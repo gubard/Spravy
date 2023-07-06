@@ -1,0 +1,85 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:models="clr-namespace:Spravy.Models"
+             xmlns:interfaces="clr-namespace:Spravy.Interfaces"
+             xmlns:handlers="clr-namespace:Spravy.Handlers"
+             xmlns:converters="clr-namespace:ExtensionFramework.AvaloniaUi.Converters;assembly=ExtensionFramework.AvaloniaUi"
+             xmlns:converters1="clr-namespace:Spravy.Converters"
+             x:Class="Spravy.App"
+             RequestedThemeVariant="Dark">
+    <Application.Styles>
+        <FluentTheme DensityStyle="Compact" />
+        <StyleInclude Source="avares://ExtensionFramework.AvaloniaUi/Styles/Theme.axaml" />
+
+        <Style Selector="ListBox.ItemsDragAndDrop">
+            <Style.Resources>
+                <handlers:ItemsListBoxDropHandlerToDoItemNotify x:Key="ItemsListBoxDropHandler" />
+            </Style.Resources>
+
+            <Setter Property="(Interaction.Behaviors)">
+                <BehaviorCollectionTemplate>
+                    <BehaviorCollection>
+                        <ContextDropBehavior Handler="{StaticResource ItemsListBoxDropHandler}" />
+                    </BehaviorCollection>
+                </BehaviorCollectionTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="ListBox.ItemsDragAndDrop ListBoxItem">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="(Interaction.Behaviors)">
+                <BehaviorCollectionTemplate>
+                    <BehaviorCollection>
+                        <ContextDragBehavior HorizontalDragThreshold="3" VerticalDragThreshold="3" />
+                    </BehaviorCollection>
+                </BehaviorCollectionTemplate>
+            </Setter>
+        </Style>
+    </Application.Styles>
+
+    <Application.DataTemplates>
+        <DataTemplate DataType="models:ToDoItemNotify">
+            <Grid ColumnDefinitions="Auto,*">
+                <Rectangle Width="10"
+                           Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
+
+                <Button Grid.Column="1" Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
+                        CommandParameter="{Binding}"
+                        HorizontalAlignment="Stretch">
+                    <DockPanel>
+                        <Grid DockPanel.Dock="Left" RowDefinitions="Auto,Auto">
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox IsChecked="{Binding IsComplete}" />
+
+                                <TextBlock Text="{Binding Name}"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Center" />
+                            </StackPanel>
+
+                            <DatePicker Grid.Row="1"
+                                        IsVisible="{Binding DueDate, Converter={StaticResource ObjectToVisibleValueConverter}}"
+                                        SelectedDate="{Binding DueDate}"
+                                        IsEnabled="False" VerticalAlignment="Center"
+                                        HorizontalAlignment="Center" />
+                        </Grid>
+
+                        <Button DockPanel.Dock="Right"
+                                Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
+                                CommandParameter="{Binding}"
+                                Content="Delete"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center" />
+
+                        <Control />
+                    </DockPanel>
+
+                </Button>
+            </Grid>
+        </DataTemplate>
+    </Application.DataTemplates>
+
+    <Application.Resources>
+        <converters:ObjectToVisibleValueConverter x:Key="ObjectToVisibleValueConverter" />
+        <converters1:ToDoItemStatusToBrushValueConverter x:Key="ToDoItemStatusToBrushValueConverter" />
+    </Application.Resources>
+</Application>

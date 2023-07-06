@@ -1,0 +1,41 @@
+<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:AddToDoItemViewModel" xmlns="https://github.com/avaloniaui"
+                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                                xmlns:reactiveUi="http://reactiveui.net"
+                                xmlns:viewModels="clr-namespace:Spravy.ViewModels"
+                                xmlns:models="clr-namespace:Spravy.Models"
+                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                                x:Class="Spravy.Views.AddToDoItemView"
+                                x:DataType="viewModels:AddToDoItemViewModel">
+    <Design.DataContext>
+        <viewModels:AddToDoItemViewModel />
+    </Design.DataContext>
+
+    <Interaction.Behaviors>
+        <EventTriggerBehavior EventName="Initialized">
+            <InvokeCommandAction Command="{Binding InitializedCommand}" />
+        </EventTriggerBehavior>
+    </Interaction.Behaviors>
+
+    <Grid RowDefinitions="Auto, *,Auto">
+        <ContentControl Content="{Binding Path}">
+            <ContentControl.DataTemplates>
+                <DataTemplate DataType="models:ToDoItemParentNotify">
+                    <TextBlock Text="{Binding Name}" />
+                </DataTemplate>
+                <DataTemplate DataType="models:RootItem">
+                    <TextBlock Text="{x:Static models:RootItem.Name}" />
+                </DataTemplate>
+            </ContentControl.DataTemplates>
+        </ContentControl>
+
+        <TextBox Grid.Row="1" Text="{Binding Name}" IsReadOnly="False" Watermark="Name" />
+
+        <DockPanel Grid.Row="2">
+            <Button DockPanel.Dock="Left" Command="{Binding Navigator.NavigateBack}" Content="Back" />
+            <Button DockPanel.Dock="Right" Command="{Binding AddToDoItemCommand}" Content="Add" />
+            <Control />
+        </DockPanel>
+    </Grid>
+</reactiveUi:ReactiveUserControl>

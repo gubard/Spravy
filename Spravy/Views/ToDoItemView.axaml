@@ -1,0 +1,52 @@
+<models1:MainReactiveUserControl x:TypeArguments="viewModels:ToDoItemViewModel"
+                                 xmlns="https://github.com/avaloniaui"
+                                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                                 xmlns:viewModels="clr-namespace:Spravy.ViewModels"
+                                 xmlns:models="clr-namespace:Spravy.Models"
+                                 xmlns:views="clr-namespace:Spravy.Views"
+                                 xmlns:models1="clr-namespace:ExtensionFramework.AvaloniaUi.Models;assembly=ExtensionFramework.AvaloniaUi"
+                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                                 x:Class="Spravy.Views.ToDoItemView"
+                                 x:DataType="viewModels:ToDoItemViewModel">
+    <Design.DataContext>
+        <viewModels:ToDoItemViewModel />
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,Auto, Auto,*">
+        <ContentControl Content="{Binding Path}">
+            <ContentControl.DataTemplates>
+                <DataTemplate DataType="models:ToDoItemParentNotify">
+                    <Button Command="{Binding $parent[views:ToDoItemView].MainViewModel.ChangeToDoItemByPathCommand}"
+                            CommandParameter="{Binding}">
+                        <TextBlock Text="{Binding Name}" />
+                    </Button>
+                </DataTemplate>
+
+                <DataTemplate DataType="models:RootItem">
+                    <Button Command="{Binding $parent[views:ToDoItemView].MainViewModel.ToRootItemCommand}">
+                        <TextBlock Text="{x:Static models:RootItem.Name}" />
+                    </Button>
+                </DataTemplate>
+            </ContentControl.DataTemplates>
+        </ContentControl>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <CheckBox IsChecked="{Binding IsComplete}" />
+            <TextBox Text="{Binding Name}" VerticalAlignment="Center" />
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal">
+            <Button Command="{Binding AddToDoItemCommand}" Content="Add" />
+            <ComboBox SelectedItem="{Binding TypeOfPeriodicity}" ItemsSource="{Binding TypeOfPeriodicities}" />
+            <DatePicker SelectedDate="{Binding DueDate}" />
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="3" 
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Auto">
+            <ListBox Classes="ItemsDragAndDrop" ItemsSource="{Binding Items}" />
+        </ScrollViewer>
+    </Grid>
+</models1:MainReactiveUserControl>
