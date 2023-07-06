@@ -236,12 +236,13 @@ public class EntityFrameworkToDoService : IToDoService
             }
 
             item.IsComplete = false;
-            await context.SaveChangesAsync();
         }
         else
         {
             item.IsComplete = false;
         }
+
+        await context.SaveChangesAsync();
     }
 
     public async Task UpdateNameToDoItemAsync(Guid id, string name)
