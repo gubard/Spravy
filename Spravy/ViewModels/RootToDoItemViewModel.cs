@@ -5,12 +5,10 @@ using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
 using ExtensionFramework.AvaloniaUi.Interfaces;
-using ExtensionFramework.AvaloniaUi.Models;
 using ExtensionFramework.Core.DependencyInjection.Attributes;
 using ExtensionFramework.ReactiveUI.Models;
 using ReactiveUI;
 using Spravy.Core.Interfaces;
-using Spravy.Extensions;
 using Spravy.Interfaces;
 using Spravy.Models;
 

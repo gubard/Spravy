@@ -1,6 +1,5 @@
 using AutoMapper;
 using Google.Protobuf;
-using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Spravy.Core.Enums;
 using Spravy.Core.Interfaces;

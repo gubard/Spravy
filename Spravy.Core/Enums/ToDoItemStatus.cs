@@ -5,4 +5,5 @@ public enum ToDoItemStatus
     Waiting,
     Today,
     Miss,
+    Complete,
 }

@@ -5,6 +5,7 @@
              xmlns:handlers="clr-namespace:Spravy.Handlers"
              xmlns:converters="clr-namespace:ExtensionFramework.AvaloniaUi.Converters;assembly=ExtensionFramework.AvaloniaUi"
              xmlns:converters1="clr-namespace:Spravy.Converters"
+             xmlns:controls="clr-namespace:ExtensionFramework.AvaloniaUi.Controls;assembly=ExtensionFramework.AvaloniaUi"
              x:Class="Spravy.App"
              RequestedThemeVariant="Dark">
     <Application.Styles>
@@ -59,7 +60,8 @@
                             <DatePicker Grid.Row="1"
                                         IsVisible="{Binding DueDate, Converter={StaticResource ObjectToVisibleValueConverter}}"
                                         SelectedDate="{Binding DueDate}"
-                                        IsEnabled="False" VerticalAlignment="Center"
+                                        IsEnabled="False"
+                                        VerticalAlignment="Center"
                                         HorizontalAlignment="Center" />
                         </Grid>
 

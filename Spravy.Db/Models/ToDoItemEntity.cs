@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Spravy.Core.Enums;
-using Spravy.Core.Models;
 
 namespace Spravy.Db.Models;
 

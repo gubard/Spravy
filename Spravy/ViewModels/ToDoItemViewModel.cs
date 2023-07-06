@@ -11,7 +11,6 @@ using ExtensionFramework.ReactiveUI.Models;
 using ReactiveUI;
 using Spravy.Core.Enums;
 using Spravy.Core.Interfaces;
-using Spravy.Core.Models;
 using Spravy.Interfaces;
 using Spravy.Models;
 

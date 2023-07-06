@@ -9,6 +9,7 @@ using Avalonia.ReactiveUI;
 using ExtensionFramework.Core.DependencyInjection.Interfaces;
 using ExtensionFramework.Core.DependencyInjection.Extensions;
 using ExtensionFramework.Core.Ui.Models;
+using ExtensionFramework.ReactiveUI.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Spravy.Core.Interfaces;
 using Spravy.Models;
@@ -27,6 +28,7 @@ public readonly struct SpravyDependencyInjectorConfiguration : IDependencyInject
         register.RegisterScope<IMapper>((MapperConfiguration cfg) => new Mapper(cfg));
         register.RegisterScope<IToDoService, GrpcToDoService>();
         register.RegisterScope<Application, App>();
+        register.RegisterScope<IExceptionViewModel, ExceptionViewModel>();
         register.RegisterScope(() => Enumerable.Empty<IDataTemplate>());
         register.RegisterScope<Control, MainView>();
         register.RegisterScope<Window, MainWindow>();

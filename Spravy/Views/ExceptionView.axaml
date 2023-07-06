@@ -1,0 +1,19 @@
+<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:ExceptionViewModel"
+                                xmlns="https://github.com/avaloniaui"
+                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                                xmlns:reactiveUi="http://reactiveui.net"
+                                xmlns:viewModels="clr-namespace:Spravy.ViewModels"
+                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                                x:Class="Spravy.Views.ExceptionView"
+                                x:DataType="viewModels:ExceptionViewModel">
+    <Design.DataContext>
+        <viewModels:ExceptionViewModel />
+    </Design.DataContext>
+
+    <Grid RowDefinitions="*,Auto">
+        <TextBox Text="{Binding FullExceptionText}" IsReadOnly="False" />
+        <Button Grid.Row="1" Command="{Binding Navigator.NavigateBack}" Content="Ok" />
+    </Grid>
+</reactiveUi:ReactiveUserControl>

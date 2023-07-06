@@ -20,6 +20,8 @@ public class ToDoItemStatusToBrushValueConverter : IValueConverter
                     return new SolidColorBrush(Colors.DarkGreen);
                 case ToDoItemStatus.Miss:
                     return new SolidColorBrush(Colors.DarkRed);
+                case ToDoItemStatus.Complete:
+                    return new SolidColorBrush(Colors.CadetBlue);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -45,6 +47,11 @@ public class ToDoItemStatusToBrushValueConverter : IValueConverter
             if (brush.Color == Colors.YellowGreen)
             {
                 return ToDoItemStatus.Waiting;
+            }
+            
+            if (brush.Color == Colors.CadetBlue)
+            {
+                return ToDoItemStatus.Complete;
             }
 
             throw new ArgumentOutOfRangeException();

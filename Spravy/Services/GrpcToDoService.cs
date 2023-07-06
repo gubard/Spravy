@@ -4,11 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ExtensionFramework.Core.Common.Extensions;
-using Google.Protobuf.WellKnownTypes;
 using Google.Protobuf;
 using Spravy.Core.Enums;
 using Spravy.Core.Interfaces;
 using Spravy.Core.Models;
+using Spravy.Exceptions;
 using Spravy.Models;
 using Spravy.Protos;
 
@@ -27,93 +27,163 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
 
     public async Task<IEnumerable<ToDoSubItem>> GetRootToDoItemsAsync()
     {
-        var items = await client.GetRootToDoItemsAsync(new GetRootToDoItemsRequest());
+        try
+        {
+            var items = await client.GetRootToDoItemsAsync(new GetRootToDoItemsRequest());
 
-        return items.Items.Select(x => mapper.Map<ToDoSubItem>(x)).ToArray();
+            return items.Items.Select(x => mapper.Map<ToDoSubItem>(x)).ToArray();
+        }
+        catch (Exception e)
+        {
+            throw new GrpcException(grpcChannel.Target, e);
+        }
     }
 
     public async Task<ToDoItem> GetToDoItemAsync(Guid id)
     {
-        var item = await client.GetToDoItemAsync(
-            new GetToDoItemRequest
-            {
-                Id = mapper.Map<ByteString>(id),
-            }
-        );
+        try
+        {
+            var item = await client.GetToDoItemAsync(
+                new GetToDoItemRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                }
+            );
 
-        return mapper.Map<ToDoItem>(item.Item);
+            return mapper.Map<ToDoItem>(item.Item);
+        }
+        catch (Exception e)
+        {
+            throw new GrpcException(grpcChannel.Target, e);
+        }
     }
 
     public async Task<Guid> AddRootToDoItemAsync(AddRootToDoItemOptions options)
     {
-        var id = await client.AddRootToDoItemAsync(mapper.Map<AddRootToDoItemRequest>(options));
+        try
+        {
+            var id = await client.AddRootToDoItemAsync(mapper.Map<AddRootToDoItemRequest>(options));
 
-        return mapper.Map<Guid>(id.Id);
+            return mapper.Map<Guid>(id.Id);
+        }
+        catch (Exception e)
+        {
+            throw new GrpcException(grpcChannel.Target, e);
+        }
     }
 
     public async Task<Guid> AddToDoItemAsync(AddToDoItemOptions options)
     {
-        var id = await client.AddToDoItemAsync(mapper.Map<AddToDoItemRequest>(options));
+        try
+        {
+            var id = await client.AddToDoItemAsync(mapper.Map<AddToDoItemRequest>(options));
 
-        return mapper.Map<Guid>(id.Id);
+            return mapper.Map<Guid>(id.Id);
+        }
+        catch (Exception e)
+        {
+            throw new GrpcException(grpcChannel.Target, e);
+        }
     }
 
     public async Task DeleteToDoItemAsync(Guid id)
     {
-        await client.DeleteToDoItemAsync(
-            new DeleteToDoItemRequest
-            {
-                Id = mapper.Map<ByteString>(id)
-            }
-        );
+        try
+        {
+            await client.DeleteToDoItemAsync(
+                new DeleteToDoItemRequest
+                {
+                    Id = mapper.Map<ByteString>(id)
+                }
+            );
+        }
+        catch (Exception e)
+        {
+            throw new GrpcException(grpcChannel.Target, e);
+        }
     }
 
     public async Task UpdateTypeOfPeriodicityAsync(Guid id, TypeOfPeriodicity type)
     {
-        await client.UpdateTypeOfPeriodicityAsync(
-            new UpdateTypeOfPeriodicityRequest
-            {
-                Id = mapper.Map<ByteString>(id),
-                Type = (TypeOfPeriodicityGrpc)type,
-            }
-        );
+        try
+        {
+            await client.UpdateTypeOfPeriodicityAsync(
+                new UpdateTypeOfPeriodicityRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                    Type = (TypeOfPeriodicityGrpc)type,
+                }
+            );
+        }
+        catch (Exception e)
+        {
+            throw new GrpcException(grpcChannel.Target, e);
+        }
     }
 
     public async Task UpdateDueDateAsync(Guid id, DateTimeOffset? dueDate)
     {
-        await client.UpdateDueDateAsync(
-            new UpdateDueDateRequest
-            {
-                Id = mapper.Map<ByteString>(id),
-                DueDate = mapper.Map<DateTimeOffsetGrpc>(dueDate),
-            }
-        );
+        try
+        {
+            await client.UpdateDueDateAsync(
+                new UpdateDueDateRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                    DueDate = mapper.Map<DateTimeOffsetGrpc>(dueDate),
+                }
+            );
+        }
+        catch (Exception e)
+        {
+            throw new GrpcException(grpcChannel.Target, e);
+        }
     }
 
     public async Task UpdateCompleteStatusAsync(Guid id, bool isComplete)
     {
-        await client.UpdateCompleteStatusAsync(
-            new UpdateCompleteStatusRequest
-            {
-                Id = mapper.Map<ByteString>(id),
-                IsComplete = isComplete
-            }
-        );
+        try
+        {
+            await client.UpdateCompleteStatusAsync(
+                new UpdateCompleteStatusRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                    IsComplete = isComplete
+                }
+            );
+        }
+        catch (Exception e)
+        {
+            throw new GrpcException(grpcChannel.Target, e);
+        }
     }
 
     public async Task UpdateNameToDoItemAsync(Guid id, string name)
     {
-        await client.UpdateNameToDoItemAsync(
-            new UpdateNameToDoItemRequest
-            {
-                Id = mapper.Map<ByteString>(id),
-                Name = name,
-            }
-        );
+        try
+        {
+            await client.UpdateNameToDoItemAsync(
+                new UpdateNameToDoItemRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                    Name = name,
+                }
+            );
+        }
+        catch (Exception e)
+        {
+            throw new GrpcException(grpcChannel.Target, e);
+        }
     }
 
     public async Task UpdateOrderIndexToDoItemAsync(UpdateOrderIndexToDoItemOptions options)
     {
-        await client.UpdateOrderIndexToDoItemAsync(mapper.Map<UpdateOrderIndexToDoItemRequest>(options));
+        try
+        {
+            await client.UpdateOrderIndexToDoItemAsync(mapper.Map<UpdateOrderIndexToDoItemRequest>(options));
+        }
+        catch (Exception e)
+        {
+            throw new GrpcException(grpcChannel.Target, e);
+        }
     }
 }

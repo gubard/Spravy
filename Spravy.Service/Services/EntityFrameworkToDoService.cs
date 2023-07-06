@@ -46,6 +46,11 @@ public class EntityFrameworkToDoService : IToDoService
 
     private async Task<ToDoItemStatus> GetStatusAsync(ToDoItemEntity entity)
     {
+        if (entity.IsComplete)
+        {
+            return ToDoItemStatus.Complete;
+        }
+        
         if (entity.DueDate.HasValue && entity.DueDate.Value < DateTimeOffset.Now.ToCurrentDay())
         {
             return ToDoItemStatus.Miss;
@@ -65,6 +70,11 @@ public class EntityFrameworkToDoService : IToDoService
 
         foreach (var child in children)
         {
+            if (child.IsComplete)
+            {
+                continue;
+            }
+
             var status = await GetStatusAsync(child);
 
             switch (status)
@@ -76,6 +86,8 @@ public class EntityFrameworkToDoService : IToDoService
                     break;
                 case ToDoItemStatus.Miss:
                     return ToDoItemStatus.Miss;
+                case ToDoItemStatus.Complete:
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
