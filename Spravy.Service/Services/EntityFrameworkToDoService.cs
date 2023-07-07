@@ -63,11 +63,6 @@ public class EntityFrameworkToDoService : IToDoService
 
         var result = ToDoItemStatus.Waiting;
 
-        if (entity.DueDate.HasValue && entity.DueDate.Value == DateTimeOffset.Now.ToCurrentDay())
-        {
-            result = ToDoItemStatus.Today;
-        }
-
         var children = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.ParentId == entity.Id)
@@ -76,6 +71,11 @@ public class EntityFrameworkToDoService : IToDoService
         if (children.Length > 0 && children.All(x => x.IsComplete))
         {
             return ToDoItemStatus.ReadyForComplete;
+        }
+
+        if (entity.DueDate.HasValue && entity.DueDate.Value == DateTimeOffset.Now.ToCurrentDay())
+        {
+            result = ToDoItemStatus.Today;
         }
 
         foreach (var child in children)
