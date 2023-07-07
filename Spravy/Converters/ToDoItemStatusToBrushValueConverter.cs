@@ -15,13 +15,15 @@ public class ToDoItemStatusToBrushValueConverter : IValueConverter
             switch (status)
             {
                 case ToDoItemStatus.Waiting:
-                    return new SolidColorBrush(Colors.YellowGreen);
+                    return new SolidColorBrush(Colors.Yellow);
                 case ToDoItemStatus.Today:
-                    return new SolidColorBrush(Colors.DarkGreen);
+                    return new SolidColorBrush(Colors.CadetBlue);
                 case ToDoItemStatus.Miss:
                     return new SolidColorBrush(Colors.DarkRed);
                 case ToDoItemStatus.Complete:
-                    return new SolidColorBrush(Colors.CadetBlue);
+                    return new SolidColorBrush(Colors.DarkGreen);
+                case ToDoItemStatus.ReadyForComplete:
+                    return new SolidColorBrush(Colors.GreenYellow);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -34,7 +36,7 @@ public class ToDoItemStatusToBrushValueConverter : IValueConverter
     {
         if (value is SolidColorBrush brush)
         {
-            if (brush.Color == Colors.DarkGreen)
+            if (brush.Color == Colors.CadetBlue)
             {
                 return ToDoItemStatus.Today;
             }
@@ -44,14 +46,19 @@ public class ToDoItemStatusToBrushValueConverter : IValueConverter
                 return ToDoItemStatus.Miss;
             }
 
-            if (brush.Color == Colors.YellowGreen)
+            if (brush.Color == Colors.Yellow)
             {
                 return ToDoItemStatus.Waiting;
             }
-            
-            if (brush.Color == Colors.CadetBlue)
+
+            if (brush.Color == Colors.DarkGreen)
             {
                 return ToDoItemStatus.Complete;
+            }
+
+            if (brush.Color == Colors.GreenYellow)
+            {
+                return ToDoItemStatus.ReadyForComplete;
             }
 
             throw new ArgumentOutOfRangeException();

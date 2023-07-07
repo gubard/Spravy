@@ -7,6 +7,7 @@ using Avalonia.Collections;
 using ExtensionFramework.AvaloniaUi.Controls;
 using ExtensionFramework.AvaloniaUi.Interfaces;
 using ExtensionFramework.Core.DependencyInjection.Attributes;
+using ExtensionFramework.ReactiveUI.Interfaces;
 using ExtensionFramework.ReactiveUI.Models;
 using ReactiveUI;
 using Spravy.Core.Enums;
@@ -197,7 +198,14 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
                     return;
                 }
 
-                await ToDoService.UpdateCompleteStatusAsync(itemNotify.Id, x);
+                try
+                {
+                    await ToDoService.UpdateCompleteStatusAsync(itemNotify.Id, x);
+                }
+                catch (Exception e)
+                {
+                    Navigator.NavigateTo<IExceptionViewModel>(viewModel => viewModel.Exception = e);
+                }
             }
 
             itemNotify.WhenAnyValue(x => x.IsComplete).Subscribe(OnNextIsComplete);

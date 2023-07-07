@@ -50,10 +50,15 @@ public class EntityFrameworkToDoService : IToDoService
         {
             return ToDoItemStatus.Complete;
         }
-        
+
         if (entity.DueDate.HasValue && entity.DueDate.Value < DateTimeOffset.Now.ToCurrentDay())
         {
             return ToDoItemStatus.Miss;
+        }
+
+        if (entity.DueDate.HasValue && entity.DueDate.Value > DateTimeOffset.Now.ToCurrentDay())
+        {
+            return ToDoItemStatus.Complete;
         }
 
         var result = ToDoItemStatus.Waiting;
@@ -67,6 +72,11 @@ public class EntityFrameworkToDoService : IToDoService
             .AsNoTracking()
             .Where(x => x.ParentId == entity.Id)
             .ToArrayAsync();
+
+        if (children.Length > 0 && children.All(x => x.IsComplete))
+        {
+            return ToDoItemStatus.ReadyForComplete;
+        }
 
         foreach (var child in children)
         {
@@ -87,6 +97,8 @@ public class EntityFrameworkToDoService : IToDoService
                 case ToDoItemStatus.Miss:
                     return ToDoItemStatus.Miss;
                 case ToDoItemStatus.Complete:
+                    break;
+                case ToDoItemStatus.ReadyForComplete:
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -222,6 +234,16 @@ public class EntityFrameworkToDoService : IToDoService
 
         if (isComplete)
         {
+            var hasChildren =
+                await context.Set<ToDoItemEntity>().AsNoTracking().Where(x => x.ParentId == item.Id).AnyAsync();
+
+            var status = await GetStatusAsync(item);
+
+            if (hasChildren && status != ToDoItemStatus.ReadyForComplete)
+            {
+                throw new Exception("Need close sub tasks.");
+            }
+
             if (item.TypeOfPeriodicity == TypeOfPeriodicity.None || item.DueDate is null)
             {
                 item.IsComplete = true;

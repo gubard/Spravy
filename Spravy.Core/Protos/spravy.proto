@@ -138,8 +138,9 @@ enum TypeOfPeriodicityGrpc {
 }
 
 enum ToDoItemStatusGrpc {
-  Waiting = 0;
+  Miss = 0;
   Today = 1;
-  Miss = 2;
-  Complete = 3;
+  Waiting = 2;
+  ReadyForComplete = 3;
+  Complete = 4;
 }
