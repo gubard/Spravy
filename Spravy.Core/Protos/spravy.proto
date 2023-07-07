@@ -18,6 +18,15 @@ service ToDoService {
   rpc UpdateCompleteStatus (UpdateCompleteStatusRequest) returns (UpdateCompleteStatusReply);
   rpc UpdateNameToDoItem (UpdateNameToDoItemRequest) returns (UpdateNameToDoItemReply);
   rpc UpdateOrderIndexToDoItem (UpdateOrderIndexToDoItemRequest) returns (UpdateOrderIndexToDoItemReply);
+  rpc UpdateDescriptionToDoItem (UpdateDescriptionToDoItemRequest) returns (UpdateDescriptionToDoItemReply);
+}
+
+message UpdateDescriptionToDoItemRequest {
+  bytes Id = 1;
+  string Description = 2;
+}
+
+message UpdateDescriptionToDoItemReply {
 }
 
 message UpdateOrderIndexToDoItemRequest {
@@ -107,6 +116,7 @@ message ToDoSubItemGrpc {
   bool IsComplete = 4;
   uint64 OrderIndex = 5;
   ToDoItemStatusGrpc Status = 6;
+  string Description = 7;
 }
 
 message ToDoItemParentGrpc {
@@ -122,6 +132,7 @@ message ToDoItemGrpc {
   TypeOfPeriodicityGrpc TypeOfPeriodicity = 5;
   DateTimeOffsetGrpc DueDate = 6;
   bool IsComplete = 7;
+  string Description = 8;
 }
 
 message DateTimeOffsetGrpc {

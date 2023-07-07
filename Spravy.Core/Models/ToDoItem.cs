@@ -11,13 +11,15 @@ public readonly struct ToDoItem
         DateTimeOffset? dueDate,
         ToDoSubItem[] items,
         ToDoItemParent[] parents,
-        bool isComplete
+        bool isComplete,
+        string description
     )
     {
         Name = name;
         Items = items;
         Parents = parents;
         IsComplete = isComplete;
+        Description = description;
         TypeOfPeriodicity = typeOfPeriodicity;
         DueDate = dueDate;
         Id = id;
@@ -30,4 +32,5 @@ public readonly struct ToDoItem
     public DateTimeOffset? DueDate { get; }
     public ToDoSubItem[] Items { get; }
     public ToDoItemParent[] Parents { get; }
+    public string Description { get; }
 }

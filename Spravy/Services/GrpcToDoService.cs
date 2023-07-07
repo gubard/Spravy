@@ -186,4 +186,22 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
             throw new GrpcException(grpcChannel.Target, e);
         }
     }
+
+    public async Task UpdateDescriptionToDoItemAsync(Guid id, string description)
+    {
+        try
+        {
+            await client.UpdateDescriptionToDoItemAsync(
+                new UpdateDescriptionToDoItemRequest
+                {
+                    Description = description,
+                    Id = mapper.Map<ByteString>(id),
+                }
+            );
+        }
+        catch (Exception e)
+        {
+            throw new GrpcException(grpcChannel.Target, e);
+        }
+    }
 }

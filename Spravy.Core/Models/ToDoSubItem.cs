@@ -10,13 +10,15 @@ public readonly struct ToDoSubItem
         bool isComplete,
         DateTimeOffset? dueDate,
         ulong orderIndex,
-        ToDoItemStatus status
+        ToDoItemStatus status,
+        string description
     )
     {
         Name = name;
         DueDate = dueDate;
         OrderIndex = orderIndex;
         Status = status;
+        Description = description;
         IsComplete = isComplete;
         Id = id;
     }
@@ -27,4 +29,5 @@ public readonly struct ToDoSubItem
     public DateTimeOffset? DueDate { get; }
     public ulong OrderIndex { get; }
     public ToDoItemStatus Status { get; }
+    public string Description { get; }
 }

@@ -40,7 +40,7 @@
 
     <Application.DataTemplates>
         <DataTemplate DataType="models:ToDoItemNotify">
-            <Grid ColumnDefinitions="Auto,*">
+            <Grid ColumnDefinitions="Auto,*" ToolTip.Tip="{Binding Description}">
                 <Rectangle Width="10"
                            Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
 

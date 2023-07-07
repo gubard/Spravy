@@ -13,6 +13,7 @@ public class ToDoItemNotify : NotifyBase, IEquatable<ToDoItemNotify>
     private DateTimeOffset? dueDate;
     private bool isComplete;
     private ToDoItemStatus status;
+    private string description = string.Empty;
 
     public string Name
     {
@@ -48,6 +49,12 @@ public class ToDoItemNotify : NotifyBase, IEquatable<ToDoItemNotify>
     {
         get => status;
         set => this.RaiseAndSetIfChanged(ref status, value);
+    }
+
+    public string Description
+    {
+        get => description;
+        set => this.RaiseAndSetIfChanged(ref description, value);
     }
 
     public bool Equals(ToDoItemNotify? other)

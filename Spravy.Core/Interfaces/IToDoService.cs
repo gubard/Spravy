@@ -15,4 +15,5 @@ public interface IToDoService
     Task UpdateCompleteStatusAsync(Guid id, bool isComplete);
     Task UpdateNameToDoItemAsync(Guid id, string name);
     Task UpdateOrderIndexToDoItemAsync(UpdateOrderIndexToDoItemOptions options);
+    Task UpdateDescriptionToDoItemAsync(Guid id, string description);
 }

@@ -35,7 +35,8 @@ public class EntityFrameworkToDoService : IToDoService
                 item.IsComplete,
                 item.DueDate,
                 item.OrderIndex,
-                status
+                status,
+                item.Description
             );
 
             result.Add(toDoSubItem);
@@ -146,7 +147,8 @@ public class EntityFrameworkToDoService : IToDoService
                 subItem.IsComplete,
                 subItem.DueDate,
                 subItem.OrderIndex,
-                status
+                status,
+                subItem.Description
             );
 
             toDoSubItems.Add(toDoSubItem);
@@ -159,7 +161,8 @@ public class EntityFrameworkToDoService : IToDoService
             item.DueDate,
             toDoSubItems.ToArray(),
             parents.ToArray(),
-            item.IsComplete
+            item.IsComplete,
+            item.Description
         );
     }
 
@@ -168,6 +171,7 @@ public class EntityFrameworkToDoService : IToDoService
         var id = Guid.NewGuid();
         var items = await context.Set<ToDoItemEntity>().AsNoTracking().Where(x => x.ParentId == null).ToArrayAsync();
         var newEntity = mapper.Map<ToDoItemEntity>(options);
+        newEntity.Description = string.Empty;
         newEntity.Id = id;
         newEntity.OrderIndex = items.Length == 0 ? 0 : items.Max(x => x.OrderIndex) + 1;
         await context.Set<ToDoItemEntity>().AddAsync(newEntity);
@@ -187,6 +191,7 @@ public class EntityFrameworkToDoService : IToDoService
             .ToArrayAsync();
 
         var newEntity = mapper.Map<ToDoItemEntity>(options);
+        newEntity.Description = string.Empty;
         newEntity.Id = id;
         newEntity.OrderIndex = items.Length == 0 ? 0 : items.Max(x => x.OrderIndex) + 1;
         newEntity.TypeOfPeriodicity = parent.TypeOfPeriodicity;
@@ -325,6 +330,13 @@ public class EntityFrameworkToDoService : IToDoService
         item.OrderIndex = orderIndex;
         await context.SaveChangesAsync();
         await NormalizeOrderIndexAsync(item.ParentId);
+    }
+
+    public async Task UpdateDescriptionToDoItemAsync(Guid id, string description)
+    {
+        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
+        item.Description = description;
+        await context.SaveChangesAsync();
     }
 
     private async Task NormalizeOrderIndexAsync(Guid? parentId)

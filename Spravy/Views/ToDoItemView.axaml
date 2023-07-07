@@ -44,10 +44,16 @@
             <controls:NullableDatePicker SelectedDate="{Binding DueDate, Mode=TwoWay}" />
         </StackPanel>
 
-        <ScrollViewer Grid.Row="3" 
+        <ScrollViewer Grid.Row="3"
                       VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Auto">
-            <ListBox Classes="ItemsDragAndDrop" ItemsSource="{Binding Items}" />
+            <StackPanel>
+                <controls:EditableTextBlock AcceptsReturn="True" 
+                                            AcceptsTab="True"
+                                            TextWrapping="Wrap"
+                                            Text="{Binding Description, Mode=TwoWay}" />
+                <ListBox Classes="ItemsDragAndDrop" ItemsSource="{Binding Items}" />
+            </StackPanel>
         </ScrollViewer>
     </Grid>
 </models1:MainReactiveUserControl>

@@ -131,4 +131,11 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
 
         return new UpdateOrderIndexToDoItemReply();
     }
+
+    public override async Task<UpdateDescriptionToDoItemReply> UpdateDescriptionToDoItem(UpdateDescriptionToDoItemRequest request, ServerCallContext context)
+    {
+        await toDoService.UpdateDescriptionToDoItemAsync(mapper.Map<Guid>(request.Id), request.Description);
+
+        return new UpdateDescriptionToDoItemReply();
+    }
 }

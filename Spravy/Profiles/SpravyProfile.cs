@@ -66,7 +66,8 @@ public class SpravyProfile : Profile
                     res.Mapper.Map<DateTimeOffset?>(src.DueDate),
                     src.Items.Select(x => res.Mapper.Map<ToDoSubItem>(x)).ToArray(),
                     src.Parents.Select(x => res.Mapper.Map<ToDoItemParent>(x)).ToArray(),
-                    src.IsComplete
+                    src.IsComplete,
+                    src.Description
                 )
             );
 
@@ -78,7 +79,8 @@ public class SpravyProfile : Profile
                     src.IsComplete,
                     res.Mapper.Map<DateTimeOffset?>(src.DueDate),
                     src.OrderIndex,
-                    (ToDoItemStatus)src.Status
+                    (ToDoItemStatus)src.Status,
+                    src.Description
                 )
             );
     }

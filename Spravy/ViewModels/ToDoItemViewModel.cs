@@ -24,6 +24,7 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
     private TypeOfPeriodicity typeOfPeriodicity;
     private DateTimeOffset? dueDate;
     private bool isComplete;
+    private string description = string.Empty;
 
     public ToDoItemViewModel() : base("to-do-item")
     {
@@ -38,6 +39,7 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
         this.WhenAnyValue(x => x.Id).Subscribe(OnNextId);
         this.WhenAnyValue(x => x.IsComplete).Subscribe(OnNextIsComplete);
         this.WhenAnyValue(x => x.Name).Subscribe(OnNextName);
+        this.WhenAnyValue(x => x.Description).Subscribe(OnNextDescription);
     }
 
     public AvaloniaList<TypeOfPeriodicity> TypeOfPeriodicities { get; }
@@ -85,6 +87,12 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
     {
         get => typeOfPeriodicity;
         set => this.RaiseAndSetIfChanged(ref typeOfPeriodicity, value);
+    }
+
+    public string Description
+    {
+        get => description;
+        set => this.RaiseAndSetIfChanged(ref description, value);
     }
 
     private async void OnNextId(Guid x)
@@ -161,6 +169,16 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
         await ToDoService.UpdateDueDateAsync(Id, x);
     }
 
+    private async void OnNextDescription(string x)
+    {
+        if (ToDoService is null)
+        {
+            return;
+        }
+
+        await ToDoService.UpdateDescriptionToDoItemAsync(Id, x);
+    }
+
     public async Task RefreshToDoItemAsync()
     {
         if (Path is null)
@@ -179,6 +197,7 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
         Name = item.Name;
         IsComplete = item.IsComplete;
         TypeOfPeriodicity = item.TypeOfPeriodicity;
+        Description = item.Description;
         Items.Clear();
         Items.AddRange(item.Items.Select(x => Mapper.Map<ToDoItemNotify>(x)).OrderBy(x => x.OrderIndex));
         SubscribeItems();
