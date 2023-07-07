@@ -16,7 +16,7 @@
         <TextBox Text="{Binding Name}" Watermark="Name" />
 
         <DockPanel Grid.Row="1">
-            <Button DockPanel.Dock="Left" Command="{Binding Navigator.NavigateBack}" Content="Back" />
+            <Button DockPanel.Dock="Left" Command="{Binding NavigateBackCommand}" Content="Back" />
             <Button DockPanel.Dock="Right" Command="{Binding AddRootToDoItemCommand}" Content="Add" />
             <Control />
         </DockPanel>

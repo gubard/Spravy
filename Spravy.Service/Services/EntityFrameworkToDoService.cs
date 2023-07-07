@@ -179,13 +179,18 @@ public class EntityFrameworkToDoService : IToDoService
     public async Task<Guid> AddToDoItemAsync(AddToDoItemOptions options)
     {
         var id = Guid.NewGuid();
+        var parent = await context.Set<ToDoItemEntity>().FindAsync(options.ParentId);
+
         var items = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.ParentId == options.ParentId)
             .ToArrayAsync();
+
         var newEntity = mapper.Map<ToDoItemEntity>(options);
         newEntity.Id = id;
         newEntity.OrderIndex = items.Length == 0 ? 0 : items.Max(x => x.OrderIndex) + 1;
+        newEntity.TypeOfPeriodicity = parent.TypeOfPeriodicity;
+        newEntity.DueDate = parent.DueDate;
         await context.Set<ToDoItemEntity>().AddAsync(newEntity);
         await context.SaveChangesAsync();
 

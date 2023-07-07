@@ -33,7 +33,7 @@
         <TextBox Grid.Row="1" Text="{Binding Name}" IsReadOnly="False" Watermark="Name" />
 
         <DockPanel Grid.Row="2">
-            <Button DockPanel.Dock="Left" Command="{Binding Navigator.NavigateBack}" Content="Back" />
+            <Button DockPanel.Dock="Left" Command="{Binding NavigateBackCommand}" Content="Back" />
             <Button DockPanel.Dock="Right" Command="{Binding AddToDoItemCommand}" Content="Add" />
             <Control />
         </DockPanel>

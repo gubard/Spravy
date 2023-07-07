@@ -14,6 +14,6 @@
 
     <Grid RowDefinitions="*,Auto">
         <TextBox Text="{Binding FullExceptionText}" IsReadOnly="False" />
-        <Button Grid.Row="1" Command="{Binding Navigator.NavigateBack}" Content="Ok" />
+        <Button Grid.Row="1" Command="{Binding NavigateBackCommand}" Content="Ok" />
     </Grid>
 </reactiveUi:ReactiveUserControl>
