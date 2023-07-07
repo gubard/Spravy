@@ -73,10 +73,7 @@ public class EntityFrameworkToDoService : IToDoService
             return ToDoItemStatus.ReadyForComplete;
         }
 
-        if (entity.DueDate.HasValue && entity.DueDate.Value == DateTimeOffset.Now.ToCurrentDay())
-        {
-            result = ToDoItemStatus.Today;
-        }
+        var completeChildrenCount = 0;
 
         foreach (var child in children)
         {
@@ -97,12 +94,23 @@ public class EntityFrameworkToDoService : IToDoService
                 case ToDoItemStatus.Miss:
                     return ToDoItemStatus.Miss;
                 case ToDoItemStatus.Complete:
+                    completeChildrenCount++;
                     break;
                 case ToDoItemStatus.ReadyForComplete:
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        if (completeChildrenCount == children.Length)
+        {
+            return ToDoItemStatus.ReadyForComplete;
+        }
+
+        if (entity.DueDate.HasValue && entity.DueDate.Value == DateTimeOffset.Now.ToCurrentDay())
+        {
+            result = ToDoItemStatus.Today;
         }
 
         return result;
