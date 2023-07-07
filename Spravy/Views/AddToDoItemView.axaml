@@ -30,7 +30,7 @@
             </ContentControl.DataTemplates>
         </ContentControl>
 
-        <TextBox Grid.Row="1" Text="{Binding Name}" IsReadOnly="False" Watermark="Name" />
+        <TextBox Grid.Row="1" Text="{Binding Name}" Watermark="Name" />
 
         <DockPanel Grid.Row="2">
             <Button DockPanel.Dock="Left" Command="{Binding NavigateBackCommand}" Content="Back" />

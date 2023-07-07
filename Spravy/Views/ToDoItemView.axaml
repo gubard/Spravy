@@ -35,7 +35,7 @@
 
         <StackPanel Grid.Row="1" Orientation="Horizontal">
             <CheckBox IsChecked="{Binding IsComplete}" />
-            <TextBox Text="{Binding Name}" VerticalAlignment="Center" />
+            <controls:EditableTextBlock Text="{Binding Name, Mode=TwoWay}" VerticalAlignment="Center" />
         </StackPanel>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal">
