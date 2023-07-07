@@ -16,6 +16,7 @@ public class ToDoItemEntity
     public bool IsComplete { get; set; }
     public ulong OrderIndex { get; set; }
     public string Description { get; set; }
+    public DateTimeOffset CreatedDateTime { get; set; } = DateTimeOffset.Now;
 
     [ForeignKey(nameof(Parent))]
     public Guid? ParentId { get; set; }
