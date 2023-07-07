@@ -68,7 +68,12 @@ public class EntityFrameworkToDoService : IToDoService
             .Where(x => x.ParentId == entity.Id)
             .ToArrayAsync();
 
-        if (children.Length > 0 && children.All(x => x.IsComplete))
+        if (children.Length == 0)
+        {
+            return ToDoItemStatus.ReadyForComplete;
+        }
+
+        if (children.All(x => x.IsComplete))
         {
             return ToDoItemStatus.ReadyForComplete;
         }
