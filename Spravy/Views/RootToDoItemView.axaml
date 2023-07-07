@@ -23,7 +23,11 @@
         <ScrollViewer Grid.Row="1"
                       VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Auto">
-            <ListBox Classes="ItemsDragAndDrop" ItemsSource="{Binding Items}" />
+            <StackPanel>
+                <ListBox Classes="ItemsDragAndDrop" ItemsSource="{Binding Items}" />
+                <Border Height="5" Background="{StaticResource SystemControlForegroundChromeGrayBrush}" />
+                <ListBox Classes="ItemsDragAndDrop" ItemsSource="{Binding CompletedItems}" />
+            </StackPanel>
         </ScrollViewer>
     </Grid>
 </reactiveUi:ReactiveUserControl>

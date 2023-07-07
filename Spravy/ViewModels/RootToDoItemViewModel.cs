@@ -9,6 +9,7 @@ using ExtensionFramework.Core.DependencyInjection.Attributes;
 using ExtensionFramework.ReactiveUI.Interfaces;
 using ExtensionFramework.ReactiveUI.Models;
 using ReactiveUI;
+using Spravy.Core.Enums;
 using Spravy.Core.Interfaces;
 using Spravy.Interfaces;
 using Spravy.Models;
@@ -30,6 +31,7 @@ public class RootToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDo
     public ICommand DeleteSubToDoItemCommand { get; }
     public ICommand ChangeToDoItemCommand { get; }
     public AvaloniaList<ToDoItemNotify> Items { get; } = new();
+    public AvaloniaList<ToDoItemNotify> CompletedItems { get; } = new();
 
     [Inject]
     public required IToDoService? ToDoService { get; set; }
@@ -51,7 +53,10 @@ public class RootToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDo
 
         var items = await ToDoService.GetRootToDoItemsAsync();
         Items.Clear();
-        Items.AddRange(items.Select(x => Mapper.Map<ToDoItemNotify>(x)).OrderBy(x => x.OrderIndex));
+        CompletedItems.Clear();
+        var source = items.Select(x => Mapper.Map<ToDoItemNotify>(x)).ToArray();
+        Items.AddRange(source.Where(x => x.Status != ToDoItemStatus.Complete).OrderBy(x => x.OrderIndex));
+        CompletedItems.AddRange(source.Where(x => x.Status == ToDoItemStatus.Complete).OrderBy(x => x.OrderIndex));
         SubscribeItems();
     }
 

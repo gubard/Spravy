@@ -42,6 +42,7 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
         this.WhenAnyValue(x => x.Description).Subscribe(OnNextDescription);
     }
 
+    public AvaloniaList<ToDoItemNotify> CompletedItems { get; } = new();
     public AvaloniaList<TypeOfPeriodicity> TypeOfPeriodicities { get; }
     public AvaloniaList<ToDoItemNotify> Items { get; } = new();
     public ICommand DeleteSubToDoItemCommand { get; }
@@ -155,6 +156,11 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
 
     private async Task DeleteSubToDoItemAsync(ToDoItemNotify item)
     {
+        if (ToDoService is null)
+        {
+            return;
+        }
+
         await ToDoService.DeleteToDoItemAsync(item.Id);
         await RefreshToDoItemAsync();
     }
@@ -199,7 +205,10 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
         TypeOfPeriodicity = item.TypeOfPeriodicity;
         Description = item.Description;
         Items.Clear();
-        Items.AddRange(item.Items.Select(x => Mapper.Map<ToDoItemNotify>(x)).OrderBy(x => x.OrderIndex));
+        CompletedItems.Clear();
+        var source = item.Items.Select(x => Mapper.Map<ToDoItemNotify>(x)).ToArray();
+        Items.AddRange(source.Where(x => x.Status != ToDoItemStatus.Complete).OrderBy(x => x.OrderIndex));
+        CompletedItems.AddRange(source.Where(x => x.Status == ToDoItemStatus.Complete).OrderBy(x => x.OrderIndex));
         SubscribeItems();
         Path.Items.Clear();
         Path.Items.Add(new RootItem());
