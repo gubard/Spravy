@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
@@ -56,7 +58,8 @@ public class RootToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDo
         var source = items.Select(x => Mapper.Map<ToDoItemNotify>(x)).ToArray();
         Items.AddRange(source.Where(x => x.Status != ToDoItemStatus.Complete).OrderBy(x => x.OrderIndex));
         CompletedItems.AddRange(source.Where(x => x.Status == ToDoItemStatus.Complete).OrderBy(x => x.OrderIndex));
-        SubscribeItems();
+        SubscribeItems(Items);
+        SubscribeItems(CompletedItems);
     }
 
     private async Task DeleteSubToDoItemAsync(ToDoItemNotify item)
@@ -80,26 +83,27 @@ public class RootToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDo
         Navigator.NavigateTo<ToDoItemViewModel>(vm => vm.Id = item.Id);
     }
 
-    private void SubscribeItems()
+    private void SubscribeItems(IEnumerable<ToDoItemNotify> items)
     {
-        foreach (var itemNotify in Items)
+        foreach (var itemNotify in items)
         {
             async void OnNextIsComplete(bool x)
             {
                 await SafeExecuteAsync(
-                    () =>
+                    async () =>
                     {
                         if (ToDoService is null)
                         {
-                            return Task.CompletedTask;
+                            return;
                         }
 
-                        return ToDoService.UpdateCompleteStatusAsync(itemNotify.Id, x);
+                        await ToDoService.UpdateCompleteStatusAsync(itemNotify.Id, x);
+                        await RefreshToDoItemAsync();
                     }
                 );
             }
 
-            itemNotify.WhenAnyValue(x => x.IsComplete).Subscribe(OnNextIsComplete);
+            itemNotify.WhenAnyValue(x => x.IsComplete).Skip(1).Subscribe(OnNextIsComplete);
         }
     }
 }

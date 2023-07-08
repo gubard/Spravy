@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
@@ -33,12 +35,12 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
         ChangeToDoItemByPathCommand = CreateCommand<ToDoItemParentNotify>(ChangeToDoItemByPath);
         ToRootItemCommand = CreateCommand(ToRootItem);
         TypeOfPeriodicities = new(Enum.GetValues<TypeOfPeriodicity>());
-        this.WhenAnyValue(x => x.DueDate).Subscribe(OnNextDueDate);
-        this.WhenAnyValue(x => x.TypeOfPeriodicity).Subscribe(OnNextTypeOfPeriodicity);
+        this.WhenAnyValue(x => x.DueDate).Skip(1).Subscribe(OnNextDueDate);
+        this.WhenAnyValue(x => x.TypeOfPeriodicity).Skip(1).Subscribe(OnNextTypeOfPeriodicity);
         this.WhenAnyValue(x => x.Id).Subscribe(OnNextId);
-        this.WhenAnyValue(x => x.IsComplete).Subscribe(OnNextIsComplete);
-        this.WhenAnyValue(x => x.Name).Subscribe(OnNextName);
-        this.WhenAnyValue(x => x.Description).Subscribe(OnNextDescription);
+        this.WhenAnyValue(x => x.IsComplete).Skip(1).Subscribe(OnNextIsComplete);
+        this.WhenAnyValue(x => x.Name).Skip(1).Subscribe(OnNextName);
+        this.WhenAnyValue(x => x.Description).Skip(1).Subscribe(OnNextDescription);
     }
 
     public AvaloniaList<ToDoItemNotify> CompletedItems { get; } = new();
@@ -181,13 +183,33 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
 
     private async void OnNextDueDate(DateTimeOffset? x)
     {
-        await SafeExecuteAsync(() => ToDoService is null ? Task.CompletedTask : ToDoService.UpdateDueDateAsync(Id, x));
+        await SafeExecuteAsync(
+            async () =>
+            {
+                if (ToDoService is null)
+                {
+                    return;
+                }
+
+                await ToDoService.UpdateDueDateAsync(Id, x);
+                await RefreshToDoItemAsync();
+            }
+        );
     }
 
     private async void OnNextDescription(string x)
     {
         await SafeExecuteAsync(
-            () => ToDoService is null ? Task.CompletedTask : ToDoService.UpdateDescriptionToDoItemAsync(Id, x)
+            async () =>
+            {
+                if (ToDoService is null)
+                {
+                    return;
+                }
+
+                await ToDoService.UpdateDescriptionToDoItemAsync(Id, x);
+                await RefreshToDoItemAsync();
+            }
         );
     }
 
@@ -215,32 +237,34 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
         var source = item.Items.Select(x => Mapper.Map<ToDoItemNotify>(x)).ToArray();
         Items.AddRange(source.Where(x => x.Status != ToDoItemStatus.Complete).OrderBy(x => x.OrderIndex));
         CompletedItems.AddRange(source.Where(x => x.Status == ToDoItemStatus.Complete).OrderBy(x => x.OrderIndex));
-        SubscribeItems();
+        SubscribeItems(Items);
+        SubscribeItems(CompletedItems);
         Path.Items.Clear();
         Path.Items.Add(new RootItem());
         Path.Items.AddRange(item.Parents.Select(x => Mapper.Map<ToDoItemParentNotify>(x)));
     }
 
-    private void SubscribeItems()
+    private void SubscribeItems(IEnumerable<ToDoItemNotify> items)
     {
-        foreach (var itemNotify in Items)
+        foreach (var itemNotify in items)
         {
             async void OnNextIsComplete(bool x)
             {
                 await SafeExecuteAsync(
-                    () =>
+                    async () =>
                     {
                         if (ToDoService is null)
                         {
-                            return Task.CompletedTask;
+                            return;
                         }
 
-                        return ToDoService.UpdateCompleteStatusAsync(itemNotify.Id, x);
+                        await ToDoService.UpdateCompleteStatusAsync(itemNotify.Id, x);
+                        await RefreshToDoItemAsync();
                     }
                 );
             }
 
-            itemNotify.WhenAnyValue(x => x.IsComplete).Subscribe(OnNextIsComplete);
+            itemNotify.WhenAnyValue(x => x.IsComplete).Skip(1).Subscribe(OnNextIsComplete);
         }
     }
 }
