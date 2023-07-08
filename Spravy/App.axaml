@@ -57,7 +57,7 @@
                                            HorizontalAlignment="Center" />
                             </StackPanel>
 
-                            <StackPanel Grid.Row="1">
+                            <StackPanel Grid.Row="1" Orientation="Horizontal">
                                 <TextBlock Text="{Binding CompletedCount}" />
 
                                 <DatePicker
