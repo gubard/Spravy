@@ -17,12 +17,18 @@ builder.Services.AddScoped<IDbContextSetup, SqliteDbContextSetup>();
 
 #if DEBUG
 builder.Services.AddDbContext<SpravyDbContext>(options => options.UseInMemoryDatabase("SpravyDbContext"));
-#else 
+#else
 builder.Services.AddDbContext<SpravyDbContext>(
     (sp, options) => options.UseSqlite(sp.GetRequiredService<IConfiguration>()["Sqlite:ConnectionString"])
 );
 #endif
 
 var app = builder.Build();
+
+#if DEBUG
+app.Urls.Clear();
+app.Urls.Add("http://localhost:5000");
+#endif
+
 app.MapGrpcService<GrpcToDoService>();
 app.Run();
