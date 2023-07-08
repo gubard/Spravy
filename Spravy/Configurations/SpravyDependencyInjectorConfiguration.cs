@@ -38,7 +38,11 @@ public readonly struct SpravyDependencyInjectorConfiguration : IDependencyInject
         register.RegisterScope<GrpcToDoServiceOptions>(
             (IConfiguration configuration) => new GrpcToDoServiceOptions
             {
+#if DEBUG
+                Host = "http://localhost:5000",
+#else
                 Host = configuration["GrpcToDoService:Host"],
+#endif
             }
         );
 
