@@ -37,7 +37,7 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
         TypeOfPeriodicities = new(Enum.GetValues<TypeOfPeriodicity>());
         this.WhenAnyValue(x => x.DueDate).Skip(1).Subscribe(OnNextDueDate);
         this.WhenAnyValue(x => x.TypeOfPeriodicity).Skip(1).Subscribe(OnNextTypeOfPeriodicity);
-        this.WhenAnyValue(x => x.Id).Subscribe(OnNextId);
+        this.WhenAnyValue(x => x.Id).Skip(1).Subscribe(OnNextId);
         this.WhenAnyValue(x => x.IsComplete).Skip(1).Subscribe(OnNextIsComplete);
         this.WhenAnyValue(x => x.Name).Skip(1).Subscribe(OnNextName);
         this.WhenAnyValue(x => x.Description).Skip(1).Subscribe(OnNextDescription);
@@ -53,13 +53,13 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
     public ICommand ToRootItemCommand { get; }
 
     [Inject]
-    public required IToDoService? ToDoService { get; set; }
+    public required IToDoService ToDoService { get; set; }
 
     [Inject]
     public required IMapper Mapper { get; set; }
 
     [Inject]
-    public required PathControl? Path { get; set; }
+    public required PathControl Path { get; set; }
 
     public string Name
     {
@@ -107,11 +107,6 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
         await SafeExecuteAsync(
             async () =>
             {
-                if (ToDoService is null)
-                {
-                    return;
-                }
-
                 await ToDoService.UpdateTypeOfPeriodicityAsync(Id, x);
                 await RefreshToDoItemAsync();
             }
@@ -123,11 +118,6 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
         await SafeExecuteAsync(
             async () =>
             {
-                if (ToDoService is null)
-                {
-                    return;
-                }
-
                 await ToDoService.UpdateNameToDoItemAsync(Id, x);
                 await RefreshToDoItemAsync();
             }
@@ -149,11 +139,6 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
         await SafeExecuteAsync(
             async () =>
             {
-                if (ToDoService is null)
-                {
-                    return;
-                }
-
                 await ToDoService.UpdateCompleteStatusAsync(Id, x);
                 await RefreshToDoItemAsync();
             }
@@ -172,11 +157,6 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
 
     private async Task DeleteSubToDoItemAsync(ToDoItemNotify item)
     {
-        if (ToDoService is null)
-        {
-            return;
-        }
-
         await ToDoService.DeleteToDoItemAsync(item.Id);
         await RefreshToDoItemAsync();
     }
@@ -186,11 +166,6 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
         await SafeExecuteAsync(
             async () =>
             {
-                if (ToDoService is null)
-                {
-                    return;
-                }
-
                 await ToDoService.UpdateDueDateAsync(Id, x);
                 await RefreshToDoItemAsync();
             }
@@ -202,11 +177,6 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
         await SafeExecuteAsync(
             async () =>
             {
-                if (ToDoService is null)
-                {
-                    return;
-                }
-
                 await ToDoService.UpdateDescriptionToDoItemAsync(Id, x);
                 await RefreshToDoItemAsync();
             }
@@ -215,16 +185,6 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
 
     public async Task RefreshToDoItemAsync()
     {
-        if (Path is null)
-        {
-            return;
-        }
-
-        if (ToDoService is null)
-        {
-            return;
-        }
-
         Path.Items ??= new AvaloniaList<object>();
         var item = await ToDoService.GetToDoItemAsync(Id);
         DueDate = item.DueDate;
@@ -253,11 +213,6 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
                 await SafeExecuteAsync(
                     async () =>
                     {
-                        if (ToDoService is null)
-                        {
-                            return;
-                        }
-
                         await ToDoService.UpdateCompleteStatusAsync(itemNotify.Id, x);
                         await RefreshToDoItemAsync();
                     }

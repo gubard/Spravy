@@ -35,7 +35,7 @@ public class RootToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDo
     public AvaloniaList<ToDoItemNotify> CompletedItems { get; } = new();
 
     [Inject]
-    public required IToDoService? ToDoService { get; set; }
+    public required IToDoService ToDoService { get; set; }
 
     [Inject]
     public required IMapper Mapper { get; set; }
@@ -47,11 +47,6 @@ public class RootToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDo
 
     public async Task RefreshToDoItemAsync()
     {
-        if (ToDoService is null)
-        {
-            return;
-        }
-
         var items = await ToDoService.GetRootToDoItemsAsync();
         Items.Clear();
         CompletedItems.Clear();
@@ -64,11 +59,6 @@ public class RootToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDo
 
     private async Task DeleteSubToDoItemAsync(ToDoItemNotify item)
     {
-        if (ToDoService is null)
-        {
-            return;
-        }
-
         await ToDoService.DeleteToDoItemAsync(item.Id);
         await InitializedAsync();
     }
@@ -92,11 +82,6 @@ public class RootToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDo
                 await SafeExecuteAsync(
                     async () =>
                     {
-                        if (ToDoService is null)
-                        {
-                            return;
-                        }
-
                         await ToDoService.UpdateCompleteStatusAsync(itemNotify.Id, x);
                         await RefreshToDoItemAsync();
                     }
