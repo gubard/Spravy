@@ -36,7 +36,8 @@ public class EntityFrameworkToDoService : IToDoService
                 item.DueDate,
                 item.OrderIndex,
                 status,
-                item.Description
+                item.Description,
+                item.CompletedCount
             );
 
             result.Add(toDoSubItem);
@@ -148,7 +149,8 @@ public class EntityFrameworkToDoService : IToDoService
                 subItem.DueDate,
                 subItem.OrderIndex,
                 status,
-                subItem.Description
+                subItem.Description,
+                subItem.CompletedCount
             );
 
             toDoSubItems.Add(toDoSubItem);
@@ -205,6 +207,7 @@ public class EntityFrameworkToDoService : IToDoService
     public async Task DeleteToDoItemAsync(Guid id)
     {
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
+        item = item.ThrowIfNull();
         var children = await context.Set<ToDoItemEntity>().AsNoTracking().Where(x => x.ParentId == id).ToArrayAsync();
 
         foreach (var child in children)
@@ -219,6 +222,7 @@ public class EntityFrameworkToDoService : IToDoService
     public async Task UpdateTypeOfPeriodicityAsync(Guid id, TypeOfPeriodicity type)
     {
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
+        item = item.ThrowIfNull();
         item.TypeOfPeriodicity = type;
 
         switch (type)
@@ -247,6 +251,7 @@ public class EntityFrameworkToDoService : IToDoService
     public async Task UpdateDueDateAsync(Guid id, DateTimeOffset? dueDate)
     {
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
+        item = item.ThrowIfNull();
         item.DueDate = dueDate;
         await context.SaveChangesAsync();
     }
@@ -254,11 +259,14 @@ public class EntityFrameworkToDoService : IToDoService
     public async Task UpdateCompleteStatusAsync(Guid id, bool isComplete)
     {
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
+        item = item.ThrowIfNull();
 
         if (isComplete)
         {
-            var hasChildren =
-                await context.Set<ToDoItemEntity>().AsNoTracking().Where(x => x.ParentId == item.Id).AnyAsync();
+            var hasChildren = await context.Set<ToDoItemEntity>()
+                .AsNoTracking()
+                .Where(x => x.ParentId == item.Id)
+                .AnyAsync();
 
             var status = await GetStatusAsync(item);
 
@@ -266,6 +274,8 @@ public class EntityFrameworkToDoService : IToDoService
             {
                 throw new Exception("Need close sub tasks.");
             }
+
+            item.CompletedCount++;
 
             if (item.TypeOfPeriodicity == TypeOfPeriodicity.None || item.DueDate is null)
             {
@@ -305,6 +315,7 @@ public class EntityFrameworkToDoService : IToDoService
     public async Task UpdateNameToDoItemAsync(Guid id, string name)
     {
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
+        item = item.ThrowIfNull();
         item.Name = name;
         await context.SaveChangesAsync();
     }
@@ -312,7 +323,9 @@ public class EntityFrameworkToDoService : IToDoService
     public async Task UpdateOrderIndexToDoItemAsync(UpdateOrderIndexToDoItemOptions options)
     {
         var item = await context.Set<ToDoItemEntity>().FindAsync(options.Id);
+        item = item.ThrowIfNull();
         var targetItem = await context.Set<ToDoItemEntity>().FindAsync(options.TargetId);
+        targetItem = targetItem.ThrowIfNull();
         var orderIndex = options.IsAfter ? targetItem.OrderIndex + 1 : targetItem.OrderIndex;
 
         var items = await context.Set<ToDoItemEntity>()
@@ -332,6 +345,7 @@ public class EntityFrameworkToDoService : IToDoService
     public async Task UpdateDescriptionToDoItemAsync(Guid id, string description)
     {
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
+        item = item.ThrowIfNull();
         item.Description = description;
         await context.SaveChangesAsync();
     }

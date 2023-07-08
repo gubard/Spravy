@@ -117,6 +117,7 @@ message ToDoSubItemGrpc {
   uint64 OrderIndex = 5;
   ToDoItemStatusGrpc Status = 6;
   string Description = 7;
+  uint32 CompletedCount = 8;
 }
 
 message ToDoItemParentGrpc {

@@ -17,6 +17,7 @@ public class ToDoItemEntity
     public uint OrderIndex { get; set; }
     public string Description { get; set; }
     public DateTimeOffset CreatedDateTime { get; set; } = DateTimeOffset.Now;
+    public uint CompletedCount { get; set; }
 
     [ForeignKey(nameof(Parent))]
     public Guid? ParentId { get; set; }

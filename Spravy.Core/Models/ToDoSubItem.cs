@@ -11,7 +11,8 @@ public readonly struct ToDoSubItem
         DateTimeOffset? dueDate,
         ulong orderIndex,
         ToDoItemStatus status,
-        string description
+        string description,
+        uint completedCount
     )
     {
         Name = name;
@@ -19,6 +20,7 @@ public readonly struct ToDoSubItem
         OrderIndex = orderIndex;
         Status = status;
         Description = description;
+        CompletedCount = completedCount;
         IsComplete = isComplete;
         Id = id;
     }
@@ -30,4 +32,5 @@ public readonly struct ToDoSubItem
     public ulong OrderIndex { get; }
     public ToDoItemStatus Status { get; }
     public string Description { get; }
+    public uint CompletedCount { get; }
 }

@@ -80,7 +80,8 @@ public class SpravyProfile : Profile
                     res.Mapper.Map<DateTimeOffset?>(src.DueDate),
                     src.OrderIndex,
                     (ToDoItemStatus)src.Status,
-                    src.Description
+                    src.Description,
+                    src.CompletedCount
                 )
             );
     }

@@ -9,11 +9,12 @@ public class ToDoItemNotify : NotifyBase, IEquatable<ToDoItemNotify>
 {
     private string name = string.Empty;
     private Guid id;
-    private ulong orderIndex;
+    private uint orderIndex;
     private DateTimeOffset? dueDate;
     private bool isComplete;
     private ToDoItemStatus status;
     private string description = string.Empty;
+    private uint completedCount;
 
     public string Name
     {
@@ -39,7 +40,7 @@ public class ToDoItemNotify : NotifyBase, IEquatable<ToDoItemNotify>
         set => this.RaiseAndSetIfChanged(ref isComplete, value);
     }
 
-    public ulong OrderIndex
+    public uint OrderIndex
     {
         get => orderIndex;
         set => this.RaiseAndSetIfChanged(ref orderIndex, value);
@@ -55,6 +56,12 @@ public class ToDoItemNotify : NotifyBase, IEquatable<ToDoItemNotify>
     {
         get => description;
         set => this.RaiseAndSetIfChanged(ref description, value);
+    }
+
+    public uint CompletedCount
+    {
+        get => completedCount;
+        set => this.RaiseAndSetIfChanged(ref completedCount, value);
     }
 
     public bool Equals(ToDoItemNotify? other)
