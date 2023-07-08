@@ -5,6 +5,7 @@
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.ViewModels"
                                 xmlns:models="clr-namespace:Spravy.Models"
+                                xmlns:views="clr-namespace:Spravy.Views"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Views.AddToDoItemView"
                                 x:DataType="viewModels:AddToDoItemViewModel">
@@ -34,7 +35,7 @@
             </ContentControl.DataTemplates>
         </ContentControl>
 
-        <TextBox Grid.Row="1" Text="{Binding Name}" Watermark="Name" />
+        <TextBox Grid.Row="1" Text="{Binding Name}" Watermark="Name" Name="{x:Static views:AddToDoItemView.NameTextBoxName}" />
 
         <DockPanel Grid.Row="2">
             <Button DockPanel.Dock="Left" Command="{Binding NavigateBackCommand}" Content="Back" />

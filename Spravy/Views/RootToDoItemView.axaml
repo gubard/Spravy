@@ -20,6 +20,7 @@
 
     <Grid RowDefinitions="Auto,*">
         <Button Command="{Binding AddToDoItemCommand}" Content="Add" />
+
         <ScrollViewer Grid.Row="1"
                       VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Auto">
