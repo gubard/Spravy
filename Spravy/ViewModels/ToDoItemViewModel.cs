@@ -7,7 +7,6 @@ using Avalonia.Collections;
 using ExtensionFramework.AvaloniaUi.Controls;
 using ExtensionFramework.AvaloniaUi.Interfaces;
 using ExtensionFramework.Core.DependencyInjection.Attributes;
-using ExtensionFramework.ReactiveUI.Interfaces;
 using ExtensionFramework.ReactiveUI.Models;
 using ReactiveUI;
 using Spravy.Core.Enums;
@@ -98,29 +97,39 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
 
     private async void OnNextId(Guid x)
     {
-        await RefreshToDoItemAsync();
+        await SafeExecuteAsync(RefreshToDoItemAsync);
     }
 
     private async void OnNextTypeOfPeriodicity(TypeOfPeriodicity x)
     {
-        if (ToDoService is null)
-        {
-            return;
-        }
+        await SafeExecuteAsync(
+            async () =>
+            {
+                if (ToDoService is null)
+                {
+                    return;
+                }
 
-        await ToDoService.UpdateTypeOfPeriodicityAsync(Id, x);
-        await RefreshToDoItemAsync();
+                await ToDoService.UpdateTypeOfPeriodicityAsync(Id, x);
+                await RefreshToDoItemAsync();
+            }
+        );
     }
 
     private async void OnNextName(string x)
     {
-        if (ToDoService is null)
-        {
-            return;
-        }
+        await SafeExecuteAsync(
+            async () =>
+            {
+                if (ToDoService is null)
+                {
+                    return;
+                }
 
-        await ToDoService.UpdateNameToDoItemAsync(Id, x);
-        await RefreshToDoItemAsync();
+                await ToDoService.UpdateNameToDoItemAsync(Id, x);
+                await RefreshToDoItemAsync();
+            }
+        );
     }
 
     private void AddToDoItem()
@@ -135,13 +144,18 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
 
     private async void OnNextIsComplete(bool x)
     {
-        if (ToDoService is null)
-        {
-            return;
-        }
+        await SafeExecuteAsync(
+            async () =>
+            {
+                if (ToDoService is null)
+                {
+                    return;
+                }
 
-        await ToDoService.UpdateCompleteStatusAsync(Id, x);
-        await RefreshToDoItemAsync();
+                await ToDoService.UpdateCompleteStatusAsync(Id, x);
+                await RefreshToDoItemAsync();
+            }
+        );
     }
 
     private void ChangeToDoItem(ToDoItemNotify item)
@@ -167,22 +181,14 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
 
     private async void OnNextDueDate(DateTimeOffset? x)
     {
-        if (ToDoService is null)
-        {
-            return;
-        }
-
-        await ToDoService.UpdateDueDateAsync(Id, x);
+        await SafeExecuteAsync(() => ToDoService is null ? Task.CompletedTask : ToDoService.UpdateDueDateAsync(Id, x));
     }
 
     private async void OnNextDescription(string x)
     {
-        if (ToDoService is null)
-        {
-            return;
-        }
-
-        await ToDoService.UpdateDescriptionToDoItemAsync(Id, x);
+        await SafeExecuteAsync(
+            () => ToDoService is null ? Task.CompletedTask : ToDoService.UpdateDescriptionToDoItemAsync(Id, x)
+        );
     }
 
     public async Task RefreshToDoItemAsync()
@@ -221,19 +227,17 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
         {
             async void OnNextIsComplete(bool x)
             {
-                if (ToDoService is null)
-                {
-                    return;
-                }
+                await SafeExecuteAsync(
+                    () =>
+                    {
+                        if (ToDoService is null)
+                        {
+                            return Task.CompletedTask;
+                        }
 
-                try
-                {
-                    await ToDoService.UpdateCompleteStatusAsync(itemNotify.Id, x);
-                }
-                catch (Exception e)
-                {
-                    Navigator.NavigateTo<IExceptionViewModel>(viewModel => viewModel.Exception = e);
-                }
+                        return ToDoService.UpdateCompleteStatusAsync(itemNotify.Id, x);
+                    }
+                );
             }
 
             itemNotify.WhenAnyValue(x => x.IsComplete).Subscribe(OnNextIsComplete);

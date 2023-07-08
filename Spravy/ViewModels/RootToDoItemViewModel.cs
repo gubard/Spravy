@@ -6,7 +6,6 @@ using AutoMapper;
 using Avalonia.Collections;
 using ExtensionFramework.AvaloniaUi.Interfaces;
 using ExtensionFramework.Core.DependencyInjection.Attributes;
-using ExtensionFramework.ReactiveUI.Interfaces;
 using ExtensionFramework.ReactiveUI.Models;
 using ReactiveUI;
 using Spravy.Core.Enums;
@@ -62,6 +61,11 @@ public class RootToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDo
 
     private async Task DeleteSubToDoItemAsync(ToDoItemNotify item)
     {
+        if (ToDoService is null)
+        {
+            return;
+        }
+
         await ToDoService.DeleteToDoItemAsync(item.Id);
         await InitializedAsync();
     }
@@ -82,19 +86,17 @@ public class RootToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDo
         {
             async void OnNextIsComplete(bool x)
             {
-                if (ToDoService is null)
-                {
-                    return;
-                }
+                await SafeExecuteAsync(
+                    () =>
+                    {
+                        if (ToDoService is null)
+                        {
+                            return Task.CompletedTask;
+                        }
 
-                try
-                {
-                    await ToDoService.UpdateCompleteStatusAsync(itemNotify.Id, x);
-                }
-                catch (Exception e)
-                {
-                    Navigator.NavigateTo<IExceptionViewModel>(viewModel => viewModel.Exception = e);
-                }
+                        return ToDoService.UpdateCompleteStatusAsync(itemNotify.Id, x);
+                    }
+                );
             }
 
             itemNotify.WhenAnyValue(x => x.IsComplete).Subscribe(OnNextIsComplete);
