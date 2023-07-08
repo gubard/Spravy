@@ -14,7 +14,7 @@ public class ToDoItemEntity
     public TypeOfPeriodicity TypeOfPeriodicity { get; set; }
     public DateTimeOffset? DueDate { get; set; }
     public bool IsComplete { get; set; }
-    public ulong OrderIndex { get; set; }
+    public uint OrderIndex { get; set; }
     public string Description { get; set; }
     public DateTimeOffset CreatedDateTime { get; set; } = DateTimeOffset.Now;
 

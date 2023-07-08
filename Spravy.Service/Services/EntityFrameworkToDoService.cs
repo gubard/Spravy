@@ -315,12 +315,9 @@ public class EntityFrameworkToDoService : IToDoService
         var targetItem = await context.Set<ToDoItemEntity>().FindAsync(options.TargetId);
         var orderIndex = options.IsAfter ? targetItem.OrderIndex + 1 : targetItem.OrderIndex;
 
-        var items = (await context.Set<ToDoItemEntity>()
-                .Where(x => x.ParentId == item.ParentId && x.Id != item.Id)
-                .ToArrayAsync()).Where(
-                x => x.OrderIndex >= orderIndex
-            )
-            .ToArray();
+        var items = await context.Set<ToDoItemEntity>()
+            .Where(x => x.ParentId == item.ParentId && x.Id != item.Id && x.OrderIndex >= orderIndex)
+            .ToArrayAsync();
 
         foreach (var itemEntity in items)
         {
@@ -347,7 +344,7 @@ public class EntityFrameworkToDoService : IToDoService
 
         var ordered = items.OrderBy(x => x.OrderIndex).ToArray();
 
-        for (var index = 0ul; index < (ulong)ordered.LongLength; index++)
+        for (var index = 0u; index < ordered.LongLength; index++)
         {
             ordered[index].OrderIndex = index;
         }
