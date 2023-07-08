@@ -12,6 +12,10 @@
         <viewModels:AddToDoItemViewModel />
     </Design.DataContext>
 
+    <UserControl.KeyBindings>
+        <KeyBinding Gesture="Enter" Command="{Binding AddToDoItemCommand}" />
+    </UserControl.KeyBindings>
+
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
             <InvokeCommandAction Command="{Binding InitializedCommand}" />

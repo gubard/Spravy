@@ -12,6 +12,10 @@
         <viewModels:AddRootToDoItemViewModel />
     </Design.DataContext>
 
+    <UserControl.KeyBindings>
+        <KeyBinding Gesture="Enter" Command="{Binding AddRootToDoItemCommand}" />
+    </UserControl.KeyBindings>
+
     <Grid RowDefinitions="*,Auto">
         <TextBox Text="{Binding Name}" Watermark="Name" />
 
