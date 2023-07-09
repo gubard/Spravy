@@ -47,6 +47,10 @@ internal partial class Program
     {
         InitModules();
 
-        return AppBuilder.Configure(() => module.ThrowIfNull().GetObject<Application>()).UseReactiveUI();
+        return AppBuilder.Configure(() => module.ThrowIfNull().GetObject<Application>())
+#if DEBUG
+            .LogToTrace()
+#endif
+            .UseReactiveUI();
     }
 }
