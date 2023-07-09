@@ -19,32 +19,12 @@ namespace Spravy.ViewModels;
 
 public class RootToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItemNotify>, IToDoItemOrderChanger
 {
-    private ToDoItemNotify? selectedToDoItem;
-
     public RootToDoItemViewModel() : base("root-to-do-item")
     {
         InitializedCommand = CreateCommandFromTask(InitializedAsync);
         AddToDoItemCommand = CreateCommand(AddToDoItem);
         DeleteSubToDoItemCommand = CreateCommandFromTask<ToDoItemNotify>(DeleteSubToDoItemAsync);
         ChangeToDoItemCommand = CreateCommand<ToDoItemNotify>(ChangeToDoItem);
-
-        this.WhenAnyValue(x => x.SelectedToDoItem)
-            .Subscribe(
-                x =>
-                {
-                    if (x is null)
-                    {
-                        return;
-                    }
-
-                    if (Navigator is null)
-                    {
-                        return;
-                    }
-
-                    Navigator.NavigateTo<ToDoItemViewModel>(vm => vm.Id = x.Id);
-                }
-            );
     }
 
     public ICommand InitializedCommand { get; }
@@ -59,12 +39,6 @@ public class RootToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDo
 
     [Inject]
     public required IMapper Mapper { get; set; }
-
-    public ToDoItemNotify? SelectedToDoItem
-    {
-        get => selectedToDoItem;
-        set => this.RaiseAndSetIfChanged(ref selectedToDoItem, value);
-    }
 
     private Task InitializedAsync()
     {

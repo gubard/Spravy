@@ -17,7 +17,8 @@
     </Design.DataContext>
 
     <Grid RowDefinitions="Auto,Auto, Auto, Auto, Auto,*">
-        <ContentControl Content="{Binding Path}">
+        <ContentControl Content="{Binding Path}"
+                        Margin="5">
             <ContentControl.DataTemplates>
                 <DataTemplate DataType="models:ToDoItemParentNotify">
                     <Button Command="{Binding $parent[views:ToDoItemView].MainViewModel.ChangeToDoItemByPathCommand}"
@@ -33,16 +34,17 @@
                 </DataTemplate>
             </ContentControl.DataTemplates>
         </ContentControl>
+
         <CheckBox Grid.Row="1"
+                  Margin="5"
                   IsChecked="{Binding IsComplete}" Content="Completed" />
 
         <controls:EditableTextBlock Grid.Row="2" Text="{Binding Name, Mode=TwoWay}"
                                     VerticalAlignment="Center"
-                                    Watermark="Name" />
+                                    Watermark="Name"
+                                    Margin="5" />
 
-        <StackPanel Grid.Row="3" Orientation="Horizontal">
-
-
+        <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="5">
             <ComboBox SelectedItem="{Binding TypeOfPeriodicity}"
                       ItemsSource="{Binding TypeOfPeriodicities}"
                       VerticalAlignment="Center"
@@ -53,7 +55,7 @@
             <controls:NullableDatePicker SelectedDate="{Binding DueDate, Mode=TwoWay}" />
         </StackPanel>
 
-        <Button Grid.Row="4" Command="{Binding AddToDoItemCommand}" Content="Add" />
+        <Button Grid.Row="4" Command="{Binding AddToDoItemCommand}" Content="Add" Margin="5" />
 
         <ScrollViewer Grid.Row="5"
                       VerticalScrollBarVisibility="Auto"
@@ -63,18 +65,17 @@
                                             AcceptsTab="True"
                                             TextWrapping="Wrap"
                                             Text="{Binding Description, Mode=TwoWay}"
-                                            Watermark="Description" />
+                                            Watermark="Description"
+                                            Margin="5" />
                 <ListBox Classes="ItemsDragAndDrop"
                          ItemsSource="{Binding Items}"
-                         SelectionMode="Single"
-                         SelectedItem="{Binding SelectedToDoItem}" />
+                         SelectionMode="Single" />
 
                 <Border Height="5" Background="{StaticResource SystemControlForegroundChromeGrayBrush}" />
 
                 <ListBox Classes="ItemsDragAndDrop"
                          ItemsSource="{Binding CompletedItems}"
-                         SelectionMode="Single"
-                         SelectedItem="{Binding SelectedToDoItem}" />
+                         SelectionMode="Single" />
             </StackPanel>
         </ScrollViewer>
     </Grid>

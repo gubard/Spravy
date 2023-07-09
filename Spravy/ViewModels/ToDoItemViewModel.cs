@@ -26,7 +26,6 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
     private DateTimeOffset? dueDate;
     private bool isComplete;
     private string description = string.Empty;
-    private ToDoItemNotify? selectedToDoItem;
 
     public ToDoItemViewModel() : base("to-do-item")
     {
@@ -42,19 +41,6 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
         this.WhenAnyValue(x => x.IsComplete).Skip(1).Subscribe(OnNextIsComplete);
         this.WhenAnyValue(x => x.Name).Skip(1).Subscribe(OnNextName);
         this.WhenAnyValue(x => x.Description).Skip(1).Subscribe(OnNextDescription);
-
-        this.WhenAnyValue(x => x.SelectedToDoItem)
-            .Subscribe(
-                x =>
-                {
-                    if (x is null)
-                    {
-                        return;
-                    }
-
-                    Id = x.Id;
-                }
-            );
     }
 
     public AvaloniaList<ToDoItemNotify> CompletedItems { get; } = new();
@@ -74,12 +60,6 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
 
     [Inject]
     public required PathControl Path { get; set; }
-
-    public ToDoItemNotify? SelectedToDoItem
-    {
-        get => selectedToDoItem;
-        set => this.RaiseAndSetIfChanged(ref selectedToDoItem, value);
-    }
 
     public string Name
     {

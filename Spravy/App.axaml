@@ -7,6 +7,7 @@
              xmlns:converters1="clr-namespace:Spravy.Converters"
              xmlns:themes="clr-namespace:Material.Styles.Themes;assembly=Material.Styles"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:controls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
              x:Class="Spravy.App"
              RequestedThemeVariant="Dark">
     <Application.Styles>
@@ -43,7 +44,7 @@
     </Application.Styles>
 
     <Application.DataTemplates>
-        <DataTemplate DataType="models:ToDoItemNotify">
+        <!--<DataTemplate DataType="models:ToDoItemNotify">
             <Grid ColumnDefinitions="Auto,*" ToolTip.Tip="{Binding Description}">
                 <Rectangle Width="10"
                            Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
@@ -81,6 +82,56 @@
                             HorizontalContentAlignment="Right" />
                 </Grid>
             </Grid>
+        </DataTemplate>-->
+        <DataTemplate DataType="models:ToDoItemNotify">
+            <Button Padding="0"
+                    Margin="0"
+                    BorderThickness="0"
+                    Background="Transparent"
+                    ToolTip.Tip="{Binding Description}"
+                    VerticalContentAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
+                    CommandParameter="{Binding}">
+                <Grid ColumnDefinitions="Auto,*" ToolTip.Tip="{Binding Description}">
+                    <Rectangle Width="10"
+                               Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
+
+                    <Grid Grid.Column="1" ColumnDefinitions="*,*"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          Margin="5">
+                        <StackPanel HorizontalAlignment="Left">
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox IsChecked="{Binding IsComplete}" />
+
+                                <TextBlock Text="{Binding Name}"
+                                           Classes="Headline6" />
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding CompletedCount, StringFormat=Completed count: \{0\}}"
+                                           Classes="Body2" />
+
+                                <DatePicker
+                                    IsVisible="{Binding DueDate, Converter={StaticResource ObjectToVisibleValueConverter}}"
+                                    SelectedDate="{Binding DueDate}"
+                                    IsEnabled="False"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <Button Grid.Column="1"
+                                Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
+                                CommandParameter="{Binding}"
+                                Content="Delete"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                HorizontalContentAlignment="Right" />
+                    </Grid>
+                </Grid>
+            </Button>
         </DataTemplate>
     </Application.DataTemplates>
 

@@ -41,6 +41,7 @@
 
     <ItemGroup>
       <UpToDateCheckInput Remove="Assets\avalonia-logo.ico" />
+      <UpToDateCheckInput Remove="Styles\Theme.axaml" />
     </ItemGroup>
 
     <ItemGroup>
