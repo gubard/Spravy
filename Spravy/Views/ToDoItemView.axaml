@@ -1,16 +1,17 @@
-<models1:MainReactiveUserControl x:TypeArguments="viewModels:ToDoItemViewModel"
-                                 xmlns="https://github.com/avaloniaui"
-                                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                                 xmlns:viewModels="clr-namespace:Spravy.ViewModels"
-                                 xmlns:models="clr-namespace:Spravy.Models"
-                                 xmlns:views="clr-namespace:Spravy.Views"
-                                 xmlns:models1="clr-namespace:ExtensionFramework.AvaloniaUi.Models;assembly=ExtensionFramework.AvaloniaUi"
-                                 xmlns:controls="clr-namespace:ExtensionFramework.AvaloniaUi.Controls;assembly=ExtensionFramework.AvaloniaUi"
-                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                                 x:Class="Spravy.Views.ToDoItemView"
-                                 x:DataType="viewModels:ToDoItemViewModel">
+<reactiveUi:MainReactiveUserControl x:TypeArguments="viewModels:ToDoItemViewModel"
+                                    xmlns="https://github.com/avaloniaui"
+                                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                                    xmlns:viewModels="clr-namespace:Spravy.ViewModels"
+                                    xmlns:models="clr-namespace:Spravy.Models"
+                                    xmlns:views="clr-namespace:Spravy.Views"
+                                    xmlns:controls="clr-namespace:ExtensionFramework.AvaloniaUi.Controls;assembly=ExtensionFramework.AvaloniaUi"
+                                    xmlns:reactiveUi="clr-namespace:ExtensionFramework.AvaloniaUi.ReactiveUI.Models;assembly=ExtensionFramework.AvaloniaUi.ReactiveUI"
+                                    xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
+                                    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                                    x:Class="Spravy.Views.ToDoItemView"
+                                    x:DataType="viewModels:ToDoItemViewModel">
     <Design.DataContext>
         <viewModels:ToDoItemViewModel />
     </Design.DataContext>
@@ -35,12 +36,22 @@
 
         <StackPanel Grid.Row="1" Orientation="Horizontal">
             <CheckBox IsChecked="{Binding IsComplete}" />
-            <controls:EditableTextBlock Text="{Binding Name, Mode=TwoWay}" VerticalAlignment="Center" />
+
+            <controls:EditableTextBlock Text="{Binding Name, Mode=TwoWay}"
+                                        VerticalAlignment="Center"
+                                        Watermark="Name" />
         </StackPanel>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal">
             <Button Command="{Binding AddToDoItemCommand}" Content="Add" />
-            <ComboBox SelectedItem="{Binding TypeOfPeriodicity}" ItemsSource="{Binding TypeOfPeriodicities}" />
+
+            <ComboBox SelectedItem="{Binding TypeOfPeriodicity}"
+                      ItemsSource="{Binding TypeOfPeriodicities}"
+                      VerticalAlignment="Center"
+                      HorizontalAlignment="Center"
+                      Classes="Outline"
+                      assists:ComboBoxAssist.Label="Type of periodicity" />
+
             <controls:NullableDatePicker SelectedDate="{Binding DueDate, Mode=TwoWay}" />
         </StackPanel>
 
@@ -51,11 +62,20 @@
                 <controls:EditableTextBlock AcceptsReturn="True"
                                             AcceptsTab="True"
                                             TextWrapping="Wrap"
-                                            Text="{Binding Description, Mode=TwoWay}" />
-                <ListBox Classes="ItemsDragAndDrop" ItemsSource="{Binding Items}" />
+                                            Text="{Binding Description, Mode=TwoWay}"
+                                            Watermark="Description" />
+                <ListBox Classes="ItemsDragAndDrop"
+                         ItemsSource="{Binding Items}"
+                         SelectionMode="Single"
+                         SelectedItem="{Binding SelectedToDoItem}" />
+
                 <Border Height="5" Background="{StaticResource SystemControlForegroundChromeGrayBrush}" />
-                <ListBox Classes="ItemsDragAndDrop" ItemsSource="{Binding CompletedItems}" />
+
+                <ListBox Classes="ItemsDragAndDrop"
+                         ItemsSource="{Binding CompletedItems}"
+                         SelectionMode="Single"
+                         SelectedItem="{Binding SelectedToDoItem}" />
             </StackPanel>
         </ScrollViewer>
     </Grid>
-</models1:MainReactiveUserControl>
+</reactiveUi:MainReactiveUserControl>

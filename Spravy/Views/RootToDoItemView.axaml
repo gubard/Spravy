@@ -25,9 +25,17 @@
                       VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Auto">
             <StackPanel>
-                <ListBox Classes="ItemsDragAndDrop" ItemsSource="{Binding Items}" />
+                <ListBox Classes="ItemsDragAndDrop"
+                         ItemsSource="{Binding Items}"
+                         SelectionMode="Single"
+                         SelectedItem="{Binding SelectedToDoItem}" />
+
                 <Border Height="5" Background="{StaticResource SystemControlForegroundChromeGrayBrush}" />
-                <ListBox Classes="ItemsDragAndDrop" ItemsSource="{Binding CompletedItems}" />
+
+                <ListBox Classes="ItemsDragAndDrop"
+                         ItemsSource="{Binding CompletedItems}"
+                         SelectionMode="Single"
+                         SelectedItem="{Binding SelectedToDoItem}" />
             </StackPanel>
         </ScrollViewer>
     </Grid>

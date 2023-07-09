@@ -18,7 +18,10 @@
     </UserControl.KeyBindings>
 
     <Grid RowDefinitions="*,Auto">
-        <TextBox Text="{Binding Name}" Watermark="Name" Name="{x:Static views:AddRootToDoItemView.NameTextBoxName}" />
+        <TextBox Text="{Binding Name}" 
+                 Watermark="Name" 
+                 Name="{x:Static views:AddRootToDoItemView.NameTextBoxName}" 
+                 VerticalAlignment="Top" />
 
         <DockPanel Grid.Row="1">
             <Button DockPanel.Dock="Left" Command="{Binding NavigateBackCommand}" Content="Back" />

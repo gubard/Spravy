@@ -8,6 +8,5 @@ namespace Spravy.Interfaces;
 public interface IToDoItemOrderChanger
 {
     IToDoService? ToDoService { get; }
-    AvaloniaList<ToDoItemNotify> Items { get; }
     Task RefreshToDoItemAsync();
 }

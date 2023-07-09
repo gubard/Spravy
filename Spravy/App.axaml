@@ -5,12 +5,13 @@
              xmlns:handlers="clr-namespace:Spravy.Handlers"
              xmlns:converters="clr-namespace:ExtensionFramework.AvaloniaUi.Converters;assembly=ExtensionFramework.AvaloniaUi"
              xmlns:converters1="clr-namespace:Spravy.Converters"
-             xmlns:controls="clr-namespace:ExtensionFramework.AvaloniaUi.Controls;assembly=ExtensionFramework.AvaloniaUi"
+             xmlns:themes="clr-namespace:Material.Styles.Themes;assembly=Material.Styles"
              x:Class="Spravy.App"
              RequestedThemeVariant="Dark">
     <Application.Styles>
         <FluentTheme DensityStyle="Compact" />
         <StyleInclude Source="avares://ExtensionFramework.AvaloniaUi/Styles/Theme.axaml" />
+        <themes:MaterialTheme BaseTheme="Dark" PrimaryColor="Purple" SecondaryColor="Lime" />
 
         <Style Selector="ListBox.ItemsDragAndDrop">
             <Style.Resources>
@@ -44,42 +45,38 @@
                 <Rectangle Width="10"
                            Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
 
-                <Button Grid.Column="1" Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
-                        CommandParameter="{Binding}"
-                        HorizontalAlignment="Stretch">
-                    <DockPanel>
-                        <Grid DockPanel.Dock="Left" RowDefinitions="Auto,Auto">
-                            <StackPanel Orientation="Horizontal">
-                                <CheckBox IsChecked="{Binding IsComplete}" />
+                <Grid Grid.Column="1" ColumnDefinitions="*,*"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch">
+                    <StackPanel HorizontalAlignment="Left">
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox IsChecked="{Binding IsComplete}" />
 
-                                <TextBlock Text="{Binding Name}"
-                                           VerticalAlignment="Center"
-                                           HorizontalAlignment="Center" />
-                            </StackPanel>
+                            <TextBlock Text="{Binding Name}"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center" />
+                        </StackPanel>
 
-                            <StackPanel Grid.Row="1" Orientation="Horizontal">
-                                <TextBlock Text="{Binding CompletedCount}" />
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding CompletedCount}" />
 
-                                <DatePicker
-                                    IsVisible="{Binding DueDate, Converter={StaticResource ObjectToVisibleValueConverter}}"
-                                    SelectedDate="{Binding DueDate}"
-                                    IsEnabled="False"
-                                    VerticalAlignment="Center"
-                                    HorizontalAlignment="Center" />
-                            </StackPanel>
-                        </Grid>
-
-                        <Button DockPanel.Dock="Right"
-                                Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
-                                CommandParameter="{Binding}"
-                                Content="Delete"
+                            <DatePicker
+                                IsVisible="{Binding DueDate, Converter={StaticResource ObjectToVisibleValueConverter}}"
+                                SelectedDate="{Binding DueDate}"
+                                IsEnabled="False"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center" />
+                        </StackPanel>
+                    </StackPanel>
 
-                        <Control />
-                    </DockPanel>
-
-                </Button>
+                    <Button Grid.Column="1"
+                            Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
+                            CommandParameter="{Binding}"
+                            Content="Delete"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            HorizontalContentAlignment="Right" />
+                </Grid>
             </Grid>
         </DataTemplate>
     </Application.DataTemplates>

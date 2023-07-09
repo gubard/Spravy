@@ -1,5 +1,6 @@
 using System;
 using ExtensionFramework.AvaloniaUi.Configurations;
+using ExtensionFramework.AvaloniaUi.ReactiveUI.Configurations;
 using ExtensionFramework.Core.DependencyInjection.Extensions;
 using ExtensionFramework.Core.DependencyInjection.Services;
 using ExtensionFramework.Core.ModularSystem.Services;
@@ -21,6 +22,7 @@ public class SpravyModule : Module
         register.RegisterConfiguration<SpravyDependencyInjectorConfiguration>();
         register.RegisterConfiguration<AvaloniaUiDependencyInjectorConfiguration>();
         register.RegisterConfiguration<ReactiveUIDependencyInjectorConfiguration>();
+        register.RegisterConfiguration<AvaloniaUiReactiveUIDependencyInjectorConfiguration>();
         MainDependencyInjector = register.Build();
     }
 

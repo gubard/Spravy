@@ -35,7 +35,12 @@
             </ContentControl.DataTemplates>
         </ContentControl>
 
-        <TextBox Grid.Row="1" Text="{Binding Name}" Watermark="Name" Name="{x:Static views:AddToDoItemView.NameTextBoxName}" />
+        <TextBox Grid.Row="1"
+                 Text="{Binding Name}"
+                 Watermark="Name"
+                 Name="{x:Static views:AddToDoItemView.NameTextBoxName}"
+                 UseFloatingWatermark="True"
+                 VerticalAlignment="Top" />
 
         <DockPanel Grid.Row="2">
             <Button DockPanel.Dock="Left" Command="{Binding NavigateBackCommand}" Content="Back" />
