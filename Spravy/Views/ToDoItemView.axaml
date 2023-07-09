@@ -16,7 +16,7 @@
         <viewModels:ToDoItemViewModel />
     </Design.DataContext>
 
-    <Grid RowDefinitions="Auto,Auto, Auto,*">
+    <Grid RowDefinitions="Auto,Auto, Auto, Auto, Auto,*">
         <ContentControl Content="{Binding Path}">
             <ContentControl.DataTemplates>
                 <DataTemplate DataType="models:ToDoItemParentNotify">
@@ -33,17 +33,15 @@
                 </DataTemplate>
             </ContentControl.DataTemplates>
         </ContentControl>
+        <CheckBox Grid.Row="1"
+                  IsChecked="{Binding IsComplete}" Content="Completed" />
 
-        <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <CheckBox IsChecked="{Binding IsComplete}" />
+        <controls:EditableTextBlock Grid.Row="2" Text="{Binding Name, Mode=TwoWay}"
+                                    VerticalAlignment="Center"
+                                    Watermark="Name" />
 
-            <controls:EditableTextBlock Text="{Binding Name, Mode=TwoWay}"
-                                        VerticalAlignment="Center"
-                                        Watermark="Name" />
-        </StackPanel>
+        <StackPanel Grid.Row="3" Orientation="Horizontal">
 
-        <StackPanel Grid.Row="2" Orientation="Horizontal">
-            <Button Command="{Binding AddToDoItemCommand}" Content="Add" />
 
             <ComboBox SelectedItem="{Binding TypeOfPeriodicity}"
                       ItemsSource="{Binding TypeOfPeriodicities}"
@@ -55,7 +53,9 @@
             <controls:NullableDatePicker SelectedDate="{Binding DueDate, Mode=TwoWay}" />
         </StackPanel>
 
-        <ScrollViewer Grid.Row="3"
+        <Button Grid.Row="4" Command="{Binding AddToDoItemCommand}" Content="Add" />
+
+        <ScrollViewer Grid.Row="5"
                       VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Auto">
             <StackPanel>
