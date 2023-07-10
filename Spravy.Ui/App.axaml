@@ -3,11 +3,10 @@
              xmlns:models="clr-namespace:Spravy.Ui.Models"
              xmlns:interfaces="clr-namespace:Spravy.Ui.Interfaces"
              xmlns:handlers="clr-namespace:Spravy.Ui.Handlers"
-             xmlns:converters="clr-namespace:ExtensionFramework.AvaloniaUi.Converters;assembly=ExtensionFramework.AvaloniaUi"
-             xmlns:converters1="clr-namespace:Spravy.Ui.Converters"
+             xmlns:extensionFramework="clr-namespace:ExtensionFramework.AvaloniaUi.Converters;assembly=ExtensionFramework.AvaloniaUi"
+             xmlns:converters="clr-namespace:Spravy.Ui.Converters"
              xmlns:themes="clr-namespace:Material.Styles.Themes;assembly=Material.Styles"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             xmlns:controls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
              x:Class="Spravy.Ui.App"
              RequestedThemeVariant="Dark">
     <Application.Styles>
@@ -79,10 +78,12 @@
                                     HorizontalAlignment="Center" />
 
                                 <TextBlock Text="{Binding CompletedCount, StringFormat=Completed count: \{0\}}"
-                                           Classes="Body2" />
+                                           Classes="Body2"
+                                           IsVisible="{Binding Converter={StaticResource ToDoItemNotifyToIsVisibleCompletedCountConverter}}" />
 
                                 <TextBlock Text="{Binding SkippedCount, StringFormat=Skipped count: \{0\}}"
-                                           Classes="Body2" />
+                                           Classes="Body2"
+                                           IsVisible="{Binding Converter={StaticResource ToDoItemNotifyToIsVisibleSkippedCountConverter}}" />
                             </StackPanel>
                         </StackPanel>
 
@@ -102,7 +103,13 @@
     </Application.DataTemplates>
 
     <Application.Resources>
-        <converters:ObjectToVisibleValueConverter x:Key="ObjectToVisibleValueConverter" />
-        <converters1:ToDoItemStatusToBrushValueConverter x:Key="ToDoItemStatusToBrushValueConverter" />
+        <extensionFramework:ObjectToVisibleValueConverter x:Key="ObjectToVisibleValueConverter" />
+        <converters:ToDoItemStatusToBrushValueConverter x:Key="ToDoItemStatusToBrushValueConverter" />
+
+        <converters:ToDoItemNotifyToIsVisibleCompletedCountConverter
+            x:Key="ToDoItemNotifyToIsVisibleCompletedCountConverter" />
+
+        <converters:ToDoItemNotifyToIsVisibleSkippedCountConverter
+            x:Key="ToDoItemNotifyToIsVisibleSkippedCountConverter" />
     </Application.Resources>
 </Application>
