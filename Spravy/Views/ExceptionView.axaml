@@ -15,7 +15,7 @@
 
     <Grid RowDefinitions="*,Auto">
         <TextBox Text="{Binding FullExceptionText}"
-                 IsReadOnly="False"
+                 IsReadOnly="True"
                  UseFloatingWatermark="True" assists:TextFieldAssist.Label="Error message"
                  Classes="outline"
                  Theme="{StaticResource OutlineTextBox}"

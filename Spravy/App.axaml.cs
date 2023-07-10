@@ -8,13 +8,14 @@ using ExtensionFramework.Core.Common.Extensions;
 using ExtensionFramework.Core.DependencyInjection.Attributes;
 using ExtensionFramework.Core.DependencyInjection.Extensions;
 using ExtensionFramework.Core.DependencyInjection.Interfaces;
+using ExtensionFramework.Core.DependencyInjection.Services;
 
 namespace Spravy;
 
 public partial class App : Application
 {
     [Inject]
-    public IResolver? Resolver { get; set; }
+    public IResolver? Resolver { get; set; } = DependencyInjector.Default;
 
     public override void Initialize()
     {

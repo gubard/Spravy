@@ -5,8 +5,8 @@ using Android.OS;
 using Avalonia;
 using Avalonia.Android;
 using Avalonia.ReactiveUI;
-using ExtensionFramework.Core.Common.Extensions;
 using ExtensionFramework.Core.DependencyInjection.Interfaces;
+using ExtensionFramework.Core.DependencyInjection.Services;
 using ExtensionFramework.Core.Graph.Extensions;
 using ExtensionFramework.Core.Graph.Services;
 using ExtensionFramework.Core.ModularSystem.Interfaces;
@@ -40,9 +40,9 @@ public class MainActivity : AvaloniaMainActivity<App>
 
     protected override void OnCreate(Bundle savedInstanceState)
     {
-        base.OnCreate(savedInstanceState);
         InitModules();
-        Avalonia.Application.Current.As<App>().Resolver = module.GetObject<IResolver>();
+        DependencyInjector.Default = module.GetObject<IResolver>();
+        base.OnCreate(savedInstanceState);
     }
     
     private static void InitModules()

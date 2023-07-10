@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "SpysokSprav.Browser": {
+    "Spravy.Browser": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {

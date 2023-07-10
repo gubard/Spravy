@@ -109,16 +109,16 @@
                                            Classes="Headline6" />
                             </StackPanel>
 
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{Binding CompletedCount, StringFormat=Completed count: \{0\}}"
-                                           Classes="Body2" />
-
+                            <StackPanel>
                                 <DatePicker
                                     IsVisible="{Binding DueDate, Converter={StaticResource ObjectToVisibleValueConverter}}"
                                     SelectedDate="{Binding DueDate}"
                                     IsEnabled="False"
                                     VerticalAlignment="Center"
                                     HorizontalAlignment="Center" />
+
+                                <TextBlock Text="{Binding CompletedCount, StringFormat=Completed count: \{0\}}"
+                                           Classes="Body2" />
                             </StackPanel>
                         </StackPanel>
 

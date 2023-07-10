@@ -1,6 +1,8 @@
 using System;
+using ExtensionFramework.Core.DependencyInjection.Extensions;
 using ExtensionFramework.Core.DependencyInjection.Services;
 using ExtensionFramework.Core.ModularSystem.Services;
+using Spravy.Android.Configurations;
 
 namespace Spravy.Android.Modules;
 
@@ -14,6 +16,7 @@ public class AndroidModules : Module
     static AndroidModules()
     {
         var register = new DependencyInjectorRegister();
+        register.RegisterConfiguration<AndroidDependencyInjectorConfiguration>();
         MainDependencyInjector = register.Build();
     }
 

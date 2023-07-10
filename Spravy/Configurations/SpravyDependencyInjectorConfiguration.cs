@@ -46,11 +46,6 @@ public readonly struct SpravyDependencyInjectorConfiguration : IDependencyInject
             }
         );
 
-        register.RegisterScope<IConfiguration>(
-            () =>
-                new ConfigurationBuilder().AddJsonFile("appsettings.json").Build()
-        );
-
         register.RegisterScope(
             () => new AppConfiguration(
                 typeof(RootToDoItemViewModel),

@@ -1,7 +1,5 @@
 using System.Windows.Input;
 using Avalonia.Markup.Xaml;
-using Avalonia.ReactiveUI;
-using ExtensionFramework.AvaloniaUi.Models;
 using ExtensionFramework.AvaloniaUi.ReactiveUI.Models;
 using ExtensionFramework.Core.Common.Extensions;
 using Spravy.Interfaces;
