@@ -6,7 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Protobuf Include="Protos\spravy.proto">
+      <Protobuf Include="Protos\to_do.proto">
         <GrpcServices>Server</GrpcServices>
         <Access>Public</Access>
         <ProtoCompile>True</ProtoCompile>

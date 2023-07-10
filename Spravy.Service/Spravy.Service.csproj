@@ -9,8 +9,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Protobuf Include="..\Spravy.Core\Protos\spravy.proto" GrpcServices="Server">
-            <Link>Protos\spravy.proto</Link>
+        <Protobuf Include="..\Spravy.Core\Protos\to_do.proto" GrpcServices="Server">
+            <Link>Protos/to_do.proto</Link>
         </Protobuf>
     </ItemGroup>
 

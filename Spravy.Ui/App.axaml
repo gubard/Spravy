@@ -1,0 +1,108 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:models="clr-namespace:Spravy.Ui.Models"
+             xmlns:interfaces="clr-namespace:Spravy.Ui.Interfaces"
+             xmlns:handlers="clr-namespace:Spravy.Ui.Handlers"
+             xmlns:converters="clr-namespace:ExtensionFramework.AvaloniaUi.Converters;assembly=ExtensionFramework.AvaloniaUi"
+             xmlns:converters1="clr-namespace:Spravy.Ui.Converters"
+             xmlns:themes="clr-namespace:Material.Styles.Themes;assembly=Material.Styles"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:controls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
+             x:Class="Spravy.Ui.App"
+             RequestedThemeVariant="Dark">
+    <Application.Styles>
+        <FluentTheme DensityStyle="Compact" />
+        <StyleInclude Source="avares://ExtensionFramework.AvaloniaUi/Styles/Theme.axaml" />
+        <themes:MaterialTheme BaseTheme="Dark" PrimaryColor="Purple" SecondaryColor="Lime" />
+        <avalonia:MaterialIconStyles />
+        <StyleInclude Source="avares://ExtensionFramework.AvaloniaUi.Material/Styles/Theme.axaml" />
+
+        <Style Selector="ListBox.ItemsDragAndDrop">
+            <Style.Resources>
+                <handlers:ItemsListBoxDropHandlerToDoItemNotify x:Key="ItemsListBoxDropHandler" />
+            </Style.Resources>
+
+            <Setter Property="(Interaction.Behaviors)">
+                <BehaviorCollectionTemplate>
+                    <BehaviorCollection>
+                        <ContextDropBehavior Handler="{StaticResource ItemsListBoxDropHandler}" />
+                    </BehaviorCollection>
+                </BehaviorCollectionTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="ListBox.ItemsDragAndDrop ListBoxItem">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="(Interaction.Behaviors)">
+                <BehaviorCollectionTemplate>
+                    <BehaviorCollection>
+                        <ContextDragBehavior HorizontalDragThreshold="3" VerticalDragThreshold="3" />
+                    </BehaviorCollection>
+                </BehaviorCollectionTemplate>
+            </Setter>
+        </Style>
+    </Application.Styles>
+
+    <Application.DataTemplates>
+        <DataTemplate DataType="models:ToDoItemNotify">
+            <Button Padding="0"
+                    Margin="0"
+                    BorderThickness="0"
+                    Background="Transparent"
+                    ToolTip.Tip="{Binding Description}"
+                    VerticalContentAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
+                    CommandParameter="{Binding}">
+                <Grid ColumnDefinitions="Auto,*" ToolTip.Tip="{Binding Description}">
+                    <Rectangle Width="10"
+                               Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
+
+                    <Grid Grid.Column="1" ColumnDefinitions="*,*"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          Margin="5">
+                        <StackPanel HorizontalAlignment="Left">
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox IsChecked="{Binding IsComplete}" />
+
+                                <TextBlock Text="{Binding Name}"
+                                           Classes="Headline6" />
+                            </StackPanel>
+
+                            <StackPanel>
+                                <DatePicker
+                                    IsVisible="{Binding DueDate, Converter={StaticResource ObjectToVisibleValueConverter}}"
+                                    SelectedDate="{Binding DueDate}"
+                                    IsEnabled="False"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center" />
+
+                                <TextBlock Text="{Binding CompletedCount, StringFormat=Completed count: \{0\}}"
+                                           Classes="Body2" />
+
+                                <TextBlock Text="{Binding SkippedCount, StringFormat=Skipped count: \{0\}}"
+                                           Classes="Body2" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                            <Button Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
+                                    CommandParameter="{Binding}"
+                                    Content="Delete" />
+
+                            <Button Command="{Binding $parent[interfaces:IToDoItemView].SkipSubToDoItemCommand}"
+                                    CommandParameter="{Binding}"
+                                    Content="Skip" />
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Button>
+        </DataTemplate>
+    </Application.DataTemplates>
+
+    <Application.Resources>
+        <converters:ObjectToVisibleValueConverter x:Key="ObjectToVisibleValueConverter" />
+        <converters1:ToDoItemStatusToBrushValueConverter x:Key="ToDoItemStatusToBrushValueConverter" />
+    </Application.Resources>
+</Application>

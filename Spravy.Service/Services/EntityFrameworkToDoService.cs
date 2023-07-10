@@ -37,7 +37,8 @@ public class EntityFrameworkToDoService : IToDoService
                 item.OrderIndex,
                 status,
                 item.Description,
-                item.CompletedCount
+                item.CompletedCount,
+                item.SkippedCount
             );
 
             result.Add(toDoSubItem);
@@ -150,7 +151,8 @@ public class EntityFrameworkToDoService : IToDoService
                 subItem.OrderIndex,
                 status,
                 subItem.Description,
-                subItem.CompletedCount
+                subItem.CompletedCount,
+                subItem.SkippedCount
             );
 
             toDoSubItems.Add(toDoSubItem);
@@ -276,33 +278,7 @@ public class EntityFrameworkToDoService : IToDoService
             }
 
             item.CompletedCount++;
-
-            if (item.TypeOfPeriodicity == TypeOfPeriodicity.None || item.DueDate is null)
-            {
-                item.IsComplete = true;
-                await context.SaveChangesAsync();
-
-                return;
-            }
-
-            switch (item.TypeOfPeriodicity)
-            {
-                case TypeOfPeriodicity.Daily:
-                    item.DueDate = item.DueDate.Value.AddDays(1);
-                    break;
-                case TypeOfPeriodicity.Weekly:
-                    item.DueDate = item.DueDate.Value.AddDays(7);
-                    break;
-                case TypeOfPeriodicity.Monthly:
-                    item.DueDate = item.DueDate.Value.AddMonths(1);
-                    break;
-                case TypeOfPeriodicity.Annually:
-                    item.DueDate = item.DueDate.Value.AddYears(1);
-                    break;
-                default: throw new ArgumentOutOfRangeException();
-            }
-
-            item.IsComplete = false;
+            UpdateCompleteStatus(item);
         }
         else
         {
@@ -350,6 +326,15 @@ public class EntityFrameworkToDoService : IToDoService
         await context.SaveChangesAsync();
     }
 
+    public async Task SkipToDoItemAsync(Guid id)
+    {
+        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
+        item = item.ThrowIfNull();
+        item.SkippedCount++;
+        UpdateCompleteStatus(item);
+        await context.SaveChangesAsync();
+    }
+
     private async Task NormalizeOrderIndexAsync(Guid? parentId)
     {
         var items = await context.Set<ToDoItemEntity>()
@@ -377,5 +362,34 @@ public class EntityFrameworkToDoService : IToDoService
 
         parents.Add(mapper.Map<ToDoItemParent>(parent.Parent));
         await GetParentsAsync(parent.Parent.Id, parents);
+    }
+
+    public void UpdateCompleteStatus(ToDoItemEntity item)
+    {
+        if (item.TypeOfPeriodicity == TypeOfPeriodicity.None || item.DueDate is null)
+        {
+            item.IsComplete = true;
+
+            return;
+        }
+
+        switch (item.TypeOfPeriodicity)
+        {
+            case TypeOfPeriodicity.Daily:
+                item.DueDate = item.DueDate.Value.AddDays(1);
+                break;
+            case TypeOfPeriodicity.Weekly:
+                item.DueDate = item.DueDate.Value.AddDays(7);
+                break;
+            case TypeOfPeriodicity.Monthly:
+                item.DueDate = item.DueDate.Value.AddMonths(1);
+                break;
+            case TypeOfPeriodicity.Annually:
+                item.DueDate = item.DueDate.Value.AddYears(1);
+                break;
+            default: throw new ArgumentOutOfRangeException();
+        }
+
+        item.IsComplete = false;
     }
 }

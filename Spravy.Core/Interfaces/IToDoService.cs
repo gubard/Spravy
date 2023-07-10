@@ -16,4 +16,5 @@ public interface IToDoService
     Task UpdateNameToDoItemAsync(Guid id, string name);
     Task UpdateOrderIndexToDoItemAsync(UpdateOrderIndexToDoItemOptions options);
     Task UpdateDescriptionToDoItemAsync(Guid id, string description);
+    Task SkipToDoItemAsync(Guid id);
 }

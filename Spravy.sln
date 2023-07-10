@@ -6,9 +6,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Core", "Spravy.Core\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Service", "Spravy.Service\Spravy.Service.csproj", "{989659C9-DF1F-41DF-8F8E-94D9D80A2EFD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy", "Spravy\Spravy.csproj", "{C2B020FF-C3E6-4E33-8C7C-08F6905A93A7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Ui", "Spravy.Ui\Spravy.Ui.csproj", "{C2B020FF-C3E6-4E33-8C7C-08F6905A93A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Browser", "Spravy.Browser\Spravy.Browser.csproj", "{559125AA-FABC-4574-844F-D2BFB1D39D38}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Ui.Browser", "Spravy.Ui.Browser\Spravy.Ui.Browser.csproj", "{559125AA-FABC-4574-844F-D2BFB1D39D38}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtensionFramework.AvaloniaUi", "ExtensionFramework\ExtensionFramework.AvaloniaUi\ExtensionFramework.AvaloniaUi.csproj", "{2135162E-99D3-4E62-A5EB-D2064C63FD11}"
 EndProject
@@ -20,13 +20,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtensionFramework.Reactive
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Db", "Spravy.Db\Spravy.Db.csproj", "{070847AF-17CA-4FCA-8B73-6763A6EF05BE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Desktop", "Spravy.Desktop\Spravy.Desktop.csproj", "{D5AB773A-BACE-4FBB-923D-0F08ABAB5179}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Ui.Desktop", "Spravy.Ui.Desktop\Spravy.Ui.Desktop.csproj", "{D5AB773A-BACE-4FBB-923D-0F08ABAB5179}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Db.Sqlite", "Spravy.Db.Sqlite\Spravy.Db.Sqlite.csproj", "{62AC9849-0775-4791-A28B-5DF53A40FC8B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Db.Sqlite.Migrator", "Spravy.Db.Sqlite.Migrator\Spravy.Db.Sqlite.Migrator.csproj", "{3EDF179E-70AE-4A31-A54C-CCE213BE29D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Android", "Spravy.Android\Spravy.Android.csproj", "{DEC68166-774A-4A1E-9069-2C678C566814}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Ui.Android", "Spravy.Ui.Android\Spravy.Ui.Android.csproj", "{DEC68166-774A-4A1E-9069-2C678C566814}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.csproj", "{688C2548-FD10-4AB8-81CB-66AF978339DF}"
 EndProject

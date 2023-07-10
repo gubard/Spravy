@@ -30,7 +30,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
 
         return reply;
     }
-    
+
     public override async Task<GetToDoItemReply> GetToDoItem(GetToDoItemRequest request, ServerCallContext context)
     {
         var item = await toDoService.GetToDoItemAsync(mapper.Map<Guid>(request.Id));
@@ -132,10 +132,20 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         return new UpdateOrderIndexToDoItemReply();
     }
 
-    public override async Task<UpdateDescriptionToDoItemReply> UpdateDescriptionToDoItem(UpdateDescriptionToDoItemRequest request, ServerCallContext context)
+    public override async Task<UpdateDescriptionToDoItemReply> UpdateDescriptionToDoItem(
+        UpdateDescriptionToDoItemRequest request,
+        ServerCallContext context
+    )
     {
         await toDoService.UpdateDescriptionToDoItemAsync(mapper.Map<Guid>(request.Id), request.Description);
 
         return new UpdateDescriptionToDoItemReply();
+    }
+
+    public override async Task<SkipToDoItemReply> SkipToDoItem(SkipToDoItemRequest request, ServerCallContext context)
+    {
+        await toDoService.SkipToDoItemAsync(mapper.Map<Guid>(request.Id));
+
+        return new SkipToDoItemReply();
     }
 }

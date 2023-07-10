@@ -12,7 +12,8 @@ public readonly struct ToDoSubItem
         ulong orderIndex,
         ToDoItemStatus status,
         string description,
-        uint completedCount
+        uint completedCount,
+        uint skippedCount
     )
     {
         Name = name;
@@ -21,6 +22,7 @@ public readonly struct ToDoSubItem
         Status = status;
         Description = description;
         CompletedCount = completedCount;
+        SkippedCount = skippedCount;
         IsComplete = isComplete;
         Id = id;
     }
@@ -33,4 +35,5 @@ public readonly struct ToDoSubItem
     public ToDoItemStatus Status { get; }
     public string Description { get; }
     public uint CompletedCount { get; }
+    public uint SkippedCount { get; }
 }
