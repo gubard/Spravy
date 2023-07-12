@@ -43,14 +43,17 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
     {
         try
         {
+            var byteStringId = mapper.Map<ByteString>(id);
             var item = await client.GetToDoItemAsync(
                 new GetToDoItemRequest
                 {
-                    Id = mapper.Map<ByteString>(id),
+                    Id = byteStringId
                 }
             );
 
-            return mapper.Map<ToDoItem>(item.Item);
+            var result = mapper.Map<ToDoItem>(item.Item);
+
+            return result;
         }
         catch (Exception e)
         {

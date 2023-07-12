@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using Spravy.Core.Interfaces;
 using Spravy.Db.Contexts;
 using Spravy.Db.Interfaces;
@@ -23,7 +24,12 @@ builder.Services.AddDbContext<SpravyDbContext>(
 );
 #endif
 
+builder.Host.UseSerilog((hostContext, services, configuration) => {
+    configuration.WriteTo.File("/tmp/Spravy/Spravy.Service.log");
+    configuration.WriteTo.Console();
+});
 var app = builder.Build();
+app.UseSerilogRequestLogging();
 
 #if DEBUG
 app.Urls.Clear();

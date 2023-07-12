@@ -15,4 +15,8 @@
         <Generator>MSBuild:Compile</Generator>
       </Protobuf>
     </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\ExtensionFramework\ExtensionFramework.Core\ExtensionFramework.Core.csproj" />
+    </ItemGroup>
 </Project>

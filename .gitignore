@@ -4,6 +4,8 @@ obj/
 riderModule.iml
 /_ReSharper.Caches/
 .idea/
+.nuke/
 ExtensionFramework/
 tools/
 *.user
+*.keystore

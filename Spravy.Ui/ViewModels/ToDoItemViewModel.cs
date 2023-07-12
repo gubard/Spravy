@@ -26,6 +26,7 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
     private DateTimeOffset? dueDate;
     private bool isComplete;
     private string description = string.Empty;
+    private List<IDisposable> propertySubscribes = new();
 
     public ToDoItemViewModel() : base("to-do-item")
     {
@@ -36,12 +37,7 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
         ToRootItemCommand = CreateCommand(ToRootItem);
         SkipSubToDoItemCommand = CreateCommandFromTask<ToDoItemNotify>(SkipSubToDoItem);
         TypeOfPeriodicities = new(Enum.GetValues<TypeOfPeriodicity>());
-        this.WhenAnyValue(x => x.DueDate).Skip(1).Subscribe(OnNextDueDate);
-        this.WhenAnyValue(x => x.TypeOfPeriodicity).Skip(1).Subscribe(OnNextTypeOfPeriodicity);
-        this.WhenAnyValue(x => x.Id).Skip(1).Subscribe(OnNextId);
-        this.WhenAnyValue(x => x.IsComplete).Skip(1).Subscribe(OnNextIsComplete);
-        this.WhenAnyValue(x => x.Name).Skip(1).Subscribe(OnNextName);
-        this.WhenAnyValue(x => x.Description).Skip(1).Subscribe(OnNextDescription);
+        SubscribeProperties();
     }
 
     public AvaloniaList<ToDoItemNotify> CompletedItems { get; } = new();
@@ -139,7 +135,7 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
 
     private void ChangeToDoItemByPath(ToDoItemParentNotify item)
     {
-        Id = item.Id;
+        Navigator.NavigateTo<ToDoItemViewModel>(vm => vm.Id = item.Id);
     }
 
     private async void OnNextIsComplete(bool x)
@@ -155,7 +151,7 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
 
     private void ChangeToDoItem(ToDoItemNotify item)
     {
-        Id = item.Id;
+        Navigator.NavigateTo<ToDoItemViewModel>(vm => vm.Id = item.Id);
     }
 
     private void ToRootItem()
@@ -193,12 +189,13 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
 
     public async Task RefreshToDoItemAsync()
     {
+        UnsubscribeProperties();
         Path.Items ??= new AvaloniaList<object>();
         var item = await ToDoService.GetToDoItemAsync(Id);
-        DueDate = item.DueDate;
         Name = item.Name;
         IsComplete = item.IsComplete;
         TypeOfPeriodicity = item.TypeOfPeriodicity;
+        DueDate = item.DueDate;
         Description = item.Description;
         Items.Clear();
         CompletedItems.Clear();
@@ -210,6 +207,7 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
         Path.Items.Clear();
         Path.Items.Add(new RootItem());
         Path.Items.AddRange(item.Parents.Select(x => Mapper.Map<ToDoItemParentNotify>(x)));
+        SubscribeProperties();
     }
 
     private void SubscribeItems(IEnumerable<ToDoItemNotify> items)
@@ -229,5 +227,30 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
 
             itemNotify.WhenAnyValue(x => x.IsComplete).Skip(1).Subscribe(OnNextIsComplete);
         }
+    }
+
+    private void SubscribeProperties()
+    {
+        propertySubscribes.AddRange(GetSubscribeProperties());
+    }
+
+    private IEnumerable<IDisposable> GetSubscribeProperties()
+    {
+        yield return this.WhenAnyValue(x => x.DueDate).Skip(1).Subscribe(OnNextDueDate);
+        yield return this.WhenAnyValue(x => x.TypeOfPeriodicity).Skip(1).Subscribe(OnNextTypeOfPeriodicity);
+        yield return this.WhenAnyValue(x => x.Id).Skip(1).Subscribe(OnNextId);
+        yield return this.WhenAnyValue(x => x.IsComplete).Skip(1).Subscribe(OnNextIsComplete);
+        yield return this.WhenAnyValue(x => x.Name).Skip(1).Subscribe(OnNextName);
+        yield return this.WhenAnyValue(x => x.Description).Skip(1).Subscribe(OnNextDescription);
+    }
+
+    private void UnsubscribeProperties()
+    {
+        foreach (var propertySubscribe in propertySubscribes)
+        {
+            propertySubscribe.Dispose();
+        }
+
+        propertySubscribes.Clear();
     }
 }
