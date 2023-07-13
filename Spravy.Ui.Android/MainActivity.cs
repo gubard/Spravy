@@ -1,7 +1,9 @@
 ﻿using System;
+
 using Android.App;
 using Android.Content.PM;
 using Android.OS;
+
 using Avalonia;
 using Avalonia.Android;
 using Avalonia.ReactiveUI;
@@ -27,7 +29,7 @@ namespace Spravy.Ui.Android;
 public class MainActivity : AvaloniaMainActivity<App>
 {
     private static IModule? module;
-    
+
     protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)
     {
         return base.CustomizeAppBuilder(builder)
@@ -44,7 +46,7 @@ public class MainActivity : AvaloniaMainActivity<App>
         DependencyInjector.Default = module.GetObject<IResolver>();
         base.OnCreate(savedInstanceState);
     }
-    
+
     private static void InitModules()
     {
         var builder = new TreeBuilder<Guid, IModule>().SetRoot(

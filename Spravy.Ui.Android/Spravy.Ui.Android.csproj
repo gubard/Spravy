@@ -11,6 +11,7 @@
         <AndroidEnableProfiledAot>False</AndroidEnableProfiledAot>
         <AndroidSdkDirectory>\home\vafnir\Android\Sdk</AndroidSdkDirectory>
         <AndroidLinkMode>None</AndroidLinkMode>
+        <TargetPlatformVersion>33</TargetPlatformVersion>
     </PropertyGroup>
 
     <ItemGroup>
