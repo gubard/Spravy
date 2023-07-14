@@ -1,3 +1,4 @@
+using ExtensionFramework.Core.Common.Extensions;
 using ExtensionFramework.Core.DependencyInjection.Interfaces;
 using ExtensionFramework.Core.DependencyInjection.Extensions;
 using Microsoft.Extensions.Configuration;
@@ -13,7 +14,7 @@ public readonly struct AndroidDependencyInjectorConfiguration : IDependencyInjec
             {
                 using var stream = typeof(MarkStruct).Assembly.GetManifestResourceStream("Spravy.Ui.Android.appsettings.json");
 
-                return new ConfigurationBuilder().AddJsonStream(stream).Build();
+                return new ConfigurationBuilder().AddJsonStream(stream.ThrowIfNull()).Build();
             }
         );
     }
