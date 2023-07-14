@@ -27,19 +27,19 @@ public readonly struct SpravyDependencyInjectorConfiguration : IDependencyInject
         register.RegisterScope(() => new MapperConfiguration(cfg => cfg.AddProfile<SpravyProfile>()));
         register.RegisterScope<IMapper>((MapperConfiguration cfg) => new Mapper(cfg));
         register.RegisterScope<IToDoService, GrpcToDoService>();
-        register.RegisterScope<Application, App>();
         register.RegisterScope<IExceptionViewModel, ExceptionViewModel>();
         register.RegisterScope(() => Enumerable.Empty<IDataTemplate>());
         register.RegisterScope<Control, MainView>();
         register.RegisterScope<Window, MainWindow>();
         register.RegisterScopeAutoInjectMember((MainWindow window) => window.Content, (Control control) => control);
         register.RegisterScope<RoutedViewHost>();
+        register.RegisterScope<Application, App>();
 
         register.RegisterScope<GrpcToDoServiceOptions>(
             (IConfiguration configuration) => new GrpcToDoServiceOptions
             {
 #if DEBUG
-                Host = "http://localhost:5000",
+                Host = "https://localhost:5000",
 #else
                 Host = configuration["GrpcToDoService:Host"],
 #endif

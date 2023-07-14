@@ -37,7 +37,10 @@ class Build : NukeBuild
         _ => _
             .DependsOn(Restore)
             .Executes(() => DotNetBuild(setting =>
-                    setting.SetProjectFile(Solution).EnableNoRestore().SetConfiguration(Configuration)
+                    setting.SetProjectFile(Solution)
+                        .EnableNoRestore()
+                        .SetConfiguration(Configuration)
+                        .EnableDisableParallel()
                 )
             );
 
@@ -46,6 +49,11 @@ class Build : NukeBuild
             .DependsOn(Compile)
             .Executes(async () =>
                 {
+                    /*var migratorFolder = PublishProject("Spravy.Db.Sqlite.Migrator");
+                    var serviceFolder = PublishProject("Spravy.Service");
+                    var desktopFolder = PublishProject("Spravy.Ui.Desktop");
+                    var browserFolder = PublishProject("Spravy.Ui.Browser");*/
+
                     var keyStoreFile = new FileInfo(Solution.Directory / "sign-key.keystore");
 
                     if (keyStoreFile.Exists)
@@ -59,10 +67,6 @@ class Build : NukeBuild
                             $"-genkey -v -keystore sign-key.keystore -alias spravy -keyalg RSA -keysize 2048 -validity 10000 -dname \"CN=Serhii Maksymov, OU=Serhii Maksymov FOP, O=Serhii Maksymov FOP, L=Kharkiv, S=Kharkiv State, C=Ukraine\" -storepass {AndroidSigningStorePass}"
                         )
                         .ExecuteAsync();
-
-                    var migratorFolder = PublishProject("Spravy.Db.Sqlite.Migrator");
-                    var serviceFolder = PublishProject("Spravy.Service");
-                    var desktopFolder = PublishProject("Spravy.Ui.Desktop");
 
                     var androidFolder = PublishProject("Spravy.Ui.Android", setting => setting
                         .AddProperty("AndroidKeyStore", "true")
@@ -97,7 +101,9 @@ class Build : NukeBuild
                 return setting.SetConfiguration(Configuration)
                     .SetProject(project)
                     .SetOutput(publishFolder.FullName)
-                    .EnableNoRestore();
+                    .EnableSelfContained()
+                    .EnableNoRestore()
+                    .EnableDisableParallel();
             }
         );
 

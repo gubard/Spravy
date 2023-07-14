@@ -16,6 +16,19 @@ builder.Services.AddScoped<IMapper>(sp => new Mapper(sp.GetRequiredService<Mappe
 builder.Services.AddScoped<IToDoService, EntityFrameworkToDoService>();
 builder.Services.AddScoped<IDbContextSetup, SqliteDbContextSetup>();
 
+builder.Services.AddCors(
+    o => o.AddPolicy(
+        "AllowAll",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .WithExposedHeaders("Grpc-Status", "Grpc-Message", "Grpc-Encoding", "Grpc-Accept-Encoding");
+        }
+    )
+);
+
 #if DEBUG
 builder.Services.AddDbContext<SpravyDbContext>(options => options.UseInMemoryDatabase("SpravyDbContext"));
 #else
@@ -24,17 +37,31 @@ builder.Services.AddDbContext<SpravyDbContext>(
 );
 #endif
 
-builder.Host.UseSerilog((hostContext, services, configuration) => {
-    configuration.WriteTo.File("/tmp/Spravy/Spravy.Service.log");
-    configuration.WriteTo.Console();
-});
+builder.Host.UseSerilog(
+    (hostContext, services, configuration) =>
+    {
+        configuration.WriteTo.File("/tmp/Spravy/Spravy.Service.log");
+        configuration.WriteTo.Console();
+    }
+);
 var app = builder.Build();
 app.UseSerilogRequestLogging();
+app.UseHttpsRedirection();
+app.UseRouting();
+
+app.UseGrpcWeb(
+    new GrpcWebOptions
+    {
+        DefaultEnabled = true
+    }
+);
+
+app.UseCors("AllowAll");
 
 #if DEBUG
 app.Urls.Clear();
-app.Urls.Add("http://localhost:5000");
+app.Urls.Add("https://localhost:5000");
 #endif
 
-app.MapGrpcService<GrpcToDoService>();
+app.MapGrpcService<GrpcToDoService>().EnableGrpcWeb();
 app.Run();
