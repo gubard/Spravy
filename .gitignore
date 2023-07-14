@@ -9,3 +9,4 @@ ExtensionFramework/
 tools/
 *.user
 *.keystore
+.vs/
