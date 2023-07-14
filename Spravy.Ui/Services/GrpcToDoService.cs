@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -11,6 +10,7 @@ using Spravy.Core.Interfaces;
 using Spravy.Core.Models;
 using Spravy.Protos;
 using Spravy.Ui.Exceptions;
+using Spravy.Ui.Extensions;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.Services;
@@ -20,7 +20,8 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
     private readonly ToDoService.ToDoServiceClient client;
     private readonly IMapper mapper;
 
-    public GrpcToDoService(GrpcToDoServiceOptions options, IMapper mapper) : base(options.Host.ToUri())
+    public GrpcToDoService(GrpcToDoServiceOptions options, IMapper mapper)
+        : base(options.Host.ToUri(), options.Mode, options.ChannelCredentialType.GetChannelCredentials())
     {
         this.mapper = mapper;
         client = new ToDoService.ToDoServiceClient(grpcChannel);

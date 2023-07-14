@@ -1,6 +1,7 @@
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Grpc.Core;
 using Grpc.Net.Client;
 using Grpc.Net.Client.Web;
 
@@ -13,14 +14,15 @@ public class GrpcServiceBase : IAsyncDisposable, IDisposable
     private readonly GrpcWebHandler grpcWebHandler;
     private readonly HttpClientHandler httpClientHandler;
 
-    protected GrpcServiceBase(Uri host)
+    protected GrpcServiceBase(Uri host, GrpcWebMode mode, ChannelCredentials channelCredentials)
     {
         httpClientHandler = new();
-        grpcWebHandler = new(GrpcWebMode.GrpcWeb, httpClientHandler);
+        grpcWebHandler = new(mode, httpClientHandler);
 
         grpcChannelOptions = new()
         {
-            HttpHandler = grpcWebHandler
+            HttpHandler = grpcWebHandler,
+            Credentials = channelCredentials
         };
 
         grpcChannel = GrpcChannel.ForAddress(host, grpcChannelOptions);

@@ -6,6 +6,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.ReactiveUI;
+using ExtensionFramework.Core.Common.Interfaces;
+using ExtensionFramework.Core.Common.Services;
 using ExtensionFramework.Core.DependencyInjection.Interfaces;
 using ExtensionFramework.Core.DependencyInjection.Extensions;
 using ExtensionFramework.Core.Ui.Models;
@@ -34,15 +36,17 @@ public readonly struct SpravyDependencyInjectorConfiguration : IDependencyInject
         register.RegisterScopeAutoInjectMember((MainWindow window) => window.Content, (Control control) => control);
         register.RegisterScope<RoutedViewHost>();
         register.RegisterScope<Application, App>();
+        register.RegisterScope<IResourceLoader, FileResourceLoader>();
 
-        register.RegisterScope<GrpcToDoServiceOptions>(
-            (IConfiguration configuration) => new GrpcToDoServiceOptions
+        register.RegisterScopeDel<GrpcToDoServiceOptions>(
+            (IConfiguration configuration) =>
             {
+                var options = configuration.GetSection("GrpcToDoService").Get<GrpcToDoServiceOptions>();
 #if DEBUG
-                Host = "https://localhost:5000",
-#else
-                Host = configuration["GrpcToDoService:Host"],
+                options.Host = "http://localhost:5000";
 #endif
+
+                return options;
             }
         );
 

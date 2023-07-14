@@ -10,3 +10,4 @@ tools/
 *.user
 *.keystore
 .vs/
+*.pfx

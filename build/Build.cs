@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using CliWrap;
 using Nuke.Common;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tools.DotNet;
@@ -49,10 +48,10 @@ class Build : NukeBuild
             .DependsOn(Compile)
             .Executes(async () =>
                 {
-                    /*var migratorFolder = PublishProject("Spravy.Db.Sqlite.Migrator");
                     var serviceFolder = PublishProject("Spravy.Service");
+                    /*var migratorFolder = PublishProject("Spravy.Db.Sqlite.Migrator");
                     var desktopFolder = PublishProject("Spravy.Ui.Desktop");
-                    var browserFolder = PublishProject("Spravy.Ui.Browser");*/
+                    var browserFolder = PublishProject("Spravy.Ui.Browser");
 
                     var keyStoreFile = new FileInfo(Solution.Directory / "sign-key.keystore");
 
@@ -74,7 +73,7 @@ class Build : NukeBuild
                         .AddProperty("AndroidSigningKeyAlias", "spravy")
                         .AddProperty("AndroidSigningKeyPass", AndroidSigningKeyPass)
                         .AddProperty("AndroidSigningStorePass", AndroidSigningStorePass)
-                    );
+                    );*/
                 }
             );
 

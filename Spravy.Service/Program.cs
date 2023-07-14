@@ -44,9 +44,9 @@ builder.Host.UseSerilog(
         configuration.WriteTo.Console();
     }
 );
+
 var app = builder.Build();
 app.UseSerilogRequestLogging();
-app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseGrpcWeb(
@@ -60,7 +60,7 @@ app.UseCors("AllowAll");
 
 #if DEBUG
 app.Urls.Clear();
-app.Urls.Add("https://localhost:5000");
+app.Urls.Add("http://localhost:5000");
 #endif
 
 app.MapGrpcService<GrpcToDoService>().EnableGrpcWeb();
