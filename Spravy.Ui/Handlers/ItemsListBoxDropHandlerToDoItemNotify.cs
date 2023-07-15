@@ -1,4 +1,3 @@
-using ExtensionFramework.AvaloniaUi.Handlers;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
