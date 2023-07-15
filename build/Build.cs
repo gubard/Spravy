@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using FluentFTP;
 using Nuke.Common;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tools.DotNet;
@@ -20,6 +21,7 @@ class Build : NukeBuild
 
     [Parameter] readonly string AndroidSigningKeyPass;
     [Parameter] readonly string AndroidSigningStorePass;
+    [Parameter] readonly string FtpPassword;
 
     [Solution] readonly Solution Solution;
 
@@ -35,47 +37,117 @@ class Build : NukeBuild
     Target Compile =>
         _ => _
             .DependsOn(Restore)
-            .Executes(() => DotNetBuild(setting =>
-                    setting.SetProjectFile(Solution)
-                        .EnableNoRestore()
-                        .SetConfiguration(Configuration)
-                        .EnableDisableParallel()
-                )
+            .Executes(() =>
+                {
+                    foreach (var project in Solution.Projects.Where(x => !x.Name.Contains("Android")))
+                    {
+                        for (var i = 0; i < 3; i++)
+                        {
+                            try
+                            {
+                                DotNetBuild(setting =>
+                                    setting.SetProjectFile(project)
+                                        .EnableNoRestore()
+                                        .SetConfiguration(Configuration)
+                                );
+
+                                break;
+                            }
+                            catch (Exception e)
+                            {
+                                if (i == 2)
+                                {
+                                    throw;
+                                }
+
+                                if (e.ToString().Contains("CompileAvaloniaXamlTask"))
+                                {
+                                    continue;
+                                }
+
+                                throw;
+                            }
+                        }
+                    }
+                }
             );
 
     Target Publish =>
         _ => _
             .DependsOn(Compile)
-            .Executes(async () =>
+            .Executes(() =>
                 {
+                    using var client = new FtpClient("192.168.50.2", "vafnir", FtpPassword);
+                    client.Connect();
                     var serviceFolder = PublishProject("Spravy.Service");
-                    /*var migratorFolder = PublishProject("Spravy.Db.Sqlite.Migrator");
+                    client.UploadDirectory(serviceFolder.FullName, "/home/vafnir/Spravy.Service");
+                    var migratorFolder = PublishProject("Spravy.Db.Sqlite.Migrator");
+                    client.UploadDirectory(migratorFolder.FullName, "/home/vafnir/Spravy.Db.Sqlite.Migrator");
                     var desktopFolder = PublishProject("Spravy.Ui.Desktop");
-                    var browserFolder = PublishProject("Spravy.Ui.Browser");
-
-                    var keyStoreFile = new FileInfo(Solution.Directory / "sign-key.keystore");
-
-                    if (keyStoreFile.Exists)
-                    {
-                        keyStoreFile.Delete();
-                    }
-
-                    await Cli.Wrap("keytool")
-                        .WithWorkingDirectory(Solution.Directory)
-                        .WithArguments(
-                            $"-genkey -v -keystore sign-key.keystore -alias spravy -keyalg RSA -keysize 2048 -validity 10000 -dname \"CN=Serhii Maksymov, OU=Serhii Maksymov FOP, O=Serhii Maksymov FOP, L=Kharkiv, S=Kharkiv State, C=Ukraine\" -storepass {AndroidSigningStorePass}"
-                        )
-                        .ExecuteAsync();
-
-                    var androidFolder = PublishProject("Spravy.Ui.Android", setting => setting
-                        .AddProperty("AndroidKeyStore", "true")
-                        .AddProperty("AndroidSigningKeyStore", keyStoreFile.FullName)
-                        .AddProperty("AndroidSigningKeyAlias", "spravy")
-                        .AddProperty("AndroidSigningKeyPass", AndroidSigningKeyPass)
-                        .AddProperty("AndroidSigningStorePass", AndroidSigningStorePass)
-                    );*/
+                    var desktopAppFolder = new DirectoryInfo("/home/vafnir/Apps/Spravy.Ui.Desktop");
+                    CopyDirectory(desktopFolder.FullName, desktopAppFolder.FullName, true);
+                    /*var browserFolder = PublishProject("Spravy.Ui.Browser");
+ 
+                     var keyStoreFile = new FileInfo(Solution.Directory / "sign-key.keystore");
+ 
+                     if (keyStoreFile.Exists)
+                     {
+                         keyStoreFile.Delete();
+                     }
+ 
+                     await Cli.Wrap("keytool")
+                         .WithWorkingDirectory(Solution.Directory)
+                         .WithArguments(
+                             $"-genkey -v -keystore sign-key.keystore -alias spravy -keyalg RSA -keysize 2048 -validity 10000 -dname \"CN=Serhii Maksymov, OU=Serhii Maksymov FOP, O=Serhii Maksymov FOP, L=Kharkiv, S=Kharkiv State, C=Ukraine\" -storepass {AndroidSigningStorePass}"
+                         )
+                         .ExecuteAsync();
+ 
+                     var androidFolder = PublishProject("Spravy.Ui.Android", setting => setting
+                         .AddProperty("AndroidKeyStore", "true")
+                         .AddProperty("AndroidSigningKeyStore", keyStoreFile.FullName)
+                         .AddProperty("AndroidSigningKeyAlias", "spravy")
+                         .AddProperty("AndroidSigningKeyPass", AndroidSigningKeyPass)
+                         .AddProperty("AndroidSigningStorePass", AndroidSigningStorePass)
+                     );*/
                 }
             );
+
+    static void CopyDirectory(string sourceDir, string destinationDir, bool recursive)
+    {
+        // Get information about the source directory
+        var dir = new DirectoryInfo(sourceDir);
+
+        // Check if the source directory exists
+        if (!dir.Exists)
+        {
+            throw new DirectoryNotFoundException($"Source directory not found: {dir.FullName}");
+        }
+
+        // Cache directories before we start copying
+        var dirs = dir.GetDirectories();
+
+        // Create the destination directory
+        Directory.CreateDirectory(destinationDir);
+
+        // Get the files in the source directory and copy to the destination directory
+        foreach (var file in dir.GetFiles())
+        {
+            var targetFilePath = Path.Combine(destinationDir, file.Name);
+            file.CopyTo(targetFilePath);
+        }
+
+        // If recursive and copying subdirectories, recursively call this method
+        if (!recursive)
+        {
+            return;
+        }
+
+        foreach (var subDir in dirs)
+        {
+            var newDestinationDir = Path.Combine(destinationDir, subDir.Name);
+            CopyDirectory(subDir.FullName, newDestinationDir, true);
+        }
+    }
 
     DirectoryInfo PublishProject(string name, Action<DotNetPublishSettings> configurator = null)
     {
@@ -93,18 +165,41 @@ class Build : NukeBuild
 
         var project = Solution.Projects.Single(x => x.Name == name);
 
-        DotNetPublish(setting =>
-            {
-                configurator?.Invoke(setting);
 
-                return setting.SetConfiguration(Configuration)
-                    .SetProject(project)
-                    .SetOutput(publishFolder.FullName)
-                    .EnableSelfContained()
-                    .EnableNoRestore()
-                    .EnableDisableParallel();
+        for (var i = 0; i < 3; i++)
+        {
+            try
+            {
+                DotNetPublish(setting =>
+                    {
+                        configurator?.Invoke(setting);
+
+                        return setting.SetConfiguration(Configuration)
+                            .SetProject(project)
+                            .SetOutput(publishFolder.FullName)
+                            .EnableNoBuild()
+                            .EnableNoRestore();
+                    }
+                );
+
+                break;
             }
-        );
+            catch (Exception e)
+            {
+                if (i == 2)
+                {
+                    throw;
+                }
+
+                if (e.ToString().Contains("CompileAvaloniaXamlTask"))
+                {
+                    continue;
+                }
+
+                throw;
+            }
+        }
+
 
         return publishFolder;
     }

@@ -38,7 +38,7 @@ builder.Services.AddDbContext<SpravyDbContext>(
 #endif
 
 builder.Host.UseSerilog(
-    (hostContext, services, configuration) =>
+    (_, _, configuration) =>
     {
         configuration.WriteTo.File("/tmp/Spravy/Spravy.Service.log");
         configuration.WriteTo.Console();
