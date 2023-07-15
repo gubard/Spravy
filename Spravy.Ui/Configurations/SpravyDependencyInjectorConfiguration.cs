@@ -46,7 +46,7 @@ public readonly struct SpravyDependencyInjectorConfiguration : IDependencyInject
 #if DEBUG
                 return new GrpcToDoServiceOptions
                 {
-                    Mode = GrpcWebMode.GrpcWeb,
+                    ChannelType = GrpcChannelType.Default,
                     Host = "http://192.168.50.2:5000",
                     ChannelCredentialType = ChannelCredentialType.Insecure
                 };

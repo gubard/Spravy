@@ -21,7 +21,7 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
     private readonly IMapper mapper;
 
     public GrpcToDoService(GrpcToDoServiceOptions options, IMapper mapper)
-        : base(options.Host.ToUri(), options.Mode, options.ChannelCredentialType.GetChannelCredentials())
+        : base(options.Host.ToUri(), options.ChannelType, options.ChannelCredentialType.GetChannelCredentials())
     {
         this.mapper = mapper;
         client = new ToDoService.ToDoServiceClient(grpcChannel);
