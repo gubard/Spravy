@@ -79,10 +79,10 @@ class Build : NukeBuild
                 {
                     using var client = new FtpClient("192.168.50.2", "vafnir", FtpPassword);
                     client.Connect();
-                    var serviceFolder = PublishProject("Spravy.Service");
-                    client.UploadDirectory(serviceFolder.FullName, "/home/vafnir/Spravy.Service");
                     var migratorFolder = PublishProject("Spravy.Db.Sqlite.Migrator");
                     client.UploadDirectory(migratorFolder.FullName, "/home/vafnir/Spravy.Db.Sqlite.Migrator");
+                    var serviceFolder = PublishProject("Spravy.Service");
+                    client.UploadDirectory(serviceFolder.FullName, "/home/vafnir/Spravy.Service");
                     var desktopFolder = PublishProject("Spravy.Ui.Desktop");
                     var desktopAppFolder = new DirectoryInfo("/home/vafnir/Apps/Spravy.Ui.Desktop");
                     CopyDirectory(desktopFolder.FullName, desktopAppFolder.FullName, true);
