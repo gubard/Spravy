@@ -5,6 +5,7 @@ using FluentFTP;
 using Nuke.Common;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tools.DotNet;
+using Renci.SshNet;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 class Build : NukeBuild
@@ -22,6 +23,7 @@ class Build : NukeBuild
     [Parameter] readonly string AndroidSigningKeyPass;
     [Parameter] readonly string AndroidSigningStorePass;
     [Parameter] readonly string FtpPassword;
+    [Parameter] readonly string SshPassword;
 
     [Solution] readonly Solution Solution;
 
@@ -77,14 +79,34 @@ class Build : NukeBuild
             .DependsOn(Compile)
             .Executes(() =>
                 {
-                    using var client = new FtpClient("192.168.50.2", "vafnir", FtpPassword);
-                    client.Connect();
+                    using var sshClient = new SshClient("192.168.50.2", "vafnir", SshPassword);
+                    sshClient.Connect();
+                    using var ftpClient = new FtpClient("192.168.50.2", "vafnir", FtpPassword);
+                    ftpClient.Connect();
                     var migratorFolder = PublishProject("Spravy.Db.Sqlite.Migrator");
-                    client.UploadDirectory(migratorFolder.FullName, "/home/vafnir/Spravy.Db.Sqlite.Migrator");
+                    ftpClient.UploadDirectory(migratorFolder.FullName, "/home/vafnir/Spravy.Db.Sqlite.Migrator");
+
+                    using var commandMigrator =
+                        sshClient.RunCommand(
+                            "cd /home/vafnir/Spravy.Db.Sqlite.Migrator;dotnet Spravy.Db.Sqlite.Migrator.dll"
+                        );
+
                     var serviceFolder = PublishProject("Spravy.Service");
-                    client.UploadDirectory(serviceFolder.FullName, "/home/vafnir/Spravy.Service");
+                    ftpClient.UploadDirectory(serviceFolder.FullName, "/home/vafnir/Spravy.Service");
+
+                    using var commandService =
+                        sshClient.RunCommand(
+                            $"echo {SshPassword} | sudo systemctl restart spravy.service"
+                        );
+
                     var desktopFolder = PublishProject("Spravy.Ui.Desktop");
                     var desktopAppFolder = new DirectoryInfo("/home/vafnir/Apps/Spravy.Ui.Desktop");
+
+                    if (desktopAppFolder.Exists)
+                    {
+                        desktopAppFolder.Delete(true);
+                    }
+
                     CopyDirectory(desktopFolder.FullName, desktopAppFolder.FullName, true);
                     /*var browserFolder = PublishProject("Spravy.Ui.Browser");
  
