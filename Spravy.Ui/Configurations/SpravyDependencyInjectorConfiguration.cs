@@ -12,8 +12,10 @@ using ExtensionFramework.Core.DependencyInjection.Interfaces;
 using ExtensionFramework.Core.DependencyInjection.Extensions;
 using ExtensionFramework.Core.Ui.Models;
 using ExtensionFramework.ReactiveUI.Interfaces;
+using Grpc.Net.Client.Web;
 using Microsoft.Extensions.Configuration;
 using Spravy.Core.Interfaces;
+using Spravy.Ui.Enums;
 using Spravy.Ui.Models;
 using Spravy.Ui.Profiles;
 using Spravy.Ui.Services;
@@ -41,10 +43,15 @@ public readonly struct SpravyDependencyInjectorConfiguration : IDependencyInject
         register.RegisterScopeDel<GrpcToDoServiceOptions>(
             (IConfiguration configuration) =>
             {
-                var options = configuration.GetSection("GrpcToDoService").Get<GrpcToDoServiceOptions>();
 #if DEBUG
-                options.Host = "http://localhost:5000";
+                return new GrpcToDoServiceOptions
+                {
+                    Mode = GrpcWebMode.GrpcWeb,
+                    Host = "http://192.168.50.2:5000",
+                    ChannelCredentialType = ChannelCredentialType.Insecure
+                };
 #endif
+                var options = configuration.GetSection("GrpcToDoService").Get<GrpcToDoServiceOptions>();
 
                 return options;
             }

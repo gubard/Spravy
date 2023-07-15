@@ -9,13 +9,13 @@ public readonly struct AndroidDependencyInjectorConfiguration : IDependencyInjec
 {
     public void Configure(IDependencyInjectorRegister register)
     {
-        register.RegisterScopeDel<IConfiguration>(
-            () =>
-            {
-                using var stream = typeof(MarkStruct).Assembly.GetManifestResourceStream("Spravy.Ui.Android.appsettings.json");
+        register.RegisterScope(() => CreateConfiguration());
+    }
 
-                return new ConfigurationBuilder().AddJsonStream(stream.ThrowIfNull()).Build();
-            }
-        );
+    private static IConfiguration CreateConfiguration()
+    {
+        using var stream = typeof(MarkStruct).Assembly.GetManifestResourceStream("Spravy.Ui.Android.appsettings.json");
+
+        return new ConfigurationBuilder().AddJsonStream(stream.ThrowIfNull()).Build();
     }
 }

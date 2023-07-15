@@ -16,13 +16,14 @@ public class GrpcServiceBase : IAsyncDisposable, IDisposable
 
     protected GrpcServiceBase(Uri host, GrpcWebMode mode, ChannelCredentials channelCredentials)
     {
-        httpClientHandler = new();
-        grpcWebHandler = new(mode, httpClientHandler);
+        httpClientHandler = new ();
 
-        grpcChannelOptions = new()
+        grpcWebHandler = new (mode, httpClientHandler);
+
+        grpcChannelOptions = new ()
         {
             HttpHandler = grpcWebHandler,
-            Credentials = channelCredentials
+            Credentials = channelCredentials,
         };
 
         grpcChannel = GrpcChannel.ForAddress(host, grpcChannelOptions);
