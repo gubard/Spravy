@@ -57,7 +57,7 @@
                     <Rectangle Width="10"
                                Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
 
-                    <Grid Grid.Column="1" 
+                    <Grid Grid.Column="1"
                           ColumnDefinitions="*,Auto"
                           HorizontalAlignment="Stretch"
                           VerticalAlignment="Stretch"
@@ -68,23 +68,36 @@
 
                                 <TextBlock Grid.Column="1"
                                            Text="{Binding Name}"
-                                           Classes="Headline6" 
+                                           Classes="Headline6"
                                            TextWrapping="Wrap" />
                             </Grid>
 
-                            <StackPanel>
+                            <Grid RowDefinitions="Auto,Auto">
                                 <TextBlock Text="{Binding DueDate, StringFormat=\{0:yyyy.MM.dd\}}"
                                            Classes="Body2"
                                            IsVisible="{Binding DueDate, Converter={StaticResource ObjectToVisibleValueConverter}}" />
 
-                                <TextBlock Text="{Binding CompletedCount, StringFormat=Completed count: \{0\}}"
-                                           Classes="Body2"
-                                           IsVisible="{Binding Converter={StaticResource ToDoItemNotifyToIsVisibleCompletedCountConverter}}" />
+                                <StackPanel Grid.Row="1"
+                                            Orientation="Horizontal">
+                                    <Grid ColumnDefinitions="Auto,*"
+                                          IsVisible="{Binding Converter={StaticResource ToDoItemNotifyToIsVisibleCompletedCountConverter}}">
+                                        <avalonia:MaterialIcon Kind="CheckBold" />
 
-                                <TextBlock Text="{Binding SkippedCount, StringFormat=Skipped count: \{0\}}"
-                                           Classes="Body2"
-                                           IsVisible="{Binding Converter={StaticResource ToDoItemNotifyToIsVisibleSkippedCountConverter}}" />
-                            </StackPanel>
+                                        <TextBlock Grid.Column="1"
+                                                   Text="{Binding CompletedCount}"
+                                                   Classes="Body2" />
+                                    </Grid>
+
+                                    <Grid ColumnDefinitions="Auto,*"
+                                          IsVisible="{Binding Converter={StaticResource ToDoItemNotifyToIsVisibleSkippedCountConverter}}">
+                                        <avalonia:MaterialIcon Kind="Alert" />
+
+                                        <TextBlock Grid.Column="1"
+                                                   Text="{Binding SkippedCount}"
+                                                   Classes="Body2" />
+                                    </Grid>
+                                </StackPanel>
+                            </Grid>
                         </StackPanel>
 
                         <StackPanel Grid.Column="1" Orientation="Horizontal">
