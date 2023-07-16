@@ -255,6 +255,12 @@ public class EntityFrameworkToDoService : IToDoService
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
         item.DueDate = dueDate;
+
+        if (dueDate is null)
+        {
+            item.TypeOfPeriodicity = TypeOfPeriodicity.None;
+        }
+
         await context.SaveChangesAsync();
     }
 
