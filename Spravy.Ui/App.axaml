@@ -70,12 +70,9 @@
                             </StackPanel>
 
                             <StackPanel>
-                                <DatePicker
-                                    IsVisible="{Binding DueDate, Converter={StaticResource ObjectToVisibleValueConverter}}"
-                                    SelectedDate="{Binding DueDate}"
-                                    IsEnabled="False"
-                                    VerticalAlignment="Center"
-                                    HorizontalAlignment="Center" />
+                                <TextBlock Text="{Binding DueDate, StringFormat=\{0:yyyy.MM.dd\}}"
+                                           Classes="Body2"
+                                           IsVisible="{Binding DueDate, Converter={StaticResource ObjectToVisibleValueConverter}}" />
 
                                 <TextBlock Text="{Binding CompletedCount, StringFormat=Completed count: \{0\}}"
                                            Classes="Body2"
