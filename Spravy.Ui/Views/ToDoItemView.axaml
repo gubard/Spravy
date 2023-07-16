@@ -16,7 +16,7 @@
         <viewModels:ToDoItemViewModel />
     </Design.DataContext>
 
-    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,*">
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto,*">
         <ContentControl Content="{Binding Path}"
                         Margin="5">
             <ContentControl.DataTemplates>
@@ -41,25 +41,41 @@
                   Margin="5"
                   IsChecked="{Binding IsComplete}" Content="Completed" />
 
-        <controls:EditableTextBlock Grid.Row="2" Text="{Binding Name, Mode=TwoWay}"
-                                    VerticalAlignment="Center"
-                                    Watermark="Name"
-                                    Margin="5" />
+        <Grid Grid.Row="2" ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto">
+            <TextBlock Text="Name"
+                       VerticalAlignment="Center" />
 
-        <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="5">
-            <ComboBox SelectedItem="{Binding TypeOfPeriodicity}"
+            <controls:EditableTextBlock Grid.Column="1"
+                                        Text="{Binding Name, Mode=TwoWay}"
+                                        VerticalAlignment="Center"
+                                        Watermark="Name"
+                                        Margin="5" />
+
+            <TextBlock Grid.Row="1"
+                       Text="Type of periodicity"
+                       VerticalAlignment="Center" />
+
+            <ComboBox Grid.Row="1"
+                      Grid.Column="1"
+                      SelectedItem="{Binding TypeOfPeriodicity}"
                       ItemsSource="{Binding TypeOfPeriodicities}"
                       VerticalAlignment="Center"
-                      HorizontalAlignment="Center"
-                      Classes="Outline"
-                      assists:ComboBoxAssist.Label="Type of periodicity" />
+                      HorizontalAlignment="Left"
+                      HorizontalContentAlignment="Center"
+                      VerticalContentAlignment="Center" />
+            
+            <TextBlock Grid.Row="2"
+                       Text="Due date"
+                       VerticalAlignment="Center"/>
+            
+            <controls:NullableDatePicker Grid.Row="2"
+                                         Grid.Column="1"
+                                         SelectedDate="{Binding DueDate, Mode=TwoWay}" />
+        </Grid>
 
-            <controls:NullableDatePicker SelectedDate="{Binding DueDate, Mode=TwoWay}" />
-        </StackPanel>
+        <Button Grid.Row="3" Command="{Binding AddToDoItemCommand}" Content="Add" Margin="5" />
 
-        <Button Grid.Row="4" Command="{Binding AddToDoItemCommand}" Content="Add" Margin="5" />
-
-        <ScrollViewer Grid.Row="5"
+        <ScrollViewer Grid.Row="4"
                       VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Disabled">
             <StackPanel>
