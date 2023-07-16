@@ -23,7 +23,7 @@
 
         <ScrollViewer Grid.Row="1"
                       VerticalScrollBarVisibility="Auto"
-                      HorizontalScrollBarVisibility="Auto">
+                      HorizontalScrollBarVisibility="Disabled">
             <StackPanel>
                 <ListBox Classes="ItemsDragAndDrop"
                          ItemsSource="{Binding Items}"

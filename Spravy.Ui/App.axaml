@@ -57,17 +57,20 @@
                     <Rectangle Width="10"
                                Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
 
-                    <Grid Grid.Column="1" ColumnDefinitions="*,*"
+                    <Grid Grid.Column="1" 
+                          ColumnDefinitions="*,Auto"
                           HorizontalAlignment="Stretch"
                           VerticalAlignment="Stretch"
                           Margin="5">
                         <StackPanel HorizontalAlignment="Left">
-                            <StackPanel Orientation="Horizontal">
+                            <Grid ColumnDefinitions="Auto,*">
                                 <CheckBox IsChecked="{Binding IsComplete}" />
 
-                                <TextBlock Text="{Binding Name}"
-                                           Classes="Headline6" />
-                            </StackPanel>
+                                <TextBlock Grid.Column="1"
+                                           Text="{Binding Name}"
+                                           Classes="Headline6" 
+                                           TextWrapping="Wrap" />
+                            </Grid>
 
                             <StackPanel>
                                 <TextBlock Text="{Binding DueDate, StringFormat=\{0:yyyy.MM.dd\}}"

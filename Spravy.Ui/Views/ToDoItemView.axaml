@@ -16,7 +16,7 @@
         <viewModels:ToDoItemViewModel />
     </Design.DataContext>
 
-    <Grid RowDefinitions="Auto,Auto, Auto, Auto, Auto,*">
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,*">
         <ContentControl Content="{Binding Path}"
                         Margin="5">
             <ContentControl.DataTemplates>
@@ -61,7 +61,7 @@
 
         <ScrollViewer Grid.Row="5"
                       VerticalScrollBarVisibility="Auto"
-                      HorizontalScrollBarVisibility="Auto">
+                      HorizontalScrollBarVisibility="Disabled">
             <StackPanel>
                 <controls:EditableTextBlock AcceptsReturn="True"
                                             AcceptsTab="True"
