@@ -21,14 +21,16 @@
                         Margin="5">
             <ContentControl.DataTemplates>
                 <DataTemplate DataType="models:ToDoItemParentNotify">
-                    <Button Command="{Binding $parent[views:ToDoItemView].MainViewModel.ChangeToDoItemByPathCommand}"
+                    <Button Margin="3"
+                            Command="{Binding $parent[views:ToDoItemView].MainViewModel.ChangeToDoItemByPathCommand}"
                             CommandParameter="{Binding}">
                         <TextBlock Text="{Binding Name}" />
                     </Button>
                 </DataTemplate>
 
                 <DataTemplate DataType="models:RootItem">
-                    <Button Command="{Binding $parent[views:ToDoItemView].MainViewModel.ToRootItemCommand}">
+                    <Button Margin="3"
+                            Command="{Binding $parent[views:ToDoItemView].MainViewModel.ToRootItemCommand}">
                         <TextBlock Text="{x:Static models:RootItem.Name}" />
                     </Button>
                 </DataTemplate>
