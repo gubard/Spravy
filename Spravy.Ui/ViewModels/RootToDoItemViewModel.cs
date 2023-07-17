@@ -8,12 +8,14 @@ using AutoMapper;
 using Avalonia.Collections;
 using ExtensionFramework.AvaloniaUi.Interfaces;
 using ExtensionFramework.Core.DependencyInjection.Attributes;
+using ExtensionFramework.Core.Ui.Interfaces;
 using ExtensionFramework.ReactiveUI.Models;
 using ReactiveUI;
 using Spravy.Core.Enums;
 using Spravy.Core.Interfaces;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
+using Spravy.Ui.Views;
 
 namespace Spravy.Ui.ViewModels;
 
@@ -22,7 +24,7 @@ public class RootToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDo
     public RootToDoItemViewModel() : base("root-to-do-item")
     {
         InitializedCommand = CreateCommandFromTask(InitializedAsync);
-        AddToDoItemCommand = CreateCommand(AddToDoItem);
+        AddToDoItemCommand = CreateCommandFromTask(AddToDoItemAsync);
         DeleteSubToDoItemCommand = CreateCommandFromTask<ToDoItemNotify>(DeleteSubToDoItemAsync);
         ChangeToDoItemCommand = CreateCommand<ToDoItemNotify>(ChangeToDoItem);
         SkipSubToDoItemCommand = CreateCommandFromTask<ToDoItemNotify>(SkipSubToDoItem);
@@ -71,9 +73,9 @@ public class RootToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDo
         await RefreshToDoItemAsync();
     }
 
-    private void AddToDoItem()
+    private async Task AddToDoItemAsync()
     {
-        Navigator.NavigateTo<AddRootToDoItemViewModel>();
+        await DialogViewer.ShowDialogAsync<AddRootToDoItemView>();
     }
 
     private void ChangeToDoItem(ToDoItemNotify item)

@@ -8,13 +8,16 @@ using AutoMapper;
 using Avalonia.Collections;
 using ExtensionFramework.AvaloniaUi.Controls;
 using ExtensionFramework.AvaloniaUi.Interfaces;
+using ExtensionFramework.Core.Common.Extensions;
 using ExtensionFramework.Core.DependencyInjection.Attributes;
+using ExtensionFramework.Core.Ui.Interfaces;
 using ExtensionFramework.ReactiveUI.Models;
 using ReactiveUI;
 using Spravy.Core.Enums;
 using Spravy.Core.Interfaces;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
+using Spravy.Ui.Views;
 
 namespace Spravy.Ui.ViewModels;
 
@@ -32,7 +35,7 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
     {
         DeleteSubToDoItemCommand = CreateCommandFromTask<ToDoItemNotify>(DeleteSubToDoItemAsync);
         ChangeToDoItemCommand = CreateCommand<ToDoItemNotify>(ChangeToDoItem);
-        AddToDoItemCommand = CreateCommand(AddToDoItem);
+        AddToDoItemCommand = CreateCommandFromTask(AddToDoItemAsync);
         ChangeToDoItemByPathCommand = CreateCommand<ToDoItemParentNotify>(ChangeToDoItemByPath);
         ToRootItemCommand = CreateCommand(ToRootItem);
         SkipSubToDoItemCommand = CreateCommandFromTask<ToDoItemNotify>(SkipSubToDoItem);
@@ -122,9 +125,11 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
         );
     }
 
-    private void AddToDoItem()
+    private async Task AddToDoItemAsync()
     {
-        Navigator.NavigateTo<AddToDoItemViewModel>(vm => vm.Parent = Mapper.Map<ToDoItemNotify>(this));
+        await DialogViewer.ShowDialogAsync<AddToDoItemView>(
+            view => view.ViewModel.ThrowIfNull().Parent = Mapper.Map<ToDoItemNotify>(this)
+        );
     }
 
     private async Task SkipSubToDoItem(ToDoItemNotify item)

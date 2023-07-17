@@ -55,6 +55,7 @@ public class AddToDoItemViewModel : RoutableViewModelBase
         var options = new AddToDoItemOptions(parentValue.Id, Name);
         await ToDoService.AddToDoItemAsync(options);
         Navigator.NavigateTo<ToDoItemViewModel>(vm => vm.Id = parentValue.Id);
+        DialogViewer.CloseDialog();
     }
 
     private async Task InitializedAsync()

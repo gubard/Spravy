@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
 using ExtensionFramework.Core.DependencyInjection.Attributes;
+using ExtensionFramework.Core.Ui.Interfaces;
 using ExtensionFramework.Core.Ui.Models;
 using ExtensionFramework.ReactiveUI.Models;
 using ReactiveUI;
@@ -42,5 +43,6 @@ public class AddRootToDoItemViewModel : RoutableViewModelBase
         var options = Mapper.Map<AddRootToDoItemOptions>(this);
         await ToDoService.AddRootToDoItemAsync(options);
         Navigator.NavigateTo(Configuration.ViewPipe[GetType()]);
+        DialogViewer.CloseDialog();
     }
 }

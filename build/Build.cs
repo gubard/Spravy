@@ -8,6 +8,8 @@ using Nuke.Common.Tools.DotNet;
 using Renci.SshNet;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
+namespace _build;
+
 class Build : NukeBuild
 {
     /// Support plugins are available for:
@@ -109,28 +111,28 @@ class Build : NukeBuild
 
                     CopyDirectory(desktopFolder.FullName, desktopAppFolder.FullName, true);
                     /*var browserFolder = PublishProject("Spravy.Ui.Browser");
- 
-                     var keyStoreFile = new FileInfo(Solution.Directory / "sign-key.keystore");
- 
-                     if (keyStoreFile.Exists)
-                     {
-                         keyStoreFile.Delete();
-                     }
- 
-                     await Cli.Wrap("keytool")
-                         .WithWorkingDirectory(Solution.Directory)
-                         .WithArguments(
-                             $"-genkey -v -keystore sign-key.keystore -alias spravy -keyalg RSA -keysize 2048 -validity 10000 -dname \"CN=Serhii Maksymov, OU=Serhii Maksymov FOP, O=Serhii Maksymov FOP, L=Kharkiv, S=Kharkiv State, C=Ukraine\" -storepass {AndroidSigningStorePass}"
-                         )
-                         .ExecuteAsync();
- 
-                     var androidFolder = PublishProject("Spravy.Ui.Android", setting => setting
-                         .AddProperty("AndroidKeyStore", "true")
-                         .AddProperty("AndroidSigningKeyStore", keyStoreFile.FullName)
-                         .AddProperty("AndroidSigningKeyAlias", "spravy")
-                         .AddProperty("AndroidSigningKeyPass", AndroidSigningKeyPass)
-                         .AddProperty("AndroidSigningStorePass", AndroidSigningStorePass)
-                     );*/
+
+                 var keyStoreFile = new FileInfo(Solution.Directory / "sign-key.keystore");
+
+                 if (keyStoreFile.Exists)
+                 {
+                     keyStoreFile.Delete();
+                 }
+
+                 await Cli.Wrap("keytool")
+                     .WithWorkingDirectory(Solution.Directory)
+                     .WithArguments(
+                         $"-genkey -v -keystore sign-key.keystore -alias spravy -keyalg RSA -keysize 2048 -validity 10000 -dname \"CN=Serhii Maksymov, OU=Serhii Maksymov FOP, O=Serhii Maksymov FOP, L=Kharkiv, S=Kharkiv State, C=Ukraine\" -storepass {AndroidSigningStorePass}"
+                     )
+                     .ExecuteAsync();
+
+                 var androidFolder = PublishProject("Spravy.Ui.Android", setting => setting
+                     .AddProperty("AndroidKeyStore", "true")
+                     .AddProperty("AndroidSigningKeyStore", keyStoreFile.FullName)
+                     .AddProperty("AndroidSigningKeyAlias", "spravy")
+                     .AddProperty("AndroidSigningKeyPass", AndroidSigningKeyPass)
+                     .AddProperty("AndroidSigningStorePass", AndroidSigningStorePass)
+                 );*/
                 }
             );
 
