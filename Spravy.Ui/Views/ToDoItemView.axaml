@@ -39,7 +39,8 @@
 
         <CheckBox Grid.Row="1"
                   Margin="5"
-                  IsChecked="{Binding IsComplete}" Content="Completed" />
+                  IsChecked="{Binding IsComplete}" Content="Completed"
+                  IsEnabled="False" />
 
         <Grid Grid.Row="2" ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto">
             <TextBlock Text="Name"
@@ -63,17 +64,20 @@
                       HorizontalAlignment="Left"
                       HorizontalContentAlignment="Center"
                       VerticalContentAlignment="Center" />
-            
+
             <TextBlock Grid.Row="2"
                        Text="Due date"
-                       VerticalAlignment="Center"/>
-            
+                       VerticalAlignment="Center" />
+
             <controls:NullableDatePicker Grid.Row="2"
                                          Grid.Column="1"
                                          SelectedDate="{Binding DueDate, Mode=TwoWay}" />
         </Grid>
 
-        <Button Grid.Row="3" Command="{Binding AddToDoItemCommand}" Content="Add" Margin="5" />
+        <Grid Grid.Row="3" ColumnDefinitions="*,*">
+            <Button Content="Complete" Margin="5" Command="{Binding CompleteToDoItemCommand}" />
+            <Button Grid.Column="1" Command="{Binding AddToDoItemCommand}" Content="Add" Margin="5" />
+        </Grid>
 
         <ScrollViewer Grid.Row="4"
                       VerticalScrollBarVisibility="Auto"

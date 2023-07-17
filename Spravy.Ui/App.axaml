@@ -66,7 +66,8 @@
                           Margin="5">
                         <StackPanel HorizontalAlignment="Left">
                             <Grid ColumnDefinitions="Auto,*">
-                                <CheckBox IsChecked="{Binding IsComplete}" />
+                                <CheckBox IsChecked="{Binding IsComplete}"
+                                          IsEnabled="False" />
 
                                 <TextBlock Grid.Column="1"
                                            Text="{Binding Name}"
@@ -107,9 +108,9 @@
                                     CommandParameter="{Binding}"
                                     Content="Delete" />
 
-                            <Button Command="{Binding $parent[interfaces:IToDoItemView].SkipSubToDoItemCommand}"
+                            <Button Command="{Binding $parent[interfaces:IToDoItemView].CompleteSubToDoItemCommand}"
                                     CommandParameter="{Binding}"
-                                    Content="Skip" />
+                                    Content="Complete" />
                         </StackPanel>
                     </Grid>
                 </Grid>
@@ -120,6 +121,7 @@
     <Application.Resources>
         <extensionFramework:ObjectToVisibleValueConverter x:Key="ObjectToVisibleValueConverter" />
         <converters:ToDoItemStatusToBrushValueConverter x:Key="ToDoItemStatusToBrushValueConverter" />
+        <converters:ReverseBooleanValueConverter x:Key="ReverseBooleanValueConverter" />
 
         <converters:ToDoItemNotifyToIsVisibleCompletedCountConverter
             x:Key="ToDoItemNotifyToIsVisibleCompletedCountConverter" />

@@ -19,7 +19,7 @@ public partial class RootToDoItemView : ReactiveUserControl<RootToDoItemViewMode
         AvaloniaXamlLoader.Load(this);
     }
 
-    public ICommand SkipSubToDoItemCommand => ViewModel.ThrowIfNull().SkipSubToDoItemCommand;
+    public ICommand CompleteSubToDoItemCommand => ViewModel.ThrowIfNull().CompleteSubToDoItemCommand;
     public ICommand DeleteSubToDoItemCommand => ViewModel.ThrowIfNull().DeleteSubToDoItemCommand;
     public ICommand ChangeToDoItemCommand => ViewModel.ThrowIfNull().ChangeToDoItemCommand;
 }

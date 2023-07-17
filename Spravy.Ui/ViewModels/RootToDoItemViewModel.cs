@@ -7,6 +7,7 @@ using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
 using ExtensionFramework.AvaloniaUi.Interfaces;
+using ExtensionFramework.Core.Common.Extensions;
 using ExtensionFramework.Core.DependencyInjection.Attributes;
 using ExtensionFramework.Core.Ui.Interfaces;
 using ExtensionFramework.ReactiveUI.Models;
@@ -27,7 +28,7 @@ public class RootToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDo
         AddToDoItemCommand = CreateCommandFromTask(AddToDoItemAsync);
         DeleteSubToDoItemCommand = CreateCommandFromTask<ToDoItemNotify>(DeleteSubToDoItemAsync);
         ChangeToDoItemCommand = CreateCommand<ToDoItemNotify>(ChangeToDoItem);
-        SkipSubToDoItemCommand = CreateCommandFromTask<ToDoItemNotify>(SkipSubToDoItem);
+        CompleteSubToDoItemCommand = CreateCommandFromTask<ToDoItemNotify>(CompleteSubToDoItemAsync);
     }
 
     public ICommand InitializedCommand { get; }
@@ -36,7 +37,7 @@ public class RootToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDo
     public ICommand ChangeToDoItemCommand { get; }
     public AvaloniaList<ToDoItemNotify> Items { get; } = new();
     public AvaloniaList<ToDoItemNotify> CompletedItems { get; } = new();
-    public ICommand SkipSubToDoItemCommand { get; }
+    public ICommand CompleteSubToDoItemCommand { get; }
 
     [Inject]
     public required IToDoService ToDoService { get; set; }
@@ -67,15 +68,23 @@ public class RootToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDo
         await InitializedAsync();
     }
 
-    private async Task SkipSubToDoItem(ToDoItemNotify item)
+    private async Task CompleteSubToDoItemAsync(ToDoItemNotify item)
     {
-        await ToDoService.SkipToDoItemAsync(item.Id);
+        await DialogViewer.ShowDialogAsync<CompleteToDoItemView>(
+            view =>
+            {
+                var viewModel = view.ViewModel.ThrowIfNull();
+                viewModel.IsDialog = true;
+                viewModel.Item = item;
+            }
+        );
+
         await RefreshToDoItemAsync();
     }
 
     private async Task AddToDoItemAsync()
     {
-        await DialogViewer.ShowDialogAsync<AddRootToDoItemView>();
+        await DialogViewer.ShowDialogAsync<AddRootToDoItemView>(v => v.ViewModel.ThrowIfNull().IsDialog = true);
     }
 
     private void ChangeToDoItem(ToDoItemNotify item)

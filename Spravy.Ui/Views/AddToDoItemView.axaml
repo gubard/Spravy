@@ -42,10 +42,9 @@
                  UseFloatingWatermark="True"
                  VerticalAlignment="Top" />
 
-        <DockPanel Grid.Row="2">
-            <Button DockPanel.Dock="Left" Command="{Binding NavigateBackCommand}" Content="Back" />
-            <Button DockPanel.Dock="Right" Command="{Binding AddToDoItemCommand}" Content="Add" />
-            <Control />
-        </DockPanel>
+        <Grid Grid.Row="2" ColumnDefinitions="*,*">
+            <Button Command="{Binding BackCommand}" Content="Back" />
+            <Button Grid.Column="1" Command="{Binding AddToDoItemCommand}" Content="Add" />
+        </Grid>
     </Grid>
 </reactiveUi:ReactiveUserControl>

@@ -23,10 +23,9 @@
                  Name="{x:Static views:AddRootToDoItemView.NameTextBoxName}" 
                  VerticalAlignment="Top" />
 
-        <DockPanel Grid.Row="1">
-            <Button DockPanel.Dock="Left" Command="{Binding NavigateBackCommand}" Content="Back" />
-            <Button DockPanel.Dock="Right" Command="{Binding AddRootToDoItemCommand}" Content="Add" />
-            <Control />
-        </DockPanel>
+        <Grid Grid.Row="1" ColumnDefinitions="*,*">
+            <Button Command="{Binding BackCommand}" Content="Back" />
+            <Button Grid.Column="1" Command="{Binding AddRootToDoItemCommand}" Content="Add" />
+        </Grid>
     </Grid>
 </reactiveUi:ReactiveUserControl>

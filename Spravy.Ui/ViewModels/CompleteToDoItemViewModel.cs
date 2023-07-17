@@ -1,0 +1,67 @@
+using System.Threading.Tasks;
+using System.Windows.Input;
+using ExtensionFramework.Core.DependencyInjection.Attributes;
+using ExtensionFramework.ReactiveUI.Models;
+using ReactiveUI;
+using Spravy.Core.Interfaces;
+using Spravy.Ui.Models;
+
+namespace Spravy.Ui.ViewModels;
+
+public class CompleteToDoItemViewModel : ViewModelBase
+{
+    private ToDoItemNotify? item;
+
+    public CompleteToDoItemViewModel()
+    {
+        SkipToDoItemCommand = CreateCommandFromTask(SkipToDoItemAsync);
+        CompleteToDoItemCommand = CreateCommandFromTask(CompleteToDoItemAsync);
+        IncompleteToDoItemCommand = CreateCommandFromTask(IncompleteToDoItemAsync);
+    }
+
+    public ToDoItemNotify? Item
+    {
+        get => item;
+        set => this.RaiseAndSetIfChanged(ref item, value);
+    }
+
+    public ICommand CompleteToDoItemCommand { get; }
+    public ICommand IncompleteToDoItemCommand { get; }
+    public ICommand SkipToDoItemCommand { get; }
+
+    [Inject]
+    public required IToDoService ToDoService { get; init; }
+
+    private async Task SkipToDoItemAsync()
+    {
+        if (Item is null)
+        {
+            return;
+        }
+
+        await ToDoService.SkipToDoItemAsync(Item.Id);
+        BackCommand.Execute(null);
+    }
+
+    private async Task CompleteToDoItemAsync()
+    {
+        if (Item is null)
+        {
+            return;
+        }
+
+        await ToDoService.UpdateCompleteStatusAsync(Item.Id, true);
+        BackCommand.Execute(null);
+    }
+
+    private async Task IncompleteToDoItemAsync()
+    {
+        if (Item is null)
+        {
+            return;
+        }
+
+        await ToDoService.UpdateCompleteStatusAsync(Item.Id, false);
+        BackCommand.Execute(null);
+    }
+}

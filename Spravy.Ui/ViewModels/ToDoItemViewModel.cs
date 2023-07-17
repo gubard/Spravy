@@ -38,8 +38,9 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
         AddToDoItemCommand = CreateCommandFromTask(AddToDoItemAsync);
         ChangeToDoItemByPathCommand = CreateCommand<ToDoItemParentNotify>(ChangeToDoItemByPath);
         ToRootItemCommand = CreateCommand(ToRootItem);
-        SkipSubToDoItemCommand = CreateCommandFromTask<ToDoItemNotify>(SkipSubToDoItem);
+        CompleteSubToDoItemCommand = CreateCommandFromTask<ToDoItemNotify>(CompleteSubToDoItemAsync);
         TypeOfPeriodicities = new(Enum.GetValues<TypeOfPeriodicity>());
+        CompleteToDoItemCommand = CreateCommandFromTask(CompleteToDoItemAsync);
         SubscribeProperties();
     }
 
@@ -49,9 +50,10 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
     public ICommand DeleteSubToDoItemCommand { get; }
     public ICommand ChangeToDoItemCommand { get; }
     public ICommand AddToDoItemCommand { get; }
+    public ICommand CompleteToDoItemCommand { get; }
     public ICommand ChangeToDoItemByPathCommand { get; }
     public ICommand ToRootItemCommand { get; }
-    public ICommand SkipSubToDoItemCommand { get; }
+    public ICommand CompleteSubToDoItemCommand { get; }
 
     [Inject]
     public required IToDoService ToDoService { get; set; }
@@ -98,6 +100,20 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
         set => this.RaiseAndSetIfChanged(ref description, value);
     }
 
+    private async Task CompleteToDoItemAsync()
+    {
+        await DialogViewer.ShowDialogAsync<CompleteToDoItemView>(
+            view =>
+            {
+                var viewModel = view.ViewModel.ThrowIfNull();
+                viewModel.IsDialog = true;
+                viewModel.Item = Mapper.Map<ToDoItemNotify>(this);
+            }
+        );
+
+        await RefreshToDoItemAsync();
+    }
+
     private async void OnNextId(Guid x)
     {
         await SafeExecuteAsync(RefreshToDoItemAsync);
@@ -128,13 +144,26 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
     private async Task AddToDoItemAsync()
     {
         await DialogViewer.ShowDialogAsync<AddToDoItemView>(
-            view => view.ViewModel.ThrowIfNull().Parent = Mapper.Map<ToDoItemNotify>(this)
+            view =>
+            {
+                var viewModel = view.ViewModel.ThrowIfNull();
+                viewModel.IsDialog = true;
+                viewModel.ThrowIfNull().Parent = Mapper.Map<ToDoItemNotify>(this);
+            }
         );
     }
 
-    private async Task SkipSubToDoItem(ToDoItemNotify item)
+    private async Task CompleteSubToDoItemAsync(ToDoItemNotify item)
     {
-        await ToDoService.SkipToDoItemAsync(item.Id);
+        await DialogViewer.ShowDialogAsync<CompleteToDoItemView>(
+            view =>
+            {
+                var viewModel = view.ViewModel.ThrowIfNull();
+                viewModel.IsDialog = true;
+                viewModel.Item = item;
+            }
+        );
+        
         await RefreshToDoItemAsync();
     }
 

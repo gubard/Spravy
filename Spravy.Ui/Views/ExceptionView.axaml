@@ -22,6 +22,6 @@
                  AcceptsReturn="True"
                  TextWrapping="Wrap" />
 
-        <Button Grid.Row="1" Command="{Binding NavigateBackCommand}" Content="Ok" />
+        <Button Grid.Row="1" Command="{Binding BackCommand}" Content="Ok" />
     </Grid>
 </reactiveUi:ReactiveUserControl>
