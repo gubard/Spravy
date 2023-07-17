@@ -229,24 +229,27 @@ public class EntityFrameworkToDoService : IToDoService
         item = item.ThrowIfNull();
         item.TypeOfPeriodicity = type;
 
-        switch (type)
+        if (item.DueDate is null)
         {
-            case TypeOfPeriodicity.None:
-                break;
-            case TypeOfPeriodicity.Daily:
-                item.DueDate = DateTimeOffset.Now.ToCurrentDay();
-                break;
-            case TypeOfPeriodicity.Weekly:
-                item.DueDate = DateTimeOffset.Now.ToCurrentDay();
-                break;
-            case TypeOfPeriodicity.Monthly:
-                item.DueDate = DateTimeOffset.Now.ToCurrentDay();
-                break;
-            case TypeOfPeriodicity.Annually:
-                item.DueDate = DateTimeOffset.Now.ToCurrentDay();
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(type), type, null);
+            switch (type)
+            {
+                case TypeOfPeriodicity.None:
+                    break;
+                case TypeOfPeriodicity.Daily:
+                    item.DueDate = DateTimeOffset.Now.ToCurrentDay();
+                    break;
+                case TypeOfPeriodicity.Weekly:
+                    item.DueDate = DateTimeOffset.Now.ToCurrentDay();
+                    break;
+                case TypeOfPeriodicity.Monthly:
+                    item.DueDate = DateTimeOffset.Now.ToCurrentDay();
+                    break;
+                case TypeOfPeriodicity.Annually:
+                    item.DueDate = DateTimeOffset.Now.ToCurrentDay();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+            }
         }
 
         await context.SaveChangesAsync();
