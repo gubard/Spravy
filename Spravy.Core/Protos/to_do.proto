@@ -20,6 +20,14 @@ service ToDoService {
   rpc UpdateOrderIndexToDoItem (UpdateOrderIndexToDoItemRequest) returns (UpdateOrderIndexToDoItemReply);
   rpc UpdateDescriptionToDoItem (UpdateDescriptionToDoItemRequest) returns (UpdateDescriptionToDoItemReply);
   rpc SkipToDoItem (SkipToDoItemRequest) returns (SkipToDoItemReply);
+  rpc FailToDoItem (FailToDoItemRequest) returns (FailToDoItemReply);
+}
+
+message FailToDoItemRequest {
+  bytes Id = 1;
+}
+
+message FailToDoItemReply {
 }
 
 message SkipToDoItemRequest {
@@ -127,6 +135,7 @@ message ToDoSubItemGrpc {
   string Description = 7;
   uint32 CompletedCount = 8;
   uint32 SkippedCount = 9;
+  uint32 FailedCount = 10;
 }
 
 message ToDoItemParentGrpc {

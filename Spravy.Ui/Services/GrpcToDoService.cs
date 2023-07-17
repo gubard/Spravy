@@ -226,4 +226,21 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
             throw new GrpcException(grpcChannel.Target, e);
         }
     }
+
+    public async Task FailToDoItemAsync(Guid id)
+    {
+        try
+        {
+            await client.FailToDoItemAsync(
+                new FailToDoItemRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                }
+            );
+        }
+        catch (Exception e)
+        {
+            throw new GrpcException(grpcChannel.Target, e);
+        }
+    }
 }

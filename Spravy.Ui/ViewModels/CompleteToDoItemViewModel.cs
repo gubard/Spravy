@@ -17,6 +17,7 @@ public class CompleteToDoItemViewModel : ViewModelBase
         SkipToDoItemCommand = CreateCommandFromTask(SkipToDoItemAsync);
         CompleteToDoItemCommand = CreateCommandFromTask(CompleteToDoItemAsync);
         IncompleteToDoItemCommand = CreateCommandFromTask(IncompleteToDoItemAsync);
+        FailToDoItemCommand = CreateCommandFromTask(FailToDoItemAsync);
     }
 
     public ToDoItemNotify? Item
@@ -28,9 +29,21 @@ public class CompleteToDoItemViewModel : ViewModelBase
     public ICommand CompleteToDoItemCommand { get; }
     public ICommand IncompleteToDoItemCommand { get; }
     public ICommand SkipToDoItemCommand { get; }
+    public ICommand FailToDoItemCommand { get; }
 
     [Inject]
     public required IToDoService ToDoService { get; init; }
+
+    private async Task FailToDoItemAsync()
+    {
+        if (Item is null)
+        {
+            return;
+        }
+
+        await ToDoService.FailToDoItemAsync(Item.Id);
+        BackCommand.Execute(null);
+    }
 
     private async Task SkipToDoItemAsync()
     {

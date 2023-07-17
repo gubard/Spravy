@@ -16,6 +16,7 @@ public class ToDoItemNotify : NotifyBase, IEquatable<ToDoItemNotify>
     private string description = string.Empty;
     private uint completedCount;
     private uint skippedCount;
+    private uint failedCount;
 
     public string Name
     {
@@ -69,6 +70,12 @@ public class ToDoItemNotify : NotifyBase, IEquatable<ToDoItemNotify>
     {
         get => skippedCount;
         set => this.RaiseAndSetIfChanged(ref skippedCount, value);
+    }
+
+    public uint FailedCount
+    {
+        get => failedCount;
+        set => this.RaiseAndSetIfChanged(ref failedCount, value);
     }
 
     public bool Equals(ToDoItemNotify? other)

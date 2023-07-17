@@ -148,4 +148,11 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
 
         return new SkipToDoItemReply();
     }
+
+    public override async Task<FailToDoItemReply> FailToDoItem(FailToDoItemRequest request, ServerCallContext context)
+    {
+        await toDoService.FailToDoItemAsync(mapper.Map<Guid>(request.Id));
+
+        return new FailToDoItemReply();
+    }
 }

@@ -9,24 +9,33 @@
                                 x:Class="Spravy.Ui.Views.CompleteToDoItemView"
                                 x:DataType="viewModels:CompleteToDoItemViewModel">
     <ItemsControl>
+        <TextBlock Text="{Binding Item.Name}"
+                   HorizontalAlignment="Center" />
+
         <Button Command="{Binding CompleteToDoItemCommand}"
                 Theme="{StaticResource OutlineButton}"
                 Content="Complete"
                 BorderBrush="Green"
-                Margin="3" 
-                IsVisible="{Binding Item.IsComplete, Converter={StaticResource ReverseBooleanValueConverter}}"/>
-        
+                Margin="3"
+                IsVisible="{Binding Item.IsComplete, Converter={StaticResource ReverseBooleanValueConverter}}" />
+
         <Button Command="{Binding IncompleteToDoItemCommand}"
                 Theme="{StaticResource OutlineButton}"
                 Content="Incomplete"
                 BorderBrush="Aqua"
                 Margin="3"
-                IsVisible="{Binding Item.IsComplete}"/>
+                IsVisible="{Binding Item.IsComplete}" />
 
         <Button Command="{Binding SkipToDoItemCommand}"
                 Theme="{StaticResource OutlineButton}"
                 Content="Skip"
                 BorderBrush="Yellow"
+                Margin="3" />
+
+        <Button Command="{Binding FailToDoItemCommand}"
+                Theme="{StaticResource OutlineButton}"
+                Content="Fail"
+                BorderBrush="Red"
                 Margin="3" />
 
         <Button Classes="light"

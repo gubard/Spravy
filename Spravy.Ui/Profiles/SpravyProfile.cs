@@ -82,7 +82,8 @@ public class SpravyProfile : Profile
                     (ToDoItemStatus)src.Status,
                     src.Description,
                     src.CompletedCount,
-                    src.SkippedCount
+                    src.SkippedCount,
+                    src.FailedCount
                 )
             );
     }

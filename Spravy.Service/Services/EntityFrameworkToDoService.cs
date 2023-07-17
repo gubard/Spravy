@@ -38,7 +38,8 @@ public class EntityFrameworkToDoService : IToDoService
                 status,
                 item.Description,
                 item.CompletedCount,
-                item.SkippedCount
+                item.SkippedCount,
+                item.FailedCount
             );
 
             result.Add(toDoSubItem);
@@ -152,7 +153,8 @@ public class EntityFrameworkToDoService : IToDoService
                 status,
                 subItem.Description,
                 subItem.CompletedCount,
-                subItem.SkippedCount
+                subItem.SkippedCount,
+                subItem.FailedCount
             );
 
             toDoSubItems.Add(toDoSubItem);
@@ -271,7 +273,7 @@ public class EntityFrameworkToDoService : IToDoService
 
         if (isComplete)
         {
-            var isCanComplete = await IsCanCompleteOrSkipToDoItem(item, item.DueDate);
+            var isCanComplete = await IsCanCompleteOrSkipToDoItem(item);
 
             if (!isCanComplete)
             {
@@ -287,6 +289,19 @@ public class EntityFrameworkToDoService : IToDoService
         }
 
         await context.SaveChangesAsync();
+    }
+
+    private Task<bool> IsCanCompleteOrSkipToDoItem(ToDoItemEntity item)
+    {
+        if (item.DueDate.HasValue)
+        {
+            if (item.DueDate.Value.ToCurrentDay() > DateTimeOffset.Now.ToCurrentDay())
+            {
+                return Task.FromResult(false);
+            }
+        }
+
+        return IsCanCompleteOrSkipToDoItem(item, item.DueDate);
     }
 
     private async Task<bool> IsCanCompleteOrSkipToDoItem(ToDoItemEntity item, DateTimeOffset? rootDue)
@@ -376,7 +391,7 @@ public class EntityFrameworkToDoService : IToDoService
     {
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
-        var isCanComplete = await IsCanCompleteOrSkipToDoItem(item, item.DueDate);
+        var isCanComplete = await IsCanCompleteOrSkipToDoItem(item);
 
         if (!isCanComplete)
         {
@@ -384,6 +399,22 @@ public class EntityFrameworkToDoService : IToDoService
         }
 
         item.SkippedCount++;
+        UpdateCompleteStatus(item);
+        await context.SaveChangesAsync();
+    }
+
+    public async Task FailToDoItemAsync(Guid id)
+    {
+        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
+        item = item.ThrowIfNull();
+        var isCanComplete = await IsCanCompleteOrSkipToDoItem(item);
+
+        if (!isCanComplete)
+        {
+            throw new Exception("Need close sub tasks.");
+        }
+
+        item.FailedCount++;
         UpdateCompleteStatus(item);
         await context.SaveChangesAsync();
     }
