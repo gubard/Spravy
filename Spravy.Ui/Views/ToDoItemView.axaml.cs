@@ -22,4 +22,5 @@ public partial class ToDoItemView : MainReactiveUserControl<ToDoItemViewModel>, 
     public ICommand CompleteSubToDoItemCommand => ViewModel.ThrowIfNull().CompleteSubToDoItemCommand;
     public ICommand DeleteSubToDoItemCommand => ViewModel.ThrowIfNull().DeleteSubToDoItemCommand;
     public ICommand ChangeToDoItemCommand => ViewModel.ThrowIfNull().ChangeToDoItemCommand;
+    public ICommand ChangeParentToDoItemCommand  => ViewModel.ThrowIfNull().ChangeParentToDoItemCommand;
 }

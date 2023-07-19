@@ -10,7 +10,6 @@ using ExtensionFramework.AvaloniaUi.Controls;
 using ExtensionFramework.AvaloniaUi.Interfaces;
 using ExtensionFramework.Core.Common.Extensions;
 using ExtensionFramework.Core.DependencyInjection.Attributes;
-using ExtensionFramework.Core.Ui.Interfaces;
 using ExtensionFramework.ReactiveUI.Models;
 using ReactiveUI;
 using Spravy.Core.Enums;
@@ -41,6 +40,7 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
         CompleteSubToDoItemCommand = CreateCommandFromTask<ToDoItemNotify>(CompleteSubToDoItemAsync);
         TypeOfPeriodicities = new(Enum.GetValues<TypeOfPeriodicity>());
         CompleteToDoItemCommand = CreateCommandFromTask(CompleteToDoItemAsync);
+        SearchCommand = CreateCommand(Search);
         SubscribeProperties();
     }
 
@@ -49,7 +49,9 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
     public AvaloniaList<ToDoItemNotify> Items { get; } = new();
     public ICommand DeleteSubToDoItemCommand { get; }
     public ICommand ChangeToDoItemCommand { get; }
+    public ICommand ChangeParentToDoItemCommand { get; }
     public ICommand AddToDoItemCommand { get; }
+    public ICommand SearchCommand { get; }
     public ICommand CompleteToDoItemCommand { get; }
     public ICommand ChangeToDoItemByPathCommand { get; }
     public ICommand ToRootItemCommand { get; }
@@ -98,6 +100,11 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
     {
         get => description;
         set => this.RaiseAndSetIfChanged(ref description, value);
+    }
+
+    private void Search()
+    {
+        Navigator.NavigateTo<SearchViewModel>();
     }
 
     private async Task CompleteToDoItemAsync()
@@ -163,7 +170,7 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
                 viewModel.Item = item;
             }
         );
-        
+
         await RefreshToDoItemAsync();
     }
 

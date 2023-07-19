@@ -18,4 +18,5 @@ public interface IToDoService
     Task UpdateDescriptionToDoItemAsync(Guid id, string description);
     Task SkipToDoItemAsync(Guid id);
     Task FailToDoItemAsync(Guid id);
+    Task<IEnumerable<ToDoSubItem>> SearchAsync(string searchText);
 }

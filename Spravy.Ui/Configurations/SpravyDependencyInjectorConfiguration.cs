@@ -12,7 +12,6 @@ using ExtensionFramework.Core.DependencyInjection.Interfaces;
 using ExtensionFramework.Core.DependencyInjection.Extensions;
 using ExtensionFramework.Core.Ui.Models;
 using ExtensionFramework.ReactiveUI.Interfaces;
-using Grpc.Net.Client.Web;
 using Microsoft.Extensions.Configuration;
 using Spravy.Core.Interfaces;
 using Spravy.Ui.Enums;

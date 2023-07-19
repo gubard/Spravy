@@ -21,6 +21,15 @@ service ToDoService {
   rpc UpdateDescriptionToDoItem (UpdateDescriptionToDoItemRequest) returns (UpdateDescriptionToDoItemReply);
   rpc SkipToDoItem (SkipToDoItemRequest) returns (SkipToDoItemReply);
   rpc FailToDoItem (FailToDoItemRequest) returns (FailToDoItemReply);
+  rpc Search (SearchRequest) returns (SearchReply);
+}
+
+message SearchRequest {
+  string SearchText = 1;
+}
+
+message SearchReply {
+  repeated ToDoSubItemGrpc Items = 1;
 }
 
 message FailToDoItemRequest {

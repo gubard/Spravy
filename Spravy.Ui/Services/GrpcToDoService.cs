@@ -243,4 +243,23 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
             throw new GrpcException(grpcChannel.Target, e);
         }
     }
+
+    public async Task<IEnumerable<ToDoSubItem>> SearchAsync(string searchText)
+    {
+        try
+        {
+            var reply = await client.SearchAsync(
+                new SearchRequest
+                {
+                    SearchText = searchText
+                }
+            );
+
+            return reply.Items.Select(x => mapper.Map<ToDoSubItem>(x)).ToArray();
+        }
+        catch (Exception e)
+        {
+            throw new GrpcException(grpcChannel.Target, e);
+        }
+    }
 }

@@ -422,6 +422,38 @@ public class EntityFrameworkToDoService : IToDoService
         await context.SaveChangesAsync();
     }
 
+    public async Task<IEnumerable<ToDoSubItem>> SearchAsync(string searchText)
+    {
+        var items = await context.Set<ToDoItemEntity>()
+            .AsNoTracking()
+            .Where(x => x.Name.Contains(searchText))
+            .ToArrayAsync();
+
+        var result = new List<ToDoSubItem>();
+
+        foreach (var item in items)
+        {
+            var status = await GetStatusAsync(item);
+
+            var toDoSubItem = new ToDoSubItem(
+                item.Id,
+                item.Name,
+                item.IsComplete,
+                item.DueDate,
+                item.OrderIndex,
+                status,
+                item.Description,
+                item.CompletedCount,
+                item.SkippedCount,
+                item.FailedCount
+            );
+
+            result.Add(toDoSubItem);
+        }
+
+        return result;
+    }
+
     private async Task NormalizeOrderIndexAsync(Guid? parentId)
     {
         var items = await context.Set<ToDoItemEntity>()

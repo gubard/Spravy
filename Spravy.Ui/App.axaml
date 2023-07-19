@@ -8,6 +8,7 @@
              xmlns:themes="clr-namespace:Material.Styles.Themes;assembly=Material.Styles"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:dialogHostAvalonia="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
+             xmlns:controls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
              x:Class="Spravy.Ui.App"
              RequestedThemeVariant="Dark">
     <Application.Styles>
@@ -42,20 +43,16 @@
                 </BehaviorCollectionTemplate>
             </Setter>
         </Style>
+
+        <Style Selector="Button">
+            <Setter Property="Margin" Value="5" />
+        </Style>
     </Application.Styles>
 
     <Application.DataTemplates>
         <DataTemplate DataType="models:ToDoItemNotify">
-            <Button Padding="0"
-                    Margin="0"
-                    BorderThickness="0"
-                    Background="Transparent"
-                    ToolTip.Tip="{Binding Description}"
-                    VerticalContentAlignment="Stretch"
-                    HorizontalContentAlignment="Stretch"
-                    Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
-                    CommandParameter="{Binding}">
-                <Grid ColumnDefinitions="Auto,*" ToolTip.Tip="{Binding Description}">
+            <controls:Card ToolTip.Tip="{Binding Description, Converter={StaticResource EmptyStringToNullConverter}}">
+                <Grid ColumnDefinitions="Auto,*">
                     <Rectangle Width="10"
                                Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
 
@@ -112,18 +109,34 @@
                             </Grid>
                         </StackPanel>
 
-                        <StackPanel Grid.Column="1" Orientation="Horizontal">
-                            <Button Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
-                                    CommandParameter="{Binding}"
-                                    Content="Delete" />
+                        <Grid Grid.Column="1" ColumnDefinitions="*,*" RowDefinitions="*,*">
+                            <Button
+                                Command="{Binding $parent[interfaces:IToDoItemView].CompleteSubToDoItemCommand}"
+                                CommandParameter="{Binding}">
+                                <avalonia:MaterialIcon Kind="Check" />
+                            </Button>
 
-                            <Button Command="{Binding $parent[interfaces:IToDoItemView].CompleteSubToDoItemCommand}"
-                                    CommandParameter="{Binding}"
-                                    Content="Complete" />
-                        </StackPanel>
+                            <Button Grid.Column="1"
+                                    Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
+                                    CommandParameter="{Binding}">
+                                <avalonia:MaterialIcon Kind="Delete" />
+                            </Button>
+
+                            <Button Grid.Row="1"
+                                    Command="{Binding $parent[interfaces:IToDoItemView].ChangeParentToDoItemCommand}">
+                                <avalonia:MaterialIcon Kind="SwapHorizontal" />
+                            </Button>
+
+                            <Button Grid.Column="1"
+                                    Grid.Row="1"
+                                    Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
+                                    CommandParameter="{Binding}">
+                                <avalonia:MaterialIcon Kind="Send" />
+                            </Button>
+                        </Grid>
                     </Grid>
                 </Grid>
-            </Button>
+            </controls:Card>
         </DataTemplate>
     </Application.DataTemplates>
 
@@ -131,6 +144,7 @@
         <extensionFramework:ObjectToVisibleValueConverter x:Key="ObjectToVisibleValueConverter" />
         <converters:ToDoItemStatusToBrushValueConverter x:Key="ToDoItemStatusToBrushValueConverter" />
         <converters:ReverseBooleanValueConverter x:Key="ReverseBooleanValueConverter" />
+        <converters:EmptyStringToNullConverter x:Key="EmptyStringToNullConverter" />
 
         <converters:ToDoItemNotifyToIsVisibleCompletedCountConverter
             x:Key="ToDoItemNotifyToIsVisibleCompletedCountConverter" />

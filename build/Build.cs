@@ -86,6 +86,7 @@ class Build : NukeBuild
                     using var ftpClient = new FtpClient("192.168.50.2", "vafnir", FtpPassword);
                     ftpClient.Connect();
                     var migratorFolder = PublishProject("Spravy.Db.Sqlite.Migrator");
+                    ftpClient.DeleteDirectory("/home/vafnir/Spravy.Db.Sqlite.Migrator", FtpListOption.Recursive);
                     ftpClient.UploadDirectory(migratorFolder.FullName, "/home/vafnir/Spravy.Db.Sqlite.Migrator");
 
                     using var commandMigrator =
@@ -94,6 +95,7 @@ class Build : NukeBuild
                         );
 
                     var serviceFolder = PublishProject("Spravy.Service");
+                    ftpClient.DeleteDirectory("/home/vafnir/Spravy.Service", FtpListOption.Recursive);
                     ftpClient.UploadDirectory(serviceFolder.FullName, "/home/vafnir/Spravy.Service");
 
                     using var commandService =

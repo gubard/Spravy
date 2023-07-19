@@ -155,4 +155,13 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
 
         return new FailToDoItemReply();
     }
+
+    public override async Task<SearchReply> Search(SearchRequest request, ServerCallContext context)
+    {
+        var items = await toDoService.SearchAsync(request.SearchText);
+        var reply = new SearchReply();
+        reply.Items.AddRange(items.Select(x => mapper.Map<ToDoSubItemGrpc>(x)));
+
+        return reply;
+    }
 }

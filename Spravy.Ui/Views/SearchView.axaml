@@ -1,0 +1,50 @@
+<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:SearchViewModel"
+                                xmlns="https://github.com/avaloniaui"
+                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                                xmlns:reactiveUi="http://reactiveui.net"
+                                xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
+                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                                xmlns:views="clr-namespace:Spravy.Ui.Views"
+                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                                x:Class="Spravy.Ui.Views.SearchView"
+                                x:DataType="viewModels:SearchViewModel">
+    <UserControl.KeyBindings>
+        <KeyBinding Gesture="Enter" Command="{Binding SearchCommand}" />
+    </UserControl.KeyBindings>
+
+    <Grid RowDefinitions="Auto,*">
+        <Grid ColumnDefinitions="*,*,*">
+            <TextBox  Name="{x:Static views:SearchView.SearchTextTextBoxName}"
+                      BorderBrush="{Binding $self.Foreground}"
+                      BorderThickness="1"
+                      Classes="solo"
+                      Theme="{StaticResource SoloTextBox}"
+                      Watermark="To do item name"
+                      CornerRadius="32"
+                      Margin="8"
+                      Text="{Binding SearchText}">
+                <TextBox.InnerLeftContent>
+                    <Border Height="{Binding $parent[TextBox].Height}" Width="{Binding $self.Bounds.Height}">
+                        <avalonia:MaterialIcon HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Kind="Magnify"
+                                               Width="20"
+                                               Height="20" />
+                    </Border>
+                </TextBox.InnerLeftContent>
+            </TextBox>
+
+            <Button Grid.Column="1" Command="{Binding SearchCommand}">
+                <avalonia:MaterialIcon Kind="Search" />
+            </Button>
+            <Button Grid.Column="2" Command="{Binding BackCommand}">
+                <avalonia:MaterialIcon Kind="ArrowLeft" />
+            </Button>
+        </Grid>
+
+
+        <ItemsControl Grid.Row="1" ItemsSource="{Binding SearchResult}" />
+    </Grid>
+</reactiveUi:ReactiveUserControl>

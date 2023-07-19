@@ -6,6 +6,7 @@
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                 xmlns:models="clr-namespace:Spravy.Ui.Models"
                                 xmlns:views="clr-namespace:Spravy.Ui.Views"
+                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.AddToDoItemView"
                                 x:DataType="viewModels:AddToDoItemViewModel">
@@ -43,8 +44,13 @@
                  VerticalAlignment="Top" />
 
         <Grid Grid.Row="2" ColumnDefinitions="*,*">
-            <Button Command="{Binding BackCommand}" Content="Back" />
-            <Button Grid.Column="1" Command="{Binding AddToDoItemCommand}" Content="Add" />
+            <Button Command="{Binding BackCommand}">
+                <avalonia:MaterialIcon Kind="ArrowBack" />
+            </Button>
+
+            <Button Grid.Column="1" Command="{Binding AddToDoItemCommand}">
+                <avalonia:MaterialIcon Kind="Plus" />
+            </Button>
         </Grid>
     </Grid>
 </reactiveUi:ReactiveUserControl>

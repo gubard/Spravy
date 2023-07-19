@@ -6,6 +6,7 @@
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                 xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
+                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.ExceptionView"
                                 x:DataType="viewModels:ExceptionViewModel">
@@ -22,6 +23,8 @@
                  AcceptsReturn="True"
                  TextWrapping="Wrap" />
 
-        <Button Grid.Row="1" Command="{Binding BackCommand}" Content="Ok" />
+        <Button Grid.Row="1" Command="{Binding BackCommand}">
+            <avalonia:MaterialIcon Kind="ArrowLeft" />
+        </Button>
     </Grid>
 </reactiveUi:ReactiveUserControl>

@@ -5,6 +5,7 @@
                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
+                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.RootToDoItemView"
                                 x:DataType="viewModels:RootToDoItemViewModel">
@@ -19,7 +20,14 @@
     </Interaction.Behaviors>
 
     <Grid RowDefinitions="Auto,*">
-        <Button Command="{Binding AddToDoItemCommand}" Content="Add" />
+        <Grid ColumnDefinitions="*,*">
+            <Button Command="{Binding AddToDoItemCommand}">
+                <avalonia:MaterialIcon Kind="Plus" />
+            </Button>
+            <Button Grid.Column="1" Command="{Binding SearchCommand}">
+                <avalonia:MaterialIcon Kind="Search" />
+            </Button>
+        </Grid>
 
         <ScrollViewer Grid.Row="1"
                       VerticalScrollBarVisibility="Auto"
