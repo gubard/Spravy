@@ -15,12 +15,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <AndroidResource Include="Icon.png">
-            <Link>Resources\drawable\Icon.png</Link>
-        </AndroidResource>
-    </ItemGroup>
-
-    <ItemGroup>
         <PackageReference Include="Avalonia.Android" Version="11.0.0" />
     </ItemGroup>
 
@@ -33,5 +27,11 @@
       <EmbeddedResource Include="appsettings.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <AndroidResource Include="..\Spravy.Ui\Assets\Images\Logo.png">
+        <Link>Resources\drawable\Icon.png</Link>
+      </AndroidResource>
     </ItemGroup>
 </Project>
