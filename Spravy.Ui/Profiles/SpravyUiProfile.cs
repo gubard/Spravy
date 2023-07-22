@@ -21,6 +21,17 @@ public class SpravyUiProfile : Profile
         CreateMap<ToDoSubItemValueNotify, AddToDoItemOptions>()
             .ConstructUsing(x => new AddToDoItemOptions(x.Id, x.Name));
 
+        CreateMap<ActiveToDoItem?, ActiveToDoItemNotify?>()
+            .ConvertUsing(
+                (source, _, resolutionContext) => source is null
+                    ? null
+                    : new ActiveToDoItemNotify
+                    {
+                        Id = resolutionContext.Mapper.Map<Guid>(source.Value.Id),
+                        Name = source.Value.Name
+                    }
+            );
+
         CreateMap<ToDoSubItemValue, ToDoSubItemNotify>()
             .ConvertUsing(
                 (source, _, resolutionContext) => resolutionContext.Mapper.Map<ToDoSubItemValueNotify>(source)

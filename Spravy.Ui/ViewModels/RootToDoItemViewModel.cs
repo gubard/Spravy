@@ -35,6 +35,7 @@ public class RootToDoItemViewModel : RoutableViewModelBase,
         AddSubToDoItemToCurrentCommand = CreateCommandFromTask<ToDoSubItemNotify>(AddCurrentToDoItemAsync);
         RemoveSubToDoItemFromCurrentCommand = CreateCommandFromTask<ToDoSubItemNotify>(RemoveCurrentToDoItemAsync);
         ToCurrentItemsCommand = CreateCommand(ToCurrentItems);
+        ChangeToActiveDoItemCommand = CreateCommand<ActiveToDoItemNotify>(ChangeToActiveDoItem);
     }
 
     public ICommand ToCurrentItemsCommand { get; }
@@ -47,6 +48,7 @@ public class RootToDoItemViewModel : RoutableViewModelBase,
     public ICommand ChangeParentToDoItemCommand { get; }
     public ICommand AddSubToDoItemToCurrentCommand { get; }
     public ICommand RemoveSubToDoItemFromCurrentCommand { get; }
+    public ICommand ChangeToActiveDoItemCommand { get; }
     public AvaloniaList<ToDoSubItemNotify> Items { get; } = new();
     public AvaloniaList<ToDoSubItemNotify> CompletedItems { get; } = new();
 
@@ -88,6 +90,11 @@ public class RootToDoItemViewModel : RoutableViewModelBase,
         CompletedItems.AddRange(source.Where(x => x.Status == ToDoItemStatus.Complete).OrderBy(x => x.OrderIndex));
         SubscribeItems(Items);
         SubscribeItems(CompletedItems);
+    }
+    
+    private void ChangeToActiveDoItem(ActiveToDoItemNotify item)
+    {
+        Navigator.NavigateTo<ToDoItemValueViewModel>(vm => vm.Id = item.Id);
     }
 
     private void ChangeToDoItem(ToDoSubItemNotify subItemValue)

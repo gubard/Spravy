@@ -25,6 +25,26 @@ public class SpravyProfile : Profile
         CreateMap<ToDoSubItemGroup, ToDoSubItemGroupGrpc>();
         CreateMap<AddToDoItemOptions, AddToDoItemRequest>();
         CreateMap<UpdateOrderIndexToDoItemOptions, UpdateOrderIndexToDoItemRequest>();
+        CreateMap<ActiveToDoItem?, ActiveToDoItemGrpc>();
+        CreateMap<ActiveToDoItem, ActiveToDoItemGrpc>();
+
+        CreateMap<Guid?, ByteString>()
+            .ConvertUsing(x => x.HasValue ? ByteString.CopyFrom(x.Value.ToByteArray()) : ByteString.Empty);
+        CreateMap<AddToDoItemRequest, AddToDoItemOptions>()
+            .ConstructUsing(x => new AddToDoItemOptions(new Guid(x.ParentId.ToByteArray()), x.Name));
+        CreateMap<AddRootToDoItemRequest, AddRootToDoItemOptions>()
+            .ConstructUsing(x => new AddRootToDoItemOptions(x.Name));
+        CreateMap<ByteString, Guid>()
+            .ConstructUsing(x => new Guid(x.ToByteArray()));
+        CreateMap<ByteString, Guid?>()
+            .ConvertUsing(x => x.IsEmpty ? null : new Guid(x.ToByteArray()));
+
+        CreateMap<ActiveToDoItemGrpc, ActiveToDoItem?>()
+            .ConvertUsing(
+                (source, _, resolutionContext) => source is null
+                    ? null
+                    : new ActiveToDoItem(resolutionContext.Mapper.Map<Guid>(source.Id), source.Name)
+            );
 
         CreateMap<DateTimeOffset, DateTimeOffsetGrpc>()
             .ConvertUsing(
@@ -50,6 +70,7 @@ public class SpravyProfile : Profile
                     result.Parents.AddRange(
                         resolutionContext.Mapper.Map<IEnumerable<ToDoItemParentGrpc>>(source.Parents)
                     );
+
                     result.Items.AddRange(resolutionContext.Mapper.Map<IEnumerable<ToDoSubItemGrpc>>(source.Items));
 
                     switch (source)
@@ -114,7 +135,8 @@ public class SpravyProfile : Profile
                         Id = resolutionContext.Mapper.Map<ByteString>(source.Id),
                         Name = source.Name,
                         OrderIndex = source.OrderIndex,
-                        IsCurrent = source.IsCurrent
+                        IsCurrent = source.IsCurrent,
+                        Active = resolutionContext.Mapper.Map<ActiveToDoItemGrpc>(source.Active),
                     };
 
                     switch (source)
@@ -141,6 +163,8 @@ public class SpravyProfile : Profile
                     switch (source.ParametersCase)
                     {
                         case ToDoSubItemGrpc.ParametersOneofCase.Value:
+                            var active = resolutionContext.Mapper.Map<ActiveToDoItem?>(source.Active);
+
                             return new ToDoSubItemValue(
                                 resolutionContext.Mapper.Map<Guid>(source.Id),
                                 source.Name,
@@ -152,7 +176,8 @@ public class SpravyProfile : Profile
                                 source.Value.CompletedCount,
                                 source.Value.SkippedCount,
                                 source.Value.FailedCount,
-                                source.IsCurrent
+                                source.IsCurrent,
+                                active
                             );
                         case ToDoSubItemGrpc.ParametersOneofCase.Group:
                             return new ToDoSubItemGroup(
@@ -161,23 +186,13 @@ public class SpravyProfile : Profile
                                 source.OrderIndex,
                                 (ToDoItemStatus)source.Status,
                                 source.Description,
-                                source.IsCurrent
+                                source.IsCurrent,
+                                resolutionContext.Mapper.Map<ActiveToDoItem?>(source.Active)
                             );
                         default: throw new ArgumentOutOfRangeException();
                     }
                 }
             );
-
-        CreateMap<Guid?, ByteString>()
-            .ConvertUsing(x => x.HasValue ? ByteString.CopyFrom(x.Value.ToByteArray()) : ByteString.Empty);
-        CreateMap<AddToDoItemRequest, AddToDoItemOptions>()
-            .ConstructUsing(x => new AddToDoItemOptions(new Guid(x.ParentId.ToByteArray()), x.Name));
-        CreateMap<AddRootToDoItemRequest, AddRootToDoItemOptions>()
-            .ConstructUsing(x => new AddRootToDoItemOptions(x.Name));
-        CreateMap<ByteString, Guid>()
-            .ConstructUsing(x => new Guid(x.ToByteArray()));
-        CreateMap<ByteString, Guid?>()
-            .ConvertUsing(x => x.IsEmpty ? null : new Guid(x.ToByteArray()));
 
         CreateMap<DateTimeOffset?, DateTimeOffsetGrpc>()
             .ConvertUsing(

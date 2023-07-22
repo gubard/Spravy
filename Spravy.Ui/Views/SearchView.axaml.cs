@@ -32,5 +32,5 @@ public partial class SearchView : ReactiveUserControl<SearchViewModel>, IToDoIte
     public ICommand CompleteSubToDoItemCommand => ViewModel.ThrowIfNull().CompleteSubToDoItemCommand;
     public ICommand DeleteSubToDoItemCommand => ViewModel.ThrowIfNull().DeleteSubToDoItemCommand;
     public ICommand ChangeToDoItemCommand => ViewModel.ThrowIfNull().ChangeToDoItemCommand;
-    public ICommand ChangeParentToDoItemCommand => ViewModel.ThrowIfNull().ChangeParentToDoItemCommand;
+    public ICommand ChangeToActiveDoItemCommand => ViewModel.ThrowIfNull().ChangeToActiveDoItemCommand;
 }

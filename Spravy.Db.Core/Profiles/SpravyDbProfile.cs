@@ -12,9 +12,13 @@ public class SpravyDbProfile : Profile
     public const string ParentsName = "Parents";
     public const string ItemsName = "Items";
     public const string ValueName = "Value";
+    public const string ActiveName = "Active";
 
     public SpravyDbProfile()
     {
+        CreateMap<ToDoItemEntity, ActiveToDoItem>()
+            .ConvertUsing((source, _, _) => new ActiveToDoItem(source.Id, source.Name));
+
         CreateMap<ToDoItemEntity, IToDoSubItem>()
             .ConvertUsing(
                 (source, _, resolutionContext) =>
@@ -33,7 +37,8 @@ public class SpravyDbProfile : Profile
                                 source.Value.CompletedCount,
                                 source.Value.SkippedCount,
                                 source.Value.FailedCount,
-                                source.IsCurrent
+                                source.IsCurrent,
+                                (ActiveToDoItem?)resolutionContext.Items[ActiveName]
                             );
                         case ToDoItemType.Group:
                             return new ToDoSubItemGroup(
@@ -42,7 +47,8 @@ public class SpravyDbProfile : Profile
                                 source.OrderIndex,
                                 (ToDoItemStatus)resolutionContext.Items[StatusName],
                                 source.Description,
-                                source.IsCurrent
+                                source.IsCurrent,
+                                (ActiveToDoItem?)resolutionContext.Items[ActiveName]
                             );
                         default:
                             throw new ArgumentOutOfRangeException();

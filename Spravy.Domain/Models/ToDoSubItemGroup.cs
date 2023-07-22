@@ -5,7 +5,7 @@ namespace Spravy.Domain.Models;
 
 public readonly struct ToDoSubItemGroup : IToDoSubItem
 {
-    public ToDoSubItemGroup(Guid id, string name, ulong orderIndex, ToDoItemStatus status, string description, bool isCurrent)
+    public ToDoSubItemGroup(Guid id, string name, ulong orderIndex, ToDoItemStatus status, string description, bool isCurrent, ActiveToDoItem? active)
     {
         Id = id;
         Name = name;
@@ -13,6 +13,7 @@ public readonly struct ToDoSubItemGroup : IToDoSubItem
         Status = status;
         Description = description;
         IsCurrent = isCurrent;
+        Active = active;
     }
 
     public Guid Id { get; }
@@ -21,4 +22,5 @@ public readonly struct ToDoSubItemGroup : IToDoSubItem
     public ToDoItemStatus Status { get; }
     public string Description { get; }
     public bool IsCurrent { get; }
+    public ActiveToDoItem? Active { get; }
 }

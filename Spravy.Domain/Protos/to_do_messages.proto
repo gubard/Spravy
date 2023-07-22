@@ -7,6 +7,11 @@ import "google/protobuf/duration.proto";
 
 package spravy;
 
+message ActiveToDoItemGrpc {
+  bytes Id = 1;
+  string Name = 2;
+}
+
 message GetCurrentToDoItemsRequest {
 }
 
@@ -171,6 +176,7 @@ message ToDoSubItemGrpc {
   ToDoItemStatusGrpc Status = 4;
   string Description = 5;
   bool IsCurrent = 8;
+  ActiveToDoItemGrpc Active = 9;
 
   oneof Parameters {
     ToDoSubItemValueGrpc Value = 6;

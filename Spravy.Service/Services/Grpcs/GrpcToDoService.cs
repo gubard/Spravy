@@ -26,7 +26,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     {
         var reply = new GetRootToDoItemsReply();
         var items = await toDoService.GetRootToDoItemsAsync();
-        reply.Items.AddRange(items.Select(x => mapper.Map<ToDoSubItemGrpc>(x)));
+        reply.Items.AddRange(mapper.Map<IEnumerable<ToDoSubItemGrpc>>(items));
 
         return reply;
     }

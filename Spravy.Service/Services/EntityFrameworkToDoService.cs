@@ -41,27 +41,60 @@ public class EntityFrameworkToDoService : IToDoService
 
         foreach (var item in items)
         {
-            var status = await GetStatusAsync(item);
-            var toDoSubItem = mapper.Map<IToDoSubItem>(item, a => a.Items.Add(SpravyDbProfile.StatusName, status));
+            var (status, active) = await GetStatusAndActiveAsync(item, item.Id);
+
+            var toDoSubItem = mapper.Map<IToDoSubItem>(
+                item,
+                a =>
+                {
+                    a.Items.Add(SpravyDbProfile.StatusName, status);
+                    a.Items.Add(SpravyDbProfile.ActiveName, active);
+                }
+            );
+
             result.Add(toDoSubItem);
         }
 
         return result;
     }
 
-    private Task<ToDoItemStatus> GetStatusAsync(ToDoItemEntity entity)
+    private Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusAndActiveAsync(ToDoItemEntity entity)
     {
         switch (entity.Type)
         {
-            case ToDoItemType.Value: return GetStatusValueAsync(entity, entity.Value);
-            case ToDoItemType.Group: return GetStatusValueAsync(entity, entity.Group);
+            case ToDoItemType.Value: return GetStatusAsync(entity, entity.Value);
+            case ToDoItemType.Group: return GetStatusAsync(entity, entity.Group);
             default: throw new ArgumentOutOfRangeException();
         }
     }
 
-    private async Task<ToDoItemStatus> GetStatusValueAsync(ToDoItemEntity entity, ToDoItemGroupEntity group)
+    private async Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusAndActiveAsync(
+        ToDoItemEntity entity,
+        Guid id
+    )
     {
-        var result = ToDoItemStatus.Waiting;
+        var result = await GetStatusAndActiveAsync(entity);
+
+        if (result.Active is null)
+        {
+            return result;
+        }
+
+        if (result.Active.Value.Id == id)
+        {
+            return (result.Status, null);
+        }
+
+        return result;
+    }
+
+    private async Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusAsync(
+        ToDoItemEntity entity,
+        ToDoItemGroupEntity group
+    )
+    {
+        var currentOrder = uint.MaxValue;
+        (ToDoItemStatus Status, ActiveToDoItem? Active) result = (ToDoItemStatus.Waiting, null);
 
         var children = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
@@ -72,28 +105,40 @@ public class EntityFrameworkToDoService : IToDoService
 
         if (children.Length == 0)
         {
-            return ToDoItemStatus.Complete;
+            return (ToDoItemStatus.Complete, null);
         }
 
         var completeChildrenCount = 0;
 
         foreach (var child in children)
         {
-            var status = await GetStatusAsync(child);
+            var status = await GetStatusAndActiveAsync(child);
 
-            switch (status)
+            switch (status.Status)
             {
                 case ToDoItemStatus.Waiting:
+                    if (Math.Min(currentOrder, child.OrderIndex) == child.OrderIndex)
+                    {
+                        currentOrder = child.OrderIndex;
+                        result = (result.Status, status.Active);
+                    }
+
                     break;
                 case ToDoItemStatus.Today:
                     result = status;
                     break;
                 case ToDoItemStatus.Miss:
-                    return ToDoItemStatus.Miss;
+                    return (ToDoItemStatus.Miss, mapper.Map<ActiveToDoItem>(child));
                 case ToDoItemStatus.Complete:
                     completeChildrenCount++;
                     break;
                 case ToDoItemStatus.ReadyForComplete:
+                    if (Math.Min(currentOrder, child.OrderIndex) == child.OrderIndex)
+                    {
+                        currentOrder = child.OrderIndex;
+                        result = (result.Status, status.Active);
+                    }
+
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -102,30 +147,33 @@ public class EntityFrameworkToDoService : IToDoService
 
         if (completeChildrenCount == children.Length)
         {
-            return ToDoItemStatus.Complete;
+            return (ToDoItemStatus.Complete, null);
         }
 
         return result;
     }
 
-    private async Task<ToDoItemStatus> GetStatusValueAsync(ToDoItemEntity entity, ToDoItemValueEntity value)
+    private async Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusAsync(
+        ToDoItemEntity entity,
+        ToDoItemValueEntity value
+    )
     {
         if (value.IsComplete)
         {
-            return ToDoItemStatus.Complete;
+            return (ToDoItemStatus.Complete, null);
         }
 
         if (value.DueDate.HasValue && value.DueDate.Value < DateTimeOffset.Now.ToCurrentDay())
         {
-            return ToDoItemStatus.Miss;
+            return (ToDoItemStatus.Complete, null);
         }
 
         if (value.DueDate.HasValue && value.DueDate.Value > DateTimeOffset.Now.ToCurrentDay())
         {
-            return ToDoItemStatus.Complete;
+            return (ToDoItemStatus.Complete, null);
         }
 
-        var result = ToDoItemStatus.Waiting;
+        (ToDoItemStatus Status, ActiveToDoItem? Active) result = (ToDoItemStatus.Waiting, null);
 
         var children = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
@@ -136,10 +184,11 @@ public class EntityFrameworkToDoService : IToDoService
 
         if (children.Length == 0)
         {
-            return ToDoItemStatus.ReadyForComplete;
+            return (ToDoItemStatus.ReadyForComplete, mapper.Map<ActiveToDoItem>(entity));
         }
 
         var completeChildrenCount = 0;
+        var currentOrder = uint.MaxValue;
 
         foreach (var child in children)
         {
@@ -148,21 +197,33 @@ public class EntityFrameworkToDoService : IToDoService
                 continue;
             }
 
-            var status = await GetStatusAsync(child);
+            var status = await GetStatusAndActiveAsync(child);
 
-            switch (status)
+            switch (status.Status)
             {
                 case ToDoItemStatus.Waiting:
+                    if (Math.Min(currentOrder, child.OrderIndex) == child.OrderIndex)
+                    {
+                        currentOrder = child.OrderIndex;
+                        result = (result.Status, status.Active);
+                    }
+
                     break;
                 case ToDoItemStatus.Today:
                     result = status;
                     break;
                 case ToDoItemStatus.Miss:
-                    return ToDoItemStatus.Miss;
+                    return (ToDoItemStatus.Miss, mapper.Map<ActiveToDoItem>(child));
                 case ToDoItemStatus.Complete:
                     completeChildrenCount++;
                     break;
                 case ToDoItemStatus.ReadyForComplete:
+                    if (Math.Min(currentOrder, child.OrderIndex) == child.OrderIndex)
+                    {
+                        currentOrder = child.OrderIndex;
+                        result = (result.Status, status.Active);
+                    }
+
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -171,12 +232,12 @@ public class EntityFrameworkToDoService : IToDoService
 
         if (completeChildrenCount == children.Length)
         {
-            return ToDoItemStatus.ReadyForComplete;
+            return (ToDoItemStatus.ReadyForComplete, null);
         }
 
         if (value.DueDate.HasValue && value.DueDate.Value == DateTimeOffset.Now.ToCurrentDay())
         {
-            result = ToDoItemStatus.Today;
+            return (ToDoItemStatus.Today, null);
         }
 
         return result;
@@ -200,20 +261,7 @@ public class EntityFrameworkToDoService : IToDoService
 
         await GetParentsAsync(id, parents);
         parents.Reverse();
-
-        var toDoSubItems = new List<IToDoSubItem>();
-
-        foreach (var subItem in subItems)
-        {
-            var status = await GetStatusAsync(subItem);
-
-            var toDoSubItem = mapper.Map<IToDoSubItem>(
-                subItem,
-                opt => opt.Items.Add(SpravyDbProfile.StatusName, status)
-            );
-
-            toDoSubItems.Add(toDoSubItem);
-        }
+        var toDoSubItems = await ConvertAsync(subItems);
 
         var toDoItem = mapper.Map<IToDoItem>(
             item,
@@ -573,7 +621,7 @@ public class EntityFrameworkToDoService : IToDoService
             .Include(x => x.Group)
             .Include(x => x.Value)
             .ToArrayAsync();
-        
+
         var result = await ConvertAsync(items);
 
         return result;

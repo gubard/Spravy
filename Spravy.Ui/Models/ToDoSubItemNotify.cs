@@ -13,6 +13,7 @@ public abstract class ToDoSubItemNotify : NotifyBase, IEquatable<ToDoSubItemNoti
     private ToDoItemStatus status;
     private string description = string.Empty;
     private bool isCurrent;
+    private ActiveToDoItemNotify? active;
 
     public Guid Id
     {
@@ -48,6 +49,12 @@ public abstract class ToDoSubItemNotify : NotifyBase, IEquatable<ToDoSubItemNoti
     {
         get => isCurrent;
         set => this.RaiseAndSetIfChanged(ref isCurrent, value);
+    }
+
+    public ActiveToDoItemNotify? Active
+    {
+        get => active;
+        set => this.RaiseAndSetIfChanged(ref active, value);
     }
 
     public bool Equals(ToDoSubItemNotify? other)

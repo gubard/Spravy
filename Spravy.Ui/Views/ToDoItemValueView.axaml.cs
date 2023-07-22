@@ -28,6 +28,7 @@ public partial class ToDoItemValueView : MainReactiveUserControl<ToDoItemValueVi
     public ICommand ChangeToDoItemCommand => ViewModel.ThrowIfNull().ChangeToDoItemCommand;
     public ICommand ToRootItemCommand => ViewModel.ThrowIfNull().ToRootItemCommand;
     public ICommand ChangeToDoItemByPathCommand => ViewModel.ThrowIfNull().ChangeToDoItemByPathCommand;
-    public ICommand AddSubToDoItemToCurrentCommand=> ViewModel.ThrowIfNull().AddSubToDoItemToCurrentCommand;
+    public ICommand AddSubToDoItemToCurrentCommand => ViewModel.ThrowIfNull().AddSubToDoItemToCurrentCommand;
     public ICommand RemoveSubToDoItemFromCurrentCommand => ViewModel.ThrowIfNull().RemoveSubToDoItemFromCurrentCommand;
+    public ICommand ChangeToActiveDoItemCommand => ViewModel.ThrowIfNull().ChangeToActiveDoItemCommand;
 }

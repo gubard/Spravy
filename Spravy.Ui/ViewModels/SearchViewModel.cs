@@ -23,14 +23,15 @@ public class SearchViewModel : RoutableViewModelBase
         DeleteSubToDoItemCommand = CreateCommandFromTask<ToDoSubItemValueNotify>(DeleteSubToDoItemAsync);
         ChangeToDoItemCommand = CreateCommand<ToDoSubItemNotify>(ChangeToDoItem);
         CompleteSubToDoItemCommand = CreateCommandFromTask<ToDoSubItemValueNotify>(CompleteSubToDoItemAsync);
+        ChangeToActiveDoItemCommand = CreateCommand<ActiveToDoItemNotify>(ChangeToActiveDoItem);
     }
 
     public AvaloniaList<ToDoSubItemValueNotify> SearchResult { get; } = new();
     public ICommand SearchCommand { get; }
     public ICommand DeleteSubToDoItemCommand { get; }
     public ICommand ChangeToDoItemCommand { get; }
+    public ICommand ChangeToActiveDoItemCommand { get; }
     public ICommand CompleteSubToDoItemCommand { get; }
-    public ICommand ChangeParentToDoItemCommand { get; }
 
     public string SearchText
     {
@@ -43,6 +44,11 @@ public class SearchViewModel : RoutableViewModelBase
 
     [Inject]
     public required IMapper Mapper { get; init; }
+    
+    private void ChangeToActiveDoItem(ActiveToDoItemNotify item)
+    {
+        Navigator.NavigateTo<ToDoItemValueViewModel>(vm => vm.Id = item.Id);
+    }
 
     private void ChangeToDoItem(ToDoSubItemNotify subItemValue)
     {

@@ -1,4 +1,5 @@
 using Spravy.Domain.Enums;
+using Spravy.Domain.Models;
 
 namespace Spravy.Domain.Interfaces;
 
@@ -10,4 +11,5 @@ public interface IToDoSubItem
     public ToDoItemStatus Status { get; }
     public string Description { get; }
     bool IsCurrent { get; }
+    ActiveToDoItem? Active { get; }
 }

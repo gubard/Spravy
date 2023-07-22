@@ -23,11 +23,13 @@ public class CurrentDoToItemsViewModel : RoutableViewModelBase
         ChangeToDoItemCommand = CreateCommand<ToDoSubItemNotify>(ChangeToDoItem);
         AddSubToDoItemToCurrentCommand = CreateCommandFromTask<ToDoSubItemNotify>(AddCurrentToDoItemAsync);
         RemoveSubToDoItemFromCurrentCommand = CreateCommandFromTask<ToDoSubItemNotify>(RemoveCurrentToDoItemAsync);
+        ChangeToActiveDoItemCommand = CreateCommand<ActiveToDoItemNotify>(ChangeToActiveDoItem);
     }
 
     public ICommand CompleteSubToDoItemCommand { get; }
     public ICommand DeleteSubToDoItemCommand { get; }
     public ICommand ChangeToDoItemCommand { get; }
+    public ICommand ChangeToActiveDoItemCommand { get; }
     public ICommand AddSubToDoItemToCurrentCommand { get; }
     public ICommand RemoveSubToDoItemFromCurrentCommand { get; }
     public ICommand InitializedCommand { get; }
@@ -38,6 +40,11 @@ public class CurrentDoToItemsViewModel : RoutableViewModelBase
 
     [Inject]
     public required IMapper Mapper { get; init; }
+
+    private void ChangeToActiveDoItem(ActiveToDoItemNotify item)
+    {
+        Navigator.NavigateTo<ToDoItemValueViewModel>(vm => vm.Id = item.Id);
+    }
 
     private Task InitializedAsync()
     {

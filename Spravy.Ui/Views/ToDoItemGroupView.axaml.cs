@@ -30,4 +30,5 @@ public partial class ToDoItemGroupView : MainReactiveUserControl<ToDoItemGroupVi
     public ICommand CompleteSubToDoItemCommand => ViewModel.ThrowIfNull().CompleteSubToDoItemCommand;
     public ICommand AddSubToDoItemToCurrentCommand=> ViewModel.ThrowIfNull().AddSubToDoItemToCurrentCommand;
     public ICommand RemoveSubToDoItemFromCurrentCommand => ViewModel.ThrowIfNull().RemoveSubToDoItemFromCurrentCommand;
+    public ICommand ChangeToActiveDoItemCommand => ViewModel.ThrowIfNull().ChangeToActiveDoItemCommand;
 }

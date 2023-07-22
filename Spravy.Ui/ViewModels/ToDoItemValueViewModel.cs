@@ -46,6 +46,11 @@ public class ToDoItemValueViewModel : ToDoItemViewModel
         set => this.RaiseAndSetIfChanged(ref typeOfPeriodicity, value);
     }
 
+    private void ChangeToActiveDoItem(ActiveToDoItemNotify item)
+    {
+        Navigator.NavigateTo<ToDoItemValueViewModel>(vm => vm.Id = item.Id);
+    }
+
     private async Task CompleteToDoItemAsync()
     {
         await DialogViewer.ShowDialogAsync<CompleteToDoItemView>(

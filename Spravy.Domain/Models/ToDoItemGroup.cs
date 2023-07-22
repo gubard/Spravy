@@ -4,7 +4,14 @@ namespace Spravy.Domain.Models;
 
 public readonly struct ToDoItemGroup : IToDoItem
 {
-    public ToDoItemGroup(Guid id, string name, IToDoSubItem[] items, ToDoItemParent[] parents, string description, bool isCurrent)
+    public ToDoItemGroup(
+        Guid id,
+        string name,
+        IToDoSubItem[] items,
+        ToDoItemParent[] parents,
+        string description,
+        bool isCurrent
+    )
     {
         Id = id;
         Name = name;

@@ -16,7 +16,8 @@ public readonly struct ToDoSubItemValue : IToDoSubItem
         uint completedCount,
         uint skippedCount,
         uint failedCount,
-        bool isCurrent
+        bool isCurrent,
+        ActiveToDoItem? active
     )
     {
         Name = name;
@@ -28,6 +29,7 @@ public readonly struct ToDoSubItemValue : IToDoSubItem
         SkippedCount = skippedCount;
         FailedCount = failedCount;
         IsCurrent = isCurrent;
+        Active = active;
         IsComplete = isComplete;
         Id = id;
     }
@@ -40,6 +42,7 @@ public readonly struct ToDoSubItemValue : IToDoSubItem
     public ToDoItemStatus Status { get; }
     public string Description { get; }
     public bool IsCurrent { get; }
+    public ActiveToDoItem? Active { get; }
     public uint CompletedCount { get; }
     public uint SkippedCount { get; }
     public uint FailedCount { get; }

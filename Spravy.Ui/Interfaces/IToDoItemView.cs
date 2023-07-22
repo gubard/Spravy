@@ -6,4 +6,5 @@ public interface IToDoItemView
 {
     ICommand DeleteSubToDoItemCommand { get; }
     ICommand ChangeToDoItemCommand { get; }
+    ICommand ChangeToActiveDoItemCommand { get; }
 }
