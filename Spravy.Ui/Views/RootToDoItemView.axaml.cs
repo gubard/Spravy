@@ -7,7 +7,10 @@ using Spravy.Ui.ViewModels;
 
 namespace Spravy.Ui.Views;
 
-public partial class RootToDoItemView : ReactiveUserControl<RootToDoItemViewModel>, IToDoItemView, ICompleteSubToDoItemCommand
+public partial class RootToDoItemView : ReactiveUserControl<RootToDoItemViewModel>,
+    IToDoItemView,
+    ICompleteSubToDoItemCommand,
+    IChangeCurrentStatusToDoItemCommand
 {
     public RootToDoItemView()
     {
@@ -22,5 +25,6 @@ public partial class RootToDoItemView : ReactiveUserControl<RootToDoItemViewMode
     public ICommand CompleteSubToDoItemCommand => ViewModel.ThrowIfNull().CompleteSubToDoItemCommand;
     public ICommand DeleteSubToDoItemCommand => ViewModel.ThrowIfNull().DeleteSubToDoItemCommand;
     public ICommand ChangeToDoItemCommand => ViewModel.ThrowIfNull().ChangeToDoItemCommand;
-    public ICommand ChangeParentToDoItemCommand  => ViewModel.ThrowIfNull().ChangeParentToDoItemCommand;
+    public ICommand AddSubToDoItemToCurrentCommand => ViewModel.ThrowIfNull().AddSubToDoItemToCurrentCommand;
+    public ICommand RemoveSubToDoItemFromCurrentCommand => ViewModel.ThrowIfNull().RemoveSubToDoItemFromCurrentCommand;
 }

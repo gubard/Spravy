@@ -10,6 +10,7 @@ public class ToDoItemEntity
     public string Description { get; set; } = string.Empty;
     public DateTimeOffset CreatedDateTime { get; set; } = DateTimeOffset.Now;
     public ToDoItemType Type { get; set; }
+    public bool IsCurrent { get; set; }
 
     public Guid? ParentId { get; set; }
     public ToDoItemEntity? Parent { get; set; }

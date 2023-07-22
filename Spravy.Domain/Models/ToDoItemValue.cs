@@ -13,7 +13,8 @@ public readonly struct ToDoItemValue : IToDoItem
         IToDoSubItem[] items,
         ToDoItemParent[] parents,
         bool isComplete,
-        string description
+        string description,
+        bool isCurrent
     )
     {
         Name = name;
@@ -21,6 +22,7 @@ public readonly struct ToDoItemValue : IToDoItem
         Parents = parents;
         IsComplete = isComplete;
         Description = description;
+        IsCurrent = isCurrent;
         TypeOfPeriodicity = typeOfPeriodicity;
         DueDate = dueDate;
         Id = id;
@@ -33,5 +35,6 @@ public readonly struct ToDoItemValue : IToDoItem
     public DateTimeOffset? DueDate { get; }
     public IToDoSubItem[] Items { get; }
     public ToDoItemParent[] Parents { get; }
+    public bool IsCurrent { get; }
     public string Description { get; }
 }

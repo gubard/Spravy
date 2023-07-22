@@ -20,4 +20,7 @@ public interface IToDoService
     Task FailToDoItemAsync(Guid id);
     Task<IEnumerable<IToDoSubItem>> SearchAsync(string searchText);
     Task UpdateToDoItemTypeAsync(Guid id, ToDoItemType type);
+    Task AddCurrentToDoItemAsync(Guid id);
+    Task RemoveCurrentToDoItemAsync(Guid id);
+    Task<IEnumerable<IToDoSubItem>> GetCurrentToDoItemsAsync();
 }

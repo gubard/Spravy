@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ExtensionFramework.Core.Common.Extensions;
@@ -33,7 +32,7 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
         {
             var items = await client.GetRootToDoItemsAsync(new GetRootToDoItemsRequest());
 
-            return items.Items.Select(x => mapper.Map<IToDoSubItem>(x)).ToArray();
+            return mapper.Map<IEnumerable<IToDoSubItem>>(items.Items);
         }
         catch (Exception e)
         {
@@ -256,7 +255,7 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
                 }
             );
 
-            return reply.Items.Select(x => mapper.Map<IToDoSubItem>(x)).ToArray();
+            return mapper.Map<IEnumerable<IToDoSubItem>>(reply.Items);
         }
         catch (Exception e)
         {
@@ -275,6 +274,54 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
                     Type = (ToDoItemTypeGrpc)type,
                 }
             );
+        }
+        catch (Exception e)
+        {
+            throw new GrpcException(grpcChannel.Target, e);
+        }
+    }
+
+    public async Task AddCurrentToDoItemAsync(Guid id)
+    {
+        try
+        {
+            await client.AddCurrentToDoItemAsync(
+                new AddCurrentToDoItemRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                }
+            );
+        }
+        catch (Exception e)
+        {
+            throw new GrpcException(grpcChannel.Target, e);
+        }
+    }
+
+    public async Task RemoveCurrentToDoItemAsync(Guid id)
+    {
+        try
+        {
+            await client.RemoveCurrentToDoItemAsync(
+                new RemoveCurrentToDoItemRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                }
+            );
+        }
+        catch (Exception e)
+        {
+            throw new GrpcException(grpcChannel.Target, e);
+        }
+    }
+
+    public async Task<IEnumerable<IToDoSubItem>> GetCurrentToDoItemsAsync()
+    {
+        try
+        {
+            var reply = await client.GetCurrentToDoItemsAsync(new GetCurrentToDoItemsRequest());
+
+            return mapper.Map<IEnumerable<IToDoSubItem>>(reply.Items);
         }
         catch (Exception e)
         {

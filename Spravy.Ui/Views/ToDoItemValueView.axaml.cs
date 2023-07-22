@@ -7,7 +7,11 @@ using Spravy.Ui.ViewModels;
 
 namespace Spravy.Ui.Views;
 
-public partial class ToDoItemValueView : MainReactiveUserControl<ToDoItemValueViewModel>, IToDoItemView, ICompleteSubToDoItemCommand, IPathView
+public partial class ToDoItemValueView : MainReactiveUserControl<ToDoItemValueViewModel>,
+    IToDoItemView,
+    ICompleteSubToDoItemCommand,
+    IPathView,
+    IChangeCurrentStatusToDoItemCommand
 {
     public ToDoItemValueView()
     {
@@ -22,7 +26,8 @@ public partial class ToDoItemValueView : MainReactiveUserControl<ToDoItemValueVi
     public ICommand CompleteSubToDoItemCommand => ViewModel.ThrowIfNull().CompleteSubToDoItemCommand;
     public ICommand DeleteSubToDoItemCommand => ViewModel.ThrowIfNull().DeleteSubToDoItemCommand;
     public ICommand ChangeToDoItemCommand => ViewModel.ThrowIfNull().ChangeToDoItemCommand;
-    public ICommand ChangeParentToDoItemCommand  => ViewModel.ThrowIfNull().ChangeParentToDoItemCommand;
     public ICommand ToRootItemCommand => ViewModel.ThrowIfNull().ToRootItemCommand;
-    public ICommand ChangeToDoItemByPathCommand  => ViewModel.ThrowIfNull().ChangeToDoItemByPathCommand;
+    public ICommand ChangeToDoItemByPathCommand => ViewModel.ThrowIfNull().ChangeToDoItemByPathCommand;
+    public ICommand AddSubToDoItemToCurrentCommand=> ViewModel.ThrowIfNull().AddSubToDoItemToCurrentCommand;
+    public ICommand RemoveSubToDoItemFromCurrentCommand => ViewModel.ThrowIfNull().RemoveSubToDoItemFromCurrentCommand;
 }

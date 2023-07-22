@@ -26,7 +26,6 @@ public class ToDoItemValueViewModel : ToDoItemViewModel
         SubscribeProperties();
     }
 
-
     public ICommand CompleteToDoItemCommand { get; }
 
     public bool IsComplete
@@ -106,6 +105,7 @@ public class ToDoItemValueViewModel : ToDoItemViewModel
                 Navigator.NavigateTo<ToDoItemGroupViewModel>(x => x.Id = toDoItemGroup.Id);
                 return;
             case ToDoItemValue toDoItemValue:
+                IsCurrent = item.IsCurrent;
                 Name = toDoItemValue.Name;
                 Type = ToDoItemType.Value;
                 IsComplete = toDoItemValue.IsComplete;
@@ -116,9 +116,11 @@ public class ToDoItemValueViewModel : ToDoItemViewModel
                 CompletedItems.Clear();
                 var source = toDoItemValue.Items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
                 Items.AddRange(source.Where(x => x.Status != ToDoItemStatus.Complete).OrderBy(x => x.OrderIndex));
+
                 CompletedItems.AddRange(
                     source.Where(x => x.Status == ToDoItemStatus.Complete).OrderBy(x => x.OrderIndex)
                 );
+
                 SubscribeItems(Items);
                 SubscribeItems(CompletedItems);
                 Path.Items.Clear();

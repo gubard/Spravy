@@ -32,7 +32,8 @@ public class SpravyDbProfile : Profile
                                 source.Description,
                                 source.Value.CompletedCount,
                                 source.Value.SkippedCount,
-                                source.Value.FailedCount
+                                source.Value.FailedCount,
+                                source.IsCurrent
                             );
                         case ToDoItemType.Group:
                             return new ToDoSubItemGroup(
@@ -40,7 +41,8 @@ public class SpravyDbProfile : Profile
                                 source.Name,
                                 source.OrderIndex,
                                 (ToDoItemStatus)resolutionContext.Items[StatusName],
-                                source.Description
+                                source.Description,
+                                source.IsCurrent
                             );
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -65,7 +67,8 @@ public class SpravyDbProfile : Profile
                                 (IToDoSubItem[])resolutionContext.Items[ItemsName],
                                 (ToDoItemParent[])resolutionContext.Items[ParentsName],
                                 value.IsComplete,
-                                source.Description
+                                source.Description,
+                                source.IsCurrent
                             );
                         case ToDoItemType.Group:
                             return new ToDoItemGroup(
@@ -73,7 +76,8 @@ public class SpravyDbProfile : Profile
                                 source.Name,
                                 (IToDoSubItem[])resolutionContext.Items[ItemsName],
                                 (ToDoItemParent[])resolutionContext.Items[ParentsName],
-                                source.Description
+                                source.Description,
+                                source.IsCurrent
                             );
                         default:
                             throw new ArgumentOutOfRangeException();

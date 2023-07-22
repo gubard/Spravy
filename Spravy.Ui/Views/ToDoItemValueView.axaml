@@ -61,19 +61,33 @@
                                              SelectedDate="{Binding DueDate, Mode=TwoWay}" />
             </Grid>
 
-            <Grid ColumnDefinitions="*,*,*">
+            <StackPanel Orientation="Horizontal">
                 <Button Command="{Binding CompleteToDoItemCommand}">
                     <avalonia:MaterialIcon Kind="Check" />
                 </Button>
 
-                <Button Grid.Column="1" Command="{Binding AddToDoItemCommand}">
+                <Button Command="{Binding RemoveToDoItemFromCurrentCommand}"
+                        IsVisible="{Binding IsCurrent}">
+                    <avalonia:MaterialIcon Kind="Star" />
+                </Button>
+
+                <Button Command="{Binding AddToDoItemToCurrentCommand}"
+                        IsVisible="{Binding IsCurrent, Converter={StaticResource ReverseBooleanValueConverter}}">
+                    <avalonia:MaterialIcon Kind="StarOutline" />
+                </Button>
+
+                <Button Command="{Binding AddToDoItemCommand}">
                     <avalonia:MaterialIcon Kind="Plus" />
                 </Button>
 
-                <Button Grid.Column="2" Command="{Binding SearchCommand}">
+                <Button Command="{Binding SearchCommand}">
                     <avalonia:MaterialIcon Kind="Search" />
                 </Button>
-            </Grid>
+
+                <Button Command="{Binding ToCurrentItemsCommand}">
+                    <avalonia:MaterialIcon Kind="Creation" />
+                </Button>
+            </StackPanel>
         </StackPanel>
 
         <ScrollViewer Grid.Row="1"

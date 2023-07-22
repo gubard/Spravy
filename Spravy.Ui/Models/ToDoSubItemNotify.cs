@@ -12,6 +12,7 @@ public abstract class ToDoSubItemNotify : NotifyBase, IEquatable<ToDoSubItemNoti
     private ulong orderIndex;
     private ToDoItemStatus status;
     private string description = string.Empty;
+    private bool isCurrent;
 
     public Guid Id
     {
@@ -43,6 +44,12 @@ public abstract class ToDoSubItemNotify : NotifyBase, IEquatable<ToDoSubItemNoti
         set => this.RaiseAndSetIfChanged(ref description, value);
     }
 
+    public bool IsCurrent
+    {
+        get => isCurrent;
+        set => this.RaiseAndSetIfChanged(ref isCurrent, value);
+    }
+
     public bool Equals(ToDoSubItemNotify? other)
     {
         if (other is null)
@@ -59,7 +66,7 @@ public abstract class ToDoSubItemNotify : NotifyBase, IEquatable<ToDoSubItemNoti
             return false;
         if (ReferenceEquals(this, obj))
             return true;
-        if (obj.GetType() != this.GetType())
+        if (obj.GetType() != GetType())
             return false;
         return Equals((ToDoSubItemNotify)obj);
     }

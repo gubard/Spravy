@@ -19,7 +19,9 @@ using Spravy.Ui.Views;
 
 namespace Spravy.Ui.ViewModels;
 
-public class RootToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoSubItemNotify>, IToDoItemOrderChanger
+public class RootToDoItemViewModel : RoutableViewModelBase,
+    IItemsViewModel<ToDoSubItemNotify>,
+    IToDoItemOrderChanger
 {
     public RootToDoItemViewModel() : base("root-to-do-item")
     {
@@ -30,8 +32,12 @@ public class RootToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDo
         CompleteSubToDoItemCommand = CreateCommandFromTask<ToDoSubItemValueNotify>(CompleteSubToDoItemAsync);
         SearchCommand = CreateCommand(Search);
         ChangeParentToDoItemCommand = CreateCommandFromTask(ChangeParentToDoItemAsync);
+        AddSubToDoItemToCurrentCommand = CreateCommandFromTask<ToDoSubItemNotify>(AddCurrentToDoItemAsync);
+        RemoveSubToDoItemFromCurrentCommand = CreateCommandFromTask<ToDoSubItemNotify>(RemoveCurrentToDoItemAsync);
+        ToCurrentItemsCommand = CreateCommand(ToCurrentItems);
     }
 
+    public ICommand ToCurrentItemsCommand { get; }
     public ICommand SearchCommand { get; }
     public ICommand InitializedCommand { get; }
     public ICommand AddToDoItemCommand { get; }
@@ -39,14 +45,33 @@ public class RootToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDo
     public ICommand ChangeToDoItemCommand { get; }
     public ICommand CompleteSubToDoItemCommand { get; }
     public ICommand ChangeParentToDoItemCommand { get; }
+    public ICommand AddSubToDoItemToCurrentCommand { get; }
+    public ICommand RemoveSubToDoItemFromCurrentCommand { get; }
     public AvaloniaList<ToDoSubItemNotify> Items { get; } = new();
     public AvaloniaList<ToDoSubItemNotify> CompletedItems { get; } = new();
 
     [Inject]
-    public required IToDoService ToDoService { get; set; }
+    public required IToDoService ToDoService { get; init; }
 
     [Inject]
-    public required IMapper Mapper { get; set; }
+    public required IMapper Mapper { get; init; }
+
+    private async Task RemoveCurrentToDoItemAsync(ToDoSubItemNotify item)
+    {
+        await ToDoService.RemoveCurrentToDoItemAsync(item.Id);
+        await RefreshToDoItemAsync();
+    }
+
+    private async Task AddCurrentToDoItemAsync(ToDoSubItemNotify item)
+    {
+        await ToDoService.AddCurrentToDoItemAsync(item.Id);
+        await RefreshToDoItemAsync();
+    }
+
+    private void ToCurrentItems()
+    {
+        Navigator.NavigateTo<CurrentDoToItemsViewModel>();
+    }
 
     private Task InitializedAsync()
     {
@@ -95,14 +120,16 @@ public class RootToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDo
         Navigator.NavigateTo<SearchViewModel>();
     }
 
-    private async Task AddToDoItemAsync()
+    private Task AddToDoItemAsync()
     {
-        await DialogViewer.ShowDialogAsync<AddRootToDoItemView>(v => v.ViewModel.ThrowIfNull().IsDialog = true);
+        return DialogViewer.ShowDialogAsync<AddRootToDoItemView>(v => v.ViewModel.ThrowIfNull().IsDialog = true);
     }
 
-    private async Task ChangeParentToDoItemAsync()
+    private Task ChangeParentToDoItemAsync()
     {
-        var obj = await DialogViewer.ShowDialogAsync<RootToDoItemView>(view => view.ViewModel.ThrowIfNull().IsDialog = true);
+        return DialogViewer.ShowDialogAsync<RootToDoItemView>(
+            view => view.ViewModel.ThrowIfNull().IsDialog = true
+        );
     }
 
     private void SubscribeItems(IEnumerable<ToDoSubItemNotify> items)

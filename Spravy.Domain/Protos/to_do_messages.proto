@@ -7,6 +7,27 @@ import "google/protobuf/duration.proto";
 
 package spravy;
 
+message GetCurrentToDoItemsRequest {
+}
+
+message GetCurrentToDoItemsReply {
+  repeated ToDoSubItemGrpc Items = 1;
+}
+
+message RemoveCurrentToDoItemRequest {
+  bytes Id = 1;
+}
+
+message RemoveCurrentToDoItemReply {
+}
+
+message AddCurrentToDoItemRequest {
+  bytes Id = 1;
+}
+
+message AddCurrentToDoItemReply {
+}
+
 message SearchRequest {
   string SearchText = 1;
 }
@@ -125,6 +146,7 @@ message ToDoItemGrpc {
   repeated ToDoSubItemGrpc Items = 3;
   repeated ToDoItemParentGrpc Parents = 4;
   string Description = 5;
+  bool IsCurrent = 8;
 
   oneof Parameters {
     ToDoItemValueGrpc Value = 6;
@@ -148,6 +170,7 @@ message ToDoSubItemGrpc {
   uint64 OrderIndex = 3;
   ToDoItemStatusGrpc Status = 4;
   string Description = 5;
+  bool IsCurrent = 8;
 
   oneof Parameters {
     ToDoSubItemValueGrpc Value = 6;

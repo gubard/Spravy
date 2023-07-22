@@ -174,4 +174,36 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
 
         return new UpdateToDoItemTypeReply();
     }
+
+    public override async Task<AddCurrentToDoItemReply> AddCurrentToDoItem(
+        AddCurrentToDoItemRequest request,
+        ServerCallContext context
+    )
+    {
+        await toDoService.AddCurrentToDoItemAsync(mapper.Map<Guid>(request.Id));
+
+        return new AddCurrentToDoItemReply();
+    }
+
+    public override async Task<RemoveCurrentToDoItemReply> RemoveCurrentToDoItem(
+        RemoveCurrentToDoItemRequest request,
+        ServerCallContext context
+    )
+    {
+        await toDoService.RemoveCurrentToDoItemAsync(mapper.Map<Guid>(request.Id));
+
+        return new RemoveCurrentToDoItemReply();
+    }
+
+    public override async Task<GetCurrentToDoItemsReply> GetCurrentToDoItems(
+        GetCurrentToDoItemsRequest request,
+        ServerCallContext context
+    )
+    {
+        var reply = new GetCurrentToDoItemsReply();
+        var items = await toDoService.GetCurrentToDoItemsAsync();
+        reply.Items.AddRange(mapper.Map<IEnumerable<ToDoSubItemGrpc>>(items));
+
+        return reply;
+    }
 }

@@ -138,8 +138,17 @@
                             </Button>
 
                             <Button Grid.Row="1"
-                                    Command="{Binding $parent[interfaces:IToDoItemView].ChangeParentToDoItemCommand}">
-                                <avalonia:MaterialIcon Kind="SwapHorizontal" />
+                                    Command="{Binding $parent[interfaces:IChangeCurrentStatusToDoItemCommand].RemoveSubToDoItemFromCurrentCommand}"
+                                    CommandParameter="{Binding}"
+                                    IsVisible="{Binding IsCurrent}">
+                                <avalonia:MaterialIcon Kind="Star" />
+                            </Button>
+
+                            <Button Grid.Row="1"
+                                    Command="{Binding $parent[interfaces:IChangeCurrentStatusToDoItemCommand].AddSubToDoItemToCurrentCommand}"
+                                    CommandParameter="{Binding}"
+                                    IsVisible="{Binding IsCurrent, Converter={StaticResource ReverseBooleanValueConverter}}">
+                                <avalonia:MaterialIcon Kind="StarOutline" />
                             </Button>
 
                             <Button Grid.Column="1"
@@ -178,8 +187,17 @@
                             </Button>
 
                             <Button Grid.Row="1"
-                                    Command="{Binding $parent[interfaces:IToDoItemView].ChangeParentToDoItemCommand}">
-                                <avalonia:MaterialIcon Kind="SwapHorizontal" />
+                                    Command="{Binding $parent[interfaces:IChangeCurrentStatusToDoItemCommand].RemoveSubToDoItemFromCurrentCommand}"
+                                    CommandParameter="{Binding}"
+                                    IsVisible="{Binding IsCurrent}">
+                                <avalonia:MaterialIcon Kind="Star" />
+                            </Button>
+
+                            <Button Grid.Row="1"
+                                    Command="{Binding $parent[interfaces:IChangeCurrentStatusToDoItemCommand].AddSubToDoItemToCurrentCommand}"
+                                    CommandParameter="{Binding}"
+                                    IsVisible="{Binding IsCurrent, Converter={StaticResource ReverseBooleanValueConverter}}">
+                                <avalonia:MaterialIcon Kind="StarOutline" />
                             </Button>
 
                             <Button Grid.Column="1"

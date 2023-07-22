@@ -44,6 +44,7 @@ public class SpravyProfile : Profile
                         Description = source.Description,
                         Id = resolutionContext.Mapper.Map<ByteString>(source.Id),
                         Name = source.Name,
+                        IsCurrent = source.IsCurrent,
                     };
 
                     result.Parents.AddRange(
@@ -84,7 +85,8 @@ public class SpravyProfile : Profile
                                 resolutionContext.Mapper.Map<IToDoSubItem[]>(source.Items),
                                 resolutionContext.Mapper.Map<ToDoItemParent[]>(source.Parents),
                                 source.Value.IsComplete,
-                                source.Description
+                                source.Description,
+                                source.IsCurrent
                             );
                         case ToDoItemGrpc.ParametersOneofCase.Group:
                             return new ToDoItemGroup(
@@ -92,7 +94,8 @@ public class SpravyProfile : Profile
                                 source.Name,
                                 resolutionContext.Mapper.Map<IToDoSubItem[]>(source.Items),
                                 resolutionContext.Mapper.Map<ToDoItemParent[]>(source.Parents),
-                                source.Description
+                                source.Description,
+                                source.IsCurrent
                             );
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -111,6 +114,7 @@ public class SpravyProfile : Profile
                         Id = resolutionContext.Mapper.Map<ByteString>(source.Id),
                         Name = source.Name,
                         OrderIndex = source.OrderIndex,
+                        IsCurrent = source.IsCurrent
                     };
 
                     switch (source)
@@ -147,7 +151,8 @@ public class SpravyProfile : Profile
                                 source.Description,
                                 source.Value.CompletedCount,
                                 source.Value.SkippedCount,
-                                source.Value.FailedCount
+                                source.Value.FailedCount,
+                                source.IsCurrent
                             );
                         case ToDoSubItemGrpc.ParametersOneofCase.Group:
                             return new ToDoSubItemGroup(
@@ -155,7 +160,8 @@ public class SpravyProfile : Profile
                                 source.Name,
                                 source.OrderIndex,
                                 (ToDoItemStatus)source.Status,
-                                source.Description
+                                source.Description,
+                                source.IsCurrent
                             );
                         default: throw new ArgumentOutOfRangeException();
                     }

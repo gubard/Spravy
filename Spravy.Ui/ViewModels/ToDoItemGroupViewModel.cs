@@ -26,17 +26,20 @@ public class ToDoItemGroupViewModel : ToDoItemViewModel
 
         switch (item)
         {
-            case ToDoItemGroup :
+            case ToDoItemGroup:
                 Name = item.Name;
                 Description = item.Description;
                 Type = ToDoItemType.Group;
                 Items.Clear();
                 CompletedItems.Clear();
+                IsCurrent = item.IsCurrent;
                 var source = item.Items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
                 Items.AddRange(source.Where(x => x.Status != ToDoItemStatus.Complete).OrderBy(x => x.OrderIndex));
+
                 CompletedItems.AddRange(
                     source.Where(x => x.Status == ToDoItemStatus.Complete).OrderBy(x => x.OrderIndex)
                 );
+
                 SubscribeItems(Items);
                 SubscribeItems(CompletedItems);
                 Path.Items.Clear();

@@ -28,9 +28,12 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase,
 
     protected readonly List<IDisposable> PropertySubscribes = new();
     private ToDoItemType type;
+    private bool isCurrent;
 
     public ToDoItemViewModel(string? urlPathSegment) : base(urlPathSegment)
     {
+        AddSubToDoItemToCurrentCommand = CreateCommandFromTask<ToDoSubItemNotify>(AddCurrentToDoItemAsync);
+        RemoveSubToDoItemFromCurrentCommand = CreateCommandFromTask<ToDoSubItemNotify>(RemoveCurrentToDoItemAsync);
         CompleteSubToDoItemCommand = CreateCommandFromTask<ToDoSubItemValueNotify>(CompleteSubToDoItemAsync);
         DeleteSubToDoItemCommand = CreateCommandFromTask<ToDoSubItemValueNotify>(DeleteSubToDoItemAsync);
         ChangeToDoItemCommand = CreateCommand<ToDoSubItemNotify>(ChangeToDoItem);
@@ -40,6 +43,9 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase,
         TypeOfPeriodicities = new(Enum.GetValues<TypeOfPeriodicity>());
         ToDoItemTypes = new(Enum.GetValues<ToDoItemType>());
         SearchCommand = CreateCommand(Search);
+        AddToDoItemToCurrentCommand = CreateCommandFromTask(AddToDoItemToCurrentAsync);
+        RemoveToDoItemFromCurrentCommand = CreateCommandFromTask(RemoveToDoItemFromCurrentAsync);
+        ToCurrentItemsCommand = CreateCommand(ToCurrentItems);
     }
 
     public AvaloniaList<ToDoSubItemNotify> CompletedItems { get; } = new();
@@ -49,11 +55,15 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase,
     public ICommand CompleteSubToDoItemCommand { get; }
     public ICommand DeleteSubToDoItemCommand { get; }
     public ICommand ChangeToDoItemCommand { get; }
-    public ICommand ChangeParentToDoItemCommand { get; }
+    public ICommand AddSubToDoItemToCurrentCommand { get; }
+    public ICommand RemoveSubToDoItemFromCurrentCommand { get; }
+    public ICommand AddToDoItemToCurrentCommand { get; }
+    public ICommand RemoveToDoItemFromCurrentCommand { get; }
     public ICommand AddToDoItemCommand { get; }
     public ICommand SearchCommand { get; }
     public ICommand ChangeToDoItemByPathCommand { get; }
     public ICommand ToRootItemCommand { get; }
+    public ICommand ToCurrentItemsCommand { get; }
 
     [Inject]
     public required IToDoService ToDoService { get; set; }
@@ -63,6 +73,12 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase,
 
     [Inject]
     public required PathControl Path { get; set; }
+
+    public bool IsCurrent
+    {
+        get => isCurrent;
+        set => this.RaiseAndSetIfChanged(ref isCurrent, value);
+    }
 
     public ToDoItemType Type
     {
@@ -89,6 +105,35 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase,
     }
 
     public abstract Task RefreshToDoItemAsync();
+
+    private void ToCurrentItems()
+    {
+        Navigator.NavigateTo<CurrentDoToItemsViewModel>();
+    }
+
+    private async Task RemoveToDoItemFromCurrentAsync()
+    {
+        await ToDoService.RemoveCurrentToDoItemAsync(Id);
+        await RefreshToDoItemAsync();
+    }
+
+    private async Task AddToDoItemToCurrentAsync()
+    {
+        await ToDoService.AddCurrentToDoItemAsync(Id);
+        await RefreshToDoItemAsync();
+    }
+
+    private async Task RemoveCurrentToDoItemAsync(ToDoSubItemNotify item)
+    {
+        await ToDoService.RemoveCurrentToDoItemAsync(item.Id);
+        await RefreshToDoItemAsync();
+    }
+
+    private async Task AddCurrentToDoItemAsync(ToDoSubItemNotify item)
+    {
+        await ToDoService.AddCurrentToDoItemAsync(item.Id);
+        await RefreshToDoItemAsync();
+    }
 
     private void Search()
     {

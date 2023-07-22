@@ -22,4 +22,7 @@ service ToDoService {
   rpc FailToDoItem (FailToDoItemRequest) returns (FailToDoItemReply);
   rpc Search (SearchRequest) returns (SearchReply);
   rpc UpdateToDoItemType (UpdateToDoItemTypeRequest) returns (UpdateToDoItemTypeReply);
+  rpc AddCurrentToDoItem (AddCurrentToDoItemRequest) returns (AddCurrentToDoItemReply);
+  rpc RemoveCurrentToDoItem (RemoveCurrentToDoItemRequest) returns (RemoveCurrentToDoItemReply);
+  rpc GetCurrentToDoItems (GetCurrentToDoItemsRequest) returns (GetCurrentToDoItemsReply);
 }

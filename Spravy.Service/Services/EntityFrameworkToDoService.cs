@@ -30,6 +30,13 @@ public class EntityFrameworkToDoService : IToDoService
             .Include(x => x.Group)
             .ToArrayAsync();
 
+        var result = await ConvertAsync(items);
+
+        return result;
+    }
+
+    private async Task<IEnumerable<IToDoSubItem>> ConvertAsync(IEnumerable<ToDoItemEntity> items)
+    {
         var result = new List<IToDoSubItem>();
 
         foreach (var item in items)
@@ -288,7 +295,7 @@ public class EntityFrameworkToDoService : IToDoService
             case ToDoItemType.Value:
                 toDoItemValue.TypeOfPeriodicity = parentValue.TypeOfPeriodicity;
                 toDoItemValue.DueDate = parentValue.DueDate;
-                
+
                 break;
             case ToDoItemType.Group: break;
             default: throw new ArgumentOutOfRangeException();
@@ -529,14 +536,7 @@ public class EntityFrameworkToDoService : IToDoService
             .Include(x => x.Value)
             .ToArrayAsync();
 
-        var result = new List<IToDoSubItem>();
-
-        foreach (var item in items)
-        {
-            var status = await GetStatusAsync(item);
-            var toDoSubItem = mapper.Map<IToDoSubItem>(item, opt => opt.Items.Add(SpravyDbProfile.StatusName, status));
-            result.Add(toDoSubItem);
-        }
+        var result = await ConvertAsync(items);
 
         return result;
     }
@@ -547,6 +547,36 @@ public class EntityFrameworkToDoService : IToDoService
         item = item.ThrowIfNull();
         item.Type = type;
         await context.SaveChangesAsync();
+    }
+
+    public async Task AddCurrentToDoItemAsync(Guid id)
+    {
+        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
+        item = item.ThrowIfNull();
+        item.IsCurrent = true;
+        await context.SaveChangesAsync();
+    }
+
+    public async Task RemoveCurrentToDoItemAsync(Guid id)
+    {
+        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
+        item = item.ThrowIfNull();
+        item.IsCurrent = false;
+        await context.SaveChangesAsync();
+    }
+
+    public async Task<IEnumerable<IToDoSubItem>> GetCurrentToDoItemsAsync()
+    {
+        var items = await context.Set<ToDoItemEntity>()
+            .AsNoTracking()
+            .Where(x => x.IsCurrent)
+            .Include(x => x.Group)
+            .Include(x => x.Value)
+            .ToArrayAsync();
+        
+        var result = await ConvertAsync(items);
+
+        return result;
     }
 
     private async Task NormalizeOrderIndexAsync(Guid? parentId)
