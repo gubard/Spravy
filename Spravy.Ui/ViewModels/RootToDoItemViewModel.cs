@@ -11,23 +11,23 @@ using ExtensionFramework.Core.Common.Extensions;
 using ExtensionFramework.Core.DependencyInjection.Attributes;
 using ExtensionFramework.ReactiveUI.Models;
 using ReactiveUI;
-using Spravy.Core.Enums;
-using Spravy.Core.Interfaces;
+using Spravy.Domain.Enums;
+using Spravy.Domain.Interfaces;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 using Spravy.Ui.Views;
 
 namespace Spravy.Ui.ViewModels;
 
-public class RootToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItemNotify>, IToDoItemOrderChanger
+public class RootToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoSubItemNotify>, IToDoItemOrderChanger
 {
     public RootToDoItemViewModel() : base("root-to-do-item")
     {
         InitializedCommand = CreateCommandFromTask(InitializedAsync);
         AddToDoItemCommand = CreateCommandFromTask(AddToDoItemAsync);
-        DeleteSubToDoItemCommand = CreateCommandFromTask<ToDoItemNotify>(DeleteSubToDoItemAsync);
-        ChangeToDoItemCommand = CreateCommand<ToDoItemNotify>(ChangeToDoItem);
-        CompleteSubToDoItemCommand = CreateCommandFromTask<ToDoItemNotify>(CompleteSubToDoItemAsync);
+        DeleteSubToDoItemCommand = CreateCommandFromTask<ToDoSubItemNotify>(DeleteSubToDoItemAsync);
+        ChangeToDoItemCommand = CreateCommand<ToDoSubItemNotify>(ChangeToDoItem);
+        CompleteSubToDoItemCommand = CreateCommandFromTask<ToDoSubItemValueNotify>(CompleteSubToDoItemAsync);
         SearchCommand = CreateCommand(Search);
         ChangeParentToDoItemCommand = CreateCommandFromTask(ChangeParentToDoItemAsync);
     }
@@ -39,8 +39,8 @@ public class RootToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDo
     public ICommand ChangeToDoItemCommand { get; }
     public ICommand CompleteSubToDoItemCommand { get; }
     public ICommand ChangeParentToDoItemCommand { get; }
-    public AvaloniaList<ToDoItemNotify> Items { get; } = new();
-    public AvaloniaList<ToDoItemNotify> CompletedItems { get; } = new();
+    public AvaloniaList<ToDoSubItemNotify> Items { get; } = new();
+    public AvaloniaList<ToDoSubItemNotify> CompletedItems { get; } = new();
 
     [Inject]
     public required IToDoService ToDoService { get; set; }
@@ -58,32 +58,32 @@ public class RootToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDo
         var items = await ToDoService.GetRootToDoItemsAsync();
         Items.Clear();
         CompletedItems.Clear();
-        var source = items.Select(x => Mapper.Map<ToDoItemNotify>(x)).ToArray();
+        var source = items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
         Items.AddRange(source.Where(x => x.Status != ToDoItemStatus.Complete).OrderBy(x => x.OrderIndex));
         CompletedItems.AddRange(source.Where(x => x.Status == ToDoItemStatus.Complete).OrderBy(x => x.OrderIndex));
         SubscribeItems(Items);
         SubscribeItems(CompletedItems);
     }
 
-    private void ChangeToDoItem(ToDoItemNotify item)
+    private void ChangeToDoItem(ToDoSubItemNotify subItemValue)
     {
-        Navigator.NavigateTo<ToDoItemViewModel>(vm => vm.Id = item.Id);
+        Navigator.NavigateTo<ToDoItemValueViewModel>(vm => vm.Id = subItemValue.Id);
     }
 
-    private async Task DeleteSubToDoItemAsync(ToDoItemNotify item)
+    private async Task DeleteSubToDoItemAsync(ToDoSubItemNotify subItemValue)
     {
-        await ToDoService.DeleteToDoItemAsync(item.Id);
+        await ToDoService.DeleteToDoItemAsync(subItemValue.Id);
         await RefreshToDoItemAsync();
     }
 
-    private async Task CompleteSubToDoItemAsync(ToDoItemNotify item)
+    private async Task CompleteSubToDoItemAsync(ToDoSubItemValueNotify subItemValue)
     {
         await DialogViewer.ShowDialogAsync<CompleteToDoItemView>(
             view =>
             {
                 var viewModel = view.ViewModel.ThrowIfNull();
                 viewModel.IsDialog = true;
-                viewModel.Item = item;
+                viewModel.Item = subItemValue;
             }
         );
 
@@ -105,9 +105,9 @@ public class RootToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDo
         var obj = await DialogViewer.ShowDialogAsync<RootToDoItemView>(view => view.ViewModel.ThrowIfNull().IsDialog = true);
     }
 
-    private void SubscribeItems(IEnumerable<ToDoItemNotify> items)
+    private void SubscribeItems(IEnumerable<ToDoSubItemNotify> items)
     {
-        foreach (var itemNotify in items)
+        foreach (var itemNotify in items.OfType<ToDoSubItemValueNotify>())
         {
             async void OnNextIsComplete(bool x)
             {

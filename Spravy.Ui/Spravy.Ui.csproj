@@ -36,7 +36,8 @@
       <ProjectReference Include="..\ExtensionFramework\ExtensionFramework.AvaloniaUi\ExtensionFramework.AvaloniaUi.csproj" />
       <ProjectReference Include="..\ExtensionFramework\ExtensionFramework.Core\ExtensionFramework.Core.csproj" />
       <ProjectReference Include="..\ExtensionFramework\ExtensionFramework.ReactiveUI\ExtensionFramework.ReactiveUI.csproj" />
-      <ProjectReference Include="..\Spravy.Core\Spravy.Core.csproj" />
+      <ProjectReference Include="..\Spravy.Domain.Core\Spravy.Domain.Core.csproj" />
+      <ProjectReference Include="..\Spravy.Domain\Spravy.Domain.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -45,8 +46,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Protobuf Include="..\Spravy.Core\Protos\to_do.proto" GrpcServices="Client">
-        <Link>Protos/to_do.proto</Link>
-      </Protobuf>
+        <Protobuf Include="..\Spravy.Domain\Protos\to_do.proto" GrpcServices="Client" ProtoRoot="..\Spravy.Domain">
+            <Link>Protos/to_do.proto</Link>
+        </Protobuf>
+        <Protobuf Include="..\Spravy.Domain\Protos\to_do_messages.proto" GrpcServices="None" ProtoCompile="False">
+            <Link>Protos/to_do_messages.proto</Link>
+        </Protobuf>
     </ItemGroup>
 </Project>

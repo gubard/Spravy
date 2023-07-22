@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using AutoMapper;
 using ExtensionFramework.Core.Common.Extensions;
 using Google.Protobuf;
-using Spravy.Core.Enums;
-using Spravy.Core.Interfaces;
-using Spravy.Core.Models;
+using Spravy.Domain.Enums;
+using Spravy.Domain.Interfaces;
+using Spravy.Domain.Models;
 using Spravy.Protos;
 using Spravy.Ui.Exceptions;
 using Spravy.Ui.Extensions;
@@ -27,13 +27,13 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
         client = new ToDoService.ToDoServiceClient(grpcChannel);
     }
 
-    public async Task<IEnumerable<ToDoSubItem>> GetRootToDoItemsAsync()
+    public async Task<IEnumerable<IToDoSubItem>> GetRootToDoItemsAsync()
     {
         try
         {
             var items = await client.GetRootToDoItemsAsync(new GetRootToDoItemsRequest());
 
-            return items.Items.Select(x => mapper.Map<ToDoSubItem>(x)).ToArray();
+            return items.Items.Select(x => mapper.Map<IToDoSubItem>(x)).ToArray();
         }
         catch (Exception e)
         {
@@ -41,11 +41,12 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
         }
     }
 
-    public async Task<ToDoItem> GetToDoItemAsync(Guid id)
+    public async Task<IToDoItem> GetToDoItemAsync(Guid id)
     {
         try
         {
             var byteStringId = mapper.Map<ByteString>(id);
+
             var item = await client.GetToDoItemAsync(
                 new GetToDoItemRequest
                 {
@@ -53,7 +54,7 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
                 }
             );
 
-            var result = mapper.Map<ToDoItem>(item.Item);
+            var result = mapper.Map<IToDoItem>(item.Item);
 
             return result;
         }
@@ -244,7 +245,7 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
         }
     }
 
-    public async Task<IEnumerable<ToDoSubItem>> SearchAsync(string searchText)
+    public async Task<IEnumerable<IToDoSubItem>> SearchAsync(string searchText)
     {
         try
         {
@@ -255,7 +256,25 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
                 }
             );
 
-            return reply.Items.Select(x => mapper.Map<ToDoSubItem>(x)).ToArray();
+            return reply.Items.Select(x => mapper.Map<IToDoSubItem>(x)).ToArray();
+        }
+        catch (Exception e)
+        {
+            throw new GrpcException(grpcChannel.Target, e);
+        }
+    }
+
+    public async Task UpdateToDoItemTypeAsync(Guid id, ToDoItemType type)
+    {
+        try
+        {
+            await client.UpdateToDoItemTypeAsync(
+                new UpdateToDoItemTypeRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                    Type = (ToDoItemTypeGrpc)type,
+                }
+            );
         }
         catch (Exception e)
         {

@@ -5,10 +5,22 @@
                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
+                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.CompleteToDoItemView"
                                 x:DataType="viewModels:CompleteToDoItemViewModel">
-    <ItemsControl>
+    <Design.DataContext>
+        <viewModels:CompleteToDoItemViewModel />
+    </Design.DataContext>
+
+    <UserControl.KeyBindings>
+        <KeyBinding Gesture="C" Command="{Binding ChangeCompleteStatusToDoItemCommand}" />
+        <KeyBinding Gesture="S" Command="{Binding SkipToDoItemCommand}" />
+        <KeyBinding Gesture="F" Command="{Binding FailToDoItemCommand}" />
+        <KeyBinding Gesture="Escape" Command="{Binding BackCommand}" />
+    </UserControl.KeyBindings>
+
+    <StackPanel>
         <TextBlock Text="{Binding Item.Name}"
                    HorizontalAlignment="Center" />
 
@@ -16,31 +28,27 @@
                 Theme="{StaticResource OutlineButton}"
                 Content="Complete"
                 BorderBrush="Green"
-                Margin="3"
                 IsVisible="{Binding Item.IsComplete, Converter={StaticResource ReverseBooleanValueConverter}}" />
 
         <Button Command="{Binding IncompleteToDoItemCommand}"
                 Theme="{StaticResource OutlineButton}"
                 Content="Incomplete"
                 BorderBrush="Aqua"
-                Margin="3"
                 IsVisible="{Binding Item.IsComplete}" />
 
         <Button Command="{Binding SkipToDoItemCommand}"
                 Theme="{StaticResource OutlineButton}"
                 Content="Skip"
-                BorderBrush="Yellow"
-                Margin="3" />
+                BorderBrush="Yellow" />
 
         <Button Command="{Binding FailToDoItemCommand}"
                 Theme="{StaticResource OutlineButton}"
                 Content="Fail"
-                BorderBrush="Red"
-                Margin="3" />
+                BorderBrush="Red" />
 
         <Button Classes="light"
-                Content="Back"
-                Command="{Binding BackCommand}"
-                Margin="3" />
-    </ItemsControl>
+                Command="{Binding BackCommand}">
+            <avalonia:MaterialIcon Kind="ArrowLeft" />
+        </Button>
+    </StackPanel>
 </reactiveUi:ReactiveUserControl>

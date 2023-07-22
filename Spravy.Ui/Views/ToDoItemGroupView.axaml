@@ -1,0 +1,76 @@
+<models:MainReactiveUserControl x:TypeArguments="viewModels:ToDoItemGroupViewModel"
+                                xmlns="https://github.com/avaloniaui"
+                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                                xmlns:models="clr-namespace:ExtensionFramework.AvaloniaUi.ReactiveUI.Models;assembly=ExtensionFramework.AvaloniaUi.ReactiveUI"
+                                xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
+                                xmlns:controls="clr-namespace:ExtensionFramework.AvaloniaUi.Controls;assembly=ExtensionFramework.AvaloniaUi"
+                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                                x:Class="Spravy.Ui.Views.ToDoItemGroupView"
+                                x:DataType="viewModels:ToDoItemGroupViewModel">
+    <Design.DataContext>
+        <viewModels:ToDoItemGroupViewModel />
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,*">
+        <StackPanel>
+            <ContentControl Content="{Binding Path}"
+                            Margin="5" />
+
+            <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto">
+                <TextBlock Text="Type"
+                           VerticalAlignment="Center" />
+
+                <ComboBox Grid.Row="0"
+                          Grid.Column="1"
+                          SelectedItem="{Binding Type}"
+                          ItemsSource="{Binding ToDoItemTypes}" />
+
+                <TextBlock Grid.Row="1"
+                           Text="Name"
+                           VerticalAlignment="Center" />
+
+                <controls:EditableTextBlock Grid.Row="1"
+                                            Grid.Column="1"
+                                            Text="{Binding Name, Mode=TwoWay}"
+                                            VerticalAlignment="Center"
+                                            Watermark="Name"
+                                            Margin="5" />
+            </Grid>
+
+            <Grid ColumnDefinitions="*,*">
+                <Button Command="{Binding AddToDoItemCommand}">
+                    <avalonia:MaterialIcon Kind="Plus" />
+                </Button>
+
+                <Button Grid.Column="1" Command="{Binding SearchCommand}">
+                    <avalonia:MaterialIcon Kind="Search" />
+                </Button>
+            </Grid>
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <StackPanel>
+                <controls:EditableTextBlock AcceptsReturn="True"
+                                            AcceptsTab="True"
+                                            TextWrapping="Wrap"
+                                            Text="{Binding Description, Mode=TwoWay}"
+                                            Watermark="Description"
+                                            Margin="5" />
+                <ListBox Classes="ItemsDragAndDrop"
+                         ItemsSource="{Binding Items}"
+                         SelectionMode="Single" />
+
+                <Border Height="5" Background="{StaticResource SystemControlForegroundChromeGrayBrush}" />
+
+                <ListBox Classes="ItemsDragAndDrop"
+                         ItemsSource="{Binding CompletedItems}"
+                         SelectionMode="Single" />
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</models:MainReactiveUserControl>

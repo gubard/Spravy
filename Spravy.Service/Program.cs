@@ -1,17 +1,30 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using Spravy.Core.Interfaces;
+using Spravy.Domain.Interfaces;
 using Spravy.Db.Contexts;
+using Spravy.Db.Core.Profiles;
 using Spravy.Db.Interfaces;
 using Spravy.Db.Sqlite.Services;
+using Spravy.Domain.Core.Profiles;
 using Spravy.Service.Profiles;
 using Spravy.Service.Services;
 using Spravy.Service.Services.Grpcs;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddGrpc();
-builder.Services.AddScoped(_ => new MapperConfiguration(cfg => cfg.AddProfile<SpravyServiceProfile>()));
+
+builder.Services.AddScoped(
+    _ => new MapperConfiguration(
+        cfg =>
+        {
+            cfg.AddProfile<SpravyServiceProfile>();
+            cfg.AddProfile<SpravyProfile>();
+            cfg.AddProfile<SpravyDbProfile>();
+        }
+    )
+);
+
 builder.Services.AddScoped<IMapper>(sp => new Mapper(sp.GetRequiredService<MapperConfiguration>()));
 builder.Services.AddScoped<IToDoService, EntityFrameworkToDoService>();
 builder.Services.AddScoped<IDbContextSetup, SqliteDbContextSetup>();

@@ -9,7 +9,7 @@ public class ToDoItemNotifyToIsVisibleSkippedCountConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is not ToDoItemNotify item)
+        if (value is not ToDoSubItemValueNotify item)
         {
             return false;
         }

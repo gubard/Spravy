@@ -4,7 +4,7 @@ using Spravy.Ui.Models;
 
 namespace Spravy.Ui.Handlers;
 
-public class ItemsListBoxDropHandlerToDoItemNotify : ItemsListBoxDropHandler<ToDoItemNotify>
+public class ItemsListBoxDropHandlerToDoItemNotify : ItemsListBoxDropHandler<ToDoSubItemNotify>
 {
     public ItemsListBoxDropHandlerToDoItemNotify()
     {

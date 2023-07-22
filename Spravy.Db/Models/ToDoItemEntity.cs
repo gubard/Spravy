@@ -1,29 +1,20 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Spravy.Core.Enums;
+using Spravy.Domain.Enums;
 
 namespace Spravy.Db.Models;
 
-[Table("ToDoItems")]
 public class ToDoItemEntity
 {
-    [Key]
     public Guid Id { get; set; }
-
-    public string Name { get; set; }
-    public TypeOfPeriodicity TypeOfPeriodicity { get; set; }
-    public DateTimeOffset? DueDate { get; set; }
-    public bool IsComplete { get; set; }
+    public string Name { get; set; } = string.Empty;
     public uint OrderIndex { get; set; }
-    public string Description { get; set; }
+    public string Description { get; set; } = string.Empty;
     public DateTimeOffset CreatedDateTime { get; set; } = DateTimeOffset.Now;
-    public uint CompletedCount { get; set; }
-    public uint SkippedCount { get; set; }
-    public uint FailedCount { get; set; }
-    //public string PeriodicityItems { get; set; }
+    public ToDoItemType Type { get; set; }
 
-    [ForeignKey(nameof(Parent))]
     public Guid? ParentId { get; set; }
-
     public ToDoItemEntity? Parent { get; set; }
+    public Guid ValueId { get; set; }
+    public ToDoItemValueEntity? Value { get; set; }
+    public Guid GroupId { get; set; }
+    public ToDoItemGroupEntity? Group { get; set; }
 }

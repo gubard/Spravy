@@ -10,7 +10,7 @@ using ExtensionFramework.AvaloniaUi.Models;
 
 namespace Spravy.Ui.Handlers;
 
-public class ItemsListBoxDropHandler<TItem> : DropHandlerBase where TItem : new()
+public class ItemsListBoxDropHandler<TItem> : DropHandlerBase
 {
     public event EventHandler<MovedDragDropArgs<TItem>>? Moved;
 
@@ -42,21 +42,10 @@ public class ItemsListBoxDropHandler<TItem> : DropHandlerBase where TItem : new(
 
         switch (e.DragEffects)
         {
-            case DragDropEffects.Copy:
-            {
-                if (bExecute)
-                {
-                    var clone = new TItem();
-                    InsertItem(items, clone, targetIndex + 1);
-                }
-
-                return true;
-            }
             case DragDropEffects.Move:
             {
                 if (bExecute)
                 {
-                    //MoveItem(items, sourceIndex, targetIndex);
                     Moved?.Invoke(
                         targetContext,
                         new MovedDragDropArgs<TItem>(
@@ -68,15 +57,6 @@ public class ItemsListBoxDropHandler<TItem> : DropHandlerBase where TItem : new(
                             pointerPosition
                         )
                     );
-                }
-
-                return true;
-            }
-            case DragDropEffects.Link:
-            {
-                if (bExecute)
-                {
-                    SwapItem(items, sourceIndex, targetIndex);
                 }
 
                 return true;

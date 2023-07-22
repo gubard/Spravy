@@ -11,5 +11,7 @@ public class ToDoItemEntityTypeConfiguration : IEntityTypeConfiguration<ToDoItem
         builder.ToTable("ToDoItem");
         builder.HasKey(x => x.Id);
         builder.HasOne(x => x.Parent).WithMany().HasForeignKey(x => x.ParentId);
+        builder.HasOne(x => x.Value).WithOne(x => x.Item).HasForeignKey<ToDoItemEntity>(x => x.ValueId);
+        builder.HasOne(x => x.Group).WithOne(x => x.Item).HasForeignKey<ToDoItemEntity>(x => x.GroupId);
     }
 }

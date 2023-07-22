@@ -10,6 +10,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Spravy.Core\Spravy.Core.csproj" />
+      <ProjectReference Include="..\Spravy.Domain\Spravy.Domain.csproj" />
     </ItemGroup>
 </Project>

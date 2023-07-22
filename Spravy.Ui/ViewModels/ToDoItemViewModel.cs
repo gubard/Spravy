@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
@@ -12,50 +10,50 @@ using ExtensionFramework.Core.Common.Extensions;
 using ExtensionFramework.Core.DependencyInjection.Attributes;
 using ExtensionFramework.ReactiveUI.Models;
 using ReactiveUI;
-using Spravy.Core.Enums;
-using Spravy.Core.Interfaces;
+using Spravy.Domain.Enums;
+using Spravy.Domain.Interfaces;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 using Spravy.Ui.Views;
 
 namespace Spravy.Ui.ViewModels;
 
-public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItemNotify>, IToDoItemOrderChanger
+public abstract class ToDoItemViewModel : RoutableViewModelBase,
+    IItemsViewModel<ToDoSubItemNotify>,
+    IToDoItemOrderChanger
 {
     private string name = string.Empty;
     private Guid id;
-    private TypeOfPeriodicity typeOfPeriodicity;
-    private DateTimeOffset? dueDate;
-    private bool isComplete;
     private string description = string.Empty;
-    private List<IDisposable> propertySubscribes = new();
 
-    public ToDoItemViewModel() : base("to-do-item")
+    protected readonly List<IDisposable> PropertySubscribes = new();
+    private ToDoItemType type;
+
+    public ToDoItemViewModel(string? urlPathSegment) : base(urlPathSegment)
     {
-        DeleteSubToDoItemCommand = CreateCommandFromTask<ToDoItemNotify>(DeleteSubToDoItemAsync);
-        ChangeToDoItemCommand = CreateCommand<ToDoItemNotify>(ChangeToDoItem);
+        CompleteSubToDoItemCommand = CreateCommandFromTask<ToDoSubItemValueNotify>(CompleteSubToDoItemAsync);
+        DeleteSubToDoItemCommand = CreateCommandFromTask<ToDoSubItemValueNotify>(DeleteSubToDoItemAsync);
+        ChangeToDoItemCommand = CreateCommand<ToDoSubItemNotify>(ChangeToDoItem);
         AddToDoItemCommand = CreateCommandFromTask(AddToDoItemAsync);
         ChangeToDoItemByPathCommand = CreateCommand<ToDoItemParentNotify>(ChangeToDoItemByPath);
         ToRootItemCommand = CreateCommand(ToRootItem);
-        CompleteSubToDoItemCommand = CreateCommandFromTask<ToDoItemNotify>(CompleteSubToDoItemAsync);
         TypeOfPeriodicities = new(Enum.GetValues<TypeOfPeriodicity>());
-        CompleteToDoItemCommand = CreateCommandFromTask(CompleteToDoItemAsync);
+        ToDoItemTypes = new(Enum.GetValues<ToDoItemType>());
         SearchCommand = CreateCommand(Search);
-        SubscribeProperties();
     }
 
-    public AvaloniaList<ToDoItemNotify> CompletedItems { get; } = new();
+    public AvaloniaList<ToDoSubItemNotify> CompletedItems { get; } = new();
     public AvaloniaList<TypeOfPeriodicity> TypeOfPeriodicities { get; }
-    public AvaloniaList<ToDoItemNotify> Items { get; } = new();
+    public AvaloniaList<ToDoItemType> ToDoItemTypes { get; }
+    public AvaloniaList<ToDoSubItemNotify> Items { get; } = new();
+    public ICommand CompleteSubToDoItemCommand { get; }
     public ICommand DeleteSubToDoItemCommand { get; }
     public ICommand ChangeToDoItemCommand { get; }
     public ICommand ChangeParentToDoItemCommand { get; }
     public ICommand AddToDoItemCommand { get; }
     public ICommand SearchCommand { get; }
-    public ICommand CompleteToDoItemCommand { get; }
     public ICommand ChangeToDoItemByPathCommand { get; }
     public ICommand ToRootItemCommand { get; }
-    public ICommand CompleteSubToDoItemCommand { get; }
 
     [Inject]
     public required IToDoService ToDoService { get; set; }
@@ -66,16 +64,16 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
     [Inject]
     public required PathControl Path { get; set; }
 
+    public ToDoItemType Type
+    {
+        get => type;
+        set => this.RaiseAndSetIfChanged(ref type, value);
+    }
+
     public string Name
     {
         get => name;
         set => this.RaiseAndSetIfChanged(ref name, value);
-    }
-
-    public bool IsComplete
-    {
-        get => isComplete;
-        set => this.RaiseAndSetIfChanged(ref isComplete, value);
     }
 
     public Guid Id
@@ -84,60 +82,25 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
         set => this.RaiseAndSetIfChanged(ref id, value);
     }
 
-    public DateTimeOffset? DueDate
-    {
-        get => dueDate;
-        set => this.RaiseAndSetIfChanged(ref dueDate, value);
-    }
-
-    public TypeOfPeriodicity TypeOfPeriodicity
-    {
-        get => typeOfPeriodicity;
-        set => this.RaiseAndSetIfChanged(ref typeOfPeriodicity, value);
-    }
-
     public string Description
     {
         get => description;
         set => this.RaiseAndSetIfChanged(ref description, value);
     }
 
+    public abstract Task RefreshToDoItemAsync();
+
     private void Search()
     {
         Navigator.NavigateTo<SearchViewModel>();
     }
 
-    private async Task CompleteToDoItemAsync()
-    {
-        await DialogViewer.ShowDialogAsync<CompleteToDoItemView>(
-            view =>
-            {
-                var viewModel = view.ViewModel.ThrowIfNull();
-                viewModel.IsDialog = true;
-                viewModel.Item = Mapper.Map<ToDoItemNotify>(this);
-            }
-        );
-
-        await RefreshToDoItemAsync();
-    }
-
-    private async void OnNextId(Guid x)
+    protected async void OnNextId(Guid x)
     {
         await SafeExecuteAsync(RefreshToDoItemAsync);
     }
 
-    private async void OnNextTypeOfPeriodicity(TypeOfPeriodicity x)
-    {
-        await SafeExecuteAsync(
-            async () =>
-            {
-                await ToDoService.UpdateTypeOfPeriodicityAsync(Id, x);
-                await RefreshToDoItemAsync();
-            }
-        );
-    }
-
-    private async void OnNextName(string x)
+    protected async void OnNextName(string x)
     {
         await SafeExecuteAsync(
             async () =>
@@ -148,6 +111,31 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
         );
     }
 
+    protected async void OnNextType(ToDoItemType x)
+    {
+        await SafeExecuteAsync(
+            async () =>
+            {
+                await ToDoService.UpdateToDoItemTypeAsync(Id, x);
+                await RefreshToDoItemAsync();
+            }
+        );
+    }
+
+    private async Task CompleteSubToDoItemAsync(ToDoSubItemValueNotify subItemValue)
+    {
+        await DialogViewer.ShowDialogAsync<CompleteToDoItemView>(
+            view =>
+            {
+                var viewModel = view.ViewModel.ThrowIfNull();
+                viewModel.IsDialog = true;
+                viewModel.Item = subItemValue;
+            }
+        );
+
+        await RefreshToDoItemAsync();
+    }
+
     private async Task AddToDoItemAsync()
     {
         await DialogViewer.ShowDialogAsync<AddToDoItemView>(
@@ -155,44 +143,19 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
             {
                 var viewModel = view.ViewModel.ThrowIfNull();
                 viewModel.IsDialog = true;
-                viewModel.ThrowIfNull().Parent = Mapper.Map<ToDoItemNotify>(this);
+                viewModel.ThrowIfNull().Parent = Mapper.Map<ToDoSubItemNotify>(this);
             }
         );
-    }
-
-    private async Task CompleteSubToDoItemAsync(ToDoItemNotify item)
-    {
-        await DialogViewer.ShowDialogAsync<CompleteToDoItemView>(
-            view =>
-            {
-                var viewModel = view.ViewModel.ThrowIfNull();
-                viewModel.IsDialog = true;
-                viewModel.Item = item;
-            }
-        );
-
-        await RefreshToDoItemAsync();
     }
 
     private void ChangeToDoItemByPath(ToDoItemParentNotify item)
     {
-        Navigator.NavigateTo<ToDoItemViewModel>(vm => vm.Id = item.Id);
+        Navigator.NavigateTo<ToDoItemValueViewModel>(vm => vm.Id = item.Id);
     }
 
-    private async void OnNextIsComplete(bool x)
+    private void ChangeToDoItem(ToDoSubItemNotify subItemValue)
     {
-        await SafeExecuteAsync(
-            async () =>
-            {
-                await ToDoService.UpdateCompleteStatusAsync(Id, x);
-                await RefreshToDoItemAsync();
-            }
-        );
-    }
-
-    private void ChangeToDoItem(ToDoItemNotify item)
-    {
-        Navigator.NavigateTo<ToDoItemViewModel>(vm => vm.Id = item.Id);
+        Navigator.NavigateTo<ToDoItemValueViewModel>(vm => vm.Id = subItemValue.Id);
     }
 
     private void ToRootItem()
@@ -200,24 +163,13 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
         Navigator.NavigateTo<RootToDoItemViewModel>();
     }
 
-    private async Task DeleteSubToDoItemAsync(ToDoItemNotify item)
+    private async Task DeleteSubToDoItemAsync(ToDoSubItemNotify subItemValue)
     {
-        await ToDoService.DeleteToDoItemAsync(item.Id);
+        await ToDoService.DeleteToDoItemAsync(subItemValue.Id);
         await RefreshToDoItemAsync();
     }
 
-    private async void OnNextDueDate(DateTimeOffset? x)
-    {
-        await SafeExecuteAsync(
-            async () =>
-            {
-                await ToDoService.UpdateDueDateAsync(Id, x);
-                await RefreshToDoItemAsync();
-            }
-        );
-    }
-
-    private async void OnNextDescription(string x)
+    protected async void OnNextDescription(string x)
     {
         await SafeExecuteAsync(
             async () =>
@@ -226,72 +178,5 @@ public class ToDoItemViewModel : RoutableViewModelBase, IItemsViewModel<ToDoItem
                 await RefreshToDoItemAsync();
             }
         );
-    }
-
-    public async Task RefreshToDoItemAsync()
-    {
-        UnsubscribeProperties();
-        Path.Items ??= new AvaloniaList<object>();
-        var item = await ToDoService.GetToDoItemAsync(Id);
-        Name = item.Name;
-        IsComplete = item.IsComplete;
-        TypeOfPeriodicity = item.TypeOfPeriodicity;
-        DueDate = item.DueDate;
-        Description = item.Description;
-        Items.Clear();
-        CompletedItems.Clear();
-        var source = item.Items.Select(x => Mapper.Map<ToDoItemNotify>(x)).ToArray();
-        Items.AddRange(source.Where(x => x.Status != ToDoItemStatus.Complete).OrderBy(x => x.OrderIndex));
-        CompletedItems.AddRange(source.Where(x => x.Status == ToDoItemStatus.Complete).OrderBy(x => x.OrderIndex));
-        SubscribeItems(Items);
-        SubscribeItems(CompletedItems);
-        Path.Items.Clear();
-        Path.Items.Add(new RootItem());
-        Path.Items.AddRange(item.Parents.Select(x => Mapper.Map<ToDoItemParentNotify>(x)));
-        SubscribeProperties();
-    }
-
-    private void SubscribeItems(IEnumerable<ToDoItemNotify> items)
-    {
-        foreach (var itemNotify in items)
-        {
-            async void OnNextIsComplete(bool x)
-            {
-                await SafeExecuteAsync(
-                    async () =>
-                    {
-                        await ToDoService.UpdateCompleteStatusAsync(itemNotify.Id, x);
-                        await RefreshToDoItemAsync();
-                    }
-                );
-            }
-
-            itemNotify.WhenAnyValue(x => x.IsComplete).Skip(1).Subscribe(OnNextIsComplete);
-        }
-    }
-
-    private void SubscribeProperties()
-    {
-        propertySubscribes.AddRange(GetSubscribeProperties());
-    }
-
-    private IEnumerable<IDisposable> GetSubscribeProperties()
-    {
-        yield return this.WhenAnyValue(x => x.DueDate).Skip(1).Subscribe(OnNextDueDate);
-        yield return this.WhenAnyValue(x => x.TypeOfPeriodicity).Skip(1).Subscribe(OnNextTypeOfPeriodicity);
-        yield return this.WhenAnyValue(x => x.Id).Skip(1).Subscribe(OnNextId);
-        yield return this.WhenAnyValue(x => x.IsComplete).Skip(1).Subscribe(OnNextIsComplete);
-        yield return this.WhenAnyValue(x => x.Name).Skip(1).Subscribe(OnNextName);
-        yield return this.WhenAnyValue(x => x.Description).Skip(1).Subscribe(OnNextDescription);
-    }
-
-    private void UnsubscribeProperties()
-    {
-        foreach (var propertySubscribe in propertySubscribes)
-        {
-            propertySubscribe.Dispose();
-        }
-
-        propertySubscribes.Clear();
     }
 }

@@ -3,14 +3,14 @@ using System.Windows.Input;
 using ExtensionFramework.Core.DependencyInjection.Attributes;
 using ExtensionFramework.ReactiveUI.Models;
 using ReactiveUI;
-using Spravy.Core.Interfaces;
+using Spravy.Domain.Interfaces;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 
 public class CompleteToDoItemViewModel : ViewModelBase
 {
-    private ToDoItemNotify? item;
+    private ToDoSubItemValueNotify? item;
 
     public CompleteToDoItemViewModel()
     {
@@ -18,9 +18,10 @@ public class CompleteToDoItemViewModel : ViewModelBase
         CompleteToDoItemCommand = CreateCommandFromTask(CompleteToDoItemAsync);
         IncompleteToDoItemCommand = CreateCommandFromTask(IncompleteToDoItemAsync);
         FailToDoItemCommand = CreateCommandFromTask(FailToDoItemAsync);
+        ChangeCompleteStatusToDoItemCommand = CreateCommandFromTask(ChangeCompleteStatusToDoItemAsync);
     }
 
-    public ToDoItemNotify? Item
+    public ToDoSubItemValueNotify? Item
     {
         get => item;
         set => this.RaiseAndSetIfChanged(ref item, value);
@@ -30,6 +31,7 @@ public class CompleteToDoItemViewModel : ViewModelBase
     public ICommand IncompleteToDoItemCommand { get; }
     public ICommand SkipToDoItemCommand { get; }
     public ICommand FailToDoItemCommand { get; }
+    public ICommand ChangeCompleteStatusToDoItemCommand { get; }
 
     [Inject]
     public required IToDoService ToDoService { get; init; }
@@ -53,6 +55,25 @@ public class CompleteToDoItemViewModel : ViewModelBase
         }
 
         await ToDoService.SkipToDoItemAsync(Item.Id);
+        BackCommand.Execute(null);
+    }
+
+    private async Task ChangeCompleteStatusToDoItemAsync()
+    {
+        if (Item is null)
+        {
+            return;
+        }
+
+        if (Item.IsComplete)
+        {
+            await ToDoService.UpdateCompleteStatusAsync(Item.Id, false);
+        }
+        else
+        {
+            await ToDoService.UpdateCompleteStatusAsync(Item.Id, true);
+        }
+
         BackCommand.Execute(null);
     }
 

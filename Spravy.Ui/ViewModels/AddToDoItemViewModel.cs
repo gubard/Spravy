@@ -8,15 +8,15 @@ using ExtensionFramework.Core.Common.Extensions;
 using ExtensionFramework.Core.DependencyInjection.Attributes;
 using ExtensionFramework.ReactiveUI.Models;
 using ReactiveUI;
-using Spravy.Core.Interfaces;
-using Spravy.Core.Models;
+using Spravy.Domain.Interfaces;
+using Spravy.Domain.Models;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 
 public class AddToDoItemViewModel : RoutableViewModelBase
 {
-    private ToDoItemNotify? parent;
+    private ToDoSubItemNotify? parent;
     private string name = string.Empty;
 
     public AddToDoItemViewModel() : base("add-to-do-item")
@@ -37,7 +37,7 @@ public class AddToDoItemViewModel : RoutableViewModelBase
     [Inject]
     public required IToDoService ToDoService { get; init; }
 
-    public ToDoItemNotify? Parent
+    public ToDoSubItemNotify? Parent
     {
         get => parent;
         set => this.RaiseAndSetIfChanged(ref parent, value);
@@ -54,7 +54,7 @@ public class AddToDoItemViewModel : RoutableViewModelBase
         var parentValue = Parent.ThrowIfNull();
         var options = new AddToDoItemOptions(parentValue.Id, Name);
         await ToDoService.AddToDoItemAsync(options);
-        Navigator.NavigateTo<ToDoItemViewModel>(vm => vm.Id = parentValue.Id);
+        Navigator.NavigateTo<ToDoItemValueViewModel>(vm => vm.Id = parentValue.Id);
         DialogViewer.CloseDialog();
     }
 

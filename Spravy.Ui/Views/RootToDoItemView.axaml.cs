@@ -7,7 +7,7 @@ using Spravy.Ui.ViewModels;
 
 namespace Spravy.Ui.Views;
 
-public partial class RootToDoItemView : ReactiveUserControl<RootToDoItemViewModel>, IToDoItemView
+public partial class RootToDoItemView : ReactiveUserControl<RootToDoItemViewModel>, IToDoItemView, ICompleteSubToDoItemCommand
 {
     public RootToDoItemView()
     {

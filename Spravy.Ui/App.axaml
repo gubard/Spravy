@@ -15,7 +15,7 @@
         <FluentTheme DensityStyle="Compact" />
         <dialogHostAvalonia:DialogHostStyles />
         <StyleInclude Source="avares://ExtensionFramework.AvaloniaUi/Styles/Theme.axaml" />
-        <themes:MaterialTheme BaseTheme="Dark" PrimaryColor="Purple" SecondaryColor="Lime" />
+        <themes:MaterialTheme BaseTheme="Dark" PrimaryColor="Blue" SecondaryColor="Yellow" />
         <avalonia:MaterialIconStyles />
         <StyleInclude Source="avares://ExtensionFramework.AvaloniaUi.Material/Styles/Theme.axaml" />
 
@@ -50,7 +50,22 @@
     </Application.Styles>
 
     <Application.DataTemplates>
-        <DataTemplate DataType="models:ToDoItemNotify">
+        <DataTemplate DataType="models:ToDoItemParentNotify">
+            <Button Margin="3"
+                    Command="{Binding $parent[interfaces:IPathView].ChangeToDoItemByPathCommand}"
+                    CommandParameter="{Binding}">
+                <TextBlock Text="{Binding Name}" />
+            </Button>
+        </DataTemplate>
+
+        <DataTemplate DataType="models:RootItem">
+            <Button Margin="3"
+                    Command="{Binding $parent[interfaces:IPathView].ToRootItemCommand}">
+                <TextBlock Text="{x:Static models:RootItem.Name}" />
+            </Button>
+        </DataTemplate>
+
+        <DataTemplate DataType="models:ToDoSubItemValueNotify">
             <controls:Card ToolTip.Tip="{Binding Description, Converter={StaticResource EmptyStringToNullConverter}}">
                 <Grid ColumnDefinitions="Auto,*">
                     <Rectangle Width="10"
@@ -111,11 +126,51 @@
 
                         <Grid Grid.Column="1" ColumnDefinitions="*,*" RowDefinitions="*,*">
                             <Button
-                                Command="{Binding $parent[interfaces:IToDoItemView].CompleteSubToDoItemCommand}"
+                                Command="{Binding $parent[interfaces:ICompleteSubToDoItemCommand].CompleteSubToDoItemCommand}"
                                 CommandParameter="{Binding}">
                                 <avalonia:MaterialIcon Kind="Check" />
                             </Button>
 
+                            <Button Grid.Column="1"
+                                    Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
+                                    CommandParameter="{Binding}">
+                                <avalonia:MaterialIcon Kind="Delete" />
+                            </Button>
+
+                            <Button Grid.Row="1"
+                                    Command="{Binding $parent[interfaces:IToDoItemView].ChangeParentToDoItemCommand}">
+                                <avalonia:MaterialIcon Kind="SwapHorizontal" />
+                            </Button>
+
+                            <Button Grid.Column="1"
+                                    Grid.Row="1"
+                                    Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
+                                    CommandParameter="{Binding}">
+                                <avalonia:MaterialIcon Kind="Send" />
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </controls:Card>
+        </DataTemplate>
+
+        <DataTemplate DataType="models:ToDoSubItemGroupNotify">
+            <controls:Card ToolTip.Tip="{Binding Description, Converter={StaticResource EmptyStringToNullConverter}}">
+                <Grid ColumnDefinitions="Auto,*">
+                    <Rectangle Width="10"
+                               Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
+
+                    <Grid Grid.Column="1"
+                          ColumnDefinitions="*,Auto"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          Margin="5">
+                        <TextBlock Text="{Binding Name}"
+                                   Classes="Headline6"
+                                   HorizontalAlignment="Left"
+                                   TextWrapping="Wrap" />
+
+                        <Grid Grid.Column="1" ColumnDefinitions="*,*" RowDefinitions="*,*">
                             <Button Grid.Column="1"
                                     Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
                                     CommandParameter="{Binding}">

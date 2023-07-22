@@ -13,7 +13,8 @@ using ExtensionFramework.Core.DependencyInjection.Extensions;
 using ExtensionFramework.Core.Ui.Models;
 using ExtensionFramework.ReactiveUI.Interfaces;
 using Microsoft.Extensions.Configuration;
-using Spravy.Core.Interfaces;
+using Spravy.Domain.Core.Profiles;
+using Spravy.Domain.Interfaces;
 using Spravy.Ui.Enums;
 using Spravy.Ui.Models;
 using Spravy.Ui.Profiles;
@@ -27,7 +28,7 @@ public readonly struct SpravyDependencyInjectorConfiguration : IDependencyInject
 {
     public void Configure(IDependencyInjectorRegister register)
     {
-        register.RegisterScope(() => new MapperConfiguration(cfg => cfg.AddProfile<SpravyProfile>()));
+        register.RegisterScope(() => new MapperConfiguration(SetupMapperConfiguration));
         register.RegisterScope<IMapper>((MapperConfiguration cfg) => new Mapper(cfg));
         register.RegisterScope<IToDoService, GrpcToDoService>();
         register.RegisterScope<IExceptionViewModel, ExceptionViewModel>();
@@ -65,10 +66,16 @@ public readonly struct SpravyDependencyInjectorConfiguration : IDependencyInject
                         typeof(AddRootToDoItemViewModel), typeof(RootToDoItemViewModel)
                     },
                     {
-                        typeof(AddToDoItemViewModel), typeof(ToDoItemViewModel)
+                        typeof(AddToDoItemViewModel), typeof(ToDoItemValueViewModel)
                     }
                 }
             )
         );
+    }
+
+    private static void SetupMapperConfiguration(IMapperConfigurationExpression expression)
+    {
+        expression.AddProfile<SpravyProfile>();
+        expression.AddProfile<SpravyUiProfile>();
     }
 }

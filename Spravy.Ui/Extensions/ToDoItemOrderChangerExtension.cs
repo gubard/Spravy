@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using ExtensionFramework.AvaloniaUi.Extensions;
 using ExtensionFramework.AvaloniaUi.Models;
-using Spravy.Core.Models;
+using Spravy.Domain.Models;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 
@@ -11,7 +11,7 @@ public static class ToDoItemOrderChangerExtension
 {
     public static async Task ChangeToDoItemOrderAsync(
         this IToDoItemOrderChanger changer,
-        MovedDragDropArgs<ToDoItemNotify> args
+        MovedDragDropArgs<ToDoSubItemNotify> args
     )
     {
         if (changer.ToDoService is null)
@@ -31,7 +31,7 @@ public static class ToDoItemOrderChangerExtension
         await changer.RefreshToDoItemAsync();
     }
 
-    private static bool GetIsAfter(MovedDragDropArgs<ToDoItemNotify> args)
+    private static bool GetIsAfter(MovedDragDropArgs<ToDoSubItemNotify> args)
     {
         if (args.TargetIndex == args.SourceIndex + 1)
         {

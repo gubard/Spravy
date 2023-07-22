@@ -1,0 +1,204 @@
+syntax = "proto3";
+
+option csharp_namespace = "Spravy.Protos";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+
+package spravy;
+
+message SearchRequest {
+  string SearchText = 1;
+}
+
+message SearchReply {
+  repeated ToDoSubItemGrpc Items = 1;
+}
+
+message FailToDoItemRequest {
+  bytes Id = 1;
+}
+
+message FailToDoItemReply {
+}
+
+message SkipToDoItemRequest {
+  bytes Id = 1;
+}
+
+message SkipToDoItemReply {
+}
+
+message UpdateDescriptionToDoItemRequest {
+  bytes Id = 1;
+  string Description = 2;
+}
+
+message UpdateDescriptionToDoItemReply {
+}
+
+message UpdateOrderIndexToDoItemRequest {
+  bytes Id = 1;
+  bytes TargetId = 2;
+  bool IsAfter = 3;
+}
+
+message UpdateToDoItemTypeRequest {
+  bytes Id = 1;
+  ToDoItemTypeGrpc Type = 2;
+}
+
+message UpdateToDoItemTypeReply {
+  
+}
+
+message UpdateOrderIndexToDoItemReply {
+}
+
+message UpdateNameToDoItemRequest {
+  bytes Id = 1;
+  string Name = 2;
+}
+
+message UpdateNameToDoItemReply {
+}
+
+message UpdateCompleteStatusRequest {
+  bytes Id = 1;
+  bool IsComplete = 2;
+}
+
+message UpdateCompleteStatusReply {
+}
+
+message UpdateDueDateRequest {
+  bytes Id = 1;
+  DateTimeOffsetGrpc DueDate = 2;
+}
+
+message UpdateDueDateReply {
+}
+
+message UpdateTypeOfPeriodicityRequest {
+  bytes Id = 1;
+  TypeOfPeriodicityGrpc Type = 2;
+}
+
+message UpdateTypeOfPeriodicityReply {
+}
+
+message DeleteToDoItemRequest {
+  bytes Id = 1;
+}
+
+message DeleteToDoItemReply {
+}
+
+message AddToDoItemRequest {
+  bytes ParentId = 1;
+  string Name = 2;
+}
+
+message AddToDoItemReply {
+  bytes Id = 1;
+}
+
+message AddRootToDoItemRequest {
+  string Name = 1;
+}
+
+message AddRootToDoItemReply {
+  bytes Id = 1;
+}
+
+message GetToDoItemRequest {
+  bytes Id = 1;
+}
+
+message GetToDoItemReply {
+  ToDoItemGrpc Item = 1;
+}
+
+message ToDoItemGrpc {
+  bytes Id = 1;
+  string Name = 2;
+  repeated ToDoSubItemGrpc Items = 3;
+  repeated ToDoItemParentGrpc Parents = 4;
+  string Description = 5;
+
+  oneof Parameters {
+    ToDoItemValueGrpc Value = 6;
+    ToDoItemGroupGrpc Group = 7;
+  }
+}
+
+message ToDoItemGroupGrpc {
+}
+
+message GetRootToDoItemsRequest {
+}
+
+message GetRootToDoItemsReply {
+  repeated ToDoSubItemGrpc Items = 1;
+}
+
+message ToDoSubItemGrpc {
+  bytes Id = 1;
+  string Name = 2;
+  uint64 OrderIndex = 3;
+  ToDoItemStatusGrpc Status = 4;
+  string Description = 5;
+
+  oneof Parameters {
+    ToDoSubItemValueGrpc Value = 6;
+    ToDoSubItemGroupGrpc Group = 7;
+  }
+}
+
+message ToDoSubItemGroupGrpc {
+}
+
+message ToDoSubItemValueGrpc {
+  DateTimeOffsetGrpc DueDate = 1;
+  bool IsComplete = 2;
+  uint32 CompletedCount = 3;
+  uint32 SkippedCount = 4;
+  uint32 FailedCount = 5;
+}
+
+message ToDoItemParentGrpc {
+  bytes Id = 1;
+  string Name = 2;
+}
+
+message ToDoItemValueGrpc {
+  TypeOfPeriodicityGrpc TypeOfPeriodicity = 1;
+  DateTimeOffsetGrpc DueDate = 2;
+  bool IsComplete = 3;
+}
+
+message DateTimeOffsetGrpc {
+  google.protobuf.Timestamp Date = 1;
+  google.protobuf.Duration Offset = 2;
+}
+
+enum TypeOfPeriodicityGrpc {
+  None = 0;
+  Daily = 1;
+  Weekly = 2;
+  Monthly = 3;
+  Annually = 4;
+}
+
+enum ToDoItemStatusGrpc {
+  Miss = 0;
+  Today = 1;
+  Waiting = 2;
+  ReadyForComplete = 3;
+  Complete = 4;
+}
+
+enum ToDoItemTypeGrpc {
+  Value = 0;
+  Group = 1;
+}

@@ -1,9 +1,9 @@
 using AutoMapper;
 using Google.Protobuf;
 using Grpc.Core;
-using Spravy.Core.Enums;
-using Spravy.Core.Interfaces;
-using Spravy.Core.Models;
+using Spravy.Domain.Enums;
+using Spravy.Domain.Interfaces;
+using Spravy.Domain.Models;
 using Spravy.Protos;
 
 namespace Spravy.Service.Services.Grpcs;
@@ -163,5 +163,15 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         reply.Items.AddRange(items.Select(x => mapper.Map<ToDoSubItemGrpc>(x)));
 
         return reply;
+    }
+
+    public override async Task<UpdateToDoItemTypeReply> UpdateToDoItemType(
+        UpdateToDoItemTypeRequest request,
+        ServerCallContext context
+    )
+    {
+        await toDoService.UpdateToDoItemTypeAsync(mapper.Map<Guid>(request.Id), (ToDoItemType)request.Type);
+
+        return new UpdateToDoItemTypeReply();
     }
 }

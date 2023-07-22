@@ -5,8 +5,8 @@ using ExtensionFramework.Core.DependencyInjection.Attributes;
 using ExtensionFramework.Core.Ui.Models;
 using ExtensionFramework.ReactiveUI.Models;
 using ReactiveUI;
-using Spravy.Core.Interfaces;
-using Spravy.Core.Models;
+using Spravy.Domain.Interfaces;
+using Spravy.Domain.Models;
 
 namespace Spravy.Ui.ViewModels;
 

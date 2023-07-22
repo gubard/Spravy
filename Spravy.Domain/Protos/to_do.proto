@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+option csharp_namespace = "Spravy.Protos";
+
+import "Protos/to_do_messages.proto";
+
+package spravy;
+
+service ToDoService {
+  rpc GetRootToDoItems (GetRootToDoItemsRequest) returns (GetRootToDoItemsReply);
+  rpc GetToDoItem (GetToDoItemRequest) returns (GetToDoItemReply);
+  rpc AddRootToDoItem (AddRootToDoItemRequest) returns (AddRootToDoItemReply);
+  rpc AddToDoItem (AddToDoItemRequest) returns (AddToDoItemReply);
+  rpc DeleteToDoItem (DeleteToDoItemRequest) returns (DeleteToDoItemReply);
+  rpc UpdateTypeOfPeriodicity (UpdateTypeOfPeriodicityRequest) returns (UpdateTypeOfPeriodicityReply);
+  rpc UpdateDueDate (UpdateDueDateRequest) returns (UpdateDueDateReply);
+  rpc UpdateCompleteStatus (UpdateCompleteStatusRequest) returns (UpdateCompleteStatusReply);
+  rpc UpdateNameToDoItem (UpdateNameToDoItemRequest) returns (UpdateNameToDoItemReply);
+  rpc UpdateOrderIndexToDoItem (UpdateOrderIndexToDoItemRequest) returns (UpdateOrderIndexToDoItemReply);
+  rpc UpdateDescriptionToDoItem (UpdateDescriptionToDoItemRequest) returns (UpdateDescriptionToDoItemReply);
+  rpc SkipToDoItem (SkipToDoItemRequest) returns (SkipToDoItemReply);
+  rpc FailToDoItem (FailToDoItemRequest) returns (FailToDoItemReply);
+  rpc Search (SearchRequest) returns (SearchReply);
+  rpc UpdateToDoItemType (UpdateToDoItemTypeRequest) returns (UpdateToDoItemTypeReply);
+}
