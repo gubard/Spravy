@@ -61,7 +61,7 @@
         <DataTemplate DataType="models:RootItem">
             <Button Margin="3"
                     Command="{Binding $parent[interfaces:IPathView].ToRootItemCommand}">
-                <TextBlock Text="{x:Static models:RootItem.Name}" />
+                <avalonia:MaterialIcon Kind="Home" />
             </Button>
         </DataTemplate>
 
