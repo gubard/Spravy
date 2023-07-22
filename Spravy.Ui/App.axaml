@@ -122,19 +122,18 @@
                                     </Grid>
                                 </WrapPanel>
 
-                                <Grid Grid.Row="1"
-                                      ColumnDefinitions="Auto,Auto"
-                                      IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}">
+                                <WrapPanel Grid.Row="1"
+                                           Orientation="Horizontal"
+                                           IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}">
                                     <TextBlock Text="{Binding Active.Name}"
                                                TextWrapping="Wrap"
                                                VerticalAlignment="Center" />
 
-                                    <Button Grid.Column="1"
-                                            Command="{Binding $parent[interfaces:IToDoItemView].ChangeToActiveDoItemCommand}"
-                                            CommandParameter="{Binding Active}">
+                                    <Button CommandParameter="{Binding Active}"
+                                            Command="{Binding $parent[interfaces:IToDoItemView].ChangeToActiveDoItemCommand}">
                                         <avalonia:MaterialIcon Kind="Send" />
                                     </Button>
-                                </Grid>
+                                </WrapPanel>
                             </Grid>
                         </StackPanel>
 
@@ -194,18 +193,17 @@
                                        Classes="Headline6"
                                        TextWrapping="Wrap" />
 
-                            <Grid ColumnDefinitions="Auto,Auto"
-                                  IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}">
+                            <WrapPanel Orientation="Horizontal"
+                                       IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}">
                                 <TextBlock Text="{Binding Active.Name}"
                                            TextWrapping="Wrap"
                                            VerticalAlignment="Center" />
 
-                                <Button Grid.Column="1"
-                                        Command="{Binding $parent[interfaces:IToDoItemView].ChangeToActiveDoItemCommand}"
-                                        CommandParameter="{Binding Active}">
+                                <Button CommandParameter="{Binding Active}"
+                                        Command="{Binding $parent[interfaces:IToDoItemView].ChangeToActiveDoItemCommand}">
                                     <avalonia:MaterialIcon Kind="Send" />
                                 </Button>
-                            </Grid>
+                            </WrapPanel>
                         </WrapPanel>
 
                         <Grid Grid.Column="1" ColumnDefinitions="*,*" RowDefinitions="*,*">
