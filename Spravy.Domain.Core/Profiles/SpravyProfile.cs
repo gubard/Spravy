@@ -26,6 +26,15 @@ public class SpravyProfile : Profile
         CreateMap<AddToDoItemOptions, AddToDoItemRequest>();
         CreateMap<UpdateOrderIndexToDoItemOptions, UpdateOrderIndexToDoItemRequest>();
 
+        CreateMap<DateTimeOffset, DateTimeOffsetGrpc>()
+            .ConvertUsing(
+                (source, _, _) => new DateTimeOffsetGrpc
+                {
+                    Date = ToTimestamp(source),
+                    Offset = OffsetToDuration(source),
+                }
+            );
+
         CreateMap<IToDoItem, ToDoItemGrpc>()
             .ConvertUsing(
                 (source, _, resolutionContext) =>
