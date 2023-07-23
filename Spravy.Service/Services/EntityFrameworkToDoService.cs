@@ -175,7 +175,7 @@ public class EntityFrameworkToDoService : IToDoService
 
         if (value.DueDate.HasValue && value.DueDate.Value < DateTimeOffset.Now.ToCurrentDay())
         {
-            return (ToDoItemStatus.Complete, null);
+            return (ToDoItemStatus.Miss, null);
         }
 
         if (value.DueDate.HasValue && value.DueDate.Value > DateTimeOffset.Now.ToCurrentDay())
