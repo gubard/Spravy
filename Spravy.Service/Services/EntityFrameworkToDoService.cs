@@ -28,6 +28,7 @@ public class EntityFrameworkToDoService : IToDoService
             .Where(x => x.ParentId == null)
             .Include(x => x.Value)
             .Include(x => x.Group)
+            .Include(x => x.Statistical)
             .ToArrayAsync();
 
         var result = await ConvertAsync(items);
@@ -108,6 +109,7 @@ public class EntityFrameworkToDoService : IToDoService
             .AsNoTracking()
             .Include(x => x.Value)
             .Include(x => x.Group)
+            .Include(x => x.Statistical)
             .Where(x => x.ParentId == entity.Id)
             .ToArrayAsync();
 
@@ -186,6 +188,7 @@ public class EntityFrameworkToDoService : IToDoService
         var children = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Include(x => x.Value)
+            .Include(x => x.Statistical)
             .Include(x => x.Group)
             .Where(x => x.ParentId == entity.Id)
             .ToArrayAsync();
@@ -260,6 +263,7 @@ public class EntityFrameworkToDoService : IToDoService
             .Where(x => x.ParentId == item.Id)
             .Include(x => x.Group)
             .Include(x => x.Value)
+            .Include(x => x.Statistical)
             .ToArrayAsync();
 
         var parents = new List<ToDoItemParent>
@@ -473,6 +477,7 @@ public class EntityFrameworkToDoService : IToDoService
             .AsNoTracking()
             .Include(x => x.Group)
             .Include(x => x.Value)
+            .Include(x => x.Statistical)
             .Where(x => x.ParentId == item.Id)
             .ToArrayAsync();
 
@@ -592,6 +597,7 @@ public class EntityFrameworkToDoService : IToDoService
             .Where(x => x.Name.ToUpperInvariant().Contains(searchText.ToUpperInvariant()))
             .Include(x => x.Group)
             .Include(x => x.Value)
+            .Include(x => x.Statistical)
             .ToArrayAsync();
 
         var result = await ConvertAsync(items);
@@ -630,6 +636,7 @@ public class EntityFrameworkToDoService : IToDoService
             .Where(x => x.IsCurrent)
             .Include(x => x.Group)
             .Include(x => x.Value)
+            .Include(x => x.Statistical)
             .ToArrayAsync();
 
         var result = await ConvertAsync(items);
