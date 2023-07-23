@@ -20,13 +20,13 @@ public class SearchViewModel : RoutableViewModelBase
     public SearchViewModel() : base("search")
     {
         SearchCommand = CreateCommandFromTask(RefreshToDoItemAsync);
-        DeleteSubToDoItemCommand = CreateCommandFromTask<ToDoSubItemValueNotify>(DeleteSubToDoItemAsync);
+        DeleteSubToDoItemCommand = CreateCommandFromTask<ToDoSubItemNotify>(DeleteSubToDoItemAsync);
         ChangeToDoItemCommand = CreateCommand<ToDoSubItemNotify>(ChangeToDoItem);
         CompleteSubToDoItemCommand = CreateCommandFromTask<ToDoSubItemValueNotify>(CompleteSubToDoItemAsync);
         ChangeToActiveDoItemCommand = CreateCommand<ActiveToDoItemNotify>(ChangeToActiveDoItem);
     }
 
-    public AvaloniaList<ToDoSubItemValueNotify> SearchResult { get; } = new();
+    public AvaloniaList<ToDoSubItemNotify> SearchResult { get; } = new();
     public ICommand SearchCommand { get; }
     public ICommand DeleteSubToDoItemCommand { get; }
     public ICommand ChangeToDoItemCommand { get; }
@@ -65,7 +65,7 @@ public class SearchViewModel : RoutableViewModelBase
     {
         var items = await ToDoService.SearchAsync(SearchText);
         SearchResult.Clear();
-        SearchResult.AddRange(items.Select(x => Mapper.Map<ToDoSubItemValueNotify>(x)));
+        SearchResult.AddRange(items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)));
     }
 
     private async Task CompleteSubToDoItemAsync(ToDoSubItemValueNotify subItemValue)
