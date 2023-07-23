@@ -34,9 +34,9 @@ public class SpravyDbProfile : Profile
                                 source.OrderIndex,
                                 (ToDoItemStatus)resolutionContext.Items[StatusName],
                                 source.Description,
-                                source.Value.CompletedCount,
-                                source.Value.SkippedCount,
-                                source.Value.FailedCount,
+                                source.Statistical.CompletedCount,
+                                source.Statistical.SkippedCount,
+                                source.Statistical.FailedCount,
                                 source.IsCurrent,
                                 (ActiveToDoItem?)resolutionContext.Items[ActiveName]
                             );

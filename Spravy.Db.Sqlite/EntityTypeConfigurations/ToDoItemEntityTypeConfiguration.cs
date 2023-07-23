@@ -13,5 +13,6 @@ public class ToDoItemEntityTypeConfiguration : IEntityTypeConfiguration<ToDoItem
         builder.HasOne(x => x.Parent).WithMany().HasForeignKey(x => x.ParentId);
         builder.HasOne(x => x.Value).WithOne(x => x.Item).HasForeignKey<ToDoItemEntity>(x => x.ValueId);
         builder.HasOne(x => x.Group).WithOne(x => x.Item).HasForeignKey<ToDoItemEntity>(x => x.GroupId);
+        builder.HasOne(x => x.Statistical).WithOne(x => x.Item).HasForeignKey<ToDoItemEntity>(x => x.StatisticalId);
     }
 }

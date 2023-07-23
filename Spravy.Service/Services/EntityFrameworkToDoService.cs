@@ -98,7 +98,7 @@ public class EntityFrameworkToDoService : IToDoService
 
     private async Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusAsync(
         ToDoItemEntity entity,
-        ToDoItemGroupEntity group
+        ToDoItemGroupEntity _
     )
     {
         var currentOrder = uint.MaxValue;
@@ -253,7 +253,7 @@ public class EntityFrameworkToDoService : IToDoService
 
     public async Task<IToDoItem> GetToDoItemAsync(Guid id)
     {
-        var (item, value, group) = await GetToDoItemEntityAsync(id);
+        var (item, value, _, _) = await GetToDoItemEntityAsync(id);
 
         var subItems = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
@@ -318,7 +318,7 @@ public class EntityFrameworkToDoService : IToDoService
     public async Task<Guid> AddToDoItemAsync(AddToDoItemOptions options)
     {
         var id = Guid.NewGuid();
-        var (parentItem, parentValue, parentGroup) = await GetToDoItemEntityAsync(options.ParentId);
+        var (parentItem, parentValue, parentGroup, statistical) = await GetToDoItemEntityAsync(options.ParentId);
 
         var items = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
@@ -330,7 +330,7 @@ public class EntityFrameworkToDoService : IToDoService
             Id = Guid.NewGuid(),
             ItemId = id,
             TypeOfPeriodicity = parentValue.TypeOfPeriodicity,
-            DueDate = parentValue.DueDate
+            DueDate = parentValue.DueDate,
         };
 
         var toDoItemGroup = new ToDoItemGroupEntity
@@ -367,7 +367,7 @@ public class EntityFrameworkToDoService : IToDoService
 
     public async Task DeleteToDoItemAsync(Guid id)
     {
-        var (item, value, group) = await GetToDoItemEntityAsync(id);
+        var (item, value, group, statistical) = await GetToDoItemEntityAsync(id);
         var children = await context.Set<ToDoItemEntity>().AsNoTracking().Where(x => x.ParentId == id).ToArrayAsync();
 
         foreach (var child in children)
@@ -383,7 +383,7 @@ public class EntityFrameworkToDoService : IToDoService
 
     public async Task UpdateTypeOfPeriodicityAsync(Guid id, TypeOfPeriodicity type)
     {
-        var (item, value, group) = await GetToDoItemEntityAsync(id);
+        var (_, value, _, _) = await GetToDoItemEntityAsync(id);
         value.TypeOfPeriodicity = type;
 
         if (value.DueDate is null)
@@ -414,7 +414,7 @@ public class EntityFrameworkToDoService : IToDoService
 
     public async Task UpdateDueDateAsync(Guid id, DateTimeOffset? dueDate)
     {
-        var (item, value, group) = await GetToDoItemEntityAsync(id);
+        var (_, value, _, _) = await GetToDoItemEntityAsync(id);
         value.DueDate = dueDate;
 
         if (dueDate is null)
@@ -427,7 +427,7 @@ public class EntityFrameworkToDoService : IToDoService
 
     public async Task UpdateCompleteStatusAsync(Guid id, bool isComplete)
     {
-        var (item, value, group) = await GetToDoItemEntityAsync(id);
+        var (item, value, _, statistical) = await GetToDoItemEntityAsync(id);
 
         if (isComplete)
         {
@@ -438,7 +438,7 @@ public class EntityFrameworkToDoService : IToDoService
                 throw new Exception("Need close sub tasks.");
             }
 
-            value.CompletedCount++;
+            statistical.CompletedCount++;
             UpdateCompleteStatus(value);
         }
         else
@@ -557,7 +557,7 @@ public class EntityFrameworkToDoService : IToDoService
 
     public async Task SkipToDoItemAsync(Guid id)
     {
-        var (item, value, group) = await GetToDoItemEntityAsync(id);
+        var (item, value, group, statistical) = await GetToDoItemEntityAsync(id);
         var isCanComplete = await IsCanCompleteOrSkipToDoItem(item, value);
 
         if (!isCanComplete)
@@ -565,14 +565,14 @@ public class EntityFrameworkToDoService : IToDoService
             throw new Exception("Need close sub tasks.");
         }
 
-        value.SkippedCount++;
+        statistical.SkippedCount++;
         UpdateCompleteStatus(value);
         await context.SaveChangesAsync();
     }
 
     public async Task FailToDoItemAsync(Guid id)
     {
-        var (item, value, group) = await GetToDoItemEntityAsync(id);
+        var (item, value, group, statistical) = await GetToDoItemEntityAsync(id);
         var isCanComplete = await IsCanCompleteOrSkipToDoItem(item, value);
 
         if (!isCanComplete)
@@ -580,7 +580,7 @@ public class EntityFrameworkToDoService : IToDoService
             throw new Exception("Need close sub tasks.");
         }
 
-        value.FailedCount++;
+        statistical.FailedCount++;
         UpdateCompleteStatus(value);
         await context.SaveChangesAsync();
     }
@@ -695,14 +695,18 @@ public class EntityFrameworkToDoService : IToDoService
         value.IsComplete = false;
     }
 
-    private async Task<(ToDoItemEntity Item, ToDoItemValueEntity Value, ToDoItemGroupEntity Group)>
+    private async Task<(ToDoItemEntity Item,
+            ToDoItemValueEntity Value,
+            ToDoItemGroupEntity Group,
+            ToDoItemStatisticalEntity Statistical)>
         GetToDoItemEntityAsync(Guid id)
     {
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
         var value = await context.Set<ToDoItemValueEntity>().FindAsync(item.ValueId);
         var group = await context.Set<ToDoItemGroupEntity>().FindAsync(item.GroupId);
+        var statistical = await context.Set<ToDoItemStatisticalEntity>().FindAsync(item.StatisticalId);
 
-        return (item, value.ThrowIfNull(), group.ThrowIfNull());
+        return (item, value.ThrowIfNull(), group.ThrowIfNull(), statistical.ThrowIfNull());
     }
 }

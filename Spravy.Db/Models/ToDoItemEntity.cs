@@ -18,4 +18,6 @@ public class ToDoItemEntity
     public ToDoItemValueEntity? Value { get; set; }
     public Guid GroupId { get; set; }
     public ToDoItemGroupEntity? Group { get; set; }
+    public Guid StatisticalId { get; set; }
+    public ToDoItemStatisticalEntity? Statistical { get; set; }
 }
