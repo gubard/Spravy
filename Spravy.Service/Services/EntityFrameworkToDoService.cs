@@ -85,7 +85,15 @@ public class EntityFrameworkToDoService : IToDoService
             return (result.Status, null);
         }
 
-        return result;
+        var item = await context.Set<ToDoItemEntity>().FindAsync(result.Active.Value.Id);
+        item = item.ThrowIfNull();
+
+        if (item.ParentId is null)
+        {
+            return (result.Status, null);
+        }
+
+        return (result.Status, new ActiveToDoItem(item.ParentId.Value, result.Active.Value.Name));
     }
 
     private async Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusAsync(
