@@ -329,6 +329,8 @@ public class EntityFrameworkToDoService : IToDoService
         {
             Id = Guid.NewGuid(),
             ItemId = id,
+            TypeOfPeriodicity = parentValue.TypeOfPeriodicity,
+            DueDate = parentValue.DueDate
         };
 
         var toDoItemGroup = new ToDoItemGroupEntity
