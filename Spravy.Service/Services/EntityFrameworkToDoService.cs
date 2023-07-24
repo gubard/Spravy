@@ -309,10 +309,18 @@ public class EntityFrameworkToDoService : IToDoService
             ItemId = id,
         };
 
+        var toDoItemStatistical = new ToDoItemStatisticalEntity
+        {
+            Id = Guid.NewGuid(),
+            ItemId = id,
+        };
+
         newEntity.GroupId = toDoItemGroup.Id;
         newEntity.ValueId = toDoItemValue.Id;
+        newEntity.StatisticalId = toDoItemStatistical.Id;
         await context.Set<ToDoItemValueEntity>().AddAsync(toDoItemValue);
         await context.Set<ToDoItemGroupEntity>().AddAsync(toDoItemGroup);
+        await context.Set<ToDoItemStatisticalEntity>().AddAsync(toDoItemStatistical);
         await context.Set<ToDoItemEntity>().AddAsync(newEntity);
         await context.SaveChangesAsync();
 
@@ -342,14 +350,22 @@ public class EntityFrameworkToDoService : IToDoService
             Id = Guid.NewGuid(),
             ItemId = id,
         };
+        
+        var toDoItemStatistical = new ToDoItemStatisticalEntity
+        {
+            Id = Guid.NewGuid(),
+            ItemId = id,
+        };
 
         await context.Set<ToDoItemValueEntity>().AddAsync(toDoItemValue);
         await context.Set<ToDoItemGroupEntity>().AddAsync(toDoItemGroup);
+        await context.Set<ToDoItemStatisticalEntity>().AddAsync(toDoItemStatistical);
         var toDoItem = mapper.Map<ToDoItemEntity>(options);
         toDoItem.Description = string.Empty;
         toDoItem.Id = id;
         toDoItem.OrderIndex = items.Length == 0 ? 0 : items.Max(x => x.OrderIndex) + 1;
         toDoItem.ValueId = toDoItemValue.Id;
+        toDoItem.StatisticalId = toDoItemStatistical.Id;
         toDoItem.GroupId = toDoItemGroup.Id;
 
         switch (parentItem.Type)
@@ -594,7 +610,7 @@ public class EntityFrameworkToDoService : IToDoService
     {
         var items = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
-            .Where(x => x.Name.ToUpperInvariant().Contains(searchText.ToUpperInvariant()))
+            .Where(x => x.Name.ToUpper().Contains(searchText.ToUpper()))
             .Include(x => x.Group)
             .Include(x => x.Value)
             .Include(x => x.Statistical)
