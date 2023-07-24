@@ -610,7 +610,7 @@ public class EntityFrameworkToDoService : IToDoService
     {
         var items = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
-            .Where(x => x.Name.ToUpper().Contains(searchText.ToUpper()))
+            .Where(x => x.Name.Contains(searchText))
             .Include(x => x.Group)
             .Include(x => x.Value)
             .Include(x => x.Statistical)

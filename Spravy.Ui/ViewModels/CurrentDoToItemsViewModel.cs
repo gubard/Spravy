@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
-using Avalonia;
 using Avalonia.Collections;
 using ExtensionFramework.Core.Common.Extensions;
 using ExtensionFramework.Core.DependencyInjection.Attributes;
