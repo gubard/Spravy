@@ -11,7 +11,6 @@ public class MainViewModel : ViewModelBase
     public MainViewModel()
     {
         InitializedCommand = CreateCommand(Initialized);
-        RefreshViewCommand = CreateCommand(RefreshView);
     }
 
     [Inject]
@@ -21,14 +20,8 @@ public class MainViewModel : ViewModelBase
     public required AppConfiguration Configuration { get; init; }
 
     public ICommand InitializedCommand { get; }
-    public ICommand RefreshViewCommand { get; }
 
     private void Initialized()
-    {
-        Navigator.NavigateTo(Configuration.DefaultMainViewType);
-    }
-
-    private void RefreshView()
     {
         Navigator.NavigateTo(Configuration.DefaultMainViewType);
     }
