@@ -1,19 +1,27 @@
+using System;
 using ReactiveUI;
-using Spravy.Ui.Interfaces;
+using Spravy.Domain.Enums;
 
 namespace Spravy.Ui.Models;
 
-public class ToDoSubItemValueNotify : ToDoSubItemNotify, IIsCompletedToDoItem
+public class ToDoSubItemPeriodicityNotify : ToDoSubItemNotify
 {
-    private bool isCompleted;
+    private DateTimeOffset dueDate;
     private uint completedCount;
     private uint skippedCount;
     private uint failedCount;
+    private TypeOfPeriodicity typeOfPeriodicity;
 
-    public bool IsCompleted
+    public TypeOfPeriodicity TypeOfPeriodicity
     {
-        get => isCompleted;
-        set => this.RaiseAndSetIfChanged(ref isCompleted, value);
+        get => typeOfPeriodicity;
+        set => this.RaiseAndSetIfChanged(ref typeOfPeriodicity, value);
+    }
+
+    public DateTimeOffset DueDate
+    {
+        get => dueDate;
+        set => this.RaiseAndSetIfChanged(ref dueDate, value);
     }
 
     public uint CompletedCount

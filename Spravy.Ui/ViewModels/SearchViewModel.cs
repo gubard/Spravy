@@ -8,6 +8,7 @@ using ExtensionFramework.Core.DependencyInjection.Attributes;
 using ExtensionFramework.ReactiveUI.Models;
 using ReactiveUI;
 using Spravy.Domain.Interfaces;
+using Spravy.Ui.Extensions;
 using Spravy.Ui.Models;
 using Spravy.Ui.Views;
 
@@ -19,11 +20,11 @@ public class SearchViewModel : RoutableViewModelBase
 
     public SearchViewModel() : base("search")
     {
-        SearchCommand = CreateCommandFromTask(RefreshToDoItemAsync);
-        DeleteSubToDoItemCommand = CreateCommandFromTask<ToDoSubItemNotify>(DeleteSubToDoItemAsync);
-        ChangeToDoItemCommand = CreateCommand<ToDoSubItemNotify>(ChangeToDoItem);
-        CompleteSubToDoItemCommand = CreateCommandFromTask<ToDoSubItemValueNotify>(CompleteSubToDoItemAsync);
-        ChangeToActiveDoItemCommand = CreateCommand<ActiveToDoItemNotify>(ChangeToActiveDoItem);
+        SearchCommand = CreateCommandFromTaskWithDialogProgressIndicator(RefreshToDoItemAsync);
+        DeleteSubToDoItemCommand = CreateCommandFromTaskWithDialogProgressIndicator<ToDoSubItemNotify>(DeleteSubToDoItemAsync);
+        ChangeToDoItemCommand = CreateCommandFromTask<ToDoSubItemNotify>(ChangeToDoItem);
+        CompleteSubToDoItemCommand = CreateCommandFromTaskWithDialogProgressIndicator<ToDoSubItemNotify>(CompleteSubToDoItemAsync);
+        ChangeToActiveDoItemCommand = CreateCommandFromTask<ActiveToDoItemNotify>(ChangeToActiveDoItem);
     }
 
     public AvaloniaList<ToDoSubItemNotify> SearchResult { get; } = new();
@@ -45,14 +46,14 @@ public class SearchViewModel : RoutableViewModelBase
     [Inject]
     public required IMapper Mapper { get; init; }
     
-    private void ChangeToActiveDoItem(ActiveToDoItemNotify item)
+    private Task ChangeToActiveDoItem(ActiveToDoItemNotify item)
     {
-        Navigator.NavigateTo<ToDoItemValueViewModel>(vm => vm.Id = item.Id);
+        return ToDoService.NavigateToToDoItemViewModel(item.Id, Navigator);
     }
 
-    private void ChangeToDoItem(ToDoSubItemNotify subItemValue)
+    private Task ChangeToDoItem(ToDoSubItemNotify subItemValue)
     {
-        Navigator.NavigateTo<ToDoItemValueViewModel>(vm => vm.Id = subItemValue.Id);
+        return ToDoService.NavigateToToDoItemViewModel(subItemValue.Id, Navigator);
     }
 
     private async Task DeleteSubToDoItemAsync(ToDoSubItemNotify subItemValue)
@@ -68,7 +69,7 @@ public class SearchViewModel : RoutableViewModelBase
         SearchResult.AddRange(items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)));
     }
 
-    private async Task CompleteSubToDoItemAsync(ToDoSubItemValueNotify subItemValue)
+    private async Task CompleteSubToDoItemAsync(ToDoSubItemNotify subItemValue)
     {
         await DialogViewer.ShowDialogAsync<CompleteToDoItemView>(
             view =>

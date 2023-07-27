@@ -4,13 +4,14 @@ using ExtensionFramework.Core.DependencyInjection.Attributes;
 using ExtensionFramework.ReactiveUI.Models;
 using ReactiveUI;
 using Spravy.Domain.Interfaces;
+using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 
 public class CompleteToDoItemViewModel : ViewModelBase
 {
-    private ToDoSubItemValueNotify? item;
+    private ToDoSubItemNotify? item;
 
     public CompleteToDoItemViewModel()
     {
@@ -21,7 +22,7 @@ public class CompleteToDoItemViewModel : ViewModelBase
         ChangeCompleteStatusToDoItemCommand = CreateCommandFromTask(ChangeCompleteStatusToDoItemAsync);
     }
 
-    public ToDoSubItemValueNotify? Item
+    public ToDoSubItemNotify? Item
     {
         get => item;
         set => this.RaiseAndSetIfChanged(ref item, value);
@@ -65,9 +66,16 @@ public class CompleteToDoItemViewModel : ViewModelBase
             return;
         }
 
-        if (Item.IsComplete)
+        if (Item is IIsCompletedToDoItem completed)
         {
-            await ToDoService.UpdateCompleteStatusAsync(Item.Id, false);
+            if (completed.IsCompleted)
+            {
+                await ToDoService.UpdateCompleteStatusAsync(Item.Id, false);
+            }
+            else
+            {
+                await ToDoService.UpdateCompleteStatusAsync(Item.Id, true);
+            }
         }
         else
         {

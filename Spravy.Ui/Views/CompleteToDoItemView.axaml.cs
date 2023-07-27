@@ -1,10 +1,11 @@
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
+using ExtensionFramework.AvaloniaUi.ReactiveUI.Models;
 using Spravy.Ui.ViewModels;
 
 namespace Spravy.Ui.Views;
 
-public partial class CompleteToDoItemView : ReactiveUserControl<CompleteToDoItemViewModel>
+public partial class CompleteToDoItemView : MainReactiveUserControl<CompleteToDoItemViewModel>
 {
     public CompleteToDoItemView()
     {

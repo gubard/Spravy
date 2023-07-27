@@ -5,6 +5,7 @@ using AutoMapper;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
+using Avalonia.Layout;
 using Avalonia.ReactiveUI;
 using ExtensionFramework.Core.Common.Interfaces;
 using ExtensionFramework.Core.Common.Services;
@@ -12,6 +13,7 @@ using ExtensionFramework.Core.DependencyInjection.Interfaces;
 using ExtensionFramework.Core.DependencyInjection.Extensions;
 using ExtensionFramework.Core.Ui.Models;
 using ExtensionFramework.ReactiveUI.Interfaces;
+using Material.Styles.Controls;
 using Microsoft.Extensions.Configuration;
 using Spravy.Domain.Core.Profiles;
 using Spravy.Domain.Interfaces;
@@ -39,6 +41,27 @@ public readonly struct SpravyDependencyInjectorConfiguration : IDependencyInject
         register.RegisterScope<RoutedViewHost>();
         register.RegisterScope<Application, App>();
         register.RegisterScope<IResourceLoader, FileResourceLoader>();
+
+        register.RegisterTransient<IDialogProgressIndicator>(
+            () => new Card
+            {
+                CornerRadius = new CornerRadius(24),
+                Padding = new Thickness(4),
+                Margin = new Thickness(4),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                Content = new ProgressBar
+                {
+                    Classes =
+                    {
+                        "circular"
+                    },
+                    Height = 100,
+                    Width = 100,
+                    IsIndeterminate = true,
+                }
+            }
+        );
 
         register.RegisterScopeDel<GrpcToDoServiceOptions>(
             (IConfiguration configuration) =>

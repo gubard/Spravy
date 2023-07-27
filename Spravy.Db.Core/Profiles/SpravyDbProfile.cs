@@ -11,7 +11,6 @@ public class SpravyDbProfile : Profile
     public const string StatusName = "Status";
     public const string ParentsName = "Parents";
     public const string ItemsName = "Items";
-    public const string ValueName = "Value";
     public const string ActiveName = "Active";
 
     public SpravyDbProfile()
@@ -21,73 +20,104 @@ public class SpravyDbProfile : Profile
 
         CreateMap<ToDoItemEntity, IToDoSubItem>()
             .ConvertUsing(
-                (source, _, resolutionContext) =>
+                (source, _, resolutionContext) => source.Type switch
                 {
-                    switch (source.Type)
-                    {
-                        case ToDoItemType.Value:
-                            return new ToDoSubItemValue(
-                                source.Id,
-                                source.Name,
-                                source.Value.IsComplete,
-                                source.Value.DueDate,
-                                source.OrderIndex,
-                                (ToDoItemStatus)resolutionContext.Items[StatusName],
-                                source.Description,
-                                source.Statistical.CompletedCount,
-                                source.Statistical.SkippedCount,
-                                source.Statistical.FailedCount,
-                                source.IsCurrent,
-                                (ActiveToDoItem?)resolutionContext.Items[ActiveName]
-                            );
-                        case ToDoItemType.Group:
-                            return new ToDoSubItemGroup(
-                                source.Id,
-                                source.Name,
-                                source.OrderIndex,
-                                (ToDoItemStatus)resolutionContext.Items[StatusName],
-                                source.Description,
-                                source.IsCurrent,
-                                (ActiveToDoItem?)resolutionContext.Items[ActiveName]
-                            );
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
+                    ToDoItemType.Value => new ToDoSubItemValue(
+                        source.Id,
+                        source.Name,
+                        source.IsCompleted,
+                        source.OrderIndex,
+                        (ToDoItemStatus)resolutionContext.Items[StatusName],
+                        source.Description,
+                        source.CompletedCount,
+                        source.SkippedCount,
+                        source.FailedCount,
+                        source.IsCurrent,
+                        (ActiveToDoItem?)resolutionContext.Items[ActiveName]
+                    ),
+                    ToDoItemType.Group => new ToDoSubItemGroup(
+                        source.Id,
+                        source.Name,
+                        source.OrderIndex,
+                        (ToDoItemStatus)resolutionContext.Items[StatusName],
+                        source.Description,
+                        source.IsCurrent,
+                        (ActiveToDoItem?)resolutionContext.Items[ActiveName]
+                    ),
+                    ToDoItemType.Planned => new ToDoSubItemPlanned(
+                        source.Id,
+                        source.Name,
+                        source.OrderIndex,
+                        (ToDoItemStatus)resolutionContext.Items[StatusName],
+                        source.Description,
+                        source.IsCurrent,
+                        (ActiveToDoItem?)resolutionContext.Items[ActiveName],
+                        source.DueDate,
+                        source.CompletedCount,
+                        source.SkippedCount,
+                        source.FailedCount,
+                        source.IsCompleted
+                    ),
+                    ToDoItemType.Periodicity => new ToDoSubItemPeriodicity(
+                        source.Id,
+                        source.Name,
+                        source.OrderIndex,
+                        (ToDoItemStatus)resolutionContext.Items[StatusName],
+                        source.Description,
+                        source.IsCurrent,
+                        source.DueDate,
+                        source.TypeOfPeriodicity,
+                        (ActiveToDoItem?)resolutionContext.Items[ActiveName],
+                        source.CompletedCount,
+                        source.SkippedCount,
+                        source.FailedCount
+                    ),
+                    _ => throw new ArgumentOutOfRangeException()
                 }
             );
 
         CreateMap<ToDoItemEntity, IToDoItem>()
             .ConvertUsing(
-                (source, _, resolutionContext) =>
+                (source, _, resolutionContext) => source.Type switch
                 {
-                    switch (source.Type)
-                    {
-                        case ToDoItemType.Value:
-                            var value = source.Value ?? (ToDoItemValueEntity)resolutionContext.Items[ValueName];
-
-                            return new ToDoItemValue(
-                                source.Id,
-                                source.Name,
-                                value.TypeOfPeriodicity,
-                                value.DueDate,
-                                (IToDoSubItem[])resolutionContext.Items[ItemsName],
-                                (ToDoItemParent[])resolutionContext.Items[ParentsName],
-                                value.IsComplete,
-                                source.Description,
-                                source.IsCurrent
-                            );
-                        case ToDoItemType.Group:
-                            return new ToDoItemGroup(
-                                source.Id,
-                                source.Name,
-                                (IToDoSubItem[])resolutionContext.Items[ItemsName],
-                                (ToDoItemParent[])resolutionContext.Items[ParentsName],
-                                source.Description,
-                                source.IsCurrent
-                            );
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
+                    ToDoItemType.Value => new ToDoItemValue(
+                        source.Id,
+                        source.Name,
+                        (IToDoSubItem[])resolutionContext.Items[ItemsName],
+                        (ToDoItemParent[])resolutionContext.Items[ParentsName],
+                        source.IsCompleted,
+                        source.Description,
+                        source.IsCurrent
+                    ),
+                    ToDoItemType.Group => new ToDoItemGroup(
+                        source.Id,
+                        source.Name,
+                        (IToDoSubItem[])resolutionContext.Items[ItemsName],
+                        (ToDoItemParent[])resolutionContext.Items[ParentsName],
+                        source.Description,
+                        source.IsCurrent
+                    ),
+                    ToDoItemType.Planned => new ToDoItemPlanned(
+                        source.Id,
+                        source.Name,
+                        source.Description,
+                        (IToDoSubItem[])resolutionContext.Items[ItemsName],
+                        (ToDoItemParent[])resolutionContext.Items[ParentsName],
+                        source.IsCurrent,
+                        source.DueDate,
+                        source.IsCompleted
+                    ),
+                    ToDoItemType.Periodicity => new ToDoItemPeriodicity(
+                        source.Id,
+                        source.Name,
+                        source.Description,
+                        (IToDoSubItem[])resolutionContext.Items[ItemsName],
+                        (ToDoItemParent[])resolutionContext.Items[ParentsName],
+                        source.IsCurrent,
+                        source.DueDate,
+                        source.TypeOfPeriodicity
+                    ),
+                    _ => throw new ArgumentOutOfRangeException()
                 }
             );
     }

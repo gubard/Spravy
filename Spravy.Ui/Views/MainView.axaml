@@ -18,6 +18,9 @@
     </Interaction.Behaviors>
 
     <dialogHostAvalonia:DialogHost Identifier="MainDialogHost">
-        <ContentControl Content="{Binding RoutedViewHost}" />
+        <Grid RowDefinitions="Auto,*">
+            <Button Command="{Binding RefreshViewCommand}" />
+            <ContentControl Grid.Row="1" Content="{Binding RoutedViewHost}" />
+        </Grid>
     </dialogHostAvalonia:DialogHost>
 </UserControl>

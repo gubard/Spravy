@@ -1,17 +1,17 @@
-<reactiveUi:MainReactiveUserControl x:TypeArguments="viewModels:ToDoItemValueViewModel"
-                                    xmlns="https://github.com/avaloniaui"
-                                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                                    xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-                                    xmlns:controls="clr-namespace:ExtensionFramework.AvaloniaUi.Controls;assembly=ExtensionFramework.AvaloniaUi"
-                                    xmlns:reactiveUi="clr-namespace:ExtensionFramework.AvaloniaUi.ReactiveUI.Models;assembly=ExtensionFramework.AvaloniaUi.ReactiveUI"
-                                    xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-                                    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                                    x:Class="Spravy.Ui.Views.ToDoItemValueView"
-                                    x:DataType="viewModels:ToDoItemValueViewModel">
+<models:MainReactiveUserControl x:TypeArguments="viewModels:ToDoItemPeriodicityViewModel"
+                                xmlns="https://github.com/avaloniaui"
+                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                                xmlns:models="clr-namespace:ExtensionFramework.AvaloniaUi.ReactiveUI.Models;assembly=ExtensionFramework.AvaloniaUi.ReactiveUI"
+                                xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
+                                xmlns:controls="clr-namespace:ExtensionFramework.AvaloniaUi.Controls;assembly=ExtensionFramework.AvaloniaUi"
+                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                                x:Class="Spravy.Ui.Views.ToDoItemPeriodicityView"
+                                x:DataType="viewModels:ToDoItemPeriodicityViewModel">
     <Design.DataContext>
-        <viewModels:ToDoItemValueViewModel />
+        <viewModels:ToDoItemPeriodicityViewModel />
     </Design.DataContext>
 
     <Grid RowDefinitions="Auto,*">
@@ -19,11 +19,7 @@
             <ContentControl Content="{Binding Path}"
                             Margin="5" />
 
-            <CheckBox Margin="5"
-                      IsChecked="{Binding IsCompleted}" Content="Completed"
-                      IsEnabled="False" />
-
-            <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto">
+            <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto">
                 <TextBlock Text="Type"
                            VerticalAlignment="Center" />
 
@@ -42,6 +38,22 @@
                                             VerticalAlignment="Center"
                                             Watermark="Name"
                                             Margin="5" />
+
+                <TextBlock Grid.Row="2"
+                           Text="Name"
+                           VerticalAlignment="Center" />
+
+                <ComboBox Grid.Row="2"
+                          Grid.Column="1"
+                          SelectedItem="{Binding TypeOfPeriodicity}"
+                          ItemsSource="{Binding TypeOfPeriodicities}" />
+
+
+                <TextBlock Grid.Row="3" Text="DueDate" VerticalAlignment="Center" />
+
+                <DatePicker Grid.Row="3"
+                            Grid.Column="1"
+                            SelectedDate="{Binding DueDate}" />
             </Grid>
 
             <StackPanel Orientation="Horizontal">
@@ -95,4 +107,4 @@
             </StackPanel>
         </ScrollViewer>
     </Grid>
-</reactiveUi:MainReactiveUserControl>
+</models:MainReactiveUserControl>

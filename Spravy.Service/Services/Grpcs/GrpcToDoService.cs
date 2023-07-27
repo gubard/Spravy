@@ -95,7 +95,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        var dueDate = mapper.Map<DateTimeOffset?>(request.DueDate);
+        var dueDate = mapper.Map<DateTimeOffset>(request.DueDate);
         await toDoService.UpdateDueDateAsync(mapper.Map<Guid>(request.Id), dueDate);
 
         return new UpdateDueDateReply();
@@ -106,7 +106,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        await toDoService.UpdateCompleteStatusAsync(mapper.Map<Guid>(request.Id), request.IsComplete);
+        await toDoService.UpdateCompleteStatusAsync(mapper.Map<Guid>(request.Id), request.IsCompleted);
 
         return new UpdateCompleteStatusReply();
     }

@@ -1,11 +1,14 @@
-<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:CompleteToDoItemViewModel"
+<models:MainReactiveUserControl x:TypeArguments="viewModels:CompleteToDoItemViewModel"
                                 xmlns="https://github.com/avaloniaui"
                                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                                xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                                xmlns:interfaces="clr-namespace:Spravy.Ui.Interfaces"
+                                xmlns:views="clr-namespace:Spravy.Ui.Views"
+                                xmlns:models="clr-namespace:ExtensionFramework.AvaloniaUi.ReactiveUI.Models;assembly=ExtensionFramework.AvaloniaUi.ReactiveUI"
+                                xmlns:models1="clr-namespace:Spravy.Ui.Models"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.CompleteToDoItemView"
                                 x:DataType="viewModels:CompleteToDoItemViewModel">
@@ -20,35 +23,68 @@
         <KeyBinding Gesture="Escape" Command="{Binding BackCommand}" />
     </UserControl.KeyBindings>
 
-    <StackPanel>
-        <TextBlock Text="{Binding Item.Name}"
-                   HorizontalAlignment="Center" />
+    <ContentControl Content="{Binding Item}">
+        <ContentControl.DataTemplates>
+            <DataTemplate DataType="interfaces:IIsCompletedToDoItem">
+                <StackPanel>
+                    <TextBlock Text="{Binding Name}"
+                               HorizontalAlignment="Center" />
 
-        <Button Command="{Binding CompleteToDoItemCommand}"
-                Theme="{StaticResource OutlineButton}"
-                Content="Complete"
-                BorderBrush="Green"
-                IsVisible="{Binding Item.IsComplete, Converter={StaticResource ReverseBooleanValueConverter}}" />
+                    <Button Content="Complete"
+                            Command="{Binding $parent[views:CompleteToDoItemView].MainViewModel.CompleteToDoItemCommand}"
+                            Theme="{StaticResource OutlineButton}"
+                            BorderBrush="Green"
+                            IsVisible="{Binding IsCompleted, Converter={StaticResource ReverseBooleanValueConverter}}" />
 
-        <Button Command="{Binding IncompleteToDoItemCommand}"
-                Theme="{StaticResource OutlineButton}"
-                Content="Incomplete"
-                BorderBrush="Aqua"
-                IsVisible="{Binding Item.IsComplete}" />
+                    <Button BorderBrush="Aqua"
+                            Command="{Binding $parent[views:CompleteToDoItemView].MainViewModel.IncompleteToDoItemCommand}"
+                            Theme="{StaticResource OutlineButton}"
+                            Content="Incomplete"
+                            IsVisible="{Binding IsCompleted}" />
 
-        <Button Command="{Binding SkipToDoItemCommand}"
-                Theme="{StaticResource OutlineButton}"
-                Content="Skip"
-                BorderBrush="Yellow" />
+                    <Button Command="{Binding $parent[views:CompleteToDoItemView].MainViewModel.SkipToDoItemCommand}"
+                            Theme="{StaticResource OutlineButton}"
+                            Content="Skip"
+                            BorderBrush="Yellow" />
 
-        <Button Command="{Binding FailToDoItemCommand}"
-                Theme="{StaticResource OutlineButton}"
-                Content="Fail"
-                BorderBrush="Red" />
+                    <Button Command="{Binding $parent[views:CompleteToDoItemView].MainViewModel.FailToDoItemCommand}"
+                            Theme="{StaticResource OutlineButton}"
+                            Content="Fail"
+                            BorderBrush="Red" />
 
-        <Button Classes="light"
-                Command="{Binding BackCommand}">
-            <avalonia:MaterialIcon Kind="ArrowLeft" />
-        </Button>
-    </StackPanel>
-</reactiveUi:ReactiveUserControl>
+                    <Button Classes="light"
+                            Command="{Binding $parent[views:CompleteToDoItemView].MainViewModel.BackCommand}">
+                        <avalonia:MaterialIcon Kind="ArrowLeft" />
+                    </Button>
+                </StackPanel>
+            </DataTemplate>
+
+            <DataTemplate DataType="models1:ToDoSubItemNotify">
+                <StackPanel>
+                    <TextBlock Text="{Binding Name}"
+                               HorizontalAlignment="Center" />
+
+                    <Button Content="Complete"
+                            Command="{Binding $parent[views:CompleteToDoItemView].MainViewModel.CompleteToDoItemCommand}"
+                            Theme="{StaticResource OutlineButton}"
+                            BorderBrush="Green" />
+
+                    <Button Command="{Binding $parent[views:CompleteToDoItemView].MainViewModel.SkipToDoItemCommand}"
+                            Theme="{StaticResource OutlineButton}"
+                            Content="Skip"
+                            BorderBrush="Yellow" />
+
+                    <Button Command="{Binding $parent[views:CompleteToDoItemView].MainViewModel.FailToDoItemCommand}"
+                            Theme="{StaticResource OutlineButton}"
+                            Content="Fail"
+                            BorderBrush="Red" />
+
+                    <Button Classes="light"
+                            Command="{Binding $parent[views:CompleteToDoItemView].MainViewModel.BackCommand}">
+                        <avalonia:MaterialIcon Kind="ArrowLeft" />
+                    </Button>
+                </StackPanel>
+            </DataTemplate>
+        </ContentControl.DataTemplates>
+    </ContentControl>
+</models:MainReactiveUserControl>

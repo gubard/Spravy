@@ -11,8 +11,8 @@ public interface IToDoService
     Task<Guid> AddToDoItemAsync(AddToDoItemOptions options);
     Task DeleteToDoItemAsync(Guid id);
     Task UpdateTypeOfPeriodicityAsync(Guid id, TypeOfPeriodicity type);
-    Task UpdateDueDateAsync(Guid id, DateTimeOffset? dueDate);
-    Task UpdateCompleteStatusAsync(Guid id, bool isComplete);
+    Task UpdateDueDateAsync(Guid id, DateTimeOffset dueDate);
+    Task UpdateCompleteStatusAsync(Guid id, bool isCompleted);
     Task UpdateNameToDoItemAsync(Guid id, string name);
     Task UpdateOrderIndexToDoItemAsync(UpdateOrderIndexToDoItemOptions options);
     Task UpdateDescriptionToDoItemAsync(Guid id, string description);

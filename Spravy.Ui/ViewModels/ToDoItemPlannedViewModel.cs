@@ -14,11 +14,12 @@ using Spravy.Ui.Views;
 
 namespace Spravy.Ui.ViewModels;
 
-public class ToDoItemValueViewModel : ToDoItemViewModel
+public class ToDoItemPlannedViewModel : ToDoItemViewModel
 {
     private bool isCompleted;
+    private DateTimeOffset dueDate;
 
-    public ToDoItemValueViewModel() : base("to-do-item-value")
+    public ToDoItemPlannedViewModel() : base("to-do-item-value")
     {
         CompleteToDoItemCommand = CreateCommandFromTaskWithDialogProgressIndicator(CompleteToDoItemAsync);
         SubscribeProperties();
@@ -30,6 +31,12 @@ public class ToDoItemValueViewModel : ToDoItemViewModel
     {
         get => isCompleted;
         set => this.RaiseAndSetIfChanged(ref isCompleted, value);
+    }
+
+    public DateTimeOffset DueDate
+    {
+        get => dueDate;
+        set => this.RaiseAndSetIfChanged(ref dueDate, value);
     }
 
     private async Task CompleteToDoItemAsync()
@@ -44,6 +51,17 @@ public class ToDoItemValueViewModel : ToDoItemViewModel
         );
 
         await RefreshToDoItemAsync();
+    }
+
+    private async void OnNextDueDate(DateTimeOffset x)
+    {
+        await SafeExecuteAsync(
+            async () =>
+            {
+                await ToDoService.UpdateDueDateAsync(Id, x);
+                await RefreshToDoItemAsync();
+            }
+        );
     }
 
     private async void OnNextIsComplete(bool x)
@@ -74,18 +92,15 @@ public class ToDoItemValueViewModel : ToDoItemViewModel
 
                 return;
             case ToDoItemPlanned toDoItemPlanned:
-                Navigator.NavigateTo<ToDoItemPlannedViewModel>(x => x.Id = toDoItemPlanned.Id);
-
-                return;
-            case ToDoItemValue toDoItemValue:
                 IsCurrent = item.IsCurrent;
-                Name = toDoItemValue.Name;
-                Type = ToDoItemType.Value;
-                IsCompleted = toDoItemValue.IsCompleted;
-                Description = toDoItemValue.Description;
+                Name = toDoItemPlanned.Name;
+                Type = ToDoItemType.Planned;
+                IsCompleted = toDoItemPlanned.IsCompleted;
+                Description = toDoItemPlanned.Description;
+                DueDate = toDoItemPlanned.DueDate;
                 Items.Clear();
                 CompletedItems.Clear();
-                var source = toDoItemValue.Items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
+                var source = toDoItemPlanned.Items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
                 Items.AddRange(source.Where(x => x.Status != ToDoItemStatus.Complete).OrderBy(x => x.OrderIndex));
 
                 CompletedItems.AddRange(
@@ -99,6 +114,10 @@ public class ToDoItemValueViewModel : ToDoItemViewModel
                 Path.Items.AddRange(item.Parents.Select(x => Mapper.Map<ToDoItemParentNotify>(x)));
 
                 break;
+            case ToDoItemValue toDoItemValue:
+                Navigator.NavigateTo<ToDoItemValueViewModel>(x => x.Id = toDoItemValue.Id);
+
+                return;
             default: throw new ArgumentOutOfRangeException(nameof(item));
         }
 
@@ -136,6 +155,7 @@ public class ToDoItemValueViewModel : ToDoItemViewModel
         yield return this.WhenAnyValue(x => x.Name).Skip(1).Subscribe(OnNextName);
         yield return this.WhenAnyValue(x => x.Description).Skip(1).Subscribe(OnNextDescription);
         yield return this.WhenAnyValue(x => x.Type).Skip(1).Subscribe(OnNextType);
+        yield return this.WhenAnyValue(x => x.DueDate).Skip(1).Subscribe(OnNextDueDate);
     }
 
     private void UnsubscribeProperties()

@@ -1,19 +1,21 @@
+using System;
 using ReactiveUI;
 using Spravy.Ui.Interfaces;
 
 namespace Spravy.Ui.Models;
 
-public class ToDoSubItemValueNotify : ToDoSubItemNotify, IIsCompletedToDoItem
+public class ToDoSubItemPlannedNotify : ToDoSubItemNotify, IIsCompletedToDoItem
 {
-    private bool isCompleted;
+    private DateTimeOffset dueDate;
     private uint completedCount;
     private uint skippedCount;
     private uint failedCount;
+    private bool isCompleted;
 
-    public bool IsCompleted
+    public DateTimeOffset DueDate
     {
-        get => isCompleted;
-        set => this.RaiseAndSetIfChanged(ref isCompleted, value);
+        get => dueDate;
+        set => this.RaiseAndSetIfChanged(ref dueDate, value);
     }
 
     public uint CompletedCount
@@ -32,5 +34,11 @@ public class ToDoSubItemValueNotify : ToDoSubItemNotify, IIsCompletedToDoItem
     {
         get => failedCount;
         set => this.RaiseAndSetIfChanged(ref failedCount, value);
+    }
+
+    public bool IsCompleted
+    {
+        get => isCompleted;
+        set => this.RaiseAndSetIfChanged(ref isCompleted, value);
     }
 }

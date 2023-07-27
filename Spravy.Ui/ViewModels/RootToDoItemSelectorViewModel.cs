@@ -15,7 +15,7 @@ public class RootToDoItemSelectorViewModel : ViewModelBase
 {
     public RootToDoItemSelectorViewModel()
     {
-        InitializedCommand = CreateCommandFromTask(InitializedAsync);
+        InitializedCommand = CreateCommandFromTaskWithDialogProgressIndicator(InitializedAsync);
     }
 
     public ICommand InitializedCommand { get; }

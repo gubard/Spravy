@@ -3,16 +3,21 @@ using Spravy.Domain.Interfaces;
 
 namespace Spravy.Domain.Models;
 
-public readonly struct ToDoSubItemGroup : IToDoSubItem
+public readonly struct ToDoSubItemPlanned : IToDoSubItem
 {
-    public ToDoSubItemGroup(
+    public ToDoSubItemPlanned(
         Guid id,
         string name,
         uint orderIndex,
         ToDoItemStatus status,
         string description,
         bool isCurrent,
-        ActiveToDoItem? active
+        ActiveToDoItem? active,
+        DateTimeOffset dueDate,
+        uint completedCount,
+        uint skippedCount,
+        uint failedCount,
+        bool isCompleted
     )
     {
         Id = id;
@@ -22,6 +27,11 @@ public readonly struct ToDoSubItemGroup : IToDoSubItem
         Description = description;
         IsCurrent = isCurrent;
         Active = active;
+        DueDate = dueDate;
+        CompletedCount = completedCount;
+        SkippedCount = skippedCount;
+        FailedCount = failedCount;
+        IsCompleted = isCompleted;
     }
 
     public Guid Id { get; }
@@ -31,4 +41,9 @@ public readonly struct ToDoSubItemGroup : IToDoSubItem
     public string Description { get; }
     public bool IsCurrent { get; }
     public ActiveToDoItem? Active { get; }
+    public DateTimeOffset DueDate { get; }
+    public uint CompletedCount { get; }
+    public uint SkippedCount { get; }
+    public uint FailedCount { get; }
+    public bool IsCompleted { get; }
 }

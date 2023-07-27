@@ -4,4 +4,6 @@ public enum ToDoItemType
 {
     Value,
     Group,
+    Planned,
+    Periodicity,
 }

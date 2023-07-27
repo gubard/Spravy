@@ -10,6 +10,7 @@ using ExtensionFramework.ReactiveUI.Models;
 using ReactiveUI;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
+using Spravy.Ui.Extensions;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
@@ -21,8 +22,8 @@ public class AddToDoItemViewModel : RoutableViewModelBase
 
     public AddToDoItemViewModel() : base("add-to-do-item")
     {
-        InitializedCommand = CreateCommandFromTask(InitializedAsync);
-        AddToDoItemCommand = CreateCommandFromTask(AddToDoItemAsync);
+        InitializedCommand = CreateCommandFromTaskWithDialogProgressIndicator(InitializedAsync);
+        AddToDoItemCommand = CreateCommandFromTaskWithDialogProgressIndicator(AddToDoItemAsync);
     }
 
     public ICommand InitializedCommand { get; }
@@ -54,7 +55,7 @@ public class AddToDoItemViewModel : RoutableViewModelBase
         var parentValue = Parent.ThrowIfNull();
         var options = new AddToDoItemOptions(parentValue.Id, Name);
         await ToDoService.AddToDoItemAsync(options);
-        Navigator.NavigateTo<ToDoItemValueViewModel>(vm => vm.Id = parentValue.Id);
+        await ToDoService.NavigateToToDoItemViewModel(parentValue.Id, Navigator);
         DialogViewer.CloseDialog();
     }
 

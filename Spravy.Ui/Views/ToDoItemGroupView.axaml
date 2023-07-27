@@ -19,7 +19,7 @@
             <ContentControl Content="{Binding Path}"
                             Margin="5" />
 
-            <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto">
+            <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto">
                 <TextBlock Text="Type"
                            VerticalAlignment="Center" />
 

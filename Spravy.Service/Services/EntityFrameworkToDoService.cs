@@ -26,9 +26,6 @@ public class EntityFrameworkToDoService : IToDoService
         var items = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.ParentId == null)
-            .Include(x => x.Value)
-            .Include(x => x.Group)
-            .Include(x => x.Statistical)
             .ToArrayAsync();
 
         var result = await ConvertAsync(items);
@@ -63,122 +60,27 @@ public class EntityFrameworkToDoService : IToDoService
     {
         switch (entity.Type)
         {
-            case ToDoItemType.Value: return GetStatusAsync(entity, entity.Value);
-            case ToDoItemType.Group: return GetStatusAsync(entity, entity.Group);
+            case ToDoItemType.Value: return GetStatusValueAsync(entity);
+            case ToDoItemType.Group: return GetStatusGroupAsync(entity);
+            case ToDoItemType.Planned: return GetStatusPlannedAsync(entity);
+            case ToDoItemType.Periodicity: return GetStatusPeriodicityAsync(entity);
             default: throw new ArgumentOutOfRangeException();
         }
     }
 
-    private async Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusAndActiveAsync(
-        ToDoItemEntity entity,
-        Guid id
-    )
+    private async Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusPeriodicityAsync(ToDoItemEntity entity)
     {
-        var result = await GetStatusAndActiveAsync(entity);
-
-        if (result.Active is null)
-        {
-            return result;
-        }
-
-        if (result.Active.Value.Id == id)
-        {
-            return (result.Status, null);
-        }
-
-        var item = await context.Set<ToDoItemEntity>().FindAsync(result.Active.Value.Id);
-        item = item.ThrowIfNull();
-
-        if (item.ParentId is null)
-        {
-            return (result.Status, null);
-        }
-
-        return (result.Status, new ActiveToDoItem(item.ParentId.Value, result.Active.Value.Name));
-    }
-
-    private async Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusAsync(
-        ToDoItemEntity entity,
-        ToDoItemGroupEntity _
-    )
-    {
-        var currentOrder = uint.MaxValue;
-        (ToDoItemStatus Status, ActiveToDoItem? Active) result = (ToDoItemStatus.Waiting, null);
-
-        var children = await context.Set<ToDoItemEntity>()
-            .AsNoTracking()
-            .Include(x => x.Value)
-            .Include(x => x.Group)
-            .Include(x => x.Statistical)
-            .Where(x => x.ParentId == entity.Id)
-            .ToArrayAsync();
-
-        if (children.Length == 0)
+        if (entity.IsCompleted)
         {
             return (ToDoItemStatus.Complete, null);
         }
 
-        var completeChildrenCount = 0;
-
-        foreach (var child in children)
-        {
-            var status = await GetStatusAndActiveAsync(child);
-
-            switch (status.Status)
-            {
-                case ToDoItemStatus.Waiting:
-                    if (Math.Min(currentOrder, child.OrderIndex) == child.OrderIndex)
-                    {
-                        currentOrder = child.OrderIndex;
-                        result = (result.Status, status.Active);
-                    }
-
-                    break;
-                case ToDoItemStatus.Today:
-                    result = status;
-                    break;
-                case ToDoItemStatus.Miss:
-                    return (ToDoItemStatus.Miss, mapper.Map<ActiveToDoItem>(child));
-                case ToDoItemStatus.Complete:
-                    completeChildrenCount++;
-                    break;
-                case ToDoItemStatus.ReadyForComplete:
-                    if (Math.Min(currentOrder, child.OrderIndex) == child.OrderIndex)
-                    {
-                        currentOrder = child.OrderIndex;
-                        result = (result.Status, status.Active);
-                    }
-
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
-        if (completeChildrenCount == children.Length)
-        {
-            return (ToDoItemStatus.Complete, null);
-        }
-
-        return result;
-    }
-
-    private async Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusAsync(
-        ToDoItemEntity entity,
-        ToDoItemValueEntity value
-    )
-    {
-        if (value.IsComplete)
-        {
-            return (ToDoItemStatus.Complete, null);
-        }
-
-        if (value.DueDate.HasValue && value.DueDate.Value < DateTimeOffset.Now.ToCurrentDay())
+        if (entity.DueDate < DateTimeOffset.Now.ToCurrentDay())
         {
             return (ToDoItemStatus.Miss, null);
         }
 
-        if (value.DueDate.HasValue && value.DueDate.Value > DateTimeOffset.Now.ToCurrentDay())
+        if (entity.DueDate > DateTimeOffset.Now.ToCurrentDay())
         {
             return (ToDoItemStatus.Complete, null);
         }
@@ -187,9 +89,6 @@ public class EntityFrameworkToDoService : IToDoService
 
         var children = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
-            .Include(x => x.Value)
-            .Include(x => x.Statistical)
-            .Include(x => x.Group)
             .Where(x => x.ParentId == entity.Id)
             .ToArrayAsync();
 
@@ -203,11 +102,6 @@ public class EntityFrameworkToDoService : IToDoService
 
         foreach (var child in children)
         {
-            if (value.IsComplete)
-            {
-                continue;
-            }
-
             var status = await GetStatusAndActiveAsync(child);
 
             switch (status.Status)
@@ -246,7 +140,7 @@ public class EntityFrameworkToDoService : IToDoService
             return (ToDoItemStatus.ReadyForComplete, null);
         }
 
-        if (value.DueDate.HasValue && value.DueDate.Value == DateTimeOffset.Now.ToCurrentDay())
+        if (entity.DueDate.ToCurrentDay() == DateTimeOffset.Now.ToCurrentDay())
         {
             return (ToDoItemStatus.Today, null);
         }
@@ -254,16 +148,248 @@ public class EntityFrameworkToDoService : IToDoService
         return result;
     }
 
+    private async Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusPlannedAsync(ToDoItemEntity entity)
+    {
+        if (entity.IsCompleted)
+        {
+            return (ToDoItemStatus.Complete, null);
+        }
+
+        if (entity.DueDate < DateTimeOffset.Now.ToCurrentDay())
+        {
+            return (ToDoItemStatus.Miss, null);
+        }
+
+        if (entity.DueDate > DateTimeOffset.Now.ToCurrentDay())
+        {
+            return (ToDoItemStatus.Complete, null);
+        }
+
+        (ToDoItemStatus Status, ActiveToDoItem? Active) result = (ToDoItemStatus.Waiting, null);
+
+        var children = await context.Set<ToDoItemEntity>()
+            .AsNoTracking()
+            .Where(x => x.ParentId == entity.Id)
+            .ToArrayAsync();
+
+        if (children.Length == 0)
+        {
+            return (ToDoItemStatus.ReadyForComplete, mapper.Map<ActiveToDoItem>(entity));
+        }
+
+        var completeChildrenCount = 0;
+        var currentOrder = uint.MaxValue;
+
+        foreach (var child in children)
+        {
+            var status = await GetStatusAndActiveAsync(child);
+
+            switch (status.Status)
+            {
+                case ToDoItemStatus.Waiting:
+                    if (Math.Min(currentOrder, child.OrderIndex) == child.OrderIndex)
+                    {
+                        currentOrder = child.OrderIndex;
+                        result = (result.Status, status.Active);
+                    }
+
+                    break;
+                case ToDoItemStatus.Today:
+                    result = status;
+                    break;
+                case ToDoItemStatus.Miss:
+                    return (ToDoItemStatus.Miss, mapper.Map<ActiveToDoItem>(child));
+                case ToDoItemStatus.Complete:
+                    completeChildrenCount++;
+                    break;
+                case ToDoItemStatus.ReadyForComplete:
+                    if (Math.Min(currentOrder, child.OrderIndex) == child.OrderIndex)
+                    {
+                        currentOrder = child.OrderIndex;
+                        result = (result.Status, status.Active);
+                    }
+
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        if (completeChildrenCount == children.Length)
+        {
+            return (ToDoItemStatus.ReadyForComplete, null);
+        }
+
+        if (entity.DueDate.ToCurrentDay() == DateTimeOffset.Now.ToCurrentDay())
+        {
+            return (ToDoItemStatus.Today, null);
+        }
+
+        return result;
+    }
+
+    private async Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusAndActiveAsync(
+        ToDoItemEntity entity,
+        Guid id
+    )
+    {
+        var result = await GetStatusAndActiveAsync(entity);
+
+        if (result.Active is null)
+        {
+            return result;
+        }
+
+        if (result.Active.Value.Id == id)
+        {
+            return (result.Status, null);
+        }
+
+        var item = await context.Set<ToDoItemEntity>().FindAsync(result.Active.Value.Id);
+        item = item.ThrowIfNull();
+
+        if (item.ParentId is null)
+        {
+            return (result.Status, null);
+        }
+
+        return (result.Status, new ActiveToDoItem(item.ParentId.Value, result.Active.Value.Name));
+    }
+
+    private async Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusGroupAsync(ToDoItemEntity entity)
+    {
+        var currentOrder = uint.MaxValue;
+        (ToDoItemStatus Status, ActiveToDoItem? Active) result = (ToDoItemStatus.Waiting, null);
+
+        var children = await context.Set<ToDoItemEntity>()
+            .AsNoTracking()
+            .Where(x => x.ParentId == entity.Id)
+            .ToArrayAsync();
+
+        if (children.Length == 0)
+        {
+            return (ToDoItemStatus.Complete, null);
+        }
+
+        var completeChildrenCount = 0;
+
+        foreach (var child in children)
+        {
+            var status = await GetStatusAndActiveAsync(child);
+
+            switch (status.Status)
+            {
+                case ToDoItemStatus.Waiting:
+                    if (Math.Min(currentOrder, child.OrderIndex) == child.OrderIndex)
+                    {
+                        currentOrder = child.OrderIndex;
+                        result = (result.Status, status.Active);
+                    }
+
+                    break;
+                case ToDoItemStatus.Today:
+                    result = status;
+                    break;
+                case ToDoItemStatus.Miss:
+                    return (ToDoItemStatus.Miss, mapper.Map<ActiveToDoItem>(child));
+                case ToDoItemStatus.Complete:
+                    completeChildrenCount++;
+                    break;
+                case ToDoItemStatus.ReadyForComplete:
+                    if (Math.Min(currentOrder, child.OrderIndex) == child.OrderIndex)
+                    {
+                        currentOrder = child.OrderIndex;
+                        result = (result.Status, status.Active);
+                    }
+
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        if (completeChildrenCount == children.Length)
+        {
+            return (ToDoItemStatus.Complete, null);
+        }
+
+        return result;
+    }
+
+
+    private async Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusValueAsync(ToDoItemEntity entity)
+    {
+        if (entity.IsCompleted)
+        {
+            return (ToDoItemStatus.Complete, null);
+        }
+
+        (ToDoItemStatus Status, ActiveToDoItem? Active) result = (ToDoItemStatus.Waiting, null);
+
+        var children = await context.Set<ToDoItemEntity>()
+            .AsNoTracking()
+            .Where(x => x.ParentId == entity.Id)
+            .ToArrayAsync();
+
+        if (children.Length == 0)
+        {
+            return (ToDoItemStatus.ReadyForComplete, mapper.Map<ActiveToDoItem>(entity));
+        }
+
+        var completeChildrenCount = 0;
+        var currentOrder = uint.MaxValue;
+
+        foreach (var child in children)
+        {
+            var status = await GetStatusAndActiveAsync(child);
+
+            switch (status.Status)
+            {
+                case ToDoItemStatus.Waiting:
+                    if (Math.Min(currentOrder, child.OrderIndex) == child.OrderIndex)
+                    {
+                        currentOrder = child.OrderIndex;
+                        result = (result.Status, status.Active);
+                    }
+
+                    break;
+                case ToDoItemStatus.Today:
+                    result = status;
+                    break;
+                case ToDoItemStatus.Miss:
+                    return (ToDoItemStatus.Miss, mapper.Map<ActiveToDoItem>(child));
+                case ToDoItemStatus.Complete:
+                    completeChildrenCount++;
+                    break;
+                case ToDoItemStatus.ReadyForComplete:
+                    if (Math.Min(currentOrder, child.OrderIndex) == child.OrderIndex)
+                    {
+                        currentOrder = child.OrderIndex;
+                        result = (result.Status, status.Active);
+                    }
+
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        if (completeChildrenCount == children.Length)
+        {
+            return (ToDoItemStatus.ReadyForComplete, null);
+        }
+
+        return result;
+    }
+
     public async Task<IToDoItem> GetToDoItemAsync(Guid id)
     {
-        var (item, value, _, _) = await GetToDoItemEntityAsync(id);
+        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
+        item = item.ThrowIfNull();
 
         var subItems = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.ParentId == item.Id)
-            .Include(x => x.Group)
-            .Include(x => x.Value)
-            .Include(x => x.Statistical)
             .ToArrayAsync();
 
         var parents = new List<ToDoItemParent>
@@ -281,7 +407,6 @@ public class EntityFrameworkToDoService : IToDoService
             {
                 opt.Items.Add(SpravyDbProfile.ParentsName, parents.ToArray());
                 opt.Items.Add(SpravyDbProfile.ItemsName, toDoSubItems.ToArray());
-                opt.Items.Add(SpravyDbProfile.ValueName, value);
             }
         );
 
@@ -296,31 +421,6 @@ public class EntityFrameworkToDoService : IToDoService
         newEntity.Description = string.Empty;
         newEntity.Id = id;
         newEntity.OrderIndex = items.Length == 0 ? 0 : items.Max(x => x.OrderIndex) + 1;
-
-        var toDoItemValue = new ToDoItemValueEntity
-        {
-            Id = Guid.NewGuid(),
-            ItemId = id,
-        };
-
-        var toDoItemGroup = new ToDoItemGroupEntity
-        {
-            Id = Guid.NewGuid(),
-            ItemId = id,
-        };
-
-        var toDoItemStatistical = new ToDoItemStatisticalEntity
-        {
-            Id = Guid.NewGuid(),
-            ItemId = id,
-        };
-
-        newEntity.GroupId = toDoItemGroup.Id;
-        newEntity.ValueId = toDoItemValue.Id;
-        newEntity.StatisticalId = toDoItemStatistical.Id;
-        await context.Set<ToDoItemValueEntity>().AddAsync(toDoItemValue);
-        await context.Set<ToDoItemGroupEntity>().AddAsync(toDoItemGroup);
-        await context.Set<ToDoItemStatisticalEntity>().AddAsync(toDoItemStatistical);
         await context.Set<ToDoItemEntity>().AddAsync(newEntity);
         await context.SaveChangesAsync();
 
@@ -330,55 +430,20 @@ public class EntityFrameworkToDoService : IToDoService
     public async Task<Guid> AddToDoItemAsync(AddToDoItemOptions options)
     {
         var id = Guid.NewGuid();
-        var (parentItem, parentValue, parentGroup, statistical) = await GetToDoItemEntityAsync(options.ParentId);
+        var parent = await context.Set<ToDoItemEntity>().FindAsync(options.ParentId);
+        parent = parent.ThrowIfNull();
 
         var items = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.ParentId == options.ParentId)
             .ToArrayAsync();
 
-        var toDoItemValue = new ToDoItemValueEntity
-        {
-            Id = Guid.NewGuid(),
-            ItemId = id,
-            TypeOfPeriodicity = parentValue.TypeOfPeriodicity,
-            DueDate = parentValue.DueDate,
-        };
-
-        var toDoItemGroup = new ToDoItemGroupEntity
-        {
-            Id = Guid.NewGuid(),
-            ItemId = id,
-        };
-        
-        var toDoItemStatistical = new ToDoItemStatisticalEntity
-        {
-            Id = Guid.NewGuid(),
-            ItemId = id,
-        };
-
-        await context.Set<ToDoItemValueEntity>().AddAsync(toDoItemValue);
-        await context.Set<ToDoItemGroupEntity>().AddAsync(toDoItemGroup);
-        await context.Set<ToDoItemStatisticalEntity>().AddAsync(toDoItemStatistical);
         var toDoItem = mapper.Map<ToDoItemEntity>(options);
         toDoItem.Description = string.Empty;
         toDoItem.Id = id;
         toDoItem.OrderIndex = items.Length == 0 ? 0 : items.Max(x => x.OrderIndex) + 1;
-        toDoItem.ValueId = toDoItemValue.Id;
-        toDoItem.StatisticalId = toDoItemStatistical.Id;
-        toDoItem.GroupId = toDoItemGroup.Id;
-
-        switch (parentItem.Type)
-        {
-            case ToDoItemType.Value:
-                toDoItemValue.TypeOfPeriodicity = parentValue.TypeOfPeriodicity;
-                toDoItemValue.DueDate = parentValue.DueDate;
-
-                break;
-            case ToDoItemType.Group: break;
-            default: throw new ArgumentOutOfRangeException();
-        }
-
+        toDoItem.DueDate = parent.DueDate;
+        toDoItem.TypeOfPeriodicity = parent.TypeOfPeriodicity;
         await context.Set<ToDoItemEntity>().AddAsync(toDoItem);
         await context.SaveChangesAsync();
 
@@ -387,7 +452,8 @@ public class EntityFrameworkToDoService : IToDoService
 
     public async Task DeleteToDoItemAsync(Guid id)
     {
-        var (item, value, group, statistical) = await GetToDoItemEntityAsync(id);
+        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
+        item = item.ThrowIfNull();
         var children = await context.Set<ToDoItemEntity>().AsNoTracking().Where(x => x.ParentId == id).ToArrayAsync();
 
         foreach (var child in children)
@@ -395,139 +461,108 @@ public class EntityFrameworkToDoService : IToDoService
             await DeleteToDoItemAsync(child.Id);
         }
 
-        context.Set<ToDoItemValueEntity>().Remove(value);
-        context.Set<ToDoItemGroupEntity>().Remove(group);
         context.Set<ToDoItemEntity>().Remove(item);
         await context.SaveChangesAsync();
     }
 
     public async Task UpdateTypeOfPeriodicityAsync(Guid id, TypeOfPeriodicity type)
     {
-        var (_, value, _, _) = await GetToDoItemEntityAsync(id);
-        value.TypeOfPeriodicity = type;
-
-        if (value.DueDate is null)
-        {
-            switch (type)
-            {
-                case TypeOfPeriodicity.None:
-                    break;
-                case TypeOfPeriodicity.Daily:
-                    value.DueDate = DateTimeOffset.Now.ToCurrentDay();
-                    break;
-                case TypeOfPeriodicity.Weekly:
-                    value.DueDate = DateTimeOffset.Now.ToCurrentDay();
-                    break;
-                case TypeOfPeriodicity.Monthly:
-                    value.DueDate = DateTimeOffset.Now.ToCurrentDay();
-                    break;
-                case TypeOfPeriodicity.Annually:
-                    value.DueDate = DateTimeOffset.Now.ToCurrentDay();
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
-            }
-        }
-
+        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
+        item = item.ThrowIfNull();
+        item.TypeOfPeriodicity = type;
         await context.SaveChangesAsync();
     }
 
-    public async Task UpdateDueDateAsync(Guid id, DateTimeOffset? dueDate)
+    public async Task UpdateDueDateAsync(Guid id, DateTimeOffset dueDate)
     {
-        var (_, value, _, _) = await GetToDoItemEntityAsync(id);
-        value.DueDate = dueDate;
-
-        if (dueDate is null)
-        {
-            value.TypeOfPeriodicity = TypeOfPeriodicity.None;
-        }
-
+        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
+        item = item.ThrowIfNull();
+        item.DueDate = dueDate;
         await context.SaveChangesAsync();
     }
 
-    public async Task UpdateCompleteStatusAsync(Guid id, bool isComplete)
+    public async Task UpdateCompleteStatusAsync(Guid id, bool isCompleted)
     {
-        var (item, value, _, statistical) = await GetToDoItemEntityAsync(id);
+        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
+        item = item.ThrowIfNull();
 
-        if (isComplete)
+        if (isCompleted)
         {
-            var isCanComplete = await IsCanCompleteOrSkipToDoItem(item, value);
+            var isCanComplete = await IsCanFinishToDoItem(item);
 
             if (!isCanComplete)
             {
                 throw new Exception("Need close sub tasks.");
             }
 
-            statistical.CompletedCount++;
-            UpdateCompleteStatus(value);
+            switch (item.Type)
+            {
+                case ToDoItemType.Value:
+                    item.IsCompleted = true;
+                    break;
+                case ToDoItemType.Group:
+                    break;
+                case ToDoItemType.Planned:
+                    item.IsCompleted = true;
+                    break;
+                case ToDoItemType.Periodicity:
+                    break;
+                default: throw new ArgumentOutOfRangeException();
+            }
+
+            item.CompletedCount++;
+            UpdateDueDate(item);
         }
         else
         {
-            value.IsComplete = false;
+            item.IsCompleted = false;
         }
 
         await context.SaveChangesAsync();
     }
 
-    private Task<bool> IsCanCompleteOrSkipToDoItem(ToDoItemEntity item, ToDoItemValueEntity value)
+    private async Task<bool> IsCanFinishToDoItem(ToDoItemEntity item)
     {
         if (item.Type == ToDoItemType.Group)
         {
-            return Task.FromResult(false);
+            return false;
         }
 
-        if (value.DueDate.HasValue)
+        switch (item.Type)
         {
-            if (value.DueDate.Value.ToCurrentDay() > DateTimeOffset.Now.ToCurrentDay())
-            {
-                return Task.FromResult(false);
-            }
+            case ToDoItemType.Planned:
+                if (item.DueDate.ToCurrentDay() > DateTimeOffset.Now.ToCurrentDay())
+                {
+                    return false;
+                }
+
+                break;
+            case ToDoItemType.Periodicity:
+                if (item.DueDate.ToCurrentDay() > DateTimeOffset.Now.ToCurrentDay())
+                {
+                    return false;
+                }
+
+                break;
         }
 
-        return IsCanCompleteOrSkipToDoItem(item, value.DueDate);
-    }
-
-    private async Task<bool> IsCanCompleteOrSkipToDoItem(ToDoItemEntity item, DateTimeOffset? rootDue)
-    {
         var children = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
-            .Include(x => x.Group)
-            .Include(x => x.Value)
-            .Include(x => x.Statistical)
             .Where(x => x.ParentId == item.Id)
             .ToArrayAsync();
 
         foreach (var child in children)
         {
-            if (child.Type == ToDoItemType.Value)
+            var dueDate = item.Type switch
             {
-                if (child.Value.IsComplete)
-                {
-                    continue;
-                }
+                ToDoItemType.Value => (DateTimeOffset?)null,
+                ToDoItemType.Group => null,
+                ToDoItemType.Planned => item.DueDate,
+                ToDoItemType.Periodicity => item.DueDate,
+                _ => throw new ArgumentOutOfRangeException()
+            };
 
-                if (!child.Value.DueDate.HasValue)
-                {
-                    return false;
-                }
-
-                if (rootDue.HasValue)
-                {
-                    if (child.Value.DueDate.Value.ToCurrentDay() <= rootDue.Value.ToCurrentDay())
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    if (child.Value.DueDate.Value.ToCurrentDay() <= DateTimeOffset.Now.ToCurrentDay())
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            var isCanComplete = await IsCanCompleteOrSkipToDoItem(child, rootDue);
+            var isCanComplete = await IsCanFinishToDoItem(child, dueDate);
 
             if (!isCanComplete)
             {
@@ -536,6 +571,138 @@ public class EntityFrameworkToDoService : IToDoService
         }
 
         return true;
+    }
+
+    private async Task<bool> IsCanFinishToDoSubItemPeriodicity(ToDoItemEntity item, DateTimeOffset? rootDue)
+    {
+        if (rootDue.HasValue)
+        {
+            if (item.DueDate.ToCurrentDay() <= rootDue.Value.ToCurrentDay())
+            {
+                return false;
+            }
+        }
+        else
+        {
+            if (item.DueDate.ToCurrentDay() <= DateTimeOffset.Now.ToCurrentDay())
+            {
+                return false;
+            }
+        }
+
+        var children = await context.Set<ToDoItemEntity>()
+            .AsNoTracking()
+            .Where(x => x.ParentId == item.Id)
+            .ToArrayAsync();
+
+        foreach (var child in children)
+        {
+            var isCanComplete = await IsCanFinishToDoItem(child, rootDue);
+
+            if (!isCanComplete)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private async Task<bool> IsCanFinishToDoSubItemPlanned(ToDoItemEntity item, DateTimeOffset? rootDue)
+    {
+        if (item.IsCompleted)
+        {
+            return true;
+        }
+
+        if (rootDue.HasValue)
+        {
+            if (item.DueDate.ToCurrentDay() <= rootDue.Value.ToCurrentDay())
+            {
+                return false;
+            }
+        }
+        else
+        {
+            if (item.DueDate.ToCurrentDay() <= DateTimeOffset.Now.ToCurrentDay())
+            {
+                return false;
+            }
+        }
+
+        var children = await context.Set<ToDoItemEntity>()
+            .AsNoTracking()
+            .Where(x => x.ParentId == item.Id)
+            .ToArrayAsync();
+
+        foreach (var child in children)
+        {
+            var isCanComplete = await IsCanFinishToDoItem(child, rootDue);
+
+            if (!isCanComplete)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private async Task<bool> IsCanFinishToDoSubItemValue(ToDoItemEntity item, DateTimeOffset? rootDue)
+    {
+        if (item.IsCompleted)
+        {
+            return true;
+        }
+
+        var children = await context.Set<ToDoItemEntity>()
+            .AsNoTracking()
+            .Where(x => x.ParentId == item.Id)
+            .ToArrayAsync();
+
+        foreach (var child in children)
+        {
+            var isCanComplete = await IsCanFinishToDoItem(child, rootDue);
+
+            if (!isCanComplete)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private async Task<bool> IsCanFinishToDoSubItemGroup(ToDoItemEntity item, DateTimeOffset? rootDue)
+    {
+        var children = await context.Set<ToDoItemEntity>()
+            .AsNoTracking()
+            .Where(x => x.ParentId == item.Id)
+            .ToArrayAsync();
+
+        foreach (var child in children)
+        {
+            var isCanComplete = await IsCanFinishToDoItem(child, rootDue);
+
+            if (!isCanComplete)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private Task<bool> IsCanFinishToDoItem(ToDoItemEntity item, DateTimeOffset? rootDue)
+    {
+        switch (item.Type)
+        {
+            case ToDoItemType.Value: return IsCanFinishToDoSubItemValue(item, rootDue);
+            case ToDoItemType.Group: return IsCanFinishToDoSubItemGroup(item, rootDue);
+            case ToDoItemType.Planned: return IsCanFinishToDoSubItemPlanned(item, rootDue);
+            case ToDoItemType.Periodicity: return IsCanFinishToDoSubItemPeriodicity(item, rootDue);
+            default: throw new ArgumentOutOfRangeException();
+        }
     }
 
     public async Task UpdateNameToDoItemAsync(Guid id, string name)
@@ -578,31 +745,33 @@ public class EntityFrameworkToDoService : IToDoService
 
     public async Task SkipToDoItemAsync(Guid id)
     {
-        var (item, value, group, statistical) = await GetToDoItemEntityAsync(id);
-        var isCanComplete = await IsCanCompleteOrSkipToDoItem(item, value);
+        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
+        item = item.ThrowIfNull();
+        var isCanComplete = await IsCanFinishToDoItem(item);
 
         if (!isCanComplete)
         {
             throw new Exception("Need close sub tasks.");
         }
 
-        statistical.SkippedCount++;
-        UpdateCompleteStatus(value);
+        item.SkippedCount++;
+        UpdateDueDate(item);
         await context.SaveChangesAsync();
     }
 
     public async Task FailToDoItemAsync(Guid id)
     {
-        var (item, value, group, statistical) = await GetToDoItemEntityAsync(id);
-        var isCanComplete = await IsCanCompleteOrSkipToDoItem(item, value);
+        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
+        item = item.ThrowIfNull();
+        var isCanComplete = await IsCanFinishToDoItem(item);
 
         if (!isCanComplete)
         {
             throw new Exception("Need close sub tasks.");
         }
 
-        statistical.FailedCount++;
-        UpdateCompleteStatus(value);
+        item.FailedCount++;
+        UpdateDueDate(item);
         await context.SaveChangesAsync();
     }
 
@@ -611,9 +780,6 @@ public class EntityFrameworkToDoService : IToDoService
         var items = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.Name.Contains(searchText))
-            .Include(x => x.Group)
-            .Include(x => x.Value)
-            .Include(x => x.Statistical)
             .ToArrayAsync();
 
         var result = await ConvertAsync(items);
@@ -650,9 +816,6 @@ public class EntityFrameworkToDoService : IToDoService
         var items = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.IsCurrent)
-            .Include(x => x.Group)
-            .Include(x => x.Value)
-            .Include(x => x.Statistical)
             .ToArrayAsync();
 
         var result = await ConvertAsync(items);
@@ -689,47 +852,41 @@ public class EntityFrameworkToDoService : IToDoService
         await GetParentsAsync(parent.Parent.Id, parents);
     }
 
-    private void UpdateCompleteStatus(ToDoItemValueEntity value)
+    private void UpdateDueDate(ToDoItemEntity item)
     {
-        if (value.TypeOfPeriodicity == TypeOfPeriodicity.None || value.DueDate is null)
+        switch (item.Type)
         {
-            value.IsComplete = true;
-
-            return;
+            case ToDoItemType.Value:
+                break;
+            case ToDoItemType.Group:
+                break;
+            case ToDoItemType.Planned:
+                break;
+            case ToDoItemType.Periodicity:
+                AddPeriodicity(item);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
         }
+    }
 
-        switch (value.TypeOfPeriodicity)
+    private void AddPeriodicity(ToDoItemEntity item)
+    {
+        switch (item.TypeOfPeriodicity)
         {
             case TypeOfPeriodicity.Daily:
-                value.DueDate = value.DueDate.Value.AddDays(1);
+                item.DueDate = item.DueDate.AddDays(1);
                 break;
             case TypeOfPeriodicity.Weekly:
-                value.DueDate = value.DueDate.Value.AddDays(7);
+                item.DueDate = item.DueDate.AddDays(7);
                 break;
             case TypeOfPeriodicity.Monthly:
-                value.DueDate = value.DueDate.Value.AddMonths(1);
+                item.DueDate = item.DueDate.AddMonths(1);
                 break;
             case TypeOfPeriodicity.Annually:
-                value.DueDate = value.DueDate.Value.AddYears(1);
+                item.DueDate = item.DueDate.AddYears(1);
                 break;
             default: throw new ArgumentOutOfRangeException();
         }
-
-        value.IsComplete = false;
-    }
-
-    private async Task<(ToDoItemEntity Item,
-            ToDoItemValueEntity Value,
-            ToDoItemGroupEntity Group,
-            ToDoItemStatisticalEntity Statistical)>
-        GetToDoItemEntityAsync(Guid id)
-    {
-        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
-        item = item.ThrowIfNull();
-        var value = await context.Set<ToDoItemValueEntity>().FindAsync(item.ValueId);
-        var group = await context.Set<ToDoItemGroupEntity>().FindAsync(item.GroupId);
-        var statistical = await context.Set<ToDoItemStatisticalEntity>().FindAsync(item.StatisticalId);
-
-        return (item, value.ThrowIfNull(), group.ThrowIfNull(), statistical.ThrowIfNull());
     }
 }

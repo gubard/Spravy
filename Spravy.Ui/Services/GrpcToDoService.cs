@@ -126,7 +126,7 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
         }
     }
 
-    public async Task UpdateDueDateAsync(Guid id, DateTimeOffset? dueDate)
+    public async Task UpdateDueDateAsync(Guid id, DateTimeOffset dueDate)
     {
         try
         {
@@ -144,7 +144,7 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
         }
     }
 
-    public async Task UpdateCompleteStatusAsync(Guid id, bool isComplete)
+    public async Task UpdateCompleteStatusAsync(Guid id, bool isCompleted)
     {
         try
         {
@@ -152,7 +152,7 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
                 new UpdateCompleteStatusRequest
                 {
                     Id = mapper.Map<ByteString>(id),
-                    IsComplete = isComplete
+                    IsCompleted = isCompleted
                 }
             );
         }

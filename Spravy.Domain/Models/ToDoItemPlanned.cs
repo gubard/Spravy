@@ -2,32 +2,35 @@ using Spravy.Domain.Interfaces;
 
 namespace Spravy.Domain.Models;
 
-public readonly struct ToDoItemValue : IToDoItem
+public readonly struct ToDoItemPlanned : IToDoItem
 {
-    public ToDoItemValue(
+    public ToDoItemPlanned(
         Guid id,
         string name,
+        string description,
         IToDoSubItem[] items,
         ToDoItemParent[] parents,
-        bool isCompleted,
-        string description,
-        bool isCurrent
+        bool isCurrent,
+        DateTimeOffset dueDate,
+        bool isCompleted
     )
     {
+        Id = id;
         Name = name;
+        Description = description;
         Items = items;
         Parents = parents;
-        IsCompleted = isCompleted;
-        Description = description;
         IsCurrent = isCurrent;
-        Id = id;
+        DueDate = dueDate;
+        IsCompleted = isCompleted;
     }
 
     public Guid Id { get; }
     public string Name { get; }
-    public bool IsCompleted { get; }
+    public string Description { get; }
     public IToDoSubItem[] Items { get; }
     public ToDoItemParent[] Parents { get; }
     public bool IsCurrent { get; }
-    public string Description { get; }
+    public DateTimeOffset DueDate { get; }
+    public bool IsCompleted { get; }
 }

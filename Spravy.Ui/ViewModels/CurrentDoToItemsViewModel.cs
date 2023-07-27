@@ -7,6 +7,7 @@ using ExtensionFramework.Core.Common.Extensions;
 using ExtensionFramework.Core.DependencyInjection.Attributes;
 using ExtensionFramework.ReactiveUI.Models;
 using Spravy.Domain.Interfaces;
+using Spravy.Ui.Extensions;
 using Spravy.Ui.Models;
 using Spravy.Ui.Views;
 
@@ -16,13 +17,17 @@ public class CurrentDoToItemsViewModel : RoutableViewModelBase
 {
     public CurrentDoToItemsViewModel() : base("current-do-to-items")
     {
-        InitializedCommand = CreateCommandFromTask(InitializedAsync);
-        DeleteSubToDoItemCommand = CreateCommandFromTask<ToDoSubItemNotify>(DeleteSubToDoItemAsync);
-        CompleteSubToDoItemCommand = CreateCommandFromTask<ToDoSubItemValueNotify>(CompleteSubToDoItemAsync);
-        ChangeToDoItemCommand = CreateCommand<ToDoSubItemNotify>(ChangeToDoItem);
-        AddSubToDoItemToCurrentCommand = CreateCommandFromTask<ToDoSubItemNotify>(AddCurrentToDoItemAsync);
-        RemoveSubToDoItemFromCurrentCommand = CreateCommandFromTask<ToDoSubItemNotify>(RemoveCurrentToDoItemAsync);
-        ChangeToActiveDoItemCommand = CreateCommand<ActiveToDoItemNotify>(ChangeToActiveDoItem);
+        InitializedCommand = CreateCommandFromTaskWithDialogProgressIndicator(InitializedAsync);
+        DeleteSubToDoItemCommand =
+            CreateCommandFromTaskWithDialogProgressIndicator<ToDoSubItemNotify>(DeleteSubToDoItemAsync);
+        CompleteSubToDoItemCommand =
+            CreateCommandFromTaskWithDialogProgressIndicator<ToDoSubItemNotify>(CompleteSubToDoItemAsync);
+        ChangeToDoItemCommand = CreateCommandFromTask<ToDoSubItemNotify>(ChangeToDoItemAsync);
+        AddSubToDoItemToCurrentCommand =
+            CreateCommandFromTaskWithDialogProgressIndicator<ToDoSubItemNotify>(AddCurrentToDoItemAsync);
+        RemoveSubToDoItemFromCurrentCommand =
+            CreateCommandFromTaskWithDialogProgressIndicator<ToDoSubItemNotify>(RemoveCurrentToDoItemAsync);
+        ChangeToActiveDoItemCommand = CreateCommandFromTask<ActiveToDoItemNotify>(ChangeToActiveDoItemAsync);
     }
 
     public ICommand CompleteSubToDoItemCommand { get; }
@@ -40,9 +45,9 @@ public class CurrentDoToItemsViewModel : RoutableViewModelBase
     [Inject]
     public required IMapper Mapper { get; init; }
 
-    private void ChangeToActiveDoItem(ActiveToDoItemNotify item)
+    private Task ChangeToActiveDoItemAsync(ActiveToDoItemNotify item)
     {
-        Navigator.NavigateTo<ToDoItemValueViewModel>(vm => vm.Id = item.Id);
+        return ToDoService.NavigateToToDoItemViewModel(item.Id, Navigator);
     }
 
     private Task InitializedAsync()
@@ -63,9 +68,9 @@ public class CurrentDoToItemsViewModel : RoutableViewModelBase
         Items.AddRange(Mapper.Map<IEnumerable<ToDoSubItemNotify>>(items));
     }
 
-    private void ChangeToDoItem(ToDoSubItemNotify subItemValue)
+    private Task ChangeToDoItemAsync(ToDoSubItemNotify subItemValue)
     {
-        Navigator.NavigateTo<ToDoItemValueViewModel>(vm => vm.Id = subItemValue.Id);
+        return ToDoService.NavigateToToDoItemViewModel(subItemValue.Id, Navigator);
     }
 
     private async Task AddCurrentToDoItemAsync(ToDoSubItemNotify item)
@@ -74,7 +79,7 @@ public class CurrentDoToItemsViewModel : RoutableViewModelBase
         await RefreshToDoItemAsync();
     }
 
-    private async Task CompleteSubToDoItemAsync(ToDoSubItemValueNotify subItemValue)
+    private async Task CompleteSubToDoItemAsync(ToDoSubItemNotify subItemValue)
     {
         await DialogViewer.ShowDialogAsync<CompleteToDoItemView>(
             view =>

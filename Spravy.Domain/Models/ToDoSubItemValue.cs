@@ -8,9 +8,8 @@ public readonly struct ToDoSubItemValue : IToDoSubItem
     public ToDoSubItemValue(
         Guid id,
         string name,
-        bool isComplete,
-        DateTimeOffset? dueDate,
-        ulong orderIndex,
+        bool isCompleted,
+        uint orderIndex,
         ToDoItemStatus status,
         string description,
         uint completedCount,
@@ -21,7 +20,6 @@ public readonly struct ToDoSubItemValue : IToDoSubItem
     )
     {
         Name = name;
-        DueDate = dueDate;
         OrderIndex = orderIndex;
         Status = status;
         Description = description;
@@ -30,15 +28,14 @@ public readonly struct ToDoSubItemValue : IToDoSubItem
         FailedCount = failedCount;
         IsCurrent = isCurrent;
         Active = active;
-        IsComplete = isComplete;
+        IsCompleted = isCompleted;
         Id = id;
     }
 
     public Guid Id { get; }
-    public bool IsComplete { get; }
+    public bool IsCompleted { get; }
     public string Name { get; }
-    public DateTimeOffset? DueDate { get; }
-    public ulong OrderIndex { get; }
+    public uint OrderIndex { get; }
     public ToDoItemStatus Status { get; }
     public string Description { get; }
     public bool IsCurrent { get; }

@@ -14,7 +14,8 @@ public class SpravyProfile : Profile
     {
         CreateMap<Guid, ByteString>().ConvertUsing(x => ByteString.CopyFrom(x.ToByteArray()));
         CreateMap<ToDoItemParent, ToDoItemParentGrpc>();
-        CreateMap<DateTimeOffsetGrpc, DateTimeOffset?>().ConvertUsing(x => ToDateTimeOffset(x));
+        CreateMap<DateTimeOffsetGrpc, DateTimeOffset?>().ConvertUsing(x => ToNullableDateTimeOffset(x));
+        CreateMap<DateTimeOffsetGrpc, DateTimeOffset>().ConvertUsing(x => ToDateTimeOffset(x));
         CreateMap<DateTimeOffset?, Timestamp?>().ConvertUsing(x => ToTimestamp(x));
         CreateMap<Timestamp?, DateTimeOffset?>().ConvertUsing(x => ToDateTimeOffset(x));
         CreateMap<ToDoItemParentGrpc, ToDoItemParent>();
@@ -27,6 +28,11 @@ public class SpravyProfile : Profile
         CreateMap<UpdateOrderIndexToDoItemOptions, UpdateOrderIndexToDoItemRequest>();
         CreateMap<ActiveToDoItem?, ActiveToDoItemGrpc>();
         CreateMap<ActiveToDoItem, ActiveToDoItemGrpc>();
+        CreateMap<ToDoItemPlanned, ToDoItemPlannedGrpc>();
+        CreateMap<ToDoItemPeriodicity, ToDoItemPeriodicityGrpc>();
+        CreateMap<ToDoSubItemPlanned, ToDoSubItemPlannedGrpc>();
+        CreateMap<ToDoSubItemPeriodicity, ToDoSubItemPeriodicityGrpc>();
+
 
         CreateMap<Guid?, ByteString>()
             .ConvertUsing(x => x.HasValue ? ByteString.CopyFrom(x.Value.ToByteArray()) : ByteString.Empty);
@@ -79,6 +85,15 @@ public class SpravyProfile : Profile
                             result.Group = resolutionContext.Mapper.Map<ToDoItemGroupGrpc>(toDoItemGroup);
 
                             break;
+                        case ToDoItemPeriodicity toDoItemPeriodicity:
+                            result.Periodicity =
+                                resolutionContext.Mapper.Map<ToDoItemPeriodicityGrpc>(toDoItemPeriodicity);
+
+                            break;
+                        case ToDoItemPlanned toDoItemPlanned:
+                            result.Planned = resolutionContext.Mapper.Map<ToDoItemPlannedGrpc>(toDoItemPlanned);
+
+                            break;
                         case ToDoItemValue toDoItemValue:
                             result.Value = resolutionContext.Mapper.Map<ToDoItemValueGrpc>(toDoItemValue);
 
@@ -93,34 +108,47 @@ public class SpravyProfile : Profile
 
         CreateMap<ToDoItemGrpc, IToDoItem>()
             .ConvertUsing(
-                (source, _, resolutionContext) =>
+                (source, _, resolutionContext) => source.ParametersCase switch
                 {
-                    switch (source.ParametersCase)
-                    {
-                        case ToDoItemGrpc.ParametersOneofCase.Value:
-                            return new ToDoItemValue(
-                                resolutionContext.Mapper.Map<Guid>(source.Id),
-                                source.Name,
-                                (TypeOfPeriodicity)source.Value.TypeOfPeriodicity,
-                                resolutionContext.Mapper.Map<DateTimeOffset?>(source.Value.DueDate),
-                                resolutionContext.Mapper.Map<IToDoSubItem[]>(source.Items),
-                                resolutionContext.Mapper.Map<ToDoItemParent[]>(source.Parents),
-                                source.Value.IsComplete,
-                                source.Description,
-                                source.IsCurrent
-                            );
-                        case ToDoItemGrpc.ParametersOneofCase.Group:
-                            return new ToDoItemGroup(
-                                resolutionContext.Mapper.Map<Guid>(source.Id),
-                                source.Name,
-                                resolutionContext.Mapper.Map<IToDoSubItem[]>(source.Items),
-                                resolutionContext.Mapper.Map<ToDoItemParent[]>(source.Parents),
-                                source.Description,
-                                source.IsCurrent
-                            );
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
+                    ToDoItemGrpc.ParametersOneofCase.Value => new ToDoItemValue(
+                        resolutionContext.Mapper.Map<Guid>(source.Id),
+                        source.Name,
+                        resolutionContext.Mapper.Map<IToDoSubItem[]>(source.Items),
+                        resolutionContext.Mapper.Map<ToDoItemParent[]>(source.Parents),
+                        source.Value.IsCompleted,
+                        source.Description,
+                        source.IsCurrent
+                    ),
+                    ToDoItemGrpc.ParametersOneofCase.Group => new ToDoItemGroup(
+                        resolutionContext.Mapper.Map<Guid>(source.Id),
+                        source.Name,
+                        source.Items.Select(x => resolutionContext.Mapper.Map<IToDoSubItem>(x)).ToArray(),
+                        resolutionContext.Mapper.Map<ToDoItemParent[]>(source.Parents),
+                        source.Description,
+                        source.IsCurrent
+                    ),
+                    ToDoItemGrpc.ParametersOneofCase.Planned => new ToDoItemPlanned(
+                        resolutionContext.Mapper.Map<Guid>(source.Id),
+                        source.Name,
+                        source.Description,
+                        resolutionContext.Mapper.Map<IToDoSubItem[]>(source.Items),
+                        resolutionContext.Mapper.Map<ToDoItemParent[]>(source.Parents),
+                        source.IsCurrent,
+                        resolutionContext.Mapper.Map<DateTimeOffset>(source.Planned.DueDate),
+                        source.Planned.IsCompleted
+                    ),
+                    ToDoItemGrpc.ParametersOneofCase.Periodicity => new ToDoItemPeriodicity(
+                        resolutionContext.Mapper.Map<Guid>(source.Id),
+                        source.Name,
+                        source.Description,
+                        resolutionContext.Mapper.Map<IToDoSubItem[]>(source.Items),
+                        resolutionContext.Mapper.Map<ToDoItemParent[]>(source.Parents),
+                        source.IsCurrent,
+                        resolutionContext.Mapper.Map<DateTimeOffset>(source.Periodicity.DueDate),
+                        (TypeOfPeriodicity)source.Periodicity.TypeOfPeriodicity
+                    ),
+                    ToDoItemGrpc.ParametersOneofCase.None => throw new ArgumentOutOfRangeException(),
+                    _ => throw new ArgumentOutOfRangeException()
                 }
             );
 
@@ -145,6 +173,15 @@ public class SpravyProfile : Profile
                             result.Group = resolutionContext.Mapper.Map<ToDoSubItemGroupGrpc>(toDoSubItemGroup);
 
                             break;
+                        case ToDoSubItemPeriodicity toDoSubItemPeriodicity:
+                            result.Periodicity =
+                                resolutionContext.Mapper.Map<ToDoSubItemPeriodicityGrpc>(toDoSubItemPeriodicity);
+
+                            break;
+                        case ToDoSubItemPlanned toDoSubItemPlanned:
+                            result.Planned = resolutionContext.Mapper.Map<ToDoSubItemPlannedGrpc>(toDoSubItemPlanned);
+
+                            break;
                         case ToDoSubItemValue toDoSubItemValue:
                             result.Value = resolutionContext.Mapper.Map<ToDoSubItemValueGrpc>(toDoSubItemValue);
 
@@ -158,39 +195,60 @@ public class SpravyProfile : Profile
 
         CreateMap<ToDoSubItemGrpc, IToDoSubItem>()
             .ConvertUsing(
-                (source, _, resolutionContext) =>
+                (source, _, resolutionContext) => source.ParametersCase switch
                 {
-                    switch (source.ParametersCase)
-                    {
-                        case ToDoSubItemGrpc.ParametersOneofCase.Value:
-                            var active = resolutionContext.Mapper.Map<ActiveToDoItem?>(source.Active);
-
-                            return new ToDoSubItemValue(
-                                resolutionContext.Mapper.Map<Guid>(source.Id),
-                                source.Name,
-                                source.Value.IsComplete,
-                                resolutionContext.Mapper.Map<DateTimeOffset?>(source.Value.DueDate),
-                                source.OrderIndex,
-                                (ToDoItemStatus)source.Status,
-                                source.Description,
-                                source.Value.CompletedCount,
-                                source.Value.SkippedCount,
-                                source.Value.FailedCount,
-                                source.IsCurrent,
-                                active
-                            );
-                        case ToDoSubItemGrpc.ParametersOneofCase.Group:
-                            return new ToDoSubItemGroup(
-                                resolutionContext.Mapper.Map<Guid>(source.Id),
-                                source.Name,
-                                source.OrderIndex,
-                                (ToDoItemStatus)source.Status,
-                                source.Description,
-                                source.IsCurrent,
-                                resolutionContext.Mapper.Map<ActiveToDoItem?>(source.Active)
-                            );
-                        default: throw new ArgumentOutOfRangeException();
-                    }
+                    ToDoSubItemGrpc.ParametersOneofCase.Value => new ToDoSubItemValue(
+                        resolutionContext.Mapper.Map<Guid>(source.Id),
+                        source.Name,
+                        source.Value.IsCompleted,
+                        source.OrderIndex,
+                        (ToDoItemStatus)source.Status,
+                        source.Description,
+                        source.Value.CompletedCount,
+                        source.Value.SkippedCount,
+                        source.Value.FailedCount,
+                        source.IsCurrent,
+                        resolutionContext.Mapper.Map<ActiveToDoItem?>(source.Active)
+                    ),
+                    ToDoSubItemGrpc.ParametersOneofCase.Group => new ToDoSubItemGroup(
+                        resolutionContext.Mapper.Map<Guid>(source.Id),
+                        source.Name,
+                        source.OrderIndex,
+                        (ToDoItemStatus)source.Status,
+                        source.Description,
+                        source.IsCurrent,
+                        resolutionContext.Mapper.Map<ActiveToDoItem?>(source.Active)
+                    ),
+                    ToDoSubItemGrpc.ParametersOneofCase.None => throw new ArgumentOutOfRangeException(),
+                    ToDoSubItemGrpc.ParametersOneofCase.Planned => new ToDoSubItemPlanned(
+                        resolutionContext.Mapper.Map<Guid>(source.Id),
+                        source.Name,
+                        source.OrderIndex,
+                        (ToDoItemStatus)source.Status,
+                        source.Description,
+                        source.IsCurrent,
+                        resolutionContext.Mapper.Map<ActiveToDoItem?>(source.Active),
+                        resolutionContext.Mapper.Map<DateTimeOffset>(source.Planned.DueDate),
+                        source.Planned.CompletedCount,
+                        source.Planned.SkippedCount,
+                        source.Planned.FailedCount,
+                        source.Planned.IsCompleted
+                    ),
+                    ToDoSubItemGrpc.ParametersOneofCase.Periodicity => new ToDoSubItemPeriodicity(
+                        resolutionContext.Mapper.Map<Guid>(source.Id),
+                        source.Name,
+                        source.OrderIndex,
+                        (ToDoItemStatus)source.Status,
+                        source.Description,
+                        source.IsCurrent,
+                        resolutionContext.Mapper.Map<DateTimeOffset>(source.Periodicity.DueDate),
+                        (TypeOfPeriodicity)source.Periodicity.TypeOfPeriodicity,
+                        resolutionContext.Mapper.Map<ActiveToDoItem?>(source.Active),
+                        source.Periodicity.CompletedCount,
+                        source.Periodicity.SkippedCount,
+                        source.Periodicity.FailedCount
+                    ),
+                    _ => throw new ArgumentOutOfRangeException()
                 }
             );
 
@@ -213,7 +271,22 @@ public class SpravyProfile : Profile
             );
     }
 
-    private DateTimeOffset? ToDateTimeOffset(DateTimeOffsetGrpc grpc)
+    private DateTimeOffset ToDateTimeOffset(DateTimeOffsetGrpc grpc)
+    {
+        var date = grpc.Date.ToDateTimeOffset();
+
+        return new DateTimeOffset(
+            date.Year,
+            date.Month,
+            date.Day,
+            date.Hour,
+            date.Minute,
+            date.Second,
+            grpc.Offset.ToTimeSpan()
+        );
+    }
+
+    private DateTimeOffset? ToNullableDateTimeOffset(DateTimeOffsetGrpc grpc)
     {
         if (grpc.Date is null)
         {

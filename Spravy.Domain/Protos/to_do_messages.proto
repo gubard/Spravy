@@ -91,7 +91,7 @@ message UpdateNameToDoItemReply {
 
 message UpdateCompleteStatusRequest {
   bytes Id = 1;
-  bool IsComplete = 2;
+  bool IsCompleted = 2;
 }
 
 message UpdateCompleteStatusReply {
@@ -156,7 +156,25 @@ message ToDoItemGrpc {
   oneof Parameters {
     ToDoItemValueGrpc Value = 6;
     ToDoItemGroupGrpc Group = 7;
+    ToDoItemPlannedGrpc Planned = 9;
+    ToDoItemPeriodicityGrpc Periodicity = 10;
   }
+}
+
+message ToDoItemPlannedGrpc {
+  DateTimeOffsetGrpc DueDate = 1;
+  bool IsCompleted = 2;
+  uint32 CompletedCount = 3;
+  uint32 SkippedCount = 4;
+  uint32 FailedCount = 5;
+}
+
+message ToDoItemPeriodicityGrpc {
+  DateTimeOffsetGrpc DueDate = 1;
+  TypeOfPeriodicityGrpc TypeOfPeriodicity = 2;
+  uint32 CompletedCount = 3;
+  uint32 SkippedCount = 4;
+  uint32 FailedCount = 5;
 }
 
 message ToDoItemGroupGrpc {
@@ -172,7 +190,7 @@ message GetRootToDoItemsReply {
 message ToDoSubItemGrpc {
   bytes Id = 1;
   string Name = 2;
-  uint64 OrderIndex = 3;
+  uint32 OrderIndex = 3;
   ToDoItemStatusGrpc Status = 4;
   string Description = 5;
   bool IsCurrent = 8;
@@ -181,18 +199,35 @@ message ToDoSubItemGrpc {
   oneof Parameters {
     ToDoSubItemValueGrpc Value = 6;
     ToDoSubItemGroupGrpc Group = 7;
+    ToDoSubItemPlannedGrpc Planned = 10;
+    ToDoSubItemPeriodicityGrpc Periodicity = 11;
   }
+}
+
+message ToDoSubItemPeriodicityGrpc {
+  TypeOfPeriodicityGrpc TypeOfPeriodicity = 1;
+  DateTimeOffsetGrpc DueDate = 2;
+  uint32 CompletedCount = 3;
+  uint32 SkippedCount = 4;
+  uint32 FailedCount = 5;
+}
+
+message ToDoSubItemPlannedGrpc {
+  bool IsCompleted = 1;
+  DateTimeOffsetGrpc DueDate = 2;
+  uint32 CompletedCount = 3;
+  uint32 SkippedCount = 4;
+  uint32 FailedCount = 5;
 }
 
 message ToDoSubItemGroupGrpc {
 }
 
 message ToDoSubItemValueGrpc {
-  DateTimeOffsetGrpc DueDate = 1;
-  bool IsComplete = 2;
-  uint32 CompletedCount = 3;
-  uint32 SkippedCount = 4;
-  uint32 FailedCount = 5;
+  bool IsCompleted = 1;
+  uint32 CompletedCount = 2;
+  uint32 SkippedCount = 3;
+  uint32 FailedCount = 4;
 }
 
 message ToDoItemParentGrpc {
@@ -203,7 +238,7 @@ message ToDoItemParentGrpc {
 message ToDoItemValueGrpc {
   TypeOfPeriodicityGrpc TypeOfPeriodicity = 1;
   DateTimeOffsetGrpc DueDate = 2;
-  bool IsComplete = 3;
+  bool IsCompleted = 3;
 }
 
 message DateTimeOffsetGrpc {
@@ -212,11 +247,10 @@ message DateTimeOffsetGrpc {
 }
 
 enum TypeOfPeriodicityGrpc {
-  None = 0;
-  Daily = 1;
-  Weekly = 2;
-  Monthly = 3;
-  Annually = 4;
+  Daily = 0;
+  Weekly = 1;
+  Monthly = 2;
+  Annually = 3;
 }
 
 enum ToDoItemStatusGrpc {
@@ -230,4 +264,6 @@ enum ToDoItemStatusGrpc {
 enum ToDoItemTypeGrpc {
   Value = 0;
   Group = 1;
+  Planned = 2;
+  Periodicity = 3;
 }
