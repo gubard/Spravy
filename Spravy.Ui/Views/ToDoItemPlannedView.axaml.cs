@@ -1,6 +1,4 @@
 using System.Windows.Input;
-using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using ExtensionFramework.AvaloniaUi.ReactiveUI.Models;
 using ExtensionFramework.Core.Common.Extensions;

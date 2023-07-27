@@ -115,7 +115,12 @@ public class EntityFrameworkToDoService : IToDoService
 
                     break;
                 case ToDoItemStatus.Today:
-                    result = status;
+                    if (Math.Min(currentOrder, child.OrderIndex) == child.OrderIndex)
+                    {
+                        currentOrder = child.OrderIndex;
+                        result = (result.Status, status.Active);
+                    }
+
                     break;
                 case ToDoItemStatus.Miss:
                     return (ToDoItemStatus.Miss, mapper.Map<ActiveToDoItem>(child));
@@ -142,7 +147,7 @@ public class EntityFrameworkToDoService : IToDoService
 
         if (entity.DueDate.ToCurrentDay() == DateTimeOffset.Now.ToCurrentDay())
         {
-            return (ToDoItemStatus.Today, null);
+            return (ToDoItemStatus.Today, result.Active);
         }
 
         return result;
@@ -195,7 +200,12 @@ public class EntityFrameworkToDoService : IToDoService
 
                     break;
                 case ToDoItemStatus.Today:
-                    result = status;
+                    if (Math.Min(currentOrder, child.OrderIndex) == child.OrderIndex)
+                    {
+                        currentOrder = child.OrderIndex;
+                        result = (result.Status, status.Active);
+                    }
+
                     break;
                 case ToDoItemStatus.Miss:
                     return (ToDoItemStatus.Miss, mapper.Map<ActiveToDoItem>(child));
@@ -288,7 +298,12 @@ public class EntityFrameworkToDoService : IToDoService
 
                     break;
                 case ToDoItemStatus.Today:
-                    result = status;
+                    if (Math.Min(currentOrder, child.OrderIndex) == child.OrderIndex)
+                    {
+                        currentOrder = child.OrderIndex;
+                        result = (result.Status, status.Active);
+                    }
+
                     break;
                 case ToDoItemStatus.Miss:
                     return (ToDoItemStatus.Miss, mapper.Map<ActiveToDoItem>(child));
@@ -354,7 +369,12 @@ public class EntityFrameworkToDoService : IToDoService
 
                     break;
                 case ToDoItemStatus.Today:
-                    result = status;
+                    if (Math.Min(currentOrder, child.OrderIndex) == child.OrderIndex)
+                    {
+                        currentOrder = child.OrderIndex;
+                        result = (result.Status, status.Active);
+                    }
+
                     break;
                 case ToDoItemStatus.Miss:
                     return (ToDoItemStatus.Miss, mapper.Map<ActiveToDoItem>(child));

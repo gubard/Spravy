@@ -45,9 +45,9 @@
 
                 <TextBlock Grid.Row="2" Text="DueDate" VerticalAlignment="Center" />
 
-                <DatePicker Grid.Row="2"
-                            Grid.Column="1"
-                            SelectedDate="{Binding DueDate}" />
+                <TextBox Grid.Row="2"
+                         Grid.Column="1"
+                         Text="{Binding DueDate}" />
             </Grid>
 
             <StackPanel Orientation="Horizontal">

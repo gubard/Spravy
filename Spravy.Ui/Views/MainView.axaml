@@ -20,7 +20,7 @@
     <dialogHostAvalonia:DialogHost Identifier="MainDialogHost">
         <Grid RowDefinitions="Auto,*">
             <Button Command="{Binding RefreshViewCommand}" />
-            <ContentControl Grid.Row="1" Content="{Binding RoutedViewHost}" />
+            <ContentControl Grid.Row="1" Content="{Binding RoutedViewHost, Mode=TwoWay}" />
         </Grid>
     </dialogHostAvalonia:DialogHost>
 </UserControl>

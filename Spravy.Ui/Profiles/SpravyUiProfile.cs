@@ -1,6 +1,5 @@
 using System;
 using AutoMapper;
-using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
 using Spravy.Ui.Models;
 using Spravy.Ui.ViewModels;

@@ -1,5 +1,4 @@
 using Avalonia.Markup.Xaml;
-using Avalonia.ReactiveUI;
 using ExtensionFramework.AvaloniaUi.ReactiveUI.Models;
 using Spravy.Ui.ViewModels;
 
