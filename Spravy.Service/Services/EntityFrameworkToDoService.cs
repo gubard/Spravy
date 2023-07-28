@@ -70,11 +70,6 @@ public class EntityFrameworkToDoService : IToDoService
 
     private async Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusPeriodicityAsync(ToDoItemEntity entity)
     {
-        if (entity.IsCompleted)
-        {
-            return (ToDoItemStatus.Complete, null);
-        }
-
         if (entity.DueDate < DateTimeOffset.Now.ToCurrentDay())
         {
             return (ToDoItemStatus.Miss, null);
