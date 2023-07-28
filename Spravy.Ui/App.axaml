@@ -92,7 +92,7 @@
                                 <WrapPanel Grid.Row="1"
                                            Orientation="Horizontal">
                                     <Grid RowDefinitions="Auto,*"
-                                          IsVisible="{Binding Converter={StaticResource ToDoItemNotifyToIsVisibleCompletedCountConverter}}">
+                                          IsVisible="{Binding CompletedCount, Converter={StaticResource UInt32ToIsVisibleConverter}}">
                                         <TextBlock Text="{Binding CompletedCount}"
                                                    Classes="Body2"
                                                    HorizontalAlignment="Center" />
@@ -101,7 +101,7 @@
                                     </Grid>
 
                                     <Grid RowDefinitions="Auto,*"
-                                          IsVisible="{Binding Converter={StaticResource ToDoItemNotifyToIsVisibleSkippedCountConverter}}">
+                                          IsVisible="{Binding SkippedCount, Converter={StaticResource UInt32ToIsVisibleConverter}}">
                                         <TextBlock Text="{Binding SkippedCount}"
                                                    Classes="Body2"
                                                    HorizontalAlignment="Center" />
@@ -110,7 +110,7 @@
                                     </Grid>
 
                                     <Grid RowDefinitions="Auto,*"
-                                          IsVisible="{Binding Converter={StaticResource ToDoItemNotifyToIsVisibleFailedCountConverter}}">
+                                          IsVisible="{Binding FailedCount, Converter={StaticResource UInt32ToIsVisibleConverter}}">
                                         <TextBlock Text="{Binding FailedCount}"
                                                    Classes="Body2"
                                                    HorizontalAlignment="Center" />
@@ -264,7 +264,7 @@
                                 <WrapPanel Grid.Row="1"
                                            Orientation="Horizontal">
                                     <Grid RowDefinitions="Auto,*"
-                                          IsVisible="{Binding Converter={StaticResource ToDoItemNotifyToIsVisibleCompletedCountConverter}}">
+                                          IsVisible="{Binding CompletedCount, Converter={StaticResource UInt32ToIsVisibleConverter}}">
                                         <TextBlock Text="{Binding CompletedCount}"
                                                    Classes="Body2"
                                                    HorizontalAlignment="Center" />
@@ -273,7 +273,7 @@
                                     </Grid>
 
                                     <Grid RowDefinitions="Auto,*"
-                                          IsVisible="{Binding Converter={StaticResource ToDoItemNotifyToIsVisibleSkippedCountConverter}}">
+                                          IsVisible="{Binding SkippedCount, Converter={StaticResource UInt32ToIsVisibleConverter}}">
                                         <TextBlock Text="{Binding SkippedCount}"
                                                    Classes="Body2"
                                                    HorizontalAlignment="Center" />
@@ -282,7 +282,7 @@
                                     </Grid>
 
                                     <Grid RowDefinitions="Auto,*"
-                                          IsVisible="{Binding Converter={StaticResource ToDoItemNotifyToIsVisibleFailedCountConverter}}">
+                                          IsVisible="{Binding FailedCount, Converter={StaticResource UInt32ToIsVisibleConverter}}">
                                         <TextBlock Text="{Binding FailedCount}"
                                                    Classes="Body2"
                                                    HorizontalAlignment="Center" />
@@ -367,7 +367,7 @@
                                 <WrapPanel Grid.Row="1"
                                            Orientation="Horizontal">
                                     <Grid RowDefinitions="Auto,*"
-                                          IsVisible="{Binding Converter={StaticResource ToDoItemNotifyToIsVisibleCompletedCountConverter}}">
+                                          IsVisible="{Binding CompletedCount, Converter={StaticResource UInt32ToIsVisibleConverter}}">
                                         <TextBlock Text="{Binding CompletedCount}"
                                                    Classes="Body2"
                                                    HorizontalAlignment="Center" />
@@ -376,7 +376,7 @@
                                     </Grid>
 
                                     <Grid RowDefinitions="Auto,*"
-                                          IsVisible="{Binding Converter={StaticResource ToDoItemNotifyToIsVisibleSkippedCountConverter}}">
+                                          IsVisible="{Binding SkippedCount, Converter={StaticResource UInt32ToIsVisibleConverter}}">
                                         <TextBlock Text="{Binding SkippedCount}"
                                                    Classes="Body2"
                                                    HorizontalAlignment="Center" />
@@ -385,7 +385,7 @@
                                     </Grid>
 
                                     <Grid RowDefinitions="Auto,*"
-                                          IsVisible="{Binding Converter={StaticResource ToDoItemNotifyToIsVisibleFailedCountConverter}}">
+                                          IsVisible="{Binding FailedCount, Converter={StaticResource UInt32ToIsVisibleConverter}}">
                                         <TextBlock Text="{Binding FailedCount}"
                                                    Classes="Body2"
                                                    HorizontalAlignment="Center" />
@@ -455,14 +455,6 @@
         <converters:ReverseBooleanValueConverter x:Key="ReverseBooleanValueConverter" />
         <converters:EmptyStringToNullConverter x:Key="EmptyStringToNullConverter" />
         <converters:NullToBooleanConverter x:Key="NullToBooleanConverter" />
-
-        <converters:ToDoItemNotifyToIsVisibleCompletedCountConverter
-            x:Key="ToDoItemNotifyToIsVisibleCompletedCountConverter" />
-
-        <converters:ToDoItemNotifyToIsVisibleSkippedCountConverter
-            x:Key="ToDoItemNotifyToIsVisibleSkippedCountConverter" />
-
-        <converters:ToDoItemNotifyToIsVisibleFailedCountConverter
-            x:Key="ToDoItemNotifyToIsVisibleFailedCountConverter" />
+        <converters:UInt32ToIsVisibleConverter x:Key="UInt32ToIsVisibleConverter"/>
     </Application.Resources>
 </Application>
