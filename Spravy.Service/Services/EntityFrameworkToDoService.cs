@@ -913,6 +913,7 @@ public class EntityFrameworkToDoService : IToDoService
         var entities = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.ParentId == id)
+            .OrderBy(x => x.OrderIndex)
             .ToArrayAsync();
 
         if (entities.IsEmpty())
@@ -938,6 +939,7 @@ public class EntityFrameworkToDoService : IToDoService
         var entities = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.ParentId == itemEntity.Id)
+            .OrderBy(x => x.OrderIndex)
             .ToArrayAsync();
 
         if (entities.IsEmpty())
