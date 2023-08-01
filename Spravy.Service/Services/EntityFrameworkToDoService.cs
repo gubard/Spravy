@@ -775,6 +775,24 @@ public class EntityFrameworkToDoService : IToDoService
             throw new Exception("Need close sub tasks.");
         }
 
+        switch (item.Type)
+        {
+            case ToDoItemType.Value:
+                item.IsCompleted = true;
+
+                break;
+            case ToDoItemType.Group:
+                break;
+            case ToDoItemType.Planned:
+                item.IsCompleted = true;
+
+                break;
+            case ToDoItemType.Periodicity:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+
         item.SkippedCount++;
         UpdateDueDate(item);
         await context.SaveChangesAsync();
@@ -789,6 +807,24 @@ public class EntityFrameworkToDoService : IToDoService
         if (!isCanComplete)
         {
             throw new Exception("Need close sub tasks.");
+        }
+
+        switch (item.Type)
+        {
+            case ToDoItemType.Value:
+                item.IsCompleted = true;
+
+                break;
+            case ToDoItemType.Group:
+                break;
+            case ToDoItemType.Planned:
+                item.IsCompleted = true;
+
+                break;
+            case ToDoItemType.Periodicity:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
         }
 
         item.FailedCount++;
