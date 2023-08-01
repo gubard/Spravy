@@ -1,4 +1,6 @@
-using System.Linq;
+using System;
+using System.Collections.Generic;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
@@ -14,30 +16,19 @@ using Spravy.Ui.Views;
 
 namespace Spravy.Ui.ViewModels;
 
-public class SearchViewModel : RoutableViewModelBase
+public class LeafToDoItemsViewModel : RoutableViewModelBase
 {
-    private string searchText = string.Empty;
+    private Guid id;
 
-    public SearchViewModel() : base("search")
+    public LeafToDoItemsViewModel() : base("leaf-to-do-items")
     {
-        SearchCommand = CreateCommandFromTaskWithDialogProgressIndicator(RefreshToDoItemAsync);
-        CompleteSubToDoItemCommand = CreateCommandFromTaskWithDialogProgressIndicator<ToDoSubItemNotify>(CompleteSubToDoItemAsync);
+        CompleteSubToDoItemCommand =
+            CreateCommandFromTaskWithDialogProgressIndicator<ToDoSubItemNotify>(CompleteSubToDoItemAsync);
         ChangeToActiveDoItemCommand = CreateCommandFromTask<ActiveToDoItemNotify>(ChangeToActiveDoItem);
-        DeleteSubToDoItemCommand = CreateCommandFromTaskWithDialogProgressIndicator<ToDoSubItemNotify>(DeleteSubToDoItemAsync);
+        DeleteSubToDoItemCommand =
+            CreateCommandFromTaskWithDialogProgressIndicator<ToDoSubItemNotify>(DeleteSubToDoItemAsync);
         ChangeToDoItemCommand = CreateCommandFromTask<ToDoSubItemNotify>(ChangeToDoItem);
-    }
-
-    public AvaloniaList<ToDoSubItemNotify> SearchResult { get; } = new();
-    public ICommand SearchCommand { get; }
-    public ICommand DeleteSubToDoItemCommand { get; }
-    public ICommand ChangeToDoItemCommand { get; }
-    public ICommand ChangeToActiveDoItemCommand { get; }
-    public ICommand CompleteSubToDoItemCommand { get; }
-
-    public string SearchText
-    {
-        get => searchText;
-        set => this.RaiseAndSetIfChanged(ref searchText, value);
+        this.WhenAnyValue(x => x.Id).Skip(1).Subscribe(OnNextId);
     }
 
     [Inject]
@@ -45,14 +36,31 @@ public class SearchViewModel : RoutableViewModelBase
 
     [Inject]
     public required IMapper Mapper { get; init; }
-    
+
+    public ICommand DeleteSubToDoItemCommand { get; }
+    public ICommand ChangeToDoItemCommand { get; }
+    public ICommand ChangeToActiveDoItemCommand { get; }
+    public ICommand CompleteSubToDoItemCommand { get; }
+    public AvaloniaList<ToDoSubItemNotify> Items { get; } = new();
+
+    public Guid Id
+    {
+        get => id;
+        set => this.RaiseAndSetIfChanged(ref id, value);
+    }
+
+    private async void OnNextId(Guid x)
+    {
+        await CreateWithDialogProgressIndicatorAsync(RefreshToDoItemAsync).Invoke();
+    }
+
     private async Task RefreshToDoItemAsync()
     {
-        var items = await ToDoService.SearchAsync(SearchText);
-        SearchResult.Clear();
-        SearchResult.AddRange(items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)));
+        var items = await ToDoService.GetLeafToDoItemsAsync(Id);
+        Items.Clear();
+        Items.AddRange(Mapper.Map<IEnumerable<ToDoSubItemNotify>>(items));
     }
-    
+
     private Task ChangeToActiveDoItem(ActiveToDoItemNotify item)
     {
         return ToDoService.NavigateToToDoItemViewModel(item.Id, Navigator);

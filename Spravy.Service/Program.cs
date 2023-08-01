@@ -42,13 +42,13 @@ builder.Services.AddCors(
     )
 );
 
-#if DEBUG
-builder.Services.AddDbContext<SpravyDbContext>(options => options.UseInMemoryDatabase("SpravyDbContext"));
-#else
+//#if DEBUG
+//builder.Services.AddDbContext<SpravyDbContext>(options => options.UseInMemoryDatabase("SpravyDbContext"));
+//#else
 builder.Services.AddDbContext<SpravyDbContext>(
     (sp, options) => options.UseSqlite(sp.GetRequiredService<IConfiguration>()["Sqlite:ConnectionString"])
 );
-#endif
+//#endif
 
 builder.Host.UseSerilog(
     (_, _, configuration) =>

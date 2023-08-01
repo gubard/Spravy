@@ -41,21 +41,25 @@ public class EntityFrameworkToDoService : IToDoService
 
         foreach (var item in items)
         {
-            var (status, active) = await GetStatusAndActiveAsync(item, item.Id);
-
-            var toDoSubItem = mapper.Map<IToDoSubItem>(
-                item,
-                a =>
-                {
-                    a.Items.Add(SpravyDbProfile.StatusName, status);
-                    a.Items.Add(SpravyDbProfile.ActiveName, active);
-                }
-            );
-
+            var toDoSubItem = await ConvertAsync(item);
             result.Add(toDoSubItem);
         }
 
         return result;
+    }
+
+    private async Task<IToDoSubItem> ConvertAsync(ToDoItemEntity item)
+    {
+        var (status, active) = await GetStatusAndActiveAsync(item, item.Id);
+
+        return mapper.Map<IToDoSubItem>(
+            item,
+            a =>
+            {
+                a.Items.Add(SpravyDbProfile.StatusName, status);
+                a.Items.Add(SpravyDbProfile.ActiveName, active);
+            }
+        );
     }
 
     private Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusAndActiveAsync(ToDoItemEntity entity)
@@ -902,6 +906,53 @@ public class EntityFrameworkToDoService : IToDoService
         item = item.ThrowIfNull();
         item.SetDaysOfWeek(periodicity.Days);
         await context.SaveChangesAsync();
+    }
+
+    public async Task<IEnumerable<IToDoSubItem>> GetLeafToDoItemsAsync(Guid id)
+    {
+        var entities = await context.Set<ToDoItemEntity>()
+            .AsNoTracking()
+            .Where(x => x.ParentId == id)
+            .ToArrayAsync();
+
+        if (entities.IsEmpty())
+        {
+            return Enumerable.Empty<IToDoSubItem>();
+        }
+
+        var result = new List<IToDoSubItem>();
+
+        foreach (var entity in entities)
+        {
+            await foreach (var item in GetLeafToDoItemsAsync(entity))
+            {
+                result.Add(item);
+            }
+        }
+
+        return result;
+    }
+
+    private async IAsyncEnumerable<IToDoSubItem> GetLeafToDoItemsAsync(ToDoItemEntity itemEntity)
+    {
+        var entities = await context.Set<ToDoItemEntity>()
+            .AsNoTracking()
+            .Where(x => x.ParentId == itemEntity.Id)
+            .ToArrayAsync();
+
+        if (entities.IsEmpty())
+        {
+            yield return await ConvertAsync(itemEntity);
+            yield break;
+        }
+
+        foreach (var entity in entities)
+        {
+            await foreach (var item in GetLeafToDoItemsAsync(entity))
+            {
+                yield return item;
+            }
+        }
     }
 
     private async Task NormalizeOrderIndexAsync(Guid? parentId)

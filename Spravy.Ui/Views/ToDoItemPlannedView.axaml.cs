@@ -7,7 +7,7 @@ using Spravy.Ui.ViewModels;
 
 namespace Spravy.Ui.Views;
 
-public partial class ToDoItemPlannedView : MainReactiveUserControl<ToDoItemPlannedViewModel>,
+public partial class ToDoItemPlannedView : ReactiveUserControl<ToDoItemPlannedViewModel>,
     IToDoItemView,
     ICompleteSubToDoItemCommand,
     IPathView,

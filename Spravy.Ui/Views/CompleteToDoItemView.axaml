@@ -1,4 +1,4 @@
-<models:MainReactiveUserControl x:TypeArguments="viewModels:CompleteToDoItemViewModel"
+<models:ReactiveUserControl x:TypeArguments="viewModels:CompleteToDoItemViewModel"
                                 xmlns="https://github.com/avaloniaui"
                                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -87,4 +87,4 @@
             </DataTemplate>
         </ContentControl.DataTemplates>
     </ContentControl>
-</models:MainReactiveUserControl>
+</models:ReactiveUserControl>

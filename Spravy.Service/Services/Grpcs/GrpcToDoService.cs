@@ -245,4 +245,16 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
 
         return new UpdateWeeklyPeriodicityReply();
     }
+
+    public override async Task<GetLeafToDoItemsReply> GetLeafToDoItems(
+        GetLeafToDoItemsRequest request,
+        ServerCallContext context
+    )
+    {
+        var items = await toDoService.GetLeafToDoItemsAsync(mapper.Map<Guid>(request.Id));
+        var reply = new GetLeafToDoItemsReply();
+        reply.Items.AddRange(mapper.Map<IEnumerable<ToDoSubItemGrpc>>(items));
+
+        return reply;
+    }
 }

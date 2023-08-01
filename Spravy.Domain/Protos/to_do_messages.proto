@@ -7,6 +7,14 @@ import "google/protobuf/duration.proto";
 
 package spravy;
 
+message GetLeafToDoItemsRequest {
+  bytes Id = 1;
+}
+
+message GetLeafToDoItemsReply {
+  repeated ToDoSubItemGrpc Items = 1;
+}
+
 message UpdateWeeklyPeriodicityRequest {
   bytes Id = 1;
   WeeklyPeriodicityGrpc Periodicity = 2;

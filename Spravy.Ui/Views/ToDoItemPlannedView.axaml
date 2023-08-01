@@ -1,15 +1,15 @@
-<models:MainReactiveUserControl x:TypeArguments="viewModels:ToDoItemPlannedViewModel"
-                                xmlns="https://github.com/avaloniaui"
-                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                                xmlns:models="clr-namespace:ExtensionFramework.AvaloniaUi.ReactiveUI.Models;assembly=ExtensionFramework.AvaloniaUi.ReactiveUI"
-                                xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-                                xmlns:controls="clr-namespace:ExtensionFramework.AvaloniaUi.Controls;assembly=ExtensionFramework.AvaloniaUi"
-                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                                x:Class="Spravy.Ui.Views.ToDoItemPlannedView"
-                                x:DataType="viewModels:ToDoItemPlannedViewModel">
+<models:ReactiveUserControl x:TypeArguments="viewModels:ToDoItemPlannedViewModel"
+                            xmlns="https://github.com/avaloniaui"
+                            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                            xmlns:models="clr-namespace:ExtensionFramework.AvaloniaUi.ReactiveUI.Models;assembly=ExtensionFramework.AvaloniaUi.ReactiveUI"
+                            xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
+                            xmlns:controls="clr-namespace:ExtensionFramework.AvaloniaUi.Controls;assembly=ExtensionFramework.AvaloniaUi"
+                            xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                            mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                            x:Class="Spravy.Ui.Views.ToDoItemPlannedView"
+                            x:DataType="viewModels:ToDoItemPlannedViewModel">
     <Design.DataContext>
         <viewModels:ToDoItemPlannedViewModel />
     </Design.DataContext>
@@ -18,7 +18,7 @@
         <StackPanel>
             <ContentControl Content="{Binding Path}"
                             Margin="5" />
-            
+
             <CheckBox Margin="5"
                       IsChecked="{Binding IsCompleted}" Content="Completed"
                       IsEnabled="False" />
@@ -76,6 +76,10 @@
                 <Button Command="{Binding ToCurrentItemsCommand}">
                     <avalonia:MaterialIcon Kind="Creation" />
                 </Button>
+
+                <Button Command="{Binding ToLeafToDoItemsCommand}">
+                    <avalonia:MaterialIcon Kind="Leaf" />
+                </Button>
             </StackPanel>
         </StackPanel>
 
@@ -101,4 +105,4 @@
             </StackPanel>
         </ScrollViewer>
     </Grid>
-</models:MainReactiveUserControl>
+</models:ReactiveUserControl>

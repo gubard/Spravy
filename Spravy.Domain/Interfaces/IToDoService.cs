@@ -26,4 +26,5 @@ public interface IToDoService
     Task UpdateAnnuallyPeriodicityAsync(Guid id, AnnuallyPeriodicity periodicity);
     Task UpdateMonthlyPeriodicityAsync(Guid id, MonthlyPeriodicity periodicity);
     Task UpdateWeeklyPeriodicityAsync(Guid id, WeeklyPeriodicity periodicity);
+    Task<IEnumerable<IToDoSubItem>> GetLeafToDoItemsAsync(Guid id);
 }

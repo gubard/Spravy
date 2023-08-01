@@ -7,7 +7,7 @@ using Spravy.Ui.ViewModels;
 
 namespace Spravy.Ui.Views;
 
-public partial class ToDoItemGroupView : MainReactiveUserControl<ToDoItemGroupViewModel>,
+public partial class ToDoItemGroupView : ReactiveUserControl<ToDoItemGroupViewModel>,
     IToDoItemView,
     IPathView,
     ICompleteSubToDoItemCommand,

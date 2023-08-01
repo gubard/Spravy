@@ -1,0 +1,25 @@
+<models:ReactiveUserControl x:TypeArguments="viewModels:LeafToDoItemsViewModel"
+                            xmlns="https://github.com/avaloniaui"
+                            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                            xmlns:models="clr-namespace:ExtensionFramework.AvaloniaUi.ReactiveUI.Models;assembly=ExtensionFramework.AvaloniaUi.ReactiveUI"
+                            xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
+                            xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                            mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                            x:Class="Spravy.Ui.Views.LeafToDoItemsView"
+                            x:DataType="viewModels:LeafToDoItemsViewModel">
+    <Design.DataContext>
+        <viewModels:LeafToDoItemsViewModel />
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto, *">
+        <Button Command="{Binding BackCommand}">
+            <avalonia:MaterialIcon Kind="ArrowLeft" />
+        </Button>
+
+        <ScrollViewer Grid.Row="1">
+            <ItemsControl ItemsSource="{Binding Items}" />
+        </ScrollViewer>
+    </Grid>
+</models:ReactiveUserControl>

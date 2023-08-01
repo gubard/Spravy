@@ -48,6 +48,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase,
         RemoveToDoItemFromCurrentCommand = CreateCommandFromTaskWithDialogProgressIndicator(RemoveToDoItemFromCurrentAsync);
         ToCurrentItemsCommand = CreateCommand(ToCurrentItems);
         ChangeToActiveDoItemCommand = CreateCommandFromTask<ActiveToDoItemNotify>(ChangeToActiveDoItemAsync);
+        ToLeafToDoItemsCommand = CreateCommand(ToLeafToDoItems);
     }
 
     public AvaloniaList<ToDoSubItemNotify> CompletedItems { get; } = new();
@@ -67,6 +68,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase,
     public ICommand ChangeToDoItemByPathCommand { get; }
     public ICommand ToRootItemCommand { get; }
     public ICommand ToCurrentItemsCommand { get; }
+    public ICommand ToLeafToDoItemsCommand { get; }
 
     [Inject]
     public required IToDoService ToDoService { get; set; }
@@ -108,6 +110,11 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase,
     }
 
     public abstract Task RefreshToDoItemAsync();
+    
+    private void ToLeafToDoItems()
+    {
+        Navigator.NavigateTo<LeafToDoItemsViewModel>(vm => vm.Id = Id);
+    }
     
     private Task ChangeToActiveDoItemAsync(ActiveToDoItemNotify item)
     {

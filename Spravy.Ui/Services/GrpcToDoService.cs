@@ -382,4 +382,23 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
             throw new GrpcException(grpcChannel.Target, e);
         }
     }
+
+    public async Task<IEnumerable<IToDoSubItem>> GetLeafToDoItemsAsync(Guid id)
+    {
+        try
+        {
+           var reply = await client.GetLeafToDoItemsAsync(
+                new GetLeafToDoItemsRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                }
+            );
+
+           return mapper.Map<IEnumerable<IToDoSubItem>>(reply.Items);
+        }
+        catch (Exception e)
+        {
+            throw new GrpcException(grpcChannel.Target, e);
+        }
+    }
 }

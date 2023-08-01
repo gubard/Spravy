@@ -7,7 +7,7 @@ using Spravy.Ui.ViewModels;
 
 namespace Spravy.Ui.Views;
 
-public partial class ToDoItemPeriodicityView  : MainReactiveUserControl<ToDoItemPeriodicityViewModel>,
+public partial class ToDoItemPeriodicityView  : ReactiveUserControl<ToDoItemPeriodicityViewModel>,
     IToDoItemView,
     ICompleteSubToDoItemCommand,
     IPathView,

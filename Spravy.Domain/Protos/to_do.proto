@@ -28,4 +28,5 @@ service ToDoService {
   rpc UpdateAnnuallyPeriodicity (UpdateAnnuallyPeriodicityRequest) returns (UpdateAnnuallyPeriodicityReply);
   rpc UpdateMonthlyPeriodicity (UpdateMonthlyPeriodicityRequest) returns (UpdateMonthlyPeriodicityReply);
   rpc UpdateWeeklyPeriodicity (UpdateWeeklyPeriodicityRequest) returns (UpdateWeeklyPeriodicityReply);
+  rpc GetLeafToDoItems (GetLeafToDoItemsRequest) returns (GetLeafToDoItemsReply);
 }
