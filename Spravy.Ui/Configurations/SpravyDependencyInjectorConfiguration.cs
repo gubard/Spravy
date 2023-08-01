@@ -7,6 +7,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Layout;
 using Avalonia.ReactiveUI;
+using ExtensionFramework.AvaloniaUi.Controls;
 using ExtensionFramework.Core.Common.Interfaces;
 using ExtensionFramework.Core.Common.Services;
 using ExtensionFramework.Core.DependencyInjection.Interfaces;
@@ -41,6 +42,13 @@ public readonly struct SpravyDependencyInjectorConfiguration : IDependencyInject
         register.RegisterScope<RoutedViewHost>();
         register.RegisterScope<Application, App>();
         register.RegisterScope<IResourceLoader, FileResourceLoader>();
+        register.RegisterTransient<AnnuallyPeriodicityViewModel>();
+        register.RegisterTransient<DailyPeriodicityViewModel>();
+        register.RegisterTransient<MonthlyPeriodicityViewModel>();
+        register.RegisterTransient<WeeklyPeriodicityViewModel>();
+        register.RegisterTransient<DayOfYearSelector>();
+        register.RegisterTransient<DayOfWeekSelector>();
+        register.RegisterTransient<DayOfMonthSelector>();
 
         register.RegisterTransient<IDialogProgressIndicator>(
             () => new Card

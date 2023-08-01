@@ -13,7 +13,7 @@ public readonly struct ToDoItemPeriodicity : IToDoItem
         ToDoItemParent[] parents,
         bool isCurrent,
         DateTimeOffset dueDate,
-        TypeOfPeriodicity typeOfPeriodicity
+        IPeriodicity periodicity
     )
     {
         Id = id;
@@ -23,7 +23,7 @@ public readonly struct ToDoItemPeriodicity : IToDoItem
         Parents = parents;
         IsCurrent = isCurrent;
         DueDate = dueDate;
-        TypeOfPeriodicity = typeOfPeriodicity;
+        Periodicity = periodicity;
     }
 
     public Guid Id { get; }
@@ -33,5 +33,5 @@ public readonly struct ToDoItemPeriodicity : IToDoItem
     public ToDoItemParent[] Parents { get; }
     public bool IsCurrent { get; }
     public DateTimeOffset DueDate { get; }
-    public TypeOfPeriodicity TypeOfPeriodicity { get; }
+    public IPeriodicity Periodicity { get; }
 }

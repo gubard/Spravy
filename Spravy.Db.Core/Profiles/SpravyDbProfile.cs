@@ -1,4 +1,5 @@
 using AutoMapper;
+using Spravy.Db.Extension;
 using Spravy.Db.Models;
 using Spravy.Domain.Enums;
 using Spravy.Domain.Interfaces;
@@ -15,6 +16,11 @@ public class SpravyDbProfile : Profile
 
     public SpravyDbProfile()
     {
+        CreateMap<ToDoItemEntity, DailyPeriodicity>();
+        CreateMap<ToDoItemEntity, MonthlyPeriodicity>().ConstructUsing(x => new MonthlyPeriodicity(x.GetDaysOfMonth()));
+        CreateMap<ToDoItemEntity, WeeklyPeriodicity>().ConstructUsing(x => new WeeklyPeriodicity(x.GetDaysOfWeek()));
+        CreateMap<ToDoItemEntity, AnnuallyPeriodicity>().ConstructUsing(x => new AnnuallyPeriodicity(x.GetDaysOfYear()));
+
         CreateMap<ToDoItemEntity, ActiveToDoItem>()
             .ConvertUsing((source, _, _) => new ActiveToDoItem(source.Id, source.Name));
 
@@ -66,7 +72,6 @@ public class SpravyDbProfile : Profile
                         source.Description,
                         source.IsCurrent,
                         source.DueDate,
-                        source.TypeOfPeriodicity,
                         (ActiveToDoItem?)resolutionContext.Items[ActiveName],
                         source.CompletedCount,
                         source.SkippedCount,
@@ -115,7 +120,14 @@ public class SpravyDbProfile : Profile
                         (ToDoItemParent[])resolutionContext.Items[ParentsName],
                         source.IsCurrent,
                         source.DueDate,
-                        source.TypeOfPeriodicity
+                        source.TypeOfPeriodicity switch
+                        {
+                            TypeOfPeriodicity.Daily => resolutionContext.Mapper.Map<DailyPeriodicity>(source),
+                            TypeOfPeriodicity.Weekly => resolutionContext.Mapper.Map<WeeklyPeriodicity>(source),
+                            TypeOfPeriodicity.Monthly => resolutionContext.Mapper.Map<MonthlyPeriodicity>(source),
+                            TypeOfPeriodicity.Annually => resolutionContext.Mapper.Map<AnnuallyPeriodicity>(source),
+                            _ => throw new ArgumentOutOfRangeException()
+                        }
                     ),
                     _ => throw new ArgumentOutOfRangeException()
                 }

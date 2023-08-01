@@ -7,6 +7,30 @@ import "google/protobuf/duration.proto";
 
 package spravy;
 
+message UpdateWeeklyPeriodicityRequest {
+  bytes Id = 1;
+  WeeklyPeriodicityGrpc Periodicity = 2;
+}
+
+message UpdateWeeklyPeriodicityReply {
+}
+
+message UpdateMonthlyPeriodicityRequest {
+  bytes Id = 1;
+  MonthlyPeriodicityGrpc Periodicity = 2;
+}
+
+message UpdateMonthlyPeriodicityReply {
+}
+
+message UpdateAnnuallyPeriodicityRequest {
+  bytes Id = 1;
+  AnnuallyPeriodicityGrpc Periodicity = 2;
+}
+
+message UpdateAnnuallyPeriodicityReply {
+}
+
 message ActiveToDoItemGrpc {
   bytes Id = 1;
   string Name = 2;
@@ -171,10 +195,13 @@ message ToDoItemPlannedGrpc {
 
 message ToDoItemPeriodicityGrpc {
   DateTimeOffsetGrpc DueDate = 1;
-  TypeOfPeriodicityGrpc TypeOfPeriodicity = 2;
-  uint32 CompletedCount = 3;
-  uint32 SkippedCount = 4;
-  uint32 FailedCount = 5;
+
+  oneof Periodicity {
+    DailyPeriodicityGrpc Daily = 2;
+    WeeklyPeriodicityGrpc Weekly = 3;
+    MonthlyPeriodicityGrpc Monthly = 4;
+    AnnuallyPeriodicityGrpc Annually = 5;
+  }
 }
 
 message ToDoItemGroupGrpc {
@@ -205,11 +232,17 @@ message ToDoSubItemGrpc {
 }
 
 message ToDoSubItemPeriodicityGrpc {
-  TypeOfPeriodicityGrpc TypeOfPeriodicity = 1;
-  DateTimeOffsetGrpc DueDate = 2;
-  uint32 CompletedCount = 3;
-  uint32 SkippedCount = 4;
-  uint32 FailedCount = 5;
+  DateTimeOffsetGrpc DueDate = 1;
+  uint32 CompletedCount = 2;
+  uint32 SkippedCount = 3;
+  uint32 FailedCount = 4;
+
+  oneof Periodicity {
+    DailyPeriodicityGrpc Daily = 5;
+    WeeklyPeriodicityGrpc Weekly = 6;
+    MonthlyPeriodicityGrpc Monthly = 7;
+    AnnuallyPeriodicityGrpc Annually = 8;
+  }
 }
 
 message ToDoSubItemPlannedGrpc {
@@ -236,9 +269,8 @@ message ToDoItemParentGrpc {
 }
 
 message ToDoItemValueGrpc {
-  TypeOfPeriodicityGrpc TypeOfPeriodicity = 1;
-  DateTimeOffsetGrpc DueDate = 2;
-  bool IsCompleted = 3;
+  DateTimeOffsetGrpc DueDate = 1;
+  bool IsCompleted = 2;
 }
 
 message DateTimeOffsetGrpc {
@@ -251,6 +283,36 @@ enum TypeOfPeriodicityGrpc {
   Weekly = 1;
   Monthly = 2;
   Annually = 3;
+}
+
+message DailyPeriodicityGrpc {
+}
+
+message MonthlyPeriodicityGrpc {
+  bytes Days = 1;
+}
+
+message WeeklyPeriodicityGrpc {
+  repeated DayOfWeekGrpc Days = 1;
+}
+
+message AnnuallyPeriodicityGrpc {
+  repeated DayOfYearGrpc Days = 1;
+}
+
+message DayOfYearGrpc {
+  uint32 Month = 1;
+  uint32 Day = 2;
+}
+
+enum DayOfWeekGrpc {
+  Sunday = 0;
+  Monday = 1;
+  Tuesday = 2;
+  Wednesday = 3;
+  Thursday = 4;
+  Friday = 5;
+  Saturday = 6;
 }
 
 enum ToDoItemStatusGrpc {

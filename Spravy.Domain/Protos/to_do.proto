@@ -25,4 +25,7 @@ service ToDoService {
   rpc AddCurrentToDoItem (AddCurrentToDoItemRequest) returns (AddCurrentToDoItemReply);
   rpc RemoveCurrentToDoItem (RemoveCurrentToDoItemRequest) returns (RemoveCurrentToDoItemReply);
   rpc GetCurrentToDoItems (GetCurrentToDoItemsRequest) returns (GetCurrentToDoItemsReply);
+  rpc UpdateAnnuallyPeriodicity (UpdateAnnuallyPeriodicityRequest) returns (UpdateAnnuallyPeriodicityReply);
+  rpc UpdateMonthlyPeriodicity (UpdateMonthlyPeriodicityRequest) returns (UpdateMonthlyPeriodicityReply);
+  rpc UpdateWeeklyPeriodicity (UpdateWeeklyPeriodicityRequest) returns (UpdateWeeklyPeriodicityReply);
 }

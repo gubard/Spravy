@@ -447,6 +447,20 @@
                 </Grid>
             </controls:Card>
         </DataTemplate>
+
+        <DataTemplate DataType="viewModels:AnnuallyPeriodicityViewModel">
+            <ContentControl Content="{Binding DayOfYearSelector}" />
+        </DataTemplate>
+
+        <DataTemplate DataType="viewModels:DailyPeriodicityViewModel" />
+
+        <DataTemplate DataType="viewModels:MonthlyPeriodicityViewModel">
+            <ContentControl Content="{Binding DayOfMonthSelector}" />
+        </DataTemplate>
+
+        <DataTemplate DataType="viewModels:WeeklyPeriodicityViewModel">
+            <ContentControl Content="{Binding DayOfWeekSelector}" />
+        </DataTemplate>
     </Application.DataTemplates>
 
     <Application.Resources>
@@ -455,6 +469,6 @@
         <converters:ReverseBooleanValueConverter x:Key="ReverseBooleanValueConverter" />
         <converters:EmptyStringToNullConverter x:Key="EmptyStringToNullConverter" />
         <converters:NullToBooleanConverter x:Key="NullToBooleanConverter" />
-        <converters:UInt32ToIsVisibleConverter x:Key="UInt32ToIsVisibleConverter"/>
+        <converters:UInt32ToIsVisibleConverter x:Key="UInt32ToIsVisibleConverter" />
     </Application.Resources>
 </Application>

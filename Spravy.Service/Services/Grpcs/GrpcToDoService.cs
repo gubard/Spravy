@@ -206,4 +206,43 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
 
         return reply;
     }
+
+    public override async Task<UpdateAnnuallyPeriodicityReply> UpdateAnnuallyPeriodicity(
+        UpdateAnnuallyPeriodicityRequest request,
+        ServerCallContext context
+    )
+    {
+        await toDoService.UpdateAnnuallyPeriodicityAsync(
+            mapper.Map<Guid>(request.Id),
+            mapper.Map<AnnuallyPeriodicity>(request.Periodicity)
+        );
+
+        return new UpdateAnnuallyPeriodicityReply();
+    }
+
+    public override async Task<UpdateMonthlyPeriodicityReply> UpdateMonthlyPeriodicity(
+        UpdateMonthlyPeriodicityRequest request,
+        ServerCallContext context
+    )
+    {
+        await toDoService.UpdateMonthlyPeriodicityAsync(
+            mapper.Map<Guid>(request.Id),
+            mapper.Map<MonthlyPeriodicity>(request.Periodicity)
+        );
+
+        return new UpdateMonthlyPeriodicityReply();
+    }
+
+    public override async Task<UpdateWeeklyPeriodicityReply> UpdateWeeklyPeriodicity(
+        UpdateWeeklyPeriodicityRequest request,
+        ServerCallContext context
+    )
+    {
+        await toDoService.UpdateWeeklyPeriodicityAsync(
+            mapper.Map<Guid>(request.Id),
+            mapper.Map<WeeklyPeriodicity>(request.Periodicity)
+        );
+
+        return new UpdateWeeklyPeriodicityReply();
+    }
 }

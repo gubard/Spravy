@@ -23,4 +23,7 @@ public interface IToDoService
     Task AddCurrentToDoItemAsync(Guid id);
     Task RemoveCurrentToDoItemAsync(Guid id);
     Task<IEnumerable<IToDoSubItem>> GetCurrentToDoItemsAsync();
+    Task UpdateAnnuallyPeriodicityAsync(Guid id, AnnuallyPeriodicity periodicity);
+    Task UpdateMonthlyPeriodicityAsync(Guid id, MonthlyPeriodicity periodicity);
+    Task UpdateWeeklyPeriodicityAsync(Guid id, WeeklyPeriodicity periodicity);
 }

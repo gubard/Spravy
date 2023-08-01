@@ -328,4 +328,58 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
             throw new GrpcException(grpcChannel.Target, e);
         }
     }
+
+    public async Task UpdateAnnuallyPeriodicityAsync(Guid id, AnnuallyPeriodicity periodicity)
+    {
+        try
+        {
+            await client.UpdateAnnuallyPeriodicityAsync(
+                new UpdateAnnuallyPeriodicityRequest
+                {
+                    Periodicity = mapper.Map<AnnuallyPeriodicityGrpc>(periodicity),
+                    Id = mapper.Map<ByteString>(id),
+                }
+            );
+        }
+        catch (Exception e)
+        {
+            throw new GrpcException(grpcChannel.Target, e);
+        }
+    }
+
+    public async Task UpdateMonthlyPeriodicityAsync(Guid id, MonthlyPeriodicity periodicity)
+    {
+        try
+        {
+            await client.UpdateMonthlyPeriodicityAsync(
+                new UpdateMonthlyPeriodicityRequest
+                {
+                    Periodicity = mapper.Map<MonthlyPeriodicityGrpc>(periodicity),
+                    Id = mapper.Map<ByteString>(id),
+                }
+            );
+        }
+        catch (Exception e)
+        {
+            throw new GrpcException(grpcChannel.Target, e);
+        }
+    }
+
+    public async Task UpdateWeeklyPeriodicityAsync(Guid id, WeeklyPeriodicity periodicity)
+    {
+        try
+        {
+            await client.UpdateWeeklyPeriodicityAsync(
+                new UpdateWeeklyPeriodicityRequest
+                {
+                    Periodicity = mapper.Map<WeeklyPeriodicityGrpc>(periodicity),
+                    Id = mapper.Map<ByteString>(id),
+                }
+            );
+        }
+        catch (Exception e)
+        {
+            throw new GrpcException(grpcChannel.Target, e);
+        }
+    }
 }

@@ -13,7 +13,6 @@ public readonly struct ToDoSubItemPeriodicity : IToDoSubItem
         string description,
         bool isCurrent,
         DateTimeOffset dueDate,
-        TypeOfPeriodicity typeOfPeriodicity,
         ActiveToDoItem? active,
         uint completedCount,
         uint skippedCount,
@@ -27,7 +26,6 @@ public readonly struct ToDoSubItemPeriodicity : IToDoSubItem
         Description = description;
         IsCurrent = isCurrent;
         DueDate = dueDate;
-        TypeOfPeriodicity = typeOfPeriodicity;
         Active = active;
         CompletedCount = completedCount;
         SkippedCount = skippedCount;
@@ -41,7 +39,6 @@ public readonly struct ToDoSubItemPeriodicity : IToDoSubItem
     public string Description { get; }
     public bool IsCurrent { get; }
     public DateTimeOffset DueDate { get; }
-    public TypeOfPeriodicity TypeOfPeriodicity { get; }
     public ActiveToDoItem? Active { get; }
     public uint CompletedCount { get; }
     public uint SkippedCount { get; }

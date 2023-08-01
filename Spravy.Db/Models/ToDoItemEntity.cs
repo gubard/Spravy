@@ -18,6 +18,9 @@ public class ToDoItemEntity
     public uint CompletedCount { get; set; }
     public uint SkippedCount { get; set; }
     public uint FailedCount { get; set; }
+    public string DaysOfWeek { get; set; } = "Monday";
+    public string DaysOfMonth { get; set; } = "1";
+    public string DaysOfYear { get; set; } = "1.1";
 
     public Guid? ParentId { get; set; }
     public ToDoItemEntity? Parent { get; set; }

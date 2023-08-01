@@ -1,4 +1,5 @@
 using AutoMapper;
+using ExtensionFramework.Core.Common.Models;
 using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
 using Spravy.Domain.Enums;
@@ -12,12 +13,7 @@ public class SpravyProfile : Profile
 {
     public SpravyProfile()
     {
-        CreateMap<Guid, ByteString>().ConvertUsing(x => ByteString.CopyFrom(x.ToByteArray()));
         CreateMap<ToDoItemParent, ToDoItemParentGrpc>();
-        CreateMap<DateTimeOffsetGrpc, DateTimeOffset?>().ConvertUsing(x => ToNullableDateTimeOffset(x));
-        CreateMap<DateTimeOffsetGrpc, DateTimeOffset>().ConvertUsing(x => ToDateTimeOffset(x));
-        CreateMap<DateTimeOffset?, Timestamp?>().ConvertUsing(x => ToTimestamp(x));
-        CreateMap<Timestamp?, DateTimeOffset?>().ConvertUsing(x => ToDateTimeOffset(x));
         CreateMap<ToDoItemParentGrpc, ToDoItemParent>();
         CreateMap<AddRootToDoItemOptions, AddRootToDoItemRequest>();
         CreateMap<ToDoSubItemValue, ToDoSubItemValueGrpc>();
@@ -29,10 +25,155 @@ public class SpravyProfile : Profile
         CreateMap<ActiveToDoItem?, ActiveToDoItemGrpc>();
         CreateMap<ActiveToDoItem, ActiveToDoItemGrpc>();
         CreateMap<ToDoItemPlanned, ToDoItemPlannedGrpc>();
-        CreateMap<ToDoItemPeriodicity, ToDoItemPeriodicityGrpc>();
         CreateMap<ToDoSubItemPlanned, ToDoSubItemPlannedGrpc>();
         CreateMap<ToDoSubItemPeriodicity, ToDoSubItemPeriodicityGrpc>();
+        CreateMap<DailyPeriodicity, DailyPeriodicityGrpc>();
 
+        CreateMap<DayOfYearGrpc, DayOfYear>().ConstructUsing(x => new DayOfYear((byte)x.Day, (byte)x.Month));
+        CreateMap<DateTimeOffsetGrpc, DateTimeOffset?>().ConvertUsing(x => ToNullableDateTimeOffset(x));
+        CreateMap<DateTimeOffsetGrpc, DateTimeOffset>().ConvertUsing(x => ToDateTimeOffset(x));
+        CreateMap<DateTimeOffset?, Timestamp?>().ConvertUsing(x => ToTimestamp(x));
+        CreateMap<Timestamp?, DateTimeOffset?>().ConvertUsing(x => ToDateTimeOffset(x));
+        CreateMap<Guid, ByteString>().ConvertUsing(x => ByteString.CopyFrom(x.ToByteArray()));
+
+        CreateMap<MonthlyPeriodicityGrpc, MonthlyPeriodicity>()
+            .ConvertUsing((source, _, _) => new(source.Days.ToByteArray()));
+
+        CreateMap<AnnuallyPeriodicityGrpc, AnnuallyPeriodicity>()
+            .ConvertUsing(
+                (source, _, resolutionContext) =>
+                    new AnnuallyPeriodicity(resolutionContext.Mapper.Map<IEnumerable<DayOfYear>>(source.Days))
+            );
+
+        CreateMap<WeeklyPeriodicityGrpc, WeeklyPeriodicity>()
+            .ConvertUsing(
+                (source, _, resolutionContext) =>
+                    new WeeklyPeriodicity(resolutionContext.Mapper.Map<IEnumerable<DayOfWeek>>(source.Days))
+            );
+
+        CreateMap<DayOfYear, DayOfYearGrpc>()
+            .ConvertUsing(
+                (source, _, _) => new DayOfYearGrpc
+                {
+                    Day = source.Day,
+                    Month = source.Month,
+                }
+            );
+
+        CreateMap<WeeklyPeriodicity, WeeklyPeriodicityGrpc>()
+            .ConvertUsing(
+                (source, _, _) =>
+                {
+                    var result = new WeeklyPeriodicityGrpc();
+                    result.Days.AddRange(source.Days.Select(x => (DayOfWeekGrpc)x));
+
+                    return result;
+                }
+            );
+
+        CreateMap<MonthlyPeriodicity, MonthlyPeriodicityGrpc>()
+            .ConvertUsing(
+                (source, _, _) => new MonthlyPeriodicityGrpc()
+                {
+                    Days = ByteString.CopyFrom(source.Days.ToArray())
+                }
+            );
+
+        CreateMap<AnnuallyPeriodicity, AnnuallyPeriodicityGrpc>()
+            .ConvertUsing(
+                (source, _, resolutionContext) =>
+                {
+                    var result = new AnnuallyPeriodicityGrpc();
+                    result.Days.AddRange(source.Days.Select(x => resolutionContext.Mapper.Map<DayOfYearGrpc>(x)));
+
+                    return result;
+                }
+            );
+
+        CreateMap<ToDoItemPeriodicity, ToDoItemPeriodicityGrpc>()
+            .ConvertUsing(
+                (source, _, resolutionContext) =>
+                {
+                    var result = new ToDoItemPeriodicityGrpc
+                    {
+                        DueDate = resolutionContext.Mapper.Map<DateTimeOffsetGrpc>(source.DueDate),
+                    };
+
+                    switch (source.Periodicity)
+                    {
+                        case AnnuallyPeriodicity annuallyPeriodicity:
+                            result.Annually =
+                                resolutionContext.Mapper.Map<AnnuallyPeriodicityGrpc>(annuallyPeriodicity);
+
+                            break;
+                        case DailyPeriodicity dailyPeriodicity:
+                            result.Daily = resolutionContext.Mapper.Map<DailyPeriodicityGrpc>(dailyPeriodicity);
+
+                            break;
+                        case MonthlyPeriodicity monthlyPeriodicity:
+                            result.Monthly = resolutionContext.Mapper.Map<MonthlyPeriodicityGrpc>(monthlyPeriodicity);
+
+                            break;
+                        case WeeklyPeriodicity weeklyPeriodicity:
+                            result.Weekly = resolutionContext.Mapper.Map<WeeklyPeriodicityGrpc>(weeklyPeriodicity);
+
+                            break;
+                        default: throw new ArgumentOutOfRangeException();
+                    }
+
+                    return result;
+                }
+            );
+
+        CreateMap<ToDoSubItemPeriodicityGrpc, IPeriodicity>()
+            .ConvertUsing(
+                (source, _, resolutionContext) => source.PeriodicityCase switch
+                {
+                    ToDoSubItemPeriodicityGrpc.PeriodicityOneofCase.None =>
+                        throw new ArgumentOutOfRangeException(),
+
+                    ToDoSubItemPeriodicityGrpc.PeriodicityOneofCase.Daily => new DailyPeriodicity(),
+
+                    ToDoSubItemPeriodicityGrpc.PeriodicityOneofCase.Weekly => new WeeklyPeriodicity(
+                        source.Weekly.Days.Select(x => (DayOfWeek)x)
+                    ),
+
+                    ToDoSubItemPeriodicityGrpc.PeriodicityOneofCase.Monthly => new MonthlyPeriodicity(
+                        source.Monthly.ToByteArray()
+                    ),
+
+                    ToDoSubItemPeriodicityGrpc.PeriodicityOneofCase.Annually => new AnnuallyPeriodicity(
+                        resolutionContext.Mapper.Map<IEnumerable<DayOfYear>>(source.Annually.Days)
+                    ),
+
+                    _ => throw new ArgumentOutOfRangeException()
+                }
+            );
+
+        CreateMap<ToDoItemPeriodicityGrpc, IPeriodicity>()
+            .ConvertUsing(
+                (source, _, resolutionContext) => source.PeriodicityCase switch
+                {
+                    ToDoItemPeriodicityGrpc.PeriodicityOneofCase.None =>
+                        throw new ArgumentOutOfRangeException(),
+
+                    ToDoItemPeriodicityGrpc.PeriodicityOneofCase.Daily => new DailyPeriodicity(),
+
+                    ToDoItemPeriodicityGrpc.PeriodicityOneofCase.Weekly => new WeeklyPeriodicity(
+                        source.Weekly.Days.Select(x => (DayOfWeek)x)
+                    ),
+
+                    ToDoItemPeriodicityGrpc.PeriodicityOneofCase.Monthly => new MonthlyPeriodicity(
+                        source.Monthly.Days.ToArray()
+                    ),
+
+                    ToDoItemPeriodicityGrpc.PeriodicityOneofCase.Annually => new AnnuallyPeriodicity(
+                        resolutionContext.Mapper.Map<IEnumerable<DayOfYear>>(source.Annually.Days)
+                    ),
+
+                    _ => throw new ArgumentOutOfRangeException()
+                }
+            );
 
         CreateMap<Guid?, ByteString>()
             .ConvertUsing(x => x.HasValue ? ByteString.CopyFrom(x.Value.ToByteArray()) : ByteString.Empty);
@@ -145,7 +286,7 @@ public class SpravyProfile : Profile
                         resolutionContext.Mapper.Map<ToDoItemParent[]>(source.Parents),
                         source.IsCurrent,
                         resolutionContext.Mapper.Map<DateTimeOffset>(source.Periodicity.DueDate),
-                        (TypeOfPeriodicity)source.Periodicity.TypeOfPeriodicity
+                        resolutionContext.Mapper.Map<IPeriodicity>(source.Periodicity)
                     ),
                     ToDoItemGrpc.ParametersOneofCase.None => throw new ArgumentOutOfRangeException(),
                     _ => throw new ArgumentOutOfRangeException()
@@ -242,7 +383,6 @@ public class SpravyProfile : Profile
                         source.Description,
                         source.IsCurrent,
                         resolutionContext.Mapper.Map<DateTimeOffset>(source.Periodicity.DueDate),
-                        (TypeOfPeriodicity)source.Periodicity.TypeOfPeriodicity,
                         resolutionContext.Mapper.Map<ActiveToDoItem?>(source.Active),
                         source.Periodicity.CompletedCount,
                         source.Periodicity.SkippedCount,

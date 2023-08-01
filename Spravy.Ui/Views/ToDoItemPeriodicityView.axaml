@@ -19,42 +19,33 @@
             <ContentControl Content="{Binding Path}"
                             Margin="5" />
 
-            <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto">
+            <StackPanel>
                 <TextBlock Text="Type"
                            VerticalAlignment="Center" />
 
-                <ComboBox Grid.Row="0"
-                          Grid.Column="1"
-                          SelectedItem="{Binding Type}"
+                <ComboBox SelectedItem="{Binding Type}"
                           ItemsSource="{Binding ToDoItemTypes}" />
 
-                <TextBlock Grid.Row="1"
-                           Text="Name"
+                <TextBlock Text="Name"
                            VerticalAlignment="Center" />
 
-                <controls:EditableTextBlock Grid.Row="1"
-                                            Grid.Column="1"
-                                            Text="{Binding Name, Mode=TwoWay}"
+                <controls:EditableTextBlock Text="{Binding Name, Mode=TwoWay}"
                                             VerticalAlignment="Center"
                                             Watermark="Name"
                                             Margin="5" />
 
-                <TextBlock Grid.Row="2"
-                           Text="Name"
+                <TextBlock Text="Name"
                            VerticalAlignment="Center" />
 
-                <ComboBox Grid.Row="2"
-                          Grid.Column="1"
-                          SelectedItem="{Binding TypeOfPeriodicity}"
+                <ComboBox SelectedItem="{Binding TypeOfPeriodicity}"
                           ItemsSource="{Binding TypeOfPeriodicities}" />
 
+                <ContentControl Content="{Binding Periodicity}"/>
 
-                <TextBlock Grid.Row="3" Text="DueDate" VerticalAlignment="Center" />
+                <TextBlock Text="DueDate" VerticalAlignment="Center" />
 
-                <TextBox Grid.Row="3"
-                            Grid.Column="1"
-                            Text="{Binding DueDate}" />
-            </Grid>
+                <TextBox Text="{Binding DueDate}" />
+            </StackPanel>
 
             <StackPanel Orientation="Horizontal">
                 <Button Command="{Binding CompleteToDoItemCommand}">

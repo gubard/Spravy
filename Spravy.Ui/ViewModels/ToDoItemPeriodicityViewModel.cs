@@ -1,13 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Collections;
+using ExtensionFramework.AvaloniaUi.Models;
 using ExtensionFramework.Core.Common.Extensions;
+using ExtensionFramework.Core.DependencyInjection.Attributes;
+using ExtensionFramework.Core.DependencyInjection.Interfaces;
+using ExtensionFramework.Core.DependencyInjection.Extensions;
 using ReactiveUI;
 using Spravy.Domain.Enums;
+using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
 using Spravy.Ui.Models;
 using Spravy.Ui.Views;
@@ -18,14 +24,25 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel
 {
     private DateTimeOffset dueDate;
     private TypeOfPeriodicity typeOfPeriodicity;
+    private PeriodicityViewModel? periodicity;
+    private IDisposable? periodicitySub;
 
     public ToDoItemPeriodicityViewModel() : base("to-do-item-periodicity")
     {
         CompleteToDoItemCommand = CreateCommandFromTaskWithDialogProgressIndicator(CompleteToDoItemAsync);
         SubscribeProperties();
     }
-    
+
+    [Inject]
+    public required IResolver Resolver { get; init; }
+
     public ICommand CompleteToDoItemCommand { get; }
+
+    public PeriodicityViewModel? Periodicity
+    {
+        get => periodicity;
+        set => this.RaiseAndSetIfChanged(ref periodicity, value);
+    }
 
     public TypeOfPeriodicity TypeOfPeriodicity
     {
@@ -38,7 +55,7 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel
         get => dueDate;
         set => this.RaiseAndSetIfChanged(ref dueDate, value);
     }
-    
+
     private async Task CompleteToDoItemAsync()
     {
         await DialogViewer.ShowDialogAsync<CompleteToDoItemView>(
@@ -63,7 +80,7 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel
         {
             case ToDoItemGroup toDoItemGroup:
                 Navigator.NavigateTo<ToDoItemGroupViewModel>(x => x.Id = toDoItemGroup.Id);
-                
+
                 return;
             case ToDoItemPeriodicity toDoItemPeriodicity:
                 IsCurrent = item.IsCurrent;
@@ -71,7 +88,7 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel
                 Type = ToDoItemType.Periodicity;
                 Description = item.Description;
                 DueDate = toDoItemPeriodicity.DueDate;
-                TypeOfPeriodicity = toDoItemPeriodicity.TypeOfPeriodicity;
+                SetTypeOfPeriodicity(toDoItemPeriodicity.Periodicity);
                 Items.Clear();
                 CompletedItems.Clear();
                 var source = item.Items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
@@ -86,7 +103,7 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel
                 Path.Items.Clear();
                 Path.Items.Add(new RootItem());
                 Path.Items.AddRange(item.Parents.Select(x => Mapper.Map<ToDoItemParentNotify>(x)));
-                
+
                 break;
             case ToDoItemPlanned toDoItemPlanned:
                 Navigator.NavigateTo<ToDoItemPlannedViewModel>(x => x.Id = toDoItemPlanned.Id);
@@ -156,6 +173,94 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel
         yield return this.WhenAnyValue(x => x.Type).Skip(1).Subscribe(OnNextType);
         yield return this.WhenAnyValue(x => x.DueDate).Skip(1).Subscribe(OnNextDueDate);
         yield return this.WhenAnyValue(x => x.TypeOfPeriodicity).Skip(1).Subscribe(OnNextTypeOfPeriodicity);
+    }
+
+    private void SetTypeOfPeriodicity(IPeriodicity periodicity)
+    {
+        switch (periodicity)
+        {
+            case AnnuallyPeriodicity annuallyPeriodicity:
+            {
+                TypeOfPeriodicity = TypeOfPeriodicity.Annually;
+                var periodicityViewModel = Resolver.Resolve<AnnuallyPeriodicityViewModel>();
+                periodicityViewModel.DayOfYearSelector.SelectedDaysOfYear.AddRange(annuallyPeriodicity.Days);
+                periodicitySub?.Dispose();
+                Periodicity = periodicityViewModel;
+
+                periodicitySub = Observable
+                    .FromEventPattern<EventHandler<SelectedSelectedDaysOfYearEventArgs>,
+                        SelectedSelectedDaysOfYearEventArgs>(
+                        h => periodicityViewModel.DayOfYearSelector.SelectedDaysOfYearChanged += h,
+                        h => periodicityViewModel.DayOfYearSelector.SelectedDaysOfYearChanged -= h
+                    )
+                    .Subscribe(OnNextSelectedDayOfYear);
+
+                break;
+            }
+            case DailyPeriodicity:
+            {
+                TypeOfPeriodicity = TypeOfPeriodicity.Daily;
+                var periodicityViewModel = Resolver.Resolve<DailyPeriodicityViewModel>();
+                periodicitySub?.Dispose();
+                Periodicity = periodicityViewModel;
+
+                break;
+            }
+            case MonthlyPeriodicity monthlyPeriodicity:
+            {
+                TypeOfPeriodicity = TypeOfPeriodicity.Monthly;
+                var periodicityViewModel = Resolver.Resolve<MonthlyPeriodicityViewModel>();
+                periodicityViewModel.DayOfMonthSelector.SelectedDaysOfMonth.AddRange(monthlyPeriodicity.Days);
+                periodicitySub?.Dispose();
+                Periodicity = periodicityViewModel;
+
+                periodicitySub = Observable
+                    .FromEventPattern<EventHandler<SelectedDaysOfMonthChangedEventArgs>,
+                        SelectedDaysOfMonthChangedEventArgs>(
+                        h => periodicityViewModel.DayOfMonthSelector.SelectedDaysOfMonthChanged += h,
+                        h => periodicityViewModel.DayOfMonthSelector.SelectedDaysOfMonthChanged -= h
+                    )
+                    .Subscribe(OnNextSelectedDaysOfMonth);
+
+                break;
+            }
+            case WeeklyPeriodicity weeklyPeriodicity:
+            {
+                TypeOfPeriodicity = TypeOfPeriodicity.Weekly;
+                var periodicityViewModel = Resolver.Resolve<WeeklyPeriodicityViewModel>();
+                periodicityViewModel.DayOfWeekSelector.SelectedDaysOfWeek.AddRange(weeklyPeriodicity.Days);
+                periodicitySub?.Dispose();
+                Periodicity = periodicityViewModel;
+
+                periodicitySub = Observable
+                    .FromEventPattern<EventHandler<SelectedDaysOfWeekChangedEventArgs>,
+                        SelectedDaysOfWeekChangedEventArgs>(
+                        h => periodicityViewModel.DayOfWeekSelector.SelectedDaysOfWeekChanged += h,
+                        h => periodicityViewModel.DayOfWeekSelector.SelectedDaysOfWeekChanged -= h
+                    )
+                    .Subscribe(OnNextSelectedDaysOfWeek);
+
+                break;
+            }
+            default: throw new ArgumentOutOfRangeException(nameof(periodicity));
+        }
+    }
+
+    private async void OnNextSelectedDaysOfWeek(EventPattern<SelectedDaysOfWeekChangedEventArgs> x)
+    {
+        var weeklyPeriodicity = new WeeklyPeriodicity(x.EventArgs.NewSelectedDaysOfWeek);
+        await SafeExecuteAsync(() => ToDoService.UpdateWeeklyPeriodicityAsync(Id, weeklyPeriodicity));
+    }
+
+    private async void OnNextSelectedDaysOfMonth(EventPattern<SelectedDaysOfMonthChangedEventArgs> x)
+    {
+        await SafeExecuteAsync(() => ToDoService.UpdateMonthlyPeriodicityAsync(Id, new(x.EventArgs.NewDaysOfMonth)));
+    }
+
+    private async void OnNextSelectedDayOfYear(EventPattern<SelectedSelectedDaysOfYearEventArgs> x)
+    {
+        var annuallyPeriodicity = new AnnuallyPeriodicity(x.EventArgs.NewSelectedDaysOfYear);
+        await SafeExecuteAsync(() => ToDoService.UpdateAnnuallyPeriodicityAsync(Id, annuallyPeriodicity));
     }
 
     private void UnsubscribeProperties()

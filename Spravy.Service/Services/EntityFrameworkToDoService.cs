@@ -1,11 +1,13 @@
 using AutoMapper;
 using ExtensionFramework.Core.Common.Extensions;
+using ExtensionFramework.Core.Common.Models;
 using Microsoft.EntityFrameworkCore;
 using Spravy.Domain.Enums;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
 using Spravy.Db.Contexts;
 using Spravy.Db.Core.Profiles;
+using Spravy.Db.Extension;
 using Spravy.Db.Models;
 
 namespace Spravy.Service.Services;
@@ -457,7 +459,11 @@ public class EntityFrameworkToDoService : IToDoService
         toDoItem.Description = string.Empty;
         toDoItem.Id = id;
         toDoItem.OrderIndex = items.Length == 0 ? 0 : items.Max(x => x.OrderIndex) + 1;
-        toDoItem.DueDate = parent.DueDate;
+
+        toDoItem.DueDate = parent.DueDate < DateTimeOffset.Now.ToCurrentDay()
+            ? DateTimeOffset.Now.ToCurrentDay()
+            : parent.DueDate;
+
         toDoItem.TypeOfPeriodicity = parent.TypeOfPeriodicity;
         await context.Set<ToDoItemEntity>().AddAsync(toDoItem);
         await context.SaveChangesAsync();
@@ -838,6 +844,30 @@ public class EntityFrameworkToDoService : IToDoService
         return result;
     }
 
+    public async Task UpdateAnnuallyPeriodicityAsync(Guid id, AnnuallyPeriodicity periodicity)
+    {
+        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
+        item = item.ThrowIfNull();
+        item.SetDaysOfYear(periodicity.Days);
+        await context.SaveChangesAsync();
+    }
+
+    public async Task UpdateMonthlyPeriodicityAsync(Guid id, MonthlyPeriodicity periodicity)
+    {
+        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
+        item = item.ThrowIfNull();
+        item.SetDaysOfMonth(periodicity.Days);
+        await context.SaveChangesAsync();
+    }
+
+    public async Task UpdateWeeklyPeriodicityAsync(Guid id, WeeklyPeriodicity periodicity)
+    {
+        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
+        item = item.ThrowIfNull();
+        item.SetDaysOfWeek(periodicity.Days);
+        await context.SaveChangesAsync();
+    }
+
     private async Task NormalizeOrderIndexAsync(Guid? parentId)
     {
         var items = await context.Set<ToDoItemEntity>()
@@ -891,16 +921,51 @@ public class EntityFrameworkToDoService : IToDoService
         {
             case TypeOfPeriodicity.Daily:
                 item.DueDate = item.DueDate.AddDays(1);
+
                 break;
             case TypeOfPeriodicity.Weekly:
-                item.DueDate = item.DueDate.AddDays(7);
+            {
+                var dayOfWeek = item.DueDate.DayOfWeek;
+                var daysOfWeek = item.GetDaysOfWeek().Order().Select(x => (DayOfWeek?)x).ThrowIfEmpty().ToArray();
+                var nextDay = daysOfWeek.FirstOrDefault(x => x > dayOfWeek);
+
+                item.DueDate = nextDay is not null
+                    ? item.DueDate.AddDays((double)nextDay - (double)dayOfWeek)
+                    : item.DueDate.AddDays(7 - (double)dayOfWeek + (double)daysOfWeek.First());
+
                 break;
+            }
             case TypeOfPeriodicity.Monthly:
-                item.DueDate = item.DueDate.AddMonths(1);
+            {
+                var now = item.DueDate;
+                var dayOfMonth = now.Day;
+                var daysOfMonth = item.GetDaysOfMonth().Order().Select(x => (byte?)x).ThrowIfEmpty().ToArray();
+                var nextDay = daysOfMonth.FirstOrDefault(x => x > dayOfMonth);
+                var daysInCurrentMonth = DateTime.DaysInMonth(now.Year, now.Month);
+                var daysInNextMonth = DateTime.DaysInMonth(now.AddMonths(1).Year, now.AddMonths(1).Month);
+
+                item.DueDate = nextDay is not null
+                    ? item.DueDate.WithDay(Math.Min(nextDay.Value, daysInCurrentMonth))
+                    : item.DueDate.AddMonths(1).WithDay(Math.Min(daysOfMonth.First().Value, daysInNextMonth));
+
                 break;
+            }
             case TypeOfPeriodicity.Annually:
-                item.DueDate = item.DueDate.AddYears(1);
+            {
+                var now = item.DueDate;
+                var daysOfYear = item.GetDaysOfYear().Order().Select(x => (DayOfYear?)x).ThrowIfEmpty().ToArray();
+                var nextDay = daysOfYear.FirstOrDefault(x => x.Value.Month >= now.Month && x.Value.Day > now.Day);
+                var daysInNextMonth = DateTime.DaysInMonth(now.Year + 1, daysOfYear.First().Value.Month);
+
+                item.DueDate = nextDay is not null
+                    ? item.DueDate.WithMonth(nextDay.Value.Month)
+                        .WithDay(Math.Min(DateTime.DaysInMonth(now.Year, nextDay.Value.Month), nextDay.Value.Day))
+                    : item.DueDate.AddYears(1)
+                        .WithMonth(daysOfYear.First().Value.Month)
+                        .WithDay(Math.Min(daysInNextMonth, daysOfYear.First().Value.Day));
+
                 break;
+            }
             default: throw new ArgumentOutOfRangeException();
         }
     }

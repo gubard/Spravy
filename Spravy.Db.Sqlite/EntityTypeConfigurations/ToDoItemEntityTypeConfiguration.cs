@@ -11,5 +11,8 @@ public class ToDoItemEntityTypeConfiguration : IEntityTypeConfiguration<ToDoItem
         builder.ToTable("ToDoItem");
         builder.HasKey(x => x.Id);
         builder.HasOne(x => x.Parent).WithMany().HasForeignKey(x => x.ParentId);
+        builder.Property(x => x.DaysOfMonth).HasDefaultValue("1");
+        builder.Property(x => x.DaysOfWeek).HasDefaultValue(DayOfWeek.Monday.ToString());
+        builder.Property(x => x.DaysOfYear).HasDefaultValue("1.1");
     }
 }
