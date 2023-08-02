@@ -19,13 +19,13 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         this.mapper = mapper;
     }
 
-    public override async Task<GetRootToDoItemsReply> GetRootToDoItems(
-        GetRootToDoItemsRequest request,
+    public override async Task<GetRootToDoSubItemsReply> GetRootToDoSubItems(
+        GetRootToDoSubItemsRequest request,
         ServerCallContext context
     )
     {
-        var reply = new GetRootToDoItemsReply();
-        var items = await toDoService.GetRootToDoItemsAsync();
+        var reply = new GetRootToDoSubItemsReply();
+        var items = await toDoService.GetRootToDoSubItemsAsync();
         reply.Items.AddRange(mapper.Map<IEnumerable<ToDoSubItemGrpc>>(items));
 
         return reply;
@@ -80,66 +80,69 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         return new DeleteToDoItemReply();
     }
 
-    public override async Task<UpdateTypeOfPeriodicityReply> UpdateTypeOfPeriodicity(
-        UpdateTypeOfPeriodicityRequest request,
+    public override async Task<UpdateToDoItemTypeOfPeriodicityReply> UpdateToDoItemTypeOfPeriodicity(
+        UpdateToDoItemTypeOfPeriodicityRequest request,
         ServerCallContext context
     )
     {
-        await toDoService.UpdateTypeOfPeriodicityAsync(mapper.Map<Guid>(request.Id), (TypeOfPeriodicity)request.Type);
+        await toDoService.UpdateToDoItemTypeOfPeriodicityAsync(
+            mapper.Map<Guid>(request.Id),
+            (TypeOfPeriodicity)request.Type
+        );
 
-        return new UpdateTypeOfPeriodicityReply();
+        return new UpdateToDoItemTypeOfPeriodicityReply();
     }
 
-    public override async Task<UpdateDueDateReply> UpdateDueDate(
-        UpdateDueDateRequest request,
+    public override async Task<UpdateToDoItemDueDateReply> UpdateToDoItemDueDate(
+        UpdateToDoItemDueDateRequest request,
         ServerCallContext context
     )
     {
         var dueDate = mapper.Map<DateTimeOffset>(request.DueDate);
-        await toDoService.UpdateDueDateAsync(mapper.Map<Guid>(request.Id), dueDate);
+        await toDoService.UpdateToDoItemDueDateAsync(mapper.Map<Guid>(request.Id), dueDate);
 
-        return new UpdateDueDateReply();
+        return new UpdateToDoItemDueDateReply();
     }
 
-    public override async Task<UpdateCompleteStatusReply> UpdateCompleteStatus(
-        UpdateCompleteStatusRequest request,
+    public override async Task<UpdateToDoItemCompleteStatusReply> UpdateToDoItemCompleteStatus(
+        UpdateToDoItemCompleteStatusRequest request,
         ServerCallContext context
     )
     {
-        await toDoService.UpdateCompleteStatusAsync(mapper.Map<Guid>(request.Id), request.IsCompleted);
+        await toDoService.UpdateToDoItemCompleteStatusAsync(mapper.Map<Guid>(request.Id), request.IsCompleted);
 
-        return new UpdateCompleteStatusReply();
+        return new UpdateToDoItemCompleteStatusReply();
     }
 
-    public override async Task<UpdateNameToDoItemReply> UpdateNameToDoItem(
-        UpdateNameToDoItemRequest request,
+    public override async Task<UpdateToDoItemNameReply> UpdateToDoItemName(
+        UpdateToDoItemNameRequest request,
         ServerCallContext context
     )
     {
-        await toDoService.UpdateNameToDoItemAsync(mapper.Map<Guid>(request.Id), request.Name);
+        await toDoService.UpdateToDoItemNameAsync(mapper.Map<Guid>(request.Id), request.Name);
 
-        return new UpdateNameToDoItemReply();
+        return new UpdateToDoItemNameReply();
     }
 
-    public override async Task<UpdateOrderIndexToDoItemReply> UpdateOrderIndexToDoItem(
-        UpdateOrderIndexToDoItemRequest request,
+    public override async Task<UpdateToDoItemOrderIndexReply> UpdateToDoItemOrderIndex(
+        UpdateToDoItemOrderIndexRequest request,
         ServerCallContext context
     )
     {
         var options = mapper.Map<UpdateOrderIndexToDoItemOptions>(request);
-        await toDoService.UpdateOrderIndexToDoItemAsync(options);
+        await toDoService.UpdateToDoItemOrderIndexAsync(options);
 
-        return new UpdateOrderIndexToDoItemReply();
+        return new UpdateToDoItemOrderIndexReply();
     }
 
-    public override async Task<UpdateDescriptionToDoItemReply> UpdateDescriptionToDoItem(
-        UpdateDescriptionToDoItemRequest request,
+    public override async Task<UpdateToDoItemDescriptionReply> UpdateToDoItemDescription(
+        UpdateToDoItemDescriptionRequest request,
         ServerCallContext context
     )
     {
-        await toDoService.UpdateDescriptionToDoItemAsync(mapper.Map<Guid>(request.Id), request.Description);
+        await toDoService.UpdateToDoItemDescriptionAsync(mapper.Map<Guid>(request.Id), request.Description);
 
-        return new UpdateDescriptionToDoItemReply();
+        return new UpdateToDoItemDescriptionReply();
     }
 
     public override async Task<SkipToDoItemReply> SkipToDoItem(SkipToDoItemRequest request, ServerCallContext context)
@@ -156,10 +159,13 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         return new FailToDoItemReply();
     }
 
-    public override async Task<SearchReply> Search(SearchRequest request, ServerCallContext context)
+    public override async Task<SearchToDoSubItemsReply> SearchToDoSubItems(
+        SearchToDoSubItemsRequest request,
+        ServerCallContext context
+    )
     {
-        var items = await toDoService.SearchAsync(request.SearchText);
-        var reply = new SearchReply();
+        var items = await toDoService.SearchToDoSubItemsAsync(request.SearchText);
+        var reply = new SearchToDoSubItemsReply();
         reply.Items.AddRange(items.Select(x => mapper.Map<ToDoSubItemGrpc>(x)));
 
         return reply;
@@ -207,52 +213,52 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         return reply;
     }
 
-    public override async Task<UpdateAnnuallyPeriodicityReply> UpdateAnnuallyPeriodicity(
-        UpdateAnnuallyPeriodicityRequest request,
+    public override async Task<UpdateToDoItemAnnuallyPeriodicityReply> UpdateToDoItemAnnuallyPeriodicity(
+        UpdateToDoItemAnnuallyPeriodicityRequest request,
         ServerCallContext context
     )
     {
-        await toDoService.UpdateAnnuallyPeriodicityAsync(
+        await toDoService.UpdateToDoItemAnnuallyPeriodicityAsync(
             mapper.Map<Guid>(request.Id),
             mapper.Map<AnnuallyPeriodicity>(request.Periodicity)
         );
 
-        return new UpdateAnnuallyPeriodicityReply();
+        return new UpdateToDoItemAnnuallyPeriodicityReply();
     }
 
-    public override async Task<UpdateMonthlyPeriodicityReply> UpdateMonthlyPeriodicity(
-        UpdateMonthlyPeriodicityRequest request,
+    public override async Task<UpdateToDoItemMonthlyPeriodicityReply> UpdateToDoItemMonthlyPeriodicity(
+        UpdateToDoItemMonthlyPeriodicityRequest request,
         ServerCallContext context
     )
     {
-        await toDoService.UpdateMonthlyPeriodicityAsync(
+        await toDoService.UpdateToDoItemMonthlyPeriodicityAsync(
             mapper.Map<Guid>(request.Id),
             mapper.Map<MonthlyPeriodicity>(request.Periodicity)
         );
 
-        return new UpdateMonthlyPeriodicityReply();
+        return new UpdateToDoItemMonthlyPeriodicityReply();
     }
 
-    public override async Task<UpdateWeeklyPeriodicityReply> UpdateWeeklyPeriodicity(
-        UpdateWeeklyPeriodicityRequest request,
+    public override async Task<UpdateToDoItemWeeklyPeriodicityReply> UpdateToDoItemWeeklyPeriodicity(
+        UpdateToDoItemWeeklyPeriodicityRequest request,
         ServerCallContext context
     )
     {
-        await toDoService.UpdateWeeklyPeriodicityAsync(
+        await toDoService.UpdateToDoItemWeeklyPeriodicityAsync(
             mapper.Map<Guid>(request.Id),
             mapper.Map<WeeklyPeriodicity>(request.Periodicity)
         );
 
-        return new UpdateWeeklyPeriodicityReply();
+        return new UpdateToDoItemWeeklyPeriodicityReply();
     }
 
-    public override async Task<GetLeafToDoItemsReply> GetLeafToDoItems(
-        GetLeafToDoItemsRequest request,
+    public override async Task<GetLeafToDoSubItemsReply> GetLeafToDoSubItems(
+        GetLeafToDoSubItemsRequest request,
         ServerCallContext context
     )
     {
-        var items = await toDoService.GetLeafToDoItemsAsync(mapper.Map<Guid>(request.Id));
-        var reply = new GetLeafToDoItemsReply();
+        var items = await toDoService.GetLeafToDoSubItemsAsync(mapper.Map<Guid>(request.Id));
+        var reply = new GetLeafToDoSubItemsReply();
         reply.Items.AddRange(mapper.Map<IEnumerable<ToDoSubItemGrpc>>(items));
 
         return reply;

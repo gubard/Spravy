@@ -26,11 +26,11 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
         client = new ToDoService.ToDoServiceClient(grpcChannel);
     }
 
-    public async Task<IEnumerable<IToDoSubItem>> GetRootToDoItemsAsync()
+    public async Task<IEnumerable<IToDoSubItem>> GetRootToDoSubItemsAsync()
     {
         try
         {
-            var items = await client.GetRootToDoItemsAsync(new GetRootToDoItemsRequest());
+            var items = await client.GetRootToDoSubItemsAsync(new GetRootToDoSubItemsRequest());
 
             return mapper.Map<IEnumerable<IToDoSubItem>>(items.Items);
         }
@@ -108,12 +108,12 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
         }
     }
 
-    public async Task UpdateTypeOfPeriodicityAsync(Guid id, TypeOfPeriodicity type)
+    public async Task UpdateToDoItemTypeOfPeriodicityAsync(Guid id, TypeOfPeriodicity type)
     {
         try
         {
-            await client.UpdateTypeOfPeriodicityAsync(
-                new UpdateTypeOfPeriodicityRequest
+            await client.UpdateToDoItemTypeOfPeriodicityAsync(
+                new UpdateToDoItemTypeOfPeriodicityRequest
                 {
                     Id = mapper.Map<ByteString>(id),
                     Type = (TypeOfPeriodicityGrpc)type,
@@ -126,12 +126,12 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
         }
     }
 
-    public async Task UpdateDueDateAsync(Guid id, DateTimeOffset dueDate)
+    public async Task UpdateToDoItemDueDateAsync(Guid id, DateTimeOffset dueDate)
     {
         try
         {
-            await client.UpdateDueDateAsync(
-                new UpdateDueDateRequest
+            await client.UpdateToDoItemDueDateAsync(
+                new UpdateToDoItemDueDateRequest
                 {
                     Id = mapper.Map<ByteString>(id),
                     DueDate = mapper.Map<DateTimeOffsetGrpc>(dueDate),
@@ -144,12 +144,12 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
         }
     }
 
-    public async Task UpdateCompleteStatusAsync(Guid id, bool isCompleted)
+    public async Task UpdateToDoItemCompleteStatusAsync(Guid id, bool isCompleted)
     {
         try
         {
-            await client.UpdateCompleteStatusAsync(
-                new UpdateCompleteStatusRequest
+            await client.UpdateToDoItemCompleteStatusAsync(
+                new UpdateToDoItemCompleteStatusRequest
                 {
                     Id = mapper.Map<ByteString>(id),
                     IsCompleted = isCompleted
@@ -162,12 +162,12 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
         }
     }
 
-    public async Task UpdateNameToDoItemAsync(Guid id, string name)
+    public async Task UpdateToDoItemNameAsync(Guid id, string name)
     {
         try
         {
-            await client.UpdateNameToDoItemAsync(
-                new UpdateNameToDoItemRequest
+            await client.UpdateToDoItemNameAsync(
+                new UpdateToDoItemNameRequest
                 {
                     Id = mapper.Map<ByteString>(id),
                     Name = name,
@@ -180,11 +180,11 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
         }
     }
 
-    public async Task UpdateOrderIndexToDoItemAsync(UpdateOrderIndexToDoItemOptions options)
+    public async Task UpdateToDoItemOrderIndexAsync(UpdateOrderIndexToDoItemOptions options)
     {
         try
         {
-            await client.UpdateOrderIndexToDoItemAsync(mapper.Map<UpdateOrderIndexToDoItemRequest>(options));
+            await client.UpdateToDoItemOrderIndexAsync(mapper.Map<UpdateToDoItemOrderIndexRequest>(options));
         }
         catch (Exception e)
         {
@@ -192,12 +192,12 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
         }
     }
 
-    public async Task UpdateDescriptionToDoItemAsync(Guid id, string description)
+    public async Task UpdateToDoItemDescriptionAsync(Guid id, string description)
     {
         try
         {
-            await client.UpdateDescriptionToDoItemAsync(
-                new UpdateDescriptionToDoItemRequest
+            await client.UpdateToDoItemDescriptionAsync(
+                new UpdateToDoItemDescriptionRequest
                 {
                     Description = description,
                     Id = mapper.Map<ByteString>(id),
@@ -244,12 +244,12 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
         }
     }
 
-    public async Task<IEnumerable<IToDoSubItem>> SearchAsync(string searchText)
+    public async Task<IEnumerable<IToDoSubItem>> SearchToDoSubItemsAsync(string searchText)
     {
         try
         {
-            var reply = await client.SearchAsync(
-                new SearchRequest
+            var reply = await client.SearchToDoSubItemsAsync(
+                new SearchToDoSubItemsRequest
                 {
                     SearchText = searchText
                 }
@@ -329,12 +329,12 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
         }
     }
 
-    public async Task UpdateAnnuallyPeriodicityAsync(Guid id, AnnuallyPeriodicity periodicity)
+    public async Task UpdateToDoItemAnnuallyPeriodicityAsync(Guid id, AnnuallyPeriodicity periodicity)
     {
         try
         {
-            await client.UpdateAnnuallyPeriodicityAsync(
-                new UpdateAnnuallyPeriodicityRequest
+            await client.UpdateToDoItemAnnuallyPeriodicityAsync(
+                new UpdateToDoItemAnnuallyPeriodicityRequest
                 {
                     Periodicity = mapper.Map<AnnuallyPeriodicityGrpc>(periodicity),
                     Id = mapper.Map<ByteString>(id),
@@ -347,12 +347,12 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
         }
     }
 
-    public async Task UpdateMonthlyPeriodicityAsync(Guid id, MonthlyPeriodicity periodicity)
+    public async Task UpdateToDoItemMonthlyPeriodicityAsync(Guid id, MonthlyPeriodicity periodicity)
     {
         try
         {
-            await client.UpdateMonthlyPeriodicityAsync(
-                new UpdateMonthlyPeriodicityRequest
+            await client.UpdateToDoItemMonthlyPeriodicityAsync(
+                new UpdateToDoItemMonthlyPeriodicityRequest
                 {
                     Periodicity = mapper.Map<MonthlyPeriodicityGrpc>(periodicity),
                     Id = mapper.Map<ByteString>(id),
@@ -365,12 +365,12 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
         }
     }
 
-    public async Task UpdateWeeklyPeriodicityAsync(Guid id, WeeklyPeriodicity periodicity)
+    public async Task UpdateToDoItemWeeklyPeriodicityAsync(Guid id, WeeklyPeriodicity periodicity)
     {
         try
         {
-            await client.UpdateWeeklyPeriodicityAsync(
-                new UpdateWeeklyPeriodicityRequest
+            await client.UpdateToDoItemWeeklyPeriodicityAsync(
+                new UpdateToDoItemWeeklyPeriodicityRequest
                 {
                     Periodicity = mapper.Map<WeeklyPeriodicityGrpc>(periodicity),
                     Id = mapper.Map<ByteString>(id),
@@ -383,18 +383,18 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
         }
     }
 
-    public async Task<IEnumerable<IToDoSubItem>> GetLeafToDoItemsAsync(Guid id)
+    public async Task<IEnumerable<IToDoSubItem>> GetLeafToDoSubItemsAsync(Guid id)
     {
         try
         {
-           var reply = await client.GetLeafToDoItemsAsync(
-                new GetLeafToDoItemsRequest
+            var reply = await client.GetLeafToDoSubItemsAsync(
+                new GetLeafToDoSubItemsRequest
                 {
                     Id = mapper.Map<ByteString>(id),
                 }
             );
 
-           return mapper.Map<IEnumerable<IToDoSubItem>>(reply.Items);
+            return mapper.Map<IEnumerable<IToDoSubItem>>(reply.Items);
         }
         catch (Exception e)
         {

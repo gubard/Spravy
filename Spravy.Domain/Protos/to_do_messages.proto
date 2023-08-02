@@ -7,36 +7,36 @@ import "google/protobuf/duration.proto";
 
 package spravy;
 
-message GetLeafToDoItemsRequest {
+message GetLeafToDoSubItemsRequest {
   bytes Id = 1;
 }
 
-message GetLeafToDoItemsReply {
+message GetLeafToDoSubItemsReply {
   repeated ToDoSubItemGrpc Items = 1;
 }
 
-message UpdateWeeklyPeriodicityRequest {
+message UpdateToDoItemWeeklyPeriodicityRequest {
   bytes Id = 1;
   WeeklyPeriodicityGrpc Periodicity = 2;
 }
 
-message UpdateWeeklyPeriodicityReply {
+message UpdateToDoItemWeeklyPeriodicityReply {
 }
 
-message UpdateMonthlyPeriodicityRequest {
+message UpdateToDoItemMonthlyPeriodicityRequest {
   bytes Id = 1;
   MonthlyPeriodicityGrpc Periodicity = 2;
 }
 
-message UpdateMonthlyPeriodicityReply {
+message UpdateToDoItemMonthlyPeriodicityReply {
 }
 
-message UpdateAnnuallyPeriodicityRequest {
+message UpdateToDoItemAnnuallyPeriodicityRequest {
   bytes Id = 1;
   AnnuallyPeriodicityGrpc Periodicity = 2;
 }
 
-message UpdateAnnuallyPeriodicityReply {
+message UpdateToDoItemAnnuallyPeriodicityReply {
 }
 
 message ActiveToDoItemGrpc {
@@ -65,11 +65,11 @@ message AddCurrentToDoItemRequest {
 message AddCurrentToDoItemReply {
 }
 
-message SearchRequest {
+message SearchToDoSubItemsRequest {
   string SearchText = 1;
 }
 
-message SearchReply {
+message SearchToDoSubItemsReply {
   repeated ToDoSubItemGrpc Items = 1;
 }
 
@@ -87,18 +87,21 @@ message SkipToDoItemRequest {
 message SkipToDoItemReply {
 }
 
-message UpdateDescriptionToDoItemRequest {
+message UpdateToDoItemDescriptionRequest {
   bytes Id = 1;
   string Description = 2;
 }
 
-message UpdateDescriptionToDoItemReply {
+message UpdateToDoItemDescriptionReply {
 }
 
-message UpdateOrderIndexToDoItemRequest {
+message UpdateToDoItemOrderIndexRequest {
   bytes Id = 1;
   bytes TargetId = 2;
   bool IsAfter = 3;
+}
+
+message UpdateToDoItemOrderIndexReply {
 }
 
 message UpdateToDoItemTypeRequest {
@@ -110,39 +113,36 @@ message UpdateToDoItemTypeReply {
   
 }
 
-message UpdateOrderIndexToDoItemReply {
-}
-
-message UpdateNameToDoItemRequest {
+message UpdateToDoItemNameRequest {
   bytes Id = 1;
   string Name = 2;
 }
 
-message UpdateNameToDoItemReply {
+message UpdateToDoItemNameReply {
 }
 
-message UpdateCompleteStatusRequest {
+message UpdateToDoItemCompleteStatusRequest {
   bytes Id = 1;
   bool IsCompleted = 2;
 }
 
-message UpdateCompleteStatusReply {
+message UpdateToDoItemCompleteStatusReply {
 }
 
-message UpdateDueDateRequest {
+message UpdateToDoItemDueDateRequest {
   bytes Id = 1;
   DateTimeOffsetGrpc DueDate = 2;
 }
 
-message UpdateDueDateReply {
+message UpdateToDoItemDueDateReply {
 }
 
-message UpdateTypeOfPeriodicityRequest {
+message UpdateToDoItemTypeOfPeriodicityRequest {
   bytes Id = 1;
   TypeOfPeriodicityGrpc Type = 2;
 }
 
-message UpdateTypeOfPeriodicityReply {
+message UpdateToDoItemTypeOfPeriodicityReply {
 }
 
 message DeleteToDoItemRequest {
@@ -215,10 +215,10 @@ message ToDoItemPeriodicityGrpc {
 message ToDoItemGroupGrpc {
 }
 
-message GetRootToDoItemsRequest {
+message GetRootToDoSubItemsRequest {
 }
 
-message GetRootToDoItemsReply {
+message GetRootToDoSubItemsReply {
   repeated ToDoSubItemGrpc Items = 1;
 }
 

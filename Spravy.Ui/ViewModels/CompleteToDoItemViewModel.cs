@@ -70,16 +70,16 @@ public class CompleteToDoItemViewModel : ViewModelBase
         {
             if (completed.IsCompleted)
             {
-                await ToDoService.UpdateCompleteStatusAsync(Item.Id, false);
+                await ToDoService.UpdateToDoItemCompleteStatusAsync(Item.Id, false);
             }
             else
             {
-                await ToDoService.UpdateCompleteStatusAsync(Item.Id, true);
+                await ToDoService.UpdateToDoItemCompleteStatusAsync(Item.Id, true);
             }
         }
         else
         {
-            await ToDoService.UpdateCompleteStatusAsync(Item.Id, true);
+            await ToDoService.UpdateToDoItemCompleteStatusAsync(Item.Id, true);
         }
 
         BackCommand.Execute(null);
@@ -92,7 +92,7 @@ public class CompleteToDoItemViewModel : ViewModelBase
             return;
         }
 
-        await ToDoService.UpdateCompleteStatusAsync(Item.Id, true);
+        await ToDoService.UpdateToDoItemCompleteStatusAsync(Item.Id, true);
         BackCommand.Execute(null);
     }
 
@@ -103,7 +103,7 @@ public class CompleteToDoItemViewModel : ViewModelBase
             return;
         }
 
-        await ToDoService.UpdateCompleteStatusAsync(Item.Id, false);
+        await ToDoService.UpdateToDoItemCompleteStatusAsync(Item.Id, false);
         BackCommand.Execute(null);
     }
 }

@@ -83,7 +83,7 @@ public class RootToDoItemViewModel : RoutableViewModelBase,
 
     public async Task RefreshToDoItemAsync()
     {
-        var items = await ToDoService.GetRootToDoItemsAsync();
+        var items = await ToDoService.GetRootToDoSubItemsAsync();
         Items.Clear();
         CompletedItems.Clear();
         var source = items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
@@ -149,7 +149,7 @@ public class RootToDoItemViewModel : RoutableViewModelBase,
                 await SafeExecuteAsync(
                     async () =>
                     {
-                        await ToDoService.UpdateCompleteStatusAsync(itemNotify.Id, x);
+                        await ToDoService.UpdateToDoItemCompleteStatusAsync(itemNotify.Id, x);
                         await RefreshToDoItemAsync();
                     }
                 );

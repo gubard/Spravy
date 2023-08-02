@@ -48,7 +48,7 @@ public class SearchViewModel : RoutableViewModelBase
     
     private async Task RefreshToDoItemAsync()
     {
-        var items = await ToDoService.SearchAsync(SearchText);
+        var items = await ToDoService.SearchToDoSubItemsAsync(SearchText);
         SearchResult.Clear();
         SearchResult.AddRange(items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)));
     }

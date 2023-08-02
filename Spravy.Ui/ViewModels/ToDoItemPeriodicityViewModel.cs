@@ -127,7 +127,7 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel
                 await SafeExecuteAsync(
                     async () =>
                     {
-                        await ToDoService.UpdateCompleteStatusAsync(itemNotify.Id, x);
+                        await ToDoService.UpdateToDoItemCompleteStatusAsync(itemNotify.Id, x);
                         await RefreshToDoItemAsync();
                     }
                 );
@@ -143,7 +143,7 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel
         await SafeExecuteAsync(
             async () =>
             {
-                await ToDoService.UpdateDueDateAsync(Id, x);
+                await ToDoService.UpdateToDoItemDueDateAsync(Id, x);
                 await RefreshToDoItemAsync();
             }
         );
@@ -154,7 +154,7 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel
         await SafeExecuteAsync(
             async () =>
             {
-                await ToDoService.UpdateTypeOfPeriodicityAsync(Id, x);
+                await ToDoService.UpdateToDoItemTypeOfPeriodicityAsync(Id, x);
                 await RefreshToDoItemAsync();
             }
         );
@@ -249,18 +249,18 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel
     private async void OnNextSelectedDaysOfWeek(EventPattern<SelectedDaysOfWeekChangedEventArgs> x)
     {
         var weeklyPeriodicity = new WeeklyPeriodicity(x.EventArgs.NewSelectedDaysOfWeek);
-        await SafeExecuteAsync(() => ToDoService.UpdateWeeklyPeriodicityAsync(Id, weeklyPeriodicity));
+        await SafeExecuteAsync(() => ToDoService.UpdateToDoItemWeeklyPeriodicityAsync(Id, weeklyPeriodicity));
     }
 
     private async void OnNextSelectedDaysOfMonth(EventPattern<SelectedDaysOfMonthChangedEventArgs> x)
     {
-        await SafeExecuteAsync(() => ToDoService.UpdateMonthlyPeriodicityAsync(Id, new(x.EventArgs.NewDaysOfMonth)));
+        await SafeExecuteAsync(() => ToDoService.UpdateToDoItemMonthlyPeriodicityAsync(Id, new(x.EventArgs.NewDaysOfMonth)));
     }
 
     private async void OnNextSelectedDayOfYear(EventPattern<SelectedSelectedDaysOfYearEventArgs> x)
     {
         var annuallyPeriodicity = new AnnuallyPeriodicity(x.EventArgs.NewSelectedDaysOfYear);
-        await SafeExecuteAsync(() => ToDoService.UpdateAnnuallyPeriodicityAsync(Id, annuallyPeriodicity));
+        await SafeExecuteAsync(() => ToDoService.UpdateToDoItemAnnuallyPeriodicityAsync(Id, annuallyPeriodicity));
     }
 
     private void UnsubscribeProperties()

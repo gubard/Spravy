@@ -56,7 +56,7 @@ public class LeafToDoItemsViewModel : RoutableViewModelBase
 
     private async Task RefreshToDoItemAsync()
     {
-        var items = await ToDoService.GetLeafToDoItemsAsync(Id);
+        var items = await ToDoService.GetLeafToDoSubItemsAsync(Id);
         Items.Clear();
         Items.AddRange(Mapper.Map<IEnumerable<ToDoSubItemNotify>>(items));
     }

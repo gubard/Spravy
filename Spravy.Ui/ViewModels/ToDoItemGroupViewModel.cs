@@ -74,7 +74,7 @@ public class ToDoItemGroupViewModel : ToDoItemViewModel
                 await SafeExecuteAsync(
                     async () =>
                     {
-                        await ToDoService.UpdateCompleteStatusAsync(itemNotify.Id, x);
+                        await ToDoService.UpdateToDoItemCompleteStatusAsync(itemNotify.Id, x);
                         await RefreshToDoItemAsync();
                     }
                 );

@@ -165,7 +165,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase,
         await SafeExecuteAsync(
             async () =>
             {
-                await ToDoService.UpdateNameToDoItemAsync(Id, x);
+                await ToDoService.UpdateToDoItemNameAsync(Id, x);
                 await RefreshToDoItemAsync();
             }
         );
@@ -234,7 +234,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase,
         await SafeExecuteAsync(
             async () =>
             {
-                await ToDoService.UpdateDescriptionToDoItemAsync(Id, x);
+                await ToDoService.UpdateToDoItemDescriptionAsync(Id, x);
                 await RefreshToDoItemAsync();
             }
         );

@@ -34,7 +34,7 @@ public class RootToDoItemSelectorViewModel : ViewModelBase
 
     private async Task RefreshToDoItemAsync()
     {
-        var items = await ToDoService.GetRootToDoItemsAsync();
+        var items = await ToDoService.GetRootToDoSubItemsAsync();
         Items.Clear();
         var source = items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
         Items.AddRange(source.Where(x => x.Status != ToDoItemStatus.Complete).OrderBy(x => x.OrderIndex));

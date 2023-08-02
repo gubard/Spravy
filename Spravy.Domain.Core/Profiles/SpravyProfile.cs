@@ -21,7 +21,7 @@ public class SpravyProfile : Profile
         CreateMap<ToDoItemValue, ToDoItemValueGrpc>();
         CreateMap<ToDoSubItemGroup, ToDoSubItemGroupGrpc>();
         CreateMap<AddToDoItemOptions, AddToDoItemRequest>();
-        CreateMap<UpdateOrderIndexToDoItemOptions, UpdateOrderIndexToDoItemRequest>();
+        CreateMap<UpdateOrderIndexToDoItemOptions, UpdateToDoItemOrderIndexRequest>();
         CreateMap<ActiveToDoItem?, ActiveToDoItemGrpc>();
         CreateMap<ActiveToDoItem, ActiveToDoItemGrpc>();
         CreateMap<ToDoItemPlanned, ToDoItemPlannedGrpc>();
@@ -401,7 +401,7 @@ public class SpravyProfile : Profile
                 }
             );
 
-        CreateMap<UpdateOrderIndexToDoItemRequest, UpdateOrderIndexToDoItemOptions>()
+        CreateMap<UpdateToDoItemOrderIndexRequest, UpdateOrderIndexToDoItemOptions>()
             .ConstructUsing(
                 (src, res) => new UpdateOrderIndexToDoItemOptions(
                     res.Mapper.Map<Guid>(src.Id),

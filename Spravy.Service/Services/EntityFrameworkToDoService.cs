@@ -23,7 +23,7 @@ public class EntityFrameworkToDoService : IToDoService
         this.mapper = mapper;
     }
 
-    public async Task<IEnumerable<IToDoSubItem>> GetRootToDoItemsAsync()
+    public async Task<IEnumerable<IToDoSubItem>> GetRootToDoSubItemsAsync()
     {
         var items = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
@@ -490,7 +490,7 @@ public class EntityFrameworkToDoService : IToDoService
         await context.SaveChangesAsync();
     }
 
-    public async Task UpdateTypeOfPeriodicityAsync(Guid id, TypeOfPeriodicity type)
+    public async Task UpdateToDoItemTypeOfPeriodicityAsync(Guid id, TypeOfPeriodicity type)
     {
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
@@ -498,7 +498,7 @@ public class EntityFrameworkToDoService : IToDoService
         await context.SaveChangesAsync();
     }
 
-    public async Task UpdateDueDateAsync(Guid id, DateTimeOffset dueDate)
+    public async Task UpdateToDoItemDueDateAsync(Guid id, DateTimeOffset dueDate)
     {
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
@@ -506,7 +506,7 @@ public class EntityFrameworkToDoService : IToDoService
         await context.SaveChangesAsync();
     }
 
-    public async Task UpdateCompleteStatusAsync(Guid id, bool isCompleted)
+    public async Task UpdateToDoItemCompleteStatusAsync(Guid id, bool isCompleted)
     {
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
@@ -730,7 +730,7 @@ public class EntityFrameworkToDoService : IToDoService
         }
     }
 
-    public async Task UpdateNameToDoItemAsync(Guid id, string name)
+    public async Task UpdateToDoItemNameAsync(Guid id, string name)
     {
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
@@ -738,7 +738,7 @@ public class EntityFrameworkToDoService : IToDoService
         await context.SaveChangesAsync();
     }
 
-    public async Task UpdateOrderIndexToDoItemAsync(UpdateOrderIndexToDoItemOptions options)
+    public async Task UpdateToDoItemOrderIndexAsync(UpdateOrderIndexToDoItemOptions options)
     {
         var item = await context.Set<ToDoItemEntity>().FindAsync(options.Id);
         item = item.ThrowIfNull();
@@ -760,7 +760,7 @@ public class EntityFrameworkToDoService : IToDoService
         await NormalizeOrderIndexAsync(item.ParentId);
     }
 
-    public async Task UpdateDescriptionToDoItemAsync(Guid id, string description)
+    public async Task UpdateToDoItemDescriptionAsync(Guid id, string description)
     {
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
@@ -836,7 +836,7 @@ public class EntityFrameworkToDoService : IToDoService
         await context.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<IToDoSubItem>> SearchAsync(string searchText)
+    public async Task<IEnumerable<IToDoSubItem>> SearchToDoSubItemsAsync(string searchText)
     {
         var items = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
@@ -884,7 +884,7 @@ public class EntityFrameworkToDoService : IToDoService
         return result;
     }
 
-    public async Task UpdateAnnuallyPeriodicityAsync(Guid id, AnnuallyPeriodicity periodicity)
+    public async Task UpdateToDoItemAnnuallyPeriodicityAsync(Guid id, AnnuallyPeriodicity periodicity)
     {
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
@@ -892,7 +892,7 @@ public class EntityFrameworkToDoService : IToDoService
         await context.SaveChangesAsync();
     }
 
-    public async Task UpdateMonthlyPeriodicityAsync(Guid id, MonthlyPeriodicity periodicity)
+    public async Task UpdateToDoItemMonthlyPeriodicityAsync(Guid id, MonthlyPeriodicity periodicity)
     {
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
@@ -900,7 +900,7 @@ public class EntityFrameworkToDoService : IToDoService
         await context.SaveChangesAsync();
     }
 
-    public async Task UpdateWeeklyPeriodicityAsync(Guid id, WeeklyPeriodicity periodicity)
+    public async Task UpdateToDoItemWeeklyPeriodicityAsync(Guid id, WeeklyPeriodicity periodicity)
     {
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
@@ -908,7 +908,7 @@ public class EntityFrameworkToDoService : IToDoService
         await context.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<IToDoSubItem>> GetLeafToDoItemsAsync(Guid id)
+    public async Task<IEnumerable<IToDoSubItem>> GetLeafToDoSubItemsAsync(Guid id)
     {
         var entities = await context.Set<ToDoItemEntity>()
             .AsNoTracking()

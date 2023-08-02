@@ -51,7 +51,7 @@ public class ToDoItemValueViewModel : ToDoItemViewModel
         await SafeExecuteAsync(
             async () =>
             {
-                await ToDoService.UpdateCompleteStatusAsync(Id, x);
+                await ToDoService.UpdateToDoItemCompleteStatusAsync(Id, x);
                 await RefreshToDoItemAsync();
             }
         );
@@ -114,7 +114,7 @@ public class ToDoItemValueViewModel : ToDoItemViewModel
                 await SafeExecuteAsync(
                     async () =>
                     {
-                        await ToDoService.UpdateCompleteStatusAsync(itemNotify.Id, x);
+                        await ToDoService.UpdateToDoItemCompleteStatusAsync(itemNotify.Id, x);
                         await RefreshToDoItemAsync();
                     }
                 );
