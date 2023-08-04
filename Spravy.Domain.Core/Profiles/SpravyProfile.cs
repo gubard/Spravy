@@ -28,6 +28,7 @@ public class SpravyProfile : Profile
         CreateMap<ToDoSubItemPlanned, ToDoSubItemPlannedGrpc>();
         CreateMap<ToDoSubItemPeriodicity, ToDoSubItemPeriodicityGrpc>();
         CreateMap<DailyPeriodicity, DailyPeriodicityGrpc>();
+        CreateMap<ToDoSelectorItem, ToDoSelectorItemGrpc>();
 
         CreateMap<DayOfYearGrpc, DayOfYear>().ConstructUsing(x => new DayOfYear((byte)x.Day, (byte)x.Month));
         CreateMap<DateTimeOffsetGrpc, DateTimeOffset?>().ConvertUsing(x => ToNullableDateTimeOffset(x));
@@ -38,6 +39,15 @@ public class SpravyProfile : Profile
 
         CreateMap<MonthlyPeriodicityGrpc, MonthlyPeriodicity>()
             .ConvertUsing((source, _, _) => new(source.Days.ToByteArray()));
+
+        CreateMap<ToDoSelectorItemGrpc, ToDoSelectorItem>()
+            .ConvertUsing(
+                (source, _, resolutionContext) => new ToDoSelectorItem(
+                    resolutionContext.Mapper.Map<Guid>(source.Id),
+                    source.Name,
+                    resolutionContext.Mapper.Map<ToDoSelectorItem[]>(source.Children)
+                )
+            );
 
         CreateMap<AnnuallyPeriodicityGrpc, AnnuallyPeriodicity>()
             .ConvertUsing(

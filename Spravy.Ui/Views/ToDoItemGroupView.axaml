@@ -66,6 +66,14 @@
                 <Button Command="{Binding ToLeafToDoItemsCommand}">
                     <avalonia:MaterialIcon Kind="Leaf" />
                 </Button>
+
+                <Button Command="{Binding ChangeRootItemCommand}">
+                    <avalonia:MaterialIcon Kind="SwapHorizontal" />
+                </Button>
+
+                <Button Command="{Binding ToDoItemToRootCommand}">
+                    <avalonia:MaterialIcon Kind="FamilyTree" />
+                </Button>
             </StackPanel>
         </StackPanel>
 

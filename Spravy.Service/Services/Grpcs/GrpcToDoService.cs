@@ -263,4 +263,36 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
 
         return reply;
     }
+
+    public override async Task<GetToDoSelectorItemsReply> GetToDoSelectorItems(
+        GetToDoSelectorItemsRequest request,
+        ServerCallContext context
+    )
+    {
+        var items = await toDoService.GetToDoSelectorItemsAsync();
+        var reply = new GetToDoSelectorItemsReply();
+        reply.Items.AddRange(mapper.Map<IEnumerable<ToDoSelectorItemGrpc>>(items));
+
+        return reply;
+    }
+
+    public override async Task<UpdateToDoItemParentReply> UpdateToDoItemParent(
+        UpdateToDoItemParentRequest request,
+        ServerCallContext context
+    )
+    {
+        await toDoService.UpdateToDoItemParentAsync(mapper.Map<Guid>(request.Id), mapper.Map<Guid>(request.ParentId));
+
+        return new UpdateToDoItemParentReply();
+    }
+
+    public override async Task<ToDoItemToRootReply> ToDoItemToRoot(
+        ToDoItemToRootRequest request,
+        ServerCallContext context
+    )
+    {
+        await toDoService.ToDoItemToRootAsync(mapper.Map<Guid>(request.Id));
+
+        return new ToDoItemToRootReply();
+    }
 }

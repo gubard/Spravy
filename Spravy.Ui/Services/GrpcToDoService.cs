@@ -11,6 +11,7 @@ using Spravy.Protos;
 using Spravy.Ui.Exceptions;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Models;
+using ToDoSelectorItem = Spravy.Domain.Models.ToDoSelectorItem;
 
 namespace Spravy.Ui.Services;
 
@@ -395,6 +396,57 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
             );
 
             return mapper.Map<IEnumerable<IToDoSubItem>>(reply.Items);
+        }
+        catch (Exception e)
+        {
+            throw new GrpcException(grpcChannel.Target, e);
+        }
+    }
+
+    public async Task<IEnumerable<ToDoSelectorItem>> GetToDoSelectorItemsAsync()
+    {
+        try
+        {
+            var reply = await client.GetToDoSelectorItemsAsync(
+                new GetToDoSelectorItemsRequest()
+            );
+
+            return mapper.Map<IEnumerable<ToDoSelectorItem>>(reply.Items);
+        }
+        catch (Exception e)
+        {
+            throw new GrpcException(grpcChannel.Target, e);
+        }
+    }
+
+    public async Task UpdateToDoItemParentAsync(Guid id, Guid parentId)
+    {
+        try
+        {
+            await client.UpdateToDoItemParentAsync(
+                new UpdateToDoItemParentRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                    ParentId = mapper.Map<ByteString>(parentId),
+                }
+            );
+        }
+        catch (Exception e)
+        {
+            throw new GrpcException(grpcChannel.Target, e);
+        }
+    }
+
+    public async Task ToDoItemToRootAsync(Guid id)
+    {
+        try
+        {
+            await client.ToDoItemToRootAsync(
+                new ToDoItemToRootRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                }
+            );
         }
         catch (Exception e)
         {

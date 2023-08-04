@@ -19,6 +19,7 @@ public class SpravyUiProfile : Profile
         CreateMap<ToDoItemGroupViewModel, ToDoSubItemGroupNotify>();
         CreateMap<ToDoItemPlannedViewModel, ToDoSubItemPlannedNotify>();
         CreateMap<ToDoItemPeriodicityViewModel, ToDoSubItemPeriodicityNotify>();
+        CreateMap<ToDoSelectorItem, ToDoSelectorItemNotify>();
 
         CreateMap<AddRootToDoItemViewModel, AddRootToDoItemOptions>()
             .ConstructUsing(x => new AddRootToDoItemOptions(x.Name));

@@ -1,10 +1,51 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using AutoMapper;
+using Avalonia.Collections;
+using ExtensionFramework.Core.DependencyInjection.Attributes;
 using ExtensionFramework.ReactiveUI.Models;
+using ReactiveUI;
+using Spravy.Domain.Interfaces;
+using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 
-public class ToDoItemSelectorViewModel : RoutableViewModelBase
+public class ToDoItemSelectorViewModel : ViewModelBase
 {
-    public ToDoItemSelectorViewModel() : base("to-do-item-selector")
+    private ToDoSelectorItemNotify? selectedItem;
+
+    public ToDoItemSelectorViewModel()
     {
+        InitializedCommand = CreateCommandFromTask(InitializedAsync);
+        SelectCommand = CreateCommand(Select);
+    }
+
+    [Inject]
+    public required IToDoService ToDoService { get; init; }
+
+    [Inject]
+    public required IMapper Mapper { get; init; }
+
+    public AvaloniaList<ToDoSelectorItemNotify> Roots { get; } = new();
+    public ICommand InitializedCommand { get; }
+    public ICommand SelectCommand { get; }
+
+    public ToDoSelectorItemNotify? SelectedItem
+    {
+        get => selectedItem;
+        set => this.RaiseAndSetIfChanged(ref selectedItem, value);
+    }
+
+    private async Task InitializedAsync()
+    {
+        var items = await ToDoService.GetToDoSelectorItemsAsync();
+        Roots.Clear();
+        Roots.AddRange(Mapper.Map<IEnumerable<ToDoSelectorItemNotify>>(items));
+    }
+
+    private void Select()
+    {
+        DialogViewer.CloseDialog();
     }
 }

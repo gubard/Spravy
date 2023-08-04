@@ -934,6 +934,67 @@ public class EntityFrameworkToDoService : IToDoService
         return result;
     }
 
+    public async Task<IEnumerable<ToDoSelectorItem>> GetToDoSelectorItemsAsync()
+    {
+        var items = await context.Set<ToDoItemEntity>()
+            .AsNoTracking()
+            .Where(x => x.ParentId == null)
+            .OrderBy(x => x.OrderIndex)
+            .ToArrayAsync();
+
+        var result = new ToDoSelectorItem[items.Length];
+
+        for (var i = 0; i < result.Length; i++)
+        {
+            var item = items[i];
+            var children = await GetToDoSelectorItemsAsync(item.Id);
+            result[i] = new ToDoSelectorItem(item.Id, item.Name, children);
+        }
+
+        return result;
+    }
+
+    public async Task UpdateToDoItemParentAsync(Guid id, Guid parentId)
+    {
+        if (id == parentId)
+        {
+            throw new Exception();
+        }
+
+        var entity = await context.Set<ToDoItemEntity>().FindAsync(id);
+        entity = entity.ThrowIfNull();
+        entity.ParentId = parentId;
+        await context.SaveChangesAsync();
+    }
+
+    public async Task ToDoItemToRootAsync(Guid id)
+    {
+        var entity = await context.Set<ToDoItemEntity>().FindAsync(id);
+        entity = entity.ThrowIfNull();
+        entity.ParentId = null;
+        await context.SaveChangesAsync();
+    }
+
+    private async Task<ToDoSelectorItem[]> GetToDoSelectorItemsAsync(Guid id)
+    {
+        var items = await context.Set<ToDoItemEntity>()
+            .AsNoTracking()
+            .Where(x => x.ParentId == id)
+            .OrderBy(x => x.OrderIndex)
+            .ToArrayAsync();
+
+        var result = new ToDoSelectorItem[items.Length];
+
+        for (var i = 0; i < result.Length; i++)
+        {
+            var item = items[i];
+            var children = await GetToDoSelectorItemsAsync(item.Id);
+            result[i] = new ToDoSelectorItem(item.Id, item.Name, children);
+        }
+
+        return result;
+    }
+
     private async IAsyncEnumerable<IToDoSubItem> GetLeafToDoItemsAsync(ToDoItemEntity itemEntity)
     {
         var entities = await context.Set<ToDoItemEntity>()

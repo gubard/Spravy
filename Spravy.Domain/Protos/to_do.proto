@@ -29,4 +29,7 @@ service ToDoService {
   rpc UpdateToDoItemMonthlyPeriodicity (UpdateToDoItemMonthlyPeriodicityRequest) returns (UpdateToDoItemMonthlyPeriodicityReply);
   rpc UpdateToDoItemWeeklyPeriodicity (UpdateToDoItemWeeklyPeriodicityRequest) returns (UpdateToDoItemWeeklyPeriodicityReply);
   rpc GetLeafToDoSubItems (GetLeafToDoSubItemsRequest) returns (GetLeafToDoSubItemsReply);
+  rpc GetToDoSelectorItems (GetToDoSelectorItemsRequest) returns (GetToDoSelectorItemsReply);
+  rpc UpdateToDoItemParent (UpdateToDoItemParentRequest) returns (UpdateToDoItemParentReply);
+  rpc ToDoItemToRoot (ToDoItemToRootRequest) returns (ToDoItemToRootReply);
 }

@@ -7,6 +7,34 @@ import "google/protobuf/duration.proto";
 
 package spravy;
 
+message ToDoItemToRootRequest {
+  bytes Id = 1;
+}
+
+message ToDoItemToRootReply {
+}
+
+message UpdateToDoItemParentRequest {
+  bytes Id = 1;
+  bytes ParentId = 2;
+}
+
+message UpdateToDoItemParentReply {
+}
+
+message GetToDoSelectorItemsRequest {
+}
+
+message GetToDoSelectorItemsReply {
+  repeated ToDoSelectorItemGrpc Items = 1;
+}
+
+message ToDoSelectorItemGrpc {
+  bytes Id = 1;
+  string Name = 2;
+  repeated ToDoSelectorItemGrpc Children = 3;
+}
+
 message GetLeafToDoSubItemsRequest {
   bytes Id = 1;
 }

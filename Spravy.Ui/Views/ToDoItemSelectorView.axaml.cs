@@ -4,9 +4,9 @@ using Spravy.Ui.ViewModels;
 
 namespace Spravy.Ui.Views;
 
-public partial class RootToDoItemSelectorView : ReactiveUserControl<RootToDoItemSelectorViewModel>
+public partial class ToDoItemSelectorView : ReactiveUserControl<ToDoItemSelectorViewModel>
 {
-    public RootToDoItemSelectorView()
+    public ToDoItemSelectorView()
     {
         InitializeComponent();
     }

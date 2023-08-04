@@ -51,6 +51,10 @@
     </Application.Styles>
 
     <Application.DataTemplates>
+        <TreeDataTemplate DataType="models:ToDoSelectorItemNotify" ItemsSource="{Binding Children}">
+            <TextBlock Text="{Binding Name}" />
+        </TreeDataTemplate>
+
         <DataTemplate DataType="models:ToDoItemParentNotify">
             <Button Margin="3"
                     Command="{Binding $parent[interfaces:IPathView].ChangeToDoItemByPathCommand}"

@@ -17,7 +17,7 @@
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 
-    <dialogHostAvalonia:DialogHost Grid.Row="1" Identifier="MainDialogHost">
+    <dialogHostAvalonia:DialogHost Identifier="MainDialogHost">
         <ContentControl Content="{Binding RoutedViewHost, Mode=TwoWay}" />
     </dialogHostAvalonia:DialogHost>
 </UserControl>
