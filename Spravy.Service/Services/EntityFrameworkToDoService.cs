@@ -469,6 +469,10 @@ public class EntityFrameworkToDoService : IToDoService
             : parent.DueDate;
 
         toDoItem.TypeOfPeriodicity = parent.TypeOfPeriodicity;
+        toDoItem.Type = parent.Type;
+        toDoItem.DaysOfMonth = parent.DaysOfMonth;
+        toDoItem.DaysOfWeek = parent.DaysOfWeek;
+        toDoItem.DaysOfYear = parent.DaysOfYear;
         await context.Set<ToDoItemEntity>().AddAsync(toDoItem);
         await context.SaveChangesAsync();
 
