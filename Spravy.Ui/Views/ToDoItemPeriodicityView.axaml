@@ -41,9 +41,7 @@
                           ItemsSource="{Binding TypeOfPeriodicities}" />
 
                 <ContentControl Content="{Binding Periodicity}" />
-
                 <TextBlock Text="DueDate" VerticalAlignment="Center" />
-
                 <TextBox Text="{Binding DueDate}" />
             </StackPanel>
 
