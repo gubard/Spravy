@@ -15,7 +15,7 @@ using Spravy.Ui.Views;
 
 namespace Spravy.Ui.ViewModels;
 
-public class ToDoSubItemsViewModel : ViewModelBase
+public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 {
     private IRefreshToDoItem? refreshToDoItem;
 
@@ -44,6 +44,11 @@ public class ToDoSubItemsViewModel : ViewModelBase
 
     [Inject]
     public required IToDoService ToDoService { get; set; }
+
+    public Task RefreshToDoItemAsync()
+    {
+        return refreshToDoItem.ThrowIfNull().RefreshToDoItemAsync();
+    }
 
     private async Task CompleteSubToDoItemAsync(ToDoSubItemNotify subItemValue)
     {
@@ -96,12 +101,13 @@ public class ToDoSubItemsViewModel : ViewModelBase
 
     public void UpdateItems(IEnumerable<ToDoSubItemNotify> items, IRefreshToDoItem refresh)
     {
+        var sortedItems = items.OrderBy(x => x.OrderIndex).ToArray();
         refreshToDoItem = refresh;
         Missed.Clear();
-        Missed.AddRange(items.Where(x => x.Status == ToDoItemStatus.Miss));
+        Missed.AddRange(sortedItems.Where(x => x.Status == ToDoItemStatus.Miss));
         ReadyForCompleted.Clear();
-        ReadyForCompleted.AddRange(items.Where(x => x.Status == ToDoItemStatus.ReadyForComplete));
+        ReadyForCompleted.AddRange(sortedItems.Where(x => x.Status == ToDoItemStatus.ReadyForComplete));
         Completed.Clear();
-        Completed.AddRange(items.Where(x => x.Status == ToDoItemStatus.Completed));
+        Completed.AddRange(sortedItems.Where(x => x.Status == ToDoItemStatus.Completed));
     }
 }
