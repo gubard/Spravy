@@ -83,10 +83,10 @@ public class EntityFrameworkToDoService : IToDoService
 
         if (entity.DueDate > DateTimeOffset.Now.ToCurrentDay())
         {
-            return (ToDoItemStatus.Complete, null);
+            return (ToDoItemStatus.Completed, null);
         }
 
-        (ToDoItemStatus Status, ActiveToDoItem? Active) result = (ToDoItemStatus.Waiting, null);
+        (ToDoItemStatus Status, ActiveToDoItem? Active) result = (ToDoItemStatus.ReadyForComplete, null);
 
         var children = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
@@ -107,25 +107,9 @@ public class EntityFrameworkToDoService : IToDoService
 
             switch (status.Status)
             {
-                case ToDoItemStatus.Waiting:
-                    if (Math.Min(currentOrder, child.OrderIndex) == child.OrderIndex)
-                    {
-                        currentOrder = child.OrderIndex;
-                        result = (result.Status, status.Active);
-                    }
-
-                    break;
-                case ToDoItemStatus.Today:
-                    if (Math.Min(currentOrder, child.OrderIndex) == child.OrderIndex)
-                    {
-                        currentOrder = child.OrderIndex;
-                        result = (result.Status, status.Active);
-                    }
-
-                    break;
                 case ToDoItemStatus.Miss:
                     return (ToDoItemStatus.Miss, mapper.Map<ActiveToDoItem>(child));
-                case ToDoItemStatus.Complete:
+                case ToDoItemStatus.Completed:
                     completeChildrenCount++;
                     break;
                 case ToDoItemStatus.ReadyForComplete:
@@ -148,7 +132,7 @@ public class EntityFrameworkToDoService : IToDoService
 
         if (entity.DueDate.ToCurrentDay() == DateTimeOffset.Now.ToCurrentDay())
         {
-            return (ToDoItemStatus.Today, result.Active);
+            return (ToDoItemStatus.ReadyForComplete, result.Active);
         }
 
         return result;
@@ -158,7 +142,7 @@ public class EntityFrameworkToDoService : IToDoService
     {
         if (entity.IsCompleted)
         {
-            return (ToDoItemStatus.Complete, null);
+            return (ToDoItemStatus.Completed, null);
         }
 
         if (entity.DueDate < DateTimeOffset.Now.ToCurrentDay())
@@ -168,10 +152,10 @@ public class EntityFrameworkToDoService : IToDoService
 
         if (entity.DueDate > DateTimeOffset.Now.ToCurrentDay())
         {
-            return (ToDoItemStatus.Complete, null);
+            return (ToDoItemStatus.Completed, null);
         }
 
-        (ToDoItemStatus Status, ActiveToDoItem? Active) result = (ToDoItemStatus.Waiting, null);
+        (ToDoItemStatus Status, ActiveToDoItem? Active) result = (ToDoItemStatus.ReadyForComplete, null);
 
         var children = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
@@ -192,25 +176,9 @@ public class EntityFrameworkToDoService : IToDoService
 
             switch (status.Status)
             {
-                case ToDoItemStatus.Waiting:
-                    if (Math.Min(currentOrder, child.OrderIndex) == child.OrderIndex)
-                    {
-                        currentOrder = child.OrderIndex;
-                        result = (result.Status, status.Active);
-                    }
-
-                    break;
-                case ToDoItemStatus.Today:
-                    if (Math.Min(currentOrder, child.OrderIndex) == child.OrderIndex)
-                    {
-                        currentOrder = child.OrderIndex;
-                        result = (result.Status, status.Active);
-                    }
-
-                    break;
                 case ToDoItemStatus.Miss:
                     return (ToDoItemStatus.Miss, mapper.Map<ActiveToDoItem>(child));
-                case ToDoItemStatus.Complete:
+                case ToDoItemStatus.Completed:
                     completeChildrenCount++;
                     break;
                 case ToDoItemStatus.ReadyForComplete:
@@ -233,7 +201,7 @@ public class EntityFrameworkToDoService : IToDoService
 
         if (entity.DueDate.ToCurrentDay() == DateTimeOffset.Now.ToCurrentDay())
         {
-            return (ToDoItemStatus.Today, null);
+            return (ToDoItemStatus.ReadyForComplete, null);
         }
 
         return result;
@@ -270,7 +238,7 @@ public class EntityFrameworkToDoService : IToDoService
     private async Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusGroupAsync(ToDoItemEntity entity)
     {
         var currentOrder = uint.MaxValue;
-        (ToDoItemStatus Status, ActiveToDoItem? Active) result = (ToDoItemStatus.Waiting, null);
+        (ToDoItemStatus Status, ActiveToDoItem? Active) result = (ToDoItemStatus.ReadyForComplete, null);
 
         var children = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
@@ -279,7 +247,7 @@ public class EntityFrameworkToDoService : IToDoService
 
         if (children.Length == 0)
         {
-            return (ToDoItemStatus.Complete, null);
+            return (ToDoItemStatus.Completed, null);
         }
 
         var completeChildrenCount = 0;
@@ -290,25 +258,9 @@ public class EntityFrameworkToDoService : IToDoService
 
             switch (status.Status)
             {
-                case ToDoItemStatus.Waiting:
-                    if (Math.Min(currentOrder, child.OrderIndex) == child.OrderIndex)
-                    {
-                        currentOrder = child.OrderIndex;
-                        result = (result.Status, status.Active);
-                    }
-
-                    break;
-                case ToDoItemStatus.Today:
-                    if (Math.Min(currentOrder, child.OrderIndex) == child.OrderIndex)
-                    {
-                        currentOrder = child.OrderIndex;
-                        result = (result.Status, status.Active);
-                    }
-
-                    break;
                 case ToDoItemStatus.Miss:
                     return (ToDoItemStatus.Miss, mapper.Map<ActiveToDoItem>(child));
-                case ToDoItemStatus.Complete:
+                case ToDoItemStatus.Completed:
                     completeChildrenCount++;
                     break;
                 case ToDoItemStatus.ReadyForComplete:
@@ -326,7 +278,7 @@ public class EntityFrameworkToDoService : IToDoService
 
         if (completeChildrenCount == children.Length)
         {
-            return (ToDoItemStatus.Complete, null);
+            return (ToDoItemStatus.Completed, null);
         }
 
         return result;
@@ -337,10 +289,10 @@ public class EntityFrameworkToDoService : IToDoService
     {
         if (entity.IsCompleted)
         {
-            return (ToDoItemStatus.Complete, null);
+            return (ToDoItemStatus.Completed, null);
         }
 
-        (ToDoItemStatus Status, ActiveToDoItem? Active) result = (ToDoItemStatus.Waiting, null);
+        (ToDoItemStatus Status, ActiveToDoItem? Active) result = (ToDoItemStatus.ReadyForComplete, null);
 
         var children = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
@@ -361,25 +313,9 @@ public class EntityFrameworkToDoService : IToDoService
 
             switch (status.Status)
             {
-                case ToDoItemStatus.Waiting:
-                    if (Math.Min(currentOrder, child.OrderIndex) == child.OrderIndex)
-                    {
-                        currentOrder = child.OrderIndex;
-                        result = (result.Status, status.Active);
-                    }
-
-                    break;
-                case ToDoItemStatus.Today:
-                    if (Math.Min(currentOrder, child.OrderIndex) == child.OrderIndex)
-                    {
-                        currentOrder = child.OrderIndex;
-                        result = (result.Status, status.Active);
-                    }
-
-                    break;
                 case ToDoItemStatus.Miss:
                     return (ToDoItemStatus.Miss, mapper.Map<ActiveToDoItem>(child));
-                case ToDoItemStatus.Complete:
+                case ToDoItemStatus.Completed:
                     completeChildrenCount++;
                     break;
                 case ToDoItemStatus.ReadyForComplete:

@@ -4,14 +4,16 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Avalonia.Collections;
+using ExtensionFramework.Core.Common.Extensions;
 using ReactiveUI;
 using Spravy.Domain.Enums;
 using Spravy.Domain.Models;
+using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 
-public class ToDoItemGroupViewModel : ToDoItemViewModel
+public class ToDoItemGroupViewModel : ToDoItemViewModel, IRefreshToDoItem
 {
     public ToDoItemGroupViewModel() : base("to-do-item-group")
     {
@@ -30,18 +32,10 @@ public class ToDoItemGroupViewModel : ToDoItemViewModel
                 Name = item.Name;
                 Description = item.Description;
                 Type = ToDoItemType.Group;
-                Items.Clear();
-                CompletedItems.Clear();
                 IsCurrent = item.IsCurrent;
                 var source = item.Items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
-                Items.AddRange(source.Where(x => x.Status != ToDoItemStatus.Complete).OrderBy(x => x.OrderIndex));
-
-                CompletedItems.AddRange(
-                    source.Where(x => x.Status == ToDoItemStatus.Complete).OrderBy(x => x.OrderIndex)
-                );
-
-                SubscribeItems(Items);
-                SubscribeItems(CompletedItems);
+                ToDoSubItemsView.ViewModel.ThrowIfNull().UpdateItems(source, this);
+                SubscribeItems(source);
                 Path.Items.Clear();
                 Path.Items.Add(new RootItem());
                 Path.Items.AddRange(item.Parents.Select(x => Mapper.Map<ToDoItemParentNotify>(x)));

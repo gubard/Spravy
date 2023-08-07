@@ -30,6 +30,7 @@
                 <DataTemplate DataType="models:ToDoItemParentNotify">
                     <TextBlock Text="{Binding Name}" />
                 </DataTemplate>
+
                 <DataTemplate DataType="models:RootItem">
                     <TextBlock Text="{x:Static models:RootItem.Name}" />
                 </DataTemplate>

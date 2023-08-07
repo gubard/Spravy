@@ -5,7 +5,6 @@ using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
 using ExtensionFramework.AvaloniaUi.Controls;
-using ExtensionFramework.AvaloniaUi.Interfaces;
 using ExtensionFramework.Core.Common.Extensions;
 using ExtensionFramework.Core.DependencyInjection.Attributes;
 using ExtensionFramework.ReactiveUI.Models;
@@ -20,7 +19,6 @@ using Spravy.Ui.Views;
 namespace Spravy.Ui.ViewModels;
 
 public abstract class ToDoItemViewModel : RoutableViewModelBase,
-    IItemsViewModel<ToDoSubItemNotify>,
     IToDoItemOrderChanger
 {
     private string name = string.Empty;
@@ -58,10 +56,8 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase,
         ToDoItemToRootCommand = CreateCommandFromTask(ToDoItemToRootAsync);
     }
 
-    public AvaloniaList<ToDoSubItemNotify> CompletedItems { get; } = new();
     public AvaloniaList<TypeOfPeriodicity> TypeOfPeriodicities { get; }
     public AvaloniaList<ToDoItemType> ToDoItemTypes { get; }
-    public AvaloniaList<ToDoSubItemNotify> Items { get; } = new();
     public ICommand CompleteSubToDoItemCommand { get; }
     public ICommand DeleteSubToDoItemCommand { get; }
     public ICommand ChangeToDoItemCommand { get; }
@@ -78,6 +74,9 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase,
     public ICommand ToLeafToDoItemsCommand { get; }
     public ICommand ChangeRootItemCommand { get; }
     public ICommand ToDoItemToRootCommand { get; }
+    
+    [Inject]
+    public required ToDoSubItemsView ToDoSubItemsView { get; init; }
 
     [Inject]
     public required IToDoService ToDoService { get; set; }

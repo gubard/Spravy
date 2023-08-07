@@ -17,13 +17,9 @@ public class ToDoItemStatusToBrushValueConverter : IValueConverter
 
         switch (status)
         {
-            case ToDoItemStatus.Waiting:
-                return new SolidColorBrush(Colors.Yellow);
-            case ToDoItemStatus.Today:
-                return new SolidColorBrush(Colors.CadetBlue);
             case ToDoItemStatus.Miss:
                 return new SolidColorBrush(Colors.DarkRed);
-            case ToDoItemStatus.Complete:
+            case ToDoItemStatus.Completed:
                 return new SolidColorBrush(Colors.DarkGreen);
             case ToDoItemStatus.ReadyForComplete:
                 return new SolidColorBrush(Colors.GreenYellow);
@@ -39,24 +35,14 @@ public class ToDoItemStatusToBrushValueConverter : IValueConverter
             return ToDoItemStatus.Miss;
         }
 
-        if (brush.Color == Colors.CadetBlue)
-        {
-            return ToDoItemStatus.Today;
-        }
-
         if (brush.Color == Colors.DarkRed)
         {
             return ToDoItemStatus.Miss;
         }
 
-        if (brush.Color == Colors.Yellow)
-        {
-            return ToDoItemStatus.Waiting;
-        }
-
         if (brush.Color == Colors.DarkGreen)
         {
-            return ToDoItemStatus.Complete;
+            return ToDoItemStatus.Completed;
         }
 
         if (brush.Color == Colors.GreenYellow)

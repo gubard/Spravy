@@ -9,12 +9,13 @@ using ExtensionFramework.Core.Common.Extensions;
 using ReactiveUI;
 using Spravy.Domain.Enums;
 using Spravy.Domain.Models;
+using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 using Spravy.Ui.Views;
 
 namespace Spravy.Ui.ViewModels;
 
-public class ToDoItemPlannedViewModel : ToDoItemViewModel
+public class ToDoItemPlannedViewModel : ToDoItemViewModel, IRefreshToDoItem
 {
     private bool isCompleted;
     private DateTimeOffset dueDate;
@@ -98,17 +99,9 @@ public class ToDoItemPlannedViewModel : ToDoItemViewModel
                 IsCompleted = toDoItemPlanned.IsCompleted;
                 Description = toDoItemPlanned.Description;
                 DueDate = toDoItemPlanned.DueDate;
-                Items.Clear();
-                CompletedItems.Clear();
                 var source = toDoItemPlanned.Items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
-                Items.AddRange(source.Where(x => x.Status != ToDoItemStatus.Complete).OrderBy(x => x.OrderIndex));
-
-                CompletedItems.AddRange(
-                    source.Where(x => x.Status == ToDoItemStatus.Complete).OrderBy(x => x.OrderIndex)
-                );
-
-                SubscribeItems(Items);
-                SubscribeItems(CompletedItems);
+                ToDoSubItemsView.ViewModel.ThrowIfNull().UpdateItems(source, this);
+                SubscribeItems(source);
                 Path.Items.Clear();
                 Path.Items.Add(new RootItem());
                 Path.Items.AddRange(item.Parents.Select(x => Mapper.Map<ToDoItemParentNotify>(x)));

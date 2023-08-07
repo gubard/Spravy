@@ -24,6 +24,6 @@
             <avalonia:MaterialIcon Kind="ArrowLeft" />
         </Button>
 
-        <ItemsControl Grid.Row="1" ItemsSource="{Binding Items}" />
+        <ContentControl Grid.Row="1" Content="{Binding ToDoSubItemsView}" />
     </Grid>
 </reactiveUi:ReactiveUserControl>

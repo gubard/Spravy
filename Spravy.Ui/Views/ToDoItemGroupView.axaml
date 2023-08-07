@@ -1,15 +1,15 @@
-<models:ReactiveUserControl x:TypeArguments="viewModels:ToDoItemGroupViewModel"
-                            xmlns="https://github.com/avaloniaui"
-                            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                            xmlns:models="clr-namespace:ExtensionFramework.AvaloniaUi.ReactiveUI.Models;assembly=ExtensionFramework.AvaloniaUi.ReactiveUI"
-                            xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-                            xmlns:controls="clr-namespace:ExtensionFramework.AvaloniaUi.Controls;assembly=ExtensionFramework.AvaloniaUi"
-                            xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-                            mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                            x:Class="Spravy.Ui.Views.ToDoItemGroupView"
-                            x:DataType="viewModels:ToDoItemGroupViewModel">
+<models:MainReactiveUserControl x:TypeArguments="viewModels:ToDoItemGroupViewModel"
+                                xmlns="https://github.com/avaloniaui"
+                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                                xmlns:models="clr-namespace:ExtensionFramework.AvaloniaUi.ReactiveUI.Models;assembly=ExtensionFramework.AvaloniaUi.ReactiveUI"
+                                xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
+                                xmlns:controls="clr-namespace:ExtensionFramework.AvaloniaUi.Controls;assembly=ExtensionFramework.AvaloniaUi"
+                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                                x:Class="Spravy.Ui.Views.ToDoItemGroupView"
+                                x:DataType="viewModels:ToDoItemGroupViewModel">
     <Design.DataContext>
         <viewModels:ToDoItemGroupViewModel />
     </Design.DataContext>
@@ -75,28 +75,15 @@
                     <avalonia:MaterialIcon Kind="FamilyTree" />
                 </Button>
             </StackPanel>
+
+            <controls:EditableTextBlock AcceptsReturn="True"
+                                        AcceptsTab="True"
+                                        TextWrapping="Wrap"
+                                        Text="{Binding Description, Mode=TwoWay}"
+                                        Watermark="Description"
+                                        Margin="5" />
         </StackPanel>
 
-        <ScrollViewer Grid.Row="1"
-                      VerticalScrollBarVisibility="Auto"
-                      HorizontalScrollBarVisibility="Disabled">
-            <StackPanel>
-                <controls:EditableTextBlock AcceptsReturn="True"
-                                            AcceptsTab="True"
-                                            TextWrapping="Wrap"
-                                            Text="{Binding Description, Mode=TwoWay}"
-                                            Watermark="Description"
-                                            Margin="5" />
-                <ListBox Classes="ItemsDragAndDrop"
-                         ItemsSource="{Binding Items}"
-                         SelectionMode="Single" />
-
-                <Border Height="5" Background="{StaticResource SystemControlForegroundChromeGrayBrush}" />
-
-                <ListBox Classes="ItemsDragAndDrop"
-                         ItemsSource="{Binding CompletedItems}"
-                         SelectionMode="Single" />
-            </StackPanel>
-        </ScrollViewer>
+        <ContentControl Grid.Row="1" Content="{Binding ToDoSubItemsView}" />
     </Grid>
-</models:ReactiveUserControl>
+</models:MainReactiveUserControl>

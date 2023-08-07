@@ -1,15 +1,12 @@
-using System.Windows.Input;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
-using ExtensionFramework.Core.Common.Extensions;
-using Spravy.Ui.Interfaces;
 using Spravy.Ui.ViewModels;
 
 namespace Spravy.Ui.Views;
 
-public partial class SearchView : ReactiveUserControl<SearchViewModel>, IToDoItemView, ICompleteSubToDoItemCommand
+public partial class SearchView : ReactiveUserControl<SearchViewModel>
 {
     public const string SearchTextTextBoxName = "SearchTextTextBox";
 
@@ -28,9 +25,4 @@ public partial class SearchView : ReactiveUserControl<SearchViewModel>, IToDoIte
         base.OnLoaded(e);
         this.FindControl<TextBox>(SearchTextTextBoxName)?.Focus();
     }
-
-    public ICommand CompleteSubToDoItemCommand => ViewModel.ThrowIfNull().CompleteSubToDoItemCommand;
-    public ICommand DeleteSubToDoItemCommand => ViewModel.ThrowIfNull().DeleteSubToDoItemCommand;
-    public ICommand ChangeToDoItemCommand => ViewModel.ThrowIfNull().ChangeToDoItemCommand;
-    public ICommand ChangeToActiveDoItemCommand => ViewModel.ThrowIfNull().ChangeToActiveDoItemCommand;
 }

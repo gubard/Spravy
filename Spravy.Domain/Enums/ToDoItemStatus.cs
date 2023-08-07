@@ -8,16 +8,6 @@ public enum ToDoItemStatus
     Miss,
 
     /// <summary>
-    /// Due date today.
-    /// </summary>
-    Today,
-
-    /// <summary>
-    /// Don't have due date.
-    /// </summary>
-    Waiting,
-
-    /// <summary>
     /// All sub to do items is complete.
     /// </summary>
     ReadyForComplete,
@@ -25,5 +15,5 @@ public enum ToDoItemStatus
     /// <summary>
     /// To do item is complete.
     /// </summary>
-    Complete,
+    Completed,
 }

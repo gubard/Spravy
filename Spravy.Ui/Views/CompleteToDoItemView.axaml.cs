@@ -4,7 +4,7 @@ using Spravy.Ui.ViewModels;
 
 namespace Spravy.Ui.Views;
 
-public partial class CompleteToDoItemView : ReactiveUserControl<CompleteToDoItemViewModel>
+public partial class CompleteToDoItemView : MainReactiveUserControl<CompleteToDoItemViewModel>
 {
     public CompleteToDoItemView()
     {

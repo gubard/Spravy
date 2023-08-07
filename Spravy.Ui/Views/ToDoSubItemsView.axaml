@@ -1,0 +1,22 @@
+<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:ToDoSubItemsViewModel"
+                                xmlns="https://github.com/avaloniaui"
+                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                                xmlns:reactiveUi="http://reactiveui.net"
+                                xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
+                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                                x:Class="Spravy.Ui.Views.ToDoSubItemsView"
+                                x:DataType="viewModels:ToDoSubItemsViewModel">
+    <Design.DataContext>
+        <viewModels:ToDoSubItemsViewModel />
+    </Design.DataContext>
+
+    <ScrollViewer>
+        <WrapPanel Orientation="Horizontal">
+            <ItemsControl Margin="5" ItemsSource="{Binding Missed}" />
+            <ItemsControl Margin="5" ItemsSource="{Binding ReadyForCompleted}" />
+            <ItemsControl Margin="5" ItemsSource="{Binding Completed}" />
+        </WrapPanel>
+    </ScrollViewer>
+</reactiveUi:ReactiveUserControl>

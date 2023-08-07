@@ -7,11 +7,7 @@ using Spravy.Ui.ViewModels;
 
 namespace Spravy.Ui.Views;
 
-public partial class ToDoItemPlannedView : ReactiveUserControl<ToDoItemPlannedViewModel>,
-    IToDoItemView,
-    ICompleteSubToDoItemCommand,
-    IPathView,
-    IChangeCurrentStatusToDoItemCommand
+public partial class ToDoItemPlannedView : MainReactiveUserControl<ToDoItemPlannedViewModel>, IPathView
 {
     public ToDoItemPlannedView()
     {
@@ -23,12 +19,6 @@ public partial class ToDoItemPlannedView : ReactiveUserControl<ToDoItemPlannedVi
         AvaloniaXamlLoader.Load(this);
     }
 
-    public ICommand CompleteSubToDoItemCommand => ViewModel.ThrowIfNull().CompleteSubToDoItemCommand;
-    public ICommand DeleteSubToDoItemCommand => ViewModel.ThrowIfNull().DeleteSubToDoItemCommand;
-    public ICommand ChangeToDoItemCommand => ViewModel.ThrowIfNull().ChangeToDoItemCommand;
     public ICommand ToRootItemCommand => ViewModel.ThrowIfNull().ToRootItemCommand;
     public ICommand ChangeToDoItemByPathCommand => ViewModel.ThrowIfNull().ChangeToDoItemByPathCommand;
-    public ICommand AddSubToDoItemToCurrentCommand => ViewModel.ThrowIfNull().AddSubToDoItemToCurrentCommand;
-    public ICommand RemoveSubToDoItemFromCurrentCommand => ViewModel.ThrowIfNull().RemoveSubToDoItemFromCurrentCommand;
-    public ICommand ChangeToActiveDoItemCommand => ViewModel.ThrowIfNull().ChangeToActiveDoItemCommand;
 }

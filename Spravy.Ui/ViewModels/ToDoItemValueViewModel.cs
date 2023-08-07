@@ -9,12 +9,13 @@ using ExtensionFramework.Core.Common.Extensions;
 using ReactiveUI;
 using Spravy.Domain.Enums;
 using Spravy.Domain.Models;
+using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 using Spravy.Ui.Views;
 
 namespace Spravy.Ui.ViewModels;
 
-public class ToDoItemValueViewModel : ToDoItemViewModel
+public class ToDoItemValueViewModel : ToDoItemViewModel, IRefreshToDoItem
 {
     private bool isCompleted;
 
@@ -83,17 +84,9 @@ public class ToDoItemValueViewModel : ToDoItemViewModel
                 Type = ToDoItemType.Value;
                 IsCompleted = toDoItemValue.IsCompleted;
                 Description = toDoItemValue.Description;
-                Items.Clear();
-                CompletedItems.Clear();
                 var source = toDoItemValue.Items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
-                Items.AddRange(source.Where(x => x.Status != ToDoItemStatus.Complete).OrderBy(x => x.OrderIndex));
-
-                CompletedItems.AddRange(
-                    source.Where(x => x.Status == ToDoItemStatus.Complete).OrderBy(x => x.OrderIndex)
-                );
-
-                SubscribeItems(Items);
-                SubscribeItems(CompletedItems);
+                ToDoSubItemsView.ViewModel.ThrowIfNull().UpdateItems(source, this);
+                SubscribeItems(source);
                 Path.Items.Clear();
                 Path.Items.Add(new RootItem());
                 Path.Items.AddRange(item.Parents.Select(x => Mapper.Map<ToDoItemParentNotify>(x)));
