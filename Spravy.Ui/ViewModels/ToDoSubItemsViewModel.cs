@@ -23,8 +23,7 @@ public class ToDoSubItemsViewModel : ViewModelBase
     {
         CompleteSubToDoItemCommand =
             CreateCommandFromTaskWithDialogProgressIndicator<ToDoSubItemNotify>(CompleteSubToDoItemAsync);
-        DeleteSubToDoItemCommand =
-            CreateCommandFromTaskWithDialogProgressIndicator<ToDoSubItemNotify>(DeleteSubToDoItemAsync);
+        DeleteSubToDoItemCommand = CreateCommandFromTask<ToDoSubItemNotify>(DeleteSubToDoItemAsync);
         ChangeToDoItemCommand = CreateCommandFromTask<ToDoSubItemNotify>(ChangeToDoItemAsync);
         AddSubToDoItemToCurrentCommand =
             CreateCommandFromTaskWithDialogProgressIndicator<ToDoSubItemNotify>(AddCurrentToDoItemAsync);
@@ -66,9 +65,16 @@ public class ToDoSubItemsViewModel : ViewModelBase
         await refreshToDoItem.ThrowIfNull().RefreshToDoItemAsync();
     }
 
-    private async Task DeleteSubToDoItemAsync(ToDoSubItemNotify subItemValue)
+    private async Task DeleteSubToDoItemAsync(ToDoSubItemNotify subItem)
     {
-        await ToDoService.DeleteToDoItemAsync(subItemValue.Id);
+        await DialogViewer.ShowDialogAsync<DeleteToDoItemView>(
+            view =>
+            {
+                view.ViewModel.ThrowIfNull().IsDialog = true;
+                view.ViewModel.ThrowIfNull().Item = subItem;
+            }
+        );
+
         await refreshToDoItem.ThrowIfNull().RefreshToDoItemAsync();
     }
 
