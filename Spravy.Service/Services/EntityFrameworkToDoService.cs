@@ -373,11 +373,17 @@ public class EntityFrameworkToDoService : IToDoService
     public async Task<Guid> AddRootToDoItemAsync(AddRootToDoItemOptions options)
     {
         var id = Guid.NewGuid();
-        var items = await context.Set<ToDoItemEntity>().AsNoTracking().Where(x => x.ParentId == null).ToArrayAsync();
+
+        var items = await context.Set<ToDoItemEntity>()
+            .AsNoTracking()
+            .Where(x => x.ParentId == null)
+            .Select(x => x.OrderIndex)
+            .ToArrayAsync();
+
         var newEntity = mapper.Map<ToDoItemEntity>(options);
         newEntity.Description = string.Empty;
         newEntity.Id = id;
-        newEntity.OrderIndex = items.Length == 0 ? 0 : items.Max(x => x.OrderIndex) + 1;
+        newEntity.OrderIndex = items.Length == 0 ? 0 : items.Max() + 1;
         await context.Set<ToDoItemEntity>().AddAsync(newEntity);
         await context.SaveChangesAsync();
 
@@ -393,19 +399,19 @@ public class EntityFrameworkToDoService : IToDoService
         var items = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.ParentId == options.ParentId)
+            .Select(x => x.OrderIndex)
             .ToArrayAsync();
 
         var toDoItem = mapper.Map<ToDoItemEntity>(options);
         toDoItem.Description = string.Empty;
         toDoItem.Id = id;
-        toDoItem.OrderIndex = items.Length == 0 ? 0 : items.Max(x => x.OrderIndex) + 1;
+        toDoItem.OrderIndex = items.Length == 0 ? 0 : items.Max() + 1;
 
         toDoItem.DueDate = parent.DueDate < DateTimeOffset.Now.ToCurrentDay()
             ? DateTimeOffset.Now.ToCurrentDay()
             : parent.DueDate;
 
         toDoItem.TypeOfPeriodicity = parent.TypeOfPeriodicity;
-        toDoItem.Type = parent.Type;
         toDoItem.DaysOfMonth = parent.DaysOfMonth;
         toDoItem.DaysOfWeek = parent.DaysOfWeek;
         toDoItem.DaysOfYear = parent.DaysOfYear;
@@ -902,16 +908,32 @@ public class EntityFrameworkToDoService : IToDoService
         }
 
         var entity = await context.Set<ToDoItemEntity>().FindAsync(id);
+
+        var items = await context.Set<ToDoItemEntity>()
+            .AsNoTracking()
+            .Where(x => x.ParentId == parentId)
+            .Select(x => x.OrderIndex)
+            .ToArrayAsync();
+
         entity = entity.ThrowIfNull();
         entity.ParentId = parentId;
+        entity.OrderIndex = items.Length == 0 ? 0 : items.Max() + 1;
         await context.SaveChangesAsync();
     }
 
     public async Task ToDoItemToRootAsync(Guid id)
     {
         var entity = await context.Set<ToDoItemEntity>().FindAsync(id);
+
+        var items = await context.Set<ToDoItemEntity>()
+            .AsNoTracking()
+            .Where(x => x.ParentId == null)
+            .Select(x => x.OrderIndex)
+            .ToArrayAsync();
+
         entity = entity.ThrowIfNull();
         entity.ParentId = null;
+        entity.OrderIndex = items.Length == 0 ? 0 : items.Max() + 1;
         await context.SaveChangesAsync();
     }
 
