@@ -28,6 +28,7 @@ public class EntityFrameworkToDoService : IToDoService
         var items = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.ParentId == null)
+            .OrderBy(x => x.OrderIndex)
             .ToArrayAsync();
 
         var result = await ConvertAsync(items);
@@ -66,15 +67,17 @@ public class EntityFrameworkToDoService : IToDoService
     {
         switch (entity.Type)
         {
-            case ToDoItemType.Value: return GetStatusValueAsync(entity);
-            case ToDoItemType.Group: return GetStatusGroupAsync(entity);
-            case ToDoItemType.Planned: return GetStatusPlannedAsync(entity);
-            case ToDoItemType.Periodicity: return GetStatusPeriodicityAsync(entity);
+            case ToDoItemType.Value: return GetStatusAndActiveValueAsync(entity);
+            case ToDoItemType.Group: return GetStatusAndActiveGroupAsync(entity);
+            case ToDoItemType.Planned: return GetStatusAndActivePlannedAsync(entity);
+            case ToDoItemType.Periodicity: return GetStatusAndActivePeriodicityAsync(entity);
             default: throw new ArgumentOutOfRangeException();
         }
     }
 
-    private async Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusPeriodicityAsync(ToDoItemEntity entity)
+    private async Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusAndActivePeriodicityAsync(
+        ToDoItemEntity entity
+    )
     {
         if (entity.DueDate < DateTimeOffset.Now.ToCurrentDay())
         {
@@ -138,7 +141,9 @@ public class EntityFrameworkToDoService : IToDoService
         return result;
     }
 
-    private async Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusPlannedAsync(ToDoItemEntity entity)
+    private async Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusAndActivePlannedAsync(
+        ToDoItemEntity entity
+    )
     {
         if (entity.IsCompleted)
         {
@@ -235,7 +240,9 @@ public class EntityFrameworkToDoService : IToDoService
         return (result.Status, new ActiveToDoItem(item.ParentId.Value, result.Active.Value.Name));
     }
 
-    private async Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusGroupAsync(ToDoItemEntity entity)
+    private async Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusAndActiveGroupAsync(
+        ToDoItemEntity entity
+    )
     {
         var currentOrder = uint.MaxValue;
         (ToDoItemStatus Status, ActiveToDoItem? Active) result = (ToDoItemStatus.ReadyForComplete, null);
@@ -285,7 +292,9 @@ public class EntityFrameworkToDoService : IToDoService
     }
 
 
-    private async Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusValueAsync(ToDoItemEntity entity)
+    private async Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusAndActiveValueAsync(
+        ToDoItemEntity entity
+    )
     {
         if (entity.IsCompleted)
         {
@@ -347,6 +356,7 @@ public class EntityFrameworkToDoService : IToDoService
         var subItems = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.ParentId == item.Id)
+            .OrderBy(x => x.OrderIndex)
             .ToArrayAsync();
 
         var parents = new List<ToDoItemParent>
@@ -483,6 +493,7 @@ public class EntityFrameworkToDoService : IToDoService
 
             item.CompletedCount++;
             UpdateDueDate(item);
+            item.LastCompleted = DateTimeOffset.Now;
         }
         else
         {
@@ -745,6 +756,7 @@ public class EntityFrameworkToDoService : IToDoService
 
         item.SkippedCount++;
         UpdateDueDate(item);
+        item.LastCompleted = DateTimeOffset.Now;
         await context.SaveChangesAsync();
     }
 
@@ -779,6 +791,7 @@ public class EntityFrameworkToDoService : IToDoService
 
         item.FailedCount++;
         UpdateDueDate(item);
+        item.LastCompleted = DateTimeOffset.Now;
         await context.SaveChangesAsync();
     }
 
@@ -787,6 +800,7 @@ public class EntityFrameworkToDoService : IToDoService
         var items = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.Name.Contains(searchText))
+            .OrderBy(x => x.OrderIndex)
             .ToArrayAsync();
 
         var result = await ConvertAsync(items);
@@ -823,6 +837,7 @@ public class EntityFrameworkToDoService : IToDoService
         var items = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.IsCurrent)
+            .OrderBy(x => x.OrderIndex)
             .ToArrayAsync();
 
         var result = await ConvertAsync(items);

@@ -1,33 +1,34 @@
-using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
-using Avalonia.Collections;
 using ExtensionFramework.Core.Common.Extensions;
 using ExtensionFramework.Core.DependencyInjection.Attributes;
 using ExtensionFramework.ReactiveUI.Models;
 using ReactiveUI;
 using Spravy.Domain.Interfaces;
 using Spravy.Ui.Extensions;
+using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 using Spravy.Ui.Views;
 
 namespace Spravy.Ui.ViewModels;
 
-public class SearchViewModel : RoutableViewModelBase
+public class SearchViewModel : RoutableViewModelBase, IRefreshToDoItem
 {
     private string searchText = string.Empty;
 
     public SearchViewModel() : base("search")
     {
         SearchCommand = CreateCommandFromTaskWithDialogProgressIndicator(RefreshToDoItemAsync);
-        CompleteSubToDoItemCommand = CreateCommandFromTaskWithDialogProgressIndicator<ToDoSubItemNotify>(CompleteSubToDoItemAsync);
+        CompleteSubToDoItemCommand =
+            CreateCommandFromTaskWithDialogProgressIndicator<ToDoSubItemNotify>(CompleteSubToDoItemAsync);
         ChangeToActiveDoItemCommand = CreateCommandFromTask<ActiveToDoItemNotify>(ChangeToActiveDoItem);
-        DeleteSubToDoItemCommand = CreateCommandFromTaskWithDialogProgressIndicator<ToDoSubItemNotify>(DeleteSubToDoItemAsync);
+        DeleteSubToDoItemCommand =
+            CreateCommandFromTaskWithDialogProgressIndicator<ToDoSubItemNotify>(DeleteSubToDoItemAsync);
         ChangeToDoItemCommand = CreateCommandFromTask<ToDoSubItemNotify>(ChangeToDoItem);
     }
 
-    public AvaloniaList<ToDoSubItemNotify> SearchResult { get; } = new();
     public ICommand SearchCommand { get; }
     public ICommand DeleteSubToDoItemCommand { get; }
     public ICommand ChangeToDoItemCommand { get; }
@@ -41,18 +42,20 @@ public class SearchViewModel : RoutableViewModelBase
     }
 
     [Inject]
+    public required ToDoSubItemsView ToDoSubItemsView { get; init; }
+
+    [Inject]
     public required IToDoService ToDoService { get; init; }
 
     [Inject]
     public required IMapper Mapper { get; init; }
-    
-    private async Task RefreshToDoItemAsync()
+
+    public async Task RefreshToDoItemAsync()
     {
         var items = await ToDoService.SearchToDoSubItemsAsync(SearchText);
-        SearchResult.Clear();
-        SearchResult.AddRange(items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)));
+        ToDoSubItemsView.ViewModel.ThrowIfNull().UpdateItems(Mapper.Map<IEnumerable<ToDoSubItemNotify>>(items), this);
     }
-    
+
     private Task ChangeToActiveDoItem(ActiveToDoItemNotify item)
     {
         return ToDoService.NavigateToToDoItemViewModel(item.Id, Navigator);

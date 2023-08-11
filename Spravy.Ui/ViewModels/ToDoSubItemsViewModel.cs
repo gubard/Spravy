@@ -101,13 +101,13 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 
     public void UpdateItems(IEnumerable<ToDoSubItemNotify> items, IRefreshToDoItem refresh)
     {
-        var sortedItems = items.OrderBy(x => x.OrderIndex).ToArray();
+        var itemsArray = items.ToArray();
         refreshToDoItem = refresh;
         Missed.Clear();
-        Missed.AddRange(sortedItems.Where(x => x.Status == ToDoItemStatus.Miss));
+        Missed.AddRange(itemsArray.Where(x => x.Status == ToDoItemStatus.Miss));
         ReadyForCompleted.Clear();
-        ReadyForCompleted.AddRange(sortedItems.Where(x => x.Status == ToDoItemStatus.ReadyForComplete));
+        ReadyForCompleted.AddRange(itemsArray.Where(x => x.Status == ToDoItemStatus.ReadyForComplete));
         Completed.Clear();
-        Completed.AddRange(sortedItems.Where(x => x.Status == ToDoItemStatus.Completed));
+        Completed.AddRange(itemsArray.Where(x => x.Status == ToDoItemStatus.Completed));
     }
 }
