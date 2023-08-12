@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Collections;
 using ExtensionFramework.Core.Common.Extensions;
+using Material.Icons;
 using ReactiveUI;
 using Spravy.Domain.Enums;
 using Spravy.Domain.Models;
@@ -23,6 +24,7 @@ public class ToDoItemValueViewModel : ToDoItemViewModel, IRefreshToDoItem
     {
         CompleteToDoItemCommand = CreateCommandFromTaskWithDialogProgressIndicator(CompleteToDoItemAsync);
         SubscribeProperties();
+        Commands.Add(new(MaterialIconKind.Check, CompleteToDoItemCommand));
     }
 
     public ICommand CompleteToDoItemCommand { get; }

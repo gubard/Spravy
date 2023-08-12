@@ -16,7 +16,7 @@
         <FluentTheme DensityStyle="Compact" />
         <dialogHostAvalonia:DialogHostStyles />
         <StyleInclude Source="avares://ExtensionFramework.AvaloniaUi/Styles/Theme.axaml" />
-        <themes:MaterialTheme BaseTheme="Dark" PrimaryColor="Blue" SecondaryColor="Yellow" />
+        <themes:MaterialTheme BaseTheme="Dark" PrimaryColor="Teal" SecondaryColor="DeepOrange" />
         <avalonia:MaterialIconStyles />
         <StyleInclude Source="avares://ExtensionFramework.AvaloniaUi.Material/Styles/Theme.axaml" />
 
@@ -51,6 +51,12 @@
     </Application.Styles>
 
     <Application.DataTemplates>
+        <DataTemplate x:DataType="models:ToDoItemCommand">
+            <Button Command="{Binding Command}">
+                <avalonia:MaterialIcon Kind="{Binding Icon}" />
+            </Button>
+        </DataTemplate>
+
         <TreeDataTemplate DataType="models:ToDoSelectorItemNotify" ItemsSource="{Binding Children}">
             <TextBlock Text="{Binding Name}" />
         </TreeDataTemplate>

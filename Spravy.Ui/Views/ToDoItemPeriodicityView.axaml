@@ -14,8 +14,16 @@
         <viewModels:ToDoItemPeriodicityViewModel />
     </Design.DataContext>
 
-    <Grid RowDefinitions="Auto,*">
-        <StackPanel>
+    <Interaction.Behaviors>
+        <EventTriggerBehavior EventName="Initialized">
+            <InvokeCommandAction Command="{Binding InitializedCommand}" />
+        </EventTriggerBehavior>
+    </Interaction.Behaviors>
+
+    <Grid RowDefinitions="Auto,Auto,*">
+        <ContentControl Content="{Binding ToDoItemHeaderView}"/>
+
+        <StackPanel Grid.Row="1">
             <ContentControl Content="{Binding Path}"
                             Margin="5" />
 
@@ -29,17 +37,7 @@
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Name"
-                               VerticalAlignment="Center" />
-
-                    <controls:EditableTextBlock Text="{Binding Name, Mode=TwoWay}"
-                                                VerticalAlignment="Center"
-                                                Watermark="Name"
-                                                Margin="5" />
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Name"
+                    <TextBlock Text="TypeOfPeriodicity"
                                VerticalAlignment="Center" />
 
                     <ComboBox SelectedItem="{Binding TypeOfPeriodicity}"
@@ -50,7 +48,7 @@
 
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="DueDate" VerticalAlignment="Center" />
-                    <TextBox Text="{Binding DueDate}" />
+                    <DatePicker SelectedDate="{Binding DueDate}" />
                 </StackPanel>
             </StackPanel>
 
@@ -102,6 +100,6 @@
                                         Margin="5" />
         </StackPanel>
 
-        <ContentControl Grid.Row="1" Content="{Binding ToDoSubItemsView}" />
+        <ContentControl Grid.Row="2" Content="{Binding ToDoSubItemsView}" />
     </Grid>
 </models:MainReactiveUserControl>

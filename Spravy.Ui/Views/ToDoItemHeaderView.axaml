@@ -1,0 +1,33 @@
+<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:ToDoItemHeaderViewModel"
+                                xmlns="https://github.com/avaloniaui"
+                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                                xmlns:reactiveUi="http://reactiveui.net"
+                                xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
+                                xmlns:controls="clr-namespace:ExtensionFramework.AvaloniaUi.Controls;assembly=ExtensionFramework.AvaloniaUi"
+                                xmlns:controls1="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
+                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                                x:Class="Spravy.Ui.Views.ToDoItemHeaderView"
+                                x:DataType="viewModels:ToDoItemHeaderViewModel">
+    <Design.DataContext>
+        <viewModels:ToDoItemHeaderViewModel />
+    </Design.DataContext>
+
+    <controls1:ColorZone Mode="PrimaryMid">
+        <Grid ColumnDefinitions="Auto, *">
+            <controls:EditableTextBlock Text="{Binding Item.Name, Mode=TwoWay}" />
+
+            <ItemsControl Grid.Column="1"
+                          HorizontalAlignment="Right"
+                          VerticalAlignment="Center"
+                          ItemsSource="{Binding Commands}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </Grid>
+    </controls1:ColorZone>
+</reactiveUi:ReactiveUserControl>

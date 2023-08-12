@@ -8,6 +8,7 @@ using ExtensionFramework.AvaloniaUi.Controls;
 using ExtensionFramework.Core.Common.Extensions;
 using ExtensionFramework.Core.DependencyInjection.Attributes;
 using ExtensionFramework.ReactiveUI.Models;
+using Material.Icons;
 using ReactiveUI;
 using Spravy.Domain.Enums;
 using Spravy.Domain.Interfaces;
@@ -28,9 +29,13 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase,
     protected readonly List<IDisposable> PropertySubscribes = new();
     private ToDoItemType type;
     private bool isCurrent;
+    protected readonly List<ToDoItemCommand> Commands = new();
+    private readonly ToDoItemCommand toCurrentCommand;
 
     public ToDoItemViewModel(string? urlPathSegment) : base(urlPathSegment)
     {
+        toCurrentCommand = new(MaterialIconKind.Star, RemoveToDoItemFromCurrentCommand);
+
         AddSubToDoItemToCurrentCommand =
             CreateCommandFromTaskWithDialogProgressIndicator<ToDoSubItemNotify>(AddCurrentToDoItemAsync);
         RemoveSubToDoItemFromCurrentCommand =
@@ -54,6 +59,32 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase,
         ToLeafToDoItemsCommand = CreateCommand(ToLeafToDoItems);
         ChangeRootItemCommand = CreateCommandFromTask(ChangeRootItemAsync);
         ToDoItemToRootCommand = CreateCommandFromTask(ToDoItemToRootAsync);
+        InitializedCommand = CreateCommand(Initialized);
+
+        this.WhenAnyValue(x => x.IsCurrent)
+            .Subscribe(
+                x =>
+                {
+                    if (x)
+                    {
+                        toCurrentCommand.Command = RemoveToDoItemFromCurrentCommand;
+                        toCurrentCommand.Icon = MaterialIconKind.Star;
+                    }
+                    else
+                    {
+                        toCurrentCommand.Command = AddToDoItemToCurrentCommand;
+                        toCurrentCommand.Icon = MaterialIconKind.StarOutline;
+                    }
+                }
+            );
+
+        Commands.Add(toCurrentCommand);
+        Commands.Add(new(MaterialIconKind.Plus, AddToDoItemCommand));
+        Commands.Add(new(MaterialIconKind.Search, SearchCommand));
+        Commands.Add(new(MaterialIconKind.Creation, ToCurrentItemsCommand));
+        Commands.Add(new(MaterialIconKind.Leaf, ToLeafToDoItemsCommand));
+        Commands.Add(new(MaterialIconKind.SwapHorizontal, ChangeRootItemCommand));
+        Commands.Add(new(MaterialIconKind.FamilyTree, ToDoItemToRootCommand));
     }
 
     public AvaloniaList<TypeOfPeriodicity> TypeOfPeriodicities { get; }
@@ -74,7 +105,11 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase,
     public ICommand ToLeafToDoItemsCommand { get; }
     public ICommand ChangeRootItemCommand { get; }
     public ICommand ToDoItemToRootCommand { get; }
-    
+    public ICommand InitializedCommand { get; }
+
+    [Inject]
+    public required ToDoItemHeaderView ToDoItemHeaderView { get; init; }
+
     [Inject]
     public required ToDoSubItemsView ToDoSubItemsView { get; init; }
 
@@ -118,6 +153,13 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase,
     }
 
     public abstract Task RefreshToDoItemAsync();
+
+    private void Initialized()
+    {
+        var viewModel = ToDoItemHeaderView.ViewModel.ThrowIfNull();
+        viewModel.Item = this;
+        viewModel.Commands.AddRange(Commands);
+    }
 
     private async Task ChangeRootItemAsync()
     {

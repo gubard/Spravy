@@ -11,6 +11,7 @@ using ExtensionFramework.Core.Common.Extensions;
 using ExtensionFramework.Core.DependencyInjection.Attributes;
 using ExtensionFramework.Core.DependencyInjection.Interfaces;
 using ExtensionFramework.Core.DependencyInjection.Extensions;
+using Material.Icons;
 using ReactiveUI;
 using Spravy.Domain.Enums;
 using Spravy.Domain.Interfaces;
@@ -32,6 +33,7 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
     {
         CompleteToDoItemCommand = CreateCommandFromTaskWithDialogProgressIndicator(CompleteToDoItemAsync);
         SubscribeProperties();
+        Commands.Add(new(MaterialIconKind.Check, CompleteToDoItemCommand));
     }
 
     [Inject]

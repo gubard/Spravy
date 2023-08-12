@@ -14,8 +14,16 @@
         <viewModels:ToDoItemValueViewModel />
     </Design.DataContext>
 
-    <Grid RowDefinitions="Auto,*">
-        <StackPanel>
+    <Interaction.Behaviors>
+        <EventTriggerBehavior EventName="Initialized">
+            <InvokeCommandAction Command="{Binding InitializedCommand}" />
+        </EventTriggerBehavior>
+    </Interaction.Behaviors>
+
+    <Grid RowDefinitions="Auto,Auto,*">
+        <ContentControl Content="{Binding ToDoItemHeaderView}"/>
+        
+        <StackPanel Grid.Row="1">
             <ContentControl Content="{Binding Path}"
                             Margin="5" />
 
@@ -31,58 +39,7 @@
                           Grid.Column="1"
                           SelectedItem="{Binding Type}"
                           ItemsSource="{Binding ToDoItemTypes}" />
-
-                <TextBlock Grid.Row="1"
-                           Text="Name"
-                           VerticalAlignment="Center" />
-
-                <controls:EditableTextBlock Grid.Row="1"
-                                            Grid.Column="1"
-                                            Text="{Binding Name, Mode=TwoWay}"
-                                            VerticalAlignment="Center"
-                                            Watermark="Name"
-                                            Margin="5" />
             </Grid>
-
-            <StackPanel Orientation="Horizontal">
-                <Button Command="{Binding CompleteToDoItemCommand}">
-                    <avalonia:MaterialIcon Kind="Check" />
-                </Button>
-
-                <Button Command="{Binding RemoveToDoItemFromCurrentCommand}"
-                        IsVisible="{Binding IsCurrent}">
-                    <avalonia:MaterialIcon Kind="Star" />
-                </Button>
-
-                <Button Command="{Binding AddToDoItemToCurrentCommand}"
-                        IsVisible="{Binding IsCurrent, Converter={StaticResource ReverseBooleanValueConverter}}">
-                    <avalonia:MaterialIcon Kind="StarOutline" />
-                </Button>
-
-                <Button Command="{Binding AddToDoItemCommand}">
-                    <avalonia:MaterialIcon Kind="Plus" />
-                </Button>
-
-                <Button Command="{Binding SearchCommand}">
-                    <avalonia:MaterialIcon Kind="Search" />
-                </Button>
-
-                <Button Command="{Binding ToCurrentItemsCommand}">
-                    <avalonia:MaterialIcon Kind="Creation" />
-                </Button>
-
-                <Button Command="{Binding ToLeafToDoItemsCommand}">
-                    <avalonia:MaterialIcon Kind="Leaf" />
-                </Button>
-
-                <Button Command="{Binding ChangeRootItemCommand}">
-                    <avalonia:MaterialIcon Kind="SwapHorizontal" />
-                </Button>
-
-                <Button Command="{Binding ToDoItemToRootCommand}">
-                    <avalonia:MaterialIcon Kind="FamilyTree" />
-                </Button>
-            </StackPanel>
 
             <controls:EditableTextBlock AcceptsReturn="True"
                                         AcceptsTab="True"
@@ -92,6 +49,6 @@
                                         Margin="5" />
         </StackPanel>
 
-        <ContentControl Grid.Row="1" Content="{Binding ToDoSubItemsView}" />
+        <ContentControl Grid.Row="2" Content="{Binding ToDoSubItemsView}" />
     </Grid>
 </reactiveUi:MainReactiveUserControl>
