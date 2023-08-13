@@ -12,6 +12,7 @@ using Material.Icons;
 using ReactiveUI;
 using Spravy.Domain.Enums;
 using Spravy.Domain.Interfaces;
+using Spravy.Domain.Models;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
@@ -161,12 +162,16 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase,
         viewModel.Commands.AddRange(Commands);
     }
 
-    private async Task ChangeRootItemAsync()
+    private Task ChangeRootItemAsync()
     {
-        var view = await DialogViewer.ShowDialogAsync<ToDoItemSelectorView>() as ToDoItemSelectorView;
-        view = view.ThrowIfNull();
-        await ToDoService.UpdateToDoItemParentAsync(Id, view.ViewModel.SelectedItem.Id);
-        await RefreshToDoItemAsync();
+        return DialogViewer.ShowConfirmDialogAsync<ToDoItemSelectorView>(
+            async _ => DialogViewer.CloseDialog(),
+            async view =>
+            {
+                await ToDoService.UpdateToDoItemParentAsync(Id, view.ViewModel.SelectedItem.Id);
+                await RefreshToDoItemAsync();
+            }
+        );
     }
 
     private void ToLeafToDoItems()
@@ -260,15 +265,20 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase,
         await RefreshToDoItemAsync();
     }
 
-    private async Task AddToDoItemAsync()
+    private Task AddToDoItemAsync()
     {
-        await DialogViewer.ShowDialogAsync<AddToDoItemView>(
-            view =>
+        return DialogViewer.ShowConfirmDialogAsync<AddToDoItemView>(
+            async _ => DialogViewer.CloseDialog(),
+            async view =>
             {
                 var viewModel = view.ViewModel.ThrowIfNull();
-                viewModel.IsDialog = true;
-                viewModel.ThrowIfNull().Parent = Mapper.Map<ToDoSubItemNotify>(this);
-            }
+                var parentValue = viewModel.Parent.ThrowIfNull();
+                var options = new AddToDoItemOptions(parentValue.Id, Name);
+                await ToDoService.AddToDoItemAsync(options);
+                await ToDoService.NavigateToToDoItemViewModel(parentValue.Id, Navigator);
+                DialogViewer.CloseDialog();
+            },
+            view => view.ViewModel.ThrowIfNull().Parent = Mapper.Map<ToDoSubItemNotify>(this)
         );
     }
 

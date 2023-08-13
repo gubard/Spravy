@@ -14,17 +14,13 @@
         <viewModels:AddToDoItemViewModel />
     </Design.DataContext>
 
-    <UserControl.KeyBindings>
-        <KeyBinding Gesture="Enter" Command="{Binding AddToDoItemCommand}" />
-    </UserControl.KeyBindings>
-
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
             <InvokeCommandAction Command="{Binding InitializedCommand}" />
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 
-    <Grid RowDefinitions="Auto, *,Auto">
+    <Grid RowDefinitions="Auto,*">
         <ContentControl Content="{Binding Path}">
             <ContentControl.DataTemplates>
                 <DataTemplate DataType="models:ToDoItemParentNotify">
@@ -43,15 +39,5 @@
                  Name="{x:Static views:AddToDoItemView.NameTextBoxName}"
                  UseFloatingWatermark="True"
                  VerticalAlignment="Top" />
-
-        <Grid Grid.Row="2" ColumnDefinitions="*,*">
-            <Button Command="{Binding BackCommand}">
-                <avalonia:MaterialIcon Kind="ArrowBack" />
-            </Button>
-
-            <Button Grid.Column="1" Command="{Binding AddToDoItemCommand}">
-                <avalonia:MaterialIcon Kind="Plus" />
-            </Button>
-        </Grid>
     </Grid>
 </reactiveUi:ReactiveUserControl>

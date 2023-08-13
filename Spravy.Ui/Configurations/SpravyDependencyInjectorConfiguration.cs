@@ -12,6 +12,7 @@ using ExtensionFramework.Core.Common.Interfaces;
 using ExtensionFramework.Core.Common.Services;
 using ExtensionFramework.Core.DependencyInjection.Interfaces;
 using ExtensionFramework.Core.DependencyInjection.Extensions;
+using ExtensionFramework.Core.Ui.Interfaces;
 using ExtensionFramework.Core.Ui.Models;
 using ExtensionFramework.ReactiveUI.Interfaces;
 using Material.Styles.Controls;
@@ -49,6 +50,13 @@ public readonly struct SpravyDependencyInjectorConfiguration : IDependencyInject
         register.RegisterTransient<DayOfYearSelector>();
         register.RegisterTransient<DayOfWeekSelector>();
         register.RegisterTransient<DayOfMonthSelector>();
+        
+        register.RegisterScope<IDialogViewer>(
+            (IResolver resolver) => new DialogViewer(DialogViewer.DefaultDialogIdentifier)
+            {
+                Resolver = resolver
+            }
+        );
 
         register.RegisterTransient<IDialogProgressIndicator>(
             () => new Card

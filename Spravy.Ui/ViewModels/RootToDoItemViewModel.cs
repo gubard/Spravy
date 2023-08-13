@@ -10,6 +10,7 @@ using ExtensionFramework.Core.DependencyInjection.Attributes;
 using ExtensionFramework.ReactiveUI.Models;
 using ReactiveUI;
 using Spravy.Domain.Interfaces;
+using Spravy.Domain.Models;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 using Spravy.Ui.Views;
@@ -65,7 +66,16 @@ public class RootToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChange
 
     private Task AddToDoItemAsync()
     {
-        return DialogViewer.ShowDialogAsync<AddRootToDoItemView>(v => v.ViewModel.ThrowIfNull().IsDialog = true);
+        return DialogViewer.ShowConfirmDialogAsync<AddRootToDoItemView>(
+            async view => DialogViewer.CloseDialog(),
+            async view =>
+            {
+                var options = Mapper.Map<AddRootToDoItemOptions>(view.ViewModel);
+                await ToDoService.AddRootToDoItemAsync(options);
+                DialogViewer.CloseDialog();
+                await RefreshToDoItemAsync();
+            }
+        );
     }
 
     private void SubscribeItems(IEnumerable<ToDoSubItemNotify> items)

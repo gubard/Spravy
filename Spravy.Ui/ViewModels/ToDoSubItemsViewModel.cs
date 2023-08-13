@@ -70,17 +70,18 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
         await refreshToDoItem.ThrowIfNull().RefreshToDoItemAsync();
     }
 
-    private async Task DeleteSubToDoItemAsync(ToDoSubItemNotify subItem)
+    private Task DeleteSubToDoItemAsync(ToDoSubItemNotify subItem)
     {
-        await DialogViewer.ShowDialogAsync<DeleteToDoItemView>(
-            view =>
+        return DialogViewer.ShowConfirmDialogAsync<DeleteToDoItemView>(
+            async _ => DialogViewer.CloseDialog(),
+            async view =>
             {
-                view.ViewModel.ThrowIfNull().IsDialog = true;
-                view.ViewModel.ThrowIfNull().Item = subItem;
-            }
+                await ToDoService.DeleteToDoItemAsync(view.ViewModel.ThrowIfNull().Item.ThrowIfNull().Id);
+                DialogViewer.CloseDialog();
+                await refreshToDoItem.ThrowIfNull().RefreshToDoItemAsync();
+            },
+            view => view.ViewModel.ThrowIfNull().Item = subItem
         );
-
-        await refreshToDoItem.ThrowIfNull().RefreshToDoItemAsync();
     }
 
     private Task ChangeToDoItemAsync(ToDoSubItemNotify subItemValue)

@@ -6,7 +6,6 @@
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                 xmlns:views="clr-namespace:Spravy.Ui.Views"
-                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.AddRootToDoItemView"
                                 x:DataType="viewModels:AddRootToDoItemViewModel">
@@ -14,24 +13,8 @@
         <viewModels:AddRootToDoItemViewModel />
     </Design.DataContext>
 
-    <UserControl.KeyBindings>
-        <KeyBinding Gesture="Enter" Command="{Binding AddRootToDoItemCommand}" />
-    </UserControl.KeyBindings>
-
-    <Grid RowDefinitions="*,Auto">
-        <TextBox Text="{Binding Name}"
-                 Watermark="Name"
-                 Name="{x:Static views:AddRootToDoItemView.NameTextBoxName}"
-                 VerticalAlignment="Top" />
-
-        <Grid Grid.Row="1" ColumnDefinitions="*,*">
-            <Button Command="{Binding BackCommand}">
-                <avalonia:MaterialIcon Kind="ArrowBack" />
-            </Button>
-
-            <Button Grid.Column="1" Command="{Binding AddRootToDoItemCommand}">
-                <avalonia:MaterialIcon Kind="Plus" />
-            </Button>
-        </Grid>
-    </Grid>
+    <TextBox Text="{Binding Name}"
+             Watermark="Name"
+             Name="{x:Static views:AddRootToDoItemView.NameTextBoxName}"
+             VerticalAlignment="Top" />
 </reactiveUi:ReactiveUserControl>

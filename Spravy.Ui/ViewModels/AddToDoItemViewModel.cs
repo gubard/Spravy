@@ -23,11 +23,9 @@ public class AddToDoItemViewModel : RoutableViewModelBase
     public AddToDoItemViewModel() : base("add-to-do-item")
     {
         InitializedCommand = CreateCommandFromTaskWithDialogProgressIndicator(InitializedAsync);
-        AddToDoItemCommand = CreateCommandFromTaskWithDialogProgressIndicator(AddToDoItemAsync);
     }
 
     public ICommand InitializedCommand { get; }
-    public ICommand AddToDoItemCommand { get; }
 
     [Inject]
     public required IMapper Mapper { get; init; }
@@ -48,15 +46,6 @@ public class AddToDoItemViewModel : RoutableViewModelBase
     {
         get => name;
         set => this.RaiseAndSetIfChanged(ref name, value);
-    }
-
-    private async Task AddToDoItemAsync()
-    {
-        var parentValue = Parent.ThrowIfNull();
-        var options = new AddToDoItemOptions(parentValue.Id, Name);
-        await ToDoService.AddToDoItemAsync(options);
-        await ToDoService.NavigateToToDoItemViewModel(parentValue.Id, Navigator);
-        DialogViewer.CloseDialog();
     }
 
     private async Task InitializedAsync()
