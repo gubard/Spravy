@@ -273,7 +273,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase,
             {
                 var viewModel = view.ViewModel.ThrowIfNull();
                 var parentValue = viewModel.Parent.ThrowIfNull();
-                var options = new AddToDoItemOptions(parentValue.Id, Name);
+                var options = new AddToDoItemOptions(parentValue.Id, viewModel.Name);
                 await ToDoService.AddToDoItemAsync(options);
                 await ToDoService.NavigateToToDoItemViewModel(parentValue.Id, Navigator);
                 DialogViewer.CloseDialog();
