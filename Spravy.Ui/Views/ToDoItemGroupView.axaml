@@ -25,7 +25,8 @@
 
         <StackPanel Grid.Row="1">
             <ContentControl Content="{Binding Path}"
-                            Margin="5" />
+                            Margin="5"
+                            HorizontalAlignment="Center" />
 
             <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto">
                 <TextBlock Text="Type"

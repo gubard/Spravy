@@ -21,11 +21,12 @@
     </Interaction.Behaviors>
 
     <Grid RowDefinitions="Auto, Auto,*">
-        <ContentControl Content="{Binding ToDoItemHeaderView}"/>
-        
+        <ContentControl Content="{Binding ToDoItemHeaderView}" />
+
         <StackPanel Grid.Row="1">
             <ContentControl Content="{Binding Path}"
-                            Margin="5" />
+                            Margin="5"
+                            HorizontalAlignment="Center" />
 
             <CheckBox Margin="5"
                       IsChecked="{Binding IsCompleted}" Content="Completed"
