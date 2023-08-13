@@ -39,7 +39,8 @@ public class SpravyDbProfile : Profile
                         source.SkippedCount,
                         source.FailedCount,
                         source.IsCurrent,
-                        (ActiveToDoItem?)resolutionContext.Items[ActiveName]
+                        (ActiveToDoItem?)resolutionContext.Items[ActiveName],
+                        source.LastCompleted
                     ),
                     ToDoItemType.Group => new ToDoSubItemGroup(
                         source.Id,
@@ -48,7 +49,8 @@ public class SpravyDbProfile : Profile
                         (ToDoItemStatus)resolutionContext.Items[StatusName],
                         source.Description,
                         source.IsCurrent,
-                        (ActiveToDoItem?)resolutionContext.Items[ActiveName]
+                        (ActiveToDoItem?)resolutionContext.Items[ActiveName],
+                        source.LastCompleted
                     ),
                     ToDoItemType.Planned => new ToDoSubItemPlanned(
                         source.Id,
@@ -62,7 +64,8 @@ public class SpravyDbProfile : Profile
                         source.CompletedCount,
                         source.SkippedCount,
                         source.FailedCount,
-                        source.IsCompleted
+                        source.IsCompleted,
+                        source.LastCompleted
                     ),
                     ToDoItemType.Periodicity => new ToDoSubItemPeriodicity(
                         source.Id,
@@ -75,7 +78,8 @@ public class SpravyDbProfile : Profile
                         (ActiveToDoItem?)resolutionContext.Items[ActiveName],
                         source.CompletedCount,
                         source.SkippedCount,
-                        source.FailedCount
+                        source.FailedCount,
+                        source.LastCompleted
                     ),
                     _ => throw new ArgumentOutOfRangeException()
                 }

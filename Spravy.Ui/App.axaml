@@ -119,6 +119,8 @@
                                         <avalonia:MaterialIcon Grid.Row="1" Kind="Alert" Foreground="Yellow" />
                                     </Grid>
 
+                                    <TextBlock Text="{Binding LastCompleted, StringFormat=\{0:yyyy\\.MM\\.dd hh\\:mm\\:ss\}}" />
+
                                     <Grid RowDefinitions="Auto,*"
                                           IsVisible="{Binding FailedCount, Converter={StaticResource UInt32ToIsVisibleConverter}}">
                                         <TextBlock Text="{Binding FailedCount}"
@@ -211,6 +213,8 @@
                                     <avalonia:MaterialIcon Kind="Send" />
                                 </Button>
                             </WrapPanel>
+                            
+                            <TextBlock Text="{Binding LastCompleted, StringFormat=\{0:yyyy\\.MM\\.dd hh\\:mm\\:ss\}}" />
                         </WrapPanel>
 
                         <Grid Grid.Column="1" ColumnDefinitions="*,*" RowDefinitions="*,*">
@@ -271,8 +275,7 @@
                             <TextBlock Text="{Binding DueDate, StringFormat=\{0:yyyy.MM.dd\}}" />
 
                             <Grid RowDefinitions="Auto,Auto,Auto">
-                                <WrapPanel Grid.Row="1"
-                                           Orientation="Horizontal">
+                                <WrapPanel Orientation="Horizontal">
                                     <Grid RowDefinitions="Auto,*"
                                           IsVisible="{Binding CompletedCount, Converter={StaticResource UInt32ToIsVisibleConverter}}">
                                         <TextBlock Text="{Binding CompletedCount}"
@@ -300,8 +303,10 @@
                                         <avalonia:MaterialIcon Grid.Row="1" Kind="Cancel" Foreground="Red" />
                                     </Grid>
                                 </WrapPanel>
+                                
+                                <TextBlock Grid.Row="1" Text="{Binding LastCompleted, StringFormat=\{0:yyyy\\.MM\\.dd hh\\:mm\\:ss\}}" />
 
-                                <WrapPanel Grid.Row="1"
+                                <WrapPanel Grid.Row="2"
                                            Orientation="Horizontal"
                                            IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}">
                                     <TextBlock Text="{Binding Active.Name}"
@@ -402,6 +407,8 @@
 
                                         <avalonia:MaterialIcon Grid.Row="1" Kind="Cancel" Foreground="Red" />
                                     </Grid>
+                                    
+                                    <TextBlock Text="{Binding LastCompleted, StringFormat=\{0:yyyy\\.MM\\.dd hh\\:mm\\:ss\}}" />
                                 </WrapPanel>
 
                                 <WrapPanel Grid.Row="1"

@@ -6,7 +6,6 @@
                                 xmlns:models="clr-namespace:ExtensionFramework.AvaloniaUi.ReactiveUI.Models;assembly=ExtensionFramework.AvaloniaUi.ReactiveUI"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                 xmlns:controls="clr-namespace:ExtensionFramework.AvaloniaUi.Controls;assembly=ExtensionFramework.AvaloniaUi"
-                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.ToDoItemPeriodicityView"
                                 x:DataType="viewModels:ToDoItemPeriodicityViewModel">
@@ -48,48 +47,8 @@
 
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="DueDate" VerticalAlignment="Center" />
-                    <DatePicker SelectedDate="{Binding DueDate}" />
+                    <TextBox Text="{Binding DueDate}" />
                 </StackPanel>
-            </StackPanel>
-
-            <StackPanel Orientation="Horizontal">
-                <Button Command="{Binding CompleteToDoItemCommand}">
-                    <avalonia:MaterialIcon Kind="Check" />
-                </Button>
-
-                <Button Command="{Binding RemoveToDoItemFromCurrentCommand}"
-                        IsVisible="{Binding IsCurrent}">
-                    <avalonia:MaterialIcon Kind="Star" />
-                </Button>
-
-                <Button Command="{Binding AddToDoItemToCurrentCommand}"
-                        IsVisible="{Binding IsCurrent, Converter={StaticResource ReverseBooleanValueConverter}}">
-                    <avalonia:MaterialIcon Kind="StarOutline" />
-                </Button>
-
-                <Button Command="{Binding AddToDoItemCommand}">
-                    <avalonia:MaterialIcon Kind="Plus" />
-                </Button>
-
-                <Button Command="{Binding SearchCommand}">
-                    <avalonia:MaterialIcon Kind="Search" />
-                </Button>
-
-                <Button Command="{Binding ToCurrentItemsCommand}">
-                    <avalonia:MaterialIcon Kind="Creation" />
-                </Button>
-
-                <Button Command="{Binding ToLeafToDoItemsCommand}">
-                    <avalonia:MaterialIcon Kind="Leaf" />
-                </Button>
-
-                <Button Command="{Binding ChangeRootItemCommand}">
-                    <avalonia:MaterialIcon Kind="SwapHorizontal" />
-                </Button>
-
-                <Button Command="{Binding ToDoItemToRootCommand}">
-                    <avalonia:MaterialIcon Kind="FamilyTree" />
-                </Button>
             </StackPanel>
 
             <controls:EditableTextBlock AcceptsReturn="True"

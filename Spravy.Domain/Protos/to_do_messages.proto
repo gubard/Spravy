@@ -258,6 +258,7 @@ message ToDoSubItemGrpc {
   string Description = 5;
   bool IsCurrent = 8;
   ActiveToDoItemGrpc Active = 9;
+  DateTimeOffsetGrpc LastCompleted = 12; 
 
   oneof Parameters {
     ToDoSubItemValueGrpc Value = 6;

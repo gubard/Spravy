@@ -30,6 +30,9 @@ public class SpravyProfile : Profile
         CreateMap<DailyPeriodicity, DailyPeriodicityGrpc>();
         CreateMap<ToDoSelectorItem, ToDoSelectorItemGrpc>();
 
+        CreateMap<TimeSpan, Duration>().ConvertUsing(x => TimeSpanToDuration(x));
+        CreateMap<TimeSpan?, Duration?>().ConvertUsing(x => TimeSpanToDuration(x));
+        CreateMap<Duration?, TimeSpan?>().ConvertUsing(x => DurationToTimeSpan(x));
         CreateMap<DayOfYearGrpc, DayOfYear>().ConstructUsing(x => new DayOfYear((byte)x.Day, (byte)x.Month));
         CreateMap<DateTimeOffsetGrpc, DateTimeOffset?>().ConvertUsing(x => ToNullableDateTimeOffset(x));
         CreateMap<DateTimeOffsetGrpc, DateTimeOffset>().ConvertUsing(x => ToDateTimeOffset(x));
@@ -316,6 +319,7 @@ public class SpravyProfile : Profile
                         OrderIndex = source.OrderIndex,
                         IsCurrent = source.IsCurrent,
                         Active = resolutionContext.Mapper.Map<ActiveToDoItemGrpc>(source.Active),
+                        LastCompleted = resolutionContext.Mapper.Map<DateTimeOffsetGrpc>(source.LastCompleted),
                     };
 
                     switch (source)
@@ -359,7 +363,8 @@ public class SpravyProfile : Profile
                         source.Value.SkippedCount,
                         source.Value.FailedCount,
                         source.IsCurrent,
-                        resolutionContext.Mapper.Map<ActiveToDoItem?>(source.Active)
+                        resolutionContext.Mapper.Map<ActiveToDoItem?>(source.Active),
+                        resolutionContext.Mapper.Map<DateTimeOffset?>(source.LastCompleted)
                     ),
                     ToDoSubItemGrpc.ParametersOneofCase.Group => new ToDoSubItemGroup(
                         resolutionContext.Mapper.Map<Guid>(source.Id),
@@ -368,7 +373,8 @@ public class SpravyProfile : Profile
                         (ToDoItemStatus)source.Status,
                         source.Description,
                         source.IsCurrent,
-                        resolutionContext.Mapper.Map<ActiveToDoItem?>(source.Active)
+                        resolutionContext.Mapper.Map<ActiveToDoItem?>(source.Active),
+                        resolutionContext.Mapper.Map<DateTimeOffset?>(source.LastCompleted)
                     ),
                     ToDoSubItemGrpc.ParametersOneofCase.None => throw new ArgumentOutOfRangeException(),
                     ToDoSubItemGrpc.ParametersOneofCase.Planned => new ToDoSubItemPlanned(
@@ -383,7 +389,8 @@ public class SpravyProfile : Profile
                         source.Planned.CompletedCount,
                         source.Planned.SkippedCount,
                         source.Planned.FailedCount,
-                        source.Planned.IsCompleted
+                        source.Planned.IsCompleted,
+                        resolutionContext.Mapper.Map<DateTimeOffset?>(source.LastCompleted)
                     ),
                     ToDoSubItemGrpc.ParametersOneofCase.Periodicity => new ToDoSubItemPeriodicity(
                         resolutionContext.Mapper.Map<Guid>(source.Id),
@@ -396,7 +403,8 @@ public class SpravyProfile : Profile
                         resolutionContext.Mapper.Map<ActiveToDoItem?>(source.Active),
                         source.Periodicity.CompletedCount,
                         source.Periodicity.SkippedCount,
-                        source.Periodicity.FailedCount
+                        source.Periodicity.FailedCount,
+                        resolutionContext.Mapper.Map<DateTimeOffset?>(source.LastCompleted)
                     ),
                     _ => throw new ArgumentOutOfRangeException()
                 }
@@ -459,6 +467,21 @@ public class SpravyProfile : Profile
     private Duration? OffsetToDuration(DateTimeOffset? date)
     {
         return date?.Offset.ToDuration();
+    }
+
+    private Duration? TimeSpanToDuration(TimeSpan? span)
+    {
+        return span is null ? null : Duration.FromTimeSpan(span.Value);
+    }
+
+    private Duration TimeSpanToDuration(TimeSpan span)
+    {
+        return Duration.FromTimeSpan(span);
+    }
+
+    private TimeSpan? DurationToTimeSpan(Duration? duration)
+    {
+        return duration?.ToTimeSpan();
     }
 
     private Timestamp? ToTimestamp(DateTimeOffset? date)

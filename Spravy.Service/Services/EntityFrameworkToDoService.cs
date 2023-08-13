@@ -53,7 +53,7 @@ public class EntityFrameworkToDoService : IToDoService
     {
         var (status, active) = await GetStatusAndActiveAsync(item, item.Id);
 
-        return mapper.Map<IToDoSubItem>(
+        var result = mapper.Map<IToDoSubItem>(
             item,
             a =>
             {
@@ -61,6 +61,8 @@ public class EntityFrameworkToDoService : IToDoService
                 a.Items.Add(SpravyDbProfile.ActiveName, active);
             }
         );
+
+        return result;
     }
 
     private Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusAndActiveAsync(ToDoItemEntity entity)

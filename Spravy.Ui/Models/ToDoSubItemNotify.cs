@@ -14,6 +14,7 @@ public abstract class ToDoSubItemNotify : NotifyBase, IEquatable<ToDoSubItemNoti
     private string description = string.Empty;
     private bool isCurrent;
     private ActiveToDoItemNotify? active;
+    private DateTimeOffset? lastCompleted;
 
     public Guid Id
     {
@@ -55,6 +56,12 @@ public abstract class ToDoSubItemNotify : NotifyBase, IEquatable<ToDoSubItemNoti
     {
         get => active;
         set => this.RaiseAndSetIfChanged(ref active, value);
+    }
+
+    public DateTimeOffset? LastCompleted
+    {
+        get => lastCompleted;
+        set => this.RaiseAndSetIfChanged(ref lastCompleted, value);
     }
 
     public bool Equals(ToDoSubItemNotify? other)

@@ -21,7 +21,7 @@ public class ToDoItemEntity
     public string DaysOfWeek { get; set; } = "Monday";
     public string DaysOfMonth { get; set; } = "1";
     public string DaysOfYear { get; set; } = "1.1";
-    public DateTimeOffset LastCompleted { get; set; } = DateTimeOffset.Now;
+    public DateTimeOffset? LastCompleted { get; set; }
 
     public Guid? ParentId { get; set; }
     public ToDoItemEntity? Parent { get; set; }

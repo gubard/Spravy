@@ -12,4 +12,5 @@ public interface IToDoSubItem
     public string Description { get; }
     bool IsCurrent { get; }
     ActiveToDoItem? Active { get; }
+    DateTimeOffset? LastCompleted { get; }
 }
