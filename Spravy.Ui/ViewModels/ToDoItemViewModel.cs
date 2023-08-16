@@ -170,6 +170,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase,
             {
                 await ToDoService.UpdateToDoItemParentAsync(Id, view.ViewModel.SelectedItem.Id);
                 await RefreshToDoItemAsync();
+                DialogViewer.CloseDialog();
             }
         );
     }

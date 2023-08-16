@@ -18,7 +18,6 @@ public class ToDoItemSelectorViewModel : ViewModelBase
     public ToDoItemSelectorViewModel()
     {
         InitializedCommand = CreateCommandFromTask(InitializedAsync);
-        SelectCommand = CreateCommand(Select);
     }
 
     [Inject]
@@ -29,7 +28,6 @@ public class ToDoItemSelectorViewModel : ViewModelBase
 
     public AvaloniaList<ToDoSelectorItemNotify> Roots { get; } = new();
     public ICommand InitializedCommand { get; }
-    public ICommand SelectCommand { get; }
 
     public ToDoSelectorItemNotify? SelectedItem
     {
@@ -42,10 +40,5 @@ public class ToDoItemSelectorViewModel : ViewModelBase
         var items = await ToDoService.GetToDoSelectorItemsAsync();
         Roots.Clear();
         Roots.AddRange(Mapper.Map<IEnumerable<ToDoSelectorItemNotify>>(items));
-    }
-
-    private void Select()
-    {
-        DialogViewer.CloseDialog();
     }
 }
