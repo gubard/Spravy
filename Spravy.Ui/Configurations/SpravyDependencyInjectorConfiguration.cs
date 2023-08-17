@@ -5,9 +5,12 @@ using AutoMapper;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
+using Avalonia.Input.Platform;
 using Avalonia.Layout;
 using Avalonia.ReactiveUI;
 using ExtensionFramework.AvaloniaUi.Controls;
+using ExtensionFramework.AvaloniaUi.Extensions;
+using ExtensionFramework.Core.Common.Extensions;
 using ExtensionFramework.Core.Common.Interfaces;
 using ExtensionFramework.Core.Common.Services;
 using ExtensionFramework.Core.DependencyInjection.Interfaces;
@@ -17,6 +20,7 @@ using ExtensionFramework.Core.Ui.Models;
 using ExtensionFramework.ReactiveUI.Interfaces;
 using Material.Styles.Controls;
 using Microsoft.Extensions.Configuration;
+using Splat;
 using Spravy.Domain.Core.Profiles;
 using Spravy.Domain.Interfaces;
 using Spravy.Ui.Enums;
@@ -38,7 +42,7 @@ public readonly struct SpravyDependencyInjectorConfiguration : IDependencyInject
         register.RegisterScope<IExceptionViewModel, ExceptionViewModel>();
         register.RegisterScope(() => Enumerable.Empty<IDataTemplate>());
         register.RegisterScope<Control, MainView>();
-        register.RegisterScope<Window, MainWindow>();
+        register.RegisterSingleton<Window, MainWindow>();
         register.RegisterScopeAutoInjectMember((MainWindow window) => window.Content, (Control control) => control);
         register.RegisterScope<RoutedViewHost>();
         register.RegisterScope<Application, App>();
@@ -50,7 +54,11 @@ public readonly struct SpravyDependencyInjectorConfiguration : IDependencyInject
         register.RegisterTransient<DayOfYearSelector>();
         register.RegisterTransient<DayOfWeekSelector>();
         register.RegisterTransient<DayOfMonthSelector>();
-        
+
+        register.RegisterTransient(
+            () => Application.Current.ThrowIfNull("Application").GetTopLevel().ThrowIfNull("TopLevel").Clipboard
+        );
+
         register.RegisterScope<IDialogViewer>(
             (IResolver resolver) => new DialogViewer(DialogViewer.DefaultDialogIdentifier)
             {

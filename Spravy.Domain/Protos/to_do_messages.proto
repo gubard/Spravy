@@ -7,6 +7,14 @@ import "google/protobuf/duration.proto";
 
 package spravy;
 
+message ToDoItemToStringRequest {
+  bytes Id = 1;
+}
+
+message ToDoItemToStringReply {
+    string Value = 1;
+}
+
 message ToDoItemToRootRequest {
   bytes Id = 1;
 }

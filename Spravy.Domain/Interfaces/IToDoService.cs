@@ -30,4 +30,5 @@ public interface IToDoService
     Task<IEnumerable<ToDoSelectorItem>> GetToDoSelectorItemsAsync();
     Task UpdateToDoItemParentAsync(Guid id, Guid parentId);
     Task ToDoItemToRootAsync(Guid id);
+    Task<string> ToDoItemToStringAsync(Guid id);
 }

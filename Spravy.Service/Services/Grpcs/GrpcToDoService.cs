@@ -295,4 +295,17 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
 
         return new ToDoItemToRootReply();
     }
+
+    public override async Task<ToDoItemToStringReply> ToDoItemToString(
+        ToDoItemToStringRequest request,
+        ServerCallContext context
+    )
+    {
+        var value = await toDoService.ToDoItemToStringAsync(mapper.Map<Guid>(request.Id));
+
+        return new ToDoItemToStringReply
+        {
+            Value = value,
+        };
+    }
 }

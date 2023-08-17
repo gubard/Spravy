@@ -1,3 +1,4 @@
+using System.Text;
 using AutoMapper;
 using ExtensionFramework.Core.Common.Extensions;
 using ExtensionFramework.Core.Common.Models;
@@ -952,6 +953,31 @@ public class EntityFrameworkToDoService : IToDoService
         entity.ParentId = null;
         entity.OrderIndex = items.Length == 0 ? 0 : items.Max() + 1;
         await context.SaveChangesAsync();
+    }
+
+    public async Task<string> ToDoItemToStringAsync(Guid id)
+    {
+        var builder = new StringBuilder();
+        await ToDoItemToStringAsync(id, 0, builder);
+
+        return builder.ToString();
+    }
+
+    private async Task ToDoItemToStringAsync(Guid id, ushort level, StringBuilder builder)
+    {
+        var items = await context.Set<ToDoItemEntity>()
+            .AsNoTracking()
+            .Where(x => x.ParentId == id)
+            .OrderBy(x => x.OrderIndex)
+            .ToArrayAsync();
+
+        foreach (var item in items)
+        {
+            builder.Duplicate(" ", level);
+            builder.Append(item.Name);
+            builder.AppendLine();
+            await ToDoItemToStringAsync(item.Id, (ushort)(level + 1), builder);
+        }
     }
 
     private async Task<ToDoSelectorItem[]> GetToDoSelectorItemsAsync(Guid id)

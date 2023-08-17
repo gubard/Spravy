@@ -453,4 +453,23 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
             throw new GrpcException(grpcChannel.Target, e);
         }
     }
+
+    public async Task<string> ToDoItemToStringAsync(Guid id)
+    {
+        try
+        {
+            var reply = await client.ToDoItemToStringAsync(
+                new ToDoItemToStringRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                }
+            );
+
+            return reply.Value;
+        }
+        catch (Exception e)
+        {
+            throw new GrpcException(grpcChannel.Target, e);
+        }
+    }
 }

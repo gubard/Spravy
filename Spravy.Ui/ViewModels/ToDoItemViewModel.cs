@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
+using Avalonia.Input.Platform;
 using ExtensionFramework.AvaloniaUi.Controls;
 using ExtensionFramework.Core.Common.Extensions;
 using ExtensionFramework.Core.DependencyInjection.Attributes;
@@ -61,6 +62,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase,
         ChangeRootItemCommand = CreateCommandFromTask(ChangeRootItemAsync);
         ToDoItemToRootCommand = CreateCommandFromTask(ToDoItemToRootAsync);
         InitializedCommand = CreateCommand(Initialized);
+        ToDoItemToStringCommand = CreateCommandFromTaskWithDialogProgressIndicator(ToDoItemToStringAsync);
 
         this.WhenAnyValue(x => x.IsCurrent)
             .Subscribe(
@@ -86,6 +88,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase,
         Commands.Add(new(MaterialIconKind.Leaf, ToLeafToDoItemsCommand));
         Commands.Add(new(MaterialIconKind.SwapHorizontal, ChangeRootItemCommand));
         Commands.Add(new(MaterialIconKind.FamilyTree, ToDoItemToRootCommand));
+        Commands.Add(new(MaterialIconKind.CodeString, ToDoItemToStringCommand));
     }
 
     public AvaloniaList<TypeOfPeriodicity> TypeOfPeriodicities { get; }
@@ -107,6 +110,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase,
     public ICommand ChangeRootItemCommand { get; }
     public ICommand ToDoItemToRootCommand { get; }
     public ICommand InitializedCommand { get; }
+    public ICommand ToDoItemToStringCommand { get; }
 
     [Inject]
     public required ToDoItemHeaderView ToDoItemHeaderView { get; init; }
@@ -122,6 +126,9 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase,
 
     [Inject]
     public required PathControl Path { get; set; }
+
+    [Inject]
+    public required IClipboard Clipboard { get; set; }
 
     public bool IsCurrent
     {
@@ -160,6 +167,12 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase,
         var viewModel = ToDoItemHeaderView.ViewModel.ThrowIfNull();
         viewModel.Item = this;
         viewModel.Commands.AddRange(Commands);
+    }
+
+    private async Task ToDoItemToStringAsync()
+    {
+        var text = await ToDoService.ToDoItemToStringAsync(Id);
+        await Clipboard.SetTextAsync(text);
     }
 
     private Task ChangeRootItemAsync()
