@@ -100,7 +100,7 @@ class Build : NukeBuild
 
                     using var commandService =
                         sshClient.RunCommand(
-                            $"echo {SshPassword} | sudo systemctl restart spravy.service"
+                            $"echo {SshPassword} | sudo systemctl restart spravy.todo.service"
                         );
 
                     var desktopFolder = PublishProject("Spravy.Ui.Desktop");
