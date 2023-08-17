@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using Avalonia.Collections;
 using ExtensionFramework.Core.Common.Extensions;
 using ReactiveUI;
-using Spravy.Domain.Enums;
-using Spravy.Domain.Models;
+using Spravy.ToDo.Domain.Enums;
+using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 

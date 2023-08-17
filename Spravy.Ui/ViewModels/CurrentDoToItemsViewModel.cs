@@ -5,7 +5,7 @@ using AutoMapper;
 using ExtensionFramework.Core.Common.Extensions;
 using ExtensionFramework.Core.DependencyInjection.Attributes;
 using ExtensionFramework.ReactiveUI.Models;
-using Spravy.Domain.Interfaces;
+using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 using Spravy.Ui.Views;

@@ -1,8 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using ExtensionFramework.ReactiveUI.Interfaces;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
+using Spravy.ToDo.Domain.Interfaces;
+using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.ViewModels;
 
 namespace Spravy.Ui.Extensions;

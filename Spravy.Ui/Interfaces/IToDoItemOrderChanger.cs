@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using Spravy.Domain.Interfaces;
+using Spravy.ToDo.Domain.Interfaces;
 
 namespace Spravy.Ui.Interfaces;
 

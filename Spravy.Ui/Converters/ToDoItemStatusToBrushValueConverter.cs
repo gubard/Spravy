@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
 using Avalonia.Media;
-using Spravy.Domain.Enums;
+using Spravy.ToDo.Domain.Enums;
 
 namespace Spravy.Ui.Converters;
 

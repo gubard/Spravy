@@ -85,18 +85,18 @@ class Build : NukeBuild
                     sshClient.Connect();
                     using var ftpClient = new FtpClient("192.168.50.2", "vafnir", FtpPassword);
                     ftpClient.Connect();
-                    var migratorFolder = PublishProject("Spravy.Db.Sqlite.Migrator");
-                    ftpClient.DeleteDirectory("/home/vafnir/Spravy.Db.Sqlite.Migrator", FtpListOption.Recursive);
-                    ftpClient.UploadDirectory(migratorFolder.FullName, "/home/vafnir/Spravy.Db.Sqlite.Migrator");
+                    var migratorFolder = PublishProject("Spravy.ToDo.Db.Sqlite.Migrator");
+                    ftpClient.DeleteDirectory("/home/vafnir/Spravy.ToDo.Db.Sqlite.Migrator", FtpListOption.Recursive);
+                    ftpClient.UploadDirectory(migratorFolder.FullName, "/home/vafnir/Spravy.ToDo.Db.Sqlite.Migrator");
 
                     using var commandMigrator =
                         sshClient.RunCommand(
-                            "cd /home/vafnir/Spravy.Db.Sqlite.Migrator;dotnet Spravy.Db.Sqlite.Migrator.dll"
+                            "cd /home/vafnir/Spravy.ToDo.Db.Sqlite.Migrator;dotnet Spravy.ToDo.Db.Sqlite.Migrator.dll"
                         );
 
-                    var serviceFolder = PublishProject("Spravy.Service");
-                    ftpClient.DeleteDirectory("/home/vafnir/Spravy.Service", FtpListOption.Recursive);
-                    ftpClient.UploadDirectory(serviceFolder.FullName, "/home/vafnir/Spravy.Service");
+                    var serviceFolder = PublishProject("Spravy.ToDo.Service");
+                    ftpClient.DeleteDirectory("/home/vafnir/Spravy.ToDo.Service", FtpListOption.Recursive);
+                    ftpClient.UploadDirectory(serviceFolder.FullName, "/home/vafnir/Spravy.ToDo.Service");
 
                     using var commandService =
                         sshClient.RunCommand(

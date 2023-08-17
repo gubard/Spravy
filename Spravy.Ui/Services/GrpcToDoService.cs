@@ -4,14 +4,14 @@ using System.Threading.Tasks;
 using AutoMapper;
 using ExtensionFramework.Core.Common.Extensions;
 using Google.Protobuf;
-using Spravy.Domain.Enums;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
-using Spravy.Protos;
+using Spravy.ToDo.Domain.Enums;
+using Spravy.ToDo.Domain.Interfaces;
+using Spravy.ToDo.Domain.Models;
+using Spravy.ToDo.Protos;
 using Spravy.Ui.Exceptions;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Models;
-using ToDoSelectorItem = Spravy.Domain.Models.ToDoSelectorItem;
+using ToDoSelectorItem = Spravy.ToDo.Domain.Models.ToDoSelectorItem;
 
 namespace Spravy.Ui.Services;
 

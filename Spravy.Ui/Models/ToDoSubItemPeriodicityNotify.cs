@@ -1,6 +1,6 @@
 using System;
 using ReactiveUI;
-using Spravy.Domain.Enums;
+using Spravy.ToDo.Domain.Enums;
 
 namespace Spravy.Ui.Models;
 

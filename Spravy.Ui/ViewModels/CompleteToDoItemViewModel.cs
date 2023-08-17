@@ -3,7 +3,7 @@ using System.Windows.Input;
 using ExtensionFramework.Core.DependencyInjection.Attributes;
 using ExtensionFramework.ReactiveUI.Models;
 using ReactiveUI;
-using Spravy.Domain.Interfaces;
+using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 

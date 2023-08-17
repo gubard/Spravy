@@ -2,9 +2,9 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExtensionFramework", "ExtensionFramework", "{74FDAC70-D578-4280-B992-D2CFDD71D14B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Domain", "Spravy.Domain\Spravy.Domain.csproj", "{DBECA9D0-4945-48D5-992D-E3151D0DC163}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.ToDo.Domain", "Spravy.ToDo.Domain\Spravy.ToDo.Domain.csproj", "{DBECA9D0-4945-48D5-992D-E3151D0DC163}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Service", "Spravy.Service\Spravy.Service.csproj", "{989659C9-DF1F-41DF-8F8E-94D9D80A2EFD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.ToDo.Service", "Spravy.ToDo.Service\Spravy.ToDo.Service.csproj", "{989659C9-DF1F-41DF-8F8E-94D9D80A2EFD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Ui", "Spravy.Ui\Spravy.Ui.csproj", "{C2B020FF-C3E6-4E33-8C7C-08F6905A93A7}"
 EndProject
@@ -16,13 +16,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtensionFramework.EntityFr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtensionFramework.ReactiveUI", "ExtensionFramework\ExtensionFramework.ReactiveUI\ExtensionFramework.ReactiveUI.csproj", "{6755585E-C1B2-46E8-B932-B42E36AB15AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Db", "Spravy.Db\Spravy.Db.csproj", "{070847AF-17CA-4FCA-8B73-6763A6EF05BE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.ToDo.Db", "Spravy.ToDo.Db\Spravy.ToDo.Db.csproj", "{070847AF-17CA-4FCA-8B73-6763A6EF05BE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Ui.Desktop", "Spravy.Ui.Desktop\Spravy.Ui.Desktop.csproj", "{D5AB773A-BACE-4FBB-923D-0F08ABAB5179}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Db.Sqlite", "Spravy.Db.Sqlite\Spravy.Db.Sqlite.csproj", "{62AC9849-0775-4791-A28B-5DF53A40FC8B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.ToDo.Db.Sqlite", "Spravy.ToDo.Db.Sqlite\Spravy.ToDo.Db.Sqlite.csproj", "{62AC9849-0775-4791-A28B-5DF53A40FC8B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Db.Sqlite.Migrator", "Spravy.Db.Sqlite.Migrator\Spravy.Db.Sqlite.Migrator.csproj", "{3EDF179E-70AE-4A31-A54C-CCE213BE29D2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.ToDo.Db.Sqlite.Migrator", "Spravy.ToDo.Db.Sqlite.Migrator\Spravy.ToDo.Db.Sqlite.Migrator.csproj", "{3EDF179E-70AE-4A31-A54C-CCE213BE29D2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Ui.Android", "Spravy.Ui.Android\Spravy.Ui.Android.csproj", "{DEC68166-774A-4A1E-9069-2C678C566814}"
 EndProject
@@ -34,9 +34,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtensionFramework.Avalonia
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Ui.Browser", "Spravy.Ui.Browser\Spravy.Ui.Browser.csproj", "{6B149ED6-F83B-4731-8950-E2989D96E1D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Domain.Core", "Spravy.Domain.Core\Spravy.Domain.Core.csproj", "{447ABE78-490A-4D33-BC08-8D9BA5980030}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.ToDo.Domain.Core", "Spravy.ToDo.Domain.Core\Spravy.ToDo.Domain.Core.csproj", "{447ABE78-490A-4D33-BC08-8D9BA5980030}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Db.Core", "Spravy.Db.Core\Spravy.Db.Core.csproj", "{DF47ACE4-706C-481C-A66E-E41487BB2855}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.ToDo.Db.Core", "Spravy.ToDo.Db.Core\Spravy.ToDo.Db.Core.csproj", "{DF47ACE4-706C-481C-A66E-E41487BB2855}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
