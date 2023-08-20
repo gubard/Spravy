@@ -1,5 +1,4 @@
 using System;
-using ExtensionFramework.ReactiveUI.Models;
 using ReactiveUI;
 using Spravy.ToDo.Domain.Enums;
 

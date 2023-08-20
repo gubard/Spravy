@@ -1,5 +1,5 @@
-using ExtensionFramework.AvaloniaUi.Controls;
-using ExtensionFramework.Core.DependencyInjection.Attributes;
+using Spravy.Domain.Attributes;
+using Spravy.Ui.Controls;
 
 namespace Spravy.Ui.ViewModels;
 

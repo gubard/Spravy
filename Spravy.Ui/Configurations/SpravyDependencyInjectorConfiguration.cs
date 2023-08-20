@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 using Avalonia;
@@ -7,23 +6,21 @@ using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Layout;
 using Avalonia.ReactiveUI;
-using ExtensionFramework.AvaloniaUi.Controls;
-using ExtensionFramework.AvaloniaUi.Extensions;
-using ExtensionFramework.Core.Common.Extensions;
-using ExtensionFramework.Core.Common.Interfaces;
-using ExtensionFramework.Core.Common.Services;
-using ExtensionFramework.Core.DependencyInjection.Interfaces;
-using ExtensionFramework.Core.DependencyInjection.Extensions;
-using ExtensionFramework.Core.Ui.Interfaces;
-using ExtensionFramework.Core.Ui.Models;
-using ExtensionFramework.ReactiveUI.Interfaces;
 using Material.Styles.Controls;
 using Microsoft.Extensions.Configuration;
+using ReactiveUI;
 using Spravy.Authentication.Domain.Core.Profiles;
 using Spravy.Authentication.Domain.Interfaces;
+using Spravy.Domain.Interfaces;
+using Spravy.Domain.Extensions;
+using Spravy.Domain.Models;
+using Spravy.Domain.Services;
 using Spravy.ToDo.Domain.Core.Profiles;
 using Spravy.ToDo.Domain.Interfaces;
+using Spravy.Ui.Controls;
 using Spravy.Ui.Enums;
+using Spravy.Ui.Extensions;
+using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 using Spravy.Ui.Profiles;
 using Spravy.Ui.Services;
@@ -36,13 +33,19 @@ public readonly struct SpravyDependencyInjectorConfiguration : IDependencyInject
 {
     public void Configure(IDependencyInjectorRegister register)
     {
+        register.RegisterScopeAutoInjectMember((RoutedViewHost host) => host.Router, (RoutingState state) => state);
+        register.RegisterScope<IModuleSetup, ReactiveUIModuleSetup>();
+        register.RegisterScope<IViewLocator, ModuleViewLocator>();
+        register.RegisterScope<INavigator, Navigator>();
+        register.RegisterSingleton(new RoutingState());
+        register.RegisterTransient<PathControl>();
         register.RegisterScope(() => new MapperConfiguration(SetupMapperConfiguration));
         register.RegisterScope<IMapper>((MapperConfiguration cfg) => new Mapper(cfg));
         register.RegisterScope<IToDoService, GrpcToDoService>();
         register.RegisterScope<IExceptionViewModel, ExceptionViewModel>();
         register.RegisterScope(() => Enumerable.Empty<IDataTemplate>());
         register.RegisterScope<Control, MainView>();
-        register.RegisterSingleton<Window, MainWindow>();
+        register.RegisterSingleton<Window>((MainWindow window) => window);
         register.RegisterScopeAutoInjectMember((MainWindow window) => window.Content, (Control control) => control);
         register.RegisterScope<RoutedViewHost>();
         register.RegisterScope<Application, App>();
@@ -55,6 +58,7 @@ public readonly struct SpravyDependencyInjectorConfiguration : IDependencyInject
         register.RegisterTransient<DayOfWeekSelector>();
         register.RegisterTransient<DayOfMonthSelector>();
         register.RegisterTransient<IAuthenticationService, GrpcAuthenticationService>();
+        RegisterViewModels(register);
 
         register.RegisterTransient(
             () => Application.Current.ThrowIfNull("Application").GetTopLevel().ThrowIfNull("TopLevel").Clipboard
@@ -104,7 +108,7 @@ public readonly struct SpravyDependencyInjectorConfiguration : IDependencyInject
                 return options;
             }
         );
-        
+
         register.RegisterScopeDel<GrpcAuthenticationServiceOptions>(
             (IConfiguration configuration) =>
             {
@@ -116,7 +120,8 @@ public readonly struct SpravyDependencyInjectorConfiguration : IDependencyInject
                     ChannelCredentialType = ChannelCredentialType.Insecure
                 };
 #endif
-                var options = configuration.GetSection("GrpcAuthenticationService").Get<GrpcAuthenticationServiceOptions>();
+                var options = configuration.GetSection("GrpcAuthenticationService")
+                    .Get<GrpcAuthenticationServiceOptions>();
 
                 return options;
             }
@@ -130,5 +135,53 @@ public readonly struct SpravyDependencyInjectorConfiguration : IDependencyInject
         expression.AddProfile<SpravyToDoProfile>();
         expression.AddProfile<SpravyUiProfile>();
         expression.AddProfile<SpravyAuthenticationProfile>();
+    }
+
+    private void RegisterViewModels(IDependencyInjectorRegister register)
+    {
+        var styledElementType = typeof(StyledElement);
+        var member = styledElementType.GetProperty(nameof(StyledElement.DataContext)).ThrowIfNull();
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        var autoInjectMember = new AutoInjectMember(member);
+
+        foreach (var assembly in assemblies)
+        {
+            var types = assembly.GetTypes();
+
+            foreach (var type in types)
+            {
+                if (type.Namespace.IsNullOrWhiteSpace())
+                {
+                    continue;
+                }
+
+                if (!styledElementType.IsAssignableFrom(type))
+                {
+                    continue;
+                }
+
+                var ns = type.Namespace
+                    .Replace(".Views.", ".ViewModels.")
+                    .Replace(".Views", ".ViewModels");
+
+                var viewModelName = $"{ns}.{type.Name}Model";
+                var viewModelType = assembly.GetType(viewModelName);
+
+                if (viewModelType is null)
+                {
+                    continue;
+                }
+
+                var autoInjectIdentifier = new AutoInjectMemberIdentifier(type, autoInjectMember);
+                var variable = viewModelType.ToVariableAutoName();
+                register.RegisterScope(type);
+                register.RegisterScope(viewModelType);
+
+                register.RegisterScopeAutoInjectMember(
+                    autoInjectIdentifier,
+                    variable.ToLambda(variable)
+                );
+            }
+        }
     }
 }

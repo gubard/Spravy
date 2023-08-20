@@ -1,0 +1,42 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="using:System"
+                    xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                    xmlns:controls="clr-namespace:Spravy.Ui.Controls"
+                    x:ClassModifier="internal">
+    <Design.PreviewWith>
+        <Border Padding="20" Height="500">
+            <StackPanel Spacing="20" VerticalAlignment="Center">
+                <controls:NullableDatePicker />
+                <controls:NullableDatePicker CornerRadius="10" />
+                <controls:NullableDatePicker IsEnabled="False" />
+                <controls:NullableDatePicker>
+                    <DataValidationErrors.Error>
+                        <sys:Exception>
+                            <x:Arguments>
+                                <x:String>Error</x:String>
+                            </x:Arguments>
+                        </sys:Exception>
+                    </DataValidationErrors.Error>
+                </controls:NullableDatePicker>
+            </StackPanel>
+        </Border>
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type controls:NullableDatePicker}" TargetType="controls:NullableDatePicker">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid ColumnDefinitions="*,Auto"
+                      Background="{TemplateBinding Background}">
+                    <DatePicker Name="{x:Static controls:NullableDatePicker.DatePickerPartName}"
+                                SelectedDate="{TemplateBinding SelectedDate, Mode=TwoWay}" />
+
+                    <Button Grid.Column="1"
+                            Name="{x:Static controls:NullableDatePicker.ClearButtonPartName}">
+                        <avalonia:MaterialIcon Kind="CloseCircle" />
+                    </Button>
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

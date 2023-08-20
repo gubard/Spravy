@@ -1,10 +1,10 @@
 using System;
 using System.Threading.Tasks;
 using AutoMapper;
-using ExtensionFramework.Core.Common.Extensions;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Models;
 using Spravy.Authentication.Protos;
+using Spravy.Domain.Extensions;
 using Spravy.Ui.Exceptions;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Models;

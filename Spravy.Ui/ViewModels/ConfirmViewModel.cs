@@ -1,9 +1,9 @@
 using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using ExtensionFramework.Core.Common.Extensions;
-using ExtensionFramework.ReactiveUI.Models;
 using ReactiveUI;
+using Spravy.Domain.Extensions;
+using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 

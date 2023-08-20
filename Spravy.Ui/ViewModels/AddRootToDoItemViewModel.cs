@@ -1,5 +1,5 @@
-using ExtensionFramework.ReactiveUI.Models;
 using ReactiveUI;
+using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 

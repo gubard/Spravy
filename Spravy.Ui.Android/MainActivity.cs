@@ -6,14 +6,8 @@ using Android.OS;
 
 using Avalonia;
 using Avalonia.Android;
-using Avalonia.ReactiveUI;
-using ExtensionFramework.Core.DependencyInjection.Interfaces;
-using ExtensionFramework.Core.DependencyInjection.Services;
-using ExtensionFramework.Core.Graph.Extensions;
-using ExtensionFramework.Core.Graph.Services;
-using ExtensionFramework.Core.ModularSystem.Interfaces;
-using ExtensionFramework.Core.ModularSystem.Services;
-using ExtensionFramework.Core.ModularSystem.Extensions;
+using Spravy.Domain.Interfaces;
+using Spravy.Domain.Services;
 using Spravy.Ui.Android.Modules;
 using Spravy.Ui.Modules;
 

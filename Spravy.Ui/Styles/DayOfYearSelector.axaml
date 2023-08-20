@@ -1,0 +1,100 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:Spravy.Ui.Controls">
+    <Design.PreviewWith>
+        <controls:DayOfYearSelector />
+    </Design.PreviewWith>
+
+    <Style Selector="controls|DayOfYearSelector">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <TabControl>
+                    <TabItem>
+                        <TabItem.Header>
+                            <TextBlock Text="Jan" />
+                        </TabItem.Header>
+                        <controls:DayOfMonthSelector
+                            Name="{x:Static controls:DayOfYearSelector.JanuaryDayOfMonthSelectorPartName}" />
+                    </TabItem>
+                    <TabItem>
+                        <TabItem.Header>
+                            <TextBlock Text="Feb" />
+                        </TabItem.Header>
+                        <controls:DayOfMonthSelector
+                            Name="{x:Static controls:DayOfYearSelector.FebruaryDayOfMonthSelectorPartName}" />
+                    </TabItem>
+                    <TabItem>
+                        <TabItem.Header>
+                            <TextBlock Text="Mar" />
+                        </TabItem.Header>
+                        <controls:DayOfMonthSelector
+                            Name="{x:Static controls:DayOfYearSelector.MarchDayOfMonthSelectorPartName}" />
+                    </TabItem>
+                    <TabItem>
+                        <TabItem.Header>
+                            <TextBlock Text="Apr" />
+                        </TabItem.Header>
+                        <controls:DayOfMonthSelector
+                            Name="{x:Static controls:DayOfYearSelector.AprilDayOfMonthSelectorPartName}" />
+                    </TabItem>
+                    <TabItem>
+                        <TabItem.Header>
+                            <TextBlock Text="May" />
+                        </TabItem.Header>
+                        <controls:DayOfMonthSelector
+                            Name="{x:Static controls:DayOfYearSelector.MayDayOfMonthSelectorPartName}" />
+                    </TabItem>
+                    <TabItem>
+                        <TabItem.Header>
+                            <TextBlock Text="Jun" />
+                        </TabItem.Header>
+                        <controls:DayOfMonthSelector
+                            Name="{x:Static controls:DayOfYearSelector.JuneDayOfMonthSelectorPartName}" />
+                    </TabItem>
+                    <TabItem>
+                        <TabItem.Header>
+                            <TextBlock Text="Jul" />
+                        </TabItem.Header>
+                        <controls:DayOfMonthSelector
+                            Name="{x:Static controls:DayOfYearSelector.JulyDayOfMonthSelectorPartName}" />
+                    </TabItem>
+                    <TabItem>
+                        <TabItem.Header>
+                            <TextBlock Text="Aug" />
+                        </TabItem.Header>
+                        <controls:DayOfMonthSelector
+                            Name="{x:Static controls:DayOfYearSelector.AugustDayOfMonthSelectorPartName}" />
+                    </TabItem>
+                    <TabItem>
+                        <TabItem.Header>
+                            <TextBlock Text="Sep" />
+                        </TabItem.Header>
+                        <controls:DayOfMonthSelector
+                            Name="{x:Static controls:DayOfYearSelector.SeptemberDayOfMonthSelectorPartName}" />
+                    </TabItem>
+                    <TabItem>
+                        <TabItem.Header>
+                            <TextBlock Text="Oct" />
+                        </TabItem.Header>
+                        <controls:DayOfMonthSelector
+                            Name="{x:Static controls:DayOfYearSelector.OctoberDayOfMonthSelectorPartName}" />
+                    </TabItem>
+                    <TabItem>
+                        <TabItem.Header>
+                            <TextBlock Text="Nov" />
+                        </TabItem.Header>
+                        <controls:DayOfMonthSelector
+                            Name="{x:Static controls:DayOfYearSelector.NovemberDayOfMonthSelectorPartName}" />
+                    </TabItem>
+                    <TabItem>
+                        <TabItem.Header>
+                            <TextBlock Text="Dec" />
+                        </TabItem.Header>
+                        <controls:DayOfMonthSelector
+                            Name="{x:Static controls:DayOfYearSelector.DecemberDayOfMonthSelectorPartName}" />
+                    </TabItem>
+                </TabControl>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+</Styles>

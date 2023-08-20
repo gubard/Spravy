@@ -34,7 +34,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ExtensionFramework\ExtensionFramework.Core\ExtensionFramework.Core.csproj" />
       <ProjectReference Include="..\Spravy.ToDo.Db.Core\Spravy.ToDo.Db.Core.csproj" />
       <ProjectReference Include="..\Spravy.ToDo.Domain.Core\Spravy.ToDo.Domain.Core.csproj" />
       <ProjectReference Include="..\Spravy.ToDo.Domain\Spravy.ToDo.Domain.csproj" />

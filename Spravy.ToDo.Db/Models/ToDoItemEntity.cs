@@ -1,4 +1,4 @@
-using ExtensionFramework.Core.Common.Extensions;
+using Spravy.Domain.Extensions;
 using Spravy.ToDo.Domain.Enums;
 
 namespace Spravy.ToDo.Db.Models;

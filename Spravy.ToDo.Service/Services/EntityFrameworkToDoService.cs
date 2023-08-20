@@ -1,8 +1,8 @@
 using System.Text;
 using AutoMapper;
-using ExtensionFramework.Core.Common.Extensions;
-using ExtensionFramework.Core.Common.Models;
 using Microsoft.EntityFrameworkCore;
+using Spravy.Domain.Extensions;
+using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;

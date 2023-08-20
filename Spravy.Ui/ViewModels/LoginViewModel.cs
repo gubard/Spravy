@@ -2,11 +2,11 @@ using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
-using ExtensionFramework.Core.DependencyInjection.Attributes;
-using ExtensionFramework.ReactiveUI.Models;
 using ReactiveUI;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Models;
+using Spravy.Domain.Attributes;
+using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 

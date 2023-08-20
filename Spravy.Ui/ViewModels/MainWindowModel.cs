@@ -1,6 +1,6 @@
-using ExtensionFramework.Core.DependencyInjection.Attributes;
-using ExtensionFramework.ReactiveUI.Models;
 using ReactiveUI;
+using Spravy.Domain.Attributes;
+using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 

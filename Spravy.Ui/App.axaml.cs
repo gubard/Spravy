@@ -4,11 +4,10 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Templates;
 using Avalonia.Markup.Xaml;
-using ExtensionFramework.Core.Common.Extensions;
-using ExtensionFramework.Core.DependencyInjection.Attributes;
-using ExtensionFramework.Core.DependencyInjection.Extensions;
-using ExtensionFramework.Core.DependencyInjection.Interfaces;
-using ExtensionFramework.Core.DependencyInjection.Services;
+using Spravy.Domain.Attributes;
+using Spravy.Domain.Extensions;
+using Spravy.Domain.Interfaces;
+using Spravy.Domain.Services;
 
 namespace Spravy.Ui;
 

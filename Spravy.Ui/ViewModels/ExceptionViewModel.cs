@@ -1,7 +1,7 @@
 using System;
-using ExtensionFramework.ReactiveUI.Interfaces;
-using ExtensionFramework.ReactiveUI.Models;
 using ReactiveUI;
+using Spravy.Ui.Interfaces;
+using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 

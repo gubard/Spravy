@@ -1,7 +1,7 @@
 using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
-using ExtensionFramework.Core.Common.Extensions;
+using Spravy.Domain.Extensions;
 
 namespace Spravy.Ui.Converters;
 

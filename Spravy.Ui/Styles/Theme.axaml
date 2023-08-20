@@ -1,0 +1,19 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+    </Design.PreviewWith>
+
+    <Styles.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <MergeResourceInclude Source="NullableDatePicker.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Styles.Resources>
+
+    <StyleInclude Source="PathControl.axaml" />
+    <StyleInclude Source="EditableTextBlock.axaml" />
+    <StyleInclude Source="DayOfMonthSelector.axaml" />
+    <StyleInclude Source="DayOfWeekSelector.axaml" />
+    <StyleInclude Source="DayOfYearSelector.axaml" />
+</Styles>

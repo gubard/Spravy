@@ -1,7 +1,7 @@
 using AutoMapper;
-using ExtensionFramework.Core.Common.Models;
 using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
+using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;

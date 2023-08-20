@@ -2,14 +2,6 @@
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
 using Avalonia;
-using Avalonia.Browser;
-using Avalonia.ReactiveUI;
-using ExtensionFramework.Core.Common.Extensions;
-using ExtensionFramework.Core.Graph.Extensions;
-using ExtensionFramework.Core.Graph.Services;
-using ExtensionFramework.Core.ModularSystem.Extensions;
-using ExtensionFramework.Core.ModularSystem.Interfaces;
-using ExtensionFramework.Core.ModularSystem.Services;
 using Spravy.Ui.Browser.Modules;
 using Spravy.Ui.Modules;
 

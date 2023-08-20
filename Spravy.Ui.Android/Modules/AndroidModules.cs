@@ -1,7 +1,6 @@
 using System;
-using ExtensionFramework.Core.DependencyInjection.Extensions;
-using ExtensionFramework.Core.DependencyInjection.Services;
-using ExtensionFramework.Core.ModularSystem.Services;
+using Spravy.Domain.Extensions;
+using Spravy.Domain.Services;
 using Spravy.Ui.Android.Configurations;
 
 namespace Spravy.Ui.Android.Modules;

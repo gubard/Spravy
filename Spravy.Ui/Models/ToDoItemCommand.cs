@@ -1,5 +1,4 @@
 using System.Windows.Input;
-using ExtensionFramework.ReactiveUI.Models;
 using Material.Icons;
 using ReactiveUI;
 

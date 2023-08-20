@@ -4,7 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
 using Avalonia.ReactiveUI;
-using ExtensionFramework.Core.Common.Extensions;
+using Spravy.Domain.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.ViewModels;
 

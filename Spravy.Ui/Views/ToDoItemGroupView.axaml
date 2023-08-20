@@ -1,11 +1,10 @@
-<models:MainReactiveUserControl x:TypeArguments="viewModels:ToDoItemGroupViewModel"
+<controls1:MainReactiveUserControl x:TypeArguments="viewModels:ToDoItemGroupViewModel"
                                 xmlns="https://github.com/avaloniaui"
                                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                                xmlns:models="clr-namespace:ExtensionFramework.AvaloniaUi.ReactiveUI.Models;assembly=ExtensionFramework.AvaloniaUi.ReactiveUI"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-                                xmlns:controls="clr-namespace:ExtensionFramework.AvaloniaUi.Controls;assembly=ExtensionFramework.AvaloniaUi"
+                                xmlns:controls1="clr-namespace:Spravy.Ui.Controls"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.ToDoItemGroupView"
                                 x:DataType="viewModels:ToDoItemGroupViewModel">
@@ -37,7 +36,7 @@
                           ItemsSource="{Binding ToDoItemTypes}" />
             </Grid>
 
-            <controls:EditableTextBlock AcceptsReturn="True"
+            <controls1:EditableTextBlock AcceptsReturn="True"
                                         AcceptsTab="True"
                                         TextWrapping="Wrap"
                                         Text="{Binding Description, Mode=TwoWay}"
@@ -47,4 +46,4 @@
 
         <ContentControl Grid.Row="2" Content="{Binding ToDoSubItemsView}" />
     </Grid>
-</models:MainReactiveUserControl>
+</controls1:MainReactiveUserControl>

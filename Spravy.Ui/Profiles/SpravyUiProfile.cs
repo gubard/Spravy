@@ -1,7 +1,6 @@
 using System;
 using AutoMapper;
 using Spravy.Authentication.Domain.Models;
-using Spravy.Authentication.Protos;
 using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.Models;
 using Spravy.Ui.ViewModels;

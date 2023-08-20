@@ -1,4 +1,4 @@
-using ExtensionFramework.Core.Common.Models;
+using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Interfaces;
 
 namespace Spravy.ToDo.Domain.Models;

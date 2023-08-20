@@ -1,6 +1,5 @@
 using System;
 using Avalonia.Collections;
-using ExtensionFramework.ReactiveUI.Models;
 using ReactiveUI;
 
 namespace Spravy.Ui.Models;

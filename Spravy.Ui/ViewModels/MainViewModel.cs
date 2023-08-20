@@ -1,8 +1,7 @@
 ﻿using System.Windows.Input;
 using Avalonia.ReactiveUI;
-using ExtensionFramework.Core.DependencyInjection.Attributes;
-using ExtensionFramework.Core.Ui.Models;
-using ExtensionFramework.ReactiveUI.Models;
+using Spravy.Domain.Attributes;
+using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 

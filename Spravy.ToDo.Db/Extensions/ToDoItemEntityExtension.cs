@@ -1,5 +1,5 @@
-using ExtensionFramework.Core.Common.Extensions;
-using ExtensionFramework.Core.Common.Models;
+using Spravy.Domain.Extensions;
+using Spravy.Domain.Models;
 using Spravy.ToDo.Db.Models;
 
 namespace Spravy.ToDo.Db.Extensions;

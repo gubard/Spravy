@@ -3,7 +3,6 @@
              xmlns:models="clr-namespace:Spravy.Ui.Models"
              xmlns:interfaces="clr-namespace:Spravy.Ui.Interfaces"
              xmlns:handlers="clr-namespace:Spravy.Ui.Handlers"
-             xmlns:extensionFramework="clr-namespace:ExtensionFramework.AvaloniaUi.Converters;assembly=ExtensionFramework.AvaloniaUi"
              xmlns:converters="clr-namespace:Spravy.Ui.Converters"
              xmlns:themes="clr-namespace:Material.Styles.Themes;assembly=Material.Styles"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
@@ -15,10 +14,9 @@
     <Application.Styles>
         <FluentTheme DensityStyle="Compact" />
         <dialogHostAvalonia:DialogHostStyles />
-        <StyleInclude Source="avares://ExtensionFramework.AvaloniaUi/Styles/Theme.axaml" />
         <themes:MaterialTheme BaseTheme="Dark" PrimaryColor="Teal" SecondaryColor="DeepOrange" />
         <avalonia:MaterialIconStyles />
-        <StyleInclude Source="avares://ExtensionFramework.AvaloniaUi.Material/Styles/Theme.axaml" />
+        <StyleInclude Source="avares://Spravy.Ui/Styles/Theme.axaml" />
 
         <Style Selector="ListBox.ItemsDragAndDrop">
             <Style.Resources>
@@ -481,7 +479,7 @@
     </Application.DataTemplates>
 
     <Application.Resources>
-        <extensionFramework:ObjectToVisibleValueConverter x:Key="ObjectToVisibleValueConverter" />
+        <converters:ObjectToVisibleValueConverter x:Key="ObjectToVisibleValueConverter" />
         <converters:ToDoItemStatusToBrushValueConverter x:Key="ToDoItemStatusToBrushValueConverter" />
         <converters:ReverseBooleanValueConverter x:Key="ReverseBooleanValueConverter" />
         <converters:EmptyStringToNullConverter x:Key="EmptyStringToNullConverter" />

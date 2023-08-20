@@ -1,5 +1,5 @@
 using Avalonia.Markup.Xaml;
-using ExtensionFramework.AvaloniaUi.ReactiveUI.Models;
+using Spravy.Ui.Controls;
 using Spravy.Ui.ViewModels;
 
 namespace Spravy.Ui.Views;

@@ -1,6 +1,6 @@
-using ExtensionFramework.Core.DependencyInjection.Extensions;
-using ExtensionFramework.Core.DependencyInjection.Interfaces;
 using Microsoft.Extensions.Configuration;
+using Spravy.Domain.Extensions;
+using Spravy.Domain.Interfaces;
 
 namespace Spravy.Ui.Browser.Configurations;
 

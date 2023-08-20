@@ -1,11 +1,10 @@
 using System;
 using System.Threading.Tasks;
 using DialogHostAvalonia;
-using ExtensionFramework.Core.Common.Extensions;
-using ExtensionFramework.Core.DependencyInjection.Attributes;
-using ExtensionFramework.Core.DependencyInjection.Extensions;
-using ExtensionFramework.Core.DependencyInjection.Interfaces;
-using ExtensionFramework.Core.Ui.Interfaces;
+using Spravy.Domain.Attributes;
+using Spravy.Domain.Extensions;
+using Spravy.Domain.Interfaces;
+using Spravy.Ui.Interfaces;
 using Spravy.Ui.Views;
 
 namespace Spravy.Ui.Services;

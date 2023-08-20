@@ -1,12 +1,9 @@
 ﻿using System;
 using Avalonia;
 using Avalonia.ReactiveUI;
-using ExtensionFramework.Core.Common.Extensions;
-using ExtensionFramework.Core.Graph.Extensions;
-using ExtensionFramework.Core.Graph.Services;
-using ExtensionFramework.Core.ModularSystem.Extensions;
-using ExtensionFramework.Core.ModularSystem.Interfaces;
-using ExtensionFramework.Core.ModularSystem.Services;
+using Spravy.Domain.Extensions;
+using Spravy.Domain.Interfaces;
+using Spravy.Domain.Services;
 using Spravy.Ui.Desktop.Modules;
 using Spravy.Ui.Modules;
 

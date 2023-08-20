@@ -1,4 +1,4 @@
-<models:MainReactiveUserControl x:TypeArguments="viewModels:CompleteToDoItemViewModel"
+<controls:MainReactiveUserControl x:TypeArguments="viewModels:CompleteToDoItemViewModel"
                                 xmlns="https://github.com/avaloniaui"
                                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -7,8 +7,8 @@
                                 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                 xmlns:interfaces="clr-namespace:Spravy.Ui.Interfaces"
                                 xmlns:views="clr-namespace:Spravy.Ui.Views"
-                                xmlns:models="clr-namespace:ExtensionFramework.AvaloniaUi.ReactiveUI.Models;assembly=ExtensionFramework.AvaloniaUi.ReactiveUI"
                                 xmlns:models1="clr-namespace:Spravy.Ui.Models"
+                                xmlns:controls="clr-namespace:Spravy.Ui.Controls"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.CompleteToDoItemView"
                                 x:DataType="viewModels:CompleteToDoItemViewModel">
@@ -87,4 +87,4 @@
             </DataTemplate>
         </ContentControl.DataTemplates>
     </ContentControl>
-</models:MainReactiveUserControl>
+</controls:MainReactiveUserControl>

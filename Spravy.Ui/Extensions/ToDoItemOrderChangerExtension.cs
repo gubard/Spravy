@@ -1,6 +1,4 @@
 using System.Threading.Tasks;
-using ExtensionFramework.AvaloniaUi.Extensions;
-using ExtensionFramework.AvaloniaUi.Models;
 using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;

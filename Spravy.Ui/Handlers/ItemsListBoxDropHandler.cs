@@ -5,8 +5,8 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.VisualTree;
 using Avalonia.Xaml.Interactions.DragAndDrop;
-using ExtensionFramework.AvaloniaUi.Extensions;
-using ExtensionFramework.AvaloniaUi.Models;
+using Spravy.Ui.Extensions;
+using Spravy.Ui.Models;
 
 namespace Spravy.Ui.Handlers;
 

@@ -3,12 +3,11 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
-using ExtensionFramework.AvaloniaUi.Controls;
-using ExtensionFramework.Core.Common.Extensions;
-using ExtensionFramework.Core.DependencyInjection.Attributes;
-using ExtensionFramework.ReactiveUI.Models;
 using ReactiveUI;
+using Spravy.Domain.Attributes;
+using Spravy.Domain.Extensions;
 using Spravy.ToDo.Domain.Interfaces;
+using Spravy.Ui.Controls;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
