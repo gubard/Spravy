@@ -8,18 +8,24 @@
                                 xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
                                 xmlns:controls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
                                 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                                xmlns:views="clr-namespace:Spravy.Ui.Views"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.CreateUserView"
                                 x:DataType="viewModels:CreateUserViewModel">
     <Design.DataContext>
         <viewModels:CreateUserViewModel />
     </Design.DataContext>
+    
+    <UserControl.KeyBindings>
+        <KeyBinding Gesture="Enter" Command="{Binding CreateUserCommand}" />
+    </UserControl.KeyBindings>
 
     <controls:Card HorizontalAlignment="Center"
                    VerticalAlignment="Center"
                    MinWidth="300">
         <Grid RowDefinitions="Auto,Auto,Auto,Auto">
             <TextBox UseFloatingWatermark="True"
+                     Name="{x:Static views:CreateUserView.LoginTextBoxName}"
                      Classes="outline dense"
                      Theme="{StaticResource OutlineTextBox}"
                      assists:TextFieldAssist.Label="Login"
