@@ -2,6 +2,11 @@
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
 using Avalonia;
+using Avalonia.Browser;
+using Avalonia.ReactiveUI;
+using Spravy.Domain.Extensions;
+using Spravy.Domain.Interfaces;
+using Spravy.Domain.Services;
 using Spravy.Ui.Browser.Modules;
 using Spravy.Ui.Modules;
 

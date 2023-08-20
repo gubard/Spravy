@@ -6,6 +6,8 @@ using Android.OS;
 
 using Avalonia;
 using Avalonia.Android;
+using Avalonia.ReactiveUI;
+using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Services;
 using Spravy.Ui.Android.Modules;
