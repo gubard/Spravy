@@ -1,5 +1,7 @@
 using System;
 using AutoMapper;
+using Spravy.Authentication.Domain.Models;
+using Spravy.Authentication.Protos;
 using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.Models;
 using Spravy.Ui.ViewModels;
@@ -20,7 +22,9 @@ public class SpravyUiProfile : Profile
         CreateMap<ToDoItemPlannedViewModel, ToDoSubItemPlannedNotify>();
         CreateMap<ToDoItemPeriodicityViewModel, ToDoSubItemPeriodicityNotify>();
         CreateMap<ToDoSelectorItem, ToDoSelectorItemNotify>();
-
+        CreateMap<CreateUserViewModel, CreateUserOptions>();
+        CreateMap<LoginViewModel, User>();
+        
         CreateMap<AddRootToDoItemViewModel, AddRootToDoItemOptions>()
             .ConstructUsing(x => new AddRootToDoItemOptions(x.Name));
         CreateMap<ToDoSubItemValueNotify, AddToDoItemOptions>()
@@ -46,12 +50,12 @@ public class SpravyUiProfile : Profile
             .ConvertUsing(
                 (source, _, resolutionContext) => resolutionContext.Mapper.Map<ToDoSubItemGroupNotify>(source)
             );
-        
+
         CreateMap<ToDoSubItemPlanned, ToDoSubItemNotify>()
             .ConvertUsing(
                 (source, _, resolutionContext) => resolutionContext.Mapper.Map<ToDoSubItemPlannedNotify>(source)
             );
-        
+
         CreateMap<ToDoSubItemPeriodicity, ToDoSubItemNotify>()
             .ConvertUsing(
                 (source, _, resolutionContext) => resolutionContext.Mapper.Map<ToDoSubItemPeriodicityNotify>(source)

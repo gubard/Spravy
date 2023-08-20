@@ -5,12 +5,12 @@ using Spravy.ToDo.Db.Contexts;
 
 namespace Spravy.ToDo.Db.Sqlite.Migrator;
 
-public class SqliteSpravyDbContext : SpravyDbContext
+public class SqliteSpravyToDoDbContext : SpravyToDoDbContext
 {
     public const string GenerateGuidQuery =
         "hex(randomblob(4)) || '-' || hex(randomblob(2)) || '-' || '4' || substr(hex(randomblob(2)), 2) || '-' || substr('AB89', 1 + (abs(random()) % 4) , 1)  || substr(hex(randomblob(2)), 2) || '-' || hex(randomblob(6))";
 
-    public SqliteSpravyDbContext() : base(new SqliteDbContextSetup())
+    public SqliteSpravyToDoDbContext() : base(new SqliteToDoDbContextSetup())
     {
     }
 

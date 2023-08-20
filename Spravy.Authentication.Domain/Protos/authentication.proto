@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+option csharp_namespace = "Spravy.Authentication.Protos";
+
+import "Protos/authentication_messages.proto";
+
+package spravy.authentication;
+
+service AuthenticationService {
+  rpc IsValid (IsValidRequest) returns (IsValidReply);
+  rpc CreateUser (CreateUserRequest) returns (CreateUserReply);
+}

@@ -4,7 +4,7 @@ option csharp_namespace = "Spravy.ToDo.Protos";
 
 import "Protos/to_do_messages.proto";
 
-package spravy;
+package spravy.to_do;
 
 service ToDoService {
   rpc GetRootToDoSubItems (GetRootToDoSubItemsRequest) returns (GetRootToDoSubItemsReply);

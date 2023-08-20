@@ -20,12 +20,6 @@
 
     <ItemGroup>
       <Protobuf Include="..\Spravy.ToDo.Domain\Protos\to_do_messages.proto">
-        <GrpcServices>None</GrpcServices>
-        <Access>Public</Access>
-        <ProtoCompile>True</ProtoCompile>
-        <CompileOutputs>True</CompileOutputs>
-        <OutputDir>obj\Debug/net7.0/</OutputDir>
-        <Generator>MSBuild:Compile</Generator>
         <Link>Protos\to_do_messages.proto</Link>
       </Protobuf>
     </ItemGroup>

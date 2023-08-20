@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
-using Spravy.ToDo.Db.Interfaces;
+using Spravy.Db.Core.Interfaces;
 using Spravy.ToDo.Db.Sqlite.EntityTypeConfigurations;
 
 namespace Spravy.ToDo.Db.Sqlite.Services;
 
-public class SqliteDbContextSetup : IDbContextSetup
+public class SqliteToDoDbContextSetup : IDbContextSetup
 {
     public void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -1,5 +1,5 @@
 using AutoMapper;
-using Spravy.ToDo.Db.Extension;
+using Spravy.ToDo.Db.Extensions;
 using Spravy.ToDo.Db.Models;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
@@ -7,14 +7,14 @@ using Spravy.ToDo.Domain.Models;
 
 namespace Spravy.ToDo.Db.Core.Profiles;
 
-public class SpravyDbProfile : Profile
+public class SpravyToDoDbProfile : Profile
 {
     public const string StatusName = "Status";
     public const string ParentsName = "Parents";
     public const string ItemsName = "Items";
     public const string ActiveName = "Active";
 
-    public SpravyDbProfile()
+    public SpravyToDoDbProfile()
     {
         CreateMap<ToDoItemEntity, DailyPeriodicity>();
         CreateMap<ToDoItemEntity, MonthlyPeriodicity>().ConstructUsing(x => new MonthlyPeriodicity(x.GetDaysOfMonth()));

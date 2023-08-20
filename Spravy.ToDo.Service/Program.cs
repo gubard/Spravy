@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using Spravy.Db.Core.Interfaces;
 using Spravy.ToDo.Domain.Core.Profiles;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Db.Core.Profiles;
@@ -9,7 +10,6 @@ using Spravy.ToDo.Service.Profiles;
 using Spravy.ToDo.Service.Services;
 using Spravy.ToDo.Service.Services.Grpcs;
 using Spravy.ToDo.Db.Contexts;
-using Spravy.ToDo.Db.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddGrpc();
@@ -19,15 +19,15 @@ builder.Services.AddScoped(
         cfg =>
         {
             cfg.AddProfile<SpravyServiceProfile>();
-            cfg.AddProfile<SpravyProfile>();
-            cfg.AddProfile<SpravyDbProfile>();
+            cfg.AddProfile<SpravyToDoProfile>();
+            cfg.AddProfile<SpravyToDoDbProfile>();
         }
     )
 );
 
 builder.Services.AddScoped<IMapper>(sp => new Mapper(sp.GetRequiredService<MapperConfiguration>()));
 builder.Services.AddScoped<IToDoService, EntityFrameworkToDoService>();
-builder.Services.AddScoped<IDbContextSetup, SqliteDbContextSetup>();
+builder.Services.AddScoped<IDbContextSetup, SqliteToDoDbContextSetup>();
 
 builder.Services.AddCors(
     o => o.AddPolicy(
@@ -42,13 +42,9 @@ builder.Services.AddCors(
     )
 );
 
-//#if DEBUG
-//builder.Services.AddDbContext<SpravyDbContext>(options => options.UseInMemoryDatabase("SpravyDbContext"));
-//#else
-builder.Services.AddDbContext<SpravyDbContext>(
+builder.Services.AddDbContext<SpravyToDoDbContext>(
     (sp, options) => options.UseSqlite(sp.GetRequiredService<IConfiguration>()["Sqlite:ConnectionString"])
 );
-//#endif
 
 builder.Host.UseSerilog(
     (_, _, configuration) =>

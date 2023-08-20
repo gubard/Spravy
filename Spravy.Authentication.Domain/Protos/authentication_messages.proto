@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+option csharp_namespace = "Spravy.Authentication.Protos";
+
+package spravy.authentication;
+
+message IsValidRequest {
+  UserGrpc User = 1;
+}
+
+message IsValidReply {
+  bool IsValid = 1;
+}
+
+message CreateUserRequest {
+  string Login = 1;
+  string Password = 2;
+}
+
+message CreateUserReply {
+
+}
+
+message UserGrpc {
+  string Login = 1;
+  string Password = 2;
+}

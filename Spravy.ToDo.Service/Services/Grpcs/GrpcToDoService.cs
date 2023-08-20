@@ -5,10 +5,11 @@ using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
 using Spravy.ToDo.Protos;
+using static Spravy.ToDo.Protos.ToDoService;
 
 namespace Spravy.ToDo.Service.Services.Grpcs;
 
-public class GrpcToDoService : ToDoService.ToDoServiceBase
+public class GrpcToDoService : ToDoServiceBase
 {
     private readonly IToDoService toDoService;
     private readonly IMapper mapper;

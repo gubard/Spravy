@@ -10,7 +10,7 @@ using Spravy.ToDo.Db.Sqlite.Migrator;
 
 namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
 {
-    [DbContext(typeof(SqliteSpravyDbContext))]
+    [DbContext(typeof(SqliteSpravyToDoDbContext))]
     [Migration("20230710114749_AddSkippedCount")]
     partial class AddSkippedCount
     {

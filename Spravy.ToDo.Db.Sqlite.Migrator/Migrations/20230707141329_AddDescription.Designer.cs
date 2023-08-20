@@ -10,7 +10,7 @@ using Spravy.ToDo.Db.Sqlite.Migrator;
 
 namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
 {
-    [DbContext(typeof(SqliteSpravyDbContext))]
+    [DbContext(typeof(SqliteSpravyToDoDbContext))]
     [Migration("20230707141329_AddDescription")]
     partial class AddDescription
     {

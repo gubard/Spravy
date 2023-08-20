@@ -8,17 +8,17 @@ using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
 using Spravy.ToDo.Db.Core.Profiles;
 using Spravy.ToDo.Db.Contexts;
-using Spravy.ToDo.Db.Extension;
+using Spravy.ToDo.Db.Extensions;
 using Spravy.ToDo.Db.Models;
 
 namespace Spravy.ToDo.Service.Services;
 
 public class EntityFrameworkToDoService : IToDoService
 {
-    private readonly SpravyDbContext context;
+    private readonly SpravyToDoDbContext context;
     private readonly IMapper mapper;
 
-    public EntityFrameworkToDoService(SpravyDbContext context, IMapper mapper)
+    public EntityFrameworkToDoService(SpravyToDoDbContext context, IMapper mapper)
     {
         this.context = context;
         this.mapper = mapper;
@@ -58,8 +58,8 @@ public class EntityFrameworkToDoService : IToDoService
             item,
             a =>
             {
-                a.Items.Add(SpravyDbProfile.StatusName, status);
-                a.Items.Add(SpravyDbProfile.ActiveName, active);
+                a.Items.Add(SpravyToDoDbProfile.StatusName, status);
+                a.Items.Add(SpravyToDoDbProfile.ActiveName, active);
             }
         );
 
@@ -375,8 +375,8 @@ public class EntityFrameworkToDoService : IToDoService
             item,
             opt =>
             {
-                opt.Items.Add(SpravyDbProfile.ParentsName, parents.ToArray());
-                opt.Items.Add(SpravyDbProfile.ItemsName, toDoSubItems.ToArray());
+                opt.Items.Add(SpravyToDoDbProfile.ParentsName, parents.ToArray());
+                opt.Items.Add(SpravyToDoDbProfile.ItemsName, toDoSubItems.ToArray());
             }
         );
 

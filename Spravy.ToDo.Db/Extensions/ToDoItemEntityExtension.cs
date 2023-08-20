@@ -2,7 +2,7 @@ using ExtensionFramework.Core.Common.Extensions;
 using ExtensionFramework.Core.Common.Models;
 using Spravy.ToDo.Db.Models;
 
-namespace Spravy.ToDo.Db.Extension;
+namespace Spravy.ToDo.Db.Extensions;
 
 public static class ToDoItemEntityExtension
 {

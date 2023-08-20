@@ -19,6 +19,8 @@ using ExtensionFramework.Core.Ui.Models;
 using ExtensionFramework.ReactiveUI.Interfaces;
 using Material.Styles.Controls;
 using Microsoft.Extensions.Configuration;
+using Spravy.Authentication.Domain.Core.Profiles;
+using Spravy.Authentication.Domain.Interfaces;
 using Spravy.ToDo.Domain.Core.Profiles;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Enums;
@@ -52,6 +54,7 @@ public readonly struct SpravyDependencyInjectorConfiguration : IDependencyInject
         register.RegisterTransient<DayOfYearSelector>();
         register.RegisterTransient<DayOfWeekSelector>();
         register.RegisterTransient<DayOfMonthSelector>();
+        register.RegisterTransient<IAuthenticationService, GrpcAuthenticationService>();
 
         register.RegisterTransient(
             () => Application.Current.ThrowIfNull("Application").GetTopLevel().ThrowIfNull("TopLevel").Clipboard
@@ -101,26 +104,31 @@ public readonly struct SpravyDependencyInjectorConfiguration : IDependencyInject
                 return options;
             }
         );
-
-        register.RegisterScope(
-            () => new AppConfiguration(
-                typeof(RootToDoItemViewModel),
-                new Dictionary<Type, Type>
+        
+        register.RegisterScopeDel<GrpcAuthenticationServiceOptions>(
+            (IConfiguration configuration) =>
+            {
+#if DEBUG
+                return new GrpcAuthenticationServiceOptions
                 {
-                    {
-                        typeof(AddRootToDoItemViewModel), typeof(RootToDoItemViewModel)
-                    },
-                    {
-                        typeof(AddToDoItemViewModel), typeof(ToDoItemValueViewModel)
-                    }
-                }
-            )
+                    ChannelType = GrpcChannelType.Default,
+                    Host = "http://localhost:5001",
+                    ChannelCredentialType = ChannelCredentialType.Insecure
+                };
+#endif
+                var options = configuration.GetSection("GrpcAuthenticationService").Get<GrpcAuthenticationServiceOptions>();
+
+                return options;
+            }
         );
+
+        register.RegisterScope(() => new AppConfiguration(typeof(LoginViewModel)));
     }
 
     private static void SetupMapperConfiguration(IMapperConfigurationExpression expression)
     {
-        expression.AddProfile<SpravyProfile>();
+        expression.AddProfile<SpravyToDoProfile>();
         expression.AddProfile<SpravyUiProfile>();
+        expression.AddProfile<SpravyAuthenticationProfile>();
     }
 }

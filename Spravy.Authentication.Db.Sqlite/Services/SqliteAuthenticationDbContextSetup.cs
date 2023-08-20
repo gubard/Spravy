@@ -1,0 +1,13 @@
+using Microsoft.EntityFrameworkCore;
+using Spravy.Authentication.Db.Sqlite.EntityTypeConfigurations;
+using Spravy.Db.Core.Interfaces;
+
+namespace Spravy.Authentication.Db.Sqlite.Services;
+
+public class SqliteAuthenticationDbContextSetup : IDbContextSetup
+{
+    public void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfiguration(new UserEntityTypeConfiguration());
+    }
+}

@@ -9,9 +9,9 @@ using Spravy.ToDo.Protos;
 
 namespace Spravy.ToDo.Domain.Core.Profiles;
 
-public class SpravyProfile : Profile
+public class SpravyToDoProfile : Profile
 {
-    public SpravyProfile()
+    public SpravyToDoProfile()
     {
         CreateMap<ToDoItemParent, ToDoItemParentGrpc>();
         CreateMap<ToDoItemParentGrpc, ToDoItemParent>();

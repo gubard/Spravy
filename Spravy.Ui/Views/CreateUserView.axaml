@@ -1,0 +1,57 @@
+<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:CreateUserViewModel"
+                                xmlns="https://github.com/avaloniaui"
+                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                                xmlns:reactiveUi="http://reactiveui.net"
+                                xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
+                                xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
+                                xmlns:controls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
+                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                                x:Class="Spravy.Ui.Views.CreateUserView"
+                                x:DataType="viewModels:CreateUserViewModel">
+    <Design.DataContext>
+        <viewModels:CreateUserViewModel />
+    </Design.DataContext>
+
+    <controls:Card HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   MinWidth="300">
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto">
+            <TextBox UseFloatingWatermark="True"
+                     Classes="outline dense"
+                     Theme="{StaticResource OutlineTextBox}"
+                     assists:TextFieldAssist.Label="Login"
+                     Text="{Binding Login}" />
+
+            <TextBox Grid.Row="1" UseFloatingWatermark="True"
+                     Classes="out
+                     line dense revealPasswordButton"
+                     Theme="{StaticResource OutlineTextBox}"
+                     assists:TextFieldAssist.Label="Password"
+                     PasswordChar="*"
+                     Text="{Binding Password}" />
+
+            <TextBox Grid.Row="2"
+                     UseFloatingWatermark="True"
+                     Classes="outline dense revealPasswordButton"
+                     Theme="{StaticResource OutlineTextBox}"
+                     assists:TextFieldAssist.Label="Repeat password"
+                     PasswordChar="*"
+                     Text="{Binding RepeatPassword}" />
+
+            <Grid Grid.Row="3"
+                  ColumnDefinitions="*,*">
+                <Button Command="{Binding BackCommand}">
+                    <avalonia:MaterialIcon Kind="Cancel" />
+                </Button>
+
+                <Button Grid.Column="1"
+                        Command="{Binding CreateUserCommand}">
+                    <avalonia:MaterialIcon Kind="AccountPlus" />
+                </Button>
+            </Grid>
+        </Grid>
+    </controls:Card>
+</reactiveUi:ReactiveUserControl>

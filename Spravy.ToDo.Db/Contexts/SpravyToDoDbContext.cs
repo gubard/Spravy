@@ -1,18 +1,18 @@
 using Microsoft.EntityFrameworkCore;
-using Spravy.ToDo.Db.Interfaces;
+using Spravy.Db.Core.Interfaces;
 
 namespace Spravy.ToDo.Db.Contexts;
 
-public class SpravyDbContext : DbContext
+public class SpravyToDoDbContext : DbContext
 {
     private readonly IDbContextSetup setup;
 
-    protected SpravyDbContext(IDbContextSetup setup)
+    protected SpravyToDoDbContext(IDbContextSetup setup)
     {
         this.setup = setup;
     }
 
-    public SpravyDbContext(DbContextOptions options, IDbContextSetup setup) : base(options)
+    public SpravyToDoDbContext(DbContextOptions options, IDbContextSetup setup) : base(options)
     {
         this.setup = setup;
     }

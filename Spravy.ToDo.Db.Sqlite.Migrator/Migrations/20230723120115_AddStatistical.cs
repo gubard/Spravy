@@ -49,7 +49,7 @@ namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
 
             migrationBuilder.Sql(
                 @$"INSERT INTO ToDoItemStatisticalEntity (Id, ItemId, CompletedCount, SkippedCount, FailedCount) 
-            SELECT {SqliteSpravyDbContext.GenerateGuidQuery}, tdi.Id, 0, 0, 0
+            SELECT {SqliteSpravyToDoDbContext.GenerateGuidQuery}, tdi.Id, 0, 0, 0
             FROM ToDoItem tdi;"
             );
 

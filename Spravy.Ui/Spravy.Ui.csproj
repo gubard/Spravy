@@ -37,6 +37,7 @@
       <ProjectReference Include="..\ExtensionFramework\ExtensionFramework.AvaloniaUi\ExtensionFramework.AvaloniaUi.csproj" />
       <ProjectReference Include="..\ExtensionFramework\ExtensionFramework.Core\ExtensionFramework.Core.csproj" />
       <ProjectReference Include="..\ExtensionFramework\ExtensionFramework.ReactiveUI\ExtensionFramework.ReactiveUI.csproj" />
+      <ProjectReference Include="..\Spravy.Authentication.Domain.Core\Spravy.Authentication.Domain.Core.csproj" />
       <ProjectReference Include="..\Spravy.ToDo.Domain.Core\Spravy.ToDo.Domain.Core.csproj" />
       <ProjectReference Include="..\Spravy.ToDo.Domain\Spravy.ToDo.Domain.csproj" />
     </ItemGroup>
@@ -52,6 +53,15 @@
         </Protobuf>
         <Protobuf Include="..\Spravy.ToDo.Domain\Protos\to_do_messages.proto" GrpcServices="None" ProtoCompile="False">
             <Link>Protos/to_do_messages.proto</Link>
+        </Protobuf>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Protobuf Include="..\Spravy.Authentication.Domain\Protos\authentication.proto" GrpcServices="Client" ProtoRoot="..\Spravy.Authentication.Domain">
+            <Link>Protos/authentication.proto</Link>
+        </Protobuf>
+        <Protobuf Include="..\Spravy.Authentication.Domain\Protos\authentication_messages.proto" GrpcServices="None" ProtoCompile="False">
+            <Link>Protos/authentication_messages.proto</Link>
         </Protobuf>
     </ItemGroup>
 </Project>

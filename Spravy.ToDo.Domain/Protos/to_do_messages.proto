@@ -5,7 +5,7 @@ option csharp_namespace = "Spravy.ToDo.Protos";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/duration.proto";
 
-package spravy;
+package spravy.to_do;
 
 message ToDoItemToStringRequest {
   bytes Id = 1;
