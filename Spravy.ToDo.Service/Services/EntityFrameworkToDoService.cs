@@ -15,44 +15,49 @@ namespace Spravy.ToDo.Service.Services;
 
 public class EntityFrameworkToDoService : IToDoService
 {
-    private readonly SpravyToDoDbContext context;
     private readonly IMapper mapper;
+    private readonly IDbContextFactory<SpravyToDoDbContext> dbContextFactory;
 
-    public EntityFrameworkToDoService(SpravyToDoDbContext context, IMapper mapper)
+    public EntityFrameworkToDoService(IMapper mapper, IDbContextFactory<SpravyToDoDbContext> dbContextFactory)
     {
-        this.context = context;
         this.mapper = mapper;
+        this.dbContextFactory = dbContextFactory;
     }
 
     public async Task<IEnumerable<IToDoSubItem>> GetRootToDoSubItemsAsync()
     {
+        await using var context = await dbContextFactory.CreateDbContextAsync();
+
         var items = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.ParentId == null)
             .OrderBy(x => x.OrderIndex)
             .ToArrayAsync();
 
-        var result = await ConvertAsync(items);
+        var result = await ConvertAsync(context, items);
 
         return result;
     }
 
-    private async Task<IEnumerable<IToDoSubItem>> ConvertAsync(IEnumerable<ToDoItemEntity> items)
+    private async Task<IEnumerable<IToDoSubItem>> ConvertAsync(
+        SpravyToDoDbContext context,
+        IEnumerable<ToDoItemEntity> items
+    )
     {
         var result = new List<IToDoSubItem>();
 
         foreach (var item in items)
         {
-            var toDoSubItem = await ConvertAsync(item);
+            var toDoSubItem = await ConvertAsync(context, item);
             result.Add(toDoSubItem);
         }
 
         return result;
     }
 
-    private async Task<IToDoSubItem> ConvertAsync(ToDoItemEntity item)
+    private async Task<IToDoSubItem> ConvertAsync(SpravyToDoDbContext context, ToDoItemEntity item)
     {
-        var (status, active) = await GetStatusAndActiveAsync(item, item.Id);
+        var (status, active) = await GetStatusAndActiveAsync(context, item, item.Id);
 
         var result = mapper.Map<IToDoSubItem>(
             item,
@@ -66,19 +71,23 @@ public class EntityFrameworkToDoService : IToDoService
         return result;
     }
 
-    private Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusAndActiveAsync(ToDoItemEntity entity)
+    private Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusAndActiveAsync(
+        SpravyToDoDbContext context,
+        ToDoItemEntity entity
+    )
     {
         switch (entity.Type)
         {
-            case ToDoItemType.Value: return GetStatusAndActiveValueAsync(entity);
-            case ToDoItemType.Group: return GetStatusAndActiveGroupAsync(entity);
-            case ToDoItemType.Planned: return GetStatusAndActivePlannedAsync(entity);
-            case ToDoItemType.Periodicity: return GetStatusAndActivePeriodicityAsync(entity);
+            case ToDoItemType.Value: return GetStatusAndActiveValueAsync(context, entity);
+            case ToDoItemType.Group: return GetStatusAndActiveGroupAsync(context, entity);
+            case ToDoItemType.Planned: return GetStatusAndActivePlannedAsync(context, entity);
+            case ToDoItemType.Periodicity: return GetStatusAndActivePeriodicityAsync(context, entity);
             default: throw new ArgumentOutOfRangeException();
         }
     }
 
     private async Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusAndActivePeriodicityAsync(
+        SpravyToDoDbContext context,
         ToDoItemEntity entity
     )
     {
@@ -109,7 +118,7 @@ public class EntityFrameworkToDoService : IToDoService
 
         foreach (var child in children)
         {
-            var status = await GetStatusAndActiveAsync(child);
+            var status = await GetStatusAndActiveAsync(context, child);
 
             switch (status.Status)
             {
@@ -145,6 +154,7 @@ public class EntityFrameworkToDoService : IToDoService
     }
 
     private async Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusAndActivePlannedAsync(
+        SpravyToDoDbContext context,
         ToDoItemEntity entity
     )
     {
@@ -180,7 +190,7 @@ public class EntityFrameworkToDoService : IToDoService
 
         foreach (var child in children)
         {
-            var status = await GetStatusAndActiveAsync(child);
+            var status = await GetStatusAndActiveAsync(context, child);
 
             switch (status.Status)
             {
@@ -216,11 +226,12 @@ public class EntityFrameworkToDoService : IToDoService
     }
 
     private async Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusAndActiveAsync(
+        SpravyToDoDbContext context,
         ToDoItemEntity entity,
         Guid id
     )
     {
-        var result = await GetStatusAndActiveAsync(entity);
+        var result = await GetStatusAndActiveAsync(context, entity);
 
         if (result.Active is null)
         {
@@ -244,6 +255,7 @@ public class EntityFrameworkToDoService : IToDoService
     }
 
     private async Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusAndActiveGroupAsync(
+        SpravyToDoDbContext context,
         ToDoItemEntity entity
     )
     {
@@ -264,7 +276,7 @@ public class EntityFrameworkToDoService : IToDoService
 
         foreach (var child in children)
         {
-            var status = await GetStatusAndActiveAsync(child);
+            var status = await GetStatusAndActiveAsync(context, child);
 
             switch (status.Status)
             {
@@ -296,6 +308,7 @@ public class EntityFrameworkToDoService : IToDoService
 
 
     private async Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusAndActiveValueAsync(
+        SpravyToDoDbContext context,
         ToDoItemEntity entity
     )
     {
@@ -321,7 +334,7 @@ public class EntityFrameworkToDoService : IToDoService
 
         foreach (var child in children)
         {
-            var status = await GetStatusAndActiveAsync(child);
+            var status = await GetStatusAndActiveAsync(context, child);
 
             switch (status.Status)
             {
@@ -353,6 +366,7 @@ public class EntityFrameworkToDoService : IToDoService
 
     public async Task<IToDoItem> GetToDoItemAsync(Guid id)
     {
+        await using var context = await dbContextFactory.CreateDbContextAsync();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
 
@@ -367,9 +381,9 @@ public class EntityFrameworkToDoService : IToDoService
             new(item.Id, item.Name)
         };
 
-        await GetParentsAsync(id, parents);
+        await GetParentsAsync(context, id, parents);
         parents.Reverse();
-        var toDoSubItems = await ConvertAsync(subItems);
+        var toDoSubItems = await ConvertAsync(context, subItems);
 
         var toDoItem = mapper.Map<IToDoItem>(
             item,
@@ -385,6 +399,7 @@ public class EntityFrameworkToDoService : IToDoService
 
     public async Task<Guid> AddRootToDoItemAsync(AddRootToDoItemOptions options)
     {
+        await using var context = await dbContextFactory.CreateDbContextAsync();
         var id = Guid.NewGuid();
 
         var items = await context.Set<ToDoItemEntity>()
@@ -405,6 +420,7 @@ public class EntityFrameworkToDoService : IToDoService
 
     public async Task<Guid> AddToDoItemAsync(AddToDoItemOptions options)
     {
+        await using var context = await dbContextFactory.CreateDbContextAsync();
         var id = Guid.NewGuid();
         var parent = await context.Set<ToDoItemEntity>().FindAsync(options.ParentId);
         parent = parent.ThrowIfNull();
@@ -436,6 +452,7 @@ public class EntityFrameworkToDoService : IToDoService
 
     public async Task DeleteToDoItemAsync(Guid id)
     {
+        await using var context = await dbContextFactory.CreateDbContextAsync();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
         var children = await context.Set<ToDoItemEntity>().AsNoTracking().Where(x => x.ParentId == id).ToArrayAsync();
@@ -451,6 +468,7 @@ public class EntityFrameworkToDoService : IToDoService
 
     public async Task UpdateToDoItemTypeOfPeriodicityAsync(Guid id, TypeOfPeriodicity type)
     {
+        await using var context = await dbContextFactory.CreateDbContextAsync();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
         item.TypeOfPeriodicity = type;
@@ -459,6 +477,7 @@ public class EntityFrameworkToDoService : IToDoService
 
     public async Task UpdateToDoItemDueDateAsync(Guid id, DateTimeOffset dueDate)
     {
+        await using var context = await dbContextFactory.CreateDbContextAsync();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
         item.DueDate = dueDate;
@@ -467,12 +486,13 @@ public class EntityFrameworkToDoService : IToDoService
 
     public async Task UpdateToDoItemCompleteStatusAsync(Guid id, bool isCompleted)
     {
+        await using var context = await dbContextFactory.CreateDbContextAsync();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
 
         if (isCompleted)
         {
-            var isCanComplete = await IsCanFinishToDoItem(item);
+            var isCanComplete = await IsCanFinishToDoItem(context, item);
 
             if (!isCanComplete)
             {
@@ -506,7 +526,7 @@ public class EntityFrameworkToDoService : IToDoService
         await context.SaveChangesAsync();
     }
 
-    private async Task<bool> IsCanFinishToDoItem(ToDoItemEntity item)
+    private async Task<bool> IsCanFinishToDoItem(SpravyToDoDbContext context, ToDoItemEntity item)
     {
         if (item.Type == ToDoItemType.Group)
         {
@@ -547,7 +567,7 @@ public class EntityFrameworkToDoService : IToDoService
                 _ => throw new ArgumentOutOfRangeException()
             };
 
-            var isCanComplete = await IsCanFinishToDoItem(child, dueDate);
+            var isCanComplete = await IsCanFinishToDoItem(context, child, dueDate);
 
             if (!isCanComplete)
             {
@@ -558,7 +578,11 @@ public class EntityFrameworkToDoService : IToDoService
         return true;
     }
 
-    private async Task<bool> IsCanFinishToDoSubItemPeriodicity(ToDoItemEntity item, DateTimeOffset? rootDue)
+    private async Task<bool> IsCanFinishToDoSubItemPeriodicity(
+        SpravyToDoDbContext context,
+        ToDoItemEntity item,
+        DateTimeOffset? rootDue
+    )
     {
         if (rootDue.HasValue)
         {
@@ -582,7 +606,7 @@ public class EntityFrameworkToDoService : IToDoService
 
         foreach (var child in children)
         {
-            var isCanComplete = await IsCanFinishToDoItem(child, rootDue);
+            var isCanComplete = await IsCanFinishToDoItem(context, child, rootDue);
 
             if (!isCanComplete)
             {
@@ -593,7 +617,11 @@ public class EntityFrameworkToDoService : IToDoService
         return true;
     }
 
-    private async Task<bool> IsCanFinishToDoSubItemPlanned(ToDoItemEntity item, DateTimeOffset? rootDue)
+    private async Task<bool> IsCanFinishToDoSubItemPlanned(
+        SpravyToDoDbContext context,
+        ToDoItemEntity item,
+        DateTimeOffset? rootDue
+    )
     {
         if (item.IsCompleted)
         {
@@ -622,7 +650,7 @@ public class EntityFrameworkToDoService : IToDoService
 
         foreach (var child in children)
         {
-            var isCanComplete = await IsCanFinishToDoItem(child, rootDue);
+            var isCanComplete = await IsCanFinishToDoItem(context, child, rootDue);
 
             if (!isCanComplete)
             {
@@ -633,7 +661,11 @@ public class EntityFrameworkToDoService : IToDoService
         return true;
     }
 
-    private async Task<bool> IsCanFinishToDoSubItemValue(ToDoItemEntity item, DateTimeOffset? rootDue)
+    private async Task<bool> IsCanFinishToDoSubItemValue(
+        SpravyToDoDbContext context,
+        ToDoItemEntity item,
+        DateTimeOffset? rootDue
+    )
     {
         if (item.IsCompleted)
         {
@@ -647,7 +679,7 @@ public class EntityFrameworkToDoService : IToDoService
 
         foreach (var child in children)
         {
-            var isCanComplete = await IsCanFinishToDoItem(child, rootDue);
+            var isCanComplete = await IsCanFinishToDoItem(context, child, rootDue);
 
             if (!isCanComplete)
             {
@@ -658,7 +690,11 @@ public class EntityFrameworkToDoService : IToDoService
         return true;
     }
 
-    private async Task<bool> IsCanFinishToDoSubItemGroup(ToDoItemEntity item, DateTimeOffset? rootDue)
+    private async Task<bool> IsCanFinishToDoSubItemGroup(
+        SpravyToDoDbContext context,
+        ToDoItemEntity item,
+        DateTimeOffset? rootDue
+    )
     {
         var children = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
@@ -667,7 +703,7 @@ public class EntityFrameworkToDoService : IToDoService
 
         foreach (var child in children)
         {
-            var isCanComplete = await IsCanFinishToDoItem(child, rootDue);
+            var isCanComplete = await IsCanFinishToDoItem(context, child, rootDue);
 
             if (!isCanComplete)
             {
@@ -678,20 +714,21 @@ public class EntityFrameworkToDoService : IToDoService
         return true;
     }
 
-    private Task<bool> IsCanFinishToDoItem(ToDoItemEntity item, DateTimeOffset? rootDue)
+    private Task<bool> IsCanFinishToDoItem(SpravyToDoDbContext context, ToDoItemEntity item, DateTimeOffset? rootDue)
     {
         switch (item.Type)
         {
-            case ToDoItemType.Value: return IsCanFinishToDoSubItemValue(item, rootDue);
-            case ToDoItemType.Group: return IsCanFinishToDoSubItemGroup(item, rootDue);
-            case ToDoItemType.Planned: return IsCanFinishToDoSubItemPlanned(item, rootDue);
-            case ToDoItemType.Periodicity: return IsCanFinishToDoSubItemPeriodicity(item, rootDue);
+            case ToDoItemType.Value: return IsCanFinishToDoSubItemValue(context, item, rootDue);
+            case ToDoItemType.Group: return IsCanFinishToDoSubItemGroup(context, item, rootDue);
+            case ToDoItemType.Planned: return IsCanFinishToDoSubItemPlanned(context, item, rootDue);
+            case ToDoItemType.Periodicity: return IsCanFinishToDoSubItemPeriodicity(context, item, rootDue);
             default: throw new ArgumentOutOfRangeException();
         }
     }
 
     public async Task UpdateToDoItemNameAsync(Guid id, string name)
     {
+        await using var context = await dbContextFactory.CreateDbContextAsync();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
         item.Name = name;
@@ -700,6 +737,7 @@ public class EntityFrameworkToDoService : IToDoService
 
     public async Task UpdateToDoItemOrderIndexAsync(UpdateOrderIndexToDoItemOptions options)
     {
+        await using var context = await dbContextFactory.CreateDbContextAsync();
         var item = await context.Set<ToDoItemEntity>().FindAsync(options.Id);
         item = item.ThrowIfNull();
         var targetItem = await context.Set<ToDoItemEntity>().FindAsync(options.TargetId);
@@ -717,11 +755,12 @@ public class EntityFrameworkToDoService : IToDoService
 
         item.OrderIndex = orderIndex;
         await context.SaveChangesAsync();
-        await NormalizeOrderIndexAsync(item.ParentId);
+        await NormalizeOrderIndexAsync(context, item.ParentId);
     }
 
     public async Task UpdateToDoItemDescriptionAsync(Guid id, string description)
     {
+        await using var context = await dbContextFactory.CreateDbContextAsync();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
         item.Description = description;
@@ -730,9 +769,10 @@ public class EntityFrameworkToDoService : IToDoService
 
     public async Task SkipToDoItemAsync(Guid id)
     {
+        await using var context = await dbContextFactory.CreateDbContextAsync();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
-        var isCanComplete = await IsCanFinishToDoItem(item);
+        var isCanComplete = await IsCanFinishToDoItem(context, item);
 
         if (!isCanComplete)
         {
@@ -765,9 +805,10 @@ public class EntityFrameworkToDoService : IToDoService
 
     public async Task FailToDoItemAsync(Guid id)
     {
+        await using var context = await dbContextFactory.CreateDbContextAsync();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
-        var isCanComplete = await IsCanFinishToDoItem(item);
+        var isCanComplete = await IsCanFinishToDoItem(context, item);
 
         if (!isCanComplete)
         {
@@ -800,19 +841,21 @@ public class EntityFrameworkToDoService : IToDoService
 
     public async Task<IEnumerable<IToDoSubItem>> SearchToDoSubItemsAsync(string searchText)
     {
+        await using var context = await dbContextFactory.CreateDbContextAsync();
         var items = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.Name.Contains(searchText))
             .OrderBy(x => x.OrderIndex)
             .ToArrayAsync();
 
-        var result = await ConvertAsync(items);
+        var result = await ConvertAsync(context, items);
 
         return result;
     }
 
     public async Task UpdateToDoItemTypeAsync(Guid id, ToDoItemType type)
     {
+        await using var context = await dbContextFactory.CreateDbContextAsync();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
         item.Type = type;
@@ -821,6 +864,7 @@ public class EntityFrameworkToDoService : IToDoService
 
     public async Task AddCurrentToDoItemAsync(Guid id)
     {
+        await using var context = await dbContextFactory.CreateDbContextAsync();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
         item.IsCurrent = true;
@@ -829,6 +873,7 @@ public class EntityFrameworkToDoService : IToDoService
 
     public async Task RemoveCurrentToDoItemAsync(Guid id)
     {
+        await using var context = await dbContextFactory.CreateDbContextAsync();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
         item.IsCurrent = false;
@@ -837,19 +882,22 @@ public class EntityFrameworkToDoService : IToDoService
 
     public async Task<IEnumerable<IToDoSubItem>> GetCurrentToDoItemsAsync()
     {
+        await using var context = await dbContextFactory.CreateDbContextAsync();
+
         var items = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.IsCurrent)
             .OrderBy(x => x.OrderIndex)
             .ToArrayAsync();
 
-        var result = await ConvertAsync(items);
+        var result = await ConvertAsync(context, items);
 
         return result;
     }
 
     public async Task UpdateToDoItemAnnuallyPeriodicityAsync(Guid id, AnnuallyPeriodicity periodicity)
     {
+        await using var context = await dbContextFactory.CreateDbContextAsync();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
         item.SetDaysOfYear(periodicity.Days);
@@ -858,6 +906,7 @@ public class EntityFrameworkToDoService : IToDoService
 
     public async Task UpdateToDoItemMonthlyPeriodicityAsync(Guid id, MonthlyPeriodicity periodicity)
     {
+        await using var context = await dbContextFactory.CreateDbContextAsync();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
         item.SetDaysOfMonth(periodicity.Days);
@@ -866,6 +915,7 @@ public class EntityFrameworkToDoService : IToDoService
 
     public async Task UpdateToDoItemWeeklyPeriodicityAsync(Guid id, WeeklyPeriodicity periodicity)
     {
+        await using var context = await dbContextFactory.CreateDbContextAsync();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
         item.SetDaysOfWeek(periodicity.Days);
@@ -874,6 +924,8 @@ public class EntityFrameworkToDoService : IToDoService
 
     public async Task<IEnumerable<IToDoSubItem>> GetLeafToDoSubItemsAsync(Guid id)
     {
+        await using var context = await dbContextFactory.CreateDbContextAsync();
+
         var entities = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.ParentId == id)
@@ -889,7 +941,7 @@ public class EntityFrameworkToDoService : IToDoService
 
         foreach (var entity in entities)
         {
-            await foreach (var item in GetLeafToDoItemsAsync(entity))
+            await foreach (var item in GetLeafToDoItemsAsync(context, entity))
             {
                 result.Add(item);
             }
@@ -900,6 +952,8 @@ public class EntityFrameworkToDoService : IToDoService
 
     public async Task<IEnumerable<ToDoSelectorItem>> GetToDoSelectorItemsAsync()
     {
+        await using var context = await dbContextFactory.CreateDbContextAsync();
+
         var items = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.ParentId == null)
@@ -911,7 +965,7 @@ public class EntityFrameworkToDoService : IToDoService
         for (var i = 0; i < result.Length; i++)
         {
             var item = items[i];
-            var children = await GetToDoSelectorItemsAsync(item.Id);
+            var children = await GetToDoSelectorItemsAsync(context, item.Id);
             result[i] = new ToDoSelectorItem(item.Id, item.Name, children);
         }
 
@@ -925,6 +979,7 @@ public class EntityFrameworkToDoService : IToDoService
             throw new Exception();
         }
 
+        await using var context = await dbContextFactory.CreateDbContextAsync();
         var entity = await context.Set<ToDoItemEntity>().FindAsync(id);
 
         var items = await context.Set<ToDoItemEntity>()
@@ -941,6 +996,7 @@ public class EntityFrameworkToDoService : IToDoService
 
     public async Task ToDoItemToRootAsync(Guid id)
     {
+        await using var context = await dbContextFactory.CreateDbContextAsync();
         var entity = await context.Set<ToDoItemEntity>().FindAsync(id);
 
         var items = await context.Set<ToDoItemEntity>()
@@ -957,13 +1013,14 @@ public class EntityFrameworkToDoService : IToDoService
 
     public async Task<string> ToDoItemToStringAsync(Guid id)
     {
+        await using var context = await dbContextFactory.CreateDbContextAsync();
         var builder = new StringBuilder();
-        await ToDoItemToStringAsync(id, 0, builder);
+        await ToDoItemToStringAsync(context, id, 0, builder);
 
         return builder.ToString();
     }
 
-    private async Task ToDoItemToStringAsync(Guid id, ushort level, StringBuilder builder)
+    private async Task ToDoItemToStringAsync(SpravyToDoDbContext context, Guid id, ushort level, StringBuilder builder)
     {
         var items = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
@@ -976,11 +1033,11 @@ public class EntityFrameworkToDoService : IToDoService
             builder.Duplicate(" ", level);
             builder.Append(item.Name);
             builder.AppendLine();
-            await ToDoItemToStringAsync(item.Id, (ushort)(level + 1), builder);
+            await ToDoItemToStringAsync(context, item.Id, (ushort)(level + 1), builder);
         }
     }
 
-    private async Task<ToDoSelectorItem[]> GetToDoSelectorItemsAsync(Guid id)
+    private async Task<ToDoSelectorItem[]> GetToDoSelectorItemsAsync(SpravyToDoDbContext context, Guid id)
     {
         var items = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
@@ -993,14 +1050,17 @@ public class EntityFrameworkToDoService : IToDoService
         for (var i = 0; i < result.Length; i++)
         {
             var item = items[i];
-            var children = await GetToDoSelectorItemsAsync(item.Id);
+            var children = await GetToDoSelectorItemsAsync(context, item.Id);
             result[i] = new ToDoSelectorItem(item.Id, item.Name, children);
         }
 
         return result;
     }
 
-    private async IAsyncEnumerable<IToDoSubItem> GetLeafToDoItemsAsync(ToDoItemEntity itemEntity)
+    private async IAsyncEnumerable<IToDoSubItem> GetLeafToDoItemsAsync(
+        SpravyToDoDbContext context,
+        ToDoItemEntity itemEntity
+    )
     {
         var entities = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
@@ -1010,20 +1070,20 @@ public class EntityFrameworkToDoService : IToDoService
 
         if (entities.IsEmpty())
         {
-            yield return await ConvertAsync(itemEntity);
+            yield return await ConvertAsync(context, itemEntity);
             yield break;
         }
 
         foreach (var entity in entities)
         {
-            await foreach (var item in GetLeafToDoItemsAsync(entity))
+            await foreach (var item in GetLeafToDoItemsAsync(context, entity))
             {
                 yield return item;
             }
         }
     }
 
-    private async Task NormalizeOrderIndexAsync(Guid? parentId)
+    private async Task NormalizeOrderIndexAsync(SpravyToDoDbContext context, Guid? parentId)
     {
         var items = await context.Set<ToDoItemEntity>()
             .Where(x => x.ParentId == parentId)
@@ -1039,7 +1099,7 @@ public class EntityFrameworkToDoService : IToDoService
         await context.SaveChangesAsync();
     }
 
-    private async Task GetParentsAsync(Guid id, List<ToDoItemParent> parents)
+    private async Task GetParentsAsync(SpravyToDoDbContext context, Guid id, List<ToDoItemParent> parents)
     {
         var parent = await context.Set<ToDoItemEntity>().Include(x => x.Parent).SingleAsync(x => x.Id == id);
 
@@ -1049,7 +1109,7 @@ public class EntityFrameworkToDoService : IToDoService
         }
 
         parents.Add(mapper.Map<ToDoItemParent>(parent.Parent));
-        await GetParentsAsync(parent.Parent.Id, parents);
+        await GetParentsAsync(context, parent.Parent.Id, parents);
     }
 
     private void UpdateDueDate(ToDoItemEntity item)

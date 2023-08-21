@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -41,14 +42,15 @@ builder.Services.AddAuthentication(
         x =>
         {
             var key = builder.Configuration["Jwt:Key"].ThrowIfNull();
+
             x.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidIssuer = builder.Configuration["Jwt:Issuer"],
                 ValidAudience = builder.Configuration["Jwt:Audience"],
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
-                //ValidateIssuer = true,
-               // ValidateLifetime = true,
-               // ValidateAudience = true,
+                ValidateIssuer = true,
+                ValidateLifetime = true,
+                ValidateAudience = true,
                 ValidateIssuerSigningKey = true,
             };
         }
@@ -57,7 +59,22 @@ builder.Services.AddAuthentication(
 builder.Services.AddAuthorization();
 builder.Services.AddScoped<IMapper>(sp => new Mapper(sp.GetRequiredService<MapperConfiguration>()));
 builder.Services.AddScoped<IToDoService, EntityFrameworkToDoService>();
-builder.Services.AddScoped<IDbContextSetup, SqliteToDoDbContextSetup>();
+builder.Services.AddSingleton<IDbContextSetup, SqliteToDoDbContextSetup>();
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddDbContextFactory<SpravyToDoDbContext>(
+    (sp, options) =>
+    {
+        var httpContextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
+        var configuration = sp.GetRequiredService<IConfiguration>();
+        var claims = httpContextAccessor.HttpContext.ThrowIfNull().User.Claims;
+        var nameIdentifier = claims.Single(x => x.Type == ClaimTypes.NameIdentifier);
+        var dataBasesFolder = configuration["Sqlite:DataBasesFolder"].ThrowIfNull();
+        var fileName = $"{nameIdentifier.Value}.db";
+        var connectionString = $"DataSource={Path.Combine(dataBasesFolder, fileName)}";
+        options.UseSqlite(connectionString);
+    }
+);
 
 builder.Services.AddCors(
     o => o.AddPolicy(
@@ -70,10 +87,6 @@ builder.Services.AddCors(
                 .WithExposedHeaders("Grpc-Status", "Grpc-Message", "Grpc-Encoding", "Grpc-Accept-Encoding");
         }
     )
-);
-
-builder.Services.AddDbContext<SpravyToDoDbContext>(
-    (sp, options) => options.UseSqlite(sp.GetRequiredService<IConfiguration>()["Sqlite:ConnectionString"])
 );
 
 builder.Host.UseSerilog(
