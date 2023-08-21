@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using ReactiveUI;
 using Spravy.Authentication.Domain.Core.Profiles;
 using Spravy.Authentication.Domain.Interfaces;
+using Spravy.Authentication.Domain.Models;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Models;
@@ -58,6 +59,7 @@ public readonly struct SpravyDependencyInjectorConfiguration : IDependencyInject
         register.RegisterTransient<DayOfWeekSelector>();
         register.RegisterTransient<DayOfMonthSelector>();
         register.RegisterTransient<IAuthenticationService, GrpcAuthenticationService>();
+        register.RegisterTransient<IKeeper<TokenResult>, StaticKeeper<TokenResult>>();
         RegisterViewModels(register);
 
         register.RegisterTransient(

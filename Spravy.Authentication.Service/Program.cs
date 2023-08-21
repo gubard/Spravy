@@ -1,15 +1,19 @@
+using System.IdentityModel.Tokens.Jwt;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Spravy.Authentication.Db.Contexts;
+using Spravy.Authentication.Db.Core.Profiles;
 using Spravy.Authentication.Db.Sqlite.Services;
 using Spravy.Authentication.Domain.Core.Profiles;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Service.Helpers;
 using Spravy.Authentication.Service.Interfaces;
+using Spravy.Authentication.Service.Models;
 using Spravy.Authentication.Service.Services;
 using Spravy.Authentication.Service.Services.Grpcs;
 using Spravy.Db.Core.Interfaces;
+using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
 
@@ -23,7 +27,11 @@ builder.Services.AddGrpc();
 
 builder.Services.AddScoped(
     _ => new MapperConfiguration(
-        cfg => { cfg.AddProfile<SpravyAuthenticationProfile>(); }
+        cfg =>
+        {
+            cfg.AddProfile<SpravyAuthenticationProfile>();
+            cfg.AddProfile<SpravyAuthenticationDbProfile>();
+        }
     )
 );
 
@@ -34,6 +42,12 @@ builder.Services.AddScoped<IFactory<string, IHasher>, HasherFactory>();
 builder.Services.AddScoped<IFactory<string, Named<IBytesToString>>, BytesToStringFactory>();
 builder.Services.AddScoped<IFactory<string, Named<IStringToBytes>>, StringToBytesFactory>();
 builder.Services.AddScoped<IFactory<string, Named<IHashService>>, HashServiceFactory>();
+builder.Services.AddScoped<ITokenFactory, JwtTokenFactory>();
+builder.Services.AddScoped<JwtSecurityTokenHandler>();
+
+builder.Services.AddScoped<JwtTokenFactoryOptions>(
+    sp => sp.GetRequiredService<IConfiguration>().GetSection("Jwt").Get<JwtTokenFactoryOptions>().ThrowIfNull()
+);
 
 builder.Services.AddScoped<Ref<Named<IBytesToString>>>(
     _ => new Ref<Named<IBytesToString>>(NamedHelper.BytesToUpperCaseHexString)

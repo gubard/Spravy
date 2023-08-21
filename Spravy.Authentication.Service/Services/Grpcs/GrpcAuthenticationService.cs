@@ -26,14 +26,12 @@ public class GrpcAuthenticationService : AuthenticationServiceBase
         return new CreateUserReply();
     }
 
-    public override async Task<IsValidReply> IsValid(IsValidRequest request, ServerCallContext context)
+    public override async Task<LoginReply> Login(LoginRequest request, ServerCallContext context)
     {
         var user = mapper.Map<User>(request.User);
-        var result = await authenticationService.IsValidAsync(user);
+        var result = await authenticationService.LoginAsync(user);
+        var reply = mapper.Map<LoginReply>(result);
 
-        return new IsValidReply
-        {
-            IsValid = result,
-        };
+        return reply;
     }
 }

@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Google.Protobuf;
+using Grpc.Core;
+using Spravy.Authentication.Domain.Models;
 using Spravy.Domain.Extensions;
+using Spravy.Domain.Interfaces;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
@@ -19,11 +22,13 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
 {
     private readonly ToDoService.ToDoServiceClient client;
     private readonly IMapper mapper;
+    private readonly IKeeper<TokenResult> tokenKeeper;
 
-    public GrpcToDoService(GrpcToDoServiceOptions options, IMapper mapper)
+    public GrpcToDoService(GrpcToDoServiceOptions options, IMapper mapper, IKeeper<TokenResult> tokenKeeper)
         : base(options.Host.ToUri(), options.ChannelType, options.ChannelCredentialType.GetChannelCredentials())
     {
         this.mapper = mapper;
+        this.tokenKeeper = tokenKeeper;
         client = new ToDoService.ToDoServiceClient(grpcChannel);
     }
 
@@ -31,7 +36,7 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
     {
         try
         {
-            var items = await client.GetRootToDoSubItemsAsync(new GetRootToDoSubItemsRequest());
+            var items = await client.GetRootToDoSubItemsAsync(new GetRootToDoSubItemsRequest(), CreateMetadata());
 
             return mapper.Map<IEnumerable<IToDoSubItem>>(items.Items);
         }
@@ -51,7 +56,8 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
                 new GetToDoItemRequest
                 {
                     Id = byteStringId
-                }
+                },
+                CreateMetadata()
             );
 
             var result = mapper.Map<IToDoItem>(item.Item);
@@ -68,7 +74,7 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
     {
         try
         {
-            var id = await client.AddRootToDoItemAsync(mapper.Map<AddRootToDoItemRequest>(options));
+            var id = await client.AddRootToDoItemAsync(mapper.Map<AddRootToDoItemRequest>(options), CreateMetadata());
 
             return mapper.Map<Guid>(id.Id);
         }
@@ -82,7 +88,7 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
     {
         try
         {
-            var id = await client.AddToDoItemAsync(mapper.Map<AddToDoItemRequest>(options));
+            var id = await client.AddToDoItemAsync(mapper.Map<AddToDoItemRequest>(options), CreateMetadata());
 
             return mapper.Map<Guid>(id.Id);
         }
@@ -100,7 +106,8 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
                 new DeleteToDoItemRequest
                 {
                     Id = mapper.Map<ByteString>(id)
-                }
+                },
+                CreateMetadata()
             );
         }
         catch (Exception e)
@@ -118,7 +125,8 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
                 {
                     Id = mapper.Map<ByteString>(id),
                     Type = (TypeOfPeriodicityGrpc)type,
-                }
+                },
+                CreateMetadata()
             );
         }
         catch (Exception e)
@@ -136,7 +144,8 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
                 {
                     Id = mapper.Map<ByteString>(id),
                     DueDate = mapper.Map<DateTimeOffsetGrpc>(dueDate),
-                }
+                },
+                CreateMetadata()
             );
         }
         catch (Exception e)
@@ -154,7 +163,8 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
                 {
                     Id = mapper.Map<ByteString>(id),
                     IsCompleted = isCompleted
-                }
+                },
+                CreateMetadata()
             );
         }
         catch (Exception e)
@@ -172,7 +182,8 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
                 {
                     Id = mapper.Map<ByteString>(id),
                     Name = name,
-                }
+                },
+                CreateMetadata()
             );
         }
         catch (Exception e)
@@ -185,7 +196,10 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
     {
         try
         {
-            await client.UpdateToDoItemOrderIndexAsync(mapper.Map<UpdateToDoItemOrderIndexRequest>(options));
+            await client.UpdateToDoItemOrderIndexAsync(
+                mapper.Map<UpdateToDoItemOrderIndexRequest>(options),
+                CreateMetadata()
+            );
         }
         catch (Exception e)
         {
@@ -202,7 +216,8 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
                 {
                     Description = description,
                     Id = mapper.Map<ByteString>(id),
-                }
+                },
+                CreateMetadata()
             );
         }
         catch (Exception e)
@@ -219,7 +234,8 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
                 new SkipToDoItemRequest
                 {
                     Id = mapper.Map<ByteString>(id),
-                }
+                },
+                CreateMetadata()
             );
         }
         catch (Exception e)
@@ -236,7 +252,8 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
                 new FailToDoItemRequest
                 {
                     Id = mapper.Map<ByteString>(id),
-                }
+                },
+                CreateMetadata()
             );
         }
         catch (Exception e)
@@ -253,7 +270,8 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
                 new SearchToDoSubItemsRequest
                 {
                     SearchText = searchText
-                }
+                },
+                CreateMetadata()
             );
 
             return mapper.Map<IEnumerable<IToDoSubItem>>(reply.Items);
@@ -273,7 +291,8 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
                 {
                     Id = mapper.Map<ByteString>(id),
                     Type = (ToDoItemTypeGrpc)type,
-                }
+                },
+                CreateMetadata()
             );
         }
         catch (Exception e)
@@ -290,7 +309,8 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
                 new AddCurrentToDoItemRequest
                 {
                     Id = mapper.Map<ByteString>(id),
-                }
+                },
+                CreateMetadata()
             );
         }
         catch (Exception e)
@@ -307,7 +327,8 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
                 new RemoveCurrentToDoItemRequest
                 {
                     Id = mapper.Map<ByteString>(id),
-                }
+                },
+                CreateMetadata()
             );
         }
         catch (Exception e)
@@ -320,7 +341,7 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
     {
         try
         {
-            var reply = await client.GetCurrentToDoItemsAsync(new GetCurrentToDoItemsRequest());
+            var reply = await client.GetCurrentToDoItemsAsync(new GetCurrentToDoItemsRequest(), CreateMetadata());
 
             return mapper.Map<IEnumerable<IToDoSubItem>>(reply.Items);
         }
@@ -339,7 +360,8 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
                 {
                     Periodicity = mapper.Map<AnnuallyPeriodicityGrpc>(periodicity),
                     Id = mapper.Map<ByteString>(id),
-                }
+                },
+                CreateMetadata()
             );
         }
         catch (Exception e)
@@ -357,7 +379,8 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
                 {
                     Periodicity = mapper.Map<MonthlyPeriodicityGrpc>(periodicity),
                     Id = mapper.Map<ByteString>(id),
-                }
+                },
+                CreateMetadata()
             );
         }
         catch (Exception e)
@@ -375,7 +398,8 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
                 {
                     Periodicity = mapper.Map<WeeklyPeriodicityGrpc>(periodicity),
                     Id = mapper.Map<ByteString>(id),
-                }
+                },
+                CreateMetadata()
             );
         }
         catch (Exception e)
@@ -392,7 +416,8 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
                 new GetLeafToDoSubItemsRequest
                 {
                     Id = mapper.Map<ByteString>(id),
-                }
+                },
+                CreateMetadata()
             );
 
             return mapper.Map<IEnumerable<IToDoSubItem>>(reply.Items);
@@ -408,7 +433,8 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
         try
         {
             var reply = await client.GetToDoSelectorItemsAsync(
-                new GetToDoSelectorItemsRequest()
+                new GetToDoSelectorItemsRequest(),
+                CreateMetadata()
             );
 
             return mapper.Map<IEnumerable<ToDoSelectorItem>>(reply.Items);
@@ -428,7 +454,8 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
                 {
                     Id = mapper.Map<ByteString>(id),
                     ParentId = mapper.Map<ByteString>(parentId),
-                }
+                },
+                CreateMetadata()
             );
         }
         catch (Exception e)
@@ -445,7 +472,8 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
                 new ToDoItemToRootRequest
                 {
                     Id = mapper.Map<ByteString>(id),
-                }
+                },
+                CreateMetadata()
             );
         }
         catch (Exception e)
@@ -462,7 +490,8 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
                 new ToDoItemToStringRequest
                 {
                     Id = mapper.Map<ByteString>(id),
-                }
+                },
+                CreateMetadata()
             );
 
             return reply.Value;
@@ -471,5 +500,17 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
         {
             throw new GrpcException(grpcChannel.Target, e);
         }
+    }
+
+    private Metadata CreateMetadata()
+    {
+        var metadata = new Metadata
+        {
+            {
+                "Authorization", $"Bearer {tokenKeeper.Get().Token}"
+            }
+        };
+
+        return metadata;
     }
 }

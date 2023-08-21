@@ -7,6 +7,6 @@ import "Protos/authentication_messages.proto";
 package spravy.authentication;
 
 service AuthenticationService {
-  rpc IsValid (IsValidRequest) returns (IsValidReply);
+  rpc Login (LoginRequest) returns (LoginReply);
   rpc CreateUser (CreateUserRequest) returns (CreateUserReply);
 }

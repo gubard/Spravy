@@ -40,6 +40,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Authentication.Db.Sq
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Domain", "Spravy.Domain\Spravy.Domain.csproj", "{3DDCB234-3912-4107-8A6D-D182621B5482}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Authentication.Db.Core", "Spravy.Authentication.Db.Core\Spravy.Authentication.Db.Core.csproj", "{AB428F21-C3D7-4193-BD07-F9DD162EB68D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -124,6 +126,10 @@ Global
 		{3DDCB234-3912-4107-8A6D-D182621B5482}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3DDCB234-3912-4107-8A6D-D182621B5482}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3DDCB234-3912-4107-8A6D-D182621B5482}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB428F21-C3D7-4193-BD07-F9DD162EB68D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB428F21-C3D7-4193-BD07-F9DD162EB68D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB428F21-C3D7-4193-BD07-F9DD162EB68D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB428F21-C3D7-4193-BD07-F9DD162EB68D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection

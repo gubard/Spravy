@@ -11,6 +11,8 @@ public class SpravyAuthenticationProfile : Profile
         CreateMap<User, UserGrpc>();
         CreateMap<CreateUserOptions, CreateUserRequest>();
         CreateMap<CreateUserRequest, CreateUserOptions>();
-        CreateMap<UserGrpc, User>().ConstructUsing(x => new(x.Login, x.Password));
+        CreateMap<UserGrpc, User>();
+        CreateMap<TokenResult, LoginReply>();
+        CreateMap<LoginReply, TokenResult>();
     }
 }

@@ -1,7 +1,11 @@
+using System.Text;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Spravy.Db.Core.Interfaces;
+using Spravy.Domain.Extensions;
 using Spravy.ToDo.Domain.Core.Profiles;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Db.Core.Profiles;
@@ -25,6 +29,32 @@ builder.Services.AddScoped(
     )
 );
 
+builder.Services.AddAuthentication(
+        x =>
+        {
+            x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        }
+    )
+    .AddJwtBearer(
+        x =>
+        {
+            var key = builder.Configuration["Jwt:Key"].ThrowIfNull();
+            x.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                ValidAudience = builder.Configuration["Jwt:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
+                //ValidateIssuer = true,
+               // ValidateLifetime = true,
+               // ValidateAudience = true,
+                ValidateIssuerSigningKey = true,
+            };
+        }
+    );
+
+builder.Services.AddAuthorization();
 builder.Services.AddScoped<IMapper>(sp => new Mapper(sp.GetRequiredService<MapperConfiguration>()));
 builder.Services.AddScoped<IToDoService, EntityFrameworkToDoService>();
 builder.Services.AddScoped<IDbContextSetup, SqliteToDoDbContextSetup>();
@@ -66,6 +96,9 @@ app.UseGrpcWeb(
 );
 
 app.UseCors("AllowAll");
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 #if DEBUG
 app.Urls.Clear();

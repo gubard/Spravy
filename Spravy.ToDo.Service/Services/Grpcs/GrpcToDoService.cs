@@ -1,6 +1,7 @@
 using AutoMapper;
 using Google.Protobuf;
 using Grpc.Core;
+using Microsoft.AspNetCore.Authorization;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
@@ -9,6 +10,7 @@ using static Spravy.ToDo.Protos.ToDoService;
 
 namespace Spravy.ToDo.Service.Services.Grpcs;
 
+[Authorize]
 public class GrpcToDoService : ToDoServiceBase
 {
     private readonly IToDoService toDoService;

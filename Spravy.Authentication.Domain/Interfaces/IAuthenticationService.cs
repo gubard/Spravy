@@ -4,6 +4,6 @@ namespace Spravy.Authentication.Domain.Interfaces;
 
 public interface IAuthenticationService
 {
-    Task<bool> IsValidAsync(User user);
+    Task<TokenResult> LoginAsync(User user);
     Task CreateUserAsync(CreateUserOptions options);
 }

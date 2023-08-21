@@ -7,6 +7,7 @@ using ReactiveUI;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Models;
 using Spravy.Domain.Attributes;
+using Spravy.Domain.Interfaces;
 using Spravy.Ui.Models;
 using Spravy.Ui.Views;
 
@@ -29,6 +30,9 @@ public class LoginViewModel : RoutableViewModelBase
 
     [Inject]
     public required IMapper Mapper { get; init; }
+
+    [Inject]
+    public required IKeeper<TokenResult> TokenKeeper { get; init; }
 
     public string Login
     {
@@ -81,13 +85,8 @@ public class LoginViewModel : RoutableViewModelBase
     private async Task LoginAsync()
     {
         var user = Mapper.Map<User>(this);
-        var isValid = await AuthenticationService.IsValidAsync(user);
-
-        if (!isValid)
-        {
-            throw new Exception("Login error.");
-        }
-
+        var token = await AuthenticationService.LoginAsync(user);
+        TokenKeeper.Set(token);
         Navigator.NavigateTo<RootToDoItemViewModel>();
     }
 }

@@ -4,12 +4,12 @@ option csharp_namespace = "Spravy.Authentication.Protos";
 
 package spravy.authentication;
 
-message IsValidRequest {
+message LoginRequest {
   UserGrpc User = 1;
 }
 
-message IsValidReply {
-  bool IsValid = 1;
+message LoginReply {
+  string Token = 1;
 }
 
 message CreateUserRequest {

@@ -24,20 +24,20 @@ public class GrpcAuthenticationService : GrpcServiceBase, IAuthenticationService
         client = new AuthenticationServiceClient(grpcChannel);
     }
 
-    public async Task<bool> IsValidAsync(User user)
+    public async Task<TokenResult> LoginAsync(User user)
     {
         try
         {
             var userGrpc = mapper.Map<UserGrpc>(user);
 
-            var request = new IsValidRequest
+            var request = new LoginRequest
             {
                 User = userGrpc,
             };
 
-            var reply = await client.IsValidAsync(request);
+            var reply = await client.LoginAsync(request);
 
-            return reply.IsValid;
+            return mapper.Map<TokenResult>(reply);
         }
         catch (Exception e)
         {
