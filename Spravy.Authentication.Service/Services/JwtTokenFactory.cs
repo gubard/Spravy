@@ -23,6 +23,7 @@ public class JwtTokenFactory : ITokenFactory
         var claims = new List<Claim>
         {
             new(ClaimTypes.Name, user.Login),
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
         };
 
         var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(options.Key));
