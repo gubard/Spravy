@@ -17,7 +17,7 @@
     </Design.DataContext>
 
     <UserControl.KeyBindings>
-        <KeyBinding Gesture="Enter" Command="{Binding LoginCommand}" />
+        <KeyBinding Gesture="Enter" Command="{Binding EnterCommand}" CommandParameter="{Binding $self}" />
     </UserControl.KeyBindings>
 
     <controls:Card HorizontalAlignment="Center"
@@ -32,6 +32,7 @@
                      Text="{Binding Login}" />
 
             <TextBox Grid.Row="1"
+                     Name="{x:Static views:LoginView.PasswordTextBoxName}"
                      UseFloatingWatermark="True"
                      Classes="out
                      line dense revealPasswordButton"

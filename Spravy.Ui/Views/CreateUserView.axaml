@@ -17,7 +17,7 @@
     </Design.DataContext>
     
     <UserControl.KeyBindings>
-        <KeyBinding Gesture="Enter" Command="{Binding CreateUserCommand}" />
+        <KeyBinding Gesture="Enter" Command="{Binding EnterCommand}" CommandParameter="{Binding $self}" />
     </UserControl.KeyBindings>
 
     <controls:Card HorizontalAlignment="Center"
@@ -31,7 +31,9 @@
                      assists:TextFieldAssist.Label="Login"
                      Text="{Binding Login}" />
 
-            <TextBox Grid.Row="1" UseFloatingWatermark="True"
+            <TextBox Grid.Row="1"
+                     UseFloatingWatermark="True"
+                     Name="{x:Static views:CreateUserView.PasswordTextBoxName}"
                      Classes="out
                      line dense revealPasswordButton"
                      Theme="{StaticResource OutlineTextBox}"
@@ -40,6 +42,7 @@
                      Text="{Binding Password}" />
 
             <TextBox Grid.Row="2"
+                     Name="{x:Static views:CreateUserView.RepeatPasswordTextBoxName}"
                      UseFloatingWatermark="True"
                      Classes="outline dense revealPasswordButton"
                      Theme="{StaticResource OutlineTextBox}"

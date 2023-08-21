@@ -2,11 +2,13 @@ using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
+using Avalonia.Controls;
 using ReactiveUI;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Models;
 using Spravy.Domain.Attributes;
 using Spravy.Ui.Models;
+using Spravy.Ui.Views;
 
 namespace Spravy.Ui.ViewModels;
 
@@ -19,6 +21,7 @@ public class LoginViewModel : RoutableViewModelBase
     {
         LoginCommand = CreateCommandFromTaskWithDialogProgressIndicator(LoginAsync);
         CreateUserCommand = CreateCommand(CreateUser);
+        EnterCommand = CreateCommandFromTaskWithDialogProgressIndicator<LoginView>(EnterAsync);
     }
 
     [Inject]
@@ -42,6 +45,33 @@ public class LoginViewModel : RoutableViewModelBase
 
     public ICommand LoginCommand { get; }
     public ICommand CreateUserCommand { get; }
+    public ICommand EnterCommand { get; }
+
+    private async Task EnterAsync(LoginView view)
+    {
+        var loginTextBox = view.FindControl<TextBox>(LoginView.LoginTextBoxName);
+
+        if (loginTextBox is null)
+        {
+            return;
+        }
+
+        var passwordTextBox = view.FindControl<TextBox>(LoginView.PasswordTextBoxName);
+
+        if (passwordTextBox is null)
+        {
+            return;
+        }
+
+        if (loginTextBox.IsFocused)
+        {
+            passwordTextBox.Focus();
+
+            return;
+        }
+
+        await LoginAsync();
+    }
 
     private void CreateUser()
     {

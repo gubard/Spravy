@@ -8,7 +8,9 @@ namespace Spravy.Ui.Views;
 public partial class CreateUserView : ReactiveUserControl<CreateUserViewModel>
 {
     public const string LoginTextBoxName = "LoginTextBox";
-
+    public const string PasswordTextBoxName = "PasswordTextBox";
+    public const string RepeatPasswordTextBoxName = "RepeatPasswordTextBox";
+    
     public CreateUserView()
     {
         InitializeComponent();
