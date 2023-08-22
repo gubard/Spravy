@@ -95,16 +95,6 @@ class Build : NukeBuild
                             "cd /home/vafnir/Spravy.Authentication.Db.Sqlite.Migrator;dotnet Spravy.Authentication.Db.Sqlite.Migrator.dll"
                         );
 
-                    
-                    var toDoMigratorFolder = PublishProject("Spravy.ToDo.Db.Sqlite.Migrator");
-                    ftpClient.DeleteDirectory("/home/vafnir/Spravy.ToDo.Db.Sqlite.Migrator", FtpListOption.Recursive);
-                    ftpClient.UploadDirectory(toDoMigratorFolder.FullName, "/home/vafnir/Spravy.ToDo.Db.Sqlite.Migrator");
-
-                    using var commandToDoMigrator =
-                        sshClient.RunCommand(
-                            "cd /home/vafnir/Spravy.ToDo.Db.Sqlite.Migrator;dotnet Spravy.ToDo.Db.Sqlite.Migrator.dll"
-                        );
-
                     var authenticationServiceFolder = PublishProject("Spravy.Authentication.Service");
                     ftpClient.DeleteDirectory("/home/vafnir/Spravy.Authentication.Service", FtpListOption.Recursive);
                     ftpClient.UploadDirectory(authenticationServiceFolder.FullName, "/home/vafnir/Spravy.Authentication.Service");
