@@ -1,6 +1,4 @@
-using System;
-
-namespace Spravy.Ui.Exceptions;
+namespace Spravy.ToDo.Domain.Client.Exceptions;
 
 public class GrpcException : Exception
 {

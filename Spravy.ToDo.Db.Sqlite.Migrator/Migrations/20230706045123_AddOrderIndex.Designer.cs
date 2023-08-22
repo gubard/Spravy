@@ -4,13 +4,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Spravy.ToDo.Db.Contexts;
 using Spravy.ToDo.Db.Sqlite.Migrator;
 
 #nullable disable
 
 namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
 {
-    [DbContext(typeof(SqliteSpravyToDoDbContext))]
+    [DbContext(typeof(SpravyToDoDbContext))]
     [Migration("20230706045123_AddOrderIndex")]
     partial class AddOrderIndex
     {

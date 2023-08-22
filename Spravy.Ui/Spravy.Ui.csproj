@@ -37,22 +37,13 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Spravy.Authentication.Domain.Core\Spravy.Authentication.Domain.Core.csproj" />
-      <ProjectReference Include="..\Spravy.ToDo.Domain.Core\Spravy.ToDo.Domain.Core.csproj" />
+      <ProjectReference Include="..\Spravy.ToDo.Domain.Client\Spravy.ToDo.Domain.Client.csproj" />
       <ProjectReference Include="..\Spravy.ToDo.Domain\Spravy.ToDo.Domain.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <UpToDateCheckInput Remove="Assets\avalonia-logo.ico" />
       <UpToDateCheckInput Remove="Styles\Theme.axaml" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <Protobuf Include="..\Spravy.ToDo.Domain\Protos\to_do.proto" GrpcServices="Client" ProtoRoot="..\Spravy.ToDo.Domain">
-            <Link>Protos/to_do.proto</Link>
-        </Protobuf>
-        <Protobuf Include="..\Spravy.ToDo.Domain\Protos\to_do_messages.proto" GrpcServices="None" ProtoCompile="False">
-            <Link>Protos/to_do_messages.proto</Link>
-        </Protobuf>
     </ItemGroup>
 
     <ItemGroup>

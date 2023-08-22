@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Spravy.ToDo.Db.Contexts;
 
 #nullable disable
 
@@ -49,7 +50,7 @@ namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
 
             migrationBuilder.Sql(
                 @$"INSERT INTO ToDoItemStatisticalEntity (Id, ItemId, CompletedCount, SkippedCount, FailedCount) 
-            SELECT {SqliteSpravyToDoDbContext.GenerateGuidQuery}, tdi.Id, 0, 0, 0
+            SELECT {SpravyToDoDbContext.GenerateGuidQuery}, tdi.Id, 0, 0, 0
             FROM ToDoItem tdi;"
             );
 

@@ -22,6 +22,7 @@ public class SpravyUiProfile : Profile
         CreateMap<ToDoItemPeriodicityViewModel, ToDoSubItemPeriodicityNotify>();
         CreateMap<ToDoSelectorItem, ToDoSelectorItemNotify>();
         CreateMap<CreateUserViewModel, CreateUserOptions>();
+        CreateMap<CreateUserViewModel, User>();
         CreateMap<LoginViewModel, User>();
         
         CreateMap<AddRootToDoItemViewModel, AddRootToDoItemOptions>()

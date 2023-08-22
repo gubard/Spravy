@@ -1,22 +1,19 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using AutoMapper;
 using Google.Protobuf;
 using Grpc.Core;
 using Spravy.Authentication.Domain.Models;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
+using Spravy.ToDo.Domain.Client.Exceptions;
+using Spravy.ToDo.Domain.Client.Extensions;
+using Spravy.ToDo.Domain.Client.Models;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
 using Spravy.ToDo.Protos;
-using Spravy.Ui.Exceptions;
-using Spravy.Ui.Extensions;
-using Spravy.Ui.Models;
 using ToDoSelectorItem = Spravy.ToDo.Domain.Models.ToDoSelectorItem;
 
-namespace Spravy.Ui.Services;
+namespace Spravy.ToDo.Domain.Client.Services;
 
 public class GrpcToDoService : GrpcServiceBase, IToDoService
 {
@@ -495,6 +492,18 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
             );
 
             return reply.Value;
+        }
+        catch (Exception e)
+        {
+            throw new GrpcException(grpcChannel.Target, e);
+        }
+    }
+
+    public async Task InitAsync()
+    {
+        try
+        {
+            await client.InitAsync(new InitRequest(), CreateMetadata());
         }
         catch (Exception e)
         {

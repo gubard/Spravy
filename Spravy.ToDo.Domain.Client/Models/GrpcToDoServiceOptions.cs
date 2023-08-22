@@ -1,6 +1,6 @@
-using Spravy.Ui.Enums;
+using Spravy.ToDo.Domain.Client.Enums;
 
-namespace Spravy.Ui.Models;
+namespace Spravy.ToDo.Domain.Client.Models;
 
 public class GrpcToDoServiceOptions
 {

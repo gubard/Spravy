@@ -5,12 +5,13 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Spravy.ToDo.Db.Sqlite.Migrator;
+using Spravy.ToDo.Db.Contexts;
 
 #nullable disable
 
 namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
 {
-    [DbContext(typeof(SqliteSpravyToDoDbContext))]
+    [DbContext(typeof(SpravyToDoDbContext))]
     [Migration("20230729201945_AddDaysOf")]
     partial class AddDaysOf
     {

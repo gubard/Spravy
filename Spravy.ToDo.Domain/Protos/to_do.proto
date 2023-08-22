@@ -33,4 +33,5 @@ service ToDoService {
   rpc UpdateToDoItemParent (UpdateToDoItemParentRequest) returns (UpdateToDoItemParentReply);
   rpc ToDoItemToRoot (ToDoItemToRootRequest) returns (ToDoItemToRootReply);
   rpc ToDoItemToString (ToDoItemToStringRequest) returns (ToDoItemToStringReply);
+  rpc Init (InitRequest) returns (InitReply);
 }

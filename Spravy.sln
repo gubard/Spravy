@@ -20,7 +20,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.cspr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Ui.Browser", "Spravy.Ui.Browser\Spravy.Ui.Browser.csproj", "{6B149ED6-F83B-4731-8950-E2989D96E1D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.ToDo.Domain.Core", "Spravy.ToDo.Domain.Core\Spravy.ToDo.Domain.Core.csproj", "{447ABE78-490A-4D33-BC08-8D9BA5980030}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.ToDo.Domain.Client", "Spravy.ToDo.Domain.Client\Spravy.ToDo.Domain.Client.csproj", "{447ABE78-490A-4D33-BC08-8D9BA5980030}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.ToDo.Db.Core", "Spravy.ToDo.Db.Core\Spravy.ToDo.Db.Core.csproj", "{DF47ACE4-706C-481C-A66E-E41487BB2855}"
 EndProject

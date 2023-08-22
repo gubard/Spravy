@@ -19,7 +19,7 @@ public class AddToDoItemViewModel : RoutableViewModelBase
 
     public AddToDoItemViewModel() : base("add-to-do-item")
     {
-        InitializedCommand = CreateCommandFromTaskWithDialogProgressIndicator(InitializedAsync);
+        InitializedCommand = CreateCommandFromTask(InitializedAsync);
     }
 
     public ICommand InitializedCommand { get; }

@@ -1,12 +1,9 @@
-using System;
-using System.Net.Http;
-using System.Threading.Tasks;
 using Grpc.Core;
 using Grpc.Net.Client;
 using Grpc.Net.Client.Web;
-using Spravy.Ui.Enums;
+using Spravy.ToDo.Domain.Client.Enums;
 
-namespace Spravy.Ui.Services;
+namespace Spravy.ToDo.Domain.Client.Services;
 
 public class GrpcServiceBase : IAsyncDisposable, IDisposable
 {

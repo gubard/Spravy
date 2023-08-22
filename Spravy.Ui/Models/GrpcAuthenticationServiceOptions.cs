@@ -1,4 +1,4 @@
-using Spravy.Ui.Enums;
+using Spravy.ToDo.Domain.Client.Enums;
 
 namespace Spravy.Ui.Models;
 

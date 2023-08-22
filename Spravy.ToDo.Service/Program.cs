@@ -7,7 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Spravy.Db.Core.Interfaces;
 using Spravy.Domain.Extensions;
-using Spravy.ToDo.Domain.Core.Profiles;
+using Spravy.Domain.Interfaces;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Db.Core.Profiles;
 using Spravy.ToDo.Db.Sqlite.Services;
@@ -15,6 +15,10 @@ using Spravy.ToDo.Service.Profiles;
 using Spravy.ToDo.Service.Services;
 using Spravy.ToDo.Service.Services.Grpcs;
 using Spravy.ToDo.Db.Contexts;
+using Spravy.ToDo.Db.Sqlite.Migrator;
+using Spravy.ToDo.Domain.Client.Profiles;
+using Spravy.ToDo.Service.HostedServices;
+using Spravy.ToDo.Service.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddGrpc();
@@ -61,17 +65,22 @@ builder.Services.AddScoped<IMapper>(sp => new Mapper(sp.GetRequiredService<Mappe
 builder.Services.AddScoped<IToDoService, EntityFrameworkToDoService>();
 builder.Services.AddSingleton<IDbContextSetup, SqliteToDoDbContextSetup>();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddHostedService<MigratorHostedService>();
+builder.Services.AddSingleton<IFactory<string, SpravyToDoDbContext>, SpravyToDoDbContextFactory>();
+
+builder.Services.AddSingleton(
+    sp => sp.GetRequiredService<IConfiguration>().GetSection(SqliteOptions.Section).Get<SqliteOptions>().ThrowIfNull()
+);
 
 builder.Services.AddDbContextFactory<SpravyToDoDbContext>(
     (sp, options) =>
     {
+        var sqliteOptions = sp.GetRequiredService<SqliteOptions>();
         var httpContextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
-        var configuration = sp.GetRequiredService<IConfiguration>();
         var claims = httpContextAccessor.HttpContext.ThrowIfNull().User.Claims;
         var nameIdentifier = claims.Single(x => x.Type == ClaimTypes.NameIdentifier);
-        var dataBasesFolder = configuration["Sqlite:DataBasesFolder"].ThrowIfNull();
         var fileName = $"{nameIdentifier.Value}.db";
-        var connectionString = $"DataSource={Path.Combine(dataBasesFolder, fileName)}";
+        var connectionString = $"DataSource={Path.Combine(sqliteOptions.DataBasesFolder, fileName)}";
         options.UseSqlite(connectionString);
     }
 );

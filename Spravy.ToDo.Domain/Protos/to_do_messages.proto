@@ -7,6 +7,12 @@ import "google/protobuf/duration.proto";
 
 package spravy.to_do;
 
+message InitRequest {
+}
+
+message InitReply {
+}
+
 message ToDoItemToStringRequest {
   bytes Id = 1;
 }

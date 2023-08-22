@@ -1020,6 +1020,12 @@ public class EntityFrameworkToDoService : IToDoService
         return builder.ToString();
     }
 
+    public async Task InitAsync()
+    {
+        await using var context = await dbContextFactory.CreateDbContextAsync();
+        await context.Database.EnsureCreatedAsync();
+    }
+
     private async Task ToDoItemToStringAsync(SpravyToDoDbContext context, Guid id, ushort level, StringBuilder builder)
     {
         var items = await context.Set<ToDoItemEntity>()

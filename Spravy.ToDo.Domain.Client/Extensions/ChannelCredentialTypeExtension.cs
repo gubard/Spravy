@@ -1,8 +1,7 @@
-using System;
 using Grpc.Core;
-using Spravy.Ui.Enums;
+using Spravy.ToDo.Domain.Client.Enums;
 
-namespace Spravy.Ui.Extensions;
+namespace Spravy.ToDo.Domain.Client.Extensions;
 
 public static class ChannelCredentialTypeExtension
 {

@@ -311,4 +311,11 @@ public class GrpcToDoService : ToDoServiceBase
             Value = value,
         };
     }
+
+    public override async Task<InitReply> Init(InitRequest request, ServerCallContext context)
+    {
+        await toDoService.InitAsync();
+
+        return new InitReply();
+    }
 }

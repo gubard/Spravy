@@ -7,6 +7,8 @@ using ReactiveUI;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Models;
 using Spravy.Domain.Attributes;
+using Spravy.Domain.Interfaces;
+using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Models;
 using Spravy.Ui.Views;
 
@@ -28,7 +30,13 @@ public class CreateUserViewModel : RoutableViewModelBase
     public required IAuthenticationService AuthenticationService { get; init; }
 
     [Inject]
+    public required IToDoService ToDoService { get; init; }
+
+    [Inject]
     public required IMapper Mapper { get; init; }
+
+    [Inject]
+    public required IKeeper<TokenResult> KeeperToken { get; init; }
 
     public ICommand CreateUserCommand { get; }
     public ICommand EnterCommand { get; }
@@ -73,14 +81,14 @@ public class CreateUserViewModel : RoutableViewModelBase
 
             return;
         }
-        
+
         var repeatPasswordTextBox = view.FindControl<TextBox>(CreateUserView.RepeatPasswordTextBoxName);
-        
+
         if (repeatPasswordTextBox is null)
         {
             return;
         }
-        
+
         if (passwordTextBox.IsFocused)
         {
             repeatPasswordTextBox.Focus();
@@ -100,6 +108,10 @@ public class CreateUserViewModel : RoutableViewModelBase
 
         var options = Mapper.Map<CreateUserOptions>(this);
         await AuthenticationService.CreateUserAsync(options);
+        var user = Mapper.Map<User>(this);
+        var token = await AuthenticationService.LoginAsync(user);
+        KeeperToken.Set(token);
+        await ToDoService.InitAsync();
         Navigator.NavigateTo<LoginViewModel>();
     }
 }
