@@ -40,11 +40,18 @@
 
                 <ContentControl Content="{Binding Periodicity}" />
 
-                <TextBox UseFloatingWatermark="True"
+                <!--<DatePicker SelectedDate="{Binding DueDate}" />-->
+                <!--<TextBox UseFloatingWatermark="True"
                          Classes="outline dense"
                          Theme="{StaticResource OutlineTextBox}"
                          assists:TextFieldAssist.Label="DueDate"
-                         Text="{Binding DueDate}" />
+                         Text="{Binding DueDate}" />-->
+                <controls:EditableTextBlock AcceptsReturn="True"
+                                            AcceptsTab="True"
+                                            TextWrapping="Wrap"
+                                            Text="{Binding DueDate, Mode=TwoWay}"
+                                            Watermark="DueDate"
+                                            Margin="5" />
             </StackPanel>
 
             <controls:EditableTextBlock AcceptsReturn="True"

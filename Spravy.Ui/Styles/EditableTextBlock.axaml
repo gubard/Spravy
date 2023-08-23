@@ -3,8 +3,8 @@
         xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         xmlns:controls="clr-namespace:Spravy.Ui.Controls">
     <Design.PreviewWith>
-        <controls:EditableTextBlock Width="500"
-                                    Height="150"
+        <controls:EditableTextBlock Width="120"
+                                    Height="100"
                                     Watermark="Text" />
     </Design.PreviewWith>
 

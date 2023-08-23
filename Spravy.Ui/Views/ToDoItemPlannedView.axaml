@@ -35,18 +35,18 @@
                       assists:ComboBoxAssist.Label="Type"
                       SelectedItem="{Binding Type}"
                       ItemsSource="{Binding ToDoItemTypes}" />
-
-            <TextBox UseFloatingWatermark="True"
+            
+            <!--<DatePicker SelectedDate="{Binding DueDate}" />-->
+            <!--<TextBox UseFloatingWatermark="True"
                      Classes="outline dense"
                      Theme="{StaticResource OutlineTextBox}"
                      assists:TextFieldAssist.Label="DueDate"
-                     Text="{Binding DueDate}" />
-
+                     Text="{Binding DueDate}" />-->
             <controls:EditableTextBlock AcceptsReturn="True"
                                         AcceptsTab="True"
                                         TextWrapping="Wrap"
-                                        Text="{Binding Description, Mode=TwoWay}"
-                                        Watermark="Description"
+                                        Text="{Binding DueDate, Mode=TwoWay}"
+                                        Watermark="DueDate"
                                         Margin="5" />
         </StackPanel>
 
