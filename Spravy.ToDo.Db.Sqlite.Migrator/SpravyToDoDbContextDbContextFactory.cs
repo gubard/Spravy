@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.Extensions.Configuration;
 using Spravy.ToDo.Db.Contexts;
 using Spravy.ToDo.Db.Sqlite.Services;
 
@@ -10,10 +9,8 @@ public class SpravyToDoDbContextDbContextFactory : IDesignTimeDbContextFactory<S
 {
     public SpravyToDoDbContext CreateDbContext(string[] args)
     {
-        var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
-
         var options = new DbContextOptionsBuilder().UseSqlite(
-                configuration.GetSection("Sqlite:ConnectionString").Value,
+                args[0],
                 b => b.MigrationsAssembly(SpravyToDoDbSqliteMigratorMark.AssemblyFullName)
             )
             .Options;
