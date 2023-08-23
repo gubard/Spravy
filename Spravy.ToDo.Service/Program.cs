@@ -81,7 +81,7 @@ builder.Services.AddDbContextFactory<SpravyToDoDbContext>(
         var nameIdentifier = claims.Single(x => x.Type == ClaimTypes.NameIdentifier);
         var fileName = $"{nameIdentifier.Value}.db";
         var connectionString = $"DataSource={Path.Combine(sqliteOptions.DataBasesFolder, fileName)}";
-        options.UseSqlite(connectionString);
+        options.UseSqlite(connectionString, b => b.MigrationsAssembly(SpravyToDoDbSqliteMigratorMark.AssemblyFullName));
     }
 );
 

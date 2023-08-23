@@ -105,6 +105,10 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
                 Navigator.NavigateTo<ToDoItemValueViewModel>(x => x.Id = toDoItemValue.Id);
 
                 return;
+            case ToDoItemPeriodicityOffset doItemPeriodicityOffset:
+                Navigator.NavigateTo<ToDoItemPeriodicityOffsetViewModel>(x => x.Id = doItemPeriodicityOffset.Id);
+
+                return;
             default: throw new ArgumentOutOfRangeException(nameof(item));
         }
 
@@ -247,7 +251,9 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
 
     private async void OnNextSelectedDaysOfMonth(EventPattern<SelectedDaysOfMonthChangedEventArgs> x)
     {
-        await SafeExecuteAsync(() => ToDoService.UpdateToDoItemMonthlyPeriodicityAsync(Id, new(x.EventArgs.NewDaysOfMonth)));
+        await SafeExecuteAsync(
+            () => ToDoService.UpdateToDoItemMonthlyPeriodicityAsync(Id, new(x.EventArgs.NewDaysOfMonth))
+        );
     }
 
     private async void OnNextSelectedDayOfYear(EventPattern<SelectedSelectedDaysOfYearEventArgs> x)

@@ -16,8 +16,10 @@ public class SpravyToDoDbContextFactory : IFactory<string, SpravyToDoDbContext>
 
     public SpravyToDoDbContext Create(string key)
     {
-        var options = new DbContextOptionsBuilder().UseSqlite(key).Options;
-        
+        var options = new DbContextOptionsBuilder()
+            .UseSqlite(key, b => b.MigrationsAssembly(SpravyToDoDbSqliteMigratorMark.AssemblyFullName))
+            .Options;
+
         return new SpravyToDoDbContext(options, dbContextSetup);
     }
 }

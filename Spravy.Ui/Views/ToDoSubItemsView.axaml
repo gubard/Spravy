@@ -21,8 +21,8 @@
                 <BehaviorCollectionTemplate>
                     <BehaviorCollection>
                         <ir:AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
-                            <ir:AdaptiveClassSetter MinWidth="0" MaxWidth="1000" ClassName="small" />
-                            <ir:AdaptiveClassSetter MinWidth="1000" MaxWidth="Infinity" ClassName="wide" />
+                            <ir:AdaptiveClassSetter MinWidth="0" MaxWidth="900" ClassName="small" />
+                            <ir:AdaptiveClassSetter MinWidth="900" MaxWidth="Infinity" ClassName="wide" />
                         </ir:AdaptiveBehavior>
                     </BehaviorCollection>
                 </BehaviorCollectionTemplate>
@@ -34,8 +34,8 @@
                 <BehaviorCollectionTemplate>
                     <BehaviorCollection>
                         <ir:AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
-                            <ir:AdaptiveClassSetter MinWidth="0" MaxWidth="1000" ClassName="small" />
-                            <ir:AdaptiveClassSetter MinWidth="1000" MaxWidth="Infinity" ClassName="wide" />
+                            <ir:AdaptiveClassSetter MinWidth="0" MaxWidth="900" ClassName="small" />
+                            <ir:AdaptiveClassSetter MinWidth="900" MaxWidth="Infinity" ClassName="wide" />
                         </ir:AdaptiveBehavior>
                     </BehaviorCollection>
                 </BehaviorCollectionTemplate>
@@ -90,8 +90,8 @@
                              IsVisible="{Binding ReadyForCompleted.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
 
                     <ListBox Classes="ItemsDragAndDrop" SelectionMode="Single" Margin="5"
-                             ItemsSource="{Binding Completed.Count}"
-                             IsVisible="{Binding Completed, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                             ItemsSource="{Binding Completed}"
+                             IsVisible="{Binding Completed.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
                 </StackPanel>
             </Panel>
         </ScrollViewer>

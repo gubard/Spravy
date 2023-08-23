@@ -19,7 +19,8 @@ public class SpravyToDoDbProfile : Profile
         CreateMap<ToDoItemEntity, DailyPeriodicity>();
         CreateMap<ToDoItemEntity, MonthlyPeriodicity>().ConstructUsing(x => new MonthlyPeriodicity(x.GetDaysOfMonth()));
         CreateMap<ToDoItemEntity, WeeklyPeriodicity>().ConstructUsing(x => new WeeklyPeriodicity(x.GetDaysOfWeek()));
-        CreateMap<ToDoItemEntity, AnnuallyPeriodicity>().ConstructUsing(x => new AnnuallyPeriodicity(x.GetDaysOfYear()));
+        CreateMap<ToDoItemEntity, AnnuallyPeriodicity>()
+            .ConstructUsing(x => new AnnuallyPeriodicity(x.GetDaysOfYear()));
 
         CreateMap<ToDoItemEntity, ActiveToDoItem>()
             .ConvertUsing((source, _, _) => new ActiveToDoItem(source.Id, source.Name));
@@ -68,6 +69,20 @@ public class SpravyToDoDbProfile : Profile
                         source.LastCompleted
                     ),
                     ToDoItemType.Periodicity => new ToDoSubItemPeriodicity(
+                        source.Id,
+                        source.Name,
+                        source.OrderIndex,
+                        (ToDoItemStatus)resolutionContext.Items[StatusName],
+                        source.Description,
+                        source.IsCurrent,
+                        source.DueDate,
+                        (ActiveToDoItem?)resolutionContext.Items[ActiveName],
+                        source.CompletedCount,
+                        source.SkippedCount,
+                        source.FailedCount,
+                        source.LastCompleted
+                    ),
+                    ToDoItemType.PeriodicityOffset => new ToDoSubItemPeriodicityOffset(
                         source.Id,
                         source.Name,
                         source.OrderIndex,
@@ -132,6 +147,19 @@ public class SpravyToDoDbProfile : Profile
                             TypeOfPeriodicity.Annually => resolutionContext.Mapper.Map<AnnuallyPeriodicity>(source),
                             _ => throw new ArgumentOutOfRangeException()
                         }
+                    ),
+                    ToDoItemType.PeriodicityOffset => new ToDoItemPeriodicityOffset(
+                        source.Id,
+                        source.Name,
+                        source.Description,
+                        (IToDoSubItem[])resolutionContext.Items[ItemsName],
+                        (ToDoItemParent[])resolutionContext.Items[ParentsName],
+                        source.IsCurrent,
+                        source.DaysOffset,
+                        source.MonthsOffset,
+                        source.WeeksOffset,
+                        source.YearsOffset,
+                        source.DueDate
                     ),
                     _ => throw new ArgumentOutOfRangeException()
                 }

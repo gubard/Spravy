@@ -15,8 +15,10 @@ public class SpravyUiProfile : Profile
         CreateMap<ToDoSubItemValue, ToDoSubItemValueNotify>();
         CreateMap<ToDoSubItemGroup, ToDoSubItemGroupNotify>();
         CreateMap<ToDoSubItemPeriodicity, ToDoSubItemPeriodicityNotify>();
+        CreateMap<ToDoSubItemPeriodicityOffset, ToDoSubItemPeriodicityOffsetNotify>();
         CreateMap<ToDoSubItemPlanned, ToDoSubItemPlannedNotify>();
         CreateMap<ToDoItemValueViewModel, ToDoSubItemValueNotify>();
+        CreateMap<ToDoItemPeriodicityOffsetViewModel, ToDoSubItemPeriodicityOffsetNotify>();
         CreateMap<ToDoItemGroupViewModel, ToDoSubItemGroupNotify>();
         CreateMap<ToDoItemPlannedViewModel, ToDoSubItemPlannedNotify>();
         CreateMap<ToDoItemPeriodicityViewModel, ToDoSubItemPeriodicityNotify>();
@@ -24,7 +26,7 @@ public class SpravyUiProfile : Profile
         CreateMap<CreateUserViewModel, CreateUserOptions>();
         CreateMap<CreateUserViewModel, User>();
         CreateMap<LoginViewModel, User>();
-        
+
         CreateMap<AddRootToDoItemViewModel, AddRootToDoItemOptions>()
             .ConstructUsing(x => new AddRootToDoItemOptions(x.Name));
         CreateMap<ToDoSubItemValueNotify, AddToDoItemOptions>()
@@ -60,6 +62,11 @@ public class SpravyUiProfile : Profile
             .ConvertUsing(
                 (source, _, resolutionContext) => resolutionContext.Mapper.Map<ToDoSubItemPeriodicityNotify>(source)
             );
+        
+        CreateMap<ToDoSubItemPeriodicityOffset, ToDoSubItemNotify>()
+            .ConvertUsing(
+                (source, _, resolutionContext) => resolutionContext.Mapper.Map<ToDoSubItemPeriodicityOffsetNotify>(source)
+            );
 
         CreateMap<ToDoItemViewModel, ToDoSubItemNotify>()
             .ConvertUsing(
@@ -73,6 +80,8 @@ public class SpravyUiProfile : Profile
                         .Map<ToDoSubItemPlannedNotify>(toDoItemPlannedViewModel),
                     ToDoItemValueViewModel toDoItemValueViewModel => resolutionContext.Mapper
                         .Map<ToDoSubItemValueNotify>(toDoItemValueViewModel),
+                    ToDoItemPeriodicityOffsetViewModel toDoItemPeriodicityOffsetViewModel => resolutionContext.Mapper
+                        .Map<ToDoSubItemPeriodicityOffsetNotify>(toDoItemPeriodicityOffsetViewModel),
                     _ => throw new ArgumentOutOfRangeException(nameof(source))
                 }
             );

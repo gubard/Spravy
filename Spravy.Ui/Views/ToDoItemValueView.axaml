@@ -5,6 +5,7 @@
                                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                                     xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                     xmlns:controls1="clr-namespace:Spravy.Ui.Controls"
+                                    xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
                                     mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                     x:Class="Spravy.Ui.Views.ToDoItemValueView"
                                     x:DataType="viewModels:ToDoItemValueViewModel">
@@ -31,15 +32,10 @@
                       Content="Completed"
                       IsEnabled="False" />
 
-            <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto">
-                <TextBlock Text="Type"
-                           VerticalAlignment="Center" />
-
-                <ComboBox Grid.Row="0"
-                          Grid.Column="1"
-                          SelectedItem="{Binding Type}"
-                          ItemsSource="{Binding ToDoItemTypes}" />
-            </Grid>
+            <ComboBox Classes="Outline"
+                      assists:ComboBoxAssist.Label="Type"
+                      SelectedItem="{Binding Type}"
+                      ItemsSource="{Binding ToDoItemTypes}" />
 
             <controls1:EditableTextBlock AcceptsReturn="True"
                                         AcceptsTab="True"

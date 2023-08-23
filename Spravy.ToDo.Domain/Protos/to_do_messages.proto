@@ -7,6 +7,38 @@ import "google/protobuf/duration.proto";
 
 package spravy.to_do;
 
+message UpdateToDoItemYearsOffsetRequest {
+  bytes Id = 1;
+  uint32 Years = 2;
+}
+
+message UpdateToDoItemYearsOffsetReply {
+}
+
+message UpdateToDoItemWeeksOffsetRequest {
+  bytes Id = 1;
+  uint32 Weeks = 2;
+}
+
+message UpdateToDoItemWeeksOffsetReply {
+}
+
+message UpdateToDoItemMonthsOffsetRequest {
+  bytes Id = 1;
+  uint32 Months = 2;
+}
+
+message UpdateToDoItemMonthsOffsetReply {
+}
+
+message UpdateToDoItemDaysOffsetRequest {
+  bytes Id = 1;
+  uint32 Days = 2;
+}
+
+message UpdateToDoItemDaysOffsetReply {
+}
+
 message InitRequest {
 }
 
@@ -232,6 +264,7 @@ message ToDoItemGrpc {
     ToDoItemGroupGrpc Group = 7;
     ToDoItemPlannedGrpc Planned = 9;
     ToDoItemPeriodicityGrpc Periodicity = 10;
+    ToDoItemPeriodicityOffsetGrpc PeriodicityOffset = 11;
   }
 }
 
@@ -279,6 +312,7 @@ message ToDoSubItemGrpc {
     ToDoSubItemGroupGrpc Group = 7;
     ToDoSubItemPlannedGrpc Planned = 10;
     ToDoSubItemPeriodicityGrpc Periodicity = 11;
+    ToDoSubItemPeriodicityOffsetGrpc PeriodicityOffset = 13;
   }
 }
 
@@ -337,6 +371,21 @@ enum TypeOfPeriodicityGrpc {
 }
 
 message DailyPeriodicityGrpc {
+}
+
+message ToDoSubItemPeriodicityOffsetGrpc {
+  DateTimeOffsetGrpc DueDate = 1;
+  uint32 CompletedCount = 2;
+  uint32 SkippedCount = 3;
+  uint32 FailedCount = 4;
+}
+
+message ToDoItemPeriodicityOffsetGrpc {
+  uint32 DaysOffset = 1;
+  uint32 MonthsOffset= 2;
+  uint32 WeeksOffset = 3;
+  uint32 YearsOffset = 4;
+  DateTimeOffsetGrpc DueDate = 5;
 }
 
 message MonthlyPeriodicityGrpc {

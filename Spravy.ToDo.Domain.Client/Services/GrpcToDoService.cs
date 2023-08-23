@@ -511,6 +511,82 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
         }
     }
 
+    public async Task UpdateToDoItemDaysOffsetAsync(Guid id, ushort days)
+    {
+        try
+        {
+            await client.UpdateToDoItemDaysOffsetAsync(
+                new UpdateToDoItemDaysOffsetRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                    Days = days
+                },
+                CreateMetadata()
+            );
+        }
+        catch (Exception e)
+        {
+            throw new GrpcException(grpcChannel.Target, e);
+        }
+    }
+
+    public async Task UpdateToDoItemMonthsOffsetAsync(Guid id, ushort months)
+    {
+        try
+        {
+            await client.UpdateToDoItemMonthsOffsetAsync(
+                new UpdateToDoItemMonthsOffsetRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                    Months = months
+                },
+                CreateMetadata()
+            );
+        }
+        catch (Exception e)
+        {
+            throw new GrpcException(grpcChannel.Target, e);
+        }
+    }
+
+    public async Task UpdateToDoItemWeeksOffsetAsync(Guid id, ushort weeks)
+    {
+        try
+        {
+            await client.UpdateToDoItemWeeksOffsetAsync(
+                new UpdateToDoItemWeeksOffsetRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                    Weeks = weeks
+                },
+                CreateMetadata()
+            );
+        }
+        catch (Exception e)
+        {
+            throw new GrpcException(grpcChannel.Target, e);
+        }
+    }
+
+    public async Task UpdateToDoItemYearsOffsetAsync(Guid id, ushort years)
+    {
+        try
+        {
+            await client.UpdateToDoItemYearsOffsetAsync(
+                new UpdateToDoItemYearsOffsetRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                    Years = years
+                },
+                CreateMetadata()
+            );
+        }
+        catch (Exception e)
+        {
+            throw new GrpcException(grpcChannel.Target, e);
+        }
+    }
+
     private Metadata CreateMetadata()
     {
         var metadata = new Metadata

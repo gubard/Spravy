@@ -1,13 +1,14 @@
 <controls:MainReactiveUserControl x:TypeArguments="viewModels:ToDoItemPlannedViewModel"
-                                xmlns="https://github.com/avaloniaui"
-                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                                xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-                                xmlns:controls="clr-namespace:Spravy.Ui.Controls"
-                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                                x:Class="Spravy.Ui.Views.ToDoItemPlannedView"
-                                x:DataType="viewModels:ToDoItemPlannedViewModel">
+                                  xmlns="https://github.com/avaloniaui"
+                                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                                  xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
+                                  xmlns:controls="clr-namespace:Spravy.Ui.Controls"
+                                  xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
+                                  mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                                  x:Class="Spravy.Ui.Views.ToDoItemPlannedView"
+                                  x:DataType="viewModels:ToDoItemPlannedViewModel">
     <Design.DataContext>
         <viewModels:ToDoItemPlannedViewModel />
     </Design.DataContext>
@@ -30,29 +31,16 @@
                       IsChecked="{Binding IsCompleted}" Content="Completed"
                       IsEnabled="False" />
 
-            <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto">
-                <TextBlock Text="Type"
-                           VerticalAlignment="Center" />
+            <ComboBox Classes="Outline"
+                      assists:ComboBoxAssist.Label="Type"
+                      SelectedItem="{Binding Type}"
+                      ItemsSource="{Binding ToDoItemTypes}" />
 
-                <ComboBox Grid.Row="0"
-                          Grid.Column="1"
-                          SelectedItem="{Binding Type}"
-                          ItemsSource="{Binding ToDoItemTypes}" />
-
-                <TextBlock Grid.Row="1"
-                           Text="Name"
-                           VerticalAlignment="Center" />
-
-                <controls:EditableTextBlock Grid.Row="1"
-                                            Grid.Column="1"
-                                            Text="{Binding Name, Mode=TwoWay}"
-                                            VerticalAlignment="Center"
-                                            Watermark="Name"
-                                            Margin="5" />
-
-                <TextBlock Grid.Row="2" Text="DueDate" VerticalAlignment="Center" />
-                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding DueDate}" />
-            </Grid>
+            <TextBox UseFloatingWatermark="True"
+                     Classes="outline dense"
+                     Theme="{StaticResource OutlineTextBox}"
+                     assists:TextFieldAssist.Label="DueDate"
+                     Text="{Binding DueDate}" />
 
             <controls:EditableTextBlock AcceptsReturn="True"
                                         AcceptsTab="True"

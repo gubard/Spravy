@@ -1,16 +1,17 @@
-<controls:MainReactiveUserControl x:TypeArguments="viewModels:ToDoItemPeriodicityViewModel"
+<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:ToDoItemPeriodicityOffsetViewModel"
                                 xmlns="https://github.com/avaloniaui"
                                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                                xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                 xmlns:controls="clr-namespace:Spravy.Ui.Controls"
                                 xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                                x:Class="Spravy.Ui.Views.ToDoItemPeriodicityView"
-                                x:DataType="viewModels:ToDoItemPeriodicityViewModel">
+                                x:Class="Spravy.Ui.Views.ToDoItemPeriodicityOffsetView"
+                                x:DataType="viewModels:ToDoItemPeriodicityOffsetViewModel">
     <Design.DataContext>
-        <viewModels:ToDoItemPeriodicityViewModel />
+        <viewModels:ToDoItemPeriodicityOffsetViewModel />
     </Design.DataContext>
 
     <Interaction.Behaviors>
@@ -33,12 +34,31 @@
                           SelectedItem="{Binding Type}"
                           ItemsSource="{Binding ToDoItemTypes}" />
 
-                <ComboBox Classes="Outline"
-                          assists:ComboBoxAssist.Label="TypeOfPeriodicity"
-                          SelectedItem="{Binding TypeOfPeriodicity}"
-                          ItemsSource="{Binding TypeOfPeriodicities}" />
-
-                <ContentControl Content="{Binding Periodicity}" />
+                <Grid ColumnDefinitions="*,*,*,*">
+                    <TextBox UseFloatingWatermark="True"
+                             Classes="outline dense"
+                             Theme="{StaticResource OutlineTextBox}"
+                             assists:TextFieldAssist.Label="DaysOffset"
+                             Text="{Binding DaysOffset}" />
+                    <TextBox Grid.Column="1"
+                             UseFloatingWatermark="True"
+                             Classes="outline dense"
+                             Theme="{StaticResource OutlineTextBox}"
+                             assists:TextFieldAssist.Label="WeeksOffset"
+                             Text="{Binding WeeksOffset}" />
+                    <TextBox Grid.Column="2"
+                             UseFloatingWatermark="True"
+                             Classes="outline dense"
+                             Theme="{StaticResource OutlineTextBox}"
+                             assists:TextFieldAssist.Label="MonthsOffset"
+                             Text="{Binding MonthsOffset}" />
+                    <TextBox Grid.Column="3"
+                             UseFloatingWatermark="True"
+                             Classes="outline dense"
+                             Theme="{StaticResource OutlineTextBox}"
+                             assists:TextFieldAssist.Label="YearsOffset"
+                             Text="{Binding YearsOffset}" />
+                </Grid>
 
                 <TextBox UseFloatingWatermark="True"
                          Classes="outline dense"
@@ -57,4 +77,4 @@
 
         <ContentControl Grid.Row="2" Content="{Binding ToDoSubItemsView}" />
     </Grid>
-</controls:MainReactiveUserControl>
+</reactiveUi:ReactiveUserControl>

@@ -82,8 +82,76 @@ public class EntityFrameworkToDoService : IToDoService
             case ToDoItemType.Group: return GetStatusAndActiveGroupAsync(context, entity);
             case ToDoItemType.Planned: return GetStatusAndActivePlannedAsync(context, entity);
             case ToDoItemType.Periodicity: return GetStatusAndActivePeriodicityAsync(context, entity);
+            case ToDoItemType.PeriodicityOffset: return GetStatusAndActivePeriodicityAsync(context, entity);
             default: throw new ArgumentOutOfRangeException();
         }
+    }
+
+    private async Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusAndActivePeriodicityOffsetAsync(
+        SpravyToDoDbContext context,
+        ToDoItemEntity entity
+    )
+    {
+        if (entity.DueDate < DateTimeOffset.Now.ToCurrentDay())
+        {
+            return (ToDoItemStatus.Miss, null);
+        }
+
+        if (entity.DueDate > DateTimeOffset.Now.ToCurrentDay())
+        {
+            return (ToDoItemStatus.Completed, null);
+        }
+
+        (ToDoItemStatus Status, ActiveToDoItem? Active) result = (ToDoItemStatus.ReadyForComplete, null);
+
+        var children = await context.Set<ToDoItemEntity>()
+            .AsNoTracking()
+            .Where(x => x.ParentId == entity.Id)
+            .ToArrayAsync();
+
+        if (children.Length == 0)
+        {
+            return (ToDoItemStatus.ReadyForComplete, mapper.Map<ActiveToDoItem>(entity));
+        }
+
+        var completeChildrenCount = 0;
+        var currentOrder = uint.MaxValue;
+
+        foreach (var child in children)
+        {
+            var status = await GetStatusAndActiveAsync(context, child);
+
+            switch (status.Status)
+            {
+                case ToDoItemStatus.Miss:
+                    return (ToDoItemStatus.Miss, mapper.Map<ActiveToDoItem>(child));
+                case ToDoItemStatus.Completed:
+                    completeChildrenCount++;
+                    break;
+                case ToDoItemStatus.ReadyForComplete:
+                    if (Math.Min(currentOrder, child.OrderIndex) == child.OrderIndex)
+                    {
+                        currentOrder = child.OrderIndex;
+                        result = (result.Status, status.Active);
+                    }
+
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        if (completeChildrenCount == children.Length)
+        {
+            return (ToDoItemStatus.ReadyForComplete, null);
+        }
+
+        if (entity.DueDate.ToCurrentDay() == DateTimeOffset.Now.ToCurrentDay())
+        {
+            return (ToDoItemStatus.ReadyForComplete, result.Active);
+        }
+
+        return result;
     }
 
     private async Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusAndActivePeriodicityAsync(
@@ -511,6 +579,8 @@ public class EntityFrameworkToDoService : IToDoService
                     break;
                 case ToDoItemType.Periodicity:
                     break;
+                case ToDoItemType.PeriodicityOffset:
+                    break;
                 default: throw new ArgumentOutOfRangeException();
             }
 
@@ -549,6 +619,13 @@ public class EntityFrameworkToDoService : IToDoService
                 }
 
                 break;
+            case ToDoItemType.PeriodicityOffset:
+                if (item.DueDate.ToCurrentDay() > DateTimeOffset.Now.ToCurrentDay())
+                {
+                    return false;
+                }
+
+                break;
         }
 
         var children = await context.Set<ToDoItemEntity>()
@@ -564,6 +641,7 @@ public class EntityFrameworkToDoService : IToDoService
                 ToDoItemType.Group => null,
                 ToDoItemType.Planned => item.DueDate,
                 ToDoItemType.Periodicity => item.DueDate,
+                ToDoItemType.PeriodicityOffset => item.DueDate,
                 _ => throw new ArgumentOutOfRangeException()
             };
 
@@ -579,6 +657,45 @@ public class EntityFrameworkToDoService : IToDoService
     }
 
     private async Task<bool> IsCanFinishToDoSubItemPeriodicity(
+        SpravyToDoDbContext context,
+        ToDoItemEntity item,
+        DateTimeOffset? rootDue
+    )
+    {
+        if (rootDue.HasValue)
+        {
+            if (item.DueDate.ToCurrentDay() <= rootDue.Value.ToCurrentDay())
+            {
+                return false;
+            }
+        }
+        else
+        {
+            if (item.DueDate.ToCurrentDay() <= DateTimeOffset.Now.ToCurrentDay())
+            {
+                return false;
+            }
+        }
+
+        var children = await context.Set<ToDoItemEntity>()
+            .AsNoTracking()
+            .Where(x => x.ParentId == item.Id)
+            .ToArrayAsync();
+
+        foreach (var child in children)
+        {
+            var isCanComplete = await IsCanFinishToDoItem(context, child, rootDue);
+
+            if (!isCanComplete)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private async Task<bool> IsCanFinishToDoSubItemPeriodicityOffset(
         SpravyToDoDbContext context,
         ToDoItemEntity item,
         DateTimeOffset? rootDue
@@ -722,6 +839,7 @@ public class EntityFrameworkToDoService : IToDoService
             case ToDoItemType.Group: return IsCanFinishToDoSubItemGroup(context, item, rootDue);
             case ToDoItemType.Planned: return IsCanFinishToDoSubItemPlanned(context, item, rootDue);
             case ToDoItemType.Periodicity: return IsCanFinishToDoSubItemPeriodicity(context, item, rootDue);
+            case ToDoItemType.PeriodicityOffset: return IsCanFinishToDoSubItemPeriodicityOffset(context, item, rootDue);
             default: throw new ArgumentOutOfRangeException();
         }
     }
@@ -793,6 +911,8 @@ public class EntityFrameworkToDoService : IToDoService
                 break;
             case ToDoItemType.Periodicity:
                 break;
+            case ToDoItemType.PeriodicityOffset:
+                break;
             default:
                 throw new ArgumentOutOfRangeException();
         }
@@ -828,6 +948,8 @@ public class EntityFrameworkToDoService : IToDoService
 
                 break;
             case ToDoItemType.Periodicity:
+                break;
+            case ToDoItemType.PeriodicityOffset:
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
@@ -1026,6 +1148,42 @@ public class EntityFrameworkToDoService : IToDoService
         await context.Database.EnsureCreatedAsync();
     }
 
+    public async Task UpdateToDoItemDaysOffsetAsync(Guid id, ushort days)
+    {
+        await using var context = await dbContextFactory.CreateDbContextAsync();
+        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
+        item = item.ThrowIfNull();
+        item.DaysOffset = days;
+        await context.SaveChangesAsync();
+    }
+
+    public async Task UpdateToDoItemMonthsOffsetAsync(Guid id, ushort months)
+    {
+        await using var context = await dbContextFactory.CreateDbContextAsync();
+        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
+        item = item.ThrowIfNull();
+        item.MonthsOffset = months;
+        await context.SaveChangesAsync();
+    }
+
+    public async Task UpdateToDoItemWeeksOffsetAsync(Guid id, ushort weeks)
+    {
+        await using var context = await dbContextFactory.CreateDbContextAsync();
+        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
+        item = item.ThrowIfNull();
+        item.WeeksOffset = weeks;
+        await context.SaveChangesAsync();
+    }
+
+    public async Task UpdateToDoItemYearsOffsetAsync(Guid id, ushort years)
+    {
+        await using var context = await dbContextFactory.CreateDbContextAsync();
+        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
+        item = item.ThrowIfNull();
+        item.YearsOffset = years;
+        await context.SaveChangesAsync();
+    }
+
     private async Task ToDoItemToStringAsync(SpravyToDoDbContext context, Guid id, ushort level, StringBuilder builder)
     {
         var items = await context.Set<ToDoItemEntity>()
@@ -1131,9 +1289,19 @@ public class EntityFrameworkToDoService : IToDoService
             case ToDoItemType.Periodicity:
                 AddPeriodicity(item);
                 break;
+            case ToDoItemType.PeriodicityOffset:
+                AddPeriodicityOffset(item);
+                break;
             default:
                 throw new ArgumentOutOfRangeException();
         }
+    }
+
+    private void AddPeriodicityOffset(ToDoItemEntity item)
+    {
+        item.DueDate = item.DueDate.AddDays(item.DaysOffset + item.WeeksOffset * 7)
+            .AddMonths(item.MonthsOffset)
+            .AddYears(item.YearsOffset);
     }
 
     private void AddPeriodicity(ToDoItemEntity item)

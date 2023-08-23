@@ -31,6 +31,10 @@ public static class ToDoServiceExtension
                 navigator.NavigateTo<ToDoItemValueViewModel>(vm => vm.Id = toDoItemValue.Id);
 
                 break;
+            case ToDoItemPeriodicityOffset toDoItemPeriodicityOffset:
+                navigator.NavigateTo<ToDoItemPeriodicityOffsetViewModel>(vm => vm.Id = toDoItemPeriodicityOffset.Id);
+
+                break;
             default: throw new ArgumentOutOfRangeException(nameof(item));
         }
     }

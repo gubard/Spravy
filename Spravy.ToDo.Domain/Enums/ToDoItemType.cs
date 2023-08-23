@@ -6,4 +6,5 @@ public enum ToDoItemType
     Group,
     Planned,
     Periodicity,
+    PeriodicityOffset,
 }

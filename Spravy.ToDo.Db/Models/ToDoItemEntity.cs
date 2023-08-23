@@ -22,6 +22,10 @@ public class ToDoItemEntity
     public string DaysOfMonth { get; set; } = "1";
     public string DaysOfYear { get; set; } = "1.1";
     public DateTimeOffset? LastCompleted { get; set; }
+    public ushort DaysOffset { get; set; } = 1;
+    public ushort MonthsOffset { get; set; }
+    public ushort WeeksOffset { get; set; }
+    public ushort YearsOffset { get; set; }
 
     public Guid? ParentId { get; set; }
     public ToDoItemEntity? Parent { get; set; }

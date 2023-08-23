@@ -33,5 +33,9 @@ service ToDoService {
   rpc UpdateToDoItemParent (UpdateToDoItemParentRequest) returns (UpdateToDoItemParentReply);
   rpc ToDoItemToRoot (ToDoItemToRootRequest) returns (ToDoItemToRootReply);
   rpc ToDoItemToString (ToDoItemToStringRequest) returns (ToDoItemToStringReply);
+  rpc UpdateToDoItemDaysOffset (UpdateToDoItemDaysOffsetRequest) returns (UpdateToDoItemDaysOffsetReply);
+  rpc UpdateToDoItemMonthsOffset (UpdateToDoItemMonthsOffsetRequest) returns (UpdateToDoItemMonthsOffsetReply);
+  rpc UpdateToDoItemWeeksOffset (UpdateToDoItemWeeksOffsetRequest) returns (UpdateToDoItemWeeksOffsetReply);
+  rpc UpdateToDoItemYearsOffset (UpdateToDoItemYearsOffsetRequest) returns (UpdateToDoItemYearsOffsetReply);
   rpc Init (InitRequest) returns (InitReply);
 }

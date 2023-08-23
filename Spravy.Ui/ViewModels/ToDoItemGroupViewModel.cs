@@ -53,6 +53,10 @@ public class ToDoItemGroupViewModel : ToDoItemViewModel, IRefreshToDoItem
                 Navigator.NavigateTo<ToDoItemValueViewModel>(x => x.Id = toDoItemValue.Id);
 
                 return;
+            case ToDoItemPeriodicityOffset doItemPeriodicityOffset:
+                Navigator.NavigateTo<ToDoItemPeriodicityOffsetViewModel>(x => x.Id = doItemPeriodicityOffset.Id);
+
+                return;
             default: throw new ArgumentOutOfRangeException(nameof(item));
         }
 

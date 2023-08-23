@@ -94,6 +94,10 @@ public class ToDoItemValueViewModel : ToDoItemViewModel, IRefreshToDoItem
                 Path.Items.AddRange(item.Parents.Select(x => Mapper.Map<ToDoItemParentNotify>(x)));
 
                 break;
+            case ToDoItemPeriodicityOffset doItemPeriodicityOffset:
+                Navigator.NavigateTo<ToDoItemPeriodicityOffsetViewModel>(x => x.Id = doItemPeriodicityOffset.Id);
+
+                return;
             default: throw new ArgumentOutOfRangeException(nameof(item));
         }
 
