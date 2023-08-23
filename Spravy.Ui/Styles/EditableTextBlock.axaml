@@ -22,6 +22,8 @@
                              UseFloatingWatermark="False">
                         <TextBox.InnerLeftContent>
                             <Button Margin="2,10,2,2"
+                                    Height="35"
+                                    Width="35"
                                     Name="{x:Static controls:EditableTextBlock.EditButtonPartName}">
                                 <avalonia:MaterialIcon Kind="Pencil" />
                             </Button>
