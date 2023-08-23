@@ -17,11 +17,13 @@
                              Name="{x:Static controls:EditableTextBlock.TextBoxReadOnlyPartName}"
                              Text="{TemplateBinding Text, Mode=TwoWay}"
                              IsReadOnly="True"
+                             Theme="{StaticResource OutlineTextBox}"
                              Watermark="{TemplateBinding Watermark, Mode=TwoWay}"
                              UseFloatingWatermark="False">
                         <TextBox.InnerLeftContent>
-                            <Button Name="{x:Static controls:EditableTextBlock.EditButtonPartName}">
-                                <avalonia:MaterialIcon Kind="Pencil"  />
+                            <Button Margin="2,10,2,2"
+                                    Name="{x:Static controls:EditableTextBlock.EditButtonPartName}">
+                                <avalonia:MaterialIcon Kind="Pencil" />
                             </Button>
                         </TextBox.InnerLeftContent>
                     </TextBox>
