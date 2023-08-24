@@ -90,7 +90,7 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
             case ToDoItemPeriodicityOffset toDoItemPeriodicityOffset:
                 IsCurrent = item.IsCurrent;
                 Name = item.Name;
-                Type = ToDoItemType.Periodicity;
+                Type = ToDoItemType.PeriodicityOffset;
                 Description = item.Description;
                 DueDate = toDoItemPeriodicityOffset.DueDate;
                 DaysOffset = toDoItemPeriodicityOffset.DaysOffset;
