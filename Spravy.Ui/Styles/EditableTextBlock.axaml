@@ -13,7 +13,6 @@
             <ControlTemplate>
                 <Panel>
                     <TextBox VerticalAlignment="Top"
-                             HorizontalAlignment="Left"
                              Name="{x:Static controls:EditableTextBlock.TextBoxReadOnlyPartName}"
                              Text="{TemplateBinding Text, Mode=TwoWay}"
                              IsReadOnly="True"
@@ -32,7 +31,6 @@
 
                     <TextBox IsVisible="False"
                              VerticalAlignment="Top"
-                             HorizontalAlignment="Left"
                              AcceptsReturn="{TemplateBinding AcceptsReturn, Mode=TwoWay}"
                              AcceptsTab="{TemplateBinding AcceptsTab, Mode=TwoWay}"
                              TextWrapping="{TemplateBinding TextWrapping, Mode=TwoWay}"
