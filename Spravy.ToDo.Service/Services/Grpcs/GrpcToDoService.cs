@@ -318,4 +318,44 @@ public class GrpcToDoService : ToDoServiceBase
 
         return new InitReply();
     }
+
+    public override async Task<UpdateToDoItemDaysOffsetReply> UpdateToDoItemDaysOffset(
+        UpdateToDoItemDaysOffsetRequest request,
+        ServerCallContext context
+    )
+    {
+        await toDoService.UpdateToDoItemDaysOffsetAsync(mapper.Map<Guid>(request.Id), (ushort)request.Days);
+
+        return new UpdateToDoItemDaysOffsetReply();
+    }
+
+    public override async Task<UpdateToDoItemMonthsOffsetReply> UpdateToDoItemMonthsOffset(
+        UpdateToDoItemMonthsOffsetRequest request,
+        ServerCallContext context
+    )
+    {
+        await toDoService.UpdateToDoItemMonthsOffsetAsync(mapper.Map<Guid>(request.Id), (ushort)request.Months);
+
+        return new UpdateToDoItemMonthsOffsetReply();
+    }
+
+    public override async Task<UpdateToDoItemWeeksOffsetReply> UpdateToDoItemWeeksOffset(
+        UpdateToDoItemWeeksOffsetRequest request,
+        ServerCallContext context
+    )
+    {
+        await toDoService.UpdateToDoItemWeeksOffsetAsync(mapper.Map<Guid>(request.Id), (ushort)request.Weeks);
+
+        return new UpdateToDoItemWeeksOffsetReply();
+    }
+
+    public override async Task<UpdateToDoItemYearsOffsetReply> UpdateToDoItemYearsOffset(
+        UpdateToDoItemYearsOffsetRequest request,
+        ServerCallContext context
+    )
+    {
+        await toDoService.UpdateToDoItemYearsOffsetAsync(mapper.Map<Guid>(request.Id), (ushort)request.Years);
+
+        return new UpdateToDoItemYearsOffsetReply();
+    }
 }
