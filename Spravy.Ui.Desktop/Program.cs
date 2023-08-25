@@ -40,9 +40,6 @@ class Program
 
         return AppBuilder.Configure(() => module.ThrowIfNull().GetObject<Application>())
             .UsePlatformDetect()
-#if DEBUG
-            .LogToTrace()
-#endif
             .UseReactiveUI();
     }
 }

@@ -30,9 +30,6 @@ public class MainActivity : AvaloniaMainActivity<App>
     {
         return base.CustomizeAppBuilder(builder)
             .WithInterFont()
-#if DEBUG
-            .LogToTrace()
-#endif
             .UseReactiveUI();
     }
 
