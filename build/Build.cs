@@ -43,7 +43,7 @@ class Build : NukeBuild
             .DependsOn(Restore)
             .Executes(() =>
                 {
-                    foreach (var project in Solution.Projects.Where(x => !x.Name.Contains("Android")))
+                    foreach (var project in Solution.AllProjects.Where(x => !x.Name.Contains("Android")))
                     {
                         for (var i = 0; i < 3; i++)
                         {
@@ -199,7 +199,7 @@ class Build : NukeBuild
             publishFolder.Create();
         }
 
-        var project = Solution.Projects.Single(x => x.Name == name);
+        var project = Solution.AllProjects.Single(x => x.Name == name);
 
 
         for (var i = 0; i < 3; i++)

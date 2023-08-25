@@ -8,6 +8,7 @@
                                 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                 xmlns:views="clr-namespace:Spravy.Ui.Views"
                                 xmlns:ir="clr-namespace:Avalonia.Xaml.Interactions.Responsive;assembly=Avalonia.Xaml.Interactions.Responsive"
+                                xmlns:helpers="clr-namespace:Spravy.Ui.Helpers"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.ToDoSubItemsView"
                                 x:DataType="viewModels:ToDoSubItemsViewModel">
@@ -21,8 +22,8 @@
                 <BehaviorCollectionTemplate>
                     <BehaviorCollection>
                         <ir:AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
-                            <ir:AdaptiveClassSetter MinWidth="0" MaxWidth="900" ClassName="small" />
-                            <ir:AdaptiveClassSetter MinWidth="900" MaxWidth="Infinity" ClassName="wide" />
+                            <ir:AdaptiveClassSetter MinWidth="0" MaxWidth="{x:Static helpers:MaterialDesignSize.MinMedium}" ClassName="small" />
+                            <ir:AdaptiveClassSetter MinWidth="{x:Static helpers:MaterialDesignSize.MinMedium}" MaxWidth="Infinity" ClassName="wide" />
                         </ir:AdaptiveBehavior>
                     </BehaviorCollection>
                 </BehaviorCollectionTemplate>
@@ -34,8 +35,8 @@
                 <BehaviorCollectionTemplate>
                     <BehaviorCollection>
                         <ir:AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
-                            <ir:AdaptiveClassSetter MinWidth="0" MaxWidth="900" ClassName="small" />
-                            <ir:AdaptiveClassSetter MinWidth="900" MaxWidth="Infinity" ClassName="wide" />
+                            <ir:AdaptiveClassSetter MinWidth="0" MaxWidth="{x:Static helpers:MaterialDesignSize.MinMedium}" ClassName="small" />
+                            <ir:AdaptiveClassSetter MinWidth="{x:Static helpers:MaterialDesignSize.MinMedium}" MaxWidth="Infinity" ClassName="wide" />
                         </ir:AdaptiveBehavior>
                     </BehaviorCollection>
                 </BehaviorCollectionTemplate>
