@@ -19,6 +19,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Spravy.Authentication.Domain\Spravy.Authentication.Domain.csproj" />
       <ProjectReference Include="..\Spravy.Client\Spravy.Client.csproj" />
+      <ProjectReference Include="..\Spravy.ToDo.Domain.Mapper\Spravy.ToDo.Domain.Mapper.csproj" />
       <ProjectReference Include="..\Spravy.ToDo.Domain\Spravy.ToDo.Domain.csproj" />
     </ItemGroup>
 
@@ -26,7 +27,7 @@
         <Protobuf Include="..\Spravy.ToDo.Domain\Protos\to_do.proto" GrpcServices="Client" ProtoRoot="..\Spravy.ToDo.Domain">
             <Link>Protos/to_do.proto</Link>
         </Protobuf>
-        <Protobuf Include="..\Spravy.ToDo.Domain\Protos\to_do_messages.proto">
+        <Protobuf Include="..\Spravy.ToDo.Domain\Protos\to_do_messages.proto" GrpcServices="None" ProtoCompile="False">
             <Link>Protos/to_do_messages.proto</Link>
         </Protobuf>
     </ItemGroup>
