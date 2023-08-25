@@ -15,12 +15,12 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Protobuf Include="..\Spravy.Authentication.Domain\Protos\authentication_messages.proto">
-            <Link>Protos\authentication_messages.proto</Link>
+        <Protobuf Include="..\Spravy.ToDo.Domain\Protos\to_do_messages.proto" GrpcServices="None">
+            <Link>Protos\to_do_messages.proto</Link>
         </Protobuf>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Spravy.Authentication.Domain\Spravy.Authentication.Domain.csproj" />
+      <ProjectReference Include="..\Spravy.ToDo.Domain\Spravy.ToDo.Domain.csproj" />
     </ItemGroup>
 </Project>

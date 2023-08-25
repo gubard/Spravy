@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace Spravy.Db.Core.Interfaces;
+namespace Spravy.Db.Interfaces;
 
 public interface IDbContextSetup
 {

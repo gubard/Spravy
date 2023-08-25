@@ -7,7 +7,7 @@ using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
 using Spravy.ToDo.Protos;
 
-namespace Spravy.ToDo.Domain.Client.Profiles;
+namespace Spravy.ToDo.Domain.Mapper.Profiles;
 
 public class SpravyToDoProfile : Profile
 {

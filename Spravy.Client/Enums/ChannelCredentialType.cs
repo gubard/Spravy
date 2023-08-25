@@ -1,4 +1,4 @@
-namespace Spravy.ToDo.Domain.Client.Enums;
+namespace Spravy.Client.Enums;
 
 public enum ChannelCredentialType
 {

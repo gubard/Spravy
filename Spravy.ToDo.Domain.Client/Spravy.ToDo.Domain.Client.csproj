@@ -6,7 +6,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="AutoMapper" Version="12.0.1" />
         <PackageReference Include="Google.Protobuf" Version="3.24.1" />
         <PackageReference Include="Grpc.Net.Client" Version="2.55.0" />
         <PackageReference Include="Grpc.Net.Client.Web" Version="2.55.0" />
@@ -19,6 +18,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Spravy.Authentication.Domain\Spravy.Authentication.Domain.csproj" />
+      <ProjectReference Include="..\Spravy.Client\Spravy.Client.csproj" />
       <ProjectReference Include="..\Spravy.ToDo.Domain\Spravy.ToDo.Domain.csproj" />
     </ItemGroup>
 
@@ -26,7 +26,7 @@
         <Protobuf Include="..\Spravy.ToDo.Domain\Protos\to_do.proto" GrpcServices="Client" ProtoRoot="..\Spravy.ToDo.Domain">
             <Link>Protos/to_do.proto</Link>
         </Protobuf>
-        <Protobuf Include="..\Spravy.ToDo.Domain\Protos\to_do_messages.proto" GrpcServices="Client">
+        <Protobuf Include="..\Spravy.ToDo.Domain\Protos\to_do_messages.proto">
             <Link>Protos/to_do_messages.proto</Link>
         </Protobuf>
     </ItemGroup>

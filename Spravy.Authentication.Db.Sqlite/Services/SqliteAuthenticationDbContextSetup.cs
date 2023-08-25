@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Spravy.Authentication.Db.Sqlite.EntityTypeConfigurations;
-using Spravy.Db.Core.Interfaces;
+using Spravy.Db.Interfaces;
 
 namespace Spravy.Authentication.Db.Sqlite.Services;
 

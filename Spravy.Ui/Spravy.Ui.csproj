@@ -38,6 +38,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Spravy.Authentication.Domain.Core\Spravy.Authentication.Domain.Core.csproj" />
       <ProjectReference Include="..\Spravy.ToDo.Domain.Client\Spravy.ToDo.Domain.Client.csproj" />
+      <ProjectReference Include="..\Spravy.ToDo.Domain.Mapper\Spravy.ToDo.Domain.Mapper.csproj" />
       <ProjectReference Include="..\Spravy.ToDo.Domain\Spravy.ToDo.Domain.csproj" />
     </ItemGroup>
 

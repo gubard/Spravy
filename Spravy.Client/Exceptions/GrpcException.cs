@@ -1,4 +1,4 @@
-namespace Spravy.ToDo.Domain.Client.Exceptions;
+namespace Spravy.Client.Exceptions;
 
 public class GrpcException : Exception
 {

@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Spravy.Db.Core.Interfaces;
+using Spravy.Db.Interfaces;
 using Spravy.Domain.Interfaces;
 using Spravy.ToDo.Db.Contexts;
 

@@ -12,7 +12,7 @@ using Spravy.Authentication.Service.Interfaces;
 using Spravy.Authentication.Service.Models;
 using Spravy.Authentication.Service.Services;
 using Spravy.Authentication.Service.Services.Grpcs;
-using Spravy.Db.Core.Interfaces;
+using Spravy.Db.Interfaces;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;

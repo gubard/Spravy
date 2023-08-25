@@ -5,18 +5,17 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
-using Spravy.Db.Core.Interfaces;
+using Spravy.Db.Interfaces;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Db.Core.Profiles;
 using Spravy.ToDo.Db.Sqlite.Services;
-using Spravy.ToDo.Service.Profiles;
 using Spravy.ToDo.Service.Services;
 using Spravy.ToDo.Service.Services.Grpcs;
 using Spravy.ToDo.Db.Contexts;
 using Spravy.ToDo.Db.Sqlite.Migrator;
-using Spravy.ToDo.Domain.Client.Profiles;
+using Spravy.ToDo.Domain.Mapper.Profiles;
 using Spravy.ToDo.Service.HostedServices;
 using Spravy.ToDo.Service.Models;
 
@@ -27,7 +26,6 @@ builder.Services.AddScoped(
     _ => new MapperConfiguration(
         cfg =>
         {
-            cfg.AddProfile<SpravyServiceProfile>();
             cfg.AddProfile<SpravyToDoProfile>();
             cfg.AddProfile<SpravyToDoDbProfile>();
         }

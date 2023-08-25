@@ -1,7 +1,7 @@
 using Grpc.Core;
 using Grpc.Net.Client;
 using Grpc.Net.Client.Web;
-using Spravy.ToDo.Domain.Client.Enums;
+using Spravy.Client.Enums;
 
 namespace Spravy.ToDo.Domain.Client.Services;
 
