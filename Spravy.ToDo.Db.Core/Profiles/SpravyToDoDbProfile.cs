@@ -117,7 +117,8 @@ public class SpravyToDoDbProfile : Profile
                         (ToDoItemParent[])resolutionContext.Items[ParentsName],
                         source.IsCompleted,
                         source.Description,
-                        source.IsCurrent
+                        source.IsCurrent,
+                        source.ChildrenType
                     ),
                     ToDoItemType.Group => new ToDoItemGroup(
                         source.Id,
@@ -135,7 +136,8 @@ public class SpravyToDoDbProfile : Profile
                         (ToDoItemParent[])resolutionContext.Items[ParentsName],
                         source.IsCurrent,
                         source.DueDate,
-                        source.IsCompleted
+                        source.IsCompleted,
+                        source.ChildrenType
                     ),
                     ToDoItemType.Periodicity => new ToDoItemPeriodicity(
                         source.Id,
@@ -152,7 +154,8 @@ public class SpravyToDoDbProfile : Profile
                             TypeOfPeriodicity.Monthly => resolutionContext.Mapper.Map<MonthlyPeriodicity>(source),
                             TypeOfPeriodicity.Annually => resolutionContext.Mapper.Map<AnnuallyPeriodicity>(source),
                             _ => throw new ArgumentOutOfRangeException()
-                        }
+                        },
+                        source.ChildrenType
                     ),
                     ToDoItemType.PeriodicityOffset => new ToDoItemPeriodicityOffset(
                         source.Id,
@@ -165,7 +168,8 @@ public class SpravyToDoDbProfile : Profile
                         source.MonthsOffset,
                         source.WeeksOffset,
                         source.YearsOffset,
-                        source.DueDate
+                        source.DueDate,
+                        source.ChildrenType
                     ),
                     _ => throw new ArgumentOutOfRangeException()
                 }

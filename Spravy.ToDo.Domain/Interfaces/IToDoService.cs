@@ -36,4 +36,5 @@ public interface IToDoService
     Task UpdateToDoItemMonthsOffsetAsync(Guid id, ushort months);
     Task UpdateToDoItemWeeksOffsetAsync(Guid id, ushort weeks);
     Task UpdateToDoItemYearsOffsetAsync(Guid id, ushort years);
+    Task UpdateToDoItemChildrenTypeAsync(Guid id, ToDoItemChildrenType type);
 }

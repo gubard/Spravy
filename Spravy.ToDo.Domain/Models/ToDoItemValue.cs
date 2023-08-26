@@ -1,3 +1,4 @@
+using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 
 namespace Spravy.ToDo.Domain.Models;
@@ -11,7 +12,8 @@ public readonly struct ToDoItemValue : IToDoItem
         ToDoItemParent[] parents,
         bool isCompleted,
         string description,
-        bool isCurrent
+        bool isCurrent,
+        ToDoItemChildrenType childrenType
     )
     {
         Name = name;
@@ -20,6 +22,7 @@ public readonly struct ToDoItemValue : IToDoItem
         IsCompleted = isCompleted;
         Description = description;
         IsCurrent = isCurrent;
+        ChildrenType = childrenType;
         Id = id;
     }
 
@@ -29,5 +32,6 @@ public readonly struct ToDoItemValue : IToDoItem
     public IToDoSubItem[] Items { get; }
     public ToDoItemParent[] Parents { get; }
     public bool IsCurrent { get; }
+    public ToDoItemChildrenType ChildrenType { get; }
     public string Description { get; }
 }

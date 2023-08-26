@@ -358,4 +358,17 @@ public class GrpcToDoService : ToDoServiceBase
 
         return new UpdateToDoItemYearsOffsetReply();
     }
+
+    public override async Task<UpdateToDoItemChildrenTypeReply> UpdateToDoItemChildrenType(
+        UpdateToDoItemChildrenTypeRequest request,
+        ServerCallContext context
+    )
+    {
+        await toDoService.UpdateToDoItemChildrenTypeAsync(
+            mapper.Map<Guid>(request.Id),
+            (ToDoItemChildrenType)request.Type
+        );
+
+        return new UpdateToDoItemChildrenTypeReply();
+    }
 }

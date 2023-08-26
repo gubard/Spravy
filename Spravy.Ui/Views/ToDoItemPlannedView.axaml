@@ -31,10 +31,17 @@
                       IsChecked="{Binding IsCompleted}" Content="Completed"
                       IsEnabled="False" />
 
-            <ComboBox Classes="Outline"
-                      assists:ComboBoxAssist.Label="Type"
-                      SelectedItem="{Binding Type}"
-                      ItemsSource="{Binding ToDoItemTypes}" />
+            <Grid ColumnDefinitions="*,*">
+                <ComboBox Classes="Outline"
+                          assists:ComboBoxAssist.Label="Type"
+                          SelectedItem="{Binding Type}"
+                          ItemsSource="{Binding ToDoItemTypes}" />
+                <ComboBox Grid.Column="1"
+                          Classes="Outline"
+                          assists:ComboBoxAssist.Label="Type"
+                          SelectedItem="{Binding ChildrenType}"
+                          ItemsSource="{Binding ChildrenTypes}" />
+            </Grid>
             
             <!--<DatePicker SelectedDate="{Binding DueDate}" />-->
             <!--<TextBox UseFloatingWatermark="True"

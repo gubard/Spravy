@@ -26,6 +26,7 @@ public class ToDoItemEntity
     public ushort MonthsOffset { get; set; }
     public ushort WeeksOffset { get; set; }
     public ushort YearsOffset { get; set; }
+    public ToDoItemChildrenType ChildrenType { get; set; }
 
     public Guid? ParentId { get; set; }
     public ToDoItemEntity? Parent { get; set; }

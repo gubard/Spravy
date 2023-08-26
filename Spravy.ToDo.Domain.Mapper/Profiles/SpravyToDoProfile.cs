@@ -279,7 +279,8 @@ public class SpravyToDoProfile : Profile
                         resolutionContext.Mapper.Map<ToDoItemParent[]>(source.Parents),
                         source.Value.IsCompleted,
                         source.Description,
-                        source.IsCurrent
+                        source.IsCurrent,
+                        (ToDoItemChildrenType)source.Value.ChildrenType
                     ),
                     ToDoItemGrpc.ParametersOneofCase.Group => new ToDoItemGroup(
                         resolutionContext.Mapper.Map<Guid>(source.Id),
@@ -297,7 +298,8 @@ public class SpravyToDoProfile : Profile
                         resolutionContext.Mapper.Map<ToDoItemParent[]>(source.Parents),
                         source.IsCurrent,
                         resolutionContext.Mapper.Map<DateTimeOffset>(source.Planned.DueDate),
-                        source.Planned.IsCompleted
+                        source.Planned.IsCompleted,
+                        (ToDoItemChildrenType)source.Planned.ChildrenType
                     ),
                     ToDoItemGrpc.ParametersOneofCase.Periodicity => new ToDoItemPeriodicity(
                         resolutionContext.Mapper.Map<Guid>(source.Id),
@@ -307,7 +309,8 @@ public class SpravyToDoProfile : Profile
                         resolutionContext.Mapper.Map<ToDoItemParent[]>(source.Parents),
                         source.IsCurrent,
                         resolutionContext.Mapper.Map<DateTimeOffset>(source.Periodicity.DueDate),
-                        resolutionContext.Mapper.Map<IPeriodicity>(source.Periodicity)
+                        resolutionContext.Mapper.Map<IPeriodicity>(source.Periodicity),
+                        (ToDoItemChildrenType)source.Periodicity.ChildrenType
                     ),
                     ToDoItemGrpc.ParametersOneofCase.PeriodicityOffset => new ToDoItemPeriodicityOffset(
                         resolutionContext.Mapper.Map<Guid>(source.Id),
@@ -320,7 +323,8 @@ public class SpravyToDoProfile : Profile
                         (ushort)source.PeriodicityOffset.MonthsOffset,
                         (ushort)source.PeriodicityOffset.WeeksOffset,
                         (ushort)source.PeriodicityOffset.YearsOffset,
-                        resolutionContext.Mapper.Map<DateTimeOffset>(source.PeriodicityOffset.DueDate)
+                        resolutionContext.Mapper.Map<DateTimeOffset>(source.PeriodicityOffset.DueDate),
+                        (ToDoItemChildrenType)source.PeriodicityOffset.ChildrenType
                     ),
                     ToDoItemGrpc.ParametersOneofCase.None => throw new ArgumentOutOfRangeException(),
                     _ => throw new ArgumentOutOfRangeException()
@@ -363,7 +367,10 @@ public class SpravyToDoProfile : Profile
 
                             break;
                         case ToDoSubItemPeriodicityOffset subItemPeriodicityOffset:
-                            result.PeriodicityOffset = resolutionContext.Mapper.Map<ToDoSubItemPeriodicityOffsetGrpc>(subItemPeriodicityOffset);
+                            result.PeriodicityOffset =
+                                resolutionContext.Mapper.Map<ToDoSubItemPeriodicityOffsetGrpc>(
+                                    subItemPeriodicityOffset
+                                );
 
                             break;
                         default: throw new ArgumentOutOfRangeException(nameof(source));

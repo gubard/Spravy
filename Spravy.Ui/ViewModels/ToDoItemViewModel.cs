@@ -20,8 +20,7 @@ using Spravy.Ui.Views;
 
 namespace Spravy.Ui.ViewModels;
 
-public abstract class ToDoItemViewModel : RoutableViewModelBase,
-    IToDoItemOrderChanger
+public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
 {
     private string name = string.Empty;
     private Guid id;
@@ -51,6 +50,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase,
         ToRootItemCommand = CreateCommand(ToRootItem);
         TypeOfPeriodicities = new(Enum.GetValues<TypeOfPeriodicity>());
         ToDoItemTypes = new(Enum.GetValues<ToDoItemType>());
+        ChildrenTypes = new(Enum.GetValues<ToDoItemChildrenType>());
         SearchCommand = CreateCommand(Search);
         AddToDoItemToCurrentCommand = CreateCommandFromTaskWithDialogProgressIndicator(AddToDoItemToCurrentAsync);
         RemoveToDoItemFromCurrentCommand =
@@ -92,6 +92,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase,
 
     public AvaloniaList<TypeOfPeriodicity> TypeOfPeriodicities { get; }
     public AvaloniaList<ToDoItemType> ToDoItemTypes { get; }
+    public AvaloniaList<ToDoItemChildrenType> ChildrenTypes { get; }
     public ICommand CompleteSubToDoItemCommand { get; }
     public ICommand DeleteSubToDoItemCommand { get; }
     public ICommand ChangeToDoItemCommand { get; }

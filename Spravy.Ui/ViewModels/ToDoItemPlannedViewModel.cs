@@ -20,6 +20,7 @@ public class ToDoItemPlannedViewModel : ToDoItemViewModel, IRefreshToDoItem
 {
     private bool isCompleted;
     private DateTimeOffset dueDate;
+    private ToDoItemChildrenType childrenType;
 
     public ToDoItemPlannedViewModel() : base("to-do-item-value")
     {
@@ -29,6 +30,12 @@ public class ToDoItemPlannedViewModel : ToDoItemViewModel, IRefreshToDoItem
     }
 
     public ICommand CompleteToDoItemCommand { get; }
+
+    public ToDoItemChildrenType ChildrenType
+    {
+        get => childrenType;
+        set => this.RaiseAndSetIfChanged(ref childrenType, value);
+    }
 
     public bool IsCompleted
     {
@@ -155,6 +162,18 @@ public class ToDoItemPlannedViewModel : ToDoItemViewModel, IRefreshToDoItem
         yield return this.WhenAnyValue(x => x.Description).Skip(1).Subscribe(OnNextDescription);
         yield return this.WhenAnyValue(x => x.Type).Skip(1).Subscribe(OnNextType);
         yield return this.WhenAnyValue(x => x.DueDate).Skip(1).Subscribe(OnNextDueDate);
+        yield return this.WhenAnyValue(x => x.ChildrenType).Skip(1).Subscribe(OnNextChildrenType);
+    }
+
+    private async void OnNextChildrenType(ToDoItemChildrenType x)
+    {
+        await SafeExecuteAsync(
+            async () =>
+            {
+                await ToDoService.UpdateToDoItemChildrenTypeAsync(Id, x);
+                await RefreshToDoItemAsync();
+            }
+        );
     }
 
     private void UnsubscribeProperties()

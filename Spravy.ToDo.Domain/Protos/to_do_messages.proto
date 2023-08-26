@@ -7,6 +7,15 @@ import "google/protobuf/duration.proto";
 
 package spravy.to_do;
 
+message UpdateToDoItemChildrenTypeRequest {
+  bytes Id = 1;
+  ToDoItemChildrenTypeGrpc Type = 2;
+}
+
+message UpdateToDoItemChildrenTypeReply {
+  
+}
+
 message UpdateToDoItemYearsOffsetRequest {
   bytes Id = 1;
   uint32 Years = 2;
@@ -274,10 +283,12 @@ message ToDoItemPlannedGrpc {
   uint32 CompletedCount = 3;
   uint32 SkippedCount = 4;
   uint32 FailedCount = 5;
+  ToDoItemChildrenTypeGrpc ChildrenType = 6;
 }
 
 message ToDoItemPeriodicityGrpc {
   DateTimeOffsetGrpc DueDate = 1;
+  ToDoItemChildrenTypeGrpc ChildrenType = 6;
 
   oneof Periodicity {
     DailyPeriodicityGrpc Daily = 2;
@@ -356,6 +367,7 @@ message ToDoItemParentGrpc {
 message ToDoItemValueGrpc {
   DateTimeOffsetGrpc DueDate = 1;
   bool IsCompleted = 2;
+  ToDoItemChildrenTypeGrpc ChildrenType = 3;
 }
 
 message DateTimeOffsetGrpc {
@@ -386,6 +398,7 @@ message ToDoItemPeriodicityOffsetGrpc {
   uint32 WeeksOffset = 3;
   uint32 YearsOffset = 4;
   DateTimeOffsetGrpc DueDate = 5;
+  ToDoItemChildrenTypeGrpc ChildrenType = 6;
 }
 
 message MonthlyPeriodicityGrpc {
@@ -426,4 +439,10 @@ enum ToDoItemTypeGrpc {
   Group = 1;
   Planned = 2;
   Periodicity = 3;
+}
+
+enum ToDoItemChildrenTypeGrpc {
+  RequireCompletion = 0;
+  IgnoreCompletion = 1;
+  CircleCompletion = 2;
 }

@@ -22,6 +22,7 @@ namespace Spravy.Ui.ViewModels;
 
 public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
 {
+    private ToDoItemChildrenType childrenType;
     private DateTimeOffset dueDate;
     private TypeOfPeriodicity typeOfPeriodicity;
     private PeriodicityViewModel? periodicity;
@@ -38,6 +39,12 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
     public required IResolver Resolver { get; init; }
 
     public ICommand CompleteToDoItemCommand { get; }
+
+    public ToDoItemChildrenType ChildrenType
+    {
+        get => childrenType;
+        set => this.RaiseAndSetIfChanged(ref childrenType, value);
+    }
 
     public PeriodicityViewModel? Periodicity
     {
@@ -170,6 +177,18 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
         yield return this.WhenAnyValue(x => x.Type).Skip(1).Subscribe(OnNextType);
         yield return this.WhenAnyValue(x => x.DueDate).Skip(1).Subscribe(OnNextDueDate);
         yield return this.WhenAnyValue(x => x.TypeOfPeriodicity).Skip(1).Subscribe(OnNextTypeOfPeriodicity);
+        yield return this.WhenAnyValue(x => x.ChildrenType).Skip(1).Subscribe(OnNextChildrenType);
+    }
+
+    private async void OnNextChildrenType(ToDoItemChildrenType x)
+    {
+        await SafeExecuteAsync(
+            async () =>
+            {
+                await ToDoService.UpdateToDoItemChildrenTypeAsync(Id, x);
+                await RefreshToDoItemAsync();
+            }
+        );
     }
 
     private void SetTypeOfPeriodicity(IPeriodicity periodicity)

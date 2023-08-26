@@ -11,7 +11,6 @@ using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
 using Spravy.ToDo.Protos;
-using ToDoSelectorItem = Spravy.ToDo.Domain.Models.ToDoSelectorItem;
 
 namespace Spravy.ToDo.Domain.Client.Services;
 
@@ -577,6 +576,25 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
                 {
                     Id = mapper.Map<ByteString>(id),
                     Years = years
+                },
+                CreateMetadata()
+            );
+        }
+        catch (Exception e)
+        {
+            throw new GrpcException(grpcChannel.Target, e);
+        }
+    }
+
+    public async Task UpdateToDoItemChildrenTypeAsync(Guid id, ToDoItemChildrenType type)
+    {
+        try
+        {
+            await client.UpdateToDoItemChildrenTypeAsync(
+                new UpdateToDoItemChildrenTypeRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                    Type = (ToDoItemChildrenTypeGrpc)type
                 },
                 CreateMetadata()
             );

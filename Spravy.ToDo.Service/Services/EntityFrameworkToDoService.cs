@@ -82,7 +82,7 @@ public class EntityFrameworkToDoService : IToDoService
             case ToDoItemType.Group: return GetStatusAndActiveGroupAsync(context, entity);
             case ToDoItemType.Planned: return GetStatusAndActivePlannedAsync(context, entity);
             case ToDoItemType.Periodicity: return GetStatusAndActivePeriodicityAsync(context, entity);
-            case ToDoItemType.PeriodicityOffset: return GetStatusAndActivePeriodicityAsync(context, entity);
+            case ToDoItemType.PeriodicityOffset: return GetStatusAndActivePeriodicityOffsetAsync(context, entity);
             default: throw new ArgumentOutOfRangeException();
         }
     }
@@ -100,6 +100,17 @@ public class EntityFrameworkToDoService : IToDoService
         if (entity.DueDate > DateTimeOffset.Now.ToCurrentDay())
         {
             return (ToDoItemStatus.Completed, null);
+        }
+        
+        switch (entity.ChildrenType)
+        {
+            case ToDoItemChildrenType.RequireCompletion:
+                break;
+            case ToDoItemChildrenType.IgnoreCompletion:
+                return (ToDoItemStatus.ReadyForComplete, mapper.Map<ActiveToDoItem>(entity));
+            case ToDoItemChildrenType.CircleCompletion:
+                break;
+            default: throw new ArgumentOutOfRangeException();
         }
 
         (ToDoItemStatus Status, ActiveToDoItem? Active) result = (ToDoItemStatus.ReadyForComplete, null);
@@ -167,6 +178,17 @@ public class EntityFrameworkToDoService : IToDoService
         if (entity.DueDate > DateTimeOffset.Now.ToCurrentDay())
         {
             return (ToDoItemStatus.Completed, null);
+        }
+        
+        switch (entity.ChildrenType)
+        {
+            case ToDoItemChildrenType.RequireCompletion:
+                break;
+            case ToDoItemChildrenType.IgnoreCompletion:
+                return (ToDoItemStatus.ReadyForComplete, mapper.Map<ActiveToDoItem>(entity));
+            case ToDoItemChildrenType.CircleCompletion:
+                break;
+            default: throw new ArgumentOutOfRangeException();
         }
 
         (ToDoItemStatus Status, ActiveToDoItem? Active) result = (ToDoItemStatus.ReadyForComplete, null);
@@ -240,8 +262,20 @@ public class EntityFrameworkToDoService : IToDoService
         {
             return (ToDoItemStatus.Completed, null);
         }
+        
+        switch (entity.ChildrenType)
+        {
+            case ToDoItemChildrenType.RequireCompletion:
+                break;
+            case ToDoItemChildrenType.IgnoreCompletion:
+                return (ToDoItemStatus.ReadyForComplete, mapper.Map<ActiveToDoItem>(entity));
+            case ToDoItemChildrenType.CircleCompletion:
+                break;
+            default: throw new ArgumentOutOfRangeException();
+        }
 
         (ToDoItemStatus Status, ActiveToDoItem? Active) result = (ToDoItemStatus.ReadyForComplete, null);
+        
 
         var children = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
@@ -383,6 +417,17 @@ public class EntityFrameworkToDoService : IToDoService
         if (entity.IsCompleted)
         {
             return (ToDoItemStatus.Completed, null);
+        }
+
+        switch (entity.ChildrenType)
+        {
+            case ToDoItemChildrenType.RequireCompletion:
+                break;
+            case ToDoItemChildrenType.IgnoreCompletion:
+                return (ToDoItemStatus.ReadyForComplete, mapper.Map<ActiveToDoItem>(entity));
+            case ToDoItemChildrenType.CircleCompletion:
+                break;
+            default: throw new ArgumentOutOfRangeException();
         }
 
         (ToDoItemStatus Status, ActiveToDoItem? Active) result = (ToDoItemStatus.ReadyForComplete, null);
@@ -1181,6 +1226,15 @@ public class EntityFrameworkToDoService : IToDoService
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
         item.YearsOffset = years;
+        await context.SaveChangesAsync();
+    }
+
+    public async Task UpdateToDoItemChildrenTypeAsync(Guid id, ToDoItemChildrenType type)
+    {
+        await using var context = await dbContextFactory.CreateDbContextAsync();
+        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
+        item = item.ThrowIfNull();
+        item.ChildrenType = type;
         await context.SaveChangesAsync();
     }
 

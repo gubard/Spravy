@@ -23,6 +23,7 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
     private ushort monthsOffset;
     private ushort yearsOffset;
     private ushort weeksOffset;
+    private ToDoItemChildrenType childrenType;
 
     public ToDoItemPeriodicityOffsetViewModel() : base("to-do-item-periodicity-offset")
     {
@@ -32,6 +33,12 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
     }
 
     public ICommand CompleteToDoItemCommand { get; }
+
+    public ToDoItemChildrenType ChildrenType
+    {
+        get => childrenType;
+        set => this.RaiseAndSetIfChanged(ref childrenType, value);
+    }
 
     public DateTimeOffset DueDate
     {
@@ -88,16 +95,17 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
                 return;
 
             case ToDoItemPeriodicityOffset toDoItemPeriodicityOffset:
-                IsCurrent = item.IsCurrent;
-                Name = item.Name;
+                IsCurrent = toDoItemPeriodicityOffset.IsCurrent;
+                Name = toDoItemPeriodicityOffset.Name;
                 Type = ToDoItemType.PeriodicityOffset;
-                Description = item.Description;
+                Description = toDoItemPeriodicityOffset.Description;
                 DueDate = toDoItemPeriodicityOffset.DueDate;
                 DaysOffset = toDoItemPeriodicityOffset.DaysOffset;
                 WeeksOffset = toDoItemPeriodicityOffset.WeeksOffset;
                 MonthsOffset = toDoItemPeriodicityOffset.MonthsOffset;
                 YearsOffset = toDoItemPeriodicityOffset.YearsOffset;
-                var source = item.Items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
+                ChildrenType = toDoItemPeriodicityOffset.ChildrenType;
+                var source = toDoItemPeriodicityOffset.Items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
                 ToDoSubItemsView.ViewModel.ThrowIfNull().UpdateItems(source, this);
                 SubscribeItems(source);
                 Path.Items.Clear();
@@ -128,6 +136,18 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
         yield return this.WhenAnyValue(x => x.WeeksOffset).Skip(1).Subscribe(OnNextWeeksOffset);
         yield return this.WhenAnyValue(x => x.MonthsOffset).Skip(1).Subscribe(OnNextMonthsOffset);
         yield return this.WhenAnyValue(x => x.YearsOffset).Skip(1).Subscribe(OnNextYearsOffset);
+        yield return this.WhenAnyValue(x => x.ChildrenType).Skip(1).Subscribe(OnNextChildrenType);
+    }
+
+    private async void OnNextChildrenType(ToDoItemChildrenType x)
+    {
+        await SafeExecuteAsync(
+            async () =>
+            {
+                await ToDoService.UpdateToDoItemChildrenTypeAsync(Id, x);
+                await RefreshToDoItemAsync();
+            }
+        );
     }
 
     private async void OnNextYearsOffset(ushort x)

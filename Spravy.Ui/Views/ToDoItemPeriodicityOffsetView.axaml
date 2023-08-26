@@ -29,10 +29,17 @@
                             HorizontalAlignment="Center" />
 
             <StackPanel>
-                <ComboBox Classes="Outline"
-                          assists:ComboBoxAssist.Label="Type"
-                          SelectedItem="{Binding Type}"
-                          ItemsSource="{Binding ToDoItemTypes}" />
+                <Grid ColumnDefinitions="*,*">
+                    <ComboBox Classes="Outline"
+                              assists:ComboBoxAssist.Label="Type"
+                              SelectedItem="{Binding Type}"
+                              ItemsSource="{Binding ToDoItemTypes}" />
+                    <ComboBox Grid.Column="1"
+                              Classes="Outline"
+                              assists:ComboBoxAssist.Label="Type"
+                              SelectedItem="{Binding ChildrenType}"
+                              ItemsSource="{Binding ChildrenTypes}" />
+                </Grid>
 
                 <Grid ColumnDefinitions="*,*,*,*">
                     <TextBox UseFloatingWatermark="True"

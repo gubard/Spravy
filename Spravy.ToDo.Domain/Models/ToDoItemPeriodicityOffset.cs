@@ -1,3 +1,4 @@
+using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 
 namespace Spravy.ToDo.Domain.Models;
@@ -15,7 +16,8 @@ public readonly struct ToDoItemPeriodicityOffset : IToDoItem
         ushort monthsOffset,
         ushort weeksOffset,
         ushort yearsOffset,
-        DateTimeOffset dueDate
+        DateTimeOffset dueDate,
+        ToDoItemChildrenType childrenType
     )
     {
         Id = id;
@@ -29,6 +31,7 @@ public readonly struct ToDoItemPeriodicityOffset : IToDoItem
         WeeksOffset = weeksOffset;
         YearsOffset = yearsOffset;
         DueDate = dueDate;
+        ChildrenType = childrenType;
     }
 
     public Guid Id { get; }
@@ -38,6 +41,7 @@ public readonly struct ToDoItemPeriodicityOffset : IToDoItem
     public ToDoItemParent[] Parents { get; }
     public DateTimeOffset DueDate { get; }
     public bool IsCurrent { get; }
+    public ToDoItemChildrenType ChildrenType { get; }
     public ushort DaysOffset { get; }
     public ushort MonthsOffset { get; }
     public ushort WeeksOffset { get; }
