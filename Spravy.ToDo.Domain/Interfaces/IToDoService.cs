@@ -12,10 +12,10 @@ public interface IToDoService
     Task DeleteToDoItemAsync(Guid id);
     Task UpdateToDoItemTypeOfPeriodicityAsync(Guid id, TypeOfPeriodicity type);
     Task UpdateToDoItemDueDateAsync(Guid id, DateTimeOffset dueDate);
-    Task UpdateToDoItemCompleteStatusAsync(Guid id, bool isCompleted);
     Task UpdateToDoItemNameAsync(Guid id, string name);
     Task UpdateToDoItemOrderIndexAsync(UpdateOrderIndexToDoItemOptions options);
     Task UpdateToDoItemDescriptionAsync(Guid id, string description);
+    Task UpdateToDoItemCompleteStatusAsync(Guid id, bool isCompleted);
     Task SkipToDoItemAsync(Guid id);
     Task FailToDoItemAsync(Guid id);
     Task<IEnumerable<IToDoSubItem>> SearchToDoSubItemsAsync(string searchText);

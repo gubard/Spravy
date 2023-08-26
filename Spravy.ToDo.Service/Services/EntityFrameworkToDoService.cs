@@ -101,17 +101,6 @@ public class EntityFrameworkToDoService : IToDoService
         {
             return (ToDoItemStatus.Completed, null);
         }
-        
-        switch (entity.ChildrenType)
-        {
-            case ToDoItemChildrenType.RequireCompletion:
-                break;
-            case ToDoItemChildrenType.IgnoreCompletion:
-                return (ToDoItemStatus.ReadyForComplete, mapper.Map<ActiveToDoItem>(entity));
-            case ToDoItemChildrenType.CircleCompletion:
-                break;
-            default: throw new ArgumentOutOfRangeException();
-        }
 
         (ToDoItemStatus Status, ActiveToDoItem? Active) result = (ToDoItemStatus.ReadyForComplete, null);
 
@@ -178,17 +167,6 @@ public class EntityFrameworkToDoService : IToDoService
         if (entity.DueDate > DateTimeOffset.Now.ToCurrentDay())
         {
             return (ToDoItemStatus.Completed, null);
-        }
-        
-        switch (entity.ChildrenType)
-        {
-            case ToDoItemChildrenType.RequireCompletion:
-                break;
-            case ToDoItemChildrenType.IgnoreCompletion:
-                return (ToDoItemStatus.ReadyForComplete, mapper.Map<ActiveToDoItem>(entity));
-            case ToDoItemChildrenType.CircleCompletion:
-                break;
-            default: throw new ArgumentOutOfRangeException();
         }
 
         (ToDoItemStatus Status, ActiveToDoItem? Active) result = (ToDoItemStatus.ReadyForComplete, null);
@@ -262,20 +240,9 @@ public class EntityFrameworkToDoService : IToDoService
         {
             return (ToDoItemStatus.Completed, null);
         }
-        
-        switch (entity.ChildrenType)
-        {
-            case ToDoItemChildrenType.RequireCompletion:
-                break;
-            case ToDoItemChildrenType.IgnoreCompletion:
-                return (ToDoItemStatus.ReadyForComplete, mapper.Map<ActiveToDoItem>(entity));
-            case ToDoItemChildrenType.CircleCompletion:
-                break;
-            default: throw new ArgumentOutOfRangeException();
-        }
 
         (ToDoItemStatus Status, ActiveToDoItem? Active) result = (ToDoItemStatus.ReadyForComplete, null);
-        
+
 
         var children = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
@@ -417,17 +384,6 @@ public class EntityFrameworkToDoService : IToDoService
         if (entity.IsCompleted)
         {
             return (ToDoItemStatus.Completed, null);
-        }
-
-        switch (entity.ChildrenType)
-        {
-            case ToDoItemChildrenType.RequireCompletion:
-                break;
-            case ToDoItemChildrenType.IgnoreCompletion:
-                return (ToDoItemStatus.ReadyForComplete, mapper.Map<ActiveToDoItem>(entity));
-            case ToDoItemChildrenType.CircleCompletion:
-                break;
-            default: throw new ArgumentOutOfRangeException();
         }
 
         (ToDoItemStatus Status, ActiveToDoItem? Active) result = (ToDoItemStatus.ReadyForComplete, null);
@@ -605,12 +561,35 @@ public class EntityFrameworkToDoService : IToDoService
 
         if (isCompleted)
         {
-            var isCanComplete = await IsCanFinishToDoItem(context, item);
-
-            if (!isCanComplete)
+            switch (item.ChildrenType)
             {
-                throw new Exception("Need close sub tasks.");
+                case ToDoItemChildrenType.RequireCompletion:
+                {
+                    var isCanComplete = await IsCanFinishToDoItem(context, item);
+
+                    if (!isCanComplete)
+                    {
+                        throw new Exception("Need close sub tasks.");
+                    }
+
+                    break;
+                }
+                case ToDoItemChildrenType.IgnoreCompletion:
+                    break;
+                case ToDoItemChildrenType.CircleCompletion:
+                {
+                    var isCanComplete = await IsCanFinishToDoItem(context, item);
+
+                    if (!isCanComplete)
+                    {
+                        throw new Exception("Need close sub tasks.");
+                    }
+
+                    break;
+                }
+                default: throw new ArgumentOutOfRangeException();
             }
+
 
             switch (item.Type)
             {
@@ -632,6 +611,20 @@ public class EntityFrameworkToDoService : IToDoService
             item.CompletedCount++;
             UpdateDueDate(item);
             item.LastCompleted = DateTimeOffset.Now;
+
+            switch (item.ChildrenType)
+            {
+                case ToDoItemChildrenType.RequireCompletion:
+                    break;
+                case ToDoItemChildrenType.IgnoreCompletion:
+                    break;
+                case ToDoItemChildrenType.CircleCompletion:
+                    await CircleCompletionAsync(context, item);
+
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
         else
         {
@@ -639,6 +632,39 @@ public class EntityFrameworkToDoService : IToDoService
         }
 
         await context.SaveChangesAsync();
+    }
+
+    private async Task CircleCompletionAsync(SpravyToDoDbContext context, ToDoItemEntity item)
+    {
+        var children = await context.Set<ToDoItemEntity>()
+            .Where(x => x.ParentId == item.Id)
+            .OrderBy(x => x.OrderIndex)
+            .ToArrayAsync();
+
+        var maxOrderIndex = children.Max(x => x.OrderIndex);
+        var nextOrderIndex = item.CurrentCircleOrderIndex + 1;
+
+        if (nextOrderIndex > maxOrderIndex)
+        {
+            nextOrderIndex = 0;
+        }
+
+        item.CurrentCircleOrderIndex = nextOrderIndex;
+
+        foreach (var child in children)
+        {
+            if (child.OrderIndex == nextOrderIndex)
+            {
+                child.IsCompleted = false;
+                child.Type = ToDoItemType.Planned;
+                child.DueDate = item.DueDate;
+            }
+            else
+            {
+                child.IsCompleted = true;
+                child.Type = ToDoItemType.Value;
+            }
+        }
     }
 
     private async Task<bool> IsCanFinishToDoItem(SpravyToDoDbContext context, ToDoItemEntity item)
@@ -935,12 +961,37 @@ public class EntityFrameworkToDoService : IToDoService
         await using var context = await dbContextFactory.CreateDbContextAsync();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
-        var isCanComplete = await IsCanFinishToDoItem(context, item);
 
-        if (!isCanComplete)
+        switch (item.ChildrenType)
         {
-            throw new Exception("Need close sub tasks.");
+            case ToDoItemChildrenType.RequireCompletion:
+            {
+                var isCanComplete = await IsCanFinishToDoItem(context, item);
+
+                if (!isCanComplete)
+                {
+                    throw new Exception("Need close sub tasks.");
+                }
+
+                break;
+            }
+            case ToDoItemChildrenType.IgnoreCompletion:
+                break;
+            case ToDoItemChildrenType.CircleCompletion:
+            {
+                var isCanComplete = await IsCanFinishToDoItem(context, item);
+
+                if (!isCanComplete)
+                {
+                    throw new Exception("Need close sub tasks.");
+                }
+
+                break;
+            }
+            default:
+                throw new ArgumentOutOfRangeException();
         }
+
 
         switch (item.Type)
         {
@@ -965,6 +1016,21 @@ public class EntityFrameworkToDoService : IToDoService
         item.SkippedCount++;
         UpdateDueDate(item);
         item.LastCompleted = DateTimeOffset.Now;
+
+        switch (item.ChildrenType)
+        {
+            case ToDoItemChildrenType.RequireCompletion:
+                break;
+            case ToDoItemChildrenType.IgnoreCompletion:
+                break;
+            case ToDoItemChildrenType.CircleCompletion:
+                await CircleCompletionAsync(context, item);
+
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+
         await context.SaveChangesAsync();
     }
 
@@ -973,12 +1039,38 @@ public class EntityFrameworkToDoService : IToDoService
         await using var context = await dbContextFactory.CreateDbContextAsync();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
-        var isCanComplete = await IsCanFinishToDoItem(context, item);
 
-        if (!isCanComplete)
+
+        switch (item.ChildrenType)
         {
-            throw new Exception("Need close sub tasks.");
+            case ToDoItemChildrenType.RequireCompletion:
+            {
+                var isCanComplete = await IsCanFinishToDoItem(context, item);
+
+                if (!isCanComplete)
+                {
+                    throw new Exception("Need close sub tasks.");
+                }
+
+                break;
+            }
+            case ToDoItemChildrenType.IgnoreCompletion:
+                break;
+            case ToDoItemChildrenType.CircleCompletion:
+            {
+                var isCanComplete = await IsCanFinishToDoItem(context, item);
+
+                if (!isCanComplete)
+                {
+                    throw new Exception("Need close sub tasks.");
+                }
+
+                break;
+            }
+            default:
+                throw new ArgumentOutOfRangeException();
         }
+
 
         switch (item.Type)
         {
@@ -1003,6 +1095,21 @@ public class EntityFrameworkToDoService : IToDoService
         item.FailedCount++;
         UpdateDueDate(item);
         item.LastCompleted = DateTimeOffset.Now;
+
+        switch (item.ChildrenType)
+        {
+            case ToDoItemChildrenType.RequireCompletion:
+                break;
+            case ToDoItemChildrenType.IgnoreCompletion:
+                break;
+            case ToDoItemChildrenType.CircleCompletion:
+                await CircleCompletionAsync(context, item);
+
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+
         await context.SaveChangesAsync();
     }
 

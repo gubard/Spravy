@@ -27,6 +27,7 @@ public class ToDoItemEntity
     public ushort WeeksOffset { get; set; }
     public ushort YearsOffset { get; set; }
     public ToDoItemChildrenType ChildrenType { get; set; }
+    public uint CurrentCircleOrderIndex { get; set; }
 
     public Guid? ParentId { get; set; }
     public ToDoItemEntity? Parent { get; set; }

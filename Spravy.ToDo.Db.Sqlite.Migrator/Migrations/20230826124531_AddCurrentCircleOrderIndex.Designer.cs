@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Spravy.ToDo.Db.Contexts;
 
@@ -10,9 +11,11 @@ using Spravy.ToDo.Db.Contexts;
 namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
 {
     [DbContext(typeof(SpravyToDoDbContext))]
-    partial class SqliteSpravyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230826124531_AddCurrentCircleOrderIndex")]
+    partial class AddCurrentCircleOrderIndex
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.10");
