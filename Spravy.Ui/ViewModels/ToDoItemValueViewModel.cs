@@ -93,6 +93,7 @@ public class ToDoItemValueViewModel : ToDoItemViewModel, IRefreshToDoItem
                 Type = ToDoItemType.Value;
                 IsCompleted = toDoItemValue.IsCompleted;
                 Description = toDoItemValue.Description;
+                ChildrenType = toDoItemValue.ChildrenType;
                 var source = toDoItemValue.Items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
                 ToDoSubItemsView.ViewModel.ThrowIfNull().UpdateItems(source, this);
                 SubscribeItems(source);

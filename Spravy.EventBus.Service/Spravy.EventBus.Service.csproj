@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Grpc.AspNetCore" Version="2.55.0" />
+        <PackageReference Include="Grpc.AspNetCore.Web" Version="2.55.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.10" />
+        <PackageReference Include="Serilog.AspNetCore" Version="7.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Protobuf Include="..\Spravy.EventBus.Domain\Protos\event_bus.proto" GrpcServices="Server" ProtoRoot="..\Spravy.EventBus.Domain">
+            <Link>Protos/event_bus.proto</Link>
+        </Protobuf>
+
+        <Protobuf Include="..\Spravy.EventBus.Domain\Protos\event_bus_messages.proto" GrpcServices="None" ProtoCompile="False">
+            <Link>Protos/event_bus_messages.proto</Link>
+        </Protobuf>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Spravy.Domain\Spravy.Domain.csproj" />
+      <ProjectReference Include="..\Spravy.EventBus.Domain.Mapper\Spravy.EventBus.Domain.Mapper.csproj" />
+    </ItemGroup>
+</Project>

@@ -3,7 +3,7 @@ using Grpc.Net.Client;
 using Grpc.Net.Client.Web;
 using Spravy.Client.Enums;
 
-namespace Spravy.ToDo.Domain.Client.Services;
+namespace Spravy.Client.Services;
 
 public class GrpcServiceBase : IAsyncDisposable, IDisposable
 {

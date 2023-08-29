@@ -108,10 +108,6 @@ public class CreateUserViewModel : RoutableViewModelBase
 
         var options = Mapper.Map<CreateUserOptions>(this);
         await AuthenticationService.CreateUserAsync(options);
-        var user = Mapper.Map<User>(this);
-        var token = await AuthenticationService.LoginAsync(user);
-        KeeperToken.Set(token);
-        await ToDoService.InitAsync();
         Navigator.NavigateTo<LoginViewModel>();
     }
 }

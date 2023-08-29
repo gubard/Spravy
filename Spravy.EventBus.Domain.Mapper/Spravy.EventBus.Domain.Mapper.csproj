@@ -1,4 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
@@ -15,12 +16,12 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Protobuf Include="..\Spravy.ToDo.Domain\Protos\to_do_messages.proto" GrpcServices="None">
-            <Link>Protos\to_do_messages.proto</Link>
+        <Protobuf Include="..\Spravy.EventBus.Domain\Protos\event_bus_messages.proto" GrpcServices="None">
+            <Link>Protos\event_bus_messages.proto</Link>
         </Protobuf>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Spravy.ToDo.Domain\Spravy.ToDo.Domain.csproj" />
+        <ProjectReference Include="..\Spravy.EventBus.Domain\Spravy.EventBus.Domain.csproj" />
     </ItemGroup>
 </Project>

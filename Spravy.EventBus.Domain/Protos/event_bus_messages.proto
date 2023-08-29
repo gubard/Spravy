@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+option csharp_namespace = "Spravy.EventBus.Protos";
+
+package spravy.event_bus;
+
+message PublishEventRequest {
+  bytes EventId = 1;
+  bytes Content = 2;
+}
+
+message PublishEventReply {
+}
+
+message SubscribeEventsRequest {
+  repeated bytes EventIds = 1;
+}
+
+message SubscribeEventsReply {
+  bytes EventId = 1;
+  bytes Content = 2;
+}
+
+message CreateUserEvent {
+  string Token = 1;
+}

@@ -6,8 +6,8 @@ using Spravy.Authentication.Domain.Models;
 using Spravy.Authentication.Protos;
 using Spravy.Client.Exceptions;
 using Spravy.Client.Extensions;
+using Spravy.Client.Services;
 using Spravy.Domain.Extensions;
-using Spravy.ToDo.Domain.Client.Services;
 using Spravy.Ui.Models;
 using static Spravy.Authentication.Protos.AuthenticationService;
 
@@ -46,12 +46,14 @@ public class GrpcAuthenticationService : GrpcServiceBase, IAuthenticationService
         }
     }
 
-    public async Task CreateUserAsync(CreateUserOptions options)
+    public async Task<TokenResult> CreateUserAsync(CreateUserOptions options)
     {
         try
         {
             var request = mapper.Map<CreateUserRequest>(options);
-            await client.CreateUserAsync(request);
+            var reply = await client.CreateUserAsync(request);
+
+            return new TokenResult(reply.Token);
         }
         catch (Exception e)
         {

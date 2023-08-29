@@ -10,6 +10,6 @@ public class UserEntityTypeConfiguration : IEntityTypeConfiguration<UserEntity>
     {
         builder.ToTable("User");
         builder.HasKey(x => x.Id);
-        builder.Property(x => x.Login).IsRequired();
+        builder.HasIndex(x => x.Login).IsUnique();
     }
 }

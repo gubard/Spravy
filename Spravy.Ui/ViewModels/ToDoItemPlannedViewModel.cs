@@ -108,6 +108,7 @@ public class ToDoItemPlannedViewModel : ToDoItemViewModel, IRefreshToDoItem
                 IsCompleted = toDoItemPlanned.IsCompleted;
                 Description = toDoItemPlanned.Description;
                 DueDate = toDoItemPlanned.DueDate;
+                ChildrenType = toDoItemPlanned.ChildrenType;
                 var source = toDoItemPlanned.Items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
                 ToDoSubItemsView.ViewModel.ThrowIfNull().UpdateItems(source, this);
                 SubscribeItems(source);

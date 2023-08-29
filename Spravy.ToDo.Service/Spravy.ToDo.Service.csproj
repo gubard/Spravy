@@ -34,6 +34,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Spravy.EventBus.Domain.Client\Spravy.EventBus.Domain.Client.csproj" />
       <ProjectReference Include="..\Spravy.ToDo.Db.Core\Spravy.ToDo.Db.Core.csproj" />
       <ProjectReference Include="..\Spravy.ToDo.Db.Sqlite.Migrator\Spravy.ToDo.Db.Sqlite.Migrator.csproj" />
       <ProjectReference Include="..\Spravy.ToDo.Domain.Mapper\Spravy.ToDo.Domain.Mapper.csproj" />

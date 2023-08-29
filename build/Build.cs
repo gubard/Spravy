@@ -86,6 +86,15 @@ class Build : NukeBuild
                     using var ftpClient = new FtpClient("192.168.50.2", "vafnir", FtpPassword);
                     ftpClient.Connect();
                     
+                    var eventBusServiceFolder = PublishProject("Spravy.EventBus.Service");
+                    ftpClient.DeleteDirectory("/home/vafnir/Spravy.EventBus.Service", FtpListOption.Recursive);
+                    ftpClient.UploadDirectory(eventBusServiceFolder.FullName, "/home/vafnir/Spravy.EventBus.Service");
+
+                    using var commandEventBusService =
+                        sshClient.RunCommand(
+                            $"echo {SshPassword} | sudo systemctl restart spravy.event-bus.service"
+                        );
+                    
                     var authenticationMigratorFolder = PublishProject("Spravy.Authentication.Db.Sqlite.Migrator");
                     ftpClient.DeleteDirectory("/home/vafnir/Spravy.Authentication.Db.Sqlite.Migrator", FtpListOption.Recursive);
                     ftpClient.UploadDirectory(authenticationMigratorFolder.FullName, "/home/vafnir/Spravy.Authentication.Db.Sqlite.Migrator");

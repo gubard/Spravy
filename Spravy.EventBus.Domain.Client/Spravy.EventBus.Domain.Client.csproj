@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Google.Protobuf" Version="3.24.1" />
+        <PackageReference Include="Grpc.Net.Client" Version="2.55.0" />
+        <PackageReference Include="Grpc.Net.Client.Web" Version="2.55.0" />
+        <PackageReference Include="Grpc.Net.ClientFactory" Version="2.55.0" />
+        <PackageReference Include="Grpc.Tools" Version="2.57.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Protobuf Include="..\Spravy.EventBus.Domain\Protos\event_bus.proto" GrpcServices="Client" ProtoRoot="..\Spravy.EventBus.Domain">
+            <Link>Protos/event_bus.proto</Link>
+        </Protobuf>
+
+        <Protobuf Include="..\Spravy.EventBus.Domain\Protos\event_bus_messages.proto" GrpcServices="None" ProtoCompile="False">
+            <Link>Protos/event_bus_messages.proto</Link>
+        </Protobuf>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Spravy.Authentication.Domain\Spravy.Authentication.Domain.csproj" />
+      <ProjectReference Include="..\Spravy.Client\Spravy.Client.csproj" />
+      <ProjectReference Include="..\Spravy.Domain\Spravy.Domain.csproj" />
+      <ProjectReference Include="..\Spravy.EventBus.Domain.Mapper\Spravy.EventBus.Domain.Mapper.csproj" />
+    </ItemGroup>
+</Project>

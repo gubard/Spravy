@@ -42,7 +42,7 @@
                           SelectedItem="{Binding ChildrenType}"
                           ItemsSource="{Binding ChildrenTypes}" />
             </Grid>
-            
+
             <!--<DatePicker SelectedDate="{Binding DueDate}" />-->
             <!--<TextBox UseFloatingWatermark="True"
                      Classes="outline dense"
@@ -54,6 +54,12 @@
                                         TextWrapping="Wrap"
                                         Text="{Binding DueDate, Mode=TwoWay}"
                                         Watermark="DueDate"
+                                        Margin="5" />
+            <controls:EditableTextBlock AcceptsReturn="True"
+                                        AcceptsTab="True"
+                                        TextWrapping="Wrap"
+                                        Text="{Binding Description, Mode=TwoWay}"
+                                        Watermark="Description"
                                         Margin="5" />
         </StackPanel>
 

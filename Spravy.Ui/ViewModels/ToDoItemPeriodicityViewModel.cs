@@ -96,6 +96,7 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
                 Type = ToDoItemType.Periodicity;
                 Description = item.Description;
                 DueDate = toDoItemPeriodicity.DueDate;
+                ChildrenType = toDoItemPeriodicity.ChildrenType;
                 SetTypeOfPeriodicity(toDoItemPeriodicity.Periodicity);
                 var source = item.Items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
                 ToDoSubItemsView.ViewModel.ThrowIfNull().UpdateItems(source, this);

@@ -18,7 +18,7 @@ message CreateUserRequest {
 }
 
 message CreateUserReply {
-
+  string Token = 1;
 }
 
 message UserGrpc {

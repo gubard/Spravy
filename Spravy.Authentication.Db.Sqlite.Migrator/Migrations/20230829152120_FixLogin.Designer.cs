@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Spravy.Authentication.Db.Sqlite.Migrator;
 
@@ -10,9 +11,11 @@ using Spravy.Authentication.Db.Sqlite.Migrator;
 namespace Spravy.Authentication.Db.Sqlite.Migrator.Migrations
 {
     [DbContext(typeof(SqliteSpravyAuthenticationDbContext))]
-    partial class SqliteSpravyAuthenticationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230829152120_FixLogin")]
+    partial class FixLogin
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.10");

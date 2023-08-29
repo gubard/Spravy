@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+option csharp_namespace = "Spravy.EventBus.Protos";
+
+import "Protos/event_bus_messages.proto";
+
+package spravy.event_bus;
+
+service EventBusService {
+  rpc SubscribeEvents (SubscribeEventsRequest) returns (stream SubscribeEventsReply);
+  rpc PublishEvent (PublishEventRequest) returns (PublishEventReply);
+}

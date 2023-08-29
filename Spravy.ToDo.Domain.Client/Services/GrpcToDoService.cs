@@ -4,6 +4,7 @@ using Grpc.Core;
 using Spravy.Authentication.Domain.Models;
 using Spravy.Client.Exceptions;
 using Spravy.Client.Extensions;
+using Spravy.Client.Services;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.ToDo.Domain.Client.Models;
@@ -11,12 +12,13 @@ using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
 using Spravy.ToDo.Protos;
+using static Spravy.ToDo.Protos.ToDoService;
 
 namespace Spravy.ToDo.Domain.Client.Services;
 
 public class GrpcToDoService : GrpcServiceBase, IToDoService
 {
-    private readonly ToDoService.ToDoServiceClient client;
+    private readonly ToDoServiceClient client;
     private readonly IMapper mapper;
     private readonly IKeeper<TokenResult> tokenKeeper;
 
@@ -25,7 +27,7 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
     {
         this.mapper = mapper;
         this.tokenKeeper = tokenKeeper;
-        client = new ToDoService.ToDoServiceClient(grpcChannel);
+        client = new ToDoServiceClient(grpcChannel);
     }
 
     public async Task<IEnumerable<IToDoSubItem>> GetRootToDoSubItemsAsync()

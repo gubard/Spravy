@@ -7,15 +7,19 @@ using Spravy.Authentication.Db.Core.Profiles;
 using Spravy.Authentication.Db.Sqlite.Services;
 using Spravy.Authentication.Domain.Core.Profiles;
 using Spravy.Authentication.Domain.Interfaces;
+using Spravy.Authentication.Domain.Models;
 using Spravy.Authentication.Service.Helpers;
 using Spravy.Authentication.Service.Interfaces;
 using Spravy.Authentication.Service.Models;
 using Spravy.Authentication.Service.Services;
-using Spravy.Authentication.Service.Services.Grpcs;
 using Spravy.Db.Interfaces;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
+using Spravy.Domain.Services;
+using Spravy.EventBus.Domain.Client.Models;
+using Spravy.EventBus.Domain.Client.Services;
+using Spravy.EventBus.Domain.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +29,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddGrpc();
 
-builder.Services.AddScoped(
+builder.Services.AddSingleton(
     _ => new MapperConfiguration(
         cfg =>
         {
@@ -44,6 +48,15 @@ builder.Services.AddScoped<IFactory<string, Named<IStringToBytes>>, StringToByte
 builder.Services.AddScoped<IFactory<string, Named<IHashService>>, HashServiceFactory>();
 builder.Services.AddScoped<ITokenFactory, JwtTokenFactory>();
 builder.Services.AddScoped<JwtSecurityTokenHandler>();
+builder.Services.AddSingleton<IEventBusService, GrpcEventBusService>();
+builder.Services.AddSingleton<IKeeper<TokenResult>, StaticKeeper<TokenResult>>();
+
+builder.Services.AddSingleton(
+    sp => sp.GetRequiredService<IConfiguration>()
+        .GetSection("GrpcEventBusService")
+        .Get<GrpcEventBusServiceOptions>()
+        .ThrowIfNull()
+);
 
 builder.Services.AddScoped<JwtTokenFactoryOptions>(
     sp => sp.GetRequiredService<IConfiguration>().GetSection("Jwt").Get<JwtTokenFactoryOptions>().ThrowIfNull()
@@ -69,9 +82,9 @@ builder.Services.AddDbContext<SpravyAuthenticationDbContext>(
 builder.Services.AddCors(
     o => o.AddPolicy(
         "AllowAll",
-        builder =>
+        policyBuilder =>
         {
-            builder.AllowAnyOrigin()
+            policyBuilder.AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .WithExposedHeaders("Grpc-Status", "Grpc-Message", "Grpc-Encoding", "Grpc-Accept-Encoding");
@@ -79,7 +92,7 @@ builder.Services.AddCors(
     )
 );
 
-builder.Services.AddScoped<IMapper>(sp => new Mapper(sp.GetRequiredService<MapperConfiguration>()));
+builder.Services.AddSingleton<IMapper>(sp => new Mapper(sp.GetRequiredService<MapperConfiguration>()));
 
 builder.Host.UseSerilog(
     (_, _, configuration) =>
@@ -101,11 +114,11 @@ app.UseGrpcWeb(
 );
 
 app.UseCors("AllowAll");
+app.MapGrpcService<GrpcAuthenticationService>().EnableGrpcWeb();
 
 #if DEBUG
 app.Urls.Clear();
 app.Urls.Add("http://localhost:5001");
 #endif
 
-app.MapGrpcService<GrpcAuthenticationService>().EnableGrpcWeb();
 app.Run();

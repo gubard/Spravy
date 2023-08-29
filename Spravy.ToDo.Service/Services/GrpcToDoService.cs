@@ -8,7 +8,7 @@ using Spravy.ToDo.Domain.Models;
 using Spravy.ToDo.Protos;
 using static Spravy.ToDo.Protos.ToDoService;
 
-namespace Spravy.ToDo.Service.Services.Grpcs;
+namespace Spravy.ToDo.Service.Services;
 
 [Authorize]
 public class GrpcToDoService : ToDoServiceBase

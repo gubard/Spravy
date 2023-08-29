@@ -513,6 +513,10 @@ public class EntityFrameworkToDoService : IToDoService
         toDoItem.DaysOfMonth = parent.DaysOfMonth;
         toDoItem.DaysOfWeek = parent.DaysOfWeek;
         toDoItem.DaysOfYear = parent.DaysOfYear;
+        toDoItem.WeeksOffset = parent.WeeksOffset;
+        toDoItem.DaysOffset = parent.DaysOffset;
+        toDoItem.MonthsOffset = parent.MonthsOffset;
+        toDoItem.YearsOffset = parent.YearsOffset;
         await context.Set<ToDoItemEntity>().AddAsync(toDoItem);
         await context.SaveChangesAsync();
 

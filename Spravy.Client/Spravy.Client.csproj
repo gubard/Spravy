@@ -9,5 +9,11 @@
       <Reference Include="Grpc.Core.Api">
         <HintPath>..\..\..\.nuget\packages\grpc.core.api\2.55.0\lib\netstandard2.1\Grpc.Core.Api.dll</HintPath>
       </Reference>
+      <Reference Include="Grpc.Net.Client">
+        <HintPath>..\..\..\.nuget\packages\grpc.net.client\2.55.0\lib\net7.0\Grpc.Net.Client.dll</HintPath>
+      </Reference>
+      <Reference Include="Grpc.Net.Client.Web">
+        <HintPath>..\..\..\.nuget\packages\grpc.net.client.web\2.55.0\lib\net7.0\Grpc.Net.Client.Web.dll</HintPath>
+      </Reference>
     </ItemGroup>
 </Project>

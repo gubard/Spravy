@@ -24,6 +24,7 @@
       <ProjectReference Include="..\Spravy.Authentication.Db.Core\Spravy.Authentication.Db.Core.csproj" />
       <ProjectReference Include="..\Spravy.Authentication.Db.Sqlite\Spravy.Authentication.Db.Sqlite.csproj" />
       <ProjectReference Include="..\Spravy.Authentication.Domain.Core\Spravy.Authentication.Domain.Core.csproj" />
+      <ProjectReference Include="..\Spravy.EventBus.Domain.Client\Spravy.EventBus.Domain.Client.csproj" />
     </ItemGroup>
 
     <ItemGroup>

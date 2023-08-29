@@ -49,7 +49,7 @@ public class EntityFrameworkAuthenticationService : IAuthenticationService
         return tokenResult;
     }
 
-    public async Task CreateUserAsync(CreateUserOptions options)
+    public async Task<TokenResult> CreateUserAsync(CreateUserOptions options)
     {
         var salt = Guid.NewGuid();
         var hash = hasher.ComputeHash($"{salt};{options.Password}");
@@ -63,7 +63,11 @@ public class EntityFrameworkAuthenticationService : IAuthenticationService
             PasswordHash = hash,
         };
 
-        await context.Set<UserEntity>().AddAsync(newUser);
+        var entityEntry = await context.Set<UserEntity>().AddAsync(newUser);
         await context.SaveChangesAsync();
+        var userTokenClaims = mapper.Map<UserTokenClaims>(entityEntry.Entity);
+        var tokenResult = tokenFactory.Create(userTokenClaims);
+
+        return tokenResult;
     }
 }
