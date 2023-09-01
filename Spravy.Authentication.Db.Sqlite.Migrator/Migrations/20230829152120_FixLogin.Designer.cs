@@ -4,13 +4,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Spravy.Authentication.Db.Contexts;
 using Spravy.Authentication.Db.Sqlite.Migrator;
 
 #nullable disable
 
 namespace Spravy.Authentication.Db.Sqlite.Migrator.Migrations
 {
-    [DbContext(typeof(SqliteSpravyAuthenticationDbContext))]
+    [DbContext(typeof(SpravyAuthenticationDbContext))]
     [Migration("20230829152120_FixLogin")]
     partial class FixLogin
     {

@@ -31,7 +31,6 @@ public interface IToDoService
     Task UpdateToDoItemParentAsync(Guid id, Guid parentId);
     Task ToDoItemToRootAsync(Guid id);
     Task<string> ToDoItemToStringAsync(Guid id);
-    Task InitAsync();
     Task UpdateToDoItemDaysOffsetAsync(Guid id, ushort days);
     Task UpdateToDoItemMonthsOffsetAsync(Guid id, ushort months);
     Task UpdateToDoItemWeeksOffsetAsync(Guid id, ushort weeks);

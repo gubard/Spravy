@@ -3,13 +3,14 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Spravy.Authentication.Db.Contexts;
 using Spravy.Authentication.Db.Sqlite.Migrator;
 
 #nullable disable
 
 namespace Spravy.Authentication.Db.Sqlite.Migrator.Migrations
 {
-    [DbContext(typeof(SqliteSpravyAuthenticationDbContext))]
+    [DbContext(typeof(SpravyAuthenticationDbContext))]
     partial class SqliteSpravyAuthenticationDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

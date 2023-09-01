@@ -21,12 +21,12 @@
 
     <Grid RowDefinitions="Auto,*">
         <StackPanel Orientation="Horizontal">
-            <Button Command="{Binding AddToDoItemCommand}">
-                <avalonia:MaterialIcon Kind="Plus" />
+            <Button Command="{Binding SwitchPaneCommand}">
+                <avalonia:MaterialIcon Kind="Menu" />
             </Button>
 
-            <Button Command="{Binding SearchCommand}">
-                <avalonia:MaterialIcon Kind="Search" />
+            <Button Command="{Binding AddToDoItemCommand}">
+                <avalonia:MaterialIcon Kind="Plus" />
             </Button>
 
             <Button Command="{Binding ToCurrentItemsCommand}">

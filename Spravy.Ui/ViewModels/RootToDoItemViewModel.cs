@@ -5,6 +5,8 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
+using Avalonia.Controls;
+using Avalonia.Media;
 using ReactiveUI;
 using Spravy.Domain.Attributes;
 using Spravy.Domain.Extensions;
@@ -22,14 +24,14 @@ public class RootToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChange
     {
         InitializedCommand = CreateCommandFromTaskWithDialogProgressIndicator(InitializedAsync);
         AddToDoItemCommand = CreateCommandFromTask(AddToDoItemAsync);
-        SearchCommand = CreateCommand(Search);
         ToCurrentItemsCommand = CreateCommand(ToCurrentItems);
+        SwitchPaneCommand = CreateCommand(SwitchPane);
     }
 
     public ICommand ToCurrentItemsCommand { get; }
-    public ICommand SearchCommand { get; }
     public ICommand InitializedCommand { get; }
     public ICommand AddToDoItemCommand { get; }
+    public ICommand SwitchPaneCommand { get; }
 
     [Inject]
     public required ToDoSubItemsView ToDoSubItemsView { get; init; }
@@ -39,6 +41,14 @@ public class RootToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChange
 
     [Inject]
     public required IMapper Mapper { get; init; }
+
+    [Inject]
+    public required SplitView SplitView { get; init; }
+
+    private void SwitchPane()
+    {
+        SplitView.IsPaneOpen = !SplitView.IsPaneOpen;
+    }
 
     private void ToCurrentItems()
     {
@@ -56,11 +66,6 @@ public class RootToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChange
         var source = items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
         ToDoSubItemsView.ViewModel.ThrowIfNull().UpdateItems(source, this);
         SubscribeItems(source);
-    }
-
-    private void Search()
-    {
-        Navigator.NavigateTo<SearchViewModel>();
     }
 
     private Task AddToDoItemAsync()

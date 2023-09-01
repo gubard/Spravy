@@ -15,16 +15,21 @@
     </UserControl.KeyBindings>
 
     <Grid RowDefinitions="Auto,*">
-        <Grid ColumnDefinitions="*,*,*">
-            <TextBox  Name="{x:Static views:SearchView.SearchTextTextBoxName}"
-                      BorderBrush="{Binding $self.Foreground}"
-                      BorderThickness="1"
-                      Classes="solo"
-                      Theme="{StaticResource SoloTextBox}"
-                      Watermark="To do item name"
-                      CornerRadius="32"
-                      Margin="8"
-                      Text="{Binding SearchText}">
+        <Grid ColumnDefinitions="Auto,*,*">
+            <Button Command="{Binding SwitchPaneCommand}">
+                <avalonia:MaterialIcon Kind="Menu" />
+            </Button>
+
+            <TextBox Grid.Column="1"
+                     Name="{x:Static views:SearchView.SearchTextTextBoxName}"
+                     BorderBrush="{Binding $self.Foreground}"
+                     BorderThickness="1"
+                     Classes="solo"
+                     Theme="{StaticResource SoloTextBox}"
+                     Watermark="To do item name"
+                     CornerRadius="32"
+                     Margin="8"
+                     Text="{Binding SearchText}">
                 <TextBox.InnerLeftContent>
                     <Border Height="{Binding $parent[TextBox].Height}" Width="{Binding $self.Bounds.Height}">
                         <avalonia:MaterialIcon HorizontalAlignment="Center"
@@ -36,14 +41,11 @@
                 </TextBox.InnerLeftContent>
             </TextBox>
 
-            <Button Grid.Column="1" Command="{Binding SearchCommand}">
+            <Button Grid.Column="2" Command="{Binding SearchCommand}">
                 <avalonia:MaterialIcon Kind="Search" />
-            </Button>
-            <Button Grid.Column="2" Command="{Binding BackCommand}">
-                <avalonia:MaterialIcon Kind="ArrowLeft" />
             </Button>
         </Grid>
 
-        <ContentControl Grid.Row="1" Content="{Binding ToDoSubItemsView}"/>
+        <ContentControl Grid.Row="1" Content="{Binding ToDoSubItemsView}" />
     </Grid>
 </reactiveUi:ReactiveUserControl>

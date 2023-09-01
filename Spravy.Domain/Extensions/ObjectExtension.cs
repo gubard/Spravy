@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using Spravy.Domain.Exceptions;
+using Spravy.Domain.Models;
 
 namespace Spravy.Domain.Extensions;
 
@@ -100,5 +101,10 @@ public static class ObjectExtension
     public static ConstantExpression ToConstant(this object obj, Type type)
     {
         return Expression.Constant(obj, type);
+    }
+
+    public static Ref<T> ToRef<T>(this T value) where T : struct
+    {
+        return new Ref<T>(value);
     }
 }

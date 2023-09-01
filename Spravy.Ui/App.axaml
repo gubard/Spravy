@@ -49,6 +49,13 @@
     </Application.Styles>
 
     <Application.DataTemplates>
+        <DataTemplate x:DataType="models:TimerToDoItemCompletedNotify">
+            <StackPanel>
+                <CheckBox IsChecked="{Binding IsCompleted}" />
+                <TextBlock Text="{Binding DueDateTime, StringFormat=\{0:yyyy.MM.dd\}}" />
+            </StackPanel>
+        </DataTemplate>
+
         <DataTemplate x:DataType="models:ToDoItemCommand">
             <Button Command="{Binding Command}">
                 <avalonia:MaterialIcon Kind="{Binding Icon}" />
@@ -138,7 +145,7 @@
                                         <TextBlock Text="{Binding Active.Name}"
                                                    TextWrapping="Wrap"
                                                    VerticalAlignment="Center" />
-                                        <avalonia:MaterialIcon Kind="Send" />
+                                        <avalonia:MaterialIcon Margin="5,0,0,0" Kind="Send" />
                                     </WrapPanel>
                                 </Button>
                             </Grid>
@@ -207,7 +214,7 @@
                                     <TextBlock Text="{Binding Active.Name}"
                                                TextWrapping="Wrap"
                                                VerticalAlignment="Center" />
-                                    <avalonia:MaterialIcon Kind="Send" />
+                                    <avalonia:MaterialIcon Margin="5,0,0,0" Kind="Send" />
                                 </WrapPanel>
                             </Button>
 
@@ -312,7 +319,7 @@
                                         <TextBlock Text="{Binding Active.Name}"
                                                    TextWrapping="Wrap"
                                                    VerticalAlignment="Center" />
-                                        <avalonia:MaterialIcon Kind="Send" />
+                                        <avalonia:MaterialIcon Margin="5,0,0,0" Kind="Send" />
                                     </WrapPanel>
                                 </Button>
                             </Grid>
@@ -417,7 +424,7 @@
                                         <TextBlock Text="{Binding Active.Name}"
                                                    TextWrapping="Wrap"
                                                    VerticalAlignment="Center" />
-                                        <avalonia:MaterialIcon Kind="Send" />
+                                        <avalonia:MaterialIcon Margin="5,0,0,0" Kind="Send" />
                                     </WrapPanel>
                                 </Button>
                             </Grid>
@@ -522,7 +529,7 @@
                                         <TextBlock Text="{Binding Active.Name}"
                                                    TextWrapping="Wrap"
                                                    VerticalAlignment="Center" />
-                                        <avalonia:MaterialIcon Kind="Send" />
+                                        <avalonia:MaterialIcon Margin="5,0,0,0" Kind="Send" />
                                     </WrapPanel>
                                 </Button>
                             </Grid>

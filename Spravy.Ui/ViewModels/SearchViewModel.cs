@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
+using Avalonia.Controls;
 using ReactiveUI;
 using Spravy.Domain.Attributes;
 using Spravy.Domain.Extensions;
@@ -26,6 +27,7 @@ public class SearchViewModel : RoutableViewModelBase, IRefreshToDoItem
         DeleteSubToDoItemCommand =
             CreateCommandFromTaskWithDialogProgressIndicator<ToDoSubItemNotify>(DeleteSubToDoItemAsync);
         ChangeToDoItemCommand = CreateCommandFromTask<ToDoSubItemNotify>(ChangeToDoItem);
+        SwitchPaneCommand = CreateCommand(SwitchPane);
     }
 
     public ICommand SearchCommand { get; }
@@ -33,6 +35,7 @@ public class SearchViewModel : RoutableViewModelBase, IRefreshToDoItem
     public ICommand ChangeToDoItemCommand { get; }
     public ICommand ChangeToActiveDoItemCommand { get; }
     public ICommand CompleteSubToDoItemCommand { get; }
+    public ICommand SwitchPaneCommand { get; }
 
     public string SearchText
     {
@@ -48,6 +51,14 @@ public class SearchViewModel : RoutableViewModelBase, IRefreshToDoItem
 
     [Inject]
     public required IMapper Mapper { get; init; }
+
+    [Inject]
+    public required SplitView SplitView { get; init; }
+
+    private void SwitchPane()
+    {
+        SplitView.IsPaneOpen = !SplitView.IsPaneOpen;
+    }
 
     public async Task RefreshToDoItemAsync()
     {

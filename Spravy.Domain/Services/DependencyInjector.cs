@@ -20,18 +20,18 @@ public class DependencyInjector : IDependencyInjector
 {
     private readonly DependencyInjectorFields fields;
     public static IResolver? Default;
-    
-    
+
+
     public DependencyInjector(
-        IReadOnlyDictionary<TypeInformation, Models.InjectorItem> injectors,
-        IReadOnlyDictionary<AutoInjectMemberIdentifier, Models.InjectorItem> autoInjects,
-        IReadOnlyDictionary<ReservedCtorParameterIdentifier, Models.InjectorItem> reservedCtorParameters,
+        IReadOnlyDictionary<TypeInformation, InjectorItem> injectors,
+        IReadOnlyDictionary<AutoInjectMemberIdentifier, InjectorItem> autoInjects,
+        IReadOnlyDictionary<ReservedCtorParameterIdentifier, InjectorItem> reservedCtorParameters,
         IReadOnlyDictionary<TypeInformation, LazyDependencyInjectorOptions> lazyOptions
     )
     {
         Check(injectors);
 
-        fields = new (
+        fields = new(
             injectors,
             autoInjects,
             reservedCtorParameters,
@@ -52,7 +52,7 @@ public class DependencyInjector : IDependencyInjector
         BuildExpression(
             type,
             injectorItem,
-            new (),
+            new(),
             out var expression
         );
 
@@ -79,10 +79,10 @@ public class DependencyInjector : IDependencyInjector
 
         BuildExpression(type, injectorItem, scopeParameters, out var expression);
 
-        return new (type, expression);
+        return new(type, expression);
     }
 
-    public object? Invoke(Delegate del, Models.DictionarySpan<TypeInformation, object> arguments)
+    public object? Invoke(Delegate del, DictionarySpan<TypeInformation, object> arguments)
     {
         var parameterTypes = del.GetParameterTypes();
         var args = new object[parameterTypes.Length];
@@ -102,7 +102,7 @@ public class DependencyInjector : IDependencyInjector
         return del.DynamicInvoke(args);
     }
 
-    public object? Invoke(object? obj, MethodInfo method, Models.DictionarySpan<TypeInformation, object> arguments)
+    public object? Invoke(object? obj, MethodInfo method, DictionarySpan<TypeInformation, object> arguments)
     {
         var parameterTypes = method.GetParameters();
         var args = new object[parameterTypes.Length];
@@ -124,7 +124,7 @@ public class DependencyInjector : IDependencyInjector
 
     private bool BuildExpression(
         TypeInformation type,
-        Models.InjectorItem injectorItem,
+        InjectorItem injectorItem,
         Dictionary<TypeInformation, ScopeValue> scopeExpressions,
         out Expression result
     )
@@ -183,8 +183,8 @@ public class DependencyInjector : IDependencyInjector
                 );
 
                 var variable = result.Type.ToVariableAutoName();
-                scopeExpressions.TryAdd(type, new (variable, result));
-                scopeExpressions.TryAdd(variable.Type, new (variable, result));
+                scopeExpressions.TryAdd(type, new(variable, result));
+                scopeExpressions.TryAdd(variable.Type, new(variable, result));
                 result = variable;
 
                 return isFull;
@@ -284,7 +284,7 @@ public class DependencyInjector : IDependencyInjector
                     : newExpression.Constructor.GetParameters();
 
                 var reserveds =
-                    new Dictionary<int, (TypeInformation Type, Models.InjectorItem InjectorItem)>();
+                    new Dictionary<int, (TypeInformation Type, InjectorItem InjectorItem)>();
 
                 for (var index = 0; index < parameters.Length; index++)
                 {
@@ -489,7 +489,7 @@ public class DependencyInjector : IDependencyInjector
                     case PropertyInfo property:
                     {
                         var parameter = property.PropertyType.ToParameterAutoName();
-                        injectorItem = new (InjectorItemType.Scope, parameter.ToLambda(parameter));
+                        injectorItem = new(InjectorItemType.Scope, parameter.ToLambda(parameter));
 
                         fields.AutoInjectMembers.Add(identifier, injectorItem);
 
@@ -498,7 +498,7 @@ public class DependencyInjector : IDependencyInjector
                     case FieldInfo field:
                     {
                         var parameter = field.FieldType.ToParameterAutoName();
-                        injectorItem = new (InjectorItemType.Scope, parameter.ToLambda(parameter));
+                        injectorItem = new(InjectorItemType.Scope, parameter.ToLambda(parameter));
 
                         fields.AutoInjectMembers.Add(identifier, injectorItem);
 
@@ -619,9 +619,11 @@ public class DependencyInjector : IDependencyInjector
             case MethodCallExpression methodCallExpression:
             {
                 foreach (var argument in methodCallExpression.Arguments)
-                foreach (var parameter in GetParameters(argument))
                 {
-                    yield return parameter;
+                    foreach (var parameter in GetParameters(argument))
+                    {
+                        yield return parameter;
+                    }
                 }
 
                 if (methodCallExpression.Object is not null)
@@ -636,6 +638,27 @@ public class DependencyInjector : IDependencyInjector
             }
             case ConstantExpression:
             {
+                break;
+            }
+            case BlockExpression blockExpression:
+            {
+                foreach (var argument in blockExpression.Expressions)
+                {
+                    foreach (var parameter in GetParameters(argument))
+                    {
+                        yield return parameter;
+                    }
+                }
+
+                break;
+            }
+            case BinaryExpression binaryExpression:
+            {
+                foreach (var parameter in GetParameters(binaryExpression.Right))
+                {
+                    yield return parameter;
+                }
+
                 break;
             }
             default:
@@ -702,7 +725,7 @@ public class DependencyInjector : IDependencyInjector
                     )
                     .ThrowIfNull();
 
-                return new (
+                return new(
                     type,
                     constructor.ToNew(expression.ToLambda(), LazyThreadSafetyMode.None.ToConstant())
                 );
@@ -718,7 +741,7 @@ public class DependencyInjector : IDependencyInjector
                     )
                     .ThrowIfNull();
 
-                return new (
+                return new(
                     type,
                     constructor.ToNew(
                         expression.ToLambda(),
@@ -737,7 +760,7 @@ public class DependencyInjector : IDependencyInjector
                     )
                     .ThrowIfNull();
 
-                return new (
+                return new(
                     type,
                     constructor.ToNew(
                         expression.ToLambda(),
@@ -756,7 +779,7 @@ public class DependencyInjector : IDependencyInjector
                     )
                     .ThrowIfNull();
 
-                return new (
+                return new(
                     type,
                     constructor.ToNew(expression.ToLambda(), true.ToConstant())
                 );

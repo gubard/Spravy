@@ -1,12 +1,13 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
+using Spravy.Db.Sqlite.Models;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.EventBus.Domain.Helpers;
 using Spravy.EventBus.Domain.Interfaces;
 using Spravy.EventBus.Protos;
 using Spravy.ToDo.Db.Contexts;
-using Spravy.ToDo.Service.Models;
 
 namespace Spravy.ToDo.Service.HostedServices;
 
@@ -14,7 +15,7 @@ public class EventSubscriberHostedService : IHostedService
 {
     private readonly IEventBusService eventBusService;
     private readonly IFactory<string, SpravyToDoDbContext> spravyToDoDbContextFactory;
-    private readonly SqliteOptions sqliteOptions;
+    private readonly SqliteFolderOptions sqliteFolderOptions;
 
     private static readonly Guid[] EventIds =
     {
@@ -24,12 +25,12 @@ public class EventSubscriberHostedService : IHostedService
     public EventSubscriberHostedService(
         IEventBusService eventBusService,
         IFactory<string, SpravyToDoDbContext> spravyToDoDbContextFactory,
-        SqliteOptions sqliteOptions
+        SqliteFolderOptions sqliteFolderOptions
     )
     {
         this.eventBusService = eventBusService;
         this.spravyToDoDbContextFactory = spravyToDoDbContextFactory;
-        this.sqliteOptions = sqliteOptions;
+        this.sqliteFolderOptions = sqliteFolderOptions;
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
@@ -56,11 +57,12 @@ public class EventSubscriberHostedService : IHostedService
                 var jwtToken = new JwtSecurityToken(eventContent.Token);
                 var claimId = jwtToken.Claims.Single(x => x.Type == ClaimTypes.NameIdentifier);
 
-                var dataBaseFile = sqliteOptions.DataBasesFolder.ToDirectory()
+                var dataBaseFile = sqliteFolderOptions.DataBasesFolder.ThrowIfNull()
+                    .ToDirectory()
                     .ToFile($"{Guid.Parse(claimId.Value)}.db");
 
                 await using var context = spravyToDoDbContextFactory.Create($"DataSource={dataBaseFile}");
-                await context.Database.EnsureCreatedAsync(cancellationToken);
+                await context.Database.MigrateAsync(cancellationToken);
             }
 
             cancellationToken.ThrowIfCancellationRequested();

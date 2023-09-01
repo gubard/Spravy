@@ -1,4 +1,5 @@
 ﻿using System.Windows.Input;
+using Avalonia.Controls;
 using Avalonia.ReactiveUI;
 using Spravy.Domain.Attributes;
 using Spravy.Ui.Models;
@@ -13,10 +14,10 @@ public class MainViewModel : ViewModelBase
     }
 
     [Inject]
-    public required RoutedViewHost RoutedViewHost { get; init; }
+    public required AppConfiguration Configuration { get; init; }
 
     [Inject]
-    public required AppConfiguration Configuration { get; init; }
+    public required SplitView SplitView { get; init; }
 
     public ICommand InitializedCommand { get; }
 

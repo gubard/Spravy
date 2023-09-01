@@ -48,12 +48,6 @@ message UpdateToDoItemDaysOffsetRequest {
 message UpdateToDoItemDaysOffsetReply {
 }
 
-message InitRequest {
-}
-
-message InitReply {
-}
-
 message ToDoItemToStringRequest {
   bytes Id = 1;
 }

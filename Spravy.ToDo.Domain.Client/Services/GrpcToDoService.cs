@@ -500,18 +500,6 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
         }
     }
 
-    public async Task InitAsync()
-    {
-        try
-        {
-            await client.InitAsync(new InitRequest(), CreateMetadata());
-        }
-        catch (Exception e)
-        {
-            throw new GrpcException(grpcChannel.Target, e);
-        }
-    }
-
     public async Task UpdateToDoItemDaysOffsetAsync(Guid id, ushort days)
     {
         try

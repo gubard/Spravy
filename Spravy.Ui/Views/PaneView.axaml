@@ -1,0 +1,31 @@
+<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:PaneViewModel"
+                                xmlns="https://github.com/avaloniaui"
+                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                                xmlns:reactiveUi="http://reactiveui.net"
+                                xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
+                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                                x:Class="Spravy.Ui.Views.PaneView"
+                                x:DataType="viewModels:PaneViewModel">
+    <Design.DataContext>
+        <viewModels:PaneViewModel />
+    </Design.DataContext>
+
+    <StackPanel>
+        <Button Command="{Binding ToRootToDoItemViewCommand}">
+            <Grid ColumnDefinitions="Auto,Auto">
+                <avalonia:MaterialIcon Kind="Checks" />
+                <TextBlock Grid.Column="1" Text="Search" />
+            </Grid>
+        </Button>
+
+        <Button Command="{Binding ToSearchViewCommand}">
+            <Grid ColumnDefinitions="Auto,Auto">
+                <avalonia:MaterialIcon Kind="Search" />
+                <TextBlock Grid.Column="1" Text="Search" />
+            </Grid>
+        </Button>
+    </StackPanel>
+</reactiveUi:ReactiveUserControl>

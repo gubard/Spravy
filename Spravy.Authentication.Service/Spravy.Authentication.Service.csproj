@@ -7,8 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Grpc.AspNetCore" Version="2.55.0" />
-        <PackageReference Include="Grpc.AspNetCore.Web" Version="2.55.0" />
+        <PackageReference Include="Grpc.AspNetCore" Version="2.56.0" />
+        <PackageReference Include="Grpc.AspNetCore.Web" Version="2.56.0" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.10" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.10" />
         <PackageReference Include="Serilog.AspNetCore" Version="7.0.0" />
@@ -21,10 +21,13 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Spravy.Authentication.Db.Core\Spravy.Authentication.Db.Core.csproj" />
+      <ProjectReference Include="..\Spravy.Authentication.Db.Mapper\Spravy.Authentication.Db.Mapper.csproj" />
+      <ProjectReference Include="..\Spravy.Authentication.Db.Sqlite.Migrator\Spravy.Authentication.Db.Sqlite.Migrator.csproj" />
       <ProjectReference Include="..\Spravy.Authentication.Db.Sqlite\Spravy.Authentication.Db.Sqlite.csproj" />
       <ProjectReference Include="..\Spravy.Authentication.Domain.Core\Spravy.Authentication.Domain.Core.csproj" />
+      <ProjectReference Include="..\Spravy.Db.Sqlite\Spravy.Db.Sqlite.csproj" />
       <ProjectReference Include="..\Spravy.EventBus.Domain.Client\Spravy.EventBus.Domain.Client.csproj" />
+      <ProjectReference Include="..\Spravy.Service\Spravy.Service.csproj" />
     </ItemGroup>
 
     <ItemGroup>

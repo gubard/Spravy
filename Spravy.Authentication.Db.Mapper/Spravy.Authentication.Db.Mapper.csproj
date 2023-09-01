@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="AutoMapper" Version="12.0.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Spravy.Authentication.Db\Spravy.Authentication.Db.csproj" />
+      <ProjectReference Include="..\Spravy.Authentication.Domain\Spravy.Authentication.Domain.csproj" />
+    </ItemGroup>
+</Project>

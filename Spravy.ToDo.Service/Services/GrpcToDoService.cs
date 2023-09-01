@@ -312,13 +312,6 @@ public class GrpcToDoService : ToDoServiceBase
         };
     }
 
-    public override async Task<InitReply> Init(InitRequest request, ServerCallContext context)
-    {
-        await toDoService.InitAsync();
-
-        return new InitReply();
-    }
-
     public override async Task<UpdateToDoItemDaysOffsetReply> UpdateToDoItemDaysOffset(
         UpdateToDoItemDaysOffsetRequest request,
         ServerCallContext context

@@ -18,6 +18,6 @@
     </Interaction.Behaviors>
 
     <dialogHostAvalonia:DialogHost Identifier="MainDialogHost">
-        <ContentControl Content="{Binding RoutedViewHost, Mode=TwoWay}" />
+        <ContentControl Content="{Binding SplitView}" />
     </dialogHostAvalonia:DialogHost>
 </UserControl>

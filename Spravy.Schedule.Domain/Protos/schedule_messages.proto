@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+option csharp_namespace = "Spravy.Schedule.Protos";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+
+package spravy.schedule;
+
+message RemoveTimerRequest {
+  bytes Id = 1;
+}
+
+message RemoveTimerReply {
+}
+
+message GetListTimesRequest {
+}
+
+message GetListTimesReply {
+  repeated TimerItemGrpc Items = 1;
+}
+
+message AddTimerRequest {
+  AddTimerParametersGrpc Parameters = 1;
+}
+
+message AddTimerReply {
+}
+
+message AddTimerParametersGrpc {
+  bytes EventId = 1;
+  bytes Content = 2;
+  DateTimeOffsetGrpc DueDateTime = 3;
+}
+
+message TimerItemGrpc {
+  bytes Id = 1;
+  bytes EventId = 2;
+  bytes Content = 3;
+  DateTimeOffsetGrpc DueDateTime = 4;
+}
+
+message DateTimeOffsetGrpc {
+  google.protobuf.Timestamp Date = 1;
+  google.protobuf.Duration Offset = 2;
+}

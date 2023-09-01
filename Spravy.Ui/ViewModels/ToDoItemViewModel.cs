@@ -51,7 +51,6 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
         TypeOfPeriodicities = new(Enum.GetValues<TypeOfPeriodicity>());
         ToDoItemTypes = new(Enum.GetValues<ToDoItemType>());
         ChildrenTypes = new(Enum.GetValues<ToDoItemChildrenType>());
-        SearchCommand = CreateCommand(Search);
         AddToDoItemToCurrentCommand = CreateCommandFromTaskWithDialogProgressIndicator(AddToDoItemToCurrentAsync);
         RemoveToDoItemFromCurrentCommand =
             CreateCommandFromTaskWithDialogProgressIndicator(RemoveToDoItemFromCurrentAsync);
@@ -82,7 +81,6 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
 
         Commands.Add(toCurrentCommand);
         Commands.Add(new(MaterialIconKind.Plus, AddToDoItemCommand));
-        Commands.Add(new(MaterialIconKind.Search, SearchCommand));
         Commands.Add(new(MaterialIconKind.Creation, ToCurrentItemsCommand));
         Commands.Add(new(MaterialIconKind.Leaf, ToLeafToDoItemsCommand));
         Commands.Add(new(MaterialIconKind.SwapHorizontal, ChangeRootItemCommand));
@@ -102,7 +100,6 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
     public ICommand AddToDoItemToCurrentCommand { get; }
     public ICommand RemoveToDoItemFromCurrentCommand { get; }
     public ICommand AddToDoItemCommand { get; }
-    public ICommand SearchCommand { get; }
     public ICommand ChangeToDoItemByPathCommand { get; }
     public ICommand ToRootItemCommand { get; }
     public ICommand ToCurrentItemsCommand { get; }
@@ -225,11 +222,6 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
     {
         await ToDoService.AddCurrentToDoItemAsync(item.Id);
         await RefreshToDoItemAsync();
-    }
-
-    private void Search()
-    {
-        Navigator.NavigateTo<SearchViewModel>();
     }
 
     private async Task ToDoItemToRootAsync()

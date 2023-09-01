@@ -1,9 +1,13 @@
+using Spravy.Domain.Interfaces;
+
 namespace Spravy.Authentication.Service.Models;
 
-public class JwtTokenFactoryOptions
+public class JwtTokenFactoryOptions : IOptionsValue
 {
-    public string Key { get; set; }
+    public static string Section => "Jwt";
+    
+    public string? Key { get; set; }
     public ushort ExpiresDays { get; set; }
-    public string Issuer { get; set; }
-    public string Audience { get; set; }
+    public string? Issuer { get; set; }
+    public string? Audience { get; set; }
 }

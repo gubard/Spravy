@@ -85,43 +85,46 @@ class Build : NukeBuild
                     sshClient.Connect();
                     using var ftpClient = new FtpClient("192.168.50.2", "vafnir", FtpPassword);
                     ftpClient.Connect();
-                    
+
                     var eventBusServiceFolder = PublishProject("Spravy.EventBus.Service");
-                    ftpClient.DeleteDirectory("/home/vafnir/Spravy.EventBus.Service", FtpListOption.Recursive);
+                    DeleteIfExistsDirectory(ftpClient, "/home/vafnir/Spravy.EventBus.Service");
                     ftpClient.UploadDirectory(eventBusServiceFolder.FullName, "/home/vafnir/Spravy.EventBus.Service");
 
                     using var commandEventBusService =
                         sshClient.RunCommand(
                             $"echo {SshPassword} | sudo systemctl restart spravy.event-bus.service"
                         );
-                    
-                    var authenticationMigratorFolder = PublishProject("Spravy.Authentication.Db.Sqlite.Migrator");
-                    ftpClient.DeleteDirectory("/home/vafnir/Spravy.Authentication.Db.Sqlite.Migrator", FtpListOption.Recursive);
-                    ftpClient.UploadDirectory(authenticationMigratorFolder.FullName, "/home/vafnir/Spravy.Authentication.Db.Sqlite.Migrator");
-
-                    using var commandAuthenticationMigrator =
-                        sshClient.RunCommand(
-                            "cd /home/vafnir/Spravy.Authentication.Db.Sqlite.Migrator;dotnet Spravy.Authentication.Db.Sqlite.Migrator.dll"
-                        );
 
                     var authenticationServiceFolder = PublishProject("Spravy.Authentication.Service");
-                    ftpClient.DeleteDirectory("/home/vafnir/Spravy.Authentication.Service", FtpListOption.Recursive);
-                    ftpClient.UploadDirectory(authenticationServiceFolder.FullName, "/home/vafnir/Spravy.Authentication.Service");
+                    DeleteIfExistsDirectory(ftpClient, "/home/vafnir/Spravy.Authentication.Service");
+
+                    ftpClient.UploadDirectory(authenticationServiceFolder.FullName,
+                        "/home/vafnir/Spravy.Authentication.Service"
+                    );
 
                     using var commandAuthenticationService =
                         sshClient.RunCommand(
                             $"echo {SshPassword} | sudo systemctl restart spravy.authentication.service"
                         );
-                    
+
+                    var scheduleServiceFolder = PublishProject("Spravy.Schedule.Service");
+                    DeleteIfExistsDirectory(ftpClient, "/home/vafnir/Spravy.Schedule.Service");
+                    ftpClient.UploadDirectory(scheduleServiceFolder.FullName, "/home/vafnir/Spravy.Schedule.Service");
+
+                    using var commandScheduleService =
+                        sshClient.RunCommand(
+                            $"echo {SshPassword} | sudo systemctl restart spravy.schedule.service"
+                        );
+
                     var toDoServiceFolder = PublishProject("Spravy.ToDo.Service");
-                    ftpClient.DeleteDirectory("/home/vafnir/Spravy.ToDo.Service", FtpListOption.Recursive);
+                    DeleteIfExistsDirectory(ftpClient, "/home/vafnir/Spravy.ToDo.Service");
                     ftpClient.UploadDirectory(toDoServiceFolder.FullName, "/home/vafnir/Spravy.ToDo.Service");
 
                     using var commandToDoService =
                         sshClient.RunCommand(
                             $"echo {SshPassword} | sudo systemctl restart spravy.todo.service"
                         );
-                    
+
                     var desktopFolder = PublishProject("Spravy.Ui.Desktop");
                     var desktopAppFolder = new DirectoryInfo("/home/vafnir/Apps/Spravy.Ui.Desktop");
 
@@ -156,6 +159,16 @@ class Build : NukeBuild
                  );*/
                 }
             );
+
+    static void DeleteIfExistsDirectory(FtpClient client, string path)
+    {
+        if (!client.DirectoryExists(path))
+        {
+            return;
+        }
+
+        client.DeleteDirectory(path, FtpListOption.Recursive);
+    }
 
     static void CopyDirectory(string sourceDir, string destinationDir, bool recursive)
     {

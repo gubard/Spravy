@@ -2,31 +2,31 @@ using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Spravy.Db.Sqlite.Models;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.ToDo.Db.Contexts;
-using Spravy.ToDo.Service.Models;
 
 namespace Spravy.ToDo.Service.HostedServices;
 
 public class MigratorHostedService : IHostedService
 {
     private const string MigrationFileName = ".migration";
-    private readonly SqliteOptions sqliteOptions;
+    private readonly SqliteFolderOptions sqliteFolderOptions;
     private readonly IFactory<string, SpravyToDoDbContext> spravyToDoDbContextFactory;
 
     public MigratorHostedService(
-        SqliteOptions sqliteOptions,
+        SqliteFolderOptions sqliteFolderOptions,
         IFactory<string, SpravyToDoDbContext> spravyToDoDbContextFactory
     )
     {
-        this.sqliteOptions = sqliteOptions;
+        this.sqliteFolderOptions = sqliteFolderOptions;
         this.spravyToDoDbContextFactory = spravyToDoDbContextFactory;
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        var migrationFile = sqliteOptions.DataBasesFolder.ToDirectory().ToFile(MigrationFileName);
+        var migrationFile = sqliteFolderOptions.DataBasesFolder.ToDirectory().ToFile(MigrationFileName);
         var migrationId = GetMigrationId();
 
         if (!await IsNeedMigration(migrationFile, migrationId))
@@ -34,7 +34,7 @@ public class MigratorHostedService : IHostedService
             return;
         }
 
-        var dataBaseFiles = sqliteOptions.DataBasesFolder.ToDirectory().GetFiles("*.db");
+        var dataBaseFiles = sqliteFolderOptions.DataBasesFolder.ToDirectory().GetFiles("*.db");
 
         foreach (var dataBaseFile in dataBaseFiles)
         {

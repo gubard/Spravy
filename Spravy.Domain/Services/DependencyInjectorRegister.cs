@@ -6,22 +6,10 @@ namespace Spravy.Domain.Services;
 
 public class DependencyInjectorRegister : IBuilder<DependencyInjector>, IDependencyInjectorRegister
 {
-    private readonly Dictionary<AutoInjectMemberIdentifier, InjectorItem> autoInjectMembers;
-    private readonly Dictionary<TypeInformation, InjectorItem> injectors;
-    private readonly Dictionary<TypeInformation, LazyDependencyInjectorOptions> lazyOptions;
-
-    private readonly Dictionary<
-        ReservedCtorParameterIdentifier,
-        InjectorItem
-    > reservedCtorParameters;
-
-    public DependencyInjectorRegister()
-    {
-        lazyOptions = new ();
-        reservedCtorParameters = new ();
-        injectors = new ();
-        autoInjectMembers = new ();
-    }
+    private readonly Dictionary<AutoInjectMemberIdentifier, InjectorItem> autoInjectMembers = new();
+    private readonly Dictionary<TypeInformation, InjectorItem> injectors = new();
+    private readonly Dictionary<TypeInformation, LazyDependencyInjectorOptions> lazyOptions = new();
+    private readonly Dictionary<ReservedCtorParameterIdentifier, InjectorItem> reservedCtorParameters = new();
 
     public DependencyInjector Build()
     {
@@ -88,7 +76,7 @@ public class DependencyInjectorRegister : IBuilder<DependencyInjector>, IDepende
 
     public void RegisterScope(Type type, Expression expression)
     {
-        injectors[type] = new (InjectorItemType.Scope, expression);
+        injectors[type] = new(InjectorItemType.Scope, expression);
     }
 
     public void SetLazyOptions(TypeInformation type, LazyDependencyInjectorOptions options)
@@ -104,11 +92,11 @@ public class DependencyInjectorRegister : IBuilder<DependencyInjector>, IDepende
 
     private void RegisterTransientCore(Type type, Expression expression)
     {
-        injectors[type] = new (InjectorItemType.Transient, expression);
+        injectors[type] = new(InjectorItemType.Transient, expression);
     }
 
     public void RegisterSingletonCore(Type type, Expression expression)
     {
-        injectors[type] = new (InjectorItemType.Singleton, expression);
+        injectors[type] = new(InjectorItemType.Singleton, expression);
     }
 }

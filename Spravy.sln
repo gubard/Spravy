@@ -22,7 +22,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Ui.Browser", "Spravy
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.ToDo.Domain.Client", "Spravy.ToDo.Domain.Client\Spravy.ToDo.Domain.Client.csproj", "{447ABE78-490A-4D33-BC08-8D9BA5980030}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.ToDo.Db.Core", "Spravy.ToDo.Db.Core\Spravy.ToDo.Db.Core.csproj", "{DF47ACE4-706C-481C-A66E-E41487BB2855}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.ToDo.Db.Mapper", "Spravy.ToDo.Db.Mapper\Spravy.ToDo.Db.Mapper.csproj", "{DF47ACE4-706C-481C-A66E-E41487BB2855}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Authentication.Domain", "Spravy.Authentication.Domain\Spravy.Authentication.Domain.csproj", "{13485D75-2234-4798-AE7A-5B993E72BE97}"
 EndProject
@@ -40,7 +40,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Authentication.Db.Sq
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Domain", "Spravy.Domain\Spravy.Domain.csproj", "{3DDCB234-3912-4107-8A6D-D182621B5482}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Authentication.Db.Core", "Spravy.Authentication.Db.Core\Spravy.Authentication.Db.Core.csproj", "{AB428F21-C3D7-4193-BD07-F9DD162EB68D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Authentication.Db.Mapper", "Spravy.Authentication.Db.Mapper\Spravy.Authentication.Db.Mapper.csproj", "{AB428F21-C3D7-4193-BD07-F9DD162EB68D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Client", "Spravy.Client\Spravy.Client.csproj", "{90FE4F5F-15EA-4088-940F-C5A2B7288D54}"
 EndProject
@@ -59,6 +59,28 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.EventBus.Domain.Mapper", "Spravy.EventBus.Domain.Mapper\Spravy.EventBus.Domain.Mapper.csproj", "{729418D0-F401-4197-B8A5-98CF9725236D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.EventBus.Domain.Client", "Spravy.EventBus.Domain.Client\Spravy.EventBus.Domain.Client.csproj", "{F7E698B5-379A-4A41-9500-A1275048CB34}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Schedule", "Schedule", "{66EB2F70-0745-43DC-AB59-8DFE3BB248AB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Schedule.Domain", "Spravy.Schedule.Domain\Spravy.Schedule.Domain.csproj", "{54D6CF9A-1335-45F3-B696-A0AA3419E644}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Schedule.Domain.Mapper", "Spravy.Schedule.Domain.Mapper\Spravy.Schedule.Domain.Mapper.csproj", "{020D524E-3F41-48F1-AA80-1048E6754758}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Service", "Spravy.Service\Spravy.Service.csproj", "{20C7A9E7-84FC-4693-81E4-C2757160B185}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Schedule.Service", "Spravy.Schedule.Service\Spravy.Schedule.Service.csproj", "{7B368647-DDA9-44C2-BB44-3FC1536F787C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Schedule.Db", "Spravy.Schedule.Db\Spravy.Schedule.Db.csproj", "{0F8D3964-BA93-4AB4-A0A0-0799C6436BD7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Schedule.Db.Sqlite", "Spravy.Schedule.Db.Sqlite\Spravy.Schedule.Db.Sqlite.csproj", "{1F3FD7F8-5FA4-4046-B60A-9F2E6C684A59}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Schedule.Db.Sqlite.Migrator", "Spravy.Schedule.Db.Sqlite.Migrator\Spravy.Schedule.Db.Sqlite.Migrator.csproj", "{67AA8E0A-775D-4CE6-AA87-3E3E4E6EE314}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Db.Sqlite", "Spravy.Db.Sqlite\Spravy.Db.Sqlite.csproj", "{48F54D72-DE5D-4B39-91A1-C6BF8957D3C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Schedule.Db.Mapper", "Spravy.Schedule.Db.Mapper\Spravy.Schedule.Db.Mapper.csproj", "{422E9B47-7D7B-4F2E-9494-817D18CD4C78}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Domain.Di", "Spravy.Domain.Di\Spravy.Domain.Di.csproj", "{16D48F69-FCF3-40C2-900F-BF781DA7AF16}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -172,6 +194,46 @@ Global
 		{F7E698B5-379A-4A41-9500-A1275048CB34}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F7E698B5-379A-4A41-9500-A1275048CB34}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F7E698B5-379A-4A41-9500-A1275048CB34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54D6CF9A-1335-45F3-B696-A0AA3419E644}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54D6CF9A-1335-45F3-B696-A0AA3419E644}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54D6CF9A-1335-45F3-B696-A0AA3419E644}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54D6CF9A-1335-45F3-B696-A0AA3419E644}.Release|Any CPU.Build.0 = Release|Any CPU
+		{020D524E-3F41-48F1-AA80-1048E6754758}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{020D524E-3F41-48F1-AA80-1048E6754758}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{020D524E-3F41-48F1-AA80-1048E6754758}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{020D524E-3F41-48F1-AA80-1048E6754758}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20C7A9E7-84FC-4693-81E4-C2757160B185}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20C7A9E7-84FC-4693-81E4-C2757160B185}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20C7A9E7-84FC-4693-81E4-C2757160B185}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20C7A9E7-84FC-4693-81E4-C2757160B185}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B368647-DDA9-44C2-BB44-3FC1536F787C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B368647-DDA9-44C2-BB44-3FC1536F787C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B368647-DDA9-44C2-BB44-3FC1536F787C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B368647-DDA9-44C2-BB44-3FC1536F787C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F8D3964-BA93-4AB4-A0A0-0799C6436BD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F8D3964-BA93-4AB4-A0A0-0799C6436BD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F8D3964-BA93-4AB4-A0A0-0799C6436BD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F8D3964-BA93-4AB4-A0A0-0799C6436BD7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F3FD7F8-5FA4-4046-B60A-9F2E6C684A59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F3FD7F8-5FA4-4046-B60A-9F2E6C684A59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F3FD7F8-5FA4-4046-B60A-9F2E6C684A59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F3FD7F8-5FA4-4046-B60A-9F2E6C684A59}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67AA8E0A-775D-4CE6-AA87-3E3E4E6EE314}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67AA8E0A-775D-4CE6-AA87-3E3E4E6EE314}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67AA8E0A-775D-4CE6-AA87-3E3E4E6EE314}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67AA8E0A-775D-4CE6-AA87-3E3E4E6EE314}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48F54D72-DE5D-4B39-91A1-C6BF8957D3C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48F54D72-DE5D-4B39-91A1-C6BF8957D3C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48F54D72-DE5D-4B39-91A1-C6BF8957D3C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48F54D72-DE5D-4B39-91A1-C6BF8957D3C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{422E9B47-7D7B-4F2E-9494-817D18CD4C78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{422E9B47-7D7B-4F2E-9494-817D18CD4C78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{422E9B47-7D7B-4F2E-9494-817D18CD4C78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{422E9B47-7D7B-4F2E-9494-817D18CD4C78}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16D48F69-FCF3-40C2-900F-BF781DA7AF16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16D48F69-FCF3-40C2-900F-BF781DA7AF16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16D48F69-FCF3-40C2-900F-BF781DA7AF16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16D48F69-FCF3-40C2-900F-BF781DA7AF16}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{8DA7C381-65E0-4216-9021-D4CB7A186453} = {AE245578-F16D-44FB-8F2C-496CBE7C1D53}
@@ -193,5 +255,12 @@ Global
 		{8EA5D29A-3FC6-4021-81C8-FB4F0F1CF3D4} = {1B62345A-F423-4CA1-A4B5-56DEC8B9F3E9}
 		{729418D0-F401-4197-B8A5-98CF9725236D} = {1B62345A-F423-4CA1-A4B5-56DEC8B9F3E9}
 		{F7E698B5-379A-4A41-9500-A1275048CB34} = {1B62345A-F423-4CA1-A4B5-56DEC8B9F3E9}
+		{54D6CF9A-1335-45F3-B696-A0AA3419E644} = {66EB2F70-0745-43DC-AB59-8DFE3BB248AB}
+		{020D524E-3F41-48F1-AA80-1048E6754758} = {66EB2F70-0745-43DC-AB59-8DFE3BB248AB}
+		{7B368647-DDA9-44C2-BB44-3FC1536F787C} = {66EB2F70-0745-43DC-AB59-8DFE3BB248AB}
+		{0F8D3964-BA93-4AB4-A0A0-0799C6436BD7} = {66EB2F70-0745-43DC-AB59-8DFE3BB248AB}
+		{1F3FD7F8-5FA4-4046-B60A-9F2E6C684A59} = {66EB2F70-0745-43DC-AB59-8DFE3BB248AB}
+		{67AA8E0A-775D-4CE6-AA87-3E3E4E6EE314} = {66EB2F70-0745-43DC-AB59-8DFE3BB248AB}
+		{422E9B47-7D7B-4F2E-9494-817D18CD4C78} = {66EB2F70-0745-43DC-AB59-8DFE3BB248AB}
 	EndGlobalSection
 EndGlobal

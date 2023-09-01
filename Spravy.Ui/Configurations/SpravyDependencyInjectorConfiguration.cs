@@ -62,7 +62,18 @@ public readonly struct SpravyDependencyInjectorConfiguration : IDependencyInject
         register.RegisterTransient<DayOfMonthSelector>();
         register.RegisterTransient<IAuthenticationService, GrpcAuthenticationService>();
         register.RegisterTransient<IKeeper<TokenResult>, StaticKeeper<TokenResult>>();
+        register.RegisterTransient<PaneView>();
         RegisterViewModels(register);
+
+        register.RegisterSingleton<SplitView>(
+            (PaneView pane, RoutedViewHost routedViewHost) => new SplitView
+            {
+                Pane = pane,
+                Content = routedViewHost,
+                OpenPaneLength = 200,
+                PanePlacement = SplitViewPanePlacement.Left,
+            }
+        );
 
         register.RegisterTransient(
             () => Application.Current.ThrowIfNull("Application").GetTopLevel().ThrowIfNull("TopLevel").Clipboard
