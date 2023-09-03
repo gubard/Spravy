@@ -1,9 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using DialogHostAvalonia;
-using Spravy.Domain.Attributes;
+using Ninject;
 using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Views;
 
@@ -23,11 +22,11 @@ public class DialogViewer : IDialogViewer
     }
 
     [Inject]
-    public required IResolver Resolver { get; init; }
+    public required IKernel Resolver { get; init; }
 
     public Task<object?> ShowDialogAsync(Type contentType)
     {
-        var content = Resolver.Resolve(contentType);
+        var content = Resolver.Get(contentType);
 
         return DialogHost.Show(content, dialogIdentifier);
     }
@@ -39,7 +38,7 @@ public class DialogViewer : IDialogViewer
 
     public Task<object?> ShowDialogAsync<TView>(Action<TView>? setup) where TView : notnull
     {
-        var content = Resolver.Resolve<TView>();
+        var content = Resolver.Get<TView>();
         setup?.Invoke(content);
         currentContent = content;
 
@@ -52,9 +51,9 @@ public class DialogViewer : IDialogViewer
         Action<TView>? setup = null
     ) where TView : notnull
     {
-        var content = Resolver.Resolve<TView>();
+        var content = Resolver.Get<TView>();
         setup?.Invoke(content);
-        var confirmView = Resolver.Resolve<ConfirmView>();
+        var confirmView = Resolver.Get<ConfirmView>();
         var viewModel = confirmView.ViewModel.ThrowIfNull();
         viewModel.Content = content;
         viewModel.ConfirmTask = view => confirmTask.Invoke((TView)view);

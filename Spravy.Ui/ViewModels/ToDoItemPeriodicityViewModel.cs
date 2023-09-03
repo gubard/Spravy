@@ -7,10 +7,9 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Collections;
 using Material.Icons;
+using Ninject;
 using ReactiveUI;
-using Spravy.Domain.Attributes;
 using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
@@ -36,7 +35,7 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
     }
 
     [Inject]
-    public required IResolver Resolver { get; init; }
+    public required IKernel Resolver { get; init; }
 
     public ICommand CompleteToDoItemCommand { get; }
 
@@ -199,7 +198,7 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
             case AnnuallyPeriodicity annuallyPeriodicity:
             {
                 TypeOfPeriodicity = TypeOfPeriodicity.Annually;
-                var periodicityViewModel = Resolver.Resolve<AnnuallyPeriodicityViewModel>();
+                var periodicityViewModel = Resolver.Get<AnnuallyPeriodicityViewModel>();
                 periodicityViewModel.DayOfYearSelector.SelectedDaysOfYear.AddRange(annuallyPeriodicity.Days);
                 periodicitySub?.Dispose();
                 Periodicity = periodicityViewModel;
@@ -217,7 +216,7 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
             case DailyPeriodicity:
             {
                 TypeOfPeriodicity = TypeOfPeriodicity.Daily;
-                var periodicityViewModel = Resolver.Resolve<DailyPeriodicityViewModel>();
+                var periodicityViewModel = Resolver.Get<DailyPeriodicityViewModel>();
                 periodicitySub?.Dispose();
                 Periodicity = periodicityViewModel;
 
@@ -226,7 +225,7 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
             case MonthlyPeriodicity monthlyPeriodicity:
             {
                 TypeOfPeriodicity = TypeOfPeriodicity.Monthly;
-                var periodicityViewModel = Resolver.Resolve<MonthlyPeriodicityViewModel>();
+                var periodicityViewModel = Resolver.Get<MonthlyPeriodicityViewModel>();
                 periodicityViewModel.DayOfMonthSelector.SelectedDaysOfMonth.AddRange(monthlyPeriodicity.Days);
                 periodicitySub?.Dispose();
                 Periodicity = periodicityViewModel;
@@ -244,7 +243,7 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
             case WeeklyPeriodicity weeklyPeriodicity:
             {
                 TypeOfPeriodicity = TypeOfPeriodicity.Weekly;
-                var periodicityViewModel = Resolver.Resolve<WeeklyPeriodicityViewModel>();
+                var periodicityViewModel = Resolver.Get<WeeklyPeriodicityViewModel>();
                 periodicityViewModel.DayOfWeekSelector.SelectedDaysOfWeek.AddRange(weeklyPeriodicity.Days);
                 periodicitySub?.Dispose();
                 Periodicity = periodicityViewModel;

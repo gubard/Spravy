@@ -1,45 +1,37 @@
 ﻿using System;
 using Avalonia;
 using Avalonia.ReactiveUI;
+using Ninject;
+using ReactiveUI;
+using Splat;
+using Spravy.Domain.Di.Helpers;
 using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Services;
-using Spravy.Ui.Desktop.Modules;
-using Spravy.Ui.Modules;
+using Spravy.Ui.Configurations;
+using Spravy.Ui.Desktop.Configurations;
 
 namespace Spravy.Ui.Desktop;
 
-class Program
+public class Program
 {
-    private static IModule? module;
-
     [STAThread]
     public static void Main(string[] args)
     {
+        DiHelper.Kernel = new StandardKernel(UiModule.Default, DesktopModule.Default);
+
         BuildAvaloniaApp()
             .StartWithClassicDesktopLifetime(args);
     }
 
-    private static void InitModules()
-    {
-        var builder = new TreeBuilder<Guid, IModule>().SetRoot(
-            new TreeNodeBuilder<Guid, IModule>()
-                .SetKey(SpravyDesktopModule.IdValue)
-                .SetValue(new SpravyDesktopModule())
-                .Add(SpravyModule.IdValue, new SpravyModule())
-        );
-
-        var moduleTree = new ModuleTree(builder.Build());
-        module = moduleTree;
-        moduleTree.SetupModule();
-    }
-
     public static AppBuilder BuildAvaloniaApp()
     {
-        InitModules();
-
-        return AppBuilder.Configure(() => module.ThrowIfNull().GetObject<Application>())
+        return AppBuilder.Configure(() => DiHelper.Kernel.ThrowIfNull().Get<Application>())
             .UsePlatformDetect()
-            .UseReactiveUI();
+            .UseReactiveUI()
+            .AfterSetup(
+                _ => Locator.CurrentMutable.RegisterLazySingleton(
+                    () => DiHelper.Kernel.ThrowIfNull().Get<IViewLocator>(),
+                    typeof(IViewLocator)
+                )
+            );
     }
 }

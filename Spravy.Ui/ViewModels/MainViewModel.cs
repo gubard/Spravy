@@ -1,7 +1,6 @@
 ﻿using System.Windows.Input;
 using Avalonia.Controls;
-using Avalonia.ReactiveUI;
-using Spravy.Domain.Attributes;
+using Ninject;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;

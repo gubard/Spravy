@@ -1,20 +1,19 @@
+using Ninject;
 using ReactiveUI;
-using Spravy.Domain.Attributes;
 using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
 
 namespace Spravy.Ui.Services;
 
 public class ModuleViewLocator : IViewLocator
 {
     [Inject]
-    public required IResolver Resolver { get; init; }
+    public required IKernel Resolver { get; init; }
 
     public IViewFor? ResolveView<T>(T? viewModel, string? contract = null)
     {
         if (viewModel is null)
         {
-            return Resolver.Resolve<IViewFor>();
+            return Resolver.Get<IViewFor>();
         }
 
         var type = viewModel.GetType();
@@ -25,7 +24,7 @@ public class ModuleViewLocator : IViewLocator
 
         var viewName = $"{ns}.{type.Name.Substring(0, type.Name.Length - 5)}";
         var viewType = type.Assembly.GetType(viewName).ThrowIfNull(viewName);
-        var result = (IViewFor)Resolver.Resolve(viewType);
+        var result = (IViewFor)Resolver.Get(viewType);
 
         if (viewModel is not null)
         {

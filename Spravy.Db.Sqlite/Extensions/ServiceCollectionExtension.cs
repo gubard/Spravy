@@ -1,7 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Spravy.Db.Sqlite.Helpers;
 using Spravy.Db.Sqlite.Models;
 
 namespace Spravy.Db.Sqlite.Extensions;

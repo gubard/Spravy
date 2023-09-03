@@ -1,14 +1,15 @@
-﻿using System;
-using System.Runtime.Versioning;
+﻿using System.Runtime.Versioning;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Browser;
 using Avalonia.ReactiveUI;
+using Ninject;
+using ReactiveUI;
+using Splat;
+using Spravy.Domain.Di.Helpers;
 using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Services;
-using Spravy.Ui.Browser.Modules;
-using Spravy.Ui.Modules;
+using Spravy.Ui.Browser.Configurations;
+using Spravy.Ui.Configurations;
 
 [assembly: SupportedOSPlatform("browser")]
 
@@ -16,35 +17,26 @@ namespace Spravy.Ui.Browser;
 
 internal partial class Program
 {
-    private static IModule? module;
-
     private static async Task Main(string[] args)
     {
+        DiHelper.Kernel = new StandardKernel(UiModule.Default, BrowserModule.Default);
+
         await BuildAvaloniaApp()
             .WithInterFont()
             .UseReactiveUI()
             .StartBrowserAppAsync("out");
     }
 
-    private static void InitModules()
-    {
-        var builder = new TreeBuilder<Guid, IModule>().SetRoot(
-            new TreeNodeBuilder<Guid, IModule>()
-                .SetKey(SpravyBrowserModule.IdValue)
-                .SetValue(new SpravyBrowserModule())
-                .Add(SpravyModule.IdValue, new SpravyModule())
-        );
-
-        var moduleTree = new ModuleTree(builder.Build());
-        moduleTree.SetupModule();
-        module = moduleTree;
-    }
-
     public static AppBuilder BuildAvaloniaApp()
     {
-        InitModules();
-
-        return AppBuilder.Configure(() => module.ThrowIfNull().GetObject<Application>())
-            .UseReactiveUI();
+        return AppBuilder.Configure(() => DiHelper.Kernel.ThrowIfNull().Get<Application>())
+            .UseReactiveUI()
+            .AfterSetup(
+                _ => Locator.CurrentMutable.RegisterLazySingleton(
+                    () => DiHelper.Kernel.ThrowIfNull().Get<IViewLocator>(),
+                    typeof(IViewLocator)
+                )
+            );
+        ;
     }
 }

@@ -1,4 +1,3 @@
-using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 
 namespace Spravy.ToDo.Domain.Models;

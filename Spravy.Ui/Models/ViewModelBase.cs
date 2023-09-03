@@ -2,8 +2,8 @@ using System;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Ninject;
 using ReactiveUI;
-using Spravy.Domain.Attributes;
 using Spravy.Ui.Interfaces;
 
 namespace Spravy.Ui.Models;

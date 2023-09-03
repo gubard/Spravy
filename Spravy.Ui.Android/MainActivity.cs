@@ -1,17 +1,16 @@
-﻿using System;
-
-using Android.App;
+﻿using Android.App;
 using Android.Content.PM;
 using Android.OS;
-
 using Avalonia;
 using Avalonia.Android;
 using Avalonia.ReactiveUI;
+using Ninject;
+using ReactiveUI;
+using Splat;
+using Spravy.Domain.Di.Helpers;
 using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Services;
-using Spravy.Ui.Android.Modules;
-using Spravy.Ui.Modules;
+using Spravy.Ui.Android.Configurations;
+using Spravy.Ui.Configurations;
 
 namespace Spravy.Ui.Android;
 
@@ -24,33 +23,22 @@ namespace Spravy.Ui.Android;
 )]
 public class MainActivity : AvaloniaMainActivity<App>
 {
-    private static IModule? module;
-
     protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)
     {
         return base.CustomizeAppBuilder(builder)
             .WithInterFont()
-            .UseReactiveUI();
+            .UseReactiveUI()
+            .AfterSetup(
+                _ => Locator.CurrentMutable.RegisterLazySingleton(
+                    () => DiHelper.Kernel.ThrowIfNull().Get<IViewLocator>(),
+                    typeof(IViewLocator)
+                )
+            );;
     }
 
-    protected override void OnCreate(Bundle savedInstanceState)
+    protected override void OnCreate(Bundle? savedInstanceState)
     {
-        InitModules();
-        DependencyInjector.Default = module.GetObject<IResolver>();
+        DiHelper.Kernel = new StandardKernel(UiModule.Default, AndroidModule.Default);
         base.OnCreate(savedInstanceState);
-    }
-
-    private static void InitModules()
-    {
-        var builder = new TreeBuilder<Guid, IModule>().SetRoot(
-            new TreeNodeBuilder<Guid, IModule>()
-                .SetKey(AndroidModules.IdValue)
-                .SetValue(new AndroidModules())
-                .Add(SpravyModule.IdValue, new SpravyModule())
-        );
-
-        var moduleTree = new ModuleTree(builder.Build());
-        module = moduleTree;
-        moduleTree.SetupModule();
     }
 }

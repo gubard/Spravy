@@ -1,5 +1,3 @@
-using System.Numerics;
-
 namespace Spravy.Domain.Interfaces;
 
 public interface IOptionsValue

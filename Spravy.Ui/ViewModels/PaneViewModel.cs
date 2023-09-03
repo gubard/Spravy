@@ -1,5 +1,5 @@
 using System.Windows.Input;
-using Spravy.Domain.Attributes;
+using Ninject;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Models;
 

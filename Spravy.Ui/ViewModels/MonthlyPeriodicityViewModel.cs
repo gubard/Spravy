@@ -1,4 +1,4 @@
-using Spravy.Domain.Attributes;
+using Ninject;
 using Spravy.Ui.Controls;
 
 namespace Spravy.Ui.ViewModels;

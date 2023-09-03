@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Ninject;
 using ReactiveUI;
-using Spravy.Domain.Attributes;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;

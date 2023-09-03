@@ -1,8 +1,6 @@
 using System;
+using Ninject;
 using ReactiveUI;
-using Spravy.Domain.Attributes;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 
@@ -14,7 +12,7 @@ public class Navigator : INavigator
     public required RoutingState RoutingState { get; init; }
 
     [Inject]
-    public required IResolver Resolver { get; init; }
+    public required IKernel Resolver { get; init; }
 
     [Inject]
     public required AppConfiguration Configuration { get; init; }
@@ -26,7 +24,7 @@ public class Navigator : INavigator
 
     public IObservable<IRoutableViewModel> NavigateTo(Type type)
     {
-        var viewModel = (IRoutableViewModel)Resolver.Resolve(type);
+        var viewModel = (IRoutableViewModel)Resolver.Get(type);
 
         return RoutingState.Navigate.Execute(viewModel);
     }
@@ -34,7 +32,7 @@ public class Navigator : INavigator
     public IObservable<IRoutableViewModel> NavigateTo<TViewModel>(Action<TViewModel>? setup = null)
         where TViewModel : IRoutableViewModel
     {
-        var viewModel = Resolver.Resolve<TViewModel>();
+        var viewModel = Resolver.Get<TViewModel>();
 
         if (setup is null)
         {
