@@ -66,15 +66,14 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
             {
                 var viewModel = view.ViewModel.ThrowIfNull();
                 viewModel.IsDialog = true;
-                
                 viewModel.SetAllStatus();
 
                 viewModel.Complete = async status =>
                 {
-                    await CompleteAsync(SelectedCompleted, status).WhenAll();
-                    await CompleteAsync(SelectedMissed, status).WhenAll();
-                    await CompleteAsync(SelectedCurrentToDoItems, status).WhenAll();
-                    await CompleteAsync(SelectedReadyForCompleted, status).WhenAll();
+                    await CompleteAsync(SelectedCompleted, status);
+                    await CompleteAsync(SelectedMissed, status);
+                    await CompleteAsync(SelectedCurrentToDoItems, status);
+                    await CompleteAsync(SelectedReadyForCompleted, status);
                     await RefreshToDoItemAsync();
                     DialogViewer.CloseDialog();
                 };
@@ -93,6 +92,8 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
             view =>
             {
                 var viewModel = view.ViewModel.ThrowIfNull();
+                viewModel.IsDialog = true;
+
                 switch (subItemValue)
                 {
                     case ToDoSubItemPeriodicityNotify:
@@ -154,7 +155,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
         );
     }
 
-    private IEnumerable<Task> CompleteAsync(IEnumerable<ToDoSubItemNotify> items, CompleteStatus status)
+    private async Task CompleteAsync(IEnumerable<ToDoSubItemNotify> items, CompleteStatus status)
     {
         switch (status)
         {
@@ -164,15 +165,15 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                     switch (item)
                     {
                         case ToDoSubItemPeriodicityNotify:
-                            yield return ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
+                            await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
                             break;
                         case ToDoSubItemPeriodicityOffsetNotify:
-                            yield return ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
+                            await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
                             break;
                         case ToDoSubItemPlannedNotify toDoSubItemPlannedNotify:
                             if (!toDoSubItemPlannedNotify.IsCompleted)
                             {
-                                yield return ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
+                                await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
                             }
                             else
                             {
@@ -183,7 +184,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                         case ToDoSubItemValueNotify toDoSubItemValueNotify:
                             if (!toDoSubItemValueNotify.IsCompleted)
                             {
-                                yield return ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
+                                await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
                             }
                             else
                             {
@@ -203,16 +204,16 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                     switch (item)
                     {
                         case ToDoSubItemPeriodicityNotify:
-                            yield return ToDoService.SkipToDoItemAsync(item.Id);
+                            await ToDoService.SkipToDoItemAsync(item.Id);
                             break;
                         case ToDoSubItemPeriodicityOffsetNotify:
-                            yield return ToDoService.SkipToDoItemAsync(item.Id);
+                            await ToDoService.SkipToDoItemAsync(item.Id);
                             break;
                         case ToDoSubItemPlannedNotify:
-                            yield return ToDoService.SkipToDoItemAsync(item.Id);
+                            await ToDoService.SkipToDoItemAsync(item.Id);
                             break;
                         case ToDoSubItemValueNotify:
-                            yield return ToDoService.SkipToDoItemAsync(item.Id);
+                            await ToDoService.SkipToDoItemAsync(item.Id);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException(nameof(item));
@@ -226,16 +227,16 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                     switch (item)
                     {
                         case ToDoSubItemPeriodicityNotify:
-                            yield return ToDoService.FailToDoItemAsync(item.Id);
+                            await ToDoService.FailToDoItemAsync(item.Id);
                             break;
                         case ToDoSubItemPeriodicityOffsetNotify:
-                            yield return ToDoService.FailToDoItemAsync(item.Id);
+                            await ToDoService.FailToDoItemAsync(item.Id);
                             break;
                         case ToDoSubItemPlannedNotify:
-                            yield return ToDoService.FailToDoItemAsync(item.Id);
+                            await ToDoService.FailToDoItemAsync(item.Id);
                             break;
                         case ToDoSubItemValueNotify:
-                            yield return ToDoService.FailToDoItemAsync(item.Id);
+                            await ToDoService.FailToDoItemAsync(item.Id);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException(nameof(item));
@@ -255,7 +256,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                             }
                             else
                             {
-                                yield return ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
+                                await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
                             }
 
                             break;
@@ -266,7 +267,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                             }
                             else
                             {
-                                yield return ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
+                                await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
                             }
 
                             break;

@@ -143,7 +143,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
 
     private Task ChangeDescriptionAsync()
     {
-        return DialogViewer.ShowStringConfirmDialogAsync(
+        return DialogViewer.ShowMultiStringConfirmDialogAsync(
             str =>
             {
                 DialogViewer.CloseDialog();
@@ -242,6 +242,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
             async view =>
             {
                 var viewModel = view.ViewModel.ThrowIfNull();
+                viewModel.IsDialog = true;
                 var parentValue = viewModel.Parent.ThrowIfNull();
                 var options = new AddToDoItemOptions(parentValue.Id, viewModel.Name);
                 await ToDoService.AddToDoItemAsync(options);

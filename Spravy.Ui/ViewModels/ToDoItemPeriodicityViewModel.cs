@@ -87,6 +87,7 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
             view =>
             {
                 var viewModel = view.ViewModel.ThrowIfNull();
+                viewModel.IsDialog = true;
                 viewModel.SetCompleteStatus();
 
                 viewModel.Complete = async status =>

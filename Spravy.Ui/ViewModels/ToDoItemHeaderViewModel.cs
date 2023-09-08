@@ -34,7 +34,7 @@ public class ToDoItemHeaderViewModel : ViewModelBase
 
     private Task ChangeNameAsync()
     {
-        return DialogViewer.ShowStringConfirmDialogAsync(
+        return DialogViewer.ShowSingleStringConfirmDialogAsync(
             str =>
             {
                 DialogViewer.CloseDialog();

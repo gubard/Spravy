@@ -49,6 +49,7 @@ public class ToDoItemValueViewModel : ToDoItemViewModel, IRefreshToDoItem
             view =>
             {
                 var viewModel = view.ViewModel.ThrowIfNull();
+                viewModel.IsDialog = true;
 
                 if (IsCompleted)
                 {

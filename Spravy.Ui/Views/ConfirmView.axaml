@@ -13,7 +13,8 @@
     </Design.DataContext>
 
     <UserControl.KeyBindings>
-        <KeyBinding Gesture="Enter" Command="{Binding ConfirmCommand}" />
+        <KeyBinding Gesture="Ctrl+Enter" Command="{Binding ConfirmCommand}" />
+        <KeyBinding Gesture="Ctrl+Enter" Command="{Binding ConfirmCommand}" />
     </UserControl.KeyBindings>
 
     <Grid RowDefinitions="*,Auto"

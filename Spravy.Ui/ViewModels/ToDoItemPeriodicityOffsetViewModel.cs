@@ -248,6 +248,7 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
             view =>
             {
                 var viewModel = view.ViewModel.ThrowIfNull();
+                viewModel.IsDialog = true;
                 viewModel.SetCompleteStatus();
 
                 viewModel.Complete = async status =>
