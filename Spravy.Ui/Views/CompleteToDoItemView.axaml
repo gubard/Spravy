@@ -1,29 +1,50 @@
 <controls:MainReactiveUserControl x:TypeArguments="viewModels:CompleteToDoItemViewModel"
-                                xmlns="https://github.com/avaloniaui"
-                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                                xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-                                xmlns:interfaces="clr-namespace:Spravy.Ui.Interfaces"
-                                xmlns:views="clr-namespace:Spravy.Ui.Views"
-                                xmlns:models1="clr-namespace:Spravy.Ui.Models"
-                                xmlns:controls="clr-namespace:Spravy.Ui.Controls"
-                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                                x:Class="Spravy.Ui.Views.CompleteToDoItemView"
-                                x:DataType="viewModels:CompleteToDoItemViewModel">
+                                  xmlns="https://github.com/avaloniaui"
+                                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                                  xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
+                                  xmlns:views="clr-namespace:Spravy.Ui.Views"
+                                  xmlns:controls="clr-namespace:Spravy.Ui.Controls"
+                                  xmlns:enums="clr-namespace:Spravy.Ui.Enums"
+                                  xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                                  xmlns:models="clr-namespace:Spravy.Domain.Models;assembly=Spravy.Domain"
+                                  mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                                  x:Class="Spravy.Ui.Views.CompleteToDoItemView"
+                                  x:DataType="viewModels:CompleteToDoItemViewModel">
     <Design.DataContext>
         <viewModels:CompleteToDoItemViewModel />
     </Design.DataContext>
 
-    <UserControl.KeyBindings>
-        <KeyBinding Gesture="C" Command="{Binding ChangeCompleteStatusToDoItemCommand}" />
-        <KeyBinding Gesture="S" Command="{Binding SkipToDoItemCommand}" />
-        <KeyBinding Gesture="F" Command="{Binding FailToDoItemCommand}" />
-        <KeyBinding Gesture="Escape" Command="{Binding BackCommand}" />
-    </UserControl.KeyBindings>
+    <Interaction.Behaviors>
+        <EventTriggerBehavior EventName="Initialized">
+            <InvokeCommandAction Command="{Binding InitializedCommand}" />
+        </EventTriggerBehavior>
+    </Interaction.Behaviors>
 
-    <ContentControl Content="{Binding Item}">
+    <Grid RowDefinitions="Auto,Auto">
+        <ItemsControl ItemsSource="{Binding CompleteStatuses}">
+            <ItemsControl.DataTemplates>
+                <DataTemplate>
+                    <DataTemplate.DataType>
+                        <x:Type TypeName="models:Ref" x:TypeArguments="enums:CompleteStatus" />
+                    </DataTemplate.DataType>
+
+                    <Button Content="{Binding Value}"
+                            Command="{Binding $parent[views:CompleteToDoItemView].MainViewModel.CompleteCommand}"
+                            CommandParameter="{Binding Value}"
+                            Theme="{StaticResource OutlineButton}"
+                            BorderBrush="{Binding Value, Converter={StaticResource CompleteStatusToBrushConverter}}" />
+                </DataTemplate>
+            </ItemsControl.DataTemplates>
+        </ItemsControl>
+
+        <Button Grid.Row="1"
+                Command="{Binding BackCommand}">
+            <avalonia:MaterialIcon Kind="ArrowLeft" />
+        </Button>
+    </Grid>
+    <!--<ContentControl Content="{Binding Item}">
         <ContentControl.DataTemplates>
             <DataTemplate DataType="interfaces:IIsCompletedToDoItem">
                 <StackPanel>
@@ -86,5 +107,5 @@
                 </StackPanel>
             </DataTemplate>
         </ContentControl.DataTemplates>
-    </ContentControl>
+    </ContentControl>-->
 </controls:MainReactiveUserControl>

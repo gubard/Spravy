@@ -21,20 +21,10 @@ public class SearchViewModel : RoutableViewModelBase, IRefreshToDoItem
     public SearchViewModel() : base("search")
     {
         SearchCommand = CreateCommandFromTaskWithDialogProgressIndicator(RefreshToDoItemAsync);
-        CompleteSubToDoItemCommand =
-            CreateCommandFromTaskWithDialogProgressIndicator<ToDoSubItemNotify>(CompleteSubToDoItemAsync);
-        ChangeToActiveDoItemCommand = CreateCommandFromTask<ActiveToDoItemNotify>(ChangeToActiveDoItem);
-        DeleteSubToDoItemCommand =
-            CreateCommandFromTaskWithDialogProgressIndicator<ToDoSubItemNotify>(DeleteSubToDoItemAsync);
-        ChangeToDoItemCommand = CreateCommandFromTask<ToDoSubItemNotify>(ChangeToDoItem);
         SwitchPaneCommand = CreateCommand(SwitchPane);
     }
 
     public ICommand SearchCommand { get; }
-    public ICommand DeleteSubToDoItemCommand { get; }
-    public ICommand ChangeToDoItemCommand { get; }
-    public ICommand ChangeToActiveDoItemCommand { get; }
-    public ICommand CompleteSubToDoItemCommand { get; }
     public ICommand SwitchPaneCommand { get; }
 
     public string SearchText
@@ -64,35 +54,5 @@ public class SearchViewModel : RoutableViewModelBase, IRefreshToDoItem
     {
         var items = await ToDoService.SearchToDoSubItemsAsync(SearchText);
         ToDoSubItemsView.ViewModel.ThrowIfNull().UpdateItems(Mapper.Map<IEnumerable<ToDoSubItemNotify>>(items), this);
-    }
-
-    private Task ChangeToActiveDoItem(ActiveToDoItemNotify item)
-    {
-        return ToDoService.NavigateToToDoItemViewModel(item.Id, Navigator);
-    }
-
-    private Task ChangeToDoItem(ToDoSubItemNotify subItemValue)
-    {
-        return ToDoService.NavigateToToDoItemViewModel(subItemValue.Id, Navigator);
-    }
-
-    private async Task DeleteSubToDoItemAsync(ToDoSubItemNotify subItemValue)
-    {
-        await ToDoService.DeleteToDoItemAsync(subItemValue.Id);
-        await RefreshToDoItemAsync();
-    }
-
-    private async Task CompleteSubToDoItemAsync(ToDoSubItemNotify subItemValue)
-    {
-        await DialogViewer.ShowDialogAsync<CompleteToDoItemView>(
-            view =>
-            {
-                var viewModel = view.ViewModel.ThrowIfNull();
-                viewModel.IsDialog = true;
-                viewModel.Item = subItemValue;
-            }
-        );
-
-        await RefreshToDoItemAsync();
     }
 }

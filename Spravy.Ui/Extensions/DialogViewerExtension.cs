@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Spravy.Domain.Extensions;
 using Spravy.Ui.Interfaces;
+using Spravy.Ui.Views;
 
 namespace Spravy.Ui.Extensions;
 
@@ -25,7 +26,7 @@ public static class DialogViewerExtension
             setup
         );
     }
-    
+
     public static Task ShowDateTimeConfirmDialogAsync(
         this IDialogViewer dialogViewer,
         Func<DateTime, Task> confirmTask,
@@ -42,5 +43,13 @@ public static class DialogViewerExtension
             view => confirmTask.Invoke(view.SelectedDate.ThrowIfNullStruct()),
             setup
         );
+    }
+
+    public static Task ShowCompleteToDoItemDialogAsync(
+        this IDialogViewer dialogViewer,
+        Action<CompleteToDoItemView> setup
+    )
+    {
+        return dialogViewer.ShowDialogAsync(setup);
     }
 }

@@ -1,108 +1,113 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Ninject;
-using ReactiveUI;
-using Spravy.ToDo.Domain.Interfaces;
-using Spravy.Ui.Interfaces;
+using Avalonia.Collections;
+using Avalonia.Input;
+using Spravy.Domain.Extensions;
+using Spravy.Domain.Models;
+using Spravy.Ui.Enums;
 using Spravy.Ui.Models;
+using Spravy.Ui.Views;
 
 namespace Spravy.Ui.ViewModels;
 
 public class CompleteToDoItemViewModel : ViewModelBase
 {
-    private ToDoSubItemNotify? item;
+    private static readonly Dictionary<CompleteStatus, KeyGesture> keys = new()
+    {
+        {
+            CompleteStatus.Complete, new KeyGesture(Key.C)
+        },
+        {
+            CompleteStatus.Incomplete, new KeyGesture(Key.I)
+        },
+        {
+            CompleteStatus.Fail, new KeyGesture(Key.F)
+        },
+        {
+            CompleteStatus.Skip, new KeyGesture(Key.S)
+        },
+    };
+
+    private CompleteToDoItemView? view;
 
     public CompleteToDoItemViewModel()
     {
-        SkipToDoItemCommand = CreateCommandFromTask(SkipToDoItemAsync);
-        CompleteToDoItemCommand = CreateCommandFromTask(CompleteToDoItemAsync);
-        IncompleteToDoItemCommand = CreateCommandFromTask(IncompleteToDoItemAsync);
-        FailToDoItemCommand = CreateCommandFromTask(FailToDoItemAsync);
-        ChangeCompleteStatusToDoItemCommand = CreateCommandFromTask(ChangeCompleteStatusToDoItemAsync);
+        CompleteCommand = CreateCommandFromTask<CompleteStatus>(CompleteAsync);
+        InitializedCommand = CreateCommand<CompleteToDoItemView>(Initialized);
     }
 
-    public ToDoSubItemNotify? Item
+    public AvaloniaList<Ref<CompleteStatus>> CompleteStatuses { get; } = new();
+    public ICommand CompleteCommand { get; }
+    public ICommand InitializedCommand { get; }
+    public Func<CompleteStatus, Task>? Complete { get; set; }
+
+    private void Initialized(CompleteToDoItemView args)
     {
-        get => item;
-        set => this.RaiseAndSetIfChanged(ref item, value);
+        view = args;
+        UpdateKeyBindings();
     }
 
-    public ICommand CompleteToDoItemCommand { get; }
-    public ICommand IncompleteToDoItemCommand { get; }
-    public ICommand SkipToDoItemCommand { get; }
-    public ICommand FailToDoItemCommand { get; }
-    public ICommand ChangeCompleteStatusToDoItemCommand { get; }
-
-    [Inject]
-    public required IToDoService ToDoService { get; init; }
-
-    private async Task FailToDoItemAsync()
+    private Task CompleteAsync(CompleteStatus status)
     {
-        if (Item is null)
-        {
-            return;
-        }
-
-        await ToDoService.FailToDoItemAsync(Item.Id);
-        BackCommand.Execute(null);
+        return Complete.ThrowIfNull().Invoke(status);
     }
 
-    private async Task SkipToDoItemAsync()
+    public void SetAllStatus()
     {
-        if (Item is null)
-        {
-            return;
-        }
-
-        await ToDoService.SkipToDoItemAsync(Item.Id);
-        BackCommand.Execute(null);
+        CompleteStatuses.Clear();
+        CompleteStatuses.AddRange(Enum.GetValues<CompleteStatus>().Select(x => new Ref<CompleteStatus>(x)));
+        UpdateKeyBindings();
     }
 
-    private async Task ChangeCompleteStatusToDoItemAsync()
+    public void SetCompleteStatus()
     {
-        if (Item is null)
-        {
-            return;
-        }
+        CompleteStatuses.Clear();
 
-        if (Item is IIsCompletedToDoItem completed)
-        {
-            if (completed.IsCompleted)
+        CompleteStatuses.AddRange(
+            new Ref<CompleteStatus>[]
             {
-                await ToDoService.UpdateToDoItemCompleteStatusAsync(Item.Id, false);
+                new(CompleteStatus.Complete), new(CompleteStatus.Skip), new(CompleteStatus.Fail),
             }
-            else
+        );
+
+        UpdateKeyBindings();
+    }
+
+    public void SetIncompleteStatus()
+    {
+        CompleteStatuses.Clear();
+
+        CompleteStatuses.AddRange(
+            new Ref<CompleteStatus>[]
             {
-                await ToDoService.UpdateToDoItemCompleteStatusAsync(Item.Id, true);
+                new(CompleteStatus.Incomplete), new(CompleteStatus.Skip), new(CompleteStatus.Fail),
             }
-        }
-        else
-        {
-            await ToDoService.UpdateToDoItemCompleteStatusAsync(Item.Id, true);
-        }
+        );
 
-        BackCommand.Execute(null);
+        UpdateKeyBindings();
     }
 
-    private async Task CompleteToDoItemAsync()
+    private void UpdateKeyBindings()
     {
-        if (Item is null)
+        if (view is null)
         {
             return;
         }
 
-        await ToDoService.UpdateToDoItemCompleteStatusAsync(Item.Id, true);
-        BackCommand.Execute(null);
-    }
+        view.KeyBindings.Clear();
 
-    private async Task IncompleteToDoItemAsync()
-    {
-        if (Item is null)
-        {
-            return;
-        }
-
-        await ToDoService.UpdateToDoItemCompleteStatusAsync(Item.Id, false);
-        BackCommand.Execute(null);
+        view.KeyBindings.AddRange(
+            CompleteStatuses.Select(
+                x => new KeyBinding
+                {
+                    [KeyBinding.CommandProperty] = CompleteCommand,
+                    [KeyBinding.CommandParameterProperty] = x,
+                    [KeyBinding.GestureProperty] = keys[x.Value],
+                }
+            )
+        );
     }
 }

@@ -15,7 +15,7 @@
     <Design.DataContext>
         <viewModels:ToDoSubItemsViewModel />
     </Design.DataContext>
-    
+
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
             <InvokeCommandAction Command="{Binding InitializedCommand}" />
@@ -75,41 +75,62 @@
     <Panel>
         <ScrollViewer Name="{x:Static views:ToDoSubItemsView.MainScrollViewerName}">
             <StackPanel>
-                <ListBox SelectionMode="Single" 
+                <WrapPanel Orientation="Horizontal">
+                    <Button Command="{Binding CompleteSelectedToDoItemsCommand }">
+                        <avalonia:MaterialIcon Kind="Checks" />
+                    </Button>
+                </WrapPanel>
+
+                <ListBox SelectionMode="Multiple"
                          Margin="5"
                          ItemsSource="{Binding CurrentToDoItems}"
-                         IsVisible="{Binding CurrentToDoItems.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
-                
+                         IsVisible="{Binding CurrentToDoItems.Count, Converter={StaticResource Int32ToIsVisibleConverter}}"
+                         SelectedItems="{Binding SelectedCurrentToDoItems}" />
+
                 <Panel>
                     <UniformGrid Classes="adaptive" Rows="1">
-                        <ListBox Classes="ItemsDragAndDrop" SelectionMode="Single" Margin="5"
+                        <ListBox Classes="ItemsDragAndDrop"
+                                 SelectionMode="Multiple"
+                                 Margin="5"
                                  ItemsSource="{Binding Missed}"
+                                 SelectedItems="{Binding SelectedMissed}"
                                  IsVisible="{Binding Missed.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
 
                         <ListBox Classes="ItemsDragAndDrop"
-                                 SelectionMode="Single"
+                                 SelectionMode="Multiple"
                                  Margin="5"
                                  ItemsSource="{Binding ReadyForCompleted}"
+                                 SelectedItems="{Binding SelectedReadyForCompleted}"
                                  IsVisible="{Binding ReadyForCompleted.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
 
-                        <ListBox Classes="ItemsDragAndDrop" SelectionMode="Single" Margin="5"
+                        <ListBox Classes="ItemsDragAndDrop"
+                                 SelectionMode="Multiple"
+                                 Margin="5"
                                  ItemsSource="{Binding Completed}"
+                                 SelectedItems="{Binding SelectedCompleted}"
                                  IsVisible="{Binding Completed.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
                     </UniformGrid>
 
                     <StackPanel Classes="adaptive">
-                        <ListBox Classes="ItemsDragAndDrop" SelectionMode="Single" Margin="5"
+                        <ListBox Classes="ItemsDragAndDrop"
+                                 SelectionMode="Multiple"
+                                 Margin="5"
                                  ItemsSource="{Binding Missed}"
+                                 SelectedItems="{Binding SelectedMissed}"
                                  IsVisible="{Binding Missed.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
 
                         <ListBox Classes="ItemsDragAndDrop"
-                                 SelectionMode="Single"
+                                 SelectionMode="Multiple"
                                  Margin="5"
                                  ItemsSource="{Binding ReadyForCompleted}"
+                                 SelectedItems="{Binding SelectedReadyForCompleted}"
                                  IsVisible="{Binding ReadyForCompleted.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
 
-                        <ListBox Classes="ItemsDragAndDrop" SelectionMode="Single" Margin="5"
+                        <ListBox Classes="ItemsDragAndDrop"
+                                 SelectionMode="Multiple"
+                                 Margin="5"
                                  ItemsSource="{Binding Completed}"
+                                 SelectedItems="{Binding SelectedCompleted}"
                                  IsVisible="{Binding Completed.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
                     </StackPanel>
                 </Panel>

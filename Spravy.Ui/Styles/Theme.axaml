@@ -17,4 +17,6 @@
     <StyleInclude Source="DayOfYearSelector.axaml" />
     <StyleInclude Source="ButtonTextBox.axaml" />
     <StyleInclude Source="UserControl.axaml" />
+    <StyleInclude Source="DialogOverlayPopupHost.axaml" />
+    <StyleInclude Source="DialogProgressIndicator.axaml" />
 </Styles>

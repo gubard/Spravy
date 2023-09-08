@@ -597,5 +597,6 @@
         <converters:NullToBooleanConverter x:Key="NullToBooleanConverter" />
         <converters:UInt32ToIsVisibleConverter x:Key="UInt32ToIsVisibleConverter" />
         <converters:Int32ToIsVisibleConverter x:Key="Int32ToIsVisibleConverter" />
+        <converters:CompleteStatusToBrushConverter x:Key="CompleteStatusToBrushConverter" />
     </Application.Resources>
 </Application>

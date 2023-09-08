@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using Ninject;
 using Spravy.Domain.Extensions;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
+using Spravy.Ui.Enums;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
@@ -31,12 +33,17 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
             CreateCommandFromTaskWithDialogProgressIndicator<ToDoSubItemNotify>(RemoveCurrentToDoItemAsync);
         ChangeToActiveDoItemCommand = CreateCommandFromTask<ActiveToDoItemNotify>(ChangeToActiveDoItemAsync);
         InitializedCommand = CreateCommandFromTaskWithDialogProgressIndicator(InitializedAsync);
+        CompleteSelectedToDoItemsCommand = CreateCommandFromTask(CompleteSelectedToDoItemsAsync);
     }
 
     public AvaloniaList<ToDoSubItemNotify> Missed { get; } = new();
     public AvaloniaList<ToDoSubItemNotify> ReadyForCompleted { get; } = new();
     public AvaloniaList<ToDoSubItemNotify> Completed { get; } = new();
     public AvaloniaList<ToDoSubItemNotify> CurrentToDoItems { get; } = new();
+    public AvaloniaList<ToDoSubItemNotify> SelectedMissed { get; } = new();
+    public AvaloniaList<ToDoSubItemNotify> SelectedReadyForCompleted { get; } = new();
+    public AvaloniaList<ToDoSubItemNotify> SelectedCompleted { get; } = new();
+    public AvaloniaList<ToDoSubItemNotify> SelectedCurrentToDoItems { get; } = new();
     public ICommand CompleteSubToDoItemCommand { get; }
     public ICommand DeleteSubToDoItemCommand { get; }
     public ICommand ChangeToDoItemCommand { get; }
@@ -44,6 +51,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
     public ICommand RemoveSubToDoItemFromCurrentCommand { get; }
     public ICommand ChangeToActiveDoItemCommand { get; }
     public ICommand InitializedCommand { get; }
+    public ICommand CompleteSelectedToDoItemsCommand { get; }
 
     [Inject]
     public required IToDoService ToDoService { get; set; }
@@ -51,23 +59,226 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
     [Inject]
     public required IMapper Mapper { get; set; }
 
+    private Task CompleteSelectedToDoItemsAsync()
+    {
+        return DialogViewer.ShowDialogAsync<CompleteToDoItemView>(
+            view =>
+            {
+                var viewModel = view.ViewModel.ThrowIfNull();
+                viewModel.IsDialog = true;
+                
+                viewModel.SetAllStatus();
+
+                viewModel.Complete = async status =>
+                {
+                    await CompleteAsync(SelectedCompleted, status).WhenAll();
+                    await CompleteAsync(SelectedMissed, status).WhenAll();
+                    await CompleteAsync(SelectedCurrentToDoItems, status).WhenAll();
+                    await CompleteAsync(SelectedReadyForCompleted, status).WhenAll();
+                    await RefreshToDoItemAsync();
+                    DialogViewer.CloseDialog();
+                };
+            }
+        );
+    }
+
     public Task RefreshToDoItemAsync()
     {
         return Task.WhenAll(InitializedAsync(), refreshToDoItem.ThrowIfNull().RefreshToDoItemAsync());
     }
 
-    private async Task CompleteSubToDoItemAsync(ToDoSubItemNotify subItemValue)
+    private Task CompleteSubToDoItemAsync(ToDoSubItemNotify subItemValue)
     {
-        await DialogViewer.ShowDialogAsync<CompleteToDoItemView>(
+        return DialogViewer.ShowDialogAsync<CompleteToDoItemView>(
             view =>
             {
                 var viewModel = view.ViewModel.ThrowIfNull();
-                viewModel.IsDialog = true;
-                viewModel.Item = subItemValue;
+                switch (subItemValue)
+                {
+                    case ToDoSubItemPeriodicityNotify:
+                        viewModel.SetCompleteStatus();
+                        break;
+                    case ToDoSubItemPeriodicityOffsetNotify:
+                        viewModel.SetCompleteStatus();
+                        break;
+                    case ToDoSubItemPlannedNotify toDoSubItemPlannedNotify:
+                        if (toDoSubItemPlannedNotify.IsCompleted)
+                        {
+                            viewModel.SetIncompleteStatus();
+                        }
+                        else
+                        {
+                            viewModel.SetCompleteStatus();
+                        }
+
+                        break;
+                    case ToDoSubItemValueNotify toDoSubItemValueNotify:
+                        if (toDoSubItemValueNotify.IsCompleted)
+                        {
+                            viewModel.SetIncompleteStatus();
+                        }
+                        else
+                        {
+                            viewModel.SetCompleteStatus();
+                        }
+
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(subItemValue));
+                }
+
+                viewModel.Complete = async status =>
+                {
+                    switch (status)
+                    {
+                        case CompleteStatus.Complete:
+                            await ToDoService.UpdateToDoItemCompleteStatusAsync(subItemValue.Id, true);
+                            break;
+                        case CompleteStatus.Incomplete:
+                            await ToDoService.UpdateToDoItemCompleteStatusAsync(subItemValue.Id, false);
+                            break;
+                        case CompleteStatus.Skip:
+                            await ToDoService.SkipToDoItemAsync(subItemValue.Id);
+                            break;
+                        case CompleteStatus.Fail:
+                            await ToDoService.FailToDoItemAsync(subItemValue.Id);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(status), status, null);
+                    }
+
+                    await RefreshToDoItemAsync();
+                    DialogViewer.CloseDialog();
+                };
             }
         );
+    }
 
-        await RefreshToDoItemAsync();
+    private IEnumerable<Task> CompleteAsync(IEnumerable<ToDoSubItemNotify> items, CompleteStatus status)
+    {
+        switch (status)
+        {
+            case CompleteStatus.Complete:
+                foreach (var item in items)
+                {
+                    switch (item)
+                    {
+                        case ToDoSubItemPeriodicityNotify:
+                            yield return ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
+                            break;
+                        case ToDoSubItemPeriodicityOffsetNotify:
+                            yield return ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
+                            break;
+                        case ToDoSubItemPlannedNotify toDoSubItemPlannedNotify:
+                            if (!toDoSubItemPlannedNotify.IsCompleted)
+                            {
+                                yield return ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
+                            }
+                            else
+                            {
+                                throw new ArgumentException(nameof(item));
+                            }
+
+                            break;
+                        case ToDoSubItemValueNotify toDoSubItemValueNotify:
+                            if (!toDoSubItemValueNotify.IsCompleted)
+                            {
+                                yield return ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
+                            }
+                            else
+                            {
+                                throw new ArgumentException(nameof(item));
+                            }
+
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(item));
+                    }
+                }
+
+                break;
+            case CompleteStatus.Skip:
+                foreach (var item in items)
+                {
+                    switch (item)
+                    {
+                        case ToDoSubItemPeriodicityNotify:
+                            yield return ToDoService.SkipToDoItemAsync(item.Id);
+                            break;
+                        case ToDoSubItemPeriodicityOffsetNotify:
+                            yield return ToDoService.SkipToDoItemAsync(item.Id);
+                            break;
+                        case ToDoSubItemPlannedNotify:
+                            yield return ToDoService.SkipToDoItemAsync(item.Id);
+                            break;
+                        case ToDoSubItemValueNotify:
+                            yield return ToDoService.SkipToDoItemAsync(item.Id);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(item));
+                    }
+                }
+
+                break;
+            case CompleteStatus.Fail:
+                foreach (var item in items)
+                {
+                    switch (item)
+                    {
+                        case ToDoSubItemPeriodicityNotify:
+                            yield return ToDoService.FailToDoItemAsync(item.Id);
+                            break;
+                        case ToDoSubItemPeriodicityOffsetNotify:
+                            yield return ToDoService.FailToDoItemAsync(item.Id);
+                            break;
+                        case ToDoSubItemPlannedNotify:
+                            yield return ToDoService.FailToDoItemAsync(item.Id);
+                            break;
+                        case ToDoSubItemValueNotify:
+                            yield return ToDoService.FailToDoItemAsync(item.Id);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(item));
+                    }
+                }
+
+                break;
+            case CompleteStatus.Incomplete:
+                foreach (var item in items)
+                {
+                    switch (item)
+                    {
+                        case ToDoSubItemPlannedNotify toDoSubItemPlannedNotify:
+                            if (!toDoSubItemPlannedNotify.IsCompleted)
+                            {
+                                throw new ArgumentException(nameof(item));
+                            }
+                            else
+                            {
+                                yield return ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
+                            }
+
+                            break;
+                        case ToDoSubItemValueNotify toDoSubItemValueNotify:
+                            if (!toDoSubItemValueNotify.IsCompleted)
+                            {
+                                throw new ArgumentException(nameof(item));
+                            }
+                            else
+                            {
+                                yield return ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
+                            }
+
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(item));
+                    }
+                }
+
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(status), status, null);
+        }
     }
 
     private async Task RemoveCurrentToDoItemAsync(ToDoSubItemNotify item)

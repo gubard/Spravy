@@ -10,6 +10,7 @@ using ReactiveUI;
 using Spravy.Domain.Extensions;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Models;
+using Spravy.Ui.Enums;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
@@ -241,18 +242,36 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
         }
     }
 
-    private async Task CompleteToDoItemAsync()
+    private Task CompleteToDoItemAsync()
     {
-        await DialogViewer.ShowDialogAsync<CompleteToDoItemView>(
+        return DialogViewer.ShowCompleteToDoItemDialogAsync(
             view =>
             {
                 var viewModel = view.ViewModel.ThrowIfNull();
-                viewModel.IsDialog = true;
-                viewModel.Item = Mapper.Map<ToDoSubItemNotify>(this);
+                viewModel.SetCompleteStatus();
+
+                viewModel.Complete = async status =>
+                {
+                    switch (status)
+                    {
+                        case CompleteStatus.Complete:
+                            await ToDoService.UpdateToDoItemCompleteStatusAsync(Id, true);
+                            break;
+                        case CompleteStatus.Skip:
+                            await ToDoService.SkipToDoItemAsync(Id);
+                            break;
+                        case CompleteStatus.Fail:
+                            await ToDoService.FailToDoItemAsync(Id);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(status), status, null);
+                    }
+
+                    await RefreshToDoItemAsync();
+                    DialogViewer.CloseDialog();
+                };
             }
         );
-
-        await RefreshToDoItemAsync();
     }
 
     private void UnsubscribeProperties()
