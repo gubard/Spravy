@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using AutoMapper;
 using Avalonia.Collections;
 using Ninject;
 using Spravy.Domain.Extensions;
@@ -29,24 +30,30 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
         RemoveSubToDoItemFromCurrentCommand =
             CreateCommandFromTaskWithDialogProgressIndicator<ToDoSubItemNotify>(RemoveCurrentToDoItemAsync);
         ChangeToActiveDoItemCommand = CreateCommandFromTask<ActiveToDoItemNotify>(ChangeToActiveDoItemAsync);
+        InitializedCommand = CreateCommandFromTaskWithDialogProgressIndicator(InitializedAsync);
     }
 
     public AvaloniaList<ToDoSubItemNotify> Missed { get; } = new();
     public AvaloniaList<ToDoSubItemNotify> ReadyForCompleted { get; } = new();
     public AvaloniaList<ToDoSubItemNotify> Completed { get; } = new();
+    public AvaloniaList<ToDoSubItemNotify> CurrentToDoItems { get; } = new();
     public ICommand CompleteSubToDoItemCommand { get; }
     public ICommand DeleteSubToDoItemCommand { get; }
     public ICommand ChangeToDoItemCommand { get; }
     public ICommand AddSubToDoItemToCurrentCommand { get; }
     public ICommand RemoveSubToDoItemFromCurrentCommand { get; }
     public ICommand ChangeToActiveDoItemCommand { get; }
+    public ICommand InitializedCommand { get; }
 
     [Inject]
     public required IToDoService ToDoService { get; set; }
 
+    [Inject]
+    public required IMapper Mapper { get; set; }
+
     public Task RefreshToDoItemAsync()
     {
-        return refreshToDoItem.ThrowIfNull().RefreshToDoItemAsync();
+        return Task.WhenAll(InitializedAsync(), refreshToDoItem.ThrowIfNull().RefreshToDoItemAsync());
     }
 
     private async Task CompleteSubToDoItemAsync(ToDoSubItemNotify subItemValue)
@@ -60,13 +67,20 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
             }
         );
 
-        await refreshToDoItem.ThrowIfNull().RefreshToDoItemAsync();
+        await RefreshToDoItemAsync();
     }
 
     private async Task RemoveCurrentToDoItemAsync(ToDoSubItemNotify item)
     {
         await ToDoService.RemoveCurrentToDoItemAsync(item.Id);
-        await refreshToDoItem.ThrowIfNull().RefreshToDoItemAsync();
+        await RefreshToDoItemAsync();
+    }
+
+    private async Task InitializedAsync()
+    {
+        var currentToDoItems = await ToDoService.GetCurrentToDoItemsAsync();
+        CurrentToDoItems.Clear();
+        CurrentToDoItems.AddRange(Mapper.Map<IEnumerable<ToDoSubItemNotify>>(currentToDoItems));
     }
 
     private Task DeleteSubToDoItemAsync(ToDoSubItemNotify subItem)
@@ -77,7 +91,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
             {
                 await ToDoService.DeleteToDoItemAsync(view.ViewModel.ThrowIfNull().Item.ThrowIfNull().Id);
                 DialogViewer.CloseDialog();
-                await refreshToDoItem.ThrowIfNull().RefreshToDoItemAsync();
+                await RefreshToDoItemAsync();
             },
             view => view.ViewModel.ThrowIfNull().Item = subItem
         );
@@ -91,7 +105,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
     private async Task AddCurrentToDoItemAsync(ToDoSubItemNotify item)
     {
         await ToDoService.AddCurrentToDoItemAsync(item.Id);
-        await refreshToDoItem.ThrowIfNull().RefreshToDoItemAsync();
+        await RefreshToDoItemAsync();
     }
 
     private Task ChangeToActiveDoItemAsync(ActiveToDoItemNotify item)

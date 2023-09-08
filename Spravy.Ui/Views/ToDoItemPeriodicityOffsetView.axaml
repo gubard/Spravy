@@ -30,12 +30,12 @@
 
             <StackPanel>
                 <Grid ColumnDefinitions="*,*">
-                    <ComboBox Classes="Outline"
+                    <ComboBox Theme="{StaticResource MaterialOutlineComboBox}"
                               assists:ComboBoxAssist.Label="Type"
                               SelectedItem="{Binding Type}"
                               ItemsSource="{Binding ToDoItemTypes}" />
                     <ComboBox Grid.Column="1"
-                              Classes="Outline"
+                              Theme="{StaticResource MaterialOutlineComboBox}"
                               assists:ComboBoxAssist.Label="Type"
                               SelectedItem="{Binding ChildrenType}"
                               ItemsSource="{Binding ChildrenTypes}" />
@@ -67,26 +67,20 @@
                              Text="{Binding YearsOffset}" />
                 </Grid>
 
-                <!--<DatePicker SelectedDate="{Binding DueDate}" />-->
+                <DatePicker SelectedDate="{Binding DueDate}" />
                 <!--<TextBox UseFloatingWatermark="True"
                          Classes="outline dense"
                          Theme="{StaticResource OutlineTextBox}"
                          assists:TextFieldAssist.Label="DueDate"
                          Text="{Binding DueDate}" />-->
-                <controls:EditableTextBlock AcceptsReturn="True"
-                                            AcceptsTab="True"
-                                            TextWrapping="Wrap"
-                                            Text="{Binding DueDate, Mode=TwoWay}"
-                                            Watermark="DueDate"
-                                            Margin="5" />
+                <!--<controls:ButtonTextBox Text="{Binding DueDate}" Label="DueDate" />-->
             </StackPanel>
 
-            <controls:EditableTextBlock AcceptsReturn="True"
-                                        AcceptsTab="True"
-                                        TextWrapping="Wrap"
-                                        Text="{Binding Description, Mode=TwoWay}"
-                                        Watermark="Description"
-                                        Margin="5" />
+            <controls:ButtonTextBox Text="{Binding Description}"
+                                    Label="Description"
+                                    Command="{Binding ChangeDescriptionCommand}"
+                                    IsReadOnly="True"
+                                    Kind="Pencil" />
         </StackPanel>
 
         <ContentControl Grid.Row="2" Content="{Binding ToDoSubItemsView}" />

@@ -12,8 +12,9 @@
     </Styles.Resources>
 
     <StyleInclude Source="PathControl.axaml" />
-    <StyleInclude Source="EditableTextBlock.axaml" />
     <StyleInclude Source="DayOfMonthSelector.axaml" />
     <StyleInclude Source="DayOfWeekSelector.axaml" />
     <StyleInclude Source="DayOfYearSelector.axaml" />
+    <StyleInclude Source="ButtonTextBox.axaml" />
+    <StyleInclude Source="UserControl.axaml" />
 </Styles>

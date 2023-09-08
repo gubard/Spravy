@@ -9,6 +9,7 @@
                                 xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
                                 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                 xmlns:views="clr-namespace:Spravy.Ui.Views"
+                                xmlns:controls1="clr-namespace:Spravy.Ui.Controls"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.LoginView"
                                 x:DataType="viewModels:LoginViewModel">
@@ -34,8 +35,7 @@
             <TextBox Grid.Row="1"
                      Name="{x:Static views:LoginView.PasswordTextBoxName}"
                      UseFloatingWatermark="True"
-                     Classes="out
-                     line dense revealPasswordButton"
+                     Classes="outline dense revealPasswordButton"
                      Theme="{StaticResource OutlineTextBox}"
                      assists:TextFieldAssist.Label="Password"
                      PasswordChar="*"

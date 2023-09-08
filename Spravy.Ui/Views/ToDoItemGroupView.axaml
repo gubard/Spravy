@@ -26,16 +26,15 @@
             <ContentControl Content="{Binding Path}"
                             Margin="5"
                             HorizontalAlignment="Center" />
-            <ComboBox Classes="Outline"
+            <ComboBox Theme="{StaticResource MaterialOutlineComboBox}"
                       assists:ComboBoxAssist.Label="Type"
                       SelectedItem="{Binding Type}"
                       ItemsSource="{Binding ToDoItemTypes}" />
-            <controls1:EditableTextBlock AcceptsReturn="True"
-                                         AcceptsTab="True"
-                                         TextWrapping="Wrap"
-                                         Text="{Binding Description, Mode=TwoWay}"
-                                         Watermark="Description"
-                                         Margin="5" />
+            <controls1:ButtonTextBox Text="{Binding Description}"
+                                     Label="Description"
+                                     Command="{Binding ChangeDescriptionCommand}"
+                                     IsReadOnly="True"
+                                     Kind="Pencil" /> 
         </StackPanel>
 
         <ContentControl Grid.Row="2" Content="{Binding ToDoSubItemsView}" />

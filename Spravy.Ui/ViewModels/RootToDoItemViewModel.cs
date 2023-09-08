@@ -23,11 +23,9 @@ public class RootToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChange
     {
         InitializedCommand = CreateCommandFromTaskWithDialogProgressIndicator(InitializedAsync);
         AddToDoItemCommand = CreateCommandFromTask(AddToDoItemAsync);
-        ToCurrentItemsCommand = CreateCommand(ToCurrentItems);
         SwitchPaneCommand = CreateCommand(SwitchPane);
     }
 
-    public ICommand ToCurrentItemsCommand { get; }
     public ICommand InitializedCommand { get; }
     public ICommand AddToDoItemCommand { get; }
     public ICommand SwitchPaneCommand { get; }
@@ -47,11 +45,6 @@ public class RootToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChange
     private void SwitchPane()
     {
         SplitView.IsPaneOpen = !SplitView.IsPaneOpen;
-    }
-
-    private void ToCurrentItems()
-    {
-        Navigator.NavigateTo<CurrentDoToItemsViewModel>();
     }
 
     private Task InitializedAsync()

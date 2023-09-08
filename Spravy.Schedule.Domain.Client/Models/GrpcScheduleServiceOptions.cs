@@ -1,12 +1,12 @@
 using Spravy.Client.Enums;
 using Spravy.Domain.Interfaces;
 
-namespace Spravy.ToDo.Domain.Client.Models;
+namespace Spravy.Schedule.Domain.Client.Models;
 
-public class GrpcToDoServiceOptions : IOptionsValue
+public class GrpcScheduleServiceOptions : IOptionsValue
 {
-    public static string Section => "GrpcToDoService";
-    
+    public static string Section => "GrpcScheduleService";
+
     public string Host { get; set; }
     public GrpcChannelType ChannelType { get; set; }
     public ChannelCredentialType ChannelCredentialType { get; set; }

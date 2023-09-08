@@ -17,7 +17,7 @@
         <Button Command="{Binding ToRootToDoItemViewCommand}">
             <Grid ColumnDefinitions="Auto,Auto">
                 <avalonia:MaterialIcon Kind="Checks" />
-                <TextBlock Grid.Column="1" Text="Search" />
+                <TextBlock Grid.Column="1" Text="To Do Items" />
             </Grid>
         </Button>
 
@@ -25,6 +25,20 @@
             <Grid ColumnDefinitions="Auto,Auto">
                 <avalonia:MaterialIcon Kind="Search" />
                 <TextBlock Grid.Column="1" Text="Search" />
+            </Grid>
+        </Button>
+        
+        <Button Command="{Binding ToTimersViewCommand}">
+            <Grid ColumnDefinitions="Auto,Auto">
+                <avalonia:MaterialIcon Kind="Timer" />
+                <TextBlock Grid.Column="1" Text="Timers" />
+            </Grid>
+        </Button>
+        
+        <Button Command="{Binding LogoutCommand}">
+            <Grid ColumnDefinitions="Auto,Auto">
+                <avalonia:MaterialIcon Kind="Logout" />
+                <TextBlock Grid.Column="1" Text="Logout" />
             </Grid>
         </Button>
     </StackPanel>

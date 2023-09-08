@@ -18,6 +18,9 @@ using Spravy.Authentication.Domain.Models;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Services;
+using Spravy.Schedule.Domain.Client.Models;
+using Spravy.Schedule.Domain.Client.Services;
+using Spravy.Schedule.Domain.Interfaces;
 using Spravy.ToDo.Domain.Client.Models;
 using Spravy.ToDo.Domain.Client.Services;
 using Spravy.ToDo.Domain.Interfaces;
@@ -58,6 +61,7 @@ public class UiModule : NinjectModule
         Bind<DayOfWeekSelector>().ToSelf();
         Bind<DayOfMonthSelector>().ToSelf();
         Bind<IAuthenticationService>().To<GrpcAuthenticationService>();
+        Bind<IScheduleService>().To<GrpcScheduleService>();
         Bind<IKeeper<TokenResult>>().To<StaticKeeper<TokenResult>>();
         Bind<Control>().To<MainView>().OnActivation((c, x) => x.DataContext = c.Kernel.Get<MainViewModel>());
         RegisterViewModels(this);
@@ -80,14 +84,18 @@ public class UiModule : NinjectModule
 
         Bind<SplitView>()
             .ToMethod(
-                x => new SplitView
+                x =>
                 {
-                    Pane = x.Kernel.Get<PaneView>(),
-                    Content = x.Kernel.Get<RoutedViewHost>(),
-                    OpenPaneLength = 200,
-                    PanePlacement = SplitViewPanePlacement.Left,
+                    var splitView = new SplitView
+                    {
+                        OpenPaneLength = 200,
+                        PanePlacement = SplitViewPanePlacement.Left,
+                    };
+
+                    return splitView;
                 }
-            );
+            )
+            .InSingletonScope();
 
         Bind<MapperConfiguration>()
             .ToConstructor(
@@ -126,13 +134,26 @@ public class UiModule : NinjectModule
                     }
                 }
             );
+
         Bind<GrpcToDoServiceOptions>()
             .ToMethod(
                 x =>
                 {
                     var options = x.Kernel.Get<IConfiguration>()
-                        .GetSection("GrpcToDoService")
+                        .GetRequiredSection(GrpcToDoServiceOptions.Section)
                         .Get<GrpcToDoServiceOptions>();
+
+                    return options;
+                }
+            );
+
+        Bind<GrpcScheduleServiceOptions>()
+            .ToMethod(
+                x =>
+                {
+                    var options = x.Kernel.Get<IConfiguration>()
+                        .GetRequiredSection(GrpcScheduleServiceOptions.Section)
+                        .Get<GrpcScheduleServiceOptions>();
 
                     return options;
                 }
@@ -143,7 +164,7 @@ public class UiModule : NinjectModule
                 x =>
                 {
                     var options = x.Kernel.Get<IConfiguration>()
-                        .GetSection("GrpcAuthenticationService")
+                        .GetRequiredSection("GrpcAuthenticationService")
                         .Get<GrpcAuthenticationServiceOptions>();
 
                     return options;

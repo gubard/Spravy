@@ -16,14 +16,14 @@ public class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        DiHelper.Kernel = new StandardKernel(UiModule.Default, DesktopModule.Default);
-
         BuildAvaloniaApp()
             .StartWithClassicDesktopLifetime(args);
     }
 
     public static AppBuilder BuildAvaloniaApp()
     {
+        DiHelper.Kernel = new StandardKernel(UiModule.Default, DesktopModule.Default);
+
         return AppBuilder.Configure(() => DiHelper.Kernel.ThrowIfNull().Get<Application>())
             .UsePlatformDetect()
             .UseReactiveUI()

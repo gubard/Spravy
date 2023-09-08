@@ -7,6 +7,7 @@
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                 xmlns:controls1="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
                                 xmlns:controls="clr-namespace:Spravy.Ui.Controls"
+                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.ToDoItemHeaderView"
                                 x:DataType="viewModels:ToDoItemHeaderViewModel">
@@ -15,10 +16,18 @@
     </Design.DataContext>
 
     <controls1:ColorZone Mode="PrimaryMid">
-        <Grid ColumnDefinitions="Auto, *">
-            <controls:EditableTextBlock Text="{Binding Item.Name, Mode=TwoWay}" />
+        <Grid ColumnDefinitions="Auto,Auto,*">
+            <Button Command="{Binding SwitchPaneCommand}">
+                <avalonia:MaterialIcon Kind="Menu" />
+            </Button>
 
-            <ItemsControl Grid.Column="1"
+            <controls:ButtonTextBox Grid.Column="1"
+                                    Text="{Binding Item.Name}"
+                                    Command="{Binding ChangeNameCommand}"
+                                    IsReadOnly="True"
+                                    Kind="Pencil" />
+
+            <ItemsControl Grid.Column="2"
                           HorizontalAlignment="Right"
                           VerticalAlignment="Center"
                           ItemsSource="{Binding Commands}">

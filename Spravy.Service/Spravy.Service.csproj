@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
@@ -8,28 +7,13 @@
 
     <ItemGroup>
       <PackageReference Include="AutoMapper" Version="12.0.1" />
-      <PackageReference Include="Grpc.AspNetCore" Version="2.56.0" />
-      <PackageReference Include="Grpc.AspNetCore.Web" Version="2.56.0" />
+      <PackageReference Include="Grpc.AspNetCore" Version="2.57.0" />
+      <PackageReference Include="Grpc.AspNetCore.Web" Version="2.57.0" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.10" />
       <PackageReference Include="Serilog.AspNetCore" Version="7.0.0" />
     </ItemGroup>
 
-
-
     <ItemGroup>
       <ProjectReference Include="..\Spravy.Domain\Spravy.Domain.csproj" />
     </ItemGroup>
-
-
-
-
-
-
-
-
-
-
-
-
-
 </Project>

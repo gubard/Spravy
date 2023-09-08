@@ -5,14 +5,25 @@
                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
+                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.TimersView"
                                 x:DataType="viewModels:TimersViewModel">
     <Design.DataContext>
         <viewModels:TimersViewModel />
     </Design.DataContext>
-    
-    <ListBox ItemsSource="{Binding Timers}" SelectionMode="Single">
-        
-    </ListBox>
+
+    <Grid RowDefinitions="Auto,*">
+        <WrapPanel>
+            <Button Command="{Binding SwitchPaneCommand}">
+                <avalonia:MaterialIcon Kind="Menu" />
+            </Button>
+            
+            <Button Command="{Binding AddTimerCommand}">
+                <avalonia:MaterialIcon Kind="Plus" />
+            </Button>
+        </WrapPanel>
+
+        <ListBox Grid.Row="1" ItemsSource="{Binding Timers}" SelectionMode="Single" />
+    </Grid>
 </reactiveUi:ReactiveUserControl>

@@ -36,6 +36,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
     {
         toCurrentCommand = new(MaterialIconKind.Star, RemoveToDoItemFromCurrentCommand);
 
+        ChangeDescriptionCommand = CreateCommandFromTask(ChangeDescriptionAsync);
         AddSubToDoItemToCurrentCommand =
             CreateCommandFromTaskWithDialogProgressIndicator<ToDoSubItemNotify>(AddCurrentToDoItemAsync);
         RemoveSubToDoItemFromCurrentCommand =
@@ -54,7 +55,6 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
         AddToDoItemToCurrentCommand = CreateCommandFromTaskWithDialogProgressIndicator(AddToDoItemToCurrentAsync);
         RemoveToDoItemFromCurrentCommand =
             CreateCommandFromTaskWithDialogProgressIndicator(RemoveToDoItemFromCurrentAsync);
-        ToCurrentItemsCommand = CreateCommand(ToCurrentItems);
         ChangeToActiveDoItemCommand = CreateCommandFromTask<ActiveToDoItemNotify>(ChangeToActiveDoItemAsync);
         ToLeafToDoItemsCommand = CreateCommand(ToLeafToDoItems);
         ChangeRootItemCommand = CreateCommandFromTask(ChangeRootItemAsync);
@@ -81,7 +81,6 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
 
         Commands.Add(toCurrentCommand);
         Commands.Add(new(MaterialIconKind.Plus, AddToDoItemCommand));
-        Commands.Add(new(MaterialIconKind.Creation, ToCurrentItemsCommand));
         Commands.Add(new(MaterialIconKind.Leaf, ToLeafToDoItemsCommand));
         Commands.Add(new(MaterialIconKind.SwapHorizontal, ChangeRootItemCommand));
         Commands.Add(new(MaterialIconKind.FamilyTree, ToDoItemToRootCommand));
@@ -91,6 +90,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
     public AvaloniaList<TypeOfPeriodicity> TypeOfPeriodicities { get; }
     public AvaloniaList<ToDoItemType> ToDoItemTypes { get; }
     public AvaloniaList<ToDoItemChildrenType> ChildrenTypes { get; }
+    public ICommand ChangeDescriptionCommand { get; }
     public ICommand CompleteSubToDoItemCommand { get; }
     public ICommand DeleteSubToDoItemCommand { get; }
     public ICommand ChangeToDoItemCommand { get; }
@@ -102,7 +102,6 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
     public ICommand AddToDoItemCommand { get; }
     public ICommand ChangeToDoItemByPathCommand { get; }
     public ICommand ToRootItemCommand { get; }
-    public ICommand ToCurrentItemsCommand { get; }
     public ICommand ToLeafToDoItemsCommand { get; }
     public ICommand ChangeRootItemCommand { get; }
     public ICommand ToDoItemToRootCommand { get; }
@@ -159,6 +158,24 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
 
     public abstract Task RefreshToDoItemAsync();
 
+    private Task ChangeDescriptionAsync()
+    {
+        return DialogViewer.ShowStringConfirmDialogAsync(
+            str =>
+            {
+                DialogViewer.CloseDialog();
+                Description = str;
+
+                return Task.CompletedTask;
+            },
+            box =>
+            {
+                box.Text = Description;
+                box.Watermark = "Description";
+            }
+        );
+    }
+
     private void Initialized()
     {
         var viewModel = ToDoItemHeaderView.ViewModel.ThrowIfNull();
@@ -193,11 +210,6 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
     private Task ChangeToActiveDoItemAsync(ActiveToDoItemNotify item)
     {
         return ToDoService.NavigateToToDoItemViewModel(item.Id, Navigator);
-    }
-
-    private void ToCurrentItems()
-    {
-        Navigator.NavigateTo<CurrentDoToItemsViewModel>();
     }
 
     private async Task RemoveToDoItemFromCurrentAsync()

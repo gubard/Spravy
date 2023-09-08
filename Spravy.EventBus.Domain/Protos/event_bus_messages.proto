@@ -24,3 +24,8 @@ message SubscribeEventsReply {
 message CreateUserEvent {
   string Token = 1;
 }
+
+message ChangeToDoItemIsCompletedEvent {
+  bytes ToDoItemId = 1;
+  bool IsCompleted = 2;
+}
