@@ -10,6 +10,7 @@ using ReactiveUI;
 using Spravy.Domain.Extensions;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Models;
+using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 using Spravy.Ui.Views;
@@ -28,11 +29,13 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
     public ToDoItemPeriodicityOffsetViewModel() : base("to-do-item-periodicity-offset")
     {
         CompleteToDoItemCommand = CreateCommandFromTaskWithDialogProgressIndicator(CompleteToDoItemAsync);
+        ChangeDueDateCommand = CreateCommandFromTask(ChangeDueDate);
         SubscribeProperties();
         Commands.Add(new(MaterialIconKind.Check, CompleteToDoItemCommand));
     }
 
     public ICommand CompleteToDoItemCommand { get; }
+    public ICommand ChangeDueDateCommand { get; }
 
     public ToDoItemChildrenType ChildrenType
     {
@@ -68,6 +71,20 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
     {
         get => yearsOffset;
         set => this.RaiseAndSetIfChanged(ref yearsOffset, value);
+    }
+
+    private Task ChangeDueDate()
+    {
+        return DialogViewer.ShowDateTimeConfirmDialogAsync(
+            value =>
+            {
+                DialogViewer.CloseDialog();
+                DueDate = value;
+
+                return Task.CompletedTask;
+            },
+            calendar => calendar.SelectedDate = DueDate.Date
+        );
     }
 
     public override async Task RefreshToDoItemAsync()

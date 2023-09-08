@@ -33,12 +33,18 @@
                                     CommandParameter="{TemplateBinding CommandParameter}"
                                     Command="{TemplateBinding Command}"
                                     Margin="4,15,4,4">
-                                <avalonia:MaterialIcon Name="{x:Static controls:ButtonTextBox.MaterialIconName}" Kind="{TemplateBinding Kind}" />
+                                <avalonia:MaterialIcon Name="{x:Static controls:ButtonTextBox.MaterialIconName}"
+                                                       Kind="{TemplateBinding Kind}" />
                             </Button>
                         </TextBox.InnerLeftContent>
                     </TextBox>
                 </ControlTemplate>
             </Setter>
+
+            <Style Selector="^.edit">
+                <Setter Property="IsReadOnly" Value="True" />
+                <Setter Property="Kind" Value="Pencil" />
+            </Style>
         </ControlTheme>
     </Styles.Resources>
 </Styles>

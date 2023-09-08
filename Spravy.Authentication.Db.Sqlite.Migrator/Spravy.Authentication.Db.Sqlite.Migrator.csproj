@@ -18,11 +18,4 @@
       <ProjectReference Include="..\Spravy.Authentication.Db.Sqlite\Spravy.Authentication.Db.Sqlite.csproj" />
       <ProjectReference Include="..\Spravy.Domain\Spravy.Domain.csproj" />
     </ItemGroup>
-
-
-    <ItemGroup>
-      <None Update="appsettings.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-    </ItemGroup>
 </Project>

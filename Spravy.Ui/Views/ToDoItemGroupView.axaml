@@ -33,8 +33,7 @@
             <controls1:ButtonTextBox Text="{Binding Description}"
                                      Label="Description"
                                      Command="{Binding ChangeDescriptionCommand}"
-                                     IsReadOnly="True"
-                                     Kind="Pencil" /> 
+                                     Classes="edit" /> 
         </StackPanel>
 
         <ContentControl Grid.Row="2" Content="{Binding ToDoSubItemsView}" />

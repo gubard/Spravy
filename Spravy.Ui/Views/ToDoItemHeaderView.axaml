@@ -24,8 +24,7 @@
             <controls:ButtonTextBox Grid.Column="1"
                                     Text="{Binding Item.Name}"
                                     Command="{Binding ChangeNameCommand}"
-                                    IsReadOnly="True"
-                                    Kind="Pencil" />
+                                    Classes="edit" />
 
             <ItemsControl Grid.Column="2"
                           HorizontalAlignment="Right"

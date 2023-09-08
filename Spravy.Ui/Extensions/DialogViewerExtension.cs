@@ -25,4 +25,22 @@ public static class DialogViewerExtension
             setup
         );
     }
+    
+    public static Task ShowDateTimeConfirmDialogAsync(
+        this IDialogViewer dialogViewer,
+        Func<DateTime, Task> confirmTask,
+        Action<Calendar>? setup = null
+    )
+    {
+        return dialogViewer.ShowConfirmDialogAsync(
+            _ =>
+            {
+                dialogViewer.CloseDialog();
+
+                return Task.CompletedTask;
+            },
+            view => confirmTask.Invoke(view.SelectedDate.ThrowIfNullStruct()),
+            setup
+        );
+    }
 }

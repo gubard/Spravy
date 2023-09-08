@@ -13,6 +13,7 @@ using Spravy.Domain.Extensions;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
+using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 using Spravy.Ui.Views;
@@ -29,6 +30,7 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
 
     public ToDoItemPeriodicityViewModel() : base("to-do-item-periodicity")
     {
+        ChangeDueDateCommand = CreateCommandFromTask(ChangeDueDate);
         CompleteToDoItemCommand = CreateCommandFromTaskWithDialogProgressIndicator(CompleteToDoItemAsync);
         SubscribeProperties();
         Commands.Add(new(MaterialIconKind.Check, CompleteToDoItemCommand));
@@ -38,6 +40,7 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
     public required IKernel Resolver { get; init; }
 
     public ICommand CompleteToDoItemCommand { get; }
+    public ICommand ChangeDueDateCommand { get; }
 
     public ToDoItemChildrenType ChildrenType
     {
@@ -61,6 +64,20 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
     {
         get => dueDate;
         set => this.RaiseAndSetIfChanged(ref dueDate, value);
+    }
+
+    private Task ChangeDueDate()
+    {
+        return DialogViewer.ShowDateTimeConfirmDialogAsync(
+            value =>
+            {
+                DialogViewer.CloseDialog();
+                DueDate = value;
+
+                return Task.CompletedTask;
+            },
+            calendar => calendar.SelectedDate = DueDate.Date
+        );
     }
 
     private async Task CompleteToDoItemAsync()
