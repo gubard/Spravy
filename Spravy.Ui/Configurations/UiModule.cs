@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using AutoMapper;
 using Avalonia;
 using Avalonia.Controls;
@@ -8,19 +6,25 @@ using Avalonia.Controls.Templates;
 using Avalonia.Input.Platform;
 using Avalonia.Layout;
 using Avalonia.ReactiveUI;
-using Microsoft.Extensions.Configuration;
 using Ninject;
 using Ninject.Modules;
 using ReactiveUI;
-using Spravy.Authentication.Domain.Core.Profiles;
+using Spravy.Authentication.Domain.Client.Models;
+using Spravy.Authentication.Domain.Client.Services;
 using Spravy.Authentication.Domain.Interfaces;
+using Spravy.Authentication.Domain.Mapper.Profiles;
 using Spravy.Authentication.Domain.Models;
+using Spravy.Authentication.Domain.Services;
+using Spravy.Client.Interfaces;
+using Spravy.Client.Services;
+using Spravy.Domain.Di.Extensions;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Services;
 using Spravy.Schedule.Domain.Client.Models;
 using Spravy.Schedule.Domain.Client.Services;
 using Spravy.Schedule.Domain.Interfaces;
+using Spravy.Schedule.Domain.Mapper.Profiles;
 using Spravy.ToDo.Domain.Client.Models;
 using Spravy.ToDo.Domain.Client.Services;
 using Spravy.ToDo.Domain.Interfaces;
@@ -50,7 +54,6 @@ public class UiModule : NinjectModule
         Bind<IMapper>().ToConstructor(x => new Mapper(x.Context.Kernel.Get<MapperConfiguration>()));
         Bind<IToDoService>().To<GrpcToDoService>();
         Bind<IExceptionViewModel>().To<ExceptionViewModel>();
-        Bind<IEnumerable<IDataTemplate>>().ToMethod(_ => Enumerable.Empty<IDataTemplate>());
         Bind<Application>().To<App>();
         Bind<IResourceLoader>().To<FileResourceLoader>();
         Bind<AnnuallyPeriodicityViewModel>().ToSelf();
@@ -60,11 +63,23 @@ public class UiModule : NinjectModule
         Bind<DayOfYearSelector>().ToSelf();
         Bind<DayOfWeekSelector>().ToSelf();
         Bind<DayOfMonthSelector>().ToSelf();
+        Bind<ITokenService>().To<TokenService>().InSingletonScope();
         Bind<IAuthenticationService>().To<GrpcAuthenticationService>();
         Bind<IScheduleService>().To<GrpcScheduleService>();
         Bind<IKeeper<TokenResult>>().To<StaticKeeper<TokenResult>>();
+        Bind<IKeeper<Guid>>().To<StaticKeeper<Guid>>();
         Bind<Control>().To<MainView>().OnActivation((c, x) => x.DataContext = c.Kernel.Get<MainViewModel>());
         RegisterViewModels(this);
+        Bind<AppConfiguration>().ToConstructor(x => new AppConfiguration(typeof(LoginViewModel)));
+        Bind<MapperConfiguration>().ToConstructor(x => new MapperConfiguration(SetupMapperConfiguration));
+        Bind<GrpcToDoServiceOptions>().ToMethod(x => x.Kernel.GetOptionsValue<GrpcToDoServiceOptions>());
+        Bind<GrpcScheduleServiceOptions>().ToMethod(x => x.Kernel.GetOptionsValue<GrpcScheduleServiceOptions>());
+        Bind<IDataTemplate>().To<ModuleDataTemplate>();
+        Bind<IMetadataFactory>().To<MetadataFactory>();
+        Bind<IHttpHeaderFactory>().To<TokenHttpHeaderFactory>();
+
+        Bind<GrpcAuthenticationServiceOptions>()
+            .ToMethod(x => x.Kernel.GetOptionsValue<GrpcAuthenticationServiceOptions>());
 
         Bind<IDialogViewer>()
             .ToMethod(
@@ -84,7 +99,7 @@ public class UiModule : NinjectModule
 
         Bind<SplitView>()
             .ToMethod(
-                x =>
+                _ =>
                 {
                     var splitView = new SplitView
                     {
@@ -96,11 +111,6 @@ public class UiModule : NinjectModule
                 }
             )
             .InSingletonScope();
-
-        Bind<MapperConfiguration>()
-            .ToConstructor(
-                x => new MapperConfiguration(SetupMapperConfiguration)
-            );
 
         Bind<Window>()
             .To<MainWindow>()
@@ -134,45 +144,6 @@ public class UiModule : NinjectModule
                     }
                 }
             );
-
-        Bind<GrpcToDoServiceOptions>()
-            .ToMethod(
-                x =>
-                {
-                    var options = x.Kernel.Get<IConfiguration>()
-                        .GetRequiredSection(GrpcToDoServiceOptions.Section)
-                        .Get<GrpcToDoServiceOptions>();
-
-                    return options;
-                }
-            );
-
-        Bind<GrpcScheduleServiceOptions>()
-            .ToMethod(
-                x =>
-                {
-                    var options = x.Kernel.Get<IConfiguration>()
-                        .GetRequiredSection(GrpcScheduleServiceOptions.Section)
-                        .Get<GrpcScheduleServiceOptions>();
-
-                    return options;
-                }
-            );
-
-        Bind<GrpcAuthenticationServiceOptions>()
-            .ToMethod(
-                x =>
-                {
-                    var options = x.Kernel.Get<IConfiguration>()
-                        .GetRequiredSection("GrpcAuthenticationService")
-                        .Get<GrpcAuthenticationServiceOptions>();
-
-                    return options;
-                }
-            );
-
-
-        Bind<AppConfiguration>().ToConstructor(x => new AppConfiguration(typeof(LoginViewModel)));
     }
 
     private static void SetupMapperConfiguration(IMapperConfigurationExpression expression)
@@ -180,6 +151,7 @@ public class UiModule : NinjectModule
         expression.AddProfile<SpravyToDoProfile>();
         expression.AddProfile<SpravyUiProfile>();
         expression.AddProfile<SpravyAuthenticationProfile>();
+        expression.AddProfile<SpravyScheduleProfile>();
     }
 
     private void RegisterViewModels(NinjectModule module)

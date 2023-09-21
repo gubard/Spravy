@@ -3,14 +3,14 @@ using System.Windows.Input;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
-using Avalonia.ReactiveUI;
 using Spravy.Domain.Extensions;
+using Spravy.Ui.Controls;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.ViewModels;
 
 namespace Spravy.Ui.Views;
 
-public partial class ToDoSubItemsView : ReactiveUserControl<ToDoSubItemsViewModel>,
+public partial class ToDoSubItemsView : MainReactiveUserControl<ToDoSubItemsViewModel>,
     IToDoItemView,
     ICompleteSubToDoItemCommand,
     IChangeCurrentStatusToDoItemCommand

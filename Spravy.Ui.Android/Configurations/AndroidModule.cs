@@ -12,7 +12,7 @@ public class AndroidModule : NinjectModule
     {
         Bind<IConfiguration>()
             .ToMethod(
-                x =>
+                _ =>
                 {
                     using var stream =
                         typeof(MarkStruct).Assembly.GetManifestResourceStream("Spravy.Ui.Android.appsettings.json");

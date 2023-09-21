@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Spravy.Authentication.Db.Contexts;
-using Spravy.Authentication.Db.Sqlite.Migrator;
 
 #nullable disable
 
@@ -25,19 +24,18 @@ namespace Spravy.Authentication.Db.Sqlite.Migrator.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("HashMethod")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Login")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PasswordHash")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("Role")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Salt")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");

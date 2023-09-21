@@ -39,7 +39,7 @@
                               SelectedItem="{Binding ChildrenType}"
                               ItemsSource="{Binding ChildrenTypes}" />
                 </Grid>
-
+                
                 <ComboBox Theme="{StaticResource MaterialOutlineComboBox}"
                           assists:ComboBoxAssist.Label="TypeOfPeriodicity"
                           SelectedItem="{Binding TypeOfPeriodicity}"
@@ -65,6 +65,6 @@
                                     Classes="edit" />
         </StackPanel>
 
-        <ContentControl Grid.Row="2" Content="{Binding ToDoSubItemsView}" />
+        <ContentControl Grid.Row="2" Content="{Binding ToDoSubItemsViewModel}" />
     </Grid>
 </controls:MainReactiveUserControl>

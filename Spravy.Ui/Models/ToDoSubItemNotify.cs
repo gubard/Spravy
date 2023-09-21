@@ -14,6 +14,13 @@ public abstract class ToDoSubItemNotify : NotifyBase, IEquatable<ToDoSubItemNoti
     private bool isCurrent;
     private ActiveToDoItemNotify? active;
     private DateTimeOffset? lastCompleted;
+    private bool isVisible = true;
+
+    public bool IsVisible
+    {
+        get => isVisible;
+        set => this.RaiseAndSetIfChanged(ref isVisible, value);
+    }
 
     public Guid Id
     {
@@ -65,27 +72,26 @@ public abstract class ToDoSubItemNotify : NotifyBase, IEquatable<ToDoSubItemNoti
 
     public bool Equals(ToDoSubItemNotify? other)
     {
-        if (other is null)
-        {
-            return false;
-        }
-
-        return id.Equals(other.id);
+        return other is not null && id.Equals(other.id);
     }
 
     public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj))
+        {
             return false;
+        }
+
         if (ReferenceEquals(this, obj))
+        {
             return true;
-        if (obj.GetType() != GetType())
-            return false;
-        return Equals((ToDoSubItemNotify)obj);
+        }
+
+        return obj.GetType() == GetType() && Equals((ToDoSubItemNotify)obj);
     }
 
     public override int GetHashCode()
     {
-        return id.GetHashCode();
+        return Id.GetHashCode();
     }
 }

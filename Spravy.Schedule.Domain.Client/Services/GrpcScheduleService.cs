@@ -1,12 +1,10 @@
 using AutoMapper;
 using Google.Protobuf;
-using Grpc.Core;
-using Spravy.Authentication.Domain.Models;
 using Spravy.Client.Exceptions;
 using Spravy.Client.Extensions;
+using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
 using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
 using Spravy.Schedule.Domain.Client.Models;
 using Spravy.Schedule.Domain.Interfaces;
 using Spravy.Schedule.Domain.Models;
@@ -19,14 +17,22 @@ public class GrpcScheduleService : GrpcServiceBase, IScheduleService
 {
     private readonly ScheduleServiceClient client;
     private readonly IMapper mapper;
-    private readonly IKeeper<TokenResult> tokenKeeper;
+    private readonly IMetadataFactory metadataFactory;
 
-    public GrpcScheduleService(GrpcScheduleServiceOptions options, IMapper mapper, IKeeper<TokenResult> tokenKeeper)
-        : base(options.Host.ToUri(), options.ChannelType, options.ChannelCredentialType.GetChannelCredentials())
+    public GrpcScheduleService(
+        GrpcScheduleServiceOptions options,
+        IMapper mapper,
+        IMetadataFactory metadataFactory
+    )
+        : base(
+            options.Host.ThrowIfNullOrWhiteSpace().ToUri(),
+            options.ChannelType,
+            options.ChannelCredentialType.GetChannelCredentials()
+        )
     {
         this.mapper = mapper;
-        this.tokenKeeper = tokenKeeper;
-        client = new ScheduleServiceClient(grpcChannel);
+        this.metadataFactory = metadataFactory;
+        client = new ScheduleServiceClient(GrpcChannel);
     }
 
     public async Task AddTimerAsync(AddTimerParameters parameters)
@@ -34,11 +40,11 @@ public class GrpcScheduleService : GrpcServiceBase, IScheduleService
         try
         {
             var request = mapper.Map<AddTimerRequest>(parameters);
-            await client.AddTimerAsync(request, CreateMetadata());
+            await client.AddTimerAsync(request, await metadataFactory.CreateAsync());
         }
         catch (Exception e)
         {
-            throw new GrpcException(grpcChannel.Target, e);
+            throw new GrpcException(GrpcChannel.Target, e);
         }
     }
 
@@ -46,13 +52,13 @@ public class GrpcScheduleService : GrpcServiceBase, IScheduleService
     {
         try
         {
-            var timers = await client.GetListTimesAsync(new GetListTimesRequest(), CreateMetadata());
+            var timers = await client.GetListTimesAsync(new GetListTimesRequest(), await metadataFactory.CreateAsync());
 
             return mapper.Map<IEnumerable<TimerItem>>(timers.Items);
         }
         catch (Exception e)
         {
-            throw new GrpcException(grpcChannel.Target, e);
+            throw new GrpcException(GrpcChannel.Target, e);
         }
     }
 
@@ -65,24 +71,12 @@ public class GrpcScheduleService : GrpcServiceBase, IScheduleService
                 {
                     Id = mapper.Map<ByteString>(id),
                 },
-                CreateMetadata()
+                await metadataFactory.CreateAsync()
             );
         }
         catch (Exception e)
         {
-            throw new GrpcException(grpcChannel.Target, e);
+            throw new GrpcException(GrpcChannel.Target, e);
         }
-    }
-
-    private Metadata CreateMetadata()
-    {
-        var metadata = new Metadata
-        {
-            {
-                "Authorization", $"Bearer {tokenKeeper.Get().Token}"
-            }
-        };
-
-        return metadata;
     }
 }

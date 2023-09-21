@@ -6,6 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Spravy.Authentication.Domain\Spravy.Authentication.Domain.csproj" />
       <ProjectReference Include="..\Spravy.Db\Spravy.Db.csproj" />
     </ItemGroup>
 </Project>

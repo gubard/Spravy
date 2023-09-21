@@ -14,7 +14,6 @@ using Spravy.Ui.Enums;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
-using Spravy.Ui.Views;
 
 namespace Spravy.Ui.ViewModels;
 
@@ -76,7 +75,7 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
 
     private Task ChangeDueDate()
     {
-        return DialogViewer.ShowDateTimeConfirmDialogAsync(
+        return DialogViewer.ShowDateConfirmDialogAsync(
             value =>
             {
                 DialogViewer.CloseDialog();
@@ -124,7 +123,7 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
                 YearsOffset = toDoItemPeriodicityOffset.YearsOffset;
                 ChildrenType = toDoItemPeriodicityOffset.ChildrenType;
                 var source = toDoItemPeriodicityOffset.Items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
-                ToDoSubItemsView.ViewModel.ThrowIfNull().UpdateItems(source, this);
+                ToDoSubItemsViewModel.UpdateItems(source, this);
                 SubscribeItems(source);
                 Path.Items.Clear();
                 Path.Items.Add(new RootItem());

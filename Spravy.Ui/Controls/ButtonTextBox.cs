@@ -1,24 +1,22 @@
-using System;
 using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Primitives;
-using Avalonia.Data;
-using Avalonia.Input;
 using Avalonia.Styling;
 using Material.Icons;
 using Material.Icons.Avalonia;
-using Material.Styles.Assists;
 
 namespace Spravy.Ui.Controls;
 
 [TemplatePart(ButtonName, typeof(Button))]
 [TemplatePart(MaterialIconName, typeof(MaterialIcon))]
+[TemplatePart(MaterialIconName, typeof(TextBox))]
 public class ButtonTextBox : TemplatedControl
 {
     public const string ButtonName = "PART_Button";
     public const string MaterialIconName = "PART_MaterialIcon";
+    public const string TextBoxName = "PART_TextBox";
 
     private Button? button;
     private MaterialIcon? materialIcon;

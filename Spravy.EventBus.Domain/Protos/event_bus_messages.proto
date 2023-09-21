@@ -21,11 +21,7 @@ message SubscribeEventsReply {
   bytes Content = 2;
 }
 
-message CreateUserEvent {
-  string Token = 1;
-}
-
-message ChangeToDoItemIsCompletedEvent {
+message ChangeToDoItemIsCurrentEvent {
   bytes ToDoItemId = 1;
-  bool IsCompleted = 2;
+  bool IsCurrent = 2;
 }

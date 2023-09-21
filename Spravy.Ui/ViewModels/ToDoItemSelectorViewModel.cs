@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -27,6 +28,9 @@ public class ToDoItemSelectorViewModel : ViewModelBase
 
     public AvaloniaList<ToDoSelectorItemNotify> Roots { get; } = new();
     public ICommand InitializedCommand { get; }
+    public List<Guid> IgnoreIds { get; } = new();
+
+    public Guid DefaultSelectedItemId { get; set; }
 
     public ToDoSelectorItemNotify? SelectedItem
     {
@@ -36,8 +40,51 @@ public class ToDoItemSelectorViewModel : ViewModelBase
 
     private async Task InitializedAsync()
     {
-        var items = await ToDoService.GetToDoSelectorItemsAsync();
+        var items = await ToDoService.GetToDoSelectorItemsAsync(IgnoreIds.ToArray());
         Roots.Clear();
         Roots.AddRange(Mapper.Map<IEnumerable<ToDoSelectorItemNotify>>(items));
+        SetItem(DefaultSelectedItemId);
+    }
+
+    public void SetItem(Guid id)
+    {
+        foreach (var root in Roots)
+        {
+            if (root.Id != id)
+            {
+                if (SetItem(id, root.Children))
+                {
+                    return;
+                }
+
+                continue;
+            }
+
+            SelectedItem = root;
+
+            return;
+        }
+    }
+
+    public bool SetItem(Guid id, IEnumerable<ToDoSelectorItemNotify> items)
+    {
+        foreach (var item in items)
+        {
+            if (item.Id != id)
+            {
+                if (SetItem(id, item.Children))
+                {
+                    return true;
+                }
+
+                continue;
+            }
+
+            SelectedItem = item;
+
+            return true;
+        }
+
+        return false;
     }
 }

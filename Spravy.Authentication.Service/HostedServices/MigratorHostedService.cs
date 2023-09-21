@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Spravy.Authentication.Db.Contexts;
+using Spravy.Db.Sqlite.Extensions;
 using Spravy.Db.Sqlite.Models;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
@@ -23,7 +24,7 @@ public class MigratorHostedService : IHostedService
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         var dataBaseFile = sqliteFileOptions.DataBaseFile.ThrowIfNull().ToFile();
-        await using var context = spravyAuthenticationDbContextFactory.Create($"DataSource={dataBaseFile}");
+        await using var context = spravyAuthenticationDbContextFactory.Create(dataBaseFile.ToSqliteConnectionString());
 
         if (dataBaseFile.Directory is not null && !dataBaseFile.Directory.Exists)
         {

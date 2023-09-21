@@ -50,6 +50,6 @@
                                      Classes="edit" />
         </StackPanel>
 
-        <ContentControl Grid.Row="2" Content="{Binding ToDoSubItemsView}" />
+        <ContentControl Grid.Row="2" Content="{Binding ToDoSubItemsViewModel}" />
     </Grid>
 </controls1:MainReactiveUserControl>

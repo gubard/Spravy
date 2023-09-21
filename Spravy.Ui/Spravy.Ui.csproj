@@ -21,23 +21,27 @@
         <PackageReference Include="Avalonia.Xaml.Interactions" Version="11.0.2" />
         <PackageReference Include="Avalonia.Xaml.Interactions.DragAndDrop" Version="11.0.2" />
         <PackageReference Include="Avalonia.Xaml.Interactions.Responsive" Version="11.0.2" />
-        <PackageReference Include="DialogHost.Avalonia" Version="0.7.6" />
-        <PackageReference Include="Google.Protobuf" Version="3.24.2" />
+        <PackageReference Include="DialogHost.Avalonia" Version="0.7.7" />
+        <PackageReference Include="Google.Protobuf" Version="3.24.3" />
         <PackageReference Include="Grpc.Net.Client" Version="2.57.0" />
         <PackageReference Include="Grpc.Net.Client.Web" Version="2.57.0" />
         <PackageReference Include="Grpc.Net.ClientFactory" Version="2.57.0" />
-        <PackageReference Include="Grpc.Tools" Version="2.57.0">
+        <PackageReference Include="Grpc.Tools" Version="2.58.0">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Material.Avalonia" Version="3.0.0" />
         <PackageReference Include="Material.Icons.Avalonia" Version="2.0.1" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.0.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Spravy.Authentication.Domain.Core\Spravy.Authentication.Domain.Core.csproj" />
+      <ProjectReference Include="..\Spravy.Authentication.Domain.Client\Spravy.Authentication.Domain.Client.csproj" />
+      <ProjectReference Include="..\Spravy.Authentication.Domain.Mapper\Spravy.Authentication.Domain.Mapper.csproj" />
       <ProjectReference Include="..\Spravy.Domain.Di\Spravy.Domain.Di.csproj" />
+      <ProjectReference Include="..\Spravy.EventBus.Domain.Mapper\Spravy.EventBus.Domain.Mapper.csproj" />
+      <ProjectReference Include="..\Spravy.EventBus.Domain\Spravy.EventBus.Domain.csproj" />
       <ProjectReference Include="..\Spravy.Schedule.Domain.Client\Spravy.Schedule.Domain.Client.csproj" />
       <ProjectReference Include="..\Spravy.Schedule.Domain\Spravy.Schedule.Domain.csproj" />
       <ProjectReference Include="..\Spravy.ToDo.Domain.Client\Spravy.ToDo.Domain.Client.csproj" />

@@ -11,4 +11,9 @@ public static class FileInfoExtension
     {
         return File.WriteAllTextAsync(file.FullName, text);
     }
+    
+    public static string GetFileNameWithoutExtension(this FileInfo file)
+    {
+        return Path.GetFileNameWithoutExtension(file.FullName);
+    }
 }

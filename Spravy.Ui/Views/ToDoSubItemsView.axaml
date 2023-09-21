@@ -75,12 +75,6 @@
     <Panel>
         <ScrollViewer Name="{x:Static views:ToDoSubItemsView.MainScrollViewerName}">
             <StackPanel>
-                <WrapPanel Orientation="Horizontal">
-                    <Button Command="{Binding CompleteSelectedToDoItemsCommand }">
-                        <avalonia:MaterialIcon Kind="Checks" />
-                    </Button>
-                </WrapPanel>
-
                 <ListBox SelectionMode="Multiple"
                          Margin="5"
                          ItemsSource="{Binding CurrentToDoItems}"

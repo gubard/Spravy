@@ -12,7 +12,7 @@ public class ToDoItemCommand : NotifyBase
     public ToDoItemCommand(MaterialIconKind icon, ICommand command)
     {
         Icon = icon;
-        Command = command;
+        this.command = command;
     }
 
     public MaterialIconKind Icon

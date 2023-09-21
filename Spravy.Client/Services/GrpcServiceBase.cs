@@ -7,10 +7,7 @@ namespace Spravy.Client.Services;
 
 public class GrpcServiceBase : IAsyncDisposable, IDisposable
 {
-    protected readonly GrpcChannel grpcChannel;
-    private readonly GrpcChannelOptions grpcChannelOptions;
-    private readonly GrpcWebHandler grpcWebHandler;
-    private readonly HttpClientHandler httpClientHandler;
+    protected readonly GrpcChannel GrpcChannel;
 
     protected GrpcServiceBase(Uri host, GrpcChannelType grpcChannelType, ChannelCredentials channelCredentials)
     {
@@ -18,38 +15,38 @@ public class GrpcServiceBase : IAsyncDisposable, IDisposable
         {
             case GrpcChannelType.Default:
             {
-                grpcChannel = GrpcChannel.ForAddress(host);
+                GrpcChannel = GrpcChannel.ForAddress(host);
+
                 break;
             }
             case GrpcChannelType.GrpcWeb:
             {
-                httpClientHandler = new ();
+                var httpClientHandler = new HttpClientHandler();
+                var grpcWebHandler = new GrpcWebHandler(GrpcWebMode.GrpcWeb, httpClientHandler);
 
-                grpcWebHandler = new (GrpcWebMode.GrpcWeb, httpClientHandler);
-
-                grpcChannelOptions = new ()
+                var grpcChannelOptions = new GrpcChannelOptions()
                 {
                     HttpHandler = grpcWebHandler,
                     Credentials = channelCredentials,
                 };
 
-                grpcChannel = GrpcChannel.ForAddress(host);
+                GrpcChannel = GrpcChannel.ForAddress(host, grpcChannelOptions);
+
                 break;
             }
             case GrpcChannelType.GrpcWebText:
             {
-                httpClientHandler = new ();
+                var httpClientHandler = new HttpClientHandler();
+                var grpcWebHandler = new GrpcWebHandler(GrpcWebMode.GrpcWebText, httpClientHandler);
 
-                grpcWebHandler = new (GrpcWebMode.GrpcWebText, httpClientHandler);
-
-                grpcChannelOptions = new ()
+                var grpcChannelOptions = new GrpcChannelOptions()
                 {
                     HttpHandler = grpcWebHandler,
                     Credentials = channelCredentials,
                 };
 
-                grpcChannel = GrpcChannel.ForAddress(host);
-                
+                GrpcChannel = GrpcChannel.ForAddress(host, grpcChannelOptions);
+
                 break;
             }
             default: throw new ArgumentOutOfRangeException(nameof(grpcChannelType), grpcChannelType, null);
@@ -59,11 +56,11 @@ public class GrpcServiceBase : IAsyncDisposable, IDisposable
     public virtual async ValueTask DisposeAsync()
     {
         Dispose();
-        await grpcChannel.ShutdownAsync();
+        await GrpcChannel.ShutdownAsync();
     }
 
     public virtual void Dispose()
     {
-        grpcChannel.Dispose();
+        GrpcChannel.Dispose();
     }
 }

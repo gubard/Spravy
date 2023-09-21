@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Models;
 using Spravy.Authentication.Service.Models;
+using Spravy.Domain.Extensions;
 
 namespace Spravy.Authentication.Service.Services;
 
@@ -18,27 +19,50 @@ public class JwtTokenFactory : ITokenFactory
         this.jwtSecurityTokenHandler = jwtSecurityTokenHandler;
     }
 
-    public TokenResult Create(UserTokenClaims user)
+    public TokenResult Create(TokenClaims user)
     {
-        var claims = new List<Claim>
-        {
-            new(ClaimTypes.Name, user.Login),
-            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-        };
-
-        var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(options.Key));
+        var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(options.Key.ThrowIfNullOrWhiteSpace()));
         var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
+        var jwt = CreateToken(
+            signingCredentials,
+            new List<Claim>
+            {
+                new(ClaimTypes.Name, user.Login),
+                new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new(ClaimTypes.Role, user.Role.ToString()),
+            },
+            DateTime.UtcNow.AddDays(options.ExpiresDays)
+        );
+
+        var refreshJwt = CreateToken(
+            signingCredentials,
+            new List<Claim>
+            {
+                new(ClaimTypes.Name, user.Login),
+            },
+            DateTime.UtcNow.AddDays(options.RefreshExpiresDays)
+        );
+
+        return new TokenResult(jwt, refreshJwt);
+    }
+
+    private string CreateToken(
+        SigningCredentials signingCredentials,
+        List<Claim> claims,
+        DateTime expires
+    )
+    {
         var token = new JwtSecurityToken(
             options.Issuer,
             options.Audience,
             claims,
-            expires: DateTime.UtcNow.AddDays(options.ExpiresDays),
+            expires: expires,
             signingCredentials: signingCredentials
         );
 
         var jwt = jwtSecurityTokenHandler.WriteToken(token);
 
-        return new TokenResult(jwt);
+        return jwt;
     }
 }

@@ -69,7 +69,7 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
 
     private Task ChangeDueDate()
     {
-        return DialogViewer.ShowDateTimeConfirmDialogAsync(
+        return DialogViewer.ShowDateConfirmDialogAsync(
             value =>
             {
                 DialogViewer.CloseDialog();
@@ -135,7 +135,7 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
                 ChildrenType = toDoItemPeriodicity.ChildrenType;
                 SetTypeOfPeriodicity(toDoItemPeriodicity.Periodicity);
                 var source = item.Items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
-                ToDoSubItemsView.ViewModel.ThrowIfNull().UpdateItems(source, this);
+                ToDoSubItemsViewModel.UpdateItems(source, this);
                 SubscribeItems(source);
                 Path.Items.Clear();
                 Path.Items.Add(new RootItem());
@@ -228,9 +228,9 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
         );
     }
 
-    private void SetTypeOfPeriodicity(IPeriodicity periodicity)
+    private void SetTypeOfPeriodicity(IPeriodicity per)
     {
-        switch (periodicity)
+        switch (per)
         {
             case AnnuallyPeriodicity annuallyPeriodicity:
             {
@@ -295,7 +295,7 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
 
                 break;
             }
-            default: throw new ArgumentOutOfRangeException(nameof(periodicity));
+            default: throw new ArgumentOutOfRangeException(nameof(per));
         }
     }
 

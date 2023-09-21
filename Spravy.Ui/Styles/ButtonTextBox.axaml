@@ -21,7 +21,8 @@
                              MinWidth="{TemplateBinding MinWidth}"
                              Theme="{TemplateBinding TextBoxTheme}"
                              Classes="outline dense"
-                             IsReadOnly="{TemplateBinding IsReadOnly}">
+                             IsReadOnly="{TemplateBinding IsReadOnly}"
+                             Name="{x:Static controls:ButtonTextBox.TextBoxName}">
                         <TextBox.Styles>
                             <Style Selector="TextBox /template/ TextBlock#PART_LabelText">
                                 <Setter Property="Margin" Value="50,0,0,0" />

@@ -13,16 +13,16 @@
         <viewModels:TimersViewModel />
     </Design.DataContext>
 
+    <Interaction.Behaviors>
+        <EventTriggerBehavior EventName="Initialized">
+            <InvokeCommandAction Command="{Binding InitializedCommand}" />
+        </EventTriggerBehavior>
+    </Interaction.Behaviors>
+
     <Grid RowDefinitions="Auto,*">
-        <WrapPanel>
-            <Button Command="{Binding SwitchPaneCommand}">
-                <avalonia:MaterialIcon Kind="Menu" />
-            </Button>
-            
-            <Button Command="{Binding AddTimerCommand}">
-                <avalonia:MaterialIcon Kind="Plus" />
-            </Button>
-        </WrapPanel>
+        <Button Command="{Binding SwitchPaneCommand}">
+            <avalonia:MaterialIcon Kind="Menu" />
+        </Button>
 
         <ListBox Grid.Row="1" ItemsSource="{Binding Timers}" SelectionMode="Single" />
     </Grid>

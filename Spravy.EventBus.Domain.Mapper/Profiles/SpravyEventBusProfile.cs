@@ -11,13 +11,12 @@ public class SpravyEventBusProfile : Profile
     {
         CreateMap<Guid, ByteString>().ConvertUsing(x => ByteString.CopyFrom(x.ToByteArray()));
         CreateMap<ByteString, Guid>().ConstructUsing(x => new Guid(x.ToByteArray()));
+        CreateMap<byte[], ByteString>().ConstructUsing(x => ByteString.CopyFrom(x));
+        CreateMap<ByteString, byte[]>().ConstructUsing(x => x.ToByteArray());
 
         CreateMap<SubscribeEventsReply, EventValue>()
-            .ConvertUsing(
-                (source, _, resolutionContext) => new EventValue(
-                    resolutionContext.Mapper.Map<Guid>(source.EventId),
-                    new MemoryStream(source.Content.ToByteArray())
-                )
+            .ConstructUsing(
+                (x, context) => new EventValue(context.Mapper.Map<Guid>(x.EventId), x.Content.ToByteArray())
             );
     }
 }

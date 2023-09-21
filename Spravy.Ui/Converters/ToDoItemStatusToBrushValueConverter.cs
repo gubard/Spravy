@@ -8,27 +8,23 @@ namespace Spravy.Ui.Converters;
 
 public class ToDoItemStatusToBrushValueConverter : IValueConverter
 {
-    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is not ToDoItemStatus status)
         {
             return new SolidColorBrush(Colors.DarkRed);
         }
 
-        switch (status)
+        return status switch
         {
-            case ToDoItemStatus.Miss:
-                return new SolidColorBrush(Colors.DarkRed);
-            case ToDoItemStatus.Completed:
-                return new SolidColorBrush(Colors.DarkGreen);
-            case ToDoItemStatus.ReadyForComplete:
-                return new SolidColorBrush(Colors.GreenYellow);
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            ToDoItemStatus.Miss => new SolidColorBrush(Colors.DarkRed),
+            ToDoItemStatus.Completed => new SolidColorBrush(Colors.DarkGreen),
+            ToDoItemStatus.ReadyForComplete => new SolidColorBrush(Colors.GreenYellow),
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
-    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is not SolidColorBrush brush)
         {

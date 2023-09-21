@@ -5,7 +5,7 @@ namespace Spravy.Domain.Exceptions;
 
 public static class MethodInfoExtension
 {
-    public static bool IsRTDynamicMethod(this MethodInfo methodInfo)
+    public static bool IsRtDynamicMethod(this MethodInfo methodInfo)
     {
         if (
             methodInfo.GetType().ToString()

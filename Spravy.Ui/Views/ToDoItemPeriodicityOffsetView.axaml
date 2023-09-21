@@ -73,10 +73,10 @@
                          Theme="{StaticResource OutlineTextBox}"
                          assists:TextFieldAssist.Label="DueDate"
                          Text="{Binding DueDate}" />-->
-                <controls:ButtonTextBox Text="{Binding DueDate}" 
-                                        Label="DueDate" 
+                <controls:ButtonTextBox Text="{Binding DueDate}"
+                                        Label="DueDate"
                                         Command="{Binding ChangeDueDateCommand}"
-                                        Classes="edit"/>
+                                        Classes="edit" />
             </StackPanel>
 
             <controls:ButtonTextBox Text="{Binding Description}"
@@ -85,6 +85,6 @@
                                     Classes="edit" />
         </StackPanel>
 
-        <ContentControl Grid.Row="2" Content="{Binding ToDoSubItemsView}" />
+        <ContentControl Grid.Row="2" Content="{Binding ToDoSubItemsViewModel}" />
     </Grid>
 </reactiveUi:ReactiveUserControl>

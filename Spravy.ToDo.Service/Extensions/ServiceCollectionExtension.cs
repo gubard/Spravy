@@ -1,6 +1,10 @@
-using System.Security.Claims;
-using Microsoft.EntityFrameworkCore;
+using Spravy.Authentication.Domain.Client.Models;
+using Spravy.Authentication.Domain.Client.Services;
+using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Models;
+using Spravy.Authentication.Domain.Services;
+using Spravy.Client.Interfaces;
+using Spravy.Client.Services;
 using Spravy.Db.Interfaces;
 using Spravy.Db.Sqlite.Models;
 using Spravy.Domain.Extensions;
@@ -11,6 +15,8 @@ using Spravy.EventBus.Domain.Client.Services;
 using Spravy.EventBus.Domain.Interfaces;
 using Spravy.EventBus.Domain.Mapper.Profiles;
 using Spravy.Service.Extensions;
+using Spravy.Service.HostedServices;
+using Spravy.Service.Services;
 using Spravy.ToDo.Db.Contexts;
 using Spravy.ToDo.Db.Mapper.Profiles;
 using Spravy.ToDo.Db.Sqlite.Migrator;
@@ -26,34 +32,38 @@ public static class ServiceCollectionExtension
 {
     public static IServiceCollection AddToDo(this IServiceCollection serviceCollection)
     {
-        serviceCollection.AddMapperConfiguration<SpravyToDoProfile, SpravyToDoDbProfile, SpravyEventBusProfile>();
-        serviceCollection.AddScoped<IToDoService, EfToDoService>();
+        serviceCollection.AddHostedService<MigratorHostedService<SpravyToDoDbContext>>();
+        serviceCollection.AddHostedService<EventBusHostedService>();
+
         serviceCollection.AddSingleton<IDbContextSetup, SqliteToDoDbContextSetup>();
-        serviceCollection.AddHostedService<MigratorHostedService>();
-        serviceCollection.AddHostedService<EventSubscriberHostedService>();
         serviceCollection.AddSingleton<IFactory<string, SpravyToDoDbContext>, SpravyToDoDbContextFactory>();
         serviceCollection.AddSingleton<IEventBusService, GrpcEventBusService>();
         serviceCollection.AddSingleton<IKeeper<TokenResult>, StaticKeeper<TokenResult>>();
+        serviceCollection.AddSingleton<ITokenService, TokenService>();
+        serviceCollection.AddSingleton<IAuthenticationService, GrpcAuthenticationService>();
         serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<SqliteFolderOptions>());
         serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<GrpcEventBusServiceOptions>());
-        serviceCollection.AddSpravyToDoDbContext();
+        serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<GrpcAuthenticationServiceOptions>());
+        serviceCollection.AddSingleton<IMetadataFactory, MetadataFactory>();
+        serviceCollection.AddSingleton<TokenHttpHeaderFactory>();
+        serviceCollection.AddSingleton<ContextAccessorHttpHeaderFactory>();
+        serviceCollection.AddSingleton<IFactory<string, IEventBusService>, EventBusServiceFactory>();
+        serviceCollection.AddSingleton<IHttpHeaderFactory, TokenHttpHeaderFactory>();
 
-        return serviceCollection;
-    }
+        serviceCollection.AddScoped<IToDoService, EfToDoService>();
 
-    public static IServiceCollection AddSpravyToDoDbContext(this IServiceCollection serviceCollection)
-    {
-        serviceCollection.AddDbContextFactory<SpravyToDoDbContext>(
-            (sp, options) =>
+        serviceCollection.AddSpravySqliteFolderContext<SpravyToDoDbContext>();
+
+        serviceCollection.AddMapperConfiguration<SpravyToDoProfile, SpravyToDoDbProfile, SpravyEventBusProfile>();
+
+        serviceCollection.AddSingleton<ITokenService>(
+            sp =>
             {
-                var sqliteOptions = sp.GetRequiredService<SqliteFolderOptions>();
-                var httpContextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
-                var claims = httpContextAccessor.HttpContext.ThrowIfNull().User.Claims;
-                var nameIdentifier = claims.Single(x => x.Type == ClaimTypes.NameIdentifier);
-                var fileName = $"{nameIdentifier.Value}.db";
-                var dataBasesFolder = sqliteOptions.DataBasesFolder.ThrowIfNull();
-                var connectionString = $"DataSource={Path.Combine(dataBasesFolder, fileName)}";
-                options.UseSqlite(connectionString);
+                var tokenService = new TokenService(sp.GetRequiredService<IAuthenticationService>());
+                var refreshToken = sp.GetRequiredService<GrpcEventBusServiceOptions>().Token.ThrowIfNullOrWhiteSpace();
+                tokenService.Login(new TokenResult(refreshToken, refreshToken));
+
+                return tokenService;
             }
         );
 

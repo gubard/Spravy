@@ -1,9 +1,14 @@
 using System;
+using System.IO;
 using AutoMapper;
 using Spravy.Authentication.Domain.Models;
+using Spravy.EventBus.Protos;
+using Spravy.Schedule.Domain.Models;
 using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.Models;
 using Spravy.Ui.ViewModels;
+using Google.Protobuf;
+using Spravy.Domain.Extensions;
 
 namespace Spravy.Ui.Profiles;
 
@@ -26,11 +31,43 @@ public class SpravyUiProfile : Profile
         CreateMap<CreateUserViewModel, CreateUserOptions>();
         CreateMap<CreateUserViewModel, User>();
         CreateMap<LoginViewModel, User>();
+        CreateMap<TimerItem, TimerItemToDoItemCurrentNotify>()
+            .ConvertUsing(
+                (item, _, _) => new TimerItemToDoItemCurrentNotify
+                {
+                    DueDateTime = item.DueDateTime,
+                    Id = item.Id,
+                    IsCurrent = ChangeToDoItemIsCurrentEvent.Parser.ParseFrom(item.Content).IsCurrent
+                }
+            );
 
+        CreateMap<TimerItem, TimerItemNotify>()
+            .ConvertUsing((item, _, context) => context.Mapper.Map<TimerItemToDoItemCurrentNotify>(item));
         CreateMap<AddRootToDoItemViewModel, AddRootToDoItemOptions>()
             .ConstructUsing(x => new AddRootToDoItemOptions(x.Name));
         CreateMap<ToDoSubItemValueNotify, AddToDoItemOptions>()
             .ConstructUsing(x => new AddToDoItemOptions(x.Id, x.Name));
+
+        CreateMap<AddTimerViewModel, AddTimerParameters>()
+            .ConvertUsing(
+                (source, _, context) =>
+                {
+                    var changeToDoItemIsCurrentEvent = new ChangeToDoItemIsCurrentEvent
+                    {
+                        IsCurrent = source.IsCurrent,
+                        ToDoItemId = context.Mapper.Map<ByteString>(source.Item.ThrowIfNull().Id),
+                    };
+
+                    using var stream = new MemoryStream();
+                    changeToDoItemIsCurrentEvent.WriteTo(stream);
+
+                    return new AddTimerParameters(
+                        source.DueDateTime,
+                        source.EventId,
+                        stream.ToByteArray()
+                    );
+                }
+            );
 
         CreateMap<ActiveToDoItem?, ActiveToDoItemNotify?>()
             .ConvertUsing(
@@ -62,10 +99,11 @@ public class SpravyUiProfile : Profile
             .ConvertUsing(
                 (source, _, resolutionContext) => resolutionContext.Mapper.Map<ToDoSubItemPeriodicityNotify>(source)
             );
-        
+
         CreateMap<ToDoSubItemPeriodicityOffset, ToDoSubItemNotify>()
             .ConvertUsing(
-                (source, _, resolutionContext) => resolutionContext.Mapper.Map<ToDoSubItemPeriodicityOffsetNotify>(source)
+                (source, _, resolutionContext) =>
+                    resolutionContext.Mapper.Map<ToDoSubItemPeriodicityOffsetNotify>(source)
             );
 
         CreateMap<ToDoItemViewModel, ToDoSubItemNotify>()

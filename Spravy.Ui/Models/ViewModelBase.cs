@@ -122,7 +122,9 @@ public class ViewModelBase : NotifyBase, IIsDialog
 
             if (await IsTakeMoreThen(task, TaskTimeout))
             {
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                 DialogViewer.ShowDialogAsync(typeof(IDialogProgressIndicator));
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                 await task;
                 DialogViewer.CloseDialog();
             }
@@ -139,7 +141,9 @@ public class ViewModelBase : NotifyBase, IIsDialog
 
             if (await IsTakeMoreThen(task, TaskTimeout))
             {
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                 DialogViewer.ShowDialogAsync(typeof(IDialogProgressIndicator));
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                 await task;
                 DialogViewer.CloseDialog();
             }

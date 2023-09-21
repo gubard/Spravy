@@ -18,7 +18,8 @@ public partial class App : Application
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
-        DataTemplates.AddRange(Resolver.ThrowIfNull().Get<IEnumerable<IDataTemplate>>());
+        var dataTemplates = Resolver.ThrowIfNull().Get<IEnumerable<IDataTemplate>>();
+        DataTemplates.AddRange(dataTemplates);
     }
 
     public override void OnFrameworkInitializationCompleted()
@@ -33,7 +34,6 @@ public partial class App : Application
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {
             var control = resolver.Get<Control>();
-            ;
             singleViewPlatform.MainView = control;
         }
 

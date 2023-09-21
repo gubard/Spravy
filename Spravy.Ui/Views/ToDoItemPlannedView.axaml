@@ -42,7 +42,7 @@
                           SelectedItem="{Binding ChildrenType}"
                           ItemsSource="{Binding ChildrenTypes}" />
             </Grid>
-
+            
             <!--<DatePicker SelectedDate="{Binding DueDate}" />-->
             <!--<TextBox UseFloatingWatermark="True"
                      Classes="outline dense"
@@ -60,6 +60,6 @@
                                     Classes="edit" />
         </StackPanel>
 
-        <ContentControl Grid.Row="2" Content="{Binding ToDoSubItemsView}" />
+        <ContentControl Grid.Row="2" Content="{Binding ToDoSubItemsViewModel}" />
     </Grid>
 </controls:MainReactiveUserControl>

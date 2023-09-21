@@ -1,5 +1,13 @@
+using Spravy.EventBus.Db.Contexts;
 using Spravy.EventBus.Service.Extensions;
 using Spravy.EventBus.Service.Services;
 using Spravy.Service.Extensions;
+using Spravy.Service.Middlewares;
 
-WebApplication.CreateBuilder(args).BuildSpravy<GrpcEventBusService>(x => x.AddEventBus()).Run();
+WebApplication.CreateBuilder(args)
+    .BuildSpravy<GrpcEventBusService>(
+        args,
+        typeof(DataBaseSetupSqliteMiddleware<SpravyEventBusDbContext>),
+        x => x.AddEventBus()
+    )
+    .Run();

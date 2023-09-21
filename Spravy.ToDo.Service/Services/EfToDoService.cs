@@ -536,6 +536,7 @@ public class EfToDoService : IToDoService
         }
 
         context.Set<ToDoItemEntity>().Remove(item);
+        await NormalizeOrderIndexAsync(context, item.ParentId);
         await context.SaveChangesAsync();
     }
 
@@ -1228,13 +1229,13 @@ public class EfToDoService : IToDoService
         return result;
     }
 
-    public async Task<IEnumerable<ToDoSelectorItem>> GetToDoSelectorItemsAsync()
+    public async Task<IEnumerable<ToDoSelectorItem>> GetToDoSelectorItemsAsync(Guid[] ignoreIds)
     {
         await using var context = await dbContextFactory.CreateDbContextAsync();
 
         var items = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
-            .Where(x => x.ParentId == null)
+            .Where(x => x.ParentId == null && !ignoreIds.Contains(x.Id))
             .OrderBy(x => x.OrderIndex)
             .ToArrayAsync();
 
@@ -1243,7 +1244,7 @@ public class EfToDoService : IToDoService
         for (var i = 0; i < result.Length; i++)
         {
             var item = items[i];
-            var children = await GetToDoSelectorItemsAsync(context, item.Id);
+            var children = await GetToDoSelectorItemsAsync(context, item.Id, ignoreIds);
             result[i] = new ToDoSelectorItem(item.Id, item.Name, children);
         }
 
@@ -1360,11 +1361,15 @@ public class EfToDoService : IToDoService
         }
     }
 
-    private async Task<ToDoSelectorItem[]> GetToDoSelectorItemsAsync(SpravyToDoDbContext context, Guid id)
+    private async Task<ToDoSelectorItem[]> GetToDoSelectorItemsAsync(
+        SpravyToDoDbContext context,
+        Guid id,
+        Guid[] ignoreIds
+    )
     {
         var items = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
-            .Where(x => x.ParentId == id)
+            .Where(x => x.ParentId == id && !ignoreIds.Contains(x.Id))
             .OrderBy(x => x.OrderIndex)
             .ToArrayAsync();
 
@@ -1373,7 +1378,7 @@ public class EfToDoService : IToDoService
         for (var i = 0; i < result.Length; i++)
         {
             var item = items[i];
-            var children = await GetToDoSelectorItemsAsync(context, item.Id);
+            var children = await GetToDoSelectorItemsAsync(context, item.Id, ignoreIds);
             result[i] = new ToDoSelectorItem(item.Id, item.Name, children);
         }
 
@@ -1412,7 +1417,7 @@ public class EfToDoService : IToDoService
             .Where(x => x.ParentId == parentId)
             .ToArrayAsync();
 
-        var ordered = items.OrderBy(x => x.OrderIndex).ToArray();
+        var ordered = Enumerable.ToArray(items.OrderBy(x => x.OrderIndex));
 
         for (var index = 0u; index < ordered.LongLength; index++)
         {
@@ -1479,7 +1484,7 @@ public class EfToDoService : IToDoService
 
                 item.DueDate = nextDay is not null
                     ? item.DueDate.AddDays((double)nextDay - (double)dayOfWeek)
-                    : item.DueDate.AddDays(7 - (double)dayOfWeek + (double)daysOfWeek.First());
+                    : item.DueDate.AddDays(7 - (double)dayOfWeek + (double)daysOfWeek.First().ThrowIfNullStruct());
 
                 break;
             }
@@ -1494,7 +1499,8 @@ public class EfToDoService : IToDoService
 
                 item.DueDate = nextDay is not null
                     ? item.DueDate.WithDay(Math.Min(nextDay.Value, daysInCurrentMonth))
-                    : item.DueDate.AddMonths(1).WithDay(Math.Min(daysOfMonth.First().Value, daysInNextMonth));
+                    : item.DueDate.AddMonths(1)
+                        .WithDay(Math.Min(daysOfMonth.First().ThrowIfNullStruct(), daysInNextMonth));
 
                 break;
             }
@@ -1502,15 +1508,17 @@ public class EfToDoService : IToDoService
             {
                 var now = item.DueDate;
                 var daysOfYear = item.GetDaysOfYear().Order().Select(x => (DayOfYear?)x).ThrowIfEmpty().ToArray();
-                var nextDay = daysOfYear.FirstOrDefault(x => x.Value.Month >= now.Month && x.Value.Day > now.Day);
-                var daysInNextMonth = DateTime.DaysInMonth(now.Year + 1, daysOfYear.First().Value.Month);
+                var nextDay = daysOfYear.FirstOrDefault(
+                    x => x.ThrowIfNullStruct().Month >= now.Month && x.ThrowIfNullStruct().Day > now.Day
+                );
+                var daysInNextMonth = DateTime.DaysInMonth(now.Year + 1, daysOfYear.First().ThrowIfNullStruct().Month);
 
                 item.DueDate = nextDay is not null
                     ? item.DueDate.WithMonth(nextDay.Value.Month)
                         .WithDay(Math.Min(DateTime.DaysInMonth(now.Year, nextDay.Value.Month), nextDay.Value.Day))
                     : item.DueDate.AddYears(1)
-                        .WithMonth(daysOfYear.First().Value.Month)
-                        .WithDay(Math.Min(daysInNextMonth, daysOfYear.First().Value.Day));
+                        .WithMonth(daysOfYear.First().ThrowIfNullStruct().Month)
+                        .WithDay(Math.Min(daysInNextMonth, daysOfYear.First().ThrowIfNullStruct().Day));
 
                 break;
             }

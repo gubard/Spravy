@@ -1,5 +1,13 @@
+using Spravy.Schedule.Db.Contexts;
 using Spravy.Schedule.Service.Extensions;
 using Spravy.Schedule.Service.Services;
 using Spravy.Service.Extensions;
+using Spravy.Service.Middlewares;
 
-WebApplication.CreateBuilder(args).BuildSpravy<GrpcScheduleService>(x => x.AddSchedule()).Run();
+WebApplication.CreateBuilder(args)
+    .BuildSpravy<GrpcScheduleService>(
+        args,
+        typeof(DataBaseSetupSqliteMiddleware<SpravyScheduleDbContext>),
+        x => x.AddSchedule()
+    )
+    .Run();

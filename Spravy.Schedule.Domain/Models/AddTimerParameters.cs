@@ -2,7 +2,7 @@ namespace Spravy.Schedule.Domain.Models;
 
 public readonly struct AddTimerParameters
 {
-    public AddTimerParameters(DateTimeOffset dueDateTime, Guid eventId, Stream content)
+    public AddTimerParameters(DateTimeOffset dueDateTime, Guid eventId, byte[] content)
     {
         DueDateTime = dueDateTime;
         EventId = eventId;
@@ -11,5 +11,5 @@ public readonly struct AddTimerParameters
 
     public DateTimeOffset DueDateTime { get; }
     public Guid EventId { get; }
-    public Stream Content { get; }
+    public byte[] Content { get; }
 }

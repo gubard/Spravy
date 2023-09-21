@@ -10,4 +10,5 @@ public class GrpcEventBusServiceOptions : IOptionsValue
     public string? Host { get; set; }
     public GrpcChannelType ChannelType { get; set; }
     public ChannelCredentialType ChannelCredentialType { get; set; }
+    public string? Token { get; set; }
 }

@@ -272,7 +272,7 @@ public class GrpcToDoService : ToDoServiceBase
         ServerCallContext context
     )
     {
-        var items = await toDoService.GetToDoSelectorItemsAsync();
+        var items = await toDoService.GetToDoSelectorItemsAsync(mapper.Map<Guid[]>(request.IgnoreIds));
         var reply = new GetToDoSelectorItemsReply();
         reply.Items.AddRange(mapper.Map<IEnumerable<ToDoSelectorItemGrpc>>(items));
 

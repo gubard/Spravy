@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Reflection;
-using Spravy.Domain.Models;
 
 namespace Spravy.Domain.Extensions;
 
@@ -49,11 +48,6 @@ public static class ExpressionExtension
     public static UnaryExpression ToConvert(this Expression expression, Type type)
     {
         return Expression.Convert(expression, type);
-    }
-
-    public static UnaryExpression ToConvert(this Expression expression, TypeInformation type)
-    {
-        return expression.ToConvert(type.Type);
     }
 
     public static InvocationExpression ToInvoke(

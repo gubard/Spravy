@@ -7,7 +7,6 @@ using Ninject;
 using ReactiveUI;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Models;
-using Spravy.Domain.Interfaces;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Models;
 using Spravy.Ui.Views;
@@ -34,9 +33,6 @@ public class CreateUserViewModel : RoutableViewModelBase
 
     [Inject]
     public required IMapper Mapper { get; init; }
-
-    [Inject]
-    public required IKeeper<TokenResult> KeeperToken { get; init; }
 
     public ICommand CreateUserCommand { get; }
     public ICommand EnterCommand { get; }

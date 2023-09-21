@@ -126,7 +126,7 @@ public class ToDoItemValueViewModel : ToDoItemViewModel, IRefreshToDoItem
                 Description = toDoItemValue.Description;
                 ChildrenType = toDoItemValue.ChildrenType;
                 var source = toDoItemValue.Items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
-                ToDoSubItemsView.ViewModel.ThrowIfNull().UpdateItems(source, this);
+                ToDoSubItemsViewModel.UpdateItems(source, this);
                 SubscribeItems(source);
                 Path.Items.Clear();
                 Path.Items.Add(new RootItem());
@@ -147,7 +147,7 @@ public class ToDoItemValueViewModel : ToDoItemViewModel, IRefreshToDoItem
     {
         foreach (var itemNotify in items.OfType<ToDoSubItemValueNotify>())
         {
-            async void OnNextIsComplete(bool x)
+            async void OnNextIsCompleteItem(bool x)
             {
                 await SafeExecuteAsync(
                     async () =>
@@ -158,7 +158,7 @@ public class ToDoItemValueViewModel : ToDoItemViewModel, IRefreshToDoItem
                 );
             }
 
-            itemNotify.WhenAnyValue(x => x.IsCompleted).Skip(1).Subscribe(OnNextIsComplete);
+            itemNotify.WhenAnyValue(x => x.IsCompleted).Skip(1).Subscribe(OnNextIsCompleteItem);
         }
     }
 

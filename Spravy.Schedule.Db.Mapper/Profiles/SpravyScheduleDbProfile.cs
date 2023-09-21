@@ -9,5 +9,6 @@ public class SpravyScheduleDbProfile : Profile
     public SpravyScheduleDbProfile()
     {
         CreateMap<TimerItem, TimerEntity>();
+        CreateMap<TimerEntity, TimerItem>();
     }
 }

@@ -20,6 +20,7 @@ namespace Spravy.Ui.ViewModels;
 public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 {
     private IRefreshToDoItem? refreshToDoItem;
+    private string searchText = string.Empty;
 
     public ToDoSubItemsViewModel()
     {
@@ -298,7 +299,12 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
     private Task DeleteSubToDoItemAsync(ToDoSubItemNotify subItem)
     {
         return DialogViewer.ShowConfirmDialogAsync<DeleteToDoItemView>(
-            async _ => DialogViewer.CloseDialog(),
+            _ =>
+            {
+                DialogViewer.CloseDialog();
+
+                return Task.CompletedTask;
+            },
             async view =>
             {
                 await ToDoService.DeleteToDoItemAsync(view.ViewModel.ThrowIfNull().Item.ThrowIfNull().Id);

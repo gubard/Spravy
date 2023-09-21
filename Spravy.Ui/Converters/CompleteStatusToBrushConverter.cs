@@ -8,7 +8,7 @@ namespace Spravy.Ui.Converters;
 
 public class CompleteStatusToBrushConverter : IValueConverter
 {
-    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is not CompleteStatus status)
         {
@@ -25,7 +25,7 @@ public class CompleteStatusToBrushConverter : IValueConverter
         };
     }
 
-    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is not IBrush brush)
         {

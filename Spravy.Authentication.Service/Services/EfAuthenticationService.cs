@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Spravy.Authentication.Db.Contexts;
@@ -5,7 +6,10 @@ using Spravy.Authentication.Db.Models;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Models;
 using Spravy.Authentication.Service.Interfaces;
+using Spravy.Domain.Enums;
+using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
+using Spravy.Service.Extensions;
 
 namespace Spravy.Authentication.Service.Services;
 
@@ -35,7 +39,7 @@ public class EfAuthenticationService : IAuthenticationService
     public async Task<TokenResult> LoginAsync(User user)
     {
         var userEntity = await context.Set<UserEntity>().AsNoTracking().SingleAsync(x => x.Login == user.Login);
-        var newHasher = hasherFactory.Create(userEntity.HashMethod);
+        var newHasher = hasherFactory.Create(userEntity.HashMethod.ThrowIfNullOrWhiteSpace());
         var hash = newHasher.ComputeHash($"{userEntity.Salt};{user.Password}");
 
         if (hash != userEntity.PasswordHash)
@@ -43,13 +47,13 @@ public class EfAuthenticationService : IAuthenticationService
             throw new Exception("Wrong password.");
         }
 
-        var userTokenClaims = mapper.Map<UserTokenClaims>(userEntity);
+        var userTokenClaims = mapper.Map<TokenClaims>(userEntity);
         var tokenResult = tokenFactory.Create(userTokenClaims);
 
         return tokenResult;
     }
 
-    public async Task<TokenResult> CreateUserAsync(CreateUserOptions options)
+    public async Task CreateUserAsync(CreateUserOptions options)
     {
         var salt = Guid.NewGuid();
         var hash = hasher.ComputeHash($"{salt};{options.Password}");
@@ -63,11 +67,41 @@ public class EfAuthenticationService : IAuthenticationService
             PasswordHash = hash,
         };
 
-        var entityEntry = await context.Set<UserEntity>().AddAsync(newUser);
+        await context.Set<UserEntity>().AddAsync(newUser);
         await context.SaveChangesAsync();
-        var userTokenClaims = mapper.Map<UserTokenClaims>(entityEntry.Entity);
-        var tokenResult = tokenFactory.Create(userTokenClaims);
+    }
 
-        return tokenResult;
+    public async Task<TokenResult> RefreshTokenAsync(string refreshToken)
+    {
+        var jwtHandler = new JwtSecurityTokenHandler();
+        var jwtToken = jwtHandler.ReadJwtToken(refreshToken);
+        var role = jwtToken.Claims.GetRoleClaim().Value.ParseEnum<Role>();
+
+        switch (role)
+        {
+            case Role.User:
+            {
+                var loginClaim = jwtToken.Claims.GetNameClaim();
+
+                var userEntity = await context.Set<UserEntity>()
+                    .AsNoTracking()
+                    .SingleAsync(x => x.Login == loginClaim.Value);
+
+                var userTokenClaims = mapper.Map<TokenClaims>(userEntity);
+                var tokenResult = tokenFactory.Create(userTokenClaims);
+
+                return tokenResult;
+            }
+            case Role.Service:
+            {
+                var loginClaim = jwtToken.Claims.GetNameClaim();
+                var userTokenClaims = new TokenClaims(loginClaim.Value, Guid.Empty, Role.Service);
+                var tokenResult = tokenFactory.Create(userTokenClaims);
+
+                return tokenResult;
+            }
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
     }
 }

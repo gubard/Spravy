@@ -17,7 +17,7 @@ namespace Spravy.Ui.Browser;
 
 internal partial class Program
 {
-    private static async Task Main(string[] args)
+    private static async Task Main()
     {
         DiHelper.Kernel = new StandardKernel(UiModule.Default, BrowserModule.Default);
 
@@ -37,6 +37,5 @@ internal partial class Program
                     typeof(IViewLocator)
                 )
             );
-        ;
     }
 }

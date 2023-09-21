@@ -2,12 +2,12 @@ namespace Spravy.EventBus.Domain.Models;
 
 public readonly struct EventValue
 {
-    public EventValue(Guid id, Stream stream)
+    public EventValue(Guid id, byte[] content)
     {
         Id = id;
-        Stream = stream;
+        Content = content;
     }
 
     public Guid Id { get; }
-    public Stream Stream { get; }
+    public byte[] Content { get; }
 }

@@ -33,7 +33,7 @@ public class MainActivity : AvaloniaMainActivity<App>
                     () => DiHelper.Kernel.ThrowIfNull().Get<IViewLocator>(),
                     typeof(IViewLocator)
                 )
-            );;
+            );
     }
 
     protected override void OnCreate(Bundle? savedInstanceState)

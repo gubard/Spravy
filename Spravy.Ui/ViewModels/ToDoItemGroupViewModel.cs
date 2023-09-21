@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Avalonia.Collections;
 using ReactiveUI;
-using Spravy.Domain.Extensions;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Models;
-using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 
@@ -36,7 +33,7 @@ public class ToDoItemGroupViewModel : ToDoItemViewModel, IRefreshToDoItem
                 Type = ToDoItemType.Group;
                 IsCurrent = item.IsCurrent;
                 var source = item.Items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
-                ToDoSubItemsView.ViewModel.ThrowIfNull().UpdateItems(source, this);
+                ToDoSubItemsViewModel.UpdateItems(source, this);
                 SubscribeItems(source);
                 Path.Items.Clear();
                 Path.Items.Add(new RootItem());

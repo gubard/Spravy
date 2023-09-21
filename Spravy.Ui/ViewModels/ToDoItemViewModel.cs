@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
@@ -9,6 +10,7 @@ using Material.Icons;
 using Ninject;
 using ReactiveUI;
 using Spravy.Domain.Extensions;
+using Spravy.EventBus.Domain.Helpers;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
@@ -30,11 +32,13 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
     private ToDoItemType type;
     private bool isCurrent;
     protected readonly List<ToDoItemCommand> Commands = new();
-    private readonly ToDoItemCommand toCurrentCommand;
 
     public ToDoItemViewModel(string? urlPathSegment) : base(urlPathSegment)
     {
-        toCurrentCommand = new(MaterialIconKind.Star, RemoveToDoItemFromCurrentCommand);
+        RemoveToDoItemFromCurrentCommand =
+            CreateCommandFromTaskWithDialogProgressIndicator(RemoveToDoItemFromCurrentAsync);
+
+        var toCurrentCommand = new ToDoItemCommand(MaterialIconKind.Star, RemoveToDoItemFromCurrentCommand);
         ChangeDescriptionCommand = CreateCommandFromTask(ChangeDescriptionAsync);
         AddToDoItemCommand = CreateCommandFromTask(AddToDoItemAsync);
         ChangeToDoItemByPathCommand = CreateCommandFromTask<ToDoItemParentNotify>(ChangeToDoItemByPathAsync);
@@ -43,13 +47,12 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
         ToDoItemTypes = new(Enum.GetValues<ToDoItemType>());
         ChildrenTypes = new(Enum.GetValues<ToDoItemChildrenType>());
         AddToDoItemToCurrentCommand = CreateCommandFromTaskWithDialogProgressIndicator(AddToDoItemToCurrentAsync);
-        RemoveToDoItemFromCurrentCommand =
-            CreateCommandFromTaskWithDialogProgressIndicator(RemoveToDoItemFromCurrentAsync);
         ToLeafToDoItemsCommand = CreateCommand(ToLeafToDoItems);
         ChangeRootItemCommand = CreateCommandFromTask(ChangeRootItemAsync);
         ToDoItemToRootCommand = CreateCommandFromTask(ToDoItemToRootAsync);
         InitializedCommand = CreateCommand(Initialized);
         ToDoItemToStringCommand = CreateCommandFromTaskWithDialogProgressIndicator(ToDoItemToStringAsync);
+        AddTimerCommand = CreateCommand(AddTimer);
 
         this.WhenAnyValue(x => x.IsCurrent)
             .Subscribe(
@@ -74,6 +77,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
         Commands.Add(new(MaterialIconKind.SwapHorizontal, ChangeRootItemCommand));
         Commands.Add(new(MaterialIconKind.FamilyTree, ToDoItemToRootCommand));
         Commands.Add(new(MaterialIconKind.CodeString, ToDoItemToStringCommand));
+        Commands.Add(new(MaterialIconKind.Timer, AddTimerCommand));
     }
 
     public AvaloniaList<TypeOfPeriodicity> TypeOfPeriodicities { get; }
@@ -90,12 +94,13 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
     public ICommand ToDoItemToRootCommand { get; }
     public ICommand InitializedCommand { get; }
     public ICommand ToDoItemToStringCommand { get; }
+    public ICommand AddTimerCommand { get; }
 
     [Inject]
     public required ToDoItemHeaderView ToDoItemHeaderView { get; init; }
 
     [Inject]
-    public required ToDoSubItemsView ToDoSubItemsView { get; init; }
+    public required ToDoSubItemsViewModel ToDoSubItemsViewModel { get; init; }
 
     [Inject]
     public required IToDoService ToDoService { get; set; }
@@ -141,6 +146,24 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
 
     public abstract Task RefreshToDoItemAsync();
 
+    private void AddTimer()
+    {
+        Navigator.NavigateTo<AddTimerViewModel>(
+            vm =>
+            {
+                vm.EventId = EventIdHelper.ChangeCurrentId;
+
+                vm.Item = new ToDoItemNotify
+                {
+                    Id = Id,
+                    Name = Name,
+                };
+
+                vm.DueDateTime = DateTimeOffset.Now.ToCurrentDay();
+            }
+        );
+    }
+
     private Task ChangeDescriptionAsync()
     {
         return DialogViewer.ShowMultiStringConfirmDialogAsync(
@@ -161,6 +184,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
 
     private void Initialized()
     {
+        Commands.Add(new(MaterialIconKind.Checks, ToDoSubItemsViewModel.CompleteSelectedToDoItemsCommand));
         var viewModel = ToDoItemHeaderView.ViewModel.ThrowIfNull();
         viewModel.Item = this;
         viewModel.Commands.AddRange(Commands);
@@ -174,13 +198,25 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
 
     private Task ChangeRootItemAsync()
     {
-        return DialogViewer.ShowConfirmDialogAsync<ToDoItemSelectorView>(
-            async _ => DialogViewer.CloseDialog(),
-            async view =>
+        return DialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
+            async item =>
             {
-                await ToDoService.UpdateToDoItemParentAsync(Id, view.ViewModel.SelectedItem.Id);
+                await ToDoService.UpdateToDoItemParentAsync(Id, item.Id);
                 await RefreshToDoItemAsync();
                 DialogViewer.CloseDialog();
+            },
+            view =>
+            {
+                var viewModel = view.ViewModel.ThrowIfNull();
+                viewModel.IgnoreIds.Add(Id);
+                var parents = Path.Items.OfType<ToDoItemParentNotify>().ToArray();
+
+                if (parents.Length == 1)
+                {
+                    return;
+                }
+
+                viewModel.DefaultSelectedItemId = parents[^2].Id;
             }
         );
     }
@@ -238,7 +274,12 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
     private Task AddToDoItemAsync()
     {
         return DialogViewer.ShowConfirmDialogAsync<AddToDoItemView>(
-            async _ => DialogViewer.CloseDialog(),
+            _ =>
+            {
+                DialogViewer.CloseDialog();
+
+                return Task.CompletedTask;
+            },
             async view =>
             {
                 var viewModel = view.ViewModel.ThrowIfNull();

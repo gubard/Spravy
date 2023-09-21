@@ -17,7 +17,7 @@ public static class JwtBearerOptionsExtension
         {
             ValidIssuer = jwtOptions.Issuer.ThrowIfNull(),
             ValidAudience = jwtOptions.Audience.ThrowIfNull(),
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Key.ThrowIfNull())),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Key.ThrowIfNullOrWhiteSpace())),
             ValidateIssuer = true,
             ValidateLifetime = true,
             ValidateAudience = true,

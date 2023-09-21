@@ -9,18 +9,15 @@ public class EmptyStringToNullConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is string str)
+        if (value is not string str)
         {
-            if (str.IsNullOrWhiteSpace())
-            {
-                return null;
-            }
+            return value;
         }
 
-        return value;
+        return str.IsNullOrWhiteSpace() ? null : value;
     }
 
-    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is null)
         {

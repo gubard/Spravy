@@ -9,4 +9,5 @@ package spravy.authentication;
 service AuthenticationService {
   rpc Login (LoginRequest) returns (LoginReply);
   rpc CreateUser (CreateUserRequest) returns (CreateUserReply);
+  rpc RefreshToken (RefreshTokenRequest) returns (RefreshTokenReply);
 }

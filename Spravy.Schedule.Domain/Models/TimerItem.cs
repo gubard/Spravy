@@ -2,7 +2,7 @@ namespace Spravy.Schedule.Domain.Models;
 
 public readonly struct TimerItem
 {
-    public TimerItem(DateTimeOffset dueDateTime, Guid eventId, Stream content, Guid id)
+    public TimerItem(DateTimeOffset dueDateTime, Guid eventId, byte[] content, Guid id)
     {
         DueDateTime = dueDateTime;
         EventId = eventId;
@@ -13,5 +13,5 @@ public readonly struct TimerItem
     public Guid Id { get; }
     public DateTimeOffset DueDateTime { get; }
     public Guid EventId { get; }
-    public Stream Content { get; }
+    public byte[] Content { get; }
 }

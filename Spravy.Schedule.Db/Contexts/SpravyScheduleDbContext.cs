@@ -1,24 +1,16 @@
 using Microsoft.EntityFrameworkCore;
+using Spravy.Db.Contexts;
 using Spravy.Db.Interfaces;
 
 namespace Spravy.Schedule.Db.Contexts;
 
-public class SpravyScheduleDbContext : DbContext
+public class SpravyScheduleDbContext : SpravyContext
 {
-    private readonly IDbContextSetup setup;
-
-    protected SpravyScheduleDbContext(IDbContextSetup setup)
+    protected SpravyScheduleDbContext(IDbContextSetup setup) : base(setup)
     {
-        this.setup = setup;
     }
 
-    public SpravyScheduleDbContext(DbContextOptions options, IDbContextSetup setup) : base(options)
+    public SpravyScheduleDbContext(DbContextOptions options, IDbContextSetup setup) : base(options, setup)
     {
-        this.setup = setup;
-    }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        setup.OnModelCreating(modelBuilder);
     }
 }

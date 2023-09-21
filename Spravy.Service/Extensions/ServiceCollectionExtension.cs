@@ -1,12 +1,36 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Spravy.Db.Sqlite.Extensions;
+using Spravy.Db.Sqlite.Models;
+using Spravy.Domain.Extensions;
 using Spravy.Service.Model;
 
 namespace Spravy.Service.Extensions;
 
 public static class ServiceCollectionExtension
 {
+    public static IServiceCollection AddSpravySqliteFolderContext<TContext>(this IServiceCollection serviceCollection)
+        where TContext : DbContext
+    {
+        serviceCollection.AddDbContextFactory<TContext>(
+            (sp, options) =>
+            {
+                var sqliteOptions = sp.GetRequiredService<SqliteFolderOptions>();
+                var httpContextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
+                var userId = httpContextAccessor.GetUserId();
+                var fileName = $"{userId}.db";
+                var file = sqliteOptions.DataBasesFolder.ThrowIfNull().ToDirectory().ToFile(fileName);
+                var connectionString = file.ToSqliteConnectionString();
+                options.UseSqlite(connectionString);
+            }
+        );
+
+        return serviceCollection;
+    }
+
     public static IServiceCollection AddSpravy(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
         serviceCollection.AddGrpc();
@@ -40,7 +64,7 @@ public static class ServiceCollectionExtension
 
         return serviceCollection;
     }
-    
+
     public static IServiceCollection AddMapperConfiguration<TProfile1, TProfile2>(
         this IServiceCollection serviceCollection
     )
@@ -59,7 +83,7 @@ public static class ServiceCollectionExtension
 
         return serviceCollection;
     }
-    
+
     public static IServiceCollection AddMapperConfiguration<TProfile>(
         this IServiceCollection serviceCollection
     )
@@ -67,10 +91,7 @@ public static class ServiceCollectionExtension
     {
         serviceCollection.AddSingleton(
             _ => new MapperConfiguration(
-                cfg =>
-                {
-                    cfg.AddProfile<TProfile>();
-                }
+                cfg => { cfg.AddProfile<TProfile>(); }
             )
         );
 

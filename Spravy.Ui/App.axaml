@@ -49,9 +49,9 @@
     </Application.Styles>
 
     <Application.DataTemplates>
-        <DataTemplate x:DataType="models:TimerToDoItemCompletedNotify">
+        <DataTemplate x:DataType="models:TimerItemToDoItemCurrentNotify">
             <StackPanel>
-                <CheckBox IsChecked="{Binding IsCompleted}" />
+                <CheckBox IsChecked="{Binding IsCurrent}" />
                 <TextBlock Text="{Binding DueDateTime, StringFormat=\{0:yyyy.MM.dd\}}" />
             </StackPanel>
         </DataTemplate>
@@ -82,7 +82,8 @@
         </DataTemplate>
 
         <DataTemplate DataType="models:ToDoSubItemValueNotify">
-            <controls:Card ToolTip.Tip="{Binding Description, Converter={StaticResource EmptyStringToNullConverter}}">
+            <controls:Card ToolTip.Tip="{Binding Description, Converter={StaticResource EmptyStringToNullConverter}}"
+                           IsVisible="{Binding IsVisible}">
                 <Grid ColumnDefinitions="Auto,*">
                     <Rectangle Width="10"
                                Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
@@ -191,7 +192,8 @@
         </DataTemplate>
 
         <DataTemplate DataType="models:ToDoSubItemGroupNotify">
-            <controls:Card ToolTip.Tip="{Binding Description, Converter={StaticResource EmptyStringToNullConverter}}">
+            <controls:Card ToolTip.Tip="{Binding Description, Converter={StaticResource EmptyStringToNullConverter}}"
+                           IsVisible="{Binding IsVisible}">
                 <Grid ColumnDefinitions="Auto,*">
                     <Rectangle Width="10"
                                Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
@@ -255,7 +257,8 @@
         </DataTemplate>
 
         <DataTemplate DataType="models:ToDoSubItemPlannedNotify">
-            <controls:Card ToolTip.Tip="{Binding Description, Converter={StaticResource EmptyStringToNullConverter}}">
+            <controls:Card ToolTip.Tip="{Binding Description, Converter={StaticResource EmptyStringToNullConverter}}"
+                           IsVisible="{Binding IsVisible}">
                 <Grid ColumnDefinitions="Auto,*">
                     <Rectangle Width="10"
                                Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
@@ -365,7 +368,8 @@
         </DataTemplate>
 
         <DataTemplate DataType="models:ToDoSubItemPeriodicityNotify">
-            <controls:Card ToolTip.Tip="{Binding Description, Converter={StaticResource EmptyStringToNullConverter}}">
+            <controls:Card ToolTip.Tip="{Binding Description, Converter={StaticResource EmptyStringToNullConverter}}"
+                           IsVisible="{Binding IsVisible}">
                 <Grid ColumnDefinitions="Auto,*">
                     <Rectangle Width="10"
                                Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
@@ -470,7 +474,8 @@
         </DataTemplate>
 
         <DataTemplate DataType="models:ToDoSubItemPeriodicityOffsetNotify">
-            <controls:Card ToolTip.Tip="{Binding Description, Converter={StaticResource EmptyStringToNullConverter}}">
+            <controls:Card ToolTip.Tip="{Binding Description, Converter={StaticResource EmptyStringToNullConverter}}"
+                           IsVisible="{Binding IsVisible}">
                 <Grid ColumnDefinitions="Auto,*">
                     <Rectangle Width="10"
                                Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />

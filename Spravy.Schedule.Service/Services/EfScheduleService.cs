@@ -10,23 +10,24 @@ namespace Spravy.Schedule.Service.Services;
 
 public class EfScheduleService : IScheduleService
 {
-    private readonly SpravyScheduleDbContext context;
+    private readonly IDbContextFactory<SpravyScheduleDbContext> dbContextFactory;
     private readonly IMapper mapper;
 
-    public EfScheduleService(SpravyScheduleDbContext context, IMapper mapper)
+    public EfScheduleService(IMapper mapper, IDbContextFactory<SpravyScheduleDbContext> dbContextFactory)
     {
-        this.context = context;
         this.mapper = mapper;
+        this.dbContextFactory = dbContextFactory;
     }
 
     public async Task AddTimerAsync(AddTimerParameters parameters)
     {
+        await using var context = await dbContextFactory.CreateDbContextAsync();
         var newTimer = new TimerEntity
         {
             Id = Guid.NewGuid(),
             EventId = parameters.EventId,
             DueDateTime = parameters.DueDateTime,
-            Content = await parameters.Content.ToByteArrayAsync(),
+            Content = parameters.Content,
         };
 
         await context.Set<TimerEntity>().AddAsync(newTimer);
@@ -35,6 +36,7 @@ public class EfScheduleService : IScheduleService
 
     public async Task<IEnumerable<TimerItem>> GetListTimesAsync()
     {
+        await using var context = await dbContextFactory.CreateDbContextAsync();
         var timers = await context.Set<TimerEntity>().AsNoTracking().ToArrayAsync();
         var result = mapper.Map<IEnumerable<TimerItem>>(timers);
 
@@ -43,6 +45,7 @@ public class EfScheduleService : IScheduleService
 
     public async Task RemoveTimerAsync(Guid id)
     {
+        await using var context = await dbContextFactory.CreateDbContextAsync();
         var timer = await context.Set<TimerEntity>().FindAsync(id);
         context.Set<TimerEntity>().Remove(timer.ThrowIfNull());
         await context.SaveChangesAsync();

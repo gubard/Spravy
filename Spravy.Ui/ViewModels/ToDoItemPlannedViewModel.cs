@@ -26,7 +26,7 @@ public class ToDoItemPlannedViewModel : ToDoItemViewModel, IRefreshToDoItem
 
     public ToDoItemPlannedViewModel() : base("to-do-item-value")
     {
-        ChangeDueDateCommand = CreateCommandFromTask(ChangeDueDate);
+        ChangeDueDateCommand = CreateCommandFromTask(ChangeDueDateAsync);
         CompleteToDoItemCommand = CreateCommandFromTaskWithDialogProgressIndicator(CompleteToDoItemAsync);
         SubscribeProperties();
         Commands.Add(new(MaterialIconKind.Check, CompleteToDoItemCommand));
@@ -53,9 +53,9 @@ public class ToDoItemPlannedViewModel : ToDoItemViewModel, IRefreshToDoItem
         set => this.RaiseAndSetIfChanged(ref dueDate, value);
     }
 
-    private Task ChangeDueDate()
+    private Task ChangeDueDateAsync()
     {
-        return DialogViewer.ShowDateTimeConfirmDialogAsync(
+        return DialogViewer.ShowDateConfirmDialogAsync(
             value =>
             {
                 DialogViewer.CloseDialog();
@@ -158,7 +158,7 @@ public class ToDoItemPlannedViewModel : ToDoItemViewModel, IRefreshToDoItem
                 DueDate = toDoItemPlanned.DueDate;
                 ChildrenType = toDoItemPlanned.ChildrenType;
                 var source = toDoItemPlanned.Items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
-                ToDoSubItemsView.ViewModel.ThrowIfNull().UpdateItems(source, this);
+                ToDoSubItemsViewModel.UpdateItems(source, this);
                 SubscribeItems(source);
                 Path.Items.Clear();
                 Path.Items.Add(new RootItem());
@@ -183,7 +183,7 @@ public class ToDoItemPlannedViewModel : ToDoItemViewModel, IRefreshToDoItem
     {
         foreach (var itemNotify in items.OfType<ToDoSubItemValueNotify>())
         {
-            async void OnNextIsComplete(bool x)
+            async void OnNextIsCompleteItem(bool x)
             {
                 await SafeExecuteAsync(
                     async () =>
@@ -194,7 +194,7 @@ public class ToDoItemPlannedViewModel : ToDoItemViewModel, IRefreshToDoItem
                 );
             }
 
-            itemNotify.WhenAnyValue(x => x.IsCompleted).Skip(1).Subscribe(OnNextIsComplete);
+            itemNotify.WhenAnyValue(x => x.IsCompleted).Skip(1).Subscribe(OnNextIsCompleteItem);
         }
     }
 

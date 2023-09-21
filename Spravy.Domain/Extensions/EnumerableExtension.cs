@@ -63,7 +63,7 @@ public static class EnumerableExtension
         string paramName = ""
     )
     {
-        var array = enumerable.ThrowIfNull().ToArray();
+        var array = Enumerable.ToArray(enumerable.ThrowIfNull());
         array.ThrowIfNull(paramName);
         array.ThrowIfEmpty(paramName);
 
@@ -76,7 +76,7 @@ public static class EnumerableExtension
         string paramName = ""
     )
     {
-        var array = enumerable.ToArray();
+        var array = Enumerable.ToArray(enumerable);
 
         return array.IsEmpty() ? throw new EmptyEnumerableException(paramName) : array;
     }

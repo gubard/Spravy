@@ -12,6 +12,11 @@ public static class StringExtension
         return Environment.GetEnvironmentVariable(key);
     }
 
+    public static Guid ToGuid(this string str)
+    {
+        return Guid.Parse(str);
+    }
+
     public static Uri ToUri(this string str)
     {
         return new(str);
@@ -141,5 +146,10 @@ public static class StringExtension
         {
             builder.Append(str);
         }
+    }
+
+    public static TEnum ParseEnum<TEnum>(this string str) where TEnum : struct
+    {
+        return Enum.Parse<TEnum>(str);
     }
 }

@@ -27,7 +27,7 @@ public interface IToDoService
     Task UpdateToDoItemMonthlyPeriodicityAsync(Guid id, MonthlyPeriodicity periodicity);
     Task UpdateToDoItemWeeklyPeriodicityAsync(Guid id, WeeklyPeriodicity periodicity);
     Task<IEnumerable<IToDoSubItem>> GetLeafToDoSubItemsAsync(Guid id);
-    Task<IEnumerable<ToDoSelectorItem>> GetToDoSelectorItemsAsync();
+    Task<IEnumerable<ToDoSelectorItem>> GetToDoSelectorItemsAsync(Guid[] ignoreIds);
     Task UpdateToDoItemParentAsync(Guid id, Guid parentId);
     Task ToDoItemToRootAsync(Guid id);
     Task<string> ToDoItemToStringAsync(Guid id);

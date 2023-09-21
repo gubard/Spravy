@@ -6,6 +6,7 @@ using Avalonia.Collections;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Primitives;
+using Spravy.Domain.Extensions;
 using Spravy.Domain.Models;
 using Spravy.Ui.Models;
 
@@ -111,7 +112,7 @@ public class DayOfYearSelector : TemplatedControl
             var dayOfMonthSelector = GetDayOfMonthSelector(month);
             SelectedDaysOfYear.RemoveAll(SelectedDaysOfYear.Where(x => x.Month == month));
             SelectedDaysOfYear.AddRange(dayOfMonthSelector.SelectedDaysOfMonth.Select(x => new DayOfYear(x, month)));
-            var args = new SelectedSelectedDaysOfYearEventArgs(SelectedDaysOfYear.ToArray());
+            var args = new SelectedSelectedDaysOfYearEventArgs(Enumerable.ToArray(SelectedDaysOfYear));
             SelectedDaysOfYearChanged?.Invoke(this, args);
             SelectedDaysOfYear.CollectionChanged += SelectedDaysOfYearChangedCore;
         };
@@ -153,7 +154,8 @@ public class DayOfYearSelector : TemplatedControl
         {
             var dayOfMonthSelector = GetDayOfMonthSelector(i);
             dayOfMonthSelector.SelectedDaysOfMonth.Clear();
-            dayOfMonthSelector.SelectedDaysOfMonth.AddRange(list.Where(x => x.Month == i).Select(x => x.Day));
+            var tempI = i;
+            dayOfMonthSelector.SelectedDaysOfMonth.AddRange(list.Where(x => x.Month == tempI).Select(x => x.Day));
         }
     }
 
@@ -161,18 +163,18 @@ public class DayOfYearSelector : TemplatedControl
     {
         switch (month)
         {
-            case 1: return januaryDayOfMonthSelector;
-            case 2: return februaryDayOfMonthSelector;
-            case 3: return marchDayOfMonthSelector;
-            case 4: return aprilDayOfMonthSelector;
-            case 5: return mayDayOfMonthSelector;
-            case 6: return juneDayOfMonthSelector;
-            case 7: return julyDayOfMonthSelector;
-            case 8: return augustDayOfMonthSelector;
-            case 9: return septemberDayOfMonthSelector;
-            case 10: return octoberDayOfMonthSelector;
-            case 11: return novemberDayOfMonthSelector;
-            case 12: return decemberDayOfMonthSelector;
+            case 1: return januaryDayOfMonthSelector.ThrowIfNull();
+            case 2: return februaryDayOfMonthSelector.ThrowIfNull();
+            case 3: return marchDayOfMonthSelector.ThrowIfNull();
+            case 4: return aprilDayOfMonthSelector.ThrowIfNull();
+            case 5: return mayDayOfMonthSelector.ThrowIfNull();
+            case 6: return juneDayOfMonthSelector.ThrowIfNull();
+            case 7: return julyDayOfMonthSelector.ThrowIfNull();
+            case 8: return augustDayOfMonthSelector.ThrowIfNull();
+            case 9: return septemberDayOfMonthSelector.ThrowIfNull();
+            case 10: return octoberDayOfMonthSelector.ThrowIfNull();
+            case 11: return novemberDayOfMonthSelector.ThrowIfNull();
+            case 12: return decemberDayOfMonthSelector.ThrowIfNull();
             default: throw new ArgumentOutOfRangeException();
         }
     }

@@ -22,10 +22,14 @@ class Build : NukeBuild
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
-    [Parameter] readonly string AndroidSigningKeyPass;
-    [Parameter] readonly string AndroidSigningStorePass;
     [Parameter] readonly string FtpPassword;
     [Parameter] readonly string SshPassword;
+    [Parameter] readonly string FtpHost;
+    [Parameter] readonly string FtpUser;
+    [Parameter] readonly string SshHost;
+    static readonly DirectoryInfo TempFolder = new(Path.Combine("/", "tmp", "Spravy"));
+    static readonly DirectoryInfo PublishFolder = new(Path.Combine(TempFolder.FullName, "Publish"));
+    static readonly DirectoryInfo ServicesFolder = new(Path.Combine(TempFolder.FullName, "services"));
 
     [Solution] readonly Solution Solution;
 
@@ -81,52 +85,63 @@ class Build : NukeBuild
             .DependsOn(Compile)
             .Executes(() =>
                 {
-                    using var sshClient = new SshClient("192.168.50.2", "vafnir", SshPassword);
+                    var serviceProjects =
+                        Solution.AllProjects.Where(x => x.Name.EndsWith(".Service") && x.Name != "Spravy.Service")
+                            .ToArray();
+
+                    using var sshClient = new SshClient(FtpHost, FtpUser, SshPassword);
                     sshClient.Connect();
-                    using var ftpClient = new FtpClient("192.168.50.2", "vafnir", FtpPassword);
+                    using var ftpClient = new FtpClient(SshHost, FtpUser, FtpPassword);
                     ftpClient.Connect();
 
-                    var eventBusServiceFolder = PublishProject("Spravy.EventBus.Service");
-                    DeleteIfExistsDirectory(ftpClient, "/home/vafnir/Spravy.EventBus.Service");
-                    ftpClient.UploadDirectory(eventBusServiceFolder.FullName, "/home/vafnir/Spravy.EventBus.Service");
+                    foreach (var serviceProject in serviceProjects)
+                    {
+                        var folder = PublishProject(serviceProject.Name);
+                        DeleteIfExistsDirectory(ftpClient, $"/home/{FtpUser}/{serviceProject.Name}");
+                        ftpClient.UploadDirectory(folder.FullName, $"/home/{FtpUser}/{serviceProject.Name}");
 
-                    using var commandEventBusService =
-                        sshClient.RunCommand(
-                            $"echo {SshPassword} | sudo systemctl restart spravy.event-bus.service"
+                        using var rmCommand =
+                            sshClient.RunCommand(
+                                $"echo {SshPassword} | rm /etc/systemd/system/{serviceProject.Name.ToLower()}"
+                            );
+
+                        if (!ServicesFolder.Exists)
+                        {
+                            ServicesFolder.Create();
+                        }
+                        
+                        File.WriteAllText(Path.Combine(ServicesFolder.FullName, serviceProject.Name.ToLower()),
+                            CreateDaemonConfig(serviceProject.Name)
                         );
+                        
+                        if(!ftpClient.DirectoryExists("/tmp/Spravy/services"))
+                        {
+                            ftpClient.CreateDirectory("/tmp/Spravy/services");
+                        }
 
-                    var authenticationServiceFolder = PublishProject("Spravy.Authentication.Service");
-                    DeleteIfExistsDirectory(ftpClient, "/home/vafnir/Spravy.Authentication.Service");
-
-                    ftpClient.UploadDirectory(authenticationServiceFolder.FullName,
-                        "/home/vafnir/Spravy.Authentication.Service"
-                    );
-
-                    using var commandAuthenticationService =
-                        sshClient.RunCommand(
-                            $"echo {SshPassword} | sudo systemctl restart spravy.authentication.service"
+                        ftpClient.UploadFile(Path.Combine(ServicesFolder.FullName, serviceProject.Name.ToLower()),
+                            $"/tmp/Spravy/services/{serviceProject.Name.ToLower()}"
                         );
+                        
+                        using var cpCommand =
+                            sshClient.RunCommand(
+                                $"echo {SshPassword} | sudo cp /tmp/Spravy/services/{serviceProject.Name.ToLower()} /etc/systemd/system/{serviceProject.Name.ToLower()}"
+                            );
+                    }
 
-                    var scheduleServiceFolder = PublishProject("Spravy.Schedule.Service");
-                    DeleteIfExistsDirectory(ftpClient, "/home/vafnir/Spravy.Schedule.Service");
-                    ftpClient.UploadDirectory(scheduleServiceFolder.FullName, "/home/vafnir/Spravy.Schedule.Service");
+                    using var daemonReloadCommand =
+                        sshClient.RunCommand($"echo {SshPassword} | sudo systemctl daemon-reload");
 
-                    using var commandScheduleService =
-                        sshClient.RunCommand(
-                            $"echo {SshPassword} | sudo systemctl restart spravy.schedule.service"
-                        );
-
-                    var toDoServiceFolder = PublishProject("Spravy.ToDo.Service");
-                    DeleteIfExistsDirectory(ftpClient, "/home/vafnir/Spravy.ToDo.Service");
-                    ftpClient.UploadDirectory(toDoServiceFolder.FullName, "/home/vafnir/Spravy.ToDo.Service");
-
-                    using var commandToDoService =
-                        sshClient.RunCommand(
-                            $"echo {SshPassword} | sudo systemctl restart spravy.todo.service"
-                        );
+                    foreach (var serviceProject in serviceProjects)
+                    {
+                        using var sshCommand =
+                            sshClient.RunCommand(
+                                $"echo {SshPassword} | sudo systemctl restart {serviceProject.Name.ToLower()}"
+                            );
+                    }
 
                     var desktopFolder = PublishProject("Spravy.Ui.Desktop");
-                    var desktopAppFolder = new DirectoryInfo("/home/vafnir/Apps/Spravy.Ui.Desktop");
+                    var desktopAppFolder = new DirectoryInfo($"/home/{FtpUser}/Apps/Spravy.Ui.Desktop");
 
                     if (desktopAppFolder.Exists)
                     {
@@ -134,31 +149,32 @@ class Build : NukeBuild
                     }
 
                     CopyDirectory(desktopFolder.FullName, desktopAppFolder.FullName, true);
-                    /*var browserFolder = PublishProject("Spravy.Ui.Browser");
-
-                 var keyStoreFile = new FileInfo(Solution.Directory / "sign-key.keystore");
-
-                 if (keyStoreFile.Exists)
-                 {
-                     keyStoreFile.Delete();
-                 }
-
-                 await Cli.Wrap("keytool")
-                     .WithWorkingDirectory(Solution.Directory)
-                     .WithArguments(
-                         $"-genkey -v -keystore sign-key.keystore -alias spravy -keyalg RSA -keysize 2048 -validity 10000 -dname \"CN=Serhii Maksymov, OU=Serhii Maksymov FOP, O=Serhii Maksymov FOP, L=Kharkiv, S=Kharkiv State, C=Ukraine\" -storepass {AndroidSigningStorePass}"
-                     )
-                     .ExecuteAsync();
-
-                 var androidFolder = PublishProject("Spravy.Ui.Android", setting => setting
-                     .AddProperty("AndroidKeyStore", "true")
-                     .AddProperty("AndroidSigningKeyStore", keyStoreFile.FullName)
-                     .AddProperty("AndroidSigningKeyAlias", "spravy")
-                     .AddProperty("AndroidSigningKeyPass", AndroidSigningKeyPass)
-                     .AddProperty("AndroidSigningStorePass", AndroidSigningStorePass)
-                 );*/
                 }
             );
+
+    string CreateDaemonConfig(string serviceName)
+    {
+        return $"""
+                [Unit]
+                Description={serviceName}
+                After=network.target
+
+                [Service]
+                WorkingDirectory=/home/{FtpUser}/{serviceName}
+                ExecStart=/usr/bin/dotnet /home/{FtpUser}/{serviceName}/{serviceName}.dll
+                Restart=always
+                # Restart service after 10 seconds if the dotnet service crashes:
+                RestartSec=10
+                KillSignal=SIGINT
+                SyslogIdentifier={serviceName.ToLower().Replace(",", "-")}
+                User={FtpUser}
+                Environment=ASPNETCORE_ENVIRONMENT=Production
+                Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
+
+                [Install]
+                WantedBy=multi-user.target
+                """;
+    }
 
     static void DeleteIfExistsDirectory(FtpClient client, string path)
     {
@@ -209,7 +225,7 @@ class Build : NukeBuild
 
     DirectoryInfo PublishProject(string name, Action<DotNetPublishSettings> configurator = null)
     {
-        var publishFolder = new DirectoryInfo(Path.Combine("/", "tmp", "Spravy", "publish", name));
+        var publishFolder = new DirectoryInfo(Path.Combine(PublishFolder.FullName, name));
 
         if (publishFolder.Exists)
         {

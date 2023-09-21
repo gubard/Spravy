@@ -1,3 +1,4 @@
+using System;
 using ReactiveUI;
 
 namespace Spravy.Ui.Models;
@@ -10,5 +11,5 @@ public class RoutableViewModelBase : ViewModelBase, IRoutableViewModel
     }
 
     public string? UrlPathSegment { get; }
-    public IScreen? HostScreen => null;
+    public IScreen HostScreen => throw new NullReferenceException();
 }

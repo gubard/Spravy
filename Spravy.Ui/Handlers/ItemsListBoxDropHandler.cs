@@ -78,12 +78,14 @@ public class ItemsListBoxDropHandler<TItem> : DropHandlerBase
         {
             if (control is not ListBoxItem item)
             {
-                item = control.FindParent<ListBoxItem>();
-            }
+                var parent = control.FindParent<ListBoxItem>();
 
-            if (item is null)
-            {
-                return false;
+                if (parent is null)
+                {
+                    return false;
+                }
+
+                item = parent;
             }
 
             var pointerPosition = e.GetPosition(item);
@@ -106,12 +108,14 @@ public class ItemsListBoxDropHandler<TItem> : DropHandlerBase
         {
             if (control is not ListBoxItem item)
             {
-                item = control.FindParent<ListBoxItem>();
-            }
+                var parent = control.FindParent<ListBoxItem>();
 
-            if (item is null)
-            {
-                return false;
+                if (parent is null)
+                {
+                    return false;
+                }
+
+                item = parent;
             }
 
             var pointerPosition = e.GetPosition(item);

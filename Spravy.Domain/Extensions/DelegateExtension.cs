@@ -6,19 +6,18 @@ namespace Spravy.Domain.Extensions;
 
 public static class DelegateExtension
 {
-    private static readonly Type DelegateType;
     private static readonly MethodInfo DelegateInvokeDynamicType;
     
     public static Type[] GetParameterTypes(this Delegate del)
     {
-        return del.Method.GetParameters().Select(x => x.ParameterType).ToArray();
+        return Enumerable.ToArray(del.Method.GetParameters().Select(x => x.ParameterType));
     }
 
     static DelegateExtension()
     {
-        DelegateType = typeof(Delegate);
+        var delegateType = typeof(Delegate);
 
-        DelegateInvokeDynamicType = DelegateType
+        DelegateInvokeDynamicType = delegateType
             .GetMethod(nameof(Delegate.DynamicInvoke))
             .ThrowIfNull();
     }
@@ -28,7 +27,7 @@ public static class DelegateExtension
         var target = del.Target.ThrowIfNull();
         var instance = target.ToConstant();
 
-        if (del.Method.IsRTDynamicMethod())
+        if (del.Method.IsRtDynamicMethod())
         {
             var args = arguments.Where(x => !x.Type.IsClosure());
             var parameters = typeof(object).ToNewArrayInit(args);

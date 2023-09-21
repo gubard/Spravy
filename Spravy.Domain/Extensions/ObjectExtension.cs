@@ -7,12 +7,17 @@ namespace Spravy.Domain.Extensions;
 
 public static class ObjectExtension
 {
-    public static T[] AsArray<T>(this T obj)
+    public static T[] ToArray<T>(this T obj)
     {
         return new[]
         {
             obj
         };
+    }
+
+    public static IEnumerable<T> ToEnumerable<T>(this T obj)
+    {
+        yield return obj;
     }
 
     public static void ThrowDisposedException<T>(this T obj) where T : notnull
@@ -71,7 +76,8 @@ public static class ObjectExtension
     public static TObj ThrowIfNotEquals<TObj>(
         this TObj obj,
         TObj expected,
-        [CallerArgumentExpression(nameof(obj))] string name = ""
+        [CallerArgumentExpression(nameof(obj))]
+        string name = ""
     )
         where TObj : notnull
     {
@@ -92,7 +98,7 @@ public static class ObjectExtension
 
         return obj;
     }
-    
+
     public static ConstantExpression ToConstant(this object obj)
     {
         return Expression.Constant(obj);

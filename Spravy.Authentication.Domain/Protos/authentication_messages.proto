@@ -10,6 +10,7 @@ message LoginRequest {
 
 message LoginReply {
   string Token = 1;
+  string RefreshToken = 2;
 }
 
 message CreateUserRequest {
@@ -18,10 +19,18 @@ message CreateUserRequest {
 }
 
 message CreateUserReply {
-  string Token = 1;
 }
 
 message UserGrpc {
   string Login = 1;
   string Password = 2;
+}
+
+message RefreshTokenRequest {
+  string RefreshToken = 1;
+}
+
+message RefreshTokenReply {
+  string Token = 1;
+  string RefreshToken = 2;
 }
