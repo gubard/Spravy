@@ -6,7 +6,6 @@ using Spravy.Client.Extensions;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
 using Spravy.Domain.Extensions;
-using Spravy.Domain.Models;
 using Spravy.EventBus.Domain.Client.Models;
 using Spravy.EventBus.Domain.Interfaces;
 using Spravy.EventBus.Domain.Models;

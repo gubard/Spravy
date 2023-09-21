@@ -34,4 +34,12 @@
             <Link>Protos/authentication_messages.proto</Link>
         </Protobuf>
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Logs\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Logs\log20230921.txt" />
+    </ItemGroup>
 </Project>

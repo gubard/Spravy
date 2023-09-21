@@ -10,6 +10,10 @@ public static class WebApplicationBuilderExtension
 {
     public static WebApplicationBuilder AddSpravy(this WebApplicationBuilder builder, string[] args)
     {
+        Log.Logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(builder.Configuration)
+            .CreateLogger();
+
         builder.Configuration.AddSpravy(args);
         builder.Services.AddSpravy(builder.Configuration);
         builder.Host.UseSpravy();
