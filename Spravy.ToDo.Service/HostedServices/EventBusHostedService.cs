@@ -69,20 +69,27 @@ public class EventBusHostedService : IHostedService
         {
             try
             {
-                var eventBusService = spravyEventBusServiceFactory.Create(file.GetFileNameWithoutExtension());
-                var stream = eventBusService.SubscribeEventsAsync(eventIds.ToArray(), default);
-                await using var context = spravyToDoDbContext.Create(file.ToSqliteConnectionString());
-                logger.LogInformation("Connected for events {File}", file);
-
-                await foreach (var eventValue in stream)
+                while (true)
                 {
-                    if (eventValue.Id == EventIdHelper.ChangeCurrentId)
+                    var eventBusService = spravyEventBusServiceFactory.Create(file.GetFileNameWithoutExtension());
+                    await using var context = spravyToDoDbContext.Create(file.ToSqliteConnectionString());
+                    var events = await eventBusService.GetEventsAsync(eventIds);
+
+                    foreach (var @event in events)
                     {
-                        var eventContent = ChangeToDoItemIsCurrentEvent.Parser.ParseFrom(eventValue.Content);
-                        var item = await context.Set<ToDoItemEntity>().FindAsync(new Guid(eventContent.ToDoItemId.ToByteArray()));
-                        item.ThrowIfNull().IsCurrent = eventContent.IsCurrent;
-                        await context.SaveChangesAsync();
+                        if (@event.Id == EventIdHelper.ChangeCurrentId)
+                        {
+                            var eventContent = ChangeToDoItemIsCurrentEvent.Parser.ParseFrom(@event.Content);
+
+                            var item = await context.Set<ToDoItemEntity>()
+                                .FindAsync(new Guid(eventContent.ToDoItemId.ToByteArray()));
+
+                            item.ThrowIfNull().IsCurrent = eventContent.IsCurrent;
+                            await context.SaveChangesAsync();
+                        }
                     }
+
+                    await Task.Delay(TimeSpan.FromSeconds(20));
                 }
             }
             catch (Exception e)
@@ -93,6 +100,8 @@ public class EventBusHostedService : IHostedService
         catch (Exception e)
         {
             logger.Log(LogLevel.Error, e, null);
+            await Task.Delay(TimeSpan.FromSeconds(30));
+            tasks[file.FullName] = HandleEventsAsync(file);
         }
     }
 }

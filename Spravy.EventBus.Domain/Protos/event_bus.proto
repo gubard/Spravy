@@ -9,4 +9,5 @@ package spravy.event_bus;
 service EventBusService {
   rpc SubscribeEvents (SubscribeEventsRequest) returns (stream SubscribeEventsReply);
   rpc PublishEvent (PublishEventRequest) returns (PublishEventReply);
+  rpc GetEvents (GetEventsRequest) returns (GetEventsReply);
 }

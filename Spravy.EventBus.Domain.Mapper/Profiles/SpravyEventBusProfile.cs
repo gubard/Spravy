@@ -14,6 +14,20 @@ public class SpravyEventBusProfile : Profile
         CreateMap<byte[], ByteString>().ConstructUsing(x => ByteString.CopyFrom(x));
         CreateMap<ByteString, byte[]>().ConstructUsing(x => x.ToByteArray());
 
+        CreateMap<EventValue, Event>()
+            .ConstructUsing(
+                (x, context) => new Event
+                {
+                    EventId = context.Mapper.Map<ByteString>(x.Id),
+                    Content = context.Mapper.Map<ByteString>(x.Content)
+                }
+            );
+
+        CreateMap<Event, EventValue>()
+            .ConstructUsing(
+                (x, context) => new EventValue(context.Mapper.Map<Guid>(x.EventId), x.Content.ToByteArray())
+            );
+
         CreateMap<SubscribeEventsReply, EventValue>()
             .ConstructUsing(
                 (x, context) => new EventValue(context.Mapper.Map<Guid>(x.EventId), x.Content.ToByteArray())

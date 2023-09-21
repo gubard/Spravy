@@ -6,4 +6,5 @@ public interface IEventBusService
 {
     IAsyncEnumerable<EventValue> SubscribeEventsAsync(Guid[] eventIds, CancellationToken cancellationToken);
     Task PublishEventAsync(Guid eventId, byte[] content);
+    Task<IEnumerable<EventValue>> GetEventsAsync(ReadOnlyMemory<Guid> eventIds);
 }

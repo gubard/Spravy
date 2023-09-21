@@ -12,6 +12,14 @@ message PublishEventRequest {
 message PublishEventReply {
 }
 
+message GetEventsRequest {
+  repeated bytes EventIds = 1;
+}
+
+message GetEventsReply {
+  repeated Event Events = 1;
+}
+
 message SubscribeEventsRequest {
   repeated bytes EventIds = 1;
 }
@@ -24,4 +32,9 @@ message SubscribeEventsReply {
 message ChangeToDoItemIsCurrentEvent {
   bytes ToDoItemId = 1;
   bool IsCurrent = 2;
+}
+
+message Event {
+  bytes EventId = 1;
+  bytes Content = 2;
 }

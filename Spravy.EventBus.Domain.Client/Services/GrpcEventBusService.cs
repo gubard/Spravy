@@ -73,4 +73,20 @@ public class GrpcEventBusService : GrpcServiceBase, IEventBusService
             throw new GrpcException(GrpcChannel.Target, e);
         }
     }
+
+    public async Task<IEnumerable<EventValue>> GetEventsAsync(ReadOnlyMemory<Guid> eventIds)
+    {
+        try
+        {
+            var request = new GetEventsRequest();
+            request.EventIds.AddRange(mapper.Map<IEnumerable<ByteString>>(eventIds.ToArray()));
+            var events = await client.GetEventsAsync(request, await metadataFactory.CreateAsync());
+
+            return mapper.Map<IEnumerable<EventValue>>(events.Events);
+        }
+        catch (Exception e)
+        {
+            throw new GrpcException(GrpcChannel.Target, e);
+        }
+    }
 }

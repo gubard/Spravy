@@ -49,6 +49,7 @@ public class GrpcEventBusService : EventBusServiceBase
                     Content = ByteString.CopyFrom(eventValue.Content),
                 };
 
+                logger.LogInformation("Send event {Id}", eventValue.Id);
                 await responseStream.WriteAsync(reply);
             }
         }
@@ -59,6 +60,16 @@ public class GrpcEventBusService : EventBusServiceBase
         await eventStorage.AddEventAsync(mapper.Map<Guid>(request.EventId), request.Content.ToByteArray());
 
         return new PublishEventReply();
+    }
+
+    public override async Task<GetEventsReply> GetEvents(GetEventsRequest request, ServerCallContext context)
+    {
+        var eventIds = mapper.Map<Guid[]>(request.EventIds);
+        var eventValues = await eventStorage.PushEventAsync(eventIds);
+        var reply = new GetEventsReply();
+        reply.Events.AddRange(mapper.Map<IEnumerable<Event>>(eventValues));
+
+        return reply;
     }
 
     private async ValueTask<IsSuccessValue<IEnumerable<EventValue>>> WaitAnyEventAsync(
