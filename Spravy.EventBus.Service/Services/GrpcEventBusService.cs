@@ -1,6 +1,7 @@
 using AutoMapper;
 using Google.Protobuf;
 using Grpc.Core;
+using Microsoft.AspNetCore.Authorization;
 using Spravy.Domain.Models;
 using Spravy.EventBus.Domain.Models;
 using Spravy.EventBus.Protos;
@@ -9,6 +10,7 @@ using static Spravy.EventBus.Protos.EventBusService;
 
 namespace Spravy.EventBus.Service.Services;
 
+[Authorize]
 public class GrpcEventBusService : EventBusServiceBase
 {
     private readonly IMapper mapper;
@@ -57,14 +59,19 @@ public class GrpcEventBusService : EventBusServiceBase
 
     public override async Task<PublishEventReply> PublishEvent(PublishEventRequest request, ServerCallContext context)
     {
-        await eventStorage.AddEventAsync(mapper.Map<Guid>(request.EventId), request.Content.ToByteArray());
+        var userId = context.GetHttpContext().GetUserId();
+        var id = mapper.Map<Guid>(request.EventId);
+        logger.LogInformation("{UserId} push event {Id}", userId, id);
+        await eventStorage.AddEventAsync(id, request.Content.ToByteArray());
 
         return new PublishEventReply();
     }
 
     public override async Task<GetEventsReply> GetEvents(GetEventsRequest request, ServerCallContext context)
     {
+        var userId = context.GetHttpContext().GetUserId();
         var eventIds = mapper.Map<Guid[]>(request.EventIds);
+        logger.LogInformation("{UserId} get events {EventIds}", userId, eventIds);
         var eventValues = await eventStorage.PushEventAsync(eventIds);
         var reply = new GetEventsReply();
         reply.Events.AddRange(mapper.Map<IEnumerable<Event>>(eventValues));

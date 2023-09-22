@@ -65,11 +65,11 @@ public class EventBusHostedService : IHostedService
 
     private async Task HandleEventsAsync(FileInfo file)
     {
-        try
+        while (true)
         {
             try
             {
-                while (true)
+                try
                 {
                     var eventBusService = spravyEventBusServiceFactory.Create(file.GetFileNameWithoutExtension());
                     await using var context = spravyToDoDbContext.Create(file.ToSqliteConnectionString());
@@ -88,20 +88,18 @@ public class EventBusHostedService : IHostedService
                             await context.SaveChangesAsync();
                         }
                     }
-
-                    await Task.Delay(TimeSpan.FromSeconds(20));
+                }
+                catch (Exception e)
+                {
+                    throw new FileException($"Can't handle file {file}.", e, file);
                 }
             }
             catch (Exception e)
             {
-                throw new FileException($"Can't handle file {file}.", e, file);
+                logger.Log(LogLevel.Error, e, null);
             }
-        }
-        catch (Exception e)
-        {
-            logger.Log(LogLevel.Error, e, null);
-            await Task.Delay(TimeSpan.FromSeconds(30));
-            tasks[file.FullName] = HandleEventsAsync(file);
+
+            await Task.Delay(TimeSpan.FromSeconds(20));
         }
     }
 }

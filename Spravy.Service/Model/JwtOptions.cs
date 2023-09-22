@@ -1,8 +1,10 @@
+using Spravy.Domain.Interfaces;
+
 namespace Spravy.Service.Model;
 
-public class JwtOptions
+public class JwtOptions : IOptionsValue
 {
-    public const string Section = "Jwt";
+    public static string Section => "Jwt";
 
     public string? Key { get; set; }
     public string? Issuer { get; set; }

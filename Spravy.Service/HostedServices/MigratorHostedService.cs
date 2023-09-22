@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Spravy.Db.Sqlite.Models;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
@@ -14,14 +15,17 @@ public class MigratorHostedService<TDbContext> : IHostedService where TDbContext
     private const string MigrationFileName = ".migration";
     private readonly SqliteFolderOptions sqliteFolderOptions;
     private readonly IFactory<string, TDbContext> spravyToDoDbContextFactory;
+    private readonly ILogger<MigratorHostedService<TDbContext>> logger;
 
     public MigratorHostedService(
         SqliteFolderOptions sqliteFolderOptions,
-        IFactory<string, TDbContext> spravyToDoDbContextFactory
+        IFactory<string, TDbContext> spravyToDoDbContextFactory,
+        ILogger<MigratorHostedService<TDbContext>> logger
     )
     {
         this.sqliteFolderOptions = sqliteFolderOptions;
         this.spravyToDoDbContextFactory = spravyToDoDbContextFactory;
+        this.logger = logger;
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
@@ -30,10 +34,15 @@ public class MigratorHostedService<TDbContext> : IHostedService where TDbContext
             .ToDirectory()
             .ToFile(MigrationFileName);
 
+        cancellationToken.ThrowIfCancellationRequested();
         var migrationId = GetMigrationId();
+
+        logger.LogInformation("Start migration to {MigrationId}", migrationId);
 
         if (!await IsNeedMigration(migrationFile, migrationId))
         {
+            logger.LogInformation("End migration to {MigrationId}", migrationId);
+
             return;
         }
 
@@ -45,6 +54,7 @@ public class MigratorHostedService<TDbContext> : IHostedService where TDbContext
         }
 
         var dataBaseFiles = dataBasesFolder.GetFiles("*.db");
+        cancellationToken.ThrowIfCancellationRequested();
 
         foreach (var dataBaseFile in dataBaseFiles)
         {
@@ -58,6 +68,7 @@ public class MigratorHostedService<TDbContext> : IHostedService where TDbContext
         }
 
         await migrationFile.WriteAllTextAsync(migrationId);
+        logger.LogInformation("End migration to {MigrationId}", migrationId);
     }
 
     public Task StopAsync(CancellationToken cancellationToken)

@@ -52,7 +52,7 @@
         <DataTemplate x:DataType="models:TimerItemToDoItemCurrentNotify">
             <StackPanel>
                 <CheckBox IsChecked="{Binding IsCurrent}" />
-                <TextBlock Text="{Binding DueDateTime, StringFormat=\{0:yyyy.MM.dd hh:mm\}}" />
+                <TextBlock Text="{Binding DueDateTime, StringFormat=\{0:yyyy.MM.dd HH:mm zzz\}}" />
             </StackPanel>
         </DataTemplate>
 

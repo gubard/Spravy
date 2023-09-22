@@ -38,7 +38,7 @@ public static class ServiceCollectionExtension
         serviceCollection.AddHttpContextAccessor();
         serviceCollection.AddSingleton<IMapper>(sp => new Mapper(sp.GetRequiredService<MapperConfiguration>()));
         serviceCollection.AddCors(o => o.AddAllowAllPolicy());
-        serviceCollection.AddScoped(sp => sp.GetConfigurationSection<JwtOptions>(JwtOptions.Section));
+        serviceCollection.AddScoped(sp => sp.GetConfigurationSection<JwtOptions>());
         serviceCollection.AddSpravyAuthentication(configuration);
 
         return serviceCollection;

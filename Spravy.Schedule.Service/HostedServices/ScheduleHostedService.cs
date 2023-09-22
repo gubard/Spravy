@@ -14,16 +14,19 @@ public class ScheduleHostedService : IHostedService
     private readonly IFactory<string, SpravyScheduleDbContext> spravyScheduleDbContextFactory;
     private readonly SqliteFolderOptions sqliteFolderOptions;
     private readonly IFactory<string, IEventBusService> eventBusServiceFactory;
+    private readonly ILogger<ScheduleHostedService> logger;
 
     public ScheduleHostedService(
         IFactory<string, SpravyScheduleDbContext> spravyScheduleDbContextFactory,
         SqliteFolderOptions sqliteFolderOptions,
-        IFactory<string, IEventBusService> eventBusServiceFactory
+        IFactory<string, IEventBusService> eventBusServiceFactory,
+        ILogger<ScheduleHostedService> logger
     )
     {
         this.spravyScheduleDbContextFactory = spravyScheduleDbContextFactory;
         this.sqliteFolderOptions = sqliteFolderOptions;
         this.eventBusServiceFactory = eventBusServiceFactory;
+        this.logger = logger;
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
@@ -47,32 +50,39 @@ public class ScheduleHostedService : IHostedService
     {
         while (true)
         {
-            var dataBaseFiles = sqliteFolderOptions.GetDataBaseFiles();
-
-            foreach (var dataBaseFile in dataBaseFiles)
+            try
             {
-                await using var context =
-                    spravyScheduleDbContextFactory.Create(dataBaseFile.ToSqliteConnectionString());
+                var dataBaseFiles = sqliteFolderOptions.GetDataBaseFiles();
 
-                var timers = await context.Set<TimerEntity>()
-                    .AsNoTracking()
-                    .ToArrayAsync();
-
-                foreach (var timer in timers)
+                foreach (var dataBaseFile in dataBaseFiles)
                 {
-                    if (timer.DueDateTime > DateTimeOffset.Now)
-                    {
-                        continue;
-                    }
+                    await using var context =
+                        spravyScheduleDbContextFactory.Create(dataBaseFile.ToSqliteConnectionString());
 
-                    var eventBusService = eventBusServiceFactory.Create(dataBaseFile.GetFileNameWithoutExtension());
-                    await eventBusService.PublishEventAsync(timer.EventId, timer.Content);
-                    context.Set<TimerEntity>().Remove(timer);
-                    await context.SaveChangesAsync();
+                    var timers = await context.Set<TimerEntity>()
+                        .AsNoTracking()
+                        .ToArrayAsync();
+
+                    foreach (var timer in timers)
+                    {
+                        if (timer.DueDateTime > DateTimeOffset.Now)
+                        {
+                            continue;
+                        }
+
+                        var eventBusService = eventBusServiceFactory.Create(dataBaseFile.GetFileNameWithoutExtension());
+                        await eventBusService.PublishEventAsync(timer.EventId, timer.Content);
+                        context.Set<TimerEntity>().Remove(timer);
+                        await context.SaveChangesAsync();
+                    }
                 }
             }
+            catch (Exception e)
+            {
+                logger.Log(LogLevel.Error, e, null);
+            }
 
-            await Task.Delay(TimeSpan.FromSeconds(10));
+            await Task.Delay(TimeSpan.FromSeconds(30));
         }
     }
 }

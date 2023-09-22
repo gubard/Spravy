@@ -2,6 +2,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Spravy.Domain.Di.Extensions;
 using Spravy.Domain.Extensions;
 using Spravy.Service.Model;
 
@@ -11,13 +12,15 @@ public static class JwtBearerOptionsExtension
 {
     public static JwtBearerOptions SetJwtOptions(this JwtBearerOptions options, IConfiguration configuration)
     {
-        var jwtOptions = configuration.GetSection(JwtOptions.Section).Get<JwtOptions>().ThrowIfNull();
+        var jwtOptions = configuration.GetConfigurationSection<JwtOptions>();
+        var key = Encoding.UTF8.GetBytes(jwtOptions.Key.ThrowIfNullOrWhiteSpace());
+        var symmetricSecurityKey = new SymmetricSecurityKey(key);
 
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidIssuer = jwtOptions.Issuer.ThrowIfNull(),
             ValidAudience = jwtOptions.Audience.ThrowIfNull(),
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Key.ThrowIfNullOrWhiteSpace())),
+            IssuerSigningKey = symmetricSecurityKey,
             ValidateIssuer = true,
             ValidateLifetime = true,
             ValidateAudience = true,

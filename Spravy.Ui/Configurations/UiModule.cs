@@ -21,6 +21,9 @@ using Spravy.Domain.Di.Extensions;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Services;
+using Spravy.EventBus.Domain.Client.Models;
+using Spravy.EventBus.Domain.Client.Services;
+using Spravy.EventBus.Domain.Interfaces;
 using Spravy.Schedule.Domain.Client.Models;
 using Spravy.Schedule.Domain.Client.Services;
 using Spravy.Schedule.Domain.Interfaces;
@@ -74,6 +77,8 @@ public class UiModule : NinjectModule
         Bind<MapperConfiguration>().ToConstructor(x => new MapperConfiguration(SetupMapperConfiguration));
         Bind<GrpcToDoServiceOptions>().ToMethod(x => x.Kernel.GetOptionsValue<GrpcToDoServiceOptions>());
         Bind<GrpcScheduleServiceOptions>().ToMethod(x => x.Kernel.GetOptionsValue<GrpcScheduleServiceOptions>());
+        Bind<GrpcEventBusServiceOptions>().ToMethod(x => x.Kernel.GetOptionsValue<GrpcEventBusServiceOptions>());
+        Bind<IEventBusService>().To<GrpcEventBusService>();
         Bind<IDataTemplate>().To<ModuleDataTemplate>();
         Bind<IMetadataFactory>().To<MetadataFactory>();
         Bind<IHttpHeaderFactory>().To<TokenHttpHeaderFactory>();
