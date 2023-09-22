@@ -15,6 +15,7 @@ public class ScheduleHostedService : IHostedService
     private readonly SqliteFolderOptions sqliteFolderOptions;
     private readonly IFactory<string, IEventBusService> eventBusServiceFactory;
     private readonly ILogger<ScheduleHostedService> logger;
+    private readonly Dictionary<string, Task> tasks = new();
 
     public ScheduleHostedService(
         IFactory<string, SpravyScheduleDbContext> spravyScheduleDbContextFactory,
@@ -31,11 +32,11 @@ public class ScheduleHostedService : IHostedService
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        var _executingTask = ExecuteAsync();
+        var dataBaseFiles = sqliteFolderOptions.GetDataBaseFiles();
 
-        if (_executingTask.IsCompleted)
+        foreach (var dataBaseFile in dataBaseFiles)
         {
-            return _executingTask;
+            tasks.Add(dataBaseFile.FullName, HandleDataBaseAsync(dataBaseFile));
         }
 
         return Task.CompletedTask;
@@ -46,18 +47,16 @@ public class ScheduleHostedService : IHostedService
         return Task.CompletedTask;
     }
 
-    private async Task ExecuteAsync()
+    private async Task HandleDataBaseAsync(FileInfo file)
     {
         while (true)
         {
             try
             {
-                var dataBaseFiles = sqliteFolderOptions.GetDataBaseFiles();
-
-                foreach (var dataBaseFile in dataBaseFiles)
+                try
                 {
                     await using var context =
-                        spravyScheduleDbContextFactory.Create(dataBaseFile.ToSqliteConnectionString());
+                        spravyScheduleDbContextFactory.Create(file.ToSqliteConnectionString());
 
                     var timers = await context.Set<TimerEntity>()
                         .AsNoTracking()
@@ -70,11 +69,15 @@ public class ScheduleHostedService : IHostedService
                             continue;
                         }
 
-                        var eventBusService = eventBusServiceFactory.Create(dataBaseFile.GetFileNameWithoutExtension());
+                        var eventBusService = eventBusServiceFactory.Create(file.GetFileNameWithoutExtension());
                         await eventBusService.PublishEventAsync(timer.EventId, timer.Content);
                         context.Set<TimerEntity>().Remove(timer);
                         await context.SaveChangesAsync();
                     }
+                }
+                catch (Exception e)
+                {
+                    throw new FileException($"Can't handle file {file}.", e, file);
                 }
             }
             catch (Exception e)
@@ -82,7 +85,7 @@ public class ScheduleHostedService : IHostedService
                 logger.Log(LogLevel.Error, e, null);
             }
 
-            await Task.Delay(TimeSpan.FromSeconds(30));
+            await Task.Delay(TimeSpan.FromSeconds(20));
         }
     }
 }

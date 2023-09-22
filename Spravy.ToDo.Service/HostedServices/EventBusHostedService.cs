@@ -69,28 +69,32 @@ public class EventBusHostedService : IHostedService
         {
             try
             {
+                var source = new CancellationTokenSource();
+
                 try
                 {
                     var eventBusService = spravyEventBusServiceFactory.Create(file.GetFileNameWithoutExtension());
+                    var stream = eventBusService.SubscribeEventsAsync(eventIds.ToArray(), source.Token);
                     await using var context = spravyToDoDbContext.Create(file.ToSqliteConnectionString());
-                    var events = await eventBusService.GetEventsAsync(eventIds);
+                    logger.LogInformation("Connected for events {File}", file);
 
-                    foreach (var @event in events)
+                    await foreach (var eventValue in stream)
                     {
-                        if (@event.Id == EventIdHelper.ChangeCurrentId)
+                        if (eventValue.Id == EventIdHelper.ChangeCurrentId)
                         {
-                            var eventContent = ChangeToDoItemIsCurrentEvent.Parser.ParseFrom(@event.Content);
+                            var eventContent = ChangeToDoItemIsCurrentEvent.Parser.ParseFrom(eventValue.Content);
 
                             var item = await context.Set<ToDoItemEntity>()
                                 .FindAsync(new Guid(eventContent.ToDoItemId.ToByteArray()));
 
                             item.ThrowIfNull().IsCurrent = eventContent.IsCurrent;
-                            await context.SaveChangesAsync();
+                            await context.SaveChangesAsync(source.Token);
                         }
                     }
                 }
                 catch (Exception e)
                 {
+                    source.Cancel();
                     throw new FileException($"Can't handle file {file}.", e, file);
                 }
             }
