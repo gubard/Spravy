@@ -19,6 +19,7 @@ using Spravy.Service.HostedServices;
 using Spravy.Service.Services;
 using Spravy.ToDo.Db.Contexts;
 using Spravy.ToDo.Db.Mapper.Profiles;
+using Spravy.ToDo.Db.Services;
 using Spravy.ToDo.Db.Sqlite.Migrator;
 using Spravy.ToDo.Db.Sqlite.Services;
 using Spravy.ToDo.Domain.Interfaces;
@@ -51,6 +52,8 @@ public static class ServiceCollectionExtension
         serviceCollection.AddSingleton<IHttpHeaderFactory, TokenHttpHeaderFactory>();
 
         serviceCollection.AddScoped<IToDoService, EfToDoService>();
+        serviceCollection.AddScoped<StatusToDoItemService>();
+        serviceCollection.AddScoped<ActiveToDoItemToDoItemService>();
 
         serviceCollection.AddSpravySqliteFolderContext<SpravyToDoDbContext>();
 

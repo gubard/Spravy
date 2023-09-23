@@ -34,8 +34,7 @@
             <TextBox Grid.Row="1"
                      UseFloatingWatermark="True"
                      Name="{x:Static views:CreateUserView.PasswordTextBoxName}"
-                     Classes="out
-                     line dense revealPasswordButton"
+                     Classes="outline dense revealPasswordButton"
                      Theme="{StaticResource OutlineTextBox}"
                      assists:TextFieldAssist.Label="Password"
                      PasswordChar="*"

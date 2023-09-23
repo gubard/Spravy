@@ -10,6 +10,7 @@ using Spravy.ToDo.Db.Mapper.Profiles;
 using Spravy.ToDo.Db.Contexts;
 using Spravy.ToDo.Db.Extensions;
 using Spravy.ToDo.Db.Models;
+using Spravy.ToDo.Db.Services;
 
 namespace Spravy.ToDo.Service.Services;
 
@@ -17,11 +18,20 @@ public class EfToDoService : IToDoService
 {
     private readonly IMapper mapper;
     private readonly IDbContextFactory<SpravyToDoDbContext> dbContextFactory;
+    private readonly StatusToDoItemService statusToDoItemService;
+    private readonly ActiveToDoItemToDoItemService activeToDoItemToDoItemService;
 
-    public EfToDoService(IMapper mapper, IDbContextFactory<SpravyToDoDbContext> dbContextFactory)
+    public EfToDoService(
+        IMapper mapper,
+        IDbContextFactory<SpravyToDoDbContext> dbContextFactory,
+        StatusToDoItemService statusToDoItemService,
+        ActiveToDoItemToDoItemService activeToDoItemToDoItemService
+    )
     {
         this.mapper = mapper;
         this.dbContextFactory = dbContextFactory;
+        this.statusToDoItemService = statusToDoItemService;
+        this.activeToDoItemToDoItemService = activeToDoItemToDoItemService;
     }
 
     public async Task<IEnumerable<IToDoSubItem>> GetRootToDoSubItemsAsync()
@@ -57,7 +67,8 @@ public class EfToDoService : IToDoService
 
     private async Task<IToDoSubItem> ConvertAsync(SpravyToDoDbContext context, ToDoItemEntity item)
     {
-        var (status, active) = await GetStatusAndActiveAsync(context, item, item.Id);
+        var status = await statusToDoItemService.GetStatusAsync(context, item);
+        var active = await activeToDoItemToDoItemService.GetActiveItemAsync(context, item);
 
         var result = mapper.Map<IToDoSubItem>(
             item,
@@ -67,368 +78,6 @@ public class EfToDoService : IToDoService
                 a.Items.Add(SpravyToDoDbProfile.ActiveName, active);
             }
         );
-
-        return result;
-    }
-
-    private Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusAndActiveAsync(
-        SpravyToDoDbContext context,
-        ToDoItemEntity entity
-    )
-    {
-        switch (entity.Type)
-        {
-            case ToDoItemType.Value: return GetStatusAndActiveValueAsync(context, entity);
-            case ToDoItemType.Group: return GetStatusAndActiveGroupAsync(context, entity);
-            case ToDoItemType.Planned: return GetStatusAndActivePlannedAsync(context, entity);
-            case ToDoItemType.Periodicity: return GetStatusAndActivePeriodicityAsync(context, entity);
-            case ToDoItemType.PeriodicityOffset: return GetStatusAndActivePeriodicityOffsetAsync(context, entity);
-            default: throw new ArgumentOutOfRangeException();
-        }
-    }
-
-    private async Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusAndActivePeriodicityOffsetAsync(
-        SpravyToDoDbContext context,
-        ToDoItemEntity entity
-    )
-    {
-        if (entity.DueDate < DateTimeOffset.Now.ToCurrentDay())
-        {
-            return (ToDoItemStatus.Miss, null);
-        }
-
-        if (entity.DueDate > DateTimeOffset.Now.ToCurrentDay())
-        {
-            return (ToDoItemStatus.Completed, null);
-        }
-
-        (ToDoItemStatus Status, ActiveToDoItem? Active) result = (ToDoItemStatus.ReadyForComplete, null);
-
-        var children = await context.Set<ToDoItemEntity>()
-            .AsNoTracking()
-            .Where(x => x.ParentId == entity.Id)
-            .ToArrayAsync();
-
-        if (children.Length == 0)
-        {
-            return (ToDoItemStatus.ReadyForComplete, mapper.Map<ActiveToDoItem>(entity));
-        }
-
-        var completeChildrenCount = 0;
-        var currentOrder = uint.MaxValue;
-
-        foreach (var child in children)
-        {
-            var status = await GetStatusAndActiveAsync(context, child);
-
-            switch (status.Status)
-            {
-                case ToDoItemStatus.Miss:
-                    return (ToDoItemStatus.Miss, mapper.Map<ActiveToDoItem>(child));
-                case ToDoItemStatus.Completed:
-                    completeChildrenCount++;
-                    break;
-                case ToDoItemStatus.ReadyForComplete:
-                    if (Math.Min(currentOrder, child.OrderIndex) == child.OrderIndex)
-                    {
-                        currentOrder = child.OrderIndex;
-                        result = (result.Status, status.Active);
-                    }
-
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
-        if (completeChildrenCount == children.Length)
-        {
-            return (ToDoItemStatus.ReadyForComplete, null);
-        }
-
-        if (entity.DueDate.ToCurrentDay() == DateTimeOffset.Now.ToCurrentDay())
-        {
-            return (ToDoItemStatus.ReadyForComplete, result.Active);
-        }
-
-        return result;
-    }
-
-    private async Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusAndActivePeriodicityAsync(
-        SpravyToDoDbContext context,
-        ToDoItemEntity entity
-    )
-    {
-        if (entity.DueDate < DateTimeOffset.Now.ToCurrentDay())
-        {
-            return (ToDoItemStatus.Miss, null);
-        }
-
-        if (entity.DueDate > DateTimeOffset.Now.ToCurrentDay())
-        {
-            return (ToDoItemStatus.Completed, null);
-        }
-
-        (ToDoItemStatus Status, ActiveToDoItem? Active) result = (ToDoItemStatus.ReadyForComplete, null);
-
-        var children = await context.Set<ToDoItemEntity>()
-            .AsNoTracking()
-            .Where(x => x.ParentId == entity.Id)
-            .ToArrayAsync();
-
-        if (children.Length == 0)
-        {
-            return (ToDoItemStatus.ReadyForComplete, mapper.Map<ActiveToDoItem>(entity));
-        }
-
-        var completeChildrenCount = 0;
-        var currentOrder = uint.MaxValue;
-
-        foreach (var child in children)
-        {
-            var status = await GetStatusAndActiveAsync(context, child);
-
-            switch (status.Status)
-            {
-                case ToDoItemStatus.Miss:
-                    return (ToDoItemStatus.Miss, mapper.Map<ActiveToDoItem>(child));
-                case ToDoItemStatus.Completed:
-                    completeChildrenCount++;
-                    break;
-                case ToDoItemStatus.ReadyForComplete:
-                    if (Math.Min(currentOrder, child.OrderIndex) == child.OrderIndex)
-                    {
-                        currentOrder = child.OrderIndex;
-                        result = (result.Status, status.Active);
-                    }
-
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
-        if (completeChildrenCount == children.Length)
-        {
-            return (ToDoItemStatus.ReadyForComplete, null);
-        }
-
-        if (entity.DueDate.ToCurrentDay() == DateTimeOffset.Now.ToCurrentDay())
-        {
-            return (ToDoItemStatus.ReadyForComplete, result.Active);
-        }
-
-        return result;
-    }
-
-    private async Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusAndActivePlannedAsync(
-        SpravyToDoDbContext context,
-        ToDoItemEntity entity
-    )
-    {
-        if (entity.IsCompleted)
-        {
-            return (ToDoItemStatus.Completed, null);
-        }
-
-        if (entity.DueDate < DateTimeOffset.Now.ToCurrentDay())
-        {
-            return (ToDoItemStatus.Miss, null);
-        }
-
-        if (entity.DueDate > DateTimeOffset.Now.ToCurrentDay())
-        {
-            return (ToDoItemStatus.Completed, null);
-        }
-
-        (ToDoItemStatus Status, ActiveToDoItem? Active) result = (ToDoItemStatus.ReadyForComplete, null);
-
-
-        var children = await context.Set<ToDoItemEntity>()
-            .AsNoTracking()
-            .Where(x => x.ParentId == entity.Id)
-            .ToArrayAsync();
-
-        if (children.Length == 0)
-        {
-            return (ToDoItemStatus.ReadyForComplete, mapper.Map<ActiveToDoItem>(entity));
-        }
-
-        var completeChildrenCount = 0;
-        var currentOrder = uint.MaxValue;
-
-        foreach (var child in children)
-        {
-            var status = await GetStatusAndActiveAsync(context, child);
-
-            switch (status.Status)
-            {
-                case ToDoItemStatus.Miss:
-                    return (ToDoItemStatus.Miss, mapper.Map<ActiveToDoItem>(child));
-                case ToDoItemStatus.Completed:
-                    completeChildrenCount++;
-                    break;
-                case ToDoItemStatus.ReadyForComplete:
-                    if (Math.Min(currentOrder, child.OrderIndex) == child.OrderIndex)
-                    {
-                        currentOrder = child.OrderIndex;
-                        result = (result.Status, status.Active);
-                    }
-
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
-        if (completeChildrenCount == children.Length)
-        {
-            return (ToDoItemStatus.ReadyForComplete, null);
-        }
-
-        if (entity.DueDate.ToCurrentDay() == DateTimeOffset.Now.ToCurrentDay())
-        {
-            return (ToDoItemStatus.ReadyForComplete, null);
-        }
-
-        return result;
-    }
-
-    private async Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusAndActiveAsync(
-        SpravyToDoDbContext context,
-        ToDoItemEntity entity,
-        Guid id
-    )
-    {
-        var result = await GetStatusAndActiveAsync(context, entity);
-
-        if (result.Active is null)
-        {
-            return result;
-        }
-
-        if (result.Active.Value.Id == id)
-        {
-            return (result.Status, null);
-        }
-
-        var item = await context.Set<ToDoItemEntity>().FindAsync(result.Active.Value.Id);
-        item = item.ThrowIfNull();
-
-        if (item.ParentId is null)
-        {
-            return (result.Status, null);
-        }
-
-        return (result.Status, new ActiveToDoItem(item.ParentId.Value, result.Active.Value.Name));
-    }
-
-    private async Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusAndActiveGroupAsync(
-        SpravyToDoDbContext context,
-        ToDoItemEntity entity
-    )
-    {
-        var currentOrder = uint.MaxValue;
-        (ToDoItemStatus Status, ActiveToDoItem? Active) result = (ToDoItemStatus.ReadyForComplete, null);
-
-        var children = await context.Set<ToDoItemEntity>()
-            .AsNoTracking()
-            .Where(x => x.ParentId == entity.Id)
-            .ToArrayAsync();
-
-        if (children.Length == 0)
-        {
-            return (ToDoItemStatus.Completed, null);
-        }
-
-        var completeChildrenCount = 0;
-
-        foreach (var child in children)
-        {
-            var status = await GetStatusAndActiveAsync(context, child);
-
-            switch (status.Status)
-            {
-                case ToDoItemStatus.Miss:
-                    return (ToDoItemStatus.Miss, mapper.Map<ActiveToDoItem>(child));
-                case ToDoItemStatus.Completed:
-                    completeChildrenCount++;
-                    break;
-                case ToDoItemStatus.ReadyForComplete:
-                    if (Math.Min(currentOrder, child.OrderIndex) == child.OrderIndex)
-                    {
-                        currentOrder = child.OrderIndex;
-                        result = (result.Status, status.Active);
-                    }
-
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
-        if (completeChildrenCount == children.Length)
-        {
-            return (ToDoItemStatus.Completed, null);
-        }
-
-        return result;
-    }
-
-
-    private async Task<(ToDoItemStatus Status, ActiveToDoItem? Active)> GetStatusAndActiveValueAsync(
-        SpravyToDoDbContext context,
-        ToDoItemEntity entity
-    )
-    {
-        if (entity.IsCompleted)
-        {
-            return (ToDoItemStatus.Completed, null);
-        }
-
-        (ToDoItemStatus Status, ActiveToDoItem? Active) result = (ToDoItemStatus.ReadyForComplete, null);
-
-        var children = await context.Set<ToDoItemEntity>()
-            .AsNoTracking()
-            .Where(x => x.ParentId == entity.Id)
-            .ToArrayAsync();
-
-        if (children.Length == 0)
-        {
-            return (ToDoItemStatus.ReadyForComplete, mapper.Map<ActiveToDoItem>(entity));
-        }
-
-        var completeChildrenCount = 0;
-        var currentOrder = uint.MaxValue;
-
-        foreach (var child in children)
-        {
-            var status = await GetStatusAndActiveAsync(context, child);
-
-            switch (status.Status)
-            {
-                case ToDoItemStatus.Miss:
-                    return (ToDoItemStatus.Miss, mapper.Map<ActiveToDoItem>(child));
-                case ToDoItemStatus.Completed:
-                    completeChildrenCount++;
-                    break;
-                case ToDoItemStatus.ReadyForComplete:
-                    if (Math.Min(currentOrder, child.OrderIndex) == child.OrderIndex)
-                    {
-                        currentOrder = child.OrderIndex;
-                        result = (result.Status, status.Active);
-                    }
-
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
-        if (completeChildrenCount == children.Length)
-        {
-            return (ToDoItemStatus.ReadyForComplete, null);
-        }
 
         return result;
     }
