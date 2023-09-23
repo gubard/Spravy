@@ -9,7 +9,14 @@ namespace Spravy.ToDo.Db.Services;
 
 public class ActiveToDoItemToDoItemService
 {
-    public Task<ActiveToDoItem?> GetActiveItemAsync(SpravyToDoDbContext context, ToDoItemEntity entity)
+    public async Task<ActiveToDoItem?> GetActiveItemAsync(SpravyToDoDbContext context, ToDoItemEntity entity)
+    {
+        var result = await GetActiveToDoItemAsync(context, entity);
+
+        return ToActiveToDoItem(entity, result);
+    }
+
+    private Task<ActiveToDoItem?> GetActiveToDoItemAsync(SpravyToDoDbContext context, ToDoItemEntity entity)
     {
         switch (entity.Type)
         {
@@ -49,7 +56,7 @@ public class ActiveToDoItemToDoItemService
 
         foreach (var item in items)
         {
-            var activeItem = await GetActiveItemAsync(context, item);
+            var activeItem = await GetActiveToDoItemAsync(context, item);
 
             if (activeItem is not null)
             {
@@ -64,12 +71,12 @@ public class ActiveToDoItemToDoItemService
     {
         if (entity.DueDate == DateTimeOffset.Now.ToCurrentDay())
         {
-            return new ActiveToDoItem(entity.Id, entity.Name);
+            return ToActiveToDoItem(entity);
         }
 
         if (entity.DueDate < DateTimeOffset.Now.ToCurrentDay())
         {
-            return new ActiveToDoItem(entity.Id, entity.Name);
+            return ToActiveToDoItem(entity);
         }
 
         if (entity.DueDate > DateTimeOffset.Now.ToCurrentDay())
@@ -89,7 +96,7 @@ public class ActiveToDoItemToDoItemService
 
         foreach (var item in items)
         {
-            var activeItem = await GetActiveItemAsync(context, item);
+            var activeItem = await GetActiveToDoItemAsync(context, item);
 
             if (activeItem is not null)
             {
@@ -114,7 +121,7 @@ public class ActiveToDoItemToDoItemService
 
         foreach (var item in items)
         {
-            var activeItem = await GetActiveItemAsync(context, item);
+            var activeItem = await GetActiveToDoItemAsync(context, item);
 
             if (activeItem is not null)
             {
@@ -122,6 +129,31 @@ public class ActiveToDoItemToDoItemService
             }
         }
 
-        return new ActiveToDoItem(entity.Id, entity.Name);
+        return ToActiveToDoItem(entity);
+    }
+
+    private ActiveToDoItem? ToActiveToDoItem(ToDoItemEntity entity)
+    {
+        if (entity.ParentId is null)
+        {
+            return null;
+        }
+
+        return new ActiveToDoItem(entity.ParentId.Value, entity.Name);
+    }
+
+    private ActiveToDoItem? ToActiveToDoItem(ToDoItemEntity entity, ActiveToDoItem? item)
+    {
+        if (item is null)
+        {
+            return null;
+        }
+
+        if (entity.ParentId == item.Value.Id)
+        {
+            return null;
+        }
+
+        return item;
     }
 }
