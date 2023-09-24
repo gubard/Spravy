@@ -22,7 +22,7 @@ public class StatusToDoItemService
             }
             case ToDoItemType.Planned:
             {
-                return GetDueDateStatusAsync(context, entity);
+                return GetPlannedStatusAsync(context, entity);
             }
             case ToDoItemType.Periodicity:
             {
@@ -37,6 +37,48 @@ public class StatusToDoItemService
                 throw new ArgumentOutOfRangeException();
             }
         }
+    }
+
+    private async Task<ToDoItemStatus> GetPlannedStatusAsync(SpravyToDoDbContext context, ToDoItemEntity entity)
+    {
+        if (entity.IsCompleted)
+        {
+            return ToDoItemStatus.Completed;
+        }
+
+        if (entity.DueDate > DateTimeOffset.Now.ToCurrentDay())
+        {
+            return ToDoItemStatus.Completed;
+        }
+
+        var items = await context.Set<ToDoItemEntity>().Where(x => x.ParentId == entity.Id).ToArrayAsync();
+
+        foreach (var item in items)
+        {
+            var status = await GetStatusAsync(context, item);
+
+            switch (status)
+            {
+                case ToDoItemStatus.Miss:
+                {
+                    return ToDoItemStatus.Miss;
+                }
+                case ToDoItemStatus.ReadyForComplete:
+                {
+                    break;
+                }
+                case ToDoItemStatus.Completed:
+                {
+                    break;
+                }
+                default:
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+            }
+        }
+
+        return await GetDueDateStatusAsync(context, entity);
     }
 
     private Task<ToDoItemStatus> GetDueDateStatusAsync(SpravyToDoDbContext context, ToDoItemEntity entity)

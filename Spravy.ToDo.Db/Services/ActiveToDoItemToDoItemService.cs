@@ -30,7 +30,7 @@ public class ActiveToDoItemToDoItemService
             }
             case ToDoItemType.Planned:
             {
-                return GetActiveItemByDueDateAsync(context, entity);
+                return GetPlannedActiveItemAsync(context, entity);
             }
             case ToDoItemType.Periodicity:
             {
@@ -47,24 +47,24 @@ public class ActiveToDoItemToDoItemService
         }
     }
 
-    private async Task<ActiveToDoItem?> GetActiveItemByDueDateAsync(SpravyToDoDbContext context, ToDoItemEntity entity)
+    private Task<ActiveToDoItem?> GetPlannedActiveItemAsync(SpravyToDoDbContext context, ToDoItemEntity entity)
     {
-        var items = await context.Set<ToDoItemEntity>()
-            .Where(x => x.ParentId == entity.Id)
-            .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync();
-
-        foreach (var item in items)
+        if (entity.IsCompleted)
         {
-            var activeItem = await GetActiveToDoItemAsync(context, item);
-
-            if (activeItem is not null)
-            {
-                return activeItem;
-            }
+            return Task.FromResult<ActiveToDoItem?>(null);
         }
 
-        return GetActiveItemByDueDate(entity);
+        return GetActiveItemByDueDateAsync(context, entity);
+    }
+
+    private Task<ActiveToDoItem?> GetActiveItemByDueDateAsync(SpravyToDoDbContext context, ToDoItemEntity entity)
+    {
+        if (entity.DueDate > DateTimeOffset.Now.ToCurrentDay())
+        {
+            return Task.FromResult<ActiveToDoItem?>(null);
+        }
+
+        return GetChildrenActiveToDoItemAsync(context, entity, GetActiveItemByDueDate(entity));
     }
 
     private ActiveToDoItem? GetActiveItemByDueDate(ToDoItemEntity entity)
@@ -87,33 +87,27 @@ public class ActiveToDoItemToDoItemService
         throw new ArgumentOutOfRangeException();
     }
 
-    private async Task<ActiveToDoItem?> GetGroupActiveItemAsync(SpravyToDoDbContext context, ToDoItemEntity entity)
+    private Task<ActiveToDoItem?> GetGroupActiveItemAsync(SpravyToDoDbContext context, ToDoItemEntity entity)
     {
-        var items = await context.Set<ToDoItemEntity>()
-            .Where(x => x.ParentId == entity.Id)
-            .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync();
-
-        foreach (var item in items)
-        {
-            var activeItem = await GetActiveToDoItemAsync(context, item);
-
-            if (activeItem is not null)
-            {
-                return activeItem;
-            }
-        }
-
-        return null;
+        return GetChildrenActiveToDoItemAsync(context, entity, null);
     }
 
-    private async Task<ActiveToDoItem?> GetValueActiveItemAsync(SpravyToDoDbContext context, ToDoItemEntity entity)
+    private Task<ActiveToDoItem?> GetValueActiveItemAsync(SpravyToDoDbContext context, ToDoItemEntity entity)
     {
         if (entity.IsCompleted)
         {
-            return null;
+            return Task.FromResult<ActiveToDoItem?>(null);
         }
 
+        return GetChildrenActiveToDoItemAsync(context, entity, ToActiveToDoItem(entity));
+    }
+
+    private async Task<ActiveToDoItem?> GetChildrenActiveToDoItemAsync(
+        SpravyToDoDbContext context,
+        ToDoItemEntity entity,
+        ActiveToDoItem? def
+    )
+    {
         var items = await context.Set<ToDoItemEntity>()
             .Where(x => x.ParentId == entity.Id)
             .OrderBy(x => x.OrderIndex)
@@ -129,7 +123,7 @@ public class ActiveToDoItemToDoItemService
             }
         }
 
-        return ToActiveToDoItem(entity);
+        return def;
     }
 
     private ActiveToDoItem? ToActiveToDoItem(ToDoItemEntity entity)
