@@ -15,6 +15,7 @@ public class LoginViewModel : RoutableViewModelBase
 {
     private string login = string.Empty;
     private string password = string.Empty;
+    private bool isRememberMe;
 
     public LoginViewModel() : base("login")
     {
@@ -29,10 +30,15 @@ public class LoginViewModel : RoutableViewModelBase
     [Inject]
     public required IMapper Mapper { get; init; }
 
+    public bool IsRememberMe
+    {
+        get => isRememberMe;
+        set => this.RaiseAndSetIfChanged(ref isRememberMe, value);
+    }
+
     public string Login
     {
         get => login;
-
         set => this.RaiseAndSetIfChanged(ref login, value);
     }
 

@@ -23,7 +23,7 @@
     <controls:Card HorizontalAlignment="Center"
                    VerticalAlignment="Center"
                    MinWidth="300">
-        <Grid RowDefinitions="Auto,Auto,Auto">
+        <StackPanel>
             <TextBox UseFloatingWatermark="True"
                      Name="{x:Static views:LoginView.LoginTextBoxName}"
                      Classes="outline dense"
@@ -31,8 +31,7 @@
                      assists:TextFieldAssist.Label="Login"
                      Text="{Binding Login}" />
 
-            <TextBox Grid.Row="1"
-                     Name="{x:Static views:LoginView.PasswordTextBoxName}"
+            <TextBox Name="{x:Static views:LoginView.PasswordTextBoxName}"
                      UseFloatingWatermark="True"
                      Classes="outline dense revealPasswordButton"
                      Theme="{StaticResource OutlineTextBox}"
@@ -40,8 +39,9 @@
                      PasswordChar="*"
                      Text="{Binding Password}" />
 
-            <Grid Row="2"
-                  ColumnDefinitions="*,*">
+            <CheckBox IsChecked="{Binding IsRememberMe}" Content="Remember Me" />
+
+            <Grid ColumnDefinitions="*,*">
                 <Button
                     Command="{Binding CreateUserCommand}">
                     <avalonia:MaterialIcon Kind="AccountPlus" />
@@ -52,6 +52,6 @@
                     <avalonia:MaterialIcon Kind="Login" />
                 </Button>
             </Grid>
-        </Grid>
+        </StackPanel>
     </controls:Card>
 </reactiveUi:ReactiveUserControl>
