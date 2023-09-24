@@ -47,16 +47,16 @@
 
                 <ContentControl Content="{Binding Periodicity}" />
 
-                <DatePicker SelectedDate="{Binding DueDate}" />
+                <!--<DatePicker SelectedDate="{Binding DueDate}" />-->
                 <!--<TextBox UseFloatingWatermark="True"
                          Classes="outline dense"
                          Theme="{StaticResource OutlineTextBox}"
                          assists:TextFieldAssist.Label="DueDate"
                          Text="{Binding DueDate}" />-->
-                <!--<controls:ButtonTextBox Text="{Binding DueDate}" 
+                <controls:ButtonTextBox Text="{Binding DueDate}" 
                                         Label="DueDate" 
                                         Command="{Binding ChangeDueDateCommand}"
-                                        Classes="edit"/>-->
+                                        Classes="edit"/>
             </StackPanel>
 
             <controls:ButtonTextBox Text="{Binding Description}"
