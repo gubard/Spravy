@@ -109,12 +109,12 @@ class Build : NukeBuild
                         {
                             ServicesFolder.Create();
                         }
-                        
+
                         File.WriteAllText(Path.Combine(ServicesFolder.FullName, serviceProject.Name.ToLower()),
                             CreateDaemonConfig(serviceProject.Name)
                         );
-                        
-                        if(!ftpClient.DirectoryExists("/tmp/Spravy/services"))
+
+                        if (!ftpClient.DirectoryExists("/tmp/Spravy/services"))
                         {
                             ftpClient.CreateDirectory("/tmp/Spravy/services");
                         }
@@ -122,7 +122,7 @@ class Build : NukeBuild
                         ftpClient.UploadFile(Path.Combine(ServicesFolder.FullName, serviceProject.Name.ToLower()),
                             $"/tmp/Spravy/services/{serviceProject.Name.ToLower()}"
                         );
-                        
+
                         using var cpCommand =
                             sshClient.RunCommand(
                                 $"echo {SshPassword} | sudo cp /tmp/Spravy/services/{serviceProject.Name.ToLower()} /etc/systemd/system/{serviceProject.Name.ToLower()}"
