@@ -1,7 +1,14 @@
 using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
+using System.Text;
+using System.Text.Json;
+using _build.Models;
 using FluentFTP;
+using Microsoft.IdentityModel.Tokens;
 using Nuke.Common;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tools.DotNet;
@@ -17,7 +24,10 @@ class Build : NukeBuild
     ///   - JetBrains Rider            https://nuke.build/rider
     ///   - Microsoft VisualStudio     https://nuke.build/visualstudio
     ///   - Microsoft VSCode           https://nuke.build/vscode
-    public static int Main() => Execute<Build>(x => x.Publish);
+    public static int Main()
+    {
+        return Execute<Build>(x => x.Publish);
+    }
 
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
@@ -27,6 +37,7 @@ class Build : NukeBuild
     [Parameter] readonly string FtpHost;
     [Parameter] readonly string FtpUser;
     [Parameter] readonly string SshHost;
+    [Parameter] readonly string ServerHost;
     static readonly DirectoryInfo TempFolder = new(Path.Combine("/", "tmp", "Spravy"));
     static readonly DirectoryInfo PublishFolder = new(Path.Combine(TempFolder.FullName, "Publish"));
     static readonly DirectoryInfo ServicesFolder = new(Path.Combine(TempFolder.FullName, "services"));
@@ -89,45 +100,71 @@ class Build : NukeBuild
                         Solution.AllProjects.Where(x => x.Name.EndsWith(".Service") && x.Name != "Spravy.Service")
                             .ToArray();
 
+                    var browserProject = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Browser");
+                    ushort port = 5000;
+                    ushort browserPort = 6000;
+                    var serviceOptions = new Dictionary<Project, ServiceOptions>();
+                    var hosts = new Dictionary<string, string>();
+                    var browserHosts = new Dictionary<string, string>();
+
+                    foreach (var serviceProject in serviceProjects)
+                    {
+                        serviceOptions[serviceProject] = new ServiceOptions(
+                            port,
+                            browserPort,
+                            serviceProject.Name,
+                            $"{serviceProject.Name}.Browser"
+                        );
+
+                        hosts[$"Grpc{serviceProject.Name.Substring(6).Replace(".", "")}"] =
+                            $"http://{ServerHost}:{port}";
+
+                        browserHosts[$"Grpc{serviceProject.Name.Substring(6).Replace(".", "")}"] =
+                            $"http://{ServerHost}:{browserPort}";
+
+                        port++;
+                        browserPort++;
+                    }
+
                     using var sshClient = new SshClient(FtpHost, FtpUser, SshPassword);
                     sshClient.Connect();
                     using var ftpClient = new FtpClient(SshHost, FtpUser, FtpPassword);
                     ftpClient.Connect();
+                    var token = CreteToken();
 
-                    foreach (var serviceProject in serviceProjects)
+                    foreach (var serviceOption in serviceOptions)
                     {
-                        var folder = PublishProject(serviceProject.Name);
-                        DeleteIfExistsDirectory(ftpClient, $"/home/{FtpUser}/{serviceProject.Name}");
-                        ftpClient.UploadDirectory(folder.FullName, $"/home/{FtpUser}/{serviceProject.Name}");
-
-                        using var rmCommand =
-                            sshClient.RunCommand(
-                                $"echo {SshPassword} | rm /etc/systemd/system/{serviceProject.Name.ToLower()}"
-                            );
-
-                        if (!ServicesFolder.Exists)
-                        {
-                            ServicesFolder.Create();
-                        }
-
-                        File.WriteAllText(Path.Combine(ServicesFolder.FullName, serviceProject.Name.ToLower()),
-                            CreateDaemonConfig(serviceProject.Name)
+                        PublishService(
+                            serviceOption.Key,
+                            serviceOption.Value.ServiceName,
+                            serviceOption.Value.Port,
+                            "Http2",
+                            sshClient,
+                            ftpClient,
+                            hosts,
+                            token
                         );
-
-                        if (!ftpClient.DirectoryExists("/tmp/Spravy/services"))
-                        {
-                            ftpClient.CreateDirectory("/tmp/Spravy/services");
-                        }
-
-                        ftpClient.UploadFile(Path.Combine(ServicesFolder.FullName, serviceProject.Name.ToLower()),
-                            $"/tmp/Spravy/services/{serviceProject.Name.ToLower()}"
+                        PublishService(
+                            serviceOption.Key,
+                            serviceOption.Value.BrowserServiceName,
+                            serviceOption.Value.BrowserPort,
+                            "HttpAndHttp2",
+                            sshClient,
+                            ftpClient,
+                            hosts,
+                            token
                         );
-
-                        using var cpCommand =
-                            sshClient.RunCommand(
-                                $"echo {SshPassword} | sudo cp /tmp/Spravy/services/{serviceProject.Name.ToLower()} /etc/systemd/system/{serviceProject.Name.ToLower()}"
-                            );
                     }
+
+                    PublishService(browserProject,
+                        browserProject.Name,
+                        browserPort,
+                        "HttpAndHttp2",
+                        sshClient,
+                        ftpClient,
+                        browserHosts,
+                        token
+                    );
 
                     using var daemonReloadCommand =
                         sshClient.RunCommand($"echo {SshPassword} | sudo systemctl daemon-reload");
@@ -140,8 +177,10 @@ class Build : NukeBuild
                             );
                     }
 
-                    var desktopFolder = PublishProject("Spravy.Ui.Desktop");
+                    var desktop = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Desktop");
+                    var desktopFolder = PublishProject(desktop, desktop.Name);
                     var desktopAppFolder = new DirectoryInfo($"/home/{FtpUser}/Apps/Spravy.Ui.Desktop");
+                    var desktopAppSettings = new FileInfo(Path.Combine(desktopAppFolder.FullName, "appsettings.json"));
 
                     if (desktopAppFolder.Exists)
                     {
@@ -149,8 +188,165 @@ class Build : NukeBuild
                     }
 
                     CopyDirectory(desktopFolder.FullName, desktopAppFolder.FullName, true);
+                    SetServiceSettings(desktopAppSettings, 0, null, hosts, "");
                 }
             );
+
+    void PublishService(
+        Project project,
+        string name,
+        ushort port,
+        string protocol,
+        SshClient sshClient,
+        FtpClient ftpClient,
+        Dictionary<string, string> hosts,
+        string token
+    )
+    {
+        var folder = PublishProject(project, name);
+        var appSettingsFile = new FileInfo(Path.Combine(folder.FullName, "appsettings.json"));
+        SetServiceSettings(appSettingsFile, port, protocol, hosts, token);
+        DeleteIfExistsDirectory(ftpClient, $"/home/{FtpUser}/{name}");
+        ftpClient.UploadDirectory(folder.FullName, $"/home/{FtpUser}/{name}");
+
+        using var rmCommand =
+            sshClient.RunCommand(
+                $"echo {SshPassword} | rm /etc/systemd/system/{name.ToLower()}"
+            );
+
+        if (!ServicesFolder.Exists)
+        {
+            ServicesFolder.Create();
+        }
+
+        File.WriteAllText(Path.Combine(ServicesFolder.FullName, name.ToLower()),
+            CreateDaemonConfig(name)
+        );
+
+        if (!ftpClient.DirectoryExists("/tmp/Spravy/services"))
+        {
+            ftpClient.CreateDirectory("/tmp/Spravy/services");
+        }
+
+        ftpClient.UploadFile(Path.Combine(ServicesFolder.FullName, name.ToLower()),
+            $"/tmp/Spravy/services/{name.ToLower()}"
+        );
+
+        using var cpCommand =
+            sshClient.RunCommand(
+                $"echo {SshPassword} | sudo cp /tmp/Spravy/services/{name.ToLower()} /etc/systemd/system/{name.ToLower()}"
+            );
+    }
+
+    void SetServiceSettings(
+        Stream stream,
+        JsonDocument jsonDocument,
+        ushort port,
+        string protocol,
+        Dictionary<string, string> hosts,
+        string token
+    )
+    {
+        var jsonWriterOptions = new JsonWriterOptions
+        {
+            Indented = true,
+        };
+
+        using var writer = new Utf8JsonWriter(stream, jsonWriterOptions);
+        writer.WriteStartObject();
+
+        foreach (var obj in jsonDocument.RootElement.EnumerateObject())
+        {
+            if (hosts.TryGetValue(obj.Name, out var host))
+            {
+                writer.WritePropertyName(obj.Name);
+                writer.WriteStartObject();
+                writer.WritePropertyName("Host");
+                writer.WriteStringValue(host);
+                writer.WritePropertyName("ChannelType");
+                writer.WriteStringValue("Default");
+                writer.WritePropertyName("ChannelCredentialType");
+                writer.WriteStringValue("Insecure");
+                writer.WritePropertyName("Token");
+                writer.WriteStringValue(token);
+                writer.WriteEndObject();
+
+                continue;
+            }
+
+            if (obj.Name == "Urls")
+            {
+                writer.WritePropertyName("Urls");
+                writer.WriteStringValue($"http://0.0.0.0:{port}");
+
+                continue;
+            }
+
+            if (obj.Name == "Kestrel")
+            {
+                writer.WritePropertyName("Kestrel");
+                writer.WriteStartObject();
+                writer.WritePropertyName("EndpointDefaults");
+                writer.WriteStartObject();
+                writer.WritePropertyName("Protocols");
+                writer.WriteStringValue(protocol);
+                writer.WriteEndObject();
+                writer.WriteEndObject();
+
+                continue;
+            }
+
+            if (obj.Name == "Serilog")
+            {
+                writer.WritePropertyName("Serilog");
+                writer.WriteStartObject();
+
+                foreach (var ser in obj.Value.EnumerateObject())
+                {
+                    if (ser.Name == "MinimumLevel")
+                    {
+                        writer.WritePropertyName("MinimumLevel");
+                        writer.WriteStartObject();
+                        writer.WritePropertyName("Default");
+                        writer.WriteStringValue("Information");
+                        writer.WritePropertyName("Override");
+                        writer.WriteStartObject();
+                        writer.WritePropertyName("Microsoft");
+                        writer.WriteStringValue("Warning");
+                        writer.WriteEndObject();
+                        writer.WriteEndObject();
+
+                        continue;
+                    }
+
+                    ser.WriteTo(writer);
+                }
+
+                writer.WriteEndObject();
+
+                continue;
+            }
+
+            obj.WriteTo(writer);
+        }
+
+        writer.WriteEndObject();
+    }
+
+    void SetServiceSettings(
+        FileInfo appSettingFile,
+        ushort port,
+        string protocol,
+        Dictionary<string, string> hosts,
+        string token
+    )
+    {
+        var jsonDocument = JsonDocument.Parse(File.ReadAllText(appSettingFile.FullName));
+        using var stream = new MemoryStream();
+        SetServiceSettings(stream, jsonDocument, port, protocol, hosts, token);
+        var jsonData = Encoding.UTF8.GetString(stream.ToArray());
+        File.WriteAllText(appSettingFile.FullName, jsonData);
+    }
 
     string CreateDaemonConfig(string serviceName)
     {
@@ -223,7 +419,7 @@ class Build : NukeBuild
         }
     }
 
-    DirectoryInfo PublishProject(string name, Action<DotNetPublishSettings> configurator = null)
+    DirectoryInfo PublishProject(Project project, string name, Action<DotNetPublishSettings> configurator = null)
     {
         var publishFolder = new DirectoryInfo(Path.Combine(PublishFolder.FullName, name));
 
@@ -236,9 +432,6 @@ class Build : NukeBuild
         {
             publishFolder.Create();
         }
-
-        var project = Solution.AllProjects.Single(x => x.Name == name);
-
 
         for (var i = 0; i < 3; i++)
         {
@@ -274,7 +467,31 @@ class Build : NukeBuild
             }
         }
 
-
         return publishFolder;
+    }
+
+    string CreteToken()
+    {
+        var key = new SymmetricSecurityKey("0bf7731f-2441-4cff-8e2e-7b343d5d35d0b9b47d13-5b69-4249-aed9-24421e8a94d9"u8
+            .ToArray()
+        );
+
+        var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+        var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
+
+        var token = new JwtSecurityToken(
+            "https://spravy.issuer.authentication.com",
+            "https://spravy.audience.authentication.com",
+            new List<Claim>
+            {
+                new(ClaimTypes.Role, "Service"),
+            },
+            expires: DateTime.UtcNow.AddDays(30),
+            signingCredentials: signingCredentials
+        );
+
+        var jwt = jwtSecurityTokenHandler.WriteToken(token);
+
+        return jwt;
     }
 }

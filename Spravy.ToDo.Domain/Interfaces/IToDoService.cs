@@ -30,7 +30,7 @@ public interface IToDoService
     Task<IEnumerable<ToDoSelectorItem>> GetToDoSelectorItemsAsync(Guid[] ignoreIds);
     Task UpdateToDoItemParentAsync(Guid id, Guid parentId);
     Task ToDoItemToRootAsync(Guid id);
-    Task<string> ToDoItemToStringAsync(Guid id);
+    Task<string> ToDoItemToStringAsync(ToDoItemToStringOptions options);
     Task UpdateToDoItemDaysOffsetAsync(Guid id, ushort days);
     Task UpdateToDoItemMonthsOffsetAsync(Guid id, ushort months);
     Task UpdateToDoItemWeeksOffsetAsync(Guid id, ushort weeks);

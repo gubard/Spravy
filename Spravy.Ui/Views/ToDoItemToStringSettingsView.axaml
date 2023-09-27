@@ -1,0 +1,28 @@
+<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:ToDoItemToStringSettingsViewModel"
+                                xmlns="https://github.com/avaloniaui"
+                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                                xmlns:reactiveUi="http://reactiveui.net"
+                                xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
+                                xmlns:models="clr-namespace:Spravy.Ui.Models"
+                                xmlns:enums="clr-namespace:Spravy.ToDo.Domain.Enums;assembly=Spravy.ToDo.Domain"
+                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                                x:Class="Spravy.Ui.Views.ToDoItemToStringSettingsView"
+                                x:DataType="viewModels:ToDoItemToStringSettingsViewModel">
+    <Design.DataContext>
+        <viewModels:ToDoItemToStringSettingsViewModel />
+    </Design.DataContext>
+
+    <ItemsControl ItemsSource="{Binding Statuses}">
+        <ItemsControl.DataTemplates>
+            <DataTemplate>
+                <DataTemplate.DataType>
+                    <x:Type TypeName="models:CheckedItem" x:TypeArguments="enums:ToDoItemStatus" />
+                </DataTemplate.DataType>
+
+                <CheckBox IsChecked="{Binding IsChecked}" Content="{Binding Item}" />
+            </DataTemplate>
+        </ItemsControl.DataTemplates>
+    </ItemsControl>
+</reactiveUi:ReactiveUserControl>

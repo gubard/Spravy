@@ -1,32 +1,20 @@
 using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Spravy.Db.Sqlite.Extensions;
-using Spravy.Db.Sqlite.Models;
-using Spravy.Domain.Extensions;
+using Spravy.Db.Interfaces;
+using Spravy.Domain.Interfaces;
 using Spravy.Service.Model;
+using Spravy.Service.Services;
 
 namespace Spravy.Service.Extensions;
 
 public static class ServiceCollectionExtension
 {
     public static IServiceCollection AddSpravySqliteFolderContext<TContext>(this IServiceCollection serviceCollection)
-        where TContext : DbContext
+        where TContext : DbContext, IDbContextCreator<TContext>
     {
-        serviceCollection.AddDbContextFactory<TContext>(
-            (sp, options) =>
-            {
-                var sqliteOptions = sp.GetRequiredService<SqliteFolderOptions>();
-                var httpContextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
-                var userId = httpContextAccessor.GetUserId();
-                var fileName = $"{userId}.db";
-                var file = sqliteOptions.DataBasesFolder.ThrowIfNull().ToDirectory().ToFile(fileName);
-                var connectionString = file.ToSqliteConnectionString();
-                options.UseSqlite(connectionString);
-            }
-        );
+        serviceCollection.AddTransient<IFactory<TContext>, SqliteDbContextFactory<TContext>>();
 
         return serviceCollection;
     }
@@ -38,7 +26,7 @@ public static class ServiceCollectionExtension
         serviceCollection.AddHttpContextAccessor();
         serviceCollection.AddSingleton<IMapper>(sp => new Mapper(sp.GetRequiredService<MapperConfiguration>()));
         serviceCollection.AddCors(o => o.AddAllowAllPolicy());
-        serviceCollection.AddScoped(sp => sp.GetConfigurationSection<JwtOptions>());
+        serviceCollection.AddTransient(sp => sp.GetConfigurationSection<JwtOptions>());
         serviceCollection.AddSpravyAuthentication(configuration);
 
         return serviceCollection;

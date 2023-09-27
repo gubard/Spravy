@@ -2,6 +2,7 @@ using System.Text;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Spravy.Domain.Extensions;
+using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
@@ -17,13 +18,13 @@ namespace Spravy.ToDo.Service.Services;
 public class EfToDoService : IToDoService
 {
     private readonly IMapper mapper;
-    private readonly IDbContextFactory<SpravyToDoDbContext> dbContextFactory;
+    private readonly IFactory<SpravyToDoDbContext> dbContextFactory;
     private readonly StatusToDoItemService statusToDoItemService;
     private readonly ActiveToDoItemToDoItemService activeToDoItemToDoItemService;
 
     public EfToDoService(
         IMapper mapper,
-        IDbContextFactory<SpravyToDoDbContext> dbContextFactory,
+        IFactory<SpravyToDoDbContext> dbContextFactory,
         StatusToDoItemService statusToDoItemService,
         ActiveToDoItemToDoItemService activeToDoItemToDoItemService
     )
@@ -36,7 +37,7 @@ public class EfToDoService : IToDoService
 
     public async Task<IEnumerable<IToDoSubItem>> GetRootToDoSubItemsAsync()
     {
-        await using var context = await dbContextFactory.CreateDbContextAsync();
+        await using var context = dbContextFactory.Create();
 
         var items = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
@@ -84,7 +85,7 @@ public class EfToDoService : IToDoService
 
     public async Task<IToDoItem> GetToDoItemAsync(Guid id)
     {
-        await using var context = await dbContextFactory.CreateDbContextAsync();
+        await using var context = dbContextFactory.Create();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
 
@@ -117,7 +118,7 @@ public class EfToDoService : IToDoService
 
     public async Task<Guid> AddRootToDoItemAsync(AddRootToDoItemOptions options)
     {
-        await using var context = await dbContextFactory.CreateDbContextAsync();
+        await using var context = dbContextFactory.Create();
         var id = Guid.NewGuid();
 
         var items = await context.Set<ToDoItemEntity>()
@@ -138,7 +139,7 @@ public class EfToDoService : IToDoService
 
     public async Task<Guid> AddToDoItemAsync(AddToDoItemOptions options)
     {
-        await using var context = await dbContextFactory.CreateDbContextAsync();
+        await using var context = dbContextFactory.Create();
         var id = Guid.NewGuid();
         var parent = await context.Set<ToDoItemEntity>().FindAsync(options.ParentId);
         parent = parent.ThrowIfNull();
@@ -174,7 +175,7 @@ public class EfToDoService : IToDoService
 
     public async Task DeleteToDoItemAsync(Guid id)
     {
-        await using var context = await dbContextFactory.CreateDbContextAsync();
+        await using var context = dbContextFactory.Create();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
         var children = await context.Set<ToDoItemEntity>().AsNoTracking().Where(x => x.ParentId == id).ToArrayAsync();
@@ -191,7 +192,7 @@ public class EfToDoService : IToDoService
 
     public async Task UpdateToDoItemTypeOfPeriodicityAsync(Guid id, TypeOfPeriodicity type)
     {
-        await using var context = await dbContextFactory.CreateDbContextAsync();
+        await using var context = dbContextFactory.Create();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
         item.TypeOfPeriodicity = type;
@@ -200,7 +201,7 @@ public class EfToDoService : IToDoService
 
     public async Task UpdateToDoItemDueDateAsync(Guid id, DateTimeOffset dueDate)
     {
-        await using var context = await dbContextFactory.CreateDbContextAsync();
+        await using var context = dbContextFactory.Create();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
         item.DueDate = dueDate;
@@ -209,7 +210,7 @@ public class EfToDoService : IToDoService
 
     public async Task UpdateToDoItemCompleteStatusAsync(Guid id, bool isCompleted)
     {
-        await using var context = await dbContextFactory.CreateDbContextAsync();
+        await using var context = dbContextFactory.Create();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
 
@@ -571,7 +572,7 @@ public class EfToDoService : IToDoService
 
     public async Task UpdateToDoItemNameAsync(Guid id, string name)
     {
-        await using var context = await dbContextFactory.CreateDbContextAsync();
+        await using var context = dbContextFactory.Create();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
         item.Name = name;
@@ -580,7 +581,7 @@ public class EfToDoService : IToDoService
 
     public async Task UpdateToDoItemOrderIndexAsync(UpdateOrderIndexToDoItemOptions options)
     {
-        await using var context = await dbContextFactory.CreateDbContextAsync();
+        await using var context = dbContextFactory.Create();
         var item = await context.Set<ToDoItemEntity>().FindAsync(options.Id);
         item = item.ThrowIfNull();
         var targetItem = await context.Set<ToDoItemEntity>().FindAsync(options.TargetId);
@@ -603,7 +604,7 @@ public class EfToDoService : IToDoService
 
     public async Task UpdateToDoItemDescriptionAsync(Guid id, string description)
     {
-        await using var context = await dbContextFactory.CreateDbContextAsync();
+        await using var context = dbContextFactory.Create();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
         item.Description = description;
@@ -612,7 +613,7 @@ public class EfToDoService : IToDoService
 
     public async Task SkipToDoItemAsync(Guid id)
     {
-        await using var context = await dbContextFactory.CreateDbContextAsync();
+        await using var context = dbContextFactory.Create();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
 
@@ -690,7 +691,7 @@ public class EfToDoService : IToDoService
 
     public async Task FailToDoItemAsync(Guid id)
     {
-        await using var context = await dbContextFactory.CreateDbContextAsync();
+        await using var context = dbContextFactory.Create();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
 
@@ -769,7 +770,8 @@ public class EfToDoService : IToDoService
 
     public async Task<IEnumerable<IToDoSubItem>> SearchToDoSubItemsAsync(string searchText)
     {
-        await using var context = await dbContextFactory.CreateDbContextAsync();
+        await using var context = dbContextFactory.Create();
+
         var items = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.Name.Contains(searchText))
@@ -783,7 +785,7 @@ public class EfToDoService : IToDoService
 
     public async Task UpdateToDoItemTypeAsync(Guid id, ToDoItemType type)
     {
-        await using var context = await dbContextFactory.CreateDbContextAsync();
+        await using var context = dbContextFactory.Create();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
         item.Type = type;
@@ -792,7 +794,7 @@ public class EfToDoService : IToDoService
 
     public async Task AddCurrentToDoItemAsync(Guid id)
     {
-        await using var context = await dbContextFactory.CreateDbContextAsync();
+        await using var context = dbContextFactory.Create();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
         item.IsCurrent = true;
@@ -801,7 +803,7 @@ public class EfToDoService : IToDoService
 
     public async Task RemoveCurrentToDoItemAsync(Guid id)
     {
-        await using var context = await dbContextFactory.CreateDbContextAsync();
+        await using var context = dbContextFactory.Create();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
         item.IsCurrent = false;
@@ -810,7 +812,7 @@ public class EfToDoService : IToDoService
 
     public async Task<IEnumerable<IToDoSubItem>> GetCurrentToDoItemsAsync()
     {
-        await using var context = await dbContextFactory.CreateDbContextAsync();
+        await using var context = dbContextFactory.Create();
 
         var items = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
@@ -825,7 +827,7 @@ public class EfToDoService : IToDoService
 
     public async Task UpdateToDoItemAnnuallyPeriodicityAsync(Guid id, AnnuallyPeriodicity periodicity)
     {
-        await using var context = await dbContextFactory.CreateDbContextAsync();
+        await using var context = dbContextFactory.Create();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
         item.SetDaysOfYear(periodicity.Days);
@@ -834,7 +836,7 @@ public class EfToDoService : IToDoService
 
     public async Task UpdateToDoItemMonthlyPeriodicityAsync(Guid id, MonthlyPeriodicity periodicity)
     {
-        await using var context = await dbContextFactory.CreateDbContextAsync();
+        await using var context = dbContextFactory.Create();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
         item.SetDaysOfMonth(periodicity.Days);
@@ -843,7 +845,7 @@ public class EfToDoService : IToDoService
 
     public async Task UpdateToDoItemWeeklyPeriodicityAsync(Guid id, WeeklyPeriodicity periodicity)
     {
-        await using var context = await dbContextFactory.CreateDbContextAsync();
+        await using var context = dbContextFactory.Create();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
         item.SetDaysOfWeek(periodicity.Days);
@@ -852,7 +854,7 @@ public class EfToDoService : IToDoService
 
     public async Task<IEnumerable<IToDoSubItem>> GetLeafToDoSubItemsAsync(Guid id)
     {
-        await using var context = await dbContextFactory.CreateDbContextAsync();
+        await using var context = dbContextFactory.Create();
 
         var entities = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
@@ -880,7 +882,7 @@ public class EfToDoService : IToDoService
 
     public async Task<IEnumerable<ToDoSelectorItem>> GetToDoSelectorItemsAsync(Guid[] ignoreIds)
     {
-        await using var context = await dbContextFactory.CreateDbContextAsync();
+        await using var context = dbContextFactory.Create();
 
         var items = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
@@ -907,7 +909,7 @@ public class EfToDoService : IToDoService
             throw new Exception();
         }
 
-        await using var context = await dbContextFactory.CreateDbContextAsync();
+        await using var context = dbContextFactory.Create();
         var entity = await context.Set<ToDoItemEntity>().FindAsync(id);
 
         var items = await context.Set<ToDoItemEntity>()
@@ -924,7 +926,7 @@ public class EfToDoService : IToDoService
 
     public async Task ToDoItemToRootAsync(Guid id)
     {
-        await using var context = await dbContextFactory.CreateDbContextAsync();
+        await using var context = dbContextFactory.Create();
         var entity = await context.Set<ToDoItemEntity>().FindAsync(id);
 
         var items = await context.Set<ToDoItemEntity>()
@@ -939,18 +941,18 @@ public class EfToDoService : IToDoService
         await context.SaveChangesAsync();
     }
 
-    public async Task<string> ToDoItemToStringAsync(Guid id)
+    public async Task<string> ToDoItemToStringAsync(ToDoItemToStringOptions options)
     {
-        await using var context = await dbContextFactory.CreateDbContextAsync();
+        await using var context = dbContextFactory.Create();
         var builder = new StringBuilder();
-        await ToDoItemToStringAsync(context, id, 0, builder);
+        await ToDoItemToStringAsync(context, options, 0, builder);
 
         return builder.ToString();
     }
 
     public async Task UpdateToDoItemDaysOffsetAsync(Guid id, ushort days)
     {
-        await using var context = await dbContextFactory.CreateDbContextAsync();
+        await using var context = dbContextFactory.Create();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
         item.DaysOffset = days;
@@ -959,7 +961,7 @@ public class EfToDoService : IToDoService
 
     public async Task UpdateToDoItemMonthsOffsetAsync(Guid id, ushort months)
     {
-        await using var context = await dbContextFactory.CreateDbContextAsync();
+        await using var context = dbContextFactory.Create();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
         item.MonthsOffset = months;
@@ -968,7 +970,7 @@ public class EfToDoService : IToDoService
 
     public async Task UpdateToDoItemWeeksOffsetAsync(Guid id, ushort weeks)
     {
-        await using var context = await dbContextFactory.CreateDbContextAsync();
+        await using var context = dbContextFactory.Create();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
         item.WeeksOffset = weeks;
@@ -977,7 +979,7 @@ public class EfToDoService : IToDoService
 
     public async Task UpdateToDoItemYearsOffsetAsync(Guid id, ushort years)
     {
-        await using var context = await dbContextFactory.CreateDbContextAsync();
+        await using var context = dbContextFactory.Create();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
         item.YearsOffset = years;
@@ -986,27 +988,45 @@ public class EfToDoService : IToDoService
 
     public async Task UpdateToDoItemChildrenTypeAsync(Guid id, ToDoItemChildrenType type)
     {
-        await using var context = await dbContextFactory.CreateDbContextAsync();
+        await using var context = dbContextFactory.Create();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
         item.ChildrenType = type;
         await context.SaveChangesAsync();
     }
 
-    private async Task ToDoItemToStringAsync(SpravyToDoDbContext context, Guid id, ushort level, StringBuilder builder)
+    private async Task ToDoItemToStringAsync(
+        SpravyToDoDbContext context,
+        ToDoItemToStringOptions options,
+        ushort level,
+        StringBuilder builder
+    )
     {
         var items = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
-            .Where(x => x.ParentId == id)
+            .Where(x => x.ParentId == options.Id)
             .OrderBy(x => x.OrderIndex)
             .ToArrayAsync();
 
         foreach (var item in items)
         {
+            var status = await statusToDoItemService.GetStatusAsync(context, item);
+
+            if (!options.Statuses.Span.ToArray().Contains(status))
+            {
+                continue;
+            }
+
             builder.Duplicate(" ", level);
             builder.Append(item.Name);
             builder.AppendLine();
-            await ToDoItemToStringAsync(context, item.Id, (ushort)(level + 1), builder);
+
+            await ToDoItemToStringAsync(
+                context,
+                new ToDoItemToStringOptions(options.Statuses.ToArray(), item.Id),
+                (ushort)(level + 1),
+                builder
+            );
         }
     }
 

@@ -48,7 +48,7 @@ public static class ServiceCollectionExtension
         serviceCollection.AddSingleton<ContextAccessorHttpHeaderFactory>();
         serviceCollection.AddSingleton<IHttpHeaderFactory, TokenHttpHeaderFactory>();
 
-        serviceCollection.AddScoped<IScheduleService, EfScheduleService>();
+        serviceCollection.AddTransient<IScheduleService, EfScheduleService>();
 
         serviceCollection.AddMapperConfiguration<SpravyScheduleProfile, SpravyScheduleDbProfile>();
         serviceCollection.AddSpravySqliteFolderContext<SpravyScheduleDbContext>();

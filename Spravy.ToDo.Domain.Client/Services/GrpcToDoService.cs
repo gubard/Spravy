@@ -494,17 +494,12 @@ public class GrpcToDoService : GrpcServiceBase, IToDoService
         }
     }
 
-    public async Task<string> ToDoItemToStringAsync(Guid id)
+    public async Task<string> ToDoItemToStringAsync(ToDoItemToStringOptions options)
     {
         try
         {
-            var reply = await client.ToDoItemToStringAsync(
-                new ToDoItemToStringRequest
-                {
-                    Id = mapper.Map<ByteString>(id),
-                },
-                await metadataFactory.CreateAsync()
-            );
+            var request = mapper.Map<ToDoItemToStringRequest>(options);
+            var reply = await client.ToDoItemToStringAsync(request, await metadataFactory.CreateAsync());
 
             return reply.Value;
         }

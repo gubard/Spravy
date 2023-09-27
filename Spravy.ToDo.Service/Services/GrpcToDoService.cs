@@ -304,7 +304,7 @@ public class GrpcToDoService : ToDoServiceBase
         ServerCallContext context
     )
     {
-        var value = await toDoService.ToDoItemToStringAsync(mapper.Map<Guid>(request.Id));
+        var value = await toDoService.ToDoItemToStringAsync(mapper.Map<ToDoItemToStringOptions>(request));
 
         return new ToDoItemToStringReply
         {

@@ -14,5 +14,6 @@
     <PackageReference Include="FluentFTP" Version="48.0.0" />
     <PackageReference Include="Nuke.Common" Version="7.0.5" />
     <PackageReference Include="SSH.NET" Version="2020.0.2" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.0.0" />
   </ItemGroup>
 </Project>

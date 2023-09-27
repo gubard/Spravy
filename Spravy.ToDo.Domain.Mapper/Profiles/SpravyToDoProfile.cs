@@ -42,6 +42,31 @@ public class SpravyToDoProfile : Profile
         CreateMap<Guid, ByteString>().ConvertUsing(x => ByteString.CopyFrom(x.ToByteArray()));
         CreateMap<ToDoSelectorItem, ToDoSelectorItemGrpc>();
 
+        CreateMap<ToDoItemToStringRequest, ToDoItemToStringOptions>()
+            .ConstructUsing(
+                (x, context) => new ToDoItemToStringOptions(
+                    context.Mapper.Map<IEnumerable<ToDoItemStatus>>(x.Statuses),
+                    context.Mapper.Map<Guid>(x.Id)
+                )
+            );
+
+        CreateMap<ToDoItemToStringOptions, ToDoItemToStringRequest>()
+            .ConvertUsing(
+                (x, _, context) =>
+                {
+                    var request = new ToDoItemToStringRequest
+                    {
+                        Id = context.Mapper.Map<ByteString>(x.Id)
+                    };
+
+                    request.Statuses.AddRange(
+                        context.Mapper.Map<IEnumerable<ToDoItemStatusGrpc>>(x.Statuses.ToArray())
+                    );
+
+                    return request;
+                }
+            );
+
         CreateMap<MonthlyPeriodicityGrpc, MonthlyPeriodicity>()
             .ConvertUsing((source, _, _) => new(source.Days.ToByteArray()));
 

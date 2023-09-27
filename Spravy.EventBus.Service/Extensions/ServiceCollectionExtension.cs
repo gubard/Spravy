@@ -22,7 +22,7 @@ public static class ServiceCollectionExtension
         serviceCollection.AddSingleton<IDbContextSetup, SqliteEventBusDbContextSetup>();
         serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<SqliteFolderOptions>());
 
-        serviceCollection.AddScoped<EventStorage>();
+        serviceCollection.AddTransient<EventStorage>();
 
         serviceCollection.AddMapperConfiguration<SpravyEventBusProfile, SpravyEventBusDbProfile>();
         serviceCollection.AddSpravySqliteFolderContext<SpravyEventBusDbContext>();

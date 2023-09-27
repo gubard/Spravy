@@ -51,9 +51,9 @@ public static class ServiceCollectionExtension
         serviceCollection.AddSingleton<IFactory<string, IEventBusService>, EventBusServiceFactory>();
         serviceCollection.AddSingleton<IHttpHeaderFactory, TokenHttpHeaderFactory>();
 
-        serviceCollection.AddScoped<IToDoService, EfToDoService>();
-        serviceCollection.AddScoped<StatusToDoItemService>();
-        serviceCollection.AddScoped<ActiveToDoItemToDoItemService>();
+        serviceCollection.AddTransient<IToDoService, EfToDoService>();
+        serviceCollection.AddTransient<StatusToDoItemService>();
+        serviceCollection.AddTransient<ActiveToDoItemToDoItemService>();
 
         serviceCollection.AddSpravySqliteFolderContext<SpravyToDoDbContext>();
 

@@ -50,6 +50,7 @@ message UpdateToDoItemDaysOffsetReply {
 
 message ToDoItemToStringRequest {
   bytes Id = 1;
+  repeated ToDoItemStatusGrpc Statuses = 2;
 }
 
 message ToDoItemToStringReply {

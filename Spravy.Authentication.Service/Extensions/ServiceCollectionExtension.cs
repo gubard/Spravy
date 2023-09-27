@@ -26,9 +26,9 @@ using Spravy.EventBus.Domain.Client.Services;
 using Spravy.EventBus.Domain.Interfaces;
 using Spravy.Service.Extensions;
 using Spravy.Service.Services;
+using TokenService = Spravy.Authentication.Service.Services.TokenService;
 using ISpravyAuthenticationDbContextFactory =
     Spravy.Domain.Interfaces.IFactory<string, Spravy.Authentication.Db.Contexts.SpravyAuthenticationDbContext>;
-using TokenService = Spravy.Authentication.Service.Services.TokenService;
 
 namespace Spravy.Authentication.Service.Extensions;
 
@@ -37,21 +37,21 @@ public static class ServiceCollectionExtension
     public static IServiceCollection RegisterAuthentication(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddMapperConfiguration<SpravyAuthenticationProfile, SpravyAuthenticationDbProfile>();
-        serviceCollection.AddScoped<IAuthenticationService, EfAuthenticationService>();
+        serviceCollection.AddTransient<IAuthenticationService, EfAuthenticationService>();
         serviceCollection.AddSingleton<IDbContextSetup, SqliteAuthenticationDbContextSetup>();
-        serviceCollection.AddScoped<IHasher, Hasher>();
-        serviceCollection.AddScoped<IFactory<string, IHasher>, HasherFactory>();
-        serviceCollection.AddScoped<IFactory<string, Named<IBytesToString>>, BytesToStringFactory>();
-        serviceCollection.AddScoped<IFactory<string, Named<IStringToBytes>>, StringToBytesFactory>();
-        serviceCollection.AddScoped<IFactory<string, Named<IHashService>>, HashServiceFactory>();
+        serviceCollection.AddTransient<IHasher, Hasher>();
+        serviceCollection.AddTransient<IFactory<string, IHasher>, HasherFactory>();
+        serviceCollection.AddTransient<IFactory<string, Named<IBytesToString>>, BytesToStringFactory>();
+        serviceCollection.AddTransient<IFactory<string, Named<IStringToBytes>>, StringToBytesFactory>();
+        serviceCollection.AddTransient<IFactory<string, Named<IHashService>>, HashServiceFactory>();
         serviceCollection.AddSingleton<ITokenFactory, JwtTokenFactory>();
         serviceCollection.AddSingleton<JwtSecurityTokenHandler>();
         serviceCollection.AddSingleton<IKeeper<TokenResult>, StaticKeeper<TokenResult>>();
         serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<GrpcEventBusServiceOptions>());
         serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<JwtTokenFactoryOptions>());
-        serviceCollection.AddScoped(_ => NamedHelper.BytesToUpperCaseHexString.ToRef());
-        serviceCollection.AddScoped(_ => NamedHelper.Sha512Hash.ToRef());
-        serviceCollection.AddScoped(_ => NamedHelper.StringToUtf8Bytes.ToRef());
+        serviceCollection.AddTransient(_ => NamedHelper.BytesToUpperCaseHexString.ToRef());
+        serviceCollection.AddTransient(_ => NamedHelper.Sha512Hash.ToRef());
+        serviceCollection.AddTransient(_ => NamedHelper.StringToUtf8Bytes.ToRef());
         serviceCollection.AddSpravySqliteFileDbContext<SpravyAuthenticationDbContext>();
         serviceCollection.AddHostedService<MigratorHostedService>();
         serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<SqliteFileOptions>());

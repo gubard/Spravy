@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Spravy.Domain.Interfaces;
 using Spravy.EventBus.Db.Contexts;
 using Spravy.EventBus.Db.Models;
 using Spravy.EventBus.Domain.Models;
@@ -8,10 +9,10 @@ namespace Spravy.EventBus.Service.Services;
 
 public class EventStorage
 {
-    private readonly IDbContextFactory<SpravyEventBusDbContext> dbContextFactory;
+    private readonly IFactory<SpravyEventBusDbContext> dbContextFactory;
     private readonly IMapper mapper;
 
-    public EventStorage(IDbContextFactory<SpravyEventBusDbContext> dbContextFactory, IMapper mapper)
+    public EventStorage(IFactory<SpravyEventBusDbContext> dbContextFactory, IMapper mapper)
     {
         this.dbContextFactory = dbContextFactory;
         this.mapper = mapper;
@@ -19,7 +20,7 @@ public class EventStorage
 
     public async Task AddEventAsync(Guid id, byte[] content)
     {
-        await using var context = await dbContextFactory.CreateDbContextAsync();
+        await using var context = dbContextFactory.Create();
 
         var newEvent = new EventEntity
         {
@@ -34,7 +35,7 @@ public class EventStorage
 
     public async Task<IEnumerable<EventValue>> PushEventAsync(Guid[] eventIds)
     {
-        await using var context = await dbContextFactory.CreateDbContextAsync();
+        await using var context = dbContextFactory.Create();
         await using  var transaction = await context.Database.BeginTransactionAsync();
 
         try

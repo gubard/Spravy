@@ -190,10 +190,27 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
         viewModel.Commands.AddRange(Commands);
     }
 
-    private async Task ToDoItemToStringAsync()
+    private Task ToDoItemToStringAsync()
     {
-        var text = await ToDoService.ToDoItemToStringAsync(Id);
-        await Clipboard.SetTextAsync(text);
+        return DialogViewer.ShowConfirmDialogAsync<ToDoItemToStringSettingsView>(
+            _ =>
+            {
+                DialogViewer.CloseDialog();
+
+                return Task.CompletedTask;
+            },
+            async view =>
+            {
+                var options = new ToDoItemToStringOptions(
+                    view.ViewModel.ThrowIfNull().Statuses.Where(x => x.IsChecked).Select(x => x.Item),
+                    Id
+                );
+
+                var text = await ToDoService.ToDoItemToStringAsync(options);
+                await Clipboard.SetTextAsync(text);
+                DialogViewer.CloseDialog();
+            }
+        );
     }
 
     private Task ChangeRootItemAsync()
