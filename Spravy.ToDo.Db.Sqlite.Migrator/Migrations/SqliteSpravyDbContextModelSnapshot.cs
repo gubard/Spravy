@@ -9,7 +9,7 @@ using Spravy.ToDo.Db.Contexts;
 
 namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
 {
-    [DbContext(typeof(SpravyToDoDbContext))]
+    [DbContext(typeof(SpravyDbToDoDbContext))]
     partial class SqliteSpravyDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

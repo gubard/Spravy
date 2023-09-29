@@ -1,11 +1,10 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Spravy.Domain.Di.Extensions;
 using Spravy.Domain.Interfaces;
 
-namespace Spravy.Service.Extensions;
+namespace Spravy.Di.Extensions;
 
-public static class ServiceProvider
+public static class ServiceProviderExtension
 {
     public static T GetConfigurationSection<T>(this IServiceProvider serviceProvider) where T : IOptionsValue
     {

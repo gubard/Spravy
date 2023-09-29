@@ -1,9 +1,9 @@
 using Spravy.Client.Enums;
-using Spravy.Domain.Interfaces;
+using Spravy.Client.Interfaces;
 
 namespace Spravy.Schedule.Domain.Client.Models;
 
-public class GrpcScheduleServiceOptions : IOptionsValue
+public class GrpcScheduleServiceOptions : IGrpcOptionsValue
 {
     public static string Section => "GrpcScheduleService";
 

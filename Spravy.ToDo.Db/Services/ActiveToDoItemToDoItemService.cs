@@ -9,14 +9,14 @@ namespace Spravy.ToDo.Db.Services;
 
 public class ActiveToDoItemToDoItemService
 {
-    public async Task<ActiveToDoItem?> GetActiveItemAsync(SpravyToDoDbContext context, ToDoItemEntity entity)
+    public async Task<ActiveToDoItem?> GetActiveItemAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
     {
         var result = await GetActiveToDoItemAsync(context, entity);
 
         return ToActiveToDoItem(entity, result);
     }
 
-    private Task<ActiveToDoItem?> GetActiveToDoItemAsync(SpravyToDoDbContext context, ToDoItemEntity entity)
+    private Task<ActiveToDoItem?> GetActiveToDoItemAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
     {
         switch (entity.Type)
         {
@@ -47,7 +47,7 @@ public class ActiveToDoItemToDoItemService
         }
     }
 
-    private Task<ActiveToDoItem?> GetPlannedActiveItemAsync(SpravyToDoDbContext context, ToDoItemEntity entity)
+    private Task<ActiveToDoItem?> GetPlannedActiveItemAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
     {
         if (entity.IsCompleted)
         {
@@ -57,7 +57,7 @@ public class ActiveToDoItemToDoItemService
         return GetActiveItemByDueDateAsync(context, entity);
     }
 
-    private Task<ActiveToDoItem?> GetActiveItemByDueDateAsync(SpravyToDoDbContext context, ToDoItemEntity entity)
+    private Task<ActiveToDoItem?> GetActiveItemByDueDateAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
     {
         if (entity.DueDate > DateTimeOffset.Now.ToCurrentDay())
         {
@@ -87,12 +87,12 @@ public class ActiveToDoItemToDoItemService
         throw new ArgumentOutOfRangeException();
     }
 
-    private Task<ActiveToDoItem?> GetGroupActiveItemAsync(SpravyToDoDbContext context, ToDoItemEntity entity)
+    private Task<ActiveToDoItem?> GetGroupActiveItemAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
     {
         return GetChildrenActiveToDoItemAsync(context, entity, null);
     }
 
-    private Task<ActiveToDoItem?> GetValueActiveItemAsync(SpravyToDoDbContext context, ToDoItemEntity entity)
+    private Task<ActiveToDoItem?> GetValueActiveItemAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
     {
         if (entity.IsCompleted)
         {
@@ -103,7 +103,7 @@ public class ActiveToDoItemToDoItemService
     }
 
     private async Task<ActiveToDoItem?> GetChildrenActiveToDoItemAsync(
-        SpravyToDoDbContext context,
+        SpravyDbToDoDbContext context,
         ToDoItemEntity entity,
         ActiveToDoItem? def
     )

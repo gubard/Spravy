@@ -9,6 +9,7 @@ using Spravy.Ui.Models;
 using Spravy.Ui.ViewModels;
 using Google.Protobuf;
 using Spravy.Domain.Extensions;
+using Spravy.Domain.Models;
 
 namespace Spravy.Ui.Profiles;
 

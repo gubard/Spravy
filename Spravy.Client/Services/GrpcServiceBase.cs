@@ -1,66 +1,55 @@
 using Grpc.Core;
-using Grpc.Net.Client;
-using Grpc.Net.Client.Web;
-using Spravy.Client.Enums;
+using Spravy.Client.Exceptions;
+using Spravy.Domain.Interfaces;
 
 namespace Spravy.Client.Services;
 
-public class GrpcServiceBase : IAsyncDisposable, IDisposable
+public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBase
 {
-    protected readonly GrpcChannel GrpcChannel;
+    private readonly IFactory<Uri, TGrpcClient> grpcClientFactory;
+    private readonly Uri host;
 
-    protected GrpcServiceBase(Uri host, GrpcChannelType grpcChannelType, ChannelCredentials channelCredentials)
+    protected GrpcServiceBase(IFactory<Uri, TGrpcClient> grpcClientFactory, Uri host)
     {
-        switch (grpcChannelType)
+        this.grpcClientFactory = grpcClientFactory;
+        this.host = host;
+    }
+
+    protected async Task CallClientAsync(Func<TGrpcClient, Task> func)
+    {
+        try
         {
-            case GrpcChannelType.Default:
-            {
-                GrpcChannel = GrpcChannel.ForAddress(host);
-
-                break;
-            }
-            case GrpcChannelType.GrpcWeb:
-            {
-                var httpClientHandler = new HttpClientHandler();
-                var grpcWebHandler = new GrpcWebHandler(GrpcWebMode.GrpcWeb, httpClientHandler);
-
-                var grpcChannelOptions = new GrpcChannelOptions()
-                {
-                    HttpHandler = grpcWebHandler,
-                    Credentials = channelCredentials,
-                };
-
-                GrpcChannel = GrpcChannel.ForAddress(host, grpcChannelOptions);
-
-                break;
-            }
-            case GrpcChannelType.GrpcWebText:
-            {
-                var httpClientHandler = new HttpClientHandler();
-                var grpcWebHandler = new GrpcWebHandler(GrpcWebMode.GrpcWebText, httpClientHandler);
-
-                var grpcChannelOptions = new GrpcChannelOptions()
-                {
-                    HttpHandler = grpcWebHandler,
-                    Credentials = channelCredentials,
-                };
-
-                GrpcChannel = GrpcChannel.ForAddress(host, grpcChannelOptions);
-
-                break;
-            }
-            default: throw new ArgumentOutOfRangeException(nameof(grpcChannelType), grpcChannelType, null);
+            var client = grpcClientFactory.Create(host);
+            await func.Invoke(client);
+        }
+        catch (Exception e)
+        {
+            throw new GrpcException(host, e);
         }
     }
 
-    public virtual async ValueTask DisposeAsync()
+    protected async Task<TResult> CallClientAsync<TResult>(Func<TGrpcClient, Task<TResult>> func)
     {
-        Dispose();
-        await GrpcChannel.ShutdownAsync();
+        try
+        {
+            var client = grpcClientFactory.Create(host);
+            var result = await func.Invoke(client);
+
+            return result;
+        }
+        catch (Exception e)
+        {
+            throw new GrpcException(host, e);
+        }
     }
 
-    public virtual void Dispose()
+    protected IAsyncEnumerable<TResult> CallClientAsync<TResult>(
+        Func<TGrpcClient, CancellationToken, IAsyncEnumerable<TResult>> func,
+        CancellationToken token
+    )
     {
-        GrpcChannel.Dispose();
+        var client = grpcClientFactory.Create(host);
+
+        return func.Invoke(client, token);
     }
 }

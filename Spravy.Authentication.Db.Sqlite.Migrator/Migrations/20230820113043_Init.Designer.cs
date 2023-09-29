@@ -11,7 +11,7 @@ using Spravy.Authentication.Db.Sqlite.Migrator;
 
 namespace Spravy.Authentication.Db.Sqlite.Migrator.Migrations
 {
-    [DbContext(typeof(SpravyAuthenticationDbContext))]
+    [DbContext(typeof(SpravyDbAuthenticationDbContext))]
     [Migration("20230820113043_Init")]
     partial class Init
     {

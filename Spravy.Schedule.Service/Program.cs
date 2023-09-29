@@ -7,7 +7,7 @@ using Spravy.Service.Middlewares;
 WebApplication.CreateBuilder(args)
     .BuildSpravy<GrpcScheduleService>(
         args,
-        typeof(DataBaseSetupSqliteMiddleware<SpravyScheduleDbContext>),
+        typeof(DataBaseSetupSqliteMiddleware<SpravyDbScheduleDbContext>),
         x => x.AddSchedule()
     )
     .Run();

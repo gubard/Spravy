@@ -54,13 +54,4 @@
       <UpToDateCheckInput Remove="Assets\avalonia-logo.ico" />
       <UpToDateCheckInput Remove="Styles\Theme.axaml" />
     </ItemGroup>
-
-    <ItemGroup>
-        <Protobuf Include="..\Spravy.Authentication.Domain\Protos\authentication.proto" GrpcServices="Client" ProtoRoot="..\Spravy.Authentication.Domain">
-            <Link>Protos/authentication.proto</Link>
-        </Protobuf>
-        <Protobuf Include="..\Spravy.Authentication.Domain\Protos\authentication_messages.proto" GrpcServices="None" ProtoCompile="False">
-            <Link>Protos/authentication_messages.proto</Link>
-        </Protobuf>
-    </ItemGroup>
 </Project>

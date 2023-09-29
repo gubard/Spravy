@@ -11,14 +11,14 @@ namespace Spravy.Schedule.Service.HostedServices;
 
 public class ScheduleHostedService : IHostedService
 {
-    private readonly IFactory<string, SpravyScheduleDbContext> spravyScheduleDbContextFactory;
+    private readonly IFactory<string, SpravyDbScheduleDbContext> spravyScheduleDbContextFactory;
     private readonly SqliteFolderOptions sqliteFolderOptions;
     private readonly IFactory<string, IEventBusService> eventBusServiceFactory;
     private readonly ILogger<ScheduleHostedService> logger;
     private readonly Dictionary<string, Task> tasks = new();
 
     public ScheduleHostedService(
-        IFactory<string, SpravyScheduleDbContext> spravyScheduleDbContextFactory,
+        IFactory<string, SpravyDbScheduleDbContext> spravyScheduleDbContextFactory,
         SqliteFolderOptions sqliteFolderOptions,
         IFactory<string, IEventBusService> eventBusServiceFactory,
         ILogger<ScheduleHostedService> logger

@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Models;
 using Spravy.Authentication.Service.Models;
+using Spravy.Domain.Enums;
 using Spravy.Domain.Extensions;
 
 namespace Spravy.Authentication.Service.Services;
@@ -19,7 +20,7 @@ public class JwtTokenFactory : ITokenFactory
         this.jwtSecurityTokenHandler = jwtSecurityTokenHandler;
     }
 
-    public TokenResult Create(TokenClaims user)
+    public TokenResult Create(UserTokenClaims user)
     {
         var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(options.Key.ThrowIfNullOrWhiteSpace()));
         var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
@@ -64,5 +65,31 @@ public class JwtTokenFactory : ITokenFactory
         var jwt = jwtSecurityTokenHandler.WriteToken(token);
 
         return jwt;
+    }
+
+    public TokenResult Create()
+    {
+        var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(options.Key.ThrowIfNullOrWhiteSpace()));
+        var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+
+        var jwt = CreateToken(
+            signingCredentials,
+            new List<Claim>
+            {
+                new(ClaimTypes.Role, Role.Service.ToString()),
+            },
+            DateTime.UtcNow.AddDays(options.ExpiresDays)
+        );
+
+        var refreshJwt = CreateToken(
+            signingCredentials,
+            new List<Claim>
+            {
+                new(ClaimTypes.Role, Role.Service.ToString()),
+            },
+            DateTime.UtcNow.AddDays(options.RefreshExpiresDays)
+        );
+
+        return new TokenResult(jwt, refreshJwt);
     }
 }

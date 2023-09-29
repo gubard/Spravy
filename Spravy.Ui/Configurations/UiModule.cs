@@ -6,6 +6,7 @@ using Avalonia.Controls.Templates;
 using Avalonia.Input.Platform;
 using Avalonia.Layout;
 using Avalonia.ReactiveUI;
+using Grpc.Net.Client;
 using Ninject;
 using Ninject.Modules;
 using ReactiveUI;
@@ -15,6 +16,7 @@ using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Mapper.Profiles;
 using Spravy.Authentication.Domain.Models;
 using Spravy.Authentication.Domain.Services;
+using Spravy.Authentication.Protos;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
 using Spravy.Domain.Di.Extensions;
@@ -24,14 +26,17 @@ using Spravy.Domain.Services;
 using Spravy.EventBus.Domain.Client.Models;
 using Spravy.EventBus.Domain.Client.Services;
 using Spravy.EventBus.Domain.Interfaces;
+using Spravy.EventBus.Protos;
 using Spravy.Schedule.Domain.Client.Models;
 using Spravy.Schedule.Domain.Client.Services;
 using Spravy.Schedule.Domain.Interfaces;
 using Spravy.Schedule.Domain.Mapper.Profiles;
+using Spravy.Schedule.Protos;
 using Spravy.ToDo.Domain.Client.Models;
 using Spravy.ToDo.Domain.Client.Services;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Mapper.Profiles;
+using Spravy.ToDo.Protos;
 using Spravy.Ui.Controls;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
@@ -49,13 +54,23 @@ public class UiModule : NinjectModule
 
     public override void Load()
     {
+        this.BindGrpcService2<GrpcAuthenticationService, AuthenticationService.AuthenticationServiceClient,
+            GrpcAuthenticationServiceOptions>();
+        this.BindGrpcService<GrpcScheduleService, ScheduleService.ScheduleServiceClient,
+            GrpcScheduleServiceOptions>();
+        this.BindGrpcService<GrpcToDoService, ToDoService.ToDoServiceClient,
+            GrpcToDoServiceOptions>();
+        this.BindGrpcService<GrpcEventBusService, EventBusService.EventBusServiceClient,
+            GrpcEventBusServiceOptions>();
+
+        Bind<ICacheValidator<Uri, GrpcChannel>>().To<GrpcChannelCacheValidator>();
         Bind<RoutingState>().ToConstructor(_ => new RoutingState(null)).InSingletonScope();
         Bind<RoutedViewHost>().ToSelf().OnActivation((c, x) => x.Router = c.Kernel.Get<RoutingState>());
         Bind<IViewLocator>().To<ModuleViewLocator>();
         Bind<INavigator>().To<Navigator>();
         Bind<PathControl>().ToSelf();
         Bind<IMapper>().ToConstructor(x => new Mapper(x.Context.Kernel.Get<MapperConfiguration>()));
-        Bind<IToDoService>().To<GrpcToDoService>();
+        Bind<IToDoService>().ToMethod(x => x.Kernel.Get<GrpcToDoService>());
         Bind<IExceptionViewModel>().To<ExceptionViewModel>();
         Bind<Application>().To<App>();
         Bind<IResourceLoader>().To<FileResourceLoader>();
@@ -67,24 +82,18 @@ public class UiModule : NinjectModule
         Bind<DayOfWeekSelector>().ToSelf();
         Bind<DayOfMonthSelector>().ToSelf();
         Bind<ITokenService>().To<TokenService>().InSingletonScope();
-        Bind<IAuthenticationService>().To<GrpcAuthenticationService>();
-        Bind<IScheduleService>().To<GrpcScheduleService>();
+        Bind<IAuthenticationService>().ToMethod(context => context.Kernel.Get<GrpcAuthenticationService>());
+        Bind<IScheduleService>().ToMethod(context => context.Kernel.Get<GrpcScheduleService>());
         Bind<IKeeper<TokenResult>>().To<StaticKeeper<TokenResult>>();
         Bind<IKeeper<Guid>>().To<StaticKeeper<Guid>>();
         Bind<Control>().To<MainView>().OnActivation((c, x) => x.DataContext = c.Kernel.Get<MainViewModel>());
         RegisterViewModels(this);
         Bind<AppConfiguration>().ToConstructor(x => new AppConfiguration(typeof(LoginViewModel)));
         Bind<MapperConfiguration>().ToConstructor(x => new MapperConfiguration(SetupMapperConfiguration));
-        Bind<GrpcToDoServiceOptions>().ToMethod(x => x.Kernel.GetOptionsValue<GrpcToDoServiceOptions>());
-        Bind<GrpcScheduleServiceOptions>().ToMethod(x => x.Kernel.GetOptionsValue<GrpcScheduleServiceOptions>());
-        Bind<GrpcEventBusServiceOptions>().ToMethod(x => x.Kernel.GetOptionsValue<GrpcEventBusServiceOptions>());
-        Bind<IEventBusService>().To<GrpcEventBusService>();
+        Bind<IEventBusService>().ToMethod(context => context.Kernel.Get<GrpcEventBusService>());
         Bind<IDataTemplate>().To<ModuleDataTemplate>();
         Bind<IMetadataFactory>().To<MetadataFactory>();
         Bind<IHttpHeaderFactory>().To<TokenHttpHeaderFactory>();
-
-        Bind<GrpcAuthenticationServiceOptions>()
-            .ToMethod(x => x.Kernel.GetOptionsValue<GrpcAuthenticationServiceOptions>());
 
         Bind<IDialogViewer>()
             .ToMethod(

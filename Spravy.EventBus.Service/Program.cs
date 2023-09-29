@@ -7,7 +7,7 @@ using Spravy.Service.Middlewares;
 WebApplication.CreateBuilder(args)
     .BuildSpravy<GrpcEventBusService>(
         args,
-        typeof(DataBaseSetupSqliteMiddleware<SpravyEventBusDbContext>),
+        typeof(DataBaseSetupSqliteMiddleware<SpravyDbEventBusDbContext>),
         x => x.AddEventBus()
     )
     .Run();

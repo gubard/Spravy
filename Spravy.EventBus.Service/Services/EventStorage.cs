@@ -9,10 +9,10 @@ namespace Spravy.EventBus.Service.Services;
 
 public class EventStorage
 {
-    private readonly IFactory<SpravyEventBusDbContext> dbContextFactory;
+    private readonly IFactory<SpravyDbEventBusDbContext> dbContextFactory;
     private readonly IMapper mapper;
 
-    public EventStorage(IFactory<SpravyEventBusDbContext> dbContextFactory, IMapper mapper)
+    public EventStorage(IFactory<SpravyDbEventBusDbContext> dbContextFactory, IMapper mapper)
     {
         this.dbContextFactory = dbContextFactory;
         this.mapper = mapper;

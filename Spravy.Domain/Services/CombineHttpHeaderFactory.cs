@@ -7,6 +7,11 @@ public class CombineHttpHeaderFactory : IHttpHeaderFactory
 {
     private readonly IEnumerable<IHttpHeaderFactory> factories;
 
+    public CombineHttpHeaderFactory(params IHttpHeaderFactory[] factories)
+    {
+        this.factories = factories;
+    }
+    
     public CombineHttpHeaderFactory(IEnumerable<IHttpHeaderFactory> factories)
     {
         this.factories = factories;

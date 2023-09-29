@@ -2,7 +2,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Spravy.Domain.Di.Extensions;
+using Spravy.Di.Extensions;
 using Spravy.Domain.Extensions;
 using Spravy.Service.Model;
 

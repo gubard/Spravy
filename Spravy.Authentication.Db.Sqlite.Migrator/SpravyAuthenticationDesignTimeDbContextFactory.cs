@@ -5,9 +5,9 @@ using Spravy.Authentication.Db.Sqlite.Services;
 
 namespace Spravy.Authentication.Db.Sqlite.Migrator;
 
-public class SpravyAuthenticationDesignTimeDbContextFactory : IDesignTimeDbContextFactory<SpravyAuthenticationDbContext>
+public class SpravyAuthenticationDesignTimeDbContextFactory : IDesignTimeDbContextFactory<SpravyDbAuthenticationDbContext>
 {
-    public SpravyAuthenticationDbContext CreateDbContext(string[] args)
+    public SpravyDbAuthenticationDbContext CreateDbContext(string[] args)
     {
         var options = new DbContextOptionsBuilder().UseSqlite(
                 args[0],
@@ -15,6 +15,6 @@ public class SpravyAuthenticationDesignTimeDbContextFactory : IDesignTimeDbConte
             )
             .Options;
 
-        return new SpravyAuthenticationDbContext(options, new SqliteAuthenticationDbContextSetup());
+        return new SpravyDbAuthenticationDbContext(options, new SqliteAuthenticationDbContextSetup());
     }
 }

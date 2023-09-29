@@ -1,9 +1,9 @@
 using Spravy.Client.Enums;
-using Spravy.Domain.Interfaces;
+using Spravy.Client.Interfaces;
 
 namespace Spravy.EventBus.Domain.Client.Models;
 
-public class GrpcEventBusServiceOptions : IOptionsValue
+public class GrpcEventBusServiceOptions : IGrpcOptionsValue
 {
     public static string Section => "GrpcEventBusService";
 

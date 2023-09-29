@@ -13,7 +13,7 @@ namespace Spravy.ToDo.Service.HostedServices;
 public class EventBusHostedService : IHostedService
 {
     private static readonly ReadOnlyMemory<Guid> eventIds;
-    private readonly IFactory<string, SpravyToDoDbContext> spravyToDoDbContext;
+    private readonly IFactory<string, SpravyDbToDoDbContext> spravyToDoDbContext;
     private readonly IFactory<string, IEventBusService> spravyEventBusServiceFactory;
     private readonly SqliteFolderOptions sqliteFolderOptions;
     private readonly Dictionary<string, Task> tasks = new();
@@ -28,7 +28,7 @@ public class EventBusHostedService : IHostedService
     }
 
     public EventBusHostedService(
-        IFactory<string, SpravyToDoDbContext> spravyToDoDbContext,
+        IFactory<string, SpravyDbToDoDbContext> spravyToDoDbContext,
         SqliteFolderOptions sqliteFolderOptions,
         IFactory<string, IEventBusService> spravyEventBusServiceFactory,
         ILogger<EventBusHostedService> logger

@@ -11,7 +11,7 @@ using Spravy.ToDo.Db.Contexts;
 
 namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
 {
-    [DbContext(typeof(SpravyToDoDbContext))]
+    [DbContext(typeof(SpravyDbToDoDbContext))]
     [Migration("20230813121020_MakeLastCompletedNullable")]
     partial class MakeLastCompletedNullable
     {

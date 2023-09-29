@@ -2,9 +2,9 @@ using Spravy.Domain.Enums;
 
 namespace Spravy.Authentication.Domain.Models;
 
-public struct TokenClaims
+public struct UserTokenClaims
 {
-    public TokenClaims(string login, Guid id, Role role)
+    public UserTokenClaims(string login, Guid id, Role role)
     {
         Login = login;
         Id = id;

@@ -1,14 +1,18 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Spravy.Domain.Interfaces;
 
 namespace Spravy.Db.Sqlite.Extensions;
 
 public static class ServiceCollectionExtension
 {
-    public static IServiceCollection AddSpravySqliteFileDbContext<TContext>(this IServiceCollection serviceCollection)
+    public static IServiceCollection AddSpravySqliteFileDbContext<TContext, TAssemblyMark>(
+        this IServiceCollection serviceCollection
+    )
         where TContext : DbContext
+        where TAssemblyMark : IAssemblyMark
     {
-        serviceCollection.AddDbContext<TContext>((sp, x) => x.UseSqliteFile(sp));
+        serviceCollection.AddDbContext<TContext>((sp, x) => x.UseSqliteFile<TAssemblyMark>(sp));
 
         return serviceCollection;
     }

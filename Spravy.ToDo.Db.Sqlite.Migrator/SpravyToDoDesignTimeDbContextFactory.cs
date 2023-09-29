@@ -5,9 +5,9 @@ using Spravy.ToDo.Db.Sqlite.Services;
 
 namespace Spravy.ToDo.Db.Sqlite.Migrator;
 
-public class SpravyToDoDesignTimeDbContextFactory : IDesignTimeDbContextFactory<SpravyToDoDbContext>
+public class SpravyToDoDesignTimeDbContextFactory : IDesignTimeDbContextFactory<SpravyDbToDoDbContext>
 {
-    public SpravyToDoDbContext CreateDbContext(string[] args)
+    public SpravyDbToDoDbContext CreateDbContext(string[] args)
     {
         var options = new DbContextOptionsBuilder().UseSqlite(
                 args[0],
@@ -15,6 +15,6 @@ public class SpravyToDoDesignTimeDbContextFactory : IDesignTimeDbContextFactory<
             )
             .Options;
 
-        return new SpravyToDoDbContext(options, new SqliteToDoDbContextSetup());
+        return new SpravyDbToDoDbContext(options, new SqliteToDoDbContextSetup());
     }
 }

@@ -8,7 +8,7 @@ namespace Spravy.ToDo.Db.Services;
 
 public class StatusToDoItemService
 {
-    public Task<ToDoItemStatus> GetStatusAsync(SpravyToDoDbContext context, ToDoItemEntity entity)
+    public Task<ToDoItemStatus> GetStatusAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
     {
         switch (entity.Type)
         {
@@ -39,7 +39,7 @@ public class StatusToDoItemService
         }
     }
 
-    private async Task<ToDoItemStatus> GetPlannedStatusAsync(SpravyToDoDbContext context, ToDoItemEntity entity)
+    private async Task<ToDoItemStatus> GetPlannedStatusAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
     {
         if (entity.IsCompleted)
         {
@@ -81,7 +81,7 @@ public class StatusToDoItemService
         return await GetDueDateStatusAsync(context, entity);
     }
 
-    private Task<ToDoItemStatus> GetDueDateStatusAsync(SpravyToDoDbContext context, ToDoItemEntity entity)
+    private Task<ToDoItemStatus> GetDueDateStatusAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
     {
         if (entity.DueDate == DateTimeOffset.Now.ToCurrentDay())
         {
@@ -101,7 +101,7 @@ public class StatusToDoItemService
         throw new ArgumentOutOfRangeException();
     }
 
-    private async Task<ToDoItemStatus> GetGroupStatusAsync(SpravyToDoDbContext context, ToDoItemEntity entity)
+    private async Task<ToDoItemStatus> GetGroupStatusAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
     {
         var items = await context.Set<ToDoItemEntity>().Where(x => x.ParentId == entity.Id).ToArrayAsync();
         var completedCount = 0;
@@ -141,7 +141,7 @@ public class StatusToDoItemService
         return ToDoItemStatus.ReadyForComplete;
     }
 
-    private async Task<ToDoItemStatus> GetValueStatusAsync(SpravyToDoDbContext context, ToDoItemEntity entity)
+    private async Task<ToDoItemStatus> GetValueStatusAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
     {
         if (entity.IsCompleted)
         {

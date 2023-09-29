@@ -2,6 +2,8 @@ using System.IdentityModel.Tokens.Jwt;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Models;
 using Spravy.Domain.Enums;
+using Spravy.Domain.Interfaces;
+using Spravy.Domain.Models;
 
 namespace Spravy.Authentication.Service.Services;
 
@@ -13,7 +15,7 @@ public class TokenService : ITokenService
     public TokenService(ITokenFactory tokenFactory)
     {
         this.tokenFactory = tokenFactory;
-        token = tokenFactory.Create(new TokenClaims("authentication.service", Guid.Empty, Role.Service));
+        token = tokenFactory.Create(new UserTokenClaims("authentication.service", Guid.Empty, Role.Service));
     }
 
     public Task<string> GetTokenAsync()
@@ -27,7 +29,7 @@ public class TokenService : ITokenService
             return Task.FromResult(token.Token);
         }
 
-        token = tokenFactory.Create(new TokenClaims("authentication.service", Guid.Empty, Role.Service));
+        token = tokenFactory.Create(new UserTokenClaims("authentication.service", Guid.Empty, Role.Service));
 
         return Task.FromResult(token.Token);
     }

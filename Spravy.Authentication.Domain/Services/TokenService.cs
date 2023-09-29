@@ -1,6 +1,8 @@
 using System.IdentityModel.Tokens.Jwt;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Models;
+using Spravy.Domain.Interfaces;
+using Spravy.Domain.Models;
 
 namespace Spravy.Authentication.Domain.Services;
 
@@ -44,10 +46,5 @@ public class TokenService : ITokenService
     public async Task LoginAsync(string refreshToken)
     {
         token = await authenticationService.RefreshTokenAsync(refreshToken);
-    }
-
-    public void Login(TokenResult tokenResult)
-    {
-        token = tokenResult;
     }
 }

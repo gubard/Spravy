@@ -10,7 +10,7 @@ using Spravy.Authentication.Db.Contexts;
 
 namespace Spravy.Authentication.Db.Sqlite.Migrator.Migrations
 {
-    [DbContext(typeof(SpravyAuthenticationDbContext))]
+    [DbContext(typeof(SpravyDbAuthenticationDbContext))]
     [Migration("20230914140131_AddRole")]
     partial class AddRole
     {

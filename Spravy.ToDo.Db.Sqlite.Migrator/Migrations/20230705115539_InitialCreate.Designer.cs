@@ -11,7 +11,7 @@ using Spravy.ToDo.Db.Sqlite.Migrator;
 
 namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
 {
-    [DbContext(typeof(SpravyToDoDbContext))]
+    [DbContext(typeof(SpravyDbToDoDbContext))]
     [Migration("20230705115539_InitialCreate")]
     partial class InitialCreate
     {

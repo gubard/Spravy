@@ -14,17 +14,17 @@ public class MigratorHostedService<TDbContext> : IHostedService where TDbContext
 {
     private const string MigrationFileName = ".migration";
     private readonly SqliteFolderOptions sqliteFolderOptions;
-    private readonly IFactory<string, TDbContext> spravyToDoDbContextFactory;
+    private readonly IFactory<string, TDbContext> dbContextFactory;
     private readonly ILogger<MigratorHostedService<TDbContext>> logger;
 
     public MigratorHostedService(
         SqliteFolderOptions sqliteFolderOptions,
-        IFactory<string, TDbContext> spravyToDoDbContextFactory,
+        IFactory<string, TDbContext> dbContextFactory,
         ILogger<MigratorHostedService<TDbContext>> logger
     )
     {
         this.sqliteFolderOptions = sqliteFolderOptions;
-        this.spravyToDoDbContextFactory = spravyToDoDbContextFactory;
+        this.dbContextFactory = dbContextFactory;
         this.logger = logger;
     }
 
@@ -58,7 +58,7 @@ public class MigratorHostedService<TDbContext> : IHostedService where TDbContext
 
         foreach (var dataBaseFile in dataBaseFiles)
         {
-            await using var spravyToDoDbContext = spravyToDoDbContextFactory.Create($"DataSource={dataBaseFile}");
+            await using var spravyToDoDbContext = dbContextFactory.Create($"DataSource={dataBaseFile}");
             await spravyToDoDbContext.Database.MigrateAsync(cancellationToken);
         }
 

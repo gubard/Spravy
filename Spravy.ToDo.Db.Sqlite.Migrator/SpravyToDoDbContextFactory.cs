@@ -5,7 +5,7 @@ using Spravy.ToDo.Db.Contexts;
 
 namespace Spravy.ToDo.Db.Sqlite.Migrator;
 
-public class SpravyToDoDbContextFactory : IFactory<string, SpravyToDoDbContext>
+public class SpravyToDoDbContextFactory : IFactory<string, SpravyDbToDoDbContext>
 {
     private readonly IDbContextSetup dbContextSetup;
 
@@ -14,12 +14,12 @@ public class SpravyToDoDbContextFactory : IFactory<string, SpravyToDoDbContext>
         this.dbContextSetup = dbContextSetup;
     }
 
-    public SpravyToDoDbContext Create(string key)
+    public SpravyDbToDoDbContext Create(string key)
     {
         var options = new DbContextOptionsBuilder()
             .UseSqlite(key, b => b.MigrationsAssembly(SpravyToDoDbSqliteMigratorMark.AssemblyFullName))
             .Options;
 
-        return new SpravyToDoDbContext(options, dbContextSetup);
+        return new SpravyDbToDoDbContext(options, dbContextSetup);
     }
 }

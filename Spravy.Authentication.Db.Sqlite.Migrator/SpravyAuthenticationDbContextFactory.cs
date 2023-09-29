@@ -5,7 +5,7 @@ using Spravy.Domain.Interfaces;
 
 namespace Spravy.Authentication.Db.Sqlite.Migrator;
 
-public class SpravyAuthenticationDbContextFactory : IFactory<string, SpravyAuthenticationDbContext>
+public class SpravyAuthenticationDbContextFactory : IFactory<string, SpravyDbAuthenticationDbContext>
 {
     private readonly IDbContextSetup dbContextSetup;
 
@@ -14,12 +14,12 @@ public class SpravyAuthenticationDbContextFactory : IFactory<string, SpravyAuthe
         this.dbContextSetup = dbContextSetup;
     }
     
-    public SpravyAuthenticationDbContext Create(string key)
+    public SpravyDbAuthenticationDbContext Create(string key)
     {
         var options = new DbContextOptionsBuilder()
             .UseSqlite(key, b => b.MigrationsAssembly(SpravyAuthenticationDbSqliteMigratorMark.AssemblyFullName))
             .Options;
 
-        return new SpravyAuthenticationDbContext(options, dbContextSetup);
+        return new SpravyDbAuthenticationDbContext(options, dbContextSetup);
     }
 }

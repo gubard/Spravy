@@ -1,12 +1,14 @@
+using AutoMapper;
 using Spravy.Authentication.Domain.Client.Models;
 using Spravy.Authentication.Domain.Client.Services;
-using Spravy.Authentication.Domain.Interfaces;
+using Spravy.Authentication.Domain.Mapper.Profiles;
 using Spravy.Authentication.Domain.Models;
 using Spravy.Authentication.Domain.Services;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
 using Spravy.Db.Interfaces;
 using Spravy.Db.Sqlite.Models;
+using Spravy.Di.Extensions;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Services;
@@ -24,6 +26,9 @@ using Spravy.Schedule.Service.Services;
 using Spravy.Service.Extensions;
 using Spravy.Service.HostedServices;
 using Spravy.Service.Services;
+using Spravy.Client.Extensions;
+using Spravy.EventBus.Protos;
+using IAuthenticationService = Spravy.Authentication.Domain.Interfaces.IAuthenticationService;
 
 namespace Spravy.Schedule.Service.Extensions;
 
@@ -31,38 +36,31 @@ public static class ServiceCollectionExtension
 {
     public static IServiceCollection AddSchedule(this IServiceCollection serviceCollection)
     {
-        serviceCollection.AddHostedService<MigratorHostedService<SpravyScheduleDbContext>>();
+        serviceCollection.AddHostedService<MigratorHostedService<SpravyDbScheduleDbContext>>();
         serviceCollection.AddHostedService<ScheduleHostedService>();
+        serviceCollection.AddMapperConfiguration<SpravyScheduleProfile, SpravyScheduleDbProfile, SpravyAuthenticationProfile>();
+        serviceCollection.AddSpravySqliteFolderContext<SpravyDbScheduleDbContext, SpravyScheduleDbSqliteMigratorMark>();
+        serviceCollection
+            .AddGrpcService2<GrpcAuthenticationService,
+                Spravy.Authentication.Protos.AuthenticationService.AuthenticationServiceClient,
+                GrpcAuthenticationServiceOptions>();
+        serviceCollection
+            .AddGrpcService<GrpcEventBusService, EventBusService.EventBusServiceClient, GrpcEventBusServiceOptions>();
 
-        serviceCollection.AddSingleton<IFactory<string, SpravyScheduleDbContext>, SpravyScheduleDbContextFactory>();
+        serviceCollection.AddSingleton<ITokenService, TokenService>();
+        serviceCollection.AddSingleton<IFactory<string, SpravyDbScheduleDbContext>, SpravyScheduleDbContextFactory>();
         serviceCollection.AddSingleton<IDbContextSetup, SqliteScheduleDbContextSetup>();
         serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<SqliteFolderOptions>());
-        serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<GrpcEventBusServiceOptions>());
-        serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<GrpcAuthenticationServiceOptions>());
         serviceCollection.AddSingleton<IFactory<string, IEventBusService>, EventBusServiceFactory>();
         serviceCollection.AddSingleton<IKeeper<TokenResult>, StaticKeeper<TokenResult>>();
-        serviceCollection.AddSingleton<IAuthenticationService, GrpcAuthenticationService>();
+        serviceCollection.AddSingleton<IAuthenticationService>(
+            sp => sp.GetRequiredService<GrpcAuthenticationService>()
+        );
         serviceCollection.AddSingleton<ITokenService, TokenService>();
         serviceCollection.AddSingleton<IMetadataFactory, MetadataFactory>();
-        serviceCollection.AddSingleton<TokenHttpHeaderFactory>();
         serviceCollection.AddSingleton<ContextAccessorHttpHeaderFactory>();
-        serviceCollection.AddSingleton<IHttpHeaderFactory, TokenHttpHeaderFactory>();
-
+        serviceCollection.AddSingleton<IHttpHeaderFactory, EmptyHttpHeaderFactory>();
         serviceCollection.AddTransient<IScheduleService, EfScheduleService>();
-
-        serviceCollection.AddMapperConfiguration<SpravyScheduleProfile, SpravyScheduleDbProfile>();
-        serviceCollection.AddSpravySqliteFolderContext<SpravyScheduleDbContext>();
-
-        serviceCollection.AddSingleton<ITokenService>(
-            sp =>
-            {
-                var tokenService = new TokenService(sp.GetRequiredService<IAuthenticationService>());
-                var refreshToken = sp.GetRequiredService<GrpcEventBusServiceOptions>().Token.ThrowIfNullOrWhiteSpace();
-                tokenService.Login(new TokenResult(refreshToken, refreshToken));
-
-                return tokenService;
-            }
-        );
 
         return serviceCollection;
     }

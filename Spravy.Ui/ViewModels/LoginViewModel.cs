@@ -4,8 +4,8 @@ using AutoMapper;
 using Avalonia.Controls;
 using Ninject;
 using ReactiveUI;
-using Spravy.Authentication.Domain.Interfaces;
-using Spravy.Authentication.Domain.Models;
+using Spravy.Domain.Interfaces;
+using Spravy.Domain.Models;
 using Spravy.Ui.Models;
 using Spravy.Ui.Views;
 

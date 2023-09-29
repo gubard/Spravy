@@ -18,13 +18,13 @@ namespace Spravy.ToDo.Service.Services;
 public class EfToDoService : IToDoService
 {
     private readonly IMapper mapper;
-    private readonly IFactory<SpravyToDoDbContext> dbContextFactory;
+    private readonly IFactory<SpravyDbToDoDbContext> dbContextFactory;
     private readonly StatusToDoItemService statusToDoItemService;
     private readonly ActiveToDoItemToDoItemService activeToDoItemToDoItemService;
 
     public EfToDoService(
         IMapper mapper,
-        IFactory<SpravyToDoDbContext> dbContextFactory,
+        IFactory<SpravyDbToDoDbContext> dbContextFactory,
         StatusToDoItemService statusToDoItemService,
         ActiveToDoItemToDoItemService activeToDoItemToDoItemService
     )
@@ -51,7 +51,7 @@ public class EfToDoService : IToDoService
     }
 
     private async Task<IEnumerable<IToDoSubItem>> ConvertAsync(
-        SpravyToDoDbContext context,
+        SpravyDbToDoDbContext context,
         IEnumerable<ToDoItemEntity> items
     )
     {
@@ -66,7 +66,7 @@ public class EfToDoService : IToDoService
         return result;
     }
 
-    private async Task<IToDoSubItem> ConvertAsync(SpravyToDoDbContext context, ToDoItemEntity item)
+    private async Task<IToDoSubItem> ConvertAsync(SpravyDbToDoDbContext context, ToDoItemEntity item)
     {
         var status = await statusToDoItemService.GetStatusAsync(context, item);
         var active = await activeToDoItemToDoItemService.GetActiveItemAsync(context, item);
@@ -289,7 +289,7 @@ public class EfToDoService : IToDoService
         await context.SaveChangesAsync();
     }
 
-    private async Task CircleCompletionAsync(SpravyToDoDbContext context, ToDoItemEntity item)
+    private async Task CircleCompletionAsync(SpravyDbToDoDbContext context, ToDoItemEntity item)
     {
         var children = await context.Set<ToDoItemEntity>()
             .Where(x => x.ParentId == item.Id)
@@ -322,7 +322,7 @@ public class EfToDoService : IToDoService
         }
     }
 
-    private async Task<bool> IsCanFinishToDoItem(SpravyToDoDbContext context, ToDoItemEntity item)
+    private async Task<bool> IsCanFinishToDoItem(SpravyDbToDoDbContext context, ToDoItemEntity item)
     {
         if (item.Type == ToDoItemType.Group)
         {
@@ -383,7 +383,7 @@ public class EfToDoService : IToDoService
     }
 
     private async Task<bool> IsCanFinishToDoSubItemPeriodicity(
-        SpravyToDoDbContext context,
+        SpravyDbToDoDbContext context,
         ToDoItemEntity item,
         DateTimeOffset? rootDue
     )
@@ -422,7 +422,7 @@ public class EfToDoService : IToDoService
     }
 
     private async Task<bool> IsCanFinishToDoSubItemPeriodicityOffset(
-        SpravyToDoDbContext context,
+        SpravyDbToDoDbContext context,
         ToDoItemEntity item,
         DateTimeOffset? rootDue
     )
@@ -461,7 +461,7 @@ public class EfToDoService : IToDoService
     }
 
     private async Task<bool> IsCanFinishToDoSubItemPlanned(
-        SpravyToDoDbContext context,
+        SpravyDbToDoDbContext context,
         ToDoItemEntity item,
         DateTimeOffset? rootDue
     )
@@ -505,7 +505,7 @@ public class EfToDoService : IToDoService
     }
 
     private async Task<bool> IsCanFinishToDoSubItemValue(
-        SpravyToDoDbContext context,
+        SpravyDbToDoDbContext context,
         ToDoItemEntity item,
         DateTimeOffset? rootDue
     )
@@ -534,7 +534,7 @@ public class EfToDoService : IToDoService
     }
 
     private async Task<bool> IsCanFinishToDoSubItemGroup(
-        SpravyToDoDbContext context,
+        SpravyDbToDoDbContext context,
         ToDoItemEntity item,
         DateTimeOffset? rootDue
     )
@@ -557,7 +557,7 @@ public class EfToDoService : IToDoService
         return true;
     }
 
-    private Task<bool> IsCanFinishToDoItem(SpravyToDoDbContext context, ToDoItemEntity item, DateTimeOffset? rootDue)
+    private Task<bool> IsCanFinishToDoItem(SpravyDbToDoDbContext context, ToDoItemEntity item, DateTimeOffset? rootDue)
     {
         switch (item.Type)
         {
@@ -996,7 +996,7 @@ public class EfToDoService : IToDoService
     }
 
     private async Task ToDoItemToStringAsync(
-        SpravyToDoDbContext context,
+        SpravyDbToDoDbContext context,
         ToDoItemToStringOptions options,
         ushort level,
         StringBuilder builder
@@ -1031,7 +1031,7 @@ public class EfToDoService : IToDoService
     }
 
     private async Task<ToDoSelectorItem[]> GetToDoSelectorItemsAsync(
-        SpravyToDoDbContext context,
+        SpravyDbToDoDbContext context,
         Guid id,
         Guid[] ignoreIds
     )
@@ -1055,7 +1055,7 @@ public class EfToDoService : IToDoService
     }
 
     private async IAsyncEnumerable<IToDoSubItem> GetLeafToDoItemsAsync(
-        SpravyToDoDbContext context,
+        SpravyDbToDoDbContext context,
         ToDoItemEntity itemEntity
     )
     {
@@ -1080,7 +1080,7 @@ public class EfToDoService : IToDoService
         }
     }
 
-    private async Task NormalizeOrderIndexAsync(SpravyToDoDbContext context, Guid? parentId)
+    private async Task NormalizeOrderIndexAsync(SpravyDbToDoDbContext context, Guid? parentId)
     {
         var items = await context.Set<ToDoItemEntity>()
             .Where(x => x.ParentId == parentId)
@@ -1096,7 +1096,7 @@ public class EfToDoService : IToDoService
         await context.SaveChangesAsync();
     }
 
-    private async Task GetParentsAsync(SpravyToDoDbContext context, Guid id, List<ToDoItemParent> parents)
+    private async Task GetParentsAsync(SpravyDbToDoDbContext context, Guid id, List<ToDoItemParent> parents)
     {
         var parent = await context.Set<ToDoItemEntity>().Include(x => x.Parent).SingleAsync(x => x.Id == id);
 

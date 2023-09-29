@@ -1,9 +1,8 @@
-using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
 
-namespace Spravy.Authentication.Domain.Services;
+namespace Spravy.Domain.Services;
 
 public class TokenHttpHeaderFactory : IHttpHeaderFactory
 {

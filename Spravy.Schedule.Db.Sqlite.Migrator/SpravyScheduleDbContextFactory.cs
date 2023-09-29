@@ -5,7 +5,7 @@ using Spravy.Schedule.Db.Contexts;
 
 namespace Spravy.Schedule.Db.Sqlite.Migrator;
 
-public class SpravyScheduleDbContextFactory : IFactory<string, SpravyScheduleDbContext>
+public class SpravyScheduleDbContextFactory : IFactory<string, SpravyDbScheduleDbContext>
 {
     private readonly IDbContextSetup dbContextSetup;
 
@@ -14,12 +14,12 @@ public class SpravyScheduleDbContextFactory : IFactory<string, SpravyScheduleDbC
         this.dbContextSetup = dbContextSetup;
     }
 
-    public SpravyScheduleDbContext Create(string key)
+    public SpravyDbScheduleDbContext Create(string key)
     {
         var options = new DbContextOptionsBuilder()
             .UseSqlite(key, b => b.MigrationsAssembly(SpravyScheduleDbSqliteMigratorMark.AssemblyFullName))
             .Options;
 
-        return new SpravyScheduleDbContext(options, dbContextSetup);
+        return new SpravyDbScheduleDbContext(options, dbContextSetup);
     }
 }

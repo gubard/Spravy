@@ -1,12 +1,15 @@
+using AutoMapper;
 using Spravy.Authentication.Domain.Client.Models;
 using Spravy.Authentication.Domain.Client.Services;
 using Spravy.Authentication.Domain.Interfaces;
+using Spravy.Authentication.Domain.Mapper.Profiles;
 using Spravy.Authentication.Domain.Models;
 using Spravy.Authentication.Domain.Services;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
 using Spravy.Db.Interfaces;
 using Spravy.Db.Sqlite.Models;
+using Spravy.Di.Extensions;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Services;
@@ -26,6 +29,8 @@ using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Mapper.Profiles;
 using Spravy.ToDo.Service.HostedServices;
 using Spravy.ToDo.Service.Services;
+using Spravy.Client.Extensions;
+using Spravy.EventBus.Protos;
 
 namespace Spravy.ToDo.Service.Extensions;
 
@@ -33,42 +38,38 @@ public static class ServiceCollectionExtension
 {
     public static IServiceCollection AddToDo(this IServiceCollection serviceCollection)
     {
-        serviceCollection.AddHostedService<MigratorHostedService<SpravyToDoDbContext>>();
+        serviceCollection.AddHostedService<MigratorHostedService<SpravyDbToDoDbContext>>();
         serviceCollection.AddHostedService<EventBusHostedService>();
+        serviceCollection.AddSpravySqliteFolderContext<SpravyDbToDoDbContext, SpravyToDoDbSqliteMigratorMark>();
+        serviceCollection
+            .AddMapperConfiguration<SpravyToDoProfile, SpravyToDoDbProfile, SpravyEventBusProfile,
+                SpravyAuthenticationProfile>();
+        serviceCollection
+            .AddGrpcService2<GrpcAuthenticationService,
+                Spravy.Authentication.Protos.AuthenticationService.AuthenticationServiceClient,
+                GrpcAuthenticationServiceOptions>();
+        serviceCollection
+            .AddGrpcService<GrpcEventBusService, EventBusService.EventBusServiceClient, GrpcEventBusServiceOptions>();
 
-        serviceCollection.AddSingleton<IDbContextSetup, SqliteToDoDbContextSetup>();
-        serviceCollection.AddSingleton<IFactory<string, SpravyToDoDbContext>, SpravyToDoDbContextFactory>();
-        serviceCollection.AddSingleton<IEventBusService, GrpcEventBusService>();
-        serviceCollection.AddSingleton<IKeeper<TokenResult>, StaticKeeper<TokenResult>>();
         serviceCollection.AddSingleton<ITokenService, TokenService>();
-        serviceCollection.AddSingleton<IAuthenticationService, GrpcAuthenticationService>();
-        serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<SqliteFolderOptions>());
-        serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<GrpcEventBusServiceOptions>());
-        serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<GrpcAuthenticationServiceOptions>());
-        serviceCollection.AddSingleton<IMetadataFactory, MetadataFactory>();
-        serviceCollection.AddSingleton<TokenHttpHeaderFactory>();
-        serviceCollection.AddSingleton<ContextAccessorHttpHeaderFactory>();
+        serviceCollection.AddSingleton<IDbContextSetup, SqliteToDoDbContextSetup>();
+        serviceCollection.AddSingleton<IFactory<string, SpravyDbToDoDbContext>, SpravyToDoDbContextFactory>();
+        serviceCollection.AddSingleton<IEventBusService>(sp => sp.GetRequiredService<GrpcEventBusService>());
+        serviceCollection.AddSingleton<IKeeper<TokenResult>, StaticKeeper<TokenResult>>();
+
+        serviceCollection.AddSingleton<IAuthenticationService>(
+            sp => sp.GetRequiredService<GrpcAuthenticationService>()
+        );
+
         serviceCollection.AddSingleton<IFactory<string, IEventBusService>, EventBusServiceFactory>();
-        serviceCollection.AddSingleton<IHttpHeaderFactory, TokenHttpHeaderFactory>();
+        serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<SqliteFolderOptions>());
+        serviceCollection.AddSingleton<IMetadataFactory, MetadataFactory>();
+        serviceCollection.AddSingleton<ContextAccessorHttpHeaderFactory>();
+        serviceCollection.AddSingleton<IHttpHeaderFactory, EmptyHttpHeaderFactory>();
 
         serviceCollection.AddTransient<IToDoService, EfToDoService>();
         serviceCollection.AddTransient<StatusToDoItemService>();
         serviceCollection.AddTransient<ActiveToDoItemToDoItemService>();
-
-        serviceCollection.AddSpravySqliteFolderContext<SpravyToDoDbContext>();
-
-        serviceCollection.AddMapperConfiguration<SpravyToDoProfile, SpravyToDoDbProfile, SpravyEventBusProfile>();
-
-        serviceCollection.AddSingleton<ITokenService>(
-            sp =>
-            {
-                var tokenService = new TokenService(sp.GetRequiredService<IAuthenticationService>());
-                var refreshToken = sp.GetRequiredService<GrpcEventBusServiceOptions>().Token.ThrowIfNullOrWhiteSpace();
-                tokenService.Login(new TokenResult(refreshToken, refreshToken));
-
-                return tokenService;
-            }
-        );
 
         return serviceCollection;
     }

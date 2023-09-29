@@ -1,12 +1,9 @@
 using System.Runtime.CompilerServices;
 using AutoMapper;
 using Google.Protobuf;
-using Spravy.Client.Exceptions;
-using Spravy.Client.Extensions;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
-using Spravy.Domain.Extensions;
-using Spravy.EventBus.Domain.Client.Models;
+using Spravy.Domain.Interfaces;
 using Spravy.EventBus.Domain.Interfaces;
 using Spravy.EventBus.Domain.Models;
 using Spravy.EventBus.Protos;
@@ -14,35 +11,70 @@ using static Spravy.EventBus.Protos.EventBusService;
 
 namespace Spravy.EventBus.Domain.Client.Services;
 
-public class GrpcEventBusService : GrpcServiceBase, IEventBusService
+public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>, IEventBusService, IGrpcServiceCreator<GrpcEventBusService, EventBusServiceClient>
 {
-    private readonly EventBusServiceClient client;
     private readonly IMapper mapper;
     private readonly IMetadataFactory metadataFactory;
 
     public GrpcEventBusService(
-        GrpcEventBusServiceOptions options,
+        IFactory<Uri, EventBusServiceClient> grpcClientFactory,
+        Uri host,
         IMapper mapper,
         IMetadataFactory metadataFactory
-    ) : base(
-        options.Host.ThrowIfNullOrWhiteSpace().ToUri(),
-        options.ChannelType,
-        options.ChannelCredentialType.GetChannelCredentials()
-    )
+    ) : base(grpcClientFactory, host)
     {
         this.mapper = mapper;
         this.metadataFactory = metadataFactory;
-        client = new EventBusServiceClient(GrpcChannel);
     }
 
-    public async IAsyncEnumerable<EventValue> SubscribeEventsAsync(
+    public IAsyncEnumerable<EventValue> SubscribeEventsAsync(Guid[] eventIds, CancellationToken cancellationToken)
+    {
+        return CallClientAsync(
+            (client, token) => SubscribeEventsAsyncCore(client, eventIds, token),
+            cancellationToken
+        );
+    }
+
+    public Task PublishEventAsync(Guid eventId, byte[] content)
+    {
+        return CallClientAsync(
+            async client =>
+            {
+                var request = new PublishEventRequest
+                {
+                    EventId = mapper.Map<ByteString>(eventId),
+                    Content = ByteString.CopyFrom(content),
+                };
+
+                await client.PublishEventAsync(request, await metadataFactory.CreateAsync());
+            }
+        );
+    }
+
+    public Task<IEnumerable<EventValue>> GetEventsAsync(ReadOnlyMemory<Guid> eventIds)
+    {
+        return CallClientAsync(
+            async client =>
+            {
+                var request = new GetEventsRequest();
+                request.EventIds.AddRange(mapper.Map<IEnumerable<ByteString>>(eventIds.ToArray()));
+                var events = await client.GetEventsAsync(request, await metadataFactory.CreateAsync());
+
+                return mapper.Map<IEnumerable<EventValue>>(events.Events);
+            }
+        );
+    }
+
+    private async IAsyncEnumerable<EventValue> SubscribeEventsAsyncCore(
+        EventBusServiceClient client,
         Guid[] eventIds,
         [EnumeratorCancellation] CancellationToken cancellationToken
     )
     {
         var request = new SubscribeEventsRequest();
         request.EventIds.AddRange(mapper.Map<IEnumerable<ByteString>>(eventIds));
-        using var response = client.SubscribeEvents(request, await metadataFactory.CreateAsync());
+        var metadata = await metadataFactory.CreateAsync();
+        using var response = client.SubscribeEvents(request, metadata);
         cancellationToken.ThrowIfCancellationRequested();
 
         while (await response.ResponseStream.MoveNext(cancellationToken))
@@ -56,37 +88,13 @@ public class GrpcEventBusService : GrpcServiceBase, IEventBusService
         }
     }
 
-    public async Task PublishEventAsync(Guid eventId, byte[] content)
+    public static GrpcEventBusService CreateGrpcService(
+        IFactory<Uri, EventBusServiceClient> grpcClientFactory,
+        Uri host,
+        IMapper mapper,
+        IMetadataFactory metadataFactory
+    )
     {
-        try
-        {
-            var request = new PublishEventRequest
-            {
-                EventId = mapper.Map<ByteString>(eventId),
-                Content = ByteString.CopyFrom(content),
-            };
-
-            await client.PublishEventAsync(request, await metadataFactory.CreateAsync());
-        }
-        catch (Exception e)
-        {
-            throw new GrpcException(GrpcChannel.Target, e);
-        }
-    }
-
-    public async Task<IEnumerable<EventValue>> GetEventsAsync(ReadOnlyMemory<Guid> eventIds)
-    {
-        try
-        {
-            var request = new GetEventsRequest();
-            request.EventIds.AddRange(mapper.Map<IEnumerable<ByteString>>(eventIds.ToArray()));
-            var events = await client.GetEventsAsync(request, await metadataFactory.CreateAsync());
-
-            return mapper.Map<IEnumerable<EventValue>>(events.Events);
-        }
-        catch (Exception e)
-        {
-            throw new GrpcException(GrpcChannel.Target, e);
-        }
+        return new(grpcClientFactory, host, mapper, metadataFactory);
     }
 }

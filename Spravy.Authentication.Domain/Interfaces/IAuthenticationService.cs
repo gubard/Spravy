@@ -1,4 +1,5 @@
 using Spravy.Authentication.Domain.Models;
+using Spravy.Domain.Models;
 
 namespace Spravy.Authentication.Domain.Interfaces;
 

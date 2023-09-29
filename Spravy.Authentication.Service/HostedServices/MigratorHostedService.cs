@@ -9,21 +9,25 @@ namespace Spravy.Authentication.Service.HostedServices;
 
 public class MigratorHostedService : IHostedService
 {
+    private readonly ILogger<MigratorHostedService> logger;
     private readonly SqliteFileOptions sqliteFileOptions;
-    private readonly IFactory<string, SpravyAuthenticationDbContext> spravyAuthenticationDbContextFactory;
+    private readonly IFactory<string, SpravyDbAuthenticationDbContext> spravyAuthenticationDbContextFactory;
 
     public MigratorHostedService(
         SqliteFileOptions sqliteFileOptions,
-        IFactory<string, SpravyAuthenticationDbContext> spravyAuthenticationDbContextFactory
+        IFactory<string, SpravyDbAuthenticationDbContext> spravyAuthenticationDbContextFactory,
+        ILogger<MigratorHostedService> logger
     )
     {
         this.sqliteFileOptions = sqliteFileOptions;
         this.spravyAuthenticationDbContextFactory = spravyAuthenticationDbContextFactory;
+        this.logger = logger;
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         var dataBaseFile = sqliteFileOptions.DataBaseFile.ThrowIfNull().ToFile();
+        logger.LogInformation("Start migration {DataBaseFile}", dataBaseFile);
         await using var context = spravyAuthenticationDbContextFactory.Create(dataBaseFile.ToSqliteConnectionString());
 
         if (dataBaseFile.Directory is not null && !dataBaseFile.Directory.Exists)
@@ -32,6 +36,7 @@ public class MigratorHostedService : IHostedService
         }
 
         await context.Database.MigrateAsync(cancellationToken);
+        logger.LogInformation("End migration {DataBaseFile}", dataBaseFile);
     }
 
     public Task StopAsync(CancellationToken cancellationToken)

@@ -1,9 +1,9 @@
 using Spravy.Client.Enums;
-using Spravy.Domain.Interfaces;
+using Spravy.Client.Interfaces;
 
 namespace Spravy.ToDo.Domain.Client.Models;
 
-public class GrpcToDoServiceOptions : IOptionsValue
+public class GrpcToDoServiceOptions : IGrpcOptionsValue
 {
     public static string Section => "GrpcToDoService";
     

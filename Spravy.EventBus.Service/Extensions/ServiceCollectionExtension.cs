@@ -1,5 +1,6 @@
 using Spravy.Db.Interfaces;
 using Spravy.Db.Sqlite.Models;
+using Spravy.Di.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.EventBus.Db.Contexts;
 using Spravy.EventBus.Db.Mapper.Profiles;
@@ -16,16 +17,14 @@ public static class ServiceCollectionExtension
 {
     public static IServiceCollection AddEventBus(this IServiceCollection serviceCollection)
     {
-        serviceCollection.AddHostedService<MigratorHostedService<SpravyEventBusDbContext>>();
+        serviceCollection.AddHostedService<MigratorHostedService<SpravyDbEventBusDbContext>>();
+        serviceCollection.AddMapperConfiguration<SpravyEventBusProfile, SpravyEventBusDbProfile>();
+        serviceCollection.AddSpravySqliteFolderContext<SpravyDbEventBusDbContext, SpravyEventBusDbSqliteMigratorMark>();
 
-        serviceCollection.AddSingleton<IFactory<string, SpravyEventBusDbContext>, SpravyEventBusDbContextFactory>();
         serviceCollection.AddSingleton<IDbContextSetup, SqliteEventBusDbContextSetup>();
         serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<SqliteFolderOptions>());
 
         serviceCollection.AddTransient<EventStorage>();
-
-        serviceCollection.AddMapperConfiguration<SpravyEventBusProfile, SpravyEventBusDbProfile>();
-        serviceCollection.AddSpravySqliteFolderContext<SpravyEventBusDbContext>();
 
         return serviceCollection;
     }

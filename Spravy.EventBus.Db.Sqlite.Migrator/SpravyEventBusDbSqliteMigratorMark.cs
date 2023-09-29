@@ -1,10 +1,14 @@
 using System.Reflection;
+using Spravy.Domain.Interfaces;
 
 namespace Spravy.EventBus.Db.Sqlite.Migrator;
 
-public readonly struct SpravyEventBusDbSqliteMigratorMark
+public readonly struct SpravyEventBusDbSqliteMigratorMark : IAssemblyMark
 {
-    public static readonly AssemblyName AssemblyName = typeof(SpravyEventBusDbSqliteMigratorMark).Assembly.GetName();
-    public static readonly string AssemblyFullName = typeof(SpravyEventBusDbSqliteMigratorMark).Assembly.GetName().FullName;
-    public static readonly Assembly Assembly = typeof(SpravyEventBusDbSqliteMigratorMark).Assembly;
+    public static AssemblyName AssemblyName { get; } = typeof(SpravyEventBusDbSqliteMigratorMark).Assembly.GetName();
+
+    public static string AssemblyFullName { get; } =
+        typeof(SpravyEventBusDbSqliteMigratorMark).Assembly.GetName().FullName;
+
+    public static Assembly Assembly { get; } = typeof(SpravyEventBusDbSqliteMigratorMark).Assembly;
 }

@@ -7,7 +7,7 @@ using Spravy.ToDo.Service.Extensions;
 WebApplication.CreateBuilder(args)
     .BuildSpravy<GrpcToDoService>(
         args,
-        typeof(DataBaseSetupSqliteMiddleware<SpravyToDoDbContext>),
+        typeof(DataBaseSetupSqliteMiddleware<SpravyDbToDoDbContext>),
         services => services.AddToDo()
     )
     .Run();

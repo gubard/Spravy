@@ -15,6 +15,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Spravy.Db.Sqlite\Spravy.Db.Sqlite.csproj" />
+      <ProjectReference Include="..\Spravy.Di\Spravy.Di.csproj" />
       <ProjectReference Include="..\Spravy.Domain.Di\Spravy.Domain.Di.csproj" />
       <ProjectReference Include="..\Spravy.Domain\Spravy.Domain.csproj" />
       <ProjectReference Include="..\Spravy.Schedule.Db.Sqlite\Spravy.Schedule.Db.Sqlite.csproj" />

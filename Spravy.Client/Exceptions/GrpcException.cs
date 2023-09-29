@@ -2,10 +2,10 @@ namespace Spravy.Client.Exceptions;
 
 public class GrpcException : Exception
 {
-    public GrpcException(string target, Exception? innerException) : base($"{target} throw exception.", innerException)
+    public GrpcException(Uri host, Exception? innerException) : base($"{host} throw exception.", innerException)
     {
-        Target = target;
+        Host = host;
     }
 
-    public string Target { get; }
+    public Uri Host { get; }
 }

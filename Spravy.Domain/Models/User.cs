@@ -1,4 +1,4 @@
-namespace Spravy.Authentication.Domain.Models;
+namespace Spravy.Domain.Models;
 
 public readonly struct User
 {

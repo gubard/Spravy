@@ -2,7 +2,7 @@ using Microsoft.Extensions.Configuration;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 
-namespace Spravy.Domain.Di.Extensions;
+namespace Spravy.Di.Extensions;
 
 public static class ConfigurationExtension
 {

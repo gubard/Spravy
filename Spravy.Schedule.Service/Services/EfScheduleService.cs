@@ -11,10 +11,10 @@ namespace Spravy.Schedule.Service.Services;
 
 public class EfScheduleService : IScheduleService
 {
-    private readonly IFactory<SpravyScheduleDbContext> dbContextFactory;
+    private readonly IFactory<SpravyDbScheduleDbContext> dbContextFactory;
     private readonly IMapper mapper;
 
-    public EfScheduleService(IMapper mapper, IFactory<SpravyScheduleDbContext> dbContextFactory)
+    public EfScheduleService(IMapper mapper, IFactory<SpravyDbScheduleDbContext> dbContextFactory)
     {
         this.mapper = mapper;
         this.dbContextFactory = dbContextFactory;

@@ -9,20 +9,21 @@ using Spravy.Authentication.Service.Interfaces;
 using Spravy.Domain.Enums;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
+using Spravy.Domain.Models;
 using Spravy.Service.Extensions;
 
 namespace Spravy.Authentication.Service.Services;
 
 public class EfAuthenticationService : IAuthenticationService
 {
-    private readonly SpravyAuthenticationDbContext context;
+    private readonly SpravyDbAuthenticationDbContext context;
     private readonly IHasher hasher;
     private readonly IFactory<string, IHasher> hasherFactory;
     private readonly ITokenFactory tokenFactory;
     private readonly IMapper mapper;
 
     public EfAuthenticationService(
-        SpravyAuthenticationDbContext context,
+        SpravyDbAuthenticationDbContext context,
         IHasher hasher,
         IFactory<string, IHasher> hasherFactory,
         ITokenFactory tokenFactory,
@@ -47,7 +48,7 @@ public class EfAuthenticationService : IAuthenticationService
             throw new Exception("Wrong password.");
         }
 
-        var userTokenClaims = mapper.Map<TokenClaims>(userEntity);
+        var userTokenClaims = mapper.Map<UserTokenClaims>(userEntity);
         var tokenResult = tokenFactory.Create(userTokenClaims);
 
         return tokenResult;
@@ -87,16 +88,14 @@ public class EfAuthenticationService : IAuthenticationService
                     .AsNoTracking()
                     .SingleAsync(x => x.Login == loginClaim.Value);
 
-                var userTokenClaims = mapper.Map<TokenClaims>(userEntity);
+                var userTokenClaims = mapper.Map<UserTokenClaims>(userEntity);
                 var tokenResult = tokenFactory.Create(userTokenClaims);
 
                 return tokenResult;
             }
             case Role.Service:
             {
-                var loginClaim = jwtToken.Claims.GetNameClaim();
-                var userTokenClaims = new TokenClaims(loginClaim.Value, Guid.Empty, Role.Service);
-                var tokenResult = tokenFactory.Create(userTokenClaims);
+                var tokenResult = tokenFactory.Create();
 
                 return tokenResult;
             }

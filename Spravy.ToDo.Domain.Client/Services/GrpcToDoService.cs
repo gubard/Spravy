@@ -1,13 +1,8 @@
 using AutoMapper;
 using Google.Protobuf;
-using Spravy.Authentication.Domain.Interfaces;
-using Spravy.Authentication.Domain.Models;
-using Spravy.Client.Exceptions;
-using Spravy.Client.Extensions;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
-using Spravy.Domain.Extensions;
-using Spravy.ToDo.Domain.Client.Models;
+using Spravy.Domain.Interfaces;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
@@ -16,591 +11,529 @@ using static Spravy.ToDo.Protos.ToDoService;
 
 namespace Spravy.ToDo.Domain.Client.Services;
 
-public class GrpcToDoService : GrpcServiceBase, IToDoService
+public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
+    IToDoService,
+    IGrpcServiceCreator<GrpcToDoService, ToDoServiceClient>
 {
-    private readonly ToDoServiceClient client;
     private readonly IMapper mapper;
     private readonly IMetadataFactory metadataFactory;
 
     public GrpcToDoService(
-        GrpcToDoServiceOptions options,
+        IFactory<Uri, ToDoServiceClient> grpcClientFactory,
+        Uri host,
         IMapper mapper,
-        ITokenService tokenService,
         IMetadataFactory metadataFactory
-    )
-        : base(
-            options.Host.ThrowIfNull().ToUri(),
-            options.ChannelType,
-            options.ChannelCredentialType.GetChannelCredentials()
-        )
+    ) : base(grpcClientFactory, host)
     {
         this.mapper = mapper;
         this.metadataFactory = metadataFactory;
-        client = new ToDoServiceClient(GrpcChannel);
-
-        if (!options.Token.IsNullOrWhiteSpace())
-        {
-            tokenService.Login(new TokenResult(options.Token, options.Token));
-        }
     }
 
-    public async Task<IEnumerable<IToDoSubItem>> GetRootToDoSubItemsAsync()
+    public Task<IEnumerable<IToDoSubItem>> GetRootToDoSubItemsAsync()
     {
-        try
-        {
-            var metadata = await metadataFactory.CreateAsync();
-            var items = await client.GetRootToDoSubItemsAsync(new GetRootToDoSubItemsRequest(), metadata);
-
-            return mapper.Map<IEnumerable<IToDoSubItem>>(items.Items);
-        }
-        catch (Exception e)
-        {
-            throw new GrpcException(GrpcChannel.Target, e);
-        }
-    }
-
-    public async Task<IToDoItem> GetToDoItemAsync(Guid id)
-    {
-        try
-        {
-            var byteStringId = mapper.Map<ByteString>(id);
-
-            var request = new GetToDoItemRequest
+        return CallClientAsync(
+            async client =>
             {
-                Id = byteStringId
-            };
+                var metadata = await metadataFactory.CreateAsync();
+                var items = await client.GetRootToDoSubItemsAsync(new GetRootToDoSubItemsRequest(), metadata);
 
-            var item = await client.GetToDoItemAsync(request, await metadataFactory.CreateAsync());
-            var result = mapper.Map<IToDoItem>(item.Item);
-
-            return result;
-        }
-        catch (Exception e)
-        {
-            throw new GrpcException(GrpcChannel.Target, e);
-        }
+                return mapper.Map<IEnumerable<IToDoSubItem>>(items.Items);
+            }
+        );
     }
 
-    public async Task<Guid> AddRootToDoItemAsync(AddRootToDoItemOptions options)
+    public Task<IToDoItem> GetToDoItemAsync(Guid id)
     {
-        try
-        {
-            var request = mapper.Map<AddRootToDoItemRequest>(options);
-            var id = await client.AddRootToDoItemAsync(request, await metadataFactory.CreateAsync());
-
-            return mapper.Map<Guid>(id.Id);
-        }
-        catch (Exception e)
-        {
-            throw new GrpcException(GrpcChannel.Target, e);
-        }
-    }
-
-    public async Task<Guid> AddToDoItemAsync(AddToDoItemOptions options)
-    {
-        try
-        {
-            var request = mapper.Map<AddToDoItemRequest>(options);
-            var id = await client.AddToDoItemAsync(request, await metadataFactory.CreateAsync());
-
-            return mapper.Map<Guid>(id.Id);
-        }
-        catch (Exception e)
-        {
-            throw new GrpcException(GrpcChannel.Target, e);
-        }
-    }
-
-    public async Task DeleteToDoItemAsync(Guid id)
-    {
-        try
-        {
-            var request = new DeleteToDoItemRequest
+        return CallClientAsync(
+            async client =>
             {
-                Id = mapper.Map<ByteString>(id)
-            };
+                var byteStringId = mapper.Map<ByteString>(id);
 
-            await client.DeleteToDoItemAsync(request, await metadataFactory.CreateAsync());
-        }
-        catch (Exception e)
-        {
-            throw new GrpcException(GrpcChannel.Target, e);
-        }
+                var request = new GetToDoItemRequest
+                {
+                    Id = byteStringId
+                };
+
+                var item = await client.GetToDoItemAsync(request, await metadataFactory.CreateAsync());
+                var result = mapper.Map<IToDoItem>(item.Item);
+
+                return result;
+            }
+        );
     }
 
-    public async Task UpdateToDoItemTypeOfPeriodicityAsync(Guid id, TypeOfPeriodicity type)
+    public Task<Guid> AddRootToDoItemAsync(AddRootToDoItemOptions options)
     {
-        try
-        {
-            var request = new UpdateToDoItemTypeOfPeriodicityRequest
+        return CallClientAsync(
+            async client =>
             {
-                Id = mapper.Map<ByteString>(id),
-                Type = (TypeOfPeriodicityGrpc)type,
-            };
+                var request = mapper.Map<AddRootToDoItemRequest>(options);
+                var id = await client.AddRootToDoItemAsync(request, await metadataFactory.CreateAsync());
 
-            await client.UpdateToDoItemTypeOfPeriodicityAsync(request, await metadataFactory.CreateAsync());
-        }
-        catch (Exception e)
-        {
-            throw new GrpcException(GrpcChannel.Target, e);
-        }
+                return mapper.Map<Guid>(id.Id);
+            }
+        );
     }
 
-    public async Task UpdateToDoItemDueDateAsync(Guid id, DateTimeOffset dueDate)
+    public Task<Guid> AddToDoItemAsync(AddToDoItemOptions options)
     {
-        try
-        {
-            var request = new UpdateToDoItemDueDateRequest
+        return CallClientAsync(
+            async client =>
             {
-                Id = mapper.Map<ByteString>(id),
-                DueDate = mapper.Map<DateTimeOffsetGrpc>(dueDate),
-            };
+                var request = mapper.Map<AddToDoItemRequest>(options);
+                var id = await client.AddToDoItemAsync(request, await metadataFactory.CreateAsync());
 
-            await client.UpdateToDoItemDueDateAsync(request, await metadataFactory.CreateAsync());
-        }
-        catch (Exception e)
-        {
-            throw new GrpcException(GrpcChannel.Target, e);
-        }
+                return mapper.Map<Guid>(id.Id);
+            }
+        );
     }
 
-    public async Task UpdateToDoItemCompleteStatusAsync(Guid id, bool isCompleted)
+    public Task DeleteToDoItemAsync(Guid id)
     {
-        try
-        {
-            await client.UpdateToDoItemCompleteStatusAsync(
-                new UpdateToDoItemCompleteStatusRequest
+        return CallClientAsync(
+            async client =>
+            {
+                var request = new DeleteToDoItemRequest
+                {
+                    Id = mapper.Map<ByteString>(id)
+                };
+
+                await client.DeleteToDoItemAsync(request, await metadataFactory.CreateAsync());
+            }
+        );
+    }
+
+    public Task UpdateToDoItemTypeOfPeriodicityAsync(Guid id, TypeOfPeriodicity type)
+    {
+        return CallClientAsync(
+            async client =>
+            {
+                var request = new UpdateToDoItemTypeOfPeriodicityRequest
                 {
                     Id = mapper.Map<ByteString>(id),
-                    IsCompleted = isCompleted
-                },
-                await metadataFactory.CreateAsync()
-            );
-        }
-        catch (Exception e)
-        {
-            throw new GrpcException(GrpcChannel.Target, e);
-        }
+                    Type = (TypeOfPeriodicityGrpc)type,
+                };
+
+                await client.UpdateToDoItemTypeOfPeriodicityAsync(request, await metadataFactory.CreateAsync());
+            }
+        );
     }
 
-    public async Task UpdateToDoItemNameAsync(Guid id, string name)
+    public Task UpdateToDoItemDueDateAsync(Guid id, DateTimeOffset dueDate)
     {
-        try
-        {
-            await client.UpdateToDoItemNameAsync(
-                new UpdateToDoItemNameRequest
+        return CallClientAsync(
+            async client =>
+            {
+                var request = new UpdateToDoItemDueDateRequest
                 {
                     Id = mapper.Map<ByteString>(id),
-                    Name = name,
-                },
-                await metadataFactory.CreateAsync()
-            );
-        }
-        catch (Exception e)
-        {
-            throw new GrpcException(GrpcChannel.Target, e);
-        }
+                    DueDate = mapper.Map<DateTimeOffsetGrpc>(dueDate),
+                };
+
+                await client.UpdateToDoItemDueDateAsync(request, await metadataFactory.CreateAsync());
+            }
+        );
     }
 
-    public async Task UpdateToDoItemOrderIndexAsync(UpdateOrderIndexToDoItemOptions options)
+    public Task UpdateToDoItemCompleteStatusAsync(Guid id, bool isCompleted)
     {
-        try
-        {
-            await client.UpdateToDoItemOrderIndexAsync(
-                mapper.Map<UpdateToDoItemOrderIndexRequest>(options),
-                await metadataFactory.CreateAsync()
-            );
-        }
-        catch (Exception e)
-        {
-            throw new GrpcException(GrpcChannel.Target, e);
-        }
+        return CallClientAsync(
+            async client =>
+            {
+                await client.UpdateToDoItemCompleteStatusAsync(
+                    new UpdateToDoItemCompleteStatusRequest
+                    {
+                        Id = mapper.Map<ByteString>(id),
+                        IsCompleted = isCompleted
+                    },
+                    await metadataFactory.CreateAsync()
+                );
+            }
+        );
     }
 
-    public async Task UpdateToDoItemDescriptionAsync(Guid id, string description)
+    public Task UpdateToDoItemNameAsync(Guid id, string name)
     {
-        try
-        {
-            await client.UpdateToDoItemDescriptionAsync(
-                new UpdateToDoItemDescriptionRequest
-                {
-                    Description = description,
-                    Id = mapper.Map<ByteString>(id),
-                },
-                await metadataFactory.CreateAsync()
-            );
-        }
-        catch (Exception e)
-        {
-            throw new GrpcException(GrpcChannel.Target, e);
-        }
+        return CallClientAsync(
+            async client =>
+            {
+                await client.UpdateToDoItemNameAsync(
+                    new UpdateToDoItemNameRequest
+                    {
+                        Id = mapper.Map<ByteString>(id),
+                        Name = name,
+                    },
+                    await metadataFactory.CreateAsync()
+                );
+            }
+        );
     }
 
-    public async Task SkipToDoItemAsync(Guid id)
+    public Task UpdateToDoItemOrderIndexAsync(UpdateOrderIndexToDoItemOptions options)
     {
-        try
-        {
-            await client.SkipToDoItemAsync(
-                new SkipToDoItemRequest
-                {
-                    Id = mapper.Map<ByteString>(id),
-                },
-                await metadataFactory.CreateAsync()
-            );
-        }
-        catch (Exception e)
-        {
-            throw new GrpcException(GrpcChannel.Target, e);
-        }
+        return CallClientAsync(
+            async client =>
+            {
+                await client.UpdateToDoItemOrderIndexAsync(
+                    mapper.Map<UpdateToDoItemOrderIndexRequest>(options),
+                    await metadataFactory.CreateAsync()
+                );
+            }
+        );
     }
 
-    public async Task FailToDoItemAsync(Guid id)
+    public Task UpdateToDoItemDescriptionAsync(Guid id, string description)
     {
-        try
-        {
-            await client.FailToDoItemAsync(
-                new FailToDoItemRequest
-                {
-                    Id = mapper.Map<ByteString>(id),
-                },
-                await metadataFactory.CreateAsync()
-            );
-        }
-        catch (Exception e)
-        {
-            throw new GrpcException(GrpcChannel.Target, e);
-        }
+        return CallClientAsync(
+            async client =>
+            {
+                await client.UpdateToDoItemDescriptionAsync(
+                    new UpdateToDoItemDescriptionRequest
+                    {
+                        Description = description,
+                        Id = mapper.Map<ByteString>(id),
+                    },
+                    await metadataFactory.CreateAsync()
+                );
+            }
+        );
     }
 
-    public async Task<IEnumerable<IToDoSubItem>> SearchToDoSubItemsAsync(string searchText)
+    public Task SkipToDoItemAsync(Guid id)
     {
-        try
-        {
-            var reply = await client.SearchToDoSubItemsAsync(
-                new SearchToDoSubItemsRequest
-                {
-                    SearchText = searchText
-                },
-                await metadataFactory.CreateAsync()
-            );
-
-            return mapper.Map<IEnumerable<IToDoSubItem>>(reply.Items);
-        }
-        catch (Exception e)
-        {
-            throw new GrpcException(GrpcChannel.Target, e);
-        }
+        return CallClientAsync(
+            async client =>
+            {
+                await client.SkipToDoItemAsync(
+                    new SkipToDoItemRequest
+                    {
+                        Id = mapper.Map<ByteString>(id),
+                    },
+                    await metadataFactory.CreateAsync()
+                );
+            }
+        );
     }
 
-    public async Task UpdateToDoItemTypeAsync(Guid id, ToDoItemType type)
+    public Task FailToDoItemAsync(Guid id)
     {
-        try
-        {
-            await client.UpdateToDoItemTypeAsync(
-                new UpdateToDoItemTypeRequest
-                {
-                    Id = mapper.Map<ByteString>(id),
-                    Type = (ToDoItemTypeGrpc)type,
-                },
-                await metadataFactory.CreateAsync()
-            );
-        }
-        catch (Exception e)
-        {
-            throw new GrpcException(GrpcChannel.Target, e);
-        }
+        return CallClientAsync(
+            async client =>
+            {
+                await client.FailToDoItemAsync(
+                    new FailToDoItemRequest
+                    {
+                        Id = mapper.Map<ByteString>(id),
+                    },
+                    await metadataFactory.CreateAsync()
+                );
+            }
+        );
     }
 
-    public async Task AddCurrentToDoItemAsync(Guid id)
+    public Task<IEnumerable<IToDoSubItem>> SearchToDoSubItemsAsync(string searchText)
     {
-        try
-        {
-            await client.AddCurrentToDoItemAsync(
-                new AddCurrentToDoItemRequest
-                {
-                    Id = mapper.Map<ByteString>(id),
-                },
-                await metadataFactory.CreateAsync()
-            );
-        }
-        catch (Exception e)
-        {
-            throw new GrpcException(GrpcChannel.Target, e);
-        }
+        return CallClientAsync(
+            async client =>
+            {
+                var reply = await client.SearchToDoSubItemsAsync(
+                    new SearchToDoSubItemsRequest
+                    {
+                        SearchText = searchText
+                    },
+                    await metadataFactory.CreateAsync()
+                );
+
+                return mapper.Map<IEnumerable<IToDoSubItem>>(reply.Items);
+            }
+        );
     }
 
-    public async Task RemoveCurrentToDoItemAsync(Guid id)
+    public Task UpdateToDoItemTypeAsync(Guid id, ToDoItemType type)
     {
-        try
-        {
-            await client.RemoveCurrentToDoItemAsync(
-                new RemoveCurrentToDoItemRequest
-                {
-                    Id = mapper.Map<ByteString>(id),
-                },
-                await metadataFactory.CreateAsync()
-            );
-        }
-        catch (Exception e)
-        {
-            throw new GrpcException(GrpcChannel.Target, e);
-        }
+        return CallClientAsync(
+            async client =>
+            {
+                await client.UpdateToDoItemTypeAsync(
+                    new UpdateToDoItemTypeRequest
+                    {
+                        Id = mapper.Map<ByteString>(id),
+                        Type = (ToDoItemTypeGrpc)type,
+                    },
+                    await metadataFactory.CreateAsync()
+                );
+            }
+        );
     }
 
-    public async Task<IEnumerable<IToDoSubItem>> GetCurrentToDoItemsAsync()
+    public Task AddCurrentToDoItemAsync(Guid id)
     {
-        try
-        {
-            var reply = await client.GetCurrentToDoItemsAsync(
-                new GetCurrentToDoItemsRequest(),
-                await metadataFactory.CreateAsync()
-            );
-
-            return mapper.Map<IEnumerable<IToDoSubItem>>(reply.Items);
-        }
-        catch (Exception e)
-        {
-            throw new GrpcException(GrpcChannel.Target, e);
-        }
+        return CallClientAsync(
+            async client =>
+            {
+                await client.AddCurrentToDoItemAsync(
+                    new AddCurrentToDoItemRequest
+                    {
+                        Id = mapper.Map<ByteString>(id),
+                    },
+                    await metadataFactory.CreateAsync()
+                );
+            }
+        );
     }
 
-    public async Task UpdateToDoItemAnnuallyPeriodicityAsync(Guid id, AnnuallyPeriodicity periodicity)
+    public Task RemoveCurrentToDoItemAsync(Guid id)
     {
-        try
-        {
-            await client.UpdateToDoItemAnnuallyPeriodicityAsync(
-                new UpdateToDoItemAnnuallyPeriodicityRequest
-                {
-                    Periodicity = mapper.Map<AnnuallyPeriodicityGrpc>(periodicity),
-                    Id = mapper.Map<ByteString>(id),
-                },
-                await metadataFactory.CreateAsync()
-            );
-        }
-        catch (Exception e)
-        {
-            throw new GrpcException(GrpcChannel.Target, e);
-        }
+        return CallClientAsync(
+            async client =>
+            {
+                await client.RemoveCurrentToDoItemAsync(
+                    new RemoveCurrentToDoItemRequest
+                    {
+                        Id = mapper.Map<ByteString>(id),
+                    },
+                    await metadataFactory.CreateAsync()
+                );
+            }
+        );
     }
 
-    public async Task UpdateToDoItemMonthlyPeriodicityAsync(Guid id, MonthlyPeriodicity periodicity)
+    public Task<IEnumerable<IToDoSubItem>> GetCurrentToDoItemsAsync()
     {
-        try
-        {
-            await client.UpdateToDoItemMonthlyPeriodicityAsync(
-                new UpdateToDoItemMonthlyPeriodicityRequest
-                {
-                    Periodicity = mapper.Map<MonthlyPeriodicityGrpc>(periodicity),
-                    Id = mapper.Map<ByteString>(id),
-                },
-                await metadataFactory.CreateAsync()
-            );
-        }
-        catch (Exception e)
-        {
-            throw new GrpcException(GrpcChannel.Target, e);
-        }
+        return CallClientAsync(
+            async client =>
+            {
+                var reply = await client.GetCurrentToDoItemsAsync(
+                    new GetCurrentToDoItemsRequest(),
+                    await metadataFactory.CreateAsync()
+                );
+
+                return mapper.Map<IEnumerable<IToDoSubItem>>(reply.Items);
+            }
+        );
     }
 
-    public async Task UpdateToDoItemWeeklyPeriodicityAsync(Guid id, WeeklyPeriodicity periodicity)
+    public Task UpdateToDoItemAnnuallyPeriodicityAsync(Guid id, AnnuallyPeriodicity periodicity)
     {
-        try
-        {
-            await client.UpdateToDoItemWeeklyPeriodicityAsync(
-                new UpdateToDoItemWeeklyPeriodicityRequest
-                {
-                    Periodicity = mapper.Map<WeeklyPeriodicityGrpc>(periodicity),
-                    Id = mapper.Map<ByteString>(id),
-                },
-                await metadataFactory.CreateAsync()
-            );
-        }
-        catch (Exception e)
-        {
-            throw new GrpcException(GrpcChannel.Target, e);
-        }
+        return CallClientAsync(
+            async client =>
+            {
+                await client.UpdateToDoItemAnnuallyPeriodicityAsync(
+                    new UpdateToDoItemAnnuallyPeriodicityRequest
+                    {
+                        Periodicity = mapper.Map<AnnuallyPeriodicityGrpc>(periodicity),
+                        Id = mapper.Map<ByteString>(id),
+                    },
+                    await metadataFactory.CreateAsync()
+                );
+            }
+        );
     }
 
-    public async Task<IEnumerable<IToDoSubItem>> GetLeafToDoSubItemsAsync(Guid id)
+    public Task UpdateToDoItemMonthlyPeriodicityAsync(Guid id, MonthlyPeriodicity periodicity)
     {
-        try
-        {
-            var reply = await client.GetLeafToDoSubItemsAsync(
-                new GetLeafToDoSubItemsRequest
-                {
-                    Id = mapper.Map<ByteString>(id),
-                },
-                await metadataFactory.CreateAsync()
-            );
-
-            return mapper.Map<IEnumerable<IToDoSubItem>>(reply.Items);
-        }
-        catch (Exception e)
-        {
-            throw new GrpcException(GrpcChannel.Target, e);
-        }
+        return CallClientAsync(
+            async client =>
+            {
+                await client.UpdateToDoItemMonthlyPeriodicityAsync(
+                    new UpdateToDoItemMonthlyPeriodicityRequest
+                    {
+                        Periodicity = mapper.Map<MonthlyPeriodicityGrpc>(periodicity),
+                        Id = mapper.Map<ByteString>(id),
+                    },
+                    await metadataFactory.CreateAsync()
+                );
+            }
+        );
     }
 
-    public async Task<IEnumerable<ToDoSelectorItem>> GetToDoSelectorItemsAsync(Guid[] ignoreIds)
+    public Task UpdateToDoItemWeeklyPeriodicityAsync(Guid id, WeeklyPeriodicity periodicity)
     {
-        try
-        {
-            var request = new GetToDoSelectorItemsRequest();
-            request.IgnoreIds.AddRange(mapper.Map<IEnumerable<ByteString>>(ignoreIds));
-            var reply = await client.GetToDoSelectorItemsAsync(request, await metadataFactory.CreateAsync());
-
-            return mapper.Map<IEnumerable<ToDoSelectorItem>>(reply.Items);
-        }
-        catch (Exception e)
-        {
-            throw new GrpcException(GrpcChannel.Target, e);
-        }
+        return CallClientAsync(
+            async client =>
+            {
+                await client.UpdateToDoItemWeeklyPeriodicityAsync(
+                    new UpdateToDoItemWeeklyPeriodicityRequest
+                    {
+                        Periodicity = mapper.Map<WeeklyPeriodicityGrpc>(periodicity),
+                        Id = mapper.Map<ByteString>(id),
+                    },
+                    await metadataFactory.CreateAsync()
+                );
+            }
+        );
     }
 
-    public async Task UpdateToDoItemParentAsync(Guid id, Guid parentId)
+    public Task<IEnumerable<IToDoSubItem>> GetLeafToDoSubItemsAsync(Guid id)
     {
-        try
-        {
-            await client.UpdateToDoItemParentAsync(
-                new UpdateToDoItemParentRequest
-                {
-                    Id = mapper.Map<ByteString>(id),
-                    ParentId = mapper.Map<ByteString>(parentId),
-                },
-                await metadataFactory.CreateAsync()
-            );
-        }
-        catch (Exception e)
-        {
-            throw new GrpcException(GrpcChannel.Target, e);
-        }
+        return CallClientAsync(
+            async client =>
+            {
+                var reply = await client.GetLeafToDoSubItemsAsync(
+                    new GetLeafToDoSubItemsRequest
+                    {
+                        Id = mapper.Map<ByteString>(id),
+                    },
+                    await metadataFactory.CreateAsync()
+                );
+
+                return mapper.Map<IEnumerable<IToDoSubItem>>(reply.Items);
+            }
+        );
     }
 
-    public async Task ToDoItemToRootAsync(Guid id)
+    public Task<IEnumerable<ToDoSelectorItem>> GetToDoSelectorItemsAsync(Guid[] ignoreIds)
     {
-        try
-        {
-            await client.ToDoItemToRootAsync(
-                new ToDoItemToRootRequest
-                {
-                    Id = mapper.Map<ByteString>(id),
-                },
-                await metadataFactory.CreateAsync()
-            );
-        }
-        catch (Exception e)
-        {
-            throw new GrpcException(GrpcChannel.Target, e);
-        }
+        return CallClientAsync(
+            async client =>
+            {
+                var request = new GetToDoSelectorItemsRequest();
+                request.IgnoreIds.AddRange(mapper.Map<IEnumerable<ByteString>>(ignoreIds));
+                var reply = await client.GetToDoSelectorItemsAsync(request, await metadataFactory.CreateAsync());
+
+                return mapper.Map<IEnumerable<ToDoSelectorItem>>(reply.Items);
+            }
+        );
     }
 
-    public async Task<string> ToDoItemToStringAsync(ToDoItemToStringOptions options)
+    public Task UpdateToDoItemParentAsync(Guid id, Guid parentId)
     {
-        try
-        {
-            var request = mapper.Map<ToDoItemToStringRequest>(options);
-            var reply = await client.ToDoItemToStringAsync(request, await metadataFactory.CreateAsync());
-
-            return reply.Value;
-        }
-        catch (Exception e)
-        {
-            throw new GrpcException(GrpcChannel.Target, e);
-        }
+        return CallClientAsync(
+            async client =>
+            {
+                await client.UpdateToDoItemParentAsync(
+                    new UpdateToDoItemParentRequest
+                    {
+                        Id = mapper.Map<ByteString>(id),
+                        ParentId = mapper.Map<ByteString>(parentId),
+                    },
+                    await metadataFactory.CreateAsync()
+                );
+            }
+        );
     }
 
-    public async Task UpdateToDoItemDaysOffsetAsync(Guid id, ushort days)
+    public Task ToDoItemToRootAsync(Guid id)
     {
-        try
-        {
-            await client.UpdateToDoItemDaysOffsetAsync(
-                new UpdateToDoItemDaysOffsetRequest
-                {
-                    Id = mapper.Map<ByteString>(id),
-                    Days = days
-                },
-                await metadataFactory.CreateAsync()
-            );
-        }
-        catch (Exception e)
-        {
-            throw new GrpcException(GrpcChannel.Target, e);
-        }
+        return CallClientAsync(
+            async client =>
+            {
+                await client.ToDoItemToRootAsync(
+                    new ToDoItemToRootRequest
+                    {
+                        Id = mapper.Map<ByteString>(id),
+                    },
+                    await metadataFactory.CreateAsync()
+                );
+            }
+        );
     }
 
-    public async Task UpdateToDoItemMonthsOffsetAsync(Guid id, ushort months)
+    public Task<string> ToDoItemToStringAsync(ToDoItemToStringOptions options)
     {
-        try
-        {
-            await client.UpdateToDoItemMonthsOffsetAsync(
-                new UpdateToDoItemMonthsOffsetRequest
-                {
-                    Id = mapper.Map<ByteString>(id),
-                    Months = months
-                },
-                await metadataFactory.CreateAsync()
-            );
-        }
-        catch (Exception e)
-        {
-            throw new GrpcException(GrpcChannel.Target, e);
-        }
+        return CallClientAsync(
+            async client =>
+            {
+                var request = mapper.Map<ToDoItemToStringRequest>(options);
+                var reply = await client.ToDoItemToStringAsync(request, await metadataFactory.CreateAsync());
+
+                return reply.Value;
+            }
+        );
     }
 
-    public async Task UpdateToDoItemWeeksOffsetAsync(Guid id, ushort weeks)
+    public Task UpdateToDoItemDaysOffsetAsync(Guid id, ushort days)
     {
-        try
-        {
-            await client.UpdateToDoItemWeeksOffsetAsync(
-                new UpdateToDoItemWeeksOffsetRequest
-                {
-                    Id = mapper.Map<ByteString>(id),
-                    Weeks = weeks
-                },
-                await metadataFactory.CreateAsync()
-            );
-        }
-        catch (Exception e)
-        {
-            throw new GrpcException(GrpcChannel.Target, e);
-        }
+        return CallClientAsync(
+            async client =>
+            {
+                await client.UpdateToDoItemDaysOffsetAsync(
+                    new UpdateToDoItemDaysOffsetRequest
+                    {
+                        Id = mapper.Map<ByteString>(id),
+                        Days = days
+                    },
+                    await metadataFactory.CreateAsync()
+                );
+            }
+        );
     }
 
-    public async Task UpdateToDoItemYearsOffsetAsync(Guid id, ushort years)
+    public Task UpdateToDoItemMonthsOffsetAsync(Guid id, ushort months)
     {
-        try
-        {
-            await client.UpdateToDoItemYearsOffsetAsync(
-                new UpdateToDoItemYearsOffsetRequest
-                {
-                    Id = mapper.Map<ByteString>(id),
-                    Years = years
-                },
-                await metadataFactory.CreateAsync()
-            );
-        }
-        catch (Exception e)
-        {
-            throw new GrpcException(GrpcChannel.Target, e);
-        }
+        return CallClientAsync(
+            async client =>
+            {
+                await client.UpdateToDoItemMonthsOffsetAsync(
+                    new UpdateToDoItemMonthsOffsetRequest
+                    {
+                        Id = mapper.Map<ByteString>(id),
+                        Months = months
+                    },
+                    await metadataFactory.CreateAsync()
+                );
+            }
+        );
     }
 
-    public async Task UpdateToDoItemChildrenTypeAsync(Guid id, ToDoItemChildrenType type)
+    public Task UpdateToDoItemWeeksOffsetAsync(Guid id, ushort weeks)
     {
-        try
-        {
-            await client.UpdateToDoItemChildrenTypeAsync(
-                new UpdateToDoItemChildrenTypeRequest
-                {
-                    Id = mapper.Map<ByteString>(id),
-                    Type = (ToDoItemChildrenTypeGrpc)type
-                },
-                await metadataFactory.CreateAsync()
-            );
-        }
-        catch (Exception e)
-        {
-            throw new GrpcException(GrpcChannel.Target, e);
-        }
+        return CallClientAsync(
+            async client =>
+            {
+                await client.UpdateToDoItemWeeksOffsetAsync(
+                    new UpdateToDoItemWeeksOffsetRequest
+                    {
+                        Id = mapper.Map<ByteString>(id),
+                        Weeks = weeks
+                    },
+                    await metadataFactory.CreateAsync()
+                );
+            }
+        );
+    }
+
+    public Task UpdateToDoItemYearsOffsetAsync(Guid id, ushort years)
+    {
+        return CallClientAsync(
+            async client =>
+            {
+                await client.UpdateToDoItemYearsOffsetAsync(
+                    new UpdateToDoItemYearsOffsetRequest
+                    {
+                        Id = mapper.Map<ByteString>(id),
+                        Years = years
+                    },
+                    await metadataFactory.CreateAsync()
+                );
+            }
+        );
+    }
+
+    public Task UpdateToDoItemChildrenTypeAsync(Guid id, ToDoItemChildrenType type)
+    {
+        return CallClientAsync(
+            async client =>
+            {
+                await client.UpdateToDoItemChildrenTypeAsync(
+                    new UpdateToDoItemChildrenTypeRequest
+                    {
+                        Id = mapper.Map<ByteString>(id),
+                        Type = (ToDoItemChildrenTypeGrpc)type
+                    },
+                    await metadataFactory.CreateAsync()
+                );
+            }
+        );
+    }
+
+    public static GrpcToDoService CreateGrpcService(
+        IFactory<Uri, ToDoServiceClient> grpcClientFactory,
+        Uri host,
+        IMapper mapper,
+        IMetadataFactory metadataFactory
+    )
+    {
+        return new GrpcToDoService(grpcClientFactory, host, mapper, metadataFactory);
     }
 }

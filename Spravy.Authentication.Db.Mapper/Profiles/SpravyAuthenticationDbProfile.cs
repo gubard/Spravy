@@ -8,6 +8,6 @@ public class SpravyAuthenticationDbProfile : Profile
 {
     public SpravyAuthenticationDbProfile()
     {
-        CreateMap<UserEntity, TokenClaims>();
+        CreateMap<UserEntity, UserTokenClaims>();
     }
 }
