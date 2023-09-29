@@ -1,4 +1,3 @@
-using AutoMapper;
 using Spravy.Authentication.Domain.Client.Models;
 using Spravy.Authentication.Domain.Client.Services;
 using Spravy.Authentication.Domain.Interfaces;
@@ -10,7 +9,6 @@ using Spravy.Client.Services;
 using Spravy.Db.Interfaces;
 using Spravy.Db.Sqlite.Models;
 using Spravy.Di.Extensions;
-using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Services;
 using Spravy.EventBus.Domain.Client.Models;
