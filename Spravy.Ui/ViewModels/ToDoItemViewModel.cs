@@ -224,6 +224,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
             },
             view =>
             {
+                Path.Items ??= new AvaloniaList<object>();
                 var viewModel = view.ViewModel.ThrowIfNull();
                 viewModel.IgnoreIds.Add(Id);
                 var parents = Path.Items.OfType<ToDoItemParentNotify>().ToArray();

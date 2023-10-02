@@ -87,21 +87,6 @@ public class SpravyScheduleProfile : Profile
         return date?.Offset.ToDuration();
     }
 
-    private Duration? TimeSpanToDuration(TimeSpan? span)
-    {
-        return span is null ? null : Duration.FromTimeSpan(span.Value);
-    }
-
-    private Duration TimeSpanToDuration(TimeSpan span)
-    {
-        return Duration.FromTimeSpan(span);
-    }
-
-    private TimeSpan? DurationToTimeSpan(Duration? duration)
-    {
-        return duration?.ToTimeSpan();
-    }
-
     private Timestamp? ToTimestamp(DateTimeOffset? date)
     {
         if (!date.HasValue)
@@ -110,10 +95,5 @@ public class SpravyScheduleProfile : Profile
         }
 
         return date.Value.Add(date.Value.Offset).ToTimestamp();
-    }
-
-    private DateTimeOffset? ToDateTimeOffset(Timestamp? timestamp)
-    {
-        return timestamp?.ToDateTimeOffset();
     }
 }

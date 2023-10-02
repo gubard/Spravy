@@ -26,11 +26,11 @@ public class StatusToDoItemService
             }
             case ToDoItemType.Periodicity:
             {
-                return GetDueDateStatusAsync(context, entity);
+                return GetDueDateStatusAsync(entity);
             }
             case ToDoItemType.PeriodicityOffset:
             {
-                return GetDueDateStatusAsync(context, entity);
+                return GetDueDateStatusAsync(entity);
             }
             default:
             {
@@ -78,10 +78,10 @@ public class StatusToDoItemService
             }
         }
 
-        return await GetDueDateStatusAsync(context, entity);
+        return await GetDueDateStatusAsync(entity);
     }
 
-    private Task<ToDoItemStatus> GetDueDateStatusAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
+    private Task<ToDoItemStatus> GetDueDateStatusAsync(ToDoItemEntity entity)
     {
         if (entity.DueDate == DateTimeOffset.Now.ToCurrentDay())
         {

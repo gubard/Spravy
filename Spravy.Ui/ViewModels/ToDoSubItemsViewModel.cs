@@ -20,7 +20,6 @@ namespace Spravy.Ui.ViewModels;
 public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 {
     private IRefreshToDoItem? refreshToDoItem;
-    private string searchText = string.Empty;
 
     public ToDoSubItemsViewModel()
     {

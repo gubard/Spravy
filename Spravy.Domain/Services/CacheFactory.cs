@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Spravy.Domain.Interfaces;
 
 namespace Spravy.Domain.Services;
@@ -41,7 +42,7 @@ public class CacheFactory<TKey, TValue> : IFactory<TKey, TValue>, ICache<TKey, T
         return value;
     }
 
-    public bool TryGetCacheValue(TKey key, out TValue? value)
+    public bool TryGetCacheValue(TKey key, [MaybeNullWhen(false)] out TValue value)
     {
         return cache.TryGetValue(key, out value);
     }

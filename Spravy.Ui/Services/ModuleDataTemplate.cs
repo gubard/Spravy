@@ -12,9 +12,9 @@ public class ModuleDataTemplate : IDataTemplate
     [Inject]
     public required IKernel Resolver { get; init; }
 
-    public Control? Build(object? param)
+    public Control Build(object? param)
     {
-        var type = param.GetType();
+        var type = param.ThrowIfNull().GetType();
 
         var ns = type.Namespace.ThrowIfNullOrWhiteSpace()
             .Replace(".ViewModels.", ".Views.")

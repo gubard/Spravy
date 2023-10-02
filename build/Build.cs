@@ -13,6 +13,7 @@ using Nuke.Common;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tools.DotNet;
 using Renci.SshNet;
+using Serilog;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 namespace _build;
@@ -126,6 +127,7 @@ class Build : NukeBuild
                         browserPort++;
                     }
 
+                    Log.Information(FtpHost);
                     using var sshClient = new SshClient(FtpHost, FtpUser, SshPassword);
                     sshClient.Connect();
                     using var ftpClient = new FtpClient(SshHost, FtpUser, FtpPassword);
