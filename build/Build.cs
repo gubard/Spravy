@@ -498,13 +498,12 @@ class Build : NukeBuild
 
     ConnectionInfo CreateSshConnection()
     {
-        var values = FtpHost.Split(":");
+        var values = SshHost.Split(":");
+        var password = new PasswordAuthenticationMethod(FtpUser, SshPassword);
 
         if (values.Length == 2)
         {
-            return new ConnectionInfo(values[0], int.Parse(values[1]), FtpUser,
-                new PasswordAuthenticationMethod(FtpUser, SshPassword)
-            );
+            return new ConnectionInfo(values[0], int.Parse(values[1]), FtpUser, password);
         }
 
         return new ConnectionInfo(values[0], FtpUser, new PasswordAuthenticationMethod(FtpUser, SshPassword));
