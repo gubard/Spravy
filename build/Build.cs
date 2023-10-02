@@ -127,10 +127,9 @@ class Build : NukeBuild
                         browserPort++;
                     }
 
-                    Log.Information(FtpHost);
-                    using var sshClient = new SshClient(FtpHost, FtpUser, SshPassword);
+                    using var sshClient = new SshClient(CreateSshConnection());
                     sshClient.Connect();
-                    using var ftpClient = new FtpClient(SshHost, FtpUser, FtpPassword);
+                    using var ftpClient = CreateFtpClient();
                     ftpClient.Connect();
                     var token = CreteToken();
 
@@ -495,5 +494,31 @@ class Build : NukeBuild
         var jwt = jwtSecurityTokenHandler.WriteToken(token);
 
         return jwt;
+    }
+
+    ConnectionInfo CreateSshConnection()
+    {
+        var values = FtpHost.Split(":");
+
+        if (values.Length == 2)
+        {
+            return new ConnectionInfo(values[0], int.Parse(values[1]), FtpUser,
+                new PasswordAuthenticationMethod(FtpUser, SshPassword)
+            );
+        }
+
+        return new ConnectionInfo(values[0], FtpUser, new PasswordAuthenticationMethod(FtpUser, SshPassword));
+    }
+
+    FtpClient CreateFtpClient()
+    {
+        var values = FtpHost.Split(":");
+
+        if (values.Length == 2)
+        {
+            return new FtpClient(values[0], FtpUser, FtpPassword, int.Parse(values[1]));
+        }
+
+        return new FtpClient(SshHost, FtpUser, FtpPassword);
     }
 }
