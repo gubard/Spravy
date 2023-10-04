@@ -15,7 +15,7 @@ public class AndroidModule : NinjectModule
                 _ =>
                 {
                     using var stream =
-                        typeof(MarkStruct).Assembly.GetManifestResourceStream("Spravy.Ui.Android.appsettings.json");
+                        typeof(SpravyUiAndroidMark).Assembly.GetManifestResourceStream("Spravy.Ui.Android.appsettings.json");
 
                     return new ConfigurationBuilder().AddJsonStream(stream.ThrowIfNull()).Build();
                 }

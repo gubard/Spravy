@@ -13,7 +13,6 @@ using Nuke.Common;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tools.DotNet;
 using Renci.SshNet;
-using Serilog;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 namespace _build;
@@ -132,6 +131,8 @@ class Build : NukeBuild
                     using var ftpClient = CreateFtpClient();
                     ftpClient.Connect();
                     var token = CreteToken();
+                    RunCommand(sshClient, "dotnet tool install --global dotnet-serve");
+                    RunCommand(sshClient, "dotnet tool update --global dotnet-serve");
 
                     foreach (var serviceOption in serviceOptions)
                     {
@@ -192,6 +193,11 @@ class Build : NukeBuild
                     SetServiceSettings(desktopAppSettings, 0, null, hosts, "");
                 }
             );
+
+    void RunCommand(SshClient client, string command)
+    {
+        using var run = client.RunCommand(command);
+    }
 
     void PublishService(
         Project project,
