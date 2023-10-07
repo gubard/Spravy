@@ -4,6 +4,7 @@ using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.EventBus.Domain.Helpers;
 using Spravy.EventBus.Domain.Interfaces;
+using Spravy.EventBus.Domain.Models;
 using Spravy.EventBus.Protos;
 using Spravy.ToDo.Db.Contexts;
 using Spravy.ToDo.Db.Models;
@@ -81,18 +82,7 @@ public class EventBusHostedService : IHostedService
                     {
                         if (eventValue.Id == EventIdHelper.ChangeCurrentId)
                         {
-                            await using var context = spravyToDoDbContext.Create(file.ToSqliteConnectionString());
-                            var eventContent = ChangeToDoItemIsCurrentEvent.Parser.ParseFrom(eventValue.Content);
-                            var id = new Guid(eventContent.ToDoItemId.ToByteArray());
-                            var item = await context.Set<ToDoItemEntity>().FindAsync(id);
-
-                            if (item is null)
-                            {
-                                continue;
-                            }
-                            
-                            item.IsCurrent = eventContent.IsCurrent;
-                            await context.SaveChangesAsync(source.Token);
+                            await ChangeCurrentAsync(file, eventValue, source.Token);
                         }
                     }
                 }
@@ -109,5 +99,21 @@ public class EventBusHostedService : IHostedService
 
             await Task.Delay(TimeSpan.FromSeconds(20));
         }
+    }
+
+    private async Task ChangeCurrentAsync(FileInfo file, EventValue eventValue, CancellationToken cancellationToken)
+    {
+        await using var context = spravyToDoDbContext.Create(file.ToSqliteConnectionString());
+        var eventContent = ChangeToDoItemIsCurrentEvent.Parser.ParseFrom(eventValue.Content);
+        var id = new Guid(eventContent.ToDoItemId.ToByteArray());
+        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
+
+        if (item is null)
+        {
+            return;
+        }
+
+        item.IsCurrent = eventContent.IsCurrent;
+        await context.SaveChangesAsync(cancellationToken);
     }
 }
