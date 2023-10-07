@@ -83,11 +83,15 @@ public class EventBusHostedService : IHostedService
                         {
                             await using var context = spravyToDoDbContext.Create(file.ToSqliteConnectionString());
                             var eventContent = ChangeToDoItemIsCurrentEvent.Parser.ParseFrom(eventValue.Content);
+                            var id = new Guid(eventContent.ToDoItemId.ToByteArray());
+                            var item = await context.Set<ToDoItemEntity>().FindAsync(id);
 
-                            var item = await context.Set<ToDoItemEntity>()
-                                .FindAsync(new Guid(eventContent.ToDoItemId.ToByteArray()));
-
-                            item.ThrowIfNull().IsCurrent = eventContent.IsCurrent;
+                            if (item is null)
+                            {
+                                continue;
+                            }
+                            
+                            item.IsCurrent = eventContent.IsCurrent;
                             await context.SaveChangesAsync(source.Token);
                         }
                     }
