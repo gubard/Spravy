@@ -85,7 +85,7 @@ public class ScheduleHostedService : IHostedService
                 logger.Log(LogLevel.Error, e, null);
             }
 
-            await Task.Delay(TimeSpan.FromSeconds(20));
+            await Task.Delay(TimeSpan.FromSeconds(1));
         }
     }
 }

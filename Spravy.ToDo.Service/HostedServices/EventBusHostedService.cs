@@ -75,13 +75,13 @@ public class EventBusHostedService : IHostedService
                 {
                     var eventBusService = spravyEventBusServiceFactory.Create(file.GetFileNameWithoutExtension());
                     var stream = eventBusService.SubscribeEventsAsync(eventIds.ToArray(), source.Token);
-                    await using var context = spravyToDoDbContext.Create(file.ToSqliteConnectionString());
                     logger.LogInformation("Connected for events {File}", file);
 
                     await foreach (var eventValue in stream)
                     {
                         if (eventValue.Id == EventIdHelper.ChangeCurrentId)
                         {
+                            await using var context = spravyToDoDbContext.Create(file.ToSqliteConnectionString());
                             var eventContent = ChangeToDoItemIsCurrentEvent.Parser.ParseFrom(eventValue.Content);
 
                             var item = await context.Set<ToDoItemEntity>()
@@ -100,7 +100,7 @@ public class EventBusHostedService : IHostedService
             }
             catch (Exception e)
             {
-                logger.Log(LogLevel.Error, e, null);
+                logger.LogError(e, "Handle file {File}", file);
             }
 
             await Task.Delay(TimeSpan.FromSeconds(20));

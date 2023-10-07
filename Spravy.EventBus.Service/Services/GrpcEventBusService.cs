@@ -87,7 +87,7 @@ public class GrpcEventBusService : EventBusServiceBase
         while (!cancellationToken.IsCancellationRequested)
         {
             var eventValue = await eventStorage.PushEventAsync(eventIds);
-            await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
+            await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
 
             return new IsSuccessValue<IEnumerable<EventValue>>(eventValue);
         }
