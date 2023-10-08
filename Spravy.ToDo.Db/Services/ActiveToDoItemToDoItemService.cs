@@ -25,53 +25,29 @@ public class ActiveToDoItemToDoItemService
 
     private Task<ActiveToDoItem?> GetActiveToDoItemAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
     {
-        switch (entity.Type)
+        return entity.Type switch
         {
-            case ToDoItemType.Value:
-            {
-                return GetValueActiveItemAsync(context, entity);
-            }
-            case ToDoItemType.Group:
-            {
-                return GetGroupActiveItemAsync(context, entity);
-            }
-            case ToDoItemType.Planned:
-            {
-                return GetPlannedActiveItemAsync(context, entity);
-            }
-            case ToDoItemType.Periodicity:
-            {
-                return GetActiveItemByDueDateAsync(context, entity);
-            }
-            case ToDoItemType.PeriodicityOffset:
-            {
-                return GetActiveItemByDueDateAsync(context, entity);
-            }
-            default:
-            {
-                throw new ArgumentOutOfRangeException();
-            }
-        }
+            ToDoItemType.Value => GetValueActiveItemAsync(context, entity),
+            ToDoItemType.Group => GetGroupActiveItemAsync(context, entity),
+            ToDoItemType.Planned => GetPlannedActiveItemAsync(context, entity),
+            ToDoItemType.Periodicity => GetActiveItemByDueDateAsync(context, entity),
+            ToDoItemType.PeriodicityOffset => GetActiveItemByDueDateAsync(context, entity),
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
     private Task<ActiveToDoItem?> GetPlannedActiveItemAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
     {
-        if (entity.IsCompleted)
-        {
-            return Task.FromResult<ActiveToDoItem?>(null);
-        }
-
-        return GetActiveItemByDueDateAsync(context, entity);
+        return entity.IsCompleted
+            ? Task.FromResult<ActiveToDoItem?>(null)
+            : GetActiveItemByDueDateAsync(context, entity);
     }
 
     private Task<ActiveToDoItem?> GetActiveItemByDueDateAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
     {
-        if (entity.DueDate > DateTimeOffset.Now.ToCurrentDay())
-        {
-            return Task.FromResult<ActiveToDoItem?>(null);
-        }
-
-        return GetChildrenActiveToDoItemAsync(context, entity, GetActiveItemByDueDate(entity));
+        return entity.DueDate > DateTimeOffset.Now.ToCurrentDay()
+            ? Task.FromResult<ActiveToDoItem?>(null)
+            : GetChildrenActiveToDoItemAsync(context, entity, GetActiveItemByDueDate(entity));
     }
 
     private ActiveToDoItem? GetActiveItemByDueDate(ToDoItemEntity entity)
@@ -101,12 +77,9 @@ public class ActiveToDoItemToDoItemService
 
     private Task<ActiveToDoItem?> GetValueActiveItemAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
     {
-        if (entity.IsCompleted)
-        {
-            return Task.FromResult<ActiveToDoItem?>(null);
-        }
-
-        return GetChildrenActiveToDoItemAsync(context, entity, ToActiveToDoItem(entity));
+        return entity.IsCompleted
+            ? Task.FromResult<ActiveToDoItem?>(null)
+            : GetChildrenActiveToDoItemAsync(context, entity, ToActiveToDoItem(entity));
     }
 
     private async Task<ActiveToDoItem?> GetChildrenActiveToDoItemAsync(
@@ -140,12 +113,9 @@ public class ActiveToDoItemToDoItemService
                     result ??= activeItem;
 
                     break;
-                case ToDoItemStatus.Planned:
-                    break;
-                case ToDoItemStatus.Completed:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                case ToDoItemStatus.Planned: break;
+                case ToDoItemStatus.Completed: break;
+                default: throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -154,12 +124,7 @@ public class ActiveToDoItemToDoItemService
 
     private ActiveToDoItem? ToActiveToDoItem(ToDoItemEntity entity)
     {
-        if (entity.ParentId is null)
-        {
-            return null;
-        }
-
-        return new ActiveToDoItem(entity.ParentId.Value, entity.Name);
+        return entity.ParentId is null ? null : new ActiveToDoItem(entity.ParentId.Value, entity.Name);
     }
 
     private ActiveToDoItem? ToActiveToDoItem(ToDoItemEntity entity, ActiveToDoItem? item)
