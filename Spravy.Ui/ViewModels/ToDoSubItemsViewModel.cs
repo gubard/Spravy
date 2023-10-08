@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
-using Microsoft.CodeAnalysis.CSharp;
 using Ninject;
 using Spravy.Domain.Extensions;
 using Spravy.ToDo.Domain.Enums;

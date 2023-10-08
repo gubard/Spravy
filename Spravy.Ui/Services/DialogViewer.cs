@@ -20,7 +20,13 @@ public class DialogViewer : IDialogViewer
 
     public Task ShowContentDialogAsync<TView>(Action<TView>? setupView = null)
     {
-        var content = Resolver.Get<TView>().ThrowIfNull();
+        var content = Resolver.Get<TView>();
+
+        if (content is null)
+        {
+            throw new NullReferenceException();
+        }
+
         setupView?.Invoke(content);
 
         return DialogHost.Show(content, ContentDialogHostIdentifier);
@@ -28,7 +34,13 @@ public class DialogViewer : IDialogViewer
 
     public Task ShowProgressDialogAsync<TView>(Action<TView>? setupView = null)
     {
-        var content = Resolver.Get<TView>().ThrowIfNull();
+        var content = Resolver.Get<TView>();
+
+        if (content is null)
+        {
+            throw new NullReferenceException();
+        }
+
         setupView?.Invoke(content);
 
         return DialogHost.Show(content, ProgressDialogHostIdentifier);
@@ -36,7 +48,13 @@ public class DialogViewer : IDialogViewer
 
     public Task ShowErrorDialogAsync<TView>(Action<TView>? setupView = null)
     {
-        var content = Resolver.Get<TView>().ThrowIfNull();
+        var content = Resolver.Get<TView>();
+
+        if (content is null)
+        {
+            throw new NullReferenceException();
+        }
+
         setupView?.Invoke(content);
 
         return DialogHost.Show(content, ErrorDialogHostIdentifier);
@@ -68,7 +86,13 @@ public class DialogViewer : IDialogViewer
 
     public Task ShowInputDialogAsync<TView>(Action<TView>? setupView = null)
     {
-        var content = Resolver.Get<TView>().ThrowIfNull();
+        var content = Resolver.Get<TView>();
+
+        if (content is null)
+        {
+            throw new NullReferenceException();
+        }
+
         setupView?.Invoke(content);
 
         return DialogHost.Show(content, InputDialogHostIdentifier);

@@ -203,7 +203,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
                 await Clipboard.SetTextAsync(text);
                 await DialogViewer.CloseContentDialogAsync();
             },
-            view => DialogViewer.CloseContentDialogAsync()
+            _ => DialogViewer.CloseContentDialogAsync()
         );
     }
 
