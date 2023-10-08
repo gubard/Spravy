@@ -9,6 +9,13 @@ namespace Spravy.ToDo.Db.Services;
 
 public class ActiveToDoItemToDoItemService
 {
+    private readonly StatusToDoItemService statusToDoItemService;
+
+    public ActiveToDoItemToDoItemService(StatusToDoItemService statusToDoItemService)
+    {
+        this.statusToDoItemService = statusToDoItemService;
+    }
+
     public async Task<ActiveToDoItem?> GetActiveItemAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
     {
         var result = await GetActiveToDoItemAsync(context, entity);
@@ -113,17 +120,34 @@ public class ActiveToDoItemToDoItemService
             .OrderBy(x => x.OrderIndex)
             .ToArrayAsync();
 
+        ActiveToDoItem? result = null;
+
         foreach (var item in items)
         {
+            var status = await statusToDoItemService.GetStatusAsync(context, item);
             var activeItem = await GetActiveToDoItemAsync(context, item);
 
-            if (activeItem is not null)
+            switch (status)
             {
-                return activeItem;
+                case ToDoItemStatus.Miss:
+                    if (activeItem is not null)
+                    {
+                        return activeItem;
+                    }
+
+                    break;
+                case ToDoItemStatus.ReadyForComplete:
+                    result ??= activeItem;
+
+                    break;
+                case ToDoItemStatus.Completed:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
-        return def;
+        return result ?? def;
     }
 
     private ActiveToDoItem? ToActiveToDoItem(ToDoItemEntity entity)
