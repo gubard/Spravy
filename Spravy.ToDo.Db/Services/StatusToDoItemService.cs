@@ -109,7 +109,6 @@ public class StatusToDoItemService
     {
         var items = await context.Set<ToDoItemEntity>().Where(x => x.ParentId == entity.Id).ToArrayAsync();
         var completedCount = 0;
-        var def = ToDoItemStatus.ReadyForComplete;
 
         foreach (var item in items)
         {
@@ -127,8 +126,6 @@ public class StatusToDoItemService
                 }
                 case ToDoItemStatus.Planned:
                 {
-                    def = ToDoItemStatus.Planned;
-
                     break;
                 }
                 case ToDoItemStatus.Completed:
@@ -149,7 +146,7 @@ public class StatusToDoItemService
             return ToDoItemStatus.Completed;
         }
 
-        return def;
+        return ToDoItemStatus.ReadyForComplete;
     }
 
     private async Task<ToDoItemStatus> GetValueStatusAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
@@ -160,7 +157,6 @@ public class StatusToDoItemService
         }
 
         var items = await context.Set<ToDoItemEntity>().Where(x => x.ParentId == entity.Id).ToArrayAsync();
-        var def = ToDoItemStatus.ReadyForComplete;
 
         foreach (var item in items)
         {
@@ -178,8 +174,6 @@ public class StatusToDoItemService
                 }
                 case ToDoItemStatus.Planned:
                 {
-                    def = ToDoItemStatus.Planned;
-
                     break;
                 }
                 case ToDoItemStatus.Completed:
@@ -193,6 +187,6 @@ public class StatusToDoItemService
             }
         }
 
-        return def;
+        return ToDoItemStatus.ReadyForComplete;
     }
 }
