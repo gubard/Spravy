@@ -37,7 +37,11 @@ class Build : NukeBuild
     [Parameter] readonly string FtpHost;
     [Parameter] readonly string FtpUser;
     [Parameter] readonly string SshHost;
+    [Parameter] readonly string SshUser;
     [Parameter] readonly string ServerHost;
+    [Parameter] readonly string JwtKey;
+    [Parameter] readonly string JwtIssuer;
+    [Parameter] readonly string JwtAudience;
     static readonly DirectoryInfo TempFolder = new(Path.Combine("/", "tmp", "Spravy"));
     static readonly DirectoryInfo PublishFolder = new(Path.Combine(TempFolder.FullName, "Publish"));
     static readonly DirectoryInfo ServicesFolder = new(Path.Combine(TempFolder.FullName, "services"));
@@ -381,7 +385,7 @@ class Build : NukeBuild
                 WantedBy=multi-user.target
                 """;
     }
-    
+
     static void CreateIfNotExistsDirectory(FtpClient client, string path)
     {
         if (client.DirectoryExists(path))
@@ -404,29 +408,22 @@ class Build : NukeBuild
 
     static void CopyDirectory(string sourceDir, string destinationDir, bool recursive)
     {
-        // Get information about the source directory
         var dir = new DirectoryInfo(sourceDir);
 
-        // Check if the source directory exists
         if (!dir.Exists)
         {
             throw new DirectoryNotFoundException($"Source directory not found: {dir.FullName}");
         }
 
-        // Cache directories before we start copying
         var dirs = dir.GetDirectories();
-
-        // Create the destination directory
         Directory.CreateDirectory(destinationDir);
 
-        // Get the files in the source directory and copy to the destination directory
         foreach (var file in dir.GetFiles())
         {
             var targetFilePath = Path.Combine(destinationDir, file.Name);
             file.CopyTo(targetFilePath);
         }
 
-        // If recursive and copying subdirectories, recursively call this method
         if (!recursive)
         {
             return;
@@ -492,21 +489,21 @@ class Build : NukeBuild
 
     string CreteToken()
     {
-        var key = new SymmetricSecurityKey("0bf7731f-2441-4cff-8e2e-7b343d5d35d0b9b47d13-5b69-4249-aed9-24421e8a94d9"u8
-            .ToArray()
-        );
-
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtKey));
         var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
         var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
+        var expires = DateTime.UtcNow.AddDays(30);
+
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.Role, "Service"),
+        };
 
         var token = new JwtSecurityToken(
-            "https://spravy.issuer.authentication.com",
-            "https://spravy.audience.authentication.com",
-            new List<Claim>
-            {
-                new(ClaimTypes.Role, "Service"),
-            },
-            expires: DateTime.UtcNow.AddDays(30),
+            JwtIssuer,
+            JwtAudience,
+            claims,
+            expires: expires,
             signingCredentials: signingCredentials
         );
 
@@ -518,14 +515,14 @@ class Build : NukeBuild
     ConnectionInfo CreateSshConnection()
     {
         var values = SshHost.Split(":");
-        var password = new PasswordAuthenticationMethod(FtpUser, SshPassword);
+        var password = new PasswordAuthenticationMethod(SshUser, SshPassword);
 
         if (values.Length == 2)
         {
-            return new ConnectionInfo(values[0], int.Parse(values[1]), FtpUser, password);
+            return new ConnectionInfo(values[0], int.Parse(values[1]), SshUser, password);
         }
 
-        return new ConnectionInfo(values[0], FtpUser, new PasswordAuthenticationMethod(FtpUser, SshPassword));
+        return new ConnectionInfo(values[0], SshUser, password);
     }
 
     FtpClient CreateFtpClient()
@@ -537,6 +534,6 @@ class Build : NukeBuild
             return new FtpClient(values[0], FtpUser, FtpPassword, int.Parse(values[1]));
         }
 
-        return new FtpClient(SshHost, FtpUser, FtpPassword);
+        return new FtpClient(FtpHost, FtpUser, FtpPassword);
     }
 }
