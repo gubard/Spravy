@@ -10,33 +10,15 @@ public class StatusToDoItemService
 {
     public Task<ToDoItemStatus> GetStatusAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
     {
-        switch (entity.Type)
+        return entity.Type switch
         {
-            case ToDoItemType.Value:
-            {
-                return GetValueStatusAsync(context, entity);
-            }
-            case ToDoItemType.Group:
-            {
-                return GetGroupStatusAsync(context, entity);
-            }
-            case ToDoItemType.Planned:
-            {
-                return GetPlannedStatusAsync(context, entity);
-            }
-            case ToDoItemType.Periodicity:
-            {
-                return GetDueDateStatusAsync(entity);
-            }
-            case ToDoItemType.PeriodicityOffset:
-            {
-                return GetDueDateStatusAsync(entity);
-            }
-            default:
-            {
-                throw new ArgumentOutOfRangeException();
-            }
-        }
+            ToDoItemType.Value => GetValueStatusAsync(context, entity),
+            ToDoItemType.Group => GetGroupStatusAsync(context, entity),
+            ToDoItemType.Planned => GetPlannedStatusAsync(context, entity),
+            ToDoItemType.Periodicity => GetDueDateStatusAsync(entity),
+            ToDoItemType.PeriodicityOffset => GetDueDateStatusAsync(entity),
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
     private async Task<ToDoItemStatus> GetPlannedStatusAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
@@ -59,26 +41,11 @@ public class StatusToDoItemService
 
             switch (status)
             {
-                case ToDoItemStatus.Miss:
-                {
-                    return ToDoItemStatus.Miss;
-                }
-                case ToDoItemStatus.ReadyForComplete:
-                {
-                    break;
-                }
-                case ToDoItemStatus.Planned:
-                {
-                    break;
-                }
-                case ToDoItemStatus.Completed:
-                {
-                    break;
-                }
-                default:
-                {
-                    throw new ArgumentOutOfRangeException();
-                }
+                case ToDoItemStatus.Miss: return ToDoItemStatus.Miss;
+                case ToDoItemStatus.ReadyForComplete: break;
+                case ToDoItemStatus.Planned: break;
+                case ToDoItemStatus.Completed: break;
+                default: throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -109,6 +76,7 @@ public class StatusToDoItemService
     {
         var items = await context.Set<ToDoItemEntity>().Where(x => x.ParentId == entity.Id).ToArrayAsync();
         var completedCount = 0;
+        var isReadyForComplete = false;
 
         foreach (var item in items)
         {
@@ -116,28 +84,21 @@ public class StatusToDoItemService
 
             switch (status)
             {
-                case ToDoItemStatus.Miss:
-                {
-                    return ToDoItemStatus.Miss;
-                }
+                case ToDoItemStatus.Miss: return ToDoItemStatus.Miss;
                 case ToDoItemStatus.ReadyForComplete:
                 {
+                    isReadyForComplete = true;
+                    
                     break;
                 }
-                case ToDoItemStatus.Planned:
-                {
-                    break;
-                }
+                case ToDoItemStatus.Planned: break;
                 case ToDoItemStatus.Completed:
                 {
                     completedCount++;
 
                     break;
                 }
-                default:
-                {
-                    throw new ArgumentOutOfRangeException();
-                }
+                default: throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -146,7 +107,12 @@ public class StatusToDoItemService
             return ToDoItemStatus.Completed;
         }
 
-        return ToDoItemStatus.ReadyForComplete;
+        if (isReadyForComplete)
+        {
+            return ToDoItemStatus.ReadyForComplete;
+        }
+
+        return ToDoItemStatus.Planned;
     }
 
     private async Task<ToDoItemStatus> GetValueStatusAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
@@ -157,33 +123,18 @@ public class StatusToDoItemService
         }
 
         var items = await context.Set<ToDoItemEntity>().Where(x => x.ParentId == entity.Id).ToArrayAsync();
-
+        
         foreach (var item in items)
         {
             var status = await GetStatusAsync(context, item);
 
             switch (status)
             {
-                case ToDoItemStatus.Miss:
-                {
-                    return ToDoItemStatus.Miss;
-                }
-                case ToDoItemStatus.ReadyForComplete:
-                {
-                    break;
-                }
-                case ToDoItemStatus.Planned:
-                {
-                    break;
-                }
-                case ToDoItemStatus.Completed:
-                {
-                    break;
-                }
-                default:
-                {
-                    throw new ArgumentOutOfRangeException();
-                }
+                case ToDoItemStatus.Miss: return ToDoItemStatus.Miss;
+                case ToDoItemStatus.ReadyForComplete: break;
+                case ToDoItemStatus.Planned: break;
+                case ToDoItemStatus.Completed: break;
+                default: throw new ArgumentOutOfRangeException();
             }
         }
 
