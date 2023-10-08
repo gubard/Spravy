@@ -37,14 +37,12 @@ public class ToDoItemHeaderViewModel : ViewModelBase
         return DialogViewer.ShowSingleStringConfirmDialogAsync(
             str =>
             {
-                DialogViewer.CloseDialog();
-
                 if (Item is not null)
                 {
                     Item.Name = str;
                 }
 
-                return Task.CompletedTask;
+                return  DialogViewer.CloseInputDialogAsync();
             },
             box =>
             {

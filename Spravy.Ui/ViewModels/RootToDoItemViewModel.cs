@@ -62,20 +62,15 @@ public class RootToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChange
 
     private Task AddToDoItemAsync()
     {
-        return DialogViewer.ShowConfirmDialogAsync<AddRootToDoItemView>(
-            _ =>
-            {
-                DialogViewer.CloseDialog();
-
-                return Task.CompletedTask;
-            },
+        return DialogViewer.ShowConfirmContentDialogAsync<AddRootToDoItemView>(
             async view =>
             {
                 var options = Mapper.Map<AddRootToDoItemOptions>(view.ViewModel);
                 await ToDoService.AddRootToDoItemAsync(options);
-                DialogViewer.CloseDialog();
+                await DialogViewer.CloseContentDialogAsync();
                 await RefreshToDoItemAsync();
-            }
+            },
+            _ => DialogViewer.CloseContentDialogAsync()
         );
     }
 

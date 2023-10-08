@@ -1,4 +1,5 @@
-<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:ConfirmViewModel" xmlns="https://github.com/avaloniaui"
+<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:InfoViewModel"
+                                xmlns="https://github.com/avaloniaui"
                                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -6,28 +7,21 @@
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                                x:Class="Spravy.Ui.Views.ConfirmView"
-                                x:DataType="viewModels:ConfirmViewModel">
+                                x:Class="Spravy.Ui.Views.InfoView"
+                                x:DataType="viewModels:InfoViewModel">
     <Design.DataContext>
-        <viewModels:ConfirmViewModel Content="{avalonia:MaterialIconExt About}" />
+        <viewModels:InfoViewModel Content="{avalonia:MaterialIconExt About}" />
     </Design.DataContext>
 
     <UserControl.KeyBindings>
-        <KeyBinding Gesture="Ctrl+Enter" Command="{Binding ConfirmCommand}" />
+        <KeyBinding Gesture="Ctrl+Enter" Command="{Binding OkCommand}" />
     </UserControl.KeyBindings>
 
-    <Grid RowDefinitions="*,Auto"
-          ColumnDefinitions="*,*">
-        <ContentControl Grid.ColumnSpan="2" Content="{Binding Content}" />
+    <Grid RowDefinitions="*,Auto">
+        <ContentControl Content="{Binding Content}" />
 
         <Button Grid.Row="1"
-                Command="{Binding CancelCommand}">
-            <avalonia:MaterialIcon Kind="Cancel" />
-        </Button>
-
-        <Button Grid.Row="1"
-                Grid.Column="1"
-                Command="{Binding ConfirmCommand}">
+                Command="{Binding OkCommand }">
             <avalonia:MaterialIcon Kind="Check" />
         </Button>
     </Grid>

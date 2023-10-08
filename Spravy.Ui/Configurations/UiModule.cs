@@ -94,14 +94,7 @@ public class UiModule : NinjectModule
         Bind<IDataTemplate>().To<ModuleDataTemplate>();
         Bind<IMetadataFactory>().To<MetadataFactory>();
         Bind<IHttpHeaderFactory>().To<TokenHttpHeaderFactory>();
-
-        Bind<IDialogViewer>()
-            .ToMethod(
-                x => new DialogViewer(DialogViewer.DefaultDialogIdentifier)
-                {
-                    Resolver = x.Kernel,
-                }
-            );
+        Bind<IDialogViewer>().To<DialogViewer>();
 
         Bind<IClipboard>()
             .ToMethod(

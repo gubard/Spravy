@@ -1,5 +1,4 @@
 using System;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Ninject;
@@ -8,43 +7,15 @@ using Spravy.Ui.Interfaces;
 
 namespace Spravy.Ui.Models;
 
-public class ViewModelBase : NotifyBase, IIsDialog
+public class ViewModelBase : NotifyBase
 {
     private static readonly TimeSpan TaskTimeout = TimeSpan.FromMilliseconds(120);
-
-    public ViewModelBase()
-    {
-        NavigateBackCommand = ReactiveCommand.CreateFromObservable(
-            () => Navigator is null ? Observable.Empty<IRoutableViewModel>() : Navigator.NavigateBack()
-        );
-
-        CloseDialogCommand = ReactiveCommand.Create(() => DialogViewer?.CloseDialog());
-
-        BackCommand = ReactiveCommand.Create(
-            () =>
-            {
-                if (IsDialog)
-                {
-                    CloseDialogCommand.Execute(null);
-                }
-                else
-                {
-                    NavigateBackCommand.Execute(null);
-                }
-            }
-        );
-    }
 
     [Inject]
     public required INavigator Navigator { get; init; }
 
     [Inject]
     public required IDialogViewer DialogViewer { get; set; }
-
-    public ICommand NavigateBackCommand { get; }
-    public ICommand CloseDialogCommand { get; }
-    public ICommand BackCommand { get; }
-    public bool IsDialog { get; set; }
 
     protected ICommand CreateCommandFromObservable<TResult>(Func<IObservable<TResult>> execute)
     {
@@ -123,10 +94,10 @@ public class ViewModelBase : NotifyBase, IIsDialog
             if (await IsTakeMoreThen(task, TaskTimeout))
             {
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                DialogViewer.ShowDialogAsync(typeof(IDialogProgressIndicator));
+                DialogViewer.ShowProgressDialogAsync<IDialogProgressIndicator>();
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                 await task;
-                DialogViewer.CloseDialog();
+                await DialogViewer.CloseProgressDialogAsync();
             }
 
             await task;
@@ -142,10 +113,10 @@ public class ViewModelBase : NotifyBase, IIsDialog
             if (await IsTakeMoreThen(task, TaskTimeout))
             {
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                DialogViewer.ShowDialogAsync(typeof(IDialogProgressIndicator));
+                DialogViewer.ShowProgressDialogAsync<IDialogProgressIndicator>();
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                 await task;
-                DialogViewer.CloseDialog();
+                await DialogViewer.CloseProgressDialogAsync();
             }
 
             await task;
@@ -166,12 +137,14 @@ public class ViewModelBase : NotifyBase, IIsDialog
 
     private void SetupCommand<TParam, TResult>(ReactiveCommand<TParam, TResult> command)
     {
-        command.ThrownExceptions.Subscribe(
-            exception =>
-            {
-                Navigator.NavigateTo<IExceptionViewModel>(viewModel => viewModel.Exception = exception);
-                DialogViewer.CloseDialog();
-            }
+        command.ThrownExceptions.Subscribe(OnNextError);
+    }
+
+    private async void OnNextError(Exception exception)
+    {
+        await DialogViewer.ShowInfoErrorDialogAsync<IExceptionViewModel>(
+            _ => DialogViewer.CloseErrorDialogAsync(),
+            viewModel => viewModel.Exception = exception
         );
     }
 }

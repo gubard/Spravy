@@ -14,6 +14,7 @@ using Spravy.Ui.Enums;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
+using Spravy.Ui.Views;
 
 namespace Spravy.Ui.ViewModels;
 
@@ -78,10 +79,9 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
         return DialogViewer.ShowDateConfirmDialogAsync(
             value =>
             {
-                DialogViewer.CloseDialog();
                 DueDate = value;
 
-                return Task.CompletedTask;
+                return DialogViewer.CloseInputDialogAsync();
             },
             calendar => calendar.SelectedDate = DueDate.Date
         );
@@ -243,11 +243,11 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
 
     private Task CompleteToDoItemAsync()
     {
-        return DialogViewer.ShowCompleteToDoItemDialogAsync(
+        return DialogViewer.ShowInfoInputDialogAsync<CompleteToDoItemView>(
+            _ => DialogViewer.CloseInputDialogAsync(),
             view =>
             {
                 var viewModel = view.ViewModel.ThrowIfNull();
-                viewModel.IsDialog = true;
                 viewModel.SetCompleteStatus();
 
                 viewModel.Complete = async status =>
@@ -268,7 +268,7 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
                     }
 
                     await RefreshToDoItemAsync();
-                    DialogViewer.CloseDialog();
+                    await DialogViewer.CloseInputDialogAsync();
                 };
             }
         );

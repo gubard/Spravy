@@ -22,90 +22,19 @@
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 
-    <Grid RowDefinitions="Auto,Auto">
-        <ItemsControl ItemsSource="{Binding CompleteStatuses}">
-            <ItemsControl.DataTemplates>
-                <DataTemplate>
-                    <DataTemplate.DataType>
-                        <x:Type TypeName="models:Ref" x:TypeArguments="enums:CompleteStatus" />
-                    </DataTemplate.DataType>
+    <ItemsControl ItemsSource="{Binding CompleteStatuses}">
+        <ItemsControl.DataTemplates>
+            <DataTemplate>
+                <DataTemplate.DataType>
+                    <x:Type TypeName="models:Ref" x:TypeArguments="enums:CompleteStatus" />
+                </DataTemplate.DataType>
 
-                    <Button Content="{Binding Value}"
-                            Command="{Binding $parent[views:CompleteToDoItemView].MainViewModel.CompleteCommand}"
-                            CommandParameter="{Binding Value}"
-                            Theme="{StaticResource OutlineButton}"
-                            BorderBrush="{Binding Value, Converter={StaticResource CompleteStatusToBrushConverter}}" />
-                </DataTemplate>
-            </ItemsControl.DataTemplates>
-        </ItemsControl>
-
-        <Button Grid.Row="1"
-                Command="{Binding BackCommand}">
-            <avalonia:MaterialIcon Kind="ArrowLeft" />
-        </Button>
-    </Grid>
-    <!--<ContentControl Content="{Binding Item}">
-        <ContentControl.DataTemplates>
-            <DataTemplate DataType="interfaces:IIsCompletedToDoItem">
-                <StackPanel>
-                    <TextBlock Text="{Binding Name}"
-                               HorizontalAlignment="Center" />
-
-                    <Button Content="Complete"
-                            Command="{Binding $parent[views:CompleteToDoItemView].MainViewModel.CompleteToDoItemCommand}"
-                            Theme="{StaticResource OutlineButton}"
-                            BorderBrush="Green"
-                            IsVisible="{Binding IsCompleted, Converter={StaticResource ReverseBooleanValueConverter}}" />
-
-                    <Button BorderBrush="Aqua"
-                            Command="{Binding $parent[views:CompleteToDoItemView].MainViewModel.IncompleteToDoItemCommand}"
-                            Theme="{StaticResource OutlineButton}"
-                            Content="Incomplete"
-                            IsVisible="{Binding IsCompleted}" />
-
-                    <Button Command="{Binding $parent[views:CompleteToDoItemView].MainViewModel.SkipToDoItemCommand}"
-                            Theme="{StaticResource OutlineButton}"
-                            Content="Skip"
-                            BorderBrush="Yellow" />
-
-                    <Button Command="{Binding $parent[views:CompleteToDoItemView].MainViewModel.FailToDoItemCommand}"
-                            Theme="{StaticResource OutlineButton}"
-                            Content="Fail"
-                            BorderBrush="Red" />
-
-                    <Button Classes="light"
-                            Command="{Binding $parent[views:CompleteToDoItemView].MainViewModel.BackCommand}">
-                        <avalonia:MaterialIcon Kind="ArrowLeft" />
-                    </Button>
-                </StackPanel>
+                <Button Content="{Binding Value}"
+                        Command="{Binding $parent[views:CompleteToDoItemView].MainViewModel.CompleteCommand}"
+                        CommandParameter="{Binding Value}"
+                        Theme="{StaticResource OutlineButton}"
+                        BorderBrush="{Binding Value, Converter={StaticResource CompleteStatusToBrushConverter}}" />
             </DataTemplate>
-
-            <DataTemplate DataType="models1:ToDoSubItemNotify">
-                <StackPanel>
-                    <TextBlock Text="{Binding Name}"
-                               HorizontalAlignment="Center" />
-
-                    <Button Content="Complete"
-                            Command="{Binding $parent[views:CompleteToDoItemView].MainViewModel.CompleteToDoItemCommand}"
-                            Theme="{StaticResource OutlineButton}"
-                            BorderBrush="Green" />
-
-                    <Button Command="{Binding $parent[views:CompleteToDoItemView].MainViewModel.SkipToDoItemCommand}"
-                            Theme="{StaticResource OutlineButton}"
-                            Content="Skip"
-                            BorderBrush="Yellow" />
-
-                    <Button Command="{Binding $parent[views:CompleteToDoItemView].MainViewModel.FailToDoItemCommand}"
-                            Theme="{StaticResource OutlineButton}"
-                            Content="Fail"
-                            BorderBrush="Red" />
-
-                    <Button Classes="light"
-                            Command="{Binding $parent[views:CompleteToDoItemView].MainViewModel.BackCommand}">
-                        <avalonia:MaterialIcon Kind="ArrowLeft" />
-                    </Button>
-                </StackPanel>
-            </DataTemplate>
-        </ContentControl.DataTemplates>
-    </ContentControl>-->
+        </ItemsControl.DataTemplates>
+    </ItemsControl>
 </controls:MainReactiveUserControl>

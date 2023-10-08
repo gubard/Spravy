@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
+using Microsoft.CodeAnalysis.CSharp;
 using Ninject;
 using Spravy.Domain.Extensions;
 using Spravy.ToDo.Domain.Enums;
@@ -63,11 +64,11 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 
     private Task CompleteSelectedToDoItemsAsync()
     {
-        return DialogViewer.ShowDialogAsync<CompleteToDoItemView>(
+        return DialogViewer.ShowInfoInputDialogAsync<CompleteToDoItemView>(
+            _ => DialogViewer.CloseInputDialogAsync(),
             view =>
             {
                 var viewModel = view.ViewModel.ThrowIfNull();
-                viewModel.IsDialog = true;
                 viewModel.SetAllStatus();
 
                 viewModel.Complete = async status =>
@@ -78,7 +79,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                     await CompleteAsync(SelectedReadyForCompleted, status);
                     await CompleteAsync(SelectedPlanned, status);
                     await RefreshToDoItemAsync();
-                    DialogViewer.CloseDialog();
+                    await DialogViewer.CloseInputDialogAsync();
                 };
             }
         );
@@ -91,11 +92,11 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 
     private Task CompleteSubToDoItemAsync(ToDoSubItemNotify subItemValue)
     {
-        return DialogViewer.ShowDialogAsync<CompleteToDoItemView>(
+        return DialogViewer.ShowInfoInputDialogAsync<CompleteToDoItemView>(
+            _ => DialogViewer.CloseInputDialogAsync(),
             view =>
             {
                 var viewModel = view.ViewModel.ThrowIfNull();
-                viewModel.IsDialog = true;
 
                 switch (subItemValue)
                 {
@@ -151,7 +152,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                     }
 
                     await RefreshToDoItemAsync();
-                    DialogViewer.CloseDialog();
+                    await DialogViewer.CloseInputDialogAsync();
                 };
             }
         );
@@ -290,19 +291,14 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 
     private Task DeleteSubToDoItemAsync(ToDoSubItemNotify subItem)
     {
-        return DialogViewer.ShowConfirmDialogAsync<DeleteToDoItemView>(
-            _ =>
-            {
-                DialogViewer.CloseDialog();
-
-                return Task.CompletedTask;
-            },
+        return DialogViewer.ShowConfirmContentDialogAsync<DeleteToDoItemView>(
             async view =>
             {
                 await ToDoService.DeleteToDoItemAsync(view.ViewModel.ThrowIfNull().Item.ThrowIfNull().Id);
-                DialogViewer.CloseDialog();
+                await DialogViewer.CloseContentDialogAsync();
                 await RefreshToDoItemAsync();
             },
+            _ => DialogViewer.CloseContentDialogAsync(),
             view => view.ViewModel.ThrowIfNull().Item = subItem
         );
     }

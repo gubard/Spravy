@@ -45,11 +45,11 @@ public class ToDoItemValueViewModel : ToDoItemViewModel, IRefreshToDoItem
 
     private Task CompleteToDoItemAsync()
     {
-        return DialogViewer.ShowDialogAsync<CompleteToDoItemView>(
+        return DialogViewer.ShowInfoInputDialogAsync<CompleteToDoItemView>(
+            _ => DialogViewer.CloseInputDialogAsync(),
             view =>
             {
                 var viewModel = view.ViewModel.ThrowIfNull();
-                viewModel.IsDialog = true;
 
                 if (IsCompleted)
                 {
@@ -81,7 +81,7 @@ public class ToDoItemValueViewModel : ToDoItemViewModel, IRefreshToDoItem
                     }
 
                     await RefreshToDoItemAsync();
-                    DialogViewer.CloseDialog();
+                    await DialogViewer.CloseInputDialogAsync();
                 };
             }
         );

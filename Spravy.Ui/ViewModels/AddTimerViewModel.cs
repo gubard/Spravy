@@ -50,15 +50,13 @@ public class AddTimerViewModel : RoutableViewModelBase
         return DialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
             itemNotify =>
             {
-                DialogViewer.CloseDialog();
-
                 Item = new ToDoItemNotify
                 {
                     Id = itemNotify.Id,
                     Name = itemNotify.Name
                 };
 
-                return Task.CompletedTask;
+                return  DialogViewer.CloseInputDialogAsync();
             },
             view =>
             {
@@ -77,10 +75,9 @@ public class AddTimerViewModel : RoutableViewModelBase
         return DialogViewer.ShowDateTimeConfirmDialogAsync(
             value =>
             {
-                DialogViewer.CloseDialog();
                 DueDateTime = value;
 
-                return Task.CompletedTask;
+                return  DialogViewer.CloseInputDialogAsync();
             },
             calendar => calendar.SelectedDate = DateTimeOffset.Now.ToCurrentDay().DateTime,
             clock => clock.SelectedTime = TimeSpan.Zero

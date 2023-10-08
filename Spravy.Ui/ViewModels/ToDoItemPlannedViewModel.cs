@@ -58,10 +58,9 @@ public class ToDoItemPlannedViewModel : ToDoItemViewModel, IRefreshToDoItem
         return DialogViewer.ShowDateConfirmDialogAsync(
             value =>
             {
-                DialogViewer.CloseDialog();
                 DueDate = value;
 
-                return Task.CompletedTask;
+                return DialogViewer.CloseInputDialogAsync();
             },
             calendar => calendar.SelectedDate = DueDate.Date
         );
@@ -69,11 +68,11 @@ public class ToDoItemPlannedViewModel : ToDoItemViewModel, IRefreshToDoItem
 
     private Task CompleteToDoItemAsync()
     {
-        return DialogViewer.ShowDialogAsync<CompleteToDoItemView>(
+        return DialogViewer.ShowInfoInputDialogAsync<CompleteToDoItemView>(
+            _ => DialogViewer.CloseInputDialogAsync(),
             view =>
             {
                 var viewModel = view.ViewModel.ThrowIfNull();
-                viewModel.IsDialog = true;
 
                 if (IsCompleted)
                 {
@@ -105,7 +104,7 @@ public class ToDoItemPlannedViewModel : ToDoItemViewModel, IRefreshToDoItem
                     }
 
                     await RefreshToDoItemAsync();
-                    DialogViewer.CloseDialog();
+                    await DialogViewer.CloseInputDialogAsync();
                 };
             }
         );

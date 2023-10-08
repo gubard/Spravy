@@ -19,14 +19,9 @@ public static class DialogViewerExtension
         Action<TextBox>? setup = null
     )
     {
-        return dialogViewer.ShowConfirmDialogAsync(
-            _ =>
-            {
-                dialogViewer.CloseDialog();
-
-                return Task.CompletedTask;
-            },
+        return dialogViewer.ShowConfirmInputDialogAsync(
             view => confirmTask.Invoke(view.Text.ThrowIfNull()),
+            _ => dialogViewer.CloseInputDialogAsync(),
             setup
         );
     }
@@ -37,14 +32,9 @@ public static class DialogViewerExtension
         Action<TextBox>? setup = null
     )
     {
-        return dialogViewer.ShowConfirmDialogAsync(
-            _ =>
-            {
-                dialogViewer.CloseDialog();
-
-                return Task.CompletedTask;
-            },
+        return dialogViewer.ShowConfirmInputDialogAsync(
             view => confirmTask.Invoke(view.Text.ThrowIfNull()),
+            _ => dialogViewer.CloseInputDialogAsync(),
             (TextBox textBox) =>
             {
                 textBox.AcceptsReturn = true;
@@ -60,14 +50,9 @@ public static class DialogViewerExtension
         Action<Calendar>? setup = null
     )
     {
-        return dialogViewer.ShowConfirmDialogAsync(
-            _ =>
-            {
-                dialogViewer.CloseDialog();
-
-                return Task.CompletedTask;
-            },
+        return dialogViewer.ShowConfirmInputDialogAsync(
             view => confirmTask.Invoke(view.SelectedDate.ThrowIfNullStruct()),
+            _ => dialogViewer.CloseInputDialogAsync(),
             setup
         );
     }
@@ -82,16 +67,11 @@ public static class DialogViewerExtension
         var calendar = new Calendar();
         var clock = new Clock();
 
-        return dialogViewer.ShowConfirmDialogAsync<WrapPanel>(
-            _ =>
-            {
-                dialogViewer.CloseDialog();
-
-                return Task.CompletedTask;
-            },
+        return dialogViewer.ShowConfirmInputDialogAsync<WrapPanel>(
             _ => confirmTask.Invoke(
                 calendar.SelectedDate.ThrowIfNullStruct().Add(clock.SelectedTime.ThrowIfNullStruct())
             ),
+            _ => dialogViewer.CloseInputDialogAsync(),
             wrapPanel =>
             {
                 wrapPanel.Orientation = Orientation.Horizontal;
@@ -109,23 +89,10 @@ public static class DialogViewerExtension
         Action<ToDoItemSelectorView> setup
     )
     {
-        return dialogViewer.ShowConfirmDialogAsync(
-            _ =>
-            {
-                dialogViewer.CloseDialog();
-
-                return Task.CompletedTask;
-            },
+        return dialogViewer.ShowConfirmInputDialogAsync(
             view => confirmTask.Invoke(view.ViewModel.ThrowIfNull().SelectedItem.ThrowIfNull()),
+            _ => dialogViewer.CloseInputDialogAsync(),
             setup
         );
-    }
-
-    public static Task ShowCompleteToDoItemDialogAsync(
-        this IDialogViewer dialogViewer,
-        Action<CompleteToDoItemView> setup
-    )
-    {
-        return dialogViewer.ShowDialogAsync(setup);
     }
 }

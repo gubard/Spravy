@@ -23,6 +23,7 @@ public class CreateUserViewModel : RoutableViewModelBase
     {
         CreateUserCommand = CreateCommandFromTaskWithDialogProgressIndicator(CreateUserAsync);
         EnterCommand = CreateCommandFromTaskWithDialogProgressIndicator<CreateUserView>(EnterAsync);
+        BackCommand = CreateCommand(() => Navigator.NavigateTo<LoginViewModel>());
     }
 
     [Inject]
@@ -36,6 +37,7 @@ public class CreateUserViewModel : RoutableViewModelBase
 
     public ICommand CreateUserCommand { get; }
     public ICommand EnterCommand { get; }
+    public ICommand BackCommand { get; }
 
     public string Login
     {

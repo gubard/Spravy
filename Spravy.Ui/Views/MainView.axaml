@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
              xmlns:dialogHostAvalonia="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
+             xmlns:services="clr-namespace:Spravy.Ui.Services"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Spravy.Ui.Views.MainView"
              x:DataType="vm:MainViewModel">
@@ -17,7 +18,14 @@
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 
-    <dialogHostAvalonia:DialogHost Identifier="MainDialogHost">
-        <ContentControl Content="{Binding SplitView}" />
+    <dialogHostAvalonia:DialogHost Identifier="{x:Static services:DialogViewer.ErrorDialogHostIdentifier}">
+        <dialogHostAvalonia:DialogHost Identifier="{x:Static services:DialogViewer.ProgressDialogHostIdentifier}">
+            <dialogHostAvalonia:DialogHost Identifier="{x:Static services:DialogViewer.InputDialogHostIdentifier}">
+                <dialogHostAvalonia:DialogHost
+                    Identifier="{x:Static services:DialogViewer.ContentDialogHostIdentifier}">
+                    <ContentControl Content="{Binding SplitView}" />
+                </dialogHostAvalonia:DialogHost>
+            </dialogHostAvalonia:DialogHost>
+        </dialogHostAvalonia:DialogHost>
     </dialogHostAvalonia:DialogHost>
 </UserControl>

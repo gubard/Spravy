@@ -169,10 +169,9 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
         return DialogViewer.ShowMultiStringConfirmDialogAsync(
             str =>
             {
-                DialogViewer.CloseDialog();
                 Description = str;
 
-                return Task.CompletedTask;
+                return DialogViewer.CloseInputDialogAsync();
             },
             box =>
             {
@@ -192,13 +191,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
 
     private Task ToDoItemToStringAsync()
     {
-        return DialogViewer.ShowConfirmDialogAsync<ToDoItemToStringSettingsView>(
-            _ =>
-            {
-                DialogViewer.CloseDialog();
-
-                return Task.CompletedTask;
-            },
+        return DialogViewer.ShowConfirmContentDialogAsync<ToDoItemToStringSettingsView>(
             async view =>
             {
                 var options = new ToDoItemToStringOptions(
@@ -208,8 +201,9 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
 
                 var text = await ToDoService.ToDoItemToStringAsync(options);
                 await Clipboard.SetTextAsync(text);
-                DialogViewer.CloseDialog();
-            }
+                await DialogViewer.CloseContentDialogAsync();
+            },
+            view => DialogViewer.CloseContentDialogAsync()
         );
     }
 
@@ -220,7 +214,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
             {
                 await ToDoService.UpdateToDoItemParentAsync(Id, item.Id);
                 await RefreshToDoItemAsync();
-                DialogViewer.CloseDialog();
+                await DialogViewer.CloseInputDialogAsync();
             },
             view =>
             {
@@ -291,23 +285,17 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
 
     private Task AddToDoItemAsync()
     {
-        return DialogViewer.ShowConfirmDialogAsync<AddToDoItemView>(
-            _ =>
-            {
-                DialogViewer.CloseDialog();
-
-                return Task.CompletedTask;
-            },
+        return DialogViewer.ShowConfirmContentDialogAsync<AddToDoItemView>(
             async view =>
             {
                 var viewModel = view.ViewModel.ThrowIfNull();
-                viewModel.IsDialog = true;
                 var parentValue = viewModel.Parent.ThrowIfNull();
                 var options = new AddToDoItemOptions(parentValue.Id, viewModel.Name);
                 await ToDoService.AddToDoItemAsync(options);
                 await ToDoService.NavigateToToDoItemViewModel(parentValue.Id, Navigator);
-                DialogViewer.CloseDialog();
+                await DialogViewer.CloseContentDialogAsync();
             },
+            _ => DialogViewer.CloseContentDialogAsync(),
             view => view.ViewModel.ThrowIfNull().Parent = Mapper.Map<ToDoSubItemNotify>(this)
         );
     }
