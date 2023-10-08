@@ -191,6 +191,9 @@ class Build : NukeBuild
 
                     CopyDirectory(desktopFolder.FullName, desktopAppFolder.FullName, true);
                     SetServiceSettings(desktopAppSettings, 0, null, hosts, "");
+                    DeleteIfExistsDirectory(ftpClient, desktopAppFolder.FullName);
+                    CreateIfNotExistsDirectory(ftpClient, $"/home/{FtpUser}/Apps");
+                    ftpClient.UploadDirectory(desktopAppFolder.FullName, $"/home/{FtpUser}/Apps/Spravy.Ui.Desktop");
                 }
             );
 
@@ -377,6 +380,16 @@ class Build : NukeBuild
                 [Install]
                 WantedBy=multi-user.target
                 """;
+    }
+    
+    static void CreateIfNotExistsDirectory(FtpClient client, string path)
+    {
+        if (client.DirectoryExists(path))
+        {
+            return;
+        }
+
+        client.CreateDirectory(path, true);
     }
 
     static void DeleteIfExistsDirectory(FtpClient client, string path)
