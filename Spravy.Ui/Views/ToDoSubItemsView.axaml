@@ -96,6 +96,13 @@
                                  ItemsSource="{Binding ReadyForCompleted}"
                                  SelectedItems="{Binding SelectedReadyForCompleted}"
                                  IsVisible="{Binding ReadyForCompleted.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                        
+                        <ListBox Classes="ItemsDragAndDrop"
+                                 SelectionMode="Multiple"
+                                 Margin="5"
+                                 ItemsSource="{Binding Planned}"
+                                 SelectedItems="{Binding SelectedPlanned}"
+                                 IsVisible="{Binding Planned.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
 
                         <ListBox Classes="ItemsDragAndDrop"
                                  SelectionMode="Multiple"
@@ -119,6 +126,13 @@
                                  ItemsSource="{Binding ReadyForCompleted}"
                                  SelectedItems="{Binding SelectedReadyForCompleted}"
                                  IsVisible="{Binding ReadyForCompleted.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                        
+                        <ListBox Classes="ItemsDragAndDrop"
+                                 SelectionMode="Multiple"
+                                 Margin="5"
+                                 ItemsSource="{Binding Planned}"
+                                 SelectedItems="{Binding SelectedPlanned}"
+                                 IsVisible="{Binding Planned.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
 
                         <ListBox Classes="ItemsDragAndDrop"
                                  SelectionMode="Multiple"

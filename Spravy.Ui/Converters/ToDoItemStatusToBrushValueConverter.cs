@@ -19,6 +19,7 @@ public class ToDoItemStatusToBrushValueConverter : IValueConverter
         {
             ToDoItemStatus.Miss => new SolidColorBrush(Colors.DarkRed),
             ToDoItemStatus.Completed => new SolidColorBrush(Colors.DarkGreen),
+            ToDoItemStatus.Planned => new SolidColorBrush(Colors.PowderBlue),
             ToDoItemStatus.ReadyForComplete => new SolidColorBrush(Colors.GreenYellow),
             _ => throw new ArgumentOutOfRangeException()
         };
@@ -44,6 +45,11 @@ public class ToDoItemStatusToBrushValueConverter : IValueConverter
         if (brush.Color == Colors.GreenYellow)
         {
             return ToDoItemStatus.ReadyForComplete;
+        }
+        
+        if (brush.Color == Colors.PowderBlue)
+        {
+            return ToDoItemStatus.Planned;
         }
 
         throw new ArgumentOutOfRangeException();

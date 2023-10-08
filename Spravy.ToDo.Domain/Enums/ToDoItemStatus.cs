@@ -12,6 +12,8 @@ public enum ToDoItemStatus
     /// </summary>
     ReadyForComplete,
 
+    Planned,
+
     /// <summary>
     /// To do item is complete.
     /// </summary>

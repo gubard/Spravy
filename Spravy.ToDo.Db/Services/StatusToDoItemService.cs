@@ -48,7 +48,7 @@ public class StatusToDoItemService
 
         if (entity.DueDate > DateTimeOffset.Now.ToCurrentDay())
         {
-            return ToDoItemStatus.Completed;
+            return ToDoItemStatus.Planned;
         }
 
         var items = await context.Set<ToDoItemEntity>().Where(x => x.ParentId == entity.Id).ToArrayAsync();
@@ -64,6 +64,10 @@ public class StatusToDoItemService
                     return ToDoItemStatus.Miss;
                 }
                 case ToDoItemStatus.ReadyForComplete:
+                {
+                    break;
+                }
+                case ToDoItemStatus.Planned:
                 {
                     break;
                 }
@@ -95,7 +99,7 @@ public class StatusToDoItemService
 
         if (entity.DueDate > DateTimeOffset.Now.ToCurrentDay())
         {
-            return ToDoItemStatus.Completed.ToTaskResult();
+            return ToDoItemStatus.Planned.ToTaskResult();
         }
 
         throw new ArgumentOutOfRangeException();
@@ -105,6 +109,7 @@ public class StatusToDoItemService
     {
         var items = await context.Set<ToDoItemEntity>().Where(x => x.ParentId == entity.Id).ToArrayAsync();
         var completedCount = 0;
+        var def = ToDoItemStatus.ReadyForComplete;
 
         foreach (var item in items)
         {
@@ -118,6 +123,12 @@ public class StatusToDoItemService
                 }
                 case ToDoItemStatus.ReadyForComplete:
                 {
+                    break;
+                }
+                case ToDoItemStatus.Planned:
+                {
+                    def = ToDoItemStatus.Planned;
+
                     break;
                 }
                 case ToDoItemStatus.Completed:
@@ -138,7 +149,7 @@ public class StatusToDoItemService
             return ToDoItemStatus.Completed;
         }
 
-        return ToDoItemStatus.ReadyForComplete;
+        return def;
     }
 
     private async Task<ToDoItemStatus> GetValueStatusAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
@@ -149,6 +160,7 @@ public class StatusToDoItemService
         }
 
         var items = await context.Set<ToDoItemEntity>().Where(x => x.ParentId == entity.Id).ToArrayAsync();
+        var def = ToDoItemStatus.ReadyForComplete;
 
         foreach (var item in items)
         {
@@ -164,6 +176,12 @@ public class StatusToDoItemService
                 {
                     break;
                 }
+                case ToDoItemStatus.Planned:
+                {
+                    def = ToDoItemStatus.Planned;
+
+                    break;
+                }
                 case ToDoItemStatus.Completed:
                 {
                     break;
@@ -175,6 +193,6 @@ public class StatusToDoItemService
             }
         }
 
-        return ToDoItemStatus.ReadyForComplete;
+        return def;
     }
 }

@@ -140,6 +140,8 @@ public class ActiveToDoItemToDoItemService
                     result ??= activeItem;
 
                     break;
+                case ToDoItemStatus.Planned:
+                    break;
                 case ToDoItemStatus.Completed:
                     break;
                 default:

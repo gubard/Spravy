@@ -425,9 +425,10 @@ enum DayOfWeekGrpc {
 }
 
 enum ToDoItemStatusGrpc {
-  Miss = 0;
-  ReadyForComplete = 1;
-  Completed = 2;
+  StatusMiss = 0;
+  StatusReadyForComplete = 1;
+  StatusPlanned = 2;
+  StatusCompleted = 3;
 }
 
 enum ToDoItemTypeGrpc {

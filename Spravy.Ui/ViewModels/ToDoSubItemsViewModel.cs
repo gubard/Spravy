@@ -37,10 +37,12 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
     }
 
     public AvaloniaList<ToDoSubItemNotify> Missed { get; } = new();
+    public AvaloniaList<ToDoSubItemNotify> Planned { get; } = new();
     public AvaloniaList<ToDoSubItemNotify> ReadyForCompleted { get; } = new();
     public AvaloniaList<ToDoSubItemNotify> Completed { get; } = new();
     public AvaloniaList<ToDoSubItemNotify> CurrentToDoItems { get; } = new();
     public AvaloniaList<ToDoSubItemNotify> SelectedMissed { get; } = new();
+    public AvaloniaList<ToDoSubItemNotify> SelectedPlanned { get; } = new();
     public AvaloniaList<ToDoSubItemNotify> SelectedReadyForCompleted { get; } = new();
     public AvaloniaList<ToDoSubItemNotify> SelectedCompleted { get; } = new();
     public AvaloniaList<ToDoSubItemNotify> SelectedCurrentToDoItems { get; } = new();
@@ -74,6 +76,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                     await CompleteAsync(SelectedMissed, status);
                     await CompleteAsync(SelectedCurrentToDoItems, status);
                     await CompleteAsync(SelectedReadyForCompleted, status);
+                    await CompleteAsync(SelectedPlanned, status);
                     await RefreshToDoItemAsync();
                     DialogViewer.CloseDialog();
                 };
@@ -144,8 +147,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                         case CompleteStatus.Fail:
                             await ToDoService.FailToDoItemAsync(subItemValue.Id);
                             break;
-                        default:
-                            throw new ArgumentOutOfRangeException(nameof(status), status, null);
+                        default: throw new ArgumentOutOfRangeException(nameof(status), status, null);
                     }
 
                     await RefreshToDoItemAsync();
@@ -192,8 +194,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                             }
 
                             break;
-                        default:
-                            throw new ArgumentOutOfRangeException(nameof(item));
+                        default: throw new ArgumentOutOfRangeException(nameof(item));
                     }
                 }
 
@@ -215,8 +216,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                         case ToDoSubItemValueNotify:
                             await ToDoService.SkipToDoItemAsync(item.Id);
                             break;
-                        default:
-                            throw new ArgumentOutOfRangeException(nameof(item));
+                        default: throw new ArgumentOutOfRangeException(nameof(item));
                     }
                 }
 
@@ -238,8 +238,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                         case ToDoSubItemValueNotify:
                             await ToDoService.FailToDoItemAsync(item.Id);
                             break;
-                        default:
-                            throw new ArgumentOutOfRangeException(nameof(item));
+                        default: throw new ArgumentOutOfRangeException(nameof(item));
                     }
                 }
 
@@ -254,10 +253,8 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                             {
                                 throw new ArgumentException(nameof(item));
                             }
-                            else
-                            {
-                                await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
-                            }
+
+                            await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
 
                             break;
                         case ToDoSubItemValueNotify toDoSubItemValueNotify:
@@ -265,20 +262,16 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                             {
                                 throw new ArgumentException(nameof(item));
                             }
-                            else
-                            {
-                                await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
-                            }
+
+                            await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
 
                             break;
-                        default:
-                            throw new ArgumentOutOfRangeException(nameof(item));
+                        default: throw new ArgumentOutOfRangeException(nameof(item));
                     }
                 }
 
                 break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(status), status, null);
+            default: throw new ArgumentOutOfRangeException(nameof(status), status, null);
         }
     }
 
@@ -340,5 +333,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
         ReadyForCompleted.AddRange(itemsArray.Where(x => x.Status == ToDoItemStatus.ReadyForComplete));
         Completed.Clear();
         Completed.AddRange(itemsArray.Where(x => x.Status == ToDoItemStatus.Completed));
+        Planned.Clear();
+        Planned.AddRange(itemsArray.Where(x => x.Status == ToDoItemStatus.Planned));
     }
 }
