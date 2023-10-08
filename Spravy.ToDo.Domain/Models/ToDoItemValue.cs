@@ -12,7 +12,7 @@ public readonly struct ToDoItemValue : IToDoItem
         ToDoItemParent[] parents,
         bool isCompleted,
         string description,
-        bool isCurrent,
+        bool isPinned,
         ToDoItemChildrenType childrenType
     )
     {
@@ -21,7 +21,7 @@ public readonly struct ToDoItemValue : IToDoItem
         Parents = parents;
         IsCompleted = isCompleted;
         Description = description;
-        IsCurrent = isCurrent;
+        IsPinned = isPinned;
         ChildrenType = childrenType;
         Id = id;
     }
@@ -31,7 +31,7 @@ public readonly struct ToDoItemValue : IToDoItem
     public bool IsCompleted { get; }
     public IToDoSubItem[] Items { get; }
     public ToDoItemParent[] Parents { get; }
-    public bool IsCurrent { get; }
+    public bool IsPinned { get; }
     public ToDoItemChildrenType ChildrenType { get; }
     public string Description { get; }
 }

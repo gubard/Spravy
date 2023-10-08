@@ -792,31 +792,31 @@ public class EfToDoService : IToDoService
         await context.SaveChangesAsync();
     }
 
-    public async Task AddCurrentToDoItemAsync(Guid id)
+    public async Task AddPinnedToDoItemAsync(Guid id)
     {
         await using var context = dbContextFactory.Create();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
-        item.IsCurrent = true;
+        item.IsPinned = true;
         await context.SaveChangesAsync();
     }
 
-    public async Task RemoveCurrentToDoItemAsync(Guid id)
+    public async Task RemovePinnedToDoItemAsync(Guid id)
     {
         await using var context = dbContextFactory.Create();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
-        item.IsCurrent = false;
+        item.IsPinned = false;
         await context.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<IToDoSubItem>> GetCurrentToDoItemsAsync()
+    public async Task<IEnumerable<IToDoSubItem>> GetPinnedToDoItemsAsync()
     {
         await using var context = dbContextFactory.Create();
 
         var items = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
-            .Where(x => x.IsCurrent)
+            .Where(x => x.IsPinned)
             .OrderBy(x => x.OrderIndex)
             .ToArrayAsync();
 

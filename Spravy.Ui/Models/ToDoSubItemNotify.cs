@@ -11,7 +11,7 @@ public abstract class ToDoSubItemNotify : NotifyBase, IEquatable<ToDoSubItemNoti
     private ulong orderIndex;
     private ToDoItemStatus status;
     private string description = string.Empty;
-    private bool isCurrent;
+    private bool isPinned;
     private ActiveToDoItemNotify? active;
     private DateTimeOffset? lastCompleted;
     private bool isVisible = true;
@@ -52,10 +52,10 @@ public abstract class ToDoSubItemNotify : NotifyBase, IEquatable<ToDoSubItemNoti
         set => this.RaiseAndSetIfChanged(ref description, value);
     }
 
-    public bool IsCurrent
+    public bool IsPinned
     {
-        get => isCurrent;
-        set => this.RaiseAndSetIfChanged(ref isCurrent, value);
+        get => isPinned;
+        set => this.RaiseAndSetIfChanged(ref isPinned, value);
     }
 
     public ActiveToDoItemNotify? Active

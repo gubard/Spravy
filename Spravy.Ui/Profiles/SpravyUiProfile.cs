@@ -32,18 +32,18 @@ public class SpravyUiProfile : Profile
         CreateMap<CreateUserViewModel, CreateUserOptions>();
         CreateMap<CreateUserViewModel, User>();
         CreateMap<LoginViewModel, User>();
-        CreateMap<TimerItem, TimerItemToDoItemCurrentNotify>()
+        CreateMap<TimerItem, TimerItemToDoItemPinnedNotify>()
             .ConvertUsing(
-                (item, _, _) => new TimerItemToDoItemCurrentNotify
+                (item, _, _) => new TimerItemToDoItemPinnedNotify
                 {
                     DueDateTime = item.DueDateTime,
                     Id = item.Id,
-                    IsCurrent = ChangeToDoItemIsCurrentEvent.Parser.ParseFrom(item.Content).IsCurrent
+                    IsPinned = ChangeToDoItemIsPinnedEvent.Parser.ParseFrom(item.Content).IsPinned
                 }
             );
 
         CreateMap<TimerItem, TimerItemNotify>()
-            .ConvertUsing((item, _, context) => context.Mapper.Map<TimerItemToDoItemCurrentNotify>(item));
+            .ConvertUsing((item, _, context) => context.Mapper.Map<TimerItemToDoItemPinnedNotify>(item));
         CreateMap<AddRootToDoItemViewModel, AddRootToDoItemOptions>()
             .ConstructUsing(x => new AddRootToDoItemOptions(x.Name));
         CreateMap<ToDoSubItemValueNotify, AddToDoItemOptions>()
@@ -53,14 +53,14 @@ public class SpravyUiProfile : Profile
             .ConvertUsing(
                 (source, _, context) =>
                 {
-                    var changeToDoItemIsCurrentEvent = new ChangeToDoItemIsCurrentEvent
+                    var changeToDoItemIsPinnedEvent = new ChangeToDoItemIsPinnedEvent
                     {
-                        IsCurrent = source.IsCurrent,
+                        IsPinned = source.IsPinned,
                         ToDoItemId = context.Mapper.Map<ByteString>(source.Item.ThrowIfNull().Id),
                     };
 
                     using var stream = new MemoryStream();
-                    changeToDoItemIsCurrentEvent.WriteTo(stream);
+                    changeToDoItemIsPinnedEvent.WriteTo(stream);
 
                     return new AddTimerParameters(
                         source.DueDateTime,

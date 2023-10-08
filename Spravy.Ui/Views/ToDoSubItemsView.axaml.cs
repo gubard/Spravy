@@ -13,7 +13,7 @@ namespace Spravy.Ui.Views;
 public partial class ToDoSubItemsView : MainReactiveUserControl<ToDoSubItemsViewModel>,
     IToDoItemView,
     ICompleteSubToDoItemCommand,
-    IChangeCurrentStatusToDoItemCommand
+    IChangePinnedToDoItemCommand
 {
     public const string MainScrollViewerName = "MainScrollViewer";
     public const string ScrollUpButtonName = "ScrollUpButton";
@@ -31,8 +31,8 @@ public partial class ToDoSubItemsView : MainReactiveUserControl<ToDoSubItemsView
     public ICommand CompleteSubToDoItemCommand => ViewModel.ThrowIfNull().CompleteSubToDoItemCommand;
     public ICommand DeleteSubToDoItemCommand => ViewModel.ThrowIfNull().DeleteSubToDoItemCommand;
     public ICommand ChangeToDoItemCommand => ViewModel.ThrowIfNull().ChangeToDoItemCommand;
-    public ICommand AddSubToDoItemToCurrentCommand => ViewModel.ThrowIfNull().AddSubToDoItemToCurrentCommand;
-    public ICommand RemoveSubToDoItemFromCurrentCommand => ViewModel.ThrowIfNull().RemoveSubToDoItemFromCurrentCommand;
+    public ICommand AddSubToDoItemToPinnedCommand => ViewModel.ThrowIfNull().AddSubToDoItemToPinnedCommand;
+    public ICommand RemoveSubToDoItemFromPinnedCommand => ViewModel.ThrowIfNull().RemoveSubToDoItemFromPinnedCommand;
     public ICommand ChangeToActiveDoItemCommand => ViewModel.ThrowIfNull().ChangeToActiveDoItemCommand;
 
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)

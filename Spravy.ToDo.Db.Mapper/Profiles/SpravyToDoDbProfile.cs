@@ -45,7 +45,7 @@ public class SpravyToDoDbProfile : Profile
                         source.CompletedCount,
                         source.SkippedCount,
                         source.FailedCount,
-                        source.IsCurrent,
+                        source.IsPinned,
                         (ActiveToDoItem?)resolutionContext.Items[ActiveName],
                         source.LastCompleted
                     ),
@@ -55,7 +55,7 @@ public class SpravyToDoDbProfile : Profile
                         source.OrderIndex,
                         (ToDoItemStatus)resolutionContext.Items[StatusName],
                         source.Description,
-                        source.IsCurrent,
+                        source.IsPinned,
                         (ActiveToDoItem?)resolutionContext.Items[ActiveName],
                         source.LastCompleted
                     ),
@@ -65,7 +65,7 @@ public class SpravyToDoDbProfile : Profile
                         source.OrderIndex,
                         (ToDoItemStatus)resolutionContext.Items[StatusName],
                         source.Description,
-                        source.IsCurrent,
+                        source.IsPinned,
                         (ActiveToDoItem?)resolutionContext.Items[ActiveName],
                         source.DueDate,
                         source.CompletedCount,
@@ -80,7 +80,7 @@ public class SpravyToDoDbProfile : Profile
                         source.OrderIndex,
                         (ToDoItemStatus)resolutionContext.Items[StatusName],
                         source.Description,
-                        source.IsCurrent,
+                        source.IsPinned,
                         source.DueDate,
                         (ActiveToDoItem?)resolutionContext.Items[ActiveName],
                         source.CompletedCount,
@@ -94,7 +94,7 @@ public class SpravyToDoDbProfile : Profile
                         source.OrderIndex,
                         (ToDoItemStatus)resolutionContext.Items[StatusName],
                         source.Description,
-                        source.IsCurrent,
+                        source.IsPinned,
                         source.DueDate,
                         (ActiveToDoItem?)resolutionContext.Items[ActiveName],
                         source.CompletedCount,
@@ -117,7 +117,7 @@ public class SpravyToDoDbProfile : Profile
                         (ToDoItemParent[])resolutionContext.Items[ParentsName],
                         source.IsCompleted,
                         source.Description,
-                        source.IsCurrent,
+                        source.IsPinned,
                         source.ChildrenType
                     ),
                     ToDoItemType.Group => new ToDoItemGroup(
@@ -126,7 +126,7 @@ public class SpravyToDoDbProfile : Profile
                         (IToDoSubItem[])resolutionContext.Items[ItemsName],
                         (ToDoItemParent[])resolutionContext.Items[ParentsName],
                         source.Description,
-                        source.IsCurrent
+                        source.IsPinned
                     ),
                     ToDoItemType.Planned => new ToDoItemPlanned(
                         source.Id,
@@ -134,7 +134,7 @@ public class SpravyToDoDbProfile : Profile
                         source.Description,
                         (IToDoSubItem[])resolutionContext.Items[ItemsName],
                         (ToDoItemParent[])resolutionContext.Items[ParentsName],
-                        source.IsCurrent,
+                        source.IsPinned,
                         source.DueDate,
                         source.IsCompleted,
                         source.ChildrenType
@@ -145,7 +145,7 @@ public class SpravyToDoDbProfile : Profile
                         source.Description,
                         (IToDoSubItem[])resolutionContext.Items[ItemsName],
                         (ToDoItemParent[])resolutionContext.Items[ParentsName],
-                        source.IsCurrent,
+                        source.IsPinned,
                         source.DueDate,
                         source.TypeOfPeriodicity switch
                         {
@@ -163,7 +163,7 @@ public class SpravyToDoDbProfile : Profile
                         source.Description,
                         (IToDoSubItem[])resolutionContext.Items[ItemsName],
                         (ToDoItemParent[])resolutionContext.Items[ParentsName],
-                        source.IsCurrent,
+                        source.IsPinned,
                         source.DaysOffset,
                         source.MonthsOffset,
                         source.WeeksOffset,

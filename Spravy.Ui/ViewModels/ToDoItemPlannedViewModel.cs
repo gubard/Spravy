@@ -150,7 +150,7 @@ public class ToDoItemPlannedViewModel : ToDoItemViewModel, IRefreshToDoItem
 
                 return;
             case ToDoItemPlanned toDoItemPlanned:
-                IsCurrent = item.IsCurrent;
+                IsPinned = item.IsPinned;
                 Name = toDoItemPlanned.Name;
                 Type = ToDoItemType.Planned;
                 IsCompleted = toDoItemPlanned.IsCompleted;

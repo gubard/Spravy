@@ -49,9 +49,9 @@
     </Application.Styles>
 
     <Application.DataTemplates>
-        <DataTemplate x:DataType="models:TimerItemToDoItemCurrentNotify">
+        <DataTemplate x:DataType="models:TimerItemToDoItemPinnedNotify">
             <StackPanel>
-                <CheckBox IsChecked="{Binding IsCurrent}" />
+                <CheckBox IsChecked="{Binding IsPinned}" />
                 <TextBlock Text="{Binding DueDateTime, StringFormat=\{0:yyyy.MM.dd HH:mm zzz\}}" />
             </StackPanel>
         </DataTemplate>
@@ -166,17 +166,17 @@
                             </Button>
 
                             <Button Grid.Row="1"
-                                    Command="{Binding $parent[interfaces:IChangeCurrentStatusToDoItemCommand].RemoveSubToDoItemFromCurrentCommand}"
+                                    Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].RemoveSubToDoItemFromPinnedCommand}"
                                     CommandParameter="{Binding}"
-                                    IsVisible="{Binding IsCurrent}">
-                                <avalonia:MaterialIcon Kind="Star" />
+                                    IsVisible="{Binding IsPinned}">
+                                <avalonia:MaterialIcon Kind="Pin" />
                             </Button>
 
                             <Button Grid.Row="1"
-                                    Command="{Binding $parent[interfaces:IChangeCurrentStatusToDoItemCommand].AddSubToDoItemToCurrentCommand}"
+                                    Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].AddSubToDoItemToPinnedCommand}"
                                     CommandParameter="{Binding}"
-                                    IsVisible="{Binding IsCurrent, Converter={StaticResource ReverseBooleanValueConverter}}">
-                                <avalonia:MaterialIcon Kind="StarOutline" />
+                                    IsVisible="{Binding IsPinned, Converter={StaticResource ReverseBooleanValueConverter}}">
+                                <avalonia:MaterialIcon Kind="PinOutline" />
                             </Button>
 
                             <Button Grid.Column="1"
@@ -231,17 +231,17 @@
                             </Button>
 
                             <Button Grid.Row="1"
-                                    Command="{Binding $parent[interfaces:IChangeCurrentStatusToDoItemCommand].RemoveSubToDoItemFromCurrentCommand}"
+                                    Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].RemoveSubToDoItemFromPinnedCommand}"
                                     CommandParameter="{Binding}"
-                                    IsVisible="{Binding IsCurrent}">
-                                <avalonia:MaterialIcon Kind="Star" />
+                                    IsVisible="{Binding IsPinned}">
+                                <avalonia:MaterialIcon Kind="Pin" />
                             </Button>
 
                             <Button Grid.Row="1"
-                                    Command="{Binding $parent[interfaces:IChangeCurrentStatusToDoItemCommand].AddSubToDoItemToCurrentCommand}"
+                                    Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].AddSubToDoItemToPinnedCommand}"
                                     CommandParameter="{Binding}"
-                                    IsVisible="{Binding IsCurrent, Converter={StaticResource ReverseBooleanValueConverter}}">
-                                <avalonia:MaterialIcon Kind="StarOutline" />
+                                    IsVisible="{Binding IsPinned, Converter={StaticResource ReverseBooleanValueConverter}}">
+                                <avalonia:MaterialIcon Kind="PinOutline" />
                             </Button>
 
                             <Button Grid.Column="1"
@@ -342,17 +342,17 @@
                             </Button>
 
                             <Button Grid.Row="1"
-                                    Command="{Binding $parent[interfaces:IChangeCurrentStatusToDoItemCommand].RemoveSubToDoItemFromCurrentCommand}"
+                                    Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].RemoveSubToDoItemFromPinnedCommand}"
                                     CommandParameter="{Binding}"
-                                    IsVisible="{Binding IsCurrent}">
-                                <avalonia:MaterialIcon Kind="Star" />
+                                    IsVisible="{Binding IsPinned}">
+                                <avalonia:MaterialIcon Kind="Pin" />
                             </Button>
 
                             <Button Grid.Row="1"
-                                    Command="{Binding $parent[interfaces:IChangeCurrentStatusToDoItemCommand].AddSubToDoItemToCurrentCommand}"
+                                    Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].AddSubToDoItemToPinnedCommand}"
                                     CommandParameter="{Binding}"
-                                    IsVisible="{Binding IsCurrent, Converter={StaticResource ReverseBooleanValueConverter}}">
-                                <avalonia:MaterialIcon Kind="StarOutline" />
+                                    IsVisible="{Binding IsPinned, Converter={StaticResource ReverseBooleanValueConverter}}">
+                                <avalonia:MaterialIcon Kind="PinOutline" />
                             </Button>
 
                             <Button Grid.Column="1"
@@ -448,17 +448,17 @@
                             </Button>
 
                             <Button Grid.Row="1"
-                                    Command="{Binding $parent[interfaces:IChangeCurrentStatusToDoItemCommand].RemoveSubToDoItemFromCurrentCommand}"
+                                    Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].RemoveSubToDoItemFromPinnedCommand}"
                                     CommandParameter="{Binding}"
-                                    IsVisible="{Binding IsCurrent}">
-                                <avalonia:MaterialIcon Kind="Star" />
+                                    IsVisible="{Binding IsPinned}">
+                                <avalonia:MaterialIcon Kind="Pin" />
                             </Button>
 
                             <Button Grid.Row="1"
-                                    Command="{Binding $parent[interfaces:IChangeCurrentStatusToDoItemCommand].AddSubToDoItemToCurrentCommand}"
+                                    Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].AddSubToDoItemToPinnedCommand}"
                                     CommandParameter="{Binding}"
-                                    IsVisible="{Binding IsCurrent, Converter={StaticResource ReverseBooleanValueConverter}}">
-                                <avalonia:MaterialIcon Kind="StarOutline" />
+                                    IsVisible="{Binding IsPinned, Converter={StaticResource ReverseBooleanValueConverter}}">
+                                <avalonia:MaterialIcon Kind="PinOutline" />
                             </Button>
 
                             <Button Grid.Column="1"
@@ -554,17 +554,17 @@
                             </Button>
 
                             <Button Grid.Row="1"
-                                    Command="{Binding $parent[interfaces:IChangeCurrentStatusToDoItemCommand].RemoveSubToDoItemFromCurrentCommand}"
+                                    Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].RemoveSubToDoItemFromPinnedCommand}"
                                     CommandParameter="{Binding}"
-                                    IsVisible="{Binding IsCurrent}">
-                                <avalonia:MaterialIcon Kind="Star" />
+                                    IsVisible="{Binding IsPinned}">
+                                <avalonia:MaterialIcon Kind="Pin" />
                             </Button>
 
                             <Button Grid.Row="1"
-                                    Command="{Binding $parent[interfaces:IChangeCurrentStatusToDoItemCommand].AddSubToDoItemToCurrentCommand}"
+                                    Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].AddSubToDoItemToPinnedCommand}"
                                     CommandParameter="{Binding}"
-                                    IsVisible="{Binding IsCurrent, Converter={StaticResource ReverseBooleanValueConverter}}">
-                                <avalonia:MaterialIcon Kind="StarOutline" />
+                                    IsVisible="{Binding IsPinned, Converter={StaticResource ReverseBooleanValueConverter}}">
+                                <avalonia:MaterialIcon Kind="PinOutline" />
                             </Button>
 
                             <Button Grid.Column="1"

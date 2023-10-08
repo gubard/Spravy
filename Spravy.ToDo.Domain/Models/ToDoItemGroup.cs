@@ -10,7 +10,7 @@ public readonly struct ToDoItemGroup : IToDoItem
         IToDoSubItem[] items,
         ToDoItemParent[] parents,
         string description,
-        bool isCurrent
+        bool isPinned
     )
     {
         Id = id;
@@ -18,13 +18,13 @@ public readonly struct ToDoItemGroup : IToDoItem
         Items = items;
         Parents = parents;
         Description = description;
-        IsCurrent = isCurrent;
+        IsPinned = isPinned;
     }
 
     public Guid Id { get; }
     public string Name { get; }
     public IToDoSubItem[] Items { get; }
     public ToDoItemParent[] Parents { get; }
-    public bool IsCurrent { get; }
+    public bool IsPinned { get; }
     public string Description { get; }
 }

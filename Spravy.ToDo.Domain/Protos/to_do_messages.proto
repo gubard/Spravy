@@ -123,25 +123,25 @@ message ActiveToDoItemGrpc {
   string Name = 2;
 }
 
-message GetCurrentToDoItemsRequest {
+message GetPinnedToDoItemsRequest {
 }
 
-message GetCurrentToDoItemsReply {
+message GetPinnedToDoItemsReply {
   repeated ToDoSubItemGrpc Items = 1;
 }
 
-message RemoveCurrentToDoItemRequest {
+message RemovePinnedToDoItemRequest {
   bytes Id = 1;
 }
 
-message RemoveCurrentToDoItemReply {
+message RemovePinnedToDoItemReply {
 }
 
-message AddCurrentToDoItemRequest {
+message AddPinnedToDoItemRequest {
   bytes Id = 1;
 }
 
-message AddCurrentToDoItemReply {
+message AddPinnedToDoItemReply {
 }
 
 message SearchToDoSubItemsRequest {
@@ -262,7 +262,7 @@ message ToDoItemGrpc {
   repeated ToDoSubItemGrpc Items = 3;
   repeated ToDoItemParentGrpc Parents = 4;
   string Description = 5;
-  bool IsCurrent = 8;
+  bool IsPinned = 8;
 
   oneof Parameters {
     ToDoItemValueGrpc Value = 6;
@@ -310,7 +310,7 @@ message ToDoSubItemGrpc {
   uint32 OrderIndex = 3;
   ToDoItemStatusGrpc Status = 4;
   string Description = 5;
-  bool IsCurrent = 8;
+  bool IsPinned = 8;
   ActiveToDoItemGrpc Active = 9;
   DateTimeOffsetGrpc LastCompleted = 12; 
 

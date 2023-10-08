@@ -77,9 +77,9 @@
             <StackPanel>
                 <ListBox SelectionMode="Multiple"
                          Margin="5"
-                         ItemsSource="{Binding CurrentToDoItems}"
-                         IsVisible="{Binding CurrentToDoItems.Count, Converter={StaticResource Int32ToIsVisibleConverter}}"
-                         SelectedItems="{Binding SelectedCurrentToDoItems}" />
+                         ItemsSource="{Binding PinnedToDoItems}"
+                         IsVisible="{Binding PinnedToDoItems.Count, Converter={StaticResource Int32ToIsVisibleConverter}}"
+                         SelectedItems="{Binding SelectedPinnedToDoItems}" />
 
                 <Panel>
                     <UniformGrid Classes="adaptive" Rows="1">

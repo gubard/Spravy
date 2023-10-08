@@ -11,7 +11,7 @@ public readonly struct ToDoItemPeriodicity : IToDoItem
         string description,
         IToDoSubItem[] items,
         ToDoItemParent[] parents,
-        bool isCurrent,
+        bool isPinned,
         DateTimeOffset dueDate,
         IPeriodicity periodicity,
         ToDoItemChildrenType childrenType
@@ -22,7 +22,7 @@ public readonly struct ToDoItemPeriodicity : IToDoItem
         Description = description;
         Items = items;
         Parents = parents;
-        IsCurrent = isCurrent;
+        IsPinned = isPinned;
         DueDate = dueDate;
         Periodicity = periodicity;
         ChildrenType = childrenType;
@@ -33,7 +33,7 @@ public readonly struct ToDoItemPeriodicity : IToDoItem
     public string Description { get; }
     public IToDoSubItem[] Items { get; }
     public ToDoItemParent[] Parents { get; }
-    public bool IsCurrent { get; }
+    public bool IsPinned { get; }
     public ToDoItemChildrenType ChildrenType { get; }
     public DateTimeOffset DueDate { get; }
     public IPeriodicity Periodicity { get; }

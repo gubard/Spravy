@@ -29,9 +29,9 @@ message SubscribeEventsReply {
   bytes Content = 2;
 }
 
-message ChangeToDoItemIsCurrentEvent {
+message ChangeToDoItemIsPinnedEvent {
   bytes ToDoItemId = 1;
-  bool IsCurrent = 2;
+  bool IsPinned = 2;
 }
 
 message Event {

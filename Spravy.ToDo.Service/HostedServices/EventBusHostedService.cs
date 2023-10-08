@@ -24,7 +24,7 @@ public class EventBusHostedService : IHostedService
     {
         eventIds = new[]
         {
-            EventIdHelper.ChangeCurrentId
+            EventIdHelper.ChangePinnedId
         };
     }
 
@@ -80,9 +80,9 @@ public class EventBusHostedService : IHostedService
 
                     await foreach (var eventValue in stream)
                     {
-                        if (eventValue.Id == EventIdHelper.ChangeCurrentId)
+                        if (eventValue.Id == EventIdHelper.ChangePinnedId)
                         {
-                            await ChangeCurrentAsync(file, eventValue, source.Token);
+                            await ChangePinnedAsync(file, eventValue, source.Token);
                         }
                     }
                 }
@@ -101,10 +101,10 @@ public class EventBusHostedService : IHostedService
         }
     }
 
-    private async Task ChangeCurrentAsync(FileInfo file, EventValue eventValue, CancellationToken cancellationToken)
+    private async Task ChangePinnedAsync(FileInfo file, EventValue eventValue, CancellationToken cancellationToken)
     {
         await using var context = spravyToDoDbContext.Create(file.ToSqliteConnectionString());
-        var eventContent = ChangeToDoItemIsCurrentEvent.Parser.ParseFrom(eventValue.Content);
+        var eventContent = ChangeToDoItemIsPinnedEvent.Parser.ParseFrom(eventValue.Content);
         var id = new Guid(eventContent.ToDoItemId.ToByteArray());
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
 
@@ -113,7 +113,7 @@ public class EventBusHostedService : IHostedService
             return;
         }
 
-        item.IsCurrent = eventContent.IsCurrent;
+        item.IsPinned = eventContent.IsPinned;
         await context.SaveChangesAsync(cancellationToken);
     }
 }

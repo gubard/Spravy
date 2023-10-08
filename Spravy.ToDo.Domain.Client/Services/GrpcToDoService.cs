@@ -266,13 +266,13 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public Task AddCurrentToDoItemAsync(Guid id)
+    public Task AddPinnedToDoItemAsync(Guid id)
     {
         return CallClientAsync(
             async client =>
             {
-                await client.AddCurrentToDoItemAsync(
-                    new AddCurrentToDoItemRequest
+                await client.AddPinnedToDoItemAsync(
+                    new AddPinnedToDoItemRequest
                     {
                         Id = mapper.Map<ByteString>(id),
                     },
@@ -282,13 +282,13 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public Task RemoveCurrentToDoItemAsync(Guid id)
+    public Task RemovePinnedToDoItemAsync(Guid id)
     {
         return CallClientAsync(
             async client =>
             {
-                await client.RemoveCurrentToDoItemAsync(
-                    new RemoveCurrentToDoItemRequest
+                await client.RemovePinnedToDoItemAsync(
+                    new RemovePinnedToDoItemRequest
                     {
                         Id = mapper.Map<ByteString>(id),
                     },
@@ -298,13 +298,13 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public Task<IEnumerable<IToDoSubItem>> GetCurrentToDoItemsAsync()
+    public Task<IEnumerable<IToDoSubItem>> GetPinnedToDoItemsAsync()
     {
         return CallClientAsync(
             async client =>
             {
-                var reply = await client.GetCurrentToDoItemsAsync(
-                    new GetCurrentToDoItemsRequest(),
+                var reply = await client.GetPinnedToDoItemsAsync(
+                    new GetPinnedToDoItemsRequest(),
                     await metadataFactory.CreateAsync()
                 );
 

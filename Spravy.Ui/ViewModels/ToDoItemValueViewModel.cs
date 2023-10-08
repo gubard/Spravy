@@ -119,7 +119,7 @@ public class ToDoItemValueViewModel : ToDoItemViewModel, IRefreshToDoItem
 
                 return;
             case ToDoItemValue toDoItemValue:
-                IsCurrent = item.IsCurrent;
+                IsPinned = item.IsPinned;
                 Name = toDoItemValue.Name;
                 Type = ToDoItemType.Value;
                 IsCompleted = toDoItemValue.IsCompleted;

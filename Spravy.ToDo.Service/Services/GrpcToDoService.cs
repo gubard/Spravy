@@ -184,33 +184,33 @@ public class GrpcToDoService : ToDoServiceBase
         return new UpdateToDoItemTypeReply();
     }
 
-    public override async Task<AddCurrentToDoItemReply> AddCurrentToDoItem(
-        AddCurrentToDoItemRequest request,
+    public override async Task<AddPinnedToDoItemReply> AddPinnedToDoItem(
+        AddPinnedToDoItemRequest request,
         ServerCallContext context
     )
     {
-        await toDoService.AddCurrentToDoItemAsync(mapper.Map<Guid>(request.Id));
+        await toDoService.AddPinnedToDoItemAsync(mapper.Map<Guid>(request.Id));
 
-        return new AddCurrentToDoItemReply();
+        return new AddPinnedToDoItemReply();
     }
 
-    public override async Task<RemoveCurrentToDoItemReply> RemoveCurrentToDoItem(
-        RemoveCurrentToDoItemRequest request,
+    public override async Task<RemovePinnedToDoItemReply> RemovePinnedToDoItem(
+        RemovePinnedToDoItemRequest request,
         ServerCallContext context
     )
     {
-        await toDoService.RemoveCurrentToDoItemAsync(mapper.Map<Guid>(request.Id));
+        await toDoService.RemovePinnedToDoItemAsync(mapper.Map<Guid>(request.Id));
 
-        return new RemoveCurrentToDoItemReply();
+        return new RemovePinnedToDoItemReply();
     }
 
-    public override async Task<GetCurrentToDoItemsReply> GetCurrentToDoItems(
-        GetCurrentToDoItemsRequest request,
+    public override async Task<GetPinnedToDoItemsReply> GetPinnedToDoItems(
+        GetPinnedToDoItemsRequest request,
         ServerCallContext context
     )
     {
-        var reply = new GetCurrentToDoItemsReply();
-        var items = await toDoService.GetCurrentToDoItemsAsync();
+        var reply = new GetPinnedToDoItemsReply();
+        var items = await toDoService.GetPinnedToDoItemsAsync();
         reply.Items.AddRange(mapper.Map<IEnumerable<ToDoSubItemGrpc>>(items));
 
         return reply;

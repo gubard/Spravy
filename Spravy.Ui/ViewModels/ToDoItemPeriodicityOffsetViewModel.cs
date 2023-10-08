@@ -112,7 +112,7 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
                 return;
 
             case ToDoItemPeriodicityOffset toDoItemPeriodicityOffset:
-                IsCurrent = toDoItemPeriodicityOffset.IsCurrent;
+                IsPinned = toDoItemPeriodicityOffset.IsPinned;
                 Name = toDoItemPeriodicityOffset.Name;
                 Type = ToDoItemType.PeriodicityOffset;
                 Description = toDoItemPeriodicityOffset.Description;

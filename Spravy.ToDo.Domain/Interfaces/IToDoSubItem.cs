@@ -10,7 +10,7 @@ public interface IToDoSubItem
     public uint OrderIndex { get; }
     public ToDoItemStatus Status { get; }
     public string Description { get; }
-    bool IsCurrent { get; }
+    bool IsPinned { get; }
     ActiveToDoItem? Active { get; }
     DateTimeOffset? LastCompleted { get; }
 }

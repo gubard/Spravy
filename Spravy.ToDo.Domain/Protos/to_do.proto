@@ -22,9 +22,9 @@ service ToDoService {
   rpc FailToDoItem (FailToDoItemRequest) returns (FailToDoItemReply);
   rpc SearchToDoSubItems (SearchToDoSubItemsRequest) returns (SearchToDoSubItemsReply);
   rpc UpdateToDoItemType (UpdateToDoItemTypeRequest) returns (UpdateToDoItemTypeReply);
-  rpc AddCurrentToDoItem (AddCurrentToDoItemRequest) returns (AddCurrentToDoItemReply);
-  rpc RemoveCurrentToDoItem (RemoveCurrentToDoItemRequest) returns (RemoveCurrentToDoItemReply);
-  rpc GetCurrentToDoItems (GetCurrentToDoItemsRequest) returns (GetCurrentToDoItemsReply);
+  rpc AddPinnedToDoItem (AddPinnedToDoItemRequest) returns (AddPinnedToDoItemReply);
+  rpc RemovePinnedToDoItem (RemovePinnedToDoItemRequest) returns (RemovePinnedToDoItemReply);
+  rpc GetPinnedToDoItems (GetPinnedToDoItemsRequest) returns (GetPinnedToDoItemsReply);
   rpc UpdateToDoItemAnnuallyPeriodicity (UpdateToDoItemAnnuallyPeriodicityRequest) returns (UpdateToDoItemAnnuallyPeriodicityReply);
   rpc UpdateToDoItemMonthlyPeriodicity (UpdateToDoItemMonthlyPeriodicityRequest) returns (UpdateToDoItemMonthlyPeriodicityReply);
   rpc UpdateToDoItemWeeklyPeriodicity (UpdateToDoItemWeeklyPeriodicityRequest) returns (UpdateToDoItemWeeklyPeriodicityReply);

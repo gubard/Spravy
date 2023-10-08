@@ -11,7 +11,7 @@ public readonly struct ToDoSubItemGroup : IToDoSubItem
         uint orderIndex,
         ToDoItemStatus status,
         string description,
-        bool isCurrent,
+        bool isPinned,
         ActiveToDoItem? active,
         DateTimeOffset? lastCompleted
     )
@@ -21,7 +21,7 @@ public readonly struct ToDoSubItemGroup : IToDoSubItem
         OrderIndex = orderIndex;
         Status = status;
         Description = description;
-        IsCurrent = isCurrent;
+        IsPinned = isPinned;
         Active = active;
         LastCompleted = lastCompleted;
     }
@@ -31,7 +31,7 @@ public readonly struct ToDoSubItemGroup : IToDoSubItem
     public uint OrderIndex { get; }
     public ToDoItemStatus Status { get; }
     public string Description { get; }
-    public bool IsCurrent { get; }
+    public bool IsPinned { get; }
     public ActiveToDoItem? Active { get; }
     public DateTimeOffset? LastCompleted { get; }
 }
