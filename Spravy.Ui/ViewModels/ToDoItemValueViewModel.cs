@@ -24,7 +24,7 @@ public class ToDoItemValueViewModel : ToDoItemViewModel, IRefreshToDoItem
 
     public ToDoItemValueViewModel() : base("to-do-item-value")
     {
-        CompleteToDoItemCommand = CreateCommandFromTaskWithDialogProgressIndicator(CompleteToDoItemAsync);
+        CompleteToDoItemCommand = CreateCommandFromTask(CompleteToDoItemAsync);
         SubscribeProperties();
         Commands.Add(new(MaterialIconKind.Check, CompleteToDoItemCommand));
     }

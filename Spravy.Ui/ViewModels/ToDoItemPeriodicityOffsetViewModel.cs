@@ -29,7 +29,7 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
 
     public ToDoItemPeriodicityOffsetViewModel() : base("to-do-item-periodicity-offset")
     {
-        CompleteToDoItemCommand = CreateCommandFromTaskWithDialogProgressIndicator(CompleteToDoItemAsync);
+        CompleteToDoItemCommand = CreateCommandFromTask(CompleteToDoItemAsync);
         ChangeDueDateCommand = CreateCommandFromTask(ChangeDueDate);
         SubscribeProperties();
         Commands.Add(new(MaterialIconKind.Check, CompleteToDoItemCommand));

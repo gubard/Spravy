@@ -27,7 +27,7 @@ public class ToDoItemPlannedViewModel : ToDoItemViewModel, IRefreshToDoItem
     public ToDoItemPlannedViewModel() : base("to-do-item-value")
     {
         ChangeDueDateCommand = CreateCommandFromTask(ChangeDueDateAsync);
-        CompleteToDoItemCommand = CreateCommandFromTaskWithDialogProgressIndicator(CompleteToDoItemAsync);
+        CompleteToDoItemCommand = CreateCommandFromTask(CompleteToDoItemAsync);
         SubscribeProperties();
         Commands.Add(new(MaterialIconKind.Check, CompleteToDoItemCommand));
     }
