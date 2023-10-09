@@ -35,7 +35,7 @@ public class CompleteToDoItemViewModel : ViewModelBase
 
     public CompleteToDoItemViewModel()
     {
-        CompleteCommand = CreateCommandFromTask<CompleteStatus>(CompleteAsync);
+        CompleteCommand = CreateCommandFromTaskWithDialogProgressIndicator<CompleteStatus>(CompleteAsync);
         InitializedCommand = CreateCommand<CompleteToDoItemView>(Initialized);
     }
 

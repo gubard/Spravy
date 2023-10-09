@@ -24,13 +24,4 @@
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </EmbeddedResource>
     </ItemGroup>
-
-    <ItemGroup>
-      <Content Include="..\Spravy.Ui\Assets\Images\Logo.ico">
-        <Link>AppBundle\favicon.ico</Link>
-      </Content>
-      <Content Include="..\Spravy.Ui\Assets\Images\Logo.svg">
-        <Link>AppBundle\Logo.svg</Link>
-      </Content>
-    </ItemGroup>
 </Project>

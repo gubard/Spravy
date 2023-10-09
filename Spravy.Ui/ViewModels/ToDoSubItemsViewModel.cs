@@ -23,8 +23,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 
     public ToDoSubItemsViewModel()
     {
-        CompleteSubToDoItemCommand =
-            CreateCommandFromTaskWithDialogProgressIndicator<ToDoSubItemNotify>(CompleteSubToDoItemAsync);
+        CompleteSubToDoItemCommand = CreateCommandFromTask<ToDoSubItemNotify>(CompleteSubToDoItemAsync);
         DeleteSubToDoItemCommand = CreateCommandFromTask<ToDoSubItemNotify>(DeleteSubToDoItemAsync);
         ChangeToDoItemCommand = CreateCommandFromTask<ToDoSubItemNotify>(ChangeToDoItemAsync);
         AddSubToDoItemToPinnedCommand =

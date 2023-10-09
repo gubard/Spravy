@@ -143,7 +143,11 @@ public class ViewModelBase : NotifyBase
     private async void OnNextError(Exception exception)
     {
         await DialogViewer.ShowInfoErrorDialogAsync<IExceptionViewModel>(
-            _ => DialogViewer.CloseErrorDialogAsync(),
+            async _ =>
+            {
+                await DialogViewer.CloseErrorDialogAsync();
+                await DialogViewer.CloseProgressDialogAsync();
+            },
             viewModel => viewModel.Exception = exception
         );
     }

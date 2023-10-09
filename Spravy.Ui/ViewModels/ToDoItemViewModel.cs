@@ -194,11 +194,8 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
         return DialogViewer.ShowConfirmContentDialogAsync<ToDoItemToStringSettingsView>(
             async view =>
             {
-                var options = new ToDoItemToStringOptions(
-                    view.ViewModel.ThrowIfNull().Statuses.Where(x => x.IsChecked).Select(x => x.Item),
-                    Id
-                );
-
+                var statuses = view.ViewModel.ThrowIfNull().Statuses.Where(x => x.IsChecked).Select(x => x.Item);
+                var options = new ToDoItemToStringOptions(statuses, Id);
                 var text = await ToDoService.ToDoItemToStringAsync(options);
                 await Clipboard.SetTextAsync(text);
                 await DialogViewer.CloseContentDialogAsync();
