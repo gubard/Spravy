@@ -14,6 +14,7 @@ using Nuke.Common;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tools.DotNet;
 using Renci.SshNet;
+using Serilog;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 namespace _build;
@@ -196,7 +197,7 @@ class Build : NukeBuild
                     var keyStoreFile = new FileInfo("/tmp/Spravy/sign-key.keystore");
                     keyStoreFile.Delete();
 
-                    Cli.Wrap("keytool")
+                    RunCommand(Cli.Wrap("keytool")
                         .WithArguments(new[]
                             {
                                 "-genkey",
@@ -217,9 +218,7 @@ class Build : NukeBuild
                                 AndroidSigningStorePass,
                             }
                         )
-                        .ExecuteAsync()
-                        .GetAwaiter()
-                        .GetResult();
+                    );
 
                     var android = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Android");
 
@@ -240,6 +239,21 @@ class Build : NukeBuild
     void RunCommand(SshClient client, string command)
     {
         using var run = client.RunCommand(command);
+    }
+
+    void RunCommand(Command command)
+    {
+        var errorStringBuilder = new StringBuilder();
+        var outputStringBuilder = new StringBuilder();
+
+        command.WithStandardErrorPipe(PipeTarget.ToStringBuilder(errorStringBuilder))
+            .WithStandardOutputPipe(PipeTarget.ToStringBuilder(outputStringBuilder))
+            .ExecuteAsync()
+            .GetAwaiter()
+            .GetResult();
+
+        Log.Error("{Error}", errorStringBuilder.ToString());
+        Log.Error("{Output}", outputStringBuilder.ToString());
     }
 
     void PublishService(
