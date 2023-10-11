@@ -7,6 +7,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using _build.Models;
+using CliWrap;
 using FluentFTP;
 using Microsoft.IdentityModel.Tokens;
 using Nuke.Common;
@@ -42,6 +43,8 @@ class Build : NukeBuild
     [Parameter] readonly string JwtKey;
     [Parameter] readonly string JwtIssuer;
     [Parameter] readonly string JwtAudience;
+    [Parameter] readonly string AndroidSigningKeyPass;
+    [Parameter] readonly string AndroidSigningStorePass;
     static readonly DirectoryInfo TempFolder = new(Path.Combine("/", "tmp", "Spravy"));
     static readonly DirectoryInfo PublishFolder = new(Path.Combine(TempFolder.FullName, "Publish"));
     static readonly DirectoryInfo ServicesFolder = new(Path.Combine(TempFolder.FullName, "services"));
@@ -190,6 +193,47 @@ class Build : NukeBuild
                     DeleteIfExistsDirectory(ftpClient, $"/home/{FtpUser}/Apps/Spravy.Ui.Desktop");
                     CreateIfNotExistsDirectory(ftpClient, $"/home/{FtpUser}/Apps");
                     ftpClient.UploadDirectory(desktopFolder.FullName, $"/home/{FtpUser}/Apps/Spravy.Ui.Desktop");
+                    var keyStoreFile = new FileInfo("/tmp/Spravy/sign-key.keystore");
+                    keyStoreFile.Delete();
+
+                    Cli.Wrap("keytool")
+                        .WithArguments(new[]
+                            {
+                                "-genkey",
+                                "-v",
+                                "-keystore",
+                                keyStoreFile.FullName,
+                                "-alias",
+                                "spravy",
+                                "-keyalg",
+                                "RSA",
+                                "-keysize",
+                                "2048",
+                                "-validity",
+                                "10000",
+                                "-dname",
+                                "\"CN=Serhii Maksymov, OU=Serhii Maksymov FOP, O=Serhii Maksymov FOP, L=Kharkiv, S=Kharkiv State, C=Ukraine\"",
+                                "-storepass",
+                                AndroidSigningStorePass,
+                            }
+                        )
+                        .ExecuteAsync()
+                        .GetAwaiter()
+                        .GetResult();
+
+                    var android = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Android");
+
+                    var androidFolder = PublishProject(android, android.Name, setting => setting
+                        .AddProperty("AndroidKeyStore", "true")
+                        .AddProperty("AndroidSigningKeyStore", keyStoreFile.FullName)
+                        .AddProperty("AndroidSigningKeyAlias", "spravy")
+                        .AddProperty("AndroidSigningKeyPass", AndroidSigningKeyPass)
+                        .AddProperty("AndroidSigningStorePass", AndroidSigningStorePass)
+                    );
+
+                    DeleteIfExistsDirectory(ftpClient, $"/home/{FtpUser}/Apps/Spravy.Ui.Android");
+                    CreateIfNotExistsDirectory(ftpClient, $"/home/{FtpUser}/Apps");
+                    ftpClient.UploadDirectory(androidFolder.FullName, $"/home/{FtpUser}/Apps/Spravy.Ui.Android");
                 }
             );
 
