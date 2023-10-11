@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Ninject.Modules;
+using Spravy.Domain.Helpers;
 
 namespace Spravy.Ui.Browser.Configurations;
 
@@ -13,8 +14,7 @@ public class BrowserModule : NinjectModule
             .ToMethod(
                 _ =>
                 {
-                    using var stream =
-                        typeof(MarkStruct).Assembly.GetManifestResourceStream("Spravy.Ui.Browser.appsettings.json");
+                    using var stream = SpravyUiBrowserMark.GetResourceStream(FileNames.DefaultConfigFileName);
 
                     return new ConfigurationBuilder().AddJsonStream(stream).Build();
                 }

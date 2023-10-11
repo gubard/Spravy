@@ -5,6 +5,7 @@
         <WasmMainJSPath>AppBundle\main.js</WasmMainJSPath>
         <OutputType>Exe</OutputType>
         <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>

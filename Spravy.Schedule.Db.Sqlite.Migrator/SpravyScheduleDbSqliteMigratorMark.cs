@@ -12,4 +12,9 @@ public readonly struct SpravyScheduleDbSqliteMigratorMark : IAssemblyMark
         typeof(SpravyScheduleDbSqliteMigratorMark).Assembly.GetName().FullName;
 
     public static Assembly Assembly { get; } = typeof(SpravyScheduleDbSqliteMigratorMark).Assembly;
+
+    public static Stream? GetResourceStream(string resourceName)
+    {
+        return Assembly.GetManifestResourceStream($"{AssemblyName.Name}.{resourceName}");
+    }
 }

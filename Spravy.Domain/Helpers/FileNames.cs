@@ -1,4 +1,4 @@
-namespace Spravy.Service.Helpers;
+namespace Spravy.Domain.Helpers;
 
 public static class FileNames
 {

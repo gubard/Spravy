@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Ninject.Modules;
+using Spravy.Domain.Helpers;
 
 namespace Spravy.Ui.Desktop.Configurations;
 
@@ -12,7 +13,7 @@ public class DesktopModule : NinjectModule
         Bind<IConfiguration>()
             .ToMethod(
                 _ =>
-                    new ConfigurationBuilder().AddJsonFile("appsettings.json").Build()
+                    new ConfigurationBuilder().AddJsonFile(FileNames.DefaultConfigFileName).Build()
             );
     }
 }
