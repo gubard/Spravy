@@ -253,7 +253,7 @@ class Build : NukeBuild
             .GetResult();
 
         Log.Error("{Error}", errorStringBuilder.ToString());
-        Log.Error("{Output}", outputStringBuilder.ToString());
+        Log.Information("{Output}", outputStringBuilder.ToString());
     }
 
     void PublishService(
