@@ -233,6 +233,7 @@ class Build : NukeBuild
                         .AddProperty("AndroidSigningKeyAlias", "spravy")
                         .AddProperty("AndroidSigningKeyPass", AndroidSigningKeyPass)
                         .AddProperty("AndroidSigningStorePass", AndroidSigningStorePass)
+                        .AddProperty("AndroidSdkDirectory", "/usr/lib/android-sdk")
                     );
 
                     DeleteIfExistsDirectory(ftpClient, $"/home/{FtpUser}/Apps/Spravy.Ui.Android");
