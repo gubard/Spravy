@@ -185,19 +185,11 @@ class Build : NukeBuild
 
                     var desktop = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Desktop");
                     var desktopFolder = PublishProject(desktop, desktop.Name);
-                    var desktopAppFolder = new DirectoryInfo($"/home/{FtpUser}/Apps/Spravy.Ui.Desktop");
-                    var desktopAppSettings = new FileInfo(Path.Combine(desktopAppFolder.FullName, "appsettings.json"));
-
-                    if (desktopAppFolder.Exists)
-                    {
-                        desktopAppFolder.Delete(true);
-                    }
-
-                    CopyDirectory(desktopFolder.FullName, desktopAppFolder.FullName, true);
+                    var desktopAppSettings = new FileInfo(Path.Combine(desktopFolder.FullName, "appsettings.json"));
                     SetServiceSettings(desktopAppSettings, 0, null, hosts, "");
-                    DeleteIfExistsDirectory(ftpClient, desktopAppFolder.FullName);
+                    DeleteIfExistsDirectory(ftpClient, $"/home/{FtpUser}/Apps/Spravy.Ui.Desktop");
                     CreateIfNotExistsDirectory(ftpClient, $"/home/{FtpUser}/Apps");
-                    ftpClient.UploadDirectory(desktopAppFolder.FullName, $"/home/{FtpUser}/Apps/Spravy.Ui.Desktop");
+                    ftpClient.UploadDirectory(desktopFolder.FullName, $"/home/{FtpUser}/Apps/Spravy.Ui.Desktop");
                 }
             );
 
