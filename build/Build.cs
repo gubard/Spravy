@@ -181,7 +181,12 @@ class Build : NukeBuild
 
                     foreach (var serviceProject in serviceProjects)
                     {
-                        using var sshCommand =
+                        using var enableCommand =
+                            sshClient.RunCommand(
+                                $"echo {SshPassword} | sudo systemctl enable {serviceProject.Name.ToLower()}"
+                            );
+
+                        using var restartCommand =
                             sshClient.RunCommand(
                                 $"echo {SshPassword} | sudo systemctl restart {serviceProject.Name.ToLower()}"
                             );
