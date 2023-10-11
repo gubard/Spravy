@@ -213,7 +213,7 @@ class Build : NukeBuild
                                 "-validity",
                                 "10000",
                                 "-dname",
-                                "\"CN=Serhii Maksymov, OU=Serhii Maksymov FOP, O=Serhii Maksymov FOP, L=Kharkiv, S=Kharkiv State, C=Ukraine\"",
+                                "CN=Serhii Maksymov, OU=Serhii Maksymov FOP, O=Serhii Maksymov FOP, L=Kharkiv, S=Kharkiv State, C=Ukraine",
                                 "-storepass",
                                 AndroidSigningStorePass,
                             }
