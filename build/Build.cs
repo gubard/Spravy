@@ -199,46 +199,6 @@ class Build : NukeBuild
                     DeleteIfExistsDirectory(ftpClient, $"/home/{FtpUser}/Apps/Spravy.Ui.Desktop");
                     CreateIfNotExistsDirectory(ftpClient, $"/home/{FtpUser}/Apps");
                     ftpClient.UploadDirectory(desktopFolder.FullName, $"/home/{FtpUser}/Apps/Spravy.Ui.Desktop");
-                    var keyStoreFile = new FileInfo("/tmp/Spravy/sign-key.keystore");
-                    keyStoreFile.Delete();
-
-                    RunCommand(Cli.Wrap("keytool")
-                        .WithArguments(new[]
-                            {
-                                "-genkey",
-                                "-v",
-                                "-keystore",
-                                keyStoreFile.FullName,
-                                "-alias",
-                                "spravy",
-                                "-keyalg",
-                                "RSA",
-                                "-keysize",
-                                "2048",
-                                "-validity",
-                                "10000",
-                                "-dname",
-                                "CN=Serhii Maksymov, OU=Serhii Maksymov FOP, O=Serhii Maksymov FOP, L=Kharkiv, S=Kharkiv State, C=Ukraine",
-                                "-storepass",
-                                AndroidSigningStorePass,
-                            }
-                        )
-                    );
-
-                    var android = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Android");
-
-                    var androidFolder = PublishProject(android, android.Name, setting => setting
-                        .SetProperty("AndroidKeyStore", "true")
-                        .SetProperty("AndroidSigningKeyStore", keyStoreFile.FullName)
-                        .SetProperty("AndroidSigningKeyAlias", "spravy")
-                        .SetProperty("AndroidSigningKeyPass", AndroidSigningKeyPass)
-                        .SetProperty("AndroidSigningStorePass", AndroidSigningStorePass)
-                        .SetProperty("AndroidSdkDirectory", "/usr/lib/android-sdk")
-                    );
-
-                    DeleteIfExistsDirectory(ftpClient, $"/home/{FtpUser}/Apps/Spravy.Ui.Android");
-                    CreateIfNotExistsDirectory(ftpClient, $"/home/{FtpUser}/Apps");
-                    ftpClient.UploadDirectory(androidFolder.FullName, $"/home/{FtpUser}/Apps/Spravy.Ui.Android");
                 }
             );
 
@@ -298,6 +258,7 @@ class Build : NukeBuild
                         .SetProperty("AndroidSigningKeyPass", AndroidSigningKeyPass)
                         .SetProperty("AndroidSigningStorePass", AndroidSigningStorePass)
                         .SetProperty("AndroidSdkDirectory", "/usr/lib/android-sdk")
+                        .DisableNoBuild()
                     );
 
                     DeleteIfExistsDirectory(ftpClient, $"/home/{FtpUser}/Apps/Spravy.Ui.Android");
@@ -580,18 +541,16 @@ class Build : NukeBuild
             {
                 DotNetPublish(setting =>
                     {
-                        var result = setting;
+                        var result = setting.SetConfiguration(Configuration)
+                            .SetProject(project)
+                            .SetOutput(publishFolder.FullName)
+                            .EnableNoBuild()
+                            .EnableNoRestore();
 
                         if (configurator is not null)
                         {
                             result = configurator.Invoke(result);
                         }
-
-                        result = result.SetConfiguration(Configuration)
-                            .SetProject(project)
-                            .SetOutput(publishFolder.FullName)
-                            .EnableNoBuild()
-                            .EnableNoRestore();
 
                         return result;
                     }
