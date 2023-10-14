@@ -250,7 +250,7 @@ class Build : NukeBuild
                     using var ftpClient = CreateFtpClient();
                     ftpClient.Connect();
                     var keyStoreFile = new FileInfo("/tmp/Spravy/sign-key.keystore");
-                    
+
                     if (keyStoreFile.Directory is null)
                     {
                         throw new NullReferenceException();
@@ -556,7 +556,11 @@ class Build : NukeBuild
         }
     }
 
-    DirectoryInfo PublishProject(Project project, string name, Action<DotNetPublishSettings> configurator = null)
+    DirectoryInfo PublishProject(
+        Project project,
+        string name,
+        Func<DotNetPublishSettings, DotNetPublishSettings> configurator = null
+    )
     {
         var publishFolder = new DirectoryInfo(Path.Combine(PublishFolder.FullName, name));
 
@@ -576,13 +580,20 @@ class Build : NukeBuild
             {
                 DotNetPublish(setting =>
                     {
-                        configurator?.Invoke(setting);
+                        var result = setting;
 
-                        return setting.SetConfiguration(Configuration)
+                        if (configurator is not null)
+                        {
+                            result = configurator.Invoke(result);
+                        }
+
+                        result = result.SetConfiguration(Configuration)
                             .SetProject(project)
                             .SetOutput(publishFolder.FullName)
                             .EnableNoBuild()
                             .EnableNoRestore();
+
+                        return result;
                     }
                 );
 
