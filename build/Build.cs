@@ -247,33 +247,25 @@ class Build : NukeBuild
             .DependsOn(Compile)
             .Executes(() =>
                 {
-                    Log.Information("Test 1");
                     using var ftpClient = CreateFtpClient();
-                    Log.Information("Test 2");
                     ftpClient.Connect();
-                    Log.Information("Test 3");
                     var keyStoreFile = new FileInfo("/tmp/Spravy/sign-key.keystore");
-                    Log.Information("Test 4");
                     
                     if (keyStoreFile.Directory is null)
                     {
-                        Log.Information("Test 5");
                         throw new NullReferenceException();
                     }
 
                     if (!keyStoreFile.Directory.Exists)
                     {
-                        Log.Information("Test 6");
-                        keyStoreFile.Create();
+                        keyStoreFile.Directory.Create();
                     }
 
                     if (keyStoreFile.Exists)
                     {
-                        Log.Information("Test 7");
                         keyStoreFile.Delete();
                     }
 
-                    Log.Information("Test 8");
                     RunCommand(Cli.Wrap("keytool")
                         .WithArguments(new[]
                             {
@@ -297,7 +289,6 @@ class Build : NukeBuild
                         )
                     );
 
-                    Log.Information("Test 9");
                     var android = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Android");
 
                     var androidFolder = PublishProject(android, android.Name, setting => setting
