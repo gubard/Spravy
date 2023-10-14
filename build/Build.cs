@@ -283,7 +283,7 @@ class Build : NukeBuild
             .GetAwaiter()
             .GetResult();
 
-        Log.Error("{Error}", errorStringBuilder.ToString());
+        Log.Information("{Error}", errorStringBuilder.ToString());
         Log.Information("{Output}", outputStringBuilder.ToString());
     }
 
