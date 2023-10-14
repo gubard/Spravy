@@ -241,8 +241,8 @@ class Build : NukeBuild
                     ftpClient.UploadDirectory(androidFolder.FullName, $"/home/{FtpUser}/Apps/Spravy.Ui.Android");
                 }
             );
-    
-      Target PublishAndroid =>
+
+    Target PublishAndroid =>
         _ => _
             .DependsOn(Compile)
             .Executes(() =>
@@ -250,7 +250,21 @@ class Build : NukeBuild
                     using var ftpClient = CreateFtpClient();
                     ftpClient.Connect();
                     var keyStoreFile = new FileInfo("/tmp/Spravy/sign-key.keystore");
-                    keyStoreFile.Delete();
+
+                    if (keyStoreFile.Directory is null)
+                    {
+                        throw new NullReferenceException();
+                    }
+
+                    if (!keyStoreFile.Directory.Exists)
+                    {
+                        keyStoreFile.Create();
+                    }
+
+                    if (keyStoreFile.Exists)
+                    {
+                        keyStoreFile.Delete();
+                    }
 
                     RunCommand(Cli.Wrap("keytool")
                         .WithArguments(new[]
