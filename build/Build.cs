@@ -53,18 +53,13 @@ class Build : NukeBuild
 
     [Solution] readonly Solution Solution;
 
-    Target Clean =>
-        _ => _
-            .Before(Restore)
-            .Executes(() => DotNetClean(setting => setting.SetProject(Solution).SetConfiguration(Configuration)));
-
     Target Restore =>
         _ => _
             .Executes(() => DotNetRestore(setting => setting.SetProjectFile(Solution)));
 
     Target Compile =>
         _ => _
-            .DependsOn(Clean)
+            .DependsOn(Restore)
             .Executes(() =>
                 {
                     foreach (var project in Solution.AllProjects.Where(x => !x.Name.Contains("Android")))
