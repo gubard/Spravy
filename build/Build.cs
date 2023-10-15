@@ -49,6 +49,7 @@ class Build : NukeBuild
     static readonly DirectoryInfo TempFolder = new(Path.Combine("/", "tmp", "Spravy"));
     static readonly DirectoryInfo PublishFolder = new(Path.Combine(TempFolder.FullName, "Publish"));
     static readonly DirectoryInfo ServicesFolder = new(Path.Combine(TempFolder.FullName, "services"));
+    static readonly Dictionary<string, string> Hosts = new();
 
     [Solution] readonly Solution Solution;
 
@@ -99,7 +100,7 @@ class Build : NukeBuild
                 }
             );
 
-    Target Publish =>
+    Target PublishServices =>
         _ => _
             .DependsOn(Compile)
             .Executes(() =>
@@ -191,11 +192,20 @@ class Build : NukeBuild
                                 $"echo {SshPassword} | sudo systemctl restart {serviceProject.Name.ToLower()}"
                             );
                     }
+                }
+            );
 
+    Target PublishDesktop =>
+        _ => _
+            .DependsOn(PublishServices)
+            .Executes(() =>
+                {
+                    using var ftpClient = CreateFtpClient();
+                    ftpClient.Connect();
                     var desktop = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Desktop");
                     var desktopFolder = PublishProject(desktop, desktop.Name);
                     var desktopAppSettings = new FileInfo(Path.Combine(desktopFolder.FullName, "appsettings.json"));
-                    SetServiceSettings(desktopAppSettings, 0, null, hosts, "");
+                    SetServiceSettings(desktopAppSettings, 0, null, Hosts, "");
                     DeleteIfExistsDirectory(ftpClient, $"/home/{FtpUser}/Apps/Spravy.Ui.Desktop");
                     CreateIfNotExistsDirectory(ftpClient, $"/home/{FtpUser}/Apps");
                     ftpClient.UploadDirectory(desktopFolder.FullName, $"/home/{FtpUser}/Apps/Spravy.Ui.Desktop");
@@ -266,6 +276,8 @@ class Build : NukeBuild
                     ftpClient.UploadDirectory(androidFolder.FullName, $"/home/{FtpUser}/Apps/Spravy.Ui.Android");
                 }
             );
+
+    Target Publish => _ => _.DependsOn(PublishDesktop, PublishAndroid);
 
     void RunCommand(SshClient client, string command)
     {
