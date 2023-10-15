@@ -64,7 +64,7 @@ class Build : NukeBuild
 
     Target Compile =>
         _ => _
-            .DependsOn(Restore)
+            .DependsOn(Clean)
             .Executes(() =>
                 {
                     foreach (var project in Solution.AllProjects.Where(x => !x.Name.Contains("Android")))
