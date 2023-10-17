@@ -8,16 +8,6 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
-    },
-    "Spravy.EventBus.Service Browser": {
-      "commandName": "Project",
-      "dotnetRunMessages": true,
-      "launchBrowser": false,
-      "applicationUrl": "http://localhost:6002",
-      "commandLineArgs": "Urls=http://0.0.0.0:6002 Kestrel:EndpointDefaults:Protocols=Http1AndHttp2",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
     }
   }
 }

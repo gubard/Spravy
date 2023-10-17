@@ -4,12 +4,11 @@ using Microsoft.AspNetCore.Authorization;
 using Spravy.Schedule.Domain.Interfaces;
 using Spravy.Schedule.Domain.Models;
 using Spravy.Schedule.Protos;
-using static Spravy.Schedule.Protos.ScheduleService;
 
-namespace Spravy.Schedule.Service.Services;
+namespace Spravy.Router.Service.Services;
 
 [Authorize]
-public class GrpcScheduleService : ScheduleServiceBase
+public class GrpcScheduleService : ScheduleService.ScheduleServiceBase
 {
     private readonly IScheduleService scheduleService;
     private readonly IMapper mapper;

@@ -106,28 +106,18 @@ class Build : NukeBuild
 
                     var browserProject = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Browser");
                     ushort port = 5000;
-                    ushort browserPort = 6000;
                     var serviceOptions = new Dictionary<Project, ServiceOptions>();
                     var hosts = new Dictionary<string, string>();
                     var browserHosts = new Dictionary<string, string>();
 
                     foreach (var serviceProject in serviceProjects)
                     {
-                        serviceOptions[serviceProject] = new ServiceOptions(
-                            port,
-                            browserPort,
-                            serviceProject.Name,
-                            $"{serviceProject.Name}.Browser"
-                        );
+                        serviceOptions[serviceProject] = new ServiceOptions(port, serviceProject.Name);
 
                         hosts[$"Grpc{serviceProject.Name.Substring(6).Replace(".", "")}"] =
                             $"http://{ServerHost}:{port}";
 
-                        browserHosts[$"Grpc{serviceProject.Name.Substring(6).Replace(".", "")}"] =
-                            $"http://{ServerHost}:{browserPort}";
-
                         port++;
-                        browserPort++;
                     }
 
                     using var sshClient = new SshClient(CreateSshConnection());
@@ -144,17 +134,6 @@ class Build : NukeBuild
                             serviceOption.Key,
                             serviceOption.Value.ServiceName,
                             serviceOption.Value.Port,
-                            "Http2",
-                            sshClient,
-                            ftpClient,
-                            hosts,
-                            token
-                        );
-                        PublishService(
-                            serviceOption.Key,
-                            serviceOption.Value.BrowserServiceName,
-                            serviceOption.Value.BrowserPort,
-                            "HttpAndHttp2",
                             sshClient,
                             ftpClient,
                             hosts,
@@ -164,8 +143,7 @@ class Build : NukeBuild
 
                     PublishService(browserProject,
                         browserProject.Name,
-                        browserPort,
-                        "HttpAndHttp2",
+                        6000,
                         sshClient,
                         ftpClient,
                         browserHosts,
@@ -200,7 +178,7 @@ class Build : NukeBuild
                     var desktop = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Desktop");
                     var desktopFolder = PublishProject(desktop, desktop.Name);
                     var desktopAppSettings = new FileInfo(Path.Combine(desktopFolder.FullName, "appsettings.json"));
-                    SetServiceSettings(desktopAppSettings, 0, null, Hosts, "");
+                    SetServiceSettings(desktopAppSettings, 0, Hosts, "");
                     DeleteIfExistsDirectory(ftpClient, $"/home/{FtpUser}/Apps/Spravy.Ui.Desktop");
                     CreateIfNotExistsDirectory(ftpClient, $"/home/{FtpUser}/Apps");
                     ftpClient.UploadDirectory(desktopFolder.FullName, $"/home/{FtpUser}/Apps/Spravy.Ui.Desktop");
@@ -298,7 +276,6 @@ class Build : NukeBuild
         Project project,
         string name,
         ushort port,
-        string protocol,
         SshClient sshClient,
         FtpClient ftpClient,
         Dictionary<string, string> hosts,
@@ -307,7 +284,7 @@ class Build : NukeBuild
     {
         var folder = PublishProject(project, name);
         var appSettingsFile = new FileInfo(Path.Combine(folder.FullName, "appsettings.json"));
-        SetServiceSettings(appSettingsFile, port, protocol, hosts, token);
+        SetServiceSettings(appSettingsFile, port, hosts, token);
         DeleteIfExistsDirectory(ftpClient, $"/home/{FtpUser}/{name}");
         ftpClient.UploadDirectory(folder.FullName, $"/home/{FtpUser}/{name}");
 
@@ -344,7 +321,6 @@ class Build : NukeBuild
         Stream stream,
         JsonDocument jsonDocument,
         ushort port,
-        string protocol,
         Dictionary<string, string> hosts,
         string token
     )
@@ -380,20 +356,6 @@ class Build : NukeBuild
             {
                 writer.WritePropertyName("Urls");
                 writer.WriteStringValue($"http://0.0.0.0:{port}");
-
-                continue;
-            }
-
-            if (obj.Name == "Kestrel")
-            {
-                writer.WritePropertyName("Kestrel");
-                writer.WriteStartObject();
-                writer.WritePropertyName("EndpointDefaults");
-                writer.WriteStartObject();
-                writer.WritePropertyName("Protocols");
-                writer.WriteStringValue(protocol);
-                writer.WriteEndObject();
-                writer.WriteEndObject();
 
                 continue;
             }
@@ -438,14 +400,13 @@ class Build : NukeBuild
     void SetServiceSettings(
         FileInfo appSettingFile,
         ushort port,
-        string protocol,
         Dictionary<string, string> hosts,
         string token
     )
     {
         var jsonDocument = JsonDocument.Parse(File.ReadAllText(appSettingFile.FullName));
         using var stream = new MemoryStream();
-        SetServiceSettings(stream, jsonDocument, port, protocol, hosts, token);
+        SetServiceSettings(stream, jsonDocument, port, hosts, token);
         var jsonData = Encoding.UTF8.GetString(stream.ToArray());
         File.WriteAllText(appSettingFile.FullName, jsonData);
     }

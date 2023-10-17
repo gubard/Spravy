@@ -8,16 +8,6 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
-    },
-    "Spravy.Authentication.Service Browser": {
-      "commandName": "Project",
-      "dotnetRunMessages": true,
-      "launchBrowser": false,
-      "applicationUrl": "http://localhost:6001",
-      "commandLineArgs": "Urls=http://0.0.0.0:6001 Kestrel:EndpointDefaults:Protocols=Http1AndHttp2",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
     }
   }
 }

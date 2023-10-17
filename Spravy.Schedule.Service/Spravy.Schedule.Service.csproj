@@ -20,7 +20,6 @@
         <Protobuf Include="..\Spravy.Schedule.Domain\Protos\schedule.proto" GrpcServices="Server" ProtoRoot="..\Spravy.Schedule.Domain">
             <Link>Protos/schedule.proto</Link>
         </Protobuf>
-
         <Protobuf Include="..\Spravy.Schedule.Domain\Protos\schedule_messages.proto" GrpcServices="None" ProtoCompile="False">
             <Link>Protos/schedule_messages.proto</Link>
         </Protobuf>
