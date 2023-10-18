@@ -464,7 +464,15 @@ class Build : NukeBuild
             return;
         }
 
-        client.DeleteDirectory(path, FtpListOption.Recursive);
+        try
+        {
+            client.DeleteDirectory(path, FtpListOption.Recursive);
+        }
+        catch
+        {
+            Log.Error("{Path}", path);
+            throw;
+        }
     }
 
     static void CopyDirectory(string sourceDir, string destinationDir, bool recursive)
