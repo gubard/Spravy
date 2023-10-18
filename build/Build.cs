@@ -466,11 +466,12 @@ class Build : NukeBuild
 
         try
         {
-            client.DeleteDirectory(path, FtpListOption.Recursive);
+            client.DeleteDirectory(path, FtpListOption.Recursive | FtpListOption.ForceList);
         }
         catch
         {
             Log.Error("{Path}", path);
+
             throw;
         }
     }
