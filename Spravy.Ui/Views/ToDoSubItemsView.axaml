@@ -48,7 +48,8 @@
                                                     MaxWidth="{x:Static helpers:MaterialDesignSize.MinMedium}"
                                                     ClassName="small" />
                             <ir:AdaptiveClassSetter MinWidth="{x:Static helpers:MaterialDesignSize.MinMedium}"
-                                                    MaxWidth="Infinity" ClassName="wide" />
+                                                    MaxWidth="Infinity"
+                                                    ClassName="wide" />
                         </ir:AdaptiveBehavior>
                     </BehaviorCollection>
                 </BehaviorCollectionTemplate>
@@ -96,7 +97,7 @@
                                  ItemsSource="{Binding ReadyForCompleted}"
                                  SelectedItems="{Binding SelectedReadyForCompleted}"
                                  IsVisible="{Binding ReadyForCompleted.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
-                        
+
                         <ListBox Classes="ItemsDragAndDrop"
                                  SelectionMode="Multiple"
                                  Margin="5"
@@ -126,7 +127,7 @@
                                  ItemsSource="{Binding ReadyForCompleted}"
                                  SelectedItems="{Binding SelectedReadyForCompleted}"
                                  IsVisible="{Binding ReadyForCompleted.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
-                        
+
                         <ListBox Classes="ItemsDragAndDrop"
                                  SelectionMode="Multiple"
                                  Margin="5"

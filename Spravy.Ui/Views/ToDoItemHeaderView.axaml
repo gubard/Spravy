@@ -8,12 +8,71 @@
                                 xmlns:controls1="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
                                 xmlns:controls="clr-namespace:Spravy.Ui.Controls"
                                 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                                xmlns:helpers="clr-namespace:Spravy.Ui.Helpers"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.ToDoItemHeaderView"
                                 x:DataType="viewModels:ToDoItemHeaderViewModel">
     <Design.DataContext>
         <viewModels:ToDoItemHeaderViewModel />
     </Design.DataContext>
+
+    <UserControl.Resources>
+        <MenuFlyout x:Key="CommandsMenuFlyout"
+                    Placement="Bottom"
+                    ItemsSource="{Binding Commands}" />
+    </UserControl.Resources>
+
+    <UserControl.Styles>
+        <Style Selector="ItemsControl.adaptive">
+            <Setter Property="(Interaction.Behaviors)">
+                <BehaviorCollectionTemplate>
+                    <BehaviorCollection>
+                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
+                            <AdaptiveClassSetter MinWidth="0"
+                                                 MaxWidth="{x:Static helpers:MaterialDesignSize.MinMedium}"
+                                                 ClassName="small" />
+                            <AdaptiveClassSetter MinWidth="{x:Static helpers:MaterialDesignSize.MinMedium}"
+                                                 MaxWidth="Infinity"
+                                                 ClassName="wide" />
+                        </AdaptiveBehavior>
+                    </BehaviorCollection>
+                </BehaviorCollectionTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="DropDownButton.adaptive">
+            <Setter Property="(Interaction.Behaviors)">
+                <BehaviorCollectionTemplate>
+                    <BehaviorCollection>
+                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
+                            <AdaptiveClassSetter MinWidth="0"
+                                                 MaxWidth="{x:Static helpers:MaterialDesignSize.MinMedium}"
+                                                 ClassName="small" />
+                            <AdaptiveClassSetter MinWidth="{x:Static helpers:MaterialDesignSize.MinMedium}"
+                                                 MaxWidth="Infinity"
+                                                 ClassName="wide" />
+                        </AdaptiveBehavior>
+                    </BehaviorCollection>
+                </BehaviorCollectionTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="ItemsControl.small">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+
+        <Style Selector="ItemsControl.wide">
+            <Setter Property="IsVisible" Value="True" />
+        </Style>
+
+        <Style Selector="DropDownButton.small">
+            <Setter Property="IsVisible" Value="True" />
+        </Style>
+
+        <Style Selector="DropDownButton.wide">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+    </UserControl.Styles>
 
     <controls1:ColorZone Mode="PrimaryMid">
         <Grid ColumnDefinitions="Auto,Auto,*">
@@ -26,16 +85,25 @@
                                     Command="{Binding ChangeNameCommand}"
                                     Classes="edit" />
 
-            <ItemsControl Grid.Column="2"
-                          HorizontalAlignment="Right"
-                          VerticalAlignment="Center"
-                          ItemsSource="{Binding Commands}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel Orientation="Horizontal" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-            </ItemsControl>
+            <Panel Grid.Column="2">
+                <ItemsControl HorizontalAlignment="Right"
+                              VerticalAlignment="Center"
+                              ItemsSource="{Binding Commands}"
+                              Classes="adaptive">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+
+                <DropDownButton HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Classes="adaptive"
+                                Flyout="{StaticResource CommandsMenuFlyout}">
+                    <avalonia:MaterialIcon Kind="DotsHorizontal" />
+                </DropDownButton>
+            </Panel>
         </Grid>
     </controls1:ColorZone>
 </reactiveUi:ReactiveUserControl>
