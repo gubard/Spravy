@@ -1,3 +1,4 @@
+using Spravy.Db.Extensions;
 using Spravy.Db.Sqlite.Extensions;
 using Spravy.Db.Sqlite.Models;
 using Spravy.Domain.Extensions;
@@ -106,14 +107,19 @@ public class EventBusHostedService : IHostedService
         await using var context = spravyToDoDbContext.Create(file.ToSqliteConnectionString());
         var eventContent = ChangeToDoItemIsPinnedEvent.Parser.ParseFrom(eventValue.Content);
         var id = new Guid(eventContent.ToDoItemId.ToByteArray());
-        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
 
-        if (item is null)
-        {
-            return;
-        }
+        await context.ExecuteSaveChangesTransactionAsync(
+            async c =>
+            {
+                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
 
-        item.IsPinned = eventContent.IsPinned;
-        await context.SaveChangesAsync(cancellationToken);
+                if (item is null)
+                {
+                    return;
+                }
+
+                item.IsPinned = eventContent.IsPinned;
+            }
+        );
     }
 }

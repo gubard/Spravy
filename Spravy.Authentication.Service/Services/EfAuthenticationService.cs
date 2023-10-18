@@ -6,6 +6,7 @@ using Spravy.Authentication.Db.Models;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Models;
 using Spravy.Authentication.Service.Interfaces;
+using Spravy.Db.Extensions;
 using Spravy.Domain.Enums;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
@@ -68,8 +69,7 @@ public class EfAuthenticationService : IAuthenticationService
             PasswordHash = hash,
         };
 
-        await context.Set<UserEntity>().AddAsync(newUser);
-        await context.SaveChangesAsync();
+        await context.ExecuteSaveChangesTransactionAsync(c => c.Set<UserEntity>().AddAsync(newUser));
     }
 
     public async Task<TokenResult> RefreshTokenAsync(string refreshToken)

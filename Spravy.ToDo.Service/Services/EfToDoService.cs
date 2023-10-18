@@ -1,6 +1,7 @@
 using System.Text;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Spravy.Db.Extensions;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
@@ -121,18 +122,22 @@ public class EfToDoService : IToDoService
         await using var context = dbContextFactory.Create();
         var id = Guid.NewGuid();
 
-        var items = await context.Set<ToDoItemEntity>()
-            .AsNoTracking()
-            .Where(x => x.ParentId == null)
-            .Select(x => x.OrderIndex)
-            .ToArrayAsync();
+        await context.ExecuteSaveChangesTransactionAsync(
+            async c =>
+            {
+                var items = await c.Set<ToDoItemEntity>()
+                    .AsNoTracking()
+                    .Where(x => x.ParentId == null)
+                    .Select(x => x.OrderIndex)
+                    .ToArrayAsync();
 
-        var newEntity = mapper.Map<ToDoItemEntity>(options);
-        newEntity.Description = string.Empty;
-        newEntity.Id = id;
-        newEntity.OrderIndex = items.Length == 0 ? 0 : items.Max() + 1;
-        await context.Set<ToDoItemEntity>().AddAsync(newEntity);
-        await context.SaveChangesAsync();
+                var newEntity = mapper.Map<ToDoItemEntity>(options);
+                newEntity.Description = string.Empty;
+                newEntity.Id = id;
+                newEntity.OrderIndex = items.Length == 0 ? 0 : items.Max() + 1;
+                await c.Set<ToDoItemEntity>().AddAsync(newEntity);
+            }
+        );
 
         return id;
     }
@@ -141,34 +146,39 @@ public class EfToDoService : IToDoService
     {
         await using var context = dbContextFactory.Create();
         var id = Guid.NewGuid();
-        var parent = await context.Set<ToDoItemEntity>().FindAsync(options.ParentId);
-        parent = parent.ThrowIfNull();
 
-        var items = await context.Set<ToDoItemEntity>()
-            .AsNoTracking()
-            .Where(x => x.ParentId == options.ParentId)
-            .Select(x => x.OrderIndex)
-            .ToArrayAsync();
+        await context.ExecuteSaveChangesTransactionAsync(
+            async c =>
+            {
+                var parent = await c.Set<ToDoItemEntity>().FindAsync(options.ParentId);
+                parent = parent.ThrowIfNull();
 
-        var toDoItem = mapper.Map<ToDoItemEntity>(options);
-        toDoItem.Description = string.Empty;
-        toDoItem.Id = id;
-        toDoItem.OrderIndex = items.Length == 0 ? 0 : items.Max() + 1;
+                var items = await c.Set<ToDoItemEntity>()
+                    .AsNoTracking()
+                    .Where(x => x.ParentId == options.ParentId)
+                    .Select(x => x.OrderIndex)
+                    .ToArrayAsync();
 
-        toDoItem.DueDate = parent.DueDate < DateTimeOffset.Now.ToCurrentDay()
-            ? DateTimeOffset.Now.ToCurrentDay()
-            : parent.DueDate;
+                var toDoItem = mapper.Map<ToDoItemEntity>(options);
+                toDoItem.Description = string.Empty;
+                toDoItem.Id = id;
+                toDoItem.OrderIndex = items.Length == 0 ? 0 : items.Max() + 1;
 
-        toDoItem.TypeOfPeriodicity = parent.TypeOfPeriodicity;
-        toDoItem.DaysOfMonth = parent.DaysOfMonth;
-        toDoItem.DaysOfWeek = parent.DaysOfWeek;
-        toDoItem.DaysOfYear = parent.DaysOfYear;
-        toDoItem.WeeksOffset = parent.WeeksOffset;
-        toDoItem.DaysOffset = parent.DaysOffset;
-        toDoItem.MonthsOffset = parent.MonthsOffset;
-        toDoItem.YearsOffset = parent.YearsOffset;
-        await context.Set<ToDoItemEntity>().AddAsync(toDoItem);
-        await context.SaveChangesAsync();
+                toDoItem.DueDate = parent.DueDate < DateTimeOffset.Now.ToCurrentDay()
+                    ? DateTimeOffset.Now.ToCurrentDay()
+                    : parent.DueDate;
+
+                toDoItem.TypeOfPeriodicity = parent.TypeOfPeriodicity;
+                toDoItem.DaysOfMonth = parent.DaysOfMonth;
+                toDoItem.DaysOfWeek = parent.DaysOfWeek;
+                toDoItem.DaysOfYear = parent.DaysOfYear;
+                toDoItem.WeeksOffset = parent.WeeksOffset;
+                toDoItem.DaysOffset = parent.DaysOffset;
+                toDoItem.MonthsOffset = parent.MonthsOffset;
+                toDoItem.YearsOffset = parent.YearsOffset;
+                await c.Set<ToDoItemEntity>().AddAsync(toDoItem);
+            }
+        );
 
         return id;
     }
@@ -176,117 +186,156 @@ public class EfToDoService : IToDoService
     public async Task DeleteToDoItemAsync(Guid id)
     {
         await using var context = dbContextFactory.Create();
+
+        await context.ExecuteSaveChangesTransactionAsync(
+            async c =>
+            {
+                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
+                item = item.ThrowIfNull();
+                var children = await c.Set<ToDoItemEntity>()
+                    .AsNoTracking()
+                    .Where(x => x.ParentId == id)
+                    .ToArrayAsync();
+
+                foreach (var child in children)
+                {
+                    await DeleteToDoItemAsync(child.Id, context);
+                }
+
+                c.Set<ToDoItemEntity>().Remove(item);
+                await NormalizeOrderIndexAsync(c, item.ParentId);
+            }
+        );
+    }
+
+    private async Task DeleteToDoItemAsync(Guid id, SpravyDbToDoDbContext context)
+    {
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
         item = item.ThrowIfNull();
-        var children = await context.Set<ToDoItemEntity>().AsNoTracking().Where(x => x.ParentId == id).ToArrayAsync();
+        var children = await context.Set<ToDoItemEntity>()
+            .AsNoTracking()
+            .Where(x => x.ParentId == id)
+            .ToArrayAsync();
 
         foreach (var child in children)
         {
-            await DeleteToDoItemAsync(child.Id);
+            await DeleteToDoItemAsync(child.Id, context);
         }
 
         context.Set<ToDoItemEntity>().Remove(item);
-        await NormalizeOrderIndexAsync(context, item.ParentId);
-        await context.SaveChangesAsync();
     }
 
     public async Task UpdateToDoItemTypeOfPeriodicityAsync(Guid id, TypeOfPeriodicity type)
     {
         await using var context = dbContextFactory.Create();
-        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
-        item = item.ThrowIfNull();
-        item.TypeOfPeriodicity = type;
-        await context.SaveChangesAsync();
+
+        await context.ExecuteSaveChangesTransactionAsync(
+            async c =>
+            {
+                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
+                item = item.ThrowIfNull();
+                item.TypeOfPeriodicity = type;
+            }
+        );
     }
 
     public async Task UpdateToDoItemDueDateAsync(Guid id, DateTimeOffset dueDate)
     {
         await using var context = dbContextFactory.Create();
-        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
-        item = item.ThrowIfNull();
-        item.DueDate = dueDate;
-        await context.SaveChangesAsync();
+
+        await context.ExecuteSaveChangesTransactionAsync(
+            async c =>
+            {
+                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
+                item = item.ThrowIfNull();
+                item.DueDate = dueDate;
+            }
+        );
     }
 
     public async Task UpdateToDoItemCompleteStatusAsync(Guid id, bool isCompleted)
     {
         await using var context = dbContextFactory.Create();
-        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
-        item = item.ThrowIfNull();
 
-        if (isCompleted)
-        {
-            switch (item.ChildrenType)
+        await context.ExecuteSaveChangesTransactionAsync(
+            async c =>
             {
-                case ToDoItemChildrenType.RequireCompletion:
-                {
-                    var isCanComplete = await IsCanFinishToDoItem(context, item);
+                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
+                item = item.ThrowIfNull();
 
-                    if (!isCanComplete)
+                if (isCompleted)
+                {
+                    switch (item.ChildrenType)
                     {
-                        throw new Exception("Need close sub tasks.");
+                        case ToDoItemChildrenType.RequireCompletion:
+                        {
+                            var isCanComplete = await IsCanFinishToDoItem(c, item);
+
+                            if (!isCanComplete)
+                            {
+                                throw new Exception("Need close sub tasks.");
+                            }
+
+                            break;
+                        }
+                        case ToDoItemChildrenType.IgnoreCompletion:
+                            break;
+                        case ToDoItemChildrenType.CircleCompletion:
+                        {
+                            var isCanComplete = await IsCanFinishToDoItem(c, item);
+
+                            if (!isCanComplete)
+                            {
+                                throw new Exception("Need close sub tasks.");
+                            }
+
+                            break;
+                        }
+                        default: throw new ArgumentOutOfRangeException();
                     }
 
-                    break;
-                }
-                case ToDoItemChildrenType.IgnoreCompletion:
-                    break;
-                case ToDoItemChildrenType.CircleCompletion:
-                {
-                    var isCanComplete = await IsCanFinishToDoItem(context, item);
 
-                    if (!isCanComplete)
+                    switch (item.Type)
                     {
-                        throw new Exception("Need close sub tasks.");
+                        case ToDoItemType.Value:
+                            item.IsCompleted = true;
+                            break;
+                        case ToDoItemType.Group:
+                            break;
+                        case ToDoItemType.Planned:
+                            item.IsCompleted = true;
+                            break;
+                        case ToDoItemType.Periodicity:
+                            break;
+                        case ToDoItemType.PeriodicityOffset:
+                            break;
+                        default: throw new ArgumentOutOfRangeException();
                     }
 
-                    break;
+                    item.CompletedCount++;
+                    UpdateDueDate(item);
+                    item.LastCompleted = DateTimeOffset.Now;
+
+                    switch (item.ChildrenType)
+                    {
+                        case ToDoItemChildrenType.RequireCompletion:
+                            break;
+                        case ToDoItemChildrenType.IgnoreCompletion:
+                            break;
+                        case ToDoItemChildrenType.CircleCompletion:
+                            await CircleCompletionAsync(c, item);
+
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
                 }
-                default: throw new ArgumentOutOfRangeException();
+                else
+                {
+                    item.IsCompleted = false;
+                }
             }
-
-
-            switch (item.Type)
-            {
-                case ToDoItemType.Value:
-                    item.IsCompleted = true;
-                    break;
-                case ToDoItemType.Group:
-                    break;
-                case ToDoItemType.Planned:
-                    item.IsCompleted = true;
-                    break;
-                case ToDoItemType.Periodicity:
-                    break;
-                case ToDoItemType.PeriodicityOffset:
-                    break;
-                default: throw new ArgumentOutOfRangeException();
-            }
-
-            item.CompletedCount++;
-            UpdateDueDate(item);
-            item.LastCompleted = DateTimeOffset.Now;
-
-            switch (item.ChildrenType)
-            {
-                case ToDoItemChildrenType.RequireCompletion:
-                    break;
-                case ToDoItemChildrenType.IgnoreCompletion:
-                    break;
-                case ToDoItemChildrenType.CircleCompletion:
-                    await CircleCompletionAsync(context, item);
-
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-        else
-        {
-            item.IsCompleted = false;
-        }
-
-        await context.SaveChangesAsync();
+        );
     }
 
     private async Task CircleCompletionAsync(SpravyDbToDoDbContext context, ToDoItemEntity item)
@@ -573,199 +622,222 @@ public class EfToDoService : IToDoService
     public async Task UpdateToDoItemNameAsync(Guid id, string name)
     {
         await using var context = dbContextFactory.Create();
-        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
-        item = item.ThrowIfNull();
-        item.Name = name;
-        await context.SaveChangesAsync();
+
+        await context.ExecuteSaveChangesTransactionAsync(
+            async c =>
+            {
+                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
+                item = item.ThrowIfNull();
+                item.Name = name;
+            }
+        );
     }
 
     public async Task UpdateToDoItemOrderIndexAsync(UpdateOrderIndexToDoItemOptions options)
     {
         await using var context = dbContextFactory.Create();
-        var item = await context.Set<ToDoItemEntity>().FindAsync(options.Id);
-        item = item.ThrowIfNull();
-        var targetItem = await context.Set<ToDoItemEntity>().FindAsync(options.TargetId);
-        targetItem = targetItem.ThrowIfNull();
-        var orderIndex = options.IsAfter ? targetItem.OrderIndex + 1 : targetItem.OrderIndex;
 
-        var items = await context.Set<ToDoItemEntity>()
-            .Where(x => x.ParentId == item.ParentId && x.Id != item.Id && x.OrderIndex >= orderIndex)
-            .ToArrayAsync();
+        await context.ExecuteSaveChangesTransactionAsync(
+            async c =>
+            {
+                var item = await c.Set<ToDoItemEntity>().FindAsync(options.Id);
+                item = item.ThrowIfNull();
+                var targetItem = await c.Set<ToDoItemEntity>().FindAsync(options.TargetId);
+                targetItem = targetItem.ThrowIfNull();
+                var orderIndex = options.IsAfter ? targetItem.OrderIndex + 1 : targetItem.OrderIndex;
 
-        foreach (var itemEntity in items)
-        {
-            itemEntity.OrderIndex++;
-        }
+                var items = await c.Set<ToDoItemEntity>()
+                    .Where(x => x.ParentId == item.ParentId && x.Id != item.Id && x.OrderIndex >= orderIndex)
+                    .ToArrayAsync();
 
-        item.OrderIndex = orderIndex;
-        await context.SaveChangesAsync();
-        await NormalizeOrderIndexAsync(context, item.ParentId);
+                foreach (var itemEntity in items)
+                {
+                    itemEntity.OrderIndex++;
+                }
+
+                item.OrderIndex = orderIndex;
+                await c.SaveChangesAsync();
+                await NormalizeOrderIndexAsync(c, item.ParentId);
+            }
+        );
     }
 
     public async Task UpdateToDoItemDescriptionAsync(Guid id, string description)
     {
         await using var context = dbContextFactory.Create();
-        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
-        item = item.ThrowIfNull();
-        item.Description = description;
-        await context.SaveChangesAsync();
+
+        await context.ExecuteSaveChangesTransactionAsync(
+            async c =>
+            {
+                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
+                item = item.ThrowIfNull();
+                item.Description = description;
+            }
+        );
     }
 
     public async Task SkipToDoItemAsync(Guid id)
     {
         await using var context = dbContextFactory.Create();
-        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
-        item = item.ThrowIfNull();
 
-        switch (item.ChildrenType)
-        {
-            case ToDoItemChildrenType.RequireCompletion:
+        await context.ExecuteSaveChangesTransactionAsync(
+            async c =>
             {
-                var isCanComplete = await IsCanFinishToDoItem(context, item);
+                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
+                item = item.ThrowIfNull();
 
-                if (!isCanComplete)
+                switch (item.ChildrenType)
                 {
-                    throw new Exception("Need close sub tasks.");
+                    case ToDoItemChildrenType.RequireCompletion:
+                    {
+                        var isCanComplete = await IsCanFinishToDoItem(c, item);
+
+                        if (!isCanComplete)
+                        {
+                            throw new Exception("Need close sub tasks.");
+                        }
+
+                        break;
+                    }
+                    case ToDoItemChildrenType.IgnoreCompletion:
+                        break;
+                    case ToDoItemChildrenType.CircleCompletion:
+                    {
+                        var isCanComplete = await IsCanFinishToDoItem(c, item);
+
+                        if (!isCanComplete)
+                        {
+                            throw new Exception("Need close sub tasks.");
+                        }
+
+                        break;
+                    }
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
 
-                break;
-            }
-            case ToDoItemChildrenType.IgnoreCompletion:
-                break;
-            case ToDoItemChildrenType.CircleCompletion:
-            {
-                var isCanComplete = await IsCanFinishToDoItem(context, item);
 
-                if (!isCanComplete)
+                switch (item.Type)
                 {
-                    throw new Exception("Need close sub tasks.");
+                    case ToDoItemType.Value:
+                        item.IsCompleted = true;
+
+                        break;
+                    case ToDoItemType.Group:
+                        break;
+                    case ToDoItemType.Planned:
+                        item.IsCompleted = true;
+
+                        break;
+                    case ToDoItemType.Periodicity:
+                        break;
+                    case ToDoItemType.PeriodicityOffset:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
 
-                break;
+                item.SkippedCount++;
+                UpdateDueDate(item);
+                item.LastCompleted = DateTimeOffset.Now;
+
+                switch (item.ChildrenType)
+                {
+                    case ToDoItemChildrenType.RequireCompletion:
+                        break;
+                    case ToDoItemChildrenType.IgnoreCompletion:
+                        break;
+                    case ToDoItemChildrenType.CircleCompletion:
+                        await CircleCompletionAsync(c, item);
+
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
             }
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-
-
-        switch (item.Type)
-        {
-            case ToDoItemType.Value:
-                item.IsCompleted = true;
-
-                break;
-            case ToDoItemType.Group:
-                break;
-            case ToDoItemType.Planned:
-                item.IsCompleted = true;
-
-                break;
-            case ToDoItemType.Periodicity:
-                break;
-            case ToDoItemType.PeriodicityOffset:
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-
-        item.SkippedCount++;
-        UpdateDueDate(item);
-        item.LastCompleted = DateTimeOffset.Now;
-
-        switch (item.ChildrenType)
-        {
-            case ToDoItemChildrenType.RequireCompletion:
-                break;
-            case ToDoItemChildrenType.IgnoreCompletion:
-                break;
-            case ToDoItemChildrenType.CircleCompletion:
-                await CircleCompletionAsync(context, item);
-
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-
-        await context.SaveChangesAsync();
+        );
     }
 
     public async Task FailToDoItemAsync(Guid id)
     {
         await using var context = dbContextFactory.Create();
-        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
-        item = item.ThrowIfNull();
 
-
-        switch (item.ChildrenType)
-        {
-            case ToDoItemChildrenType.RequireCompletion:
+        await context.ExecuteSaveChangesTransactionAsync(
+            async c =>
             {
-                var isCanComplete = await IsCanFinishToDoItem(context, item);
+                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
+                item = item.ThrowIfNull();
 
-                if (!isCanComplete)
+                switch (item.ChildrenType)
                 {
-                    throw new Exception("Need close sub tasks.");
+                    case ToDoItemChildrenType.RequireCompletion:
+                    {
+                        var isCanComplete = await IsCanFinishToDoItem(c, item);
+
+                        if (!isCanComplete)
+                        {
+                            throw new Exception("Need close sub tasks.");
+                        }
+
+                        break;
+                    }
+                    case ToDoItemChildrenType.IgnoreCompletion:
+                        break;
+                    case ToDoItemChildrenType.CircleCompletion:
+                    {
+                        var isCanComplete = await IsCanFinishToDoItem(c, item);
+
+                        if (!isCanComplete)
+                        {
+                            throw new Exception("Need close sub tasks.");
+                        }
+
+                        break;
+                    }
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
 
-                break;
-            }
-            case ToDoItemChildrenType.IgnoreCompletion:
-                break;
-            case ToDoItemChildrenType.CircleCompletion:
-            {
-                var isCanComplete = await IsCanFinishToDoItem(context, item);
 
-                if (!isCanComplete)
+                switch (item.Type)
                 {
-                    throw new Exception("Need close sub tasks.");
+                    case ToDoItemType.Value:
+                        item.IsCompleted = true;
+
+                        break;
+                    case ToDoItemType.Group:
+                        break;
+                    case ToDoItemType.Planned:
+                        item.IsCompleted = true;
+
+                        break;
+                    case ToDoItemType.Periodicity:
+                        break;
+                    case ToDoItemType.PeriodicityOffset:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
 
-                break;
+                item.FailedCount++;
+                UpdateDueDate(item);
+                item.LastCompleted = DateTimeOffset.Now;
+
+                switch (item.ChildrenType)
+                {
+                    case ToDoItemChildrenType.RequireCompletion:
+                        break;
+                    case ToDoItemChildrenType.IgnoreCompletion:
+                        break;
+                    case ToDoItemChildrenType.CircleCompletion:
+                        await CircleCompletionAsync(c, item);
+
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
             }
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-
-
-        switch (item.Type)
-        {
-            case ToDoItemType.Value:
-                item.IsCompleted = true;
-
-                break;
-            case ToDoItemType.Group:
-                break;
-            case ToDoItemType.Planned:
-                item.IsCompleted = true;
-
-                break;
-            case ToDoItemType.Periodicity:
-                break;
-            case ToDoItemType.PeriodicityOffset:
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-
-        item.FailedCount++;
-        UpdateDueDate(item);
-        item.LastCompleted = DateTimeOffset.Now;
-
-        switch (item.ChildrenType)
-        {
-            case ToDoItemChildrenType.RequireCompletion:
-                break;
-            case ToDoItemChildrenType.IgnoreCompletion:
-                break;
-            case ToDoItemChildrenType.CircleCompletion:
-                await CircleCompletionAsync(context, item);
-
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-
-        await context.SaveChangesAsync();
+        );
     }
 
     public async Task<IEnumerable<IToDoSubItem>> SearchToDoSubItemsAsync(string searchText)
@@ -786,70 +858,105 @@ public class EfToDoService : IToDoService
     public async Task UpdateToDoItemTypeAsync(Guid id, ToDoItemType type)
     {
         await using var context = dbContextFactory.Create();
-        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
-        item = item.ThrowIfNull();
-        item.Type = type;
-        await context.SaveChangesAsync();
+
+        await context.ExecuteSaveChangesTransactionAsync(
+            async c =>
+            {
+                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
+                item = item.ThrowIfNull();
+                item.Type = type;
+            }
+        );
     }
 
     public async Task AddPinnedToDoItemAsync(Guid id)
     {
         await using var context = dbContextFactory.Create();
-        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
-        item = item.ThrowIfNull();
-        item.IsPinned = true;
-        await context.SaveChangesAsync();
+
+        await context.ExecuteSaveChangesTransactionAsync(
+            async c =>
+            {
+                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
+                item = item.ThrowIfNull();
+                item.IsPinned = true;
+            }
+        );
     }
 
     public async Task RemovePinnedToDoItemAsync(Guid id)
     {
         await using var context = dbContextFactory.Create();
-        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
-        item = item.ThrowIfNull();
-        item.IsPinned = false;
-        await context.SaveChangesAsync();
+
+        await context.ExecuteSaveChangesTransactionAsync(
+            async c =>
+            {
+                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
+                item = item.ThrowIfNull();
+                item.IsPinned = false;
+            }
+        );
     }
 
     public async Task<IEnumerable<IToDoSubItem>> GetPinnedToDoItemsAsync()
     {
         await using var context = dbContextFactory.Create();
 
-        var items = await context.Set<ToDoItemEntity>()
-            .AsNoTracking()
-            .Where(x => x.IsPinned)
-            .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync();
+        return await context.ExecuteSaveChangesTransactionAsync(
+            async c =>
+            {
+                var items = await c.Set<ToDoItemEntity>()
+                    .AsNoTracking()
+                    .Where(x => x.IsPinned)
+                    .OrderBy(x => x.OrderIndex)
+                    .ToArrayAsync();
 
-        var result = await ConvertAsync(context, items);
+                var result = await ConvertAsync(c, items);
 
-        return result;
+                return result;
+            }
+        );
     }
 
     public async Task UpdateToDoItemAnnuallyPeriodicityAsync(Guid id, AnnuallyPeriodicity periodicity)
     {
         await using var context = dbContextFactory.Create();
-        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
-        item = item.ThrowIfNull();
-        item.SetDaysOfYear(periodicity.Days);
-        await context.SaveChangesAsync();
+
+        await context.ExecuteSaveChangesTransactionAsync(
+            async c =>
+            {
+                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
+                item = item.ThrowIfNull();
+                item.SetDaysOfYear(periodicity.Days);
+            }
+        );
     }
 
     public async Task UpdateToDoItemMonthlyPeriodicityAsync(Guid id, MonthlyPeriodicity periodicity)
     {
         await using var context = dbContextFactory.Create();
-        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
-        item = item.ThrowIfNull();
-        item.SetDaysOfMonth(periodicity.Days);
-        await context.SaveChangesAsync();
+
+        await context.ExecuteSaveChangesTransactionAsync(
+            async c =>
+            {
+                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
+                item = item.ThrowIfNull();
+                item.SetDaysOfMonth(periodicity.Days);
+            }
+        );
     }
 
     public async Task UpdateToDoItemWeeklyPeriodicityAsync(Guid id, WeeklyPeriodicity periodicity)
     {
         await using var context = dbContextFactory.Create();
-        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
-        item = item.ThrowIfNull();
-        item.SetDaysOfWeek(periodicity.Days);
-        await context.SaveChangesAsync();
+
+        await context.ExecuteSaveChangesTransactionAsync(
+            async c =>
+            {
+                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
+                item = item.ThrowIfNull();
+                item.SetDaysOfWeek(periodicity.Days);
+            }
+        );
     }
 
     public async Task<IEnumerable<IToDoSubItem>> GetLeafToDoSubItemsAsync(Guid id)
@@ -910,35 +1017,45 @@ public class EfToDoService : IToDoService
         }
 
         await using var context = dbContextFactory.Create();
-        var entity = await context.Set<ToDoItemEntity>().FindAsync(id);
 
-        var items = await context.Set<ToDoItemEntity>()
-            .AsNoTracking()
-            .Where(x => x.ParentId == parentId)
-            .Select(x => x.OrderIndex)
-            .ToArrayAsync();
+        await context.ExecuteSaveChangesTransactionAsync(
+            async c =>
+            {
+                var entity = await c.Set<ToDoItemEntity>().FindAsync(id);
 
-        entity = entity.ThrowIfNull();
-        entity.ParentId = parentId;
-        entity.OrderIndex = items.Length == 0 ? 0 : items.Max() + 1;
-        await context.SaveChangesAsync();
+                var items = await c.Set<ToDoItemEntity>()
+                    .AsNoTracking()
+                    .Where(x => x.ParentId == parentId)
+                    .Select(x => x.OrderIndex)
+                    .ToArrayAsync();
+
+                entity = entity.ThrowIfNull();
+                entity.ParentId = parentId;
+                entity.OrderIndex = items.Length == 0 ? 0 : items.Max() + 1;
+            }
+        );
     }
 
     public async Task ToDoItemToRootAsync(Guid id)
     {
         await using var context = dbContextFactory.Create();
-        var entity = await context.Set<ToDoItemEntity>().FindAsync(id);
 
-        var items = await context.Set<ToDoItemEntity>()
-            .AsNoTracking()
-            .Where(x => x.ParentId == null)
-            .Select(x => x.OrderIndex)
-            .ToArrayAsync();
+        await context.ExecuteSaveChangesTransactionAsync(
+            async c =>
+            {
+                var entity = await c.Set<ToDoItemEntity>().FindAsync(id);
 
-        entity = entity.ThrowIfNull();
-        entity.ParentId = null;
-        entity.OrderIndex = items.Length == 0 ? 0 : items.Max() + 1;
-        await context.SaveChangesAsync();
+                var items = await c.Set<ToDoItemEntity>()
+                    .AsNoTracking()
+                    .Where(x => x.ParentId == null)
+                    .Select(x => x.OrderIndex)
+                    .ToArrayAsync();
+
+                entity = entity.ThrowIfNull();
+                entity.ParentId = null;
+                entity.OrderIndex = items.Length == 0 ? 0 : items.Max() + 1;
+            }
+        );
     }
 
     public async Task<string> ToDoItemToStringAsync(ToDoItemToStringOptions options)
@@ -953,46 +1070,71 @@ public class EfToDoService : IToDoService
     public async Task UpdateToDoItemDaysOffsetAsync(Guid id, ushort days)
     {
         await using var context = dbContextFactory.Create();
-        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
-        item = item.ThrowIfNull();
-        item.DaysOffset = days;
-        await context.SaveChangesAsync();
+
+        await context.ExecuteSaveChangesTransactionAsync(
+            async c =>
+            {
+                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
+                item = item.ThrowIfNull();
+                item.DaysOffset = days;
+            }
+        );
     }
 
     public async Task UpdateToDoItemMonthsOffsetAsync(Guid id, ushort months)
     {
         await using var context = dbContextFactory.Create();
-        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
-        item = item.ThrowIfNull();
-        item.MonthsOffset = months;
-        await context.SaveChangesAsync();
+
+        await context.ExecuteSaveChangesTransactionAsync(
+            async c =>
+            {
+                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
+                item = item.ThrowIfNull();
+                item.MonthsOffset = months;
+            }
+        );
     }
 
     public async Task UpdateToDoItemWeeksOffsetAsync(Guid id, ushort weeks)
     {
         await using var context = dbContextFactory.Create();
-        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
-        item = item.ThrowIfNull();
-        item.WeeksOffset = weeks;
-        await context.SaveChangesAsync();
+
+        await context.ExecuteSaveChangesTransactionAsync(
+            async c =>
+            {
+                var item = await context.Set<ToDoItemEntity>().FindAsync(id);
+                item = item.ThrowIfNull();
+                item.WeeksOffset = weeks;
+            }
+        );
     }
 
     public async Task UpdateToDoItemYearsOffsetAsync(Guid id, ushort years)
     {
         await using var context = dbContextFactory.Create();
-        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
-        item = item.ThrowIfNull();
-        item.YearsOffset = years;
-        await context.SaveChangesAsync();
+
+        await context.ExecuteSaveChangesTransactionAsync(
+            async c =>
+            {
+                var item = await context.Set<ToDoItemEntity>().FindAsync(id);
+                item = item.ThrowIfNull();
+                item.YearsOffset = years;
+            }
+        );
     }
 
     public async Task UpdateToDoItemChildrenTypeAsync(Guid id, ToDoItemChildrenType type)
     {
         await using var context = dbContextFactory.Create();
-        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
-        item = item.ThrowIfNull();
-        item.ChildrenType = type;
-        await context.SaveChangesAsync();
+
+        await context.ExecuteSaveChangesTransactionAsync(
+            async c =>
+            {
+                var item = await context.Set<ToDoItemEntity>().FindAsync(id);
+                item = item.ThrowIfNull();
+                item.ChildrenType = type;
+            }
+        );
     }
 
     private async Task ToDoItemToStringAsync(
@@ -1092,8 +1234,6 @@ public class EfToDoService : IToDoService
         {
             ordered[index].OrderIndex = index;
         }
-
-        await context.SaveChangesAsync();
     }
 
     private async Task GetParentsAsync(SpravyDbToDoDbContext context, Guid id, List<ToDoItemParent> parents)

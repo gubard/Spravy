@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Spravy.Db.Extensions;
 using Spravy.Db.Sqlite.Extensions;
 using Spravy.Db.Sqlite.Models;
 using Spravy.Domain.Extensions;
@@ -58,22 +59,26 @@ public class ScheduleHostedService : IHostedService
                     await using var context =
                         spravyScheduleDbContextFactory.Create(file.ToSqliteConnectionString());
 
-                    var timers = await context.Set<TimerEntity>()
-                        .AsNoTracking()
-                        .ToArrayAsync();
-
-                    foreach (var timer in timers)
-                    {
-                        if (timer.DueDateTime > DateTimeOffset.Now)
+                    await context.ExecuteSaveChangesTransactionAsync(
+                        async c =>
                         {
-                            continue;
-                        }
+                            var timers = await c.Set<TimerEntity>()
+                                .AsNoTracking()
+                                .ToArrayAsync();
 
-                        var eventBusService = eventBusServiceFactory.Create(file.GetFileNameWithoutExtension());
-                        await eventBusService.PublishEventAsync(timer.EventId, timer.Content);
-                        context.Set<TimerEntity>().Remove(timer);
-                        await context.SaveChangesAsync();
-                    }
+                            foreach (var timer in timers)
+                            {
+                                if (timer.DueDateTime > DateTimeOffset.Now)
+                                {
+                                    continue;
+                                }
+
+                                var eventBusService = eventBusServiceFactory.Create(file.GetFileNameWithoutExtension());
+                                await eventBusService.PublishEventAsync(timer.EventId, timer.Content);
+                                c.Set<TimerEntity>().Remove(timer);
+                            }
+                        }
+                    );
                 }
                 catch (Exception e)
                 {

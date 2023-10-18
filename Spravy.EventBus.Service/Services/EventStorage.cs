@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Spravy.Db.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.EventBus.Db.Contexts;
 using Spravy.EventBus.Db.Models;
@@ -29,33 +30,27 @@ public class EventStorage
             Id = Guid.NewGuid(),
         };
 
-        await context.Set<EventEntity>().AddAsync(newEvent);
-        await context.SaveChangesAsync();
+        await context.ExecuteSaveChangesTransactionAsync(
+            c => c.Set<EventEntity>().AddAsync(newEvent)
+        );
     }
 
     public async Task<IEnumerable<EventValue>> PushEventAsync(Guid[] eventIds)
     {
         await using var context = dbContextFactory.Create();
-        await using  var transaction = await context.Database.BeginTransactionAsync();
 
-        try
-        {
-            var events = await context.Set<EventEntity>()
-                .Where(x => eventIds.Contains(x.EventId))
-                .ToArrayAsync();
+        return await context.ExecuteSaveChangesTransactionAsync(
+            async c =>
+            {
+                var events = await c.Set<EventEntity>()
+                    .Where(x => eventIds.Contains(x.EventId))
+                    .ToArrayAsync();
 
-            var result = mapper.Map<IEnumerable<EventValue>>(events);
-            context.Set<EventEntity>().RemoveRange(events);
-            await context.SaveChangesAsync();
-            await transaction.CommitAsync();
+                var result = mapper.Map<IEnumerable<EventValue>>(events);
+                c.Set<EventEntity>().RemoveRange(events);
 
-            return result;
-        }
-        catch
-        {
-            await transaction.RollbackAsync();
-
-            throw;
-        }
+                return result;
+            }
+        );
     }
 }
