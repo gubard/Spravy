@@ -200,7 +200,7 @@ class Build : NukeBuild
 
     Target PublishAndroid =>
         _ => _
-            .DependsOn(Compile)
+            .DependsOn(PublishServices)
             .Executes(() =>
                 {
                     using var ftpClient = CreateFtpClient();
