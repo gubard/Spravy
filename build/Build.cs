@@ -109,13 +109,12 @@ class Build : NukeBuild
 
                     ushort port = 5000;
                     var serviceOptions = new Dictionary<Project, ServiceOptions>();
-                    var hosts = new Dictionary<string, string>();
 
                     foreach (var serviceProject in serviceProjects)
                     {
                         serviceOptions[serviceProject] = new ServiceOptions(port, serviceProject.Name);
 
-                        hosts[$"Grpc{serviceProject.Name.Substring(6).Replace(".", "")}"] =
+                        Hosts[$"Grpc{serviceProject.Name.Substring(6).Replace(".", "")}"] =
                             $"http://{ServerHost}:{port}";
 
                         port++;
@@ -134,7 +133,7 @@ class Build : NukeBuild
                             serviceOption.Value.Port,
                             sshClient,
                             ftpClient,
-                            hosts
+                            Hosts
                         );
                     }
 
@@ -248,7 +247,7 @@ class Build : NukeBuild
                     var android = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Android");
 
                     SetServiceSettings(new FileInfo(Path.Combine(android.Directory, "appsettings.json")), 6000,
-                        new Dictionary<string, string>(), token
+                        Hosts, token
                     );
 
                     var androidFolder = PublishProject(android, android.Name, setting => setting
