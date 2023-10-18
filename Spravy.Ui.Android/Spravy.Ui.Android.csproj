@@ -10,6 +10,8 @@
         <AndroidPackageFormat>apk</AndroidPackageFormat>
         <AndroidEnableProfiledAot>False</AndroidEnableProfiledAot>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+        <RunAOTCompilation>false</RunAOTCompilation>
+        <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
     </PropertyGroup>
 
     <ItemGroup>
