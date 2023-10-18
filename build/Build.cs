@@ -185,7 +185,7 @@ class Build : NukeBuild
                     var browserProject = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Browser");
                     var name = browserProject.Name;
                     var folder = PublishProject(browserProject, name);
-                    CopyDirectory(Path.Combine(browserProject.Path, "bin/Release/net7.0/browser-wasm/AppBundle"),
+                    CopyDirectory(Path.Combine(browserProject.Directory, "bin/Release/net7.0/browser-wasm/AppBundle"),
                         Path.Combine(folder.FullName, "AppBundle"), true
                     );
                     var appSettingsFile = new FileInfo(Path.Combine(folder.FullName, "appsettings.json"));
