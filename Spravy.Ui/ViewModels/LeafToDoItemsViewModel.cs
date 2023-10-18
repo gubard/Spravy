@@ -24,7 +24,7 @@ public class LeafToDoItemsViewModel : RoutableViewModelBase, IRefreshToDoItem
         this.WhenAnyValue(x => x.Id).Skip(1).Subscribe(OnNextId);
         SwitchPaneCommand = CreateCommand(SwitchPane);
     }
-    
+
     public ICommand SwitchPaneCommand { get; }
 
     [Inject]
@@ -35,7 +35,7 @@ public class LeafToDoItemsViewModel : RoutableViewModelBase, IRefreshToDoItem
 
     [Inject]
     public required ToDoSubItemsView ToDoSubItemsView { get; init; }
-    
+
     [Inject]
     public required SplitView SplitView { get; init; }
 
@@ -54,9 +54,9 @@ public class LeafToDoItemsViewModel : RoutableViewModelBase, IRefreshToDoItem
     {
         var items = await ToDoService.GetLeafToDoSubItemsAsync(Id);
         var notifyItems = Mapper.Map<IEnumerable<ToDoSubItemNotify>>(items);
-        ToDoSubItemsView.ViewModel.ThrowIfNull().UpdateItems(notifyItems, this);
+        await ToDoSubItemsView.ViewModel.ThrowIfNull().UpdateItemsAsync(notifyItems, this);
     }
-    
+
     private void SwitchPane()
     {
         SplitView.IsPaneOpen = !SplitView.IsPaneOpen;

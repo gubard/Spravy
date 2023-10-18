@@ -56,7 +56,7 @@ public class RootToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChange
     {
         var items = await ToDoService.GetRootToDoSubItemsAsync();
         var source = items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
-        ToDoSubItemsView.ViewModel.ThrowIfNull().UpdateItems(source, this);
+        await ToDoSubItemsView.ViewModel.ThrowIfNull().UpdateItemsAsync(source, this);
         SubscribeItems(source);
     }
 

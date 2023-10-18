@@ -126,7 +126,7 @@ public class ToDoItemValueViewModel : ToDoItemViewModel, IRefreshToDoItem
                 Description = toDoItemValue.Description;
                 ChildrenType = toDoItemValue.ChildrenType;
                 var source = toDoItemValue.Items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
-                ToDoSubItemsViewModel.UpdateItems(source, this);
+                await ToDoSubItemsViewModel.UpdateItemsAsync(source, this);
                 SubscribeItems(source);
                 Path.Items.Clear();
                 Path.Items.Add(new RootItem());

@@ -317,7 +317,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
         return ToDoService.NavigateToToDoItemViewModel(item.Id, Navigator);
     }
 
-    public void UpdateItems(IEnumerable<ToDoSubItemNotify> items, IRefreshToDoItem refresh)
+    public Task UpdateItemsAsync(IEnumerable<ToDoSubItemNotify> items, IRefreshToDoItem refresh)
     {
         var itemsArray = items.ToArray();
         refreshToDoItem = refresh;
@@ -329,5 +329,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
         Completed.AddRange(itemsArray.Where(x => x.Status == ToDoItemStatus.Completed));
         Planned.Clear();
         Planned.AddRange(itemsArray.Where(x => x.Status == ToDoItemStatus.Planned));
+
+        return InitializedAsync();
     }
 }

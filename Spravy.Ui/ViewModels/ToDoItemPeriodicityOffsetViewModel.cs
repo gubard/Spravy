@@ -123,7 +123,7 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
                 YearsOffset = toDoItemPeriodicityOffset.YearsOffset;
                 ChildrenType = toDoItemPeriodicityOffset.ChildrenType;
                 var source = toDoItemPeriodicityOffset.Items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
-                ToDoSubItemsViewModel.UpdateItems(source, this);
+                await ToDoSubItemsViewModel.UpdateItemsAsync(source, this);
                 SubscribeItems(source);
                 Path.Items.Clear();
                 Path.Items.Add(new RootItem());

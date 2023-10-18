@@ -52,6 +52,8 @@ public class SearchViewModel : RoutableViewModelBase, IRefreshToDoItem
     public async Task RefreshToDoItemAsync()
     {
         var items = await ToDoService.SearchToDoSubItemsAsync(SearchText);
-        ToDoSubItemsView.ViewModel.ThrowIfNull().UpdateItems(Mapper.Map<IEnumerable<ToDoSubItemNotify>>(items), this);
+
+        await ToDoSubItemsView.ViewModel.ThrowIfNull()
+            .UpdateItemsAsync(Mapper.Map<IEnumerable<ToDoSubItemNotify>>(items), this);
     }
 }

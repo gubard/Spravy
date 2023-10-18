@@ -33,7 +33,7 @@ public class ToDoItemGroupViewModel : ToDoItemViewModel, IRefreshToDoItem
                 Type = ToDoItemType.Group;
                 IsPinned = item.IsPinned;
                 var source = item.Items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
-                ToDoSubItemsViewModel.UpdateItems(source, this);
+                await ToDoSubItemsViewModel.UpdateItemsAsync(source, this);
                 SubscribeItems(source);
                 Path.Items.Clear();
                 Path.Items.Add(new RootItem());
