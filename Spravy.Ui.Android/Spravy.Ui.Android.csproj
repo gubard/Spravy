@@ -10,14 +10,13 @@
         <AndroidPackageFormat>apk</AndroidPackageFormat>
         <AndroidEnableProfiledAot>False</AndroidEnableProfiledAot>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-        <PublishTrimmed>false</PublishTrimmed>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Avalonia.Android" Version="11.0.4" />
     </ItemGroup>
 
-    <ItemGroup>
+    <ItemGroup>s
         <ProjectReference Include="..\Spravy.Ui\Spravy.Ui.csproj" />
     </ItemGroup>
 
