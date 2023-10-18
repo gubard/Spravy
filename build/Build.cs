@@ -247,6 +247,10 @@ class Build : NukeBuild
 
                     var android = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Android");
 
+                    SetServiceSettings(new FileInfo(Path.Combine(android.Directory, "appsettings.json")), 6000,
+                        new Dictionary<string, string>(), token
+                    );
+
                     var androidFolder = PublishProject(android, android.Name, setting => setting
                         .SetProperty("AndroidKeyStore", "true")
                         .SetProperty("AndroidSigningKeyStore", keyStoreFile.FullName)
