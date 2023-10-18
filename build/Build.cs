@@ -50,6 +50,7 @@ class Build : NukeBuild
     static readonly DirectoryInfo PublishFolder = new(Path.Combine(TempFolder.FullName, "Publish"));
     static readonly DirectoryInfo ServicesFolder = new(Path.Combine(TempFolder.FullName, "services"));
     static readonly Dictionary<string, string> Hosts = new();
+    static string token;
 
     [Solution] readonly Solution Solution;
 
@@ -92,6 +93,8 @@ class Build : NukeBuild
                             }
                         }
                     }
+
+                    token = CreteToken();
                 }
             );
 
@@ -104,11 +107,9 @@ class Build : NukeBuild
                         Solution.AllProjects.Where(x => x.Name.EndsWith(".Service") && x.Name != "Spravy.Service")
                             .ToArray();
 
-                    var browserProject = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Browser");
                     ushort port = 5000;
                     var serviceOptions = new Dictionary<Project, ServiceOptions>();
                     var hosts = new Dictionary<string, string>();
-                    var browserHosts = new Dictionary<string, string>();
 
                     foreach (var serviceProject in serviceProjects)
                     {
@@ -124,9 +125,6 @@ class Build : NukeBuild
                     sshClient.Connect();
                     using var ftpClient = CreateFtpClient();
                     ftpClient.Connect();
-                    var token = CreteToken();
-                    RunCommand(sshClient, "dotnet tool install --global dotnet-serve");
-                    RunCommand(sshClient, "dotnet tool update --global dotnet-serve");
 
                     foreach (var serviceOption in serviceOptions)
                     {
@@ -136,22 +134,9 @@ class Build : NukeBuild
                             serviceOption.Value.Port,
                             sshClient,
                             ftpClient,
-                            hosts,
-                            token
+                            hosts
                         );
                     }
-
-                    PublishService(browserProject,
-                        browserProject.Name,
-                        6000,
-                        sshClient,
-                        ftpClient,
-                        browserHosts,
-                        token
-                    );
-
-                    using var daemonReloadCommand =
-                        sshClient.RunCommand($"echo {SshPassword} | sudo systemctl daemon-reload");
 
                     foreach (var serviceProject in serviceProjects)
                     {
@@ -165,6 +150,9 @@ class Build : NukeBuild
                                 $"echo {SshPassword} | sudo systemctl restart {serviceProject.Name.ToLower()}"
                             );
                     }
+
+                    using var daemonReloadCommand =
+                        sshClient.RunCommand($"echo {SshPassword} | sudo systemctl daemon-reload");
                 }
             );
 
@@ -182,6 +170,31 @@ class Build : NukeBuild
                     DeleteIfExistsDirectory(ftpClient, $"/home/{FtpUser}/Apps/Spravy.Ui.Desktop");
                     CreateIfNotExistsDirectory(ftpClient, $"/home/{FtpUser}/Apps");
                     ftpClient.UploadDirectory(desktopFolder.FullName, $"/home/{FtpUser}/Apps/Spravy.Ui.Desktop");
+                }
+            );
+
+    Target PublishBrowser =>
+        _ => _
+            .DependsOn(Compile)
+            .Executes(() =>
+                {
+                    using var sshClient = new SshClient(CreateSshConnection());
+                    sshClient.Connect();
+                    using var ftpClient = CreateFtpClient();
+                    ftpClient.Connect();
+                    var browserProject = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Browser");
+                    var name = browserProject.Name;
+                    var folder = PublishProject(browserProject, name);
+                    CopyDirectory(Path.Combine(browserProject.Path, "bin/Release/net7.0/browser-wasm/AppBundle"),
+                        Path.Combine(folder.FullName, "AppBundle"), true
+                    );
+                    var appSettingsFile = new FileInfo(Path.Combine(folder.FullName, "appsettings.json"));
+                    SetServiceSettings(appSettingsFile, 6000, new Dictionary<string, string>(), token);
+                    DeleteIfExistsDirectory(ftpClient, $"/home/{FtpUser}/{name}");
+                    ftpClient.UploadDirectory(folder.FullName, $"/home/{FtpUser}/{name}");
+
+                    using var daemonReloadCommand =
+                        sshClient.RunCommand($"echo {SshPassword} | sudo systemctl reload nginx");
                 }
             );
 
@@ -250,7 +263,7 @@ class Build : NukeBuild
                 }
             );
 
-    Target Publish => _ => _.DependsOn(PublishDesktop, PublishAndroid);
+    Target Publish => _ => _.DependsOn(PublishDesktop, PublishAndroid, PublishBrowser);
 
     void RunCommand(SshClient client, string command)
     {
@@ -278,8 +291,7 @@ class Build : NukeBuild
         ushort port,
         SshClient sshClient,
         FtpClient ftpClient,
-        Dictionary<string, string> hosts,
-        string token
+        Dictionary<string, string> hosts
     )
     {
         var folder = PublishProject(project, name);
