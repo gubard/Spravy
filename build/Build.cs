@@ -410,11 +410,11 @@ class Build : NukeBuild
                         writer.WritePropertyName("MinimumLevel");
                         writer.WriteStartObject();
                         writer.WritePropertyName("Default");
-                        writer.WriteStringValue("Information");
+                        writer.WriteStringValue("Verbose");
                         writer.WritePropertyName("Override");
                         writer.WriteStartObject();
                         writer.WritePropertyName("Microsoft");
-                        writer.WriteStringValue("Warning");
+                        writer.WriteStringValue("Verbose");
                         writer.WriteEndObject();
                         writer.WriteEndObject();
 
