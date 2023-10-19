@@ -107,9 +107,14 @@ class Build : NukeBuild
                 }
             );
 
-    Target Restore =>
+    Target Clean =>
         _ => _
             .DependsOn(SetupAppSettings)
+            .Executes(() => DotNetClean(setting => setting.SetProject(Solution)));
+
+    Target Restore =>
+        _ => _
+            .DependsOn(Clean)
             .Executes(() => DotNetRestore(setting => setting.SetProjectFile(Solution)));
 
     Target Compile =>
@@ -215,11 +220,11 @@ class Build : NukeBuild
                     var browserProject = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Browser");
                     var name = browserProject.Name;
                     var folder = PublishProject(browserProject, name);
-                    
+
                     CopyDirectory(Path.Combine(browserProject.Directory, "bin/Release/net7.0/browser-wasm/AppBundle"),
                         Path.Combine(folder.FullName, "AppBundle"), true
                     );
-                    
+
                     DeleteIfExistsDirectory(ftpClient, $"/home/{FtpUser}/{name}");
                     ftpClient.UploadDirectory(folder.FullName, $"/home/{FtpUser}/{name}");
 
