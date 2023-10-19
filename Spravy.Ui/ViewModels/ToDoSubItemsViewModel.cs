@@ -6,6 +6,7 @@ using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
 using Ninject;
+using Serilog;
 using Spravy.Domain.Extensions;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
@@ -23,6 +24,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 
     public ToDoSubItemsViewModel()
     {
+        Log.Logger.Information("Test {Number}", 22);
         CompleteSubToDoItemCommand = CreateCommandFromTask<ToDoSubItemNotify>(CompleteSubToDoItemAsync);
         DeleteSubToDoItemCommand = CreateCommandFromTask<ToDoSubItemNotify>(DeleteSubToDoItemAsync);
         ChangeToDoItemCommand = CreateCommandFromTask<ToDoSubItemNotify>(ChangeToDoItemAsync);
@@ -33,6 +35,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
         ChangeToActiveDoItemCommand = CreateCommandFromTask<ActiveToDoItemNotify>(ChangeToActiveDoItemAsync);
         InitializedCommand = CreateCommandFromTaskWithDialogProgressIndicator(InitializedAsync);
         CompleteSelectedToDoItemsCommand = CreateCommandFromTask(CompleteSelectedToDoItemsAsync);
+        Log.Logger.Information("Test {Number}", 23);
     }
 
     public AvaloniaList<ToDoSubItemNotify> Missed { get; } = new();
