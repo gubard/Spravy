@@ -22,13 +22,9 @@ public class RootToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChange
 {
     public RootToDoItemViewModel() : base("root-to-do-item")
     {
-        Log.Logger.Information("Test {Number}", 15);
         InitializedCommand = CreateCommandFromTaskWithDialogProgressIndicator(InitializedAsync);
-        Log.Logger.Information("Test {Number}", 16);
         AddToDoItemCommand = CreateCommandFromTask(AddToDoItemAsync);
-        Log.Logger.Information("Test {Number}", 17);
         SwitchPaneCommand = CreateCommand(SwitchPane);
-        Log.Logger.Information("Test {Number}", 18);
     }
 
     public ICommand InitializedCommand { get; }
@@ -59,15 +55,10 @@ public class RootToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChange
 
     public async Task RefreshToDoItemAsync()
     {
-        Log.Logger.Information("Test {Number}", 5);
         var items = await ToDoService.GetRootToDoSubItemsAsync();
-        Log.Logger.Information("Test {Number}", 6);
         var source = items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
-        Log.Logger.Information("Test {Number}", 7);
         await ToDoSubItemsView.ViewModel.ThrowIfNull().UpdateItemsAsync(source, this);
-        Log.Logger.Information("Test {Number}", 8);
         SubscribeItems(source);
-        Log.Logger.Information("Test {Number}", 9);
     }
 
     private Task AddToDoItemAsync()

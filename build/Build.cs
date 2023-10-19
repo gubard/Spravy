@@ -95,13 +95,20 @@ class Build : NukeBuild
                             continue;
                         }
 
+                        var token = Token;
+
+                        if (project.Name.Contains(".Ui."))
+                        {
+                            token = string.Empty;
+                        }
+
                         if (ServiceOptions.TryGetValue(project, out var options))
                         {
-                            SetServiceSettings(appSettingsFile, options.Port, Hosts, Token);
+                            SetServiceSettings(appSettingsFile, options.Port, Hosts, token);
                         }
                         else
                         {
-                            SetServiceSettings(appSettingsFile, 0, Hosts, Token);
+                            SetServiceSettings(appSettingsFile, 0, Hosts, token);
                         }
                     }
                 }

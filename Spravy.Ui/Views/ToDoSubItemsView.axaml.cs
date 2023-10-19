@@ -26,9 +26,7 @@ public partial class ToDoSubItemsView : MainReactiveUserControl<ToDoSubItemsView
 
     public ToDoSubItemsView()
     {
-        Log.Logger.Information("Test {Number}", 21);
         InitializeComponent();
-        Log.Logger.Information("Test {Number}", 22);
     }
 
     public ICommand CompleteSubToDoItemCommand => ViewModel.ThrowIfNull().CompleteSubToDoItemCommand;
