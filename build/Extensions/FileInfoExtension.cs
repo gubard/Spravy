@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.Json;
+using Serilog;
 
 namespace _build.Extensions;
 
@@ -16,6 +17,7 @@ public static class FileInfoExtension
     {
         var jsonDocument = file.GetJsonDocument();
         using var stream = new MemoryStream();
+        Log.Logger.Information("Set app settings {File}", file);
         stream.SetAppSettingsStream(jsonDocument, urls, hosts, token);
         var jsonData = Encoding.UTF8.GetString(stream.ToArray());
         File.WriteAllText(file.FullName, jsonData);

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Text.Json;
+using Serilog;
 
 namespace _build.Extensions;
 
@@ -28,6 +29,8 @@ public static class Utf8JsonWriterExtension
         writer.WritePropertyName("Token");
         writer.WriteStringValue(token);
         writer.WriteEndObject();
+        Log.Information("Setup service {ServiceName}", property.Name);
+        Log.Information("Set host {Host}", host);
 
         return true;
     }
@@ -41,6 +44,7 @@ public static class Utf8JsonWriterExtension
 
         writer.WritePropertyName("Urls");
         writer.WriteStringValue(urls);
+        Log.Information("Set URLs {Urls}", urls);
 
         return true;
     }

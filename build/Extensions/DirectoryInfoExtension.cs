@@ -1,4 +1,5 @@
 using System.IO;
+using Serilog;
 
 namespace _build.Extensions;
 
@@ -21,12 +22,15 @@ public static class DirectoryInfoExtension
 
         return Path.Combine(values).ToFolder();
     }
-    
+
     public static void CreateIfNotExits(this DirectoryInfo folder)
     {
-        if (!folder.Exists)
+        if (folder.Exists)
         {
-            folder.Create();
+            return;
         }
+
+        folder.Create();
+        Log.Logger.Information("Created {Folder}", folder);
     }
 }

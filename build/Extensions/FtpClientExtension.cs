@@ -18,6 +18,7 @@ public static class FtpClientExtension
         try
         {
             client.DeleteDirectory(folder.FullName, options);
+            Log.Logger.Information("Delete FTP folder {Folder}", folder);
         }
         catch
         {
@@ -26,12 +27,15 @@ public static class FtpClientExtension
             throw;
         }
     }
-    
+
     public static void CreateIfNotExistsDirectory(this FtpClient client, DirectoryInfo folder)
     {
-        if (!client.DirectoryExists(folder.FullName))
+        if (client.DirectoryExists(folder.FullName))
         {
-            client.CreateDirectory(folder.FullName);
+            return;
         }
+
+        client.CreateDirectory(folder.FullName);
+        Log.Logger.Information("Create FTP folder {Folder}", folder);
     }
 }
