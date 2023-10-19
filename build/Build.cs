@@ -50,12 +50,66 @@ class Build : NukeBuild
     static readonly DirectoryInfo PublishFolder = new(Path.Combine(TempFolder.FullName, "Publish"));
     static readonly DirectoryInfo ServicesFolder = new(Path.Combine(TempFolder.FullName, "services"));
     static readonly Dictionary<string, string> Hosts = new();
-    static string token;
+    static readonly Dictionary<Project, ServiceOptions> ServiceOptions = new();
+    static readonly List<Project> ServiceProjects = new();
+    static string Token;
 
     [Solution] readonly Solution Solution;
 
+    Target Setup =>
+        _ => _
+            .Executes(() =>
+                {
+                    Token = CreteToken();
+
+                    ServiceProjects.AddRange(Solution.AllProjects
+                        .Where(x => x.Name.EndsWith(".Service") && x.Name != "Spravy.Service")
+                        .ToArray()
+                    );
+
+                    ushort port = 5000;
+
+                    foreach (var serviceProject in ServiceProjects)
+                    {
+                        ServiceOptions[serviceProject] = new ServiceOptions(port, serviceProject.Name);
+
+                        Hosts[$"Grpc{serviceProject.Name.Substring(6).Replace(".", "")}"] =
+                            $"http://{ServerHost}:{port}";
+
+                        port++;
+                    }
+                }
+            );
+
+    Target SetupAppSettings =>
+        _ => _
+            .DependsOn(Setup)
+            .Executes(() =>
+                {
+                    foreach (var project in Solution.AllProjects)
+                    {
+                        var appSettingsFile = new FileInfo(Path.Combine(project.Directory, "appsettings.json"));
+
+                        if (!appSettingsFile.Exists)
+                        {
+                            continue;
+                        }
+
+                        if (ServiceOptions.TryGetValue(project, out var options))
+                        {
+                            SetServiceSettings(appSettingsFile, options.Port, Hosts, Token);
+                        }
+                        else
+                        {
+                            SetServiceSettings(appSettingsFile, 0, Hosts, Token);
+                        }
+                    }
+                }
+            );
+
     Target Restore =>
         _ => _
+            .DependsOn(SetupAppSettings)
             .Executes(() => DotNetRestore(setting => setting.SetProjectFile(Solution)));
 
     Target Compile =>
@@ -93,8 +147,6 @@ class Build : NukeBuild
                             }
                         }
                     }
-
-                    token = CreteToken();
                 }
             );
 
@@ -103,41 +155,22 @@ class Build : NukeBuild
             .DependsOn(Compile)
             .Executes(() =>
                 {
-                    var serviceProjects =
-                        Solution.AllProjects.Where(x => x.Name.EndsWith(".Service") && x.Name != "Spravy.Service")
-                            .ToArray();
-
-                    ushort port = 5000;
-                    var serviceOptions = new Dictionary<Project, ServiceOptions>();
-
-                    foreach (var serviceProject in serviceProjects)
-                    {
-                        serviceOptions[serviceProject] = new ServiceOptions(port, serviceProject.Name);
-
-                        Hosts[$"Grpc{serviceProject.Name.Substring(6).Replace(".", "")}"] =
-                            $"http://{ServerHost}:{port}";
-
-                        port++;
-                    }
-
                     using var sshClient = new SshClient(CreateSshConnection());
                     sshClient.Connect();
                     using var ftpClient = CreateFtpClient();
                     ftpClient.Connect();
 
-                    foreach (var serviceOption in serviceOptions)
+                    foreach (var serviceOption in ServiceOptions)
                     {
                         PublishService(
                             serviceOption.Key,
                             serviceOption.Value.ServiceName,
-                            serviceOption.Value.Port,
                             sshClient,
-                            ftpClient,
-                            Hosts
+                            ftpClient
                         );
                     }
 
-                    foreach (var serviceProject in serviceProjects)
+                    foreach (var serviceProject in ServiceProjects)
                     {
                         using var enableCommand =
                             sshClient.RunCommand(
@@ -164,8 +197,6 @@ class Build : NukeBuild
                     ftpClient.Connect();
                     var desktop = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Desktop");
                     var desktopFolder = PublishProject(desktop, desktop.Name);
-                    var desktopAppSettings = new FileInfo(Path.Combine(desktopFolder.FullName, "appsettings.json"));
-                    SetServiceSettings(desktopAppSettings, 0, Hosts, "");
                     DeleteIfExistsDirectory(ftpClient, $"/home/{FtpUser}/Apps/Spravy.Ui.Desktop");
                     CreateIfNotExistsDirectory(ftpClient, $"/home/{FtpUser}/Apps");
                     ftpClient.UploadDirectory(desktopFolder.FullName, $"/home/{FtpUser}/Apps/Spravy.Ui.Desktop");
@@ -184,11 +215,11 @@ class Build : NukeBuild
                     var browserProject = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Browser");
                     var name = browserProject.Name;
                     var folder = PublishProject(browserProject, name);
+                    
                     CopyDirectory(Path.Combine(browserProject.Directory, "bin/Release/net7.0/browser-wasm/AppBundle"),
                         Path.Combine(folder.FullName, "AppBundle"), true
                     );
-                    var appSettingsFile = new FileInfo(Path.Combine(folder.FullName, "appsettings.json"));
-                    SetServiceSettings(appSettingsFile, 6000, new Dictionary<string, string>(), token);
+                    
                     DeleteIfExistsDirectory(ftpClient, $"/home/{FtpUser}/{name}");
                     ftpClient.UploadDirectory(folder.FullName, $"/home/{FtpUser}/{name}");
 
@@ -246,10 +277,6 @@ class Build : NukeBuild
 
                     var android = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Android");
 
-                    SetServiceSettings(new FileInfo(Path.Combine(android.Directory, "appsettings.json")), 6000,
-                        Hosts, token
-                    );
-
                     var androidFolder = PublishProject(android, android.Name, setting => setting
                         .SetProperty("AndroidKeyStore", "true")
                         .SetProperty("AndroidSigningKeyStore", keyStoreFile.FullName)
@@ -291,15 +318,11 @@ class Build : NukeBuild
     void PublishService(
         Project project,
         string name,
-        ushort port,
         SshClient sshClient,
-        FtpClient ftpClient,
-        Dictionary<string, string> hosts
+        FtpClient ftpClient
     )
     {
         var folder = PublishProject(project, name);
-        var appSettingsFile = new FileInfo(Path.Combine(folder.FullName, "appsettings.json"));
-        SetServiceSettings(appSettingsFile, port, hosts, token);
         DeleteIfExistsDirectory(ftpClient, $"/home/{FtpUser}/{name}");
         ftpClient.UploadDirectory(folder.FullName, $"/home/{FtpUser}/{name}");
 
