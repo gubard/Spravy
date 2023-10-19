@@ -252,7 +252,7 @@ class Build : NukeBuild
                         Log.Logger.Information("{Path}", project.Path);
                     }
 
-                    var android = Solution.GetProject("Spravy.Ui.Android").ThrowIfNull();
+                    var android = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Android");
 
                     var androidFolder = android.PublishProject(PathHelper.PublishFolder, Configuration, setting =>
                         setting
