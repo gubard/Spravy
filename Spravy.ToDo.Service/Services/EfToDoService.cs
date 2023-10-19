@@ -861,7 +861,7 @@ public class EfToDoService : IToDoService
                     case ToDoItemChildrenType.IgnoreCompletion:
                         break;
                     case ToDoItemChildrenType.CircleCompletion:
-                        await CircleSkipAsync(c, item);
+                        await CircleCompletionAsync(c, item);
 
                         break;
                     default:
