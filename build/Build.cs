@@ -247,6 +247,11 @@ class Build : NukeBuild
                         )
                         .RunCommand();
 
+                    foreach (var project in Solution.AllProjects)
+                    {
+                        Log.Logger.Information("{Path}", project.Path);
+                    }
+
                     var android = Solution.GetProject("Spravy.Ui.Android").ThrowIfNull();
 
                     var androidFolder = android.PublishProject(PathHelper.PublishFolder, Configuration, setting =>
