@@ -4,6 +4,7 @@ using AutoMapper;
 using Avalonia.Controls;
 using Ninject;
 using ReactiveUI;
+using Serilog;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
 using Spravy.Ui.Models;
@@ -85,8 +86,12 @@ public class LoginViewModel : RoutableViewModelBase
 
     private async Task LoginAsync()
     {
+        Log.Logger.Information("Test {Number}", 1);
         var user = Mapper.Map<User>(this);
+        Log.Logger.Information("Test {Number}", 2);
         await TokenService.LoginAsync(user);
+        Log.Logger.Information("Test {Number}", 3);
         Navigator.NavigateTo<RootToDoItemViewModel>();
+        Log.Logger.Information("Test {Number}", 4);
     }
 }
