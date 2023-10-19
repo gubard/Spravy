@@ -8,6 +8,7 @@ using AutoMapper;
 using Avalonia.Controls;
 using Ninject;
 using ReactiveUI;
+using Serilog;
 using Spravy.Domain.Extensions;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
@@ -54,10 +55,15 @@ public class RootToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChange
 
     public async Task RefreshToDoItemAsync()
     {
+        Log.Logger.Information("Test {Number}", 5);
         var items = await ToDoService.GetRootToDoSubItemsAsync();
+        Log.Logger.Information("Test {Number}", 6);
         var source = items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
+        Log.Logger.Information("Test {Number}", 7);
         await ToDoSubItemsView.ViewModel.ThrowIfNull().UpdateItemsAsync(source, this);
+        Log.Logger.Information("Test {Number}", 8);
         SubscribeItems(source);
+        Log.Logger.Information("Test {Number}", 9);
     }
 
     private Task AddToDoItemAsync()
