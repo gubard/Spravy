@@ -492,7 +492,9 @@ class Build : NukeBuild
 
         try
         {
-            client.DeleteDirectory(path, FtpListOption.Recursive | FtpListOption.ForceList);
+            client.DeleteDirectory(path,
+                FtpListOption.Recursive | FtpListOption.ForceList | FtpListOption.Auto | FtpListOption.AllFiles
+            );
         }
         catch
         {
