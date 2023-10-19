@@ -370,6 +370,37 @@ public class EfToDoService : IToDoService
             }
         }
     }
+    
+    private async Task CircleSkipAsync(SpravyDbToDoDbContext context, ToDoItemEntity item)
+    {
+        var children = await context.Set<ToDoItemEntity>()
+            .Where(x => x.ParentId == item.Id)
+            .OrderBy(x => x.OrderIndex)
+            .ToArrayAsync();
+
+        var maxOrderIndex = children.Max(x => x.OrderIndex);
+        var nextOrderIndex = item.CurrentCircleOrderIndex;
+
+        if (nextOrderIndex > maxOrderIndex)
+        {
+            nextOrderIndex = 0;
+        }
+
+        foreach (var child in children)
+        {
+            if (child.OrderIndex == nextOrderIndex)
+            {
+                child.IsCompleted = false;
+                child.Type = ToDoItemType.Planned;
+                child.DueDate = item.DueDate;
+            }
+            else
+            {
+                child.IsCompleted = true;
+                child.Type = ToDoItemType.Value;
+            }
+        }
+    }
 
     private async Task<bool> IsCanFinishToDoItem(SpravyDbToDoDbContext context, ToDoItemEntity item)
     {
@@ -748,7 +779,7 @@ public class EfToDoService : IToDoService
                     case ToDoItemChildrenType.IgnoreCompletion:
                         break;
                     case ToDoItemChildrenType.CircleCompletion:
-                        await CircleCompletionAsync(c, item);
+                        await CircleSkipAsync(c, item);
 
                         break;
                     default:
@@ -830,7 +861,7 @@ public class EfToDoService : IToDoService
                     case ToDoItemChildrenType.IgnoreCompletion:
                         break;
                     case ToDoItemChildrenType.CircleCompletion:
-                        await CircleCompletionAsync(c, item);
+                        await CircleSkipAsync(c, item);
 
                         break;
                     default:
