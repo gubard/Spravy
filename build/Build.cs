@@ -172,7 +172,7 @@ class Build : NukeBuild
                 {
                     using var ftpClient = CreateFtpClient();
                     ftpClient.Connect();
-                    var desktop = Solution.GetProject("Spravy.Ui.Desktop").ThrowIfNull();
+                    var desktop = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Desktop").ThrowIfNull();
                     var desktopFolder = desktop.PublishProject(PathHelper.PublishFolder, Configuration);
                     ftpClient.DeleteIfExistsFolder($"/home/{FtpUser}/Apps/Spravy.Ui.Desktop".ToFolder());
                     ftpClient.CreateIfNotExistsDirectory($"/home/{FtpUser}/Apps".ToFolder());
@@ -189,7 +189,7 @@ class Build : NukeBuild
                     sshClient.Connect();
                     using var ftpClient = CreateFtpClient();
                     ftpClient.Connect();
-                    var browserProject = Solution.GetProject("Spravy.Ui.Browser").ThrowIfNull();
+                    var browserProject = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Browser").ThrowIfNull();
                     var name = browserProject.Name;
                     var folder = browserProject.PublishProject(PathHelper.PublishFolder, Configuration);
 
