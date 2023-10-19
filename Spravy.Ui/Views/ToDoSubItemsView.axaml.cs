@@ -3,6 +3,7 @@ using System.Windows.Input;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
+using Serilog;
 using Spravy.Domain.Extensions;
 using Spravy.Ui.Controls;
 using Spravy.Ui.Interfaces;
@@ -25,7 +26,9 @@ public partial class ToDoSubItemsView : MainReactiveUserControl<ToDoSubItemsView
 
     public ToDoSubItemsView()
     {
+        Log.Logger.Information("Test {Number}", 21);
         InitializeComponent();
+        Log.Logger.Information("Test {Number}", 22);
     }
 
     public ICommand CompleteSubToDoItemCommand => ViewModel.ThrowIfNull().CompleteSubToDoItemCommand;
