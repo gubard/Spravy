@@ -6,6 +6,8 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
+using _build.Extensions;
+using _build.Helpers;
 using _build.Models;
 using CliWrap;
 using FluentFTP;
@@ -46,9 +48,6 @@ class Build : NukeBuild
     [Parameter] readonly string JwtAudience;
     [Parameter] readonly string AndroidSigningKeyPass;
     [Parameter] readonly string AndroidSigningStorePass;
-    static readonly DirectoryInfo TempFolder = new(Path.Combine("/", "tmp", "Spravy"));
-    static readonly DirectoryInfo PublishFolder = new(Path.Combine(TempFolder.FullName, "Publish"));
-    static readonly DirectoryInfo ServicesFolder = new(Path.Combine(TempFolder.FullName, "services"));
     static readonly Dictionary<string, string> Hosts = new();
     static readonly Dictionary<Project, ServiceOptions> ServiceOptions = new();
     static readonly List<Project> ServiceProjects = new();
@@ -61,21 +60,13 @@ class Build : NukeBuild
             .Executes(() =>
                 {
                     Token = CreteToken();
-
-                    ServiceProjects.AddRange(Solution.AllProjects
-                        .Where(x => x.Name.EndsWith(".Service") && x.Name != "Spravy.Service")
-                        .ToArray()
-                    );
-
+                    ServiceProjects.AddRange(Solution.GetProjects("Service"));
                     ushort port = 5000;
 
                     foreach (var serviceProject in ServiceProjects)
                     {
                         ServiceOptions[serviceProject] = new ServiceOptions(port, serviceProject.Name);
-
-                        Hosts[$"Grpc{serviceProject.Name.Substring(6).Replace(".", "")}"] =
-                            $"http://{ServerHost}:{port}";
-
+                        Hosts[serviceProject.GetOptionsName()] = $"http://{ServerHost}:{port}";
                         port++;
                     }
                 }
@@ -88,28 +79,7 @@ class Build : NukeBuild
                 {
                     foreach (var project in Solution.AllProjects)
                     {
-                        var appSettingsFile = new FileInfo(Path.Combine(project.Directory, "appsettings.json"));
-
-                        if (!appSettingsFile.Exists)
-                        {
-                            continue;
-                        }
-
-                        var token = Token;
-
-                        if (project.Name.Contains(".Ui."))
-                        {
-                            token = string.Empty;
-                        }
-
-                        if (ServiceOptions.TryGetValue(project, out var options))
-                        {
-                            SetServiceSettings(appSettingsFile, options.Port, Hosts, token);
-                        }
-                        else
-                        {
-                            SetServiceSettings(appSettingsFile, 0, Hosts, token);
-                        }
+                        project.SetGetAppSettingsFile(Token, ServiceOptions, Hosts);
                     }
                 }
             );
@@ -174,29 +144,24 @@ class Build : NukeBuild
 
                     foreach (var serviceOption in ServiceOptions)
                     {
-                        PublishService(
-                            serviceOption.Key,
-                            serviceOption.Value.ServiceName,
+                        serviceOption.Key.DeployService(
                             sshClient,
-                            ftpClient
+                            ftpClient,
+                            PathHelper.PublishFolder,
+                            Configuration,
+                            FtpUser,
+                            SshPassword
                         );
                     }
 
                     foreach (var serviceProject in ServiceProjects)
                     {
-                        using var enableCommand =
-                            sshClient.RunCommand(
-                                $"echo {SshPassword} | sudo systemctl enable {serviceProject.Name.ToLower()}"
-                            );
-
-                        using var restartCommand =
-                            sshClient.RunCommand(
-                                $"echo {SshPassword} | sudo systemctl restart {serviceProject.Name.ToLower()}"
-                            );
+                        var serviceName = serviceProject.Name.ToLower();
+                        sshClient.SafeRun($"echo {SshPassword} | sudo systemctl enable {serviceName}");
+                        sshClient.SafeRun($"echo {SshPassword} | sudo systemctl restart {serviceName}");
                     }
 
-                    using var daemonReloadCommand =
-                        sshClient.RunCommand($"echo {SshPassword} | sudo systemctl daemon-reload");
+                    sshClient.SafeRun($"echo {SshPassword} | sudo systemctl daemon-reload");
                 }
             );
 
@@ -207,10 +172,10 @@ class Build : NukeBuild
                 {
                     using var ftpClient = CreateFtpClient();
                     ftpClient.Connect();
-                    var desktop = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Desktop");
-                    var desktopFolder = PublishProject(desktop, desktop.Name);
-                    DeleteIfExistsDirectory(ftpClient, $"/home/{FtpUser}/Apps/Spravy.Ui.Desktop");
-                    CreateIfNotExistsDirectory(ftpClient, $"/home/{FtpUser}/Apps");
+                    var desktop = Solution.GetProject("Spravy.Ui.Desktop").ThrowIfNull();
+                    var desktopFolder = desktop.PublishProject(PathHelper.PublishFolder, Configuration);
+                    ftpClient.DeleteIfExistsFolder($"/home/{FtpUser}/Apps/Spravy.Ui.Desktop".ToFolder());
+                    ftpClient.CreateIfNotExistsDirectory($"/home/{FtpUser}/Apps".ToFolder());
                     ftpClient.UploadDirectory(desktopFolder.FullName, $"/home/{FtpUser}/Apps/Spravy.Ui.Desktop");
                 }
             );
@@ -224,19 +189,17 @@ class Build : NukeBuild
                     sshClient.Connect();
                     using var ftpClient = CreateFtpClient();
                     ftpClient.Connect();
-                    var browserProject = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Browser");
+                    var browserProject = Solution.GetProject("Spravy.Ui.Browser").ThrowIfNull();
                     var name = browserProject.Name;
-                    var folder = PublishProject(browserProject, name);
+                    var folder = browserProject.PublishProject(PathHelper.PublishFolder, Configuration);
 
                     CopyDirectory(Path.Combine(browserProject.Directory, "bin/Release/net7.0/browser-wasm/AppBundle"),
                         Path.Combine(folder.FullName, "AppBundle"), true
                     );
 
-                    DeleteIfExistsDirectory(ftpClient, $"/home/{FtpUser}/{name}");
+                    ftpClient.DeleteIfExistsFolder($"/home/{FtpUser}/{name}".ToFolder());
                     ftpClient.UploadDirectory(folder.FullName, $"/home/{FtpUser}/{name}");
-
-                    using var daemonReloadCommand =
-                        sshClient.RunCommand($"echo {SshPassword} | sudo systemctl reload nginx");
+                    sshClient.SafeRun($"echo {SshPassword} | sudo systemctl reload nginx");
                 }
             );
 
@@ -254,17 +217,14 @@ class Build : NukeBuild
                         throw new NullReferenceException();
                     }
 
-                    if (!keyStoreFile.Directory.Exists)
-                    {
-                        keyStoreFile.Directory.Create();
-                    }
+                    keyStoreFile.Directory.CreateIfNotExits();
 
                     if (keyStoreFile.Exists)
                     {
                         keyStoreFile.Delete();
                     }
 
-                    RunCommand(Cli.Wrap("keytool")
+                    Cli.Wrap("keytool")
                         .WithArguments(new[]
                             {
                                 "-genkey",
@@ -285,18 +245,19 @@ class Build : NukeBuild
                                 AndroidSigningStorePass,
                             }
                         )
-                    );
+                        .RunCommand();
 
-                    var android = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Android");
+                    var android = Solution.GetProject("Spravy.Ui.Android").ThrowIfNull();
 
-                    var androidFolder = PublishProject(android, android.Name, setting => setting
-                        .SetProperty("AndroidKeyStore", "true")
-                        .SetProperty("AndroidSigningKeyStore", keyStoreFile.FullName)
-                        .SetProperty("AndroidSigningKeyAlias", "spravy")
-                        .SetProperty("AndroidSigningKeyPass", AndroidSigningKeyPass)
-                        .SetProperty("AndroidSigningStorePass", AndroidSigningStorePass)
-                        .SetProperty("AndroidSdkDirectory", "/usr/lib/android-sdk")
-                        .DisableNoBuild()
+                    var androidFolder = android.PublishProject(PathHelper.PublishFolder, Configuration, setting =>
+                        setting
+                            .SetProperty("AndroidKeyStore", "true")
+                            .SetProperty("AndroidSigningKeyStore", keyStoreFile.FullName)
+                            .SetProperty("AndroidSigningKeyAlias", "spravy")
+                            .SetProperty("AndroidSigningKeyPass", AndroidSigningKeyPass)
+                            .SetProperty("AndroidSigningStorePass", AndroidSigningStorePass)
+                            .SetProperty("AndroidSdkDirectory", "/usr/lib/android-sdk")
+                            .DisableNoBuild()
                     );
 
                     DeleteIfExistsDirectory(ftpClient, $"/home/{FtpUser}/Apps/Spravy.Ui.Android");
@@ -306,66 +267,6 @@ class Build : NukeBuild
             );
 
     Target Publish => _ => _.DependsOn(PublishDesktop, PublishAndroid, PublishBrowser);
-
-    void RunCommand(SshClient client, string command)
-    {
-        using var run = client.RunCommand(command);
-    }
-
-    void RunCommand(Command command)
-    {
-        var errorStringBuilder = new StringBuilder();
-        var outputStringBuilder = new StringBuilder();
-
-        command.WithStandardErrorPipe(PipeTarget.ToStringBuilder(errorStringBuilder))
-            .WithStandardOutputPipe(PipeTarget.ToStringBuilder(outputStringBuilder))
-            .ExecuteAsync()
-            .GetAwaiter()
-            .GetResult();
-
-        Log.Information("{Error}", errorStringBuilder.ToString());
-        Log.Information("{Output}", outputStringBuilder.ToString());
-    }
-
-    void PublishService(
-        Project project,
-        string name,
-        SshClient sshClient,
-        FtpClient ftpClient
-    )
-    {
-        var folder = PublishProject(project, name);
-        DeleteIfExistsDirectory(ftpClient, $"/home/{FtpUser}/{name}");
-        ftpClient.UploadDirectory(folder.FullName, $"/home/{FtpUser}/{name}");
-
-        using var rmCommand =
-            sshClient.RunCommand(
-                $"echo {SshPassword} | rm /etc/systemd/system/{name.ToLower()}"
-            );
-
-        if (!ServicesFolder.Exists)
-        {
-            ServicesFolder.Create();
-        }
-
-        File.WriteAllText(Path.Combine(ServicesFolder.FullName, name.ToLower()),
-            CreateDaemonConfig(name)
-        );
-
-        if (!ftpClient.DirectoryExists("/tmp/Spravy/services"))
-        {
-            ftpClient.CreateDirectory("/tmp/Spravy/services");
-        }
-
-        ftpClient.UploadFile(Path.Combine(ServicesFolder.FullName, name.ToLower()),
-            $"/tmp/Spravy/services/{name.ToLower()}"
-        );
-
-        using var cpCommand =
-            sshClient.RunCommand(
-                $"echo {SshPassword} | sudo cp /tmp/Spravy/services/{name.ToLower()} /etc/systemd/system/{name.ToLower()}"
-            );
-    }
 
     void SetServiceSettings(
         Stream stream,
@@ -544,66 +445,6 @@ class Build : NukeBuild
             var newDestinationDir = Path.Combine(destinationDir, subDir.Name);
             CopyDirectory(subDir.FullName, newDestinationDir, true);
         }
-    }
-
-    DirectoryInfo PublishProject(
-        Project project,
-        string name,
-        Func<DotNetPublishSettings, DotNetPublishSettings> configurator = null
-    )
-    {
-        var publishFolder = new DirectoryInfo(Path.Combine(PublishFolder.FullName, name));
-
-        if (publishFolder.Exists)
-        {
-            publishFolder.Delete(true);
-        }
-
-        if (!publishFolder.Exists)
-        {
-            publishFolder.Create();
-        }
-
-        for (var i = 0; i < 3; i++)
-        {
-            try
-            {
-                DotNetPublish(setting =>
-                    {
-                        var result = setting.SetConfiguration(Configuration)
-                            .SetProject(project)
-                            .SetOutput(publishFolder.FullName)
-                            .EnableNoBuild()
-                            .EnableNoRestore();
-
-                        if (configurator is not null)
-                        {
-                            result = configurator.Invoke(result);
-                        }
-
-                        return result;
-                    }
-                );
-
-                break;
-            }
-            catch (Exception e)
-            {
-                if (i == 2)
-                {
-                    throw;
-                }
-
-                if (e.ToString().Contains("CompileAvaloniaXamlTask"))
-                {
-                    continue;
-                }
-
-                throw;
-            }
-        }
-
-        return publishFolder;
     }
 
     string CreteToken()
