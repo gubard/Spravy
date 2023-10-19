@@ -1,6 +1,7 @@
 using System;
 using Ninject;
 using ReactiveUI;
+using Serilog;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 
@@ -32,14 +33,19 @@ public class Navigator : INavigator
     public IObservable<IRoutableViewModel> NavigateTo<TViewModel>(Action<TViewModel>? setup = null)
         where TViewModel : IRoutableViewModel
     {
+        Log.Logger.Information("Test {Number}", 10);
         var viewModel = Resolver.Get<TViewModel>();
+        Log.Logger.Information("Test {Number}", 11);
 
         if (setup is null)
         {
+            Log.Logger.Information("Test {Number}", 12);
             return RoutingState.Navigate.Execute(viewModel);
         }
 
+        Log.Logger.Information("Test {Number}", 13);
         setup.Invoke(viewModel);
+        Log.Logger.Information("Test {Number}", 14);
 
         return RoutingState.Navigate.Execute(viewModel);
     }
