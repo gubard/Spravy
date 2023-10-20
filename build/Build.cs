@@ -192,11 +192,9 @@ class Build : NukeBuild
                     var browserProject = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Browser").ThrowIfNull();
                     var name = browserProject.Name;
                     var folder = browserProject.PublishProject(PathHelper.PublishFolder, Configuration);
-
-                    CopyDirectory(Path.Combine(browserProject.Directory, "bin/Release/net7.0/browser-wasm/AppBundle"),
-                        Path.Combine(folder.FullName, "AppBundle"), true
-                    );
-
+                    var appBundlePath = "bin/Release/net7.0/browser-wasm/AppBundle";
+                    var appBundleFolder = Path.Combine(browserProject.Directory, appBundlePath).ToFolder();
+                    CopyDirectory(appBundleFolder.FullName, Path.Combine(folder.FullName, "AppBundle"), true);
                     ftpClient.DeleteIfExistsFolder($"/home/{FtpUser}/{name}".ToFolder());
                     ftpClient.UploadDirectory(folder.FullName, $"/home/{FtpUser}/{name}");
                     sshClient.SafeRun($"echo {SshPassword} | sudo chown -R nginx /home/{FtpUser}/{name}");
