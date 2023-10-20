@@ -14,6 +14,16 @@
 
     <ItemGroup>
         <WasmExtraFilesToDeploy Include="AppBundle\**" />
+
+        <WasmExtraFilesToDeploy Include="..\Spravy.Ui\Assets\Images\Logo.ico" >
+            <Link>AppBundle/favicon.ico</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </WasmExtraFilesToDeploy>
+
+        <WasmExtraFilesToDeploy Include="..\Spravy.Ui\Assets\Images\Logo.svg" >
+            <Link>AppBundle/Logo.svg</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </WasmExtraFilesToDeploy>
     </ItemGroup>
 
     <ItemGroup>

@@ -10,8 +10,9 @@ public static class ServiceProviderExtension
     {
         return serviceProvider.GetRequiredService<IConfiguration>().GetConfigurationSection<T>();
     }
-    
-    public static T GetConfigurationSection<T>(this IServiceProvider serviceProvider, string path) where T : IOptionsValue
+
+    public static T GetConfigurationSection<T>(this IServiceProvider serviceProvider, string path)
+        where T : IOptionsValue
     {
         return serviceProvider.GetRequiredService<IConfiguration>().GetConfigurationSection<T>(path);
     }

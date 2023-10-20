@@ -10,7 +10,7 @@ public static class ConfigurationExtension
     {
         return configuration.GetSection(T.Section).Get<T>().ThrowIfNull();
     }
-    
+
     public static T GetConfigurationSection<T>(this IConfiguration configuration, string path) where T : IOptionsValue
     {
         return configuration.GetSection(path).Get<T>().ThrowIfNull();

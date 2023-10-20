@@ -23,8 +23,6 @@ public static class NinjectModuleExtension
         where TGrpcClient : ClientBase
         where TGrpcOptions : class, IGrpcOptionsValue
     {
-        module.Bind<TGrpcOptions>().ToMethod(context => context.Kernel.GetConfigurationSection<TGrpcOptions>());
-
         module.Bind<IFactory<Uri, TGrpcClient>>()
             .ToMethod(
                 context =>
@@ -73,8 +71,6 @@ public static class NinjectModuleExtension
         where TGrpcClient : ClientBase
         where TGrpcOptions : class, IGrpcOptionsValue
     {
-        module.Bind<TGrpcOptions>().ToMethod(context => context.Kernel.GetConfigurationSection<TGrpcOptions>());
-
         module.Bind<IFactory<Uri, TGrpcClient>>()
             .ToMethod(
                 context =>
