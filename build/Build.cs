@@ -199,6 +199,8 @@ class Build : NukeBuild
 
                     ftpClient.DeleteIfExistsFolder($"/home/{FtpUser}/{name}".ToFolder());
                     ftpClient.UploadDirectory(folder.FullName, $"/home/{FtpUser}/{name}");
+                    sshClient.SafeRun($"echo {SshPassword} | sudo chown -R nginx /home/{FtpUser}/{name}");
+                    sshClient.SafeRun($"echo {SshPassword} | sudo chmod -R 777 /home/{FtpUser}/{name}");
                     sshClient.SafeRun($"echo {SshPassword} | sudo systemctl reload nginx");
                 }
             );
