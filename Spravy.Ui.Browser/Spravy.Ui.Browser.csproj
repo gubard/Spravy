@@ -9,6 +9,7 @@
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
         <PublishTrimmed>false</PublishTrimmed>
         <IsTrimmable>false</IsTrimmable>
+        <TrimMode>partial</TrimMode>
     </PropertyGroup>
 
     <ItemGroup>
