@@ -30,6 +30,10 @@
     </ItemGroup>
 
     <ItemGroup>
+        <LinkerRootAssemblies Include="Ninject" />
+    </ItemGroup>
+
+    <ItemGroup>
         <LinkerRootDescriptors Include="ILLink.Descriptors.xml" />
     </ItemGroup>
 
