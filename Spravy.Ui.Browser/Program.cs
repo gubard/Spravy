@@ -19,7 +19,7 @@ internal partial class Program
 {
     private static async Task Main()
     {
-        DiHelper.Kernel = new StandardKernel(BrowserModule.Default, UiModule.Default);
+        DiHelper.Kernel = new StandardKernel(BrowserModule.Default, new UiModule(false));
 
         await BuildAvaloniaApp()
             .WithInterFont()

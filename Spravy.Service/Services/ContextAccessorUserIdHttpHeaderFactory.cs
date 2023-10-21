@@ -7,11 +7,11 @@ using Spravy.Service.Extensions;
 
 namespace Spravy.Service.Services;
 
-public class ContextAccessorHttpHeaderFactory : IHttpHeaderFactory
+public class ContextAccessorUserIdHttpHeaderFactory : IHttpHeaderFactory
 {
     private readonly IHttpContextAccessor httpContextAccessor;
 
-    public ContextAccessorHttpHeaderFactory(IHttpContextAccessor httpContextAccessor)
+    public ContextAccessorUserIdHttpHeaderFactory(IHttpContextAccessor httpContextAccessor)
     {
         this.httpContextAccessor = httpContextAccessor;
     }

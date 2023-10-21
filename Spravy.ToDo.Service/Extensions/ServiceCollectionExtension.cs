@@ -37,7 +37,7 @@ public static class ServiceCollectionExtension
     public static IServiceCollection AddToDo(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddHostedService<MigratorHostedService<SpravyDbToDoDbContext>>();
-        //serviceCollection.AddHostedService<EventBusHostedService>();
+        serviceCollection.AddHostedService<EventBusHostedService>();
         serviceCollection.AddSpravySqliteFolderContext<SpravyDbToDoDbContext, SpravyToDoDbSqliteMigratorMark>();
         serviceCollection
             .AddMapperConfiguration<SpravyToDoProfile, SpravyToDoDbProfile, SpravyEventBusProfile,
@@ -62,7 +62,7 @@ public static class ServiceCollectionExtension
         serviceCollection.AddSingleton<IFactory<string, IEventBusService>, EventBusServiceFactory>();
         serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<SqliteFolderOptions>());
         serviceCollection.AddSingleton<IMetadataFactory, MetadataFactory>();
-        serviceCollection.AddSingleton<ContextAccessorHttpHeaderFactory>();
+        serviceCollection.AddSingleton<ContextAccessorUserIdHttpHeaderFactory>();
         serviceCollection.AddSingleton<IHttpHeaderFactory, EmptyHttpHeaderFactory>();
 
         serviceCollection.AddTransient<IToDoService, EfToDoService>();

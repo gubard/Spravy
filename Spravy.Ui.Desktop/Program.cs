@@ -23,7 +23,7 @@ public class Program
 
     public static AppBuilder BuildAvaloniaApp()
     {
-        DiHelper.Kernel = new StandardKernel(UiModule.Default, DesktopModule.Default);
+        DiHelper.Kernel = new StandardKernel(new UiModule(true), DesktopModule.Default);
 
         return AppBuilder.Configure(() => DiHelper.Kernel.ThrowIfNull().Get<Application>())
             .UsePlatformDetect()

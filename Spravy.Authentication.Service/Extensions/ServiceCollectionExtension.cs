@@ -50,7 +50,7 @@ public static class ServiceCollectionExtension
         serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<JwtTokenFactoryOptions>());
         serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<SqliteFileOptions>());
         serviceCollection.AddSingleton<IMetadataFactory, MetadataFactory>();
-        serviceCollection.AddSingleton<ContextAccessorHttpHeaderFactory>();
+        serviceCollection.AddSingleton<ContextAccessorUserIdHttpHeaderFactory>();
         serviceCollection.AddSingleton<IEventBusService>(sp => sp.GetRequiredService<GrpcEventBusService>());
         serviceCollection.AddSingleton<ITokenService, TokenService>();
 
@@ -66,7 +66,7 @@ public static class ServiceCollectionExtension
         serviceCollection.AddTransient(_ => NamedHelper.Sha512Hash.ToRef());
         serviceCollection.AddTransient(_ => NamedHelper.StringToUtf8Bytes.ToRef());
         serviceCollection.AddTransient<IHttpHeaderFactory>(
-            sp => sp.GetRequiredService<ContextAccessorHttpHeaderFactory>()
+            sp => sp.GetRequiredService<ContextAccessorUserIdHttpHeaderFactory>()
         );
 
         return serviceCollection;

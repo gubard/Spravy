@@ -50,18 +50,23 @@ namespace Spravy.Ui.Configurations;
 
 public class UiModule : NinjectModule
 {
-    public static readonly UiModule Default = new();
+    private readonly bool useCache;
+    
+    public UiModule(bool useCache)
+    {
+        this.useCache = useCache;
+    }
 
     public override void Load()
     {
         this.BindGrpcService2<GrpcAuthenticationService, AuthenticationService.AuthenticationServiceClient,
-            GrpcAuthenticationServiceOptions>();
+            GrpcAuthenticationServiceOptions>(useCache);
         this.BindGrpcService<GrpcScheduleService, ScheduleService.ScheduleServiceClient,
-            GrpcScheduleServiceOptions>();
+            GrpcScheduleServiceOptions>(useCache);
         this.BindGrpcService<GrpcToDoService, ToDoService.ToDoServiceClient,
-            GrpcToDoServiceOptions>();
+            GrpcToDoServiceOptions>(useCache);
         this.BindGrpcService<GrpcEventBusService, EventBusService.EventBusServiceClient,
-            GrpcEventBusServiceOptions>();
+            GrpcEventBusServiceOptions>(useCache);
 
         Bind<ICacheValidator<Uri, GrpcChannel>>().To<GrpcChannelCacheValidator>();
         Bind<RoutingState>().ToConstructor(_ => new RoutingState(null)).InSingletonScope();
