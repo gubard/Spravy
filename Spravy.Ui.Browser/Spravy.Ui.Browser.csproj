@@ -29,9 +29,9 @@
       <ProjectReference Include="..\Spravy.Ui\Spravy.Ui.csproj" />
     </ItemGroup>
 
-    <!--<ItemGroup>
+    <ItemGroup>
         <LinkerRootDescriptors Include="ILLink.Descriptors.xml" />
-    </ItemGroup>-->
+    </ItemGroup>
 
     <ItemGroup>
       <EmbeddedResource Include="appsettings.json">
