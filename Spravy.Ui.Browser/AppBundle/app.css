@@ -20,7 +20,7 @@
 .icon {
     opacity: 0.05;
     height: 35%;
-    width: 35%;
+    width: auto;
     position: absolute;
     background-repeat: no-repeat;
     right: 0px;
