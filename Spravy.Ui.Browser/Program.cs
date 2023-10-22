@@ -1,11 +1,9 @@
-﻿using System;
-using System.Runtime.Versioning;
+﻿using System.Runtime.Versioning;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Browser;
 using Avalonia.ReactiveUI;
 using Ninject;
-using Ninject.Planning.Bindings;
 using ReactiveUI;
 using Splat;
 using Spravy.Domain.Di.Helpers;
