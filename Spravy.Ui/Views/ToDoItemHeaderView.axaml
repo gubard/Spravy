@@ -16,12 +16,6 @@
         <viewModels:ToDoItemHeaderViewModel />
     </Design.DataContext>
 
-    <UserControl.Resources>
-        <MenuFlyout x:Key="CommandsMenuFlyout"
-                    Placement="Bottom"
-                    ItemsSource="{Binding Commands}" />
-    </UserControl.Resources>
-
     <UserControl.Styles>
         <Style Selector="ItemsControl.adaptive">
             <Setter Property="(Interaction.Behaviors)">
@@ -40,7 +34,7 @@
             </Setter>
         </Style>
 
-        <Style Selector="DropDownButton.adaptive">
+        <Style Selector="Button.adaptive">
             <Setter Property="(Interaction.Behaviors)">
                 <BehaviorCollectionTemplate>
                     <BehaviorCollection>
@@ -65,11 +59,11 @@
             <Setter Property="IsVisible" Value="True" />
         </Style>
 
-        <Style Selector="DropDownButton.small">
+        <Style Selector="Button.small">
             <Setter Property="IsVisible" Value="True" />
         </Style>
 
-        <Style Selector="DropDownButton.wide">
+        <Style Selector="Button.wide">
             <Setter Property="IsVisible" Value="False" />
         </Style>
     </UserControl.Styles>
@@ -97,12 +91,15 @@
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
 
-                <DropDownButton HorizontalAlignment="Right"
-                                VerticalAlignment="Center"
-                                Classes="adaptive"
-                                Flyout="{StaticResource CommandsMenuFlyout}">
+                <Button Classes="adaptive">
+                    <Button.Flyout>
+                        <Flyout>
+                            <ItemsControl ItemsSource="{Binding Commands}" />
+                        </Flyout>
+                    </Button.Flyout>
+
                     <avalonia:MaterialIcon Kind="DotsHorizontal" />
-                </DropDownButton>
+                </Button>
             </Panel>
         </Grid>
     </controls1:ColorZone>
