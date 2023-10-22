@@ -21,17 +21,6 @@ internal partial class Program
 {
     private static async Task Main()
     {
-        var builder = new StringBuilder();
-        builder.Append("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
-        builder.Append("<linker>");
-        
-        foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-        {
-            builder.Append($"<assembly fullname=\"{assembly.FullName}\" preserve=\"all\" />");
-        }
-
-        builder.Append("</linker>");
-        Console.WriteLine(builder.ToString());
         DiHelper.Kernel = new StandardKernel(BrowserModule.Default, new UiModule(false));
 
         await BuildAvaloniaApp()
