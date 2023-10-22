@@ -1,8 +1,23 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <linker>
-    <assembly fullname="Ninject, Version=3.3.6.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7" preserve="all" />
-    <assembly fullname="AutoMapper, Version=12.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005" preserve="all" />
-    <assembly fullname="Avalonia.Browser, Version=11.0.5.0, Culture=neutral, PublicKeyToken=c8d484a7012f9a8b" preserve="all" />
+    <assembly fullname="System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e" preserve="all" />
+    <assembly fullname="System.Runtime.InteropServices.JavaScript, Version=7.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" preserve="all" />
+    <assembly fullname="System.Runtime, Version=7.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" preserve="all" />
+    <assembly fullname="Spravy.Ui, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" preserve="all" />
     <assembly fullname="ReactiveUI, Version=18.3.0.0, Culture=neutral, PublicKeyToken=null" preserve="all" />
-    <assembly fullname="System.Reactive, Version=6.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263" preserve="all" />
+    <assembly fullname="System.ObjectModel, Version=7.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" preserve="all" />
+    <assembly fullname="Splat, Version=14.4.0.0, Culture=neutral, PublicKeyToken=null" preserve="all" />
+    <assembly fullname="Avalonia.Xaml.Interactions.DragAndDrop, Version=11.0.2.0, Culture=neutral, PublicKeyToken=e1c1f6030f574d02" preserve="all" />
+    <assembly fullname="Spravy.Ui.Browser, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" preserve="all" />
+    <assembly fullname="System.Collections, Version=7.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" preserve="all" />
+    <assembly fullname="System.Runtime.InteropServices, Version=7.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" preserve="all" />
+    <assembly fullname="System.Console, Version=7.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" preserve="all" />
+    <assembly fullname="Ninject, Version=3.3.6.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7" preserve="all" />
+    <assembly fullname="netstandard, Version=2.1.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" preserve="all" />
+    <assembly fullname="System.ComponentModel, Version=7.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" preserve="all" />
+    <assembly fullname="Spravy.Domain.Di, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" preserve="all" />
+    <assembly fullname="Avalonia.Controls, Version=11.0.5.0, Culture=neutral, PublicKeyToken=c8d484a7012f9a8b" preserve="all" />
+    <assembly fullname="Avalonia.Fonts.Inter, Version=11.0.5.0, Culture=neutral, PublicKeyToken=c8d484a7012f9a8b" preserve="all" />
+    <assembly fullname="Avalonia.ReactiveUI, Version=11.0.5.0, Culture=neutral, PublicKeyToken=null" preserve="all" />
+    <assembly fullname="Avalonia.Browser, Version=11.0.5.0, Culture=neutral, PublicKeyToken=c8d484a7012f9a8b" preserve="all" />
 </linker>
