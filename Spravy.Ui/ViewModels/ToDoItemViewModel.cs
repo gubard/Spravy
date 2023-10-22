@@ -51,7 +51,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
         ChangeRootItemCommand = CreateCommandFromTask(ChangeRootItemAsync);
         ToDoItemToRootCommand = CreateCommandFromTask(ToDoItemToRootAsync);
         InitializedCommand = CreateCommand(Initialized);
-        ToDoItemToStringCommand = CreateCommandFromTaskWithDialogProgressIndicator(ToDoItemToStringAsync);
+        ToDoItemToStringCommand = CreateCommandFromTask(ToDoItemToStringAsync);
         AddTimerCommand = CreateCommand(AddTimer);
 
         this.WhenAnyValue(x => x.IsPinned)
