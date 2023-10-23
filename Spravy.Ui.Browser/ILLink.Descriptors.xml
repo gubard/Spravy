@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <linker>
+    <assembly fullname="Ninject, Version=3.3.6.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7">
+        <type fullname="Ninject.Planning.Bindings.BindingPrecedenceComparer" />
+    </assembly>
     <!--<assembly fullname="System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e" preserve="all" />
     <assembly fullname="System.Runtime.InteropServices.JavaScript, Version=7.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" preserve="all" />
     <assembly fullname="System.Runtime, Version=7.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" preserve="all" />
