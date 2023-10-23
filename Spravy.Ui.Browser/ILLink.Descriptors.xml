@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <linker>
-    <assembly fullname="System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e" preserve="all" />
+    <!--<assembly fullname="System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e" preserve="all" />
     <assembly fullname="System.Runtime.InteropServices.JavaScript, Version=7.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" preserve="all" />
     <assembly fullname="System.Runtime, Version=7.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" preserve="all" />
     <assembly fullname="Spravy.Ui, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" preserve="all" />
@@ -19,5 +19,5 @@
     <assembly fullname="Avalonia.Controls, Version=11.0.5.0, Culture=neutral, PublicKeyToken=c8d484a7012f9a8b" preserve="all" />
     <assembly fullname="Avalonia.Fonts.Inter, Version=11.0.5.0, Culture=neutral, PublicKeyToken=c8d484a7012f9a8b" preserve="all" />
     <assembly fullname="Avalonia.ReactiveUI, Version=11.0.5.0, Culture=neutral, PublicKeyToken=null" preserve="all" />
-    <assembly fullname="Avalonia.Browser, Version=11.0.5.0, Culture=neutral, PublicKeyToken=c8d484a7012f9a8b" preserve="all" />
+    <assembly fullname="Avalonia.Browser, Version=11.0.5.0, Culture=neutral, PublicKeyToken=c8d484a7012f9a8b" preserve="all" />-->
 </linker>
