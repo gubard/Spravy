@@ -30,6 +30,8 @@
                    VerticalAlignment="Center"
                    MinWidth="300">
         <StackPanel>
+            <TextBlock Text="Welcome to Spravy" FontSize="24" HorizontalAlignment="Center" />
+            
             <TextBox UseFloatingWatermark="True"
                      Name="{x:Static views:LoginView.LoginTextBoxName}"
                      Classes="outline dense"

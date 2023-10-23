@@ -6,11 +6,12 @@
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                                xmlns:design="clr-namespace:Spravy.Ui.Design"
+                                mc:Ignorable="d" d:DesignWidth="540" d:DesignHeight="1200"
                                 x:Class="Spravy.Ui.Views.RootToDoItemView"
                                 x:DataType="viewModels:RootToDoItemViewModel">
     <Design.DataContext>
-        <viewModels:RootToDoItemViewModel />
+        <design:RootToDoItemViewModelDesign />
     </Design.DataContext>
 
     <Interaction.Behaviors>
@@ -19,17 +20,20 @@
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 
-    <Grid RowDefinitions="Auto,*">
+    <Grid RowDefinitions="Auto,*, Auto">
         <StackPanel Orientation="Horizontal">
             <Button Command="{Binding SwitchPaneCommand}">
                 <avalonia:MaterialIcon Kind="Menu" />
             </Button>
-
-            <Button Command="{Binding AddToDoItemCommand}">
-                <avalonia:MaterialIcon Kind="Plus" />
-            </Button>
         </StackPanel>
 
         <ContentControl Grid.Row="1" Content="{Binding ToDoSubItemsView}" />
+
+        <Button Grid.Row="2" Command="{Binding AddToDoItemCommand}" Height="64">
+            <StackPanel Orientation="Horizontal">
+                <avalonia:MaterialIcon Kind="Plus" Width="40" Height="40" />
+                <TextBlock Text="Create Task" VerticalAlignment="Center" FontSize="25" />
+            </StackPanel>
+        </Button>
     </Grid>
 </reactiveUi:ReactiveUserControl>

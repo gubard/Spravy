@@ -146,7 +146,7 @@
                                         <TextBlock Text="{Binding Active.Name}"
                                                    TextWrapping="Wrap"
                                                    VerticalAlignment="Center" />
-                                        <avalonia:MaterialIcon Margin="5,0,0,0" Kind="Send" />
+                                        <avalonia:MaterialIcon Margin="5,0,0,0" Kind="ArrowRight" />
                                     </WrapPanel>
                                 </Button>
                             </Grid>
@@ -183,7 +183,7 @@
                                     Grid.Row="1"
                                     Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
                                     CommandParameter="{Binding}">
-                                <avalonia:MaterialIcon Kind="Send" />
+                                <avalonia:MaterialIcon Kind="ArrowRight" />
                             </Button>
                         </Grid>
                     </Grid>
@@ -216,7 +216,7 @@
                                     <TextBlock Text="{Binding Active.Name}"
                                                TextWrapping="Wrap"
                                                VerticalAlignment="Center" />
-                                    <avalonia:MaterialIcon Margin="5,0,0,0" Kind="Send" />
+                                    <avalonia:MaterialIcon Margin="5,0,0,0" Kind="ArrowRight" />
                                 </WrapPanel>
                             </Button>
 
@@ -248,7 +248,7 @@
                                     Grid.Row="1"
                                     Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
                                     CommandParameter="{Binding}">
-                                <avalonia:MaterialIcon Kind="Send" />
+                                <avalonia:MaterialIcon Kind="ArrowRight" />
                             </Button>
                         </Grid>
                     </Grid>
@@ -322,7 +322,7 @@
                                         <TextBlock Text="{Binding Active.Name}"
                                                    TextWrapping="Wrap"
                                                    VerticalAlignment="Center" />
-                                        <avalonia:MaterialIcon Margin="5,0,0,0" Kind="Send" />
+                                        <avalonia:MaterialIcon Margin="5,0,0,0" Kind="ArrowRight" />
                                     </WrapPanel>
                                 </Button>
                             </Grid>
@@ -359,7 +359,7 @@
                                     Grid.Row="1"
                                     Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
                                     CommandParameter="{Binding}">
-                                <avalonia:MaterialIcon Kind="Send" />
+                                <avalonia:MaterialIcon Kind="ArrowRight" />
                             </Button>
                         </Grid>
                     </Grid>
@@ -428,7 +428,7 @@
                                         <TextBlock Text="{Binding Active.Name}"
                                                    TextWrapping="Wrap"
                                                    VerticalAlignment="Center" />
-                                        <avalonia:MaterialIcon Margin="5,0,0,0" Kind="Send" />
+                                        <avalonia:MaterialIcon Margin="5,0,0,0" Kind="ArrowRight" />
                                     </WrapPanel>
                                 </Button>
                             </Grid>
@@ -465,7 +465,7 @@
                                     Grid.Row="1"
                                     Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
                                     CommandParameter="{Binding}">
-                                <avalonia:MaterialIcon Kind="Send" />
+                                <avalonia:MaterialIcon Kind="ArrowRight" />
                             </Button>
                         </Grid>
                     </Grid>
@@ -492,9 +492,8 @@
 
                             <TextBlock Text="{Binding DueDate, StringFormat=\{0:yyyy.MM.dd\}}" />
 
-                            <Grid RowDefinitions="Auto,Auto,Auto">
-                                <WrapPanel Grid.Row="1"
-                                           Orientation="Horizontal">
+                            <Grid RowDefinitions="Auto,Auto">
+                                <WrapPanel Orientation="Horizontal">
                                     <Grid RowDefinitions="Auto,*"
                                           IsVisible="{Binding CompletedCount, Converter={StaticResource UInt32ToIsVisibleConverter}}">
                                         <TextBlock Text="{Binding CompletedCount}"
@@ -534,7 +533,7 @@
                                         <TextBlock Text="{Binding Active.Name}"
                                                    TextWrapping="Wrap"
                                                    VerticalAlignment="Center" />
-                                        <avalonia:MaterialIcon Margin="5,0,0,0" Kind="Send" />
+                                        <avalonia:MaterialIcon Margin="5,0,0,0" Kind="ArrowRight" />
                                     </WrapPanel>
                                 </Button>
                             </Grid>
@@ -571,7 +570,7 @@
                                     Grid.Row="1"
                                     Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
                                     CommandParameter="{Binding}">
-                                <avalonia:MaterialIcon Kind="Send" />
+                                <avalonia:MaterialIcon Kind="ArrowRight" />
                             </Button>
                         </Grid>
                     </Grid>

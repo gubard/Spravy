@@ -15,7 +15,7 @@
     <Design.DataContext>
         <viewModels:CreateUserViewModel />
     </Design.DataContext>
-    
+
     <UserControl.KeyBindings>
         <KeyBinding Gesture="Enter" Command="{Binding EnterCommand}" CommandParameter="{Binding $self}" />
     </UserControl.KeyBindings>
@@ -23,7 +23,9 @@
     <controls:Card HorizontalAlignment="Center"
                    VerticalAlignment="Center"
                    MinWidth="300">
-        <Grid RowDefinitions="Auto,Auto,Auto,Auto">
+        <StackPanel>
+            <TextBlock Text="Create Account" FontSize="24" HorizontalAlignment="Center" />
+
             <TextBox UseFloatingWatermark="True"
                      Name="{x:Static views:CreateUserView.LoginTextBoxName}"
                      Classes="outline dense"
@@ -31,8 +33,7 @@
                      assists:TextFieldAssist.Label="Login"
                      Text="{Binding Login}" />
 
-            <TextBox Grid.Row="1"
-                     UseFloatingWatermark="True"
+            <TextBox UseFloatingWatermark="True"
                      Name="{x:Static views:CreateUserView.PasswordTextBoxName}"
                      Classes="outline dense revealPasswordButton"
                      Theme="{StaticResource OutlineTextBox}"
@@ -40,8 +41,7 @@
                      PasswordChar="*"
                      Text="{Binding Password}" />
 
-            <TextBox Grid.Row="2"
-                     Name="{x:Static views:CreateUserView.RepeatPasswordTextBoxName}"
+            <TextBox Name="{x:Static views:CreateUserView.RepeatPasswordTextBoxName}"
                      UseFloatingWatermark="True"
                      Classes="outline dense revealPasswordButton"
                      Theme="{StaticResource OutlineTextBox}"
@@ -49,10 +49,9 @@
                      PasswordChar="*"
                      Text="{Binding RepeatPassword}" />
 
-            <Grid Grid.Row="3"
-                  ColumnDefinitions="*,*">
+            <Grid ColumnDefinitions="*,*">
                 <Button Command="{Binding BackCommand}">
-                    <avalonia:MaterialIcon Kind="Cancel" />
+                    <avalonia:MaterialIcon Kind="ArrowLeft" />
                 </Button>
 
                 <Button Grid.Column="1"
@@ -60,6 +59,6 @@
                     <avalonia:MaterialIcon Kind="AccountPlus" />
                 </Button>
             </Grid>
-        </Grid>
+        </StackPanel>
     </controls:Card>
 </reactiveUi:ReactiveUserControl>
