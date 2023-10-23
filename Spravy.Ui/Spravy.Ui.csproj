@@ -40,6 +40,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Spravy.Authentication.Domain.Client\Spravy.Authentication.Domain.Client.csproj" />
       <ProjectReference Include="..\Spravy.Authentication.Domain.Mapper\Spravy.Authentication.Domain.Mapper.csproj" />
+      <ProjectReference Include="..\Spravy.Core\Spravy.Core.csproj" />
       <ProjectReference Include="..\Spravy.Domain.Di\Spravy.Domain.Di.csproj" />
       <ProjectReference Include="..\Spravy.EventBus.Domain.Client\Spravy.EventBus.Domain.Client.csproj" />
       <ProjectReference Include="..\Spravy.EventBus.Domain.Mapper\Spravy.EventBus.Domain.Mapper.csproj" />

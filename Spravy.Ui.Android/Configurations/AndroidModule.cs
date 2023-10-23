@@ -1,12 +1,17 @@
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Ninject.Modules;
 using Spravy.Authentication.Domain.Client.Models;
+using Spravy.Core.Services;
 using Spravy.Di.Extensions;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
+using Spravy.Domain.Interfaces;
+using Spravy.Domain.Services;
 using Spravy.EventBus.Domain.Client.Models;
 using Spravy.Schedule.Domain.Client.Models;
 using Spravy.ToDo.Domain.Client.Models;
+using Xamarin.Essentials;
 
 namespace Spravy.Ui.Android.Configurations;
 
@@ -16,6 +21,8 @@ public class AndroidModule : NinjectModule
 
     public override void Load()
     {
+        Bind<ISerializer>().To<ProtobufSerializer>();
+
         Bind<GrpcAuthenticationServiceOptions>()
             .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcAuthenticationServiceOptions>());
 
@@ -36,6 +43,14 @@ public class AndroidModule : NinjectModule
 
                     return new ConfigurationBuilder().AddJsonStream(stream.ThrowIfNull()).Build();
                 }
+            );
+
+        Bind<IObjectStorage>()
+            .ToConstructor(
+                x => new ObjectStorage(
+                    FileSystem.AppDataDirectory.ToDirectory(),
+                    x.Context.Kernel.GetRequiredService<ISerializer>()
+                )
             );
     }
 }

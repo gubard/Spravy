@@ -4,9 +4,10 @@ using AutoMapper;
 using Avalonia.Controls;
 using Ninject;
 using ReactiveUI;
-using Serilog;
+using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
+using Spravy.Ui.Helpers;
 using Spravy.Ui.Models;
 using Spravy.Ui.Views;
 
@@ -23,6 +24,7 @@ public class LoginViewModel : RoutableViewModelBase
         LoginCommand = CreateCommandFromTaskWithDialogProgressIndicator(LoginAsync);
         CreateUserCommand = CreateCommand(CreateUser);
         EnterCommand = CreateCommandFromTaskWithDialogProgressIndicator<LoginView>(EnterAsync);
+        InitializedCommand = CreateCommandFromTask(InitializedAsync);
     }
 
     [Inject]
@@ -30,6 +32,9 @@ public class LoginViewModel : RoutableViewModelBase
 
     [Inject]
     public required IMapper Mapper { get; init; }
+
+    [Inject]
+    public required IObjectStorage ObjectStorage { get; init; }
 
     public bool IsRememberMe
     {
@@ -49,9 +54,22 @@ public class LoginViewModel : RoutableViewModelBase
         set => this.RaiseAndSetIfChanged(ref password, value);
     }
 
+    public ICommand InitializedCommand { get; }
     public ICommand LoginCommand { get; }
     public ICommand CreateUserCommand { get; }
     public ICommand EnterCommand { get; }
+
+    private async Task InitializedAsync()
+    {
+        if (!await ObjectStorage.IsExistsAsync(FileIds.LoginFileId))
+        {
+            return;
+        }
+
+        var item = await ObjectStorage.GetObjectAsync<LoginStorageItem>(FileIds.LoginFileId);
+        await TokenService.LoginAsync(item.Token.ThrowIfNullOrWhiteSpace());
+        Navigator.NavigateTo<RootToDoItemViewModel>();
+    }
 
     private async Task EnterAsync(LoginView view)
     {
@@ -88,6 +106,24 @@ public class LoginViewModel : RoutableViewModelBase
     {
         var user = Mapper.Map<User>(this);
         await TokenService.LoginAsync(user);
+        await RememberMeAsync();
         Navigator.NavigateTo<RootToDoItemViewModel>();
+    }
+
+    private async Task RememberMeAsync()
+    {
+        if (!IsRememberMe)
+        {
+            return;
+        }
+
+        var token = await TokenService.GetTokenAsync();
+
+        var item = new LoginStorageItem
+        {
+            Token = token,
+        };
+
+        await ObjectStorage.SaveObjectAsync(FileIds.LoginFileId, item);
     }
 }

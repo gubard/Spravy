@@ -1,7 +1,6 @@
 using System;
 using Ninject;
 using ReactiveUI;
-using Serilog;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 

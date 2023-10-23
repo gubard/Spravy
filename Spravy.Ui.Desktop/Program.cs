@@ -3,7 +3,6 @@ using Avalonia;
 using Avalonia.ReactiveUI;
 using Ninject;
 using ReactiveUI;
-using Serilog;
 using Splat;
 using Spravy.Domain.Di.Helpers;
 using Spravy.Domain.Extensions;

@@ -102,6 +102,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Router", "Router", "{2767C4
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Router.Service", "Spravy.Router.Service\Spravy.Router.Service.csproj", "{2F25E662-E5DF-4617-BA33-2D2ADFE8D06B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Core", "Spravy.Core\Spravy.Core.csproj", "{A3F05DBE-1B50-4294-9466-76224ADE4E27}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -286,6 +288,10 @@ Global
 		{2F25E662-E5DF-4617-BA33-2D2ADFE8D06B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F25E662-E5DF-4617-BA33-2D2ADFE8D06B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2F25E662-E5DF-4617-BA33-2D2ADFE8D06B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3F05DBE-1B50-4294-9466-76224ADE4E27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3F05DBE-1B50-4294-9466-76224ADE4E27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3F05DBE-1B50-4294-9466-76224ADE4E27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3F05DBE-1B50-4294-9466-76224ADE4E27}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{8DA7C381-65E0-4216-9021-D4CB7A186453} = {AE245578-F16D-44FB-8F2C-496CBE7C1D53}

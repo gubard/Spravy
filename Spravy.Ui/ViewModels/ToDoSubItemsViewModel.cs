@@ -6,7 +6,6 @@ using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
 using Ninject;
-using Serilog;
 using Spravy.Domain.Extensions;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;

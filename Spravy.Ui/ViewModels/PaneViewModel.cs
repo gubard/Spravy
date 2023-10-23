@@ -1,8 +1,10 @@
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Controls;
 using Ninject;
 using Spravy.Authentication.Domain.Models;
 using Spravy.Domain.Interfaces;
+using Spravy.Ui.Helpers;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
@@ -14,7 +16,7 @@ public class PaneViewModel : ViewModelBase
         ToRootToDoItemViewCommand = CreateCommand(ToRootToDoItemView);
         ToSearchViewCommand = CreateCommand(ToSearchView);
         ToTimersViewCommand = CreateCommand(ToTimersView);
-        LogoutCommand = CreateCommand(Logout);
+        LogoutCommand = CreateCommandFromTask(LogoutAsync);
     }
 
     public ICommand ToRootToDoItemViewCommand { get; }
@@ -23,13 +25,17 @@ public class PaneViewModel : ViewModelBase
     public ICommand LogoutCommand { get; }
 
     [Inject]
+    public required IObjectStorage ObjectStorage { get; init; }
+
+    [Inject]
     public required IKeeper<TokenResult> KeeperTokenResult { get; init; }
 
     [Inject]
     public required SplitView SplitView { get; init; }
 
-    private void Logout()
+    private async Task LogoutAsync()
     {
+        await ObjectStorage.DeleteAsync(FileIds.LoginFileId);
         KeeperTokenResult.Set(default);
         Navigator.NavigateTo<LoginViewModel>();
         SplitView.IsPaneOpen = false;

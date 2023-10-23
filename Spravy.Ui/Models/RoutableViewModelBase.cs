@@ -1,6 +1,5 @@
 using System;
 using ReactiveUI;
-using Serilog;
 
 namespace Spravy.Ui.Models;
 

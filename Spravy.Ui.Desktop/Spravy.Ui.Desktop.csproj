@@ -20,6 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Spravy.Core\Spravy.Core.csproj" />
         <ProjectReference Include="..\Spravy.Ui\Spravy.Ui.csproj" />
     </ItemGroup>
 

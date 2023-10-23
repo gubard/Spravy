@@ -17,9 +17,11 @@
 
     <ItemGroup>
         <PackageReference Include="Avalonia.Android" Version="11.0.5" />
+        <PackageReference Include="Xamarin.Essentials" Version="1.8.0" />
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Spravy.Core\Spravy.Core.csproj" />
         <ProjectReference Include="..\Spravy.Ui\Spravy.Ui.csproj" />
     </ItemGroup>
 

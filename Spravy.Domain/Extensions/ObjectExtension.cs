@@ -114,7 +114,7 @@ public static class ObjectExtension
         return new Ref<T>(value);
     }
     
-    public static Task<T> ToTaskResult<T>(this T value) where T : struct
+    public static Task<T> ToTaskResult<T>(this T value)
     {
         return Task.FromResult(value);
     }

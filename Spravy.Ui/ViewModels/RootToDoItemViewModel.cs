@@ -8,7 +8,6 @@ using AutoMapper;
 using Avalonia.Controls;
 using Ninject;
 using ReactiveUI;
-using Serilog;
 using Spravy.Domain.Extensions;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
