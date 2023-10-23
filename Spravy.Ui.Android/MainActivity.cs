@@ -15,7 +15,7 @@ using Spravy.Ui.Configurations;
 namespace Spravy.Ui.Android;
 
 [Activity(
-    Label = "Spravy.Ui.Android",
+    Label = "Spravy",
     Theme = "@style/MyTheme.NoActionBar",
     Icon = "@drawable/icon",
     MainLauncher = true,
