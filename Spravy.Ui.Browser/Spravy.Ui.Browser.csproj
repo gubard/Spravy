@@ -25,10 +25,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <LinkerDescriptor Include="ILLink.Descriptors.xml" />
-    </ItemGroup>
-
-    <ItemGroup>
       <EmbeddedResource Include="appsettings.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </EmbeddedResource>
