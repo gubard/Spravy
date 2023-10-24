@@ -46,7 +46,7 @@ public static class DbContextExtension
             await context.ExecuteSaveChangesAsync(func);
             await transaction.CommitAsync();
         }
-        catch (Exception e)
+        catch
         {
             await transaction.RollbackAsync();
 

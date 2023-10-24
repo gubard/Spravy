@@ -83,7 +83,7 @@ public class EventBusHostedService : IHostedService
                     {
                         if (eventValue.Id == EventIdHelper.ChangePinnedId)
                         {
-                            await ChangePinnedAsync(file, eventValue, source.Token);
+                            await ChangePinnedAsync(file, eventValue);
                         }
                     }
                 }
@@ -102,7 +102,7 @@ public class EventBusHostedService : IHostedService
         }
     }
 
-    private async Task ChangePinnedAsync(FileInfo file, EventValue eventValue, CancellationToken cancellationToken)
+    private async Task ChangePinnedAsync(FileInfo file, EventValue eventValue)
     {
         await using var context = spravyToDoDbContext.Create(file.ToSqliteConnectionString());
         var eventContent = ChangeToDoItemIsPinnedEvent.Parser.ParseFrom(eventValue.Content);

@@ -1133,7 +1133,7 @@ public class EfToDoService : IToDoService
         await context.ExecuteSaveChangesTransactionAsync(
             async c =>
             {
-                var item = await context.Set<ToDoItemEntity>().FindAsync(id);
+                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
                 item = item.ThrowIfNull();
                 item.WeeksOffset = weeks;
             }
@@ -1147,7 +1147,7 @@ public class EfToDoService : IToDoService
         await context.ExecuteSaveChangesTransactionAsync(
             async c =>
             {
-                var item = await context.Set<ToDoItemEntity>().FindAsync(id);
+                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
                 item = item.ThrowIfNull();
                 item.YearsOffset = years;
             }
@@ -1161,7 +1161,7 @@ public class EfToDoService : IToDoService
         await context.ExecuteSaveChangesTransactionAsync(
             async c =>
             {
-                var item = await context.Set<ToDoItemEntity>().FindAsync(id);
+                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
                 item = item.ThrowIfNull();
                 item.ChildrenType = type;
             }
