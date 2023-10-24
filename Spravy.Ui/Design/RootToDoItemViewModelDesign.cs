@@ -33,9 +33,9 @@ public class RootToDoItemViewModelDesign : RootToDoItemViewModel
                     false,
                     DateTimeOffset.Now,
                     null,
-                    1,
-                    1,
-                    1,
+                    100,
+                    100,
+                    100,
                     null
                 ),
                 new ToDoSubItemPlanned(
@@ -47,9 +47,9 @@ public class RootToDoItemViewModelDesign : RootToDoItemViewModel
                     false,
                     null,
                     DateTimeOffset.Now,
-                    1u,
-                    1u,
-                    1u,
+                    100u,
+                    100u,
+                    100u,
                     false,
                     null
                 ),
@@ -60,9 +60,9 @@ public class RootToDoItemViewModelDesign : RootToDoItemViewModel
                     1,
                     ToDoItemStatus.Completed,
                     string.Empty,
-                    1u,
-                    1u,
-                    1u,
+                    100u,
+                    100u,
+                    100u,
                     false,
                     null,
                     null
@@ -76,9 +76,9 @@ public class RootToDoItemViewModelDesign : RootToDoItemViewModel
                     false,
                     DateTimeOffset.Now,
                     null,
-                    1,
-                    1,
-                    1,
+                    100,
+                    100,
+                    100,
                     null
                 ),
                 //-------------------------------------------LastCompleted----------------------------------------------
