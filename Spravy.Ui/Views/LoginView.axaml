@@ -9,11 +9,12 @@
                                 xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
                                 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                 xmlns:views="clr-namespace:Spravy.Ui.Views"
+                                xmlns:design="clr-namespace:Spravy.Ui.Design"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.LoginView"
                                 x:DataType="viewModels:LoginViewModel">
     <Design.DataContext>
-        <viewModels:LoginViewModel />
+        <design:LoginViewModelDesign />
     </Design.DataContext>
     
     <Interaction.Behaviors>
@@ -30,7 +31,7 @@
                    VerticalAlignment="Center"
                    MinWidth="300">
         <StackPanel>
-            <TextBlock Text="Welcome to Spravy" FontSize="24" HorizontalAlignment="Center" />
+            <TextBlock Text="Welcome to Spravy" Classes="Headline5" HorizontalAlignment="Center" />
             
             <TextBox UseFloatingWatermark="True"
                      Name="{x:Static views:LoginView.LoginTextBoxName}"

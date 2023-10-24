@@ -12,8 +12,7 @@ public readonly struct ToDoSubItemGroup : IToDoSubItem
         ToDoItemStatus status,
         string description,
         bool isPinned,
-        ActiveToDoItem? active,
-        DateTimeOffset? lastCompleted
+        ActiveToDoItem? active
     )
     {
         Id = id;
@@ -23,7 +22,6 @@ public readonly struct ToDoSubItemGroup : IToDoSubItem
         Description = description;
         IsPinned = isPinned;
         Active = active;
-        LastCompleted = lastCompleted;
     }
 
     public Guid Id { get; }
@@ -33,5 +31,4 @@ public readonly struct ToDoSubItemGroup : IToDoSubItem
     public string Description { get; }
     public bool IsPinned { get; }
     public ActiveToDoItem? Active { get; }
-    public DateTimeOffset? LastCompleted { get; }
 }

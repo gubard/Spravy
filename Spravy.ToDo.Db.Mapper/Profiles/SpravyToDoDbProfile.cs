@@ -56,8 +56,7 @@ public class SpravyToDoDbProfile : Profile
                         (ToDoItemStatus)resolutionContext.Items[StatusName],
                         source.Description,
                         source.IsPinned,
-                        (ActiveToDoItem?)resolutionContext.Items[ActiveName],
-                        source.LastCompleted
+                        (ActiveToDoItem?)resolutionContext.Items[ActiveName]
                     ),
                     ToDoItemType.Planned => new ToDoSubItemPlanned(
                         source.Id,

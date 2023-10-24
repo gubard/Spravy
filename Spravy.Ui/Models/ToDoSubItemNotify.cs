@@ -13,7 +13,6 @@ public abstract class ToDoSubItemNotify : NotifyBase, IEquatable<ToDoSubItemNoti
     private string description = string.Empty;
     private bool isPinned;
     private ActiveToDoItemNotify? active;
-    private DateTimeOffset? lastCompleted;
     private bool isVisible = true;
 
     public bool IsVisible
@@ -62,12 +61,6 @@ public abstract class ToDoSubItemNotify : NotifyBase, IEquatable<ToDoSubItemNoti
     {
         get => active;
         set => this.RaiseAndSetIfChanged(ref active, value);
-    }
-
-    public DateTimeOffset? LastCompleted
-    {
-        get => lastCompleted;
-        set => this.RaiseAndSetIfChanged(ref lastCompleted, value);
     }
 
     public bool Equals(ToDoSubItemNotify? other)

@@ -312,7 +312,6 @@ message ToDoSubItemGrpc {
   string Description = 5;
   bool IsPinned = 8;
   ActiveToDoItemGrpc Active = 9;
-  DateTimeOffsetGrpc LastCompleted = 12; 
 
   oneof Parameters {
     ToDoSubItemValueGrpc Value = 6;
@@ -328,6 +327,7 @@ message ToDoSubItemPeriodicityGrpc {
   uint32 CompletedCount = 2;
   uint32 SkippedCount = 3;
   uint32 FailedCount = 4;
+  DateTimeOffsetGrpc LastCompleted = 9;
 
   oneof Periodicity {
     DailyPeriodicityGrpc Daily = 5;
@@ -343,6 +343,7 @@ message ToDoSubItemPlannedGrpc {
   uint32 CompletedCount = 3;
   uint32 SkippedCount = 4;
   uint32 FailedCount = 5;
+  DateTimeOffsetGrpc LastCompleted = 6;
 }
 
 message ToDoSubItemGroupGrpc {
@@ -353,6 +354,7 @@ message ToDoSubItemValueGrpc {
   uint32 CompletedCount = 2;
   uint32 SkippedCount = 3;
   uint32 FailedCount = 4;
+  DateTimeOffsetGrpc LastCompleted = 5;
 }
 
 message ToDoItemParentGrpc {
@@ -386,6 +388,7 @@ message ToDoSubItemPeriodicityOffsetGrpc {
   uint32 CompletedCount = 2;
   uint32 SkippedCount = 3;
   uint32 FailedCount = 4;
+  DateTimeOffsetGrpc LastCompleted = 5;
 }
 
 message ToDoItemPeriodicityOffsetGrpc {

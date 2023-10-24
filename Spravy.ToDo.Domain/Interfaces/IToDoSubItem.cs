@@ -12,5 +12,4 @@ public interface IToDoSubItem
     public string Description { get; }
     bool IsPinned { get; }
     ActiveToDoItem? Active { get; }
-    DateTimeOffset? LastCompleted { get; }
 }

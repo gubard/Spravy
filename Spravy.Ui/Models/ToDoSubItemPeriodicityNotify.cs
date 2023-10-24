@@ -11,6 +11,13 @@ public class ToDoSubItemPeriodicityNotify : ToDoSubItemNotify
     private uint skippedCount;
     private uint failedCount;
     private TypeOfPeriodicity typeOfPeriodicity;
+    private DateTimeOffset? lastCompleted;
+
+    public DateTimeOffset? LastCompleted
+    {
+        get => lastCompleted;
+        set => this.RaiseAndSetIfChanged(ref lastCompleted, value);
+    }
 
     public TypeOfPeriodicity TypeOfPeriodicity
     {

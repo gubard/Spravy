@@ -11,6 +11,13 @@ public class ToDoSubItemPlannedNotify : ToDoSubItemNotify, IIsCompletedToDoItem
     private uint skippedCount;
     private uint failedCount;
     private bool isCompleted;
+    private DateTimeOffset? lastCompleted;
+
+    public DateTimeOffset? LastCompleted
+    {
+        get => lastCompleted;
+        set => this.RaiseAndSetIfChanged(ref lastCompleted, value);
+    }
 
     public DateTimeOffset DueDate
     {

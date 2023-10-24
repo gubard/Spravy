@@ -1,3 +1,4 @@
+using System;
 using ReactiveUI;
 using Spravy.Ui.Interfaces;
 
@@ -9,6 +10,13 @@ public class ToDoSubItemValueNotify : ToDoSubItemNotify, IIsCompletedToDoItem
     private uint completedCount;
     private uint skippedCount;
     private uint failedCount;
+    private DateTimeOffset? lastCompleted;
+
+    public DateTimeOffset? LastCompleted
+    {
+        get => lastCompleted;
+        set => this.RaiseAndSetIfChanged(ref lastCompleted, value);
+    }
 
     public bool IsCompleted
     {

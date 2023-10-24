@@ -370,7 +370,6 @@ public class SpravyToDoProfile : Profile
                         OrderIndex = source.OrderIndex,
                         IsPinned = source.IsPinned,
                         Active = resolutionContext.Mapper.Map<ActiveToDoItemGrpc>(source.Active),
-                        LastCompleted = resolutionContext.Mapper.Map<DateTimeOffsetGrpc>(source.LastCompleted),
                     };
 
                     switch (source)
@@ -422,7 +421,7 @@ public class SpravyToDoProfile : Profile
                         source.Value.FailedCount,
                         source.IsPinned,
                         resolutionContext.Mapper.Map<ActiveToDoItem?>(source.Active),
-                        resolutionContext.Mapper.Map<DateTimeOffset?>(source.LastCompleted)
+                        resolutionContext.Mapper.Map<DateTimeOffset?>(source.Value.LastCompleted)
                     ),
                     ToDoSubItemGrpc.ParametersOneofCase.Group => new ToDoSubItemGroup(
                         resolutionContext.Mapper.Map<Guid>(source.Id),
@@ -431,8 +430,7 @@ public class SpravyToDoProfile : Profile
                         (ToDoItemStatus)source.Status,
                         source.Description,
                         source.IsPinned,
-                        resolutionContext.Mapper.Map<ActiveToDoItem?>(source.Active),
-                        resolutionContext.Mapper.Map<DateTimeOffset?>(source.LastCompleted)
+                        resolutionContext.Mapper.Map<ActiveToDoItem?>(source.Active)
                     ),
                     ToDoSubItemGrpc.ParametersOneofCase.None => throw new ArgumentOutOfRangeException(),
                     ToDoSubItemGrpc.ParametersOneofCase.Planned => new ToDoSubItemPlanned(
@@ -448,7 +446,7 @@ public class SpravyToDoProfile : Profile
                         source.Planned.SkippedCount,
                         source.Planned.FailedCount,
                         source.Planned.IsCompleted,
-                        resolutionContext.Mapper.Map<DateTimeOffset?>(source.LastCompleted)
+                        resolutionContext.Mapper.Map<DateTimeOffset?>(source.Planned.LastCompleted)
                     ),
                     ToDoSubItemGrpc.ParametersOneofCase.Periodicity => new ToDoSubItemPeriodicity(
                         resolutionContext.Mapper.Map<Guid>(source.Id),
@@ -462,7 +460,7 @@ public class SpravyToDoProfile : Profile
                         source.Periodicity.CompletedCount,
                         source.Periodicity.SkippedCount,
                         source.Periodicity.FailedCount,
-                        resolutionContext.Mapper.Map<DateTimeOffset?>(source.LastCompleted)
+                        resolutionContext.Mapper.Map<DateTimeOffset?>(source.Periodicity.LastCompleted)
                     ),
                     ToDoSubItemGrpc.ParametersOneofCase.PeriodicityOffset => new ToDoSubItemPeriodicityOffset(
                         resolutionContext.Mapper.Map<Guid>(source.Id),
@@ -476,7 +474,7 @@ public class SpravyToDoProfile : Profile
                         source.PeriodicityOffset.CompletedCount,
                         source.PeriodicityOffset.SkippedCount,
                         source.PeriodicityOffset.FailedCount,
-                        resolutionContext.Mapper.Map<DateTimeOffset?>(source.LastCompleted)
+                        resolutionContext.Mapper.Map<DateTimeOffset?>(source.PeriodicityOffset.LastCompleted)
                     ),
                     _ => throw new ArgumentOutOfRangeException()
                 }

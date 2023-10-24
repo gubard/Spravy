@@ -13,6 +13,13 @@ public class ToDoSubItemPeriodicityOffsetNotify : ToDoSubItemNotify
     private ushort monthsOffset;
     private ushort weeksOffset;
     private ushort yearsOffset;
+    private DateTimeOffset? lastCompleted;
+
+    public DateTimeOffset? LastCompleted
+    {
+        get => lastCompleted;
+        set => this.RaiseAndSetIfChanged(ref lastCompleted, value);
+    }
 
     public ushort DaysOffset
     {

@@ -32,7 +32,7 @@
         <Button Grid.Row="2" Command="{Binding AddToDoItemCommand}" Height="64">
             <StackPanel Orientation="Horizontal">
                 <avalonia:MaterialIcon Kind="Plus" Width="40" Height="40" />
-                <TextBlock Text="Create Task" VerticalAlignment="Center" FontSize="25" />
+                <TextBlock Text="Create Task" VerticalAlignment="Center" Classes="Headline5" />
             </StackPanel>
         </Button>
     </Grid>
