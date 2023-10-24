@@ -158,7 +158,7 @@ public class UiModule : NinjectModule
             );
     }
 
-    private static void SetupMapperConfiguration(IMapperConfigurationExpression expression)
+    public static void SetupMapperConfiguration(IMapperConfigurationExpression expression)
     {
         expression.AddProfile<SpravyToDoProfile>();
         expression.AddProfile<SpravyUiProfile>();

@@ -81,6 +81,7 @@
             </Button>
         </DataTemplate>
 
+        <!--#region ToDoSubItemNotify-->
         <DataTemplate DataType="models:ToDoSubItemValueNotify">
             <controls:Card ToolTip.Tip="{Binding Description, Converter={StaticResource EmptyStringToNullConverter}}"
                            IsVisible="{Binding IsVisible}">
@@ -150,42 +151,44 @@
                                     </WrapPanel>
                                 </Button>
                             </Grid>
+
+                            <Grid ColumnDefinitions="*,*,*">
+                                <Button CommandParameter="{Binding}"
+                                        Command="{Binding $parent[interfaces:ICompleteSubToDoItemCommand].CompleteSubToDoItemCommand}">
+                                    <avalonia:MaterialIcon Kind="Check" />
+                                </Button>
+
+                                <Button Grid.Column="1"
+                                        Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
+                                        CommandParameter="{Binding}">
+                                    <avalonia:MaterialIcon Kind="Delete" />
+                                </Button>
+
+                                <Button Grid.Column="2"
+                                        Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
+                                        CommandParameter="{Binding}">
+                                    <avalonia:MaterialIcon Kind="ArrowRight" />
+                                </Button>
+                            </Grid>
                         </StackPanel>
 
-                        <Grid Grid.Column="1" ColumnDefinitions="*,*" RowDefinitions="*,*">
+                        <Panel Grid.Column="1"
+                               VerticalAlignment="Top"
+                               HorizontalAlignment="Right">
                             <Button
-                                Command="{Binding $parent[interfaces:ICompleteSubToDoItemCommand].CompleteSubToDoItemCommand}"
-                                CommandParameter="{Binding}">
-                                <avalonia:MaterialIcon Kind="Check" />
-                            </Button>
-
-                            <Button Grid.Column="1"
-                                    Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
-                                    CommandParameter="{Binding}">
-                                <avalonia:MaterialIcon Kind="Delete" />
-                            </Button>
-
-                            <Button Grid.Row="1"
-                                    Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].RemoveSubToDoItemFromPinnedCommand}"
-                                    CommandParameter="{Binding}"
-                                    IsVisible="{Binding IsPinned}">
+                                Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].RemoveSubToDoItemFromPinnedCommand}"
+                                CommandParameter="{Binding}"
+                                IsVisible="{Binding IsPinned}">
                                 <avalonia:MaterialIcon Kind="Pin" />
                             </Button>
 
-                            <Button Grid.Row="1"
-                                    Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].AddSubToDoItemToPinnedCommand}"
-                                    CommandParameter="{Binding}"
-                                    IsVisible="{Binding IsPinned, Converter={StaticResource ReverseBooleanValueConverter}}">
+                            <Button
+                                Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].AddSubToDoItemToPinnedCommand}"
+                                CommandParameter="{Binding}"
+                                IsVisible="{Binding IsPinned, Converter={StaticResource ReverseBooleanValueConverter}}">
                                 <avalonia:MaterialIcon Kind="PinOutline" />
                             </Button>
-
-                            <Button Grid.Column="1"
-                                    Grid.Row="1"
-                                    Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
-                                    CommandParameter="{Binding}">
-                                <avalonia:MaterialIcon Kind="ArrowRight" />
-                            </Button>
-                        </Grid>
+                        </Panel>
                     </Grid>
                 </Grid>
             </controls:Card>
@@ -221,36 +224,37 @@
                             </Button>
 
                             <TextBlock Text="{Binding LastCompleted, StringFormat=\{0:yyyy\\.MM\\.dd hh\\:mm\\:ss\}}" />
+
+                            <Grid ColumnDefinitions="*,*">
+                                <Button Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
+                                        CommandParameter="{Binding}">
+                                    <avalonia:MaterialIcon Kind="Delete" />
+                                </Button>
+
+                                <Button Grid.Column="1"
+                                        Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
+                                        CommandParameter="{Binding}">
+                                    <avalonia:MaterialIcon Kind="ArrowRight" />
+                                </Button>
+                            </Grid>
                         </WrapPanel>
 
-                        <Grid Grid.Column="1" ColumnDefinitions="*,*" RowDefinitions="*,*">
-                            <Button Grid.Column="1"
-                                    Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
-                                    CommandParameter="{Binding}">
-                                <avalonia:MaterialIcon Kind="Delete" />
-                            </Button>
-
-                            <Button Grid.Row="1"
-                                    Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].RemoveSubToDoItemFromPinnedCommand}"
-                                    CommandParameter="{Binding}"
-                                    IsVisible="{Binding IsPinned}">
+                        <Panel Grid.Column="1" VerticalAlignment="Top"
+                               HorizontalAlignment="Right">
+                            <Button
+                                Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].RemoveSubToDoItemFromPinnedCommand}"
+                                CommandParameter="{Binding}"
+                                IsVisible="{Binding IsPinned}">
                                 <avalonia:MaterialIcon Kind="Pin" />
                             </Button>
 
-                            <Button Grid.Row="1"
-                                    Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].AddSubToDoItemToPinnedCommand}"
-                                    CommandParameter="{Binding}"
-                                    IsVisible="{Binding IsPinned, Converter={StaticResource ReverseBooleanValueConverter}}">
+                            <Button
+                                Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].AddSubToDoItemToPinnedCommand}"
+                                CommandParameter="{Binding}"
+                                IsVisible="{Binding IsPinned, Converter={StaticResource ReverseBooleanValueConverter}}">
                                 <avalonia:MaterialIcon Kind="PinOutline" />
                             </Button>
-
-                            <Button Grid.Column="1"
-                                    Grid.Row="1"
-                                    Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
-                                    CommandParameter="{Binding}">
-                                <avalonia:MaterialIcon Kind="ArrowRight" />
-                            </Button>
-                        </Grid>
+                        </Panel>
                     </Grid>
                 </Grid>
             </controls:Card>
@@ -326,42 +330,43 @@
                                     </WrapPanel>
                                 </Button>
                             </Grid>
+
+                            <Grid ColumnDefinitions="*,*,*">
+                                <Button
+                                    Command="{Binding $parent[interfaces:ICompleteSubToDoItemCommand].CompleteSubToDoItemCommand}"
+                                    CommandParameter="{Binding}">
+                                    <avalonia:MaterialIcon Kind="Check" />
+                                </Button>
+
+                                <Button Grid.Column="1"
+                                        Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
+                                        CommandParameter="{Binding}">
+                                    <avalonia:MaterialIcon Kind="Delete" />
+                                </Button>
+
+                                <Button Grid.Column="2"
+                                        Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
+                                        CommandParameter="{Binding}">
+                                    <avalonia:MaterialIcon Kind="ArrowRight" />
+                                </Button>
+                            </Grid>
                         </StackPanel>
 
-                        <Grid Grid.Column="1" ColumnDefinitions="*,*" RowDefinitions="*,*">
+                        <Panel Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Right">
                             <Button
-                                Command="{Binding $parent[interfaces:ICompleteSubToDoItemCommand].CompleteSubToDoItemCommand}"
-                                CommandParameter="{Binding}">
-                                <avalonia:MaterialIcon Kind="Check" />
-                            </Button>
-
-                            <Button Grid.Column="1"
-                                    Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
-                                    CommandParameter="{Binding}">
-                                <avalonia:MaterialIcon Kind="Delete" />
-                            </Button>
-
-                            <Button Grid.Row="1"
-                                    Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].RemoveSubToDoItemFromPinnedCommand}"
-                                    CommandParameter="{Binding}"
-                                    IsVisible="{Binding IsPinned}">
+                                Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].RemoveSubToDoItemFromPinnedCommand}"
+                                CommandParameter="{Binding}"
+                                IsVisible="{Binding IsPinned}">
                                 <avalonia:MaterialIcon Kind="Pin" />
                             </Button>
 
-                            <Button Grid.Row="1"
-                                    Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].AddSubToDoItemToPinnedCommand}"
-                                    CommandParameter="{Binding}"
-                                    IsVisible="{Binding IsPinned, Converter={StaticResource ReverseBooleanValueConverter}}">
+                            <Button
+                                Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].AddSubToDoItemToPinnedCommand}"
+                                CommandParameter="{Binding}"
+                                IsVisible="{Binding IsPinned, Converter={StaticResource ReverseBooleanValueConverter}}">
                                 <avalonia:MaterialIcon Kind="PinOutline" />
                             </Button>
-
-                            <Button Grid.Column="1"
-                                    Grid.Row="1"
-                                    Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
-                                    CommandParameter="{Binding}">
-                                <avalonia:MaterialIcon Kind="ArrowRight" />
-                            </Button>
-                        </Grid>
+                        </Panel>
                     </Grid>
                 </Grid>
             </controls:Card>
@@ -432,42 +437,43 @@
                                     </WrapPanel>
                                 </Button>
                             </Grid>
+
+                            <Grid ColumnDefinitions="*,*,*">
+                                <Button
+                                    Command="{Binding $parent[interfaces:ICompleteSubToDoItemCommand].CompleteSubToDoItemCommand}"
+                                    CommandParameter="{Binding}">
+                                    <avalonia:MaterialIcon Kind="Check" />
+                                </Button>
+
+                                <Button Grid.Column="1"
+                                        Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
+                                        CommandParameter="{Binding}">
+                                    <avalonia:MaterialIcon Kind="Delete" />
+                                </Button>
+
+                                <Button Grid.Column="2"
+                                        Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
+                                        CommandParameter="{Binding}">
+                                    <avalonia:MaterialIcon Kind="ArrowRight" />
+                                </Button>
+                            </Grid>
                         </StackPanel>
 
-                        <Grid Grid.Column="1" ColumnDefinitions="*,*" RowDefinitions="*,*">
+                        <Panel Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Right">
                             <Button
-                                Command="{Binding $parent[interfaces:ICompleteSubToDoItemCommand].CompleteSubToDoItemCommand}"
-                                CommandParameter="{Binding}">
-                                <avalonia:MaterialIcon Kind="Check" />
-                            </Button>
-
-                            <Button Grid.Column="1"
-                                    Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
-                                    CommandParameter="{Binding}">
-                                <avalonia:MaterialIcon Kind="Delete" />
-                            </Button>
-
-                            <Button Grid.Row="1"
-                                    Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].RemoveSubToDoItemFromPinnedCommand}"
-                                    CommandParameter="{Binding}"
-                                    IsVisible="{Binding IsPinned}">
+                                Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].RemoveSubToDoItemFromPinnedCommand}"
+                                CommandParameter="{Binding}"
+                                IsVisible="{Binding IsPinned}">
                                 <avalonia:MaterialIcon Kind="Pin" />
                             </Button>
 
-                            <Button Grid.Row="1"
-                                    Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].AddSubToDoItemToPinnedCommand}"
-                                    CommandParameter="{Binding}"
-                                    IsVisible="{Binding IsPinned, Converter={StaticResource ReverseBooleanValueConverter}}">
+                            <Button
+                                Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].AddSubToDoItemToPinnedCommand}"
+                                CommandParameter="{Binding}"
+                                IsVisible="{Binding IsPinned, Converter={StaticResource ReverseBooleanValueConverter}}">
                                 <avalonia:MaterialIcon Kind="PinOutline" />
                             </Button>
-
-                            <Button Grid.Column="1"
-                                    Grid.Row="1"
-                                    Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
-                                    CommandParameter="{Binding}">
-                                <avalonia:MaterialIcon Kind="ArrowRight" />
-                            </Button>
-                        </Grid>
+                        </Panel>
                     </Grid>
                 </Grid>
             </controls:Card>
@@ -537,46 +543,48 @@
                                     </WrapPanel>
                                 </Button>
                             </Grid>
+
+                            <Grid ColumnDefinitions="*,*,*">
+                                <Button
+                                    Command="{Binding $parent[interfaces:ICompleteSubToDoItemCommand].CompleteSubToDoItemCommand}"
+                                    CommandParameter="{Binding}">
+                                    <avalonia:MaterialIcon Kind="Check" />
+                                </Button>
+
+                                <Button Grid.Column="1"
+                                        Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
+                                        CommandParameter="{Binding}">
+                                    <avalonia:MaterialIcon Kind="Delete" />
+                                </Button>
+
+                                <Button Grid.Column="2"
+                                        Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
+                                        CommandParameter="{Binding}">
+                                    <avalonia:MaterialIcon Kind="ArrowRight" />
+                                </Button>
+                            </Grid>
                         </StackPanel>
 
-                        <Grid Grid.Column="1" ColumnDefinitions="*,*" RowDefinitions="*,*">
+                        <Panel Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Right">
                             <Button
-                                Command="{Binding $parent[interfaces:ICompleteSubToDoItemCommand].CompleteSubToDoItemCommand}"
-                                CommandParameter="{Binding}">
-                                <avalonia:MaterialIcon Kind="Check" />
-                            </Button>
-
-                            <Button Grid.Column="1"
-                                    Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
-                                    CommandParameter="{Binding}">
-                                <avalonia:MaterialIcon Kind="Delete" />
-                            </Button>
-
-                            <Button Grid.Row="1"
-                                    Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].RemoveSubToDoItemFromPinnedCommand}"
-                                    CommandParameter="{Binding}"
-                                    IsVisible="{Binding IsPinned}">
+                                Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].RemoveSubToDoItemFromPinnedCommand}"
+                                CommandParameter="{Binding}"
+                                IsVisible="{Binding IsPinned}">
                                 <avalonia:MaterialIcon Kind="Pin" />
                             </Button>
 
-                            <Button Grid.Row="1"
-                                    Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].AddSubToDoItemToPinnedCommand}"
-                                    CommandParameter="{Binding}"
-                                    IsVisible="{Binding IsPinned, Converter={StaticResource ReverseBooleanValueConverter}}">
+                            <Button
+                                Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].AddSubToDoItemToPinnedCommand}"
+                                CommandParameter="{Binding}"
+                                IsVisible="{Binding IsPinned, Converter={StaticResource ReverseBooleanValueConverter}}">
                                 <avalonia:MaterialIcon Kind="PinOutline" />
                             </Button>
-
-                            <Button Grid.Column="1"
-                                    Grid.Row="1"
-                                    Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
-                                    CommandParameter="{Binding}">
-                                <avalonia:MaterialIcon Kind="ArrowRight" />
-                            </Button>
-                        </Grid>
+                        </Panel>
                     </Grid>
                 </Grid>
             </controls:Card>
         </DataTemplate>
+        <!--#endregion ToDoSubItemNotify-->
 
         <DataTemplate DataType="viewModels:AnnuallyPeriodicityViewModel">
             <ContentControl Content="{Binding DayOfYearSelector}" />

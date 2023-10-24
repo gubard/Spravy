@@ -142,11 +142,7 @@ public class ViewModelBase : NotifyBase
 
     private async void OnNextError(Exception exception)
     {
-        if (DialogViewer is null)
-        {
-            return;
-        }
-
+        Console.WriteLine(exception);
         await DialogViewer.ShowInfoErrorDialogAsync<IExceptionViewModel>(
             async _ =>
             {

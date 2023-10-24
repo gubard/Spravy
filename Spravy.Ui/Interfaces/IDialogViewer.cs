@@ -27,14 +27,4 @@ public interface IDialogViewer
         Func<TView, Task> cancelTask,
         Action<TView>? setupView = null
     );
-
-    /*Task<object?> ShowDialogAsync(Type contentType);
-    Task<object?> ShowDialogAsync<TView>(Action<TView>? setup = null) where TView : notnull;
-    void CloseDialog();
-
-    Task<object?> ShowConfirmDialogAsync<TView>(
-        Func<TView, Task> cancelTask,
-        Func<TView, Task> confirmTask,
-        Action<TView>? setup = null
-    ) where TView : notnull;*/
 }

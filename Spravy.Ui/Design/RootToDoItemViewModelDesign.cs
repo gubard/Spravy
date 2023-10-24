@@ -1,5 +1,8 @@
 using System;
-using Spravy.Ui.Models;
+using System.Linq;
+using Spravy.ToDo.Domain.Enums;
+using Spravy.ToDo.Domain.Interfaces;
+using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.ViewModels;
 using Spravy.Ui.Views;
 
@@ -9,45 +12,91 @@ public class RootToDoItemViewModelDesign : RootToDoItemViewModel
 {
     public RootToDoItemViewModelDesign()
     {
-        ToDoSubItemsView = new ToDoSubItemsView()
+        var toDoServiceDesign = new ToDoServiceDesign(
+            new IToDoSubItem[]
+            {
+                new ToDoSubItemGroup(
+                    Guid.NewGuid(),
+                    "Group",
+                    1,
+                    ToDoItemStatus.Completed,
+                    string.Empty,
+                    false,
+                    null,
+                    null
+                ),
+                new ToDoSubItemPeriodicity(
+                    Guid.NewGuid(),
+                    "Periodicity",
+                    1,
+                    ToDoItemStatus.Completed,
+                    string.Empty,
+                    false,
+                    DateTimeOffset.Now,
+                    null,
+                    1,
+                    1,
+                    1,
+                    null
+                ),
+                new ToDoSubItemPlanned(
+                    Guid.NewGuid(),
+                    "Planned",
+                    1u,
+                    ToDoItemStatus.Completed,
+                    string.Empty,
+                    false,
+                    null,
+                    DateTimeOffset.Now,
+                    1u,
+                    1u,
+                    1u,
+                    false,
+                    null
+                ),
+                new ToDoSubItemValue(
+                    Guid.NewGuid(),
+                    "Value",
+                    false,
+                    1,
+                    ToDoItemStatus.Completed,
+                    string.Empty,
+                    1u,
+                    1u,
+                    1u,
+                    false,
+                    null,
+                    null
+                ),
+                new ToDoSubItemPeriodicityOffset(
+                    Guid.NewGuid(),
+                    "PeriodicityOffset",
+                    1u,
+                    ToDoItemStatus.Completed,
+                    string.Empty,
+                    false,
+                    DateTimeOffset.Now,
+                    null,
+                    1,
+                    1,
+                    1,
+                    null
+                ),
+            },
+            Enumerable.Empty<IToDoSubItem>()
+        );
+
+        ToDoService = toDoServiceDesign;
+        Mapper = ConstDesign.Mapper;
+
+        ToDoSubItemsView = new ToDoSubItemsView
         {
             ViewModel = new ToDoSubItemsViewModelDesign
             {
-                Mapper = null,
-                Navigator = null,
-                DialogViewer = null,
-                ToDoService = null,
-                Completed =
-                {
-                    new ToDoSubItemGroupNotify
-                    {
-                        Name = "ToDoSubItemGroupNotify",
-                    },
-                    new ToDoSubItemPeriodicityNotify
-                    {
-                        Name = "ToDoSubItemPeriodicityNotify",
-                    },
-                    new ToDoSubItemPlannedNotify
-                    {
-                        Name = "ToDoSubItemPlannedNotify",
-                    },
-                    new ToDoSubItemValueNotify
-                    {
-                        Name = "ToDoSubItemValueNotify",
-                    },
-                    new ToDoSubItemPeriodicityOffsetNotify
-                    {
-                        Name = "ToDoSubItemPeriodicityOffsetNotify",
-                        /*Active = new ActiveToDoItemNotify
-                        {
-                            Name = "Active"
-                        },*/
-                        CompletedCount = 2,
-                        FailedCount = 3,
-                        SkippedCount = 6,
-                        LastCompleted = DateTimeOffset.Now
-                    }
-                }
+                Mapper = ConstDesign.Mapper,
+                Navigator = ConstDesign.Navigator,
+                DialogViewer = ConstDesign.DialogViewer,
+                ToDoService = toDoServiceDesign,
             },
         };
     }
