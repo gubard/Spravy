@@ -81,7 +81,7 @@ public class RootToDoItemViewModelDesign : RootToDoItemViewModel
                     1,
                     null
                 ),
-                //------------------------------------------------------------------------------------------------------
+                //-------------------------------------------LastCompleted----------------------------------------------
                 new ToDoSubItemGroup(
                     Guid.NewGuid(),
                     "Group LastCompleted",
@@ -143,6 +143,73 @@ public class RootToDoItemViewModelDesign : RootToDoItemViewModel
                     false,
                     DateTimeOffset.Now,
                     null,
+                    1,
+                    1,
+                    1,
+                    DateTimeOffset.Now
+                ),
+                //-------------------------------------------Active-----------------------------------------------------
+                new ToDoSubItemGroup(
+                    Guid.NewGuid(),
+                    "Group LastCompleted",
+                    1,
+                    ToDoItemStatus.Completed,
+                    string.Empty,
+                    false,
+                    new ActiveToDoItem(Guid.NewGuid(), "Active")
+                ),
+                new ToDoSubItemPeriodicity(
+                    Guid.NewGuid(),
+                    "Periodicity LastCompleted",
+                    1,
+                    ToDoItemStatus.Completed,
+                    string.Empty,
+                    false,
+                    DateTimeOffset.Now,
+                    new ActiveToDoItem(Guid.NewGuid(), "Active"),
+                    1,
+                    1,
+                    1,
+                    DateTimeOffset.Now
+                ),
+                new ToDoSubItemPlanned(
+                    Guid.NewGuid(),
+                    "Planned LastCompleted",
+                    1u,
+                    ToDoItemStatus.Completed,
+                    string.Empty,
+                    false,
+                    new ActiveToDoItem(Guid.NewGuid(), "Active"),
+                    DateTimeOffset.Now,
+                    1u,
+                    1u,
+                    1u,
+                    false,
+                    DateTimeOffset.Now
+                ),
+                new ToDoSubItemValue(
+                    Guid.NewGuid(),
+                    "Value LastCompleted",
+                    false,
+                    1,
+                    ToDoItemStatus.Completed,
+                    string.Empty,
+                    1u,
+                    1u,
+                    1u,
+                    false,
+                    new ActiveToDoItem(Guid.NewGuid(), "Active"),
+                    DateTimeOffset.Now
+                ),
+                new ToDoSubItemPeriodicityOffset(
+                    Guid.NewGuid(),
+                    "PeriodicityOffset LastCompleted",
+                    1u,
+                    ToDoItemStatus.Completed,
+                    string.Empty,
+                    false,
+                    DateTimeOffset.Now,
+                    new ActiveToDoItem(Guid.NewGuid(), "Active"),
                     1,
                     1,
                     1,
