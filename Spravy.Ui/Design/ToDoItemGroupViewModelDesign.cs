@@ -4,13 +4,12 @@ using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.ViewModels;
-using Spravy.Ui.Views;
 
 namespace Spravy.Ui.Design;
 
-public class RootToDoItemViewModelDesign : RootToDoItemViewModel
+public class ToDoItemGroupViewModelDesign : ToDoItemGroupViewModel
 {
-    public RootToDoItemViewModelDesign()
+    public ToDoItemGroupViewModelDesign()
     {
         var toDoServiceDesign = new ToDoServiceDesign(
             new IToDoSubItem[]
@@ -222,15 +221,12 @@ public class RootToDoItemViewModelDesign : RootToDoItemViewModel
         ToDoService = toDoServiceDesign;
         Mapper = ConstDesign.Mapper;
 
-        ToDoSubItemsView = new ToDoSubItemsView
+        ToDoSubItemsViewModel = new ToDoSubItemsViewModelDesign
         {
-            ViewModel = new ToDoSubItemsViewModelDesign
-            {
-                Mapper = ConstDesign.Mapper,
-                Navigator = ConstDesign.Navigator,
-                DialogViewer = ConstDesign.DialogViewer,
-                ToDoService = toDoServiceDesign,
-            },
+            Mapper = ConstDesign.Mapper,
+            Navigator = ConstDesign.Navigator,
+            DialogViewer = ConstDesign.DialogViewer,
+            ToDoService = toDoServiceDesign,
         };
     }
 }
