@@ -107,7 +107,7 @@
                                        Fill="{StaticResource MaterialTextBoxBorderBrush}" />
                         </Grid>
 
-                        <StackPanel Grid.Row="1" HorizontalAlignment="Left">
+                        <StackPanel Grid.Row="1">
                             <TextBlock Text="{Binding Name}"
                                        Classes="Headline6"
                                        TextWrapping="Wrap" />
@@ -212,8 +212,7 @@
                                        Fill="{StaticResource MaterialTextBoxBorderBrush}" />
                         </Grid>
 
-                        <WrapPanel Grid.Row="1" HorizontalAlignment="Left"
-                                   Orientation="Vertical">
+                        <StackPanel Grid.Row="1">
                             <TextBlock Text="{Binding Name}"
                                        Classes="Headline6"
                                        TextWrapping="Wrap" />
@@ -247,7 +246,7 @@
                                     </StackPanel>
                                 </Button>
                             </Grid>
-                        </WrapPanel>
+                        </StackPanel>
 
                         <Panel Grid.Row="1" Grid.Column="1" VerticalAlignment="Top"
                                HorizontalAlignment="Right">
@@ -295,7 +294,7 @@
                                        Fill="{StaticResource MaterialTextBoxBorderBrush}" />
                         </Grid>
 
-                        <StackPanel Grid.Row="1" HorizontalAlignment="Left">
+                        <StackPanel Grid.Row="1">
                             <TextBlock Text="{Binding Name}"
                                        Classes="Headline6"
                                        TextWrapping="Wrap" />
@@ -400,7 +399,7 @@
                                        Fill="{StaticResource MaterialTextBoxBorderBrush}" />
                         </Grid>
 
-                        <StackPanel Grid.Row="1" HorizontalAlignment="Left">
+                        <StackPanel Grid.Row="1">
                             <TextBlock Text="{Binding Name}"
                                        Classes="Headline6"
                                        TextWrapping="Wrap" />
@@ -503,7 +502,7 @@
                                        Fill="{StaticResource MaterialTextBoxBorderBrush}" />
                         </Grid>
 
-                        <StackPanel Grid.Row="1" HorizontalAlignment="Left">
+                        <StackPanel Grid.Row="1">
                             <TextBlock Text="{Binding Name}"
                                        Classes="Headline6"
                                        TextWrapping="Wrap" />
