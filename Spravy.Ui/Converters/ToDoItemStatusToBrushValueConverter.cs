@@ -20,7 +20,7 @@ public class ToDoItemStatusToBrushValueConverter : IValueConverter
             ToDoItemStatus.Miss => new SolidColorBrush(Colors.DarkRed),
             ToDoItemStatus.Completed => new SolidColorBrush(Colors.DarkGreen),
             ToDoItemStatus.Planned => new SolidColorBrush(Colors.PowderBlue),
-            ToDoItemStatus.ReadyForComplete => new SolidColorBrush(Colors.GreenYellow),
+            ToDoItemStatus.ReadyForComplete => new SolidColorBrush(Colors.Navy),
             _ => throw new ArgumentOutOfRangeException()
         };
     }
@@ -42,7 +42,7 @@ public class ToDoItemStatusToBrushValueConverter : IValueConverter
             return ToDoItemStatus.Completed;
         }
 
-        if (brush.Color == Colors.GreenYellow)
+        if (brush.Color == Colors.Navy)
         {
             return ToDoItemStatus.ReadyForComplete;
         }
