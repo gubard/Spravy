@@ -85,104 +85,98 @@
         <DataTemplate DataType="models:ToDoSubItemValueNotify">
             <controls:Card ToolTip.Tip="{Binding Description, Converter={StaticResource EmptyStringToNullConverter}}"
                            IsVisible="{Binding IsVisible}">
-                <Grid ColumnDefinitions="Auto,*">
-                    <Rectangle Width="10"
-                               Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
+                <Grid ColumnDefinitions="*,Auto"
+                      RowDefinitions="Auto,*"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      Margin="5">
+                    <Grid Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*">
+                        <Rectangle Width="15"
+                                   Margin="0,0,3,0"
+                                   Height="2"
+                                   Fill="{StaticResource MaterialTextBoxBorderBrush}" />
+                        <TextBlock Grid.Column="1" Text="Value" Classes="Body2" />
+                        <Rectangle Grid.Column="2"
+                                   Margin="3,0,0,0"
+                                   Height="2"
+                                   Fill="{StaticResource MaterialTextBoxBorderBrush}" />
+                    </Grid>
 
-                    <Grid Grid.Column="1"
-                          ColumnDefinitions="*,Auto"
-                          RowDefinitions="Auto,*"
-                          HorizontalAlignment="Stretch"
-                          VerticalAlignment="Stretch"
-                          Margin="5">
-                        <Grid Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*">
-                            <Rectangle Width="15"
-                                       Margin="0,0,3,0"
-                                       Height="2"
-                                       Fill="{StaticResource MaterialTextBoxBorderBrush}" />
-                            <TextBlock Grid.Column="1" Text="Value" Classes="Body2" />
-                            <Rectangle Grid.Column="2"
-                                       Margin="3,0,0,0"
-                                       Height="2"
-                                       Fill="{StaticResource MaterialTextBoxBorderBrush}" />
-                        </Grid>
+                    <StackPanel Grid.Row="1">
+                        <TextBlock Text="{Binding Name}"
+                                   Classes="Headline6"
+                                   TextWrapping="Wrap" />
 
-                        <StackPanel Grid.Row="1">
-                            <TextBlock Text="{Binding Name}"
-                                       Classes="Headline6"
-                                       TextWrapping="Wrap" />
-
-                            <StackPanel>
-                                <StackPanel Orientation="Horizontal">
-                                    <Rectangle Fill="Green" Height="3" Width="{Binding CompletedPercentage}" />
-                                    <Rectangle Fill="Yellow" Height="3" Width="{Binding SkippedPercentage}" />
-                                    <Rectangle Fill="Red" Height="3" Width="{Binding FailedPercentage}" />
-                                </StackPanel>
-
-                                <TextBlock
-                                    Text="{Binding LastCompleted, StringFormat=LastCompleted: \{0:yyyy\\.MM\\.dd hh\\:mm\\:ss\}}"
-                                    IsVisible="{Binding  LastCompleted, Converter={StaticResource NullToBooleanConverter}}" />
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Rectangle Fill="Green" Height="3" Width="{Binding CompletedPercentage}" />
+                                <Rectangle Fill="Yellow" Height="3" Width="{Binding SkippedPercentage}" />
+                                <Rectangle Fill="Red" Height="3" Width="{Binding FailedPercentage}" />
                             </StackPanel>
 
-                            <Button IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}"
-                                    CommandParameter="{Binding Active}"
-                                    Command="{Binding $parent[interfaces:IToDoItemView].ChangeToActiveDoItemCommand}">
-                                <WrapPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding Active.Name}"
-                                               TextWrapping="Wrap"
-                                               VerticalAlignment="Center" />
-                                    <avalonia:MaterialIcon Margin="5,0,0,0" Kind="ArrowRight" />
-                                </WrapPanel>
-                            </Button>
-
-                            <Grid ColumnDefinitions="*,*,*">
-                                <Button CommandParameter="{Binding}"
-                                        Command="{Binding $parent[interfaces:ICompleteSubToDoItemCommand].CompleteSubToDoItemCommand}">
-                                    <StackPanel Orientation="Horizontal">
-                                        <avalonia:MaterialIcon Kind="Check" />
-                                        <TextBlock Text="Complete" />
-                                    </StackPanel>
-                                </Button>
-
-                                <Button Grid.Column="1"
-                                        Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
-                                        CommandParameter="{Binding}">
-                                    <StackPanel Orientation="Horizontal">
-                                        <avalonia:MaterialIcon Kind="Delete" Foreground="{DynamicResource ErrorBrush}" />
-                                        <TextBlock Text="Delete" Foreground="{DynamicResource ErrorBrush}" />
-                                    </StackPanel>
-                                </Button>
-
-                                <Button Grid.Column="2"
-                                        Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
-                                        CommandParameter="{Binding}">
-                                    <StackPanel Orientation="Horizontal">
-                                        <avalonia:MaterialIcon Kind="ArrowRight" />
-                                        <TextBlock Text="Open" />
-                                    </StackPanel>
-                                </Button>
-                            </Grid>
+                            <TextBlock
+                                Text="{Binding LastCompleted, StringFormat=LastCompleted: \{0:yyyy\\.MM\\.dd hh\\:mm\\:ss\}}"
+                                IsVisible="{Binding  LastCompleted, Converter={StaticResource NullToBooleanConverter}}" />
                         </StackPanel>
 
-                        <Panel Grid.Row="1"
-                               Grid.Column="1"
-                               VerticalAlignment="Top"
-                               HorizontalAlignment="Right">
-                            <Button
-                                Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].RemoveSubToDoItemFromPinnedCommand}"
-                                CommandParameter="{Binding}"
-                                IsVisible="{Binding IsPinned}">
-                                <avalonia:MaterialIcon Kind="Pin" />
+                        <Button IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}"
+                                CommandParameter="{Binding Active}"
+                                Command="{Binding $parent[interfaces:IToDoItemView].ChangeToActiveDoItemCommand}">
+                            <WrapPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Active.Name}"
+                                           TextWrapping="Wrap"
+                                           VerticalAlignment="Center" />
+                                <avalonia:MaterialIcon Margin="5,0,0,0" Kind="ArrowRight" />
+                            </WrapPanel>
+                        </Button>
+
+                        <Grid ColumnDefinitions="*,*,*">
+                            <Button CommandParameter="{Binding}"
+                                    Command="{Binding $parent[interfaces:ICompleteSubToDoItemCommand].CompleteSubToDoItemCommand}">
+                                <StackPanel Orientation="Horizontal">
+                                    <avalonia:MaterialIcon Kind="Check" />
+                                    <TextBlock Text="Complete" />
+                                </StackPanel>
                             </Button>
 
-                            <Button
-                                Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].AddSubToDoItemToPinnedCommand}"
-                                CommandParameter="{Binding}"
-                                IsVisible="{Binding IsPinned, Converter={StaticResource ReverseBooleanValueConverter}}">
-                                <avalonia:MaterialIcon Kind="PinOutline" />
+                            <Button Grid.Column="1"
+                                    Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
+                                    CommandParameter="{Binding}">
+                                <StackPanel Orientation="Horizontal">
+                                    <avalonia:MaterialIcon Kind="Delete" Foreground="{DynamicResource ErrorBrush}" />
+                                    <TextBlock Text="Delete" Foreground="{DynamicResource ErrorBrush}" />
+                                </StackPanel>
                             </Button>
-                        </Panel>
-                    </Grid>
+
+                            <Button Grid.Column="2"
+                                    Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
+                                    CommandParameter="{Binding}">
+                                <StackPanel Orientation="Horizontal">
+                                    <avalonia:MaterialIcon Kind="ArrowRight" />
+                                    <TextBlock Text="Open" />
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                    </StackPanel>
+
+                    <Panel Grid.Row="1"
+                           Grid.Column="1"
+                           VerticalAlignment="Top"
+                           HorizontalAlignment="Right">
+                        <Button
+                            Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].RemoveSubToDoItemFromPinnedCommand}"
+                            CommandParameter="{Binding}"
+                            IsVisible="{Binding IsPinned}">
+                            <avalonia:MaterialIcon Kind="Pin" />
+                        </Button>
+
+                        <Button
+                            Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].AddSubToDoItemToPinnedCommand}"
+                            CommandParameter="{Binding}"
+                            IsVisible="{Binding IsPinned, Converter={StaticResource ReverseBooleanValueConverter}}">
+                            <avalonia:MaterialIcon Kind="PinOutline" />
+                        </Button>
+                    </Panel>
                 </Grid>
             </controls:Card>
         </DataTemplate>
@@ -190,32 +184,116 @@
         <DataTemplate DataType="models:ToDoSubItemGroupNotify">
             <controls:Card ToolTip.Tip="{Binding Description, Converter={StaticResource EmptyStringToNullConverter}}"
                            IsVisible="{Binding IsVisible}">
-                <Grid ColumnDefinitions="Auto,*">
-                    <Rectangle Width="10"
-                               Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
+                <Grid ColumnDefinitions="*,Auto"
+                      RowDefinitions="Auto,*"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      Margin="5">
+                    <Grid Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*">
+                        <Rectangle Width="15"
+                                   Margin="0,0,3,0"
+                                   Height="2"
+                                   Fill="{StaticResource MaterialTextBoxBorderBrush}" />
+                        <TextBlock Grid.Column="1" Text="Group" Classes="Body2" />
+                        <Rectangle Grid.Column="2"
+                                   Margin="3,0,0,0"
+                                   Height="2"
+                                   Fill="{StaticResource MaterialTextBoxBorderBrush}" />
+                    </Grid>
 
-                    <Grid Grid.Column="1"
-                          ColumnDefinitions="*,Auto"
-                          RowDefinitions="Auto,*"
-                          HorizontalAlignment="Stretch"
-                          VerticalAlignment="Stretch"
-                          Margin="5">
-                        <Grid Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*">
-                            <Rectangle Width="15"
-                                       Margin="0,0,3,0"
-                                       Height="2"
-                                       Fill="{StaticResource MaterialTextBoxBorderBrush}" />
-                            <TextBlock Grid.Column="1" Text="Group" Classes="Body2" />
-                            <Rectangle Grid.Column="2"
-                                       Margin="3,0,0,0"
-                                       Height="2"
-                                       Fill="{StaticResource MaterialTextBoxBorderBrush}" />
+                    <StackPanel Grid.Row="1">
+                        <TextBlock Text="{Binding Name}"
+                                   Classes="Headline6"
+                                   TextWrapping="Wrap" />
+
+                        <Button IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}"
+                                CommandParameter="{Binding Active}"
+                                Command="{Binding $parent[interfaces:IToDoItemView].ChangeToActiveDoItemCommand}">
+                            <WrapPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Active.Name}"
+                                           TextWrapping="Wrap"
+                                           VerticalAlignment="Center" />
+                                <avalonia:MaterialIcon Margin="5,0,0,0" Kind="ArrowRight" />
+                            </WrapPanel>
+                        </Button>
+
+                        <Grid ColumnDefinitions="*,*">
+                            <Button Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
+                                    CommandParameter="{Binding}">
+                                <StackPanel Orientation="Horizontal">
+                                    <avalonia:MaterialIcon Kind="Delete" Foreground="{DynamicResource ErrorBrush}" />
+                                    <TextBlock Text="Delete" Foreground="{DynamicResource ErrorBrush}" />
+                                </StackPanel>
+                            </Button>
+
+                            <Button Grid.Column="1"
+                                    Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
+                                    CommandParameter="{Binding}">
+                                <StackPanel Orientation="Horizontal">
+                                    <avalonia:MaterialIcon Kind="ArrowRight" />
+                                    <TextBlock Text="Open" />
+                                </StackPanel>
+                            </Button>
                         </Grid>
+                    </StackPanel>
 
-                        <StackPanel Grid.Row="1">
-                            <TextBlock Text="{Binding Name}"
-                                       Classes="Headline6"
-                                       TextWrapping="Wrap" />
+                    <Panel Grid.Row="1" Grid.Column="1" VerticalAlignment="Top"
+                           HorizontalAlignment="Right">
+                        <Button
+                            Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].RemoveSubToDoItemFromPinnedCommand}"
+                            CommandParameter="{Binding}"
+                            IsVisible="{Binding IsPinned}">
+                            <avalonia:MaterialIcon Kind="Pin" />
+                        </Button>
+
+                        <Button
+                            Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].AddSubToDoItemToPinnedCommand}"
+                            CommandParameter="{Binding}"
+                            IsVisible="{Binding IsPinned, Converter={StaticResource ReverseBooleanValueConverter}}">
+                            <avalonia:MaterialIcon Kind="PinOutline" />
+                        </Button>
+                    </Panel>
+                </Grid>
+            </controls:Card>
+        </DataTemplate>
+
+        <DataTemplate DataType="models:ToDoSubItemPlannedNotify">
+            <controls:Card ToolTip.Tip="{Binding Description, Converter={StaticResource EmptyStringToNullConverter}}"
+                           IsVisible="{Binding IsVisible}">
+                <Grid ColumnDefinitions="*,Auto"
+                      RowDefinitions="Auto,*"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      Margin="5">
+                    <Grid Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*">
+                        <Rectangle Width="15"
+                                   Margin="0,0,3,0"
+                                   Height="2"
+                                   Fill="{StaticResource MaterialTextBoxBorderBrush}" />
+                        <TextBlock Grid.Column="1" Text="Planned" Classes="Body2" />
+                        <Rectangle Grid.Column="2"
+                                   Margin="3,0,0,0"
+                                   Height="2"
+                                   Fill="{StaticResource MaterialTextBoxBorderBrush}" />
+                    </Grid>
+
+                    <StackPanel Grid.Row="1">
+                        <TextBlock Text="{Binding Name}"
+                                   Classes="Headline6"
+                                   TextWrapping="Wrap" />
+
+                        <TextBlock Text="{Binding DueDate, StringFormat=DueDate: \{0:yyyy.MM.dd\}}" />
+
+                        <TextBlock
+                            Text="{Binding LastCompleted, StringFormat=LastCompleted: \{0:yyyy\\.MM\\.dd hh\\:mm\\:ss\}}"
+                            IsVisible="{Binding  LastCompleted, Converter={StaticResource NullToBooleanConverter}}" />
+
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Rectangle Fill="Green" Height="3" Width="{Binding CompletedPercentage}" />
+                                <Rectangle Fill="Yellow" Height="3" Width="{Binding SkippedPercentage}" />
+                                <Rectangle Fill="Red" Height="3" Width="{Binding FailedPercentage}" />
+                            </StackPanel>
 
                             <Button IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}"
                                     CommandParameter="{Binding Active}"
@@ -227,149 +305,53 @@
                                     <avalonia:MaterialIcon Margin="5,0,0,0" Kind="ArrowRight" />
                                 </WrapPanel>
                             </Button>
-
-                            <Grid ColumnDefinitions="*,*">
-                                <Button Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
-                                        CommandParameter="{Binding}">
-                                    <StackPanel Orientation="Horizontal">
-                                        <avalonia:MaterialIcon Kind="Delete" Foreground="{DynamicResource ErrorBrush}" />
-                                        <TextBlock Text="Delete" Foreground="{DynamicResource ErrorBrush}" />
-                                    </StackPanel>
-                                </Button>
-
-                                <Button Grid.Column="1"
-                                        Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
-                                        CommandParameter="{Binding}">
-                                    <StackPanel Orientation="Horizontal">
-                                        <avalonia:MaterialIcon Kind="ArrowRight" />
-                                        <TextBlock Text="Open" />
-                                    </StackPanel>
-                                </Button>
-                            </Grid>
                         </StackPanel>
 
-                        <Panel Grid.Row="1" Grid.Column="1" VerticalAlignment="Top"
-                               HorizontalAlignment="Right">
+                        <Grid ColumnDefinitions="*,*,*">
                             <Button
-                                Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].RemoveSubToDoItemFromPinnedCommand}"
-                                CommandParameter="{Binding}"
-                                IsVisible="{Binding IsPinned}">
-                                <avalonia:MaterialIcon Kind="Pin" />
-                            </Button>
-
-                            <Button
-                                Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].AddSubToDoItemToPinnedCommand}"
-                                CommandParameter="{Binding}"
-                                IsVisible="{Binding IsPinned, Converter={StaticResource ReverseBooleanValueConverter}}">
-                                <avalonia:MaterialIcon Kind="PinOutline" />
-                            </Button>
-                        </Panel>
-                    </Grid>
-                </Grid>
-            </controls:Card>
-        </DataTemplate>
-
-        <DataTemplate DataType="models:ToDoSubItemPlannedNotify">
-            <controls:Card ToolTip.Tip="{Binding Description, Converter={StaticResource EmptyStringToNullConverter}}"
-                           IsVisible="{Binding IsVisible}">
-                <Grid ColumnDefinitions="Auto,*">
-                    <Rectangle Width="10"
-                               Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
-
-                    <Grid Grid.Column="1"
-                          ColumnDefinitions="*,Auto"
-                          RowDefinitions="Auto,*"
-                          HorizontalAlignment="Stretch"
-                          VerticalAlignment="Stretch"
-                          Margin="5">
-                        <Grid Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*">
-                            <Rectangle Width="15"
-                                       Margin="0,0,3,0"
-                                       Height="2"
-                                       Fill="{StaticResource MaterialTextBoxBorderBrush}" />
-                            <TextBlock Grid.Column="1" Text="Planned" Classes="Body2" />
-                            <Rectangle Grid.Column="2"
-                                       Margin="3,0,0,0"
-                                       Height="2"
-                                       Fill="{StaticResource MaterialTextBoxBorderBrush}" />
-                        </Grid>
-
-                        <StackPanel Grid.Row="1">
-                            <TextBlock Text="{Binding Name}"
-                                       Classes="Headline6"
-                                       TextWrapping="Wrap" />
-
-                            <TextBlock Text="{Binding DueDate, StringFormat=DueDate: \{0:yyyy.MM.dd\}}" />
-
-                            <TextBlock
-                                Text="{Binding LastCompleted, StringFormat=LastCompleted: \{0:yyyy\\.MM\\.dd hh\\:mm\\:ss\}}"
-                                IsVisible="{Binding  LastCompleted, Converter={StaticResource NullToBooleanConverter}}" />
-
-                            <StackPanel>
+                                Command="{Binding $parent[interfaces:ICompleteSubToDoItemCommand].CompleteSubToDoItemCommand}"
+                                CommandParameter="{Binding}">
                                 <StackPanel Orientation="Horizontal">
-                                    <Rectangle Fill="Green" Height="3" Width="{Binding CompletedPercentage}" />
-                                    <Rectangle Fill="Yellow" Height="3" Width="{Binding SkippedPercentage}" />
-                                    <Rectangle Fill="Red" Height="3" Width="{Binding FailedPercentage}" />
+                                    <avalonia:MaterialIcon Kind="Check" />
+                                    <TextBlock Text="Complete" />
                                 </StackPanel>
+                            </Button>
 
-                                <Button IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}"
-                                        CommandParameter="{Binding Active}"
-                                        Command="{Binding $parent[interfaces:IToDoItemView].ChangeToActiveDoItemCommand}">
-                                    <WrapPanel Orientation="Horizontal">
-                                        <TextBlock Text="{Binding Active.Name}"
-                                                   TextWrapping="Wrap"
-                                                   VerticalAlignment="Center" />
-                                        <avalonia:MaterialIcon Margin="5,0,0,0" Kind="ArrowRight" />
-                                    </WrapPanel>
-                                </Button>
-                            </StackPanel>
-
-                            <Grid ColumnDefinitions="*,*,*">
-                                <Button
-                                    Command="{Binding $parent[interfaces:ICompleteSubToDoItemCommand].CompleteSubToDoItemCommand}"
+                            <Button Grid.Column="1"
+                                    Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
                                     CommandParameter="{Binding}">
-                                    <StackPanel Orientation="Horizontal">
-                                        <avalonia:MaterialIcon Kind="Check" />
-                                        <TextBlock Text="Complete" />
-                                    </StackPanel>
-                                </Button>
-
-                                <Button Grid.Column="1"
-                                        Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
-                                        CommandParameter="{Binding}">
-                                    <StackPanel Orientation="Horizontal">
-                                        <avalonia:MaterialIcon Kind="Delete" Foreground="{DynamicResource ErrorBrush}" />
-                                        <TextBlock Text="Delete" Foreground="{DynamicResource ErrorBrush}" />
-                                    </StackPanel>
-                                </Button>
-
-                                <Button Grid.Column="2"
-                                        Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
-                                        CommandParameter="{Binding}">
-                                    <StackPanel Orientation="Horizontal">
-                                        <avalonia:MaterialIcon Kind="ArrowRight" />
-                                        <TextBlock Text="Open" />
-                                    </StackPanel>
-                                </Button>
-                            </Grid>
-                        </StackPanel>
-
-                        <Panel Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Right">
-                            <Button
-                                Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].RemoveSubToDoItemFromPinnedCommand}"
-                                CommandParameter="{Binding}"
-                                IsVisible="{Binding IsPinned}">
-                                <avalonia:MaterialIcon Kind="Pin" />
+                                <StackPanel Orientation="Horizontal">
+                                    <avalonia:MaterialIcon Kind="Delete" Foreground="{DynamicResource ErrorBrush}" />
+                                    <TextBlock Text="Delete" Foreground="{DynamicResource ErrorBrush}" />
+                                </StackPanel>
                             </Button>
 
-                            <Button
-                                Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].AddSubToDoItemToPinnedCommand}"
-                                CommandParameter="{Binding}"
-                                IsVisible="{Binding IsPinned, Converter={StaticResource ReverseBooleanValueConverter}}">
-                                <avalonia:MaterialIcon Kind="PinOutline" />
+                            <Button Grid.Column="2"
+                                    Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
+                                    CommandParameter="{Binding}">
+                                <StackPanel Orientation="Horizontal">
+                                    <avalonia:MaterialIcon Kind="ArrowRight" />
+                                    <TextBlock Text="Open" />
+                                </StackPanel>
                             </Button>
-                        </Panel>
-                    </Grid>
+                        </Grid>
+                    </StackPanel>
+
+                    <Panel Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Right">
+                        <Button
+                            Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].RemoveSubToDoItemFromPinnedCommand}"
+                            CommandParameter="{Binding}"
+                            IsVisible="{Binding IsPinned}">
+                            <avalonia:MaterialIcon Kind="Pin" />
+                        </Button>
+
+                        <Button
+                            Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].AddSubToDoItemToPinnedCommand}"
+                            CommandParameter="{Binding}"
+                            IsVisible="{Binding IsPinned, Converter={StaticResource ReverseBooleanValueConverter}}">
+                            <avalonia:MaterialIcon Kind="PinOutline" />
+                        </Button>
+                    </Panel>
                 </Grid>
             </controls:Card>
         </DataTemplate>
@@ -377,47 +359,140 @@
         <DataTemplate DataType="models:ToDoSubItemPeriodicityNotify">
             <controls:Card ToolTip.Tip="{Binding Description, Converter={StaticResource EmptyStringToNullConverter}}"
                            IsVisible="{Binding IsVisible}">
-                <Grid ColumnDefinitions="Auto,*">
-                    <Rectangle Width="10"
-                               Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
+                <Grid ColumnDefinitions="*,Auto"
+                      RowDefinitions="Auto,*"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      Margin="5">
+                    <Grid Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*">
+                        <Rectangle Width="15"
+                                   Margin="0,0,3,0"
+                                   Height="2"
+                                   Fill="{StaticResource MaterialTextBoxBorderBrush}" />
+                        <TextBlock Grid.Column="1" Text="Periodicity" Classes="Body2" />
+                        <Rectangle Grid.Column="2"
+                                   Margin="3,0,0,0"
+                                   Height="2"
+                                   Fill="{StaticResource MaterialTextBoxBorderBrush}" />
+                    </Grid>
 
-                    <Grid Grid.Column="1"
-                          ColumnDefinitions="*,Auto"
-                          RowDefinitions="Auto,*"
-                          HorizontalAlignment="Stretch"
-                          VerticalAlignment="Stretch"
-                          Margin="5">
-                        <Grid Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*">
-                            <Rectangle Width="15"
-                                       Margin="0,0,3,0"
-                                       Height="2"
-                                       Fill="{StaticResource MaterialTextBoxBorderBrush}" />
-                            <TextBlock Grid.Column="1" Text="Periodicity" Classes="Body2" />
-                            <Rectangle Grid.Column="2"
-                                       Margin="3,0,0,0"
-                                       Height="2"
-                                       Fill="{StaticResource MaterialTextBoxBorderBrush}" />
+                    <StackPanel Grid.Row="1">
+                        <TextBlock Text="{Binding Name}"
+                                   Classes="Headline6"
+                                   TextWrapping="Wrap" />
+
+                        <TextBlock Text="{Binding DueDate, StringFormat=DueDate: \{0:yyyy.MM.dd\}}" />
+
+                        <TextBlock
+                            Text="{Binding LastCompleted, StringFormat=LastCompleted: \{0:yyyy\\.MM\\.dd hh\\:mm\\:ss\}}"
+                            IsVisible="{Binding  LastCompleted, Converter={StaticResource NullToBooleanConverter}}" />
+
+                        <StackPanel Orientation="Horizontal">
+                            <Rectangle Fill="Green" Height="3" Width="{Binding CompletedPercentage}" />
+                            <Rectangle Fill="Yellow" Height="3" Width="{Binding SkippedPercentage}" />
+                            <Rectangle Fill="Red" Height="3" Width="{Binding FailedPercentage}" />
+                        </StackPanel>
+
+                        <Button CommandParameter="{Binding Active}"
+                                IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}"
+                                Command="{Binding $parent[interfaces:IToDoItemView].ChangeToActiveDoItemCommand}">
+                            <WrapPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Active.Name}"
+                                           TextWrapping="Wrap"
+                                           VerticalAlignment="Center" />
+                                <avalonia:MaterialIcon Margin="5,0,0,0" Kind="ArrowRight" />
+                            </WrapPanel>
+                        </Button>
+
+                        <Grid ColumnDefinitions="*,*,*">
+                            <Button
+                                Command="{Binding $parent[interfaces:ICompleteSubToDoItemCommand].CompleteSubToDoItemCommand}"
+                                CommandParameter="{Binding}">
+                                <StackPanel Orientation="Horizontal">
+                                    <avalonia:MaterialIcon Kind="Check" />
+                                    <TextBlock Text="Complete" />
+                                </StackPanel>
+                            </Button>
+
+                            <Button Grid.Column="1"
+                                    Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
+                                    CommandParameter="{Binding}">
+                                <StackPanel Orientation="Horizontal">
+                                    <avalonia:MaterialIcon Kind="Delete" Foreground="{DynamicResource ErrorBrush}" />
+                                    <TextBlock Text="Delete" Foreground="{DynamicResource ErrorBrush}" />
+                                </StackPanel>
+                            </Button>
+
+                            <Button Grid.Column="2"
+                                    Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
+                                    CommandParameter="{Binding}">
+                                <StackPanel Orientation="Horizontal">
+                                    <avalonia:MaterialIcon Kind="ArrowRight" />
+                                    <TextBlock Text="Open" />
+                                </StackPanel>
+                            </Button>
                         </Grid>
+                    </StackPanel>
 
-                        <StackPanel Grid.Row="1">
-                            <TextBlock Text="{Binding Name}"
-                                       Classes="Headline6"
-                                       TextWrapping="Wrap" />
+                    <Panel Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Right">
+                        <Button
+                            Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].RemoveSubToDoItemFromPinnedCommand}"
+                            CommandParameter="{Binding}"
+                            IsVisible="{Binding IsPinned}">
+                            <avalonia:MaterialIcon Kind="Pin" />
+                        </Button>
 
-                            <TextBlock Text="{Binding DueDate, StringFormat=DueDate: \{0:yyyy.MM.dd\}}" />
+                        <Button
+                            Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].AddSubToDoItemToPinnedCommand}"
+                            CommandParameter="{Binding}"
+                            IsVisible="{Binding IsPinned, Converter={StaticResource ReverseBooleanValueConverter}}">
+                            <avalonia:MaterialIcon Kind="PinOutline" />
+                        </Button>
+                    </Panel>
+                </Grid>
+            </controls:Card>
+        </DataTemplate>
 
-                            <TextBlock
-                                Text="{Binding LastCompleted, StringFormat=LastCompleted: \{0:yyyy\\.MM\\.dd hh\\:mm\\:ss\}}"
-                                IsVisible="{Binding  LastCompleted, Converter={StaticResource NullToBooleanConverter}}" />
+        <DataTemplate DataType="models:ToDoSubItemPeriodicityOffsetNotify">
+            <controls:Card ToolTip.Tip="{Binding Description, Converter={StaticResource EmptyStringToNullConverter}}"
+                           IsVisible="{Binding IsVisible}">
+                <Grid ColumnDefinitions="*,Auto"
+                      RowDefinitions="Auto,*"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      Margin="5">
+                    <Grid Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*">
+                        <Rectangle Width="15"
+                                   Margin="0,0,3,0"
+                                   Height="2"
+                                   Fill="{StaticResource MaterialTextBoxBorderBrush}" />
+                        <TextBlock Grid.Column="1" Text="PeriodicityOffset" Classes="Body2" />
+                        <Rectangle Grid.Column="2"
+                                   Margin="3,0,0,0"
+                                   Height="2"
+                                   Fill="{StaticResource MaterialTextBoxBorderBrush}" />
+                    </Grid>
 
+                    <StackPanel Grid.Row="1">
+                        <TextBlock Text="{Binding Name}"
+                                   Classes="Headline6"
+                                   TextWrapping="Wrap" />
+
+                        <TextBlock Text="{Binding DueDate, StringFormat=DueDate: \{0:yyyy.MM.dd\}}" />
+
+                        <TextBlock
+                            Text="{Binding LastCompleted, StringFormat=LastCompleted: \{0:yyyy\\.MM\\.dd hh\\:mm\\:ss\}}"
+                            IsVisible="{Binding  LastCompleted, Converter={StaticResource NullToBooleanConverter}}" />
+
+                        <StackPanel>
                             <StackPanel Orientation="Horizontal">
                                 <Rectangle Fill="Green" Height="3" Width="{Binding CompletedPercentage}" />
                                 <Rectangle Fill="Yellow" Height="3" Width="{Binding SkippedPercentage}" />
                                 <Rectangle Fill="Red" Height="3" Width="{Binding FailedPercentage}" />
                             </StackPanel>
 
-                            <Button CommandParameter="{Binding Active}"
-                                    IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}"
+                            <Button IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}"
+                                    CommandParameter="{Binding Active}"
                                     Command="{Binding $parent[interfaces:IToDoItemView].ChangeToActiveDoItemCommand}">
                                 <WrapPanel Orientation="Horizontal">
                                     <TextBlock Text="{Binding Active.Name}"
@@ -426,158 +501,53 @@
                                     <avalonia:MaterialIcon Margin="5,0,0,0" Kind="ArrowRight" />
                                 </WrapPanel>
                             </Button>
-
-                            <Grid ColumnDefinitions="*,*,*">
-                                <Button
-                                    Command="{Binding $parent[interfaces:ICompleteSubToDoItemCommand].CompleteSubToDoItemCommand}"
-                                    CommandParameter="{Binding}">
-                                    <StackPanel Orientation="Horizontal">
-                                        <avalonia:MaterialIcon Kind="Check" />
-                                        <TextBlock Text="Complete" />
-                                    </StackPanel>
-                                </Button>
-
-                                <Button Grid.Column="1"
-                                        Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
-                                        CommandParameter="{Binding}">
-                                    <StackPanel Orientation="Horizontal">
-                                        <avalonia:MaterialIcon Kind="Delete" Foreground="{DynamicResource ErrorBrush}" />
-                                        <TextBlock Text="Delete" Foreground="{DynamicResource ErrorBrush}" />
-                                    </StackPanel>
-                                </Button>
-
-                                <Button Grid.Column="2"
-                                        Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
-                                        CommandParameter="{Binding}">
-                                    <StackPanel Orientation="Horizontal">
-                                        <avalonia:MaterialIcon Kind="ArrowRight" />
-                                        <TextBlock Text="Open" />
-                                    </StackPanel>
-                                </Button>
-                            </Grid>
                         </StackPanel>
 
-                        <Panel Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Right">
+                        <Grid ColumnDefinitions="*,*,*">
                             <Button
-                                Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].RemoveSubToDoItemFromPinnedCommand}"
-                                CommandParameter="{Binding}"
-                                IsVisible="{Binding IsPinned}">
-                                <avalonia:MaterialIcon Kind="Pin" />
-                            </Button>
-
-                            <Button
-                                Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].AddSubToDoItemToPinnedCommand}"
-                                CommandParameter="{Binding}"
-                                IsVisible="{Binding IsPinned, Converter={StaticResource ReverseBooleanValueConverter}}">
-                                <avalonia:MaterialIcon Kind="PinOutline" />
-                            </Button>
-                        </Panel>
-                    </Grid>
-                </Grid>
-            </controls:Card>
-        </DataTemplate>
-
-        <DataTemplate DataType="models:ToDoSubItemPeriodicityOffsetNotify">
-            <controls:Card ToolTip.Tip="{Binding Description, Converter={StaticResource EmptyStringToNullConverter}}"
-                           IsVisible="{Binding IsVisible}">
-                <Grid ColumnDefinitions="Auto,*">
-                    <Rectangle Width="10"
-                               Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
-
-                    <Grid Grid.Column="1"
-                          ColumnDefinitions="*,Auto"
-                          RowDefinitions="Auto,*"
-                          HorizontalAlignment="Stretch"
-                          VerticalAlignment="Stretch"
-                          Margin="5">
-                        <Grid Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*">
-                            <Rectangle Width="15"
-                                       Margin="0,0,3,0"
-                                       Height="2"
-                                       Fill="{StaticResource MaterialTextBoxBorderBrush}" />
-                            <TextBlock Grid.Column="1" Text="PeriodicityOffset" Classes="Body2" />
-                            <Rectangle Grid.Column="2"
-                                       Margin="3,0,0,0"
-                                       Height="2"
-                                       Fill="{StaticResource MaterialTextBoxBorderBrush}" />
-                        </Grid>
-
-                        <StackPanel Grid.Row="1">
-                            <TextBlock Text="{Binding Name}"
-                                       Classes="Headline6"
-                                       TextWrapping="Wrap" />
-
-                            <TextBlock Text="{Binding DueDate, StringFormat=DueDate: \{0:yyyy.MM.dd\}}" />
-
-                            <TextBlock
-                                Text="{Binding LastCompleted, StringFormat=LastCompleted: \{0:yyyy\\.MM\\.dd hh\\:mm\\:ss\}}"
-                                IsVisible="{Binding  LastCompleted, Converter={StaticResource NullToBooleanConverter}}" />
-
-                            <StackPanel>
+                                Command="{Binding $parent[interfaces:ICompleteSubToDoItemCommand].CompleteSubToDoItemCommand}"
+                                CommandParameter="{Binding}">
                                 <StackPanel Orientation="Horizontal">
-                                    <Rectangle Fill="Green" Height="3" Width="{Binding CompletedPercentage}" />
-                                    <Rectangle Fill="Yellow" Height="3" Width="{Binding SkippedPercentage}" />
-                                    <Rectangle Fill="Red" Height="3" Width="{Binding FailedPercentage}" />
+                                    <avalonia:MaterialIcon Kind="Check" />
+                                    <TextBlock Text="Complete" />
                                 </StackPanel>
+                            </Button>
 
-                                <Button IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}"
-                                        CommandParameter="{Binding Active}"
-                                        Command="{Binding $parent[interfaces:IToDoItemView].ChangeToActiveDoItemCommand}">
-                                    <WrapPanel Orientation="Horizontal">
-                                        <TextBlock Text="{Binding Active.Name}"
-                                                   TextWrapping="Wrap"
-                                                   VerticalAlignment="Center" />
-                                        <avalonia:MaterialIcon Margin="5,0,0,0" Kind="ArrowRight" />
-                                    </WrapPanel>
-                                </Button>
-                            </StackPanel>
-
-                            <Grid ColumnDefinitions="*,*,*">
-                                <Button
-                                    Command="{Binding $parent[interfaces:ICompleteSubToDoItemCommand].CompleteSubToDoItemCommand}"
+                            <Button Grid.Column="1"
+                                    Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
                                     CommandParameter="{Binding}">
-                                    <StackPanel Orientation="Horizontal">
-                                        <avalonia:MaterialIcon Kind="Check" />
-                                        <TextBlock Text="Complete" />
-                                    </StackPanel>
-                                </Button>
-
-                                <Button Grid.Column="1"
-                                        Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
-                                        CommandParameter="{Binding}">
-                                    <StackPanel Orientation="Horizontal">
-                                        <avalonia:MaterialIcon Kind="Delete" Foreground="{DynamicResource ErrorBrush}" />
-                                        <TextBlock Text="Delete" Foreground="{DynamicResource ErrorBrush}" />
-                                    </StackPanel>
-                                </Button>
-
-                                <Button Grid.Column="2"
-                                        Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
-                                        CommandParameter="{Binding}">
-                                    <StackPanel Orientation="Horizontal">
-                                        <avalonia:MaterialIcon Kind="ArrowRight" />
-                                        <TextBlock Text="Open" />
-                                    </StackPanel>
-                                </Button>
-                            </Grid>
-                        </StackPanel>
-
-                        <Panel Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Right">
-                            <Button
-                                Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].RemoveSubToDoItemFromPinnedCommand}"
-                                CommandParameter="{Binding}"
-                                IsVisible="{Binding IsPinned}">
-                                <avalonia:MaterialIcon Kind="Pin" />
+                                <StackPanel Orientation="Horizontal">
+                                    <avalonia:MaterialIcon Kind="Delete" Foreground="{DynamicResource ErrorBrush}" />
+                                    <TextBlock Text="Delete" Foreground="{DynamicResource ErrorBrush}" />
+                                </StackPanel>
                             </Button>
 
-                            <Button
-                                Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].AddSubToDoItemToPinnedCommand}"
-                                CommandParameter="{Binding}"
-                                IsVisible="{Binding IsPinned, Converter={StaticResource ReverseBooleanValueConverter}}">
-                                <avalonia:MaterialIcon Kind="PinOutline" />
+                            <Button Grid.Column="2"
+                                    Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
+                                    CommandParameter="{Binding}">
+                                <StackPanel Orientation="Horizontal">
+                                    <avalonia:MaterialIcon Kind="ArrowRight" />
+                                    <TextBlock Text="Open" />
+                                </StackPanel>
                             </Button>
-                        </Panel>
-                    </Grid>
+                        </Grid>
+                    </StackPanel>
+
+                    <Panel Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Right">
+                        <Button
+                            Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].RemoveSubToDoItemFromPinnedCommand}"
+                            CommandParameter="{Binding}"
+                            IsVisible="{Binding IsPinned}">
+                            <avalonia:MaterialIcon Kind="Pin" />
+                        </Button>
+
+                        <Button
+                            Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].AddSubToDoItemToPinnedCommand}"
+                            CommandParameter="{Binding}"
+                            IsVisible="{Binding IsPinned, Converter={StaticResource ReverseBooleanValueConverter}}">
+                            <avalonia:MaterialIcon Kind="PinOutline" />
+                        </Button>
+                    </Panel>
                 </Grid>
             </controls:Card>
         </DataTemplate>

@@ -89,28 +89,32 @@
                                  Margin="5"
                                  ItemsSource="{Binding Missed}"
                                  SelectedItems="{Binding SelectedMissed}"
-                                 IsVisible="{Binding Missed.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                                 IsVisible="{Binding Missed.Count, Converter={StaticResource Int32ToIsVisibleConverter}}"
+                                 Background="#888B0000" />
 
                         <ListBox Classes="ItemsDragAndDrop"
                                  SelectionMode="Multiple"
                                  Margin="5"
                                  ItemsSource="{Binding ReadyForCompleted}"
                                  SelectedItems="{Binding SelectedReadyForCompleted}"
-                                 IsVisible="{Binding ReadyForCompleted.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                                 IsVisible="{Binding ReadyForCompleted.Count, Converter={StaticResource Int32ToIsVisibleConverter}}"
+                                 Background="#88000080" />
 
                         <ListBox Classes="ItemsDragAndDrop"
                                  SelectionMode="Multiple"
                                  Margin="5"
                                  ItemsSource="{Binding Planned}"
                                  SelectedItems="{Binding SelectedPlanned}"
-                                 IsVisible="{Binding Planned.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                                 IsVisible="{Binding Planned.Count, Converter={StaticResource Int32ToIsVisibleConverter}}"
+                                 Background="#88B0E0E6" />
 
                         <ListBox Classes="ItemsDragAndDrop"
                                  SelectionMode="Multiple"
                                  Margin="5"
                                  ItemsSource="{Binding Completed}"
                                  SelectedItems="{Binding SelectedCompleted}"
-                                 IsVisible="{Binding Completed.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                                 IsVisible="{Binding Completed.Count, Converter={StaticResource Int32ToIsVisibleConverter}}"
+                                 Background="#88006400" />
                     </UniformGrid>
 
                     <StackPanel Classes="adaptive">
@@ -119,28 +123,32 @@
                                  Margin="5"
                                  ItemsSource="{Binding Missed}"
                                  SelectedItems="{Binding SelectedMissed}"
-                                 IsVisible="{Binding Missed.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                                 IsVisible="{Binding Missed.Count, Converter={StaticResource Int32ToIsVisibleConverter}}"
+                                 Background="#888B0000" />
 
                         <ListBox Classes="ItemsDragAndDrop"
                                  SelectionMode="Multiple"
                                  Margin="5"
                                  ItemsSource="{Binding ReadyForCompleted}"
                                  SelectedItems="{Binding SelectedReadyForCompleted}"
-                                 IsVisible="{Binding ReadyForCompleted.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                                 IsVisible="{Binding ReadyForCompleted.Count, Converter={StaticResource Int32ToIsVisibleConverter}}"
+                                 Background="#88000080" />
 
                         <ListBox Classes="ItemsDragAndDrop"
                                  SelectionMode="Multiple"
                                  Margin="5"
                                  ItemsSource="{Binding Planned}"
                                  SelectedItems="{Binding SelectedPlanned}"
-                                 IsVisible="{Binding Planned.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                                 IsVisible="{Binding Planned.Count, Converter={StaticResource Int32ToIsVisibleConverter}}"
+                                 Background="#88B0E0E6" />
 
                         <ListBox Classes="ItemsDragAndDrop"
                                  SelectionMode="Multiple"
                                  Margin="5"
                                  ItemsSource="{Binding Completed}"
                                  SelectedItems="{Binding SelectedCompleted}"
-                                 IsVisible="{Binding Completed.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                                 IsVisible="{Binding Completed.Count, Converter={StaticResource Int32ToIsVisibleConverter}}"
+                                 Background="#88006400" />
                     </StackPanel>
                 </Panel>
             </StackPanel>
