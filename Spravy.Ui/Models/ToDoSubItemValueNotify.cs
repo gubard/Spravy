@@ -11,6 +11,40 @@ public class ToDoSubItemValueNotify : ToDoSubItemNotify, IIsCompletedToDoItem
     private uint skippedCount;
     private uint failedCount;
     private DateTimeOffset? lastCompleted;
+    private double completedPercentage;
+    private double skippedPercentage;
+    private double failedPercentage;
+
+    public ToDoSubItemValueNotify()
+    {
+        this.WhenAnyValue(x => x.FailedCount, x => x.SkippedCount, x => x.FailedCount)
+            .Subscribe(
+                _ =>
+                {
+                    var count = FailedCount + SkippedCount + CompletedCount + 0.0;
+                    CompletedPercentage = CompletedCount * 100.0 / count;
+                    SkippedPercentage = SkippedCount * 100.0 / count;
+                    FailedPercentage = FailedCount * 100.0 / count;
+                });
+    }
+
+    public double CompletedPercentage
+    {
+        get => completedPercentage;
+        set => this.RaiseAndSetIfChanged(ref completedPercentage, value);
+    }
+
+    public double SkippedPercentage
+    {
+        get => skippedPercentage;
+        set => this.RaiseAndSetIfChanged(ref skippedPercentage, value);
+    }
+
+    public double FailedPercentage
+    {
+        get => failedPercentage;
+        set => this.RaiseAndSetIfChanged(ref failedPercentage, value);
+    }
 
     public DateTimeOffset? LastCompleted
     {

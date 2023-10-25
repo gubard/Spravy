@@ -114,34 +114,9 @@
 
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal">
-                                    <Grid RowDefinitions="Auto,*"
-                                          IsVisible="{Binding CompletedCount, Converter={StaticResource UInt32ToIsVisibleConverter}}">
-                                        <TextBlock Text="{Binding CompletedCount}"
-                                                   Classes="Body2"
-                                                   HorizontalAlignment="Center" />
-
-                                        <avalonia:MaterialIcon Grid.Row="1" Kind="CheckBold" Foreground="Green" />
-                                    </Grid>
-
-                                    <Grid RowDefinitions="Auto,*"
-                                          IsVisible="{Binding SkippedCount, Converter={StaticResource UInt32ToIsVisibleConverter}}"
-                                          Margin="3,0,3,0">
-                                        <TextBlock Text="{Binding SkippedCount}"
-                                                   Classes="Body2"
-                                                   HorizontalAlignment="Center" />
-
-                                        <avalonia:MaterialIcon Grid.Row="1" Kind="Alert" Foreground="Yellow" />
-                                    </Grid>
-
-
-                                    <Grid RowDefinitions="Auto,*"
-                                          IsVisible="{Binding FailedCount, Converter={StaticResource UInt32ToIsVisibleConverter}}">
-                                        <TextBlock Text="{Binding FailedCount}"
-                                                   Classes="Body2"
-                                                   HorizontalAlignment="Center" />
-
-                                        <avalonia:MaterialIcon Grid.Row="1" Kind="Cancel" Foreground="Red" />
-                                    </Grid>
+                                    <Rectangle Fill="Green" Height="3" Width="{Binding CompletedPercentage}" />
+                                    <Rectangle Fill="Yellow" Height="3" Width="{Binding SkippedPercentage}" />
+                                    <Rectangle Fill="Red" Height="3" Width="{Binding FailedPercentage}" />
                                 </StackPanel>
 
                                 <TextBlock
@@ -332,35 +307,11 @@
                                 IsVisible="{Binding  LastCompleted, Converter={StaticResource NullToBooleanConverter}}" />
 
                             <StackPanel>
-                                <WrapPanel Orientation="Horizontal">
-                                    <Grid RowDefinitions="Auto,*"
-                                          IsVisible="{Binding CompletedCount, Converter={StaticResource UInt32ToIsVisibleConverter}}">
-                                        <TextBlock Text="{Binding CompletedCount}"
-                                                   Classes="Body2"
-                                                   HorizontalAlignment="Center" />
-
-                                        <avalonia:MaterialIcon Grid.Row="1" Kind="CheckBold" Foreground="Green" />
-                                    </Grid>
-
-                                    <Grid RowDefinitions="Auto,*"
-                                          IsVisible="{Binding SkippedCount, Converter={StaticResource UInt32ToIsVisibleConverter}}"
-                                          Margin="3,0,3,0">
-                                        <TextBlock Text="{Binding SkippedCount}"
-                                                   Classes="Body2"
-                                                   HorizontalAlignment="Center" />
-
-                                        <avalonia:MaterialIcon Grid.Row="1" Kind="Alert" Foreground="Yellow" />
-                                    </Grid>
-
-                                    <Grid RowDefinitions="Auto,*"
-                                          IsVisible="{Binding FailedCount, Converter={StaticResource UInt32ToIsVisibleConverter}}">
-                                        <TextBlock Text="{Binding FailedCount}"
-                                                   Classes="Body2"
-                                                   HorizontalAlignment="Center" />
-
-                                        <avalonia:MaterialIcon Grid.Row="1" Kind="Cancel" Foreground="Red" />
-                                    </Grid>
-                                </WrapPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <Rectangle Fill="Green" Height="3" Width="{Binding CompletedPercentage}" />
+                                    <Rectangle Fill="Yellow" Height="3" Width="{Binding SkippedPercentage}" />
+                                    <Rectangle Fill="Red" Height="3" Width="{Binding FailedPercentage}" />
+                                </StackPanel>
 
                                 <Button IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}"
                                         CommandParameter="{Binding Active}"
@@ -460,36 +411,10 @@
                                 Text="{Binding LastCompleted, StringFormat=LastCompleted: \{0:yyyy\\.MM\\.dd hh\\:mm\\:ss\}}"
                                 IsVisible="{Binding  LastCompleted, Converter={StaticResource NullToBooleanConverter}}" />
 
-                            <StackPanel>
-                                <StackPanel Orientation="Horizontal">
-                                    <Grid RowDefinitions="Auto,*"
-                                          IsVisible="{Binding CompletedCount, Converter={StaticResource UInt32ToIsVisibleConverter}}">
-                                        <TextBlock Text="{Binding CompletedCount}"
-                                                   Classes="Body2"
-                                                   HorizontalAlignment="Center" />
-
-                                        <avalonia:MaterialIcon Grid.Row="1" Kind="CheckBold" Foreground="Green" />
-                                    </Grid>
-
-                                    <Grid RowDefinitions="Auto,*"
-                                          IsVisible="{Binding SkippedCount, Converter={StaticResource UInt32ToIsVisibleConverter}}"
-                                          Margin="3,0,3,0">
-                                        <TextBlock Text="{Binding SkippedCount}"
-                                                   Classes="Body2"
-                                                   HorizontalAlignment="Center" />
-
-                                        <avalonia:MaterialIcon Grid.Row="1" Kind="Alert" Foreground="Yellow" />
-                                    </Grid>
-
-                                    <Grid RowDefinitions="Auto,*"
-                                          IsVisible="{Binding FailedCount, Converter={StaticResource UInt32ToIsVisibleConverter}}">
-                                        <TextBlock Text="{Binding FailedCount}"
-                                                   Classes="Body2"
-                                                   HorizontalAlignment="Center" />
-
-                                        <avalonia:MaterialIcon Grid.Row="1" Kind="Cancel" Foreground="Red" />
-                                    </Grid>
-                                </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Rectangle Fill="Green" Height="3" Width="{Binding CompletedPercentage}" />
+                                <Rectangle Fill="Yellow" Height="3" Width="{Binding SkippedPercentage}" />
+                                <Rectangle Fill="Red" Height="3" Width="{Binding FailedPercentage}" />
                             </StackPanel>
 
                             <Button CommandParameter="{Binding Active}"
@@ -591,33 +516,9 @@
 
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal">
-                                    <Grid RowDefinitions="Auto,*"
-                                          IsVisible="{Binding CompletedCount, Converter={StaticResource UInt32ToIsVisibleConverter}}">
-                                        <TextBlock Text="{Binding CompletedCount}"
-                                                   Classes="Body2"
-                                                   HorizontalAlignment="Center" />
-
-                                        <avalonia:MaterialIcon Grid.Row="1" Kind="CheckBold" Foreground="Green" />
-                                    </Grid>
-
-                                    <Grid RowDefinitions="Auto,*"
-                                          IsVisible="{Binding SkippedCount, Converter={StaticResource UInt32ToIsVisibleConverter}}"
-                                          Margin="3,0,3,0">
-                                        <TextBlock Text="{Binding SkippedCount}"
-                                                   Classes="Body2"
-                                                   HorizontalAlignment="Center" />
-
-                                        <avalonia:MaterialIcon Grid.Row="1" Kind="Alert" Foreground="Yellow" />
-                                    </Grid>
-
-                                    <Grid RowDefinitions="Auto,*"
-                                          IsVisible="{Binding FailedCount, Converter={StaticResource UInt32ToIsVisibleConverter}}">
-                                        <TextBlock Text="{Binding FailedCount}"
-                                                   Classes="Body2"
-                                                   HorizontalAlignment="Center" />
-
-                                        <avalonia:MaterialIcon Grid.Row="1" Kind="Cancel" Foreground="Red" />
-                                    </Grid>
+                                    <Rectangle Fill="Green" Height="3" Width="{Binding CompletedPercentage}" />
+                                    <Rectangle Fill="Yellow" Height="3" Width="{Binding SkippedPercentage}" />
+                                    <Rectangle Fill="Red" Height="3" Width="{Binding FailedPercentage}" />
                                 </StackPanel>
 
                                 <Button IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}"
