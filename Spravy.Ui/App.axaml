@@ -163,19 +163,28 @@
                             <Grid ColumnDefinitions="*,*,*">
                                 <Button CommandParameter="{Binding}"
                                         Command="{Binding $parent[interfaces:ICompleteSubToDoItemCommand].CompleteSubToDoItemCommand}">
-                                    <avalonia:MaterialIcon Kind="Check" />
+                                    <StackPanel Orientation="Horizontal">
+                                        <avalonia:MaterialIcon Kind="Check" />
+                                        <TextBlock Text="Complete" />
+                                    </StackPanel>
                                 </Button>
 
                                 <Button Grid.Column="1"
                                         Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
                                         CommandParameter="{Binding}">
-                                    <avalonia:MaterialIcon Kind="Delete" />
+                                    <StackPanel Orientation="Horizontal">
+                                        <avalonia:MaterialIcon Kind="Delete" Foreground="{DynamicResource ErrorBrush}" />
+                                        <TextBlock Text="Delete" Foreground="{DynamicResource ErrorBrush}" />
+                                    </StackPanel>
                                 </Button>
 
                                 <Button Grid.Column="2"
                                         Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
                                         CommandParameter="{Binding}">
-                                    <avalonia:MaterialIcon Kind="ArrowRight" />
+                                    <StackPanel Orientation="Horizontal">
+                                        <avalonia:MaterialIcon Kind="ArrowRight" />
+                                        <TextBlock Text="Open" />
+                                    </StackPanel>
                                 </Button>
                             </Grid>
                         </StackPanel>
@@ -248,13 +257,19 @@
                             <Grid ColumnDefinitions="*,*">
                                 <Button Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
                                         CommandParameter="{Binding}">
-                                    <avalonia:MaterialIcon Kind="Delete" />
+                                    <StackPanel Orientation="Horizontal">
+                                        <avalonia:MaterialIcon Kind="Delete" Foreground="{DynamicResource ErrorBrush}" />
+                                        <TextBlock Text="Delete" Foreground="{DynamicResource ErrorBrush}" />
+                                    </StackPanel>
                                 </Button>
 
                                 <Button Grid.Column="1"
                                         Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
                                         CommandParameter="{Binding}">
-                                    <avalonia:MaterialIcon Kind="ArrowRight" />
+                                    <StackPanel Orientation="Horizontal">
+                                        <avalonia:MaterialIcon Kind="ArrowRight" />
+                                        <TextBlock Text="Open" />
+                                    </StackPanel>
                                 </Button>
                             </Grid>
                         </WrapPanel>
@@ -364,19 +379,28 @@
                                 <Button
                                     Command="{Binding $parent[interfaces:ICompleteSubToDoItemCommand].CompleteSubToDoItemCommand}"
                                     CommandParameter="{Binding}">
-                                    <avalonia:MaterialIcon Kind="Check" />
+                                    <StackPanel Orientation="Horizontal">
+                                        <avalonia:MaterialIcon Kind="Check" />
+                                        <TextBlock Text="Complete" />
+                                    </StackPanel>
                                 </Button>
 
                                 <Button Grid.Column="1"
                                         Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
                                         CommandParameter="{Binding}">
-                                    <avalonia:MaterialIcon Kind="Delete" />
+                                    <StackPanel Orientation="Horizontal">
+                                        <avalonia:MaterialIcon Kind="Delete" Foreground="{DynamicResource ErrorBrush}" />
+                                        <TextBlock Text="Delete" Foreground="{DynamicResource ErrorBrush}" />
+                                    </StackPanel>
                                 </Button>
 
                                 <Button Grid.Column="2"
                                         Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
                                         CommandParameter="{Binding}">
-                                    <avalonia:MaterialIcon Kind="ArrowRight" />
+                                    <StackPanel Orientation="Horizontal">
+                                        <avalonia:MaterialIcon Kind="ArrowRight" />
+                                        <TextBlock Text="Open" />
+                                    </StackPanel>
                                 </Button>
                             </Grid>
                         </StackPanel>
@@ -484,19 +508,28 @@
                                 <Button
                                     Command="{Binding $parent[interfaces:ICompleteSubToDoItemCommand].CompleteSubToDoItemCommand}"
                                     CommandParameter="{Binding}">
-                                    <avalonia:MaterialIcon Kind="Check" />
+                                    <StackPanel Orientation="Horizontal">
+                                        <avalonia:MaterialIcon Kind="Check" />
+                                        <TextBlock Text="Complete" />
+                                    </StackPanel>
                                 </Button>
 
                                 <Button Grid.Column="1"
                                         Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
                                         CommandParameter="{Binding}">
-                                    <avalonia:MaterialIcon Kind="Delete" />
+                                    <StackPanel Orientation="Horizontal">
+                                        <avalonia:MaterialIcon Kind="Delete" Foreground="{DynamicResource ErrorBrush}" />
+                                        <TextBlock Text="Delete" Foreground="{DynamicResource ErrorBrush}" />
+                                    </StackPanel>
                                 </Button>
 
                                 <Button Grid.Column="2"
                                         Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
                                         CommandParameter="{Binding}">
-                                    <avalonia:MaterialIcon Kind="ArrowRight" />
+                                    <StackPanel Orientation="Horizontal">
+                                        <avalonia:MaterialIcon Kind="ArrowRight" />
+                                        <TextBlock Text="Open" />
+                                    </StackPanel>
                                 </Button>
                             </Grid>
                         </StackPanel>
@@ -604,19 +637,28 @@
                                 <Button
                                     Command="{Binding $parent[interfaces:ICompleteSubToDoItemCommand].CompleteSubToDoItemCommand}"
                                     CommandParameter="{Binding}">
-                                    <avalonia:MaterialIcon Kind="Check" />
+                                    <StackPanel Orientation="Horizontal">
+                                        <avalonia:MaterialIcon Kind="Check" />
+                                        <TextBlock Text="Complete" />
+                                    </StackPanel>
                                 </Button>
 
                                 <Button Grid.Column="1"
                                         Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
                                         CommandParameter="{Binding}">
-                                    <avalonia:MaterialIcon Kind="Delete" />
+                                    <StackPanel Orientation="Horizontal">
+                                        <avalonia:MaterialIcon Kind="Delete" Foreground="{DynamicResource ErrorBrush}" />
+                                        <TextBlock Text="Delete" Foreground="{DynamicResource ErrorBrush}" />
+                                    </StackPanel>
                                 </Button>
 
                                 <Button Grid.Column="2"
                                         Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
                                         CommandParameter="{Binding}">
-                                    <avalonia:MaterialIcon Kind="ArrowRight" />
+                                    <StackPanel Orientation="Horizontal">
+                                        <avalonia:MaterialIcon Kind="ArrowRight" />
+                                        <TextBlock Text="Open" />
+                                    </StackPanel>
                                 </Button>
                             </Grid>
                         </StackPanel>

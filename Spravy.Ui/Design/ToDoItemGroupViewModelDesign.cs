@@ -1,9 +1,13 @@
 using System;
 using System.Linq;
+
+using Avalonia.Controls;
+
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.ViewModels;
+using Spravy.Ui.Views;
 
 namespace Spravy.Ui.Design;
 
@@ -227,6 +231,16 @@ public class ToDoItemGroupViewModelDesign : ToDoItemGroupViewModel
             Navigator = ConstDesign.Navigator,
             DialogViewer = ConstDesign.DialogViewer,
             ToDoService = toDoServiceDesign,
+        };
+
+        ToDoItemHeaderView = new ToDoItemHeaderView
+        {
+            ViewModel = new ToDoItemHeaderViewModelDesign
+            {
+                Navigator = ConstDesign.Navigator,
+                DialogViewer = ConstDesign.DialogViewer,
+                SplitView = new SplitView()
+            }
         };
     }
 }
