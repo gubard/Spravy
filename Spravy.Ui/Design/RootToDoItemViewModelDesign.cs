@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
@@ -216,7 +215,18 @@ public class RootToDoItemViewModelDesign : RootToDoItemViewModel
                     DateTimeOffset.Now
                 ),
             },
-            Enumerable.Empty<IToDoSubItem>()
+          new IToDoSubItem[]
+          {
+              new ToDoSubItemGroup(
+                  Guid.NewGuid(),
+                  "Pinned Group",
+                  1,
+                  ToDoItemStatus.Miss,
+                  string.Empty,
+                  true,
+                  null
+              ),
+          }
         );
 
         ToDoService = toDoServiceDesign;

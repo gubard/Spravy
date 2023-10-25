@@ -7,7 +7,7 @@
                                    xmlns:controls1="clr-namespace:Spravy.Ui.Controls"
                                    xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
                                    xmlns:design="clr-namespace:Spravy.Ui.Design"
-                                   mc:Ignorable="d" d:DesignWidth="540" d:DesignHeight="1200"
+                                   mc:Ignorable="d" d:DesignWidth="540" d:DesignHeight="1100"
                                    x:Class="Spravy.Ui.Views.ToDoItemGroupView"
                                    x:DataType="viewModels:ToDoItemGroupViewModel">
     <Design.DataContext>
