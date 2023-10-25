@@ -327,7 +327,11 @@
 
                             <TextBlock Text="{Binding DueDate, StringFormat=DueDate: \{0:yyyy.MM.dd\}}" />
 
-                            <Grid RowDefinitions="Auto,Auto,Auto">
+                            <TextBlock
+                                Text="{Binding LastCompleted, StringFormat=LastCompleted: \{0:yyyy\\.MM\\.dd hh\\:mm\\:ss\}}"
+                                IsVisible="{Binding  LastCompleted, Converter={StaticResource NullToBooleanConverter}}" />
+
+                            <StackPanel>
                                 <WrapPanel Orientation="Horizontal">
                                     <Grid RowDefinitions="Auto,*"
                                           IsVisible="{Binding CompletedCount, Converter={StaticResource UInt32ToIsVisibleConverter}}">
@@ -358,12 +362,7 @@
                                     </Grid>
                                 </WrapPanel>
 
-                                <TextBlock Grid.Row="1"
-                                           Text="{Binding LastCompleted, StringFormat=LastCompleted: \{0:yyyy\\.MM\\.dd hh\\:mm\\:ss\}}"
-                                           IsVisible="{Binding  LastCompleted, Converter={StaticResource NullToBooleanConverter}}" />
-
-                                <Button Grid.Row="2"
-                                        IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}"
+                                <Button IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}"
                                         CommandParameter="{Binding Active}"
                                         Command="{Binding $parent[interfaces:IToDoItemView].ChangeToActiveDoItemCommand}">
                                     <WrapPanel Orientation="Horizontal">
@@ -373,7 +372,7 @@
                                         <avalonia:MaterialIcon Margin="5,0,0,0" Kind="ArrowRight" />
                                     </WrapPanel>
                                 </Button>
-                            </Grid>
+                            </StackPanel>
 
                             <Grid ColumnDefinitions="*,*,*">
                                 <Button
@@ -457,6 +456,10 @@
 
                             <TextBlock Text="{Binding DueDate, StringFormat=DueDate: \{0:yyyy.MM.dd\}}" />
 
+                            <TextBlock
+                                Text="{Binding LastCompleted, StringFormat=LastCompleted: \{0:yyyy\\.MM\\.dd hh\\:mm\\:ss\}}"
+                                IsVisible="{Binding  LastCompleted, Converter={StaticResource NullToBooleanConverter}}" />
+
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal">
                                     <Grid RowDefinitions="Auto,*"
@@ -487,10 +490,6 @@
                                         <avalonia:MaterialIcon Grid.Row="1" Kind="Cancel" Foreground="Red" />
                                     </Grid>
                                 </StackPanel>
-
-                                <TextBlock
-                                    Text="{Binding LastCompleted, StringFormat=LastCompleted: \{0:yyyy\\.MM\\.dd hh\\:mm\\:ss\}}"
-                                    IsVisible="{Binding  LastCompleted, Converter={StaticResource NullToBooleanConverter}}" />
                             </StackPanel>
 
                             <Button CommandParameter="{Binding Active}"
@@ -586,6 +585,10 @@
 
                             <TextBlock Text="{Binding DueDate, StringFormat=DueDate: \{0:yyyy.MM.dd\}}" />
 
+                            <TextBlock
+                                Text="{Binding LastCompleted, StringFormat=LastCompleted: \{0:yyyy\\.MM\\.dd hh\\:mm\\:ss\}}"
+                                IsVisible="{Binding  LastCompleted, Converter={StaticResource NullToBooleanConverter}}" />
+
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal">
                                     <Grid RowDefinitions="Auto,*"
@@ -616,10 +619,6 @@
                                         <avalonia:MaterialIcon Grid.Row="1" Kind="Cancel" Foreground="Red" />
                                     </Grid>
                                 </StackPanel>
-
-                                <TextBlock
-                                    Text="{Binding LastCompleted, StringFormat=LastCompleted: \{0:yyyy\\.MM\\.dd hh\\:mm\\:ss\}}"
-                                    IsVisible="{Binding  LastCompleted, Converter={StaticResource NullToBooleanConverter}}" />
 
                                 <Button IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}"
                                         CommandParameter="{Binding Active}"
