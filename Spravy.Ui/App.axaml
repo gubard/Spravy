@@ -1,4 +1,4 @@
-3""<Application xmlns="https://github.com/avaloniaui"
+<Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:models="clr-namespace:Spravy.Ui.Models"
              xmlns:interfaces="clr-namespace:Spravy.Ui.Interfaces"
