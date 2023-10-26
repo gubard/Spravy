@@ -94,12 +94,12 @@
                         <Rectangle Width="15"
                                    Margin="0,0,3,0"
                                    Height="2"
-                                   Fill="{StaticResource MaterialTextBoxBorderBrush}" />
+                                   Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                         <TextBlock Grid.Column="1" Text="Value" Classes="Body2" />
                         <Rectangle Grid.Column="2"
                                    Margin="3,0,0,0"
                                    Height="2"
-                                   Fill="{StaticResource MaterialTextBoxBorderBrush}" />
+                                   Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                     </Grid>
 
                     <StackPanel Grid.Row="1">
@@ -193,12 +193,12 @@
                         <Rectangle Width="15"
                                    Margin="0,0,3,0"
                                    Height="2"
-                                   Fill="{StaticResource MaterialTextBoxBorderBrush}" />
+                                   Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                         <TextBlock Grid.Column="1" Text="Group" Classes="Body2" />
                         <Rectangle Grid.Column="2"
                                    Margin="3,0,0,0"
                                    Height="2"
-                                   Fill="{StaticResource MaterialTextBoxBorderBrush}" />
+                                   Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                     </Grid>
 
                     <StackPanel Grid.Row="1">
@@ -269,12 +269,12 @@
                         <Rectangle Width="15"
                                    Margin="0,0,3,0"
                                    Height="2"
-                                   Fill="{StaticResource MaterialTextBoxBorderBrush}" />
+                                   Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                         <TextBlock Grid.Column="1" Text="Planned" Classes="Body2" />
                         <Rectangle Grid.Column="2"
                                    Margin="3,0,0,0"
                                    Height="2"
-                                   Fill="{StaticResource MaterialTextBoxBorderBrush}" />
+                                   Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                     </Grid>
 
                     <StackPanel Grid.Row="1">
@@ -368,12 +368,12 @@
                         <Rectangle Width="15"
                                    Margin="0,0,3,0"
                                    Height="2"
-                                   Fill="{StaticResource MaterialTextBoxBorderBrush}" />
+                                   Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                         <TextBlock Grid.Column="1" Text="Periodicity" Classes="Body2" />
                         <Rectangle Grid.Column="2"
                                    Margin="3,0,0,0"
                                    Height="2"
-                                   Fill="{StaticResource MaterialTextBoxBorderBrush}" />
+                                   Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                     </Grid>
 
                     <StackPanel Grid.Row="1">
@@ -465,12 +465,12 @@
                         <Rectangle Width="15"
                                    Margin="0,0,3,0"
                                    Height="2"
-                                   Fill="{StaticResource MaterialTextBoxBorderBrush}" />
+                                   Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                         <TextBlock Grid.Column="1" Text="PeriodicityOffset" Classes="Body2" />
                         <Rectangle Grid.Column="2"
                                    Margin="3,0,0,0"
                                    Height="2"
-                                   Fill="{StaticResource MaterialTextBoxBorderBrush}" />
+                                   Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                     </Grid>
 
                     <StackPanel Grid.Row="1">
