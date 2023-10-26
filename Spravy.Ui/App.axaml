@@ -1,4 +1,4 @@
-<Application xmlns="https://github.com/avaloniaui"
+3""<Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:models="clr-namespace:Spravy.Ui.Models"
              xmlns:interfaces="clr-namespace:Spravy.Ui.Interfaces"
@@ -109,9 +109,9 @@
 
                         <StackPanel>
                             <StackPanel Orientation="Horizontal">
-                                <Rectangle Fill="Green" Height="3" Width="{Binding CompletedPercentage}" />
-                                <Rectangle Fill="Yellow" Height="3" Width="{Binding SkippedPercentage}" />
-                                <Rectangle Fill="Red" Height="3" Width="{Binding FailedPercentage}" />
+                                <Rectangle Fill="Green" Height="6" Width="{Binding CompletedPercentage}" />
+                                <Rectangle Fill="Yellow" Height="6" Width="{Binding SkippedPercentage}" />
+                                <Rectangle Fill="Red" Height="6" Width="{Binding FailedPercentage}" />
                             </StackPanel>
 
                             <TextBlock
@@ -290,9 +290,9 @@
 
                         <StackPanel>
                             <StackPanel Orientation="Horizontal">
-                                <Rectangle Fill="Green" Height="3" Width="{Binding CompletedPercentage}" />
-                                <Rectangle Fill="Yellow" Height="3" Width="{Binding SkippedPercentage}" />
-                                <Rectangle Fill="Red" Height="3" Width="{Binding FailedPercentage}" />
+                                <Rectangle Fill="Green" Height="6" Width="{Binding CompletedPercentage}" />
+                                <Rectangle Fill="Yellow" Height="6" Width="{Binding SkippedPercentage}" />
+                                <Rectangle Fill="Red" Height="6" Width="{Binding FailedPercentage}" />
                             </StackPanel>
 
                             <Button IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}"
@@ -388,9 +388,9 @@
                             IsVisible="{Binding  LastCompleted, Converter={StaticResource NullToBooleanConverter}}" />
 
                         <StackPanel Orientation="Horizontal">
-                            <Rectangle Fill="Green" Height="3" Width="{Binding CompletedPercentage}" />
-                            <Rectangle Fill="Yellow" Height="3" Width="{Binding SkippedPercentage}" />
-                            <Rectangle Fill="Red" Height="3" Width="{Binding FailedPercentage}" />
+                            <Rectangle Fill="Green" Height="6" Width="{Binding CompletedPercentage}" />
+                            <Rectangle Fill="Yellow" Height="6" Width="{Binding SkippedPercentage}" />
+                            <Rectangle Fill="Red" Height="6" Width="{Binding FailedPercentage}" />
                         </StackPanel>
 
                         <Button CommandParameter="{Binding Active}"
@@ -486,9 +486,9 @@
 
                         <StackPanel>
                             <StackPanel Orientation="Horizontal">
-                                <Rectangle Fill="Green" Height="3" Width="{Binding CompletedPercentage}" />
-                                <Rectangle Fill="Yellow" Height="3" Width="{Binding SkippedPercentage}" />
-                                <Rectangle Fill="Red" Height="3" Width="{Binding FailedPercentage}" />
+                                <Rectangle Fill="Green" Height="6" Width="{Binding CompletedPercentage}" />
+                                <Rectangle Fill="Yellow" Height="6" Width="{Binding SkippedPercentage}" />
+                                <Rectangle Fill="Red" Height="6" Width="{Binding FailedPercentage}" />
                             </StackPanel>
 
                             <Button IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}"

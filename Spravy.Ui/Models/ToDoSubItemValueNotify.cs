@@ -22,9 +22,9 @@ public class ToDoSubItemValueNotify : ToDoSubItemNotify, IIsCompletedToDoItem
                 _ =>
                 {
                     var count = FailedCount + SkippedCount + CompletedCount + 0.0;
-                    CompletedPercentage = CompletedCount * 100.0 / count;
-                    SkippedPercentage = SkippedCount * 100.0 / count;
-                    FailedPercentage = FailedCount * 100.0 / count;
+                    CompletedPercentage = CompletedCount * 200.0 / count;
+                    SkippedPercentage = SkippedCount * 200.0 / count;
+                    FailedPercentage = FailedCount * 200.0 / count;
                 });
     }
 
