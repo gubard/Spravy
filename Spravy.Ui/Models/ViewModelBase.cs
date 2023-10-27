@@ -9,7 +9,7 @@ namespace Spravy.Ui.Models;
 
 public class ViewModelBase : NotifyBase
 {
-    private static readonly TimeSpan TaskTimeout = TimeSpan.FromMilliseconds(120);
+    private static readonly TimeSpan TaskTimeout = TimeSpan.FromMilliseconds(300);
 
     [Inject]
     public required INavigator Navigator { get; init; }
