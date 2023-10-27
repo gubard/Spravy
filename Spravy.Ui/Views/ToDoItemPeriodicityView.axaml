@@ -6,6 +6,7 @@
                                   xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                   xmlns:controls="clr-namespace:Spravy.Ui.Controls"
                                   xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
+                                  xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                   mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                   x:Class="Spravy.Ui.Views.ToDoItemPeriodicityView"
                                   x:DataType="viewModels:ToDoItemPeriodicityViewModel">
@@ -27,42 +28,48 @@
                             Margin="5"
                             HorizontalAlignment="Center" />
 
-            <StackPanel>
-                <Grid ColumnDefinitions="*,*">
-                    <ComboBox Theme="{StaticResource MaterialOutlineComboBox}"
-                              assists:ComboBoxAssist.Label="Type"
-                              SelectedItem="{Binding Type}"
-                              ItemsSource="{Binding ToDoItemTypes}" />
-                    <ComboBox Grid.Column="1"
-                              Theme="{StaticResource MaterialOutlineComboBox}"
-                              assists:ComboBoxAssist.Label="Type"
-                              SelectedItem="{Binding ChildrenType}"
-                              ItemsSource="{Binding ChildrenTypes}" />
-                </Grid>
-                
+            <Grid ColumnDefinitions="*,*">
                 <ComboBox Theme="{StaticResource MaterialOutlineComboBox}"
-                          assists:ComboBoxAssist.Label="TypeOfPeriodicity"
-                          SelectedItem="{Binding TypeOfPeriodicity}"
-                          ItemsSource="{Binding TypeOfPeriodicities}" />
+                          assists:ComboBoxAssist.Label="Type"
+                          SelectedItem="{Binding Type}"
+                          ItemsSource="{Binding ToDoItemTypes}" />
+                <ComboBox Grid.Column="1"
+                          Theme="{StaticResource MaterialOutlineComboBox}"
+                          assists:ComboBoxAssist.Label="Type"
+                          SelectedItem="{Binding ChildrenType}"
+                          ItemsSource="{Binding ChildrenTypes}" />
+            </Grid>
 
-                <ContentControl Content="{Binding Periodicity}" />
+            <ComboBox Theme="{StaticResource MaterialOutlineComboBox}"
+                      assists:ComboBoxAssist.Label="TypeOfPeriodicity"
+                      SelectedItem="{Binding TypeOfPeriodicity}"
+                      ItemsSource="{Binding TypeOfPeriodicities}" />
 
-                <!--<DatePicker SelectedDate="{Binding DueDate}" />-->
-                <!--<TextBox UseFloatingWatermark="True"
+            <ContentControl Content="{Binding Periodicity}" />
+
+            <!--<DatePicker SelectedDate="{Binding DueDate}" />-->
+            <!--<TextBox UseFloatingWatermark="True"
                          Classes="outline dense"
                          Theme="{StaticResource OutlineTextBox}"
                          assists:TextFieldAssist.Label="DueDate"
                          Text="{Binding DueDate}" />-->
-                <controls:ButtonTextBox Text="{Binding DueDate}" 
-                                        Label="DueDate" 
-                                        Command="{Binding ChangeDueDateCommand}"
-                                        Classes="edit"/>
-            </StackPanel>
-
-            <controls:ButtonTextBox Text="{Binding Description}"
-                                    Label="Description"
-                                    Command="{Binding ChangeDescriptionCommand}"
+            <controls:ButtonTextBox Text="{Binding DueDate}"
+                                    Label="DueDate"
+                                    Command="{Binding ChangeDueDateCommand}"
                                     Classes="edit" />
+
+            <Expander>
+                <Expander.Header>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                        <Button Command="{Binding ChangeDescriptionCommand}">
+                            <avalonia:MaterialIcon Kind="Pencil" />
+                        </Button>
+                        <TextBlock Text="Description" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                    </StackPanel>
+                </Expander.Header>
+
+                <TextBlock Text="{Binding Description}" />
+            </Expander>
         </StackPanel>
 
         <ContentControl Grid.Row="2" Content="{Binding ToDoSubItemsViewModel}" />

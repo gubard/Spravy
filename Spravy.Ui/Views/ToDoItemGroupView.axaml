@@ -7,6 +7,7 @@
                                    xmlns:controls1="clr-namespace:Spravy.Ui.Controls"
                                    xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
                                    xmlns:design="clr-namespace:Spravy.Ui.Design"
+                                   xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                    mc:Ignorable="d" d:DesignWidth="540" d:DesignHeight="1100"
                                    x:Class="Spravy.Ui.Views.ToDoItemGroupView"
                                    x:DataType="viewModels:ToDoItemGroupViewModel">
@@ -31,10 +32,18 @@
                       assists:ComboBoxAssist.Label="Type"
                       SelectedItem="{Binding Type}"
                       ItemsSource="{Binding ToDoItemTypes}" />
-            <controls1:ButtonTextBox Text="{Binding Description}"
-                                     Label="Description"
-                                     Command="{Binding ChangeDescriptionCommand}"
-                                     Classes="edit" />
+            <Expander>
+                <Expander.Header>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                        <Button Command="{Binding ChangeDescriptionCommand}">
+                            <avalonia:MaterialIcon Kind="Pencil" />
+                        </Button>
+                        <TextBlock Text="Description" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                    </StackPanel>
+                </Expander.Header>
+
+                <TextBlock Text="{Binding Description}" />
+            </Expander>
         </StackPanel>
 
         <ContentControl Grid.Row="2" Content="{Binding ToDoSubItemsViewModel}" />
