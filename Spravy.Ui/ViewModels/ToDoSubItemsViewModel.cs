@@ -3,12 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+
 using AutoMapper;
+
 using Avalonia.Collections;
+
 using Ninject;
+
 using Spravy.Domain.Extensions;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
+using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.Enums;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
@@ -26,25 +31,32 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
         CompleteSubToDoItemCommand = CreateCommandFromTask<ToDoSubItemNotify>(CompleteSubToDoItemAsync);
         DeleteSubToDoItemCommand = CreateCommandFromTask<ToDoSubItemNotify>(DeleteSubToDoItemAsync);
         ChangeToDoItemCommand = CreateCommandFromTask<ToDoSubItemNotify>(ChangeToDoItemAsync);
+
         AddSubToDoItemToPinnedCommand =
             CreateCommandFromTaskWithDialogProgressIndicator<ToDoSubItemNotify>(AddPinnedToDoItemAsync);
+
         RemoveSubToDoItemFromPinnedCommand =
             CreateCommandFromTaskWithDialogProgressIndicator<ToDoSubItemNotify>(RemovePinnedToDoItemAsync);
+
         ChangeToActiveDoItemCommand = CreateCommandFromTask<ActiveToDoItemNotify>(ChangeToActiveDoItemAsync);
         InitializedCommand = CreateCommandFromTaskWithDialogProgressIndicator(InitializedAsync);
         CompleteSelectedToDoItemsCommand = CreateCommandFromTask(CompleteSelectedToDoItemsAsync);
+        UpOrderIndexCommand = CreateCommandFromTaskWithDialogProgressIndicator<ToDoSubItemNotify>(UpOrderIndexAsync);
+
+        DownOrderIndexCommand =
+            CreateCommandFromTaskWithDialogProgressIndicator<ToDoSubItemNotify>(DownOrderIndexAsync);
     }
 
-    public AvaloniaList<ToDoSubItemNotify> Missed { get; } = new();
-    public AvaloniaList<ToDoSubItemNotify> Planned { get; } = new();
-    public AvaloniaList<ToDoSubItemNotify> ReadyForCompleted { get; } = new();
-    public AvaloniaList<ToDoSubItemNotify> Completed { get; } = new();
-    public AvaloniaList<ToDoSubItemNotify> PinnedToDoItems { get; } = new();
-    public AvaloniaList<ToDoSubItemNotify> SelectedMissed { get; } = new();
-    public AvaloniaList<ToDoSubItemNotify> SelectedPlanned { get; } = new();
-    public AvaloniaList<ToDoSubItemNotify> SelectedReadyForCompleted { get; } = new();
-    public AvaloniaList<ToDoSubItemNotify> SelectedCompleted { get; } = new();
-    public AvaloniaList<ToDoSubItemNotify> SelectedPinnedToDoItems { get; } = new();
+    public AvaloniaList<ToDoSubItemNotify> Missed { get; } = new ();
+    public AvaloniaList<ToDoSubItemNotify> Planned { get; } = new ();
+    public AvaloniaList<ToDoSubItemNotify> ReadyForCompleted { get; } = new ();
+    public AvaloniaList<ToDoSubItemNotify> Completed { get; } = new ();
+    public AvaloniaList<ToDoSubItemNotify> PinnedToDoItems { get; } = new ();
+    public AvaloniaList<ToDoSubItemNotify> SelectedMissed { get; } = new ();
+    public AvaloniaList<ToDoSubItemNotify> SelectedPlanned { get; } = new ();
+    public AvaloniaList<ToDoSubItemNotify> SelectedReadyForCompleted { get; } = new ();
+    public AvaloniaList<ToDoSubItemNotify> SelectedCompleted { get; } = new ();
+    public AvaloniaList<ToDoSubItemNotify> SelectedPinnedToDoItems { get; } = new ();
     public ICommand CompleteSubToDoItemCommand { get; }
     public ICommand DeleteSubToDoItemCommand { get; }
     public ICommand ChangeToDoItemCommand { get; }
@@ -53,12 +65,69 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
     public ICommand ChangeToActiveDoItemCommand { get; }
     public ICommand InitializedCommand { get; }
     public ICommand CompleteSelectedToDoItemsCommand { get; }
+    public ICommand UpOrderIndexCommand { get; }
+    public ICommand DownOrderIndexCommand { get; }
 
     [Inject]
     public required IToDoService ToDoService { get; set; }
 
     [Inject]
     public required IMapper Mapper { get; set; }
+
+    private async Task DownOrderIndexAsync(ToDoSubItemNotify item)
+    {
+        await Task.WhenAll(
+            DownOrderIndexAsync(item, Missed),
+            DownOrderIndexAsync(item, Planned),
+            DownOrderIndexAsync(item, ReadyForCompleted),
+            DownOrderIndexAsync(item, Completed));
+
+        await RefreshToDoItemAsync();
+    }
+
+    private async Task UpOrderIndexAsync(ToDoSubItemNotify item)
+    {
+        await Task.WhenAll(
+            UpOrderIndexAsync(item, Missed),
+            UpOrderIndexAsync(item, Planned),
+            UpOrderIndexAsync(item, ReadyForCompleted),
+            UpOrderIndexAsync(item, Completed));
+
+        await RefreshToDoItemAsync();
+    }
+
+    private Task DownOrderIndexAsync(ToDoSubItemNotify item, AvaloniaList<ToDoSubItemNotify> list)
+    {
+        var indexOf = list.IndexOf(item);
+
+        if (indexOf <= -1)
+        {
+            return Task.CompletedTask;
+        }
+
+        if (indexOf >= list.Count - 1)
+        {
+            return Task.CompletedTask;
+        }
+
+        var options = new UpdateOrderIndexToDoItemOptions(item.Id, list[indexOf + 1].Id, true);
+
+        return ToDoService.UpdateToDoItemOrderIndexAsync(options);
+    }
+
+    private Task UpOrderIndexAsync(ToDoSubItemNotify item, AvaloniaList<ToDoSubItemNotify> list)
+    {
+        var indexOf = list.IndexOf(item);
+
+        if (indexOf <= 0)
+        {
+            return Task.CompletedTask;
+        }
+
+        var options = new UpdateOrderIndexToDoItemOptions(item.Id, list[indexOf - 1].Id, false);
+
+        return ToDoService.UpdateToDoItemOrderIndexAsync(options);
+    }
 
     private Task CompleteSelectedToDoItemsAsync()
     {
@@ -100,9 +169,11 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                 {
                     case ToDoSubItemPeriodicityNotify:
                         viewModel.SetCompleteStatus();
+
                         break;
                     case ToDoSubItemPeriodicityOffsetNotify:
                         viewModel.SetCompleteStatus();
+
                         break;
                     case ToDoSubItemPlannedNotify toDoSubItemPlannedNotify:
                         if (toDoSubItemPlannedNotify.IsCompleted)
@@ -136,15 +207,19 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                     {
                         case CompleteStatus.Complete:
                             await ToDoService.UpdateToDoItemCompleteStatusAsync(subItemValue.Id, true);
+
                             break;
                         case CompleteStatus.Incomplete:
                             await ToDoService.UpdateToDoItemCompleteStatusAsync(subItemValue.Id, false);
+
                             break;
                         case CompleteStatus.Skip:
                             await ToDoService.SkipToDoItemAsync(subItemValue.Id);
+
                             break;
                         case CompleteStatus.Fail:
                             await ToDoService.FailToDoItemAsync(subItemValue.Id);
+
                             break;
                         default: throw new ArgumentOutOfRangeException(nameof(status), status, null);
                     }
@@ -167,9 +242,11 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                     {
                         case ToDoSubItemPeriodicityNotify:
                             await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
+
                             break;
                         case ToDoSubItemPeriodicityOffsetNotify:
                             await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
+
                             break;
                         case ToDoSubItemPlannedNotify toDoSubItemPlannedNotify:
                             if (!toDoSubItemPlannedNotify.IsCompleted)
@@ -205,15 +282,19 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                     {
                         case ToDoSubItemPeriodicityNotify:
                             await ToDoService.SkipToDoItemAsync(item.Id);
+
                             break;
                         case ToDoSubItemPeriodicityOffsetNotify:
                             await ToDoService.SkipToDoItemAsync(item.Id);
+
                             break;
                         case ToDoSubItemPlannedNotify:
                             await ToDoService.SkipToDoItemAsync(item.Id);
+
                             break;
                         case ToDoSubItemValueNotify:
                             await ToDoService.SkipToDoItemAsync(item.Id);
+
                             break;
                         default: throw new ArgumentOutOfRangeException(nameof(item));
                     }
@@ -227,15 +308,19 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                     {
                         case ToDoSubItemPeriodicityNotify:
                             await ToDoService.FailToDoItemAsync(item.Id);
+
                             break;
                         case ToDoSubItemPeriodicityOffsetNotify:
                             await ToDoService.FailToDoItemAsync(item.Id);
+
                             break;
                         case ToDoSubItemPlannedNotify:
                             await ToDoService.FailToDoItemAsync(item.Id);
+
                             break;
                         case ToDoSubItemValueNotify:
                             await ToDoService.FailToDoItemAsync(item.Id);
+
                             break;
                         default: throw new ArgumentOutOfRangeException(nameof(item));
                     }

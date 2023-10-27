@@ -76,71 +76,65 @@
     <Panel>
         <ScrollViewer>
             <StackPanel>
-                <ListBox SelectionMode="Multiple"
-                         Margin="5"
-                         ItemsSource="{Binding PinnedToDoItems}"
-                         IsVisible="{Binding PinnedToDoItems.Count, Converter={StaticResource Int32ToIsVisibleConverter}}"
-                         SelectedItems="{Binding SelectedPinnedToDoItems}" />
+                <Expander IsExpanded="True"
+                          IsVisible="{Binding PinnedToDoItems.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
+                    <Expander.Header>
+                        Pinned
+                    </Expander.Header>
 
+                    <ItemsControl ItemsSource="{Binding PinnedToDoItems}" />
+                </Expander>
                 <Panel>
                     <UniformGrid Classes="adaptive" Rows="1">
-                        <ListBox Classes="ItemsDragAndDrop"
-                                 SelectionMode="Multiple"
-                                 Margin="5"
-                                 ItemsSource="{Binding Missed}"
-                                 SelectedItems="{Binding SelectedMissed}"
-                                 IsVisible="{Binding Missed.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                        <ItemsControl ItemsSource="{Binding Missed}"
+                                      IsVisible="{Binding Missed.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
 
-                        <ListBox Classes="ItemsDragAndDrop"
-                                 SelectionMode="Multiple"
-                                 Margin="5"
-                                 ItemsSource="{Binding ReadyForCompleted}"
-                                 SelectedItems="{Binding SelectedReadyForCompleted}"
-                                 IsVisible="{Binding ReadyForCompleted.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                        <ItemsControl ItemsSource="{Binding ReadyForCompleted}"
+                                      IsVisible="{Binding ReadyForCompleted.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
 
-                        <ListBox Classes="ItemsDragAndDrop"
-                                 SelectionMode="Multiple"
-                                 Margin="5"
-                                 ItemsSource="{Binding Planned}"
-                                 SelectedItems="{Binding SelectedPlanned}"
-                                 IsVisible="{Binding Planned.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                        <ItemsControl ItemsSource="{Binding Planned}"
+                                      IsVisible="{Binding Planned.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
 
-                        <ListBox Classes="ItemsDragAndDrop"
-                                 SelectionMode="Multiple"
-                                 Margin="5"
-                                 ItemsSource="{Binding Completed}"
-                                 SelectedItems="{Binding SelectedCompleted}"
-                                 IsVisible="{Binding Completed.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                        <ItemsControl ItemsSource="{Binding Completed}"
+                                      IsVisible="{Binding Completed.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
                     </UniformGrid>
 
                     <StackPanel Classes="adaptive">
-                        <ListBox Classes="ItemsDragAndDrop"
-                                 SelectionMode="Multiple"
-                                 Margin="5"
-                                 ItemsSource="{Binding Missed}"
-                                 SelectedItems="{Binding SelectedMissed}"
-                                 IsVisible="{Binding Missed.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                        <Expander IsExpanded="True"
+                                  IsVisible="{Binding Missed.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
+                            <Expander.Header>
+                                Missed
+                            </Expander.Header>
 
-                        <ListBox Classes="ItemsDragAndDrop"
-                                 SelectionMode="Multiple"
-                                 Margin="5"
-                                 ItemsSource="{Binding ReadyForCompleted}"
-                                 SelectedItems="{Binding SelectedReadyForCompleted}"
-                                 IsVisible="{Binding ReadyForCompleted.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                            <ItemsControl ItemsSource="{Binding Missed}" />
+                        </Expander>
 
-                        <ListBox Classes="ItemsDragAndDrop"
-                                 SelectionMode="Multiple"
-                                 Margin="5"
-                                 ItemsSource="{Binding Planned}"
-                                 SelectedItems="{Binding SelectedPlanned}"
-                                 IsVisible="{Binding Planned.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                        <Expander IsExpanded="True"
+                                  IsVisible="{Binding ReadyForCompleted.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
+                            <Expander.Header>
+                                ReadyForCompleted
+                            </Expander.Header>
 
-                        <ListBox Classes="ItemsDragAndDrop"
-                                 SelectionMode="Multiple"
-                                 Margin="5"
-                                 ItemsSource="{Binding Completed}"
-                                 SelectedItems="{Binding SelectedCompleted}"
-                                 IsVisible="{Binding Completed.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+                            <ItemsControl ItemsSource="{Binding ReadyForCompleted}" />
+                        </Expander>
+
+                        <Expander
+                            IsVisible="{Binding Planned.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
+                            <Expander.Header>
+                                Planned
+                            </Expander.Header>
+
+                            <ItemsControl ItemsSource="{Binding Planned}" />
+                        </Expander>
+
+                        <Expander
+                            IsVisible="{Binding Completed.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
+                            <Expander.Header>
+                                Completed
+                            </Expander.Header>
+
+                            <ItemsControl ItemsSource="{Binding Completed}" />
+                        </Expander>
                     </StackPanel>
                 </Panel>
             </StackPanel>

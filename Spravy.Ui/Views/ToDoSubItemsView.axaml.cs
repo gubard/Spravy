@@ -30,4 +30,6 @@ public partial class ToDoSubItemsView : MainReactiveUserControl<ToDoSubItemsView
     public ICommand AddSubToDoItemToPinnedCommand => ViewModel.ThrowIfNull().AddSubToDoItemToPinnedCommand;
     public ICommand RemoveSubToDoItemFromPinnedCommand => ViewModel.ThrowIfNull().RemoveSubToDoItemFromPinnedCommand;
     public ICommand ChangeToActiveDoItemCommand => ViewModel.ThrowIfNull().ChangeToActiveDoItemCommand;
+    public ICommand UpOrderIndexCommand=> ViewModel.ThrowIfNull().UpOrderIndexCommand;
+    public ICommand DownOrderIndexCommand => ViewModel.ThrowIfNull().DownOrderIndexCommand;
 }
