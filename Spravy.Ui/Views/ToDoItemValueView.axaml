@@ -45,14 +45,16 @@
                           ItemsSource="{Binding ChildrenTypes}" />
             </Grid>
 
-            <Expander>
+            <Expander Classes="header-left">
                 <Expander.Header>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                        <Button Command="{Binding ChangeDescriptionCommand}">
+                    <Grid ColumnDefinitions="Auto,*" Height="60">
+                        <Button Command="{Binding ChangeDescriptionCommand}"
+                                Classes="with-icon">
                             <avalonia:MaterialIcon Kind="Pencil" />
                         </Button>
-                        <TextBlock Text="Description" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                    </StackPanel>
+
+                        <TextBlock Grid.Column="1" Text="Description" Classes="alignment-center" />
+                    </Grid>
                 </Expander.Header>
 
                 <TextBlock Text="{Binding Description}" />

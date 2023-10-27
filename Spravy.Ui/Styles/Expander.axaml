@@ -1,0 +1,19 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+        <Border Padding="20" Height="500">
+            <ItemsControl>
+                <Expander Classes="header-left" Width="500" VerticalAlignment="Top">
+                    <Expander.Header>Header</Expander.Header>
+                    <Expander.Content>
+                        <TextBlock Text="Content"></TextBlock>
+                    </Expander.Content>
+                </Expander>
+            </ItemsControl>
+        </Border>
+    </Design.PreviewWith>
+
+    <Style Selector="Expander.header-left /template/ LayoutTransformControl#PART_ToggleTransform > ToggleButton">
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+    </Style>
+</Styles>

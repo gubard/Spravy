@@ -7,8 +7,9 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <MergeResourceInclude Source="NullableDatePicker.axaml" />
-                <MergeResourceInclude Source="Colors.axaml"/>
-                <MergeResourceInclude Source="Brushes.axaml"/>
+                <MergeResourceInclude Source="Colors.axaml" />
+                <MergeResourceInclude Source="Brushes.axaml" />
+                <MergeResourceInclude Source="Numbers.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Styles.Resources>
@@ -21,4 +22,7 @@
     <StyleInclude Source="UserControl.axaml" />
     <StyleInclude Source="DialogOverlayPopupHost.axaml" />
     <StyleInclude Source="DialogProgressIndicator.axaml" />
+    <StyleInclude Source="Button.axaml" />
+    <StyleInclude Source="Expander.axaml" />
+    <StyleInclude Source="Layoutable.axaml" />
 </Styles>
