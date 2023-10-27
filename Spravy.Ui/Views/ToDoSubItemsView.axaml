@@ -74,7 +74,7 @@
     </UserControl.Styles>
 
     <Panel>
-        <ScrollViewer Name="{x:Static views:ToDoSubItemsView.MainScrollViewerName}">
+        <ScrollViewer>
             <StackPanel>
                 <ListBox SelectionMode="Multiple"
                          Margin="5"
@@ -145,17 +145,5 @@
                 </Panel>
             </StackPanel>
         </ScrollViewer>
-
-        <Button HorizontalAlignment="Right"
-                VerticalAlignment="Top"
-                Name="{x:Static views:ToDoSubItemsView.ScrollUpButtonName}">
-            <avalonia:MaterialIcon Kind="ArrowUp" />
-        </Button>
-
-        <Button HorizontalAlignment="Right"
-                VerticalAlignment="Bottom"
-                Name="{x:Static views:ToDoSubItemsView.ScrollButtonBottomName}">
-            <avalonia:MaterialIcon Kind="ArrowDown" />
-        </Button>
     </Panel>
 </reactiveUi:ReactiveUserControl>
