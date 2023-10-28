@@ -44,23 +44,27 @@
                           SelectedItem="{Binding ChildrenType}"
                           ItemsSource="{Binding ChildrenTypes}" />
             </Grid>
-
-            <Expander Classes="header-left">
-                <Expander.Header>
-                    <Grid ColumnDefinitions="Auto,*" Height="60">
-                        <Button Command="{Binding ChangeDescriptionCommand}"
-                                Classes="with-icon">
-                            <avalonia:MaterialIcon Kind="Pencil" />
-                        </Button>
-
-                        <TextBlock Grid.Column="1" Text="Description" Classes="alignment-center" />
-                    </Grid>
-                </Expander.Header>
-
-                <TextBlock Text="{Binding Description}" />
-            </Expander>
         </StackPanel>
 
-        <ContentControl Grid.Row="2" Content="{Binding ToDoSubItemsViewModel}" />
+        <ScrollViewer Grid.Row="2">
+            <StackPanel>
+                <Expander Classes="header-left">
+                    <Expander.Header>
+                        <Grid ColumnDefinitions="Auto,*" Height="60">
+                            <Button Command="{Binding ChangeDescriptionCommand}"
+                                    Classes="with-icon">
+                                <avalonia:MaterialIcon Kind="Pencil" />
+                            </Button>
+
+                            <TextBlock Grid.Column="1" Text="Description" Classes="alignment-center" />
+                        </Grid>
+                    </Expander.Header>
+
+                    <TextBlock Text="{Binding Description}" />
+                </Expander>
+
+                <ContentControl Content="{Binding ToDoSubItemsViewModel}" />
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </controls1:MainReactiveUserControl>
