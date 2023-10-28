@@ -1,11 +1,16 @@
 using AutoMapper;
+
 using Google.Protobuf;
+
 using Grpc.Core;
+
 using Microsoft.AspNetCore.Authorization;
+
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
 using Spravy.ToDo.Protos;
+
 using static Spravy.ToDo.Protos.ToDoService;
 
 namespace Spravy.ToDo.Service.Services;
@@ -363,5 +368,15 @@ public class GrpcToDoService : ToDoServiceBase
         );
 
         return new UpdateToDoItemChildrenTypeReply();
+    }
+
+    public override async Task<GetSiblingsReply> GetSiblings(GetSiblingsRequest request, ServerCallContext context)
+    {
+        var id = mapper.Map<Guid>(request.Id);
+        var items = await toDoService.GetSiblingsAsync(id);
+        var reply = new GetSiblingsReply();
+        reply.Items.AddRange(mapper.Map<IEnumerable<ToDoShortItemGrpc>>(items));
+
+        return reply;
     }
 }

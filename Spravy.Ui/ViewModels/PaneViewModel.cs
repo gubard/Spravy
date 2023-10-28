@@ -49,7 +49,7 @@ public class PaneViewModel : ViewModelBase
 
     private void ToRootToDoItemView()
     {
-        Navigator.NavigateTo<RootToDoItemViewModel>();
+        Navigator.NavigateTo<RootToDoItemsViewModel>();
         SplitView.IsPaneOpen = false;
     }
 

@@ -7,9 +7,9 @@ using Spravy.Ui.Views;
 
 namespace Spravy.Ui.Design;
 
-public class RootToDoItemViewModelDesign : RootToDoItemViewModel
+public class RootToDoItemsViewModelDesign : RootToDoItemsViewModel
 {
-    public RootToDoItemViewModelDesign()
+    public RootToDoItemsViewModelDesign()
     {
         var toDoServiceDesign = new ToDoServiceDesign(
             new IToDoSubItem[]

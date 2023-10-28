@@ -1,0 +1,24 @@
+﻿<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:ChangeToDoItemPositionViewModel"
+                                xmlns="https://github.com/avaloniaui"
+                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                                xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
+                                xmlns:reactiveUi="http://reactiveui.net"
+                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                                x:Class="Spravy.Ui.Views.ChangeToDoItemPositionView"
+                                x:DataType="viewModels:ChangeToDoItemPositionViewModel">
+    <Design.DataContext>
+        <viewModels:ChangeToDoItemPositionViewModel />
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,*">
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Before" Classes="center" />
+            <ToggleSwitch />
+            <TextBlock Text="After" Classes="center" />
+        </StackPanel>
+
+        <ListBox Grid.Row="1" />
+    </Grid>
+</reactiveUi:ReactiveUserControl>

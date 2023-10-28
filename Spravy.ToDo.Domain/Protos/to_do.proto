@@ -38,4 +38,5 @@ service ToDoService {
   rpc UpdateToDoItemWeeksOffset (UpdateToDoItemWeeksOffsetRequest) returns (UpdateToDoItemWeeksOffsetReply);
   rpc UpdateToDoItemYearsOffset (UpdateToDoItemYearsOffsetRequest) returns (UpdateToDoItemYearsOffsetReply);
   rpc UpdateToDoItemChildrenType (UpdateToDoItemChildrenTypeRequest) returns (UpdateToDoItemChildrenTypeReply);
+  rpc GetSiblings (GetSiblingsRequest) returns (GetSiblingsReply);
 }

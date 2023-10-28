@@ -68,7 +68,7 @@ public class LoginViewModel : RoutableViewModelBase
 
         var item = await ObjectStorage.GetObjectAsync<LoginStorageItem>(FileIds.LoginFileId);
         await TokenService.LoginAsync(item.Token.ThrowIfNullOrWhiteSpace());
-        Navigator.NavigateTo<RootToDoItemViewModel>();
+        Navigator.NavigateTo<RootToDoItemsViewModel>();
     }
 
     private async Task EnterAsync(LoginView view)
@@ -107,7 +107,7 @@ public class LoginViewModel : RoutableViewModelBase
         var user = Mapper.Map<User>(this);
         await TokenService.LoginAsync(user);
         await RememberMeAsync();
-        Navigator.NavigateTo<RootToDoItemViewModel>();
+        Navigator.NavigateTo<RootToDoItemsViewModel>();
     }
 
     private async Task RememberMeAsync()

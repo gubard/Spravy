@@ -250,7 +250,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
     private async Task ToDoItemToRootAsync()
     {
         await ToDoService.ToDoItemToRootAsync(Id);
-        Navigator.NavigateTo<RootToDoItemViewModel>();
+        Navigator.NavigateTo<RootToDoItemsViewModel>();
     }
 
     protected async void OnNextId(Guid x)
@@ -304,7 +304,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
 
     private void ToRootItem()
     {
-        Navigator.NavigateTo<RootToDoItemViewModel>();
+        Navigator.NavigateTo<RootToDoItemsViewModel>();
     }
 
     protected async void OnNextDescription(string x)

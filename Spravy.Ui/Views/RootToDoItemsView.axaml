@@ -1,4 +1,4 @@
-<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:RootToDoItemViewModel"
+<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:RootToDoItemsViewModel"
                                 xmlns="https://github.com/avaloniaui"
                                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -8,10 +8,10 @@
                                 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                 xmlns:design="clr-namespace:Spravy.Ui.Design"
                                 mc:Ignorable="d" d:DesignWidth="540" d:DesignHeight="1100"
-                                x:Class="Spravy.Ui.Views.RootToDoItemView"
-                                x:DataType="viewModels:RootToDoItemViewModel">
+                                x:Class="Spravy.Ui.Views.RootToDoItemsView"
+                                x:DataType="viewModels:RootToDoItemsViewModel">
     <Design.DataContext>
-        <design:RootToDoItemViewModelDesign />
+        <design:RootToDoItemsViewModelDesign />
     </Design.DataContext>
 
     <Interaction.Behaviors>

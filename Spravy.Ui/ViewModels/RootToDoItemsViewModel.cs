@@ -17,9 +17,9 @@ using Spravy.Ui.Views;
 
 namespace Spravy.Ui.ViewModels;
 
-public class RootToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger, IRefreshToDoItem
+public class RootToDoItemsViewModel : RoutableViewModelBase, IToDoItemOrderChanger, IRefreshToDoItem
 {
-    public RootToDoItemViewModel() : base("root-to-do-item")
+    public RootToDoItemsViewModel() : base("root-to-do-item")
     {
         InitializedCommand = CreateCommandFromTaskWithDialogProgressIndicator(InitializedAsync);
         AddToDoItemCommand = CreateCommandFromTask(AddToDoItemAsync);

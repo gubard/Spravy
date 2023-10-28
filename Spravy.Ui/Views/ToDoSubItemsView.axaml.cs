@@ -1,8 +1,5 @@
-using System;
 using System.Windows.Input;
-using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
-using Avalonia.Interactivity;
+
 using Spravy.Domain.Extensions;
 using Spravy.Ui.Controls;
 using Spravy.Ui.Interfaces;
@@ -15,10 +12,6 @@ public partial class ToDoSubItemsView : MainReactiveUserControl<ToDoSubItemsView
     ICompleteSubToDoItemCommand,
     IChangePinnedToDoItemCommand
 {
-    private ScrollViewer? mainScrollViewer;
-    private Button? scrollUpButton;
-    private Button? scrollButtonBottom;
-
     public ToDoSubItemsView()
     {
         InitializeComponent();
