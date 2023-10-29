@@ -69,38 +69,43 @@
     </UserControl.Styles>
 
     <controls1:ColorZone Mode="PrimaryMid">
-        <Grid ColumnDefinitions="Auto,Auto,*">
+        <Grid ColumnDefinitions="Auto,*,Auto">
             <Button Command="{Binding SwitchPaneCommand}">
                 <avalonia:MaterialIcon Kind="Menu" />
             </Button>
 
-            <controls:ButtonTextBox Grid.Column="1"
-                                    Text="{Binding Item.Name}"
-                                    Command="{Binding ChangeNameCommand}"
-                                    Classes="edit" />
+            <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
+                <TextBlock Text="{Binding Item.Name}" Classes="alignment-center" />
+            </ScrollViewer>
 
-            <Panel Grid.Column="2">
-                <ItemsControl HorizontalAlignment="Right"
-                              VerticalAlignment="Center"
-                              ItemsSource="{Binding Commands}"
-                              Classes="adaptive">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel Orientation="Horizontal" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                </ItemsControl>
-
-                <Button Classes="adaptive">
-                    <Button.Flyout>
-                        <Flyout>
-                            <ItemsControl ItemsSource="{Binding Commands}" />
-                        </Flyout>
-                    </Button.Flyout>
-
-                    <avalonia:MaterialIcon Kind="DotsHorizontal" />
+            <StackPanel Grid.Column="2" Orientation="Horizontal">
+                <Button Command="{Binding ChangeNameCommand}">
+                    <avalonia:MaterialIcon Kind="Pencil" />
                 </Button>
-            </Panel>
+
+                <Panel>
+                    <ItemsControl HorizontalAlignment="Right"
+                                  VerticalAlignment="Center"
+                                  ItemsSource="{Binding Commands}"
+                                  Classes="adaptive">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+
+                    <Button Classes="adaptive">
+                        <Button.Flyout>
+                            <Flyout>
+                                <ItemsControl ItemsSource="{Binding Commands}" />
+                            </Flyout>
+                        </Button.Flyout>
+
+                        <avalonia:MaterialIcon Kind="DotsHorizontal" />
+                    </Button>
+                </Panel>
+            </StackPanel>
         </Grid>
     </controls1:ColorZone>
 </reactiveUi:ReactiveUserControl>

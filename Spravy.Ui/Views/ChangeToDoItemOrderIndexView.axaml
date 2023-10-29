@@ -14,9 +14,9 @@
 
     <Grid RowDefinitions="Auto,*">
         <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Before" Classes="center" />
+            <TextBlock Text="Before" Classes="alignment-center" />
             <ToggleSwitch IsChecked="{Binding IsAfter}" />
-            <TextBlock Text="After" Classes="center" />
+            <TextBlock Text="After" Classes="alignment-center" />
         </StackPanel>
 
         <ScrollViewer Grid.Row="1">

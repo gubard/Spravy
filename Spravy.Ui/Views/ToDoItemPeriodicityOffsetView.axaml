@@ -25,9 +25,11 @@
         <ContentControl Content="{Binding ToDoItemHeaderView}" />
 
         <StackPanel Grid.Row="1">
-            <ContentControl Content="{Binding Path}"
-                            Margin="5"
-                            HorizontalAlignment="Center" />
+            <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
+                <ContentControl Content="{Binding Path}"
+                                Margin="5"
+                                HorizontalAlignment="Center" />
+            </ScrollViewer>
 
             <Grid ColumnDefinitions="*,*">
                 <ComboBox Theme="{StaticResource MaterialOutlineComboBox}"
