@@ -17,6 +17,7 @@ public class SpravyToDoDbProfile : Profile
     public SpravyToDoDbProfile()
     {
         CreateMap<ToDoItemEntity, DailyPeriodicity>();
+        CreateMap<ToDoItemEntity, ToDoShortItem>();
         CreateMap<ToDoItemEntity, MonthlyPeriodicity>().ConstructUsing(x => new MonthlyPeriodicity(x.GetDaysOfMonth()));
         CreateMap<ToDoItemEntity, WeeklyPeriodicity>().ConstructUsing(x => new WeeklyPeriodicity(x.GetDaysOfWeek()));
         CreateMap<AddRootToDoItemOptions, ToDoItemEntity>();

@@ -30,9 +30,6 @@ public class CreateUserViewModel : RoutableViewModelBase
     public required IAuthenticationService AuthenticationService { get; init; }
 
     [Inject]
-    public required IToDoService ToDoService { get; init; }
-
-    [Inject]
     public required IMapper Mapper { get; init; }
 
     public ICommand CreateUserCommand { get; }

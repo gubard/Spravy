@@ -18,6 +18,8 @@ public class SpravyUiProfile : Profile
     public SpravyUiProfile()
     {
         CreateMap<ToDoItemParent, ToDoItemParentNotify>();
+        CreateMap<ToDoItemNotify, ToDoShortItem>();
+        CreateMap<ToDoShortItem, ToDoItemNotify>();
         CreateMap<ToDoSubItemValue, ToDoSubItemValueNotify>();
         CreateMap<ToDoSubItemGroup, ToDoSubItemGroupNotify>();
         CreateMap<ToDoSubItemPeriodicity, ToDoSubItemPeriodicityNotify>();

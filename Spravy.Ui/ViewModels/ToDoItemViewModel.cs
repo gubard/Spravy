@@ -153,7 +153,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
             {
                 vm.EventId = EventIdHelper.ChangePinnedId;
 
-                vm.Item = new ToDoItemNotify
+                vm.Item = new()
                 {
                     Id = Id,
                     Name = Name,
@@ -215,7 +215,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
             },
             view =>
             {
-                Path.Items ??= new AvaloniaList<object>();
+                Path.Items ??= new();
                 var viewModel = view.ViewModel.ThrowIfNull();
                 viewModel.IgnoreIds.Add(Id);
                 var parents = Path.Items.OfType<ToDoItemParentNotify>().ToArray();

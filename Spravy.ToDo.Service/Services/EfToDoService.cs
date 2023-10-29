@@ -275,7 +275,7 @@ public class EfToDoService : IToDoService
 
                             if(!isCanComplete)
                             {
-                                throw new Exception("Need close sub tasks.");
+                                throw new("Need close sub tasks.");
                             }
 
                             break;
@@ -288,7 +288,7 @@ public class EfToDoService : IToDoService
 
                             if(!isCanComplete)
                             {
-                                throw new Exception("Need close sub tasks.");
+                                throw new("Need close sub tasks.");
                             }
 
                             break;
@@ -728,7 +728,7 @@ public class EfToDoService : IToDoService
 
                         if(!isCanComplete)
                         {
-                            throw new Exception("Need close sub tasks.");
+                            throw new("Need close sub tasks.");
                         }
 
                         break;
@@ -741,7 +741,7 @@ public class EfToDoService : IToDoService
 
                         if(!isCanComplete)
                         {
-                            throw new Exception("Need close sub tasks.");
+                            throw new("Need close sub tasks.");
                         }
 
                         break;
@@ -809,7 +809,7 @@ public class EfToDoService : IToDoService
 
                         if(!isCanComplete)
                         {
-                            throw new Exception("Need close sub tasks.");
+                            throw new("Need close sub tasks.");
                         }
 
                         break;
@@ -822,7 +822,7 @@ public class EfToDoService : IToDoService
 
                         if(!isCanComplete)
                         {
-                            throw new Exception("Need close sub tasks.");
+                            throw new("Need close sub tasks.");
                         }
 
                         break;
@@ -1035,7 +1035,7 @@ public class EfToDoService : IToDoService
         {
             var item = items[i];
             var children = await GetToDoSelectorItemsAsync(context, item.Id, ignoreIds);
-            result[i] = new ToDoSelectorItem(item.Id, item.Name, children);
+            result[i] = new(item.Id, item.Name, children);
         }
 
         return result;
@@ -1045,7 +1045,7 @@ public class EfToDoService : IToDoService
     {
         if(id == parentId)
         {
-            throw new Exception();
+            throw new();
         }
 
         await using var context = dbContextFactory.Create();
@@ -1211,7 +1211,7 @@ public class EfToDoService : IToDoService
 
             await ToDoItemToStringAsync(
                 context,
-                new ToDoItemToStringOptions(options.Statuses.ToArray(), item.Id),
+                new(options.Statuses.ToArray(), item.Id),
                 (ushort)(level + 1),
                 builder
             );
@@ -1236,7 +1236,7 @@ public class EfToDoService : IToDoService
         {
             var item = items[i];
             var children = await GetToDoSelectorItemsAsync(context, item.Id, ignoreIds);
-            result[i] = new ToDoSelectorItem(item.Id, item.Name, children);
+            result[i] = new(item.Id, item.Name, children);
         }
 
         return result;

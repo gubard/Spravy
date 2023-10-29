@@ -101,7 +101,7 @@ public class ToDoItemValueViewModel : ToDoItemViewModel, IRefreshToDoItem
     public override async Task RefreshToDoItemAsync()
     {
         UnsubscribeProperties();
-        Path.Items ??= new AvaloniaList<object>();
+        Path.Items ??= new();
         var item = await ToDoService.GetToDoItemAsync(Id);
 
         switch (item)

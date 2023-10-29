@@ -51,7 +51,7 @@ namespace Spravy.Ui.Configurations;
 public class UiModule : NinjectModule
 {
     private readonly bool useCache;
-    
+
     public UiModule(bool useCache)
     {
         this.useCache = useCache;
@@ -61,10 +61,13 @@ public class UiModule : NinjectModule
     {
         this.BindGrpcService2<GrpcAuthenticationService, AuthenticationService.AuthenticationServiceClient,
             GrpcAuthenticationServiceOptions>(useCache);
+
         this.BindGrpcService<GrpcScheduleService, ScheduleService.ScheduleServiceClient,
             GrpcScheduleServiceOptions>(useCache);
+
         this.BindGrpcService<GrpcToDoService, ToDoService.ToDoServiceClient,
             GrpcToDoServiceOptions>(useCache);
+
         this.BindGrpcService<GrpcEventBusService, EventBusService.EventBusServiceClient,
             GrpcEventBusServiceOptions>(useCache);
 
@@ -102,15 +105,15 @@ public class UiModule : NinjectModule
         Bind<IDialogViewer>().To<DialogViewer>();
 
         Bind<IClipboard>()
-            .ToMethod(
+        .ToMethod(
                 _ => Application.Current.ThrowIfNull("Application")
-                    .GetTopLevel()
-                    .ThrowIfNull("TopLevel")
-                    .Clipboard.ThrowIfNull()
+                .GetTopLevel()
+                .ThrowIfNull("TopLevel")
+                .Clipboard.ThrowIfNull()
             );
 
         Bind<SplitView>()
-            .ToMethod(
+        .ToMethod(
                 _ =>
                 {
                     var splitView = new SplitView
@@ -122,12 +125,12 @@ public class UiModule : NinjectModule
                     return splitView;
                 }
             )
-            .InSingletonScope();
+        .InSingletonScope();
 
         Bind<Window>()
-            .To<MainWindow>()
-            .InSingletonScope()
-            .OnActivation(
+        .To<MainWindow>()
+        .InSingletonScope()
+        .OnActivation(
                 (c, x) =>
                 {
                     x.ViewModel = c.Kernel.Get<MainWindowModel>();
@@ -136,7 +139,7 @@ public class UiModule : NinjectModule
             );
 
         Bind<IDialogProgressIndicator>()
-            .ToMethod(
+        .ToMethod(
                 _ => new DialogProgressIndicator
                 {
                     CornerRadius = new CornerRadius(24),
@@ -171,30 +174,30 @@ public class UiModule : NinjectModule
         var styledElementType = typeof(StyledElement);
         var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
-        foreach (var assembly in assemblies)
+        foreach(var assembly in assemblies)
         {
             var types = assembly.GetTypes();
 
-            foreach (var type in types)
+            foreach(var type in types)
             {
-                if (type.Namespace.IsNullOrWhiteSpace())
+                if(type.Namespace.IsNullOrWhiteSpace())
                 {
                     continue;
                 }
 
-                if (!styledElementType.IsAssignableFrom(type))
+                if(!styledElementType.IsAssignableFrom(type))
                 {
                     continue;
                 }
 
                 var ns = type.Namespace
-                    .Replace(".Views.", ".ViewModels.")
-                    .Replace(".Views", ".ViewModels");
+                .Replace(".Views.", ".ViewModels.")
+                .Replace(".Views", ".ViewModels");
 
                 var viewModelName = $"{ns}.{type.Name}Model";
                 var viewModelType = assembly.GetType(viewModelName);
 
-                if (viewModelType is null)
+                if(viewModelType is null)
                 {
                     continue;
                 }
@@ -202,8 +205,8 @@ public class UiModule : NinjectModule
                 module.Bind(viewModelType).ToSelf();
 
                 module.Bind(type)
-                    .ToSelf()
-                    .OnActivation((c, x) => ((StyledElement)x).DataContext = c.Kernel.Get(viewModelType));
+                .ToSelf()
+                .OnActivation((c, x) => ((StyledElement)x).DataContext = c.Kernel.Get(viewModelType));
             }
         }
     }

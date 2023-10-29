@@ -80,6 +80,10 @@
                 <avalonia:MaterialIcon Kind="Home" />
             </Button>
         </DataTemplate>
+        
+        <DataTemplate DataType="models:ToDoItemNotify">
+            <TextBlock Text="{Binding Name}"/>
+        </DataTemplate>
 
         <!--#region ToDoSubItemNotify-->
         <DataTemplate DataType="models:ToDoSubItemValueNotify">
@@ -87,20 +91,11 @@
                            IsVisible="{Binding IsVisible}"
                            Margin="3">
                 <Grid ColumnDefinitions="*,Auto"
-                      RowDefinitions="Auto,Auto,*,Auto"
+                      RowDefinitions="Auto,*"
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Stretch"
                       Margin="5">
-                    <Button Command="{Binding $parent[interfaces:IToDoItemView].UpOrderIndexCommand}"
-                            CommandParameter="{Binding}"
-                            Grid.ColumnSpan="2"
-                            HorizontalAlignment="Right"
-                            Padding="16,4,16,4"
-                            Margin="0">
-                        <avalonia:MaterialIcon Kind="ArrowUp" />
-                    </Button>
-
-                    <Grid Grid.Row="1" Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*">
+                    <Grid Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*">
                         <Rectangle Width="15"
                                    Margin="0,0,3,0"
                                    Height="2"
@@ -112,7 +107,7 @@
                                    Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                     </Grid>
 
-                    <StackPanel Grid.Row="2">
+                    <StackPanel Grid.Row="1">
                         <TextBlock Text="{Binding Name}"
                                    Classes="Headline6"
                                    TextWrapping="Wrap" />
@@ -140,8 +135,16 @@
                             </WrapPanel>
                         </Button>
 
-                        <Grid ColumnDefinitions="*,*,*">
+                        <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto">
                             <Button CommandParameter="{Binding}"
+                                    Command="{Binding $parent[interfaces:IToDoItemView].ChangeOrderIndexCommand}">
+                                <StackPanel Orientation="Horizontal">
+                                    <avalonia:MaterialIcon Kind="ReorderHorizontal" />
+                                    <TextBlock Text="Reorder" />
+                                </StackPanel>
+                            </Button>
+
+                            <Button Grid.Row="1" CommandParameter="{Binding}"
                                     Command="{Binding $parent[interfaces:ICompleteSubToDoItemCommand].CompleteSubToDoItemCommand}">
                                 <StackPanel Orientation="Horizontal">
                                     <avalonia:MaterialIcon Kind="Check" />
@@ -169,7 +172,7 @@
                         </Grid>
                     </StackPanel>
 
-                    <Panel Grid.Row="2"
+                    <Panel Grid.Row="1"
                            Grid.Column="1"
                            VerticalAlignment="Top"
                            HorizontalAlignment="Right">
@@ -187,15 +190,6 @@
                             <avalonia:MaterialIcon Kind="PinOutline" />
                         </Button>
                     </Panel>
-
-                    <Button Grid.Row="3" Command="{Binding $parent[interfaces:IToDoItemView].DownOrderIndexCommand}"
-                            CommandParameter="{Binding}"
-                            Grid.ColumnSpan="2"
-                            HorizontalAlignment="Right"
-                            Padding="16,4,16,4"
-                            Margin="0">
-                        <avalonia:MaterialIcon Kind="ArrowDown" />
-                    </Button>
                 </Grid>
             </controls:Card>
         </DataTemplate>
@@ -205,20 +199,11 @@
                            IsVisible="{Binding IsVisible}"
                            Margin="3">
                 <Grid ColumnDefinitions="*,Auto"
-                      RowDefinitions="Auto,Auto,*,Auto"
+                      RowDefinitions="Auto,*"
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Stretch"
                       Margin="5">
-                    <Button Command="{Binding $parent[interfaces:IToDoItemView].UpOrderIndexCommand}"
-                            CommandParameter="{Binding}"
-                            Grid.ColumnSpan="2"
-                            HorizontalAlignment="Right"
-                            Padding="16,4,16,4"
-                            Margin="0">
-                        <avalonia:MaterialIcon Kind="ArrowUp" />
-                    </Button>
-
-                    <Grid Grid.Row="1" Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*">
+                    <Grid Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*">
                         <Rectangle Width="15"
                                    Margin="0,0,3,0"
                                    Height="2"
@@ -230,7 +215,7 @@
                                    Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                     </Grid>
 
-                    <StackPanel Grid.Row="2">
+                    <StackPanel Grid.Row="1">
                         <TextBlock Text="{Binding Name}"
                                    Classes="Headline6"
                                    TextWrapping="Wrap" />
@@ -246,8 +231,17 @@
                             </WrapPanel>
                         </Button>
 
-                        <Grid ColumnDefinitions="*,*">
-                            <Button Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
+                        <Grid ColumnDefinitions="*,*,*">
+                            <Button CommandParameter="{Binding}"
+                                    Command="{Binding $parent[interfaces:IToDoItemView].ChangeOrderIndexCommand}">
+                                <StackPanel Orientation="Horizontal">
+                                    <avalonia:MaterialIcon Kind="ReorderHorizontal" />
+                                    <TextBlock Text="Reorder" />
+                                </StackPanel>
+                            </Button>
+
+                            <Button Grid.Column="1"
+                                    Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
                                     CommandParameter="{Binding}">
                                 <StackPanel Orientation="Horizontal">
                                     <avalonia:MaterialIcon Kind="Delete" Foreground="{DynamicResource ErrorBrush}" />
@@ -255,7 +249,7 @@
                                 </StackPanel>
                             </Button>
 
-                            <Button Grid.Column="1"
+                            <Button Grid.Column="2"
                                     Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
                                     CommandParameter="{Binding}">
                                 <StackPanel Orientation="Horizontal">
@@ -266,7 +260,7 @@
                         </Grid>
                     </StackPanel>
 
-                    <Panel Grid.Row="2" Grid.Column="1" VerticalAlignment="Top"
+                    <Panel Grid.Row="1" Grid.Column="1" VerticalAlignment="Top"
                            HorizontalAlignment="Right">
                         <Button
                             Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].RemoveSubToDoItemFromPinnedCommand}"
@@ -282,15 +276,6 @@
                             <avalonia:MaterialIcon Kind="PinOutline" />
                         </Button>
                     </Panel>
-
-                    <Button Grid.Row="3" Command="{Binding $parent[interfaces:IToDoItemView].DownOrderIndexCommand}"
-                            CommandParameter="{Binding}"
-                            Grid.ColumnSpan="2"
-                            HorizontalAlignment="Right"
-                            Padding="16,4,16,4"
-                            Margin="0">
-                        <avalonia:MaterialIcon Kind="ArrowDown" />
-                    </Button>
                 </Grid>
             </controls:Card>
         </DataTemplate>
@@ -300,20 +285,11 @@
                            IsVisible="{Binding IsVisible}"
                            Margin="3">
                 <Grid ColumnDefinitions="*,Auto"
-                      RowDefinitions="Auto,Auto,*,Auto"
+                      RowDefinitions="Auto,*"
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Stretch"
                       Margin="5">
-                    <Button Command="{Binding $parent[interfaces:IToDoItemView].UpOrderIndexCommand}"
-                            CommandParameter="{Binding}"
-                            Grid.ColumnSpan="2"
-                            HorizontalAlignment="Right"
-                            Padding="16,4,16,4"
-                            Margin="0">
-                        <avalonia:MaterialIcon Kind="ArrowUp" />
-                    </Button>
-
-                    <Grid Grid.Row="1" Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*">
+                    <Grid Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*">
                         <Rectangle Width="15"
                                    Margin="0,0,3,0"
                                    Height="2"
@@ -325,7 +301,7 @@
                                    Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                     </Grid>
 
-                    <StackPanel Grid.Row="2">
+                    <StackPanel Grid.Row="1">
                         <TextBlock Text="{Binding Name}"
                                    Classes="Headline6"
                                    TextWrapping="Wrap" />
@@ -355,10 +331,18 @@
                             </Button>
                         </StackPanel>
 
-                        <Grid ColumnDefinitions="*,*,*">
-                            <Button
-                                Command="{Binding $parent[interfaces:ICompleteSubToDoItemCommand].CompleteSubToDoItemCommand}"
-                                CommandParameter="{Binding}">
+                        <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto">
+                            <Button CommandParameter="{Binding}"
+                                    Command="{Binding $parent[interfaces:IToDoItemView].ChangeOrderIndexCommand}">
+                                <StackPanel Orientation="Horizontal">
+                                    <avalonia:MaterialIcon Kind="ReorderHorizontal" />
+                                    <TextBlock Text="Reorder" />
+                                </StackPanel>
+                            </Button>
+
+                            <Button Grid.Row="1"
+                                    Command="{Binding $parent[interfaces:ICompleteSubToDoItemCommand].CompleteSubToDoItemCommand}"
+                                    CommandParameter="{Binding}">
                                 <StackPanel Orientation="Horizontal">
                                     <avalonia:MaterialIcon Kind="Check" />
                                     <TextBlock Text="Complete" />
@@ -385,7 +369,7 @@
                         </Grid>
                     </StackPanel>
 
-                    <Panel Grid.Row="2" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Right">
+                    <Panel Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Right">
                         <Button
                             Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].RemoveSubToDoItemFromPinnedCommand}"
                             CommandParameter="{Binding}"
@@ -400,15 +384,6 @@
                             <avalonia:MaterialIcon Kind="PinOutline" />
                         </Button>
                     </Panel>
-
-                    <Button Grid.Row="3" Command="{Binding $parent[interfaces:IToDoItemView].DownOrderIndexCommand}"
-                            CommandParameter="{Binding}"
-                            Grid.ColumnSpan="2"
-                            HorizontalAlignment="Right"
-                            Padding="16,4,16,4"
-                            Margin="0">
-                        <avalonia:MaterialIcon Kind="ArrowDown" />
-                    </Button>
                 </Grid>
             </controls:Card>
         </DataTemplate>
@@ -418,20 +393,11 @@
                            IsVisible="{Binding IsVisible}"
                            Margin="3">
                 <Grid ColumnDefinitions="*,Auto"
-                      RowDefinitions="Auto,Auto,*,Auto"
+                      RowDefinitions="Auto,*"
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Stretch"
                       Margin="5">
-                    <Button Command="{Binding $parent[interfaces:IToDoItemView].UpOrderIndexCommand}"
-                            CommandParameter="{Binding}"
-                            Grid.ColumnSpan="2"
-                            HorizontalAlignment="Right"
-                            Padding="16,4,16,4"
-                            Margin="0">
-                        <avalonia:MaterialIcon Kind="ArrowUp" />
-                    </Button>
-
-                    <Grid Grid.Row="1" Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*">
+                    <Grid Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*">
                         <Rectangle Width="15"
                                    Margin="0,0,3,0"
                                    Height="2"
@@ -443,7 +409,7 @@
                                    Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                     </Grid>
 
-                    <StackPanel Grid.Row="2">
+                    <StackPanel Grid.Row="1">
                         <TextBlock Text="{Binding Name}"
                                    Classes="Headline6"
                                    TextWrapping="Wrap" />
@@ -471,10 +437,18 @@
                             </WrapPanel>
                         </Button>
 
-                        <Grid ColumnDefinitions="*,*,*">
-                            <Button
-                                Command="{Binding $parent[interfaces:ICompleteSubToDoItemCommand].CompleteSubToDoItemCommand}"
-                                CommandParameter="{Binding}">
+                        <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto">
+                            <Button CommandParameter="{Binding}"
+                                    Command="{Binding $parent[interfaces:IToDoItemView].ChangeOrderIndexCommand}">
+                                <StackPanel Orientation="Horizontal">
+                                    <avalonia:MaterialIcon Kind="ReorderHorizontal" />
+                                    <TextBlock Text="Reorder" />
+                                </StackPanel>
+                            </Button>
+
+                            <Button Grid.Row="1"
+                                    Command="{Binding $parent[interfaces:ICompleteSubToDoItemCommand].CompleteSubToDoItemCommand}"
+                                    CommandParameter="{Binding}">
                                 <StackPanel Orientation="Horizontal">
                                     <avalonia:MaterialIcon Kind="Check" />
                                     <TextBlock Text="Complete" />
@@ -501,7 +475,7 @@
                         </Grid>
                     </StackPanel>
 
-                    <Panel Grid.Row="2" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Right">
+                    <Panel Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Right">
                         <Button
                             Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].RemoveSubToDoItemFromPinnedCommand}"
                             CommandParameter="{Binding}"
@@ -516,15 +490,6 @@
                             <avalonia:MaterialIcon Kind="PinOutline" />
                         </Button>
                     </Panel>
-
-                    <Button Grid.Row="3" Command="{Binding $parent[interfaces:IToDoItemView].DownOrderIndexCommand}"
-                            CommandParameter="{Binding}"
-                            Grid.ColumnSpan="2"
-                            HorizontalAlignment="Right"
-                            Padding="16,4,16,4"
-                            Margin="0">
-                        <avalonia:MaterialIcon Kind="ArrowDown" />
-                    </Button>
                 </Grid>
             </controls:Card>
         </DataTemplate>
@@ -534,19 +499,10 @@
                            IsVisible="{Binding IsVisible}"
                            Margin="3">
                 <Grid ColumnDefinitions="*,Auto"
-                      RowDefinitions="Auto,Auto,*,Auto"
+                      RowDefinitions="Auto,*"
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Stretch"
                       Margin="5">
-                    <Button Command="{Binding $parent[interfaces:IToDoItemView].UpOrderIndexCommand}"
-                            CommandParameter="{Binding}"
-                            Grid.ColumnSpan="2"
-                            HorizontalAlignment="Right"
-                            Padding="16,4,16,4"
-                            Margin="0">
-                        <avalonia:MaterialIcon Kind="ArrowUp" />
-                    </Button>
-
                     <Grid Grid.Row="1" Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*">
                         <Rectangle Width="15"
                                    Margin="0,0,3,0"
@@ -559,7 +515,7 @@
                                    Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                     </Grid>
 
-                    <StackPanel Grid.Row="2">
+                    <StackPanel Grid.Row="1">
                         <TextBlock Text="{Binding Name}"
                                    Classes="Headline6"
                                    TextWrapping="Wrap" />
@@ -589,10 +545,18 @@
                             </Button>
                         </StackPanel>
 
-                        <Grid ColumnDefinitions="*,*,*">
-                            <Button
-                                Command="{Binding $parent[interfaces:ICompleteSubToDoItemCommand].CompleteSubToDoItemCommand}"
-                                CommandParameter="{Binding}">
+                        <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto">
+                            <Button CommandParameter="{Binding}"
+                                    Command="{Binding $parent[interfaces:IToDoItemView].ChangeOrderIndexCommand}">
+                                <StackPanel Orientation="Horizontal">
+                                    <avalonia:MaterialIcon Kind="ReorderHorizontal" />
+                                    <TextBlock Text="Reorder" />
+                                </StackPanel>
+                            </Button>
+
+                            <Button Grid.Row="1"
+                                    Command="{Binding $parent[interfaces:ICompleteSubToDoItemCommand].CompleteSubToDoItemCommand}"
+                                    CommandParameter="{Binding}">
                                 <StackPanel Orientation="Horizontal">
                                     <avalonia:MaterialIcon Kind="Check" />
                                     <TextBlock Text="Complete" />
@@ -619,7 +583,7 @@
                         </Grid>
                     </StackPanel>
 
-                    <Panel Grid.Row="2" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Right">
+                    <Panel Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Right">
                         <Button
                             Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].RemoveSubToDoItemFromPinnedCommand}"
                             CommandParameter="{Binding}"
@@ -634,15 +598,6 @@
                             <avalonia:MaterialIcon Kind="PinOutline" />
                         </Button>
                     </Panel>
-
-                    <Button Grid.Row="3" Command="{Binding $parent[interfaces:IToDoItemView].DownOrderIndexCommand}"
-                            CommandParameter="{Binding}"
-                            Grid.ColumnSpan="2"
-                            HorizontalAlignment="Right"
-                            Padding="16,4,16,4"
-                            Margin="0">
-                        <avalonia:MaterialIcon Kind="ArrowDown" />
-                    </Button>
                 </Grid>
             </controls:Card>
         </DataTemplate>

@@ -85,7 +85,7 @@ public class GrpcToDoService : ToDoServiceBase
     {
         await toDoService.DeleteToDoItemAsync(mapper.Map<Guid>(request.Id));
 
-        return new DeleteToDoItemReply();
+        return new();
     }
 
     public override async Task<UpdateToDoItemTypeOfPeriodicityReply> UpdateToDoItemTypeOfPeriodicity(
@@ -98,7 +98,7 @@ public class GrpcToDoService : ToDoServiceBase
             (TypeOfPeriodicity)request.Type
         );
 
-        return new UpdateToDoItemTypeOfPeriodicityReply();
+        return new();
     }
 
     public override async Task<UpdateToDoItemDueDateReply> UpdateToDoItemDueDate(
@@ -109,7 +109,7 @@ public class GrpcToDoService : ToDoServiceBase
         var dueDate = mapper.Map<DateTimeOffset>(request.DueDate);
         await toDoService.UpdateToDoItemDueDateAsync(mapper.Map<Guid>(request.Id), dueDate);
 
-        return new UpdateToDoItemDueDateReply();
+        return new();
     }
 
     public override async Task<UpdateToDoItemCompleteStatusReply> UpdateToDoItemCompleteStatus(
@@ -119,7 +119,7 @@ public class GrpcToDoService : ToDoServiceBase
     {
         await toDoService.UpdateToDoItemCompleteStatusAsync(mapper.Map<Guid>(request.Id), request.IsCompleted);
 
-        return new UpdateToDoItemCompleteStatusReply();
+        return new();
     }
 
     public override async Task<UpdateToDoItemNameReply> UpdateToDoItemName(
@@ -129,7 +129,7 @@ public class GrpcToDoService : ToDoServiceBase
     {
         await toDoService.UpdateToDoItemNameAsync(mapper.Map<Guid>(request.Id), request.Name);
 
-        return new UpdateToDoItemNameReply();
+        return new();
     }
 
     public override async Task<UpdateToDoItemOrderIndexReply> UpdateToDoItemOrderIndex(
@@ -140,7 +140,7 @@ public class GrpcToDoService : ToDoServiceBase
         var options = mapper.Map<UpdateOrderIndexToDoItemOptions>(request);
         await toDoService.UpdateToDoItemOrderIndexAsync(options);
 
-        return new UpdateToDoItemOrderIndexReply();
+        return new();
     }
 
     public override async Task<UpdateToDoItemDescriptionReply> UpdateToDoItemDescription(
@@ -150,21 +150,21 @@ public class GrpcToDoService : ToDoServiceBase
     {
         await toDoService.UpdateToDoItemDescriptionAsync(mapper.Map<Guid>(request.Id), request.Description);
 
-        return new UpdateToDoItemDescriptionReply();
+        return new();
     }
 
     public override async Task<SkipToDoItemReply> SkipToDoItem(SkipToDoItemRequest request, ServerCallContext context)
     {
         await toDoService.SkipToDoItemAsync(mapper.Map<Guid>(request.Id));
 
-        return new SkipToDoItemReply();
+        return new();
     }
 
     public override async Task<FailToDoItemReply> FailToDoItem(FailToDoItemRequest request, ServerCallContext context)
     {
         await toDoService.FailToDoItemAsync(mapper.Map<Guid>(request.Id));
 
-        return new FailToDoItemReply();
+        return new();
     }
 
     public override async Task<SearchToDoSubItemsReply> SearchToDoSubItems(
@@ -186,7 +186,7 @@ public class GrpcToDoService : ToDoServiceBase
     {
         await toDoService.UpdateToDoItemTypeAsync(mapper.Map<Guid>(request.Id), (ToDoItemType)request.Type);
 
-        return new UpdateToDoItemTypeReply();
+        return new();
     }
 
     public override async Task<AddPinnedToDoItemReply> AddPinnedToDoItem(
@@ -196,7 +196,7 @@ public class GrpcToDoService : ToDoServiceBase
     {
         await toDoService.AddPinnedToDoItemAsync(mapper.Map<Guid>(request.Id));
 
-        return new AddPinnedToDoItemReply();
+        return new();
     }
 
     public override async Task<RemovePinnedToDoItemReply> RemovePinnedToDoItem(
@@ -206,7 +206,7 @@ public class GrpcToDoService : ToDoServiceBase
     {
         await toDoService.RemovePinnedToDoItemAsync(mapper.Map<Guid>(request.Id));
 
-        return new RemovePinnedToDoItemReply();
+        return new();
     }
 
     public override async Task<GetPinnedToDoItemsReply> GetPinnedToDoItems(
@@ -231,7 +231,7 @@ public class GrpcToDoService : ToDoServiceBase
             mapper.Map<AnnuallyPeriodicity>(request.Periodicity)
         );
 
-        return new UpdateToDoItemAnnuallyPeriodicityReply();
+        return new();
     }
 
     public override async Task<UpdateToDoItemMonthlyPeriodicityReply> UpdateToDoItemMonthlyPeriodicity(
@@ -244,7 +244,7 @@ public class GrpcToDoService : ToDoServiceBase
             mapper.Map<MonthlyPeriodicity>(request.Periodicity)
         );
 
-        return new UpdateToDoItemMonthlyPeriodicityReply();
+        return new();
     }
 
     public override async Task<UpdateToDoItemWeeklyPeriodicityReply> UpdateToDoItemWeeklyPeriodicity(
@@ -257,7 +257,7 @@ public class GrpcToDoService : ToDoServiceBase
             mapper.Map<WeeklyPeriodicity>(request.Periodicity)
         );
 
-        return new UpdateToDoItemWeeklyPeriodicityReply();
+        return new();
     }
 
     public override async Task<GetLeafToDoSubItemsReply> GetLeafToDoSubItems(
@@ -291,7 +291,7 @@ public class GrpcToDoService : ToDoServiceBase
     {
         await toDoService.UpdateToDoItemParentAsync(mapper.Map<Guid>(request.Id), mapper.Map<Guid>(request.ParentId));
 
-        return new UpdateToDoItemParentReply();
+        return new();
     }
 
     public override async Task<ToDoItemToRootReply> ToDoItemToRoot(
@@ -301,7 +301,7 @@ public class GrpcToDoService : ToDoServiceBase
     {
         await toDoService.ToDoItemToRootAsync(mapper.Map<Guid>(request.Id));
 
-        return new ToDoItemToRootReply();
+        return new();
     }
 
     public override async Task<ToDoItemToStringReply> ToDoItemToString(
@@ -311,7 +311,7 @@ public class GrpcToDoService : ToDoServiceBase
     {
         var value = await toDoService.ToDoItemToStringAsync(mapper.Map<ToDoItemToStringOptions>(request));
 
-        return new ToDoItemToStringReply
+        return new()
         {
             Value = value,
         };
@@ -324,7 +324,7 @@ public class GrpcToDoService : ToDoServiceBase
     {
         await toDoService.UpdateToDoItemDaysOffsetAsync(mapper.Map<Guid>(request.Id), (ushort)request.Days);
 
-        return new UpdateToDoItemDaysOffsetReply();
+        return new();
     }
 
     public override async Task<UpdateToDoItemMonthsOffsetReply> UpdateToDoItemMonthsOffset(
@@ -334,7 +334,7 @@ public class GrpcToDoService : ToDoServiceBase
     {
         await toDoService.UpdateToDoItemMonthsOffsetAsync(mapper.Map<Guid>(request.Id), (ushort)request.Months);
 
-        return new UpdateToDoItemMonthsOffsetReply();
+        return new();
     }
 
     public override async Task<UpdateToDoItemWeeksOffsetReply> UpdateToDoItemWeeksOffset(
@@ -344,7 +344,7 @@ public class GrpcToDoService : ToDoServiceBase
     {
         await toDoService.UpdateToDoItemWeeksOffsetAsync(mapper.Map<Guid>(request.Id), (ushort)request.Weeks);
 
-        return new UpdateToDoItemWeeksOffsetReply();
+        return new();
     }
 
     public override async Task<UpdateToDoItemYearsOffsetReply> UpdateToDoItemYearsOffset(
@@ -354,7 +354,7 @@ public class GrpcToDoService : ToDoServiceBase
     {
         await toDoService.UpdateToDoItemYearsOffsetAsync(mapper.Map<Guid>(request.Id), (ushort)request.Years);
 
-        return new UpdateToDoItemYearsOffsetReply();
+        return new();
     }
 
     public override async Task<UpdateToDoItemChildrenTypeReply> UpdateToDoItemChildrenType(
@@ -367,7 +367,7 @@ public class GrpcToDoService : ToDoServiceBase
             (ToDoItemChildrenType)request.Type
         );
 
-        return new UpdateToDoItemChildrenTypeReply();
+        return new();
     }
 
     public override async Task<GetSiblingsReply> GetSiblings(GetSiblingsRequest request, ServerCallContext context)

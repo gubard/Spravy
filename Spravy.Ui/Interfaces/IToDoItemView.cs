@@ -7,6 +7,5 @@ public interface IToDoItemView
     ICommand DeleteSubToDoItemCommand { get; }
     ICommand ChangeToDoItemCommand { get; }
     ICommand ChangeToActiveDoItemCommand { get; }
-    ICommand UpOrderIndexCommand { get; }
-    ICommand DownOrderIndexCommand { get; }
+    ICommand ChangeOrderIndexCommand { get; }
 }
