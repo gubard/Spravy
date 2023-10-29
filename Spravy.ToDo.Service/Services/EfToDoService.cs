@@ -363,8 +363,7 @@ public class EfToDoService : IToDoService
             if(child.OrderIndex == nextOrderIndex)
             {
                 child.IsCompleted = false;
-                child.Type = ToDoItemType.Planned;
-                child.DueDate = item.DueDate;
+                child.Type = ToDoItemType.Value;
             }
             else
             {
@@ -394,8 +393,7 @@ public class EfToDoService : IToDoService
             if(child.OrderIndex == nextOrderIndex)
             {
                 child.IsCompleted = false;
-                child.Type = ToDoItemType.Planned;
-                child.DueDate = item.DueDate;
+                child.Type = ToDoItemType.Value;
             }
             else
             {
