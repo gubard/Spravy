@@ -19,9 +19,10 @@
             <TextBlock Text="After" Classes="center" />
         </StackPanel>
 
-        <ListBox Grid.Row="1"
-                 ItemsSource="{Binding Items}"
-                 SelectionMode="Single"
-                 SelectedItem="{Binding SelectedItem}" />
+        <ScrollViewer Grid.Row="1">
+            <ListBox ItemsSource="{Binding Items}"
+                     SelectionMode="Single"
+                     SelectedItem="{Binding SelectedItem}" />
+        </ScrollViewer>
     </Grid>
 </reactiveUi:ReactiveUserControl>

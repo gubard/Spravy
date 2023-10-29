@@ -24,6 +24,8 @@
             <avalonia:MaterialIcon Kind="Menu" />
         </Button>
 
-        <ListBox Grid.Row="1" ItemsSource="{Binding Timers}" SelectionMode="Single" />
+        <ScrollViewer Grid.Row="1">
+            <ListBox ItemsSource="{Binding Timers}" SelectionMode="Single" />
+        </ScrollViewer>
     </Grid>
 </reactiveUi:ReactiveUserControl>
