@@ -55,21 +55,21 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
         AddTimerCommand = CreateCommand(AddTimer);
 
         this.WhenAnyValue(x => x.IsFavorite)
-            .Subscribe(
-                x =>
-                {
-                    if (x)
-                    {
-                        toFavoriteCommand.Command = RemoveToDoItemFromFavoriteCommand;
-                        toFavoriteCommand.Icon = MaterialIconKind.Star;
-                    }
-                    else
-                    {
-                        toFavoriteCommand.Command = AddToDoItemToFavoriteCommand;
-                        toFavoriteCommand.Icon = MaterialIconKind.StarOutline;
-                    }
-                }
-            );
+         .Subscribe(
+                 x =>
+                 {
+                     if(x)
+                     {
+                         toFavoriteCommand.Command = RemoveToDoItemFromFavoriteCommand;
+                         toFavoriteCommand.Icon = MaterialIconKind.Star;
+                     }
+                     else
+                     {
+                         toFavoriteCommand.Command = AddToDoItemToFavoriteCommand;
+                         toFavoriteCommand.Icon = MaterialIconKind.StarOutline;
+                     }
+                 }
+             );
 
         Commands.Add(toFavoriteCommand);
         Commands.Add(new(MaterialIconKind.Plus, AddToDoItemCommand));
@@ -220,7 +220,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
                 viewModel.IgnoreIds.Add(Id);
                 var parents = Path.Items.OfType<ToDoItemParentNotify>().ToArray();
 
-                if (parents.Length == 1)
+                if(parents.Length == 1)
                 {
                     return;
                 }
@@ -287,7 +287,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
             {
                 var viewModel = view.ViewModel.ThrowIfNull();
                 var parentValue = viewModel.Parent.ThrowIfNull();
-                var options = new AddToDoItemOptions(parentValue.Id, viewModel.Name);
+                var options = new AddToDoItemOptions(parentValue.Id, viewModel.Name, viewModel.Type);
                 await ToDoService.AddToDoItemAsync(options);
                 await ToDoService.NavigateToToDoItemViewModel(parentValue.Id, Navigator);
                 await DialogViewer.CloseContentDialogAsync();

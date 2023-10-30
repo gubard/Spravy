@@ -6,6 +6,7 @@
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                 xmlns:views="clr-namespace:Spravy.Ui.Views"
+                                xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.AddRootToDoItemView"
                                 x:DataType="viewModels:AddRootToDoItemViewModel">
@@ -13,8 +14,14 @@
         <viewModels:AddRootToDoItemViewModel />
     </Design.DataContext>
 
-    <TextBox Text="{Binding Name}"
-             Watermark="Name"
-             Name="{x:Static views:AddRootToDoItemView.NameTextBoxName}"
-             VerticalAlignment="Top" />
+    <StackPanel>
+        <TextBox Text="{Binding Name}"
+                 Watermark="Name"
+                 Name="{x:Static views:AddRootToDoItemView.NameTextBoxName}"
+                 VerticalAlignment="Top" />
+        <ComboBox Theme="{StaticResource MaterialOutlineComboBox}"
+                  assists:ComboBoxAssist.Label="Type"
+                  SelectedItem="{Binding Type}"
+                  ItemsSource="{Binding ToDoItemTypes}" />
+    </StackPanel>
 </reactiveUi:ReactiveUserControl>

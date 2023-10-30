@@ -247,6 +247,7 @@ message DeleteToDoItemReply {
 message AddToDoItemRequest {
   bytes ParentId = 1;
   string Name = 2;
+  ToDoItemTypeGrpc Type = 3;
 }
 
 message AddToDoItemReply {
@@ -255,6 +256,7 @@ message AddToDoItemReply {
 
 message AddRootToDoItemRequest {
   string Name = 1;
+  ToDoItemTypeGrpc Type = 2;
 }
 
 message AddRootToDoItemReply {

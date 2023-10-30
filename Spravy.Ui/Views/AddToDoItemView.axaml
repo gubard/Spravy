@@ -6,6 +6,7 @@
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                 xmlns:models="clr-namespace:Spravy.Ui.Models"
                                 xmlns:views="clr-namespace:Spravy.Ui.Views"
+                                xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.AddToDoItemView"
                                 x:DataType="viewModels:AddToDoItemViewModel">
@@ -19,7 +20,7 @@
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 
-    <Grid RowDefinitions="Auto,*">
+    <StackPanel>
         <ContentControl Content="{Binding Path}">
             <ContentControl.DataTemplates>
                 <DataTemplate DataType="models:ToDoItemParentNotify">
@@ -32,11 +33,14 @@
             </ContentControl.DataTemplates>
         </ContentControl>
 
-        <TextBox Grid.Row="1"
-                 Text="{Binding Name}"
+        <TextBox Text="{Binding Name}"
                  Watermark="Name"
                  Name="{x:Static views:AddToDoItemView.NameTextBoxName}"
                  UseFloatingWatermark="True"
                  VerticalAlignment="Top" />
-    </Grid>
+        <ComboBox Theme="{StaticResource MaterialOutlineComboBox}"
+                  assists:ComboBoxAssist.Label="Type"
+                  SelectedItem="{Binding Type}"
+                  ItemsSource="{Binding ToDoItemTypes}" />
+    </StackPanel>
 </reactiveUi:ReactiveUserControl>
