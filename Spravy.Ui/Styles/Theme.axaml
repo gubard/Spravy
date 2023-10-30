@@ -7,8 +7,6 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <MergeResourceInclude Source="NullableDatePicker.axaml" />
-                <MergeResourceInclude Source="Colors.axaml" />
-                <MergeResourceInclude Source="Brushes.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Styles.Resources>
