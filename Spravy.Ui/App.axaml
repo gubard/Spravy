@@ -49,9 +49,9 @@
     </Application.Styles>
 
     <Application.DataTemplates>
-        <DataTemplate x:DataType="models:TimerItemToDoItemPinnedNotify">
+        <DataTemplate x:DataType="models:TimerItemToDoItemFavoriteNotify">
             <StackPanel>
-                <CheckBox IsChecked="{Binding IsPinned}" />
+                <CheckBox IsChecked="{Binding IsFavorite}" />
                 <TextBlock Text="{Binding DueDateTime, StringFormat=\{0:yyyy.MM.dd HH:mm zzz\}}" />
             </StackPanel>
         </DataTemplate>
@@ -177,17 +177,17 @@
                            VerticalAlignment="Top"
                            HorizontalAlignment="Right">
                         <Button
-                            Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].RemoveSubToDoItemFromPinnedCommand}"
+                            Command="{Binding $parent[interfaces:IChangeFavoriteToDoItemCommand].RemoveSubToDoItemFromFavoriteCommand}"
                             CommandParameter="{Binding}"
-                            IsVisible="{Binding IsPinned}">
-                            <avalonia:MaterialIcon Kind="Pin" />
+                            IsVisible="{Binding IsFavorite}">
+                            <avalonia:MaterialIcon Kind="Star" />
                         </Button>
 
                         <Button
-                            Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].AddSubToDoItemToPinnedCommand}"
+                            Command="{Binding $parent[interfaces:IChangeFavoriteToDoItemCommand].AddSubToDoItemToFavoriteCommand}"
                             CommandParameter="{Binding}"
-                            IsVisible="{Binding IsPinned, Converter={StaticResource ReverseBooleanValueConverter}}">
-                            <avalonia:MaterialIcon Kind="PinOutline" />
+                            IsVisible="{Binding IsFavorite, Converter={StaticResource ReverseBooleanValueConverter}}">
+                            <avalonia:MaterialIcon Kind="StarOutline" />
                         </Button>
                     </Panel>
                 </Grid>
@@ -263,17 +263,17 @@
                     <Panel Grid.Row="1" Grid.Column="1" VerticalAlignment="Top"
                            HorizontalAlignment="Right">
                         <Button
-                            Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].RemoveSubToDoItemFromPinnedCommand}"
+                            Command="{Binding $parent[interfaces:IChangeFavoriteToDoItemCommand].RemoveSubToDoItemFromFavoriteCommand}"
                             CommandParameter="{Binding}"
-                            IsVisible="{Binding IsPinned}">
-                            <avalonia:MaterialIcon Kind="Pin" />
+                            IsVisible="{Binding IsFavorite}">
+                            <avalonia:MaterialIcon Kind="Star" />
                         </Button>
 
                         <Button
-                            Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].AddSubToDoItemToPinnedCommand}"
+                            Command="{Binding $parent[interfaces:IChangeFavoriteToDoItemCommand].AddSubToDoItemToFavoriteCommand}"
                             CommandParameter="{Binding}"
-                            IsVisible="{Binding IsPinned, Converter={StaticResource ReverseBooleanValueConverter}}">
-                            <avalonia:MaterialIcon Kind="PinOutline" />
+                            IsVisible="{Binding IsFavorite, Converter={StaticResource ReverseBooleanValueConverter}}">
+                            <avalonia:MaterialIcon Kind="StarOutline" />
                         </Button>
                     </Panel>
                 </Grid>
@@ -371,17 +371,17 @@
 
                     <Panel Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Right">
                         <Button
-                            Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].RemoveSubToDoItemFromPinnedCommand}"
+                            Command="{Binding $parent[interfaces:IChangeFavoriteToDoItemCommand].RemoveSubToDoItemFromFavoriteCommand}"
                             CommandParameter="{Binding}"
-                            IsVisible="{Binding IsPinned}">
-                            <avalonia:MaterialIcon Kind="Pin" />
+                            IsVisible="{Binding IsFavorite}">
+                            <avalonia:MaterialIcon Kind="Star" />
                         </Button>
 
                         <Button
-                            Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].AddSubToDoItemToPinnedCommand}"
+                            Command="{Binding $parent[interfaces:IChangeFavoriteToDoItemCommand].AddSubToDoItemToFavoriteCommand}"
                             CommandParameter="{Binding}"
-                            IsVisible="{Binding IsPinned, Converter={StaticResource ReverseBooleanValueConverter}}">
-                            <avalonia:MaterialIcon Kind="PinOutline" />
+                            IsVisible="{Binding IsFavorite, Converter={StaticResource ReverseBooleanValueConverter}}">
+                            <avalonia:MaterialIcon Kind="StarOutline" />
                         </Button>
                     </Panel>
                 </Grid>
@@ -477,17 +477,17 @@
 
                     <Panel Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Right">
                         <Button
-                            Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].RemoveSubToDoItemFromPinnedCommand}"
+                            Command="{Binding $parent[interfaces:IChangeFavoriteToDoItemCommand].RemoveSubToDoItemFromFavoriteCommand}"
                             CommandParameter="{Binding}"
-                            IsVisible="{Binding IsPinned}">
-                            <avalonia:MaterialIcon Kind="Pin" />
+                            IsVisible="{Binding IsFavorite}">
+                            <avalonia:MaterialIcon Kind="Star" />
                         </Button>
 
                         <Button
-                            Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].AddSubToDoItemToPinnedCommand}"
+                            Command="{Binding $parent[interfaces:IChangeFavoriteToDoItemCommand].AddSubToDoItemToFavoriteCommand}"
                             CommandParameter="{Binding}"
-                            IsVisible="{Binding IsPinned, Converter={StaticResource ReverseBooleanValueConverter}}">
-                            <avalonia:MaterialIcon Kind="PinOutline" />
+                            IsVisible="{Binding IsFavorite, Converter={StaticResource ReverseBooleanValueConverter}}">
+                            <avalonia:MaterialIcon Kind="StarOutline" />
                         </Button>
                     </Panel>
                 </Grid>
@@ -585,17 +585,17 @@
 
                     <Panel Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Right">
                         <Button
-                            Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].RemoveSubToDoItemFromPinnedCommand}"
+                            Command="{Binding $parent[interfaces:IChangeFavoriteToDoItemCommand].RemoveSubToDoItemFromFavoriteCommand}"
                             CommandParameter="{Binding}"
-                            IsVisible="{Binding IsPinned}">
-                            <avalonia:MaterialIcon Kind="Pin" />
+                            IsVisible="{Binding IsFavorite}">
+                            <avalonia:MaterialIcon Kind="Star" />
                         </Button>
 
                         <Button
-                            Command="{Binding $parent[interfaces:IChangePinnedToDoItemCommand].AddSubToDoItemToPinnedCommand}"
+                            Command="{Binding $parent[interfaces:IChangeFavoriteToDoItemCommand].AddSubToDoItemToFavoriteCommand}"
                             CommandParameter="{Binding}"
-                            IsVisible="{Binding IsPinned, Converter={StaticResource ReverseBooleanValueConverter}}">
-                            <avalonia:MaterialIcon Kind="PinOutline" />
+                            IsVisible="{Binding IsFavorite, Converter={StaticResource ReverseBooleanValueConverter}}">
+                            <avalonia:MaterialIcon Kind="StarOutline" />
                         </Button>
                     </Panel>
                 </Grid>

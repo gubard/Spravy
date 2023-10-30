@@ -11,7 +11,7 @@ public readonly struct ToDoSubItemPlanned : IToDoSubItem
         uint orderIndex,
         ToDoItemStatus status,
         string description,
-        bool isPinned,
+        bool isFavorite,
         ActiveToDoItem? active,
         DateTimeOffset dueDate,
         uint completedCount,
@@ -26,7 +26,7 @@ public readonly struct ToDoSubItemPlanned : IToDoSubItem
         OrderIndex = orderIndex;
         Status = status;
         Description = description;
-        IsPinned = isPinned;
+        IsFavorite = isFavorite;
         Active = active;
         DueDate = dueDate;
         CompletedCount = completedCount;
@@ -41,7 +41,7 @@ public readonly struct ToDoSubItemPlanned : IToDoSubItem
     public uint OrderIndex { get; }
     public ToDoItemStatus Status { get; }
     public string Description { get; }
-    public bool IsPinned { get; }
+    public bool IsFavorite { get; }
     public ActiveToDoItem? Active { get; }
     public DateTimeOffset? LastCompleted { get; }
     public DateTimeOffset DueDate { get; }

@@ -11,7 +11,7 @@ public readonly struct ToDoItemPeriodicityOffset : IToDoItem
         string description,
         IToDoSubItem[] items,
         ToDoItemParent[] parents,
-        bool isPinned,
+        bool isFavorite,
         ushort daysOffset,
         ushort monthsOffset,
         ushort weeksOffset,
@@ -25,7 +25,7 @@ public readonly struct ToDoItemPeriodicityOffset : IToDoItem
         Description = description;
         Items = items;
         Parents = parents;
-        IsPinned = isPinned;
+        IsFavorite = isFavorite;
         DaysOffset = daysOffset;
         MonthsOffset = monthsOffset;
         WeeksOffset = weeksOffset;
@@ -40,7 +40,7 @@ public readonly struct ToDoItemPeriodicityOffset : IToDoItem
     public IToDoSubItem[] Items { get; }
     public ToDoItemParent[] Parents { get; }
     public DateTimeOffset DueDate { get; }
-    public bool IsPinned { get; }
+    public bool IsFavorite { get; }
     public ToDoItemChildrenType ChildrenType { get; }
     public ushort DaysOffset { get; }
     public ushort MonthsOffset { get; }

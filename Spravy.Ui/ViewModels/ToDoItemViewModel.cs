@@ -30,15 +30,15 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
 
     protected readonly List<IDisposable> PropertySubscribes = new();
     private ToDoItemType type;
-    private bool isPinned;
+    private bool isFavorite;
     protected readonly List<ToDoItemCommand> Commands = new();
 
     public ToDoItemViewModel(string? urlPathSegment) : base(urlPathSegment)
     {
-        RemoveToDoItemFromPinnedCommand =
-            CreateCommandFromTaskWithDialogProgressIndicator(RemoveToDoItemFromPinnedAsync);
+        RemoveToDoItemFromFavoriteCommand =
+            CreateCommandFromTaskWithDialogProgressIndicator(RemoveToDoItemFromFavoriteAsync);
 
-        var toPinnedCommand = new ToDoItemCommand(MaterialIconKind.Pin, RemoveToDoItemFromPinnedCommand);
+        var toFavoriteCommand = new ToDoItemCommand(MaterialIconKind.Star, RemoveToDoItemFromFavoriteCommand);
         ChangeDescriptionCommand = CreateCommandFromTask(ChangeDescriptionAsync);
         AddToDoItemCommand = CreateCommandFromTask(AddToDoItemAsync);
         ChangeToDoItemByPathCommand = CreateCommandFromTask<ToDoItemParentNotify>(ChangeToDoItemByPathAsync);
@@ -46,7 +46,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
         TypeOfPeriodicities = new(Enum.GetValues<TypeOfPeriodicity>());
         ToDoItemTypes = new(Enum.GetValues<ToDoItemType>());
         ChildrenTypes = new(Enum.GetValues<ToDoItemChildrenType>());
-        AddToDoItemToPinnedCommand = CreateCommandFromTaskWithDialogProgressIndicator(AddToDoItemToCurrentAsync);
+        AddToDoItemToFavoriteCommand = CreateCommandFromTaskWithDialogProgressIndicator(AddToDoItemToCurrentAsync);
         ToLeafToDoItemsCommand = CreateCommand(ToLeafToDoItems);
         ChangeRootItemCommand = CreateCommandFromTask(ChangeRootItemAsync);
         ToDoItemToRootCommand = CreateCommandFromTask(ToDoItemToRootAsync);
@@ -54,24 +54,24 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
         ToDoItemToStringCommand = CreateCommandFromTask(ToDoItemToStringAsync);
         AddTimerCommand = CreateCommand(AddTimer);
 
-        this.WhenAnyValue(x => x.IsPinned)
+        this.WhenAnyValue(x => x.IsFavorite)
             .Subscribe(
                 x =>
                 {
                     if (x)
                     {
-                        toPinnedCommand.Command = RemoveToDoItemFromPinnedCommand;
-                        toPinnedCommand.Icon = MaterialIconKind.Pin;
+                        toFavoriteCommand.Command = RemoveToDoItemFromFavoriteCommand;
+                        toFavoriteCommand.Icon = MaterialIconKind.Star;
                     }
                     else
                     {
-                        toPinnedCommand.Command = AddToDoItemToPinnedCommand;
-                        toPinnedCommand.Icon = MaterialIconKind.PinOutline;
+                        toFavoriteCommand.Command = AddToDoItemToFavoriteCommand;
+                        toFavoriteCommand.Icon = MaterialIconKind.StarOutline;
                     }
                 }
             );
 
-        Commands.Add(toPinnedCommand);
+        Commands.Add(toFavoriteCommand);
         Commands.Add(new(MaterialIconKind.Plus, AddToDoItemCommand));
         Commands.Add(new(MaterialIconKind.Leaf, ToLeafToDoItemsCommand));
         Commands.Add(new(MaterialIconKind.SwapHorizontal, ChangeRootItemCommand));
@@ -84,8 +84,8 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
     public AvaloniaList<ToDoItemType> ToDoItemTypes { get; }
     public AvaloniaList<ToDoItemChildrenType> ChildrenTypes { get; }
     public ICommand ChangeDescriptionCommand { get; }
-    public ICommand AddToDoItemToPinnedCommand { get; }
-    public ICommand RemoveToDoItemFromPinnedCommand { get; }
+    public ICommand AddToDoItemToFavoriteCommand { get; }
+    public ICommand RemoveToDoItemFromFavoriteCommand { get; }
     public ICommand AddToDoItemCommand { get; }
     public ICommand ChangeToDoItemByPathCommand { get; }
     public ICommand ToRootItemCommand { get; }
@@ -114,10 +114,10 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
     [Inject]
     public required IClipboard Clipboard { get; set; }
 
-    public bool IsPinned
+    public bool IsFavorite
     {
-        get => isPinned;
-        set => this.RaiseAndSetIfChanged(ref isPinned, value);
+        get => isFavorite;
+        set => this.RaiseAndSetIfChanged(ref isFavorite, value);
     }
 
     public ToDoItemType Type
@@ -151,7 +151,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
         Navigator.NavigateTo<AddTimerViewModel>(
             vm =>
             {
-                vm.EventId = EventIdHelper.ChangePinnedId;
+                vm.EventId = EventIdHelper.ChangeFavoriteId;
 
                 vm.Item = new()
                 {
@@ -235,15 +235,15 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
         Navigator.NavigateTo<LeafToDoItemsViewModel>(vm => vm.Id = Id);
     }
 
-    private async Task RemoveToDoItemFromPinnedAsync()
+    private async Task RemoveToDoItemFromFavoriteAsync()
     {
-        await ToDoService.RemovePinnedToDoItemAsync(Id);
+        await ToDoService.RemoveFavoriteToDoItemAsync(Id);
         await RefreshToDoItemAsync();
     }
 
     private async Task AddToDoItemToCurrentAsync()
     {
-        await ToDoService.AddPinnedToDoItemAsync(Id);
+        await ToDoService.AddFavoriteToDoItemAsync(Id);
         await RefreshToDoItemAsync();
     }
 

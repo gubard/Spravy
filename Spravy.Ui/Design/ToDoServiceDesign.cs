@@ -11,12 +11,12 @@ namespace Spravy.Ui.Design;
 public class ToDoServiceDesign : IToDoService
 {
     private readonly IEnumerable<IToDoSubItem> roots;
-    private readonly IEnumerable<IToDoSubItem> pinned;
+    private readonly IEnumerable<IToDoSubItem> favorite;
     
-    public ToDoServiceDesign(IEnumerable<IToDoSubItem> roots, IEnumerable<IToDoSubItem> pinned)
+    public ToDoServiceDesign(IEnumerable<IToDoSubItem> roots, IEnumerable<IToDoSubItem> favorite)
     {
         this.roots = roots;
-        this.pinned = pinned;
+        this.favorite = favorite;
     }
 
     public Task<IEnumerable<IToDoSubItem>> GetRootToDoSubItemsAsync()
@@ -94,19 +94,19 @@ public class ToDoServiceDesign : IToDoService
         throw new NotImplementedException();
     }
 
-    public Task AddPinnedToDoItemAsync(Guid id)
+    public Task AddFavoriteToDoItemAsync(Guid id)
     {
         throw new NotImplementedException();
     }
 
-    public Task RemovePinnedToDoItemAsync(Guid id)
+    public Task RemoveFavoriteToDoItemAsync(Guid id)
     {
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<IToDoSubItem>> GetPinnedToDoItemsAsync()
+    public Task<IEnumerable<IToDoSubItem>> GetFavoriteToDoItemsAsync()
     {
-        return pinned.ToTaskResult();
+        return favorite.ToTaskResult();
     }
 
     public Task UpdateToDoItemAnnuallyPeriodicityAsync(Guid id, AnnuallyPeriodicity periodicity)

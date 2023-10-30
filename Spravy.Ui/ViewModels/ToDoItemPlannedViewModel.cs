@@ -148,7 +148,7 @@ public class ToDoItemPlannedViewModel : ToDoItemViewModel, IRefreshToDoItem
 
                 return;
             case ToDoItemPlanned toDoItemPlanned:
-                IsPinned = item.IsPinned;
+                IsFavorite = item.IsFavorite;
                 Name = toDoItemPlanned.Name;
                 Type = ToDoItemType.Planned;
                 IsCompleted = toDoItemPlanned.IsCompleted;

@@ -11,7 +11,7 @@ public abstract class ToDoSubItemNotify : NotifyBase, IEquatable<ToDoSubItemNoti
     private ulong orderIndex;
     private ToDoItemStatus status;
     private string description = string.Empty;
-    private bool isPinned;
+    private bool isFavorite;
     private ActiveToDoItemNotify? active;
     private bool isVisible = true;
 
@@ -51,10 +51,10 @@ public abstract class ToDoSubItemNotify : NotifyBase, IEquatable<ToDoSubItemNoti
         set => this.RaiseAndSetIfChanged(ref description, value);
     }
 
-    public bool IsPinned
+    public bool IsFavorite
     {
-        get => isPinned;
-        set => this.RaiseAndSetIfChanged(ref isPinned, value);
+        get => isFavorite;
+        set => this.RaiseAndSetIfChanged(ref isFavorite, value);
     }
 
     public ActiveToDoItemNotify? Active

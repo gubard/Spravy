@@ -11,7 +11,7 @@ public class ToDoItemEntity
     public string Description { get; set; } = string.Empty;
     public DateTimeOffset CreatedDateTime { get; set; } = DateTimeOffset.Now;
     public ToDoItemType Type { get; set; }
-    public bool IsPinned { get; set; }
+    public bool IsFavorite { get; set; }
     public DateTimeOffset DueDate { get; set; } = DateTimeOffset.Now.ToCurrentDay();
     public bool IsCompleted { get; set; }
     public TypeOfPeriodicity TypeOfPeriodicity { get; set; }

@@ -34,18 +34,18 @@ public class SpravyUiProfile : Profile
         CreateMap<CreateUserViewModel, CreateUserOptions>();
         CreateMap<CreateUserViewModel, User>();
         CreateMap<LoginViewModel, User>();
-        CreateMap<TimerItem, TimerItemToDoItemPinnedNotify>()
+        CreateMap<TimerItem, TimerItemToDoItemFavoriteNotify>()
             .ConvertUsing(
                 (item, _, _) => new()
                 {
                     DueDateTime = item.DueDateTime,
                     Id = item.Id,
-                    IsPinned = ChangeToDoItemIsPinnedEvent.Parser.ParseFrom(item.Content).IsPinned
+                    IsFavorite = ChangeToDoItemIsFavoriteEvent.Parser.ParseFrom(item.Content).IsFavorite
                 }
             );
 
         CreateMap<TimerItem, TimerItemNotify>()
-            .ConvertUsing((item, _, context) => context.Mapper.Map<TimerItemToDoItemPinnedNotify>(item));
+            .ConvertUsing((item, _, context) => context.Mapper.Map<TimerItemToDoItemFavoriteNotify>(item));
         CreateMap<AddRootToDoItemViewModel, AddRootToDoItemOptions>()
             .ConstructUsing(x => new(x.Name));
         CreateMap<ToDoSubItemValueNotify, AddToDoItemOptions>()
@@ -55,14 +55,14 @@ public class SpravyUiProfile : Profile
             .ConvertUsing(
                 (source, _, context) =>
                 {
-                    var changeToDoItemIsPinnedEvent = new ChangeToDoItemIsPinnedEvent
+                    var changeToDoItemIsFavoriteEvent = new ChangeToDoItemIsFavoriteEvent
                     {
-                        IsPinned = source.IsPinned,
+                        IsFavorite = source.IsFavorite,
                         ToDoItemId = context.Mapper.Map<ByteString>(source.Item.ThrowIfNull().Id),
                     };
 
                     using var stream = new MemoryStream();
-                    changeToDoItemIsPinnedEvent.WriteTo(stream);
+                    changeToDoItemIsFavoriteEvent.WriteTo(stream);
 
                     return new(
                         source.DueDateTime,

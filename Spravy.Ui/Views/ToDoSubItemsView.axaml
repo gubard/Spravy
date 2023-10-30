@@ -74,12 +74,12 @@
     <Panel>
         <StackPanel>
             <Expander IsExpanded="True"
-                      IsVisible="{Binding PinnedToDoItems.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
+                      IsVisible="{Binding FavoriteToDoItems.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
                 <Expander.Header>
-                    Pinned
+                    Favorite
                 </Expander.Header>
 
-                <ItemsControl ItemsSource="{Binding PinnedToDoItems}" />
+                <ItemsControl ItemsSource="{Binding FavoriteToDoItems}" />
             </Expander>
             <Panel>
                 <UniformGrid Classes="adaptive" Rows="1">

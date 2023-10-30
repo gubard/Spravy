@@ -11,7 +11,7 @@ public readonly struct ToDoSubItemGroup : IToDoSubItem
         uint orderIndex,
         ToDoItemStatus status,
         string description,
-        bool isPinned,
+        bool isFavorite,
         ActiveToDoItem? active
     )
     {
@@ -20,7 +20,7 @@ public readonly struct ToDoSubItemGroup : IToDoSubItem
         OrderIndex = orderIndex;
         Status = status;
         Description = description;
-        IsPinned = isPinned;
+        IsFavorite = isFavorite;
         Active = active;
     }
 
@@ -29,6 +29,6 @@ public readonly struct ToDoSubItemGroup : IToDoSubItem
     public uint OrderIndex { get; }
     public ToDoItemStatus Status { get; }
     public string Description { get; }
-    public bool IsPinned { get; }
+    public bool IsFavorite { get; }
     public ActiveToDoItem? Active { get; }
 }

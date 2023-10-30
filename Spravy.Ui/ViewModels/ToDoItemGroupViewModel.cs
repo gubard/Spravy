@@ -30,7 +30,7 @@ public class ToDoItemGroupViewModel : ToDoItemViewModel, IRefreshToDoItem
                 Name = item.Name;
                 Description = item.Description;
                 Type = ToDoItemType.Group;
-                IsPinned = item.IsPinned;
+                IsFavorite = item.IsFavorite;
                 var source = item.Items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
                 await ToDoSubItemsViewModel.UpdateItemsAsync(source, this);
                 SubscribeItems(source);

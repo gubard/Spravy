@@ -9,7 +9,7 @@ namespace Spravy.Ui.Views;
 public partial class ToDoSubItemsView : MainReactiveUserControl<ToDoSubItemsViewModel>,
     IToDoItemView,
     ICompleteSubToDoItemCommand,
-    IChangePinnedToDoItemCommand
+    IChangeFavoriteToDoItemCommand
 {
     public ToDoSubItemsView()
     {
@@ -19,8 +19,8 @@ public partial class ToDoSubItemsView : MainReactiveUserControl<ToDoSubItemsView
     public ICommand CompleteSubToDoItemCommand => ViewModel.ThrowIfNull().CompleteSubToDoItemCommand;
     public ICommand DeleteSubToDoItemCommand => ViewModel.ThrowIfNull().DeleteSubToDoItemCommand;
     public ICommand ChangeToDoItemCommand => ViewModel.ThrowIfNull().ChangeToDoItemCommand;
-    public ICommand AddSubToDoItemToPinnedCommand => ViewModel.ThrowIfNull().AddSubToDoItemToPinnedCommand;
-    public ICommand RemoveSubToDoItemFromPinnedCommand => ViewModel.ThrowIfNull().RemoveSubToDoItemFromPinnedCommand;
+    public ICommand AddSubToDoItemToFavoriteCommand => ViewModel.ThrowIfNull().AddSubToDoItemToFavoriteCommand;
+    public ICommand RemoveSubToDoItemFromFavoriteCommand => ViewModel.ThrowIfNull().RemoveSubToDoItemFromFavoriteCommand;
     public ICommand ChangeToActiveDoItemCommand => ViewModel.ThrowIfNull().ChangeToActiveDoItemCommand;
     public ICommand ChangeOrderIndexCommand => ViewModel.ThrowIfNull().ChangeOrderIndexCommand;
 }

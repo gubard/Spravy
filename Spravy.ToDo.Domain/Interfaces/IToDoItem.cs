@@ -9,5 +9,5 @@ public interface IToDoItem
     string Description { get; }
     IToDoSubItem[] Items { get; }
     ToDoItemParent[] Parents { get; }
-    bool IsPinned { get; }
+    bool IsFavorite { get; }
 }

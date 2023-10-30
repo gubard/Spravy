@@ -118,7 +118,7 @@ public class ToDoItemValueViewModel : ToDoItemViewModel, IRefreshToDoItem
 
                 return;
             case ToDoItemValue toDoItemValue:
-                IsPinned = item.IsPinned;
+                IsFavorite = item.IsFavorite;
                 Name = toDoItemValue.Name;
                 Type = ToDoItemType.Value;
                 IsCompleted = toDoItemValue.IsCompleted;

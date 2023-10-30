@@ -125,7 +125,7 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
 
                 return;
             case ToDoItemPeriodicity toDoItemPeriodicity:
-                IsPinned = item.IsPinned;
+                IsFavorite = item.IsFavorite;
                 Name = item.Name;
                 Type = ToDoItemType.Periodicity;
                 Description = item.Description;

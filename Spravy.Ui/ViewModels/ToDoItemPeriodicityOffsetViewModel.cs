@@ -111,7 +111,7 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
                 return;
 
             case ToDoItemPeriodicityOffset toDoItemPeriodicityOffset:
-                IsPinned = toDoItemPeriodicityOffset.IsPinned;
+                IsFavorite = toDoItemPeriodicityOffset.IsFavorite;
                 Name = toDoItemPeriodicityOffset.Name;
                 Type = ToDoItemType.PeriodicityOffset;
                 Description = toDoItemPeriodicityOffset.Description;

@@ -19,7 +19,7 @@ namespace Spravy.Ui.ViewModels;
 public class AddTimerViewModel : RoutableViewModelBase
 {
     private DateTimeOffset dueDateTime = DateTimeOffset.Now.ToCurrentDay();
-    private bool isPinned;
+    private bool isFavorite;
     private ToDoItemNotify? item;
 
     public AddTimerViewModel() : base("add-timer")
@@ -96,10 +96,10 @@ public class AddTimerViewModel : RoutableViewModelBase
         set => this.RaiseAndSetIfChanged(ref dueDateTime, value);
     }
 
-    public bool IsPinned
+    public bool IsFavorite
     {
-        get => isPinned;
-        set => this.RaiseAndSetIfChanged(ref isPinned, value);
+        get => isFavorite;
+        set => this.RaiseAndSetIfChanged(ref isFavorite, value);
     }
 
     private void SwitchPane()
@@ -109,9 +109,9 @@ public class AddTimerViewModel : RoutableViewModelBase
 
     private async Task AddTimerAsync()
     {
-        var eventValue = new ChangeToDoItemIsPinnedEvent
+        var eventValue = new ChangeToDoItemIsFavoriteEvent
         {
-            IsPinned = IsPinned,
+            IsFavorite = IsFavorite,
             ToDoItemId = Mapper.Map<ByteString>(Item.ThrowIfNull().Id),
         };
 

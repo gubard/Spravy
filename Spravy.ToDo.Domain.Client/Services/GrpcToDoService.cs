@@ -269,12 +269,12 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public Task AddPinnedToDoItemAsync(Guid id)
+    public Task AddFavoriteToDoItemAsync(Guid id)
     {
         return CallClientAsync(
             async client =>
             {
-                await client.AddPinnedToDoItemAsync(
+                await client.AddFavoriteToDoItemAsync(
                     new()
                     {
                         Id = mapper.Map<ByteString>(id),
@@ -285,12 +285,12 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public Task RemovePinnedToDoItemAsync(Guid id)
+    public Task RemoveFavoriteToDoItemAsync(Guid id)
     {
         return CallClientAsync(
             async client =>
             {
-                await client.RemovePinnedToDoItemAsync(
+                await client.RemoveFavoriteToDoItemAsync(
                     new()
                     {
                         Id = mapper.Map<ByteString>(id),
@@ -301,12 +301,12 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public Task<IEnumerable<IToDoSubItem>> GetPinnedToDoItemsAsync()
+    public Task<IEnumerable<IToDoSubItem>> GetFavoriteToDoItemsAsync()
     {
         return CallClientAsync(
             async client =>
             {
-                var reply = await client.GetPinnedToDoItemsAsync(
+                var reply = await client.GetFavoriteToDoItemsAsync(
                     new(),
                     await metadataFactory.CreateAsync()
                 );

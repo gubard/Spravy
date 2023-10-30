@@ -29,9 +29,9 @@ message SubscribeEventsReply {
   bytes Content = 2;
 }
 
-message ChangeToDoItemIsPinnedEvent {
+message ChangeToDoItemIsFavoriteEvent {
   bytes ToDoItemId = 1;
-  bool IsPinned = 2;
+  bool IsFavorite = 2;
 }
 
 message Event {

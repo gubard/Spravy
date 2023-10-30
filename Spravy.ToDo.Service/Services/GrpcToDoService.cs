@@ -189,33 +189,33 @@ public class GrpcToDoService : ToDoServiceBase
         return new();
     }
 
-    public override async Task<AddPinnedToDoItemReply> AddPinnedToDoItem(
-        AddPinnedToDoItemRequest request,
+    public override async Task<AddFavoriteToDoItemReply> AddFavoriteToDoItem(
+        AddFavoriteToDoItemRequest request,
         ServerCallContext context
     )
     {
-        await toDoService.AddPinnedToDoItemAsync(mapper.Map<Guid>(request.Id));
+        await toDoService.AddFavoriteToDoItemAsync(mapper.Map<Guid>(request.Id));
 
         return new();
     }
 
-    public override async Task<RemovePinnedToDoItemReply> RemovePinnedToDoItem(
-        RemovePinnedToDoItemRequest request,
+    public override async Task<RemoveFavoriteToDoItemReply> RemoveFavoriteToDoItem(
+        RemoveFavoriteToDoItemRequest request,
         ServerCallContext context
     )
     {
-        await toDoService.RemovePinnedToDoItemAsync(mapper.Map<Guid>(request.Id));
+        await toDoService.RemoveFavoriteToDoItemAsync(mapper.Map<Guid>(request.Id));
 
         return new();
     }
 
-    public override async Task<GetPinnedToDoItemsReply> GetPinnedToDoItems(
-        GetPinnedToDoItemsRequest request,
+    public override async Task<GetFavoriteToDoItemsReply> GetFavoriteToDoItems(
+        GetFavoriteToDoItemsRequest request,
         ServerCallContext context
     )
     {
-        var reply = new GetPinnedToDoItemsReply();
-        var items = await toDoService.GetPinnedToDoItemsAsync();
+        var reply = new GetFavoriteToDoItemsReply();
+        var items = await toDoService.GetFavoriteToDoItemsAsync();
         reply.Items.AddRange(mapper.Map<IEnumerable<ToDoSubItemGrpc>>(items));
 
         return reply;

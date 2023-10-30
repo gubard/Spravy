@@ -25,7 +25,7 @@ public class EventBusHostedService : IHostedService
     {
         eventIds = new[]
         {
-            EventIdHelper.ChangePinnedId
+            EventIdHelper.ChangeFavoriteId
         };
     }
 
@@ -81,9 +81,9 @@ public class EventBusHostedService : IHostedService
 
                     await foreach (var eventValue in stream)
                     {
-                        if (eventValue.Id == EventIdHelper.ChangePinnedId)
+                        if (eventValue.Id == EventIdHelper.ChangeFavoriteId)
                         {
-                            await ChangePinnedAsync(file, eventValue);
+                            await ChangeFavoriteAsync(file, eventValue);
                         }
                     }
                 }
@@ -102,10 +102,10 @@ public class EventBusHostedService : IHostedService
         }
     }
 
-    private async Task ChangePinnedAsync(FileInfo file, EventValue eventValue)
+    private async Task ChangeFavoriteAsync(FileInfo file, EventValue eventValue)
     {
         await using var context = spravyToDoDbContext.Create(file.ToSqliteConnectionString());
-        var eventContent = ChangeToDoItemIsPinnedEvent.Parser.ParseFrom(eventValue.Content);
+        var eventContent = ChangeToDoItemIsFavoriteEvent.Parser.ParseFrom(eventValue.Content);
         var id = new Guid(eventContent.ToDoItemId.ToByteArray());
 
         await context.ExecuteSaveChangesTransactionAsync(
@@ -118,7 +118,7 @@ public class EventBusHostedService : IHostedService
                     return;
                 }
 
-                item.IsPinned = eventContent.IsPinned;
+                item.IsFavorite = eventContent.IsFavorite;
             }
         );
     }

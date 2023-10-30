@@ -10,6 +10,6 @@ public interface IToDoSubItem
     public uint OrderIndex { get; }
     public ToDoItemStatus Status { get; }
     public string Description { get; }
-    bool IsPinned { get; }
+    bool IsFavorite { get; }
     ActiveToDoItem? Active { get; }
 }

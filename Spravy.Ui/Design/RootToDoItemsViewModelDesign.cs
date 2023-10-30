@@ -219,7 +219,7 @@ public class RootToDoItemsViewModelDesign : RootToDoItemsViewModel
           {
               new ToDoSubItemGroup(
                   Guid.NewGuid(),
-                  "Pinned Group",
+                  "Favorite Group",
                   1,
                   ToDoItemStatus.Miss,
                   string.Empty,
@@ -232,7 +232,7 @@ public class RootToDoItemsViewModelDesign : RootToDoItemsViewModel
         ToDoService = toDoServiceDesign;
         Mapper = ConstDesign.Mapper;
 
-        ToDoSubItemsView = new ToDoSubItemsView
+        ToDoSubItemsView = new()
         {
             ViewModel = new ToDoSubItemsViewModelDesign
             {

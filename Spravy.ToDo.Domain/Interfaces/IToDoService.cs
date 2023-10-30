@@ -20,9 +20,9 @@ public interface IToDoService
     Task FailToDoItemAsync(Guid id);
     Task<IEnumerable<IToDoSubItem>> SearchToDoSubItemsAsync(string searchText);
     Task UpdateToDoItemTypeAsync(Guid id, ToDoItemType type);
-    Task AddPinnedToDoItemAsync(Guid id);
-    Task RemovePinnedToDoItemAsync(Guid id);
-    Task<IEnumerable<IToDoSubItem>> GetPinnedToDoItemsAsync();
+    Task AddFavoriteToDoItemAsync(Guid id);
+    Task RemoveFavoriteToDoItemAsync(Guid id);
+    Task<IEnumerable<IToDoSubItem>> GetFavoriteToDoItemsAsync();
     Task UpdateToDoItemAnnuallyPeriodicityAsync(Guid id, AnnuallyPeriodicity periodicity);
     Task UpdateToDoItemMonthlyPeriodicityAsync(Guid id, MonthlyPeriodicity periodicity);
     Task UpdateToDoItemWeeklyPeriodicityAsync(Guid id, WeeklyPeriodicity periodicity);

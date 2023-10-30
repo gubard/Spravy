@@ -19,7 +19,7 @@
             <avalonia:MaterialIcon Kind="Menu" />
         </Button>
 
-        <CheckBox Grid.Row="1" IsChecked="{Binding IsPinned}" Content="Completed" />
+        <CheckBox Grid.Row="1" IsChecked="{Binding IsFavorite}" Content="Completed" />
         <controls:ButtonTextBox Grid.Row="2"
                                 Text="{Binding Item.Name}"
                                 Label="Item"

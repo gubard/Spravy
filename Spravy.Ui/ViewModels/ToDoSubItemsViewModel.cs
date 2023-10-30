@@ -28,11 +28,11 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
         DeleteSubToDoItemCommand = CreateCommandFromTask<ToDoSubItemNotify>(DeleteSubToDoItemAsync);
         ChangeToDoItemCommand = CreateCommandFromTask<ToDoSubItemNotify>(ChangeToDoItemAsync);
 
-        AddSubToDoItemToPinnedCommand =
-            CreateCommandFromTaskWithDialogProgressIndicator<ToDoSubItemNotify>(AddPinnedToDoItemAsync);
+        AddSubToDoItemToFavoriteCommand =
+            CreateCommandFromTaskWithDialogProgressIndicator<ToDoSubItemNotify>(AddFavoriteToDoItemAsync);
 
-        RemoveSubToDoItemFromPinnedCommand =
-            CreateCommandFromTaskWithDialogProgressIndicator<ToDoSubItemNotify>(RemovePinnedToDoItemAsync);
+        RemoveSubToDoItemFromFavoriteCommand =
+            CreateCommandFromTaskWithDialogProgressIndicator<ToDoSubItemNotify>(RemoveFavoriteToDoItemAsync);
 
         ChangeToActiveDoItemCommand = CreateCommandFromTask<ActiveToDoItemNotify>(ChangeToActiveDoItemAsync);
         InitializedCommand = CreateCommandFromTaskWithDialogProgressIndicator(InitializedAsync);
@@ -44,17 +44,17 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
     public AvaloniaList<ToDoSubItemNotify> Planned { get; } = new();
     public AvaloniaList<ToDoSubItemNotify> ReadyForCompleted { get; } = new();
     public AvaloniaList<ToDoSubItemNotify> Completed { get; } = new();
-    public AvaloniaList<ToDoSubItemNotify> PinnedToDoItems { get; } = new();
+    public AvaloniaList<ToDoSubItemNotify> FavoriteToDoItems { get; } = new();
     public AvaloniaList<ToDoSubItemNotify> SelectedMissed { get; } = new();
     public AvaloniaList<ToDoSubItemNotify> SelectedPlanned { get; } = new();
     public AvaloniaList<ToDoSubItemNotify> SelectedReadyForCompleted { get; } = new();
     public AvaloniaList<ToDoSubItemNotify> SelectedCompleted { get; } = new();
-    public AvaloniaList<ToDoSubItemNotify> SelectedPinnedToDoItems { get; } = new();
+    public AvaloniaList<ToDoSubItemNotify> SelectedFavoriteToDoItems { get; } = new();
     public ICommand CompleteSubToDoItemCommand { get; }
     public ICommand DeleteSubToDoItemCommand { get; }
     public ICommand ChangeToDoItemCommand { get; }
-    public ICommand AddSubToDoItemToPinnedCommand { get; }
-    public ICommand RemoveSubToDoItemFromPinnedCommand { get; }
+    public ICommand AddSubToDoItemToFavoriteCommand { get; }
+    public ICommand RemoveSubToDoItemFromFavoriteCommand { get; }
     public ICommand ChangeToActiveDoItemCommand { get; }
     public ICommand InitializedCommand { get; }
     public ICommand CompleteSelectedToDoItemsCommand { get; }
@@ -100,7 +100,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                 {
                     await CompleteAsync(SelectedCompleted, status);
                     await CompleteAsync(SelectedMissed, status);
-                    await CompleteAsync(SelectedPinnedToDoItems, status);
+                    await CompleteAsync(SelectedFavoriteToDoItems, status);
                     await CompleteAsync(SelectedReadyForCompleted, status);
                     await CompleteAsync(SelectedPlanned, status);
                     await RefreshToDoItemAsync();
@@ -317,17 +317,17 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
         }
     }
 
-    private async Task RemovePinnedToDoItemAsync(ToDoSubItemNotify item)
+    private async Task RemoveFavoriteToDoItemAsync(ToDoSubItemNotify item)
     {
-        await ToDoService.RemovePinnedToDoItemAsync(item.Id);
+        await ToDoService.RemoveFavoriteToDoItemAsync(item.Id);
         await RefreshToDoItemAsync();
     }
 
     private async Task InitializedAsync()
     {
-        var pinnedToDoItems = await ToDoService.GetPinnedToDoItemsAsync();
-        PinnedToDoItems.Clear();
-        PinnedToDoItems.AddRange(Mapper.Map<IEnumerable<ToDoSubItemNotify>>(pinnedToDoItems));
+        var favoriteToDoItems = await ToDoService.GetFavoriteToDoItemsAsync();
+        FavoriteToDoItems.Clear();
+        FavoriteToDoItems.AddRange(Mapper.Map<IEnumerable<ToDoSubItemNotify>>(favoriteToDoItems));
     }
 
     private Task DeleteSubToDoItemAsync(ToDoSubItemNotify subItem)
@@ -349,9 +349,9 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
         return ToDoService.NavigateToToDoItemViewModel(subItemValue.Id, Navigator);
     }
 
-    private async Task AddPinnedToDoItemAsync(ToDoSubItemNotify item)
+    private async Task AddFavoriteToDoItemAsync(ToDoSubItemNotify item)
     {
-        await ToDoService.AddPinnedToDoItemAsync(item.Id);
+        await ToDoService.AddFavoriteToDoItemAsync(item.Id);
         await RefreshToDoItemAsync();
     }
 

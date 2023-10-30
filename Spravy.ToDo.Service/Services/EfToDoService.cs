@@ -904,7 +904,7 @@ public class EfToDoService : IToDoService
         );
     }
 
-    public async Task AddPinnedToDoItemAsync(Guid id)
+    public async Task AddFavoriteToDoItemAsync(Guid id)
     {
         await using var context = dbContextFactory.Create();
 
@@ -913,12 +913,12 @@ public class EfToDoService : IToDoService
             {
                 var item = await c.Set<ToDoItemEntity>().FindAsync(id);
                 item = item.ThrowIfNull();
-                item.IsPinned = true;
+                item.IsFavorite = true;
             }
         );
     }
 
-    public async Task RemovePinnedToDoItemAsync(Guid id)
+    public async Task RemoveFavoriteToDoItemAsync(Guid id)
     {
         await using var context = dbContextFactory.Create();
 
@@ -927,12 +927,12 @@ public class EfToDoService : IToDoService
             {
                 var item = await c.Set<ToDoItemEntity>().FindAsync(id);
                 item = item.ThrowIfNull();
-                item.IsPinned = false;
+                item.IsFavorite = false;
             }
         );
     }
 
-    public async Task<IEnumerable<IToDoSubItem>> GetPinnedToDoItemsAsync()
+    public async Task<IEnumerable<IToDoSubItem>> GetFavoriteToDoItemsAsync()
     {
         await using var context = dbContextFactory.Create();
 
@@ -941,7 +941,7 @@ public class EfToDoService : IToDoService
             {
                 var items = await c.Set<ToDoItemEntity>()
                                 .AsNoTracking()
-                                .Where(x => x.IsPinned)
+                                .Where(x => x.IsFavorite)
                                 .OrderBy(x => x.OrderIndex)
                                 .ToArrayAsync();
 

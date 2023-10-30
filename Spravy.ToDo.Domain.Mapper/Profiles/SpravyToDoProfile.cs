@@ -255,7 +255,7 @@ public class SpravyToDoProfile : Profile
                         Description = source.Description,
                         Id = resolutionContext.Mapper.Map<ByteString>(source.Id),
                         Name = source.Name,
-                        IsPinned = source.IsPinned,
+                        IsFavorite = source.IsFavorite,
                     };
 
                     result.Parents.AddRange(
@@ -307,7 +307,7 @@ public class SpravyToDoProfile : Profile
                         resolutionContext.Mapper.Map<ToDoItemParent[]>(source.Parents),
                         source.Value.IsCompleted,
                         source.Description,
-                        source.IsPinned,
+                        source.IsFavorite,
                         (ToDoItemChildrenType)source.Value.ChildrenType
                     ),
                     ToDoItemGrpc.ParametersOneofCase.Group => new ToDoItemGroup(
@@ -316,7 +316,7 @@ public class SpravyToDoProfile : Profile
                         source.Items.Select(x => resolutionContext.Mapper.Map<IToDoSubItem>(x)).ToArray(),
                         resolutionContext.Mapper.Map<ToDoItemParent[]>(source.Parents),
                         source.Description,
-                        source.IsPinned
+                        source.IsFavorite
                     ),
                     ToDoItemGrpc.ParametersOneofCase.Planned => new ToDoItemPlanned(
                         resolutionContext.Mapper.Map<Guid>(source.Id),
@@ -324,7 +324,7 @@ public class SpravyToDoProfile : Profile
                         source.Description,
                         resolutionContext.Mapper.Map<IToDoSubItem[]>(source.Items),
                         resolutionContext.Mapper.Map<ToDoItemParent[]>(source.Parents),
-                        source.IsPinned,
+                        source.IsFavorite,
                         resolutionContext.Mapper.Map<DateTimeOffset>(source.Planned.DueDate),
                         source.Planned.IsCompleted,
                         (ToDoItemChildrenType)source.Planned.ChildrenType
@@ -335,7 +335,7 @@ public class SpravyToDoProfile : Profile
                         source.Description,
                         resolutionContext.Mapper.Map<IToDoSubItem[]>(source.Items),
                         resolutionContext.Mapper.Map<ToDoItemParent[]>(source.Parents),
-                        source.IsPinned,
+                        source.IsFavorite,
                         resolutionContext.Mapper.Map<DateTimeOffset>(source.Periodicity.DueDate),
                         resolutionContext.Mapper.Map<IPeriodicity>(source.Periodicity),
                         (ToDoItemChildrenType)source.Periodicity.ChildrenType
@@ -346,7 +346,7 @@ public class SpravyToDoProfile : Profile
                         source.Description,
                         resolutionContext.Mapper.Map<IToDoSubItem[]>(source.Items),
                         resolutionContext.Mapper.Map<ToDoItemParent[]>(source.Parents),
-                        source.IsPinned,
+                        source.IsFavorite,
                         (ushort)source.PeriodicityOffset.DaysOffset,
                         (ushort)source.PeriodicityOffset.MonthsOffset,
                         (ushort)source.PeriodicityOffset.WeeksOffset,
@@ -370,7 +370,7 @@ public class SpravyToDoProfile : Profile
                         Id = resolutionContext.Mapper.Map<ByteString>(source.Id),
                         Name = source.Name,
                         OrderIndex = source.OrderIndex,
-                        IsPinned = source.IsPinned,
+                        IsFavorite = source.IsFavorite,
                         Active = resolutionContext.Mapper.Map<ActiveToDoItemGrpc>(source.Active),
                     };
 
@@ -421,7 +421,7 @@ public class SpravyToDoProfile : Profile
                         source.Value.CompletedCount,
                         source.Value.SkippedCount,
                         source.Value.FailedCount,
-                        source.IsPinned,
+                        source.IsFavorite,
                         resolutionContext.Mapper.Map<ActiveToDoItem?>(source.Active),
                         resolutionContext.Mapper.Map<DateTimeOffset?>(source.Value.LastCompleted)
                     ),
@@ -431,7 +431,7 @@ public class SpravyToDoProfile : Profile
                         source.OrderIndex,
                         (ToDoItemStatus)source.Status,
                         source.Description,
-                        source.IsPinned,
+                        source.IsFavorite,
                         resolutionContext.Mapper.Map<ActiveToDoItem?>(source.Active)
                     ),
                     ToDoSubItemGrpc.ParametersOneofCase.None => throw new ArgumentOutOfRangeException(),
@@ -441,7 +441,7 @@ public class SpravyToDoProfile : Profile
                         source.OrderIndex,
                         (ToDoItemStatus)source.Status,
                         source.Description,
-                        source.IsPinned,
+                        source.IsFavorite,
                         resolutionContext.Mapper.Map<ActiveToDoItem?>(source.Active),
                         resolutionContext.Mapper.Map<DateTimeOffset>(source.Planned.DueDate),
                         source.Planned.CompletedCount,
@@ -456,7 +456,7 @@ public class SpravyToDoProfile : Profile
                         source.OrderIndex,
                         (ToDoItemStatus)source.Status,
                         source.Description,
-                        source.IsPinned,
+                        source.IsFavorite,
                         resolutionContext.Mapper.Map<DateTimeOffset>(source.Periodicity.DueDate),
                         resolutionContext.Mapper.Map<ActiveToDoItem?>(source.Active),
                         source.Periodicity.CompletedCount,
@@ -470,7 +470,7 @@ public class SpravyToDoProfile : Profile
                         source.OrderIndex,
                         (ToDoItemStatus)source.Status,
                         source.Description,
-                        source.IsPinned,
+                        source.IsFavorite,
                         resolutionContext.Mapper.Map<DateTimeOffset>(source.PeriodicityOffset.DueDate),
                         resolutionContext.Mapper.Map<ActiveToDoItem?>(source.Active),
                         source.PeriodicityOffset.CompletedCount,

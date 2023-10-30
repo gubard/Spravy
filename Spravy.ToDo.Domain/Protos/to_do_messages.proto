@@ -136,25 +136,25 @@ message ActiveToDoItemGrpc {
   string Name = 2;
 }
 
-message GetPinnedToDoItemsRequest {
+message GetFavoriteToDoItemsRequest {
 }
 
-message GetPinnedToDoItemsReply {
+message GetFavoriteToDoItemsReply {
   repeated ToDoSubItemGrpc Items = 1;
 }
 
-message RemovePinnedToDoItemRequest {
+message RemoveFavoriteToDoItemRequest {
   bytes Id = 1;
 }
 
-message RemovePinnedToDoItemReply {
+message RemoveFavoriteToDoItemReply {
 }
 
-message AddPinnedToDoItemRequest {
+message AddFavoriteToDoItemRequest {
   bytes Id = 1;
 }
 
-message AddPinnedToDoItemReply {
+message AddFavoriteToDoItemReply {
 }
 
 message SearchToDoSubItemsRequest {
@@ -275,7 +275,7 @@ message ToDoItemGrpc {
   repeated ToDoSubItemGrpc Items = 3;
   repeated ToDoItemParentGrpc Parents = 4;
   string Description = 5;
-  bool IsPinned = 8;
+  bool IsFavorite = 8;
 
   oneof Parameters {
     ToDoItemValueGrpc Value = 6;
@@ -323,7 +323,7 @@ message ToDoSubItemGrpc {
   uint32 OrderIndex = 3;
   ToDoItemStatusGrpc Status = 4;
   string Description = 5;
-  bool IsPinned = 8;
+  bool IsFavorite = 8;
   ActiveToDoItemGrpc Active = 9;
 
   oneof Parameters {
