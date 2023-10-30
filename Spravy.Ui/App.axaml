@@ -142,7 +142,7 @@
                         </Button>
 
                         <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto">
-                            <Button CommandParameter="{Binding}"
+                            <Button Classes="with-text" CommandParameter="{Binding}"
                                     Command="{Binding $parent[interfaces:IToDoItemView].ChangeOrderIndexCommand}">
                                 <StackPanel Orientation="Horizontal">
                                     <avalonia:MaterialIcon Kind="ReorderHorizontal" />
@@ -150,7 +150,7 @@
                                 </StackPanel>
                             </Button>
 
-                            <Button Grid.Row="1" CommandParameter="{Binding}"
+                            <Button Classes="with-text" Grid.Row="1" CommandParameter="{Binding}"
                                     Command="{Binding $parent[interfaces:ICompleteSubToDoItemCommand].CompleteSubToDoItemCommand}">
                                 <StackPanel Orientation="Horizontal">
                                     <avalonia:MaterialIcon Kind="Check" />
@@ -158,7 +158,7 @@
                                 </StackPanel>
                             </Button>
 
-                            <Button Grid.Column="1"
+                            <Button Classes="with-text" Grid.Column="1"
                                     Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
                                     CommandParameter="{Binding}">
                                 <StackPanel Orientation="Horizontal">
@@ -167,7 +167,7 @@
                                 </StackPanel>
                             </Button>
 
-                            <Button Grid.Column="2"
+                            <Button Classes="with-text" Grid.Column="2"
                                     Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
                                     CommandParameter="{Binding}">
                                 <StackPanel Orientation="Horizontal">
@@ -244,7 +244,7 @@
                         </Button>
 
                         <Grid ColumnDefinitions="*,*,*">
-                            <Button CommandParameter="{Binding}"
+                            <Button Classes="with-text" CommandParameter="{Binding}"
                                     Command="{Binding $parent[interfaces:IToDoItemView].ChangeOrderIndexCommand}">
                                 <StackPanel Orientation="Horizontal">
                                     <avalonia:MaterialIcon Kind="ReorderHorizontal" />
@@ -253,6 +253,7 @@
                             </Button>
 
                             <Button Grid.Column="1"
+                                    Classes="with-text"
                                     Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
                                     CommandParameter="{Binding}">
                                 <StackPanel Orientation="Horizontal">
@@ -262,6 +263,7 @@
                             </Button>
 
                             <Button Grid.Column="2"
+                                    Classes="with-text"
                                     Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
                                     CommandParameter="{Binding}">
                                 <StackPanel Orientation="Horizontal">
@@ -350,7 +352,7 @@
                         </StackPanel>
 
                         <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto">
-                            <Button CommandParameter="{Binding}"
+                            <Button Classes="with-text" CommandParameter="{Binding}"
                                     Command="{Binding $parent[interfaces:IToDoItemView].ChangeOrderIndexCommand}">
                                 <StackPanel Orientation="Horizontal">
                                     <avalonia:MaterialIcon Kind="ReorderHorizontal" />
@@ -358,7 +360,7 @@
                                 </StackPanel>
                             </Button>
 
-                            <Button Grid.Row="1"
+                            <Button Classes="with-text" Grid.Row="1"
                                     Command="{Binding $parent[interfaces:ICompleteSubToDoItemCommand].CompleteSubToDoItemCommand}"
                                     CommandParameter="{Binding}">
                                 <StackPanel Orientation="Horizontal">
@@ -367,7 +369,7 @@
                                 </StackPanel>
                             </Button>
 
-                            <Button Grid.Column="1"
+                            <Button Classes="with-text" Grid.Column="1"
                                     Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
                                     CommandParameter="{Binding}">
                                 <StackPanel Orientation="Horizontal">
@@ -376,7 +378,7 @@
                                 </StackPanel>
                             </Button>
 
-                            <Button Grid.Column="2"
+                            <Button Classes="with-text" Grid.Column="2"
                                     Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
                                     CommandParameter="{Binding}">
                                 <StackPanel Orientation="Horizontal">
@@ -462,7 +464,7 @@
                         </Button>
 
                         <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto">
-                            <Button CommandParameter="{Binding}"
+                            <Button Classes="with-text" CommandParameter="{Binding}"
                                     Command="{Binding $parent[interfaces:IToDoItemView].ChangeOrderIndexCommand}">
                                 <StackPanel Orientation="Horizontal">
                                     <avalonia:MaterialIcon Kind="ReorderHorizontal" />
@@ -470,7 +472,7 @@
                                 </StackPanel>
                             </Button>
 
-                            <Button Grid.Row="1"
+                            <Button Classes="with-text" Grid.Row="1"
                                     Command="{Binding $parent[interfaces:ICompleteSubToDoItemCommand].CompleteSubToDoItemCommand}"
                                     CommandParameter="{Binding}">
                                 <StackPanel Orientation="Horizontal">
@@ -479,7 +481,7 @@
                                 </StackPanel>
                             </Button>
 
-                            <Button Grid.Column="1"
+                            <Button Classes="with-text" Grid.Column="1"
                                     Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
                                     CommandParameter="{Binding}">
                                 <StackPanel Orientation="Horizontal">
@@ -488,7 +490,7 @@
                                 </StackPanel>
                             </Button>
 
-                            <Button Grid.Column="2"
+                            <Button Classes="with-text" Grid.Column="2"
                                     Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
                                     CommandParameter="{Binding}">
                                 <StackPanel Orientation="Horizontal">
@@ -576,7 +578,7 @@
                         </StackPanel>
 
                         <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto">
-                            <Button CommandParameter="{Binding}"
+                            <Button Classes="with-text" CommandParameter="{Binding}"
                                     Command="{Binding $parent[interfaces:IToDoItemView].ChangeOrderIndexCommand}">
                                 <StackPanel Orientation="Horizontal">
                                     <avalonia:MaterialIcon Kind="ReorderHorizontal" />
@@ -584,7 +586,7 @@
                                 </StackPanel>
                             </Button>
 
-                            <Button Grid.Row="1"
+                            <Button Classes="with-text" Grid.Row="1"
                                     Command="{Binding $parent[interfaces:ICompleteSubToDoItemCommand].CompleteSubToDoItemCommand}"
                                     CommandParameter="{Binding}">
                                 <StackPanel Orientation="Horizontal">
@@ -593,7 +595,7 @@
                                 </StackPanel>
                             </Button>
 
-                            <Button Grid.Column="1"
+                            <Button Classes="with-text" Grid.Column="1"
                                     Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
                                     CommandParameter="{Binding}">
                                 <StackPanel Orientation="Horizontal">
@@ -602,7 +604,7 @@
                                 </StackPanel>
                             </Button>
 
-                            <Button Grid.Column="2"
+                            <Button Classes="with-text" Grid.Column="2"
                                     Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
                                     CommandParameter="{Binding}">
                                 <StackPanel Orientation="Horizontal">
