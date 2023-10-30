@@ -233,13 +233,13 @@ public class ToDoItemGroupViewModelDesign : ToDoItemGroupViewModel
             ToDoService = toDoServiceDesign,
         };
 
-        ToDoItemHeaderView = new ToDoItemHeaderView
+        ToDoItemHeaderView = new()
         {
             ViewModel = new ToDoItemHeaderViewModelDesign
             {
                 Navigator = ConstDesign.Navigator,
                 DialogViewer = ConstDesign.DialogViewer,
-                SplitView = new SplitView()
+                SplitView = new()
             }
         };
     }

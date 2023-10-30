@@ -18,19 +18,19 @@ public class SpravyToDoDbProfile : Profile
     {
         CreateMap<ToDoItemEntity, DailyPeriodicity>();
         CreateMap<ToDoItemEntity, ToDoShortItem>();
-        CreateMap<ToDoItemEntity, MonthlyPeriodicity>().ConstructUsing(x => new MonthlyPeriodicity(x.GetDaysOfMonth()));
-        CreateMap<ToDoItemEntity, WeeklyPeriodicity>().ConstructUsing(x => new WeeklyPeriodicity(x.GetDaysOfWeek()));
+        CreateMap<ToDoItemEntity, MonthlyPeriodicity>().ConstructUsing(x => new(x.GetDaysOfMonth()));
+        CreateMap<ToDoItemEntity, WeeklyPeriodicity>().ConstructUsing(x => new(x.GetDaysOfWeek()));
         CreateMap<AddRootToDoItemOptions, ToDoItemEntity>();
         CreateMap<AddToDoItemOptions, ToDoItemEntity>();
 
         CreateMap<ToDoItemEntity, ToDoItemParent>()
-            .ConstructUsing(x => new ToDoItemParent(x.Id, x.Name));
+            .ConstructUsing(x => new(x.Id, x.Name));
 
         CreateMap<ToDoItemEntity, AnnuallyPeriodicity>()
-            .ConstructUsing(x => new AnnuallyPeriodicity(x.GetDaysOfYear()));
+            .ConstructUsing(x => new(x.GetDaysOfYear()));
 
         CreateMap<ToDoItemEntity, ActiveToDoItem>()
-            .ConvertUsing((source, _, _) => new ActiveToDoItem(source.Id, source.Name));
+            .ConvertUsing((source, _, _) => new(source.Id, source.Name));
 
         CreateMap<ToDoItemEntity, IToDoSubItem>()
             .ConvertUsing(

@@ -41,10 +41,10 @@ public class EfToDoService : IToDoService
         await using var context = dbContextFactory.Create();
 
         var items = await context.Set<ToDoItemEntity>()
-        .AsNoTracking()
-        .Where(x => x.ParentId == null)
-        .OrderBy(x => x.OrderIndex)
-        .ToArrayAsync();
+                              .AsNoTracking()
+                              .Where(x => x.ParentId == null)
+                              .OrderBy(x => x.OrderIndex)
+                              .ToArrayAsync();
 
         var result = await ConvertAsync(context, items);
 
@@ -91,10 +91,10 @@ public class EfToDoService : IToDoService
         item = item.ThrowIfNull();
 
         var subItems = await context.Set<ToDoItemEntity>()
-        .AsNoTracking()
-        .Where(x => x.ParentId == item.Id)
-        .OrderBy(x => x.OrderIndex)
-        .ToArrayAsync();
+                                 .AsNoTracking()
+                                 .Where(x => x.ParentId == item.Id)
+                                 .OrderBy(x => x.OrderIndex)
+                                 .ToArrayAsync();
 
         var parents = new List<ToDoItemParent>
         {
@@ -126,10 +126,10 @@ public class EfToDoService : IToDoService
             async c =>
             {
                 var items = await c.Set<ToDoItemEntity>()
-                .AsNoTracking()
-                .Where(x => x.ParentId == null)
-                .Select(x => x.OrderIndex)
-                .ToArrayAsync();
+                                .AsNoTracking()
+                                .Where(x => x.ParentId == null)
+                                .Select(x => x.OrderIndex)
+                                .ToArrayAsync();
 
                 var newEntity = mapper.Map<ToDoItemEntity>(options);
                 newEntity.Description = string.Empty;
@@ -154,19 +154,20 @@ public class EfToDoService : IToDoService
                 parent = parent.ThrowIfNull();
 
                 var items = await c.Set<ToDoItemEntity>()
-                .AsNoTracking()
-                .Where(x => x.ParentId == options.ParentId)
-                .Select(x => x.OrderIndex)
-                .ToArrayAsync();
+                                .AsNoTracking()
+                                .Where(x => x.ParentId == options.ParentId)
+                                .Select(x => x.OrderIndex)
+                                .ToArrayAsync();
 
                 var toDoItem = mapper.Map<ToDoItemEntity>(options);
                 toDoItem.Description = string.Empty;
                 toDoItem.Id = id;
                 toDoItem.OrderIndex = items.Length == 0 ? 0 : items.Max() + 1;
 
-                toDoItem.DueDate = parent.DueDate < DateTimeOffset.Now.ToCurrentDay()
-                    ? DateTimeOffset.Now.ToCurrentDay()
-                    : parent.DueDate;
+                toDoItem.DueDate =
+                    parent.DueDate.ToDayDateTimeWithOffset() < DateTimeOffset.Now.ToDayDateTimeWithOffset()
+                        ? DateTimeOffset.Now.ToCurrentDay()
+                        : parent.DueDate;
 
                 toDoItem.TypeOfPeriodicity = parent.TypeOfPeriodicity;
                 toDoItem.DaysOfMonth = parent.DaysOfMonth;
@@ -194,9 +195,9 @@ public class EfToDoService : IToDoService
                 item = item.ThrowIfNull();
 
                 var children = await c.Set<ToDoItemEntity>()
-                .AsNoTracking()
-                .Where(x => x.ParentId == id)
-                .ToArrayAsync();
+                                   .AsNoTracking()
+                                   .Where(x => x.ParentId == id)
+                                   .ToArrayAsync();
 
                 foreach(var child in children)
                 {
@@ -215,9 +216,9 @@ public class EfToDoService : IToDoService
         item = item.ThrowIfNull();
 
         var children = await context.Set<ToDoItemEntity>()
-        .AsNoTracking()
-        .Where(x => x.ParentId == id)
-        .ToArrayAsync();
+                                 .AsNoTracking()
+                                 .Where(x => x.ParentId == id)
+                                 .ToArrayAsync();
 
         foreach(var child in children)
         {
@@ -344,9 +345,9 @@ public class EfToDoService : IToDoService
     private async Task CircleCompletionAsync(SpravyDbToDoDbContext context, ToDoItemEntity item)
     {
         var children = await context.Set<ToDoItemEntity>()
-        .Where(x => x.ParentId == item.Id)
-        .OrderBy(x => x.OrderIndex)
-        .ToArrayAsync();
+                                 .Where(x => x.ParentId == item.Id)
+                                 .OrderBy(x => x.OrderIndex)
+                                 .ToArrayAsync();
 
         var maxOrderIndex = children.Max(x => x.OrderIndex);
         var nextOrderIndex = item.CurrentCircleOrderIndex + 1;
@@ -376,9 +377,9 @@ public class EfToDoService : IToDoService
     private async Task CircleSkipAsync(SpravyDbToDoDbContext context, ToDoItemEntity item)
     {
         var children = await context.Set<ToDoItemEntity>()
-        .Where(x => x.ParentId == item.Id)
-        .OrderBy(x => x.OrderIndex)
-        .ToArrayAsync();
+                                 .Where(x => x.ParentId == item.Id)
+                                 .OrderBy(x => x.OrderIndex)
+                                 .ToArrayAsync();
 
         var maxOrderIndex = children.Max(x => x.OrderIndex);
         var nextOrderIndex = item.CurrentCircleOrderIndex;
@@ -436,9 +437,9 @@ public class EfToDoService : IToDoService
         }
 
         var children = await context.Set<ToDoItemEntity>()
-        .AsNoTracking()
-        .Where(x => x.ParentId == item.Id)
-        .ToArrayAsync();
+                                 .AsNoTracking()
+                                 .Where(x => x.ParentId == item.Id)
+                                 .ToArrayAsync();
 
         foreach(var child in children)
         {
@@ -485,9 +486,9 @@ public class EfToDoService : IToDoService
         }
 
         var children = await context.Set<ToDoItemEntity>()
-        .AsNoTracking()
-        .Where(x => x.ParentId == item.Id)
-        .ToArrayAsync();
+                                 .AsNoTracking()
+                                 .Where(x => x.ParentId == item.Id)
+                                 .ToArrayAsync();
 
         foreach(var child in children)
         {
@@ -524,9 +525,9 @@ public class EfToDoService : IToDoService
         }
 
         var children = await context.Set<ToDoItemEntity>()
-        .AsNoTracking()
-        .Where(x => x.ParentId == item.Id)
-        .ToArrayAsync();
+                                 .AsNoTracking()
+                                 .Where(x => x.ParentId == item.Id)
+                                 .ToArrayAsync();
 
         foreach(var child in children)
         {
@@ -568,9 +569,9 @@ public class EfToDoService : IToDoService
         }
 
         var children = await context.Set<ToDoItemEntity>()
-        .AsNoTracking()
-        .Where(x => x.ParentId == item.Id)
-        .ToArrayAsync();
+                                 .AsNoTracking()
+                                 .Where(x => x.ParentId == item.Id)
+                                 .ToArrayAsync();
 
         foreach(var child in children)
         {
@@ -597,9 +598,9 @@ public class EfToDoService : IToDoService
         }
 
         var children = await context.Set<ToDoItemEntity>()
-        .AsNoTracking()
-        .Where(x => x.ParentId == item.Id)
-        .ToArrayAsync();
+                                 .AsNoTracking()
+                                 .Where(x => x.ParentId == item.Id)
+                                 .ToArrayAsync();
 
         foreach(var child in children)
         {
@@ -621,9 +622,9 @@ public class EfToDoService : IToDoService
     )
     {
         var children = await context.Set<ToDoItemEntity>()
-        .AsNoTracking()
-        .Where(x => x.ParentId == item.Id)
-        .ToArrayAsync();
+                                 .AsNoTracking()
+                                 .Where(x => x.ParentId == item.Id)
+                                 .ToArrayAsync();
 
         foreach(var child in children)
         {
@@ -679,8 +680,12 @@ public class EfToDoService : IToDoService
                 var orderIndex = options.IsAfter ? targetItem.OrderIndex + 1 : targetItem.OrderIndex;
 
                 var items = await c.Set<ToDoItemEntity>()
-                .Where(x => x.ParentId == item.ParentId && x.Id != item.Id && x.OrderIndex >= orderIndex)
-                .ToArrayAsync();
+                                .Where(
+                                        x => x.ParentId == item.ParentId
+                                        && x.Id != item.Id
+                                        && x.OrderIndex >= orderIndex
+                                    )
+                                .ToArrayAsync();
 
                 foreach(var itemEntity in items)
                 {
@@ -875,10 +880,10 @@ public class EfToDoService : IToDoService
         await using var context = dbContextFactory.Create();
 
         var items = await context.Set<ToDoItemEntity>()
-        .AsNoTracking()
-        .Where(x => x.Name.Contains(searchText))
-        .OrderBy(x => x.OrderIndex)
-        .ToArrayAsync();
+                              .AsNoTracking()
+                              .Where(x => x.Name.Contains(searchText))
+                              .OrderBy(x => x.OrderIndex)
+                              .ToArrayAsync();
 
         var result = await ConvertAsync(context, items);
 
@@ -935,10 +940,10 @@ public class EfToDoService : IToDoService
             async c =>
             {
                 var items = await c.Set<ToDoItemEntity>()
-                .AsNoTracking()
-                .Where(x => x.IsPinned)
-                .OrderBy(x => x.OrderIndex)
-                .ToArrayAsync();
+                                .AsNoTracking()
+                                .Where(x => x.IsPinned)
+                                .OrderBy(x => x.OrderIndex)
+                                .ToArrayAsync();
 
                 var result = await ConvertAsync(c, items);
 
@@ -994,10 +999,10 @@ public class EfToDoService : IToDoService
         await using var context = dbContextFactory.Create();
 
         var entities = await context.Set<ToDoItemEntity>()
-        .AsNoTracking()
-        .Where(x => x.ParentId == id)
-        .OrderBy(x => x.OrderIndex)
-        .ToArrayAsync();
+                                 .AsNoTracking()
+                                 .Where(x => x.ParentId == id)
+                                 .OrderBy(x => x.OrderIndex)
+                                 .ToArrayAsync();
 
         if(entities.IsEmpty())
         {
@@ -1022,10 +1027,10 @@ public class EfToDoService : IToDoService
         await using var context = dbContextFactory.Create();
 
         var items = await context.Set<ToDoItemEntity>()
-        .AsNoTracking()
-        .Where(x => x.ParentId == null && !ignoreIds.Contains(x.Id))
-        .OrderBy(x => x.OrderIndex)
-        .ToArrayAsync();
+                              .AsNoTracking()
+                              .Where(x => x.ParentId == null && !ignoreIds.Contains(x.Id))
+                              .OrderBy(x => x.OrderIndex)
+                              .ToArrayAsync();
 
         var result = new ToDoSelectorItem[items.Length];
 
@@ -1054,10 +1059,10 @@ public class EfToDoService : IToDoService
                 var entity = await c.Set<ToDoItemEntity>().FindAsync(id);
 
                 var items = await c.Set<ToDoItemEntity>()
-                .AsNoTracking()
-                .Where(x => x.ParentId == parentId)
-                .Select(x => x.OrderIndex)
-                .ToArrayAsync();
+                                .AsNoTracking()
+                                .Where(x => x.ParentId == parentId)
+                                .Select(x => x.OrderIndex)
+                                .ToArrayAsync();
 
                 entity = entity.ThrowIfNull();
                 entity.ParentId = parentId;
@@ -1076,10 +1081,10 @@ public class EfToDoService : IToDoService
                 var entity = await c.Set<ToDoItemEntity>().FindAsync(id);
 
                 var items = await c.Set<ToDoItemEntity>()
-                .AsNoTracking()
-                .Where(x => x.ParentId == null)
-                .Select(x => x.OrderIndex)
-                .ToArrayAsync();
+                                .AsNoTracking()
+                                .Where(x => x.ParentId == null)
+                                .Select(x => x.OrderIndex)
+                                .ToArrayAsync();
 
                 entity = entity.ThrowIfNull();
                 entity.ParentId = null;
@@ -1174,9 +1179,9 @@ public class EfToDoService : IToDoService
         item = item.ThrowIfNull();
 
         var items = await context.Set<ToDoItemEntity>()
-        .Where(x => x.ParentId == item.ParentId && x.Id != item.Id)
-        .OrderBy(x => x.OrderIndex)
-        .ToArrayAsync();
+                              .Where(x => x.ParentId == item.ParentId && x.Id != item.Id)
+                              .OrderBy(x => x.OrderIndex)
+                              .ToArrayAsync();
 
         return mapper.Map<IEnumerable<ToDoShortItem>>(items);
     }
@@ -1189,10 +1194,10 @@ public class EfToDoService : IToDoService
     )
     {
         var items = await context.Set<ToDoItemEntity>()
-        .AsNoTracking()
-        .Where(x => x.ParentId == options.Id)
-        .OrderBy(x => x.OrderIndex)
-        .ToArrayAsync();
+                              .AsNoTracking()
+                              .Where(x => x.ParentId == options.Id)
+                              .OrderBy(x => x.OrderIndex)
+                              .ToArrayAsync();
 
         foreach(var item in items)
         {
@@ -1223,10 +1228,10 @@ public class EfToDoService : IToDoService
     )
     {
         var items = await context.Set<ToDoItemEntity>()
-        .AsNoTracking()
-        .Where(x => x.ParentId == id && !ignoreIds.Contains(x.Id))
-        .OrderBy(x => x.OrderIndex)
-        .ToArrayAsync();
+                              .AsNoTracking()
+                              .Where(x => x.ParentId == id && !ignoreIds.Contains(x.Id))
+                              .OrderBy(x => x.OrderIndex)
+                              .ToArrayAsync();
 
         var result = new ToDoSelectorItem[items.Length];
 
@@ -1246,10 +1251,10 @@ public class EfToDoService : IToDoService
     )
     {
         var entities = await context.Set<ToDoItemEntity>()
-        .AsNoTracking()
-        .Where(x => x.ParentId == itemEntity.Id)
-        .OrderBy(x => x.OrderIndex)
-        .ToArrayAsync();
+                                 .AsNoTracking()
+                                 .Where(x => x.ParentId == itemEntity.Id)
+                                 .OrderBy(x => x.OrderIndex)
+                                 .ToArrayAsync();
 
         if(entities.IsEmpty())
         {
@@ -1270,8 +1275,8 @@ public class EfToDoService : IToDoService
     private async Task NormalizeOrderIndexAsync(SpravyDbToDoDbContext context, Guid? parentId)
     {
         var items = await context.Set<ToDoItemEntity>()
-        .Where(x => x.ParentId == parentId)
-        .ToArrayAsync();
+                              .Where(x => x.ParentId == parentId)
+                              .ToArrayAsync();
 
         var ordered = Enumerable.ToArray(items.OrderBy(x => x.OrderIndex));
 
@@ -1319,9 +1324,10 @@ public class EfToDoService : IToDoService
 
     private void AddPeriodicityOffset(ToDoItemEntity item)
     {
-        item.DueDate = item.DueDate.AddDays(item.DaysOffset + item.WeeksOffset * 7)
-        .AddMonths(item.MonthsOffset)
-        .AddYears(item.YearsOffset);
+        item.DueDate = item.DueDate
+                        .AddDays(item.DaysOffset + item.WeeksOffset * 7)
+                        .AddMonths(item.MonthsOffset)
+                        .AddYears(item.YearsOffset);
     }
 
     private void AddPeriodicity(ToDoItemEntity item)
@@ -1355,8 +1361,9 @@ public class EfToDoService : IToDoService
 
                 item.DueDate = nextDay is not null
                     ? item.DueDate.WithDay(Math.Min(nextDay.Value, daysInCurrentMonth))
-                    : item.DueDate.AddMonths(1)
-                    .WithDay(Math.Min(daysOfMonth.First().ThrowIfNullStruct(), daysInNextMonth));
+                    : item.DueDate
+                       .AddMonths(1)
+                       .WithDay(Math.Min(daysOfMonth.First().ThrowIfNullStruct(), daysInNextMonth));
 
                 break;
             }
@@ -1372,11 +1379,13 @@ public class EfToDoService : IToDoService
                 var daysInNextMonth = DateTime.DaysInMonth(now.Year + 1, daysOfYear.First().ThrowIfNullStruct().Month);
 
                 item.DueDate = nextDay is not null
-                    ? item.DueDate.WithMonth(nextDay.Value.Month)
-                    .WithDay(Math.Min(DateTime.DaysInMonth(now.Year, nextDay.Value.Month), nextDay.Value.Day))
-                    : item.DueDate.AddYears(1)
-                    .WithMonth(daysOfYear.First().ThrowIfNullStruct().Month)
-                    .WithDay(Math.Min(daysInNextMonth, daysOfYear.First().ThrowIfNullStruct().Day));
+                    ? item.DueDate
+                       .WithMonth(nextDay.Value.Month)
+                       .WithDay(Math.Min(DateTime.DaysInMonth(now.Year, nextDay.Value.Month), nextDay.Value.Day))
+                    : item.DueDate
+                       .AddYears(1)
+                       .WithMonth(daysOfYear.First().ThrowIfNullStruct().Month)
+                       .WithDay(Math.Min(daysInNextMonth, daysOfYear.First().ThrowIfNullStruct().Day));
 
                 break;
             }

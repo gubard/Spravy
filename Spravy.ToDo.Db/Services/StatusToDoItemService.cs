@@ -28,7 +28,7 @@ public class StatusToDoItemService
             return ToDoItemStatus.Completed;
         }
 
-        if (entity.DueDate > DateTimeOffset.Now.ToCurrentDay())
+        if (entity.DueDate.ToDayDateTimeWithOffset() > DateTimeOffset.Now.ToDayDateTimeWithOffset())
         {
             return ToDoItemStatus.Planned;
         }
@@ -54,17 +54,17 @@ public class StatusToDoItemService
 
     private Task<ToDoItemStatus> GetDueDateStatusAsync(ToDoItemEntity entity)
     {
-        if (entity.DueDate == DateTimeOffset.Now.ToCurrentDay())
+        if (entity.DueDate.ToDayDateTimeWithOffset() == DateTimeOffset.Now.ToDayDateTimeWithOffset())
         {
             return ToDoItemStatus.ReadyForComplete.ToTaskResult();
         }
 
-        if (entity.DueDate < DateTimeOffset.Now.ToCurrentDay())
+        if (entity.DueDate.ToDayDateTimeWithOffset() < DateTimeOffset.Now.ToDayDateTimeWithOffset())
         {
             return ToDoItemStatus.Miss.ToTaskResult();
         }
 
-        if (entity.DueDate > DateTimeOffset.Now.ToCurrentDay())
+        if (entity.DueDate.ToDayDateTimeWithOffset() > DateTimeOffset.Now.ToDayDateTimeWithOffset())
         {
             return ToDoItemStatus.Planned.ToTaskResult();
         }

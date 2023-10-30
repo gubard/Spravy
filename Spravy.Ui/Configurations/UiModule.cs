@@ -142,9 +142,9 @@ public class UiModule : NinjectModule
         .ToMethod(
                 _ => new DialogProgressIndicator
                 {
-                    CornerRadius = new CornerRadius(24),
-                    Padding = new Thickness(4),
-                    Margin = new Thickness(4),
+                    CornerRadius = new(24),
+                    Padding = new(4),
+                    Margin = new(4),
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center,
                     Content = new ProgressBar

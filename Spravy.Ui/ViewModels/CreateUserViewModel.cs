@@ -98,7 +98,7 @@ public class CreateUserViewModel : RoutableViewModelBase
     {
         if (Password != RepeatPassword)
         {
-            throw new Exception("Password not equal RepeatPassword.");
+            throw new("Password not equal RepeatPassword.");
         }
 
         var options = Mapper.Map<CreateUserOptions>(this);

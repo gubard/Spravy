@@ -2,6 +2,24 @@ namespace Spravy.Domain.Extensions;
 
 public static class DateTimeOffsetExtension
 {
+    public static DateTime ToDateTimeWithOffset(this DateTimeOffset date)
+    {
+        return date.DateTime.Add(date.Offset);
+    }
+
+    public static bool IsToday(this DateTimeOffset date)
+    {
+        var nowDay = DateTimeOffset.Now.ToDayDateTimeWithOffset();
+        var day = date.ToDayDateTimeWithOffset();
+
+        return day == nowDay;
+    }
+
+    public static DateTime ToDayDateTimeWithOffset(this DateTimeOffset date)
+    {
+        return date.ToDateTimeWithOffset().Date;
+    }
+
     public static DateTimeOffset ToCurrentDay(this DateTimeOffset date)
     {
         var result = new DateTimeOffset(date.Year, date.Month, date.Day, 0, 0, 0, date.Offset);
@@ -11,7 +29,7 @@ public static class DateTimeOffsetExtension
 
     public static DateTimeOffset? ToCurrentDayOrNull(this DateTimeOffset? date)
     {
-        if (date is null)
+        if(date is null)
         {
             return null;
         }
@@ -21,7 +39,7 @@ public static class DateTimeOffsetExtension
 
     public static DateTimeOffset WithDay(this DateTimeOffset date, int day)
     {
-        return new DateTimeOffset(
+        return new(
             date.Year,
             date.Month,
             day,
@@ -36,7 +54,7 @@ public static class DateTimeOffsetExtension
 
     public static DateTimeOffset WithMonth(this DateTimeOffset date, int month)
     {
-        return new DateTimeOffset(
+        return new(
             date.Year,
             month,
             date.Day,

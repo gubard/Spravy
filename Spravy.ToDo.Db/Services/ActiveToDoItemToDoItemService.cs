@@ -45,24 +45,24 @@ public class ActiveToDoItemToDoItemService
 
     private Task<ActiveToDoItem?> GetActiveItemByDueDateAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
     {
-        return entity.DueDate > DateTimeOffset.Now.ToCurrentDay()
+        return entity.DueDate.ToDayDateTimeWithOffset() > DateTimeOffset.Now.ToDayDateTimeWithOffset()
             ? Task.FromResult<ActiveToDoItem?>(null)
             : GetChildrenActiveToDoItemAsync(context, entity, GetActiveItemByDueDate(entity));
     }
 
     private ActiveToDoItem? GetActiveItemByDueDate(ToDoItemEntity entity)
     {
-        if (entity.DueDate == DateTimeOffset.Now.ToCurrentDay())
+        if (entity.DueDate.ToDayDateTimeWithOffset() == DateTimeOffset.Now.ToDayDateTimeWithOffset())
         {
             return ToActiveToDoItem(entity);
         }
 
-        if (entity.DueDate < DateTimeOffset.Now.ToCurrentDay())
+        if (entity.DueDate.ToDayDateTimeWithOffset() < DateTimeOffset.Now.ToDayDateTimeWithOffset())
         {
             return ToActiveToDoItem(entity);
         }
 
-        if (entity.DueDate > DateTimeOffset.Now.ToCurrentDay())
+        if (entity.DueDate.ToDayDateTimeWithOffset() > DateTimeOffset.Now.ToDayDateTimeWithOffset())
         {
             return null;
         }

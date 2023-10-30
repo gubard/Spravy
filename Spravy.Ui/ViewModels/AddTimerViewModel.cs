@@ -50,7 +50,7 @@ public class AddTimerViewModel : RoutableViewModelBase
         return DialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
             itemNotify =>
             {
-                Item = new ToDoItemNotify
+                Item = new()
                 {
                     Id = itemNotify.Id,
                     Name = itemNotify.Name

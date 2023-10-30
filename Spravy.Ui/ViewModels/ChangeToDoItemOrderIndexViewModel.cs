@@ -13,14 +13,14 @@ namespace Spravy.Ui.ViewModels;
 public class ChangeToDoItemOrderIndexViewModel : ViewModelBase
 {
     private Guid id;
-    private bool isAfter;
+    private bool isAfter = true;
     private ToDoItemNotify? selectedItem;
 
     public ChangeToDoItemOrderIndexViewModel()
     {
         this.WhenAnyValue(x => x.Id)
-        .Skip(1)
-        .Subscribe(OnNextId);
+         .Skip(1)
+         .Subscribe(OnNextId);
     }
 
     [Inject]

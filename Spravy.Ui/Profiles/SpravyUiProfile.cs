@@ -36,7 +36,7 @@ public class SpravyUiProfile : Profile
         CreateMap<LoginViewModel, User>();
         CreateMap<TimerItem, TimerItemToDoItemPinnedNotify>()
             .ConvertUsing(
-                (item, _, _) => new TimerItemToDoItemPinnedNotify
+                (item, _, _) => new()
                 {
                     DueDateTime = item.DueDateTime,
                     Id = item.Id,
@@ -47,9 +47,9 @@ public class SpravyUiProfile : Profile
         CreateMap<TimerItem, TimerItemNotify>()
             .ConvertUsing((item, _, context) => context.Mapper.Map<TimerItemToDoItemPinnedNotify>(item));
         CreateMap<AddRootToDoItemViewModel, AddRootToDoItemOptions>()
-            .ConstructUsing(x => new AddRootToDoItemOptions(x.Name));
+            .ConstructUsing(x => new(x.Name));
         CreateMap<ToDoSubItemValueNotify, AddToDoItemOptions>()
-            .ConstructUsing(x => new AddToDoItemOptions(x.Id, x.Name));
+            .ConstructUsing(x => new(x.Id, x.Name));
 
         CreateMap<AddTimerViewModel, AddTimerParameters>()
             .ConvertUsing(
@@ -64,7 +64,7 @@ public class SpravyUiProfile : Profile
                     using var stream = new MemoryStream();
                     changeToDoItemIsPinnedEvent.WriteTo(stream);
 
-                    return new AddTimerParameters(
+                    return new(
                         source.DueDateTime,
                         source.EventId,
                         stream.ToByteArray()

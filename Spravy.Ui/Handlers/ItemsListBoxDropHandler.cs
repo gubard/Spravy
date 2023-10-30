@@ -48,7 +48,7 @@ public class ItemsListBoxDropHandler<TItem> : DropHandlerBase
                 {
                     Moved?.Invoke(
                         targetContext,
-                        new MovedDragDropArgs<TItem>(
+                        new(
                             sourceItem,
                             sourceIndex,
                             targetItem,

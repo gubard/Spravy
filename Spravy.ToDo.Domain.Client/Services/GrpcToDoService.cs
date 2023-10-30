@@ -38,7 +38,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
             async client =>
             {
                 var metadata = await metadataFactory.CreateAsync();
-                var items = await client.GetRootToDoSubItemsAsync(new GetRootToDoSubItemsRequest(), metadata);
+                var items = await client.GetRootToDoSubItemsAsync(new(), metadata);
 
                 return mapper.Map<IEnumerable<IToDoSubItem>>(items.Items);
             }
@@ -144,7 +144,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
             async client =>
             {
                 await client.UpdateToDoItemCompleteStatusAsync(
-                    new UpdateToDoItemCompleteStatusRequest
+                    new()
                     {
                         Id = mapper.Map<ByteString>(id),
                         IsCompleted = isCompleted
@@ -161,7 +161,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
             async client =>
             {
                 await client.UpdateToDoItemNameAsync(
-                    new UpdateToDoItemNameRequest
+                    new()
                     {
                         Id = mapper.Map<ByteString>(id),
                         Name = name,
@@ -191,7 +191,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
             async client =>
             {
                 await client.UpdateToDoItemDescriptionAsync(
-                    new UpdateToDoItemDescriptionRequest
+                    new()
                     {
                         Description = description,
                         Id = mapper.Map<ByteString>(id),
@@ -208,7 +208,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
             async client =>
             {
                 await client.SkipToDoItemAsync(
-                    new SkipToDoItemRequest
+                    new()
                     {
                         Id = mapper.Map<ByteString>(id),
                     },
@@ -224,7 +224,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
             async client =>
             {
                 await client.FailToDoItemAsync(
-                    new FailToDoItemRequest
+                    new()
                     {
                         Id = mapper.Map<ByteString>(id),
                     },
@@ -240,7 +240,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
             async client =>
             {
                 var reply = await client.SearchToDoSubItemsAsync(
-                    new SearchToDoSubItemsRequest
+                    new()
                     {
                         SearchText = searchText
                     },
@@ -258,7 +258,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
             async client =>
             {
                 await client.UpdateToDoItemTypeAsync(
-                    new UpdateToDoItemTypeRequest
+                    new()
                     {
                         Id = mapper.Map<ByteString>(id),
                         Type = (ToDoItemTypeGrpc)type,
@@ -275,7 +275,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
             async client =>
             {
                 await client.AddPinnedToDoItemAsync(
-                    new AddPinnedToDoItemRequest
+                    new()
                     {
                         Id = mapper.Map<ByteString>(id),
                     },
@@ -291,7 +291,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
             async client =>
             {
                 await client.RemovePinnedToDoItemAsync(
-                    new RemovePinnedToDoItemRequest
+                    new()
                     {
                         Id = mapper.Map<ByteString>(id),
                     },
@@ -307,7 +307,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
             async client =>
             {
                 var reply = await client.GetPinnedToDoItemsAsync(
-                    new GetPinnedToDoItemsRequest(),
+                    new(),
                     await metadataFactory.CreateAsync()
                 );
 
@@ -322,7 +322,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
             async client =>
             {
                 await client.UpdateToDoItemAnnuallyPeriodicityAsync(
-                    new UpdateToDoItemAnnuallyPeriodicityRequest
+                    new()
                     {
                         Periodicity = mapper.Map<AnnuallyPeriodicityGrpc>(periodicity),
                         Id = mapper.Map<ByteString>(id),
@@ -339,7 +339,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
             async client =>
             {
                 await client.UpdateToDoItemMonthlyPeriodicityAsync(
-                    new UpdateToDoItemMonthlyPeriodicityRequest
+                    new()
                     {
                         Periodicity = mapper.Map<MonthlyPeriodicityGrpc>(periodicity),
                         Id = mapper.Map<ByteString>(id),
@@ -356,7 +356,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
             async client =>
             {
                 await client.UpdateToDoItemWeeklyPeriodicityAsync(
-                    new UpdateToDoItemWeeklyPeriodicityRequest
+                    new()
                     {
                         Periodicity = mapper.Map<WeeklyPeriodicityGrpc>(periodicity),
                         Id = mapper.Map<ByteString>(id),
@@ -373,7 +373,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
             async client =>
             {
                 var reply = await client.GetLeafToDoSubItemsAsync(
-                    new GetLeafToDoSubItemsRequest
+                    new()
                     {
                         Id = mapper.Map<ByteString>(id),
                     },
@@ -405,7 +405,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
             async client =>
             {
                 await client.UpdateToDoItemParentAsync(
-                    new UpdateToDoItemParentRequest
+                    new()
                     {
                         Id = mapper.Map<ByteString>(id),
                         ParentId = mapper.Map<ByteString>(parentId),
@@ -422,7 +422,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
             async client =>
             {
                 await client.ToDoItemToRootAsync(
-                    new ToDoItemToRootRequest
+                    new()
                     {
                         Id = mapper.Map<ByteString>(id),
                     },
@@ -451,7 +451,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
             async client =>
             {
                 await client.UpdateToDoItemDaysOffsetAsync(
-                    new UpdateToDoItemDaysOffsetRequest
+                    new()
                     {
                         Id = mapper.Map<ByteString>(id),
                         Days = days
@@ -468,7 +468,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
             async client =>
             {
                 await client.UpdateToDoItemMonthsOffsetAsync(
-                    new UpdateToDoItemMonthsOffsetRequest
+                    new()
                     {
                         Id = mapper.Map<ByteString>(id),
                         Months = months
@@ -485,7 +485,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
             async client =>
             {
                 await client.UpdateToDoItemWeeksOffsetAsync(
-                    new UpdateToDoItemWeeksOffsetRequest
+                    new()
                     {
                         Id = mapper.Map<ByteString>(id),
                         Weeks = weeks
@@ -502,7 +502,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
             async client =>
             {
                 await client.UpdateToDoItemYearsOffsetAsync(
-                    new UpdateToDoItemYearsOffsetRequest
+                    new()
                     {
                         Id = mapper.Map<ByteString>(id),
                         Years = years
@@ -519,7 +519,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
             async client =>
             {
                 await client.UpdateToDoItemChildrenTypeAsync(
-                    new UpdateToDoItemChildrenTypeRequest
+                    new()
                     {
                         Id = mapper.Map<ByteString>(id),
                         Type = (ToDoItemChildrenTypeGrpc)type
@@ -554,6 +554,6 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         IMetadataFactory metadataFactory
     )
     {
-        return new GrpcToDoService(grpcClientFactory, host, mapper, metadataFactory);
+        return new(grpcClientFactory, host, mapper, metadataFactory);
     }
 }
