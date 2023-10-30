@@ -95,13 +95,19 @@
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Stretch"
                       Margin="5">
-                    <Grid Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*">
+                    <Grid Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*,Auto,Auto">
                         <Rectangle Width="15"
                                    Margin="0,0,3,0"
                                    Height="2"
                                    Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                         <TextBlock Grid.Column="1" Text="Value" Classes="Body2" />
                         <Rectangle Grid.Column="2"
+                                   Margin="3,0,3,0"
+                                   Height="2"
+                                   Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
+                        <TextBlock Grid.Column="3" Text="{Binding Status}" Classes="Body2" />
+                        <Rectangle Grid.Column="4"
+                                   Width="15"
                                    Margin="3,0,0,0"
                                    Height="2"
                                    Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
@@ -203,13 +209,19 @@
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Stretch"
                       Margin="5">
-                    <Grid Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*">
+                    <Grid Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*,Auto,Auto">
                         <Rectangle Width="15"
                                    Margin="0,0,3,0"
                                    Height="2"
                                    Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                         <TextBlock Grid.Column="1" Text="Group" Classes="Body2" />
                         <Rectangle Grid.Column="2"
+                                   Margin="3,0,3,0"
+                                   Height="2"
+                                   Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
+                        <TextBlock Grid.Column="3" Text="{Binding Status}" Classes="Body2" />
+                        <Rectangle Grid.Column="4"
+                                   Width="15"
                                    Margin="3,0,0,0"
                                    Height="2"
                                    Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
@@ -289,13 +301,19 @@
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Stretch"
                       Margin="5">
-                    <Grid Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*">
+                    <Grid Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*,Auto,Auto">
                         <Rectangle Width="15"
                                    Margin="0,0,3,0"
                                    Height="2"
                                    Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                         <TextBlock Grid.Column="1" Text="Planned" Classes="Body2" />
                         <Rectangle Grid.Column="2"
+                                   Margin="3,0,3,0"
+                                   Height="2"
+                                   Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
+                        <TextBlock Grid.Column="3" Text="{Binding Status}" Classes="Body2" />
+                        <Rectangle Grid.Column="4"
+                                   Width="15"
                                    Margin="3,0,0,0"
                                    Height="2"
                                    Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
@@ -397,13 +415,19 @@
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Stretch"
                       Margin="5">
-                    <Grid Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*">
+                    <Grid Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*,Auto,Auto">
                         <Rectangle Width="15"
                                    Margin="0,0,3,0"
                                    Height="2"
                                    Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                         <TextBlock Grid.Column="1" Text="Periodicity" Classes="Body2" />
                         <Rectangle Grid.Column="2"
+                                   Margin="3,0,3,0"
+                                   Height="2"
+                                   Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
+                        <TextBlock Grid.Column="3" Text="{Binding Status}" Classes="Body2" />
+                        <Rectangle Grid.Column="4"
+                                   Width="15"
                                    Margin="3,0,0,0"
                                    Height="2"
                                    Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
@@ -503,13 +527,19 @@
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Stretch"
                       Margin="5">
-                    <Grid Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*">
+                    <Grid Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*,Auto,Auto">
                         <Rectangle Width="15"
                                    Margin="0,0,3,0"
                                    Height="2"
                                    Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                         <TextBlock Grid.Column="1" Text="PeriodicityOffset" Classes="Body2" />
                         <Rectangle Grid.Column="2"
+                                   Margin="3,0,3,0"
+                                   Height="2"
+                                   Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
+                        <TextBlock Grid.Column="3" Text="{Binding Status}" Classes="Body2" />
+                        <Rectangle Grid.Column="4"
+                                   Width="15"
                                    Margin="3,0,0,0"
                                    Height="2"
                                    Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
