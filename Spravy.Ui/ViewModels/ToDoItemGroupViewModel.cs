@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using Avalonia.Collections;
 using ReactiveUI;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Models;

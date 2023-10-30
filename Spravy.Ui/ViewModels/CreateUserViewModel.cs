@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
@@ -7,7 +6,6 @@ using Ninject;
 using ReactiveUI;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Models;
-using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Models;
 using Spravy.Ui.Views;
 

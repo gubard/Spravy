@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Avalonia.Collections;
 using Material.Icons;
 using ReactiveUI;
 using Spravy.Domain.Extensions;
