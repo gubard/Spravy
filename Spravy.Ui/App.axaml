@@ -13,9 +13,9 @@
              RequestedThemeVariant="Dark">
     <Application.Styles>
         <FluentTheme DensityStyle="Compact" />
-        <dialogHostAvalonia:DialogHostStyles />
         <themes:MaterialTheme BaseTheme="Dark" PrimaryColor="Teal" SecondaryColor="DeepOrange" />
         <avalonia:MaterialIconStyles />
+        <dialogHostAvalonia:DialogHostStyles />
         <StyleInclude Source="avares://Spravy.Ui/Styles/Theme.axaml" />
 
         <Style Selector="ListBox.ItemsDragAndDrop">
