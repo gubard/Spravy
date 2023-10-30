@@ -6,7 +6,7 @@
                 <Expander Classes="header-left" Width="500" VerticalAlignment="Top">
                     <Expander.Header>Header</Expander.Header>
                     <Expander.Content>
-                        <TextBlock Text="Content"></TextBlock>
+                        <TextBlock Text="Content" />
                     </Expander.Content>
                 </Expander>
             </ItemsControl>

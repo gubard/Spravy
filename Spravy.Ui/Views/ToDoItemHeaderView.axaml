@@ -6,7 +6,6 @@
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                 xmlns:controls1="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
-                                xmlns:controls="clr-namespace:Spravy.Ui.Controls"
                                 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                 xmlns:helpers="clr-namespace:Spravy.Ui.Helpers"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -74,8 +73,11 @@
                 <avalonia:MaterialIcon Kind="Menu" />
             </Button>
 
-            <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
-                <TextBlock Text="{Binding Item.Name}" Classes="alignment-center" />
+            <ScrollViewer Grid.Column="1"
+                          VerticalScrollBarVisibility="Disabled"
+                          HorizontalScrollBarVisibility="Auto"
+                          HorizontalAlignment="Left">
+                <TextBlock Text="{Binding Item.Name}" Classes="alignment-center Headline6" />
             </ScrollViewer>
 
             <StackPanel Grid.Column="2" Orientation="Horizontal">
