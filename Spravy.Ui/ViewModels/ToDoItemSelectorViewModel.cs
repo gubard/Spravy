@@ -17,7 +17,7 @@ public class ToDoItemSelectorViewModel : ViewModelBase
 
     public ToDoItemSelectorViewModel()
     {
-        InitializedCommand = CreateCommandFromTask(InitializedAsync);
+        InitializedCommand = CreateInitializedCommand(InitializedAsync);
     }
 
     [Inject]

@@ -22,7 +22,7 @@ public class AddToDoItemViewModel : RoutableViewModelBase
 
     public AddToDoItemViewModel() : base("add-to-do-item")
     {
-        InitializedCommand = CreateCommandFromTask(InitializedAsync);
+        InitializedCommand = CreateInitializedCommand(InitializedAsync);
         ToDoItemTypes = new(Enum.GetValues<ToDoItemType>());
     }
 

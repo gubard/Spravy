@@ -14,7 +14,7 @@ public class TimersViewModel : RoutableViewModelBase
 {
     public TimersViewModel() : base("timers")
     {
-        InitializedCommand = CreateCommandFromTaskWithDialogProgressIndicator(InitializedAsync);
+        InitializedCommand = CreateInitializedCommand(InitializedAsync);
         SwitchPaneCommand = CreateCommand(SwitchPane);
     }
 

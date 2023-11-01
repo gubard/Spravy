@@ -36,7 +36,7 @@ public class CompleteToDoItemViewModel : ViewModelBase
     public CompleteToDoItemViewModel()
     {
         CompleteCommand = CreateCommandFromTaskWithDialogProgressIndicator<CompleteStatus>(CompleteAsync);
-        InitializedCommand = CreateCommand<CompleteToDoItemView>(Initialized);
+        InitializedCommand = CreateInitializedCommand<CompleteToDoItemView>(Initialized);
     }
 
     public AvaloniaList<Ref<CompleteStatus>> CompleteStatuses { get; } = new();

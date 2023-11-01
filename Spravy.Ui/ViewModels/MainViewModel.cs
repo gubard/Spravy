@@ -11,7 +11,7 @@ public class MainViewModel : ViewModelBase
 {
     public MainViewModel()
     {
-        InitializedCommand = CreateCommand(Initialized);
+        InitializedCommand = CreateInitializedCommand(Initialized);
     }
 
     [Inject]

@@ -35,7 +35,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
             CreateCommandFromTaskWithDialogProgressIndicator<ToDoSubItemNotify>(RemoveFavoriteToDoItemAsync);
 
         ChangeToActiveDoItemCommand = CreateCommandFromTask<ActiveToDoItemNotify>(ChangeToActiveDoItemAsync);
-        InitializedCommand = CreateCommandFromTaskWithDialogProgressIndicator(InitializedAsync);
+        InitializedCommand = CreateInitializedCommand(InitializedAsync);
         CompleteSelectedToDoItemsCommand = CreateCommandFromTask(CompleteSelectedToDoItemsAsync);
         ChangeOrderIndexCommand = CreateCommandFromTask<ToDoSubItemNotify>(ChangeOrderIndexAsync);
     }

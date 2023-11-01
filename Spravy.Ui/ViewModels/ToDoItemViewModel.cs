@@ -55,7 +55,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
         ToLeafToDoItemsCommand = CreateCommand(ToLeafToDoItems);
         ChangeRootItemCommand = CreateCommandFromTask(ChangeRootItemAsync);
         ToDoItemToRootCommand = CreateCommandFromTask(ToDoItemToRootAsync);
-        InitializedCommand = CreateCommand(Initialized);
+        InitializedCommand = CreateInitializedCommand(Initialized);
         ToDoItemToStringCommand = CreateCommandFromTask(ToDoItemToStringAsync);
         AddTimerCommand = CreateCommandFromTask(AddTimerAsync);
 

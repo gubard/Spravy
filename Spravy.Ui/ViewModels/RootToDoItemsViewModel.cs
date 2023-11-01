@@ -21,7 +21,7 @@ public class RootToDoItemsViewModel : RoutableViewModelBase, IToDoItemOrderChang
 {
     public RootToDoItemsViewModel() : base("root-to-do-item")
     {
-        InitializedCommand = CreateCommandFromTaskWithDialogProgressIndicator(InitializedAsync);
+        InitializedCommand = CreateInitializedCommand(InitializedAsync);
         AddToDoItemCommand = CreateCommandFromTask(AddToDoItemAsync);
         SwitchPaneCommand = CreateCommand(SwitchPane);
     }

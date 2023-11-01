@@ -22,7 +22,7 @@ public class LeafToDoItemsViewModel : RoutableViewModelBase, IRefreshToDoItem
     public LeafToDoItemsViewModel() : base("leaf-to-do-items")
     {
         SwitchPaneCommand = CreateCommand(SwitchPane);
-        InitializedCommand = CreateCommandFromTaskWithDialogProgressIndicator(InitializedAsync);
+        InitializedCommand = CreateInitializedCommand(InitializedAsync);
     }
 
     public ICommand InitializedCommand { get; }

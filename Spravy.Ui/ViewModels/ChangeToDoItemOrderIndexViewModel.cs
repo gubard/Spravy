@@ -20,7 +20,7 @@ public class ChangeToDoItemOrderIndexViewModel : ViewModelBase
 
     public ChangeToDoItemOrderIndexViewModel()
     {
-        InitializedCommand = CreateCommandFromTaskWithDialogProgressIndicator(InitializedAsync);
+        InitializedCommand = CreateInitializedCommand(InitializedAsync);
     }
 
     public ICommand InitializedCommand { get; }

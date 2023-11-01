@@ -24,7 +24,7 @@ public class LoginViewModel : RoutableViewModelBase
         LoginCommand = CreateCommandFromTaskWithDialogProgressIndicator(LoginAsync);
         CreateUserCommand = CreateCommand(CreateUser);
         EnterCommand = CreateCommandFromTaskWithDialogProgressIndicator<LoginView>(EnterAsync);
-        InitializedCommand = CreateCommandFromTask(InitializedAsync);
+        InitializedCommand = CreateInitializedCommand(InitializedAsync);
     }
 
     [Inject]

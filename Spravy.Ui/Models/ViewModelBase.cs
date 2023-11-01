@@ -10,12 +10,12 @@ namespace Spravy.Ui.Models;
 
 public class ViewModelBase : NotifyBase
 {
-    protected static BehaviorSubject<bool> canExecute;
+    private static readonly BehaviorSubject<bool> CanExecute;
     private static readonly TimeSpan TaskTimeout = TimeSpan.FromSeconds(1);
 
     static ViewModelBase()
     {
-        canExecute = new(true);
+        CanExecute = new(true);
     }
 
     [Inject]
@@ -26,12 +26,36 @@ public class ViewModelBase : NotifyBase
 
     public void ReleaseCommands()
     {
-        canExecute.OnNext(true);
+        CanExecute.OnNext(true);
+    }
+    
+    protected ICommand CreateInitializedCommand(Action action)
+    {
+        var command = ReactiveCommand.Create(WrapCommand(action));
+        SetupCommand(command);
+
+        return command;
+    }
+
+    protected ICommand CreateInitializedCommand(Func<Task> execute)
+    {
+        var command = ReactiveCommand.CreateFromTask(WrapCommand(CreateWithDialogProgressIndicatorAsync(execute)));
+        SetupCommand(command);
+
+        return command;
+    }
+    
+    protected ICommand CreateInitializedCommand<TArgs>(Action<TArgs> action)
+    {
+        var command = ReactiveCommand.Create(WrapCommand(action));
+        SetupCommand(command);
+
+        return command;
     }
 
     protected ICommand CreateCommand(Action action)
     {
-        var command = ReactiveCommand.Create(WrapCommand(action), canExecute);
+        var command = ReactiveCommand.Create(WrapCommand(action), CanExecute);
         SetupCommand(command);
 
         return command;
@@ -39,7 +63,7 @@ public class ViewModelBase : NotifyBase
 
     protected ICommand CreateCommand<TArgs>(Action<TArgs> action)
     {
-        var command = ReactiveCommand.Create(WrapCommand(action), canExecute);
+        var command = ReactiveCommand.Create(WrapCommand(action), CanExecute);
         SetupCommand(command);
 
         return command;
@@ -47,7 +71,7 @@ public class ViewModelBase : NotifyBase
 
     protected ICommand CreateCommandFromTask(Func<Task> execute)
     {
-        var command = ReactiveCommand.CreateFromTask(WrapCommand(execute), canExecute);
+        var command = ReactiveCommand.CreateFromTask(WrapCommand(execute), CanExecute);
         SetupCommand(command);
 
         return command;
@@ -57,7 +81,7 @@ public class ViewModelBase : NotifyBase
     {
         var command = ReactiveCommand.CreateFromTask(
             WrapCommand(CreateWithDialogProgressIndicatorAsync(execute)),
-            canExecute
+            CanExecute
         );
 
         SetupCommand(command);
@@ -69,7 +93,7 @@ public class ViewModelBase : NotifyBase
     {
         var command = ReactiveCommand.CreateFromTask(
             WrapCommand(CreateWithDialogProgressIndicatorAsync(execute)),
-            canExecute
+            CanExecute
         );
 
         SetupCommand(command);
@@ -79,7 +103,7 @@ public class ViewModelBase : NotifyBase
 
     protected ICommand CreateCommandFromTask<TParam>(Func<TParam, Task> execute)
     {
-        var command = ReactiveCommand.CreateFromTask(WrapCommand(execute), canExecute);
+        var command = ReactiveCommand.CreateFromTask(WrapCommand(execute), CanExecute);
         SetupCommand(command);
 
         return command;
@@ -171,7 +195,7 @@ public class ViewModelBase : NotifyBase
     {
         return () =>
         {
-            canExecute.OnNext(false);
+            CanExecute.OnNext(false);
 
             try
             {
@@ -179,7 +203,7 @@ public class ViewModelBase : NotifyBase
             }
             finally
             {
-                canExecute.OnNext(true);
+                CanExecute.OnNext(true);
             }
         };
     }
@@ -188,7 +212,7 @@ public class ViewModelBase : NotifyBase
     {
         return args =>
         {
-            canExecute.OnNext(false);
+            CanExecute.OnNext(false);
 
             try
             {
@@ -196,7 +220,7 @@ public class ViewModelBase : NotifyBase
             }
             finally
             {
-                canExecute.OnNext(true);
+                CanExecute.OnNext(true);
             }
         };
     }
@@ -205,7 +229,7 @@ public class ViewModelBase : NotifyBase
     {
         return async () =>
         {
-            canExecute.OnNext(false);
+            CanExecute.OnNext(false);
 
             try
             {
@@ -213,7 +237,7 @@ public class ViewModelBase : NotifyBase
             }
             finally
             {
-                canExecute.OnNext(true);
+                CanExecute.OnNext(true);
             }
         };
     }
@@ -222,7 +246,7 @@ public class ViewModelBase : NotifyBase
     {
         return async param =>
         {
-            canExecute.OnNext(false);
+            CanExecute.OnNext(false);
 
             try
             {
@@ -230,7 +254,7 @@ public class ViewModelBase : NotifyBase
             }
             finally
             {
-                canExecute.OnNext(true);
+                CanExecute.OnNext(true);
             }
         };
     }
