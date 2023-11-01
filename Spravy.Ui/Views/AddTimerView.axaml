@@ -6,35 +6,20 @@
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                 xmlns:controls="clr-namespace:Spravy.Ui.Controls"
-                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                                mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                                 x:Class="Spravy.Ui.Views.AddTimerView"
                                 x:DataType="viewModels:AddTimerViewModel">
-    <Design.DataContext>
-        <viewModels:AddTimerViewModel />
-    </Design.DataContext>
-
-    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto">
-        <Button Command="{Binding SwitchPaneCommand}">
-            <avalonia:MaterialIcon Kind="Menu" />
-        </Button>
-
-        <CheckBox Grid.Row="1" IsChecked="{Binding IsFavorite}" Content="Completed" />
-        <controls:ButtonTextBox Grid.Row="2"
-                                Text="{Binding Item.Name}"
+    <StackPanel>
+        <CheckBox IsChecked="{Binding IsFavorite}" Content="Completed" />
+        <controls:ButtonTextBox Text="{Binding Item.Name}"
                                 Label="Item"
                                 Command="{Binding ChangeItemCommand}"
                                 IsReadOnly="True"
                                 Kind="Pencil" />
-        <controls:ButtonTextBox Grid.Row="3"
-                                Text="{Binding DueDateTime}"
+        <controls:ButtonTextBox Text="{Binding DueDateTime}"
                                 Label="DueDateTime"
                                 Command="{Binding ChangeDueDateTimeCommand}"
                                 IsReadOnly="True"
                                 Kind="Pencil" />
-
-        <Button Grid.Row="4" Command="{Binding AddTimerCommand}">
-            <avalonia:MaterialIcon Kind="Plus" />
-        </Button>
-    </Grid>
+    </StackPanel>
 </reactiveUi:ReactiveUserControl>

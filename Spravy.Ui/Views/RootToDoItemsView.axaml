@@ -6,14 +6,9 @@
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-                                xmlns:design="clr-namespace:Spravy.Ui.Design"
-                                mc:Ignorable="d" d:DesignWidth="540" d:DesignHeight="1100"
+                                mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                                 x:Class="Spravy.Ui.Views.RootToDoItemsView"
                                 x:DataType="viewModels:RootToDoItemsViewModel">
-    <Design.DataContext>
-        <design:RootToDoItemsViewModelDesign />
-    </Design.DataContext>
-
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
             <InvokeCommandAction Command="{Binding InitializedCommand}" />

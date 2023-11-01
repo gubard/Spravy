@@ -1,16 +1,21 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
 using Avalonia.Input.Platform;
+using Google.Protobuf;
 using Material.Icons;
 using Ninject;
 using ReactiveUI;
 using Spravy.Domain.Extensions;
 using Spravy.EventBus.Domain.Helpers;
+using Spravy.EventBus.Protos;
+using Spravy.Schedule.Domain.Interfaces;
+using Spravy.Schedule.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
@@ -52,7 +57,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
         ToDoItemToRootCommand = CreateCommandFromTask(ToDoItemToRootAsync);
         InitializedCommand = CreateCommand(Initialized);
         ToDoItemToStringCommand = CreateCommandFromTask(ToDoItemToStringAsync);
-        AddTimerCommand = CreateCommand(AddTimer);
+        AddTimerCommand = CreateCommandFromTask(AddTimerAsync);
 
         this.WhenAnyValue(x => x.IsFavorite)
          .Subscribe(
@@ -106,6 +111,9 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
     public required IToDoService ToDoService { get; set; }
 
     [Inject]
+    public required IScheduleService ScheduleService { get; init; }
+
+    [Inject]
     public required IMapper Mapper { get; set; }
 
     [Inject]
@@ -146,20 +154,45 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
 
     public abstract Task RefreshToDoItemAsync();
 
-    private void AddTimer()
+    private Task AddTimerAsync()
     {
-        Navigator.NavigateTo<AddTimerViewModel>(
-            vm =>
+        return DialogViewer.ShowConfirmContentDialogAsync<AddTimerView>(
+            async view =>
             {
-                vm.EventId = EventIdHelper.ChangeFavoriteId;
+                var viewModel = view.ViewModel.ThrowIfNull();
 
-                vm.Item = new()
+                var eventValue = new ChangeToDoItemIsFavoriteEvent
+                {
+                    IsFavorite = IsFavorite,
+                    ToDoItemId = Mapper.Map<ByteString>(viewModel.Item.ThrowIfNull().Id),
+                };
+
+                await using var stream = new MemoryStream();
+                eventValue.WriteTo(stream);
+                stream.Position = 0;
+
+                var parameters = new AddTimerParameters(
+                    viewModel.DueDateTime,
+                    viewModel.EventId,
+                    await stream.ToByteArrayAsync()
+                );
+
+                await ScheduleService.AddTimerAsync(parameters);
+                await DialogViewer.CloseContentDialogAsync();
+            },
+            _ => DialogViewer.CloseContentDialogAsync(),
+            view =>
+            {
+                var viewModel = view.ViewModel.ThrowIfNull();
+                viewModel.EventId = EventIdHelper.ChangeFavoriteId;
+
+                viewModel.Item = new()
                 {
                     Id = Id,
                     Name = Name,
                 };
 
-                vm.DueDateTime = DateTimeOffset.Now.ToCurrentDay();
+                viewModel.DueDateTime = DateTimeOffset.Now.ToCurrentDay();
             }
         );
     }

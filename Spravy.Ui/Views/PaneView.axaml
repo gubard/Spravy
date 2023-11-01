@@ -6,13 +6,9 @@
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                                mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                                 x:Class="Spravy.Ui.Views.PaneView"
                                 x:DataType="viewModels:PaneViewModel">
-    <Design.DataContext>
-        <viewModels:PaneViewModel />
-    </Design.DataContext>
-
     <StackPanel>
         <Button Command="{Binding ToRootToDoItemViewCommand}">
             <Grid ColumnDefinitions="Auto,Auto">

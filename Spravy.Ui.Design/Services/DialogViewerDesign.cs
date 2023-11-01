@@ -1,8 +1,6 @@
-using System;
-using System.Threading.Tasks;
 using Spravy.Ui.Interfaces;
 
-namespace Spravy.Ui.Design;
+namespace Spravy.Ui.Design.Services;
 
 public class DialogViewerDesign : IDialogViewer
 {

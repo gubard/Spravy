@@ -1,4 +1,5 @@
 using System;
+using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Ninject;
@@ -9,7 +10,13 @@ namespace Spravy.Ui.Models;
 
 public class ViewModelBase : NotifyBase
 {
+    protected static BehaviorSubject<bool> canExecute;
     private static readonly TimeSpan TaskTimeout = TimeSpan.FromSeconds(1);
+
+    static ViewModelBase()
+    {
+        canExecute = new(true);
+    }
 
     [Inject]
     public required INavigator Navigator { get; init; }
@@ -17,17 +24,14 @@ public class ViewModelBase : NotifyBase
     [Inject]
     public required IDialogViewer DialogViewer { get; set; }
 
-    protected ICommand CreateCommandFromObservable<TResult>(Func<IObservable<TResult>> execute)
+    public void ReleaseCommands()
     {
-        var command = ReactiveCommand.CreateFromObservable(execute);
-        SetupCommand(command);
-
-        return command;
+        canExecute.OnNext(true);
     }
 
     protected ICommand CreateCommand(Action action)
     {
-        var command = ReactiveCommand.Create(action);
+        var command = ReactiveCommand.Create(WrapCommand(action), canExecute);
         SetupCommand(command);
 
         return command;
@@ -35,7 +39,7 @@ public class ViewModelBase : NotifyBase
 
     protected ICommand CreateCommand<TArgs>(Action<TArgs> action)
     {
-        var command = ReactiveCommand.Create(action);
+        var command = ReactiveCommand.Create(WrapCommand(action), canExecute);
         SetupCommand(command);
 
         return command;
@@ -43,7 +47,7 @@ public class ViewModelBase : NotifyBase
 
     protected ICommand CreateCommandFromTask(Func<Task> execute)
     {
-        var command = ReactiveCommand.CreateFromTask(execute);
+        var command = ReactiveCommand.CreateFromTask(WrapCommand(execute), canExecute);
         SetupCommand(command);
 
         return command;
@@ -51,7 +55,11 @@ public class ViewModelBase : NotifyBase
 
     protected ICommand CreateCommandFromTaskWithDialogProgressIndicator(Func<Task> execute)
     {
-        var command = ReactiveCommand.CreateFromTask(CreateWithDialogProgressIndicatorAsync(execute));
+        var command = ReactiveCommand.CreateFromTask(
+            WrapCommand(CreateWithDialogProgressIndicatorAsync(execute)),
+            canExecute
+        );
+
         SetupCommand(command);
 
         return command;
@@ -59,7 +67,11 @@ public class ViewModelBase : NotifyBase
 
     protected ICommand CreateCommandFromTaskWithDialogProgressIndicator<TParam>(Func<TParam, Task> execute)
     {
-        var command = ReactiveCommand.CreateFromTask(CreateWithDialogProgressIndicatorAsync(execute));
+        var command = ReactiveCommand.CreateFromTask(
+            WrapCommand(CreateWithDialogProgressIndicatorAsync(execute)),
+            canExecute
+        );
+
         SetupCommand(command);
 
         return command;
@@ -67,7 +79,7 @@ public class ViewModelBase : NotifyBase
 
     protected ICommand CreateCommandFromTask<TParam>(Func<TParam, Task> execute)
     {
-        var command = ReactiveCommand.CreateFromTask(execute);
+        var command = ReactiveCommand.CreateFromTask(WrapCommand(execute), canExecute);
         SetupCommand(command);
 
         return command;
@@ -79,7 +91,7 @@ public class ViewModelBase : NotifyBase
         {
             await func.Invoke();
         }
-        catch (Exception e)
+        catch(Exception e)
         {
             Navigator.NavigateTo<IExceptionViewModel>(viewModel => viewModel.Exception = e);
         }
@@ -91,7 +103,7 @@ public class ViewModelBase : NotifyBase
         {
             var task = execute.Invoke();
 
-            if (await IsTakeMoreThen(task, TaskTimeout))
+            if(await IsTakeMoreThen(task, TaskTimeout))
             {
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                 DialogViewer.ShowProgressDialogAsync<IDialogProgressIndicator>();
@@ -110,7 +122,7 @@ public class ViewModelBase : NotifyBase
         {
             var task = execute.Invoke(param);
 
-            if (await IsTakeMoreThen(task, TaskTimeout))
+            if(await IsTakeMoreThen(task, TaskTimeout))
             {
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                 DialogViewer.ShowProgressDialogAsync<IDialogProgressIndicator>();
@@ -127,7 +139,8 @@ public class ViewModelBase : NotifyBase
     {
         var tasks = new[]
         {
-            task, Task.Delay(timeout),
+            task,
+            Task.Delay(timeout),
         };
 
         var resultTask = await Task.WhenAny(tasks);
@@ -143,6 +156,7 @@ public class ViewModelBase : NotifyBase
     private async void OnNextError(Exception exception)
     {
         Console.WriteLine(exception);
+
         await DialogViewer.ShowInfoErrorDialogAsync<IExceptionViewModel>(
             async _ =>
             {
@@ -151,5 +165,73 @@ public class ViewModelBase : NotifyBase
             },
             viewModel => viewModel.Exception = exception
         );
+    }
+
+    private Action WrapCommand(Action action)
+    {
+        return () =>
+        {
+            canExecute.OnNext(false);
+
+            try
+            {
+                action.Invoke();
+            }
+            finally
+            {
+                canExecute.OnNext(true);
+            }
+        };
+    }
+
+    private Action<TArgs> WrapCommand<TArgs>(Action<TArgs> action)
+    {
+        return args =>
+        {
+            canExecute.OnNext(false);
+
+            try
+            {
+                action.Invoke(args);
+            }
+            finally
+            {
+                canExecute.OnNext(true);
+            }
+        };
+    }
+
+    private Func<Task> WrapCommand(Func<Task> func)
+    {
+        return async () =>
+        {
+            canExecute.OnNext(false);
+
+            try
+            {
+                await func.Invoke();
+            }
+            finally
+            {
+                canExecute.OnNext(true);
+            }
+        };
+    }
+
+    private Func<TParam, Task> WrapCommand<TParam>(Func<TParam, Task> func)
+    {
+        return async param =>
+        {
+            canExecute.OnNext(false);
+
+            try
+            {
+                await func.Invoke(param);
+            }
+            finally
+            {
+                canExecute.OnNext(true);
+            }
+        };
     }
 }

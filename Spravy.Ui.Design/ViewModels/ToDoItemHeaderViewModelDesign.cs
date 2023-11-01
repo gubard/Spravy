@@ -1,17 +1,26 @@
-﻿using System.Linq;
-using Avalonia;
+﻿using Avalonia;
 using Spravy.Domain.Extensions;
+using Spravy.Schedule.Domain.Models;
 using Spravy.ToDo.Domain.Interfaces;
+using Spravy.ToDo.Domain.Models;
+using Spravy.Ui.Design.Helpers;
+using Spravy.Ui.Design.Services;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.ViewModels;
 
-namespace Spravy.Ui.Design;
+namespace Spravy.Ui.Design.ViewModels;
 
 public class ToDoItemHeaderViewModelDesign : ToDoItemHeaderViewModel
 {
     public ToDoItemHeaderViewModelDesign()
     {
-        var toDoService = new ToDoServiceDesign(Enumerable.Empty<IToDoSubItem>(), Enumerable.Empty<IToDoSubItem>());
+        var toDoService = new ToDoServiceDesign(
+            Enumerable.Empty<IToDoSubItem>(),
+            Enumerable.Empty<IToDoSubItem>(),
+            null,
+            Enumerable.Empty<ToDoShortItem>(),
+            Enumerable.Empty<IToDoSubItem>()
+        );
 
         Item = new ToDoItemGroupViewModel
         {
@@ -34,7 +43,8 @@ public class ToDoItemHeaderViewModelDesign : ToDoItemHeaderViewModel
                 Navigator = ConstDesign.Navigator,
                 ToDoService = toDoService
             },
-            Name = "Header"
+            Name = "Header",
+            ScheduleService = new ScheduleServiceDesign(Enumerable.Empty<TimerItem>()),
         };
     }
 }

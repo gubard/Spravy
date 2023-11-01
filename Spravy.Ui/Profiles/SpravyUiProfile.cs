@@ -10,7 +10,6 @@ using Spravy.Ui.ViewModels;
 using Google.Protobuf;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Models;
-using Spravy.ToDo.Domain.Enums;
 
 namespace Spravy.Ui.Profiles;
 

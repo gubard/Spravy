@@ -9,10 +9,6 @@
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.TimersView"
                                 x:DataType="viewModels:TimersViewModel">
-    <Design.DataContext>
-        <viewModels:TimersViewModel />
-    </Design.DataContext>
-
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
             <InvokeCommandAction Command="{Binding InitializedCommand}" />
@@ -20,7 +16,7 @@
     </Interaction.Behaviors>
 
     <Grid RowDefinitions="Auto,*">
-        <Button Command="{Binding SwitchPaneCommand}">
+        <Button Command="{Binding SwitchPaneCommand}" HorizontalAlignment="Left">
             <avalonia:MaterialIcon Kind="Menu" />
         </Button>
 

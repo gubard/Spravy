@@ -10,10 +10,6 @@
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.ToDoSubItemsView"
                                 x:DataType="viewModels:ToDoSubItemsViewModel">
-    <Design.DataContext>
-        <viewModels:ToDoSubItemsViewModel />
-    </Design.DataContext>
-
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
             <InvokeCommandAction Command="{Binding InitializedCommand}" />

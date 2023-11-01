@@ -8,13 +8,9 @@
                                   xmlns:controls="clr-namespace:Spravy.Ui.Controls"
                                   xmlns:enums="clr-namespace:Spravy.Ui.Enums"
                                   xmlns:models="clr-namespace:Spravy.Domain.Models;assembly=Spravy.Domain"
-                                  mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                                  mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                                   x:Class="Spravy.Ui.Views.CompleteToDoItemView"
                                   x:DataType="viewModels:CompleteToDoItemViewModel">
-    <Design.DataContext>
-        <viewModels:CompleteToDoItemViewModel />
-    </Design.DataContext>
-
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
             <InvokeCommandAction Command="{Binding InitializedCommand}" />

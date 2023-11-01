@@ -1,22 +1,31 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Spravy.Domain.Extensions;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
 
-namespace Spravy.Ui.Design;
+namespace Spravy.Ui.Design.Services;
 
 public class ToDoServiceDesign : IToDoService
 {
     private readonly IEnumerable<IToDoSubItem> roots;
     private readonly IEnumerable<IToDoSubItem> favorite;
-    
-    public ToDoServiceDesign(IEnumerable<IToDoSubItem> roots, IEnumerable<IToDoSubItem> favorite)
+    private readonly IToDoItem item;
+    private readonly IEnumerable<ToDoShortItem> siblings;
+    private readonly IEnumerable<IToDoSubItem> leafs;
+
+    public ToDoServiceDesign(
+        IEnumerable<IToDoSubItem> roots,
+        IEnumerable<IToDoSubItem> favorite,
+        IToDoItem item,
+        IEnumerable<ToDoShortItem> siblings,
+        IEnumerable<IToDoSubItem> leafs
+    )
     {
         this.roots = roots;
         this.favorite = favorite;
+        this.item = item;
+        this.siblings = siblings;
+        this.leafs = leafs;
     }
 
     public Task<IEnumerable<IToDoSubItem>> GetRootToDoSubItemsAsync()
@@ -26,7 +35,7 @@ public class ToDoServiceDesign : IToDoService
 
     public Task<IToDoItem> GetToDoItemAsync(Guid id)
     {
-        throw new NotImplementedException();
+        return item.ToTaskResult();
     }
 
     public Task<Guid> AddRootToDoItemAsync(AddRootToDoItemOptions options)
@@ -126,7 +135,7 @@ public class ToDoServiceDesign : IToDoService
 
     public Task<IEnumerable<IToDoSubItem>> GetLeafToDoSubItemsAsync(Guid id)
     {
-        throw new NotImplementedException();
+        return leafs.ToTaskResult();
     }
 
     public Task<IEnumerable<ToDoSelectorItem>> GetToDoSelectorItemsAsync(Guid[] ignoreIds)
@@ -175,6 +184,11 @@ public class ToDoServiceDesign : IToDoService
     }
 
     public Task<IEnumerable<ToDoShortItem>> GetSiblingsAsync(Guid id)
+    {
+        return siblings.ToTaskResult();
+    }
+
+    public Task<ActiveToDoItem?> GetActiveToDoItemAsync()
     {
         throw new NotImplementedException();
     }

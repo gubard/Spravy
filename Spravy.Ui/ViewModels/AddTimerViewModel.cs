@@ -1,38 +1,30 @@
 using System;
-using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Controls;
-using Google.Protobuf;
 using Ninject;
 using ReactiveUI;
 using Spravy.Domain.Extensions;
-using Spravy.EventBus.Protos;
 using Spravy.Schedule.Domain.Interfaces;
-using Spravy.Schedule.Domain.Models;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 
-public class AddTimerViewModel : RoutableViewModelBase
+public class AddTimerViewModel : ViewModelBase
 {
     private DateTimeOffset dueDateTime = DateTimeOffset.Now.ToCurrentDay();
     private bool isFavorite;
     private ToDoItemNotify? item;
 
-    public AddTimerViewModel() : base("add-timer")
+    public AddTimerViewModel()
     {
-        AddTimerCommand = CreateCommandFromTaskWithDialogProgressIndicator(AddTimerAsync);
-        SwitchPaneCommand = CreateCommand(SwitchPane);
         ChangeDueDateTimeCommand = CreateCommandFromTask(ChangeDueDateTimeAsync);
         ChangeItemCommand = CreateCommandFromTask(ChangeItemAsync);
     }
 
     public Guid EventId { get; set; }
-    public ICommand AddTimerCommand { get; }
-    public ICommand SwitchPaneCommand { get; }
     public ICommand ChangeDueDateTimeCommand { get; }
     public ICommand ChangeItemCommand { get; }
 
@@ -56,11 +48,11 @@ public class AddTimerViewModel : RoutableViewModelBase
                     Name = itemNotify.Name
                 };
 
-                return  DialogViewer.CloseInputDialogAsync();
+                return DialogViewer.CloseInputDialogAsync();
             },
             view =>
             {
-                if (Item is null)
+                if(Item is null)
                 {
                     return;
                 }
@@ -77,7 +69,7 @@ public class AddTimerViewModel : RoutableViewModelBase
             {
                 DueDateTime = value;
 
-                return  DialogViewer.CloseInputDialogAsync();
+                return DialogViewer.CloseInputDialogAsync();
             },
             calendar => calendar.SelectedDate = DateTimeOffset.Now.ToCurrentDay().DateTime,
             clock => clock.SelectedTime = TimeSpan.Zero
@@ -100,25 +92,5 @@ public class AddTimerViewModel : RoutableViewModelBase
     {
         get => isFavorite;
         set => this.RaiseAndSetIfChanged(ref isFavorite, value);
-    }
-
-    private void SwitchPane()
-    {
-        SplitView.IsPaneOpen = !SplitView.IsPaneOpen;
-    }
-
-    private async Task AddTimerAsync()
-    {
-        var eventValue = new ChangeToDoItemIsFavoriteEvent
-        {
-            IsFavorite = IsFavorite,
-            ToDoItemId = Mapper.Map<ByteString>(Item.ThrowIfNull().Id),
-        };
-
-        await using var stream = new MemoryStream();
-        eventValue.WriteTo(stream);
-        stream.Position = 0;
-        var parameters = new AddTimerParameters(DueDateTime, EventId, await stream.ToByteArrayAsync());
-        await ScheduleService.AddTimerAsync(parameters);
     }
 }

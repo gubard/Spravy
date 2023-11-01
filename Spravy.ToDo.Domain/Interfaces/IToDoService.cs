@@ -37,4 +37,5 @@ public interface IToDoService
     Task UpdateToDoItemYearsOffsetAsync(Guid id, ushort years);
     Task UpdateToDoItemChildrenTypeAsync(Guid id, ToDoItemChildrenType type);
     Task<IEnumerable<ToDoShortItem>> GetSiblingsAsync(Guid id);
+    Task<ActiveToDoItem?> GetActiveToDoItemAsync();
 }

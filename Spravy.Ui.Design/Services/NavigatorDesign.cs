@@ -1,8 +1,7 @@
-using System;
 using ReactiveUI;
 using Spravy.Ui.Interfaces;
 
-namespace Spravy.Ui.Design;
+namespace Spravy.Ui.Design.Services;
 
 public class NavigatorDesign : INavigator
 {

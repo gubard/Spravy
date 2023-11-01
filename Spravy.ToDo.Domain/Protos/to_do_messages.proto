@@ -7,6 +7,14 @@ import "google/protobuf/duration.proto";
 
 package spravy.to_do;
 
+message GetActiveItemRequest {
+  
+}
+
+message GetActiveItemReply {
+  ActiveToDoItemGrpc Item = 1;
+}
+
 message GetSiblingsRequest {
   bytes Id = 1;
 }

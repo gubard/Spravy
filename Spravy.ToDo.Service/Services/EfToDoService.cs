@@ -1186,6 +1186,30 @@ public class EfToDoService : IToDoService
         return mapper.Map<IEnumerable<ToDoShortItem>>(items);
     }
 
+    public async Task<ActiveToDoItem?> GetActiveToDoItemAsync()
+    {
+        await using var context = dbContextFactory.Create();
+
+        var items = await context.Set<ToDoItemEntity>()
+                              .Where(x => x.ParentId == null)
+                              .OrderBy(x => x.OrderIndex)
+                              .ToArrayAsync();
+
+        foreach(var item in items)
+        {
+            var active = await activeToDoItemToDoItemService.GetActiveItemAsync(context, item);
+
+            if(active is null)
+            {
+                continue;
+            }
+
+            return active;
+        }
+
+        return null;
+    }
+
     private async Task ToDoItemToStringAsync(
         SpravyDbToDoDbContext context,
         ToDoItemToStringOptions options,

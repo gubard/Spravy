@@ -1,9 +1,11 @@
 using System;
 using System.Threading.Tasks;
+using Avalonia;
 using DialogHostAvalonia;
 using Ninject;
 using Spravy.Domain.Extensions;
 using Spravy.Ui.Interfaces;
+using Spravy.Ui.Models;
 using Spravy.Ui.Views;
 
 namespace Spravy.Ui.Services;
@@ -22,42 +24,42 @@ public class DialogViewer : IDialogViewer
     {
         var content = Resolver.Get<TView>();
 
-        if (content is null)
+        if(content is null)
         {
             throw new NullReferenceException();
         }
 
         setupView?.Invoke(content);
 
-        return DialogHost.Show(content, ContentDialogHostIdentifier);
+        return ShowView(content, ContentDialogHostIdentifier);
     }
 
     public Task ShowProgressDialogAsync<TView>(Action<TView>? setupView = null)
     {
         var content = Resolver.Get<TView>();
 
-        if (content is null)
+        if(content is null)
         {
             throw new NullReferenceException();
         }
 
         setupView?.Invoke(content);
 
-        return DialogHost.Show(content, ProgressDialogHostIdentifier);
+        return ShowView(content, ProgressDialogHostIdentifier);
     }
 
     public Task ShowErrorDialogAsync<TView>(Action<TView>? setupView = null)
     {
         var content = Resolver.Get<TView>();
 
-        if (content is null)
+        if(content is null)
         {
             throw new NullReferenceException();
         }
 
         setupView?.Invoke(content);
 
-        return DialogHost.Show(content, ErrorDialogHostIdentifier);
+        return ShowView(content, ErrorDialogHostIdentifier);
     }
 
     public Task ShowInfoErrorDialogAsync<TView>(Func<TView, Task> okTask, Action<TView>? setupView = null)
@@ -69,7 +71,7 @@ public class DialogViewer : IDialogViewer
         viewModel.Content = content;
         viewModel.OkTask = view => okTask.Invoke((TView)view);
 
-        return DialogHost.Show(confirmView, ErrorDialogHostIdentifier);
+        return ShowView(confirmView, ErrorDialogHostIdentifier);
     }
 
     public Task ShowInfoInputDialogAsync<TView>(Func<TView, Task> okTask, Action<TView>? setupView = null)
@@ -81,21 +83,21 @@ public class DialogViewer : IDialogViewer
         viewModel.Content = content;
         viewModel.OkTask = view => okTask.Invoke((TView)view);
 
-        return DialogHost.Show(confirmView, InputDialogHostIdentifier);
+        return ShowView(confirmView, InputDialogHostIdentifier);
     }
 
     public Task ShowInputDialogAsync<TView>(Action<TView>? setupView = null)
     {
         var content = Resolver.Get<TView>();
 
-        if (content is null)
+        if(content is null)
         {
             throw new NullReferenceException();
         }
 
         setupView?.Invoke(content);
 
-        return DialogHost.Show(content, InputDialogHostIdentifier);
+        return ShowView(content, InputDialogHostIdentifier);
     }
 
     public Task CloseProgressDialogAsync()
@@ -119,7 +121,7 @@ public class DialogViewer : IDialogViewer
         viewModel.ConfirmTask = view => confirmTask.Invoke((TView)view);
         viewModel.CancelTask = view => cancelTask.Invoke((TView)view);
 
-        return DialogHost.Show(confirmView, ContentDialogHostIdentifier);
+        return ShowView(confirmView, ContentDialogHostIdentifier);
     }
 
     public Task ShowConfirmInputDialogAsync<TView>(
@@ -136,7 +138,7 @@ public class DialogViewer : IDialogViewer
         viewModel.ConfirmTask = view => confirmTask.Invoke((TView)view);
         viewModel.CancelTask = view => cancelTask.Invoke((TView)view);
 
-        return DialogHost.Show(confirmView, InputDialogHostIdentifier);
+        return ShowView(confirmView, InputDialogHostIdentifier);
     }
 
     public Task CloseContentDialogAsync()
@@ -160,9 +162,26 @@ public class DialogViewer : IDialogViewer
         return Task.CompletedTask;
     }
 
+    private Task ShowView(object content, string identifier)
+    {
+        if(content is not StyledElement styledElement)
+        {
+            return DialogHost.Show(content, identifier);
+        }
+
+        if(styledElement.DataContext is not ViewModelBase viewModel)
+        {
+            return DialogHost.Show(content, identifier);
+        }
+
+        viewModel.ReleaseCommands();
+
+        return DialogHost.Show(content, identifier);
+    }
+
     private void SafeClose(string identifier)
     {
-        if (!DialogHost.IsDialogOpen(identifier))
+        if(!DialogHost.IsDialogOpen(identifier))
         {
             return;
         }

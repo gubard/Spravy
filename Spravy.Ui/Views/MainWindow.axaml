@@ -5,12 +5,9 @@
                            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                            xmlns:reactiveUi="http://reactiveui.net"
                            xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-                           mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                           mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                            x:Class="Spravy.Ui.Views.MainWindow"
                            Title="Spravy.Ui"
                            Icon="/Assets/Images/Logo.png"
                            x:DataType="viewModels:MainWindowModel">
-    <Design.DataContext>
-        <viewModels:MainWindowModel />
-    </Design.DataContext>
 </reactiveUi:ReactiveWindow>

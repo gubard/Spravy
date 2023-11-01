@@ -1,17 +1,32 @@
-using System;
-using Spravy.ToDo.Domain.Enums;
+﻿using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
+using Spravy.Ui.Design.Helpers;
+using Spravy.Ui.Design.Services;
 using Spravy.Ui.ViewModels;
-using Spravy.Ui.Views;
 
-namespace Spravy.Ui.Design;
+namespace Spravy.Ui.Design.ViewModels;
 
-public class RootToDoItemsViewModelDesign : RootToDoItemsViewModel
+public class LeafToDoItemsViewModelDesign : LeafToDoItemsViewModel
 {
-    public RootToDoItemsViewModelDesign()
+    public LeafToDoItemsViewModelDesign()
     {
         var toDoServiceDesign = new ToDoServiceDesign(
+            Enumerable.Empty<IToDoSubItem>(),
+            new IToDoSubItem[]
+            {
+                new ToDoSubItemGroup(
+                    Guid.NewGuid(),
+                    "Favorite Group",
+                    1,
+                    ToDoItemStatus.Miss,
+                    string.Empty,
+                    true,
+                    null
+                ),
+            },
+            null,
+            Enumerable.Empty<ToDoShortItem>(),
             new IToDoSubItem[]
             {
                 new ToDoSubItemGroup(
@@ -80,6 +95,7 @@ public class RootToDoItemsViewModelDesign : RootToDoItemsViewModel
                     100,
                     null
                 ),
+
                 //-------------------------------------------LastCompleted----------------------------------------------
                 new ToDoSubItemGroup(
                     Guid.NewGuid(),
@@ -147,6 +163,7 @@ public class RootToDoItemsViewModelDesign : RootToDoItemsViewModel
                     1,
                     DateTimeOffset.Now
                 ),
+
                 //-------------------------------------------Active-----------------------------------------------------
                 new ToDoSubItemGroup(
                     Guid.NewGuid(),
@@ -214,19 +231,7 @@ public class RootToDoItemsViewModelDesign : RootToDoItemsViewModel
                     1,
                     DateTimeOffset.Now
                 ),
-            },
-          new IToDoSubItem[]
-          {
-              new ToDoSubItemGroup(
-                  Guid.NewGuid(),
-                  "Favorite Group",
-                  1,
-                  ToDoItemStatus.Miss,
-                  string.Empty,
-                  true,
-                  null
-              ),
-          }
+            }
         );
 
         ToDoService = toDoServiceDesign;

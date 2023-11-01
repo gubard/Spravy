@@ -1,7 +1,5 @@
 using AutoMapper;
-
 using Google.Protobuf;
-
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
 using Spravy.Domain.Interfaces;
@@ -9,7 +7,6 @@ using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
 using Spravy.ToDo.Protos;
-
 using static Spravy.ToDo.Protos.ToDoService;
 
 namespace Spravy.ToDo.Domain.Client.Services;
@@ -543,6 +540,19 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                 var items = await client.GetSiblingsAsync(request, await metadataFactory.CreateAsync());
 
                 return mapper.Map<IEnumerable<ToDoShortItem>>(items.Items);
+            }
+        );
+    }
+
+    public Task<ActiveToDoItem?> GetActiveToDoItemAsync()
+    {
+        return CallClientAsync(
+            async client =>
+            {
+                var request = new GetActiveItemRequest();
+                var reply = await client.GetActiveItemAsync(request, await metadataFactory.CreateAsync());
+
+                return mapper.Map<ActiveToDoItem?>(reply.Item);
             }
         );
     }

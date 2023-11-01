@@ -8,14 +8,9 @@
                                 xmlns:controls1="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
                                 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                 xmlns:helpers="clr-namespace:Spravy.Ui.Helpers"
-                                xmlns:design="clr-namespace:Spravy.Ui.Design"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.ToDoItemHeaderView"
                                 x:DataType="viewModels:ToDoItemHeaderViewModel">
-    <Design.DataContext>
-        <design:ToDoItemHeaderViewModelDesign />
-    </Design.DataContext>
-
     <UserControl.Styles>
         <Style Selector="ItemsControl.adaptive">
             <Setter Property="(Interaction.Behaviors)">

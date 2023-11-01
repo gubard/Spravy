@@ -9,13 +9,9 @@
                                 xmlns:controls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
                                 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                 xmlns:views="clr-namespace:Spravy.Ui.Views"
-                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                                mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                                 x:Class="Spravy.Ui.Views.CreateUserView"
                                 x:DataType="viewModels:CreateUserViewModel">
-    <Design.DataContext>
-        <viewModels:CreateUserViewModel />
-    </Design.DataContext>
-
     <UserControl.KeyBindings>
         <KeyBinding Gesture="Enter" Command="{Binding EnterCommand}" CommandParameter="{Binding $self}" />
     </UserControl.KeyBindings>

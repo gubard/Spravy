@@ -5,12 +5,14 @@
                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                 xmlns:reactiveUi="http://reactiveui.net"
-                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                                mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                                 x:Class="Spravy.Ui.Views.ChangeToDoItemOrderIndexView"
                                 x:DataType="viewModels:ChangeToDoItemOrderIndexViewModel">
-    <Design.DataContext>
-        <viewModels:ChangeToDoItemOrderIndexViewModel />
-    </Design.DataContext>
+    <Interaction.Behaviors>
+        <EventTriggerBehavior EventName="Initialized">
+            <InvokeCommandAction Command="{Binding InitializedCommand}" />
+        </EventTriggerBehavior>
+    </Interaction.Behaviors>
 
     <Grid RowDefinitions="Auto,*">
         <StackPanel Orientation="Horizontal">

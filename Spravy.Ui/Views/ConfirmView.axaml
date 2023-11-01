@@ -5,13 +5,9 @@
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                                mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                                 x:Class="Spravy.Ui.Views.ConfirmView"
                                 x:DataType="viewModels:ConfirmViewModel">
-    <Design.DataContext>
-        <viewModels:ConfirmViewModel Content="{avalonia:MaterialIconExt About}" />
-    </Design.DataContext>
-
     <UserControl.KeyBindings>
         <KeyBinding Gesture="Ctrl+Enter" Command="{Binding ConfirmCommand}" />
     </UserControl.KeyBindings>

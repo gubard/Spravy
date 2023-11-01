@@ -18,16 +18,16 @@ public class CompleteToDoItemViewModel : ViewModelBase
     private static readonly Dictionary<CompleteStatus, KeyGesture> keys = new()
     {
         {
-            CompleteStatus.Complete, new KeyGesture(Key.C)
+            CompleteStatus.Complete, new(Key.C)
         },
         {
-            CompleteStatus.Incomplete, new KeyGesture(Key.I)
+            CompleteStatus.Incomplete, new(Key.I)
         },
         {
-            CompleteStatus.Fail, new KeyGesture(Key.F)
+            CompleteStatus.Fail, new(Key.F)
         },
         {
-            CompleteStatus.Skip, new KeyGesture(Key.S)
+            CompleteStatus.Skip, new(Key.S)
         },
     };
 
@@ -69,7 +69,9 @@ public class CompleteToDoItemViewModel : ViewModelBase
         CompleteStatuses.AddRange(
             new Ref<CompleteStatus>[]
             {
-                new(CompleteStatus.Complete), new(CompleteStatus.Skip), new(CompleteStatus.Fail),
+                new(CompleteStatus.Complete),
+                new(CompleteStatus.Skip),
+                new(CompleteStatus.Fail),
             }
         );
 
@@ -83,7 +85,9 @@ public class CompleteToDoItemViewModel : ViewModelBase
         CompleteStatuses.AddRange(
             new Ref<CompleteStatus>[]
             {
-                new(CompleteStatus.Incomplete), new(CompleteStatus.Skip), new(CompleteStatus.Fail),
+                new(CompleteStatus.Incomplete),
+                new(CompleteStatus.Skip),
+                new(CompleteStatus.Fail),
             }
         );
 
@@ -92,7 +96,7 @@ public class CompleteToDoItemViewModel : ViewModelBase
 
     private void UpdateKeyBindings()
     {
-        if (view is null)
+        if(view is null)
         {
             return;
         }

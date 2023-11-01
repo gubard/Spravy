@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
 using Ninject;
@@ -18,10 +20,10 @@ public class ChangeToDoItemOrderIndexViewModel : ViewModelBase
 
     public ChangeToDoItemOrderIndexViewModel()
     {
-        this.WhenAnyValue(x => x.Id)
-         .Skip(1)
-         .Subscribe(OnNextId);
+        InitializedCommand = CreateCommandFromTaskWithDialogProgressIndicator(InitializedAsync);
     }
+
+    public ICommand InitializedCommand { get; }
 
     [Inject]
     public required IMapper Mapper { get; init; }
@@ -49,9 +51,9 @@ public class ChangeToDoItemOrderIndexViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref isAfter, value);
     }
 
-    private async void OnNextId(Guid x)
+    private async Task InitializedAsync()
     {
-        var items = await ToDoService.GetSiblingsAsync(x);
+        var items = await ToDoService.GetSiblingsAsync(Id);
         Items.Clear();
         Items.AddRange(Mapper.Map<IEnumerable<ToDoItemNotify>>(items));
     }

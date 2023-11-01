@@ -21,10 +21,11 @@ public class LeafToDoItemsViewModel : RoutableViewModelBase, IRefreshToDoItem
 
     public LeafToDoItemsViewModel() : base("leaf-to-do-items")
     {
-        this.WhenAnyValue(x => x.Id).Skip(1).Subscribe(OnNextId);
         SwitchPaneCommand = CreateCommand(SwitchPane);
+        InitializedCommand = CreateCommandFromTaskWithDialogProgressIndicator(InitializedAsync);
     }
 
+    public ICommand InitializedCommand { get; }
     public ICommand SwitchPaneCommand { get; }
 
     [Inject]
@@ -45,11 +46,6 @@ public class LeafToDoItemsViewModel : RoutableViewModelBase, IRefreshToDoItem
         set => this.RaiseAndSetIfChanged(ref id, value);
     }
 
-    private async void OnNextId(Guid x)
-    {
-        await CreateWithDialogProgressIndicatorAsync(RefreshToDoItemAsync).Invoke();
-    }
-
     public async Task RefreshToDoItemAsync()
     {
         var items = await ToDoService.GetLeafToDoSubItemsAsync(Id);
@@ -60,5 +56,10 @@ public class LeafToDoItemsViewModel : RoutableViewModelBase, IRefreshToDoItem
     private void SwitchPane()
     {
         SplitView.IsPaneOpen = !SplitView.IsPaneOpen;
+    }
+
+    private Task InitializedAsync()
+    {
+        return RefreshToDoItemAsync();
     }
 }

@@ -6,13 +6,9 @@
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                 xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
-                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                                mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                                 x:Class="Spravy.Ui.Views.ExceptionView"
                                 x:DataType="viewModels:ExceptionViewModel">
-    <Design.DataContext>
-        <viewModels:ExceptionViewModel />
-    </Design.DataContext>
-
     <TextBox Text="{Binding FullExceptionText}"
              IsReadOnly="True"
              UseFloatingWatermark="True" assists:TextFieldAssist.Label="Error message"

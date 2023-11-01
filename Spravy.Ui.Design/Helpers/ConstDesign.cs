@@ -1,8 +1,9 @@
 using AutoMapper;
 using Spravy.Ui.Configurations;
+using Spravy.Ui.Design.Services;
 using Spravy.Ui.Interfaces;
 
-namespace Spravy.Ui.Design;
+namespace Spravy.Ui.Design.Helpers;
 
 public class ConstDesign
 {

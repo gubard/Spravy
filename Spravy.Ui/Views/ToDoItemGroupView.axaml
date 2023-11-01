@@ -6,15 +6,10 @@
                                    xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                    xmlns:controls1="clr-namespace:Spravy.Ui.Controls"
                                    xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
-                                   xmlns:design="clr-namespace:Spravy.Ui.Design"
                                    xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                    mc:Ignorable="d" d:DesignWidth="540" d:DesignHeight="1100"
                                    x:Class="Spravy.Ui.Views.ToDoItemGroupView"
                                    x:DataType="viewModels:ToDoItemGroupViewModel">
-    <Design.DataContext>
-        <design:ToDoItemGroupViewModelDesign />
-    </Design.DataContext>
-
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
             <InvokeCommandAction Command="{Binding InitializedCommand}" />

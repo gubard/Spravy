@@ -7,13 +7,9 @@
                                 xmlns:models="clr-namespace:Spravy.Ui.Models"
                                 xmlns:views="clr-namespace:Spravy.Ui.Views"
                                 xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
-                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                                mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                                 x:Class="Spravy.Ui.Views.AddToDoItemView"
                                 x:DataType="viewModels:AddToDoItemViewModel">
-    <Design.DataContext>
-        <viewModels:AddToDoItemViewModel />
-    </Design.DataContext>
-
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
             <InvokeCommandAction Command="{Binding InitializedCommand}" />
@@ -34,7 +30,8 @@
         </ContentControl>
 
         <TextBox Text="{Binding Name}"
-                 Watermark="Name"
+                 assists:TextFieldAssist.Label="Name"
+                 Theme="{StaticResource OutlineTextBox}"
                  Name="{x:Static views:AddToDoItemView.NameTextBoxName}"
                  UseFloatingWatermark="True"
                  VerticalAlignment="Top" />
