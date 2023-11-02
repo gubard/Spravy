@@ -132,6 +132,7 @@
 
                         <Grid ColumnDefinitions="Auto,Auto,Auto,*" RowDefinitions="Auto,Auto,Auto">
                             <Button Grid.ColumnSpan="3"
+                                    Width="320"
                                     IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}"
                                     CommandParameter="{Binding Active}"
                                     Command="{Binding $parent[interfaces:IToDoItemView].ChangeToActiveDoItemCommand}">
@@ -239,6 +240,7 @@
 
                         <Grid ColumnDefinitions="Auto,Auto,Auto,*" RowDefinitions="Auto,Auto">
                             <Button Grid.ColumnSpan="3"
+                                    Width="320"
                                     IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}"
                                     CommandParameter="{Binding Active}"
                                     Command="{Binding $parent[interfaces:IToDoItemView].ChangeToActiveDoItemCommand}">
@@ -350,6 +352,7 @@
 
                         <Grid ColumnDefinitions="Auto,Auto,Auto,*" RowDefinitions="Auto,Auto,Auto">
                             <Button Grid.ColumnSpan="3"
+                                    Width="320"
                                     IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}"
                                     CommandParameter="{Binding Active}"
                                     Command="{Binding $parent[interfaces:IToDoItemView].ChangeToActiveDoItemCommand}">
@@ -467,7 +470,9 @@
                         </StackPanel>
 
                         <Grid ColumnDefinitions="Auto,Auto,Auto,*" RowDefinitions="Auto,Auto,Auto">
-                            <Button Grid.ColumnSpan="3" CommandParameter="{Binding Active}"
+                            <Button Grid.ColumnSpan="3" 
+                                    Width="320"
+                                    CommandParameter="{Binding Active}"
                                     IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}"
                                     Command="{Binding $parent[interfaces:IToDoItemView].ChangeToActiveDoItemCommand}">
                                 <WrapPanel Orientation="Horizontal">
@@ -587,6 +592,7 @@
 
                         <Grid ColumnDefinitions="Auto,Auto,Auto,*" RowDefinitions="Auto,Auto,Auto">
                             <Button Grid.ColumnSpan="3"
+                                    Width="320"
                                     IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}"
                                     CommandParameter="{Binding Active}"
                                     Command="{Binding $parent[interfaces:IToDoItemView].ChangeToActiveDoItemCommand}">

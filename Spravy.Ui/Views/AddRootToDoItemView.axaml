@@ -7,16 +7,15 @@
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                 xmlns:views="clr-namespace:Spravy.Ui.Views"
                                 xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
-                                mc:Ignorable="d"  d:DesignWidth="425" d:DesignHeight="700"
+                                mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                                 x:Class="Spravy.Ui.Views.AddRootToDoItemView"
                                 x:DataType="viewModels:AddRootToDoItemViewModel">
     <StackPanel>
-        <TextBox UseFloatingWatermark="True"
+        <TextBox Classes="floating-watermark vertical-alignment-top"
                  Theme="{StaticResource OutlineTextBox}"
                  Text="{Binding Name}"
                  assists:TextFieldAssist.Label="Name"
-                 Name="{x:Static views:AddRootToDoItemView.NameTextBoxName}"
-                 VerticalAlignment="Top" />
+                 Name="{x:Static views:AddRootToDoItemView.NameTextBoxName}" />
         <ComboBox Theme="{StaticResource MaterialOutlineComboBox}"
                   assists:ComboBoxAssist.Label="Type"
                   SelectedItem="{Binding Type}"
