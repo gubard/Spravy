@@ -6,6 +6,7 @@
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                                xmlns:controls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
                                 mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                                 x:Class="Spravy.Ui.Views.RootToDoItemsView"
                                 x:DataType="viewModels:RootToDoItemsViewModel">
@@ -16,11 +17,13 @@
     </Interaction.Behaviors>
 
     <Grid RowDefinitions="Auto,*, Auto">
-        <StackPanel Orientation="Horizontal">
-            <Button Command="{Binding SwitchPaneCommand}">
-                <avalonia:MaterialIcon Kind="Menu" />
-            </Button>
-        </StackPanel>
+        <controls:ColorZone Mode="PrimaryMid">
+            <StackPanel Orientation="Horizontal">
+                <Button Command="{Binding SwitchPaneCommand}">
+                    <avalonia:MaterialIcon Kind="Menu" />
+                </Button>
+            </StackPanel>
+        </controls:ColorZone>
 
         <ScrollViewer Grid.Row="1">
             <ContentControl Content="{Binding ToDoSubItemsView}" />
