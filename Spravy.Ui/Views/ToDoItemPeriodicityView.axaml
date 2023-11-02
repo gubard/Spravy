@@ -63,7 +63,7 @@
 
         <ScrollViewer Grid.Row="2">
             <StackPanel>
-                <Expander Classes="header-left">
+                <Expander Classes="header-left" IsExpanded="True">
                     <Expander.Header>
                         <Grid ColumnDefinitions="Auto,*" Height="60">
                             <Button Command="{Binding ChangeDescriptionCommand}"
