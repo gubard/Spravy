@@ -256,6 +256,7 @@ class Build : NukeBuild
                             .SetProperty("AndroidSigningKeyAlias", "spravy")
                             .SetProperty("AndroidSigningKeyPass", AndroidSigningKeyPass)
                             .SetProperty("AndroidSigningStorePass", AndroidSigningStorePass)
+                            .SetProperty("AndroidSdkDirectory", "/opt/android-sdk")
                             .DisableNoBuild()
                     );
 
