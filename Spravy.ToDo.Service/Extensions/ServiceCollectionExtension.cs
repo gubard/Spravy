@@ -37,7 +37,7 @@ public static class ServiceCollectionExtension
     public static IServiceCollection AddToDo(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddHostedService<MigratorHostedService<SpravyDbToDoDbContext>>();
-        serviceCollection.AddHostedService<EventBusHostedService>();
+        //serviceCollection.AddHostedService<EventBusHostedService>();
         serviceCollection.AddSpravySqliteFolderContext<SpravyDbToDoDbContext, SpravyToDoDbSqliteMigratorMark>();
         serviceCollection
             .AddMapperConfiguration<SpravyToDoProfile, SpravyToDoDbProfile, SpravyEventBusProfile,

@@ -35,7 +35,7 @@ public static class ServiceCollectionExtension
     public static IServiceCollection AddSchedule(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddHostedService<MigratorHostedService<SpravyDbScheduleDbContext>>();
-        serviceCollection.AddHostedService<ScheduleHostedService>();
+        //serviceCollection.AddHostedService<ScheduleHostedService>();
         serviceCollection.AddMapperConfiguration<SpravyScheduleProfile, SpravyScheduleDbProfile, SpravyAuthenticationProfile>();
         serviceCollection.AddSpravySqliteFolderContext<SpravyDbScheduleDbContext, SpravyScheduleDbSqliteMigratorMark>();
         serviceCollection
