@@ -5,6 +5,7 @@
              xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
              xmlns:dialogHostAvalonia="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
              xmlns:services="clr-namespace:Spravy.Ui.Services"
+             xmlns:helpers="clr-namespace:Spravy.Ui.Helpers"
              mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
              x:Class="Spravy.Ui.Views.MainView"
              x:DataType="vm:MainViewModel">
@@ -18,11 +19,47 @@
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 
-    <dialogHostAvalonia:DialogHost Identifier="{x:Static services:DialogViewer.ErrorDialogHostIdentifier}">
-        <dialogHostAvalonia:DialogHost Identifier="{x:Static services:DialogViewer.ProgressDialogHostIdentifier}">
-            <dialogHostAvalonia:DialogHost Identifier="{x:Static services:DialogViewer.InputDialogHostIdentifier}">
-                <dialogHostAvalonia:DialogHost
-                    Identifier="{x:Static services:DialogViewer.ContentDialogHostIdentifier}">
+    <UserControl.Styles>
+        <Style Selector="dialogHostAvalonia|DialogHost.adaptive">
+            <Setter Property="(Interaction.Behaviors)">
+                <BehaviorCollectionTemplate>
+                    <BehaviorCollection>
+                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
+                            <AdaptiveClassSetter MinWidth="0"
+                                                 MaxWidth="{x:Static helpers:MaterialDesignSize.MaxExtraSmall}"
+                                                 ClassName="extra-small" />
+                        </AdaptiveBehavior>
+
+                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
+                            <AdaptiveClassSetter MinWidth="{x:Static helpers:MaterialDesignSize.MinSmall}"
+                                                 MaxWidth="{x:Static helpers:MaterialDesignSize.MaxSmall}"
+                                                 ClassName="small" />
+                        </AdaptiveBehavior>
+
+                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
+                            <AdaptiveClassSetter MinWidth="{x:Static helpers:MaterialDesignSize.MinMedium}"
+                                                 MaxWidth="{x:Static helpers:MaterialDesignSize.MaxMedium}"
+                                                 ClassName="medium" />
+                        </AdaptiveBehavior>
+
+                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
+                            <AdaptiveClassSetter MinWidth="{x:Static helpers:MaterialDesignSize.MinLarge}"
+                                                 MaxWidth="Infinity"
+                                                 ClassName="large" />
+                        </AdaptiveBehavior>
+                    </BehaviorCollection>
+                </BehaviorCollectionTemplate>
+            </Setter>
+        </Style>
+    </UserControl.Styles>
+
+    <dialogHostAvalonia:DialogHost Identifier="{x:Static services:DialogViewer.ProgressDialogHostIdentifier}">
+        <dialogHostAvalonia:DialogHost Classes="adaptive"
+                                       Identifier="{x:Static services:DialogViewer.ErrorDialogHostIdentifier}">
+            <dialogHostAvalonia:DialogHost Classes="adaptive"
+                                           Identifier="{x:Static services:DialogViewer.InputDialogHostIdentifier}">
+                <dialogHostAvalonia:DialogHost Classes="adaptive"
+                                               Identifier="{x:Static services:DialogViewer.ContentDialogHostIdentifier}">
                     <ContentControl Content="{Binding SplitView}" />
                 </dialogHostAvalonia:DialogHost>
             </dialogHostAvalonia:DialogHost>

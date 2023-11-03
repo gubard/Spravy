@@ -1,0 +1,27 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:dialogHostAvalonia="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia">
+    <Style
+        Selector="dialogHostAvalonia|DialogHost.extra-small > Grid#PART_DialogHostRoot > dialogHostAvalonia|DialogOverlayPopupHost">
+        <Setter Property="Width"
+                Value="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter95}}" />
+    </Style>
+
+    <Style
+        Selector="dialogHostAvalonia|DialogHost.small > Grid#PART_DialogHostRoot > dialogHostAvalonia|DialogOverlayPopupHost">
+        <Setter Property="Width"
+                Value="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter85}}" />
+    </Style>
+
+    <Style
+        Selector="dialogHostAvalonia|DialogHost.medium > Grid#PART_DialogHostRoot > dialogHostAvalonia|DialogOverlayPopupHost">
+        <Setter Property="Width"
+                Value="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter70}}" />
+    </Style>
+
+    <Style
+        Selector="dialogHostAvalonia|DialogHost.large > Grid#PART_DialogHostRoot > dialogHostAvalonia|DialogOverlayPopupHost">
+        <Setter Property="Width"
+                Value="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter50}}" />
+    </Style>
+</Styles>

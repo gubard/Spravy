@@ -26,7 +26,8 @@
                                                     MaxWidth="{x:Static helpers:MaterialDesignSize.MinMedium}"
                                                     ClassName="small" />
                             <ir:AdaptiveClassSetter MinWidth="{x:Static helpers:MaterialDesignSize.MinMedium}"
-                                                    MaxWidth="Infinity" ClassName="wide" />
+                                                    MaxWidth="Infinity"
+                                                    ClassName="wide" />
                         </ir:AdaptiveBehavior>
                     </BehaviorCollection>
                 </BehaviorCollectionTemplate>
