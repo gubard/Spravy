@@ -197,8 +197,8 @@ class Build : NukeBuild
                     CopyDirectory(appBundleFolder.FullName, Path.Combine(folder.FullName, "AppBundle"), true);
                     ftpClient.DeleteIfExistsFolder($"/home/{FtpUser}/{name}".ToFolder());
                     ftpClient.UploadDirectory(folder.FullName, $"/home/{FtpUser}/{name}");
-                    sshClient.SafeRun($"echo {SshPassword} | sudo -S chown -R nginx /home/{FtpUser}/{name}");
-                    sshClient.SafeRun($"echo {SshPassword} | sudo -S chmod -R 777 /home/{FtpUser}/{name}");
+                    sshClient.SafeRun($"echo {SshPassword} | sudo -S chown -R $USER:$USER /home/{FtpUser}/{name}");
+                    sshClient.SafeRun($"echo {SshPassword} | sudo -S chmod -R 755 /home/{FtpUser}/{name}");
                     sshClient.SafeRun($"echo {SshPassword} | sudo -S systemctl reload nginx");
                 }
             );
