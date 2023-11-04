@@ -196,9 +196,9 @@ class Build : NukeBuild
                     var appBundleFolder = Path.Combine(browserProject.Directory, appBundlePath).ToFolder();
                     CopyDirectory(appBundleFolder.FullName, Path.Combine(folder.FullName, "AppBundle"), true);
                     ftpClient.DeleteIfExistsFolder($"/home/{FtpUser}/{name}".ToFolder());
-                    ftpClient.UploadDirectory(folder.FullName, $"/home/{FtpUser}/{name}");
-                    sshClient.SafeRun($"echo {SshPassword} | sudo -S chown -R $USER:$USER /home/{FtpUser}/{name}");
-                    sshClient.SafeRun($"echo {SshPassword} | sudo -S chmod -R 755 /home/{FtpUser}/{name}");
+                    ftpClient.UploadDirectory(folder.FullName, "/var/www/spravy.com.ua/html");
+                    sshClient.SafeRun($"echo {SshPassword} | sudo -S chown -R $USER:$USER /var/www/spravy.com.ua/html");
+                    sshClient.SafeRun($"echo {SshPassword} | sudo -S chmod -R 755 /var/www/spravy.com.ua/html");
                     sshClient.SafeRun($"echo {SshPassword} | sudo -S systemctl reload nginx");
                 }
             );
