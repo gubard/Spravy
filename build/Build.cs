@@ -157,11 +157,11 @@ class Build : NukeBuild
                     foreach (var serviceProject in ServiceProjects)
                     {
                         var serviceName = serviceProject.Name.ToLower();
-                        sshClient.SafeRun($"echo {SshPassword} | sudo systemctl enable {serviceName}");
-                        sshClient.SafeRun($"echo {SshPassword} | sudo systemctl restart {serviceName}");
+                        sshClient.SafeRun($"echo {SshPassword} | sudo -S systemctl enable {serviceName}");
+                        sshClient.SafeRun($"echo {SshPassword} | sudo -S systemctl restart {serviceName}");
                     }
 
-                    sshClient.SafeRun($"echo {SshPassword} | sudo systemctl daemon-reload");
+                    sshClient.SafeRun($"echo {SshPassword} | sudo -S systemctl daemon-reload");
                 }
             );
 
@@ -197,9 +197,9 @@ class Build : NukeBuild
                     CopyDirectory(appBundleFolder.FullName, Path.Combine(folder.FullName, "AppBundle"), true);
                     ftpClient.DeleteIfExistsFolder($"/home/{FtpUser}/{name}".ToFolder());
                     ftpClient.UploadDirectory(folder.FullName, $"/home/{FtpUser}/{name}");
-                    sshClient.SafeRun($"echo {SshPassword} | sudo chown -R nginx /home/{FtpUser}/{name}");
-                    sshClient.SafeRun($"echo {SshPassword} | sudo chmod -R 777 /home/{FtpUser}/{name}");
-                    sshClient.SafeRun($"echo {SshPassword} | sudo systemctl reload nginx");
+                    sshClient.SafeRun($"echo {SshPassword} | sudo -S chown -R nginx /home/{FtpUser}/{name}");
+                    sshClient.SafeRun($"echo {SshPassword} | sudo -S chmod -R 777 /home/{FtpUser}/{name}");
+                    sshClient.SafeRun($"echo {SshPassword} | sudo -S systemctl reload nginx");
                 }
             );
 

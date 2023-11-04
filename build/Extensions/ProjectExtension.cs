@@ -112,13 +112,13 @@ public static class ProjectExtension
         var folder = project.PublishProject(publishFolder, configuration, configurator);
         ftpClient.DeleteIfExistsFolder($"/home/{ftpUser}/{project.Name}".ToFolder());
         ftpClient.UploadDirectory(folder.FullName, $"/home/{ftpUser}/{project.Name}");
-        sshClient.SafeRun($"echo {sshPassword} | rm /etc/systemd/system/{project.Name.ToLower()}");
+        sshClient.SafeRun($"echo {sshPassword} | sudo -S rm /etc/systemd/system/{project.Name.ToLower()}");
         PathHelper.ServicesFolder.CreateIfNotExits();
         var serviceFile = PathHelper.ServicesFolder.ToFile(project.Name.ToLower());
         serviceFile.WriteAllText(project.GetDaemonConfig(ftpUser));
         ftpClient.CreateIfNotExistsDirectory(PathHelper.ServicesFolder);
         ftpClient.UploadFile(serviceFile.FullName, serviceFile.FullName);
-        sshClient.SafeRun($"echo {sshPassword} | sudo cp {serviceFile} /etc/systemd/system/{project.Name.ToLower()}");
+        sshClient.SafeRun($"echo {sshPassword} | sudo -S cp {serviceFile} /etc/systemd/system/{project.Name.ToLower()}");
     }
 
     public static string GetOptionsName(this Project project)
