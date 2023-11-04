@@ -194,8 +194,9 @@ class Build : NukeBuild
                     var appBundlePath = "bin/Release/net7.0/browser-wasm/AppBundle";
                     var appBundleFolder = Path.Combine(browserProject.Directory, appBundlePath).ToFolder();
                     CopyDirectory(appBundleFolder.FullName, Path.Combine(folder.FullName, "AppBundle"), true);
-                    ftpClient.DeleteIfExistsFolder("/var/www/spravy.com.ua/html".ToFolder());
-                    ftpClient.UploadDirectory(folder.FullName, "/var/www/spravy.com.ua/html");
+                    ftpClient.UploadDirectory(folder.FullName, $"/tmp/Spravy/{browserProject.Name}");
+                    sshClient.SafeRun($"echo {SshPassword} | sudo -S rm -rf /var/www/spravy.com.ua/html");
+                    sshClient.SafeRun($"echo {SshPassword} | sudo -S cp -rf /tmp/Spravy/{browserProject.Name} /var/www/spravy.com.ua/html");
                     sshClient.SafeRun($"echo {SshPassword} | sudo -S chown -R $USER:$USER /var/www/spravy.com.ua");
                     sshClient.SafeRun($"echo {SshPassword} | sudo -S chmod -R 755 /var/www/spravy.com.ua");
                     sshClient.SafeRun($"echo {SshPassword} | sudo -S systemctl reload nginx");
