@@ -1,6 +1,6 @@
+using System;
 using System.IO;
 using System.Threading.Tasks;
-using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Ui.Browser.Helpers;
@@ -10,14 +10,10 @@ namespace Spravy.Ui.Browser.Services;
 public class LocalStorageObjectStorage : IObjectStorage
 {
     private readonly ISerializer serializer;
-    private readonly IBytesToString bytesToString;
-    private readonly IStringToBytes stringToBytes;
 
-    public LocalStorageObjectStorage(ISerializer serializer, IBytesToString bytesToString, IStringToBytes stringToBytes)
+    public LocalStorageObjectStorage(ISerializer serializer)
     {
         this.serializer = serializer;
-        this.bytesToString = bytesToString;
-        this.stringToBytes = stringToBytes;
     }
 
     public Task<bool> IsExistsAsync(string id)
@@ -39,14 +35,14 @@ public class LocalStorageObjectStorage : IObjectStorage
         await using var stream = new MemoryStream();
         await serializer.SerializeAsync(obj, stream);
         var bytes = stream.ToArray();
-        var value = bytesToString.BytesToString(bytes);
+        var value = Convert.ToBase64String(bytes);
         JSInterop.LocalStorageSetItem(id, value);
     }
 
     public async Task<TObject> GetObjectAsync<TObject>(string id)
     {
         var value = JSInterop.LocalStorageGetItem(id);
-        var bytes = stringToBytes.StringToBytes(value);
+        var bytes = Convert.FromBase64String(value);
         await using var stream = new MemoryStream(bytes);
 
         return await serializer.DeserializeAsync<TObject>(stream);
