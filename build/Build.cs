@@ -196,10 +196,10 @@ class Build : NukeBuild
                     CopyDirectory(appBundleFolder.FullName, Path.Combine(folder.FullName, "AppBundle"), true);
                     ftpClient.DeleteIfExistsFolder($"/tmp/Spravy/{browserProject.Name}".ToFolder());
                     ftpClient.UploadDirectory(appBundlePath, $"/tmp/Spravy/{browserProject.Name}");
-                    sshClient.SafeRun($"echo {SshPassword} | sudo -S rm -rf /var/www/spravy.com.ua/html");
-                    sshClient.SafeRun($"echo {SshPassword} | sudo -S cp -rf /tmp/Spravy/{browserProject.Name} /var/www/spravy.com.ua/html");
-                    sshClient.SafeRun($"echo {SshPassword} | sudo -S chown -R $USER:$USER /var/www/spravy.com.ua");
-                    sshClient.SafeRun($"echo {SshPassword} | sudo -S chmod -R 777 /var/www/spravy.com.ua");
+                    sshClient.SafeRun($"echo {SshPassword} | sudo -S rm -rf /var/www/spravy.com.ua/html/*");
+                    sshClient.SafeRun($"echo {SshPassword} | sudo -S cp -rf /tmp/Spravy/{browserProject.Name}/* /var/www/spravy.com.ua/html/*");
+                    //sshClient.SafeRun($"echo {SshPassword} | sudo -S chown -R $USER:$USER /var/www/spravy.com.ua");
+                    //sshClient.SafeRun($"echo {SshPassword} | sudo -S chmod -R 777 /var/www/spravy.com.ua");
                     sshClient.SafeRun($"echo {SshPassword} | sudo -S systemctl reload nginx");
                 }
             );
