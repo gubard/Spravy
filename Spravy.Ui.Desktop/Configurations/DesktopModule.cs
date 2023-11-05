@@ -20,8 +20,6 @@ public class DesktopModule : NinjectModule
 
     public override void Load()
     {
-        Bind<ISerializer>().To<ProtobufSerializer>();
-
         Bind<GrpcAuthenticationServiceOptions>()
             .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcAuthenticationServiceOptions>());
 

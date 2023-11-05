@@ -1,7 +1,7 @@
 using System.Text;
-using Spravy.Authentication.Domain.Interfaces;
+using Spravy.Domain.Interfaces;
 
-namespace Spravy.Authentication.Domain.Services;
+namespace Spravy.Domain.Services;
 
 public class BytesToUpperCaseHexString : IBytesToString
 {

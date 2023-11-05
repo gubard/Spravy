@@ -1,6 +1,8 @@
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Services;
+using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
+using Spravy.Domain.Services;
 
 namespace Spravy.Authentication.Service.Helpers;
 

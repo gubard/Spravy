@@ -1,12 +1,16 @@
 using Microsoft.Extensions.Configuration;
 using Ninject.Modules;
 using Spravy.Authentication.Domain.Client.Models;
+using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Di.Extensions;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
+using Spravy.Domain.Interfaces;
+using Spravy.Domain.Services;
 using Spravy.EventBus.Domain.Client.Models;
 using Spravy.Schedule.Domain.Client.Models;
 using Spravy.ToDo.Domain.Client.Models;
+using Spravy.Ui.Browser.Services;
 
 namespace Spravy.Ui.Browser.Configurations;
 
@@ -46,5 +50,9 @@ public class BrowserModule : NinjectModule
                     return new ConfigurationBuilder().AddJsonStream(stream).Build();
                 }
             );
+
+        Bind<IObjectStorage>().To<LocalStorageObjectStorage>();
+        Bind<IStringToBytes>().To<StringToUtf8Bytes>();
+        Bind<IBytesToString>().To<Utf8BytesToString>();
     }
 }

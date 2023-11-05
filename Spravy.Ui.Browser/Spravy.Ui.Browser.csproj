@@ -6,6 +6,7 @@
         <OutputType>Exe</OutputType>
         <Nullable>enable</Nullable>
         <ILLinkNoDefaultAction>true</ILLinkNoDefaultAction>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
     <ItemGroup>

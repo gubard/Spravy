@@ -19,6 +19,7 @@ using Spravy.Authentication.Domain.Services;
 using Spravy.Authentication.Protos;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
+using Spravy.Core.Services;
 using Spravy.Domain.Di.Extensions;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
@@ -71,6 +72,7 @@ public class UiModule : NinjectModule
         this.BindGrpcService<GrpcEventBusService, EventBusService.EventBusServiceClient,
             GrpcEventBusServiceOptions>(useCache);
 
+        Bind<ISerializer>().To<ProtobufSerializer>();
         Bind<ICacheValidator<Uri, GrpcChannel>>().To<GrpcChannelCacheValidator>();
         Bind<RoutingState>().ToConstructor(_ => new RoutingState(null)).InSingletonScope();
         Bind<RoutedViewHost>().ToSelf().OnActivation((c, x) => x.Router = c.Kernel.Get<RoutingState>());
