@@ -6,12 +6,12 @@ namespace Spravy.Ui.Browser.Helpers;
 [SupportedOSPlatform("browser")]
 public static partial class JSInterop
 {
-    [JSImport("localStorage.getItem")]
+    [JSImport("localStorageGetItem", "localStorage.js")]
     public static partial string LocalStorageGetItem(string key);
 
-    [JSImport("localStorage.setItem")]
+    [JSImport("localStorageSetItem", "localStorage.js")]
     public static partial void LocalStorageSetItem(string key, string value);
 
-    [JSImport("localStorage.removeItem")]
+    [JSImport("localStorageRemoveItem", "localStorage.js")]
     public static partial void LocalStorageRemoveItem(string key);
 }

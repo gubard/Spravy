@@ -1,4 +1,5 @@
-﻿using System.Runtime.Versioning;
+﻿using System.Runtime.InteropServices.JavaScript;
+using System.Runtime.Versioning;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Browser;
@@ -19,6 +20,7 @@ internal partial class Program
 {
     private static async Task Main()
     {
+        await JSHost.ImportAsync("localStorage.js", "./localStorage.js");
         DiHelper.Kernel = new StandardKernel(BrowserModule.Default, new UiModule(false));
 
         await BuildAvaloniaApp()
