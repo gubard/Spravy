@@ -24,6 +24,8 @@
         <converters:UInt32ToIsVisibleConverter x:Key="UInt32ToIsVisibleConverter" />
         <converters:Int32ToIsVisibleConverter x:Key="Int32ToIsVisibleConverter" />
         <converters:CompleteStatusToBrushConverter x:Key="CompleteStatusToBrushConverter" />
+        <converters:NullOrWhiteSpaceToBooleanValueConverter x:Key="NullOrWhiteSpaceToBooleanValueConverter" />
+        <converters:NullOrWhiteSpaceToBooleanValueConverter x:Key="NullOrWhiteSpaceToBooleanValueConverterReverse" Reverse="True" />
     </Application.Resources>
 
     <Application.Styles>

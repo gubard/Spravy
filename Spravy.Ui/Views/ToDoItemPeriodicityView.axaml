@@ -63,7 +63,9 @@
 
         <ScrollViewer Grid.Row="2">
             <StackPanel>
-                <Expander Classes="header-left" IsExpanded="True" Margin="3">
+                <Expander Classes="header-left"
+                          IsExpanded="{Binding Description, Mode=OneWay, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}"
+                          Margin="3">
                     <Expander.Header>
                         <Grid ColumnDefinitions="Auto,*" Height="60">
                             <Button Command="{Binding ChangeDescriptionCommand}"

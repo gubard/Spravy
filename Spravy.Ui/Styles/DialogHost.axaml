@@ -5,23 +5,31 @@
         Selector="dialogHostAvalonia|DialogHost.extra-small > Grid#PART_DialogHostRoot > dialogHostAvalonia|DialogOverlayPopupHost">
         <Setter Property="Width"
                 Value="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter95}}" />
+        <Setter Property="MaxHeight"
+                Value="{Binding $parent[TopLevel].Height, Converter={StaticResource DoubleToPercentsConverter95}}" />
     </Style>
 
     <Style
         Selector="dialogHostAvalonia|DialogHost.small > Grid#PART_DialogHostRoot > dialogHostAvalonia|DialogOverlayPopupHost">
         <Setter Property="Width"
                 Value="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter85}}" />
+        <Setter Property="MaxHeight"
+                Value="{Binding $parent[TopLevel].Height, Converter={StaticResource DoubleToPercentsConverter85}}" />
     </Style>
 
     <Style
         Selector="dialogHostAvalonia|DialogHost.medium > Grid#PART_DialogHostRoot > dialogHostAvalonia|DialogOverlayPopupHost">
         <Setter Property="Width"
                 Value="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter70}}" />
+        <Setter Property="MaxHeight"
+                Value="{Binding $parent[TopLevel].Height, Converter={StaticResource DoubleToPercentsConverter70}}" />
     </Style>
 
     <Style
         Selector="dialogHostAvalonia|DialogHost.large > Grid#PART_DialogHostRoot > dialogHostAvalonia|DialogOverlayPopupHost">
         <Setter Property="Width"
                 Value="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter50}}" />
+        <Setter Property="MaxHeight"
+                Value="{Binding $parent[TopLevel].Height, Converter={StaticResource DoubleToPercentsConverter50}}" />
     </Style>
 </Styles>
