@@ -49,9 +49,6 @@ public class BrowserModule : NinjectModule
                     using var stream = SpravyUiBrowserMark.GetResourceStream(FileNames.DefaultConfigFileName)
                         .ThrowIfNull();
 
-                    var bytes = stream.ToByteArray();
-                    Console.WriteLine(Encoding.UTF8.GetString(bytes));
-
                     return new ConfigurationBuilder().AddJsonStream(stream).Build();
                 }
             );
