@@ -227,7 +227,7 @@ public class RootToDoItemsViewModelDesign : RootToDoItemsViewModel
                   null
               ),
           },
-            null,
+            new ToDoItemGroup(),
             Enumerable.Empty<ToDoShortItem>(),
             Enumerable.Empty<IToDoSubItem>()
         );

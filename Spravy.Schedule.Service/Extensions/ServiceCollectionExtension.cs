@@ -19,7 +19,6 @@ using Spravy.Schedule.Db.Sqlite.Migrator;
 using Spravy.Schedule.Db.Sqlite.Services;
 using Spravy.Schedule.Domain.Interfaces;
 using Spravy.Schedule.Domain.Mapper.Profiles;
-using Spravy.Schedule.Service.HostedServices;
 using Spravy.Schedule.Service.Services;
 using Spravy.Service.Extensions;
 using Spravy.Service.HostedServices;

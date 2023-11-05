@@ -1,4 +1,4 @@
-namespace Spravy.Authentication.Domain.Interfaces;
+namespace Spravy.Domain.Interfaces;
 
 public interface IStringToBytes
 {

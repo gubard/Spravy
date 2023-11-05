@@ -1,9 +1,6 @@
-using System;
-using System.Text;
 using Microsoft.Extensions.Configuration;
 using Ninject.Modules;
 using Spravy.Authentication.Domain.Client.Models;
-using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Di.Extensions;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;

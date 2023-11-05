@@ -23,7 +23,7 @@ public class SearchViewModelDesign : SearchViewModel
                 ToDoService = new ToDoServiceDesign(
                     Enumerable.Empty<IToDoSubItem>(),
                     Enumerable.Empty<IToDoSubItem>(),
-                    null,
+                    new ToDoItemGroup(),
                     Enumerable.Empty<ToDoShortItem>(),
                     Enumerable.Empty<IToDoSubItem>()
                 ),

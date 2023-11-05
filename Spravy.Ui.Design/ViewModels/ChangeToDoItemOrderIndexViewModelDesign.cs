@@ -15,7 +15,7 @@ public class ChangeToDoItemOrderIndexViewModelDesign : ChangeToDoItemOrderIndexV
         ToDoService = new ToDoServiceDesign(
             Enumerable.Empty<IToDoSubItem>(),
             Enumerable.Empty<IToDoSubItem>(),
-            null,
+            new ToDoItemGroup(),
             new ToDoShortItem[]
             {
                 new(Guid.NewGuid(), "ToDoShortItem")

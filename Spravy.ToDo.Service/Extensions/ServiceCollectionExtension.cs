@@ -25,7 +25,6 @@ using Spravy.ToDo.Db.Sqlite.Migrator;
 using Spravy.ToDo.Db.Sqlite.Services;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Mapper.Profiles;
-using Spravy.ToDo.Service.HostedServices;
 using Spravy.ToDo.Service.Services;
 using Spravy.Client.Extensions;
 using Spravy.EventBus.Protos;

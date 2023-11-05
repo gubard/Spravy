@@ -1,4 +1,3 @@
-using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Service.Helpers;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;

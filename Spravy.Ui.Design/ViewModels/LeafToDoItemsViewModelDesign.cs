@@ -25,7 +25,7 @@ public class LeafToDoItemsViewModelDesign : LeafToDoItemsViewModel
                     null
                 ),
             },
-            null,
+            new ToDoItemGroup(),
             Enumerable.Empty<ToDoShortItem>(),
             new IToDoSubItem[]
             {

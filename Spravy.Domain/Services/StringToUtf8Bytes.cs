@@ -1,5 +1,5 @@
 using System.Text;
-using Spravy.Authentication.Domain.Interfaces;
+using Spravy.Domain.Interfaces;
 
 namespace Spravy.Domain.Services;
 
