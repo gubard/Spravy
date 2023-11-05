@@ -46,11 +46,13 @@
                      Text="{Binding RepeatPassword}" />
 
             <Grid ColumnDefinitions="*,*">
-                <Button Command="{Binding BackCommand}">
+                <Button Command="{Binding BackCommand}"
+                        ClickMode="Press">
                     <avalonia:MaterialIcon Kind="ArrowLeft" />
                 </Button>
 
                 <Button Grid.Column="1"
+                        ClickMode="Press"
                         Command="{Binding CreateUserCommand}">
                     <avalonia:MaterialIcon Kind="AccountPlus" />
                 </Button>
