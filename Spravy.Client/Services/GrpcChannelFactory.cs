@@ -19,8 +19,6 @@ public class GrpcChannelFactory : IFactory<Uri, GrpcChannel>
 
     public GrpcChannel Create(Uri key)
     {
-        Console.WriteLine($"{key} {grpcChannelType}");
-
         switch (grpcChannelType)
         {
             case GrpcChannelType.Default: return GrpcChannel.ForAddress(key);

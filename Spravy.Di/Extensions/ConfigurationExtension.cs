@@ -8,15 +8,17 @@ public static class ConfigurationExtension
 {
     public static T GetConfigurationSection<T>(this IConfiguration configuration) where T : IOptionsValue
     {
-        Console.WriteLine($"{T.Section} {configuration.GetSection(T.Section).Value}");
+        var section = configuration.GetSection(T.Section);
+        Console.WriteLine($"{T.Section} {section.Value} {section.GetChildren().Select(x => x.Value).JoinString(";")}");
 
-        return configuration.GetSection(T.Section).Get<T>().ThrowIfNull();
+        return section.Get<T>().ThrowIfNull();
     }
 
     public static T GetConfigurationSection<T>(this IConfiguration configuration, string path) where T : IOptionsValue
     {
-        Console.WriteLine($"{path} {configuration.GetSection(path).Value}");
+        var section = configuration.GetSection(path);
+        Console.WriteLine($"{T.Section} {section.Value} {section.GetChildren().Select(x => x.Value).JoinString(";")}");
 
-        return configuration.GetSection(path).Get<T>().ThrowIfNull();
+        return section.Get<T>().ThrowIfNull();
     }
 }

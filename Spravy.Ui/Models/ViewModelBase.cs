@@ -179,8 +179,6 @@ public class ViewModelBase : NotifyBase
 
     private async void OnNextError(Exception exception)
     {
-        Console.WriteLine(exception);
-
         await DialogViewer.ShowInfoErrorDialogAsync<IExceptionViewModel>(
             async _ =>
             {

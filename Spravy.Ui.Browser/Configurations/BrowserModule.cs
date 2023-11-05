@@ -23,13 +23,7 @@ public class BrowserModule : NinjectModule
     {
         Bind<GrpcAuthenticationServiceOptions>()
             .ToMethod(
-                context =>
-                {
-                    Console.WriteLine("GrpcAuthenticationServiceOptions");
-                    
-                    return context.Kernel
-                        .GetConfigurationSection<GrpcAuthenticationServiceOptions>("GrpcRouterService");
-                }
+                context => context.Kernel.GetConfigurationSection<GrpcAuthenticationServiceOptions>("GrpcRouterService")
             );
 
         Bind<GrpcScheduleServiceOptions>()
