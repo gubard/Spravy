@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using Microsoft.Extensions.Configuration;
 using Ninject.Modules;
 using Spravy.Authentication.Domain.Client.Models;
@@ -47,6 +48,9 @@ public class BrowserModule : NinjectModule
                 {
                     using var stream = SpravyUiBrowserMark.GetResourceStream(FileNames.DefaultConfigFileName)
                         .ThrowIfNull();
+
+                    var bytes = stream.ToByteArray();
+                    Console.WriteLine(Encoding.UTF8.GetString(bytes));
 
                     return new ConfigurationBuilder().AddJsonStream(stream).Build();
                 }
