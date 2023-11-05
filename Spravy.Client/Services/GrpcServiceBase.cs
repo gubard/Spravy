@@ -32,6 +32,7 @@ public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBas
     {
         try
         {
+            Console.WriteLine(host);
             var client = grpcClientFactory.Create(host);
             var result = await func.Invoke(client);
 
