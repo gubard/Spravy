@@ -195,7 +195,9 @@ class Build : NukeBuild
                     ftpClient.DeleteIfExistsFolder($"/home/{FtpUser}/{browserProject.Name}".ToFolder());
                     ftpClient.UploadDirectory(appBundleFolder.FullName, $"/home/{FtpUser}/{browserProject.Name}");
                     sshClient.SafeRun($"echo {SshPassword} | sudo -S rm -rf /var/www/spravy.com.ua/html/*");
-                    sshClient.SafeRun($"echo {SshPassword} | sudo -S cp -rf /home/{FtpUser}/{browserProject.Name}/* /var/www/spravy.com.ua/html");
+                    sshClient.SafeRun(
+                        $"echo {SshPassword} | sudo -S cp -rf /home/{FtpUser}/{browserProject.Name}/* /var/www/spravy.com.ua/html"
+                    );
                     sshClient.SafeRun($"echo {SshPassword} | sudo -S chown -R $USER:$USER /var/www/spravy.com.ua/html");
                     sshClient.SafeRun($"echo {SshPassword} | sudo -S chmod -R 755 /var/www/spravy.com.ua");
                     sshClient.SafeRun($"echo {SshPassword} | sudo -S systemctl restart nginx");
@@ -290,14 +292,35 @@ class Build : NukeBuild
             {
                 writer.WritePropertyName(obj.Name);
                 writer.WriteStartObject();
-                writer.WritePropertyName("Host");
-                writer.WriteStringValue(host);
-                writer.WritePropertyName("ChannelType");
-                writer.WriteStringValue("Default");
-                writer.WritePropertyName("ChannelCredentialType");
-                writer.WriteStringValue("Insecure");
-                writer.WritePropertyName("Token");
-                writer.WriteStringValue(token);
+
+                foreach (var i in obj.Value.EnumerateObject())
+                {
+                    if (obj.Name == "Host")
+                    {
+                        writer.WritePropertyName("Host");
+                        writer.WriteStringValue(host);
+                    }
+                    else if (obj.Name == "ChannelType")
+                    {
+                        writer.WritePropertyName("ChannelType");
+                        writer.WriteStringValue(i.Value.GetString());
+                    }
+                    else if (obj.Name == "ChannelCredentialType")
+                    {
+                        writer.WritePropertyName("ChannelCredentialType");
+                        writer.WriteStringValue(i.Value.GetString());
+                    }
+                    else if (obj.Name == "Token")
+                    {
+                        writer.WritePropertyName("Token");
+                        writer.WriteStringValue(token);
+                    }
+                    else
+                    {
+                        i.WriteTo(writer);
+                    }
+                }
+
                 writer.WriteEndObject();
 
                 continue;
