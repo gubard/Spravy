@@ -53,6 +53,9 @@ class Build : NukeBuild
     static readonly List<Project> ServiceProjects = new();
     static string Token;
 
+    const FtpListOption FtpOption =
+        FtpListOption.Recursive | FtpListOption.ForceList | FtpListOption.Auto | FtpListOption.AllFiles;
+
     [Solution] readonly Solution Solution;
 
     Target Setup =>
@@ -289,9 +292,7 @@ class Build : NukeBuild
 
         try
         {
-            client.DeleteDirectory(path,
-                FtpListOption.Recursive | FtpListOption.ForceList | FtpListOption.Auto | FtpListOption.AllFiles
-            );
+            client.DeleteDirectory(path, FtpOption);
         }
         catch
         {
