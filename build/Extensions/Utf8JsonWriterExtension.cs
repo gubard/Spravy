@@ -20,14 +20,25 @@ public static class Utf8JsonWriterExtension
 
         writer.WritePropertyName(property.Name);
         writer.WriteStartObject();
-        writer.WritePropertyName("Host");
-        writer.WriteStringValue(host);
-        writer.WritePropertyName("ChannelType");
-        writer.WriteStringValue("Default");
-        writer.WritePropertyName("ChannelCredentialType");
-        writer.WriteStringValue("Insecure");
-        writer.WritePropertyName("Token");
-        writer.WriteStringValue(token);
+
+        foreach (var obj in property.Value.EnumerateObject())
+        {
+            if (obj.Name == "Host")
+            {
+                writer.WritePropertyName("Host");
+                writer.WriteStringValue(host);
+            }
+            else if (obj.Name == "Token")
+            {
+                writer.WritePropertyName("Token");
+                writer.WriteStringValue(token);
+            }
+            else
+            {
+                obj.WriteTo(writer);
+            }
+        }
+
         writer.WriteEndObject();
         Log.Information("Setup service {ServiceName}", property.Name);
         Log.Information("Set host {Host}", host);
