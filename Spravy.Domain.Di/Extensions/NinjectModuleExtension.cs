@@ -30,6 +30,7 @@ public static class NinjectModuleExtension
                     context =>
                     {
                         var options = context.Kernel.GetRequiredService<TGrpcOptions>();
+                        Console.WriteLine($"{options.Host} {options.ChannelType} {options.ChannelCredentialType} {options.Token}");
                         var channelCredentials = options.ChannelCredentialType.GetChannelCredentials();
                         var grpcChannelFactory = new GrpcChannelFactory(options.ChannelType, channelCredentials);
                         var cacheValidator = context.Kernel.GetRequiredService<ICacheValidator<Uri, GrpcChannel>>();
@@ -48,6 +49,7 @@ public static class NinjectModuleExtension
                     context =>
                     {
                         var options = context.Kernel.GetRequiredService<TGrpcOptions>();
+                        Console.WriteLine($"{options.Host} {options.ChannelType} {options.ChannelCredentialType} {options.Token}");
                         var channelCredentials = options.ChannelCredentialType.GetChannelCredentials();
                         var channelFactory = new GrpcChannelFactory(options.ChannelType, channelCredentials);
 
