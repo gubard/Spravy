@@ -26,6 +26,7 @@
         <converters:CompleteStatusToBrushConverter x:Key="CompleteStatusToBrushConverter" />
         <converters:NullOrWhiteSpaceToBooleanValueConverter x:Key="NullOrWhiteSpaceToBooleanValueConverter" />
         <converters:NullOrWhiteSpaceToBooleanValueConverter x:Key="NullOrWhiteSpaceToBooleanValueConverterReverse" Reverse="True" />
+        <converters:BooleanToCompletedStringConverter x:Key="BooleanToCompletedStringConverter" />
     </Application.Resources>
 
     <Application.Styles>

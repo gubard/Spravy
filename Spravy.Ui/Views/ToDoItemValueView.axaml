@@ -30,10 +30,8 @@
                                 HorizontalAlignment="Center" />
             </ScrollViewer>
 
-            <CheckBox Margin="5"
-                      IsChecked="{Binding IsCompleted}"
-                      Content="Completed"
-                      IsEnabled="False" />
+            <TextBlock Margin="5"
+                       Text="{Binding IsCompleted, Converter={StaticResource BooleanToCompletedStringConverter}}" />
 
             <Grid ColumnDefinitions="*,*">
                 <ComboBox Theme="{StaticResource MaterialOutlineComboBox}"
