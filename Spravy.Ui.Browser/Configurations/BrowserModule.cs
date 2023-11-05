@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Extensions.Configuration;
 using Ninject.Modules;
 using Spravy.Authentication.Domain.Client.Models;
@@ -22,7 +23,13 @@ public class BrowserModule : NinjectModule
     {
         Bind<GrpcAuthenticationServiceOptions>()
             .ToMethod(
-                context => context.Kernel.GetConfigurationSection<GrpcAuthenticationServiceOptions>("GrpcRouterService")
+                context =>
+                {
+                    Console.WriteLine("GrpcAuthenticationServiceOptions");
+                    
+                    return context.Kernel
+                        .GetConfigurationSection<GrpcAuthenticationServiceOptions>("GrpcRouterService");
+                }
             );
 
         Bind<GrpcScheduleServiceOptions>()
