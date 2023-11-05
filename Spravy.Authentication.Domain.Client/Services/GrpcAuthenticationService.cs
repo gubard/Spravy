@@ -27,8 +27,6 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
 
     public Task<TokenResult> LoginAsync(User user)
     {
-        Console.WriteLine($"{user.Login}  {user.Password}");
-        
         return CallClientAsync(
             async client =>
             {
