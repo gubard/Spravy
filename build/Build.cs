@@ -190,14 +190,12 @@ class Build : NukeBuild
                     using var ftpClient = CreateFtpClient();
                     ftpClient.Connect();
                     var browserProject = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Browser").ThrowIfNull();
-                    var folder = browserProject.PublishProject(PathHelper.PublishFolder, Configuration);
                     var appBundlePath = "bin/Release/net7.0/browser-wasm/AppBundle";
                     var appBundleFolder = Path.Combine(browserProject.Directory, appBundlePath).ToFolder();
-                    CopyDirectory(appBundleFolder.FullName, Path.Combine(folder.FullName, "AppBundle"), true);
-                    ftpClient.DeleteIfExistsFolder($"/tmp/Spravy/{browserProject.Name}".ToFolder());
-                    ftpClient.UploadDirectory(appBundlePath, $"/tmp/Spravy/{browserProject.Name}");
+                    ftpClient.DeleteIfExistsFolder($"/home/{FtpUser}/{browserProject.Name}".ToFolder());
+                    ftpClient.UploadDirectory(appBundleFolder.FullName, $"/home/{FtpUser}/{browserProject.Name}");
                     sshClient.SafeRun($"echo {SshPassword} | sudo -S rm -rf /var/www/spravy.com.ua/html/*");
-                    sshClient.SafeRun($"echo {SshPassword} | sudo -S cp -rf /tmp/Spravy/{browserProject.Name}/* /var/www/spravy.com.ua/html/*");
+                    sshClient.SafeRun($"echo {SshPassword} | sudo -S cp -rf /home/{FtpUser}/{browserProject.Name}* /var/www/spravy.com.ua/html/*");
                     //sshClient.SafeRun($"echo {SshPassword} | sudo -S chown -R $USER:$USER /var/www/spravy.com.ua");
                     //sshClient.SafeRun($"echo {SshPassword} | sudo -S chmod -R 777 /var/www/spravy.com.ua");
                     sshClient.SafeRun($"echo {SshPassword} | sudo -S systemctl reload nginx");
