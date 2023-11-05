@@ -198,6 +198,7 @@ class Build : NukeBuild
                     sshClient.SafeRun($"echo {SshPassword} | sudo -S cp -rf /home/{FtpUser}/{browserProject.Name}/* /var/www/spravy.com.ua/html");
                     sshClient.SafeRun($"echo {SshPassword} | sudo -S chown -R $USER:$USER /var/www/spravy.com.ua/html");
                     sshClient.SafeRun($"echo {SshPassword} | sudo -S chmod -R 755 /var/www/spravy.com.ua");
+                    sshClient.SafeRun($"echo {SshPassword} | sudo -S systemctl restart nginx");
                     sshClient.SafeRun($"echo {SshPassword} | sudo -S systemctl reload nginx");
                 }
             );
