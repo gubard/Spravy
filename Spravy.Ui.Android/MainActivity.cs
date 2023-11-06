@@ -38,7 +38,7 @@ public class MainActivity : AvaloniaMainActivity<App>
 
     protected override void OnCreate(Bundle? savedInstanceState)
     {
-        DiHelper.Kernel = new StandardKernel(new UiModule(true), AndroidModule.Default);
+        DiHelper.Kernel = new StandardKernel(new UiModule(true), new AndroidModule(this));
         base.OnCreate(savedInstanceState);
     }
 }

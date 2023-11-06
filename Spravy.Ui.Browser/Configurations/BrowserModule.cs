@@ -10,6 +10,7 @@ using Spravy.EventBus.Domain.Client.Models;
 using Spravy.Schedule.Domain.Client.Models;
 using Spravy.ToDo.Domain.Client.Models;
 using Spravy.Ui.Browser.Services;
+using Spravy.Ui.Interfaces;
 
 namespace Spravy.Ui.Browser.Configurations;
 
@@ -19,6 +20,8 @@ public class BrowserModule : NinjectModule
 
     public override void Load()
     {
+        Bind<IOpenerLink>().To<BrowserOpenerLink>();
+        
         Bind<GrpcAuthenticationServiceOptions>()
             .ToMethod(
                 context => context.Kernel.GetConfigurationSection<GrpcAuthenticationServiceOptions>("GrpcRouterService")

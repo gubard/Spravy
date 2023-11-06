@@ -14,6 +14,13 @@ public abstract class ToDoSubItemNotify : NotifyBase, IEquatable<ToDoSubItemNoti
     private bool isFavorite;
     private ActiveToDoItemNotify? active;
     private bool isVisible = true;
+    private Uri? link;
+
+    public Uri? Link
+    {
+        get => link;
+        set => this.RaiseAndSetIfChanged(ref link, value);
+    }
 
     public bool IsVisible
     {

@@ -8,4 +8,5 @@ public interface IToDoItemView
     ICommand ChangeToDoItemCommand { get; }
     ICommand ChangeToActiveDoItemCommand { get; }
     ICommand ChangeOrderIndexCommand { get; }
+    ICommand OpenLinkCommand { get; }
 }

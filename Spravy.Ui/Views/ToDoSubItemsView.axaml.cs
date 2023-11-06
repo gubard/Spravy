@@ -23,4 +23,5 @@ public partial class ToDoSubItemsView : MainReactiveUserControl<ToDoSubItemsView
     public ICommand RemoveSubToDoItemFromFavoriteCommand => ViewModel.ThrowIfNull().RemoveSubToDoItemFromFavoriteCommand;
     public ICommand ChangeToActiveDoItemCommand => ViewModel.ThrowIfNull().ChangeToActiveDoItemCommand;
     public ICommand ChangeOrderIndexCommand => ViewModel.ThrowIfNull().ChangeOrderIndexCommand;
+    public ICommand OpenLinkCommand => ViewModel.ThrowIfNull().OpenLinkCommand;
 }

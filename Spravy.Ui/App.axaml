@@ -25,7 +25,8 @@
         <converters:Int32ToIsVisibleConverter x:Key="Int32ToIsVisibleConverter" />
         <converters:CompleteStatusToBrushConverter x:Key="CompleteStatusToBrushConverter" />
         <converters:NullOrWhiteSpaceToBooleanValueConverter x:Key="NullOrWhiteSpaceToBooleanValueConverter" />
-        <converters:NullOrWhiteSpaceToBooleanValueConverter x:Key="NullOrWhiteSpaceToBooleanValueConverterReverse" Reverse="True" />
+        <converters:NullOrWhiteSpaceToBooleanValueConverter x:Key="NullOrWhiteSpaceToBooleanValueConverterReverse"
+                                                            Reverse="True" />
         <converters:BooleanToCompletedStringConverter x:Key="BooleanToCompletedStringConverter" />
     </Application.Resources>
 
@@ -148,7 +149,7 @@
                                 IsVisible="{Binding  LastCompleted, Converter={StaticResource NullToBooleanConverter}}" />
                         </StackPanel>
 
-                        <Grid ColumnDefinitions="Auto,Auto,Auto,*" RowDefinitions="Auto,Auto,Auto">
+                        <Grid ColumnDefinitions="Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto">
                             <Button Grid.ColumnSpan="3"
                                     Margin="0,5,5,5"
                                     Width="320"
@@ -163,7 +164,10 @@
                                 </WrapPanel>
                             </Button>
 
-                            <Button Grid.Row="1" Margin="0,5,5,5" Classes="with-text" CommandParameter="{Binding}"
+                            <Button Grid.Row="1"
+                                    Margin="0,5,5,5"
+                                    Classes="with-text"
+                                    CommandParameter="{Binding}"
                                     Command="{Binding $parent[interfaces:IToDoItemView].ChangeOrderIndexCommand}">
                                 <StackPanel Orientation="Horizontal">
                                     <avalonia:MaterialIcon Kind="ReorderHorizontal" />
@@ -201,6 +205,18 @@
                                 <StackPanel Orientation="Horizontal">
                                     <avalonia:MaterialIcon Kind="ArrowRight" />
                                     <TextBlock Text="Open" />
+                                </StackPanel>
+                            </Button>
+
+                            <Button Grid.Row="2"
+                                    Grid.Column="2"
+                                    Classes="with-text"
+                                    Command="{Binding $parent[interfaces:IToDoItemView].OpenLinkCommand}"
+                                    CommandParameter="{Binding}"
+                                    IsVisible="{Binding Link, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}">
+                                <StackPanel Orientation="Horizontal">
+                                    <avalonia:MaterialIcon Kind="Link" />
+                                    <TextBlock Text="Link" />
                                 </StackPanel>
                             </Button>
                         </Grid>
@@ -260,7 +276,7 @@
                                    Classes="Headline6"
                                    TextWrapping="Wrap" />
 
-                        <Grid ColumnDefinitions="Auto,Auto,Auto,*" RowDefinitions="Auto,Auto">
+                        <Grid ColumnDefinitions="Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto">
                             <Button Grid.ColumnSpan="3"
                                     Margin="0,5,5,5"
                                     Width="320"
@@ -302,6 +318,18 @@
                                 <StackPanel Orientation="Horizontal">
                                     <avalonia:MaterialIcon Kind="ArrowRight" />
                                     <TextBlock Text="Open" />
+                                </StackPanel>
+                            </Button>
+
+                            <Button Grid.Row="2"
+                                    Grid.Column="2"
+                                    Classes="with-text"
+                                    Command="{Binding $parent[interfaces:IToDoItemView].OpenLinkCommand}"
+                                    CommandParameter="{Binding}"
+                                    IsVisible="{Binding Link, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}">
+                                <StackPanel Orientation="Horizontal">
+                                    <avalonia:MaterialIcon Kind="Link" />
+                                    <TextBlock Text="Link" />
                                 </StackPanel>
                             </Button>
                         </Grid>
@@ -373,7 +401,7 @@
                             </StackPanel>
                         </StackPanel>
 
-                        <Grid ColumnDefinitions="Auto,Auto,Auto,*" RowDefinitions="Auto,Auto,Auto">
+                        <Grid ColumnDefinitions="Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto">
                             <Button Grid.ColumnSpan="3"
                                     Margin="0,5,5,5"
                                     Width="320"
@@ -426,6 +454,18 @@
                                 <StackPanel Orientation="Horizontal">
                                     <avalonia:MaterialIcon Kind="ArrowRight" />
                                     <TextBlock Text="Open" />
+                                </StackPanel>
+                            </Button>
+
+                            <Button Grid.Row="2"
+                                    Grid.Column="2"
+                                    Classes="with-text"
+                                    Command="{Binding $parent[interfaces:IToDoItemView].OpenLinkCommand}"
+                                    CommandParameter="{Binding}"
+                                    IsVisible="{Binding Link, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}">
+                                <StackPanel Orientation="Horizontal">
+                                    <avalonia:MaterialIcon Kind="Link" />
+                                    <TextBlock Text="Link" />
                                 </StackPanel>
                             </Button>
                         </Grid>
@@ -494,7 +534,7 @@
                             <Rectangle Fill="Red" Height="6" Width="{Binding FailedPercentage}" />
                         </StackPanel>
 
-                        <Grid ColumnDefinitions="Auto,Auto,Auto,*" RowDefinitions="Auto,Auto,Auto">
+                        <Grid ColumnDefinitions="Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto">
                             <Button Grid.ColumnSpan="3"
                                     Margin="0,5,5,5"
                                     Width="320"
@@ -547,6 +587,18 @@
                                 <StackPanel Orientation="Horizontal">
                                     <avalonia:MaterialIcon Kind="ArrowRight" />
                                     <TextBlock Text="Open" />
+                                </StackPanel>
+                            </Button>
+
+                            <Button Grid.Row="2"
+                                    Grid.Column="2"
+                                    Classes="with-text"
+                                    Command="{Binding $parent[interfaces:IToDoItemView].OpenLinkCommand}"
+                                    CommandParameter="{Binding}"
+                                    IsVisible="{Binding Link, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}">
+                                <StackPanel Orientation="Horizontal">
+                                    <avalonia:MaterialIcon Kind="Link" />
+                                    <TextBlock Text="Link" />
                                 </StackPanel>
                             </Button>
                         </Grid>
@@ -617,7 +669,7 @@
                             </StackPanel>
                         </StackPanel>
 
-                        <Grid ColumnDefinitions="Auto,Auto,Auto,*" RowDefinitions="Auto,Auto,Auto">
+                        <Grid ColumnDefinitions="Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto">
                             <Button Grid.ColumnSpan="3"
                                     Margin="0,5,5,5"
                                     Width="320"
@@ -670,6 +722,18 @@
                                 <StackPanel Orientation="Horizontal">
                                     <avalonia:MaterialIcon Kind="ArrowRight" />
                                     <TextBlock Text="Open" />
+                                </StackPanel>
+                            </Button>
+
+                            <Button Grid.Row="2"
+                                    Grid.Column="2"
+                                    Classes="with-text"
+                                    Command="{Binding $parent[interfaces:IToDoItemView].OpenLinkCommand}"
+                                    CommandParameter="{Binding}"
+                                    IsVisible="{Binding Link, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}">
+                                <StackPanel Orientation="Horizontal">
+                                    <avalonia:MaterialIcon Kind="Link" />
+                                    <TextBlock Text="Link" />
                                 </StackPanel>
                             </Button>
                         </Grid>

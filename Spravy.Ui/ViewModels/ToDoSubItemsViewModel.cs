@@ -38,6 +38,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
         InitializedCommand = CreateInitializedCommand(InitializedAsync);
         CompleteSelectedToDoItemsCommand = CreateCommandFromTask(CompleteSelectedToDoItemsAsync);
         ChangeOrderIndexCommand = CreateCommandFromTask<ToDoSubItemNotify>(ChangeOrderIndexAsync);
+        OpenLinkCommand = CreateCommandFromTask<ToDoSubItemNotify>(OpenLinkAsync);
     }
 
     public AvaloniaList<ToDoSubItemNotify> Missed { get; } = new();
@@ -59,12 +60,23 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
     public ICommand InitializedCommand { get; }
     public ICommand CompleteSelectedToDoItemsCommand { get; }
     public ICommand ChangeOrderIndexCommand { get; }
+    public ICommand OpenLinkCommand { get; }
+
+    [Inject]
+    public required IOpenerLink OpenerLink { get; set; }
 
     [Inject]
     public required IToDoService ToDoService { get; set; }
 
     [Inject]
     public required IMapper Mapper { get; set; }
+
+    private Task OpenLinkAsync(ToDoSubItemNotify item)
+    {
+        var link = item.Link.ThrowIfNull();
+
+        return OpenerLink.OpenLinkAsync(link);
+    }
 
     private Task ChangeOrderIndexAsync(ToDoSubItemNotify item)
     {
@@ -123,7 +135,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
             {
                 var viewModel = view.ViewModel.ThrowIfNull();
 
-                switch(subItemValue)
+                switch (subItemValue)
                 {
                     case ToDoSubItemPeriodicityNotify:
                         viewModel.SetCompleteStatus();
@@ -134,7 +146,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 
                         break;
                     case ToDoSubItemPlannedNotify toDoSubItemPlannedNotify:
-                        if(toDoSubItemPlannedNotify.IsCompleted)
+                        if (toDoSubItemPlannedNotify.IsCompleted)
                         {
                             viewModel.SetIncompleteStatus();
                         }
@@ -145,7 +157,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 
                         break;
                     case ToDoSubItemValueNotify toDoSubItemValueNotify:
-                        if(toDoSubItemValueNotify.IsCompleted)
+                        if (toDoSubItemValueNotify.IsCompleted)
                         {
                             viewModel.SetIncompleteStatus();
                         }
@@ -161,7 +173,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 
                 viewModel.Complete = async status =>
                 {
-                    switch(status)
+                    switch (status)
                     {
                         case CompleteStatus.Complete:
                             await ToDoService.UpdateToDoItemCompleteStatusAsync(subItemValue.Id, true);
@@ -191,12 +203,12 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 
     private async Task CompleteAsync(IEnumerable<ToDoSubItemNotify> items, CompleteStatus status)
     {
-        switch(status)
+        switch (status)
         {
             case CompleteStatus.Complete:
-                foreach(var item in items)
+                foreach (var item in items)
                 {
-                    switch(item)
+                    switch (item)
                     {
                         case ToDoSubItemPeriodicityNotify:
                             await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
@@ -207,7 +219,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 
                             break;
                         case ToDoSubItemPlannedNotify toDoSubItemPlannedNotify:
-                            if(!toDoSubItemPlannedNotify.IsCompleted)
+                            if (!toDoSubItemPlannedNotify.IsCompleted)
                             {
                                 await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
                             }
@@ -218,7 +230,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 
                             break;
                         case ToDoSubItemValueNotify toDoSubItemValueNotify:
-                            if(!toDoSubItemValueNotify.IsCompleted)
+                            if (!toDoSubItemValueNotify.IsCompleted)
                             {
                                 await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
                             }
@@ -234,9 +246,9 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 
                 break;
             case CompleteStatus.Skip:
-                foreach(var item in items)
+                foreach (var item in items)
                 {
-                    switch(item)
+                    switch (item)
                     {
                         case ToDoSubItemPeriodicityNotify:
                             await ToDoService.SkipToDoItemAsync(item.Id);
@@ -260,9 +272,9 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 
                 break;
             case CompleteStatus.Fail:
-                foreach(var item in items)
+                foreach (var item in items)
                 {
-                    switch(item)
+                    switch (item)
                     {
                         case ToDoSubItemPeriodicityNotify:
                             await ToDoService.FailToDoItemAsync(item.Id);
@@ -286,12 +298,12 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 
                 break;
             case CompleteStatus.Incomplete:
-                foreach(var item in items)
+                foreach (var item in items)
                 {
-                    switch(item)
+                    switch (item)
                     {
                         case ToDoSubItemPlannedNotify toDoSubItemPlannedNotify:
-                            if(!toDoSubItemPlannedNotify.IsCompleted)
+                            if (!toDoSubItemPlannedNotify.IsCompleted)
                             {
                                 throw new ArgumentException(nameof(item));
                             }
@@ -300,7 +312,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 
                             break;
                         case ToDoSubItemValueNotify toDoSubItemValueNotify:
-                            if(!toDoSubItemValueNotify.IsCompleted)
+                            if (!toDoSubItemValueNotify.IsCompleted)
                             {
                                 throw new ArgumentException(nameof(item));
                             }

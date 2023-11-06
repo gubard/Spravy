@@ -1,3 +1,4 @@
+using Android.Content;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Ninject.Modules;
@@ -10,16 +11,26 @@ using Spravy.Domain.Services;
 using Spravy.EventBus.Domain.Client.Models;
 using Spravy.Schedule.Domain.Client.Models;
 using Spravy.ToDo.Domain.Client.Models;
+using Spravy.Ui.Android.Services;
+using Spravy.Ui.Interfaces;
 using Xamarin.Essentials;
 
 namespace Spravy.Ui.Android.Configurations;
 
 public class AndroidModule : NinjectModule
 {
-    public static readonly AndroidModule Default = new();
+    private readonly ContextWrapper contextWrapper;
+
+    public AndroidModule(ContextWrapper contextWrapper)
+    {
+        this.contextWrapper = contextWrapper;
+    }
 
     public override void Load()
     {
+        Bind<IOpenerLink>().To<AndroidOpenerLink>();
+        Bind<ContextWrapper>().ToConstant(contextWrapper);
+
         Bind<GrpcAuthenticationServiceOptions>()
             .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcAuthenticationServiceOptions>());
 

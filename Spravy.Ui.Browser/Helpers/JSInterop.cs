@@ -14,4 +14,7 @@ public static partial class JSInterop
 
     [JSImport("localStorageRemoveItem", "localStorage.js")]
     public static partial void LocalStorageRemoveItem(string key);
+
+    [JSImport("windowOpen", "window.js")]
+    public static partial void WindowOpen(string url);
 }

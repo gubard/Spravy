@@ -41,7 +41,8 @@ public class ToDoItemHeaderViewModelDesign : ToDoItemHeaderViewModel
                 DialogViewer = ConstDesign.DialogViewer,
                 Mapper = ConstDesign.Mapper,
                 Navigator = ConstDesign.Navigator,
-                ToDoService = toDoService
+                ToDoService = toDoService,
+                OpenerLink = ConstDesign.OpenerLink,
             },
             Name = "Header",
             ScheduleService = new ScheduleServiceDesign(Enumerable.Empty<TimerItem>()),

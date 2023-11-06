@@ -10,6 +10,8 @@ using Spravy.Domain.Services;
 using Spravy.EventBus.Domain.Client.Models;
 using Spravy.Schedule.Domain.Client.Models;
 using Spravy.ToDo.Domain.Client.Models;
+using Spravy.Ui.Interfaces;
+using Spravy.Ui.Services;
 
 namespace Spravy.Ui.Desktop.Configurations;
 
@@ -19,6 +21,8 @@ public class DesktopModule : NinjectModule
 
     public override void Load()
     {
+        Bind<IOpenerLink>().To<OpenerLink>();
+
         Bind<GrpcAuthenticationServiceOptions>()
             .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcAuthenticationServiceOptions>());
 

@@ -259,6 +259,7 @@ public class RootToDoItemsViewModelDesign : RootToDoItemsViewModel
                 Navigator = ConstDesign.Navigator,
                 DialogViewer = ConstDesign.DialogViewer,
                 ToDoService = toDoServiceDesign,
+                OpenerLink = ConstDesign.OpenerLink,
             },
         };
     }
