@@ -59,6 +59,11 @@
                                     Label="DueDate"
                                     Command="{Binding ChangeDueDateCommand}"
                                     Classes="edit" />
+
+            <controls:ButtonTextBox Text="{Binding Link}"
+                                    Label="Link"
+                                    Command="{Binding ChangeLinkCommand}"
+                                    Classes="edit" />
         </StackPanel>
 
         <ScrollViewer Grid.Row="2">

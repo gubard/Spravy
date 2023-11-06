@@ -12,4 +12,5 @@ public interface IToDoSubItem
     public string Description { get; }
     bool IsFavorite { get; }
     ActiveToDoItem? Active { get; }
+    Uri? Link { get; }
 }

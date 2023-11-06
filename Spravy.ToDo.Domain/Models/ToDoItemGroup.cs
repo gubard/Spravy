@@ -10,7 +10,8 @@ public readonly struct ToDoItemGroup : IToDoItem
         IToDoSubItem[] items,
         ToDoItemParent[] parents,
         string description,
-        bool isFavorite
+        bool isFavorite,
+        Uri? link
     )
     {
         Id = id;
@@ -19,6 +20,7 @@ public readonly struct ToDoItemGroup : IToDoItem
         Parents = parents;
         Description = description;
         IsFavorite = isFavorite;
+        Link = link;
     }
 
     public Guid Id { get; }
@@ -26,5 +28,6 @@ public readonly struct ToDoItemGroup : IToDoItem
     public IToDoSubItem[] Items { get; }
     public ToDoItemParent[] Parents { get; }
     public bool IsFavorite { get; }
+    public Uri? Link { get; }
     public string Description { get; }
 }

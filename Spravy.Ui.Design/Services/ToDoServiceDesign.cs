@@ -192,4 +192,9 @@ public class ToDoServiceDesign : IToDoService
     {
         throw new NotImplementedException();
     }
+
+    public Task UpdateToDoItemLinkAsync(Guid id, Uri? link)
+    {
+        throw new NotImplementedException();
+    }
 }

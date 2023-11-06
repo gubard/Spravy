@@ -17,7 +17,8 @@ public readonly struct ToDoSubItemValue : IToDoSubItem
         uint failedCount,
         bool isFavorite,
         ActiveToDoItem? active,
-        DateTimeOffset? lastCompleted
+        DateTimeOffset? lastCompleted,
+        Uri? link
     )
     {
         Name = name;
@@ -30,6 +31,7 @@ public readonly struct ToDoSubItemValue : IToDoSubItem
         IsFavorite = isFavorite;
         Active = active;
         LastCompleted = lastCompleted;
+        Link = link;
         IsCompleted = isCompleted;
         Id = id;
     }
@@ -42,6 +44,7 @@ public readonly struct ToDoSubItemValue : IToDoSubItem
     public string Description { get; }
     public bool IsFavorite { get; }
     public ActiveToDoItem? Active { get; }
+    public Uri? Link { get; }
     public DateTimeOffset? LastCompleted { get; }
     public uint CompletedCount { get; }
     public uint SkippedCount { get; }

@@ -22,7 +22,8 @@ public class AddToDoItemViewModelDesign : AddToDoItemViewModel
                 Array.Empty<IToDoSubItem>(),
                 Array.Empty<ToDoItemParent>(),
                 "Description",
-                false
+                false,
+                null
             ),
             Enumerable.Empty<ToDoShortItem>(),
             Enumerable.Empty<IToDoSubItem>()

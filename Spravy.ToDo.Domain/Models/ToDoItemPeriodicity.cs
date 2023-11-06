@@ -14,7 +14,8 @@ public readonly struct ToDoItemPeriodicity : IToDoItem
         bool isFavorite,
         DateTimeOffset dueDate,
         IPeriodicity periodicity,
-        ToDoItemChildrenType childrenType
+        ToDoItemChildrenType childrenType,
+        Uri? link
     )
     {
         Id = id;
@@ -26,6 +27,7 @@ public readonly struct ToDoItemPeriodicity : IToDoItem
         DueDate = dueDate;
         Periodicity = periodicity;
         ChildrenType = childrenType;
+        Link = link;
     }
 
     public Guid Id { get; }
@@ -34,6 +36,7 @@ public readonly struct ToDoItemPeriodicity : IToDoItem
     public IToDoSubItem[] Items { get; }
     public ToDoItemParent[] Parents { get; }
     public bool IsFavorite { get; }
+    public Uri? Link { get; }
     public ToDoItemChildrenType ChildrenType { get; }
     public DateTimeOffset DueDate { get; }
     public IPeriodicity Periodicity { get; }

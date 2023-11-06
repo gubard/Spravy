@@ -21,6 +21,7 @@ public class RootToDoItemsViewModelDesign : RootToDoItemsViewModel
                     ToDoItemStatus.Miss,
                     string.Empty,
                     false,
+                    null,
                     null
                 ),
                 new ToDoSubItemPeriodicity(
@@ -35,6 +36,7 @@ public class RootToDoItemsViewModelDesign : RootToDoItemsViewModel
                     100,
                     100,
                     100,
+                    null,
                     null
                 ),
                 new ToDoSubItemPlanned(
@@ -50,6 +52,7 @@ public class RootToDoItemsViewModelDesign : RootToDoItemsViewModel
                     100u,
                     100u,
                     false,
+                    null,
                     null
                 ),
                 new ToDoSubItemValue(
@@ -63,6 +66,7 @@ public class RootToDoItemsViewModelDesign : RootToDoItemsViewModel
                     100u,
                     100u,
                     false,
+                    null,
                     null,
                     null
                 ),
@@ -78,6 +82,7 @@ public class RootToDoItemsViewModelDesign : RootToDoItemsViewModel
                     100,
                     100,
                     100,
+                    null,
                     null
                 ),
                 //-------------------------------------------LastCompleted----------------------------------------------
@@ -88,6 +93,7 @@ public class RootToDoItemsViewModelDesign : RootToDoItemsViewModel
                     ToDoItemStatus.ReadyForComplete,
                     string.Empty,
                     false,
+                    null,
                     null
                 ),
                 new ToDoSubItemPeriodicity(
@@ -102,7 +108,8 @@ public class RootToDoItemsViewModelDesign : RootToDoItemsViewModel
                     1,
                     1,
                     1,
-                    DateTimeOffset.Now
+                    DateTimeOffset.Now,
+                    null
                 ),
                 new ToDoSubItemPlanned(
                     Guid.NewGuid(),
@@ -117,7 +124,8 @@ public class RootToDoItemsViewModelDesign : RootToDoItemsViewModel
                     1u,
                     1u,
                     false,
-                    DateTimeOffset.Now
+                    DateTimeOffset.Now,
+                    null
                 ),
                 new ToDoSubItemValue(
                     Guid.NewGuid(),
@@ -131,7 +139,8 @@ public class RootToDoItemsViewModelDesign : RootToDoItemsViewModel
                     1u,
                     false,
                     null,
-                    DateTimeOffset.Now
+                    DateTimeOffset.Now,
+                    null
                 ),
                 new ToDoSubItemPeriodicityOffset(
                     Guid.NewGuid(),
@@ -145,7 +154,8 @@ public class RootToDoItemsViewModelDesign : RootToDoItemsViewModel
                     1,
                     1,
                     1,
-                    DateTimeOffset.Now
+                    DateTimeOffset.Now,
+                    null
                 ),
                 //-------------------------------------------Active-----------------------------------------------------
                 new ToDoSubItemGroup(
@@ -155,7 +165,8 @@ public class RootToDoItemsViewModelDesign : RootToDoItemsViewModel
                     ToDoItemStatus.Planned,
                     string.Empty,
                     false,
-                    new ActiveToDoItem(Guid.NewGuid(), "Active")
+                    new ActiveToDoItem(Guid.NewGuid(), "Active"),
+                    null
                 ),
                 new ToDoSubItemPeriodicity(
                     Guid.NewGuid(),
@@ -169,7 +180,8 @@ public class RootToDoItemsViewModelDesign : RootToDoItemsViewModel
                     1,
                     1,
                     1,
-                    DateTimeOffset.Now
+                    DateTimeOffset.Now,
+                    null
                 ),
                 new ToDoSubItemPlanned(
                     Guid.NewGuid(),
@@ -184,7 +196,8 @@ public class RootToDoItemsViewModelDesign : RootToDoItemsViewModel
                     1u,
                     1u,
                     false,
-                    DateTimeOffset.Now
+                    DateTimeOffset.Now,
+                    null
                 ),
                 new ToDoSubItemValue(
                     Guid.NewGuid(),
@@ -198,7 +211,8 @@ public class RootToDoItemsViewModelDesign : RootToDoItemsViewModel
                     1u,
                     false,
                     new ActiveToDoItem(Guid.NewGuid(), "Active"),
-                    DateTimeOffset.Now
+                    DateTimeOffset.Now,
+                    null
                 ),
                 new ToDoSubItemPeriodicityOffset(
                     Guid.NewGuid(),
@@ -212,7 +226,8 @@ public class RootToDoItemsViewModelDesign : RootToDoItemsViewModel
                     1,
                     1,
                     1,
-                    DateTimeOffset.Now
+                    DateTimeOffset.Now,
+                    null
                 ),
             },
           new IToDoSubItem[]
@@ -224,6 +239,7 @@ public class RootToDoItemsViewModelDesign : RootToDoItemsViewModel
                   ToDoItemStatus.Miss,
                   string.Empty,
                   true,
+                  null,
                   null
               ),
           },

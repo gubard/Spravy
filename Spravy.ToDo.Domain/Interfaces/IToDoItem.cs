@@ -10,4 +10,5 @@ public interface IToDoItem
     IToDoSubItem[] Items { get; }
     ToDoItemParent[] Parents { get; }
     bool IsFavorite { get; }
+    Uri? Link { get; }
 }

@@ -58,6 +58,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
         InitializedCommand = CreateInitializedCommand(Initialized);
         ToDoItemToStringCommand = CreateCommandFromTask(ToDoItemToStringAsync);
         AddTimerCommand = CreateCommandFromTask(AddTimerAsync);
+        ChangeLinkCommand = CreateCommandFromTask(ChangeLinkAsync);
 
         this.WhenAnyValue(x => x.IsFavorite)
          .Subscribe(
@@ -100,6 +101,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
     public ICommand InitializedCommand { get; }
     public ICommand ToDoItemToStringCommand { get; }
     public ICommand AddTimerCommand { get; }
+    public ICommand ChangeLinkCommand { get; }
 
     [Inject]
     public required ToDoItemHeaderView ToDoItemHeaderView { get; init; }
@@ -152,7 +154,22 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
         set => this.RaiseAndSetIfChanged(ref description, value);
     }
 
+    public string Link { get; set; }
+
     public abstract Task RefreshToDoItemAsync();
+    
+    private Task ChangeLinkAsync()
+    {
+        return DialogViewer.ShowSingleStringConfirmDialogAsync(
+            value =>
+            {
+                Link = value;
+
+                return DialogViewer.CloseInputDialogAsync();
+            },
+            textBox => textBox.Text = Link
+        );
+    }
 
     private Task AddTimerAsync()
     {

@@ -17,7 +17,8 @@ public readonly struct ToDoItemPeriodicityOffset : IToDoItem
         ushort weeksOffset,
         ushort yearsOffset,
         DateTimeOffset dueDate,
-        ToDoItemChildrenType childrenType
+        ToDoItemChildrenType childrenType,
+        Uri? link
     )
     {
         Id = id;
@@ -32,6 +33,7 @@ public readonly struct ToDoItemPeriodicityOffset : IToDoItem
         YearsOffset = yearsOffset;
         DueDate = dueDate;
         ChildrenType = childrenType;
+        Link = link;
     }
 
     public Guid Id { get; }
@@ -41,6 +43,7 @@ public readonly struct ToDoItemPeriodicityOffset : IToDoItem
     public ToDoItemParent[] Parents { get; }
     public DateTimeOffset DueDate { get; }
     public bool IsFavorite { get; }
+    public Uri? Link { get; }
     public ToDoItemChildrenType ChildrenType { get; }
     public ushort DaysOffset { get; }
     public ushort MonthsOffset { get; }

@@ -12,7 +12,8 @@ public readonly struct ToDoSubItemGroup : IToDoSubItem
         ToDoItemStatus status,
         string description,
         bool isFavorite,
-        ActiveToDoItem? active
+        ActiveToDoItem? active,
+        Uri? link
     )
     {
         Id = id;
@@ -22,6 +23,7 @@ public readonly struct ToDoSubItemGroup : IToDoSubItem
         Description = description;
         IsFavorite = isFavorite;
         Active = active;
+        Link = link;
     }
 
     public Guid Id { get; }
@@ -31,4 +33,5 @@ public readonly struct ToDoSubItemGroup : IToDoSubItem
     public string Description { get; }
     public bool IsFavorite { get; }
     public ActiveToDoItem? Active { get; }
+    public Uri? Link { get; }
 }

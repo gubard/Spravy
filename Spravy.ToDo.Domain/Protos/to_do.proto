@@ -40,4 +40,5 @@ service ToDoService {
   rpc UpdateToDoItemChildrenType (UpdateToDoItemChildrenTypeRequest) returns (UpdateToDoItemChildrenTypeReply);
   rpc GetSiblings (GetSiblingsRequest) returns (GetSiblingsReply);
   rpc GetActiveItem (GetActiveItemRequest) returns (GetActiveItemReply);
+  rpc UpdateToDoItemLink (UpdateToDoItemLinkRequest) returns (UpdateToDoItemLinkReply);
 }

@@ -557,6 +557,22 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
+    public Task UpdateToDoItemLinkAsync(Guid id, Uri? link)
+    {
+        return CallClientAsync(
+            async client =>
+            {
+                var request = new UpdateToDoItemLinkRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                    Link = mapper.Map<string>(link),
+                };
+
+                await client.UpdateToDoItemLinkAsync(request, await metadataFactory.CreateAsync());
+            }
+        );
+    }
+
     public static GrpcToDoService CreateGrpcService(
         IFactory<Uri, ToDoServiceClient> grpcClientFactory,
         Uri host,

@@ -18,7 +18,8 @@ public readonly struct ToDoSubItemPlanned : IToDoSubItem
         uint skippedCount,
         uint failedCount,
         bool isCompleted,
-        DateTimeOffset? lastCompleted
+        DateTimeOffset? lastCompleted,
+        Uri? link
     )
     {
         Id = id;
@@ -34,6 +35,7 @@ public readonly struct ToDoSubItemPlanned : IToDoSubItem
         FailedCount = failedCount;
         IsCompleted = isCompleted;
         LastCompleted = lastCompleted;
+        Link = link;
     }
 
     public Guid Id { get; }
@@ -43,6 +45,7 @@ public readonly struct ToDoSubItemPlanned : IToDoSubItem
     public string Description { get; }
     public bool IsFavorite { get; }
     public ActiveToDoItem? Active { get; }
+    public Uri? Link { get; }
     public DateTimeOffset? LastCompleted { get; }
     public DateTimeOffset DueDate { get; }
     public uint CompletedCount { get; }

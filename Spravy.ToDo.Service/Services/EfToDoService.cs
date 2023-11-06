@@ -41,10 +41,10 @@ public class EfToDoService : IToDoService
         await using var context = dbContextFactory.Create();
 
         var items = await context.Set<ToDoItemEntity>()
-                              .AsNoTracking()
-                              .Where(x => x.ParentId == null)
-                              .OrderBy(x => x.OrderIndex)
-                              .ToArrayAsync();
+            .AsNoTracking()
+            .Where(x => x.ParentId == null)
+            .OrderBy(x => x.OrderIndex)
+            .ToArrayAsync();
 
         var result = await ConvertAsync(context, items);
 
@@ -58,7 +58,7 @@ public class EfToDoService : IToDoService
     {
         var result = new List<IToDoSubItem>();
 
-        foreach(var item in items)
+        foreach (var item in items)
         {
             var toDoSubItem = await ConvertAsync(context, item);
             result.Add(toDoSubItem);
@@ -91,10 +91,10 @@ public class EfToDoService : IToDoService
         item = item.ThrowIfNull();
 
         var subItems = await context.Set<ToDoItemEntity>()
-                                 .AsNoTracking()
-                                 .Where(x => x.ParentId == item.Id)
-                                 .OrderBy(x => x.OrderIndex)
-                                 .ToArrayAsync();
+            .AsNoTracking()
+            .Where(x => x.ParentId == item.Id)
+            .OrderBy(x => x.OrderIndex)
+            .ToArrayAsync();
 
         var parents = new List<ToDoItemParent>
         {
@@ -126,10 +126,10 @@ public class EfToDoService : IToDoService
             async c =>
             {
                 var items = await c.Set<ToDoItemEntity>()
-                                .AsNoTracking()
-                                .Where(x => x.ParentId == null)
-                                .Select(x => x.OrderIndex)
-                                .ToArrayAsync();
+                    .AsNoTracking()
+                    .Where(x => x.ParentId == null)
+                    .Select(x => x.OrderIndex)
+                    .ToArrayAsync();
 
                 var newEntity = mapper.Map<ToDoItemEntity>(options);
                 newEntity.Description = string.Empty;
@@ -154,10 +154,10 @@ public class EfToDoService : IToDoService
                 parent = parent.ThrowIfNull();
 
                 var items = await c.Set<ToDoItemEntity>()
-                                .AsNoTracking()
-                                .Where(x => x.ParentId == options.ParentId)
-                                .Select(x => x.OrderIndex)
-                                .ToArrayAsync();
+                    .AsNoTracking()
+                    .Where(x => x.ParentId == options.ParentId)
+                    .Select(x => x.OrderIndex)
+                    .ToArrayAsync();
 
                 var toDoItem = mapper.Map<ToDoItemEntity>(options);
                 toDoItem.Description = string.Empty;
@@ -195,11 +195,11 @@ public class EfToDoService : IToDoService
                 item = item.ThrowIfNull();
 
                 var children = await c.Set<ToDoItemEntity>()
-                                   .AsNoTracking()
-                                   .Where(x => x.ParentId == id)
-                                   .ToArrayAsync();
+                    .AsNoTracking()
+                    .Where(x => x.ParentId == id)
+                    .ToArrayAsync();
 
-                foreach(var child in children)
+                foreach (var child in children)
                 {
                     await DeleteToDoItemAsync(child.Id, context);
                 }
@@ -216,11 +216,11 @@ public class EfToDoService : IToDoService
         item = item.ThrowIfNull();
 
         var children = await context.Set<ToDoItemEntity>()
-                                 .AsNoTracking()
-                                 .Where(x => x.ParentId == id)
-                                 .ToArrayAsync();
+            .AsNoTracking()
+            .Where(x => x.ParentId == id)
+            .ToArrayAsync();
 
-        foreach(var child in children)
+        foreach (var child in children)
         {
             await DeleteToDoItemAsync(child.Id, context);
         }
@@ -266,15 +266,15 @@ public class EfToDoService : IToDoService
                 var item = await c.Set<ToDoItemEntity>().FindAsync(id);
                 item = item.ThrowIfNull();
 
-                if(isCompleted)
+                if (isCompleted)
                 {
-                    switch(item.ChildrenType)
+                    switch (item.ChildrenType)
                     {
                         case ToDoItemChildrenType.RequireCompletion:
                         {
                             var isCanComplete = await IsCanFinishToDoItem(c, item);
 
-                            if(!isCanComplete)
+                            if (!isCanComplete)
                             {
                                 throw new("Need close sub tasks.");
                             }
@@ -287,7 +287,7 @@ public class EfToDoService : IToDoService
                         {
                             var isCanComplete = await IsCanFinishToDoItem(c, item);
 
-                            if(!isCanComplete)
+                            if (!isCanComplete)
                             {
                                 throw new("Need close sub tasks.");
                             }
@@ -297,7 +297,7 @@ public class EfToDoService : IToDoService
                         default: throw new ArgumentOutOfRangeException();
                     }
 
-                    switch(item.Type)
+                    switch (item.Type)
                     {
                         case ToDoItemType.Value:
                             item.IsCompleted = true;
@@ -320,7 +320,7 @@ public class EfToDoService : IToDoService
                     UpdateDueDate(item);
                     item.LastCompleted = DateTimeOffset.Now;
 
-                    switch(item.ChildrenType)
+                    switch (item.ChildrenType)
                     {
                         case ToDoItemChildrenType.RequireCompletion:
                             break;
@@ -345,23 +345,23 @@ public class EfToDoService : IToDoService
     private async Task CircleCompletionAsync(SpravyDbToDoDbContext context, ToDoItemEntity item)
     {
         var children = await context.Set<ToDoItemEntity>()
-                                 .Where(x => x.ParentId == item.Id)
-                                 .OrderBy(x => x.OrderIndex)
-                                 .ToArrayAsync();
+            .Where(x => x.ParentId == item.Id)
+            .OrderBy(x => x.OrderIndex)
+            .ToArrayAsync();
 
         var maxOrderIndex = children.Max(x => x.OrderIndex);
         var nextOrderIndex = item.CurrentCircleOrderIndex + 1;
 
-        if(nextOrderIndex > maxOrderIndex)
+        if (nextOrderIndex > maxOrderIndex)
         {
             nextOrderIndex = 0;
         }
 
         item.CurrentCircleOrderIndex = nextOrderIndex;
 
-        foreach(var child in children)
+        foreach (var child in children)
         {
-            if(child.OrderIndex == nextOrderIndex)
+            if (child.OrderIndex == nextOrderIndex)
             {
                 child.IsCompleted = false;
                 child.Type = ToDoItemType.Value;
@@ -377,21 +377,21 @@ public class EfToDoService : IToDoService
     private async Task CircleSkipAsync(SpravyDbToDoDbContext context, ToDoItemEntity item)
     {
         var children = await context.Set<ToDoItemEntity>()
-                                 .Where(x => x.ParentId == item.Id)
-                                 .OrderBy(x => x.OrderIndex)
-                                 .ToArrayAsync();
+            .Where(x => x.ParentId == item.Id)
+            .OrderBy(x => x.OrderIndex)
+            .ToArrayAsync();
 
         var maxOrderIndex = children.Max(x => x.OrderIndex);
         var nextOrderIndex = item.CurrentCircleOrderIndex;
 
-        if(nextOrderIndex > maxOrderIndex)
+        if (nextOrderIndex > maxOrderIndex)
         {
             nextOrderIndex = 0;
         }
 
-        foreach(var child in children)
+        foreach (var child in children)
         {
-            if(child.OrderIndex == nextOrderIndex)
+            if (child.OrderIndex == nextOrderIndex)
             {
                 child.IsCompleted = false;
                 child.Type = ToDoItemType.Value;
@@ -406,29 +406,29 @@ public class EfToDoService : IToDoService
 
     private async Task<bool> IsCanFinishToDoItem(SpravyDbToDoDbContext context, ToDoItemEntity item)
     {
-        if(item.Type == ToDoItemType.Group)
+        if (item.Type == ToDoItemType.Group)
         {
             return false;
         }
 
-        switch(item.Type)
+        switch (item.Type)
         {
             case ToDoItemType.Planned:
-                if(item.DueDate.ToCurrentDay() > DateTimeOffset.Now.ToCurrentDay())
+                if (item.DueDate.ToCurrentDay() > DateTimeOffset.Now.ToCurrentDay())
                 {
                     return false;
                 }
 
                 break;
             case ToDoItemType.Periodicity:
-                if(item.DueDate.ToCurrentDay() > DateTimeOffset.Now.ToCurrentDay())
+                if (item.DueDate.ToCurrentDay() > DateTimeOffset.Now.ToCurrentDay())
                 {
                     return false;
                 }
 
                 break;
             case ToDoItemType.PeriodicityOffset:
-                if(item.DueDate.ToCurrentDay() > DateTimeOffset.Now.ToCurrentDay())
+                if (item.DueDate.ToCurrentDay() > DateTimeOffset.Now.ToCurrentDay())
                 {
                     return false;
                 }
@@ -437,11 +437,11 @@ public class EfToDoService : IToDoService
         }
 
         var children = await context.Set<ToDoItemEntity>()
-                                 .AsNoTracking()
-                                 .Where(x => x.ParentId == item.Id)
-                                 .ToArrayAsync();
+            .AsNoTracking()
+            .Where(x => x.ParentId == item.Id)
+            .ToArrayAsync();
 
-        foreach(var child in children)
+        foreach (var child in children)
         {
             var dueDate = item.Type switch
             {
@@ -455,7 +455,7 @@ public class EfToDoService : IToDoService
 
             var isCanComplete = await IsCanFinishToDoItem(context, child, dueDate);
 
-            if(!isCanComplete)
+            if (!isCanComplete)
             {
                 return false;
             }
@@ -470,31 +470,31 @@ public class EfToDoService : IToDoService
         DateTimeOffset? rootDue
     )
     {
-        if(rootDue.HasValue)
+        if (rootDue.HasValue)
         {
-            if(item.DueDate.ToCurrentDay() <= rootDue.Value.ToCurrentDay())
+            if (item.DueDate.ToCurrentDay() <= rootDue.Value.ToCurrentDay())
             {
                 return false;
             }
         }
         else
         {
-            if(item.DueDate.ToCurrentDay() <= DateTimeOffset.Now.ToCurrentDay())
+            if (item.DueDate.ToCurrentDay() <= DateTimeOffset.Now.ToCurrentDay())
             {
                 return false;
             }
         }
 
         var children = await context.Set<ToDoItemEntity>()
-                                 .AsNoTracking()
-                                 .Where(x => x.ParentId == item.Id)
-                                 .ToArrayAsync();
+            .AsNoTracking()
+            .Where(x => x.ParentId == item.Id)
+            .ToArrayAsync();
 
-        foreach(var child in children)
+        foreach (var child in children)
         {
             var isCanComplete = await IsCanFinishToDoItem(context, child, rootDue);
 
-            if(!isCanComplete)
+            if (!isCanComplete)
             {
                 return false;
             }
@@ -509,31 +509,31 @@ public class EfToDoService : IToDoService
         DateTimeOffset? rootDue
     )
     {
-        if(rootDue.HasValue)
+        if (rootDue.HasValue)
         {
-            if(item.DueDate.ToCurrentDay() <= rootDue.Value.ToCurrentDay())
+            if (item.DueDate.ToCurrentDay() <= rootDue.Value.ToCurrentDay())
             {
                 return false;
             }
         }
         else
         {
-            if(item.DueDate.ToCurrentDay() <= DateTimeOffset.Now.ToCurrentDay())
+            if (item.DueDate.ToCurrentDay() <= DateTimeOffset.Now.ToCurrentDay())
             {
                 return false;
             }
         }
 
         var children = await context.Set<ToDoItemEntity>()
-                                 .AsNoTracking()
-                                 .Where(x => x.ParentId == item.Id)
-                                 .ToArrayAsync();
+            .AsNoTracking()
+            .Where(x => x.ParentId == item.Id)
+            .ToArrayAsync();
 
-        foreach(var child in children)
+        foreach (var child in children)
         {
             var isCanComplete = await IsCanFinishToDoItem(context, child, rootDue);
 
-            if(!isCanComplete)
+            if (!isCanComplete)
             {
                 return false;
             }
@@ -548,36 +548,36 @@ public class EfToDoService : IToDoService
         DateTimeOffset? rootDue
     )
     {
-        if(item.IsCompleted)
+        if (item.IsCompleted)
         {
             return true;
         }
 
-        if(rootDue.HasValue)
+        if (rootDue.HasValue)
         {
-            if(item.DueDate.ToCurrentDay() <= rootDue.Value.ToCurrentDay())
+            if (item.DueDate.ToCurrentDay() <= rootDue.Value.ToCurrentDay())
             {
                 return false;
             }
         }
         else
         {
-            if(item.DueDate.ToCurrentDay() <= DateTimeOffset.Now.ToCurrentDay())
+            if (item.DueDate.ToCurrentDay() <= DateTimeOffset.Now.ToCurrentDay())
             {
                 return false;
             }
         }
 
         var children = await context.Set<ToDoItemEntity>()
-                                 .AsNoTracking()
-                                 .Where(x => x.ParentId == item.Id)
-                                 .ToArrayAsync();
+            .AsNoTracking()
+            .Where(x => x.ParentId == item.Id)
+            .ToArrayAsync();
 
-        foreach(var child in children)
+        foreach (var child in children)
         {
             var isCanComplete = await IsCanFinishToDoItem(context, child, rootDue);
 
-            if(!isCanComplete)
+            if (!isCanComplete)
             {
                 return false;
             }
@@ -592,21 +592,21 @@ public class EfToDoService : IToDoService
         DateTimeOffset? rootDue
     )
     {
-        if(item.IsCompleted)
+        if (item.IsCompleted)
         {
             return true;
         }
 
         var children = await context.Set<ToDoItemEntity>()
-                                 .AsNoTracking()
-                                 .Where(x => x.ParentId == item.Id)
-                                 .ToArrayAsync();
+            .AsNoTracking()
+            .Where(x => x.ParentId == item.Id)
+            .ToArrayAsync();
 
-        foreach(var child in children)
+        foreach (var child in children)
         {
             var isCanComplete = await IsCanFinishToDoItem(context, child, rootDue);
 
-            if(!isCanComplete)
+            if (!isCanComplete)
             {
                 return false;
             }
@@ -622,15 +622,15 @@ public class EfToDoService : IToDoService
     )
     {
         var children = await context.Set<ToDoItemEntity>()
-                                 .AsNoTracking()
-                                 .Where(x => x.ParentId == item.Id)
-                                 .ToArrayAsync();
+            .AsNoTracking()
+            .Where(x => x.ParentId == item.Id)
+            .ToArrayAsync();
 
-        foreach(var child in children)
+        foreach (var child in children)
         {
             var isCanComplete = await IsCanFinishToDoItem(context, child, rootDue);
 
-            if(!isCanComplete)
+            if (!isCanComplete)
             {
                 return false;
             }
@@ -641,7 +641,7 @@ public class EfToDoService : IToDoService
 
     private Task<bool> IsCanFinishToDoItem(SpravyDbToDoDbContext context, ToDoItemEntity item, DateTimeOffset? rootDue)
     {
-        switch(item.Type)
+        switch (item.Type)
         {
             case ToDoItemType.Value: return IsCanFinishToDoSubItemValue(context, item, rootDue);
             case ToDoItemType.Group: return IsCanFinishToDoSubItemGroup(context, item, rootDue);
@@ -680,14 +680,14 @@ public class EfToDoService : IToDoService
                 var orderIndex = options.IsAfter ? targetItem.OrderIndex + 1 : targetItem.OrderIndex;
 
                 var items = await c.Set<ToDoItemEntity>()
-                                .Where(
-                                        x => x.ParentId == item.ParentId
-                                        && x.Id != item.Id
-                                        && x.OrderIndex >= orderIndex
-                                    )
-                                .ToArrayAsync();
+                    .Where(
+                        x => x.ParentId == item.ParentId
+                             && x.Id != item.Id
+                             && x.OrderIndex >= orderIndex
+                    )
+                    .ToArrayAsync();
 
-                foreach(var itemEntity in items)
+                foreach (var itemEntity in items)
                 {
                     itemEntity.OrderIndex++;
                 }
@@ -723,13 +723,13 @@ public class EfToDoService : IToDoService
                 var item = await c.Set<ToDoItemEntity>().FindAsync(id);
                 item = item.ThrowIfNull();
 
-                switch(item.ChildrenType)
+                switch (item.ChildrenType)
                 {
                     case ToDoItemChildrenType.RequireCompletion:
                     {
                         var isCanComplete = await IsCanFinishToDoItem(c, item);
 
-                        if(!isCanComplete)
+                        if (!isCanComplete)
                         {
                             throw new("Need close sub tasks.");
                         }
@@ -742,7 +742,7 @@ public class EfToDoService : IToDoService
                     {
                         var isCanComplete = await IsCanFinishToDoItem(c, item);
 
-                        if(!isCanComplete)
+                        if (!isCanComplete)
                         {
                             throw new("Need close sub tasks.");
                         }
@@ -753,7 +753,7 @@ public class EfToDoService : IToDoService
                         throw new ArgumentOutOfRangeException();
                 }
 
-                switch(item.Type)
+                switch (item.Type)
                 {
                     case ToDoItemType.Value:
                         item.IsCompleted = true;
@@ -777,7 +777,7 @@ public class EfToDoService : IToDoService
                 UpdateDueDate(item);
                 item.LastCompleted = DateTimeOffset.Now;
 
-                switch(item.ChildrenType)
+                switch (item.ChildrenType)
                 {
                     case ToDoItemChildrenType.RequireCompletion:
                         break;
@@ -804,13 +804,13 @@ public class EfToDoService : IToDoService
                 var item = await c.Set<ToDoItemEntity>().FindAsync(id);
                 item = item.ThrowIfNull();
 
-                switch(item.ChildrenType)
+                switch (item.ChildrenType)
                 {
                     case ToDoItemChildrenType.RequireCompletion:
                     {
                         var isCanComplete = await IsCanFinishToDoItem(c, item);
 
-                        if(!isCanComplete)
+                        if (!isCanComplete)
                         {
                             throw new("Need close sub tasks.");
                         }
@@ -823,7 +823,7 @@ public class EfToDoService : IToDoService
                     {
                         var isCanComplete = await IsCanFinishToDoItem(c, item);
 
-                        if(!isCanComplete)
+                        if (!isCanComplete)
                         {
                             throw new("Need close sub tasks.");
                         }
@@ -834,7 +834,7 @@ public class EfToDoService : IToDoService
                         throw new ArgumentOutOfRangeException();
                 }
 
-                switch(item.Type)
+                switch (item.Type)
                 {
                     case ToDoItemType.Value:
                         item.IsCompleted = true;
@@ -858,7 +858,7 @@ public class EfToDoService : IToDoService
                 UpdateDueDate(item);
                 item.LastCompleted = DateTimeOffset.Now;
 
-                switch(item.ChildrenType)
+                switch (item.ChildrenType)
                 {
                     case ToDoItemChildrenType.RequireCompletion:
                         break;
@@ -880,10 +880,10 @@ public class EfToDoService : IToDoService
         await using var context = dbContextFactory.Create();
 
         var items = await context.Set<ToDoItemEntity>()
-                              .AsNoTracking()
-                              .Where(x => x.Name.Contains(searchText))
-                              .OrderBy(x => x.OrderIndex)
-                              .ToArrayAsync();
+            .AsNoTracking()
+            .Where(x => x.Name.Contains(searchText))
+            .OrderBy(x => x.OrderIndex)
+            .ToArrayAsync();
 
         var result = await ConvertAsync(context, items);
 
@@ -940,10 +940,10 @@ public class EfToDoService : IToDoService
             async c =>
             {
                 var items = await c.Set<ToDoItemEntity>()
-                                .AsNoTracking()
-                                .Where(x => x.IsFavorite)
-                                .OrderBy(x => x.OrderIndex)
-                                .ToArrayAsync();
+                    .AsNoTracking()
+                    .Where(x => x.IsFavorite)
+                    .OrderBy(x => x.OrderIndex)
+                    .ToArrayAsync();
 
                 var result = await ConvertAsync(c, items);
 
@@ -999,21 +999,21 @@ public class EfToDoService : IToDoService
         await using var context = dbContextFactory.Create();
 
         var entities = await context.Set<ToDoItemEntity>()
-                                 .AsNoTracking()
-                                 .Where(x => x.ParentId == id)
-                                 .OrderBy(x => x.OrderIndex)
-                                 .ToArrayAsync();
+            .AsNoTracking()
+            .Where(x => x.ParentId == id)
+            .OrderBy(x => x.OrderIndex)
+            .ToArrayAsync();
 
-        if(entities.IsEmpty())
+        if (entities.IsEmpty())
         {
             return Enumerable.Empty<IToDoSubItem>();
         }
 
         var result = new List<IToDoSubItem>();
 
-        foreach(var entity in entities)
+        foreach (var entity in entities)
         {
-            await foreach(var item in GetLeafToDoItemsAsync(context, entity))
+            await foreach (var item in GetLeafToDoItemsAsync(context, entity))
             {
                 result.Add(item);
             }
@@ -1027,14 +1027,14 @@ public class EfToDoService : IToDoService
         await using var context = dbContextFactory.Create();
 
         var items = await context.Set<ToDoItemEntity>()
-                              .AsNoTracking()
-                              .Where(x => x.ParentId == null && !ignoreIds.Contains(x.Id))
-                              .OrderBy(x => x.OrderIndex)
-                              .ToArrayAsync();
+            .AsNoTracking()
+            .Where(x => x.ParentId == null && !ignoreIds.Contains(x.Id))
+            .OrderBy(x => x.OrderIndex)
+            .ToArrayAsync();
 
         var result = new ToDoSelectorItem[items.Length];
 
-        for(var i = 0; i < result.Length; i++)
+        for (var i = 0; i < result.Length; i++)
         {
             var item = items[i];
             var children = await GetToDoSelectorItemsAsync(context, item.Id, ignoreIds);
@@ -1046,7 +1046,7 @@ public class EfToDoService : IToDoService
 
     public async Task UpdateToDoItemParentAsync(Guid id, Guid parentId)
     {
-        if(id == parentId)
+        if (id == parentId)
         {
             throw new();
         }
@@ -1059,10 +1059,10 @@ public class EfToDoService : IToDoService
                 var entity = await c.Set<ToDoItemEntity>().FindAsync(id);
 
                 var items = await c.Set<ToDoItemEntity>()
-                                .AsNoTracking()
-                                .Where(x => x.ParentId == parentId)
-                                .Select(x => x.OrderIndex)
-                                .ToArrayAsync();
+                    .AsNoTracking()
+                    .Where(x => x.ParentId == parentId)
+                    .Select(x => x.OrderIndex)
+                    .ToArrayAsync();
 
                 entity = entity.ThrowIfNull();
                 entity.ParentId = parentId;
@@ -1081,10 +1081,10 @@ public class EfToDoService : IToDoService
                 var entity = await c.Set<ToDoItemEntity>().FindAsync(id);
 
                 var items = await c.Set<ToDoItemEntity>()
-                                .AsNoTracking()
-                                .Where(x => x.ParentId == null)
-                                .Select(x => x.OrderIndex)
-                                .ToArrayAsync();
+                    .AsNoTracking()
+                    .Where(x => x.ParentId == null)
+                    .Select(x => x.OrderIndex)
+                    .ToArrayAsync();
 
                 entity = entity.ThrowIfNull();
                 entity.ParentId = null;
@@ -1179,9 +1179,9 @@ public class EfToDoService : IToDoService
         item = item.ThrowIfNull();
 
         var items = await context.Set<ToDoItemEntity>()
-                              .Where(x => x.ParentId == item.ParentId && x.Id != item.Id)
-                              .OrderBy(x => x.OrderIndex)
-                              .ToArrayAsync();
+            .Where(x => x.ParentId == item.ParentId && x.Id != item.Id)
+            .OrderBy(x => x.OrderIndex)
+            .ToArrayAsync();
 
         return mapper.Map<IEnumerable<ToDoShortItem>>(items);
     }
@@ -1191,15 +1191,15 @@ public class EfToDoService : IToDoService
         await using var context = dbContextFactory.Create();
 
         var items = await context.Set<ToDoItemEntity>()
-                              .Where(x => x.ParentId == null)
-                              .OrderBy(x => x.OrderIndex)
-                              .ToArrayAsync();
+            .Where(x => x.ParentId == null)
+            .OrderBy(x => x.OrderIndex)
+            .ToArrayAsync();
 
-        foreach(var item in items)
+        foreach (var item in items)
         {
             var active = await activeToDoItemToDoItemService.GetActiveItemAsync(context, item);
 
-            if(active is null)
+            if (active is null)
             {
                 continue;
             }
@@ -1210,6 +1210,20 @@ public class EfToDoService : IToDoService
         return null;
     }
 
+    public async Task UpdateToDoItemLinkAsync(Guid id, Uri? link)
+    {
+        await using var context = dbContextFactory.Create();
+
+        await context.ExecuteSaveChangesTransactionAsync(
+            async c =>
+            {
+                var value = await c.FindAsync<ToDoItemEntity>(id);
+                value = value.ThrowIfNull();
+                value.Link = mapper.Map<string>(link);
+            }
+        );
+    }
+
     private async Task ToDoItemToStringAsync(
         SpravyDbToDoDbContext context,
         ToDoItemToStringOptions options,
@@ -1218,16 +1232,16 @@ public class EfToDoService : IToDoService
     )
     {
         var items = await context.Set<ToDoItemEntity>()
-                              .AsNoTracking()
-                              .Where(x => x.ParentId == options.Id)
-                              .OrderBy(x => x.OrderIndex)
-                              .ToArrayAsync();
+            .AsNoTracking()
+            .Where(x => x.ParentId == options.Id)
+            .OrderBy(x => x.OrderIndex)
+            .ToArrayAsync();
 
-        foreach(var item in items)
+        foreach (var item in items)
         {
             var status = await statusToDoItemService.GetStatusAsync(context, item);
 
-            if(!options.Statuses.Span.ToArray().Contains(status))
+            if (!options.Statuses.Span.ToArray().Contains(status))
             {
                 continue;
             }
@@ -1252,14 +1266,14 @@ public class EfToDoService : IToDoService
     )
     {
         var items = await context.Set<ToDoItemEntity>()
-                              .AsNoTracking()
-                              .Where(x => x.ParentId == id && !ignoreIds.Contains(x.Id))
-                              .OrderBy(x => x.OrderIndex)
-                              .ToArrayAsync();
+            .AsNoTracking()
+            .Where(x => x.ParentId == id && !ignoreIds.Contains(x.Id))
+            .OrderBy(x => x.OrderIndex)
+            .ToArrayAsync();
 
         var result = new ToDoSelectorItem[items.Length];
 
-        for(var i = 0; i < result.Length; i++)
+        for (var i = 0; i < result.Length; i++)
         {
             var item = items[i];
             var children = await GetToDoSelectorItemsAsync(context, item.Id, ignoreIds);
@@ -1275,21 +1289,21 @@ public class EfToDoService : IToDoService
     )
     {
         var entities = await context.Set<ToDoItemEntity>()
-                                 .AsNoTracking()
-                                 .Where(x => x.ParentId == itemEntity.Id)
-                                 .OrderBy(x => x.OrderIndex)
-                                 .ToArrayAsync();
+            .AsNoTracking()
+            .Where(x => x.ParentId == itemEntity.Id)
+            .OrderBy(x => x.OrderIndex)
+            .ToArrayAsync();
 
-        if(entities.IsEmpty())
+        if (entities.IsEmpty())
         {
             yield return await ConvertAsync(context, itemEntity);
 
             yield break;
         }
 
-        foreach(var entity in entities)
+        foreach (var entity in entities)
         {
-            await foreach(var item in GetLeafToDoItemsAsync(context, entity))
+            await foreach (var item in GetLeafToDoItemsAsync(context, entity))
             {
                 yield return item;
             }
@@ -1299,12 +1313,12 @@ public class EfToDoService : IToDoService
     private async Task NormalizeOrderIndexAsync(SpravyDbToDoDbContext context, Guid? parentId)
     {
         var items = await context.Set<ToDoItemEntity>()
-                              .Where(x => x.ParentId == parentId)
-                              .ToArrayAsync();
+            .Where(x => x.ParentId == parentId)
+            .ToArrayAsync();
 
         var ordered = Enumerable.ToArray(items.OrderBy(x => x.OrderIndex));
 
-        for(var index = 0u; index < ordered.LongLength; index++)
+        for (var index = 0u; index < ordered.LongLength; index++)
         {
             ordered[index].OrderIndex = index;
         }
@@ -1314,7 +1328,7 @@ public class EfToDoService : IToDoService
     {
         var parent = await context.Set<ToDoItemEntity>().Include(x => x.Parent).SingleAsync(x => x.Id == id);
 
-        if(parent.Parent is null)
+        if (parent.Parent is null)
         {
             return;
         }
@@ -1325,7 +1339,7 @@ public class EfToDoService : IToDoService
 
     private void UpdateDueDate(ToDoItemEntity item)
     {
-        switch(item.Type)
+        switch (item.Type)
         {
             case ToDoItemType.Value:
                 break;
@@ -1349,14 +1363,14 @@ public class EfToDoService : IToDoService
     private void AddPeriodicityOffset(ToDoItemEntity item)
     {
         item.DueDate = item.DueDate
-                        .AddDays(item.DaysOffset + item.WeeksOffset * 7)
-                        .AddMonths(item.MonthsOffset)
-                        .AddYears(item.YearsOffset);
+            .AddDays(item.DaysOffset + item.WeeksOffset * 7)
+            .AddMonths(item.MonthsOffset)
+            .AddYears(item.YearsOffset);
     }
 
     private void AddPeriodicity(ToDoItemEntity item)
     {
-        switch(item.TypeOfPeriodicity)
+        switch (item.TypeOfPeriodicity)
         {
             case TypeOfPeriodicity.Daily:
                 item.DueDate = item.DueDate.AddDays(1);
@@ -1386,8 +1400,8 @@ public class EfToDoService : IToDoService
                 item.DueDate = nextDay is not null
                     ? item.DueDate.WithDay(Math.Min(nextDay.Value, daysInCurrentMonth))
                     : item.DueDate
-                       .AddMonths(1)
-                       .WithDay(Math.Min(daysOfMonth.First().ThrowIfNullStruct(), daysInNextMonth));
+                        .AddMonths(1)
+                        .WithDay(Math.Min(daysOfMonth.First().ThrowIfNullStruct(), daysInNextMonth));
 
                 break;
             }
@@ -1404,12 +1418,12 @@ public class EfToDoService : IToDoService
 
                 item.DueDate = nextDay is not null
                     ? item.DueDate
-                       .WithMonth(nextDay.Value.Month)
-                       .WithDay(Math.Min(DateTime.DaysInMonth(now.Year, nextDay.Value.Month), nextDay.Value.Day))
+                        .WithMonth(nextDay.Value.Month)
+                        .WithDay(Math.Min(DateTime.DaysInMonth(now.Year, nextDay.Value.Month), nextDay.Value.Day))
                     : item.DueDate
-                       .AddYears(1)
-                       .WithMonth(daysOfYear.First().ThrowIfNullStruct().Month)
-                       .WithDay(Math.Min(daysInNextMonth, daysOfYear.First().ThrowIfNullStruct().Day));
+                        .AddYears(1)
+                        .WithMonth(daysOfYear.First().ThrowIfNullStruct().Month)
+                        .WithDay(Math.Min(daysInNextMonth, daysOfYear.First().ThrowIfNullStruct().Day));
 
                 break;
             }

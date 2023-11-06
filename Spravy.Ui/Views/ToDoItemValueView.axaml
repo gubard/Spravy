@@ -44,6 +44,11 @@
                           SelectedItem="{Binding ChildrenType}"
                           ItemsSource="{Binding ChildrenTypes}" />
             </Grid>
+
+            <controls1:ButtonTextBox Text="{Binding Link}"
+                                     Label="Link"
+                                     Command="{Binding ChangeLinkCommand}"
+                                     Classes="edit" />
         </StackPanel>
 
         <ScrollViewer Grid.Row="2">

@@ -38,4 +38,5 @@ public interface IToDoService
     Task UpdateToDoItemChildrenTypeAsync(Guid id, ToDoItemChildrenType type);
     Task<IEnumerable<ToDoShortItem>> GetSiblingsAsync(Guid id);
     Task<ActiveToDoItem?> GetActiveToDoItemAsync();
+    Task UpdateToDoItemLinkAsync(Guid id, Uri? link);
 }

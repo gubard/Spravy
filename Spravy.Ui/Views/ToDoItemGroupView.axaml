@@ -31,7 +31,10 @@
                       SelectedItem="{Binding Type}"
                       ItemsSource="{Binding ToDoItemTypes}" />
 
-
+            <controls1:ButtonTextBox Text="{Binding Link}"
+                                     Label="Link"
+                                     Command="{Binding ChangeLinkCommand}"
+                                     Classes="edit" />
         </StackPanel>
 
         <ScrollViewer Grid.Row="2">

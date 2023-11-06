@@ -30,7 +30,7 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
 
     public ToDoItemPeriodicityViewModel() : base("to-do-item-periodicity")
     {
-        ChangeDueDateCommand = CreateCommandFromTask(ChangeDueDate);
+        ChangeDueDateCommand = CreateCommandFromTask(ChangeDueDateAsync);
         CompleteToDoItemCommand = CreateCommandFromTask(CompleteToDoItemAsync);
         SubscribeProperties();
         Commands.Add(new(MaterialIconKind.Check, CompleteToDoItemCommand));
@@ -66,7 +66,7 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
         set => this.RaiseAndSetIfChanged(ref dueDate, value);
     }
 
-    private Task ChangeDueDate()
+    private Task ChangeDueDateAsync()
     {
         return DialogViewer.ShowDateConfirmDialogAsync(
             value =>

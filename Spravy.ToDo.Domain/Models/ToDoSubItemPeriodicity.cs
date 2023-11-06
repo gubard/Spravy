@@ -17,7 +17,8 @@ public readonly struct ToDoSubItemPeriodicity : IToDoSubItem
         uint completedCount,
         uint skippedCount,
         uint failedCount,
-        DateTimeOffset? lastCompleted
+        DateTimeOffset? lastCompleted,
+        Uri? link
     )
     {
         Id = id;
@@ -32,6 +33,7 @@ public readonly struct ToDoSubItemPeriodicity : IToDoSubItem
         SkippedCount = skippedCount;
         FailedCount = failedCount;
         LastCompleted = lastCompleted;
+        Link = link;
     }
 
     public Guid Id { get; }
@@ -42,6 +44,7 @@ public readonly struct ToDoSubItemPeriodicity : IToDoSubItem
     public bool IsFavorite { get; }
     public DateTimeOffset DueDate { get; }
     public ActiveToDoItem? Active { get; }
+    public Uri? Link { get; }
     public DateTimeOffset? LastCompleted { get; }
     public uint CompletedCount { get; }
     public uint SkippedCount { get; }

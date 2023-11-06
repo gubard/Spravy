@@ -7,6 +7,15 @@ import "google/protobuf/duration.proto";
 
 package spravy.to_do;
 
+message UpdateToDoItemLinkRequest {
+  bytes Id = 1;
+  string Link = 2;
+}
+
+message UpdateToDoItemLinkReply {
+
+}
+
 message GetActiveItemRequest {
   
 }
@@ -286,6 +295,7 @@ message ToDoItemGrpc {
   repeated ToDoItemParentGrpc Parents = 4;
   string Description = 5;
   bool IsFavorite = 8;
+  string Link = 12;
 
   oneof Parameters {
     ToDoItemValueGrpc Value = 6;
@@ -335,6 +345,7 @@ message ToDoSubItemGrpc {
   string Description = 5;
   bool IsFavorite = 8;
   ActiveToDoItemGrpc Active = 9;
+  string Link = 12;
 
   oneof Parameters {
     ToDoSubItemValueGrpc Value = 6;
