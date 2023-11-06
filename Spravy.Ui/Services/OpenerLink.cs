@@ -14,12 +14,12 @@ public class OpenerLink : IOpenerLink
         {
             var url = link.AbsoluteUri.Replace("&", "^&");
 
-            Process.Start(
-                new ProcessStartInfo(url)
-                {
-                    UseShellExecute = true
-                }
-            );
+            var info = new ProcessStartInfo(url)
+            {
+                UseShellExecute = true
+            };
+
+            Process.Start(info);
         }
         else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         {
