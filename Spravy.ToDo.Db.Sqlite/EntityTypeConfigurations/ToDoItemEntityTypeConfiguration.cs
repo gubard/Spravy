@@ -14,5 +14,6 @@ public class ToDoItemEntityTypeConfiguration : IEntityTypeConfiguration<ToDoItem
         builder.Property(x => x.DaysOfMonth).HasDefaultValue("1");
         builder.Property(x => x.DaysOfWeek).HasDefaultValue(DayOfWeek.Monday.ToString());
         builder.Property(x => x.DaysOfYear).HasDefaultValue("1.1");
+        builder.Property(x => x.Link).HasDefaultValue("");
     }
 }
