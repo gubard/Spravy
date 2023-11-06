@@ -22,18 +22,21 @@ public class EfToDoService : IToDoService
     private readonly IFactory<SpravyDbToDoDbContext> dbContextFactory;
     private readonly StatusToDoItemService statusToDoItemService;
     private readonly ActiveToDoItemToDoItemService activeToDoItemToDoItemService;
+    private readonly CanCompleteToDoItemService canCompleteToDoItemService;
 
     public EfToDoService(
         IMapper mapper,
         IFactory<SpravyDbToDoDbContext> dbContextFactory,
         StatusToDoItemService statusToDoItemService,
-        ActiveToDoItemToDoItemService activeToDoItemToDoItemService
+        ActiveToDoItemToDoItemService activeToDoItemToDoItemService,
+        CanCompleteToDoItemService canCompleteToDoItemService
     )
     {
         this.mapper = mapper;
         this.dbContextFactory = dbContextFactory;
         this.statusToDoItemService = statusToDoItemService;
         this.activeToDoItemToDoItemService = activeToDoItemToDoItemService;
+        this.canCompleteToDoItemService = canCompleteToDoItemService;
     }
 
     public async Task<IEnumerable<IToDoSubItem>> GetRootToDoSubItemsAsync()
@@ -268,33 +271,11 @@ public class EfToDoService : IToDoService
 
                 if (isCompleted)
                 {
-                    switch (item.ChildrenType)
+                    var isCanComplete = await canCompleteToDoItemService.IsCanCompleteAsync(c, item);
+
+                    if (!isCanComplete)
                     {
-                        case ToDoItemChildrenType.RequireCompletion:
-                        {
-                            var isCanComplete = await IsCanFinishToDoItem(c, item);
-
-                            if (!isCanComplete)
-                            {
-                                throw new("Need close sub tasks.");
-                            }
-
-                            break;
-                        }
-                        case ToDoItemChildrenType.IgnoreCompletion:
-                            break;
-                        case ToDoItemChildrenType.CircleCompletion:
-                        {
-                            var isCanComplete = await IsCanFinishToDoItem(c, item);
-
-                            if (!isCanComplete)
-                            {
-                                throw new("Need close sub tasks.");
-                            }
-
-                            break;
-                        }
-                        default: throw new ArgumentOutOfRangeException();
+                        throw new ArgumentException();
                     }
 
                     switch (item.Type)
@@ -313,26 +294,17 @@ public class EfToDoService : IToDoService
                             break;
                         case ToDoItemType.PeriodicityOffset:
                             break;
+                        case ToDoItemType.Circle:
+                            item.IsCompleted = true;
+
+                            break;
                         default: throw new ArgumentOutOfRangeException();
                     }
 
                     item.CompletedCount++;
                     UpdateDueDate(item);
                     item.LastCompleted = DateTimeOffset.Now;
-
-                    switch (item.ChildrenType)
-                    {
-                        case ToDoItemChildrenType.RequireCompletion:
-                            break;
-                        case ToDoItemChildrenType.IgnoreCompletion:
-                            break;
-                        case ToDoItemChildrenType.CircleCompletion:
-                            await CircleCompletionAsync(c, item);
-
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
+                    await CircleCompletionAsync(context, item);
                 }
                 else
                 {
@@ -345,310 +317,46 @@ public class EfToDoService : IToDoService
     private async Task CircleCompletionAsync(SpravyDbToDoDbContext context, ToDoItemEntity item)
     {
         var children = await context.Set<ToDoItemEntity>()
-            .Where(x => x.ParentId == item.Id)
+            .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Circle)
             .OrderBy(x => x.OrderIndex)
             .ToArrayAsync();
 
-        var maxOrderIndex = children.Max(x => x.OrderIndex);
-        var nextOrderIndex = item.CurrentCircleOrderIndex + 1;
-
-        if (nextOrderIndex > maxOrderIndex)
+        if (children.Length == 0)
         {
-            nextOrderIndex = 0;
+            return;
         }
 
+        var next = children.FirstOrDefault(x => x.OrderIndex > item.CurrentCircleOrderIndex);
+        var nextOrderIndex = next?.OrderIndex ?? children.First().OrderIndex;
         item.CurrentCircleOrderIndex = nextOrderIndex;
 
         foreach (var child in children)
         {
-            if (child.OrderIndex == nextOrderIndex)
-            {
-                child.IsCompleted = false;
-                child.Type = ToDoItemType.Value;
-            }
-            else
-            {
-                child.IsCompleted = true;
-                child.Type = ToDoItemType.Value;
-            }
+            child.IsCompleted = child.OrderIndex != nextOrderIndex;
         }
     }
 
     private async Task CircleSkipAsync(SpravyDbToDoDbContext context, ToDoItemEntity item)
     {
         var children = await context.Set<ToDoItemEntity>()
-            .Where(x => x.ParentId == item.Id)
+            .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Circle)
             .OrderBy(x => x.OrderIndex)
             .ToArrayAsync();
 
-        var maxOrderIndex = children.Max(x => x.OrderIndex);
-        var nextOrderIndex = item.CurrentCircleOrderIndex;
-
-        if (nextOrderIndex > maxOrderIndex)
+        if (children.Length == 0)
         {
-            nextOrderIndex = 0;
+            return;
         }
+
+        var next = children.SingleOrDefault(x => x.OrderIndex == item.CurrentCircleOrderIndex)
+                   ?? children.FirstOrDefault(x => x.OrderIndex > item.CurrentCircleOrderIndex);
+
+        var nextOrderIndex = next?.OrderIndex ?? children.First().OrderIndex;
+        item.CurrentCircleOrderIndex = nextOrderIndex;
 
         foreach (var child in children)
         {
-            if (child.OrderIndex == nextOrderIndex)
-            {
-                child.IsCompleted = false;
-                child.Type = ToDoItemType.Value;
-            }
-            else
-            {
-                child.IsCompleted = true;
-                child.Type = ToDoItemType.Value;
-            }
-        }
-    }
-
-    private async Task<bool> IsCanFinishToDoItem(SpravyDbToDoDbContext context, ToDoItemEntity item)
-    {
-        if (item.Type == ToDoItemType.Group)
-        {
-            return false;
-        }
-
-        switch (item.Type)
-        {
-            case ToDoItemType.Planned:
-                if (item.DueDate.ToCurrentDay() > DateTimeOffset.Now.ToCurrentDay())
-                {
-                    return false;
-                }
-
-                break;
-            case ToDoItemType.Periodicity:
-                if (item.DueDate.ToCurrentDay() > DateTimeOffset.Now.ToCurrentDay())
-                {
-                    return false;
-                }
-
-                break;
-            case ToDoItemType.PeriodicityOffset:
-                if (item.DueDate.ToCurrentDay() > DateTimeOffset.Now.ToCurrentDay())
-                {
-                    return false;
-                }
-
-                break;
-        }
-
-        var children = await context.Set<ToDoItemEntity>()
-            .AsNoTracking()
-            .Where(x => x.ParentId == item.Id)
-            .ToArrayAsync();
-
-        foreach (var child in children)
-        {
-            var dueDate = item.Type switch
-            {
-                ToDoItemType.Value => (DateTimeOffset?)null,
-                ToDoItemType.Group => null,
-                ToDoItemType.Planned => item.DueDate,
-                ToDoItemType.Periodicity => item.DueDate,
-                ToDoItemType.PeriodicityOffset => item.DueDate,
-                _ => throw new ArgumentOutOfRangeException()
-            };
-
-            var isCanComplete = await IsCanFinishToDoItem(context, child, dueDate);
-
-            if (!isCanComplete)
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private async Task<bool> IsCanFinishToDoSubItemPeriodicity(
-        SpravyDbToDoDbContext context,
-        ToDoItemEntity item,
-        DateTimeOffset? rootDue
-    )
-    {
-        if (rootDue.HasValue)
-        {
-            if (item.DueDate.ToCurrentDay() <= rootDue.Value.ToCurrentDay())
-            {
-                return false;
-            }
-        }
-        else
-        {
-            if (item.DueDate.ToCurrentDay() <= DateTimeOffset.Now.ToCurrentDay())
-            {
-                return false;
-            }
-        }
-
-        var children = await context.Set<ToDoItemEntity>()
-            .AsNoTracking()
-            .Where(x => x.ParentId == item.Id)
-            .ToArrayAsync();
-
-        foreach (var child in children)
-        {
-            var isCanComplete = await IsCanFinishToDoItem(context, child, rootDue);
-
-            if (!isCanComplete)
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private async Task<bool> IsCanFinishToDoSubItemPeriodicityOffset(
-        SpravyDbToDoDbContext context,
-        ToDoItemEntity item,
-        DateTimeOffset? rootDue
-    )
-    {
-        if (rootDue.HasValue)
-        {
-            if (item.DueDate.ToCurrentDay() <= rootDue.Value.ToCurrentDay())
-            {
-                return false;
-            }
-        }
-        else
-        {
-            if (item.DueDate.ToCurrentDay() <= DateTimeOffset.Now.ToCurrentDay())
-            {
-                return false;
-            }
-        }
-
-        var children = await context.Set<ToDoItemEntity>()
-            .AsNoTracking()
-            .Where(x => x.ParentId == item.Id)
-            .ToArrayAsync();
-
-        foreach (var child in children)
-        {
-            var isCanComplete = await IsCanFinishToDoItem(context, child, rootDue);
-
-            if (!isCanComplete)
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private async Task<bool> IsCanFinishToDoSubItemPlanned(
-        SpravyDbToDoDbContext context,
-        ToDoItemEntity item,
-        DateTimeOffset? rootDue
-    )
-    {
-        if (item.IsCompleted)
-        {
-            return true;
-        }
-
-        if (rootDue.HasValue)
-        {
-            if (item.DueDate.ToCurrentDay() <= rootDue.Value.ToCurrentDay())
-            {
-                return false;
-            }
-        }
-        else
-        {
-            if (item.DueDate.ToCurrentDay() <= DateTimeOffset.Now.ToCurrentDay())
-            {
-                return false;
-            }
-        }
-
-        var children = await context.Set<ToDoItemEntity>()
-            .AsNoTracking()
-            .Where(x => x.ParentId == item.Id)
-            .ToArrayAsync();
-
-        foreach (var child in children)
-        {
-            var isCanComplete = await IsCanFinishToDoItem(context, child, rootDue);
-
-            if (!isCanComplete)
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private async Task<bool> IsCanFinishToDoSubItemValue(
-        SpravyDbToDoDbContext context,
-        ToDoItemEntity item,
-        DateTimeOffset? rootDue
-    )
-    {
-        if (item.IsCompleted)
-        {
-            return true;
-        }
-
-        var children = await context.Set<ToDoItemEntity>()
-            .AsNoTracking()
-            .Where(x => x.ParentId == item.Id)
-            .ToArrayAsync();
-
-        foreach (var child in children)
-        {
-            var isCanComplete = await IsCanFinishToDoItem(context, child, rootDue);
-
-            if (!isCanComplete)
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private async Task<bool> IsCanFinishToDoSubItemGroup(
-        SpravyDbToDoDbContext context,
-        ToDoItemEntity item,
-        DateTimeOffset? rootDue
-    )
-    {
-        var children = await context.Set<ToDoItemEntity>()
-            .AsNoTracking()
-            .Where(x => x.ParentId == item.Id)
-            .ToArrayAsync();
-
-        foreach (var child in children)
-        {
-            var isCanComplete = await IsCanFinishToDoItem(context, child, rootDue);
-
-            if (!isCanComplete)
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private Task<bool> IsCanFinishToDoItem(SpravyDbToDoDbContext context, ToDoItemEntity item, DateTimeOffset? rootDue)
-    {
-        switch (item.Type)
-        {
-            case ToDoItemType.Value: return IsCanFinishToDoSubItemValue(context, item, rootDue);
-            case ToDoItemType.Group: return IsCanFinishToDoSubItemGroup(context, item, rootDue);
-            case ToDoItemType.Planned: return IsCanFinishToDoSubItemPlanned(context, item, rootDue);
-            case ToDoItemType.Periodicity: return IsCanFinishToDoSubItemPeriodicity(context, item, rootDue);
-            case ToDoItemType.PeriodicityOffset: return IsCanFinishToDoSubItemPeriodicityOffset(context, item, rootDue);
-            default: throw new ArgumentOutOfRangeException();
+            child.IsCompleted = child.OrderIndex != nextOrderIndex;
         }
     }
 
@@ -722,35 +430,11 @@ public class EfToDoService : IToDoService
             {
                 var item = await c.Set<ToDoItemEntity>().FindAsync(id);
                 item = item.ThrowIfNull();
+                var isCanComplete = await canCompleteToDoItemService.IsCanCompleteAsync(c, item);
 
-                switch (item.ChildrenType)
+                if (!isCanComplete)
                 {
-                    case ToDoItemChildrenType.RequireCompletion:
-                    {
-                        var isCanComplete = await IsCanFinishToDoItem(c, item);
-
-                        if (!isCanComplete)
-                        {
-                            throw new("Need close sub tasks.");
-                        }
-
-                        break;
-                    }
-                    case ToDoItemChildrenType.IgnoreCompletion:
-                        break;
-                    case ToDoItemChildrenType.CircleCompletion:
-                    {
-                        var isCanComplete = await IsCanFinishToDoItem(c, item);
-
-                        if (!isCanComplete)
-                        {
-                            throw new("Need close sub tasks.");
-                        }
-
-                        break;
-                    }
-                    default:
-                        throw new ArgumentOutOfRangeException();
+                    throw new ArgumentException();
                 }
 
                 switch (item.Type)
@@ -769,6 +453,10 @@ public class EfToDoService : IToDoService
                         break;
                     case ToDoItemType.PeriodicityOffset:
                         break;
+                    case ToDoItemType.Circle:
+                        item.IsCompleted = true;
+
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
@@ -776,20 +464,7 @@ public class EfToDoService : IToDoService
                 item.SkippedCount++;
                 UpdateDueDate(item);
                 item.LastCompleted = DateTimeOffset.Now;
-
-                switch (item.ChildrenType)
-                {
-                    case ToDoItemChildrenType.RequireCompletion:
-                        break;
-                    case ToDoItemChildrenType.IgnoreCompletion:
-                        break;
-                    case ToDoItemChildrenType.CircleCompletion:
-                        await CircleSkipAsync(c, item);
-
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+                await CircleSkipAsync(context, item);
             }
         );
     }
@@ -803,35 +478,11 @@ public class EfToDoService : IToDoService
             {
                 var item = await c.Set<ToDoItemEntity>().FindAsync(id);
                 item = item.ThrowIfNull();
+                var isCanComplete = await canCompleteToDoItemService.IsCanCompleteAsync(c, item);
 
-                switch (item.ChildrenType)
+                if (!isCanComplete)
                 {
-                    case ToDoItemChildrenType.RequireCompletion:
-                    {
-                        var isCanComplete = await IsCanFinishToDoItem(c, item);
-
-                        if (!isCanComplete)
-                        {
-                            throw new("Need close sub tasks.");
-                        }
-
-                        break;
-                    }
-                    case ToDoItemChildrenType.IgnoreCompletion:
-                        break;
-                    case ToDoItemChildrenType.CircleCompletion:
-                    {
-                        var isCanComplete = await IsCanFinishToDoItem(c, item);
-
-                        if (!isCanComplete)
-                        {
-                            throw new("Need close sub tasks.");
-                        }
-
-                        break;
-                    }
-                    default:
-                        throw new ArgumentOutOfRangeException();
+                    throw new ArgumentException();
                 }
 
                 switch (item.Type)
@@ -850,6 +501,10 @@ public class EfToDoService : IToDoService
                         break;
                     case ToDoItemType.PeriodicityOffset:
                         break;
+                    case ToDoItemType.Circle:
+                        item.IsCompleted = true;
+
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
@@ -857,20 +512,7 @@ public class EfToDoService : IToDoService
                 item.FailedCount++;
                 UpdateDueDate(item);
                 item.LastCompleted = DateTimeOffset.Now;
-
-                switch (item.ChildrenType)
-                {
-                    case ToDoItemChildrenType.RequireCompletion:
-                        break;
-                    case ToDoItemChildrenType.IgnoreCompletion:
-                        break;
-                    case ToDoItemChildrenType.CircleCompletion:
-                        await CircleCompletionAsync(c, item);
-
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+                await CircleCompletionAsync(context, item);
             }
         );
     }
@@ -1354,6 +996,8 @@ public class EfToDoService : IToDoService
             case ToDoItemType.PeriodicityOffset:
                 AddPeriodicityOffset(item);
 
+                break;
+            case ToDoItemType.Circle:
                 break;
             default:
                 throw new ArgumentOutOfRangeException();

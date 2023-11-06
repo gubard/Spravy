@@ -4,5 +4,4 @@ public enum ToDoItemChildrenType : byte
 {
     RequireCompletion,
     IgnoreCompletion,
-    CircleCompletion,
 }

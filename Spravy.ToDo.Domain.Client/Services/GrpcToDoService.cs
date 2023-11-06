@@ -254,14 +254,15 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         return CallClientAsync(
             async client =>
             {
-                await client.UpdateToDoItemTypeAsync(
-                    new()
-                    {
-                        Id = mapper.Map<ByteString>(id),
-                        Type = (ToDoItemTypeGrpc)type,
-                    },
-                    await metadataFactory.CreateAsync()
-                );
+                var metadata = await metadataFactory.CreateAsync();
+
+                var request = new UpdateToDoItemTypeRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                    Type = (ToDoItemTypeGrpc)type,
+                };
+
+                await client.UpdateToDoItemTypeAsync(request, metadata);
             }
         );
     }

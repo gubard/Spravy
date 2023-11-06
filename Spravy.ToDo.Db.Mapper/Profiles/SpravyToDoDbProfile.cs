@@ -36,6 +36,21 @@ public class SpravyToDoDbProfile : Profile
             .ConvertUsing(
                 (source, _, context) => source.Type switch
                 {
+                    ToDoItemType.Circle => new ToDoSubItemCircle(
+                        source.Id,
+                        source.Name,
+                        source.IsCompleted,
+                        source.OrderIndex,
+                        (ToDoItemStatus)context.Items[StatusName],
+                        source.Description,
+                        source.CompletedCount,
+                        source.SkippedCount,
+                        source.FailedCount,
+                        source.IsFavorite,
+                        (ActiveToDoItem?)context.Items[ActiveName],
+                        source.LastCompleted,
+                        context.Mapper.Map<Uri>(source.Link)
+                    ),
                     ToDoItemType.Value => new ToDoSubItemValue(
                         source.Id,
                         source.Name,
@@ -115,6 +130,17 @@ public class SpravyToDoDbProfile : Profile
             .ConvertUsing(
                 (source, _, context) => source.Type switch
                 {
+                    ToDoItemType.Circle => new ToDoItemCircle(
+                        source.Id,
+                        source.Name,
+                        (IToDoSubItem[])context.Items[ItemsName],
+                        (ToDoItemParent[])context.Items[ParentsName],
+                        source.IsCompleted,
+                        source.Description,
+                        source.IsFavorite,
+                        source.ChildrenType,
+                        context.Mapper.Map<Uri>(source.Link ?? string.Empty)
+                    ),
                     ToDoItemType.Value => new ToDoItemValue(
                         source.Id,
                         source.Name,

@@ -53,9 +53,9 @@
         </Style>
     </UserControl.Styles>
 
-    <dialogHostAvalonia:DialogHost Identifier="{x:Static services:DialogViewer.ProgressDialogHostIdentifier}">
-        <dialogHostAvalonia:DialogHost Classes="adaptive"
-                                       Identifier="{x:Static services:DialogViewer.ErrorDialogHostIdentifier}">
+    <dialogHostAvalonia:DialogHost Classes="adaptive"
+                                   Identifier="{x:Static services:DialogViewer.ErrorDialogHostIdentifier}">
+        <dialogHostAvalonia:DialogHost Identifier="{x:Static services:DialogViewer.ProgressDialogHostIdentifier}">
             <dialogHostAvalonia:DialogHost Classes="adaptive"
                                            Identifier="{x:Static services:DialogViewer.InputDialogHostIdentifier}">
                 <dialogHostAvalonia:DialogHost Classes="adaptive"

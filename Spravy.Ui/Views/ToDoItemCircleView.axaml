@@ -1,0 +1,77 @@
+<controls:MainReactiveUserControl x:TypeArguments="viewModels:ToDoItemCircleViewModel"
+                                  xmlns="https://github.com/avaloniaui"
+                                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                                  xmlns:controls="clr-namespace:Spravy.Ui.Controls"
+                                  xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
+                                  xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                                  xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
+                                  mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                                  x:Class="Spravy.Ui.Views.ToDoItemCircleView"
+                                  x:DataType="viewModels:ToDoItemCircleViewModel">
+    <Design.DataContext>
+        <viewModels:ToDoItemCircleViewModel />
+    </Design.DataContext>
+    
+    <Interaction.Behaviors>
+        <EventTriggerBehavior EventName="Initialized">
+            <InvokeCommandAction Command="{Binding InitializedCommand}" />
+        </EventTriggerBehavior>
+    </Interaction.Behaviors>
+
+        <Grid RowDefinitions="Auto,Auto,*">
+        <ContentControl Content="{Binding ToDoItemHeaderView}" />
+
+        <StackPanel Grid.Row="1">
+            <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
+                <ContentControl Content="{Binding Path}"
+                                Margin="5"
+                                HorizontalAlignment="Center" />
+            </ScrollViewer>
+
+            <TextBlock Margin="5"
+                       Text="{Binding IsCompleted, Converter={StaticResource BooleanToCompletedStringConverter}}" />
+
+            <Grid ColumnDefinitions="*,*">
+                <ComboBox Theme="{StaticResource MaterialOutlineComboBox}"
+                          assists:ComboBoxAssist.Label="Type"
+                          SelectedItem="{Binding Type}"
+                          ItemsSource="{Binding ToDoItemTypes}" />
+                <ComboBox Grid.Column="1"
+                          Theme="{StaticResource MaterialOutlineComboBox}"
+                          assists:ComboBoxAssist.Label="Type"
+                          SelectedItem="{Binding ChildrenType}"
+                          ItemsSource="{Binding ChildrenTypes}" />
+            </Grid>
+
+            <controls:ButtonTextBox Text="{Binding Link}"
+                                     Label="Link"
+                                     Command="{Binding ChangeLinkCommand}"
+                                     Classes="edit" />
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="2">
+            <StackPanel>
+                <Expander Classes="header-left"
+                          IsExpanded="{Binding Description, Mode=OneWay, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}"
+                          Margin="3">
+                    <Expander.Header>
+                        <Grid ColumnDefinitions="Auto,*" Height="60">
+                            <Button Command="{Binding ChangeDescriptionCommand}"
+                                    Classes="with-icon">
+                                <avalonia:MaterialIcon Kind="Pencil" />
+                            </Button>
+
+                            <TextBlock Grid.Column="1" Text="Description" Classes="alignment-center" />
+                        </Grid>
+                    </Expander.Header>
+
+                    <TextBlock Text="{Binding Description}" />
+                </Expander>
+
+                <ContentControl Content="{Binding ToDoSubItemsViewModel}" />
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</controls:MainReactiveUserControl>

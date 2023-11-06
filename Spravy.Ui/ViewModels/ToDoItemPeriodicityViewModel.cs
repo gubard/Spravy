@@ -120,8 +120,8 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
 
         switch (item)
         {
-            case ToDoItemGroup toDoItemGroup:
-                Navigator.NavigateTo<ToDoItemGroupViewModel>(x => x.Id = toDoItemGroup.Id);
+            case ToDoItemGroup:
+                Navigator.NavigateTo<ToDoItemGroupViewModel>(x => x.Id = item.Id);
 
                 return;
             case ToDoItemPeriodicity toDoItemPeriodicity:
@@ -142,15 +142,19 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
                 SubscribeProperties();
 
                 break;
-            case ToDoItemPlanned toDoItemPlanned:
-                Navigator.NavigateTo<ToDoItemPlannedViewModel>(x => x.Id = toDoItemPlanned.Id);
+            case ToDoItemPlanned:
+                Navigator.NavigateTo<ToDoItemPlannedViewModel>(x => x.Id = item.Id);
                 return;
-            case ToDoItemValue toDoItemValue:
-                Navigator.NavigateTo<ToDoItemValueViewModel>(x => x.Id = toDoItemValue.Id);
+            case ToDoItemValue:
+                Navigator.NavigateTo<ToDoItemValueViewModel>(x => x.Id = item.Id);
 
                 return;
-            case ToDoItemPeriodicityOffset doItemPeriodicityOffset:
-                Navigator.NavigateTo<ToDoItemPeriodicityOffsetViewModel>(x => x.Id = doItemPeriodicityOffset.Id);
+            case ToDoItemPeriodicityOffset:
+                Navigator.NavigateTo<ToDoItemPeriodicityOffsetViewModel>(x => x.Id = item.Id);
+
+                return;
+            case ToDoItemCircle:
+                Navigator.NavigateTo<ToDoItemCircleViewModel>(x => x.Id = item.Id);
 
                 return;
             default: throw new ArgumentOutOfRangeException(nameof(item));

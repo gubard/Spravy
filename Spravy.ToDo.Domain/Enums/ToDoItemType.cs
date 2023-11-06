@@ -7,4 +7,5 @@ public enum ToDoItemType
     Planned,
     Periodicity,
     PeriodicityOffset,
+    Circle,
 }

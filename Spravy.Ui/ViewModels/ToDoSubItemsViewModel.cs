@@ -145,8 +145,8 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                         viewModel.SetCompleteStatus();
 
                         break;
-                    case ToDoSubItemPlannedNotify toDoSubItemPlannedNotify:
-                        if (toDoSubItemPlannedNotify.IsCompleted)
+                    case ToDoSubItemPlannedNotify planned:
+                        if (planned.IsCompleted)
                         {
                             viewModel.SetIncompleteStatus();
                         }
@@ -156,8 +156,19 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                         }
 
                         break;
-                    case ToDoSubItemValueNotify toDoSubItemValueNotify:
-                        if (toDoSubItemValueNotify.IsCompleted)
+                    case ToDoSubItemValueNotify value:
+                        if (value.IsCompleted)
+                        {
+                            viewModel.SetIncompleteStatus();
+                        }
+                        else
+                        {
+                            viewModel.SetCompleteStatus();
+                        }
+
+                        break;
+                    case ToDoSubItemCircleNotify circle:
+                        if (circle.IsCompleted)
                         {
                             viewModel.SetIncompleteStatus();
                         }

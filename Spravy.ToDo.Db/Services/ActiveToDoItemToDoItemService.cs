@@ -32,6 +32,7 @@ public class ActiveToDoItemToDoItemService
             ToDoItemType.Planned => GetPlannedActiveItemAsync(context, entity),
             ToDoItemType.Periodicity => GetActiveItemByDueDateAsync(context, entity),
             ToDoItemType.PeriodicityOffset => GetActiveItemByDueDateAsync(context, entity),
+            ToDoItemType.Circle => GetCircleActiveItemAsync(context, entity),
             _ => throw new ArgumentOutOfRangeException()
         };
     }
@@ -76,6 +77,13 @@ public class ActiveToDoItemToDoItemService
     }
 
     private Task<ActiveToDoItem?> GetValueActiveItemAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
+    {
+        return entity.IsCompleted
+            ? Task.FromResult<ActiveToDoItem?>(null)
+            : GetChildrenActiveToDoItemAsync(context, entity, ToActiveToDoItem(entity));
+    }
+    
+    private Task<ActiveToDoItem?> GetCircleActiveItemAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
     {
         return entity.IsCompleted
             ? Task.FromResult<ActiveToDoItem?>(null)

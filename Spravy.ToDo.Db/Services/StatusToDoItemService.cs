@@ -17,6 +17,7 @@ public class StatusToDoItemService
             ToDoItemType.Planned => GetPlannedStatusAsync(context, entity),
             ToDoItemType.Periodicity => GetDueDateStatusAsync(entity),
             ToDoItemType.PeriodicityOffset => GetDueDateStatusAsync(entity),
+            ToDoItemType.Circle => GetCircleStatusAsync(context, entity),
             _ => throw new ArgumentOutOfRangeException()
         };
     }
@@ -88,7 +89,7 @@ public class StatusToDoItemService
                 case ToDoItemStatus.ReadyForComplete:
                 {
                     isReadyForComplete = true;
-                    
+
                     break;
                 }
                 case ToDoItemStatus.Planned: break;
@@ -123,7 +124,33 @@ public class StatusToDoItemService
         }
 
         var items = await context.Set<ToDoItemEntity>().Where(x => x.ParentId == entity.Id).ToArrayAsync();
-        
+
+        foreach (var item in items)
+        {
+            var status = await GetStatusAsync(context, item);
+
+            switch (status)
+            {
+                case ToDoItemStatus.Miss: return ToDoItemStatus.Miss;
+                case ToDoItemStatus.ReadyForComplete: break;
+                case ToDoItemStatus.Planned: break;
+                case ToDoItemStatus.Completed: break;
+                default: throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        return ToDoItemStatus.ReadyForComplete;
+    }
+
+    private async Task<ToDoItemStatus> GetCircleStatusAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
+    {
+        if (entity.IsCompleted)
+        {
+            return ToDoItemStatus.Completed;
+        }
+
+        var items = await context.Set<ToDoItemEntity>().Where(x => x.ParentId == entity.Id).ToArrayAsync();
+
         foreach (var item in items)
         {
             var status = await GetStatusAsync(context, item);
