@@ -128,12 +128,11 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
                 Path.Items.Clear();
                 Path.Items.Add(new RootItem());
                 Path.Items.AddRange(item.Parents.Select(x => Mapper.Map<ToDoItemParentNotify>(x)));
+                SubscribeProperties();
 
                 break;
             default: throw new ArgumentOutOfRangeException(nameof(item));
         }
-
-        SubscribeProperties();
     }
 
     private void SubscribeProperties()

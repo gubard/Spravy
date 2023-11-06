@@ -131,6 +131,7 @@ public class ToDoItemValueViewModel : ToDoItemViewModel, IRefreshToDoItem
                 Path.Items.Clear();
                 Path.Items.Add(new RootItem());
                 Path.Items.AddRange(item.Parents.Select(x => Mapper.Map<ToDoItemParentNotify>(x)));
+                SubscribeProperties();
 
                 break;
             case ToDoItemPeriodicityOffset doItemPeriodicityOffset:
@@ -139,8 +140,6 @@ public class ToDoItemValueViewModel : ToDoItemViewModel, IRefreshToDoItem
                 return;
             default: throw new ArgumentOutOfRangeException(nameof(item));
         }
-
-        SubscribeProperties();
     }
 
     private void SubscribeItems(IEnumerable<ToDoSubItemNotify> items)
