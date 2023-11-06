@@ -249,7 +249,7 @@ public class SpravyToDoProfile : Profile
                         Id = context.Mapper.Map<ByteString>(source.Id),
                         Name = source.Name,
                         IsFavorite = source.IsFavorite,
-                        Link = context.Mapper.Map<string>(source.Link),
+                        Link = context.Mapper.Map<string>(source.Link) ?? string.Empty,
                     };
 
                     result.Parents.AddRange(

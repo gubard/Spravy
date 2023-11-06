@@ -20,14 +20,19 @@ public class OpenerLink : IOpenerLink
             };
 
             Process.Start(info);
+            return Task.CompletedTask;
         }
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         {
             Process.Start("xdg-open", link.AbsoluteUri);
+            return Task.CompletedTask;
         }
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {
             Process.Start("open", link.AbsoluteUri);
+            return Task.CompletedTask;
         }
 
         throw new NotSupportedException();

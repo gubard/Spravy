@@ -245,6 +245,7 @@ public class ToDoItemGroupViewModelDesign : ToDoItemGroupViewModel
             Navigator = ConstDesign.Navigator,
             DialogViewer = ConstDesign.DialogViewer,
             ToDoService = toDoServiceDesign,
+            OpenerLink = ConstDesign.OpenerLink,
         };
 
         ToDoItemHeaderView = new()

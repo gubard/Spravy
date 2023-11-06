@@ -27,6 +27,7 @@ public class ToDoItemGroupViewModel : ToDoItemViewModel, IRefreshToDoItem
         switch (item)
         {
             case ToDoItemGroup:
+                Link = item.Link?.AbsoluteUri ?? string.Empty;
                 Name = item.Name;
                 Description = item.Description;
                 Type = ToDoItemType.Group;
@@ -101,5 +102,6 @@ public class ToDoItemGroupViewModel : ToDoItemViewModel, IRefreshToDoItem
         yield return this.WhenAnyValue(x => x.Name).Skip(1).Subscribe(OnNextName);
         yield return this.WhenAnyValue(x => x.Description).Skip(1).Subscribe(OnNextDescription);
         yield return this.WhenAnyValue(x => x.Type).Skip(1).Subscribe(OnNextType);
+        yield return this.WhenAnyValue(x => x.Link).Skip(1).Subscribe(OnNextLink);
     }
 }

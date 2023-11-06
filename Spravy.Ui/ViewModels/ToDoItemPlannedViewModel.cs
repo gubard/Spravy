@@ -148,6 +148,7 @@ public class ToDoItemPlannedViewModel : ToDoItemViewModel, IRefreshToDoItem
 
                 return;
             case ToDoItemPlanned toDoItemPlanned:
+                Link = item.Link?.AbsoluteUri ?? string.Empty;
                 IsFavorite = item.IsFavorite;
                 Name = toDoItemPlanned.Name;
                 Type = ToDoItemType.Planned;
@@ -210,6 +211,7 @@ public class ToDoItemPlannedViewModel : ToDoItemViewModel, IRefreshToDoItem
         yield return this.WhenAnyValue(x => x.Type).Skip(1).Subscribe(OnNextType);
         yield return this.WhenAnyValue(x => x.DueDate).Skip(1).Subscribe(OnNextDueDate);
         yield return this.WhenAnyValue(x => x.ChildrenType).Skip(1).Subscribe(OnNextChildrenType);
+        yield return this.WhenAnyValue(x => x.Link).Skip(1).Subscribe(OnNextLink);
     }
 
     private async void OnNextChildrenType(ToDoItemChildrenType x)

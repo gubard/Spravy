@@ -37,6 +37,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
     private ToDoItemType type;
     private bool isFavorite;
     protected readonly List<ToDoItemCommand> Commands = new();
+    private string link;
 
     public ToDoItemViewModel(string? urlPathSegment) : base(urlPathSegment)
     {
@@ -61,21 +62,21 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
         ChangeLinkCommand = CreateCommandFromTask(ChangeLinkAsync);
 
         this.WhenAnyValue(x => x.IsFavorite)
-         .Subscribe(
-                 x =>
-                 {
-                     if(x)
-                     {
-                         toFavoriteCommand.Command = RemoveToDoItemFromFavoriteCommand;
-                         toFavoriteCommand.Icon = MaterialIconKind.Star;
-                     }
-                     else
-                     {
-                         toFavoriteCommand.Command = AddToDoItemToFavoriteCommand;
-                         toFavoriteCommand.Icon = MaterialIconKind.StarOutline;
-                     }
-                 }
-             );
+            .Subscribe(
+                x =>
+                {
+                    if (x)
+                    {
+                        toFavoriteCommand.Command = RemoveToDoItemFromFavoriteCommand;
+                        toFavoriteCommand.Icon = MaterialIconKind.Star;
+                    }
+                    else
+                    {
+                        toFavoriteCommand.Command = AddToDoItemToFavoriteCommand;
+                        toFavoriteCommand.Icon = MaterialIconKind.StarOutline;
+                    }
+                }
+            );
 
         Commands.Add(toFavoriteCommand);
         Commands.Add(new(MaterialIconKind.Plus, AddToDoItemCommand));
@@ -154,10 +155,14 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
         set => this.RaiseAndSetIfChanged(ref description, value);
     }
 
-    public string Link { get; set; }
+    public string Link
+    {
+        get => link;
+        set => this.RaiseAndSetIfChanged(ref link, value);
+    }
 
     public abstract Task RefreshToDoItemAsync();
-    
+
     private Task ChangeLinkAsync()
     {
         return DialogViewer.ShowSingleStringConfirmDialogAsync(
@@ -270,7 +275,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
                 viewModel.IgnoreIds.Add(Id);
                 var parents = Path.Items.OfType<ToDoItemParentNotify>().ToArray();
 
-                if(parents.Length == 1)
+                if (parents.Length == 1)
                 {
                     return;
                 }
@@ -306,6 +311,17 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
     protected async void OnNextId(Guid x)
     {
         await SafeExecuteAsync(RefreshToDoItemAsync);
+    }
+
+    protected async void OnNextLink(string x)
+    {
+        await SafeExecuteAsync(
+            async () =>
+            {
+                await ToDoService.UpdateToDoItemLinkAsync(Id, x.IsNullOrWhiteSpace() ? null : new Uri(x));
+                await RefreshToDoItemAsync();
+            }
+        );
     }
 
     protected async void OnNextName(string x)

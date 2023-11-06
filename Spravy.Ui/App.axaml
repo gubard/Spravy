@@ -213,7 +213,7 @@
                                     Classes="with-text"
                                     Command="{Binding $parent[interfaces:IToDoItemView].OpenLinkCommand}"
                                     CommandParameter="{Binding}"
-                                    IsVisible="{Binding Link, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}">
+                                    IsVisible="{Binding Link, Converter={StaticResource NullToBooleanConverter}}">
                                 <StackPanel Orientation="Horizontal">
                                     <avalonia:MaterialIcon Kind="Link" />
                                     <TextBlock Text="Link" />
@@ -326,7 +326,7 @@
                                     Classes="with-text"
                                     Command="{Binding $parent[interfaces:IToDoItemView].OpenLinkCommand}"
                                     CommandParameter="{Binding}"
-                                    IsVisible="{Binding Link, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}">
+                                    IsVisible="{Binding Link, Converter={StaticResource NullToBooleanConverter}}">
                                 <StackPanel Orientation="Horizontal">
                                     <avalonia:MaterialIcon Kind="Link" />
                                     <TextBlock Text="Link" />
@@ -462,7 +462,7 @@
                                     Classes="with-text"
                                     Command="{Binding $parent[interfaces:IToDoItemView].OpenLinkCommand}"
                                     CommandParameter="{Binding}"
-                                    IsVisible="{Binding Link, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}">
+                                    IsVisible="{Binding Link, Converter={StaticResource NullToBooleanConverter}}">
                                 <StackPanel Orientation="Horizontal">
                                     <avalonia:MaterialIcon Kind="Link" />
                                     <TextBlock Text="Link" />
@@ -595,7 +595,7 @@
                                     Classes="with-text"
                                     Command="{Binding $parent[interfaces:IToDoItemView].OpenLinkCommand}"
                                     CommandParameter="{Binding}"
-                                    IsVisible="{Binding Link, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}">
+                                    IsVisible="{Binding Link, Converter={StaticResource NullToBooleanConverter}}">
                                 <StackPanel Orientation="Horizontal">
                                     <avalonia:MaterialIcon Kind="Link" />
                                     <TextBlock Text="Link" />
@@ -730,7 +730,7 @@
                                     Classes="with-text"
                                     Command="{Binding $parent[interfaces:IToDoItemView].OpenLinkCommand}"
                                     CommandParameter="{Binding}"
-                                    IsVisible="{Binding Link, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}">
+                                    IsVisible="{Binding Link, Converter={StaticResource NullToBooleanConverter}}">
                                 <StackPanel Orientation="Horizontal">
                                     <avalonia:MaterialIcon Kind="Link" />
                                     <TextBlock Text="Link" />

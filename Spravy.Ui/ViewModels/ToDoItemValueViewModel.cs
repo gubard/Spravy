@@ -118,6 +118,7 @@ public class ToDoItemValueViewModel : ToDoItemViewModel, IRefreshToDoItem
 
                 return;
             case ToDoItemValue toDoItemValue:
+                Link = item.Link?.AbsoluteUri ?? string.Empty;
                 IsFavorite = item.IsFavorite;
                 Name = toDoItemValue.Name;
                 Type = ToDoItemType.Value;
@@ -174,6 +175,7 @@ public class ToDoItemValueViewModel : ToDoItemViewModel, IRefreshToDoItem
         yield return this.WhenAnyValue(x => x.Description).Skip(1).Subscribe(OnNextDescription);
         yield return this.WhenAnyValue(x => x.Type).Skip(1).Subscribe(OnNextType);
         yield return this.WhenAnyValue(x => x.ChildrenType).Skip(1).Subscribe(OnNextChildrenType);
+        yield return this.WhenAnyValue(x => x.Link).Skip(1).Subscribe(OnNextLink);
     }
 
     private async void OnNextChildrenType(ToDoItemChildrenType x)

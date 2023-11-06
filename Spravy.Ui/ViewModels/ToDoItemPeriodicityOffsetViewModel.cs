@@ -111,6 +111,7 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
                 return;
 
             case ToDoItemPeriodicityOffset toDoItemPeriodicityOffset:
+                Link = item.Link?.AbsoluteUri ?? string.Empty;
                 IsFavorite = toDoItemPeriodicityOffset.IsFavorite;
                 Name = toDoItemPeriodicityOffset.Name;
                 Type = ToDoItemType.PeriodicityOffset;
@@ -153,6 +154,7 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
         yield return this.WhenAnyValue(x => x.MonthsOffset).Skip(1).Subscribe(OnNextMonthsOffset);
         yield return this.WhenAnyValue(x => x.YearsOffset).Skip(1).Subscribe(OnNextYearsOffset);
         yield return this.WhenAnyValue(x => x.ChildrenType).Skip(1).Subscribe(OnNextChildrenType);
+        yield return this.WhenAnyValue(x => x.Link).Skip(1).Subscribe(OnNextLink);
     }
 
     private async void OnNextChildrenType(ToDoItemChildrenType x)

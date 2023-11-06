@@ -49,7 +49,7 @@ public class SpravyToDoDbProfile : Profile
                         source.IsFavorite,
                         (ActiveToDoItem?)context.Items[ActiveName],
                         source.LastCompleted,
-                        context.Mapper.Map<Uri>(source.Link ?? string.Empty)
+                        context.Mapper.Map<Uri>(source.Link)
                     ),
                     ToDoItemType.Group => new ToDoSubItemGroup(
                         source.Id,
@@ -59,7 +59,7 @@ public class SpravyToDoDbProfile : Profile
                         source.Description,
                         source.IsFavorite,
                         (ActiveToDoItem?)context.Items[ActiveName],
-                        context.Mapper.Map<Uri>(source.Link ?? string.Empty)
+                        context.Mapper.Map<Uri>(source.Link)
                     ),
                     ToDoItemType.Planned => new ToDoSubItemPlanned(
                         source.Id,
@@ -75,7 +75,7 @@ public class SpravyToDoDbProfile : Profile
                         source.FailedCount,
                         source.IsCompleted,
                         source.LastCompleted,
-                        context.Mapper.Map<Uri>(source.Link ?? string.Empty)
+                        context.Mapper.Map<Uri>(source.Link)
                     ),
                     ToDoItemType.Periodicity => new ToDoSubItemPeriodicity(
                         source.Id,
@@ -90,7 +90,7 @@ public class SpravyToDoDbProfile : Profile
                         source.SkippedCount,
                         source.FailedCount,
                         source.LastCompleted,
-                        context.Mapper.Map<Uri>(source.Link ?? string.Empty)
+                        context.Mapper.Map<Uri>(source.Link)
                     ),
                     ToDoItemType.PeriodicityOffset => new ToDoSubItemPeriodicityOffset(
                         source.Id,
@@ -105,7 +105,7 @@ public class SpravyToDoDbProfile : Profile
                         source.SkippedCount,
                         source.FailedCount,
                         source.LastCompleted,
-                        context.Mapper.Map<Uri>(source.Link ?? string.Empty)
+                        context.Mapper.Map<Uri>(source.Link)
                     ),
                     _ => throw new ArgumentOutOfRangeException()
                 }

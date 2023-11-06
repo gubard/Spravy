@@ -41,7 +41,7 @@ public class SpravyUiProfile : Profile
                 {
                     DueDateTime = item.DueDateTime,
                     Id = item.Id,
-                    IsFavorite = ChangeToDoItemIsFavoriteEvent.Parser.ParseFrom(item.Content).IsFavorite
+                    IsFavorite = ChangeToDoItemIsFavoriteEvent.Parser.ParseFrom(item.Content).IsFavorite,
                 }
             );
 

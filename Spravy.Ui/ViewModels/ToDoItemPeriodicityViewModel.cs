@@ -125,6 +125,7 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
 
                 return;
             case ToDoItemPeriodicity toDoItemPeriodicity:
+                Link = item.Link?.AbsoluteUri ?? string.Empty;
                 IsFavorite = item.IsFavorite;
                 Name = item.Name;
                 Type = ToDoItemType.Periodicity;
@@ -213,6 +214,7 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
         yield return this.WhenAnyValue(x => x.DueDate).Skip(1).Subscribe(OnNextDueDate);
         yield return this.WhenAnyValue(x => x.TypeOfPeriodicity).Skip(1).Subscribe(OnNextTypeOfPeriodicity);
         yield return this.WhenAnyValue(x => x.ChildrenType).Skip(1).Subscribe(OnNextChildrenType);
+        yield return this.WhenAnyValue(x => x.Link).Skip(1).Subscribe(OnNextLink);
     }
 
     private async void OnNextChildrenType(ToDoItemChildrenType x)
