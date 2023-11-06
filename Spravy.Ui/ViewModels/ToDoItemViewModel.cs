@@ -37,9 +37,9 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
     private ToDoItemType type;
     private bool isFavorite;
     protected readonly List<ToDoItemCommand> Commands = new();
-    private string link;
+    private string link = string.Empty;
 
-    public ToDoItemViewModel(string? urlPathSegment) : base(urlPathSegment)
+    protected ToDoItemViewModel(string urlPathSegment) : base(urlPathSegment)
     {
         RemoveToDoItemFromFavoriteCommand =
             CreateCommandFromTaskWithDialogProgressIndicator(RemoveToDoItemFromFavoriteAsync);
