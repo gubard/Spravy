@@ -2,7 +2,6 @@ using AutoMapper;
 using Spravy.Ui.Configurations;
 using Spravy.Ui.Design.Services;
 using Spravy.Ui.Interfaces;
-using Spravy.Ui.Services;
 
 namespace Spravy.Ui.Design.Helpers;
 

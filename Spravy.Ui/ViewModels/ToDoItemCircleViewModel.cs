@@ -130,6 +130,10 @@ public class ToDoItemCircleViewModel : ToDoItemViewModel, IRefreshToDoItem
                 Navigator.NavigateTo<ToDoItemPeriodicityViewModel>(x => x.Id = item.Id);
 
                 return;
+            case ToDoItemStep:
+                Navigator.NavigateTo<ToDoItemStepViewModel>(x => x.Id = item.Id);
+
+                return;
             case ToDoItemPlanned:
                 Navigator.NavigateTo<ToDoItemPlannedViewModel>(x => x.Id = item.Id);
 

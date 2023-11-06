@@ -157,6 +157,10 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
                 Navigator.NavigateTo<ToDoItemCircleViewModel>(x => x.Id = item.Id);
 
                 return;
+            case ToDoItemStep:
+                Navigator.NavigateTo<ToDoItemStepViewModel>(x => x.Id = item.Id);
+
+                return;
             default: throw new ArgumentOutOfRangeException(nameof(item));
         }
     }

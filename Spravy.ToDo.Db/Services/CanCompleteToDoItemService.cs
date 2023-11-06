@@ -8,53 +8,57 @@ namespace Spravy.ToDo.Db.Services;
 
 public class CanCompleteToDoItemService
 {
-    public async Task<bool> IsCanCompleteAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
+    public Task<bool> IsCanCompleteAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
+    {
+        var result = IsCanComplete(entity);
+
+        if (!result)
+        {
+            return false.ToTaskResult();
+        }
+
+        switch (entity.ChildrenType)
+        {
+            case ToDoItemChildrenType.RequireCompletion:
+                return IsCompletedItemsAsync(context, entity);
+            case ToDoItemChildrenType.IgnoreCompletion:
+                return true.ToTaskResult();
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    private async Task<bool> IsCompletedItemsAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
     {
         var items = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.ParentId == entity.Id)
             .ToArrayAsync();
 
-        var result = IsCanComplete(entity);
-
-        if (!result)
+        foreach (var item in items)
         {
-            return false;
-        }
-
-        switch (entity.ChildrenType)
-        {
-            case ToDoItemChildrenType.RequireCompletion:
-                foreach (var item in items)
-                {
-                    result = IsCompleted(item);
-
-                    if (!result)
-                    {
-                        return false;
-                    }
-                }
-
-                break;
-            case ToDoItemChildrenType.IgnoreCompletion:
-                return true;
-            default:
-                throw new ArgumentOutOfRangeException();
+            if (!await IsCompletedAsync(context, item))
+            {
+                return false;
+            }
         }
 
         return true;
     }
-    
-    private bool IsCompleted(ToDoItemEntity entity)
+
+    private Task<bool> IsCompletedAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
     {
         return entity.Type switch
         {
-            ToDoItemType.Value => entity.IsCompleted,
-            ToDoItemType.Group => true,
-            ToDoItemType.Planned => entity.IsCompleted,
-            ToDoItemType.Periodicity => entity.DueDate.ToCurrentDay() > DateTimeOffset.Now.ToCurrentDay(),
-            ToDoItemType.PeriodicityOffset => entity.DueDate.ToCurrentDay() > DateTimeOffset.Now.ToCurrentDay(),
-            ToDoItemType.Circle => entity.IsCompleted,
+            ToDoItemType.Value => entity.IsCompleted.ToTaskResult(),
+            ToDoItemType.Step => entity.IsCompleted.ToTaskResult(),
+            ToDoItemType.Group => IsCompletedItemsAsync(context, entity),
+            ToDoItemType.Planned => entity.IsCompleted.ToTaskResult(),
+            ToDoItemType.Periodicity => (entity.DueDate.ToCurrentDay() > DateTimeOffset.Now.ToCurrentDay())
+                .ToTaskResult(),
+            ToDoItemType.PeriodicityOffset => (entity.DueDate.ToCurrentDay() > DateTimeOffset.Now.ToCurrentDay())
+                .ToTaskResult(),
+            ToDoItemType.Circle => entity.IsCompleted.ToTaskResult(),
             _ => throw new ArgumentOutOfRangeException()
         };
     }
@@ -64,6 +68,7 @@ public class CanCompleteToDoItemService
         return entity.Type switch
         {
             ToDoItemType.Value => !entity.IsCompleted,
+            ToDoItemType.Step => !entity.IsCompleted,
             ToDoItemType.Group => false,
             ToDoItemType.Planned => !entity.IsCompleted,
             ToDoItemType.Periodicity => entity.DueDate.ToCurrentDay() <= DateTimeOffset.Now.ToCurrentDay(),

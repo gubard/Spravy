@@ -36,6 +36,21 @@ public class SpravyToDoDbProfile : Profile
             .ConvertUsing(
                 (source, _, context) => source.Type switch
                 {
+                    ToDoItemType.Step => new ToDoSubItemStep(
+                        source.Id,
+                        source.Name,
+                        source.IsCompleted,
+                        source.OrderIndex,
+                        (ToDoItemStatus)context.Items[StatusName],
+                        source.Description,
+                        source.CompletedCount,
+                        source.SkippedCount,
+                        source.FailedCount,
+                        source.IsFavorite,
+                        (ActiveToDoItem?)context.Items[ActiveName],
+                        source.LastCompleted,
+                        context.Mapper.Map<Uri>(source.Link)
+                    ),
                     ToDoItemType.Circle => new ToDoSubItemCircle(
                         source.Id,
                         source.Name,
@@ -130,6 +145,17 @@ public class SpravyToDoDbProfile : Profile
             .ConvertUsing(
                 (source, _, context) => source.Type switch
                 {
+                    ToDoItemType.Step => new ToDoItemStep(
+                        source.Id,
+                        source.Name,
+                        (IToDoSubItem[])context.Items[ItemsName],
+                        (ToDoItemParent[])context.Items[ParentsName],
+                        source.IsCompleted,
+                        source.Description,
+                        source.IsFavorite,
+                        source.ChildrenType,
+                        context.Mapper.Map<Uri>(source.Link)
+                    ),
                     ToDoItemType.Circle => new ToDoItemCircle(
                         source.Id,
                         source.Name,
@@ -139,7 +165,7 @@ public class SpravyToDoDbProfile : Profile
                         source.Description,
                         source.IsFavorite,
                         source.ChildrenType,
-                        context.Mapper.Map<Uri>(source.Link ?? string.Empty)
+                        context.Mapper.Map<Uri>(source.Link)
                     ),
                     ToDoItemType.Value => new ToDoItemValue(
                         source.Id,
@@ -150,7 +176,7 @@ public class SpravyToDoDbProfile : Profile
                         source.Description,
                         source.IsFavorite,
                         source.ChildrenType,
-                        context.Mapper.Map<Uri>(source.Link ?? string.Empty)
+                        context.Mapper.Map<Uri>(source.Link)
                     ),
                     ToDoItemType.Group => new ToDoItemGroup(
                         source.Id,
@@ -159,7 +185,7 @@ public class SpravyToDoDbProfile : Profile
                         (ToDoItemParent[])context.Items[ParentsName],
                         source.Description,
                         source.IsFavorite,
-                        context.Mapper.Map<Uri>(source.Link ?? string.Empty)
+                        context.Mapper.Map<Uri>(source.Link)
                     ),
                     ToDoItemType.Planned => new ToDoItemPlanned(
                         source.Id,
@@ -171,7 +197,7 @@ public class SpravyToDoDbProfile : Profile
                         source.DueDate,
                         source.IsCompleted,
                         source.ChildrenType,
-                        context.Mapper.Map<Uri>(source.Link ?? string.Empty)
+                        context.Mapper.Map<Uri>(source.Link)
                     ),
                     ToDoItemType.Periodicity => new ToDoItemPeriodicity(
                         source.Id,

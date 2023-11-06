@@ -16,12 +16,12 @@ using Spravy.Ui.Views;
 
 namespace Spravy.Ui.ViewModels;
 
-public class ToDoItemValueViewModel : ToDoItemViewModel, IRefreshToDoItem
+public class ToDoItemStepViewModel : ToDoItemViewModel, IRefreshToDoItem
 {
     private bool isCompleted;
     private ToDoItemChildrenType childrenType;
 
-    public ToDoItemValueViewModel() : base("to-do-item-value")
+    public ToDoItemStepViewModel() : base("to-do-item-step")
     {
         CompleteToDoItemCommand = CreateCommandFromTask(CompleteToDoItemAsync);
         SubscribeProperties();
@@ -105,6 +105,27 @@ public class ToDoItemValueViewModel : ToDoItemViewModel, IRefreshToDoItem
 
         switch (item)
         {
+            case ToDoItemCircle:
+                Navigator.NavigateTo<ToDoItemCircleViewModel>(x => x.Id = item.Id);
+
+                break;
+            case ToDoItemStep step:
+                Link = item.Link?.AbsoluteUri ?? string.Empty;
+                IsFavorite = item.IsFavorite;
+                Name = step.Name;
+                Type = ToDoItemType.Step;
+                IsCompleted = step.IsCompleted;
+                Description = step.Description;
+                ChildrenType = step.ChildrenType;
+                var source = step.Items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
+                await ToDoSubItemsViewModel.UpdateItemsAsync(source, this);
+                SubscribeItems(source);
+                Path.Items.Clear();
+                Path.Items.Add(new RootItem());
+                Path.Items.AddRange(item.Parents.Select(x => Mapper.Map<ToDoItemParentNotify>(x)));
+                SubscribeProperties();
+
+                return;
             case ToDoItemGroup:
                 Navigator.NavigateTo<ToDoItemGroupViewModel>(x => x.Id = item.Id);
 
@@ -117,33 +138,12 @@ public class ToDoItemValueViewModel : ToDoItemViewModel, IRefreshToDoItem
                 Navigator.NavigateTo<ToDoItemPlannedViewModel>(x => x.Id = item.Id);
 
                 return;
-            case ToDoItemStep:
-                Navigator.NavigateTo<ToDoItemStepViewModel>(x => x.Id = item.Id);
+            case ToDoItemValue:
+                Navigator.NavigateTo<ToDoItemValueViewModel>(x => x.Id = item.Id);
 
                 return;
-            case ToDoItemValue toDoItemValue:
-                Link = item.Link?.AbsoluteUri ?? string.Empty;
-                IsFavorite = item.IsFavorite;
-                Name = toDoItemValue.Name;
-                Type = ToDoItemType.Value;
-                IsCompleted = toDoItemValue.IsCompleted;
-                Description = toDoItemValue.Description;
-                ChildrenType = toDoItemValue.ChildrenType;
-                var source = toDoItemValue.Items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
-                await ToDoSubItemsViewModel.UpdateItemsAsync(source, this);
-                SubscribeItems(source);
-                Path.Items.Clear();
-                Path.Items.Add(new RootItem());
-                Path.Items.AddRange(item.Parents.Select(x => Mapper.Map<ToDoItemParentNotify>(x)));
-                SubscribeProperties();
-
-                break;
             case ToDoItemPeriodicityOffset:
                 Navigator.NavigateTo<ToDoItemPeriodicityOffsetViewModel>(x => x.Id = item.Id);
-
-                return;
-            case ToDoItemCircle:
-                Navigator.NavigateTo<ToDoItemCircleViewModel>(x => x.Id = item.Id);
 
                 return;
             default: throw new ArgumentOutOfRangeException(nameof(item));

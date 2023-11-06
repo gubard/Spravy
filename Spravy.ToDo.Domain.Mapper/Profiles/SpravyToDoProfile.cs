@@ -22,6 +22,8 @@ public class SpravyToDoProfile : Profile
         CreateMap<ToDoSubItemValue, ToDoSubItemValueGrpc>();
         CreateMap<ToDoSubItemPeriodicityOffset, ToDoSubItemPeriodicityOffsetGrpc>();
         CreateMap<ToDoItemGroup, ToDoItemGroupGrpc>();
+        CreateMap<ToDoItemStep, ToDoItemStepGrpc>();
+        CreateMap<ToDoSubItemStep, ToDoSubItemStepGrpc>();
         CreateMap<ToDoItemValue, ToDoItemValueGrpc>();
         CreateMap<ToDoSubItemGroup, ToDoSubItemGroupGrpc>();
         CreateMap<AddToDoItemOptions, AddToDoItemRequest>();
@@ -289,6 +291,10 @@ public class SpravyToDoProfile : Profile
                             result.Circle = context.Mapper.Map<ToDoItemCircleGrpc>(circle);
 
                             break;
+                        case ToDoItemStep step:
+                            result.Step = context.Mapper.Map<ToDoItemStepGrpc>(step);
+
+                            break;
                         default:
                             throw new ArgumentOutOfRangeException(nameof(source));
                     }
@@ -301,6 +307,17 @@ public class SpravyToDoProfile : Profile
             .ConvertUsing(
                 (source, _, context) => source.ParametersCase switch
                 {
+                    ToDoItemGrpc.ParametersOneofCase.Step => new ToDoItemStep(
+                        context.Mapper.Map<Guid>(source.Id),
+                        source.Name,
+                        context.Mapper.Map<IToDoSubItem[]>(source.Items),
+                        context.Mapper.Map<ToDoItemParent[]>(source.Parents),
+                        source.Step.IsCompleted,
+                        source.Description,
+                        source.IsFavorite,
+                        (ToDoItemChildrenType)source.Step.ChildrenType,
+                        context.Mapper.Map<Uri>(source.Link)
+                    ),
                     ToDoItemGrpc.ParametersOneofCase.Circle => new ToDoItemCircle(
                         context.Mapper.Map<Guid>(source.Id),
                         source.Name,
@@ -415,6 +432,10 @@ public class SpravyToDoProfile : Profile
                             result.Circle = context.Mapper.Map<ToDoSubItemCircleGrpc>(circle);
 
                             break;
+                        case ToDoSubItemStep step:
+                            result.Step = context.Mapper.Map<ToDoSubItemStepGrpc>(step);
+
+                            break;
                         case ToDoSubItemPeriodicityOffset periodicityOffset:
                             result.PeriodicityOffset =
                                 context.Mapper.Map<ToDoSubItemPeriodicityOffsetGrpc>(
@@ -433,6 +454,21 @@ public class SpravyToDoProfile : Profile
             .ConvertUsing(
                 (source, _, context) => source.ParametersCase switch
                 {
+                    ToDoSubItemGrpc.ParametersOneofCase.Step => new ToDoSubItemStep(
+                        context.Mapper.Map<Guid>(source.Id),
+                        source.Name,
+                        source.Step.IsCompleted,
+                        source.OrderIndex,
+                        (ToDoItemStatus)source.Status,
+                        source.Description,
+                        source.Step.CompletedCount,
+                        source.Step.SkippedCount,
+                        source.Step.FailedCount,
+                        source.IsFavorite,
+                        context.Mapper.Map<ActiveToDoItem?>(source.Active),
+                        context.Mapper.Map<DateTimeOffset?>(source.Step.LastCompleted),
+                        context.Mapper.Map<Uri>(source.Link)
+                    ),
                     ToDoSubItemGrpc.ParametersOneofCase.Circle => new ToDoSubItemCircle(
                         context.Mapper.Map<Guid>(source.Id),
                         source.Name,

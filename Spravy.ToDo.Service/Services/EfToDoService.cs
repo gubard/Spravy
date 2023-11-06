@@ -298,6 +298,10 @@ public class EfToDoService : IToDoService
                             item.IsCompleted = true;
 
                             break;
+                        case ToDoItemType.Step:
+                            item.IsCompleted = true;
+
+                            break;
                         default: throw new ArgumentOutOfRangeException();
                     }
 
@@ -305,6 +309,7 @@ public class EfToDoService : IToDoService
                     UpdateDueDate(item);
                     item.LastCompleted = DateTimeOffset.Now;
                     await CircleCompletionAsync(context, item);
+                    await StepCompletionAsync(context, item);
                 }
                 else
                 {
@@ -312,6 +317,19 @@ public class EfToDoService : IToDoService
                 }
             }
         );
+    }
+
+    private async Task StepCompletionAsync(SpravyDbToDoDbContext context, ToDoItemEntity item)
+    {
+        var children = await context.Set<ToDoItemEntity>()
+            .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Step)
+            .OrderBy(x => x.OrderIndex)
+            .ToArrayAsync();
+
+        foreach (var child in children)
+        {
+            child.IsCompleted = false;
+        }
     }
 
     private async Task CircleCompletionAsync(SpravyDbToDoDbContext context, ToDoItemEntity item)
@@ -457,6 +475,10 @@ public class EfToDoService : IToDoService
                         item.IsCompleted = true;
 
                         break;
+                    case ToDoItemType.Step:
+                        item.IsCompleted = true;
+
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
@@ -465,6 +487,7 @@ public class EfToDoService : IToDoService
                 UpdateDueDate(item);
                 item.LastCompleted = DateTimeOffset.Now;
                 await CircleSkipAsync(context, item);
+                await StepCompletionAsync(context, item);
             }
         );
     }
@@ -505,6 +528,10 @@ public class EfToDoService : IToDoService
                         item.IsCompleted = true;
 
                         break;
+                    case ToDoItemType.Step:
+                        item.IsCompleted = true;
+
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
@@ -513,6 +540,7 @@ public class EfToDoService : IToDoService
                 UpdateDueDate(item);
                 item.LastCompleted = DateTimeOffset.Now;
                 await CircleCompletionAsync(context, item);
+                await StepCompletionAsync(context, item);
             }
         );
     }
@@ -998,6 +1026,8 @@ public class EfToDoService : IToDoService
 
                 break;
             case ToDoItemType.Circle:
+                break;
+            case ToDoItemType.Step:
                 break;
             default:
                 throw new ArgumentOutOfRangeException();

@@ -178,6 +178,17 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                         }
 
                         break;
+                    case ToDoSubItemStepNotify circle:
+                        if (circle.IsCompleted)
+                        {
+                            viewModel.SetIncompleteStatus();
+                        }
+                        else
+                        {
+                            viewModel.SetCompleteStatus();
+                        }
+
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException(nameof(subItemValue));
                 }

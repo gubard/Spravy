@@ -304,6 +304,7 @@ message ToDoItemGrpc {
     ToDoItemPeriodicityGrpc Periodicity = 10;
     ToDoItemPeriodicityOffsetGrpc PeriodicityOffset = 11;
     ToDoItemCircleGrpc Circle = 13;
+    ToDoItemStepGrpc Step = 14;
   }
 }
 
@@ -317,6 +318,12 @@ message ToDoItemPlannedGrpc {
 }
 
 message ToDoItemCircleGrpc {
+  DateTimeOffsetGrpc DueDate = 1;
+  bool IsCompleted = 2;
+  ToDoItemChildrenTypeGrpc ChildrenType = 3;
+}
+
+message ToDoItemStepGrpc {
   DateTimeOffsetGrpc DueDate = 1;
   bool IsCompleted = 2;
   ToDoItemChildrenTypeGrpc ChildrenType = 3;
@@ -361,6 +368,7 @@ message ToDoSubItemGrpc {
     ToDoSubItemPeriodicityGrpc Periodicity = 11;
     ToDoSubItemPeriodicityOffsetGrpc PeriodicityOffset = 13;
     ToDoSubItemCircleGrpc Circle = 14;
+    ToDoSubItemStepGrpc Step = 15;
   }
 }
 
@@ -400,6 +408,14 @@ message ToDoSubItemValueGrpc {
 }
 
 message ToDoSubItemCircleGrpc {
+  bool IsCompleted = 1;
+  uint32 CompletedCount = 2;
+  uint32 SkippedCount = 3;
+  uint32 FailedCount = 4;
+  DateTimeOffsetGrpc LastCompleted = 5;
+}
+
+message ToDoSubItemStepGrpc {
   bool IsCompleted = 1;
   uint32 CompletedCount = 2;
   uint32 SkippedCount = 3;
@@ -490,6 +506,7 @@ enum ToDoItemTypeGrpc {
   Planned = 2;
   Periodicity = 3;
   Circle = 4;
+  Step = 5;
 }
 
 enum ToDoItemChildrenTypeGrpc {

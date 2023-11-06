@@ -10,7 +10,6 @@ using Spravy.Ui.ViewModels;
 using Google.Protobuf;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Models;
-using Spravy.ToDo.Domain.Interfaces;
 
 namespace Spravy.Ui.Profiles;
 
@@ -23,6 +22,7 @@ public class SpravyUiProfile : Profile
         CreateMap<ToDoShortItem, ToDoItemNotify>();
         CreateMap<ToDoSubItemCircle, ToDoSubItemCircleNotify>();
         CreateMap<ToDoSubItemValue, ToDoSubItemValueNotify>();
+        CreateMap<ToDoSubItemStep, ToDoSubItemStepNotify>();
         CreateMap<ToDoSubItemGroup, ToDoSubItemGroupNotify>();
         CreateMap<ToDoSubItemPeriodicity, ToDoSubItemPeriodicityNotify>();
         CreateMap<ToDoSubItemPeriodicityOffset, ToDoSubItemPeriodicityOffsetNotify>();
@@ -32,6 +32,7 @@ public class SpravyUiProfile : Profile
         CreateMap<ToDoItemPeriodicityOffsetViewModel, ToDoSubItemPeriodicityOffsetNotify>();
         CreateMap<ToDoItemGroupViewModel, ToDoSubItemGroupNotify>();
         CreateMap<ToDoItemPlannedViewModel, ToDoSubItemPlannedNotify>();
+        CreateMap<ToDoItemStepViewModel, ToDoSubItemStepNotify>();
         CreateMap<ToDoItemPeriodicityViewModel, ToDoSubItemPeriodicityNotify>();
         CreateMap<ToDoSelectorItem, ToDoSelectorItemNotify>();
         CreateMap<CreateUserViewModel, CreateUserOptions>();
@@ -90,6 +91,11 @@ public class SpravyUiProfile : Profile
             .ConvertUsing(
                 (source, _, context) => context.Mapper.Map<ToDoSubItemValueNotify>(source)
             );
+        
+        CreateMap<ToDoSubItemStep, ToDoSubItemNotify>()
+            .ConvertUsing(
+                (source, _, context) => context.Mapper.Map<ToDoSubItemStepNotify>(source)
+            );
 
         CreateMap<ToDoSubItemGroup, ToDoSubItemNotify>()
             .ConvertUsing(
@@ -134,20 +140,5 @@ public class SpravyUiProfile : Profile
                     _ => throw new ArgumentOutOfRangeException(nameof(source))
                 }
             );
-
-        /*CreateMap<IToDoSubItem, ToDoSubItemNotify>()
-            .ConvertUsing(
-                (source, _, context) => source switch
-                {
-                    ToDoSubItemCircle circle => context.Mapper.Map<ToDoSubItemCircleNotify>(circle),
-                    ToDoSubItemGroup group => context.Mapper.Map<ToDoSubItemGroupNotify>(group),
-                    ToDoSubItemPeriodicity periodicity => context.Mapper.Map<ToDoSubItemPeriodicityNotify>(periodicity),
-                    ToDoSubItemPeriodicityOffset periodicityOffset => context.Mapper
-                        .Map<ToDoSubItemPeriodicityOffsetNotify>(periodicityOffset),
-                    ToDoSubItemPlanned planned => context.Mapper.Map<ToDoSubItemPlannedNotify>(planned),
-                    ToDoSubItemValue value => context.Mapper.Map<ToDoSubItemValueNotify>(value),
-                    _ => throw new ArgumentOutOfRangeException(nameof(source))
-                }
-            );*/
     }
 }

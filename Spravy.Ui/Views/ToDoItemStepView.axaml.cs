@@ -7,9 +7,9 @@ using Spravy.Ui.ViewModels;
 
 namespace Spravy.Ui.Views;
 
-public partial class ToDoItemCircleView : MainReactiveUserControl<ToDoItemCircleViewModel>, IPathView
+public partial class ToDoItemStepView : MainReactiveUserControl<ToDoItemStepViewModel>, IPathView
 {
-    public ToDoItemCircleView()
+    public ToDoItemStepView()
     {
         InitializeComponent();
     }

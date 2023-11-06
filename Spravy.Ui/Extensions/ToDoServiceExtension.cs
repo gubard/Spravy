@@ -39,6 +39,10 @@ public static class ToDoServiceExtension
                 navigator.NavigateTo<ToDoItemCircleViewModel>(vm => vm.Id = item.Id);
 
                 break;
+            case ToDoItemStep:
+                navigator.NavigateTo<ToDoItemStepViewModel>(vm => vm.Id = item.Id);
+
+                break;
             default: throw new ArgumentOutOfRangeException(nameof(item));
         }
     }
