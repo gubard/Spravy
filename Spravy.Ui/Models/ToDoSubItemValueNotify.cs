@@ -22,10 +22,21 @@ public class ToDoSubItemValueNotify : ToDoSubItemNotify, IIsCompletedToDoItem
                 _ =>
                 {
                     var count = FailedCount + SkippedCount + CompletedCount + 0.0;
-                    CompletedPercentage = CompletedCount * 200.0 / count;
-                    SkippedPercentage = SkippedCount * 200.0 / count;
-                    FailedPercentage = FailedCount * 200.0 / count;
-                });
+
+                    if (count == 0)
+                    {
+                        CompletedPercentage = 0;
+                        SkippedPercentage = 0;
+                        FailedPercentage = 0;
+                    }
+                    else
+                    {
+                        CompletedPercentage = CompletedCount * 200.0 / count;
+                        SkippedPercentage = SkippedCount * 200.0 / count;
+                        FailedPercentage = FailedCount * 200.0 / count;
+                    }
+                }
+            );
     }
 
     public double CompletedPercentage
