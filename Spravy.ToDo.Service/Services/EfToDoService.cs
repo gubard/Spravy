@@ -321,14 +321,24 @@ public class EfToDoService : IToDoService
 
     private async Task StepCompletionAsync(SpravyDbToDoDbContext context, ToDoItemEntity item)
     {
-        var children = await context.Set<ToDoItemEntity>()
+        var steps = await context.Set<ToDoItemEntity>()
             .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Step)
             .OrderBy(x => x.OrderIndex)
             .ToArrayAsync();
 
-        foreach (var child in children)
+        foreach (var step in steps)
         {
-            child.IsCompleted = false;
+            step.IsCompleted = false;
+        }
+
+        var groups = await context.Set<ToDoItemEntity>()
+            .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Group)
+            .OrderBy(x => x.OrderIndex)
+            .ToArrayAsync();
+
+        foreach (var group in groups)
+        {
+            await StepCompletionAsync(context, group);
         }
     }
 
