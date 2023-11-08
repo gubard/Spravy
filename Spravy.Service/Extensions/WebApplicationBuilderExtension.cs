@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Serilog;
 using Spravy.Domain.Extensions;
 using Spravy.Service.Helpers;
@@ -68,6 +69,14 @@ public static class WebApplicationBuilderExtension
         setupServiceCollection.Invoke(builder.Services);
 
         var app = builder.Build();
+
+        if (!app.Environment.IsDevelopment())
+        {
+            app.UseExceptionHandler("/Error");
+            app.UseHsts();
+        }
+
+        app.UseHttpsRedirection();
         app.UseSerilogRequestLogging();
         app.UseRouting();
         app.UseGrpcWeb(ServiceDefaults.DefaultGrpcWebOptions);
