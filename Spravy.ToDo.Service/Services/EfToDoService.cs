@@ -39,7 +39,7 @@ public class EfToDoService : IToDoService
         this.canCompleteToDoItemService = canCompleteToDoItemService;
     }
 
-    public async Task<IEnumerable<IToDoSubItem>> GetRootToDoSubItemsAsync()
+    public async Task<IEnumerable<IToDoSubItem>> GetRootToDoSubItemsAsync(TimeSpan offset)
     {
         await using var context = dbContextFactory.Create();
 
@@ -49,31 +49,32 @@ public class EfToDoService : IToDoService
             .OrderBy(x => x.OrderIndex)
             .ToArrayAsync();
 
-        var result = await ConvertAsync(context, items);
+        var result = await ConvertAsync(context, items, offset);
 
         return result;
     }
 
     private async Task<IEnumerable<IToDoSubItem>> ConvertAsync(
         SpravyDbToDoDbContext context,
-        IEnumerable<ToDoItemEntity> items
+        IEnumerable<ToDoItemEntity> items,
+        TimeSpan offset
     )
     {
         var result = new List<IToDoSubItem>();
 
         foreach (var item in items)
         {
-            var toDoSubItem = await ConvertAsync(context, item);
+            var toDoSubItem = await ConvertAsync(context, item, offset);
             result.Add(toDoSubItem);
         }
 
         return result;
     }
 
-    private async Task<IToDoSubItem> ConvertAsync(SpravyDbToDoDbContext context, ToDoItemEntity item)
+    private async Task<IToDoSubItem> ConvertAsync(SpravyDbToDoDbContext context, ToDoItemEntity item, TimeSpan offset)
     {
-        var status = await statusToDoItemService.GetStatusAsync(context, item);
-        var active = await activeToDoItemToDoItemService.GetActiveItemAsync(context, item);
+        var status = await statusToDoItemService.GetStatusAsync(context, item, offset);
+        var active = await activeToDoItemToDoItemService.GetActiveItemAsync(context, item, offset);
 
         var result = mapper.Map<IToDoSubItem>(
             item,
@@ -87,7 +88,7 @@ public class EfToDoService : IToDoService
         return result;
     }
 
-    public async Task<IToDoItem> GetToDoItemAsync(Guid id)
+    public async Task<IToDoItem> GetToDoItemAsync(Guid id, TimeSpan offset)
     {
         await using var context = dbContextFactory.Create();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
@@ -106,7 +107,7 @@ public class EfToDoService : IToDoService
 
         await GetParentsAsync(context, id, parents);
         parents.Reverse();
-        var toDoSubItems = await ConvertAsync(context, subItems);
+        var toDoSubItems = await ConvertAsync(context, subItems, offset);
 
         var toDoItem = mapper.Map<IToDoItem>(
             item,
@@ -145,7 +146,7 @@ public class EfToDoService : IToDoService
         return id;
     }
 
-    public async Task<Guid> AddToDoItemAsync(AddToDoItemOptions options)
+    public async Task<Guid> AddToDoItemAsync(AddToDoItemOptions options, TimeSpan offset)
     {
         await using var context = dbContextFactory.Create();
         var id = Guid.NewGuid();
@@ -168,8 +169,8 @@ public class EfToDoService : IToDoService
                 toDoItem.OrderIndex = items.Length == 0 ? 0 : items.Max() + 1;
 
                 toDoItem.DueDate =
-                    parent.DueDate.ToDayDateTimeWithOffset() < DateTimeOffset.Now.ToDayDateTimeWithOffset()
-                        ? DateTimeOffset.Now.ToCurrentDay()
+                    parent.DueDate < DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly()
+                        ? DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly()
                         : parent.DueDate;
 
                 toDoItem.TypeOfPeriodicity = parent.TypeOfPeriodicity;
@@ -245,7 +246,7 @@ public class EfToDoService : IToDoService
         );
     }
 
-    public async Task UpdateToDoItemDueDateAsync(Guid id, DateTimeOffset dueDate)
+    public async Task UpdateToDoItemDueDateAsync(Guid id, DateOnly dueDate)
     {
         await using var context = dbContextFactory.Create();
 
@@ -259,7 +260,7 @@ public class EfToDoService : IToDoService
         );
     }
 
-    public async Task UpdateToDoItemCompleteStatusAsync(Guid id, bool isCompleted)
+    public async Task UpdateToDoItemCompleteStatusAsync(Guid id, bool isCompleted, TimeSpan offset)
     {
         await using var context = dbContextFactory.Create();
 
@@ -271,7 +272,7 @@ public class EfToDoService : IToDoService
 
                 if (isCompleted)
                 {
-                    var isCanComplete = await canCompleteToDoItemService.IsCanCompleteAsync(c, item);
+                    var isCanComplete = await canCompleteToDoItemService.IsCanCompleteAsync(c, item, offset);
 
                     if (!isCanComplete)
                     {
@@ -449,7 +450,7 @@ public class EfToDoService : IToDoService
         );
     }
 
-    public async Task SkipToDoItemAsync(Guid id)
+    public async Task SkipToDoItemAsync(Guid id, TimeSpan offset)
     {
         await using var context = dbContextFactory.Create();
 
@@ -458,7 +459,7 @@ public class EfToDoService : IToDoService
             {
                 var item = await c.Set<ToDoItemEntity>().FindAsync(id);
                 item = item.ThrowIfNull();
-                var isCanComplete = await canCompleteToDoItemService.IsCanCompleteAsync(c, item);
+                var isCanComplete = await canCompleteToDoItemService.IsCanCompleteAsync(c, item, offset);
 
                 if (!isCanComplete)
                 {
@@ -502,7 +503,7 @@ public class EfToDoService : IToDoService
         );
     }
 
-    public async Task FailToDoItemAsync(Guid id)
+    public async Task FailToDoItemAsync(Guid id, TimeSpan offset)
     {
         await using var context = dbContextFactory.Create();
 
@@ -511,7 +512,7 @@ public class EfToDoService : IToDoService
             {
                 var item = await c.Set<ToDoItemEntity>().FindAsync(id);
                 item = item.ThrowIfNull();
-                var isCanComplete = await canCompleteToDoItemService.IsCanCompleteAsync(c, item);
+                var isCanComplete = await canCompleteToDoItemService.IsCanCompleteAsync(c, item, offset);
 
                 if (!isCanComplete)
                 {
@@ -555,7 +556,7 @@ public class EfToDoService : IToDoService
         );
     }
 
-    public async Task<IEnumerable<IToDoSubItem>> SearchToDoSubItemsAsync(string searchText)
+    public async Task<IEnumerable<IToDoSubItem>> SearchToDoSubItemsAsync(string searchText, TimeSpan offset)
     {
         await using var context = dbContextFactory.Create();
 
@@ -565,7 +566,7 @@ public class EfToDoService : IToDoService
             .OrderBy(x => x.OrderIndex)
             .ToArrayAsync();
 
-        var result = await ConvertAsync(context, items);
+        var result = await ConvertAsync(context, items, offset);
 
         return result;
     }
@@ -612,7 +613,7 @@ public class EfToDoService : IToDoService
         );
     }
 
-    public async Task<IEnumerable<IToDoSubItem>> GetFavoriteToDoItemsAsync()
+    public async Task<IEnumerable<IToDoSubItem>> GetFavoriteToDoItemsAsync(TimeSpan offset)
     {
         await using var context = dbContextFactory.Create();
 
@@ -625,7 +626,7 @@ public class EfToDoService : IToDoService
                     .OrderBy(x => x.OrderIndex)
                     .ToArrayAsync();
 
-                var result = await ConvertAsync(c, items);
+                var result = await ConvertAsync(c, items, offset);
 
                 return result;
             }
@@ -674,7 +675,7 @@ public class EfToDoService : IToDoService
         );
     }
 
-    public async Task<IEnumerable<IToDoSubItem>> GetLeafToDoSubItemsAsync(Guid id)
+    public async Task<IEnumerable<IToDoSubItem>> GetLeafToDoSubItemsAsync(Guid id,TimeSpan offset)
     {
         await using var context = dbContextFactory.Create();
 
@@ -693,7 +694,7 @@ public class EfToDoService : IToDoService
 
         foreach (var entity in entities)
         {
-            await foreach (var item in GetLeafToDoItemsAsync(context, entity))
+            await foreach (var item in GetLeafToDoItemsAsync(context, entity,offset))
             {
                 result.Add(item);
             }
@@ -773,11 +774,11 @@ public class EfToDoService : IToDoService
         );
     }
 
-    public async Task<string> ToDoItemToStringAsync(ToDoItemToStringOptions options)
+    public async Task<string> ToDoItemToStringAsync(ToDoItemToStringOptions options, TimeSpan offset)
     {
         await using var context = dbContextFactory.Create();
         var builder = new StringBuilder();
-        await ToDoItemToStringAsync(context, options, 0, builder);
+        await ToDoItemToStringAsync(context, options, 0, builder, offset);
 
         return builder.ToString();
     }
@@ -866,7 +867,7 @@ public class EfToDoService : IToDoService
         return mapper.Map<IEnumerable<ToDoShortItem>>(items);
     }
 
-    public async Task<ActiveToDoItem?> GetActiveToDoItemAsync()
+    public async Task<ActiveToDoItem?> GetActiveToDoItemAsync(TimeSpan offset)
     {
         await using var context = dbContextFactory.Create();
 
@@ -877,7 +878,7 @@ public class EfToDoService : IToDoService
 
         foreach (var item in items)
         {
-            var active = await activeToDoItemToDoItemService.GetActiveItemAsync(context, item);
+            var active = await activeToDoItemToDoItemService.GetActiveItemAsync(context, item, offset);
 
             if (active is null)
             {
@@ -908,7 +909,8 @@ public class EfToDoService : IToDoService
         SpravyDbToDoDbContext context,
         ToDoItemToStringOptions options,
         ushort level,
-        StringBuilder builder
+        StringBuilder builder,
+        TimeSpan offset
     )
     {
         var items = await context.Set<ToDoItemEntity>()
@@ -919,7 +921,7 @@ public class EfToDoService : IToDoService
 
         foreach (var item in items)
         {
-            var status = await statusToDoItemService.GetStatusAsync(context, item);
+            var status = await statusToDoItemService.GetStatusAsync(context, item, offset);
 
             if (!options.Statuses.Span.ToArray().Contains(status))
             {
@@ -934,7 +936,8 @@ public class EfToDoService : IToDoService
                 context,
                 new(options.Statuses.ToArray(), item.Id),
                 (ushort)(level + 1),
-                builder
+                builder,
+                offset
             );
         }
     }
@@ -965,7 +968,7 @@ public class EfToDoService : IToDoService
 
     private async IAsyncEnumerable<IToDoSubItem> GetLeafToDoItemsAsync(
         SpravyDbToDoDbContext context,
-        ToDoItemEntity itemEntity
+        ToDoItemEntity itemEntity, TimeSpan offset
     )
     {
         var entities = await context.Set<ToDoItemEntity>()
@@ -976,14 +979,14 @@ public class EfToDoService : IToDoService
 
         if (entities.IsEmpty())
         {
-            yield return await ConvertAsync(context, itemEntity);
+            yield return await ConvertAsync(context, itemEntity,offset);
 
             yield break;
         }
 
         foreach (var entity in entities)
         {
-            await foreach (var item in GetLeafToDoItemsAsync(context, entity))
+            await foreach (var item in GetLeafToDoItemsAsync(context, entity, offset))
             {
                 yield return item;
             }
@@ -1067,8 +1070,8 @@ public class EfToDoService : IToDoService
                 var nextDay = daysOfWeek.FirstOrDefault(x => x > dayOfWeek);
 
                 item.DueDate = nextDay is not null
-                    ? item.DueDate.AddDays((double)nextDay - (double)dayOfWeek)
-                    : item.DueDate.AddDays(7 - (double)dayOfWeek + (double)daysOfWeek.First().ThrowIfNullStruct());
+                    ? item.DueDate.AddDays((int)nextDay - (int)dayOfWeek)
+                    : item.DueDate.AddDays(7 - (int)dayOfWeek + (int)daysOfWeek.First().ThrowIfNullStruct());
 
                 break;
             }

@@ -8,29 +8,33 @@ namespace Spravy.ToDo.Db.Services;
 
 public class StatusToDoItemService
 {
-    public Task<ToDoItemStatus> GetStatusAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
+    public Task<ToDoItemStatus> GetStatusAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity, TimeSpan offset)
     {
         return entity.Type switch
         {
-            ToDoItemType.Value => GetValueStatusAsync(context, entity),
-            ToDoItemType.Group => GetGroupStatusAsync(context, entity),
-            ToDoItemType.Planned => GetPlannedStatusAsync(context, entity),
-            ToDoItemType.Periodicity => GetDueDateStatusAsync(entity),
-            ToDoItemType.PeriodicityOffset => GetDueDateStatusAsync(entity),
-            ToDoItemType.Circle => GetCircleStatusAsync(context, entity),
-            ToDoItemType.Step => GetStepStatusAsync(context, entity),
+            ToDoItemType.Value => GetValueStatusAsync(context, entity, offset),
+            ToDoItemType.Group => GetGroupStatusAsync(context, entity, offset),
+            ToDoItemType.Planned => GetPlannedStatusAsync(context, entity, offset),
+            ToDoItemType.Periodicity => GetDueDateStatusAsync(entity, offset),
+            ToDoItemType.PeriodicityOffset => GetDueDateStatusAsync(entity, offset),
+            ToDoItemType.Circle => GetCircleStatusAsync(context, entity, offset),
+            ToDoItemType.Step => GetStepStatusAsync(context, entity, offset),
             _ => throw new ArgumentOutOfRangeException()
         };
     }
 
-    private async Task<ToDoItemStatus> GetPlannedStatusAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
+    private async Task<ToDoItemStatus> GetPlannedStatusAsync(
+        SpravyDbToDoDbContext context,
+        ToDoItemEntity entity,
+        TimeSpan offset
+    )
     {
         if (entity.IsCompleted)
         {
             return ToDoItemStatus.Completed;
         }
 
-        if (entity.DueDate.ToDayDateTimeWithOffset() > DateTimeOffset.Now.ToDayDateTimeWithOffset())
+        if (entity.DueDate > DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
         {
             return ToDoItemStatus.Planned;
         }
@@ -39,7 +43,7 @@ public class StatusToDoItemService
 
         foreach (var item in items)
         {
-            var status = await GetStatusAsync(context, item);
+            var status = await GetStatusAsync(context, item, offset);
 
             switch (status)
             {
@@ -51,22 +55,22 @@ public class StatusToDoItemService
             }
         }
 
-        return await GetDueDateStatusAsync(entity);
+        return await GetDueDateStatusAsync(entity, offset);
     }
 
-    private Task<ToDoItemStatus> GetDueDateStatusAsync(ToDoItemEntity entity)
+    private Task<ToDoItemStatus> GetDueDateStatusAsync(ToDoItemEntity entity, TimeSpan offset)
     {
-        if (entity.DueDate.ToDayDateTimeWithOffset() == DateTimeOffset.Now.ToDayDateTimeWithOffset())
+        if (entity.DueDate == DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
         {
             return ToDoItemStatus.ReadyForComplete.ToTaskResult();
         }
 
-        if (entity.DueDate.ToDayDateTimeWithOffset() < DateTimeOffset.Now.ToDayDateTimeWithOffset())
+        if (entity.DueDate < DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
         {
             return ToDoItemStatus.Miss.ToTaskResult();
         }
 
-        if (entity.DueDate.ToDayDateTimeWithOffset() > DateTimeOffset.Now.ToDayDateTimeWithOffset())
+        if (entity.DueDate > DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
         {
             return ToDoItemStatus.Planned.ToTaskResult();
         }
@@ -74,7 +78,11 @@ public class StatusToDoItemService
         throw new ArgumentOutOfRangeException();
     }
 
-    private async Task<ToDoItemStatus> GetGroupStatusAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
+    private async Task<ToDoItemStatus> GetGroupStatusAsync(
+        SpravyDbToDoDbContext context,
+        ToDoItemEntity entity,
+        TimeSpan offset
+    )
     {
         var items = await context.Set<ToDoItemEntity>().Where(x => x.ParentId == entity.Id).ToArrayAsync();
         var completedCount = 0;
@@ -82,7 +90,7 @@ public class StatusToDoItemService
 
         foreach (var item in items)
         {
-            var status = await GetStatusAsync(context, item);
+            var status = await GetStatusAsync(context, item, offset);
 
             switch (status)
             {
@@ -117,7 +125,11 @@ public class StatusToDoItemService
         return ToDoItemStatus.Planned;
     }
 
-    private async Task<ToDoItemStatus> GetValueStatusAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
+    private async Task<ToDoItemStatus> GetValueStatusAsync(
+        SpravyDbToDoDbContext context,
+        ToDoItemEntity entity,
+        TimeSpan offset
+    )
     {
         if (entity.IsCompleted)
         {
@@ -128,7 +140,7 @@ public class StatusToDoItemService
 
         foreach (var item in items)
         {
-            var status = await GetStatusAsync(context, item);
+            var status = await GetStatusAsync(context, item, offset);
 
             switch (status)
             {
@@ -143,7 +155,11 @@ public class StatusToDoItemService
         return ToDoItemStatus.ReadyForComplete;
     }
 
-    private async Task<ToDoItemStatus> GetCircleStatusAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
+    private async Task<ToDoItemStatus> GetCircleStatusAsync(
+        SpravyDbToDoDbContext context,
+        ToDoItemEntity entity,
+        TimeSpan offset
+    )
     {
         if (entity.IsCompleted)
         {
@@ -154,7 +170,7 @@ public class StatusToDoItemService
 
         foreach (var item in items)
         {
-            var status = await GetStatusAsync(context, item);
+            var status = await GetStatusAsync(context, item, offset);
 
             switch (status)
             {
@@ -168,8 +184,12 @@ public class StatusToDoItemService
 
         return ToDoItemStatus.ReadyForComplete;
     }
-    
-    private async Task<ToDoItemStatus> GetStepStatusAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
+
+    private async Task<ToDoItemStatus> GetStepStatusAsync(
+        SpravyDbToDoDbContext context,
+        ToDoItemEntity entity,
+        TimeSpan offset
+    )
     {
         if (entity.IsCompleted)
         {
@@ -180,7 +200,7 @@ public class StatusToDoItemService
 
         foreach (var item in items)
         {
-            var status = await GetStatusAsync(context, item);
+            var status = await GetStatusAsync(context, item, offset);
 
             switch (status)
             {

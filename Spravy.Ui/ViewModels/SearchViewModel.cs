@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -51,7 +52,7 @@ public class SearchViewModel : RoutableViewModelBase, IRefreshToDoItem
 
     public async Task RefreshToDoItemAsync()
     {
-        var items = await ToDoService.SearchToDoSubItemsAsync(SearchText);
+        var items = await ToDoService.SearchToDoSubItemsAsync(SearchText, DateTimeOffset.Now.Offset);
 
         await ToDoSubItemsView.ViewModel.ThrowIfNull()
             .UpdateItemsAsync(Mapper.Map<IEnumerable<ToDoSubItemNotify>>(items), this);

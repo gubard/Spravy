@@ -33,6 +33,10 @@ public class SpravyToDoProfile : Profile
         CreateMap<ToDoItemPlanned, ToDoItemPlannedGrpc>();
         CreateMap<ToDoSubItemPlanned, ToDoSubItemPlannedGrpc>();
         CreateMap<ToDoItemCircle, ToDoItemCircleGrpc>();
+        CreateMap<DateOnly, Timestamp>().ConvertUsing(x => Timestamp.FromDateTime(x.ToDateTime(DateTimeKind.Utc)));
+        CreateMap<Timestamp, DateOnly>().ConvertUsing(x => x.ToDateTime().ToDateOnly());
+        CreateMap<DateOnly, DateTimeOffset>().ConvertUsing(x => x.ToDateTimeOffset());
+        CreateMap<DateTimeOffset, DateOnly>().ConvertUsing(x => x.Date.ToDateOnly());
         CreateMap<ToDoSubItemCircle, ToDoSubItemCircleGrpc>();
         CreateMap<ToDoSubItemPeriodicity, ToDoSubItemPeriodicityGrpc>();
         CreateMap<DailyPeriodicity, DailyPeriodicityGrpc>();
@@ -41,7 +45,8 @@ public class SpravyToDoProfile : Profile
         CreateMap<AddRootToDoItemRequest, AddRootToDoItemOptions>();
         CreateMap<TimeSpan, Duration>().ConvertUsing(x => TimeSpanToDuration(x));
         CreateMap<TimeSpan?, Duration?>().ConvertUsing(x => TimeSpanToDuration(x));
-        CreateMap<Duration?, TimeSpan?>().ConvertUsing(x => DurationToTimeSpan(x));
+        CreateMap<Duration?, TimeSpan?>().ConvertUsing(x => DurationToTimeSpanNull(x));
+        CreateMap<Duration, TimeSpan>().ConvertUsing(x => DurationToTimeSpan(x));
         CreateMap<DayOfYearGrpc, DayOfYear>().ConstructUsing(x => new((byte)x.Day, (byte)x.Month));
         CreateMap<DateTimeOffsetGrpc, DateTimeOffset?>().ConvertUsing(x => ToNullableDateTimeOffset(x));
         CreateMap<DateTimeOffsetGrpc, DateTimeOffset>().ConvertUsing(x => ToDateTimeOffset(x));
@@ -148,7 +153,7 @@ public class SpravyToDoProfile : Profile
                 {
                     var result = new ToDoItemPeriodicityGrpc
                     {
-                        DueDate = resolutionContext.Mapper.Map<DateTimeOffsetGrpc>(source.DueDate),
+                        DueDate = resolutionContext.Mapper.Map<Timestamp>(source.DueDate),
                         ChildrenType = (ToDoItemChildrenTypeGrpc)source.ChildrenType,
                     };
 
@@ -356,7 +361,7 @@ public class SpravyToDoProfile : Profile
                         context.Mapper.Map<IToDoSubItem[]>(source.Items),
                         context.Mapper.Map<ToDoItemParent[]>(source.Parents),
                         source.IsFavorite,
-                        context.Mapper.Map<DateTimeOffset>(source.Planned.DueDate),
+                        context.Mapper.Map<DateOnly>(source.Planned.DueDate),
                         source.Planned.IsCompleted,
                         (ToDoItemChildrenType)source.Planned.ChildrenType,
                         context.Mapper.Map<Uri>(source.Link)
@@ -368,7 +373,7 @@ public class SpravyToDoProfile : Profile
                         context.Mapper.Map<IToDoSubItem[]>(source.Items),
                         context.Mapper.Map<ToDoItemParent[]>(source.Parents),
                         source.IsFavorite,
-                        context.Mapper.Map<DateTimeOffset>(source.Periodicity.DueDate),
+                        context.Mapper.Map<DateOnly>(source.Periodicity.DueDate),
                         context.Mapper.Map<IPeriodicity>(source.Periodicity),
                         (ToDoItemChildrenType)source.Periodicity.ChildrenType,
                         context.Mapper.Map<Uri>(source.Link)
@@ -384,7 +389,7 @@ public class SpravyToDoProfile : Profile
                         (ushort)source.PeriodicityOffset.MonthsOffset,
                         (ushort)source.PeriodicityOffset.WeeksOffset,
                         (ushort)source.PeriodicityOffset.YearsOffset,
-                        context.Mapper.Map<DateTimeOffset>(source.PeriodicityOffset.DueDate),
+                        context.Mapper.Map<DateOnly>(source.PeriodicityOffset.DueDate),
                         (ToDoItemChildrenType)source.PeriodicityOffset.ChildrenType,
                         context.Mapper.Map<Uri>(source.Link)
                     ),
@@ -518,7 +523,7 @@ public class SpravyToDoProfile : Profile
                         source.Description,
                         source.IsFavorite,
                         context.Mapper.Map<ActiveToDoItem?>(source.Active),
-                        context.Mapper.Map<DateTimeOffset>(source.Planned.DueDate),
+                        context.Mapper.Map<DateOnly>(source.Planned.DueDate),
                         source.Planned.CompletedCount,
                         source.Planned.SkippedCount,
                         source.Planned.FailedCount,
@@ -533,7 +538,7 @@ public class SpravyToDoProfile : Profile
                         (ToDoItemStatus)source.Status,
                         source.Description,
                         source.IsFavorite,
-                        context.Mapper.Map<DateTimeOffset>(source.Periodicity.DueDate),
+                        context.Mapper.Map<DateOnly>(source.Periodicity.DueDate),
                         context.Mapper.Map<ActiveToDoItem?>(source.Active),
                         source.Periodicity.CompletedCount,
                         source.Periodicity.SkippedCount,
@@ -548,7 +553,7 @@ public class SpravyToDoProfile : Profile
                         (ToDoItemStatus)source.Status,
                         source.Description,
                         source.IsFavorite,
-                        context.Mapper.Map<DateTimeOffset>(source.PeriodicityOffset.DueDate),
+                        context.Mapper.Map<DateOnly>(source.PeriodicityOffset.DueDate),
                         context.Mapper.Map<ActiveToDoItem?>(source.Active),
                         source.PeriodicityOffset.CompletedCount,
                         source.PeriodicityOffset.SkippedCount,
@@ -629,9 +634,14 @@ public class SpravyToDoProfile : Profile
         return Duration.FromTimeSpan(span);
     }
 
-    private TimeSpan? DurationToTimeSpan(Duration? duration)
+    private TimeSpan? DurationToTimeSpanNull(Duration? duration)
     {
         return duration?.ToTimeSpan();
+    }
+
+    private TimeSpan DurationToTimeSpan(Duration duration)
+    {
+        return duration.ToTimeSpan();
     }
 
     private Timestamp? ToTimestamp(DateTimeOffset? date)

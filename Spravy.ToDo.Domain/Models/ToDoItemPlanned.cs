@@ -12,7 +12,7 @@ public readonly struct ToDoItemPlanned : IToDoItem
         IToDoSubItem[] items,
         ToDoItemParent[] parents,
         bool isFavorite,
-        DateTimeOffset dueDate,
+        DateOnly dueDate,
         bool isCompleted,
         ToDoItemChildrenType childrenType,
         Uri? link
@@ -38,6 +38,6 @@ public readonly struct ToDoItemPlanned : IToDoItem
     public bool IsFavorite { get; }
     public Uri? Link { get; }
     public ToDoItemChildrenType ChildrenType { get; }
-    public DateTimeOffset DueDate { get; }
+    public DateOnly DueDate { get; }
     public bool IsCompleted { get; }
 }

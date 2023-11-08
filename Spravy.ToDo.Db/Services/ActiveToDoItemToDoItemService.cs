@@ -16,55 +16,71 @@ public class ActiveToDoItemToDoItemService
         this.statusToDoItemService = statusToDoItemService;
     }
 
-    public async Task<ActiveToDoItem?> GetActiveItemAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
+    public async Task<ActiveToDoItem?> GetActiveItemAsync(
+        SpravyDbToDoDbContext context,
+        ToDoItemEntity entity,
+        TimeSpan offset
+    )
     {
-        var result = await GetActiveToDoItemAsync(context, entity);
+        var result = await GetActiveToDoItemAsync(context, entity, offset);
 
         return ToActiveToDoItem(entity, result);
     }
 
-    private Task<ActiveToDoItem?> GetActiveToDoItemAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
+    private Task<ActiveToDoItem?> GetActiveToDoItemAsync(
+        SpravyDbToDoDbContext context,
+        ToDoItemEntity entity,
+        TimeSpan offset
+    )
     {
         return entity.Type switch
         {
-            ToDoItemType.Value => GetValueActiveItemAsync(context, entity),
-            ToDoItemType.Group => GetGroupActiveItemAsync(context, entity),
-            ToDoItemType.Planned => GetPlannedActiveItemAsync(context, entity),
-            ToDoItemType.Periodicity => GetActiveItemByDueDateAsync(context, entity),
-            ToDoItemType.PeriodicityOffset => GetActiveItemByDueDateAsync(context, entity),
-            ToDoItemType.Circle => GetCircleActiveItemAsync(context, entity),
-            ToDoItemType.Step => GetStepActiveItemAsync(context, entity),
+            ToDoItemType.Value => GetValueActiveItemAsync(context, entity, offset),
+            ToDoItemType.Group => GetGroupActiveItemAsync(context, entity, offset),
+            ToDoItemType.Planned => GetPlannedActiveItemAsync(context, entity, offset),
+            ToDoItemType.Periodicity => GetActiveItemByDueDateAsync(context, entity, offset),
+            ToDoItemType.PeriodicityOffset => GetActiveItemByDueDateAsync(context, entity, offset),
+            ToDoItemType.Circle => GetCircleActiveItemAsync(context, entity, offset),
+            ToDoItemType.Step => GetStepActiveItemAsync(context, entity, offset),
             _ => throw new ArgumentOutOfRangeException()
         };
     }
 
-    private Task<ActiveToDoItem?> GetPlannedActiveItemAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
+    private Task<ActiveToDoItem?> GetPlannedActiveItemAsync(
+        SpravyDbToDoDbContext context,
+        ToDoItemEntity entity,
+        TimeSpan offset
+    )
     {
         return entity.IsCompleted
             ? Task.FromResult<ActiveToDoItem?>(null)
-            : GetActiveItemByDueDateAsync(context, entity);
+            : GetActiveItemByDueDateAsync(context, entity, offset);
     }
 
-    private Task<ActiveToDoItem?> GetActiveItemByDueDateAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
+    private Task<ActiveToDoItem?> GetActiveItemByDueDateAsync(
+        SpravyDbToDoDbContext context,
+        ToDoItemEntity entity,
+        TimeSpan offset
+    )
     {
-        return entity.DueDate.ToDayDateTimeWithOffset() > DateTimeOffset.Now.ToDayDateTimeWithOffset()
+        return entity.DueDate > DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly()
             ? Task.FromResult<ActiveToDoItem?>(null)
-            : GetChildrenActiveToDoItemAsync(context, entity, GetActiveItemByDueDate(entity));
+            : GetChildrenActiveToDoItemAsync(context, entity, GetActiveItemByDueDate(entity, offset), offset);
     }
 
-    private ActiveToDoItem? GetActiveItemByDueDate(ToDoItemEntity entity)
+    private ActiveToDoItem? GetActiveItemByDueDate(ToDoItemEntity entity, TimeSpan offset)
     {
-        if (entity.DueDate.ToDayDateTimeWithOffset() == DateTimeOffset.Now.ToDayDateTimeWithOffset())
+        if (entity.DueDate == DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
         {
             return ToActiveToDoItem(entity);
         }
 
-        if (entity.DueDate.ToDayDateTimeWithOffset() < DateTimeOffset.Now.ToDayDateTimeWithOffset())
+        if (entity.DueDate < DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
         {
             return ToActiveToDoItem(entity);
         }
 
-        if (entity.DueDate.ToDayDateTimeWithOffset() > DateTimeOffset.Now.ToDayDateTimeWithOffset())
+        if (entity.DueDate > DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
         {
             return null;
         }
@@ -72,36 +88,53 @@ public class ActiveToDoItemToDoItemService
         throw new ArgumentOutOfRangeException();
     }
 
-    private Task<ActiveToDoItem?> GetGroupActiveItemAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
+    private Task<ActiveToDoItem?> GetGroupActiveItemAsync(
+        SpravyDbToDoDbContext context,
+        ToDoItemEntity entity,
+        TimeSpan offset
+    )
     {
-        return GetChildrenActiveToDoItemAsync(context, entity, null);
+        return GetChildrenActiveToDoItemAsync(context, entity, null, offset);
     }
 
-    private Task<ActiveToDoItem?> GetValueActiveItemAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
+    private Task<ActiveToDoItem?> GetValueActiveItemAsync(
+        SpravyDbToDoDbContext context,
+        ToDoItemEntity entity,
+        TimeSpan offset
+    )
     {
         return entity.IsCompleted
             ? Task.FromResult<ActiveToDoItem?>(null)
-            : GetChildrenActiveToDoItemAsync(context, entity, ToActiveToDoItem(entity));
+            : GetChildrenActiveToDoItemAsync(context, entity, ToActiveToDoItem(entity), offset);
     }
-    
-    private Task<ActiveToDoItem?> GetCircleActiveItemAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
+
+    private Task<ActiveToDoItem?> GetCircleActiveItemAsync(
+        SpravyDbToDoDbContext context,
+        ToDoItemEntity entity,
+        TimeSpan offset
+    )
     {
         return entity.IsCompleted
             ? Task.FromResult<ActiveToDoItem?>(null)
-            : GetChildrenActiveToDoItemAsync(context, entity, ToActiveToDoItem(entity));
+            : GetChildrenActiveToDoItemAsync(context, entity, ToActiveToDoItem(entity), offset);
     }
-    
-    private Task<ActiveToDoItem?> GetStepActiveItemAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity)
+
+    private Task<ActiveToDoItem?> GetStepActiveItemAsync(
+        SpravyDbToDoDbContext context,
+        ToDoItemEntity entity,
+        TimeSpan offset
+    )
     {
         return entity.IsCompleted
             ? Task.FromResult<ActiveToDoItem?>(null)
-            : GetChildrenActiveToDoItemAsync(context, entity, ToActiveToDoItem(entity));
+            : GetChildrenActiveToDoItemAsync(context, entity, ToActiveToDoItem(entity), offset);
     }
 
     private async Task<ActiveToDoItem?> GetChildrenActiveToDoItemAsync(
         SpravyDbToDoDbContext context,
         ToDoItemEntity entity,
-        ActiveToDoItem? def
+        ActiveToDoItem? def,
+        TimeSpan offset
     )
     {
         var items = await context.Set<ToDoItemEntity>()
@@ -113,8 +146,8 @@ public class ActiveToDoItemToDoItemService
 
         foreach (var item in items)
         {
-            var status = await statusToDoItemService.GetStatusAsync(context, item);
-            var activeItem = await GetActiveToDoItemAsync(context, item);
+            var status = await statusToDoItemService.GetStatusAsync(context, item, offset);
+            var activeItem = await GetActiveToDoItemAsync(context, item, offset);
 
             switch (status)
             {

@@ -58,7 +58,7 @@ public class AddToDoItemViewModel : RoutableViewModelBase
 
     private async Task InitializedAsync()
     {
-        var item = await ToDoService.GetToDoItemAsync(Parent.ThrowIfNull().Id);
+        var item = await ToDoService.GetToDoItemAsync(Parent.ThrowIfNull().Id, DateTimeOffset.Now.Offset);
         Path.Items ??= new();
         Path.Items.Clear();
         Path.Items.Add(new RootItem());

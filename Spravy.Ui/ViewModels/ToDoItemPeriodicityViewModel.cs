@@ -23,7 +23,7 @@ namespace Spravy.Ui.ViewModels;
 public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
 {
     private ToDoItemChildrenType childrenType;
-    private DateTimeOffset dueDate;
+    private DateOnly dueDate;
     private TypeOfPeriodicity typeOfPeriodicity;
     private PeriodicityViewModel? periodicity;
     private IDisposable? periodicitySub;
@@ -60,7 +60,7 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
         set => this.RaiseAndSetIfChanged(ref typeOfPeriodicity, value);
     }
 
-    public DateTimeOffset DueDate
+    public DateOnly DueDate
     {
         get => dueDate;
         set => this.RaiseAndSetIfChanged(ref dueDate, value);
@@ -71,11 +71,11 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
         return DialogViewer.ShowDateConfirmDialogAsync(
             value =>
             {
-                DueDate = value;
+                DueDate = value.ToDateOnly();
 
                 return DialogViewer.CloseInputDialogAsync();
             },
-            calendar => calendar.SelectedDate = DueDate.Date
+            calendar => calendar.SelectedDate = DueDate.ToDateTime()
         );
     }
 
@@ -93,13 +93,13 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
                     switch (status)
                     {
                         case CompleteStatus.Complete:
-                            await ToDoService.UpdateToDoItemCompleteStatusAsync(Id, true);
+                            await ToDoService.UpdateToDoItemCompleteStatusAsync(Id, true, DateTimeOffset.Now.Offset);
                             break;
                         case CompleteStatus.Skip:
-                            await ToDoService.SkipToDoItemAsync(Id);
+                            await ToDoService.SkipToDoItemAsync(Id, DateTimeOffset.Now.Offset);
                             break;
                         case CompleteStatus.Fail:
-                            await ToDoService.FailToDoItemAsync(Id);
+                            await ToDoService.FailToDoItemAsync(Id, DateTimeOffset.Now.Offset);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException(nameof(status), status, null);
@@ -116,7 +116,7 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
     {
         UnsubscribeProperties();
         Path.Items ??= new();
-        var item = await ToDoService.GetToDoItemAsync(Id);
+        var item = await ToDoService.GetToDoItemAsync(Id, DateTimeOffset.Now.Offset);
 
         switch (item)
         {
@@ -174,7 +174,7 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
                 await SafeExecuteAsync(
                     async () =>
                     {
-                        await ToDoService.UpdateToDoItemCompleteStatusAsync(itemNotify.Id, x);
+                        await ToDoService.UpdateToDoItemCompleteStatusAsync(itemNotify.Id, x, DateTimeOffset.Now.Offset);
                         await RefreshToDoItemAsync();
                     }
                 );
@@ -185,7 +185,7 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
     }
 
 
-    private async void OnNextDueDate(DateTimeOffset x)
+    private async void OnNextDueDate(DateOnly x)
     {
         await SafeExecuteAsync(
             async () =>

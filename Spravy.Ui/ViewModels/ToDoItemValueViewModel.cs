@@ -64,16 +64,16 @@ public class ToDoItemValueViewModel : ToDoItemViewModel, IRefreshToDoItem
                     switch (status)
                     {
                         case CompleteStatus.Complete:
-                            await ToDoService.UpdateToDoItemCompleteStatusAsync(Id, true);
+                            await ToDoService.UpdateToDoItemCompleteStatusAsync(Id, true, DateTimeOffset.Now.Offset);
                             break;
                         case CompleteStatus.Skip:
-                            await ToDoService.SkipToDoItemAsync(Id);
+                            await ToDoService.SkipToDoItemAsync(Id, DateTimeOffset.Now.Offset);
                             break;
                         case CompleteStatus.Fail:
-                            await ToDoService.FailToDoItemAsync(Id);
+                            await ToDoService.FailToDoItemAsync(Id, DateTimeOffset.Now.Offset);
                             break;
                         case CompleteStatus.Incomplete:
-                            await ToDoService.UpdateToDoItemCompleteStatusAsync(Id, false);
+                            await ToDoService.UpdateToDoItemCompleteStatusAsync(Id, false, DateTimeOffset.Now.Offset);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException(nameof(status), status, null);
@@ -91,7 +91,7 @@ public class ToDoItemValueViewModel : ToDoItemViewModel, IRefreshToDoItem
         await SafeExecuteAsync(
             async () =>
             {
-                await ToDoService.UpdateToDoItemCompleteStatusAsync(Id, x);
+                await ToDoService.UpdateToDoItemCompleteStatusAsync(Id, x, DateTimeOffset.Now.Offset);
                 await RefreshToDoItemAsync();
             }
         );
@@ -101,7 +101,7 @@ public class ToDoItemValueViewModel : ToDoItemViewModel, IRefreshToDoItem
     {
         UnsubscribeProperties();
         Path.Items ??= new();
-        var item = await ToDoService.GetToDoItemAsync(Id);
+        var item = await ToDoService.GetToDoItemAsync(Id, DateTimeOffset.Now.Offset);
 
         switch (item)
         {
@@ -159,7 +159,7 @@ public class ToDoItemValueViewModel : ToDoItemViewModel, IRefreshToDoItem
                 await SafeExecuteAsync(
                     async () =>
                     {
-                        await ToDoService.UpdateToDoItemCompleteStatusAsync(itemNotify.Id, x);
+                        await ToDoService.UpdateToDoItemCompleteStatusAsync(itemNotify.Id, x, DateTimeOffset.Now.Offset);
                         await RefreshToDoItemAsync();
                     }
                 );

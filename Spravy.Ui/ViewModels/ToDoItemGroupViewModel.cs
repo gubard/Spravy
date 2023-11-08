@@ -22,7 +22,7 @@ public class ToDoItemGroupViewModel : ToDoItemViewModel, IRefreshToDoItem
     {
         UnsubscribeProperties();
         Path.Items ??= new();
-        var item = await ToDoService.GetToDoItemAsync(Id);
+        var item = await ToDoService.GetToDoItemAsync(Id, DateTimeOffset.Now.Offset);
 
         switch (item)
         {
@@ -78,7 +78,7 @@ public class ToDoItemGroupViewModel : ToDoItemViewModel, IRefreshToDoItem
                 await SafeExecuteAsync(
                     async () =>
                     {
-                        await ToDoService.UpdateToDoItemCompleteStatusAsync(itemNotify.Id, x);
+                        await ToDoService.UpdateToDoItemCompleteStatusAsync(itemNotify.Id, x, DateTimeOffset.Now.Offset);
                         await RefreshToDoItemAsync();
                     }
                 );

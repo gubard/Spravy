@@ -1,5 +1,6 @@
 using AutoMapper;
 using Google.Protobuf;
+using Google.Protobuf.WellKnownTypes;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
 using Spravy.Domain.Interfaces;
@@ -29,20 +30,26 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         this.metadataFactory = metadataFactory;
     }
 
-    public Task<IEnumerable<IToDoSubItem>> GetRootToDoSubItemsAsync()
+    public Task<IEnumerable<IToDoSubItem>> GetRootToDoSubItemsAsync(TimeSpan offset)
     {
         return CallClientAsync(
             async client =>
             {
                 var metadata = await metadataFactory.CreateAsync();
-                var items = await client.GetRootToDoSubItemsAsync(new(), metadata);
+
+                var request = new GetRootToDoSubItemsRequest
+                {
+                    Offset = mapper.Map<Duration>(offset),
+                };
+
+                var items = await client.GetRootToDoSubItemsAsync(request, metadata);
 
                 return mapper.Map<IEnumerable<IToDoSubItem>>(items.Items);
             }
         );
     }
 
-    public Task<IToDoItem> GetToDoItemAsync(Guid id)
+    public Task<IToDoItem> GetToDoItemAsync(Guid id, TimeSpan offset)
     {
         return CallClientAsync(
             async client =>
@@ -51,7 +58,8 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
 
                 var request = new GetToDoItemRequest
                 {
-                    Id = byteStringId
+                    Id = byteStringId,
+                    Offset = mapper.Map<Duration>(offset),
                 };
 
                 var item = await client.GetToDoItemAsync(request, await metadataFactory.CreateAsync());
@@ -61,6 +69,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
             }
         );
     }
+
 
     public Task<Guid> AddRootToDoItemAsync(AddRootToDoItemOptions options)
     {
@@ -75,12 +84,13 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public Task<Guid> AddToDoItemAsync(AddToDoItemOptions options)
+    public Task<Guid> AddToDoItemAsync(AddToDoItemOptions options, TimeSpan offset)
     {
         return CallClientAsync(
             async client =>
             {
                 var request = mapper.Map<AddToDoItemRequest>(options);
+                request.Offset = mapper.Map<Duration>(offset);
                 var id = await client.AddToDoItemAsync(request, await metadataFactory.CreateAsync());
 
                 return mapper.Map<Guid>(id.Id);
@@ -119,7 +129,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public Task UpdateToDoItemDueDateAsync(Guid id, DateTimeOffset dueDate)
+    public Task UpdateToDoItemDueDateAsync(Guid id, DateOnly dueDate)
     {
         return CallClientAsync(
             async client =>
@@ -127,7 +137,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                 var request = new UpdateToDoItemDueDateRequest
                 {
                     Id = mapper.Map<ByteString>(id),
-                    DueDate = mapper.Map<DateTimeOffsetGrpc>(dueDate),
+                    DueDate = mapper.Map<Timestamp>(dueDate),
                 };
 
                 await client.UpdateToDoItemDueDateAsync(request, await metadataFactory.CreateAsync());
@@ -135,19 +145,19 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public Task UpdateToDoItemCompleteStatusAsync(Guid id, bool isCompleted)
+    public Task UpdateToDoItemCompleteStatusAsync(Guid id, bool isCompleted, TimeSpan offset)
     {
         return CallClientAsync(
             async client =>
             {
-                await client.UpdateToDoItemCompleteStatusAsync(
-                    new()
-                    {
-                        Id = mapper.Map<ByteString>(id),
-                        IsCompleted = isCompleted
-                    },
-                    await metadataFactory.CreateAsync()
-                );
+                var request = new UpdateToDoItemCompleteStatusRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                    IsCompleted = isCompleted,
+                    Offset = mapper.Map<Duration>(offset),
+                };
+
+                await client.UpdateToDoItemCompleteStatusAsync(request, await metadataFactory.CreateAsync());
             }
         );
     }
@@ -199,50 +209,50 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public Task SkipToDoItemAsync(Guid id)
+    public Task SkipToDoItemAsync(Guid id, TimeSpan offset)
     {
         return CallClientAsync(
             async client =>
             {
-                await client.SkipToDoItemAsync(
-                    new()
-                    {
-                        Id = mapper.Map<ByteString>(id),
-                    },
-                    await metadataFactory.CreateAsync()
-                );
+                var request = new SkipToDoItemRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                    Offset = mapper.Map<Duration>(offset),
+                };
+
+                await client.SkipToDoItemAsync(request, await metadataFactory.CreateAsync());
             }
         );
     }
 
-    public Task FailToDoItemAsync(Guid id)
+    public Task FailToDoItemAsync(Guid id, TimeSpan offset)
     {
         return CallClientAsync(
             async client =>
             {
-                await client.FailToDoItemAsync(
-                    new()
-                    {
-                        Id = mapper.Map<ByteString>(id),
-                    },
-                    await metadataFactory.CreateAsync()
-                );
+                var request = new FailToDoItemRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                    Offset = mapper.Map<Duration>(offset),
+                };
+
+                await client.FailToDoItemAsync(request, await metadataFactory.CreateAsync());
             }
         );
     }
 
-    public Task<IEnumerable<IToDoSubItem>> SearchToDoSubItemsAsync(string searchText)
+    public Task<IEnumerable<IToDoSubItem>> SearchToDoSubItemsAsync(string searchText, TimeSpan offset)
     {
         return CallClientAsync(
             async client =>
             {
-                var reply = await client.SearchToDoSubItemsAsync(
-                    new()
-                    {
-                        SearchText = searchText
-                    },
-                    await metadataFactory.CreateAsync()
-                );
+                var request = new SearchToDoSubItemsRequest
+                {
+                    SearchText = searchText,
+                    Offset = mapper.Map<Duration>(offset),
+                };
+
+                var reply = await client.SearchToDoSubItemsAsync(request, await metadataFactory.CreateAsync());
 
                 return mapper.Map<IEnumerable<IToDoSubItem>>(reply.Items);
             }
@@ -299,15 +309,17 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public Task<IEnumerable<IToDoSubItem>> GetFavoriteToDoItemsAsync()
+    public Task<IEnumerable<IToDoSubItem>> GetFavoriteToDoItemsAsync(TimeSpan offset)
     {
         return CallClientAsync(
             async client =>
             {
-                var reply = await client.GetFavoriteToDoItemsAsync(
-                    new(),
-                    await metadataFactory.CreateAsync()
-                );
+                var request = new GetFavoriteToDoItemsRequest
+                {
+                    Offset = mapper.Map<Duration>(offset),
+                };
+
+                var reply = await client.GetFavoriteToDoItemsAsync(request, await metadataFactory.CreateAsync());
 
                 return mapper.Map<IEnumerable<IToDoSubItem>>(reply.Items);
             }
@@ -365,18 +377,18 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public Task<IEnumerable<IToDoSubItem>> GetLeafToDoSubItemsAsync(Guid id)
+    public Task<IEnumerable<IToDoSubItem>> GetLeafToDoSubItemsAsync(Guid id, TimeSpan offset)
     {
         return CallClientAsync(
             async client =>
             {
-                var reply = await client.GetLeafToDoSubItemsAsync(
-                    new()
-                    {
-                        Id = mapper.Map<ByteString>(id),
-                    },
-                    await metadataFactory.CreateAsync()
-                );
+                var request = new GetLeafToDoSubItemsRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                    Offset = mapper.Map<Duration>(offset),
+                };
+
+                var reply = await client.GetLeafToDoSubItemsAsync(request, await metadataFactory.CreateAsync());
 
                 return mapper.Map<IEnumerable<IToDoSubItem>>(reply.Items);
             }
@@ -430,12 +442,13 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public Task<string> ToDoItemToStringAsync(ToDoItemToStringOptions options)
+    public Task<string> ToDoItemToStringAsync(ToDoItemToStringOptions options, TimeSpan offset)
     {
         return CallClientAsync(
             async client =>
             {
                 var request = mapper.Map<ToDoItemToStringRequest>(options);
+                request.Offset = mapper.Map<Duration>(offset);
                 var reply = await client.ToDoItemToStringAsync(request, await metadataFactory.CreateAsync());
 
                 return reply.Value;
@@ -545,12 +558,16 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public Task<ActiveToDoItem?> GetActiveToDoItemAsync()
+    public Task<ActiveToDoItem?> GetActiveToDoItemAsync(TimeSpan offset)
     {
         return CallClientAsync(
             async client =>
             {
-                var request = new GetActiveItemRequest();
+                var request = new GetActiveItemRequest
+                {
+                    Offset = mapper.Map<Duration>(offset),
+                };
+
                 var reply = await client.GetActiveItemAsync(request, await metadataFactory.CreateAsync());
 
                 return mapper.Map<ActiveToDoItem?>(reply.Item);

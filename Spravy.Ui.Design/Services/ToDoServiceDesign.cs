@@ -38,7 +38,22 @@ public class ToDoServiceDesign : IToDoService
         return item.ToTaskResult();
     }
 
+    public Task<IEnumerable<IToDoSubItem>> GetRootToDoSubItemsAsync(TimeSpan offset)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<IToDoItem> GetToDoItemAsync(Guid id, TimeSpan offset)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task<Guid> AddRootToDoItemAsync(AddRootToDoItemOptions options)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Guid> AddToDoItemAsync(AddToDoItemOptions options, TimeSpan offset)
     {
         throw new NotImplementedException();
     }
@@ -54,6 +69,11 @@ public class ToDoServiceDesign : IToDoService
     }
 
     public Task UpdateToDoItemTypeOfPeriodicityAsync(Guid id, TypeOfPeriodicity type)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task UpdateToDoItemDueDateAsync(Guid id, DateOnly dueDate)
     {
         throw new NotImplementedException();
     }
@@ -74,6 +94,26 @@ public class ToDoServiceDesign : IToDoService
     }
 
     public Task UpdateToDoItemDescriptionAsync(Guid id, string description)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task UpdateToDoItemCompleteStatusAsync(Guid id, bool isCompleted, TimeSpan offset)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task SkipToDoItemAsync(Guid id, TimeSpan offset)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task FailToDoItemAsync(Guid id, TimeSpan offset)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<IEnumerable<IToDoSubItem>> SearchToDoSubItemsAsync(string searchText, TimeSpan offset)
     {
         throw new NotImplementedException();
     }
@@ -113,6 +153,11 @@ public class ToDoServiceDesign : IToDoService
         throw new NotImplementedException();
     }
 
+    public Task<IEnumerable<IToDoSubItem>> GetFavoriteToDoItemsAsync(TimeSpan offset)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task<IEnumerable<IToDoSubItem>> GetFavoriteToDoItemsAsync()
     {
         return favorite.ToTaskResult();
@@ -133,6 +178,11 @@ public class ToDoServiceDesign : IToDoService
         throw new NotImplementedException();
     }
 
+    public Task<IEnumerable<IToDoSubItem>> GetLeafToDoSubItemsAsync(Guid id, TimeSpan offset)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task<IEnumerable<IToDoSubItem>> GetLeafToDoSubItemsAsync(Guid id)
     {
         return leafs.ToTaskResult();
@@ -149,6 +199,11 @@ public class ToDoServiceDesign : IToDoService
     }
 
     public Task ToDoItemToRootAsync(Guid id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<string> ToDoItemToStringAsync(ToDoItemToStringOptions options, TimeSpan offset)
     {
         throw new NotImplementedException();
     }
@@ -186,6 +241,11 @@ public class ToDoServiceDesign : IToDoService
     public Task<IEnumerable<ToDoShortItem>> GetSiblingsAsync(Guid id)
     {
         return siblings.ToTaskResult();
+    }
+
+    public Task<ActiveToDoItem?> GetActiveToDoItemAsync(TimeSpan offset)
+    {
+        throw new NotImplementedException();
     }
 
     public Task<ActiveToDoItem?> GetActiveToDoItemAsync()

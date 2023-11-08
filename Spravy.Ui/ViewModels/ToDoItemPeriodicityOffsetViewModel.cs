@@ -19,7 +19,7 @@ namespace Spravy.Ui.ViewModels;
 
 public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToDoItem
 {
-    private DateTimeOffset dueDate;
+    private DateOnly dueDate;
     private ushort daysOffset;
     private ushort monthsOffset;
     private ushort yearsOffset;
@@ -43,7 +43,7 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
         set => this.RaiseAndSetIfChanged(ref childrenType, value);
     }
 
-    public DateTimeOffset DueDate
+    public DateOnly DueDate
     {
         get => dueDate;
         set => this.RaiseAndSetIfChanged(ref dueDate, value);
@@ -78,11 +78,11 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
         return DialogViewer.ShowDateConfirmDialogAsync(
             value =>
             {
-                DueDate = value;
+                DueDate = value.ToDateOnly();
 
                 return DialogViewer.CloseInputDialogAsync();
             },
-            calendar => calendar.SelectedDate = DueDate.Date
+            calendar => calendar.SelectedDate = DueDate.ToDateTime()
         );
     }
 
@@ -90,7 +90,7 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
     {
         UnsubscribeProperties();
         Path.Items ??= new();
-        var item = await ToDoService.GetToDoItemAsync(Id);
+        var item = await ToDoService.GetToDoItemAsync(Id, DateTimeOffset.Now.Offset);
 
         switch (item)
         {
@@ -155,7 +155,6 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
         yield return this.WhenAnyValue(x => x.Description).Skip(1).Subscribe(OnNextDescription);
         yield return this.WhenAnyValue(x => x.Type).Skip(1).Subscribe(OnNextType);
         yield return this.WhenAnyValue(x => x.DueDate).Skip(1).Subscribe(OnNextDueDate);
-        yield return this.WhenAnyValue(x => x.DueDate).Skip(1).Subscribe(OnNextDueDate);
         yield return this.WhenAnyValue(x => x.DaysOffset).Skip(1).Subscribe(OnNextDaysOffset);
         yield return this.WhenAnyValue(x => x.WeeksOffset).Skip(1).Subscribe(OnNextWeeksOffset);
         yield return this.WhenAnyValue(x => x.MonthsOffset).Skip(1).Subscribe(OnNextMonthsOffset);
@@ -219,7 +218,7 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
         );
     }
 
-    private async void OnNextDueDate(DateTimeOffset x)
+    private async void OnNextDueDate(DateOnly x)
     {
         await SafeExecuteAsync(
             async () =>
@@ -239,7 +238,7 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
                 await SafeExecuteAsync(
                     async () =>
                     {
-                        await ToDoService.UpdateToDoItemCompleteStatusAsync(itemNotify.Id, x);
+                        await ToDoService.UpdateToDoItemCompleteStatusAsync(itemNotify.Id, x, DateTimeOffset.Now.Offset);
                         await RefreshToDoItemAsync();
                     }
                 );
@@ -263,13 +262,13 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
                     switch (status)
                     {
                         case CompleteStatus.Complete:
-                            await ToDoService.UpdateToDoItemCompleteStatusAsync(Id, true);
+                            await ToDoService.UpdateToDoItemCompleteStatusAsync(Id, true, DateTimeOffset.Now.Offset);
                             break;
                         case CompleteStatus.Skip:
-                            await ToDoService.SkipToDoItemAsync(Id);
+                            await ToDoService.SkipToDoItemAsync(Id, DateTimeOffset.Now.Offset);
                             break;
                         case CompleteStatus.Fail:
-                            await ToDoService.FailToDoItemAsync(Id);
+                            await ToDoService.FailToDoItemAsync(Id, DateTimeOffset.Now.Offset);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException(nameof(status), status, null);

@@ -13,7 +13,7 @@ public readonly struct ToDoSubItemPlanned : IToDoSubItem
         string description,
         bool isFavorite,
         ActiveToDoItem? active,
-        DateTimeOffset dueDate,
+        DateOnly dueDate,
         uint completedCount,
         uint skippedCount,
         uint failedCount,
@@ -47,7 +47,7 @@ public readonly struct ToDoSubItemPlanned : IToDoSubItem
     public ActiveToDoItem? Active { get; }
     public Uri? Link { get; }
     public DateTimeOffset? LastCompleted { get; }
-    public DateTimeOffset DueDate { get; }
+    public DateOnly DueDate { get; }
     public uint CompletedCount { get; }
     public uint SkippedCount { get; }
     public uint FailedCount { get; }
