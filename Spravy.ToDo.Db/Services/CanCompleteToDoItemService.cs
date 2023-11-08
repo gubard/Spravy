@@ -41,7 +41,9 @@ public class CanCompleteToDoItemService
 
         foreach (var item in items)
         {
-            if (!await IsCompletedAsync(context, item, offset))
+            var isCompleted = await IsCompletedAsync(context, item, offset);
+
+            if (!isCompleted)
             {
                 return false;
             }
@@ -52,16 +54,16 @@ public class CanCompleteToDoItemService
 
     private Task<bool> IsCompletedAsync(SpravyDbToDoDbContext context, ToDoItemEntity entity, TimeSpan offset)
     {
+        var now = DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly();
+
         return entity.Type switch
         {
             ToDoItemType.Value => entity.IsCompleted.ToTaskResult(),
             ToDoItemType.Step => entity.IsCompleted.ToTaskResult(),
             ToDoItemType.Group => IsCompletedItemsAsync(context, entity, offset),
-            ToDoItemType.Planned => entity.IsCompleted.ToTaskResult(),
-            ToDoItemType.Periodicity => (entity.DueDate > DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
-                .ToTaskResult(),
-            ToDoItemType.PeriodicityOffset => (entity.DueDate > DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
-                .ToTaskResult(),
+            ToDoItemType.Planned => (entity.IsCompleted || entity.DueDate > now).ToTaskResult(),
+            ToDoItemType.Periodicity => (entity.DueDate > now).ToTaskResult(),
+            ToDoItemType.PeriodicityOffset => (entity.DueDate > now).ToTaskResult(),
             ToDoItemType.Circle => entity.IsCompleted.ToTaskResult(),
             _ => throw new ArgumentOutOfRangeException()
         };
@@ -69,14 +71,16 @@ public class CanCompleteToDoItemService
 
     private bool IsCanComplete(ToDoItemEntity entity, TimeSpan offset)
     {
+        var now = DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly();
+
         return entity.Type switch
         {
             ToDoItemType.Value => !entity.IsCompleted,
             ToDoItemType.Step => !entity.IsCompleted,
             ToDoItemType.Group => false,
-            ToDoItemType.Planned => !entity.IsCompleted,
-            ToDoItemType.Periodicity => entity.DueDate <= DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly(),
-            ToDoItemType.PeriodicityOffset => entity.DueDate <= DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly(),
+            ToDoItemType.Planned => !entity.IsCompleted && entity.DueDate <= now,
+            ToDoItemType.Periodicity => entity.DueDate <= now,
+            ToDoItemType.PeriodicityOffset => entity.DueDate <= now,
             ToDoItemType.Circle => !entity.IsCompleted,
             _ => throw new ArgumentOutOfRangeException()
         };
