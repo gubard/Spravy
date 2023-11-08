@@ -137,6 +137,7 @@ public class SpravyUiProfile : Profile
                     ToDoItemPeriodicityOffsetViewModel periodicityOffset => context.Mapper
                         .Map<ToDoSubItemPeriodicityOffsetNotify>(periodicityOffset),
                     ToDoItemCircleViewModel circle => context.Mapper.Map<ToDoSubItemCircleNotify>(circle),
+                    ToDoItemStepViewModel step => context.Mapper.Map<ToDoSubItemStepNotify>(step),
                     _ => throw new ArgumentOutOfRangeException(nameof(source))
                 }
             );
