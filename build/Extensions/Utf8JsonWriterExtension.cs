@@ -33,6 +33,11 @@ public static class Utf8JsonWriterExtension
                 writer.WritePropertyName("Token");
                 writer.WriteStringValue(token);
             }
+            else if (obj.Name == "ChannelCredentialType")
+            {
+                writer.WritePropertyName("ChannelCredentialType");
+                writer.WriteStringValue("SecureSsl");
+            }
             else
             {
                 obj.WriteTo(writer);
