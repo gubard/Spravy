@@ -67,16 +67,7 @@ public static class WebApplicationBuilderExtension
     {
         builder.AddSpravy(args);
         setupServiceCollection.Invoke(builder.Services);
-
         var app = builder.Build();
-
-        if (!app.Environment.IsDevelopment())
-        {
-            app.UseExceptionHandler("/Error");
-            app.UseHsts();
-        }
-
-        app.UseHttpsRedirection();
         app.UseSerilogRequestLogging();
         app.UseRouting();
         app.UseGrpcWeb(ServiceDefaults.DefaultGrpcWebOptions);
