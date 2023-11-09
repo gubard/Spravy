@@ -68,7 +68,7 @@ class Build : NukeBuild
                     foreach (var serviceProject in ServiceProjects)
                     {
                         ServiceOptions[serviceProject] = new ServiceOptions(port, serviceProject.Name);
-                        Hosts[serviceProject.GetOptionsName()] = $"https://{ServerHost}:{port}";
+                        Hosts[serviceProject.GetOptionsName()] = $"https://{ServerHost}";
                         port++;
                     }
                 }
