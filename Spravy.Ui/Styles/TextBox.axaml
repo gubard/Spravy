@@ -3,4 +3,8 @@
     <Style Selector="TextBox.floating-watermark">
         <Setter Property="UseFloatingWatermark" Value="True" />
     </Style>
+
+    <Style Selector="TextBox.with-button /template/ TextBlock#PART_LabelText">
+        <Setter Property="Margin" Value="50,0,0,0" />
+    </Style>
 </Styles>

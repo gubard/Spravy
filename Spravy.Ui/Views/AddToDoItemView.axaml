@@ -30,6 +30,7 @@
         </ContentControl>
 
         <TextBox Text="{Binding Name}"
+                 Classes="outline dense"
                  assists:TextFieldAssist.Label="Name"
                  Theme="{StaticResource OutlineTextBox}"
                  Name="{x:Static views:AddToDoItemView.NameTextBoxName}"

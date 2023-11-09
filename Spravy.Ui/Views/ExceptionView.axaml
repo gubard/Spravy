@@ -12,7 +12,7 @@
     <TextBox Text="{Binding FullExceptionText}"
              IsReadOnly="True"
              UseFloatingWatermark="True" assists:TextFieldAssist.Label="Error message"
-             Classes="outline"
+             Classes="outline dense"
              Theme="{StaticResource OutlineTextBox}"
              AcceptsReturn="True"
              TextWrapping="Wrap" />

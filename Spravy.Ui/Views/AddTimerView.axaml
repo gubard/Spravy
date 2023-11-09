@@ -5,21 +5,35 @@
                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-                                xmlns:controls="clr-namespace:Spravy.Ui.Controls"
+                                xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
+                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                 mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                                 x:Class="Spravy.Ui.Views.AddTimerView"
                                 x:DataType="viewModels:AddTimerViewModel">
     <StackPanel>
         <CheckBox IsChecked="{Binding IsFavorite}" Content="Completed" />
-        <controls:ButtonTextBox Text="{Binding Item.Name}"
-                                Label="Item"
-                                Command="{Binding ChangeItemCommand}"
-                                IsReadOnly="True"
-                                Kind="Pencil" />
-        <controls:ButtonTextBox Text="{Binding DueDateTime}"
-                                Label="DueDateTime"
-                                Command="{Binding ChangeDueDateTimeCommand}"
-                                IsReadOnly="True"
-                                Kind="Pencil" />
+
+        <TextBox assists:TextFieldAssist.Label="Item"
+                 IsReadOnly="True"
+                 Text="{Binding Item.Name}"
+                 Classes="outline dense with-button"
+                 Theme="{StaticResource OutlineTextBox}">
+            <TextBox.InnerLeftContent>
+                <Button Command="{Binding ChangeItemCommand}" Margin="4,15,4,4">
+                    <avalonia:MaterialIcon Kind="Pencil" />
+                </Button>
+            </TextBox.InnerLeftContent>
+        </TextBox>
+
+        <TextBox assists:TextFieldAssist.Label="DueDateTime"
+                 IsReadOnly="True"
+                 Text="{Binding DueDateTime}"
+                 Classes="outline dense with-button">
+            <TextBox.InnerLeftContent>
+                <Button Command="{Binding ChangeDueDateTimeCommand}" Margin="4,15,4,4">
+                    <avalonia:MaterialIcon Kind="Pencil" />
+                </Button>
+            </TextBox.InnerLeftContent>
+        </TextBox>
     </StackPanel>
 </reactiveUi:ReactiveUserControl>

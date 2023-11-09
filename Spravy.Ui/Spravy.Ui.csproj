@@ -23,9 +23,9 @@
         <PackageReference Include="Avalonia.Xaml.Interactions.Responsive" Version="11.0.2" />
         <PackageReference Include="DialogHost.Avalonia" Version="0.7.7" />
         <PackageReference Include="Google.Protobuf" Version="3.25.0" />
-        <PackageReference Include="Grpc.Net.Client" Version="2.58.0" />
-        <PackageReference Include="Grpc.Net.Client.Web" Version="2.58.0" />
-        <PackageReference Include="Grpc.Net.ClientFactory" Version="2.58.0" />
+        <PackageReference Include="Grpc.Net.Client" Version="2.59.0" />
+        <PackageReference Include="Grpc.Net.Client.Web" Version="2.59.0" />
+        <PackageReference Include="Grpc.Net.ClientFactory" Version="2.59.0" />
         <PackageReference Include="Grpc.Tools" Version="2.59.0">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -33,7 +33,7 @@
         <PackageReference Include="Material.Avalonia" Version="3.0.2" />
         <PackageReference Include="Material.Icons.Avalonia" Version="2.0.1" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
-        <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
+        <PackageReference Include="Serilog.Sinks.Console" Version="5.0.0" />
         <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.0.3" />
     </ItemGroup>
 

@@ -31,10 +31,17 @@
                       SelectedItem="{Binding Type}"
                       ItemsSource="{Binding ToDoItemTypes}" />
 
-            <controls1:ButtonTextBox Text="{Binding Link}"
-                                     Label="Link"
-                                     Command="{Binding ChangeLinkCommand}"
-                                     Classes="edit" />
+            <TextBox Text="{Binding Link}"
+                     assists:TextFieldAssist.Label="Link"
+                     IsReadOnly="True"
+                     Classes="outline dense with-button"
+                     Theme="{StaticResource OutlineTextBox}">
+                <TextBox.InnerLeftContent>
+                    <Button Command="{Binding ChangeLinkCommand}" Margin="4,15,4,4">
+                        <avalonia:MaterialIcon Kind="Pencil" />
+                    </Button>
+                </TextBox.InnerLeftContent>
+            </TextBox>
         </StackPanel>
 
         <ScrollViewer Grid.Row="2">

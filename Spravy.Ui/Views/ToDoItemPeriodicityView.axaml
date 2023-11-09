@@ -55,15 +55,28 @@
                          Theme="{StaticResource OutlineTextBox}"
                          assists:TextFieldAssist.Label="DueDate"
                          Text="{Binding DueDate}" />-->
-            <controls:ButtonTextBox Text="{Binding DueDate}"
-                                    Label="DueDate"
-                                    Command="{Binding ChangeDueDateCommand}"
-                                    Classes="edit" />
+            <TextBox Text="{Binding DueDate}"
+                     assists:TextFieldAssist.Label="DueDate"
+                     IsReadOnly="True"
+                     Classes="outline dense with-button"
+                     Theme="{StaticResource OutlineTextBox}">
+                <TextBox.InnerLeftContent>
+                    <Button Command="{Binding ChangeDueDateCommand}" Margin="4,15,4,4">
+                        <avalonia:MaterialIcon Kind="Pencil" />
+                    </Button>
+                </TextBox.InnerLeftContent>
+            </TextBox>
 
-            <controls:ButtonTextBox Text="{Binding Link}"
-                                    Label="Link"
-                                    Command="{Binding ChangeLinkCommand}"
-                                    Classes="edit" />
+            <TextBox Text="{Binding Link}"
+                     assists:TextFieldAssist.Label="Link"
+                     IsReadOnly="True" Classes="outline dense with-button"
+                     Theme="{StaticResource OutlineTextBox}">
+                <TextBox.InnerLeftContent>
+                    <Button Command="{Binding ChangeLinkCommand}" Margin="4,15,4,4">
+                        <avalonia:MaterialIcon Kind="Pencil" />
+                    </Button>
+                </TextBox.InnerLeftContent>
+            </TextBox>
         </StackPanel>
 
         <ScrollViewer Grid.Row="2">

@@ -11,7 +11,7 @@
                                 x:Class="Spravy.Ui.Views.AddRootToDoItemView"
                                 x:DataType="viewModels:AddRootToDoItemViewModel">
     <StackPanel>
-        <TextBox Classes="floating-watermark vertical-alignment-top"
+        <TextBox Classes="floating-watermark vertical-alignment-top outline dense"
                  Theme="{StaticResource OutlineTextBox}"
                  Text="{Binding Name}"
                  assists:TextFieldAssist.Label="Name"
