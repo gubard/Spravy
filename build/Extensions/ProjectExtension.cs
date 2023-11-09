@@ -159,7 +159,7 @@ public static class ProjectExtension
 
         if (serviceOptions.TryGetValue(project, out var options))
         {
-            appSettingsFile.SetAppSettingsFile($"https://0.0.0.0:{options.Port}", hosts, token);
+            appSettingsFile.SetAppSettingsFile($"http://0.0.0.0:{options.Port}", hosts, token);
         }
         else
         {
