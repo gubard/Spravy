@@ -67,6 +67,7 @@ public static class WebApplicationBuilderExtension
         builder.AddSpravy(args);
         setupServiceCollection.Invoke(builder.Services);
         var app = builder.Build();
+        app.UseHsts();
         app.UseSerilogRequestLogging();
         app.UseRouting();
         app.UseGrpcWeb(ServiceDefaults.DefaultGrpcWebOptions);
@@ -99,6 +100,7 @@ public static class WebApplicationBuilderExtension
         setupServiceCollection.Invoke(builder.Services);
 
         var app = builder.Build();
+        app.UseHsts();
         app.UseSerilogRequestLogging();
         app.UseRouting();
         app.UseGrpcWeb(ServiceDefaults.DefaultGrpcWebOptions);
