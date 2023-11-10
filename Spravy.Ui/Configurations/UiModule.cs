@@ -75,7 +75,6 @@ public class UiModule : NinjectModule
         Bind<ISerializer>().To<ProtobufSerializer>();
         Bind<ICacheValidator<Uri, GrpcChannel>>().To<GrpcChannelCacheValidator>();
         Bind<RoutingState>().ToConstructor(_ => new RoutingState(null)).InSingletonScope();
-        Bind<RoutedViewHost>().ToSelf().OnActivation((c, x) => x.Router = c.Kernel.Get<RoutingState>());
         Bind<IViewLocator>().To<ModuleViewLocator>();
         Bind<INavigator>().To<Navigator>();
         Bind<PathControl>().ToSelf();
@@ -106,16 +105,26 @@ public class UiModule : NinjectModule
         Bind<IHttpHeaderFactory>().To<TokenHttpHeaderFactory>();
         Bind<IDialogViewer>().To<DialogViewer>();
 
+        Bind<RoutedViewHost>()
+            .ToSelf()
+            .OnActivation(
+                (c, x) =>
+                {
+                    x.ViewLocator = c.Kernel.Get<IViewLocator>();
+                    x.Router = c.Kernel.Get<RoutingState>();
+                }
+            );
+
         Bind<IClipboard>()
-        .ToMethod(
+            .ToMethod(
                 _ => Application.Current.ThrowIfNull("Application")
-                .GetTopLevel()
-                .ThrowIfNull("TopLevel")
-                .Clipboard.ThrowIfNull()
+                    .GetTopLevel()
+                    .ThrowIfNull("TopLevel")
+                    .Clipboard.ThrowIfNull()
             );
 
         Bind<SplitView>()
-        .ToMethod(
+            .ToMethod(
                 _ =>
                 {
                     var splitView = new SplitView
@@ -127,12 +136,12 @@ public class UiModule : NinjectModule
                     return splitView;
                 }
             )
-        .InSingletonScope();
+            .InSingletonScope();
 
         Bind<Window>()
-        .To<MainWindow>()
-        .InSingletonScope()
-        .OnActivation(
+            .To<MainWindow>()
+            .InSingletonScope()
+            .OnActivation(
                 (c, x) =>
                 {
                     x.ViewModel = c.Kernel.Get<MainWindowModel>();
@@ -141,7 +150,7 @@ public class UiModule : NinjectModule
             );
 
         Bind<IDialogProgressIndicator>()
-        .ToMethod(
+            .ToMethod(
                 _ => new DialogProgressIndicator
                 {
                     CornerRadius = new(24),
@@ -176,30 +185,30 @@ public class UiModule : NinjectModule
         var styledElementType = typeof(StyledElement);
         var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
-        foreach(var assembly in assemblies)
+        foreach (var assembly in assemblies)
         {
             var types = assembly.GetTypes();
 
-            foreach(var type in types)
+            foreach (var type in types)
             {
-                if(type.Namespace.IsNullOrWhiteSpace())
+                if (type.Namespace.IsNullOrWhiteSpace())
                 {
                     continue;
                 }
 
-                if(!styledElementType.IsAssignableFrom(type))
+                if (!styledElementType.IsAssignableFrom(type))
                 {
                     continue;
                 }
 
                 var ns = type.Namespace
-                .Replace(".Views.", ".ViewModels.")
-                .Replace(".Views", ".ViewModels");
+                    .Replace(".Views.", ".ViewModels.")
+                    .Replace(".Views", ".ViewModels");
 
                 var viewModelName = $"{ns}.{type.Name}Model";
                 var viewModelType = assembly.GetType(viewModelName);
 
-                if(viewModelType is null)
+                if (viewModelType is null)
                 {
                     continue;
                 }
@@ -207,8 +216,8 @@ public class UiModule : NinjectModule
                 module.Bind(viewModelType).ToSelf();
 
                 module.Bind(type)
-                .ToSelf()
-                .OnActivation((c, x) => ((StyledElement)x).DataContext = c.Kernel.Get(viewModelType));
+                    .ToSelf()
+                    .OnActivation((c, x) => ((StyledElement)x).DataContext = c.Kernel.Get(viewModelType));
             }
         }
     }

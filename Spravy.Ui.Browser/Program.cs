@@ -5,8 +5,6 @@ using Avalonia;
 using Avalonia.Browser;
 using Avalonia.ReactiveUI;
 using Ninject;
-using ReactiveUI;
-using Splat;
 using Spravy.Domain.Di.Helpers;
 using Spravy.Domain.Extensions;
 using Spravy.Ui.Browser.Configurations;
@@ -33,12 +31,6 @@ internal partial class Program
     public static AppBuilder BuildAvaloniaApp()
     {
         return AppBuilder.Configure(() => DiHelper.Kernel.ThrowIfNull().Get<Application>())
-            .UseReactiveUI()
-            .AfterSetup(
-                _ => Locator.CurrentMutable.RegisterLazySingleton(
-                    () => DiHelper.Kernel.ThrowIfNull().Get<IViewLocator>(),
-                    typeof(IViewLocator)
-                )
-            );
+            .UseReactiveUI();
     }
 }

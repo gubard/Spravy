@@ -5,10 +5,7 @@ using Avalonia;
 using Avalonia.Android;
 using Avalonia.ReactiveUI;
 using Ninject;
-using ReactiveUI;
-using Splat;
 using Spravy.Domain.Di.Helpers;
-using Spravy.Domain.Extensions;
 using Spravy.Ui.Android.Configurations;
 using Spravy.Ui.Configurations;
 
@@ -27,13 +24,7 @@ public class MainActivity : AvaloniaMainActivity<App>
     {
         return base.CustomizeAppBuilder(builder)
             .WithInterFont()
-            .UseReactiveUI()
-            .AfterSetup(
-                _ => Locator.CurrentMutable.RegisterLazySingleton(
-                    () => DiHelper.Kernel.ThrowIfNull().Get<IViewLocator>(),
-                    typeof(IViewLocator)
-                )
-            );
+            .UseReactiveUI();
     }
 
     protected override void OnCreate(Bundle? savedInstanceState)
