@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Spravy.Domain.Extensions;
@@ -67,8 +68,15 @@ public static class WebApplicationBuilderExtension
         builder.AddSpravy(args);
         setupServiceCollection.Invoke(builder.Services);
         var app = builder.Build();
-        app.UseHsts();
         app.UseSerilogRequestLogging();
+
+        app.UseForwardedHeaders(
+            new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            }
+        );
+
         app.UseRouting();
         app.UseGrpcWeb(ServiceDefaults.DefaultGrpcWebOptions);
         app.UseCors();
@@ -100,8 +108,15 @@ public static class WebApplicationBuilderExtension
         setupServiceCollection.Invoke(builder.Services);
 
         var app = builder.Build();
-        app.UseHsts();
         app.UseSerilogRequestLogging();
+
+        app.UseForwardedHeaders(
+            new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            }
+        );
+
         app.UseRouting();
         app.UseGrpcWeb(ServiceDefaults.DefaultGrpcWebOptions);
         app.UseCors();
