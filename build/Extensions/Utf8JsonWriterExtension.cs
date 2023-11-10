@@ -23,24 +23,23 @@ public static class Utf8JsonWriterExtension
 
         foreach (var obj in property.Value.EnumerateObject())
         {
-            if (obj.Name == "Host")
+            switch (obj.Name)
             {
-                writer.WritePropertyName("Host");
-                writer.WriteStringValue(host);
-            }
-            else if (obj.Name == "Token")
-            {
-                writer.WritePropertyName("Token");
-                writer.WriteStringValue(token);
-            }
-            else if (obj.Name == "ChannelCredentialType")
-            {
-                writer.WritePropertyName("ChannelCredentialType");
-                writer.WriteStringValue("SecureSsl");
-            }
-            else
-            {
-                obj.WriteTo(writer);
+                case "Host":
+                    writer.WritePropertyName("Host");
+                    writer.WriteStringValue(host);
+                    break;
+                case "Token":
+                    writer.WritePropertyName("Token");
+                    writer.WriteStringValue(token);
+                    break;
+                case "ChannelCredentialType":
+                    writer.WritePropertyName("ChannelCredentialType");
+                    writer.WriteStringValue("SecureSsl");
+                    break;
+                default:
+                    obj.WriteTo(writer);
+                    break;
             }
         }
 
