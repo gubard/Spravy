@@ -68,16 +68,7 @@ class Build : NukeBuild
                     foreach (var serviceProject in ServiceProjects)
                     {
                         ServiceOptions[serviceProject] = new ServiceOptions(port, serviceProject.Name);
-
-                        if (serviceProject.Name == "Spravy.Router.Service")
-                        {
-                            Hosts[serviceProject.GetOptionsName()] = $"https://{ServerHost}/router";
-                        }
-                        else
-                        {
-                            Hosts[serviceProject.GetOptionsName()] = $"https://{ServerHost}";
-                        }
-
+                        Hosts[serviceProject.GetOptionsName()] = $"https://{ServerHost}:{port + 1000}";
                         port++;
                     }
                 }
