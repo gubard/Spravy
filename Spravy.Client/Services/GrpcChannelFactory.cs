@@ -1,3 +1,4 @@
+using System.Net;
 using Grpc.Core;
 using Grpc.Net.Client;
 using Grpc.Net.Client.Web;
@@ -24,7 +25,11 @@ public class GrpcChannelFactory : IFactory<Uri, GrpcChannel>
             case GrpcChannelType.Default: return GrpcChannel.ForAddress(key);
             case GrpcChannelType.GrpcWeb:
             {
-                var httpClientHandler = new HttpClientHandler();
+                var httpClientHandler = new HttpClientHandler()
+                {
+                    UseProxy = true,
+                    Proxy = new WebProxy(key)
+                };
                 var grpcWebHandler = new GrpcWebHandler(GrpcWebMode.GrpcWeb, httpClientHandler);
 
                 var grpcChannelOptions = new GrpcChannelOptions
