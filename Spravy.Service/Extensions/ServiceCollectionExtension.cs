@@ -46,9 +46,9 @@ public static class ServiceCollectionExtension
         serviceCollection.AddCors(o => o.AddAllowAllPolicy());
         serviceCollection.AddTransient(sp => sp.GetConfigurationSection<JwtOptions>());
         serviceCollection.AddSpravyAuthentication(configuration);
-
-        serviceCollection.AddDataProtection()
-            .PersistKeysToFileSystem(Path.Combine("tmp", "Sparvy", Guid.NewGuid().ToString()).ToDirectory());
+        var persistKeysDirectory = Path.Combine("tmp", "Sparvy", Guid.NewGuid().ToString()).ToDirectory();
+        persistKeysDirectory.CreateIfNotExists();
+        serviceCollection.AddDataProtection().PersistKeysToFileSystem(persistKeysDirectory);
 
         return serviceCollection;
     }

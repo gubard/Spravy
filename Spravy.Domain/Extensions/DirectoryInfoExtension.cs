@@ -6,4 +6,16 @@ public static class DirectoryInfoExtension
     {
         return new FileInfo(Path.Combine(directory.FullName, fileName));
     }
+
+    public static DirectoryInfo CreateIfNotExists(this DirectoryInfo directory)
+    {
+        if (directory.Exists)
+        {
+            return directory;
+        }
+
+        directory.Create();
+
+        return directory;
+    }
 }
