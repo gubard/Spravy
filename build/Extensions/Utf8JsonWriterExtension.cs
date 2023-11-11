@@ -43,7 +43,7 @@ public static class Utf8JsonWriterExtension
         writer.AddObject(property.Name, () =>
             {
                 writer.AddObject("EndPoints", () =>
-                    writer.AddObject("HttpsFromPem", () =>
+                    writer.AddObject("HttpsInlineCertAndKeyFile", () =>
                         {
                             writer.AddStringValue("Url", $"https://0.0.0.0:{port}");
 
