@@ -40,26 +40,28 @@ public static class Utf8JsonWriterExtension
             return false;
         }
 
-        foreach (var obj in property.Value.EnumerateObject())
-        {
-            obj.WriteTo(writer);
-        }
+        writer.AddObject(property.Name, () =>
+            {
+                writer.AddObject("EndPoints", () =>
+                    writer.AddObject("HttpsFromPem", () =>
+                        {
+                            writer.AddStringValue("Url", $"https://0.0.0.0:{port}");
 
-        writer.AddObject("Kestrel", () =>
-            writer.AddObject("EndPoints", () =>
-                writer.AddObject("HttpsFromPem", () =>
-                    {
-                        writer.AddStringValue("Url", $"https://0.0.0.0:{port}");
+                            writer.AddObject("Certificate", () =>
+                                {
+                                    writer.AddStringValue("Path", "/etc/letsencrypt/live/spravy.com.ua/fullchain.pem");
+                                    writer.AddStringValue("KeyPath", "/etc/letsencrypt/live/spravy.com.ua/privkey.pem");
+                                }
+                            );
+                        }
+                    )
+                );
 
-                        writer.AddObject("Certificate", () =>
-                            {
-                                writer.AddStringValue("Path", "/etc/letsencrypt/live/spravy.com.ua/fullchain.pem");
-                                writer.AddStringValue("KeyPath", "/etc/letsencrypt/live/spravy.com.ua/privkey.pem");
-                            }
-                        );
-                    }
-                )
-            )
+                foreach (var obj in property.Value.EnumerateObject())
+                {
+                    obj.WriteTo(writer);
+                }
+            }
         );
 
         return true;
