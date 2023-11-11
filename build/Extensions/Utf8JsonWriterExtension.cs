@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using Serilog;
@@ -6,6 +7,28 @@ namespace _build.Extensions;
 
 public static class Utf8JsonWriterExtension
 {
+    public static void AddObject(this Utf8JsonWriter writer, string name, Action<Utf8JsonWriter> setup)
+    {
+        writer.WritePropertyName(name);
+        writer.WriteStartObject();
+        setup.Invoke(writer);
+        writer.WriteEndObject();
+    }
+
+    public static void AddObject(this Utf8JsonWriter writer, string name, Action setup)
+    {
+        writer.WritePropertyName(name);
+        writer.WriteStartObject();
+        setup.Invoke();
+        writer.WriteEndObject();
+    }
+
+    public static void AddStringValue(this Utf8JsonWriter writer, string name, string value)
+    {
+        writer.WritePropertyName(name);
+        writer.WriteStringValue(value);
+    }
+
     public static bool SetKestrel(
         this Utf8JsonWriter writer,
         JsonProperty property,
@@ -22,24 +45,22 @@ public static class Utf8JsonWriterExtension
             obj.WriteTo(writer);
         }
 
-        writer.WritePropertyName("Kestrel");
-        writer.WriteStartObject();
-        writer.WritePropertyName("EndPoints");
-        writer.WriteStartObject();
-        writer.WritePropertyName("HttpsFromPem");
-        writer.WriteStartObject();
-        writer.WritePropertyName("Url");
-        writer.WriteStringValue($"https://0.0.0.0:{port}");
-        writer.WritePropertyName("Certificate");
-        writer.WriteStartObject();
-        writer.WritePropertyName("Path");
-        writer.WriteStringValue("/etc/letsencrypt/live/spravy.com.ua/fullchain.pem");
-        writer.WritePropertyName("KeyPath");
-        writer.WriteStringValue("/etc/letsencrypt/live/spravy.com.ua/privkey.pem");
-        writer.WriteEndObject();
-        writer.WriteEndObject();
-        writer.WriteEndObject();
-        writer.WriteEndObject();
+        writer.AddObject("Kestrel", () =>
+            writer.AddObject("EndPoints", () =>
+                writer.AddObject("HttpsFromPem", () =>
+                    {
+                        writer.AddStringValue("Url", $"https://0.0.0.0:{port}");
+
+                        writer.AddObject("Certificate", () =>
+                            {
+                                writer.AddStringValue("Path", "/etc/letsencrypt/live/spravy.com.ua/fullchain.pem");
+                                writer.AddStringValue("KeyPath", "/etc/letsencrypt/live/spravy.com.ua/privkey.pem");
+                            }
+                        );
+                    }
+                )
+            )
+        );
 
         return true;
     }
@@ -56,32 +77,33 @@ public static class Utf8JsonWriterExtension
             return false;
         }
 
-        writer.WritePropertyName(property.Name);
-        writer.WriteStartObject();
-
-        foreach (var obj in property.Value.EnumerateObject())
-        {
-            switch (obj.Name)
+        writer.AddObject(property.Name, () =>
             {
-                case "Host":
-                    writer.WritePropertyName("Host");
-                    writer.WriteStringValue(host);
-                    break;
-                case "Token":
-                    writer.WritePropertyName("Token");
-                    writer.WriteStringValue(token);
-                    break;
-                case "ChannelCredentialType":
-                    writer.WritePropertyName("ChannelCredentialType");
-                    writer.WriteStringValue("SecureSsl");
-                    break;
-                default:
-                    obj.WriteTo(writer);
-                    break;
-            }
-        }
+                foreach (var obj in property.Value.EnumerateObject())
+                {
+                    switch (obj.Name)
+                    {
+                        case "Host":
+                            writer.AddStringValue("Host", host);
 
-        writer.WriteEndObject();
+                            break;
+                        case "Token":
+                            writer.AddStringValue("Token", token);
+
+                            break;
+                        case "ChannelCredentialType":
+                            writer.AddStringValue("ChannelCredentialType", "SecureSsl");
+
+                            break;
+                        default:
+                            obj.WriteTo(writer);
+
+                            break;
+                    }
+                }
+            }
+        );
+
         Log.Information("Setup service {ServiceName}", property.Name);
         Log.Information("Set host {Host}", host);
 
@@ -95,8 +117,7 @@ public static class Utf8JsonWriterExtension
             return false;
         }
 
-        writer.WritePropertyName("UrlDomain");
-        writer.WriteStringValue(domain);
+        writer.AddStringValue("UrlDomain", domain);
         Log.Information("Set URL domain {Domain}", domain);
 
         return true;
@@ -109,31 +130,26 @@ public static class Utf8JsonWriterExtension
             return false;
         }
 
-        writer.WritePropertyName("Serilog");
-        writer.WriteStartObject();
-
-        foreach (var ser in property.Value.EnumerateObject())
-        {
-            if (ser.Name == "MinimumLevel")
+        writer.AddObject("Serilog", () =>
             {
-                writer.WritePropertyName("MinimumLevel");
-                writer.WriteStartObject();
-                writer.WritePropertyName("Default");
-                writer.WriteStringValue("Information");
-                writer.WritePropertyName("Override");
-                writer.WriteStartObject();
-                writer.WritePropertyName("Microsoft");
-                writer.WriteStringValue("Information");
-                writer.WriteEndObject();
-                writer.WriteEndObject();
+                foreach (var ser in property.Value.EnumerateObject())
+                {
+                    if (ser.Name == "MinimumLevel")
+                    {
+                        writer.AddObject("MinimumLevel", () =>
+                            {
+                                writer.AddStringValue("Default", "Information");
+                                writer.AddObject("Override", () => writer.AddStringValue("Microsoft", "Information"));
+                            }
+                        );
 
-                continue;
+                        continue;
+                    }
+
+                    ser.WriteTo(writer);
+                }
             }
-
-            ser.WriteTo(writer);
-        }
-
-        writer.WriteEndObject();
+        );
 
         return true;
     }
