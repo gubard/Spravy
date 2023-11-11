@@ -22,6 +22,8 @@ public static class Utf8JsonWriterExtension
             obj.WriteTo(writer);
         }
 
+        writer.WritePropertyName("Kestrel");
+        writer.WriteStartObject();
         writer.WritePropertyName("EndPoints");
         writer.WriteStartObject();
         writer.WritePropertyName("HttpsFromPem");
@@ -34,6 +36,7 @@ public static class Utf8JsonWriterExtension
         writer.WriteStringValue("/etc/letsencrypt/live/spravy.com.ua/fullchain.pem");
         writer.WritePropertyName("KeyPath");
         writer.WriteStringValue("/etc/letsencrypt/live/spravy.com.ua/privkey.pem");
+        writer.WriteEndObject();
         writer.WriteEndObject();
         writer.WriteEndObject();
         writer.WriteEndObject();
