@@ -1,4 +1,3 @@
-using System.Net;
 using Grpc.Core;
 using Grpc.Net.Client;
 using Grpc.Net.Client.Web;
