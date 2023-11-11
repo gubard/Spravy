@@ -37,7 +37,10 @@ public static class ServiceCollectionExtension
         return serviceCollection;
     }
 
-    public static IServiceCollection AddSpravy(this IServiceCollection serviceCollection, IConfiguration configuration)
+    public static IServiceCollection AddSpravy<TAssemblyMark>(
+        this IServiceCollection serviceCollection,
+        IConfiguration configuration
+    ) where TAssemblyMark : IAssemblyMark
     {
         serviceCollection.AddGrpc();
         serviceCollection.AddAuthorization();
@@ -46,8 +49,13 @@ public static class ServiceCollectionExtension
         serviceCollection.AddCors(o => o.AddAllowAllPolicy());
         serviceCollection.AddTransient(sp => sp.GetConfigurationSection<JwtOptions>());
         serviceCollection.AddSpravyAuthentication(configuration);
-        var persistKeysDirectory = Path.Combine("tmp", "Sparvy", Guid.NewGuid().ToString()).ToDirectory();
-        persistKeysDirectory.CreateIfNotExists();
+
+        var persistKeysDirectory = "/".ToDirectory()
+            .Combine("tmp")
+            .Combine("Sparvy")
+            .Combine(TAssemblyMark.AssemblyName.Name.ThrowIfNullOrWhiteSpace())
+            .CreateIfNotExists();
+
         serviceCollection.AddDataProtection().PersistKeysToFileSystem(persistKeysDirectory);
 
         return serviceCollection;

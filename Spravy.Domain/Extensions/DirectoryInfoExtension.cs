@@ -2,9 +2,14 @@ namespace Spravy.Domain.Extensions;
 
 public static class DirectoryInfoExtension
 {
+    public static DirectoryInfo Combine(this DirectoryInfo directory, string part)
+    {
+        return new(Path.Combine(directory.FullName, part));
+    }
+
     public static FileInfo ToFile(this DirectoryInfo directory, string fileName)
     {
-        return new FileInfo(Path.Combine(directory.FullName, fileName));
+        return new(Path.Combine(directory.FullName, fileName));
     }
 
     public static DirectoryInfo CreateIfNotExists(this DirectoryInfo directory)
