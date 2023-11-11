@@ -120,7 +120,7 @@ public static class Utf8JsonWriterExtension
                 writer.WritePropertyName("Override");
                 writer.WriteStartObject();
                 writer.WritePropertyName("Microsoft");
-                writer.WriteStringValue("Warning");
+                writer.WriteStringValue("Information");
                 writer.WriteEndObject();
                 writer.WriteEndObject();
 

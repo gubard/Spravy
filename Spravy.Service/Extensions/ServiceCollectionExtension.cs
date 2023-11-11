@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Spravy.Db.Contexts;
@@ -6,6 +7,7 @@ using Spravy.Db.Interfaces;
 using Spravy.Db.Services;
 using Spravy.Db.Sqlite.Services;
 using Spravy.Di.Extensions;
+using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Services;
 using Spravy.Service.Model;
@@ -44,6 +46,9 @@ public static class ServiceCollectionExtension
         serviceCollection.AddCors(o => o.AddAllowAllPolicy());
         serviceCollection.AddTransient(sp => sp.GetConfigurationSection<JwtOptions>());
         serviceCollection.AddSpravyAuthentication(configuration);
+
+        serviceCollection.AddDataProtection()
+            .PersistKeysToFileSystem(Path.Combine("tmp", "Sparvy", Guid.NewGuid().ToString()).ToDirectory());
 
         return serviceCollection;
     }
