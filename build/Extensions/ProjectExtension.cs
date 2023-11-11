@@ -118,7 +118,8 @@ public static class ProjectExtension
         serviceFile.WriteAllText(project.GetDaemonConfig(ftpUser));
         ftpClient.CreateIfNotExistsDirectory(PathHelper.ServicesFolder);
         ftpClient.UploadFile(serviceFile.FullName, serviceFile.FullName);
-        sshClient.SafeRun($"echo {sshPassword} | sudo -S cp {serviceFile} /etc/systemd/system/{project.Name.ToLower()}");
+        sshClient.SafeRun($"echo {sshPassword} | sudo -S cp {serviceFile} /etc/systemd/system/{project.Name.ToLower()}"
+        );
     }
 
     public static string GetOptionsName(this Project project)
@@ -140,7 +141,8 @@ public static class ProjectExtension
         this Project project,
         string tokenValue,
         Dictionary<Project, ServiceOptions> serviceOptions,
-        Dictionary<string, string> hosts
+        Dictionary<string, string> hosts,
+        string domain
     )
     {
         var appSettingsFile = project.GetAppSettingsFile();
@@ -159,7 +161,7 @@ public static class ProjectExtension
 
         if (serviceOptions.TryGetValue(project, out var options))
         {
-            appSettingsFile.SetAppSettingsFile($"http://0.0.0.0:{options.Port}", hosts, token);
+            appSettingsFile.SetAppSettingsFile(domain, hosts, token, options.Port);
         }
         else
         {

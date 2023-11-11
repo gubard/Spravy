@@ -6,6 +6,41 @@ namespace _build.Extensions;
 
 public static class Utf8JsonWriterExtension
 {
+    public static bool SetKestrel(
+        this Utf8JsonWriter writer,
+        JsonProperty property,
+        uint port
+    )
+    {
+        if (property.Name != "Kestrel")
+        {
+            return false;
+        }
+
+        foreach (var obj in property.Value.EnumerateObject())
+        {
+            obj.WriteTo(writer);
+        }
+
+        writer.WritePropertyName("EndPoints");
+        writer.WriteStartObject();
+        writer.WritePropertyName("HttpsFromPem");
+        writer.WriteStartObject();
+        writer.WritePropertyName("Url");
+        writer.WriteStringValue($"https://0.0.0.0:{port}");
+        writer.WritePropertyName("Certificate");
+        writer.WriteStartObject();
+        writer.WritePropertyName("Path");
+        writer.WriteStringValue("/etc/letsencrypt/live/spravy.com.ua/fullchain.pem");
+        writer.WritePropertyName("KeyPath");
+        writer.WriteStringValue("/etc/letsencrypt/live/spravy.com.ua/privkey.pem");
+        writer.WriteEndObject();
+        writer.WriteEndObject();
+        writer.WriteEndObject();
+
+        return true;
+    }
+
     public static bool SetServices(
         this Utf8JsonWriter writer,
         JsonProperty property,
@@ -50,16 +85,16 @@ public static class Utf8JsonWriterExtension
         return true;
     }
 
-    public static bool SetUrls(this Utf8JsonWriter writer, JsonProperty property, string urls)
+    public static bool SetDomain(this Utf8JsonWriter writer, JsonProperty property, string domain)
     {
         if (property.Name != "Urls")
         {
             return false;
         }
 
-        writer.WritePropertyName("Urls");
-        writer.WriteStringValue(urls);
-        Log.Information("Set URLs {Urls}", urls);
+        writer.WritePropertyName("UrlDomain");
+        writer.WriteStringValue(domain);
+        Log.Information("Set URL domain {Domain}", domain);
 
         return true;
     }

@@ -9,9 +9,10 @@ public static class StreamExtension
     public static void SetAppSettingsStream(
         this Stream stream,
         JsonDocument jsonDocument,
-        string urls,
+        string domain,
         Dictionary<string, string> hosts,
-        string token
+        string token,
+        uint port
     )
     {
         var jsonWriterOptions = new JsonWriterOptions
@@ -24,12 +25,17 @@ public static class StreamExtension
 
         foreach (var obj in jsonDocument.RootElement.EnumerateObject())
         {
+            if (writer.SetKestrel(obj, port))
+            {
+                continue;
+            }
+            
             if (writer.SetServices(obj, hosts, token))
             {
                 continue;
             }
 
-            if (writer.SetUrls(obj, urls))
+            if (writer.SetDomain(obj, domain))
             {
                 continue;
             }

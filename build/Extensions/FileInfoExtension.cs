@@ -10,15 +10,16 @@ public static class FileInfoExtension
 {
     public static void SetAppSettingsFile(
         this FileInfo file,
-        string urls,
+        string domain,
         Dictionary<string, string> hosts,
-        string token
+        string token,
+        uint port
     )
     {
         var jsonDocument = file.GetJsonDocument();
         using var stream = new MemoryStream();
         Log.Logger.Information("Set app settings {File}", file);
-        stream.SetAppSettingsStream(jsonDocument, urls, hosts, token);
+        stream.SetAppSettingsStream(jsonDocument, domain, hosts, token, port);
         var jsonData = Encoding.UTF8.GetString(stream.ToArray());
         File.WriteAllText(file.FullName, jsonData);
     }
