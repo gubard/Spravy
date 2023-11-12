@@ -8,11 +8,11 @@
         <ApplicationVersion>1</ApplicationVersion>
         <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
         <AndroidPackageFormat>apk</AndroidPackageFormat>
-        <AndroidEnableProfiledAot>False</AndroidEnableProfiledAot>
+        <!--<AndroidEnableProfiledAot>False</AndroidEnableProfiledAot>
+        <PublishTrimmed>false</PublishTrimmed>
+        <AndroidLinkMode>None</AndroidLinkMode>-->
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
         <RunAOTCompilation>false</RunAOTCompilation>
-        <PublishTrimmed>false</PublishTrimmed>
-        <AndroidLinkMode>None</AndroidLinkMode>
     </PropertyGroup>
 
     <ItemGroup>
