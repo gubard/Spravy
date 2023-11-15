@@ -12,27 +12,21 @@ namespace Spravy.Service.Services;
 public class SqliteDbContextFactory<TDbContext> : IFactory<TDbContext>
     where TDbContext : DbContext, IDbContextCreator<TDbContext>
 {
-    private readonly SqliteFolderOptions sqliteFolderOptions;
-    private readonly IHttpContextAccessor httpContextAccessor;
+    private readonly IFactory<FileInfo> fileFactory;
     private readonly IFactory<string, TDbContext> dbContextFactory;
 
     public SqliteDbContextFactory(
-        SqliteFolderOptions sqliteFolderOptions,
-        IHttpContextAccessor httpContextAccessor,
-        IFactory<string, TDbContext> dbContextFactory
+        IFactory<string, TDbContext> dbContextFactory,
+        IFactory<FileInfo> fileFactory
     )
     {
-        this.sqliteFolderOptions = sqliteFolderOptions;
-        this.httpContextAccessor = httpContextAccessor;
         this.dbContextFactory = dbContextFactory;
+        this.fileFactory = fileFactory;
     }
 
     public TDbContext Create()
     {
-        var userId = httpContextAccessor.GetUserId();
-        var fileName = $"{userId}.db";
-        var file = sqliteFolderOptions.DataBasesFolder.ThrowIfNull().ToDirectory().ToFile(fileName);
-        var connectionString = file.ToSqliteConnectionString();
+        var connectionString = fileFactory.Create().ToSqliteConnectionString();
         var dbContext = dbContextFactory.Create(connectionString);
 
         return dbContext;

@@ -23,6 +23,7 @@ public static class ServiceCollectionExtension
         where TDbContext : SpravyDbContext, IDbContextCreator<TDbContext>
         where TAssemblyMark : IAssemblyMark
     {
+        serviceCollection.AddTransient<IFactory<FileInfo>, SqliteDbFileFactory>();
         serviceCollection.AddTransient<IFactory<TDbContext>, SqliteDbContextFactory<TDbContext>>();
         serviceCollection.AddTransient<DbContextFactory<TDbContext, TAssemblyMark>>();
         serviceCollection.AddTransient<ICacheValidator<string, TDbContext>, DbContextCacheValidator<TDbContext>>();

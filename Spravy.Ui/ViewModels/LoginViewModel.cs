@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
@@ -7,6 +8,8 @@ using ReactiveUI;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
+using Spravy.EventBus.Domain.Helpers;
+using Spravy.EventBus.Domain.Interfaces;
 using Spravy.Ui.Helpers;
 using Spravy.Ui.Models;
 using Spravy.Ui.Views;
@@ -35,6 +38,9 @@ public class LoginViewModel : RoutableViewModelBase
 
     [Inject]
     public required IObjectStorage ObjectStorage { get; init; }
+
+    [Inject]
+    public required IEventBusService EventBusService { get; init; }
 
     public bool IsRememberMe
     {

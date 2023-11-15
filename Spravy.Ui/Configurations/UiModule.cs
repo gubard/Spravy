@@ -27,6 +27,7 @@ using Spravy.Domain.Services;
 using Spravy.EventBus.Domain.Client.Models;
 using Spravy.EventBus.Domain.Client.Services;
 using Spravy.EventBus.Domain.Interfaces;
+using Spravy.EventBus.Domain.Mapper.Profiles;
 using Spravy.EventBus.Protos;
 using Spravy.Schedule.Domain.Client.Models;
 using Spravy.Schedule.Domain.Client.Services;
@@ -187,6 +188,7 @@ public class UiModule : NinjectModule
         expression.AddProfile<SpravyUiProfile>();
         expression.AddProfile<SpravyAuthenticationProfile>();
         expression.AddProfile<SpravyScheduleProfile>();
+        expression.AddProfile<SpravyEventBusProfile>();
     }
 
     private void RegisterViewModels(NinjectModule module)

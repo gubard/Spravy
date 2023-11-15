@@ -5,4 +5,5 @@ public class EventEntity
     public Guid Id { get; set; }
     public Guid EventId { get; set; }
     public byte[] Content { get; set; } = Array.Empty<byte>();
+    public DateTimeOffset? PushedDateTime { get; set; }
 }

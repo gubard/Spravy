@@ -34,6 +34,10 @@ message ChangeToDoItemIsFavoriteEvent {
   bool IsFavorite = 2;
 }
 
+message AddRootToDoItemEvent {
+  bytes ToDoItemId = 1;
+}
+
 message Event {
   bytes EventId = 1;
   bytes Content = 2;

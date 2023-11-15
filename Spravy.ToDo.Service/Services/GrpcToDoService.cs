@@ -2,6 +2,10 @@ using AutoMapper;
 using Google.Protobuf;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
+using Spravy.Domain.Extensions;
+using Spravy.EventBus.Domain.Helpers;
+using Spravy.EventBus.Domain.Interfaces;
+using Spravy.EventBus.Protos;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
@@ -15,11 +19,13 @@ public class GrpcToDoService : ToDoServiceBase
 {
     private readonly IToDoService toDoService;
     private readonly IMapper mapper;
+    private readonly IEventBusService eventBusService;
 
-    public GrpcToDoService(IToDoService toDoService, IMapper mapper)
+    public GrpcToDoService(IToDoService toDoService, IMapper mapper, IEventBusService eventBusService)
     {
         this.toDoService = toDoService;
         this.mapper = mapper;
+        this.eventBusService = eventBusService;
     }
 
     public override async Task<UpdateToDoItemLinkReply> UpdateToDoItemLink(
@@ -70,6 +76,15 @@ public class GrpcToDoService : ToDoServiceBase
         {
             Id = mapper.Map<ByteString>(id)
         };
+
+        var @event = new AddRootToDoItemEvent
+        {
+            ToDoItemId = mapper.Map<ByteString>(id)
+        };
+
+        await using var stream = new MemoryStream();
+        @event.WriteTo(stream);
+        await eventBusService.PublishEventAsync(EventIdHelper.AddRootToDoItemId, stream.ToArray());
 
         return reply;
     }

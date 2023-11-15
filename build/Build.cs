@@ -172,13 +172,8 @@ class Build : NukeBuild
             .DependsOn(PublishServices)
             .Executes(() =>
                 {
-                    using var ftpClient = CreateFtpClient();
-                    ftpClient.Connect();
-                    var desktop = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Desktop").ThrowIfNull();
-                    var desktopFolder = desktop.PublishProject(PathHelper.PublishFolder, Configuration);
-                    ftpClient.DeleteIfExistsFolder($"/home/{FtpUser}/Apps/Spravy.Ui.Desktop".ToFolder());
-                    ftpClient.CreateIfNotExistsDirectory($"/home/{FtpUser}/Apps".ToFolder());
-                    ftpClient.UploadDirectory(desktopFolder.FullName, $"/home/{FtpUser}/Apps/Spravy.Ui.Desktop");
+                    DeployDesktop("linux-x64");
+                    DeployDesktop("win-x64");
                 }
             );
 
@@ -271,6 +266,19 @@ class Build : NukeBuild
             );
 
     Target Publish => _ => _.DependsOn(PublishDesktop, PublishAndroid, PublishBrowser);
+
+    void DeployDesktop(string runtime)
+    {
+        using var ftpClient = CreateFtpClient();
+        ftpClient.Connect();
+        var desktop = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Desktop").ThrowIfNull();
+        var desktopFolder = desktop.PublishProject(PathHelper.PublishFolder.Combine(runtime), Configuration,
+            settings => settings.SetRuntime(runtime)
+        );
+        ftpClient.DeleteIfExistsFolder($"/home/{FtpUser}/Apps/Spravy.Ui.Desktop".ToFolder().Combine(runtime));
+        ftpClient.CreateIfNotExistsDirectory($"/home/{FtpUser}/Apps".ToFolder().Combine(runtime));
+        ftpClient.UploadDirectory(desktopFolder.FullName, $"/home/{FtpUser}/Apps/Spravy.Ui.Desktop/{runtime}");
+    }
 
     static void CreateIfNotExistsDirectory(FtpClient client, string path)
     {
