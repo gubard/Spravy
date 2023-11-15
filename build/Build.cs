@@ -101,7 +101,9 @@ class Build : NukeBuild
             .DependsOn(Restore)
             .Executes(() =>
                 {
-                    foreach (var project in Solution.AllProjects.Where(x => !x.Name.Contains("Android")))
+                    foreach (var project in Solution.AllProjects.Where(x =>
+                                 !x.Name.Contains("Android") && x.Name != "Spravy.Ui.Desktop"
+                             ))
                     {
                         for (var i = 0; i < 3; i++)
                         {
@@ -129,6 +131,66 @@ class Build : NukeBuild
 
                                 throw;
                             }
+                        }
+                    }
+
+                    var desktop = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Desktop").ThrowIfNull();
+
+                    for (var i = 0; i < 3; i++)
+                    {
+                        try
+                        {
+                            DotNetBuild(setting =>
+                                setting.SetProjectFile(desktop)
+                                    .EnableNoRestore()
+                                    .SetRuntime("linux-x64")
+                                    .SetConfiguration(Configuration)
+                            );
+
+                            break;
+                        }
+                        catch (Exception e)
+                        {
+                            if (i == 2)
+                            {
+                                throw;
+                            }
+
+                            if (e.ToString().Contains("CompileAvaloniaXamlTask"))
+                            {
+                                continue;
+                            }
+
+                            throw;
+                        }
+                    }
+
+                    for (var i = 0; i < 3; i++)
+                    {
+                        try
+                        {
+                            DotNetBuild(setting =>
+                                setting.SetProjectFile(desktop)
+                                    .EnableNoRestore()
+                                    .SetRuntime("win-x64")
+                                    .SetConfiguration(Configuration)
+                            );
+
+                            break;
+                        }
+                        catch (Exception e)
+                        {
+                            if (i == 2)
+                            {
+                                throw;
+                            }
+
+                            if (e.ToString().Contains("CompileAvaloniaXamlTask"))
+                            {
+                                continue;
+                            }
+
+                            throw;
                         }
                     }
                 }
