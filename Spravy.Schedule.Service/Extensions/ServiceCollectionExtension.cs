@@ -56,7 +56,8 @@ public static class ServiceCollectionExtension
         serviceCollection.AddSingleton<ITokenService, TokenService>();
         serviceCollection.AddSingleton<IMetadataFactory, MetadataFactory>();
         serviceCollection.AddSingleton<ContextAccessorUserIdHttpHeaderFactory>();
-        serviceCollection.AddSingleton<IHttpHeaderFactory, EmptyHttpHeaderFactory>();
+        serviceCollection.AddSingleton<TimeZoneHttpHeaderFactory>();
+        serviceCollection.AddTransient<IHttpHeaderFactory, TimeZoneHttpHeaderFactory>();
         serviceCollection.AddTransient<IScheduleService, EfScheduleService>();
 
         return serviceCollection;

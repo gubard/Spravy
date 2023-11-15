@@ -11,7 +11,7 @@ public static class ToDoServiceExtension
 {
     public static async Task NavigateToToDoItemViewModel(this IToDoService toDoService, Guid id, INavigator navigator)
     {
-        var item = await toDoService.GetToDoItemAsync(id, DateTimeOffset.Now.Offset);
+        var item = await toDoService.GetToDoItemAsync(id);
 
         switch (item)
         {

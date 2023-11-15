@@ -65,8 +65,12 @@ public static class ServiceCollectionExtension
         serviceCollection.AddTransient(_ => NamedHelper.BytesToUpperCaseHexString.ToRef());
         serviceCollection.AddTransient(_ => NamedHelper.Sha512Hash.ToRef());
         serviceCollection.AddTransient(_ => NamedHelper.StringToUtf8Bytes.ToRef());
+        serviceCollection.AddSingleton<TimeZoneHttpHeaderFactory>();
         serviceCollection.AddTransient<IHttpHeaderFactory>(
-            sp => sp.GetRequiredService<ContextAccessorUserIdHttpHeaderFactory>()
+            sp => new CombineHttpHeaderFactory(
+                sp.GetRequiredService<ContextAccessorUserIdHttpHeaderFactory>(),
+                sp.GetRequiredService<TimeZoneHttpHeaderFactory>()
+            )
         );
 
         return serviceCollection;

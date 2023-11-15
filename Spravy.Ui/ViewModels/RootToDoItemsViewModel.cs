@@ -54,7 +54,7 @@ public class RootToDoItemsViewModel : RoutableViewModelBase, IToDoItemOrderChang
 
     public async Task RefreshToDoItemAsync()
     {
-        var items = await ToDoService.GetRootToDoSubItemsAsync(DateTimeOffset.Now.Offset);
+        var items = await ToDoService.GetRootToDoSubItemsAsync();
         var source = items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
         await ToDoSubItemsView.ViewModel.ThrowIfNull().UpdateItemsAsync(source, this);
         SubscribeItems(source);
@@ -83,7 +83,7 @@ public class RootToDoItemsViewModel : RoutableViewModelBase, IToDoItemOrderChang
                 await SafeExecuteAsync(
                     async () =>
                     {
-                        await ToDoService.UpdateToDoItemCompleteStatusAsync(itemNotify.Id, x, DateTimeOffset.Now.Offset);
+                        await ToDoService.UpdateToDoItemCompleteStatusAsync(itemNotify.Id, x);
                         await RefreshToDoItemAsync();
                     }
                 );

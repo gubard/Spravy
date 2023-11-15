@@ -27,7 +27,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     )
     {
         var reply = new GetRootToDoSubItemsReply();
-        var items = await toDoService.GetRootToDoSubItemsAsync(mapper.Map<TimeSpan>(request.Offset));
+        var items = await toDoService.GetRootToDoSubItemsAsync();
         reply.Items.AddRange(mapper.Map<IEnumerable<ToDoSubItemGrpc>>(items));
 
         return reply;
@@ -36,8 +36,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     public override async Task<GetToDoItemReply> GetToDoItem(GetToDoItemRequest request, ServerCallContext context)
     {
         var item = await toDoService.GetToDoItemAsync(
-            mapper.Map<Guid>(request.Id),
-            mapper.Map<TimeSpan>(request.Offset)
+            mapper.Map<Guid>(request.Id)
         );
 
         var reply = new GetToDoItemReply
@@ -66,8 +65,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     public override async Task<AddToDoItemReply> AddToDoItem(AddToDoItemRequest request, ServerCallContext context)
     {
         var id = await toDoService.AddToDoItemAsync(
-            mapper.Map<AddToDoItemOptions>(request),
-            mapper.Map<TimeSpan>(request.Offset)
+            mapper.Map<AddToDoItemOptions>(request)
         );
 
         var reply = new AddToDoItemReply
@@ -119,8 +117,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     {
         await toDoService.UpdateToDoItemCompleteStatusAsync(
             mapper.Map<Guid>(request.Id),
-            request.IsCompleted,
-            mapper.Map<TimeSpan>(request.Offset)
+            request.IsCompleted
         );
 
         return new();
@@ -159,14 +156,14 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
 
     public override async Task<SkipToDoItemReply> SkipToDoItem(SkipToDoItemRequest request, ServerCallContext context)
     {
-        await toDoService.SkipToDoItemAsync(mapper.Map<Guid>(request.Id), mapper.Map<TimeSpan>(request.Offset));
+        await toDoService.SkipToDoItemAsync(mapper.Map<Guid>(request.Id));
 
         return new();
     }
 
     public override async Task<FailToDoItemReply> FailToDoItem(FailToDoItemRequest request, ServerCallContext context)
     {
-        await toDoService.FailToDoItemAsync(mapper.Map<Guid>(request.Id), mapper.Map<TimeSpan>(request.Offset));
+        await toDoService.FailToDoItemAsync(mapper.Map<Guid>(request.Id));
 
         return new();
     }
@@ -176,7 +173,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        var items = await toDoService.SearchToDoSubItemsAsync(request.SearchText, mapper.Map<TimeSpan>(request.Offset));
+        var items = await toDoService.SearchToDoSubItemsAsync(request.SearchText);
         var reply = new SearchToDoSubItemsReply();
         reply.Items.AddRange(items.Select(x => mapper.Map<ToDoSubItemGrpc>(x)));
 
@@ -219,7 +216,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     )
     {
         var reply = new GetFavoriteToDoItemsReply();
-        var items = await toDoService.GetFavoriteToDoItemsAsync(mapper.Map<TimeSpan>(request.Offset));
+        var items = await toDoService.GetFavoriteToDoItemsAsync();
         reply.Items.AddRange(mapper.Map<IEnumerable<ToDoSubItemGrpc>>(items));
 
         return reply;
@@ -270,8 +267,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     )
     {
         var items = await toDoService.GetLeafToDoSubItemsAsync(
-            mapper.Map<Guid>(request.Id),
-            mapper.Map<TimeSpan>(request.Offset)
+            mapper.Map<Guid>(request.Id)
         );
         var reply = new GetLeafToDoSubItemsReply();
         reply.Items.AddRange(mapper.Map<IEnumerable<ToDoSubItemGrpc>>(items));
@@ -317,8 +313,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     )
     {
         var value = await toDoService.ToDoItemToStringAsync(
-            mapper.Map<ToDoItemToStringOptions>(request),
-            mapper.Map<TimeSpan>(request.Offset)
+            mapper.Map<ToDoItemToStringOptions>(request)
         );
 
         return new()

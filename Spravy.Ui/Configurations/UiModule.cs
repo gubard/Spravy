@@ -102,8 +102,17 @@ public class UiModule : NinjectModule
         Bind<IEventBusService>().ToMethod(context => context.Kernel.Get<GrpcEventBusService>());
         Bind<IDataTemplate>().To<ModuleDataTemplate>();
         Bind<IMetadataFactory>().To<MetadataFactory>();
-        Bind<IHttpHeaderFactory>().To<TokenHttpHeaderFactory>();
+        Bind<TokenHttpHeaderFactory>().To<TokenHttpHeaderFactory>();
+        Bind<TimeZoneHttpHeaderFactory>().To<TimeZoneHttpHeaderFactory>();
         Bind<IDialogViewer>().To<DialogViewer>();
+
+        Bind<IHttpHeaderFactory>()
+            .ToMethod(
+                context => new CombineHttpHeaderFactory(
+                    context.Kernel.Get<TokenHttpHeaderFactory>(),
+                    context.Kernel.Get<TimeZoneHttpHeaderFactory>()
+                )
+            );
 
         Bind<RoutedViewHost>()
             .ToSelf()

@@ -27,7 +27,22 @@ public static class HttpContextExtension
     {
         return httpContext.GetClaim(ClaimTypes.Role);
     }
-    
+
+    public static string GetTimeZoneOffsetHeader(this HttpContext httpContext)
+    {
+        return httpContext.GetHeader(HttpNames.HeaderTimeZoneOffsetName);
+    }
+
+    public static TimeSpan GetTimeZoneOffset(this HttpContext httpContext)
+    {
+        return TimeSpan.Parse(httpContext.GetTimeZoneOffsetHeader());
+    }
+
+    public static string GetHeader(this HttpContext httpContext, string name)
+    {
+        return httpContext.Request.Headers[name].Single().ThrowIfNullOrWhiteSpace();
+    }
+
     public static string GetUserId(this HttpContext httpContext)
     {
         var role = httpContext.GetRoleClaim().Value.ParseEnum<Role>();

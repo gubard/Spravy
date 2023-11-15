@@ -20,6 +20,7 @@ using Spravy.Client.Extensions;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
 using Spravy.Domain.Interfaces;
+using Spravy.Domain.Services;
 using Spravy.EventBus.Domain.Interfaces;
 using Spravy.EventBus.Domain.Mapper.Profiles;
 using Spravy.Schedule.Domain.Interfaces;
@@ -59,7 +60,13 @@ public static class ServiceCollectionExtension
         serviceCollection.AddTransient<IToDoService>(sp => sp.GetRequiredService<GrpcToDoService>());
         serviceCollection.AddTransient<ITokenService, TokenService>();
         serviceCollection.AddTransient<IMetadataFactory, MetadataFactory>();
-        serviceCollection.AddTransient<IHttpHeaderFactory, ContextAccessorAuthorizationHttpHeaderFactory>();
+        serviceCollection.AddSingleton<TimeZoneHttpHeaderFactory>();
+        serviceCollection.AddTransient<IHttpHeaderFactory>(
+            sp => new CombineHttpHeaderFactory(
+                sp.GetRequiredService<ContextAccessorUserIdHttpHeaderFactory>(),
+                sp.GetRequiredService<TimeZoneHttpHeaderFactory>()
+            )
+        );
 
         return serviceCollection;
     }

@@ -62,7 +62,7 @@ public static class ServiceCollectionExtension
         serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<SqliteFolderOptions>());
         serviceCollection.AddSingleton<IMetadataFactory, MetadataFactory>();
         serviceCollection.AddSingleton<ContextAccessorUserIdHttpHeaderFactory>();
-        serviceCollection.AddSingleton<IHttpHeaderFactory, EmptyHttpHeaderFactory>();
+        serviceCollection.AddSingleton<IHttpHeaderFactory, TimeZoneHttpHeaderFactory>();
 
         serviceCollection.AddTransient<IToDoService, EfToDoService>();
         serviceCollection.AddTransient<StatusToDoItemService>();

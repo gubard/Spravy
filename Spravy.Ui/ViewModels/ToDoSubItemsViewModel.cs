@@ -198,19 +198,19 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                     switch (status)
                     {
                         case CompleteStatus.Complete:
-                            await ToDoService.UpdateToDoItemCompleteStatusAsync(subItemValue.Id, true, DateTimeOffset.Now.Offset);
+                            await ToDoService.UpdateToDoItemCompleteStatusAsync(subItemValue.Id, true);
 
                             break;
                         case CompleteStatus.Incomplete:
-                            await ToDoService.UpdateToDoItemCompleteStatusAsync(subItemValue.Id, false, DateTimeOffset.Now.Offset);
+                            await ToDoService.UpdateToDoItemCompleteStatusAsync(subItemValue.Id, false);
 
                             break;
                         case CompleteStatus.Skip:
-                            await ToDoService.SkipToDoItemAsync(subItemValue.Id, DateTimeOffset.Now.Offset);
+                            await ToDoService.SkipToDoItemAsync(subItemValue.Id);
 
                             break;
                         case CompleteStatus.Fail:
-                            await ToDoService.FailToDoItemAsync(subItemValue.Id, DateTimeOffset.Now.Offset);
+                            await ToDoService.FailToDoItemAsync(subItemValue.Id);
 
                             break;
                         default: throw new ArgumentOutOfRangeException(nameof(status), status, null);
@@ -233,17 +233,17 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                     switch (item)
                     {
                         case ToDoSubItemPeriodicityNotify:
-                            await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true, DateTimeOffset.Now.Offset);
+                            await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
 
                             break;
                         case ToDoSubItemPeriodicityOffsetNotify:
-                            await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true, DateTimeOffset.Now.Offset);
+                            await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
 
                             break;
                         case ToDoSubItemPlannedNotify toDoSubItemPlannedNotify:
                             if (!toDoSubItemPlannedNotify.IsCompleted)
                             {
-                                await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true, DateTimeOffset.Now.Offset);
+                                await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
                             }
                             else
                             {
@@ -254,7 +254,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                         case ToDoSubItemValueNotify toDoSubItemValueNotify:
                             if (!toDoSubItemValueNotify.IsCompleted)
                             {
-                                await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true, DateTimeOffset.Now.Offset);
+                                await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
                             }
                             else
                             {
@@ -273,19 +273,19 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                     switch (item)
                     {
                         case ToDoSubItemPeriodicityNotify:
-                            await ToDoService.SkipToDoItemAsync(item.Id, DateTimeOffset.Now.Offset);
+                            await ToDoService.SkipToDoItemAsync(item.Id);
 
                             break;
                         case ToDoSubItemPeriodicityOffsetNotify:
-                            await ToDoService.SkipToDoItemAsync(item.Id, DateTimeOffset.Now.Offset);
+                            await ToDoService.SkipToDoItemAsync(item.Id);
 
                             break;
                         case ToDoSubItemPlannedNotify:
-                            await ToDoService.SkipToDoItemAsync(item.Id, DateTimeOffset.Now.Offset);
+                            await ToDoService.SkipToDoItemAsync(item.Id);
 
                             break;
                         case ToDoSubItemValueNotify:
-                            await ToDoService.SkipToDoItemAsync(item.Id, DateTimeOffset.Now.Offset);
+                            await ToDoService.SkipToDoItemAsync(item.Id);
 
                             break;
                         default: throw new ArgumentOutOfRangeException(nameof(item));
@@ -299,19 +299,19 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                     switch (item)
                     {
                         case ToDoSubItemPeriodicityNotify:
-                            await ToDoService.FailToDoItemAsync(item.Id, DateTimeOffset.Now.Offset);
+                            await ToDoService.FailToDoItemAsync(item.Id);
 
                             break;
                         case ToDoSubItemPeriodicityOffsetNotify:
-                            await ToDoService.FailToDoItemAsync(item.Id, DateTimeOffset.Now.Offset);
+                            await ToDoService.FailToDoItemAsync(item.Id);
 
                             break;
                         case ToDoSubItemPlannedNotify:
-                            await ToDoService.FailToDoItemAsync(item.Id, DateTimeOffset.Now.Offset);
+                            await ToDoService.FailToDoItemAsync(item.Id);
 
                             break;
                         case ToDoSubItemValueNotify:
-                            await ToDoService.FailToDoItemAsync(item.Id, DateTimeOffset.Now.Offset);
+                            await ToDoService.FailToDoItemAsync(item.Id);
 
                             break;
                         default: throw new ArgumentOutOfRangeException(nameof(item));
@@ -330,7 +330,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                                 throw new ArgumentException(nameof(item));
                             }
 
-                            await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true, DateTimeOffset.Now.Offset);
+                            await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
 
                             break;
                         case ToDoSubItemValueNotify toDoSubItemValueNotify:
@@ -339,7 +339,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                                 throw new ArgumentException(nameof(item));
                             }
 
-                            await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true, DateTimeOffset.Now.Offset);
+                            await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
 
                             break;
                         default: throw new ArgumentOutOfRangeException(nameof(item));
@@ -359,7 +359,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 
     private async Task InitializedAsync()
     {
-        var favoriteToDoItems = await ToDoService.GetFavoriteToDoItemsAsync(DateTimeOffset.Now.Offset);
+        var favoriteToDoItems = await ToDoService.GetFavoriteToDoItemsAsync();
         FavoriteToDoItems.Clear();
         FavoriteToDoItems.AddRange(Mapper.Map<IEnumerable<ToDoSubItemNotify>>(favoriteToDoItems));
     }

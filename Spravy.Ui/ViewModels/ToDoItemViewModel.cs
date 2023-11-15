@@ -251,7 +251,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
             {
                 var statuses = view.ViewModel.ThrowIfNull().Statuses.Where(x => x.IsChecked).Select(x => x.Item);
                 var options = new ToDoItemToStringOptions(statuses, Id);
-                var text = await ToDoService.ToDoItemToStringAsync(options, DateTimeOffset.Now.Offset);
+                var text = await ToDoService.ToDoItemToStringAsync(options);
                 await Clipboard.SetTextAsync(text);
                 await DialogViewer.CloseContentDialogAsync();
             },
@@ -354,7 +354,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
                 var viewModel = view.ViewModel.ThrowIfNull();
                 var parentValue = viewModel.Parent.ThrowIfNull();
                 var options = new AddToDoItemOptions(parentValue.Id, viewModel.Name, viewModel.Type);
-                await ToDoService.AddToDoItemAsync(options, DateTimeOffset.Now.Offset);
+                await ToDoService.AddToDoItemAsync(options);
                 await ToDoService.NavigateToToDoItemViewModel(parentValue.Id, Navigator);
                 await DialogViewer.CloseContentDialogAsync();
             },

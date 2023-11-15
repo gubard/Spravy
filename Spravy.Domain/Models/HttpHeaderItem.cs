@@ -17,9 +17,14 @@ public readonly struct HttpHeaderItem
     {
         return new HttpHeaderItem(HttpNames.HeaderAuthorizationName, $"{HttpNames.BearerAuthorizationName} {token}");
     }
-    
+
     public static HttpHeaderItem CreateUserId(string userId)
     {
         return new HttpHeaderItem(HttpNames.HeaderUserIdName, userId);
+    }
+
+    public static HttpHeaderItem TimeZoneOffset()
+    {
+        return new HttpHeaderItem(HttpNames.HeaderTimeZoneOffsetName, DateTimeOffset.Now.Offset.ToString());
     }
 }

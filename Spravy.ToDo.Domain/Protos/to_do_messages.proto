@@ -17,7 +17,6 @@ message UpdateToDoItemLinkReply {
 }
 
 message GetActiveItemRequest {
-  google.protobuf.Duration Offset = 1;
 }
 
 message GetActiveItemReply {
@@ -81,7 +80,6 @@ message UpdateToDoItemDaysOffsetReply {
 message ToDoItemToStringRequest {
   bytes Id = 1;
   repeated ToDoItemStatusGrpc Statuses = 2;
-  google.protobuf.Duration Offset = 3;
 }
 
 message ToDoItemToStringReply {
@@ -119,7 +117,6 @@ message ToDoSelectorItemGrpc {
 
 message GetLeafToDoSubItemsRequest {
   bytes Id = 1;
-  google.protobuf.Duration Offset = 2;
 }
 
 message GetLeafToDoSubItemsReply {
@@ -156,7 +153,6 @@ message ActiveToDoItemGrpc {
 }
 
 message GetFavoriteToDoItemsRequest {
-  google.protobuf.Duration Offset = 1;
 }
 
 message GetFavoriteToDoItemsReply {
@@ -179,7 +175,6 @@ message AddFavoriteToDoItemReply {
 
 message SearchToDoSubItemsRequest {
   string SearchText = 1;
-  google.protobuf.Duration Offset = 2;
 }
 
 message SearchToDoSubItemsReply {
@@ -188,7 +183,6 @@ message SearchToDoSubItemsReply {
 
 message FailToDoItemRequest {
   bytes Id = 1;
-  google.protobuf.Duration Offset = 2;
 }
 
 message FailToDoItemReply {
@@ -196,7 +190,6 @@ message FailToDoItemReply {
 
 message SkipToDoItemRequest {
   bytes Id = 1;
-  google.protobuf.Duration Offset = 2;
 }
 
 message SkipToDoItemReply {
@@ -239,7 +232,6 @@ message UpdateToDoItemNameReply {
 message UpdateToDoItemCompleteStatusRequest {
   bytes Id = 1;
   bool IsCompleted = 2;
-  google.protobuf.Duration Offset = 3;
 }
 
 message UpdateToDoItemCompleteStatusReply {
@@ -272,7 +264,6 @@ message AddToDoItemRequest {
   bytes ParentId = 1;
   string Name = 2;
   ToDoItemTypeGrpc Type = 3;
-  google.protobuf.Duration Offset = 4;
 }
 
 message AddToDoItemReply {
@@ -290,7 +281,6 @@ message AddRootToDoItemReply {
 
 message GetToDoItemRequest {
   bytes Id = 1;
-  google.protobuf.Duration Offset = 2;
 }
 
 message GetToDoItemReply {
@@ -354,7 +344,6 @@ message ToDoItemGroupGrpc {
 }
 
 message GetRootToDoSubItemsRequest {
-  google.protobuf.Duration Offset = 1;
 }
 
 message GetRootToDoSubItemsReply {

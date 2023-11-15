@@ -5,6 +5,7 @@ using Spravy.Db.Extensions;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
+using Spravy.Service.Extensions;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
@@ -23,13 +24,15 @@ public class EfToDoService : IToDoService
     private readonly StatusToDoItemService statusToDoItemService;
     private readonly ActiveToDoItemToDoItemService activeToDoItemToDoItemService;
     private readonly CanCompleteToDoItemService canCompleteToDoItemService;
+    private readonly IHttpContextAccessor httpContextAccessor;
 
     public EfToDoService(
         IMapper mapper,
         IFactory<SpravyDbToDoDbContext> dbContextFactory,
         StatusToDoItemService statusToDoItemService,
         ActiveToDoItemToDoItemService activeToDoItemToDoItemService,
-        CanCompleteToDoItemService canCompleteToDoItemService
+        CanCompleteToDoItemService canCompleteToDoItemService,
+        IHttpContextAccessor httpContextAccessor
     )
     {
         this.mapper = mapper;
@@ -37,9 +40,10 @@ public class EfToDoService : IToDoService
         this.statusToDoItemService = statusToDoItemService;
         this.activeToDoItemToDoItemService = activeToDoItemToDoItemService;
         this.canCompleteToDoItemService = canCompleteToDoItemService;
+        this.httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<IEnumerable<IToDoSubItem>> GetRootToDoSubItemsAsync(TimeSpan offset)
+    public async Task<IEnumerable<IToDoSubItem>> GetRootToDoSubItemsAsync()
     {
         await using var context = dbContextFactory.Create();
 
@@ -49,30 +53,30 @@ public class EfToDoService : IToDoService
             .OrderBy(x => x.OrderIndex)
             .ToArrayAsync();
 
-        var result = await ConvertAsync(context, items, offset);
+        var result = await ConvertAsync(context, items);
 
         return result;
     }
 
     private async Task<IEnumerable<IToDoSubItem>> ConvertAsync(
         SpravyDbToDoDbContext context,
-        IEnumerable<ToDoItemEntity> items,
-        TimeSpan offset
+        IEnumerable<ToDoItemEntity> items
     )
     {
         var result = new List<IToDoSubItem>();
 
         foreach (var item in items)
         {
-            var toDoSubItem = await ConvertAsync(context, item, offset);
+            var toDoSubItem = await ConvertAsync(context, item);
             result.Add(toDoSubItem);
         }
 
         return result;
     }
 
-    private async Task<IToDoSubItem> ConvertAsync(SpravyDbToDoDbContext context, ToDoItemEntity item, TimeSpan offset)
+    private async Task<IToDoSubItem> ConvertAsync(SpravyDbToDoDbContext context, ToDoItemEntity item)
     {
+        var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
         var status = await statusToDoItemService.GetStatusAsync(context, item, offset);
         var active = await activeToDoItemToDoItemService.GetActiveItemAsync(context, item, offset);
 
@@ -88,7 +92,7 @@ public class EfToDoService : IToDoService
         return result;
     }
 
-    public async Task<IToDoItem> GetToDoItemAsync(Guid id, TimeSpan offset)
+    public async Task<IToDoItem> GetToDoItemAsync(Guid id)
     {
         await using var context = dbContextFactory.Create();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
@@ -107,7 +111,7 @@ public class EfToDoService : IToDoService
 
         await GetParentsAsync(context, id, parents);
         parents.Reverse();
-        var toDoSubItems = await ConvertAsync(context, subItems, offset);
+        var toDoSubItems = await ConvertAsync(context, subItems);
 
         var toDoItem = mapper.Map<IToDoItem>(
             item,
@@ -146,8 +150,9 @@ public class EfToDoService : IToDoService
         return id;
     }
 
-    public async Task<Guid> AddToDoItemAsync(AddToDoItemOptions options, TimeSpan offset)
+    public async Task<Guid> AddToDoItemAsync(AddToDoItemOptions options)
     {
+        var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
         await using var context = dbContextFactory.Create();
         var id = Guid.NewGuid();
 
@@ -260,8 +265,9 @@ public class EfToDoService : IToDoService
         );
     }
 
-    public async Task UpdateToDoItemCompleteStatusAsync(Guid id, bool isCompleted, TimeSpan offset)
+    public async Task UpdateToDoItemCompleteStatusAsync(Guid id, bool isCompleted)
     {
+        var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
         await using var context = dbContextFactory.Create();
 
         await context.ExecuteSaveChangesTransactionAsync(
@@ -450,8 +456,9 @@ public class EfToDoService : IToDoService
         );
     }
 
-    public async Task SkipToDoItemAsync(Guid id, TimeSpan offset)
+    public async Task SkipToDoItemAsync(Guid id)
     {
+        var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
         await using var context = dbContextFactory.Create();
 
         await context.ExecuteSaveChangesTransactionAsync(
@@ -503,8 +510,9 @@ public class EfToDoService : IToDoService
         );
     }
 
-    public async Task FailToDoItemAsync(Guid id, TimeSpan offset)
+    public async Task FailToDoItemAsync(Guid id)
     {
+        var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
         await using var context = dbContextFactory.Create();
 
         await context.ExecuteSaveChangesTransactionAsync(
@@ -556,8 +564,9 @@ public class EfToDoService : IToDoService
         );
     }
 
-    public async Task<IEnumerable<IToDoSubItem>> SearchToDoSubItemsAsync(string searchText, TimeSpan offset)
+    public async Task<IEnumerable<IToDoSubItem>> SearchToDoSubItemsAsync(string searchText)
     {
+        var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
         await using var context = dbContextFactory.Create();
 
         var items = await context.Set<ToDoItemEntity>()
@@ -566,7 +575,7 @@ public class EfToDoService : IToDoService
             .OrderBy(x => x.OrderIndex)
             .ToArrayAsync();
 
-        var result = await ConvertAsync(context, items, offset);
+        var result = await ConvertAsync(context, items);
 
         return result;
     }
@@ -613,7 +622,7 @@ public class EfToDoService : IToDoService
         );
     }
 
-    public async Task<IEnumerable<IToDoSubItem>> GetFavoriteToDoItemsAsync(TimeSpan offset)
+    public async Task<IEnumerable<IToDoSubItem>> GetFavoriteToDoItemsAsync()
     {
         await using var context = dbContextFactory.Create();
 
@@ -626,7 +635,7 @@ public class EfToDoService : IToDoService
                     .OrderBy(x => x.OrderIndex)
                     .ToArrayAsync();
 
-                var result = await ConvertAsync(c, items, offset);
+                var result = await ConvertAsync(c, items);
 
                 return result;
             }
@@ -675,8 +684,9 @@ public class EfToDoService : IToDoService
         );
     }
 
-    public async Task<IEnumerable<IToDoSubItem>> GetLeafToDoSubItemsAsync(Guid id,TimeSpan offset)
+    public async Task<IEnumerable<IToDoSubItem>> GetLeafToDoSubItemsAsync(Guid id)
     {
+        var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
         await using var context = dbContextFactory.Create();
 
         var entities = await context.Set<ToDoItemEntity>()
@@ -694,7 +704,7 @@ public class EfToDoService : IToDoService
 
         foreach (var entity in entities)
         {
-            await foreach (var item in GetLeafToDoItemsAsync(context, entity,offset))
+            await foreach (var item in GetLeafToDoItemsAsync(context, entity))
             {
                 result.Add(item);
             }
@@ -774,8 +784,9 @@ public class EfToDoService : IToDoService
         );
     }
 
-    public async Task<string> ToDoItemToStringAsync(ToDoItemToStringOptions options, TimeSpan offset)
+    public async Task<string> ToDoItemToStringAsync(ToDoItemToStringOptions options)
     {
+        var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
         await using var context = dbContextFactory.Create();
         var builder = new StringBuilder();
         await ToDoItemToStringAsync(context, options, 0, builder, offset);
@@ -867,8 +878,9 @@ public class EfToDoService : IToDoService
         return mapper.Map<IEnumerable<ToDoShortItem>>(items);
     }
 
-    public async Task<ActiveToDoItem?> GetActiveToDoItemAsync(TimeSpan offset)
+    public async Task<ActiveToDoItem?> GetActiveToDoItemAsync()
     {
+        var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
         await using var context = dbContextFactory.Create();
 
         var items = await context.Set<ToDoItemEntity>()
@@ -968,7 +980,7 @@ public class EfToDoService : IToDoService
 
     private async IAsyncEnumerable<IToDoSubItem> GetLeafToDoItemsAsync(
         SpravyDbToDoDbContext context,
-        ToDoItemEntity itemEntity, TimeSpan offset
+        ToDoItemEntity itemEntity
     )
     {
         var entities = await context.Set<ToDoItemEntity>()
@@ -979,14 +991,14 @@ public class EfToDoService : IToDoService
 
         if (entities.IsEmpty())
         {
-            yield return await ConvertAsync(context, itemEntity,offset);
+            yield return await ConvertAsync(context, itemEntity);
 
             yield break;
         }
 
         foreach (var entity in entities)
         {
-            await foreach (var item in GetLeafToDoItemsAsync(context, entity, offset))
+            await foreach (var item in GetLeafToDoItemsAsync(context, entity))
             {
                 yield return item;
             }
