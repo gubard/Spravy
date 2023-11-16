@@ -39,9 +39,6 @@ public class LoginViewModel : RoutableViewModelBase
     [Inject]
     public required IObjectStorage ObjectStorage { get; init; }
 
-    [Inject]
-    public required IEventBusService EventBusService { get; init; }
-
     public bool IsRememberMe
     {
         get => isRememberMe;
