@@ -356,18 +356,26 @@ public class EfToDoService : IToDoService
             .OrderBy(x => x.OrderIndex)
             .ToArrayAsync();
 
-        if (children.Length == 0)
+        if (children.Length != 0)
         {
-            return;
+            var next = children.FirstOrDefault(x => x.OrderIndex > item.CurrentCircleOrderIndex);
+            var nextOrderIndex = next?.OrderIndex ?? children.First().OrderIndex;
+            item.CurrentCircleOrderIndex = nextOrderIndex;
+
+            foreach (var child in children)
+            {
+                child.IsCompleted = child.OrderIndex != nextOrderIndex;
+            }
         }
 
-        var next = children.FirstOrDefault(x => x.OrderIndex > item.CurrentCircleOrderIndex);
-        var nextOrderIndex = next?.OrderIndex ?? children.First().OrderIndex;
-        item.CurrentCircleOrderIndex = nextOrderIndex;
+        var groups = await context.Set<ToDoItemEntity>()
+            .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Group)
+            .OrderBy(x => x.OrderIndex)
+            .ToArrayAsync();
 
-        foreach (var child in children)
+        foreach (var group in groups)
         {
-            child.IsCompleted = child.OrderIndex != nextOrderIndex;
+            await CircleCompletionAsync(context, group);
         }
     }
 
@@ -378,20 +386,28 @@ public class EfToDoService : IToDoService
             .OrderBy(x => x.OrderIndex)
             .ToArrayAsync();
 
-        if (children.Length == 0)
+        if (children.Length != 0)
         {
-            return;
+            var next = children.SingleOrDefault(x => x.OrderIndex == item.CurrentCircleOrderIndex)
+                       ?? children.FirstOrDefault(x => x.OrderIndex > item.CurrentCircleOrderIndex);
+
+            var nextOrderIndex = next?.OrderIndex ?? children.First().OrderIndex;
+            item.CurrentCircleOrderIndex = nextOrderIndex;
+
+            foreach (var child in children)
+            {
+                child.IsCompleted = child.OrderIndex != nextOrderIndex;
+            }
         }
 
-        var next = children.SingleOrDefault(x => x.OrderIndex == item.CurrentCircleOrderIndex)
-                   ?? children.FirstOrDefault(x => x.OrderIndex > item.CurrentCircleOrderIndex);
+        var groups = await context.Set<ToDoItemEntity>()
+            .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Group)
+            .OrderBy(x => x.OrderIndex)
+            .ToArrayAsync();
 
-        var nextOrderIndex = next?.OrderIndex ?? children.First().OrderIndex;
-        item.CurrentCircleOrderIndex = nextOrderIndex;
-
-        foreach (var child in children)
+        foreach (var group in groups)
         {
-            child.IsCompleted = child.OrderIndex != nextOrderIndex;
+            await CircleCompletionAsync(context, group);
         }
     }
 
