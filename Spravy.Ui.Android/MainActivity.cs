@@ -24,7 +24,7 @@ public class MainActivity : AvaloniaMainActivity<App>
     protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)
     {
         Log.Logger = new LoggerConfiguration()
-            .WriteTo.Console()
+            .WriteTo.AndroidLog()
             .CreateLogger();
         
         return base.CustomizeAppBuilder(builder)
@@ -36,5 +36,11 @@ public class MainActivity : AvaloniaMainActivity<App>
     {
         DiHelper.Kernel = new StandardKernel(new UiModule(true), new AndroidModule(this));
         base.OnCreate(savedInstanceState);
+    }
+
+    protected override void OnDestroy()
+    {
+        Log.CloseAndFlush();
+        base.OnDestroy();
     }
 }
