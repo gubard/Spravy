@@ -5,6 +5,7 @@ using Avalonia;
 using Avalonia.Android;
 using Avalonia.ReactiveUI;
 using Ninject;
+using Serilog;
 using Spravy.Domain.Di.Helpers;
 using Spravy.Ui.Android.Configurations;
 using Spravy.Ui.Configurations;
@@ -22,6 +23,10 @@ public class MainActivity : AvaloniaMainActivity<App>
 {
     protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)
     {
+        Log.Logger = new LoggerConfiguration()
+            .WriteTo.Console()
+            .CreateLogger();
+        
         return base.CustomizeAppBuilder(builder)
             .WithInterFont()
             .UseReactiveUI();

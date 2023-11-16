@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Ninject;
 using ReactiveUI;
+using Serilog;
 using Spravy.Ui.Interfaces;
 
 namespace Spravy.Ui.Models;
@@ -179,6 +180,8 @@ public class ViewModelBase : NotifyBase
 
     private async void OnNextError(Exception exception)
     {
+        Log.Logger.Error(exception, "UI error");
+
         await DialogViewer.ShowInfoErrorDialogAsync<IExceptionViewModel>(
             async _ =>
             {

@@ -1,10 +1,12 @@
-﻿using System.Runtime.InteropServices.JavaScript;
+﻿using System;
+using System.Runtime.InteropServices.JavaScript;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Browser;
 using Avalonia.ReactiveUI;
 using Ninject;
+using Serilog;
 using Spravy.Domain.Di.Helpers;
 using Spravy.Domain.Extensions;
 using Spravy.Ui.Browser.Configurations;
@@ -18,14 +20,30 @@ internal partial class Program
 {
     private static async Task Main()
     {
-        await JSHost.ImportAsync("localStorage.js", "./localStorage.js");
-        await JSHost.ImportAsync("window.js", "./window.js");
-        DiHelper.Kernel = new StandardKernel(BrowserModule.Default, new UiModule(false));
+        Log.Logger = new LoggerConfiguration()
+            .WriteTo.Console()
+            .CreateLogger();
 
-        await BuildAvaloniaApp()
-            .WithInterFont()
-            .UseReactiveUI()
-            .StartBrowserAppAsync("out");
+        try
+        {
+            Log.Information("Starting web app");
+            await JSHost.ImportAsync("localStorage.js", "./localStorage.js");
+            await JSHost.ImportAsync("window.js", "./window.js");
+            DiHelper.Kernel = new StandardKernel(BrowserModule.Default, new UiModule(false));
+
+            await BuildAvaloniaApp()
+                .WithInterFont()
+                .UseReactiveUI()
+                .StartBrowserAppAsync("out");
+        }
+        catch (Exception ex)
+        {
+            Log.Fatal(ex, "Application terminated unexpectedly");
+        }
+        finally
+        {
+            await Log.CloseAndFlushAsync();
+        }
     }
 
     public static AppBuilder BuildAvaloniaApp()
