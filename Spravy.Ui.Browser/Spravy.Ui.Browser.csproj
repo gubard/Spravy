@@ -5,8 +5,9 @@
         <WasmMainJSPath>AppBundle\main.js</WasmMainJSPath>
         <OutputType>Exe</OutputType>
         <Nullable>enable</Nullable>
-        <ILLinkNoDefaultAction>true</ILLinkNoDefaultAction>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <PublishTrimmed>true</PublishTrimmed>
+        <TrimMode>full</TrimMode>
     </PropertyGroup>
 
     <ItemGroup>
