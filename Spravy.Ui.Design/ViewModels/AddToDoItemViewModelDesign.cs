@@ -11,7 +11,11 @@ public class AddToDoItemViewModelDesign : AddToDoItemViewModel
     public AddToDoItemViewModelDesign()
     {
         Parent = new ToDoSubItemGroupNotify();
-        Path = new();
+        PathViewModel = new PathViewModel
+        {
+            Navigator = null,
+            DialogViewer = null
+        };
 
         ToDoService = new ToDoServiceDesign(
             Enumerable.Empty<IToDoSubItem>(),

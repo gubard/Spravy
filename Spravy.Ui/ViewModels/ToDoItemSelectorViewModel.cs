@@ -40,7 +40,7 @@ public class ToDoItemSelectorViewModel : ViewModelBase
 
     private async Task InitializedAsync()
     {
-        var items = await ToDoService.GetToDoSelectorItemsAsync(IgnoreIds.ToArray());
+        var items = await ToDoService.GetToDoSelectorItemsAsync(IgnoreIds.ToArray()).ConfigureAwait(false);
         Roots.Clear();
         Roots.AddRange(Mapper.Map<IEnumerable<ToDoSelectorItemNotify>>(items));
         SetItem(DefaultSelectedItemId);

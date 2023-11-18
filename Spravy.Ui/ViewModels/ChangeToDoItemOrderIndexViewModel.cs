@@ -52,7 +52,7 @@ public class ChangeToDoItemOrderIndexViewModel : ViewModelBase
 
     private async Task InitializedAsync()
     {
-        var items = await ToDoService.GetSiblingsAsync(Id);
+        var items = await ToDoService.GetSiblingsAsync(Id).ConfigureAwait(false);
         Items.Clear();
         Items.AddRange(Mapper.Map<IEnumerable<ToDoItemNotify>>(items));
     }

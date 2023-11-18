@@ -10,19 +10,17 @@ public class NavigatorDesign : INavigator
         throw new NotImplementedException();
     }
 
-    public IObservable<IRoutableViewModel> NavigateTo<TViewModel>(TViewModel parameter)
-        where TViewModel : IRoutableViewModel
+    public Task NavigateToAsync<TViewModel>(TViewModel parameter) where TViewModel : IRoutableViewModel
     {
         throw new NotImplementedException();
     }
 
-    public IObservable<IRoutableViewModel> NavigateTo(Type type)
+    public Task NavigateToAsync(Type type)
     {
         throw new NotImplementedException();
     }
 
-    public IObservable<IRoutableViewModel> NavigateTo<TViewModel>(Action<TViewModel>? setup = null)
-        where TViewModel : IRoutableViewModel
+    public Task NavigateToAsync<TViewModel>(Action<TViewModel>? setup = null) where TViewModel : IRoutableViewModel
     {
         throw new NotImplementedException();
     }

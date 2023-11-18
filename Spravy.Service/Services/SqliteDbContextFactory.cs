@@ -1,11 +1,7 @@
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Spravy.Db.Interfaces;
 using Spravy.Db.Sqlite.Extensions;
-using Spravy.Db.Sqlite.Models;
-using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
-using Spravy.Service.Extensions;
 
 namespace Spravy.Service.Services;
 

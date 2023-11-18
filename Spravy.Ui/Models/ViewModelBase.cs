@@ -1,5 +1,6 @@
 using System;
 using System.Reactive.Subjects;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Ninject;
@@ -29,7 +30,7 @@ public class ViewModelBase : NotifyBase
     {
         CanExecute.OnNext(true);
     }
-    
+
     protected ICommand CreateInitializedCommand(Action action)
     {
         var command = ReactiveCommand.Create(WrapCommand(action));
@@ -45,7 +46,7 @@ public class ViewModelBase : NotifyBase
 
         return command;
     }
-    
+
     protected ICommand CreateInitializedCommand<TArgs>(Action<TArgs> action)
     {
         var command = ReactiveCommand.Create(WrapCommand(action));
@@ -116,9 +117,21 @@ public class ViewModelBase : NotifyBase
         {
             await func.Invoke();
         }
-        catch(Exception e)
+        catch (Exception e)
         {
-            Navigator.NavigateTo<IExceptionViewModel>(viewModel => viewModel.Exception = e);
+            await Navigator.NavigateToAsync<IExceptionViewModel>(viewModel => viewModel.Exception = e);
+        }
+    }
+
+    protected async Task SafeExecuteAsync(Func<ConfiguredTaskAwaitable> func)
+    {
+        try
+        {
+            await func.Invoke();
+        }
+        catch (Exception e)
+        {
+            await Navigator.NavigateToAsync<IExceptionViewModel>(viewModel => viewModel.Exception = e);
         }
     }
 
@@ -128,7 +141,7 @@ public class ViewModelBase : NotifyBase
         {
             var task = execute.Invoke();
 
-            if(await IsTakeMoreThen(task, TaskTimeout))
+            if (await IsTakeMoreThen(task, TaskTimeout))
             {
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                 DialogViewer.ShowProgressDialogAsync<IDialogProgressIndicator>();
@@ -147,7 +160,7 @@ public class ViewModelBase : NotifyBase
         {
             var task = execute.Invoke(param);
 
-            if(await IsTakeMoreThen(task, TaskTimeout))
+            if (await IsTakeMoreThen(task, TaskTimeout))
             {
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                 DialogViewer.ShowProgressDialogAsync<IDialogProgressIndicator>();
@@ -162,10 +175,11 @@ public class ViewModelBase : NotifyBase
 
     private async Task<bool> IsTakeMoreThen(Task task, TimeSpan timeout)
     {
+        var delay = Task.Delay(timeout);
+
         var tasks = new[]
         {
-            task,
-            Task.Delay(timeout),
+            task, delay,
         };
 
         var resultTask = await Task.WhenAny(tasks);

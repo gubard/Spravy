@@ -1,9 +1,8 @@
-﻿using System.Windows.Input;
-using Avalonia.Controls;
+﻿using System.Threading.Tasks;
+using System.Windows.Input;
 using Avalonia.ReactiveUI;
 using Ninject;
 using Spravy.Ui.Models;
-using Spravy.Ui.Views;
 
 namespace Spravy.Ui.ViewModels;
 
@@ -11,27 +10,28 @@ public class MainViewModel : ViewModelBase
 {
     public MainViewModel()
     {
-        InitializedCommand = CreateInitializedCommand(Initialized);
+        InitializedCommand = CreateInitializedCommand(InitializedAsync);
     }
 
     [Inject]
     public required AppConfiguration Configuration { get; init; }
 
     [Inject]
-    public required SplitView SplitView { get; init; }
+    public required MainSplitViewModel MainSplitViewModel { get; init; }
 
     [Inject]
-    public required PaneView PaneView { get; init; }
+    public required PaneViewModel PaneViewModel { get; init; }
 
     [Inject]
     public required RoutedViewHost RoutedViewHost { get; init; }
 
     public ICommand InitializedCommand { get; }
 
-    private void Initialized()
+    private Task InitializedAsync()
     {
-        SplitView.Content = RoutedViewHost;
-        SplitView.Pane = PaneView;
-        Navigator.NavigateTo(Configuration.DefaultMainViewType);
+        MainSplitViewModel.Content = RoutedViewHost;
+        MainSplitViewModel.Pane = PaneViewModel;
+
+        return Navigator.NavigateToAsync(Configuration.DefaultMainViewType);
     }
 }

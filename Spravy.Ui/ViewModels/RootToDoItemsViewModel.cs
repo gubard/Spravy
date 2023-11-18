@@ -5,15 +5,12 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
-using Avalonia.Controls;
 using Ninject;
 using ReactiveUI;
-using Spravy.Domain.Extensions;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
-using Spravy.Ui.Views;
 
 namespace Spravy.Ui.ViewModels;
 
@@ -31,7 +28,7 @@ public class RootToDoItemsViewModel : RoutableViewModelBase, IToDoItemOrderChang
     public ICommand SwitchPaneCommand { get; }
 
     [Inject]
-    public required ToDoSubItemsView ToDoSubItemsView { get; init; }
+    public required ToDoSubItemsViewModel ToDoSubItemsViewModel { get; init; }
 
     [Inject]
     public required IToDoService ToDoService { get; init; }
@@ -40,11 +37,11 @@ public class RootToDoItemsViewModel : RoutableViewModelBase, IToDoItemOrderChang
     public required IMapper Mapper { get; init; }
 
     [Inject]
-    public required SplitView SplitView { get; init; }
+    public required MainSplitViewModel MainSplitViewModel { get; init; }
 
     private void SwitchPane()
     {
-        SplitView.IsPaneOpen = !SplitView.IsPaneOpen;
+        MainSplitViewModel.IsPaneOpen = !MainSplitViewModel.IsPaneOpen;
     }
 
     private Task InitializedAsync()
@@ -54,19 +51,19 @@ public class RootToDoItemsViewModel : RoutableViewModelBase, IToDoItemOrderChang
 
     public async Task RefreshToDoItemAsync()
     {
-        var items = await ToDoService.GetRootToDoSubItemsAsync();
+        var items = await ToDoService.GetRootToDoSubItemsAsync().ConfigureAwait(false);
         var source = items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
-        await ToDoSubItemsView.ViewModel.ThrowIfNull().UpdateItemsAsync(source, this);
+        await ToDoSubItemsViewModel.UpdateItemsAsync(source, this);
         SubscribeItems(source);
     }
 
     private Task AddToDoItemAsync()
     {
-        return DialogViewer.ShowConfirmContentDialogAsync<AddRootToDoItemView>(
+        return DialogViewer.ShowConfirmContentDialogAsync<AddRootToDoItemViewModel>(
             async view =>
             {
-                var options = Mapper.Map<AddRootToDoItemOptions>(view.ViewModel);
-                await ToDoService.AddRootToDoItemAsync(options);
+                var options = Mapper.Map<AddRootToDoItemOptions>(view);
+                await ToDoService.AddRootToDoItemAsync(options).ConfigureAwait(false);
                 await DialogViewer.CloseContentDialogAsync();
                 await RefreshToDoItemAsync();
             },
@@ -83,7 +80,7 @@ public class RootToDoItemsViewModel : RoutableViewModelBase, IToDoItemOrderChang
                 await SafeExecuteAsync(
                     async () =>
                     {
-                        await ToDoService.UpdateToDoItemCompleteStatusAsync(itemNotify.Id, x);
+                        await ToDoService.UpdateToDoItemCompleteStatusAsync(itemNotify.Id, x).ConfigureAwait(false);
                         await RefreshToDoItemAsync();
                     }
                 );

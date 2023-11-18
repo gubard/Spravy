@@ -47,7 +47,7 @@
         </Grid>
 
         <ScrollViewer Grid.Row="1">
-            <ContentControl Content="{Binding ToDoSubItemsView}" />
+            <ContentControl Content="{Binding ToDoSubItemsViewModel}" />
         </ScrollViewer>
     </Grid>
 </reactiveUi:ReactiveUserControl>

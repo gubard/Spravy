@@ -17,11 +17,11 @@
     </Interaction.Behaviors>
 
     <Grid RowDefinitions="Auto,Auto,*">
-        <ContentControl Content="{Binding ToDoItemHeaderView}" />
+        <ContentControl Content="{Binding ToDoItemHeaderViewModel}" />
 
         <StackPanel Grid.Row="1">
             <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
-                <ContentControl Content="{Binding Path}"
+                <ContentControl Content="{Binding PathViewModel}"
                                 Margin="5"
                                 HorizontalAlignment="Center" />
             </ScrollViewer>

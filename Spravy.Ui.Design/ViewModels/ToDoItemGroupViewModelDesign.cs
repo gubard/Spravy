@@ -249,14 +249,15 @@ public class ToDoItemGroupViewModelDesign : ToDoItemGroupViewModel
             OpenerLink = ConstDesign.OpenerLink,
         };
 
-        ToDoItemHeaderView = new()
+        ToDoItemHeaderViewModel = new ToDoItemHeaderViewModelDesign
         {
-            ViewModel = new ToDoItemHeaderViewModelDesign
+            Navigator = ConstDesign.Navigator,
+            DialogViewer = ConstDesign.DialogViewer,
+            MainSplitViewModel = new ()
             {
                 Navigator = ConstDesign.Navigator,
                 DialogViewer = ConstDesign.DialogViewer,
-                SplitView = new()
-            }
+            },
         };
     }
 }

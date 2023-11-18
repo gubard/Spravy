@@ -13,67 +13,64 @@ public class SearchViewModelDesign : SearchViewModel
 {
     public SearchViewModelDesign()
     {
-        ToDoSubItemsView = new()
+        ToDoSubItemsViewModel = new()
         {
-            ViewModel = new()
+            Mapper = ConstDesign.Mapper,
+            Navigator = ConstDesign.Navigator,
+            DialogViewer = ConstDesign.DialogViewer,
+            OpenerLink = ConstDesign.OpenerLink,
+            ToDoService = new ToDoServiceDesign(
+                Enumerable.Empty<IToDoSubItem>(),
+                Enumerable.Empty<IToDoSubItem>(),
+                new ToDoItemGroup(),
+                Enumerable.Empty<ToDoShortItem>(),
+                Enumerable.Empty<IToDoSubItem>()
+            ),
+            Completed =
             {
-                Mapper = ConstDesign.Mapper,
-                Navigator = ConstDesign.Navigator,
-                DialogViewer = ConstDesign.DialogViewer,
-                OpenerLink = ConstDesign.OpenerLink,
-                ToDoService = new ToDoServiceDesign(
-                    Enumerable.Empty<IToDoSubItem>(),
-                    Enumerable.Empty<IToDoSubItem>(),
-                    new ToDoItemGroup(),
-                    Enumerable.Empty<ToDoShortItem>(),
-                    Enumerable.Empty<IToDoSubItem>()
-                ),
-                Completed =
+                new ToDoSubItemGroupNotify
                 {
-                    new ToDoSubItemGroupNotify
-                    {
-                        Id = Guid.NewGuid(),
-                        Name = Guid.NewGuid().ToString(),
-                        Status = ToDoItemStatus.Completed
-                    },
+                    Id = Guid.NewGuid(),
+                    Name = Guid.NewGuid().ToString(),
+                    Status = ToDoItemStatus.Completed
                 },
-                Missed =
+            },
+            Missed =
+            {
+                new ToDoSubItemGroupNotify
                 {
-                    new ToDoSubItemGroupNotify
-                    {
-                        Id = Guid.NewGuid(),
-                        Name = Guid.NewGuid().ToString(),
-                        Status = ToDoItemStatus.Miss
-                    },
+                    Id = Guid.NewGuid(),
+                    Name = Guid.NewGuid().ToString(),
+                    Status = ToDoItemStatus.Miss
                 },
-                Planned =
+            },
+            Planned =
+            {
+                new ToDoSubItemGroupNotify
                 {
-                    new ToDoSubItemGroupNotify
-                    {
-                        Id = Guid.NewGuid(),
-                        Name = Guid.NewGuid().ToString(),
-                        Status = ToDoItemStatus.Planned
-                    },
+                    Id = Guid.NewGuid(),
+                    Name = Guid.NewGuid().ToString(),
+                    Status = ToDoItemStatus.Planned
                 },
-                ReadyForCompleted =
+            },
+            ReadyForCompleted =
+            {
+                new ToDoSubItemGroupNotify
                 {
-                    new ToDoSubItemGroupNotify
-                    {
-                        Id = Guid.NewGuid(),
-                        Name = Guid.NewGuid().ToString(),
-                        Status = ToDoItemStatus.ReadyForComplete
-                    },
+                    Id = Guid.NewGuid(),
+                    Name = Guid.NewGuid().ToString(),
+                    Status = ToDoItemStatus.ReadyForComplete
                 },
-                FavoriteToDoItems =
+            },
+            FavoriteToDoItems =
+            {
+                new ToDoSubItemGroupNotify
                 {
-                    new ToDoSubItemGroupNotify
-                    {
-                        Id = Guid.NewGuid(),
-                        Name = Guid.NewGuid().ToString(),
-                        Status = ToDoItemStatus.ReadyForComplete,
-                        IsFavorite = true
-                    },
-                }
+                    Id = Guid.NewGuid(),
+                    Name = Guid.NewGuid().ToString(),
+                    Status = ToDoItemStatus.ReadyForComplete,
+                    IsFavorite = true
+                },
             }
         };
     }

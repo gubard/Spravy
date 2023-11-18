@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Collections;
-using Avalonia.Controls;
 using Ninject;
 using ReactiveUI;
 using Spravy.Ui.Extensions;
@@ -24,7 +23,7 @@ public class ToDoItemHeaderViewModel : ViewModelBase
     public AvaloniaList<ToDoItemCommand> Commands { get; } = new();
 
     [Inject]
-    public required SplitView SplitView { get; init; }
+    public required MainSplitViewModel MainSplitViewModel { get; init; }
 
     public ToDoItemViewModel? Item
     {
@@ -54,6 +53,6 @@ public class ToDoItemHeaderViewModel : ViewModelBase
 
     private void SwitchPane()
     {
-        SplitView.IsPaneOpen = !SplitView.IsPaneOpen;
+        MainSplitViewModel.IsPaneOpen = !MainSplitViewModel.IsPaneOpen;
     }
 }

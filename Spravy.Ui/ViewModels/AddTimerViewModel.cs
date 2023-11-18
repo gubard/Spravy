@@ -1,12 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using AutoMapper;
-using Avalonia.Controls;
-using Ninject;
 using ReactiveUI;
 using Spravy.Domain.Extensions;
-using Spravy.Schedule.Domain.Interfaces;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Models;
 
@@ -27,15 +23,6 @@ public class AddTimerViewModel : ViewModelBase
     public Guid EventId { get; set; }
     public ICommand ChangeDueDateTimeCommand { get; }
     public ICommand ChangeItemCommand { get; }
-
-    [Inject]
-    public required IScheduleService ScheduleService { get; init; }
-
-    [Inject]
-    public required IMapper Mapper { get; init; }
-
-    [Inject]
-    public required SplitView SplitView { get; init; }
 
     private Task ChangeItemAsync()
     {

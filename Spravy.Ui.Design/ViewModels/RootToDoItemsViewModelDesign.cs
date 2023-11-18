@@ -252,16 +252,13 @@ public class RootToDoItemsViewModelDesign : RootToDoItemsViewModel
         ToDoService = toDoServiceDesign;
         Mapper = ConstDesign.Mapper;
 
-        ToDoSubItemsView = new()
+        ToDoSubItemsViewModel = new ToDoSubItemsViewModelDesign
         {
-            ViewModel = new ToDoSubItemsViewModelDesign
-            {
-                Mapper = ConstDesign.Mapper,
-                Navigator = ConstDesign.Navigator,
-                DialogViewer = ConstDesign.DialogViewer,
-                ToDoService = toDoServiceDesign,
-                OpenerLink = ConstDesign.OpenerLink,
-            },
+            Mapper = ConstDesign.Mapper,
+            Navigator = ConstDesign.Navigator,
+            DialogViewer = ConstDesign.DialogViewer,
+            ToDoService = toDoServiceDesign,
+            OpenerLink = ConstDesign.OpenerLink,
         };
     }
 }

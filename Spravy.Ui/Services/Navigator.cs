@@ -1,4 +1,6 @@
 using System;
+using System.Threading.Tasks;
+using Avalonia.Threading;
 using Ninject;
 using ReactiveUI;
 using Spravy.Ui.Interfaces;
@@ -19,34 +21,34 @@ public class Navigator : INavigator
 
     public IObservable<IRoutableViewModel?> NavigateBack()
     {
-        return NavigateTo(Configuration.DefaultMainViewType);
+        throw new NotSupportedException();
     }
 
-    public IObservable<IRoutableViewModel> NavigateTo(Type type)
+    public async Task NavigateToAsync(Type type)
     {
         var viewModel = (IRoutableViewModel)Resolver.Get(type);
-
-        return RoutingState.Navigate.Execute(viewModel);
+        await Dispatcher.UIThread.InvokeAsync(() => RoutingState.Navigate.Execute(viewModel));
     }
 
-    public IObservable<IRoutableViewModel> NavigateTo<TViewModel>(Action<TViewModel>? setup = null)
+    public async Task NavigateToAsync<TViewModel>(Action<TViewModel>? setup = null)
         where TViewModel : IRoutableViewModel
     {
         var viewModel = Resolver.Get<TViewModel>();
 
         if (setup is null)
         {
-            return RoutingState.Navigate.Execute(viewModel);
+            await Dispatcher.UIThread.InvokeAsync(() => RoutingState.Navigate.Execute(viewModel));
+            
+            return;
         }
 
         setup.Invoke(viewModel);
-
-        return RoutingState.Navigate.Execute(viewModel);
+        await Dispatcher.UIThread.InvokeAsync(() => RoutingState.Navigate.Execute(viewModel));
     }
 
-    public IObservable<IRoutableViewModel> NavigateTo<TViewModel>(TViewModel parameter)
+    public async Task NavigateToAsync<TViewModel>(TViewModel parameter)
         where TViewModel : IRoutableViewModel
     {
-        return RoutingState.Navigate.Execute(parameter);
+        await Dispatcher.UIThread.InvokeAsync(() => RoutingState.Navigate.Execute(parameter));
     }
 }

@@ -26,16 +26,29 @@ public class ToDoItemHeaderViewModelDesign : ToDoItemHeaderViewModel
         {
             DialogViewer = ConstDesign.DialogViewer,
             Clipboard = Application.Current
-                                .ThrowIfNull("Application")
-                                .GetTopLevel()
-                                .ThrowIfNull("TopLevel")
-                                .Clipboard
-                                .ThrowIfNull(),
+                .ThrowIfNull("Application")
+                .GetTopLevel()
+                .ThrowIfNull("TopLevel")
+                .Clipboard
+                .ThrowIfNull(),
             Mapper = ConstDesign.Mapper,
             Navigator = ConstDesign.Navigator,
             ToDoService = toDoService,
-            ToDoItemHeaderView = new(),
-            Path = new(),
+            ToDoItemHeaderViewModel = new ToDoItemHeaderViewModelDesign
+            {
+                Navigator = ConstDesign.Navigator,
+                DialogViewer = ConstDesign.DialogViewer,
+                MainSplitViewModel = new()
+                {
+                    Navigator = ConstDesign.Navigator,
+                    DialogViewer = ConstDesign.DialogViewer,
+                }
+            },
+            PathViewModel = new PathViewModel
+            {
+                Navigator = null,
+                DialogViewer = null
+            },
             ToDoSubItemsViewModel = new ToDoSubItemsViewModelDesign
             {
                 DialogViewer = ConstDesign.DialogViewer,

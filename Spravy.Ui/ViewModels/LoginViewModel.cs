@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
@@ -8,8 +7,6 @@ using ReactiveUI;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
-using Spravy.EventBus.Domain.Helpers;
-using Spravy.EventBus.Domain.Interfaces;
 using Spravy.Ui.Helpers;
 using Spravy.Ui.Models;
 using Spravy.Ui.Views;
@@ -25,7 +22,7 @@ public class LoginViewModel : RoutableViewModelBase
     public LoginViewModel() : base("login")
     {
         LoginCommand = CreateCommandFromTaskWithDialogProgressIndicator(LoginAsync);
-        CreateUserCommand = CreateCommand(CreateUser);
+        CreateUserCommand = CreateCommandFromTask(CreateUserAsync);
         EnterCommand = CreateCommandFromTaskWithDialogProgressIndicator<LoginView>(EnterAsync);
         InitializedCommand = CreateInitializedCommand(InitializedAsync);
     }
@@ -64,14 +61,14 @@ public class LoginViewModel : RoutableViewModelBase
 
     private async Task InitializedAsync()
     {
-        if (!await ObjectStorage.IsExistsAsync(FileIds.LoginFileId))
+        if (!await ObjectStorage.IsExistsAsync(FileIds.LoginFileId).ConfigureAwait(false))
         {
             return;
         }
 
-        var item = await ObjectStorage.GetObjectAsync<LoginStorageItem>(FileIds.LoginFileId);
-        await TokenService.LoginAsync(item.Token.ThrowIfNullOrWhiteSpace());
-        Navigator.NavigateTo<RootToDoItemsViewModel>();
+        var item = await ObjectStorage.GetObjectAsync<LoginStorageItem>(FileIds.LoginFileId).ConfigureAwait(false);
+        await TokenService.LoginAsync(item.Token.ThrowIfNullOrWhiteSpace()).ConfigureAwait(false);
+        await Navigator.NavigateToAsync<RootToDoItemsViewModel>();
     }
 
     private async Task EnterAsync(LoginView view)
@@ -100,17 +97,17 @@ public class LoginViewModel : RoutableViewModelBase
         await LoginAsync();
     }
 
-    private void CreateUser()
+    private Task CreateUserAsync()
     {
-        Navigator.NavigateTo<CreateUserViewModel>();
+        return Navigator.NavigateToAsync<CreateUserViewModel>();
     }
 
     private async Task LoginAsync()
     {
         var user = Mapper.Map<User>(this);
-        await TokenService.LoginAsync(user);
+        await TokenService.LoginAsync(user).ConfigureAwait(false);
         await RememberMeAsync();
-        Navigator.NavigateTo<RootToDoItemsViewModel>();
+        await Navigator.NavigateToAsync<RootToDoItemsViewModel>();
     }
 
     private async Task RememberMeAsync()
@@ -120,13 +117,13 @@ public class LoginViewModel : RoutableViewModelBase
             return;
         }
 
-        var token = await TokenService.GetTokenAsync();
+        var token = await TokenService.GetTokenAsync().ConfigureAwait(false);
 
         var item = new LoginStorageItem
         {
             Token = token,
         };
 
-        await ObjectStorage.SaveObjectAsync(FileIds.LoginFileId, item);
+        await ObjectStorage.SaveObjectAsync(FileIds.LoginFileId, item).ConfigureAwait(false);
     }
 }

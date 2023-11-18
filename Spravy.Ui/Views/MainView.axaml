@@ -60,7 +60,7 @@
                                            Identifier="{x:Static services:DialogViewer.InputDialogHostIdentifier}">
                 <dialogHostAvalonia:DialogHost Classes="adaptive"
                                                Identifier="{x:Static services:DialogViewer.ContentDialogHostIdentifier}">
-                    <ContentControl Content="{Binding SplitView}" />
+                    <ContentControl Content="{Binding MainSplitViewModel}" />
                 </dialogHostAvalonia:DialogHost>
             </dialogHostAvalonia:DialogHost>
         </dialogHostAvalonia:DialogHost>

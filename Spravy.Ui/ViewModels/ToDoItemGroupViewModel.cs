@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using Avalonia.Threading;
 using ReactiveUI;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Models;
@@ -21,8 +22,7 @@ public class ToDoItemGroupViewModel : ToDoItemViewModel, IRefreshToDoItem
     public override async Task RefreshToDoItemAsync()
     {
         UnsubscribeProperties();
-        Path.Items ??= new();
-        var item = await ToDoService.GetToDoItemAsync(Id);
+        var item = await ToDoService.GetToDoItemAsync(Id).ConfigureAwait(false);
 
         switch (item)
         {
@@ -35,34 +35,41 @@ public class ToDoItemGroupViewModel : ToDoItemViewModel, IRefreshToDoItem
                 var source = item.Items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
                 await ToDoSubItemsViewModel.UpdateItemsAsync(source, this);
                 SubscribeItems(source);
-                Path.Items.Clear();
-                Path.Items.Add(new RootItem());
-                Path.Items.AddRange(item.Parents.Select(x => Mapper.Map<ToDoItemParentNotify>(x)));
+
+                await Dispatcher.UIThread.InvokeAsync(
+                    () =>
+                    {
+                        PathViewModel.Items.Clear();
+                        PathViewModel.Items.Add(new RootItem());
+                        PathViewModel.Items.AddRange(item.Parents.Select(x => Mapper.Map<ToDoItemParentNotify>(x)));
+                    }
+                );
+
                 SubscribeProperties();
 
                 break;
             case ToDoItemPeriodicity:
-                Navigator.NavigateTo<ToDoItemPeriodicityViewModel>(x => x.Id = item.Id);
+                await Navigator.NavigateToAsync<ToDoItemPeriodicityViewModel>(x => x.Id = item.Id);
 
                 return;
             case ToDoItemStep:
-                Navigator.NavigateTo<ToDoItemStepViewModel>(x => x.Id = item.Id);
+                await Navigator.NavigateToAsync<ToDoItemStepViewModel>(x => x.Id = item.Id);
 
                 return;
             case ToDoItemPlanned:
-                Navigator.NavigateTo<ToDoItemPlannedViewModel>(x => x.Id = item.Id);
+                await Navigator.NavigateToAsync<ToDoItemPlannedViewModel>(x => x.Id = item.Id);
 
                 return;
             case ToDoItemValue:
-                Navigator.NavigateTo<ToDoItemValueViewModel>(x => x.Id = item.Id);
+                await Navigator.NavigateToAsync<ToDoItemValueViewModel>(x => x.Id = item.Id);
 
                 return;
             case ToDoItemPeriodicityOffset:
-                Navigator.NavigateTo<ToDoItemPeriodicityOffsetViewModel>(x => x.Id = item.Id);
+                await Navigator.NavigateToAsync<ToDoItemPeriodicityOffsetViewModel>(x => x.Id = item.Id);
 
                 return;
             case ToDoItemCircle:
-                Navigator.NavigateTo<ToDoItemCircleViewModel>(x => x.Id = item.Id);
+                await Navigator.NavigateToAsync<ToDoItemCircleViewModel>(x => x.Id = item.Id);
 
                 return;
             default: throw new ArgumentOutOfRangeException(nameof(item));
@@ -78,7 +85,7 @@ public class ToDoItemGroupViewModel : ToDoItemViewModel, IRefreshToDoItem
                 await SafeExecuteAsync(
                     async () =>
                     {
-                        await ToDoService.UpdateToDoItemCompleteStatusAsync(itemNotify.Id, x);
+                        await ToDoService.UpdateToDoItemCompleteStatusAsync(itemNotify.Id, x).ConfigureAwait(false);
                         await RefreshToDoItemAsync();
                     }
                 );

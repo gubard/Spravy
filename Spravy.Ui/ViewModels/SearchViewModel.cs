@@ -1,16 +1,12 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
-using Avalonia.Controls;
 using Ninject;
 using ReactiveUI;
-using Spravy.Domain.Extensions;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
-using Spravy.Ui.Views;
 
 namespace Spravy.Ui.ViewModels;
 
@@ -34,7 +30,7 @@ public class SearchViewModel : RoutableViewModelBase, IRefreshToDoItem
     }
 
     [Inject]
-    public required ToDoSubItemsView ToDoSubItemsView { get; init; }
+    public required ToDoSubItemsViewModel ToDoSubItemsViewModel { get; init; }
 
     [Inject]
     public required IToDoService ToDoService { get; init; }
@@ -43,18 +39,16 @@ public class SearchViewModel : RoutableViewModelBase, IRefreshToDoItem
     public required IMapper Mapper { get; init; }
 
     [Inject]
-    public required SplitView SplitView { get; init; }
+    public required MainSplitViewModel MainSplitViewModel { get; init; }
 
     private void SwitchPane()
     {
-        SplitView.IsPaneOpen = !SplitView.IsPaneOpen;
+        MainSplitViewModel.IsPaneOpen = !MainSplitViewModel.IsPaneOpen;
     }
 
     public async Task RefreshToDoItemAsync()
     {
-        var items = await ToDoService.SearchToDoSubItemsAsync(SearchText);
-
-        await ToDoSubItemsView.ViewModel.ThrowIfNull()
-            .UpdateItemsAsync(Mapper.Map<IEnumerable<ToDoSubItemNotify>>(items), this);
+        var items = await ToDoService.SearchToDoSubItemsAsync(SearchText).ConfigureAwait(false);
+        await ToDoSubItemsViewModel.UpdateItemsAsync(Mapper.Map<IEnumerable<ToDoSubItemNotify>>(items), this);
     }
 }

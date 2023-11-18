@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Avalonia.Threading;
 using Material.Icons;
 using ReactiveUI;
 using Spravy.Domain.Extensions;
@@ -31,7 +32,7 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
         CompleteToDoItemCommand = CreateCommandFromTask(CompleteToDoItemAsync);
         ChangeDueDateCommand = CreateCommandFromTask(ChangeDueDate);
         SubscribeProperties();
-        Commands.Add(new(MaterialIconKind.Check, CompleteToDoItemCommand));
+        Commands.Add(new(MaterialIconKind.Check, CompleteToDoItemCommand, "Complete"));
     }
 
     public ICommand CompleteToDoItemCommand { get; }
@@ -89,28 +90,27 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
     public override async Task RefreshToDoItemAsync()
     {
         UnsubscribeProperties();
-        Path.Items ??= new();
-        var item = await ToDoService.GetToDoItemAsync(Id);
+        var item = await ToDoService.GetToDoItemAsync(Id).ConfigureAwait(false);
 
         switch (item)
         {
             case ToDoItemGroup:
-                Navigator.NavigateTo<ToDoItemGroupViewModel>(x => x.Id = item.Id);
+                await Navigator.NavigateToAsync<ToDoItemGroupViewModel>(x => x.Id = item.Id);
 
                 return;
             case ToDoItemPeriodicity:
-                Navigator.NavigateTo<ToDoItemPeriodicityViewModel>(x => x.Id = item.Id);
+                await Navigator.NavigateToAsync<ToDoItemPeriodicityViewModel>(x => x.Id = item.Id);
 
                 return;
             case ToDoItemStep:
-                Navigator.NavigateTo<ToDoItemStepViewModel>(x => x.Id = item.Id);
+                await Navigator.NavigateToAsync<ToDoItemStepViewModel>(x => x.Id = item.Id);
 
                 return;
             case ToDoItemPlanned:
-                Navigator.NavigateTo<ToDoItemPlannedViewModel>(x => x.Id = item.Id);
+                await Navigator.NavigateToAsync<ToDoItemPlannedViewModel>(x => x.Id = item.Id);
                 return;
             case ToDoItemValue:
-                Navigator.NavigateTo<ToDoItemValueViewModel>(x => x.Id = item.Id);
+                await Navigator.NavigateToAsync<ToDoItemValueViewModel>(x => x.Id = item.Id);
 
                 return;
 
@@ -129,14 +129,21 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
                 var source = toDoItemPeriodicityOffset.Items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
                 await ToDoSubItemsViewModel.UpdateItemsAsync(source, this);
                 SubscribeItems(source);
-                Path.Items.Clear();
-                Path.Items.Add(new RootItem());
-                Path.Items.AddRange(item.Parents.Select(x => Mapper.Map<ToDoItemParentNotify>(x)));
+
+                await Dispatcher.UIThread.InvokeAsync(
+                    () =>
+                    {
+                        PathViewModel.Items.Clear();
+                        PathViewModel.Items.Add(new RootItem());
+                        PathViewModel.Items.AddRange(item.Parents.Select(x => Mapper.Map<ToDoItemParentNotify>(x)));
+                    }
+                );
+
                 SubscribeProperties();
 
                 break;
             case ToDoItemCircle:
-                Navigator.NavigateTo<ToDoItemCircleViewModel>(x => x.Id = item.Id);
+                await Navigator.NavigateToAsync<ToDoItemCircleViewModel>(x => x.Id = item.Id);
 
                 return;
             default: throw new ArgumentOutOfRangeException(nameof(item));
@@ -168,7 +175,7 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
         await SafeExecuteAsync(
             async () =>
             {
-                await ToDoService.UpdateToDoItemChildrenTypeAsync(Id, x);
+                await ToDoService.UpdateToDoItemChildrenTypeAsync(Id, x).ConfigureAwait(false);
                 await RefreshToDoItemAsync();
             }
         );
@@ -179,7 +186,7 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
         await SafeExecuteAsync(
             async () =>
             {
-                await ToDoService.UpdateToDoItemYearsOffsetAsync(Id, x);
+                await ToDoService.UpdateToDoItemYearsOffsetAsync(Id, x).ConfigureAwait(false);
                 await RefreshToDoItemAsync();
             }
         );
@@ -190,7 +197,7 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
         await SafeExecuteAsync(
             async () =>
             {
-                await ToDoService.UpdateToDoItemMonthsOffsetAsync(Id, x);
+                await ToDoService.UpdateToDoItemMonthsOffsetAsync(Id, x).ConfigureAwait(false);
                 await RefreshToDoItemAsync();
             }
         );
@@ -201,7 +208,7 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
         await SafeExecuteAsync(
             async () =>
             {
-                await ToDoService.UpdateToDoItemWeeksOffsetAsync(Id, x);
+                await ToDoService.UpdateToDoItemWeeksOffsetAsync(Id, x).ConfigureAwait(false);
                 await RefreshToDoItemAsync();
             }
         );
@@ -212,7 +219,7 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
         await SafeExecuteAsync(
             async () =>
             {
-                await ToDoService.UpdateToDoItemDaysOffsetAsync(Id, x);
+                await ToDoService.UpdateToDoItemDaysOffsetAsync(Id, x).ConfigureAwait(false);
                 await RefreshToDoItemAsync();
             }
         );
@@ -223,7 +230,7 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
         await SafeExecuteAsync(
             async () =>
             {
-                await ToDoService.UpdateToDoItemDueDateAsync(Id, x);
+                await ToDoService.UpdateToDoItemDueDateAsync(Id, x).ConfigureAwait(false);
                 await RefreshToDoItemAsync();
             }
         );
@@ -238,7 +245,7 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
                 await SafeExecuteAsync(
                     async () =>
                     {
-                        await ToDoService.UpdateToDoItemCompleteStatusAsync(itemNotify.Id, x);
+                        await ToDoService.UpdateToDoItemCompleteStatusAsync(itemNotify.Id, x).ConfigureAwait(false);
                         await RefreshToDoItemAsync();
                     }
                 );
@@ -262,13 +269,13 @@ public class ToDoItemPeriodicityOffsetViewModel : ToDoItemViewModel, IRefreshToD
                     switch (status)
                     {
                         case CompleteStatus.Complete:
-                            await ToDoService.UpdateToDoItemCompleteStatusAsync(Id, true);
+                            await ToDoService.UpdateToDoItemCompleteStatusAsync(Id, true).ConfigureAwait(false);
                             break;
                         case CompleteStatus.Skip:
-                            await ToDoService.SkipToDoItemAsync(Id);
+                            await ToDoService.SkipToDoItemAsync(Id).ConfigureAwait(false);
                             break;
                         case CompleteStatus.Fail:
-                            await ToDoService.FailToDoItemAsync(Id);
+                            await ToDoService.FailToDoItemAsync(Id).ConfigureAwait(false);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException(nameof(status), status, null);

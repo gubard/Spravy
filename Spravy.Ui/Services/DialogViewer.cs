@@ -1,12 +1,12 @@
 using System;
 using System.Threading.Tasks;
 using Avalonia;
+using Avalonia.Threading;
 using DialogHostAvalonia;
 using Ninject;
-using Spravy.Domain.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
-using Spravy.Ui.Views;
+using Spravy.Ui.ViewModels;
 
 namespace Spravy.Ui.Services;
 
@@ -24,7 +24,7 @@ public class DialogViewer : IDialogViewer
     {
         var content = Resolver.Get<TView>();
 
-        if(content is null)
+        if (content is null)
         {
             throw new NullReferenceException();
         }
@@ -38,7 +38,7 @@ public class DialogViewer : IDialogViewer
     {
         var content = Resolver.Get<TView>();
 
-        if(content is null)
+        if (content is null)
         {
             throw new NullReferenceException();
         }
@@ -52,7 +52,7 @@ public class DialogViewer : IDialogViewer
     {
         var content = Resolver.Get<TView>();
 
-        if(content is null)
+        if (content is null)
         {
             throw new NullReferenceException();
         }
@@ -66,31 +66,29 @@ public class DialogViewer : IDialogViewer
     {
         var content = Resolver.Get<TView>();
         setupView?.Invoke(content);
-        var confirmView = Resolver.Get<InfoView>();
-        var viewModel = confirmView.ViewModel.ThrowIfNull();
-        viewModel.Content = content;
-        viewModel.OkTask = view => okTask.Invoke((TView)view);
+        var infoViewModel = Resolver.Get<InfoViewModel>();
+        infoViewModel.Content = content;
+        infoViewModel.OkTask = view => okTask.Invoke((TView)view);
 
-        return ShowView(confirmView, ErrorDialogHostIdentifier);
+        return ShowView(infoViewModel, ErrorDialogHostIdentifier);
     }
 
     public Task ShowInfoInputDialogAsync<TView>(Func<TView, Task> okTask, Action<TView>? setupView = null)
     {
         var content = Resolver.Get<TView>();
         setupView?.Invoke(content);
-        var confirmView = Resolver.Get<InfoView>();
-        var viewModel = confirmView.ViewModel.ThrowIfNull();
-        viewModel.Content = content;
-        viewModel.OkTask = view => okTask.Invoke((TView)view);
+        var infoViewModel = Resolver.Get<InfoViewModel>();
+        infoViewModel.Content = content;
+        infoViewModel.OkTask = view => okTask.Invoke((TView)view);
 
-        return ShowView(confirmView, InputDialogHostIdentifier);
+        return ShowView(infoViewModel, InputDialogHostIdentifier);
     }
 
     public Task ShowInputDialogAsync<TView>(Action<TView>? setupView = null)
     {
         var content = Resolver.Get<TView>();
 
-        if(content is null)
+        if (content is null)
         {
             throw new NullReferenceException();
         }
@@ -102,9 +100,7 @@ public class DialogViewer : IDialogViewer
 
     public Task CloseProgressDialogAsync()
     {
-        SafeClose(ProgressDialogHostIdentifier);
-
-        return Task.CompletedTask;
+        return SafeClose(ProgressDialogHostIdentifier);
     }
 
     public Task ShowConfirmContentDialogAsync<TView>(
@@ -115,13 +111,12 @@ public class DialogViewer : IDialogViewer
     {
         var content = Resolver.Get<TView>();
         setupView?.Invoke(content);
-        var confirmView = Resolver.Get<ConfirmView>();
-        var viewModel = confirmView.ViewModel.ThrowIfNull();
-        viewModel.Content = content;
-        viewModel.ConfirmTask = view => confirmTask.Invoke((TView)view);
-        viewModel.CancelTask = view => cancelTask.Invoke((TView)view);
+        var confirmViewModel = Resolver.Get<ConfirmViewModel>();
+        confirmViewModel.Content = content;
+        confirmViewModel.ConfirmTask = view => confirmTask.Invoke((TView)view);
+        confirmViewModel.CancelTask = view => cancelTask.Invoke((TView)view);
 
-        return ShowView(confirmView, ContentDialogHostIdentifier);
+        return ShowView(confirmViewModel, ContentDialogHostIdentifier);
     }
 
     public Task ShowConfirmInputDialogAsync<TView>(
@@ -132,44 +127,37 @@ public class DialogViewer : IDialogViewer
     {
         var content = Resolver.Get<TView>();
         setupView?.Invoke(content);
-        var confirmView = Resolver.Get<ConfirmView>();
-        var viewModel = confirmView.ViewModel.ThrowIfNull();
-        viewModel.Content = content;
-        viewModel.ConfirmTask = view => confirmTask.Invoke((TView)view);
-        viewModel.CancelTask = view => cancelTask.Invoke((TView)view);
+        var confirmViewModel = Resolver.Get<ConfirmViewModel>();
+        confirmViewModel.Content = content;
+        confirmViewModel.ConfirmTask = view => confirmTask.Invoke((TView)view);
+        confirmViewModel.CancelTask = view => cancelTask.Invoke((TView)view);
 
-        return ShowView(confirmView, InputDialogHostIdentifier);
+        return ShowView(confirmViewModel, InputDialogHostIdentifier);
     }
 
     public Task CloseContentDialogAsync()
     {
-        SafeClose(ContentDialogHostIdentifier);
-
-        return Task.CompletedTask;
+        return SafeClose(ContentDialogHostIdentifier);
     }
 
     public Task CloseErrorDialogAsync()
     {
-        SafeClose(ErrorDialogHostIdentifier);
-
-        return Task.CompletedTask;
+        return SafeClose(ErrorDialogHostIdentifier);
     }
 
     public Task CloseInputDialogAsync()
     {
-        SafeClose(InputDialogHostIdentifier);
-
-        return Task.CompletedTask;
+        return SafeClose(InputDialogHostIdentifier);
     }
 
     private Task ShowView(object content, string identifier)
     {
-        if(content is not StyledElement styledElement)
+        if (content is not StyledElement styledElement)
         {
             return DialogHost.Show(content, identifier);
         }
 
-        if(styledElement.DataContext is not ViewModelBase viewModel)
+        if (styledElement.DataContext is not ViewModelBase viewModel)
         {
             return DialogHost.Show(content, identifier);
         }
@@ -179,13 +167,13 @@ public class DialogViewer : IDialogViewer
         return DialogHost.Show(content, identifier);
     }
 
-    private void SafeClose(string identifier)
+    private async Task SafeClose(string identifier)
     {
-        if(!DialogHost.IsDialogOpen(identifier))
+        if (!DialogHost.IsDialogOpen(identifier))
         {
             return;
         }
 
-        DialogHost.Close(identifier);
+        await Dispatcher.UIThread.InvokeAsync(() => DialogHost.Close(identifier));
     }
 }

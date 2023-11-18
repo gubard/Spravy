@@ -4,12 +4,12 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
+using Avalonia.Threading;
 using Ninject;
 using ReactiveUI;
 using Spravy.Domain.Extensions;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
-using Spravy.Ui.Controls;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
@@ -33,7 +33,7 @@ public class AddToDoItemViewModel : RoutableViewModelBase
     public required IMapper Mapper { get; init; }
 
     [Inject]
-    public required PathControl Path { get; init; }
+    public required PathViewModel PathViewModel { get; init; }
 
     [Inject]
     public required IToDoService ToDoService { get; init; }
@@ -58,10 +58,15 @@ public class AddToDoItemViewModel : RoutableViewModelBase
 
     private async Task InitializedAsync()
     {
-        var item = await ToDoService.GetToDoItemAsync(Parent.ThrowIfNull().Id);
-        Path.Items ??= new();
-        Path.Items.Clear();
-        Path.Items.Add(new RootItem());
-        Path.Items.AddRange(item.Parents.Select(x => Mapper.Map<ToDoItemParentNotify>(x)));
+        var item = await ToDoService.GetToDoItemAsync(Parent.ThrowIfNull().Id).ConfigureAwait(false);
+
+        await Dispatcher.UIThread.InvokeAsync(
+            () =>
+            {
+                PathViewModel.Items.Clear();
+                PathViewModel.Items.Add(new RootItem());
+                PathViewModel.Items.AddRange(item.Parents.Select(x => Mapper.Map<ToDoItemParentNotify>(x)));
+            }
+        );
     }
 }

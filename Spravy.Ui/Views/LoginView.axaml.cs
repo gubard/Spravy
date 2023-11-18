@@ -1,5 +1,3 @@
-using Avalonia.Controls;
-using Avalonia.Interactivity;
 using Avalonia.ReactiveUI;
 using Spravy.Ui.ViewModels;
 
@@ -13,11 +11,5 @@ public partial class LoginView : ReactiveUserControl<LoginViewModel>
     public LoginView()
     {
         InitializeComponent();
-    }
-
-    protected override void OnLoaded(RoutedEventArgs e)
-    {
-        base.OnLoaded(e);
-        this.FindControl<TextBox>(LoginTextBoxName)?.Focus();
     }
 }

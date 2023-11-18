@@ -1,6 +1,8 @@
 using System;
+using System.Linq;
 using AutoMapper;
 using Avalonia;
+using Avalonia.Collections;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Input.Platform;
@@ -10,6 +12,7 @@ using Grpc.Net.Client;
 using Ninject;
 using Ninject.Modules;
 using ReactiveUI;
+using Serilog;
 using Spravy.Authentication.Domain.Client.Models;
 using Spravy.Authentication.Domain.Client.Services;
 using Spravy.Authentication.Domain.Interfaces;
@@ -75,29 +78,32 @@ public class UiModule : NinjectModule
 
         Bind<ISerializer>().To<ProtobufSerializer>();
         Bind<ICacheValidator<Uri, GrpcChannel>>().To<GrpcChannelCacheValidator>();
-        Bind<RoutingState>().ToConstructor(_ => new RoutingState(null)).InSingletonScope();
+        Bind<RoutingState>()
+            .ToMethod(
+                _ =>
+                {
+                    var result = new RoutingState();
+                    result.Navigate.ThrownExceptions.Subscribe(x => Log.Error(x, "Navigate exception"));
+
+                    return result;
+                }
+            )
+            .InSingletonScope();
         Bind<IViewLocator>().To<ModuleViewLocator>();
         Bind<INavigator>().To<Navigator>();
-        Bind<PathControl>().ToSelf();
         Bind<IMapper>().ToConstructor(x => new Mapper(x.Context.Kernel.Get<MapperConfiguration>()));
         Bind<IToDoService>().ToMethod(x => x.Kernel.Get<GrpcToDoService>());
         Bind<IExceptionViewModel>().To<ExceptionViewModel>();
         Bind<Application>().To<App>();
         Bind<IResourceLoader>().To<FileResourceLoader>();
-        Bind<AnnuallyPeriodicityViewModel>().ToSelf();
         Bind<DailyPeriodicityViewModel>().ToSelf();
-        Bind<MonthlyPeriodicityViewModel>().ToSelf();
-        Bind<WeeklyPeriodicityViewModel>().ToSelf();
-        Bind<DayOfYearSelector>().ToSelf();
-        Bind<DayOfWeekSelector>().ToSelf();
-        Bind<DayOfMonthSelector>().ToSelf();
         Bind<ITokenService>().To<TokenService>().InSingletonScope();
         Bind<IAuthenticationService>().ToMethod(context => context.Kernel.Get<GrpcAuthenticationService>());
         Bind<IScheduleService>().ToMethod(context => context.Kernel.Get<GrpcScheduleService>());
         Bind<IKeeper<TokenResult>>().To<StaticKeeper<TokenResult>>();
         Bind<IKeeper<Guid>>().To<StaticKeeper<Guid>>();
         Bind<Control>().To<MainView>().OnActivation((c, x) => x.DataContext = c.Kernel.Get<MainViewModel>());
-        RegisterViewModels(this);
+        //RegisterViewModels(this);
         Bind<AppConfiguration>().ToConstructor(x => new AppConfiguration(typeof(LoginViewModel)));
         Bind<MapperConfiguration>().ToConstructor(x => new MapperConfiguration(SetupMapperConfiguration));
         Bind<IEventBusService>().ToMethod(context => context.Kernel.Get<GrpcEventBusService>());
@@ -106,6 +112,22 @@ public class UiModule : NinjectModule
         Bind<TokenHttpHeaderFactory>().To<TokenHttpHeaderFactory>();
         Bind<TimeZoneHttpHeaderFactory>().To<TimeZoneHttpHeaderFactory>();
         Bind<IDialogViewer>().To<DialogViewer>();
+
+        Bind<AvaloniaList<DayOfYearSelectItem>>()
+            .ToMethod(
+                context => new AvaloniaList<DayOfYearSelectItem>(
+                    Enumerable.Range(1, 12)
+                        .Select(
+                            x =>
+                            {
+                                var item = context.Kernel.Get<DayOfYearSelectItem>();
+                                item.Month = (byte)x;
+
+                                return item;
+                            }
+                        )
+                )
+            );
 
         Bind<IHttpHeaderFactory>()
             .ToMethod(
@@ -133,20 +155,7 @@ public class UiModule : NinjectModule
                     .Clipboard.ThrowIfNull()
             );
 
-        Bind<SplitView>()
-            .ToMethod(
-                _ =>
-                {
-                    var splitView = new SplitView
-                    {
-                        OpenPaneLength = 200,
-                        PanePlacement = SplitViewPanePlacement.Left,
-                    };
-
-                    return splitView;
-                }
-            )
-            .InSingletonScope();
+        Bind<MainSplitViewModel>().ToSelf().InSingletonScope();
 
         Bind<Window>()
             .To<MainWindow>()

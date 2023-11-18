@@ -5,10 +5,12 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Avalonia.Threading;
 using Material.Icons;
 using Ninject;
 using ReactiveUI;
 using Spravy.Domain.Extensions;
+using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
@@ -25,15 +27,15 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
     private ToDoItemChildrenType childrenType;
     private DateOnly dueDate;
     private TypeOfPeriodicity typeOfPeriodicity;
-    private PeriodicityViewModel? periodicity;
-    private IDisposable? periodicitySub;
+    private object? periodicity;
+    private List<IDisposable> periodicitySubs = new();
 
     public ToDoItemPeriodicityViewModel() : base("to-do-item-periodicity")
     {
         ChangeDueDateCommand = CreateCommandFromTask(ChangeDueDateAsync);
         CompleteToDoItemCommand = CreateCommandFromTask(CompleteToDoItemAsync);
         SubscribeProperties();
-        Commands.Add(new(MaterialIconKind.Check, CompleteToDoItemCommand));
+        Commands.Add(new(MaterialIconKind.Check, CompleteToDoItemCommand, "Complete"));
     }
 
     [Inject]
@@ -48,7 +50,7 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
         set => this.RaiseAndSetIfChanged(ref childrenType, value);
     }
 
-    public PeriodicityViewModel? Periodicity
+    public object? Periodicity
     {
         get => periodicity;
         set => this.RaiseAndSetIfChanged(ref periodicity, value);
@@ -93,13 +95,13 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
                     switch (status)
                     {
                         case CompleteStatus.Complete:
-                            await ToDoService.UpdateToDoItemCompleteStatusAsync(Id, true);
+                            await ToDoService.UpdateToDoItemCompleteStatusAsync(Id, true).ConfigureAwait(false);
                             break;
                         case CompleteStatus.Skip:
-                            await ToDoService.SkipToDoItemAsync(Id);
+                            await ToDoService.SkipToDoItemAsync(Id).ConfigureAwait(false);
                             break;
                         case CompleteStatus.Fail:
-                            await ToDoService.FailToDoItemAsync(Id);
+                            await ToDoService.FailToDoItemAsync(Id).ConfigureAwait(false);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException(nameof(status), status, null);
@@ -115,13 +117,12 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
     public override async Task RefreshToDoItemAsync()
     {
         UnsubscribeProperties();
-        Path.Items ??= new();
-        var item = await ToDoService.GetToDoItemAsync(Id);
+        var item = await ToDoService.GetToDoItemAsync(Id).ConfigureAwait(false);
 
         switch (item)
         {
             case ToDoItemGroup:
-                Navigator.NavigateTo<ToDoItemGroupViewModel>(x => x.Id = item.Id);
+                await Navigator.NavigateToAsync<ToDoItemGroupViewModel>(x => x.Id = item.Id);
 
                 return;
             case ToDoItemPeriodicity toDoItemPeriodicity:
@@ -136,29 +137,36 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
                 var source = item.Items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
                 await ToDoSubItemsViewModel.UpdateItemsAsync(source, this);
                 SubscribeItems(source);
-                Path.Items.Clear();
-                Path.Items.Add(new RootItem());
-                Path.Items.AddRange(item.Parents.Select(x => Mapper.Map<ToDoItemParentNotify>(x)));
+
+                await Dispatcher.UIThread.InvokeAsync(
+                    () =>
+                    {
+                        PathViewModel.Items.Clear();
+                        PathViewModel.Items.Add(new RootItem());
+                        PathViewModel.Items.AddRange(item.Parents.Select(x => Mapper.Map<ToDoItemParentNotify>(x)));
+                    }
+                );
+
                 SubscribeProperties();
 
                 break;
             case ToDoItemPlanned:
-                Navigator.NavigateTo<ToDoItemPlannedViewModel>(x => x.Id = item.Id);
+                await Navigator.NavigateToAsync<ToDoItemPlannedViewModel>(x => x.Id = item.Id);
                 return;
             case ToDoItemValue:
-                Navigator.NavigateTo<ToDoItemValueViewModel>(x => x.Id = item.Id);
+                await Navigator.NavigateToAsync<ToDoItemValueViewModel>(x => x.Id = item.Id);
 
                 return;
             case ToDoItemPeriodicityOffset:
-                Navigator.NavigateTo<ToDoItemPeriodicityOffsetViewModel>(x => x.Id = item.Id);
+                await Navigator.NavigateToAsync<ToDoItemPeriodicityOffsetViewModel>(x => x.Id = item.Id);
 
                 return;
             case ToDoItemCircle:
-                Navigator.NavigateTo<ToDoItemCircleViewModel>(x => x.Id = item.Id);
+                await Navigator.NavigateToAsync<ToDoItemCircleViewModel>(x => x.Id = item.Id);
 
                 return;
             case ToDoItemStep:
-                Navigator.NavigateTo<ToDoItemStepViewModel>(x => x.Id = item.Id);
+                await Navigator.NavigateToAsync<ToDoItemStepViewModel>(x => x.Id = item.Id);
 
                 return;
             default: throw new ArgumentOutOfRangeException(nameof(item));
@@ -174,7 +182,7 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
                 await SafeExecuteAsync(
                     async () =>
                     {
-                        await ToDoService.UpdateToDoItemCompleteStatusAsync(itemNotify.Id, x);
+                        await ToDoService.UpdateToDoItemCompleteStatusAsync(itemNotify.Id, x).ConfigureAwait(false);
                         await RefreshToDoItemAsync();
                     }
                 );
@@ -190,7 +198,7 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
         await SafeExecuteAsync(
             async () =>
             {
-                await ToDoService.UpdateToDoItemDueDateAsync(Id, x);
+                await ToDoService.UpdateToDoItemDueDateAsync(Id, x).ConfigureAwait(false);
                 await RefreshToDoItemAsync();
             }
         );
@@ -201,7 +209,7 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
         await SafeExecuteAsync(
             async () =>
             {
-                await ToDoService.UpdateToDoItemTypeOfPeriodicityAsync(Id, x);
+                await ToDoService.UpdateToDoItemTypeOfPeriodicityAsync(Id, x).ConfigureAwait(false);
                 await RefreshToDoItemAsync();
             }
         );
@@ -229,7 +237,7 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
         await SafeExecuteAsync(
             async () =>
             {
-                await ToDoService.UpdateToDoItemChildrenTypeAsync(Id, x);
+                await ToDoService.UpdateToDoItemChildrenTypeAsync(Id, x).ConfigureAwait(false);
                 await RefreshToDoItemAsync();
             }
         );
@@ -237,23 +245,38 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
 
     private void SetTypeOfPeriodicity(IPeriodicity per)
     {
+        foreach (var periodicitySub in periodicitySubs)
+        {
+            periodicitySub.Dispose();
+        }
+
+        periodicitySubs.Clear();
+
         switch (per)
         {
             case AnnuallyPeriodicity annuallyPeriodicity:
             {
                 TypeOfPeriodicity = TypeOfPeriodicity.Annually;
-                var periodicityViewModel = Resolver.Get<AnnuallyPeriodicityViewModel>();
-                periodicityViewModel.DayOfYearSelector.SelectedDaysOfYear.AddRange(annuallyPeriodicity.Days);
-                periodicitySub?.Dispose();
-                Periodicity = periodicityViewModel;
+                var periodicityViewModel = Resolver.Get<DayOfYearSelectorViewModel>();
 
-                periodicitySub = Observable
-                    .FromEventPattern<EventHandler<SelectedSelectedDaysOfYearEventArgs>,
-                        SelectedSelectedDaysOfYearEventArgs>(
-                        h => periodicityViewModel.DayOfYearSelector.SelectedDaysOfYearChanged += h,
-                        h => periodicityViewModel.DayOfYearSelector.SelectedDaysOfYearChanged -= h
-                    )
-                    .Subscribe(OnNextSelectedDayOfYear);
+                foreach (var day in annuallyPeriodicity.Days)
+                {
+                    var item = periodicityViewModel.Items.Single(x => x.Month == day.Month);
+                    var d = item.Days.Items.Single(x => x.Day == day.Day);
+                    d.IsSelected = true;
+                }
+
+                foreach (var item in periodicityViewModel.Items)
+                {
+                    foreach (var i in item.Days.Items)
+                    {
+                        periodicitySubs.Add(
+                            i.WhenAnyValue(x => x.IsSelected).Skip(1).Subscribe(OnNextSelectedDayOfYear)
+                        );
+                    }
+                }
+
+                Periodicity = periodicityViewModel;
 
                 break;
             }
@@ -261,7 +284,6 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
             {
                 TypeOfPeriodicity = TypeOfPeriodicity.Daily;
                 var periodicityViewModel = Resolver.Get<DailyPeriodicityViewModel>();
-                periodicitySub?.Dispose();
                 Periodicity = periodicityViewModel;
 
                 break;
@@ -269,36 +291,42 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
             case MonthlyPeriodicity monthlyPeriodicity:
             {
                 TypeOfPeriodicity = TypeOfPeriodicity.Monthly;
-                var periodicityViewModel = Resolver.Get<MonthlyPeriodicityViewModel>();
-                periodicityViewModel.DayOfMonthSelector.SelectedDaysOfMonth.AddRange(monthlyPeriodicity.Days);
-                periodicitySub?.Dispose();
-                Periodicity = periodicityViewModel;
+                var periodicityViewModel = Resolver.Get<DayOfMonthSelectorViewModel>();
 
-                periodicitySub = Observable
-                    .FromEventPattern<EventHandler<SelectedDaysOfMonthChangedEventArgs>,
-                        SelectedDaysOfMonthChangedEventArgs>(
-                        h => periodicityViewModel.DayOfMonthSelector.SelectedDaysOfMonthChanged += h,
-                        h => periodicityViewModel.DayOfMonthSelector.SelectedDaysOfMonthChanged -= h
-                    )
-                    .Subscribe(OnNextSelectedDaysOfMonth);
+                foreach (var selectItem in periodicityViewModel.Items)
+                {
+                    if (monthlyPeriodicity.Days.Contains(selectItem.Day))
+                    {
+                        selectItem.IsSelected = true;
+                    }
+
+                    periodicitySubs.Add(
+                        selectItem.WhenAnyValue(x => x.IsSelected).Skip(1).Subscribe(OnNextSelectedDaysOfMonth)
+                    );
+                }
+
+                Periodicity = periodicityViewModel;
 
                 break;
             }
             case WeeklyPeriodicity weeklyPeriodicity:
             {
                 TypeOfPeriodicity = TypeOfPeriodicity.Weekly;
-                var periodicityViewModel = Resolver.Get<WeeklyPeriodicityViewModel>();
-                periodicityViewModel.DayOfWeekSelector.SelectedDaysOfWeek.AddRange(weeklyPeriodicity.Days);
-                periodicitySub?.Dispose();
-                Periodicity = periodicityViewModel;
+                var periodicityViewModel = Resolver.Get<DayOfWeekSelectorViewModel>();
 
-                periodicitySub = Observable
-                    .FromEventPattern<EventHandler<SelectedDaysOfWeekChangedEventArgs>,
-                        SelectedDaysOfWeekChangedEventArgs>(
-                        h => periodicityViewModel.DayOfWeekSelector.SelectedDaysOfWeekChanged += h,
-                        h => periodicityViewModel.DayOfWeekSelector.SelectedDaysOfWeekChanged -= h
-                    )
-                    .Subscribe(OnNextSelectedDaysOfWeek);
+                foreach (var selectItem in periodicityViewModel.Items)
+                {
+                    if (weeklyPeriodicity.Days.Contains(selectItem.DayOfWeek))
+                    {
+                        selectItem.IsSelected = true;
+                    }
+
+                    periodicitySubs.Add(
+                        selectItem.WhenAnyValue(x => x.IsSelected).Skip(1).Subscribe(OnNextSelectedDaysOfWeek)
+                    );
+                }
+
+                Periodicity = periodicityViewModel;
 
                 break;
             }
@@ -306,23 +334,41 @@ public class ToDoItemPeriodicityViewModel : ToDoItemViewModel, IRefreshToDoItem
         }
     }
 
-    private async void OnNextSelectedDaysOfWeek(EventPattern<SelectedDaysOfWeekChangedEventArgs> x)
+    private async void OnNextSelectedDaysOfWeek(bool value)
     {
-        var weeklyPeriodicity = new WeeklyPeriodicity(x.EventArgs.NewSelectedDaysOfWeek);
-        await SafeExecuteAsync(() => ToDoService.UpdateToDoItemWeeklyPeriodicityAsync(Id, weeklyPeriodicity));
-    }
+        var viewModel = Periodicity.ThrowIfNull().As<DayOfWeekSelectorViewModel>().ThrowIfNull();
+        var weeklyPeriodicity =
+            new WeeklyPeriodicity(viewModel.Items.Where(x => x.IsSelected).Select(x => x.DayOfWeek));
 
-    private async void OnNextSelectedDaysOfMonth(EventPattern<SelectedDaysOfMonthChangedEventArgs> x)
-    {
         await SafeExecuteAsync(
-            () => ToDoService.UpdateToDoItemMonthlyPeriodicityAsync(Id, new(x.EventArgs.NewDaysOfMonth))
+            () => ToDoService.UpdateToDoItemWeeklyPeriodicityAsync(Id, weeklyPeriodicity).ConfigureAwait(false)
         );
     }
 
-    private async void OnNextSelectedDayOfYear(EventPattern<SelectedSelectedDaysOfYearEventArgs> x)
+    private async void OnNextSelectedDaysOfMonth(bool value)
     {
-        var annuallyPeriodicity = new AnnuallyPeriodicity(x.EventArgs.NewSelectedDaysOfYear);
-        await SafeExecuteAsync(() => ToDoService.UpdateToDoItemAnnuallyPeriodicityAsync(Id, annuallyPeriodicity));
+        var viewModel = Periodicity.ThrowIfNull().As<DayOfMonthSelectorViewModel>().ThrowIfNull();
+
+        await SafeExecuteAsync(
+            () => ToDoService.UpdateToDoItemMonthlyPeriodicityAsync(
+                    Id,
+                    new(viewModel.Items.Where(x => x.IsSelected).Select(x => x.Day))
+                )
+                .ConfigureAwait(false)
+        );
+    }
+
+    private async void OnNextSelectedDayOfYear(bool value)
+    {
+        var viewModel = Periodicity.ThrowIfNull().As<DayOfYearSelectorViewModel>().ThrowIfNull();
+
+        var annuallyPeriodicity = new AnnuallyPeriodicity(
+            viewModel.Items.SelectMany(x => x.Days.Items.Select(y => new DayOfYear(x.Month, y.Day)))
+        );
+
+        await SafeExecuteAsync(
+            () => ToDoService.UpdateToDoItemAnnuallyPeriodicityAsync(Id, annuallyPeriodicity).ConfigureAwait(false)
+        );
     }
 
     private void UnsubscribeProperties()

@@ -25,7 +25,7 @@ public static class ToDoItemOrderChangerExtension
         var id = args.SourceItem.Id;
         var isAfter = GetIsAfter(args);
         var options = new UpdateOrderIndexToDoItemOptions(id, args.TargetItem.Id, isAfter);
-        await changer.ToDoService.UpdateToDoItemOrderIndexAsync(options);
+        await changer.ToDoService.UpdateToDoItemOrderIndexAsync(options).ConfigureAwait(false);
         await changer.RefreshToDoItemAsync();
     }
 

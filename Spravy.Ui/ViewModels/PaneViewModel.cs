@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Avalonia.Controls;
 using Ninject;
 using Spravy.Authentication.Domain.Models;
 using Spravy.Domain.Interfaces;
@@ -13,9 +12,9 @@ public class PaneViewModel : ViewModelBase
 {
     public PaneViewModel()
     {
-        ToRootToDoItemViewCommand = CreateCommand(ToRootToDoItemView);
-        ToSearchViewCommand = CreateCommand(ToSearchView);
-        ToTimersViewCommand = CreateCommand(ToTimersView);
+        ToRootToDoItemViewCommand = CreateCommandFromTask(ToRootToDoItemViewAsync);
+        ToSearchViewCommand = CreateCommandFromTask(ToSearchViewAsync);
+        ToTimersViewCommand = CreateCommandFromTask(ToTimersViewAsync);
         LogoutCommand = CreateCommandFromTask(LogoutAsync);
     }
 
@@ -31,31 +30,31 @@ public class PaneViewModel : ViewModelBase
     public required IKeeper<TokenResult> KeeperTokenResult { get; init; }
 
     [Inject]
-    public required SplitView SplitView { get; init; }
+    public required MainSplitViewModel MainSplitViewModel { get; init; }
 
     private async Task LogoutAsync()
     {
-        await ObjectStorage.DeleteAsync(FileIds.LoginFileId);
+        await ObjectStorage.DeleteAsync(FileIds.LoginFileId).ConfigureAwait(false);
         KeeperTokenResult.Set(default);
-        Navigator.NavigateTo<LoginViewModel>();
-        SplitView.IsPaneOpen = false;
+        await Navigator.NavigateToAsync<LoginViewModel>();
+        MainSplitViewModel.IsPaneOpen = false;
     }
 
-    private void ToTimersView()
+    private async Task ToTimersViewAsync()
     {
-        Navigator.NavigateTo<TimersViewModel>();
-        SplitView.IsPaneOpen = false;
+        await Navigator.NavigateToAsync<TimersViewModel>();
+        MainSplitViewModel.IsPaneOpen = false;
     }
 
-    private void ToRootToDoItemView()
+    private async Task ToRootToDoItemViewAsync()
     {
-        Navigator.NavigateTo<RootToDoItemsViewModel>();
-        SplitView.IsPaneOpen = false;
+        await Navigator.NavigateToAsync<RootToDoItemsViewModel>();
+        MainSplitViewModel.IsPaneOpen = false;
     }
 
-    private void ToSearchView()
+    private async Task ToSearchViewAsync()
     {
-        Navigator.NavigateTo<SearchViewModel>();
-        SplitView.IsPaneOpen = false;
+        await Navigator.NavigateToAsync<SearchViewModel>();
+        MainSplitViewModel.IsPaneOpen = false;
     }
 }

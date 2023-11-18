@@ -17,7 +17,7 @@
     </Interaction.Behaviors>
 
     <StackPanel>
-        <ContentControl Content="{Binding Path}">
+        <ContentControl Content="{Binding PathViewModel}">
             <ContentControl.DataTemplates>
                 <DataTemplate DataType="models:ToDoItemParentNotify">
                     <TextBlock Text="{Binding Name}" />

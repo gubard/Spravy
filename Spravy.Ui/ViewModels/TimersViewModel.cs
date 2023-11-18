@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
-using Avalonia.Controls;
 using Ninject;
 using Spravy.Schedule.Domain.Interfaces;
 using Spravy.Ui.Models;
@@ -23,7 +22,7 @@ public class TimersViewModel : RoutableViewModelBase
     public AvaloniaList<TimerItemNotify> Timers { get; } = new();
 
     [Inject]
-    public required SplitView SplitView { get; init; }
+    public required MainSplitViewModel MainSplitViewModel { get; init; }
 
     [Inject]
     public required IScheduleService ScheduleService { get; init; }
@@ -33,7 +32,7 @@ public class TimersViewModel : RoutableViewModelBase
 
     private void SwitchPane()
     {
-        SplitView.IsPaneOpen = !SplitView.IsPaneOpen;
+        MainSplitViewModel.IsPaneOpen = !MainSplitViewModel.IsPaneOpen;
     }
 
     private Task InitializedAsync()
@@ -43,7 +42,7 @@ public class TimersViewModel : RoutableViewModelBase
 
     private async Task RefreshAsync()
     {
-        var timers = await ScheduleService.GetListTimesAsync();
+        var timers = await ScheduleService.GetListTimesAsync().ConfigureAwait(false);
         Timers.Clear();
         Timers.AddRange(Mapper.Map<IEnumerable<TimerItemNotify>>(timers));
     }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
+using Avalonia.Threading;
 using Ninject;
 using Spravy.Domain.Extensions;
 using Spravy.ToDo.Domain.Enums;
@@ -86,7 +87,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                 var viewModel = view.ViewModel.ThrowIfNull();
                 var targetId = viewModel.SelectedItem.ThrowIfNull().Id;
                 var options = new UpdateOrderIndexToDoItemOptions(viewModel.Id, targetId, viewModel.IsAfter);
-                await ToDoService.UpdateToDoItemOrderIndexAsync(options);
+                await ToDoService.UpdateToDoItemOrderIndexAsync(options).ConfigureAwait(false);
                 await RefreshToDoItemAsync();
                 await DialogViewer.CloseContentDialogAsync();
             },
@@ -110,11 +111,11 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 
                 viewModel.Complete = async status =>
                 {
-                    await CompleteAsync(SelectedCompleted, status);
-                    await CompleteAsync(SelectedMissed, status);
-                    await CompleteAsync(SelectedFavoriteToDoItems, status);
-                    await CompleteAsync(SelectedReadyForCompleted, status);
-                    await CompleteAsync(SelectedPlanned, status);
+                    await CompleteAsync(SelectedCompleted, status).ConfigureAwait(false);
+                    await CompleteAsync(SelectedMissed, status).ConfigureAwait(false);
+                    await CompleteAsync(SelectedFavoriteToDoItems, status).ConfigureAwait(false);
+                    await CompleteAsync(SelectedReadyForCompleted, status).ConfigureAwait(false);
+                    await CompleteAsync(SelectedPlanned, status).ConfigureAwait(false);
                     await RefreshToDoItemAsync();
                     await DialogViewer.CloseInputDialogAsync();
                 };
@@ -198,19 +199,21 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                     switch (status)
                     {
                         case CompleteStatus.Complete:
-                            await ToDoService.UpdateToDoItemCompleteStatusAsync(subItemValue.Id, true);
+                            await ToDoService.UpdateToDoItemCompleteStatusAsync(subItemValue.Id, true)
+                                .ConfigureAwait(false);
 
                             break;
                         case CompleteStatus.Incomplete:
-                            await ToDoService.UpdateToDoItemCompleteStatusAsync(subItemValue.Id, false);
+                            await ToDoService.UpdateToDoItemCompleteStatusAsync(subItemValue.Id, false)
+                                .ConfigureAwait(false);
 
                             break;
                         case CompleteStatus.Skip:
-                            await ToDoService.SkipToDoItemAsync(subItemValue.Id);
+                            await ToDoService.SkipToDoItemAsync(subItemValue.Id).ConfigureAwait(false);
 
                             break;
                         case CompleteStatus.Fail:
-                            await ToDoService.FailToDoItemAsync(subItemValue.Id);
+                            await ToDoService.FailToDoItemAsync(subItemValue.Id).ConfigureAwait(false);
 
                             break;
                         default: throw new ArgumentOutOfRangeException(nameof(status), status, null);
@@ -233,17 +236,18 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                     switch (item)
                     {
                         case ToDoSubItemPeriodicityNotify:
-                            await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
+                            await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true).ConfigureAwait(false);
 
                             break;
                         case ToDoSubItemPeriodicityOffsetNotify:
-                            await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
+                            await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true).ConfigureAwait(false);
 
                             break;
                         case ToDoSubItemPlannedNotify toDoSubItemPlannedNotify:
                             if (!toDoSubItemPlannedNotify.IsCompleted)
                             {
-                                await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
+                                await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true)
+                                    .ConfigureAwait(false);
                             }
                             else
                             {
@@ -254,7 +258,8 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                         case ToDoSubItemValueNotify toDoSubItemValueNotify:
                             if (!toDoSubItemValueNotify.IsCompleted)
                             {
-                                await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true);
+                                await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true)
+                                    .ConfigureAwait(false);
                             }
                             else
                             {
@@ -273,19 +278,19 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                     switch (item)
                     {
                         case ToDoSubItemPeriodicityNotify:
-                            await ToDoService.SkipToDoItemAsync(item.Id);
+                            await ToDoService.SkipToDoItemAsync(item.Id).ConfigureAwait(false);
 
                             break;
                         case ToDoSubItemPeriodicityOffsetNotify:
-                            await ToDoService.SkipToDoItemAsync(item.Id);
+                            await ToDoService.SkipToDoItemAsync(item.Id).ConfigureAwait(false);
 
                             break;
                         case ToDoSubItemPlannedNotify:
-                            await ToDoService.SkipToDoItemAsync(item.Id);
+                            await ToDoService.SkipToDoItemAsync(item.Id).ConfigureAwait(false);
 
                             break;
                         case ToDoSubItemValueNotify:
-                            await ToDoService.SkipToDoItemAsync(item.Id);
+                            await ToDoService.SkipToDoItemAsync(item.Id).ConfigureAwait(false);
 
                             break;
                         default: throw new ArgumentOutOfRangeException(nameof(item));
@@ -299,19 +304,19 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                     switch (item)
                     {
                         case ToDoSubItemPeriodicityNotify:
-                            await ToDoService.FailToDoItemAsync(item.Id);
+                            await ToDoService.FailToDoItemAsync(item.Id).ConfigureAwait(false);
 
                             break;
                         case ToDoSubItemPeriodicityOffsetNotify:
-                            await ToDoService.FailToDoItemAsync(item.Id);
+                            await ToDoService.FailToDoItemAsync(item.Id).ConfigureAwait(false);
 
                             break;
                         case ToDoSubItemPlannedNotify:
-                            await ToDoService.FailToDoItemAsync(item.Id);
+                            await ToDoService.FailToDoItemAsync(item.Id).ConfigureAwait(false);
 
                             break;
                         case ToDoSubItemValueNotify:
-                            await ToDoService.FailToDoItemAsync(item.Id);
+                            await ToDoService.FailToDoItemAsync(item.Id).ConfigureAwait(false);
 
                             break;
                         default: throw new ArgumentOutOfRangeException(nameof(item));
@@ -353,28 +358,34 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 
     private async Task RemoveFavoriteToDoItemAsync(ToDoSubItemNotify item)
     {
-        await ToDoService.RemoveFavoriteToDoItemAsync(item.Id);
+        await ToDoService.RemoveFavoriteToDoItemAsync(item.Id).ConfigureAwait(false);
         await RefreshToDoItemAsync();
     }
 
     private async Task InitializedAsync()
     {
-        var favoriteToDoItems = await ToDoService.GetFavoriteToDoItemsAsync();
-        FavoriteToDoItems.Clear();
-        FavoriteToDoItems.AddRange(Mapper.Map<IEnumerable<ToDoSubItemNotify>>(favoriteToDoItems));
+        var favoriteToDoItems = await ToDoService.GetFavoriteToDoItemsAsync().ConfigureAwait(false);
+
+        await Dispatcher.UIThread.InvokeAsync(
+            () =>
+            {
+                FavoriteToDoItems.Clear();
+                FavoriteToDoItems.AddRange(Mapper.Map<IEnumerable<ToDoSubItemNotify>>(favoriteToDoItems));
+            }
+        );
     }
 
     private Task DeleteSubToDoItemAsync(ToDoSubItemNotify subItem)
     {
-        return DialogViewer.ShowConfirmContentDialogAsync<DeleteToDoItemView>(
+        return DialogViewer.ShowConfirmContentDialogAsync<DeleteToDoItemViewModel>(
             async view =>
             {
-                await ToDoService.DeleteToDoItemAsync(view.ViewModel.ThrowIfNull().Item.ThrowIfNull().Id);
+                await ToDoService.DeleteToDoItemAsync(view.Item.ThrowIfNull().Id).ConfigureAwait(false);
                 await DialogViewer.CloseContentDialogAsync();
                 await RefreshToDoItemAsync();
             },
             _ => DialogViewer.CloseContentDialogAsync(),
-            view => view.ViewModel.ThrowIfNull().Item = subItem
+            view => view.Item = subItem
         );
     }
 
@@ -385,7 +396,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 
     private async Task AddFavoriteToDoItemAsync(ToDoSubItemNotify item)
     {
-        await ToDoService.AddFavoriteToDoItemAsync(item.Id);
+        await ToDoService.AddFavoriteToDoItemAsync(item.Id).ConfigureAwait(false);
         await RefreshToDoItemAsync();
     }
 
@@ -394,19 +405,26 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
         return ToDoService.NavigateToToDoItemViewModel(item.Id, Navigator);
     }
 
-    public Task UpdateItemsAsync(IEnumerable<ToDoSubItemNotify> items, IRefreshToDoItem refresh)
+    public async Task UpdateItemsAsync(IEnumerable<ToDoSubItemNotify> items, IRefreshToDoItem refresh)
     {
         var itemsArray = items.ToArray();
         refreshToDoItem = refresh;
-        Missed.Clear();
-        Missed.AddRange(itemsArray.Where(x => x.Status == ToDoItemStatus.Miss));
-        ReadyForCompleted.Clear();
-        ReadyForCompleted.AddRange(itemsArray.Where(x => x.Status == ToDoItemStatus.ReadyForComplete));
-        Completed.Clear();
-        Completed.AddRange(itemsArray.Where(x => x.Status == ToDoItemStatus.Completed));
-        Planned.Clear();
-        Planned.AddRange(itemsArray.Where(x => x.Status == ToDoItemStatus.Planned));
 
-        return InitializedAsync();
+        await Dispatcher.UIThread.InvokeAsync(
+            () =>
+            {
+                Missed.Clear();
+                ReadyForCompleted.Clear();
+                Completed.Clear();
+                Planned.Clear();
+
+                Missed.AddRange(itemsArray.Where(x => x.Status == ToDoItemStatus.Miss));
+                ReadyForCompleted.AddRange(itemsArray.Where(x => x.Status == ToDoItemStatus.ReadyForComplete));
+                Completed.AddRange(itemsArray.Where(x => x.Status == ToDoItemStatus.Completed));
+                Planned.AddRange(itemsArray.Where(x => x.Status == ToDoItemStatus.Planned));
+            }
+        );
+
+        await InitializedAsync();
     }
 }

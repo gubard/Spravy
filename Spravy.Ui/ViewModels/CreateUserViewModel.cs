@@ -21,7 +21,7 @@ public class CreateUserViewModel : RoutableViewModelBase
     {
         CreateUserCommand = CreateCommandFromTaskWithDialogProgressIndicator(CreateUserAsync);
         EnterCommand = CreateCommandFromTaskWithDialogProgressIndicator<CreateUserView>(EnterAsync);
-        BackCommand = CreateCommand(Back);
+        BackCommand = CreateCommandFromTask(BackAsync);
     }
 
     [Inject]
@@ -100,12 +100,12 @@ public class CreateUserViewModel : RoutableViewModelBase
         }
 
         var options = Mapper.Map<CreateUserOptions>(this);
-        await AuthenticationService.CreateUserAsync(options);
-        Navigator.NavigateTo<LoginViewModel>();
+        await AuthenticationService.CreateUserAsync(options).ConfigureAwait(false);
+        await Navigator.NavigateToAsync<LoginViewModel>();
     }
 
-    private void Back()
+    private Task BackAsync()
     {
-        Navigator.NavigateTo<LoginViewModel>();
+        return Navigator.NavigateToAsync<LoginViewModel>();
     }
 }

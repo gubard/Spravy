@@ -19,7 +19,6 @@ using Spravy.Schedule.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
-using Spravy.Ui.Controls;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
@@ -44,16 +43,20 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
         RemoveToDoItemFromFavoriteCommand =
             CreateCommandFromTaskWithDialogProgressIndicator(RemoveToDoItemFromFavoriteAsync);
 
-        var toFavoriteCommand = new ToDoItemCommand(MaterialIconKind.Star, RemoveToDoItemFromFavoriteCommand);
+        var toFavoriteCommand = new ToDoItemCommand(
+            MaterialIconKind.Star,
+            RemoveToDoItemFromFavoriteCommand,
+            "Move to favorite"
+        );
         ChangeDescriptionCommand = CreateCommandFromTask(ChangeDescriptionAsync);
         AddToDoItemCommand = CreateCommandFromTask(AddToDoItemAsync);
         ChangeToDoItemByPathCommand = CreateCommandFromTask<ToDoItemParentNotify>(ChangeToDoItemByPathAsync);
-        ToRootItemCommand = CreateCommand(ToRootItem);
+        ToRootItemCommand = CreateCommandFromTask(ToRootItemAsync);
         TypeOfPeriodicities = new(Enum.GetValues<TypeOfPeriodicity>());
         ToDoItemTypes = new(Enum.GetValues<ToDoItemType>());
         ChildrenTypes = new(Enum.GetValues<ToDoItemChildrenType>());
         AddToDoItemToFavoriteCommand = CreateCommandFromTaskWithDialogProgressIndicator(AddToDoItemToCurrentAsync);
-        ToLeafToDoItemsCommand = CreateCommand(ToLeafToDoItems);
+        ToLeafToDoItemsCommand = CreateCommandFromTask(ToLeafToDoItemsAsync);
         ChangeRootItemCommand = CreateCommandFromTask(ChangeRootItemAsync);
         ToDoItemToRootCommand = CreateCommandFromTask(ToDoItemToRootAsync);
         InitializedCommand = CreateInitializedCommand(Initialized);
@@ -69,22 +72,24 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
                     {
                         toFavoriteCommand.Command = RemoveToDoItemFromFavoriteCommand;
                         toFavoriteCommand.Icon = MaterialIconKind.Star;
+                        toFavoriteCommand.Name = "Move to favorite";
                     }
                     else
                     {
                         toFavoriteCommand.Command = AddToDoItemToFavoriteCommand;
                         toFavoriteCommand.Icon = MaterialIconKind.StarOutline;
+                        toFavoriteCommand.Name = "Remove from favorite";
                     }
                 }
             );
 
         Commands.Add(toFavoriteCommand);
-        Commands.Add(new(MaterialIconKind.Plus, AddToDoItemCommand));
-        Commands.Add(new(MaterialIconKind.Leaf, ToLeafToDoItemsCommand));
-        Commands.Add(new(MaterialIconKind.SwapHorizontal, ChangeRootItemCommand));
-        Commands.Add(new(MaterialIconKind.FamilyTree, ToDoItemToRootCommand));
-        Commands.Add(new(MaterialIconKind.CodeString, ToDoItemToStringCommand));
-        Commands.Add(new(MaterialIconKind.Timer, AddTimerCommand));
+        Commands.Add(new(MaterialIconKind.Plus, AddToDoItemCommand, "Add sub task"));
+        Commands.Add(new(MaterialIconKind.Leaf, ToLeafToDoItemsCommand, "Show all children"));
+        Commands.Add(new(MaterialIconKind.SwapHorizontal, ChangeRootItemCommand, "Change task parent"));
+        Commands.Add(new(MaterialIconKind.FamilyTree, ToDoItemToRootCommand, "Move to root task"));
+        Commands.Add(new(MaterialIconKind.CodeString, ToDoItemToStringCommand, "Copy task to clipboard"));
+        Commands.Add(new(MaterialIconKind.Timer, AddTimerCommand, "Add timer"));
     }
 
     public AvaloniaList<TypeOfPeriodicity> TypeOfPeriodicities { get; }
@@ -105,7 +110,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
     public ICommand ChangeLinkCommand { get; }
 
     [Inject]
-    public required ToDoItemHeaderView ToDoItemHeaderView { get; init; }
+    public required ToDoItemHeaderViewModel ToDoItemHeaderViewModel { get; init; }
 
     [Inject]
     public required ToDoSubItemsViewModel ToDoSubItemsViewModel { get; init; }
@@ -120,7 +125,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
     public required IMapper Mapper { get; set; }
 
     [Inject]
-    public required PathControl Path { get; set; }
+    public required PathViewModel PathViewModel { get; set; }
 
     [Inject]
     public required IClipboard Clipboard { get; set; }
@@ -199,7 +204,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
                     await stream.ToByteArrayAsync()
                 );
 
-                await ScheduleService.AddTimerAsync(parameters);
+                await ScheduleService.AddTimerAsync(parameters).ConfigureAwait(false);
                 await DialogViewer.CloseContentDialogAsync();
             },
             _ => DialogViewer.CloseContentDialogAsync(),
@@ -238,10 +243,11 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
 
     private void Initialized()
     {
-        Commands.Add(new(MaterialIconKind.Checks, ToDoSubItemsViewModel.CompleteSelectedToDoItemsCommand));
-        var viewModel = ToDoItemHeaderView.ViewModel.ThrowIfNull();
-        viewModel.Item = this;
-        viewModel.Commands.AddRange(Commands);
+        Commands.Add(
+            new(MaterialIconKind.Checks, ToDoSubItemsViewModel.CompleteSelectedToDoItemsCommand, "Complete multiple")
+        );
+        ToDoItemHeaderViewModel.Item = this;
+        ToDoItemHeaderViewModel.Commands.AddRange(Commands);
     }
 
     private Task ToDoItemToStringAsync()
@@ -251,8 +257,8 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
             {
                 var statuses = view.ViewModel.ThrowIfNull().Statuses.Where(x => x.IsChecked).Select(x => x.Item);
                 var options = new ToDoItemToStringOptions(statuses, Id);
-                var text = await ToDoService.ToDoItemToStringAsync(options);
-                await Clipboard.SetTextAsync(text);
+                var text = await ToDoService.ToDoItemToStringAsync(options).ConfigureAwait(false);
+                await Clipboard.SetTextAsync(text).ConfigureAwait(false);
                 await DialogViewer.CloseContentDialogAsync();
             },
             _ => DialogViewer.CloseContentDialogAsync()
@@ -264,16 +270,15 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
         return DialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
             async item =>
             {
-                await ToDoService.UpdateToDoItemParentAsync(Id, item.Id);
+                await ToDoService.UpdateToDoItemParentAsync(Id, item.Id).ConfigureAwait(false);
                 await RefreshToDoItemAsync();
                 await DialogViewer.CloseInputDialogAsync();
             },
             view =>
             {
-                Path.Items ??= new();
                 var viewModel = view.ViewModel.ThrowIfNull();
                 viewModel.IgnoreIds.Add(Id);
-                var parents = Path.Items.OfType<ToDoItemParentNotify>().ToArray();
+                var parents = PathViewModel.Items.OfType<ToDoItemParentNotify>().ToArray();
 
                 if (parents.Length == 1)
                 {
@@ -285,27 +290,27 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
         );
     }
 
-    private void ToLeafToDoItems()
+    private Task ToLeafToDoItemsAsync()
     {
-        Navigator.NavigateTo<LeafToDoItemsViewModel>(vm => vm.Id = Id);
+        return Navigator.NavigateToAsync<LeafToDoItemsViewModel>(vm => vm.Id = Id);
     }
 
     private async Task RemoveToDoItemFromFavoriteAsync()
     {
-        await ToDoService.RemoveFavoriteToDoItemAsync(Id);
+        await ToDoService.RemoveFavoriteToDoItemAsync(Id).ConfigureAwait(false);
         await RefreshToDoItemAsync();
     }
 
     private async Task AddToDoItemToCurrentAsync()
     {
-        await ToDoService.AddFavoriteToDoItemAsync(Id);
+        await ToDoService.AddFavoriteToDoItemAsync(Id).ConfigureAwait(false);
         await RefreshToDoItemAsync();
     }
 
     private async Task ToDoItemToRootAsync()
     {
-        await ToDoService.ToDoItemToRootAsync(Id);
-        Navigator.NavigateTo<RootToDoItemsViewModel>();
+        await ToDoService.ToDoItemToRootAsync(Id).ConfigureAwait(false);
+        await Navigator.NavigateToAsync<RootToDoItemsViewModel>();
     }
 
     protected async void OnNextId(Guid x)
@@ -318,7 +323,8 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
         await SafeExecuteAsync(
             async () =>
             {
-                await ToDoService.UpdateToDoItemLinkAsync(Id, x.IsNullOrWhiteSpace() ? null : new Uri(x));
+                await ToDoService.UpdateToDoItemLinkAsync(Id, x.IsNullOrWhiteSpace() ? null : new Uri(x))
+                    .ConfigureAwait(false);
                 await RefreshToDoItemAsync();
             }
         );
@@ -329,7 +335,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
         await SafeExecuteAsync(
             async () =>
             {
-                await ToDoService.UpdateToDoItemNameAsync(Id, x);
+                await ToDoService.UpdateToDoItemNameAsync(Id, x).ConfigureAwait(false);
                 await RefreshToDoItemAsync();
             }
         );
@@ -340,7 +346,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
         await SafeExecuteAsync(
             async () =>
             {
-                await ToDoService.UpdateToDoItemTypeAsync(Id, x);
+                await ToDoService.UpdateToDoItemTypeAsync(Id, x).ConfigureAwait(false);
                 await RefreshToDoItemAsync();
             }
         );
@@ -354,8 +360,8 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
                 var viewModel = view.ViewModel.ThrowIfNull();
                 var parentValue = viewModel.Parent.ThrowIfNull();
                 var options = new AddToDoItemOptions(parentValue.Id, viewModel.Name, viewModel.Type);
-                await ToDoService.AddToDoItemAsync(options);
-                await ToDoService.NavigateToToDoItemViewModel(parentValue.Id, Navigator);
+                await ToDoService.AddToDoItemAsync(options).ConfigureAwait(false);
+                await ToDoService.NavigateToToDoItemViewModel(parentValue.Id, Navigator).ConfigureAwait(false);
                 await DialogViewer.CloseContentDialogAsync();
             },
             _ => DialogViewer.CloseContentDialogAsync(),
@@ -368,9 +374,9 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
         return ToDoService.NavigateToToDoItemViewModel(item.Id, Navigator);
     }
 
-    private void ToRootItem()
+    private Task ToRootItemAsync()
     {
-        Navigator.NavigateTo<RootToDoItemsViewModel>();
+        return Navigator.NavigateToAsync<RootToDoItemsViewModel>();
     }
 
     protected async void OnNextDescription(string x)
@@ -378,7 +384,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
         await SafeExecuteAsync(
             async () =>
             {
-                await ToDoService.UpdateToDoItemDescriptionAsync(Id, x);
+                await ToDoService.UpdateToDoItemDescriptionAsync(Id, x).ConfigureAwait(false);
                 await RefreshToDoItemAsync();
             }
         );

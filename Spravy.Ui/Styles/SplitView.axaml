@@ -1,0 +1,16 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+        <Border Padding="20" Height="500" Width="500">
+            <SplitView CompactPaneLength="200" IsPaneOpen="True" Background="Red">
+                <SplitView.Pane>
+                    <Panel Margin="20" />
+                </SplitView.Pane>
+            </SplitView>
+        </Border>
+    </Design.PreviewWith>
+
+    <Style Selector="SplitView">
+        <Setter Property="PaneBackground" Value="{DynamicResource MaterialPaperBrush}" />
+    </Style>
+</Styles>

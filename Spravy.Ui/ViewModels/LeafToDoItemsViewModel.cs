@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
-using Avalonia.Controls;
 using Ninject;
 using ReactiveUI;
 using Spravy.Domain.Extensions;
@@ -37,7 +36,7 @@ public class LeafToDoItemsViewModel : RoutableViewModelBase, IRefreshToDoItem
     public required ToDoSubItemsView ToDoSubItemsView { get; init; }
 
     [Inject]
-    public required SplitView SplitView { get; init; }
+    public required MainSplitViewModel MainSplitViewModel { get; init; }
 
     public Guid Id
     {
@@ -47,14 +46,14 @@ public class LeafToDoItemsViewModel : RoutableViewModelBase, IRefreshToDoItem
 
     public async Task RefreshToDoItemAsync()
     {
-        var items = await ToDoService.GetLeafToDoSubItemsAsync(Id);
+        var items = await ToDoService.GetLeafToDoSubItemsAsync(Id).ConfigureAwait(false);
         var notifyItems = Mapper.Map<IEnumerable<ToDoSubItemNotify>>(items);
         await ToDoSubItemsView.ViewModel.ThrowIfNull().UpdateItemsAsync(notifyItems, this);
     }
 
     private void SwitchPane()
     {
-        SplitView.IsPaneOpen = !SplitView.IsPaneOpen;
+        MainSplitViewModel.IsPaneOpen = !MainSplitViewModel.IsPaneOpen;
     }
 
     private Task InitializedAsync()

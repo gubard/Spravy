@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using ReactiveUI;
 
 namespace Spravy.Ui.Interfaces;
@@ -6,9 +7,9 @@ namespace Spravy.Ui.Interfaces;
 public interface INavigator
 {
     IObservable<IRoutableViewModel?> NavigateBack();
-    IObservable<IRoutableViewModel> NavigateTo<TViewModel>(TViewModel parameter) where TViewModel : IRoutableViewModel;
-    IObservable<IRoutableViewModel> NavigateTo(Type type);
+    Task NavigateToAsync<TViewModel>(TViewModel parameter) where TViewModel : IRoutableViewModel;
+    Task NavigateToAsync(Type type);
 
-    IObservable<IRoutableViewModel> NavigateTo<TViewModel>(Action<TViewModel>? setup = null)
+    Task NavigateToAsync<TViewModel>(Action<TViewModel>? setup = null)
         where TViewModel : IRoutableViewModel;
 }

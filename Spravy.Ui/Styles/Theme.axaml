@@ -8,11 +8,6 @@
         </ResourceDictionary>
     </Styles.Resources>
 
-    <StyleInclude Source="PathControl.axaml" />
-    <StyleInclude Source="DayOfMonthSelector.axaml" />
-    <StyleInclude Source="DayOfWeekSelector.axaml" />
-    <StyleInclude Source="DayOfYearSelector.axaml" />
-    <StyleInclude Source="UserControl.axaml" />
     <StyleInclude Source="DialogOverlayPopupHost.axaml" />
     <StyleInclude Source="DialogProgressIndicator.axaml" />
     <StyleInclude Source="Button.axaml" />
@@ -21,4 +16,6 @@
     <StyleInclude Source="TextBox.axaml" />
     <StyleInclude Source="TemplatedControl.axaml" />
     <StyleInclude Source="DialogHost.axaml" />
+    <StyleInclude Source="Flyout.axaml" />
+    <StyleInclude Source="SplitView.axaml" />
 </Styles>

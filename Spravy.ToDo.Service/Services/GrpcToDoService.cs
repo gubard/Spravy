@@ -2,7 +2,6 @@ using AutoMapper;
 using Google.Protobuf;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
-using Spravy.Domain.Extensions;
 using Spravy.EventBus.Domain.Helpers;
 using Spravy.EventBus.Domain.Interfaces;
 using Spravy.EventBus.Protos;

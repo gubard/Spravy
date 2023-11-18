@@ -13,8 +13,8 @@ public class ConfirmViewModel : ViewModelBase
 
     public ConfirmViewModel()
     {
-        CancelCommand = CreateCommandFromTask(CancelAsync);
-        ConfirmCommand = CreateCommandFromTask(ConfirmAsync);
+        CancelCommand = CreateInitializedCommand(CancelAsync);
+        ConfirmCommand = CreateInitializedCommand(ConfirmAsync);
     }
 
     public object? Content
