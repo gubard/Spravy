@@ -5,7 +5,7 @@ using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 
-public class ExceptionViewModel : RoutableViewModelBase, IExceptionViewModel
+public class ExceptionViewModel : RoutableViewModelBase
 {
     private Exception? exception;
     private string? fullExceptionText;

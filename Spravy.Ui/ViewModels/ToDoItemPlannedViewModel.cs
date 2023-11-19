@@ -14,7 +14,6 @@ using Spravy.Ui.Enums;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
-using Spravy.Ui.Views;
 
 namespace Spravy.Ui.ViewModels;
 
@@ -68,12 +67,10 @@ public class ToDoItemPlannedViewModel : ToDoItemViewModel, IRefreshToDoItem
 
     private Task CompleteToDoItemAsync()
     {
-        return DialogViewer.ShowInfoInputDialogAsync<CompleteToDoItemView>(
+        return DialogViewer.ShowInfoInputDialogAsync<CompleteToDoItemViewModel>(
             _ => DialogViewer.CloseInputDialogAsync(),
-            view =>
+            viewModel =>
             {
-                var viewModel = view.ViewModel.ThrowIfNull();
-
                 if (IsCompleted)
                 {
                     viewModel.SetIncompleteStatus();

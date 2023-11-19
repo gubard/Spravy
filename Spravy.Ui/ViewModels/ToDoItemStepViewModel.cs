@@ -7,13 +7,11 @@ using System.Windows.Input;
 using Avalonia.Threading;
 using Material.Icons;
 using ReactiveUI;
-using Spravy.Domain.Extensions;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.Enums;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
-using Spravy.Ui.Views;
 
 namespace Spravy.Ui.ViewModels;
 
@@ -45,12 +43,10 @@ public class ToDoItemStepViewModel : ToDoItemViewModel, IRefreshToDoItem
 
     private Task CompleteToDoItemAsync()
     {
-        return DialogViewer.ShowInfoInputDialogAsync<CompleteToDoItemView>(
+        return DialogViewer.ShowInfoInputDialogAsync<CompleteToDoItemViewModel>(
             _ => DialogViewer.CloseInputDialogAsync(),
-            view =>
+            viewModel =>
             {
-                var viewModel = view.ViewModel.ThrowIfNull();
-
                 if (IsCompleted)
                 {
                     viewModel.SetIncompleteStatus();

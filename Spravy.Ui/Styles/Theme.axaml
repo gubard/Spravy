@@ -9,7 +9,6 @@
     </Styles.Resources>
 
     <StyleInclude Source="DialogOverlayPopupHost.axaml" />
-    <StyleInclude Source="DialogProgressIndicator.axaml" />
     <StyleInclude Source="Button.axaml" />
     <StyleInclude Source="Expander.axaml" />
     <StyleInclude Source="Layoutable.axaml" />

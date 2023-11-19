@@ -46,7 +46,7 @@ public class ToDoItemHeaderViewModel : ViewModelBase
             box =>
             {
                 box.Text = Item?.Name;
-                box.Watermark = "Name";
+                box.Label = "Name";
             }
         );
     }

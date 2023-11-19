@@ -7,6 +7,7 @@ using Ninject;
 using ReactiveUI;
 using Serilog;
 using Spravy.Ui.Interfaces;
+using Spravy.Ui.ViewModels;
 
 namespace Spravy.Ui.Models;
 
@@ -119,7 +120,7 @@ public class ViewModelBase : NotifyBase
         }
         catch (Exception e)
         {
-            await Navigator.NavigateToAsync<IExceptionViewModel>(viewModel => viewModel.Exception = e);
+            await Navigator.NavigateToAsync<ExceptionViewModel>(viewModel => viewModel.Exception = e);
         }
     }
 
@@ -131,7 +132,7 @@ public class ViewModelBase : NotifyBase
         }
         catch (Exception e)
         {
-            await Navigator.NavigateToAsync<IExceptionViewModel>(viewModel => viewModel.Exception = e);
+            await Navigator.NavigateToAsync<ExceptionViewModel>(viewModel => viewModel.Exception = e);
         }
     }
 
@@ -144,7 +145,7 @@ public class ViewModelBase : NotifyBase
             if (await IsTakeMoreThen(task, TaskTimeout))
             {
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                DialogViewer.ShowProgressDialogAsync<IDialogProgressIndicator>();
+                DialogViewer.ShowProgressDialogAsync<DialogProgressViewModel>();
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                 await task;
                 await DialogViewer.CloseProgressDialogAsync();
@@ -163,7 +164,7 @@ public class ViewModelBase : NotifyBase
             if (await IsTakeMoreThen(task, TaskTimeout))
             {
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                DialogViewer.ShowProgressDialogAsync<IDialogProgressIndicator>();
+                DialogViewer.ShowProgressDialogAsync<DialogProgressViewModel>();
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                 await task;
                 await DialogViewer.CloseProgressDialogAsync();
@@ -196,7 +197,7 @@ public class ViewModelBase : NotifyBase
     {
         Log.Logger.Error(exception, "UI error");
 
-        await DialogViewer.ShowInfoErrorDialogAsync<IExceptionViewModel>(
+        await DialogViewer.ShowInfoErrorDialogAsync<ExceptionViewModel>(
             async _ =>
             {
                 await DialogViewer.CloseErrorDialogAsync();

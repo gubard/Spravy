@@ -183,11 +183,9 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
 
     private Task AddTimerAsync()
     {
-        return DialogViewer.ShowConfirmContentDialogAsync<AddTimerView>(
-            async view =>
+        return DialogViewer.ShowConfirmContentDialogAsync<AddTimerViewModel>(
+            async viewModel =>
             {
-                var viewModel = view.ViewModel.ThrowIfNull();
-
                 var eventValue = new ChangeToDoItemIsFavoriteEvent
                 {
                     IsFavorite = IsFavorite,
@@ -208,9 +206,8 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
                 await DialogViewer.CloseContentDialogAsync();
             },
             _ => DialogViewer.CloseContentDialogAsync(),
-            view =>
+            viewModel =>
             {
-                var viewModel = view.ViewModel.ThrowIfNull();
                 viewModel.EventId = EventIdHelper.ChangeFavoriteId;
 
                 viewModel.Item = new()
@@ -236,7 +233,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
             box =>
             {
                 box.Text = Description;
-                box.Watermark = "Description";
+                box.Label = "Description";
             }
         );
     }
@@ -252,10 +249,10 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
 
     private Task ToDoItemToStringAsync()
     {
-        return DialogViewer.ShowConfirmContentDialogAsync<ToDoItemToStringSettingsView>(
+        return DialogViewer.ShowConfirmContentDialogAsync<ToDoItemToStringSettingsViewModel>(
             async view =>
             {
-                var statuses = view.ViewModel.ThrowIfNull().Statuses.Where(x => x.IsChecked).Select(x => x.Item);
+                var statuses = view.Statuses.Where(x => x.IsChecked).Select(x => x.Item);
                 var options = new ToDoItemToStringOptions(statuses, Id);
                 var text = await ToDoService.ToDoItemToStringAsync(options).ConfigureAwait(false);
                 await Clipboard.SetTextAsync(text).ConfigureAwait(false);
@@ -274,9 +271,8 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
                 await RefreshToDoItemAsync();
                 await DialogViewer.CloseInputDialogAsync();
             },
-            view =>
+            viewModel =>
             {
-                var viewModel = view.ViewModel.ThrowIfNull();
                 viewModel.IgnoreIds.Add(Id);
                 var parents = PathViewModel.Items.OfType<ToDoItemParentNotify>().ToArray();
 
@@ -354,10 +350,9 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
 
     private Task AddToDoItemAsync()
     {
-        return DialogViewer.ShowConfirmContentDialogAsync<AddToDoItemView>(
-            async view =>
+        return DialogViewer.ShowConfirmContentDialogAsync<AddToDoItemViewModel>(
+            async viewModel =>
             {
-                var viewModel = view.ViewModel.ThrowIfNull();
                 var parentValue = viewModel.Parent.ThrowIfNull();
                 var options = new AddToDoItemOptions(parentValue.Id, viewModel.Name, viewModel.Type);
                 await ToDoService.AddToDoItemAsync(options).ConfigureAwait(false);
@@ -365,7 +360,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
                 await DialogViewer.CloseContentDialogAsync();
             },
             _ => DialogViewer.CloseContentDialogAsync(),
-            view => view.ViewModel.ThrowIfNull().Parent = Mapper.Map<ToDoSubItemNotify>(this)
+            viewModel => viewModel.Parent = Mapper.Map<ToDoSubItemNotify>(this)
         );
     }
 

@@ -20,7 +20,7 @@ public class DialogViewer : IDialogViewer
     [Inject]
     public required IKernel Resolver { get; init; }
 
-    public Task ShowContentDialogAsync<TView>(Action<TView>? setupView = null)
+    public Task ShowContentDialogAsync<TView>(Action<TView>? setupView = null) where TView : ViewModelBase
     {
         var content = Resolver.Get<TView>();
 
@@ -34,7 +34,7 @@ public class DialogViewer : IDialogViewer
         return ShowView(content, ContentDialogHostIdentifier);
     }
 
-    public Task ShowProgressDialogAsync<TView>(Action<TView>? setupView = null)
+    public Task ShowProgressDialogAsync<TView>(Action<TView>? setupView = null) where TView : ViewModelBase
     {
         var content = Resolver.Get<TView>();
 
@@ -48,7 +48,7 @@ public class DialogViewer : IDialogViewer
         return ShowView(content, ProgressDialogHostIdentifier);
     }
 
-    public Task ShowErrorDialogAsync<TView>(Action<TView>? setupView = null)
+    public Task ShowErrorDialogAsync<TView>(Action<TView>? setupView = null) where TView : ViewModelBase
     {
         var content = Resolver.Get<TView>();
 
@@ -63,6 +63,7 @@ public class DialogViewer : IDialogViewer
     }
 
     public Task ShowInfoErrorDialogAsync<TView>(Func<TView, Task> okTask, Action<TView>? setupView = null)
+        where TView : ViewModelBase
     {
         var content = Resolver.Get<TView>();
         setupView?.Invoke(content);
@@ -74,6 +75,7 @@ public class DialogViewer : IDialogViewer
     }
 
     public Task ShowInfoInputDialogAsync<TView>(Func<TView, Task> okTask, Action<TView>? setupView = null)
+        where TView : ViewModelBase
     {
         var content = Resolver.Get<TView>();
         setupView?.Invoke(content);
@@ -84,7 +86,7 @@ public class DialogViewer : IDialogViewer
         return ShowView(infoViewModel, InputDialogHostIdentifier);
     }
 
-    public Task ShowInputDialogAsync<TView>(Action<TView>? setupView = null)
+    public Task ShowInputDialogAsync<TView>(Action<TView>? setupView = null) where TView : ViewModelBase
     {
         var content = Resolver.Get<TView>();
 
@@ -107,7 +109,7 @@ public class DialogViewer : IDialogViewer
         Func<TView, Task> confirmTask,
         Func<TView, Task> cancelTask,
         Action<TView>? setupView = null
-    )
+    ) where TView : ViewModelBase
     {
         var content = Resolver.Get<TView>();
         setupView?.Invoke(content);
@@ -123,7 +125,7 @@ public class DialogViewer : IDialogViewer
         Func<TView, Task> confirmTask,
         Func<TView, Task> cancelTask,
         Action<TView>? setupView = null
-    )
+    ) where TView : ViewModelBase
     {
         var content = Resolver.Get<TView>();
         setupView?.Invoke(content);

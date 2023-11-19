@@ -1,16 +1,22 @@
 using System;
 using System.Threading.Tasks;
+using Spravy.Ui.Models;
 
 namespace Spravy.Ui.Interfaces;
 
 public interface IDialogViewer
 {
-    Task ShowContentDialogAsync<TView>(Action<TView>? setupView = null);
-    Task ShowProgressDialogAsync<TView>(Action<TView>? setupView = null);
-    Task ShowErrorDialogAsync<TView>(Action<TView>? setupView = null);
-    Task ShowInfoErrorDialogAsync<TView>(Func<TView, Task> okTask, Action<TView>? setupView = null);
-    Task ShowInfoInputDialogAsync<TView>(Func<TView, Task> okTask, Action<TView>? setupView = null);
-    Task ShowInputDialogAsync<TView>(Action<TView>? setupView = null);
+    Task ShowContentDialogAsync<TView>(Action<TView>? setupView = null) where TView : ViewModelBase;
+    Task ShowProgressDialogAsync<TView>(Action<TView>? setupView = null) where TView : ViewModelBase;
+    Task ShowErrorDialogAsync<TView>(Action<TView>? setupView = null) where TView : ViewModelBase;
+
+    Task ShowInfoErrorDialogAsync<TView>(Func<TView, Task> okTask, Action<TView>? setupView = null)
+        where TView : ViewModelBase;
+
+    Task ShowInfoInputDialogAsync<TView>(Func<TView, Task> okTask, Action<TView>? setupView = null)
+        where TView : ViewModelBase;
+
+    Task ShowInputDialogAsync<TView>(Action<TView>? setupView = null) where TView : ViewModelBase;
     Task CloseContentDialogAsync();
     Task CloseErrorDialogAsync();
     Task CloseInputDialogAsync();
@@ -20,11 +26,11 @@ public interface IDialogViewer
         Func<TView, Task> confirmTask,
         Func<TView, Task> cancelTask,
         Action<TView>? setupView = null
-    );
+    ) where TView : ViewModelBase;
 
     Task ShowConfirmInputDialogAsync<TView>(
         Func<TView, Task> confirmTask,
         Func<TView, Task> cancelTask,
         Action<TView>? setupView = null
-    );
+    ) where TView : ViewModelBase;
 }

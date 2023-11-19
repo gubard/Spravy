@@ -93,7 +93,6 @@ public class UiModule : NinjectModule
         Bind<INavigator>().To<Navigator>();
         Bind<IMapper>().ToConstructor(x => new Mapper(x.Context.Kernel.Get<MapperConfiguration>()));
         Bind<IToDoService>().ToMethod(x => x.Kernel.Get<GrpcToDoService>());
-        Bind<IExceptionViewModel>().To<ExceptionViewModel>();
         Bind<Application>().To<App>();
         Bind<IResourceLoader>().To<FileResourceLoader>();
         Bind<DailyPeriodicityViewModel>().ToSelf();
@@ -165,28 +164,6 @@ public class UiModule : NinjectModule
                 {
                     x.ViewModel = c.Kernel.Get<MainWindowModel>();
                     x.Content = c.Kernel.Get<Control>();
-                }
-            );
-
-        Bind<IDialogProgressIndicator>()
-            .ToMethod(
-                _ => new DialogProgressIndicator
-                {
-                    CornerRadius = new(24),
-                    Padding = new(4),
-                    Margin = new(4),
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center,
-                    Content = new ProgressBar
-                    {
-                        Classes =
-                        {
-                            "circular"
-                        },
-                        Height = 100,
-                        Width = 100,
-                        IsIndeterminate = true,
-                    }
                 }
             );
     }

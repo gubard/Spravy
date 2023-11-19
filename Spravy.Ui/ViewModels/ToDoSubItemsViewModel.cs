@@ -15,7 +15,6 @@ using Spravy.Ui.Enums;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
-using Spravy.Ui.Views;
 
 namespace Spravy.Ui.ViewModels;
 
@@ -81,10 +80,9 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 
     private Task ChangeOrderIndexAsync(ToDoSubItemNotify item)
     {
-        return DialogViewer.ShowConfirmContentDialogAsync<ChangeToDoItemOrderIndexView>(
-            async view =>
+        return DialogViewer.ShowConfirmContentDialogAsync<ChangeToDoItemOrderIndexViewModel>(
+            async viewModel =>
             {
-                var viewModel = view.ViewModel.ThrowIfNull();
                 var targetId = viewModel.SelectedItem.ThrowIfNull().Id;
                 var options = new UpdateOrderIndexToDoItemOptions(viewModel.Id, targetId, viewModel.IsAfter);
                 await ToDoService.UpdateToDoItemOrderIndexAsync(options).ConfigureAwait(false);
@@ -92,21 +90,16 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                 await DialogViewer.CloseContentDialogAsync();
             },
             _ => DialogViewer.CloseContentDialogAsync(),
-            view =>
-            {
-                var viewModel = view.ViewModel.ThrowIfNull();
-                viewModel.Id = item.Id;
-            }
+            viewModel => viewModel.Id = item.Id
         );
     }
 
     private Task CompleteSelectedToDoItemsAsync()
     {
-        return DialogViewer.ShowInfoInputDialogAsync<CompleteToDoItemView>(
+        return DialogViewer.ShowInfoInputDialogAsync<CompleteToDoItemViewModel>(
             _ => DialogViewer.CloseInputDialogAsync(),
-            view =>
+            viewModel =>
             {
-                var viewModel = view.ViewModel.ThrowIfNull();
                 viewModel.SetAllStatus();
 
                 viewModel.Complete = async status =>
@@ -130,12 +123,10 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 
     private Task CompleteSubToDoItemAsync(ToDoSubItemNotify subItemValue)
     {
-        return DialogViewer.ShowInfoInputDialogAsync<CompleteToDoItemView>(
+        return DialogViewer.ShowInfoInputDialogAsync<CompleteToDoItemViewModel>(
             _ => DialogViewer.CloseInputDialogAsync(),
-            view =>
+            viewModel =>
             {
-                var viewModel = view.ViewModel.ThrowIfNull();
-
                 switch (subItemValue)
                 {
                     case ToDoSubItemPeriodicityNotify:

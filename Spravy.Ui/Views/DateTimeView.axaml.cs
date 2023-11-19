@@ -3,9 +3,9 @@ using Spravy.Ui.ViewModels;
 
 namespace Spravy.Ui.Views;
 
-public partial class DayOfYearSelectorView : ReactiveUserControl<DayOfYearSelectorViewModel>
+public partial class DateTimeView : ReactiveUserControl<DateTimeViewModel>
 {
-    public DayOfYearSelectorView()
+    public DateTimeView()
     {
         InitializeComponent();
     }

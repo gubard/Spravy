@@ -69,9 +69,9 @@
 
     <Application.DataTemplates>
         <DataTemplate x:DataType="models:DayOfYearSelectItem">
-            <TextBlock Text="{Binding Month}" />
+            <ContentControl Content="{Binding Days}" />
         </DataTemplate>
-        
+
         <DataTemplate x:DataType="models:DayOfMonthSelectItem">
             <StackPanel Margin="5">
                 <CheckBox IsChecked="{Binding IsSelected}"
@@ -79,7 +79,7 @@
                 <TextBlock Text="{Binding Day}" />
             </StackPanel>
         </DataTemplate>
-        
+
         <DataTemplate x:DataType="models:DayOfWeekSelectItem">
             <StackPanel Margin="5">
                 <CheckBox IsChecked="{Binding IsSelected}"

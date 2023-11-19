@@ -1,19 +1,16 @@
-<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:DayOfYearSelectorViewModel"
+<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:TextViewModel"
                                 xmlns="https://github.com/avaloniaui"
                                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-                                xmlns:models="clr-namespace:Spravy.Ui.Models"
+                                xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                                x:Class="Spravy.Ui.Views.DayOfYearSelectorView"
-                                x:DataType="viewModels:DayOfYearSelectorViewModel">
-    <TabControl ItemsSource="{Binding Items}" >
-        <TabControl.ItemTemplate>
-            <DataTemplate x:DataType="models:DayOfYearSelectItem">
-                <TextBlock Text="{Binding Month}" />
-            </DataTemplate>
-        </TabControl.ItemTemplate>
-    </TabControl>
+                                x:Class="Spravy.Ui.Views.TextView"
+                                x:DataType="viewModels:TextViewModel">
+    <TextBox Text="{Binding Text}" 
+             AcceptsReturn="{Binding AcceptsReturn}" 
+             TextWrapping="{Binding TextWrapping}"
+             assists:TextFieldAssist.Label="{Binding Label}" />
 </reactiveUi:ReactiveUserControl>

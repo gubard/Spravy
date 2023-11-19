@@ -39,12 +39,12 @@ public class AddTimerViewModel : ViewModelBase
             },
             view =>
             {
-                if(Item is null)
+                if (Item is null)
                 {
                     return;
                 }
 
-                view.ViewModel.ThrowIfNull().DefaultSelectedItemId = Item.Id;
+                view.DefaultSelectedItemId = Item.Id;
             }
         );
     }
@@ -58,8 +58,11 @@ public class AddTimerViewModel : ViewModelBase
 
                 return DialogViewer.CloseInputDialogAsync();
             },
-            calendar => calendar.SelectedDate = DateTimeOffset.Now.ToCurrentDay().DateTime,
-            clock => clock.SelectedTime = TimeSpan.Zero
+            calendar =>
+            {
+                calendar.SelectedDate = DateTimeOffset.Now.ToCurrentDay().DateTime;
+                calendar.SelectedTime = TimeSpan.Zero;
+            }
         );
     }
 
