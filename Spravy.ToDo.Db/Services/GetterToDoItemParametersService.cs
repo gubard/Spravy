@@ -186,6 +186,13 @@ public class GetterToDoItemParametersService
                 return parameters.Set(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
             default: throw new ArgumentOutOfRangeException();
         }
+        
+        if (entity.DueDate == DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
+        {
+            return parameters.WithIfNeed(ai)
+                .WithIfNeed(ToDoItemStatus.ReadyForComplete, ai)
+                .Set(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
+        }
 
         return parameters;
     }
