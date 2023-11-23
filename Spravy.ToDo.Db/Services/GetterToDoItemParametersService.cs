@@ -55,34 +55,37 @@ public class GetterToDoItemParametersService
         {
             return parameters.WithIfNeed(ToDoItemIsCan.CanIncomplete)
                 .WithIfNeed(null)
-                .WithIfNeed(ToDoItemStatus.Completed);
+                .WithIfNeed(ToDoItemStatus.Completed, null);
         }
 
         var items = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.ParentId == entity.Id)
+            .OrderBy(x => x.OrderIndex)
             .ToArrayAsync();
 
         if (items.Length == 0)
         {
+            var ai = ToActiveToDoItem(entity);
+
             if (entity.DueDate == DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
             {
                 return parameters.WithIfNeed(ToActiveToDoItem(entity))
-                    .WithIfNeed(ToDoItemStatus.ReadyForComplete)
+                    .WithIfNeed(ToDoItemStatus.ReadyForComplete, ai)
                     .WithIfNeed(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
             }
 
             if (entity.DueDate < DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
             {
                 return parameters.WithIfNeed(ToActiveToDoItem(entity))
-                    .WithIfNeed(ToDoItemStatus.Miss)
+                    .WithIfNeed(ToDoItemStatus.Miss, ai)
                     .WithIfNeed(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
             }
 
             if (entity.DueDate > DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
             {
                 return parameters.WithIfNeed(null)
-                    .WithIfNeed(ToDoItemStatus.Planned)
+                    .WithIfNeed(ToDoItemStatus.Planned, null)
                     .WithIfNeed(ToDoItemIsCan.None);
             }
         }
@@ -127,34 +130,37 @@ public class GetterToDoItemParametersService
         {
             return parameters.WithIfNeed(ToDoItemIsCan.CanIncomplete)
                 .WithIfNeed(null)
-                .WithIfNeed(ToDoItemStatus.Completed);
+                .WithIfNeed(ToDoItemStatus.Completed, null);
         }
 
         var items = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.ParentId == entity.Id)
+            .OrderBy(x => x.OrderIndex)
             .ToArrayAsync();
 
         if (items.Length == 0)
         {
+            var ai = ToActiveToDoItem(entity);
+
             if (entity.DueDate == DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
             {
-                return parameters.WithIfNeed(ToActiveToDoItem(entity))
-                    .WithIfNeed(ToDoItemStatus.ReadyForComplete)
+                return parameters.WithIfNeed(ai)
+                    .WithIfNeed(ToDoItemStatus.ReadyForComplete, ai)
                     .WithIfNeed(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
             }
 
             if (entity.DueDate < DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
             {
                 return parameters.WithIfNeed(ToActiveToDoItem(entity))
-                    .WithIfNeed(ToDoItemStatus.Miss)
+                    .WithIfNeed(ToDoItemStatus.Miss, ToActiveToDoItem(entity))
                     .WithIfNeed(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
             }
 
             if (entity.DueDate > DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
             {
                 return parameters.WithIfNeed(null)
-                    .WithIfNeed(ToDoItemStatus.Planned)
+                    .WithIfNeed(ToDoItemStatus.Planned, null)
                     .WithIfNeed(ToDoItemIsCan.None);
             }
         }
@@ -199,34 +205,37 @@ public class GetterToDoItemParametersService
         {
             return parameters.WithIfNeed(ToDoItemIsCan.CanIncomplete)
                 .WithIfNeed(null)
-                .WithIfNeed(ToDoItemStatus.Completed);
+                .WithIfNeed(ToDoItemStatus.Completed, null);
         }
 
         var items = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.ParentId == entity.Id)
+            .OrderBy(x => x.OrderIndex)
             .ToArrayAsync();
 
         if (items.Length == 0)
         {
+            var ai = ToActiveToDoItem(entity);
+
             if (entity.DueDate == DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
             {
-                return parameters.WithIfNeed(ToActiveToDoItem(entity))
-                    .WithIfNeed(ToDoItemStatus.ReadyForComplete)
+                return parameters.WithIfNeed(ai)
+                    .WithIfNeed(ToDoItemStatus.ReadyForComplete, ai)
                     .WithIfNeed(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
             }
 
             if (entity.DueDate < DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
             {
-                return parameters.WithIfNeed(ToActiveToDoItem(entity))
-                    .WithIfNeed(ToDoItemStatus.Miss)
+                return parameters.WithIfNeed(ai)
+                    .WithIfNeed(ToDoItemStatus.Miss, ai)
                     .WithIfNeed(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
             }
 
             if (entity.DueDate > DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
             {
                 return parameters.WithIfNeed(null)
-                    .WithIfNeed(ToDoItemStatus.Planned)
+                    .WithIfNeed(ToDoItemStatus.Planned, null)
                     .WithIfNeed(ToDoItemIsCan.None);
             }
         }
@@ -270,12 +279,13 @@ public class GetterToDoItemParametersService
         var items = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.ParentId == entity.Id)
+            .OrderBy(x => x.OrderIndex)
             .ToArrayAsync();
 
         if (items.Length == 0)
         {
             return parameters.WithIfNeed(null)
-                .WithIfNeed(ToDoItemStatus.Completed)
+                .WithIfNeed(ToDoItemStatus.Completed, null)
                 .WithIfNeed(ToDoItemIsCan.None);
         }
 
@@ -303,18 +313,21 @@ public class GetterToDoItemParametersService
         {
             return parameters.WithIfNeed(ToDoItemIsCan.CanIncomplete)
                 .WithIfNeed(null)
-                .WithIfNeed(ToDoItemStatus.Completed);
+                .WithIfNeed(ToDoItemStatus.Completed, null);
         }
 
         var items = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.ParentId == entity.Id)
+            .OrderBy(x => x.OrderIndex)
             .ToArrayAsync();
 
         if (items.Length == 0)
         {
+            var ai = ToActiveToDoItem(entity);
+
             return parameters.WithIfNeed(ToActiveToDoItem(entity))
-                .WithIfNeed(ToDoItemStatus.ReadyForComplete)
+                .WithIfNeed(ToDoItemStatus.ReadyForComplete, ai)
                 .WithIfNeed(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
         }
 
@@ -358,18 +371,21 @@ public class GetterToDoItemParametersService
         {
             return parameters.WithIfNeed(ToDoItemIsCan.CanIncomplete)
                 .WithIfNeed(null)
-                .WithIfNeed(ToDoItemStatus.Completed);
+                .WithIfNeed(ToDoItemStatus.Completed, null);
         }
 
         var items = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.ParentId == entity.Id)
+            .OrderBy(x => x.OrderIndex)
             .ToArrayAsync();
 
         if (items.Length == 0)
         {
-            return parameters.WithIfNeed(ToActiveToDoItem(entity))
-                .WithIfNeed(ToDoItemStatus.ReadyForComplete)
+            var ai = ToActiveToDoItem(entity);
+
+            return parameters.WithIfNeed(ai)
+                .WithIfNeed(ToDoItemStatus.ReadyForComplete, ai)
                 .WithIfNeed(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
         }
 
@@ -413,18 +429,21 @@ public class GetterToDoItemParametersService
         {
             return parameters.WithIfNeed(ToDoItemIsCan.CanIncomplete)
                 .WithIfNeed(null)
-                .WithIfNeed(ToDoItemStatus.Completed);
+                .WithIfNeed(ToDoItemStatus.Completed, null);
         }
 
         var items = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.ParentId == entity.Id)
+            .OrderBy(x => x.OrderIndex)
             .ToArrayAsync();
 
         if (items.Length == 0)
         {
-            return parameters.WithIfNeed(ToActiveToDoItem(entity))
-                .WithIfNeed(ToDoItemStatus.ReadyForComplete)
+            var ai = ToActiveToDoItem(entity);
+
+            return parameters.WithIfNeed(ai)
+                .WithIfNeed(ToDoItemStatus.ReadyForComplete, ai)
                 .WithIfNeed(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
         }
 
