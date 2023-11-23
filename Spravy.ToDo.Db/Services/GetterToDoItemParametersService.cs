@@ -64,30 +64,30 @@ public class GetterToDoItemParametersService
             .OrderBy(x => x.OrderIndex)
             .ToArrayAsync();
 
+        var ai = ToActiveToDoItem(entity);
+
         if (items.Length == 0)
         {
-            var ai = ToActiveToDoItem(entity);
-
             if (entity.DueDate == DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
             {
                 return parameters.WithIfNeed(ToActiveToDoItem(entity))
                     .WithIfNeed(ToDoItemStatus.ReadyForComplete, ai)
                     .WithIfNeed(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
             }
+        }
 
-            if (entity.DueDate < DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
-            {
-                return parameters.WithIfNeed(ToActiveToDoItem(entity))
-                    .WithIfNeed(ToDoItemStatus.Miss, ai)
-                    .WithIfNeed(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
-            }
+        if (entity.DueDate < DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
+        {
+            return parameters.WithIfNeed(ToActiveToDoItem(entity))
+                .WithIfNeed(ToDoItemStatus.Miss, ai)
+                .WithIfNeed(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
+        }
 
-            if (entity.DueDate > DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
-            {
-                return parameters.WithIfNeed(null)
-                    .WithIfNeed(ToDoItemStatus.Planned, null)
-                    .WithIfNeed(ToDoItemIsCan.None);
-            }
+        if (entity.DueDate > DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
+        {
+            return parameters.WithIfNeed(null)
+                .WithIfNeed(ToDoItemStatus.Planned, null)
+                .WithIfNeed(ToDoItemIsCan.None);
         }
 
         foreach (var item in items)
@@ -139,31 +139,32 @@ public class GetterToDoItemParametersService
             .OrderBy(x => x.OrderIndex)
             .ToArrayAsync();
 
+        var ai = ToActiveToDoItem(entity);
+
         if (items.Length == 0)
         {
-            var ai = ToActiveToDoItem(entity);
-
             if (entity.DueDate == DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
             {
                 return parameters.WithIfNeed(ai)
                     .WithIfNeed(ToDoItemStatus.ReadyForComplete, ai)
                     .WithIfNeed(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
             }
-
-            if (entity.DueDate < DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
-            {
-                return parameters.WithIfNeed(ToActiveToDoItem(entity))
-                    .WithIfNeed(ToDoItemStatus.Miss, ToActiveToDoItem(entity))
-                    .WithIfNeed(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
-            }
-
-            if (entity.DueDate > DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
-            {
-                return parameters.WithIfNeed(null)
-                    .WithIfNeed(ToDoItemStatus.Planned, null)
-                    .WithIfNeed(ToDoItemIsCan.None);
-            }
         }
+
+        if (entity.DueDate < DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
+        {
+            return parameters.WithIfNeed(ai)
+                .WithIfNeed(ToDoItemStatus.Miss, ai)
+                .WithIfNeed(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
+        }
+
+        if (entity.DueDate > DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
+        {
+            return parameters.WithIfNeed(null)
+                .WithIfNeed(ToDoItemStatus.Planned, null)
+                .WithIfNeed(ToDoItemIsCan.None);
+        }
+
 
         foreach (var item in items)
         {
@@ -214,30 +215,30 @@ public class GetterToDoItemParametersService
             .OrderBy(x => x.OrderIndex)
             .ToArrayAsync();
 
+        var ai = ToActiveToDoItem(entity);
+
         if (items.Length == 0)
         {
-            var ai = ToActiveToDoItem(entity);
-
             if (entity.DueDate == DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
             {
                 return parameters.WithIfNeed(ai)
                     .WithIfNeed(ToDoItemStatus.ReadyForComplete, ai)
                     .WithIfNeed(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
             }
+        }
 
-            if (entity.DueDate < DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
-            {
-                return parameters.WithIfNeed(ai)
-                    .WithIfNeed(ToDoItemStatus.Miss, ai)
-                    .WithIfNeed(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
-            }
+        if (entity.DueDate < DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
+        {
+            return parameters.WithIfNeed(ai)
+                .WithIfNeed(ToDoItemStatus.Miss, ai)
+                .WithIfNeed(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
+        }
 
-            if (entity.DueDate > DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
-            {
-                return parameters.WithIfNeed(null)
-                    .WithIfNeed(ToDoItemStatus.Planned, null)
-                    .WithIfNeed(ToDoItemIsCan.None);
-            }
+        if (entity.DueDate > DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
+        {
+            return parameters.WithIfNeed(null)
+                .WithIfNeed(ToDoItemStatus.Planned, null)
+                .WithIfNeed(ToDoItemIsCan.None);
         }
 
         foreach (var item in items)
