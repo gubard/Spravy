@@ -8,4 +8,9 @@ public class OpenerLinkDesign : IOpenerLink
     {
         throw new NotImplementedException();
     }
+
+    public Task OpenLinkAsync(Uri link, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
 }

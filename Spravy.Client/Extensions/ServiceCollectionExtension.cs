@@ -123,7 +123,7 @@ public static class ServiceCollectionExtension
         }
 
         var tokenService = serviceProvider.GetRequiredService<ITokenService>();
-        tokenService.LoginAsync(options.Token).GetAwaiter().GetResult();
+        tokenService.LoginAsync(options.Token, CancellationToken.None).GetAwaiter().GetResult();
         var tokenHttpHeaderFactory = new TokenHttpHeaderFactory(tokenService);
 
         var combineHttpHeaderFactory = new CombineHttpHeaderFactory(

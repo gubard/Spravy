@@ -17,27 +17,15 @@ public class SpravyUiProfile : Profile
 {
     public SpravyUiProfile()
     {
-        CreateMap<ToDoItemParent, ToDoItemParentNotify>();
-        CreateMap<ToDoItemNotify, ToDoShortItem>();
-        CreateMap<ToDoShortItem, ToDoItemNotify>();
-        CreateMap<ToDoSubItemCircle, ToDoSubItemCircleNotify>();
-        CreateMap<ToDoSubItemValue, ToDoSubItemValueNotify>();
-        CreateMap<ToDoSubItemStep, ToDoSubItemStepNotify>();
-        CreateMap<ToDoSubItemGroup, ToDoSubItemGroupNotify>();
-        CreateMap<ToDoSubItemPeriodicity, ToDoSubItemPeriodicityNotify>();
-        CreateMap<ToDoSubItemPeriodicityOffset, ToDoSubItemPeriodicityOffsetNotify>();
-        CreateMap<ToDoSubItemPlanned, ToDoSubItemPlannedNotify>();
-        CreateMap<ToDoItemValueViewModel, ToDoSubItemValueNotify>();
-        CreateMap<ToDoItemCircleViewModel, ToDoSubItemCircleNotify>();
-        CreateMap<ToDoItemPeriodicityOffsetViewModel, ToDoSubItemPeriodicityOffsetNotify>();
-        CreateMap<ToDoItemGroupViewModel, ToDoSubItemGroupNotify>();
-        CreateMap<ToDoItemPlannedViewModel, ToDoSubItemPlannedNotify>();
-        CreateMap<ToDoItemStepViewModel, ToDoSubItemStepNotify>();
-        CreateMap<ToDoItemPeriodicityViewModel, ToDoSubItemPeriodicityNotify>();
+        CreateMap<ToDoItem, ToDoItemNotify>();
+        CreateMap<ToDoShortItemNotify, ToDoShortItem>();
+        CreateMap<ToDoShortItem, ToDoShortItemNotify>();
         CreateMap<ToDoSelectorItem, ToDoSelectorItemNotify>();
         CreateMap<CreateUserViewModel, CreateUserOptions>();
         CreateMap<CreateUserViewModel, User>();
         CreateMap<LoginViewModel, User>();
+        CreateMap<ToDoShortItem, ToDoItemParentNotify>();
+        CreateMap<ToDoItemViewModel, ToDoItemNotify>();
 
         CreateMap<TimerItem, TimerItemToDoItemFavoriteNotify>()
             .ConvertUsing(
@@ -85,61 +73,6 @@ public class SpravyUiProfile : Profile
                         Id = context.Mapper.Map<Guid>(source.Value.Id),
                         Name = source.Value.Name
                     }
-            );
-
-        CreateMap<ToDoSubItemValue, ToDoSubItemNotify>()
-            .ConvertUsing(
-                (source, _, context) => context.Mapper.Map<ToDoSubItemValueNotify>(source)
-            );
-        
-        CreateMap<ToDoSubItemStep, ToDoSubItemNotify>()
-            .ConvertUsing(
-                (source, _, context) => context.Mapper.Map<ToDoSubItemStepNotify>(source)
-            );
-
-        CreateMap<ToDoSubItemGroup, ToDoSubItemNotify>()
-            .ConvertUsing(
-                (source, _, context) => context.Mapper.Map<ToDoSubItemGroupNotify>(source)
-            );
-
-        CreateMap<ToDoSubItemPlanned, ToDoSubItemNotify>()
-            .ConvertUsing(
-                (source, _, context) => context.Mapper.Map<ToDoSubItemPlannedNotify>(source)
-            );
-
-        CreateMap<ToDoSubItemPeriodicity, ToDoSubItemNotify>()
-            .ConvertUsing(
-                (source, _, context) => context.Mapper.Map<ToDoSubItemPeriodicityNotify>(source)
-            );
-
-        CreateMap<ToDoSubItemPeriodicityOffset, ToDoSubItemNotify>()
-            .ConvertUsing(
-                (source, _, context) =>
-                    context.Mapper.Map<ToDoSubItemPeriodicityOffsetNotify>(source)
-            );
-
-        CreateMap<ToDoSubItemCircle, ToDoSubItemNotify>()
-            .ConvertUsing(
-                (source, _, context) =>
-                    context.Mapper.Map<ToDoSubItemCircleNotify>(source)
-            );
-
-        CreateMap<ToDoItemViewModel, ToDoSubItemNotify>()
-            .ConvertUsing(
-                (source, _, context) => source switch
-                {
-                    ToDoItemGroupViewModel group => context.Mapper.Map<ToDoSubItemGroupNotify>(group),
-                    ToDoItemPeriodicityViewModel periodicity => context.Mapper.Map<ToDoSubItemPeriodicityNotify>(
-                        periodicity
-                    ),
-                    ToDoItemPlannedViewModel planned => context.Mapper.Map<ToDoSubItemPlannedNotify>(planned),
-                    ToDoItemValueViewModel value => context.Mapper.Map<ToDoSubItemValueNotify>(value),
-                    ToDoItemPeriodicityOffsetViewModel periodicityOffset => context.Mapper
-                        .Map<ToDoSubItemPeriodicityOffsetNotify>(periodicityOffset),
-                    ToDoItemCircleViewModel circle => context.Mapper.Map<ToDoSubItemCircleNotify>(circle),
-                    ToDoItemStepViewModel step => context.Mapper.Map<ToDoSubItemStepNotify>(step),
-                    _ => throw new ArgumentOutOfRangeException(nameof(source))
-                }
             );
     }
 }

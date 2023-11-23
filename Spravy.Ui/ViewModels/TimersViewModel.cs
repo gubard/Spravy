@@ -1,9 +1,11 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
 using Ninject;
+using Spravy.Domain.Models;
 using Spravy.Schedule.Domain.Interfaces;
 using Spravy.Ui.Models;
 
@@ -13,7 +15,7 @@ public class TimersViewModel : RoutableViewModelBase
 {
     public TimersViewModel() : base("timers")
     {
-        InitializedCommand = CreateInitializedCommand(InitializedAsync);
+        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
         SwitchPaneCommand = CreateCommand(SwitchPane);
     }
 
@@ -35,14 +37,14 @@ public class TimersViewModel : RoutableViewModelBase
         MainSplitViewModel.IsPaneOpen = !MainSplitViewModel.IsPaneOpen;
     }
 
-    private Task InitializedAsync()
+    private Task InitializedAsync(CancellationToken cancellationToken)
     {
-        return RefreshAsync();
+        return RefreshAsync(cancellationToken);
     }
 
-    private async Task RefreshAsync()
+    private async Task RefreshAsync(CancellationToken cancellationToken)
     {
-        var timers = await ScheduleService.GetListTimesAsync().ConfigureAwait(false);
+        var timers = await ScheduleService.GetListTimesAsync(cancellationToken).ConfigureAwait(false);
         Timers.Clear();
         Timers.AddRange(Mapper.Map<IEnumerable<TimerItemNotify>>(timers));
     }

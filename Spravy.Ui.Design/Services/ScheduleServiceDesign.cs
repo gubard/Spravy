@@ -27,4 +27,19 @@ public class ScheduleServiceDesign : IScheduleService
     {
         throw new NotImplementedException();
     }
+
+    public Task AddTimerAsync(AddTimerParameters parameters, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<IEnumerable<TimerItem>> GetListTimesAsync(CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task RemoveTimerAsync(Guid id, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -8,7 +8,7 @@ package spravy.to_do;
 
 service ToDoService {
   rpc GetRootToDoSubItems (GetRootToDoSubItemsRequest) returns (GetRootToDoSubItemsReply);
-  rpc GetToDoItem (GetToDoItemRequest) returns (GetToDoItemReply);
+  rpc GetToDoItem2 (GetToDoItemRequest2) returns (GetToDoItemReply2);
   rpc AddRootToDoItem (AddRootToDoItemRequest) returns (AddRootToDoItemReply);
   rpc AddToDoItem (AddToDoItemRequest) returns (AddToDoItemReply);
   rpc DeleteToDoItem (DeleteToDoItemRequest) returns (DeleteToDoItemReply);
@@ -41,4 +41,18 @@ service ToDoService {
   rpc GetSiblings (GetSiblingsRequest) returns (GetSiblingsReply);
   rpc GetActiveItem (GetActiveItemRequest) returns (GetActiveItemReply);
   rpc UpdateToDoItemLink (UpdateToDoItemLinkRequest) returns (UpdateToDoItemLinkReply);
+  rpc GetRootToDoItemIds (GetRootToDoItemIdsRequest) returns (GetRootToDoItemIdsReply);
+  rpc GetFavoriteToDoItemIds (GetFavoriteToDoItemIdsRequest) returns (GetFavoriteToDoItemIdsRequestReply);
+  rpc GetChildrenToDoItemIds (GetChildrenToDoItemIdsRequest) returns (GetChildrenToDoItemIdsReply);
+  rpc GetToDoItem (GetToDoItemRequest) returns (GetToDoItemReply);
+  rpc GetLeafToDoItemIds (GetLeafToDoItemIdsRequest) returns (GetLeafToDoItemIdsReply);
+  rpc SearchToDoItemIds (SearchToDoItemIdsRequest) returns (SearchToDoItemIdsReply);
+  rpc GetParents (GetParentsRequest) returns (GetParentsReply);
+  rpc GetPlannedToDoItemSettings (GetPlannedToDoItemSettingsRequest) returns (GetPlannedToDoItemSettingsReply);
+  rpc GetValueToDoItemSettings (GetValueToDoItemSettingsRequest) returns (GetValueToDoItemSettingsReply);
+  rpc GetPeriodicityToDoItemSettings (GetPeriodicityToDoItemSettingsRequest) returns (GetPeriodicityToDoItemSettingsReply);
+  rpc GetWeeklyPeriodicity (GetWeeklyPeriodicityRequest) returns (GetWeeklyPeriodicityReply);
+  rpc GetMonthlyPeriodicity (GetMonthlyPeriodicityRequest) returns (GetMonthlyPeriodicityReply);
+  rpc GetAnnuallyPeriodicity (GetAnnuallyPeriodicityRequest) returns (GetAnnuallyPeriodicityReply);
+  rpc GetPeriodicityOffsetToDoItemSettings (GetPeriodicityOffsetToDoItemSettingsRequest) returns (GetPeriodicityOffsetToDoItemSettingsReply);
 }

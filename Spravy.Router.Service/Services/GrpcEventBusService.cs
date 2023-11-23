@@ -44,7 +44,7 @@ public class GrpcEventBusService : EventBusService.EventBusServiceBase
         var userId = context.GetHttpContext().GetUserId();
         var id = mapper.Map<Guid>(request.EventId);
         logger.LogInformation("{UserId} push event {Id}", userId, id);
-        await eventBusService.PublishEventAsync(id, request.Content.ToByteArray());
+        await eventBusService.PublishEventAsync(id, request.Content.ToByteArray(),context.CancellationToken);
 
         return new PublishEventReply();
     }
@@ -54,7 +54,7 @@ public class GrpcEventBusService : EventBusService.EventBusServiceBase
         var userId = context.GetHttpContext().GetUserId();
         var eventIds = mapper.Map<Guid[]>(request.EventIds);
         logger.LogInformation("{UserId} get events {EventIds}", userId, eventIds);
-        var eventValues = await eventBusService.GetEventsAsync(eventIds);
+        var eventValues = await eventBusService.GetEventsAsync(eventIds,context.CancellationToken);
         var reply = new GetEventsReply();
         reply.Events.AddRange(mapper.Map<IEnumerable<Event>>(eventValues));
 

@@ -1,12 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
+using Avalonia.Threading;
 using Ninject;
-using ReactiveUI;
+using Spravy.Domain.Helpers;
+using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.Interfaces;
@@ -14,12 +13,19 @@ using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 
-public class RootToDoItemsViewModel : RoutableViewModelBase, IToDoItemOrderChanger, IRefreshToDoItem
+public class RootToDoItemsViewModel : RoutableViewModelBase, IToDoItemOrderChanger
 {
+    private readonly TaskWork refreshToDoItemWork;
+    private readonly TaskWork addToDoItemWork;
+
     public RootToDoItemsViewModel() : base("root-to-do-item")
     {
-        InitializedCommand = CreateInitializedCommand(InitializedAsync);
-        AddToDoItemCommand = CreateCommandFromTask(AddToDoItemAsync);
+        refreshToDoItemWork = new(RefreshToDoItemCoreAsync);
+        addToDoItemWork = new(AddToDoItemAsync);
+        addToDoItemWork.AddSubTasks(addToDoItemWork);
+
+        InitializedCommand = CreateInitializedCommand(refreshToDoItemWork.RunAsync);
+        AddToDoItemCommand = CreateCommandFromTask( addToDoItemWork.RunAsync);
         SwitchPaneCommand = CreateCommand(SwitchPane);
     }
 
@@ -39,54 +45,41 @@ public class RootToDoItemsViewModel : RoutableViewModelBase, IToDoItemOrderChang
     [Inject]
     public required MainSplitViewModel MainSplitViewModel { get; init; }
 
-    private void SwitchPane()
+    private DispatcherOperation SwitchPane()
     {
-        MainSplitViewModel.IsPaneOpen = !MainSplitViewModel.IsPaneOpen;
+        return Dispatcher.UIThread.InvokeAsync(() => MainSplitViewModel.IsPaneOpen = !MainSplitViewModel.IsPaneOpen);
     }
 
-    private Task InitializedAsync()
+    public async Task RefreshAsync(CancellationToken cancellationToken)
     {
-        return RefreshToDoItemAsync();
+        await refreshToDoItemWork.RunAsync();
     }
 
-    public async Task RefreshToDoItemAsync()
+    private async Task RefreshToDoItemCoreAsync(CancellationToken cancellationToken)
     {
-        var items = await ToDoService.GetRootToDoSubItemsAsync().ConfigureAwait(false);
-        var source = items.Select(x => Mapper.Map<ToDoSubItemNotify>(x)).ToArray();
-        await ToDoSubItemsViewModel.UpdateItemsAsync(source, this);
-        SubscribeItems(source);
+        cancellationToken.ThrowIfCancellationRequested();
+        var ids = await ToDoService.GetRootToDoItemIdsAsync(cancellationToken).ConfigureAwait(false);
+        cancellationToken.ThrowIfCancellationRequested();
+        await ToDoSubItemsViewModel.UpdateItemsAsync(ids, this, cancellationToken).ConfigureAwait(false);
+        cancellationToken.ThrowIfCancellationRequested();
     }
 
-    private Task AddToDoItemAsync()
+    private Task AddToDoItemAsync(CancellationToken cancellationToken)
     {
-        return DialogViewer.ShowConfirmContentDialogAsync<AddRootToDoItemViewModel>(
+        return DialogViewer.ShowConfirmContentDialogAsync(
             async view =>
             {
+                await DialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
+                cancellationToken.ThrowIfCancellationRequested();
                 var options = Mapper.Map<AddRootToDoItemOptions>(view);
-                await ToDoService.AddRootToDoItemAsync(options).ConfigureAwait(false);
-                await DialogViewer.CloseContentDialogAsync();
-                await RefreshToDoItemAsync();
+                cancellationToken.ThrowIfCancellationRequested();
+                await ToDoService.AddRootToDoItemAsync(options, cancellationToken).ConfigureAwait(false);
+                cancellationToken.ThrowIfCancellationRequested();
+                await RefreshAsync(cancellationToken).ConfigureAwait(false);
             },
-            _ => DialogViewer.CloseContentDialogAsync()
+            async _ => await DialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false),
+            ActionHelper<AddRootToDoItemViewModel>.Empty,
+            cancellationToken
         );
-    }
-
-    private void SubscribeItems(IEnumerable<ToDoSubItemNotify> items)
-    {
-        foreach (var itemNotify in items.OfType<ToDoSubItemValueNotify>())
-        {
-            async void OnNextIsComplete(bool x)
-            {
-                await SafeExecuteAsync(
-                    async () =>
-                    {
-                        await ToDoService.UpdateToDoItemCompleteStatusAsync(itemNotify.Id, x).ConfigureAwait(false);
-                        await RefreshToDoItemAsync();
-                    }
-                );
-            }
-
-            itemNotify.WhenAnyValue(x => x.IsCompleted).Skip(1).Subscribe(OnNextIsComplete);
-        }
     }
 }

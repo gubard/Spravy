@@ -5,7 +5,7 @@ namespace Spravy.Domain.Services;
 
 public class EmptyHttpHeaderFactory : IHttpHeaderFactory
 {
-    public Task<IEnumerable<HttpHeaderItem>> CreateHeaderItemsAsync()
+    public Task<IEnumerable<HttpHeaderItem>> CreateHeaderItemsAsync(CancellationToken cancellationToken)
     {
         return Task.FromResult(Enumerable.Empty<HttpHeaderItem>());
     }

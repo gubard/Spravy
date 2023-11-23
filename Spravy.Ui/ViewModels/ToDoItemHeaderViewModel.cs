@@ -1,8 +1,10 @@
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Collections;
 using Ninject;
 using ReactiveUI;
+using Spravy.Domain.Models;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Models;
 
@@ -15,7 +17,7 @@ public class ToDoItemHeaderViewModel : ViewModelBase
     public ToDoItemHeaderViewModel()
     {
         SwitchPaneCommand = CreateCommand(SwitchPane);
-        ChangeNameCommand = CreateCommandFromTask(ChangeNameAsync);
+        ChangeNameCommand = CreateCommandFromTask(TaskWork.Create(ChangeNameAsync).RunAsync);
     }
 
     public ICommand SwitchPaneCommand { get; }
@@ -31,7 +33,7 @@ public class ToDoItemHeaderViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref item, value);
     }
 
-    private Task ChangeNameAsync()
+    private Task ChangeNameAsync(CancellationToken cancellationToken)
     {
         return DialogViewer.ShowSingleStringConfirmDialogAsync(
             str =>
@@ -41,13 +43,14 @@ public class ToDoItemHeaderViewModel : ViewModelBase
                     Item.Name = str;
                 }
 
-                return  DialogViewer.CloseInputDialogAsync();
+                return DialogViewer.CloseInputDialogAsync(cancellationToken);
             },
             box =>
             {
-                box.Text = Item?.Name;
+                box.Text = Item?.Name ?? string.Empty;
                 box.Label = "Name";
-            }
+            },
+            cancellationToken
         );
     }
 

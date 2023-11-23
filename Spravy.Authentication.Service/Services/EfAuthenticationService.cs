@@ -38,9 +38,9 @@ public class EfAuthenticationService : IAuthenticationService
         this.mapper = mapper;
     }
 
-    public async Task<TokenResult> LoginAsync(User user)
+    public async Task<TokenResult> LoginAsync(User user, CancellationToken cancellationToken)
     {
-        var userEntity = await context.Set<UserEntity>().AsNoTracking().SingleAsync(x => x.Login == user.Login);
+        var userEntity = await context.Set<UserEntity>().AsNoTracking().SingleAsync(x => x.Login == user.Login,  cancellationToken);
         var newHasher = hasherFactory.Create(userEntity.HashMethod.ThrowIfNullOrWhiteSpace());
         var hash = newHasher.ComputeHash($"{userEntity.Salt};{user.Password}");
 
@@ -55,7 +55,7 @@ public class EfAuthenticationService : IAuthenticationService
         return tokenResult;
     }
 
-    public async Task CreateUserAsync(CreateUserOptions options)
+    public async Task CreateUserAsync(CreateUserOptions options, CancellationToken cancellationToken)
     {
         var salt = Guid.NewGuid();
         var hash = hasher.ComputeHash($"{salt};{options.Password}");
@@ -69,10 +69,10 @@ public class EfAuthenticationService : IAuthenticationService
             PasswordHash = hash,
         };
 
-        await context.ExecuteSaveChangesTransactionAsync(c => c.Set<UserEntity>().AddAsync(newUser));
+        await context.ExecuteSaveChangesTransactionAsync(c => c.Set<UserEntity>().AddAsync(newUser, cancellationToken));
     }
 
-    public async Task<TokenResult> RefreshTokenAsync(string refreshToken)
+    public async Task<TokenResult> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
     {
         var jwtHandler = new JwtSecurityTokenHandler();
         var jwtToken = jwtHandler.ReadJwtToken(refreshToken);
@@ -86,7 +86,7 @@ public class EfAuthenticationService : IAuthenticationService
 
                 var userEntity = await context.Set<UserEntity>()
                     .AsNoTracking()
-                    .SingleAsync(x => x.Login == loginClaim.Value);
+                    .SingleAsync(x => x.Login == loginClaim.Value,  cancellationToken);
 
                 var userTokenClaims = mapper.Map<UserTokenClaims>(userEntity);
                 var tokenResult = tokenFactory.Create(userTokenClaims);

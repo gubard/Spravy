@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Android.Content;
 using Spravy.Ui.Interfaces;
@@ -14,7 +15,7 @@ public class AndroidOpenerLink : IOpenerLink
         this.contextWrapper = contextWrapper;
     }
 
-    public Task OpenLinkAsync(Uri link)
+    public Task OpenLinkAsync(Uri link, CancellationToken cancellationToken)
     {
         var intent = new Intent(Intent.ActionView, global::Android.Net.Uri.Parse(link.AbsoluteUri));
         contextWrapper.StartActivity(intent);

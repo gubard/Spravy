@@ -22,13 +22,13 @@ public class SearchViewModelDesign : SearchViewModel
             ToDoService = new ToDoServiceDesign(
                 Enumerable.Empty<IToDoSubItem>(),
                 Enumerable.Empty<IToDoSubItem>(),
-                new ToDoItemGroup(),
+                null,
                 Enumerable.Empty<ToDoShortItem>(),
                 Enumerable.Empty<IToDoSubItem>()
             ),
             Completed =
             {
-                new ToDoSubItemGroupNotify
+                new ToDoItemNotify()
                 {
                     Id = Guid.NewGuid(),
                     Name = Guid.NewGuid().ToString(),
@@ -37,7 +37,7 @@ public class SearchViewModelDesign : SearchViewModel
             },
             Missed =
             {
-                new ToDoSubItemGroupNotify
+                new ToDoItemNotify
                 {
                     Id = Guid.NewGuid(),
                     Name = Guid.NewGuid().ToString(),
@@ -46,7 +46,7 @@ public class SearchViewModelDesign : SearchViewModel
             },
             Planned =
             {
-                new ToDoSubItemGroupNotify
+                new ToDoItemNotify
                 {
                     Id = Guid.NewGuid(),
                     Name = Guid.NewGuid().ToString(),
@@ -55,7 +55,7 @@ public class SearchViewModelDesign : SearchViewModel
             },
             ReadyForCompleted =
             {
-                new ToDoSubItemGroupNotify
+                new ToDoItemNotify
                 {
                     Id = Guid.NewGuid(),
                     Name = Guid.NewGuid().ToString(),
@@ -64,7 +64,7 @@ public class SearchViewModelDesign : SearchViewModel
             },
             FavoriteToDoItems =
             {
-                new ToDoSubItemGroupNotify
+                new ToDoItemNotify
                 {
                     Id = Guid.NewGuid(),
                     Name = Guid.NewGuid().ToString(),

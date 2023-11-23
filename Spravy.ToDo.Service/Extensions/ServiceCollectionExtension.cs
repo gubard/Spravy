@@ -75,6 +75,7 @@ public static class ServiceCollectionExtension
         serviceCollection.AddTransient<StatusToDoItemService>();
         serviceCollection.AddTransient<ActiveToDoItemToDoItemService>();
         serviceCollection.AddTransient<CanCompleteToDoItemService>();
+        serviceCollection.AddTransient<GetterToDoItemParametersService>();
 
         return serviceCollection;
     }

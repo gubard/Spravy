@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
 using Ninject;
 using ReactiveUI;
+using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Models;
 
@@ -17,7 +19,7 @@ public class ToDoItemSelectorViewModel : ViewModelBase
 
     public ToDoItemSelectorViewModel()
     {
-        InitializedCommand = CreateInitializedCommand(InitializedAsync);
+        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
     }
 
     [Inject]
@@ -38,9 +40,9 @@ public class ToDoItemSelectorViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref selectedItem, value);
     }
 
-    private async Task InitializedAsync()
+    private async Task InitializedAsync(CancellationToken cancellationToken)
     {
-        var items = await ToDoService.GetToDoSelectorItemsAsync(IgnoreIds.ToArray()).ConfigureAwait(false);
+        var items = await ToDoService.GetToDoSelectorItemsAsync(IgnoreIds.ToArray(), cancellationToken).ConfigureAwait(false);
         Roots.Clear();
         Roots.AddRange(Mapper.Map<IEnumerable<ToDoSelectorItemNotify>>(items));
         SetItem(DefaultSelectedItemId);

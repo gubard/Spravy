@@ -10,6 +10,21 @@ public class NavigatorDesign : INavigator
         throw new NotImplementedException();
     }
 
+    public Task NavigateToAsync<TViewModel>(TViewModel parameter, CancellationToken cancellationToken) where TViewModel : IRoutableViewModel
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task NavigateToAsync(Type type, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task NavigateToAsync<TViewModel>(Action<TViewModel> setup, CancellationToken cancellationToken) where TViewModel : IRoutableViewModel
+    {
+        throw new NotImplementedException();
+    }
+
     public Task NavigateToAsync<TViewModel>(TViewModel parameter) where TViewModel : IRoutableViewModel
     {
         throw new NotImplementedException();

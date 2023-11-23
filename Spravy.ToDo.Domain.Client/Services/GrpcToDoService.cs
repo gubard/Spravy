@@ -3,6 +3,7 @@ using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
+using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
@@ -30,230 +31,489 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         this.metadataFactory = metadataFactory;
     }
 
-    public Task<IEnumerable<IToDoSubItem>> GetRootToDoSubItemsAsync()
+    public Task<IEnumerable<ToDoShortItem>> GetParentsAsync(Guid id, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
             {
-                var metadata = await metadataFactory.CreateAsync();
-                var request = new GetRootToDoSubItemsRequest();
-                var items = await client.GetRootToDoSubItemsAsync(request, metadata);
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
 
-                return mapper.Map<IEnumerable<IToDoSubItem>>(items.Items);
-            }
+                var request = new GetParentsRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                };
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var reply = await client.GetParentsAsync(
+                    request,
+                    metadata,
+                    cancellationToken: cancellationToken
+                );
+
+                return mapper.Map<IEnumerable<ToDoShortItem>>(reply.Parents);
+            },
+            cancellationToken
         );
     }
 
-    public Task<IToDoItem> GetToDoItemAsync(Guid id)
+    public Task<IEnumerable<Guid>> SearchToDoItemIdsAsync(string searchText, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
             {
-                var byteStringId = mapper.Map<ByteString>(id);
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+
+                var request = new SearchToDoItemIdsRequest
+                {
+                    SearchText = searchText,
+                };
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var reply = await client.SearchToDoItemIdsAsync(
+                    request,
+                    metadata,
+                    cancellationToken: cancellationToken
+                );
+
+                return mapper.Map<IEnumerable<Guid>>(reply.Ids);
+            },
+            cancellationToken
+        );
+    }
+
+    public Task<IEnumerable<Guid>> GetLeafToDoItemIdsAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return CallClientAsync(
+            async client =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+
+                var request = new GetLeafToDoItemIdsRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                };
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var reply = await client.GetLeafToDoItemIdsAsync(
+                    request,
+                    metadata,
+                    cancellationToken: cancellationToken
+                );
+
+                return mapper.Map<IEnumerable<Guid>>(reply.Ids);
+            },
+            cancellationToken
+        );
+    }
+
+    public Task<ToDoItem> GetToDoItemAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return CallClientAsync(
+            async client =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
 
                 var request = new GetToDoItemRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                };
+
+                cancellationToken.ThrowIfCancellationRequested();
+                var reply = await client.GetToDoItemAsync(request, metadata, cancellationToken: cancellationToken);
+
+                return mapper.Map<ToDoItem>(reply);
+            },
+            cancellationToken
+        );
+    }
+
+    public Task<IEnumerable<Guid>> GetChildrenToDoItemIdsAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return CallClientAsync(
+            async client =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+
+                var request = new GetChildrenToDoItemIdsRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                };
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var reply = await client.GetChildrenToDoItemIdsAsync(
+                    request,
+                    metadata,
+                    cancellationToken: cancellationToken
+                );
+
+                return mapper.Map<IEnumerable<Guid>>(reply.Ids);
+            },
+            cancellationToken
+        );
+    }
+
+    public Task<IEnumerable<Guid>> GetRootToDoItemIdsAsync(CancellationToken cancellationToken)
+    {
+        return CallClientAsync(
+            async client =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+                var request = new GetRootToDoItemIdsRequest();
+                cancellationToken.ThrowIfCancellationRequested();
+                var reply = await client.GetRootToDoItemIdsAsync(request, metadata);
+
+                return mapper.Map<IEnumerable<Guid>>(reply.Ids);
+            },
+            cancellationToken
+        );
+    }
+
+    public Task<IEnumerable<Guid>> GetFavoriteToDoItemIdsAsync(CancellationToken cancellationToken)
+    {
+        return CallClientAsync(
+            async client =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+                var request = new GetFavoriteToDoItemIdsRequest();
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var reply = await client.GetFavoriteToDoItemIdsAsync(
+                    request,
+                    metadata,
+                    cancellationToken: cancellationToken
+                );
+
+                return mapper.Map<IEnumerable<Guid>>(reply.Ids);
+            },
+            cancellationToken
+        );
+    }
+
+    public Task<IEnumerable<IToDoSubItem>> GetRootToDoSubItemsAsync(CancellationToken cancellationToken)
+    {
+        return CallClientAsync(
+            async client =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+                var request = new GetRootToDoSubItemsRequest();
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var items = await client.GetRootToDoSubItemsAsync(
+                    request,
+                    metadata,
+                    cancellationToken: cancellationToken
+                );
+
+                return mapper.Map<IEnumerable<IToDoSubItem>>(items.Items);
+            },
+            cancellationToken
+        );
+    }
+
+    public Task<IToDoItem> GetToDoItem2Async(Guid id, CancellationToken cancellationToken)
+    {
+        return CallClientAsync(
+            async client =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+                var byteStringId = mapper.Map<ByteString>(id);
+
+                var request = new GetToDoItemRequest2
                 {
                     Id = byteStringId,
                 };
 
-                var item = await client.GetToDoItemAsync(request, await metadataFactory.CreateAsync());
+                cancellationToken.ThrowIfCancellationRequested();
+                var item = await client.GetToDoItem2Async(request, metadata, cancellationToken: cancellationToken);
                 var result = mapper.Map<IToDoItem>(item.Item);
 
                 return result;
-            }
+            },
+            cancellationToken
         );
     }
 
 
-    public Task<Guid> AddRootToDoItemAsync(AddRootToDoItemOptions options)
+    public Task<Guid> AddRootToDoItemAsync(AddRootToDoItemOptions options, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
             {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
                 var request = mapper.Map<AddRootToDoItemRequest>(options);
-                var id = await client.AddRootToDoItemAsync(request, await metadataFactory.CreateAsync());
+                cancellationToken.ThrowIfCancellationRequested();
+                var id = await client.AddRootToDoItemAsync(request, metadata, cancellationToken: cancellationToken);
 
                 return mapper.Map<Guid>(id.Id);
-            }
+            },
+            cancellationToken
         );
     }
 
-    public Task<Guid> AddToDoItemAsync(AddToDoItemOptions options)
+    public Task<Guid> AddToDoItemAsync(AddToDoItemOptions options, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
             {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
                 var request = mapper.Map<AddToDoItemRequest>(options);
-                var id = await client.AddToDoItemAsync(request, await metadataFactory.CreateAsync());
+                cancellationToken.ThrowIfCancellationRequested();
+                var id = await client.AddToDoItemAsync(request, metadata, cancellationToken: cancellationToken);
 
                 return mapper.Map<Guid>(id.Id);
-            }
+            },
+            cancellationToken
         );
     }
 
-    public Task DeleteToDoItemAsync(Guid id)
+    public Task DeleteToDoItemAsync(Guid id, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
             {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+
                 var request = new DeleteToDoItemRequest
                 {
                     Id = mapper.Map<ByteString>(id)
                 };
 
-                await client.DeleteToDoItemAsync(request, await metadataFactory.CreateAsync());
-            }
+                cancellationToken.ThrowIfCancellationRequested();
+
+                await client.DeleteToDoItemAsync(
+                    request,
+                    metadata,
+                    cancellationToken: cancellationToken
+                );
+            },
+            cancellationToken
         );
     }
 
-    public Task UpdateToDoItemTypeOfPeriodicityAsync(Guid id, TypeOfPeriodicity type)
+    public Task UpdateToDoItemTypeOfPeriodicityAsync(
+        Guid id,
+        TypeOfPeriodicity type,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             async client =>
             {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+
                 var request = new UpdateToDoItemTypeOfPeriodicityRequest
                 {
                     Id = mapper.Map<ByteString>(id),
                     Type = (TypeOfPeriodicityGrpc)type,
                 };
 
-                await client.UpdateToDoItemTypeOfPeriodicityAsync(request, await metadataFactory.CreateAsync());
-            }
+                cancellationToken.ThrowIfCancellationRequested();
+
+                await client.UpdateToDoItemTypeOfPeriodicityAsync(
+                    request,
+                    metadata,
+                    cancellationToken: cancellationToken
+                );
+            },
+            cancellationToken
         );
     }
 
-    public Task UpdateToDoItemDueDateAsync(Guid id, DateOnly dueDate)
+    public Task UpdateToDoItemDueDateAsync(Guid id, DateOnly dueDate, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
             {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+
                 var request = new UpdateToDoItemDueDateRequest
                 {
                     Id = mapper.Map<ByteString>(id),
                     DueDate = mapper.Map<Timestamp>(dueDate),
                 };
 
-                await client.UpdateToDoItemDueDateAsync(request, await metadataFactory.CreateAsync());
-            }
+                cancellationToken.ThrowIfCancellationRequested();
+                await client.UpdateToDoItemDueDateAsync(request, metadata, cancellationToken: cancellationToken);
+            },
+            cancellationToken
         );
     }
 
-    public Task UpdateToDoItemCompleteStatusAsync(Guid id, bool isCompleted)
+    public Task UpdateToDoItemCompleteStatusAsync(Guid id, bool isCompleted, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
             {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+
                 var request = new UpdateToDoItemCompleteStatusRequest
                 {
                     Id = mapper.Map<ByteString>(id),
                     IsCompleted = isCompleted,
                 };
 
-                await client.UpdateToDoItemCompleteStatusAsync(request, await metadataFactory.CreateAsync());
-            }
+                cancellationToken.ThrowIfCancellationRequested();
+                await client.UpdateToDoItemCompleteStatusAsync(request, metadata, cancellationToken: cancellationToken);
+            },
+            cancellationToken
         );
     }
 
-    public Task UpdateToDoItemNameAsync(Guid id, string name)
+    public Task UpdateToDoItemNameAsync(Guid id, string name, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
             {
-                await client.UpdateToDoItemNameAsync(
-                    new()
-                    {
-                        Id = mapper.Map<ByteString>(id),
-                        Name = name,
-                    },
-                    await metadataFactory.CreateAsync()
-                );
-            }
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+
+                var request = new UpdateToDoItemNameRequest()
+                {
+                    Id = mapper.Map<ByteString>(id),
+                    Name = name,
+                };
+
+                cancellationToken.ThrowIfCancellationRequested();
+                await client.UpdateToDoItemNameAsync(request, metadata, cancellationToken: cancellationToken);
+            },
+            cancellationToken
         );
     }
 
-    public Task UpdateToDoItemOrderIndexAsync(UpdateOrderIndexToDoItemOptions options)
+    public Task UpdateToDoItemOrderIndexAsync(
+        UpdateOrderIndexToDoItemOptions options,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             async client =>
             {
-                await client.UpdateToDoItemOrderIndexAsync(
-                    mapper.Map<UpdateToDoItemOrderIndexRequest>(options),
-                    await metadataFactory.CreateAsync()
-                );
-            }
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+                var request = mapper.Map<UpdateToDoItemOrderIndexRequest>(options);
+                cancellationToken.ThrowIfCancellationRequested();
+                await client.UpdateToDoItemOrderIndexAsync(request, metadata, cancellationToken: cancellationToken);
+            },
+            cancellationToken
         );
     }
 
-    public Task UpdateToDoItemDescriptionAsync(Guid id, string description)
+    public Task UpdateToDoItemDescriptionAsync(Guid id, string description, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
             {
-                await client.UpdateToDoItemDescriptionAsync(
-                    new()
-                    {
-                        Description = description,
-                        Id = mapper.Map<ByteString>(id),
-                    },
-                    await metadataFactory.CreateAsync()
-                );
-            }
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+
+                var request = new UpdateToDoItemDescriptionRequest()
+                {
+                    Description = description,
+                    Id = mapper.Map<ByteString>(id),
+                };
+
+                cancellationToken.ThrowIfCancellationRequested();
+                await client.UpdateToDoItemDescriptionAsync(request, metadata, cancellationToken: cancellationToken);
+            },
+            cancellationToken
         );
     }
 
-    public Task SkipToDoItemAsync(Guid id)
+    public Task SkipToDoItemAsync(Guid id, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
             {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+
                 var request = new SkipToDoItemRequest
                 {
                     Id = mapper.Map<ByteString>(id),
                 };
 
-                await client.SkipToDoItemAsync(request, await metadataFactory.CreateAsync());
-            }
+                cancellationToken.ThrowIfCancellationRequested();
+                await client.SkipToDoItemAsync(request, metadata, cancellationToken: cancellationToken);
+            },
+            cancellationToken
         );
     }
 
-    public Task FailToDoItemAsync(Guid id)
+    public Task FailToDoItemAsync(Guid id, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
             {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+
                 var request = new FailToDoItemRequest
                 {
                     Id = mapper.Map<ByteString>(id),
                 };
 
-                await client.FailToDoItemAsync(request, await metadataFactory.CreateAsync());
-            }
+                cancellationToken.ThrowIfCancellationRequested();
+                await client.FailToDoItemAsync(request, metadata, cancellationToken: cancellationToken);
+            },
+            cancellationToken
         );
     }
 
-    public Task<IEnumerable<IToDoSubItem>> SearchToDoSubItemsAsync(string searchText)
+    public Task<IEnumerable<IToDoSubItem>> SearchToDoSubItemsAsync(
+        string searchText,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             async client =>
             {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+
                 var request = new SearchToDoSubItemsRequest
                 {
                     SearchText = searchText,
                 };
 
-                var reply = await client.SearchToDoSubItemsAsync(request, await metadataFactory.CreateAsync());
+                cancellationToken.ThrowIfCancellationRequested();
+                var reply = await client.SearchToDoSubItemsAsync(
+                    request,
+                    metadata,
+                    cancellationToken: cancellationToken
+                );
 
                 return mapper.Map<IEnumerable<IToDoSubItem>>(reply.Items);
-            }
+            },
+            cancellationToken
         );
     }
 
-    public Task UpdateToDoItemTypeAsync(Guid id, ToDoItemType type)
+    public Task UpdateToDoItemTypeAsync(Guid id, ToDoItemType type, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
             {
-                var metadata = await metadataFactory.CreateAsync();
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
 
                 var request = new UpdateToDoItemTypeRequest
                 {
@@ -261,312 +521,654 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                     Type = (ToDoItemTypeGrpc)type,
                 };
 
-                await client.UpdateToDoItemTypeAsync(request, metadata);
-            }
+                cancellationToken.ThrowIfCancellationRequested();
+                await client.UpdateToDoItemTypeAsync(request, metadata, cancellationToken: cancellationToken);
+            },
+            cancellationToken
         );
     }
 
-    public Task AddFavoriteToDoItemAsync(Guid id)
+    public Task AddFavoriteToDoItemAsync(Guid id, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
             {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+
                 await client.AddFavoriteToDoItemAsync(
                     new()
                     {
                         Id = mapper.Map<ByteString>(id),
                     },
-                    await metadataFactory.CreateAsync()
+                    metadata,
+                    cancellationToken: cancellationToken
                 );
-            }
+            },
+            cancellationToken
         );
     }
 
-    public Task RemoveFavoriteToDoItemAsync(Guid id)
+    public Task RemoveFavoriteToDoItemAsync(Guid id, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
             {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+
                 await client.RemoveFavoriteToDoItemAsync(
                     new()
                     {
                         Id = mapper.Map<ByteString>(id),
                     },
-                    await metadataFactory.CreateAsync()
+                    metadata,
+                    cancellationToken: cancellationToken
                 );
-            }
+            },
+            cancellationToken
         );
     }
 
-    public Task<IEnumerable<IToDoSubItem>> GetFavoriteToDoItemsAsync()
+    public Task<IEnumerable<IToDoSubItem>> GetFavoriteToDoItemsAsync(CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
             {
-                var request = new GetFavoriteToDoItemsRequest();
-                var reply = await client.GetFavoriteToDoItemsAsync(request, await metadataFactory.CreateAsync());
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+                var request = DefaultObject<GetFavoriteToDoItemsRequest>.Default;
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var reply = await client.GetFavoriteToDoItemsAsync(
+                    request,
+                    metadata,
+                    cancellationToken: cancellationToken
+                );
 
                 return mapper.Map<IEnumerable<IToDoSubItem>>(reply.Items);
-            }
+            },
+            cancellationToken
         );
     }
 
-    public Task UpdateToDoItemAnnuallyPeriodicityAsync(Guid id, AnnuallyPeriodicity periodicity)
+    public Task UpdateToDoItemAnnuallyPeriodicityAsync(
+        Guid id,
+        AnnuallyPeriodicity periodicity,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             async client =>
             {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+
                 await client.UpdateToDoItemAnnuallyPeriodicityAsync(
                     new()
                     {
                         Periodicity = mapper.Map<AnnuallyPeriodicityGrpc>(periodicity),
                         Id = mapper.Map<ByteString>(id),
                     },
-                    await metadataFactory.CreateAsync()
+                    metadata,
+                    cancellationToken: cancellationToken
                 );
-            }
+            },
+            cancellationToken
         );
     }
 
-    public Task UpdateToDoItemMonthlyPeriodicityAsync(Guid id, MonthlyPeriodicity periodicity)
+    public Task UpdateToDoItemMonthlyPeriodicityAsync(
+        Guid id,
+        MonthlyPeriodicity periodicity,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             async client =>
             {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+
                 await client.UpdateToDoItemMonthlyPeriodicityAsync(
                     new()
                     {
                         Periodicity = mapper.Map<MonthlyPeriodicityGrpc>(periodicity),
                         Id = mapper.Map<ByteString>(id),
                     },
-                    await metadataFactory.CreateAsync()
+                    metadata,
+                    cancellationToken: cancellationToken
                 );
-            }
+            },
+            cancellationToken
         );
     }
 
-    public Task UpdateToDoItemWeeklyPeriodicityAsync(Guid id, WeeklyPeriodicity periodicity)
+    public Task UpdateToDoItemWeeklyPeriodicityAsync(
+        Guid id,
+        WeeklyPeriodicity periodicity,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             async client =>
             {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+
                 await client.UpdateToDoItemWeeklyPeriodicityAsync(
                     new()
                     {
                         Periodicity = mapper.Map<WeeklyPeriodicityGrpc>(periodicity),
                         Id = mapper.Map<ByteString>(id),
                     },
-                    await metadataFactory.CreateAsync()
+                    metadata,
+                    cancellationToken: cancellationToken
                 );
-            }
+            },
+            cancellationToken
         );
     }
 
-    public Task<IEnumerable<IToDoSubItem>> GetLeafToDoSubItemsAsync(Guid id)
+    public Task<IEnumerable<IToDoSubItem>> GetLeafToDoSubItemsAsync(Guid id, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
             {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+
                 var request = new GetLeafToDoSubItemsRequest
                 {
                     Id = mapper.Map<ByteString>(id),
                 };
 
-                var reply = await client.GetLeafToDoSubItemsAsync(request, await metadataFactory.CreateAsync());
+                cancellationToken.ThrowIfCancellationRequested();
+                var reply = await client.GetLeafToDoSubItemsAsync(
+                    request,
+                    metadata,
+                    cancellationToken: cancellationToken
+                );
 
                 return mapper.Map<IEnumerable<IToDoSubItem>>(reply.Items);
-            }
+            },
+            cancellationToken
         );
     }
 
-    public Task<IEnumerable<ToDoSelectorItem>> GetToDoSelectorItemsAsync(Guid[] ignoreIds)
+    public Task<IEnumerable<ToDoSelectorItem>> GetToDoSelectorItemsAsync(
+        Guid[] ignoreIds,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             async client =>
             {
-                var request = new GetToDoSelectorItemsRequest();
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+                var request = DefaultObject<GetToDoSelectorItemsRequest>.Default;
                 request.IgnoreIds.AddRange(mapper.Map<IEnumerable<ByteString>>(ignoreIds));
-                var reply = await client.GetToDoSelectorItemsAsync(request, await metadataFactory.CreateAsync());
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var reply = await client.GetToDoSelectorItemsAsync(
+                    request,
+                    metadata,
+                    cancellationToken: cancellationToken
+                );
 
                 return mapper.Map<IEnumerable<ToDoSelectorItem>>(reply.Items);
-            }
+            },
+            cancellationToken
         );
     }
 
-    public Task UpdateToDoItemParentAsync(Guid id, Guid parentId)
+    public Task UpdateToDoItemParentAsync(Guid id, Guid parentId, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
             {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+
                 await client.UpdateToDoItemParentAsync(
                     new()
                     {
                         Id = mapper.Map<ByteString>(id),
                         ParentId = mapper.Map<ByteString>(parentId),
                     },
-                    await metadataFactory.CreateAsync()
+                    metadata,
+                    cancellationToken: cancellationToken
                 );
-            }
+            },
+            cancellationToken
         );
     }
 
-    public Task ToDoItemToRootAsync(Guid id)
+    public Task ToDoItemToRootAsync(Guid id, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
             {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+
                 await client.ToDoItemToRootAsync(
                     new()
                     {
                         Id = mapper.Map<ByteString>(id),
                     },
-                    await metadataFactory.CreateAsync()
+                    metadata,
+                    cancellationToken: cancellationToken
                 );
-            }
+            },
+            cancellationToken
         );
     }
 
-    public Task<string> ToDoItemToStringAsync(ToDoItemToStringOptions options)
+    public Task<string> ToDoItemToStringAsync(ToDoItemToStringOptions options, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
             {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
                 var request = mapper.Map<ToDoItemToStringRequest>(options);
-                var reply = await client.ToDoItemToStringAsync(request, await metadataFactory.CreateAsync());
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var reply = await client.ToDoItemToStringAsync(
+                    request,
+                    metadata,
+                    cancellationToken: cancellationToken
+                );
 
                 return reply.Value;
-            }
+            },
+            cancellationToken
         );
     }
 
-    public Task UpdateToDoItemDaysOffsetAsync(Guid id, ushort days)
+    public Task UpdateToDoItemDaysOffsetAsync(Guid id, ushort days, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
             {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+
                 await client.UpdateToDoItemDaysOffsetAsync(
                     new()
                     {
                         Id = mapper.Map<ByteString>(id),
                         Days = days
                     },
-                    await metadataFactory.CreateAsync()
+                    metadata,
+                    cancellationToken: cancellationToken
                 );
-            }
+            },
+            cancellationToken
         );
     }
 
-    public Task UpdateToDoItemMonthsOffsetAsync(Guid id, ushort months)
+    public Task UpdateToDoItemMonthsOffsetAsync(Guid id, ushort months, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
             {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+
                 await client.UpdateToDoItemMonthsOffsetAsync(
                     new()
                     {
                         Id = mapper.Map<ByteString>(id),
                         Months = months
                     },
-                    await metadataFactory.CreateAsync()
+                    metadata,
+                    cancellationToken: cancellationToken
                 );
-            }
+            },
+            cancellationToken
         );
     }
 
-    public Task UpdateToDoItemWeeksOffsetAsync(Guid id, ushort weeks)
+    public Task UpdateToDoItemWeeksOffsetAsync(Guid id, ushort weeks, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
             {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+
                 await client.UpdateToDoItemWeeksOffsetAsync(
                     new()
                     {
                         Id = mapper.Map<ByteString>(id),
                         Weeks = weeks
                     },
-                    await metadataFactory.CreateAsync()
+                    metadata,
+                    cancellationToken: cancellationToken
                 );
-            }
+            },
+            cancellationToken
         );
     }
 
-    public Task UpdateToDoItemYearsOffsetAsync(Guid id, ushort years)
+    public Task UpdateToDoItemYearsOffsetAsync(Guid id, ushort years, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
             {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+
                 await client.UpdateToDoItemYearsOffsetAsync(
                     new()
                     {
                         Id = mapper.Map<ByteString>(id),
                         Years = years
                     },
-                    await metadataFactory.CreateAsync()
+                    metadata,
+                    cancellationToken: cancellationToken
                 );
-            }
+            },
+            cancellationToken
         );
     }
 
-    public Task UpdateToDoItemChildrenTypeAsync(Guid id, ToDoItemChildrenType type)
+    public Task UpdateToDoItemChildrenTypeAsync(Guid id, ToDoItemChildrenType type, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
             {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+
                 await client.UpdateToDoItemChildrenTypeAsync(
                     new()
                     {
                         Id = mapper.Map<ByteString>(id),
                         Type = (ToDoItemChildrenTypeGrpc)type
                     },
-                    await metadataFactory.CreateAsync()
+                    metadata,
+                    cancellationToken: cancellationToken
                 );
-            }
+            },
+            cancellationToken
         );
     }
 
-    public Task<IEnumerable<ToDoShortItem>> GetSiblingsAsync(Guid id)
+    public Task<IEnumerable<ToDoShortItem>> GetSiblingsAsync(Guid id, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
             {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+
                 var request = new GetSiblingsRequest
                 {
                     Id = mapper.Map<ByteString>(id),
                 };
 
-                var items = await client.GetSiblingsAsync(request, await metadataFactory.CreateAsync());
+                var items = await client.GetSiblingsAsync(
+                    request,
+                    metadata,
+                    cancellationToken: cancellationToken
+                );
 
                 return mapper.Map<IEnumerable<ToDoShortItem>>(items.Items);
-            }
+            },
+            cancellationToken
         );
     }
 
-    public Task<ActiveToDoItem?> GetActiveToDoItemAsync()
+    public Task<ActiveToDoItem?> GetActiveToDoItemAsync(CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
             {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+
                 var request = new GetActiveItemRequest();
-                var reply = await client.GetActiveItemAsync(request, await metadataFactory.CreateAsync());
+                var reply = await client.GetActiveItemAsync(
+                    request,
+                    metadata,
+                    cancellationToken: cancellationToken
+                );
 
                 return mapper.Map<ActiveToDoItem?>(reply.Item);
-            }
+            },
+            cancellationToken
         );
     }
 
-    public Task UpdateToDoItemLinkAsync(Guid id, Uri? link)
+    public Task UpdateToDoItemLinkAsync(Guid id, Uri? link, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
             {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+
                 var request = new UpdateToDoItemLinkRequest
                 {
                     Id = mapper.Map<ByteString>(id),
                     Link = mapper.Map<string>(link),
                 };
 
-                await client.UpdateToDoItemLinkAsync(request, await metadataFactory.CreateAsync());
-            }
+                cancellationToken.ThrowIfCancellationRequested();
+
+                await client.UpdateToDoItemLinkAsync(
+                    request,
+                    metadata,
+                    cancellationToken: cancellationToken
+                );
+            },
+            cancellationToken
+        );
+    }
+
+    public Task<PlannedToDoItemSettings> GetPlannedToDoItemSettingsAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return CallClientAsync(
+            async client =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+
+                var request = new GetPlannedToDoItemSettingsRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                };
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var reply = await client.GetPlannedToDoItemSettingsAsync(
+                    request,
+                    metadata,
+                    cancellationToken: cancellationToken
+                );
+
+                return mapper.Map<PlannedToDoItemSettings>(reply);
+            },
+            cancellationToken
+        );
+    }
+
+    public Task<ValueToDoItemSettings> GetValueToDoItemSettingsAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return CallClientAsync(
+            async client =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+
+                var request = new GetValueToDoItemSettingsRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                };
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var reply = await client.GetValueToDoItemSettingsAsync(
+                    request,
+                    metadata,
+                    cancellationToken: cancellationToken
+                );
+
+                return mapper.Map<ValueToDoItemSettings>(reply);
+            },
+            cancellationToken
+        );
+    }
+
+    public Task<PeriodicityToDoItemSettings> GetPeriodicityToDoItemSettingsAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return CallClientAsync(
+            async client =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+
+                var request = new GetPeriodicityToDoItemSettingsRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                };
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var reply = await client.GetPeriodicityToDoItemSettingsAsync(
+                    request,
+                    metadata,
+                    cancellationToken: cancellationToken
+                );
+
+                return mapper.Map<PeriodicityToDoItemSettings>(reply);
+            },
+            cancellationToken
+        );
+    }
+
+    public Task<WeeklyPeriodicity> GetWeeklyPeriodicityAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return CallClientAsync(
+            async client =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+
+                var request = new GetWeeklyPeriodicityRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                };
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var reply = await client.GetWeeklyPeriodicityAsync(
+                    request,
+                    metadata,
+                    cancellationToken: cancellationToken
+                );
+
+                return mapper.Map<WeeklyPeriodicity>(reply);
+            },
+            cancellationToken
+        );
+    }
+
+    public Task<MonthlyPeriodicity> GetMonthlyPeriodicityAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return CallClientAsync(
+            async client =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+
+                var request = new GetMonthlyPeriodicityRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                };
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var reply = await client.GetMonthlyPeriodicityAsync(
+                    request,
+                    metadata,
+                    cancellationToken: cancellationToken
+                );
+
+                return mapper.Map<MonthlyPeriodicity>(reply);
+            },
+            cancellationToken
+        );
+    }
+
+    public Task<AnnuallyPeriodicity> GetAnnuallyPeriodicityAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return CallClientAsync(
+            async client =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+
+                var request = new GetAnnuallyPeriodicityRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                };
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var reply = await client.GetAnnuallyPeriodicityAsync(
+                    request,
+                    metadata,
+                    cancellationToken: cancellationToken
+                );
+
+                return mapper.Map<AnnuallyPeriodicity>(reply);
+            },
+            cancellationToken
+        );
+    }
+
+    public Task<PeriodicityOffsetToDoItemSettings> GetPeriodicityOffsetToDoItemSettingsAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return CallClientAsync(
+            async client =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+
+                var request = new GetPeriodicityOffsetToDoItemSettingsRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                };
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var reply = await client.GetPeriodicityOffsetToDoItemSettingsAsync(
+                    request,
+                    metadata,
+                    cancellationToken: cancellationToken
+                );
+
+                return mapper.Map<PeriodicityOffsetToDoItemSettings>(reply);
+            },
+            cancellationToken
         );
     }
 

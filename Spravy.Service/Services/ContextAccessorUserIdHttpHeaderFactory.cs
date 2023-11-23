@@ -16,7 +16,7 @@ public class ContextAccessorUserIdHttpHeaderFactory : IHttpHeaderFactory
         this.httpContextAccessor = httpContextAccessor;
     }
 
-    public Task<IEnumerable<HttpHeaderItem>> CreateHeaderItemsAsync()
+    public Task<IEnumerable<HttpHeaderItem>> CreateHeaderItemsAsync(CancellationToken cancellationToken)
     {
         var userId = httpContextAccessor.HttpContext.ThrowIfNull().GetUserId();
 

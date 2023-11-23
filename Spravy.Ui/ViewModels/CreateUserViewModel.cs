@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
@@ -6,6 +7,8 @@ using Ninject;
 using ReactiveUI;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Models;
+using Spravy.Domain.Helpers;
+using Spravy.Domain.Models;
 using Spravy.Ui.Models;
 using Spravy.Ui.Views;
 
@@ -19,9 +22,9 @@ public class CreateUserViewModel : RoutableViewModelBase
 
     public CreateUserViewModel() : base("create-user")
     {
-        CreateUserCommand = CreateCommandFromTaskWithDialogProgressIndicator(CreateUserAsync);
-        EnterCommand = CreateCommandFromTaskWithDialogProgressIndicator<CreateUserView>(EnterAsync);
-        BackCommand = CreateCommandFromTask(BackAsync);
+        CreateUserCommand = CreateCommandFromTask(TaskWork.Create(CreateUserAsync).RunAsync);
+        EnterCommand = CreateCommandFromTask<CreateUserView>(TaskWork.Create<CreateUserView>(EnterAsync).RunAsync);
+        BackCommand = CreateCommandFromTask(TaskWork.Create(BackAsync).RunAsync);
     }
 
     [Inject]
@@ -52,7 +55,7 @@ public class CreateUserViewModel : RoutableViewModelBase
         set => this.RaiseAndSetIfChanged(ref repeatPassword, value);
     }
 
-    private async Task EnterAsync(CreateUserView view)
+    private async Task EnterAsync(CreateUserView view, CancellationToken cancellationToken)
     {
         var loginTextBox = view.FindControl<TextBox>(CreateUserView.LoginTextBoxName);
 
@@ -89,10 +92,10 @@ public class CreateUserViewModel : RoutableViewModelBase
             return;
         }
 
-        await CreateUserAsync();
+        await CreateUserAsync(cancellationToken);
     }
 
-    private async Task CreateUserAsync()
+    private async Task CreateUserAsync(CancellationToken cancellationToken)
     {
         if (Password != RepeatPassword)
         {
@@ -100,12 +103,14 @@ public class CreateUserViewModel : RoutableViewModelBase
         }
 
         var options = Mapper.Map<CreateUserOptions>(this);
-        await AuthenticationService.CreateUserAsync(options).ConfigureAwait(false);
-        await Navigator.NavigateToAsync<LoginViewModel>();
+        cancellationToken.ThrowIfCancellationRequested();
+        await AuthenticationService.CreateUserAsync(options, cancellationToken).ConfigureAwait(false);
+        cancellationToken.ThrowIfCancellationRequested();
+        await Navigator.NavigateToAsync(ActionHelper<LoginViewModel>.Empty, cancellationToken);
     }
 
-    private Task BackAsync()
+    private Task BackAsync(CancellationToken cancellationToken)
     {
-        return Navigator.NavigateToAsync<LoginViewModel>();
+        return Navigator.NavigateToAsync(ActionHelper<LoginViewModel>.Empty, cancellationToken);
     }
 }

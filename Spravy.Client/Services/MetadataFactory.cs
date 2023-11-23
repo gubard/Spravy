@@ -13,10 +13,11 @@ public class MetadataFactory : IMetadataFactory
         this.httpHeaderFactory = httpHeaderFactory;
     }
 
-    public async Task<Metadata> CreateAsync()
+    public async Task<Metadata> CreateAsync(CancellationToken cancellationToken)
     {
         var metadata = new Metadata();
-        var items = await httpHeaderFactory.CreateHeaderItemsAsync();
+        cancellationToken.ThrowIfCancellationRequested();
+        var items = await httpHeaderFactory.CreateHeaderItemsAsync(cancellationToken);
 
         foreach (var item in items)
         {

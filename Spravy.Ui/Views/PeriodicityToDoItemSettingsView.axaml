@@ -1,0 +1,67 @@
+<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:PeriodicityToDoItemSettingsViewModel"
+                                xmlns="https://github.com/avaloniaui"
+                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                                xmlns:reactiveUi="http://reactiveui.net"
+                                xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
+                                xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
+                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                                x:Class="Spravy.Ui.Views.PeriodicityToDoItemSettingsView"
+                                x:DataType="viewModels:PeriodicityToDoItemSettingsViewModel">
+    <Interaction.Behaviors>
+        <EventTriggerBehavior EventName="Initialized">
+            <InvokeCommandAction Command="{Binding InitializedCommand}" />
+        </EventTriggerBehavior>
+    </Interaction.Behaviors>
+
+    <StackPanel>
+        <TextBox Text="{Binding ChildrenType}"
+                 UseFloatingWatermark="True"
+                 assists:TextFieldAssist.Label="Type"
+                 IsReadOnly="True"
+                 Classes="outline dense with-button"
+                 Theme="{StaticResource OutlineTextBox}">
+            <TextBox.InnerLeftContent>
+                <Button Command="{Binding ChangeChildrenTypeCommand}" Margin="4,15,4,4">
+                    <avalonia:MaterialIcon Kind="Pencil" />
+                </Button>
+            </TextBox.InnerLeftContent>
+        </TextBox>
+
+        <TextBox Text="{Binding DueDate}"
+                 assists:TextFieldAssist.Label="DueDate"
+                 UseFloatingWatermark="True"
+                 IsReadOnly="True"
+                 Classes="outline dense with-button"
+                 Theme="{StaticResource OutlineTextBox}">
+            <TextBox.InnerLeftContent>
+                <Button Command="{Binding ChangeDueDateCommand}" Margin="4,15,4,4">
+                    <avalonia:MaterialIcon Kind="Pencil" />
+                </Button>
+            </TextBox.InnerLeftContent>
+        </TextBox>
+
+        <TextBox Text="{Binding TypeOfPeriodicity}"
+                 assists:TextFieldAssist.Label="TypeOfPeriodicity"
+                 UseFloatingWatermark="True"
+                 IsReadOnly="True"
+                 Classes="outline dense with-button"
+                 Theme="{StaticResource OutlineTextBox}">
+            <TextBox.InnerLeftContent>
+                <Button Command="{Binding ChangeTypeOfPeriodicityCommand}" Margin="4,15,4,4">
+                    <avalonia:MaterialIcon Kind="Pencil" />
+                </Button>
+            </TextBox.InnerLeftContent>
+        </TextBox>
+
+        <Grid ColumnDefinitions="Auto,*">
+            <Button Command="{Binding ChangePeriodicityCommand}" Margin="4,15,4,4">
+                <avalonia:MaterialIcon Kind="Pencil" />
+            </Button>
+
+            <ItemsControl Grid.Column="1" ItemsSource="{Binding Values}" />
+        </Grid>
+    </StackPanel>
+</reactiveUi:ReactiveUserControl>

@@ -27,19 +27,20 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     )
     {
         var reply = new GetRootToDoSubItemsReply();
-        var items = await toDoService.GetRootToDoSubItemsAsync();
+        var items = await toDoService.GetRootToDoSubItemsAsync(context.CancellationToken);
         reply.Items.AddRange(mapper.Map<IEnumerable<ToDoSubItemGrpc>>(items));
 
         return reply;
     }
 
-    public override async Task<GetToDoItemReply> GetToDoItem(GetToDoItemRequest request, ServerCallContext context)
+    public override async Task<GetToDoItemReply2> GetToDoItem2(GetToDoItemRequest2 request, ServerCallContext context)
     {
-        var item = await toDoService.GetToDoItemAsync(
-            mapper.Map<Guid>(request.Id)
+        var item = await toDoService.GetToDoItem2Async(
+            mapper.Map<Guid>(request.Id),
+            context.CancellationToken
         );
 
-        var reply = new GetToDoItemReply
+        var reply = new GetToDoItemReply2
         {
             Item = mapper.Map<ToDoItemGrpc>(item),
         };
@@ -52,7 +53,10 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        var id = await toDoService.AddRootToDoItemAsync(mapper.Map<AddRootToDoItemOptions>(request));
+        var id = await toDoService.AddRootToDoItemAsync(
+            mapper.Map<AddRootToDoItemOptions>(request),
+            context.CancellationToken
+        );
 
         var reply = new AddRootToDoItemReply
         {
@@ -65,7 +69,8 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     public override async Task<AddToDoItemReply> AddToDoItem(AddToDoItemRequest request, ServerCallContext context)
     {
         var id = await toDoService.AddToDoItemAsync(
-            mapper.Map<AddToDoItemOptions>(request)
+            mapper.Map<AddToDoItemOptions>(request),
+            context.CancellationToken
         );
 
         var reply = new AddToDoItemReply
@@ -81,7 +86,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        await toDoService.DeleteToDoItemAsync(mapper.Map<Guid>(request.Id));
+        await toDoService.DeleteToDoItemAsync(mapper.Map<Guid>(request.Id), context.CancellationToken);
 
         return new();
     }
@@ -93,7 +98,8 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     {
         await toDoService.UpdateToDoItemTypeOfPeriodicityAsync(
             mapper.Map<Guid>(request.Id),
-            (TypeOfPeriodicity)request.Type
+            (TypeOfPeriodicity)request.Type,
+            context.CancellationToken
         );
 
         return new();
@@ -105,7 +111,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     )
     {
         var dueDate = mapper.Map<DateOnly>(request.DueDate);
-        await toDoService.UpdateToDoItemDueDateAsync(mapper.Map<Guid>(request.Id), dueDate);
+        await toDoService.UpdateToDoItemDueDateAsync(mapper.Map<Guid>(request.Id), dueDate, context.CancellationToken);
 
         return new();
     }
@@ -117,7 +123,8 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     {
         await toDoService.UpdateToDoItemCompleteStatusAsync(
             mapper.Map<Guid>(request.Id),
-            request.IsCompleted
+            request.IsCompleted,
+            context.CancellationToken
         );
 
         return new();
@@ -128,7 +135,11 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        await toDoService.UpdateToDoItemNameAsync(mapper.Map<Guid>(request.Id), request.Name);
+        await toDoService.UpdateToDoItemNameAsync(
+            mapper.Map<Guid>(request.Id),
+            request.Name,
+            context.CancellationToken
+        );
 
         return new();
     }
@@ -139,7 +150,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     )
     {
         var options = mapper.Map<UpdateOrderIndexToDoItemOptions>(request);
-        await toDoService.UpdateToDoItemOrderIndexAsync(options);
+        await toDoService.UpdateToDoItemOrderIndexAsync(options, context.CancellationToken);
 
         return new();
     }
@@ -149,21 +160,25 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        await toDoService.UpdateToDoItemDescriptionAsync(mapper.Map<Guid>(request.Id), request.Description);
+        await toDoService.UpdateToDoItemDescriptionAsync(
+            mapper.Map<Guid>(request.Id),
+            request.Description,
+            context.CancellationToken
+        );
 
         return new();
     }
 
     public override async Task<SkipToDoItemReply> SkipToDoItem(SkipToDoItemRequest request, ServerCallContext context)
     {
-        await toDoService.SkipToDoItemAsync(mapper.Map<Guid>(request.Id));
+        await toDoService.SkipToDoItemAsync(mapper.Map<Guid>(request.Id), context.CancellationToken);
 
         return new();
     }
 
     public override async Task<FailToDoItemReply> FailToDoItem(FailToDoItemRequest request, ServerCallContext context)
     {
-        await toDoService.FailToDoItemAsync(mapper.Map<Guid>(request.Id));
+        await toDoService.FailToDoItemAsync(mapper.Map<Guid>(request.Id), context.CancellationToken);
 
         return new();
     }
@@ -173,7 +188,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        var items = await toDoService.SearchToDoSubItemsAsync(request.SearchText);
+        var items = await toDoService.SearchToDoSubItemsAsync(request.SearchText, context.CancellationToken);
         var reply = new SearchToDoSubItemsReply();
         reply.Items.AddRange(items.Select(x => mapper.Map<ToDoSubItemGrpc>(x)));
 
@@ -185,7 +200,11 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        await toDoService.UpdateToDoItemTypeAsync(mapper.Map<Guid>(request.Id), (ToDoItemType)request.Type);
+        await toDoService.UpdateToDoItemTypeAsync(
+            mapper.Map<Guid>(request.Id),
+            (ToDoItemType)request.Type,
+            context.CancellationToken
+        );
 
         return new();
     }
@@ -195,7 +214,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        await toDoService.AddFavoriteToDoItemAsync(mapper.Map<Guid>(request.Id));
+        await toDoService.AddFavoriteToDoItemAsync(mapper.Map<Guid>(request.Id), context.CancellationToken);
 
         return new();
     }
@@ -205,7 +224,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        await toDoService.RemoveFavoriteToDoItemAsync(mapper.Map<Guid>(request.Id));
+        await toDoService.RemoveFavoriteToDoItemAsync(mapper.Map<Guid>(request.Id), context.CancellationToken);
 
         return new();
     }
@@ -216,7 +235,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     )
     {
         var reply = new GetFavoriteToDoItemsReply();
-        var items = await toDoService.GetFavoriteToDoItemsAsync();
+        var items = await toDoService.GetFavoriteToDoItemsAsync(context.CancellationToken);
         reply.Items.AddRange(mapper.Map<IEnumerable<ToDoSubItemGrpc>>(items));
 
         return reply;
@@ -229,7 +248,8 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     {
         await toDoService.UpdateToDoItemAnnuallyPeriodicityAsync(
             mapper.Map<Guid>(request.Id),
-            mapper.Map<AnnuallyPeriodicity>(request.Periodicity)
+            mapper.Map<AnnuallyPeriodicity>(request.Periodicity),
+            context.CancellationToken
         );
 
         return new();
@@ -242,7 +262,8 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     {
         await toDoService.UpdateToDoItemMonthlyPeriodicityAsync(
             mapper.Map<Guid>(request.Id),
-            mapper.Map<MonthlyPeriodicity>(request.Periodicity)
+            mapper.Map<MonthlyPeriodicity>(request.Periodicity),
+            context.CancellationToken
         );
 
         return new();
@@ -255,7 +276,8 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     {
         await toDoService.UpdateToDoItemWeeklyPeriodicityAsync(
             mapper.Map<Guid>(request.Id),
-            mapper.Map<WeeklyPeriodicity>(request.Periodicity)
+            mapper.Map<WeeklyPeriodicity>(request.Periodicity),
+            context.CancellationToken
         );
 
         return new();
@@ -267,7 +289,8 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     )
     {
         var items = await toDoService.GetLeafToDoSubItemsAsync(
-            mapper.Map<Guid>(request.Id)
+            mapper.Map<Guid>(request.Id),
+            context.CancellationToken
         );
         var reply = new GetLeafToDoSubItemsReply();
         reply.Items.AddRange(mapper.Map<IEnumerable<ToDoSubItemGrpc>>(items));
@@ -280,7 +303,10 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        var items = await toDoService.GetToDoSelectorItemsAsync(mapper.Map<Guid[]>(request.IgnoreIds));
+        var items = await toDoService.GetToDoSelectorItemsAsync(
+            mapper.Map<Guid[]>(request.IgnoreIds),
+            context.CancellationToken
+        );
         var reply = new GetToDoSelectorItemsReply();
         reply.Items.AddRange(mapper.Map<IEnumerable<ToDoSelectorItemGrpc>>(items));
 
@@ -292,7 +318,11 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        await toDoService.UpdateToDoItemParentAsync(mapper.Map<Guid>(request.Id), mapper.Map<Guid>(request.ParentId));
+        await toDoService.UpdateToDoItemParentAsync(
+            mapper.Map<Guid>(request.Id),
+            mapper.Map<Guid>(request.ParentId),
+            context.CancellationToken
+        );
 
         return new();
     }
@@ -302,7 +332,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        await toDoService.ToDoItemToRootAsync(mapper.Map<Guid>(request.Id));
+        await toDoService.ToDoItemToRootAsync(mapper.Map<Guid>(request.Id), context.CancellationToken);
 
         return new();
     }
@@ -313,7 +343,8 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     )
     {
         var value = await toDoService.ToDoItemToStringAsync(
-            mapper.Map<ToDoItemToStringOptions>(request)
+            mapper.Map<ToDoItemToStringOptions>(request),
+            context.CancellationToken
         );
 
         return new()
@@ -327,7 +358,11 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        await toDoService.UpdateToDoItemDaysOffsetAsync(mapper.Map<Guid>(request.Id), (ushort)request.Days);
+        await toDoService.UpdateToDoItemDaysOffsetAsync(
+            mapper.Map<Guid>(request.Id),
+            (ushort)request.Days,
+            context.CancellationToken
+        );
 
         return new();
     }
@@ -337,7 +372,11 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        await toDoService.UpdateToDoItemMonthsOffsetAsync(mapper.Map<Guid>(request.Id), (ushort)request.Months);
+        await toDoService.UpdateToDoItemMonthsOffsetAsync(
+            mapper.Map<Guid>(request.Id),
+            (ushort)request.Months,
+            context.CancellationToken
+        );
 
         return new();
     }
@@ -347,7 +386,11 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        await toDoService.UpdateToDoItemWeeksOffsetAsync(mapper.Map<Guid>(request.Id), (ushort)request.Weeks);
+        await toDoService.UpdateToDoItemWeeksOffsetAsync(
+            mapper.Map<Guid>(request.Id),
+            (ushort)request.Weeks,
+            context.CancellationToken
+        );
 
         return new();
     }
@@ -357,7 +400,11 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        await toDoService.UpdateToDoItemYearsOffsetAsync(mapper.Map<Guid>(request.Id), (ushort)request.Years);
+        await toDoService.UpdateToDoItemYearsOffsetAsync(
+            mapper.Map<Guid>(request.Id),
+            (ushort)request.Years,
+            context.CancellationToken
+        );
 
         return new();
     }
@@ -369,7 +416,8 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     {
         await toDoService.UpdateToDoItemChildrenTypeAsync(
             mapper.Map<Guid>(request.Id),
-            (ToDoItemChildrenType)request.Type
+            (ToDoItemChildrenType)request.Type,
+            context.CancellationToken
         );
 
         return new();

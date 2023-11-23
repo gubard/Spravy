@@ -7,6 +7,136 @@ import "google/protobuf/duration.proto";
 
 package spravy.to_do;
 
+message GetPeriodicityOffsetToDoItemSettingsRequest {
+  bytes Id = 1;
+}
+
+message GetPeriodicityOffsetToDoItemSettingsReply {
+  uint32 DaysOffset = 1;
+  uint32 MonthsOffset= 2;
+  uint32 WeeksOffset = 3;
+  uint32 YearsOffset = 4;
+  google.protobuf.Timestamp DueDate = 5;
+  ToDoItemChildrenTypeGrpc ChildrenType = 6;
+}
+
+
+message GetAnnuallyPeriodicityRequest {
+  bytes Id = 1;
+}
+
+message GetAnnuallyPeriodicityReply {
+  repeated DayOfYearGrpc Days = 1;
+}
+
+message GetMonthlyPeriodicityRequest {
+  bytes Id = 1;
+}
+
+message GetMonthlyPeriodicityReply {
+  repeated uint32 Days = 1;
+}
+
+message GetWeeklyPeriodicityRequest {
+  bytes Id = 1;
+}
+
+message GetWeeklyPeriodicityReply {
+  repeated DayOfWeekGrpc Days = 1;
+}
+
+message GetPeriodicityToDoItemSettingsRequest {
+  bytes Id = 1;
+}
+
+message GetPeriodicityToDoItemSettingsReply {
+  ToDoItemChildrenTypeGrpc ChildrenType = 1;
+  google.protobuf.Timestamp DueDate = 2;
+  TypeOfPeriodicityGrpc TypeOfPeriodicity = 3;
+}
+
+message GetValueToDoItemSettingsRequest {
+  bytes Id = 1;
+}
+
+message GetValueToDoItemSettingsReply {
+  ToDoItemChildrenTypeGrpc ChildrenType = 1;
+}
+
+message GetPlannedToDoItemSettingsRequest {
+  bytes Id = 1;
+}
+
+message GetPlannedToDoItemSettingsReply {
+  ToDoItemChildrenTypeGrpc ChildrenType = 1;
+  google.protobuf.Timestamp DueDate = 2;
+}
+
+message GetParentsRequest {
+  bytes Id = 1;
+}
+
+message GetParentsReply {
+  repeated ToDoShortItemGrpc Parents = 1;
+}
+
+message SearchToDoItemIdsRequest {
+  string SearchText = 1;
+}
+
+message SearchToDoItemIdsReply {
+  repeated bytes Ids = 1;
+}
+
+message GetLeafToDoItemIdsRequest {
+  bytes Id = 1;
+}
+
+message GetLeafToDoItemIdsReply {
+  repeated bytes Ids = 1;
+}
+
+message GetToDoItemRequest {
+  bytes Id = 1;
+}
+
+message GetToDoItemReply {
+  bytes Id = 1;
+  string Name = 2;
+  bool IsFavorite = 3;
+  ToDoItemTypeGrpc Type = 4;
+  string Description = 5;
+  string Link = 6;
+  uint32 OrderIndex = 7;
+  ToDoItemStatusGrpc Status = 8;
+  ActiveToDoItemGrpc Active = 9;
+  ToDoItemIsCanGrpc IsCan = 10;
+}
+
+message GetChildrenToDoItemIdsRequest {
+  bytes Id = 1;
+}
+
+message GetChildrenToDoItemIdsReply {
+  repeated bytes Ids = 1;
+}
+
+message GetFavoriteToDoItemIdsRequest {
+
+}
+
+message GetFavoriteToDoItemIdsRequestReply {
+  repeated bytes Ids = 1;
+}
+
+message GetRootToDoItemIdsRequest {
+
+}
+
+message GetRootToDoItemIdsReply {
+  repeated bytes Ids = 1;
+}
+
 message UpdateToDoItemLinkRequest {
   bytes Id = 1;
   string Link = 2;
@@ -279,11 +409,11 @@ message AddRootToDoItemReply {
   bytes Id = 1;
 }
 
-message GetToDoItemRequest {
+message GetToDoItemRequest2 {
   bytes Id = 1;
 }
 
-message GetToDoItemReply {
+message GetToDoItemReply2 {
   ToDoItemGrpc Item = 1;
 }
 
@@ -504,11 +634,20 @@ enum ToDoItemTypeGrpc {
   Group = 1;
   Planned = 2;
   Periodicity = 3;
-  Circle = 4;
-  Step = 5;
+  PeriodicityOffset = 4;
+  Circle = 5;
+  Step = 6;
 }
 
 enum ToDoItemChildrenTypeGrpc {
   RequireCompletion = 0;
   IgnoreCompletion = 1;
+}
+
+enum ToDoItemIsCanGrpc {
+  None = 0;
+  CanComplete = 1;
+  CanSkip = 2;
+  CanFail = 4;
+  CanIncomplete = 8;
 }

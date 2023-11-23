@@ -1,6 +1,6 @@
 namespace Spravy.ToDo.Domain.Enums;
 
-public enum ToDoItemStatus
+public enum ToDoItemStatus : byte
 {
     /// <summary>
     /// Overdue due date or sub to do item overdue due date.

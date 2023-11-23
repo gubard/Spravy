@@ -6,7 +6,6 @@ using Avalonia.Collections;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Input.Platform;
-using Avalonia.Layout;
 using Avalonia.ReactiveUI;
 using Grpc.Net.Client;
 using Ninject;
@@ -42,7 +41,6 @@ using Spravy.ToDo.Domain.Client.Services;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Mapper.Profiles;
 using Spravy.ToDo.Protos;
-using Spravy.Ui.Controls;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
@@ -101,6 +99,7 @@ public class UiModule : NinjectModule
         Bind<IScheduleService>().ToMethod(context => context.Kernel.Get<GrpcScheduleService>());
         Bind<IKeeper<TokenResult>>().To<StaticKeeper<TokenResult>>();
         Bind<IKeeper<Guid>>().To<StaticKeeper<Guid>>();
+        Bind<ToDoItemViewModel>().ToSelf();
         Bind<Control>().To<MainView>().OnActivation((c, x) => x.DataContext = c.Kernel.Get<MainViewModel>());
         //RegisterViewModels(this);
         Bind<AppConfiguration>().ToConstructor(x => new AppConfiguration(typeof(LoginViewModel)));
@@ -111,7 +110,9 @@ public class UiModule : NinjectModule
         Bind<TokenHttpHeaderFactory>().To<TokenHttpHeaderFactory>();
         Bind<TimeZoneHttpHeaderFactory>().To<TimeZoneHttpHeaderFactory>();
         Bind<IDialogViewer>().To<DialogViewer>();
-
+        Bind<LeafToDoItemsViewModel>().ToSelf();
+        Bind<LeafToDoItemsView>().ToSelf();
+        
         Bind<AvaloniaList<DayOfYearSelectItem>>()
             .ToMethod(
                 context => new AvaloniaList<DayOfYearSelectItem>(

@@ -1,26 +1,26 @@
 using System;
-using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
+using Avalonia.Threading;
 using Ninject;
 using ReactiveUI;
-using Spravy.Domain.Extensions;
+using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
-using Spravy.Ui.Views;
 
 namespace Spravy.Ui.ViewModels;
 
-public class LeafToDoItemsViewModel : RoutableViewModelBase, IRefreshToDoItem
+public class LeafToDoItemsViewModel : RoutableViewModelBase, IRefresh
 {
     private Guid id;
 
     public LeafToDoItemsViewModel() : base("leaf-to-do-items")
     {
         SwitchPaneCommand = CreateCommand(SwitchPane);
-        InitializedCommand = CreateInitializedCommand(InitializedAsync);
+        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
     }
 
     public ICommand InitializedCommand { get; }
@@ -33,7 +33,7 @@ public class LeafToDoItemsViewModel : RoutableViewModelBase, IRefreshToDoItem
     public required IMapper Mapper { get; init; }
 
     [Inject]
-    public required ToDoSubItemsView ToDoSubItemsView { get; init; }
+    public required ToDoSubItemsViewModel ToDoSubItemsViewModel { get; init; }
 
     [Inject]
     public required MainSplitViewModel MainSplitViewModel { get; init; }
@@ -44,20 +44,21 @@ public class LeafToDoItemsViewModel : RoutableViewModelBase, IRefreshToDoItem
         set => this.RaiseAndSetIfChanged(ref id, value);
     }
 
-    public async Task RefreshToDoItemAsync()
+    public async Task RefreshAsync(CancellationToken cancellationToken)
     {
-        var items = await ToDoService.GetLeafToDoSubItemsAsync(Id).ConfigureAwait(false);
-        var notifyItems = Mapper.Map<IEnumerable<ToDoSubItemNotify>>(items);
-        await ToDoSubItemsView.ViewModel.ThrowIfNull().UpdateItemsAsync(notifyItems, this);
+        cancellationToken.ThrowIfCancellationRequested();
+        var ids = await ToDoService.GetLeafToDoItemIdsAsync(Id, cancellationToken).ConfigureAwait(false);
+        cancellationToken.ThrowIfCancellationRequested();
+        await ToDoSubItemsViewModel.UpdateItemsAsync(ids, this, cancellationToken).ConfigureAwait(false);
     }
 
-    private void SwitchPane()
+    private DispatcherOperation SwitchPane()
     {
-        MainSplitViewModel.IsPaneOpen = !MainSplitViewModel.IsPaneOpen;
+        return Dispatcher.UIThread.InvokeAsync(() => MainSplitViewModel.IsPaneOpen = !MainSplitViewModel.IsPaneOpen);
     }
 
-    private Task InitializedAsync()
+    private Task InitializedAsync(CancellationToken cancellationToken)
     {
-        return RefreshToDoItemAsync();
+        return RefreshAsync(cancellationToken);
     }
 }

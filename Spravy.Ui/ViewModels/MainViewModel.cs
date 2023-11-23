@@ -1,7 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.ReactiveUI;
 using Ninject;
+using Spravy.Domain.Models;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
@@ -10,7 +12,7 @@ public class MainViewModel : ViewModelBase
 {
     public MainViewModel()
     {
-        InitializedCommand = CreateInitializedCommand(InitializedAsync);
+        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
     }
 
     [Inject]
@@ -27,11 +29,11 @@ public class MainViewModel : ViewModelBase
 
     public ICommand InitializedCommand { get; }
 
-    private Task InitializedAsync()
+    private Task InitializedAsync(CancellationToken cancellationToken)
     {
         MainSplitViewModel.Content = RoutedViewHost;
         MainSplitViewModel.Pane = PaneViewModel;
 
-        return Navigator.NavigateToAsync(Configuration.DefaultMainViewType);
+        return Navigator.NavigateToAsync(Configuration.DefaultMainViewType, cancellationToken);
     }
 }

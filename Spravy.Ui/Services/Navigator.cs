@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using Ninject;
@@ -24,29 +25,21 @@ public class Navigator : INavigator
         throw new NotSupportedException();
     }
 
-    public async Task NavigateToAsync(Type type)
+    public async Task NavigateToAsync(Type type, CancellationToken cancellationToken)
     {
         var viewModel = (IRoutableViewModel)Resolver.Get(type);
         await Dispatcher.UIThread.InvokeAsync(() => RoutingState.Navigate.Execute(viewModel));
     }
 
-    public async Task NavigateToAsync<TViewModel>(Action<TViewModel>? setup = null)
+    public async Task NavigateToAsync<TViewModel>(Action<TViewModel> setup, CancellationToken cancellationToken)
         where TViewModel : IRoutableViewModel
     {
         var viewModel = Resolver.Get<TViewModel>();
-
-        if (setup is null)
-        {
-            await Dispatcher.UIThread.InvokeAsync(() => RoutingState.Navigate.Execute(viewModel));
-            
-            return;
-        }
-
-        setup.Invoke(viewModel);
+        await Dispatcher.UIThread.InvokeAsync(() => setup.Invoke(viewModel));
         await Dispatcher.UIThread.InvokeAsync(() => RoutingState.Navigate.Execute(viewModel));
     }
 
-    public async Task NavigateToAsync<TViewModel>(TViewModel parameter)
+    public async Task NavigateToAsync<TViewModel>(TViewModel parameter, CancellationToken cancellationToken)
         where TViewModel : IRoutableViewModel
     {
         await Dispatcher.UIThread.InvokeAsync(() => RoutingState.Navigate.Execute(parameter));

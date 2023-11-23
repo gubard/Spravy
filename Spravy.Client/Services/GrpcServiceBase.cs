@@ -15,11 +15,12 @@ public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBas
         this.host = host;
     }
 
-    protected async Task CallClientAsync(Func<TGrpcClient, Task> func)
+    protected async Task CallClientAsync(Func<TGrpcClient, Task> func, CancellationToken cancellationToken)
     {
         try
         {
             var client = grpcClientFactory.Create(host);
+            cancellationToken.ThrowIfCancellationRequested();
             await func.Invoke(client);
         }
         catch (Exception e)
@@ -28,11 +29,15 @@ public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBas
         }
     }
 
-    protected async Task<TResult> CallClientAsync<TResult>(Func<TGrpcClient, Task<TResult>> func)
+    protected async Task<TResult> CallClientAsync<TResult>(
+        Func<TGrpcClient, Task<TResult>> func,
+        CancellationToken cancellationToken
+    )
     {
         try
         {
             var client = grpcClientFactory.Create(host);
+            cancellationToken.ThrowIfCancellationRequested();
             var result = await func.Invoke(client);
 
             return result;
@@ -45,11 +50,11 @@ public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBas
 
     protected IAsyncEnumerable<TResult> CallClientAsync<TResult>(
         Func<TGrpcClient, CancellationToken, IAsyncEnumerable<TResult>> func,
-        CancellationToken token
+        CancellationToken cancellationToken
     )
     {
         var client = grpcClientFactory.Create(host);
 
-        return func.Invoke(client, token);
+        return func.Invoke(client, cancellationToken);
     }
 }

@@ -34,6 +34,11 @@ public static class ObjectExtension
 
         return result;
     }
+    
+    public static IsSuccessValue<T> ToSuccessValue<T>(this T obj)
+    {
+        return new IsSuccessValue<T>(obj);
+    }
 
     public static T ThrowIfIsNotCast<T>(this object obj)
     {

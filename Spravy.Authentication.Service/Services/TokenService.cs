@@ -18,7 +18,7 @@ public class TokenService : ITokenService
         token = tokenFactory.Create(new UserTokenClaims("authentication.service", Guid.Empty, Role.Service));
     }
 
-    public Task<string> GetTokenAsync()
+    public Task<string> GetTokenAsync(CancellationToken cancellationToken)
     {
         var jwtHandler = new JwtSecurityTokenHandler();
         var jwtToken = jwtHandler.ReadJwtToken(token.Token);
@@ -34,17 +34,17 @@ public class TokenService : ITokenService
         return Task.FromResult(token.Token);
     }
 
-    public Task LoginAsync(User user)
+    public Task LoginAsync(User user, CancellationToken cancellationToken)
     {
         throw new NotSupportedException();
     }
 
-    public Task LoginAsync(string refreshToken)
+    public Task LoginAsync(string refreshToken, CancellationToken cancellationToken)
     {
         throw new NotSupportedException();
     }
 
-    public void Login(TokenResult tokenResult)
+    public void Login(TokenResult tokenResult, CancellationToken cancellationToken)
     {
         token = tokenResult;
     }

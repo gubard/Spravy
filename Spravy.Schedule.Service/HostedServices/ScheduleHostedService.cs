@@ -37,7 +37,7 @@ public class ScheduleHostedService : IHostedService
 
         foreach (var dataBaseFile in dataBaseFiles)
         {
-            tasks.Add(dataBaseFile.FullName, HandleDataBaseAsync(dataBaseFile));
+            tasks.Add(dataBaseFile.FullName, HandleDataBaseAsync(dataBaseFile, cancellationToken));
         }
 
         return Task.CompletedTask;
@@ -48,7 +48,7 @@ public class ScheduleHostedService : IHostedService
         return Task.CompletedTask;
     }
 
-    private async Task HandleDataBaseAsync(FileInfo file)
+    private async Task HandleDataBaseAsync(FileInfo file, CancellationToken cancellationToken)
     {
         while (true)
         {
@@ -64,7 +64,7 @@ public class ScheduleHostedService : IHostedService
                         {
                             var timers = await c.Set<TimerEntity>()
                                 .AsNoTracking()
-                                .ToArrayAsync();
+                                .ToArrayAsync(cancellationToken);
 
                             foreach (var timer in timers)
                             {
@@ -74,7 +74,11 @@ public class ScheduleHostedService : IHostedService
                                 }
 
                                 var eventBusService = eventBusServiceFactory.Create(file.GetFileNameWithoutExtension());
-                                await eventBusService.PublishEventAsync(timer.EventId, timer.Content);
+                                await eventBusService.PublishEventAsync(
+                                    timer.EventId,
+                                    timer.Content,
+                                    cancellationToken
+                                );
                                 c.Set<TimerEntity>().Remove(timer);
                             }
                         }

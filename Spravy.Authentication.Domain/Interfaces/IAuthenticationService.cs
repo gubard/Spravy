@@ -5,7 +5,7 @@ namespace Spravy.Authentication.Domain.Interfaces;
 
 public interface IAuthenticationService
 {
-    Task<TokenResult> LoginAsync(User user);
-    Task CreateUserAsync(CreateUserOptions options);
-    Task<TokenResult> RefreshTokenAsync(string refreshToken);
+    Task<TokenResult> LoginAsync(User user, CancellationToken cancellationToken);
+    Task CreateUserAsync(CreateUserOptions options, CancellationToken cancellationToken);
+    Task<TokenResult> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken);
 }

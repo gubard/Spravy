@@ -6,7 +6,7 @@ namespace Spravy.Domain.Services;
 
 public class TimeZoneHttpHeaderFactory : IHttpHeaderFactory
 {
-    public Task<IEnumerable<HttpHeaderItem>> CreateHeaderItemsAsync()
+    public Task<IEnumerable<HttpHeaderItem>> CreateHeaderItemsAsync(CancellationToken cancellationToken)
     {
         return HttpHeaderItem.TimeZoneOffset().ToEnumerable().ToTaskResult();
     }

@@ -5,9 +5,9 @@ namespace Spravy.Ui.ViewModels;
 
 public class DeleteToDoItemViewModel : ViewModelBase
 {
-    private ToDoSubItemNotify? item;
+    private ToDoItemNotify? item;
 
-    public ToDoSubItemNotify? Item
+    public ToDoItemNotify? Item
     {
         get => item;
         set => this.RaiseAndSetIfChanged(ref item, value);

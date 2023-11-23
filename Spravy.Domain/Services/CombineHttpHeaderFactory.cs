@@ -17,13 +17,14 @@ public class CombineHttpHeaderFactory : IHttpHeaderFactory
         this.factories = factories;
     }
 
-    public async Task<IEnumerable<HttpHeaderItem>> CreateHeaderItemsAsync()
+    public async Task<IEnumerable<HttpHeaderItem>> CreateHeaderItemsAsync(CancellationToken cancellationToken)
     {
         var result = new List<HttpHeaderItem>();
 
         foreach (var factory in factories)
         {
-            var headers = await factory.CreateHeaderItemsAsync();
+            cancellationToken.ThrowIfCancellationRequested();
+            var headers = await factory.CreateHeaderItemsAsync(cancellationToken);
             result.AddRange(headers);
         }
 

@@ -1,8 +1,11 @@
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Ninject;
 using Spravy.Authentication.Domain.Models;
+using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;
+using Spravy.Domain.Models;
 using Spravy.Ui.Helpers;
 using Spravy.Ui.Models;
 
@@ -12,10 +15,10 @@ public class PaneViewModel : ViewModelBase
 {
     public PaneViewModel()
     {
-        ToRootToDoItemViewCommand = CreateCommandFromTask(ToRootToDoItemViewAsync);
-        ToSearchViewCommand = CreateCommandFromTask(ToSearchViewAsync);
-        ToTimersViewCommand = CreateCommandFromTask(ToTimersViewAsync);
-        LogoutCommand = CreateCommandFromTask(LogoutAsync);
+        ToRootToDoItemViewCommand = CreateCommandFromTask(TaskWork.Create(ToRootToDoItemViewAsync).RunAsync);
+        ToSearchViewCommand = CreateCommandFromTask(TaskWork.Create(ToSearchViewAsync).RunAsync);
+        ToTimersViewCommand = CreateCommandFromTask(TaskWork.Create(ToTimersViewAsync).RunAsync);
+        LogoutCommand = CreateCommandFromTask(TaskWork.Create(LogoutAsync).RunAsync);
     }
 
     public ICommand ToRootToDoItemViewCommand { get; }
@@ -32,29 +35,29 @@ public class PaneViewModel : ViewModelBase
     [Inject]
     public required MainSplitViewModel MainSplitViewModel { get; init; }
 
-    private async Task LogoutAsync()
+    private async Task LogoutAsync(CancellationToken cancellationToken)
     {
         await ObjectStorage.DeleteAsync(FileIds.LoginFileId).ConfigureAwait(false);
         KeeperTokenResult.Set(default);
-        await Navigator.NavigateToAsync<LoginViewModel>();
+        await Navigator.NavigateToAsync(ActionHelper<LoginViewModel>.Empty, cancellationToken);
         MainSplitViewModel.IsPaneOpen = false;
     }
 
-    private async Task ToTimersViewAsync()
+    private async Task ToTimersViewAsync(CancellationToken cancellationToken)
     {
-        await Navigator.NavigateToAsync<TimersViewModel>();
+        await Navigator.NavigateToAsync(ActionHelper<TimersViewModel>.Empty, cancellationToken);
         MainSplitViewModel.IsPaneOpen = false;
     }
 
-    private async Task ToRootToDoItemViewAsync()
+    private async Task ToRootToDoItemViewAsync(CancellationToken cancellationToken)
     {
-        await Navigator.NavigateToAsync<RootToDoItemsViewModel>();
+        await Navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken);
         MainSplitViewModel.IsPaneOpen = false;
     }
 
-    private async Task ToSearchViewAsync()
+    private async Task ToSearchViewAsync(CancellationToken cancellationToken)
     {
-        await Navigator.NavigateToAsync<SearchViewModel>();
+        await Navigator.NavigateToAsync(ActionHelper<SearchViewModel>.Empty, cancellationToken);
         MainSplitViewModel.IsPaneOpen = false;
     }
 }

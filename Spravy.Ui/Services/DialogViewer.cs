@@ -1,6 +1,6 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
-using Avalonia;
 using Avalonia.Threading;
 using DialogHostAvalonia;
 using Ninject;
@@ -20,73 +20,23 @@ public class DialogViewer : IDialogViewer
     [Inject]
     public required IKernel Resolver { get; init; }
 
-    public Task ShowContentDialogAsync<TView>(Action<TView>? setupView = null) where TView : ViewModelBase
-    {
-        var content = Resolver.Get<TView>();
-
-        if (content is null)
-        {
-            throw new NullReferenceException();
-        }
-
-        setupView?.Invoke(content);
-
-        return ShowView(content, ContentDialogHostIdentifier);
-    }
-
-    public Task ShowProgressDialogAsync<TView>(Action<TView>? setupView = null) where TView : ViewModelBase
-    {
-        var content = Resolver.Get<TView>();
-
-        if (content is null)
-        {
-            throw new NullReferenceException();
-        }
-
-        setupView?.Invoke(content);
-
-        return ShowView(content, ProgressDialogHostIdentifier);
-    }
-
-    public Task ShowErrorDialogAsync<TView>(Action<TView>? setupView = null) where TView : ViewModelBase
-    {
-        var content = Resolver.Get<TView>();
-
-        if (content is null)
-        {
-            throw new NullReferenceException();
-        }
-
-        setupView?.Invoke(content);
-
-        return ShowView(content, ErrorDialogHostIdentifier);
-    }
-
-    public Task ShowInfoErrorDialogAsync<TView>(Func<TView, Task> okTask, Action<TView>? setupView = null)
+    public async Task ShowContentDialogAsync<TView>(Action<TView> setupView, CancellationToken cancellationToken)
         where TView : ViewModelBase
     {
         var content = Resolver.Get<TView>();
-        setupView?.Invoke(content);
-        var infoViewModel = Resolver.Get<InfoViewModel>();
-        infoViewModel.Content = content;
-        infoViewModel.OkTask = view => okTask.Invoke((TView)view);
 
-        return ShowView(infoViewModel, ErrorDialogHostIdentifier);
+        if (content is null)
+        {
+            throw new NullReferenceException();
+        }
+
+        await Dispatcher.UIThread.InvokeAsync(() => setupView.Invoke(content));
+        cancellationToken.ThrowIfCancellationRequested();
+        await ShowView(content, ContentDialogHostIdentifier);
     }
 
-    public Task ShowInfoInputDialogAsync<TView>(Func<TView, Task> okTask, Action<TView>? setupView = null)
+    public async Task ShowProgressDialogAsync<TView>(Action<TView> setupView, CancellationToken cancellationToken)
         where TView : ViewModelBase
-    {
-        var content = Resolver.Get<TView>();
-        setupView?.Invoke(content);
-        var infoViewModel = Resolver.Get<InfoViewModel>();
-        infoViewModel.Content = content;
-        infoViewModel.OkTask = view => okTask.Invoke((TView)view);
-
-        return ShowView(infoViewModel, InputDialogHostIdentifier);
-    }
-
-    public Task ShowInputDialogAsync<TView>(Action<TView>? setupView = null) where TView : ViewModelBase
     {
         var content = Resolver.Get<TView>();
 
@@ -95,78 +45,150 @@ public class DialogViewer : IDialogViewer
             throw new NullReferenceException();
         }
 
-        setupView?.Invoke(content);
-
-        return ShowView(content, InputDialogHostIdentifier);
+        await Dispatcher.UIThread.InvokeAsync(() => setupView.Invoke(content));
+        cancellationToken.ThrowIfCancellationRequested();
+        await ShowView(content, ProgressDialogHostIdentifier);
     }
 
-    public Task CloseProgressDialogAsync()
+    public async Task ShowErrorDialogAsync<TView>(Action<TView> setupView, CancellationToken cancellationToken)
+        where TView : ViewModelBase
+    {
+        var content = Resolver.Get<TView>();
+
+        if (content is null)
+        {
+            throw new NullReferenceException();
+        }
+
+        await Dispatcher.UIThread.InvokeAsync(() => setupView.Invoke(content));
+        cancellationToken.ThrowIfCancellationRequested();
+        await ShowView(content, ErrorDialogHostIdentifier);
+    }
+
+    public async Task ShowInfoErrorDialogAsync<TView>(
+        Func<TView, Task> okTask,
+        Action<TView> setupView,
+        CancellationToken cancellationToken
+    )
+        where TView : ViewModelBase
+    {
+        var content = Resolver.Get<TView>();
+        await Dispatcher.UIThread.InvokeAsync(() => setupView.Invoke(content));
+        var infoViewModel = Resolver.Get<InfoViewModel>();
+        infoViewModel.Content = content;
+        infoViewModel.OkTask = view => okTask.Invoke((TView)view);
+        cancellationToken.ThrowIfCancellationRequested();
+        await ShowView(infoViewModel, ErrorDialogHostIdentifier);
+    }
+
+    public async Task ShowInfoInputDialogAsync<TView>(
+        Func<TView, Task> okTask,
+        Action<TView> setupView,
+        CancellationToken cancellationToken
+    )
+        where TView : ViewModelBase
+    {
+        var content = Resolver.Get<TView>();
+        await Dispatcher.UIThread.InvokeAsync(() => setupView.Invoke(content));
+        var infoViewModel = Resolver.Get<InfoViewModel>();
+        infoViewModel.Content = content;
+        infoViewModel.OkTask = view => okTask.Invoke((TView)view);
+        cancellationToken.ThrowIfCancellationRequested();
+        await ShowView(infoViewModel, InputDialogHostIdentifier);
+    }
+
+    public async Task ShowInfoContentDialogAsync<TView>(
+        Func<TView, Task> okTask,
+        Action<TView> setupView,
+        CancellationToken cancellationToken
+    ) where TView : ViewModelBase
+    {
+        var content = Resolver.Get<TView>();
+        await Dispatcher.UIThread.InvokeAsync(() => setupView.Invoke(content));
+        var infoViewModel = Resolver.Get<InfoViewModel>();
+        infoViewModel.Content = content;
+        infoViewModel.OkTask = view => okTask.Invoke((TView)view);
+        cancellationToken.ThrowIfCancellationRequested();
+        await ShowView(infoViewModel, ContentDialogHostIdentifier);
+    }
+
+    public async Task ShowInputDialogAsync<TView>(Action<TView> setupView, CancellationToken cancellationToken)
+        where TView : ViewModelBase
+    {
+        var content = Resolver.Get<TView>();
+
+        if (content is null)
+        {
+            throw new NullReferenceException();
+        }
+
+        await Dispatcher.UIThread.InvokeAsync(() => setupView.Invoke(content));
+        cancellationToken.ThrowIfCancellationRequested();
+        await ShowView(content, InputDialogHostIdentifier);
+    }
+
+    public Task CloseProgressDialogAsync(CancellationToken cancellationToken)
     {
         return SafeClose(ProgressDialogHostIdentifier);
     }
 
-    public Task ShowConfirmContentDialogAsync<TView>(
+    public async Task ShowConfirmContentDialogAsync<TView>(
         Func<TView, Task> confirmTask,
         Func<TView, Task> cancelTask,
-        Action<TView>? setupView = null
+        Action<TView> setupView,
+        CancellationToken cancellationToken
     ) where TView : ViewModelBase
     {
         var content = Resolver.Get<TView>();
-        setupView?.Invoke(content);
+        await Dispatcher.UIThread.InvokeAsync(() => setupView.Invoke(content));
         var confirmViewModel = Resolver.Get<ConfirmViewModel>();
         confirmViewModel.Content = content;
         confirmViewModel.ConfirmTask = view => confirmTask.Invoke((TView)view);
         confirmViewModel.CancelTask = view => cancelTask.Invoke((TView)view);
-
-        return ShowView(confirmViewModel, ContentDialogHostIdentifier);
+        cancellationToken.ThrowIfCancellationRequested();
+        await ShowView(confirmViewModel, ContentDialogHostIdentifier);
     }
 
-    public Task ShowConfirmInputDialogAsync<TView>(
+    public async Task ShowConfirmInputDialogAsync<TView>(
         Func<TView, Task> confirmTask,
         Func<TView, Task> cancelTask,
-        Action<TView>? setupView = null
+        Action<TView> setupView,
+        CancellationToken cancellationToken
     ) where TView : ViewModelBase
     {
         var content = Resolver.Get<TView>();
-        setupView?.Invoke(content);
+        await Dispatcher.UIThread.InvokeAsync(() => setupView.Invoke(content));
         var confirmViewModel = Resolver.Get<ConfirmViewModel>();
         confirmViewModel.Content = content;
         confirmViewModel.ConfirmTask = view => confirmTask.Invoke((TView)view);
         confirmViewModel.CancelTask = view => cancelTask.Invoke((TView)view);
-
-        return ShowView(confirmViewModel, InputDialogHostIdentifier);
+        cancellationToken.ThrowIfCancellationRequested();
+        await ShowView(confirmViewModel, InputDialogHostIdentifier);
     }
 
-    public Task CloseContentDialogAsync()
+    public Task CloseContentDialogAsync(CancellationToken cancellationToken)
     {
         return SafeClose(ContentDialogHostIdentifier);
     }
 
-    public Task CloseErrorDialogAsync()
+    public Task CloseErrorDialogAsync(CancellationToken cancellationToken)
     {
         return SafeClose(ErrorDialogHostIdentifier);
     }
 
-    public Task CloseInputDialogAsync()
+    public Task CloseInputDialogAsync(CancellationToken cancellationToken)
     {
         return SafeClose(InputDialogHostIdentifier);
     }
 
     private Task ShowView(object content, string identifier)
     {
-        if (content is not StyledElement styledElement)
+        if (DialogHost.IsDialogOpen(identifier))
         {
-            return DialogHost.Show(content, identifier);
+            return Task.CompletedTask;
         }
 
-        if (styledElement.DataContext is not ViewModelBase viewModel)
-        {
-            return DialogHost.Show(content, identifier);
-        }
-
-        viewModel.ReleaseCommands();
-
-        return DialogHost.Show(content, identifier);
+        return Dispatcher.UIThread.InvokeAsync(() => DialogHost.Show(content, identifier));
     }
 
     private async Task SafeClose(string identifier)

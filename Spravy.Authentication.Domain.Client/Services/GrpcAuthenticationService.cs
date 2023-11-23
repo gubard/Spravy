@@ -25,7 +25,7 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         this.mapper = mapper;
     }
 
-    public Task<TokenResult> LoginAsync(User user)
+    public Task<TokenResult> LoginAsync(User user, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
@@ -37,29 +37,35 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
                     User = userGrpc,
                 };
 
+                cancellationToken.ThrowIfCancellationRequested();
                 var reply = await client.LoginAsync(request);
 
                 return mapper.Map<TokenResult>(reply);
-            }
+            },
+            cancellationToken
         );
     }
 
-    public Task CreateUserAsync(CreateUserOptions options)
+    public Task CreateUserAsync(CreateUserOptions options, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
             {
                 var request = mapper.Map<CreateUserRequest>(options);
+                cancellationToken.ThrowIfCancellationRequested();
                 await client.CreateUserAsync(request);
-            }
+            },
+            cancellationToken
         );
     }
 
-    public Task<TokenResult> RefreshTokenAsync(string refreshToken)
+    public Task<TokenResult> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 var reply = await client.RefreshTokenAsync(
                     new RefreshTokenRequest
                     {
@@ -68,7 +74,8 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
                 );
 
                 return mapper.Map<TokenResult>(reply);
-            }
+            },
+            cancellationToken
         );
     }
 
@@ -78,7 +85,6 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         IMapper mapper
     )
     {
-
         return new GrpcAuthenticationService(grpcClientFactory, host, mapper);
     }
 }

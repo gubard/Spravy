@@ -16,7 +16,7 @@ public class TokenService : ITokenService
         this.authenticationService = authenticationService;
     }
 
-    public async Task<string> GetTokenAsync()
+    public async Task<string> GetTokenAsync(CancellationToken cancellationToken)
     {
         var jwtHandler = new JwtSecurityTokenHandler();
         var jwtToken = jwtHandler.ReadJwtToken(token.Token);
@@ -25,7 +25,7 @@ public class TokenService : ITokenService
         {
             return token.Token;
         }
-        
+
         DateTimeOffset expires = jwtToken.ValidTo;
 
         if (expires > DateTimeOffset.Now)
@@ -33,18 +33,19 @@ public class TokenService : ITokenService
             return token.Token;
         }
 
-        token = await authenticationService.RefreshTokenAsync(token.RefreshToken);
+        cancellationToken.ThrowIfCancellationRequested();
+        token = await authenticationService.RefreshTokenAsync(token.RefreshToken, cancellationToken);
 
         return token.Token;
     }
 
-    public async Task LoginAsync(User user)
+    public async Task LoginAsync(User user, CancellationToken cancellationToken)
     {
-        token = await authenticationService.LoginAsync(user);
+        token = await authenticationService.LoginAsync(user, cancellationToken);
     }
 
-    public async Task LoginAsync(string refreshToken)
+    public async Task LoginAsync(string refreshToken, CancellationToken cancellationToken)
     {
-        token = await authenticationService.RefreshTokenAsync(refreshToken);
+        token = await authenticationService.RefreshTokenAsync(refreshToken, cancellationToken);
     }
 }

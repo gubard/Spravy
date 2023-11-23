@@ -1,22 +1,23 @@
-using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
 using Ninject;
 using ReactiveUI;
+using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 
-public class SearchViewModel : RoutableViewModelBase, IRefreshToDoItem
+public class SearchViewModel : RoutableViewModelBase, IRefresh
 {
     private string searchText = string.Empty;
 
     public SearchViewModel() : base("search")
     {
-        SearchCommand = CreateCommandFromTaskWithDialogProgressIndicator(RefreshToDoItemAsync);
+        SearchCommand = CreateCommandFromTask(TaskWork.Create(RefreshAsync).RunAsync);
         SwitchPaneCommand = CreateCommand(SwitchPane);
     }
 
@@ -46,9 +47,9 @@ public class SearchViewModel : RoutableViewModelBase, IRefreshToDoItem
         MainSplitViewModel.IsPaneOpen = !MainSplitViewModel.IsPaneOpen;
     }
 
-    public async Task RefreshToDoItemAsync()
+    public async Task RefreshAsync(CancellationToken cancellationToken)
     {
-        var items = await ToDoService.SearchToDoSubItemsAsync(SearchText).ConfigureAwait(false);
-        await ToDoSubItemsViewModel.UpdateItemsAsync(Mapper.Map<IEnumerable<ToDoSubItemNotify>>(items), this);
+        var ids = await ToDoService.SearchToDoItemIdsAsync(SearchText, cancellationToken).ConfigureAwait(false);
+        await ToDoSubItemsViewModel.UpdateItemsAsync(ids, this, cancellationToken).ConfigureAwait(false);
     }
 }

@@ -1,8 +1,7 @@
 using AutoMapper;
+using Spravy.Domain.Extensions;
 using Spravy.ToDo.Db.Extensions;
 using Spravy.ToDo.Db.Models;
-using Spravy.ToDo.Domain.Enums;
-using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
 
 namespace Spravy.ToDo.Db.Mapper.Profiles;
@@ -13,228 +12,48 @@ public class SpravyToDoDbProfile : Profile
     public const string ParentsName = "Parents";
     public const string ItemsName = "Items";
     public const string ActiveName = "Active";
+    public const string ParametersName = "Parameters";
 
     public SpravyToDoDbProfile()
     {
+        CreateMap<ToDoItemEntity, ToDoItem>()
+            .ConvertUsing(
+                (entity, _, context) =>
+                {
+                    var parameters = (ToDoItemParameters)context.Items[ParametersName];
+
+                    return new ToDoItem(
+                        entity.Id,
+                        entity.Name,
+                        entity.IsFavorite,
+                        entity.Type,
+                        entity.Description,
+                        context.Mapper.Map<Uri?>(entity.Link),
+                        entity.OrderIndex,
+                        parameters.Status.Value,
+                        parameters.ActiveItem.Value,
+                        parameters.IsCan.Value
+                    );
+                }
+            );
+
+        CreateMap<ToDoItemEntity, PlannedToDoItemSettings>();
+        CreateMap<ToDoItemEntity, ValueToDoItemSettings>();
+        CreateMap<ToDoItemEntity, PeriodicityToDoItemSettings>();
         CreateMap<ToDoItemEntity, DailyPeriodicity>();
+        CreateMap<ToDoItemEntity, PeriodicityOffsetToDoItemSettings>();
         CreateMap<ToDoItemEntity, ToDoShortItem>();
         CreateMap<ToDoItemEntity, MonthlyPeriodicity>().ConstructUsing(x => new(x.GetDaysOfMonth()));
         CreateMap<ToDoItemEntity, WeeklyPeriodicity>().ConstructUsing(x => new(x.GetDaysOfWeek()));
         CreateMap<AddRootToDoItemOptions, ToDoItemEntity>();
         CreateMap<AddToDoItemOptions, ToDoItemEntity>();
-
-        CreateMap<ToDoItemEntity, ToDoItemParent>()
-            .ConstructUsing(x => new(x.Id, x.Name));
+        CreateMap<string?, Uri?>().ConvertUsing(str => str.IsNullOrWhiteSpace() ? null : new Uri(str));
+        CreateMap<Uri?, string?>().ConvertUsing(uri => uri == null ? string.Empty : uri.AbsoluteUri);
 
         CreateMap<ToDoItemEntity, AnnuallyPeriodicity>()
             .ConstructUsing(x => new(x.GetDaysOfYear()));
 
         CreateMap<ToDoItemEntity, ActiveToDoItem>()
             .ConvertUsing((source, _, _) => new(source.Id, source.Name));
-
-        CreateMap<ToDoItemEntity, IToDoSubItem>()
-            .ConvertUsing(
-                (source, _, context) => source.Type switch
-                {
-                    ToDoItemType.Step => new ToDoSubItemStep(
-                        source.Id,
-                        source.Name,
-                        source.IsCompleted,
-                        source.OrderIndex,
-                        (ToDoItemStatus)context.Items[StatusName],
-                        source.Description,
-                        source.CompletedCount,
-                        source.SkippedCount,
-                        source.FailedCount,
-                        source.IsFavorite,
-                        (ActiveToDoItem?)context.Items[ActiveName],
-                        source.LastCompleted,
-                        context.Mapper.Map<Uri>(source.Link)
-                    ),
-                    ToDoItemType.Circle => new ToDoSubItemCircle(
-                        source.Id,
-                        source.Name,
-                        source.IsCompleted,
-                        source.OrderIndex,
-                        (ToDoItemStatus)context.Items[StatusName],
-                        source.Description,
-                        source.CompletedCount,
-                        source.SkippedCount,
-                        source.FailedCount,
-                        source.IsFavorite,
-                        (ActiveToDoItem?)context.Items[ActiveName],
-                        source.LastCompleted,
-                        context.Mapper.Map<Uri>(source.Link)
-                    ),
-                    ToDoItemType.Value => new ToDoSubItemValue(
-                        source.Id,
-                        source.Name,
-                        source.IsCompleted,
-                        source.OrderIndex,
-                        (ToDoItemStatus)context.Items[StatusName],
-                        source.Description,
-                        source.CompletedCount,
-                        source.SkippedCount,
-                        source.FailedCount,
-                        source.IsFavorite,
-                        (ActiveToDoItem?)context.Items[ActiveName],
-                        source.LastCompleted,
-                        context.Mapper.Map<Uri>(source.Link)
-                    ),
-                    ToDoItemType.Group => new ToDoSubItemGroup(
-                        source.Id,
-                        source.Name,
-                        source.OrderIndex,
-                        (ToDoItemStatus)context.Items[StatusName],
-                        source.Description,
-                        source.IsFavorite,
-                        (ActiveToDoItem?)context.Items[ActiveName],
-                        context.Mapper.Map<Uri>(source.Link)
-                    ),
-                    ToDoItemType.Planned => new ToDoSubItemPlanned(
-                        source.Id,
-                        source.Name,
-                        source.OrderIndex,
-                        (ToDoItemStatus)context.Items[StatusName],
-                        source.Description,
-                        source.IsFavorite,
-                        (ActiveToDoItem?)context.Items[ActiveName],
-                        source.DueDate,
-                        source.CompletedCount,
-                        source.SkippedCount,
-                        source.FailedCount,
-                        source.IsCompleted,
-                        source.LastCompleted,
-                        context.Mapper.Map<Uri>(source.Link)
-                    ),
-                    ToDoItemType.Periodicity => new ToDoSubItemPeriodicity(
-                        source.Id,
-                        source.Name,
-                        source.OrderIndex,
-                        (ToDoItemStatus)context.Items[StatusName],
-                        source.Description,
-                        source.IsFavorite,
-                        source.DueDate,
-                        (ActiveToDoItem?)context.Items[ActiveName],
-                        source.CompletedCount,
-                        source.SkippedCount,
-                        source.FailedCount,
-                        source.LastCompleted,
-                        context.Mapper.Map<Uri>(source.Link)
-                    ),
-                    ToDoItemType.PeriodicityOffset => new ToDoSubItemPeriodicityOffset(
-                        source.Id,
-                        source.Name,
-                        source.OrderIndex,
-                        (ToDoItemStatus)context.Items[StatusName],
-                        source.Description,
-                        source.IsFavorite,
-                        source.DueDate,
-                        (ActiveToDoItem?)context.Items[ActiveName],
-                        source.CompletedCount,
-                        source.SkippedCount,
-                        source.FailedCount,
-                        source.LastCompleted,
-                        context.Mapper.Map<Uri>(source.Link)
-                    ),
-                    _ => throw new ArgumentOutOfRangeException()
-                }
-            );
-
-        CreateMap<ToDoItemEntity, IToDoItem>()
-            .ConvertUsing(
-                (source, _, context) => source.Type switch
-                {
-                    ToDoItemType.Step => new ToDoItemStep(
-                        source.Id,
-                        source.Name,
-                        (IToDoSubItem[])context.Items[ItemsName],
-                        (ToDoItemParent[])context.Items[ParentsName],
-                        source.IsCompleted,
-                        source.Description,
-                        source.IsFavorite,
-                        source.ChildrenType,
-                        context.Mapper.Map<Uri>(source.Link)
-                    ),
-                    ToDoItemType.Circle => new ToDoItemCircle(
-                        source.Id,
-                        source.Name,
-                        (IToDoSubItem[])context.Items[ItemsName],
-                        (ToDoItemParent[])context.Items[ParentsName],
-                        source.IsCompleted,
-                        source.Description,
-                        source.IsFavorite,
-                        source.ChildrenType,
-                        context.Mapper.Map<Uri>(source.Link)
-                    ),
-                    ToDoItemType.Value => new ToDoItemValue(
-                        source.Id,
-                        source.Name,
-                        (IToDoSubItem[])context.Items[ItemsName],
-                        (ToDoItemParent[])context.Items[ParentsName],
-                        source.IsCompleted,
-                        source.Description,
-                        source.IsFavorite,
-                        source.ChildrenType,
-                        context.Mapper.Map<Uri>(source.Link)
-                    ),
-                    ToDoItemType.Group => new ToDoItemGroup(
-                        source.Id,
-                        source.Name,
-                        (IToDoSubItem[])context.Items[ItemsName],
-                        (ToDoItemParent[])context.Items[ParentsName],
-                        source.Description,
-                        source.IsFavorite,
-                        context.Mapper.Map<Uri>(source.Link)
-                    ),
-                    ToDoItemType.Planned => new ToDoItemPlanned(
-                        source.Id,
-                        source.Name,
-                        source.Description,
-                        (IToDoSubItem[])context.Items[ItemsName],
-                        (ToDoItemParent[])context.Items[ParentsName],
-                        source.IsFavorite,
-                        source.DueDate,
-                        source.IsCompleted,
-                        source.ChildrenType,
-                        context.Mapper.Map<Uri>(source.Link)
-                    ),
-                    ToDoItemType.Periodicity => new ToDoItemPeriodicity(
-                        source.Id,
-                        source.Name,
-                        source.Description,
-                        (IToDoSubItem[])context.Items[ItemsName],
-                        (ToDoItemParent[])context.Items[ParentsName],
-                        source.IsFavorite,
-                        source.DueDate,
-                        source.TypeOfPeriodicity switch
-                        {
-                            TypeOfPeriodicity.Daily => context.Mapper.Map<DailyPeriodicity>(source),
-                            TypeOfPeriodicity.Weekly => context.Mapper.Map<WeeklyPeriodicity>(source),
-                            TypeOfPeriodicity.Monthly => context.Mapper.Map<MonthlyPeriodicity>(source),
-                            TypeOfPeriodicity.Annually => context.Mapper.Map<AnnuallyPeriodicity>(source),
-                            _ => throw new ArgumentOutOfRangeException()
-                        },
-                        source.ChildrenType,
-                        context.Mapper.Map<Uri>(source.Link ?? string.Empty)
-                    ),
-                    ToDoItemType.PeriodicityOffset => new ToDoItemPeriodicityOffset(
-                        source.Id,
-                        source.Name,
-                        source.Description,
-                        (IToDoSubItem[])context.Items[ItemsName],
-                        (ToDoItemParent[])context.Items[ParentsName],
-                        source.IsFavorite,
-                        source.DaysOffset,
-                        source.MonthsOffset,
-                        source.WeeksOffset,
-                        source.YearsOffset,
-                        source.DueDate,
-                        source.ChildrenType,
-                        context.Mapper.Map<Uri>(source.Link ?? string.Empty)
-                    ),
-                    _ => throw new ArgumentOutOfRangeException()
-                }
-            );
     }
 }

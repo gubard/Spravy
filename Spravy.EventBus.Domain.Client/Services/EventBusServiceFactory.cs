@@ -37,7 +37,7 @@ public class EventBusServiceFactory : IFactory<string, IEventBusService>
     {
         if (!options.Token.IsNullOrWhiteSpace())
         {
-            tokenService.LoginAsync(options.Token).GetAwaiter().GetResult();
+            tokenService.LoginAsync(options.Token, CancellationToken.None).GetAwaiter().GetResult();
         }
 
         var headers = new[]

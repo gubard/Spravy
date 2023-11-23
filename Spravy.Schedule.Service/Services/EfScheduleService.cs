@@ -21,7 +21,7 @@ public class EfScheduleService : IScheduleService
         this.dbContextFactory = dbContextFactory;
     }
 
-    public async Task AddTimerAsync(AddTimerParameters parameters)
+    public async Task AddTimerAsync(AddTimerParameters parameters, CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();
         var newTimer = new TimerEntity
@@ -32,19 +32,21 @@ public class EfScheduleService : IScheduleService
             Content = parameters.Content,
         };
 
-        await context.ExecuteSaveChangesTransactionAsync(c => c.Set<TimerEntity>().AddAsync(newTimer));
+        await context.ExecuteSaveChangesTransactionAsync(
+            c => c.Set<TimerEntity>().AddAsync(newTimer, cancellationToken)
+        );
     }
 
-    public async Task<IEnumerable<TimerItem>> GetListTimesAsync()
+    public async Task<IEnumerable<TimerItem>> GetListTimesAsync(CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();
-        var timers = await context.Set<TimerEntity>().AsNoTracking().ToArrayAsync();
+        var timers = await context.Set<TimerEntity>().AsNoTracking().ToArrayAsync(cancellationToken);
         var result = mapper.Map<IEnumerable<TimerItem>>(timers);
 
         return result;
     }
 
-    public async Task RemoveTimerAsync(Guid id)
+    public async Task RemoveTimerAsync(Guid id, CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();
 

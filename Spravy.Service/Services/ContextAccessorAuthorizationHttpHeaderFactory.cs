@@ -15,7 +15,7 @@ public class ContextAccessorAuthorizationHttpHeaderFactory : IHttpHeaderFactory
         this.httpContextAccessor = httpContextAccessor;
     }
 
-    public Task<IEnumerable<HttpHeaderItem>> CreateHeaderItemsAsync()
+    public Task<IEnumerable<HttpHeaderItem>> CreateHeaderItemsAsync(CancellationToken cancellationToken)
     {
         var authorization = httpContextAccessor
             .HttpContext

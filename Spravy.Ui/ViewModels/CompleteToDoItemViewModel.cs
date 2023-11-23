@@ -7,6 +7,7 @@ using Avalonia.Collections;
 using Avalonia.Input;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Models;
+using Spravy.ToDo.Domain.Enums;
 using Spravy.Ui.Enums;
 using Spravy.Ui.Models;
 using Spravy.Ui.Views;
@@ -35,7 +36,7 @@ public class CompleteToDoItemViewModel : ViewModelBase
 
     public CompleteToDoItemViewModel()
     {
-        CompleteCommand = CreateCommandFromTaskWithDialogProgressIndicator<CompleteStatus>(CompleteAsync);
+        CompleteCommand = CreateCommandFromTask<CompleteStatus>(CompleteAsync);
         InitializedCommand = CreateInitializedCommand<CompleteToDoItemView>(Initialized);
     }
 
@@ -54,7 +55,7 @@ public class CompleteToDoItemViewModel : ViewModelBase
     {
         return Complete.ThrowIfNull().Invoke(status);
     }
-
+    
     public void SetAllStatus()
     {
         CompleteStatuses.Clear();
@@ -62,38 +63,33 @@ public class CompleteToDoItemViewModel : ViewModelBase
         UpdateKeyBindings();
     }
 
-    public void SetCompleteStatus()
+    public void SetCompleteStatus(ToDoItemIsCan isCan)
     {
         CompleteStatuses.Clear();
 
-        CompleteStatuses.AddRange(
-            new Ref<CompleteStatus>[]
-            {
-                new(CompleteStatus.Complete),
-                new(CompleteStatus.Skip),
-                new(CompleteStatus.Fail),
-            }
-        );
+        if (isCan.HasFlag(ToDoItemIsCan.CanComplete))
+        {
+            CompleteStatuses.Add(new (CompleteStatus.Complete));
+        }
+        
+        if (isCan.HasFlag(ToDoItemIsCan.CanIncomplete))
+        {
+            CompleteStatuses.Add(new (CompleteStatus.Incomplete));
+        }
+        
+        if (isCan.HasFlag(ToDoItemIsCan.CanSkip))
+        {
+            CompleteStatuses.Add(new (CompleteStatus.Skip));
+        }
+        
+        if (isCan.HasFlag(ToDoItemIsCan.CanFail))
+        {
+            CompleteStatuses.Add(new (CompleteStatus.Fail));
+        }
 
         UpdateKeyBindings();
     }
-
-    public void SetIncompleteStatus()
-    {
-        CompleteStatuses.Clear();
-
-        CompleteStatuses.AddRange(
-            new Ref<CompleteStatus>[]
-            {
-                new(CompleteStatus.Incomplete),
-                new(CompleteStatus.Skip),
-                new(CompleteStatus.Fail),
-            }
-        );
-
-        UpdateKeyBindings();
-    }
-
+    
     private void UpdateKeyBindings()
     {
         if(view is null)

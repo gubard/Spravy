@@ -24,7 +24,7 @@ public class GrpcAuthenticationService : AuthenticationService.AuthenticationSer
     public override async Task<CreateUserReply> CreateUser(CreateUserRequest request, ServerCallContext context)
     {
         var options = mapper.Map<CreateUserOptions>(request);
-        await authenticationService.CreateUserAsync(options);
+        await authenticationService.CreateUserAsync(options, context.CancellationToken);
 
         return new CreateUserReply();
     }
@@ -32,7 +32,7 @@ public class GrpcAuthenticationService : AuthenticationService.AuthenticationSer
     public override async Task<LoginReply> Login(LoginRequest request, ServerCallContext context)
     {
         var user = mapper.Map<User>(request.User);
-        var result = await authenticationService.LoginAsync(user);
+        var result = await authenticationService.LoginAsync(user, context.CancellationToken);
         var reply = mapper.Map<LoginReply>(result);
 
         return reply;
@@ -40,7 +40,7 @@ public class GrpcAuthenticationService : AuthenticationService.AuthenticationSer
 
     public override async Task<RefreshTokenReply> RefreshToken(RefreshTokenRequest request, ServerCallContext context)
     {
-        var result = await authenticationService.RefreshTokenAsync(request.RefreshToken);
+        var result = await authenticationService.RefreshTokenAsync(request.RefreshToken, context.CancellationToken);
         var reply = mapper.Map<RefreshTokenReply>(result);
 
         return reply;

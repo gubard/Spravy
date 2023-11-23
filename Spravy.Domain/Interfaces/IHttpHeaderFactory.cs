@@ -4,5 +4,5 @@ namespace Spravy.Domain.Interfaces;
 
 public interface IHttpHeaderFactory
 {
-    Task<IEnumerable<HttpHeaderItem>> CreateHeaderItemsAsync();
+    Task<IEnumerable<HttpHeaderItem>> CreateHeaderItemsAsync(CancellationToken cancellationToken);
 }

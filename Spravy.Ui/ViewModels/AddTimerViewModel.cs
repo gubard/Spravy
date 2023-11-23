@@ -1,8 +1,11 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Avalonia.Threading;
 using ReactiveUI;
 using Spravy.Domain.Extensions;
+using Spravy.Domain.Models;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Models;
 
@@ -10,32 +13,38 @@ namespace Spravy.Ui.ViewModels;
 
 public class AddTimerViewModel : ViewModelBase
 {
+    private readonly TaskWork changeItemWork;
+    private readonly TaskWork changeDueDateTimeWork;
     private DateTimeOffset dueDateTime = DateTimeOffset.Now.ToCurrentDay();
     private bool isFavorite;
-    private ToDoItemNotify? item;
+    private ToDoShortItemNotify? item;
 
     public AddTimerViewModel()
     {
-        ChangeDueDateTimeCommand = CreateCommandFromTask(ChangeDueDateTimeAsync);
-        ChangeItemCommand = CreateCommandFromTask(ChangeItemAsync);
+        changeItemWork = new(ChangeItemAsync);
+        changeDueDateTimeWork = new(ChangeDueDateTimeAsync);
+        ChangeDueDateTimeCommand = CreateCommandFromTask(changeItemWork.RunAsync);
+        ChangeItemCommand = CreateCommandFromTask(changeDueDateTimeWork.RunAsync);
     }
 
     public Guid EventId { get; set; }
     public ICommand ChangeDueDateTimeCommand { get; }
     public ICommand ChangeItemCommand { get; }
 
-    private Task ChangeItemAsync()
+    private Task ChangeItemAsync(CancellationToken cancellationToken)
     {
         return DialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
-            itemNotify =>
+            async itemNotify =>
             {
-                Item = new()
-                {
-                    Id = itemNotify.Id,
-                    Name = itemNotify.Name
-                };
+                await DialogViewer.CloseInputDialogAsync(cancellationToken);
 
-                return DialogViewer.CloseInputDialogAsync();
+                await Dispatcher.UIThread.InvokeAsync(
+                    () => Item = new()
+                    {
+                        Id = itemNotify.Id,
+                        Name = itemNotify.Name
+                    }
+                );
             },
             view =>
             {
@@ -45,28 +54,29 @@ public class AddTimerViewModel : ViewModelBase
                 }
 
                 view.DefaultSelectedItemId = Item.Id;
-            }
+            },
+            cancellationToken
         );
     }
 
-    private Task ChangeDueDateTimeAsync()
+    private Task ChangeDueDateTimeAsync(CancellationToken cancellationToken)
     {
         return DialogViewer.ShowDateTimeConfirmDialogAsync(
-            value =>
+            async value =>
             {
-                DueDateTime = value;
-
-                return DialogViewer.CloseInputDialogAsync();
+                await DialogViewer.CloseInputDialogAsync(cancellationToken);
+                await Dispatcher.UIThread.InvokeAsync(() => DueDateTime = value);
             },
             calendar =>
             {
                 calendar.SelectedDate = DateTimeOffset.Now.ToCurrentDay().DateTime;
                 calendar.SelectedTime = TimeSpan.Zero;
-            }
+            },
+            cancellationToken
         );
     }
 
-    public ToDoItemNotify? Item
+    public ToDoShortItemNotify? Item
     {
         get => item;
         set => this.RaiseAndSetIfChanged(ref item, value);

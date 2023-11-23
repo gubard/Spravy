@@ -8,7 +8,7 @@ public interface IToDoItem
     string Name { get; }
     string Description { get; }
     IToDoSubItem[] Items { get; }
-    ToDoItemParent[] Parents { get; }
+    ToDoShortItem[] Parents { get; }
     bool IsFavorite { get; }
     Uri? Link { get; }
 }

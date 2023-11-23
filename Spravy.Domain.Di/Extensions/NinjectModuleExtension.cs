@@ -141,7 +141,7 @@ public static class NinjectModuleExtension
         }
 
         var tokenService = kernel.GetRequiredService<ITokenService>();
-        tokenService.LoginAsync(options.Token).GetAwaiter().GetResult();
+        tokenService.LoginAsync(options.Token, CancellationToken.None).GetAwaiter().GetResult();
         var tokenHttpHeaderFactory = new TokenHttpHeaderFactory(tokenService);
         var httpHeaderFactory = kernel.GetRequiredService<IHttpHeaderFactory>();
         var combineHttpHeaderFactory = new CombineHttpHeaderFactory(httpHeaderFactory, tokenHttpHeaderFactory);

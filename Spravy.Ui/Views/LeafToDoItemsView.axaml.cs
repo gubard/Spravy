@@ -1,18 +1,12 @@
-using Avalonia.Markup.Xaml;
-using Spravy.Ui.Controls;
+using Avalonia.ReactiveUI;
 using Spravy.Ui.ViewModels;
 
 namespace Spravy.Ui.Views;
 
-public partial class LeafToDoItemsView : MainReactiveUserControl<LeafToDoItemsViewModel>
+public partial class LeafToDoItemsView : ReactiveUserControl<LeafToDoItemsViewModel>
 {
     public LeafToDoItemsView()
     {
         InitializeComponent();
-    }
-
-    private void InitializeComponent()
-    {
-        AvaloniaXamlLoader.Load(this);
     }
 }

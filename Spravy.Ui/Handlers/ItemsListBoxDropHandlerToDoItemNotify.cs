@@ -1,3 +1,4 @@
+using System.Threading;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
@@ -15,7 +16,7 @@ public class ItemsListBoxDropHandlerToDoItemNotify : ItemsListBoxDropHandler<ToD
                 return;
             }
 
-            await changer.ChangeToDoItemOrderAsync(a);
+            await changer.ChangeToDoItemOrderAsync(a, CancellationToken.None);
         };
     }
 }

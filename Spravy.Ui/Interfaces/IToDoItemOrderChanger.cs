@@ -1,12 +1,8 @@
-using System.Threading.Tasks;
-
 using Spravy.ToDo.Domain.Interfaces;
 
 namespace Spravy.Ui.Interfaces;
 
-public interface IToDoItemOrderChanger
+public interface IToDoItemOrderChanger : IRefresh
 {
     IToDoService? ToDoService { get; }
-
-    Task RefreshToDoItemAsync();
 }

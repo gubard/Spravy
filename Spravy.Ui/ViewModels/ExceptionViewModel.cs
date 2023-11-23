@@ -1,6 +1,5 @@
 using System;
 using ReactiveUI;
-using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;

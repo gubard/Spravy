@@ -12,7 +12,7 @@ public class ValuesHttpHeaderFactory : IHttpHeaderFactory
         this.items = items;
     }
 
-    public Task<IEnumerable<HttpHeaderItem>> CreateHeaderItemsAsync()
+    public Task<IEnumerable<HttpHeaderItem>> CreateHeaderItemsAsync(CancellationToken cancellationToken)
     {
         return Task.FromResult(items);
     }

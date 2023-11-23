@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
@@ -8,6 +9,7 @@ using Avalonia.Threading;
 using Ninject;
 using ReactiveUI;
 using Spravy.Domain.Extensions;
+using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Models;
@@ -16,13 +18,13 @@ namespace Spravy.Ui.ViewModels;
 
 public class AddToDoItemViewModel : RoutableViewModelBase
 {
-    private ToDoSubItemNotify? parent;
+    private ToDoItemNotify? parent;
     private string name = string.Empty;
     private ToDoItemType type;
 
     public AddToDoItemViewModel() : base("add-to-do-item")
     {
-        InitializedCommand = CreateInitializedCommand(InitializedAsync);
+        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
         ToDoItemTypes = new(Enum.GetValues<ToDoItemType>());
     }
 
@@ -44,7 +46,7 @@ public class AddToDoItemViewModel : RoutableViewModelBase
         set => this.RaiseAndSetIfChanged(ref type, value);
     }
 
-    public ToDoSubItemNotify? Parent
+    public ToDoItemNotify? Parent
     {
         get => parent;
         set => this.RaiseAndSetIfChanged(ref parent, value);
@@ -56,16 +58,19 @@ public class AddToDoItemViewModel : RoutableViewModelBase
         set => this.RaiseAndSetIfChanged(ref name, value);
     }
 
-    private async Task InitializedAsync()
+    private async Task InitializedAsync(CancellationToken cancellationToken)
     {
-        var item = await ToDoService.GetToDoItemAsync(Parent.ThrowIfNull().Id).ConfigureAwait(false);
+        cancellationToken.ThrowIfCancellationRequested();
+        var parents = await ToDoService.GetParentsAsync(Parent.ThrowIfNull().Id, cancellationToken)
+            .ConfigureAwait(false);
+        cancellationToken.ThrowIfCancellationRequested();
 
         await Dispatcher.UIThread.InvokeAsync(
             () =>
             {
                 PathViewModel.Items.Clear();
                 PathViewModel.Items.Add(new RootItem());
-                PathViewModel.Items.AddRange(item.Parents.Select(x => Mapper.Map<ToDoItemParentNotify>(x)));
+                PathViewModel.Items.AddRange(parents.Select(x => Mapper.Map<ToDoItemParentNotify>(x)));
             }
         );
     }

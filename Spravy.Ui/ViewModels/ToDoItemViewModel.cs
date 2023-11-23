@@ -2,16 +2,20 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
 using Avalonia.Input.Platform;
+using Avalonia.Threading;
 using Google.Protobuf;
 using Material.Icons;
 using Ninject;
 using ReactiveUI;
 using Spravy.Domain.Extensions;
+using Spravy.Domain.Helpers;
+using Spravy.Domain.Models;
 using Spravy.EventBus.Domain.Helpers;
 using Spravy.EventBus.Protos;
 using Spravy.Schedule.Domain.Interfaces;
@@ -19,82 +23,58 @@ using Spravy.Schedule.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
+using Spravy.Ui.Enums;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
-using Spravy.Ui.Views;
 
 namespace Spravy.Ui.ViewModels;
 
-public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
+public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
 {
     private string name = string.Empty;
     private Guid id;
     private string description = string.Empty;
-
-    protected readonly List<IDisposable> PropertySubscribes = new();
     private ToDoItemType type;
     private bool isFavorite;
     protected readonly List<ToDoItemCommand> Commands = new();
     private string link = string.Empty;
+    private ToDoItemIsCan isCan;
+    private readonly TaskWork refreshToDoItemWork;
 
-    protected ToDoItemViewModel(string urlPathSegment) : base(urlPathSegment)
+    public ToDoItemViewModel() : base("to-do-item")
     {
+        refreshToDoItemWork = new(RefreshToDoItemCore);
         RemoveToDoItemFromFavoriteCommand =
-            CreateCommandFromTaskWithDialogProgressIndicator(RemoveToDoItemFromFavoriteAsync);
-
-        var toFavoriteCommand = new ToDoItemCommand(
-            MaterialIconKind.Star,
-            RemoveToDoItemFromFavoriteCommand,
-            "Move to favorite"
+            CreateCommandFromTask(TaskWork.Create(RemoveToDoItemFromFavoriteAsync).RunAsync);
+        ChangeDescriptionCommand = CreateCommandFromTask(TaskWork.Create(ChangeDescriptionAsync).RunAsync);
+        AddToDoItemCommand = CreateCommandFromTask(TaskWork.Create(AddToDoItemAsync).RunAsync);
+        ChangeToDoItemByPathCommand = CreateCommandFromTask<ToDoItemParentNotify>(
+            TaskWork.Create<ToDoItemParentNotify>(ChangeToDoItemByPathAsync).RunAsync
         );
-        ChangeDescriptionCommand = CreateCommandFromTask(ChangeDescriptionAsync);
-        AddToDoItemCommand = CreateCommandFromTask(AddToDoItemAsync);
-        ChangeToDoItemByPathCommand = CreateCommandFromTask<ToDoItemParentNotify>(ChangeToDoItemByPathAsync);
-        ToRootItemCommand = CreateCommandFromTask(ToRootItemAsync);
+        ToRootItemCommand = CreateCommandFromTask(TaskWork.Create(ToRootItemAsync).RunAsync);
         TypeOfPeriodicities = new(Enum.GetValues<TypeOfPeriodicity>());
         ToDoItemTypes = new(Enum.GetValues<ToDoItemType>());
         ChildrenTypes = new(Enum.GetValues<ToDoItemChildrenType>());
-        AddToDoItemToFavoriteCommand = CreateCommandFromTaskWithDialogProgressIndicator(AddToDoItemToCurrentAsync);
-        ToLeafToDoItemsCommand = CreateCommandFromTask(ToLeafToDoItemsAsync);
-        ChangeRootItemCommand = CreateCommandFromTask(ChangeRootItemAsync);
-        ToDoItemToRootCommand = CreateCommandFromTask(ToDoItemToRootAsync);
-        InitializedCommand = CreateInitializedCommand(Initialized);
-        ToDoItemToStringCommand = CreateCommandFromTask(ToDoItemToStringAsync);
-        AddTimerCommand = CreateCommandFromTask(AddTimerAsync);
-        ChangeLinkCommand = CreateCommandFromTask(ChangeLinkAsync);
-
-        this.WhenAnyValue(x => x.IsFavorite)
-            .Subscribe(
-                x =>
-                {
-                    if (x)
-                    {
-                        toFavoriteCommand.Command = RemoveToDoItemFromFavoriteCommand;
-                        toFavoriteCommand.Icon = MaterialIconKind.Star;
-                        toFavoriteCommand.Name = "Move to favorite";
-                    }
-                    else
-                    {
-                        toFavoriteCommand.Command = AddToDoItemToFavoriteCommand;
-                        toFavoriteCommand.Icon = MaterialIconKind.StarOutline;
-                        toFavoriteCommand.Name = "Remove from favorite";
-                    }
-                }
-            );
-
-        Commands.Add(toFavoriteCommand);
-        Commands.Add(new(MaterialIconKind.Plus, AddToDoItemCommand, "Add sub task"));
-        Commands.Add(new(MaterialIconKind.Leaf, ToLeafToDoItemsCommand, "Show all children"));
-        Commands.Add(new(MaterialIconKind.SwapHorizontal, ChangeRootItemCommand, "Change task parent"));
-        Commands.Add(new(MaterialIconKind.FamilyTree, ToDoItemToRootCommand, "Move to root task"));
-        Commands.Add(new(MaterialIconKind.CodeString, ToDoItemToStringCommand, "Copy task to clipboard"));
-        Commands.Add(new(MaterialIconKind.Timer, AddTimerCommand, "Add timer"));
+        AddToDoItemToFavoriteCommand = CreateCommandFromTask(TaskWork.Create(AddToDoItemToCurrentAsync).RunAsync);
+        ToLeafToDoItemsCommand = CreateCommandFromTask(TaskWork.Create(ToLeafToDoItemsAsync).RunAsync);
+        ChangeRootItemCommand = CreateCommandFromTask(TaskWork.Create(ChangeRootItemAsync).RunAsync);
+        ToDoItemToRootCommand = CreateCommandFromTask(TaskWork.Create(ToDoItemToRootAsync).RunAsync);
+        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
+        ToDoItemToStringCommand = CreateCommandFromTask(TaskWork.Create(ToDoItemToStringAsync).RunAsync);
+        AddTimerCommand = CreateCommandFromTask(TaskWork.Create(AddTimerAsync).RunAsync);
+        ChangeLinkCommand = CreateCommandFromTask(TaskWork.Create(ChangeLinkAsync).RunAsync);
+        CompleteToDoItemCommand = CreateCommandFromTask(TaskWork.Create(CompleteToDoItemAsync).RunAsync);
+        ChangeTypeCommand = CreateCommandFromTask(TaskWork.Create(ChangeTypeAsync).RunAsync);
+        SettingsToDoItemCommand = CreateCommandFromTask(TaskWork.Create(SettingsToDoItemAsync).RunAsync);
     }
 
     public AvaloniaList<TypeOfPeriodicity> TypeOfPeriodicities { get; }
     public AvaloniaList<ToDoItemType> ToDoItemTypes { get; }
     public AvaloniaList<ToDoItemChildrenType> ChildrenTypes { get; }
+
+    public ICommand SettingsToDoItemCommand { get; }
+    public ICommand CompleteToDoItemCommand { get; }
     public ICommand ChangeDescriptionCommand { get; }
     public ICommand AddToDoItemToFavoriteCommand { get; }
     public ICommand RemoveToDoItemFromFavoriteCommand { get; }
@@ -108,6 +88,7 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
     public ICommand ToDoItemToStringCommand { get; }
     public ICommand AddTimerCommand { get; }
     public ICommand ChangeLinkCommand { get; }
+    public ICommand ChangeTypeCommand { get; }
 
     [Inject]
     public required ToDoItemHeaderViewModel ToDoItemHeaderViewModel { get; init; }
@@ -166,26 +147,233 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
         set => this.RaiseAndSetIfChanged(ref link, value);
     }
 
-    public abstract Task RefreshToDoItemAsync();
-
-    private Task ChangeLinkAsync()
+    public ToDoItemIsCan IsCan
     {
-        return DialogViewer.ShowSingleStringConfirmDialogAsync(
-            value =>
-            {
-                Link = value;
+        get => isCan;
+        set => this.RaiseAndSetIfChanged(ref isCan, value);
+    }
 
-                return DialogViewer.CloseInputDialogAsync();
+    private async Task SettingsToDoItemAsync(CancellationToken cancellationToken)
+    {
+        switch (Type)
+        {
+            case ToDoItemType.Value:
+                await DialogViewer.ShowInfoContentDialogAsync<ValueToDoItemSettingsViewModel>(
+                        viewModel =>
+                        {
+                            viewModel.Refresh = this;
+                            viewModel.Id = Id;
+                        },
+                        cancellationToken
+                    )
+                    .ConfigureAwait(false);
+
+                break;
+            case ToDoItemType.Planned:
+                await DialogViewer.ShowInfoContentDialogAsync<PlannedToDoItemSettingsViewModel>(
+                        viewModel =>
+                        {
+                            viewModel.Refresh = this;
+                            viewModel.Id = Id;
+                        },
+                        cancellationToken
+                    )
+                    .ConfigureAwait(false);
+
+                break;
+            case ToDoItemType.Periodicity:
+                await DialogViewer.ShowInfoContentDialogAsync<PeriodicityToDoItemSettingsViewModel>(
+                        viewModel =>
+                        {
+                            viewModel.Refresh = this;
+                            viewModel.Id = Id;
+                        },
+                        cancellationToken
+                    )
+                    .ConfigureAwait(false);
+
+                break;
+            case ToDoItemType.PeriodicityOffset:
+                await DialogViewer.ShowInfoContentDialogAsync<PeriodicityOffsetToDoItemSettingsViewModel>(
+                        viewModel =>
+                        {
+                            viewModel.Refresh = this;
+                            viewModel.Id = Id;
+                        },
+                        cancellationToken
+                    )
+                    .ConfigureAwait(false);
+
+                break;
+            case ToDoItemType.Circle:
+                await DialogViewer.ShowInfoContentDialogAsync<ValueToDoItemSettingsViewModel>(
+                        viewModel =>
+                        {
+                            viewModel.Refresh = this;
+                            viewModel.Id = Id;
+                        },
+                        cancellationToken
+                    )
+                    .ConfigureAwait(false);
+
+                break;
+            case ToDoItemType.Step:
+                await DialogViewer.ShowInfoContentDialogAsync<ValueToDoItemSettingsViewModel>(
+                        viewModel =>
+                        {
+                            viewModel.Refresh = this;
+                            viewModel.Id = Id;
+                        },
+                        cancellationToken
+                    )
+                    .ConfigureAwait(false);
+                break;
+            case ToDoItemType.Group: throw new ArgumentOutOfRangeException();
+            default: throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    private Task ChangeTypeAsync(CancellationToken cancellationToken)
+    {
+        return DialogViewer.ShowItemSelectorDialogAsync<ToDoItemType>(
+            async item =>
+            {
+                await DialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
+                await ToDoService.UpdateToDoItemTypeAsync(Id, item, cancellationToken).ConfigureAwait(false);
+                await RefreshAsync(cancellationToken);
             },
-            textBox => textBox.Text = Link
+            viewModel =>
+            {
+                viewModel.Items.AddRange(Enum.GetValues<ToDoItemType>().OfType<object>());
+                viewModel.SelectedItem = Type;
+            },
+            cancellationToken
         );
     }
 
-    private Task AddTimerAsync()
+    private Task CompleteToDoItemAsync(CancellationToken cancellationToken)
+    {
+        return DialogViewer.ShowInfoInputDialogAsync<CompleteToDoItemViewModel>(
+            _ => DialogViewer.CloseInputDialogAsync(cancellationToken),
+            viewModel =>
+            {
+                viewModel.SetCompleteStatus(IsCan);
+
+                viewModel.Complete = async status =>
+                {
+                    switch (status)
+                    {
+                        case CompleteStatus.Complete:
+                            await ToDoService.UpdateToDoItemCompleteStatusAsync(Id, true, cancellationToken)
+                                .ConfigureAwait(false);
+                            break;
+                        case CompleteStatus.Skip:
+                            await ToDoService.SkipToDoItemAsync(Id, cancellationToken).ConfigureAwait(false);
+                            break;
+                        case CompleteStatus.Fail:
+                            await ToDoService.FailToDoItemAsync(Id, cancellationToken).ConfigureAwait(false);
+                            break;
+                        case CompleteStatus.Incomplete:
+                            await ToDoService.UpdateToDoItemCompleteStatusAsync(Id, false, cancellationToken)
+                                .ConfigureAwait(false);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(status), status, null);
+                    }
+
+                    await RefreshAsync(cancellationToken);
+                    await DialogViewer.CloseInputDialogAsync(cancellationToken);
+                };
+            },
+            cancellationToken
+        );
+    }
+
+    public async Task RefreshAsync(CancellationToken cancellationToken)
+    {
+        await Task.WhenAll(
+                RefreshToDoItemAsync(),
+                RefreshPathAsync(cancellationToken),
+                RefreshToDoItemChildrenAsync(cancellationToken),
+                UpdateCommandsAsync()
+            )
+            .WaitAsync(cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    private async Task RefreshToDoItemAsync()
+    {
+        await refreshToDoItemWork.RunAsync();
+    }
+
+    private async Task RefreshToDoItemCore(CancellationToken cancellationToken)
+    {
+        var item = await ToDoService.GetToDoItemAsync(Id, cancellationToken).ConfigureAwait(false);
+
+        await Dispatcher.UIThread.InvokeAsync(
+            () =>
+            {
+                Link = item.Link?.AbsoluteUri ?? string.Empty;
+                Description = item.Description;
+                Name = item.Name;
+                Type = item.Type;
+                IsCan = item.IsCan;
+                IsFavorite = item.IsFavorite;
+            }
+        );
+    }
+
+
+    private async Task RefreshPathAsync(CancellationToken cancellationToken)
+    {
+        var parents = await ToDoService.GetParentsAsync(Id, cancellationToken).ConfigureAwait(false);
+
+        await Dispatcher.UIThread.InvokeAsync(
+            () =>
+            {
+                PathViewModel.Items.Clear();
+                PathViewModel.Items.Add(new RootItem());
+                PathViewModel.Items.AddRange(parents.Select(x => Mapper.Map<ToDoItemParentNotify>(x)));
+            }
+        );
+    }
+
+    private async Task RefreshToDoItemChildrenAsync(CancellationToken cancellationToken)
+    {
+        var ids = await ToDoService.GetChildrenToDoItemIdsAsync(Id, cancellationToken).ConfigureAwait(false);
+        await ToDoSubItemsViewModel.UpdateItemsAsync(ids, this, cancellationToken).ConfigureAwait(false);
+    }
+
+    private Task ChangeLinkAsync(CancellationToken cancellationToken)
+    {
+        return DialogViewer.ShowSingleStringConfirmDialogAsync(
+            async value =>
+            {
+                await DialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
+                await ToDoService.UpdateToDoItemLinkAsync(
+                        Id,
+                        value.IsNullOrWhiteSpace() ? null : value.ToUri(),
+                        cancellationToken
+                    )
+                    .ConfigureAwait(false);
+                await RefreshAsync(cancellationToken);
+            },
+            textBox =>
+            {
+                textBox.Text = Link;
+                textBox.Label = "Link";
+            },
+            cancellationToken
+        );
+    }
+
+    private Task AddTimerAsync(CancellationToken cancellationToken)
     {
         return DialogViewer.ShowConfirmContentDialogAsync<AddTimerViewModel>(
             async viewModel =>
             {
+                await DialogViewer.CloseContentDialogAsync(cancellationToken);
+
                 var eventValue = new ChangeToDoItemIsFavoriteEvent
                 {
                     IsFavorite = IsFavorite,
@@ -202,10 +390,10 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
                     await stream.ToByteArrayAsync()
                 );
 
-                await ScheduleService.AddTimerAsync(parameters).ConfigureAwait(false);
-                await DialogViewer.CloseContentDialogAsync();
+                cancellationToken.ThrowIfCancellationRequested();
+                await ScheduleService.AddTimerAsync(parameters, cancellationToken).ConfigureAwait(false);
             },
-            _ => DialogViewer.CloseContentDialogAsync(),
+            _ => DialogViewer.CloseContentDialogAsync(cancellationToken),
             viewModel =>
             {
                 viewModel.EventId = EventIdHelper.ChangeFavoriteId;
@@ -217,59 +405,61 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
                 };
 
                 viewModel.DueDateTime = DateTimeOffset.Now.ToCurrentDay();
-            }
+            },
+            cancellationToken
         );
     }
 
-    private Task ChangeDescriptionAsync()
+    private Task ChangeDescriptionAsync(CancellationToken cancellationToken)
     {
         return DialogViewer.ShowMultiStringConfirmDialogAsync(
-            str =>
+            async str =>
             {
-                Description = str;
-
-                return DialogViewer.CloseInputDialogAsync();
+                await DialogViewer.CloseInputDialogAsync(cancellationToken);
+                await Dispatcher.UIThread.InvokeAsync(() => Description = str);
             },
             box =>
             {
                 box.Text = Description;
                 box.Label = "Description";
-            }
+            },
+            cancellationToken
         );
     }
 
-    private void Initialized()
+    private async Task InitializedAsync(CancellationToken cancellationToken)
     {
-        Commands.Add(
-            new(MaterialIconKind.Checks, ToDoSubItemsViewModel.CompleteSelectedToDoItemsCommand, "Complete multiple")
-        );
-        ToDoItemHeaderViewModel.Item = this;
-        ToDoItemHeaderViewModel.Commands.AddRange(Commands);
+        await Dispatcher.UIThread.InvokeAsync(() => ToDoItemHeaderViewModel.Item = this);
+        await RefreshAsync(cancellationToken);
     }
 
-    private Task ToDoItemToStringAsync()
+    private Task ToDoItemToStringAsync(CancellationToken cancellationToken)
     {
-        return DialogViewer.ShowConfirmContentDialogAsync<ToDoItemToStringSettingsViewModel>(
+        return DialogViewer.ShowConfirmContentDialogAsync(
             async view =>
             {
+                await DialogViewer.CloseContentDialogAsync(cancellationToken);
                 var statuses = view.Statuses.Where(x => x.IsChecked).Select(x => x.Item);
                 var options = new ToDoItemToStringOptions(statuses, Id);
-                var text = await ToDoService.ToDoItemToStringAsync(options).ConfigureAwait(false);
+                cancellationToken.ThrowIfCancellationRequested();
+                var text = await ToDoService.ToDoItemToStringAsync(options, cancellationToken).ConfigureAwait(false);
+                cancellationToken.ThrowIfCancellationRequested();
                 await Clipboard.SetTextAsync(text).ConfigureAwait(false);
-                await DialogViewer.CloseContentDialogAsync();
             },
-            _ => DialogViewer.CloseContentDialogAsync()
+            _ => DialogViewer.CloseContentDialogAsync(cancellationToken),
+            ActionHelper<ToDoItemToStringSettingsViewModel>.Empty,
+            cancellationToken
         );
     }
 
-    private Task ChangeRootItemAsync()
+    private Task ChangeRootItemAsync(CancellationToken cancellationToken)
     {
         return DialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
             async item =>
             {
-                await ToDoService.UpdateToDoItemParentAsync(Id, item.Id).ConfigureAwait(false);
-                await RefreshToDoItemAsync();
-                await DialogViewer.CloseInputDialogAsync();
+                await DialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
+                await ToDoService.UpdateToDoItemParentAsync(Id, item.Id, cancellationToken).ConfigureAwait(false);
+                await RefreshAsync(cancellationToken).ConfigureAwait(false);
             },
             viewModel =>
             {
@@ -282,105 +472,127 @@ public abstract class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderC
                 }
 
                 viewModel.DefaultSelectedItemId = parents[^2].Id;
-            }
+            },
+            cancellationToken
         );
     }
 
-    private Task ToLeafToDoItemsAsync()
+    private Task ToLeafToDoItemsAsync(CancellationToken cancellationToken)
     {
-        return Navigator.NavigateToAsync<LeafToDoItemsViewModel>(vm => vm.Id = Id);
+        return Navigator.NavigateToAsync<LeafToDoItemsViewModel>(vm => vm.Id = Id, cancellationToken);
     }
 
-    private async Task RemoveToDoItemFromFavoriteAsync()
+    private async Task RemoveToDoItemFromFavoriteAsync(CancellationToken cancellationToken)
     {
-        await ToDoService.RemoveFavoriteToDoItemAsync(Id).ConfigureAwait(false);
-        await RefreshToDoItemAsync();
+        await ToDoService.RemoveFavoriteToDoItemAsync(Id, cancellationToken).ConfigureAwait(false);
+        await RefreshAsync(cancellationToken);
     }
 
-    private async Task AddToDoItemToCurrentAsync()
+    private async Task AddToDoItemToCurrentAsync(CancellationToken cancellationToken)
     {
-        await ToDoService.AddFavoriteToDoItemAsync(Id).ConfigureAwait(false);
-        await RefreshToDoItemAsync();
+        await ToDoService.AddFavoriteToDoItemAsync(Id, cancellationToken).ConfigureAwait(false);
+        await RefreshAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    private async Task ToDoItemToRootAsync()
+    private async Task ToDoItemToRootAsync(CancellationToken cancellationToken)
     {
-        await ToDoService.ToDoItemToRootAsync(Id).ConfigureAwait(false);
-        await Navigator.NavigateToAsync<RootToDoItemsViewModel>();
+        await ToDoService.ToDoItemToRootAsync(Id, cancellationToken).ConfigureAwait(false);
+        await Navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken);
     }
 
-    protected async void OnNextId(Guid x)
-    {
-        await SafeExecuteAsync(RefreshToDoItemAsync);
-    }
-
-    protected async void OnNextLink(string x)
-    {
-        await SafeExecuteAsync(
-            async () =>
-            {
-                await ToDoService.UpdateToDoItemLinkAsync(Id, x.IsNullOrWhiteSpace() ? null : new Uri(x))
-                    .ConfigureAwait(false);
-                await RefreshToDoItemAsync();
-            }
-        );
-    }
-
-    protected async void OnNextName(string x)
-    {
-        await SafeExecuteAsync(
-            async () =>
-            {
-                await ToDoService.UpdateToDoItemNameAsync(Id, x).ConfigureAwait(false);
-                await RefreshToDoItemAsync();
-            }
-        );
-    }
-
-    protected async void OnNextType(ToDoItemType x)
-    {
-        await SafeExecuteAsync(
-            async () =>
-            {
-                await ToDoService.UpdateToDoItemTypeAsync(Id, x).ConfigureAwait(false);
-                await RefreshToDoItemAsync();
-            }
-        );
-    }
-
-    private Task AddToDoItemAsync()
+    private Task AddToDoItemAsync(CancellationToken cancellationToken)
     {
         return DialogViewer.ShowConfirmContentDialogAsync<AddToDoItemViewModel>(
             async viewModel =>
             {
                 var parentValue = viewModel.Parent.ThrowIfNull();
                 var options = new AddToDoItemOptions(parentValue.Id, viewModel.Name, viewModel.Type);
-                await ToDoService.AddToDoItemAsync(options).ConfigureAwait(false);
-                await ToDoService.NavigateToToDoItemViewModel(parentValue.Id, Navigator).ConfigureAwait(false);
-                await DialogViewer.CloseContentDialogAsync();
+                await ToDoService.AddToDoItemAsync(options, cancellationToken).ConfigureAwait(false);
+                await Navigator.NavigateToAsync<ToDoItemViewModel>(view => view.Id = parentValue.Id, cancellationToken);
+                await DialogViewer.CloseContentDialogAsync(cancellationToken);
             },
-            _ => DialogViewer.CloseContentDialogAsync(),
-            viewModel => viewModel.Parent = Mapper.Map<ToDoSubItemNotify>(this)
+            _ => DialogViewer.CloseContentDialogAsync(cancellationToken),
+            viewModel => viewModel.Parent = Mapper.Map<ToDoItemNotify>(this),
+            cancellationToken
         );
     }
 
-    private Task ChangeToDoItemByPathAsync(ToDoItemParentNotify item)
+    private Task ChangeToDoItemByPathAsync(ToDoItemParentNotify item, CancellationToken cancellationToken)
     {
-        return ToDoService.NavigateToToDoItemViewModel(item.Id, Navigator);
+        return Navigator.NavigateToAsync<ToDoItemViewModel>(view => view.Id = item.Id, cancellationToken);
     }
 
-    private Task ToRootItemAsync()
+    private Task ToRootItemAsync(CancellationToken cancellationToken)
     {
-        return Navigator.NavigateToAsync<RootToDoItemsViewModel>();
+        return Navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken);
     }
 
-    protected async void OnNextDescription(string x)
+    private async Task UpdateCommandsAsync()
     {
-        await SafeExecuteAsync(
-            async () =>
+        var toFavoriteCommand = new ToDoItemCommand(
+            MaterialIconKind.StarOutline,
+            AddToDoItemToFavoriteCommand,
+            "Remove from favorite"
+        );
+
+        await Dispatcher.UIThread.InvokeAsync(
+            () =>
             {
-                await ToDoService.UpdateToDoItemDescriptionAsync(Id, x).ConfigureAwait(false);
-                await RefreshToDoItemAsync();
+                ToDoItemHeaderViewModel.Commands.Clear();
+                ToDoItemHeaderViewModel.Commands.Add(new(MaterialIconKind.Plus, AddToDoItemCommand, "Add sub task"));
+                ToDoItemHeaderViewModel.Commands.Add(
+                    new(MaterialIconKind.Leaf, ToLeafToDoItemsCommand, "Show all children")
+                );
+                ToDoItemHeaderViewModel.Commands.Add(
+                    new(MaterialIconKind.SwapHorizontal, ChangeRootItemCommand, "Change task parent")
+                );
+                ToDoItemHeaderViewModel.Commands.Add(
+                    new(MaterialIconKind.FamilyTree, ToDoItemToRootCommand, "Move to root task")
+                );
+                ToDoItemHeaderViewModel.Commands.Add(
+                    new(MaterialIconKind.CodeString, ToDoItemToStringCommand, "Copy task to clipboard")
+                );
+                ToDoItemHeaderViewModel.Commands.Add(new(MaterialIconKind.Timer, AddTimerCommand, "Add timer"));
+
+                ToDoItemHeaderViewModel.Commands.Add(
+                    new(
+                        MaterialIconKind.Checks,
+                        ToDoSubItemsViewModel.CompleteSelectedToDoItemsCommand,
+                        "Complete multiple"
+                    )
+                );
+            }
+        );
+
+        await refreshToDoItemWork.Current;
+
+        await Dispatcher.UIThread.InvokeAsync(
+            () =>
+            {
+                if (IsCan != ToDoItemIsCan.None)
+                {
+                    ToDoItemHeaderViewModel.Commands.Add(
+                        new(MaterialIconKind.Check, CompleteToDoItemCommand, "Complete")
+                    );
+                }
+
+                if (Type != ToDoItemType.Group)
+                {
+                    ToDoItemHeaderViewModel.Commands.Add(
+                        new(MaterialIconKind.Settings, SettingsToDoItemCommand, "Settings")
+                    );
+                }
+
+                if (IsFavorite)
+                {
+                    toFavoriteCommand = new ToDoItemCommand(
+                        MaterialIconKind.Star,
+                        RemoveToDoItemFromFavoriteCommand,
+                        "Move to favorite"
+                    );
+                }
+
+                ToDoItemHeaderViewModel.Commands.Add(toFavoriteCommand);
             }
         );
     }

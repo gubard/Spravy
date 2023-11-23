@@ -28,43 +28,56 @@ public class GrpcScheduleService : GrpcServiceBase<ScheduleServiceClient>,
         this.metadataFactory = metadataFactory;
     }
 
-    public Task AddTimerAsync(AddTimerParameters parameters)
+    public Task AddTimerAsync(AddTimerParameters parameters, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
             {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
                 var request = mapper.Map<AddTimerRequest>(parameters);
-                await client.AddTimerAsync(request, await metadataFactory.CreateAsync());
-            }
+                cancellationToken.ThrowIfCancellationRequested();
+                await client.AddTimerAsync(request, metadata);
+            },
+            cancellationToken
         );
     }
 
-    public Task<IEnumerable<TimerItem>> GetListTimesAsync()
+    public Task<IEnumerable<TimerItem>> GetListTimesAsync(CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
             {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
                 var request = new GetListTimesRequest();
-                var timers = await client.GetListTimesAsync(request, await metadataFactory.CreateAsync());
+                cancellationToken.ThrowIfCancellationRequested();
+                var timers = await client.GetListTimesAsync(request, metadata);
 
                 return mapper.Map<IEnumerable<TimerItem>>(timers.Items);
-            }
+            },
+            cancellationToken
         );
     }
 
-    public Task RemoveTimerAsync(Guid id)
+    public Task RemoveTimerAsync(Guid id, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
             {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+
                 await client.RemoveTimerAsync(
                     new RemoveTimerRequest
                     {
                         Id = mapper.Map<ByteString>(id),
                     },
-                    await metadataFactory.CreateAsync()
+                    metadata
                 );
-            }
+            },
+            cancellationToken
         );
     }
 
