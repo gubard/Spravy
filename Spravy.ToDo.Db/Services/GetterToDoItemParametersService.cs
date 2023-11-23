@@ -82,8 +82,8 @@ public class GetterToDoItemParametersService
             if (entity.DueDate > DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
             {
                 return parameters.WithIfNeed(null)
-                    .WithIfNeed(ToDoItemStatus.ReadyForComplete)
-                    .WithIfNeed(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
+                    .WithIfNeed(ToDoItemStatus.Planned)
+                    .WithIfNeed(ToDoItemIsCan.None);
             }
         }
 
@@ -154,8 +154,8 @@ public class GetterToDoItemParametersService
             if (entity.DueDate > DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
             {
                 return parameters.WithIfNeed(null)
-                    .WithIfNeed(ToDoItemStatus.ReadyForComplete)
-                    .WithIfNeed(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
+                    .WithIfNeed(ToDoItemStatus.Planned)
+                    .WithIfNeed(ToDoItemIsCan.None);
             }
         }
 
@@ -226,8 +226,8 @@ public class GetterToDoItemParametersService
             if (entity.DueDate > DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
             {
                 return parameters.WithIfNeed(null)
-                    .WithIfNeed(ToDoItemStatus.ReadyForComplete)
-                    .WithIfNeed(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
+                    .WithIfNeed(ToDoItemStatus.Planned)
+                    .WithIfNeed(ToDoItemIsCan.None);
             }
         }
 

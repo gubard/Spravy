@@ -52,12 +52,9 @@ public class EfToDoService : IToDoService
         var item = await context.FindAsync<ToDoItemEntity>(id);
         item = item.ThrowIfNull();
 
-        var parents = new List<ToDoShortItem>
-        {
-            new(item.Id, item.Name)
-        };
-
+        var parents = new List<ToDoShortItem>();
         await GetParentsAsync(context, id, parents, cancellationToken);
+        parents.Reverse();
 
         return parents;
     }

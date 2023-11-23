@@ -15,17 +15,10 @@ namespace Spravy.Ui.ViewModels;
 
 public class RootToDoItemsViewModel : RoutableViewModelBase, IToDoItemOrderChanger
 {
-    private readonly TaskWork refreshToDoItemWork;
-    private readonly TaskWork addToDoItemWork;
-
     public RootToDoItemsViewModel() : base("root-to-do-item")
     {
-        refreshToDoItemWork = new(RefreshToDoItemCoreAsync);
-        addToDoItemWork = new(AddToDoItemAsync);
-        addToDoItemWork.AddSubTasks(addToDoItemWork);
-
-        InitializedCommand = CreateInitializedCommand(refreshToDoItemWork.RunAsync);
-        AddToDoItemCommand = CreateCommandFromTask( addToDoItemWork.RunAsync);
+        InitializedCommand = CreateInitializedCommand(TaskWork.Create(RefreshAsync).RunAsync);
+        AddToDoItemCommand = CreateCommandFromTask(TaskWork.Create(AddToDoItemAsync).RunAsync);
         SwitchPaneCommand = CreateCommand(SwitchPane);
     }
 
@@ -51,11 +44,6 @@ public class RootToDoItemsViewModel : RoutableViewModelBase, IToDoItemOrderChang
     }
 
     public async Task RefreshAsync(CancellationToken cancellationToken)
-    {
-        await refreshToDoItemWork.RunAsync();
-    }
-
-    private async Task RefreshToDoItemCoreAsync(CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
         var ids = await ToDoService.GetRootToDoItemIdsAsync(cancellationToken).ConfigureAwait(false);
