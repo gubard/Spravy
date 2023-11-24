@@ -102,8 +102,8 @@ public class UiModule : NinjectModule
         Bind<ToDoItemViewModel>().ToSelf();
         Bind<Control>().To<MainView>().OnActivation((c, x) => x.DataContext = c.Kernel.Get<MainViewModel>());
         //RegisterViewModels(this);
-        Bind<AppConfiguration>().ToConstructor(x => new AppConfiguration(typeof(LoginViewModel)));
-        Bind<MapperConfiguration>().ToConstructor(x => new MapperConfiguration(SetupMapperConfiguration));
+        Bind<AppConfiguration>().ToMethod(_ => new AppConfiguration(typeof(LoginViewModel)));
+        Bind<MapperConfiguration>().ToMethod(_ => new MapperConfiguration(SetupMapperConfiguration));
         Bind<IEventBusService>().ToMethod(context => context.Kernel.Get<GrpcEventBusService>());
         Bind<IDataTemplate>().To<ModuleDataTemplate>();
         Bind<IMetadataFactory>().To<MetadataFactory>();
