@@ -89,7 +89,7 @@ public class UiModule : NinjectModule
             .InSingletonScope();
         Bind<IViewLocator>().To<ModuleViewLocator>();
         Bind<INavigator>().To<Navigator>();
-        Bind<IMapper>().ToConstructor(x => new Mapper(x.Context.Kernel.Get<MapperConfiguration>()));
+        Bind<IMapper>().ToMethod(context => new Mapper(context.Kernel.Get<MapperConfiguration>()));
         Bind<IToDoService>().ToMethod(x => x.Kernel.Get<GrpcToDoService>());
         Bind<Application>().To<App>();
         Bind<IResourceLoader>().To<FileResourceLoader>();
@@ -112,7 +112,7 @@ public class UiModule : NinjectModule
         Bind<IDialogViewer>().To<DialogViewer>();
         Bind<LeafToDoItemsViewModel>().ToSelf();
         Bind<LeafToDoItemsView>().ToSelf();
-        
+
         Bind<AvaloniaList<DayOfYearSelectItem>>()
             .ToMethod(
                 context => new AvaloniaList<DayOfYearSelectItem>(
