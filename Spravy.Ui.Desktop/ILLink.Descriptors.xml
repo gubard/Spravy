@@ -20,5 +20,6 @@
         <type fullname="Ninject.Planning.Planner" />
         <type fullname="Ninject.Planning.Strategies.ConstructorReflectionStrategy" />
         <type fullname="Ninject.Selection.Selector" />
+        <type fullname="Ninject.Selection.Heuristics.StandardConstructorScorer" />
     </assembly>
 </linker>
