@@ -42,8 +42,11 @@ public class DesktopModule : NinjectModule
             );
 
         Bind<IObjectStorage>()
-            .ToConstructor(
-                x => new ObjectStorage("./storage".ToDirectory(), x.Context.Kernel.GetRequiredService<ISerializer>())
+            .ToMethod(
+                context => new ObjectStorage(
+                    "./storage".ToDirectory(),
+                    context.Kernel.GetRequiredService<ISerializer>()
+                )
             );
     }
 }
