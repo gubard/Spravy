@@ -8,5 +8,6 @@
         <type fullname="Ninject.Activation.Caching.Cache" />
         <type fullname="Ninject.Activation.Pipeline" />
         <type fullname="Ninject.Activation.Caching.ActivationCache" />
+        <type fullname="Ninject.Activation.Caching.GarbageCollectionCachePruner" />
     </assembly>
 </linker>
