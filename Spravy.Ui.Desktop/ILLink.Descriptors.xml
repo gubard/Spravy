@@ -18,5 +18,6 @@
         <type fullname="Ninject.Activation.Strategies.BindingActionStrategy" />
         <type fullname="Ninject.Activation.Strategies.DisposableStrategy" />
         <type fullname="Ninject.Planning.Planner" />
+        <type fullname="Ninject.Planning.Strategies.ConstructorReflectionStrategy" />
     </assembly>
 </linker>
