@@ -13,5 +13,6 @@
         <type fullname="Ninject.Activation.Strategies.PropertyInjectionStrategy" />
         <type fullname="Ninject.Injection.DynamicMethodInjectorFactory" />
         <type fullname="Ninject.Activation.Strategies.MethodInjectionStrategy" />
+        <type fullname="Ninject.Activation.Strategies.InitializableStrategy" />
     </assembly>
 </linker>
