@@ -52,7 +52,10 @@ public class EfToDoService : IToDoService
         var item = await context.FindAsync<ToDoItemEntity>(id);
         item = item.ThrowIfNull();
 
-        var parents = new List<ToDoShortItem>();
+        var parents = new List<ToDoShortItem>()
+        {
+            new ToDoShortItem(item.Id, item.Name)
+        };
         await GetParentsAsync(context, id, parents, cancellationToken);
         parents.Reverse();
 
@@ -155,7 +158,7 @@ public class EfToDoService : IToDoService
             .OrderBy(x => x.OrderIndex)
             .Where(x => x.IsFavorite)
             .Select(x => x.Id)
-            .ToArrayAsync();
+            .ToArrayAsync(cancellationToken);
 
         return ids;
     }
@@ -168,7 +171,7 @@ public class EfToDoService : IToDoService
             .AsNoTracking()
             .Where(x => x.ParentId == null)
             .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync();
+            .ToArrayAsync(cancellationToken);
 
         var result = await ConvertAsync(context, items, cancellationToken);
 
@@ -224,7 +227,7 @@ public class EfToDoService : IToDoService
             .AsNoTracking()
             .Where(x => x.ParentId == item.Id)
             .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync();
+            .ToArrayAsync(cancellationToken);
 
         var parents = new List<ToDoShortItem>
         {
@@ -259,13 +262,13 @@ public class EfToDoService : IToDoService
                     .AsNoTracking()
                     .Where(x => x.ParentId == null)
                     .Select(x => x.OrderIndex)
-                    .ToArrayAsync();
+                    .ToArrayAsync(cancellationToken);
 
                 var newEntity = mapper.Map<ToDoItemEntity>(options);
                 newEntity.Description = string.Empty;
                 newEntity.Id = id;
                 newEntity.OrderIndex = items.Length == 0 ? 0 : items.Max() + 1;
-                await c.Set<ToDoItemEntity>().AddAsync(newEntity);
+                await c.Set<ToDoItemEntity>().AddAsync(newEntity, cancellationToken);
             }
         );
 
@@ -288,7 +291,7 @@ public class EfToDoService : IToDoService
                     .AsNoTracking()
                     .Where(x => x.ParentId == options.ParentId)
                     .Select(x => x.OrderIndex)
-                    .ToArrayAsync();
+                    .ToArrayAsync(cancellationToken);
 
                 var toDoItem = mapper.Map<ToDoItemEntity>(options);
                 toDoItem.Description = string.Empty;
@@ -308,7 +311,7 @@ public class EfToDoService : IToDoService
                 toDoItem.DaysOffset = parent.DaysOffset;
                 toDoItem.MonthsOffset = parent.MonthsOffset;
                 toDoItem.YearsOffset = parent.YearsOffset;
-                await c.Set<ToDoItemEntity>().AddAsync(toDoItem);
+                await c.Set<ToDoItemEntity>().AddAsync(toDoItem, cancellationToken);
             }
         );
 
@@ -328,7 +331,7 @@ public class EfToDoService : IToDoService
                 var children = await c.Set<ToDoItemEntity>()
                     .AsNoTracking()
                     .Where(x => x.ParentId == id)
-                    .ToArrayAsync();
+                    .ToArrayAsync(cancellationToken);
 
                 foreach (var child in children)
                 {
@@ -404,8 +407,9 @@ public class EfToDoService : IToDoService
 
                 if (isComplete)
                 {
-                   var parameters = await getterToDoItemParametersService.GetToDoItemParametersAsync(context, item, offset);
-                   
+                    var parameters =
+                        await getterToDoItemParametersService.GetToDoItemParametersAsync(context, item, offset);
+
                     if (!parameters.IsCan.Value.HasFlag(ToDoItemIsCan.CanComplete))
                     {
                         throw new ArgumentException();
@@ -461,7 +465,7 @@ public class EfToDoService : IToDoService
         var steps = await context.Set<ToDoItemEntity>()
             .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Step)
             .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync();
+            .ToArrayAsync(cancellationToken);
 
         foreach (var step in steps)
         {
@@ -471,7 +475,7 @@ public class EfToDoService : IToDoService
         var groups = await context.Set<ToDoItemEntity>()
             .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Group)
             .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync();
+            .ToArrayAsync(cancellationToken);
 
         foreach (var group in groups)
         {
@@ -488,7 +492,7 @@ public class EfToDoService : IToDoService
         var children = await context.Set<ToDoItemEntity>()
             .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Circle)
             .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync();
+            .ToArrayAsync(cancellationToken);
 
         if (children.Length != 0)
         {
@@ -505,7 +509,7 @@ public class EfToDoService : IToDoService
         var groups = await context.Set<ToDoItemEntity>()
             .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Group)
             .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync();
+            .ToArrayAsync(cancellationToken);
 
         foreach (var group in groups)
         {
@@ -522,7 +526,7 @@ public class EfToDoService : IToDoService
         var children = await context.Set<ToDoItemEntity>()
             .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Circle)
             .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync();
+            .ToArrayAsync(cancellationToken);
 
         if (children.Length != 0)
         {
@@ -541,7 +545,7 @@ public class EfToDoService : IToDoService
         var groups = await context.Set<ToDoItemEntity>()
             .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Group)
             .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync();
+            .ToArrayAsync(cancellationToken);
 
         foreach (var group in groups)
         {
@@ -593,7 +597,7 @@ public class EfToDoService : IToDoService
                 }
 
                 item.OrderIndex = orderIndex;
-                await c.SaveChangesAsync();
+                await c.SaveChangesAsync(cancellationToken);
                 await NormalizeOrderIndexAsync(c, item.ParentId, cancellationToken);
             }
         );
@@ -732,7 +736,7 @@ public class EfToDoService : IToDoService
             .AsNoTracking()
             .Where(x => x.Name.Contains(searchText))
             .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync();
+            .ToArrayAsync(cancellationToken);
 
         var result = await ConvertAsync(context, items, cancellationToken);
 
@@ -792,7 +796,7 @@ public class EfToDoService : IToDoService
                     .AsNoTracking()
                     .Where(x => x.IsFavorite)
                     .OrderBy(x => x.OrderIndex)
-                    .ToArrayAsync();
+                    .ToArrayAsync(cancellationToken);
 
                 var result = await ConvertAsync(c, items, cancellationToken);
 
@@ -863,7 +867,7 @@ public class EfToDoService : IToDoService
             .AsNoTracking()
             .Where(x => x.ParentId == id)
             .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync();
+            .ToArrayAsync(cancellationToken);
 
         if (entities.IsEmpty())
         {
@@ -894,7 +898,7 @@ public class EfToDoService : IToDoService
             .AsNoTracking()
             .Where(x => x.ParentId == null && !ignoreIds.Contains(x.Id))
             .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync();
+            .ToArrayAsync(cancellationToken);
 
         var result = new ToDoSelectorItem[items.Length];
 
@@ -1118,7 +1122,10 @@ public class EfToDoService : IToDoService
         return mapper.Map<ValueToDoItemSettings>(item);
     }
 
-    public async Task<PeriodicityToDoItemSettings> GetPeriodicityToDoItemSettingsAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<PeriodicityToDoItemSettings> GetPeriodicityToDoItemSettingsAsync(
+        Guid id,
+        CancellationToken cancellationToken
+    )
     {
         await using var context = dbContextFactory.Create();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
@@ -1154,7 +1161,10 @@ public class EfToDoService : IToDoService
         return mapper.Map<AnnuallyPeriodicity>(item);
     }
 
-    public async Task<PeriodicityOffsetToDoItemSettings> GetPeriodicityOffsetToDoItemSettingsAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<PeriodicityOffsetToDoItemSettings> GetPeriodicityOffsetToDoItemSettingsAsync(
+        Guid id,
+        CancellationToken cancellationToken
+    )
     {
         await using var context = dbContextFactory.Create();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
@@ -1213,7 +1223,7 @@ public class EfToDoService : IToDoService
             .AsNoTracking()
             .Where(x => x.ParentId == id && !ignoreIds.Contains(x.Id))
             .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync();
+            .ToArrayAsync(cancellationToken);
 
         var result = new ToDoSelectorItem[items.Length];
 
