@@ -2,5 +2,6 @@
 <linker>
     <assembly fullname="Ninject, Version=3.3.6.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7">
         <type fullname="Ninject.Planning.Bindings.BindingPrecedenceComparer" />
+        <type fullname="Ninject.Modules.ModuleLoader" />
     </assembly>
 </linker>
