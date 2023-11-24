@@ -357,7 +357,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public Task UpdateToDoItemCompleteStatusAsync(Guid id, bool isCompleted, CancellationToken cancellationToken)
+    public Task UpdateToDoItemCompleteStatusAsync(Guid id, bool isComplete, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
@@ -368,7 +368,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                 var request = new UpdateToDoItemCompleteStatusRequest
                 {
                     Id = mapper.Map<ByteString>(id),
-                    IsCompleted = isCompleted,
+                    IsCompleted = isComplete,
                 };
 
                 cancellationToken.ThrowIfCancellationRequested();

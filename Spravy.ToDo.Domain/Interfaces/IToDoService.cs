@@ -22,7 +22,7 @@ public interface IToDoService
     Task UpdateToDoItemNameAsync(Guid id, string name, CancellationToken cancellationToken);
     Task UpdateToDoItemOrderIndexAsync(UpdateOrderIndexToDoItemOptions options, CancellationToken cancellationToken);
     Task UpdateToDoItemDescriptionAsync(Guid id, string description, CancellationToken cancellationToken);
-    Task UpdateToDoItemCompleteStatusAsync(Guid id, bool isCompleted, CancellationToken cancellationToken);
+    Task UpdateToDoItemCompleteStatusAsync(Guid id, bool isComplete, CancellationToken cancellationToken);
     Task SkipToDoItemAsync(Guid id, CancellationToken cancellationToken);
     Task FailToDoItemAsync(Guid id, CancellationToken cancellationToken);
     Task<IEnumerable<IToDoSubItem>> SearchToDoSubItemsAsync(string searchText, CancellationToken cancellationToken);

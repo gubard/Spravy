@@ -345,11 +345,8 @@ public class GrpcToDoService : ToDoServiceBase
         ServerCallContext context
     )
     {
-        await toDoService.UpdateToDoItemCompleteStatusAsync(
-            mapper.Map<Guid>(request.Id),
-            request.IsCompleted,
-            context.CancellationToken
-        );
+        var id = mapper.Map<Guid>(request.Id);
+        await toDoService.UpdateToDoItemCompleteStatusAsync(id, request.IsCompleted, context.CancellationToken);
 
         return new();
     }

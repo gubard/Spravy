@@ -128,7 +128,7 @@ public class ToDoServiceDesign : IToDoService
         throw new NotImplementedException();
     }
 
-    public Task UpdateToDoItemCompleteStatusAsync(Guid id, bool isCompleted, TimeSpan offset)
+    public Task UpdateToDoItemCompleteStatusAsync(Guid id, bool isComplete, TimeSpan offset)
     {
         throw new NotImplementedException();
     }
@@ -148,7 +148,7 @@ public class ToDoServiceDesign : IToDoService
         throw new NotImplementedException();
     }
 
-    public Task UpdateToDoItemCompleteStatusAsync(Guid id, bool isCompleted)
+    public Task UpdateToDoItemCompleteStatusAsync(Guid id, bool isComplete)
     {
         throw new NotImplementedException();
     }
@@ -373,7 +373,7 @@ public class ToDoServiceDesign : IToDoService
         throw new NotImplementedException();
     }
 
-    public Task UpdateToDoItemCompleteStatusAsync(Guid id, bool isCompleted, CancellationToken cancellationToken)
+    public Task UpdateToDoItemCompleteStatusAsync(Guid id, bool isComplete, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }

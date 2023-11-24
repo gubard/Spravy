@@ -349,7 +349,7 @@ public class EfToDoService : IToDoService
         var children = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.ParentId == id)
-            .ToArrayAsync();
+            .ToArrayAsync(cancellationToken);
 
         foreach (var child in children)
         {
@@ -391,7 +391,7 @@ public class EfToDoService : IToDoService
         );
     }
 
-    public async Task UpdateToDoItemCompleteStatusAsync(Guid id, bool isCompleted, CancellationToken cancellationToken)
+    public async Task UpdateToDoItemCompleteStatusAsync(Guid id, bool isComplete, CancellationToken cancellationToken)
     {
         var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
         await using var context = dbContextFactory.Create();
@@ -402,11 +402,11 @@ public class EfToDoService : IToDoService
                 var item = await c.Set<ToDoItemEntity>().FindAsync(id);
                 item = item.ThrowIfNull();
 
-                if (isCompleted)
+                if (isComplete)
                 {
-                    var isCanComplete = await canCompleteToDoItemService.IsCanCompleteAsync(c, item, offset);
-
-                    if (!isCanComplete)
+                   var parameters = await getterToDoItemParametersService.GetToDoItemParametersAsync(context, item, offset);
+                   
+                    if (!parameters.IsCan.Value.HasFlag(ToDoItemIsCan.CanComplete))
                     {
                         throw new ArgumentException();
                     }
