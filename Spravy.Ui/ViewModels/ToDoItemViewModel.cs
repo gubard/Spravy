@@ -417,7 +417,8 @@ public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
             async str =>
             {
                 await DialogViewer.CloseInputDialogAsync(cancellationToken);
-                await Dispatcher.UIThread.InvokeAsync(() => Description = str);
+                await ToDoService.UpdateToDoItemDescriptionAsync(Id, str, cancellationToken).ConfigureAwait(false);
+                await RefreshAsync(cancellationToken).ConfigureAwait(false);
             },
             box =>
             {
