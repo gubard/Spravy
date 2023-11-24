@@ -4,4 +4,7 @@
         <type fullname="Ninject.Planning.Bindings.BindingPrecedenceComparer" />
         <type fullname="Ninject.Modules.ModuleLoader" />
     </assembly>
+    <assembly fullname="AutoMapper, Version=12.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005">
+        <type fullname="AutoMapper.Mapper" />
+    </assembly>
 </linker>
