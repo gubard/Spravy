@@ -30,23 +30,13 @@ public class ConfirmViewModel : ViewModelBase
 
     private async Task CancelAsync()
     {
-        if (CancelTask is null)
-        {
-            return;
-        }
-
         var con = Content.ThrowIfNull();
-        await CancelTask.Invoke(con);
+        await CancelTask.ThrowIfNull().Invoke(con).ConfigureAwait(false);
     }
 
     private async Task ConfirmAsync()
     {
-        if (ConfirmTask is null)
-        {
-            return;
-        }
-
         var con = Content.ThrowIfNull();
-        await ConfirmTask.Invoke(con);
+        await ConfirmTask.ThrowIfNull().Invoke(con).ConfigureAwait(false);
     }
 }

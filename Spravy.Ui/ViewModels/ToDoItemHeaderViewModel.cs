@@ -2,6 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Collections;
+using Avalonia.Threading;
 using Ninject;
 using ReactiveUI;
 using Spravy.Domain.Models;
@@ -33,29 +34,33 @@ public class ToDoItemHeaderViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref item, value);
     }
 
-    private Task ChangeNameAsync(CancellationToken cancellationToken)
+    private async Task ChangeNameAsync(CancellationToken cancellationToken)
     {
-        return DialogViewer.ShowSingleStringConfirmDialogAsync(
-            str =>
-            {
-                if (Item is not null)
+        await DialogViewer.ShowSingleStringConfirmDialogAsync(
+                async str =>
                 {
-                    Item.Name = str;
-                }
+                    await DialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
 
-                return DialogViewer.CloseInputDialogAsync(cancellationToken);
-            },
-            box =>
-            {
-                box.Text = Item?.Name ?? string.Empty;
-                box.Label = "Name";
-            },
-            cancellationToken
-        );
+                    if (Item is not null)
+                    {
+                        await Item.ToDoService.UpdateToDoItemNameAsync(Item.Id, str, cancellationToken)
+                            .ConfigureAwait(false);
+
+                        await Item.RefreshAsync(cancellationToken).ConfigureAwait(false);
+                    }
+                },
+                box =>
+                {
+                    box.Text = Item?.Name ?? string.Empty;
+                    box.Label = "Name";
+                },
+                cancellationToken
+            )
+            .ConfigureAwait(false);
     }
 
-    private void SwitchPane()
+    private DispatcherOperation SwitchPane()
     {
-        MainSplitViewModel.IsPaneOpen = !MainSplitViewModel.IsPaneOpen;
+        return Dispatcher.UIThread.InvokeAsync(() => MainSplitViewModel.IsPaneOpen = !MainSplitViewModel.IsPaneOpen);
     }
 }

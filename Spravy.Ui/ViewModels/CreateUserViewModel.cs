@@ -92,7 +92,7 @@ public class CreateUserViewModel : RoutableViewModelBase
             return;
         }
 
-        await CreateUserAsync(cancellationToken);
+        await CreateUserAsync(cancellationToken).ConfigureAwait(false);
     }
 
     private async Task CreateUserAsync(CancellationToken cancellationToken)
@@ -106,11 +106,11 @@ public class CreateUserViewModel : RoutableViewModelBase
         cancellationToken.ThrowIfCancellationRequested();
         await AuthenticationService.CreateUserAsync(options, cancellationToken).ConfigureAwait(false);
         cancellationToken.ThrowIfCancellationRequested();
-        await Navigator.NavigateToAsync(ActionHelper<LoginViewModel>.Empty, cancellationToken);
+        await Navigator.NavigateToAsync(ActionHelper<LoginViewModel>.Empty, cancellationToken).ConfigureAwait(false);
     }
 
-    private Task BackAsync(CancellationToken cancellationToken)
+    private async Task BackAsync(CancellationToken cancellationToken)
     {
-        return Navigator.NavigateToAsync(ActionHelper<LoginViewModel>.Empty, cancellationToken);
+        await Navigator.NavigateToAsync(ActionHelper<LoginViewModel>.Empty, cancellationToken).ConfigureAwait(false);
     }
 }

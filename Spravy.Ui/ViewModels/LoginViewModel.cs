@@ -70,7 +70,8 @@ public class LoginViewModel : RoutableViewModelBase
 
         var item = await ObjectStorage.GetObjectAsync<LoginStorageItem>(FileIds.LoginFileId).ConfigureAwait(false);
         await TokenService.LoginAsync(item.Token.ThrowIfNullOrWhiteSpace(), cancellationToken).ConfigureAwait(false);
-        await Navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken);
+        await Navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken)
+            .ConfigureAwait(false);
     }
 
     private async Task EnterAsync(LoginView view, CancellationToken cancellationToken)
@@ -96,12 +97,13 @@ public class LoginViewModel : RoutableViewModelBase
             return;
         }
 
-        await LoginAsync(cancellationToken);
+        await LoginAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    private Task CreateUserAsync(CancellationToken cancellationToken)
+    private async Task CreateUserAsync(CancellationToken cancellationToken)
     {
-        return Navigator.NavigateToAsync(ActionHelper<CreateUserViewModel>.Empty, cancellationToken);
+        await Navigator.NavigateToAsync(ActionHelper<CreateUserViewModel>.Empty, cancellationToken)
+            .ConfigureAwait(false);
     }
 
     private async Task LoginAsync(CancellationToken cancellationToken)
@@ -109,7 +111,7 @@ public class LoginViewModel : RoutableViewModelBase
         var user = Mapper.Map<User>(this);
         await TokenService.LoginAsync(user, cancellationToken).ConfigureAwait(false);
         await RememberMeAsync(cancellationToken);
-        await Navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken);
+        await Navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken).ConfigureAwait(false);
     }
 
     private async Task RememberMeAsync(CancellationToken cancellationToken)

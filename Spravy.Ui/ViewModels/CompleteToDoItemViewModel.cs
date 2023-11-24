@@ -51,9 +51,9 @@ public class CompleteToDoItemViewModel : ViewModelBase
         UpdateKeyBindings();
     }
 
-    private Task CompleteAsync(CompleteStatus status)
+    private async Task CompleteAsync(CompleteStatus status)
     {
-        return Complete.ThrowIfNull().Invoke(status);
+        await Complete.ThrowIfNull().Invoke(status).ConfigureAwait(false);
     }
     
     public void SetAllStatus()

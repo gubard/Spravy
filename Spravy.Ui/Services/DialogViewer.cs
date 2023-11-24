@@ -32,7 +32,7 @@ public class DialogViewer : IDialogViewer
 
         await Dispatcher.UIThread.InvokeAsync(() => setupView.Invoke(content));
         cancellationToken.ThrowIfCancellationRequested();
-        await ShowView(content, ContentDialogHostIdentifier);
+        await ShowView(content, ContentDialogHostIdentifier).ConfigureAwait(false);
     }
 
     public async Task ShowProgressDialogAsync<TView>(Action<TView> setupView, CancellationToken cancellationToken)
@@ -47,7 +47,7 @@ public class DialogViewer : IDialogViewer
 
         await Dispatcher.UIThread.InvokeAsync(() => setupView.Invoke(content));
         cancellationToken.ThrowIfCancellationRequested();
-        await ShowView(content, ProgressDialogHostIdentifier);
+        await ShowView(content, ProgressDialogHostIdentifier).ConfigureAwait(false);
     }
 
     public async Task ShowErrorDialogAsync<TView>(Action<TView> setupView, CancellationToken cancellationToken)
@@ -62,7 +62,7 @@ public class DialogViewer : IDialogViewer
 
         await Dispatcher.UIThread.InvokeAsync(() => setupView.Invoke(content));
         cancellationToken.ThrowIfCancellationRequested();
-        await ShowView(content, ErrorDialogHostIdentifier);
+        await ShowView(content, ErrorDialogHostIdentifier).ConfigureAwait(false);
     }
 
     public async Task ShowInfoErrorDialogAsync<TView>(
@@ -78,7 +78,7 @@ public class DialogViewer : IDialogViewer
         infoViewModel.Content = content;
         infoViewModel.OkTask = view => okTask.Invoke((TView)view);
         cancellationToken.ThrowIfCancellationRequested();
-        await ShowView(infoViewModel, ErrorDialogHostIdentifier);
+        await ShowView(infoViewModel, ErrorDialogHostIdentifier).ConfigureAwait(false);
     }
 
     public async Task ShowInfoInputDialogAsync<TView>(
@@ -94,7 +94,7 @@ public class DialogViewer : IDialogViewer
         infoViewModel.Content = content;
         infoViewModel.OkTask = view => okTask.Invoke((TView)view);
         cancellationToken.ThrowIfCancellationRequested();
-        await ShowView(infoViewModel, InputDialogHostIdentifier);
+        await ShowView(infoViewModel, InputDialogHostIdentifier).ConfigureAwait(false);
     }
 
     public async Task ShowInfoContentDialogAsync<TView>(
@@ -109,7 +109,7 @@ public class DialogViewer : IDialogViewer
         infoViewModel.Content = content;
         infoViewModel.OkTask = view => okTask.Invoke((TView)view);
         cancellationToken.ThrowIfCancellationRequested();
-        await ShowView(infoViewModel, ContentDialogHostIdentifier);
+        await ShowView(infoViewModel, ContentDialogHostIdentifier).ConfigureAwait(false);
     }
 
     public async Task ShowInputDialogAsync<TView>(Action<TView> setupView, CancellationToken cancellationToken)
@@ -124,7 +124,7 @@ public class DialogViewer : IDialogViewer
 
         await Dispatcher.UIThread.InvokeAsync(() => setupView.Invoke(content));
         cancellationToken.ThrowIfCancellationRequested();
-        await ShowView(content, InputDialogHostIdentifier);
+        await ShowView(content, InputDialogHostIdentifier).ConfigureAwait(false);
     }
 
     public Task CloseProgressDialogAsync(CancellationToken cancellationToken)
@@ -146,7 +146,7 @@ public class DialogViewer : IDialogViewer
         confirmViewModel.ConfirmTask = view => confirmTask.Invoke((TView)view);
         confirmViewModel.CancelTask = view => cancelTask.Invoke((TView)view);
         cancellationToken.ThrowIfCancellationRequested();
-        await ShowView(confirmViewModel, ContentDialogHostIdentifier);
+        await ShowView(confirmViewModel, ContentDialogHostIdentifier).ConfigureAwait(false);
     }
 
     public async Task ShowConfirmInputDialogAsync<TView>(
@@ -163,7 +163,7 @@ public class DialogViewer : IDialogViewer
         confirmViewModel.ConfirmTask = view => confirmTask.Invoke((TView)view);
         confirmViewModel.CancelTask = view => cancelTask.Invoke((TView)view);
         cancellationToken.ThrowIfCancellationRequested();
-        await ShowView(confirmViewModel, InputDialogHostIdentifier);
+        await ShowView(confirmViewModel, InputDialogHostIdentifier).ConfigureAwait(false);
     }
 
     public Task CloseContentDialogAsync(CancellationToken cancellationToken)

@@ -52,22 +52,23 @@ public class RootToDoItemsViewModel : RoutableViewModelBase, IToDoItemOrderChang
         cancellationToken.ThrowIfCancellationRequested();
     }
 
-    private Task AddToDoItemAsync(CancellationToken cancellationToken)
+    private async Task AddToDoItemAsync(CancellationToken cancellationToken)
     {
-        return DialogViewer.ShowConfirmContentDialogAsync(
-            async view =>
-            {
-                await DialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
-                cancellationToken.ThrowIfCancellationRequested();
-                var options = Mapper.Map<AddRootToDoItemOptions>(view);
-                cancellationToken.ThrowIfCancellationRequested();
-                await ToDoService.AddRootToDoItemAsync(options, cancellationToken).ConfigureAwait(false);
-                cancellationToken.ThrowIfCancellationRequested();
-                await RefreshAsync(cancellationToken).ConfigureAwait(false);
-            },
-            async _ => await DialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false),
-            ActionHelper<AddRootToDoItemViewModel>.Empty,
-            cancellationToken
-        );
+        await DialogViewer.ShowConfirmContentDialogAsync(
+                async view =>
+                {
+                    await DialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
+                    cancellationToken.ThrowIfCancellationRequested();
+                    var options = Mapper.Map<AddRootToDoItemOptions>(view);
+                    cancellationToken.ThrowIfCancellationRequested();
+                    await ToDoService.AddRootToDoItemAsync(options, cancellationToken).ConfigureAwait(false);
+                    cancellationToken.ThrowIfCancellationRequested();
+                    await RefreshAsync(cancellationToken).ConfigureAwait(false);
+                },
+                async _ => await DialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false),
+                ActionHelper<AddRootToDoItemViewModel>.Empty,
+                cancellationToken
+            )
+            .ConfigureAwait(false);
     }
 }

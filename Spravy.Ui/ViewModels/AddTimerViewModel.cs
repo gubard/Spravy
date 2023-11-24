@@ -31,12 +31,12 @@ public class AddTimerViewModel : ViewModelBase
     public ICommand ChangeDueDateTimeCommand { get; }
     public ICommand ChangeItemCommand { get; }
 
-    private Task ChangeItemAsync(CancellationToken cancellationToken)
+    private async Task ChangeItemAsync(CancellationToken cancellationToken)
     {
-        return DialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
+        await DialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
             async itemNotify =>
             {
-                await DialogViewer.CloseInputDialogAsync(cancellationToken);
+                await DialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
 
                 await Dispatcher.UIThread.InvokeAsync(
                     () => Item = new()
@@ -56,15 +56,15 @@ public class AddTimerViewModel : ViewModelBase
                 view.DefaultSelectedItemId = Item.Id;
             },
             cancellationToken
-        );
+        ).ConfigureAwait(false);
     }
 
-    private Task ChangeDueDateTimeAsync(CancellationToken cancellationToken)
+    private async Task ChangeDueDateTimeAsync(CancellationToken cancellationToken)
     {
-        return DialogViewer.ShowDateTimeConfirmDialogAsync(
+        await DialogViewer.ShowDateTimeConfirmDialogAsync(
             async value =>
             {
-                await DialogViewer.CloseInputDialogAsync(cancellationToken);
+                await DialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
                 await Dispatcher.UIThread.InvokeAsync(() => DueDateTime = value);
             },
             calendar =>
@@ -73,7 +73,7 @@ public class AddTimerViewModel : ViewModelBase
                 calendar.SelectedTime = TimeSpan.Zero;
             },
             cancellationToken
-        );
+        ).ConfigureAwait(false);
     }
 
     public ToDoShortItemNotify? Item

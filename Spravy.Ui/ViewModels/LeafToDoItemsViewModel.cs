@@ -57,8 +57,8 @@ public class LeafToDoItemsViewModel : RoutableViewModelBase, IRefresh
         return Dispatcher.UIThread.InvokeAsync(() => MainSplitViewModel.IsPaneOpen = !MainSplitViewModel.IsPaneOpen);
     }
 
-    private Task InitializedAsync(CancellationToken cancellationToken)
+    private async Task InitializedAsync(CancellationToken cancellationToken)
     {
-        return RefreshAsync(cancellationToken);
+        await RefreshAsync(cancellationToken).ConfigureAwait(false);
     }
 }

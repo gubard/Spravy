@@ -39,25 +39,25 @@ public class PaneViewModel : ViewModelBase
     {
         await ObjectStorage.DeleteAsync(FileIds.LoginFileId).ConfigureAwait(false);
         KeeperTokenResult.Set(default);
-        await Navigator.NavigateToAsync(ActionHelper<LoginViewModel>.Empty, cancellationToken);
+        await Navigator.NavigateToAsync(ActionHelper<LoginViewModel>.Empty, cancellationToken).ConfigureAwait(false);
         MainSplitViewModel.IsPaneOpen = false;
     }
 
     private async Task ToTimersViewAsync(CancellationToken cancellationToken)
     {
-        await Navigator.NavigateToAsync(ActionHelper<TimersViewModel>.Empty, cancellationToken);
+        await Navigator.NavigateToAsync(ActionHelper<TimersViewModel>.Empty, cancellationToken).ConfigureAwait(false);
         MainSplitViewModel.IsPaneOpen = false;
     }
 
     private async Task ToRootToDoItemViewAsync(CancellationToken cancellationToken)
     {
-        await Navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken);
+        await Navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken).ConfigureAwait(false);
         MainSplitViewModel.IsPaneOpen = false;
     }
 
     private async Task ToSearchViewAsync(CancellationToken cancellationToken)
     {
-        await Navigator.NavigateToAsync(ActionHelper<SearchViewModel>.Empty, cancellationToken);
+        await Navigator.NavigateToAsync(ActionHelper<SearchViewModel>.Empty, cancellationToken).ConfigureAwait(false);
         MainSplitViewModel.IsPaneOpen = false;
     }
 }

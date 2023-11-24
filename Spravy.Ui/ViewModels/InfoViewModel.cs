@@ -27,12 +27,7 @@ public class InfoViewModel : ViewModelBase
 
     private async Task OkAsync()
     {
-        if (OkTask is null)
-        {
-            return;
-        }
-
         var con = Content.ThrowIfNull();
-        await OkTask.Invoke(con);
+        await OkTask.ThrowIfNull().Invoke(con).ConfigureAwait(false);
     }
 }

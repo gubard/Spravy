@@ -29,11 +29,10 @@ public class MainViewModel : ViewModelBase
 
     public ICommand InitializedCommand { get; }
 
-    private Task InitializedAsync(CancellationToken cancellationToken)
+    private async Task InitializedAsync(CancellationToken cancellationToken)
     {
         MainSplitViewModel.Content = RoutedViewHost;
         MainSplitViewModel.Pane = PaneViewModel;
-
-        return Navigator.NavigateToAsync(Configuration.DefaultMainViewType, cancellationToken);
+        await Navigator.NavigateToAsync(Configuration.DefaultMainViewType, cancellationToken).ConfigureAwait(false);
     }
 }
