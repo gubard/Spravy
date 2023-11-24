@@ -261,6 +261,8 @@ public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
 
                 viewModel.Complete = async status =>
                 {
+                    await DialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
+
                     switch (status)
                     {
                         case CompleteStatus.Complete:
@@ -281,8 +283,7 @@ public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
                             throw new ArgumentOutOfRangeException(nameof(status), status, null);
                     }
 
-                    await RefreshAsync(cancellationToken);
-                    await DialogViewer.CloseInputDialogAsync(cancellationToken);
+                    await RefreshAsync(cancellationToken).ConfigureAwait(false);
                 };
             },
             cancellationToken

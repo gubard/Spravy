@@ -113,13 +113,13 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 
                 viewModel.Complete = async status =>
                 {
+                    await DialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
                     await CompleteAsync(SelectedCompleted, status, cancellationToken).ConfigureAwait(false);
                     await CompleteAsync(SelectedMissed, status, cancellationToken).ConfigureAwait(false);
                     await CompleteAsync(SelectedFavoriteToDoItems, status, cancellationToken).ConfigureAwait(false);
                     await CompleteAsync(SelectedReadyForCompleted, status, cancellationToken).ConfigureAwait(false);
                     await CompleteAsync(SelectedPlanned, status, cancellationToken).ConfigureAwait(false);
                     await RefreshAsync(cancellationToken).ConfigureAwait(false);
-                    await DialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
                 };
             },
             cancellationToken
@@ -141,6 +141,8 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 
                 viewModel.Complete = async status =>
                 {
+                    await DialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
+
                     switch (status)
                     {
                         case CompleteStatus.Complete:
@@ -174,8 +176,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                         default: throw new ArgumentOutOfRangeException(nameof(status), status, null);
                     }
 
-                    await RefreshAsync(cancellationToken);
-                    await DialogViewer.CloseInputDialogAsync(cancellationToken);
+                    await RefreshAsync(cancellationToken).ConfigureAwait(false);
                 };
             },
             cancellationToken
