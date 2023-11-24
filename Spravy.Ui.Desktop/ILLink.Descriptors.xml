@@ -12,5 +12,6 @@
         <type fullname="Ninject.Activation.Strategies.ActivationCacheStrategy" />
         <type fullname="Ninject.Activation.Strategies.PropertyInjectionStrategy" />
         <type fullname="Ninject.Injection.DynamicMethodInjectorFactory" />
+        <type fullname="Ninject.Activation.Strategies.MethodInjectionStrategy" />
     </assembly>
 </linker>
