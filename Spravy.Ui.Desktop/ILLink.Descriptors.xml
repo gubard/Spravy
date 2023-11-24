@@ -3,6 +3,8 @@
     <assembly fullname="Ninject, Version=3.3.6.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7">
         <type fullname="Ninject.Planning.Bindings.BindingPrecedenceComparer" />
         <type fullname="Ninject.Modules.ModuleLoader" />
-        <type fullname="Ninject.Parameters.ConstructorArgument" />
+    </assembly>
+    <assembly fullname="System.Linq.Expressions, Version=7.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+        <type fullname="System.Linq.Expressions.NewExpression" />
     </assembly>
 </linker>
