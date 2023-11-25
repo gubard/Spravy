@@ -302,7 +302,7 @@ public class GetterToDoItemParametersService
             parameters = await GetToDoItemParametersAsync(context, item, offset, parameters);
         }
 
-        return parameters;
+        return parameters.WithIfNeed(ToDoItemIsCan.None);
     }
 
     private async Task<ToDoItemParameters> GetCircleParametersAsync(
