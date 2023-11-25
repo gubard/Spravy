@@ -1,38 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <linker>
-    <assembly fullname="Ninject, Version=3.3.6.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7">
-        <type fullname="Ninject.Planning.Bindings.BindingPrecedenceComparer" />
-        <type fullname="Ninject.Modules.ModuleLoader" />
-        <type fullname="Ninject.Planning.Bindings.Resolvers.StandardBindingResolver" />
-        <type fullname="Ninject.Planning.Bindings.Resolvers.OpenGenericBindingResolver" />
-        <type fullname="Ninject.Activation.Caching.Cache" />
-        <type fullname="Ninject.Activation.Pipeline" />
-        <type fullname="Ninject.Activation.Caching.ActivationCache" />
-        <type fullname="Ninject.Activation.Caching.GarbageCollectionCachePruner" />
-        <type fullname="Ninject.Activation.Strategies.ActivationCacheStrategy" />
-        <type fullname="Ninject.Activation.Strategies.PropertyInjectionStrategy" />
-        <type fullname="Ninject.Injection.DynamicMethodInjectorFactory" />
-        <type fullname="Ninject.Activation.Strategies.MethodInjectionStrategy" />
-        <type fullname="Ninject.Activation.Strategies.InitializableStrategy" />
-        <type fullname="Ninject.Activation.Strategies.StartableStrategy" />
-        <type fullname="Ninject.Activation.Strategies.BindingActionStrategy" />
-        <type fullname="Ninject.Activation.Strategies.DisposableStrategy" />
-        <type fullname="Ninject.Planning.Planner" />
-        <type fullname="Ninject.Planning.Strategies.ConstructorReflectionStrategy" />
-        <type fullname="Ninject.Selection.Selector" />
-        <type fullname="Ninject.Selection.Heuristics.StandardConstructorScorer" />
-        <type fullname="Ninject.Selection.Heuristics.StandardInjectionHeuristic" />
-        <type fullname="Ninject.Planning.Strategies.PropertyReflectionStrategy" />
-        <type fullname="Ninject.Planning.Strategies.MethodReflectionStrategy" />
-        <type fullname="Ninject.Planning.Bindings.Resolvers.DefaultValueBindingResolver" />
-        <type fullname="Ninject.Planning.Bindings.Resolvers.SelfBindingResolver" />
-    </assembly>
-    <assembly fullname="Spravy.Ui, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-        <type fullname="Spravy.Ui.App" />
-        <type fullname="Spravy.Ui.Services.ModuleDataTemplate" />
-        <type fullname="Spravy.Ui.Views.MainWindow" />
-        <type fullname="Spravy.Ui.ViewModels.MainWindowModel" />
-        <type fullname="Spravy.Ui.Views.MainView" />
-        <type fullname="Spravy.Ui.ViewModels.MainViewModel" />
-    </assembly>
+    <assembly fullname="Ninject, Version=3.3.6.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7" preserve="all" />
+    <assembly fullname="Spravy.Ui, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
 </linker>
