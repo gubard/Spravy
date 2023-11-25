@@ -24,6 +24,7 @@
         <type fullname="Ninject.Selection.Heuristics.StandardInjectionHeuristic" />
         <type fullname="Ninject.Planning.Strategies.PropertyReflectionStrategy" />
         <type fullname="Ninject.Planning.Strategies.MethodReflectionStrategy" />
+        <type fullname="Ninject.Planning.Bindings.Resolvers.DefaultValueBindingResolver" />
     </assembly>
     <assembly fullname="Spravy.Ui, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
         <type fullname="Spravy.Ui.App" />
