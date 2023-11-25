@@ -1,5 +1,4 @@
 using Spravy.Domain.Extensions;
-using Spravy.Domain.Helpers;
 using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Models;
@@ -34,6 +33,11 @@ public readonly struct ToDoItemParameters
         }
 
         return new ToDoItemParameters(activeToDoItem.ToSuccessValue(), Status, IsCan);
+    }
+    
+    public ToDoItemParameters Set(ToDoItemStatus status)
+    {
+        return new ToDoItemParameters(ActiveItem, status.ToSuccessValue(), IsCan);
     }
     
     public ToDoItemParameters Set(ActiveToDoItem? activeToDoItem)

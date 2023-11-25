@@ -359,6 +359,11 @@ public class GetterToDoItemParametersService
                 return parameters.Set(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
             default: throw new ArgumentOutOfRangeException();
         }
+        
+        if (!parameters.ActiveItem.Value.HasValue)
+        {
+            return parameters.Set(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip).Set(ToDoItemStatus.ReadyForComplete);
+        }
 
         return parameters;
     }
@@ -418,6 +423,11 @@ public class GetterToDoItemParametersService
             default: throw new ArgumentOutOfRangeException();
         }
 
+        if (!parameters.ActiveItem.Value.HasValue)
+        {
+            return parameters.Set(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip).Set(ToDoItemStatus.ReadyForComplete);
+        }
+
         return parameters;
     }
 
@@ -474,6 +484,11 @@ public class GetterToDoItemParametersService
             case ToDoItemChildrenType.IgnoreCompletion:
                 return parameters.Set(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
             default: throw new ArgumentOutOfRangeException();
+        }
+        
+        if (!parameters.ActiveItem.Value.HasValue)
+        {
+            return parameters.Set(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip).Set(ToDoItemStatus.ReadyForComplete);
         }
 
         return parameters;
