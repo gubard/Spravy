@@ -186,7 +186,7 @@ public class GetterToDoItemParametersService
                 return parameters.Set(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
             default: throw new ArgumentOutOfRangeException();
         }
-        
+
         if (entity.DueDate == DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
         {
             return parameters.WithIfNeed(ai)
@@ -359,10 +359,12 @@ public class GetterToDoItemParametersService
                 return parameters.Set(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
             default: throw new ArgumentOutOfRangeException();
         }
-        
+
         if (!parameters.ActiveItem.Value.HasValue)
         {
-            return parameters.Set(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip).Set(ToDoItemStatus.ReadyForComplete);
+            return parameters.Set(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip)
+                .Set(ToDoItemStatus.ReadyForComplete)
+                .Set(ToActiveToDoItem(entity));
         }
 
         return parameters;
@@ -425,7 +427,9 @@ public class GetterToDoItemParametersService
 
         if (!parameters.ActiveItem.Value.HasValue)
         {
-            return parameters.Set(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip).Set(ToDoItemStatus.ReadyForComplete);
+            return parameters.Set(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip)
+                .Set(ToDoItemStatus.ReadyForComplete)
+                .Set(ToActiveToDoItem(entity));
         }
 
         return parameters;
@@ -485,10 +489,12 @@ public class GetterToDoItemParametersService
                 return parameters.Set(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
             default: throw new ArgumentOutOfRangeException();
         }
-        
+
         if (!parameters.ActiveItem.Value.HasValue)
         {
-            return parameters.Set(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip).Set(ToDoItemStatus.ReadyForComplete);
+            return parameters.Set(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip)
+                .Set(ToDoItemStatus.ReadyForComplete)
+                .Set(ToActiveToDoItem(entity));
         }
 
         return parameters;
