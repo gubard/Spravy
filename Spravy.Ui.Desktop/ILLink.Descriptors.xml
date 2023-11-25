@@ -33,5 +33,6 @@
         <type fullname="Spravy.Ui.Views.MainWindow" />
         <type fullname="Spravy.Ui.ViewModels.MainWindowModel" />
         <type fullname="Spravy.Ui.Views.MainView" />
+        <type fullname="Spravy.Ui.ViewModels.MainViewModel" />
     </assembly>
 </linker>
