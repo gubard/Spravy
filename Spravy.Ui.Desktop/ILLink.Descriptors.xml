@@ -2,4 +2,5 @@
 <linker>
     <assembly fullname="Ninject, Version=3.3.6.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7" />
     <assembly fullname="Spravy.Ui, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+    <assembly fullname="Spravy.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
 </linker>
