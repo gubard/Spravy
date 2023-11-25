@@ -31,5 +31,6 @@
         <type fullname="Spravy.Ui.App" />
         <type fullname="Spravy.Ui.Services.ModuleDataTemplate" />
         <type fullname="Spravy.Ui.Views.MainWindow" />
+        <type fullname="Spravy.Ui.ViewModels.MainWindowModel" />
     </assembly>
 </linker>
