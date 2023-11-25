@@ -165,6 +165,11 @@ public class ViewModelBase : NotifyBase
 
     private async void OnNextError(Exception exception)
     {
+        if (exception is TaskCanceledException)
+        {
+            return;
+        }
+
         Log.Logger.Error(exception, "UI error");
 
         await DialogViewer.ShowInfoErrorDialogAsync<ExceptionViewModel>(
