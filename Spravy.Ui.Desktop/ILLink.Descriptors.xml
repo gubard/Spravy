@@ -28,5 +28,6 @@
     <assembly fullname="Spravy.Ui, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
         <type fullname="Spravy.Ui.App" />
         <type fullname="Spravy.Ui.Services.ModuleDataTemplate" />
+        <type fullname="Spravy.Ui.Views.MainWindow" />
     </assembly>
 </linker>
