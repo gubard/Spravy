@@ -30,9 +30,9 @@ public class SpravyToDoDbProfile : Profile
                         entity.Description,
                         context.Mapper.Map<Uri?>(entity.Link),
                         entity.OrderIndex,
-                        parameters.Status.Value,
-                        parameters.ActiveItem.Value,
-                        parameters.IsCan.Value
+                        parameters.Status,
+                        parameters.ActiveItem,
+                        parameters.IsCan
                     );
                 }
             );

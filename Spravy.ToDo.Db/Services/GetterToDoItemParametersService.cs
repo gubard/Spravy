@@ -17,35 +17,12 @@ public class GetterToDoItemParametersService
     )
     {
         var parameters = new ToDoItemParameters();
-
-        parameters = await (entity.Type switch
-        {
-            ToDoItemType.Value => GetValueParametersAsync(context, entity, offset, parameters, cancellationToken),
-            ToDoItemType.Group => GetGroupParametersAsync(context, entity, offset, parameters, cancellationToken),
-            ToDoItemType.Planned => GetPlannedParametersAsync(context, entity, offset, parameters, cancellationToken),
-            ToDoItemType.Periodicity => GetPeriodicityParametersAsync(
-                context,
-                entity,
-                offset,
-                parameters,
-                cancellationToken
-            ),
-            ToDoItemType.PeriodicityOffset => GetPeriodicityOffsetParametersAsync(
-                context,
-                entity,
-                offset,
-                parameters,
-                cancellationToken
-            ),
-            ToDoItemType.Circle => GetValueParametersAsync(context, entity, offset, parameters, cancellationToken),
-            ToDoItemType.Step => GetValueParametersAsync(context, entity, offset, parameters, cancellationToken),
-            _ => throw new ArgumentOutOfRangeException()
-        });
+        parameters = await GetToDoItemParametersAsync(context, entity, offset, parameters, cancellationToken);
 
         return CheckActiveItem(parameters, entity);
     }
 
-    private async Task<ToDoItemParameters> GetValueParametersAsync(
+    public async Task<ToDoItemParameters> GetToDoItemParametersAsync(
         SpravyDbToDoDbContext context,
         ToDoItemEntity entity,
         TimeSpan offset,
@@ -53,16 +30,28 @@ public class GetterToDoItemParametersService
         CancellationToken cancellationToken
     )
     {
-        if (parameters.IsSuccess)
+        if (entity.IsCompleted && IsCompletable(entity))
         {
-            return parameters;
+            return parameters.Set(ToDoItemIsCan.CanIncomplete)
+                .Set(null)
+                .Set(ToDoItemStatus.Completed);
         }
 
-        if (entity.IsCompleted)
+        if (IsDueable(entity))
         {
-            return parameters.WithIfNeed(ToDoItemIsCan.CanIncomplete)
-                .WithIfNeed(null)
-                .WithIfNeed(ToDoItemStatus.Completed, null);
+            if (entity.DueDate < DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
+            {
+                return parameters.Set(ToActiveToDoItem(entity))
+                    .Set(ToDoItemStatus.Miss)
+                    .Set(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
+            }
+
+            if (entity.DueDate > DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
+            {
+                return parameters.Set(null)
+                    .Set(ToDoItemStatus.Planned)
+                    .Set(ToDoItemIsCan.None);
+            }
         }
 
         var items = await context.Set<ToDoItemEntity>()
@@ -71,354 +60,123 @@ public class GetterToDoItemParametersService
             .OrderBy(x => x.OrderIndex)
             .ToArrayAsync(cancellationToken);
 
-        if (items.Length == 0)
-        {
-            var ai = ToActiveToDoItem(entity);
-
-            return parameters.WithIfNeed(ai)
-                .WithIfNeed(ToDoItemStatus.ReadyForComplete, ai)
-                .WithIfNeed(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
-        }
+        ActiveToDoItem? firstReadyForComplete = null;
+        var hasPlanned = false;
 
         foreach (var item in items)
         {
             parameters = await GetToDoItemParametersAsync(context, item, offset, parameters, cancellationToken);
+
+            switch (parameters.Status)
+            {
+                case ToDoItemStatus.Miss:
+                    if (IsGroup(entity))
+                    {
+                        return parameters.Set(ToDoItemStatus.Miss).Set(ToDoItemIsCan.None);
+                    }
+
+                    return parameters.Set(ToDoItemStatus.Miss);
+                case ToDoItemStatus.ReadyForComplete:
+                    firstReadyForComplete = parameters.ActiveItem ?? ToActiveToDoItem(item);
+                    break;
+                case ToDoItemStatus.Planned:
+                    hasPlanned = true;
+                    break;
+                case ToDoItemStatus.Completed:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        if (IsGroup(entity))
+        {
+            if (firstReadyForComplete is null)
+            {
+                if (hasPlanned)
+                {
+                    return parameters.Set(ToDoItemStatus.Planned).Set(ToDoItemIsCan.None).Set(null);
+                }
+            }
+            else
+            {
+                return parameters.Set(ToDoItemStatus.ReadyForComplete)
+                    .Set(ToDoItemIsCan.None)
+                    .Set(firstReadyForComplete);
+            }
+        }
+
+        if (firstReadyForComplete is null)
+        {
+            return parameters.Set(ToDoItemStatus.ReadyForComplete)
+                .Set(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip)
+                .Set(null);
         }
 
         switch (entity.ChildrenType)
         {
             case ToDoItemChildrenType.RequireCompletion:
-            {
-                if (parameters.ActiveItem is { IsSuccess: true, Value: not null })
-                {
-                    return parameters.Set(ToDoItemIsCan.None);
-                }
-
-                break;
-            }
+                return parameters.Set(ToDoItemStatus.ReadyForComplete)
+                    .Set(ToDoItemIsCan.None)
+                    .Set(firstReadyForComplete);
             case ToDoItemChildrenType.IgnoreCompletion:
-                return parameters.Set(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
+                return parameters.Set(ToDoItemStatus.ReadyForComplete)
+                    .Set(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip)
+                    .Set(firstReadyForComplete);
             default: throw new ArgumentOutOfRangeException();
         }
+    }
 
-        if (!parameters.ActiveItem.Value.HasValue)
+    private bool IsDueable(ToDoItemEntity entity)
+    {
+        return entity.Type switch
         {
-            return parameters.Set(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip)
-                .WithIfNeed(ToDoItemStatus.ReadyForComplete)
-                .Set(ToActiveToDoItem(entity));
-        }
+            ToDoItemType.Value => false,
+            ToDoItemType.Group => false,
+            ToDoItemType.Planned => true,
+            ToDoItemType.Periodicity => true,
+            ToDoItemType.PeriodicityOffset => true,
+            ToDoItemType.Circle => false,
+            ToDoItemType.Step => false,
+            _ => throw new ArgumentOutOfRangeException()
+        };
+    }
 
-        return parameters;
+    private bool IsCompletable(ToDoItemEntity entity)
+    {
+        return entity.Type switch
+        {
+            ToDoItemType.Value => true,
+            ToDoItemType.Group => false,
+            ToDoItemType.Planned => true,
+            ToDoItemType.Periodicity => false,
+            ToDoItemType.PeriodicityOffset => false,
+            ToDoItemType.Circle => true,
+            ToDoItemType.Step => true,
+            _ => throw new ArgumentOutOfRangeException()
+        };
+    }
+
+    private bool IsGroup(ToDoItemEntity entity)
+    {
+        return entity.Type switch
+        {
+            ToDoItemType.Value => false,
+            ToDoItemType.Group => true,
+            ToDoItemType.Planned => false,
+            ToDoItemType.Periodicity => false,
+            ToDoItemType.PeriodicityOffset => false,
+            ToDoItemType.Circle => false,
+            ToDoItemType.Step => false,
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
     private ToDoItemParameters CheckActiveItem(ToDoItemParameters parameters, ToDoItemEntity entity)
     {
-        return parameters.ActiveItem.Value.HasValue && parameters.ActiveItem.Value.Value.Id == entity.ParentId
+        return parameters.ActiveItem.HasValue && parameters.ActiveItem.Value.Id == entity.ParentId
             ? parameters.Set(null)
             : parameters;
-    }
-
-    private async Task<ToDoItemParameters> GetPlannedParametersAsync(
-        SpravyDbToDoDbContext context,
-        ToDoItemEntity entity,
-        TimeSpan offset,
-        ToDoItemParameters parameters,
-        CancellationToken cancellationToken
-    )
-    {
-        if (parameters.IsSuccess)
-        {
-            return parameters;
-        }
-
-        if (entity.IsCompleted)
-        {
-            return parameters.WithIfNeed(ToDoItemIsCan.CanIncomplete)
-                .WithIfNeed(null)
-                .WithIfNeed(ToDoItemStatus.Completed, null);
-        }
-
-        var items = await context.Set<ToDoItemEntity>()
-            .AsNoTracking()
-            .Where(x => x.ParentId == entity.Id)
-            .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync(cancellationToken);
-
-        var ai = ToActiveToDoItem(entity);
-
-        if (items.Length == 0)
-        {
-            if (entity.DueDate == DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
-            {
-                return parameters.WithIfNeed(ToActiveToDoItem(entity))
-                    .WithIfNeed(ToDoItemStatus.ReadyForComplete, ai)
-                    .WithIfNeed(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
-            }
-        }
-
-        if (entity.DueDate < DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
-        {
-            return parameters.WithIfNeed(ToActiveToDoItem(entity))
-                .WithIfNeed(ToDoItemStatus.Miss, ai)
-                .WithIfNeed(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
-        }
-
-        if (entity.DueDate > DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
-        {
-            return parameters.WithIfNeed(null)
-                .WithIfNeed(ToDoItemStatus.Planned, null)
-                .WithIfNeed(ToDoItemIsCan.None);
-        }
-
-        foreach (var item in items)
-        {
-            parameters = await GetToDoItemParametersAsync(context, item, offset, parameters, cancellationToken);
-        }
-
-        switch (entity.ChildrenType)
-        {
-            case ToDoItemChildrenType.RequireCompletion:
-            {
-                if (parameters.ActiveItem is { IsSuccess: true, Value: not null })
-                {
-                    return parameters.Set(ToDoItemIsCan.None);
-                }
-
-                break;
-            }
-            case ToDoItemChildrenType.IgnoreCompletion:
-                return parameters.Set(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
-            default: throw new ArgumentOutOfRangeException();
-        }
-
-        return parameters;
-    }
-
-    private async Task<ToDoItemParameters> GetPeriodicityOffsetParametersAsync(
-        SpravyDbToDoDbContext context,
-        ToDoItemEntity entity,
-        TimeSpan offset,
-        ToDoItemParameters parameters,
-        CancellationToken cancellationToken
-    )
-    {
-        if (parameters.IsSuccess)
-        {
-            return parameters;
-        }
-
-        if (entity.IsCompleted)
-        {
-            return parameters.WithIfNeed(ToDoItemIsCan.CanIncomplete)
-                .WithIfNeed(null)
-                .WithIfNeed(ToDoItemStatus.Completed, null);
-        }
-
-        var items = await context.Set<ToDoItemEntity>()
-            .AsNoTracking()
-            .Where(x => x.ParentId == entity.Id)
-            .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync();
-
-        var ai = ToActiveToDoItem(entity);
-
-        if (items.Length == 0)
-        {
-            if (entity.DueDate == DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
-            {
-                return parameters.WithIfNeed(ai)
-                    .WithIfNeed(ToDoItemStatus.ReadyForComplete, ai)
-                    .WithIfNeed(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
-            }
-        }
-
-        if (entity.DueDate < DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
-        {
-            return parameters.WithIfNeed(ai)
-                .WithIfNeed(ToDoItemStatus.Miss, ai)
-                .WithIfNeed(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
-        }
-
-        if (entity.DueDate > DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
-        {
-            return parameters.WithIfNeed(null)
-                .WithIfNeed(ToDoItemStatus.Planned, null)
-                .WithIfNeed(ToDoItemIsCan.None);
-        }
-
-
-        foreach (var item in items)
-        {
-            parameters = await GetToDoItemParametersAsync(context, item, offset, parameters, cancellationToken);
-        }
-
-        switch (entity.ChildrenType)
-        {
-            case ToDoItemChildrenType.RequireCompletion:
-            {
-                if (parameters.ActiveItem is { IsSuccess: true, Value: not null })
-                {
-                    return parameters.Set(ToDoItemIsCan.None);
-                }
-
-                break;
-            }
-            case ToDoItemChildrenType.IgnoreCompletion:
-                return parameters.Set(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
-            default: throw new ArgumentOutOfRangeException();
-        }
-
-        if (entity.DueDate == DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
-        {
-            return parameters.WithIfNeed(ai)
-                .WithIfNeed(ToDoItemStatus.ReadyForComplete, ai)
-                .Set(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
-        }
-
-        return parameters;
-    }
-
-    private async Task<ToDoItemParameters> GetPeriodicityParametersAsync(
-        SpravyDbToDoDbContext context,
-        ToDoItemEntity entity,
-        TimeSpan offset,
-        ToDoItemParameters parameters,
-        CancellationToken cancellationToken
-    )
-    {
-        if (parameters.IsSuccess)
-        {
-            return parameters;
-        }
-
-        if (entity.IsCompleted)
-        {
-            return parameters.WithIfNeed(ToDoItemIsCan.CanIncomplete)
-                .WithIfNeed(null)
-                .WithIfNeed(ToDoItemStatus.Completed, null);
-        }
-
-        var items = await context.Set<ToDoItemEntity>()
-            .AsNoTracking()
-            .Where(x => x.ParentId == entity.Id)
-            .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync(cancellationToken);
-
-        var ai = ToActiveToDoItem(entity);
-
-        if (items.Length == 0)
-        {
-            if (entity.DueDate == DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
-            {
-                return parameters.WithIfNeed(ai)
-                    .WithIfNeed(ToDoItemStatus.ReadyForComplete, ai)
-                    .WithIfNeed(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
-            }
-        }
-
-        if (entity.DueDate < DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
-        {
-            return parameters.WithIfNeed(ai)
-                .WithIfNeed(ToDoItemStatus.Miss, ai)
-                .WithIfNeed(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
-        }
-
-        if (entity.DueDate > DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
-        {
-            return parameters.WithIfNeed(null)
-                .WithIfNeed(ToDoItemStatus.Planned, null)
-                .WithIfNeed(ToDoItemIsCan.None);
-        }
-
-        foreach (var item in items)
-        {
-            parameters = await GetToDoItemParametersAsync(context, item, offset, parameters, cancellationToken);
-        }
-
-        switch (entity.ChildrenType)
-        {
-            case ToDoItemChildrenType.RequireCompletion:
-            {
-                if (parameters.ActiveItem is { IsSuccess: true, Value: not null })
-                {
-                    return parameters.Set(ToDoItemIsCan.None);
-                }
-
-                break;
-            }
-            case ToDoItemChildrenType.IgnoreCompletion:
-                return parameters.Set(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
-            default: throw new ArgumentOutOfRangeException();
-        }
-
-        return parameters;
-    }
-
-    private async Task<ToDoItemParameters> GetGroupParametersAsync(
-        SpravyDbToDoDbContext context,
-        ToDoItemEntity entity,
-        TimeSpan offset,
-        ToDoItemParameters parameters,
-        CancellationToken cancellationToken
-    )
-    {
-        if (parameters.IsSuccess)
-        {
-            return parameters;
-        }
-
-        var items = await context.Set<ToDoItemEntity>()
-            .AsNoTracking()
-            .Where(x => x.ParentId == entity.Id)
-            .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync(cancellationToken);
-
-        if (items.Length == 0)
-        {
-            return parameters.WithIfNeed(null)
-                .WithIfNeed(ToDoItemStatus.Completed, null)
-                .Set(ToDoItemIsCan.None);
-        }
-
-        foreach (var item in items)
-        {
-            parameters = await GetToDoItemParametersAsync(context, item, offset, parameters, cancellationToken);
-        }
-
-        return parameters.Set(ToDoItemIsCan.None);
-    }
-
-    private Task<ToDoItemParameters> GetToDoItemParametersAsync(
-        SpravyDbToDoDbContext context,
-        ToDoItemEntity entity,
-        TimeSpan offset,
-        ToDoItemParameters parameters,
-        CancellationToken cancellationToken
-    )
-    {
-        return entity.Type switch
-        {
-            ToDoItemType.Value => GetValueParametersAsync(context, entity, offset, parameters, cancellationToken),
-            ToDoItemType.Group => GetGroupParametersAsync(context, entity, offset, parameters, cancellationToken),
-            ToDoItemType.Planned => GetPlannedParametersAsync(context, entity, offset, parameters, cancellationToken),
-            ToDoItemType.Periodicity => GetPeriodicityParametersAsync(
-                context,
-                entity,
-                offset,
-                parameters,
-                cancellationToken
-            ),
-            ToDoItemType.PeriodicityOffset => GetPeriodicityOffsetParametersAsync(
-                context,
-                entity,
-                offset,
-                parameters,
-                cancellationToken
-            ),
-            ToDoItemType.Circle => GetValueParametersAsync(context, entity, offset, parameters, cancellationToken),
-            ToDoItemType.Step => GetValueParametersAsync(context, entity, offset, parameters, cancellationToken),
-            _ => throw new ArgumentOutOfRangeException()
-        };
     }
 
     private ActiveToDoItem? ToActiveToDoItem(ToDoItemEntity entity)

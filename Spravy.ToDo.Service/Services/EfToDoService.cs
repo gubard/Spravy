@@ -417,7 +417,7 @@ public class EfToDoService : IToDoService
                             cancellationToken
                         );
 
-                    if (!parameters.IsCan.Value.HasFlag(ToDoItemIsCan.CanComplete))
+                    if (!parameters.IsCan.HasFlag(ToDoItemIsCan.CanComplete))
                     {
                         throw new ArgumentException();
                     }
@@ -643,7 +643,7 @@ public class EfToDoService : IToDoService
                         cancellationToken
                     );
 
-                if (!parameters.IsCan.Value.HasFlag(ToDoItemIsCan.CanSkip))
+                if (!parameters.IsCan.HasFlag(ToDoItemIsCan.CanSkip))
                 {
                     throw new ArgumentException();
                 }
@@ -704,7 +704,7 @@ public class EfToDoService : IToDoService
                         cancellationToken
                     );
 
-                if (!parameters.IsCan.Value.HasFlag(ToDoItemIsCan.CanFail))
+                if (!parameters.IsCan.HasFlag(ToDoItemIsCan.CanFail))
                 {
                     throw new ArgumentException();
                 }
