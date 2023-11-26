@@ -77,7 +77,8 @@ public class GetterToDoItemParametersService
 
                     return parameters.Set(ToDoItemStatus.Miss);
                 case ToDoItemStatus.ReadyForComplete:
-                    firstReadyForComplete = parameters.ActiveItem ?? ToActiveToDoItem(item);
+                    firstReadyForComplete ??= parameters.ActiveItem ?? ToActiveToDoItem(item);
+
                     break;
                 case ToDoItemStatus.Planned:
                     hasPlanned = true;
