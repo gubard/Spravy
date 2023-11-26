@@ -18,9 +18,6 @@ using Nuke.Common.ProjectModel;
 using Nuke.Common.Tools.DotNet;
 using Renci.SshNet;
 using Serilog;
-using Telegram.Bot;
-using Telegram.Bot.Exceptions;
-using Telegram.Bot.Types;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 namespace _build;
@@ -334,43 +331,6 @@ class Build : NukeBuild
             );
 
     Target Publish => _ => _.DependsOn(PublishDesktop, PublishAndroid, PublishBrowser);
-
-    async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
-    {
-        // Only process Message updates: https://core.telegram.org/bots/api#message
-        if (update.Message is not { } message)
-            return;
-        // Only process text messages
-        if (message.Text is not { } messageText)
-            return;
-
-        var chatId = message.Chat.Id;
-
-        Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
-
-        // Echo received message text
-        await using Stream stream = AndroidFolder.GetFiles().First(x => x.Name.EndsWith("Signed")).OpenRead();
-
-        await botClient.SendDocumentAsync(
-            chatId: chatId,
-            document: InputFile.FromStream(stream: stream, fileName: "Spravy.apk"),
-            caption: "Android",
-            cancellationToken: cancellationToken
-        );
-    }
-
-    Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
-    {
-        var ErrorMessage = exception switch
-        {
-            ApiRequestException apiRequestException
-                => $"Telegram API Error:\n[{apiRequestException.ErrorCode}]\n{apiRequestException.Message}",
-            _ => exception.ToString()
-        };
-
-        Console.WriteLine(ErrorMessage);
-        return Task.CompletedTask;
-    }
 
     void DeployDesktop(string runtime)
     {
