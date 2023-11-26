@@ -97,6 +97,8 @@ public class GetterToDoItemParametersService
                 {
                     return parameters.Set(ToDoItemStatus.Planned).Set(ToDoItemIsCan.None).Set(null);
                 }
+
+                return parameters.Set(ToDoItemStatus.Completed).Set(ToDoItemIsCan.None).Set(null);
             }
             else
             {
