@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using _build.Extensions;
 using _build.Helpers;
 using _build.Models;
@@ -17,6 +19,10 @@ using Nuke.Common.Tools.DotNet;
 using Renci.SshNet;
 using Serilog;
 using Telegram.Bot;
+using Telegram.Bot.Exceptions;
+using Telegram.Bot.Polling;
+using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 namespace _build;
@@ -53,6 +59,7 @@ class Build : NukeBuild
     static readonly Dictionary<Project, ServiceOptions> ServiceOptions = new();
     static readonly List<Project> ServiceProjects = new();
     static string Token;
+    static DirectoryInfo AndroidFolder;
 
     const FtpListOption FtpOption =
         FtpListOption.Recursive | FtpListOption.ForceList | FtpListOption.Auto | FtpListOption.AllFiles;
@@ -312,7 +319,7 @@ class Build : NukeBuild
 
                     var android = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Android");
 
-                    var androidFolder = android.PublishProject(PathHelper.PublishFolder, Configuration, setting =>
+                    AndroidFolder = android.PublishProject(PathHelper.PublishFolder, Configuration, setting =>
                         setting
                             .SetProperty("AndroidKeyStore", "true")
                             .SetProperty("AndroidSigningKeyStore", keyStoreFile.FullName)
@@ -325,7 +332,7 @@ class Build : NukeBuild
 
                     DeleteIfExistsDirectory(ftpClient, $"/home/{FtpUser}/Apps/Spravy.Ui.Android");
                     CreateIfNotExistsDirectory(ftpClient, $"/home/{FtpUser}/Apps");
-                    ftpClient.UploadDirectory(androidFolder.FullName, $"/home/{FtpUser}/Apps/Spravy.Ui.Android");
+                    ftpClient.UploadDirectory(AndroidFolder.FullName, $"/home/{FtpUser}/Apps/Spravy.Ui.Android");
                 }
             );
 
@@ -337,9 +344,60 @@ class Build : NukeBuild
                 {
                     var botClient = new TelegramBotClient(TelegramToken);
                     var me = botClient.GetMeAsync().GetAwaiter().GetResult();
+                    // StartReceiving does not block the caller thread. Receiving is done on the ThreadPool.
+                    var receiverOptions = new ReceiverOptions()
+                    {
+                        AllowedUpdates =
+                            Array.Empty<UpdateType>() // receive all update types except ChatMember related updates
+                    };
+                    using CancellationTokenSource cts = new();
+                    botClient.StartReceiving(
+                        updateHandler: HandleUpdateAsync,
+                        pollingErrorHandler: HandlePollingErrorAsync,
+                        receiverOptions: receiverOptions,
+                        cancellationToken: cts.Token
+                    );
                     Log.Information("Hello, World! I am user {MeId} and my name is {MeFirstName}", me.Id, me.FirstName);
+                    cts.Cancel();
                 }
             );
+
+    async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
+    {
+        // Only process Message updates: https://core.telegram.org/bots/api#message
+        if (update.Message is not { } message)
+            return;
+        // Only process text messages
+        if (message.Text is not { } messageText)
+            return;
+
+        var chatId = message.Chat.Id;
+
+        Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
+
+        // Echo received message text
+        await using Stream stream = AndroidFolder.GetFiles().First(x => x.Name.EndsWith("Signed")).OpenRead();
+
+        await botClient.SendDocumentAsync(
+            chatId: chatId,
+            document: InputFile.FromStream(stream: stream, fileName: "Spravy.apk"),
+            caption: "Android",
+            cancellationToken: cancellationToken
+        );
+    }
+
+    Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
+    {
+        var ErrorMessage = exception switch
+        {
+            ApiRequestException apiRequestException
+                => $"Telegram API Error:\n[{apiRequestException.ErrorCode}]\n{apiRequestException.Message}",
+            _ => exception.ToString()
+        };
+
+        Console.WriteLine(ErrorMessage);
+        return Task.CompletedTask;
+    }
 
     void DeployDesktop(string runtime)
     {
