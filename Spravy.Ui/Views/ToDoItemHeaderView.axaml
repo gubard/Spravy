@@ -74,7 +74,7 @@
                           VerticalScrollBarVisibility="Disabled"
                           HorizontalScrollBarVisibility="Auto"
                           HorizontalAlignment="Left">
-                <TextBlock Text="{Binding Item.Name}" Classes="alignment-center Subtitle1" />
+                <TextBlock Text="{Binding Item.Name}" Classes="alignment-center Headline6" />
             </ScrollViewer>
 
             <StackPanel Grid.Column="2" Orientation="Horizontal">
