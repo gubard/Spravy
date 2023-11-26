@@ -16,6 +16,7 @@ using Nuke.Common.ProjectModel;
 using Nuke.Common.Tools.DotNet;
 using Renci.SshNet;
 using Serilog;
+using Telegram.Bot;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 namespace _build;
@@ -29,7 +30,7 @@ class Build : NukeBuild
     ///   - Microsoft VSCode           https://nuke.build/vscode
     public static int Main()
     {
-        return Execute<Build>(x => x.Publish);
+        return Execute<Build>(x => x.SendTelegram);
     }
 
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
@@ -328,6 +329,16 @@ class Build : NukeBuild
             );
 
     Target Publish => _ => _.DependsOn(PublishDesktop, PublishAndroid, PublishBrowser);
+
+    Target SendTelegram =>
+        _ => _.DependsOn(Publish)
+            .Executes(() =>
+                {
+                    var botClient = new TelegramBotClient("{YOUR_ACCESS_TOKEN_HERE}");
+                    var me = botClient.GetMeAsync().GetAwaiter().GetResult();
+                    Log.Information("Hello, World! I am user {MeId} and my name is {MeFirstName}", me.Id, me.FirstName);
+                }
+            );
 
     void DeployDesktop(string runtime)
     {
