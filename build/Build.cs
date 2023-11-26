@@ -48,6 +48,7 @@ class Build : NukeBuild
     [Parameter] readonly string JwtAudience;
     [Parameter] readonly string AndroidSigningKeyPass;
     [Parameter] readonly string AndroidSigningStorePass;
+    [Parameter] readonly string TelegramToken;
     static readonly Dictionary<string, string> Hosts = new();
     static readonly Dictionary<Project, ServiceOptions> ServiceOptions = new();
     static readonly List<Project> ServiceProjects = new();
@@ -334,7 +335,7 @@ class Build : NukeBuild
         _ => _.DependsOn(Publish)
             .Executes(() =>
                 {
-                    var botClient = new TelegramBotClient("{YOUR_ACCESS_TOKEN_HERE}");
+                    var botClient = new TelegramBotClient(TelegramToken);
                     var me = botClient.GetMeAsync().GetAwaiter().GetResult();
                     Log.Information("Hello, World! I am user {MeId} and my name is {MeFirstName}", me.Id, me.FirstName);
                 }
