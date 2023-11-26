@@ -283,33 +283,31 @@ class Build : NukeBuild
 
                     keyStoreFile.Directory.CreateIfNotExits();
 
-                    if (keyStoreFile.Exists)
+                    if (!keyStoreFile.Exists)
                     {
-                        keyStoreFile.Delete();
+                        Cli.Wrap("keytool")
+                            .WithArguments(new[]
+                                {
+                                    "-genkey",
+                                    "-v",
+                                    "-keystore",
+                                    keyStoreFile.FullName,
+                                    "-alias",
+                                    "spravy",
+                                    "-keyalg",
+                                    "RSA",
+                                    "-keysize",
+                                    "2048",
+                                    "-validity",
+                                    "10000",
+                                    "-dname",
+                                    "CN=Serhii Maksymov, OU=Serhii Maksymov FOP, O=Serhii Maksymov FOP, L=Kharkiv, S=Kharkiv State, C=Ukraine",
+                                    "-storepass",
+                                    AndroidSigningStorePass,
+                                }
+                            )
+                            .RunCommand();
                     }
-
-                    Cli.Wrap("keytool")
-                        .WithArguments(new[]
-                            {
-                                "-genkey",
-                                "-v",
-                                "-keystore",
-                                keyStoreFile.FullName,
-                                "-alias",
-                                "spravy",
-                                "-keyalg",
-                                "RSA",
-                                "-keysize",
-                                "2048",
-                                "-validity",
-                                "10000",
-                                "-dname",
-                                "CN=Serhii Maksymov, OU=Serhii Maksymov FOP, O=Serhii Maksymov FOP, L=Kharkiv, S=Kharkiv State, C=Ukraine",
-                                "-storepass",
-                                AndroidSigningStorePass,
-                            }
-                        )
-                        .RunCommand();
 
                     var android = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Android");
 
