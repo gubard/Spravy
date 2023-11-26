@@ -114,7 +114,8 @@ public class EfToDoService : IToDoService
         var parameters = await getterToDoItemParametersService.GetToDoItemParametersAsync(
             context,
             item,
-            httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset()
+            httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset(),
+            cancellationToken
         );
 
         var result = mapper.Map<ToDoItem>(item, a => a.Items.Add(SpravyToDoDbProfile.ParametersName, parameters));
@@ -409,7 +410,12 @@ public class EfToDoService : IToDoService
                 if (isComplete)
                 {
                     var parameters =
-                        await getterToDoItemParametersService.GetToDoItemParametersAsync(context, item, offset);
+                        await getterToDoItemParametersService.GetToDoItemParametersAsync(
+                            context,
+                            item,
+                            offset,
+                            cancellationToken
+                        );
 
                     if (!parameters.IsCan.Value.HasFlag(ToDoItemIsCan.CanComplete))
                     {
@@ -443,6 +449,7 @@ public class EfToDoService : IToDoService
                         default: throw new ArgumentOutOfRangeException();
                     }
 
+                    item.LastCompletedType = ToDoItemCompletedType.Completed;
                     item.CompletedCount++;
                     UpdateDueDate(item, cancellationToken);
                     item.LastCompleted = DateTimeOffset.Now;
@@ -590,7 +597,7 @@ public class EfToDoService : IToDoService
                              && x.Id != item.Id
                              && x.OrderIndex >= orderIndex
                     )
-                    .ToArrayAsync();
+                    .ToArrayAsync(cancellationToken);
 
                 foreach (var itemEntity in items)
                 {
@@ -628,9 +635,15 @@ public class EfToDoService : IToDoService
             {
                 var item = await c.Set<ToDoItemEntity>().FindAsync(id);
                 item = item.ThrowIfNull();
-                var isCanComplete = await canCompleteToDoItemService.IsCanCompleteAsync(c, item, offset);
+                var parameters =
+                    await getterToDoItemParametersService.GetToDoItemParametersAsync(
+                        c,
+                        item,
+                        offset,
+                        cancellationToken
+                    );
 
-                if (!isCanComplete)
+                if (!parameters.IsCan.Value.HasFlag(ToDoItemIsCan.CanSkip))
                 {
                     throw new ArgumentException();
                 }
@@ -663,6 +676,7 @@ public class EfToDoService : IToDoService
                         throw new ArgumentOutOfRangeException();
                 }
 
+                item.LastCompletedType = ToDoItemCompletedType.Skipped;
                 item.SkippedCount++;
                 UpdateDueDate(item, cancellationToken);
                 item.LastCompleted = DateTimeOffset.Now;
@@ -682,9 +696,15 @@ public class EfToDoService : IToDoService
             {
                 var item = await c.Set<ToDoItemEntity>().FindAsync(id);
                 item = item.ThrowIfNull();
-                var isCanComplete = await canCompleteToDoItemService.IsCanCompleteAsync(c, item, offset);
+                var parameters =
+                    await getterToDoItemParametersService.GetToDoItemParametersAsync(
+                        c,
+                        item,
+                        offset,
+                        cancellationToken
+                    );
 
-                if (!isCanComplete)
+                if (!parameters.IsCan.Value.HasFlag(ToDoItemIsCan.CanFail))
                 {
                     throw new ArgumentException();
                 }
@@ -717,6 +737,7 @@ public class EfToDoService : IToDoService
                         throw new ArgumentOutOfRangeException();
                 }
 
+                item.LastCompletedType = ToDoItemCompletedType.Failed;
                 item.FailedCount++;
                 UpdateDueDate(item, cancellationToken);
                 item.LastCompleted = DateTimeOffset.Now;

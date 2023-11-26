@@ -44,6 +44,21 @@ public readonly struct ToDoItemParameters
     {
         return new ToDoItemParameters(activeToDoItem.ToSuccessValue(), Status, IsCan);
     }
+    
+    public ToDoItemParameters WithIfNeed(ToDoItemStatus status)
+    {
+        if (Status.IsSuccess)
+        {
+            if (status < Status.Value)
+            {
+                return new ToDoItemParameters(ActiveItem, status.ToSuccessValue(), IsCan);
+            }
+            
+            return new ToDoItemParameters(ActiveItem, Status, IsCan);
+        }
+
+        return new ToDoItemParameters(ActiveItem, status.ToSuccessValue(), IsCan);
+    }
 
     public ToDoItemParameters WithIfNeed(ToDoItemStatus status, ActiveToDoItem? activeToDoItem)
     {

@@ -12,38 +12,45 @@ public class GetterToDoItemParametersService
     public async Task<ToDoItemParameters> GetToDoItemParametersAsync(
         SpravyDbToDoDbContext context,
         ToDoItemEntity entity,
-        TimeSpan offset
+        TimeSpan offset,
+        CancellationToken cancellationToken
     )
     {
         var parameters = new ToDoItemParameters();
 
         parameters = await (entity.Type switch
         {
-            ToDoItemType.Value => GetValueParametersAsync(context, entity, offset, parameters),
-            ToDoItemType.Group => GetGroupParametersAsync(context, entity, offset, parameters),
-            ToDoItemType.Planned => GetPlannedParametersAsync(context, entity, offset, parameters),
-            ToDoItemType.Periodicity => GetPeriodicityParametersAsync(context, entity, offset, parameters),
-            ToDoItemType.PeriodicityOffset => GetPeriodicityOffsetParametersAsync(context, entity, offset, parameters),
-            ToDoItemType.Circle => GetCircleParametersAsync(context, entity, offset, parameters),
-            ToDoItemType.Step => GetStepParametersAsync(context, entity, offset, parameters),
+            ToDoItemType.Value => GetValueParametersAsync(context, entity, offset, parameters, cancellationToken),
+            ToDoItemType.Group => GetGroupParametersAsync(context, entity, offset, parameters, cancellationToken),
+            ToDoItemType.Planned => GetPlannedParametersAsync(context, entity, offset, parameters, cancellationToken),
+            ToDoItemType.Periodicity => GetPeriodicityParametersAsync(
+                context,
+                entity,
+                offset,
+                parameters,
+                cancellationToken
+            ),
+            ToDoItemType.PeriodicityOffset => GetPeriodicityOffsetParametersAsync(
+                context,
+                entity,
+                offset,
+                parameters,
+                cancellationToken
+            ),
+            ToDoItemType.Circle => GetValueParametersAsync(context, entity, offset, parameters, cancellationToken),
+            ToDoItemType.Step => GetValueParametersAsync(context, entity, offset, parameters, cancellationToken),
             _ => throw new ArgumentOutOfRangeException()
         });
 
         return CheckActiveItem(parameters, entity);
     }
 
-    private ToDoItemParameters CheckActiveItem(ToDoItemParameters parameters, ToDoItemEntity entity)
-    {
-        return parameters.ActiveItem.Value.HasValue && parameters.ActiveItem.Value.Value.Id == entity.ParentId
-            ? parameters.Set(null)
-            : parameters;
-    }
-
-    private async Task<ToDoItemParameters> GetPlannedParametersAsync(
+    private async Task<ToDoItemParameters> GetValueParametersAsync(
         SpravyDbToDoDbContext context,
         ToDoItemEntity entity,
         TimeSpan offset,
-        ToDoItemParameters parameters
+        ToDoItemParameters parameters,
+        CancellationToken cancellationToken
     )
     {
         if (parameters.IsSuccess)
@@ -62,7 +69,80 @@ public class GetterToDoItemParametersService
             .AsNoTracking()
             .Where(x => x.ParentId == entity.Id)
             .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync();
+            .ToArrayAsync(cancellationToken);
+
+        if (items.Length == 0)
+        {
+            var ai = ToActiveToDoItem(entity);
+
+            return parameters.WithIfNeed(ai)
+                .WithIfNeed(ToDoItemStatus.ReadyForComplete, ai)
+                .WithIfNeed(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
+        }
+
+        foreach (var item in items)
+        {
+            parameters = await GetToDoItemParametersAsync(context, item, offset, parameters, cancellationToken);
+        }
+
+        switch (entity.ChildrenType)
+        {
+            case ToDoItemChildrenType.RequireCompletion:
+            {
+                if (parameters.ActiveItem is { IsSuccess: true, Value: not null })
+                {
+                    return parameters.Set(ToDoItemIsCan.None);
+                }
+
+                break;
+            }
+            case ToDoItemChildrenType.IgnoreCompletion:
+                return parameters.Set(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
+            default: throw new ArgumentOutOfRangeException();
+        }
+
+        if (!parameters.ActiveItem.Value.HasValue)
+        {
+            return parameters.Set(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip)
+                .WithIfNeed(ToDoItemStatus.ReadyForComplete)
+                .Set(ToActiveToDoItem(entity));
+        }
+
+        return parameters;
+    }
+
+    private ToDoItemParameters CheckActiveItem(ToDoItemParameters parameters, ToDoItemEntity entity)
+    {
+        return parameters.ActiveItem.Value.HasValue && parameters.ActiveItem.Value.Value.Id == entity.ParentId
+            ? parameters.Set(null)
+            : parameters;
+    }
+
+    private async Task<ToDoItemParameters> GetPlannedParametersAsync(
+        SpravyDbToDoDbContext context,
+        ToDoItemEntity entity,
+        TimeSpan offset,
+        ToDoItemParameters parameters,
+        CancellationToken cancellationToken
+    )
+    {
+        if (parameters.IsSuccess)
+        {
+            return parameters;
+        }
+
+        if (entity.IsCompleted)
+        {
+            return parameters.WithIfNeed(ToDoItemIsCan.CanIncomplete)
+                .WithIfNeed(null)
+                .WithIfNeed(ToDoItemStatus.Completed, null);
+        }
+
+        var items = await context.Set<ToDoItemEntity>()
+            .AsNoTracking()
+            .Where(x => x.ParentId == entity.Id)
+            .OrderBy(x => x.OrderIndex)
+            .ToArrayAsync(cancellationToken);
 
         var ai = ToActiveToDoItem(entity);
 
@@ -92,7 +172,7 @@ public class GetterToDoItemParametersService
 
         foreach (var item in items)
         {
-            parameters = await GetToDoItemParametersAsync(context, item, offset, parameters);
+            parameters = await GetToDoItemParametersAsync(context, item, offset, parameters, cancellationToken);
         }
 
         switch (entity.ChildrenType)
@@ -118,7 +198,8 @@ public class GetterToDoItemParametersService
         SpravyDbToDoDbContext context,
         ToDoItemEntity entity,
         TimeSpan offset,
-        ToDoItemParameters parameters
+        ToDoItemParameters parameters,
+        CancellationToken cancellationToken
     )
     {
         if (parameters.IsSuccess)
@@ -168,7 +249,7 @@ public class GetterToDoItemParametersService
 
         foreach (var item in items)
         {
-            parameters = await GetToDoItemParametersAsync(context, item, offset, parameters);
+            parameters = await GetToDoItemParametersAsync(context, item, offset, parameters, cancellationToken);
         }
 
         switch (entity.ChildrenType)
@@ -201,7 +282,8 @@ public class GetterToDoItemParametersService
         SpravyDbToDoDbContext context,
         ToDoItemEntity entity,
         TimeSpan offset,
-        ToDoItemParameters parameters
+        ToDoItemParameters parameters,
+        CancellationToken cancellationToken
     )
     {
         if (parameters.IsSuccess)
@@ -220,7 +302,7 @@ public class GetterToDoItemParametersService
             .AsNoTracking()
             .Where(x => x.ParentId == entity.Id)
             .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync();
+            .ToArrayAsync(cancellationToken);
 
         var ai = ToActiveToDoItem(entity);
 
@@ -250,7 +332,7 @@ public class GetterToDoItemParametersService
 
         foreach (var item in items)
         {
-            parameters = await GetToDoItemParametersAsync(context, item, offset, parameters);
+            parameters = await GetToDoItemParametersAsync(context, item, offset, parameters, cancellationToken);
         }
 
         switch (entity.ChildrenType)
@@ -276,7 +358,8 @@ public class GetterToDoItemParametersService
         SpravyDbToDoDbContext context,
         ToDoItemEntity entity,
         TimeSpan offset,
-        ToDoItemParameters parameters
+        ToDoItemParameters parameters,
+        CancellationToken cancellationToken
     )
     {
         if (parameters.IsSuccess)
@@ -288,234 +371,52 @@ public class GetterToDoItemParametersService
             .AsNoTracking()
             .Where(x => x.ParentId == entity.Id)
             .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync();
+            .ToArrayAsync(cancellationToken);
 
         if (items.Length == 0)
         {
             return parameters.WithIfNeed(null)
                 .WithIfNeed(ToDoItemStatus.Completed, null)
-                .WithIfNeed(ToDoItemIsCan.None);
+                .Set(ToDoItemIsCan.None);
         }
 
         foreach (var item in items)
         {
-            parameters = await GetToDoItemParametersAsync(context, item, offset, parameters);
+            parameters = await GetToDoItemParametersAsync(context, item, offset, parameters, cancellationToken);
         }
 
-        return parameters.WithIfNeed(ToDoItemIsCan.None);
-    }
-
-    private async Task<ToDoItemParameters> GetCircleParametersAsync(
-        SpravyDbToDoDbContext context,
-        ToDoItemEntity entity,
-        TimeSpan offset,
-        ToDoItemParameters parameters
-    )
-    {
-        if (parameters.IsSuccess)
-        {
-            return parameters;
-        }
-
-        if (entity.IsCompleted)
-        {
-            return parameters.WithIfNeed(ToDoItemIsCan.CanIncomplete)
-                .WithIfNeed(null)
-                .WithIfNeed(ToDoItemStatus.Completed, null);
-        }
-
-        var items = await context.Set<ToDoItemEntity>()
-            .AsNoTracking()
-            .Where(x => x.ParentId == entity.Id)
-            .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync();
-
-        if (items.Length == 0)
-        {
-            var ai = ToActiveToDoItem(entity);
-
-            return parameters.WithIfNeed(ToActiveToDoItem(entity))
-                .WithIfNeed(ToDoItemStatus.ReadyForComplete, ai)
-                .WithIfNeed(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
-        }
-
-        foreach (var item in items)
-        {
-            parameters = await GetToDoItemParametersAsync(context, item, offset, parameters);
-        }
-
-        switch (entity.ChildrenType)
-        {
-            case ToDoItemChildrenType.RequireCompletion:
-            {
-                if (parameters.ActiveItem is { IsSuccess: true, Value: not null })
-                {
-                    return parameters.Set(ToDoItemIsCan.None);
-                }
-
-                break;
-            }
-            case ToDoItemChildrenType.IgnoreCompletion:
-                return parameters.Set(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
-            default: throw new ArgumentOutOfRangeException();
-        }
-
-        if (!parameters.ActiveItem.Value.HasValue)
-        {
-            return parameters.Set(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip)
-                .Set(ToDoItemStatus.ReadyForComplete)
-                .Set(ToActiveToDoItem(entity));
-        }
-
-        return parameters;
-    }
-
-    private async Task<ToDoItemParameters> GetStepParametersAsync(
-        SpravyDbToDoDbContext context,
-        ToDoItemEntity entity,
-        TimeSpan offset,
-        ToDoItemParameters parameters
-    )
-    {
-        if (parameters.IsSuccess)
-        {
-            return parameters;
-        }
-
-        if (entity.IsCompleted)
-        {
-            return parameters.WithIfNeed(ToDoItemIsCan.CanIncomplete)
-                .WithIfNeed(null)
-                .WithIfNeed(ToDoItemStatus.Completed, null);
-        }
-
-        var items = await context.Set<ToDoItemEntity>()
-            .AsNoTracking()
-            .Where(x => x.ParentId == entity.Id)
-            .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync();
-
-        if (items.Length == 0)
-        {
-            var ai = ToActiveToDoItem(entity);
-
-            return parameters.WithIfNeed(ai)
-                .WithIfNeed(ToDoItemStatus.ReadyForComplete, ai)
-                .WithIfNeed(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
-        }
-
-        foreach (var item in items)
-        {
-            parameters = await GetToDoItemParametersAsync(context, item, offset, parameters);
-        }
-
-        switch (entity.ChildrenType)
-        {
-            case ToDoItemChildrenType.RequireCompletion:
-            {
-                if (parameters.ActiveItem is { IsSuccess: true, Value: not null })
-                {
-                    return parameters.Set(ToDoItemIsCan.None);
-                }
-
-                break;
-            }
-            case ToDoItemChildrenType.IgnoreCompletion:
-                return parameters.Set(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
-            default: throw new ArgumentOutOfRangeException();
-        }
-
-        if (!parameters.ActiveItem.Value.HasValue)
-        {
-            return parameters.Set(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip)
-                .Set(ToDoItemStatus.ReadyForComplete)
-                .Set(ToActiveToDoItem(entity));
-        }
-
-        return parameters;
-    }
-
-    private async Task<ToDoItemParameters> GetValueParametersAsync(
-        SpravyDbToDoDbContext context,
-        ToDoItemEntity entity,
-        TimeSpan offset,
-        ToDoItemParameters parameters
-    )
-    {
-        if (parameters.IsSuccess)
-        {
-            return parameters;
-        }
-
-        if (entity.IsCompleted)
-        {
-            return parameters.WithIfNeed(ToDoItemIsCan.CanIncomplete)
-                .WithIfNeed(null)
-                .WithIfNeed(ToDoItemStatus.Completed, null);
-        }
-
-        var items = await context.Set<ToDoItemEntity>()
-            .AsNoTracking()
-            .Where(x => x.ParentId == entity.Id)
-            .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync();
-
-        if (items.Length == 0)
-        {
-            var ai = ToActiveToDoItem(entity);
-
-            return parameters.WithIfNeed(ai)
-                .WithIfNeed(ToDoItemStatus.ReadyForComplete, ai)
-                .WithIfNeed(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
-        }
-
-        foreach (var item in items)
-        {
-            parameters = await GetToDoItemParametersAsync(context, item, offset, parameters);
-        }
-
-        switch (entity.ChildrenType)
-        {
-            case ToDoItemChildrenType.RequireCompletion:
-            {
-                if (parameters.ActiveItem is { IsSuccess: true, Value: not null })
-                {
-                    return parameters.Set(ToDoItemIsCan.None);
-                }
-
-                break;
-            }
-            case ToDoItemChildrenType.IgnoreCompletion:
-                return parameters.Set(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
-            default: throw new ArgumentOutOfRangeException();
-        }
-
-        if (!parameters.ActiveItem.Value.HasValue)
-        {
-            return parameters.Set(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip)
-                .Set(ToDoItemStatus.ReadyForComplete)
-                .Set(ToActiveToDoItem(entity));
-        }
-
-        return parameters;
+        return parameters.Set(ToDoItemIsCan.None);
     }
 
     private Task<ToDoItemParameters> GetToDoItemParametersAsync(
         SpravyDbToDoDbContext context,
         ToDoItemEntity entity,
         TimeSpan offset,
-        ToDoItemParameters parameters
+        ToDoItemParameters parameters,
+        CancellationToken cancellationToken
     )
     {
         return entity.Type switch
         {
-            ToDoItemType.Value => GetValueParametersAsync(context, entity, offset, parameters),
-            ToDoItemType.Group => GetGroupParametersAsync(context, entity, offset, parameters),
-            ToDoItemType.Planned => GetPlannedParametersAsync(context, entity, offset, parameters),
-            ToDoItemType.Periodicity => GetPeriodicityParametersAsync(context, entity, offset, parameters),
-            ToDoItemType.PeriodicityOffset => GetPeriodicityOffsetParametersAsync(context, entity, offset, parameters),
-            ToDoItemType.Circle => GetCircleParametersAsync(context, entity, offset, parameters),
-            ToDoItemType.Step => GetStepParametersAsync(context, entity, offset, parameters),
+            ToDoItemType.Value => GetValueParametersAsync(context, entity, offset, parameters, cancellationToken),
+            ToDoItemType.Group => GetGroupParametersAsync(context, entity, offset, parameters, cancellationToken),
+            ToDoItemType.Planned => GetPlannedParametersAsync(context, entity, offset, parameters, cancellationToken),
+            ToDoItemType.Periodicity => GetPeriodicityParametersAsync(
+                context,
+                entity,
+                offset,
+                parameters,
+                cancellationToken
+            ),
+            ToDoItemType.PeriodicityOffset => GetPeriodicityOffsetParametersAsync(
+                context,
+                entity,
+                offset,
+                parameters,
+                cancellationToken
+            ),
+            ToDoItemType.Circle => GetValueParametersAsync(context, entity, offset, parameters, cancellationToken),
+            ToDoItemType.Step => GetValueParametersAsync(context, entity, offset, parameters, cancellationToken),
             _ => throw new ArgumentOutOfRangeException()
         };
     }
