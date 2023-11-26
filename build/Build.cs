@@ -36,7 +36,7 @@ class Build : NukeBuild
     ///   - Microsoft VSCode           https://nuke.build/vscode
     public static int Main()
     {
-        return Execute<Build>(x => x.SendTelegram);
+        return Execute<Build>(x => x.Publish);
     }
 
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
@@ -54,7 +54,6 @@ class Build : NukeBuild
     [Parameter] readonly string JwtAudience;
     [Parameter] readonly string AndroidSigningKeyPass;
     [Parameter] readonly string AndroidSigningStorePass;
-    [Parameter] readonly string TelegramToken;
     static readonly Dictionary<string, string> Hosts = new();
     static readonly Dictionary<Project, ServiceOptions> ServiceOptions = new();
     static readonly List<Project> ServiceProjects = new();
@@ -337,30 +336,6 @@ class Build : NukeBuild
             );
 
     Target Publish => _ => _.DependsOn(PublishDesktop, PublishAndroid, PublishBrowser);
-
-    Target SendTelegram =>
-        _ => _.DependsOn(Publish)
-            .Executes(() =>
-                {
-                    var botClient = new TelegramBotClient(TelegramToken);
-                    var me = botClient.GetMeAsync().GetAwaiter().GetResult();
-                    // StartReceiving does not block the caller thread. Receiving is done on the ThreadPool.
-                    var receiverOptions = new ReceiverOptions()
-                    {
-                        AllowedUpdates =
-                            Array.Empty<UpdateType>() // receive all update types except ChatMember related updates
-                    };
-                    using CancellationTokenSource cts = new();
-                    botClient.StartReceiving(
-                        updateHandler: HandleUpdateAsync,
-                        pollingErrorHandler: HandlePollingErrorAsync,
-                        receiverOptions: receiverOptions,
-                        cancellationToken: cts.Token
-                    );
-                    Log.Information("Hello, World! I am user {MeId} and my name is {MeFirstName}", me.Id, me.FirstName);
-                    cts.Cancel();
-                }
-            );
 
     async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
     {
