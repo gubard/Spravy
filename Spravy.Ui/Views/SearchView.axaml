@@ -16,7 +16,7 @@
 
     <Grid RowDefinitions="Auto,*">
         <Grid ColumnDefinitions="Auto,*,*">
-            <Button Command="{Binding SwitchPaneCommand}">
+            <Button Command="{Binding SwitchPaneCommand}" ClickMode="Release">
                 <avalonia:MaterialIcon Kind="Menu" />
             </Button>
 

@@ -16,7 +16,7 @@
     </Interaction.Behaviors>
 
     <Grid RowDefinitions="Auto,*">
-        <Button Command="{Binding SwitchPaneCommand}" HorizontalAlignment="Left">
+        <Button Command="{Binding SwitchPaneCommand}" HorizontalAlignment="Left" ClickMode="Release">
             <avalonia:MaterialIcon Kind="Menu" />
         </Button>
 

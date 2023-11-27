@@ -67,7 +67,7 @@
     <controls1:ColorZone Mode="PrimaryMid">
         <Grid ColumnDefinitions="Auto,*,Auto">
             <StackPanel Orientation="Horizontal">
-                <Button Classes="with-icon" Command="{Binding SwitchPaneCommand}">
+                <Button Classes="with-icon" Command="{Binding SwitchPaneCommand}" ClickMode="Release">
                     <avalonia:MaterialIcon Kind="Menu" />
                 </Button>
 

@@ -19,7 +19,7 @@
     <Grid RowDefinitions="Auto,*, Auto">
         <controls:ColorZone Mode="PrimaryMid">
             <StackPanel Orientation="Horizontal">
-                <Button Command="{Binding SwitchPaneCommand}">
+                <Button Command="{Binding SwitchPaneCommand}" ClickMode="Release">
                     <avalonia:MaterialIcon Kind="Menu" />
                 </Button>
             </StackPanel>
