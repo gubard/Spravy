@@ -110,7 +110,8 @@
             <StackPanel Orientation="Horizontal">
                 <Button Margin="3"
                         Command="{Binding $parent[interfaces:IPathView].ChangeToDoItemByPathCommand}"
-                        CommandParameter="{Binding}">
+                        CommandParameter="{Binding}"
+                        ClickMode="Release">
                     <TextBlock Text="{Binding Name}" />
                 </Button>
 
@@ -123,7 +124,8 @@
         <DataTemplate DataType="models:RootItem">
             <StackPanel Orientation="Horizontal">
                 <Button Margin="3"
-                        Command="{Binding $parent[interfaces:IPathView].ToRootItemCommand}">
+                        Command="{Binding $parent[interfaces:IPathView].ToRootItemCommand}"
+                        ClickMode="Release">
                     <avalonia:MaterialIcon Kind="Home" />
                 </Button>
 
