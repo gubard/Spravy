@@ -101,12 +101,10 @@ public class GetterToDoItemParametersService
 
                 return parameters.Set(ToDoItemStatus.Completed).Set(ToDoItemIsCan.None).Set(null);
             }
-            else
-            {
-                return parameters.Set(ToDoItemStatus.ReadyForComplete)
-                    .Set(ToDoItemIsCan.None)
-                    .Set(firstReadyForComplete);
-            }
+
+            return parameters.Set(ToDoItemStatus.ReadyForComplete)
+                .Set(ToDoItemIsCan.None)
+                .Set(firstReadyForComplete);
         }
 
         if (firstReadyForComplete is null)
