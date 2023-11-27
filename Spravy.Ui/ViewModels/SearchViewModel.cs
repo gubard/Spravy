@@ -2,6 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
+using Avalonia.Threading;
 using Ninject;
 using ReactiveUI;
 using Spravy.Domain.Models;
@@ -42,9 +43,9 @@ public class SearchViewModel : RoutableViewModelBase, IRefresh
     [Inject]
     public required MainSplitViewModel MainSplitViewModel { get; init; }
 
-    private void SwitchPane()
+    private DispatcherOperation SwitchPane()
     {
-        MainSplitViewModel.IsPaneOpen = !MainSplitViewModel.IsPaneOpen;
+        return Dispatcher.UIThread.InvokeAsync(() => MainSplitViewModel.IsPaneOpen = !MainSplitViewModel.IsPaneOpen);
     }
 
     public async Task RefreshAsync(CancellationToken cancellationToken)

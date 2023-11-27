@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
+using Avalonia.Threading;
 using Ninject;
 using Spravy.Domain.Models;
 using Spravy.Schedule.Domain.Interfaces;
@@ -32,9 +33,9 @@ public class TimersViewModel : RoutableViewModelBase
     [Inject]
     public required IMapper Mapper { get; init; }
 
-    private void SwitchPane()
+    private DispatcherOperation SwitchPane()
     {
-        MainSplitViewModel.IsPaneOpen = !MainSplitViewModel.IsPaneOpen;
+        return Dispatcher.UIThread.InvokeAsync(() => MainSplitViewModel.IsPaneOpen = !MainSplitViewModel.IsPaneOpen);
     }
 
     private async Task InitializedAsync(CancellationToken cancellationToken)

@@ -1,6 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Avalonia.Threading;
 using Ninject;
 using Spravy.Authentication.Domain.Models;
 using Spravy.Domain.Helpers;
@@ -40,24 +41,25 @@ public class PaneViewModel : ViewModelBase
         await ObjectStorage.DeleteAsync(FileIds.LoginFileId).ConfigureAwait(false);
         KeeperTokenResult.Set(default);
         await Navigator.NavigateToAsync(ActionHelper<LoginViewModel>.Empty, cancellationToken).ConfigureAwait(false);
-        MainSplitViewModel.IsPaneOpen = false;
+        await Dispatcher.UIThread.InvokeAsync(() => MainSplitViewModel.IsPaneOpen = false);
     }
 
     private async Task ToTimersViewAsync(CancellationToken cancellationToken)
     {
         await Navigator.NavigateToAsync(ActionHelper<TimersViewModel>.Empty, cancellationToken).ConfigureAwait(false);
-        MainSplitViewModel.IsPaneOpen = false;
+        await Dispatcher.UIThread.InvokeAsync(() => MainSplitViewModel.IsPaneOpen = false);
     }
 
     private async Task ToRootToDoItemViewAsync(CancellationToken cancellationToken)
     {
-        await Navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken).ConfigureAwait(false);
-        MainSplitViewModel.IsPaneOpen = false;
+        await Navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken)
+            .ConfigureAwait(false);
+        await Dispatcher.UIThread.InvokeAsync(() => MainSplitViewModel.IsPaneOpen = false);
     }
 
     private async Task ToSearchViewAsync(CancellationToken cancellationToken)
     {
         await Navigator.NavigateToAsync(ActionHelper<SearchViewModel>.Empty, cancellationToken).ConfigureAwait(false);
-        MainSplitViewModel.IsPaneOpen = false;
+        await Dispatcher.UIThread.InvokeAsync(() => MainSplitViewModel.IsPaneOpen = false);
     }
 }
