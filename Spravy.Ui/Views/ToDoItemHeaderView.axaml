@@ -66,9 +66,15 @@
 
     <controls1:ColorZone Mode="PrimaryMid">
         <Grid ColumnDefinitions="Auto,*,Auto">
-            <Button Classes="with-icon" Command="{Binding SwitchPaneCommand}">
-                <avalonia:MaterialIcon Kind="Menu" />
-            </Button>
+            <StackPanel Orientation="Horizontal">
+                <Button Classes="with-icon" Command="{Binding SwitchPaneCommand}">
+                    <avalonia:MaterialIcon Kind="Menu" />
+                </Button>
+
+                <Button Classes="with-icon" Command="{Binding ToCurrentToDoItemCommand}">
+                    <avalonia:MaterialIcon Kind="ArrowRight" />
+                </Button>
+            </StackPanel>
 
             <ScrollViewer Grid.Column="1"
                           VerticalScrollBarVisibility="Disabled"

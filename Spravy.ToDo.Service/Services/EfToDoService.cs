@@ -1084,7 +1084,7 @@ public class EfToDoService : IToDoService
         return mapper.Map<IEnumerable<ToDoShortItem>>(items);
     }
 
-    public async Task<ActiveToDoItem?> GetActiveToDoItemAsync(CancellationToken cancellationToken)
+    public async Task<ActiveToDoItem?> GetCurrentActiveToDoItemAsync(CancellationToken cancellationToken)
     {
         var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
         await using var context = dbContextFactory.Create();
@@ -1096,14 +1096,32 @@ public class EfToDoService : IToDoService
 
         foreach (var item in items)
         {
-            var active = await activeToDoItemToDoItemService.GetActiveItemAsync(context, item, offset);
+            var parameters =
+                await getterToDoItemParametersService.GetToDoItemParametersAsync(
+                    context,
+                    item,
+                    offset,
+                    cancellationToken
+                );
 
-            if (active is null)
+            if (parameters.ActiveItem is not null)
             {
-                continue;
+                return parameters.ActiveItem;
             }
 
-            return active;
+            switch (parameters.Status)
+            {
+                case ToDoItemStatus.Miss:
+                    return null;
+                case ToDoItemStatus.ReadyForComplete:
+                    return null;
+                case ToDoItemStatus.Planned:
+                    break;
+                case ToDoItemStatus.Completed:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         return null;

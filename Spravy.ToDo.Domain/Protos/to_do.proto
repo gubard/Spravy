@@ -39,7 +39,7 @@ service ToDoService {
   rpc UpdateToDoItemYearsOffset (UpdateToDoItemYearsOffsetRequest) returns (UpdateToDoItemYearsOffsetReply);
   rpc UpdateToDoItemChildrenType (UpdateToDoItemChildrenTypeRequest) returns (UpdateToDoItemChildrenTypeReply);
   rpc GetSiblings (GetSiblingsRequest) returns (GetSiblingsReply);
-  rpc GetActiveItem (GetActiveItemRequest) returns (GetActiveItemReply);
+  rpc GetCurrentActiveToDoItem (GetCurrentActiveToDoItemRequest) returns (GetCurrentActiveToDoItemReply);
   rpc UpdateToDoItemLink (UpdateToDoItemLinkRequest) returns (UpdateToDoItemLinkReply);
   rpc GetRootToDoItemIds (GetRootToDoItemIdsRequest) returns (GetRootToDoItemIdsReply);
   rpc GetFavoriteToDoItemIds (GetFavoriteToDoItemIdsRequest) returns (GetFavoriteToDoItemIdsRequestReply);

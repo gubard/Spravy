@@ -44,7 +44,7 @@ public interface IToDoService
     Task UpdateToDoItemYearsOffsetAsync(Guid id, ushort years, CancellationToken cancellationToken);
     Task UpdateToDoItemChildrenTypeAsync(Guid id, ToDoItemChildrenType type, CancellationToken cancellationToken);
     Task<IEnumerable<ToDoShortItem>> GetSiblingsAsync(Guid id, CancellationToken cancellationToken);
-    Task<ActiveToDoItem?> GetActiveToDoItemAsync(CancellationToken cancellationToken);
+    Task<ActiveToDoItem?> GetCurrentActiveToDoItemAsync(CancellationToken cancellationToken);
     Task UpdateToDoItemLinkAsync(Guid id, Uri? link, CancellationToken cancellationToken);
     Task<PlannedToDoItemSettings> GetPlannedToDoItemSettingsAsync(Guid id, CancellationToken cancellationToken);
     Task<ValueToDoItemSettings> GetValueToDoItemSettingsAsync(Guid id, CancellationToken cancellationToken);

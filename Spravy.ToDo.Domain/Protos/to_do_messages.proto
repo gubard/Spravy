@@ -146,10 +146,10 @@ message UpdateToDoItemLinkReply {
 
 }
 
-message GetActiveItemRequest {
+message GetCurrentActiveToDoItemRequest {
 }
 
-message GetActiveItemReply {
+message GetCurrentActiveToDoItemReply {
   ActiveToDoItemGrpc Item = 1;
 }
 

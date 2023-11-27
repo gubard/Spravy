@@ -935,17 +935,17 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public Task<ActiveToDoItem?> GetActiveToDoItemAsync(CancellationToken cancellationToken)
+    public Task<ActiveToDoItem?> GetCurrentActiveToDoItemAsync(CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 var metadata = await metadataFactory.CreateAsync(cancellationToken);
+                var request = DefaultObject<GetCurrentActiveToDoItemRequest>.Default;
                 cancellationToken.ThrowIfCancellationRequested();
 
-                var request = new GetActiveItemRequest();
-                var reply = await client.GetActiveItemAsync(
+                var reply = await client.GetCurrentActiveToDoItemAsync(
                     request,
                     metadata,
                     cancellationToken: cancellationToken
@@ -1037,7 +1037,10 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public Task<PeriodicityToDoItemSettings> GetPeriodicityToDoItemSettingsAsync(Guid id, CancellationToken cancellationToken)
+    public Task<PeriodicityToDoItemSettings> GetPeriodicityToDoItemSettingsAsync(
+        Guid id,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             async client =>
@@ -1145,7 +1148,10 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public Task<PeriodicityOffsetToDoItemSettings> GetPeriodicityOffsetToDoItemSettingsAsync(Guid id, CancellationToken cancellationToken)
+    public Task<PeriodicityOffsetToDoItemSettings> GetPeriodicityOffsetToDoItemSettingsAsync(
+        Guid id,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             async client =>

@@ -491,7 +491,7 @@ public class ToDoServiceDesign : IToDoService
         throw new NotImplementedException();
     }
 
-    public Task<ActiveToDoItem?> GetActiveToDoItemAsync(CancellationToken cancellationToken)
+    public Task<ActiveToDoItem?> GetCurrentActiveToDoItemAsync(CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }

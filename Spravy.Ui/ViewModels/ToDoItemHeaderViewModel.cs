@@ -5,7 +5,9 @@ using Avalonia.Collections;
 using Avalonia.Threading;
 using Ninject;
 using ReactiveUI;
+using Spravy.Domain.Helpers;
 using Spravy.Domain.Models;
+using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Models;
 
@@ -19,14 +21,19 @@ public class ToDoItemHeaderViewModel : ViewModelBase
     {
         SwitchPaneCommand = CreateCommand(SwitchPane);
         ChangeNameCommand = CreateCommandFromTask(TaskWork.Create(ChangeNameAsync).RunAsync);
+        ToCurrentToDoItemCommand = CreateCommandFromTask(TaskWork.Create(ToCurrentToDoItemAsync).RunAsync);
     }
 
     public ICommand SwitchPaneCommand { get; }
     public ICommand ChangeNameCommand { get; }
+    public ICommand ToCurrentToDoItemCommand { get; }
     public AvaloniaList<ToDoItemCommand> Commands { get; } = new();
 
     [Inject]
     public required MainSplitViewModel MainSplitViewModel { get; init; }
+
+    [Inject]
+    public required IToDoService ToDoService { get; init; }
 
     public ToDoItemViewModel? Item
     {
@@ -57,6 +64,25 @@ public class ToDoItemHeaderViewModel : ViewModelBase
                 cancellationToken
             )
             .ConfigureAwait(false);
+    }
+
+    private async Task ToCurrentToDoItemAsync(CancellationToken cancellationToken)
+    {
+        var activeToDoItem = await ToDoService.GetCurrentActiveToDoItemAsync(cancellationToken).ConfigureAwait(false);
+
+        if (activeToDoItem.HasValue)
+        {
+            await Navigator.NavigateToAsync<ToDoItemViewModel>(
+                    viewModel => viewModel.Id = activeToDoItem.Value.Id,
+                    cancellationToken
+                )
+                .ConfigureAwait(false);
+        }
+        else
+        {
+            await Navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken)
+                .ConfigureAwait(false);
+        }
     }
 
     private DispatcherOperation SwitchPane()

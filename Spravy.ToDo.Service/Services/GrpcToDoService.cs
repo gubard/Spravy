@@ -205,13 +205,13 @@ public class GrpcToDoService : ToDoServiceBase
         return reply;
     }
 
-    public override async Task<GetActiveItemReply> GetActiveItem(
-        GetActiveItemRequest request,
+    public override async Task<GetCurrentActiveToDoItemReply> GetCurrentActiveToDoItem(
+        GetCurrentActiveToDoItemRequest request,
         ServerCallContext context
     )
     {
-        var reply = new GetActiveItemReply();
-        var item = await toDoService.GetActiveToDoItemAsync(context.CancellationToken);
+        var reply = new GetCurrentActiveToDoItemReply();
+        var item = await toDoService.GetCurrentActiveToDoItemAsync(context.CancellationToken);
         reply.Item = mapper.Map<ActiveToDoItemGrpc>(item);
 
         return reply;
