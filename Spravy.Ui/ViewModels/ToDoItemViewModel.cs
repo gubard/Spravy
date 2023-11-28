@@ -528,7 +528,7 @@ public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
                     await DialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
                     var parentValue = viewModel.Parent.ThrowIfNull();
                     var options = new AddToDoItemOptions(parentValue.Id, viewModel.Name, viewModel.Type);
-                    await ToDoService.AddToDoItemAsync(options, cancellationToken).ConfigureAwait(false);
+                    await ToDoService.AddToDoItemAsync(options, cancellationToken);
                     Id = parentValue.Id;
                     await RefreshAsync(cancellationToken).ConfigureAwait(false);
                 },
