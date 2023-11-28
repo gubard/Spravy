@@ -10,7 +10,6 @@
 
     <StyleInclude Source="DialogOverlayPopupHost.axaml" />
     <StyleInclude Source="Button.axaml" />
-    <StyleInclude Source="Expander.axaml" />
     <StyleInclude Source="Layoutable.axaml" />
     <StyleInclude Source="TextBox.axaml" />
     <StyleInclude Source="TemplatedControl.axaml" />

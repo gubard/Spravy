@@ -63,8 +63,7 @@
 
         <ScrollViewer Grid.Row="2">
             <StackPanel>
-                <Expander Classes="header-left"
-                          IsExpanded="{Binding Description, Mode=OneWay, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}"
+                <Expander IsExpanded="{Binding Description, Mode=OneWay, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}"
                           Margin="3">
                     <Expander.Header>
                         <Grid ColumnDefinitions="Auto,*" Height="60">

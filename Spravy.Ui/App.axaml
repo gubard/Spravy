@@ -266,5 +266,40 @@
                 </Grid>
             </controls:Card>
         </DataTemplate>
+
+        <DataTemplate>
+            <DataTemplate.DataType>
+                <x:Type TypeName="models:Selected" x:TypeArguments="models:ToDoItemNotify" />
+            </DataTemplate.DataType>
+
+            <controls:Card Margin="3"
+                           ToolTip.Tip="{Binding Value.Description, Converter={StaticResource EmptyStringToNullConverter}}">
+                <StackPanel>
+                    <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto">
+                        <Rectangle Width="15"
+                                   Margin="0,0,3,0"
+                                   Height="2"
+                                   Fill="{Binding Value.Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
+                        <TextBlock Grid.Column="1" Text="{Binding Value.Type}" Classes="Body2" />
+                        <Rectangle Grid.Column="2"
+                                   Margin="3,0,3,0"
+                                   Height="2"
+                                   Fill="{Binding Value.Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
+                        <TextBlock Grid.Column="3" Text="{Binding Value.Status}" Classes="Body2" />
+                        <Rectangle Grid.Column="4"
+                                   Width="15"
+                                   Margin="3,0,0,0"
+                                   Height="2"
+                                   Fill="{Binding Value.Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
+                    </Grid>
+
+                    <CheckBox IsChecked="{Binding IsSelect}">
+                        <TextBlock Text="{Binding Value.Name}"
+                                   Classes="Headline6"
+                                   TextWrapping="Wrap" />
+                    </CheckBox>
+                </StackPanel>
+            </controls:Card>
+        </DataTemplate>
     </Application.DataTemplates>
 </Application>

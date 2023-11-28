@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Threading;
 using Ninject;
 using ReactiveUI;

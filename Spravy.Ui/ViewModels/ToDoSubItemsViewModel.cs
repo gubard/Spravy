@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,6 +17,7 @@ using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.Enums;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
+using Spravy.Ui.Views;
 
 namespace Spravy.Ui.ViewModels;
 
@@ -52,11 +54,6 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
     public AvaloniaList<ToDoItemNotify> ReadyForCompleted { get; } = new();
     public AvaloniaList<ToDoItemNotify> Completed { get; } = new();
     public AvaloniaList<ToDoItemNotify> FavoriteToDoItems { get; } = new();
-    public AvaloniaList<ToDoItemNotify> SelectedMissed { get; } = new();
-    public AvaloniaList<ToDoItemNotify> SelectedPlanned { get; } = new();
-    public AvaloniaList<ToDoItemNotify> SelectedReadyForCompleted { get; } = new();
-    public AvaloniaList<ToDoItemNotify> SelectedCompleted { get; } = new();
-    public AvaloniaList<ToDoItemNotify> SelectedFavoriteToDoItems { get; } = new();
     public ICommand CompleteSubToDoItemCommand { get; }
     public ICommand DeleteSubToDoItemCommand { get; }
     public ICommand ChangeToDoItemCommand { get; }
@@ -105,23 +102,14 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 
     private async Task CompleteSelectedToDoItemsAsync(CancellationToken cancellationToken)
     {
-        await DialogViewer.ShowInfoInputDialogAsync<CompleteToDoItemViewModel>(
-                _ => DialogViewer.CloseInputDialogAsync(cancellationToken),
-                viewModel =>
-                {
-                    viewModel.SetAllStatus();
+        var ids = Missed.Concat(Planned)
+            .Concat(ReadyForCompleted)
+            .Concat(Completed)
+            .OrderBy(x => x.OrderIndex)
+            .Select(x => x.Id);
 
-                    viewModel.Complete = async status =>
-                    {
-                        await DialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
-                        await CompleteAsync(SelectedCompleted, status, cancellationToken).ConfigureAwait(false);
-                        await CompleteAsync(SelectedMissed, status, cancellationToken).ConfigureAwait(false);
-                        await CompleteAsync(SelectedFavoriteToDoItems, status, cancellationToken).ConfigureAwait(false);
-                        await CompleteAsync(SelectedReadyForCompleted, status, cancellationToken).ConfigureAwait(false);
-                        await CompleteAsync(SelectedPlanned, status, cancellationToken).ConfigureAwait(false);
-                        await RefreshAsync(cancellationToken).ConfigureAwait(false);
-                    };
-                },
+        await Navigator.NavigateToAsync<MultiEditingToDoSubItemsViewModel>(
+                viewModel => viewModel.Ids.AddRange(ids),
                 cancellationToken
             )
             .ConfigureAwait(false);

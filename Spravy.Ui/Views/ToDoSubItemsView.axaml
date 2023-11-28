@@ -68,7 +68,11 @@
                       IsVisible="{Binding FavoriteToDoItems.Count, Converter={StaticResource Int32ToIsVisibleConverter}}"
                       Margin="3">
                 <Expander.Header>
-                    Favorite
+                    <DockPanel>
+                        <TextBlock DockPanel.Dock="Left" Text="Favorite" />
+                        <TextBlock DockPanel.Dock="Right" Text="{Binding FavoriteToDoItems.Count}" />
+                        <Control />
+                    </DockPanel>
                 </Expander.Header>
 
                 <ItemsControl ItemsSource="{Binding FavoriteToDoItems}" />
@@ -97,7 +101,11 @@
                               IsVisible="{Binding Missed.Count, Converter={StaticResource Int32ToIsVisibleConverter}}"
                               Margin="3">
                         <Expander.Header>
-                            Missed
+                            <DockPanel>
+                                <TextBlock DockPanel.Dock="Left" Text="Missed" />
+                                <TextBlock DockPanel.Dock="Right" Text="{Binding Missed.Count}" />
+                                <Control />
+                            </DockPanel>
                         </Expander.Header>
 
                         <ItemsControl ItemsSource="{Binding Missed}" />
@@ -107,7 +115,11 @@
                               IsVisible="{Binding ReadyForCompleted.Count, Converter={StaticResource Int32ToIsVisibleConverter}}"
                               Margin="3">
                         <Expander.Header>
-                            ReadyForCompleted
+                            <DockPanel>
+                                <TextBlock DockPanel.Dock="Left" Text="ReadyForCompleted" />
+                                <TextBlock DockPanel.Dock="Right" Text="{Binding ReadyForCompleted.Count}" />
+                                <Control />
+                            </DockPanel>
                         </Expander.Header>
 
                         <ItemsControl ItemsSource="{Binding ReadyForCompleted}" />
@@ -116,7 +128,11 @@
                     <Expander Margin="3"
                               IsVisible="{Binding Planned.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
                         <Expander.Header>
-                            Planned
+                            <DockPanel>
+                                <TextBlock DockPanel.Dock="Left" Text="Planned" />
+                                <TextBlock DockPanel.Dock="Right" Text="{Binding Planned.Count}" />
+                                <Control />
+                            </DockPanel>
                         </Expander.Header>
 
                         <ItemsControl ItemsSource="{Binding Planned}" />
@@ -125,7 +141,11 @@
                     <Expander Margin="3"
                               IsVisible="{Binding Completed.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
                         <Expander.Header>
-                            Completed
+                            <DockPanel>
+                                <TextBlock DockPanel.Dock="Left" Text="Completed" />
+                                <TextBlock DockPanel.Dock="Right" Text="{Binding Completed.Count}" />
+                                <Control />
+                            </DockPanel>
                         </Expander.Header>
 
                         <ItemsControl ItemsSource="{Binding Completed}" />
