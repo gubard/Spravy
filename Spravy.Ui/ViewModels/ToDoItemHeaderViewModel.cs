@@ -5,6 +5,7 @@ using Avalonia.Collections;
 using Avalonia.Threading;
 using Ninject;
 using ReactiveUI;
+using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Interfaces;
@@ -15,7 +16,7 @@ namespace Spravy.Ui.ViewModels;
 
 public class ToDoItemHeaderViewModel : ViewModelBase
 {
-    private ToDoItemViewModel? item;
+    private ToDoItemViewModel? toDoItemViewModel;
 
     public ToDoItemHeaderViewModel()
     {
@@ -35,10 +36,10 @@ public class ToDoItemHeaderViewModel : ViewModelBase
     [Inject]
     public required IToDoService ToDoService { get; init; }
 
-    public ToDoItemViewModel? Item
+    public ToDoItemViewModel? ToDoItemViewModel
     {
-        get => item;
-        set => this.RaiseAndSetIfChanged(ref item, value);
+        get => toDoItemViewModel;
+        set => this.RaiseAndSetIfChanged(ref toDoItemViewModel, value);
     }
 
     private async Task ChangeNameAsync(CancellationToken cancellationToken)
@@ -48,17 +49,21 @@ public class ToDoItemHeaderViewModel : ViewModelBase
                 {
                     await DialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
 
-                    if (Item is not null)
+                    if (ToDoItemViewModel is not null)
                     {
-                        await Item.ToDoService.UpdateToDoItemNameAsync(Item.Id, str, cancellationToken)
+                        await ToDoItemViewModel.ToDoService.UpdateToDoItemNameAsync(
+                                ToDoItemViewModel.Id,
+                                str,
+                                cancellationToken
+                            )
                             .ConfigureAwait(false);
 
-                        await Item.RefreshAsync(cancellationToken).ConfigureAwait(false);
+                        await ToDoItemViewModel.RefreshAsync(cancellationToken).ConfigureAwait(false);
                     }
                 },
                 box =>
                 {
-                    box.Text = Item?.Name ?? string.Empty;
+                    box.Text = ToDoItemViewModel?.Name ?? string.Empty;
                     box.Label = "Name";
                 },
                 cancellationToken
@@ -72,11 +77,9 @@ public class ToDoItemHeaderViewModel : ViewModelBase
 
         if (activeToDoItem.HasValue)
         {
-            await Navigator.NavigateToAsync<ToDoItemViewModel>(
-                    viewModel => viewModel.Id = activeToDoItem.Value.Id,
-                    cancellationToken
-                )
-                .ConfigureAwait(false);
+            var item = ToDoItemViewModel.ThrowIfNull();
+            item.Id = activeToDoItem.Value.Id;
+            await item.RefreshAsync(cancellationToken).ConfigureAwait(false);
         }
         else
         {

@@ -444,7 +444,7 @@ public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
 
     private async Task InitializedAsync(CancellationToken cancellationToken)
     {
-        await Dispatcher.UIThread.InvokeAsync(() => ToDoItemHeaderViewModel.Item = this);
+        await Dispatcher.UIThread.InvokeAsync(() => ToDoItemHeaderViewModel.ToDoItemViewModel = this);
         await RefreshAsync(cancellationToken).ConfigureAwait(false);
     }
 
@@ -527,13 +527,10 @@ public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
                 {
                     await DialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
                     var parentValue = viewModel.Parent.ThrowIfNull();
-                    await Navigator.NavigateToAsync<ToDoItemViewModel>(
-                            view => view.Id = parentValue.Id,
-                            cancellationToken
-                        )
-                        .ConfigureAwait(false);
                     var options = new AddToDoItemOptions(parentValue.Id, viewModel.Name, viewModel.Type);
                     await ToDoService.AddToDoItemAsync(options, cancellationToken).ConfigureAwait(false);
+                    Id = parentValue.Id;
+                    await RefreshAsync(cancellationToken).ConfigureAwait(false);
                 },
                 async _ => await DialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false),
                 viewModel => viewModel.Parent = Mapper.Map<ToDoItemNotify>(this),
@@ -544,8 +541,8 @@ public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
 
     private async Task ChangeToDoItemByPathAsync(ToDoItemParentNotify item, CancellationToken cancellationToken)
     {
-        await Navigator.NavigateToAsync<ToDoItemViewModel>(view => view.Id = item.Id, cancellationToken)
-            .ConfigureAwait(false);
+        Id = item.Id;
+        await RefreshAsync(cancellationToken).ConfigureAwait(false);
     }
 
     private async Task ToRootItemAsync(CancellationToken cancellationToken)
