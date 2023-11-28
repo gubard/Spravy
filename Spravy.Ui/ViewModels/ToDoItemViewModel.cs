@@ -564,27 +564,6 @@ public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
             {
                 ToDoItemHeaderViewModel.Commands.Clear();
                 ToDoItemHeaderViewModel.Commands.Add(new(MaterialIconKind.Plus, AddToDoItemCommand, "Add sub task"));
-                ToDoItemHeaderViewModel.Commands.Add(
-                    new(MaterialIconKind.Leaf, ToLeafToDoItemsCommand, "Show all children")
-                );
-                ToDoItemHeaderViewModel.Commands.Add(
-                    new(MaterialIconKind.SwapHorizontal, ChangeRootItemCommand, "Change task parent")
-                );
-                ToDoItemHeaderViewModel.Commands.Add(
-                    new(MaterialIconKind.FamilyTree, ToDoItemToRootCommand, "Move to root task")
-                );
-                ToDoItemHeaderViewModel.Commands.Add(
-                    new(MaterialIconKind.CodeString, ToDoItemToStringCommand, "Copy task to clipboard")
-                );
-                ToDoItemHeaderViewModel.Commands.Add(new(MaterialIconKind.Timer, AddTimerCommand, "Add timer"));
-
-                ToDoItemHeaderViewModel.Commands.Add(
-                    new(
-                        MaterialIconKind.Checks,
-                        ToDoSubItemsViewModel.CompleteSelectedToDoItemsCommand,
-                        "Complete multiple"
-                    )
-                );
             }
         );
 
@@ -617,6 +596,27 @@ public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
                 }
 
                 ToDoItemHeaderViewModel.Commands.Add(toFavoriteCommand);
+                ToDoItemHeaderViewModel.Commands.Add(
+                    new(MaterialIconKind.Leaf, ToLeafToDoItemsCommand, "Show all children")
+                );
+                ToDoItemHeaderViewModel.Commands.Add(
+                    new(MaterialIconKind.SwapHorizontal, ChangeRootItemCommand, "Change task parent")
+                );
+                ToDoItemHeaderViewModel.Commands.Add(
+                    new(MaterialIconKind.FamilyTree, ToDoItemToRootCommand, "Move to root task")
+                );
+                ToDoItemHeaderViewModel.Commands.Add(
+                    new(MaterialIconKind.CodeString, ToDoItemToStringCommand, "Copy task to clipboard")
+                );
+                ToDoItemHeaderViewModel.Commands.Add(new(MaterialIconKind.Timer, AddTimerCommand, "Add timer"));
+
+                ToDoItemHeaderViewModel.Commands.Add(
+                    new(
+                        MaterialIconKind.Checks,
+                        ToDoSubItemsViewModel.CompleteSelectedToDoItemsCommand,
+                        "Complete multiple"
+                    )
+                );
             }
         );
     }
