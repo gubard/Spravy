@@ -3,6 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
+using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Threading;
 using Ninject;
 using ReactiveUI;
@@ -16,6 +18,7 @@ namespace Spravy.Ui.ViewModels;
 public class LeafToDoItemsViewModel : RoutableViewModelBase, IRefresh
 {
     private Guid id;
+    private Vector scrollOffset;
 
     public LeafToDoItemsViewModel() : base("leaf-to-do-items")
     {
@@ -25,6 +28,13 @@ public class LeafToDoItemsViewModel : RoutableViewModelBase, IRefresh
 
     public ICommand InitializedCommand { get; }
     public ICommand SwitchPaneCommand { get; }
+
+
+    public Vector ScrollOffset
+    {
+        get => scrollOffset;
+        set => this.RaiseAndSetIfChanged(ref scrollOffset, value);
+    }
 
     [Inject]
     public required IToDoService ToDoService { get; init; }
@@ -49,7 +59,9 @@ public class LeafToDoItemsViewModel : RoutableViewModelBase, IRefresh
         cancellationToken.ThrowIfCancellationRequested();
         var ids = await ToDoService.GetLeafToDoItemIdsAsync(Id, cancellationToken).ConfigureAwait(false);
         cancellationToken.ThrowIfCancellationRequested();
+        var offset = ScrollOffset;
         await ToDoSubItemsViewModel.UpdateItemsAsync(ids, this, cancellationToken).ConfigureAwait(false);
+        await Dispatcher.UIThread.InvokeAsync(() => ScrollOffset = offset);
     }
 
     private DispatcherOperation SwitchPane()

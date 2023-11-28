@@ -20,7 +20,7 @@
             <avalonia:MaterialIcon Kind="Menu" />
         </Button>
 
-        <ScrollViewer Grid.Row="1">
+        <ScrollViewer Grid.Row="1" Offset="{Binding ScrollOffset, Mode=TwoWay}">
             <ContentControl Content="{Binding ToDoSubItemsViewModel}" />
         </ScrollViewer>
     </Grid>
