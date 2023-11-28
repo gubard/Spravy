@@ -1136,7 +1136,7 @@ public class EfToDoService : IToDoService
             {
                 var value = await c.FindAsync<ToDoItemEntity>(id);
                 value = value.ThrowIfNull();
-                value.Link = mapper.Map<string>(link);
+                value.Link = mapper.Map<string>(link) ?? string.Empty;
             }
         );
     }

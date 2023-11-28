@@ -964,11 +964,12 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 var metadata = await metadataFactory.CreateAsync(cancellationToken);
+                var linkStr = mapper.Map<string>(link) ?? string.Empty;
 
                 var request = new UpdateToDoItemLinkRequest
                 {
                     Id = mapper.Map<ByteString>(id),
-                    Link = mapper.Map<string>(link),
+                    Link = linkStr,
                 };
 
                 cancellationToken.ThrowIfCancellationRequested();
