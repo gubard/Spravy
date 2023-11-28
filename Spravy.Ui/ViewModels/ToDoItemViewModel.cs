@@ -41,6 +41,7 @@ public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
     private string link = string.Empty;
     private ToDoItemIsCan isCan;
     private readonly TaskWork refreshToDoItemWork;
+    private ToDoItemStatus status;
 
     public ToDoItemViewModel() : base("to-do-item")
     {
@@ -151,6 +152,12 @@ public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
     {
         get => isCan;
         set => this.RaiseAndSetIfChanged(ref isCan, value);
+    }
+
+    public ToDoItemStatus Status
+    {
+        get => status;
+        set => this.RaiseAndSetIfChanged(ref status, value);
     }
 
     private async Task SettingsToDoItemAsync(CancellationToken cancellationToken)
@@ -322,6 +329,7 @@ public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
                 Type = item.Type;
                 IsCan = item.IsCan;
                 IsFavorite = item.IsFavorite;
+                Status = item.Status;
             }
         );
     }

@@ -17,7 +17,12 @@
     </Interaction.Behaviors>
 
     <Grid RowDefinitions="Auto, Auto,*">
-        <ContentControl Content="{Binding ToDoItemHeaderViewModel}" />
+        <Grid RowDefinitions="*,4">
+            <ContentControl Content="{Binding ToDoItemHeaderViewModel}" />
+
+            <Rectangle Grid.Row="1"
+                       Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
+        </Grid>
 
         <StackPanel Grid.Row="1">
             <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
