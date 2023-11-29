@@ -337,7 +337,7 @@ class Build : NukeBuild
             settings => settings.SetRuntime(runtime)
         );
         ftpClient.DeleteIfExistsFolder($"/home/{FtpUser}/Apps/Spravy.Ui.Desktop".ToFolder().Combine(runtime));
-        ftpClient.CreateIfNotExistsDirectory($"/home/{FtpUser}/Apps".ToFolder().Combine(runtime));
+        ftpClient.CreateIfNotExistsDirectory($"/home/{FtpUser}/Apps/Spravy.Ui.Desktop".ToFolder().Combine(runtime));
         ftpClient.UploadDirectory(desktopFolder.FullName, $"/home/{FtpUser}/Apps/Spravy.Ui.Desktop/{runtime}");
     }
 
