@@ -334,7 +334,7 @@ class Build : NukeBuild
         ftpClient.Connect();
         var desktop = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Desktop").ThrowIfNull();
         var desktopFolder = desktop.PublishProject(PathHelper.PublishFolder.Combine(runtime), Configuration,
-            settings => settings.SetRuntime(runtime)
+            settings => settings.SetRuntime(runtime).SetOutput("WinExe")
         );
         ftpClient.DeleteIfExistsFolder($"/home/{FtpUser}/Apps/Spravy.Ui.Desktop".ToFolder().Combine(runtime));
         ftpClient.CreateIfNotExistsDirectory($"/home/{FtpUser}/Apps".ToFolder().Combine(runtime));
