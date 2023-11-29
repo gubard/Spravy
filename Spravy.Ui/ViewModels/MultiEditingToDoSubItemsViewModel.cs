@@ -9,7 +9,6 @@ using Avalonia.Collections;
 using Avalonia.Threading;
 using Ninject;
 using Spravy.Domain.Models;
-using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.Models;

@@ -17,7 +17,6 @@ using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.Enums;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
-using Spravy.Ui.Views;
 
 namespace Spravy.Ui.ViewModels;
 

@@ -103,7 +103,7 @@
                     <Button Classes="adaptive with-icon">
                         <Button.Flyout>
                             <Flyout>
-                                <ItemsControl ItemsSource="{Binding Commands}">
+                                <ItemsControl ItemsSource="{Binding Commands}" x:Name="ItemsControlCommands">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate x:DataType="models:ToDoItemCommand">
                                             <Button Command="{Binding Command}" HorizontalContentAlignment="Left">

@@ -2,6 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Collections;
+using Avalonia.Controls;
 using Avalonia.Threading;
 using Ninject;
 using ReactiveUI;
@@ -29,6 +30,7 @@ public class ToDoItemHeaderViewModel : ViewModelBase
     public ICommand ChangeNameCommand { get; }
     public ICommand ToCurrentToDoItemCommand { get; }
     public AvaloniaList<ToDoItemCommand> Commands { get; } = new();
+    public ItemsControl? ItemsControlCommands { get; set; }
 
     [Inject]
     public required MainSplitViewModel MainSplitViewModel { get; init; }

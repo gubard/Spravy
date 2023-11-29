@@ -7,8 +7,11 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
+using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input.Platform;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using Google.Protobuf;
 using Material.Icons;
 using Ninject;
@@ -162,6 +165,8 @@ public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
 
     private async Task SettingsToDoItemAsync(CancellationToken cancellationToken)
     {
+        await Dispatcher.UIThread.InvokeAsync(HideFlyout);
+
         switch (Type)
         {
             case ToDoItemType.Value:
@@ -261,6 +266,8 @@ public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
 
     private async Task CompleteToDoItemAsync(CancellationToken cancellationToken)
     {
+        await Dispatcher.UIThread.InvokeAsync(HideFlyout);
+
         await DialogViewer.ShowInfoInputDialogAsync<CompleteToDoItemViewModel>(
                 _ => DialogViewer.CloseInputDialogAsync(cancellationToken),
                 viewModel =>
@@ -381,6 +388,8 @@ public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
 
     private async Task AddTimerAsync(CancellationToken cancellationToken)
     {
+        await Dispatcher.UIThread.InvokeAsync(HideFlyout);
+
         await DialogViewer.ShowConfirmContentDialogAsync<AddTimerViewModel>(
                 async viewModel =>
                 {
@@ -450,6 +459,8 @@ public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
 
     private async Task ToDoItemToStringAsync(CancellationToken cancellationToken)
     {
+        await Dispatcher.UIThread.InvokeAsync(HideFlyout);
+
         await DialogViewer.ShowConfirmContentDialogAsync(
                 async view =>
                 {
@@ -471,6 +482,7 @@ public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
 
     private async Task ChangeRootItemAsync(CancellationToken cancellationToken)
     {
+        await Dispatcher.UIThread.InvokeAsync(HideFlyout);
         await DialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
                 async item =>
                 {
@@ -497,24 +509,28 @@ public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
 
     private async Task ToLeafToDoItemsAsync(CancellationToken cancellationToken)
     {
+        await Dispatcher.UIThread.InvokeAsync(HideFlyout);
         await Navigator.NavigateToAsync<LeafToDoItemsViewModel>(vm => vm.Id = Id, cancellationToken)
             .ConfigureAwait(false);
     }
 
     private async Task RemoveToDoItemFromFavoriteAsync(CancellationToken cancellationToken)
     {
+        await Dispatcher.UIThread.InvokeAsync(HideFlyout);
         await ToDoService.RemoveFavoriteToDoItemAsync(Id, cancellationToken).ConfigureAwait(false);
         await RefreshAsync(cancellationToken).ConfigureAwait(false);
     }
 
     private async Task AddToDoItemToCurrentAsync(CancellationToken cancellationToken)
     {
+        await Dispatcher.UIThread.InvokeAsync(HideFlyout);
         await ToDoService.AddFavoriteToDoItemAsync(Id, cancellationToken).ConfigureAwait(false);
         await RefreshAsync(cancellationToken).ConfigureAwait(false);
     }
 
     private async Task ToDoItemToRootAsync(CancellationToken cancellationToken)
     {
+        await Dispatcher.UIThread.InvokeAsync(HideFlyout);
         await ToDoService.ToDoItemToRootAsync(Id, cancellationToken).ConfigureAwait(false);
         await Navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken)
             .ConfigureAwait(false);
@@ -522,6 +538,8 @@ public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
 
     private async Task AddToDoItemAsync(CancellationToken cancellationToken)
     {
+        await Dispatcher.UIThread.InvokeAsync(HideFlyout);
+
         await DialogViewer.ShowConfirmContentDialogAsync<AddToDoItemViewModel>(
                 async viewModel =>
                 {
@@ -541,12 +559,14 @@ public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
 
     private async Task ChangeToDoItemByPathAsync(ToDoItemParentNotify item, CancellationToken cancellationToken)
     {
+        await Dispatcher.UIThread.InvokeAsync(HideFlyout);
         Id = item.Id;
         await RefreshAsync(cancellationToken).ConfigureAwait(false);
     }
 
     private async Task ToRootItemAsync(CancellationToken cancellationToken)
     {
+        await Dispatcher.UIThread.InvokeAsync(HideFlyout);
         await Navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken)
             .ConfigureAwait(false);
     }
@@ -619,5 +639,38 @@ public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
                 );
             }
         );
+    }
+
+    private void HideFlyout()
+    {
+        var itemsControlCommands = ToDoItemHeaderViewModel.ItemsControlCommands;
+
+        if (itemsControlCommands is null)
+        {
+            return;
+        }
+
+        var flyoutPresenter = itemsControlCommands.FindParent<FlyoutPresenter>();
+
+        if (flyoutPresenter is null)
+        {
+            return;
+        }
+
+        var visualRoot = flyoutPresenter.GetVisualRoot();
+
+        if (visualRoot is null)
+        {
+            return;
+        }
+
+        var popupRoot = visualRoot.As<PopupRoot>();
+
+        if (popupRoot is null)
+        {
+            return;
+        }
+
+        popupRoot.Hide();
     }
 }
