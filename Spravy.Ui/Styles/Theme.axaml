@@ -14,6 +14,6 @@
     <StyleInclude Source="TextBox.axaml" />
     <StyleInclude Source="TemplatedControl.axaml" />
     <StyleInclude Source="DialogHost.axaml" />
-    <StyleInclude Source="Flyout.axaml" />
     <StyleInclude Source="SplitView.axaml" />
+    <StyleInclude Source="FlyoutPresenter.axaml" />
 </Styles>
