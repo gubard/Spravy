@@ -4,7 +4,7 @@ using Avalonia.Data.Converters;
 
 namespace Spravy.Ui.Converters;
 
-public class UInt32ToIsVisibleConverter : IValueConverter
+public class UInt32ZeroToBooleanConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {

@@ -9,6 +9,7 @@
              xmlns:dialogHostAvalonia="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
              xmlns:controls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
              xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
+             xmlns:enums="clr-namespace:Spravy.Ui.Enums"
              x:Class="Spravy.Ui.App"
              RequestedThemeVariant="Dark">
     <Application.Resources>
@@ -21,14 +22,20 @@
         <converters:ReverseBooleanValueConverter x:Key="ReverseBooleanValueConverter" />
         <converters:EmptyStringToNullConverter x:Key="EmptyStringToNullConverter" />
         <converters:NullToBooleanConverter x:Key="NullToBooleanConverter" />
-        <converters:UInt32ToIsVisibleConverter x:Key="UInt32ToIsVisibleConverter" />
-        <converters:Int32ToIsVisibleConverter x:Key="Int32ToIsVisibleConverter" />
+        <converters:UInt32ZeroToBooleanConverter x:Key="UInt32ToIsVisibleConverter" />
+        <converters:Int32PositiveToBooleanConverter x:Key="Int32ToIsVisibleConverter" />
         <converters:CompleteStatusToBrushConverter x:Key="CompleteStatusToBrushConverter" />
         <converters:NullOrWhiteSpaceToBooleanValueConverter x:Key="NullOrWhiteSpaceToBooleanValueConverter" />
         <converters:NullOrWhiteSpaceToBooleanValueConverter x:Key="NullOrWhiteSpaceToBooleanValueConverterReverse"
                                                             Reverse="True" />
         <converters:BooleanToCompletedStringConverter x:Key="BooleanToCompletedStringConverter" />
         <converters:ToDoItemIsCanToBooleanConverter x:Key="ToDoItemIsCanToBooleanConverter" />
+        <converters:EnumToBooleanConverter x:TypeArguments="enums:MultiEditingGroupBy"
+                                           x:Key="MultiEditingGroupByNoneToTrue" Value="None" />
+        <converters:EnumToBooleanConverter x:TypeArguments="enums:MultiEditingGroupBy"
+                                           x:Key="MultiEditingGroupByStatusToTrue" Value="ByStatus" />
+        <converters:EnumToBooleanConverter x:TypeArguments="enums:MultiEditingGroupBy"
+                                           x:Key="MultiEditingGroupByTypeToTrue" Value="ByType" />
     </Application.Resources>
 
     <Application.Styles>

@@ -4,16 +4,16 @@ using Avalonia.Data.Converters;
 
 namespace Spravy.Ui.Converters;
 
-public class Int32ToIsVisibleConverter : IValueConverter
+public class Int32PositiveToBooleanConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is not int i)
+        if (value is not int item)
         {
             return false;
         }
 
-        return i > 0;
+        return item > 0;
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

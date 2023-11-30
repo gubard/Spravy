@@ -7,6 +7,7 @@
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                 xmlns:controls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
                                 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                                xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.MultiEditingToDoSubItemsView"
                                 x:DataType="viewModels:MultiEditingToDoSubItemsViewModel">
@@ -43,8 +44,178 @@
             </DockPanel>
         </controls:ColorZone>
 
-        <ScrollViewer Grid.Row="1">
-            <ItemsControl ItemsSource="{Binding Items}" />
-        </ScrollViewer>
+        <Grid Grid.Row="1" RowDefinitions="Auto,*">
+            <ComboBox Theme="{StaticResource MaterialOutlineComboBox}"
+                      assists:ComboBoxAssist.Label="GroupBy"
+                      SelectedItem="{Binding GroupBy}"
+                      ItemsSource="{Binding GroupBys}" />
+
+            <ScrollViewer Grid.Row="1">
+                <Panel>
+                    <ItemsControl ItemsSource="{Binding Items}"
+                                  IsVisible="{Binding GroupBy, Converter={StaticResource MultiEditingGroupByNoneToTrue}}" />
+
+                    <StackPanel
+                        IsVisible="{Binding GroupBy, Converter={StaticResource MultiEditingGroupByStatusToTrue}}">
+                        <Expander IsExpanded="True"
+                                  IsVisible="{Binding Missed.Count, Converter={StaticResource Int32ToIsVisibleConverter}}"
+                                  Margin="3">
+                            <Expander.Header>
+                                <DockPanel>
+                                    <TextBlock DockPanel.Dock="Left" Text="Missed" />
+                                    <TextBlock DockPanel.Dock="Right" Text="{Binding Missed.Count}" />
+                                    <Control />
+                                </DockPanel>
+                            </Expander.Header>
+
+                            <ItemsControl ItemsSource="{Binding Missed}" />
+                        </Expander>
+
+                        <Expander IsExpanded="True"
+                                  IsVisible="{Binding ReadyForCompleted.Count, Converter={StaticResource Int32ToIsVisibleConverter}}"
+                                  Margin="3">
+                            <Expander.Header>
+                                <DockPanel>
+                                    <TextBlock DockPanel.Dock="Left" Text="ReadyForCompleted" />
+                                    <TextBlock DockPanel.Dock="Right" Text="{Binding ReadyForCompleted.Count}" />
+                                    <Control />
+                                </DockPanel>
+                            </Expander.Header>
+
+                            <ItemsControl ItemsSource="{Binding ReadyForCompleted}" />
+                        </Expander>
+
+                        <Expander Margin="3"
+                                  IsExpanded="True"
+                                  IsVisible="{Binding Planned.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
+                            <Expander.Header>
+                                <DockPanel>
+                                    <TextBlock DockPanel.Dock="Left" Text="Planned" />
+                                    <TextBlock DockPanel.Dock="Right" Text="{Binding Planned.Count}" />
+                                    <Control />
+                                </DockPanel>
+                            </Expander.Header>
+
+                            <ItemsControl ItemsSource="{Binding Planned}" />
+                        </Expander>
+
+                        <Expander Margin="3"
+                                  IsExpanded="True"
+                                  IsVisible="{Binding Completed.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
+                            <Expander.Header>
+                                <DockPanel>
+                                    <TextBlock DockPanel.Dock="Left" Text="Completed" />
+                                    <TextBlock DockPanel.Dock="Right" Text="{Binding Completed.Count}" />
+                                    <Control />
+                                </DockPanel>
+                            </Expander.Header>
+
+                            <ItemsControl ItemsSource="{Binding Completed}" />
+                        </Expander>
+                    </StackPanel>
+
+                    <StackPanel
+                        IsVisible="{Binding GroupBy, Converter={StaticResource MultiEditingGroupByTypeToTrue}}">
+                        <Expander IsExpanded="True"
+                                  IsVisible="{Binding Values.Count, Converter={StaticResource Int32ToIsVisibleConverter}}"
+                                  Margin="3">
+                            <Expander.Header>
+                                <DockPanel>
+                                    <TextBlock DockPanel.Dock="Left" Text="Value" />
+                                    <TextBlock DockPanel.Dock="Right" Text="{Binding Values.Count}" />
+                                    <Control />
+                                </DockPanel>
+                            </Expander.Header>
+
+                            <ItemsControl ItemsSource="{Binding Values}" />
+                        </Expander>
+
+                        <Expander IsExpanded="True"
+                                  IsVisible="{Binding Groups.Count, Converter={StaticResource Int32ToIsVisibleConverter}}"
+                                  Margin="3">
+                            <Expander.Header>
+                                <DockPanel>
+                                    <TextBlock DockPanel.Dock="Left" Text="Group" />
+                                    <TextBlock DockPanel.Dock="Right" Text="{Binding Groups.Count}" />
+                                    <Control />
+                                </DockPanel>
+                            </Expander.Header>
+
+                            <ItemsControl ItemsSource="{Binding Groups}" />
+                        </Expander>
+
+                        <Expander Margin="3"
+                                  IsExpanded="True"
+                                  IsVisible="{Binding Planneds.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
+                            <Expander.Header>
+                                <DockPanel>
+                                    <TextBlock DockPanel.Dock="Left" Text="Planned" />
+                                    <TextBlock DockPanel.Dock="Right" Text="{Binding Planneds.Count}" />
+                                    <Control />
+                                </DockPanel>
+                            </Expander.Header>
+
+                            <ItemsControl ItemsSource="{Binding Planneds}" />
+                        </Expander>
+
+                        <Expander Margin="3"
+                                  IsExpanded="True"
+                                  IsVisible="{Binding Periodicitys.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
+                            <Expander.Header>
+                                <DockPanel>
+                                    <TextBlock DockPanel.Dock="Left" Text="Periodicity" />
+                                    <TextBlock DockPanel.Dock="Right" Text="{Binding Periodicitys.Count}" />
+                                    <Control />
+                                </DockPanel>
+                            </Expander.Header>
+
+                            <ItemsControl ItemsSource="{Binding Periodicitys}" />
+                        </Expander>
+
+                        <Expander Margin="3"
+                                  IsExpanded="True"
+                                  IsVisible="{Binding PeriodicityOffsets.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
+                            <Expander.Header>
+                                <DockPanel>
+                                    <TextBlock DockPanel.Dock="Left" Text="PeriodicityOffset" />
+                                    <TextBlock DockPanel.Dock="Right" Text="{Binding PeriodicityOffsets.Count}" />
+                                    <Control />
+                                </DockPanel>
+                            </Expander.Header>
+
+                            <ItemsControl ItemsSource="{Binding PeriodicityOffsets}" />
+                        </Expander>
+
+                        <Expander Margin="3"
+                                  IsExpanded="True"
+                                  IsVisible="{Binding Circles.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
+                            <Expander.Header>
+                                <DockPanel>
+                                    <TextBlock DockPanel.Dock="Left" Text="Circle" />
+                                    <TextBlock DockPanel.Dock="Right" Text="{Binding Circles.Count}" />
+                                    <Control />
+                                </DockPanel>
+                            </Expander.Header>
+
+                            <ItemsControl ItemsSource="{Binding Circles}" />
+                        </Expander>
+
+                        <Expander Margin="3"
+                                  IsExpanded="True"
+                                  IsVisible="{Binding Steps.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
+                            <Expander.Header>
+                                <DockPanel>
+                                    <TextBlock DockPanel.Dock="Left" Text="Step" />
+                                    <TextBlock DockPanel.Dock="Right" Text="{Binding Steps.Count}" />
+                                    <Control />
+                                </DockPanel>
+                            </Expander.Header>
+
+                            <ItemsControl ItemsSource="{Binding Steps}" />
+                        </Expander>
+                    </StackPanel>
+                </Panel>
+            </ScrollViewer>
+        </Grid>
     </Grid>
 </reactiveUi:ReactiveUserControl>

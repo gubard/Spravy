@@ -9,6 +9,7 @@ using AutoMapper;
 using Avalonia.Collections;
 using Avalonia.Threading;
 using Ninject;
+using ReactiveUI;
 using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
@@ -21,6 +22,8 @@ namespace Spravy.Ui.ViewModels;
 
 public class MultiEditingToDoSubItemsViewModel : RoutableViewModelBase
 {
+    private MultiEditingGroupBy groupBy;
+
     public MultiEditingToDoSubItemsViewModel() : base("multi-editing-to-do-sub-items")
     {
         SwitchPaneCommand = CreateCommand(SwitchPane);
@@ -28,6 +31,42 @@ public class MultiEditingToDoSubItemsViewModel : RoutableViewModelBase
         CompleteCommand = CreateInitializedCommand(TaskWork.Create(CompleteAsync).RunAsync);
         ChangeTypeCommand = CreateInitializedCommand(TaskWork.Create(ChangeTypeAsync).RunAsync);
         SelectAllCommand = CreateInitializedCommand(TaskWork.Create(SelectAllAsync).RunAsync);
+        GroupBys = new(Enum.GetValues<MultiEditingGroupBy>());
+    }
+
+    public AvaloniaList<Guid> Ids { get; } = new();
+    public AvaloniaList<Selected<ToDoItemNotify>> Items { get; } = new();
+    public AvaloniaList<Selected<ToDoItemNotify>> Missed { get; } = new();
+    public AvaloniaList<Selected<ToDoItemNotify>> Planned { get; } = new();
+    public AvaloniaList<Selected<ToDoItemNotify>> ReadyForCompleted { get; } = new();
+    public AvaloniaList<Selected<ToDoItemNotify>> Completed { get; } = new();
+    public AvaloniaList<Selected<ToDoItemNotify>> Values { get; } = new();
+    public AvaloniaList<Selected<ToDoItemNotify>> Groups { get; } = new();
+    public AvaloniaList<Selected<ToDoItemNotify>> Planneds { get; } = new();
+    public AvaloniaList<Selected<ToDoItemNotify>> Periodicitys { get; } = new();
+    public AvaloniaList<Selected<ToDoItemNotify>> PeriodicityOffsets { get; } = new();
+    public AvaloniaList<Selected<ToDoItemNotify>> Circles { get; } = new();
+    public AvaloniaList<Selected<ToDoItemNotify>> Steps { get; } = new();
+    public AvaloniaList<MultiEditingGroupBy> GroupBys { get; }
+    public ICommand InitializedCommand { get; }
+    public ICommand SwitchPaneCommand { get; }
+    public ICommand CompleteCommand { get; }
+    public ICommand ChangeTypeCommand { get; }
+    public ICommand SelectAllCommand { get; }
+
+    [Inject]
+    public required IToDoService ToDoService { get; init; }
+
+    [Inject]
+    public required IMapper Mapper { get; init; }
+
+    [Inject]
+    public required MainSplitViewModel MainSplitViewModel { get; init; }
+
+    public MultiEditingGroupBy GroupBy
+    {
+        get => groupBy;
+        set => this.RaiseAndSetIfChanged(ref groupBy, value);
     }
 
     private async Task SelectAllAsync(CancellationToken arg)
@@ -47,23 +86,6 @@ public class MultiEditingToDoSubItemsViewModel : RoutableViewModelBase
             }
         }
     }
-
-    public AvaloniaList<Guid> Ids { get; } = new();
-    public AvaloniaList<Selected<ToDoItemNotify>> Items { get; } = new();
-    public ICommand InitializedCommand { get; }
-    public ICommand SwitchPaneCommand { get; }
-    public ICommand CompleteCommand { get; }
-    public ICommand ChangeTypeCommand { get; }
-    public ICommand SelectAllCommand { get; }
-
-    [Inject]
-    public required IToDoService ToDoService { get; init; }
-
-    [Inject]
-    public required IMapper Mapper { get; init; }
-
-    [Inject]
-    public required MainSplitViewModel MainSplitViewModel { get; init; }
 
     private DispatcherOperation SwitchPane()
     {
@@ -166,7 +188,14 @@ public class MultiEditingToDoSubItemsViewModel : RoutableViewModelBase
     public async Task RefreshAsync(CancellationToken cancellationToken)
     {
         await Dispatcher.UIThread.InvokeAsync(
-            () => { Items.Clear(); }
+            () =>
+            {
+                Items.Clear();
+                Missed.Clear();
+                Planned.Clear();
+                ReadyForCompleted.Clear();
+                Completed.Clear();
+            }
         );
 
         await foreach (var item in LoadToDoItemsAsync(Ids, cancellationToken).ConfigureAwait(false))
@@ -190,6 +219,63 @@ public class MultiEditingToDoSubItemsViewModel : RoutableViewModelBase
     {
         var itemNotify = Mapper.Map<ToDoItemNotify>(item);
 
-        return Dispatcher.UIThread.InvokeAsync(() => Items.Add(new Selected<ToDoItemNotify>(itemNotify)));
+        return AddItem(itemNotify);
+    }
+
+    private DispatcherOperation AddItem(ToDoItemNotify item)
+    {
+        var selected = new Selected<ToDoItemNotify>(item);
+
+        return Dispatcher.UIThread.InvokeAsync(
+            () =>
+            {
+                Items.Add(selected);
+
+                switch (item.Status)
+                {
+                    case ToDoItemStatus.Miss:
+                        Missed.Add(selected);
+                        break;
+                    case ToDoItemStatus.ReadyForComplete:
+                        ReadyForCompleted.Add(selected);
+                        break;
+                    case ToDoItemStatus.Planned:
+                        Planned.Add(selected);
+                        break;
+                    case ToDoItemStatus.Completed:
+                        Completed.Add(selected);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+
+                switch (item.Type)
+                {
+                    case ToDoItemType.Value:
+                        Values.Add(selected);
+                        break;
+                    case ToDoItemType.Group:
+                        Groups.Add(selected);
+                        break;
+                    case ToDoItemType.Planned:
+                        Planneds.Add(selected);
+                        break;
+                    case ToDoItemType.Periodicity:
+                        Periodicitys.Add(selected);
+                        break;
+                    case ToDoItemType.PeriodicityOffset:
+                        PeriodicityOffsets.Add(selected);
+                        break;
+                    case ToDoItemType.Circle:
+                        Circles.Add(selected);
+                        break;
+                    case ToDoItemType.Step:
+                        Steps.Add(selected);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+        );
     }
 }
