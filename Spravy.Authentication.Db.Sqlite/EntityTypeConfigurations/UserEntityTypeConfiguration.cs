@@ -11,5 +11,6 @@ public class UserEntityTypeConfiguration : IEntityTypeConfiguration<UserEntity>
         builder.ToTable("User");
         builder.HasKey(x => x.Id);
         builder.HasIndex(x => x.Login).IsUnique();
+        builder.HasIndex(x => x.Email).IsUnique();
     }
 }

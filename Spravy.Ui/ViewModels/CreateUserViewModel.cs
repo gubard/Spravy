@@ -19,6 +19,7 @@ public class CreateUserViewModel : RoutableViewModelBase
     private string login = string.Empty;
     private string password = string.Empty;
     private string repeatPassword = string.Empty;
+    private string email = string.Empty;
 
     public CreateUserViewModel() : base("create-user")
     {
@@ -36,6 +37,12 @@ public class CreateUserViewModel : RoutableViewModelBase
     public ICommand CreateUserCommand { get; }
     public ICommand EnterCommand { get; }
     public ICommand BackCommand { get; }
+
+    public string Email
+    {
+        get => email;
+        set => this.RaiseAndSetIfChanged(ref email, value);
+    }
 
     public string Login
     {
@@ -57,10 +64,24 @@ public class CreateUserViewModel : RoutableViewModelBase
 
     private async Task EnterAsync(CreateUserView view, CancellationToken cancellationToken)
     {
+        var emailTextBox = view.FindControl<TextBox>(CreateUserView.EmailTextBoxName);
+
+        if (emailTextBox is null)
+        {
+            return;
+        }
+
         var loginTextBox = view.FindControl<TextBox>(CreateUserView.LoginTextBoxName);
 
         if (loginTextBox is null)
         {
+            return;
+        }
+
+        if (emailTextBox.IsFocused)
+        {
+            loginTextBox.Focus();
+
             return;
         }
 

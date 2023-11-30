@@ -15,7 +15,7 @@ public class TokenService : ITokenService
     public TokenService(ITokenFactory tokenFactory)
     {
         this.tokenFactory = tokenFactory;
-        token = tokenFactory.Create(new UserTokenClaims("authentication.service", Guid.Empty, Role.Service));
+        token = tokenFactory.Create(new UserTokenClaims("authentication.service", Guid.Empty, Role.Service, string.Empty));
     }
 
     public Task<string> GetTokenAsync(CancellationToken cancellationToken)
@@ -29,7 +29,7 @@ public class TokenService : ITokenService
             return Task.FromResult(token.Token);
         }
 
-        token = tokenFactory.Create(new UserTokenClaims("authentication.service", Guid.Empty, Role.Service));
+        token = tokenFactory.Create(new UserTokenClaims("authentication.service", Guid.Empty, Role.Service, string.Empty));
 
         return Task.FromResult(token.Token);
     }

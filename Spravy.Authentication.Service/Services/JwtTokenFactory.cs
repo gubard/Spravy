@@ -32,6 +32,7 @@ public class JwtTokenFactory : ITokenFactory
                 new(ClaimTypes.Name, user.Login),
                 new(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new(ClaimTypes.Role, user.Role.ToString()),
+                new(ClaimTypes.Email, user.Email),
             },
             DateTime.UtcNow.AddDays(options.ExpiresDays)
         );

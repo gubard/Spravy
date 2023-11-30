@@ -23,6 +23,13 @@
             <TextBlock Text="Create Account" FontSize="24" HorizontalAlignment="Center" />
 
             <TextBox UseFloatingWatermark="True"
+                     Name="{x:Static views:CreateUserView.EmailTextBoxName}"
+                     Classes="outline dense"
+                     Theme="{StaticResource OutlineTextBox}"
+                     assists:TextFieldAssist.Label="Email"
+                     Text="{Binding Email}" />
+
+            <TextBox UseFloatingWatermark="True"
                      Name="{x:Static views:CreateUserView.LoginTextBoxName}"
                      Classes="outline dense"
                      Theme="{StaticResource OutlineTextBox}"

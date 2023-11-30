@@ -7,6 +7,7 @@ namespace Spravy.Ui.Views;
 
 public partial class CreateUserView : ReactiveUserControl<CreateUserViewModel>
 {
+    public const string EmailTextBoxName = "EmailTextBox";
     public const string LoginTextBoxName = "LoginTextBox";
     public const string PasswordTextBoxName = "PasswordTextBox";
     public const string RepeatPasswordTextBoxName = "RepeatPasswordTextBox";
@@ -19,6 +20,6 @@ public partial class CreateUserView : ReactiveUserControl<CreateUserViewModel>
     protected override void OnLoaded(RoutedEventArgs e)
     {
         base.OnLoaded(e);
-        this.FindControl<TextBox>(LoginTextBoxName)?.Focus();
+        this.FindControl<TextBox>(EmailTextBoxName)?.Focus();
     }
 }

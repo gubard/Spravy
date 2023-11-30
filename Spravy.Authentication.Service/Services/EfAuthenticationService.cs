@@ -67,6 +67,7 @@ public class EfAuthenticationService : IAuthenticationService
             Login = options.Login,
             Salt = salt.ToString(),
             PasswordHash = hash,
+            Email = options.Email,
         };
 
         await context.ExecuteSaveChangesTransactionAsync(c => c.Set<UserEntity>().AddAsync(newUser, cancellationToken));

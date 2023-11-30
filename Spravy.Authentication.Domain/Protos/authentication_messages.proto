@@ -16,6 +16,7 @@ message LoginReply {
 message CreateUserRequest {
   string Login = 1;
   string Password = 2;
+  string Email = 3;
 }
 
 message CreateUserReply {

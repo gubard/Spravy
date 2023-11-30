@@ -20,11 +20,13 @@ public class PaneViewModel : ViewModelBase
         ToSearchViewCommand = CreateCommandFromTask(TaskWork.Create(ToSearchViewAsync).RunAsync);
         ToTimersViewCommand = CreateCommandFromTask(TaskWork.Create(ToTimersViewAsync).RunAsync);
         LogoutCommand = CreateCommandFromTask(TaskWork.Create(LogoutAsync).RunAsync);
+        ToSettingViewCommand = CreateCommandFromTask(TaskWork.Create(ToSettingViewAsync).RunAsync);
     }
 
     public ICommand ToRootToDoItemViewCommand { get; }
     public ICommand ToSearchViewCommand { get; }
     public ICommand ToTimersViewCommand { get; }
+    public ICommand ToSettingViewCommand { get; }
     public ICommand LogoutCommand { get; }
 
     [Inject]
@@ -60,6 +62,12 @@ public class PaneViewModel : ViewModelBase
     private async Task ToSearchViewAsync(CancellationToken cancellationToken)
     {
         await Navigator.NavigateToAsync(ActionHelper<SearchViewModel>.Empty, cancellationToken).ConfigureAwait(false);
+        await Dispatcher.UIThread.InvokeAsync(() => MainSplitViewModel.IsPaneOpen = false);
+    }
+    
+    private async Task ToSettingViewAsync(CancellationToken cancellationToken)
+    {
+        await Navigator.NavigateToAsync(ActionHelper<SettingViewModel>.Empty, cancellationToken).ConfigureAwait(false);
         await Dispatcher.UIThread.InvokeAsync(() => MainSplitViewModel.IsPaneOpen = false);
     }
 }

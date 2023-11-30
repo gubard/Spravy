@@ -23,14 +23,21 @@
                 <TextBlock Grid.Column="1" Text="Search" />
             </Grid>
         </Button>
-        
+
         <Button Command="{Binding ToTimersViewCommand}">
             <Grid ColumnDefinitions="Auto,Auto">
                 <avalonia:MaterialIcon Kind="Timer" />
                 <TextBlock Grid.Column="1" Text="Timers" />
             </Grid>
         </Button>
-        
+
+        <Button Command="{Binding ToSettingViewCommand}">
+            <Grid ColumnDefinitions="Auto,Auto">
+                <avalonia:MaterialIcon Kind="Settings" />
+                <TextBlock Grid.Column="1" Text="Settings" />
+            </Grid>
+        </Button>
+
         <Button Command="{Binding LogoutCommand}">
             <Grid ColumnDefinitions="Auto,Auto">
                 <avalonia:MaterialIcon Kind="Logout" />

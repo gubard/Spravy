@@ -10,4 +10,5 @@ public class UserEntity
     public string? Salt { get; set; }
     public string? HashMethod { get; set; }
     public Role Role { get; set; }
+    public string? Email { get; set; }
 }
