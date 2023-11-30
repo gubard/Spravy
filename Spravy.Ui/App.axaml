@@ -33,11 +33,14 @@
         <converters:BooleanToCompletedStringConverter x:Key="BooleanToCompletedStringConverter" />
         <converters:ToDoItemIsCanToBooleanConverter x:Key="ToDoItemIsCanToBooleanConverter" />
         <converters:EnumToBooleanConverter x:TypeArguments="enums:MultiEditingGroupBy"
-                                           x:Key="MultiEditingGroupByNoneToTrue" Value="None" />
+                                           x:Key="MultiEditingGroupByNoneToTrue"
+                                           Value="None" />
         <converters:EnumToBooleanConverter x:TypeArguments="enums:MultiEditingGroupBy"
-                                           x:Key="MultiEditingGroupByStatusToTrue" Value="ByStatus" />
+                                           x:Key="MultiEditingGroupByStatusToTrue"
+                                           Value="ByStatus" />
         <converters:EnumToBooleanConverter x:TypeArguments="enums:MultiEditingGroupBy"
-                                           x:Key="MultiEditingGroupByTypeToTrue" Value="ByType" />
+                                           x:Key="MultiEditingGroupByTypeToTrue"
+                                           Value="ByType" />
         <converters:ObjectToBooleanConverter x:TypeArguments="system:Byte"
                                              x:Key="TypeOfPeriodicityToIsVisible"
                                              Value="0"
