@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using Spravy.Domain.Exceptions;
+using Spravy.Domain.Helpers;
 using Spravy.Domain.Models;
 
 namespace Spravy.Domain.Extensions;
@@ -13,6 +14,17 @@ public static class ObjectExtension
         {
             obj
         };
+    }
+
+    public static void Randomize<T>(this T[] array)
+    {
+        var rand = DefaultObject<Random>.Default;
+
+        for (var i = array.Length - 1; i > 0; i--)
+        {
+            var randomIndex = rand.Next(0, i + 1);
+            (array[i], array[randomIndex]) = (array[randomIndex], array[i]);
+        }
     }
 
     public static IEnumerable<T> ToEnumerable<T>(this T obj)
@@ -34,7 +46,7 @@ public static class ObjectExtension
 
         return result;
     }
-    
+
     public static IsSuccessValue<T> ToSuccessValue<T>(this T obj)
     {
         return new IsSuccessValue<T>(obj);
@@ -118,7 +130,7 @@ public static class ObjectExtension
     {
         return new Ref<T>(value);
     }
-    
+
     public static Task<T> ToTaskResult<T>(this T value)
     {
         return Task.FromResult(value);

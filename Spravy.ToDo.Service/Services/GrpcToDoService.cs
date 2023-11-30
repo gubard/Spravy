@@ -2,6 +2,7 @@ using AutoMapper;
 using Google.Protobuf;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
+using Spravy.Domain.Helpers;
 using Spravy.EventBus.Domain.Helpers;
 using Spravy.EventBus.Domain.Interfaces;
 using Spravy.EventBus.Protos;
@@ -25,6 +26,19 @@ public class GrpcToDoService : ToDoServiceBase
         this.toDoService = toDoService;
         this.mapper = mapper;
         this.eventBusService = eventBusService;
+    }
+
+    public override async Task<RandomizeChildrenOrderIndexReply> RandomizeChildrenOrderIndex(
+        RandomizeChildrenOrderIndexRequest request,
+        ServerCallContext context
+    )
+    {
+        await toDoService.RandomizeChildrenOrderIndexAsync(
+            mapper.Map<Guid>(request.Id),
+            context.CancellationToken
+        );
+
+        return DefaultObject<RandomizeChildrenOrderIndexReply>.Default;
     }
 
     public override async Task<GetPeriodicityOffsetToDoItemSettingsReply> GetPeriodicityOffsetToDoItemSettings(

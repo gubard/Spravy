@@ -55,4 +55,5 @@ service ToDoService {
   rpc GetMonthlyPeriodicity (GetMonthlyPeriodicityRequest) returns (GetMonthlyPeriodicityReply);
   rpc GetAnnuallyPeriodicity (GetAnnuallyPeriodicityRequest) returns (GetAnnuallyPeriodicityReply);
   rpc GetPeriodicityOffsetToDoItemSettings (GetPeriodicityOffsetToDoItemSettingsRequest) returns (GetPeriodicityOffsetToDoItemSettingsReply);
+  rpc RandomizeChildrenOrderIndex (RandomizeChildrenOrderIndexRequest) returns (RandomizeChildrenOrderIndexReply);
 }

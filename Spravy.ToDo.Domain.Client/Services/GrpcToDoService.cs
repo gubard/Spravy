@@ -31,6 +31,31 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         this.metadataFactory = metadataFactory;
     }
 
+    public Task RandomizeChildrenOrderIndexAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return CallClientAsync(
+            async client =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+
+                var request = new RandomizeChildrenOrderIndexRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                };
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                await client.RandomizeChildrenOrderIndexAsync(
+                    request,
+                    metadata,
+                    cancellationToken: cancellationToken
+                );
+            },
+            cancellationToken
+        );
+    }
+
     public Task<IEnumerable<ToDoShortItem>> GetParentsAsync(Guid id, CancellationToken cancellationToken)
     {
         return CallClientAsync(

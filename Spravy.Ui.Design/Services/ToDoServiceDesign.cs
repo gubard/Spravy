@@ -288,6 +288,11 @@ public class ToDoServiceDesign : IToDoService
         throw new NotImplementedException();
     }
 
+    public Task RandomizeChildrenOrderIndexAsync(Guid id, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task<IEnumerable<ToDoShortItem>> GetParentsAsync(Guid id, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();

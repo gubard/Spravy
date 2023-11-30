@@ -5,6 +5,7 @@ namespace Spravy.ToDo.Domain.Interfaces;
 
 public interface IToDoService
 {
+    Task RandomizeChildrenOrderIndexAsync(Guid id, CancellationToken cancellationToken);
     Task<IEnumerable<ToDoShortItem>> GetParentsAsync(Guid id, CancellationToken cancellationToken);
     Task<IEnumerable<Guid>> SearchToDoItemIdsAsync(string searchText, CancellationToken cancellationToken);
     Task<IEnumerable<Guid>> GetLeafToDoItemIdsAsync(Guid id, CancellationToken cancellationToken);

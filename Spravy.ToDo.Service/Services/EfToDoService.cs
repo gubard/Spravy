@@ -46,6 +46,27 @@ public class EfToDoService : IToDoService
         this.getterToDoItemParametersService = getterToDoItemParametersService;
     }
 
+    public async Task RandomizeChildrenOrderIndexAsync(Guid id, CancellationToken cancellationToken)
+    {
+        await using var context = dbContextFactory.Create();
+
+        await context.ExecuteSaveChangesTransactionAsync(
+            async c =>
+            {
+                var children = await c.Set<ToDoItemEntity>()
+                    .Where(x => x.ParentId == id)
+                    .ToArrayAsync(cancellationToken);
+
+                children.Randomize();
+
+                for (var i = children.Length - 1; i > 0; i--)
+                {
+                    children[i].OrderIndex = (uint)i;
+                }
+            }
+        );
+    }
+
     public async Task<IEnumerable<ToDoShortItem>> GetParentsAsync(Guid id, CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();

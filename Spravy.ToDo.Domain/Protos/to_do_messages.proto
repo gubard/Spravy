@@ -7,6 +7,13 @@ import "google/protobuf/duration.proto";
 
 package spravy.to_do;
 
+message RandomizeChildrenOrderIndexReply {
+}
+
+message RandomizeChildrenOrderIndexRequest {
+  bytes Id = 1;
+}
+
 message GetPeriodicityOffsetToDoItemSettingsRequest {
   bytes Id = 1;
 }
@@ -19,7 +26,6 @@ message GetPeriodicityOffsetToDoItemSettingsReply {
   google.protobuf.Timestamp DueDate = 5;
   ToDoItemChildrenTypeGrpc ChildrenType = 6;
 }
-
 
 message GetAnnuallyPeriodicityRequest {
   bytes Id = 1;

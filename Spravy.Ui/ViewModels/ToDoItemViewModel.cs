@@ -71,12 +71,13 @@ public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
         CompleteToDoItemCommand = CreateCommandFromTask(TaskWork.Create(CompleteToDoItemAsync).RunAsync);
         ChangeTypeCommand = CreateCommandFromTask(TaskWork.Create(ChangeTypeAsync).RunAsync);
         SettingsToDoItemCommand = CreateCommandFromTask(TaskWork.Create(SettingsToDoItemAsync).RunAsync);
+        RandomizeChildrenOrderIndexCommand =
+            CreateCommandFromTask(TaskWork.Create(RandomizeChildrenOrderIndexAsync).RunAsync);
     }
 
     public AvaloniaList<TypeOfPeriodicity> TypeOfPeriodicities { get; }
     public AvaloniaList<ToDoItemType> ToDoItemTypes { get; }
     public AvaloniaList<ToDoItemChildrenType> ChildrenTypes { get; }
-
     public ICommand SettingsToDoItemCommand { get; }
     public ICommand CompleteToDoItemCommand { get; }
     public ICommand ChangeDescriptionCommand { get; }
@@ -93,6 +94,7 @@ public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
     public ICommand AddTimerCommand { get; }
     public ICommand ChangeLinkCommand { get; }
     public ICommand ChangeTypeCommand { get; }
+    public ICommand RandomizeChildrenOrderIndexCommand { get; }
 
     [Inject]
     public required ToDoItemHeaderViewModel ToDoItemHeaderViewModel { get; init; }
@@ -161,6 +163,22 @@ public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
     {
         get => status;
         set => this.RaiseAndSetIfChanged(ref status, value);
+    }
+
+    private async Task RandomizeChildrenOrderIndexAsync(CancellationToken cancellationToken)
+    {
+        await DialogViewer.ShowConfirmContentDialogAsync<TextViewModel>(
+                async _ =>
+                {
+                    await DialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
+                    await ToDoService.RandomizeChildrenOrderIndexAsync(Id, cancellationToken).ConfigureAwait(false);
+                    await RefreshAsync(cancellationToken).ConfigureAwait(false);
+                },
+                async _ => await DialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false),
+                viewModel => viewModel.Text = "Are you sure?",
+                cancellationToken
+            )
+            .ConfigureAwait(false);
     }
 
     private async Task SettingsToDoItemAsync(CancellationToken cancellationToken)
@@ -635,6 +653,13 @@ public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
                         MaterialIconKind.Checks,
                         ToDoSubItemsViewModel.ToMultiEditingToDoItemsCommand,
                         "Complete multiple"
+                    )
+                );
+                ToDoItemHeaderViewModel.Commands.Add(
+                    new(
+                        MaterialIconKind.Dice6Outline,
+                        RandomizeChildrenOrderIndexCommand,
+                        "Randomize sub tasks"
                     )
                 );
             }
