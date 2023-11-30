@@ -167,6 +167,8 @@ public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
 
     private async Task RandomizeChildrenOrderIndexAsync(CancellationToken cancellationToken)
     {
+        await Dispatcher.UIThread.InvokeAsync(HideFlyout);
+
         await DialogViewer.ShowConfirmContentDialogAsync<TextViewModel>(
                 async _ =>
                 {
