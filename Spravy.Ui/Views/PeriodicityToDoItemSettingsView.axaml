@@ -56,7 +56,8 @@
             </TextBox.InnerLeftContent>
         </TextBox>
 
-        <Grid ColumnDefinitions="Auto,*">
+        <Grid ColumnDefinitions="Auto,*"
+              IsVisible="{Binding TypeOfPeriodicity, Converter={StaticResource TypeOfPeriodicityToIsVisible}}">
             <Button Command="{Binding ChangePeriodicityCommand}" Margin="4,15,4,4">
                 <avalonia:MaterialIcon Kind="Pencil" />
             </Button>

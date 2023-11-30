@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Enums;
 
-public enum MultiEditingGroupBy
+public enum MultiEditingGroupBy : byte
 {
     None,
     ByStatus,
