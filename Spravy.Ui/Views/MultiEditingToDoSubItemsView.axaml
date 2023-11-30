@@ -5,6 +5,8 @@
                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
+                                xmlns:controls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
+                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.MultiEditingToDoSubItemsView"
                                 x:DataType="viewModels:MultiEditingToDoSubItemsViewModel">
@@ -14,5 +16,35 @@
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 
-    <ItemsControl ItemsSource="{Binding Items}" />
+    <Grid RowDefinitions="Auto,*">
+        <controls:ColorZone Mode="PrimaryMid">
+            <DockPanel>
+                <Button DockPanel.Dock="Left"
+                        Classes="with-icon"
+                        Command="{Binding SwitchPaneCommand}"
+                        ClickMode="Release">
+                    <avalonia:MaterialIcon Kind="Menu" />
+                </Button>
+
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                    <Button DockPanel.Dock="Left" Classes="with-icon" Command="{Binding SelectAllCommand}">
+                        <avalonia:MaterialIcon Kind="CheckAll" />
+                    </Button>
+                    <Button DockPanel.Dock="Left" Classes="with-icon" Command="{Binding CompleteCommand}">
+                        <avalonia:MaterialIcon Kind="Check" />
+                    </Button>
+
+                    <Button DockPanel.Dock="Left" Classes="with-icon" Command="{Binding ChangeTypeCommand}">
+                        <avalonia:MaterialIcon Kind="BriefcaseArrowLeftRightOutline" />
+                    </Button>
+                </StackPanel>
+
+                <Control />
+            </DockPanel>
+        </controls:ColorZone>
+
+        <ScrollViewer Grid.Row="1">
+            <ItemsControl ItemsSource="{Binding Items}" />
+        </ScrollViewer>
+    </Grid>
 </reactiveUi:ReactiveUserControl>

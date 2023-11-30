@@ -40,8 +40,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
         ChangeToActiveDoItemCommand = CreateCommandFromTask<ActiveToDoItemNotify>(
             TaskWork.Create<ActiveToDoItemNotify>(ChangeToActiveDoItemAsync).RunAsync
         );
-        CompleteSelectedToDoItemsCommand =
-            CreateCommandFromTask(TaskWork.Create(CompleteSelectedToDoItemsAsync).RunAsync);
+        ToMultiEditingToDoItemsCommand = CreateCommandFromTask(TaskWork.Create(ToMultiEditingToDoItemsAsync).RunAsync);
         ChangeOrderIndexCommand =
             CreateCommandFromTask<ToDoItemNotify>(TaskWork.Create<ToDoItemNotify>(ChangeOrderIndexAsync).RunAsync);
         OpenLinkCommand =
@@ -59,7 +58,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
     public ICommand AddSubToDoItemToFavoriteCommand { get; }
     public ICommand RemoveSubToDoItemFromFavoriteCommand { get; }
     public ICommand ChangeToActiveDoItemCommand { get; }
-    public ICommand CompleteSelectedToDoItemsCommand { get; }
+    public ICommand ToMultiEditingToDoItemsCommand { get; }
     public ICommand ChangeOrderIndexCommand { get; }
     public ICommand OpenLinkCommand { get; }
 
@@ -99,7 +98,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
             .ConfigureAwait(false);
     }
 
-    private async Task CompleteSelectedToDoItemsAsync(CancellationToken cancellationToken)
+    private async Task ToMultiEditingToDoItemsAsync(CancellationToken cancellationToken)
     {
         var ids = Missed.Concat(Planned)
             .Concat(ReadyForCompleted)
@@ -170,48 +169,6 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
                 cancellationToken
             )
             .ConfigureAwait(false);
-    }
-
-    private async Task CompleteAsync(
-        IEnumerable<ToDoItemNotify> items,
-        CompleteStatus status,
-        CancellationToken cancellationToken
-    )
-    {
-        switch (status)
-        {
-            case CompleteStatus.Complete:
-                foreach (var item in items)
-                {
-                    await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true, cancellationToken)
-                        .ConfigureAwait(false);
-                }
-
-                break;
-            case CompleteStatus.Skip:
-                foreach (var item in items)
-                {
-                    await ToDoService.SkipToDoItemAsync(item.Id, cancellationToken).ConfigureAwait(false);
-                }
-
-                break;
-            case CompleteStatus.Fail:
-                foreach (var item in items)
-                {
-                    await ToDoService.FailToDoItemAsync(item.Id, cancellationToken).ConfigureAwait(false);
-                }
-
-                break;
-            case CompleteStatus.Incomplete:
-                foreach (var item in items)
-                {
-                    await ToDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true, cancellationToken)
-                        .ConfigureAwait(false);
-                }
-
-                break;
-            default: throw new ArgumentOutOfRangeException(nameof(status), status, null);
-        }
     }
 
     private async Task RemoveFavoriteToDoItemAsync(ToDoItemNotify item, CancellationToken cancellationToken)

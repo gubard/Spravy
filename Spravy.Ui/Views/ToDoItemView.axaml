@@ -63,17 +63,17 @@
 
         <ScrollViewer Grid.Row="2">
             <StackPanel>
-                <Expander IsExpanded="{Binding Description, Mode=OneWay, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}"
-                          Margin="3">
+                <Expander Margin="3"
+                          IsExpanded="{Binding Description, Mode=OneWay, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}">
                     <Expander.Header>
-                        <Grid ColumnDefinitions="Auto,*" Height="60">
+                        <StackPanel Orientation="Horizontal" Height="60">
                             <Button Command="{Binding ChangeDescriptionCommand}"
                                     Classes="with-icon">
                                 <avalonia:MaterialIcon Kind="Pencil" />
                             </Button>
 
-                            <TextBlock Grid.Column="1" Text="Description" Classes="alignment-center" />
-                        </Grid>
+                            <TextBlock Text="Description" Classes="alignment-center" />
+                        </StackPanel>
                     </Expander.Header>
 
                     <TextBlock Text="{Binding Description}" />

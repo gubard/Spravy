@@ -633,7 +633,7 @@ public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
                 ToDoItemHeaderViewModel.Commands.Add(
                     new(
                         MaterialIconKind.Checks,
-                        ToDoSubItemsViewModel.CompleteSelectedToDoItemsCommand,
+                        ToDoSubItemsViewModel.ToMultiEditingToDoItemsCommand,
                         "Complete multiple"
                     )
                 );

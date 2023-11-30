@@ -2,7 +2,7 @@ using ReactiveUI;
 
 namespace Spravy.Ui.Models;
 
-public class Selected<TValue> : NotifyBase
+public class Selected<TValue> : NotifyBase where TValue : notnull
 {
     private bool isSelect;
 
