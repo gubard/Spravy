@@ -32,6 +32,19 @@ public class MultiEditingToDoSubItemsViewModel : RoutableViewModelBase
         ChangeTypeCommand = CreateInitializedCommand(TaskWork.Create(ChangeTypeAsync).RunAsync);
         SelectAllCommand = CreateInitializedCommand(TaskWork.Create(SelectAllAsync).RunAsync);
         GroupBys = new(Enum.GetValues<MultiEditingGroupBy>());
+        SelectAllMissedCommand = CreateInitializedCommand(TaskWork.Create(SelectAllMissedAsync).RunAsync);
+        SelectAllPlannedCommand = CreateInitializedCommand(TaskWork.Create(SelectAllPlannedAsync).RunAsync);
+        SelectAllReadyForCompletedCommand =
+            CreateInitializedCommand(TaskWork.Create(SelectAllReadyForCompletedAsync).RunAsync);
+        SelectAllCompletedCommand = CreateInitializedCommand(TaskWork.Create(SelectAllCompletedAsync).RunAsync);
+        SelectAllPlannedsCommand = CreateInitializedCommand(TaskWork.Create(SelectAllPlannedsAsync).RunAsync);
+        SelectAllPeriodicitysCommand = CreateInitializedCommand(TaskWork.Create(SelectAllPeriodicitysAsync).RunAsync);
+        SelectAllPeriodicityOffsetsCommand =
+            CreateInitializedCommand(TaskWork.Create(SelectAllPeriodicityOffsetsAsync).RunAsync);
+        SelectAllCirclesCommand = CreateInitializedCommand(TaskWork.Create(SelectAllCirclesAsync).RunAsync);
+        SelectAllStepsCommand = CreateInitializedCommand(TaskWork.Create(SelectAllStepsAsync).RunAsync);
+        SelectAllValuesCommand = CreateInitializedCommand(TaskWork.Create(SelectAllValuesAsync).RunAsync);
+        SelectAllGroupsCommand = CreateInitializedCommand(TaskWork.Create(SelectAllGroupsAsync).RunAsync);
     }
 
     public AvaloniaList<Guid> Ids { get; } = new();
@@ -53,6 +66,17 @@ public class MultiEditingToDoSubItemsViewModel : RoutableViewModelBase
     public ICommand CompleteCommand { get; }
     public ICommand ChangeTypeCommand { get; }
     public ICommand SelectAllCommand { get; }
+    public ICommand SelectAllMissedCommand { get; }
+    public ICommand SelectAllPlannedCommand { get; }
+    public ICommand SelectAllReadyForCompletedCommand { get; }
+    public ICommand SelectAllCompletedCommand { get; }
+    public ICommand SelectAllValuesCommand { get; }
+    public ICommand SelectAllGroupsCommand { get; }
+    public ICommand SelectAllPlannedsCommand { get; }
+    public ICommand SelectAllPeriodicitysCommand { get; }
+    public ICommand SelectAllPeriodicityOffsetsCommand { get; }
+    public ICommand SelectAllCirclesCommand { get; }
+    public ICommand SelectAllStepsCommand { get; }
 
     [Inject]
     public required IToDoService ToDoService { get; init; }
@@ -69,22 +93,87 @@ public class MultiEditingToDoSubItemsViewModel : RoutableViewModelBase
         set => this.RaiseAndSetIfChanged(ref groupBy, value);
     }
 
-    private async Task SelectAllAsync(CancellationToken arg)
+    private Task SelectAllStepsAsync(CancellationToken arg)
     {
-        if (Items.All(x => x.IsSelect))
-        {
-            foreach (var item in Items)
+        return Select(Steps);
+    }
+
+    private Task SelectAllCirclesAsync(CancellationToken arg)
+    {
+        return Select(Circles);
+    }
+
+    private Task SelectAllPeriodicityOffsetsAsync(CancellationToken arg)
+    {
+        return Select(PeriodicityOffsets);
+    }
+
+    private Task SelectAllPeriodicitysAsync(CancellationToken arg)
+    {
+        return Select(Periodicitys);
+    }
+
+    private Task SelectAllPlannedsAsync(CancellationToken arg)
+    {
+        return Select(Planneds);
+    }
+
+    private Task SelectAllGroupsAsync(CancellationToken arg)
+    {
+        return Select(Groups);
+    }
+
+    private Task SelectAllValuesAsync(CancellationToken arg)
+    {
+        return Select(Values);
+    }
+
+    private Task SelectAllCompletedAsync(CancellationToken arg)
+    {
+        return Select(Completed);
+    }
+
+    private Task SelectAllReadyForCompletedAsync(CancellationToken arg)
+    {
+        return Select(ReadyForCompleted);
+    }
+
+    private Task SelectAllPlannedAsync(CancellationToken arg)
+    {
+        return Select(Planned);
+    }
+
+    private Task SelectAllMissedAsync(CancellationToken arg)
+    {
+        return Select(Missed);
+    }
+
+    private Task SelectAllAsync(CancellationToken arg)
+    {
+        return Select(Items);
+    }
+
+    private async Task Select(AvaloniaList<Selected<ToDoItemNotify>> items)
+    {
+        await Dispatcher.UIThread.InvokeAsync(
+            () =>
             {
-                await Dispatcher.UIThread.InvokeAsync(() => item.IsSelect = false);
+                if (items.All(x => x.IsSelect))
+                {
+                    foreach (var item in items)
+                    {
+                        item.IsSelect = false;
+                    }
+                }
+                else
+                {
+                    foreach (var item in items)
+                    {
+                        item.IsSelect = true;
+                    }
+                }
             }
-        }
-        else
-        {
-            foreach (var item in Items)
-            {
-                await Dispatcher.UIThread.InvokeAsync(() => item.IsSelect = true);
-            }
-        }
+        );
     }
 
     private DispatcherOperation SwitchPane()
@@ -195,6 +284,13 @@ public class MultiEditingToDoSubItemsViewModel : RoutableViewModelBase
                 Planned.Clear();
                 ReadyForCompleted.Clear();
                 Completed.Clear();
+                Values.Clear();
+                Groups.Clear();
+                Planneds.Clear();
+                Periodicitys.Clear();
+                PeriodicityOffsets.Clear();
+                Circles.Clear();
+                Steps.Clear();
             }
         );
 

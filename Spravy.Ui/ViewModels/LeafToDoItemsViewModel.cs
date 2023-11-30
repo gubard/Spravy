@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -23,11 +24,12 @@ public class LeafToDoItemsViewModel : RoutableViewModelBase, IRefresh
     {
         SwitchPaneCommand = CreateCommand(SwitchPane);
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
+        ToMultiEditingToDoItemsCommand = CreateInitializedCommand(TaskWork.Create(ToMultiEditingToDoItemsAsync).RunAsync);
     }
 
     public ICommand InitializedCommand { get; }
     public ICommand SwitchPaneCommand { get; }
-
+    public ICommand ToMultiEditingToDoItemsCommand { get; }
 
     public Vector ScrollOffset
     {
@@ -61,6 +63,21 @@ public class LeafToDoItemsViewModel : RoutableViewModelBase, IRefresh
         var offset = ScrollOffset;
         await ToDoSubItemsViewModel.UpdateItemsAsync(ids, this, cancellationToken).ConfigureAwait(false);
         await Dispatcher.UIThread.InvokeAsync(() => ScrollOffset = offset);
+    }
+
+    private async Task ToMultiEditingToDoItemsAsync(CancellationToken cancellationToken)
+    {
+        var ids = ToDoSubItemsViewModel.Missed.Concat(ToDoSubItemsViewModel.Planned)
+            .Concat(ToDoSubItemsViewModel.ReadyForCompleted)
+            .Concat(ToDoSubItemsViewModel.Completed)
+            .OrderBy(x => x.OrderIndex)
+            .Select(x => x.Id);
+
+        await Navigator.NavigateToAsync<MultiEditingToDoSubItemsViewModel>(
+                viewModel => viewModel.Ids.AddRange(ids),
+                cancellationToken
+            )
+            .ConfigureAwait(false);
     }
 
     private DispatcherOperation SwitchPane()

@@ -576,7 +576,7 @@ public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
         var toFavoriteCommand = new ToDoItemCommand(
             MaterialIconKind.StarOutline,
             AddToDoItemToFavoriteCommand,
-            "Remove from favorite"
+            "Move to favorite"
         );
 
         await Dispatcher.UIThread.InvokeAsync(
@@ -611,7 +611,7 @@ public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
                     toFavoriteCommand = new ToDoItemCommand(
                         MaterialIconKind.Star,
                         RemoveToDoItemFromFavoriteCommand,
-                        "Move to favorite"
+                        "Remove from favorite"
                     );
                 }
 
