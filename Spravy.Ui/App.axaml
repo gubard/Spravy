@@ -10,7 +10,6 @@
              xmlns:controls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
              xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
              xmlns:enums="clr-namespace:Spravy.Ui.Enums"
-             xmlns:enums1="clr-namespace:Spravy.ToDo.Domain.Enums;assembly=Spravy.ToDo.Domain"
              xmlns:system="clr-namespace:System;assembly=System.Runtime"
              x:Class="Spravy.Ui.App"
              RequestedThemeVariant="Dark">
@@ -49,7 +48,7 @@
 
     <Application.Styles>
         <FluentTheme DensityStyle="Compact" />
-        <themes:MaterialTheme BaseTheme="Dark" PrimaryColor="Teal" SecondaryColor="DeepOrange" />
+        <themes:MaterialTheme BaseTheme="Dark" PrimaryColor="Teal" SecondaryColor="Amber" />
         <avalonia:MaterialIconStyles />
         <dialogHostAvalonia:DialogHostStyles />
         <StyleInclude Source="avares://Spravy.Ui/Styles/Theme.axaml" />
@@ -226,7 +225,7 @@
 
                             <Button Grid.Row="1"
                                     Grid.Column="1"
-                                    Classes="with-text accent"
+                                    Classes="with-text"
                                     Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
                                     CommandParameter="{Binding}"
                                     ClickMode="Release">

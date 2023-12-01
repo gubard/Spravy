@@ -37,13 +37,13 @@ public class GetterToDoItemParametersService
                 .With(ToDoItemStatus.Completed);
         }
 
+        var isMiss = false;
+
         if (IsDueable(entity))
         {
             if (entity.DueDate < DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
             {
-                return parameters.With(ToActiveToDoItem(entity))
-                    .With(ToDoItemStatus.Miss)
-                    .With(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip);
+                isMiss = true;
             }
 
             if (entity.DueDate > DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
@@ -61,26 +61,23 @@ public class GetterToDoItemParametersService
             .ToArrayAsync(cancellationToken);
 
         ActiveToDoItem? firstReadyForComplete = null;
+        ActiveToDoItem? firstMiss = null;
         var hasPlanned = false;
 
         foreach (var item in items)
         {
+            if (firstMiss.HasValue)
+            {
+                break;
+            }
+
             parameters = await GetToDoItemParametersAsync(context, item, offset, parameters, cancellationToken);
 
             switch (parameters.Status)
             {
                 case ToDoItemStatus.Miss:
-                    if (!parameters.ActiveItem.HasValue)
-                    {
-                        parameters = parameters.With(ToActiveToDoItem(item));
-                    }
-
-                    if (IsGroup(entity))
-                    {
-                        return parameters.With(ToDoItemStatus.Miss).With(ToDoItemIsCan.None);
-                    }
-
-                    return parameters.With(ToDoItemStatus.Miss);
+                    firstMiss = parameters.ActiveItem ?? ToActiveToDoItem(item);
+                    break;
                 case ToDoItemStatus.ReadyForComplete:
                     firstReadyForComplete ??= parameters.ActiveItem ?? ToActiveToDoItem(item);
 
@@ -95,8 +92,22 @@ public class GetterToDoItemParametersService
             }
         }
 
+        var firstActive = firstMiss ?? firstReadyForComplete;
+
         if (IsGroup(entity))
         {
+            if (isMiss)
+            {
+                return parameters.With(ToDoItemStatus.Miss)
+                    .With(ToDoItemIsCan.None)
+                    .With(firstActive ?? ToActiveToDoItem(entity));
+            }
+
+            if (firstMiss is not null)
+            {
+                return parameters.With(ToDoItemStatus.Miss).With(ToDoItemIsCan.None).With(firstMiss);
+            }
+
             if (firstReadyForComplete is null)
             {
                 if (hasPlanned)
@@ -112,25 +123,64 @@ public class GetterToDoItemParametersService
                 .With(firstReadyForComplete);
         }
 
-        if (firstReadyForComplete is null)
+        if (isMiss)
         {
-            return parameters.With(ToDoItemStatus.ReadyForComplete)
-                .With(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip)
-                .With(null);
+            switch (entity.ChildrenType)
+            {
+                case ToDoItemChildrenType.RequireCompletion:
+                    if (firstActive.HasValue)
+                    {
+                        return parameters.With(ToDoItemStatus.Miss)
+                            .With(ToDoItemIsCan.None)
+                            .With(firstActive);
+                    }
+
+                    return parameters.With(ToDoItemStatus.Miss)
+                        .With(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip)
+                        .With(ToActiveToDoItem(entity));
+                case ToDoItemChildrenType.IgnoreCompletion:
+                    return parameters.With(ToDoItemStatus.Miss)
+                        .With(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip)
+                        .With(firstActive ?? ToActiveToDoItem(entity));
+                default: throw new ArgumentOutOfRangeException();
+            }
         }
 
-        switch (entity.ChildrenType)
+        if (firstMiss is not null)
         {
-            case ToDoItemChildrenType.RequireCompletion:
-                return parameters.With(ToDoItemStatus.ReadyForComplete)
-                    .With(ToDoItemIsCan.None)
-                    .With(firstReadyForComplete);
-            case ToDoItemChildrenType.IgnoreCompletion:
-                return parameters.With(ToDoItemStatus.ReadyForComplete)
-                    .With(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip)
-                    .With(firstReadyForComplete);
-            default: throw new ArgumentOutOfRangeException();
+            switch (entity.ChildrenType)
+            {
+                case ToDoItemChildrenType.RequireCompletion:
+                    return parameters.With(ToDoItemStatus.Miss)
+                        .With(ToDoItemIsCan.None)
+                        .With(firstMiss);
+                case ToDoItemChildrenType.IgnoreCompletion:
+                    return parameters.With(ToDoItemStatus.Miss)
+                        .With(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip)
+                        .With(firstMiss);
+                default: throw new ArgumentOutOfRangeException();
+            }
         }
+
+        if (firstReadyForComplete is not null)
+        {
+            switch (entity.ChildrenType)
+            {
+                case ToDoItemChildrenType.RequireCompletion:
+                    return parameters.With(ToDoItemStatus.ReadyForComplete)
+                        .With(ToDoItemIsCan.None)
+                        .With(firstReadyForComplete);
+                case ToDoItemChildrenType.IgnoreCompletion:
+                    return parameters.With(ToDoItemStatus.ReadyForComplete)
+                        .With(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip)
+                        .With(firstReadyForComplete);
+                default: throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        return parameters.With(ToDoItemStatus.ReadyForComplete)
+            .With(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip)
+            .With(null);
     }
 
     private bool IsDueable(ToDoItemEntity entity)
