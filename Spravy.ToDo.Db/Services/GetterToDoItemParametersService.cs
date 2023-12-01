@@ -22,11 +22,45 @@ public class GetterToDoItemParametersService
         return CheckActiveItem(parameters, entity);
     }
 
-    public async Task<ToDoItemParameters> GetToDoItemParametersAsync(
+    private Task<ToDoItemParameters> GetToDoItemParametersAsync(
         SpravyDbToDoDbContext context,
         ToDoItemEntity entity,
         TimeSpan offset,
         ToDoItemParameters parameters,
+        CancellationToken cancellationToken
+    )
+    {
+        if (IsDueable(entity))
+        {
+            return GetToDoItemParametersAsync(
+                context,
+                entity,
+                entity.DueDate,
+                offset,
+                parameters,
+                false,
+                cancellationToken
+            );
+        }
+
+        return GetToDoItemParametersAsync(
+            context,
+            entity,
+            DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly(),
+            offset,
+            parameters,
+            false,
+            cancellationToken
+        );
+    }
+
+    private async Task<ToDoItemParameters> GetToDoItemParametersAsync(
+        SpravyDbToDoDbContext context,
+        ToDoItemEntity entity,
+        DateOnly dueDate,
+        TimeSpan offset,
+        ToDoItemParameters parameters,
+        bool useDueDate,
         CancellationToken cancellationToken
     )
     {
@@ -41,16 +75,33 @@ public class GetterToDoItemParametersService
 
         if (IsDueable(entity))
         {
-            if (entity.DueDate < DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
+            if (useDueDate)
             {
-                isMiss = true;
-            }
+                if (entity.DueDate < dueDate)
+                {
+                    isMiss = true;
+                }
 
-            if (entity.DueDate > DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
+                if (entity.DueDate > dueDate)
+                {
+                    return parameters.With(null)
+                        .With(ToDoItemStatus.Planned)
+                        .With(ToDoItemIsCan.None);
+                }
+            }
+            else
             {
-                return parameters.With(null)
-                    .With(ToDoItemStatus.Planned)
-                    .With(ToDoItemIsCan.None);
+                if (entity.DueDate < DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
+                {
+                    isMiss = true;
+                }
+
+                if (entity.DueDate > DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
+                {
+                    return parameters.With(null)
+                        .With(ToDoItemStatus.Planned)
+                        .With(ToDoItemIsCan.None);
+                }
             }
         }
 
@@ -71,12 +122,20 @@ public class GetterToDoItemParametersService
                 break;
             }
 
-            parameters = await GetToDoItemParametersAsync(context, item, offset, parameters, cancellationToken);
+            parameters = await GetToDoItemParametersAsync(
+                context,
+                item,
+                dueDate,
+                offset,
+                parameters,
+                true,
+                cancellationToken
+            );
 
             switch (parameters.Status)
             {
                 case ToDoItemStatus.Miss:
-                    firstMiss = parameters.ActiveItem ?? ToActiveToDoItem(item);
+                    firstMiss ??= parameters.ActiveItem ?? ToActiveToDoItem(item);
                     break;
                 case ToDoItemStatus.ReadyForComplete:
                     firstReadyForComplete ??= parameters.ActiveItem ?? ToActiveToDoItem(item);
