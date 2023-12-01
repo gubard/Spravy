@@ -28,10 +28,6 @@
                 </Button>
 
                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                    <Button Classes="with-icon" Command="{Binding SelectAllCommand}">
-                        <avalonia:MaterialIcon Kind="CheckAll" />
-                    </Button>
-
                     <Button Classes="with-icon" Command="{Binding CompleteCommand}">
                         <avalonia:MaterialIcon Kind="Check" />
                     </Button>
@@ -50,10 +46,17 @@
         </controls:ColorZone>
 
         <Grid Grid.Row="1" RowDefinitions="Auto,*">
-            <ComboBox Theme="{StaticResource MaterialOutlineComboBox}"
-                      assists:ComboBoxAssist.Label="GroupBy"
-                      SelectedItem="{Binding GroupBy}"
-                      ItemsSource="{Binding GroupBys}" />
+            <Grid ColumnDefinitions="Auto,*">
+                <Button Classes="with-icon" Command="{Binding SelectAllCommand}">
+                    <avalonia:MaterialIcon Kind="CheckAll" />
+                </Button>
+
+                <ComboBox Grid.Column="1"
+                          Theme="{StaticResource MaterialOutlineComboBox}"
+                          assists:ComboBoxAssist.Label="GroupBy"
+                          SelectedItem="{Binding GroupBy}"
+                          ItemsSource="{Binding GroupBys}" />
+            </Grid>
 
             <ScrollViewer Grid.Row="1">
                 <Panel>
