@@ -503,6 +503,7 @@ public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
     private async Task ChangeRootItemAsync(CancellationToken cancellationToken)
     {
         await Dispatcher.UIThread.InvokeAsync(HideFlyout);
+
         await DialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
                 async item =>
                 {
@@ -670,7 +671,8 @@ public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
 
     private void HideFlyout()
     {
-        var itemsControlCommands = ToDoItemHeaderViewModel.ToDoItemHeaderView?.FindControl<ItemsControl>("ItemsControlCommands");
+        var itemsControlCommands =
+            ToDoItemHeaderViewModel.ToDoItemHeaderView?.FindControl<ItemsControl>("ItemsControlCommands");
 
         if (itemsControlCommands is null)
         {

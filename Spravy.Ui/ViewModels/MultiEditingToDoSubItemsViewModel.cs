@@ -45,6 +45,7 @@ public class MultiEditingToDoSubItemsViewModel : RoutableViewModelBase
         SelectAllStepsCommand = CreateInitializedCommand(TaskWork.Create(SelectAllStepsAsync).RunAsync);
         SelectAllValuesCommand = CreateInitializedCommand(TaskWork.Create(SelectAllValuesAsync).RunAsync);
         SelectAllGroupsCommand = CreateInitializedCommand(TaskWork.Create(SelectAllGroupsAsync).RunAsync);
+        ChangeRootItemCommand =  CreateInitializedCommand(TaskWork.Create(ChangeRootItemAsync).RunAsync);
     }
 
     public AvaloniaList<Guid> Ids { get; } = new();
@@ -77,6 +78,7 @@ public class MultiEditingToDoSubItemsViewModel : RoutableViewModelBase
     public ICommand SelectAllPeriodicityOffsetsCommand { get; }
     public ICommand SelectAllCirclesCommand { get; }
     public ICommand SelectAllStepsCommand { get; }
+    public ICommand ChangeRootItemCommand { get; }
 
     [Inject]
     public required IToDoService ToDoService { get; init; }
@@ -174,6 +176,29 @@ public class MultiEditingToDoSubItemsViewModel : RoutableViewModelBase
                 }
             }
         );
+    }
+
+    private async Task ChangeRootItemAsync(CancellationToken cancellationToken)
+    {
+        var ids = Items.Where(x => x.IsSelect).Select(x => x.Value.Id).ToArray();
+
+        await DialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
+                async item =>
+                {
+                    await DialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
+
+                    foreach (var id in ids)
+                    {
+                        await ToDoService.UpdateToDoItemParentAsync(id, item.Id, cancellationToken)
+                            .ConfigureAwait(false);
+                    }
+
+                    await RefreshAsync(cancellationToken).ConfigureAwait(false);
+                },
+                viewModel => viewModel.IgnoreIds.AddRange(ids),
+                cancellationToken
+            )
+            .ConfigureAwait(false);
     }
 
     private DispatcherOperation SwitchPane()

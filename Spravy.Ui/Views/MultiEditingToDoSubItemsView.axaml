@@ -28,15 +28,20 @@
                 </Button>
 
                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                    <Button DockPanel.Dock="Left" Classes="with-icon" Command="{Binding SelectAllCommand}">
+                    <Button Classes="with-icon" Command="{Binding SelectAllCommand}">
                         <avalonia:MaterialIcon Kind="CheckAll" />
                     </Button>
-                    <Button DockPanel.Dock="Left" Classes="with-icon" Command="{Binding CompleteCommand}">
+
+                    <Button Classes="with-icon" Command="{Binding CompleteCommand}">
                         <avalonia:MaterialIcon Kind="Check" />
                     </Button>
 
-                    <Button DockPanel.Dock="Left" Classes="with-icon" Command="{Binding ChangeTypeCommand}">
+                    <Button Classes="with-icon" Command="{Binding ChangeTypeCommand}">
                         <avalonia:MaterialIcon Kind="BriefcaseArrowLeftRightOutline" />
+                    </Button>
+
+                    <Button Classes="with-icon" Command="{Binding ChangeRootItemCommand}">
+                        <avalonia:MaterialIcon Kind="SwapHorizontal" />
                     </Button>
                 </StackPanel>
 
