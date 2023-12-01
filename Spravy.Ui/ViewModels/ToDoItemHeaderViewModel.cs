@@ -2,7 +2,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Collections;
-using Avalonia.Controls;
 using Avalonia.Threading;
 using Ninject;
 using ReactiveUI;
@@ -12,6 +11,7 @@ using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Models;
+using Spravy.Ui.Views;
 
 namespace Spravy.Ui.ViewModels;
 
@@ -30,7 +30,7 @@ public class ToDoItemHeaderViewModel : ViewModelBase
     public ICommand ChangeNameCommand { get; }
     public ICommand ToCurrentToDoItemCommand { get; }
     public AvaloniaList<ToDoItemCommand> Commands { get; } = new();
-    public ItemsControl? ItemsControlCommands { get; set; }
+    public ToDoItemHeaderView? ToDoItemHeaderView { get; set; }
 
     [Inject]
     public required MainSplitViewModel MainSplitViewModel { get; init; }

@@ -670,7 +670,7 @@ public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
 
     private void HideFlyout()
     {
-        var itemsControlCommands = ToDoItemHeaderViewModel.ItemsControlCommands;
+        var itemsControlCommands = ToDoItemHeaderViewModel.ToDoItemHeaderView?.FindControl<ItemsControl>("ItemsControlCommands");
 
         if (itemsControlCommands is null)
         {

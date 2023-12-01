@@ -1,4 +1,3 @@
-using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
 using Avalonia.ReactiveUI;
@@ -17,12 +16,12 @@ public partial class ToDoItemHeaderView : ReactiveUserControl<ToDoItemHeaderView
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
         base.OnApplyTemplate(e);
-        ViewModel.ThrowIfNull().ItemsControlCommands = this.FindControl<ItemsControl>("ItemsControlCommands");
+        ViewModel.ThrowIfNull().ToDoItemHeaderView = this;
     }
 
     protected override void OnLoaded(RoutedEventArgs e)
     {
         base.OnLoaded(e);
-        ViewModel.ThrowIfNull().ItemsControlCommands = this.FindControl<ItemsControl>("ItemsControlCommands");
+        ViewModel.ThrowIfNull().ToDoItemHeaderView = this;
     }
 }
