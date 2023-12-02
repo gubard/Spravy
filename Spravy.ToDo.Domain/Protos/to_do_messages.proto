@@ -7,6 +7,23 @@ import "google/protobuf/duration.proto";
 
 package spravy.to_do;
 
+message GetToDoItemsRequest {
+  repeated bytes Ids = 1;
+}
+
+message GetToDoItemsReply {
+  bytes Id = 1;
+  string Name = 2;
+  bool IsFavorite = 3;
+  ToDoItemTypeGrpc Type = 4;
+  string Description = 5;
+  string Link = 6;
+  uint32 OrderIndex = 7;
+  ToDoItemStatusGrpc Status = 8;
+  ActiveToDoItemGrpc Active = 9;
+  ToDoItemIsCanGrpc IsCan = 10;
+}
+
 message RandomizeChildrenOrderIndexReply {
 }
 

@@ -61,7 +61,7 @@ public class LeafToDoItemsViewModel : RoutableViewModelBase, IRefresh
         var ids = await ToDoService.GetLeafToDoItemIdsAsync(Id, cancellationToken).ConfigureAwait(false);
         cancellationToken.ThrowIfCancellationRequested();
         var offset = ScrollOffset;
-        await ToDoSubItemsViewModel.UpdateItemsAsync(ids, this, cancellationToken).ConfigureAwait(false);
+        await ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, cancellationToken).ConfigureAwait(false);
         await Dispatcher.UIThread.InvokeAsync(() => ScrollOffset = offset);
     }
 

@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Text;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
@@ -1232,6 +1233,17 @@ public class EfToDoService : IToDoService
         item = item.ThrowIfNull();
 
         return mapper.Map<PeriodicityOffsetToDoItemSettings>(item);
+    }
+
+    public async IAsyncEnumerable<ToDoItem> GetToDoItemsAsync(
+        Guid[] ids,
+        [EnumeratorCancellation] CancellationToken cancellationToken
+    )
+    {
+        foreach (var id in ids)
+        {
+            yield return await GetToDoItemAsync(id, cancellationToken);
+        }
     }
 
     private async Task ToDoItemToStringAsync(

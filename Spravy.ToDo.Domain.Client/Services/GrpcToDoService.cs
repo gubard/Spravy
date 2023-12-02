@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using AutoMapper;
 using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
@@ -1202,6 +1203,38 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
             },
             cancellationToken
         );
+    }
+
+    public IAsyncEnumerable<ToDoItem> GetToDoItemsAsync(Guid[] ids, CancellationToken cancellationToken)
+    {
+        return CallClientAsync(
+            (client, token) => GetToDoItemsAsyncCore(client, ids, token),
+            cancellationToken
+        );
+    }
+
+    private async IAsyncEnumerable<ToDoItem> GetToDoItemsAsyncCore(
+        ToDoServiceClient client,
+        Guid[] ids,
+        [EnumeratorCancellation] CancellationToken cancellationToken
+    )
+    {
+        var request = new GetToDoItemsRequest();
+        request.Ids.AddRange(mapper.Map<IEnumerable<ByteString>>(ids));
+        cancellationToken.ThrowIfCancellationRequested();
+        var metadata = await metadataFactory.CreateAsync(cancellationToken);
+        using var response = client.GetToDoItems(request, metadata, cancellationToken: cancellationToken);
+        cancellationToken.ThrowIfCancellationRequested();
+
+        while (await response.ResponseStream.MoveNext(cancellationToken))
+        {
+            var reply = response.ResponseStream.Current;
+            var item = mapper.Map<ToDoItem>(reply);
+
+            yield return item;
+
+            cancellationToken.ThrowIfCancellationRequested();
+        }
     }
 
     public static GrpcToDoService CreateGrpcService(

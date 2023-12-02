@@ -180,25 +180,25 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
     private async Task RefreshFavoriteToDoItemsAsync(CancellationToken cancellationToken)
     {
         var ids = await ToDoService.GetFavoriteToDoItemIdsAsync(cancellationToken).ConfigureAwait(false);
-        await RefreshToDoItemListAsync(FavoriteToDoItems, ids, cancellationToken).ConfigureAwait(false);
+        await RefreshToDoItemListAsync(FavoriteToDoItems, ids.ToArray(), cancellationToken).ConfigureAwait(false);
     }
 
     private async Task RefreshToDoItemListAsync(
         AvaloniaList<ToDoItemNotify> items,
-        IEnumerable<Guid> ids,
+        Guid[] ids,
         CancellationToken cancellationToken
     )
     {
         await Dispatcher.UIThread.InvokeAsync(() => items.Clear());
 
-        await foreach (var item in LoadToDoItemsAsync(ids, cancellationToken).ConfigureAwait(false))
+        await foreach (var item in ToDoService.GetToDoItemsAsync(ids, cancellationToken).ConfigureAwait(false))
         {
             var itemNotify = Mapper.Map<ToDoItemNotify>(item);
             await Dispatcher.UIThread.InvokeAsync(() => items.Add(itemNotify));
         }
     }
 
-    private async Task RefreshToDoItemListsAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken)
+    private async Task RefreshToDoItemListsAsync(Guid[] ids, CancellationToken cancellationToken)
     {
         await Dispatcher.UIThread.InvokeAsync(
             () =>
@@ -210,7 +210,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
             }
         );
 
-        await foreach (var item in LoadToDoItemsAsync(ids, cancellationToken).ConfigureAwait(false))
+        await foreach (var item in ToDoService.GetToDoItemsAsync(ids, cancellationToken).ConfigureAwait(false))
         {
             await AddToDoItemAsync(item);
         }
@@ -228,17 +228,6 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
             ToDoItemStatus.Completed => Dispatcher.UIThread.InvokeAsync(() => Completed.Add(itemNotify)),
             _ => throw new ArgumentOutOfRangeException()
         };
-    }
-
-    private async IAsyncEnumerable<ToDoItem> LoadToDoItemsAsync(
-        IEnumerable<Guid> ids,
-        [EnumeratorCancellation] CancellationToken cancellationToken
-    )
-    {
-        foreach (var id in ids)
-        {
-            yield return await ToDoService.GetToDoItemAsync(id, cancellationToken).ConfigureAwait(false);
-        }
     }
 
     private async Task DeleteSubToDoItemAsync(ToDoItemNotify subItem, CancellationToken cancellationToken)
@@ -276,7 +265,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
             .ConfigureAwait(false);
     }
 
-    public async Task UpdateItemsAsync(IEnumerable<Guid> ids, IRefresh refresh, CancellationToken cancellationToken)
+    public async Task UpdateItemsAsync(Guid[] ids, IRefresh refresh, CancellationToken cancellationToken)
     {
         refreshToDoItem = refresh;
 

@@ -45,6 +45,7 @@ service ToDoService {
   rpc GetFavoriteToDoItemIds (GetFavoriteToDoItemIdsRequest) returns (GetFavoriteToDoItemIdsRequestReply);
   rpc GetChildrenToDoItemIds (GetChildrenToDoItemIdsRequest) returns (GetChildrenToDoItemIdsReply);
   rpc GetToDoItem (GetToDoItemRequest) returns (GetToDoItemReply);
+  rpc GetToDoItems (GetToDoItemsRequest) returns (stream GetToDoItemsReply);
   rpc GetLeafToDoItemIds (GetLeafToDoItemIdsRequest) returns (GetLeafToDoItemIdsReply);
   rpc SearchToDoItemIds (SearchToDoItemIdsRequest) returns (SearchToDoItemIdsReply);
   rpc GetParents (GetParentsRequest) returns (GetParentsReply);

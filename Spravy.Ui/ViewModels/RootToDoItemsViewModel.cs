@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -48,7 +49,7 @@ public class RootToDoItemsViewModel : RoutableViewModelBase, IToDoItemOrderChang
         cancellationToken.ThrowIfCancellationRequested();
         var ids = await ToDoService.GetRootToDoItemIdsAsync(cancellationToken).ConfigureAwait(false);
         cancellationToken.ThrowIfCancellationRequested();
-        await ToDoSubItemsViewModel.UpdateItemsAsync(ids, this, cancellationToken).ConfigureAwait(false);
+        await ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, cancellationToken).ConfigureAwait(false);
         cancellationToken.ThrowIfCancellationRequested();
     }
 

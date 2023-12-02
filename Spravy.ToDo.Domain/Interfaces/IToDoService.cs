@@ -54,4 +54,5 @@ public interface IToDoService
     Task<MonthlyPeriodicity> GetMonthlyPeriodicityAsync(Guid id, CancellationToken cancellationToken);
     Task<AnnuallyPeriodicity> GetAnnuallyPeriodicityAsync(Guid id, CancellationToken cancellationToken);
     Task<PeriodicityOffsetToDoItemSettings> GetPeriodicityOffsetToDoItemSettingsAsync(Guid id, CancellationToken cancellationToken);
+    IAsyncEnumerable<ToDoItem> GetToDoItemsAsync(Guid[] ids, CancellationToken cancellationToken);
 }

@@ -27,6 +27,8 @@ public class SpravyToDoProfile : Profile
         CreateMap<GetAnnuallyPeriodicityReply, AnnuallyPeriodicity>();
         CreateMap<AnnuallyPeriodicity, GetAnnuallyPeriodicityReply>();
         CreateMap<ToDoItem, GetToDoItemReply>();
+        CreateMap<GetToDoItemsReply, ToDoItem>();
+        CreateMap<ToDoItem, GetToDoItemsReply>();
         CreateMap<PeriodicityOffsetToDoItemSettings, GetPeriodicityOffsetToDoItemSettingsReply>();
         CreateMap<GetPeriodicityOffsetToDoItemSettingsReply, PeriodicityOffsetToDoItemSettings>();
         CreateMap<PeriodicityToDoItemSettings, GetPeriodicityToDoItemSettingsReply>();

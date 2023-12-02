@@ -28,6 +28,21 @@ public class GrpcToDoService : ToDoServiceBase
         this.eventBusService = eventBusService;
     }
 
+    public override async Task GetToDoItems(
+        GetToDoItemsRequest request,
+        IServerStreamWriter<GetToDoItemsReply> responseStream,
+        ServerCallContext context
+    )
+    {
+        var ids = mapper.Map<Guid[]>(request.Ids);
+
+        await foreach (var item in toDoService.GetToDoItemsAsync(ids, context.CancellationToken))
+        {
+            var reply = mapper.Map<GetToDoItemsReply>(item);
+            await responseStream.WriteAsync(reply);
+        }
+    }
+
     public override async Task<RandomizeChildrenOrderIndexReply> RandomizeChildrenOrderIndex(
         RandomizeChildrenOrderIndexRequest request,
         ServerCallContext context

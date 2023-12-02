@@ -379,7 +379,7 @@ public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
     private async Task RefreshToDoItemChildrenAsync(CancellationToken cancellationToken)
     {
         var ids = await ToDoService.GetChildrenToDoItemIdsAsync(Id, cancellationToken).ConfigureAwait(false);
-        await ToDoSubItemsViewModel.UpdateItemsAsync(ids, this, cancellationToken).ConfigureAwait(false);
+        await ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, cancellationToken).ConfigureAwait(false);
     }
 
     private async Task ChangeLinkAsync(CancellationToken cancellationToken)

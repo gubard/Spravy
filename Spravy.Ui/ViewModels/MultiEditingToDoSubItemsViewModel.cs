@@ -319,20 +319,9 @@ public class MultiEditingToDoSubItemsViewModel : RoutableViewModelBase
             }
         );
 
-        await foreach (var item in LoadToDoItemsAsync(Ids, cancellationToken).ConfigureAwait(false))
+        await foreach (var item in ToDoService.GetToDoItemsAsync(Ids.ToArray(), cancellationToken).ConfigureAwait(false))
         {
             await AddToDoItemAsync(item);
-        }
-    }
-
-    private async IAsyncEnumerable<ToDoItem> LoadToDoItemsAsync(
-        IEnumerable<Guid> ids,
-        [EnumeratorCancellation] CancellationToken cancellationToken
-    )
-    {
-        foreach (var id in ids)
-        {
-            yield return await ToDoService.GetToDoItemAsync(id, cancellationToken).ConfigureAwait(false);
         }
     }
 
