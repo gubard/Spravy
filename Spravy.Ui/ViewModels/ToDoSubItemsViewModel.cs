@@ -211,7 +211,6 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
         await foreach (var item in ToDoService.GetToDoItemsAsync(ids, cancellationToken).ConfigureAwait(false))
         {
             await AddToDoItemAsync(item);
-            await Task.Delay(150, cancellationToken);
         }
     }
 
@@ -221,10 +220,22 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 
         return itemNotify.Status switch
         {
-            ToDoItemStatus.Miss => Dispatcher.UIThread.InvokeAsync(() => Missed.Add(itemNotify)),
-            ToDoItemStatus.ReadyForComplete => Dispatcher.UIThread.InvokeAsync(() => ReadyForCompleted.Add(itemNotify)),
-            ToDoItemStatus.Planned => Dispatcher.UIThread.InvokeAsync(() => Planned.Add(itemNotify)),
-            ToDoItemStatus.Completed => Dispatcher.UIThread.InvokeAsync(() => Completed.Add(itemNotify)),
+            ToDoItemStatus.Miss => Dispatcher.UIThread.InvokeAsync(
+                () => Missed.Add(itemNotify),
+                DispatcherPriority.Background
+            ),
+            ToDoItemStatus.ReadyForComplete => Dispatcher.UIThread.InvokeAsync(
+                () => ReadyForCompleted.Add(itemNotify),
+                DispatcherPriority.Background
+            ),
+            ToDoItemStatus.Planned => Dispatcher.UIThread.InvokeAsync(
+                () => Planned.Add(itemNotify),
+                DispatcherPriority.Background
+            ),
+            ToDoItemStatus.Completed => Dispatcher.UIThread.InvokeAsync(
+                () => Completed.Add(itemNotify),
+                DispatcherPriority.Background
+            ),
             _ => throw new ArgumentOutOfRangeException()
         };
     }
