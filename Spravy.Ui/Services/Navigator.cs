@@ -42,7 +42,7 @@ public class Navigator : INavigator
         list.Add(viewModel);
     }
 
-    public async Task<IRoutableViewModel?> NavigateBackAsync()
+    public async Task<IRoutableViewModel?> NavigateBackAsync(CancellationToken cancellationToken)
     {
         var viewModel = list.Pop();
 

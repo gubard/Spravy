@@ -43,7 +43,7 @@ public class QueryList<T> where T : class
     {
         var index = 0;
 
-        for (var i = 1; index < array.Length - 1; index++)
+        for (var i = 1; i < array.Length - 1; i++)
         {
             if (array[i] != null)
             {

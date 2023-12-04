@@ -13,12 +13,6 @@
         <vm:MainViewModel />
     </Design.DataContext>
 
-    <Interaction.Behaviors>
-        <EventTriggerBehavior EventName="Initialized">
-            <InvokeCommandAction Command="{Binding InitializedCommand}" />
-        </EventTriggerBehavior>
-    </Interaction.Behaviors>
-
     <UserControl.Styles>
         <Style Selector="dialogHostAvalonia|DialogHost.adaptive">
             <Setter Property="(Interaction.Behaviors)">

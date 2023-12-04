@@ -1,4 +1,5 @@
-﻿using Android.App;
+﻿using System.Threading;
+using Android.App;
 using Android.Content.PM;
 using Android.OS;
 using Avalonia;
@@ -59,7 +60,7 @@ public class MainActivity : AvaloniaMainActivity<App>
 
     private async void HandleBackPressedAsync()
     {
-        var viewModel = await Navigator.NavigateBackAsync().ConfigureAwait(false);
+        var viewModel = await Navigator.NavigateBackAsync(CancellationToken.None).ConfigureAwait(false);
 
         if (viewModel is null)
         {
