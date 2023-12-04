@@ -213,7 +213,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
         await foreach (var item in ToDoService.GetToDoItemsAsync(ids, cancellationToken).ConfigureAwait(false))
         {
             await AddToDoItemAsync(item);
-            await Task.Delay(25, cancellationToken);
+            await Task.Delay(50, cancellationToken);
         }
     }
 
