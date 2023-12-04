@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -213,7 +211,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
         await foreach (var item in ToDoService.GetToDoItemsAsync(ids, cancellationToken).ConfigureAwait(false))
         {
             await AddToDoItemAsync(item);
-            await Task.Delay(50, cancellationToken);
+            await Task.Delay(100, cancellationToken);
         }
     }
 
