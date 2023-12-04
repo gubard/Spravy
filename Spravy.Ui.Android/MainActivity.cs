@@ -8,6 +8,7 @@ using Ninject;
 using Serilog;
 using Serilog.Core;
 using Spravy.Domain.Di.Helpers;
+using Spravy.Domain.Extensions;
 using Spravy.Ui.Android.Configurations;
 using Spravy.Ui.Configurations;
 using Spravy.Ui.Interfaces;
@@ -49,19 +50,6 @@ public class MainActivity : AvaloniaMainActivity<App>
 
     public override void OnBackPressed()
     {
-        if (DiHelper.Kernel is null)
-        {
-            base.OnBackPressed();
-
-            return;
-        }
-
-        var navigator = DiHelper.Kernel.Get<INavigator>();
-        var viewModel = navigator.NavigateBackAsync().ConfigureAwait(false).GetAwaiter().GetResult();
-
-        if (viewModel is null)
-        {
-            base.OnBackPressed();
-        }
+        DiHelper.Kernel.ThrowIfNull().Get<INavigator>().NavigateBackAsync().ConfigureAwait(false);
     }
 }
