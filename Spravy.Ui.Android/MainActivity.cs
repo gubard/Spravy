@@ -57,8 +57,7 @@ public class MainActivity : AvaloniaMainActivity<App>
         }
 
         var navigator = DiHelper.Kernel.Get<INavigator>();
-
-        var viewModel = navigator.NavigateBackAsync().GetAwaiter().GetResult();
+        var viewModel = navigator.NavigateBackAsync().ConfigureAwait(false).GetAwaiter().GetResult();
 
         if (viewModel is null)
         {
