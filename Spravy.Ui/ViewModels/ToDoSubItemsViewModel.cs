@@ -188,18 +188,18 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
         CancellationToken cancellationToken
     )
     {
-        await Dispatcher.UIThread.InvokeAsync(() => items.Clear());
+        await this.InvokeUIBackgroundAsync(() => items.Clear());
 
         await foreach (var item in ToDoService.GetToDoItemsAsync(ids, cancellationToken).ConfigureAwait(false))
         {
             var itemNotify = Mapper.Map<ToDoItemNotify>(item);
-            await Dispatcher.UIThread.InvokeAsync(() => items.Add(itemNotify));
+            await this.InvokeUIBackgroundAsync(() => items.Add(itemNotify));
         }
     }
 
     private async Task RefreshToDoItemListsAsync(Guid[] ids, CancellationToken cancellationToken)
     {
-        await Dispatcher.UIThread.InvokeAsync(
+        await this.InvokeUIBackgroundAsync(
             () =>
             {
                 Missed.Clear();

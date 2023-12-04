@@ -82,7 +82,7 @@ public class PlannedToDoItemSettingsViewModel : ViewModelBase
     {
         var setting = await ToDoService.GetPlannedToDoItemSettingsAsync(Id, cancellationToken).ConfigureAwait(false);
 
-        await Dispatcher.UIThread.InvokeAsync(
+        await this.InvokeUIBackgroundAsync(
             () =>
             {
                 ChildrenType = setting.ChildrenType;

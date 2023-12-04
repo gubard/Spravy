@@ -156,7 +156,7 @@ public class MultiEditingToDoSubItemsViewModel : NavigatableViewModelBase
 
     private async Task Select(AvaloniaList<Selected<ToDoItemNotify>> items)
     {
-        await Dispatcher.UIThread.InvokeAsync(
+        await this.InvokeUIAsync(
             () =>
             {
                 if (items.All(x => x.IsSelect))
@@ -202,7 +202,7 @@ public class MultiEditingToDoSubItemsViewModel : NavigatableViewModelBase
 
     private DispatcherOperation SwitchPane()
     {
-        return Dispatcher.UIThread.InvokeAsync(() => MainSplitViewModel.IsPaneOpen = !MainSplitViewModel.IsPaneOpen);
+        return this.InvokeUIAsync(() => MainSplitViewModel.IsPaneOpen = !MainSplitViewModel.IsPaneOpen);
     }
 
     public async Task CompleteAsync(CancellationToken cancellationToken)
@@ -300,7 +300,7 @@ public class MultiEditingToDoSubItemsViewModel : NavigatableViewModelBase
 
     public async Task RefreshAsync(CancellationToken cancellationToken)
     {
-        await Dispatcher.UIThread.InvokeAsync(
+        await this.InvokeUIBackgroundAsync(
             () =>
             {
                 Items.Clear();
@@ -335,7 +335,7 @@ public class MultiEditingToDoSubItemsViewModel : NavigatableViewModelBase
     {
         var selected = new Selected<ToDoItemNotify>(item);
 
-        return Dispatcher.UIThread.InvokeAsync(
+        return this.InvokeUIBackgroundAsync(
             () =>
             {
                 Items.Add(selected);

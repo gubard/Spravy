@@ -12,6 +12,7 @@ using Spravy.Domain.Extensions;
 using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
+using Spravy.Ui.Extensions;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
@@ -65,7 +66,7 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
             .ConfigureAwait(false);
         cancellationToken.ThrowIfCancellationRequested();
 
-        await Dispatcher.UIThread.InvokeAsync(
+        await this.InvokeUIBackgroundAsync(
             () =>
             {
                 PathViewModel.Items.Clear();

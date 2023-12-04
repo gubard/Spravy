@@ -7,6 +7,7 @@ using Spravy.Authentication.Domain.Models;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
+using Spravy.Ui.Extensions;
 using Spravy.Ui.Helpers;
 using Spravy.Ui.Models;
 
@@ -43,31 +44,31 @@ public class PaneViewModel : ViewModelBase
         await ObjectStorage.DeleteAsync(FileIds.LoginFileId).ConfigureAwait(false);
         KeeperTokenResult.Set(default);
         await Navigator.NavigateToAsync(ActionHelper<LoginViewModel>.Empty, cancellationToken).ConfigureAwait(false);
-        await Dispatcher.UIThread.InvokeAsync(() => MainSplitViewModel.IsPaneOpen = false);
+        await this.InvokeUIAsync(() => MainSplitViewModel.IsPaneOpen = false);
     }
 
     private async Task ToTimersViewAsync(CancellationToken cancellationToken)
     {
         await Navigator.NavigateToAsync(ActionHelper<TimersViewModel>.Empty, cancellationToken).ConfigureAwait(false);
-        await Dispatcher.UIThread.InvokeAsync(() => MainSplitViewModel.IsPaneOpen = false);
+        await this.InvokeUIAsync(() => MainSplitViewModel.IsPaneOpen = false);
     }
 
     private async Task ToRootToDoItemViewAsync(CancellationToken cancellationToken)
     {
         await Navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken)
             .ConfigureAwait(false);
-        await Dispatcher.UIThread.InvokeAsync(() => MainSplitViewModel.IsPaneOpen = false);
+        await this.InvokeUIAsync(() => MainSplitViewModel.IsPaneOpen = false);
     }
 
     private async Task ToSearchViewAsync(CancellationToken cancellationToken)
     {
         await Navigator.NavigateToAsync(ActionHelper<SearchViewModel>.Empty, cancellationToken).ConfigureAwait(false);
-        await Dispatcher.UIThread.InvokeAsync(() => MainSplitViewModel.IsPaneOpen = false);
+        await this.InvokeUIAsync(() => MainSplitViewModel.IsPaneOpen = false);
     }
     
     private async Task ToSettingViewAsync(CancellationToken cancellationToken)
     {
         await Navigator.NavigateToAsync(ActionHelper<SettingViewModel>.Empty, cancellationToken).ConfigureAwait(false);
-        await Dispatcher.UIThread.InvokeAsync(() => MainSplitViewModel.IsPaneOpen = false);
+        await this.InvokeUIAsync(() => MainSplitViewModel.IsPaneOpen = false);
     }
 }

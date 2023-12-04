@@ -56,7 +56,7 @@ public class ValueToDoItemSettingsViewModel : ViewModelBase
     private async Task RefreshAsync(CancellationToken cancellationToken)
     {
         var setting = await ToDoService.GetValueToDoItemSettingsAsync(Id, cancellationToken).ConfigureAwait(false);
-        await Dispatcher.UIThread.InvokeAsync(() => ChildrenType = setting.ChildrenType);
+        await this.InvokeUIBackgroundAsync(() => ChildrenType = setting.ChildrenType);
     }
 
     private async Task ChangeChildrenTypeAsync(CancellationToken cancellationToken)

@@ -10,6 +10,7 @@ using Ninject;
 using ReactiveUI;
 using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Interfaces;
+using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 
@@ -62,7 +63,7 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
         cancellationToken.ThrowIfCancellationRequested();
         var offset = ScrollOffset;
         await ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, cancellationToken).ConfigureAwait(false);
-        await Dispatcher.UIThread.InvokeAsync(() => ScrollOffset = offset);
+        await this.InvokeUIAsync(() => ScrollOffset = offset);
     }
 
     private async Task ToMultiEditingToDoItemsAsync(CancellationToken cancellationToken)
@@ -82,7 +83,7 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
 
     private DispatcherOperation SwitchPane()
     {
-        return Dispatcher.UIThread.InvokeAsync(() => MainSplitViewModel.IsPaneOpen = !MainSplitViewModel.IsPaneOpen);
+        return this.InvokeUIAsync(() => MainSplitViewModel.IsPaneOpen = !MainSplitViewModel.IsPaneOpen);
     }
 
     private async Task InitializedAsync(CancellationToken cancellationToken)

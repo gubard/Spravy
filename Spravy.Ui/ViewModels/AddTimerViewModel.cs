@@ -38,7 +38,7 @@ public class AddTimerViewModel : ViewModelBase
             {
                 await DialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
 
-                await Dispatcher.UIThread.InvokeAsync(
+                await this.InvokeUIBackgroundAsync(
                     () => Item = new()
                     {
                         Id = itemNotify.Id,
@@ -65,7 +65,7 @@ public class AddTimerViewModel : ViewModelBase
             async value =>
             {
                 await DialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
-                await Dispatcher.UIThread.InvokeAsync(() => DueDateTime = value);
+                await this.InvokeUIBackgroundAsync(() => DueDateTime = value);
             },
             calendar =>
             {

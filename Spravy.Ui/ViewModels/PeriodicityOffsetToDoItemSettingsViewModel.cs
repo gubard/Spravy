@@ -187,7 +187,7 @@ public class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase
         var setting = await ToDoService.GetPeriodicityOffsetToDoItemSettingsAsync(Id, cancellationToken)
             .ConfigureAwait(false);
 
-        await Dispatcher.UIThread.InvokeAsync(
+        await this.InvokeUIBackgroundAsync(
             () =>
             {
                 ChildrenType = setting.ChildrenType;

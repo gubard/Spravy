@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Avalonia.Threading;
 using DialogHostAvalonia;
 using Ninject;
+using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 using Spravy.Ui.ViewModels;
@@ -30,7 +31,7 @@ public class DialogViewer : IDialogViewer
             throw new NullReferenceException();
         }
 
-        await Dispatcher.UIThread.InvokeAsync(() => setupView.Invoke(content));
+        await this.InvokeUIBackgroundAsync(() => setupView.Invoke(content));
         cancellationToken.ThrowIfCancellationRequested();
         await ShowView(content, ContentDialogHostIdentifier).ConfigureAwait(false);
     }
@@ -45,7 +46,7 @@ public class DialogViewer : IDialogViewer
             throw new NullReferenceException();
         }
 
-        await Dispatcher.UIThread.InvokeAsync(() => setupView.Invoke(content));
+        await this.InvokeUIBackgroundAsync(() => setupView.Invoke(content));
         cancellationToken.ThrowIfCancellationRequested();
         await ShowView(content, ProgressDialogHostIdentifier).ConfigureAwait(false);
     }
@@ -60,7 +61,7 @@ public class DialogViewer : IDialogViewer
             throw new NullReferenceException();
         }
 
-        await Dispatcher.UIThread.InvokeAsync(() => setupView.Invoke(content));
+        await this.InvokeUIBackgroundAsync(() => setupView.Invoke(content));
         cancellationToken.ThrowIfCancellationRequested();
         await ShowView(content, ErrorDialogHostIdentifier).ConfigureAwait(false);
     }
@@ -73,7 +74,7 @@ public class DialogViewer : IDialogViewer
         where TView : ViewModelBase
     {
         var content = Resolver.Get<TView>();
-        await Dispatcher.UIThread.InvokeAsync(() => setupView.Invoke(content));
+        await this.InvokeUIBackgroundAsync(() => setupView.Invoke(content));
         var infoViewModel = Resolver.Get<InfoViewModel>();
         infoViewModel.Content = content;
         infoViewModel.OkTask = view => okTask.Invoke((TView)view);
@@ -89,7 +90,7 @@ public class DialogViewer : IDialogViewer
         where TView : ViewModelBase
     {
         var content = Resolver.Get<TView>();
-        await Dispatcher.UIThread.InvokeAsync(() => setupView.Invoke(content));
+        await this.InvokeUIBackgroundAsync(() => setupView.Invoke(content));
         var infoViewModel = Resolver.Get<InfoViewModel>();
         infoViewModel.Content = content;
         infoViewModel.OkTask = view => okTask.Invoke((TView)view);
@@ -104,7 +105,7 @@ public class DialogViewer : IDialogViewer
     ) where TView : ViewModelBase
     {
         var content = Resolver.Get<TView>();
-        await Dispatcher.UIThread.InvokeAsync(() => setupView.Invoke(content));
+        await this.InvokeUIBackgroundAsync(() => setupView.Invoke(content));
         var infoViewModel = Resolver.Get<InfoViewModel>();
         infoViewModel.Content = content;
         infoViewModel.OkTask = view => okTask.Invoke((TView)view);
@@ -122,7 +123,7 @@ public class DialogViewer : IDialogViewer
             throw new NullReferenceException();
         }
 
-        await Dispatcher.UIThread.InvokeAsync(() => setupView.Invoke(content));
+        await this.InvokeUIBackgroundAsync(() => setupView.Invoke(content));
         cancellationToken.ThrowIfCancellationRequested();
         await ShowView(content, InputDialogHostIdentifier).ConfigureAwait(false);
     }
@@ -140,7 +141,7 @@ public class DialogViewer : IDialogViewer
     ) where TView : ViewModelBase
     {
         var content = Resolver.Get<TView>();
-        await Dispatcher.UIThread.InvokeAsync(() => setupView.Invoke(content));
+        await this.InvokeUIBackgroundAsync(() => setupView.Invoke(content));
         var confirmViewModel = Resolver.Get<ConfirmViewModel>();
         confirmViewModel.Content = content;
         confirmViewModel.ConfirmTask = view => confirmTask.Invoke((TView)view);
@@ -157,7 +158,7 @@ public class DialogViewer : IDialogViewer
     ) where TView : ViewModelBase
     {
         var content = Resolver.Get<TView>();
-        await Dispatcher.UIThread.InvokeAsync(() => setupView.Invoke(content));
+        await this.InvokeUIBackgroundAsync(() => setupView.Invoke(content));
         var confirmViewModel = Resolver.Get<ConfirmViewModel>();
         confirmViewModel.Content = content;
         confirmViewModel.ConfirmTask = view => confirmTask.Invoke((TView)view);
@@ -188,7 +189,7 @@ public class DialogViewer : IDialogViewer
             return Task.CompletedTask;
         }
 
-        return Dispatcher.UIThread.InvokeAsync(() => DialogHost.Show(content, identifier));
+        return this.InvokeUIAsync(() => DialogHost.Show(content, identifier));
     }
 
     private async Task SafeClose(string identifier)
@@ -198,6 +199,6 @@ public class DialogViewer : IDialogViewer
             return;
         }
 
-        await Dispatcher.UIThread.InvokeAsync(() => DialogHost.Close(identifier));
+        await this.InvokeUIAsync(() => DialogHost.Close(identifier));
     }
 }

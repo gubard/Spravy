@@ -236,7 +236,7 @@ public class PeriodicityToDoItemSettingsViewModel : ViewModelBase
         var setting = await ToDoService.GetPeriodicityToDoItemSettingsAsync(Id, cancellationToken)
             .ConfigureAwait(false);
 
-        await Dispatcher.UIThread.InvokeAsync(
+        await this.InvokeUIBackgroundAsync(
             () =>
             {
                 ChildrenType = setting.ChildrenType;
@@ -255,7 +255,7 @@ public class PeriodicityToDoItemSettingsViewModel : ViewModelBase
                 var periodicity = await ToDoService.GetWeeklyPeriodicityAsync(Id, cancellationToken)
                     .ConfigureAwait(false);
 
-                await Dispatcher.UIThread.InvokeAsync(
+                await this.InvokeUIBackgroundAsync(
                     () => Values.AddRange(periodicity.Days.Select(x => x.ToString()))
                 );
                 break;
@@ -265,7 +265,7 @@ public class PeriodicityToDoItemSettingsViewModel : ViewModelBase
                 var periodicity = await ToDoService.GetMonthlyPeriodicityAsync(Id, cancellationToken)
                     .ConfigureAwait(false);
 
-                await Dispatcher.UIThread.InvokeAsync(
+                await this.InvokeUIBackgroundAsync(
                     () => Values.AddRange(periodicity.Days.Select(x => x.ToString()))
                 );
 
@@ -276,7 +276,7 @@ public class PeriodicityToDoItemSettingsViewModel : ViewModelBase
                 var periodicity = await ToDoService.GetAnnuallyPeriodicityAsync(Id, cancellationToken)
                     .ConfigureAwait(false);
 
-                await Dispatcher.UIThread.InvokeAsync(
+                await this.InvokeUIBackgroundAsync(
                     () => Values.AddRange(periodicity.Days.Select(x => $"{x.Day}.{x.Month}"))
                 );
 

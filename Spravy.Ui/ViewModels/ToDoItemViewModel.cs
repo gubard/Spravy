@@ -167,7 +167,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
 
     private async Task RandomizeChildrenOrderIndexAsync(CancellationToken cancellationToken)
     {
-        await Dispatcher.UIThread.InvokeAsync(HideFlyout);
+        await this.InvokeUIAsync(HideFlyout);
 
         await DialogViewer.ShowConfirmContentDialogAsync<TextViewModel>(
                 async _ =>
@@ -185,7 +185,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
 
     private async Task SettingsToDoItemAsync(CancellationToken cancellationToken)
     {
-        await Dispatcher.UIThread.InvokeAsync(HideFlyout);
+        await this.InvokeUIAsync(HideFlyout);
 
         switch (Type)
         {
@@ -286,7 +286,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
 
     private async Task CompleteToDoItemAsync(CancellationToken cancellationToken)
     {
-        await Dispatcher.UIThread.InvokeAsync(HideFlyout);
+        await this.InvokeUIAsync(HideFlyout);
 
         await DialogViewer.ShowInfoInputDialogAsync<CompleteToDoItemViewModel>(
                 _ => DialogViewer.CloseInputDialogAsync(cancellationToken),
@@ -347,7 +347,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
     {
         var item = await ToDoService.GetToDoItemAsync(Id, cancellationToken).ConfigureAwait(false);
 
-        await Dispatcher.UIThread.InvokeAsync(
+        await this.InvokeUIBackgroundAsync(
             () =>
             {
                 Link = item.Link?.AbsoluteUri ?? string.Empty;
@@ -366,7 +366,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
     {
         var parents = await ToDoService.GetParentsAsync(Id, cancellationToken).ConfigureAwait(false);
 
-        await Dispatcher.UIThread.InvokeAsync(
+        await this.InvokeUIBackgroundAsync(
             () =>
             {
                 PathViewModel.Items.Clear();
@@ -408,7 +408,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
 
     private async Task AddTimerAsync(CancellationToken cancellationToken)
     {
-        await Dispatcher.UIThread.InvokeAsync(HideFlyout);
+        await this.InvokeUIAsync(HideFlyout);
 
         await DialogViewer.ShowConfirmContentDialogAsync<AddTimerViewModel>(
                 async viewModel =>
@@ -473,13 +473,13 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
 
     private async Task InitializedAsync(CancellationToken cancellationToken)
     {
-        await Dispatcher.UIThread.InvokeAsync(() => ToDoItemHeaderViewModel.ToDoItemViewModel = this);
+        await this.InvokeUIBackgroundAsync(() => ToDoItemHeaderViewModel.ToDoItemViewModel = this);
         await RefreshAsync(cancellationToken).ConfigureAwait(false);
     }
 
     private async Task ToDoItemToStringAsync(CancellationToken cancellationToken)
     {
-        await Dispatcher.UIThread.InvokeAsync(HideFlyout);
+        await this.InvokeUIAsync(HideFlyout);
 
         await DialogViewer.ShowConfirmContentDialogAsync(
                 async view =>
@@ -502,7 +502,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
 
     private async Task ChangeRootItemAsync(CancellationToken cancellationToken)
     {
-        await Dispatcher.UIThread.InvokeAsync(HideFlyout);
+        await this.InvokeUIAsync(HideFlyout);
 
         await DialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
                 async item =>
@@ -530,28 +530,28 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
 
     private async Task ToLeafToDoItemsAsync(CancellationToken cancellationToken)
     {
-        await Dispatcher.UIThread.InvokeAsync(HideFlyout);
+        await this.InvokeUIAsync(HideFlyout);
         await Navigator.NavigateToAsync<LeafToDoItemsViewModel>(vm => vm.Id = Id, cancellationToken)
             .ConfigureAwait(false);
     }
 
     private async Task RemoveToDoItemFromFavoriteAsync(CancellationToken cancellationToken)
     {
-        await Dispatcher.UIThread.InvokeAsync(HideFlyout);
+        await this.InvokeUIAsync(HideFlyout);
         await ToDoService.RemoveFavoriteToDoItemAsync(Id, cancellationToken).ConfigureAwait(false);
         await RefreshAsync(cancellationToken).ConfigureAwait(false);
     }
 
     private async Task AddToDoItemToCurrentAsync(CancellationToken cancellationToken)
     {
-        await Dispatcher.UIThread.InvokeAsync(HideFlyout);
+        await this.InvokeUIAsync(HideFlyout);
         await ToDoService.AddFavoriteToDoItemAsync(Id, cancellationToken).ConfigureAwait(false);
         await RefreshAsync(cancellationToken).ConfigureAwait(false);
     }
 
     private async Task ToDoItemToRootAsync(CancellationToken cancellationToken)
     {
-        await Dispatcher.UIThread.InvokeAsync(HideFlyout);
+        await this.InvokeUIAsync(HideFlyout);
         await ToDoService.ToDoItemToRootAsync(Id, cancellationToken).ConfigureAwait(false);
         await Navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken)
             .ConfigureAwait(false);
@@ -559,7 +559,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
 
     private async Task AddToDoItemAsync(CancellationToken cancellationToken)
     {
-        await Dispatcher.UIThread.InvokeAsync(HideFlyout);
+        await this.InvokeUIAsync(HideFlyout);
 
         await DialogViewer.ShowConfirmContentDialogAsync<AddToDoItemViewModel>(
                 async viewModel =>
@@ -581,7 +581,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
 
     private async Task ChangeToDoItemByPathAsync(ToDoItemParentNotify item, CancellationToken cancellationToken)
     {
-        await Dispatcher.UIThread.InvokeAsync(HideFlyout);
+        await this.InvokeUIAsync(HideFlyout);
 
         await Navigator.NavigateToAsync<ToDoItemViewModel>(vm => vm.Id = item.Id, cancellationToken)
             .ConfigureAwait(false);
@@ -589,7 +589,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
 
     private async Task ToRootItemAsync(CancellationToken cancellationToken)
     {
-        await Dispatcher.UIThread.InvokeAsync(HideFlyout);
+        await this.InvokeUIAsync(HideFlyout);
         await Navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken)
             .ConfigureAwait(false);
     }
@@ -602,7 +602,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
             "Move to favorite"
         );
 
-        await Dispatcher.UIThread.InvokeAsync(
+        await this.InvokeUIBackgroundAsync(
             () =>
             {
                 ToDoItemHeaderViewModel.Commands.Clear();
@@ -612,7 +612,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
 
         await refreshToDoItemWork.Current;
 
-        await Dispatcher.UIThread.InvokeAsync(
+        await this.InvokeUIBackgroundAsync(
             () =>
             {
                 if (IsCan != ToDoItemIsCan.None)

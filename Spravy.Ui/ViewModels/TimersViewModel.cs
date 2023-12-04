@@ -8,6 +8,7 @@ using Avalonia.Threading;
 using Ninject;
 using Spravy.Domain.Models;
 using Spravy.Schedule.Domain.Interfaces;
+using Spravy.Ui.Extensions;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
@@ -35,7 +36,7 @@ public class TimersViewModel : NavigatableViewModelBase
 
     private DispatcherOperation SwitchPane()
     {
-        return Dispatcher.UIThread.InvokeAsync(() => MainSplitViewModel.IsPaneOpen = !MainSplitViewModel.IsPaneOpen);
+        return this.InvokeUIAsync(() => MainSplitViewModel.IsPaneOpen = !MainSplitViewModel.IsPaneOpen);
     }
 
     private async Task InitializedAsync(CancellationToken cancellationToken)

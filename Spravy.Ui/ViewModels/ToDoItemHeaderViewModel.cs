@@ -93,6 +93,6 @@ public class ToDoItemHeaderViewModel : ViewModelBase
 
     private DispatcherOperation SwitchPane()
     {
-        return Dispatcher.UIThread.InvokeAsync(() => MainSplitViewModel.IsPaneOpen = !MainSplitViewModel.IsPaneOpen);
+        return this.InvokeUIAsync(() => MainSplitViewModel.IsPaneOpen = !MainSplitViewModel.IsPaneOpen);
     }
 }
