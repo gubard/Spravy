@@ -10,6 +10,7 @@ using Serilog.Core;
 using Spravy.Domain.Di.Helpers;
 using Spravy.Ui.Android.Configurations;
 using Spravy.Ui.Configurations;
+using Spravy.Ui.Interfaces;
 
 namespace Spravy.Ui.Android;
 
@@ -28,7 +29,7 @@ public class MainActivity : AvaloniaMainActivity<App>
             .WriteTo.AndroidLog()
             .Enrich.WithProperty(Constants.SourceContextPropertyName, "Spravy")
             .CreateLogger();
-        
+
         return base.CustomizeAppBuilder(builder)
             .WithInterFont()
             .UseReactiveUI();
@@ -44,5 +45,24 @@ public class MainActivity : AvaloniaMainActivity<App>
     {
         Log.CloseAndFlush();
         base.OnDestroy();
+    }
+
+    public override void OnBackPressed()
+    {
+        if (DiHelper.Kernel is null)
+        {
+            base.OnBackPressed();
+
+            return;
+        }
+
+        var navigator = DiHelper.Kernel.Get<INavigator>();
+
+        var viewModel = navigator.NavigateBackAsync().GetAwaiter().GetResult();
+
+        if (viewModel is null)
+        {
+            base.OnBackPressed();
+        }
     }
 }

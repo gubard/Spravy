@@ -80,8 +80,9 @@ public class ToDoItemHeaderViewModel : ViewModelBase
         if (activeToDoItem.HasValue)
         {
             var item = ToDoItemViewModel.ThrowIfNull();
-            item.Id = activeToDoItem.Value.Id;
-            await item.RefreshAsync(cancellationToken).ConfigureAwait(false);
+
+            await Navigator.NavigateToAsync<ToDoItemViewModel>(viewModel => viewModel.Id = item.Id, cancellationToken)
+                .ConfigureAwait(false);
         }
         else
         {

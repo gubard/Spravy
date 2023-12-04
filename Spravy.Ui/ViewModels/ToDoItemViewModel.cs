@@ -568,8 +568,9 @@ public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
                     var parentValue = viewModel.Parent.ThrowIfNull();
                     var options = new AddToDoItemOptions(parentValue.Id, viewModel.Name, viewModel.Type);
                     await ToDoService.AddToDoItemAsync(options, cancellationToken);
-                    Id = parentValue.Id;
-                    await RefreshAsync(cancellationToken).ConfigureAwait(false);
+
+                    await Navigator.NavigateToAsync<ToDoItemViewModel>(vm => vm.Id = parentValue.Id, cancellationToken)
+                        .ConfigureAwait(false);
                 },
                 async _ => await DialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false),
                 viewModel => viewModel.Parent = Mapper.Map<ToDoItemNotify>(this),
@@ -581,8 +582,9 @@ public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
     private async Task ChangeToDoItemByPathAsync(ToDoItemParentNotify item, CancellationToken cancellationToken)
     {
         await Dispatcher.UIThread.InvokeAsync(HideFlyout);
-        Id = item.Id;
-        await RefreshAsync(cancellationToken).ConfigureAwait(false);
+
+        await Navigator.NavigateToAsync<ToDoItemViewModel>(vm => vm.Id = item.Id, cancellationToken)
+            .ConfigureAwait(false);
     }
 
     private async Task ToRootItemAsync(CancellationToken cancellationToken)

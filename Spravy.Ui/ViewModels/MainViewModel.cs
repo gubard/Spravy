@@ -1,7 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Avalonia.ReactiveUI;
 using Ninject;
 using Spravy.Domain.Models;
 using Spravy.Ui.Models;
@@ -21,18 +20,10 @@ public class MainViewModel : ViewModelBase
     [Inject]
     public required MainSplitViewModel MainSplitViewModel { get; init; }
 
-    [Inject]
-    public required PaneViewModel PaneViewModel { get; init; }
-
-    [Inject]
-    public required RoutedViewHost RoutedViewHost { get; init; }
-
     public ICommand InitializedCommand { get; }
 
     private async Task InitializedAsync(CancellationToken cancellationToken)
     {
-        MainSplitViewModel.Content = RoutedViewHost;
-        MainSplitViewModel.Pane = PaneViewModel;
         await Navigator.NavigateToAsync(Configuration.DefaultMainViewType, cancellationToken).ConfigureAwait(false);
     }
 }

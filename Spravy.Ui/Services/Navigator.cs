@@ -1,47 +1,65 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Avalonia.Threading;
 using Ninject;
 using ReactiveUI;
+using Spravy.Domain.Models;
+using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
-using Spravy.Ui.Models;
 
 namespace Spravy.Ui.Services;
 
 public class Navigator : INavigator
 {
-    [Inject]
-    public required RoutingState RoutingState { get; init; }
+    private readonly QueryList<IRoutableViewModel> list = new(20);
 
     [Inject]
     public required IKernel Resolver { get; init; }
 
     [Inject]
-    public required AppConfiguration Configuration { get; init; }
-
-    public IObservable<IRoutableViewModel?> NavigateBack()
-    {
-        throw new NotSupportedException();
-    }
+    public required IContent Content { get; init; }
 
     public async Task NavigateToAsync(Type type, CancellationToken cancellationToken)
     {
         var viewModel = (IRoutableViewModel)Resolver.Get(type);
-        await Dispatcher.UIThread.InvokeAsync(() => RoutingState.Navigate.Execute(viewModel));
+        await this.InvokeUIAsync(() => Content.Content = viewModel);
+        list.Add(viewModel);
     }
 
     public async Task NavigateToAsync<TViewModel>(Action<TViewModel> setup, CancellationToken cancellationToken)
         where TViewModel : IRoutableViewModel
     {
         var viewModel = Resolver.Get<TViewModel>();
-        await Dispatcher.UIThread.InvokeAsync(() => setup.Invoke(viewModel));
-        await Dispatcher.UIThread.InvokeAsync(() => RoutingState.Navigate.Execute(viewModel));
+
+        await this.InvokeUIAsync(
+            () =>
+            {
+                setup.Invoke(viewModel);
+                Content.Content = viewModel;
+            }
+        );
+
+        list.Add(viewModel);
+    }
+
+    public async Task<IRoutableViewModel?> NavigateBackAsync()
+    {
+        var viewModel = list.Pop();
+
+        if (viewModel is null)
+        {
+            return null;
+        }
+        
+        await this.InvokeUIAsync(() => Content.Content = viewModel);
+
+        return viewModel;
     }
 
     public async Task NavigateToAsync<TViewModel>(TViewModel parameter, CancellationToken cancellationToken)
         where TViewModel : IRoutableViewModel
     {
-        await Dispatcher.UIThread.InvokeAsync(() => RoutingState.Navigate.Execute(parameter));
+        await this.InvokeUIAsync(() => Content.Content = parameter);
+        list.Add(parameter);
     }
 }

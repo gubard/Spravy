@@ -1,9 +1,10 @@
 using ReactiveUI;
+using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 
-public class MainSplitViewModel : ViewModelBase
+public class MainSplitViewModel : ViewModelBase, IContent
 {
     private object? content;
     private object? pane;

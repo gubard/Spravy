@@ -10,6 +10,11 @@ public class NavigatorDesign : INavigator
         throw new NotImplementedException();
     }
 
+    public Task<IRoutableViewModel?> NavigateBackAsync()
+    {
+        throw new NotImplementedException();
+    }
+
     public Task NavigateToAsync<TViewModel>(TViewModel parameter, CancellationToken cancellationToken) where TViewModel : IRoutableViewModel
     {
         throw new NotImplementedException();

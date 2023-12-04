@@ -7,7 +7,7 @@ namespace Spravy.Ui.Interfaces;
 
 public interface INavigator
 {
-    IObservable<IRoutableViewModel?> NavigateBack();
+    Task<IRoutableViewModel?> NavigateBackAsync();
     Task NavigateToAsync<TViewModel>(TViewModel parameter, CancellationToken cancellationToken) where TViewModel : IRoutableViewModel;
     Task NavigateToAsync(Type type, CancellationToken cancellationToken);
 

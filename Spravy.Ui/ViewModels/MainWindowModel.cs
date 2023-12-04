@@ -1,11 +1,7 @@
-using Ninject;
-using ReactiveUI;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 
-public class MainWindowModel : ViewModelBase, IScreen
+public class MainWindowModel : ViewModelBase
 {
-    [Inject]
-    public required RoutingState Router { get; init; }
 }

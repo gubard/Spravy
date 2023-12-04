@@ -6,12 +6,10 @@ using Avalonia.Collections;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Input.Platform;
-using Avalonia.ReactiveUI;
 using Grpc.Net.Client;
 using Ninject;
 using Ninject.Modules;
 using ReactiveUI;
-using Serilog;
 using Spravy.Authentication.Domain.Client.Models;
 using Spravy.Authentication.Domain.Client.Services;
 using Spravy.Authentication.Domain.Interfaces;
@@ -76,19 +74,8 @@ public class UiModule : NinjectModule
 
         Bind<ISerializer>().To<ProtobufSerializer>();
         Bind<ICacheValidator<Uri, GrpcChannel>>().To<GrpcChannelCacheValidator>();
-        Bind<RoutingState>()
-            .ToMethod(
-                _ =>
-                {
-                    var result = new RoutingState();
-                    result.Navigate.ThrownExceptions.Subscribe(x => Log.Error(x, "Navigate exception"));
-
-                    return result;
-                }
-            )
-            .InSingletonScope();
         Bind<IViewLocator>().To<ModuleViewLocator>();
-        Bind<INavigator>().To<Navigator>();
+        Bind<INavigator>().To<Navigator>().InSingletonScope();
         Bind<IMapper>().ToMethod(context => new Mapper(context.Kernel.Get<MapperConfiguration>()));
         Bind<IToDoService>().ToMethod(x => x.Kernel.Get<GrpcToDoService>());
         Bind<Application>().To<App>();
@@ -112,6 +99,7 @@ public class UiModule : NinjectModule
         Bind<IDialogViewer>().To<DialogViewer>();
         Bind<LeafToDoItemsViewModel>().ToSelf();
         Bind<LeafToDoItemsView>().ToSelf();
+        Bind<IContent>().ToMethod(x => x.Kernel.Get<MainSplitViewModel>());
 
         Bind<AvaloniaList<DayOfYearSelectItem>>()
             .ToMethod(
@@ -137,16 +125,6 @@ public class UiModule : NinjectModule
                 )
             );
 
-        Bind<RoutedViewHost>()
-            .ToSelf()
-            .OnActivation(
-                (c, x) =>
-                {
-                    x.ViewLocator = c.Kernel.Get<IViewLocator>();
-                    x.Router = c.Kernel.Get<RoutingState>();
-                }
-            );
-
         Bind<IClipboard>()
             .ToMethod(
                 _ => Application.Current.ThrowIfNull("Application")
@@ -155,7 +133,16 @@ public class UiModule : NinjectModule
                     .Clipboard.ThrowIfNull()
             );
 
-        Bind<MainSplitViewModel>().ToSelf().InSingletonScope();
+        Bind<MainSplitViewModel>()
+            .ToSelf()
+            .InSingletonScope()
+            .OnActivation(
+                (c, x) =>
+                {
+                    x.Pane = c.Kernel.Get<PaneViewModel>();
+                    x.Content = c.Kernel.Get<LoginViewModel>();
+                }
+            );
 
         Bind<Window>()
             .To<MainWindow>()
