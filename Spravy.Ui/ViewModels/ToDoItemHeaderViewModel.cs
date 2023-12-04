@@ -79,9 +79,10 @@ public class ToDoItemHeaderViewModel : ViewModelBase
 
         if (activeToDoItem.HasValue)
         {
-            var item = ToDoItemViewModel.ThrowIfNull();
-
-            await Navigator.NavigateToAsync<ToDoItemViewModel>(viewModel => viewModel.Id = item.Id, cancellationToken)
+            await Navigator.NavigateToAsync<ToDoItemViewModel>(
+                    viewModel => viewModel.Id = activeToDoItem.Value.Id,
+                    cancellationToken
+                )
                 .ConfigureAwait(false);
         }
         else
