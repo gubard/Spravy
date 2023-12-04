@@ -19,11 +19,11 @@ using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 
-public class MultiEditingToDoSubItemsViewModel : RoutableViewModelBase
+public class MultiEditingToDoSubItemsViewModel : NavigatableViewModelBase
 {
     private MultiEditingGroupBy groupBy;
 
-    public MultiEditingToDoSubItemsViewModel() : base("multi-editing-to-do-sub-items")
+    public MultiEditingToDoSubItemsViewModel() : base(true)
     {
         SwitchPaneCommand = CreateCommand(SwitchPane);
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(RefreshAsync).RunAsync);

@@ -15,12 +15,12 @@ using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 
-public class LeafToDoItemsViewModel : RoutableViewModelBase, IRefresh
+public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
 {
     private Guid id;
     private Vector scrollOffset;
 
-    public LeafToDoItemsViewModel() : base("leaf-to-do-items")
+    public LeafToDoItemsViewModel() : base(true)
     {
         SwitchPaneCommand = CreateCommand(SwitchPane);
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);

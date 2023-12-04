@@ -6,12 +6,12 @@ using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 
-public class AddRootToDoItemViewModel : RoutableViewModelBase
+public class AddRootToDoItemViewModel : NavigatableViewModelBase
 {
     private string name = string.Empty;
     private ToDoItemType type;
 
-    public AddRootToDoItemViewModel() : base("add-root-to-do")
+    public AddRootToDoItemViewModel() : base(true)
     {
         ToDoItemTypes = new(Enum.GetValues<ToDoItemType>());
     }

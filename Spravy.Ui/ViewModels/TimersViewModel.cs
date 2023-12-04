@@ -12,9 +12,9 @@ using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 
-public class TimersViewModel : RoutableViewModelBase
+public class TimersViewModel : NavigatableViewModelBase
 {
-    public TimersViewModel() : base("timers")
+    public TimersViewModel() : base(true)
     {
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
         SwitchPaneCommand = CreateCommand(SwitchPane);

@@ -2,9 +2,9 @@ using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 
-public class SettingViewModel : RoutableViewModelBase
+public class SettingViewModel : NavigatableViewModelBase
 {
-    public SettingViewModel() : base("setting")
+    public SettingViewModel() : base(true)
     {
     }
 }

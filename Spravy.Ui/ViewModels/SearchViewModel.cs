@@ -13,11 +13,11 @@ using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 
-public class SearchViewModel : RoutableViewModelBase, IRefresh
+public class SearchViewModel : NavigatableViewModelBase, IRefresh
 {
     private string searchText = string.Empty;
 
-    public SearchViewModel() : base("search")
+    public SearchViewModel() : base(true)
     {
         SearchCommand = CreateCommandFromTask(TaskWork.Create(RefreshAsync).RunAsync);
         SwitchPaneCommand = CreateCommand(SwitchPane);

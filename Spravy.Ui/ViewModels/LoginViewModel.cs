@@ -15,13 +15,13 @@ using Spravy.Ui.Views;
 
 namespace Spravy.Ui.ViewModels;
 
-public class LoginViewModel : RoutableViewModelBase
+public class LoginViewModel : NavigatableViewModelBase
 {
     private string login = string.Empty;
     private string password = string.Empty;
     private bool isRememberMe;
 
-    public LoginViewModel() : base("login")
+    public LoginViewModel() : base(false)
     {
         LoginCommand = CreateCommandFromTask(TaskWork.Create(LoginAsync).RunAsync);
         CreateUserCommand = CreateCommandFromTask(TaskWork.Create(CreateUserAsync).RunAsync);

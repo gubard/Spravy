@@ -4,12 +4,12 @@ using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 
-public class ExceptionViewModel : RoutableViewModelBase
+public class ExceptionViewModel : NavigatableViewModelBase
 {
     private Exception? exception;
     private string? fullExceptionText;
 
-    public ExceptionViewModel() : base("exception")
+    public ExceptionViewModel() : base(true)
     {
         this.WhenAnyValue(x => x.Exception).Subscribe(x => FullExceptionText = x?.ToString());
     }

@@ -14,9 +14,9 @@ using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 
-public class RootToDoItemsViewModel : RoutableViewModelBase, IToDoItemOrderChanger
+public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
 {
-    public RootToDoItemsViewModel() : base("root-to-do-item")
+    public RootToDoItemsViewModel() : base(true)
     {
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(RefreshAsync).RunAsync);
         AddToDoItemCommand = CreateCommandFromTask(TaskWork.Create(AddToDoItemAsync).RunAsync);

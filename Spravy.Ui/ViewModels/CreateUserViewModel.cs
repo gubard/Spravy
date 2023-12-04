@@ -14,14 +14,14 @@ using Spravy.Ui.Views;
 
 namespace Spravy.Ui.ViewModels;
 
-public class CreateUserViewModel : RoutableViewModelBase
+public class CreateUserViewModel : NavigatableViewModelBase
 {
     private string login = string.Empty;
     private string password = string.Empty;
     private string repeatPassword = string.Empty;
     private string email = string.Empty;
 
-    public CreateUserViewModel() : base("create-user")
+    public CreateUserViewModel() : base(true)
     {
         CreateUserCommand = CreateCommandFromTask(TaskWork.Create(CreateUserAsync).RunAsync);
         EnterCommand = CreateCommandFromTask<CreateUserView>(TaskWork.Create<CreateUserView>(EnterAsync).RunAsync);

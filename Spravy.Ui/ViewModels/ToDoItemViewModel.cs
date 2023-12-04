@@ -33,7 +33,7 @@ using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 
-public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
+public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
 {
     private string name = string.Empty;
     private Guid id;
@@ -46,7 +46,7 @@ public class ToDoItemViewModel : RoutableViewModelBase, IToDoItemOrderChanger
     private readonly TaskWork refreshToDoItemWork;
     private ToDoItemStatus status;
 
-    public ToDoItemViewModel() : base("to-do-item")
+    public ToDoItemViewModel() : base(true)
     {
         refreshToDoItemWork = new(RefreshToDoItemCore);
         RemoveToDoItemFromFavoriteCommand =
