@@ -24,6 +24,10 @@ namespace Spravy.Ui.Android;
 )]
 public class MainActivity : AvaloniaMainActivity<App>
 {
+    private INavigator? navigator;
+
+    private INavigator Navigator => navigator ??= DiHelper.Kernel.ThrowIfNull().Get<INavigator>();
+
     protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)
     {
         Log.Logger = new LoggerConfiguration()
@@ -50,6 +54,16 @@ public class MainActivity : AvaloniaMainActivity<App>
 
     public override void OnBackPressed()
     {
-        DiHelper.Kernel.ThrowIfNull().Get<INavigator>().NavigateBackAsync().ConfigureAwait(false);
+        HandleBackPressedAsync();
+    }
+
+    private async void HandleBackPressedAsync()
+    {
+        var viewModel = await Navigator.NavigateBackAsync().ConfigureAwait(false);
+
+        if (viewModel is null)
+        {
+            base.OnBackPressed();
+        }
     }
 }
