@@ -55,7 +55,12 @@ public class MainActivity : AvaloniaMainActivity<App>
 
     public override void OnBackPressed()
     {
-        var viewModel = Navigator.NavigateBackAsync(CancellationToken.None).GetAwaiter().GetResult();
+        HandleBackPressedAsync();
+    }
+
+    private async void HandleBackPressedAsync()
+    {
+        var viewModel = await Navigator.NavigateBackAsync(CancellationToken.None);
 
         if (viewModel is null)
         {
