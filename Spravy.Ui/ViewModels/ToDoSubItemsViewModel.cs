@@ -13,6 +13,7 @@ using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.Enums;
+using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 
@@ -220,22 +221,10 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 
         return itemNotify.Status switch
         {
-            ToDoItemStatus.Miss => Dispatcher.UIThread.InvokeAsync(
-                () => Missed.Add(itemNotify),
-                DispatcherPriority.Background
-            ),
-            ToDoItemStatus.ReadyForComplete => Dispatcher.UIThread.InvokeAsync(
-                () => ReadyForCompleted.Add(itemNotify),
-                DispatcherPriority.Background
-            ),
-            ToDoItemStatus.Planned => Dispatcher.UIThread.InvokeAsync(
-                () => Planned.Add(itemNotify),
-                DispatcherPriority.Background
-            ),
-            ToDoItemStatus.Completed => Dispatcher.UIThread.InvokeAsync(
-                () => Completed.Add(itemNotify),
-                DispatcherPriority.Background
-            ),
+            ToDoItemStatus.Miss => this.InvokeUIBackgroundAsync(() => Missed.Add(itemNotify)),
+            ToDoItemStatus.ReadyForComplete => this.InvokeUIBackgroundAsync(() => ReadyForCompleted.Add(itemNotify)),
+            ToDoItemStatus.Planned => this.InvokeUIBackgroundAsync(() => Planned.Add(itemNotify)),
+            ToDoItemStatus.Completed => this.InvokeUIBackgroundAsync(() => Completed.Add(itemNotify)),
             _ => throw new ArgumentOutOfRangeException()
         };
     }
