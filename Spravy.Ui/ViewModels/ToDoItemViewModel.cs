@@ -10,7 +10,6 @@ using Avalonia.Collections;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input.Platform;
-using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Google.Protobuf;
 using Material.Icons;
@@ -44,10 +43,12 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
     private string link = string.Empty;
     private ToDoItemIsCan isCan;
     private readonly TaskWork refreshToDoItemWork;
+    private readonly TaskWork refreshWork;
     private ToDoItemStatus status;
 
     public ToDoItemViewModel() : base(true)
     {
+        refreshWork = new(RefreshCoreAsync);
         refreshToDoItemWork = new(RefreshToDoItemCore);
         RemoveToDoItemFromFavoriteCommand =
             CreateCommandFromTask(TaskWork.Create(RemoveToDoItemFromFavoriteAsync).RunAsync);
@@ -326,7 +327,12 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
             .ConfigureAwait(false);
     }
 
-    public async Task RefreshAsync(CancellationToken cancellationToken)
+    public Task RefreshAsync(CancellationToken cancellationToken)
+    {
+        return refreshWork.RunAsync();
+    }
+
+    private async Task RefreshCoreAsync(CancellationToken cancellationToken)
     {
         await Task.WhenAll(
                 RefreshToDoItemAsync(),
@@ -703,5 +709,11 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
         }
 
         popupRoot.Hide();
+    }
+
+    public override void Stop()
+    {
+        refreshToDoItemWork.Cancel();
+        refreshWork.Cancel();
     }
 }

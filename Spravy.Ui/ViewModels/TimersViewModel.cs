@@ -50,4 +50,9 @@ public class TimersViewModel : NavigatableViewModelBase
         Timers.Clear();
         Timers.AddRange(Mapper.Map<IEnumerable<TimerItemNotify>>(timers));
     }
+
+    public override void Stop()
+    {
+        
+    }
 }

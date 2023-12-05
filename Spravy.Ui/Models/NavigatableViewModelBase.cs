@@ -2,7 +2,7 @@ using Spravy.Ui.Interfaces;
 
 namespace Spravy.Ui.Models;
 
-public class NavigatableViewModelBase : ViewModelBase, INavigatable
+public abstract class NavigatableViewModelBase : ViewModelBase, INavigatable
 {
     public NavigatableViewModelBase(bool isPooled)
     {
@@ -10,4 +10,6 @@ public class NavigatableViewModelBase : ViewModelBase, INavigatable
     }
 
     public bool IsPooled { get; }
+
+    public abstract void Stop();
 }

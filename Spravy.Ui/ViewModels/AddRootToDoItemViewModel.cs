@@ -6,17 +6,12 @@ using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 
-public class AddRootToDoItemViewModel : NavigatableViewModelBase
+public class AddRootToDoItemViewModel : ViewModelBase
 {
     private string name = string.Empty;
     private ToDoItemType type;
 
-    public AddRootToDoItemViewModel() : base(true)
-    {
-        ToDoItemTypes = new(Enum.GetValues<ToDoItemType>());
-    }
-
-    public AvaloniaList<ToDoItemType> ToDoItemTypes { get; }
+    public AvaloniaList<ToDoItemType> ToDoItemTypes { get; } = new(Enum.GetValues<ToDoItemType>());
 
     public string Name
     {

@@ -17,10 +17,12 @@ namespace Spravy.Ui.ViewModels;
 public class SearchViewModel : NavigatableViewModelBase, IRefresh
 {
     private string searchText = string.Empty;
+    private readonly TaskWork refreshWork;
 
     public SearchViewModel() : base(true)
     {
-        SearchCommand = CreateCommandFromTask(TaskWork.Create(RefreshAsync).RunAsync);
+        refreshWork = TaskWork.Create(RefreshCoreAsync);
+        SearchCommand = CreateCommandFromTask(refreshWork.RunAsync);
         SwitchPaneCommand = CreateCommand(SwitchPane);
     }
 
@@ -50,9 +52,19 @@ public class SearchViewModel : NavigatableViewModelBase, IRefresh
         return this.InvokeUIAsync(() => MainSplitViewModel.IsPaneOpen = !MainSplitViewModel.IsPaneOpen);
     }
 
-    public async Task RefreshAsync(CancellationToken cancellationToken)
+    public Task RefreshAsync(CancellationToken cancellationToken)
+    {
+        return refreshWork.RunAsync();
+    }
+
+    private async Task RefreshCoreAsync(CancellationToken cancellationToken)
     {
         var ids = await ToDoService.SearchToDoItemIdsAsync(SearchText, cancellationToken).ConfigureAwait(false);
         await ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, cancellationToken).ConfigureAwait(false);
+    }
+
+    public override void Stop()
+    {
+        refreshWork.Cancel();
     }
 }

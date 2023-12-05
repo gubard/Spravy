@@ -22,11 +22,13 @@ namespace Spravy.Ui.ViewModels;
 public class MultiEditingToDoSubItemsViewModel : NavigatableViewModelBase
 {
     private MultiEditingGroupBy groupBy;
+    private readonly TaskWork refreshWork;
 
     public MultiEditingToDoSubItemsViewModel() : base(true)
     {
+        refreshWork = TaskWork.Create(RefreshAsync);
         SwitchPaneCommand = CreateCommand(SwitchPane);
-        InitializedCommand = CreateInitializedCommand(TaskWork.Create(RefreshAsync).RunAsync);
+        InitializedCommand = CreateInitializedCommand(refreshWork.RunAsync);
         CompleteCommand = CreateInitializedCommand(TaskWork.Create(CompleteAsync).RunAsync);
         ChangeTypeCommand = CreateInitializedCommand(TaskWork.Create(ChangeTypeAsync).RunAsync);
         SelectAllCommand = CreateInitializedCommand(TaskWork.Create(SelectAllAsync).RunAsync);
@@ -192,7 +194,7 @@ public class MultiEditingToDoSubItemsViewModel : NavigatableViewModelBase
                             .ConfigureAwait(false);
                     }
 
-                    await RefreshAsync(cancellationToken).ConfigureAwait(false);
+                    await refreshWork.RunAsync().ConfigureAwait(false);
                 },
                 viewModel => viewModel.IgnoreIds.AddRange(ids),
                 cancellationToken
@@ -219,7 +221,7 @@ public class MultiEditingToDoSubItemsViewModel : NavigatableViewModelBase
                 {
                     await DialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
                     await CompleteAsync(items, status, cancellationToken).ConfigureAwait(false);
-                    await RefreshAsync(cancellationToken).ConfigureAwait(false);
+                    await refreshWork.RunAsync().ConfigureAwait(false);
                 };
             },
             cancellationToken
@@ -244,7 +246,7 @@ public class MultiEditingToDoSubItemsViewModel : NavigatableViewModelBase
                             .ConfigureAwait(false);
                     }
 
-                    await RefreshAsync(cancellationToken);
+                    await refreshWork.RunAsync().ConfigureAwait(false);
                 },
                 viewModel =>
                 {
@@ -317,10 +319,13 @@ public class MultiEditingToDoSubItemsViewModel : NavigatableViewModelBase
                 Steps.Clear();
             }
         );
+        
+        cancellationToken.ThrowIfCancellationRequested();
 
         await foreach (var item in ToDoService.GetToDoItemsAsync(Ids.ToArray(), cancellationToken).ConfigureAwait(false))
         {
             await AddToDoItemAsync(item);
+            cancellationToken.ThrowIfCancellationRequested();
         }
     }
 
@@ -386,5 +391,10 @@ public class MultiEditingToDoSubItemsViewModel : NavigatableViewModelBase
                 }
             }
         );
+    }
+
+    public override void Stop()
+    {
+        refreshWork.Cancel();
     }
 }

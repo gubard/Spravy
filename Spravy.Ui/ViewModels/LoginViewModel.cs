@@ -130,4 +130,8 @@ public class LoginViewModel : NavigatableViewModelBase
 
         await ObjectStorage.SaveObjectAsync(FileIds.LoginFileId, item).ConfigureAwait(false);
     }
+
+    public override void Stop()
+    {
+    }
 }

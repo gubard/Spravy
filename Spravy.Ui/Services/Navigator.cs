@@ -26,6 +26,7 @@ public class Navigator : INavigator
         }
 
         var content = (INavigatable)Content.Content;
+        content.Stop();
 
         if (!content.IsPooled)
         {

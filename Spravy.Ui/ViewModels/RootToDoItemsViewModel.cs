@@ -17,9 +17,12 @@ namespace Spravy.Ui.ViewModels;
 
 public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
 {
+    private readonly TaskWork refreshWork;
+
     public RootToDoItemsViewModel() : base(true)
     {
-        InitializedCommand = CreateInitializedCommand(TaskWork.Create(RefreshAsync).RunAsync);
+        refreshWork = TaskWork.Create(RefreshCoreAsync);
+        InitializedCommand = CreateInitializedCommand(refreshWork.RunAsync);
         AddToDoItemCommand = CreateCommandFromTask(TaskWork.Create(AddToDoItemAsync).RunAsync);
         SwitchPaneCommand = CreateCommand(SwitchPane);
     }
@@ -45,7 +48,12 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
         return this.InvokeUIAsync(() => MainSplitViewModel.IsPaneOpen = !MainSplitViewModel.IsPaneOpen);
     }
 
-    public async Task RefreshAsync(CancellationToken cancellationToken)
+    public Task RefreshAsync(CancellationToken cancellationToken)
+    {
+        return refreshWork.RunAsync();
+    }
+
+    private async Task RefreshCoreAsync(CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
         var ids = await ToDoService.GetRootToDoItemIdsAsync(cancellationToken).ConfigureAwait(false);
@@ -53,6 +61,7 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
         await ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, cancellationToken).ConfigureAwait(false);
         cancellationToken.ThrowIfCancellationRequested();
     }
+
 
     private async Task AddToDoItemAsync(CancellationToken cancellationToken)
     {
@@ -72,5 +81,10 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
                 cancellationToken
             )
             .ConfigureAwait(false);
+    }
+
+    public override void Stop()
+    {
+        refreshWork.Cancel();
     }
 }

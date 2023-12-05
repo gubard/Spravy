@@ -114,36 +114,6 @@ public class ViewModelBase : NotifyBase
         return command;
     }
 
-    protected async Task SafeExecuteAsync(Func<Task> func)
-    {
-        try
-        {
-            await func.Invoke();
-        }
-        catch (Exception e)
-        {
-            await Navigator.NavigateToAsync<ExceptionViewModel>(
-                viewModel => viewModel.Exception = e,
-                CancellationToken.None
-            );
-        }
-    }
-
-    protected async Task SafeExecuteAsync(Func<ConfiguredTaskAwaitable> func)
-    {
-        try
-        {
-            await func.Invoke();
-        }
-        catch (Exception e)
-        {
-            await Navigator.NavigateToAsync<ExceptionViewModel>(
-                viewModel => viewModel.Exception = e,
-                CancellationToken.None
-            );
-        }
-    }
-
     private async Task<bool> IsTakeMoreThen(Task task, TimeSpan timeout)
     {
         var delay = Task.Delay(timeout);

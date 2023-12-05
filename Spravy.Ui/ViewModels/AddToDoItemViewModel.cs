@@ -17,13 +17,13 @@ using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 
-public class AddToDoItemViewModel : NavigatableViewModelBase
+public class AddToDoItemViewModel : ViewModelBase
 {
     private ToDoItemNotify? parent;
     private string name = string.Empty;
     private ToDoItemType type;
 
-    public AddToDoItemViewModel() : base(true)
+    public AddToDoItemViewModel()
     {
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
         ToDoItemTypes = new(Enum.GetValues<ToDoItemType>());

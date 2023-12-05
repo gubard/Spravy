@@ -189,11 +189,13 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
     )
     {
         await this.InvokeUIBackgroundAsync(() => items.Clear());
+        cancellationToken.ThrowIfCancellationRequested();
 
         await foreach (var item in ToDoService.GetToDoItemsAsync(ids, cancellationToken).ConfigureAwait(false))
         {
             var itemNotify = Mapper.Map<ToDoItemNotify>(item);
             await this.InvokeUIBackgroundAsync(() => items.Add(itemNotify));
+            cancellationToken.ThrowIfCancellationRequested();
         }
     }
 
@@ -209,9 +211,12 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
             }
         );
 
+        cancellationToken.ThrowIfCancellationRequested();
+
         await foreach (var item in ToDoService.GetToDoItemsAsync(ids, cancellationToken).ConfigureAwait(false))
         {
             await AddToDoItemAsync(item);
+            cancellationToken.ThrowIfCancellationRequested();
         }
     }
 

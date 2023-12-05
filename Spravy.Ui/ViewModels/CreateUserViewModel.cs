@@ -134,4 +134,8 @@ public class CreateUserViewModel : NavigatableViewModelBase
     {
         await Navigator.NavigateToAsync(ActionHelper<LoginViewModel>.Empty, cancellationToken).ConfigureAwait(false);
     }
+
+    public override void Stop()
+    {
+    }
 }

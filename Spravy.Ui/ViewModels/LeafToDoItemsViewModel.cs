@@ -20,12 +20,15 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
 {
     private Guid id;
     private Vector scrollOffset;
+    private readonly TaskWork refreshWork;
 
     public LeafToDoItemsViewModel() : base(true)
     {
+        refreshWork = TaskWork.Create(RefreshCoreAsync);
         SwitchPaneCommand = CreateCommand(SwitchPane);
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
-        ToMultiEditingToDoItemsCommand = CreateInitializedCommand(TaskWork.Create(ToMultiEditingToDoItemsAsync).RunAsync);
+        ToMultiEditingToDoItemsCommand =
+            CreateInitializedCommand(TaskWork.Create(ToMultiEditingToDoItemsAsync).RunAsync);
     }
 
     public ICommand InitializedCommand { get; }
@@ -56,7 +59,12 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
         set => this.RaiseAndSetIfChanged(ref id, value);
     }
 
-    public async Task RefreshAsync(CancellationToken cancellationToken)
+    public Task RefreshAsync(CancellationToken cancellationToken)
+    {
+        return refreshWork.RunAsync();
+    }
+
+    private async Task RefreshCoreAsync(CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
         var ids = await ToDoService.GetLeafToDoItemIdsAsync(Id, cancellationToken).ConfigureAwait(false);
@@ -89,5 +97,10 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
     private async Task InitializedAsync(CancellationToken cancellationToken)
     {
         await RefreshAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    public override void Stop()
+    {
+        refreshWork.Cancel();
     }
 }
