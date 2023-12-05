@@ -14,12 +14,6 @@ namespace Spravy.Ui.Models;
 
 public class ViewModelBase : NotifyBase
 {
-    private static readonly TimeSpan TaskTimeout = TimeSpan.FromSeconds(1);
-
-    static ViewModelBase()
-    {
-    }
-
     [Inject]
     public required INavigator Navigator { get; init; }
 
@@ -112,20 +106,6 @@ public class ViewModelBase : NotifyBase
         SetupCommand(command);
 
         return command;
-    }
-
-    private async Task<bool> IsTakeMoreThen(Task task, TimeSpan timeout)
-    {
-        var delay = Task.Delay(timeout);
-
-        var tasks = new[]
-        {
-            task, delay,
-        };
-
-        var resultTask = await Task.WhenAny(tasks);
-
-        return resultTask != task;
     }
 
     private void SetupCommand<TParam, TResult>(ReactiveCommand<TParam, TResult> command)
