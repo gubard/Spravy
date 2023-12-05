@@ -36,9 +36,10 @@ public class GrpcToDoService : ToDoServiceBase
     {
         var ids = mapper.Map<Guid[]>(request.Ids);
 
-        await foreach (var item in toDoService.GetToDoItemsAsync(ids, context.CancellationToken))
+        await foreach (var item in toDoService.GetToDoItemsAsync(ids, request.ChunkSize, context.CancellationToken))
         {
-            var reply = mapper.Map<GetToDoItemsReply>(item);
+            var reply = new GetToDoItemsReply();
+            reply.Items.AddRange(mapper.Map<IEnumerable<ToDoItemGrpc>>(item));
             await responseStream.WriteAsync(reply);
         }
     }
@@ -269,21 +270,6 @@ public class GrpcToDoService : ToDoServiceBase
         var reply = new GetRootToDoSubItemsReply();
         var items = await toDoService.GetRootToDoSubItemsAsync(context.CancellationToken);
         reply.Items.AddRange(mapper.Map<IEnumerable<ToDoSubItemGrpc>>(items));
-
-        return reply;
-    }
-
-    public override async Task<GetToDoItemReply2> GetToDoItem2(GetToDoItemRequest2 request, ServerCallContext context)
-    {
-        var item = await toDoService.GetToDoItem2Async(
-            mapper.Map<Guid>(request.Id),
-            context.CancellationToken
-        );
-
-        var reply = new GetToDoItemReply2
-        {
-            Item = mapper.Map<ToDoItemGrpc>(item),
-        };
 
         return reply;
     }

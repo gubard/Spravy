@@ -33,21 +33,6 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         return reply;
     }
 
-    public override async Task<GetToDoItemReply2> GetToDoItem2(GetToDoItemRequest2 request, ServerCallContext context)
-    {
-        var item = await toDoService.GetToDoItem2Async(
-            mapper.Map<Guid>(request.Id),
-            context.CancellationToken
-        );
-
-        var reply = new GetToDoItemReply2
-        {
-            Item = mapper.Map<ToDoItemGrpc>(item),
-        };
-
-        return reply;
-    }
-
     public override async Task<AddRootToDoItemReply> AddRootToDoItem(
         AddRootToDoItemRequest request,
         ServerCallContext context

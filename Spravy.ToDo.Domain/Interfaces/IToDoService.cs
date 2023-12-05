@@ -14,7 +14,6 @@ public interface IToDoService
     Task<IEnumerable<Guid>> GetRootToDoItemIdsAsync(CancellationToken cancellationToken);
     Task<IEnumerable<Guid>> GetFavoriteToDoItemIdsAsync(CancellationToken cancellationToken);
     Task<IEnumerable<IToDoSubItem>> GetRootToDoSubItemsAsync(CancellationToken cancellationToken);
-    Task<IToDoItem> GetToDoItem2Async(Guid id, CancellationToken cancellationToken);
     Task<Guid> AddRootToDoItemAsync(AddRootToDoItemOptions options, CancellationToken cancellationToken);
     Task<Guid> AddToDoItemAsync(AddToDoItemOptions options, CancellationToken cancellationToken);
     Task DeleteToDoItemAsync(Guid id, CancellationToken cancellationToken);
@@ -54,5 +53,5 @@ public interface IToDoService
     Task<MonthlyPeriodicity> GetMonthlyPeriodicityAsync(Guid id, CancellationToken cancellationToken);
     Task<AnnuallyPeriodicity> GetAnnuallyPeriodicityAsync(Guid id, CancellationToken cancellationToken);
     Task<PeriodicityOffsetToDoItemSettings> GetPeriodicityOffsetToDoItemSettingsAsync(Guid id, CancellationToken cancellationToken);
-    IAsyncEnumerable<ToDoItem> GetToDoItemsAsync(Guid[] ids, CancellationToken cancellationToken);
+    IAsyncEnumerable<IEnumerable<ToDoItem>> GetToDoItemsAsync(Guid[] ids, uint chunkSize, CancellationToken cancellationToken);
 }

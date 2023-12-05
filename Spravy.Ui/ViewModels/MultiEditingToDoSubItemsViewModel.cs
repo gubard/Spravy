@@ -46,7 +46,7 @@ public class MultiEditingToDoSubItemsViewModel : NavigatableViewModelBase
         SelectAllStepsCommand = CreateInitializedCommand(TaskWork.Create(SelectAllStepsAsync).RunAsync);
         SelectAllValuesCommand = CreateInitializedCommand(TaskWork.Create(SelectAllValuesAsync).RunAsync);
         SelectAllGroupsCommand = CreateInitializedCommand(TaskWork.Create(SelectAllGroupsAsync).RunAsync);
-        ChangeRootItemCommand =  CreateInitializedCommand(TaskWork.Create(ChangeRootItemAsync).RunAsync);
+        ChangeRootItemCommand = CreateInitializedCommand(TaskWork.Create(ChangeRootItemAsync).RunAsync);
     }
 
     public AvaloniaList<Guid> Ids { get; } = new();
@@ -319,75 +319,78 @@ public class MultiEditingToDoSubItemsViewModel : NavigatableViewModelBase
                 Steps.Clear();
             }
         );
-        
+
         cancellationToken.ThrowIfCancellationRequested();
 
-        await foreach (var item in ToDoService.GetToDoItemsAsync(Ids.ToArray(), cancellationToken).ConfigureAwait(false))
+        await foreach (var item in ToDoService.GetToDoItemsAsync(Ids.ToArray(), 5, cancellationToken)
+                           .ConfigureAwait(false))
         {
             await AddToDoItemAsync(item);
             cancellationToken.ThrowIfCancellationRequested();
         }
     }
 
-    private DispatcherOperation AddToDoItemAsync(ToDoItem item)
+    private DispatcherOperation AddToDoItemAsync(IEnumerable<ToDoItem> item)
     {
-        var itemNotify = Mapper.Map<ToDoItemNotify>(item);
+        var itemNotify = Mapper.Map<IEnumerable<ToDoItemNotify>>(item);
 
         return AddItem(itemNotify);
     }
 
-    private DispatcherOperation AddItem(ToDoItemNotify item)
+    private DispatcherOperation AddItem(IEnumerable<ToDoItemNotify> items)
     {
-        var selected = new Selected<ToDoItemNotify>(item);
-
         return this.InvokeUIBackgroundAsync(
             () =>
             {
-                Items.Add(selected);
-
-                switch (item.Status)
+                foreach (var item in items)
                 {
-                    case ToDoItemStatus.Miss:
-                        Missed.Add(selected);
-                        break;
-                    case ToDoItemStatus.ReadyForComplete:
-                        ReadyForCompleted.Add(selected);
-                        break;
-                    case ToDoItemStatus.Planned:
-                        Planned.Add(selected);
-                        break;
-                    case ToDoItemStatus.Completed:
-                        Completed.Add(selected);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+                    var selected = new Selected<ToDoItemNotify>(item);
+                    Items.Add(selected);
 
-                switch (item.Type)
-                {
-                    case ToDoItemType.Value:
-                        Values.Add(selected);
-                        break;
-                    case ToDoItemType.Group:
-                        Groups.Add(selected);
-                        break;
-                    case ToDoItemType.Planned:
-                        Planneds.Add(selected);
-                        break;
-                    case ToDoItemType.Periodicity:
-                        Periodicitys.Add(selected);
-                        break;
-                    case ToDoItemType.PeriodicityOffset:
-                        PeriodicityOffsets.Add(selected);
-                        break;
-                    case ToDoItemType.Circle:
-                        Circles.Add(selected);
-                        break;
-                    case ToDoItemType.Step:
-                        Steps.Add(selected);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
+                    switch (item.Status)
+                    {
+                        case ToDoItemStatus.Miss:
+                            Missed.Add(selected);
+                            break;
+                        case ToDoItemStatus.ReadyForComplete:
+                            ReadyForCompleted.Add(selected);
+                            break;
+                        case ToDoItemStatus.Planned:
+                            Planned.Add(selected);
+                            break;
+                        case ToDoItemStatus.Completed:
+                            Completed.Add(selected);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+
+                    switch (item.Type)
+                    {
+                        case ToDoItemType.Value:
+                            Values.Add(selected);
+                            break;
+                        case ToDoItemType.Group:
+                            Groups.Add(selected);
+                            break;
+                        case ToDoItemType.Planned:
+                            Planneds.Add(selected);
+                            break;
+                        case ToDoItemType.Periodicity:
+                            Periodicitys.Add(selected);
+                            break;
+                        case ToDoItemType.PeriodicityOffset:
+                            PeriodicityOffsets.Add(selected);
+                            break;
+                        case ToDoItemType.Circle:
+                            Circles.Add(selected);
+                            break;
+                        case ToDoItemType.Step:
+                            Steps.Add(selected);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
                 }
             }
         );

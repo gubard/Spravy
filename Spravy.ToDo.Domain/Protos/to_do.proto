@@ -8,7 +8,6 @@ package spravy.to_do;
 
 service ToDoService {
   rpc GetRootToDoSubItems (GetRootToDoSubItemsRequest) returns (GetRootToDoSubItemsReply);
-  rpc GetToDoItem2 (GetToDoItemRequest2) returns (GetToDoItemReply2);
   rpc AddRootToDoItem (AddRootToDoItemRequest) returns (AddRootToDoItemReply);
   rpc AddToDoItem (AddToDoItemRequest) returns (AddToDoItemReply);
   rpc DeleteToDoItem (DeleteToDoItemRequest) returns (DeleteToDoItemReply);

@@ -541,6 +541,11 @@ public class ToDoServiceDesign : IToDoService
         throw new NotImplementedException();
     }
 
+    public IAsyncEnumerable<IEnumerable<ToDoItem>> GetToDoItemsAsync(Guid[] ids, uint chunkSize, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
     public IAsyncEnumerable<ToDoItem> GetToDoItemsAsync(Guid[] ids, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();

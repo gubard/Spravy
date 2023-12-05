@@ -24,7 +24,6 @@ public class EfToDoService : IToDoService
     private readonly IFactory<SpravyDbToDoDbContext> dbContextFactory;
     private readonly StatusToDoItemService statusToDoItemService;
     private readonly ActiveToDoItemToDoItemService activeToDoItemToDoItemService;
-    private readonly CanCompleteToDoItemService canCompleteToDoItemService;
     private readonly IHttpContextAccessor httpContextAccessor;
     private readonly GetterToDoItemParametersService getterToDoItemParametersService;
 
@@ -33,7 +32,6 @@ public class EfToDoService : IToDoService
         IFactory<SpravyDbToDoDbContext> dbContextFactory,
         StatusToDoItemService statusToDoItemService,
         ActiveToDoItemToDoItemService activeToDoItemToDoItemService,
-        CanCompleteToDoItemService canCompleteToDoItemService,
         IHttpContextAccessor httpContextAccessor,
         GetterToDoItemParametersService getterToDoItemParametersService
     )
@@ -42,7 +40,6 @@ public class EfToDoService : IToDoService
         this.dbContextFactory = dbContextFactory;
         this.statusToDoItemService = statusToDoItemService;
         this.activeToDoItemToDoItemService = activeToDoItemToDoItemService;
-        this.canCompleteToDoItemService = canCompleteToDoItemService;
         this.httpContextAccessor = httpContextAccessor;
         this.getterToDoItemParametersService = getterToDoItemParametersService;
     }
@@ -1235,14 +1232,35 @@ public class EfToDoService : IToDoService
         return mapper.Map<PeriodicityOffsetToDoItemSettings>(item);
     }
 
-    public async IAsyncEnumerable<ToDoItem> GetToDoItemsAsync(
+    public async IAsyncEnumerable<IEnumerable<ToDoItem>> GetToDoItemsAsync(
         Guid[] ids,
+        uint chunkSize,
         [EnumeratorCancellation] CancellationToken cancellationToken
     )
     {
         foreach (var id in ids)
         {
-            yield return await GetToDoItemAsync(id, cancellationToken);
+            var items = new List<ToDoItem>();
+
+            for (var i = 0; i < ids.Length; i++)
+            {
+                if (i % chunkSize == 0)
+                {
+                    if (items.Count > 0)
+                    {
+                        yield return items.ToArray();
+                        items.Clear();
+                    }
+                }
+
+                items.Add(await GetToDoItemAsync(id, cancellationToken));
+            }
+
+            if (items.Count > 0)
+            {
+                yield return items.ToArray();
+                items.Clear();
+            }
         }
     }
 

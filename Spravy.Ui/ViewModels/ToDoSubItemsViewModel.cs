@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -191,10 +192,10 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
         await this.InvokeUIBackgroundAsync(() => items.Clear());
         cancellationToken.ThrowIfCancellationRequested();
 
-        await foreach (var item in ToDoService.GetToDoItemsAsync(ids, cancellationToken).ConfigureAwait(false))
+        await foreach (var item in ToDoService.GetToDoItemsAsync(ids, 5, cancellationToken).ConfigureAwait(false))
         {
-            var itemNotify = Mapper.Map<ToDoItemNotify>(item);
-            await this.InvokeUIBackgroundAsync(() => items.Add(itemNotify));
+            var itemNotify = Mapper.Map<IEnumerable<ToDoItemNotify>>(item);
+            await this.InvokeUIBackgroundAsync(() => items.AddRange(itemNotify));
             cancellationToken.ThrowIfCancellationRequested();
         }
     }
@@ -213,25 +214,43 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        await foreach (var item in ToDoService.GetToDoItemsAsync(ids, cancellationToken).ConfigureAwait(false))
+        await foreach (var item in ToDoService.GetToDoItemsAsync(ids, 5, cancellationToken).ConfigureAwait(false))
         {
             await AddToDoItemAsync(item);
             cancellationToken.ThrowIfCancellationRequested();
         }
     }
 
-    private DispatcherOperation AddToDoItemAsync(ToDoItem item)
+    private DispatcherOperation AddToDoItemAsync(IEnumerable<ToDoItem> items)
     {
-        var itemNotify = Mapper.Map<ToDoItemNotify>(item);
+        return this.InvokeUIBackgroundAsync(
+            () =>
+            {
+                var itemNotify = Mapper.Map<IEnumerable<ToDoItemNotify>>(items);
 
-        return itemNotify.Status switch
-        {
-            ToDoItemStatus.Miss => this.InvokeUIBackgroundAsync(() => Missed.Add(itemNotify)),
-            ToDoItemStatus.ReadyForComplete => this.InvokeUIBackgroundAsync(() => ReadyForCompleted.Add(itemNotify)),
-            ToDoItemStatus.Planned => this.InvokeUIBackgroundAsync(() => Planned.Add(itemNotify)),
-            ToDoItemStatus.Completed => this.InvokeUIBackgroundAsync(() => Completed.Add(itemNotify)),
-            _ => throw new ArgumentOutOfRangeException()
-        };
+
+                foreach (var item in itemNotify)
+                {
+                    switch (item.Status)
+                    {
+                        case ToDoItemStatus.Miss:
+                            Missed.Add(item);
+                            break;
+                        case ToDoItemStatus.ReadyForComplete:
+                            ReadyForCompleted.Add(item);
+                            break;
+                        case ToDoItemStatus.Planned:
+                            Planned.Add(item);
+                            break;
+                        case ToDoItemStatus.Completed:
+                            Completed.Add(item);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                }
+            }
+        );
     }
 
     private async Task DeleteSubToDoItemAsync(ToDoItemNotify subItem, CancellationToken cancellationToken)

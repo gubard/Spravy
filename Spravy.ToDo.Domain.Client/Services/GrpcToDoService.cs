@@ -248,31 +248,6 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public Task<IToDoItem> GetToDoItem2Async(Guid id, CancellationToken cancellationToken)
-    {
-        return CallClientAsync(
-            async client =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                var metadata = await metadataFactory.CreateAsync(cancellationToken);
-                var byteStringId = mapper.Map<ByteString>(id);
-
-                var request = new GetToDoItemRequest2
-                {
-                    Id = byteStringId,
-                };
-
-                cancellationToken.ThrowIfCancellationRequested();
-                var item = await client.GetToDoItem2Async(request, metadata, cancellationToken: cancellationToken);
-                var result = mapper.Map<IToDoItem>(item.Item);
-
-                return result;
-            },
-            cancellationToken
-        );
-    }
-
-
     public Task<Guid> AddRootToDoItemAsync(AddRootToDoItemOptions options, CancellationToken cancellationToken)
     {
         return CallClientAsync(
@@ -1205,21 +1180,26 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public IAsyncEnumerable<ToDoItem> GetToDoItemsAsync(Guid[] ids, CancellationToken cancellationToken)
+    public IAsyncEnumerable<IEnumerable<ToDoItem>> GetToDoItemsAsync(Guid[] ids, uint chunkSize, CancellationToken cancellationToken)
     {
         return CallClientAsync(
-            (client, token) => GetToDoItemsAsyncCore(client, ids, token),
+            (client, token) => GetToDoItemsAsyncCore(client, ids, chunkSize, token),
             cancellationToken
         );
     }
 
-    private async IAsyncEnumerable<ToDoItem> GetToDoItemsAsyncCore(
+    private async IAsyncEnumerable<IEnumerable<ToDoItem>> GetToDoItemsAsyncCore(
         ToDoServiceClient client,
         Guid[] ids,
+        uint chunkSize,
         [EnumeratorCancellation] CancellationToken cancellationToken
     )
     {
-        var request = new GetToDoItemsRequest();
+        var request = new GetToDoItemsRequest
+        {
+            ChunkSize = chunkSize,
+        };
+        
         request.Ids.AddRange(mapper.Map<IEnumerable<ByteString>>(ids));
         cancellationToken.ThrowIfCancellationRequested();
         var metadata = await metadataFactory.CreateAsync(cancellationToken);
@@ -1229,7 +1209,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         while (await response.ResponseStream.MoveNext(cancellationToken))
         {
             var reply = response.ResponseStream.Current;
-            var item = mapper.Map<ToDoItem>(reply);
+            var item = mapper.Map<IEnumerable<ToDoItem>>(reply.Items);
 
             yield return item;
 

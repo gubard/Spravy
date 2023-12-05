@@ -9,9 +9,10 @@ package spravy.to_do;
 
 message GetToDoItemsRequest {
   repeated bytes Ids = 1;
+  uint32 ChunkSize = 2;
 }
 
-message GetToDoItemsReply {
+message ToDoItemGrpc {
   bytes Id = 1;
   string Name = 2;
   bool IsFavorite = 3;
@@ -22,6 +23,10 @@ message GetToDoItemsReply {
   ToDoItemStatusGrpc Status = 8;
   ActiveToDoItemGrpc Active = 9;
   ToDoItemIsCanGrpc IsCan = 10;
+}
+
+message GetToDoItemsReply {
+  repeated ToDoItemGrpc Items = 1;
 }
 
 message RandomizeChildrenOrderIndexReply {
@@ -430,34 +435,6 @@ message AddRootToDoItemRequest {
 
 message AddRootToDoItemReply {
   bytes Id = 1;
-}
-
-message GetToDoItemRequest2 {
-  bytes Id = 1;
-}
-
-message GetToDoItemReply2 {
-  ToDoItemGrpc Item = 1;
-}
-
-message ToDoItemGrpc {
-  bytes Id = 1;
-  string Name = 2;
-  repeated ToDoSubItemGrpc Items = 3;
-  repeated ToDoItemParentGrpc Parents = 4;
-  string Description = 5;
-  bool IsFavorite = 8;
-  string Link = 12;
-
-  oneof Parameters {
-    ToDoItemValueGrpc Value = 6;
-    ToDoItemGroupGrpc Group = 7;
-    ToDoItemPlannedGrpc Planned = 9;
-    ToDoItemPeriodicityGrpc Periodicity = 10;
-    ToDoItemPeriodicityOffsetGrpc PeriodicityOffset = 11;
-    ToDoItemCircleGrpc Circle = 13;
-    ToDoItemStepGrpc Step = 14;
-  }
 }
 
 message ToDoItemPlannedGrpc {
