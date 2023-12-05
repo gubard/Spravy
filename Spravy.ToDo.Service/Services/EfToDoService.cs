@@ -1238,29 +1238,28 @@ public class EfToDoService : IToDoService
         [EnumeratorCancellation] CancellationToken cancellationToken
     )
     {
-        foreach (var id in ids)
+        var items = new List<ToDoItem>();
+
+        for (var i = 0; i < ids.Length; i++)
         {
-            var items = new List<ToDoItem>();
+            cancellationToken.ThrowIfCancellationRequested();
 
-            for (var i = 0; i < ids.Length; i++)
+            if (i % chunkSize == 0)
             {
-                if (i % chunkSize == 0)
+                if (items.Count > 0)
                 {
-                    if (items.Count > 0)
-                    {
-                        yield return items.ToArray();
-                        items.Clear();
-                    }
+                    yield return items.ToArray();
+                    items.Clear();
                 }
-
-                items.Add(await GetToDoItemAsync(id, cancellationToken));
             }
 
-            if (items.Count > 0)
-            {
-                yield return items.ToArray();
-                items.Clear();
-            }
+            items.Add(await GetToDoItemAsync(ids[i], cancellationToken));
+        }
+
+        if (items.Count > 0)
+        {
+            yield return items.ToArray();
+            items.Clear();
         }
     }
 

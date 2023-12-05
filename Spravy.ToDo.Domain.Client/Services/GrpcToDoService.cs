@@ -1180,7 +1180,11 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public IAsyncEnumerable<IEnumerable<ToDoItem>> GetToDoItemsAsync(Guid[] ids, uint chunkSize, CancellationToken cancellationToken)
+    public IAsyncEnumerable<IEnumerable<ToDoItem>> GetToDoItemsAsync(
+        Guid[] ids,
+        uint chunkSize,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             (client, token) => GetToDoItemsAsyncCore(client, ids, chunkSize, token),
@@ -1195,11 +1199,17 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         [EnumeratorCancellation] CancellationToken cancellationToken
     )
     {
+        if (!ids.Any())
+        {
+            yield return Enumerable.Empty<ToDoItem>();
+            yield break;
+        }
+
         var request = new GetToDoItemsRequest
         {
             ChunkSize = chunkSize,
         };
-        
+
         request.Ids.AddRange(mapper.Map<IEnumerable<ByteString>>(ids));
         cancellationToken.ThrowIfCancellationRequested();
         var metadata = await metadataFactory.CreateAsync(cancellationToken);
