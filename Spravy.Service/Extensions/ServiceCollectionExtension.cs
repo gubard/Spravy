@@ -53,7 +53,7 @@ public static class ServiceCollectionExtension
 
         var persistKeysDirectory = "/".ToDirectory()
             .Combine("tmp")
-            .Combine("Sparvy")
+            .Combine("Spravy")
             .Combine(TAssemblyMark.AssemblyName.Name.ThrowIfNullOrWhiteSpace())
             .CreateIfNotExists();
 
