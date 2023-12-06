@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Collections;
-using Avalonia.Threading;
 using Ninject;
 using ReactiveUI;
 using Spravy.Domain.Extensions;

@@ -1,7 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Avalonia.Threading;
 using Ninject;
 using Spravy.Authentication.Domain.Models;
 using Spravy.Domain.Helpers;

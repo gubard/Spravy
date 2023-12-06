@@ -1,4 +1,4 @@
-<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:ToDoItemHeaderViewModel"
+<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:PageHeaderViewModel"
                                 xmlns="https://github.com/avaloniaui"
                                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -9,9 +9,10 @@
                                 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                 xmlns:helpers="clr-namespace:Spravy.Ui.Helpers"
                                 xmlns:models="clr-namespace:Spravy.Ui.Models"
+                                xmlns:system="clr-namespace:System;assembly=System.Runtime"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                                x:Class="Spravy.Ui.Views.ToDoItemHeaderView"
-                                x:DataType="viewModels:ToDoItemHeaderViewModel">
+                                x:Class="Spravy.Ui.Views.PageHeaderView"
+                                x:DataType="viewModels:PageHeaderViewModel">
     <UserControl.Styles>
         <Style Selector="ItemsControl.adaptive">
             <Setter Property="(Interaction.Behaviors)">
@@ -71,22 +72,24 @@
                     <avalonia:MaterialIcon Kind="Menu" />
                 </Button>
 
-                <Button Classes="with-icon" Command="{Binding ToCurrentToDoItemCommand}">
-                    <avalonia:MaterialIcon Kind="ArrowRight" />
-                </Button>
+                <ContentControl Content="{Binding LeftCommand}" />
             </StackPanel>
 
             <ScrollViewer Grid.Column="1"
                           VerticalScrollBarVisibility="Disabled"
                           HorizontalScrollBarVisibility="Auto"
                           HorizontalAlignment="Left">
-                <TextBlock Text="{Binding ToDoItemViewModel.Name}" Classes="alignment-center Headline6" />
+                <ContentControl Content="{Binding Content}">
+                    <ContentControl.DataTemplates>
+                        <DataTemplate DataType="system:String">
+                            <TextBlock Text="{Binding }" Classes="alignment-center Headline6" />
+                        </DataTemplate>
+                    </ContentControl.DataTemplates>
+                </ContentControl>
             </ScrollViewer>
 
             <StackPanel Grid.Column="2" Orientation="Horizontal">
-                <Button Classes="with-icon" Command="{Binding ChangeNameCommand}">
-                    <avalonia:MaterialIcon Kind="Pencil" />
-                </Button>
+                <ContentControl Content="{Binding RightCommand}" />
 
                 <Panel>
                     <ItemsControl HorizontalAlignment="Right"

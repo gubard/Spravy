@@ -1,7 +1,6 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Avalonia.Threading;
 using DialogHostAvalonia;
 using Ninject;
 using Spravy.Ui.Extensions;

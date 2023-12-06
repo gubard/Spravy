@@ -22,14 +22,15 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
     public RootToDoItemsViewModel() : base(true)
     {
         refreshWork = TaskWork.Create(RefreshCoreAsync);
-        InitializedCommand = CreateInitializedCommand(refreshWork.RunAsync);
+        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
         AddToDoItemCommand = CreateCommandFromTask(TaskWork.Create(AddToDoItemAsync).RunAsync);
-        SwitchPaneCommand = CreateCommand(SwitchPane);
     }
 
     public ICommand InitializedCommand { get; }
     public ICommand AddToDoItemCommand { get; }
-    public ICommand SwitchPaneCommand { get; }
+
+    [Inject]
+    public required PageHeaderViewModel PageHeaderViewModel { get; init; }
 
     [Inject]
     public required ToDoSubItemsViewModel ToDoSubItemsViewModel { get; init; }
@@ -40,12 +41,10 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
     [Inject]
     public required IMapper Mapper { get; init; }
 
-    [Inject]
-    public required MainSplitViewModel MainSplitViewModel { get; init; }
-
-    private DispatcherOperation SwitchPane()
+    public async Task InitializedAsync(CancellationToken cancellationToken)
     {
-        return this.InvokeUIAsync(() => MainSplitViewModel.IsPaneOpen = !MainSplitViewModel.IsPaneOpen);
+        await this.InvokeUIAsync(() => PageHeaderViewModel.Content = "Spravy");
+        await refreshWork.RunAsync().ConfigureAwait(false);
     }
 
     public Task RefreshAsync(CancellationToken cancellationToken)
@@ -61,7 +60,6 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
         await ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, cancellationToken).ConfigureAwait(false);
         cancellationToken.ThrowIfCancellationRequested();
     }
-
 
     private async Task AddToDoItemAsync(CancellationToken cancellationToken)
     {

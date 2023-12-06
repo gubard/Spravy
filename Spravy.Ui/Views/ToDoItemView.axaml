@@ -19,7 +19,7 @@
 
     <Grid RowDefinitions="Auto, Auto,*">
         <Grid RowDefinitions="*,4">
-            <ContentControl Content="{Binding ToDoItemHeaderViewModel}" />
+            <ContentControl Content="{Binding PageHeaderViewModel}" />
 
             <Rectangle Grid.Row="1"
                        Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />

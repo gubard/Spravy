@@ -17,13 +17,7 @@
     </Interaction.Behaviors>
 
     <Grid RowDefinitions="Auto,*, Auto">
-        <controls:ColorZone Mode="PrimaryMid">
-            <StackPanel Orientation="Horizontal">
-                <Button Command="{Binding SwitchPaneCommand}" ClickMode="Release">
-                    <avalonia:MaterialIcon Kind="Menu" />
-                </Button>
-            </StackPanel>
-        </controls:ColorZone>
+        <ContentControl Content="{Binding PageHeaderViewModel}" />
 
         <ScrollViewer Grid.Row="1">
             <ContentControl Content="{Binding ToDoSubItemsViewModel}" />

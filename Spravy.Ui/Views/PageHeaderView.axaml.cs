@@ -6,9 +6,9 @@ using Spravy.Ui.ViewModels;
 
 namespace Spravy.Ui.Views;
 
-public partial class ToDoItemHeaderView : ReactiveUserControl<ToDoItemHeaderViewModel>
+public partial class PageHeaderView : ReactiveUserControl<PageHeaderViewModel>
 {
-    public ToDoItemHeaderView()
+    public PageHeaderView()
     {
         InitializeComponent();
     }
