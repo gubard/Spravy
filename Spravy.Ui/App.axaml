@@ -155,8 +155,7 @@
         </DataTemplate>
 
         <DataTemplate DataType="models:ToDoItemNotify">
-            <controls:Card ToolTip.Tip="{Binding Description, Converter={StaticResource EmptyStringToNullConverter}}"
-                           Margin="3">
+            <controls:Card Margin="3">
                 <Grid ColumnDefinitions="*,Auto"
                       RowDefinitions="Auto,*"
                       HorizontalAlignment="Stretch"

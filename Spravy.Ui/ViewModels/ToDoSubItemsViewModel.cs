@@ -213,6 +213,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
         );
 
         cancellationToken.ThrowIfCancellationRequested();
+        await RefreshFavoriteToDoItemsAsync(cancellationToken).ConfigureAwait(false);
 
         await foreach (var item in ToDoService.GetToDoItemsAsync(ids, 5, cancellationToken).ConfigureAwait(false))
         {
@@ -291,12 +292,6 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
     public async Task UpdateItemsAsync(Guid[] ids, IRefresh refresh, CancellationToken cancellationToken)
     {
         refreshToDoItem = refresh;
-
-        await Task.WhenAll(
-                RefreshToDoItemListsAsync(ids, cancellationToken),
-                RefreshFavoriteToDoItemsAsync(cancellationToken)
-            )
-            .WaitAsync(cancellationToken)
-            .ConfigureAwait(false);
+        await RefreshToDoItemListsAsync(ids, cancellationToken).ConfigureAwait(false);
     }
 }
