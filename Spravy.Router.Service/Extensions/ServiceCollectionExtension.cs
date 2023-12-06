@@ -61,6 +61,8 @@ public static class ServiceCollectionExtension
         serviceCollection.AddTransient<ITokenService, TokenService>();
         serviceCollection.AddTransient<IMetadataFactory, MetadataFactory>();
         serviceCollection.AddSingleton<TimeZoneHttpHeaderFactory>();
+        serviceCollection.AddSingleton<ContextAccessorUserIdHttpHeaderFactory>();
+        
         serviceCollection.AddTransient<IHttpHeaderFactory>(
             sp => new CombineHttpHeaderFactory(
                 sp.GetRequiredService<ContextAccessorUserIdHttpHeaderFactory>(),
