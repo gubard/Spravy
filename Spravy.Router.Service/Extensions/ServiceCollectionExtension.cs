@@ -60,15 +60,14 @@ public static class ServiceCollectionExtension
         serviceCollection.AddTransient<IToDoService>(sp => sp.GetRequiredService<GrpcToDoService>());
         serviceCollection.AddTransient<ITokenService, TokenService>();
         serviceCollection.AddTransient<IMetadataFactory, MetadataFactory>();
-        serviceCollection.AddSingleton<TimeZoneHttpHeaderFactory>();
         serviceCollection.AddSingleton<ContextAccessorUserIdHttpHeaderFactory>();
         serviceCollection.AddSingleton<ContextAccessorAuthorizationHttpHeaderFactory>();
         
         serviceCollection.AddTransient<IHttpHeaderFactory>(
             sp => new CombineHttpHeaderFactory(
                 sp.GetRequiredService<ContextAccessorUserIdHttpHeaderFactory>(),
-                sp.GetRequiredService<TimeZoneHttpHeaderFactory>(),
-                sp.GetRequiredService<ContextAccessorAuthorizationHttpHeaderFactory>()
+                sp.GetRequiredService<ContextAccessorAuthorizationHttpHeaderFactory>(),
+                sp.GetRequiredService<ContextTimeZoneOffsetHttpHeaderFactory>()
             )
         );
 

@@ -33,6 +33,11 @@ public static class HttpContextExtension
         return httpContext.GetHeader(HttpNames.HeaderTimeZoneOffsetName);
     }
 
+    public static string GetAuthorizationHeader(this HttpContext httpContext)
+    {
+        return httpContext.GetHeader(HttpNames.HeaderAuthorizationName);
+    }
+
     public static TimeSpan GetTimeZoneOffset(this HttpContext httpContext)
     {
         return TimeSpan.Parse(httpContext.GetTimeZoneOffsetHeader());

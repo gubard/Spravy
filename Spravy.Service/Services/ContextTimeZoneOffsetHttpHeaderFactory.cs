@@ -7,11 +7,11 @@ using Spravy.Service.Extensions;
 
 namespace Spravy.Service.Services;
 
-public class ContextAccessorAuthorizationHttpHeaderFactory : IHttpHeaderFactory
+public class ContextTimeZoneOffsetHttpHeaderFactory : IHttpHeaderFactory
 {
     private readonly IHttpContextAccessor httpContextAccessor;
 
-    public ContextAccessorAuthorizationHttpHeaderFactory(IHttpContextAccessor httpContextAccessor)
+    public ContextTimeZoneOffsetHttpHeaderFactory(IHttpContextAccessor httpContextAccessor)
     {
         this.httpContextAccessor = httpContextAccessor;
     }
@@ -21,10 +21,10 @@ public class ContextAccessorAuthorizationHttpHeaderFactory : IHttpHeaderFactory
         var authorization = httpContextAccessor
             .HttpContext
             .ThrowIfNull()
-            .GetAuthorizationHeader();
+            .GetTimeZoneOffsetHeader();
 
         return Task.FromResult(
-            new HttpHeaderItem(HttpNames.HeaderAuthorizationName, authorization).ToEnumerable()
+            new HttpHeaderItem(HttpNames.HeaderTimeZoneOffsetName, authorization).ToEnumerable()
         );
     }
 }
