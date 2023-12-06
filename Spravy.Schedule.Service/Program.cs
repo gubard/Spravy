@@ -18,7 +18,7 @@ try
         .BuildSpravy<GrpcScheduleService, SpravyScheduleServiceMark>(
             args,
             typeof(DataBaseSetupSqliteMiddleware<SpravyDbScheduleDbContext>),
-            x => x.AddSchedule()
+            x => x.RegisterSchedule()
         )
         .Run();
 }

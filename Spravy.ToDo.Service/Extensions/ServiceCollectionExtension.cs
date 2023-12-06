@@ -33,36 +33,42 @@ namespace Spravy.ToDo.Service.Extensions;
 
 public static class ServiceCollectionExtension
 {
-    public static IServiceCollection AddToDo(this IServiceCollection serviceCollection)
+    public static IServiceCollection RegisterToDo(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddHostedService<MigratorHostedService<SpravyDbToDoDbContext>>();
         //serviceCollection.AddHostedService<EventBusHostedService>();
         serviceCollection.AddSpravySqliteFolderContext<SpravyDbToDoDbContext, SpravyToDoDbSqliteMigratorMark>();
-        serviceCollection
-            .AddMapperConfiguration<SpravyToDoProfile, SpravyToDoDbProfile, SpravyEventBusProfile,
-                SpravyAuthenticationProfile>();
-        serviceCollection
-            .AddGrpcService2<GrpcAuthenticationService,
-                Spravy.Authentication.Protos.AuthenticationService.AuthenticationServiceClient,
-                GrpcAuthenticationServiceOptions>();
-        serviceCollection
-            .AddGrpcService<GrpcEventBusService, EventBusService.EventBusServiceClient, GrpcEventBusServiceOptions>();
-
         serviceCollection.AddSingleton<ITokenService, TokenService>();
         serviceCollection.AddSingleton<IDbContextSetup, SqliteToDoDbContextSetup>();
         serviceCollection.AddSingleton<IFactory<string, SpravyDbToDoDbContext>, SpravyToDoDbContextFactory>();
         serviceCollection.AddSingleton<IEventBusService>(sp => sp.GetRequiredService<GrpcEventBusService>());
         serviceCollection.AddSingleton<IKeeper<TokenResult>, StaticKeeper<TokenResult>>();
-
-        serviceCollection.AddSingleton<IAuthenticationService>(
-            sp => sp.GetRequiredService<GrpcAuthenticationService>()
-        );
-
         serviceCollection.AddSingleton<IFactory<string, IEventBusService>, EventBusServiceFactory>();
         serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<SqliteFolderOptions>());
         serviceCollection.AddSingleton<IMetadataFactory, MetadataFactory>();
         serviceCollection.AddSingleton<ContextAccessorUserIdHttpHeaderFactory>();
         serviceCollection.AddSingleton<TimeZoneHttpHeaderFactory>();
+        serviceCollection.AddTransient<IToDoService, EfToDoService>();
+        serviceCollection.AddTransient<StatusToDoItemService>();
+        serviceCollection.AddTransient<ActiveToDoItemToDoItemService>();
+        serviceCollection.AddTransient<GetterToDoItemParametersService>();
+
+        serviceCollection.AddMapperConfiguration<SpravyToDoProfile,
+            SpravyToDoDbProfile,
+            SpravyEventBusProfile,
+            SpravyAuthenticationProfile>();
+
+        serviceCollection.AddGrpcService2<GrpcAuthenticationService,
+            Spravy.Authentication.Protos.AuthenticationService.AuthenticationServiceClient,
+            GrpcAuthenticationServiceOptions>();
+
+        serviceCollection.AddGrpcService<GrpcEventBusService,
+            EventBusService.EventBusServiceClient,
+            GrpcEventBusServiceOptions>();
+
+        serviceCollection.AddSingleton<IAuthenticationService>(
+            sp => sp.GetRequiredService<GrpcAuthenticationService>()
+        );
 
         serviceCollection.AddSingleton<IHttpHeaderFactory>(
             sp => new CombineHttpHeaderFactory(
@@ -70,11 +76,6 @@ public static class ServiceCollectionExtension
                 sp.GetRequiredService<ContextAccessorUserIdHttpHeaderFactory>()
             )
         );
-
-        serviceCollection.AddTransient<IToDoService, EfToDoService>();
-        serviceCollection.AddTransient<StatusToDoItemService>();
-        serviceCollection.AddTransient<ActiveToDoItemToDoItemService>();
-        serviceCollection.AddTransient<GetterToDoItemParametersService>();
 
         return serviceCollection;
     }

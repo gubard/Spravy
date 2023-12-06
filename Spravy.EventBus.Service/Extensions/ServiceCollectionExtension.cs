@@ -14,15 +14,13 @@ namespace Spravy.EventBus.Service.Extensions;
 
 public static class ServiceCollectionExtension
 {
-    public static IServiceCollection AddEventBus(this IServiceCollection serviceCollection)
+    public static IServiceCollection RegisterEventBus(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddHostedService<MigratorHostedService<SpravyDbEventBusDbContext>>();
         serviceCollection.AddMapperConfiguration<SpravyEventBusProfile, SpravyEventBusDbProfile>();
         serviceCollection.AddSpravySqliteFolderContext<SpravyDbEventBusDbContext, SpravyEventBusDbSqliteMigratorMark>();
-
         serviceCollection.AddSingleton<IDbContextSetup, SqliteEventBusDbContextSetup>();
         serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<SqliteFolderOptions>());
-
         serviceCollection.AddTransient<EventStorage>();
 
         return serviceCollection;

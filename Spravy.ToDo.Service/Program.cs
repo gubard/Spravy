@@ -18,7 +18,7 @@ try
         .BuildSpravy<GrpcToDoService, SpravyToDoServiceMark>(
             args,
             typeof(DataBaseSetupSqliteMiddleware<SpravyDbToDoDbContext>),
-            services => services.AddToDo()
+            services => services.RegisterToDo()
         )
         .Run();
 }

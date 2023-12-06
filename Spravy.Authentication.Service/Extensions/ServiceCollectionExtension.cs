@@ -37,12 +37,6 @@ public static class ServiceCollectionExtension
     {
         serviceCollection.AddHostedService<MigratorHostedService>();
         serviceCollection.AddMapperConfiguration<SpravyAuthenticationProfile, SpravyAuthenticationDbProfile>();
-        serviceCollection
-            .AddSpravySqliteFileDbContext<SpravyDbAuthenticationDbContext, SpravyAuthenticationDbSqliteMigratorMark>();
-
-        serviceCollection
-            .AddGrpcService<GrpcEventBusService, EventBusService.EventBusServiceClient, GrpcEventBusServiceOptions>();
-
         serviceCollection.AddSingleton<IDbContextSetup, SqliteAuthenticationDbContextSetup>();
         serviceCollection.AddSingleton<ITokenFactory, JwtTokenFactory>();
         serviceCollection.AddSingleton<JwtSecurityTokenHandler>();
@@ -53,11 +47,6 @@ public static class ServiceCollectionExtension
         serviceCollection.AddSingleton<ContextAccessorUserIdHttpHeaderFactory>();
         serviceCollection.AddSingleton<IEventBusService>(sp => sp.GetRequiredService<GrpcEventBusService>());
         serviceCollection.AddSingleton<ITokenService, TokenService>();
-
-        serviceCollection.AddTransient<IAuthenticationService, EfAuthenticationService>();
-        serviceCollection.AddTransient<IHasher, Hasher>();
-        serviceCollection
-            .AddTransient<IFactory<string, SpravyDbAuthenticationDbContext>, SpravyAuthenticationDbContextFactory>();
         serviceCollection.AddTransient<IFactory<string, IHasher>, HasherFactory>();
         serviceCollection.AddTransient<IFactory<string, Named<IBytesToString>>, BytesToStringFactory>();
         serviceCollection.AddTransient<IFactory<string, Named<IStringToBytes>>, StringToBytesFactory>();
@@ -66,6 +55,20 @@ public static class ServiceCollectionExtension
         serviceCollection.AddTransient(_ => NamedHelper.Sha512Hash.ToRef());
         serviceCollection.AddTransient(_ => NamedHelper.StringToUtf8Bytes.ToRef());
         serviceCollection.AddSingleton<TimeZoneHttpHeaderFactory>();
+        serviceCollection.AddTransient<IAuthenticationService, EfAuthenticationService>();
+        serviceCollection.AddTransient<IHasher, Hasher>();
+
+        serviceCollection.AddSpravySqliteFileDbContext<SpravyDbAuthenticationDbContext,
+            SpravyAuthenticationDbSqliteMigratorMark>();
+
+        serviceCollection.AddGrpcService<GrpcEventBusService,
+            EventBusService.EventBusServiceClient,
+            GrpcEventBusServiceOptions>();
+
+        serviceCollection.AddTransient<IFactory<string,
+                SpravyDbAuthenticationDbContext>,
+            SpravyAuthenticationDbContextFactory>();
+
         serviceCollection.AddTransient<IHttpHeaderFactory>(
             sp => new CombineHttpHeaderFactory(
                 sp.GetRequiredService<ContextAccessorUserIdHttpHeaderFactory>(),

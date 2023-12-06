@@ -37,24 +37,7 @@ public static class ServiceCollectionExtension
 {
     public static IServiceCollection RegisterRouter(this IServiceCollection serviceCollection)
     {
-        serviceCollection
-            .AddMapperConfiguration<SpravyAuthenticationProfile, SpravyEventBusProfile, SpravyScheduleProfile,
-                SpravyToDoProfile>();
-
-        serviceCollection
-            .AddGrpcService2<GrpcAuthenticationService, AuthenticationService.AuthenticationServiceClient,
-                GrpcAuthenticationServiceOptions>();
-        serviceCollection
-            .AddGrpcService<GrpcEventBusService, EventBusService.EventBusServiceClient, GrpcEventBusServiceOptions>();
-        serviceCollection
-            .AddGrpcService<GrpcScheduleService, ScheduleService.ScheduleServiceClient, GrpcScheduleServiceOptions>();
-        serviceCollection
-            .AddGrpcService<GrpcToDoService, ToDoService.ToDoServiceClient, GrpcToDoServiceOptions>();
-
-        serviceCollection.AddTransient<IAuthenticationService>(
-            sp => sp.GetRequiredService<GrpcAuthenticationService>()
-        );
-
+        serviceCollection.AddGrpcService<GrpcToDoService, ToDoService.ToDoServiceClient, GrpcToDoServiceOptions>();
         serviceCollection.AddTransient<IEventBusService>(sp => sp.GetRequiredService<GrpcEventBusService>());
         serviceCollection.AddTransient<IScheduleService>(sp => sp.GetRequiredService<GrpcScheduleService>());
         serviceCollection.AddTransient<IToDoService>(sp => sp.GetRequiredService<GrpcToDoService>());
@@ -62,7 +45,28 @@ public static class ServiceCollectionExtension
         serviceCollection.AddTransient<IMetadataFactory, MetadataFactory>();
         serviceCollection.AddSingleton<ContextAccessorUserIdHttpHeaderFactory>();
         serviceCollection.AddSingleton<ContextAccessorAuthorizationHttpHeaderFactory>();
-        
+
+        serviceCollection.AddMapperConfiguration<SpravyAuthenticationProfile,
+            SpravyEventBusProfile,
+            SpravyScheduleProfile,
+            SpravyToDoProfile>();
+
+        serviceCollection.AddGrpcService2<GrpcAuthenticationService,
+            AuthenticationService.AuthenticationServiceClient,
+            GrpcAuthenticationServiceOptions>();
+
+        serviceCollection.AddGrpcService<GrpcEventBusService,
+            EventBusService.EventBusServiceClient,
+            GrpcEventBusServiceOptions>();
+
+        serviceCollection.AddGrpcService<GrpcScheduleService,
+            ScheduleService.ScheduleServiceClient,
+            GrpcScheduleServiceOptions>();
+
+        serviceCollection.AddTransient<IAuthenticationService>(
+            sp => sp.GetRequiredService<GrpcAuthenticationService>()
+        );
+
         serviceCollection.AddTransient<IHttpHeaderFactory>(
             sp => new CombineHttpHeaderFactory(
                 sp.GetRequiredService<ContextAccessorUserIdHttpHeaderFactory>(),

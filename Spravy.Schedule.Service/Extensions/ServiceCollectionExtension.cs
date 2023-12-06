@@ -31,34 +31,36 @@ namespace Spravy.Schedule.Service.Extensions;
 
 public static class ServiceCollectionExtension
 {
-    public static IServiceCollection AddSchedule(this IServiceCollection serviceCollection)
+    public static IServiceCollection RegisterSchedule(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddHostedService<MigratorHostedService<SpravyDbScheduleDbContext>>();
-        //serviceCollection.AddHostedService<ScheduleHostedService>();
-        serviceCollection.AddMapperConfiguration<SpravyScheduleProfile, SpravyScheduleDbProfile, SpravyAuthenticationProfile>();
+        serviceCollection
+            .AddMapperConfiguration<SpravyScheduleProfile, SpravyScheduleDbProfile, SpravyAuthenticationProfile>();
         serviceCollection.AddSpravySqliteFolderContext<SpravyDbScheduleDbContext, SpravyScheduleDbSqliteMigratorMark>();
-        serviceCollection
-            .AddGrpcService2<GrpcAuthenticationService,
-                Spravy.Authentication.Protos.AuthenticationService.AuthenticationServiceClient,
-                GrpcAuthenticationServiceOptions>();
-        serviceCollection
-            .AddGrpcService<GrpcEventBusService, EventBusService.EventBusServiceClient, GrpcEventBusServiceOptions>();
-
         serviceCollection.AddSingleton<ITokenService, TokenService>();
         serviceCollection.AddSingleton<IFactory<string, SpravyDbScheduleDbContext>, SpravyScheduleDbContextFactory>();
         serviceCollection.AddSingleton<IDbContextSetup, SqliteScheduleDbContextSetup>();
         serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<SqliteFolderOptions>());
         serviceCollection.AddSingleton<IFactory<string, IEventBusService>, EventBusServiceFactory>();
         serviceCollection.AddSingleton<IKeeper<TokenResult>, StaticKeeper<TokenResult>>();
-        serviceCollection.AddSingleton<IAuthenticationService>(
-            sp => sp.GetRequiredService<GrpcAuthenticationService>()
-        );
         serviceCollection.AddSingleton<ITokenService, TokenService>();
         serviceCollection.AddSingleton<IMetadataFactory, MetadataFactory>();
         serviceCollection.AddSingleton<ContextAccessorUserIdHttpHeaderFactory>();
         serviceCollection.AddSingleton<TimeZoneHttpHeaderFactory>();
         serviceCollection.AddTransient<IHttpHeaderFactory, TimeZoneHttpHeaderFactory>();
         serviceCollection.AddTransient<IScheduleService, EfScheduleService>();
+
+        serviceCollection.AddGrpcService2<GrpcAuthenticationService,
+            Spravy.Authentication.Protos.AuthenticationService.AuthenticationServiceClient,
+            GrpcAuthenticationServiceOptions>();
+
+        serviceCollection.AddGrpcService<GrpcEventBusService,
+            EventBusService.EventBusServiceClient,
+            GrpcEventBusServiceOptions>();
+
+        serviceCollection.AddSingleton<IAuthenticationService>(
+            sp => sp.GetRequiredService<GrpcAuthenticationService>()
+        );
 
         return serviceCollection;
     }

@@ -18,7 +18,7 @@ try
         .BuildSpravy<GrpcEventBusService, SpravyEventBusServiceMark>(
             args,
             typeof(DataBaseSetupSqliteMiddleware<SpravyDbEventBusDbContext>),
-            x => x.AddEventBus()
+            x => x.RegisterEventBus()
         )
         .Run();
 }
