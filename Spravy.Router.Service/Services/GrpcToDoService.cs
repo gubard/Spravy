@@ -2,6 +2,7 @@ using AutoMapper;
 using Google.Protobuf;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
+using Spravy.Domain.Helpers;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
@@ -19,6 +20,250 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     {
         this.toDoService = toDoService;
         this.mapper = mapper;
+    }
+
+    public override async Task<GetPeriodicityOffsetToDoItemSettingsReply> GetPeriodicityOffsetToDoItemSettings(
+        GetPeriodicityOffsetToDoItemSettingsRequest request,
+        ServerCallContext context
+    )
+    {
+        var settings = await toDoService.GetPeriodicityOffsetToDoItemSettingsAsync(
+            mapper.Map<Guid>(request.Id),
+            context.CancellationToken
+        );
+        var reply = mapper.Map<GetPeriodicityOffsetToDoItemSettingsReply>(settings);
+
+        return reply;
+    }
+
+    public override async Task<GetValueToDoItemSettingsReply> GetValueToDoItemSettings(
+        GetValueToDoItemSettingsRequest request,
+        ServerCallContext context
+    )
+    {
+        var settings = await toDoService.GetValueToDoItemSettingsAsync(
+            mapper.Map<Guid>(request.Id),
+            context.CancellationToken
+        );
+        var reply = mapper.Map<GetValueToDoItemSettingsReply>(settings);
+
+        return reply;
+    }
+
+    public override async Task<GetRootToDoItemIdsReply> GetRootToDoItemIds(
+        GetRootToDoItemIdsRequest request,
+        ServerCallContext context
+    )
+    {
+        var ids = await toDoService.GetRootToDoItemIdsAsync(context.CancellationToken);
+        var reply = new GetRootToDoItemIdsReply();
+        reply.Ids.AddRange(mapper.Map<IEnumerable<ByteString>>(ids));
+
+        return reply;
+    }
+
+    public override async Task<GetPlannedToDoItemSettingsReply> GetPlannedToDoItemSettings(
+        GetPlannedToDoItemSettingsRequest request,
+        ServerCallContext context
+    )
+    {
+        var settings = await toDoService.GetPlannedToDoItemSettingsAsync(
+            mapper.Map<Guid>(request.Id),
+            context.CancellationToken
+        );
+        var reply = mapper.Map<GetPlannedToDoItemSettingsReply>(settings);
+
+        return reply;
+    }
+
+    public override async Task<GetPeriodicityToDoItemSettingsReply> GetPeriodicityToDoItemSettings(
+        GetPeriodicityToDoItemSettingsRequest request,
+        ServerCallContext context
+    )
+    {
+        var settings = await toDoService.GetPeriodicityToDoItemSettingsAsync(
+            mapper.Map<Guid>(request.Id),
+            context.CancellationToken
+        );
+        var reply = mapper.Map<GetPeriodicityToDoItemSettingsReply>(settings);
+
+        return reply;
+    }
+
+    public override async Task<GetLeafToDoItemIdsReply> GetLeafToDoItemIds(
+        GetLeafToDoItemIdsRequest request,
+        ServerCallContext context
+    )
+    {
+        var ids = await toDoService.GetLeafToDoItemIdsAsync(mapper.Map<Guid>(request.Id), context.CancellationToken);
+        var reply = new GetLeafToDoItemIdsReply();
+        reply.Ids.AddRange(mapper.Map<IEnumerable<ByteString>>(ids));
+
+        return reply;
+    }
+
+    public override async Task<GetFavoriteToDoItemIdsRequestReply> GetFavoriteToDoItemIds(
+        GetFavoriteToDoItemIdsRequest request,
+        ServerCallContext context
+    )
+    {
+        var ids = await toDoService.GetFavoriteToDoItemIdsAsync(context.CancellationToken);
+        var reply = new GetFavoriteToDoItemIdsRequestReply();
+        reply.Ids.AddRange(mapper.Map<IEnumerable<ByteString>>(ids));
+
+        return reply;
+    }
+
+    public override async Task<GetCurrentActiveToDoItemReply> GetCurrentActiveToDoItem(
+        GetCurrentActiveToDoItemRequest request,
+        ServerCallContext context
+    )
+    {
+        var reply = new GetCurrentActiveToDoItemReply();
+        var item = await toDoService.GetCurrentActiveToDoItemAsync(context.CancellationToken);
+        reply.Item = mapper.Map<ActiveToDoItemGrpc>(item);
+
+        return reply;
+    }
+
+    public override async Task<GetChildrenToDoItemIdsReply> GetChildrenToDoItemIds(
+        GetChildrenToDoItemIdsRequest request,
+        ServerCallContext context
+    )
+    {
+        var ids = await toDoService.GetChildrenToDoItemIdsAsync(
+            mapper.Map<Guid>(request.Id),
+            context.CancellationToken
+        );
+        var reply = new GetChildrenToDoItemIdsReply();
+        reply.Ids.AddRange(mapper.Map<IEnumerable<ByteString>>(ids));
+
+        return reply;
+    }
+
+    public override async Task<UpdateToDoItemLinkReply> UpdateToDoItemLink(
+        UpdateToDoItemLinkRequest request,
+        ServerCallContext context
+    )
+    {
+        var reply = new UpdateToDoItemLinkReply();
+        await toDoService.UpdateToDoItemLinkAsync(
+            mapper.Map<Guid>(request.Id),
+            mapper.Map<Uri>(request.Link),
+            context.CancellationToken
+        );
+
+        return reply;
+    }
+
+    public override async Task<SearchToDoItemIdsReply> SearchToDoItemIds(
+        SearchToDoItemIdsRequest request,
+        ServerCallContext context
+    )
+    {
+        var ids = await toDoService.SearchToDoItemIdsAsync(request.SearchText, context.CancellationToken);
+        var reply = new SearchToDoItemIdsReply();
+        reply.Ids.AddRange(mapper.Map<IEnumerable<ByteString>>(ids));
+
+        return reply;
+    }
+
+    public override async Task<RandomizeChildrenOrderIndexReply> RandomizeChildrenOrderIndex(
+        RandomizeChildrenOrderIndexRequest request,
+        ServerCallContext context
+    )
+    {
+        await toDoService.RandomizeChildrenOrderIndexAsync(
+            mapper.Map<Guid>(request.Id),
+            context.CancellationToken
+        );
+
+        return DefaultObject<RandomizeChildrenOrderIndexReply>.Default;
+    }
+
+    public override async Task GetToDoItems(
+        GetToDoItemsRequest request,
+        IServerStreamWriter<GetToDoItemsReply> responseStream,
+        ServerCallContext context
+    )
+    {
+        var ids = mapper.Map<Guid[]>(request.Ids);
+
+        await foreach (var item in toDoService.GetToDoItemsAsync(ids, request.ChunkSize, context.CancellationToken))
+        {
+            var reply = new GetToDoItemsReply();
+            reply.Items.AddRange(mapper.Map<IEnumerable<ToDoItemGrpc>>(item));
+            await responseStream.WriteAsync(reply);
+        }
+    }
+
+    public override async Task<GetToDoItemReply> GetToDoItem(GetToDoItemRequest request, ServerCallContext context)
+    {
+        var item = await toDoService.GetToDoItemAsync(mapper.Map<Guid>(request.Id), context.CancellationToken);
+        var reply = mapper.Map<GetToDoItemReply>(item);
+
+        return reply;
+    }
+
+    public override async Task<GetWeeklyPeriodicityReply> GetWeeklyPeriodicity(
+        GetWeeklyPeriodicityRequest request,
+        ServerCallContext context
+    )
+    {
+        var periodicity = await toDoService.GetWeeklyPeriodicityAsync(
+            mapper.Map<Guid>(request.Id),
+            context.CancellationToken
+        );
+        var reply = mapper.Map<GetWeeklyPeriodicityReply>(periodicity);
+
+        return reply;
+    }
+
+    public override async Task<GetMonthlyPeriodicityReply> GetMonthlyPeriodicity(
+        GetMonthlyPeriodicityRequest request,
+        ServerCallContext context
+    )
+    {
+        var periodicity = await toDoService.GetMonthlyPeriodicityAsync(
+            mapper.Map<Guid>(request.Id),
+            context.CancellationToken
+        );
+        var reply = mapper.Map<GetMonthlyPeriodicityReply>(periodicity);
+
+        return reply;
+    }
+
+    public override async Task<GetAnnuallyPeriodicityReply> GetAnnuallyPeriodicity(
+        GetAnnuallyPeriodicityRequest request,
+        ServerCallContext context
+    )
+    {
+        var periodicity = await toDoService.GetAnnuallyPeriodicityAsync(
+            mapper.Map<Guid>(request.Id),
+            context.CancellationToken
+        );
+        var reply = mapper.Map<GetAnnuallyPeriodicityReply>(periodicity);
+
+        return reply;
+    }
+
+    public override async Task<GetSiblingsReply> GetSiblings(GetSiblingsRequest request, ServerCallContext context)
+    {
+        var id = mapper.Map<Guid>(request.Id);
+        var items = await toDoService.GetSiblingsAsync(id, context.CancellationToken);
+        var reply = new GetSiblingsReply();
+        reply.Items.AddRange(mapper.Map<IEnumerable<ToDoShortItemGrpc>>(items));
+
+        return reply;
+    }
+
+    public override async Task<GetParentsReply> GetParents(GetParentsRequest request, ServerCallContext context)
+    {
+        var parents = await toDoService.GetParentsAsync(mapper.Map<Guid>(request.Id), context.CancellationToken);
+        var reply = new GetParentsReply();
+        reply.Parents.AddRange(mapper.Map<IEnumerable<ToDoShortItemGrpc>>(parents));
+
+        return reply;
     }
 
     public override async Task<GetRootToDoSubItemsReply> GetRootToDoSubItems(
