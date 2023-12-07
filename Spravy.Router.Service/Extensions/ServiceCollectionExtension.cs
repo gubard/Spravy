@@ -45,6 +45,7 @@ public static class ServiceCollectionExtension
         serviceCollection.AddTransient<IMetadataFactory, MetadataFactory>();
         serviceCollection.AddSingleton<ContextAccessorUserIdHttpHeaderFactory>();
         serviceCollection.AddSingleton<ContextAccessorAuthorizationHttpHeaderFactory>();
+        serviceCollection.AddSingleton<ContextTimeZoneOffsetHttpHeaderFactory>();
 
         serviceCollection.AddMapperConfiguration<SpravyAuthenticationProfile,
             SpravyEventBusProfile,
