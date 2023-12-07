@@ -286,8 +286,7 @@
                 <x:Type TypeName="models:Selected" x:TypeArguments="models:ToDoItemNotify" />
             </DataTemplate.DataType>
 
-            <controls:Card Margin="3"
-                           ToolTip.Tip="{Binding Value.Description, Converter={StaticResource EmptyStringToNullConverter}}">
+            <controls:Card Margin="3">
                 <StackPanel>
                     <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto">
                         <Rectangle Width="15"
