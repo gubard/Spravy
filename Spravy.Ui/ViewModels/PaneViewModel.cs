@@ -30,6 +30,9 @@ public class PaneViewModel : ViewModelBase
     public ICommand LogoutCommand { get; }
 
     [Inject]
+    public required AccountNotify Account { get; init; }
+
+    [Inject]
     public required IObjectStorage ObjectStorage { get; init; }
 
     [Inject]
@@ -64,7 +67,7 @@ public class PaneViewModel : ViewModelBase
         await Navigator.NavigateToAsync(ActionHelper<SearchViewModel>.Empty, cancellationToken).ConfigureAwait(false);
         await this.InvokeUIAsync(() => MainSplitViewModel.IsPaneOpen = false);
     }
-    
+
     private async Task ToSettingViewAsync(CancellationToken cancellationToken)
     {
         await Navigator.NavigateToAsync(ActionHelper<SettingViewModel>.Empty, cancellationToken).ConfigureAwait(false);

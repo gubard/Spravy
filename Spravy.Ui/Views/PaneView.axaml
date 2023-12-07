@@ -10,6 +10,8 @@
                                 x:Class="Spravy.Ui.Views.PaneView"
                                 x:DataType="viewModels:PaneViewModel">
     <StackPanel>
+        <TextBlock Text="{Binding Account.Login}" Classes="Headline4" />
+
         <Button Command="{Binding ToRootToDoItemViewCommand}">
             <Grid ColumnDefinitions="Auto,Auto">
                 <avalonia:MaterialIcon Kind="Checks" />

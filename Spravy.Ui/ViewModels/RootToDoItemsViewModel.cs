@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
-using Avalonia.Threading;
 using Ninject;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Models;
@@ -41,7 +40,7 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
     [Inject]
     public required IMapper Mapper { get; init; }
 
-    public async Task InitializedAsync(CancellationToken cancellationToken)
+    private async Task InitializedAsync(CancellationToken cancellationToken)
     {
         await this.InvokeUIAsync(() => PageHeaderViewModel.Content = "Spravy");
         await refreshWork.RunAsync().ConfigureAwait(false);

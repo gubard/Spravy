@@ -1,3 +1,6 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -28,6 +31,9 @@ public class LoginViewModel : NavigatableViewModelBase
         EnterCommand = CreateCommandFromTask<LoginView>(TaskWork.Create<LoginView>(EnterAsync).RunAsync);
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
     }
+
+    [Inject]
+    public required AccountNotify Account { get; init; }
 
     [Inject]
     public required ITokenService TokenService { get; init; }
@@ -69,7 +75,12 @@ public class LoginViewModel : NavigatableViewModelBase
         }
 
         var item = await ObjectStorage.GetObjectAsync<LoginStorageItem>(FileIds.LoginFileId).ConfigureAwait(false);
+        var jwtHandler = new JwtSecurityTokenHandler();
+        var jwtToken = jwtHandler.ReadJwtToken(item.Token);
+        var l = jwtToken.Claims.Single(x => x.Type == ClaimTypes.Name).Value;
+        Account.Login = l;
         await TokenService.LoginAsync(item.Token.ThrowIfNullOrWhiteSpace(), cancellationToken).ConfigureAwait(false);
+
         await Navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken)
             .ConfigureAwait(false);
     }
@@ -110,8 +121,11 @@ public class LoginViewModel : NavigatableViewModelBase
     {
         var user = Mapper.Map<User>(this);
         await TokenService.LoginAsync(user, cancellationToken).ConfigureAwait(false);
+        Account.Login = user.Login;
         await RememberMeAsync(cancellationToken);
-        await Navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken).ConfigureAwait(false);
+
+        await Navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken)
+            .ConfigureAwait(false);
     }
 
     private async Task RememberMeAsync(CancellationToken cancellationToken)
