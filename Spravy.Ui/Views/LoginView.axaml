@@ -27,7 +27,7 @@
                    MinWidth="300">
         <StackPanel>
             <TextBlock Text="Welcome to Spravy" Classes="Headline5" HorizontalAlignment="Center" />
-            
+
             <TextBox UseFloatingWatermark="True"
                      Name="{x:Static views:LoginView.LoginTextBoxName}"
                      Classes="outline dense"
@@ -43,7 +43,9 @@
                      PasswordChar="*"
                      Text="{Binding Password}" />
 
-            <CheckBox IsChecked="{Binding IsRememberMe}" Content="Remember Me" />
+            <CheckBox IsChecked="{Binding IsRememberMe}">
+                <TextBlock Text="Remember Me" />
+            </CheckBox>
 
             <Grid ColumnDefinitions="*,*">
                 <Button Command="{Binding CreateUserCommand}">
