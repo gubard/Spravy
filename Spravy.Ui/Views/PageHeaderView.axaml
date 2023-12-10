@@ -89,7 +89,7 @@
             <StackPanel Grid.Column="2" Orientation="Horizontal">
                 <ContentControl Content="{Binding RightCommand}" />
 
-                <Panel>
+                <Panel IsVisible="{Binding Commands.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
                     <ItemsControl HorizontalAlignment="Right"
                                   VerticalAlignment="Center"
                                   ItemsSource="{Binding Commands}"
