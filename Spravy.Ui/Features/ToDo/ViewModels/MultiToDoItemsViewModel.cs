@@ -12,7 +12,6 @@ using ReactiveUI;
 using Spravy.Domain.Models;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Features.ToDo.Enums;
-using Spravy.Ui.Features.ToDo.Views;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.Features.ToDo.ViewModels;
@@ -226,6 +225,7 @@ public class MultiToDoItemsViewModel : ViewModelBase
         return this.InvokeUIBackgroundAsync(
             () =>
             {
+                Favorite.Clear();
                 ToDoItems.Clear();
                 MultiToDoItems.Clear();
             }

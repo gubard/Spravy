@@ -25,7 +25,6 @@ using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.Enums;
 using Spravy.Ui.Extensions;
-using Spravy.Ui.Features.ToDo.Enums;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 
