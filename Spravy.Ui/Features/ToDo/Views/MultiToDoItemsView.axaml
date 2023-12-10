@@ -25,8 +25,11 @@
                       ItemsSource="{Binding GroupBys}" />
         </Grid>
 
+        <ContentControl Content="{Binding Favorite}"
+                        IsVisible="{Binding Favorite.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
         <ContentControl IsVisible="{Binding IsMulti, Converter={StaticResource ReverseBooleanValueConverter}}"
                         Content="{Binding Content}" />
+
         <ContentControl IsVisible="{Binding IsMulti}"
                         Content="{Binding Content}">
             <ContentControl.DataTemplates>

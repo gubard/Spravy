@@ -211,8 +211,8 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
         await foreach (var item in ToDoService.GetToDoItemsAsync(ids.ToArray(), 5, cancellationToken)
                            .ConfigureAwait(false))
         {
-            var itemNotify = Mapper.Map<IEnumerable<ToDoItemNotify>>(item); 
-            //await this.InvokeUIBackgroundAsync(() => List.AddFavoritesAsync(itemNotify));
+            var itemNotify = Mapper.Map<IEnumerable<ToDoItemNotify>>(item);
+            List.AddFavoritesAsync(itemNotify);
             cancellationToken.ThrowIfCancellationRequested();
         }
     }

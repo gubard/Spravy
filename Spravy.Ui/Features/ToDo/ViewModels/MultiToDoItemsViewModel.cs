@@ -12,6 +12,7 @@ using ReactiveUI;
 using Spravy.Domain.Models;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Features.ToDo.Enums;
+using Spravy.Ui.Features.ToDo.Views;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.Features.ToDo.ViewModels;
@@ -23,6 +24,7 @@ public class MultiToDoItemsViewModel : ViewModelBase
     private readonly ToDoItemsGroupByViewModel toDoItems;
     private GroupBy groupBy = GroupBy.ByStatus;
     private readonly ToDoItemsGroupByViewModel multiToDoItems;
+    private readonly ToDoItemsViewModel favorite;
 
     public MultiToDoItemsViewModel()
     {
@@ -49,6 +51,18 @@ public class MultiToDoItemsViewModel : ViewModelBase
     }
 
     public AvaloniaList<GroupBy> GroupBys { get; } = new(Enum.GetValues<GroupBy>());
+
+    [Inject]
+    public required ToDoItemsViewModel Favorite
+    {
+        get => favorite;
+        [MemberNotNull(nameof(favorite))]
+        init
+        {
+            favorite = value;
+            favorite.Header = "Favorite";
+        }
+    }
 
     [Inject]
     public required ToDoItemsGroupByViewModel ToDoItems
@@ -229,6 +243,13 @@ public class MultiToDoItemsViewModel : ViewModelBase
                 MultiToDoItems.AddItems(selected);
             }
         );
+    }
+
+    public DispatcherOperation AddFavoritesAsync(IEnumerable<ToDoItemNotify> items)
+    {
+        var selected = items.Select(x => new Selected<ToDoItemNotify>(x)).ToArray();
+
+        return this.InvokeUIBackgroundAsync(() => Favorite.Items.AddRange(selected));
     }
 
     private async Task SelectAllAsync(AvaloniaList<Selected<ToDoItemNotify>> items, CancellationToken cancellationToken)
