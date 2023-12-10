@@ -19,6 +19,7 @@
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
         <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.6" />
         <PackageReference Include="Avalonia.Xaml.Interactions" Version="11.0.5" />
+        <PackageReference Include="Avalonia.Xaml.Interactions.Custom" Version="11.0.5" />
         <PackageReference Include="Avalonia.Xaml.Interactions.DragAndDrop" Version="11.0.5" />
         <PackageReference Include="Avalonia.Xaml.Interactions.Responsive" Version="11.0.5" />
         <PackageReference Include="DialogHost.Avalonia" Version="0.7.7" />
@@ -56,5 +57,12 @@
     <ItemGroup>
       <UpToDateCheckInput Remove="Assets\avalonia-logo.ico" />
       <UpToDateCheckInput Remove="Styles\Theme.axaml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Features\ToDo\Views\ToDoItemsView.axaml.cs">
+        <DependentUpon>ToDoItemsView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 </Project>

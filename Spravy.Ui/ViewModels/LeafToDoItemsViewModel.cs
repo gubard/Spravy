@@ -74,19 +74,9 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
         await this.InvokeUIAsync(() => ScrollOffset = offset);
     }
 
-    private async Task ToMultiEditingToDoItemsAsync(CancellationToken cancellationToken)
+    private Task ToMultiEditingToDoItemsAsync(CancellationToken cancellationToken)
     {
-        var ids = ToDoSubItemsViewModel.Missed.Concat(ToDoSubItemsViewModel.Planned)
-            .Concat(ToDoSubItemsViewModel.ReadyForCompleted)
-            .Concat(ToDoSubItemsViewModel.Completed)
-            .OrderBy(x => x.OrderIndex)
-            .Select(x => x.Id);
-
-        await Navigator.NavigateToAsync<MultiEditingToDoSubItemsViewModel>(
-                viewModel => viewModel.Ids.AddRange(ids),
-                cancellationToken
-            )
-            .ConfigureAwait(false);
+        return Task.CompletedTask;
     }
 
     private DispatcherOperation SwitchPane()

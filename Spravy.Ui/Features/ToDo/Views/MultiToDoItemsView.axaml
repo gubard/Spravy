@@ -1,0 +1,70 @@
+<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:MultiToDoItemsViewModel"
+                                xmlns="https://github.com/avaloniaui"
+                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                                xmlns:reactiveUi="http://reactiveui.net"
+                                xmlns:viewModels="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+                                xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
+                                xmlns:controls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
+                                xmlns:models="clr-namespace:Spravy.Ui.Models"
+                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                                x:Class="Spravy.Ui.Features.ToDo.Views.MultiToDoItemsView"
+                                x:DataType="viewModels:MultiToDoItemsViewModel">
+
+    <Grid RowDefinitions="Auto,*" ColumnDefinitions="Auto,*">
+        <CheckBox IsChecked="{Binding IsMulti}">
+            <TextBlock Text="IsMulti" />
+        </CheckBox>
+
+        <ComboBox Grid.Column="1"
+                  Theme="{StaticResource MaterialOutlineComboBox}"
+                  assists:ComboBoxAssist.Label="GroupBy"
+                  SelectedItem="{Binding GroupBy}"
+                  ItemsSource="{Binding GroupBys}" />
+        <ContentControl Grid.Row="1"
+                        Grid.ColumnSpan="2"
+                        IsVisible="{Binding IsMulti, Converter={StaticResource ReverseBooleanValueConverter}}"
+                        Content="{Binding Content}" />
+        <ContentControl Grid.Row="1"
+                        Grid.ColumnSpan="2"
+                        IsVisible="{Binding IsMulti}"
+                        Content="{Binding Content}">
+            <ContentControl.DataTemplates>
+                <DataTemplate>
+                    <DataTemplate.DataType>
+                        <x:Type TypeName="models:Selected" x:TypeArguments="models:ToDoItemNotify" />
+                    </DataTemplate.DataType>
+
+                    <controls:Card Margin="3">
+                        <StackPanel>
+                            <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto">
+                                <Rectangle Width="15"
+                                           Margin="0,0,3,0"
+                                           Height="2"
+                                           Fill="{Binding Value.Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
+                                <TextBlock Grid.Column="1" Text="{Binding Value.Type}" Classes="Body2" />
+                                <Rectangle Grid.Column="2"
+                                           Margin="3,0,3,0"
+                                           Height="2"
+                                           Fill="{Binding Value.Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
+                                <TextBlock Grid.Column="3" Text="{Binding Value.Status}" Classes="Body2" />
+                                <Rectangle Grid.Column="4"
+                                           Width="15"
+                                           Margin="3,0,0,0"
+                                           Height="2"
+                                           Fill="{Binding Value.Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
+                            </Grid>
+
+                            <CheckBox IsChecked="{Binding IsSelect}">
+                                <TextBlock Text="{Binding Value.Name}"
+                                           Classes="Headline6"
+                                           TextWrapping="Wrap" />
+                            </CheckBox>
+                        </StackPanel>
+                    </controls:Card>
+                </DataTemplate>
+            </ContentControl.DataTemplates>
+        </ContentControl>
+    </Grid>
+</reactiveUi:ReactiveUserControl>

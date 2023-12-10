@@ -32,6 +32,8 @@ public class RootToDoItemsViewModelDesign : RootToDoItemsViewModel
             DialogViewer = ConstDesign.DialogViewer,
             ToDoService = toDoServiceDesign,
             OpenerLink = ConstDesign.OpenerLink,
+            MultiEditingItemsViewModel = null,
+            List = null,
         };
     }
 }

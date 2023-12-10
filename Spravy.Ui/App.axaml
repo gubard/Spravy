@@ -9,8 +9,8 @@
              xmlns:dialogHostAvalonia="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
              xmlns:controls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
              xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-             xmlns:enums="clr-namespace:Spravy.Ui.Enums"
              xmlns:system="clr-namespace:System;assembly=System.Runtime"
+             xmlns:enums1="clr-namespace:Spravy.Ui.Features.ToDo.Enums"
              x:Class="Spravy.Ui.App"
              RequestedThemeVariant="Dark">
     <Application.Resources>
@@ -31,13 +31,13 @@
                                                             Reverse="True" />
         <converters:BooleanToCompletedStringConverter x:Key="BooleanToCompletedStringConverter" />
         <converters:ToDoItemIsCanToBooleanConverter x:Key="ToDoItemIsCanToBooleanConverter" />
-        <converters:EnumToBooleanConverter x:TypeArguments="enums:MultiEditingGroupBy"
+        <converters:EnumToBooleanConverter x:TypeArguments="enums1:GroupBy"
                                            x:Key="MultiEditingGroupByNoneToTrue"
                                            Value="None" />
-        <converters:EnumToBooleanConverter x:TypeArguments="enums:MultiEditingGroupBy"
+        <converters:EnumToBooleanConverter x:TypeArguments="enums1:GroupBy"
                                            x:Key="MultiEditingGroupByStatusToTrue"
                                            Value="ByStatus" />
-        <converters:EnumToBooleanConverter x:TypeArguments="enums:MultiEditingGroupBy"
+        <converters:EnumToBooleanConverter x:TypeArguments="enums1:GroupBy"
                                            x:Key="MultiEditingGroupByTypeToTrue"
                                            Value="ByType" />
         <converters:ObjectToBooleanConverter x:TypeArguments="system:Byte"
@@ -154,7 +154,11 @@
             <TextBlock Text="{Binding Name}" />
         </DataTemplate>
 
-        <DataTemplate DataType="models:ToDoItemNotify">
+        <DataTemplate>
+            <DataTemplate.DataType>
+                <x:Type TypeName="models:Selected" x:TypeArguments="models:ToDoItemNotify" />
+            </DataTemplate.DataType>
+
             <controls:Card Margin="3">
                 <Grid ColumnDefinitions="*,Auto"
                       RowDefinitions="Auto,*"
@@ -162,133 +166,6 @@
                       VerticalAlignment="Stretch"
                       Margin="5">
                     <Grid Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*,Auto,Auto">
-                        <Rectangle Width="15"
-                                   Margin="0,0,3,0"
-                                   Height="2"
-                                   Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
-                        <TextBlock Grid.Column="1" Text="{Binding Type}" Classes="Body2" />
-                        <Rectangle Grid.Column="2"
-                                   Margin="3,0,3,0"
-                                   Height="2"
-                                   Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
-                        <TextBlock Grid.Column="3" Text="{Binding Status}" Classes="Body2" />
-                        <Rectangle Grid.Column="4"
-                                   Width="15"
-                                   Margin="3,0,0,0"
-                                   Height="2"
-                                   Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
-                    </Grid>
-
-                    <StackPanel Grid.Row="1">
-                        <TextBlock Text="{Binding Name}"
-                                   Classes="Headline6"
-                                   TextWrapping="Wrap" />
-
-                        <Grid ColumnDefinitions="Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto">
-                            <Button Grid.ColumnSpan="3"
-                                    Margin="0,5,5,5"
-                                    Width="320"
-                                    IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}"
-                                    CommandParameter="{Binding Active}"
-                                    Command="{Binding $parent[interfaces:IToDoItemView].ChangeToActiveDoItemCommand}"
-                                    ClickMode="Release">
-                                <WrapPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding Active.Name}"
-                                               TextWrapping="Wrap"
-                                               VerticalAlignment="Center" />
-                                    <avalonia:MaterialIcon Margin="5,0,0,0" Kind="ArrowRight" />
-                                </WrapPanel>
-                            </Button>
-
-                            <Button Grid.Row="1" Margin="0,5,5,5" Classes="with-text" CommandParameter="{Binding}"
-                                    Command="{Binding $parent[interfaces:IToDoItemView].ChangeOrderIndexCommand}"
-                                    ClickMode="Release">
-                                <StackPanel Orientation="Horizontal">
-                                    <avalonia:MaterialIcon Kind="ReorderHorizontal" />
-                                    <TextBlock Text="Reorder" />
-                                </StackPanel>
-                            </Button>
-
-                            <Button Grid.Row="2"
-                                    Margin="0,5,5,5"
-                                    Classes="with-text"
-                                    CommandParameter="{Binding}"
-                                    Command="{Binding $parent[interfaces:ICompleteSubToDoItemCommand].CompleteSubToDoItemCommand}"
-                                    IsVisible="{Binding IsCan, Converter={StaticResource ToDoItemIsCanToBooleanConverter}}"
-                                    ClickMode="Release">
-                                <StackPanel Orientation="Horizontal">
-                                    <avalonia:MaterialIcon Kind="Check" />
-                                    <TextBlock Text="Complete" />
-                                </StackPanel>
-                            </Button>
-
-                            <Button Grid.Row="1"
-                                    Grid.Column="1"
-                                    Classes="with-text"
-                                    Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
-                                    CommandParameter="{Binding}"
-                                    ClickMode="Release">
-                                <StackPanel Orientation="Horizontal">
-                                    <avalonia:MaterialIcon Kind="Delete" />
-                                    <TextBlock Text="Delete" />
-                                </StackPanel>
-                            </Button>
-
-                            <Button Grid.Row="1"
-                                    Grid.Column="2"
-                                    Classes="with-text"
-                                    Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
-                                    CommandParameter="{Binding}"
-                                    ClickMode="Release">
-                                <StackPanel Orientation="Horizontal">
-                                    <avalonia:MaterialIcon Kind="ArrowRight" />
-                                    <TextBlock Text="Open" />
-                                </StackPanel>
-                            </Button>
-
-                            <Button Grid.Row="2"
-                                    Grid.Column="2"
-                                    Classes="with-text"
-                                    Command="{Binding $parent[interfaces:IToDoItemView].OpenLinkCommand}"
-                                    CommandParameter="{Binding}"
-                                    IsVisible="{Binding Link, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}"
-                                    ClickMode="Release">
-                                <StackPanel Orientation="Horizontal">
-                                    <avalonia:MaterialIcon Kind="Link" />
-                                    <TextBlock Text="Link" />
-                                </StackPanel>
-                            </Button>
-                        </Grid>
-                    </StackPanel>
-
-                    <Panel Grid.Row="1" Grid.Column="1" VerticalAlignment="Top"
-                           HorizontalAlignment="Right">
-                        <Button CommandParameter="{Binding}"
-                                Command="{Binding $parent[interfaces:IChangeFavoriteToDoItemCommand].RemoveSubToDoItemFromFavoriteCommand}"
-                                IsVisible="{Binding IsFavorite}"
-                                ClickMode="Release">
-                            <avalonia:MaterialIcon Kind="Star" />
-                        </Button>
-
-                        <Button CommandParameter="{Binding}"
-                                Command="{Binding $parent[interfaces:IChangeFavoriteToDoItemCommand].AddSubToDoItemToFavoriteCommand}"
-                                IsVisible="{Binding IsFavorite, Converter={StaticResource ReverseBooleanValueConverter}}"
-                                ClickMode="Release">
-                            <avalonia:MaterialIcon Kind="StarOutline" />
-                        </Button>
-                    </Panel>
-                </Grid>
-            </controls:Card>
-        </DataTemplate>
-
-        <DataTemplate>
-            <DataTemplate.DataType>
-                <x:Type TypeName="models:Selected" x:TypeArguments="models:ToDoItemNotify" />
-            </DataTemplate.DataType>
-
-            <controls:Card Margin="3">
-                <StackPanel>
-                    <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto">
                         <Rectangle Width="15"
                                    Margin="0,0,3,0"
                                    Height="2"
@@ -306,12 +183,105 @@
                                    Fill="{Binding Value.Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                     </Grid>
 
-                    <CheckBox IsChecked="{Binding IsSelect}">
+                    <StackPanel Grid.Row="1">
                         <TextBlock Text="{Binding Value.Name}"
                                    Classes="Headline6"
                                    TextWrapping="Wrap" />
-                    </CheckBox>
-                </StackPanel>
+
+                        <Grid ColumnDefinitions="Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto">
+                            <Button Grid.ColumnSpan="3"
+                                    Margin="0,5,5,5"
+                                    Width="320"
+                                    IsVisible="{Binding Value.Active, Converter={StaticResource NullToBooleanConverter}}"
+                                    CommandParameter="{Binding Value.Active}"
+                                    Command="{Binding $parent[interfaces:IToDoItemView].ChangeToActiveDoItemCommand}"
+                                    ClickMode="Release">
+                                <WrapPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Value.Active.Name}"
+                                               TextWrapping="Wrap"
+                                               VerticalAlignment="Center" />
+                                    <avalonia:MaterialIcon Margin="5,0,0,0" Kind="ArrowRight" />
+                                </WrapPanel>
+                            </Button>
+
+                            <Button Grid.Row="1" Margin="0,5,5,5" Classes="with-text" CommandParameter="{Binding Value}"
+                                    Command="{Binding $parent[interfaces:IToDoItemView].ChangeOrderIndexCommand}"
+                                    ClickMode="Release">
+                                <StackPanel Orientation="Horizontal">
+                                    <avalonia:MaterialIcon Kind="ReorderHorizontal" />
+                                    <TextBlock Text="Reorder" />
+                                </StackPanel>
+                            </Button>
+
+                            <Button Grid.Row="2"
+                                    Margin="0,5,5,5"
+                                    Classes="with-text"
+                                    CommandParameter="{Binding Value}"
+                                    Command="{Binding $parent[interfaces:ICompleteSubToDoItemCommand].CompleteSubToDoItemCommand}"
+                                    IsVisible="{Binding Value.IsCan, Converter={StaticResource ToDoItemIsCanToBooleanConverter}}"
+                                    ClickMode="Release">
+                                <StackPanel Orientation="Horizontal">
+                                    <avalonia:MaterialIcon Kind="Check" />
+                                    <TextBlock Text="Complete" />
+                                </StackPanel>
+                            </Button>
+
+                            <Button Grid.Row="1"
+                                    Grid.Column="1"
+                                    Classes="with-text"
+                                    Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
+                                    CommandParameter="{Binding Value}"
+                                    ClickMode="Release">
+                                <StackPanel Orientation="Horizontal">
+                                    <avalonia:MaterialIcon Kind="Delete" />
+                                    <TextBlock Text="Delete" />
+                                </StackPanel>
+                            </Button>
+
+                            <Button Grid.Row="1"
+                                    Grid.Column="2"
+                                    Classes="with-text"
+                                    Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
+                                    CommandParameter="{Binding Value}"
+                                    ClickMode="Release">
+                                <StackPanel Orientation="Horizontal">
+                                    <avalonia:MaterialIcon Kind="ArrowRight" />
+                                    <TextBlock Text="Open" />
+                                </StackPanel>
+                            </Button>
+
+                            <Button Grid.Row="2"
+                                    Grid.Column="2"
+                                    Classes="with-text"
+                                    Command="{Binding $parent[interfaces:IToDoItemView].OpenLinkCommand}"
+                                    CommandParameter="{Binding Value}"
+                                    IsVisible="{Binding Value.Link, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}"
+                                    ClickMode="Release">
+                                <StackPanel Orientation="Horizontal">
+                                    <avalonia:MaterialIcon Kind="Link" />
+                                    <TextBlock Text="Link" />
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                    </StackPanel>
+
+                    <Panel Grid.Row="1" Grid.Column="1" VerticalAlignment="Top"
+                           HorizontalAlignment="Right">
+                        <Button CommandParameter="{Binding Value}"
+                                Command="{Binding $parent[interfaces:IChangeFavoriteToDoItemCommand].RemoveSubToDoItemFromFavoriteCommand}"
+                                IsVisible="{Binding Value.IsFavorite}"
+                                ClickMode="Release">
+                            <avalonia:MaterialIcon Kind="Star" />
+                        </Button>
+
+                        <Button CommandParameter="{Binding Value}"
+                                Command="{Binding $parent[interfaces:IChangeFavoriteToDoItemCommand].AddSubToDoItemToFavoriteCommand}"
+                                IsVisible="{Binding Value.IsFavorite, Converter={StaticResource ReverseBooleanValueConverter}}"
+                                ClickMode="Release">
+                            <avalonia:MaterialIcon Kind="StarOutline" />
+                        </Button>
+                    </Panel>
+                </Grid>
             </controls:Card>
         </DataTemplate>
     </Application.DataTemplates>

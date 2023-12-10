@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -7,10 +7,8 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
-using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
 using Avalonia.Input.Platform;
-using Avalonia.VisualTree;
+using Avalonia.Threading;
 using Google.Protobuf;
 using Material.Icons;
 using Ninject;
@@ -27,24 +25,26 @@ using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.Enums;
 using Spravy.Ui.Extensions;
+using Spravy.Ui.Features.ToDo.Enums;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 
-public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
+public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger, IPageHeaderDataType
 {
     private string name = string.Empty;
     private Guid id;
     private string description = string.Empty;
     private ToDoItemType type;
     private bool isFavorite;
-    protected readonly List<ToDoItemCommand> Commands = new();
     private string link = string.Empty;
     private ToDoItemIsCan isCan;
     private readonly TaskWork refreshToDoItemWork;
     private readonly TaskWork refreshWork;
     private ToDoItemStatus status;
+    private object? header;
+    private readonly ToDoSubItemsViewModel toDoSubItemsViewModel;
 
     public ToDoItemViewModel() : base(true)
     {
@@ -76,6 +76,18 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
             CreateCommandFromTask(TaskWork.Create(RandomizeChildrenOrderIndexAsync).RunAsync);
         ToCurrentToDoItemCommand = CreateCommandFromTask(TaskWork.Create(ToCurrentToDoItemAsync).RunAsync);
         ChangeNameCommand = CreateCommandFromTask(TaskWork.Create(ChangeNameAsync).RunAsync);
+        SwitchPaneCommand = CreateCommand(SwitchPane);
+        this.WhenAnyValue(x => x.Name).Subscribe(x => Header = x);
+        LeftCommand = new ToDoItemCommand(
+            MaterialIconKind.ArrowRight,
+            ToCurrentToDoItemCommand,
+            "Current to do item"
+        );
+        RightCommand = new ToDoItemCommand(
+            MaterialIconKind.Pencil,
+            ChangeNameCommand,
+            "Edit name"
+        );
     }
 
     public AvaloniaList<TypeOfPeriodicity> TypeOfPeriodicities { get; }
@@ -100,12 +112,24 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
     public ICommand RandomizeChildrenOrderIndexCommand { get; }
     public ICommand ToCurrentToDoItemCommand { get; }
     public ICommand ChangeNameCommand { get; }
+    public ICommand MultiChangeTypeCommand { get; }
+    public ToDoItemCommand? LeftCommand { get; } = null;
+    public ToDoItemCommand? RightCommand { get; } = null;
+    public ICommand SwitchPaneCommand { get; }
+    public AvaloniaList<ToDoItemCommand> Commands { get; } = new();
+
 
     [Inject]
-    public required PageHeaderViewModel PageHeaderViewModel { get; init; }
-
-    [Inject]
-    public required ToDoSubItemsViewModel ToDoSubItemsViewModel { get; init; }
+    public required ToDoSubItemsViewModel ToDoSubItemsViewModel
+    {
+        get => toDoSubItemsViewModel;
+        [MemberNotNull(nameof(toDoSubItemsViewModel))]
+        init
+        {
+            toDoSubItemsViewModel = value;
+            toDoSubItemsViewModel.List.WhenAnyValue(x => x.IsMulti).Subscribe(_ => UpdateCommands());
+        }
+    }
 
     [Inject]
     public required IToDoService ToDoService { get; set; }
@@ -121,6 +145,15 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
 
     [Inject]
     public required IClipboard Clipboard { get; set; }
+
+    [Inject]
+    public required MainSplitViewModel MainSplitViewModel { get; init; }
+
+    public object? Header
+    {
+        get => header;
+        set => this.RaiseAndSetIfChanged(ref header, value);
+    }
 
     public bool IsFavorite
     {
@@ -168,6 +201,11 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
     {
         get => status;
         set => this.RaiseAndSetIfChanged(ref status, value);
+    }
+
+    private DispatcherOperation SwitchPane()
+    {
+        return this.InvokeUIAsync(() => MainSplitViewModel.IsPaneOpen = !MainSplitViewModel.IsPaneOpen);
     }
 
     private async Task ChangeNameAsync(CancellationToken cancellationToken)
@@ -405,7 +443,6 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
                 IsCan = item.IsCan;
                 IsFavorite = item.IsFavorite;
                 Status = item.Status;
-                PageHeaderViewModel.Content = Name;
             }
         );
     }
@@ -522,16 +559,6 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
 
     private async Task InitializedAsync(CancellationToken cancellationToken)
     {
-        PageHeaderViewModel.LeftCommand = new ToDoItemCommand(
-            MaterialIconKind.ArrowRight,
-            ToCurrentToDoItemCommand,
-            "Current to do item"
-        );
-        PageHeaderViewModel.RightCommand = new ToDoItemCommand(
-            MaterialIconKind.Pencil,
-            ChangeNameCommand,
-            "Edit name"
-        );
         await RefreshAsync(cancellationToken).ConfigureAwait(false);
     }
 
@@ -654,118 +681,118 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
 
     private async Task UpdateCommandsAsync()
     {
-        var toFavoriteCommand = new ToDoItemCommand(
-            MaterialIconKind.StarOutline,
-            AddToDoItemToFavoriteCommand,
-            "Move to favorite"
-        );
-
-        await this.InvokeUIBackgroundAsync(
-            () =>
-            {
-                PageHeaderViewModel.Commands.Clear();
-                PageHeaderViewModel.Commands.Add(new(MaterialIconKind.Plus, AddToDoItemCommand, "Add sub task"));
-            }
-        );
-
         await refreshToDoItemWork.Current;
+        await this.InvokeUIBackgroundAsync(UpdateCommands);
+    }
 
-        await this.InvokeUIBackgroundAsync(
-            () =>
+    private void UpdateCommands()
+    {
+        Commands.Clear();
+
+        if (ToDoSubItemsViewModel.List.IsMulti)
+        {
+            Commands.Add(
+                new ToDoItemCommand(MaterialIconKind.CheckAll, ToDoSubItemsViewModel.MultiCompleteCommand, string.Empty)
+            );
+            Commands.Add(
+                new ToDoItemCommand(MaterialIconKind.Switch, ToDoSubItemsViewModel.MultiChangeTypeCommand, string.Empty)
+            );
+            Commands.Add(
+                new ToDoItemCommand(
+                    MaterialIconKind.SwapHorizontal,
+                    ToDoSubItemsViewModel.MultiChangeRootItemCommand,
+                    string.Empty
+                )
+            );
+        }
+        else
+        {
+            var toFavoriteCommand = new ToDoItemCommand(
+                MaterialIconKind.StarOutline,
+                AddToDoItemToFavoriteCommand,
+                "Move to favorite"
+            );
+
+            Commands.Add(new(MaterialIconKind.Plus, AddToDoItemCommand, "Add sub task"));
+
+            if (IsCan != ToDoItemIsCan.None)
             {
-                if (IsCan != ToDoItemIsCan.None)
-                {
-                    PageHeaderViewModel.Commands.Add(
-                        new(MaterialIconKind.Check, CompleteToDoItemCommand, "Complete")
-                    );
-                }
-
-                if (Type != ToDoItemType.Group)
-                {
-                    PageHeaderViewModel.Commands.Add(
-                        new(MaterialIconKind.Settings, SettingsToDoItemCommand, "Settings")
-                    );
-                }
-
-                if (IsFavorite)
-                {
-                    toFavoriteCommand = new ToDoItemCommand(
-                        MaterialIconKind.Star,
-                        RemoveToDoItemFromFavoriteCommand,
-                        "Remove from favorite"
-                    );
-                }
-
-                PageHeaderViewModel.Commands.Add(toFavoriteCommand);
-                PageHeaderViewModel.Commands.Add(
-                    new(MaterialIconKind.Leaf, ToLeafToDoItemsCommand, "Show all children")
-                );
-                PageHeaderViewModel.Commands.Add(
-                    new(MaterialIconKind.SwapHorizontal, ChangeRootItemCommand, "Change task parent")
-                );
-                PageHeaderViewModel.Commands.Add(
-                    new(MaterialIconKind.FamilyTree, ToDoItemToRootCommand, "Move to root task")
-                );
-                PageHeaderViewModel.Commands.Add(
-                    new(MaterialIconKind.CodeString, ToDoItemToStringCommand, "Copy task to clipboard")
-                );
-                PageHeaderViewModel.Commands.Add(new(MaterialIconKind.Timer, AddTimerCommand, "Add timer"));
-
-                PageHeaderViewModel.Commands.Add(
-                    new(
-                        MaterialIconKind.Checks,
-                        ToDoSubItemsViewModel.ToMultiEditingToDoItemsCommand,
-                        "Complete multiple"
-                    )
-                );
-                PageHeaderViewModel.Commands.Add(
-                    new(
-                        MaterialIconKind.Dice6Outline,
-                        RandomizeChildrenOrderIndexCommand,
-                        "Randomize sub tasks"
-                    )
+                Commands.Add(
+                    new(MaterialIconKind.Check, CompleteToDoItemCommand, "Complete")
                 );
             }
-        );
+
+            if (Type != ToDoItemType.Group)
+            {
+                Commands.Add(
+                    new(MaterialIconKind.Settings, SettingsToDoItemCommand, "Settings")
+                );
+            }
+
+            if (IsFavorite)
+            {
+                toFavoriteCommand = new ToDoItemCommand(
+                    MaterialIconKind.Star,
+                    RemoveToDoItemFromFavoriteCommand,
+                    "Remove from favorite"
+                );
+            }
+
+            Commands.Add(toFavoriteCommand);
+            Commands.Add(
+                new(MaterialIconKind.Leaf, ToLeafToDoItemsCommand, "Show all children")
+            );
+            Commands.Add(
+                new(MaterialIconKind.SwapHorizontal, ChangeRootItemCommand, "Change task parent")
+            );
+            Commands.Add(
+                new(MaterialIconKind.FamilyTree, ToDoItemToRootCommand, "Move to root task")
+            );
+            Commands.Add(
+                new(MaterialIconKind.CodeString, ToDoItemToStringCommand, "Copy task to clipboard")
+            );
+            Commands.Add(new(MaterialIconKind.Timer, AddTimerCommand, "Add timer"));
+
+            Commands.Add(
+                new(
+                    MaterialIconKind.Dice6Outline,
+                    RandomizeChildrenOrderIndexCommand,
+                    "Randomize sub tasks"
+                )
+            );
+        }
     }
 
     private void HideFlyout()
     {
-        var itemsControlCommands =
-            PageHeaderViewModel.ToDoItemHeaderView?.FindControl<ItemsControl>("ItemsControlCommands");
-
-        if (itemsControlCommands is null)
-        {
-            return;
-        }
-
-        var flyoutPresenter = itemsControlCommands.FindParent<FlyoutPresenter>();
-
-        if (flyoutPresenter is null)
-        {
-            return;
-        }
-
-        var visualRoot = flyoutPresenter.GetVisualRoot();
-
-        if (visualRoot is null)
-        {
-            return;
-        }
-
-        var popupRoot = visualRoot.As<PopupRoot>();
-
-        if (popupRoot is null)
-        {
-            return;
-        }
-
-        popupRoot.Hide();
     }
 
     public override void Stop()
     {
         refreshToDoItemWork.Cancel();
         refreshWork.Cancel();
+    }
+
+    private async Task SelectAllAsync(AvaloniaList<Selected<ToDoItemNotify>> items, CancellationToken arg)
+    {
+        await this.InvokeUIAsync(
+            () =>
+            {
+                if (items.All(x => x.IsSelect))
+                {
+                    foreach (var item in items)
+                    {
+                        item.IsSelect = false;
+                    }
+                }
+                else
+                {
+                    foreach (var item in items)
+                    {
+                        item.IsSelect = true;
+                    }
+                }
+            }
+        );
     }
 }

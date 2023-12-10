@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using Spravy.Domain.Services;
 
 namespace Spravy.Domain.Models;
@@ -53,7 +52,7 @@ public class TaskWork
     }
 }
 
-public readonly struct TaskWork<T>
+public class TaskWork<T>
 {
     private readonly Func<T, CancellationToken, Task> task;
     private readonly CancellationTokenFactory cancellationTokenFactory = new();
@@ -64,7 +63,7 @@ public readonly struct TaskWork<T>
         this.task = task;
     }
 
-    public ConfiguredTaskAwaitable RunAsync(T value)
+    public Task RunAsync(T value)
     {
         Cancel();
 
@@ -73,7 +72,7 @@ public readonly struct TaskWork<T>
             subTask.Cancel();
         }
 
-        return task.Invoke(value, cancellationTokenFactory.Token).ConfigureAwait(false);
+        return task.Invoke(value, cancellationTokenFactory.Token);
     }
 
     public void Cancel()

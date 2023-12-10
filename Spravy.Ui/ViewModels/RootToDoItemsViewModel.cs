@@ -3,6 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
+using Avalonia.Collections;
+using Avalonia.Threading;
 using Ninject;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Models;
@@ -14,7 +16,7 @@ using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 
-public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
+public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderChanger, IPageHeaderDataType
 {
     private readonly TaskWork refreshWork;
 
@@ -23,13 +25,16 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
         refreshWork = TaskWork.Create(RefreshCoreAsync);
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
         AddToDoItemCommand = CreateCommandFromTask(TaskWork.Create(AddToDoItemAsync).RunAsync);
+        SwitchPaneCommand = CreateCommand(SwitchPane);
     }
 
     public ICommand InitializedCommand { get; }
     public ICommand AddToDoItemCommand { get; }
-
-    [Inject]
-    public required PageHeaderViewModel PageHeaderViewModel { get; init; }
+    public ToDoItemCommand? LeftCommand { get; } = null;
+    public ToDoItemCommand? RightCommand { get; } = null;
+    public ICommand SwitchPaneCommand { get; }
+    public object? Header { get; } = "Spravy";
+    public AvaloniaList<ToDoItemCommand> Commands { get; } = new();
 
     [Inject]
     public required ToDoSubItemsViewModel ToDoSubItemsViewModel { get; init; }
@@ -39,10 +44,17 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
 
     [Inject]
     public required IMapper Mapper { get; init; }
+    
+    [Inject]
+    public required MainSplitViewModel MainSplitViewModel { get; init; }
+    
+    private DispatcherOperation SwitchPane()
+    {
+        return this.InvokeUIAsync(() => MainSplitViewModel.IsPaneOpen = !MainSplitViewModel.IsPaneOpen);
+    }
 
     private async Task InitializedAsync(CancellationToken cancellationToken)
     {
-        await this.InvokeUIAsync(() => PageHeaderViewModel.Content = "Spravy");
         await refreshWork.RunAsync().ConfigureAwait(false);
     }
 

@@ -5,7 +5,7 @@ using ReactiveUI;
 using Spravy.Domain.Extensions;
 using Spravy.Ui.Models;
 
-namespace Spravy.Ui.Services;
+namespace Spravy.Ui.DataTemplates;
 
 public class ModuleDataTemplate : IDataTemplate
 {

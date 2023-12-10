@@ -1,0 +1,96 @@
+<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:ToDoItemsGroupByTypeViewModel"
+                                xmlns="https://github.com/avaloniaui"
+                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                                xmlns:viewModels="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+                                xmlns:reactiveUi="http://reactiveui.net"
+                                xmlns:helpers="clr-namespace:Spravy.Ui.Helpers"
+                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                                x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemsGroupByTypeView"
+                                x:DataType="viewModels:ToDoItemsGroupByTypeViewModel">
+    <UserControl.Styles>
+        <Style Selector="ItemsControl.adaptive">
+            <Setter Property="(Interaction.Behaviors)">
+                <BehaviorCollectionTemplate>
+                    <BehaviorCollection>
+                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
+                            <AdaptiveClassSetter MinWidth="{x:Static helpers:MaterialDesignSize.MaxExtraSmall}"
+                                                 MaxWidth="{x:Static helpers:MaterialDesignSize.MaxExtraSmall}"
+                                                 ClassName="extra-small" />
+                            <AdaptiveClassSetter MinWidth="{x:Static helpers:MaterialDesignSize.MinSmall}"
+                                                 MaxWidth="{x:Static helpers:MaterialDesignSize.MaxSmall}"
+                                                 ClassName="small" />
+                            <AdaptiveClassSetter MinWidth="{x:Static helpers:MaterialDesignSize.MinMedium}"
+                                                 MaxWidth="{x:Static helpers:MaterialDesignSize.MaxMedium}"
+                                                 ClassName="medium" />
+                            <AdaptiveClassSetter MinWidth="{x:Static helpers:MaterialDesignSize.MinLarge}"
+                                                 MaxWidth="{x:Static helpers:MaterialDesignSize.MaxLarge}"
+                                                 ClassName="large" />
+                            <AdaptiveClassSetter MinWidth="{x:Static helpers:MaterialDesignSize.MinExtraLarge}"
+                                                 MaxWidth="Infinity"
+                                                 ClassName="extra-large" />
+                        </AdaptiveBehavior>
+                    </BehaviorCollection>
+                </BehaviorCollectionTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="ItemsControl.extra-small">
+            <Setter Property="ItemsPanel">
+                <ItemsPanelTemplate>
+                    <StackPanel />
+                </ItemsPanelTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="ItemsControl.small">
+            <Setter Property="ItemsPanel">
+                <ItemsPanelTemplate>
+                    <StackPanel />
+                </ItemsPanelTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="ItemsControl.medium">
+            <Setter Property="ItemsPanel">
+                <ItemsPanelTemplate>
+                    <StackPanel />
+                </ItemsPanelTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="ItemsControl.large">
+            <Setter Property="ItemsPanel">
+                <ItemsPanelTemplate>
+                    <UniformGrid Rows="1" />
+                </ItemsPanelTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="ItemsControl.extra-large">
+            <Setter Property="ItemsPanel">
+                <ItemsPanelTemplate>
+                    <UniformGrid Rows="1" />
+                </ItemsPanelTemplate>
+            </Setter>
+        </Style>
+    </UserControl.Styles>
+
+    <ItemsControl Classes="adaptive">
+        <ContentControl Content="{Binding Groups}"
+                        IsVisible="{Binding Groups.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+        <ContentControl Content="{Binding Values}"
+                        IsVisible="{Binding Values.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+        <ContentControl Content="{Binding Steps}"
+                        IsVisible="{Binding Steps.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+        <ContentControl Content="{Binding Circles}"
+                        IsVisible="{Binding Circles.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+        <ContentControl Content="{Binding Planneds}"
+                        IsVisible="{Binding Planneds.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+        <ContentControl Content="{Binding Periodicitys}"
+                        IsVisible="{Binding Periodicitys.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+        <ContentControl Content="{Binding PeriodicityOffsets}"
+                        IsVisible="{Binding PeriodicityOffsets.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+    </ItemsControl>
+</reactiveUi:ReactiveUserControl>
