@@ -1,12 +1,12 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using DialogHostAvalonia;
 using Ninject;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 using Spravy.Ui.ViewModels;
+using DialogHostAvalonia;
 
 namespace Spravy.Ui.Services;
 

@@ -62,5 +62,11 @@
         </Style>
     </UserControl.Styles>
 
-    <ContentControl Content="{Binding List}"/>
+    <ContentControl Content="{Binding List}">
+        <ContentControl.Styles>
+            <Style Selector="Expander">
+                <Setter Property="VerticalAlignment" Value="Top" />
+            </Style>
+        </ContentControl.Styles>
+    </ContentControl>
 </reactiveUi:ReactiveUserControl>

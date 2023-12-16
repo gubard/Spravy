@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
-using Avalonia.Collections;
 using Ninject;
 using ReactiveUI;
 using Spravy.Domain.Extensions;
@@ -19,6 +18,7 @@ using Spravy.Ui.Features.ToDo.Enums;
 using Spravy.Ui.Features.ToDo.ViewModels;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
+using Spravy.Ui.Services;
 
 namespace Spravy.Ui.ViewModels;
 
@@ -29,23 +29,16 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 
     public ToDoSubItemsViewModel()
     {
-        SelectAllCommand = CreateCommandFromTask<AvaloniaList<Selected<ToDoItemNotify>>>(
-            TaskWork.Create<AvaloniaList<Selected<ToDoItemNotify>>>(SelectAllAsync).RunAsync
-        );
-        CompleteSubToDoItemCommand =
-            CreateCommandFromTask<ToDoItemNotify>(TaskWork.Create<ToDoItemNotify>(CompleteSubToDoItemAsync).RunAsync);
-        DeleteSubToDoItemCommand =
-            CreateCommandFromTask<ToDoItemNotify>(TaskWork.Create<ToDoItemNotify>(DeleteSubToDoItemAsync).RunAsync);
-        ChangeToDoItemCommand =
-            CreateCommandFromTask<ToDoItemNotify>(TaskWork.Create<ToDoItemNotify>(ChangeToDoItemAsync).RunAsync);
+        SelectAllCommand = CommandStorage.Default.SelectAll.Command.Command;
+        CompleteSubToDoItemCommand = CommandStorage.Default.CompleteToDoItem.Command.Command;
+        DeleteSubToDoItemCommand = CommandStorage.Default.DeleteToDoItem.Command.Command;
+        ChangeToDoItemCommand = CommandStorage.Default.NavigateToToDoItem.Command.Command;
         AddSubToDoItemToFavoriteCommand =
             CreateCommandFromTask<ToDoItemNotify>(TaskWork.Create<ToDoItemNotify>(AddFavoriteToDoItemAsync).RunAsync);
         RemoveSubToDoItemFromFavoriteCommand = CreateCommandFromTask<ToDoItemNotify>(
             TaskWork.Create<ToDoItemNotify>(RemoveFavoriteToDoItemAsync).RunAsync
         );
-        ChangeToActiveDoItemCommand = CreateCommandFromTask<ActiveToDoItemNotify>(
-            TaskWork.Create<ActiveToDoItemNotify>(ChangeToActiveDoItemAsync).RunAsync
-        );
+        ChangeToActiveDoItemCommand = CommandStorage.Default.NavigateToToDoItem.Command.Command;
         ChangeOrderIndexCommand =
             CreateCommandFromTask<ToDoItemNotify>(TaskWork.Create<ToDoItemNotify>(ChangeOrderIndexAsync).RunAsync);
         OpenLinkCommand =
@@ -89,29 +82,6 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
         set => this.RaiseAndSetIfChanged(ref groupBy, value);
     }
 
-    private async Task SelectAllAsync(AvaloniaList<Selected<ToDoItemNotify>> items, CancellationToken arg)
-    {
-        await this.InvokeUIAsync(
-            () =>
-            {
-                if (items.All(x => x.IsSelect))
-                {
-                    foreach (var item in items)
-                    {
-                        item.IsSelect = false;
-                    }
-                }
-                else
-                {
-                    foreach (var item in items)
-                    {
-                        item.IsSelect = true;
-                    }
-                }
-            }
-        );
-    }
-
     private async Task OpenLinkAsync(ToDoItemNotify item, CancellationToken cancellationToken)
     {
         var link = item.Link.ThrowIfNull().ToUri();
@@ -142,59 +112,6 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
     public async Task RefreshAsync(CancellationToken cancellationToken)
     {
         await refreshToDoItem.ThrowIfNull().RefreshAsync(cancellationToken).ConfigureAwait(false);
-    }
-
-    private async Task CompleteSubToDoItemAsync(ToDoItemNotify subItemValue, CancellationToken cancellationToken)
-    {
-        await DialogViewer.ShowInfoInputDialogAsync<CompleteToDoItemViewModel>(
-                _ => DialogViewer.CloseInputDialogAsync(cancellationToken),
-                viewModel =>
-                {
-                    viewModel.SetCompleteStatus(subItemValue.IsCan);
-
-                    viewModel.Complete = async status =>
-                    {
-                        await DialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
-
-                        switch (status)
-                        {
-                            case CompleteStatus.Complete:
-                                await ToDoService.UpdateToDoItemCompleteStatusAsync(
-                                        subItemValue.Id,
-                                        true,
-                                        cancellationToken
-                                    )
-                                    .ConfigureAwait(false);
-
-                                break;
-                            case CompleteStatus.Incomplete:
-                                await ToDoService.UpdateToDoItemCompleteStatusAsync(
-                                        subItemValue.Id,
-                                        false,
-                                        cancellationToken
-                                    )
-                                    .ConfigureAwait(false);
-
-                                break;
-                            case CompleteStatus.Skip:
-                                await ToDoService.SkipToDoItemAsync(subItemValue.Id, cancellationToken)
-                                    .ConfigureAwait(false);
-
-                                break;
-                            case CompleteStatus.Fail:
-                                await ToDoService.FailToDoItemAsync(subItemValue.Id, cancellationToken)
-                                    .ConfigureAwait(false);
-
-                                break;
-                            default: throw new ArgumentOutOfRangeException(nameof(status), status, null);
-                        }
-
-                        await RefreshAsync(cancellationToken).ConfigureAwait(false);
-                    };
-                },
-                cancellationToken
-            )
-            .ConfigureAwait(false);
     }
 
     private async Task RemoveFavoriteToDoItemAsync(ToDoItemNotify item, CancellationToken cancellationToken)
@@ -231,26 +148,20 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
         }
     }
 
-    private async Task DeleteSubToDoItemAsync(ToDoItemNotify subItem, CancellationToken cancellationToken)
+    private async Task DeleteSubToDoItemAsync(IDeletable deletable, CancellationToken cancellationToken)
     {
         await DialogViewer.ShowConfirmContentDialogAsync<DeleteToDoItemViewModel>(
                 async view =>
                 {
                     await DialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
-                    await ToDoService.DeleteToDoItemAsync(view.Item.ThrowIfNull().Id, cancellationToken)
+                    await ToDoService.DeleteToDoItemAsync(deletable.Id, cancellationToken)
                         .ConfigureAwait(false);
                     await RefreshAsync(cancellationToken).ConfigureAwait(false);
                 },
                 _ => DialogViewer.CloseContentDialogAsync(cancellationToken),
-                view => view.Item = subItem,
+                view => view.Header = deletable.Header,
                 cancellationToken
             )
-            .ConfigureAwait(false);
-    }
-
-    private async Task ChangeToDoItemAsync(ToDoItemNotify subItemValue, CancellationToken cancellationToken)
-    {
-        await Navigator.NavigateToAsync<ToDoItemViewModel>(v => v.Id = subItemValue.Id, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -258,12 +169,6 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
     {
         await ToDoService.AddFavoriteToDoItemAsync(item.Id, cancellationToken).ConfigureAwait(false);
         await RefreshAsync(cancellationToken).ConfigureAwait(false);
-    }
-
-    private async Task ChangeToActiveDoItemAsync(ActiveToDoItemNotify item, CancellationToken cancellationToken)
-    {
-        await Navigator.NavigateToAsync<ToDoItemViewModel>(v => v.Id = item.Id, cancellationToken)
-            .ConfigureAwait(false);
     }
 
     public async Task UpdateItemsAsync(Guid[] ids, IRefresh refresh, CancellationToken cancellationToken)

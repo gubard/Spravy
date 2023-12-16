@@ -112,7 +112,7 @@
         </DataTemplate>
 
         <DataTemplate x:DataType="models:ToDoItemCommand">
-            <Button Command="{Binding Command}">
+            <Button Command="{Binding Command}" CommandParameter="{Binding Parameter}">
                 <avalonia:MaterialIcon Kind="{Binding Icon}" />
             </Button>
         </DataTemplate>
@@ -193,7 +193,7 @@
                                     Margin="0,5,5,5"
                                     Width="320"
                                     IsVisible="{Binding Value.Active, Converter={StaticResource NullToBooleanConverter}}"
-                                    CommandParameter="{Binding Value.Active}"
+                                    CommandParameter="{Binding Value.Active.Id}"
                                     Command="{Binding $parent[interfaces:IToDoItemView].ChangeToActiveDoItemCommand}"
                                     ClickMode="Release">
                                 <WrapPanel Orientation="Horizontal">
@@ -204,7 +204,8 @@
                                 </WrapPanel>
                             </Button>
 
-                            <Button Grid.Row="1" Margin="0,5,5,5" Classes="with-text" CommandParameter="{Binding Value}"
+                            <Button Grid.Row="1" Margin="0,5,5,5" Classes="with-text"
+                                    CommandParameter="{Binding Value}"
                                     Command="{Binding $parent[interfaces:IToDoItemView].ChangeOrderIndexCommand}"
                                     ClickMode="Release">
                                 <StackPanel Orientation="Horizontal">
@@ -242,7 +243,7 @@
                                     Grid.Column="2"
                                     Classes="with-text"
                                     Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
-                                    CommandParameter="{Binding Value}"
+                                    CommandParameter="{Binding Value.Id}"
                                     ClickMode="Release">
                                 <StackPanel Orientation="Horizontal">
                                     <avalonia:MaterialIcon Kind="ArrowRight" />

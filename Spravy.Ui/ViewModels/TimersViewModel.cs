@@ -4,12 +4,11 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
-using Avalonia.Threading;
 using Ninject;
 using Spravy.Domain.Models;
 using Spravy.Schedule.Domain.Interfaces;
-using Spravy.Ui.Extensions;
 using Spravy.Ui.Models;
+using Spravy.Ui.Services;
 
 namespace Spravy.Ui.ViewModels;
 
@@ -18,7 +17,7 @@ public class TimersViewModel : NavigatableViewModelBase
     public TimersViewModel() : base(true)
     {
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
-        SwitchPaneCommand = CreateCommand(SwitchPane);
+        SwitchPaneCommand = CommandStorage.Default.SwitchPane.Command.Command;
     }
 
     public ICommand InitializedCommand { get; }
@@ -33,11 +32,6 @@ public class TimersViewModel : NavigatableViewModelBase
 
     [Inject]
     public required IMapper Mapper { get; init; }
-
-    private DispatcherOperation SwitchPane()
-    {
-        return this.InvokeUIAsync(() => MainSplitViewModel.IsPaneOpen = !MainSplitViewModel.IsPaneOpen);
-    }
 
     private async Task InitializedAsync(CancellationToken cancellationToken)
     {

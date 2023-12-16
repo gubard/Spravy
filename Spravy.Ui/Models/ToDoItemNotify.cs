@@ -1,10 +1,11 @@
 using System;
 using ReactiveUI;
 using Spravy.ToDo.Domain.Enums;
+using Spravy.Ui.Interfaces;
 
 namespace Spravy.Ui.Models;
 
-public class ToDoItemNotify : NotifyBase
+public class ToDoItemNotify : NotifyBase, ICanComplete, IDeletable
 {
     private Guid id;
     private string name = string.Empty;
@@ -17,6 +18,7 @@ public class ToDoItemNotify : NotifyBase
     private ActiveToDoItemNotify? active;
     private ToDoItemIsCan isCan;
 
+    public object Header => Name;
 
     public ToDoItemIsCan IsCan
     {

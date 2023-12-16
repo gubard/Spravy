@@ -3,14 +3,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
-using Avalonia.Threading;
 using Ninject;
 using ReactiveUI;
 using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Interfaces;
-using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
+using Spravy.Ui.Services;
 
 namespace Spravy.Ui.ViewModels;
 
@@ -23,7 +22,7 @@ public class SearchViewModel : NavigatableViewModelBase, IRefresh
     {
         refreshWork = TaskWork.Create(RefreshCoreAsync);
         SearchCommand = CreateCommandFromTask(refreshWork.RunAsync);
-        SwitchPaneCommand = CreateCommand(SwitchPane);
+        SwitchPaneCommand = CommandStorage.Default.SwitchPane.Command.Command;
     }
 
     public ICommand SearchCommand { get; }
@@ -46,11 +45,6 @@ public class SearchViewModel : NavigatableViewModelBase, IRefresh
 
     [Inject]
     public required MainSplitViewModel MainSplitViewModel { get; init; }
-
-    private DispatcherOperation SwitchPane()
-    {
-        return this.InvokeUIAsync(() => MainSplitViewModel.IsPaneOpen = !MainSplitViewModel.IsPaneOpen);
-    }
 
     public Task RefreshAsync(CancellationToken cancellationToken)
     {

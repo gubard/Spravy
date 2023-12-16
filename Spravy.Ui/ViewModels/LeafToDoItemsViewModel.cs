@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
 using Avalonia;
-using Avalonia.Threading;
+using Avalonia.Collections;
+using Material.Icons;
 using Ninject;
 using ReactiveUI;
 using Spravy.Domain.Models;
@@ -13,27 +14,39 @@ using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
+using Spravy.Ui.Services;
 
 namespace Spravy.Ui.ViewModels;
 
-public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
+public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh, IPageHeaderDataType
 {
     private Guid id;
     private Vector scrollOffset;
     private readonly TaskWork refreshWork;
+    private object? header = "Leaf";
 
     public LeafToDoItemsViewModel() : base(true)
     {
         refreshWork = TaskWork.Create(RefreshCoreAsync);
-        SwitchPaneCommand = CreateCommand(SwitchPane);
+        SwitchPaneCommand = CommandStorage.Default.SwitchPane.Command.Command;
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
         ToMultiEditingToDoItemsCommand =
             CreateInitializedCommand(TaskWork.Create(ToMultiEditingToDoItemsAsync).RunAsync);
+        Commands = new();
     }
 
     public ICommand InitializedCommand { get; }
+    public ToDoItemCommand? LeftCommand { get; } = null;
+    public ToDoItemCommand? RightCommand { get; } = null;
     public ICommand SwitchPaneCommand { get; }
+    public AvaloniaList<ToDoItemCommand> Commands { get; }
     public ICommand ToMultiEditingToDoItemsCommand { get; }
+
+    public object? Header
+    {
+        get => header;
+        set => this.RaiseAndSetIfChanged(ref header, value);
+    }
 
     public Vector ScrollOffset
     {
@@ -79,13 +92,37 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
         return Task.CompletedTask;
     }
 
-    private DispatcherOperation SwitchPane()
-    {
-        return this.InvokeUIAsync(() => MainSplitViewModel.IsPaneOpen = !MainSplitViewModel.IsPaneOpen);
-    }
-
     private async Task InitializedAsync(CancellationToken cancellationToken)
     {
+        await this.InvokeUIAsync(
+            () =>
+            {
+                Commands.Add(
+                    new ToDoItemCommand(
+                        MaterialIconKind.CheckAll,
+                        ToDoSubItemsViewModel.MultiCompleteCommand,
+                        string.Empty,
+                        null
+                    )
+                );
+                Commands.Add(
+                    new ToDoItemCommand(
+                        MaterialIconKind.Switch,
+                        ToDoSubItemsViewModel.MultiChangeTypeCommand,
+                        string.Empty,
+                        null
+                    )
+                );
+                Commands.Add(
+                    new ToDoItemCommand(
+                        MaterialIconKind.SwapHorizontal,
+                        ToDoSubItemsViewModel.MultiChangeRootItemCommand,
+                        string.Empty,
+                        null
+                    )
+                );
+            }
+        );
         await RefreshAsync(cancellationToken).ConfigureAwait(false);
     }
 

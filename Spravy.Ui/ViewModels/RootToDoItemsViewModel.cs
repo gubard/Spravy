@@ -4,15 +4,14 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
-using Avalonia.Threading;
 using Ninject;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
-using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
+using Spravy.Ui.Services;
 
 namespace Spravy.Ui.ViewModels;
 
@@ -25,7 +24,7 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
         refreshWork = TaskWork.Create(RefreshCoreAsync);
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
         AddToDoItemCommand = CreateCommandFromTask(TaskWork.Create(AddToDoItemAsync).RunAsync);
-        SwitchPaneCommand = CreateCommand(SwitchPane);
+        SwitchPaneCommand = CommandStorage.Default.SwitchPane.Command.Command;
     }
 
     public ICommand InitializedCommand { get; }
@@ -47,11 +46,6 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
     
     [Inject]
     public required MainSplitViewModel MainSplitViewModel { get; init; }
-    
-    private DispatcherOperation SwitchPane()
-    {
-        return this.InvokeUIAsync(() => MainSplitViewModel.IsPaneOpen = !MainSplitViewModel.IsPaneOpen);
-    }
 
     private async Task InitializedAsync(CancellationToken cancellationToken)
     {

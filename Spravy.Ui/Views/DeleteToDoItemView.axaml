@@ -8,8 +8,5 @@
                                 mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                                 x:Class="Spravy.Ui.Views.DeleteToDoItemView"
                                 x:DataType="viewModels:DeleteToDoItemViewModel">
-    <Grid RowDefinitions="Auto, *, Auto">
-        <TextBlock Text="Delete item" />
-        <TextBlock Grid.Row="1" Text="{Binding Item.Name}" />
-    </Grid>
+    <ContentControl Content="{Binding Header}" />
 </reactiveUi:ReactiveUserControl>

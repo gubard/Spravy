@@ -6,7 +6,6 @@ public class TaskWork
 {
     private readonly Func<CancellationToken, Task> task;
     private CancellationTokenSource cancellationTokenSource = new();
-    private readonly List<TaskWork> subTasks = new();
     private Task current; //= Task.CompletedTask;
 
     public TaskWork(Func<CancellationToken, Task> task)
@@ -19,12 +18,6 @@ public class TaskWork
     public Task RunAsync()
     {
         Cancel();
-
-        foreach (var subTask in subTasks)
-        {
-            subTask.Cancel();
-        }
-
         current = task.Invoke(cancellationTokenSource.Token);
 
         return current;
@@ -34,11 +27,6 @@ public class TaskWork
     {
         cancellationTokenSource.Cancel();
         cancellationTokenSource = new();
-    }
-
-    public void AddSubTasks(TaskWork taskWork)
-    {
-        subTasks.Add(taskWork);
     }
 
     public static TaskWork Create(Func<CancellationToken, Task> task)
@@ -56,7 +44,6 @@ public class TaskWork<T>
 {
     private readonly Func<T, CancellationToken, Task> task;
     private readonly CancellationTokenFactory cancellationTokenFactory = new();
-    private readonly List<TaskWork> subTasks = new();
 
     public TaskWork(Func<T, CancellationToken, Task> task)
     {
@@ -67,11 +54,6 @@ public class TaskWork<T>
     {
         Cancel();
 
-        foreach (var subTask in subTasks)
-        {
-            subTask.Cancel();
-        }
-
         return task.Invoke(value, cancellationTokenFactory.Token);
     }
 
@@ -79,10 +61,5 @@ public class TaskWork<T>
     {
         cancellationTokenFactory.Cancel();
         cancellationTokenFactory.Reset();
-    }
-
-    public void AddSubTasks(TaskWork taskWork)
-    {
-        subTasks.Add(taskWork);
     }
 }

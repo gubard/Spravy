@@ -5,11 +5,11 @@ namespace Spravy.Ui.ViewModels;
 
 public class DeleteToDoItemViewModel : ViewModelBase
 {
-    private ToDoItemNotify? item;
+    private object? header;
 
-    public ToDoItemNotify? Item
+    public object? Header
     {
-        get => item;
-        set => this.RaiseAndSetIfChanged(ref item, value);
+        get => header;
+        set => this.RaiseAndSetIfChanged(ref header, value);
     }
 }

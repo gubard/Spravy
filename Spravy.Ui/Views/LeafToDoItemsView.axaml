@@ -4,9 +4,8 @@
                                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                 xmlns:reactiveUi="http://reactiveui.net"
-                                xmlns:controls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
+                                xmlns:views="clr-namespace:Spravy.Ui.Views"
                                 mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                                 x:Class="Spravy.Ui.Views.LeafToDoItemsView"
                                 x:DataType="viewModels:LeafToDoItemsViewModel">
@@ -17,19 +16,7 @@
     </Interaction.Behaviors>
 
     <Grid RowDefinitions="Auto, *">
-        <controls:ColorZone Mode="PrimaryMid">
-            <DockPanel>
-                <Button DockPanel.Dock="Left" Command="{Binding SwitchPaneCommand}" ClickMode="Release">
-                    <avalonia:MaterialIcon Kind="Menu" />
-                </Button>
-
-                <Button DockPanel.Dock="Right" Command="{Binding ToMultiEditingToDoItemsCommand}">
-                    <avalonia:MaterialIcon Kind="CheckAll" />
-                </Button>
-
-                <Control />
-            </DockPanel>
-        </controls:ColorZone>
+        <views:PageHeaderView DataContext="{Binding }"/>
 
         <ScrollViewer Grid.Row="1" Offset="{Binding ScrollOffset, Mode=TwoWay}">
             <ContentControl Content="{Binding ToDoSubItemsViewModel}" />

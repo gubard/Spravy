@@ -9,12 +9,14 @@ public class ToDoItemCommand : NotifyBase
     private MaterialIconKind icon;
     private ICommand command;
     private string name;
+    private object? parameter;
 
-    public ToDoItemCommand(MaterialIconKind icon, ICommand command, string name)
+    public ToDoItemCommand(MaterialIconKind icon, ICommand command, string name, object? parameter)
     {
         this.icon = icon;
         this.command = command;
         this.name = name;
+        this.parameter = parameter;
     }
 
     public MaterialIconKind Icon
@@ -33,5 +35,11 @@ public class ToDoItemCommand : NotifyBase
     {
         get => name;
         set => this.RaiseAndSetIfChanged(ref name, value);
+    }
+
+    public object? Parameter
+    {
+        get => parameter;
+        set => this.RaiseAndSetIfChanged(ref parameter, value);
     }
 }

@@ -8,7 +8,6 @@
         </ResourceDictionary>
     </Styles.Resources>
 
-    <StyleInclude Source="DialogOverlayPopupHost.axaml" />
     <StyleInclude Source="Button.axaml" />
     <StyleInclude Source="Layoutable.axaml" />
     <StyleInclude Source="TextBox.axaml" />

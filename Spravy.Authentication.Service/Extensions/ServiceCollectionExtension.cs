@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using AutoMapper;
 using Spravy.Authentication.Db.Contexts;
 using Spravy.Authentication.Db.Mapper.Profiles;
 using Spravy.Authentication.Db.Sqlite.Migrator;
@@ -55,7 +56,28 @@ public static class ServiceCollectionExtension
         serviceCollection.AddTransient(_ => NamedHelper.Sha512Hash.ToRef());
         serviceCollection.AddTransient(_ => NamedHelper.StringToUtf8Bytes.ToRef());
         serviceCollection.AddSingleton<TimeZoneHttpHeaderFactory>();
-        serviceCollection.AddTransient<IAuthenticationService, EfAuthenticationService>();
+
+        serviceCollection.AddTransient<IAuthenticationService>(
+            x => new EfAuthenticationService(
+                x.GetRequiredService<SpravyDbAuthenticationDbContext>(),
+                x.GetRequiredService<IHasher>(),
+                x.GetRequiredService<IFactory<string, IHasher>>(),
+                x.GetRequiredService<ITokenFactory>(),
+                x.GetRequiredService<IMapper>(),
+                new StringValidator(
+                    4,
+                    255,
+                    "QAZWSXEDCRFVTGBYHNUJMIKOP_-=+<>|0123456789qazwsxedcrfvtgbyhnujmikolp.",
+                    "Login"
+                ),
+                new StringValidator(
+                    6,
+                    512,
+                    "QAZWSXEDCRFVTGBYHNUJMIKOP_-=+<>|0123456789qazwsxedcrfvtgbyhnujmikolp.",
+                    "Password"
+                )
+            )
+        );
         serviceCollection.AddTransient<IHasher, Hasher>();
 
         serviceCollection.AddSpravySqliteFileDbContext<SpravyDbAuthenticationDbContext,

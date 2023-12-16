@@ -73,6 +73,7 @@ public class UiModule : NinjectModule
         this.BindGrpcService<GrpcEventBusService, EventBusService.EventBusServiceClient,
             GrpcEventBusServiceOptions>(useCache);
 
+        Bind<CommandStorage>().ToSelf().InSingletonScope();
         Bind<AccountNotify>().ToSelf().InSingletonScope();
         Bind<ISerializer>().To<ProtobufSerializer>();
         Bind<ICacheValidator<Uri, GrpcChannel>>().To<GrpcChannelCacheValidator>();

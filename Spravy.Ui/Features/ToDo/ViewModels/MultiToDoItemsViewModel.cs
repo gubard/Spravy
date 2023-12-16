@@ -89,7 +89,8 @@ public class MultiToDoItemsViewModel : ViewModelBase
                     CreateCommandFromTask(
                         TaskWork.Create(c => SelectAllAsync(multiToDoItems.GroupByNone.Items.Items, c)).RunAsync
                     ),
-                    "Select all"
+                    "Select all",
+                    null
                 )
             );
             multiToDoItems.GroupByStatus.Missed.Commands.Add(
@@ -98,7 +99,8 @@ public class MultiToDoItemsViewModel : ViewModelBase
                     CreateCommandFromTask(
                         TaskWork.Create(c => SelectAllAsync(multiToDoItems.GroupByStatus.Missed.Items, c)).RunAsync
                     ),
-                    "Select missed"
+                    "Select missed",
+                    null
                 )
             );
             multiToDoItems.GroupByStatus.Completed.Commands.Add(
@@ -107,7 +109,8 @@ public class MultiToDoItemsViewModel : ViewModelBase
                     CreateCommandFromTask(
                         TaskWork.Create(c => SelectAllAsync(multiToDoItems.GroupByStatus.Completed.Items, c)).RunAsync
                     ),
-                    "Select completed"
+                    "Select completed",
+                    null
                 )
             );
             multiToDoItems.GroupByStatus.Planned.Commands.Add(
@@ -116,7 +119,8 @@ public class MultiToDoItemsViewModel : ViewModelBase
                     CreateCommandFromTask(
                         TaskWork.Create(c => SelectAllAsync(multiToDoItems.GroupByStatus.Planned.Items, c)).RunAsync
                     ),
-                    "Select planned"
+                    "Select planned",
+                    null
                 )
             );
             multiToDoItems.GroupByStatus.ReadyForCompleted.Commands.Add(
@@ -126,7 +130,8 @@ public class MultiToDoItemsViewModel : ViewModelBase
                         TaskWork.Create(c => SelectAllAsync(multiToDoItems.GroupByStatus.ReadyForCompleted.Items, c))
                             .RunAsync
                     ),
-                    "Select ready for completed"
+                    "Select ready for completed",
+                    null
                 )
             );
             multiToDoItems.GroupByType.Groups.Commands.Add(
@@ -136,7 +141,8 @@ public class MultiToDoItemsViewModel : ViewModelBase
                         TaskWork.Create(c => SelectAllAsync(multiToDoItems.GroupByType.Groups.Items, c))
                             .RunAsync
                     ),
-                    "Select groups"
+                    "Select groups",
+                    null
                 )
             );
             multiToDoItems.GroupByType.Circles.Commands.Add(
@@ -146,7 +152,8 @@ public class MultiToDoItemsViewModel : ViewModelBase
                         TaskWork.Create(c => SelectAllAsync(multiToDoItems.GroupByType.Circles.Items, c))
                             .RunAsync
                     ),
-                    "Select circles"
+                    "Select circles",
+                    null
                 )
             );
             multiToDoItems.GroupByType.Periodicitys.Commands.Add(
@@ -156,7 +163,8 @@ public class MultiToDoItemsViewModel : ViewModelBase
                         TaskWork.Create(c => SelectAllAsync(multiToDoItems.GroupByType.Periodicitys.Items, c))
                             .RunAsync
                     ),
-                    "Select periodicitys"
+                    "Select periodicitys",
+                    null
                 )
             );
             multiToDoItems.GroupByType.Planneds.Commands.Add(
@@ -166,7 +174,8 @@ public class MultiToDoItemsViewModel : ViewModelBase
                         TaskWork.Create(c => SelectAllAsync(multiToDoItems.GroupByType.Planneds.Items, c))
                             .RunAsync
                     ),
-                    "Select planneds"
+                    "Select planneds",
+                    null
                 )
             );
             multiToDoItems.GroupByType.Steps.Commands.Add(
@@ -176,7 +185,8 @@ public class MultiToDoItemsViewModel : ViewModelBase
                         TaskWork.Create(c => SelectAllAsync(multiToDoItems.GroupByType.Steps.Items, c))
                             .RunAsync
                     ),
-                    "Select steps"
+                    "Select steps",
+                    null
                 )
             );
             multiToDoItems.GroupByType.Values.Commands.Add(
@@ -186,7 +196,8 @@ public class MultiToDoItemsViewModel : ViewModelBase
                         TaskWork.Create(c => SelectAllAsync(multiToDoItems.GroupByType.Values.Items, c))
                             .RunAsync
                     ),
-                    "Select values"
+                    "Select values",
+                    null
                 )
             );
             multiToDoItems.GroupByType.PeriodicityOffsets.Commands.Add(
@@ -196,7 +207,8 @@ public class MultiToDoItemsViewModel : ViewModelBase
                         TaskWork.Create(c => SelectAllAsync(multiToDoItems.GroupByType.PeriodicityOffsets.Items, c))
                             .RunAsync
                     ),
-                    "Select periodicity offsets"
+                    "Select periodicity offsets",
+                    null
                 )
             );
         }

@@ -8,7 +8,6 @@ using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
 using Avalonia.Input.Platform;
-using Avalonia.Threading;
 using Google.Protobuf;
 using Material.Icons;
 using Ninject;
@@ -23,14 +22,14 @@ using Spravy.Schedule.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
-using Spravy.Ui.Enums;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
+using Spravy.Ui.Services;
 
 namespace Spravy.Ui.ViewModels;
 
-public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger, IPageHeaderDataType
+public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger, IPageHeaderDataType, ICanComplete
 {
     private string name = string.Empty;
     private Guid id;
@@ -68,24 +67,26 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
         ToDoItemToStringCommand = CreateCommandFromTask(TaskWork.Create(ToDoItemToStringAsync).RunAsync);
         AddTimerCommand = CreateCommandFromTask(TaskWork.Create(AddTimerAsync).RunAsync);
         ChangeLinkCommand = CreateCommandFromTask(TaskWork.Create(ChangeLinkAsync).RunAsync);
-        CompleteToDoItemCommand = CreateCommandFromTask(TaskWork.Create(CompleteToDoItemAsync).RunAsync);
+        CompleteToDoItemCommand = CommandStorage.Default.CompleteToDoItem.Command.Command;
         ChangeTypeCommand = CreateCommandFromTask(TaskWork.Create(ChangeTypeAsync).RunAsync);
         SettingsToDoItemCommand = CreateCommandFromTask(TaskWork.Create(SettingsToDoItemAsync).RunAsync);
         RandomizeChildrenOrderIndexCommand =
             CreateCommandFromTask(TaskWork.Create(RandomizeChildrenOrderIndexAsync).RunAsync);
         ToCurrentToDoItemCommand = CreateCommandFromTask(TaskWork.Create(ToCurrentToDoItemAsync).RunAsync);
         ChangeNameCommand = CreateCommandFromTask(TaskWork.Create(ChangeNameAsync).RunAsync);
-        SwitchPaneCommand = CreateCommand(SwitchPane);
+        SwitchPaneCommand = CommandStorage.Default.SwitchPane.Command.Command;
         this.WhenAnyValue(x => x.Name).Subscribe(x => Header = x);
         LeftCommand = new ToDoItemCommand(
             MaterialIconKind.ArrowRight,
             ToCurrentToDoItemCommand,
-            "Current to do item"
+            "Current to do item",
+            null
         );
         RightCommand = new ToDoItemCommand(
             MaterialIconKind.Pencil,
             ChangeNameCommand,
-            "Edit name"
+            "Edit name",
+            null
         );
     }
 
@@ -111,7 +112,6 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
     public ICommand RandomizeChildrenOrderIndexCommand { get; }
     public ICommand ToCurrentToDoItemCommand { get; }
     public ICommand ChangeNameCommand { get; }
-    public ICommand MultiChangeTypeCommand { get; }
     public ToDoItemCommand? LeftCommand { get; } = null;
     public ToDoItemCommand? RightCommand { get; } = null;
     public ICommand SwitchPaneCommand { get; }
@@ -200,11 +200,6 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
     {
         get => status;
         set => this.RaiseAndSetIfChanged(ref status, value);
-    }
-
-    private DispatcherOperation SwitchPane()
-    {
-        return this.InvokeUIAsync(() => MainSplitViewModel.IsPaneOpen = !MainSplitViewModel.IsPaneOpen);
     }
 
     private async Task ChangeNameAsync(CancellationToken cancellationToken)
@@ -358,48 +353,6 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
                 {
                     viewModel.Items.AddRange(Enum.GetValues<ToDoItemType>().OfType<object>());
                     viewModel.SelectedItem = Type;
-                },
-                cancellationToken
-            )
-            .ConfigureAwait(false);
-    }
-
-    private async Task CompleteToDoItemAsync(CancellationToken cancellationToken)
-    {
-        await this.InvokeUIAsync(HideFlyout);
-
-        await DialogViewer.ShowInfoInputDialogAsync<CompleteToDoItemViewModel>(
-                _ => DialogViewer.CloseInputDialogAsync(cancellationToken),
-                viewModel =>
-                {
-                    viewModel.SetCompleteStatus(IsCan);
-
-                    viewModel.Complete = async status =>
-                    {
-                        await DialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
-
-                        switch (status)
-                        {
-                            case CompleteStatus.Complete:
-                                await ToDoService.UpdateToDoItemCompleteStatusAsync(Id, true, cancellationToken)
-                                    .ConfigureAwait(false);
-                                break;
-                            case CompleteStatus.Skip:
-                                await ToDoService.SkipToDoItemAsync(Id, cancellationToken).ConfigureAwait(false);
-                                break;
-                            case CompleteStatus.Fail:
-                                await ToDoService.FailToDoItemAsync(Id, cancellationToken).ConfigureAwait(false);
-                                break;
-                            case CompleteStatus.Incomplete:
-                                await ToDoService.UpdateToDoItemCompleteStatusAsync(Id, false, cancellationToken)
-                                    .ConfigureAwait(false);
-                                break;
-                            default:
-                                throw new ArgumentOutOfRangeException(nameof(status), status, null);
-                        }
-
-                        await RefreshAsync(cancellationToken).ConfigureAwait(false);
-                    };
                 },
                 cancellationToken
             )
@@ -691,16 +644,27 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
         if (ToDoSubItemsViewModel.List.IsMulti)
         {
             Commands.Add(
-                new ToDoItemCommand(MaterialIconKind.CheckAll, ToDoSubItemsViewModel.MultiCompleteCommand, string.Empty)
+                new ToDoItemCommand(
+                    MaterialIconKind.CheckAll,
+                    ToDoSubItemsViewModel.MultiCompleteCommand,
+                    string.Empty,
+                    null
+                )
             );
             Commands.Add(
-                new ToDoItemCommand(MaterialIconKind.Switch, ToDoSubItemsViewModel.MultiChangeTypeCommand, string.Empty)
+                new ToDoItemCommand(
+                    MaterialIconKind.Switch,
+                    ToDoSubItemsViewModel.MultiChangeTypeCommand,
+                    string.Empty,
+                    null
+                )
             );
             Commands.Add(
                 new ToDoItemCommand(
                     MaterialIconKind.SwapHorizontal,
                     ToDoSubItemsViewModel.MultiChangeRootItemCommand,
-                    string.Empty
+                    string.Empty,
+                    null
                 )
             );
         }
@@ -709,22 +673,23 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
             var toFavoriteCommand = new ToDoItemCommand(
                 MaterialIconKind.StarOutline,
                 AddToDoItemToFavoriteCommand,
-                "Move to favorite"
+                "Move to favorite",
+                null
             );
 
-            Commands.Add(new(MaterialIconKind.Plus, AddToDoItemCommand, "Add sub task"));
+            Commands.Add(new(MaterialIconKind.Plus, AddToDoItemCommand, "Add sub task", null));
 
             if (IsCan != ToDoItemIsCan.None)
             {
                 Commands.Add(
-                    new(MaterialIconKind.Check, CompleteToDoItemCommand, "Complete")
+                    new(MaterialIconKind.Check, CompleteToDoItemCommand, "Complete", this)
                 );
             }
 
             if (Type != ToDoItemType.Group)
             {
                 Commands.Add(
-                    new(MaterialIconKind.Settings, SettingsToDoItemCommand, "Settings")
+                    new(MaterialIconKind.Settings, SettingsToDoItemCommand, "Settings", null)
                 );
             }
 
@@ -733,30 +698,32 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
                 toFavoriteCommand = new ToDoItemCommand(
                     MaterialIconKind.Star,
                     RemoveToDoItemFromFavoriteCommand,
-                    "Remove from favorite"
+                    "Remove from favorite",
+                    null
                 );
             }
 
             Commands.Add(toFavoriteCommand);
             Commands.Add(
-                new(MaterialIconKind.Leaf, ToLeafToDoItemsCommand, "Show all children")
+                new(MaterialIconKind.Leaf, ToLeafToDoItemsCommand, "Show all children", null)
             );
             Commands.Add(
-                new(MaterialIconKind.SwapHorizontal, ChangeRootItemCommand, "Change task parent")
+                new(MaterialIconKind.SwapHorizontal, ChangeRootItemCommand, "Change task parent", null)
             );
             Commands.Add(
-                new(MaterialIconKind.FamilyTree, ToDoItemToRootCommand, "Move to root task")
+                new(MaterialIconKind.FamilyTree, ToDoItemToRootCommand, "Move to root task", null)
             );
             Commands.Add(
-                new(MaterialIconKind.CodeString, ToDoItemToStringCommand, "Copy task to clipboard")
+                new(MaterialIconKind.CodeString, ToDoItemToStringCommand, "Copy task to clipboard", null)
             );
-            Commands.Add(new(MaterialIconKind.Timer, AddTimerCommand, "Add timer"));
+            Commands.Add(new(MaterialIconKind.Timer, AddTimerCommand, "Add timer", null));
 
             Commands.Add(
                 new(
                     MaterialIconKind.Dice6Outline,
                     RandomizeChildrenOrderIndexCommand,
-                    "Randomize sub tasks"
+                    "Randomize sub tasks",
+                    null
                 )
             );
         }
