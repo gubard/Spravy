@@ -5,6 +5,8 @@
                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
+                                xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
+                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.ToDoItemSelectorView"
                                 x:DataType="viewModels:ToDoItemSelectorViewModel">
@@ -18,5 +20,20 @@
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 
-    <TreeView ItemsSource="{Binding Roots}" SelectionMode="Single" SelectedItem="{Binding SelectedItem}" />
+    <Grid RowDefinitions="Auto,*">
+        <Grid ColumnDefinitions="*,Auto">
+            <TextBox UseFloatingWatermark="True"
+                     Classes="outline dense"
+                     Theme="{StaticResource OutlineTextBox}"
+                     assists:TextFieldAssist.Label="Search text"
+                     Text="{Binding SearchText}" />
+
+            <Button Grid.Column="1" Command="{Binding SearchCommand}">
+                <avalonia:MaterialIcon Kind="Search" />
+            </Button>
+        </Grid>
+
+        <TreeView Grid.Row="1" ItemsSource="{Binding Roots}" SelectionMode="Single"
+                  SelectedItem="{Binding SelectedItem}" />
+    </Grid>
 </reactiveUi:ReactiveUserControl>
