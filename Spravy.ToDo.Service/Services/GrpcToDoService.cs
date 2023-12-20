@@ -19,13 +19,11 @@ public class GrpcToDoService : ToDoServiceBase
 {
     private readonly IToDoService toDoService;
     private readonly IMapper mapper;
-    private readonly IEventBusService eventBusService;
 
-    public GrpcToDoService(IToDoService toDoService, IMapper mapper, IEventBusService eventBusService)
+    public GrpcToDoService(IToDoService toDoService, IMapper mapper)
     {
         this.toDoService = toDoService;
         this.mapper = mapper;
-        this.eventBusService = eventBusService;
     }
 
     public override async Task GetToDoItems(
@@ -288,19 +286,6 @@ public class GrpcToDoService : ToDoServiceBase
         {
             Id = mapper.Map<ByteString>(id)
         };
-
-        var @event = new AddRootToDoItemEvent
-        {
-            ToDoItemId = mapper.Map<ByteString>(id)
-        };
-
-        await using var stream = new MemoryStream();
-        @event.WriteTo(stream);
-        await eventBusService.PublishEventAsync(
-            EventIdHelper.AddRootToDoItemId,
-            stream.ToArray(),
-            context.CancellationToken
-        );
 
         return reply;
     }
