@@ -7,6 +7,7 @@
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                 xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
                                 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                                xmlns:services="clr-namespace:Spravy.Ui.Services"
                                 mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                                 x:Class="Spravy.Ui.Views.AddTimerView"
                                 x:DataType="viewModels:AddTimerViewModel">
@@ -15,11 +16,12 @@
 
         <TextBox assists:TextFieldAssist.Label="Item"
                  IsReadOnly="True"
-                 Text="{Binding Item.Name}"
+                 Text="{Binding ShortItem.Name}"
                  Classes="outline dense with-button"
                  Theme="{StaticResource OutlineTextBox}">
             <TextBox.InnerLeftContent>
-                <Button Command="{Binding SelectToDoItemCommand}" Margin="4,15,4,4">
+                <Button Command="{x:Static services:CommandStorage.SetToDoShortItemCommand}"
+                        CommandParameter="{Binding}" Margin="4,15,4,4">
                     <avalonia:MaterialIcon Kind="Pencil" />
                 </Button>
             </TextBox.InnerLeftContent>
@@ -30,7 +32,9 @@
                  Text="{Binding DueDateTime}"
                  Classes="outline dense with-button">
             <TextBox.InnerLeftContent>
-                <Button Command="{Binding ChangeDueDateTimeCommand}" Margin="4,15,4,4">
+                <Button Command="{x:Static services:CommandStorage.SetDueDateTimeCommand}"
+                        CommandParameter="{Binding}"
+                        Margin="4,15,4,4">
                     <avalonia:MaterialIcon Kind="Pencil" />
                 </Button>
             </TextBox.InnerLeftContent>

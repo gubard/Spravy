@@ -51,7 +51,7 @@ public class SpravyUiProfile : Profile
                     var changeToDoItemIsFavoriteEvent = new ChangeToDoItemIsFavoriteEvent
                     {
                         IsFavorite = source.IsFavorite,
-                        ToDoItemId = context.Mapper.Map<ByteString>(source.Item.ThrowIfNull().Id),
+                        ToDoItemId = context.Mapper.Map<ByteString>(source.ShortItem.ThrowIfNull().Id),
                     };
 
                     using var stream = new MemoryStream();

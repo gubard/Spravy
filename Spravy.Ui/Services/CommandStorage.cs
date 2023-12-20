@@ -61,6 +61,16 @@ public static class CommandStorage
             MaterialIconKind.Link,
             "Add to favorite"
         );
+        SetToDoShortItem = CreateCommand<IToDoShortItemProperty>(
+            SetToDoShortItemAsync,
+            MaterialIconKind.Pencil,
+            "Set to do item"
+        );
+        SetDueDateTime = CreateCommand<IDueDateTimeProperty>(
+            SetDueDateTimeAsync,
+            MaterialIconKind.Pencil,
+            "Set due date time"
+        );
     }
 
     private static readonly INavigator navigator;
@@ -105,7 +115,61 @@ public static class CommandStorage
     public static ICommand AddToDoItemToFavoriteCommand => AddToDoItemToFavorite.Value.Command;
     public static CommandItem AddToDoItemToFavoriteItem => AddToDoItemToFavorite.Value;
 
+    public static CommandParameters<IToDoShortItemProperty> SetToDoShortItem { get; }
+    public static ICommand SetToDoShortItemCommand => SetToDoShortItem.Value.Command;
+    public static CommandItem SetToDoShortItemItem => SetToDoShortItem.Value;
+
+    public static CommandParameters<IDueDateTimeProperty> SetDueDateTime { get; }
+    public static ICommand SetDueDateTimeCommand => SetDueDateTime.Value.Command;
+    public static CommandItem SetDueDateTimeItem => SetDueDateTime.Value;
+
     public static CommandParameters<AvaloniaList<Selected<ToDoItemNotify>>> SelectAll { get; }
+
+    private static async Task SetDueDateTimeAsync(IDueDateTimeProperty property, CancellationToken cancellationToken)
+    {
+        await dialogViewer.ShowDateTimeConfirmDialogAsync(
+                async value =>
+                {
+                    await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
+                    await cancellationToken.InvokeUIBackgroundAsync(() => property.DueDateTime = value);
+                },
+                calendar =>
+                {
+                    calendar.SelectedDate = DateTimeOffset.Now.ToCurrentDay().DateTime;
+                    calendar.SelectedTime = TimeSpan.Zero;
+                },
+                cancellationToken
+            )
+            .ConfigureAwait(false);
+    }
+
+    private static Task SetToDoShortItemAsync(IToDoShortItemProperty property, CancellationToken cancellationToken)
+    {
+        return dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
+            async itemNotify =>
+            {
+                await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
+
+                await cancellationToken.InvokeUIBackgroundAsync(
+                    () => property.ShortItem = new()
+                    {
+                        Id = itemNotify.Id,
+                        Name = itemNotify.Name
+                    }
+                );
+            },
+            view =>
+            {
+                if (property.ShortItem is null)
+                {
+                    return;
+                }
+
+                view.DefaultSelectedItemId = property.ShortItem.Id;
+            },
+            cancellationToken
+        );
+    }
 
     private static async Task RemoveFavoriteToDoItemAsync(Guid id, CancellationToken cancellationToken)
     {

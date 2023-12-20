@@ -8,6 +8,6 @@ public class CompleteToDoItemViewModelDesign : CompleteToDoItemViewModel
 {
     public CompleteToDoItemViewModelDesign()
     {
-        CompleteStatuses.AddRange(Enum.GetValues<CompleteStatus>().Select(x => new Ref<CompleteStatus>(x)));
+        CompleteStatuses.AddRange(Enum.GetValues<CompleteStatus>());
     }
 }

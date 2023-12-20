@@ -452,7 +452,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
                     var eventValue = new ChangeToDoItemIsFavoriteEvent
                     {
                         IsFavorite = IsFavorite,
-                        ToDoItemId = Mapper.Map<ByteString>(viewModel.Item.ThrowIfNull().Id),
+                        ToDoItemId = Mapper.Map<ByteString>(viewModel.ShortItem.ThrowIfNull().Id),
                     };
 
                     await using var stream = new MemoryStream();
@@ -473,7 +473,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
                 {
                     viewModel.EventId = EventIdHelper.ChangeFavoriteId;
 
-                    viewModel.Item = new()
+                    viewModel.ShortItem = new()
                     {
                         Id = Id,
                         Name = Name,

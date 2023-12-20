@@ -40,7 +40,7 @@ public class CompleteToDoItemViewModel : ViewModelBase
         InitializedCommand = CreateInitializedCommand<CompleteToDoItemView>(Initialized);
     }
 
-    public AvaloniaList<Ref<CompleteStatus>> CompleteStatuses { get; } = new();
+    public AvaloniaList<CompleteStatus> CompleteStatuses { get; } = new();
     public ICommand CompleteCommand { get; }
     public ICommand InitializedCommand { get; }
     public Func<CompleteStatus, Task>? Complete { get; set; }
@@ -59,7 +59,7 @@ public class CompleteToDoItemViewModel : ViewModelBase
     public void SetAllStatus()
     {
         CompleteStatuses.Clear();
-        CompleteStatuses.AddRange(Enum.GetValues<CompleteStatus>().Select(x => new Ref<CompleteStatus>(x)));
+        CompleteStatuses.AddRange(Enum.GetValues<CompleteStatus>());
         UpdateKeyBindings();
     }
 
@@ -69,22 +69,22 @@ public class CompleteToDoItemViewModel : ViewModelBase
 
         if (isCan.HasFlag(ToDoItemIsCan.CanComplete))
         {
-            CompleteStatuses.Add(new (CompleteStatus.Complete));
+            CompleteStatuses.Add(CompleteStatus.Complete);
         }
         
         if (isCan.HasFlag(ToDoItemIsCan.CanIncomplete))
         {
-            CompleteStatuses.Add(new (CompleteStatus.Incomplete));
+            CompleteStatuses.Add(CompleteStatus.Incomplete);
         }
         
         if (isCan.HasFlag(ToDoItemIsCan.CanSkip))
         {
-            CompleteStatuses.Add(new (CompleteStatus.Skip));
+            CompleteStatuses.Add(CompleteStatus.Skip);
         }
         
         if (isCan.HasFlag(ToDoItemIsCan.CanFail))
         {
-            CompleteStatuses.Add(new (CompleteStatus.Fail));
+            CompleteStatuses.Add(CompleteStatus.Fail);
         }
 
         UpdateKeyBindings();
@@ -105,7 +105,7 @@ public class CompleteToDoItemViewModel : ViewModelBase
                 {
                     [KeyBinding.CommandProperty] = CompleteCommand,
                     [KeyBinding.CommandParameterProperty] = x,
-                    [KeyBinding.GestureProperty] = keys[x.Value],
+                    [KeyBinding.GestureProperty] = keys[x],
                 }
             )
         );

@@ -195,7 +195,7 @@
                                     Width="320"
                                     IsVisible="{Binding Value.Active, Converter={StaticResource NullToBooleanConverter}}"
                                     CommandParameter="{Binding Value.Active.Id}"
-                                    Command="{x:Static services:CommandStorage.ChangeToActiveDoItemCommand}"
+                                    Command="{x:Static services:CommandStorage.NavigateToToDoItemCommand}"
                                     ClickMode="Release">
                                 <WrapPanel Orientation="Horizontal">
                                     <TextBlock Text="{Binding Value.Active.Name}"
