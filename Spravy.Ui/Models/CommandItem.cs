@@ -4,14 +4,14 @@ using ReactiveUI;
 
 namespace Spravy.Ui.Models;
 
-public class ToDoItemCommand : NotifyBase
+public class CommandItem : NotifyBase
 {
     private MaterialIconKind icon;
     private ICommand command;
     private string name;
     private object? parameter;
 
-    public ToDoItemCommand(MaterialIconKind icon, ICommand command, string name, object? parameter)
+    public CommandItem(MaterialIconKind icon, ICommand command, string name, object? parameter)
     {
         this.icon = icon;
         this.command = command;

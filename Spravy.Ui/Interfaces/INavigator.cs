@@ -15,4 +15,7 @@ public interface INavigator
 
     Task NavigateToAsync<TViewModel>(Action<TViewModel> setup, CancellationToken cancellationToken)
         where TViewModel : INavigatable;
+    
+    Task NavigateToAsync<TViewModel>(CancellationToken cancellationToken)
+        where TViewModel : INavigatable;
 }

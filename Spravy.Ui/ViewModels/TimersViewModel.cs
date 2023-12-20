@@ -8,7 +8,6 @@ using Ninject;
 using Spravy.Domain.Models;
 using Spravy.Schedule.Domain.Interfaces;
 using Spravy.Ui.Models;
-using Spravy.Ui.Services;
 
 namespace Spravy.Ui.ViewModels;
 
@@ -17,11 +16,9 @@ public class TimersViewModel : NavigatableViewModelBase
     public TimersViewModel() : base(true)
     {
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
-        SwitchPaneCommand = CommandStorage.Default.SwitchPane.Command.Command;
     }
 
     public ICommand InitializedCommand { get; }
-    public ICommand SwitchPaneCommand { get; }
     public AvaloniaList<TimerItemNotify> Timers { get; } = new();
 
     [Inject]

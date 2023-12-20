@@ -18,7 +18,6 @@ using Spravy.Ui.Features.ToDo.Enums;
 using Spravy.Ui.Features.ToDo.ViewModels;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
-using Spravy.Ui.Services;
 
 namespace Spravy.Ui.ViewModels;
 
@@ -29,16 +28,11 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 
     public ToDoSubItemsViewModel()
     {
-        SelectAllCommand = CommandStorage.Default.SelectAll.Command.Command;
-        CompleteSubToDoItemCommand = CommandStorage.Default.CompleteToDoItem.Command.Command;
-        DeleteSubToDoItemCommand = CommandStorage.Default.DeleteToDoItem.Command.Command;
-        ChangeToDoItemCommand = CommandStorage.Default.NavigateToToDoItem.Command.Command;
         AddSubToDoItemToFavoriteCommand =
             CreateCommandFromTask<ToDoItemNotify>(TaskWork.Create<ToDoItemNotify>(AddFavoriteToDoItemAsync).RunAsync);
         RemoveSubToDoItemFromFavoriteCommand = CreateCommandFromTask<ToDoItemNotify>(
             TaskWork.Create<ToDoItemNotify>(RemoveFavoriteToDoItemAsync).RunAsync
         );
-        ChangeToActiveDoItemCommand = CommandStorage.Default.NavigateToToDoItem.Command.Command;
         ChangeOrderIndexCommand =
             CreateCommandFromTask<ToDoItemNotify>(TaskWork.Create<ToDoItemNotify>(ChangeOrderIndexAsync).RunAsync);
         OpenLinkCommand =
@@ -48,15 +42,10 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
         MultiChangeRootItemCommand = CreateInitializedCommand(TaskWork.Create(MultiChangeRootItemAsync).RunAsync);
     }
 
-    public ICommand CompleteSubToDoItemCommand { get; }
-    public ICommand DeleteSubToDoItemCommand { get; }
-    public ICommand ChangeToDoItemCommand { get; }
     public ICommand AddSubToDoItemToFavoriteCommand { get; }
     public ICommand RemoveSubToDoItemFromFavoriteCommand { get; }
-    public ICommand ChangeToActiveDoItemCommand { get; }
     public ICommand ChangeOrderIndexCommand { get; }
     public ICommand OpenLinkCommand { get; }
-    public ICommand SelectAllCommand { get; }
     public ICommand MultiCompleteCommand { get; }
     public ICommand MultiChangeTypeCommand { get; }
     public ICommand MultiChangeRootItemCommand { get; }

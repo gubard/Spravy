@@ -84,7 +84,7 @@ public class MultiToDoItemsViewModel : ViewModelBase
         {
             multiToDoItems = value;
             multiToDoItems.GroupByNone.Items.Commands.Add(
-                new ToDoItemCommand(
+                new CommandItem(
                     MaterialIconKind.CheckAll,
                     CreateCommandFromTask(
                         TaskWork.Create(c => SelectAllAsync(multiToDoItems.GroupByNone.Items.Items, c)).RunAsync
@@ -94,7 +94,7 @@ public class MultiToDoItemsViewModel : ViewModelBase
                 )
             );
             multiToDoItems.GroupByStatus.Missed.Commands.Add(
-                new ToDoItemCommand(
+                new CommandItem(
                     MaterialIconKind.CheckAll,
                     CreateCommandFromTask(
                         TaskWork.Create(c => SelectAllAsync(multiToDoItems.GroupByStatus.Missed.Items, c)).RunAsync
@@ -104,7 +104,7 @@ public class MultiToDoItemsViewModel : ViewModelBase
                 )
             );
             multiToDoItems.GroupByStatus.Completed.Commands.Add(
-                new ToDoItemCommand(
+                new CommandItem(
                     MaterialIconKind.CheckAll,
                     CreateCommandFromTask(
                         TaskWork.Create(c => SelectAllAsync(multiToDoItems.GroupByStatus.Completed.Items, c)).RunAsync
@@ -114,7 +114,7 @@ public class MultiToDoItemsViewModel : ViewModelBase
                 )
             );
             multiToDoItems.GroupByStatus.Planned.Commands.Add(
-                new ToDoItemCommand(
+                new CommandItem(
                     MaterialIconKind.CheckAll,
                     CreateCommandFromTask(
                         TaskWork.Create(c => SelectAllAsync(multiToDoItems.GroupByStatus.Planned.Items, c)).RunAsync
@@ -124,7 +124,7 @@ public class MultiToDoItemsViewModel : ViewModelBase
                 )
             );
             multiToDoItems.GroupByStatus.ReadyForCompleted.Commands.Add(
-                new ToDoItemCommand(
+                new CommandItem(
                     MaterialIconKind.CheckAll,
                     CreateCommandFromTask(
                         TaskWork.Create(c => SelectAllAsync(multiToDoItems.GroupByStatus.ReadyForCompleted.Items, c))
@@ -135,7 +135,7 @@ public class MultiToDoItemsViewModel : ViewModelBase
                 )
             );
             multiToDoItems.GroupByType.Groups.Commands.Add(
-                new ToDoItemCommand(
+                new CommandItem(
                     MaterialIconKind.CheckAll,
                     CreateCommandFromTask(
                         TaskWork.Create(c => SelectAllAsync(multiToDoItems.GroupByType.Groups.Items, c))
@@ -146,7 +146,7 @@ public class MultiToDoItemsViewModel : ViewModelBase
                 )
             );
             multiToDoItems.GroupByType.Circles.Commands.Add(
-                new ToDoItemCommand(
+                new CommandItem(
                     MaterialIconKind.CheckAll,
                     CreateCommandFromTask(
                         TaskWork.Create(c => SelectAllAsync(multiToDoItems.GroupByType.Circles.Items, c))
@@ -157,7 +157,7 @@ public class MultiToDoItemsViewModel : ViewModelBase
                 )
             );
             multiToDoItems.GroupByType.Periodicitys.Commands.Add(
-                new ToDoItemCommand(
+                new CommandItem(
                     MaterialIconKind.CheckAll,
                     CreateCommandFromTask(
                         TaskWork.Create(c => SelectAllAsync(multiToDoItems.GroupByType.Periodicitys.Items, c))
@@ -168,7 +168,7 @@ public class MultiToDoItemsViewModel : ViewModelBase
                 )
             );
             multiToDoItems.GroupByType.Planneds.Commands.Add(
-                new ToDoItemCommand(
+                new CommandItem(
                     MaterialIconKind.CheckAll,
                     CreateCommandFromTask(
                         TaskWork.Create(c => SelectAllAsync(multiToDoItems.GroupByType.Planneds.Items, c))
@@ -179,7 +179,7 @@ public class MultiToDoItemsViewModel : ViewModelBase
                 )
             );
             multiToDoItems.GroupByType.Steps.Commands.Add(
-                new ToDoItemCommand(
+                new CommandItem(
                     MaterialIconKind.CheckAll,
                     CreateCommandFromTask(
                         TaskWork.Create(c => SelectAllAsync(multiToDoItems.GroupByType.Steps.Items, c))
@@ -190,7 +190,7 @@ public class MultiToDoItemsViewModel : ViewModelBase
                 )
             );
             multiToDoItems.GroupByType.Values.Commands.Add(
-                new ToDoItemCommand(
+                new CommandItem(
                     MaterialIconKind.CheckAll,
                     CreateCommandFromTask(
                         TaskWork.Create(c => SelectAllAsync(multiToDoItems.GroupByType.Values.Items, c))
@@ -201,7 +201,7 @@ public class MultiToDoItemsViewModel : ViewModelBase
                 )
             );
             multiToDoItems.GroupByType.PeriodicityOffsets.Commands.Add(
-                new ToDoItemCommand(
+                new CommandItem(
                     MaterialIconKind.CheckAll,
                     CreateCommandFromTask(
                         TaskWork.Create(c => SelectAllAsync(multiToDoItems.GroupByType.PeriodicityOffsets.Items, c))

@@ -4,24 +4,24 @@ namespace Spravy.Ui.Models;
 
 public readonly struct CommandParameters
 {
-    public CommandParameters(ToDoItemCommand command, TaskWork work)
+    public CommandParameters(CommandItem value, TaskWork work)
     {
-        Command = command;
+        Value = value;
         Work = work;
     }
 
-    public ToDoItemCommand Command { get; }
+    public CommandItem Value { get; }
     public TaskWork Work { get; }
 }
 
 public readonly struct CommandParameters<T>
 {
-    public CommandParameters(ToDoItemCommand command, TaskWork<T> work)
+    public CommandParameters(CommandItem value, TaskWork<T> work)
     {
-        Command = command;
+        Value = value;
         Work = work;
     }
 
-    public ToDoItemCommand Command { get; }
+    public CommandItem Value { get; }
     public TaskWork<T> Work { get; }
 }

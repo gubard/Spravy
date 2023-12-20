@@ -5,7 +5,7 @@
                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                                xmlns:services="clr-namespace:Spravy.Ui.Services"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.TimersView"
                                 x:DataType="viewModels:TimersViewModel">
@@ -16,9 +16,7 @@
     </Interaction.Behaviors>
 
     <Grid RowDefinitions="Auto,*">
-        <Button Command="{Binding SwitchPaneCommand}" HorizontalAlignment="Left" ClickMode="Release">
-            <avalonia:MaterialIcon Kind="Menu" />
-        </Button>
+        <ContentControl Content="{ x:Static services:CommandStorage.SwitchPaneItem}" />
 
         <ScrollViewer Grid.Row="1">
             <ListBox ItemsSource="{Binding Timers}" SelectionMode="Single" />

@@ -7,6 +7,7 @@
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                 xmlns:views="clr-namespace:Spravy.Ui.Views"
+                                xmlns:services="clr-namespace:Spravy.Ui.Services"
                                 mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                                 x:Class="Spravy.Ui.Views.SearchView"
                                 x:DataType="viewModels:SearchViewModel">
@@ -16,9 +17,7 @@
 
     <Grid RowDefinitions="Auto,*">
         <Grid ColumnDefinitions="Auto,*,*">
-            <Button Command="{Binding SwitchPaneCommand}" ClickMode="Release">
-                <avalonia:MaterialIcon Kind="Menu" />
-            </Button>
+            <ContentControl Content="{x:Static services:CommandStorage.SwitchPaneItem}" />
 
             <TextBox Grid.Column="1"
                      Name="{x:Static views:SearchView.SearchTextTextBoxName}"

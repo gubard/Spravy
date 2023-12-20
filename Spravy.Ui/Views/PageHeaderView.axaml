@@ -8,6 +8,7 @@
              xmlns:models="clr-namespace:Spravy.Ui.Models"
              xmlns:system="clr-namespace:System;assembly=System.Runtime"
              xmlns:interfaces="clr-namespace:Spravy.Ui.Interfaces"
+             xmlns:services="clr-namespace:Spravy.Ui.Services"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Spravy.Ui.Views.PageHeaderView"
              x:DataType="interfaces:IPageHeaderDataType">
@@ -66,10 +67,7 @@
     <controls1:ColorZone Mode="PrimaryMid">
         <Grid ColumnDefinitions="Auto,*,Auto">
             <StackPanel Orientation="Horizontal">
-                <Button Classes="with-icon" Command="{Binding SwitchPaneCommand}" ClickMode="Release">
-                    <avalonia:MaterialIcon Kind="Menu" />
-                </Button>
-
+                <ContentControl Content="{ x:Static services:CommandStorage.SwitchPaneItem}" />
                 <ContentControl Content="{Binding LeftCommand}" />
             </StackPanel>
 
@@ -106,8 +104,9 @@
                             <Flyout>
                                 <ItemsControl ItemsSource="{Binding Commands}" x:Name="ItemsControlCommands">
                                     <ItemsControl.ItemTemplate>
-                                        <DataTemplate x:DataType="models:ToDoItemCommand">
-                                            <Button Command="{Binding Command}" HorizontalContentAlignment="Left">
+                                        <DataTemplate x:DataType="models:CommandItem">
+                                            <Button Command="{Binding Command}" HorizontalContentAlignment="Left"
+                                                    CommandParameter="{Binding Parameter}">
                                                 <StackPanel Orientation="Horizontal">
                                                     <avalonia:MaterialIcon Kind="{Binding Icon}" />
                                                     <TextBlock Text="{Binding Name}" />

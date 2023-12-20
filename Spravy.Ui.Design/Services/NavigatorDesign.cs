@@ -25,4 +25,9 @@ public class NavigatorDesign : INavigator
     {
         throw new NotImplementedException();
     }
+
+    public Task NavigateToAsync<TViewModel>(CancellationToken cancellationToken) where TViewModel : INavigatable
+    {
+        throw new NotImplementedException();
+    }
 }

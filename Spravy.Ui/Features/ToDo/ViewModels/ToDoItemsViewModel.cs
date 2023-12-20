@@ -9,7 +9,7 @@ public class ToDoItemsViewModel : ViewModelBase
 {
     private object? header;
     private bool isExpanded = true;
-    public AvaloniaList<ToDoItemCommand> Commands { get; } = new();
+    public AvaloniaList<CommandItem> Commands { get; } = new();
     public AvaloniaList<Selected<ToDoItemNotify>> Items { get; } = new();
 
     public object? Header

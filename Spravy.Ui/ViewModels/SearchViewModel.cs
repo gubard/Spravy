@@ -9,7 +9,6 @@ using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
-using Spravy.Ui.Services;
 
 namespace Spravy.Ui.ViewModels;
 
@@ -22,11 +21,9 @@ public class SearchViewModel : NavigatableViewModelBase, IRefresh
     {
         refreshWork = TaskWork.Create(RefreshCoreAsync);
         SearchCommand = CreateCommandFromTask(refreshWork.RunAsync);
-        SwitchPaneCommand = CommandStorage.Default.SwitchPane.Command.Command;
     }
 
     public ICommand SearchCommand { get; }
-    public ICommand SwitchPaneCommand { get; }
 
     public string SearchText
     {

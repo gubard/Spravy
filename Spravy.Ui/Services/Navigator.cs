@@ -58,6 +58,13 @@ public class Navigator : INavigator
         );
     }
 
+    public async Task NavigateToAsync<TViewModel>(CancellationToken cancellationToken) where TViewModel : INavigatable
+    {
+        AddCurrentContent();
+        var viewModel = Resolver.Get<TViewModel>();
+        await this.InvokeUIAsync(() => Content.Content = viewModel);
+    }
+
     public async Task<INavigatable?> NavigateBackAsync(CancellationToken cancellationToken)
     {
         var viewModel = list.Pop();

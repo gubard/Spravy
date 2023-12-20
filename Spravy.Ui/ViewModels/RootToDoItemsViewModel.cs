@@ -11,7 +11,6 @@ using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
-using Spravy.Ui.Services;
 
 namespace Spravy.Ui.ViewModels;
 
@@ -24,16 +23,14 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
         refreshWork = TaskWork.Create(RefreshCoreAsync);
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
         AddToDoItemCommand = CreateCommandFromTask(TaskWork.Create(AddToDoItemAsync).RunAsync);
-        SwitchPaneCommand = CommandStorage.Default.SwitchPane.Command.Command;
     }
 
     public ICommand InitializedCommand { get; }
     public ICommand AddToDoItemCommand { get; }
-    public ToDoItemCommand? LeftCommand { get; } = null;
-    public ToDoItemCommand? RightCommand { get; } = null;
-    public ICommand SwitchPaneCommand { get; }
+    public CommandItem? LeftCommand { get; } = null;
+    public CommandItem? RightCommand { get; } = null;
     public object? Header { get; } = "Spravy";
-    public AvaloniaList<ToDoItemCommand> Commands { get; } = new();
+    public AvaloniaList<CommandItem> Commands { get; } = new();
 
     [Inject]
     public required ToDoSubItemsViewModel ToDoSubItemsViewModel { get; init; }

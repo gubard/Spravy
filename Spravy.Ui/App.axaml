@@ -11,6 +11,7 @@
              xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
              xmlns:system="clr-namespace:System;assembly=System.Runtime"
              xmlns:enums1="clr-namespace:Spravy.Ui.Features.ToDo.Enums"
+             xmlns:services="clr-namespace:Spravy.Ui.Services"
              x:Class="Spravy.Ui.App"
              RequestedThemeVariant="Dark">
     <Application.Resources>
@@ -111,7 +112,7 @@
             </StackPanel>
         </DataTemplate>
 
-        <DataTemplate x:DataType="models:ToDoItemCommand">
+        <DataTemplate x:DataType="models:CommandItem">
             <Button Command="{Binding Command}" CommandParameter="{Binding Parameter}">
                 <avalonia:MaterialIcon Kind="{Binding Icon}" />
             </Button>
@@ -194,7 +195,7 @@
                                     Width="320"
                                     IsVisible="{Binding Value.Active, Converter={StaticResource NullToBooleanConverter}}"
                                     CommandParameter="{Binding Value.Active.Id}"
-                                    Command="{Binding $parent[interfaces:IToDoItemView].ChangeToActiveDoItemCommand}"
+                                    Command="{x:Static services:CommandStorage.ChangeToActiveDoItemCommand}"
                                     ClickMode="Release">
                                 <WrapPanel Orientation="Horizontal">
                                     <TextBlock Text="{Binding Value.Active.Name}"
@@ -206,7 +207,7 @@
 
                             <Button Grid.Row="1" Margin="0,5,5,5" Classes="with-text"
                                     CommandParameter="{Binding Value}"
-                                    Command="{Binding $parent[interfaces:IToDoItemView].ChangeOrderIndexCommand}"
+                                    Command="{x:Static services:CommandStorage.ChangeOrderIndexCommand}"
                                     ClickMode="Release">
                                 <StackPanel Orientation="Horizontal">
                                     <avalonia:MaterialIcon Kind="ReorderHorizontal" />
@@ -218,7 +219,7 @@
                                     Margin="0,5,5,5"
                                     Classes="with-text"
                                     CommandParameter="{Binding Value}"
-                                    Command="{Binding $parent[interfaces:ICompleteSubToDoItemCommand].CompleteSubToDoItemCommand}"
+                                    Command="{x:Static services:CommandStorage.CompleteToDoItemCommand}"
                                     IsVisible="{Binding Value.IsCan, Converter={StaticResource ToDoItemIsCanToBooleanConverter}}"
                                     ClickMode="Release">
                                 <StackPanel Orientation="Horizontal">
@@ -230,7 +231,7 @@
                             <Button Grid.Row="1"
                                     Grid.Column="1"
                                     Classes="with-text"
-                                    Command="{Binding $parent[interfaces:IToDoItemView].DeleteSubToDoItemCommand}"
+                                    Command="{x:Static services:CommandStorage.DeleteToDoItemCommand}"
                                     CommandParameter="{Binding Value}"
                                     ClickMode="Release">
                                 <StackPanel Orientation="Horizontal">
@@ -242,7 +243,7 @@
                             <Button Grid.Row="1"
                                     Grid.Column="2"
                                     Classes="with-text"
-                                    Command="{Binding $parent[interfaces:IToDoItemView].ChangeToDoItemCommand}"
+                                    Command="{x:Static services:CommandStorage.NavigateToToDoItemCommand}"
                                     CommandParameter="{Binding Value.Id}"
                                     ClickMode="Release">
                                 <StackPanel Orientation="Horizontal">
@@ -254,7 +255,7 @@
                             <Button Grid.Row="2"
                                     Grid.Column="2"
                                     Classes="with-text"
-                                    Command="{Binding $parent[interfaces:IToDoItemView].OpenLinkCommand}"
+                                    Command="{x:Static services:CommandStorage.OpenLinkCommand}"
                                     CommandParameter="{Binding Value}"
                                     IsVisible="{Binding Value.Link, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}"
                                     ClickMode="Release">
@@ -268,15 +269,15 @@
 
                     <Panel Grid.Row="1" Grid.Column="1" VerticalAlignment="Top"
                            HorizontalAlignment="Right">
-                        <Button CommandParameter="{Binding Value}"
-                                Command="{Binding $parent[interfaces:IChangeFavoriteToDoItemCommand].RemoveSubToDoItemFromFavoriteCommand}"
+                        <Button CommandParameter="{Binding Value.Id}"
+                                Command="{x:Static services:CommandStorage.RemoveToDoItemFromFavoriteCommand}"
                                 IsVisible="{Binding Value.IsFavorite}"
                                 ClickMode="Release">
                             <avalonia:MaterialIcon Kind="Star" />
                         </Button>
 
-                        <Button CommandParameter="{Binding Value}"
-                                Command="{Binding $parent[interfaces:IChangeFavoriteToDoItemCommand].AddSubToDoItemToFavoriteCommand}"
+                        <Button CommandParameter="{Binding Value.Id}"
+                                Command="{x:Static services:CommandStorage.AddToDoItemToFavoriteCommand}"
                                 IsVisible="{Binding Value.IsFavorite, Converter={StaticResource ReverseBooleanValueConverter}}"
                                 ClickMode="Release">
                             <avalonia:MaterialIcon Kind="StarOutline" />

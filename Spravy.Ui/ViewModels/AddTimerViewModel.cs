@@ -23,12 +23,12 @@ public class AddTimerViewModel : ViewModelBase
         changeItemWork = new(ChangeItemAsync);
         changeDueDateTimeWork = new(ChangeDueDateTimeAsync);
         ChangeDueDateTimeCommand = CreateCommandFromTask(changeItemWork.RunAsync);
-        ChangeItemCommand = CreateCommandFromTask(changeDueDateTimeWork.RunAsync);
+        SelectToDoItemCommand = CreateCommandFromTask(changeDueDateTimeWork.RunAsync);
     }
 
     public Guid EventId { get; set; }
     public ICommand ChangeDueDateTimeCommand { get; }
-    public ICommand ChangeItemCommand { get; }
+    public ICommand SelectToDoItemCommand { get; }
 
     private async Task ChangeItemAsync(CancellationToken cancellationToken)
     {

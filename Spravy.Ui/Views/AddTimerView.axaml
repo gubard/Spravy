@@ -19,7 +19,7 @@
                  Classes="outline dense with-button"
                  Theme="{StaticResource OutlineTextBox}">
             <TextBox.InnerLeftContent>
-                <Button Command="{Binding ChangeItemCommand}" Margin="4,15,4,4">
+                <Button Command="{Binding SelectToDoItemCommand}" Margin="4,15,4,4">
                     <avalonia:MaterialIcon Kind="Pencil" />
                 </Button>
             </TextBox.InnerLeftContent>

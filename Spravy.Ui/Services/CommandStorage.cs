@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Collections;
 using Material.Icons;
-using Material.Icons.Avalonia;
 using Ninject;
 using ReactiveUI;
 using Serilog;
@@ -13,6 +12,7 @@ using Spravy.Domain.Di.Helpers;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Interfaces;
+using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.Enums;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
@@ -21,26 +21,16 @@ using Spravy.Ui.ViewModels;
 
 namespace Spravy.Ui.Services;
 
-public class CommandStorage
+public static class CommandStorage
 {
-    public static readonly CommandStorage Default = DiHelper.Kernel.ThrowIfNull().Get<CommandStorage>();
-
-    private readonly INavigator navigator;
-    private readonly IDialogViewer dialogViewer;
-    private readonly MainSplitViewModel mainSplitViewModel;
-    private readonly IToDoService toDoService;
-
-    public CommandStorage(
-        INavigator navigator,
-        IDialogViewer dialogViewer,
-        MainSplitViewModel mainSplitViewModel,
-        IToDoService toDoService
-    )
+    static CommandStorage()
     {
-        this.navigator = navigator;
-        this.dialogViewer = dialogViewer;
-        this.mainSplitViewModel = mainSplitViewModel;
-        this.toDoService = toDoService;
+        var kernel = DiHelper.Kernel.ThrowIfNull();
+        navigator = kernel.Get<INavigator>();
+        openerLink = kernel.Get<IOpenerLink>();
+        dialogViewer = kernel.Get<IDialogViewer>();
+        mainSplitViewModel = kernel.Get<MainSplitViewModel>();
+        toDoService = kernel.Get<IToDoService>();
         SwitchPane = CreateCommand(SwitchPaneAsync, MaterialIconKind.SwapHorizontal, "Open pane");
         NavigateToToDoItem = CreateCommand<Guid>(NavigateToToDoItemAsync, MaterialIconKind.ListBox, "Open");
         CompleteToDoItem = CreateCommand<ICanComplete>(CompleteToDoItemAsync, MaterialIconKind.Check, "Complete");
@@ -50,27 +40,138 @@ public class CommandStorage
             "Select all"
         );
         DeleteToDoItem = CreateCommand<IDeletable>(DeleteSubToDoItemAsync, MaterialIconKind.Delete, "Delete");
+        ChangeToActiveDoItem = CreateCommand(ChangeToActiveDoItemAsync, MaterialIconKind.ArrowRight, "Go to active");
+        ChangeOrderIndex = CreateCommand<ToDoItemNotify>(
+            ChangeOrderIndexAsync,
+            MaterialIconKind.ReorderHorizontal,
+            "Reorder"
+        );
+        OpenLink = CreateCommand<ToDoItemNotify>(
+            OpenLinkAsync,
+            MaterialIconKind.Link,
+            "Reorder"
+        );
+        RemoveToDoItemFromFavorite = CreateCommand<Guid>(
+            RemoveFavoriteToDoItemAsync,
+            MaterialIconKind.Link,
+            "Remove from favorite"
+        );
+        AddToDoItemToFavorite = CreateCommand<Guid>(
+            AddFavoriteToDoItemAsync,
+            MaterialIconKind.Link,
+            "Add to favorite"
+        );
     }
 
-    public CommandParameters SwitchPane { get; }
-    public CommandParameters<Guid> NavigateToToDoItem { get; }
-    public CommandParameters<ICanComplete> CompleteToDoItem { get; }
-    public CommandParameters<AvaloniaList<Selected<ToDoItemNotify>>> SelectAll { get; }
-    public CommandParameters<IDeletable> DeleteToDoItem { get; }
+    private static readonly INavigator navigator;
+    private static readonly IDialogViewer dialogViewer;
+    private static readonly MainSplitViewModel mainSplitViewModel;
+    private static readonly IToDoService toDoService;
+    private static readonly IOpenerLink openerLink;
 
-    private async Task DeleteSubToDoItemAsync(IDeletable deletable, CancellationToken cancellationToken)
+    public static CommandParameters SwitchPane { get; }
+    public static ICommand SwitchPaneCommand => SwitchPane.Value.Command;
+    public static CommandItem SwitchPaneItem => SwitchPane.Value;
+
+    public static CommandParameters<ICanComplete> CompleteToDoItem { get; }
+    public static ICommand CompleteToDoItemCommand => CompleteToDoItem.Value.Command;
+    public static CommandItem CompleteToDoItemItem => CompleteToDoItem.Value;
+
+    public static CommandParameters ChangeToActiveDoItem { get; }
+    public static ICommand ChangeToActiveDoItemCommand => ChangeToActiveDoItem.Value.Command;
+    public static CommandItem ChangeToActiveDoItemItem => ChangeToActiveDoItem.Value;
+
+    public static CommandParameters<ToDoItemNotify> ChangeOrderIndex { get; }
+    public static ICommand ChangeOrderIndexCommand => ChangeOrderIndex.Value.Command;
+    public static CommandItem ChangeOrderIndexItem => ChangeOrderIndex.Value;
+
+    public static CommandParameters<IDeletable> DeleteToDoItem { get; }
+    public static ICommand DeleteToDoItemCommand => DeleteToDoItem.Value.Command;
+    public static CommandItem DeleteToDoItemItem => DeleteToDoItem.Value;
+
+    public static CommandParameters<Guid> NavigateToToDoItem { get; }
+    public static ICommand NavigateToToDoItemCommand => NavigateToToDoItem.Value.Command;
+    public static CommandItem NavigateToToDoItemItem => NavigateToToDoItem.Value;
+
+    public static CommandParameters<ToDoItemNotify> OpenLink { get; }
+    public static ICommand OpenLinkCommand => OpenLink.Value.Command;
+    public static CommandItem OpenLinkItem => OpenLink.Value;
+
+    public static CommandParameters<Guid> RemoveToDoItemFromFavorite { get; }
+    public static ICommand RemoveToDoItemFromFavoriteCommand => RemoveToDoItemFromFavorite.Value.Command;
+    public static CommandItem RemoveToDoItemFromFavoriteItem => RemoveToDoItemFromFavorite.Value;
+
+    public static CommandParameters<Guid> AddToDoItemToFavorite { get; }
+    public static ICommand AddToDoItemToFavoriteCommand => AddToDoItemToFavorite.Value.Command;
+    public static CommandItem AddToDoItemToFavoriteItem => AddToDoItemToFavorite.Value;
+
+    public static CommandParameters<AvaloniaList<Selected<ToDoItemNotify>>> SelectAll { get; }
+
+    private static async Task RemoveFavoriteToDoItemAsync(Guid id, CancellationToken cancellationToken)
+    {
+        await toDoService.RemoveFavoriteToDoItemAsync(id, cancellationToken).ConfigureAwait(false);
+        await RefreshCurrentViewAsync(cancellationToken);
+    }
+
+    private static async Task AddFavoriteToDoItemAsync(Guid id, CancellationToken cancellationToken)
+    {
+        await toDoService.AddFavoriteToDoItemAsync(id, cancellationToken).ConfigureAwait(false);
+        await RefreshCurrentViewAsync(cancellationToken);
+    }
+
+    private static async Task OpenLinkAsync(ToDoItemNotify item, CancellationToken cancellationToken)
+    {
+        var link = item.Link.ThrowIfNull().ToUri();
+        cancellationToken.ThrowIfCancellationRequested();
+        await openerLink.OpenLinkAsync(link, cancellationToken).ConfigureAwait(false);
+    }
+
+    private static async Task ChangeOrderIndexAsync(ToDoItemNotify item, CancellationToken cancellationToken)
+    {
+        await dialogViewer.ShowConfirmContentDialogAsync<ChangeToDoItemOrderIndexViewModel>(
+                async viewModel =>
+                {
+                    await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
+                    var targetId = viewModel.SelectedItem.ThrowIfNull().Id;
+                    var options = new UpdateOrderIndexToDoItemOptions(viewModel.Id, targetId, viewModel.IsAfter);
+                    cancellationToken.ThrowIfCancellationRequested();
+                    await toDoService.UpdateToDoItemOrderIndexAsync(options, cancellationToken).ConfigureAwait(false);
+                    cancellationToken.ThrowIfCancellationRequested();
+                    await RefreshCurrentViewAsync(cancellationToken);
+                },
+                _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
+                viewModel => viewModel.Id = item.Id,
+                cancellationToken
+            )
+            .ConfigureAwait(false);
+    }
+
+    private static async Task ChangeToActiveDoItemAsync(CancellationToken cancellationToken)
+    {
+        var item = await toDoService.GetCurrentActiveToDoItemAsync(cancellationToken).ConfigureAwait(false);
+
+        if (item is null)
+        {
+            await navigator.NavigateToAsync<RootToDoItemsViewModel>(cancellationToken).ConfigureAwait(false);
+        }
+        else
+        {
+            await navigator.NavigateToAsync<ToDoItemViewModel>(view => view.Id = item.Value.Id, cancellationToken)
+                .ConfigureAwait(false);
+        }
+    }
+
+    private static async Task DeleteSubToDoItemAsync(IDeletable deletable, CancellationToken cancellationToken)
     {
         await dialogViewer.ShowConfirmContentDialogAsync<DeleteToDoItemViewModel>(
                 async view =>
                 {
                     await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
+
                     await toDoService.DeleteToDoItemAsync(deletable.Id, cancellationToken)
                         .ConfigureAwait(false);
 
-                    if (mainSplitViewModel.Content is IRefresh refresh)
-                    {
-                        await refresh.RefreshAsync(cancellationToken).ConfigureAwait(false);
-                    }
+                    await RefreshCurrentViewAsync(cancellationToken);
                 },
                 _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
                 view => view.Header = deletable.Header,
@@ -79,9 +180,12 @@ public class CommandStorage
             .ConfigureAwait(false);
     }
 
-    private async Task SelectAllAsync(AvaloniaList<Selected<ToDoItemNotify>> items, CancellationToken arg)
+    private static async Task SelectAllAsync(
+        AvaloniaList<Selected<ToDoItemNotify>> items,
+        CancellationToken cancellationToken
+    )
     {
-        await this.InvokeUIAsync(
+        await cancellationToken.InvokeUIAsync(
             () =>
             {
                 if (items.All(x => x.IsSelect))
@@ -102,7 +206,7 @@ public class CommandStorage
         );
     }
 
-    private Task CompleteToDoItemAsync(ICanComplete canComplete, CancellationToken cancellationToken)
+    private static Task CompleteToDoItemAsync(ICanComplete canComplete, CancellationToken cancellationToken)
     {
         return dialogViewer.ShowInfoInputDialogAsync<CompleteToDoItemViewModel>(
             _ => dialogViewer.CloseInputDialogAsync(cancellationToken),
@@ -147,39 +251,50 @@ public class CommandStorage
                         default: throw new ArgumentOutOfRangeException(nameof(status), status, null);
                     }
 
-                    if (mainSplitViewModel.Content is IRefresh refresh)
-                    {
-                        await refresh.RefreshAsync(cancellationToken).ConfigureAwait(false);
-                    }
+                    await RefreshCurrentViewAsync(cancellationToken);
                 };
             },
             cancellationToken
         );
     }
 
-    private Task NavigateToToDoItemAsync(Guid id, CancellationToken cancellationToken)
+    private static async Task RefreshCurrentViewAsync(CancellationToken cancellationToken)
+    {
+        if (mainSplitViewModel.Content is not IRefresh refresh)
+        {
+            return;
+        }
+
+        await refresh.RefreshAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    private static Task NavigateToToDoItemAsync(Guid id, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         return navigator.NavigateToAsync<ToDoItemViewModel>(vm => vm.Id = id, cancellationToken);
     }
 
-    private async Task SwitchPaneAsync(CancellationToken cancellationToken)
+    private static async Task SwitchPaneAsync(CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        await this.InvokeUIAsync(() => mainSplitViewModel.IsPaneOpen = !mainSplitViewModel.IsPaneOpen);
+        await cancellationToken.InvokeUIAsync(() => mainSplitViewModel.IsPaneOpen = !mainSplitViewModel.IsPaneOpen);
     }
 
-    public CommandParameters CreateCommand(Func<CancellationToken, Task> func, MaterialIconKind icon, string name)
+    public static CommandParameters CreateCommand(
+        Func<CancellationToken, Task> func,
+        MaterialIconKind icon,
+        string name
+    )
     {
         var work = TaskWork.Create(func);
         var command = ReactiveCommand.CreateFromTask(work.RunAsync);
         SetupCommand(command);
 
-        return new CommandParameters(new ToDoItemCommand(icon, command, name, null), work);
+        return new CommandParameters(new CommandItem(icon, command, name, null), work);
     }
 
-    public CommandParameters<TParam> CreateCommand<TParam>(
+    public static CommandParameters<TParam> CreateCommand<TParam>(
         Func<TParam, CancellationToken, Task> func,
         MaterialIconKind icon,
         string name
@@ -189,15 +304,15 @@ public class CommandStorage
         var command = ReactiveCommand.CreateFromTask<TParam>(work.RunAsync);
         SetupCommand(command);
 
-        return new CommandParameters<TParam>(new ToDoItemCommand(icon, command, name, null), work);
+        return new CommandParameters<TParam>(new CommandItem(icon, command, name, null), work);
     }
 
-    private void SetupCommand<TParam, TResult>(ReactiveCommand<TParam, TResult> command)
+    private static void SetupCommand<TParam, TResult>(ReactiveCommand<TParam, TResult> command)
     {
         command.ThrownExceptions.Subscribe(OnNextError);
     }
 
-    private async void OnNextError(Exception exception)
+    private static async void OnNextError(Exception exception)
     {
         if (exception is TaskCanceledException)
         {
