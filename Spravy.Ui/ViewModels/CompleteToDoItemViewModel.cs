@@ -40,7 +40,7 @@ public class CompleteToDoItemViewModel : ViewModelBase
         InitializedCommand = CreateInitializedCommand<CompleteToDoItemView>(Initialized);
     }
 
-    public AvaloniaList<CompleteStatus> CompleteStatuses { get; } = new();
+    public AvaloniaList<Ref<CompleteStatus>> CompleteStatuses { get; } = new();
     public ICommand CompleteCommand { get; }
     public ICommand InitializedCommand { get; }
     public Func<CompleteStatus, Task>? Complete { get; set; }
@@ -55,11 +55,11 @@ public class CompleteToDoItemViewModel : ViewModelBase
     {
         await Complete.ThrowIfNull().Invoke(status).ConfigureAwait(false);
     }
-    
+
     public void SetAllStatus()
     {
         CompleteStatuses.Clear();
-        CompleteStatuses.AddRange(Enum.GetValues<CompleteStatus>());
+        CompleteStatuses.AddRange(Enum.GetValues<CompleteStatus>().Select(x => new Ref<CompleteStatus>(x)));
         UpdateKeyBindings();
     }
 
@@ -69,30 +69,30 @@ public class CompleteToDoItemViewModel : ViewModelBase
 
         if (isCan.HasFlag(ToDoItemIsCan.CanComplete))
         {
-            CompleteStatuses.Add(CompleteStatus.Complete);
+            CompleteStatuses.Add(new Ref<CompleteStatus>(CompleteStatus.Complete));
         }
-        
+
         if (isCan.HasFlag(ToDoItemIsCan.CanIncomplete))
         {
-            CompleteStatuses.Add(CompleteStatus.Incomplete);
+            CompleteStatuses.Add(new Ref<CompleteStatus>(CompleteStatus.Incomplete));
         }
-        
+
         if (isCan.HasFlag(ToDoItemIsCan.CanSkip))
         {
-            CompleteStatuses.Add(CompleteStatus.Skip);
+            CompleteStatuses.Add(new Ref<CompleteStatus>(CompleteStatus.Skip));
         }
-        
+
         if (isCan.HasFlag(ToDoItemIsCan.CanFail))
         {
-            CompleteStatuses.Add(CompleteStatus.Fail);
+            CompleteStatuses.Add(new Ref<CompleteStatus>(CompleteStatus.Fail));
         }
 
         UpdateKeyBindings();
     }
-    
+
     private void UpdateKeyBindings()
     {
-        if(view is null)
+        if (view is null)
         {
             return;
         }
@@ -105,7 +105,7 @@ public class CompleteToDoItemViewModel : ViewModelBase
                 {
                     [KeyBinding.CommandProperty] = CompleteCommand,
                     [KeyBinding.CommandParameterProperty] = x,
-                    [KeyBinding.GestureProperty] = keys[x],
+                    [KeyBinding.GestureProperty] = keys[x.Value],
                 }
             )
         );
