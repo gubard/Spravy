@@ -67,7 +67,7 @@
     <controls1:ColorZone Mode="PrimaryMid">
         <Grid ColumnDefinitions="Auto,*,Auto">
             <StackPanel Orientation="Horizontal">
-                <ContentControl Content="{ x:Static services:CommandStorage.SwitchPaneItem}" />
+                <ContentControl Content="{x:Static services:CommandStorage.SwitchPaneItem}" />
                 <ContentControl Content="{Binding LeftCommand}" />
             </StackPanel>
 

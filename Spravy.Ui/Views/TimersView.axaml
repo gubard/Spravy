@@ -16,7 +16,7 @@
     </Interaction.Behaviors>
 
     <Grid RowDefinitions="Auto,*">
-        <ContentControl Content="{ x:Static services:CommandStorage.SwitchPaneItem}" />
+        <ContentControl Content="{x:Static services:CommandStorage.SwitchPaneItem}" />
 
         <ScrollViewer Grid.Row="1">
             <ListBox ItemsSource="{Binding Timers}" SelectionMode="Single" />

@@ -113,7 +113,7 @@
         </DataTemplate>
 
         <DataTemplate x:DataType="models:CommandItem">
-            <Button Command="{Binding Command}" CommandParameter="{Binding Parameter}">
+            <Button Command="{Binding Command}" CommandParameter="{Binding Parameter}" ClickMode="Release">
                 <avalonia:MaterialIcon Kind="{Binding Icon}" />
             </Button>
         </DataTemplate>

@@ -31,7 +31,7 @@ public static class CommandStorage
         dialogViewer = kernel.Get<IDialogViewer>();
         mainSplitViewModel = kernel.Get<MainSplitViewModel>();
         toDoService = kernel.Get<IToDoService>();
-        SwitchPane = CreateCommand(SwitchPaneAsync, MaterialIconKind.SwapHorizontal, "Open pane");
+        SwitchPane = CreateCommand(SwitchPaneAsync, MaterialIconKind.Menu, "Open pane");
         NavigateToToDoItem = CreateCommand<Guid>(NavigateToToDoItemAsync, MaterialIconKind.ListBox, "Open");
         CompleteToDoItem = CreateCommand<ICanComplete>(CompleteToDoItemAsync, MaterialIconKind.Check, "Complete");
         SelectAll = CreateCommand<AvaloniaList<Selected<ToDoItemNotify>>>(
