@@ -9,5 +9,4 @@
                            x:Class="Spravy.Ui.Views.MainWindow"
                            Title="Spravy.Ui"
                            Icon="/Assets/Images/Logo.png"
-                           x:DataType="viewModels:MainWindowModel">
-</reactiveUi:ReactiveWindow>
+                           x:DataType="viewModels:MainWindowModel" />

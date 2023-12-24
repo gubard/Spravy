@@ -3,7 +3,7 @@
         <TargetFramework>net7.0</TargetFramework>
         <Nullable>enable</Nullable>
         <LangVersion>latest</LangVersion>
-        <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+        <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>        
     </PropertyGroup>
 
     <ItemGroup>
@@ -53,11 +53,6 @@
       <ProjectReference Include="..\Spravy.ToDo.Domain.Client\Spravy.ToDo.Domain.Client.csproj" />
       <ProjectReference Include="..\Spravy.ToDo.Domain.Mapper\Spravy.ToDo.Domain.Mapper.csproj" />
       <ProjectReference Include="..\Spravy.ToDo.Domain\Spravy.ToDo.Domain.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <UpToDateCheckInput Remove="Assets\avalonia-logo.ico" />
-      <UpToDateCheckInput Remove="Styles\Theme.axaml" />
     </ItemGroup>
 
     <ItemGroup>

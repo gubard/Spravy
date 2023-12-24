@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -16,6 +17,8 @@ using Nuke.Common.ProjectModel;
 using Nuke.Common.Tools.DotNet;
 using Renci.SshNet;
 using Serilog;
+using Telegram.Bot;
+using Telegram.Bot.Types;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 namespace _build;
@@ -47,6 +50,7 @@ class Build : NukeBuild
     [Parameter] readonly string JwtAudience;
     [Parameter] readonly string AndroidSigningKeyPass;
     [Parameter] readonly string AndroidSigningStorePass;
+    [Parameter] readonly string TelegramToken;
     static readonly Dictionary<string, string> Hosts = new();
     static readonly Dictionary<Project, ServiceOptions> ServiceOptions = new();
     static readonly List<Project> ServiceProjects = new();
@@ -326,7 +330,26 @@ class Build : NukeBuild
                 }
             );
 
-    Target Publish => _ => _.DependsOn(PublishDesktop, PublishAndroid, PublishBrowser);
+    Target PublishOnTelegram =>
+        _ => _.DependsOn(PublishDesktop, PublishAndroid, PublishBrowser)
+            .Executes(() =>
+                {
+                    var botClient = new TelegramBotClient(TelegramToken);
+                    using var stream = AndroidFolder.GetFiles()
+                        .Single(x => x.Name.EndsWith("Signed.apk"))
+                        .Open(FileMode.Open);
+
+                    botClient.SendDocumentAsync(
+                            chatId: "@spravy_release",
+                            document: InputFile.FromStream(stream: stream, fileName: "Android.zip"),
+                            caption: "Android APK"
+                        )
+                        .GetAwaiter()
+                        .GetResult();
+                }
+            );
+
+    Target Publish => _ => _.DependsOn(PublishOnTelegram);
 
     void DeployDesktop(string runtime)
     {

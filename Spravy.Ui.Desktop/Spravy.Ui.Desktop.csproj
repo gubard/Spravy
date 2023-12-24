@@ -10,6 +10,7 @@
         <PublishReadyToRun>true</PublishReadyToRun>
         <SelfContained Condition="'$(Configuration)' == 'Release'">true</SelfContained>
         <PublishSingleFile>true</PublishSingleFile>
+        <ApplicationIcon>Resources\Logo.ico</ApplicationIcon>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -38,5 +39,11 @@
       <EmbeddedResource Include="ILLink.Descriptors.xml">
         <LogicalName>ILLink.Descriptors.xml</LogicalName>
       </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Resource Include="Resources\Logo.ico">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
     </ItemGroup>
 </Project>
