@@ -4,7 +4,6 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using AutoMapper;
 using Avalonia.Controls;
 using Ninject;
 using ReactiveUI;
@@ -12,13 +11,16 @@ using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
+using Spravy.Ui.Extensions;
 using Spravy.Ui.Helpers;
+using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
+using Spravy.Ui.Services;
 using Spravy.Ui.Views;
 
 namespace Spravy.Ui.ViewModels;
 
-public class LoginViewModel : NavigatableViewModelBase
+public class LoginViewModel : NavigatableViewModelBase, ILoginProperties
 {
     private string login = string.Empty;
     private string password = string.Empty;
@@ -26,8 +28,6 @@ public class LoginViewModel : NavigatableViewModelBase
 
     public LoginViewModel() : base(false)
     {
-        LoginCommand = CreateCommandFromTask(TaskWork.Create(LoginAsync).RunAsync);
-        CreateUserCommand = CreateCommandFromTask(TaskWork.Create(CreateUserAsync).RunAsync);
         EnterCommand = CreateCommandFromTask<LoginView>(TaskWork.Create<LoginView>(EnterAsync).RunAsync);
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
     }
@@ -37,9 +37,6 @@ public class LoginViewModel : NavigatableViewModelBase
 
     [Inject]
     public required ITokenService TokenService { get; init; }
-
-    [Inject]
-    public required IMapper Mapper { get; init; }
 
     [Inject]
     public required IObjectStorage ObjectStorage { get; init; }
@@ -63,8 +60,6 @@ public class LoginViewModel : NavigatableViewModelBase
     }
 
     public ICommand InitializedCommand { get; }
-    public ICommand LoginCommand { get; }
-    public ICommand CreateUserCommand { get; }
     public ICommand EnterCommand { get; }
 
     private async Task InitializedAsync(CancellationToken cancellationToken)
@@ -108,41 +103,7 @@ public class LoginViewModel : NavigatableViewModelBase
             return;
         }
 
-        await LoginAsync(cancellationToken).ConfigureAwait(false);
-    }
-
-    private async Task CreateUserAsync(CancellationToken cancellationToken)
-    {
-        await Navigator.NavigateToAsync(ActionHelper<CreateUserViewModel>.Empty, cancellationToken)
-            .ConfigureAwait(false);
-    }
-
-    private async Task LoginAsync(CancellationToken cancellationToken)
-    {
-        var user = Mapper.Map<User>(this);
-        await TokenService.LoginAsync(user, cancellationToken).ConfigureAwait(false);
-        Account.Login = user.Login;
-        await RememberMeAsync(cancellationToken);
-
-        await Navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken)
-            .ConfigureAwait(false);
-    }
-
-    private async Task RememberMeAsync(CancellationToken cancellationToken)
-    {
-        if (!IsRememberMe)
-        {
-            return;
-        }
-
-        var token = await TokenService.GetTokenAsync(cancellationToken).ConfigureAwait(false);
-
-        var item = new LoginStorageItem
-        {
-            Token = token,
-        };
-
-        await ObjectStorage.SaveObjectAsync(FileIds.LoginFileId, item).ConfigureAwait(false);
+        await this.InvokeUIAsync(() => CommandStorage.LoginCommand.Execute(this));
     }
 
     public override void Stop()

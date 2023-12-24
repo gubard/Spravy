@@ -1,17 +1,19 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:controls1="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
-             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             xmlns:helpers="clr-namespace:Spravy.Ui.Helpers"
-             xmlns:models="clr-namespace:Spravy.Ui.Models"
-             xmlns:system="clr-namespace:System;assembly=System.Runtime"
-             xmlns:interfaces="clr-namespace:Spravy.Ui.Interfaces"
-             xmlns:services="clr-namespace:Spravy.Ui.Services"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Spravy.Ui.Views.PageHeaderView"
-             x:DataType="interfaces:IPageHeaderDataType">
+<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:PageHeaderViewModel"
+                                xmlns="https://github.com/avaloniaui"
+                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                                xmlns:controls1="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
+                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                                xmlns:helpers="clr-namespace:Spravy.Ui.Helpers"
+                                xmlns:models="clr-namespace:Spravy.Ui.Models"
+                                xmlns:system="clr-namespace:System;assembly=System.Runtime"
+                                xmlns:services="clr-namespace:Spravy.Ui.Services"
+                                xmlns:reactiveUi="http://reactiveui.net"
+                                xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
+                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                                x:Class="Spravy.Ui.Views.PageHeaderView"
+                                x:DataType="viewModels:PageHeaderViewModel">
     <UserControl.Styles>
         <Style Selector="ItemsControl.adaptive">
             <Setter Property="(Interaction.Behaviors)">
@@ -124,4 +126,4 @@
             </StackPanel>
         </Grid>
     </controls1:ColorZone>
-</UserControl>
+</reactiveUi:ReactiveUserControl>

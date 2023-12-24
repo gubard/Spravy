@@ -15,15 +15,13 @@ namespace Spravy.Ui.ViewModels;
 
 public class ChangeToDoItemOrderIndexViewModel : ViewModelBase
 {
-    private readonly TaskWork initializedWork;
     private Guid id;
     private bool isAfter = true;
     private ToDoShortItemNotify? selectedItem;
 
     public ChangeToDoItemOrderIndexViewModel()
     {
-        initializedWork = new(InitializedAsync);
-        InitializedCommand = CreateInitializedCommand(initializedWork.RunAsync);
+        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
     }
 
     public ICommand InitializedCommand { get; }

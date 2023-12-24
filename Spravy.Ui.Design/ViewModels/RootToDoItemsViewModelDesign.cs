@@ -23,7 +23,6 @@ public class RootToDoItemsViewModelDesign : RootToDoItemsViewModel
         );
 
         ToDoService = toDoServiceDesign;
-        Mapper = ConstDesign.Mapper;
 
         ToDoSubItemsViewModel = new ToDoSubItemsViewModelDesign
         {

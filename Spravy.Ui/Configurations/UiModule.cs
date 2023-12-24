@@ -14,7 +14,6 @@ using Spravy.Authentication.Domain.Client.Models;
 using Spravy.Authentication.Domain.Client.Services;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Mapper.Profiles;
-using Spravy.Authentication.Domain.Models;
 using Spravy.Authentication.Domain.Services;
 using Spravy.Authentication.Protos;
 using Spravy.Client.Interfaces;
@@ -86,7 +85,7 @@ public class UiModule : NinjectModule
         Bind<ITokenService>().To<TokenService>().InSingletonScope();
         Bind<IAuthenticationService>().ToMethod(context => context.Kernel.Get<GrpcAuthenticationService>());
         Bind<IScheduleService>().ToMethod(context => context.Kernel.Get<GrpcScheduleService>());
-        Bind<IKeeper<TokenResult>>().To<StaticKeeper<TokenResult>>();
+        //Bind<IKeeper<TokenResult>>().To<StaticKeeper<TokenResult>>();
         Bind<IKeeper<Guid>>().To<StaticKeeper<Guid>>();
         Bind<ToDoItemViewModel>().ToSelf();
         Bind<Control>().To<MainView>().OnActivation((c, x) => x.DataContext = c.Kernel.Get<MainViewModel>());

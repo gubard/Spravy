@@ -6,15 +6,17 @@ using Avalonia.Controls;
 using Ninject;
 using ReactiveUI;
 using Spravy.Authentication.Domain.Interfaces;
-using Spravy.Authentication.Domain.Models;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Models;
+using Spravy.Ui.Extensions;
+using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
+using Spravy.Ui.Services;
 using Spravy.Ui.Views;
 
 namespace Spravy.Ui.ViewModels;
 
-public class CreateUserViewModel : NavigatableViewModelBase
+public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperties
 {
     private string login = string.Empty;
     private string password = string.Empty;
@@ -23,7 +25,6 @@ public class CreateUserViewModel : NavigatableViewModelBase
 
     public CreateUserViewModel() : base(true)
     {
-        CreateUserCommand = CreateCommandFromTask(TaskWork.Create(CreateUserAsync).RunAsync);
         EnterCommand = CreateCommandFromTask<CreateUserView>(TaskWork.Create<CreateUserView>(EnterAsync).RunAsync);
         BackCommand = CreateCommandFromTask(TaskWork.Create(BackAsync).RunAsync);
     }
@@ -34,7 +35,6 @@ public class CreateUserViewModel : NavigatableViewModelBase
     [Inject]
     public required IMapper Mapper { get; init; }
 
-    public ICommand CreateUserCommand { get; }
     public ICommand EnterCommand { get; }
     public ICommand BackCommand { get; }
 
@@ -113,21 +113,7 @@ public class CreateUserViewModel : NavigatableViewModelBase
             return;
         }
 
-        await CreateUserAsync(cancellationToken).ConfigureAwait(false);
-    }
-
-    private async Task CreateUserAsync(CancellationToken cancellationToken)
-    {
-        if (Password != RepeatPassword)
-        {
-            throw new("Password not equal RepeatPassword.");
-        }
-
-        var options = Mapper.Map<CreateUserOptions>(this);
-        cancellationToken.ThrowIfCancellationRequested();
-        await AuthenticationService.CreateUserAsync(options, cancellationToken).ConfigureAwait(false);
-        cancellationToken.ThrowIfCancellationRequested();
-        await Navigator.NavigateToAsync(ActionHelper<LoginViewModel>.Empty, cancellationToken).ConfigureAwait(false);
+        await this.InvokeUIAsync(() => CommandStorage.CreateUserCommand.Execute(this));
     }
 
     private async Task BackAsync(CancellationToken cancellationToken)

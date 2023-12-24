@@ -8,7 +8,6 @@ public class LoginViewModelDesign : LoginViewModel
     public LoginViewModelDesign()
     {
         Navigator = ConstDesign.Navigator;
-        Mapper = ConstDesign.Mapper;
         DialogViewer = ConstDesign.DialogViewer;
     }
 }

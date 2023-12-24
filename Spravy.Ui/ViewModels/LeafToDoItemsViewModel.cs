@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,12 +18,11 @@ using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 
-public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh, IPageHeaderDataType
+public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
 {
     private Guid id;
     private Vector scrollOffset;
     private readonly TaskWork refreshWork;
-    private object? header = "Leaf";
 
     public LeafToDoItemsViewModel() : base(true)
     {
@@ -30,26 +30,19 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh, IPageH
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
         ToMultiEditingToDoItemsCommand =
             CreateInitializedCommand(TaskWork.Create(ToMultiEditingToDoItemsAsync).RunAsync);
-        Commands = new();
     }
 
     public ICommand InitializedCommand { get; }
-    public CommandItem? LeftCommand { get; } = null;
-    public CommandItem? RightCommand { get; } = null;
-    public AvaloniaList<CommandItem> Commands { get; }
     public ICommand ToMultiEditingToDoItemsCommand { get; }
-
-    public object? Header
-    {
-        get => header;
-        set => this.RaiseAndSetIfChanged(ref header, value);
-    }
 
     public Vector ScrollOffset
     {
         get => scrollOffset;
         set => this.RaiseAndSetIfChanged(ref scrollOffset, value);
     }
+
+    [Inject]
+    public required PageHeaderViewModel PageHeaderViewModel { get; init; }
 
     [Inject]
     public required IToDoService ToDoService { get; init; }
@@ -94,7 +87,7 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh, IPageH
         await this.InvokeUIAsync(
             () =>
             {
-                Commands.Add(
+                PageHeaderViewModel.Commands.Add(
                     new CommandItem(
                         MaterialIconKind.CheckAll,
                         ToDoSubItemsViewModel.MultiCompleteCommand,
@@ -102,7 +95,7 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh, IPageH
                         null
                     )
                 );
-                Commands.Add(
+                PageHeaderViewModel.Commands.Add(
                     new CommandItem(
                         MaterialIconKind.Switch,
                         ToDoSubItemsViewModel.MultiChangeTypeCommand,
@@ -110,7 +103,7 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh, IPageH
                         null
                     )
                 );
-                Commands.Add(
+                PageHeaderViewModel.Commands.Add(
                     new CommandItem(
                         MaterialIconKind.SwapHorizontal,
                         ToDoSubItemsViewModel.MultiChangeRootItemCommand,

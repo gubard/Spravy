@@ -9,6 +9,7 @@
                                 xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
                                 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                 xmlns:views="clr-namespace:Spravy.Ui.Views"
+                                xmlns:services="clr-namespace:Spravy.Ui.Services"
                                 mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                                 x:Class="Spravy.Ui.Views.LoginView"
                                 x:DataType="viewModels:LoginViewModel">
@@ -48,12 +49,14 @@
             </CheckBox>
 
             <Grid ColumnDefinitions="*,*">
-                <Button Command="{Binding CreateUserCommand}">
+                <Button Command="{x:Static services:CommandStorage.NavigateToCommand}"
+                        CommandParameter="{x:Type viewModels:CreateUserViewModel}">
                     <avalonia:MaterialIcon Kind="AccountPlus" />
                 </Button>
 
                 <Button Grid.Column="1"
-                        Command="{Binding LoginCommand}">
+                        Command="{x:Static services:CommandStorage.LoginCommand}"
+                        CommandParameter="{Binding}">
                     <avalonia:MaterialIcon Kind="Login" />
                 </Button>
             </Grid>

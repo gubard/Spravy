@@ -19,12 +19,13 @@ namespace Spravy.Ui.ViewModels;
 public class ToDoItemSelectorViewModel : ViewModelBase
 {
     private ToDoSelectorItemNotify? selectedItem;
-    private string searchText;
+    private string searchText = string.Empty;
+    private readonly List<ToDoSelectorItemNotify> itemsCache = new();
 
     public ToDoItemSelectorViewModel()
     {
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
-        SearchCommand = CreateInitializedCommand(TaskWork.Create(Refresh).RunAsync);
+        SearchCommand = CreateInitializedCommand(TaskWork.Create(SearchAsync).RunAsync);
     }
 
     [Inject]
@@ -62,20 +63,45 @@ public class ToDoItemSelectorViewModel : ViewModelBase
     {
         await this.InvokeUIBackgroundAsync(() => Roots.Clear());
 
+        var items = await ToDoService.GetToDoSelectorItemsAsync(IgnoreIds.ToArray(), cancellationToken)
+            .ConfigureAwait(false);
+
+        itemsCache.Clear();
+        itemsCache.AddRange(Mapper.Map<IEnumerable<ToDoSelectorItemNotify>>(items));
+        await this.InvokeUIBackgroundAsync(() => Roots.AddRange(itemsCache));
+    }
+
+    private async Task SearchAsync(CancellationToken cancellationToken)
+    {
+        await this.InvokeUIBackgroundAsync(() => Roots.Clear());
+
         if (SearchText.IsNullOrWhiteSpace())
         {
-            var items = await ToDoService.GetToDoSelectorItemsAsync(IgnoreIds.ToArray(), cancellationToken)
-                .ConfigureAwait(false);
-            await this.InvokeUIBackgroundAsync(() => Roots.AddRange(Mapper.Map<IEnumerable<ToDoSelectorItemNotify>>(items)));
-        }
-        else
-        {
-            var items = await ToDoService.SearchToDoItemIdsAsync(SearchText, cancellationToken).ConfigureAwait(false);
+            await this.InvokeUIBackgroundAsync(() => Roots.AddRange(itemsCache));
 
-            await foreach (var i in ToDoService.GetToDoItemsAsync(items.ToArray(), 5, cancellationToken))
-            {
-                await this.InvokeUIBackgroundAsync(() => Roots.AddRange(Mapper.Map<IEnumerable<ToDoSelectorItemNotify>>(i)));
-            }
+            return;
+        }
+
+        var result = new List<ToDoSelectorItemNotify>();
+
+        foreach (var item in itemsCache)
+        {
+            Search(item, result);
+        }
+
+        await this.InvokeUIBackgroundAsync(() => Roots.AddRange(result));
+    }
+
+    private void Search(ToDoSelectorItemNotify item, List<ToDoSelectorItemNotify> result)
+    {
+        if (item.Name.ToUpperInvariant().Contains(SearchText.ToUpperInvariant()))
+        {
+            result.Add(item);
+        }
+
+        foreach (var child in item.Children)
+        {
+            Search(child, result);
         }
     }
 

@@ -1,7 +1,6 @@
 using Spravy.Authentication.Domain.Client.Models;
 using Spravy.Authentication.Domain.Client.Services;
 using Spravy.Authentication.Domain.Mapper.Profiles;
-using Spravy.Authentication.Domain.Models;
 using Spravy.Authentication.Domain.Services;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
@@ -42,7 +41,7 @@ public static class ServiceCollectionExtension
         serviceCollection.AddSingleton<IDbContextSetup, SqliteScheduleDbContextSetup>();
         serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<SqliteFolderOptions>());
         serviceCollection.AddSingleton<IFactory<string, IEventBusService>, EventBusServiceFactory>();
-        serviceCollection.AddSingleton<IKeeper<TokenResult>, StaticKeeper<TokenResult>>();
+        //serviceCollection.AddSingleton<IKeeper<TokenResult>, StaticKeeper<TokenResult>>();
         serviceCollection.AddSingleton<ITokenService, TokenService>();
         serviceCollection.AddSingleton<IMetadataFactory, MetadataFactory>();
         serviceCollection.AddSingleton<ContextAccessorUserIdHttpHeaderFactory>();

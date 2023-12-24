@@ -6,41 +6,46 @@
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                                xmlns:services="clr-namespace:Spravy.Ui.Services"
                                 mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                                 x:Class="Spravy.Ui.Views.PaneView"
                                 x:DataType="viewModels:PaneViewModel">
     <StackPanel>
         <TextBlock Text="{Binding Account.Login}" Classes="Headline4" />
 
-        <Button Command="{Binding ToRootToDoItemViewCommand}">
+        <Button Command="{x:Static services:CommandStorage.NavigateToCommand}"
+                CommandParameter="{x:Type viewModels:RootToDoItemsViewModel}">
             <Grid ColumnDefinitions="Auto,Auto">
                 <avalonia:MaterialIcon Kind="Checks" />
                 <TextBlock Grid.Column="1" Text="To Do Items" />
             </Grid>
         </Button>
 
-        <Button Command="{Binding ToSearchViewCommand}">
+        <Button Command="{x:Static services:CommandStorage.NavigateToCommand}"
+                CommandParameter="{x:Type viewModels:SearchViewModel}">
             <Grid ColumnDefinitions="Auto,Auto">
                 <avalonia:MaterialIcon Kind="Search" />
                 <TextBlock Grid.Column="1" Text="Search" />
             </Grid>
         </Button>
 
-        <Button Command="{Binding ToTimersViewCommand}">
+        <Button Command="{x:Static services:CommandStorage.NavigateToCommand}"
+                CommandParameter="{x:Type viewModels:TimersViewModel}">
             <Grid ColumnDefinitions="Auto,Auto">
                 <avalonia:MaterialIcon Kind="Timer" />
                 <TextBlock Grid.Column="1" Text="Timers" />
             </Grid>
         </Button>
 
-        <Button Command="{Binding ToSettingViewCommand}">
+        <Button Command="{x:Static services:CommandStorage.NavigateToCommand}"
+                CommandParameter="{x:Type viewModels:SettingViewModel}">
             <Grid ColumnDefinitions="Auto,Auto">
                 <avalonia:MaterialIcon Kind="Settings" />
                 <TextBlock Grid.Column="1" Text="Settings" />
             </Grid>
         </Button>
 
-        <Button Command="{Binding LogoutCommand}">
+        <Button Command="{x:Static services:CommandStorage.LogoutCommand}">
             <Grid ColumnDefinitions="Auto,Auto">
                 <avalonia:MaterialIcon Kind="Logout" />
                 <TextBlock Grid.Column="1" Text="Logout" />
