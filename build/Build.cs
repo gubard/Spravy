@@ -264,10 +264,10 @@ class Build : NukeBuild
                         $"echo {SshPassword} | sudo -S cp -rf /home/{FtpUser}/Apps/Spravy.Ui.Android/com.SerhiiMaksymovFOP.Spravy-Signed.apk /var/www/spravy.com.ua/html"
                     );
                     sshClient.SafeRun(
-                        $"echo {SshPassword} | zip -r /var/www/spravy.com.ua/html/Spravy.Linux-x64.zip /Prod/home/vafnir/Apps/Spravy.Ui.Desktop/linux-x64/*"
+                        $"echo {SshPassword} | zip -r /var/www/spravy.com.ua/html/Spravy.Linux-x64.zip /home/vafnir/Apps/Spravy.Ui.Desktop/linux-x64/*"
                     );
                     sshClient.SafeRun(
-                        $"echo {SshPassword} | zip -r /var/www/spravy.com.ua/html/Spravy.Windows-x64.zip /Prod/home/vafnir/Apps/Spravy.Ui.Desktop/win-x64/*"
+                        $"echo {SshPassword} | zip -r /var/www/spravy.com.ua/html/Spravy.Windows-x64.zip /home/vafnir/Apps/Spravy.Ui.Desktop/win-x64/*"
                     );
                     sshClient.SafeRun($"echo {SshPassword} | sudo -S chown -R $USER:$USER /var/www/spravy.com.ua/html");
                     sshClient.SafeRun($"echo {SshPassword} | sudo -S chmod -R 755 /var/www/spravy.com.ua");
