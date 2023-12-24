@@ -338,7 +338,7 @@ class Build : NukeBuild
                     //var file = AndroidFolder.GetFiles().Single(x => x.Name.EndsWith("Signed.apk"));
                     var file = "/tmp/test.txt".ToFile();
                     using var stream = file.Open(FileMode.Open);
-                    Log.Information("Apk file {File} size {Size}MB", file, stream.Length / 125000);
+                    Log.Information("Apk file {File} size {Size}", file, stream.Length);
 
                     botClient.SendDocumentAsync(
                             chatId: "@spravy_release",
