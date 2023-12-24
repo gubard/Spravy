@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -11,6 +10,8 @@ using _build.Helpers;
 using _build.Models;
 using CliWrap;
 using FluentFTP;
+using Ionic.Zip;
+using Ionic.Zlib;
 using Microsoft.IdentityModel.Tokens;
 using Nuke.Common;
 using Nuke.Common.ProjectModel;
@@ -336,8 +337,16 @@ class Build : NukeBuild
                 {
                     var botClient = new TelegramBotClient(TelegramToken);
                     var file = AndroidFolder.GetFiles().Single(x => x.Name.EndsWith("Signed.apk"));
-                    //var file = "/tmp/test.txt".ToFile();
-                    using var stream = file.Open(FileMode.Open);
+                    var zipFile = AndroidFolder.ToFile("Android.zip");
+
+                    using var zip = new ZipFile
+                    {
+                        CompressionLevel = CompressionLevel.BestCompression
+                    };
+
+                    zip.AddFile(file.FullName);
+                    zip.Save(zipFile.FullName);
+                    using var stream = zipFile.Open(FileMode.Open);
                     Log.Information("Apk file {File} size {Size}", file, stream.Length);
 
                     botClient.SendDocumentAsync(
