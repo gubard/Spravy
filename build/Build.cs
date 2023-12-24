@@ -10,16 +10,12 @@ using _build.Helpers;
 using _build.Models;
 using CliWrap;
 using FluentFTP;
-using Ionic.Zip;
-using Ionic.Zlib;
 using Microsoft.IdentityModel.Tokens;
 using Nuke.Common;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tools.DotNet;
 using Renci.SshNet;
 using Serilog;
-using Telegram.Bot;
-using Telegram.Bot.Types;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 namespace _build;
@@ -237,7 +233,7 @@ class Build : NukeBuild
 
     Target PublishDesktop =>
         _ => _
-            .DependsOn(PublishServices)
+            .DependsOn(PublishAndroid)
             .Executes(() =>
                 {
                     DeployDesktop("linux-x64");
@@ -262,6 +258,9 @@ class Build : NukeBuild
                     sshClient.SafeRun($"echo {SshPassword} | sudo -S rm -rf /var/www/spravy.com.ua/html/*");
                     sshClient.SafeRun(
                         $"echo {SshPassword} | sudo -S cp -rf /home/{FtpUser}/{browserProject.Name}/* /var/www/spravy.com.ua/html"
+                    );
+                    sshClient.SafeRun(
+                        $"echo {SshPassword} | sudo -S cp -rf {AndroidFolder.GetFiles().Single(x=>x.Name.EndsWith("Signed.apk"))} /var/www/spravy.com.ua/html"
                     );
                     sshClient.SafeRun($"echo {SshPassword} | sudo -S chown -R $USER:$USER /var/www/spravy.com.ua/html");
                     sshClient.SafeRun($"echo {SshPassword} | sudo -S chmod -R 755 /var/www/spravy.com.ua");
@@ -331,35 +330,7 @@ class Build : NukeBuild
                 }
             );
 
-    Target PublishOnTelegram =>
-        _ => _.DependsOn(PublishDesktop, PublishAndroid, PublishBrowser)
-            .Executes(() =>
-                {
-                    var botClient = new TelegramBotClient(TelegramToken);
-                    var file = AndroidFolder.GetFiles().Single(x => x.Name.EndsWith("Signed.apk"));
-                    var zipFile = AndroidFolder.ToFile("Android.zip");
-
-                    using var zip = new ZipFile
-                    {
-                        CompressionLevel = CompressionLevel.BestCompression
-                    };
-
-                    zip.AddFile(file.FullName);
-                    zip.Save(zipFile.FullName);
-                    using var stream = zipFile.Open(FileMode.Open);
-                    Log.Information("Apk file {File} size {Size}", file, stream.Length);
-
-                    botClient.SendDocumentAsync(
-                            chatId: "@spravy_release",
-                            document: InputFile.FromStream(stream: stream, fileName: "Android.apk"),
-                            caption: "Android APK"
-                        )
-                        .GetAwaiter()
-                        .GetResult();
-                }
-            );
-
-    Target Publish => _ => _.DependsOn(PublishOnTelegram);
+    Target Publish => _ => _.DependsOn(PublishDesktop, PublishBrowser);
 
     void DeployDesktop(string runtime)
     {
