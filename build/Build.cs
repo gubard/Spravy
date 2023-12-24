@@ -10,6 +10,7 @@ using _build.Helpers;
 using _build.Models;
 using CliWrap;
 using FluentFTP;
+using Ionic.Zip;
 using Microsoft.IdentityModel.Tokens;
 using Nuke.Common;
 using Nuke.Common.ProjectModel;
@@ -233,7 +234,7 @@ class Build : NukeBuild
 
     Target PublishDesktop =>
         _ => _
-            .DependsOn(PublishAndroid)
+            .DependsOn(PublishServices)
             .Executes(() =>
                 {
                     DeployDesktop("linux-x64");
@@ -243,7 +244,7 @@ class Build : NukeBuild
 
     Target PublishBrowser =>
         _ => _
-            .DependsOn(Compile)
+            .DependsOn(PublishAndroid, PublishDesktop)
             .Executes(() =>
                 {
                     using var sshClient = new SshClient(CreateSshConnection());
@@ -261,6 +262,12 @@ class Build : NukeBuild
                     );
                     sshClient.SafeRun(
                         $"echo {SshPassword} | sudo -S cp -rf /home/{FtpUser}/Apps/Spravy.Ui.Android/com.SerhiiMaksymovFOP.Spravy-Signed.apk /var/www/spravy.com.ua/html"
+                    );
+                    sshClient.SafeRun(
+                        $"echo {SshPassword} | zip -r /var/www/spravy.com.ua/html/Spravy.Linux-x64.zip /Prod/home/vafnir/Apps/Spravy.Ui.Desktop/linux-x64/*"
+                    );
+                    sshClient.SafeRun(
+                        $"echo {SshPassword} | zip -r /var/www/spravy.com.ua/html/Spravy.Windows-x64.zip /Prod/home/vafnir/Apps/Spravy.Ui.Desktop/win-x64/*"
                     );
                     sshClient.SafeRun($"echo {SshPassword} | sudo -S chown -R $USER:$USER /var/www/spravy.com.ua/html");
                     sshClient.SafeRun($"echo {SshPassword} | sudo -S chmod -R 755 /var/www/spravy.com.ua");
@@ -330,7 +337,7 @@ class Build : NukeBuild
                 }
             );
 
-    Target Publish => _ => _.DependsOn(PublishDesktop, PublishBrowser);
+    Target Publish => _ => _.DependsOn(PublishBrowser);
 
     void DeployDesktop(string runtime)
     {
