@@ -338,7 +338,8 @@ class Build : NukeBuild
                     using var stream = AndroidFolder.GetFiles()
                         .Single(x => x.Name.EndsWith("Signed.apk"))
                         .Open(FileMode.Open);
-
+                    Log.Information("Apk file size {Size}MB", stream.Length / 125000);
+                    
                     botClient.SendDocumentAsync(
                             chatId: "@spravy_release",
                             document: InputFile.FromStream(stream: stream, fileName: "Android.zip"),
