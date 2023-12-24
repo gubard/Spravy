@@ -335,14 +335,14 @@ class Build : NukeBuild
             .Executes(() =>
                 {
                     var botClient = new TelegramBotClient(TelegramToken);
-                    //var file = AndroidFolder.GetFiles().Single(x => x.Name.EndsWith("Signed.apk"));
-                    var file = "/tmp/test.txt".ToFile();
+                    var file = AndroidFolder.GetFiles().Single(x => x.Name.EndsWith("Signed.apk"));
+                    //var file = "/tmp/test.txt".ToFile();
                     using var stream = file.Open(FileMode.Open);
                     Log.Information("Apk file {File} size {Size}", file, stream.Length);
 
                     botClient.SendDocumentAsync(
                             chatId: "@spravy_release",
-                            document: InputFile.FromStream(stream: stream, fileName: "Android.zip"),
+                            document: InputFile.FromStream(stream: stream, fileName: "Android.apk"),
                             caption: "Android APK"
                         )
                         .GetAwaiter()
