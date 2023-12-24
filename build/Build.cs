@@ -335,7 +335,8 @@ class Build : NukeBuild
             .Executes(() =>
                 {
                     var botClient = new TelegramBotClient(TelegramToken);
-                    var file = AndroidFolder.GetFiles().Single(x => x.Name.EndsWith("Signed.apk"));
+                    //var file = AndroidFolder.GetFiles().Single(x => x.Name.EndsWith("Signed.apk"));
+                    var file = "/tmp/test.txt".ToFile();
                     using var stream = file.Open(FileMode.Open);
                     Log.Information("Apk file {File} size {Size}MB", file, stream.Length / 125000);
 
