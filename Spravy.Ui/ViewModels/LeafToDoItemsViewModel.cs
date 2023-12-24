@@ -1,12 +1,10 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
 using Avalonia;
-using Avalonia.Collections;
 using Material.Icons;
 using Ninject;
 using ReactiveUI;
@@ -28,12 +26,9 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
     {
         refreshWork = TaskWork.Create(RefreshCoreAsync);
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
-        ToMultiEditingToDoItemsCommand =
-            CreateInitializedCommand(TaskWork.Create(ToMultiEditingToDoItemsAsync).RunAsync);
     }
 
     public ICommand InitializedCommand { get; }
-    public ICommand ToMultiEditingToDoItemsCommand { get; }
 
     public Vector ScrollOffset
     {
@@ -75,11 +70,6 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
         var offset = ScrollOffset;
         await ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, cancellationToken).ConfigureAwait(false);
         await this.InvokeUIAsync(() => ScrollOffset = offset);
-    }
-
-    private Task ToMultiEditingToDoItemsAsync(CancellationToken cancellationToken)
-    {
-        return Task.CompletedTask;
     }
 
     private async Task InitializedAsync(CancellationToken cancellationToken)

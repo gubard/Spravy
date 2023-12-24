@@ -8,6 +8,7 @@
                                 xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
                                 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                 xmlns:mdxaml="https://github.com/whistyun/Markdown.Avalonia"
+                                xmlns:services="clr-namespace:Spravy.Ui.Services"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.ToDoItemView"
                                 x:DataType="viewModels:ToDoItemViewModel">
@@ -19,7 +20,7 @@
 
     <Grid RowDefinitions="Auto, Auto,*">
         <Grid RowDefinitions="*,4">
-            <ContentControl Content="{Binding PageHeaderViewModel}"/>
+            <ContentControl Content="{Binding PageHeaderViewModel}" />
 
             <Rectangle Grid.Row="1"
                        Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
@@ -40,7 +41,9 @@
                          Classes="outline dense with-button"
                          Theme="{StaticResource OutlineTextBox}">
                     <TextBox.InnerLeftContent>
-                        <Button Command="{Binding ChangeTypeCommand}" Margin="4,15,4,4">
+                        <Button Command="{x:Static services:CommandStorage.SetToDoTypeCommand}"
+                                CommandParameter="{Binding}"
+                                Margin="4,15,4,4">
                             <avalonia:MaterialIcon Kind="Pencil" />
                         </Button>
                     </TextBox.InnerLeftContent>
@@ -54,7 +57,9 @@
                          Classes="outline dense with-button"
                          Theme="{StaticResource OutlineTextBox}">
                     <TextBox.InnerLeftContent>
-                        <Button Command="{Binding ChangeLinkCommand}" Margin="4,15,4,4">
+                        <Button Command="{x:Static services:CommandStorage.SetToDoLinkCommand}"
+                                CommandParameter="{Binding}"
+                                Margin="4,15,4,4">
                             <avalonia:MaterialIcon Kind="Pencil" />
                         </Button>
                     </TextBox.InnerLeftContent>
@@ -68,7 +73,8 @@
                           IsExpanded="{Binding Description, Mode=OneWay, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}">
                     <Expander.Header>
                         <StackPanel Orientation="Horizontal" Height="60">
-                            <Button Command="{Binding ChangeDescriptionCommand}"
+                            <Button Command="{x:Static services:CommandStorage.SetToDoDescriptionCommand}"
+                                    CommandParameter="{Binding}"
                                     Classes="with-icon">
                                 <avalonia:MaterialIcon Kind="Pencil" />
                             </Button>

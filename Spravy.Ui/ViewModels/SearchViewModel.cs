@@ -12,7 +12,7 @@ using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 
-public class SearchViewModel : NavigatableViewModelBase, IRefresh
+public class SearchViewModel : NavigatableViewModelBase, IRefresh, IToDoItemSearchProperties
 {
     private string searchText = string.Empty;
     private readonly TaskWork refreshWork;

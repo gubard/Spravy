@@ -6,7 +6,6 @@ using Avalonia.Controls;
 using Ninject;
 using ReactiveUI;
 using Spravy.Authentication.Domain.Interfaces;
-using Spravy.Domain.Helpers;
 using Spravy.Domain.Models;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
@@ -26,7 +25,6 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
     public CreateUserViewModel() : base(true)
     {
         EnterCommand = CreateCommandFromTask<CreateUserView>(TaskWork.Create<CreateUserView>(EnterAsync).RunAsync);
-        BackCommand = CreateCommandFromTask(TaskWork.Create(BackAsync).RunAsync);
     }
 
     [Inject]
@@ -36,7 +34,6 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
     public required IMapper Mapper { get; init; }
 
     public ICommand EnterCommand { get; }
-    public ICommand BackCommand { get; }
 
     public string Email
     {
@@ -114,11 +111,6 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
         }
 
         await this.InvokeUIAsync(() => CommandStorage.CreateUserCommand.Execute(this));
-    }
-
-    private async Task BackAsync(CancellationToken cancellationToken)
-    {
-        await Navigator.NavigateToAsync(ActionHelper<LoginViewModel>.Empty, cancellationToken).ConfigureAwait(false);
     }
 
     public override void Stop()

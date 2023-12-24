@@ -40,7 +40,9 @@
                 </TextBox.InnerLeftContent>
             </TextBox>
 
-            <Button Grid.Column="2" Command="{Binding SearchCommand}">
+            <Button Grid.Column="2"
+                    Command="{x:Static services:CommandStorage.ToDoItemSearchCommand}"
+                    CommandParameter="{Binding}">
                 <avalonia:MaterialIcon Kind="Search" />
             </Button>
         </Grid>

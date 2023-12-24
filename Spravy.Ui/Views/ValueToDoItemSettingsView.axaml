@@ -7,6 +7,7 @@
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                 xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
                                 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                                xmlns:services="clr-namespace:Spravy.Ui.Services"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.ValueToDoItemSettingsView"
                                 x:DataType="viewModels:ValueToDoItemSettingsViewModel">
@@ -23,7 +24,9 @@
              Classes="outline dense with-button"
              Theme="{StaticResource OutlineTextBox}">
         <TextBox.InnerLeftContent>
-            <Button Command="{Binding ChangeChildrenTypeCommand}" Margin="4,15,4,4">
+            <Button Command="{x:Static services:CommandStorage.SetToDoChildrenTypeCommand}"
+                    CommandParameter="{Binding}"
+                    Margin="4,15,4,4">
                 <avalonia:MaterialIcon Kind="Pencil" />
             </Button>
         </TextBox.InnerLeftContent>

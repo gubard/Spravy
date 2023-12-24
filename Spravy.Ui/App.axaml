@@ -125,8 +125,8 @@
         <DataTemplate DataType="models:ToDoItemParentNotify">
             <StackPanel Orientation="Horizontal">
                 <Button Margin="3"
-                        Command="{Binding $parent[interfaces:IPathView].ChangeToDoItemByPathCommand}"
-                        CommandParameter="{Binding}"
+                        Command="{x:Static services:CommandStorage.NavigateToToDoItemCommand}"
+                        CommandParameter="{Binding Id}"
                         ClickMode="Release">
                     <TextBlock Text="{Binding Name}" />
                 </Button>
@@ -140,7 +140,8 @@
         <DataTemplate DataType="models:RootItem">
             <StackPanel Orientation="Horizontal">
                 <Button Margin="3"
-                        Command="{Binding $parent[interfaces:IPathView].ToRootItemCommand}"
+                        Command="{x:Static services:CommandStorage.NavigateToCommand}"
+                        CommandParameter="{x:Type viewModels:RootToDoItemsViewModel}"
                         ClickMode="Release">
                     <avalonia:MaterialIcon Kind="Home" />
                 </Button>

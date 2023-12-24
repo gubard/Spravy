@@ -33,7 +33,9 @@
             </Button>
         </Grid>
 
-        <TreeView Grid.Row="1" ItemsSource="{Binding Roots}" SelectionMode="Single"
+        <TreeView Grid.Row="1"
+                  ItemsSource="{Binding Roots}" 
+                  SelectionMode="Single"
                   SelectedItem="{Binding SelectedItem}" />
     </Grid>
 </reactiveUi:ReactiveUserControl>

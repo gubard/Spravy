@@ -2,13 +2,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using AutoMapper;
-using Avalonia.Collections;
 using Ninject;
-using Spravy.Domain.Helpers;
 using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Interfaces;
-using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 

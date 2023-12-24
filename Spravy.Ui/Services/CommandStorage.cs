@@ -25,7 +25,6 @@ using Spravy.Ui.Helpers;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 using Spravy.Ui.ViewModels;
-using Spravy.Domain.Extensions;
 
 namespace Spravy.Ui.Services;
 
@@ -137,6 +136,41 @@ public static class CommandStorage
             MaterialIconKind.Plus,
             "Add root to do item"
         );
+        ToDoItemSearch = CreateCommand<IToDoItemSearchProperties>(
+            ToDoItemSearchAsync,
+            MaterialIconKind.Search,
+            "Search to do item"
+        );
+        SetToDoType = CreateCommand<IToDoTypeProperty>(
+            SetToDoTypeAsync,
+            MaterialIconKind.Pencil,
+            "Set to do item type"
+        );
+        SetToDoLink = CreateCommand<IToDoLinkProperty>(
+            SetToDoLinkAsync,
+            MaterialIconKind.Pencil,
+            "Set to do item link"
+        );
+        SetToDoDescription = CreateCommand<IToDoDescriptionProperty>(
+            SetToDoDescriptionAsync,
+            MaterialIconKind.Pencil,
+            "Set to do item description"
+        );
+        ShowToDoSetting = CreateCommand<IToDoSettingsProperty>(
+            ShowToDoSettingAsync,
+            MaterialIconKind.Settings,
+            "Show to do setting"
+        );
+        AddToDoItemChild = CreateCommand<object>(
+            AddToDoItemChildAsync,
+            MaterialIconKind.Plus,
+            "Add child task"
+        );
+        NavigateToLeaf = CreateCommand<Guid>(
+            NavigateToLeafAsync,
+            MaterialIconKind.Leaf,
+            "Navigate to leaf"
+        );
     }
 
     private static readonly INavigator navigator;
@@ -148,6 +182,34 @@ public static class CommandStorage
     private static readonly IAuthenticationService authenticationService;
     private static readonly ITokenService tokenService;
     private static readonly IObjectStorage objectStorage;
+
+    public static CommandParameters<Guid> NavigateToLeaf { get; }
+    public static ICommand NavigateToLeafCommand => NavigateToLeaf.Value.Command;
+    public static CommandItem NavigateToLeafItem => NavigateToLeaf.Value;
+
+    public static CommandParameters<object> AddToDoItemChild { get; }
+    public static ICommand AddToDoItemChildCommand => AddToDoItemChild.Value.Command;
+    public static CommandItem AddToDoItemChildItem => AddToDoItemChild.Value;
+
+    public static CommandParameters<IToDoSettingsProperty> ShowToDoSetting { get; }
+    public static ICommand ShowToDoSettingCommand => ShowToDoSetting.Value.Command;
+    public static CommandItem ShowToDoSettingItem => ShowToDoSetting.Value;
+
+    public static CommandParameters<IToDoDescriptionProperty> SetToDoDescription { get; }
+    public static ICommand SetToDoDescriptionCommand => SetToDoDescription.Value.Command;
+    public static CommandItem SetToDoDescriptionItem => SetToDoDescription.Value;
+
+    public static CommandParameters<IToDoLinkProperty> SetToDoLink { get; }
+    public static ICommand SetToDoLinkCommand => SetToDoLink.Value.Command;
+    public static CommandItem SetToDoLinkItem => SetToDoLink.Value;
+
+    public static CommandParameters<IToDoTypeProperty> SetToDoType { get; }
+    public static ICommand SetToDoTypeCommand => SetToDoType.Value.Command;
+    public static CommandItem SetToDoTypeItem => SetToDoType.Value;
+
+    public static CommandParameters<IToDoItemSearchProperties> ToDoItemSearch { get; }
+    public static ICommand ToDoItemSearchCommand => ToDoItemSearch.Value.Command;
+    public static CommandItem ToDoItemSearchItem => ToDoItemSearch.Value;
 
     public static CommandParameters SwitchPane { get; }
     public static ICommand SwitchPaneCommand => SwitchPane.Value.Command;
@@ -250,6 +312,140 @@ public static class CommandStorage
     public static CommandItem AddRootToDoItemItem => AddRootToDoItem.Value;
 
     public static CommandParameters<AvaloniaList<Selected<ToDoItemNotify>>> SelectAll { get; }
+
+    private static Task NavigateToLeafAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return navigator.NavigateToAsync<LeafToDoItemsViewModel>(vm => vm.Id = id, cancellationToken);
+    }
+
+    private static Task AddToDoItemChildAsync(object value, CancellationToken cancellationToken)
+    {
+        return dialogViewer.ShowConfirmContentDialogAsync<AddToDoItemViewModel>(
+            async viewModel =>
+            {
+                await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
+                var parentValue = viewModel.Parent.ThrowIfNull();
+                var options = new AddToDoItemOptions(parentValue.Id, viewModel.Name, viewModel.Type);
+                await toDoService.AddToDoItemAsync(options, cancellationToken);
+
+                await navigator.NavigateToAsync<ToDoItemViewModel>(vm => vm.Id = parentValue.Id, cancellationToken)
+                    .ConfigureAwait(false);
+            },
+            async _ => await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false),
+            viewModel => viewModel.Parent = mapper.Map<ToDoItemNotify>(value),
+            cancellationToken
+        );
+    }
+
+    private static Task ShowToDoSettingAsync(IToDoSettingsProperty property, CancellationToken cancellationToken)
+    {
+        return property.Type switch
+        {
+            ToDoItemType.Value => dialogViewer.ShowInfoContentDialogAsync<ValueToDoItemSettingsViewModel>(
+                viewModel => viewModel.Id = property.Id,
+                cancellationToken
+            ),
+            ToDoItemType.Planned => dialogViewer.ShowInfoContentDialogAsync<PlannedToDoItemSettingsViewModel>(
+                viewModel => viewModel.Id = property.Id,
+                cancellationToken
+            ),
+            ToDoItemType.Periodicity => dialogViewer.ShowInfoContentDialogAsync<PeriodicityToDoItemSettingsViewModel>(
+                viewModel => viewModel.Id = property.Id,
+                cancellationToken
+            ),
+            ToDoItemType.PeriodicityOffset => dialogViewer
+                .ShowInfoContentDialogAsync<PeriodicityOffsetToDoItemSettingsViewModel>(
+                    viewModel => viewModel.Id = property.Id,
+                    cancellationToken
+                ),
+            ToDoItemType.Circle => dialogViewer.ShowInfoContentDialogAsync<ValueToDoItemSettingsViewModel>(
+                viewModel => viewModel.Id = property.Id,
+                cancellationToken
+            ),
+            ToDoItemType.Step => dialogViewer.ShowInfoContentDialogAsync<ValueToDoItemSettingsViewModel>(
+                viewModel => viewModel.Id = property.Id,
+                cancellationToken
+            ),
+            ToDoItemType.Group => throw new ArgumentOutOfRangeException(),
+            _ => throw new ArgumentOutOfRangeException()
+        };
+    }
+
+    private static Task SetToDoDescriptionAsync(IToDoDescriptionProperty property, CancellationToken cancellationToken)
+    {
+        return dialogViewer.ShowMultiStringConfirmDialogAsync(
+            async str =>
+            {
+                await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
+                await toDoService.UpdateToDoItemDescriptionAsync(property.Id, str, cancellationToken)
+                    .ConfigureAwait(false);
+                await property.RefreshAsync(cancellationToken).ConfigureAwait(false);
+            },
+            box =>
+            {
+                box.Text = property.Description;
+                box.Label = "Description";
+            },
+            cancellationToken
+        );
+    }
+
+    private static Task SetToDoLinkAsync(IToDoLinkProperty property, CancellationToken cancellationToken)
+    {
+        return dialogViewer.ShowSingleStringConfirmDialogAsync(
+            async value =>
+            {
+                await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
+                await toDoService.UpdateToDoItemLinkAsync(
+                        property.Id,
+                        value.IsNullOrWhiteSpace() ? null : value.ToUri(),
+                        cancellationToken
+                    )
+                    .ConfigureAwait(false);
+                await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
+            },
+            textBox =>
+            {
+                textBox.Text = property.Link;
+                textBox.Label = "Link";
+            },
+            cancellationToken
+        );
+    }
+
+    private static Task SetToDoTypeAsync(IToDoTypeProperty property, CancellationToken cancellationToken)
+    {
+        return dialogViewer.ShowItemSelectorDialogAsync<ToDoItemType>(
+            async item =>
+            {
+                await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
+                await toDoService.UpdateToDoItemTypeAsync(property.Id, item, cancellationToken).ConfigureAwait(false);
+                await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
+            },
+            viewModel =>
+            {
+                viewModel.Items.AddRange(Enum.GetValues<ToDoItemType>().OfType<object>());
+                viewModel.SelectedItem = property.Type;
+            },
+            cancellationToken
+        );
+    }
+
+    private static Task ToDoItemSearchAsync(IToDoItemSearchProperties properties, CancellationToken cancellationToken)
+    {
+        return dialogViewer.ShowConfirmContentDialogAsync(
+            async _ =>
+            {
+                var ids = await toDoService.SearchToDoItemIdsAsync(properties.SearchText, cancellationToken)
+                    .ConfigureAwait(false);
+                await properties.ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), properties, cancellationToken)
+                    .ConfigureAwait(false);
+            },
+            async _ => await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false),
+            ActionHelper<AddRootToDoItemViewModel>.Empty,
+            cancellationToken
+        );
+    }
 
     private static Task AddRootToDoItemAsync(CancellationToken cancellationToken)
     {
