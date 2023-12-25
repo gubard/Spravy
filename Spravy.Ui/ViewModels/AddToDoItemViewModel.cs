@@ -61,6 +61,12 @@ public class AddToDoItemViewModel : ViewModelBase
     private async Task InitializedAsync(CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
+
+        if (Parent is null)
+        {
+            return;
+        }
+
         var parents = await ToDoService.GetParentsAsync(Parent.ThrowIfNull().Id, cancellationToken)
             .ConfigureAwait(false);
         cancellationToken.ThrowIfCancellationRequested();

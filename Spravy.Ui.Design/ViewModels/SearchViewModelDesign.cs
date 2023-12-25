@@ -15,7 +15,6 @@ public class SearchViewModelDesign : SearchViewModel
             Mapper = ConstDesign.Mapper,
             Navigator = ConstDesign.Navigator,
             DialogViewer = ConstDesign.DialogViewer,
-            OpenerLink = ConstDesign.OpenerLink,
             ToDoService = new ToDoServiceDesign(
                 Enumerable.Empty<IToDoSubItem>(),
                 Enumerable.Empty<IToDoSubItem>(),
@@ -23,7 +22,6 @@ public class SearchViewModelDesign : SearchViewModel
                 Enumerable.Empty<ToDoShortItem>(),
                 Enumerable.Empty<IToDoSubItem>()
             ),
-            MultiEditingItemsViewModel = null,
             List = null,
         };
     }

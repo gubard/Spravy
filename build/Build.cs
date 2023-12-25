@@ -10,7 +10,6 @@ using _build.Helpers;
 using _build.Models;
 using CliWrap;
 using FluentFTP;
-using Ionic.Zip;
 using Microsoft.IdentityModel.Tokens;
 using Nuke.Common;
 using Nuke.Common.ProjectModel;

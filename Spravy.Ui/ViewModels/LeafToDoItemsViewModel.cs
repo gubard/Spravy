@@ -13,6 +13,7 @@ using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
+using Spravy.Ui.Services;
 
 namespace Spravy.Ui.ViewModels;
 
@@ -80,9 +81,9 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
                 PageHeaderViewModel.Commands.Add(
                     new CommandItem(
                         MaterialIconKind.CheckAll,
-                        ToDoSubItemsViewModel.MultiCompleteCommand,
+                        CommandStorage.MultiCompleteToDoItemsCommand,
                         string.Empty,
-                        null
+                        ToDoSubItemsViewModel.List.MultiToDoItems.GroupByNone.Items.Items
                     )
                 );
                 PageHeaderViewModel.Commands.Add(
@@ -96,7 +97,7 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
                 PageHeaderViewModel.Commands.Add(
                     new CommandItem(
                         MaterialIconKind.SwapHorizontal,
-                        ToDoSubItemsViewModel.MultiChangeRootItemCommand,
+                        ToDoSubItemsViewModel.MultiSetParentItemCommand,
                         string.Empty,
                         null
                     )

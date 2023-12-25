@@ -33,8 +33,6 @@ public class LeafToDoItemsViewModelDesign : LeafToDoItemsViewModel
             Navigator = ConstDesign.Navigator,
             DialogViewer = ConstDesign.DialogViewer,
             ToDoService = toDoServiceDesign,
-            OpenerLink = ConstDesign.OpenerLink,
-            MultiEditingItemsViewModel = null,
             List = null,
         };
     }

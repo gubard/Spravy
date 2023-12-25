@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
+using Avalonia.Input.Platform;
 using Material.Icons;
 using Ninject;
 using ReactiveUI;
@@ -33,6 +35,7 @@ public static class CommandStorage
     static CommandStorage()
     {
         var kernel = DiHelper.Kernel.ThrowIfNull();
+        clipboard = kernel.Get<IClipboard>();
         objectStorage = kernel.Get<IObjectStorage>();
         mapper = kernel.Get<IMapper>();
         tokenService = kernel.Get<ITokenService>();
@@ -171,6 +174,36 @@ public static class CommandStorage
             MaterialIconKind.Leaf,
             "Navigate to leaf"
         );
+        SetToDoParentItem = CreateCommand<IIdProperty>(
+            SetToDoParentItemAsync,
+            MaterialIconKind.SwapHorizontal,
+            "Set to do item parent"
+        );
+        MoveToDoItemToRoot = CreateCommand<IIdProperty>(
+            MoveToDoItemToRootAsync,
+            MaterialIconKind.FamilyTree,
+            "Move to do item to root"
+        );
+        ToDoItemToString = CreateCommand<IIdProperty>(
+            ToDoItemToStringAsync,
+            MaterialIconKind.ContentCopy,
+            "Copy to do item"
+        );
+        ToDoItemRandomizeChildrenOrderIndex = CreateCommand<IIdProperty>(
+            ToDoItemRandomizeChildrenOrderIndexAsync,
+            MaterialIconKind.ContentCopy,
+            "Randomize children order"
+        );
+        NavigateToCurrentToDoItem = CreateCommand(
+            NavigateToCurrentToDoItemAsync,
+            MaterialIconKind.ArrowRight,
+            "Open current to do item"
+        );
+        SetToDoItemName = CreateCommand<IToDoNameProperty>(
+            SetToDoItemNameAsync,
+            MaterialIconKind.Pencil,
+            "Open current to do item"
+        );
     }
 
     private static readonly INavigator navigator;
@@ -182,6 +215,34 @@ public static class CommandStorage
     private static readonly IAuthenticationService authenticationService;
     private static readonly ITokenService tokenService;
     private static readonly IObjectStorage objectStorage;
+    private static readonly IClipboard clipboard;
+    
+    public static CommandParameters<IToDoNameProperty> MultiCompleteToDoItems { get; }
+    public static ICommand MultiCompleteToDoItemsCommand => MultiCompleteToDoItems.Value.Command;
+    public static CommandItem MultiCompleteToDoItemsItem => MultiCompleteToDoItems.Value;
+    
+    public static CommandParameters<IToDoNameProperty> SetToDoItemName { get; }
+    public static ICommand SetToDoItemNameCommand => SetToDoItemName.Value.Command;
+    public static CommandItem SetToDoItemNameItem => SetToDoItemName.Value;
+
+    public static CommandParameters NavigateToCurrentToDoItem { get; }
+    public static ICommand NavigateToCurrentToDoItemCommand => NavigateToCurrentToDoItem.Value.Command;
+    public static CommandItem NavigateToCurrentToDoItemItem => NavigateToCurrentToDoItem.Value;
+
+    public static CommandParameters<IIdProperty> ToDoItemRandomizeChildrenOrderIndex { get; }
+
+    public static ICommand ToDoItemRandomizeChildrenOrderIndexCommand =>
+        ToDoItemRandomizeChildrenOrderIndex.Value.Command;
+
+    public static CommandItem ToDoItemRandomizeChildrenOrderIndexItem => ToDoItemRandomizeChildrenOrderIndex.Value;
+
+    public static CommandParameters<IIdProperty> ToDoItemToString { get; }
+    public static ICommand ToDoItemToStringCommand => ToDoItemToString.Value.Command;
+    public static CommandItem ToDoItemToStringItem => ToDoItemToString.Value;
+
+    public static CommandParameters<IIdProperty> MoveToDoItemToRoot { get; }
+    public static ICommand MoveToDoItemToRootCommand => MoveToDoItemToRoot.Value.Command;
+    public static CommandItem MoveToDoItemToRootItem => MoveToDoItemToRoot.Value;
 
     public static CommandParameters<Guid> NavigateToLeaf { get; }
     public static ICommand NavigateToLeafCommand => NavigateToLeaf.Value.Command;
@@ -311,7 +372,173 @@ public static class CommandStorage
     public static ICommand AddRootToDoItemCommand => AddRootToDoItem.Value.Command;
     public static CommandItem AddRootToDoItemItem => AddRootToDoItem.Value;
 
+    public static CommandParameters<IIdProperty> SetToDoParentItem { get; }
+    public static ICommand SetToDoParentItemCommand => SetToDoParentItem.Value.Command;
+    public static CommandItem SetToDoParentItemItem => SetToDoParentItem.Value;
+
     public static CommandParameters<AvaloniaList<Selected<ToDoItemNotify>>> SelectAll { get; }
+    
+    private static Task MultiCompleteToDoItemsAsync(AvaloniaList<Selected<ToDoItemNotify>> itemsNotify, CancellationToken cancellationToken)
+    {
+        var items = itemsNotify.Where(x => x.IsSelect).Select(x => x.Value).ToArray();
+
+        return dialogViewer.ShowInfoInputDialogAsync<CompleteToDoItemViewModel>(
+            _ => dialogViewer.CloseInputDialogAsync(cancellationToken),
+            viewModel =>
+            {
+                viewModel.SetAllStatus();
+
+                viewModel.Complete = async status =>
+                {
+                    await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
+                    await CompleteAsync(items, status, cancellationToken).ConfigureAwait(false);
+                    await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
+                };
+            },
+            cancellationToken
+        );
+    }
+    
+    private static async Task CompleteAsync(
+        IEnumerable<ToDoItemNotify> items,
+        CompleteStatus status,
+        CancellationToken cancellationToken
+    )
+    {
+        switch (status)
+        {
+            case CompleteStatus.Complete:
+                foreach (var item in items)
+                {
+                    await toDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true, cancellationToken)
+                        .ConfigureAwait(false);
+                }
+
+                break;
+            case CompleteStatus.Skip:
+                foreach (var item in items)
+                {
+                    await toDoService.SkipToDoItemAsync(item.Id, cancellationToken).ConfigureAwait(false);
+                }
+
+                break;
+            case CompleteStatus.Fail:
+                foreach (var item in items)
+                {
+                    await toDoService.FailToDoItemAsync(item.Id, cancellationToken).ConfigureAwait(false);
+                }
+
+                break;
+            case CompleteStatus.Incomplete:
+                foreach (var item in items)
+                {
+                    await toDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true, cancellationToken)
+                        .ConfigureAwait(false);
+                }
+
+                break;
+            default: throw new ArgumentOutOfRangeException(nameof(status), status, null);
+        }
+    }
+
+    private static Task SetToDoItemNameAsync(IToDoNameProperty property, CancellationToken cancellationToken)
+    {
+        return dialogViewer.ShowSingleStringConfirmDialogAsync(
+            async str =>
+            {
+                await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
+                await toDoService.UpdateToDoItemNameAsync(property.Id, str, cancellationToken)
+                    .ConfigureAwait(false);
+                await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
+            },
+            box =>
+            {
+                box.Text = property.Name;
+                box.Label = "Name";
+            },
+            cancellationToken
+        );
+    }
+
+    private static async Task NavigateToCurrentToDoItemAsync(CancellationToken cancellationToken)
+    {
+        var activeToDoItem = await toDoService.GetCurrentActiveToDoItemAsync(cancellationToken).ConfigureAwait(false);
+
+        if (activeToDoItem.HasValue)
+        {
+            await navigator.NavigateToAsync<ToDoItemViewModel>(
+                    viewModel => viewModel.Id = activeToDoItem.Value.Id,
+                    cancellationToken
+                )
+                .ConfigureAwait(false);
+        }
+        else
+        {
+            await navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken)
+                .ConfigureAwait(false);
+        }
+    }
+
+    private static Task ToDoItemRandomizeChildrenOrderIndexAsync(
+        IIdProperty property,
+        CancellationToken cancellationToken
+    )
+    {
+        return dialogViewer.ShowConfirmContentDialogAsync<TextViewModel>(
+            async _ =>
+            {
+                await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
+                await toDoService.RandomizeChildrenOrderIndexAsync(property.Id, cancellationToken)
+                    .ConfigureAwait(false);
+                await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
+            },
+            async _ => await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false),
+            viewModel => viewModel.Text = "Are you sure?",
+            cancellationToken
+        );
+    }
+
+    private static Task ToDoItemToStringAsync(IIdProperty property, CancellationToken cancellationToken)
+    {
+        return dialogViewer.ShowConfirmContentDialogAsync(
+            async view =>
+            {
+                await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
+                var statuses = view.Statuses.Where(x => x.IsChecked).Select(x => x.Item);
+                var options = new ToDoItemToStringOptions(statuses, property.Id);
+                cancellationToken.ThrowIfCancellationRequested();
+                var text = await toDoService.ToDoItemToStringAsync(options, cancellationToken)
+                    .ConfigureAwait(false);
+                cancellationToken.ThrowIfCancellationRequested();
+                await clipboard.SetTextAsync(text).ConfigureAwait(false);
+            },
+            _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
+            ActionHelper<ToDoItemToStringSettingsViewModel>.Empty,
+            cancellationToken
+        );
+    }
+
+    private static async Task MoveToDoItemToRootAsync(IIdProperty property, CancellationToken cancellationToken)
+    {
+        await toDoService.ToDoItemToRootAsync(property.Id, cancellationToken).ConfigureAwait(false);
+        await navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    private static Task SetToDoParentItemAsync(IIdProperty property, CancellationToken cancellationToken)
+    {
+        return dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
+            async item =>
+            {
+                await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
+                await toDoService.UpdateToDoItemParentAsync(property.Id, item.Id, cancellationToken)
+                    .ConfigureAwait(false);
+                await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
+            },
+            ActionHelper<ToDoItemSelectorViewModel>.Empty,
+            cancellationToken
+        );
+    }
 
     private static Task NavigateToLeafAsync(Guid id, CancellationToken cancellationToken)
     {

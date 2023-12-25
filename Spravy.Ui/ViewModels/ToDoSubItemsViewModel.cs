@@ -23,41 +23,21 @@ namespace Spravy.Ui.ViewModels;
 
 public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 {
-    private GroupBy groupBy;
     private IRefresh? refreshToDoItem;
 
     public ToDoSubItemsViewModel()
     {
-        AddSubToDoItemToFavoriteCommand =
-            CreateCommandFromTask<ToDoItemNotify>(TaskWork.Create<ToDoItemNotify>(AddFavoriteToDoItemAsync).RunAsync);
-        RemoveSubToDoItemFromFavoriteCommand = CreateCommandFromTask<ToDoItemNotify>(
-            TaskWork.Create<ToDoItemNotify>(RemoveFavoriteToDoItemAsync).RunAsync
-        );
-        ChangeOrderIndexCommand =
-            CreateCommandFromTask<ToDoItemNotify>(TaskWork.Create<ToDoItemNotify>(ChangeOrderIndexAsync).RunAsync);
-        OpenLinkCommand =
-            CreateCommandFromTask<ToDoItemNotify>(TaskWork.Create<ToDoItemNotify>(OpenLinkAsync).RunAsync);
-        MultiCompleteCommand = CreateInitializedCommand(TaskWork.Create(MultiCompleteAsync).RunAsync);
+        //MultiCompleteCommand = CreateInitializedCommand(TaskWork.Create(MultiCompleteAsync).RunAsync);
         MultiChangeTypeCommand = CreateInitializedCommand(TaskWork.Create(MultiChangeTypeAsync).RunAsync);
-        MultiChangeRootItemCommand = CreateInitializedCommand(TaskWork.Create(MultiChangeRootItemAsync).RunAsync);
+        MultiSetParentItemCommand = CreateInitializedCommand(TaskWork.Create(MultiChangeRootItemAsync).RunAsync);
     }
 
-    public ICommand AddSubToDoItemToFavoriteCommand { get; }
-    public ICommand RemoveSubToDoItemFromFavoriteCommand { get; }
-    public ICommand ChangeOrderIndexCommand { get; }
-    public ICommand OpenLinkCommand { get; }
-    public ICommand MultiCompleteCommand { get; }
+   // public ICommand MultiCompleteCommand { get; }
     public ICommand MultiChangeTypeCommand { get; }
-    public ICommand MultiChangeRootItemCommand { get; }
+    public ICommand MultiSetParentItemCommand { get; }
 
     [Inject]
     public required MultiToDoItemsViewModel List { get; init; }
-
-    [Inject]
-    public required IOpenerLink MultiEditingItemsViewModel { get; init; }
-
-    [Inject]
-    public required IOpenerLink OpenerLink { get; init; }
 
     [Inject]
     public required IToDoService ToDoService { get; init; }
@@ -65,48 +45,9 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
     [Inject]
     public required IMapper Mapper { get; init; }
 
-    public GroupBy GroupBy
-    {
-        get => groupBy;
-        set => this.RaiseAndSetIfChanged(ref groupBy, value);
-    }
-
-    private async Task OpenLinkAsync(ToDoItemNotify item, CancellationToken cancellationToken)
-    {
-        var link = item.Link.ThrowIfNull().ToUri();
-        cancellationToken.ThrowIfCancellationRequested();
-        await OpenerLink.OpenLinkAsync(link, cancellationToken).ConfigureAwait(false);
-    }
-
-    private async Task ChangeOrderIndexAsync(ToDoItemNotify item, CancellationToken cancellationToken)
-    {
-        await DialogViewer.ShowConfirmContentDialogAsync<ChangeToDoItemOrderIndexViewModel>(
-                async viewModel =>
-                {
-                    await DialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
-                    var targetId = viewModel.SelectedItem.ThrowIfNull().Id;
-                    var options = new UpdateOrderIndexToDoItemOptions(viewModel.Id, targetId, viewModel.IsAfter);
-                    cancellationToken.ThrowIfCancellationRequested();
-                    await ToDoService.UpdateToDoItemOrderIndexAsync(options, cancellationToken).ConfigureAwait(false);
-                    cancellationToken.ThrowIfCancellationRequested();
-                    await RefreshAsync(cancellationToken).ConfigureAwait(false);
-                },
-                _ => DialogViewer.CloseContentDialogAsync(cancellationToken),
-                viewModel => viewModel.Id = item.Id,
-                cancellationToken
-            )
-            .ConfigureAwait(false);
-    }
-
     public async Task RefreshAsync(CancellationToken cancellationToken)
     {
         await refreshToDoItem.ThrowIfNull().RefreshAsync(cancellationToken).ConfigureAwait(false);
-    }
-
-    private async Task RemoveFavoriteToDoItemAsync(ToDoItemNotify item, CancellationToken cancellationToken)
-    {
-        await ToDoService.RemoveFavoriteToDoItemAsync(item.Id, cancellationToken).ConfigureAwait(false);
-        await RefreshAsync(cancellationToken).ConfigureAwait(false);
     }
 
     private async Task RefreshFavoriteToDoItemsAsync(CancellationToken cancellationToken)
@@ -135,29 +76,6 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
             await List.AddItemsAsync(itemNotify);
             cancellationToken.ThrowIfCancellationRequested();
         }
-    }
-
-    private async Task DeleteSubToDoItemAsync(IDeletable deletable, CancellationToken cancellationToken)
-    {
-        await DialogViewer.ShowConfirmContentDialogAsync<DeleteToDoItemViewModel>(
-                async view =>
-                {
-                    await DialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
-                    await ToDoService.DeleteToDoItemAsync(deletable.Id, cancellationToken)
-                        .ConfigureAwait(false);
-                    await RefreshAsync(cancellationToken).ConfigureAwait(false);
-                },
-                _ => DialogViewer.CloseContentDialogAsync(cancellationToken),
-                view => view.Header = deletable.Header,
-                cancellationToken
-            )
-            .ConfigureAwait(false);
-    }
-
-    private async Task AddFavoriteToDoItemAsync(ToDoItemNotify item, CancellationToken cancellationToken)
-    {
-        await ToDoService.AddFavoriteToDoItemAsync(item.Id, cancellationToken).ConfigureAwait(false);
-        await RefreshAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public async Task UpdateItemsAsync(Guid[] ids, IRefresh refresh, CancellationToken cancellationToken)
