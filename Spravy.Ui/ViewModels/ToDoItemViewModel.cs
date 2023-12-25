@@ -10,7 +10,6 @@ using Material.Icons;
 using Ninject;
 using ReactiveUI;
 using Spravy.Domain.Extensions;
-using Spravy.Domain.Helpers;
 using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
@@ -245,17 +244,17 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
             PageHeaderViewModel.Commands.Add(
                 new CommandItem(
                     MaterialIconKind.Switch,
-                    ToDoSubItemsViewModel.MultiChangeTypeCommand,
+                    CommandStorage.MultiSetTypeToDoItemsCommand,
                     string.Empty,
-                    null
+                    ToDoSubItemsViewModel.List.MultiToDoItems.GroupByNone.Items.Items
                 )
             );
             PageHeaderViewModel.Commands.Add(
                 new CommandItem(
                     MaterialIconKind.SwapHorizontal,
-                    ToDoSubItemsViewModel.MultiSetParentItemCommand,
+                    CommandStorage.MultiSetRootToDoItemsCommand,
                     string.Empty,
-                    null
+                    ToDoSubItemsViewModel.List.MultiToDoItems.GroupByNone.Items.Items
                 )
             );
         }

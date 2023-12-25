@@ -89,17 +89,17 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
                 PageHeaderViewModel.Commands.Add(
                     new CommandItem(
                         MaterialIconKind.Switch,
-                        ToDoSubItemsViewModel.MultiChangeTypeCommand,
+                        CommandStorage.MultiSetTypeToDoItemsCommand,
                         string.Empty,
-                        null
+                        ToDoSubItemsViewModel.List.MultiToDoItems.GroupByNone.Items.Items
                     )
                 );
                 PageHeaderViewModel.Commands.Add(
                     new CommandItem(
                         MaterialIconKind.SwapHorizontal,
-                        ToDoSubItemsViewModel.MultiSetParentItemCommand,
+                        CommandStorage.MultiSetRootToDoItemsCommand,
                         string.Empty,
-                        null
+                        ToDoSubItemsViewModel.List.MultiToDoItems.GroupByNone.Items.Items
                     )
                 );
             }

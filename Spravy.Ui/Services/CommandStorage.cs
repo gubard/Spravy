@@ -204,6 +204,21 @@ public static class CommandStorage
             MaterialIconKind.Pencil,
             "Open current to do item"
         );
+        MultiCompleteToDoItems = CreateCommand<AvaloniaList<Selected<ToDoItemNotify>>>(
+            MultiCompleteToDoItemsAsync,
+            MaterialIconKind.CheckAll,
+            "Complete all to do items"
+        );
+        MultiSetRootToDoItems = CreateCommand<AvaloniaList<Selected<ToDoItemNotify>>>(
+            MultiSetRootToDoItemsAsync,
+            MaterialIconKind.SwapHorizontal,
+            "Set parent for all to do items"
+        );
+        MultiSetTypeToDoItems = CreateCommand<AvaloniaList<Selected<ToDoItemNotify>>>(
+            MultiSetTypeToDoItemsAsync,
+            MaterialIconKind.Switch,
+            "Set type all to do items"
+        );
     }
 
     private static readonly INavigator navigator;
@@ -216,8 +231,16 @@ public static class CommandStorage
     private static readonly ITokenService tokenService;
     private static readonly IObjectStorage objectStorage;
     private static readonly IClipboard clipboard;
+    
+    public static CommandParameters<AvaloniaList<Selected<ToDoItemNotify>>> MultiSetTypeToDoItems { get; }
+    public static ICommand MultiSetTypeToDoItemsCommand => MultiSetTypeToDoItems.Value.Command;
+    public static CommandItem MultiSetTypeToDoItemsItem => MultiSetTypeToDoItems.Value;
 
-    public static CommandParameters<IToDoNameProperty> MultiCompleteToDoItems { get; }
+    public static CommandParameters<AvaloniaList<Selected<ToDoItemNotify>>> MultiSetRootToDoItems { get; }
+    public static ICommand MultiSetRootToDoItemsCommand => MultiSetRootToDoItems.Value.Command;
+    public static CommandItem MultiSetRootToDoItemsItem => MultiSetRootToDoItems.Value;
+
+    public static CommandParameters<AvaloniaList<Selected<ToDoItemNotify>>> MultiCompleteToDoItems { get; }
     public static ICommand MultiCompleteToDoItemsCommand => MultiCompleteToDoItems.Value.Command;
     public static CommandItem MultiCompleteToDoItemsItem => MultiCompleteToDoItems.Value;
 
@@ -377,6 +400,63 @@ public static class CommandStorage
     public static CommandItem SetToDoParentItemItem => SetToDoParentItem.Value;
 
     public static CommandParameters<AvaloniaList<Selected<ToDoItemNotify>>> SelectAll { get; }
+
+    private static Task MultiSetTypeToDoItemsAsync(
+        AvaloniaList<Selected<ToDoItemNotify>> itemsNotify,
+        CancellationToken cancellationToken
+    )
+    {
+        return dialogViewer.ShowItemSelectorDialogAsync<ToDoItemType>(
+            async type =>
+            {
+                await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
+
+                foreach (var item in itemsNotify)
+                {
+                    if (!item.IsSelect)
+                    {
+                        continue;
+                    }
+
+                    await toDoService.UpdateToDoItemTypeAsync(item.Value.Id, type, cancellationToken)
+                        .ConfigureAwait(false);
+                }
+
+                await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
+            },
+            viewModel =>
+            {
+                viewModel.Items.AddRange(Enum.GetValues<ToDoItemType>().OfType<object>());
+                viewModel.SelectedItem = viewModel.Items.First();
+            },
+            cancellationToken
+        );
+    }
+
+    private static Task MultiSetRootToDoItemsAsync(
+        AvaloniaList<Selected<ToDoItemNotify>> itemsNotify,
+        CancellationToken cancellationToken
+    )
+    {
+        var ids = itemsNotify.Where(x => x.IsSelect).Select(x => x.Value.Id).ToArray();
+
+        return dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
+            async item =>
+            {
+                await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
+
+                foreach (var id in ids)
+                {
+                    await toDoService.UpdateToDoItemParentAsync(id, item.Id, cancellationToken)
+                        .ConfigureAwait(false);
+                }
+
+                await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
+            },
+            viewModel => viewModel.IgnoreIds.AddRange(ids),
+            cancellationToken
+        );
+    }
 
     private static Task MultiCompleteToDoItemsAsync(
         AvaloniaList<Selected<ToDoItemNotify>> itemsNotify,

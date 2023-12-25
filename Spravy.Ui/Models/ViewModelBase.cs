@@ -20,22 +20,6 @@ public class ViewModelBase : NotifyBase
     [Inject]
     public required IDialogViewer DialogViewer { get; set; }
 
-    protected ICommand CreateInitializedCommand(Action action)
-    {
-        var command = ReactiveCommand.Create(action);
-        SetupCommand(command);
-
-        return command;
-    }
-
-    protected ICommand CreateInitializedCommand(Func<ConfiguredTaskAwaitable> action)
-    {
-        var command = ReactiveCommand.Create(action);
-        SetupCommand(command);
-
-        return command;
-    }
-
     protected ICommand CreateInitializedCommand(Func<Task> execute)
     {
         var command = ReactiveCommand.CreateFromTask(execute);
@@ -52,30 +36,6 @@ public class ViewModelBase : NotifyBase
         return command;
     }
 
-    protected ICommand CreateCommand(Action action)
-    {
-        var command = ReactiveCommand.Create(action);
-        SetupCommand(command);
-
-        return command;
-    }
-
-    protected ICommand CreateCommand(Func<DispatcherOperation> action)
-    {
-        var command = ReactiveCommand.Create(action);
-        SetupCommand(command);
-
-        return command;
-    }
-
-    protected ICommand CreateCommand<TArgs>(Action<TArgs> action)
-    {
-        var command = ReactiveCommand.Create(action);
-        SetupCommand(command);
-
-        return command;
-    }
-
     protected ICommand CreateCommandFromTask(Func<Task> execute)
     {
         var command = ReactiveCommand.CreateFromTask(execute);
@@ -84,25 +44,9 @@ public class ViewModelBase : NotifyBase
         return command;
     }
 
-    protected ICommand CreateCommandFromTask(Func<ConfiguredTaskAwaitable> execute)
-    {
-        var command = ReactiveCommand.CreateFromTask(async () => await execute.Invoke());
-        SetupCommand(command);
-
-        return command;
-    }
-
     protected ICommand CreateCommandFromTask<TParam>(Func<TParam, Task> execute)
     {
         var command = ReactiveCommand.CreateFromTask(execute);
-        SetupCommand(command);
-
-        return command;
-    }
-
-    protected ICommand CreateCommandFromTask<TParam>(Func<TParam, ConfiguredTaskAwaitable> execute)
-    {
-        var command = ReactiveCommand.CreateFromTask(async (TParam param) => await execute.Invoke(param));
         SetupCommand(command);
 
         return command;
