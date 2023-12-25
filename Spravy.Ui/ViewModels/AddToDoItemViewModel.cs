@@ -24,11 +24,9 @@ public class AddToDoItemViewModel : ViewModelBase
 
     public AddToDoItemViewModel()
     {
-        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
         ToDoItemTypes = new(Enum.GetValues<ToDoItemType>());
     }
 
-    public ICommand InitializedCommand { get; }
     public AvaloniaList<ToDoItemType> ToDoItemTypes { get; }
 
     [Inject]
@@ -46,38 +44,9 @@ public class AddToDoItemViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref type, value);
     }
 
-    public ToDoItemNotify? Parent
-    {
-        get => parent;
-        set => this.RaiseAndSetIfChanged(ref parent, value);
-    }
-
     public string Name
     {
         get => name;
         set => this.RaiseAndSetIfChanged(ref name, value);
-    }
-
-    private async Task InitializedAsync(CancellationToken cancellationToken)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
-
-        if (Parent is null)
-        {
-            return;
-        }
-
-        var parents = await ToDoService.GetParentsAsync(Parent.ThrowIfNull().Id, cancellationToken)
-            .ConfigureAwait(false);
-        cancellationToken.ThrowIfCancellationRequested();
-
-        await this.InvokeUIBackgroundAsync(
-            () =>
-            {
-                PathViewModel.Items.Clear();
-                PathViewModel.Items.Add(new RootItem());
-                PathViewModel.Items.AddRange(parents.Select(x => Mapper.Map<ToDoItemParentNotify>(x)));
-            }
-        );
     }
 }
