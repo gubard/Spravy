@@ -18,7 +18,6 @@ namespace Spravy.Ui.ViewModels;
 
 public class AddToDoItemViewModel : ViewModelBase
 {
-    private ToDoItemNotify? parent;
     private string name = string.Empty;
     private ToDoItemType type;
 
@@ -30,13 +29,7 @@ public class AddToDoItemViewModel : ViewModelBase
     public AvaloniaList<ToDoItemType> ToDoItemTypes { get; }
 
     [Inject]
-    public required IMapper Mapper { get; init; }
-
-    [Inject]
     public required PathViewModel PathViewModel { get; init; }
-
-    [Inject]
-    public required IToDoService ToDoService { get; init; }
 
     public ToDoItemType Type
     {

@@ -9,6 +9,7 @@ using AutoMapper;
 using Material.Icons;
 using Ninject;
 using ReactiveUI;
+using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
@@ -88,7 +89,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
                 MaterialIconKind.ArrowRight,
                 CommandStorage.NavigateToCurrentToDoItemCommand,
                 "Current to do item",
-                this
+                null
             );
             pageHeaderViewModel.RightCommand = new CommandItem(
                 MaterialIconKind.Pencil,
@@ -268,7 +269,12 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
             );
 
             PageHeaderViewModel.Commands.Add(
-                new(MaterialIconKind.Plus, CommandStorage.AddToDoItemChildCommand, "Add sub task", null)
+                new(
+                    MaterialIconKind.Plus,
+                    CommandStorage.AddToDoItemChildCommand,
+                    "Add sub task",
+                    PathViewModel.Items[^1].As<ToDoItemParentNotify>().ThrowIfNull().Id
+                )
             );
 
             if (IsCan != ToDoItemIsCan.None)

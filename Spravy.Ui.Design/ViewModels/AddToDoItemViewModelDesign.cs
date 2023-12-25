@@ -14,13 +14,5 @@ public class AddToDoItemViewModelDesign : AddToDoItemViewModel
             Navigator = null,
             DialogViewer = null
         };
-
-        ToDoService = new ToDoServiceDesign(
-            Enumerable.Empty<IToDoSubItem>(),
-            Enumerable.Empty<IToDoSubItem>(),
-           null,
-            Enumerable.Empty<ToDoShortItem>(),
-            Enumerable.Empty<IToDoSubItem>()
-        );
     }
 }

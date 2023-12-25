@@ -164,7 +164,7 @@ public static class CommandStorage
             MaterialIconKind.Settings,
             "Show to do setting"
         );
-        AddToDoItemChild = CreateCommand<object>(
+        AddToDoItemChild = CreateCommand<Guid>(
             AddToDoItemChildAsync,
             MaterialIconKind.Plus,
             "Add child task"
@@ -216,11 +216,11 @@ public static class CommandStorage
     private static readonly ITokenService tokenService;
     private static readonly IObjectStorage objectStorage;
     private static readonly IClipboard clipboard;
-    
+
     public static CommandParameters<IToDoNameProperty> MultiCompleteToDoItems { get; }
     public static ICommand MultiCompleteToDoItemsCommand => MultiCompleteToDoItems.Value.Command;
     public static CommandItem MultiCompleteToDoItemsItem => MultiCompleteToDoItems.Value;
-    
+
     public static CommandParameters<IToDoNameProperty> SetToDoItemName { get; }
     public static ICommand SetToDoItemNameCommand => SetToDoItemName.Value.Command;
     public static CommandItem SetToDoItemNameItem => SetToDoItemName.Value;
@@ -248,7 +248,7 @@ public static class CommandStorage
     public static ICommand NavigateToLeafCommand => NavigateToLeaf.Value.Command;
     public static CommandItem NavigateToLeafItem => NavigateToLeaf.Value;
 
-    public static CommandParameters<object> AddToDoItemChild { get; }
+    public static CommandParameters<Guid> AddToDoItemChild { get; }
     public static ICommand AddToDoItemChildCommand => AddToDoItemChild.Value.Command;
     public static CommandItem AddToDoItemChildItem => AddToDoItemChild.Value;
 
@@ -377,8 +377,11 @@ public static class CommandStorage
     public static CommandItem SetToDoParentItemItem => SetToDoParentItem.Value;
 
     public static CommandParameters<AvaloniaList<Selected<ToDoItemNotify>>> SelectAll { get; }
-    
-    private static Task MultiCompleteToDoItemsAsync(AvaloniaList<Selected<ToDoItemNotify>> itemsNotify, CancellationToken cancellationToken)
+
+    private static Task MultiCompleteToDoItemsAsync(
+        AvaloniaList<Selected<ToDoItemNotify>> itemsNotify,
+        CancellationToken cancellationToken
+    )
     {
         var items = itemsNotify.Where(x => x.IsSelect).Select(x => x.Value).ToArray();
 
@@ -398,7 +401,7 @@ public static class CommandStorage
             cancellationToken
         );
     }
-    
+
     private static async Task CompleteAsync(
         IEnumerable<ToDoItemNotify> items,
         CompleteStatus status,
@@ -545,21 +548,18 @@ public static class CommandStorage
         return navigator.NavigateToAsync<LeafToDoItemsViewModel>(vm => vm.Id = id, cancellationToken);
     }
 
-    private static Task AddToDoItemChildAsync(object value, CancellationToken cancellationToken)
+    private static Task AddToDoItemChildAsync(Guid parentId, CancellationToken cancellationToken)
     {
-        return dialogViewer.ShowConfirmContentDialogAsync<AddToDoItemViewModel>(
+        return dialogViewer.ShowConfirmContentDialogAsync(
             async viewModel =>
             {
                 await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
-                var parentValue = viewModel.Parent.ThrowIfNull();
-                var options = new AddToDoItemOptions(parentValue.Id, viewModel.Name, viewModel.Type);
+                var options = new AddToDoItemOptions(parentId, viewModel.Name, viewModel.Type);
                 await toDoService.AddToDoItemAsync(options, cancellationToken);
-
-                await navigator.NavigateToAsync<ToDoItemViewModel>(vm => vm.Id = parentValue.Id, cancellationToken)
-                    .ConfigureAwait(false);
+                await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
             },
-            async _ => await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false),
-            viewModel => viewModel.Parent = mapper.Map<ToDoItemNotify>(value),
+            _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
+            ActionHelper<AddToDoItemViewModel>.Empty,
             cancellationToken
         );
     }
