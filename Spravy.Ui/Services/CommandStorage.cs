@@ -738,20 +738,12 @@ public static class CommandStorage
         );
     }
 
-    private static Task ToDoItemSearchAsync(IToDoItemSearchProperties properties, CancellationToken cancellationToken)
+    private static async Task ToDoItemSearchAsync(IToDoItemSearchProperties properties, CancellationToken cancellationToken)
     {
-        return dialogViewer.ShowConfirmContentDialogAsync(
-            async _ =>
-            {
-                var ids = await toDoService.SearchToDoItemIdsAsync(properties.SearchText, cancellationToken)
-                    .ConfigureAwait(false);
-                await properties.ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), properties, cancellationToken)
-                    .ConfigureAwait(false);
-            },
-            async _ => await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false),
-            ActionHelper<AddRootToDoItemViewModel>.Empty,
-            cancellationToken
-        );
+        var ids = await toDoService.SearchToDoItemIdsAsync(properties.SearchText, cancellationToken)
+            .ConfigureAwait(false);
+        await properties.ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), properties, cancellationToken)
+            .ConfigureAwait(false);
     }
 
     private static Task AddRootToDoItemAsync(CancellationToken cancellationToken)

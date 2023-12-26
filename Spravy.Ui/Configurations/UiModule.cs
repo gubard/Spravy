@@ -130,7 +130,8 @@ public class UiModule : NinjectModule
                 _ => Application.Current.ThrowIfNull("Application")
                     .GetTopLevel()
                     .ThrowIfNull("TopLevel")
-                    .Clipboard.ThrowIfNull()
+                    .Clipboard
+                    .ThrowIfNull()
             );
 
         Bind<MainSplitViewModel>()

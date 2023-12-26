@@ -12,7 +12,9 @@
                                 x:Class="Spravy.Ui.Views.SearchView"
                                 x:DataType="viewModels:SearchViewModel">
     <UserControl.KeyBindings>
-        <KeyBinding Gesture="Enter" Command="{Binding SearchCommand}" />
+        <KeyBinding Gesture="Enter"
+                    Command="{x:Static services:CommandStorage.ToDoItemSearchCommand}"
+                    CommandParameter="{Binding}" />
     </UserControl.KeyBindings>
 
     <Grid RowDefinitions="Auto,*">

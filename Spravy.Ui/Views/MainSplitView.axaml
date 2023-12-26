@@ -12,5 +12,6 @@
                Pane="{Binding Pane}"
                IsPaneOpen="{Binding IsPaneOpen}"
                OpenPaneLength="200"
-               PanePlacement="Left" />
+               PanePlacement="Left" 
+               x:Name="MainSplit"/>
 </reactiveUi:ReactiveUserControl>

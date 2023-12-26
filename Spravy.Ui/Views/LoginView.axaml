@@ -50,7 +50,8 @@
 
             <Grid ColumnDefinitions="*,*">
                 <Button Command="{x:Static services:CommandStorage.NavigateToCommand}"
-                        CommandParameter="{x:Type viewModels:CreateUserViewModel}">
+                        CommandParameter="{x:Type viewModels:CreateUserViewModel}"
+                        x:Name="CreateUserButton">
                     <avalonia:MaterialIcon Kind="AccountPlus" />
                 </Button>
 

@@ -1,9 +1,7 @@
 using System;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Avalonia.Threading;
 using Ninject;
 using ReactiveUI;
 using Serilog;

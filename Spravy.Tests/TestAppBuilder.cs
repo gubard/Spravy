@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Headless;
 using Avalonia.ReactiveUI;
 using Ninject;
@@ -20,6 +21,7 @@ public class TestAppBuilder
 
         return AppBuilder.Configure<App>()
             .UseReactiveUI()
-            .UseHeadless(new AvaloniaHeadlessPlatformOptions());
+            .UseHeadless(new AvaloniaHeadlessPlatformOptions())
+            .SetupWithLifetime(new ClassicDesktopStyleApplicationLifetime());
     }
 }
