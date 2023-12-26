@@ -20,10 +20,7 @@ public class SearchViewModel : NavigatableViewModelBase, IRefresh, IToDoItemSear
     public SearchViewModel() : base(true)
     {
         refreshWork = TaskWork.Create(RefreshCoreAsync);
-        SearchCommand = CreateCommandFromTask(refreshWork.RunAsync);
     }
-
-    public ICommand SearchCommand { get; }
 
     public string SearchText
     {
@@ -36,12 +33,6 @@ public class SearchViewModel : NavigatableViewModelBase, IRefresh, IToDoItemSear
 
     [Inject]
     public required IToDoService ToDoService { get; init; }
-
-    [Inject]
-    public required IMapper Mapper { get; init; }
-
-    [Inject]
-    public required MainSplitViewModel MainSplitViewModel { get; init; }
 
     public Task RefreshAsync(CancellationToken cancellationToken)
     {
