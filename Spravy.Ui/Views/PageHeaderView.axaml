@@ -114,6 +114,7 @@
                         <Button.Styles>
                             <Style Selector="MenuItem" x:DataType="models:CommandItem">
                                 <Setter Property="Command" Value="{Binding Command}" />
+                                <Setter Property="CommandParameter" Value="{Binding Parameter}" />
                             </Style>
                         </Button.Styles>
 
