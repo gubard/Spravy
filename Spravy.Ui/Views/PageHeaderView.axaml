@@ -6,11 +6,11 @@
                                 xmlns:controls1="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
                                 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                 xmlns:helpers="clr-namespace:Spravy.Ui.Helpers"
-                                xmlns:models="clr-namespace:Spravy.Ui.Models"
                                 xmlns:system="clr-namespace:System;assembly=System.Runtime"
                                 xmlns:services="clr-namespace:Spravy.Ui.Services"
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
+                                xmlns:models="clr-namespace:Spravy.Ui.Models"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.PageHeaderView"
                                 x:DataType="viewModels:PageHeaderViewModel">
@@ -102,22 +102,23 @@
                     </ItemsControl>
 
                     <Button Classes="adaptive with-icon">
+                        <Button.DataTemplates>
+                            <DataTemplate x:DataType="models:CommandItem">
+                                <StackPanel Orientation="Horizontal">
+                                    <avalonia:MaterialIcon Kind="{Binding Icon}" />
+                                    <TextBlock Text="{Binding Name}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </Button.DataTemplates>
+
+                        <Button.Styles>
+                            <Style Selector="MenuItem" x:DataType="models:CommandItem">
+                                <Setter Property="Command" Value="{Binding Command}" />
+                            </Style>
+                        </Button.Styles>
+
                         <Button.Flyout>
-                            <Flyout>
-                                <ItemsControl ItemsSource="{Binding Commands}" x:Name="ItemsControlCommands">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate x:DataType="models:CommandItem">
-                                            <Button Command="{Binding Command}" HorizontalContentAlignment="Left"
-                                                    CommandParameter="{Binding Parameter}">
-                                                <StackPanel Orientation="Horizontal">
-                                                    <avalonia:MaterialIcon Kind="{Binding Icon}" />
-                                                    <TextBlock Text="{Binding Name}" />
-                                                </StackPanel>
-                                            </Button>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </Flyout>
+                            <MenuFlyout ItemsSource="{Binding Commands}" />
                         </Button.Flyout>
 
                         <avalonia:MaterialIcon Kind="DotsHorizontal" />
