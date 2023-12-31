@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
-using Material.Icons;
 using Ninject;
 using ReactiveUI;
 using Spravy.Domain.Extensions;
@@ -26,7 +25,8 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     IToDoLinkProperty,
     IToDoDescriptionProperty,
     IToDoSettingsProperty,
-    IToDoNameProperty
+    IToDoNameProperty,
+    IDeletable
 {
     private string name = string.Empty;
     private Guid id;
@@ -43,8 +43,8 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
 
     public ToDoItemViewModel() : base(true)
     {
-        refreshWork = new(RefreshCoreAsync);
-        refreshToDoItemWork = new(RefreshToDoItemCore);
+        refreshWork = TaskWork.Create(RefreshCoreAsync);
+        refreshToDoItemWork = TaskWork.Create(RefreshToDoItemCore);
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
 
         this.WhenAnyValue(x => x.Name)
@@ -71,7 +71,9 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
         init
         {
             toDoSubItemsViewModel = value;
-            toDoSubItemsViewModel.List.WhenAnyValue(x => x.IsMulti).Skip(1).Subscribe(_ => UpdateCommands());
+            toDoSubItemsViewModel.List.WhenAnyValue(x => x.IsMulti)
+                .Skip(1)
+                .Subscribe(_ => UpdateCommandsAsync());
         }
     }
 
@@ -84,20 +86,12 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
         {
             pageHeaderViewModel = value;
             pageHeaderViewModel.Header = Name;
-            pageHeaderViewModel.LeftCommand = new CommandItem(
-                MaterialIconKind.ArrowRight,
-                CommandStorage.NavigateToCurrentToDoItemCommand,
-                "Current to do item",
-                null
-            );
-            pageHeaderViewModel.RightCommand = new CommandItem(
-                MaterialIconKind.Pencil,
-                CommandStorage.SetToDoItemNameCommand,
-                "Edit name",
-                this
-            );
+            pageHeaderViewModel.LeftCommand = CommandStorage.NavigateToCurrentToDoItemItem;
+            pageHeaderViewModel.RightCommand = CommandStorage.SetToDoItemNameItem.WithParam(this);
         }
     }
+
+    public object Header => Name;
 
     [Inject]
     public required IToDoService ToDoService { get; set; }
@@ -161,11 +155,12 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
         return refreshWork.RunAsync();
     }
 
-    private Task RefreshCoreAsync(CancellationToken cancellationToken)
+    private async Task RefreshCoreAsync(CancellationToken cancellationToken)
     {
-        return Task.WhenAll(
+        await RefreshPathAsync(cancellationToken);
+
+        await Task.WhenAll(
                 RefreshToDoItemAsync(),
-                RefreshPathAsync(cancellationToken),
                 RefreshToDoItemChildrenAsync(cancellationToken),
                 UpdateCommandsAsync()
             )
@@ -224,109 +219,68 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     private async Task UpdateCommandsAsync()
     {
         await refreshToDoItemWork.Current;
-        await this.InvokeUIBackgroundAsync(UpdateCommands);
-    }
 
-    private void UpdateCommands()
-    {
-        PageHeaderViewModel.Commands.Clear();
-
-        if (ToDoSubItemsViewModel.List.IsMulti)
-        {
-            PageHeaderViewModel.Commands.Add(
-                new CommandItem(
-                    MaterialIconKind.CheckAll,
-                    CommandStorage.MultiCompleteToDoItemsCommand,
-                    string.Empty,
-                    ToDoSubItemsViewModel.List.MultiToDoItems.GroupByNone.Items.Items
-                )
-            );
-            PageHeaderViewModel.Commands.Add(
-                new CommandItem(
-                    MaterialIconKind.Switch,
-                    CommandStorage.MultiSetTypeToDoItemsCommand,
-                    string.Empty,
-                    ToDoSubItemsViewModel.List.MultiToDoItems.GroupByNone.Items.Items
-                )
-            );
-            PageHeaderViewModel.Commands.Add(
-                new CommandItem(
-                    MaterialIconKind.SwapHorizontal,
-                    CommandStorage.MultiSetRootToDoItemsCommand,
-                    string.Empty,
-                    ToDoSubItemsViewModel.List.MultiToDoItems.GroupByNone.Items.Items
-                )
-            );
-        }
-        else
-        {
-            var toFavoriteCommand = new CommandItem(
-                MaterialIconKind.StarOutline,
-                CommandStorage.AddToDoItemToFavoriteCommand,
-                "Move to favorite",
-                null
-            );
-
-            PageHeaderViewModel.Commands.Add(
-                new(
-                    MaterialIconKind.Plus,
-                    CommandStorage.AddToDoItemChildCommand,
-                    "Add sub task",
-                    PathViewModel.Items[^1].As<ToDoItemParentNotify>().ThrowIfNull().Id
-                )
-            );
-
-            if (IsCan != ToDoItemIsCan.None)
+        await this.InvokeUIBackgroundAsync(
+            () =>
             {
-                PageHeaderViewModel.Commands.Add(
-                    new(MaterialIconKind.Check, CommandStorage.CompleteToDoItemCommand, "Complete", this)
-                );
-            }
+                PageHeaderViewModel.Commands.Clear();
 
-            if (Type != ToDoItemType.Group)
-            {
-                PageHeaderViewModel.Commands.Add(
-                    new(MaterialIconKind.Settings, CommandStorage.ShowToDoSettingCommand, "Settings", this)
-                );
-            }
+                if (ToDoSubItemsViewModel.List.IsMulti)
+                {
+                    PageHeaderViewModel.Commands.Add(
+                        CommandStorage.MultiCompleteToDoItemsItem.WithParam(
+                            ToDoSubItemsViewModel.List.MultiToDoItems.GroupByNone.Items.Items
+                        )
+                    );
+                    PageHeaderViewModel.Commands.Add(
+                        CommandStorage.MultiSetTypeToDoItemsItem.WithParam(
+                            ToDoSubItemsViewModel.List.MultiToDoItems.GroupByNone.Items.Items
+                        )
+                    );
+                    PageHeaderViewModel.Commands.Add(
+                        CommandStorage.MultiSetRootToDoItemsItem.WithParam(
+                            ToDoSubItemsViewModel.List.MultiToDoItems.GroupByNone.Items.Items
+                        )
+                    );
+                }
+                else
+                {
+                    var toFavoriteCommand = CommandStorage.AddToDoItemToFavoriteItem.WithParam(Id);
 
-            if (IsFavorite)
-            {
-                toFavoriteCommand = new CommandItem(
-                    MaterialIconKind.Star,
-                    CommandStorage.RemoveToDoItemFromFavoriteCommand,
-                    "Remove from favorite",
-                    null
-                );
-            }
+                    PageHeaderViewModel.Commands.Add(
+                        CommandStorage.AddToDoItemChildItem.WithParam(
+                            PathViewModel.Items[^1].As<ToDoItemParentNotify>().ThrowIfNull().Id
+                        )
+                    );
 
-            PageHeaderViewModel.Commands.Add(toFavoriteCommand);
-            PageHeaderViewModel.Commands.Add(
-                new(MaterialIconKind.Leaf, CommandStorage.NavigateToLeafCommand, "Show all children", Id)
-            );
-            PageHeaderViewModel.Commands.Add(
-                new(
-                    MaterialIconKind.SwapHorizontal,
-                    CommandStorage.SetToDoParentItemCommand,
-                    "Change task parent",
-                    this
-                )
-            );
-            PageHeaderViewModel.Commands.Add(
-                new(MaterialIconKind.FamilyTree, CommandStorage.MoveToDoItemToRootCommand, "Move to root task", this)
-            );
-            PageHeaderViewModel.Commands.Add(
-                new(MaterialIconKind.CodeString, CommandStorage.ToDoItemToStringCommand, "Copy task to clipboard", this)
-            );
-            PageHeaderViewModel.Commands.Add(
-                new(
-                    MaterialIconKind.ContentCopy,
-                    CommandStorage.ToDoItemRandomizeChildrenOrderIndexCommand,
-                    "Randomize sub tasks",
-                    null
-                )
-            );
-        }
+                    PageHeaderViewModel.Commands.Add(CommandStorage.DeleteToDoItemItem.WithParam(this));
+
+                    if (IsCan != ToDoItemIsCan.None)
+                    {
+                        PageHeaderViewModel.Commands.Add(CommandStorage.CompleteToDoItemItem.WithParam(this));
+                    }
+
+                    if (Type != ToDoItemType.Group)
+                    {
+                        PageHeaderViewModel.Commands.Add(CommandStorage.ShowToDoSettingItem.WithParam(this));
+                    }
+
+                    if (IsFavorite)
+                    {
+                        toFavoriteCommand = CommandStorage.RemoveToDoItemFromFavoriteItem.WithParam(Id);
+                    }
+
+                    PageHeaderViewModel.Commands.Add(toFavoriteCommand);
+                    PageHeaderViewModel.Commands.Add(CommandStorage.NavigateToLeafItem.WithParam(Id));
+                    PageHeaderViewModel.Commands.Add(CommandStorage.SetToDoParentItemItem.WithParam(this));
+                    PageHeaderViewModel.Commands.Add(CommandStorage.MoveToDoItemToRootItem.WithParam(this));
+                    PageHeaderViewModel.Commands.Add(CommandStorage.ToDoItemToStringItem.WithParam(this));
+                    PageHeaderViewModel.Commands.Add(
+                        CommandStorage.ToDoItemRandomizeChildrenOrderIndexItem.WithParam(this)
+                    );
+                }
+            }
+        );
     }
 
     public override void Stop()

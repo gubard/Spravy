@@ -6,13 +6,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Collections;
 using Avalonia.Threading;
-using Material.Icons;
 using Ninject;
 using ReactiveUI;
-using Spravy.Domain.Models;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Features.ToDo.Enums;
 using Spravy.Ui.Models;
+using Spravy.Ui.Services;
 
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
@@ -84,132 +83,40 @@ public class MultiToDoItemsViewModel : ViewModelBase
         {
             multiToDoItems = value;
             multiToDoItems.GroupByNone.Items.Commands.Add(
-                new CommandItem(
-                    MaterialIconKind.CheckAll,
-                    CreateCommandFromTask(
-                        TaskWork.Create(c => SelectAllAsync(multiToDoItems.GroupByNone.Items.Items, c)).RunAsync
-                    ),
-                    "Select all",
-                    null
-                )
+                CommandStorage.SelectAll.WithParam(multiToDoItems.GroupByNone.Items.Items)
             );
             multiToDoItems.GroupByStatus.Missed.Commands.Add(
-                new CommandItem(
-                    MaterialIconKind.CheckAll,
-                    CreateCommandFromTask(
-                        TaskWork.Create(c => SelectAllAsync(multiToDoItems.GroupByStatus.Missed.Items, c)).RunAsync
-                    ),
-                    "Select missed",
-                    null
-                )
+                CommandStorage.SelectAll.WithParam(multiToDoItems.GroupByStatus.Missed.Items)
             );
             multiToDoItems.GroupByStatus.Completed.Commands.Add(
-                new CommandItem(
-                    MaterialIconKind.CheckAll,
-                    CreateCommandFromTask(
-                        TaskWork.Create(c => SelectAllAsync(multiToDoItems.GroupByStatus.Completed.Items, c)).RunAsync
-                    ),
-                    "Select completed",
-                    null
-                )
+                CommandStorage.SelectAll.WithParam(multiToDoItems.GroupByStatus.Completed.Items)
             );
             multiToDoItems.GroupByStatus.Planned.Commands.Add(
-                new CommandItem(
-                    MaterialIconKind.CheckAll,
-                    CreateCommandFromTask(
-                        TaskWork.Create(c => SelectAllAsync(multiToDoItems.GroupByStatus.Planned.Items, c)).RunAsync
-                    ),
-                    "Select planned",
-                    null
-                )
+                CommandStorage.SelectAll.WithParam(multiToDoItems.GroupByStatus.Planned.Items)
             );
             multiToDoItems.GroupByStatus.ReadyForCompleted.Commands.Add(
-                new CommandItem(
-                    MaterialIconKind.CheckAll,
-                    CreateCommandFromTask(
-                        TaskWork.Create(c => SelectAllAsync(multiToDoItems.GroupByStatus.ReadyForCompleted.Items, c))
-                            .RunAsync
-                    ),
-                    "Select ready for completed",
-                    null
-                )
+                CommandStorage.SelectAll.WithParam(multiToDoItems.GroupByStatus.ReadyForCompleted.Items)
             );
             multiToDoItems.GroupByType.Groups.Commands.Add(
-                new CommandItem(
-                    MaterialIconKind.CheckAll,
-                    CreateCommandFromTask(
-                        TaskWork.Create(c => SelectAllAsync(multiToDoItems.GroupByType.Groups.Items, c))
-                            .RunAsync
-                    ),
-                    "Select groups",
-                    null
-                )
+                CommandStorage.SelectAll.WithParam(multiToDoItems.GroupByType.Groups.Items)
             );
             multiToDoItems.GroupByType.Circles.Commands.Add(
-                new CommandItem(
-                    MaterialIconKind.CheckAll,
-                    CreateCommandFromTask(
-                        TaskWork.Create(c => SelectAllAsync(multiToDoItems.GroupByType.Circles.Items, c))
-                            .RunAsync
-                    ),
-                    "Select circles",
-                    null
-                )
+                CommandStorage.SelectAll.WithParam(multiToDoItems.GroupByType.Circles.Items)
             );
             multiToDoItems.GroupByType.Periodicitys.Commands.Add(
-                new CommandItem(
-                    MaterialIconKind.CheckAll,
-                    CreateCommandFromTask(
-                        TaskWork.Create(c => SelectAllAsync(multiToDoItems.GroupByType.Periodicitys.Items, c))
-                            .RunAsync
-                    ),
-                    "Select periodicitys",
-                    null
-                )
+                CommandStorage.SelectAll.WithParam(multiToDoItems.GroupByType.Periodicitys.Items)
             );
             multiToDoItems.GroupByType.Planneds.Commands.Add(
-                new CommandItem(
-                    MaterialIconKind.CheckAll,
-                    CreateCommandFromTask(
-                        TaskWork.Create(c => SelectAllAsync(multiToDoItems.GroupByType.Planneds.Items, c))
-                            .RunAsync
-                    ),
-                    "Select planneds",
-                    null
-                )
+                CommandStorage.SelectAll.WithParam(multiToDoItems.GroupByType.Planneds.Items)
             );
             multiToDoItems.GroupByType.Steps.Commands.Add(
-                new CommandItem(
-                    MaterialIconKind.CheckAll,
-                    CreateCommandFromTask(
-                        TaskWork.Create(c => SelectAllAsync(multiToDoItems.GroupByType.Steps.Items, c))
-                            .RunAsync
-                    ),
-                    "Select steps",
-                    null
-                )
+                CommandStorage.SelectAll.WithParam(multiToDoItems.GroupByType.Steps.Items)
             );
             multiToDoItems.GroupByType.Values.Commands.Add(
-                new CommandItem(
-                    MaterialIconKind.CheckAll,
-                    CreateCommandFromTask(
-                        TaskWork.Create(c => SelectAllAsync(multiToDoItems.GroupByType.Values.Items, c))
-                            .RunAsync
-                    ),
-                    "Select values",
-                    null
-                )
+                CommandStorage.SelectAll.WithParam(multiToDoItems.GroupByType.Values.Items)
             );
             multiToDoItems.GroupByType.PeriodicityOffsets.Commands.Add(
-                new CommandItem(
-                    MaterialIconKind.CheckAll,
-                    CreateCommandFromTask(
-                        TaskWork.Create(c => SelectAllAsync(multiToDoItems.GroupByType.PeriodicityOffsets.Items, c))
-                            .RunAsync
-                    ),
-                    "Select periodicity offsets",
-                    null
-                )
+                CommandStorage.SelectAll.WithParam(multiToDoItems.GroupByType.PeriodicityOffsets.Items)
             );
         }
     }

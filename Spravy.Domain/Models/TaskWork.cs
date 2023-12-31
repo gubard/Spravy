@@ -1,17 +1,16 @@
 using Spravy.Domain.Extensions;
-using Spravy.Domain.Services;
 
 namespace Spravy.Domain.Models;
 
 public class TaskWork
 {
-    private readonly Func<CancellationToken, Task> task;
+    private readonly Delegate del;
     private CancellationTokenSource cancellationTokenSource = new();
     private Task? current;
 
-    public TaskWork(Func<CancellationToken, Task> task)
+    private TaskWork(Delegate del)
     {
-        this.task = task;
+        this.del = del;
     }
 
     public Task Current => current.ThrowIfNull();
@@ -19,7 +18,15 @@ public class TaskWork
     public Task RunAsync()
     {
         Cancel();
-        current = task.Invoke(cancellationTokenSource.Token);
+        current = (Task)del.DynamicInvoke(cancellationTokenSource.Token).ThrowIfNull();
+
+        return current;
+    }
+
+    public Task RunAsync<T>(T value)
+    {
+        Cancel();
+        current = (Task)del.DynamicInvoke(value, cancellationTokenSource.Token).ThrowIfNull();
 
         return current;
     }
@@ -35,32 +42,8 @@ public class TaskWork
         return new(task);
     }
 
-    public static TaskWork<T> Create<T>(Func<T, CancellationToken, Task> task)
+    public static TaskWork Create<T>(Func<T, CancellationToken, Task> task)
     {
         return new(task);
-    }
-}
-
-public class TaskWork<T>
-{
-    private readonly Func<T, CancellationToken, Task> task;
-    private readonly CancellationTokenFactory cancellationTokenFactory = new();
-
-    public TaskWork(Func<T, CancellationToken, Task> task)
-    {
-        this.task = task;
-    }
-
-    public Task RunAsync(T value)
-    {
-        Cancel();
-
-        return task.Invoke(value, cancellationTokenFactory.Token);
-    }
-
-    public void Cancel()
-    {
-        cancellationTokenFactory.Cancel();
-        cancellationTokenFactory.Reset();
     }
 }

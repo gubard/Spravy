@@ -5,7 +5,6 @@
                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                 xmlns:reactiveUi="http://reactiveui.net"
-                                xmlns:views="clr-namespace:Spravy.Ui.Views"
                                 mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                                 x:Class="Spravy.Ui.Views.LeafToDoItemsView"
                                 x:DataType="viewModels:LeafToDoItemsViewModel">
@@ -16,7 +15,7 @@
     </Interaction.Behaviors>
 
     <Grid RowDefinitions="Auto, *">
-        <views:PageHeaderView DataContext="{Binding }"/>
+        <ContentControl Content="{Binding PageHeaderViewModel}" />
 
         <ScrollViewer Grid.Row="1" Offset="{Binding ScrollOffset, Mode=TwoWay}">
             <ContentControl Content="{Binding ToDoSubItemsViewModel}" />

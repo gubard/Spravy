@@ -17,7 +17,8 @@
         <ContentControl Content="{Binding Content}" />
 
         <Button Grid.Row="1"
-                Command="{Binding OkCommand}">
+                Command="{Binding OkCommand}"
+                ClickMode="Press">
             <avalonia:MaterialIcon Kind="Check" />
         </Button>
     </Grid>

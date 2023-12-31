@@ -1,8 +1,6 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Input;
-using AutoMapper;
 using Ninject;
 using ReactiveUI;
 using Spravy.Domain.Models;

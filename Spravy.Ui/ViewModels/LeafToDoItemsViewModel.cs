@@ -3,9 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using AutoMapper;
 using Avalonia;
-using Material.Icons;
 using Ninject;
 using ReactiveUI;
 using Spravy.Domain.Models;
@@ -44,13 +42,7 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
     public required IToDoService ToDoService { get; init; }
 
     [Inject]
-    public required IMapper Mapper { get; init; }
-
-    [Inject]
     public required ToDoSubItemsViewModel ToDoSubItemsViewModel { get; init; }
-
-    [Inject]
-    public required MainSplitViewModel MainSplitViewModel { get; init; }
 
     public Guid Id
     {
@@ -79,26 +71,17 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
             () =>
             {
                 PageHeaderViewModel.Commands.Add(
-                    new CommandItem(
-                        MaterialIconKind.CheckAll,
-                        CommandStorage.MultiCompleteToDoItemsCommand,
-                        string.Empty,
+                    CommandStorage.MultiCompleteToDoItemsItem.WithParam(
                         ToDoSubItemsViewModel.List.MultiToDoItems.GroupByNone.Items.Items
                     )
                 );
                 PageHeaderViewModel.Commands.Add(
-                    new CommandItem(
-                        MaterialIconKind.Switch,
-                        CommandStorage.MultiSetTypeToDoItemsCommand,
-                        string.Empty,
+                    CommandStorage.MultiSetTypeToDoItemsItem.WithParam(
                         ToDoSubItemsViewModel.List.MultiToDoItems.GroupByNone.Items.Items
                     )
                 );
                 PageHeaderViewModel.Commands.Add(
-                    new CommandItem(
-                        MaterialIconKind.SwapHorizontal,
-                        CommandStorage.MultiSetRootToDoItemsCommand,
-                        string.Empty,
+                    CommandStorage.MultiSetRootToDoItemsItem.WithParam(
                         ToDoSubItemsViewModel.List.MultiToDoItems.GroupByNone.Items.Items
                     )
                 );

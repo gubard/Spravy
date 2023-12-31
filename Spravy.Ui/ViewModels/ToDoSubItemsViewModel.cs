@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Ninject;
 using Spravy.Domain.Extensions;
+using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Features.ToDo.ViewModels;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
+using Spravy.Ui.Services;
 
 namespace Spravy.Ui.ViewModels;
 
@@ -39,10 +41,41 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
         await foreach (var item in ToDoService.GetToDoItemsAsync(ids.ToArray(), 5, cancellationToken)
                            .ConfigureAwait(false))
         {
-            var itemNotify = Mapper.Map<IEnumerable<ToDoItemNotify>>(item);
+            var itemNotify = Mapper.Map<IEnumerable<ToDoItemNotify>>(item).Select(SetupItem);
             List.AddFavoritesAsync(itemNotify);
             cancellationToken.ThrowIfCancellationRequested();
         }
+    }
+
+    private ToDoItemNotify SetupItem(ToDoItemNotify item)
+    {
+        var toFavoriteCommand = CommandStorage.AddToDoItemToFavoriteItem.WithParam(item.Id);
+        item.Commands.Add(CommandStorage.AddToDoItemChildItem.WithParam(item.Id));
+        item.Commands.Add(CommandStorage.DeleteToDoItemItem.WithParam(item));
+
+        if (item.IsCan != ToDoItemIsCan.None)
+        {
+            item.Commands.Add(CommandStorage.CompleteToDoItemItem.WithParam(item));
+        }
+
+        if (item.Type != ToDoItemType.Group)
+        {
+            item.Commands.Add(CommandStorage.ShowToDoSettingItem.WithParam(item));
+        }
+
+        if (item.IsFavorite)
+        {
+            toFavoriteCommand = CommandStorage.RemoveToDoItemFromFavoriteItem.WithParam(item.Id);
+        }
+
+        item.Commands.Add(toFavoriteCommand);
+        item.Commands.Add(CommandStorage.NavigateToLeafItem.WithParam(item.Id));
+        item.Commands.Add(CommandStorage.SetToDoParentItemItem.WithParam(item));
+        item.Commands.Add(CommandStorage.MoveToDoItemToRootItem.WithParam(item));
+        item.Commands.Add(CommandStorage.ToDoItemToStringItem.WithParam(item));
+        item.Commands.Add(CommandStorage.ToDoItemRandomizeChildrenOrderIndexItem.WithParam(item));
+
+        return item;
     }
 
     private async Task RefreshToDoItemListsAsync(Guid[] ids, CancellationToken cancellationToken)
@@ -53,7 +86,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 
         await foreach (var item in ToDoService.GetToDoItemsAsync(ids, 5, cancellationToken).ConfigureAwait(false))
         {
-            var itemNotify = Mapper.Map<IEnumerable<ToDoItemNotify>>(item);
+            var itemNotify = Mapper.Map<IEnumerable<ToDoItemNotify>>(item).Select(SetupItem);
             await List.AddItemsAsync(itemNotify);
             cancellationToken.ThrowIfCancellationRequested();
         }

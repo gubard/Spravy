@@ -25,8 +25,7 @@ public class LeafToDoItemsViewModelDesign : LeafToDoItemsViewModel
         );
 
         ToDoService = toDoServiceDesign;
-        Mapper = ConstDesign.Mapper;
-
+        
         ToDoSubItemsViewModel = new ToDoSubItemsViewModelDesign
         {
             Mapper = ConstDesign.Mapper,

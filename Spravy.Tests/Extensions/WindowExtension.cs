@@ -1,4 +1,3 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.VisualTree;
@@ -6,7 +5,6 @@ using DialogHostAvalonia;
 using FluentAssertions;
 using Spravy.Domain.Extensions;
 using Spravy.Tests.Helpers;
-using Spravy.Ui.Services;
 using Spravy.Ui.ViewModels;
 using Spravy.Ui.Views;
 

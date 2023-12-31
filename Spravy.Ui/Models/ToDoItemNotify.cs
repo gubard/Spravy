@@ -1,11 +1,14 @@
 using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Avalonia.Collections;
 using ReactiveUI;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.Ui.Interfaces;
 
 namespace Spravy.Ui.Models;
 
-public class ToDoItemNotify : NotifyBase, ICanComplete, IDeletable
+public class ToDoItemNotify : NotifyBase, ICanComplete, IDeletable, IToDoSettingsProperty
 {
     private Guid id;
     private string name = string.Empty;
@@ -19,6 +22,7 @@ public class ToDoItemNotify : NotifyBase, ICanComplete, IDeletable
     private ToDoItemIsCan isCan;
 
     public object Header => Name;
+    public AvaloniaList<CommandItem> Commands { get; } = new();
 
     public ToDoItemIsCan IsCan
     {
@@ -78,5 +82,10 @@ public class ToDoItemNotify : NotifyBase, ICanComplete, IDeletable
     {
         get => active;
         set => this.RaiseAndSetIfChanged(ref active, value);
+    }
+
+    public Task RefreshAsync(CancellationToken cancellationToken)
+    {
+        return Task.CompletedTask;
     }
 }

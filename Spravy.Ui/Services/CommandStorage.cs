@@ -9,7 +9,6 @@ using Avalonia.Collections;
 using Avalonia.Input.Platform;
 using Material.Icons;
 using Ninject;
-using ReactiveUI;
 using Serilog;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Models;
@@ -45,176 +44,180 @@ public static class CommandStorage
         dialogViewer = kernel.Get<IDialogViewer>();
         mainSplitViewModel = kernel.Get<MainSplitViewModel>();
         toDoService = kernel.Get<IToDoService>();
-        SwitchPane = CreateCommand(SwitchPaneAsync, MaterialIconKind.Menu, "Open pane");
-        NavigateToToDoItem = CreateCommand<Guid>(NavigateToToDoItemAsync, MaterialIconKind.ListBox, "Open");
-        CompleteToDoItem = CreateCommand<ICanComplete>(CompleteToDoItemAsync, MaterialIconKind.Check, "Complete");
+        SwitchPaneItem = CreateCommand(SwitchPaneAsync, MaterialIconKind.Menu, "Open pane");
+        NavigateToToDoItemItem = CreateCommand<Guid>(NavigateToToDoItemAsync, MaterialIconKind.ListBox, "Open");
+        CompleteToDoItemItem = CreateCommand<ICanComplete>(CompleteToDoItemAsync, MaterialIconKind.Check, "Complete");
         SelectAll = CreateCommand<AvaloniaList<Selected<ToDoItemNotify>>>(
             SelectAllAsync,
             MaterialIconKind.CheckAll,
             "Select all"
         );
-        DeleteToDoItem = CreateCommand<IDeletable>(DeleteSubToDoItemAsync, MaterialIconKind.Delete, "Delete");
-        ChangeToActiveDoItem = CreateCommand(ChangeToActiveDoItemAsync, MaterialIconKind.ArrowRight, "Go to active");
-        ChangeOrderIndex = CreateCommand<ToDoItemNotify>(
+        DeleteToDoItemItem = CreateCommand<IDeletable>(DeleteSubToDoItemAsync, MaterialIconKind.Delete, "Delete");
+        ChangeToActiveDoItemItem = CreateCommand(
+            ChangeToActiveDoItemAsync,
+            MaterialIconKind.ArrowRight,
+            "Go to active"
+        );
+        ChangeOrderIndexItem = CreateCommand<ToDoItemNotify>(
             ChangeOrderIndexAsync,
             MaterialIconKind.ReorderHorizontal,
             "Reorder"
         );
-        OpenLink = CreateCommand<ToDoItemNotify>(
+        OpenLinkItem = CreateCommand<ToDoItemNotify>(
             OpenLinkAsync,
             MaterialIconKind.Link,
             "Reorder"
         );
-        RemoveToDoItemFromFavorite = CreateCommand<Guid>(
+        RemoveToDoItemFromFavoriteItem = CreateCommand<Guid>(
             RemoveFavoriteToDoItemAsync,
-            MaterialIconKind.Link,
+            MaterialIconKind.Star,
             "Remove from favorite"
         );
-        AddToDoItemToFavorite = CreateCommand<Guid>(
+        AddToDoItemToFavoriteItem = CreateCommand<Guid>(
             AddFavoriteToDoItemAsync,
-            MaterialIconKind.Link,
+            MaterialIconKind.StarOutline,
             "Add to favorite"
         );
-        SetToDoShortItem = CreateCommand<IToDoShortItemProperty>(
+        SetToDoShortItemItem = CreateCommand<IToDoShortItemProperty>(
             SetToDoShortItemAsync,
             MaterialIconKind.Pencil,
             "Set to do item"
         );
-        SetDueDateTime = CreateCommand<IDueDateTimeProperty>(
+        SetDueDateTimeItem = CreateCommand<IDueDateTimeProperty>(
             SetDueDateTimeAsync,
             MaterialIconKind.Pencil,
             "Set due date time"
         );
-        CreateUser = CreateCommand<ICreateUserProperties>(
+        CreateUserItem = CreateCommand<ICreateUserProperties>(
             CreateUserAsync,
             MaterialIconKind.AccountPlus,
             "Set due date time"
         );
-        Back = CreateCommand(BackAsync, MaterialIconKind.ArrowLeft, "Back");
-        NavigateTo = CreateCommand<Type>(NavigateToAsync, MaterialIconKind.ArrowLeft, "Navigate to");
-        Login = CreateCommand<ILoginProperties>(LoginAsync, MaterialIconKind.Login, "Login");
-        Logout = CreateCommand(LogoutAsync, MaterialIconKind.Logout, "Logout");
-        SetToDoChildrenType = CreateCommand<IToDoChildrenTypeProperty>(
+        BackItem = CreateCommand(BackAsync, MaterialIconKind.ArrowLeft, "Back");
+        NavigateToItem = CreateCommand<Type>(NavigateToAsync, MaterialIconKind.ArrowLeft, "Navigate to");
+        LoginItem = CreateCommand<ILoginProperties>(LoginAsync, MaterialIconKind.Login, "Login");
+        LogoutItem = CreateCommand(LogoutAsync, MaterialIconKind.Logout, "Logout");
+        SetToDoChildrenTypeItem = CreateCommand<IToDoChildrenTypeProperty>(
             SetToDoChildrenTypeAsync,
             MaterialIconKind.Pencil,
             "Set children type"
         );
-        SetToDoDueDate = CreateCommand<IToDoDueDateProperty>(
+        SetToDoDueDateItem = CreateCommand<IToDoDueDateProperty>(
             SetToDoDueDateAsync,
             MaterialIconKind.Pencil,
             "Set due date"
         );
-        SetToDoDaysOffset = CreateCommand<IToDoDaysOffsetProperty>(
+        SetToDoDaysOffsetItem = CreateCommand<IToDoDaysOffsetProperty>(
             SetToDoDaysOffsetAsync,
             MaterialIconKind.Pencil,
             "Set days offset"
         );
-        SetToDoMonthsOffset = CreateCommand<IToDoMonthsOffsetProperty>(
+        SetToDoMonthsOffsetItem = CreateCommand<IToDoMonthsOffsetProperty>(
             SetToDoMonthsOffsetAsync,
             MaterialIconKind.Pencil,
             "Set months offset"
         );
-        SetToDoWeeksOffset = CreateCommand<IToDoWeeksOffsetProperty>(
+        SetToDoWeeksOffsetItem = CreateCommand<IToDoWeeksOffsetProperty>(
             SetToDoWeeksOffsetAsync,
             MaterialIconKind.Pencil,
             "Set weeks offset"
         );
-        SetToDoYearsOffset = CreateCommand<IToDoYearsOffsetProperty>(
+        SetToDoYearsOffsetItem = CreateCommand<IToDoYearsOffsetProperty>(
             SetToDoYearsOffsetAsync,
             MaterialIconKind.Pencil,
             "Set years offset"
         );
-        SetToDoTypeOfPeriodicity = CreateCommand<IToDoTypeOfPeriodicityProperty>(
+        SetToDoTypeOfPeriodicityItem = CreateCommand<IToDoTypeOfPeriodicityProperty>(
             SetToDoTypeOfPeriodicityAsync,
             MaterialIconKind.Pencil,
             "Set type of periodicity"
         );
-        SetToDoPeriodicity = CreateCommand<IToDoTypeOfPeriodicityProperty>(
+        SetToDoPeriodicityItem = CreateCommand<IToDoTypeOfPeriodicityProperty>(
             SetToDoPeriodicityAsync,
             MaterialIconKind.Pencil,
             "Set periodicity"
         );
-        AddRootToDoItem = CreateCommand(
+        AddRootToDoItemItem = CreateCommand(
             AddRootToDoItemAsync,
             MaterialIconKind.Plus,
             "Add root to do item"
         );
-        ToDoItemSearch = CreateCommand<IToDoItemSearchProperties>(
+        ToDoItemSearchItem = CreateCommand<IToDoItemSearchProperties>(
             ToDoItemSearchAsync,
             MaterialIconKind.Search,
             "Search to do item"
         );
-        SetToDoType = CreateCommand<IToDoTypeProperty>(
+        SetToDoTypeItem = CreateCommand<IToDoTypeProperty>(
             SetToDoTypeAsync,
             MaterialIconKind.Pencil,
             "Set to do item type"
         );
-        SetToDoLink = CreateCommand<IToDoLinkProperty>(
+        SetToDoLinkItem = CreateCommand<IToDoLinkProperty>(
             SetToDoLinkAsync,
             MaterialIconKind.Pencil,
             "Set to do item link"
         );
-        SetToDoDescription = CreateCommand<IToDoDescriptionProperty>(
+        SetToDoDescriptionItem = CreateCommand<IToDoDescriptionProperty>(
             SetToDoDescriptionAsync,
             MaterialIconKind.Pencil,
             "Set to do item description"
         );
-        ShowToDoSetting = CreateCommand<IToDoSettingsProperty>(
+        ShowToDoSettingItem = CreateCommand<IToDoSettingsProperty>(
             ShowToDoSettingAsync,
             MaterialIconKind.Settings,
             "Show to do setting"
         );
-        AddToDoItemChild = CreateCommand<Guid>(
+        AddToDoItemChildItem = CreateCommand<Guid>(
             AddToDoItemChildAsync,
             MaterialIconKind.Plus,
             "Add child task"
         );
-        NavigateToLeaf = CreateCommand<Guid>(
+        NavigateToLeafItem = CreateCommand<Guid>(
             NavigateToLeafAsync,
             MaterialIconKind.Leaf,
             "Navigate to leaf"
         );
-        SetToDoParentItem = CreateCommand<IIdProperty>(
+        SetToDoParentItemItem = CreateCommand<IIdProperty>(
             SetToDoParentItemAsync,
             MaterialIconKind.SwapHorizontal,
             "Set to do item parent"
         );
-        MoveToDoItemToRoot = CreateCommand<IIdProperty>(
+        MoveToDoItemToRootItem = CreateCommand<IIdProperty>(
             MoveToDoItemToRootAsync,
             MaterialIconKind.FamilyTree,
             "Move to do item to root"
         );
-        ToDoItemToString = CreateCommand<IIdProperty>(
+        ToDoItemToStringItem = CreateCommand<IIdProperty>(
             ToDoItemToStringAsync,
             MaterialIconKind.ContentCopy,
             "Copy to do item"
         );
-        ToDoItemRandomizeChildrenOrderIndex = CreateCommand<IIdProperty>(
+        ToDoItemRandomizeChildrenOrderIndexItem = CreateCommand<IIdProperty>(
             ToDoItemRandomizeChildrenOrderIndexAsync,
-            MaterialIconKind.ContentCopy,
+            MaterialIconKind.Dice6Outline,
             "Randomize children order"
         );
-        NavigateToCurrentToDoItem = CreateCommand(
+        NavigateToCurrentToDoItemItem = CreateCommand(
             NavigateToCurrentToDoItemAsync,
             MaterialIconKind.ArrowRight,
             "Open current to do item"
         );
-        SetToDoItemName = CreateCommand<IToDoNameProperty>(
+        SetToDoItemNameItem = CreateCommand<IToDoNameProperty>(
             SetToDoItemNameAsync,
             MaterialIconKind.Pencil,
             "Open current to do item"
         );
-        MultiCompleteToDoItems = CreateCommand<AvaloniaList<Selected<ToDoItemNotify>>>(
+        MultiCompleteToDoItemsItem = CreateCommand<AvaloniaList<Selected<ToDoItemNotify>>>(
             MultiCompleteToDoItemsAsync,
             MaterialIconKind.CheckAll,
             "Complete all to do items"
         );
-        MultiSetRootToDoItems = CreateCommand<AvaloniaList<Selected<ToDoItemNotify>>>(
+        MultiSetRootToDoItemsItem = CreateCommand<AvaloniaList<Selected<ToDoItemNotify>>>(
             MultiSetRootToDoItemsAsync,
             MaterialIconKind.SwapHorizontal,
             "Set parent for all to do items"
         );
-        MultiSetTypeToDoItems = CreateCommand<AvaloniaList<Selected<ToDoItemNotify>>>(
+        MultiSetTypeToDoItemsItem = CreateCommand<AvaloniaList<Selected<ToDoItemNotify>>>(
             MultiSetTypeToDoItemsAsync,
             MaterialIconKind.Switch,
             "Set type all to do items"
@@ -231,175 +234,134 @@ public static class CommandStorage
     private static readonly ITokenService tokenService;
     private static readonly IObjectStorage objectStorage;
     private static readonly IClipboard clipboard;
-    
-    public static CommandParameters<AvaloniaList<Selected<ToDoItemNotify>>> MultiSetTypeToDoItems { get; }
-    public static ICommand MultiSetTypeToDoItemsCommand => MultiSetTypeToDoItems.Value.Command;
-    public static CommandItem MultiSetTypeToDoItemsItem => MultiSetTypeToDoItems.Value;
 
-    public static CommandParameters<AvaloniaList<Selected<ToDoItemNotify>>> MultiSetRootToDoItems { get; }
-    public static ICommand MultiSetRootToDoItemsCommand => MultiSetRootToDoItems.Value.Command;
-    public static CommandItem MultiSetRootToDoItemsItem => MultiSetRootToDoItems.Value;
+    public static ICommand MultiSetTypeToDoItemsCommand => MultiSetTypeToDoItemsItem.Command;
+    public static CommandItem MultiSetTypeToDoItemsItem { get; }
 
-    public static CommandParameters<AvaloniaList<Selected<ToDoItemNotify>>> MultiCompleteToDoItems { get; }
-    public static ICommand MultiCompleteToDoItemsCommand => MultiCompleteToDoItems.Value.Command;
-    public static CommandItem MultiCompleteToDoItemsItem => MultiCompleteToDoItems.Value;
+    public static ICommand MultiSetRootToDoItemsCommand => MultiSetRootToDoItemsItem.Command;
+    public static CommandItem MultiSetRootToDoItemsItem { get; }
 
-    public static CommandParameters<IToDoNameProperty> SetToDoItemName { get; }
-    public static ICommand SetToDoItemNameCommand => SetToDoItemName.Value.Command;
-    public static CommandItem SetToDoItemNameItem => SetToDoItemName.Value;
+    public static ICommand MultiCompleteToDoItemsCommand => MultiCompleteToDoItemsItem.Command;
+    public static CommandItem MultiCompleteToDoItemsItem { get; }
 
-    public static CommandParameters NavigateToCurrentToDoItem { get; }
-    public static ICommand NavigateToCurrentToDoItemCommand => NavigateToCurrentToDoItem.Value.Command;
-    public static CommandItem NavigateToCurrentToDoItemItem => NavigateToCurrentToDoItem.Value;
+    public static ICommand SetToDoItemNameCommand => SetToDoItemNameItem.Command;
+    public static CommandItem SetToDoItemNameItem { get; }
 
-    public static CommandParameters<IIdProperty> ToDoItemRandomizeChildrenOrderIndex { get; }
+    public static ICommand NavigateToCurrentToDoItemCommand => NavigateToCurrentToDoItemItem.Command;
+    public static CommandItem NavigateToCurrentToDoItemItem { get; }
+
 
     public static ICommand ToDoItemRandomizeChildrenOrderIndexCommand =>
-        ToDoItemRandomizeChildrenOrderIndex.Value.Command;
+        ToDoItemRandomizeChildrenOrderIndexItem.Command;
 
-    public static CommandItem ToDoItemRandomizeChildrenOrderIndexItem => ToDoItemRandomizeChildrenOrderIndex.Value;
+    public static CommandItem ToDoItemRandomizeChildrenOrderIndexItem { get; }
 
-    public static CommandParameters<IIdProperty> ToDoItemToString { get; }
-    public static ICommand ToDoItemToStringCommand => ToDoItemToString.Value.Command;
-    public static CommandItem ToDoItemToStringItem => ToDoItemToString.Value;
+    public static ICommand ToDoItemToStringCommand => ToDoItemToStringItem.Command;
+    public static CommandItem ToDoItemToStringItem { get; }
 
-    public static CommandParameters<IIdProperty> MoveToDoItemToRoot { get; }
-    public static ICommand MoveToDoItemToRootCommand => MoveToDoItemToRoot.Value.Command;
-    public static CommandItem MoveToDoItemToRootItem => MoveToDoItemToRoot.Value;
+    public static ICommand MoveToDoItemToRootCommand => MoveToDoItemToRootItem.Command;
+    public static CommandItem MoveToDoItemToRootItem { get; }
 
-    public static CommandParameters<Guid> NavigateToLeaf { get; }
-    public static ICommand NavigateToLeafCommand => NavigateToLeaf.Value.Command;
-    public static CommandItem NavigateToLeafItem => NavigateToLeaf.Value;
+    public static ICommand NavigateToLeafCommand => NavigateToLeafItem.Command;
+    public static CommandItem NavigateToLeafItem { get; }
 
-    public static CommandParameters<Guid> AddToDoItemChild { get; }
-    public static ICommand AddToDoItemChildCommand => AddToDoItemChild.Value.Command;
-    public static CommandItem AddToDoItemChildItem => AddToDoItemChild.Value;
+    public static ICommand AddToDoItemChildCommand => AddToDoItemChildItem.Command;
+    public static CommandItem AddToDoItemChildItem { get; }
 
-    public static CommandParameters<IToDoSettingsProperty> ShowToDoSetting { get; }
-    public static ICommand ShowToDoSettingCommand => ShowToDoSetting.Value.Command;
-    public static CommandItem ShowToDoSettingItem => ShowToDoSetting.Value;
+    public static ICommand ShowToDoSettingCommand => ShowToDoSettingItem.Command;
+    public static CommandItem ShowToDoSettingItem { get; }
 
-    public static CommandParameters<IToDoDescriptionProperty> SetToDoDescription { get; }
-    public static ICommand SetToDoDescriptionCommand => SetToDoDescription.Value.Command;
-    public static CommandItem SetToDoDescriptionItem => SetToDoDescription.Value;
+    public static ICommand SetToDoDescriptionCommand => SetToDoDescriptionItem.Command;
+    public static CommandItem SetToDoDescriptionItem { get; }
 
-    public static CommandParameters<IToDoLinkProperty> SetToDoLink { get; }
-    public static ICommand SetToDoLinkCommand => SetToDoLink.Value.Command;
-    public static CommandItem SetToDoLinkItem => SetToDoLink.Value;
+    public static ICommand SetToDoLinkCommand => SetToDoLinkItem.Command;
+    public static CommandItem SetToDoLinkItem { get; }
 
-    public static CommandParameters<IToDoTypeProperty> SetToDoType { get; }
-    public static ICommand SetToDoTypeCommand => SetToDoType.Value.Command;
-    public static CommandItem SetToDoTypeItem => SetToDoType.Value;
+    public static ICommand SetToDoTypeCommand => SetToDoTypeItem.Command;
+    public static CommandItem SetToDoTypeItem { get; }
 
-    public static CommandParameters<IToDoItemSearchProperties> ToDoItemSearch { get; }
-    public static ICommand ToDoItemSearchCommand => ToDoItemSearch.Value.Command;
-    public static CommandItem ToDoItemSearchItem => ToDoItemSearch.Value;
+    public static ICommand ToDoItemSearchCommand => ToDoItemSearchItem.Command;
+    public static CommandItem ToDoItemSearchItem { get; }
 
-    public static CommandParameters SwitchPane { get; }
-    public static ICommand SwitchPaneCommand => SwitchPane.Value.Command;
-    public static CommandItem SwitchPaneItem => SwitchPane.Value;
+    public static ICommand SwitchPaneCommand => SwitchPaneItem.Command;
+    public static CommandItem SwitchPaneItem { get; }
 
-    public static CommandParameters<ICanComplete> CompleteToDoItem { get; }
-    public static ICommand CompleteToDoItemCommand => CompleteToDoItem.Value.Command;
-    public static CommandItem CompleteToDoItemItem => CompleteToDoItem.Value;
+    public static ICommand CompleteToDoItemCommand => CompleteToDoItemItem.Command;
+    public static CommandItem CompleteToDoItemItem { get; }
 
-    public static CommandParameters ChangeToActiveDoItem { get; }
-    public static ICommand ChangeToActiveDoItemCommand => ChangeToActiveDoItem.Value.Command;
-    public static CommandItem ChangeToActiveDoItemItem => ChangeToActiveDoItem.Value;
+    public static ICommand ChangeToActiveDoItemCommand => ChangeToActiveDoItemItem.Command;
+    public static CommandItem ChangeToActiveDoItemItem { get; }
 
-    public static CommandParameters<ToDoItemNotify> ChangeOrderIndex { get; }
-    public static ICommand ChangeOrderIndexCommand => ChangeOrderIndex.Value.Command;
-    public static CommandItem ChangeOrderIndexItem => ChangeOrderIndex.Value;
+    public static ICommand ChangeOrderIndexCommand => ChangeOrderIndexItem.Command;
+    public static CommandItem ChangeOrderIndexItem { get; }
 
-    public static CommandParameters<IDeletable> DeleteToDoItem { get; }
-    public static ICommand DeleteToDoItemCommand => DeleteToDoItem.Value.Command;
-    public static CommandItem DeleteToDoItemItem => DeleteToDoItem.Value;
+    public static ICommand DeleteToDoItemCommand => DeleteToDoItemItem.Command;
+    public static CommandItem DeleteToDoItemItem { get; }
 
-    public static CommandParameters<Guid> NavigateToToDoItem { get; }
-    public static ICommand NavigateToToDoItemCommand => NavigateToToDoItem.Value.Command;
-    public static CommandItem NavigateToToDoItemItem => NavigateToToDoItem.Value;
+    public static ICommand NavigateToToDoItemCommand => NavigateToToDoItemItem.Command;
+    public static CommandItem NavigateToToDoItemItem { get; }
 
-    public static CommandParameters<ToDoItemNotify> OpenLink { get; }
-    public static ICommand OpenLinkCommand => OpenLink.Value.Command;
-    public static CommandItem OpenLinkItem => OpenLink.Value;
+    public static ICommand OpenLinkCommand => OpenLinkItem.Command;
+    public static CommandItem OpenLinkItem { get; }
 
-    public static CommandParameters<Guid> RemoveToDoItemFromFavorite { get; }
-    public static ICommand RemoveToDoItemFromFavoriteCommand => RemoveToDoItemFromFavorite.Value.Command;
-    public static CommandItem RemoveToDoItemFromFavoriteItem => RemoveToDoItemFromFavorite.Value;
+    public static ICommand RemoveToDoItemFromFavoriteCommand => RemoveToDoItemFromFavoriteItem.Command;
+    public static CommandItem RemoveToDoItemFromFavoriteItem { get; }
 
-    public static CommandParameters<Guid> AddToDoItemToFavorite { get; }
-    public static ICommand AddToDoItemToFavoriteCommand => AddToDoItemToFavorite.Value.Command;
-    public static CommandItem AddToDoItemToFavoriteItem => AddToDoItemToFavorite.Value;
+    public static ICommand AddToDoItemToFavoriteCommand => AddToDoItemToFavoriteItem.Command;
+    public static CommandItem AddToDoItemToFavoriteItem { get; }
 
-    public static CommandParameters<IToDoShortItemProperty> SetToDoShortItem { get; }
-    public static ICommand SetToDoShortItemCommand => SetToDoShortItem.Value.Command;
-    public static CommandItem SetToDoShortItemItem => SetToDoShortItem.Value;
+    public static ICommand SetToDoShortItemCommand => SetToDoShortItemItem.Command;
+    public static CommandItem SetToDoShortItemItem { get; }
 
-    public static CommandParameters<IDueDateTimeProperty> SetDueDateTime { get; }
-    public static ICommand SetDueDateTimeCommand => SetDueDateTime.Value.Command;
-    public static CommandItem SetDueDateTimeItem => SetDueDateTime.Value;
+    public static ICommand SetDueDateTimeCommand => SetDueDateTimeItem.Command;
+    public static CommandItem SetDueDateTimeItem { get; }
 
-    public static CommandParameters<ICreateUserProperties> CreateUser { get; }
-    public static ICommand CreateUserCommand => CreateUser.Value.Command;
-    public static CommandItem CreateUserItem => CreateUser.Value;
+    public static ICommand CreateUserCommand => CreateUserItem.Command;
+    public static CommandItem CreateUserItem { get; }
 
-    public static CommandParameters Back { get; }
-    public static ICommand BackCommand => Back.Value.Command;
-    public static CommandItem BackItem => Back.Value;
+    public static ICommand BackCommand => BackItem.Command;
+    public static CommandItem BackItem { get; }
 
-    public static CommandParameters<Type> NavigateTo { get; }
-    public static ICommand NavigateToCommand => NavigateTo.Value.Command;
-    public static CommandItem NavigateToItem => NavigateTo.Value;
+    public static ICommand NavigateToCommand => NavigateToItem.Command;
+    public static CommandItem NavigateToItem { get; }
 
-    public static CommandParameters<ILoginProperties> Login { get; }
-    public static ICommand LoginCommand => Login.Value.Command;
-    public static CommandItem LoginItem => Login.Value;
+    public static ICommand LoginCommand => LoginItem.Command;
+    public static CommandItem LoginItem { get; }
 
-    public static CommandParameters Logout { get; }
-    public static ICommand LogoutCommand => Logout.Value.Command;
-    public static CommandItem LogoutItem => Logout.Value;
+    public static ICommand LogoutCommand => LogoutItem.Command;
+    public static CommandItem LogoutItem { get; }
 
-    public static CommandParameters<IToDoChildrenTypeProperty> SetToDoChildrenType { get; }
-    public static ICommand SetToDoChildrenTypeCommand => SetToDoChildrenType.Value.Command;
-    public static CommandItem SetToDoChildrenTypeItem => SetToDoChildrenType.Value;
+    public static ICommand SetToDoChildrenTypeCommand => SetToDoChildrenTypeItem.Command;
+    public static CommandItem SetToDoChildrenTypeItem { get; }
 
-    public static CommandParameters<IToDoDueDateProperty> SetToDoDueDate { get; }
-    public static ICommand SetToDoDueDateCommand => SetToDoDueDate.Value.Command;
-    public static CommandItem SetToDoDueDateItem => SetToDoDueDate.Value;
+    public static ICommand SetToDoDueDateCommand => SetToDoDueDateItem.Command;
+    public static CommandItem SetToDoDueDateItem { get; }
 
-    public static CommandParameters<IToDoDaysOffsetProperty> SetToDoDaysOffset { get; }
-    public static ICommand SetToDoDaysOffsetCommand => SetToDoDaysOffset.Value.Command;
-    public static CommandItem SetToDoDaysOffsetItem => SetToDoDaysOffset.Value;
+    public static ICommand SetToDoDaysOffsetCommand => SetToDoDaysOffsetItem.Command;
+    public static CommandItem SetToDoDaysOffsetItem { get; }
 
-    public static CommandParameters<IToDoMonthsOffsetProperty> SetToDoMonthsOffset { get; }
-    public static ICommand SetToDoMonthsOffsetCommand => SetToDoMonthsOffset.Value.Command;
-    public static CommandItem SetToDoMonthsOffsetItem => SetToDoMonthsOffset.Value;
+    public static ICommand SetToDoMonthsOffsetCommand => SetToDoMonthsOffsetItem.Command;
+    public static CommandItem SetToDoMonthsOffsetItem { get; }
 
-    public static CommandParameters<IToDoWeeksOffsetProperty> SetToDoWeeksOffset { get; }
-    public static ICommand SetToDoWeeksOffsetCommand => SetToDoWeeksOffset.Value.Command;
-    public static CommandItem SetToDoWeeksOffsetItem => SetToDoWeeksOffset.Value;
+    public static ICommand SetToDoWeeksOffsetCommand => SetToDoWeeksOffsetItem.Command;
+    public static CommandItem SetToDoWeeksOffsetItem { get; }
 
-    public static CommandParameters<IToDoYearsOffsetProperty> SetToDoYearsOffset { get; }
-    public static ICommand SetToDoYearsOffsetCommand => SetToDoYearsOffset.Value.Command;
-    public static CommandItem SetToDoYearsOffsetItem => SetToDoYearsOffset.Value;
+    public static ICommand SetToDoYearsOffsetCommand => SetToDoYearsOffsetItem.Command;
+    public static CommandItem SetToDoYearsOffsetItem { get; }
 
-    public static CommandParameters<IToDoTypeOfPeriodicityProperty> SetToDoTypeOfPeriodicity { get; }
-    public static ICommand SetToDoTypeOfPeriodicityCommand => SetToDoTypeOfPeriodicity.Value.Command;
-    public static CommandItem SetToDoTypeOfPeriodicityItem => SetToDoTypeOfPeriodicity.Value;
+    public static ICommand SetToDoTypeOfPeriodicityCommand => SetToDoTypeOfPeriodicityItem.Command;
+    public static CommandItem SetToDoTypeOfPeriodicityItem { get; }
 
-    public static CommandParameters<IToDoTypeOfPeriodicityProperty> SetToDoPeriodicity { get; }
-    public static ICommand SetToDoPeriodicityCommand => SetToDoPeriodicity.Value.Command;
-    public static CommandItem SetToDoPeriodicityItem => SetToDoPeriodicity.Value;
+    public static ICommand SetToDoPeriodicityCommand => SetToDoPeriodicityItem.Command;
+    public static CommandItem SetToDoPeriodicityItem { get; }
 
-    public static CommandParameters AddRootToDoItem { get; }
-    public static ICommand AddRootToDoItemCommand => AddRootToDoItem.Value.Command;
-    public static CommandItem AddRootToDoItemItem => AddRootToDoItem.Value;
+    public static ICommand AddRootToDoItemCommand => AddRootToDoItemItem.Command;
+    public static CommandItem AddRootToDoItemItem { get; }
 
-    public static CommandParameters<IIdProperty> SetToDoParentItem { get; }
-    public static ICommand SetToDoParentItemCommand => SetToDoParentItem.Value.Command;
-    public static CommandItem SetToDoParentItemItem => SetToDoParentItem.Value;
+    public static ICommand SetToDoParentItemCommand => SetToDoParentItemItem.Command;
+    public static CommandItem SetToDoParentItemItem { get; }
 
-    public static CommandParameters<AvaloniaList<Selected<ToDoItemNotify>>> SelectAll { get; }
+    public static CommandItem SelectAll { get; }
 
     private static Task MultiSetTypeToDoItemsAsync(
         AvaloniaList<Selected<ToDoItemNotify>> itemsNotify,
@@ -738,7 +700,10 @@ public static class CommandStorage
         );
     }
 
-    private static async Task ToDoItemSearchAsync(IToDoItemSearchProperties properties, CancellationToken cancellationToken)
+    private static async Task ToDoItemSearchAsync(
+        IToDoItemSearchProperties properties,
+        CancellationToken cancellationToken
+    )
     {
         var ids = await toDoService.SearchToDoItemIdsAsync(properties.SearchText, cancellationToken)
             .ConfigureAwait(false);
@@ -1293,35 +1258,28 @@ public static class CommandStorage
         await cancellationToken.InvokeUIAsync(() => mainSplitViewModel.IsPaneOpen = !mainSplitViewModel.IsPaneOpen);
     }
 
-    public static CommandParameters CreateCommand(
+    public static CommandItem CreateCommand(
         Func<CancellationToken, Task> func,
         MaterialIconKind icon,
         string name
     )
     {
-        var work = TaskWork.Create(func);
-        var command = ReactiveCommand.CreateFromTask(work.RunAsync);
-        SetupCommand(command);
+        var result = CommandItem.Create(icon, name, func);
+        result.ThrownExceptions.Subscribe(OnNextError);
 
-        return new CommandParameters(new CommandItem(icon, command, name, null), work);
+        return result;
     }
 
-    public static CommandParameters<TParam> CreateCommand<TParam>(
+    public static CommandItem CreateCommand<TParam>(
         Func<TParam, CancellationToken, Task> func,
         MaterialIconKind icon,
         string name
     )
     {
-        var work = TaskWork.Create(func);
-        var command = ReactiveCommand.CreateFromTask<TParam>(work.RunAsync);
-        SetupCommand(command);
+        var result = CommandItem.Create(icon, name, func);
+        result.ThrownExceptions.Subscribe(OnNextError);
 
-        return new CommandParameters<TParam>(new CommandItem(icon, command, name, null), work);
-    }
-
-    private static void SetupCommand<TParam, TResult>(ReactiveCommand<TParam, TResult> command)
-    {
-        command.ThrownExceptions.Subscribe(OnNextError);
+        return result;
     }
 
     private static async void OnNextError(Exception exception)

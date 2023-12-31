@@ -1,9 +1,7 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Headless;
 using Avalonia.Headless.XUnit;
 using Avalonia.Input;
-using FluentAssertions;
 using Spravy.Domain.Extensions;
 using Spravy.Tests.Extensions;
 using Spravy.Tests.Helpers;
@@ -21,12 +19,14 @@ public class MainWindowTests
             .ShowWindow()
             .Case(w => w.Height = 1000)
             .Case(w => w.Width = 1000)
+            .RunJobs()
             .Case(
                 w => w.GetCurrentView<LoginView, LoginViewModel>()
                     .FindControl<Button>("CreateUserButton")
                     .ThrowIfNull()
-                    .Case(b => w.MouseDown(b.Bounds.Position, MouseButton.Left))
-                    .Case(b => w.MouseUp(b.Bounds.Position, MouseButton.Left))
+                    .FocusElement()
+                    .Case(() => w.KeyPressQwerty(PhysicalKey.Enter, RawInputModifiers.None))
+                    .RunJobs()
             )
             .GetCurrentView<CreateUserView, CreateUserViewModel>();
     }
