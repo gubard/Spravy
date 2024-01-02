@@ -66,7 +66,7 @@ public static class CommandStorage
         OpenLinkItem = CreateCommand<ToDoItemNotify>(
             OpenLinkAsync,
             MaterialIconKind.Link,
-            "Reorder"
+            "Open link"
         );
         RemoveToDoItemFromFavoriteItem = CreateCommand<Guid>(
             RemoveFavoriteToDoItemAsync,
@@ -177,7 +177,7 @@ public static class CommandStorage
             MaterialIconKind.Leaf,
             "Navigate to leaf"
         );
-        SetToDoParentItemItem = CreateCommand<IIdProperty>(
+        SetToDoParentItemItem = CreateCommand<ISetToDoParentItemParams>(
             SetToDoParentItemAsync,
             MaterialIconKind.SwapHorizontal,
             "Set to do item parent"
@@ -570,7 +570,7 @@ public static class CommandStorage
             .ConfigureAwait(false);
     }
 
-    private static Task SetToDoParentItemAsync(IIdProperty property, CancellationToken cancellationToken)
+    private static Task SetToDoParentItemAsync(ISetToDoParentItemParams property, CancellationToken cancellationToken)
     {
         return dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
             async item =>
@@ -580,7 +580,11 @@ public static class CommandStorage
                     .ConfigureAwait(false);
                 await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
             },
-            ActionHelper<ToDoItemSelectorViewModel>.Empty,
+            viewModel =>
+            {
+                viewModel.IgnoreIds.Add(property.Id);
+                viewModel.DefaultSelectedItemId = property.ParentId.GetValueOrDefault();
+            },
             cancellationToken
         );
     }

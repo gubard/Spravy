@@ -14,7 +14,8 @@ public readonly struct ToDoItem
         uint orderIndex,
         ToDoItemStatus status,
         ActiveToDoItem? active,
-        ToDoItemIsCan isCan
+        ToDoItemIsCan isCan,
+        Guid? parentId
     )
     {
         Id = id;
@@ -27,6 +28,7 @@ public readonly struct ToDoItem
         Status = status;
         Active = active;
         IsCan = isCan;
+        ParentId = parentId;
     }
 
     public Guid Id { get; }
@@ -39,4 +41,5 @@ public readonly struct ToDoItem
     public ToDoItemStatus Status { get; }
     public ActiveToDoItem? Active { get; }
     public ToDoItemIsCan IsCan { get; }
+    public Guid? ParentId { get; }
 }

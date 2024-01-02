@@ -8,6 +8,20 @@ public class ToDoSelectorItemNotify : NotifyBase
 {
     private Guid id;
     private string name = string.Empty;
+    private ToDoSelectorItemNotify? parent;
+    private bool isExpanded;
+
+    public bool IsExpanded
+    {
+        get => isExpanded;
+        set => this.RaiseAndSetIfChanged(ref isExpanded, value);
+    }
+
+    public ToDoSelectorItemNotify? Parent
+    {
+        get => parent;
+        set => this.RaiseAndSetIfChanged(ref parent, value);
+    }
 
     public Guid Id
     {

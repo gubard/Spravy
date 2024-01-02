@@ -32,7 +32,8 @@ public class SpravyToDoDbProfile : Profile
                         entity.OrderIndex,
                         parameters.Status,
                         parameters.ActiveItem,
-                        parameters.IsCan
+                        parameters.IsCan,
+                        entity.ParentId
                     );
                 }
             );

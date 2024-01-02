@@ -23,6 +23,7 @@ message ToDoItemGrpc {
   ToDoItemStatusGrpc Status = 8;
   ActiveToDoItemGrpc Active = 9;
   ToDoItemIsCanGrpc IsCan = 10;
+  bytes ParentId = 11;
 }
 
 message GetToDoItemsReply {
@@ -139,6 +140,7 @@ message GetToDoItemReply {
   ToDoItemStatusGrpc Status = 8;
   ActiveToDoItemGrpc Active = 9;
   ToDoItemIsCanGrpc IsCan = 10;
+  bytes ParentId = 11;
 }
 
 message GetChildrenToDoItemIdsRequest {

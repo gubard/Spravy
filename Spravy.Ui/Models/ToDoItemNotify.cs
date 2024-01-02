@@ -8,7 +8,7 @@ using Spravy.Ui.Interfaces;
 
 namespace Spravy.Ui.Models;
 
-public class ToDoItemNotify : NotifyBase, ICanComplete, IDeletable, IToDoSettingsProperty
+public class ToDoItemNotify : NotifyBase, ICanComplete, IDeletable, IToDoSettingsProperty, ISetToDoParentItemParams
 {
     private Guid id;
     private string name = string.Empty;
@@ -20,6 +20,7 @@ public class ToDoItemNotify : NotifyBase, ICanComplete, IDeletable, IToDoSetting
     private ToDoItemStatus status;
     private ActiveToDoItemNotify? active;
     private ToDoItemIsCan isCan;
+    private Guid? parentId;
 
     public object Header => Name;
     public AvaloniaList<CommandItem> Commands { get; } = new();
@@ -87,5 +88,11 @@ public class ToDoItemNotify : NotifyBase, ICanComplete, IDeletable, IToDoSetting
     public Task RefreshAsync(CancellationToken cancellationToken)
     {
         return Task.CompletedTask;
+    }
+
+    public Guid? ParentId
+    {
+        get => parentId;
+        set =>  this.RaiseAndSetIfChanged(ref parentId, value);
     }
 }

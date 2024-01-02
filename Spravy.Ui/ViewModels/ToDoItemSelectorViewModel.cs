@@ -110,9 +110,14 @@ public class ToDoItemSelectorViewModel : ViewModelBase
         {
             if (root.Id != id)
             {
+                foreach (var child in root.Children)
+                {
+                    child.Parent = root;
+                }
+
                 if (SetItem(id, root.Children))
                 {
-                    return;
+                    break;
                 }
 
                 continue;
@@ -120,7 +125,20 @@ public class ToDoItemSelectorViewModel : ViewModelBase
 
             SelectedItem = root;
 
+            break;
+        }
+
+        if (SelectedItem is null)
+        {
             return;
+        }
+
+        var current = SelectedItem;
+
+        while (current.Parent is not null)
+        {
+            current.Parent.IsExpanded = true;
+            current = current.Parent;
         }
     }
 
@@ -130,6 +148,11 @@ public class ToDoItemSelectorViewModel : ViewModelBase
         {
             if (item.Id != id)
             {
+                foreach (var child in item.Children)
+                {
+                    child.Parent = item;
+                }
+
                 if (SetItem(id, item.Children))
                 {
                     return true;

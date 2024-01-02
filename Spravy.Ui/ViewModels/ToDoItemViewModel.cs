@@ -26,7 +26,8 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     IToDoDescriptionProperty,
     IToDoSettingsProperty,
     IToDoNameProperty,
-    IDeletable
+    IDeletable,
+    ISetToDoParentItemParams
 {
     private string name = string.Empty;
     private Guid id;
@@ -40,6 +41,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     private ToDoItemStatus status;
     private readonly ToDoSubItemsViewModel toDoSubItemsViewModel;
     private readonly PageHeaderViewModel pageHeaderViewModel;
+    private Guid? parentId;
 
     public ToDoItemViewModel() : base(true)
     {
@@ -101,6 +103,12 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
 
     [Inject]
     public required PathViewModel PathViewModel { get; set; }
+
+    public Guid? ParentId
+    {
+        get => parentId;
+        set => this.RaiseAndSetIfChanged(ref parentId, value);
+    }
 
     public bool IsFavorite
     {
@@ -186,6 +194,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
                 IsCan = item.IsCan;
                 IsFavorite = item.IsFavorite;
                 Status = item.Status;
+                ParentId = item.ParentId;
             }
         );
     }

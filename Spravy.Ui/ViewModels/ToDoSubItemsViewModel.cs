@@ -74,6 +74,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
         item.Commands.Add(CommandStorage.MoveToDoItemToRootItem.WithParam(item));
         item.Commands.Add(CommandStorage.ToDoItemToStringItem.WithParam(item));
         item.Commands.Add(CommandStorage.ToDoItemRandomizeChildrenOrderIndexItem.WithParam(item));
+        item.Commands.Add(CommandStorage.ChangeOrderIndexItem.WithParam(item));
 
         return item;
     }
