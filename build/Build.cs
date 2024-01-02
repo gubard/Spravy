@@ -16,6 +16,7 @@ using Nuke.Common.ProjectModel;
 using Nuke.Common.Tools.DotNet;
 using Renci.SshNet;
 using Serilog;
+using Telegram.Bot;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 namespace _build;
@@ -336,7 +337,19 @@ class Build : NukeBuild
                 }
             );
 
-    Target Publish => _ => _.DependsOn(PublishBrowser);
+    Target Publish =>
+        _ => _.DependsOn(PublishBrowser)
+            .Executes(() =>
+                {
+                    var botClient = new TelegramBotClient(TelegramToken);
+                    botClient.SendTextMessageAsync(
+                            chatId: "@spravy_release",
+                            text: "Published"
+                        )
+                        .GetAwaiter()
+                        .GetResult();
+                }
+            );
 
     void DeployDesktop(string runtime)
     {
