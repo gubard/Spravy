@@ -55,7 +55,7 @@ public class AndroidModule : NinjectModule
 
         Bind<IObjectStorage>()
             .ToConstructor(
-                x => new ObjectStorage(
+                x => new FilesObjectStorage(
                     FileSystem.AppDataDirectory.ToDirectory(),
                     x.Context.Kernel.GetRequiredService<ISerializer>()
                 )

@@ -3,12 +3,12 @@ using Spravy.Domain.Interfaces;
 
 namespace Spravy.Domain.Services;
 
-public class ObjectStorage : IObjectStorage
+public class FilesObjectStorage : IObjectStorage
 {
     private readonly DirectoryInfo root;
     private readonly ISerializer serializer;
 
-    public ObjectStorage(DirectoryInfo root, ISerializer serializer)
+    public FilesObjectStorage(DirectoryInfo root, ISerializer serializer)
     {
         if (!root.Exists)
         {

@@ -43,7 +43,7 @@ public class DesktopModule : NinjectModule
 
         Bind<IObjectStorage>()
             .ToMethod(
-                context => new ObjectStorage(
+                context => new FilesObjectStorage(
                     "./storage".ToDirectory(),
                     context.Kernel.GetRequiredService<ISerializer>()
                 )
