@@ -712,7 +712,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 var metadata = await metadataFactory.CreateAsync(cancellationToken);
-                var request = DefaultObject<GetToDoSelectorItemsRequest>.Default;
+                var request = new GetToDoSelectorItemsRequest();
                 request.IgnoreIds.AddRange(mapper.Map<IEnumerable<ByteString>>(ignoreIds));
                 cancellationToken.ThrowIfCancellationRequested();
 
