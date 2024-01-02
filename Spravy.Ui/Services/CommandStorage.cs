@@ -52,7 +52,7 @@ public static class CommandStorage
             MaterialIconKind.CheckAll,
             "Select all"
         );
-        DeleteToDoItemItem = CreateCommand<IDeletable>(DeleteSubToDoItemAsync, MaterialIconKind.Delete, "Delete");
+        DeleteToDoItemItem = CreateCommand<IDeletable>(DeleteToDoItemAsync, MaterialIconKind.Delete, "Delete");
         ChangeToActiveDoItemItem = CreateCommand(
             ChangeToActiveDoItemAsync,
             MaterialIconKind.ArrowRight,
@@ -1142,15 +1142,34 @@ public static class CommandStorage
         }
     }
 
-    private static async Task DeleteSubToDoItemAsync(IDeletable deletable, CancellationToken cancellationToken)
+    private static async Task DeleteToDoItemAsync(IDeletable deletable, CancellationToken cancellationToken)
     {
         await dialogViewer.ShowConfirmContentDialogAsync<DeleteToDoItemViewModel>(
-                async view =>
+                async _ =>
                 {
                     await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
 
                     await toDoService.DeleteToDoItemAsync(deletable.Id, cancellationToken)
                         .ConfigureAwait(false);
+
+                    if (deletable.IsNavigateToParent)
+                    {
+                        if (deletable.ParentId is null)
+                        {
+                            await navigator.NavigateToAsync<RootToDoItemsViewModel>(cancellationToken)
+                                .ConfigureAwait(false);
+                        }
+                        else
+                        {
+                            await navigator.NavigateToAsync<ToDoItemViewModel>(
+                                    viewModel => viewModel.Id = deletable.ParentId.Value,
+                                    cancellationToken
+                                )
+                                .ConfigureAwait(false);
+                        }
+
+                        return;
+                    }
 
                     await RefreshCurrentViewAsync(cancellationToken);
                 },

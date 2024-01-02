@@ -95,4 +95,6 @@ public class ToDoItemNotify : NotifyBase, ICanComplete, IDeletable, IToDoSetting
         get => parentId;
         set =>  this.RaiseAndSetIfChanged(ref parentId, value);
     }
+
+    public bool IsNavigateToParent => false;
 }

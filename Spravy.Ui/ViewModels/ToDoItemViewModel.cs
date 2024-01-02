@@ -110,6 +110,8 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
         set => this.RaiseAndSetIfChanged(ref parentId, value);
     }
 
+    public bool IsNavigateToParent => true;
+
     public bool IsFavorite
     {
         get => isFavorite;
