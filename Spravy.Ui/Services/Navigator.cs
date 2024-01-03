@@ -18,7 +18,7 @@ public class Navigator : INavigator
     [Inject]
     public required IContent Content { get; init; }
 
-    private void AddCurrentContent()
+    private async Task AddCurrentContentAsync()
     {
         if (Content.Content is null)
         {
@@ -33,12 +33,13 @@ public class Navigator : INavigator
             return;
         }
 
+        await content.SaveStateAsync().ConfigureAwait(false);
         list.Add(content);
     }
 
     public async Task NavigateToAsync(Type type, CancellationToken cancellationToken)
     {
-        AddCurrentContent();
+        await AddCurrentContentAsync();
         var viewModel = (INavigatable)Resolver.Get(type);
         await this.InvokeUIAsync(() => Content.Content = viewModel);
     }
@@ -46,7 +47,7 @@ public class Navigator : INavigator
     public async Task NavigateToAsync<TViewModel>(Action<TViewModel> setup, CancellationToken cancellationToken)
         where TViewModel : INavigatable
     {
-        AddCurrentContent();
+        await AddCurrentContentAsync();
         var viewModel = Resolver.Get<TViewModel>();
 
         await this.InvokeUIAsync(
@@ -60,7 +61,7 @@ public class Navigator : INavigator
 
     public async Task NavigateToAsync<TViewModel>(CancellationToken cancellationToken) where TViewModel : INavigatable
     {
-        AddCurrentContent();
+        await AddCurrentContentAsync();
         var viewModel = Resolver.Get<TViewModel>();
         await this.InvokeUIAsync(() => Content.Content = viewModel);
     }
@@ -82,7 +83,7 @@ public class Navigator : INavigator
     public async Task NavigateToAsync<TViewModel>(TViewModel parameter, CancellationToken cancellationToken)
         where TViewModel : INavigatable
     {
-        AddCurrentContent();
+        await AddCurrentContentAsync();
         await this.InvokeUIAsync(() => Content.Content = parameter);
     }
 }

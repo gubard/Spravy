@@ -984,7 +984,7 @@ public static class CommandStorage
 
     private static async Task LogoutAsync(CancellationToken cancellationToken)
     {
-        await objectStorage.DeleteAsync(FileIds.LoginFileId).ConfigureAwait(false);
+        await objectStorage.DeleteAsync(StorageIds.LoginId).ConfigureAwait(false);
         await navigator.NavigateToAsync(ActionHelper<LoginViewModel>.Empty, cancellationToken).ConfigureAwait(false);
         await cancellationToken.InvokeUIAsync(() => mainSplitViewModel.IsPaneOpen = false);
     }
@@ -1014,7 +1014,7 @@ public static class CommandStorage
             Token = token,
         };
 
-        await objectStorage.SaveObjectAsync(FileIds.LoginFileId, item).ConfigureAwait(false);
+        await objectStorage.SaveObjectAsync(StorageIds.LoginId, item).ConfigureAwait(false);
     }
 
     private static async Task NavigateToAsync(Type type, CancellationToken cancellationToken)

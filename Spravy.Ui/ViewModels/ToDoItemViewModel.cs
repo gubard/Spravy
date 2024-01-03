@@ -7,12 +7,16 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
 using Ninject;
+using ProtoBuf;
 using ReactiveUI;
 using Spravy.Domain.Extensions;
+using Spravy.Domain.Helpers;
+using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Extensions;
+using Spravy.Ui.Features.ToDo.Enums;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 using Spravy.Ui.Services;
@@ -104,6 +108,9 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     [Inject]
     public required PathViewModel PathViewModel { get; set; }
 
+    [Inject]
+    public required IObjectStorage ObjectStorage { get; init; }
+
     public Guid? ParentId
     {
         get => parentId;
@@ -111,6 +118,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     }
 
     public bool IsNavigateToParent => true;
+    public override string ViewId => $"{TypeCache<ToDoItemViewModel>.Type.Name}:{Id}";
 
     public bool IsFavorite
     {
@@ -222,9 +230,13 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
         await ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, cancellationToken).ConfigureAwait(false);
     }
 
-    private Task InitializedAsync(CancellationToken cancellationToken)
+    private async Task InitializedAsync(CancellationToken cancellationToken)
     {
-        return RefreshAsync(cancellationToken);
+        var setting = await ObjectStorage.GetObjectOrDefaultAsync<ToDoItemViewModelSetting>(ViewId)
+            .ConfigureAwait(false);
+
+        await SetStateAsync(setting).ConfigureAwait(false);
+        await RefreshAsync(cancellationToken).ConfigureAwait(false);
     }
 
     private async Task UpdateCommandsAsync()
@@ -298,5 +310,43 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     {
         refreshToDoItemWork.Cancel();
         refreshWork.Cancel();
+    }
+
+    public override Task SaveStateAsync()
+    {
+        return ObjectStorage.SaveObjectAsync(ViewId, new ToDoItemViewModelSetting(this));
+    }
+
+    public override async Task SetStateAsync(object setting)
+    {
+        var s = setting.ThrowIfIsNotCast<ToDoItemViewModelSetting>();
+
+        await this.InvokeUIAsync(
+            () =>
+            {
+                ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
+                ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
+            }
+        );
+    }
+
+    [ProtoContract]
+    class ToDoItemViewModelSetting
+    {
+        public ToDoItemViewModelSetting(ToDoItemViewModel viewModel)
+        {
+            GroupBy = viewModel.ToDoSubItemsViewModel.List.GroupBy;
+            IsMulti = viewModel.ToDoSubItemsViewModel.List.IsMulti;
+        }
+
+        public ToDoItemViewModelSetting()
+        {
+        }
+
+        [ProtoMember(1)]
+        public GroupBy GroupBy { get; set; } = GroupBy.ByStatus;
+
+        [ProtoMember(2)]
+        public bool IsMulti { get; set; }
     }
 }

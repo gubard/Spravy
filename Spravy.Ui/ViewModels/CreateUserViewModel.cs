@@ -1,11 +1,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using AutoMapper;
 using Avalonia.Controls;
-using Ninject;
 using ReactiveUI;
-using Spravy.Authentication.Domain.Interfaces;
+using Spravy.Domain.Helpers;
 using Spravy.Domain.Models;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
@@ -27,13 +25,8 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
         EnterCommand = CreateCommandFromTask<CreateUserView>(TaskWork.Create<CreateUserView>(EnterAsync).RunAsync);
     }
 
-    [Inject]
-    public required IAuthenticationService AuthenticationService { get; init; }
-
-    [Inject]
-    public required IMapper Mapper { get; init; }
-
     public ICommand EnterCommand { get; }
+    public override string ViewId => TypeCache<CreateUserViewModel>.Type.Name;
 
     public string Email
     {
@@ -115,5 +108,15 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
 
     public override void Stop()
     {
+    }
+
+    public override Task SaveStateAsync()
+    {
+        return Task.CompletedTask;
+    }
+
+    public override Task SetStateAsync(object setting)
+    {
+        return Task.CompletedTask;
     }
 }

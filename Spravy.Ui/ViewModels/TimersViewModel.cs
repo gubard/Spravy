@@ -5,6 +5,7 @@ using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
 using Ninject;
+using Spravy.Domain.Helpers;
 using Spravy.Domain.Models;
 using Spravy.Schedule.Domain.Interfaces;
 using Spravy.Ui.Models;
@@ -20,6 +21,7 @@ public class TimersViewModel : NavigatableViewModelBase
 
     public ICommand InitializedCommand { get; }
     public AvaloniaList<TimerItemNotify> Timers { get; } = new();
+    public override string ViewId => TypeCache<TimersViewModel>.Type.Name;
 
     [Inject]
     public required MainSplitViewModel MainSplitViewModel { get; init; }
@@ -44,6 +46,15 @@ public class TimersViewModel : NavigatableViewModelBase
 
     public override void Stop()
     {
-        
+    }
+
+    public override Task SaveStateAsync()
+    {
+        return Task.CompletedTask;
+    }
+
+    public override Task SetStateAsync(object setting)
+    {
+        return Task.CompletedTask;
     }
 }

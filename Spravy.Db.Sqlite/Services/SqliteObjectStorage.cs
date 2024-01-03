@@ -40,14 +40,13 @@ public class SqliteObjectStorage : IObjectStorage
 
         if (item is null)
         {
-            await storageDbContext.Set<StorageEntity>()
-                .AddAsync(
-                    new StorageEntity
-                    {
-                        Id = id,
-                        Value = steam.ToArray()
-                    }
-                );
+            var entity = new StorageEntity
+            {
+                Id = id,
+                Value = steam.ToArray(),
+            };
+
+            await storageDbContext.Set<StorageEntity>().AddAsync(entity);
         }
         else
         {

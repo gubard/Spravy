@@ -7,6 +7,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Input.Platform;
 using Grpc.Net.Client;
+using Microsoft.Extensions.DependencyInjection;
 using Ninject;
 using Ninject.Modules;
 using ReactiveUI;
@@ -19,6 +20,9 @@ using Spravy.Authentication.Protos;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
 using Spravy.Core.Services;
+using Spravy.Db.Interfaces;
+using Spravy.Db.Services;
+using Spravy.Db.Sqlite.Services;
 using Spravy.Domain.Di.Extensions;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
@@ -60,6 +64,9 @@ public class UiModule : NinjectModule
 
     public override void Load()
     {
+        Bind<IObjectStorage>().To<SqliteObjectStorage>();
+        Bind<StorageDbContext>().ToMethod(c => new StorageDbContext(c.Kernel.GetRequiredService<IDbContextSetup>()));
+
         this.BindGrpcService2<GrpcAuthenticationService, AuthenticationService.AuthenticationServiceClient,
             GrpcAuthenticationServiceOptions>(useCache);
 

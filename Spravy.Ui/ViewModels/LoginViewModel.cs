@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Controls;
 using Ninject;
+using ProtoBuf;
 using ReactiveUI;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
@@ -61,15 +62,19 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties
 
     public ICommand InitializedCommand { get; }
     public ICommand EnterCommand { get; }
+    public override string ViewId => TypeCache<LoginViewModel>.Type.Name;
 
     private async Task InitializedAsync(CancellationToken cancellationToken)
     {
-        if (!await ObjectStorage.IsExistsAsync(FileIds.LoginFileId).ConfigureAwait(false))
+        var setting = await ObjectStorage.GetObjectOrDefaultAsync<LoginViewModelSetting>(ViewId).ConfigureAwait(false);
+        await SetStateAsync(setting).ConfigureAwait(false);
+
+        if (!await ObjectStorage.IsExistsAsync(StorageIds.LoginId).ConfigureAwait(false))
         {
             return;
         }
 
-        var item = await ObjectStorage.GetObjectAsync<LoginStorageItem>(FileIds.LoginFileId).ConfigureAwait(false);
+        var item = await ObjectStorage.GetObjectAsync<LoginStorageItem>(StorageIds.LoginId).ConfigureAwait(false);
         var jwtHandler = new JwtSecurityTokenHandler();
         var jwtToken = jwtHandler.ReadJwtToken(item.Token);
         var l = jwtToken.Claims.Single(x => x.Type == ClaimTypes.Name).Value;
@@ -108,5 +113,32 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties
 
     public override void Stop()
     {
+    }
+
+    public override Task SaveStateAsync()
+    {
+        return ObjectStorage.SaveObjectAsync(ViewId, new LoginViewModelSetting(this));
+    }
+
+    public override async Task SetStateAsync(object setting)
+    {
+        var s = setting.ThrowIfIsNotCast<LoginViewModelSetting>();
+        await this.InvokeUIAsync(() => Login = s.Login);
+    }
+
+    [ProtoContract]
+    class LoginViewModelSetting
+    {
+        public LoginViewModelSetting(LoginViewModel viewModel)
+        {
+            Login = viewModel.Login;
+        }
+
+        public LoginViewModelSetting()
+        {
+        }
+
+        [ProtoMember(1)]
+        public string Login { get; set; } = string.Empty;
     }
 }

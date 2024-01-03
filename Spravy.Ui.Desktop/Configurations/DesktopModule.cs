@@ -1,12 +1,12 @@
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Ninject.Modules;
 using Spravy.Authentication.Domain.Client.Models;
+using Spravy.Db.Interfaces;
+using Spravy.Db.Sqlite.EntityTypeConfigurations;
+using Spravy.Db.Sqlite.Services;
 using Spravy.Di.Extensions;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Services;
 using Spravy.EventBus.Domain.Client.Models;
 using Spravy.Schedule.Domain.Client.Models;
 using Spravy.ToDo.Domain.Client.Models;
@@ -41,11 +41,15 @@ public class DesktopModule : NinjectModule
                     new ConfigurationBuilder().AddJsonFile(FileNames.DefaultConfigFileName).Build()
             );
 
-        Bind<IObjectStorage>()
-            .ToMethod(
-                context => new FilesObjectStorage(
-                    "./storage".ToDirectory(),
-                    context.Kernel.GetRequiredService<ISerializer>()
+        Bind<IDbContextSetup>()
+            .ToMethod<SqliteDbContextSetup>(
+                c => new SqliteDbContextSetup(
+                    new[]
+                    {
+                        new StorageEntityTypeConfiguration()
+                    },
+                    "./storage/storage.db".ToFile(),
+                    true
                 )
             );
     }

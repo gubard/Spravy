@@ -1,13 +1,13 @@
 using Android.Content;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Ninject.Modules;
 using Spravy.Authentication.Domain.Client.Models;
+using Spravy.Db.Interfaces;
+using Spravy.Db.Sqlite.EntityTypeConfigurations;
+using Spravy.Db.Sqlite.Services;
 using Spravy.Di.Extensions;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Services;
 using Spravy.EventBus.Domain.Client.Models;
 using Spravy.Schedule.Domain.Client.Models;
 using Spravy.ToDo.Domain.Client.Models;
@@ -53,11 +53,15 @@ public class AndroidModule : NinjectModule
                 }
             );
 
-        Bind<IObjectStorage>()
-            .ToConstructor(
-                x => new FilesObjectStorage(
-                    FileSystem.AppDataDirectory.ToDirectory(),
-                    x.Context.Kernel.GetRequiredService<ISerializer>()
+        Bind<IDbContextSetup>()
+            .ToMethod<SqliteDbContextSetup>(
+                c => new SqliteDbContextSetup(
+                    new[]
+                    {
+                        new StorageEntityTypeConfiguration()
+                    },
+                    FileSystem.AppDataDirectory.ToDirectory().ToFile("storage.db"),
+                    true
                 )
             );
     }
