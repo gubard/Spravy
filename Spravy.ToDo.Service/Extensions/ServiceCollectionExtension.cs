@@ -42,8 +42,6 @@ public static class ServiceCollectionExtension
         serviceCollection.AddSingleton<ContextAccessorUserIdHttpHeaderFactory>();
         serviceCollection.AddSingleton<TimeZoneHttpHeaderFactory>();
         serviceCollection.AddTransient<IToDoService, EfToDoService>();
-        serviceCollection.AddTransient<StatusToDoItemService>();
-        serviceCollection.AddTransient<ActiveToDoItemToDoItemService>();
         serviceCollection.AddTransient<GetterToDoItemParametersService>();
 
         serviceCollection.AddMapperConfiguration<SpravyToDoProfile,

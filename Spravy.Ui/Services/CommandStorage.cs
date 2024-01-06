@@ -453,7 +453,7 @@ public static class CommandStorage
         switch (status)
         {
             case CompleteStatus.Complete:
-                foreach (var item in items)
+                foreach (var item in items.Where(x => x.IsCan.HasFlag(ToDoItemIsCan.CanComplete)))
                 {
                     await toDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true, cancellationToken)
                         .ConfigureAwait(false);
@@ -461,21 +461,21 @@ public static class CommandStorage
 
                 break;
             case CompleteStatus.Skip:
-                foreach (var item in items)
+                foreach (var item in items.Where(x => x.IsCan.HasFlag(ToDoItemIsCan.CanSkip)))
                 {
                     await toDoService.SkipToDoItemAsync(item.Id, cancellationToken).ConfigureAwait(false);
                 }
 
                 break;
             case CompleteStatus.Fail:
-                foreach (var item in items)
+                foreach (var item in items.Where(x => x.IsCan.HasFlag(ToDoItemIsCan.CanFail)))
                 {
                     await toDoService.FailToDoItemAsync(item.Id, cancellationToken).ConfigureAwait(false);
                 }
 
                 break;
             case CompleteStatus.Incomplete:
-                foreach (var item in items)
+                foreach (var item in items.Where(x => x.IsCan.HasFlag(ToDoItemIsCan.CanIncomplete)))
                 {
                     await toDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true, cancellationToken)
                         .ConfigureAwait(false);

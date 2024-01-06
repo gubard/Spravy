@@ -22,24 +22,18 @@ public class EfToDoService : IToDoService
 {
     private readonly IMapper mapper;
     private readonly IFactory<SpravyDbToDoDbContext> dbContextFactory;
-    private readonly StatusToDoItemService statusToDoItemService;
-    private readonly ActiveToDoItemToDoItemService activeToDoItemToDoItemService;
     private readonly IHttpContextAccessor httpContextAccessor;
     private readonly GetterToDoItemParametersService getterToDoItemParametersService;
 
     public EfToDoService(
         IMapper mapper,
         IFactory<SpravyDbToDoDbContext> dbContextFactory,
-        StatusToDoItemService statusToDoItemService,
-        ActiveToDoItemToDoItemService activeToDoItemToDoItemService,
         IHttpContextAccessor httpContextAccessor,
         GetterToDoItemParametersService getterToDoItemParametersService
     )
     {
         this.mapper = mapper;
         this.dbContextFactory = dbContextFactory;
-        this.statusToDoItemService = statusToDoItemService;
-        this.activeToDoItemToDoItemService = activeToDoItemToDoItemService;
         this.httpContextAccessor = httpContextAccessor;
         this.getterToDoItemParametersService = getterToDoItemParametersService;
     }
@@ -223,15 +217,15 @@ public class EfToDoService : IToDoService
     )
     {
         var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
-        var status = await statusToDoItemService.GetStatusAsync(context, item, offset);
-        var active = await activeToDoItemToDoItemService.GetActiveItemAsync(context, item, offset);
+        var parameters =
+            await getterToDoItemParametersService.GetToDoItemParametersAsync(context, item, offset, cancellationToken);
 
         var result = mapper.Map<IToDoSubItem>(
             item,
             a =>
             {
-                a.Items.Add(SpravyToDoDbProfile.StatusName, status);
-                a.Items.Add(SpravyToDoDbProfile.ActiveName, active);
+                a.Items.Add(SpravyToDoDbProfile.StatusName, parameters.Status);
+                a.Items.Add(SpravyToDoDbProfile.ActiveName, parameters.ActiveItem);
             }
         );
 
@@ -1280,9 +1274,14 @@ public class EfToDoService : IToDoService
 
         foreach (var item in items)
         {
-            var status = await statusToDoItemService.GetStatusAsync(context, item, offset);
+            var parameters = await getterToDoItemParametersService.GetToDoItemParametersAsync(
+                context,
+                item,
+                offset,
+                cancellationToken
+            );
 
-            if (!options.Statuses.Span.ToArray().Contains(status))
+            if (!options.Statuses.Span.ToArray().Contains(parameters.Status))
             {
                 continue;
             }
