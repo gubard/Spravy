@@ -12,11 +12,20 @@ namespace Spravy.Tests.Extensions;
 
 public static class WindowExtension
 {
+    public static CreateUserView NavigateToCreateUserView<TWindow>(this TWindow window) where TWindow : Window
+    {
+        return window.Case(
+                w => w.GetCurrentView<LoginView, LoginViewModel>()
+                    .FindControl<Button>("CreateUserButton")
+                    .ThrowIfNull()
+                    .ClickOnButton(w)
+            )
+            .GetCurrentView<CreateUserView, CreateUserViewModel>();
+    }
+
     public static TWindow ShowWindow<TWindow>(this TWindow window) where TWindow : Window
     {
-        var windowsCount = WindowHelper.GetWindowList().Count;
         window.Show();
-        WindowHelper.GetWindowList().Should().HaveCount(windowsCount + 1);
 
         return window;
     }

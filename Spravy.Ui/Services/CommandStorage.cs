@@ -34,7 +34,7 @@ public static class CommandStorage
     static CommandStorage()
     {
         var kernel = DiHelper.Kernel.ThrowIfNull();
-        clipboard = kernel.Get<IClipboard>();
+        clipboard = kernel.Get<IClipboardService>();
         objectStorage = kernel.Get<IObjectStorage>();
         mapper = kernel.Get<IMapper>();
         tokenService = kernel.Get<ITokenService>();
@@ -233,7 +233,7 @@ public static class CommandStorage
     private static readonly IAuthenticationService authenticationService;
     private static readonly ITokenService tokenService;
     private static readonly IObjectStorage objectStorage;
-    private static readonly IClipboard clipboard;
+    private static readonly IClipboardService clipboard;
 
     public static ICommand MultiSetTypeToDoItemsCommand => MultiSetTypeToDoItemsItem.Command;
     public static CommandItem MultiSetTypeToDoItemsItem { get; }

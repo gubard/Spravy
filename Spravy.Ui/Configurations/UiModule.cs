@@ -132,13 +132,20 @@ public class UiModule : NinjectModule
                 )
             );
 
-        Bind<IClipboard>()
+        Bind<IClipboardService>()
             .ToMethod(
-                _ => Application.Current.ThrowIfNull("Application")
-                    .GetTopLevel()
-                    .ThrowIfNull("TopLevel")
-                    .Clipboard
-                    .ThrowIfNull()
+                _ =>
+                {
+                    var topLevel = Application.Current.ThrowIfNull("Application")
+                        .GetTopLevel();
+
+                    if (topLevel is null)
+                    {
+                        return new CodeClipboardService();
+                    }
+
+                    return new TopLevelClipboardService();
+                }
             );
 
         Bind<MainSplitViewModel>()

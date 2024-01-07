@@ -21,7 +21,12 @@ public class TestAppBuilder
 
         return AppBuilder.Configure<App>()
             .UseReactiveUI()
-            .UseHeadless(new AvaloniaHeadlessPlatformOptions())
-            .SetupWithLifetime(new ClassicDesktopStyleApplicationLifetime());
+            .UseHeadless(
+                new AvaloniaHeadlessPlatformOptions
+                {
+                    UseHeadlessDrawing = false
+                }
+            )
+            .UseSkia();
     }
 }
