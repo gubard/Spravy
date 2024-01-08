@@ -5,7 +5,6 @@ using Avalonia;
 using Avalonia.Collections;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
-using Avalonia.Input.Platform;
 using Grpc.Net.Client;
 using Microsoft.Extensions.DependencyInjection;
 using Ninject;

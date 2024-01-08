@@ -55,7 +55,7 @@
                  Classes="outline dense with-button"
                  Theme="{StaticResource OutlineTextBox}">
             <TextBox.InnerLeftContent>
-                <Button Command="{x:Static services:CommandStorage.SetToDoDueDateCommand}"
+                <Button Command="{x:Static services:CommandStorage.SetToDoTypeOfPeriodicityCommand}"
                         CommandParameter="{Binding}"
                         Margin="4,15,4,4">
                     <avalonia:MaterialIcon Kind="Pencil" />

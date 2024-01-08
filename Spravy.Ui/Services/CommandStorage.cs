@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
-using Avalonia.Input.Platform;
 using Material.Icons;
 using Ninject;
 using Serilog;

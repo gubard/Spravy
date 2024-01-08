@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
+using Avalonia.Headless;
 using Avalonia.VisualTree;
 using DialogHostAvalonia;
 using FluentAssertions;
@@ -12,6 +13,36 @@ namespace Spravy.Tests.Extensions;
 
 public static class WindowExtension
 {
+    public static TWindow SetKeyTextInput<TWindow>(this TWindow window, string text) where TWindow : Window
+    {
+        window.KeyTextInput(text);
+        window.RunJobsAll();
+
+        return window;
+    }
+
+    public static TWindow SetSize<TWindow>(this TWindow window, double width, double height) where TWindow : Window
+    {
+        window.Width = width;
+        window.Height = height;
+        window.RunJobsAll();
+
+        return window;
+    }
+
+    public static TWindow SaveFrame<TWindow>(this TWindow window) where TWindow : Window
+    {
+        return window.SaveFrame(FileHelper.GetFrameShortFile());
+    }
+
+    public static TWindow SaveFrame<TWindow>(this TWindow window, FileInfo file) where TWindow : Window
+    {
+        using var bitmap = window.CaptureRenderedFrame().ThrowIfNull();
+        bitmap.Save(file.FullName);
+
+        return window;
+    }
+
     public static CreateUserView NavigateToCreateUserView<TWindow>(this TWindow window) where TWindow : Window
     {
         return window.Case(
@@ -26,6 +57,7 @@ public static class WindowExtension
     public static TWindow ShowWindow<TWindow>(this TWindow window) where TWindow : Window
     {
         window.Show();
+        window.RunJobsAll();
 
         return window;
     }

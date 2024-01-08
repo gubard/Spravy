@@ -14,4 +14,12 @@ public static class InputElementExtension
 
         return inputElement;
     }
+    
+    public static TInputElement MustFocused<TInputElement>(this TInputElement inputElement)
+        where TInputElement : IInputElement
+    {
+        inputElement.IsFocused.Should().BeTrue();
+
+        return inputElement;
+    }
 }

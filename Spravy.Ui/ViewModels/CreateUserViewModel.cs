@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -28,24 +29,32 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
     public ICommand EnterCommand { get; }
     public override string ViewId => TypeCache<CreateUserViewModel>.Type.Name;
 
+    [EmailAddress]
+    [StringLength(50, ErrorMessage = "Email max length 50")]
     public string Email
     {
         get => email;
         set => this.RaiseAndSetIfChanged(ref email, value);
     }
 
+    [StringLength(512, MinimumLength = 4, ErrorMessage = "Login max length 512")]
+    [RegularExpression("^[!@#$%^&*()_+\\-={}\\[\\]:;\"'<>,.?/\\\\|a-zA-Z0-9]+$")]
     public string Login
     {
         get => login;
         set => this.RaiseAndSetIfChanged(ref login, value);
     }
 
+    [StringLength(512, MinimumLength = 8, ErrorMessage = "Password max length 512")]
+    [RegularExpression("^[ !@#$%^&*()_+\\-={}\\[\\]:;\"'<>,.?/\\\\|a-zA-Z0-9]+$")]
     public string Password
     {
         get => password;
         set => this.RaiseAndSetIfChanged(ref password, value);
     }
 
+    [StringLength(512, MinimumLength = 8, ErrorMessage = "Password max length 512")]
+    [RegularExpression("^[ !@#$%^&*()_+\\-={}\\[\\]:;\"'<>,.?/\\\\|a-zA-Z0-9]+$")]
     public string RepeatPassword
     {
         get => repeatPassword;
