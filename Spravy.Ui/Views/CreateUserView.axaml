@@ -59,7 +59,8 @@
                     <avalonia:MaterialIcon Kind="ArrowLeft" />
                 </Button>
 
-                <Button Grid.Column="1"
+                <Button x:Name="CreateUserButton"
+                        Grid.Column="1"
                         Command="{x:Static services:CommandStorage.CreateUserCommand}"
                         CommandParameter="{Binding}">
                     <avalonia:MaterialIcon Kind="AccountPlus" />

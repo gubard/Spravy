@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Headless;
+using Avalonia.Input;
 using Avalonia.VisualTree;
 using DialogHostAvalonia;
 using FluentAssertions;
@@ -21,6 +22,21 @@ public static class WindowExtension
         return window;
     }
 
+    public static TWindow KeyHandleQwerty<TWindow>(
+        this TWindow window,
+        PhysicalKey key,
+        RawInputModifiers modifiers = RawInputModifiers.None
+    )
+        where TWindow : Window
+    {
+        window.KeyPressQwerty(key, modifiers);
+        window.RunJobsAll();
+        window.KeyReleaseQwerty(key, modifiers);
+        window.RunJobsAll();
+
+        return window;
+    }
+
     public static TWindow SetSize<TWindow>(this TWindow window, double width, double height) where TWindow : Window
     {
         window.Width = width;
@@ -32,7 +48,7 @@ public static class WindowExtension
 
     public static TWindow SaveFrame<TWindow>(this TWindow window) where TWindow : Window
     {
-        return window.SaveFrame(FileHelper.GetFrameShortFile());
+        return window.RunJobsAll().SaveFrame(FileHelper.GetFrameShortFile());
     }
 
     public static TWindow SaveFrame<TWindow>(this TWindow window, FileInfo file) where TWindow : Window
