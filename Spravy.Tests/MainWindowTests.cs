@@ -1,7 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.Input;
-using Serilog;
 using Spravy.Domain.Extensions;
 using Spravy.Tests.Extensions;
 using Spravy.Tests.Helpers;
@@ -10,7 +9,7 @@ namespace Spravy.Tests;
 
 public class MainWindowTests
 {
-    [AvaloniaFact]
+    [AvaloniaFact(Timeout = 30000)]
     public void Should_Type_Text_Into_TextBox()
     {
         WindowHelper.CreateWindow()
