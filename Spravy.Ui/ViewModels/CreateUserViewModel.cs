@@ -37,7 +37,7 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
         set => this.RaiseAndSetIfChanged(ref email, value);
     }
 
-    [StringLength(512, MinimumLength = 4, ErrorMessage = "Login max length 512")]
+    [StringLength(512, MinimumLength = 4)]
     [RegularExpression("^[!@#$%^&*()_+\\-={}\\[\\]:;\"'<>,.?/\\\\|a-zA-Z0-9]+$")]
     public string Login
     {
@@ -45,7 +45,7 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
         set => this.RaiseAndSetIfChanged(ref login, value);
     }
 
-    [StringLength(512, MinimumLength = 8, ErrorMessage = "Password max length 512")]
+    [StringLength(512, MinimumLength = 8)]
     [RegularExpression("^[ !@#$%^&*()_+\\-={}\\[\\]:;\"'<>,.?/\\\\|a-zA-Z0-9]+$")]
     public string Password
     {
@@ -53,7 +53,7 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
         set => this.RaiseAndSetIfChanged(ref password, value);
     }
 
-    [StringLength(512, MinimumLength = 8, ErrorMessage = "Password max length 512")]
+    [StringLength(512, MinimumLength = 8)]
     [RegularExpression("^[ !@#$%^&*()_+\\-={}\\[\\]:;\"'<>,.?/\\\\|a-zA-Z0-9]+$")]
     public string RepeatPassword
     {

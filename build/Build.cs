@@ -49,6 +49,14 @@ class Build : NukeBuild
     [Parameter] readonly string AndroidSigningKeyPass;
     [Parameter] readonly string AndroidSigningStorePass;
     [Parameter] readonly string TelegramToken;
+    [Parameter] readonly string StagingFtpPassword;
+    [Parameter] readonly string StagingSshPassword;
+    [Parameter] readonly string StagingFtpHost;
+    [Parameter] readonly string StagingFtpUser;
+    [Parameter] readonly string StagingSshHost;
+    [Parameter] readonly string StagingSshUser;
+    [Parameter] readonly string StagingServerHost;
+
     static readonly Dictionary<string, string> Hosts = new();
     static readonly Dictionary<Project, ServiceOptions> ServiceOptions = new();
     static readonly List<Project> ServiceProjects = new();
@@ -60,285 +68,351 @@ class Build : NukeBuild
 
     [Solution] readonly Solution Solution;
 
-    Target Setup =>
-        _ => _
-            .Executes(() =>
+    void Setup(string host)
+    {
+        Token = CreteToken();
+        ServiceProjects.AddRange(Solution.GetProjects("Service"));
+        ushort port = 5000;
+
+        foreach (var serviceProject in ServiceProjects)
+        {
+            ServiceOptions[serviceProject] = new ServiceOptions(port, serviceProject.Name);
+            Hosts[serviceProject.GetOptionsName()] = $"https://{host}:{port}";
+            port++;
+        }
+    }
+
+    void SetupAppSettings()
+    {
+        foreach (var project in Solution.AllProjects)
+        {
+            project.SetGetAppSettingsFile(Token, ServiceOptions, Hosts, ServerHost);
+        }
+    }
+
+    void Clean()
+    {
+        DotNetClean(setting => setting.SetProject(Solution).SetConfiguration(Configuration));
+    }
+
+    void Restore()
+    {
+        DotNetRestore(setting => setting.SetProjectFile(Solution));
+    }
+
+    void Compile()
+    {
+        foreach (var project in Solution.AllProjects.Where(x =>
+                     !x.Name.Contains("Android") && x.Name != "Spravy.Ui.Desktop"
+                 ))
+        {
+            for (var i = 0; i < 3; i++)
+            {
+                try
                 {
-                    Token = CreteToken();
-                    ServiceProjects.AddRange(Solution.GetProjects("Service"));
-                    ushort port = 5000;
-
-                    foreach (var serviceProject in ServiceProjects)
-                    {
-                        ServiceOptions[serviceProject] = new ServiceOptions(port, serviceProject.Name);
-                        Hosts[serviceProject.GetOptionsName()] = $"https://{ServerHost}:{port}";
-                        port++;
-                    }
-                }
-            );
-
-    Target SetupAppSettings =>
-        _ => _
-            .DependsOn(Setup)
-            .Executes(() =>
-                {
-                    foreach (var project in Solution.AllProjects)
-                    {
-                        project.SetGetAppSettingsFile(Token, ServiceOptions, Hosts, ServerHost);
-                    }
-                }
-            );
-
-    Target Clean =>
-        _ => _
-            .DependsOn(SetupAppSettings)
-            .Executes(() => DotNetClean(setting => setting.SetProject(Solution)));
-
-    Target Restore =>
-        _ => _
-            .DependsOn(Clean)
-            .Executes(() => DotNetRestore(setting => setting.SetProjectFile(Solution)));
-
-    Target Compile =>
-        _ => _
-            .DependsOn(Restore)
-            .Executes(() =>
-                {
-                    foreach (var project in Solution.AllProjects.Where(x =>
-                                 !x.Name.Contains("Android") && x.Name != "Spravy.Ui.Desktop"
-                             ))
-                    {
-                        for (var i = 0; i < 3; i++)
-                        {
-                            try
-                            {
-                                DotNetBuild(setting =>
-                                    setting.SetProjectFile(project)
-                                        .EnableNoRestore()
-                                        .SetConfiguration(Configuration)
-                                );
-
-                                break;
-                            }
-                            catch (Exception e)
-                            {
-                                if (i == 2)
-                                {
-                                    throw;
-                                }
-
-                                if (e.ToString().Contains("CompileAvaloniaXamlTask"))
-                                {
-                                    continue;
-                                }
-
-                                throw;
-                            }
-                        }
-                    }
-
-                    var desktop = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Desktop").ThrowIfNull();
-
-                    for (var i = 0; i < 3; i++)
-                    {
-                        try
-                        {
-                            DotNetBuild(setting =>
-                                setting.SetProjectFile(desktop)
-                                    .EnableNoRestore()
-                                    .SetRuntime("linux-x64")
-                                    .SetConfiguration(Configuration)
-                            );
-
-                            break;
-                        }
-                        catch (Exception e)
-                        {
-                            if (i == 2)
-                            {
-                                throw;
-                            }
-
-                            if (e.ToString().Contains("CompileAvaloniaXamlTask"))
-                            {
-                                continue;
-                            }
-
-                            throw;
-                        }
-                    }
-
-                    for (var i = 0; i < 3; i++)
-                    {
-                        try
-                        {
-                            DotNetBuild(setting =>
-                                setting.SetProjectFile(desktop)
-                                    .EnableNoRestore()
-                                    .SetRuntime("win-x64")
-                                    .SetConfiguration(Configuration)
-                            );
-
-                            break;
-                        }
-                        catch (Exception e)
-                        {
-                            if (i == 2)
-                            {
-                                throw;
-                            }
-
-                            if (e.ToString().Contains("CompileAvaloniaXamlTask"))
-                            {
-                                continue;
-                            }
-
-                            throw;
-                        }
-                    }
-                }
-            );
-
-    Target PublishServices =>
-        _ => _
-            .DependsOn(Compile)
-            .Executes(() =>
-                {
-                    using var sshClient = new SshClient(CreateSshConnection());
-                    sshClient.Connect();
-                    using var ftpClient = CreateFtpClient();
-                    ftpClient.Connect();
-
-                    foreach (var serviceOption in ServiceOptions)
-                    {
-                        serviceOption.Key.DeployService(
-                            sshClient,
-                            ftpClient,
-                            PathHelper.PublishFolder,
-                            Configuration,
-                            FtpUser,
-                            SshPassword
-                        );
-                    }
-
-                    foreach (var serviceProject in ServiceProjects)
-                    {
-                        var serviceName = serviceProject.Name.ToLower();
-                        sshClient.SafeRun($"echo {SshPassword} | sudo -S systemctl enable {serviceName}");
-                        sshClient.SafeRun($"echo {SshPassword} | sudo -S systemctl restart {serviceName}");
-                    }
-
-                    sshClient.SafeRun($"echo {SshPassword} | sudo -S systemctl daemon-reload");
-                }
-            );
-
-    Target PublishDesktop =>
-        _ => _
-            .DependsOn(PublishServices)
-            .Executes(() =>
-                {
-                    DeployDesktop("linux-x64");
-                    DeployDesktop("win-x64");
-                }
-            );
-
-    Target PublishBrowser =>
-        _ => _
-            .DependsOn(PublishAndroid, PublishDesktop)
-            .Executes(() =>
-                {
-                    using var sshClient = new SshClient(CreateSshConnection());
-                    sshClient.Connect();
-                    using var ftpClient = CreateFtpClient();
-                    ftpClient.Connect();
-                    var browserProject = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Browser").ThrowIfNull();
-                    var appBundlePath = "bin/Release/net7.0/browser-wasm/AppBundle";
-                    var appBundleFolder = Path.Combine(browserProject.Directory, appBundlePath).ToFolder();
-                    ftpClient.DeleteIfExistsFolder($"/home/{FtpUser}/{browserProject.Name}".ToFolder());
-                    ftpClient.UploadDirectory(appBundleFolder.FullName, $"/home/{FtpUser}/{browserProject.Name}");
-                    sshClient.SafeRun($"echo {SshPassword} | sudo -S rm -rf /var/www/spravy.com.ua/html/*");
-                    sshClient.SafeRun(
-                        $"echo {SshPassword} | sudo -S cp -rf /home/{FtpUser}/{browserProject.Name}/* /var/www/spravy.com.ua/html"
-                    );
-                    sshClient.SafeRun(
-                        $"echo {SshPassword} | sudo -S cp -rf /home/{FtpUser}/Apps/Spravy.Ui.Android/com.SerhiiMaksymovFOP.Spravy-Signed.apk /var/www/spravy.com.ua/html"
-                    );
-                    sshClient.SafeRun(
-                        $"echo {SshPassword} | zip -r /var/www/spravy.com.ua/html/Spravy.Linux-x64.zip /home/vafnir/Apps/Spravy.Ui.Desktop/linux-x64/*"
-                    );
-                    sshClient.SafeRun(
-                        $"echo {SshPassword} | zip -r /var/www/spravy.com.ua/html/Spravy.Windows-x64.zip /home/vafnir/Apps/Spravy.Ui.Desktop/win-x64/*"
-                    );
-                    sshClient.SafeRun($"echo {SshPassword} | sudo -S chown -R $USER:$USER /var/www/spravy.com.ua/html");
-                    sshClient.SafeRun($"echo {SshPassword} | sudo -S chmod -R 755 /var/www/spravy.com.ua");
-                    sshClient.SafeRun($"echo {SshPassword} | sudo -S systemctl restart nginx");
-                    sshClient.SafeRun($"echo {SshPassword} | sudo -S systemctl reload nginx");
-                }
-            );
-
-    Target PublishAndroid =>
-        _ => _
-            .DependsOn(PublishServices)
-            .Executes(() =>
-                {
-                    using var ftpClient = CreateFtpClient();
-                    ftpClient.Connect();
-                    var keyStoreFile = new FileInfo("/tmp/Spravy/sign-key.keystore");
-
-                    if (keyStoreFile.Directory is null)
-                    {
-                        throw new NullReferenceException();
-                    }
-
-                    keyStoreFile.Directory.CreateIfNotExits();
-
-                    if (!keyStoreFile.Exists)
-                    {
-                        Cli.Wrap("keytool")
-                            .WithArguments(new[]
-                                {
-                                    "-genkey",
-                                    "-v",
-                                    "-keystore",
-                                    keyStoreFile.FullName,
-                                    "-alias",
-                                    "spravy",
-                                    "-keyalg",
-                                    "RSA",
-                                    "-keysize",
-                                    "2048",
-                                    "-validity",
-                                    "10000",
-                                    "-dname",
-                                    "CN=Serhii Maksymov, OU=Serhii Maksymov FOP, O=Serhii Maksymov FOP, L=Kharkiv, S=Kharkiv State, C=Ukraine",
-                                    "-storepass",
-                                    AndroidSigningStorePass,
-                                }
-                            )
-                            .RunCommand();
-                    }
-
-                    var android = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Android");
-
-                    AndroidFolder = android.PublishProject(PathHelper.PublishFolder, Configuration, setting =>
-                        setting
-                            .SetProperty("AndroidKeyStore", "true")
-                            .SetProperty("AndroidSigningKeyStore", keyStoreFile.FullName)
-                            .SetProperty("AndroidSigningKeyAlias", "spravy")
-                            .SetProperty("AndroidSigningKeyPass", AndroidSigningKeyPass)
-                            .SetProperty("AndroidSigningStorePass", AndroidSigningStorePass)
-                            .SetProperty("AndroidSdkDirectory", "/usr/lib/android-sdk")
-                            .DisableNoBuild()
+                    DotNetBuild(setting =>
+                        setting.SetProjectFile(project)
+                            .EnableNoRestore()
+                            .SetConfiguration(Configuration)
                     );
 
-                    DeleteIfExistsDirectory(ftpClient, $"/home/{FtpUser}/Apps/Spravy.Ui.Android");
-                    CreateIfNotExistsDirectory(ftpClient, $"/home/{FtpUser}/Apps");
-                    ftpClient.UploadDirectory(AndroidFolder.FullName, $"/home/{FtpUser}/Apps/Spravy.Ui.Android");
+                    break;
                 }
+                catch (Exception e)
+                {
+                    if (i == 2)
+                    {
+                        throw;
+                    }
+
+                    if (e.ToString().Contains("CompileAvaloniaXamlTask"))
+                    {
+                        continue;
+                    }
+
+                    throw;
+                }
+            }
+        }
+
+        var desktop = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Desktop").ThrowIfNull();
+
+        for (var i = 0; i < 3; i++)
+        {
+            try
+            {
+                DotNetBuild(setting =>
+                    setting.SetProjectFile(desktop)
+                        .EnableNoRestore()
+                        .SetRuntime("linux-x64")
+                        .SetConfiguration(Configuration)
+                );
+
+                break;
+            }
+            catch (Exception e)
+            {
+                if (i == 2)
+                {
+                    throw;
+                }
+
+                if (e.ToString().Contains("CompileAvaloniaXamlTask"))
+                {
+                    continue;
+                }
+
+                throw;
+            }
+        }
+
+        for (var i = 0; i < 3; i++)
+        {
+            try
+            {
+                DotNetBuild(setting =>
+                    setting.SetProjectFile(desktop)
+                        .EnableNoRestore()
+                        .SetRuntime("win-x64")
+                        .SetConfiguration(Configuration)
+                );
+
+                break;
+            }
+            catch (Exception e)
+            {
+                if (i == 2)
+                {
+                    throw;
+                }
+
+                if (e.ToString().Contains("CompileAvaloniaXamlTask"))
+                {
+                    continue;
+                }
+
+                throw;
+            }
+        }
+    }
+
+    void PublishServices(
+        string ftpHost,
+        string ftpUser,
+        string ftpPassword,
+        string sshHost,
+        string sshUser,
+        string sshPassword
+    )
+    {
+        using var sshClient = new SshClient(CreateSshConnection(sshHost, sshUser, sshPassword));
+        sshClient.Connect();
+        using var ftpClient = CreateFtpClient(ftpHost, ftpUser, ftpPassword);
+        ftpClient.Connect();
+
+        foreach (var serviceOption in ServiceOptions)
+        {
+            serviceOption.Key.DeployService(
+                sshClient,
+                ftpClient,
+                PathHelper.PublishFolder,
+                Configuration,
+                ftpUser,
+                sshPassword
+            );
+        }
+
+        foreach (var serviceProject in ServiceProjects)
+        {
+            var serviceName = serviceProject.Name.ToLower();
+            sshClient.SafeRun($"echo {sshPassword} | sudo -S systemctl enable {serviceName}");
+            sshClient.SafeRun($"echo {sshPassword} | sudo -S systemctl restart {serviceName}");
+        }
+
+        sshClient.SafeRun($"echo {sshPassword} | sudo -S systemctl daemon-reload");
+    }
+
+    void PublishDesktop(string ftpHost, string ftpUser, string ftpPassword)
+    {
+        DeployDesktop("linux-x64", ftpHost, ftpUser, ftpPassword);
+        DeployDesktop("win-x64", ftpHost, ftpUser, ftpPassword);
+    }
+
+    void PublishAndroid(string ftpHost, string ftpUser, string ftpPassword)
+    {
+        using var ftpClient = CreateFtpClient(ftpHost, ftpUser, ftpPassword);
+        ftpClient.Connect();
+        var keyStoreFile = new FileInfo("/tmp/Spravy/sign-key.keystore");
+
+        if (keyStoreFile.Directory is null)
+        {
+            throw new NullReferenceException();
+        }
+
+        keyStoreFile.Directory.CreateIfNotExits();
+
+        if (!keyStoreFile.Exists)
+        {
+            Cli.Wrap("keytool")
+                .WithArguments(new[]
+                    {
+                        "-genkey",
+                        "-v",
+                        "-keystore",
+                        keyStoreFile.FullName,
+                        "-alias",
+                        "spravy",
+                        "-keyalg",
+                        "RSA",
+                        "-keysize",
+                        "2048",
+                        "-validity",
+                        "10000",
+                        "-dname",
+                        "CN=Serhii Maksymov, OU=Serhii Maksymov FOP, O=Serhii Maksymov FOP, L=Kharkiv, S=Kharkiv State, C=Ukraine",
+                        "-storepass",
+                        AndroidSigningStorePass,
+                    }
+                )
+                .RunCommand();
+        }
+
+        var android = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Android");
+
+        AndroidFolder = android.PublishProject(PathHelper.PublishFolder, Configuration, setting =>
+            setting
+                .SetProperty("AndroidKeyStore", "true")
+                .SetProperty("AndroidSigningKeyStore", keyStoreFile.FullName)
+                .SetProperty("AndroidSigningKeyAlias", "spravy")
+                .SetProperty("AndroidSigningKeyPass", AndroidSigningKeyPass)
+                .SetProperty("AndroidSigningStorePass", AndroidSigningStorePass)
+                .SetProperty("AndroidSdkDirectory", "/usr/lib/android-sdk")
+                .DisableNoBuild()
+        );
+
+        DeleteIfExistsDirectory(ftpClient, $"/home/{ftpUser}/Apps/Spravy.Ui.Android");
+        CreateIfNotExistsDirectory(ftpClient, $"/home/{ftpUser}/Apps");
+        ftpClient.UploadDirectory(AndroidFolder.FullName, $"/home/{ftpUser}/Apps/Spravy.Ui.Android");
+    }
+
+    void PublishBrowser(
+        string ftpHost,
+        string ftpUser,
+        string ftpPassword,
+        string sshHost,
+        string sshUser,
+        string sshPassword
+    )
+    {
+        using var sshClient = new SshClient(CreateSshConnection(ftpHost, ftpUser, ftpPassword));
+        sshClient.Connect();
+        using var ftpClient = CreateFtpClient(sshHost, sshUser, sshPassword);
+        ftpClient.Connect();
+        var browserProject = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Browser").ThrowIfNull();
+        var appBundlePath = "bin/Release/net7.0/browser-wasm/AppBundle";
+        var appBundleFolder = Path.Combine(browserProject.Directory, appBundlePath).ToFolder();
+        ftpClient.DeleteIfExistsFolder($"/home/{ftpUser}/{browserProject.Name}".ToFolder());
+        ftpClient.UploadDirectory(appBundleFolder.FullName, $"/home/{ftpUser}/{browserProject.Name}");
+        sshClient.SafeRun($"echo {sshPassword} | sudo -S rm -rf /var/www/spravy.com.ua/html/*");
+        sshClient.SafeRun(
+            $"echo {sshPassword} | sudo -S cp -rf /home/{ftpUser}/{browserProject.Name}/* /var/www/spravy.com.ua/html"
+        );
+        sshClient.SafeRun(
+            $"echo {sshPassword} | sudo -S cp -rf /home/{ftpUser}/Apps/Spravy.Ui.Android/com.SerhiiMaksymovFOP.Spravy-Signed.apk /var/www/spravy.com.ua/html"
+        );
+        sshClient.SafeRun(
+            $"echo {sshPassword} | zip -r /var/www/spravy.com.ua/html/Spravy.Linux-x64.zip /home/vafnir/Apps/Spravy.Ui.Desktop/linux-x64/*"
+        );
+        sshClient.SafeRun(
+            $"echo {sshPassword} | zip -r /var/www/spravy.com.ua/html/Spravy.Windows-x64.zip /home/vafnir/Apps/Spravy.Ui.Desktop/win-x64/*"
+        );
+        sshClient.SafeRun($"echo {sshPassword} | sudo -S chown -R $USER:$USER /var/www/spravy.com.ua/html");
+        sshClient.SafeRun($"echo {sshPassword} | sudo -S chmod -R 755 /var/www/spravy.com.ua");
+        sshClient.SafeRun($"echo {sshPassword} | sudo -S systemctl restart nginx");
+        sshClient.SafeRun($"echo {sshPassword} | sudo -S systemctl reload nginx");
+    }
+
+    Target StagingSetup => _ => _.Executes(() => Setup(StagingServerHost));
+    Target ProdSetup => _ => _.DependsOn(StagingPublishBrowser).Executes(() => Setup(ServerHost));
+
+    Target StagingSetupAppSettings => _ => _.DependsOn(StagingSetup).Executes(SetupAppSettings);
+    Target ProdSetupAppSettings => _ => _.DependsOn(ProdSetup).Executes(SetupAppSettings);
+
+    Target StagingClean => _ => _.DependsOn(StagingSetupAppSettings).Executes(Clean);
+    Target ProdClean => _ => _.DependsOn(ProdSetupAppSettings).Executes(Clean);
+
+    Target StagingRestore => _ => _.DependsOn(StagingClean).Executes(Restore);
+    Target ProdRestore => _ => _.DependsOn(ProdClean).Executes(Restore);
+
+    Target StagingCompile => _ => _.DependsOn(StagingRestore).Executes(Compile);
+    Target ProdCompile => _ => _.DependsOn(ProdRestore).Executes(Compile);
+
+    Target StagingPublishServices =>
+        _ => _.DependsOn(StagingCompile)
+            .Executes(() => PublishServices(
+                    StagingFtpHost,
+                    StagingFtpUser,
+                    StagingFtpPassword,
+                    StagingSshHost,
+                    StagingSshUser,
+                    StagingSshPassword
+                )
+            );
+
+    Target Test =>
+        _ => _.DependsOn(StagingPublishServices)
+            .Executes(() => DotNetTest(s =>
+                    s.SetConfiguration(Configuration)
+                        .SetProjectFile(Solution.AllProjects.Single(x => x.Name.EndsWith(".Tests")))
+                )
+            );
+
+    Target ProdPublishServices =>
+        _ => _.DependsOn(ProdCompile)
+            .Executes(() => PublishServices(FtpHost, FtpUser, FtpPassword, SshHost, SshUser, SshPassword));
+
+    Target StagingPublishDesktop =>
+        _ => _.DependsOn(Test)
+            .Executes(() => PublishDesktop(StagingFtpHost, StagingFtpUser, StagingFtpPassword));
+
+    Target ProdPublishDesktop =>
+        _ => _.DependsOn(ProdPublishServices).Executes(() => PublishDesktop(FtpHost, FtpUser, FtpPassword));
+
+    Target StagingPublishAndroid =>
+        _ => _.DependsOn(Test)
+            .Executes(() => PublishAndroid(StagingFtpHost, StagingFtpUser, StagingFtpPassword));
+
+    Target ProdPublishAndroid =>
+        _ => _.DependsOn(ProdPublishServices).Executes(() => PublishAndroid(FtpHost, FtpUser, FtpPassword));
+
+    Target StagingPublishBrowser =>
+        _ => _
+            .DependsOn(StagingPublishAndroid, StagingPublishDesktop)
+            .Executes(() => PublishBrowser(
+                    StagingFtpHost,
+                    StagingFtpUser,
+                    StagingFtpPassword,
+                    StagingSshHost,
+                    StagingSshUser,
+                    StagingSshPassword
+                )
+            );
+
+    Target ProdPublishBrowser =>
+        _ => _
+            .DependsOn(ProdPublishAndroid, ProdPublishDesktop)
+            .Executes(() => PublishBrowser(
+                    FtpHost,
+                    FtpUser,
+                    FtpPassword,
+                    SshHost,
+                    SshUser,
+                    SshPassword
+                )
             );
 
     Target Publish =>
-        _ => _.DependsOn(PublishBrowser)
+        _ => _.DependsOn(ProdPublishBrowser)
             .Executes(() =>
                 {
                     var botClient = new TelegramBotClient(TelegramToken);
@@ -351,9 +425,9 @@ class Build : NukeBuild
                 }
             );
 
-    void DeployDesktop(string runtime)
+    void DeployDesktop(string runtime, string ftpHost, string ftpUser, string fptPassword)
     {
-        using var ftpClient = CreateFtpClient();
+        using var ftpClient = CreateFtpClient(ftpHost, ftpUser, fptPassword);
         ftpClient.Connect();
         var desktop = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Desktop").ThrowIfNull();
         var desktopFolder = desktop.PublishProject(PathHelper.PublishFolder.Combine(runtime), Configuration,
@@ -448,28 +522,28 @@ class Build : NukeBuild
         return jwt;
     }
 
-    ConnectionInfo CreateSshConnection()
+    ConnectionInfo CreateSshConnection(string sshHost, string sshUser, string sshPassword)
     {
-        var values = SshHost.Split(":");
-        var password = new PasswordAuthenticationMethod(SshUser, SshPassword);
+        var values = sshHost.Split(":");
+        var password = new PasswordAuthenticationMethod(sshUser, sshPassword);
 
         if (values.Length == 2)
         {
-            return new ConnectionInfo(values[0], int.Parse(values[1]), SshUser, password);
+            return new ConnectionInfo(values[0], int.Parse(values[1]), sshUser, password);
         }
 
-        return new ConnectionInfo(values[0], SshUser, password);
+        return new ConnectionInfo(values[0], sshUser, password);
     }
 
-    FtpClient CreateFtpClient()
+    FtpClient CreateFtpClient(string ftpHost, string ftpUser, string fptPassword)
     {
-        var values = FtpHost.Split(":");
+        var values = ftpHost.Split(":");
 
         if (values.Length == 2)
         {
-            return new FtpClient(values[0], FtpUser, FtpPassword, int.Parse(values[1]));
+            return new FtpClient(values[0], ftpUser, fptPassword, int.Parse(values[1]));
         }
 
-        return new FtpClient(FtpHost, FtpUser, FtpPassword);
+        return new FtpClient(ftpHost, ftpUser, fptPassword);
     }
 }
