@@ -363,6 +363,8 @@ class Build : NukeBuild
         _ => _.DependsOn(StagingPublishServices)
             .Executes(() => DotNetTest(s =>
                     s.SetConfiguration(Configuration)
+                        .EnableNoRestore()
+                        .EnableNoBuild()
                         .SetProjectFile(Solution.AllProjects.Single(x => x.Name.EndsWith(".Tests")))
                 )
             );
@@ -433,9 +435,9 @@ class Build : NukeBuild
         var desktopFolder = desktop.PublishProject(PathHelper.PublishFolder.Combine(runtime), Configuration,
             settings => settings.SetRuntime(runtime)
         );
-        ftpClient.DeleteIfExistsFolder($"/home/{FtpUser}/Apps/Spravy.Ui.Desktop".ToFolder().Combine(runtime));
-        ftpClient.CreateIfNotExistsDirectory($"/home/{FtpUser}/Apps/Spravy.Ui.Desktop".ToFolder().Combine(runtime));
-        ftpClient.UploadDirectory(desktopFolder.FullName, $"/home/{FtpUser}/Apps/Spravy.Ui.Desktop/{runtime}");
+        ftpClient.DeleteIfExistsFolder($"/home/{ftpUser}/Apps/Spravy.Ui.Desktop".ToFolder().Combine(runtime));
+        ftpClient.CreateIfNotExistsDirectory($"/home/{ftpUser}/Apps/Spravy.Ui.Desktop".ToFolder().Combine(runtime));
+        ftpClient.UploadDirectory(desktopFolder.FullName, $"/home/{ftpUser}/Apps/Spravy.Ui.Desktop/{runtime}");
     }
 
     static void CreateIfNotExistsDirectory(FtpClient client, string path)
