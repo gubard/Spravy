@@ -8,7 +8,7 @@
 
     <ItemGroup>
         <PackageReference Include="CsvHelper" Version="30.0.1" />
-        <PackageReference Include="Grpc.AspNetCore" Version="2.59.0" />
+        <PackageReference Include="Grpc.AspNetCore" Version="2.60.0" />
     </ItemGroup>
 
     <ItemGroup>
