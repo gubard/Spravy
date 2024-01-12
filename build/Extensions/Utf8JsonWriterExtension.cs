@@ -46,7 +46,7 @@ public static class Utf8JsonWriterExtension
                     writer.AddObject("HttpsInlineCertAndKeyFile", () =>
                         {
                             writer.AddStringValue("Url", $"https://0.0.0.0:{port}");
-                            Log.Information("Add Url: https://0.0.0.0:{Port}", port);
+                            Log.Information("Added Url: https://0.0.0.0:{Port}", port);
 
                             writer.AddObject("Certificate", () =>
                                 {
@@ -55,7 +55,7 @@ public static class Utf8JsonWriterExtension
                                 }
                             );
 
-                            Log.Information("Add Certificate");
+                            Log.Information("Added Certificate");
                         }
                     )
                 );
