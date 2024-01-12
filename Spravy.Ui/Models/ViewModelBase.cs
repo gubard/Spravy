@@ -41,6 +41,14 @@ public class ViewModelBase : NotifyBase
 
         return command;
     }
+    
+    protected ICommand CreateCommandFromTask(Func<Task> execute, IObservable<bool> canExecute)
+    {
+        var command = ReactiveCommand.CreateFromTask(execute, canExecute);
+        SetupCommand(command);
+
+        return command;
+    }
 
     protected ICommand CreateCommandFromTask<TParam>(Func<TParam, Task> execute)
     {

@@ -359,8 +359,18 @@ class Build : NukeBuild
                 )
             );
 
-    Target Test =>
+    Target CleanStagingDataBase =>
         _ => _.DependsOn(StagingPublishServices)
+            .Executes(() =>
+                {
+                    using var client =
+                        new SshClient(CreateSshConnection(StagingSshHost, StagingSshUser, StagingSshPassword));
+                    client.SafeRun($"echo {StagingSshPassword} | sudo -S rm -fr /home/{StagingFtpUser}/DataBases");
+                }
+            );
+
+    Target Test =>
+        _ => _.DependsOn(CleanStagingDataBase)
             .Executes(() => DotNetTest(s =>
                     s.SetConfiguration(Configuration)
                         .EnableNoRestore()

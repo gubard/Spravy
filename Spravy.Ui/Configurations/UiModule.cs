@@ -64,6 +64,7 @@ public class UiModule : NinjectModule
     public override void Load()
     {
         Bind<IObjectStorage>().To<SqliteObjectStorage>();
+        Bind<IPropertyValidator>().To<PropertyValidator>();
         Bind<StorageDbContext>().ToMethod(c => new StorageDbContext(c.Kernel.GetRequiredService<IDbContextSetup>()));
 
         this.BindGrpcService2<GrpcAuthenticationService, AuthenticationService.AuthenticationServiceClient,

@@ -18,7 +18,6 @@ public static class WindowExtension
     {
         var dialogHost = window.GetErrorDialogHost();
         dialogHost.IsOpen.Should().BeTrue();
-        Thread.Sleep(TimeSpan.FromSeconds(1));
 
         dialogHost.GetVisualChildren()
             .Single()
@@ -39,7 +38,6 @@ public static class WindowExtension
             .ThrowIfNull()
             .ClickOnButton(window);
         
-        Thread.Sleep(TimeSpan.FromSeconds(1));
         dialogHost.IsOpen.Should().BeFalse();
 
         return window;

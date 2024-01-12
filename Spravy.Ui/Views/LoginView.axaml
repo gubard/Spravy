@@ -56,8 +56,7 @@
                 </Button>
 
                 <Button Grid.Column="1"
-                        Command="{x:Static services:CommandStorage.LoginCommand}"
-                        CommandParameter="{Binding}">
+                        Command="{Binding LoginCommand}">
                     <avalonia:MaterialIcon Kind="Login" />
                 </Button>
             </Grid>

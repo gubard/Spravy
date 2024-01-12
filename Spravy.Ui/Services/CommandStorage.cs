@@ -87,14 +87,8 @@ public static class CommandStorage
             MaterialIconKind.Pencil,
             "Set due date time"
         );
-        CreateUserItem = CreateCommand<ICreateUserProperties>(
-            CreateUserAsync,
-            MaterialIconKind.AccountPlus,
-            "Set due date time"
-        );
         BackItem = CreateCommand(BackAsync, MaterialIconKind.ArrowLeft, "Back");
         NavigateToItem = CreateCommand<Type>(NavigateToAsync, MaterialIconKind.ArrowLeft, "Navigate to");
-        LoginItem = CreateCommand<ILoginProperties>(LoginAsync, MaterialIconKind.Login, "Login");
         LogoutItem = CreateCommand(LogoutAsync, MaterialIconKind.Logout, "Logout");
         SetToDoChildrenTypeItem = CreateCommand<IToDoChildrenTypeProperty>(
             SetToDoChildrenTypeAsync,
@@ -315,17 +309,11 @@ public static class CommandStorage
     public static ICommand SetDueDateTimeCommand => SetDueDateTimeItem.Command;
     public static CommandItem SetDueDateTimeItem { get; }
 
-    public static ICommand CreateUserCommand => CreateUserItem.Command;
-    public static CommandItem CreateUserItem { get; }
-
     public static ICommand BackCommand => BackItem.Command;
     public static CommandItem BackItem { get; }
 
     public static ICommand NavigateToCommand => NavigateToItem.Command;
     public static CommandItem NavigateToItem { get; }
-
-    public static ICommand LoginCommand => LoginItem.Command;
-    public static CommandItem LoginItem { get; }
 
     public static ICommand LogoutCommand => LogoutItem.Command;
     public static CommandItem LogoutItem { get; }
@@ -988,17 +976,6 @@ public static class CommandStorage
         await cancellationToken.InvokeUIAsync(() => mainSplitViewModel.IsPaneOpen = false);
     }
 
-    private static async Task LoginAsync(ILoginProperties properties, CancellationToken cancellationToken)
-    {
-        var user = mapper.Map<User>(properties);
-        await tokenService.LoginAsync(user, cancellationToken).ConfigureAwait(false);
-        properties.Account.Login = user.Login;
-        await RememberMeAsync(properties, cancellationToken);
-
-        await navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken)
-            .ConfigureAwait(false);
-    }
-
     private static async Task RememberMeAsync(ILoginProperties properties, CancellationToken cancellationToken)
     {
         if (!properties.IsRememberMe)
@@ -1025,20 +1002,6 @@ public static class CommandStorage
     private static Task BackAsync(CancellationToken cancellationToken)
     {
         return navigator.NavigateBackAsync(cancellationToken);
-    }
-
-    private static async Task CreateUserAsync(ICreateUserProperties properties, CancellationToken cancellationToken)
-    {
-        if (properties.Password != properties.RepeatPassword)
-        {
-            throw new("Password not equal RepeatPassword.");
-        }
-
-        var options = mapper.Map<CreateUserOptions>(properties);
-        cancellationToken.ThrowIfCancellationRequested();
-        await authenticationService.CreateUserAsync(options, cancellationToken).ConfigureAwait(false);
-        cancellationToken.ThrowIfCancellationRequested();
-        await navigator.NavigateToAsync(ActionHelper<LoginViewModel>.Empty, cancellationToken).ConfigureAwait(false);
     }
 
     private static async Task SetDueDateTimeAsync(IDueDateTimeProperty property, CancellationToken cancellationToken)

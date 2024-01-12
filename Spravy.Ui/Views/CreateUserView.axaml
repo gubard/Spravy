@@ -55,14 +55,14 @@
                      Text="{Binding RepeatPassword}" />
 
             <Grid ColumnDefinitions="*,*">
-                <Button Command="{x:Static services:CommandStorage.BackCommand}">
+                <Button Command="{x:Static services:CommandStorage.NavigateToCommand}"
+                        CommandParameter="{x:Type viewModels:LoginViewModel}">
                     <avalonia:MaterialIcon Kind="ArrowLeft" />
                 </Button>
 
                 <Button x:Name="CreateUserButton"
                         Grid.Column="1"
-                        Command="{x:Static services:CommandStorage.CreateUserCommand}"
-                        CommandParameter="{Binding}">
+                        Command="{Binding CreateUserCommand}">
                     <avalonia:MaterialIcon Kind="AccountPlus" />
                 </Button>
             </Grid>

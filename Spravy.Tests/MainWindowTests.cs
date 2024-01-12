@@ -6,7 +6,6 @@ using Spravy.Tests.Extensions;
 using Spravy.Tests.Helpers;
 using Spravy.Ui.ViewModels;
 using Spravy.Ui.Views;
-using Xunit;
 
 namespace Spravy.Tests;
 
@@ -66,15 +65,14 @@ public class MainWindowTests
                                     .MustFocused()
                                     .ValidateCreateUserViewTextBoxError(w, c, TextHelper.TextLength513)
                                     .ValidateCreateUserViewTextBoxError(w, c, TextHelper.TextLength7)
-                                    .ValidateCreateUserViewTextBox(w, c, TextHelper.TextWithSpaceLength512)
-                                    .ValidateCreateUserViewTextBox(w, c, TextHelper.TextWithSpaceLength8)
-                                    .ValidateCreateUserViewTextBox(w, c, TextHelper.TextLength512)
+                                    .ValidateCreateUserViewTextBoxError(w, c, TextHelper.TextWithSpaceLength512)
+                                    .ValidateCreateUserViewTextBoxError(w, c, TextHelper.TextWithSpaceLength8)
+                                    .ValidateCreateUserViewTextBoxError(w, c, TextHelper.TextLength512)
                                     .ValidateCreateUserViewTextBox(w, c, TextHelper.TextLength8)
                                     .Case(() => w.SetKeyTextInput(TextHelper.TextLength512))
                             )
                             .Case(() => w.KeyHandleQwerty(PhysicalKey.Enter))
                     )
-                    /*.CloseErrorDialogHost()
                     .Case(
                         () => w.GetCurrentView<CreateUserView, CreateUserViewModel>()
                             .Case(
@@ -87,7 +85,7 @@ public class MainWindowTests
                             .ThrowIfNull()
                             .ClickOnButton(w)
                     )
-                    .Case(() => w.GetCurrentView<LoginView, LoginViewModel>())*/
+                    .Case(() => w.GetCurrentView<LoginView, LoginViewModel>())
                     .SaveFrame(),
                 (w, _) => w.SaveFrame()
             );
