@@ -7,7 +7,6 @@ using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
 using Spravy.ToDo.Protos;
-using static Spravy.ToDo.Protos.ToDoService;
 
 namespace Spravy.ToDo.Service.Services;
 

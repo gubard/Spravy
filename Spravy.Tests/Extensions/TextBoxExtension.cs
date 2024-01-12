@@ -10,9 +10,9 @@ public static class TextBoxExtension
     public static TTextBox ClearText<TTextBox>(this TTextBox textBox, Window window) where TTextBox : TextBox
     {
         textBox.Text.ThrowIfNullOrEmpty();
-        textBox.Text = string.Empty;
-        window.RunJobsAll();
-        /*textBox.MustFocused();
+        //textBox.Text = string.Empty;
+        //window.RunJobsAll();
+        textBox.MustFocused();
 
         for (var i = 0; i < textBox.Text.ThrowIfNull().Length; i++)
         {
@@ -33,7 +33,7 @@ public static class TextBoxExtension
             window.RunJobsAll();
             window.KeyReleaseQwerty(PhysicalKey.Backspace, RawInputModifiers.None);
             window.RunJobsAll();
-        }*/
+        }
 
         return textBox;
     }

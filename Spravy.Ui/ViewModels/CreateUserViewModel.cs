@@ -16,7 +16,6 @@ using Spravy.Domain.Models;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
-using Spravy.Ui.Services;
 using Spravy.Ui.Views;
 
 namespace Spravy.Ui.ViewModels;
