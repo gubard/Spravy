@@ -47,14 +47,14 @@ public static class Utf8JsonWriterExtension
                         {
                             writer.AddStringValue("Url", $"https://0.0.0.0:{port}");
                             Log.Information("Add Url: https://0.0.0.0:{Port}", port);
-                            
+
                             writer.AddObject("Certificate", () =>
                                 {
                                     writer.AddStringValue("Path", "/etc/letsencrypt/live/spravy.com.ua/fullchain.pem");
                                     writer.AddStringValue("KeyPath", "/etc/letsencrypt/live/spravy.com.ua/privkey.pem");
                                 }
                             );
-                            
+
                             Log.Information("Add Certificate");
                         }
                     )
@@ -62,6 +62,11 @@ public static class Utf8JsonWriterExtension
 
                 foreach (var obj in property.Value.EnumerateObject())
                 {
+                    if (obj.Name == "EndPoints")
+                    {
+                        continue;
+                    }
+
                     obj.WriteTo(writer);
                 }
             }
