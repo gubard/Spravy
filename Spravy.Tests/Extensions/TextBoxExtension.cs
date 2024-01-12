@@ -14,9 +14,9 @@ public static class TextBoxExtension
 
         for (var i = 0; i < textBox.Text.ThrowIfNull().Length; i++)
         {
-            window.KeyPressQwerty(PhysicalKey.ArrowLeft, RawInputModifiers.None);
+            window.KeyPressQwerty(PhysicalKey.ArrowRight, RawInputModifiers.None);
             window.RunJobsAll();
-            window.KeyReleaseQwerty(PhysicalKey.ArrowLeft, RawInputModifiers.None);
+            window.KeyReleaseQwerty(PhysicalKey.ArrowRight, RawInputModifiers.None);
             window.RunJobsAll();
         }
 
