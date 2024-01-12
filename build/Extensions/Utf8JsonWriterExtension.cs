@@ -67,6 +67,7 @@ public static class Utf8JsonWriterExtension
                         continue;
                     }
 
+                    Log.Information("Added {Object}", obj.Name);
                     obj.WriteTo(writer);
                 }
             }
