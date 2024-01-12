@@ -365,6 +365,7 @@ class Build : NukeBuild
                 {
                     using var client =
                         new SshClient(CreateSshConnection(StagingSshHost, StagingSshUser, StagingSshPassword));
+                    client.Connect();
                     client.SafeRun($"echo {StagingSshPassword} | sudo -S rm -fr /home/{StagingFtpUser}/DataBases");
                 }
             );
