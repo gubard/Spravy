@@ -11,7 +11,7 @@ using Spravy.ToDo.Protos;
 namespace Spravy.ToDo.Service.Services;
 
 [Authorize]
-public class GrpcToDoService : ToDoServiceBase
+public class GrpcToDoService : ToDoService.ToDoServiceBase
 {
     private readonly IToDoService toDoService;
     private readonly IMapper mapper;

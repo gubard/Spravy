@@ -8,7 +8,7 @@ using Spravy.Schedule.Protos;
 namespace Spravy.Schedule.Service.Services;
 
 [Authorize]
-public class GrpcScheduleService : ScheduleServiceBase
+public class GrpcScheduleService : ScheduleService.ScheduleServiceBase
 {
     private readonly IScheduleService scheduleService;
     private readonly IMapper mapper;
