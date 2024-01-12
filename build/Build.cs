@@ -348,7 +348,7 @@ class Build : NukeBuild
     Target ProdCompile => _ => _.DependsOn(ProdRestore).Executes(Compile);
 
     Target StagingPublishServices =>
-        _ => _.DependsOn(StagingCompile)
+        _ => _.DependsOn(CleanStagingDataBase, StagingCompile)
             .Executes(() => PublishServices(
                     StagingFtpHost,
                     StagingFtpUser,
@@ -360,18 +360,17 @@ class Build : NukeBuild
             );
 
     Target CleanStagingDataBase =>
-        _ => _.DependsOn(StagingPublishServices)
-            .Executes(() =>
-                {
-                    using var client =
-                        new SshClient(CreateSshConnection(StagingSshHost, StagingSshUser, StagingSshPassword));
-                    client.Connect();
-                    client.SafeRun($"echo {StagingSshPassword} | sudo -S rm -fr /home/{StagingFtpUser}/DataBases");
-                }
-            );
+        _ => _.Executes(() =>
+            {
+                using var client =
+                    new SshClient(CreateSshConnection(StagingSshHost, StagingSshUser, StagingSshPassword));
+                client.Connect();
+                client.SafeRun($"echo {StagingSshPassword} | sudo -S rm -fr /home/{StagingFtpUser}/DataBases");
+            }
+        );
 
     Target Test =>
-        _ => _.DependsOn(CleanStagingDataBase)
+        _ => _.DependsOn(StagingPublishServices)
             .Executes(() => DotNetTest(s =>
                     s.SetConfiguration(Configuration)
                         .EnableNoRestore()

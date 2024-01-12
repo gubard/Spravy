@@ -10,6 +10,7 @@ public static class InputElementExtension
     {
         inputElement.IsFocused.Should().BeFalse();
         inputElement.Focus();
+        inputElement.RunJobsAll();
         inputElement.IsFocused.Should().BeTrue();
 
         return inputElement;

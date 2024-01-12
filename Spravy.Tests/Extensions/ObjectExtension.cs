@@ -4,6 +4,19 @@ namespace Spravy.Tests.Extensions;
 
 public static class ObjectExtension
 {
+    private static readonly DispatcherPriority[] dispatcherPriorities =
+    {
+        DispatcherPriority.SystemIdle,
+        DispatcherPriority.ApplicationIdle,
+        DispatcherPriority.ContextIdle,
+        DispatcherPriority.Background,
+        DispatcherPriority.Input,
+        DispatcherPriority.Default,
+        DispatcherPriority.Loaded,
+        DispatcherPriority.Render,
+        DispatcherPriority.Send
+    };
+
     public static TObject Case<TObject>(this TObject obj, Action<TObject> action)
     {
         action.Invoke(obj);
@@ -118,17 +131,27 @@ public static class ObjectExtension
 
     public static TObject RunJobsAll<TObject>(this TObject obj)
     {
+        var count = 0;
+
+        while (count != dispatcherPriorities.Length)
+        {
+            count = 0;
+
+            foreach (var dispatcherPriority in dispatcherPriorities)
+            {
+                if (!Dispatcher.UIThread.HasJobsWithPriority(dispatcherPriority))
+                {
+                    count++;
+                }
+                else
+                {
+                    Dispatcher.UIThread.RunJobs(dispatcherPriority);
+                }
+            }
+        }
+
         obj.RunJobsInvalid();
         obj.RunJobsInactive();
-        obj.RunJobsSystemIdle();
-        obj.RunJobsApplicationIdle();
-        obj.RunJobsContextIdle();
-        obj.RunJobsBackground();
-        obj.RunJobsInput();
-        obj.RunJobsDefault();
-        obj.RunJobsLoaded();
-        obj.RunJobsRender();
-        obj.RunJobsSend();
 
         return obj;
     }
