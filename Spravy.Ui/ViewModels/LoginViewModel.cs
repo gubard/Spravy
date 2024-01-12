@@ -80,6 +80,9 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
     [Inject]
     public required IObjectStorage ObjectStorage { get; init; }
 
+    [Inject]
+    public required IPropertyValidator PropertyValidator { get; init; }
+
     public bool IsRememberMe
     {
         get => isRememberMe;
@@ -167,9 +170,6 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
             return hasError;
         }
     }
-
-    [Inject]
-    public required IPropertyValidator PropertyValidator { get; init; }
 
     private async Task LoginAsync(CancellationToken cancellationToken)
     {
