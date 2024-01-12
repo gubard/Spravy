@@ -14,6 +14,44 @@ namespace Spravy.Tests.Extensions;
 
 public static class WindowExtension
 {
+    public static TWindow CloseErrorDialogHost<TWindow>(this TWindow window) where TWindow : Window
+    {
+        var dialogHost = window.GetErrorDialogHost();
+        dialogHost.IsOpen.Should().BeTrue();
+        Thread.Sleep(TimeSpan.FromSeconds(1));
+
+        dialogHost.GetVisualChildren()
+            .Single()
+            .ThrowIfIsNotCast<Grid>()
+            .Children
+            .OfType<DialogOverlayPopupHost>()
+            .Single()
+            .GetVisualChildren()
+            .Single()
+            .ThrowIfIsNotCast<Border>()
+            .Child
+            .ThrowIfNull()
+            .ThrowIfIsNotCast<ContentPresenter>()
+            .GetVisualChildren()
+            .Single()
+            .ThrowIfIsNotCast<Control>()
+            .FindControl<Button>(ElementNames.OkButton)
+            .ThrowIfNull()
+            .ClickOnButton(window);
+        
+        Thread.Sleep(TimeSpan.FromSeconds(1));
+        dialogHost.IsOpen.Should().BeFalse();
+
+        return window;
+    }
+
+    public static TWindow MustShowError<TWindow>(this TWindow window) where TWindow : Window
+    {
+        window.GetErrorDialogHost().IsOpen.Should().BeTrue();
+
+        return window;
+    }
+
     public static TWindow SetKeyTextInput<TWindow>(this TWindow window, string text) where TWindow : Window
     {
         window.KeyTextInput(text);
@@ -78,7 +116,7 @@ public static class WindowExtension
         return window;
     }
 
-    public static TView GetCurrentView<TView, TViewModel>(this Window window)
+    public static DialogHost GetErrorDialogHost(this Window window)
     {
         return window.ThrowIfIsNotCast<MainWindow>()
             .Case(w => w.DataContext.ThrowIfNull().ThrowIfIsNotCast<MainWindowModel>())
@@ -89,7 +127,12 @@ public static class WindowExtension
             .Content
             .ThrowIfNull()
             .ThrowIfIsNotCast<DialogHost>()
-            .Case(dh => dh.Identifier.Should().Be("ErrorDialogHost"))
+            .Case(dh => dh.Identifier.Should().Be("ErrorDialogHost"));
+    }
+
+    public static TView GetCurrentView<TView, TViewModel>(this Window window)
+    {
+        return window.GetErrorDialogHost()
             .Content
             .ThrowIfNull()
             .ThrowIfIsNotCast<DialogHost>()

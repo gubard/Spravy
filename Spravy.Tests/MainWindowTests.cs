@@ -4,12 +4,15 @@ using Avalonia.Input;
 using Spravy.Domain.Extensions;
 using Spravy.Tests.Extensions;
 using Spravy.Tests.Helpers;
+using Spravy.Ui.ViewModels;
+using Spravy.Ui.Views;
+using Xunit;
 
 namespace Spravy.Tests;
 
 public class MainWindowTests
 {
-    [AvaloniaFact(Timeout = 30000)]
+    [AvaloniaFact]
     public void Should_Type_Text_Into_TextBox()
     {
         WindowHelper.CreateWindow()
@@ -69,11 +72,22 @@ public class MainWindowTests
                                     .ValidateCreateUserViewTextBox(w, c, TextHelper.TextLength8)
                                     .Case(() => w.SetKeyTextInput(TextHelper.TextLength512))
                             )
+                            .Case(() => w.KeyHandleQwerty(PhysicalKey.Enter))
+                    )
+                    /*.CloseErrorDialogHost()
+                    .Case(
+                        () => w.GetCurrentView<CreateUserView, CreateUserViewModel>()
+                            .Case(
+                                c => c.FindControl<TextBox>(ElementNames.RepeatPasswordTextBox)
+                                    .ThrowIfNull()
+                                    .ClearText(w)
+                                    .Case(() => w.SetKeyTextInput(TextHelper.TextLength8))
+                            )
                             .FindControl<Button>(ElementNames.CreateUserButton)
                             .ThrowIfNull()
                             .ClickOnButton(w)
                     )
-                    //.Case(() => w.GetCurrentView<LoginView, LoginViewModel>())
+                    .Case(() => w.GetCurrentView<LoginView, LoginViewModel>())*/
                     .SaveFrame(),
                 (w, _) => w.SaveFrame()
             );

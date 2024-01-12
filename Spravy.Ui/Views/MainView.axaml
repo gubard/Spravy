@@ -3,7 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
-             xmlns:dialogHostAvalonia="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
+             xmlns:dh="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
              xmlns:services="clr-namespace:Spravy.Ui.Services"
              xmlns:helpers="clr-namespace:Spravy.Ui.Helpers"
              mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
@@ -14,7 +14,7 @@
     </Design.DataContext>
 
     <UserControl.Styles>
-        <Style Selector="dialogHostAvalonia|DialogHost.adaptive">
+        <Style Selector="dh|DialogHost.adaptive">
             <Setter Property="(Interaction.Behaviors)">
                 <BehaviorCollectionTemplate>
                     <BehaviorCollection>
@@ -47,16 +47,21 @@
         </Style>
     </UserControl.Styles>
 
-    <dialogHostAvalonia:DialogHost Classes="adaptive"
-                                   Identifier="{x:Static services:DialogViewer.ErrorDialogHostIdentifier}">
-        <dialogHostAvalonia:DialogHost Identifier="{x:Static services:DialogViewer.ProgressDialogHostIdentifier}">
-            <dialogHostAvalonia:DialogHost Classes="adaptive"
-                                           Identifier="{x:Static services:DialogViewer.InputDialogHostIdentifier}">
-                <dialogHostAvalonia:DialogHost Classes="adaptive"
-                                               Identifier="{x:Static services:DialogViewer.ContentDialogHostIdentifier}">
+    <dh:DialogHost x:Name="ErrorDialogHost"
+                   Classes="adaptive"
+                   Identifier="{x:Static services:DialogViewer.ErrorDialogHostIdentifier}">
+        <dh:DialogHost x:Name="ProgressDialogHost"
+                       Classes="adaptive"
+                       Identifier="{x:Static services:DialogViewer.ProgressDialogHostIdentifier}">
+            <dh:DialogHost x:Name="InputDialogHost"
+                           Classes="adaptive"
+                           Identifier="{x:Static services:DialogViewer.InputDialogHostIdentifier}">
+                <dh:DialogHost x:Name="ContentDialogHost"
+                               Classes="adaptive"
+                               Identifier="{x:Static services:DialogViewer.ContentDialogHostIdentifier}">
                     <ContentControl x:Name="MainContent" Content="{Binding MainSplitViewModel}" />
-                </dialogHostAvalonia:DialogHost>
-            </dialogHostAvalonia:DialogHost>
-        </dialogHostAvalonia:DialogHost>
-    </dialogHostAvalonia:DialogHost>
+                </dh:DialogHost>
+            </dh:DialogHost>
+        </dh:DialogHost>
+    </dh:DialogHost>
 </UserControl>
