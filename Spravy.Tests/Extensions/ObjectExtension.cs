@@ -4,18 +4,36 @@ namespace Spravy.Tests.Extensions;
 
 public static class ObjectExtension
 {
-    private static readonly DispatcherPriority[] dispatcherPriorities =
+    private static readonly DispatcherPriority[] dispatcherPriorities;
+
+    static ObjectExtension()
     {
-        DispatcherPriority.SystemIdle,
-        DispatcherPriority.ApplicationIdle,
-        DispatcherPriority.ContextIdle,
-        DispatcherPriority.Background,
-        DispatcherPriority.Input,
-        DispatcherPriority.Default,
-        DispatcherPriority.Loaded,
-        DispatcherPriority.Render,
-        DispatcherPriority.Send
-    };
+        DispatcherPriority[] dp =
+        {
+            DispatcherPriority.SystemIdle,
+            DispatcherPriority.ApplicationIdle,
+            DispatcherPriority.ContextIdle,
+            DispatcherPriority.Background,
+            DispatcherPriority.Input,
+            DispatcherPriority.Default,
+            DispatcherPriority.Loaded,
+            DispatcherPriority.Render,
+            DispatcherPriority.Send,
+        };
+
+        dispatcherPriorities = dp.OrderBy(x => x.Value).ToArray();
+    }
+
+    public static TObject WaitSeconds<TObject>(this TObject obj, byte seconds)
+    {
+        for (var i = 0; i < seconds; i++)
+        {
+            Thread.Sleep(TimeSpan.FromSeconds(1));
+            obj.RunJobsAll();
+        }
+
+        return obj;
+    }
 
     public static TObject Case<TObject>(this TObject obj, Action<TObject> action)
     {
@@ -27,6 +45,13 @@ public static class ObjectExtension
     public static TObject Case<TObject>(this TObject obj, Action action)
     {
         action.Invoke();
+
+        return obj;
+    }
+
+    public static async Task<TObject> DelayAsync<TObject>(this TObject obj, TimeSpan timeout)
+    {
+        await Task.Delay(timeout);
 
         return obj;
     }
@@ -132,6 +157,8 @@ public static class ObjectExtension
     public static TObject RunJobsAll<TObject>(this TObject obj)
     {
         var count = 0;
+        obj.RunJobsInvalid();
+        obj.RunJobsInactive();
 
         while (count != dispatcherPriorities.Length)
         {
@@ -149,9 +176,6 @@ public static class ObjectExtension
                 }
             }
         }
-
-        obj.RunJobsInvalid();
-        obj.RunJobsInactive();
 
         return obj;
     }

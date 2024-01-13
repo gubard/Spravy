@@ -1329,14 +1329,14 @@ public class EfToDoService : IToDoService
     private async IAsyncEnumerable<IToDoSubItem> GetLeafToDoItemsAsync(
         SpravyDbToDoDbContext context,
         ToDoItemEntity itemEntity,
-        CancellationToken cancellationToken
+        [EnumeratorCancellation] CancellationToken cancellationToken
     )
     {
         var entities = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.ParentId == itemEntity.Id)
             .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync();
+            .ToArrayAsync(cancellationToken);
 
         if (entities.IsEmpty())
         {
@@ -1357,14 +1357,14 @@ public class EfToDoService : IToDoService
     private async IAsyncEnumerable<Guid> GetLeafToDoItemIdsAsync(
         SpravyDbToDoDbContext context,
         ToDoItemEntity itemEntity,
-        CancellationToken cancellationToken
+        [EnumeratorCancellation] CancellationToken cancellationToken
     )
     {
         var entities = await context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.ParentId == itemEntity.Id)
             .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync();
+            .ToArrayAsync(cancellationToken);
 
         if (entities.IsEmpty())
         {
