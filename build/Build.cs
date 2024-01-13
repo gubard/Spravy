@@ -82,11 +82,11 @@ class Build : NukeBuild
         }
     }
 
-    void SetupAppSettings()
+    void SetupAppSettings(string domain)
     {
         foreach (var project in Solution.AllProjects)
         {
-            project.SetGetAppSettingsFile(Token, ServiceOptions, Hosts, ServerHost);
+            project.SetGetAppSettingsFile(Token, ServiceOptions, Hosts, domain);
         }
     }
 
@@ -335,8 +335,10 @@ class Build : NukeBuild
     Target StagingSetup => _ => _.Executes(() => Setup(StagingServerHost));
     Target ProdSetup => _ => _.DependsOn(StagingPublishBrowser).Executes(() => Setup(ServerHost));
 
-    Target StagingSetupAppSettings => _ => _.DependsOn(StagingSetup).Executes(SetupAppSettings);
-    Target ProdSetupAppSettings => _ => _.DependsOn(ProdSetup).Executes(SetupAppSettings);
+    Target StagingSetupAppSettings =>
+        _ => _.DependsOn(StagingSetup).Executes(() => SetupAppSettings(StagingServerHost));
+
+    Target ProdSetupAppSettings => _ => _.DependsOn(ProdSetup).Executes(() => SetupAppSettings(ServerHost));
 
     Target StagingClean => _ => _.DependsOn(StagingSetupAppSettings).Executes(Clean);
     Target ProdClean => _ => _.DependsOn(ProdSetupAppSettings).Executes(Clean);
