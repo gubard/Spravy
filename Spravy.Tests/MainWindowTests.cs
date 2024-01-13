@@ -85,7 +85,7 @@ public class MainWindowTests
                             .ThrowIfNull()
                             .ClickOnButton(w)
                     )
-                    //.Case(() => w.GetCurrentView<LoginView, LoginViewModel>())
+                    .Case(() => w.GetCurrentView<LoginView, LoginViewModel>())
                     .SaveFrame(),
                 (w, _) => w.SaveFrame()
             );
