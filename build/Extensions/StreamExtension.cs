@@ -25,7 +25,7 @@ public static class StreamExtension
 
         foreach (var obj in jsonDocument.RootElement.EnumerateObject())
         {
-            if (writer.SetKestrel(obj, port))
+            if (writer.SetKestrel(obj, port, domain))
             {
                 continue;
             }

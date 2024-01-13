@@ -8,6 +8,7 @@ using Spravy.Db.Sqlite.Services;
 using Spravy.Di.Extensions;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
+using Spravy.Domain.Interfaces;
 using Spravy.EventBus.Domain.Client.Models;
 using Spravy.Schedule.Domain.Client.Models;
 using Spravy.ToDo.Domain.Client.Models;
@@ -28,6 +29,7 @@ public class AndroidModule : NinjectModule
 
     public override void Load()
     {
+        Bind<IObjectStorage>().To<SqliteObjectStorage>();
         Bind<IOpenerLink>().To<AndroidOpenerLink>();
         Bind<ContextWrapper>().ToConstant(contextWrapper);
 

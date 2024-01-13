@@ -32,7 +32,8 @@ public static class Utf8JsonWriterExtension
     public static bool SetKestrel(
         this Utf8JsonWriter writer,
         JsonProperty property,
-        uint port
+        uint port,
+        string domain
     )
     {
         if (property.Name != "Kestrel")
@@ -50,8 +51,8 @@ public static class Utf8JsonWriterExtension
 
                             writer.AddObject("Certificate", () =>
                                 {
-                                    writer.AddStringValue("Path", "/etc/letsencrypt/live/spravy.com.ua/fullchain.pem");
-                                    writer.AddStringValue("KeyPath", "/etc/letsencrypt/live/spravy.com.ua/privkey.pem");
+                                    writer.AddStringValue("Path", $"/etc/letsencrypt/live/{domain}/fullchain.pem");
+                                    writer.AddStringValue("KeyPath", $"/etc/letsencrypt/live/{domain}/privkey.pem");
                                 }
                             );
 
