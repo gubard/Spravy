@@ -200,6 +200,11 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
             return;
         }
 
+        if (HasErrors)
+        {
+            return;
+        }
+
         await this.InvokeUIAsync(() => CreateUserCommand.Execute(null));
     }
 

@@ -242,6 +242,11 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
             return;
         }
 
+        if (HasErrors)
+        {
+            return;
+        }
+
         await this.InvokeUIAsync(() => LoginCommand.Execute(null));
     }
 
