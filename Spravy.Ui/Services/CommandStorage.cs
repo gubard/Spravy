@@ -370,6 +370,8 @@ public static class CommandStorage
 
             await toDoService.ToDoItemToRootAsync(selected.Value.Id, cancellationToken).ConfigureAwait(false);
         }
+
+        await RefreshCurrentViewAsync(cancellationToken);
     }
 
     private static Task MultiSetTypeToDoItemsAsync(
