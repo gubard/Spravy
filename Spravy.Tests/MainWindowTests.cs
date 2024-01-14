@@ -83,9 +83,12 @@ public class MainWindowTests
                             )
                             .FindControl<Button>(ElementNames.CreateUserButton)
                             .ThrowIfNull()
-                            .ClickOnButton(w, TimeWait.MinSecondsWait)
+                            .ClickOnButton(
+                                w,
+                                TimeWait.MinSecondsWait,
+                                w.GetCurrentView<LoginView, LoginViewModel>
+                            )
                     )
-                    .Case(() => w.GetCurrentView<LoginView, LoginViewModel>())
                     .SaveFrame(),
                 (w, _) => w.SaveFrame()
             );

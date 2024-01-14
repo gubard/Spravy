@@ -35,6 +35,46 @@ public static class ObjectExtension
         return obj;
     }
 
+    public static TObject WaitSeconds<TObject>(this TObject obj, byte seconds, Action predicate)
+    {
+        for (var i = 0; i < seconds; i++)
+        {
+            try
+            {
+                predicate.Invoke();
+
+                return obj;
+            }
+            catch
+            {
+                Thread.Sleep(TimeSpan.FromSeconds(1));
+                obj.RunJobsAll();
+            }
+        }
+
+        predicate.Invoke();
+
+        return obj;
+    }
+
+    public static T WaitSeconds<TObject, T>(this TObject obj, byte seconds, Func<T> predicate)
+    {
+        for (var i = 0; i < seconds; i++)
+        {
+            try
+            {
+                return predicate.Invoke();
+            }
+            catch
+            {
+                Thread.Sleep(TimeSpan.FromSeconds(1));
+                obj.RunJobsAll();
+            }
+        }
+
+        return predicate.Invoke();
+    }
+
     public static TObject Case<TObject>(this TObject obj, Action<TObject> action)
     {
         action.Invoke(obj);
