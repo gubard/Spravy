@@ -8,6 +8,7 @@ public static class TextHelper
     public const string TextLength50 = "oymyhvkajlvmnwkunxnexlgppszoamasapfgpwfbqktjqrqwui";
     public const string EmailLength51 = "oymyhvkajlvmnwkunxnexlgppszoamasapfgp@fbqktjq.qwuio";
     public const string EmailLength50 = "oymyhvkajlvmnwkunxnexlgppszoamasapfgp@fbqktjq.qwui";
+    public const string Email = "straging@spravy.com.ua";
     public const string TextWithSpaceLength8 = "lmhi fnb";
     public const string TextLength8 = "lmhifnba";
     public const string TextLength7 = "udsdyjy";

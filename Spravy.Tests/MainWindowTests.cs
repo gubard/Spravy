@@ -30,7 +30,7 @@ public class MainWindowTests
                                     .ValidateCreateUserViewTextBoxError(w, c, TextHelper.TextLength50)
                                     .ValidateCreateUserViewTextBoxError(w, c, TextHelper.EmailLength51)
                                     .ValidateCreateUserViewTextBox(w, c, TextHelper.EmailLength50)
-                                    .Case(() => w.SetKeyTextInput(TextHelper.EmailLength50))
+                                    .Case(() => w.SetKeyTextInput(TextHelper.Email))
                             )
                             .Case(() => w.KeyHandleQwerty(PhysicalKey.Enter))
                             .Case(
