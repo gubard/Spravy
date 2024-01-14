@@ -203,10 +203,15 @@ public static class CommandStorage
             MaterialIconKind.CheckAll,
             "Complete all to do items"
         );
-        MultiSetRootToDoItemsItem = CreateCommand<AvaloniaList<Selected<ToDoItemNotify>>>(
-            MultiSetRootToDoItemsAsync,
+        MultiSetParentToDoItemsItem = CreateCommand<AvaloniaList<Selected<ToDoItemNotify>>>(
+            MultiSetParentToDoItemsAsync,
             MaterialIconKind.SwapHorizontal,
             "Set parent for all to do items"
+        );
+        MultiMoveToDoItemsToRootItem = CreateCommand<AvaloniaList<Selected<ToDoItemNotify>>>(
+            MultiMoveToDoItemsToRootAsync,
+            MaterialIconKind.FamilyTree,
+            "Move items to root"
         );
         MultiSetTypeToDoItemsItem = CreateCommand<AvaloniaList<Selected<ToDoItemNotify>>>(
             MultiSetTypeToDoItemsAsync,
@@ -229,8 +234,11 @@ public static class CommandStorage
     public static ICommand MultiSetTypeToDoItemsCommand => MultiSetTypeToDoItemsItem.Command;
     public static CommandItem MultiSetTypeToDoItemsItem { get; }
 
-    public static ICommand MultiSetRootToDoItemsCommand => MultiSetRootToDoItemsItem.Command;
-    public static CommandItem MultiSetRootToDoItemsItem { get; }
+    public static ICommand MultiMoveToDoItemsToRootCommand => MultiMoveToDoItemsToRootItem.Command;
+    public static CommandItem MultiMoveToDoItemsToRootItem { get; }
+
+    public static ICommand MultiSetParentToDoItemsCommand => MultiSetParentToDoItemsItem.Command;
+    public static CommandItem MultiSetParentToDoItemsItem { get; }
 
     public static ICommand MultiCompleteToDoItemsCommand => MultiCompleteToDoItemsItem.Command;
     public static CommandItem MultiCompleteToDoItemsItem { get; }
@@ -348,6 +356,22 @@ public static class CommandStorage
 
     public static CommandItem SelectAll { get; }
 
+    private static async Task MultiMoveToDoItemsToRootAsync(
+        AvaloniaList<Selected<ToDoItemNotify>> itemsNotify,
+        CancellationToken cancellationToken
+    )
+    {
+        foreach (var selected in itemsNotify)
+        {
+            if (!selected.IsSelect)
+            {
+                continue;
+            }
+
+            await toDoService.ToDoItemToRootAsync(selected.Value.Id, cancellationToken).ConfigureAwait(false);
+        }
+    }
+
     private static Task MultiSetTypeToDoItemsAsync(
         AvaloniaList<Selected<ToDoItemNotify>> itemsNotify,
         CancellationToken cancellationToken
@@ -380,7 +404,7 @@ public static class CommandStorage
         );
     }
 
-    private static Task MultiSetRootToDoItemsAsync(
+    private static Task MultiSetParentToDoItemsAsync(
         AvaloniaList<Selected<ToDoItemNotify>> itemsNotify,
         CancellationToken cancellationToken
     )

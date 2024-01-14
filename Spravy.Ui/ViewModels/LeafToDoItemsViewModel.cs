@@ -90,7 +90,12 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
                     )
                 );
                 PageHeaderViewModel.Commands.Add(
-                    CommandStorage.MultiSetRootToDoItemsItem.WithParam(
+                    CommandStorage.MultiSetParentToDoItemsItem.WithParam(
+                        ToDoSubItemsViewModel.List.MultiToDoItems.GroupByNone.Items.Items
+                    )
+                );
+                PageHeaderViewModel.Commands.Add(
+                    CommandStorage.MultiMoveToDoItemsToRootItem.WithParam(
                         ToDoSubItemsViewModel.List.MultiToDoItems.GroupByNone.Items.Items
                     )
                 );

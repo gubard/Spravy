@@ -56,6 +56,9 @@ class Build : NukeBuild
     [Parameter] readonly string StagingSshHost;
     [Parameter] readonly string StagingSshUser;
     [Parameter] readonly string StagingServerHost;
+    [Parameter] readonly string MailServer;
+    [Parameter] readonly string MailLogin;
+    [Parameter] readonly string MailPassword;
 
     static readonly Dictionary<string, string> Hosts = new();
     static readonly Dictionary<Project, ServiceOptions> ServiceOptions = new();
@@ -86,7 +89,7 @@ class Build : NukeBuild
     {
         foreach (var project in Solution.AllProjects)
         {
-            project.SetGetAppSettingsFile(Token, ServiceOptions, Hosts, domain);
+            project.SetGetAppSettingsFile(Token, ServiceOptions, Hosts, domain, MailServer, MailLogin, MailPassword);
         }
     }
 

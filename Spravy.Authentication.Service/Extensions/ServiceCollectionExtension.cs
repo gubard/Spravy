@@ -28,6 +28,8 @@ using Spravy.EventBus.Domain.Interfaces;
 using Spravy.Service.Extensions;
 using Spravy.Service.Services;
 using Spravy.Client.Extensions;
+using Spravy.Core.Options;
+using Spravy.Core.Services;
 using Spravy.EventBus.Protos;
 
 namespace Spravy.Authentication.Service.Extensions;
@@ -56,6 +58,19 @@ public static class ServiceCollectionExtension
         serviceCollection.AddTransient(_ => NamedHelper.Sha512Hash.ToRef());
         serviceCollection.AddTransient(_ => NamedHelper.StringToUtf8Bytes.ToRef());
         serviceCollection.AddSingleton<TimeZoneHttpHeaderFactory>();
+        serviceCollection.AddTransient<IEmailService, EmailService>();
+        serviceCollection.AddTransient<IRandom<string>>(_ => RandomStringGuid.Hexadecimal);
+
+        serviceCollection.AddTransient(
+            sp => new EmailOptions
+            {
+                Host = sp.GetRequiredService<IConfiguration>().GetSection("EmailService:Host").Value.ThrowIfNull(),
+                Login = sp.GetRequiredService<IConfiguration>().GetSection("EmailService:Login").Value.ThrowIfNull(),
+                Password = sp.GetRequiredService<IConfiguration>()
+                    .GetSection("EmailService:Password")
+                    .Value.ThrowIfNull(),
+            }
+        );
 
         serviceCollection.AddTransient<IAuthenticationService>(
             x => new EfAuthenticationService(

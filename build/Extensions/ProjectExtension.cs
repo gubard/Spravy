@@ -142,7 +142,10 @@ public static class ProjectExtension
         string tokenValue,
         Dictionary<Project, ServiceOptions> serviceOptions,
         Dictionary<string, string> hosts,
-        string domain
+        string domain,
+        string emailHost,
+        string emailLogin,
+        string emailPassword
     )
     {
         var appSettingsFile = project.GetAppSettingsFile();
@@ -161,7 +164,15 @@ public static class ProjectExtension
 
         if (serviceOptions.TryGetValue(project, out var options))
         {
-            appSettingsFile.SetAppSettingsFile(domain, hosts, token, options.Port);
+            appSettingsFile.SetAppSettingsFile(
+                domain,
+                hosts,
+                token,
+                options.Port,
+                emailHost,
+                emailLogin,
+                emailPassword
+            );
         }
         else
         {

@@ -122,6 +122,30 @@ public static class Utf8JsonWriterExtension
         return true;
     }
 
+    public static bool SetEmailService(
+        this Utf8JsonWriter writer,
+        JsonProperty property,
+        string host,
+        string login,
+        string password
+    )
+    {
+        if (property.Name != "EmailService")
+        {
+            return false;
+        }
+
+        writer.AddObject(property.Name, w =>
+            {
+                w.AddStringValue("Host", host);
+                w.AddStringValue("Login", login);
+                w.AddStringValue("Password", password);
+            }
+        );
+
+        return true;
+    }
+
     public static bool SetDomain(this Utf8JsonWriter writer, JsonProperty property, string domain)
     {
         if (property.Name != "Urls")

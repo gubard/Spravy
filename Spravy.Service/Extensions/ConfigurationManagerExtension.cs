@@ -9,7 +9,7 @@ public static class ConfigurationManagerExtension
     {
         manager.Sources.Clear();
         manager.AddJsonFile(FileNames.DefaultConfigFileName);
-        manager.AddEnvironmentVariables();
+        manager.AddEnvironmentVariables("Spravy_");
         manager.AddCommandLine(args);
 
         return manager;

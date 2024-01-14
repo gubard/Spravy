@@ -12,7 +12,10 @@ public static class StreamExtension
         string domain,
         Dictionary<string, string> hosts,
         string token,
-        uint port
+        uint port,
+        string emailHost,
+        string emailLogin,
+        string emailPassword
     )
     {
         var jsonWriterOptions = new JsonWriterOptions
@@ -29,13 +32,18 @@ public static class StreamExtension
             {
                 continue;
             }
-            
+
             if (writer.SetServices(obj, hosts, token))
             {
                 continue;
             }
 
             if (writer.SetDomain(obj, domain))
+            {
+                continue;
+            }
+
+            if (writer.SetEmailService(obj, emailHost, emailLogin, emailPassword))
             {
                 continue;
             }
@@ -50,7 +58,7 @@ public static class StreamExtension
 
         writer.WriteEndObject();
     }
-    
+
     public static void SetAppSettingsStream(
         this Stream stream,
         JsonDocument jsonDocument,

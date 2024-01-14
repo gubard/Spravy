@@ -3,6 +3,8 @@ using Grpc.Core;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Models;
 using Spravy.Authentication.Protos;
+using Spravy.Domain.Extensions;
+using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
 using static Spravy.Authentication.Protos.AuthenticationService;
 
@@ -12,20 +14,33 @@ public class GrpcAuthenticationService : AuthenticationServiceBase
 {
     private readonly IAuthenticationService authenticationService;
     private readonly IMapper mapper;
+    private readonly IEmailService emailService;
+    private readonly IRandom<string> randomString;
 
     public GrpcAuthenticationService(
         IAuthenticationService authenticationService,
-        IMapper mapper
+        IMapper mapper,
+        IEmailService emailService,
+        IRandom<string> randomString
     )
     {
         this.authenticationService = authenticationService;
         this.mapper = mapper;
+        this.emailService = emailService;
+        this.randomString = randomString;
     }
 
     public override async Task<CreateUserReply> CreateUser(CreateUserRequest request, ServerCallContext context)
     {
         var options = mapper.Map<CreateUserOptions>(request);
         await authenticationService.CreateUserAsync(options, context.CancellationToken);
+
+        await emailService.SendEmailAsync(
+            "Verification code",
+            options.Email,
+            randomString.GetRandom().ThrowIfNull(),
+            context.CancellationToken
+        );
 
         return new CreateUserReply();
     }
