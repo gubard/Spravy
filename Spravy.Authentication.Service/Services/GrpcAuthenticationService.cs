@@ -39,7 +39,7 @@ public class GrpcAuthenticationService : AuthenticationServiceBase
             "Verification code",
             options.Email,
             randomString.GetRandom().ThrowIfNull(),
-            context.CancellationToken
+            CancellationToken.None
         );
 
         return new CreateUserReply();
