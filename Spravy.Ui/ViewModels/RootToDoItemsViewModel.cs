@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,12 +14,14 @@ using Spravy.Ui.Extensions;
 using Spravy.Ui.Features.ToDo.Enums;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
+using Spravy.Ui.Services;
 
 namespace Spravy.Ui.ViewModels;
 
 public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
 {
     private readonly TaskWork refreshWork;
+    private readonly PageHeaderViewModel pageHeaderViewModel;
 
     public RootToDoItemsViewModel() : base(true)
     {
@@ -30,7 +33,17 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
     public override string ViewId => TypeCache<RootToDoItemsViewModel>.Type.Name;
 
     [Inject]
-    public required PageHeaderViewModel PageHeaderViewModel { get; init; }
+    public required PageHeaderViewModel PageHeaderViewModel
+    {
+        get => pageHeaderViewModel;
+        [MemberNotNull(nameof(pageHeaderViewModel))]
+        init
+        {
+            pageHeaderViewModel = value;
+            pageHeaderViewModel.Header = "Spravy";
+            pageHeaderViewModel.LeftCommand = CommandStorage.NavigateToCurrentToDoItemItem;
+        }
+    }
 
     [Inject]
     public required ToDoSubItemsViewModel ToDoSubItemsViewModel { get; init; }
