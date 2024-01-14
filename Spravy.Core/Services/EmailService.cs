@@ -32,7 +32,7 @@ public class EmailService : IEmailService
         };
 
         using var client = new SmtpClient();
-        await client.ConnectAsync(options.Host, 465, true, cancellationToken);
+        await client.ConnectAsync(options.Host, 587, false, cancellationToken);
         await client.AuthenticateAsync(options.Login, options.Password, cancellationToken);
         await client.SendAsync(message, cancellationToken);
         await client.DisconnectAsync(true, cancellationToken);
