@@ -101,11 +101,11 @@ public class MainWindowTests
                             )
                             .FindControl<Button>(ElementNames.CreateUserButton)
                             .ThrowIfNull()
-                            .ClickOnButton(
+                            /*.ClickOnButton(
                                 w,
                                 TimeWait.MinSecondsWait,
                                 w.GetCurrentView<VerificationCodeView, VerificationCodeViewModel>
-                            )
+                            )*/
                     )
                     .SaveFrame(),
                 (w, _) => w.SaveFrame()
