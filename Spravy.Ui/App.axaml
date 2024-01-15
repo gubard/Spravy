@@ -11,6 +11,7 @@
              xmlns:system="clr-namespace:System;assembly=System.Runtime"
              xmlns:enums1="clr-namespace:Spravy.Ui.Features.ToDo.Enums"
              xmlns:services="clr-namespace:Spravy.Ui.Services"
+             xmlns:enums="clr-namespace:Spravy.Ui.Enums"
              x:Class="Spravy.Ui.App"
              RequestedThemeVariant="Dark">
     <Application.Resources>
@@ -44,6 +45,12 @@
                                              x:Key="TypeOfPeriodicityToIsVisible"
                                              Value="0"
                                              Reverse="True" />
+        <converters:EnumToBooleanConverter x:TypeArguments="enums:UserIdentifierType"
+                                           x:Key="UserIdentifierTypeEmailToTrue"
+                                           Value="Email" />
+        <converters:EnumToBooleanConverter x:TypeArguments="enums:UserIdentifierType"
+                                           x:Key="UserIdentifierTypeLoginToTrue"
+                                           Value="Login" />
     </Application.Resources>
 
     <Application.Styles>

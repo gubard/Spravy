@@ -7,6 +7,7 @@ using DialogHostAvalonia;
 using FluentAssertions;
 using Spravy.Domain.Extensions;
 using Spravy.Tests.Helpers;
+using Spravy.Ui.Models;
 using Spravy.Ui.ViewModels;
 using Spravy.Ui.Views;
 
@@ -37,7 +38,7 @@ public static class WindowExtension
             .FindControl<Button>(ElementNames.OkButton)
             .ThrowIfNull()
             .ClickOnButton(window);
-        
+
         dialogHost.IsOpen.Should().BeFalse();
 
         return window;
@@ -95,17 +96,6 @@ public static class WindowExtension
         return window;
     }
 
-    public static CreateUserView NavigateToCreateUserView<TWindow>(this TWindow window) where TWindow : Window
-    {
-        return window.Case(
-                w => w.GetCurrentView<LoginView, LoginViewModel>()
-                    .FindControl<Button>("CreateUserButton")
-                    .ThrowIfNull()
-                    .ClickOnButton(w)
-            )
-            .GetCurrentView<CreateUserView, CreateUserViewModel>();
-    }
-
     public static TWindow ShowWindow<TWindow>(this TWindow window) where TWindow : Window
     {
         window.Show();
@@ -129,6 +119,7 @@ public static class WindowExtension
     }
 
     public static TView GetCurrentView<TView, TViewModel>(this Window window)
+        where TView : UserControl where TViewModel : ViewModelBase
     {
         return window.GetErrorDialogHost()
             .Content

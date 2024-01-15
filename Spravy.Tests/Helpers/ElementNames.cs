@@ -9,4 +9,5 @@ public static class ElementNames
     public const string PasswordTextBox = "PasswordTextBox";
     public const string RepeatPasswordTextBox = "RepeatPasswordTextBox";
     public const string OkButton = "OkButton";
+    public const string BackButton = "BackButton";
 }

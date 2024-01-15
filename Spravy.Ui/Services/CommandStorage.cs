@@ -218,6 +218,11 @@ public static class CommandStorage
             MaterialIconKind.Switch,
             "Set type all to do items"
         );
+        VerificationEmailItem = CreateCommand<IVerificationEmail>(
+            VerificationEmailAsync,
+            MaterialIconKind.EmailVerified,
+            "Verification email"
+        );
     }
 
     private static readonly INavigator navigator;
@@ -230,6 +235,9 @@ public static class CommandStorage
     private static readonly ITokenService tokenService;
     private static readonly IObjectStorage objectStorage;
     private static readonly IClipboardService clipboard;
+    
+    public static ICommand VerificationEmailCommand => VerificationEmailItem.Command;
+    public static CommandItem VerificationEmailItem { get; }
 
     public static ICommand MultiSetTypeToDoItemsCommand => MultiSetTypeToDoItemsItem.Command;
     public static CommandItem MultiSetTypeToDoItemsItem { get; }
@@ -355,6 +363,11 @@ public static class CommandStorage
     public static CommandItem SetToDoParentItemItem { get; }
 
     public static CommandItem SelectAll { get; }
+
+    private static Task VerificationEmailAsync(IVerificationEmail verificationEmail, CancellationToken cancellationToken)
+    {
+     return Task.CompletedTask;
+    }
 
     private static async Task MultiMoveToDoItemsToRootAsync(
         AvaloniaList<Selected<ToDoItemNotify>> itemsNotify,

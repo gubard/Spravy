@@ -1,0 +1,40 @@
+<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:VerificationCodeViewModel"
+                                xmlns="https://github.com/avaloniaui"
+                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                                xmlns:reactiveUi="http://reactiveui.net"
+                                xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
+                                xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
+                                xmlns:services="clr-namespace:Spravy.Ui.Services"
+                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                                x:Class="Spravy.Ui.Views.VerificationCodeView"
+                                x:DataType="viewModels:VerificationCodeViewModel">
+    <StackPanel>
+        <Panel>
+            <TextBlock Text="{Binding Identifier, StringFormat=Send verification code to email \{0\}}"
+                       IsVisible="{Binding IdentifierType, Converter={StaticResource UserIdentifierTypeEmailToTrue}}" />
+            <TextBlock Text="{Binding Identifier, StringFormat=Send verification code to user \{0\}}"
+                       IsVisible="{Binding IdentifierType, Converter={StaticResource UserIdentifierTypeLoginToTrue}}" />
+        </Panel>
+
+        <TextBox UseFloatingWatermark="True"
+                 Classes="outline dense"
+                 Theme="{StaticResource OutlineTextBox}"
+                 assists:TextFieldAssist.Label="VerificationCode"
+                 Text="{Binding VerificationCode}" />
+        
+        <StackPanel Orientation="Horizontal">
+            <Button Command="{x:Static services:CommandStorage.NavigateToCommand}"
+                    CommandParameter="{x:Type viewModels:LoginViewModel}">
+                <avalonia:MaterialIcon Kind="ArrowLeft" />
+            </Button>
+
+            <Button Command="{x:Static services:CommandStorage.VerificationEmailCommand}"
+                    CommandParameter="{Binding }">
+                <avalonia:MaterialIcon Kind="VerifiedUser" />
+            </Button>
+        </StackPanel>
+    </StackPanel>
+</reactiveUi:ReactiveUserControl>

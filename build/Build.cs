@@ -74,6 +74,7 @@ class Build : NukeBuild
     void Setup(string host)
     {
         Token = CreteToken();
+        ServiceProjects.Clear();
         ServiceProjects.AddRange(Solution.GetProjects("Service"));
         ushort port = 5000;
 

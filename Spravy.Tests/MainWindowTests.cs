@@ -19,7 +19,25 @@ public class MainWindowTests
                 w => w.SetSize(1000, 1000)
                     .ShowWindow()
                     .Case(
-                        () => w.NavigateToCreateUserView()
+                        () => w.Case(
+                                () => w.GetCurrentView<LoginView, LoginViewModel>()
+                                    .FindControl<Button>(ElementNames.CreateUserButton)
+                                    .ThrowIfNull()
+                                    .ClickOnButton(w)
+                            )
+                            .Case(
+                                () => w.GetCurrentView<CreateUserView, CreateUserViewModel>()
+                                    .FindControl<Button>(ElementNames.BackButton)
+                                    .ThrowIfNull()
+                                    .ClickOnButton(w)
+                            )
+                            .Case(
+                                () => w.GetCurrentView<LoginView, LoginViewModel>()
+                                    .FindControl<Button>(ElementNames.CreateUserButton)
+                                    .ThrowIfNull()
+                                    .ClickOnButton(w)
+                            )
+                            .GetCurrentView<CreateUserView, CreateUserViewModel>()
                             .Case(
                                 c => c.FindControl<TextBox>(ElementNames.EmailTextBox)
                                     .ThrowIfNull()
@@ -86,7 +104,7 @@ public class MainWindowTests
                             .ClickOnButton(
                                 w,
                                 TimeWait.MinSecondsWait,
-                                w.GetCurrentView<LoginView, LoginViewModel>
+                                w.GetCurrentView<VerificationCodeView, VerificationCodeViewModel>
                             )
                     )
                     .SaveFrame(),
