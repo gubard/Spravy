@@ -14,15 +14,13 @@ public static class FileInfoExtension
         Dictionary<string, string> hosts,
         string token,
         uint port,
-        string emailHost,
-        string emailLogin,
         string emailPassword
     )
     {
         var jsonDocument = file.GetJsonDocument();
         using var stream = new MemoryStream();
         Log.Logger.Information("Set app settings {File}", file);
-        stream.SetAppSettingsStream(jsonDocument, domain, hosts, token, port, emailHost, emailLogin, emailPassword);
+        stream.SetAppSettingsStream(jsonDocument, domain, hosts, token, port, emailPassword);
         var jsonData = Encoding.UTF8.GetString(stream.ToArray());
         File.WriteAllText(file.FullName, jsonData);
     }

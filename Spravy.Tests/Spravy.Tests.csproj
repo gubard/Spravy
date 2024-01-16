@@ -27,4 +27,10 @@
       <ProjectReference Include="..\Spravy.Ui.Desktop\Spravy.Ui.Desktop.csproj" />
       <ProjectReference Include="..\Spravy.Ui\Spravy.Ui.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <None Update="testsettings.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
 </Project>

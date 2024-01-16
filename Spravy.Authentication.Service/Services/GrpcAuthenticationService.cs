@@ -131,7 +131,6 @@ public class GrpcAuthenticationService : AuthenticationServiceBase
     {
         var options = mapper.Map<CreateUserOptions>(request);
         await authenticationService.CreateUserAsync(options, context.CancellationToken);
-        await authenticationService.UpdateVerificationCodeByEmailAsync(request.Email, context.CancellationToken);
 
         return new CreateUserReply();
     }

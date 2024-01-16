@@ -143,8 +143,6 @@ public static class ProjectExtension
         Dictionary<Project, ServiceOptions> serviceOptions,
         Dictionary<string, string> hosts,
         string domain,
-        string emailHost,
-        string emailLogin,
         string emailPassword
     )
     {
@@ -169,8 +167,6 @@ public static class ProjectExtension
                 hosts,
                 token,
                 options.Port,
-                emailHost,
-                emailLogin,
                 emailPassword
             );
         }

@@ -13,8 +13,6 @@ public static class StreamExtension
         Dictionary<string, string> hosts,
         string token,
         uint port,
-        string emailHost,
-        string emailLogin,
         string emailPassword
     )
     {
@@ -43,7 +41,7 @@ public static class StreamExtension
                 continue;
             }
 
-            if (writer.SetEmailService(obj, emailHost, emailLogin, emailPassword))
+            if (writer.SetEmailService(obj, emailPassword))
             {
                 continue;
             }
