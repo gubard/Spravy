@@ -8,33 +8,40 @@
                                 xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
                                 xmlns:services="clr-namespace:Spravy.Ui.Services"
                                 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                                xmlns:controls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.VerificationCodeView"
                                 x:DataType="viewModels:VerificationCodeViewModel">
-    <StackPanel>
-        <Panel>
-            <TextBlock Text="{Binding Identifier, StringFormat=Send verification code to email \{0\}}"
-                       IsVisible="{Binding IdentifierType, Converter={StaticResource UserIdentifierTypeEmailToTrue}}" />
-            <TextBlock Text="{Binding Identifier, StringFormat=Send verification code to user \{0\}}"
-                       IsVisible="{Binding IdentifierType, Converter={StaticResource UserIdentifierTypeLoginToTrue}}" />
-        </Panel>
+    <controls:Card HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   MinWidth="300">
+        <Grid RowDefinitions="Auto,Auto,Auto">
+            <Panel>
+                <TextBlock Text="{Binding Identifier, StringFormat=Send verification code to email \{0\}}"
+                           IsVisible="{Binding IdentifierType, Converter={StaticResource UserIdentifierTypeEmailToTrue}}" />
+                <TextBlock Text="{Binding Identifier, StringFormat=Send verification code to user \{0\}}"
+                           IsVisible="{Binding IdentifierType, Converter={StaticResource UserIdentifierTypeLoginToTrue}}" />
+            </Panel>
 
-        <TextBox UseFloatingWatermark="True"
-                 Classes="outline dense"
-                 Theme="{StaticResource OutlineTextBox}"
-                 assists:TextFieldAssist.Label="VerificationCode"
-                 Text="{Binding VerificationCode}" />
-        
-        <StackPanel Orientation="Horizontal">
-            <Button Command="{x:Static services:CommandStorage.NavigateToCommand}"
-                    CommandParameter="{x:Type viewModels:LoginViewModel}">
-                <avalonia:MaterialIcon Kind="ArrowLeft" />
-            </Button>
+            <TextBox Grid.Row="1"
+                     UseFloatingWatermark="True"
+                     Classes="outline dense"
+                     Theme="{StaticResource OutlineTextBox}"
+                     assists:TextFieldAssist.Label="VerificationCode"
+                     Text="{Binding VerificationCode}" />
 
-            <Button Command="{x:Static services:CommandStorage.VerificationEmailCommand}"
-                    CommandParameter="{Binding }">
-                <avalonia:MaterialIcon Kind="VerifiedUser" />
-            </Button>
-        </StackPanel>
-    </StackPanel>
+            <Grid Grid.Row="2" ColumnDefinitions="*,*">
+                <Button Command="{x:Static services:CommandStorage.NavigateToCommand}"
+                        CommandParameter="{x:Type viewModels:LoginViewModel}">
+                    <avalonia:MaterialIcon Kind="ArrowLeft" />
+                </Button>
+
+                <Button Grid.Column="1"
+                        Command="{x:Static services:CommandStorage.VerificationEmailCommand}"
+                        CommandParameter="{Binding }">
+                    <avalonia:MaterialIcon Kind="VerifiedUser" />
+                </Button>
+            </Grid>
+        </Grid>
+    </controls:Card>
 </reactiveUi:ReactiveUserControl>
