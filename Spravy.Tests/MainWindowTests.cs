@@ -12,7 +12,7 @@ namespace Spravy.Tests;
 public class MainWindowTests
 {
     [AvaloniaFact]
-    public void Should_Type_Text_Into_TextBox()
+    public void CreateUserFlow()
     {
         WindowHelper.CreateWindow()
             .TryCatch(
