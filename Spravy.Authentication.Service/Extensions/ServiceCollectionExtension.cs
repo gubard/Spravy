@@ -59,7 +59,9 @@ public static class ServiceCollectionExtension
         serviceCollection.AddTransient(_ => NamedHelper.StringToUtf8Bytes.ToRef());
         serviceCollection.AddSingleton<TimeZoneHttpHeaderFactory>();
         serviceCollection.AddTransient<IEmailService, EmailService>();
-        serviceCollection.AddTransient<IRandom<string>>(_ => RandomStringGuid.Hexadecimal);
+        serviceCollection.AddTransient<IRandom<string>>(
+            _ => new RandomString("QAZWSXEDCRFVTGBYHNUJMIKOP0123456789", 6)
+        );
         serviceCollection.AddTransient(sp => sp.GetConfigurationSection<EmailOptions>());
 
         serviceCollection.AddTransient<IAuthenticationService>(
