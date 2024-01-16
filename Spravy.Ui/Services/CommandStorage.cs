@@ -223,6 +223,11 @@ public static class CommandStorage
             MaterialIconKind.EmailVerified,
             "Verification email"
         );
+        SendNewVerificationCodeItem = CreateCommand<IVerificationEmail>(
+            SendNewVerificationCodeAsync,
+            MaterialIconKind.CodeString,
+            "Verification email"
+        );
     }
 
     private static readonly INavigator navigator;
@@ -235,6 +240,9 @@ public static class CommandStorage
     private static readonly ITokenService tokenService;
     private static readonly IObjectStorage objectStorage;
     private static readonly IClipboardService clipboard;
+
+    public static ICommand SendNewVerificationCodeCommand => SendNewVerificationCodeItem.Command;
+    public static CommandItem SendNewVerificationCodeItem { get; }
 
     public static ICommand VerificationEmailCommand => VerificationEmailItem.Command;
     public static CommandItem VerificationEmailItem { get; }
@@ -363,6 +371,29 @@ public static class CommandStorage
     public static CommandItem SetToDoParentItemItem { get; }
 
     public static CommandItem SelectAll { get; }
+
+    private static Task SendNewVerificationCodeAsync(
+        IVerificationEmail verificationEmail,
+        CancellationToken cancellationToken
+    )
+    {
+        switch (verificationEmail.IdentifierType)
+        {
+            case UserIdentifierType.Email:
+                return authenticationService.UpdateVerificationCodeByEmailAsync(
+                    verificationEmail.Identifier,
+                    cancellationToken
+                );
+
+            case UserIdentifierType.Login:
+                return authenticationService.UpdateVerificationCodeByLoginAsync(
+                    verificationEmail.Identifier,
+                    cancellationToken
+                );
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
 
     private static async Task VerificationEmailAsync(
         IVerificationEmail verificationEmail,
