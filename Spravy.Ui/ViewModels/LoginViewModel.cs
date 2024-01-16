@@ -13,10 +13,12 @@ using Avalonia.Controls;
 using Ninject;
 using ProtoBuf;
 using ReactiveUI;
+using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
+using Spravy.Ui.Enums;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Helpers;
 using Spravy.Ui.Interfaces;
@@ -81,6 +83,9 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
 
     [Inject]
     public required IPropertyValidator PropertyValidator { get; init; }
+
+    [Inject]
+    public required IAuthenticationService AuthenticationService { get; init; }
 
     public bool IsRememberMe
     {
@@ -172,6 +177,22 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
 
     private async Task LoginAsync(CancellationToken cancellationToken)
     {
+        var isVerified = await AuthenticationService.IsVerifiedByLoginAsync(Login, cancellationToken);
+
+        if (!isVerified)
+        {
+            await Navigator.NavigateToAsync<VerificationCodeViewModel>(
+                vm =>
+                {
+                    vm.Identifier = Login;
+                    vm.IdentifierType = UserIdentifierType.Login;
+                },
+                cancellationToken
+            );
+
+            return;
+        }
+
         var user = Mapper.Map<User>(this);
         await TokenService.LoginAsync(user, cancellationToken).ConfigureAwait(false);
         Account.Login = user.Login;

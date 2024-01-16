@@ -3,8 +3,6 @@ using Grpc.Core;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Models;
 using Spravy.Authentication.Protos;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
 using static Spravy.Authentication.Protos.AuthenticationService;
 

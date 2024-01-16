@@ -56,7 +56,7 @@ public class EfAuthenticationService : IAuthenticationService
     {
         var userEntity = await context.Set<UserEntity>()
             .AsNoTracking()
-            .SingleOrDefaultAsync(x => x.Login == user.Login, cancellationToken);
+            .SingleOrDefaultAsync(x => x.Login == user.Login && x.IsEmailVerified, cancellationToken);
 
         if (userEntity is null)
         {
@@ -140,7 +140,7 @@ public class EfAuthenticationService : IAuthenticationService
 
                 var userEntity = await context.Set<UserEntity>()
                     .AsNoTracking()
-                    .SingleAsync(x => x.Login == loginClaim.Value, cancellationToken);
+                    .SingleAsync(x => x.Login == loginClaim.Value && x.IsEmailVerified, cancellationToken);
 
                 var userTokenClaims = mapper.Map<UserTokenClaims>(userEntity);
                 var tokenResult = tokenFactory.Create(userTokenClaims);
