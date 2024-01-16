@@ -228,6 +228,11 @@ public static class CommandStorage
             MaterialIconKind.CodeString,
             "Verification email"
         );
+        UpdateEmailNotVerifiedUserByItem = CreateCommand<IVerificationEmail>(
+            UpdateEmailNotVerifiedUserAsync,
+            MaterialIconKind.EmailCheck,
+            "Change email"
+        );
     }
 
     private static readonly INavigator navigator;
@@ -240,6 +245,9 @@ public static class CommandStorage
     private static readonly ITokenService tokenService;
     private static readonly IObjectStorage objectStorage;
     private static readonly IClipboardService clipboard;
+
+    public static ICommand UpdateEmailNotVerifiedUserByCommand => UpdateEmailNotVerifiedUserByItem.Command;
+    public static CommandItem UpdateEmailNotVerifiedUserByItem { get; }
 
     public static ICommand SendNewVerificationCodeCommand => SendNewVerificationCodeItem.Command;
     public static CommandItem SendNewVerificationCodeItem { get; }
@@ -371,6 +379,40 @@ public static class CommandStorage
     public static CommandItem SetToDoParentItemItem { get; }
 
     public static CommandItem SelectAll { get; }
+
+    private static Task UpdateEmailNotVerifiedUserAsync(
+        IVerificationEmail verificationEmail,
+        CancellationToken cancellationToken
+    )
+    {
+        return dialogViewer.ShowSingleStringConfirmDialogAsync(
+            async newEmail =>
+            {
+                switch (verificationEmail.IdentifierType)
+                {
+                    case UserIdentifierType.Email:
+                        await authenticationService.UpdateEmailNotVerifiedUserByEmailAsync(
+                            verificationEmail.Identifier,
+                            newEmail,
+                            cancellationToken
+                        );
+                        break;
+                    case UserIdentifierType.Login:
+                        await authenticationService.UpdateEmailNotVerifiedUserByLoginAsync(
+                            verificationEmail.Identifier,
+                            newEmail,
+                            cancellationToken
+                        );
+                        break;
+                    default: throw new ArgumentOutOfRangeException();
+                }
+
+                await dialogViewer.CloseInputDialogAsync(cancellationToken);
+            },
+            ActionHelper<TextViewModel>.Empty,
+            cancellationToken
+        );
+    }
 
     private static Task SendNewVerificationCodeAsync(
         IVerificationEmail verificationEmail,

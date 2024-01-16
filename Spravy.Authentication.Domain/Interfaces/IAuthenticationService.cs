@@ -14,4 +14,6 @@ public interface IAuthenticationService
     Task<bool> IsVerifiedByEmailAsync(string email, CancellationToken cancellationToken);
     Task VerifiedEmailByLoginAsync(string login, string verificationCode, CancellationToken cancellationToken);
     Task VerifiedEmailByEmailAsync(string email, string verificationCode, CancellationToken cancellationToken);
+    Task UpdateEmailNotVerifiedUserByEmailAsync(string email, string newEmail, CancellationToken cancellationToken);
+    Task UpdateEmailNotVerifiedUserByLoginAsync(string login, string newEmail, CancellationToken cancellationToken);
 }

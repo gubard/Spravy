@@ -251,4 +251,30 @@ public class EfAuthenticationService : IAuthenticationService
         userEntity.IsEmailVerified = true;
         await context.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task UpdateEmailNotVerifiedUserByEmailAsync(
+        string email,
+        string newEmail,
+        CancellationToken cancellationToken
+    )
+    {
+        var userEntity = await context.Set<UserEntity>()
+            .SingleAsync(x => x.Email == email && !x.IsEmailVerified, cancellationToken);
+
+        userEntity.Email = newEmail;
+        await context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task UpdateEmailNotVerifiedUserByLoginAsync(
+        string login,
+        string newEmail,
+        CancellationToken cancellationToken
+    )
+    {
+        var userEntity = await context.Set<UserEntity>()
+            .SingleAsync(x => x.Login == login && !x.IsEmailVerified, cancellationToken);
+
+        userEntity.Email = newEmail;
+        await context.SaveChangesAsync(cancellationToken);
+    }
 }

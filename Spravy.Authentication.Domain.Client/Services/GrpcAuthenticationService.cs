@@ -193,6 +193,52 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         );
     }
 
+    public Task UpdateEmailNotVerifiedUserByEmailAsync(
+        string email,
+        string newEmail,
+        CancellationToken cancellationToken
+    )
+    {
+        return CallClientAsync(
+            async client =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                await client.UpdateEmailNotVerifiedUserByEmailAsync(
+                    new UpdateEmailNotVerifiedUserByEmailRequest
+                    {
+                        Email = email,
+                        NewEmail = newEmail,
+                    }
+                );
+            },
+            cancellationToken
+        );
+    }
+
+    public Task UpdateEmailNotVerifiedUserByLoginAsync(
+        string login,
+        string newEmail,
+        CancellationToken cancellationToken
+    )
+    {
+        return CallClientAsync(
+            async client =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                await client.UpdateEmailNotVerifiedUserByLoginAsync(
+                    new UpdateEmailNotVerifiedUserByLoginRequest
+                    {
+                        Login = login,
+                        NewEmail = newEmail,
+                    }
+                );
+            },
+            cancellationToken
+        );
+    }
+
     public static GrpcAuthenticationService CreateGrpcService(
         IFactory<Uri, AuthenticationServiceClient> grpcClientFactory,
         Uri host,

@@ -19,6 +19,34 @@ public class GrpcAuthenticationService : AuthenticationServiceBase
         this.mapper = mapper;
     }
 
+    public override async Task<UpdateEmailNotVerifiedUserByLoginReply> UpdateEmailNotVerifiedUserByLogin(
+        UpdateEmailNotVerifiedUserByLoginRequest request,
+        ServerCallContext context
+    )
+    {
+        await authenticationService.UpdateEmailNotVerifiedUserByLoginAsync(
+            request.Login,
+            request.NewEmail,
+            context.CancellationToken
+        );
+
+        return new UpdateEmailNotVerifiedUserByLoginReply();
+    }
+
+    public override async Task<UpdateEmailNotVerifiedUserByEmailReply> UpdateEmailNotVerifiedUserByEmail(
+        UpdateEmailNotVerifiedUserByEmailRequest request,
+        ServerCallContext context
+    )
+    {
+        await authenticationService.UpdateEmailNotVerifiedUserByEmailAsync(
+            request.Email,
+            request.NewEmail,
+            context.CancellationToken
+        );
+
+        return new UpdateEmailNotVerifiedUserByEmailReply();
+    }
+
     public override async Task<UpdateVerificationCodeByLoginReply> UpdateVerificationCodeByLogin(
         UpdateVerificationCodeByLoginRequest request,
         ServerCallContext context

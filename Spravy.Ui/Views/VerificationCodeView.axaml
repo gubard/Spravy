@@ -15,7 +15,7 @@
     <controls:Card HorizontalAlignment="Center"
                    VerticalAlignment="Center"
                    MinWidth="300">
-        <Grid RowDefinitions="Auto,Auto,Auto,Auto">
+        <Grid RowDefinitions="Auto,Auto,Auto">
             <Panel>
                 <TextBlock Text="{Binding Identifier, StringFormat=Send verification code to email \{0\}}"
                            IsVisible="{Binding IdentifierType, Converter={StaticResource UserIdentifierTypeEmailToTrue}}" />
@@ -30,17 +30,25 @@
                      assists:TextFieldAssist.Label="VerificationCode"
                      Text="{Binding VerificationCode}" />
 
-            <Button Grid.Row="2" Command="{x:Static services:CommandStorage.SendNewVerificationCodeCommand}">
-                <TextBlock Text="Send new code" />
-            </Button>
+            <Grid Grid.Row="2" ColumnDefinitions="*,*" RowDefinitions="*,*">
+                <Button Command="{x:Static services:CommandStorage.SendNewVerificationCodeCommand}"
+                        CommandParameter="{Binding}">
+                    <TextBlock Text="Send new code" />
+                </Button>
 
-            <Grid Grid.Row="3" ColumnDefinitions="*,*">
-                <Button Command="{x:Static services:CommandStorage.NavigateToCommand}"
+                <Button Grid.Column="1"
+                        Command="{x:Static services:CommandStorage.UpdateEmailNotVerifiedUserByCommand}"
+                        CommandParameter="{Binding}">
+                    <TextBlock Text="Change email" />
+                </Button>
+
+                <Button Grid.Row="1" Command="{x:Static services:CommandStorage.NavigateToCommand}"
                         CommandParameter="{x:Type viewModels:LoginViewModel}">
                     <avalonia:MaterialIcon Kind="ArrowLeft" />
                 </Button>
 
-                <Button Grid.Column="1"
+                <Button Grid.Row="1"
+                        Grid.Column="1"
                         Command="{x:Static services:CommandStorage.VerificationEmailCommand}"
                         CommandParameter="{Binding }">
                     <avalonia:MaterialIcon Kind="VerifiedUser" />

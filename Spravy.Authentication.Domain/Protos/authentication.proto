@@ -16,4 +16,6 @@ service AuthenticationService {
   rpc IsVerifiedByEmail (IsVerifiedByEmailRequest) returns (IsVerifiedByEmailReply);
   rpc VerifiedEmailByLogin (VerifiedEmailByLoginRequest) returns (VerifiedEmailByLoginReply);
   rpc VerifiedEmailByEmail (VerifiedEmailByEmailRequest) returns (VerifiedEmailByEmailReply);
+  rpc UpdateEmailNotVerifiedUserByEmail (UpdateEmailNotVerifiedUserByEmailRequest) returns (UpdateEmailNotVerifiedUserByEmailReply);
+  rpc UpdateEmailNotVerifiedUserByLogin (UpdateEmailNotVerifiedUserByLoginRequest) returns (UpdateEmailNotVerifiedUserByLoginReply);
 }

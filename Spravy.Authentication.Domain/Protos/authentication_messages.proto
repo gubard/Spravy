@@ -82,3 +82,19 @@ message VerifiedEmailByLoginRequest {
 
 message VerifiedEmailByLoginReply {
 }
+
+message UpdateEmailNotVerifiedUserByEmailRequest {
+  string Email = 1;
+  string NewEmail = 2;
+}
+
+message UpdateEmailNotVerifiedUserByEmailReply {
+}
+
+message UpdateEmailNotVerifiedUserByLoginRequest {
+  string Login = 1;
+  string NewEmail = 2;
+}
+
+message UpdateEmailNotVerifiedUserByLoginReply {
+}
