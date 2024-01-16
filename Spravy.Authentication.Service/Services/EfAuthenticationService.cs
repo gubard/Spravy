@@ -169,6 +169,13 @@ public class EfAuthenticationService : IAuthenticationService
         userEntity.VerificationCodeHash = hash;
         userEntity.IsEmailVerified = false;
         await context.SaveChangesAsync(cancellationToken);
+
+        await emailService.SendEmailAsync(
+            "VerificationCode",
+            userEntity.Email.ThrowIfNullOrWhiteSpace(),
+            verificationCode,
+            cancellationToken
+        );
     }
 
     public async Task UpdateVerificationCodeByEmailAsync(string email, CancellationToken cancellationToken)
@@ -182,6 +189,7 @@ public class EfAuthenticationService : IAuthenticationService
         userEntity.VerificationCodeHash = hash;
         userEntity.IsEmailVerified = false;
         await context.SaveChangesAsync(cancellationToken);
+        await emailService.SendEmailAsync("VerificationCode", email, verificationCode, cancellationToken);
     }
 
     public async Task<bool> IsVerifiedByLoginAsync(string login, CancellationToken cancellationToken)

@@ -60,17 +60,7 @@ public static class ServiceCollectionExtension
         serviceCollection.AddSingleton<TimeZoneHttpHeaderFactory>();
         serviceCollection.AddTransient<IEmailService, EmailService>();
         serviceCollection.AddTransient<IRandom<string>>(_ => RandomStringGuid.Hexadecimal);
-
-        serviceCollection.AddTransient(
-            sp => new EmailOptions
-            {
-                Host = sp.GetRequiredService<IConfiguration>().GetSection("EmailService:Host").Value.ThrowIfNull(),
-                Login = sp.GetRequiredService<IConfiguration>().GetSection("EmailService:Login").Value.ThrowIfNull(),
-                Password = sp.GetRequiredService<IConfiguration>()
-                    .GetSection("EmailService:Password")
-                    .Value.ThrowIfNull(),
-            }
-        );
+        serviceCollection.AddTransient(sp => sp.GetConfigurationSection<EmailOptions>());
 
         serviceCollection.AddTransient<IAuthenticationService>(
             x => new EfAuthenticationService(
