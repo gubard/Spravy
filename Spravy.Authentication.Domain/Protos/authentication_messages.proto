@@ -25,6 +25,7 @@ message CreateUserReply {
 message UserGrpc {
   string Login = 1;
   string Password = 2;
+  bool  IsVerified = 3;
 }
 
 message RefreshTokenRequest {
@@ -34,4 +35,50 @@ message RefreshTokenRequest {
 message RefreshTokenReply {
   string Token = 1;
   string RefreshToken = 2;
+}
+
+message UpdateVerificationCodeByEmailRequest {
+  string Email = 1;
+}
+
+message UpdateVerificationCodeByEmailReply {
+}
+
+message IsVerifiedByEmailRequest {
+  string Email = 1;
+}
+
+message IsVerifiedByEmailReply {
+  bool IsVerified = 1;
+}
+
+message VerifiedEmailByEmailRequest {
+  string Email = 1;
+  string VerificationCode = 2;
+}
+
+message VerifiedEmailByEmailReply {
+}
+
+message UpdateVerificationCodeByLoginRequest {
+  string Login = 1;
+}
+
+message UpdateVerificationCodeByLoginReply {
+}
+
+message IsVerifiedByLoginRequest {
+  string Login = 1;
+}
+
+message IsVerifiedByLoginReply {
+  bool IsVerified = 1;
+}
+
+message VerifiedEmailByLoginRequest {
+  string Login = 1;
+  string VerificationCode = 2;
+}
+
+message VerifiedEmailByLoginReply {
 }

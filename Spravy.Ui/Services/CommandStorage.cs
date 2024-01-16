@@ -235,7 +235,7 @@ public static class CommandStorage
     private static readonly ITokenService tokenService;
     private static readonly IObjectStorage objectStorage;
     private static readonly IClipboardService clipboard;
-    
+
     public static ICommand VerificationEmailCommand => VerificationEmailItem.Command;
     public static CommandItem VerificationEmailItem { get; }
 
@@ -364,9 +364,36 @@ public static class CommandStorage
 
     public static CommandItem SelectAll { get; }
 
-    private static Task VerificationEmailAsync(IVerificationEmail verificationEmail, CancellationToken cancellationToken)
+    private static async Task VerificationEmailAsync(
+        IVerificationEmail verificationEmail,
+        CancellationToken cancellationToken
+    )
     {
-     return Task.CompletedTask;
+        switch (verificationEmail.IdentifierType)
+        {
+            case UserIdentifierType.Email:
+                await authenticationService.VerifiedEmailByEmailAsync(
+                    verificationEmail.Identifier,
+                    verificationEmail.VerificationCode,
+                    cancellationToken
+                );
+
+                await navigator.NavigateToAsync<LoginViewModel>(cancellationToken);
+
+                return;
+            case UserIdentifierType.Login:
+                await authenticationService.VerifiedEmailByLoginAsync(
+                    verificationEmail.Identifier,
+                    verificationEmail.VerificationCode,
+                    cancellationToken
+                );
+
+                await navigator.NavigateToAsync<LoginViewModel>(cancellationToken);
+
+                return;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
     }
 
     private static async Task MultiMoveToDoItemsToRootAsync(

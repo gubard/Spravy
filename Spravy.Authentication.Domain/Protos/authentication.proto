@@ -10,4 +10,10 @@ service AuthenticationService {
   rpc Login (LoginRequest) returns (LoginReply);
   rpc CreateUser (CreateUserRequest) returns (CreateUserReply);
   rpc RefreshToken (RefreshTokenRequest) returns (RefreshTokenReply);
+  rpc UpdateVerificationCodeByLogin (UpdateVerificationCodeByLoginRequest) returns (UpdateVerificationCodeByLoginReply);
+  rpc UpdateVerificationCodeByEmail (UpdateVerificationCodeByEmailRequest) returns (UpdateVerificationCodeByEmailReply);
+  rpc IsVerifiedByLogin (IsVerifiedByLoginRequest) returns (IsVerifiedByLoginReply);
+  rpc IsVerifiedByEmail (IsVerifiedByEmailRequest) returns (IsVerifiedByEmailReply);
+  rpc VerifiedEmailByLogin (VerifiedEmailByLoginRequest) returns (VerifiedEmailByLoginReply);
+  rpc VerifiedEmailByEmail (VerifiedEmailByEmailRequest) returns (VerifiedEmailByEmailReply);
 }

@@ -26,6 +26,8 @@ public class EfAuthenticationService : IAuthenticationService
     private readonly IMapper mapper;
     private readonly IValidator<SpravyException, string> passwordValidator;
     private readonly IValidator<SpravyException, string> loginValidator;
+    private readonly IEmailService emailService;
+    private readonly IRandom<string> randomString;
 
     public EfAuthenticationService(
         SpravyDbAuthenticationDbContext context,
@@ -34,7 +36,9 @@ public class EfAuthenticationService : IAuthenticationService
         ITokenFactory tokenFactory,
         IMapper mapper,
         IValidator<SpravyException, string> loginValidator,
-        IValidator<SpravyException, string> passwordValidator
+        IValidator<SpravyException, string> passwordValidator,
+        IEmailService emailService,
+        IRandom<string> randomString
     )
     {
         this.context = context;
@@ -44,6 +48,8 @@ public class EfAuthenticationService : IAuthenticationService
         this.mapper = mapper;
         this.loginValidator = loginValidator;
         this.passwordValidator = passwordValidator;
+        this.emailService = emailService;
+        this.randomString = randomString;
     }
 
     public async Task<TokenResult> LoginAsync(User user, CancellationToken cancellationToken)
@@ -150,5 +156,91 @@ public class EfAuthenticationService : IAuthenticationService
             default:
                 throw new ArgumentOutOfRangeException();
         }
+    }
+
+    public async Task UpdateVerificationCodeByLoginAsync(string login, CancellationToken cancellationToken)
+    {
+        var userEntity = await context.Set<UserEntity>()
+            .SingleAsync(x => x.Login == login, cancellationToken);
+
+        var verificationCode = randomString.GetRandom().ThrowIfNull();
+        var hash = hasher.ComputeHash(verificationCode);
+        userEntity.VerificationCodeMethod = hasher.HashMethod;
+        userEntity.VerificationCodeHash = hash;
+        userEntity.IsEmailVerified = false;
+        await context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task UpdateVerificationCodeByEmailAsync(string email, CancellationToken cancellationToken)
+    {
+        var userEntity = await context.Set<UserEntity>()
+            .SingleAsync(x => x.Email == email, cancellationToken);
+
+        var verificationCode = randomString.GetRandom().ThrowIfNull();
+        var hash = hasher.ComputeHash(verificationCode);
+        userEntity.VerificationCodeMethod = hasher.HashMethod;
+        userEntity.VerificationCodeHash = hash;
+        userEntity.IsEmailVerified = false;
+        await context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<bool> IsVerifiedByLoginAsync(string login, CancellationToken cancellationToken)
+    {
+        var userEntity = await context.Set<UserEntity>()
+            .AsNoTracking()
+            .SingleAsync(x => x.Login == login, cancellationToken);
+
+        return userEntity.IsEmailVerified;
+    }
+
+    public async Task<bool> IsVerifiedByEmailAsync(string email, CancellationToken cancellationToken)
+    {
+        var userEntity = await context.Set<UserEntity>()
+            .AsNoTracking()
+            .SingleAsync(x => x.Email == email, cancellationToken);
+
+        return userEntity.IsEmailVerified;
+    }
+
+    public async Task VerifiedEmailByLoginAsync(
+        string login,
+        string verificationCode,
+        CancellationToken cancellationToken
+    )
+    {
+        var userEntity = await context.Set<UserEntity>()
+            .SingleAsync(x => x.Login == login, cancellationToken);
+
+        var h = hasherFactory.Create(userEntity.HashMethod.ThrowIfNullOrWhiteSpace());
+        var hash = h.ComputeHash(verificationCode);
+
+        if (hash != userEntity.VerificationCodeHash)
+        {
+            throw new Exception();
+        }
+
+        userEntity.IsEmailVerified = true;
+        await context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task VerifiedEmailByEmailAsync(
+        string email,
+        string verificationCode,
+        CancellationToken cancellationToken
+    )
+    {
+        var userEntity = await context.Set<UserEntity>()
+            .SingleAsync(x => x.Email == email, cancellationToken);
+
+        var h = hasherFactory.Create(userEntity.HashMethod.ThrowIfNullOrWhiteSpace());
+        var hash = h.ComputeHash(verificationCode);
+
+        if (hash != userEntity.VerificationCodeHash)
+        {
+            throw new Exception();
+        }
+
+        userEntity.IsEmailVerified = true;
+        await context.SaveChangesAsync(cancellationToken);
     }
 }

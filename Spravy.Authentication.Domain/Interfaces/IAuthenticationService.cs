@@ -8,4 +8,10 @@ public interface IAuthenticationService
     Task<TokenResult> LoginAsync(User user, CancellationToken cancellationToken);
     Task CreateUserAsync(CreateUserOptions options, CancellationToken cancellationToken);
     Task<TokenResult> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken);
+    Task UpdateVerificationCodeByLoginAsync(string login, CancellationToken cancellationToken);
+    Task UpdateVerificationCodeByEmailAsync(string email, CancellationToken cancellationToken);
+    Task<bool> IsVerifiedByLoginAsync(string login, CancellationToken cancellationToken);
+    Task<bool> IsVerifiedByEmailAsync(string email, CancellationToken cancellationToken);
+    Task VerifiedEmailByLoginAsync(string login, string verificationCode, CancellationToken cancellationToken);
+    Task VerifiedEmailByEmailAsync(string email, string verificationCode, CancellationToken cancellationToken);
 }

@@ -14,33 +14,98 @@ public class GrpcAuthenticationService : AuthenticationServiceBase
 {
     private readonly IAuthenticationService authenticationService;
     private readonly IMapper mapper;
-    private readonly IEmailService emailService;
-    private readonly IRandom<string> randomString;
 
-    public GrpcAuthenticationService(
-        IAuthenticationService authenticationService,
-        IMapper mapper,
-        IEmailService emailService,
-        IRandom<string> randomString
-    )
+    public GrpcAuthenticationService(IAuthenticationService authenticationService, IMapper mapper)
     {
         this.authenticationService = authenticationService;
         this.mapper = mapper;
-        this.emailService = emailService;
-        this.randomString = randomString;
+    }
+
+    public override async Task<UpdateVerificationCodeByLoginReply> UpdateVerificationCodeByLogin(
+        UpdateVerificationCodeByLoginRequest request,
+        ServerCallContext context
+    )
+    {
+        await authenticationService.UpdateVerificationCodeByLoginAsync(
+            request.Login,
+            context.CancellationToken
+        );
+
+        return new UpdateVerificationCodeByLoginReply();
+    }
+
+    public override async Task<UpdateVerificationCodeByEmailReply> UpdateVerificationCodeByEmail(
+        UpdateVerificationCodeByEmailRequest request,
+        ServerCallContext context
+    )
+    {
+        await authenticationService.UpdateVerificationCodeByEmailAsync(
+            request.Email,
+            context.CancellationToken
+        );
+
+        return new UpdateVerificationCodeByEmailReply();
+    }
+
+    public override async Task<VerifiedEmailByLoginReply> VerifiedEmailByLogin(
+        VerifiedEmailByLoginRequest request,
+        ServerCallContext context
+    )
+    {
+        await authenticationService.VerifiedEmailByLoginAsync(
+            request.Login,
+            request.VerificationCode,
+            context.CancellationToken
+        );
+
+        return new VerifiedEmailByLoginReply();
+    }
+
+    public override async Task<VerifiedEmailByEmailReply> VerifiedEmailByEmail(
+        VerifiedEmailByEmailRequest request,
+        ServerCallContext context
+    )
+    {
+        await authenticationService.VerifiedEmailByEmailAsync(
+            request.Email,
+            request.VerificationCode,
+            context.CancellationToken
+        );
+
+        return new VerifiedEmailByEmailReply();
+    }
+
+    public override async Task<IsVerifiedByLoginReply> IsVerifiedByLogin(
+        IsVerifiedByLoginRequest request,
+        ServerCallContext context
+    )
+    {
+        var result = await authenticationService.IsVerifiedByLoginAsync(request.Login, context.CancellationToken);
+
+        return new IsVerifiedByLoginReply
+        {
+            IsVerified = result
+        };
+    }
+
+    public override async Task<IsVerifiedByEmailReply> IsVerifiedByEmail(
+        IsVerifiedByEmailRequest request,
+        ServerCallContext context
+    )
+    {
+        var result = await authenticationService.IsVerifiedByEmailAsync(request.Email, context.CancellationToken);
+
+        return new IsVerifiedByEmailReply
+        {
+            IsVerified = result
+        };
     }
 
     public override async Task<CreateUserReply> CreateUser(CreateUserRequest request, ServerCallContext context)
     {
         var options = mapper.Map<CreateUserOptions>(request);
         await authenticationService.CreateUserAsync(options, context.CancellationToken);
-
-        await emailService.SendEmailAsync(
-            "Verification code",
-            options.Email,
-            randomString.GetRandom().ThrowIfNull(),
-            CancellationToken.None
-        );
+        await authenticationService.UpdateVerificationCodeByEmailAsync(request.Email, context.CancellationToken);
 
         return new CreateUserReply();
     }

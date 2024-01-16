@@ -90,7 +90,9 @@ public static class ServiceCollectionExtension
                     512,
                     "QAZWSXEDCRFVTGBYHNUJMIKOP_-=+<>|0123456789qazwsxedcrfvtgbyhnujmikolp.",
                     "Password"
-                )
+                ),
+                x.GetRequiredService<IEmailService>(),
+                x.GetRequiredService<IRandom<string>>()
             )
         );
         serviceCollection.AddTransient<IHasher, Hasher>();

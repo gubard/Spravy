@@ -13,6 +13,7 @@ using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Models;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Models;
+using Spravy.Ui.Enums;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
@@ -327,6 +328,15 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
         cancellationToken.ThrowIfCancellationRequested();
         await AuthenticationService.CreateUserAsync(options, cancellationToken).ConfigureAwait(false);
         cancellationToken.ThrowIfCancellationRequested();
-        await Navigator.NavigateToAsync(ActionHelper<LoginViewModel>.Empty, cancellationToken).ConfigureAwait(false);
+
+        await Navigator.NavigateToAsync<VerificationCodeViewModel>(
+                vm =>
+                {
+                    vm.Identifier = Email;
+                    vm.IdentifierType = UserIdentifierType.Email;
+                },
+                cancellationToken
+            )
+            .ConfigureAwait(false);
     }
 }
