@@ -16,7 +16,6 @@ namespace Spravy.Ui.ViewModels;
 public class ForgotPasswordViewModel : NavigatableViewModelBase, IVerificationEmail
 {
     private string verificationCode = string.Empty;
-    private string oldPassword = string.Empty;
     private string newPassword = string.Empty;
     private string newRepeatPassword = string.Empty;
     private UserIdentifierType identifierType;
@@ -53,12 +52,6 @@ public class ForgotPasswordViewModel : NavigatableViewModelBase, IVerificationEm
         set => this.RaiseAndSetIfChanged(ref verificationCode, value);
     }
 
-    public string OldPassword
-    {
-        get => oldPassword;
-        set => this.RaiseAndSetIfChanged(ref oldPassword, value);
-    }
-
     public string NewPassword
     {
         get => newPassword;
@@ -92,7 +85,6 @@ public class ForgotPasswordViewModel : NavigatableViewModelBase, IVerificationEm
                 await AuthenticationService.UpdatePasswordByEmailAsync(
                     Identifier,
                     VerificationCode,
-                    OldPassword,
                     NewPassword,
                     cancellationToken
                 );
@@ -101,7 +93,6 @@ public class ForgotPasswordViewModel : NavigatableViewModelBase, IVerificationEm
                 await AuthenticationService.UpdatePasswordByLoginAsync(
                     Identifier,
                     VerificationCode,
-                    OldPassword,
                     NewPassword,
                     cancellationToken
                 );

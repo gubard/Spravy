@@ -20,7 +20,6 @@ public interface IAuthenticationService
     Task UpdatePasswordByEmailAsync(
         string email,
         string verificationCode,
-        string oldPassword,
         string newPassword,
         CancellationToken cancellationToken
     );
@@ -28,7 +27,6 @@ public interface IAuthenticationService
     Task UpdatePasswordByLoginAsync(
         string login,
         string verificationCode,
-        string oldPassword,
         string newPassword,
         CancellationToken cancellationToken
     );

@@ -261,7 +261,6 @@ public class EfAuthenticationService : IAuthenticationService
     public async Task UpdatePasswordByEmailAsync(
         string email,
         string verificationCode,
-        string oldPassword,
         string newPassword,
         CancellationToken cancellationToken
     )
@@ -270,7 +269,6 @@ public class EfAuthenticationService : IAuthenticationService
             .SingleAsync(x => x.Email == email && x.IsEmailVerified, cancellationToken);
 
         CheckVerificationCode(verificationCode, userEntity);
-        CheckPassword(oldPassword, userEntity);
         var newHasher = hasherFactory.Create(userEntity.HashMethod.ThrowIfNullOrWhiteSpace());
         var hash = newHasher.ComputeHash($"{userEntity.Salt};{newPassword}");
         userEntity.VerificationCodeMethod = null;
@@ -283,7 +281,6 @@ public class EfAuthenticationService : IAuthenticationService
     public async Task UpdatePasswordByLoginAsync(
         string login,
         string verificationCode,
-        string oldPassword,
         string newPassword,
         CancellationToken cancellationToken
     )
@@ -292,7 +289,6 @@ public class EfAuthenticationService : IAuthenticationService
             .SingleAsync(x => x.Login == login && x.IsEmailVerified, cancellationToken);
 
         CheckVerificationCode(verificationCode, userEntity);
-        CheckPassword(oldPassword, userEntity);
         var newHasher = hasherFactory.Create(userEntity.HashMethod.ThrowIfNullOrWhiteSpace());
         var hash = newHasher.ComputeHash($"{userEntity.Salt};{newPassword}");
         userEntity.VerificationCodeMethod = null;

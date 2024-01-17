@@ -242,7 +242,6 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
     public Task UpdatePasswordByEmailAsync(
         string email,
         string verificationCode,
-        string oldPassword,
         string newPassword,
         CancellationToken cancellationToken
     )
@@ -258,7 +257,6 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
                         Email = email,
                         VerificationCode = verificationCode,
                         NewPassword = newPassword,
-                        OldPassword = oldPassword,
                     }
                 );
             },
@@ -269,7 +267,6 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
     public Task UpdatePasswordByLoginAsync(
         string login,
         string verificationCode,
-        string oldPassword,
         string newPassword,
         CancellationToken cancellationToken
     )
@@ -285,7 +282,6 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
                         Login = login,
                         VerificationCode = verificationCode,
                         NewPassword = newPassword,
-                        OldPassword = oldPassword,
                     }
                 );
             },

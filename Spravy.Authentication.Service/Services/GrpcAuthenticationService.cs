@@ -24,10 +24,9 @@ public class GrpcAuthenticationService : AuthenticationServiceBase
         ServerCallContext context
     )
     {
-        await authenticationService.UpdatePasswordByEmailAsync(
+        await authenticationService.UpdatePasswordByLoginAsync(
             request.Login,
             request.VerificationCode,
-            request.OldPassword,
             request.NewPassword,
             context.CancellationToken
         );
@@ -43,7 +42,6 @@ public class GrpcAuthenticationService : AuthenticationServiceBase
         await authenticationService.UpdatePasswordByEmailAsync(
             request.Email,
             request.VerificationCode,
-            request.OldPassword,
             request.NewPassword,
             context.CancellationToken
         );
