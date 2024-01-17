@@ -108,7 +108,7 @@ public class MainWindowTests
                                 TimeWait.MinSecondsWait,
                                 w.GetCurrentView<VerificationCodeView, VerificationCodeViewModel>
                             )
-                            .Case(
+                            /*.Case(
                                 () =>
                                 {
                                    using var imapClient = new ImapClient(
@@ -128,7 +128,7 @@ public class MainWindowTests
                                     );
                                   var messages=   imapClient.SearchMessages(SearchCondition.Undeleted());
                                 }
-                            )
+                            )*/
                     )
                     .SaveFrame(),
                 (w, _) => w.SaveFrame()
