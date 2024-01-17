@@ -34,10 +34,11 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
     private bool isRememberMe;
     private bool loginChanged;
     private bool passwordChanged;
+    private bool tryAutoLogin;
 
     public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
-    public LoginViewModel() : base(false)
+    public LoginViewModel() : base(true)
     {
         EnterCommand = CreateCommandFromTask<LoginView>(TaskWork.Create<LoginView>(EnterAsync).RunAsync);
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
@@ -86,6 +87,12 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
 
     [Inject]
     public required IAuthenticationService AuthenticationService { get; init; }
+
+    public bool TryAutoLogin
+    {
+        get => tryAutoLogin;
+        set => this.RaiseAndSetIfChanged(ref tryAutoLogin, value);
+    }
 
     public bool IsRememberMe
     {
@@ -221,6 +228,11 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
 
     private async Task InitializedAsync(CancellationToken cancellationToken)
     {
+        if (!TryAutoLogin)
+        {
+            return;
+        }
+        
         var setting = await ObjectStorage.GetObjectOrDefaultAsync<LoginViewModelSetting>(ViewId).ConfigureAwait(false);
         await SetStateAsync(setting).ConfigureAwait(false);
 
@@ -283,7 +295,7 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
     public override async Task SetStateAsync(object setting)
     {
         var s = setting.ThrowIfIsNotCast<LoginViewModelSetting>();
-        await this.InvokeUIAsync(() => Login = s.Login);
+        await this.InvokeUIBackgroundAsync(() => Login = s.Login);
     }
 
     [ProtoContract]

@@ -9,11 +9,17 @@
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.TextView"
                                 x:DataType="viewModels:TextViewModel">
-    <TextBox Classes="outline dense"
-             UseFloatingWatermark="True"
-             Text="{Binding Text}"
-             Theme="{StaticResource OutlineTextBox}"
-             AcceptsReturn="{Binding AcceptsReturn}"
-             TextWrapping="{Binding TextWrapping}"
-             assists:TextFieldAssist.Label="{Binding Label}" />
+    <Panel>
+        <TextBox Classes="outline dense"
+                 UseFloatingWatermark="True"
+                 Text="{Binding Text}"
+                 Theme="{StaticResource OutlineTextBox}"
+                 AcceptsReturn="{Binding AcceptsReturn}"
+                 TextWrapping="{Binding TextWrapping}"
+                 assists:TextFieldAssist.Label="{Binding Label}"
+                 IsVisible="{Binding IsReadOnly, Converter={StaticResource ReverseBooleanValueConverter}}" />
+        <TextBlock IsVisible="{Binding IsReadOnly}"
+                   Text="{Binding Text}"
+                   TextWrapping="{Binding TextWrapping}" />
+    </Panel>
 </reactiveUi:ReactiveUserControl>

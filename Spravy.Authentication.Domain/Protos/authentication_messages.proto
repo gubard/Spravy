@@ -98,3 +98,23 @@ message UpdateEmailNotVerifiedUserByLoginRequest {
 
 message UpdateEmailNotVerifiedUserByLoginReply {
 }
+
+message UpdatePasswordByEmailRequest {
+  string Email = 1;
+  string VerificationCode = 2;
+  string OldPassword = 3;
+  string NewPassword = 4;
+}
+
+message UpdatePasswordByEmailReply {
+}
+
+message UpdatePasswordByLoginRequest {
+  string Login = 1;
+  string VerificationCode = 2;
+  string OldPassword = 3;
+  string NewPassword = 4;
+}
+
+message UpdatePasswordByLoginReply {
+}

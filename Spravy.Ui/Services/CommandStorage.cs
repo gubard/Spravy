@@ -662,7 +662,11 @@ public static class CommandStorage
                 await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
             },
             async _ => await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false),
-            viewModel => viewModel.Text = "Are you sure?",
+            viewModel =>
+            {
+                viewModel.Text = "Are you sure?";
+                viewModel.IsReadOnly = true;
+            },
             cancellationToken
         );
     }

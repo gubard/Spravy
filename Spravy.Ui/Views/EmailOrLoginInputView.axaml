@@ -1,0 +1,31 @@
+<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:EmailOrLoginInputViewModel"
+                                xmlns="https://github.com/avaloniaui"
+                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                                xmlns:reactiveUi="http://reactiveui.net"
+                                xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
+                                xmlns:services="clr-namespace:Spravy.Ui.Services"
+                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                                xmlns:controls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
+                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                                x:Class="Spravy.Ui.Views.EmailOrLoginInputView"
+                                x:DataType="viewModels:EmailOrLoginInputViewModel">
+    <controls:Card HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   MinWidth="300">
+        <StackPanel>
+            <ContentControl Content="{Binding TextViewModel}" />
+
+            <Grid ColumnDefinitions="*,*">
+                <Button Command="{x:Static services:CommandStorage.BackCommand}">
+                    <avalonia:MaterialIcon Kind="ArrowLeft" />
+                </Button>
+
+                <Button Grid.Column="1" Command="{Binding ForgotPasswordCommand}">
+                    <avalonia:MaterialIcon Kind="ForgotPassword" />
+                </Button>
+            </Grid>
+        </StackPanel>
+    </controls:Card>
+</reactiveUi:ReactiveUserControl>

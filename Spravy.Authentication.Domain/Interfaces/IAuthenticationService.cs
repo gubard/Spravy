@@ -16,4 +16,20 @@ public interface IAuthenticationService
     Task VerifiedEmailByEmailAsync(string email, string verificationCode, CancellationToken cancellationToken);
     Task UpdateEmailNotVerifiedUserByEmailAsync(string email, string newEmail, CancellationToken cancellationToken);
     Task UpdateEmailNotVerifiedUserByLoginAsync(string login, string newEmail, CancellationToken cancellationToken);
+
+    Task UpdatePasswordByEmailAsync(
+        string email,
+        string verificationCode,
+        string oldPassword,
+        string newPassword,
+        CancellationToken cancellationToken
+    );
+
+    Task UpdatePasswordByLoginAsync(
+        string login,
+        string verificationCode,
+        string oldPassword,
+        string newPassword,
+        CancellationToken cancellationToken
+    );
 }

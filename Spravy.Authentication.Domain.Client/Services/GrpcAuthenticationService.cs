@@ -239,6 +239,60 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         );
     }
 
+    public Task UpdatePasswordByEmailAsync(
+        string email,
+        string verificationCode,
+        string oldPassword,
+        string newPassword,
+        CancellationToken cancellationToken
+    )
+    {
+        return CallClientAsync(
+            async client =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                await client.UpdatePasswordByEmailAsync(
+                    new UpdatePasswordByEmailRequest
+                    {
+                        Email = email,
+                        VerificationCode = verificationCode,
+                        NewPassword = newPassword,
+                        OldPassword = oldPassword,
+                    }
+                );
+            },
+            cancellationToken
+        );
+    }
+
+    public Task UpdatePasswordByLoginAsync(
+        string login,
+        string verificationCode,
+        string oldPassword,
+        string newPassword,
+        CancellationToken cancellationToken
+    )
+    {
+        return CallClientAsync(
+            async client =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                await client.UpdatePasswordByLoginAsync(
+                    new UpdatePasswordByLoginRequest
+                    {
+                        Login = login,
+                        VerificationCode = verificationCode,
+                        NewPassword = newPassword,
+                        OldPassword = oldPassword,
+                    }
+                );
+            },
+            cancellationToken
+        );
+    }
+
     public static GrpcAuthenticationService CreateGrpcService(
         IFactory<Uri, AuthenticationServiceClient> grpcClientFactory,
         Uri host,

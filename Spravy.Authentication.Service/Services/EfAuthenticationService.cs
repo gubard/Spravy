@@ -63,14 +63,7 @@ public class EfAuthenticationService : IAuthenticationService
             throw new UserNotFondException(user.Login);
         }
 
-        var newHasher = hasherFactory.Create(userEntity.HashMethod.ThrowIfNullOrWhiteSpace());
-        var hash = newHasher.ComputeHash($"{userEntity.Salt};{user.Password}");
-
-        if (hash != userEntity.PasswordHash)
-        {
-            throw new UserWrongPasswordException(user.Login);
-        }
-
+        CheckPassword(user.Password, userEntity);
         var userTokenClaims = mapper.Map<UserTokenClaims>(userEntity);
         var tokenResult = tokenFactory.Create(userTokenClaims);
 
@@ -167,7 +160,6 @@ public class EfAuthenticationService : IAuthenticationService
         var hash = hasher.ComputeHash(verificationCode);
         userEntity.VerificationCodeMethod = hasher.HashMethod;
         userEntity.VerificationCodeHash = hash;
-        userEntity.IsEmailVerified = false;
         await context.SaveChangesAsync(cancellationToken);
 
         await emailService.SendEmailAsync(
@@ -187,7 +179,6 @@ public class EfAuthenticationService : IAuthenticationService
         var hash = hasher.ComputeHash(verificationCode);
         userEntity.VerificationCodeMethod = hasher.HashMethod;
         userEntity.VerificationCodeHash = hash;
-        userEntity.IsEmailVerified = false;
         await context.SaveChangesAsync(cancellationToken);
         await emailService.SendEmailAsync("VerificationCode", email, verificationCode, cancellationToken);
     }
@@ -219,15 +210,10 @@ public class EfAuthenticationService : IAuthenticationService
         var userEntity = await context.Set<UserEntity>()
             .SingleAsync(x => x.Login == login, cancellationToken);
 
-        var h = hasherFactory.Create(userEntity.HashMethod.ThrowIfNullOrWhiteSpace());
-        var hash = h.ComputeHash(verificationCode);
-
-        if (hash != userEntity.VerificationCodeHash)
-        {
-            throw new Exception();
-        }
-
+        CheckVerificationCode(verificationCode, userEntity);
         userEntity.IsEmailVerified = true;
+        userEntity.VerificationCodeMethod = null;
+        userEntity.VerificationCodeHash = null;
         await context.SaveChangesAsync(cancellationToken);
     }
 
@@ -240,15 +226,10 @@ public class EfAuthenticationService : IAuthenticationService
         var userEntity = await context.Set<UserEntity>()
             .SingleAsync(x => x.Email == email, cancellationToken);
 
-        var h = hasherFactory.Create(userEntity.HashMethod.ThrowIfNullOrWhiteSpace());
-        var hash = h.ComputeHash(verificationCode);
-
-        if (hash != userEntity.VerificationCodeHash)
-        {
-            throw new Exception();
-        }
-
+        CheckVerificationCode(verificationCode, userEntity);
         userEntity.IsEmailVerified = true;
+        userEntity.VerificationCodeMethod = null;
+        userEntity.VerificationCodeHash = null;
         await context.SaveChangesAsync(cancellationToken);
     }
 
@@ -276,5 +257,78 @@ public class EfAuthenticationService : IAuthenticationService
 
         userEntity.Email = newEmail;
         await context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task UpdatePasswordByEmailAsync(
+        string email,
+        string verificationCode,
+        string oldPassword,
+        string newPassword,
+        CancellationToken cancellationToken
+    )
+    {
+        var userEntity = await context.Set<UserEntity>()
+            .SingleAsync(x => x.Email == email && x.IsEmailVerified, cancellationToken);
+
+        CheckVerificationCode(verificationCode, userEntity);
+        CheckPassword(oldPassword, userEntity);
+        var newHasher = hasherFactory.Create(userEntity.HashMethod.ThrowIfNullOrWhiteSpace());
+        var hash = newHasher.ComputeHash($"{userEntity.Salt};{newPassword}");
+        userEntity.VerificationCodeMethod = null;
+        userEntity.VerificationCodeHash = null;
+        userEntity.HashMethod = newHasher.HashMethod;
+        userEntity.PasswordHash = hash;
+        await context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task UpdatePasswordByLoginAsync(
+        string login,
+        string verificationCode,
+        string oldPassword,
+        string newPassword,
+        CancellationToken cancellationToken
+    )
+    {
+        var userEntity = await context.Set<UserEntity>()
+            .SingleAsync(x => x.Login == login && x.IsEmailVerified, cancellationToken);
+
+        CheckVerificationCode(verificationCode, userEntity);
+        CheckPassword(oldPassword, userEntity);
+        var newHasher = hasherFactory.Create(userEntity.HashMethod.ThrowIfNullOrWhiteSpace());
+        var hash = newHasher.ComputeHash($"{userEntity.Salt};{newPassword}");
+        userEntity.VerificationCodeMethod = null;
+        userEntity.VerificationCodeHash = null;
+        userEntity.HashMethod = newHasher.HashMethod;
+        userEntity.PasswordHash = hash;
+        await context.SaveChangesAsync(cancellationToken);
+    }
+
+    private void Check(string code, string hashMethod, string valueHash)
+    {
+        var newHasher = hasherFactory.Create(hashMethod.ThrowIfNullOrWhiteSpace());
+        var hash = newHasher.ComputeHash(code);
+
+        if (hash != valueHash)
+        {
+            throw new Exception();
+        }
+    }
+
+    private void CheckVerificationCode(string code, UserEntity entity)
+    {
+        Check(
+            code,
+            entity.VerificationCodeMethod.ThrowIfNullOrWhiteSpace(),
+            entity.VerificationCodeHash.ThrowIfNullOrWhiteSpace()
+        );
+    }
+
+    private void CheckPassword(string password, UserEntity entity)
+    {
+        Check(
+            $"{entity.Salt};{password}",
+            entity.HashMethod.ThrowIfNullOrWhiteSpace(),
+            entity.PasswordHash.ThrowIfNullOrWhiteSpace()
+        );
     }
 }

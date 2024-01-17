@@ -152,8 +152,10 @@ public class UiModule : NinjectModule
             .OnActivation(
                 (c, x) =>
                 {
+                    var login = c.Kernel.Get<LoginViewModel>();
+                    login.TryAutoLogin = true;
                     x.Pane = c.Kernel.Get<PaneViewModel>();
-                    x.Content = c.Kernel.Get<LoginViewModel>();
+                    x.Content = login;
                 }
             );
 

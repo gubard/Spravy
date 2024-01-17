@@ -9,7 +9,14 @@ public class TextViewModel : ViewModelBase
     private string text = string.Empty;
     private bool acceptsReturn;
     private TextWrapping textWrapping;
-    private string label;
+    private string label = string.Empty;
+    private bool isReadOnly;
+
+    public bool IsReadOnly
+    {
+        get => isReadOnly;
+        set =>this.RaiseAndSetIfChanged(ref isReadOnly, value);
+    }
 
     public string Text
     {
