@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Headless;
 using Avalonia.ReactiveUI;
+using Microsoft.Extensions.Configuration;
 using Ninject;
 using Spravy.Domain.Di.Helpers;
 using Spravy.Tests;
@@ -14,6 +15,16 @@ namespace Spravy.Tests;
 
 public class TestAppBuilder
 {
+    public static readonly IConfiguration Configuration;
+
+    static TestAppBuilder()
+    {
+        Configuration = new ConfigurationBuilder().AddJsonFile("testsettings.json")
+            .AddEnvironmentVariables("Spravy_")
+            .AddCommandLine(Environment.GetCommandLineArgs())
+            .Build();
+    }
+
     public static AppBuilder BuildAvaloniaApp()
     {
         DiHelper.Kernel = new StandardKernel(new UiModule(true), DesktopModule.Default);

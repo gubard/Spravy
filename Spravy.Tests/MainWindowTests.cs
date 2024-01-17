@@ -1,6 +1,8 @@
+using AE.Net.Mail;
 using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.Input;
+using MailKit.Net.Smtp;
 using Spravy.Domain.Extensions;
 using Spravy.Tests.Extensions;
 using Spravy.Tests.Helpers;
@@ -105,6 +107,27 @@ public class MainWindowTests
                                 w,
                                 TimeWait.MinSecondsWait,
                                 w.GetCurrentView<VerificationCodeView, VerificationCodeViewModel>
+                            )
+                            .Case(
+                                () =>
+                                {
+                                   using var imapClient = new ImapClient(
+                                        TestAppBuilder.Configuration.GetSection("EmailServer:Host").Value,
+                                        TestAppBuilder.Configuration.GetSection("EmailAccount:Email").Value,
+                                        TestAppBuilder.Configuration.GetSection("EmailAccount:Password").Value,
+                                        AuthMethods.Login,
+                                        993,
+                                        true
+                                    );
+                                    using    var pop = new Pop3Client(
+                                        TestAppBuilder.Configuration.GetSection("EmailServer:Host").Value,
+                                        TestAppBuilder.Configuration.GetSection("EmailAccount:Email").Value,
+                                        TestAppBuilder.Configuration.GetSection("EmailAccount:Password").Value,
+                                        993,
+                                        true
+                                    );
+                                  var messages=   imapClient.SearchMessages(SearchCondition.Undeleted());
+                                }
                             )
                     )
                     .SaveFrame(),
