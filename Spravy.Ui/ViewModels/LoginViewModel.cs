@@ -295,7 +295,12 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
     public override async Task SetStateAsync(object setting)
     {
         var s = setting.ThrowIfIsNotCast<LoginViewModelSetting>();
-        await this.InvokeUIBackgroundAsync(() => Login = s.Login);
+        await this.InvokeUIBackgroundAsync(() =>
+            {
+                TryAutoLogin = false;
+                Login = s.Login;
+            }
+        );
     }
 
     [ProtoContract]

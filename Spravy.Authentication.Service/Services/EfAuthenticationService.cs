@@ -146,8 +146,7 @@ public class EfAuthenticationService : IAuthenticationService
 
                 return tokenResult;
             }
-            default:
-                throw new ArgumentOutOfRangeException();
+            default: throw new ArgumentOutOfRangeException();
         }
     }
 
