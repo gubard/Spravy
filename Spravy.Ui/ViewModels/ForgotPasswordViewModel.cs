@@ -84,7 +84,7 @@ public class ForgotPasswordViewModel : NavigatableViewModelBase, IVerificationEm
             case UserIdentifierType.Email:
                 await AuthenticationService.UpdatePasswordByEmailAsync(
                     Identifier,
-                    VerificationCode,
+                    VerificationCode.ToUpperInvariant(),
                     NewPassword,
                     cancellationToken
                 );
@@ -92,7 +92,7 @@ public class ForgotPasswordViewModel : NavigatableViewModelBase, IVerificationEm
             case UserIdentifierType.Login:
                 await AuthenticationService.UpdatePasswordByLoginAsync(
                     Identifier,
-                    VerificationCode,
+                    VerificationCode.ToUpperInvariant(),
                     NewPassword,
                     cancellationToken
                 );

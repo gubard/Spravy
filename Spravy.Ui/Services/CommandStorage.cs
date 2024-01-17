@@ -447,7 +447,7 @@ public static class CommandStorage
             case UserIdentifierType.Email:
                 await authenticationService.VerifiedEmailByEmailAsync(
                     verificationEmail.Identifier,
-                    verificationEmail.VerificationCode,
+                    verificationEmail.VerificationCode.ToUpperInvariant(),
                     cancellationToken
                 );
 
@@ -457,7 +457,7 @@ public static class CommandStorage
             case UserIdentifierType.Login:
                 await authenticationService.VerifiedEmailByLoginAsync(
                     verificationEmail.Identifier,
-                    verificationEmail.VerificationCode,
+                    verificationEmail.VerificationCode.ToUpperInvariant(),
                     cancellationToken
                 );
 
