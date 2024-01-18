@@ -1112,7 +1112,11 @@ public static class CommandStorage
 
     private static async Task LogoutAsync(CancellationToken cancellationToken)
     {
-        await objectStorage.DeleteAsync(StorageIds.LoginId).ConfigureAwait(false);
+        if (await objectStorage.IsExistsAsync(StorageIds.LoginId).ConfigureAwait(false))
+        {
+            await objectStorage.DeleteAsync(StorageIds.LoginId).ConfigureAwait(false);
+        }
+
         await navigator.NavigateToAsync(ActionHelper<LoginViewModel>.Empty, cancellationToken).ConfigureAwait(false);
         await cancellationToken.InvokeUIAsync(() => mainSplitViewModel.IsPaneOpen = false);
     }
