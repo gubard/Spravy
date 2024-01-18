@@ -108,10 +108,10 @@ public class MainWindowTests
                                 TimeWait.MinSecondsWait,
                                 w.GetCurrentView<VerificationCodeView, VerificationCodeViewModel>
                             )
-                            /*.Case(
+                            .Case(
                                 () =>
                                 {
-                                   using var imapClient = new ImapClient(
+                                    /*using var imapClient = new ImapClient(
                                         TestAppBuilder.Configuration.GetSection("EmailServer:Host").Value,
                                         TestAppBuilder.Configuration.GetSection("EmailAccount:Email").Value,
                                         TestAppBuilder.Configuration.GetSection("EmailAccount:Password").Value,
@@ -119,16 +119,16 @@ public class MainWindowTests
                                         993,
                                         true
                                     );
-                                    using    var pop = new Pop3Client(
+                                    using var pop = new Pop3Client(
                                         TestAppBuilder.Configuration.GetSection("EmailServer:Host").Value,
                                         TestAppBuilder.Configuration.GetSection("EmailAccount:Email").Value,
                                         TestAppBuilder.Configuration.GetSection("EmailAccount:Password").Value,
-                                        993,
+                                        995,
                                         true
                                     );
-                                  var messages=   imapClient.SearchMessages(SearchCondition.Undeleted());
+                                    var messages = imapClient.SearchMessages(SearchCondition.From(""));*/
                                 }
-                            )*/
+                            )
                     )
                     .SaveFrame(),
                 (w, _) => w.SaveFrame()
