@@ -2,5 +2,5 @@ namespace Spravy.Tests.Helpers;
 
 public static class TimeWait
 {
-    public const byte MinSecondsWait = 10;
+    public const byte MinSecondsWait = 15;
 }
