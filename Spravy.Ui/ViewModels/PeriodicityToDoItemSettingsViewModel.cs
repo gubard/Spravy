@@ -15,12 +15,17 @@ using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 
-public class PeriodicityToDoItemSettingsViewModel : ViewModelBase, IToDoChildrenTypeProperty, IToDoDueDateProperty, IToDoTypeOfPeriodicityProperty
+public class PeriodicityToDoItemSettingsViewModel : ViewModelBase,
+    IToDoChildrenTypeProperty,
+    IToDoDueDateProperty,
+    IToDoTypeOfPeriodicityProperty,
+    IIsRequiredCompleteInDueDateProperty
 {
     private ToDoItemChildrenType childrenType;
     private Guid id;
     private DateOnly dueDate;
     private TypeOfPeriodicity typeOfPeriodicity;
+    private bool isRequiredCompleteInDueDate;
 
     public PeriodicityToDoItemSettingsViewModel()
     {
@@ -28,6 +33,12 @@ public class PeriodicityToDoItemSettingsViewModel : ViewModelBase, IToDoChildren
     }
 
     public AvaloniaList<string> Values { get; } = new();
+
+    public bool IsRequiredCompleteInDueDate
+    {
+        get => isRequiredCompleteInDueDate;
+        set => this.RaiseAndSetIfChanged(ref isRequiredCompleteInDueDate, value);
+    }
 
     public Guid Id
     {

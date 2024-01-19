@@ -19,7 +19,8 @@ public class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
     IToDoDaysOffsetProperty,
     IToDoMonthsOffsetProperty,
     IToDoWeeksOffsetProperty,
-    IToDoYearsOffsetProperty
+    IToDoYearsOffsetProperty,
+    IIsRequiredCompleteInDueDateProperty
 {
     private ToDoItemChildrenType childrenType;
     private Guid id;
@@ -28,10 +29,17 @@ public class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
     private ushort monthsOffset;
     private ushort weeksOffset;
     private ushort yearsOffset;
+    private bool isRequiredCompleteInDueDate;
 
     public PeriodicityOffsetToDoItemSettingsViewModel()
     {
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
+    }
+
+    public bool IsRequiredCompleteInDueDate
+    {
+        get => isRequiredCompleteInDueDate;
+        set => this.RaiseAndSetIfChanged(ref isRequiredCompleteInDueDate, value);
     }
 
     public Guid Id

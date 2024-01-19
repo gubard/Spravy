@@ -107,5 +107,10 @@
                 </Button>
             </TextBox.InnerLeftContent>
         </TextBox>
+
+        <ToggleButton Command="{x:Static services:CommandStorage.SetRequiredCompleteInDueDateCommand}"
+                      CommandParameter="{Binding}" 
+                      IsChecked="{Binding IsRequiredCompleteInDueDate}"
+                      Content="Required complete by the due date" />
     </StackPanel>
 </reactiveUi:ReactiveUserControl>

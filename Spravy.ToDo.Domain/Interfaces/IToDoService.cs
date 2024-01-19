@@ -29,12 +29,7 @@ public interface IToDoService
     Task UpdateToDoItemTypeAsync(Guid id, ToDoItemType type, CancellationToken cancellationToken);
     Task AddFavoriteToDoItemAsync(Guid id, CancellationToken cancellationToken);
     Task RemoveFavoriteToDoItemAsync(Guid id, CancellationToken cancellationToken);
-    Task<IEnumerable<IToDoSubItem>> GetFavoriteToDoItemsAsync( CancellationToken cancellationToken);
-    Task UpdateToDoItemAnnuallyPeriodicityAsync(Guid id, AnnuallyPeriodicity periodicity, CancellationToken cancellationToken);
-    Task UpdateToDoItemMonthlyPeriodicityAsync(Guid id, MonthlyPeriodicity periodicity, CancellationToken cancellationToken);
-    Task UpdateToDoItemWeeklyPeriodicityAsync(Guid id, WeeklyPeriodicity periodicity, CancellationToken cancellationToken);
-    Task<IEnumerable<IToDoSubItem>> GetLeafToDoSubItemsAsync(Guid id, CancellationToken cancellationToken);
-    Task<IEnumerable<ToDoSelectorItem>> GetToDoSelectorItemsAsync(Guid[] ignoreIds, CancellationToken cancellationToken);
+    Task<IEnumerable<IToDoSubItem>> GetFavoriteToDoItemsAsync(CancellationToken cancellationToken);
     Task UpdateToDoItemParentAsync(Guid id, Guid parentId, CancellationToken cancellationToken);
     Task ToDoItemToRootAsync(Guid id, CancellationToken cancellationToken);
     Task<string> ToDoItemToStringAsync(ToDoItemToStringOptions options, CancellationToken cancellationToken);
@@ -52,6 +47,41 @@ public interface IToDoService
     Task<WeeklyPeriodicity> GetWeeklyPeriodicityAsync(Guid id, CancellationToken cancellationToken);
     Task<MonthlyPeriodicity> GetMonthlyPeriodicityAsync(Guid id, CancellationToken cancellationToken);
     Task<AnnuallyPeriodicity> GetAnnuallyPeriodicityAsync(Guid id, CancellationToken cancellationToken);
-    Task<PeriodicityOffsetToDoItemSettings> GetPeriodicityOffsetToDoItemSettingsAsync(Guid id, CancellationToken cancellationToken);
-    IAsyncEnumerable<IEnumerable<ToDoItem>> GetToDoItemsAsync(Guid[] ids, uint chunkSize, CancellationToken cancellationToken);
+    Task UpdateToDoItemIsRequiredCompleteInDueDateAsync(Guid id, bool value, CancellationToken cancellationToken);
+
+    Task UpdateToDoItemAnnuallyPeriodicityAsync(
+        Guid id,
+        AnnuallyPeriodicity periodicity,
+        CancellationToken cancellationToken
+    );
+
+    Task UpdateToDoItemMonthlyPeriodicityAsync(
+        Guid id,
+        MonthlyPeriodicity periodicity,
+        CancellationToken cancellationToken
+    );
+
+    Task UpdateToDoItemWeeklyPeriodicityAsync(
+        Guid id,
+        WeeklyPeriodicity periodicity,
+        CancellationToken cancellationToken
+    );
+
+    Task<IEnumerable<IToDoSubItem>> GetLeafToDoSubItemsAsync(Guid id, CancellationToken cancellationToken);
+
+    Task<IEnumerable<ToDoSelectorItem>> GetToDoSelectorItemsAsync(
+        Guid[] ignoreIds,
+        CancellationToken cancellationToken
+    );
+
+    Task<PeriodicityOffsetToDoItemSettings> GetPeriodicityOffsetToDoItemSettingsAsync(
+        Guid id,
+        CancellationToken cancellationToken
+    );
+
+    IAsyncEnumerable<IEnumerable<ToDoItem>> GetToDoItemsAsync(
+        Guid[] ids,
+        uint chunkSize,
+        CancellationToken cancellationToken
+    );
 }

@@ -840,6 +840,20 @@ public class EfToDoService : IToDoService
         );
     }
 
+    public async Task UpdateToDoItemIsRequiredCompleteInDueDateAsync(Guid id, bool value, CancellationToken cancellationToken)
+    {
+        await using var context = dbContextFactory.Create();
+
+        await context.ExecuteSaveChangesTransactionAsync(
+            async c =>
+            {
+                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
+                item = item.ThrowIfNull();
+                item.IsRequiredCompleteInDueDate = value;
+            }
+        );
+    }
+
     public async Task UpdateToDoItemAnnuallyPeriodicityAsync(
         Guid id,
         AnnuallyPeriodicity periodicity,

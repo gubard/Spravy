@@ -2,55 +2,21 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:models="clr-namespace:Spravy.Ui.Models"
              xmlns:handlers="clr-namespace:Spravy.Ui.Handlers"
-             xmlns:converters="clr-namespace:Spravy.Ui.Converters"
              xmlns:themes="clr-namespace:Material.Styles.Themes;assembly=Material.Styles"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:dialogHostAvalonia="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
              xmlns:controls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
              xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-             xmlns:system="clr-namespace:System;assembly=System.Runtime"
-             xmlns:enums1="clr-namespace:Spravy.Ui.Features.ToDo.Enums"
              xmlns:services="clr-namespace:Spravy.Ui.Services"
-             xmlns:enums="clr-namespace:Spravy.Ui.Enums"
              x:Class="Spravy.Ui.App"
              RequestedThemeVariant="Dark">
     <Application.Resources>
-        <converters:DoubleToPercentsConverter x:Key="DoubleToPercentsConverter95" Percentage=".95" />
-        <converters:DoubleToPercentsConverter x:Key="DoubleToPercentsConverter85" Percentage=".85" />
-        <converters:DoubleToPercentsConverter x:Key="DoubleToPercentsConverter70" Percentage=".70" />
-        <converters:DoubleToPercentsConverter x:Key="DoubleToPercentsConverter50" Percentage=".50" />
-        <converters:ObjectToVisibleValueConverter x:Key="ObjectToVisibleValueConverter" />
-        <converters:ToDoItemStatusToBrushValueConverter x:Key="ToDoItemStatusToBrushValueConverter" />
-        <converters:ReverseBooleanValueConverter x:Key="ReverseBooleanValueConverter" />
-        <converters:EmptyStringToNullConverter x:Key="EmptyStringToNullConverter" />
-        <converters:NullToBooleanConverter x:Key="NullToBooleanConverter" />
-        <converters:UInt32ZeroToBooleanConverter x:Key="UInt32ToIsVisibleConverter" />
-        <converters:Int32PositiveToBooleanConverter x:Key="Int32ToIsVisibleConverter" />
-        <converters:CompleteStatusToBrushConverter x:Key="CompleteStatusToBrushConverter" />
-        <converters:NullOrWhiteSpaceToBooleanValueConverter x:Key="NullOrWhiteSpaceToBooleanValueConverter" />
-        <converters:NullOrWhiteSpaceToBooleanValueConverter x:Key="NullOrWhiteSpaceToBooleanValueConverterReverse"
-                                                            Reverse="True" />
-        <converters:BooleanToCompletedStringConverter x:Key="BooleanToCompletedStringConverter" />
-        <converters:ToDoItemIsCanToBooleanConverter x:Key="ToDoItemIsCanToBooleanConverter" />
-        <converters:EnumToBooleanConverter x:TypeArguments="enums1:GroupBy"
-                                           x:Key="MultiEditingGroupByNoneToTrue"
-                                           Value="None" />
-        <converters:EnumToBooleanConverter x:TypeArguments="enums1:GroupBy"
-                                           x:Key="MultiEditingGroupByStatusToTrue"
-                                           Value="ByStatus" />
-        <converters:EnumToBooleanConverter x:TypeArguments="enums1:GroupBy"
-                                           x:Key="MultiEditingGroupByTypeToTrue"
-                                           Value="ByType" />
-        <converters:ObjectToBooleanConverter x:TypeArguments="system:Byte"
-                                             x:Key="TypeOfPeriodicityToIsVisible"
-                                             Value="0"
-                                             Reverse="True" />
-        <converters:EnumToBooleanConverter x:TypeArguments="enums:UserIdentifierType"
-                                           x:Key="UserIdentifierTypeEmailToTrue"
-                                           Value="Email" />
-        <converters:EnumToBooleanConverter x:TypeArguments="enums:UserIdentifierType"
-                                           x:Key="UserIdentifierTypeLoginToTrue"
-                                           Value="Login" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="Styles/Resources.axaml" />
+                <ResourceInclude Source="Styles/ToggleButton.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 
     <Application.Styles>
@@ -194,7 +160,8 @@
                                    Classes="Headline6"
                                    TextWrapping="Wrap" />
 
-                        <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto"  Width="320" HorizontalAlignment="Left">
+                        <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto" Width="320"
+                              HorizontalAlignment="Left">
                             <Button Grid.ColumnSpan="3"
                                     Margin="0,5,5,5"
                                     Width="320"
@@ -240,7 +207,7 @@
                             </Button>
 
                             <Button Grid.Row="1"
-                                Grid.Column="1"
+                                    Grid.Column="1"
                                     Margin="0,5,5,5"
                                     Classes="with-text"
                                     CommandParameter="{Binding Value}"
@@ -284,7 +251,7 @@
                                 <avalonia:MaterialIcon Kind="StarOutline" />
                             </Button>
                         </Panel>
-                        
+
                         <Button Command="{x:Static services:CommandStorage.OpenLinkCommand}"
                                 CommandParameter="{Binding Value}"
                                 IsVisible="{Binding Value.Link, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}"

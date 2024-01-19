@@ -595,6 +595,32 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
+    public Task UpdateToDoItemIsRequiredCompleteInDueDateAsync(Guid id, bool value, CancellationToken cancellationToken)
+    {
+        return CallClientAsync(
+            async client =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+
+                var request = new UpdateToDoItemIsRequiredCompleteInDueDateRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                    IsRequiredCompleteInDueDate = value,
+                };
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var reply = await client.UpdateToDoItemIsRequiredCompleteInDueDateAsync(
+                    request,
+                    metadata,
+                    cancellationToken: cancellationToken
+                );
+            },
+            cancellationToken
+        );
+    }
+
     public Task UpdateToDoItemAnnuallyPeriodicityAsync(
         Guid id,
         AnnuallyPeriodicity periodicity,

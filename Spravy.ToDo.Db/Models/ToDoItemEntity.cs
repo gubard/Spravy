@@ -30,6 +30,7 @@ public class ToDoItemEntity
     public uint CurrentCircleOrderIndex { get; set; }
     public string Link { get; set; } = string.Empty;
     public ToDoItemCompletedType? LastCompletedType { get; set; }
+    public bool IsRequiredCompleteInDueDate { get; set; } = true;
 
     public Guid? ParentId { get; set; }
     public ToDoItemEntity? Parent { get; set; }

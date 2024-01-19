@@ -7,6 +7,15 @@ import "google/protobuf/duration.proto";
 
 package spravy.to_do;
 
+message UpdateToDoItemIsRequiredCompleteInDueDateRequest {
+  bytes Id = 1;
+  bool IsRequiredCompleteInDueDate = 2;
+}
+
+message UpdateToDoItemIsRequiredCompleteInDueDateReply {
+
+}
+
 message GetToDoItemsRequest {
   repeated bytes Ids = 1;
   uint32 ChunkSize = 2;

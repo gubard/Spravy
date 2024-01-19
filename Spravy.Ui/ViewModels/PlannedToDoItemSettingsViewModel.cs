@@ -13,15 +13,22 @@ using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 
-public class PlannedToDoItemSettingsViewModel : ViewModelBase, IToDoChildrenTypeProperty, IToDoDueDateProperty
+public class PlannedToDoItemSettingsViewModel : ViewModelBase, IToDoChildrenTypeProperty, IToDoDueDateProperty, IIsRequiredCompleteInDueDateProperty
 {
     private ToDoItemChildrenType childrenType;
     private Guid id;
     private DateOnly dueDate;
+    private bool isRequiredCompleteInDueDate;
 
     public PlannedToDoItemSettingsViewModel()
     {
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
+    }
+    
+    public bool IsRequiredCompleteInDueDate
+    {
+        get => isRequiredCompleteInDueDate;
+        set => this.RaiseAndSetIfChanged(ref isRequiredCompleteInDueDate, value);
     }
 
     public Guid Id

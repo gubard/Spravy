@@ -73,5 +73,10 @@
 
             <ItemsControl Grid.Column="1" ItemsSource="{Binding Values}" />
         </Grid>
+
+        <ToggleButton Command="{x:Static services:CommandStorage.SetRequiredCompleteInDueDateCommand}"
+                      CommandParameter="{Binding}" 
+                      IsChecked="{Binding IsRequiredCompleteInDueDate}"
+                      Content="Required complete by the due date" />
     </StackPanel>
 </reactiveUi:ReactiveUserControl>

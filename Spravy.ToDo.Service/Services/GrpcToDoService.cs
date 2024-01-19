@@ -22,6 +22,21 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         this.mapper = mapper;
     }
 
+    public override async Task<UpdateToDoItemIsRequiredCompleteInDueDateReply>
+        UpdateToDoItemIsRequiredCompleteInDueDate(
+            UpdateToDoItemIsRequiredCompleteInDueDateRequest request,
+            ServerCallContext context
+        )
+    {
+        await toDoService.UpdateToDoItemIsRequiredCompleteInDueDateAsync(
+            mapper.Map<Guid>(request.Id),
+            request.IsRequiredCompleteInDueDate,
+            context.CancellationToken
+        );
+
+        return new UpdateToDoItemIsRequiredCompleteInDueDateReply();
+    }
+
     public override async Task GetToDoItems(
         GetToDoItemsRequest request,
         IServerStreamWriter<GetToDoItemsReply> responseStream,

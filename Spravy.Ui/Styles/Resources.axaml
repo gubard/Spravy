@@ -1,0 +1,43 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:converters="clr-namespace:Spravy.Ui.Converters"
+                    xmlns:enums1="clr-namespace:Spravy.Ui.Features.ToDo.Enums"
+                    xmlns:system="clr-namespace:System;assembly=System.Runtime"
+                    xmlns:enums="clr-namespace:Spravy.Ui.Enums">
+    <converters:DoubleToPercentsConverter x:Key="DoubleToPercentsConverter95" Percentage=".95" />
+    <converters:DoubleToPercentsConverter x:Key="DoubleToPercentsConverter85" Percentage=".85" />
+    <converters:DoubleToPercentsConverter x:Key="DoubleToPercentsConverter70" Percentage=".70" />
+    <converters:DoubleToPercentsConverter x:Key="DoubleToPercentsConverter50" Percentage=".50" />
+    <converters:ObjectToVisibleValueConverter x:Key="ObjectToVisibleValueConverter" />
+    <converters:ToDoItemStatusToBrushValueConverter x:Key="ToDoItemStatusToBrushValueConverter" />
+    <converters:ReverseBooleanValueConverter x:Key="ReverseBooleanValueConverter" />
+    <converters:EmptyStringToNullConverter x:Key="EmptyStringToNullConverter" />
+    <converters:NullToBooleanConverter x:Key="NullToBooleanConverter" />
+    <converters:UInt32ZeroToBooleanConverter x:Key="UInt32ToIsVisibleConverter" />
+    <converters:Int32PositiveToBooleanConverter x:Key="Int32ToIsVisibleConverter" />
+    <converters:CompleteStatusToBrushConverter x:Key="CompleteStatusToBrushConverter" />
+    <converters:NullOrWhiteSpaceToBooleanValueConverter x:Key="NullOrWhiteSpaceToBooleanValueConverter" />
+    <converters:NullOrWhiteSpaceToBooleanValueConverter x:Key="NullOrWhiteSpaceToBooleanValueConverterReverse"
+                                                        Reverse="True" />
+    <converters:BooleanToCompletedStringConverter x:Key="BooleanToCompletedStringConverter" />
+    <converters:ToDoItemIsCanToBooleanConverter x:Key="ToDoItemIsCanToBooleanConverter" />
+    <converters:EnumToBooleanConverter x:TypeArguments="enums1:GroupBy"
+                                       x:Key="MultiEditingGroupByNoneToTrue"
+                                       Value="None" />
+    <converters:EnumToBooleanConverter x:TypeArguments="enums1:GroupBy"
+                                       x:Key="MultiEditingGroupByStatusToTrue"
+                                       Value="ByStatus" />
+    <converters:EnumToBooleanConverter x:TypeArguments="enums1:GroupBy"
+                                       x:Key="MultiEditingGroupByTypeToTrue"
+                                       Value="ByType" />
+    <converters:ObjectToBooleanConverter x:TypeArguments="system:Byte"
+                                         x:Key="TypeOfPeriodicityToIsVisible"
+                                         Value="0"
+                                         Reverse="True" />
+    <converters:EnumToBooleanConverter x:TypeArguments="enums:UserIdentifierType"
+                                       x:Key="UserIdentifierTypeEmailToTrue"
+                                       Value="Email" />
+    <converters:EnumToBooleanConverter x:TypeArguments="enums:UserIdentifierType"
+                                       x:Key="UserIdentifierTypeLoginToTrue"
+                                       Value="Login" />
+</ResourceDictionary>

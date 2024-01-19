@@ -418,6 +418,11 @@ public class ToDoServiceDesign : IToDoService
         throw new NotImplementedException();
     }
 
+    public Task UpdateToDoItemIsRequiredCompleteInDueDateAsync(Guid id, bool value, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task UpdateToDoItemAnnuallyPeriodicityAsync(
         Guid id,
         AnnuallyPeriodicity periodicity,

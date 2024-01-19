@@ -10,7 +10,8 @@ public readonly struct PeriodicityOffsetToDoItemSettings
         ushort daysOffset,
         ushort monthsOffset,
         ushort weeksOffset,
-        ushort yearsOffset
+        ushort yearsOffset,
+        bool isRequiredCompleteInDueDate
     )
     {
         ChildrenType = childrenType;
@@ -19,6 +20,7 @@ public readonly struct PeriodicityOffsetToDoItemSettings
         MonthsOffset = monthsOffset;
         WeeksOffset = weeksOffset;
         YearsOffset = yearsOffset;
+        IsRequiredCompleteInDueDate = isRequiredCompleteInDueDate;
     }
 
     public ToDoItemChildrenType ChildrenType { get; }
@@ -27,4 +29,5 @@ public readonly struct PeriodicityOffsetToDoItemSettings
     public ushort MonthsOffset { get; }
     public ushort WeeksOffset { get; }
     public ushort YearsOffset { get; }
+    public bool IsRequiredCompleteInDueDate { get; }
 }

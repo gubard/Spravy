@@ -233,6 +233,11 @@ public static class CommandStorage
             MaterialIconKind.EmailCheck,
             "Change email"
         );
+        SetRequiredCompleteInDueDateItem = CreateCommand<IIsRequiredCompleteInDueDateProperty>(
+            SetRequiredCompleteInDueDateAsync,
+            MaterialIconKind.EmailCheck,
+            "Required complete by the due date"
+        );
     }
 
     private static readonly INavigator navigator;
@@ -245,6 +250,9 @@ public static class CommandStorage
     private static readonly ITokenService tokenService;
     private static readonly IObjectStorage objectStorage;
     private static readonly IClipboardService clipboard;
+
+    public static ICommand SetRequiredCompleteInDueDateCommand => SetRequiredCompleteInDueDateItem.Command;
+    public static CommandItem SetRequiredCompleteInDueDateItem { get; }
 
     public static ICommand UpdateEmailNotVerifiedUserByCommand => UpdateEmailNotVerifiedUserByItem.Command;
     public static CommandItem UpdateEmailNotVerifiedUserByItem { get; }
@@ -379,6 +387,21 @@ public static class CommandStorage
     public static CommandItem SetToDoParentItemItem { get; }
 
     public static CommandItem SelectAll { get; }
+
+    private static async Task SetRequiredCompleteInDueDateAsync(
+        IIsRequiredCompleteInDueDateProperty property,
+        CancellationToken cancellationToken
+    )
+    {
+        await toDoService.UpdateToDoItemIsRequiredCompleteInDueDateAsync(
+                property.Id,
+                property.IsRequiredCompleteInDueDate,
+                cancellationToken
+            )
+            .ConfigureAwait(false);
+
+        await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
+    }
 
     private static Task UpdateEmailNotVerifiedUserAsync(
         IVerificationEmail verificationEmail,
