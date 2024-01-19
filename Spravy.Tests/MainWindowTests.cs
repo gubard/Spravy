@@ -1,8 +1,6 @@
-using AE.Net.Mail;
 using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.Input;
-using MailKit.Net.Smtp;
 using Spravy.Domain.Extensions;
 using Spravy.Tests.Extensions;
 using Spravy.Tests.Helpers;
@@ -14,10 +12,10 @@ namespace Spravy.Tests;
 public class MainWindowTests
 {
     [AvaloniaFact]
-    public async Task CreateUserFlow()
+    public void CreateUserFlow()
     {
-        await WindowHelper.CreateWindow()
-            .TryCatchAsync(
+        WindowHelper.CreateWindow()
+            .TryCatch(
                 w => w.SetSize(1000, 1000)
                     .ShowWindow()
                     .Case(
@@ -93,7 +91,7 @@ public class MainWindowTests
                             )
                             .Case(() => w.KeyHandleQwerty(PhysicalKey.Enter))
                     )
-                    .CaseAsync(
+                    .Case(
                         () => w.GetCurrentView<CreateUserView, CreateUserViewModel>()
                             .Case(
                                 c => c.FindControl<TextBox>(ElementNames.RepeatPasswordTextBox)
@@ -103,13 +101,14 @@ public class MainWindowTests
                             )
                             .FindControl<Button>(ElementNames.CreateUserButton)
                             .ThrowIfNull()
-                            .ClickOnButtonAsync(
+                            .MustEnabled()
+                            .ClickOnButton(
                                 w,
                                 TimeWait.MinSecondsWait,
                                 w.GetCurrentView<VerificationCodeView, VerificationCodeViewModel>
                             )
                     )
-                    .SaveFrameAsync(),
+                    .SaveFrame(),
                 (w, _) => w.SaveFrame()
             );
 

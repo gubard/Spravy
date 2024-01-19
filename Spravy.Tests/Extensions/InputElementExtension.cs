@@ -23,4 +23,12 @@ public static class InputElementExtension
 
         return inputElement;
     }
+    
+    public static TInputElement MustEnabled<TInputElement>(this TInputElement inputElement)
+        where TInputElement : IInputElement
+    {
+        inputElement.IsEnabled.Should().BeTrue();
+
+        return inputElement;
+    }
 }
