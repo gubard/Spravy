@@ -14,10 +14,10 @@ namespace Spravy.Tests;
 public class MainWindowTests
 {
     [AvaloniaFact]
-    public void CreateUserFlow()
+    public async Task CreateUserFlow()
     {
-        WindowHelper.CreateWindow()
-            .TryCatch(
+        await WindowHelper.CreateWindow()
+            .TryCatchAsync(
                 w => w.SetSize(1000, 1000)
                     .ShowWindow()
                     .Case(
@@ -93,7 +93,7 @@ public class MainWindowTests
                             )
                             .Case(() => w.KeyHandleQwerty(PhysicalKey.Enter))
                     )
-                    .Case(
+                    .CaseAsync(
                         () => w.GetCurrentView<CreateUserView, CreateUserViewModel>()
                             .Case(
                                 c => c.FindControl<TextBox>(ElementNames.RepeatPasswordTextBox)
@@ -103,35 +103,31 @@ public class MainWindowTests
                             )
                             .FindControl<Button>(ElementNames.CreateUserButton)
                             .ThrowIfNull()
-                            .ClickOnButton(
+                            .ClickOnButtonAsync(
                                 w,
                                 TimeWait.MinSecondsWait,
                                 w.GetCurrentView<VerificationCodeView, VerificationCodeViewModel>
                             )
-                            .Case(
-                                () =>
-                                {
-                                    /*using var imapClient = new ImapClient(
-                                        TestAppBuilder.Configuration.GetSection("EmailServer:Host").Value,
-                                        TestAppBuilder.Configuration.GetSection("EmailAccount:Email").Value,
-                                        TestAppBuilder.Configuration.GetSection("EmailAccount:Password").Value,
-                                        AuthMethods.Login,
-                                        993,
-                                        true
-                                    );
-                                    using var pop = new Pop3Client(
-                                        TestAppBuilder.Configuration.GetSection("EmailServer:Host").Value,
-                                        TestAppBuilder.Configuration.GetSection("EmailAccount:Email").Value,
-                                        TestAppBuilder.Configuration.GetSection("EmailAccount:Password").Value,
-                                        995,
-                                        true
-                                    );
-                                    var messages = imapClient.SearchMessages(SearchCondition.From(""));*/
-                                }
-                            )
                     )
-                    .SaveFrame(),
+                    .SaveFrameAsync(),
                 (w, _) => w.SaveFrame()
             );
+
+        /*using var imapClient = new ImapClient(
+                                   TestAppBuilder.Configuration.GetSection("EmailServer:Host").Value,
+                                   TestAppBuilder.Configuration.GetSection("EmailAccount:Email").Value,
+                                   TestAppBuilder.Configuration.GetSection("EmailAccount:Password").Value,
+                                   AuthMethods.Login,
+                                   993,
+                                   true
+                               );
+                               using var pop = new Pop3Client(
+                                   TestAppBuilder.Configuration.GetSection("EmailServer:Host").Value,
+                                   TestAppBuilder.Configuration.GetSection("EmailAccount:Email").Value,
+                                   TestAppBuilder.Configuration.GetSection("EmailAccount:Password").Value,
+                                   995,
+                                   true
+                               );
+                               var messages = imapClient.SearchMessages(SearchCondition.From(""));*/
     }
 }

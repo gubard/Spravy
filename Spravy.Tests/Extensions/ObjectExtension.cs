@@ -75,6 +75,24 @@ public static class ObjectExtension
         return predicate.Invoke();
     }
 
+    public static async Task<T> WaitSecondsAsync<TObject, T>(this TObject obj, byte seconds, Func<T> predicate)
+    {
+        for (var i = 0; i < seconds; i++)
+        {
+            try
+            {
+                return predicate.Invoke();
+            }
+            catch
+            {
+                await Task.Delay(TimeSpan.FromSeconds(1));
+                obj.RunJobsAll();
+            }
+        }
+
+        return predicate.Invoke();
+    }
+
     public static TObject Case<TObject>(this TObject obj, Action<TObject> action)
     {
         action.Invoke(obj);
@@ -85,6 +103,13 @@ public static class ObjectExtension
     public static TObject Case<TObject>(this TObject obj, Action action)
     {
         action.Invoke();
+
+        return obj;
+    }
+
+    public static async Task<TObject> CaseAsync<TObject>(this TObject obj, Func<Task> action)
+    {
+        await action.Invoke();
 
         return obj;
     }
@@ -225,6 +250,25 @@ public static class ObjectExtension
         try
         {
             @try.Invoke(obj);
+        }
+        catch (Exception e)
+        {
+            @catch.Invoke(obj, e);
+            throw;
+        }
+
+        return obj;
+    }
+
+    public static async Task<TObject> TryCatchAsync<TObject>(
+        this TObject obj,
+        Func<TObject, Task> @try,
+        Action<TObject, Exception> @catch
+    )
+    {
+        try
+        {
+            await @try.Invoke(obj);
         }
         catch (Exception e)
         {

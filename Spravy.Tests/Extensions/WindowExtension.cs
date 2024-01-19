@@ -88,6 +88,13 @@ public static class WindowExtension
         return window.RunJobsAll().SaveFrame(FileHelper.GetFrameShortFile());
     }
 
+    public static async Task<TWindow> SaveFrameAsync<TWindow>(this Task<TWindow> task) where TWindow : Window
+    {
+        var window = await task;
+
+        return window.RunJobsAll().SaveFrame(FileHelper.GetFrameShortFile());
+    }
+
     public static TWindow SaveFrame<TWindow>(this TWindow window, FileInfo file) where TWindow : Window
     {
         using var bitmap = window.CaptureRenderedFrame().ThrowIfNull();
