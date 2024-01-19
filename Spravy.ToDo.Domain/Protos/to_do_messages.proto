@@ -7,6 +7,13 @@ import "google/protobuf/duration.proto";
 
 package spravy.to_do;
 
+message GetTodayToDoItemsRequest {
+}
+
+message GetTodayToDoItemsReply {
+  repeated bytes Ids = 1;
+}
+
 message UpdateToDoItemIsRequiredCompleteInDueDateRequest {
   bytes Id = 1;
   bool IsRequiredCompleteInDueDate = 2;
@@ -57,6 +64,7 @@ message GetPeriodicityOffsetToDoItemSettingsReply {
   uint32 YearsOffset = 4;
   google.protobuf.Timestamp DueDate = 5;
   ToDoItemChildrenTypeGrpc ChildrenType = 6;
+  bool  IsRequiredCompleteInDueDate = 7;
 }
 
 message GetAnnuallyPeriodicityRequest {
@@ -91,6 +99,7 @@ message GetPeriodicityToDoItemSettingsReply {
   ToDoItemChildrenTypeGrpc ChildrenType = 1;
   google.protobuf.Timestamp DueDate = 2;
   TypeOfPeriodicityGrpc TypeOfPeriodicity = 3;
+  bool  IsRequiredCompleteInDueDate = 7;
 }
 
 message GetValueToDoItemSettingsRequest {
@@ -108,6 +117,7 @@ message GetPlannedToDoItemSettingsRequest {
 message GetPlannedToDoItemSettingsReply {
   ToDoItemChildrenTypeGrpc ChildrenType = 1;
   google.protobuf.Timestamp DueDate = 2;
+  bool  IsRequiredCompleteInDueDate = 7;
 }
 
 message GetParentsRequest {

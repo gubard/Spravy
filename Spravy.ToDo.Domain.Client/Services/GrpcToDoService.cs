@@ -611,11 +611,35 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
 
                 cancellationToken.ThrowIfCancellationRequested();
 
-                var reply = await client.UpdateToDoItemIsRequiredCompleteInDueDateAsync(
+                await client.UpdateToDoItemIsRequiredCompleteInDueDateAsync(
                     request,
                     metadata,
                     cancellationToken: cancellationToken
                 );
+            },
+            cancellationToken
+        );
+    }
+
+    public Task<IEnumerable<Guid>> GetTodayToDoItemsAsync(CancellationToken cancellationToken)
+    {
+        return CallClientAsync(
+            async client =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+
+                var request = new GetTodayToDoItemsRequest();
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var reply = await client.GetTodayToDoItemsAsync(
+                    request,
+                    metadata,
+                    cancellationToken: cancellationToken
+                );
+                
+                return mapper.Map<IEnumerable<Guid>>(reply.Ids);
             },
             cancellationToken
         );

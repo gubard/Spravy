@@ -423,6 +423,11 @@ public class ToDoServiceDesign : IToDoService
         throw new NotImplementedException();
     }
 
+    public Task<IEnumerable<Guid>> GetTodayToDoItemsAsync(CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task UpdateToDoItemAnnuallyPeriodicityAsync(
         Guid id,
         AnnuallyPeriodicity periodicity,

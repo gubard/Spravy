@@ -57,4 +57,5 @@ service ToDoService {
   rpc GetPeriodicityOffsetToDoItemSettings (GetPeriodicityOffsetToDoItemSettingsRequest) returns (GetPeriodicityOffsetToDoItemSettingsReply);
   rpc RandomizeChildrenOrderIndex (RandomizeChildrenOrderIndexRequest) returns (RandomizeChildrenOrderIndexReply);
   rpc UpdateToDoItemIsRequiredCompleteInDueDate (UpdateToDoItemIsRequiredCompleteInDueDateRequest) returns (UpdateToDoItemIsRequiredCompleteInDueDateReply);
+  rpc GetTodayToDoItems (GetTodayToDoItemsRequest) returns (GetTodayToDoItemsReply);
 }

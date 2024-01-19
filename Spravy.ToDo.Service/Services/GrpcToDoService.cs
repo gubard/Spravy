@@ -22,6 +22,18 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         this.mapper = mapper;
     }
 
+    public override async Task<GetTodayToDoItemsReply> GetTodayToDoItems(
+        GetTodayToDoItemsRequest request,
+        ServerCallContext context
+    )
+    {
+        var ids = await toDoService.GetTodayToDoItemsAsync(context.CancellationToken);
+        var reply = new GetTodayToDoItemsReply();
+        reply.Ids.AddRange(mapper.Map<IEnumerable<ByteString>>(ids));
+
+        return reply;
+    }
+
     public override async Task<UpdateToDoItemIsRequiredCompleteInDueDateReply>
         UpdateToDoItemIsRequiredCompleteInDueDate(
             UpdateToDoItemIsRequiredCompleteInDueDateRequest request,
@@ -75,6 +87,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
             mapper.Map<Guid>(request.Id),
             context.CancellationToken
         );
+
         var reply = mapper.Map<GetPeriodicityOffsetToDoItemSettingsReply>(settings);
 
         return reply;

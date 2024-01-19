@@ -840,7 +840,11 @@ public class EfToDoService : IToDoService
         );
     }
 
-    public async Task UpdateToDoItemIsRequiredCompleteInDueDateAsync(Guid id, bool value, CancellationToken cancellationToken)
+    public async Task UpdateToDoItemIsRequiredCompleteInDueDateAsync(
+        Guid id,
+        bool value,
+        CancellationToken cancellationToken
+    )
     {
         await using var context = dbContextFactory.Create();
 
@@ -852,6 +856,33 @@ public class EfToDoService : IToDoService
                 item.IsRequiredCompleteInDueDate = value;
             }
         );
+    }
+
+    public async Task<IEnumerable<Guid>> GetTodayToDoItemsAsync(CancellationToken cancellationToken)
+    {
+        var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
+        await using var context = dbContextFactory.Create();
+
+        var items = await context.Set<ToDoItemEntity>()
+            .AsNoTracking()
+            .Where(
+                x => !x.IsCompleted
+                     && (x.Type == ToDoItemType.Periodicity
+                         || x.Type == ToDoItemType.PeriodicityOffset
+                         || x.Type == ToDoItemType.Planned)
+            )
+            .Select(
+                x => new
+                {
+                    x.Id,
+                    x.DueDate,
+                }
+            )
+            .ToArrayAsync(cancellationToken);
+
+        return items.Where(x => x.DueDate <= DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
+            .Select(x => x.Id)
+            .ToArray();
     }
 
     public async Task UpdateToDoItemAnnuallyPeriodicityAsync(

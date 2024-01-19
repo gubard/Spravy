@@ -85,6 +85,7 @@ public class PeriodicityToDoItemSettingsViewModel : ViewModelBase,
                 ChildrenType = setting.ChildrenType;
                 DueDate = setting.DueDate;
                 TypeOfPeriodicity = setting.TypeOfPeriodicity;
+                IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
                 Values.Clear();
             }
         );

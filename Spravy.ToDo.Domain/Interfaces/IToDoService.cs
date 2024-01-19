@@ -48,6 +48,7 @@ public interface IToDoService
     Task<MonthlyPeriodicity> GetMonthlyPeriodicityAsync(Guid id, CancellationToken cancellationToken);
     Task<AnnuallyPeriodicity> GetAnnuallyPeriodicityAsync(Guid id, CancellationToken cancellationToken);
     Task UpdateToDoItemIsRequiredCompleteInDueDateAsync(Guid id, bool value, CancellationToken cancellationToken);
+    Task<IEnumerable<Guid>> GetTodayToDoItemsAsync(CancellationToken cancellationToken);
 
     Task UpdateToDoItemAnnuallyPeriodicityAsync(
         Guid id,

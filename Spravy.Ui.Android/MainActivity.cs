@@ -1,16 +1,4 @@
-﻿using System.Threading;
-using Android.App;
-using Android.Content.PM;
-using Android.OS;
-using Avalonia;
-using Avalonia.Android;
-using Avalonia.ReactiveUI;
-using Ninject;
-using Serilog;
-using Serilog.Core;
-using Spravy.Domain.Di.Helpers;
-using Spravy.Domain.Extensions;
-using Spravy.Ui.Android.Configurations;
+﻿using Spravy.Ui.Android.Configurations;
 using Spravy.Ui.Configurations;
 using Spravy.Ui.Interfaces;
 

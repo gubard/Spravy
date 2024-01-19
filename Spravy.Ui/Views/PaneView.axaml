@@ -17,7 +17,15 @@
                 CommandParameter="{x:Type viewModels:RootToDoItemsViewModel}">
             <Grid ColumnDefinitions="Auto,Auto">
                 <avalonia:MaterialIcon Kind="Checks" />
-                <TextBlock Grid.Column="1" Text="To Do Items" />
+                <TextBlock Grid.Column="1" Text="To-do Items" />
+            </Grid>
+        </Button>
+        
+        <Button Command="{x:Static services:CommandStorage.NavigateToCommand}"
+                CommandParameter="{x:Type viewModels:TodayToDoItemsViewModel}">
+            <Grid ColumnDefinitions="Auto,Auto">
+                <avalonia:MaterialIcon Kind="Settings" />
+                <TextBlock Grid.Column="1" Text="Today to-do items" />
             </Grid>
         </Button>
 

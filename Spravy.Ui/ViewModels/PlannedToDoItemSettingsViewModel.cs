@@ -68,6 +68,7 @@ public class PlannedToDoItemSettingsViewModel : ViewModelBase, IToDoChildrenType
             {
                 ChildrenType = setting.ChildrenType;
                 DueDate = setting.DueDate;
+                IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
             }
         );
     }
