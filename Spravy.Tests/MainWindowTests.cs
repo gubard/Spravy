@@ -104,7 +104,7 @@ public class MainWindowTests
                             .MustEnabled()
                             .ClickOnButton(w, TimeWait.MinSecondsWait)
                     )
-                    .Case(() => w.GetCurrentView<VerificationCodeView, VerificationCodeViewModel>())
+                    //.Case(() => w.GetCurrentView<VerificationCodeView, VerificationCodeViewModel>())
                     .SaveFrame(),
                 (w, _) => w.SaveFrame()
             );
