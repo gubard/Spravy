@@ -77,7 +77,7 @@ public class GetterToDoItemParametersService
         {
             if (useDueDate)
             {
-                if (entity.DueDate < dueDate)
+                if (entity.DueDate < dueDate && entity.IsRequiredCompleteInDueDate)
                 {
                     isMiss = true;
                 }
@@ -91,7 +91,8 @@ public class GetterToDoItemParametersService
             }
             else
             {
-                if (entity.DueDate < DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
+                if (entity.DueDate < DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly()
+                    && entity.IsRequiredCompleteInDueDate)
                 {
                     isMiss = true;
                 }
