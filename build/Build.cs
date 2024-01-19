@@ -99,6 +99,8 @@ class Build : NukeBuild
 
     void CleanDirectories()
     {
+        DotNetClean(setting => setting.SetProject(Solution).SetConfiguration(Configuration));
+
         var bins = new DirectoryInfo(Solution.Directory.ThrowIfNull())
             .GetDirectories("bin", SearchOption.AllDirectories);
 
