@@ -97,6 +97,25 @@ class Build : NukeBuild
         DotNetClean(setting => setting.SetProject(Solution).SetConfiguration(Configuration));
     }
 
+    void CleanDirectories()
+    {
+        var bins = new DirectoryInfo(Solution.Directory.ThrowIfNull())
+            .GetDirectories("bin", SearchOption.AllDirectories);
+
+        var objs = new DirectoryInfo(Solution.Directory.ThrowIfNull())
+            .GetDirectories("obj", SearchOption.AllDirectories);
+
+        foreach (var bin in bins)
+        {
+            Log.Information("{Folder}", bin);
+        }
+
+        foreach (var obj in objs)
+        {
+            Log.Information("{Folder}", obj);
+        }
+    }
+
     void Restore()
     {
         DotNetRestore(setting => setting.SetProjectFile(Solution));
@@ -342,7 +361,7 @@ class Build : NukeBuild
 
     Target ProdSetupAppSettings => _ => _.DependsOn(ProdSetup).Executes(() => SetupAppSettings(ServerHost));
 
-    Target StagingClean => _ => _.DependsOn(StagingSetupAppSettings).Executes(Clean);
+    Target StagingClean => _ => _.DependsOn(StagingSetupAppSettings).Executes(CleanDirectories);
     Target ProdClean => _ => _.DependsOn(ProdSetupAppSettings).Executes(Clean);
 
     Target StagingRestore => _ => _.DependsOn(StagingClean).Executes(Restore);
