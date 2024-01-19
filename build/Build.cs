@@ -108,11 +108,13 @@ class Build : NukeBuild
         foreach (var bin in bins)
         {
             Log.Information("{Folder}", bin);
+            bin.Delete(true);
         }
 
         foreach (var obj in objs)
         {
             Log.Information("{Folder}", obj);
+            obj.Delete(true);
         }
     }
 
