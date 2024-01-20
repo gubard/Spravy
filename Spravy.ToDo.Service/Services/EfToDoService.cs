@@ -464,7 +464,7 @@ public class EfToDoService : IToDoService
 
                     item.LastCompletedType = ToDoItemCompletedType.Completed;
                     item.CompletedCount++;
-                    UpdateDueDate(item, cancellationToken);
+                    UpdateDueDate(item, offset, cancellationToken);
                     item.LastCompleted = DateTimeOffset.Now;
                     await CircleCompletionAsync(context, item, cancellationToken);
                     await StepCompletionAsync(context, item, cancellationToken);
@@ -691,7 +691,7 @@ public class EfToDoService : IToDoService
 
                 item.LastCompletedType = ToDoItemCompletedType.Skipped;
                 item.SkippedCount++;
-                UpdateDueDate(item, cancellationToken);
+                UpdateDueDate(item, offset, cancellationToken);
                 item.LastCompleted = DateTimeOffset.Now;
                 await CircleSkipAsync(context, item, cancellationToken);
                 await StepCompletionAsync(context, item, cancellationToken);
@@ -752,7 +752,7 @@ public class EfToDoService : IToDoService
 
                 item.LastCompletedType = ToDoItemCompletedType.Failed;
                 item.FailedCount++;
-                UpdateDueDate(item, cancellationToken);
+                UpdateDueDate(item, offset, cancellationToken);
                 item.LastCompleted = DateTimeOffset.Now;
                 await CircleCompletionAsync(context, item, cancellationToken);
                 await StepCompletionAsync(context, item, cancellationToken);
@@ -1465,7 +1465,7 @@ public class EfToDoService : IToDoService
         await GetParentsAsync(context, parent.Parent.Id, parents, cancellationToken);
     }
 
-    private void UpdateDueDate(ToDoItemEntity item, CancellationToken cancellationToken)
+    private void UpdateDueDate(ToDoItemEntity item, TimeSpan offset, CancellationToken cancellationToken)
     {
         switch (item.Type)
         {
@@ -1480,7 +1480,7 @@ public class EfToDoService : IToDoService
 
                 break;
             case ToDoItemType.PeriodicityOffset:
-                AddPeriodicityOffset(item, cancellationToken);
+                AddPeriodicityOffset(item, offset, cancellationToken);
 
                 break;
             case ToDoItemType.Circle:
@@ -1492,12 +1492,23 @@ public class EfToDoService : IToDoService
         }
     }
 
-    private void AddPeriodicityOffset(ToDoItemEntity item, CancellationToken cancellationToken)
+    private void AddPeriodicityOffset(ToDoItemEntity item, TimeSpan offset, CancellationToken cancellationToken)
     {
-        item.DueDate = item.DueDate
-            .AddDays(item.DaysOffset + item.WeeksOffset * 7)
-            .AddMonths(item.MonthsOffset)
-            .AddYears(item.YearsOffset);
+        if (item.IsRequiredCompleteInDueDate)
+        {
+            item.DueDate = item.DueDate
+                .AddDays(item.DaysOffset + item.WeeksOffset * 7)
+                .AddMonths(item.MonthsOffset)
+                .AddYears(item.YearsOffset);
+        }
+        else
+        {
+            item.DueDate = DateTimeOffset.UtcNow.Add(offset)
+                .Date.ToDateOnly()
+                .AddDays(item.DaysOffset + item.WeeksOffset * 7)
+                .AddMonths(item.MonthsOffset)
+                .AddYears(item.YearsOffset);
+        }
     }
 
     private void AddPeriodicity(ToDoItemEntity item, CancellationToken cancellationToken)
