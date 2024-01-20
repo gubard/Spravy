@@ -12,3 +12,4 @@ tools/
 .vs/
 *.pfx
 storage/
+*.binlog

@@ -1,3 +1,7 @@
+using System.IO;
+using System.Reflection;
+using Spravy.Domain.Interfaces;
+
 namespace Spravy.Ui.Android;
 
 public struct SpravyUiAndroidMark : IAssemblyMark
