@@ -32,6 +32,31 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         this.metadataFactory = metadataFactory;
     }
 
+    public Task ResetToDoItemAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return CallClientAsync(
+            async client =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+
+                var request = new ResetToDoItemRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                };
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                await client.ResetToDoItemAsync(
+                    request,
+                    metadata,
+                    cancellationToken: cancellationToken
+                );
+            },
+            cancellationToken
+        );
+    }
+
     public Task RandomizeChildrenOrderIndexAsync(Guid id, CancellationToken cancellationToken)
     {
         return CallClientAsync(
@@ -221,28 +246,6 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                 );
 
                 return mapper.Map<IEnumerable<Guid>>(reply.Ids);
-            },
-            cancellationToken
-        );
-    }
-
-    public Task<IEnumerable<IToDoSubItem>> GetRootToDoSubItemsAsync(CancellationToken cancellationToken)
-    {
-        return CallClientAsync(
-            async client =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                var metadata = await metadataFactory.CreateAsync(cancellationToken);
-                var request = new GetRootToDoSubItemsRequest();
-                cancellationToken.ThrowIfCancellationRequested();
-
-                var items = await client.GetRootToDoSubItemsAsync(
-                    request,
-                    metadata,
-                    cancellationToken: cancellationToken
-                );
-
-                return mapper.Map<IEnumerable<IToDoSubItem>>(items.Items);
             },
             cancellationToken
         );
@@ -479,35 +482,6 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public Task<IEnumerable<IToDoSubItem>> SearchToDoSubItemsAsync(
-        string searchText,
-        CancellationToken cancellationToken
-    )
-    {
-        return CallClientAsync(
-            async client =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                var metadata = await metadataFactory.CreateAsync(cancellationToken);
-
-                var request = new SearchToDoSubItemsRequest
-                {
-                    SearchText = searchText,
-                };
-
-                cancellationToken.ThrowIfCancellationRequested();
-                var reply = await client.SearchToDoSubItemsAsync(
-                    request,
-                    metadata,
-                    cancellationToken: cancellationToken
-                );
-
-                return mapper.Map<IEnumerable<IToDoSubItem>>(reply.Items);
-            },
-            cancellationToken
-        );
-    }
-
     public Task UpdateToDoItemTypeAsync(Guid id, ToDoItemType type, CancellationToken cancellationToken)
     {
         return CallClientAsync(
@@ -573,28 +547,6 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public Task<IEnumerable<IToDoSubItem>> GetFavoriteToDoItemsAsync(CancellationToken cancellationToken)
-    {
-        return CallClientAsync(
-            async client =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                var metadata = await metadataFactory.CreateAsync(cancellationToken);
-                var request = DefaultObject<GetFavoriteToDoItemsRequest>.Default;
-                cancellationToken.ThrowIfCancellationRequested();
-
-                var reply = await client.GetFavoriteToDoItemsAsync(
-                    request,
-                    metadata,
-                    cancellationToken: cancellationToken
-                );
-
-                return mapper.Map<IEnumerable<IToDoSubItem>>(reply.Items);
-            },
-            cancellationToken
-        );
-    }
-
     public Task UpdateToDoItemIsRequiredCompleteInDueDateAsync(Guid id, bool value, CancellationToken cancellationToken)
     {
         return CallClientAsync(
@@ -638,7 +590,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                     metadata,
                     cancellationToken: cancellationToken
                 );
-                
+
                 return mapper.Map<IEnumerable<Guid>>(reply.Ids);
             },
             cancellationToken
@@ -721,32 +673,6 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                     metadata,
                     cancellationToken: cancellationToken
                 );
-            },
-            cancellationToken
-        );
-    }
-
-    public Task<IEnumerable<IToDoSubItem>> GetLeafToDoSubItemsAsync(Guid id, CancellationToken cancellationToken)
-    {
-        return CallClientAsync(
-            async client =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                var metadata = await metadataFactory.CreateAsync(cancellationToken);
-
-                var request = new GetLeafToDoSubItemsRequest
-                {
-                    Id = mapper.Map<ByteString>(id),
-                };
-
-                cancellationToken.ThrowIfCancellationRequested();
-                var reply = await client.GetLeafToDoSubItemsAsync(
-                    request,
-                    metadata,
-                    cancellationToken: cancellationToken
-                );
-
-                return mapper.Map<IEnumerable<IToDoSubItem>>(reply.Items);
             },
             cancellationToken
         );

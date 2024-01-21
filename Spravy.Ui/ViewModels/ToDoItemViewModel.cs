@@ -303,6 +303,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
                     PageHeaderViewModel.Commands.Add(CommandStorage.SetToDoParentItemItem.WithParam(this));
                     PageHeaderViewModel.Commands.Add(CommandStorage.MoveToDoItemToRootItem.WithParam(this));
                     PageHeaderViewModel.Commands.Add(CommandStorage.ToDoItemToStringItem.WithParam(this));
+                    PageHeaderViewModel.Commands.Add(CommandStorage.ResetToDoItemItem.WithParam(this));
                     PageHeaderViewModel.Commands.Add(
                         CommandStorage.ToDoItemRandomizeChildrenOrderIndexItem.WithParam(this)
                     );

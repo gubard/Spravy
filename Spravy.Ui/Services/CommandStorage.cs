@@ -238,6 +238,11 @@ public static class CommandStorage
             MaterialIconKind.EmailCheck,
             "Required complete by the due date"
         );
+        ResetToDoItemItem = CreateCommand<IIdProperty>(
+            ResetToDoItemAsync,
+            MaterialIconKind.EncryptionReset,
+            "Reset to-do item"
+        );
     }
 
     private static readonly INavigator navigator;
@@ -250,6 +255,9 @@ public static class CommandStorage
     private static readonly ITokenService tokenService;
     private static readonly IObjectStorage objectStorage;
     private static readonly IClipboardService clipboard;
+
+    public static ICommand ResetToDoItemCommand => ResetToDoItemItem.Command;
+    public static CommandItem ResetToDoItemItem { get; }
 
     public static ICommand SetRequiredCompleteInDueDateCommand => SetRequiredCompleteInDueDateItem.Command;
     public static CommandItem SetRequiredCompleteInDueDateItem { get; }
@@ -387,6 +395,15 @@ public static class CommandStorage
     public static CommandItem SetToDoParentItemItem { get; }
 
     public static CommandItem SelectAll { get; }
+
+    private static async Task ResetToDoItemAsync(
+        IIdProperty property,
+        CancellationToken cancellationToken
+    )
+    {
+        await toDoService.ResetToDoItemAsync(property.Id, cancellationToken).ConfigureAwait(false);
+        await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
+    }
 
     private static async Task SetRequiredCompleteInDueDateAsync(
         IIsRequiredCompleteInDueDateProperty property,

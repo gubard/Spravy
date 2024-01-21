@@ -26,7 +26,6 @@
     <ItemGroup>
         <ProjectReference Include="..\Spravy.Core\Spravy.Core.csproj" />
         <ProjectReference Include="..\Spravy.Db.Sqlite\Spravy.Db.Sqlite.csproj" />
-        <ProjectReference Condition="'$(Configuration)' == 'Debug'" Include="..\Spravy.Ui.Design\Spravy.Ui.Design.csproj" />
         <ProjectReference Include="..\Spravy.Ui\Spravy.Ui.csproj" />
     </ItemGroup>
 

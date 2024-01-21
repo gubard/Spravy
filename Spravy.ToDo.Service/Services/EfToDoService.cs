@@ -38,6 +38,21 @@ public class EfToDoService : IToDoService
         this.getterToDoItemParametersService = getterToDoItemParametersService;
     }
 
+    public async Task ResetToDoItemAsync(Guid id, CancellationToken cancellationToken)
+    {
+        await using var context = dbContextFactory.Create();
+
+        await context.ExecuteSaveChangesTransactionAsync(
+            async c =>
+            {
+                var item = await c.FindAsync<ToDoItemEntity>(id);
+                item = item.ThrowIfNull();
+                await CircleCompletionAsync(context, item, cancellationToken);
+                await StepCompletionAsync(context, item, cancellationToken);
+            }
+        );
+    }
+
     public async Task RandomizeChildrenOrderIndexAsync(Guid id, CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();
@@ -176,93 +191,6 @@ public class EfToDoService : IToDoService
             .ToArrayAsync(cancellationToken);
 
         return ids;
-    }
-
-    public async Task<IEnumerable<IToDoSubItem>> GetRootToDoSubItemsAsync(CancellationToken cancellationToken)
-    {
-        await using var context = dbContextFactory.Create();
-
-        var items = await context.Set<ToDoItemEntity>()
-            .AsNoTracking()
-            .Where(x => x.ParentId == null)
-            .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync(cancellationToken);
-
-        var result = await ConvertAsync(context, items, cancellationToken);
-
-        return result;
-    }
-
-    private async Task<IEnumerable<IToDoSubItem>> ConvertAsync(
-        SpravyDbToDoDbContext context,
-        IEnumerable<ToDoItemEntity> items,
-        CancellationToken cancellationToken
-    )
-    {
-        var result = new List<IToDoSubItem>();
-
-        foreach (var item in items)
-        {
-            var toDoSubItem = await ConvertAsync(context, item, cancellationToken);
-            result.Add(toDoSubItem);
-        }
-
-        return result;
-    }
-
-    private async Task<IToDoSubItem> ConvertAsync(
-        SpravyDbToDoDbContext context,
-        ToDoItemEntity item,
-        CancellationToken cancellationToken
-    )
-    {
-        var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
-        var parameters =
-            await getterToDoItemParametersService.GetToDoItemParametersAsync(context, item, offset, cancellationToken);
-
-        var result = mapper.Map<IToDoSubItem>(
-            item,
-            a =>
-            {
-                a.Items.Add(SpravyToDoDbProfile.StatusName, parameters.Status);
-                a.Items.Add(SpravyToDoDbProfile.ActiveName, parameters.ActiveItem);
-            }
-        );
-
-        return result;
-    }
-
-    public async Task<IToDoItem> GetToDoItem2Async(Guid id, CancellationToken cancellationToken)
-    {
-        await using var context = dbContextFactory.Create();
-        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
-        item = item.ThrowIfNull();
-
-        var subItems = await context.Set<ToDoItemEntity>()
-            .AsNoTracking()
-            .Where(x => x.ParentId == item.Id)
-            .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync(cancellationToken);
-
-        var parents = new List<ToDoShortItem>
-        {
-            new(item.Id, item.Name)
-        };
-
-        await GetParentsAsync(context, id, parents, cancellationToken);
-        parents.Reverse();
-        var toDoSubItems = await ConvertAsync(context, subItems, cancellationToken);
-
-        var toDoItem = mapper.Map<IToDoItem>(
-            item,
-            opt =>
-            {
-                opt.Items.Add(SpravyToDoDbProfile.ParentsName, parents.ToArray());
-                opt.Items.Add(SpravyToDoDbProfile.ItemsName, toDoSubItems.ToArray());
-            }
-        );
-
-        return toDoItem;
     }
 
     public async Task<Guid> AddRootToDoItemAsync(AddRootToDoItemOptions options, CancellationToken cancellationToken)
@@ -760,24 +688,6 @@ public class EfToDoService : IToDoService
         );
     }
 
-    public async Task<IEnumerable<IToDoSubItem>> SearchToDoSubItemsAsync(
-        string searchText,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-
-        var items = await context.Set<ToDoItemEntity>()
-            .AsNoTracking()
-            .Where(x => x.Name.Contains(searchText))
-            .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync(cancellationToken);
-
-        var result = await ConvertAsync(context, items, cancellationToken);
-
-        return result;
-    }
-
     public async Task UpdateToDoItemTypeAsync(Guid id, ToDoItemType type, CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();
@@ -816,26 +726,6 @@ public class EfToDoService : IToDoService
                 var item = await c.Set<ToDoItemEntity>().FindAsync(id);
                 item = item.ThrowIfNull();
                 item.IsFavorite = false;
-            }
-        );
-    }
-
-    public async Task<IEnumerable<IToDoSubItem>> GetFavoriteToDoItemsAsync(CancellationToken cancellationToken)
-    {
-        await using var context = dbContextFactory.Create();
-
-        return await context.ExecuteSaveChangesTransactionAsync(
-            async c =>
-            {
-                var items = await c.Set<ToDoItemEntity>()
-                    .AsNoTracking()
-                    .Where(x => x.IsFavorite)
-                    .OrderBy(x => x.OrderIndex)
-                    .ToArrayAsync(cancellationToken);
-
-                var result = await ConvertAsync(c, items, cancellationToken);
-
-                return result;
             }
         );
     }
@@ -937,34 +827,6 @@ public class EfToDoService : IToDoService
                 item.SetDaysOfWeek(periodicity.Days);
             }
         );
-    }
-
-    public async Task<IEnumerable<IToDoSubItem>> GetLeafToDoSubItemsAsync(Guid id, CancellationToken cancellationToken)
-    {
-        await using var context = dbContextFactory.Create();
-
-        var entities = await context.Set<ToDoItemEntity>()
-            .AsNoTracking()
-            .Where(x => x.ParentId == id)
-            .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync(cancellationToken);
-
-        if (entities.IsEmpty())
-        {
-            return Enumerable.Empty<IToDoSubItem>();
-        }
-
-        var result = new List<IToDoSubItem>();
-
-        foreach (var entity in entities)
-        {
-            await foreach (var item in GetLeafToDoItemsAsync(context, entity, cancellationToken))
-            {
-                result.Add(item);
-            }
-        }
-
-        return result;
     }
 
     public async Task<IEnumerable<ToDoSelectorItem>> GetToDoSelectorItemsAsync(
@@ -1369,34 +1231,6 @@ public class EfToDoService : IToDoService
         }
 
         return result;
-    }
-
-    private async IAsyncEnumerable<IToDoSubItem> GetLeafToDoItemsAsync(
-        SpravyDbToDoDbContext context,
-        ToDoItemEntity itemEntity,
-        [EnumeratorCancellation] CancellationToken cancellationToken
-    )
-    {
-        var entities = await context.Set<ToDoItemEntity>()
-            .AsNoTracking()
-            .Where(x => x.ParentId == itemEntity.Id)
-            .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync(cancellationToken);
-
-        if (entities.IsEmpty())
-        {
-            yield return await ConvertAsync(context, itemEntity, cancellationToken);
-
-            yield break;
-        }
-
-        foreach (var entity in entities)
-        {
-            await foreach (var item in GetLeafToDoItemsAsync(context, entity, cancellationToken))
-            {
-                yield return item;
-            }
-        }
     }
 
     private async IAsyncEnumerable<Guid> GetLeafToDoItemIdsAsync(

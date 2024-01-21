@@ -266,18 +266,6 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         return reply;
     }
 
-    public override async Task<GetRootToDoSubItemsReply> GetRootToDoSubItems(
-        GetRootToDoSubItemsRequest request,
-        ServerCallContext context
-    )
-    {
-        var reply = new GetRootToDoSubItemsReply();
-        var items = await toDoService.GetRootToDoSubItemsAsync(context.CancellationToken);
-        reply.Items.AddRange(mapper.Map<IEnumerable<ToDoSubItemGrpc>>(items));
-
-        return reply;
-    }
-
     public override async Task<AddRootToDoItemReply> AddRootToDoItem(
         AddRootToDoItemRequest request,
         ServerCallContext context
@@ -413,18 +401,6 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         return new();
     }
 
-    public override async Task<SearchToDoSubItemsReply> SearchToDoSubItems(
-        SearchToDoSubItemsRequest request,
-        ServerCallContext context
-    )
-    {
-        var items = await toDoService.SearchToDoSubItemsAsync(request.SearchText, context.CancellationToken);
-        var reply = new SearchToDoSubItemsReply();
-        reply.Items.AddRange(items.Select(x => mapper.Map<ToDoSubItemGrpc>(x)));
-
-        return reply;
-    }
-
     public override async Task<UpdateToDoItemTypeReply> UpdateToDoItemType(
         UpdateToDoItemTypeRequest request,
         ServerCallContext context
@@ -457,18 +433,6 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         await toDoService.RemoveFavoriteToDoItemAsync(mapper.Map<Guid>(request.Id), context.CancellationToken);
 
         return new();
-    }
-
-    public override async Task<GetFavoriteToDoItemsReply> GetFavoriteToDoItems(
-        GetFavoriteToDoItemsRequest request,
-        ServerCallContext context
-    )
-    {
-        var reply = new GetFavoriteToDoItemsReply();
-        var items = await toDoService.GetFavoriteToDoItemsAsync(context.CancellationToken);
-        reply.Items.AddRange(mapper.Map<IEnumerable<ToDoSubItemGrpc>>(items));
-
-        return reply;
     }
 
     public override async Task<UpdateToDoItemAnnuallyPeriodicityReply> UpdateToDoItemAnnuallyPeriodicity(
@@ -511,21 +475,6 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         );
 
         return new();
-    }
-
-    public override async Task<GetLeafToDoSubItemsReply> GetLeafToDoSubItems(
-        GetLeafToDoSubItemsRequest request,
-        ServerCallContext context
-    )
-    {
-        var items = await toDoService.GetLeafToDoSubItemsAsync(
-            mapper.Map<Guid>(request.Id),
-            context.CancellationToken
-        );
-        var reply = new GetLeafToDoSubItemsReply();
-        reply.Items.AddRange(mapper.Map<IEnumerable<ToDoSubItemGrpc>>(items));
-
-        return reply;
     }
 
     public override async Task<GetToDoSelectorItemsReply> GetToDoSelectorItems(

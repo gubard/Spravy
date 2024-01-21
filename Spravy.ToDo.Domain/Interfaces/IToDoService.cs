@@ -5,6 +5,7 @@ namespace Spravy.ToDo.Domain.Interfaces;
 
 public interface IToDoService
 {
+    Task ResetToDoItemAsync(Guid id, CancellationToken cancellationToken);
     Task RandomizeChildrenOrderIndexAsync(Guid id, CancellationToken cancellationToken);
     Task<IEnumerable<ToDoShortItem>> GetParentsAsync(Guid id, CancellationToken cancellationToken);
     Task<IEnumerable<Guid>> SearchToDoItemIdsAsync(string searchText, CancellationToken cancellationToken);
@@ -13,7 +14,6 @@ public interface IToDoService
     Task<IEnumerable<Guid>> GetChildrenToDoItemIdsAsync(Guid id, CancellationToken cancellationToken);
     Task<IEnumerable<Guid>> GetRootToDoItemIdsAsync(CancellationToken cancellationToken);
     Task<IEnumerable<Guid>> GetFavoriteToDoItemIdsAsync(CancellationToken cancellationToken);
-    Task<IEnumerable<IToDoSubItem>> GetRootToDoSubItemsAsync(CancellationToken cancellationToken);
     Task<Guid> AddRootToDoItemAsync(AddRootToDoItemOptions options, CancellationToken cancellationToken);
     Task<Guid> AddToDoItemAsync(AddToDoItemOptions options, CancellationToken cancellationToken);
     Task DeleteToDoItemAsync(Guid id, CancellationToken cancellationToken);
@@ -25,11 +25,9 @@ public interface IToDoService
     Task UpdateToDoItemCompleteStatusAsync(Guid id, bool isComplete, CancellationToken cancellationToken);
     Task SkipToDoItemAsync(Guid id, CancellationToken cancellationToken);
     Task FailToDoItemAsync(Guid id, CancellationToken cancellationToken);
-    Task<IEnumerable<IToDoSubItem>> SearchToDoSubItemsAsync(string searchText, CancellationToken cancellationToken);
     Task UpdateToDoItemTypeAsync(Guid id, ToDoItemType type, CancellationToken cancellationToken);
     Task AddFavoriteToDoItemAsync(Guid id, CancellationToken cancellationToken);
     Task RemoveFavoriteToDoItemAsync(Guid id, CancellationToken cancellationToken);
-    Task<IEnumerable<IToDoSubItem>> GetFavoriteToDoItemsAsync(CancellationToken cancellationToken);
     Task UpdateToDoItemParentAsync(Guid id, Guid parentId, CancellationToken cancellationToken);
     Task ToDoItemToRootAsync(Guid id, CancellationToken cancellationToken);
     Task<string> ToDoItemToStringAsync(ToDoItemToStringOptions options, CancellationToken cancellationToken);
@@ -67,8 +65,6 @@ public interface IToDoService
         WeeklyPeriodicity periodicity,
         CancellationToken cancellationToken
     );
-
-    Task<IEnumerable<IToDoSubItem>> GetLeafToDoSubItemsAsync(Guid id, CancellationToken cancellationToken);
 
     Task<IEnumerable<ToDoSelectorItem>> GetToDoSelectorItemsAsync(
         Guid[] ignoreIds,

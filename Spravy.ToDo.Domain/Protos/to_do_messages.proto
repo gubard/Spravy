@@ -7,6 +7,13 @@ import "google/protobuf/duration.proto";
 
 package spravy.to_do;
 
+message ResetToDoItemRequest {
+  bytes Id = 1;
+}
+
+message ResetToDoItemReply {
+}
+
 message GetTodayToDoItemsRequest {
 }
 
@@ -294,14 +301,6 @@ message ToDoSelectorItemGrpc {
   repeated ToDoSelectorItemGrpc Children = 3;
 }
 
-message GetLeafToDoSubItemsRequest {
-  bytes Id = 1;
-}
-
-message GetLeafToDoSubItemsReply {
-  repeated ToDoSubItemGrpc Items = 1;
-}
-
 message UpdateToDoItemWeeklyPeriodicityRequest {
   bytes Id = 1;
   WeeklyPeriodicityGrpc Periodicity = 2;
@@ -331,13 +330,6 @@ message ActiveToDoItemGrpc {
   string Name = 2;
 }
 
-message GetFavoriteToDoItemsRequest {
-}
-
-message GetFavoriteToDoItemsReply {
-  repeated ToDoSubItemGrpc Items = 1;
-}
-
 message RemoveFavoriteToDoItemRequest {
   bytes Id = 1;
 }
@@ -350,14 +342,6 @@ message AddFavoriteToDoItemRequest {
 }
 
 message AddFavoriteToDoItemReply {
-}
-
-message SearchToDoSubItemsRequest {
-  string SearchText = 1;
-}
-
-message SearchToDoSubItemsReply {
-  repeated ToDoSubItemGrpc Items = 1;
 }
 
 message FailToDoItemRequest {
@@ -492,13 +476,6 @@ message ToDoItemPeriodicityGrpc {
 }
 
 message ToDoItemGroupGrpc {
-}
-
-message GetRootToDoSubItemsRequest {
-}
-
-message GetRootToDoSubItemsReply {
-  repeated ToDoSubItemGrpc Items = 1;
 }
 
 message ToDoSubItemGrpc {

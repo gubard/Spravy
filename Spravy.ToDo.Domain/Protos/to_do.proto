@@ -7,7 +7,6 @@ import "Protos/to_do_messages.proto";
 package spravy.to_do;
 
 service ToDoService {
-  rpc GetRootToDoSubItems (GetRootToDoSubItemsRequest) returns (GetRootToDoSubItemsReply);
   rpc AddRootToDoItem (AddRootToDoItemRequest) returns (AddRootToDoItemReply);
   rpc AddToDoItem (AddToDoItemRequest) returns (AddToDoItemReply);
   rpc DeleteToDoItem (DeleteToDoItemRequest) returns (DeleteToDoItemReply);
@@ -19,15 +18,12 @@ service ToDoService {
   rpc UpdateToDoItemDescription (UpdateToDoItemDescriptionRequest) returns (UpdateToDoItemDescriptionReply);
   rpc SkipToDoItem (SkipToDoItemRequest) returns (SkipToDoItemReply);
   rpc FailToDoItem (FailToDoItemRequest) returns (FailToDoItemReply);
-  rpc SearchToDoSubItems (SearchToDoSubItemsRequest) returns (SearchToDoSubItemsReply);
   rpc UpdateToDoItemType (UpdateToDoItemTypeRequest) returns (UpdateToDoItemTypeReply);
   rpc AddFavoriteToDoItem (AddFavoriteToDoItemRequest) returns (AddFavoriteToDoItemReply);
   rpc RemoveFavoriteToDoItem (RemoveFavoriteToDoItemRequest) returns (RemoveFavoriteToDoItemReply);
-  rpc GetFavoriteToDoItems (GetFavoriteToDoItemsRequest) returns (GetFavoriteToDoItemsReply);
   rpc UpdateToDoItemAnnuallyPeriodicity (UpdateToDoItemAnnuallyPeriodicityRequest) returns (UpdateToDoItemAnnuallyPeriodicityReply);
   rpc UpdateToDoItemMonthlyPeriodicity (UpdateToDoItemMonthlyPeriodicityRequest) returns (UpdateToDoItemMonthlyPeriodicityReply);
   rpc UpdateToDoItemWeeklyPeriodicity (UpdateToDoItemWeeklyPeriodicityRequest) returns (UpdateToDoItemWeeklyPeriodicityReply);
-  rpc GetLeafToDoSubItems (GetLeafToDoSubItemsRequest) returns (GetLeafToDoSubItemsReply);
   rpc GetToDoSelectorItems (GetToDoSelectorItemsRequest) returns (GetToDoSelectorItemsReply);
   rpc UpdateToDoItemParent (UpdateToDoItemParentRequest) returns (UpdateToDoItemParentReply);
   rpc ToDoItemToRoot (ToDoItemToRootRequest) returns (ToDoItemToRootReply);
@@ -58,4 +54,5 @@ service ToDoService {
   rpc RandomizeChildrenOrderIndex (RandomizeChildrenOrderIndexRequest) returns (RandomizeChildrenOrderIndexReply);
   rpc UpdateToDoItemIsRequiredCompleteInDueDate (UpdateToDoItemIsRequiredCompleteInDueDateRequest) returns (UpdateToDoItemIsRequiredCompleteInDueDateReply);
   rpc GetTodayToDoItems (GetTodayToDoItemsRequest) returns (GetTodayToDoItemsReply);
+  rpc ResetToDoItem (ResetToDoItemRequest) returns (ResetToDoItemReply);
 }
