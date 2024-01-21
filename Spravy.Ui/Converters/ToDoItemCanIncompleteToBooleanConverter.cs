@@ -5,7 +5,7 @@ using Spravy.ToDo.Domain.Enums;
 
 namespace Spravy.Ui.Converters;
 
-public class ToDoItemIsCanToBooleanConverter : IValueConverter
+public class ToDoItemCanIncompleteToBooleanConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
@@ -16,8 +16,8 @@ public class ToDoItemIsCanToBooleanConverter : IValueConverter
 
         return isCan switch
         {
-            ToDoItemIsCan.None => false,
-            _ => true
+            ToDoItemIsCan.CanIncomplete => true,
+            _ => false
         };
     }
 

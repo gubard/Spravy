@@ -344,20 +344,6 @@ message AddFavoriteToDoItemRequest {
 message AddFavoriteToDoItemReply {
 }
 
-message FailToDoItemRequest {
-  bytes Id = 1;
-}
-
-message FailToDoItemReply {
-}
-
-message SkipToDoItemRequest {
-  bytes Id = 1;
-}
-
-message SkipToDoItemReply {
-}
-
 message UpdateToDoItemDescriptionRequest {
   bytes Id = 1;
   string Description = 2;
@@ -445,9 +431,6 @@ message AddRootToDoItemReply {
 message ToDoItemPlannedGrpc {
   google.protobuf.Timestamp DueDate = 1;
   bool IsCompleted = 2;
-  uint32 CompletedCount = 3;
-  uint32 SkippedCount = 4;
-  uint32 FailedCount = 5;
   ToDoItemChildrenTypeGrpc ChildrenType = 6;
 }
 
@@ -501,9 +484,6 @@ message ToDoSubItemGrpc {
 
 message ToDoSubItemPeriodicityGrpc {
   google.protobuf.Timestamp DueDate = 1;
-  uint32 CompletedCount = 2;
-  uint32 SkippedCount = 3;
-  uint32 FailedCount = 4;
   DateTimeOffsetGrpc LastCompleted = 9;
 
   oneof Periodicity {
@@ -517,9 +497,6 @@ message ToDoSubItemPeriodicityGrpc {
 message ToDoSubItemPlannedGrpc {
   bool IsCompleted = 1;
   google.protobuf.Timestamp DueDate = 2;
-  uint32 CompletedCount = 3;
-  uint32 SkippedCount = 4;
-  uint32 FailedCount = 5;
   DateTimeOffsetGrpc LastCompleted = 6;
 }
 
@@ -528,25 +505,16 @@ message ToDoSubItemGroupGrpc {
 
 message ToDoSubItemValueGrpc {
   bool IsCompleted = 1;
-  uint32 CompletedCount = 2;
-  uint32 SkippedCount = 3;
-  uint32 FailedCount = 4;
   DateTimeOffsetGrpc LastCompleted = 5;
 }
 
 message ToDoSubItemCircleGrpc {
   bool IsCompleted = 1;
-  uint32 CompletedCount = 2;
-  uint32 SkippedCount = 3;
-  uint32 FailedCount = 4;
   DateTimeOffsetGrpc LastCompleted = 5;
 }
 
 message ToDoSubItemStepGrpc {
   bool IsCompleted = 1;
-  uint32 CompletedCount = 2;
-  uint32 SkippedCount = 3;
-  uint32 FailedCount = 4;
   DateTimeOffsetGrpc LastCompleted = 5;
 }
 
@@ -578,9 +546,6 @@ message DailyPeriodicityGrpc {
 
 message ToDoSubItemPeriodicityOffsetGrpc {
   google.protobuf.Timestamp DueDate = 1;
-  uint32 CompletedCount = 2;
-  uint32 SkippedCount = 3;
-  uint32 FailedCount = 4;
   DateTimeOffsetGrpc LastCompleted = 5;
 }
 
@@ -645,7 +610,5 @@ enum ToDoItemChildrenTypeGrpc {
 enum ToDoItemIsCanGrpc {
   None = 0;
   CanComplete = 1;
-  CanSkip = 2;
-  CanFail = 4;
-  CanIncomplete = 8;
+  CanIncomplete = 2;
 }

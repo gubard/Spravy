@@ -16,8 +16,6 @@ service ToDoService {
   rpc UpdateToDoItemName (UpdateToDoItemNameRequest) returns (UpdateToDoItemNameReply);
   rpc UpdateToDoItemOrderIndex (UpdateToDoItemOrderIndexRequest) returns (UpdateToDoItemOrderIndexReply);
   rpc UpdateToDoItemDescription (UpdateToDoItemDescriptionRequest) returns (UpdateToDoItemDescriptionReply);
-  rpc SkipToDoItem (SkipToDoItemRequest) returns (SkipToDoItemReply);
-  rpc FailToDoItem (FailToDoItemRequest) returns (FailToDoItemReply);
   rpc UpdateToDoItemType (UpdateToDoItemTypeRequest) returns (UpdateToDoItemTypeReply);
   rpc AddFavoriteToDoItem (AddFavoriteToDoItemRequest) returns (AddFavoriteToDoItemReply);
   rpc RemoveFavoriteToDoItem (RemoveFavoriteToDoItemRequest) returns (RemoveFavoriteToDoItemReply);

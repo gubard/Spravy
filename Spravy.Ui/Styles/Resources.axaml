@@ -3,7 +3,8 @@
                     xmlns:converters="clr-namespace:Spravy.Ui.Converters"
                     xmlns:enums1="clr-namespace:Spravy.Ui.Features.ToDo.Enums"
                     xmlns:system="clr-namespace:System;assembly=System.Runtime"
-                    xmlns:enums="clr-namespace:Spravy.Ui.Enums">
+                    xmlns:enums="clr-namespace:Spravy.Ui.Enums"
+                    xmlns:enums2="clr-namespace:Spravy.ToDo.Domain.Enums;assembly=Spravy.ToDo.Domain">
     <converters:DoubleToPercentsConverter x:Key="DoubleToPercentsConverter95" Percentage=".95" />
     <converters:DoubleToPercentsConverter x:Key="DoubleToPercentsConverter85" Percentage=".85" />
     <converters:DoubleToPercentsConverter x:Key="DoubleToPercentsConverter70" Percentage=".70" />
@@ -20,7 +21,8 @@
     <converters:NullOrWhiteSpaceToBooleanValueConverter x:Key="NullOrWhiteSpaceToBooleanValueConverterReverse"
                                                         Reverse="True" />
     <converters:BooleanToCompletedStringConverter x:Key="BooleanToCompletedStringConverter" />
-    <converters:ToDoItemIsCanToBooleanConverter x:Key="ToDoItemIsCanToBooleanConverter" />
+    <converters:ToDoItemCanCompleteToBooleanConverter x:Key="ToDoItemCanCompleteToBooleanConverter" />
+    <converters:ToDoItemCanIncompleteToBooleanConverter x:Key="ToDoItemCanIncompleteToBooleanConverter" />
     <converters:EnumToBooleanConverter x:TypeArguments="enums1:GroupBy"
                                        x:Key="MultiEditingGroupByNoneToTrue"
                                        Value="None" />
@@ -40,4 +42,10 @@
     <converters:EnumToBooleanConverter x:TypeArguments="enums:UserIdentifierType"
                                        x:Key="UserIdentifierTypeLoginToTrue"
                                        Value="Login" />
+    <!--<converters:EnumToBooleanConverter x:TypeArguments="enums2:ToDoItemIsCan" 
+                                       x:Key="ToDoItemIsCanCanCompleteToTrue"
+                                       Value="CanComplete" />
+    <converters:EnumToBooleanConverter x:TypeArguments="enums2:ToDoItemIsCan" 
+                                       x:Key="ToDoItemIsCanCanIncompleteToTrue"
+                                       Value="CanIncomplete" />-->
 </ResourceDictionary>

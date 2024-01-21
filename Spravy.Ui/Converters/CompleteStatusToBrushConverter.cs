@@ -19,8 +19,6 @@ public class CompleteStatusToBrushConverter : IValueConverter
         {
             CompleteStatus.Complete => Brushes.Green,
             CompleteStatus.Incomplete => Brushes.Aqua,
-            CompleteStatus.Skip => Brushes.Yellow,
-            CompleteStatus.Fail => Brushes.Red,
             _ => throw new ArgumentOutOfRangeException()
         };
     }
@@ -40,16 +38,6 @@ public class CompleteStatusToBrushConverter : IValueConverter
         if (brush.Equals(Brushes.Aqua))
         {
             return CompleteStatus.Incomplete;
-        }
-
-        if (brush.Equals(Brushes.Yellow))
-        {
-            return CompleteStatus.Skip;
-        }
-
-        if (brush.Equals(Brushes.Red))
-        {
-            return CompleteStatus.Fail;
         }
 
         throw new ArgumentOutOfRangeException();

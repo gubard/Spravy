@@ -25,7 +25,7 @@ namespace Spravy.Ui.ViewModels;
 
 public class ToDoItemViewModel : NavigatableViewModelBase,
     IToDoItemOrderChanger,
-    ICanComplete,
+    ICanCompleteProperty,
     IToDoLinkProperty,
     IToDoDescriptionProperty,
     IToDoSettingsProperty,
@@ -285,7 +285,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
 
                     if (IsCan != ToDoItemIsCan.None)
                     {
-                        PageHeaderViewModel.Commands.Add(CommandStorage.CompleteToDoItemItem.WithParam(this));
+                        PageHeaderViewModel.Commands.Add(CommandStorage.SwitchCompleteToDoItemItem.WithParam(this));
                     }
 
                     if (Type != ToDoItemType.Group)

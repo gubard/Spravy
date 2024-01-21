@@ -55,7 +55,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 
         if (item.IsCan != ToDoItemIsCan.None)
         {
-            item.Commands.Add(CommandStorage.CompleteToDoItemItem.WithParam(item));
+            item.Commands.Add(CommandStorage.SwitchCompleteToDoItemItem.WithParam(item));
         }
 
         if (item.Type != ToDoItemType.Group)

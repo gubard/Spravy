@@ -43,7 +43,11 @@ public static class CommandStorage
         toDoService = kernel.Get<IToDoService>();
         SwitchPaneItem = CreateCommand(SwitchPaneAsync, MaterialIconKind.Menu, "Open pane");
         NavigateToToDoItemItem = CreateCommand<Guid>(NavigateToToDoItemAsync, MaterialIconKind.ListBox, "Open");
-        CompleteToDoItemItem = CreateCommand<ICanComplete>(CompleteToDoItemAsync, MaterialIconKind.Check, "Complete");
+        SwitchCompleteToDoItemItem = CreateCommand<ICanCompleteProperty>(
+            SwitchCompleteToDoItemAsync,
+            MaterialIconKind.Check,
+            "Complete"
+        );
         SelectAll = CreateCommand<AvaloniaList<Selected<ToDoItemNotify>>>(
             SelectAllAsync,
             MaterialIconKind.CheckAll,
@@ -199,7 +203,7 @@ public static class CommandStorage
             "Open current to do item"
         );
         MultiCompleteToDoItemsItem = CreateCommand<AvaloniaList<Selected<ToDoItemNotify>>>(
-            MultiCompleteToDoItemsAsync,
+            MultiSwitchCompleteToDoItemsAsync,
             MaterialIconKind.CheckAll,
             "Complete all to do items"
         );
@@ -325,8 +329,8 @@ public static class CommandStorage
     public static ICommand SwitchPaneCommand => SwitchPaneItem.Command;
     public static CommandItem SwitchPaneItem { get; }
 
-    public static ICommand CompleteToDoItemCommand => CompleteToDoItemItem.Command;
-    public static CommandItem CompleteToDoItemItem { get; }
+    public static ICommand SwitchCompleteToDoItemCommand => SwitchCompleteToDoItemItem.Command;
+    public static CommandItem SwitchCompleteToDoItemItem { get; }
 
     public static ICommand ChangeToActiveDoItemCommand => ChangeToActiveDoItemItem.Command;
     public static CommandItem ChangeToActiveDoItemItem { get; }
@@ -584,69 +588,41 @@ public static class CommandStorage
         );
     }
 
-    private static Task MultiCompleteToDoItemsAsync(
+    private static async Task MultiSwitchCompleteToDoItemsAsync(
         AvaloniaList<Selected<ToDoItemNotify>> itemsNotify,
         CancellationToken cancellationToken
     )
     {
         var items = itemsNotify.Where(x => x.IsSelect).Select(x => x.Value).ToArray();
 
-        return dialogViewer.ShowInfoInputDialogAsync<CompleteToDoItemViewModel>(
-            _ => dialogViewer.CloseInputDialogAsync(cancellationToken),
-            viewModel =>
-            {
-                viewModel.SetAllStatus();
-
-                viewModel.Complete = async status =>
-                {
-                    await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
-                    await CompleteAsync(items, status, cancellationToken).ConfigureAwait(false);
-                    await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
-                };
-            },
-            cancellationToken
-        );
+        await CompleteAsync(items, cancellationToken).ConfigureAwait(false);
+        await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
     }
 
     private static async Task CompleteAsync(
         IEnumerable<ToDoItemNotify> items,
-        CompleteStatus status,
         CancellationToken cancellationToken
     )
     {
-        switch (status)
+        foreach (var item in items)
         {
-            case CompleteStatus.Complete:
-                foreach (var item in items.Where(x => x.IsCan.HasFlag(ToDoItemIsCan.CanComplete)))
-                {
+            switch (item.IsCan)
+            {
+                case ToDoItemIsCan.None:
+                    break;
+                case ToDoItemIsCan.CanComplete:
                     await toDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true, cancellationToken)
                         .ConfigureAwait(false);
-                }
 
-                break;
-            case CompleteStatus.Skip:
-                foreach (var item in items.Where(x => x.IsCan.HasFlag(ToDoItemIsCan.CanSkip)))
-                {
-                    await toDoService.SkipToDoItemAsync(item.Id, cancellationToken).ConfigureAwait(false);
-                }
-
-                break;
-            case CompleteStatus.Fail:
-                foreach (var item in items.Where(x => x.IsCan.HasFlag(ToDoItemIsCan.CanFail)))
-                {
-                    await toDoService.FailToDoItemAsync(item.Id, cancellationToken).ConfigureAwait(false);
-                }
-
-                break;
-            case CompleteStatus.Incomplete:
-                foreach (var item in items.Where(x => x.IsCan.HasFlag(ToDoItemIsCan.CanIncomplete)))
-                {
-                    await toDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true, cancellationToken)
+                    break;
+                case ToDoItemIsCan.CanIncomplete:
+                    await toDoService.UpdateToDoItemCompleteStatusAsync(item.Id, false, cancellationToken)
                         .ConfigureAwait(false);
-                }
 
-                break;
-            default: throw new ArgumentOutOfRangeException(nameof(status), status, null);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
     }
 
@@ -1353,56 +1329,37 @@ public static class CommandStorage
         );
     }
 
-    private static Task CompleteToDoItemAsync(ICanComplete canComplete, CancellationToken cancellationToken)
+    private static async Task SwitchCompleteToDoItemAsync(
+        ICanCompleteProperty property,
+        CancellationToken cancellationToken
+    )
     {
-        return dialogViewer.ShowInfoInputDialogAsync<CompleteToDoItemViewModel>(
-            _ => dialogViewer.CloseInputDialogAsync(cancellationToken),
-            viewModel =>
-            {
-                viewModel.SetCompleteStatus(canComplete.IsCan);
+        switch (property.IsCan)
+        {
+            case ToDoItemIsCan.None:
+                break;
+            case ToDoItemIsCan.CanComplete:
+                await toDoService.UpdateToDoItemCompleteStatusAsync(
+                        property.Id,
+                        true,
+                        cancellationToken
+                    )
+                    .ConfigureAwait(false);
+                break;
+            case ToDoItemIsCan.CanIncomplete:
+                await toDoService.UpdateToDoItemCompleteStatusAsync(
+                        property.Id,
+                        false,
+                        cancellationToken
+                    )
+                    .ConfigureAwait(false);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
 
-                viewModel.Complete = async status =>
-                {
-                    await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
 
-                    switch (status)
-                    {
-                        case CompleteStatus.Complete:
-                            await toDoService.UpdateToDoItemCompleteStatusAsync(
-                                    canComplete.Id,
-                                    true,
-                                    cancellationToken
-                                )
-                                .ConfigureAwait(false);
-
-                            break;
-                        case CompleteStatus.Incomplete:
-                            await toDoService.UpdateToDoItemCompleteStatusAsync(
-                                    canComplete.Id,
-                                    false,
-                                    cancellationToken
-                                )
-                                .ConfigureAwait(false);
-
-                            break;
-                        case CompleteStatus.Skip:
-                            await toDoService.SkipToDoItemAsync(canComplete.Id, cancellationToken)
-                                .ConfigureAwait(false);
-
-                            break;
-                        case CompleteStatus.Fail:
-                            await toDoService.FailToDoItemAsync(canComplete.Id, cancellationToken)
-                                .ConfigureAwait(false);
-
-                            break;
-                        default: throw new ArgumentOutOfRangeException(nameof(status), status, null);
-                    }
-
-                    await RefreshCurrentViewAsync(cancellationToken);
-                };
-            },
-            cancellationToken
-        );
+        await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
     }
 
     private static async Task RefreshCurrentViewAsync(CancellationToken cancellationToken)

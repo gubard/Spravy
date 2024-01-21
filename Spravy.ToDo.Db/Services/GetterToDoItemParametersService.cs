@@ -196,11 +196,11 @@ public class GetterToDoItemParametersService
                     }
 
                     return parameters.With(ToDoItemStatus.Miss)
-                        .With(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip)
+                        .With(ToDoItemIsCan.CanComplete)
                         .With(ToActiveToDoItem(entity));
                 case ToDoItemChildrenType.IgnoreCompletion:
                     return parameters.With(ToDoItemStatus.Miss)
-                        .With(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip)
+                        .With(ToDoItemIsCan.CanComplete)
                         .With(firstActive ?? ToActiveToDoItem(entity));
                 default: throw new ArgumentOutOfRangeException();
             }
@@ -216,7 +216,7 @@ public class GetterToDoItemParametersService
                         .With(firstMiss);
                 case ToDoItemChildrenType.IgnoreCompletion:
                     return parameters.With(ToDoItemStatus.Miss)
-                        .With(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip)
+                        .With(ToDoItemIsCan.CanComplete)
                         .With(firstMiss);
                 default: throw new ArgumentOutOfRangeException();
             }
@@ -232,14 +232,14 @@ public class GetterToDoItemParametersService
                         .With(firstReadyForComplete);
                 case ToDoItemChildrenType.IgnoreCompletion:
                     return parameters.With(ToDoItemStatus.ReadyForComplete)
-                        .With(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip)
+                        .With(ToDoItemIsCan.CanComplete)
                         .With(firstReadyForComplete);
                 default: throw new ArgumentOutOfRangeException();
             }
         }
 
         return parameters.With(ToDoItemStatus.ReadyForComplete)
-            .With(ToDoItemIsCan.CanFail | ToDoItemIsCan.CanComplete | ToDoItemIsCan.CanSkip)
+            .With(ToDoItemIsCan.CanComplete)
             .With(null);
     }
 

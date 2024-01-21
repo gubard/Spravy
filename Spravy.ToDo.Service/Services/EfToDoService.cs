@@ -390,8 +390,6 @@ public class EfToDoService : IToDoService
                         default: throw new ArgumentOutOfRangeException();
                     }
 
-                    item.LastCompletedType = ToDoItemCompletedType.Completed;
-                    item.CompletedCount++;
                     UpdateDueDate(item, offset, cancellationToken);
                     item.LastCompleted = DateTimeOffset.Now;
                     await CircleCompletionAsync(context, item, cancellationToken);
@@ -562,128 +560,6 @@ public class EfToDoService : IToDoService
                 var item = await c.Set<ToDoItemEntity>().FindAsync(id);
                 item = item.ThrowIfNull();
                 item.Description = description;
-            }
-        );
-    }
-
-    public async Task SkipToDoItemAsync(Guid id, CancellationToken cancellationToken)
-    {
-        var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
-        await using var context = dbContextFactory.Create();
-
-        await context.ExecuteSaveChangesTransactionAsync(
-            async c =>
-            {
-                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
-                item = item.ThrowIfNull();
-                var parameters =
-                    await getterToDoItemParametersService.GetToDoItemParametersAsync(
-                        c,
-                        item,
-                        offset,
-                        cancellationToken
-                    );
-
-                if (!parameters.IsCan.HasFlag(ToDoItemIsCan.CanSkip))
-                {
-                    throw new ArgumentException();
-                }
-
-                switch (item.Type)
-                {
-                    case ToDoItemType.Value:
-                        item.IsCompleted = true;
-
-                        break;
-                    case ToDoItemType.Group:
-                        break;
-                    case ToDoItemType.Planned:
-                        item.IsCompleted = true;
-
-                        break;
-                    case ToDoItemType.Periodicity:
-                        break;
-                    case ToDoItemType.PeriodicityOffset:
-                        break;
-                    case ToDoItemType.Circle:
-                        item.IsCompleted = true;
-
-                        break;
-                    case ToDoItemType.Step:
-                        item.IsCompleted = true;
-
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-
-                item.LastCompletedType = ToDoItemCompletedType.Skipped;
-                item.SkippedCount++;
-                UpdateDueDate(item, offset, cancellationToken);
-                item.LastCompleted = DateTimeOffset.Now;
-                await CircleSkipAsync(context, item, cancellationToken);
-                await StepCompletionAsync(context, item, cancellationToken);
-            }
-        );
-    }
-
-    public async Task FailToDoItemAsync(Guid id, CancellationToken cancellationToken)
-    {
-        var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
-        await using var context = dbContextFactory.Create();
-
-        await context.ExecuteSaveChangesTransactionAsync(
-            async c =>
-            {
-                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
-                item = item.ThrowIfNull();
-                var parameters =
-                    await getterToDoItemParametersService.GetToDoItemParametersAsync(
-                        c,
-                        item,
-                        offset,
-                        cancellationToken
-                    );
-
-                if (!parameters.IsCan.HasFlag(ToDoItemIsCan.CanFail))
-                {
-                    throw new ArgumentException();
-                }
-
-                switch (item.Type)
-                {
-                    case ToDoItemType.Value:
-                        item.IsCompleted = true;
-
-                        break;
-                    case ToDoItemType.Group:
-                        break;
-                    case ToDoItemType.Planned:
-                        item.IsCompleted = true;
-
-                        break;
-                    case ToDoItemType.Periodicity:
-                        break;
-                    case ToDoItemType.PeriodicityOffset:
-                        break;
-                    case ToDoItemType.Circle:
-                        item.IsCompleted = true;
-
-                        break;
-                    case ToDoItemType.Step:
-                        item.IsCompleted = true;
-
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-
-                item.LastCompletedType = ToDoItemCompletedType.Failed;
-                item.FailedCount++;
-                UpdateDueDate(item, offset, cancellationToken);
-                item.LastCompleted = DateTimeOffset.Now;
-                await CircleCompletionAsync(context, item, cancellationToken);
-                await StepCompletionAsync(context, item, cancellationToken);
             }
         );
     }

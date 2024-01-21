@@ -442,46 +442,6 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public Task SkipToDoItemAsync(Guid id, CancellationToken cancellationToken)
-    {
-        return CallClientAsync(
-            async client =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                var metadata = await metadataFactory.CreateAsync(cancellationToken);
-
-                var request = new SkipToDoItemRequest
-                {
-                    Id = mapper.Map<ByteString>(id),
-                };
-
-                cancellationToken.ThrowIfCancellationRequested();
-                await client.SkipToDoItemAsync(request, metadata, cancellationToken: cancellationToken);
-            },
-            cancellationToken
-        );
-    }
-
-    public Task FailToDoItemAsync(Guid id, CancellationToken cancellationToken)
-    {
-        return CallClientAsync(
-            async client =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                var metadata = await metadataFactory.CreateAsync(cancellationToken);
-
-                var request = new FailToDoItemRequest
-                {
-                    Id = mapper.Map<ByteString>(id),
-                };
-
-                cancellationToken.ThrowIfCancellationRequested();
-                await client.FailToDoItemAsync(request, metadata, cancellationToken: cancellationToken);
-            },
-            cancellationToken
-        );
-    }
-
     public Task UpdateToDoItemTypeAsync(Guid id, ToDoItemType type, CancellationToken cancellationToken)
     {
         return CallClientAsync(

@@ -156,9 +156,24 @@
                     </Grid>
 
                     <StackPanel Grid.Row="1">
-                        <TextBlock Text="{Binding Value.Name}"
-                                   Classes="Headline6"
-                                   TextWrapping="Wrap" />
+                        <WrapPanel Orientation="Horizontal">
+                            <Button Command="{x:Static services:CommandStorage.SwitchCompleteToDoItemCommand}"
+                                    CommandParameter="{Binding Value}"
+                                    IsVisible="{Binding Value.IsCan, Converter={StaticResource ToDoItemCanCompleteToBooleanConverter}}">
+                                <avalonia:MaterialIcon Kind="Check" />
+                            </Button>
+
+                            <Button Command="{x:Static services:CommandStorage.SwitchCompleteToDoItemCommand}"
+                                    CommandParameter="{Binding Value}"
+                                    IsVisible="{Binding Value.IsCan, Converter={StaticResource ToDoItemCanIncompleteToBooleanConverter}}">
+                                <avalonia:MaterialIcon Kind="Ban" />
+                            </Button>
+
+                            <TextBlock Text="{Binding Value.Name}"
+                                       Classes="Headline6"
+                                       TextWrapping="Wrap"
+                                       VerticalAlignment="Center" />
+                        </WrapPanel>
 
                         <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto" Width="320"
                               HorizontalAlignment="Left">
@@ -203,19 +218,6 @@
                                 <StackPanel Orientation="Horizontal">
                                     <avalonia:MaterialIcon Kind="DotsHorizontal" />
                                     <TextBlock Text="Options" />
-                                </StackPanel>
-                            </Button>
-
-                            <Button Grid.Row="1"
-                                    Grid.Column="1"
-                                    Margin="0,5,5,5"
-                                    Classes="with-text"
-                                    CommandParameter="{Binding Value}"
-                                    Command="{x:Static services:CommandStorage.CompleteToDoItemCommand}"
-                                    IsVisible="{Binding Value.IsCan, Converter={StaticResource ToDoItemIsCanToBooleanConverter}}">
-                                <StackPanel Orientation="Horizontal">
-                                    <avalonia:MaterialIcon Kind="Check" />
-                                    <TextBlock Text="Complete" />
                                 </StackPanel>
                             </Button>
 

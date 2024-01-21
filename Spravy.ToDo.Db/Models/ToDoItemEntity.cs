@@ -15,9 +15,6 @@ public class ToDoItemEntity
     public DateOnly DueDate { get; set; } = DateTime.Now.ToDateOnly();
     public bool IsCompleted { get; set; }
     public TypeOfPeriodicity TypeOfPeriodicity { get; set; }
-    public uint CompletedCount { get; set; }
-    public uint SkippedCount { get; set; }
-    public uint FailedCount { get; set; }
     public string DaysOfWeek { get; set; } = "Monday";
     public string DaysOfMonth { get; set; } = "1";
     public string DaysOfYear { get; set; } = "1.1";
@@ -29,7 +26,6 @@ public class ToDoItemEntity
     public ToDoItemChildrenType ChildrenType { get; set; }
     public uint CurrentCircleOrderIndex { get; set; }
     public string Link { get; set; } = string.Empty;
-    public ToDoItemCompletedType? LastCompletedType { get; set; }
     public bool IsRequiredCompleteInDueDate { get; set; } = true;
 
     public Guid? ParentId { get; set; }

@@ -8,7 +8,11 @@ using Spravy.Ui.Interfaces;
 
 namespace Spravy.Ui.Models;
 
-public class ToDoItemNotify : NotifyBase, ICanComplete, IDeletable, IToDoSettingsProperty, ISetToDoParentItemParams
+public class ToDoItemNotify : NotifyBase,
+    ICanCompleteProperty,
+    IDeletable,
+    IToDoSettingsProperty,
+    ISetToDoParentItemParams
 {
     private Guid id;
     private string name = string.Empty;
@@ -93,7 +97,7 @@ public class ToDoItemNotify : NotifyBase, ICanComplete, IDeletable, IToDoSetting
     public Guid? ParentId
     {
         get => parentId;
-        set =>  this.RaiseAndSetIfChanged(ref parentId, value);
+        set => this.RaiseAndSetIfChanged(ref parentId, value);
     }
 
     public bool IsNavigateToParent => false;

@@ -23,8 +23,6 @@ public interface IToDoService
     Task UpdateToDoItemOrderIndexAsync(UpdateOrderIndexToDoItemOptions options, CancellationToken cancellationToken);
     Task UpdateToDoItemDescriptionAsync(Guid id, string description, CancellationToken cancellationToken);
     Task UpdateToDoItemCompleteStatusAsync(Guid id, bool isComplete, CancellationToken cancellationToken);
-    Task SkipToDoItemAsync(Guid id, CancellationToken cancellationToken);
-    Task FailToDoItemAsync(Guid id, CancellationToken cancellationToken);
     Task UpdateToDoItemTypeAsync(Guid id, ToDoItemType type, CancellationToken cancellationToken);
     Task AddFavoriteToDoItemAsync(Guid id, CancellationToken cancellationToken);
     Task RemoveFavoriteToDoItemAsync(Guid id, CancellationToken cancellationToken);

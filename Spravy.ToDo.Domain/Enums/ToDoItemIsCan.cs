@@ -1,11 +1,9 @@
 namespace Spravy.ToDo.Domain.Enums;
 
 [Flags]
-public enum ToDoItemIsCan : byte
+public enum ToDoItemIsCan
 {
     None = 0,
     CanComplete = 1,
-    CanSkip = 2,
-    CanFail = 4,
-    CanIncomplete = 8,
+    CanIncomplete = 2,
 }

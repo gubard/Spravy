@@ -4,6 +4,4 @@ public enum CompleteStatus
 {
     Complete,
     Incomplete,
-    Skip,
-    Fail,
 }

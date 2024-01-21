@@ -1,10 +1,8 @@
-using System;
 using Spravy.ToDo.Domain.Enums;
 
 namespace Spravy.Ui.Interfaces;
 
-public interface ICanComplete
+public interface ICanCompleteProperty : IIdProperty
 {
     ToDoItemIsCan IsCan { get; }
-    Guid Id { get; }
 }

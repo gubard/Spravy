@@ -387,20 +387,6 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         return new();
     }
 
-    public override async Task<SkipToDoItemReply> SkipToDoItem(SkipToDoItemRequest request, ServerCallContext context)
-    {
-        await toDoService.SkipToDoItemAsync(mapper.Map<Guid>(request.Id), context.CancellationToken);
-
-        return new();
-    }
-
-    public override async Task<FailToDoItemReply> FailToDoItem(FailToDoItemRequest request, ServerCallContext context)
-    {
-        await toDoService.FailToDoItemAsync(mapper.Map<Guid>(request.Id), context.CancellationToken);
-
-        return new();
-    }
-
     public override async Task<UpdateToDoItemTypeReply> UpdateToDoItemType(
         UpdateToDoItemTypeRequest request,
         ServerCallContext context
