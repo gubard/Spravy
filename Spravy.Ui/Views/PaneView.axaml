@@ -24,7 +24,7 @@
         <Button Command="{x:Static services:CommandStorage.NavigateToCommand}"
                 CommandParameter="{x:Type viewModels:TodayToDoItemsViewModel}">
             <Grid ColumnDefinitions="Auto,Auto">
-                <avalonia:MaterialIcon Kind="Settings" />
+                <avalonia:MaterialIcon Kind="CalendarToday" />
                 <TextBlock Grid.Column="1" Text="Today to-do items" />
             </Grid>
         </Button>

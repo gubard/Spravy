@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Ninject;
 using Spravy.Authentication.Domain.Interfaces;
-using Spravy.Authentication.Protos;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Models;
 using Spravy.Ui.Enums;
