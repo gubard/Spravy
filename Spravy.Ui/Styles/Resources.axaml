@@ -23,6 +23,7 @@
     <converters:BooleanToCompletedStringConverter x:Key="BooleanToCompletedStringConverter" />
     <converters:ToDoItemCanCompleteToBooleanConverter x:Key="ToDoItemCanCompleteToBooleanConverter" />
     <converters:ToDoItemCanIncompleteToBooleanConverter x:Key="ToDoItemCanIncompleteToBooleanConverter" />
+    <converters:ToDoItemCanNoneToBooleanReverseConverter x:Key="ToDoItemCanNoneToBooleanReverseConverter"/>
     <converters:EnumToBooleanConverter x:TypeArguments="enums1:GroupBy"
                                        x:Key="MultiEditingGroupByNoneToTrue"
                                        Value="None" />

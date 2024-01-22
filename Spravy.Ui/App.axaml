@@ -157,17 +157,9 @@
 
                     <StackPanel Grid.Row="1">
                         <WrapPanel Orientation="Horizontal">
-                            <Button Command="{x:Static services:CommandStorage.SwitchCompleteToDoItemCommand}"
-                                    CommandParameter="{Binding Value}"
-                                    IsVisible="{Binding Value.IsCan, Converter={StaticResource ToDoItemCanCompleteToBooleanConverter}}">
-                                <avalonia:MaterialIcon Kind="Check" />
-                            </Button>
-
-                            <Button Command="{x:Static services:CommandStorage.SwitchCompleteToDoItemCommand}"
-                                    CommandParameter="{Binding Value}"
-                                    IsVisible="{Binding Value.IsCan, Converter={StaticResource ToDoItemCanIncompleteToBooleanConverter}}">
-                                <avalonia:MaterialIcon Kind="Ban" />
-                            </Button>
+                            <ToggleButton Command="{x:Static services:CommandStorage.SwitchCompleteToDoItemCommand}"
+                                          CommandParameter="{Binding Value}"
+                                          IsVisible="{Binding Value.IsCan, Converter={StaticResource ToDoItemCanNoneToBooleanReverseConverter}}" />
 
                             <TextBlock Text="{Binding Value.Name}"
                                        Classes="Headline6"

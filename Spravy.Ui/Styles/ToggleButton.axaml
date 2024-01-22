@@ -6,7 +6,7 @@
   <system:Double x:Key="CheckBoxHoveredOpacity">0.12</system:Double>
   <system:Double x:Key="CheckBoxPressedOpacity">0.26</system:Double>
 
-  <ControlTheme x:Key="MaterialToggleButton" TargetType="ToggleButton">
+  <ControlTheme x:Key="CheckBoxToggleButton" TargetType="ToggleButton">
     <Setter Property="VerticalContentAlignment" Value="Center" />
     <Setter Property="assists:SelectionControlAssist.InnerForeground"
             Value="{DynamicResource MaterialPrimaryMidBrush}" />
@@ -113,5 +113,5 @@
   </ControlTheme>
 
   <ControlTheme x:Key="{x:Type ToggleButton}" TargetType="ToggleButton"
-                BasedOn="{StaticResource MaterialToggleButton}" />
+                BasedOn="{StaticResource CheckBoxToggleButton}" />
 </ResourceDictionary>
