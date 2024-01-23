@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,6 +26,7 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
     private Guid id;
     private Vector scrollOffset;
     private readonly TaskWork refreshWork;
+    private readonly PageHeaderViewModel pageHeaderViewModel;
 
     public LeafToDoItemsViewModel() : base(true)
     {
@@ -45,7 +47,16 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
     public required IObjectStorage ObjectStorage { get; init; }
 
     [Inject]
-    public required PageHeaderViewModel PageHeaderViewModel { get; init; }
+    public required PageHeaderViewModel PageHeaderViewModel
+    {
+        get => pageHeaderViewModel;
+        [MemberNotNull(nameof(pageHeaderViewModel))]
+        init
+        {
+            pageHeaderViewModel = value;
+            pageHeaderViewModel.LeftCommand = CommandStorage.NavigateToCurrentToDoItemItem;
+        }
+    }
 
     [Inject]
     public required IToDoService ToDoService { get; init; }

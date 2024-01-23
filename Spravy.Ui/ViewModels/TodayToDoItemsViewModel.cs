@@ -9,6 +9,7 @@ using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
+using Spravy.Ui.Services;
 
 namespace Spravy.Ui.ViewModels;
 
@@ -36,6 +37,7 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IRefresh
         {
             pageHeaderViewModel = value;
             pageHeaderViewModel.Header = "Today to-do";
+            pageHeaderViewModel.LeftCommand = CommandStorage.NavigateToCurrentToDoItemItem;
         }
     }
 
