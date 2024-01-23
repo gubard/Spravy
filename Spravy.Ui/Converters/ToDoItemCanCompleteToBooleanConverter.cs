@@ -16,8 +16,8 @@ public class ToDoItemCanCompleteToBooleanConverter : IValueConverter
 
         return isCan switch
         {
-            ToDoItemIsCan.CanComplete => true,
-            _ => false
+            ToDoItemIsCan.CanComplete => false,
+            _ => true
         };
     }
 
