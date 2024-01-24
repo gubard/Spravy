@@ -187,7 +187,6 @@
                             <Grid ColumnDefinitions="*,*,*" HorizontalAlignment="Left">
                                 <Button Grid.ColumnSpan="3"
                                         Margin="0,5,5,5"
-                                        Width="320"
                                         IsVisible="{Binding Value.Active, Converter={StaticResource NullToBooleanConverter}}"
                                         CommandParameter="{Binding Value.Active.Id}"
                                         Command="{x:Static services:CommandStorage.NavigateToToDoItemCommand}">
