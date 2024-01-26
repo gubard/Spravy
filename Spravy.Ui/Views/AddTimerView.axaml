@@ -14,7 +14,7 @@
     <StackPanel>
         <CheckBox IsChecked="{Binding IsFavorite}" Content="Completed" />
 
-        <TextBox assists:TextFieldAssist.Label="Item"
+        <TextBox assists:TextFieldAssist.Label="{DynamicResource AddTimerView.Item}"
                  IsReadOnly="True"
                  Text="{Binding ShortItem.Name}"
                  Classes="outline dense with-button"
@@ -27,7 +27,7 @@
             </TextBox.InnerLeftContent>
         </TextBox>
 
-        <TextBox assists:TextFieldAssist.Label="DueDateTime"
+        <TextBox assists:TextFieldAssist.Label="{DynamicResource AddTimerView.DueDateTime}"
                  IsReadOnly="True"
                  Text="{Binding DueDateTime}"
                  Classes="outline dense with-button">

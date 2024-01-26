@@ -28,7 +28,7 @@
                 Height="64">
             <StackPanel Orientation="Horizontal">
                 <avalonia:MaterialIcon Kind="Plus" Width="40" Height="40" />
-                <TextBlock Text="{DynamicResource PaneView.CreateTask}" VerticalAlignment="Center" Classes="Headline5" />
+                <TextBlock Text="{DynamicResource RootToDoItemsView.CreateTask}" VerticalAlignment="Center" Classes="Headline5" />
             </StackPanel>
         </Button>
     </Grid>

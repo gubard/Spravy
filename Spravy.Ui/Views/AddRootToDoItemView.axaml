@@ -14,10 +14,10 @@
         <TextBox Classes="floating-watermark alignment-top outline dense"
                  Theme="{StaticResource OutlineTextBox}"
                  Text="{Binding Name}"
-                 assists:TextFieldAssist.Label="Name"
+                 assists:TextFieldAssist.Label="{DynamicResource AddRootToDoItemView.Name}"
                  Name="{x:Static views:AddRootToDoItemView.NameTextBoxName}" />
         <ComboBox Theme="{StaticResource MaterialOutlineComboBox}"
-                  assists:ComboBoxAssist.Label="Type"
+                  assists:ComboBoxAssist.Label="{DynamicResource AddRootToDoItemView.Type}"
                   SelectedItem="{Binding Type}"
                   ItemsSource="{Binding ToDoItemTypes}" />
     </StackPanel>

@@ -11,7 +11,7 @@
                                 x:DataType="viewModels:ExceptionViewModel">
     <TextBox Text="{Binding FullExceptionText}"
              IsReadOnly="True"
-             UseFloatingWatermark="True" assists:TextFieldAssist.Label="Error message"
+             UseFloatingWatermark="True" assists:TextFieldAssist.Label="{DynamicResource ExceptionView.ErrorMessage}"
              Classes="outline dense"
              Theme="{StaticResource OutlineTextBox}"
              AcceptsReturn="True"

@@ -26,13 +26,13 @@
 
         <TextBox Text="{Binding Name}"
                  Classes="outline dense"
-                 assists:TextFieldAssist.Label="Name"
+                 assists:TextFieldAssist.Label="{DynamicResource AddToDoItemView.Name}"
                  Theme="{StaticResource OutlineTextBox}"
                  Name="{x:Static views:AddToDoItemView.NameTextBoxName}"
                  UseFloatingWatermark="True"
                  VerticalAlignment="Top" />
         <ComboBox Theme="{StaticResource MaterialOutlineComboBox}"
-                  assists:ComboBoxAssist.Label="Type"
+                  assists:ComboBoxAssist.Label="{DynamicResource AddToDoItemView.Type}"
                   SelectedItem="{Binding Type}"
                   ItemsSource="{Binding ToDoItemTypes}" />
     </StackPanel>

@@ -3,6 +3,7 @@
                     xmlns:system="clr-namespace:System;assembly=System.Runtime">
     <!--MultiToDoItemsView-->
     <system:String x:Key="MultiToDoItemsView.IsMulti">Select a few</system:String>
+    <system:String x:Key="MultiToDoItemsView.GroupBy">Group by</system:String>
 
     <!--ToDoItemType-->
     <system:String x:Key="ToDoItemType.Value">Value</system:String>
@@ -18,26 +19,23 @@
     <system:String x:Key="ToDoItemStatus.ReadyForComplete">Ready for complete</system:String>
     <system:String x:Key="ToDoItemStatus.Planned">Planned</system:String>
     <system:String x:Key="ToDoItemStatus.Completed">Completed</system:String>
-    
+
     <!--AccountSettingView-->
     <system:String x:Key="AccountSettingView.Login">Login:</system:String>
     <system:String x:Key="AccountSettingView.ChangePassword">Change password</system:String>
-    
+
     <!--ChangeToDoItemOrderIndexView-->
     <system:String x:Key="ChangeToDoItemOrderIndexView.Before">Before</system:String>
     <system:String x:Key="ChangeToDoItemOrderIndexView.After">After</system:String>
-    
-    <!--CreateUserView-->
-    <system:String x:Key="CreateUserView.CreateAccount">Create Account</system:String>
-    
+
     <!--ForgotPasswordView-->
     <system:String x:Key="ForgotPasswordView.SendNewCode">Send new code</system:String>
-    
+
     <!--LoginView-->
     <system:String x:Key="LoginView.WelcomeToSpravy">Welcome to Spravy</system:String>
     <system:String x:Key="LoginView.RememberMe">Remember Me</system:String>
     <system:String x:Key="LoginView.ForgotPassword">Forgot password</system:String>
-    
+
     <!--PaneView-->
     <system:String x:Key="PaneView.ToDoItems">To-do Items</system:String>
     <system:String x:Key="PaneView.TodayToDoItems">Today to-do items</system:String>
@@ -45,14 +43,36 @@
     <system:String x:Key="PaneView.Timers">Timers</system:String>
     <system:String x:Key="PaneView.Settings">Settings</system:String>
     <system:String x:Key="PaneView.Logout">Logout</system:String>
-    
+
     <!--RootToDoItemsView-->
-    <system:String x:Key="PaneView.CreateTask">Create Task</system:String>
-    
+    <system:String x:Key="RootToDoItemsView.CreateTask">Create Task</system:String>
+
     <!--ToDoItemView-->
-    <system:String x:Key="PaneView.Description">Description</system:String>
-    
+    <system:String x:Key="ToDoItemView.Description">Description</system:String>
+
     <!--VerificationCodeView-->
     <system:String x:Key="VerificationCodeView.SendNewCode">Send new code</system:String>
     <system:String x:Key="VerificationCodeView.ChangeEmail">Change email</system:String>
+
+    <!--AddRootToDoItemView-->
+    <system:String x:Key="AddRootToDoItemView.Name">Name</system:String>
+    <system:String x:Key="AddRootToDoItemView.Type">Type</system:String>
+
+    <!--AddTimerView-->
+    <system:String x:Key="AddTimerView.Item">Item</system:String>
+    <system:String x:Key="AddTimerView.DueDateTime">Due date time</system:String>
+
+    <!--AddToDoItemView-->
+    <system:String x:Key="AddToDoItemView.Name">Name</system:String>
+    <system:String x:Key="AddToDoItemView.Type">Type</system:String>
+
+    <!--CreateUserView-->
+    <system:String x:Key="CreateUserView.CreateAccount">Create Account</system:String>
+    <system:String x:Key="CreateUserView.Email">Email</system:String>
+    <system:String x:Key="CreateUserView.Login">Login</system:String>
+    <system:String x:Key="CreateUserView.Password">Password</system:String>
+    <system:String x:Key="CreateUserView.RepeatPassword">Repeat password</system:String>
+
+    <!--ExceptionView-->
+    <system:String x:Key="ExceptionView.ErrorMessage">Error message</system:String>
 </ResourceDictionary>

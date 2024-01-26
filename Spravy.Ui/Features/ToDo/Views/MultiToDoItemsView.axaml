@@ -20,7 +20,7 @@
             </CheckBox>
 
             <ComboBox Grid.Column="1" Theme="{StaticResource MaterialOutlineComboBox}"
-                      assists:ComboBoxAssist.Label="GroupBy"
+                      assists:ComboBoxAssist.Label="{DynamicResource MultiToDoItemsView.GroupBy}"
                       SelectedItem="{Binding GroupBy}"
                       ItemsSource="{Binding GroupBys}" />
         </Grid>

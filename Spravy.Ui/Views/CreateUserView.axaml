@@ -28,21 +28,21 @@
                      Name="{x:Static views:CreateUserView.EmailTextBoxName}"
                      Classes="outline dense"
                      Theme="{StaticResource OutlineTextBox}"
-                     assists:TextFieldAssist.Label="Email"
+                     assists:TextFieldAssist.Label="{DynamicResource CreateUserView.Email}"
                      Text="{Binding Email}" />
 
             <TextBox UseFloatingWatermark="True"
                      Name="{x:Static views:CreateUserView.LoginTextBoxName}"
                      Classes="outline dense"
                      Theme="{StaticResource OutlineTextBox}"
-                     assists:TextFieldAssist.Label="Login"
+                     assists:TextFieldAssist.Label="{DynamicResource CreateUserView.Login}"
                      Text="{Binding Login}" />
 
             <TextBox UseFloatingWatermark="True"
                      Name="{x:Static views:CreateUserView.PasswordTextBoxName}"
                      Classes="outline dense revealPasswordButton"
                      Theme="{StaticResource OutlineTextBox}"
-                     assists:TextFieldAssist.Label="Password"
+                     assists:TextFieldAssist.Label="{DynamicResource CreateUserView.Password}"
                      PasswordChar="*"
                      Text="{Binding Password}" />
 
@@ -50,7 +50,7 @@
                      UseFloatingWatermark="True"
                      Classes="outline dense revealPasswordButton"
                      Theme="{StaticResource OutlineTextBox}"
-                     assists:TextFieldAssist.Label="Repeat password"
+                     assists:TextFieldAssist.Label="{DynamicResource CreateUserView.RepeatPassword}"
                      PasswordChar="*"
                      Text="{Binding RepeatPassword}" />
 
