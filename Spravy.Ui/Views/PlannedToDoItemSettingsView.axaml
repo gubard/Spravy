@@ -20,7 +20,7 @@
     <StackPanel>
         <TextBox Text="{Binding ChildrenType}"
                  UseFloatingWatermark="True"
-                 assists:TextFieldAssist.Label="Type"
+                 assists:TextFieldAssist.Label="{DynamicResource PlannedToDoItemSettingsView.Type}"
                  IsReadOnly="True"
                  Classes="outline dense with-button"
                  Theme="{StaticResource OutlineTextBox}">
@@ -34,7 +34,7 @@
         </TextBox>
 
         <TextBox Text="{Binding DueDate}"
-                 assists:TextFieldAssist.Label="DueDate"
+                 assists:TextFieldAssist.Label="{DynamicResource PlannedToDoItemSettingsView.DueDate}"
                  IsReadOnly="True"
                  UseFloatingWatermark="True"
                  Classes="outline dense with-button"

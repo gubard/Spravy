@@ -30,11 +30,16 @@
 
     <!--ForgotPasswordView-->
     <system:String x:Key="ForgotPasswordView.SendNewCode">Send new code</system:String>
+    <system:String x:Key="ForgotPasswordView.VerificationCode">Verification code</system:String>
+    <system:String x:Key="ForgotPasswordView.NewPassword">New password</system:String>
+    <system:String x:Key="ForgotPasswordView.NewRepeatPassword">New repeat password</system:String>
 
     <!--LoginView-->
     <system:String x:Key="LoginView.WelcomeToSpravy">Welcome to Spravy</system:String>
     <system:String x:Key="LoginView.RememberMe">Remember Me</system:String>
     <system:String x:Key="LoginView.ForgotPassword">Forgot password</system:String>
+    <system:String x:Key="LoginView.Login">Login</system:String>
+    <system:String x:Key="LoginView.Password">Password</system:String>
 
     <!--PaneView-->
     <system:String x:Key="PaneView.ToDoItems">To-do Items</system:String>
@@ -49,10 +54,13 @@
 
     <!--ToDoItemView-->
     <system:String x:Key="ToDoItemView.Description">Description</system:String>
+    <system:String x:Key="ToDoItemView.Type">Type</system:String>
+    <system:String x:Key="ToDoItemView.Link">Link</system:String>
 
     <!--VerificationCodeView-->
     <system:String x:Key="VerificationCodeView.SendNewCode">Send new code</system:String>
     <system:String x:Key="VerificationCodeView.ChangeEmail">Change email</system:String>
+    <system:String x:Key="VerificationCodeView.VerificationCode">Verification code</system:String>
 
     <!--AddRootToDoItemView-->
     <system:String x:Key="AddRootToDoItemView.Name">Name</system:String>
@@ -75,4 +83,27 @@
 
     <!--ExceptionView-->
     <system:String x:Key="ExceptionView.ErrorMessage">Error message</system:String>
+
+    <!--PeriodicityOffsetToDoItemSettingsView-->
+    <system:String x:Key="PeriodicityOffsetToDoItemSettingsView.Type">Type</system:String>
+    <system:String x:Key="PeriodicityOffsetToDoItemSettingsView.DueDate">Due date</system:String>
+    <system:String x:Key="PeriodicityOffsetToDoItemSettingsView.DaysOffset">Days offset</system:String>
+    <system:String x:Key="PeriodicityOffsetToDoItemSettingsView.MonthsOffset">Months offset</system:String>
+    <system:String x:Key="PeriodicityOffsetToDoItemSettingsView.WeeksOffset">Weeks offset</system:String>
+    <system:String x:Key="PeriodicityOffsetToDoItemSettingsView.YearsOffset">Years offset</system:String>
+
+    <!--PeriodicityToDoItemSettingsView-->
+    <system:String x:Key="PeriodicityToDoItemSettingsView.Type">Type</system:String>
+    <system:String x:Key="PeriodicityToDoItemSettingsView.DueDate">Due date</system:String>
+    <system:String x:Key="PeriodicityToDoItemSettingsView.TypeOfPeriodicity">Type of periodicity</system:String>
+
+    <!--PlannedToDoItemSettingsView-->
+    <system:String x:Key="PlannedToDoItemSettingsView.Type">Type</system:String>
+    <system:String x:Key="PlannedToDoItemSettingsView.DueDate">DueDate</system:String>
+
+    <!--ToDoItemSelectorView-->
+    <system:String x:Key="ToDoItemSelectorView.SearchText">Search text</system:String>
+
+    <!--ValueToDoItemSettingsView-->
+    <system:String x:Key="ValueToDoItemSettingsView.Type">Type</system:String>
 </ResourceDictionary>

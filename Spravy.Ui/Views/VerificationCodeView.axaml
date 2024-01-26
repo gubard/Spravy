@@ -33,7 +33,7 @@
                      UseFloatingWatermark="True"
                      Classes="outline dense"
                      Theme="{StaticResource OutlineTextBox}"
-                     assists:TextFieldAssist.Label="VerificationCode"
+                     assists:TextFieldAssist.Label="{DynamicResource VerificationCodeView.VerificationCode}"
                      Text="{Binding VerificationCode}" />
 
             <Grid Grid.Row="2" ColumnDefinitions="*,*" RowDefinitions="*,*">

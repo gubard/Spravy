@@ -33,14 +33,14 @@
                      Name="{x:Static views:LoginView.LoginTextBoxName}"
                      Classes="outline dense"
                      Theme="{StaticResource OutlineTextBox}"
-                     assists:TextFieldAssist.Label="Login"
+                     assists:TextFieldAssist.Label="{DynamicResource LoginView.Login}"
                      Text="{Binding Login}" />
 
             <TextBox Name="{x:Static views:LoginView.PasswordTextBoxName}"
                      UseFloatingWatermark="True"
                      Classes="outline dense revealPasswordButton"
                      Theme="{StaticResource OutlineTextBox}"
-                     assists:TextFieldAssist.Label="Password"
+                     assists:TextFieldAssist.Label="{DynamicResource LoginView.Password}"
                      PasswordChar="*"
                      Text="{Binding Password}" />
 

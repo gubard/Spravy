@@ -20,7 +20,7 @@
     <StackPanel>
         <TextBox Text="{Binding ChildrenType}"
                  UseFloatingWatermark="True"
-                 assists:TextFieldAssist.Label="Type"
+                 assists:TextFieldAssist.Label="{DynamicResource PeriodicityToDoItemSettingsView.Type}"
                  IsReadOnly="True"
                  Classes="outline dense with-button"
                  Theme="{StaticResource OutlineTextBox}">
@@ -34,7 +34,7 @@
         </TextBox>
 
         <TextBox Text="{Binding DueDate}"
-                 assists:TextFieldAssist.Label="DueDate"
+                 assists:TextFieldAssist.Label="{DynamicResource PeriodicityToDoItemSettingsView.DueDate}"
                  UseFloatingWatermark="True"
                  IsReadOnly="True"
                  Classes="outline dense with-button"
@@ -49,7 +49,7 @@
         </TextBox>
 
         <TextBox Text="{Binding TypeOfPeriodicity}"
-                 assists:TextFieldAssist.Label="TypeOfPeriodicity"
+                 assists:TextFieldAssist.Label="{DynamicResource PeriodicityToDoItemSettingsView.TypeOfPeriodicity}"
                  UseFloatingWatermark="True"
                  IsReadOnly="True"
                  Classes="outline dense with-button"

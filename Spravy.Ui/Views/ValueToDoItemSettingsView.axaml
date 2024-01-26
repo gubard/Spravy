@@ -19,7 +19,7 @@
 
     <TextBox Text="{Binding ChildrenType}"
              UseFloatingWatermark="True"
-             assists:TextFieldAssist.Label="Type"
+             assists:TextFieldAssist.Label="{DynamicResource ValueToDoItemSettingsView.Type}"
              IsReadOnly="True"
              Classes="outline dense with-button"
              Theme="{StaticResource OutlineTextBox}">

@@ -26,7 +26,7 @@
             <TextBox UseFloatingWatermark="True"
                      Classes="outline dense"
                      Theme="{StaticResource OutlineTextBox}"
-                     assists:TextFieldAssist.Label="Search text"
+                     assists:TextFieldAssist.Label="{DynamicResource ToDoItemSelectorView.SearchText}"
                      Text="{Binding SearchText}" />
 
             <Button Grid.Column="1" Command="{Binding SearchCommand}">
@@ -35,12 +35,12 @@
         </Grid>
 
         <TreeView Grid.Row="1"
-                  ItemsSource="{Binding Roots}" 
+                  ItemsSource="{Binding Roots}"
                   SelectionMode="Single"
-                  SelectedItem="{Binding SelectedItem}" >
+                  SelectedItem="{Binding SelectedItem}">
             <TreeView.Styles>
                 <Style Selector="TreeViewItem" x:DataType="models:ToDoSelectorItemNotify">
-                    <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
                 </Style>
             </TreeView.Styles>
         </TreeView>

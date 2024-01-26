@@ -20,7 +20,7 @@
     <StackPanel>
         <TextBox Text="{Binding ChildrenType}"
                  UseFloatingWatermark="True"
-                 assists:TextFieldAssist.Label="Type"
+                 assists:TextFieldAssist.Label="{DynamicResource PeriodicityOffsetToDoItemSettingsView.Type}"
                  IsReadOnly="True"
                  Classes="outline dense with-button"
                  Theme="{StaticResource OutlineTextBox}">
@@ -34,7 +34,7 @@
         </TextBox>
 
         <TextBox Text="{Binding DueDate}"
-                 assists:TextFieldAssist.Label="DueDate"
+                 assists:TextFieldAssist.Label="{DynamicResource PeriodicityOffsetToDoItemSettingsView.DueDate}"
                  UseFloatingWatermark="True"
                  IsReadOnly="True"
                  Classes="outline dense with-button"
@@ -49,7 +49,7 @@
         </TextBox>
 
         <TextBox Text="{Binding DaysOffset}"
-                 assists:TextFieldAssist.Label="DaysOffset"
+                 assists:TextFieldAssist.Label="{DynamicResource PeriodicityOffsetToDoItemSettingsView.DaysOffset}"
                  UseFloatingWatermark="True"
                  IsReadOnly="True"
                  Classes="outline dense with-button"
@@ -64,7 +64,7 @@
         </TextBox>
 
         <TextBox Text="{Binding MonthsOffset}"
-                 assists:TextFieldAssist.Label="MonthsOffset"
+                 assists:TextFieldAssist.Label="{DynamicResource PeriodicityOffsetToDoItemSettingsView.MonthsOffset}"
                  UseFloatingWatermark="True"
                  IsReadOnly="True"
                  Classes="outline dense with-button"
@@ -79,7 +79,7 @@
         </TextBox>
 
         <TextBox Text="{Binding WeeksOffset}"
-                 assists:TextFieldAssist.Label="WeeksOffset"
+                 assists:TextFieldAssist.Label="{DynamicResource PeriodicityOffsetToDoItemSettingsView.WeeksOffset}"
                  UseFloatingWatermark="True"
                  IsReadOnly="True"
                  Classes="outline dense with-button"
@@ -94,7 +94,7 @@
         </TextBox>
 
         <TextBox Text="{Binding YearsOffset}"
-                 assists:TextFieldAssist.Label="YearsOffset"
+                 assists:TextFieldAssist.Label="{DynamicResource PeriodicityOffsetToDoItemSettingsView.YearsOffset}"
                  UseFloatingWatermark="True"
                  IsReadOnly="True"
                  Classes="outline dense with-button"
@@ -109,7 +109,7 @@
         </TextBox>
 
         <ToggleButton Command="{x:Static services:CommandStorage.SetRequiredCompleteInDueDateCommand}"
-                      CommandParameter="{Binding}" 
+                      CommandParameter="{Binding}"
                       IsChecked="{Binding IsRequiredCompleteInDueDate}"
                       Content="Required complete by the due date" />
     </StackPanel>

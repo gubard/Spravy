@@ -36,7 +36,7 @@
             <Grid ColumnDefinitions="*,*">
                 <TextBox Text="{Binding Type}"
                          UseFloatingWatermark="True"
-                         assists:TextFieldAssist.Label="Type"
+                         assists:TextFieldAssist.Label="{DynamicResource ToDoItemView.Type}"
                          IsReadOnly="True"
                          Classes="outline dense with-button"
                          Theme="{StaticResource OutlineTextBox}">
@@ -52,7 +52,7 @@
                 <TextBox Grid.Column="1"
                          Text="{Binding Link}"
                          UseFloatingWatermark="True"
-                         assists:TextFieldAssist.Label="Link"
+                         assists:TextFieldAssist.Label="{DynamicResource ToDoItemView.Link}"
                          IsReadOnly="True"
                          Classes="outline dense with-button"
                          Theme="{StaticResource OutlineTextBox}">
