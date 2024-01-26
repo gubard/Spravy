@@ -16,9 +16,9 @@
 
     <Grid RowDefinitions="Auto,*">
         <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Before" Classes="alignment-center" />
+            <TextBlock Text="{DynamicResource ChangeToDoItemOrderIndexView.Before}" Classes="alignment-center" />
             <ToggleSwitch IsChecked="{Binding IsAfter}" />
-            <TextBlock Text="After" Classes="alignment-center" />
+            <TextBlock Text="{DynamicResource ChangeToDoItemOrderIndexView.After}" Classes="alignment-center" />
         </StackPanel>
 
         <ScrollViewer Grid.Row="1">

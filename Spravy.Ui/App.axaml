@@ -13,6 +13,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="Assets/Lang/en-US.axaml" />
                 <ResourceInclude Source="Styles/Resources.axaml" />
                 <ResourceInclude Source="Styles/ToggleButton.axaml" />
             </ResourceDictionary.MergedDictionaries>
@@ -151,7 +152,7 @@
                                        Height="2"
                                        Fill="{Binding Value.Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                             <TextBlock Grid.Column="1"
-                                       Text="{Binding Value.Type}"
+                                       Text="{Binding Value.Type, Converter={StaticResource ToDoItemTypeLocalizationValueConverter}}"
                                        Classes="Body2"
                                        Foreground="{DynamicResource MaterialBodyBrush}" />
                             <Rectangle Grid.Column="2"
@@ -159,7 +160,7 @@
                                        Height="2"
                                        Fill="{Binding Value.Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                             <TextBlock Grid.Column="3"
-                                       Text="{Binding Value.Status}"
+                                       Text="{Binding Value.Status, Converter={StaticResource ToDoItemStatusLocalizationValueConverter}}"
                                        Classes="Body2"
                                        Foreground="{DynamicResource MaterialBodyBrush}" />
                             <Rectangle Grid.Column="4"

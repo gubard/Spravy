@@ -39,13 +39,13 @@
             <Grid Grid.Row="2" ColumnDefinitions="*,*" RowDefinitions="*,*">
                 <Button Command="{x:Static services:CommandStorage.SendNewVerificationCodeCommand}"
                         CommandParameter="{Binding}">
-                    <TextBlock Text="Send new code" />
+                    <TextBlock Text="{DynamicResource VerificationCodeView.SendNewCode}" />
                 </Button>
 
                 <Button Grid.Column="1"
                         Command="{x:Static services:CommandStorage.UpdateEmailNotVerifiedUserByCommand}"
                         CommandParameter="{Binding}">
-                    <TextBlock Text="Change email" />
+                    <TextBlock Text="{DynamicResource VerificationCodeView.ChangeEmail}" />
                 </Button>
 
                 <Button Grid.Row="1" Command="{x:Static services:CommandStorage.NavigateToCommand}"

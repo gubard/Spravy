@@ -17,15 +17,15 @@
                 CommandParameter="{x:Type viewModels:RootToDoItemsViewModel}">
             <Grid ColumnDefinitions="Auto,Auto">
                 <avalonia:MaterialIcon Kind="Checks" />
-                <TextBlock Grid.Column="1" Text="To-do Items" />
+                <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.ToDoItems}" />
             </Grid>
         </Button>
-        
+
         <Button Command="{x:Static services:CommandStorage.NavigateToCommand}"
                 CommandParameter="{x:Type viewModels:TodayToDoItemsViewModel}">
             <Grid ColumnDefinitions="Auto,Auto">
                 <avalonia:MaterialIcon Kind="CalendarToday" />
-                <TextBlock Grid.Column="1" Text="Today to-do items" />
+                <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.TodayToDoItems}" />
             </Grid>
         </Button>
 
@@ -33,7 +33,7 @@
                 CommandParameter="{x:Type viewModels:SearchViewModel}">
             <Grid ColumnDefinitions="Auto,Auto">
                 <avalonia:MaterialIcon Kind="Search" />
-                <TextBlock Grid.Column="1" Text="Search" />
+                <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.Search}" />
             </Grid>
         </Button>
 
@@ -41,7 +41,7 @@
                 CommandParameter="{x:Type viewModels:TimersViewModel}">
             <Grid ColumnDefinitions="Auto,Auto">
                 <avalonia:MaterialIcon Kind="Timer" />
-                <TextBlock Grid.Column="1" Text="Timers" />
+                <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.Timers}" />
             </Grid>
         </Button>
 
@@ -49,14 +49,14 @@
                 CommandParameter="{x:Type viewModels:AccountSettingViewModel}">
             <Grid ColumnDefinitions="Auto,Auto">
                 <avalonia:MaterialIcon Kind="Settings" />
-                <TextBlock Grid.Column="1" Text="Settings" />
+                <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.Settings}" />
             </Grid>
         </Button>
 
         <Button Command="{x:Static services:CommandStorage.LogoutCommand}">
             <Grid ColumnDefinitions="Auto,Auto">
                 <avalonia:MaterialIcon Kind="Logout" />
-                <TextBlock Grid.Column="1" Text="Logout" />
+                <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.Logout}" />
             </Grid>
         </Button>
     </StackPanel>

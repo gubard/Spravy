@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.VisualTree;
+using Spravy.Domain.Extensions;
 
 namespace Spravy.Ui.Extensions;
 
@@ -22,5 +23,12 @@ public static class ApplicationExtension
         }
 
         return null;
+    }
+
+    public static object? GetResource(this Application app, string key)
+    {
+        app.TryGetResource(key, out var value);
+
+        return value;
     }
 }

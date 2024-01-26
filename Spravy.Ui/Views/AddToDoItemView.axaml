@@ -7,6 +7,7 @@
                                 xmlns:models="clr-namespace:Spravy.Ui.Models"
                                 xmlns:views="clr-namespace:Spravy.Ui.Views"
                                 xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
+                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                 mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                                 x:Class="Spravy.Ui.Views.AddToDoItemView"
                                 x:DataType="viewModels:AddToDoItemViewModel">
@@ -18,7 +19,7 @@
                 </DataTemplate>
 
                 <DataTemplate DataType="models:RootItem">
-                    <TextBlock Text="{x:Static models:RootItem.Name}" />
+                    <avalonia:MaterialIcon Kind="Home" />
                 </DataTemplate>
             </ContentControl.DataTemplates>
         </ContentControl>

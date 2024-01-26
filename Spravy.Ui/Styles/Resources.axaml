@@ -3,13 +3,14 @@
                     xmlns:converters="clr-namespace:Spravy.Ui.Converters"
                     xmlns:enums1="clr-namespace:Spravy.Ui.Features.ToDo.Enums"
                     xmlns:system="clr-namespace:System;assembly=System.Runtime"
-                    xmlns:enums="clr-namespace:Spravy.Ui.Enums"
-                    xmlns:enums2="clr-namespace:Spravy.ToDo.Domain.Enums;assembly=Spravy.ToDo.Domain">
+                    xmlns:enums="clr-namespace:Spravy.Ui.Enums">
     <converters:DoubleToPercentsConverter x:Key="DoubleToPercentsConverter95" Percentage=".95" />
     <converters:DoubleToPercentsConverter x:Key="DoubleToPercentsConverter85" Percentage=".85" />
     <converters:DoubleToPercentsConverter x:Key="DoubleToPercentsConverter70" Percentage=".70" />
     <converters:DoubleToPercentsConverter x:Key="DoubleToPercentsConverter50" Percentage=".50" />
+    <converters:ToDoItemStatusLocalizationValueConverter x:Key="ToDoItemStatusLocalizationValueConverter" />
     <converters:ObjectToVisibleValueConverter x:Key="ObjectToVisibleValueConverter" />
+    <converters:ToDoItemTypeLocalizationValueConverter x:Key="ToDoItemTypeLocalizationValueConverter" />
     <converters:ToDoItemStatusToBrushValueConverter x:Key="ToDoItemStatusToBrushValueConverter" />
     <converters:ReverseBooleanValueConverter x:Key="ReverseBooleanValueConverter" />
     <converters:EmptyStringToNullConverter x:Key="EmptyStringToNullConverter" />
@@ -23,7 +24,7 @@
     <converters:BooleanToCompletedStringConverter x:Key="BooleanToCompletedStringConverter" />
     <converters:ToDoItemCanCompleteToBooleanConverter x:Key="ToDoItemCanCompleteToBooleanConverter" />
     <converters:ToDoItemCanIncompleteToBooleanConverter x:Key="ToDoItemCanIncompleteToBooleanConverter" />
-    <converters:ToDoItemCanNoneToBooleanReverseConverter x:Key="ToDoItemCanNoneToBooleanReverseConverter"/>
+    <converters:ToDoItemCanNoneToBooleanReverseConverter x:Key="ToDoItemCanNoneToBooleanReverseConverter" />
     <converters:EnumToBooleanConverter x:TypeArguments="enums1:GroupBy"
                                        x:Key="MultiEditingGroupByNoneToTrue"
                                        Value="None" />

@@ -16,7 +16,7 @@
         <Grid ColumnDefinitions="Auto,*"
               IsVisible="{Binding ToDoItems.GroupByNone.Items.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
             <CheckBox IsChecked="{Binding IsMulti}">
-                <TextBlock Text="IsMulti" />
+                <TextBlock Text="{DynamicResource MultiToDoItemsView.IsMulti}" />
             </CheckBox>
 
             <ComboBox Grid.Column="1" Theme="{StaticResource MaterialOutlineComboBox}"
@@ -45,12 +45,16 @@
                                            Margin="0,0,3,0"
                                            Height="2"
                                            Fill="{Binding Value.Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
-                                <TextBlock Grid.Column="1" Text="{Binding Value.Type}" Classes="Body2" />
+                                <TextBlock Grid.Column="1"
+                                           Text="{Binding Value.Type, Converter={StaticResource ToDoItemTypeLocalizationValueConverter}}"
+                                           Classes="Body2" />
                                 <Rectangle Grid.Column="2"
                                            Margin="3,0,3,0"
                                            Height="2"
                                            Fill="{Binding Value.Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
-                                <TextBlock Grid.Column="3" Text="{Binding Value.Status}" Classes="Body2" />
+                                <TextBlock Grid.Column="3"
+                                           Text="{Binding Value.Status, Converter={StaticResource ToDoItemStatusLocalizationValueConverter}}"
+                                           Classes="Body2" />
                                 <Rectangle Grid.Column="4"
                                            Width="15"
                                            Margin="3,0,0,0"

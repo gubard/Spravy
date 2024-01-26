@@ -27,7 +27,7 @@
                    VerticalAlignment="Center"
                    MinWidth="300">
         <StackPanel>
-            <TextBlock Text="Welcome to Spravy" Classes="Headline5" HorizontalAlignment="Center" />
+            <TextBlock Text="{DynamicResource LoginView.WelcomeToSpravy}" Classes="Headline5" HorizontalAlignment="Center" />
 
             <TextBox UseFloatingWatermark="True"
                      Name="{x:Static views:LoginView.LoginTextBoxName}"
@@ -46,13 +46,13 @@
 
             <Grid ColumnDefinitions="*,*" RowDefinitions="*,*">
                 <CheckBox IsChecked="{Binding IsRememberMe}">
-                    <TextBlock Text="Remember Me" />
+                    <TextBlock Text="{DynamicResource LoginView.RememberMe}" />
                 </CheckBox>
 
                 <Button Grid.Column="1"
                         Command="{x:Static services:CommandStorage.NavigateToCommand}"
                         CommandParameter="{x:Type viewModels:EmailOrLoginInputViewModel}">
-                    <TextBlock Text="Forgot password" />
+                    <TextBlock Text="{DynamicResource LoginView.ForgotPassword}" />
                 </Button>
 
                 <Button Grid.Row="1" Command="{x:Static services:CommandStorage.NavigateToCommand}"

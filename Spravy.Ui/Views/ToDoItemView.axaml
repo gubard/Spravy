@@ -79,7 +79,7 @@
                                 <avalonia:MaterialIcon Kind="Pencil" />
                             </Button>
 
-                            <TextBlock Text="Description" Classes="alignment-center" />
+                            <TextBlock Text="{DynamicResource PaneView.Description}" Classes="alignment-center" />
                         </StackPanel>
                     </Expander.Header>
 

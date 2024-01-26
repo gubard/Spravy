@@ -22,7 +22,7 @@
                    VerticalAlignment="Center"
                    Width="300">
         <StackPanel>
-            <TextBlock Text="Create Account" FontSize="24" HorizontalAlignment="Center" />
+            <TextBlock Text="{DynamicResource CreateUserView.CreateAccount}" FontSize="24" HorizontalAlignment="Center" />
 
             <TextBox UseFloatingWatermark="True"
                      Name="{x:Static views:CreateUserView.EmailTextBoxName}"
@@ -55,7 +55,7 @@
                      Text="{Binding RepeatPassword}" />
 
             <Grid ColumnDefinitions="*,*">
-                <Button x:Name="BackButton" 
+                <Button x:Name="BackButton"
                         Command="{x:Static services:CommandStorage.NavigateToCommand}"
                         CommandParameter="{x:Type viewModels:LoginViewModel}">
                     <avalonia:MaterialIcon Kind="ArrowLeft" />
