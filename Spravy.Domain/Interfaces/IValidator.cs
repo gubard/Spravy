@@ -1,8 +1,8 @@
-using System.Diagnostics.CodeAnalysis;
+using Spravy.Domain.Models;
 
 namespace Spravy.Domain.Interfaces;
 
-public interface IValidator<TException, in TValue> where TException : Exception
+public interface IValidator<in TValue>
 {
-    bool Validate(TValue value, [MaybeNullWhen(true)] out TException exception);
+    IAsyncEnumerable<ValidationResult> ValidateAsync(TValue value);
 }

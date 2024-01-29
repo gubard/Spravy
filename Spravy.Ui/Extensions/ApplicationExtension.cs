@@ -2,7 +2,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.VisualTree;
-using Spravy.Domain.Extensions;
 
 namespace Spravy.Ui.Extensions;
 

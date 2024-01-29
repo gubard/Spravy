@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Spravy.Authentication.Db.Contexts;
 using Spravy.Authentication.Db.Mapper.Profiles;
 using Spravy.Authentication.Db.Sqlite.Migrator;
@@ -63,30 +64,9 @@ public static class ServiceCollectionExtension
             _ => new RandomString("QAZWSXEDCRFVTGBYHNUJMIKOP0123456789", 6)
         );
         serviceCollection.AddTransient(sp => sp.GetConfigurationSection<EmailOptions>());
-
-        serviceCollection.AddTransient<IAuthenticationService>(
-            x => new EfAuthenticationService(
-                x.GetRequiredService<SpravyDbAuthenticationDbContext>(),
-                x.GetRequiredService<IHasher>(),
-                x.GetRequiredService<IFactory<string, IHasher>>(),
-                x.GetRequiredService<ITokenFactory>(),
-                x.GetRequiredService<IMapper>(),
-                new StringValidator(
-                    4,
-                    255,
-                    "QAZWSXEDCRFVTGBYHNUJMIKOP_-=+<>|0123456789qazwsxedcrfvtgbyhnujmikolp.",
-                    "Login"
-                ),
-                new StringValidator(
-                    6,
-                    512,
-                    "QAZWSXEDCRFVTGBYHNUJMIKOP_-=+<>|0123456789qazwsxedcrfvtgbyhnujmikolp.",
-                    "Password"
-                ),
-                x.GetRequiredService<IEmailService>(),
-                x.GetRequiredService<IRandom<string>>()
-            )
-        );
+        serviceCollection.AddTransient<IPasswordValidator>(_ => PasswordValidator.Default);
+        serviceCollection.AddTransient<ILoginValidator>(_ => LoginValidator.Default);
+        serviceCollection.AddTransient<IAuthenticationService, EfAuthenticationService>();
         serviceCollection.AddTransient<IHasher, Hasher>();
 
         serviceCollection.AddSpravySqliteFileDbContext<SpravyDbAuthenticationDbContext,

@@ -24,8 +24,8 @@ public class EfAuthenticationService : IAuthenticationService
     private readonly IFactory<string, IHasher> hasherFactory;
     private readonly ITokenFactory tokenFactory;
     private readonly IMapper mapper;
-    private readonly IValidator<SpravyException, string> passwordValidator;
-    private readonly IValidator<SpravyException, string> loginValidator;
+    private readonly IPasswordValidator passwordValidator;
+    private readonly ILoginValidator loginValidator;
     private readonly IEmailService emailService;
     private readonly IRandom<string> randomString;
 
@@ -35,8 +35,8 @@ public class EfAuthenticationService : IAuthenticationService
         IFactory<string, IHasher> hasherFactory,
         ITokenFactory tokenFactory,
         IMapper mapper,
-        IValidator<SpravyException, string> loginValidator,
-        IValidator<SpravyException, string> passwordValidator,
+        ILoginValidator loginValidator,
+        IPasswordValidator passwordValidator,
         IEmailService emailService,
         IRandom<string> randomString
     )
@@ -72,16 +72,6 @@ public class EfAuthenticationService : IAuthenticationService
 
     public Task CreateUserAsync(CreateUserOptions options, CancellationToken cancellationToken)
     {
-        if (!loginValidator.Validate(options.Login, out var exception))
-        {
-            throw exception;
-        }
-
-        if (!passwordValidator.Validate(options.Password, out exception))
-        {
-            throw exception;
-        }
-
         var salt = Guid.NewGuid();
         var hash = hasher.ComputeHash($"{salt};{options.Password}");
 
