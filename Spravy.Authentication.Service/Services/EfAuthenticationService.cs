@@ -70,8 +70,20 @@ public class EfAuthenticationService : IAuthenticationService
         return tokenResult;
     }
 
-    public Task CreateUserAsync(CreateUserOptions options, CancellationToken cancellationToken)
+    public async Task CreateUserAsync(CreateUserOptions options, CancellationToken cancellationToken)
     {
+        var errors = new List<ValidationResult>();
+
+        await foreach (var error in loginValidator.ValidateAsync(options.Login).WithCancellation(cancellationToken))
+        {
+            errors.Add(error);
+        }
+        
+        await foreach (var error in passwordValidator.ValidateAsync(options.Password).WithCancellation(cancellationToken))
+        {
+            errors.Add(error);
+        }
+
         var salt = Guid.NewGuid();
         var hash = hasher.ComputeHash($"{salt};{options.Password}");
 
@@ -85,7 +97,7 @@ public class EfAuthenticationService : IAuthenticationService
             Email = options.Email,
         };
 
-        return context.ExecuteSaveChangesTransactionAsync(
+        await context.ExecuteSaveChangesTransactionAsync(
             async c =>
             {
                 var user = await c.Set<UserEntity>()
