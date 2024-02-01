@@ -441,6 +441,18 @@ public class EfToDoService : IToDoService
             .OrderBy(x => x.OrderIndex)
             .ToArrayAsync(cancellationToken);
 
+        var childrenOrderIndexCount = children.DistinctBy(x => x.OrderIndex).Count();
+
+        if (childrenOrderIndexCount != children.Length)
+        {
+            await NormalizeOrderIndexAsync(context, item.Id, cancellationToken);
+
+            children = await context.Set<ToDoItemEntity>()
+                .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Circle)
+                .OrderBy(x => x.OrderIndex)
+                .ToArrayAsync(cancellationToken);
+        }
+
         if (children.Length != 0)
         {
             var next = children.FirstOrDefault(x => x.OrderIndex > item.CurrentCircleOrderIndex);
@@ -1145,7 +1157,7 @@ public class EfToDoService : IToDoService
     {
         var items = await context.Set<ToDoItemEntity>()
             .Where(x => x.ParentId == parentId)
-            .ToArrayAsync();
+            .ToArrayAsync(cancellationToken);
 
         var ordered = Enumerable.ToArray(items.OrderBy(x => x.OrderIndex));
 
