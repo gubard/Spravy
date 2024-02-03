@@ -290,6 +290,7 @@ class Build : NukeBuild
                 .SetProperty("AndroidSigningStorePass", AndroidSigningStorePass)
                 .SetProperty("AndroidSdkDirectory", "/usr/lib/android-sdk")
                 .DisableNoBuild()
+                .SetVerbosity(DotNetVerbosity.diagnostic)
         );
 
         DeleteIfExistsDirectory(ftpClient, $"/home/{ftpUser}/Apps/Spravy.Ui.Android");
