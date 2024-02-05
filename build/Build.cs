@@ -323,6 +323,9 @@ class Build : NukeBuild
             $"echo {sshPassword} | sudo -S cp -rf /home/{ftpUser}/Apps/Spravy.Ui.Android/com.SerhiiMaksymovFOP.Spravy-Signed.apk /var/www/spravy.com.ua/html"
         );
         sshClient.SafeRun(
+            $"echo {sshPassword} | sudo -S cp -rf /home/{ftpUser}/Apps/Spravy.Ui.Android/com.SerhiiMaksymovFOP.Spravy-Signed.aab /var/www/spravy.com.ua/html"
+        );
+        sshClient.SafeRun(
             $"echo {sshPassword} | zip -r /var/www/spravy.com.ua/html/Spravy.Linux-x64.zip /home/vafnir/Apps/Spravy.Ui.Desktop/linux-x64/*"
         );
         sshClient.SafeRun(

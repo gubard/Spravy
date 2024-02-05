@@ -4,6 +4,7 @@ namespace Spravy.Domain.Models;
 
 public class TaskWork
 {
+    private static readonly List<Task> Tasks = new();
     private readonly Delegate del;
     private CancellationTokenSource cancellationTokenSource = new();
     private Task? current;
@@ -13,13 +14,22 @@ public class TaskWork
         this.del = del;
     }
 
+    private static void UpdateTasks(Task task)
+    {
+        Tasks.Add(task);
+        Tasks.RemoveAll(x => x.IsCompletedSuccessfully || x.IsCanceled || x.IsCompleted || x.IsFaulted);
+    }
+
+    public static Task AllTasks => Task.WhenAll(Tasks);
+
     public Task Current => current.ThrowIfNull();
 
     public Task RunAsync()
     {
         Cancel();
         current = (Task)del.DynamicInvoke(cancellationTokenSource.Token).ThrowIfNull();
-
+        UpdateTasks(current);
+        
         return current;
     }
 
@@ -27,6 +37,7 @@ public class TaskWork
     {
         Cancel();
         current = (Task)del.DynamicInvoke(value, cancellationTokenSource.Token).ThrowIfNull();
+        UpdateTasks(current);
 
         return current;
     }

@@ -102,7 +102,10 @@ public class MainWindowTests
                             .FindControl<Button>(ElementNames.CreateUserButton)
                             .ThrowIfNull()
                             .MustEnabled()
-                            .ClickOnButton(w, TimeWait.MinSecondsWait)
+                            .ClickOnButton(w)
+                            //.WhenAllTasksAsync()s
+                            //.GetAwaiter()
+                            //.GetResult()
                     )
                     //.Case(() => w.GetCurrentView<VerificationCodeView, VerificationCodeViewModel>())
                     .SaveFrame(),

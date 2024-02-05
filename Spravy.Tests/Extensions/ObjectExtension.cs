@@ -1,4 +1,5 @@
 using Avalonia.Threading;
+using Spravy.Domain.Models;
 
 namespace Spravy.Tests.Extensions;
 
@@ -22,6 +23,13 @@ public static class ObjectExtension
         };
 
         dispatcherPriorities = dp.OrderBy(x => x.Value).ToArray();
+    }
+
+    public static async Task<TObject> WhenAllTasksAsync<TObject>(this TObject obj)
+    {
+        await TaskWork.AllTasks;
+
+        return obj;
     }
 
     public static TObject WaitSeconds<TObject>(this TObject obj, byte seconds)
