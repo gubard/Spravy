@@ -7,7 +7,7 @@
         <ApplicationId>com.SerhiiMaksymovFOP.Spravy</ApplicationId>
         <ApplicationVersion>1</ApplicationVersion>
         <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
-        <AndroidPackageFormat>apk;aab</AndroidPackageFormat>
+        <AndroidPackageFormat>aab</AndroidPackageFormat>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     </PropertyGroup>
 
