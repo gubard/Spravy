@@ -242,7 +242,6 @@ class Build : NukeBuild
 
     void PublishAndroid(string ftpHost, string ftpUser, string ftpPassword)
     {
-        return;
         using var ftpClient = CreateFtpClient(ftpHost, ftpUser, ftpPassword);
         ftpClient.Connect();
         var keyStoreFile = new FileInfo("/tmp/Spravy/sign-key.keystore");
