@@ -9,7 +9,6 @@
         <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
         <AndroidPackageFormat>apk;aab</AndroidPackageFormat>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-        <RuntimeIdentifier>android-x64</RuntimeIdentifier>
     </PropertyGroup>
 
     <ItemGroup>
