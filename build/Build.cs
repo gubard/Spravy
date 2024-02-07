@@ -311,7 +311,7 @@ class Build : NukeBuild
         using var ftpClient = CreateFtpClient(sshHost, sshUser, sshPassword);
         ftpClient.Connect();
         var browserProject = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Browser").ThrowIfNull();
-        var appBundlePath = "bin/Release/net7.0/browser-wasm/AppBundle";
+        var appBundlePath = "bin/Release/net8.0/browser-wasm/AppBundle";
         var appBundleFolder = Path.Combine(browserProject.Directory, appBundlePath).ToFolder();
         ftpClient.DeleteIfExistsFolder($"/home/{ftpUser}/{browserProject.Name}".ToFolder());
         ftpClient.UploadDirectory(appBundleFolder.FullName, $"/home/{ftpUser}/{browserProject.Name}");
