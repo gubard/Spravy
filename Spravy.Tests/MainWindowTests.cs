@@ -103,11 +103,11 @@ public class MainWindowTests
                             .ThrowIfNull()
                             .MustEnabled()
                             .ClickOnButton(w)
-                            //.WhenAllTasksAsync()s
-                            //.GetAwaiter()
-                            //.GetResult()
+                            .WhenAllTasksAsync()
+                            .GetAwaiter()
+                            .GetResult()
                     )
-                    //.Case(() => w.GetCurrentView<VerificationCodeView, VerificationCodeViewModel>())
+                    .Case(() => w.GetCurrentView<VerificationCodeView, VerificationCodeViewModel>())
                     .SaveFrame(),
                 (w, _) => w.SaveFrame()
             );

@@ -22,6 +22,46 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         this.mapper = mapper;
     }
 
+    public override async Task<UpdateToDoItemIsRequiredCompleteInDueDateReply>
+        UpdateToDoItemIsRequiredCompleteInDueDate(
+            UpdateToDoItemIsRequiredCompleteInDueDateRequest request,
+            ServerCallContext context
+        )
+    {
+        await toDoService.UpdateToDoItemIsRequiredCompleteInDueDateAsync(
+            mapper.Map<Guid>(request.Id),
+            request.IsRequiredCompleteInDueDate,
+            context.CancellationToken
+        );
+
+        return new UpdateToDoItemIsRequiredCompleteInDueDateReply();
+    }
+
+    public override async Task<GetTodayToDoItemsReply> GetTodayToDoItems(
+        GetTodayToDoItemsRequest request,
+        ServerCallContext context
+    )
+    {
+        var ids = await toDoService.GetTodayToDoItemsAsync(context.CancellationToken);
+        var result = new GetTodayToDoItemsReply();
+        result.Ids.AddRange(mapper.Map<IEnumerable<ByteString>>(ids));
+
+        return result;
+    }
+
+    public override async Task<ResetToDoItemReply> ResetToDoItem(
+        ResetToDoItemRequest request,
+        ServerCallContext context
+    )
+    {
+        await toDoService.ResetToDoItemAsync(
+            mapper.Map<Guid>(request.Id),
+            context.CancellationToken
+        );
+
+        return new ResetToDoItemReply();
+    }
+
     public override async Task<GetPeriodicityOffsetToDoItemSettingsReply> GetPeriodicityOffsetToDoItemSettings(
         GetPeriodicityOffsetToDoItemSettingsRequest request,
         ServerCallContext context

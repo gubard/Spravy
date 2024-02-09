@@ -11,13 +11,13 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoMapper" Version="12.0.1" />
-        <PackageReference Include="Avalonia" Version="11.0.7" />
-        <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.7" />
-        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.7" />
-        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.7" />
+        <PackageReference Include="AutoMapper" Version="13.0.1" />
+        <PackageReference Include="Avalonia" Version="11.0.8" />
+        <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.8" />
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.8" />
+        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.8" />
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.7" />
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.8" />
         <PackageReference Include="Avalonia.Xaml.Interactions" Version="11.0.6" />
         <PackageReference Include="Avalonia.Xaml.Interactions.Custom" Version="11.0.6" />
         <PackageReference Include="Avalonia.Xaml.Interactions.DragAndDrop" Version="11.0.6" />
@@ -27,17 +27,17 @@
         <PackageReference Include="Grpc.Net.Client" Version="2.60.0" />
         <PackageReference Include="Grpc.Net.Client.Web" Version="2.60.0" />
         <PackageReference Include="Grpc.Net.ClientFactory" Version="2.60.0" />
-        <PackageReference Include="Grpc.Tools" Version="2.60.0">
+        <PackageReference Include="Grpc.Tools" Version="2.61.0">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Markdown.Avalonia" Version="11.0.2" />
-        <PackageReference Include="Material.Avalonia" Version="3.2.2" />
-        <PackageReference Include="Material.Avalonia.Dialogs" Version="3.2.2" />
+        <PackageReference Include="Material.Avalonia" Version="3.3.0" />
+        <PackageReference Include="Material.Avalonia.Dialogs" Version="3.3.0" />
         <PackageReference Include="Material.Icons.Avalonia" Version="2.1.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
         <PackageReference Include="Serilog.Sinks.Console" Version="5.0.1" />
-        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.2.0" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.3.1" />
     </ItemGroup>
 
     <ItemGroup>

@@ -21,6 +21,144 @@ public class GrpcAuthenticationService : AuthenticationService.AuthenticationSer
         this.mapper = mapper;
     }
 
+    public override async Task<UpdateEmailNotVerifiedUserByLoginReply> UpdateEmailNotVerifiedUserByLogin(
+        UpdateEmailNotVerifiedUserByLoginRequest request,
+        ServerCallContext context
+    )
+    {
+        await authenticationService.UpdateEmailNotVerifiedUserByLoginAsync(
+            request.Login,
+            request.NewEmail,
+            context.CancellationToken
+        );
+
+        return new UpdateEmailNotVerifiedUserByLoginReply();
+    }
+
+    public override async Task<UpdateEmailNotVerifiedUserByEmailReply> UpdateEmailNotVerifiedUserByEmail(
+        UpdateEmailNotVerifiedUserByEmailRequest request,
+        ServerCallContext context
+    )
+    {
+        await authenticationService.UpdateEmailNotVerifiedUserByEmailAsync(
+            request.Email,
+            request.NewEmail,
+            context.CancellationToken
+        );
+
+        return new UpdateEmailNotVerifiedUserByEmailReply();
+    }
+
+    public override async Task<UpdateVerificationCodeByLoginReply> UpdateVerificationCodeByLogin(
+        UpdateVerificationCodeByLoginRequest request,
+        ServerCallContext context
+    )
+    {
+        await authenticationService.UpdateVerificationCodeByLoginAsync(
+            request.Login,
+            context.CancellationToken
+        );
+
+        return new UpdateVerificationCodeByLoginReply();
+    }
+
+    public override async Task<UpdateVerificationCodeByEmailReply> UpdateVerificationCodeByEmail(
+        UpdateVerificationCodeByEmailRequest request,
+        ServerCallContext context
+    )
+    {
+        await authenticationService.UpdateVerificationCodeByEmailAsync(
+            request.Email,
+            context.CancellationToken
+        );
+
+        return new UpdateVerificationCodeByEmailReply();
+    }
+
+    public override async Task<VerifiedEmailByLoginReply> VerifiedEmailByLogin(
+        VerifiedEmailByLoginRequest request,
+        ServerCallContext context
+    )
+    {
+        await authenticationService.VerifiedEmailByLoginAsync(
+            request.Login,
+            request.VerificationCode,
+            context.CancellationToken
+        );
+
+        return new VerifiedEmailByLoginReply();
+    }
+
+    public override async Task<VerifiedEmailByEmailReply> VerifiedEmailByEmail(
+        VerifiedEmailByEmailRequest request,
+        ServerCallContext context
+    )
+    {
+        await authenticationService.VerifiedEmailByEmailAsync(
+            request.Email,
+            request.VerificationCode,
+            context.CancellationToken
+        );
+
+        return new VerifiedEmailByEmailReply();
+    }
+
+    public override async Task<UpdatePasswordByLoginReply> UpdatePasswordByLogin(
+        UpdatePasswordByLoginRequest request,
+        ServerCallContext context
+    )
+    {
+        await authenticationService.UpdatePasswordByLoginAsync(
+            request.Login,
+            request.VerificationCode,
+            request.NewPassword,
+            context.CancellationToken
+        );
+
+        return new UpdatePasswordByLoginReply();
+    }
+
+    public override async Task<UpdatePasswordByEmailReply> UpdatePasswordByEmail(
+        UpdatePasswordByEmailRequest request,
+        ServerCallContext context
+    )
+    {
+        await authenticationService.UpdatePasswordByEmailAsync(
+            request.Email,
+            request.VerificationCode,
+            request.NewPassword,
+            context.CancellationToken
+        );
+
+        return new UpdatePasswordByEmailReply();
+    }
+
+    public override async Task<IsVerifiedByLoginReply> IsVerifiedByLogin(
+        IsVerifiedByLoginRequest request,
+        ServerCallContext context
+    )
+    {
+        var result = await authenticationService.IsVerifiedByLoginAsync(request.Login, context.CancellationToken);
+
+        return new IsVerifiedByLoginReply
+        {
+            IsVerified = result,
+        };
+    }
+
+    public override async Task<IsVerifiedByEmailReply> IsVerifiedByEmail(
+        IsVerifiedByEmailRequest request,
+        ServerCallContext context
+    )
+    {
+        var result = await authenticationService.IsVerifiedByEmailAsync(request.Email, context.CancellationToken);
+
+        return new IsVerifiedByEmailReply
+        {
+            IsVerified = result,
+        };
+    }
+
     public override async Task<CreateUserReply> CreateUser(CreateUserRequest request, ServerCallContext context)
     {
         var options = mapper.Map<CreateUserOptions>(request);
