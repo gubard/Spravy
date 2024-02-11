@@ -114,7 +114,6 @@ public static class WindowExtension
     public static DialogHost GetErrorDialogHost(this Window window)
     {
         return window.ThrowIfIsNotCast<MainWindow>()
-            .Case(w => w.DataContext.ThrowIfNull().ThrowIfIsNotCast<MainWindowModel>())
             .Content
             .ThrowIfNull()
             .ThrowIfIsNotCast<MainView>()
