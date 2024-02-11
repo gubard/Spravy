@@ -35,6 +35,7 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
     private bool loginChanged;
     private bool passwordChanged;
     private bool tryAutoLogin;
+    private bool isBusy;
 
     public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
@@ -87,6 +88,12 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
 
     [Inject]
     public required IAuthenticationService AuthenticationService { get; init; }
+
+    public bool IsBusy
+    {
+        get => isBusy;
+        set => this.RaiseAndSetIfChanged(ref isBusy, value);
+    }
 
     public bool TryAutoLogin
     {
@@ -184,29 +191,37 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
 
     private async Task LoginAsync(CancellationToken cancellationToken)
     {
-        var isVerified = await AuthenticationService.IsVerifiedByLoginAsync(Login, cancellationToken);
-
-        if (!isVerified)
+        try
         {
-            await Navigator.NavigateToAsync<VerificationCodeViewModel>(
-                vm =>
-                {
-                    vm.Identifier = Login;
-                    vm.IdentifierType = UserIdentifierType.Login;
-                },
-                cancellationToken
-            );
+            await this.InvokeUIAsync(() => IsBusy = true);
+            var isVerified = await AuthenticationService.IsVerifiedByLoginAsync(Login, cancellationToken);
 
-            return;
+            if (!isVerified)
+            {
+                await Navigator.NavigateToAsync<VerificationCodeViewModel>(
+                    vm =>
+                    {
+                        vm.Identifier = Login;
+                        vm.IdentifierType = UserIdentifierType.Login;
+                    },
+                    cancellationToken
+                );
+
+                return;
+            }
+
+            var user = Mapper.Map<User>(this);
+            await TokenService.LoginAsync(user, cancellationToken).ConfigureAwait(false);
+            Account.Login = user.Login;
+            await RememberMeAsync(cancellationToken);
+
+            await Navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken)
+                .ConfigureAwait(false);
         }
-
-        var user = Mapper.Map<User>(this);
-        await TokenService.LoginAsync(user, cancellationToken).ConfigureAwait(false);
-        Account.Login = user.Login;
-        await RememberMeAsync(cancellationToken);
-
-        await Navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken)
-            .ConfigureAwait(false);
+        finally
+        {
+            await this.InvokeUIAsync(() => IsBusy = false);
+        }
     }
 
     private async Task RememberMeAsync(CancellationToken cancellationToken)
@@ -228,28 +243,39 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
 
     private async Task InitializedAsync(CancellationToken cancellationToken)
     {
-        if (!TryAutoLogin)
+        try
         {
-            return;
-        }
-        
-        var setting = await ObjectStorage.GetObjectOrDefaultAsync<LoginViewModelSetting>(ViewId).ConfigureAwait(false);
-        await SetStateAsync(setting).ConfigureAwait(false);
+            await this.InvokeUIAsync(() => IsBusy = true);
 
-        if (!await ObjectStorage.IsExistsAsync(StorageIds.LoginId).ConfigureAwait(false))
+            if (!TryAutoLogin)
+            {
+                return;
+            }
+
+            var setting = await ObjectStorage.GetObjectOrDefaultAsync<LoginViewModelSetting>(ViewId)
+                .ConfigureAwait(false);
+            await SetStateAsync(setting).ConfigureAwait(false);
+
+            if (!await ObjectStorage.IsExistsAsync(StorageIds.LoginId).ConfigureAwait(false))
+            {
+                return;
+            }
+
+            var item = await ObjectStorage.GetObjectAsync<LoginStorageItem>(StorageIds.LoginId).ConfigureAwait(false);
+            var jwtHandler = new JwtSecurityTokenHandler();
+            var jwtToken = jwtHandler.ReadJwtToken(item.Token);
+            var l = jwtToken.Claims.Single(x => x.Type == ClaimTypes.Name).Value;
+            Account.Login = l;
+            await TokenService.LoginAsync(item.Token.ThrowIfNullOrWhiteSpace(), cancellationToken)
+                .ConfigureAwait(false);
+
+            await Navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken)
+                .ConfigureAwait(false);
+        }
+        finally
         {
-            return;
+            await this.InvokeUIAsync(() => IsBusy = false);
         }
-
-        var item = await ObjectStorage.GetObjectAsync<LoginStorageItem>(StorageIds.LoginId).ConfigureAwait(false);
-        var jwtHandler = new JwtSecurityTokenHandler();
-        var jwtToken = jwtHandler.ReadJwtToken(item.Token);
-        var l = jwtToken.Claims.Single(x => x.Type == ClaimTypes.Name).Value;
-        Account.Login = l;
-        await TokenService.LoginAsync(item.Token.ThrowIfNullOrWhiteSpace(), cancellationToken).ConfigureAwait(false);
-
-        await Navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken)
-            .ConfigureAwait(false);
     }
 
     private async Task EnterAsync(LoginView view, CancellationToken cancellationToken)
@@ -295,7 +321,8 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
     public override async Task SetStateAsync(object setting)
     {
         var s = setting.ThrowIfIsNotCast<LoginViewModelSetting>();
-        await this.InvokeUIBackgroundAsync(() =>
+        await this.InvokeUIBackgroundAsync(
+            () =>
             {
                 TryAutoLogin = false;
                 Login = s.Login;

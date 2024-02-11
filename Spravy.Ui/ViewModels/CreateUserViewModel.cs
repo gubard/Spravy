@@ -31,6 +31,7 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
     private bool loginChanged;
     private bool passwordChanged;
     private bool repeatPasswordChanged;
+    private bool isBusy;
 
     public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
@@ -124,6 +125,12 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
 
             return hasError;
         }
+    }
+
+    public bool IsBusy
+    {
+        get => isBusy;
+        set => this.RaiseAndSetIfChanged(ref isBusy, value);
     }
 
     public string Email
@@ -324,19 +331,27 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
 
     private async Task CreateUserAsync(CancellationToken cancellationToken)
     {
-        var options = Mapper.Map<CreateUserOptions>(this);
-        cancellationToken.ThrowIfCancellationRequested();
-        await AuthenticationService.CreateUserAsync(options, cancellationToken).ConfigureAwait(false);
-        cancellationToken.ThrowIfCancellationRequested();
+        try
+        {
+            await this.InvokeUIAsync(() => IsBusy = true);
+            var options = Mapper.Map<CreateUserOptions>(this);
+            cancellationToken.ThrowIfCancellationRequested();
+            await AuthenticationService.CreateUserAsync(options, cancellationToken).ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
 
-        await Navigator.NavigateToAsync<VerificationCodeViewModel>(
-                vm =>
-                {
-                    vm.Identifier = Email;
-                    vm.IdentifierType = UserIdentifierType.Email;
-                },
-                cancellationToken
-            )
-            .ConfigureAwait(false);
+            await Navigator.NavigateToAsync<VerificationCodeViewModel>(
+                    vm =>
+                    {
+                        vm.Identifier = Email;
+                        vm.IdentifierType = UserIdentifierType.Email;
+                    },
+                    cancellationToken
+                )
+                .ConfigureAwait(false);
+        }
+        finally
+        {
+            await this.InvokeUIAsync(() => IsBusy = false);
+        }
     }
 }

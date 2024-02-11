@@ -6,7 +6,6 @@
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-                                xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
                                 xmlns:services="clr-namespace:Spravy.Ui.Services"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.PlannedToDoItemSettingsView"
@@ -20,7 +19,6 @@
     <StackPanel>
         <TextBox Text="{Binding ChildrenType}"
                  UseFloatingWatermark="True"
-                 assists:TextFieldAssist.Label="{DynamicResource PlannedToDoItemSettingsView.Type}"
                  IsReadOnly="True"
                  Classes="outline dense with-button"
                  Theme="{StaticResource OutlineTextBox}">
@@ -34,7 +32,6 @@
         </TextBox>
 
         <TextBox Text="{Binding DueDate}"
-                 assists:TextFieldAssist.Label="{DynamicResource PlannedToDoItemSettingsView.DueDate}"
                  IsReadOnly="True"
                  UseFloatingWatermark="True"
                  Classes="outline dense with-button"

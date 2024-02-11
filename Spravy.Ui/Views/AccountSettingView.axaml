@@ -5,22 +5,20 @@
                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
+                                xmlns:controls="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+                                xmlns:theme="clr-namespace:SukiUI.Theme;assembly=SukiUI"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.AccountSettingView"
                                 x:DataType="viewModels:AccountSettingViewModel">
-    <Grid RowDefinitions="Auto,*">
-        <ContentControl Content="{Binding PageHeaderViewModel}" />
-
-        <StackPanel Grid.Row="1">
-            <Grid ColumnDefinitions="*,*" RowDefinitions="*,*">
-                <TextBlock Text="{DynamicResource AccountSettingView.Login}" />
-                <TextBlock Grid.Column="1" Text="{Binding AccountNotify.Login}" />
-
-                <Button Grid.Row="1"
-                        Grid.ColumnSpan="2"
-                        Content="{DynamicResource AccountSettingView.ChangePassword}"
+    <controls:GlassCard VerticalAlignment="Center" HorizontalAlignment="Center">
+        <controls:GroupBox Header="{Binding PageHeaderViewModel}">
+            <StackPanel>
+                <TextBox IsReadOnly="True" 
+                         theme:TextBoxExtensions.Prefix="{DynamicResource AccountSettingView.Login}"
+                         Text="{Binding AccountNotify.Login}" />
+                <Button Content="{DynamicResource AccountSettingView.ChangePassword}"
                         Command="{Binding ChangePasswordCommand}" />
-            </Grid>
-        </StackPanel>
-    </Grid>
+            </StackPanel>
+        </controls:GroupBox>
+    </controls:GlassCard>
 </reactiveUi:ReactiveUserControl>

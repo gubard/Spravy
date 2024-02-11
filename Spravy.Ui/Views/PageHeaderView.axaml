@@ -3,7 +3,6 @@
                                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                                xmlns:controls1="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
                                 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                 xmlns:helpers="clr-namespace:Spravy.Ui.Helpers"
                                 xmlns:system="clr-namespace:System;assembly=System.Runtime"
@@ -11,6 +10,7 @@
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                 xmlns:models="clr-namespace:Spravy.Ui.Models"
+                                xmlns:content="clr-namespace:SukiUI.Content;assembly=SukiUI"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.PageHeaderView"
                                 x:DataType="viewModels:PageHeaderViewModel">
@@ -66,66 +66,67 @@
         </Style>
     </UserControl.Styles>
 
-    <controls1:ColorZone Mode="PrimaryMid">
-        <Grid ColumnDefinitions="Auto,*,Auto">
-            <StackPanel Orientation="Horizontal">
-                <ContentControl Content="{x:Static services:CommandStorage.SwitchPaneItem}" />
-                <ContentControl Content="{Binding LeftCommand}" />
-            </StackPanel>
+    <Grid ColumnDefinitions="Auto,*,Auto">
+        <StackPanel Orientation="Horizontal">
+            <Button Classes="Basic" Command="{x:Static services:CommandStorage.SwitchPaneCommand}">
+                <PathIcon Data="{x:Static content:Icons.Menu}" />
+            </Button>
 
-            <ScrollViewer Grid.Column="1"
-                          VerticalScrollBarVisibility="Disabled"
-                          HorizontalScrollBarVisibility="Auto"
-                          HorizontalAlignment="Left">
-                <ContentControl Content="{Binding Header}">
-                    <ContentControl.DataTemplates>
-                        <DataTemplate DataType="system:String">
-                            <TextBlock Text="{Binding }" Classes="alignment-center Headline6" />
+            <ContentControl Content="{Binding LeftCommand}" />
+        </StackPanel>
+
+        <ScrollViewer Grid.Column="1"
+                      VerticalScrollBarVisibility="Disabled"
+                      HorizontalScrollBarVisibility="Auto"
+                      HorizontalAlignment="Left">
+            <ContentControl Content="{Binding Header}">
+                <ContentControl.DataTemplates>
+                    <DataTemplate DataType="system:String">
+                        <TextBlock Text="{Binding }" Classes="h3" />
+                    </DataTemplate>
+                </ContentControl.DataTemplates>
+            </ContentControl>
+        </ScrollViewer>
+
+        <StackPanel Grid.Column="2" Orientation="Horizontal">
+            <ContentControl Content="{Binding RightCommand}" />
+
+            <Panel IsVisible="{Binding Commands.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
+                <ItemsControl HorizontalAlignment="Right"
+                              VerticalAlignment="Center"
+                              ItemsSource="{Binding Commands}"
+                              Classes="adaptive">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+
+                <Button Classes="adaptive Basic">
+                    <Button.DataTemplates>
+                        <DataTemplate x:DataType="models:CommandItem">
+                            <StackPanel Orientation="Horizontal">
+                                <avalonia:MaterialIcon Kind="{Binding Icon}" />
+                                <TextBlock Text="{Binding Name}" />
+                            </StackPanel>
                         </DataTemplate>
-                    </ContentControl.DataTemplates>
-                </ContentControl>
-            </ScrollViewer>
+                    </Button.DataTemplates>
 
-            <StackPanel Grid.Column="2" Orientation="Horizontal">
-                <ContentControl Content="{Binding RightCommand}" />
+                    <Button.Styles>
+                        <Style Selector="MenuItem" x:DataType="models:CommandItem">
+                            <Setter Property="Command" Value="{Binding Command}" />
+                            <Setter Property="CommandParameter" Value="{Binding Parameter}" />
+                        </Style>
+                    </Button.Styles>
 
-                <Panel IsVisible="{Binding Commands.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
-                    <ItemsControl HorizontalAlignment="Right"
-                                  VerticalAlignment="Center"
-                                  ItemsSource="{Binding Commands}"
-                                  Classes="adaptive">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel Orientation="Horizontal" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                    </ItemsControl>
+                    <Button.Flyout>
+                        <MenuFlyout ItemsSource="{Binding Commands}" />
+                    </Button.Flyout>
 
-                    <Button Classes="adaptive with-icon">
-                        <Button.DataTemplates>
-                            <DataTemplate x:DataType="models:CommandItem">
-                                <StackPanel Orientation="Horizontal">
-                                    <avalonia:MaterialIcon Kind="{Binding Icon}" />
-                                    <TextBlock Text="{Binding Name}" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </Button.DataTemplates>
-
-                        <Button.Styles>
-                            <Style Selector="MenuItem" x:DataType="models:CommandItem">
-                                <Setter Property="Command" Value="{Binding Command}" />
-                                <Setter Property="CommandParameter" Value="{Binding Parameter}" />
-                            </Style>
-                        </Button.Styles>
-
-                        <Button.Flyout>
-                            <MenuFlyout ItemsSource="{Binding Commands}" />
-                        </Button.Flyout>
-
-                        <avalonia:MaterialIcon Kind="DotsHorizontal" />
-                    </Button>
-                </Panel>
-            </StackPanel>
-        </Grid>
-    </controls1:ColorZone>
+                    <avalonia:MaterialIcon Kind="DotsHorizontal" />
+                </Button>
+            </Panel>
+        </StackPanel>
+    </Grid>
 </reactiveUi:ReactiveUserControl>

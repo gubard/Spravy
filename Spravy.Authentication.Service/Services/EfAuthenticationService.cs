@@ -9,7 +9,6 @@ using Spravy.Authentication.Domain.Models;
 using Spravy.Authentication.Service.Interfaces;
 using Spravy.Db.Extensions;
 using Spravy.Domain.Enums;
-using Spravy.Domain.Exceptions;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;

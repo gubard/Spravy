@@ -5,11 +5,9 @@
                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-                                xmlns:controls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
-                                xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
-                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                 xmlns:views="clr-namespace:Spravy.Ui.Views"
                                 xmlns:services="clr-namespace:Spravy.Ui.Services"
+                                xmlns:controls="clr-namespace:SukiUI.Controls;assembly=SukiUI"
                                 mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                                 x:Class="Spravy.Ui.Views.LoginView"
                                 x:DataType="viewModels:LoginViewModel">
@@ -23,50 +21,42 @@
         <KeyBinding Gesture="Enter" Command="{Binding EnterCommand}" CommandParameter="{Binding $self}" />
     </UserControl.KeyBindings>
 
-    <controls:Card HorizontalAlignment="Center"
-                   VerticalAlignment="Center"
-                   MinWidth="300">
-        <StackPanel>
-            <TextBlock Text="{DynamicResource LoginView.WelcomeToSpravy}" Classes="Headline5" HorizontalAlignment="Center" />
+    <controls:GlassCard HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        MinWidth="300">
+        <controls:BusyArea BusyText="{DynamicResource LoginView.Busy}"
+                           IsBusy="{Binding IsBusy}">
+            <StackPanel>
+                <TextBlock Text="{DynamicResource LoginView.WelcomeToSpravy}" Classes="h2" HorizontalAlignment="Center" />
+                <TextBlock Classes="field"
+                           Text="{DynamicResource LoginView.Login}" />
+                <TextBox Name="{x:Static views:LoginView.LoginTextBoxName}"
+                         Text="{Binding Login}" />
+                <TextBlock Classes="field"
+                           Text="{DynamicResource LoginView.Password}" />
+                <TextBox Name="{x:Static views:LoginView.PasswordTextBoxName}"
+                         PasswordChar="*"
+                         Text="{Binding Password}" />
 
-            <TextBox UseFloatingWatermark="True"
-                     Name="{x:Static views:LoginView.LoginTextBoxName}"
-                     Classes="outline dense"
-                     Theme="{StaticResource OutlineTextBox}"
-                     assists:TextFieldAssist.Label="{DynamicResource LoginView.Login}"
-                     Text="{Binding Login}" />
-
-            <TextBox Name="{x:Static views:LoginView.PasswordTextBoxName}"
-                     UseFloatingWatermark="True"
-                     Classes="outline dense revealPasswordButton"
-                     Theme="{StaticResource OutlineTextBox}"
-                     assists:TextFieldAssist.Label="{DynamicResource LoginView.Password}"
-                     PasswordChar="*"
-                     Text="{Binding Password}" />
-
-            <Grid ColumnDefinitions="*,*" RowDefinitions="*,*">
-                <CheckBox IsChecked="{Binding IsRememberMe}">
-                    <TextBlock Text="{DynamicResource LoginView.RememberMe}" />
-                </CheckBox>
-
-                <Button Grid.Column="1"
-                        Command="{x:Static services:CommandStorage.NavigateToCommand}"
-                        CommandParameter="{x:Type viewModels:EmailOrLoginInputViewModel}">
-                    <TextBlock Text="{DynamicResource LoginView.ForgotPassword}" />
-                </Button>
-
-                <Button Grid.Row="1" Command="{x:Static services:CommandStorage.NavigateToCommand}"
-                        CommandParameter="{x:Type viewModels:CreateUserViewModel}"
-                        x:Name="CreateUserButton">
-                    <avalonia:MaterialIcon Kind="AccountPlus" />
-                </Button>
-
-                <Button Grid.Row="1"
-                        Grid.Column="1"
-                        Command="{Binding LoginCommand}">
-                    <avalonia:MaterialIcon Kind="Login" />
-                </Button>
-            </Grid>
-        </StackPanel>
-    </controls:Card>
+                <Grid ColumnDefinitions="*,*" RowDefinitions="*,*">
+                    <CheckBox IsChecked="{Binding IsRememberMe}"
+                              Content="{DynamicResource LoginView.RememberMe}"
+                              HorizontalAlignment="Center" />
+                    <Button Grid.Column="1"
+                            Command="{x:Static services:CommandStorage.NavigateToCommand}"
+                            CommandParameter="{x:Type viewModels:EmailOrLoginInputViewModel}"
+                            Content="{DynamicResource LoginView.ForgotPassword}" />
+                    <Button Grid.Row="1" Command="{x:Static services:CommandStorage.NavigateToCommand}"
+                            CommandParameter="{x:Type viewModels:CreateUserViewModel}"
+                            x:Name="CreateUserButton"
+                            Content="{DynamicResource LoginView.CreateAccount}" />
+                    <Button Grid.Row="1"
+                            Grid.Column="1"
+                            Command="{Binding LoginCommand}"
+                            Content="{DynamicResource LoginView.Login}"
+                            Classes="Flat" />
+                </Grid>
+            </StackPanel>
+        </controls:BusyArea>
+    </controls:GlassCard>
 </reactiveUi:ReactiveUserControl>

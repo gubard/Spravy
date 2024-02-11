@@ -15,4 +15,6 @@
     <StyleInclude Source="DialogHost.axaml" />
     <StyleInclude Source="SplitView.axaml" />
     <StyleInclude Source="FlyoutPresenter.axaml" />
+    <StyleInclude Source="CheckBox.axaml" />
+    <StyleInclude Source="TextBlock.axaml" />
 </Styles>

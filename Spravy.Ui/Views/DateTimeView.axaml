@@ -5,12 +5,11 @@
                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-                                xmlns:controls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.DateTimeView"
                                 x:DataType="viewModels:DateTimeViewModel">
     <WrapPanel Orientation="Horizontal">
         <Calendar SelectedDate="{Binding SelectedDate}" />
-        <controls:Clock SelectedTime="{Binding SelectedTime}" />
+        <TimePicker SelectedTime="{Binding SelectedTime}" />
     </WrapPanel>
 </reactiveUi:ReactiveUserControl>

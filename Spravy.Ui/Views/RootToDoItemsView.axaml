@@ -25,10 +25,11 @@
 
         <Button Grid.Row="2"
                 Command="{x:Static services:CommandStorage.AddRootToDoItemCommand}"
-                Height="64">
+                Height="64"
+                Classes="Flat">
             <StackPanel Orientation="Horizontal">
                 <avalonia:MaterialIcon Kind="Plus" Width="40" Height="40" />
-                <TextBlock Text="{DynamicResource RootToDoItemsView.CreateTask}" VerticalAlignment="Center" Classes="Headline5" />
+                <TextBlock Text="{DynamicResource RootToDoItemsView.CreateTask}" VerticalAlignment="Center" Classes="h3" />
             </StackPanel>
         </Button>
     </Grid>

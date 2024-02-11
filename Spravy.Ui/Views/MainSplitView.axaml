@@ -11,7 +11,7 @@
     <SplitView Content="{Binding Content}"
                Pane="{Binding Pane}"
                IsPaneOpen="{Binding IsPaneOpen}"
-               OpenPaneLength="200"
-               PanePlacement="Left" 
-               x:Name="MainSplit"/>
+               OpenPaneLength="300"
+               PanePlacement="Left"
+               x:Name="MainSplit" />
 </reactiveUi:ReactiveUserControl>

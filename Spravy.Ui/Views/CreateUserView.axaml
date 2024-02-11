@@ -5,11 +5,9 @@
                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-                                xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
-                                xmlns:controls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
-                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                 xmlns:views="clr-namespace:Spravy.Ui.Views"
                                 xmlns:services="clr-namespace:Spravy.Ui.Services"
+                                xmlns:controls="clr-namespace:SukiUI.Controls;assembly=SukiUI"
                                 mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                                 x:Class="Spravy.Ui.Views.CreateUserView"
                                 x:DataType="viewModels:CreateUserViewModel">
@@ -17,56 +15,48 @@
         <KeyBinding Gesture="Enter" Command="{Binding EnterCommand}" CommandParameter="{Binding $self}" />
     </UserControl.KeyBindings>
 
-    <controls:Card x:Name="CreateUserCard"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"
-                   Width="300">
-        <StackPanel>
-            <TextBlock Text="{DynamicResource CreateUserView.CreateAccount}" FontSize="24" HorizontalAlignment="Center" />
+    <controls:GlassCard x:Name="CreateUserCard"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Width="400">
+        <controls:BusyArea IsBusy="{Binding IsBusy}"
+                           BusyText="{DynamicResource CreateUserView.Busy}">
+            <StackPanel>
+                <TextBlock Text="{DynamicResource CreateUserView.CreateAccountHeader}" 
+                           Classes="h2"
+                           HorizontalAlignment="Center" />
+                <TextBlock Classes="field"
+                           Text="{DynamicResource CreateUserView.Email}" />
+                <TextBox Name="{x:Static views:CreateUserView.EmailTextBoxName}"
+                         Text="{Binding Email}" />
+                <TextBlock Classes="field"
+                           Text="{DynamicResource CreateUserView.Login}" />
+                <TextBox Name="{x:Static views:CreateUserView.LoginTextBoxName}"
+                         Text="{Binding Login}" />
+                <TextBlock Classes="field"
+                           Text="{DynamicResource CreateUserView.Password}" />
+                <TextBox Name="{x:Static views:CreateUserView.PasswordTextBoxName}"
+                         PasswordChar="*"
+                         Text="{Binding Password}" />
+                <TextBlock Classes="field"
+                           Text="{DynamicResource CreateUserView.RepeatPassword}" />
+                <TextBox Name="{x:Static views:CreateUserView.RepeatPasswordTextBoxName}"
+                         PasswordChar="*"
+                         Text="{Binding RepeatPassword}" />
 
-            <TextBox UseFloatingWatermark="True"
-                     Name="{x:Static views:CreateUserView.EmailTextBoxName}"
-                     Classes="outline dense"
-                     Theme="{StaticResource OutlineTextBox}"
-                     assists:TextFieldAssist.Label="{DynamicResource CreateUserView.Email}"
-                     Text="{Binding Email}" />
+                <Grid ColumnDefinitions="*,*">
+                    <Button x:Name="BackButton"
+                            Command="{x:Static services:CommandStorage.NavigateToCommand}"
+                            CommandParameter="{x:Type viewModels:LoginViewModel}"
+                            Content="{DynamicResource CreateUserView.Back}" />
 
-            <TextBox UseFloatingWatermark="True"
-                     Name="{x:Static views:CreateUserView.LoginTextBoxName}"
-                     Classes="outline dense"
-                     Theme="{StaticResource OutlineTextBox}"
-                     assists:TextFieldAssist.Label="{DynamicResource CreateUserView.Login}"
-                     Text="{Binding Login}" />
-
-            <TextBox UseFloatingWatermark="True"
-                     Name="{x:Static views:CreateUserView.PasswordTextBoxName}"
-                     Classes="outline dense revealPasswordButton"
-                     Theme="{StaticResource OutlineTextBox}"
-                     assists:TextFieldAssist.Label="{DynamicResource CreateUserView.Password}"
-                     PasswordChar="*"
-                     Text="{Binding Password}" />
-
-            <TextBox Name="{x:Static views:CreateUserView.RepeatPasswordTextBoxName}"
-                     UseFloatingWatermark="True"
-                     Classes="outline dense revealPasswordButton"
-                     Theme="{StaticResource OutlineTextBox}"
-                     assists:TextFieldAssist.Label="{DynamicResource CreateUserView.RepeatPassword}"
-                     PasswordChar="*"
-                     Text="{Binding RepeatPassword}" />
-
-            <Grid ColumnDefinitions="*,*">
-                <Button x:Name="BackButton"
-                        Command="{x:Static services:CommandStorage.NavigateToCommand}"
-                        CommandParameter="{x:Type viewModels:LoginViewModel}">
-                    <avalonia:MaterialIcon Kind="ArrowLeft" />
-                </Button>
-
-                <Button x:Name="CreateUserButton"
-                        Grid.Column="1"
-                        Command="{Binding CreateUserCommand}">
-                    <avalonia:MaterialIcon Kind="AccountPlus" />
-                </Button>
-            </Grid>
-        </StackPanel>
-    </controls:Card>
+                    <Button x:Name="CreateUserButton"
+                            Grid.Column="1"
+                            Command="{Binding CreateUserCommand}"
+                            Content="{DynamicResource CreateUserView.CreateAccount}"
+                            Classes="Flat" />
+                </Grid>
+            </StackPanel>
+        </controls:BusyArea>
+    </controls:GlassCard>
 </reactiveUi:ReactiveUserControl>

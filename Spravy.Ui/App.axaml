@@ -2,12 +2,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:models="clr-namespace:Spravy.Ui.Models"
              xmlns:handlers="clr-namespace:Spravy.Ui.Handlers"
-             xmlns:themes="clr-namespace:Material.Styles.Themes;assembly=Material.Styles"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:dialogHostAvalonia="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
-             xmlns:controls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
              xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
              xmlns:services="clr-namespace:Spravy.Ui.Services"
+             xmlns:sukiUi="clr-namespace:SukiUI;assembly=SukiUI"
+             xmlns:controls="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+             xmlns:icons="clr-namespace:Material.Icons;assembly=Material.Icons"
              x:Class="Spravy.Ui.App"
              RequestedThemeVariant="Dark">
     <Application.Resources>
@@ -15,14 +16,12 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="Assets/Lang/en-US.axaml" />
                 <ResourceInclude Source="Styles/Resources.axaml" />
-                <ResourceInclude Source="Styles/ToggleButton.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
 
     <Application.Styles>
-        <FluentTheme DensityStyle="Compact" />
-        <themes:MaterialTheme BaseTheme="Dark" PrimaryColor="Teal" SecondaryColor="Amber" />
+        <sukiUi:SukiTheme ThemeColor="Green" />
         <avalonia:MaterialIconStyles />
         <dialogHostAvalonia:DialogHostStyles />
         <StyleInclude Source="avares://Spravy.Ui/Styles/Theme.axaml" />
@@ -86,7 +85,7 @@
         </DataTemplate>
 
         <DataTemplate x:DataType="models:CommandItem">
-            <Button Command="{Binding Command}" CommandParameter="{Binding Parameter}">
+            <Button Classes="Basic" Command="{Binding Command}" CommandParameter="{Binding Parameter}">
                 <avalonia:MaterialIcon Kind="{Binding Icon}" />
             </Button>
         </DataTemplate>
@@ -96,35 +95,25 @@
         </TreeDataTemplate>
 
         <DataTemplate DataType="models:ToDoItemParentNotify">
-            <StackPanel Orientation="Horizontal">
-                <Button Margin="3"
-                        Command="{x:Static services:CommandStorage.NavigateToToDoItemCommand}"
-                        CommandParameter="{Binding Id}">
-                    <TextBlock Text="{Binding Name}" />
-                </Button>
-
-                <TextBlock Text="{x:Static viewModels:PathViewModel.DefaultSeparator}"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center" />
-            </StackPanel>
+            <Button Command="{x:Static services:CommandStorage.NavigateToToDoItemCommand}"
+                    CommandParameter="{Binding Id}"
+                    Content="{Binding Name}"
+                    Classes="Basic" />
         </DataTemplate>
 
         <DataTemplate DataType="models:RootItem">
-            <StackPanel Orientation="Horizontal">
-                <Button Margin="3"
-                        Command="{x:Static services:CommandStorage.NavigateToCommand}"
-                        CommandParameter="{x:Type viewModels:RootToDoItemsViewModel}">
-                    <avalonia:MaterialIcon Kind="Home" />
-                </Button>
-
-                <TextBlock Text="{x:Static viewModels:PathViewModel.DefaultSeparator}"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center" />
-            </StackPanel>
+            <Button Command="{x:Static services:CommandStorage.NavigateToCommand}"
+                    CommandParameter="{x:Type viewModels:RootToDoItemsViewModel}"
+                    Content="{x:Static icons:MaterialIconKind.Home}"
+                    Classes="Basic" />
         </DataTemplate>
 
         <DataTemplate DataType="models:ToDoShortItemNotify">
             <TextBlock Text="{Binding Name}" />
+        </DataTemplate>
+
+        <DataTemplate DataType="icons:MaterialIconKind">
+            <avalonia:MaterialIcon Kind="{Binding}" />
         </DataTemplate>
 
         <DataTemplate>
@@ -132,138 +121,126 @@
                 <x:Type TypeName="models:Selected" x:TypeArguments="models:ToDoItemNotify" />
             </DataTemplate.DataType>
 
-            <Button Margin="3"
-                    Padding="0"
-                    Command="{x:Static services:CommandStorage.NavigateToToDoItemCommand}"
-                    CommandParameter="{Binding Value.Id}"
-                    Background="Transparent"
-                    BorderThickness="0"
-                    HorizontalContentAlignment="Stretch"
-                    VerticalContentAlignment="Stretch">
-                <controls:Card Margin="0" Padding="0">
-                    <Grid ColumnDefinitions="*,Auto"
-                          RowDefinitions="Auto,*"
-                          HorizontalAlignment="Stretch"
-                          VerticalAlignment="Stretch"
-                          Margin="5">
-                        <Grid Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*,Auto,Auto">
-                            <Rectangle Width="15"
-                                       Margin="0,0,3,0"
-                                       Height="2"
-                                       Fill="{Binding Value.Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
-                            <TextBlock Grid.Column="1"
-                                       Text="{Binding Value.Type, Converter={StaticResource ToDoItemTypeLocalizationValueConverter}}"
-                                       Classes="Body2"
-                                       Foreground="{DynamicResource MaterialBodyBrush}" />
-                            <Rectangle Grid.Column="2"
-                                       Margin="3,0,3,0"
-                                       Height="2"
-                                       Fill="{Binding Value.Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
-                            <TextBlock Grid.Column="3"
-                                       Text="{Binding Value.Status, Converter={StaticResource ToDoItemStatusLocalizationValueConverter}}"
-                                       Classes="Body2"
-                                       Foreground="{DynamicResource MaterialBodyBrush}" />
-                            <Rectangle Grid.Column="4"
-                                       Width="15"
-                                       Margin="3,0,0,0"
-                                       Height="2"
-                                       Fill="{Binding Value.Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
-                        </Grid>
+            <controls:GlassCard Command="{x:Static services:CommandStorage.NavigateToToDoItemCommand}"
+                                CommandParameter="{Binding Value.Id}"
+                                IsInteractive="True">
+                <Grid ColumnDefinitions="*,Auto"
+                      RowDefinitions="Auto,*"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      Margin="5">
+                    <Grid Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*,Auto,Auto">
+                        <Rectangle Width="15"
+                                   Margin="0,0,3,0"
+                                   Height="2"
+                                   Fill="{Binding Value.Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding Value.Type, Converter={StaticResource ToDoItemTypeLocalizationValueConverter}}"
+                                   Classes="Body2" />
+                        <Rectangle Grid.Column="2"
+                                   Margin="3,0,3,0"
+                                   Height="2"
+                                   Fill="{Binding Value.Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
+                        <TextBlock Grid.Column="3"
+                                   Text="{Binding Value.Status, Converter={StaticResource ToDoItemStatusLocalizationValueConverter}}"
+                                   Classes="Body2" />
+                        <Rectangle Grid.Column="4"
+                                   Width="15"
+                                   Margin="3,0,0,0"
+                                   Height="2"
+                                   Fill="{Binding Value.Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
+                    </Grid>
 
-                        <StackPanel Grid.Row="1">
-                            <WrapPanel Orientation="Horizontal">
-                                <ToggleButton
-                                    Command="{x:Static services:CommandStorage.SwitchCompleteToDoItemCommand}"
-                                    CommandParameter="{Binding Value}"
-                                    IsVisible="{Binding Value.IsCan, Converter={StaticResource ToDoItemCanNoneToBooleanReverseConverter}}"
-                                    IsChecked="{Binding Value.IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanConverter}}" />
+                    <StackPanel Grid.Row="1">
+                        <WrapPanel Orientation="Horizontal">
+                            <ToggleButton
+                                Command="{x:Static services:CommandStorage.SwitchCompleteToDoItemCommand}"
+                                CommandParameter="{Binding Value}"
+                                IsVisible="{Binding Value.IsCan, Converter={StaticResource ToDoItemCanNoneToBooleanReverseConverter}}"
+                                IsChecked="{Binding Value.IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanConverter}}" />
 
-                                <TextBlock Text="{Binding Value.Name}"
-                                           Classes="Headline6"
-                                           TextWrapping="Wrap"
-                                           VerticalAlignment="Center"
-                                           Foreground="{DynamicResource MaterialBodyBrush}" />
-                            </WrapPanel>
+                            <TextBlock Text="{Binding Value.Name}"
+                                       Classes="Headline6"
+                                       TextWrapping="Wrap"
+                                       VerticalAlignment="Center" />
+                        </WrapPanel>
 
-                            <Grid ColumnDefinitions="*,*,*" HorizontalAlignment="Left">
-                                <Button Grid.ColumnSpan="3"
-                                        Margin="0,5,5,5"
-                                        IsVisible="{Binding Value.Active, Converter={StaticResource NullToBooleanConverter}}"
-                                        CommandParameter="{Binding Value.Active.Id}"
-                                        Command="{x:Static services:CommandStorage.NavigateToToDoItemCommand}">
-                                    <WrapPanel Orientation="Horizontal">
-                                        <TextBlock Text="{Binding Value.Active.Name}"
-                                                   TextWrapping="Wrap"
-                                                   VerticalAlignment="Center" />
-                                        <avalonia:MaterialIcon Margin="5,0,0,0" Kind="ArrowRight" />
-                                    </WrapPanel>
-                                </Button>
-                            </Grid>
-                        </StackPanel>
-
-                        <Grid Grid.Row="1"
-                              Grid.Column="1"
-                              ColumnDefinitions="Auto,Auto"
-                              RowDefinitions="Auto,Auto"
-                              Margin="3">
-                            <Button Width="48" Height="32" CommandParameter="{Binding Value}">
-                                <Button.DataTemplates>
-                                    <DataTemplate x:DataType="models:CommandItem">
-                                        <StackPanel Orientation="Horizontal">
-                                            <avalonia:MaterialIcon Kind="{Binding Icon}" />
-                                            <TextBlock Text="{Binding Name}" />
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </Button.DataTemplates>
-
-                                <Button.Styles>
-                                    <Style Selector="MenuItem" x:DataType="models:CommandItem">
-                                        <Setter Property="Command" Value="{Binding Command}" />
-                                        <Setter Property="CommandParameter" Value="{Binding Parameter}" />
-                                    </Style>
-                                </Button.Styles>
-
-                                <Button.Flyout>
-                                    <MenuFlyout ItemsSource="{Binding Value.Commands}" />
-                                </Button.Flyout>
-
-                                <avalonia:MaterialIcon Kind="DotsHorizontal" />
+                        <Grid ColumnDefinitions="*,*,*" HorizontalAlignment="Left">
+                            <Button Grid.ColumnSpan="3"
+                                    Margin="0,5,5,5"
+                                    IsVisible="{Binding Value.Active, Converter={StaticResource NullToBooleanConverter}}"
+                                    CommandParameter="{Binding Value.Active.Id}"
+                                    Command="{x:Static services:CommandStorage.NavigateToToDoItemCommand}">
+                                <WrapPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Value.Active.Name}"
+                                               TextWrapping="Wrap"
+                                               VerticalAlignment="Center" />
+                                    <avalonia:MaterialIcon Margin="5,0,0,0" Kind="ArrowRight" />
+                                </WrapPanel>
                             </Button>
+                        </Grid>
+                    </StackPanel>
 
-                            <Panel Grid.Column="1">
-                                <Button CommandParameter="{Binding Value.Id}"
-                                        Command="{x:Static services:CommandStorage.RemoveToDoItemFromFavoriteCommand}"
-                                        IsVisible="{Binding Value.IsFavorite}"
-                                        Margin="3"
-                                        Width="48"
-                                        Height="32">
-                                    <avalonia:MaterialIcon Kind="Star" />
-                                </Button>
+                    <Grid Grid.Row="1"
+                          Grid.Column="1"
+                          ColumnDefinitions="Auto,Auto"
+                          RowDefinitions="Auto,Auto"
+                          Margin="3">
+                        <Button CommandParameter="{Binding Value}">
+                            <Button.DataTemplates>
+                                <DataTemplate x:DataType="models:CommandItem">
+                                    <TextBlock Text="{Binding Name}" />
+                                </DataTemplate>
+                            </Button.DataTemplates>
 
-                                <Button CommandParameter="{Binding Value.Id}"
-                                        Command="{x:Static services:CommandStorage.AddToDoItemToFavoriteCommand}"
-                                        IsVisible="{Binding Value.IsFavorite, Converter={StaticResource ReverseBooleanValueConverter}}"
-                                        Margin="3"
-                                        Width="48"
-                                        Height="32">
-                                    <avalonia:MaterialIcon Kind="StarOutline" />
-                                </Button>
-                            </Panel>
+                            <Button.Styles>
+                                <Style Selector="MenuItem" x:DataType="models:CommandItem">
+                                    <Setter Property="Command" Value="{Binding Command}" />
+                                    <Setter Property="CommandParameter" Value="{Binding Parameter}" />
+                                    <Setter Property="Icon" Value="{Binding Icon}" />
+                                </Style>
+                            </Button.Styles>
 
-                            <Button Grid.Row="1"
-                                    Grid.Column="1"
-                                    Command="{x:Static services:CommandStorage.OpenLinkCommand}"
-                                    CommandParameter="{Binding Value}"
-                                    IsVisible="{Binding Value.Link, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}"
+                            <Button.Flyout>
+                                <MenuFlyout ItemsSource="{Binding Value.Commands}" />
+                            </Button.Flyout>
+
+                            <avalonia:MaterialIcon Kind="DotsHorizontal" />
+                        </Button>
+
+                        <Panel Grid.Column="1">
+                            <Button CommandParameter="{Binding Value.Id}"
+                                    Command="{x:Static services:CommandStorage.RemoveToDoItemFromFavoriteCommand}"
+                                    IsVisible="{Binding Value.IsFavorite}"
                                     Margin="3"
                                     Width="48"
                                     Height="32">
-                                <avalonia:MaterialIcon Kind="Link" />
+                                <avalonia:MaterialIcon Kind="Star" />
                             </Button>
-                        </Grid>
+
+                            <Button CommandParameter="{Binding Value.Id}"
+                                    Command="{x:Static services:CommandStorage.AddToDoItemToFavoriteCommand}"
+                                    IsVisible="{Binding Value.IsFavorite, Converter={StaticResource ReverseBooleanValueConverter}}"
+                                    Margin="3"
+                                    Width="48"
+                                    Height="32">
+                                <avalonia:MaterialIcon Kind="StarOutline" />
+                            </Button>
+                        </Panel>
+
+                        <Button Grid.Row="1"
+                                Grid.Column="1"
+                                Command="{x:Static services:CommandStorage.OpenLinkCommand}"
+                                CommandParameter="{Binding Value}"
+                                IsVisible="{Binding Value.Link, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}"
+                                Margin="3"
+                                Width="48"
+                                Height="32">
+                            <avalonia:MaterialIcon Kind="Link" />
+                        </Button>
                     </Grid>
-                </controls:Card>
-            </Button>
+                </Grid>
+            </controls:GlassCard>
         </DataTemplate>
     </Application.DataTemplates>
 </Application>

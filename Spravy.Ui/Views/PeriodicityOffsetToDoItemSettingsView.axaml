@@ -5,7 +5,6 @@
                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                 xmlns:reactiveUi="http://reactiveui.net"
-                                xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
                                 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                 xmlns:services="clr-namespace:Spravy.Ui.Services"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -20,7 +19,6 @@
     <StackPanel>
         <TextBox Text="{Binding ChildrenType}"
                  UseFloatingWatermark="True"
-                 assists:TextFieldAssist.Label="{DynamicResource PeriodicityOffsetToDoItemSettingsView.Type}"
                  IsReadOnly="True"
                  Classes="outline dense with-button"
                  Theme="{StaticResource OutlineTextBox}">
@@ -34,7 +32,6 @@
         </TextBox>
 
         <TextBox Text="{Binding DueDate}"
-                 assists:TextFieldAssist.Label="{DynamicResource PeriodicityOffsetToDoItemSettingsView.DueDate}"
                  UseFloatingWatermark="True"
                  IsReadOnly="True"
                  Classes="outline dense with-button"
@@ -49,7 +46,6 @@
         </TextBox>
 
         <TextBox Text="{Binding DaysOffset}"
-                 assists:TextFieldAssist.Label="{DynamicResource PeriodicityOffsetToDoItemSettingsView.DaysOffset}"
                  UseFloatingWatermark="True"
                  IsReadOnly="True"
                  Classes="outline dense with-button"
@@ -64,7 +60,6 @@
         </TextBox>
 
         <TextBox Text="{Binding MonthsOffset}"
-                 assists:TextFieldAssist.Label="{DynamicResource PeriodicityOffsetToDoItemSettingsView.MonthsOffset}"
                  UseFloatingWatermark="True"
                  IsReadOnly="True"
                  Classes="outline dense with-button"
@@ -79,7 +74,6 @@
         </TextBox>
 
         <TextBox Text="{Binding WeeksOffset}"
-                 assists:TextFieldAssist.Label="{DynamicResource PeriodicityOffsetToDoItemSettingsView.WeeksOffset}"
                  UseFloatingWatermark="True"
                  IsReadOnly="True"
                  Classes="outline dense with-button"
@@ -94,7 +88,6 @@
         </TextBox>
 
         <TextBox Text="{Binding YearsOffset}"
-                 assists:TextFieldAssist.Label="{DynamicResource PeriodicityOffsetToDoItemSettingsView.YearsOffset}"
                  UseFloatingWatermark="True"
                  IsReadOnly="True"
                  Classes="outline dense with-button"

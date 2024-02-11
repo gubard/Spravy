@@ -1,6 +1,10 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:system="clr-namespace:System;assembly=System.Runtime">
+    <!--ConfirmView-->
+    <system:String x:Key="ConfirmView.Ok">Ok</system:String>
+    <system:String x:Key="ConfirmView.Cancel">Cancel</system:String>
+
     <!--MultiToDoItemsView-->
     <system:String x:Key="MultiToDoItemsView.IsMulti">Select a few</system:String>
     <system:String x:Key="MultiToDoItemsView.GroupBy">Group by</system:String>
@@ -23,6 +27,7 @@
     <!--AccountSettingView-->
     <system:String x:Key="AccountSettingView.Login">Login:</system:String>
     <system:String x:Key="AccountSettingView.ChangePassword">Change password</system:String>
+    <system:String x:Key="AccountSettingView.Setting">Setting</system:String>
 
     <!--ChangeToDoItemOrderIndexView-->
     <system:String x:Key="ChangeToDoItemOrderIndexView.Before">Before</system:String>
@@ -40,6 +45,8 @@
     <system:String x:Key="LoginView.ForgotPassword">Forgot password</system:String>
     <system:String x:Key="LoginView.Login">Login</system:String>
     <system:String x:Key="LoginView.Password">Password</system:String>
+    <system:String x:Key="LoginView.CreateAccount">Create account</system:String>
+    <system:String x:Key="LoginView.Busy">Login...</system:String>
 
     <!--PaneView-->
     <system:String x:Key="PaneView.ToDoItems">To-do Items</system:String>
@@ -61,6 +68,8 @@
     <system:String x:Key="VerificationCodeView.SendNewCode">Send new code</system:String>
     <system:String x:Key="VerificationCodeView.ChangeEmail">Change email</system:String>
     <system:String x:Key="VerificationCodeView.VerificationCode">Verification code</system:String>
+    <system:String x:Key="VerificationCodeView.Back">Back</system:String>
+    <system:String x:Key="VerificationCodeView.SubmitCode">Submit code</system:String>
 
     <!--AddRootToDoItemView-->
     <system:String x:Key="AddRootToDoItemView.Name">Name</system:String>
@@ -75,11 +84,14 @@
     <system:String x:Key="AddToDoItemView.Type">Type</system:String>
 
     <!--CreateUserView-->
-    <system:String x:Key="CreateUserView.CreateAccount">Create Account</system:String>
+    <system:String x:Key="CreateUserView.CreateAccountHeader">Create Account</system:String>
     <system:String x:Key="CreateUserView.Email">Email</system:String>
     <system:String x:Key="CreateUserView.Login">Login</system:String>
     <system:String x:Key="CreateUserView.Password">Password</system:String>
     <system:String x:Key="CreateUserView.RepeatPassword">Repeat password</system:String>
+    <system:String x:Key="CreateUserView.CreateAccount">Create account</system:String>
+    <system:String x:Key="CreateUserView.Back">Back</system:String>
+    <system:String x:Key="CreateUserView.Busy">Create account...</system:String>
 
     <!--ExceptionView-->
     <system:String x:Key="ExceptionView.ErrorMessage">Error message</system:String>

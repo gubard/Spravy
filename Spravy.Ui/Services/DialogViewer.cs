@@ -7,6 +7,7 @@ using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 using Spravy.Ui.ViewModels;
 using DialogHostAvalonia;
+using SukiUI.Controls;
 
 namespace Spravy.Ui.Services;
 
@@ -188,7 +189,12 @@ public class DialogViewer : IDialogViewer
             return Task.CompletedTask;
         }
 
-        return this.InvokeUIAsync(() => DialogHost.Show(content, identifier));
+        return this.InvokeUIAsync(
+            () => DialogHost.Show(
+                content,
+                identifier
+            )
+        );
     }
 
     private async Task SafeClose(string identifier)

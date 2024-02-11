@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
+using Avalonia.Collections;
 using Ninject;
 using ProtoBuf;
 using ReactiveUI;
@@ -46,6 +47,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     private readonly ToDoSubItemsViewModel toDoSubItemsViewModel;
     private readonly PageHeaderViewModel pageHeaderViewModel;
     private Guid? parentId;
+    private object[] path = ["asdas", "asdas", "asdasdasa"];
 
     public ToDoItemViewModel() : base(true)
     {
@@ -106,15 +108,18 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     public required IMapper Mapper { get; set; }
 
     [Inject]
-    public required PathViewModel PathViewModel { get; set; }
-
-    [Inject]
     public required IObjectStorage ObjectStorage { get; init; }
 
     public Guid? ParentId
     {
         get => parentId;
         set => this.RaiseAndSetIfChanged(ref parentId, value);
+    }
+
+    public object[] Path
+    {
+        get => path;
+        set => this.RaiseAndSetIfChanged(ref path, value);
     }
 
     public bool IsNavigateToParent => true;
@@ -214,13 +219,11 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     {
         var parents = await ToDoService.GetParentsAsync(Id, cancellationToken).ConfigureAwait(false);
 
-        await this.InvokeUIBackgroundAsync(
-            () =>
-            {
-                PathViewModel.Items.Clear();
-                PathViewModel.Items.Add(new RootItem());
-                PathViewModel.Items.AddRange(parents.Select(x => Mapper.Map<ToDoItemParentNotify>(x)));
-            }
+        await this.InvokeUIAsync(
+            () => Path = new RootItem().To<object>()
+                .ToEnumerable()
+                .Concat(parents.Select(x => Mapper.Map<ToDoItemParentNotify>(x)))
+                .ToArray()
         );
     }
 
@@ -277,7 +280,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
 
                     PageHeaderViewModel.Commands.Add(
                         CommandStorage.AddToDoItemChildItem.WithParam(
-                            PathViewModel.Items[^1].As<ToDoItemParentNotify>().ThrowIfNull().Id
+                            Path[^1].As<ToDoItemParentNotify>().ThrowIfNull().Id
                         )
                     );
 

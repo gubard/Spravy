@@ -1,8 +1,8 @@
 using Avalonia.Controls;
-using Material.Styles.Controls;
 using Spravy.Domain.Extensions;
 using Spravy.Tests.Helpers;
 using Spravy.Ui.Views;
+using SukiUI.Controls;
 
 namespace Spravy.Tests.Extensions;
 
@@ -18,7 +18,7 @@ public static class CreateUserViewExtension
         return textBox.Case(() => window.SetKeyTextInput(text))
             .MustHasError()
             .Case(
-                () => createUserView.FindControl<Card>(ElementNames.CreateUserCard)
+                () => createUserView.FindControl<GlassCard>(ElementNames.CreateUserCard)
                     .ThrowIfNull()
                     .MustWidth(300)
             )
@@ -35,7 +35,7 @@ public static class CreateUserViewExtension
         return textBox.Case(() => window.SetKeyTextInput(text))
             .MustNotHasError()
             .Case(
-                () => createUserView.FindControl<Card>(ElementNames.CreateUserCard)
+                () => createUserView.FindControl<GlassCard>(ElementNames.CreateUserCard)
                     .ThrowIfNull()
                     .MustWidth(300)
             )

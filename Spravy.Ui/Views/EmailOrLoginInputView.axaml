@@ -7,13 +7,13 @@
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                 xmlns:services="clr-namespace:Spravy.Ui.Services"
                                 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-                                xmlns:controls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
+                                xmlns:controls="clr-namespace:SukiUI.Controls;assembly=SukiUI"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.EmailOrLoginInputView"
                                 x:DataType="viewModels:EmailOrLoginInputViewModel">
-    <controls:Card HorizontalAlignment="Center"
-                   VerticalAlignment="Center"
-                   MinWidth="300">
+    <controls:GlassCard HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        MinWidth="300">
         <StackPanel>
             <ContentControl Content="{Binding TextViewModel}" />
 
@@ -27,5 +27,5 @@
                 </Button>
             </Grid>
         </StackPanel>
-    </controls:Card>
+    </controls:GlassCard>
 </reactiveUi:ReactiveUserControl>

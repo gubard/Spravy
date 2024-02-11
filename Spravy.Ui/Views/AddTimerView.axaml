@@ -5,7 +5,6 @@
                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-                                xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
                                 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                 xmlns:services="clr-namespace:Spravy.Ui.Services"
                                 mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
@@ -14,8 +13,7 @@
     <StackPanel>
         <CheckBox IsChecked="{Binding IsFavorite}" Content="Completed" />
 
-        <TextBox assists:TextFieldAssist.Label="{DynamicResource AddTimerView.Item}"
-                 IsReadOnly="True"
+        <TextBox IsReadOnly="True"
                  Text="{Binding ShortItem.Name}"
                  Classes="outline dense with-button"
                  Theme="{StaticResource OutlineTextBox}">
@@ -27,8 +25,7 @@
             </TextBox.InnerLeftContent>
         </TextBox>
 
-        <TextBox assists:TextFieldAssist.Label="{DynamicResource AddTimerView.DueDateTime}"
-                 IsReadOnly="True"
+        <TextBox IsReadOnly="True"
                  Text="{Binding DueDateTime}"
                  Classes="outline dense with-button">
             <TextBox.InnerLeftContent>

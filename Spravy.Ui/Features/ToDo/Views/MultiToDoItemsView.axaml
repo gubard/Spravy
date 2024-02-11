@@ -5,9 +5,8 @@
                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
-                                xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
-                                xmlns:controls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
                                 xmlns:models="clr-namespace:Spravy.Ui.Models"
+                                xmlns:controls="clr-namespace:SukiUI.Controls;assembly=SukiUI"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Features.ToDo.Views.MultiToDoItemsView"
                                 x:DataType="viewModels:MultiToDoItemsViewModel">
@@ -15,14 +14,14 @@
     <StackPanel>
         <Grid ColumnDefinitions="Auto,*"
               IsVisible="{Binding ToDoItems.GroupByNone.Items.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
-            <CheckBox IsChecked="{Binding IsMulti}">
-                <TextBlock Text="{DynamicResource MultiToDoItemsView.IsMulti}" />
-            </CheckBox>
+            <CheckBox IsChecked="{Binding IsMulti}" Content="{DynamicResource MultiToDoItemsView.IsMulti}" />
 
-            <ComboBox Grid.Column="1" Theme="{StaticResource MaterialOutlineComboBox}"
-                      assists:ComboBoxAssist.Label="{DynamicResource MultiToDoItemsView.GroupBy}"
-                      SelectedItem="{Binding GroupBy}"
-                      ItemsSource="{Binding GroupBys}" />
+            <StackPanel Grid.Column="1">
+                <TextBlock Classes="field"
+                           Text="{DynamicResource MultiToDoItemsView.GroupBy}" />
+                <ComboBox SelectedItem="{Binding GroupBy}"
+                          ItemsSource="{Binding GroupBys}" />
+            </StackPanel>
         </Grid>
 
         <ContentControl Content="{Binding Favorite}"
@@ -38,7 +37,7 @@
                         <x:Type TypeName="models:Selected" x:TypeArguments="models:ToDoItemNotify" />
                     </DataTemplate.DataType>
 
-                    <controls:Card Margin="3">
+                    <controls:GlassCard Margin="3">
                         <StackPanel>
                             <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto">
                                 <Rectangle Width="15"
@@ -68,7 +67,7 @@
                                            TextWrapping="Wrap" />
                             </CheckBox>
                         </StackPanel>
-                    </controls:Card>
+                    </controls:GlassCard>
                 </DataTemplate>
             </ContentControl.DataTemplates>
         </ContentControl>

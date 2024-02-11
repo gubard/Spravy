@@ -6,7 +6,6 @@
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                 xmlns:models="clr-namespace:Spravy.Ui.Models"
                                 xmlns:views="clr-namespace:Spravy.Ui.Views"
-                                xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
                                 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                 mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                                 x:Class="Spravy.Ui.Views.AddToDoItemView"
@@ -26,13 +25,11 @@
 
         <TextBox Text="{Binding Name}"
                  Classes="outline dense"
-                 assists:TextFieldAssist.Label="{DynamicResource AddToDoItemView.Name}"
                  Theme="{StaticResource OutlineTextBox}"
                  Name="{x:Static views:AddToDoItemView.NameTextBoxName}"
                  UseFloatingWatermark="True"
                  VerticalAlignment="Top" />
         <ComboBox Theme="{StaticResource MaterialOutlineComboBox}"
-                  assists:ComboBoxAssist.Label="{DynamicResource AddToDoItemView.Type}"
                   SelectedItem="{Binding Type}"
                   ItemsSource="{Binding ToDoItemTypes}" />
     </StackPanel>

@@ -18,15 +18,14 @@
 
         <Button Grid.Row="1"
                 Command="{Binding CancelCommand}"
-                ClickMode="Press">
-            <avalonia:MaterialIcon Kind="Cancel" />
-        </Button>
+                ClickMode="Press"
+                Content="{DynamicResource ConfirmView.Cancel}" />
 
         <Button Grid.Row="1"
                 Grid.Column="1"
                 Command="{Binding ConfirmCommand}"
-                ClickMode="Press">
-            <avalonia:MaterialIcon Kind="Check" />
-        </Button>
+                ClickMode="Press"
+                Content="{DynamicResource ConfirmView.Ok}" 
+                Classes="Flat"/>
     </Grid>
 </reactiveUi:ReactiveUserControl>

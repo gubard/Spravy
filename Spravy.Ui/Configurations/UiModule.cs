@@ -165,7 +165,6 @@ public class UiModule : NinjectModule
             .OnActivation(
                 (c, x) =>
                 {
-                    x.ViewModel = c.Kernel.Get<MainWindowModel>();
                     x.Content = c.Kernel.Get<Control>();
                 }
             );

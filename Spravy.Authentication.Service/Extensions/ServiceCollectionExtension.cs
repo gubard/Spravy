@@ -1,6 +1,4 @@
 using System.IdentityModel.Tokens.Jwt;
-using AutoMapper;
-using Microsoft.AspNetCore.Identity;
 using Spravy.Authentication.Db.Contexts;
 using Spravy.Authentication.Db.Mapper.Profiles;
 using Spravy.Authentication.Db.Sqlite.Migrator;

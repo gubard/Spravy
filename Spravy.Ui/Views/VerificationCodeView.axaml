@@ -5,10 +5,9 @@
                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-                                xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
                                 xmlns:services="clr-namespace:Spravy.Ui.Services"
                                 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-                                xmlns:controls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
+                                xmlns:controls="clr-namespace:SukiUI.Controls;assembly=SukiUI"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.VerificationCodeView"
                                 x:DataType="viewModels:VerificationCodeViewModel">
@@ -18,9 +17,9 @@
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 
-    <controls:Card HorizontalAlignment="Center"
-                   VerticalAlignment="Center"
-                   MinWidth="300">
+    <controls:GlassCard HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        MinWidth="300">
         <Grid RowDefinitions="Auto,Auto,Auto">
             <Panel>
                 <TextBlock Text="{Binding Identifier, StringFormat=Send verification code to email \{0\}}"
@@ -30,10 +29,6 @@
             </Panel>
 
             <TextBox Grid.Row="1"
-                     UseFloatingWatermark="True"
-                     Classes="outline dense"
-                     Theme="{StaticResource OutlineTextBox}"
-                     assists:TextFieldAssist.Label="{DynamicResource VerificationCodeView.VerificationCode}"
                      Text="{Binding VerificationCode}" />
 
             <Grid Grid.Row="2" ColumnDefinitions="*,*" RowDefinitions="*,*">
@@ -49,17 +44,16 @@
                 </Button>
 
                 <Button Grid.Row="1" Command="{x:Static services:CommandStorage.NavigateToCommand}"
-                        CommandParameter="{x:Type viewModels:LoginViewModel}">
-                    <avalonia:MaterialIcon Kind="ArrowLeft" />
-                </Button>
+                        CommandParameter="{x:Type viewModels:LoginViewModel}"
+                        Content="{DynamicResource VerificationCodeView.Back}" />
 
                 <Button Grid.Row="1"
                         Grid.Column="1"
                         Command="{x:Static services:CommandStorage.VerificationEmailCommand}"
-                        CommandParameter="{Binding }">
-                    <avalonia:MaterialIcon Kind="VerifiedUser" />
-                </Button>
+                        CommandParameter="{Binding }"
+                        Content="{DynamicResource VerificationCodeView.SubmitCode}" 
+                        Classes="Flat"/>
             </Grid>
         </Grid>
-    </controls:Card>
+    </controls:GlassCard>
 </reactiveUi:ReactiveUserControl>

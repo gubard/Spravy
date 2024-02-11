@@ -5,11 +5,11 @@
                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-                                xmlns:controls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
+                                xmlns:controls1="clr-namespace:SukiUI.Controls;assembly=SukiUI"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.DialogProgressView"
                                 x:DataType="viewModels:DialogProgressViewModel">
-    <controls:Card CornerRadius="24" Padding="4" Margin="4" HorizontalAlignment="Center" VerticalAlignment="Center">
+    <controls1:GlassCard CornerRadius="24" Padding="4" Margin="4" HorizontalAlignment="Center" VerticalAlignment="Center">
         <ProgressBar Classes="circular" Height="100" Width="100" />
-    </controls:Card>
+    </controls1:GlassCard>
 </reactiveUi:ReactiveUserControl>
