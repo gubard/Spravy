@@ -27,7 +27,9 @@
         </Grid>
 
         <StackPanel Grid.Row="1">
-            <controls:Stepper Steps="{Binding Path}" Index="0" HorizontalAlignment="Center" />
+            <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
+                <controls:Stepper Steps="{Binding Path}" Index="0" HorizontalAlignment="Center" />
+            </ScrollViewer>
 
             <Grid ColumnDefinitions="*,*">
                 <TextBox Text="{Binding Type}"
