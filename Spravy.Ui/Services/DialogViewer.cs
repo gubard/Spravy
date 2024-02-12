@@ -7,6 +7,7 @@ using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 using Spravy.Ui.ViewModels;
 using DialogHostAvalonia;
+using Spravy.Domain.Extensions;
 
 namespace Spravy.Ui.Services;
 
@@ -201,6 +202,13 @@ public class DialogViewer : IDialogViewer
         if (!DialogHost.IsDialogOpen(identifier))
         {
             return;
+        }
+
+        var content = DialogHost.GetDialogSession(identifier).ThrowIfNull().Content.ThrowIfNull();
+
+        if (content is ISaveState saveState)
+        {
+            await saveState.SaveStateAsync();
         }
 
         await this.InvokeUIAsync(() => DialogHost.Close(identifier));

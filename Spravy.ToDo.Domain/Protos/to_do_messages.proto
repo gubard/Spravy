@@ -7,6 +7,14 @@ import "google/protobuf/duration.proto";
 
 package spravy.to_do;
 
+message GetChildrenToDoItemShortsRequest {
+  bytes Id = 1;
+}
+
+message GetChildrenToDoItemShortsReply {
+  repeated ToDoShortItemGrpc Items = 1;
+}
+
 enum DescriptionTypeGrpc {
   PlainText = 0;
   Markdown = 1;

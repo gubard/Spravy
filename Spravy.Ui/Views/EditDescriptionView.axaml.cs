@@ -1,8 +1,9 @@
-using Avalonia.Controls;
+using Avalonia.ReactiveUI;
+using Spravy.Ui.ViewModels;
 
 namespace Spravy.Ui.Views;
 
-public partial class EditDescriptionView : UserControl
+public partial class EditDescriptionView : ReactiveUserControl<EditDescriptionViewModel>
 {
     public EditDescriptionView()
     {

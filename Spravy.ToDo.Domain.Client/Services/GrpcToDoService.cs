@@ -239,6 +239,33 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
+    public Task<IEnumerable<ToDoShortItem>> GetChildrenToDoItemShortsAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return CallClientAsync(
+            async client =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+
+                var request = new GetChildrenToDoItemShortsRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                };
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var reply = await client.GetChildrenToDoItemShortsAsync(
+                    request,
+                    metadata,
+                    cancellationToken: cancellationToken
+                );
+
+                return mapper.Map<IEnumerable<ToDoShortItem>>(reply.Items);
+            },
+            cancellationToken
+        );
+    }
+
     public Task<IEnumerable<Guid>> GetRootToDoItemIdsAsync(CancellationToken cancellationToken)
     {
         return CallClientAsync(

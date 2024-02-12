@@ -3,11 +3,12 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using ReactiveUI;
 using Spravy.Domain.Extensions;
+using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 
-public class ConfirmViewModel : ViewModelBase
+public class ConfirmViewModel : ViewModelBase, ISaveState
 {
     private object? content;
 
@@ -38,5 +39,15 @@ public class ConfirmViewModel : ViewModelBase
     {
         var con = Content.ThrowIfNull();
         await ConfirmTask.ThrowIfNull().Invoke(con).ConfigureAwait(false);
+    }
+
+    public Task SaveStateAsync()
+    {
+        if (content is ISaveState saveState)
+        {
+            return saveState.SaveStateAsync();
+        }
+
+        return Task.CompletedTask;
     }
 }

@@ -23,6 +23,22 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         this.mapper = mapper;
     }
 
+    public override async Task<GetChildrenToDoItemShortsReply> GetChildrenToDoItemShorts(
+        GetChildrenToDoItemShortsRequest request,
+        ServerCallContext context
+    )
+    {
+        var items = await toDoService.GetChildrenToDoItemShortsAsync(
+            mapper.Map<Guid>(request.Id),
+            context.CancellationToken
+        );
+
+        var result = new GetChildrenToDoItemShortsReply();
+        result.Items.AddRange(mapper.Map<IEnumerable<ToDoShortItemGrpc>>(items));
+
+        return result;
+    }
+
     public override async Task<UpdateToDoItemDescriptionTypeReply> UpdateToDoItemDescriptionType(
         UpdateToDoItemDescriptionTypeRequest request,
         ServerCallContext context

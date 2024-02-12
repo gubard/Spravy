@@ -8,7 +8,7 @@ namespace Spravy.Ui.ViewModels;
 public class EditDescriptionContentViewModel : ViewModelBase
 {
     private string description = string.Empty;
-    private bool isPlainText;
+    private bool isPlainText = true;
     private bool isMarkdown;
 
     public bool IsMarkdown

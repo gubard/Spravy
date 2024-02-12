@@ -184,6 +184,22 @@ public class EfToDoService : IToDoService
         return ids;
     }
 
+    public async Task<IEnumerable<ToDoShortItem>> GetChildrenToDoItemShortsAsync(
+        Guid id,
+        CancellationToken cancellationToken
+    )
+    {
+        await using var context = dbContextFactory.Create();
+
+        var items = await context.Set<ToDoItemEntity>()
+            .AsNoTracking()
+            .Where(x => x.ParentId == id)
+            .OrderBy(x => x.OrderIndex)
+            .ToArrayAsync(cancellationToken);
+
+        return mapper.Map<IEnumerable<ToDoShortItem>>(items);
+    }
+
     public async Task<IEnumerable<Guid>> GetRootToDoItemIdsAsync(CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();

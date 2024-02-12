@@ -1,8 +1,5 @@
-using System;
-using Avalonia.Collections;
 using Ninject;
 using ReactiveUI;
-using Spravy.Domain.Enums;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;

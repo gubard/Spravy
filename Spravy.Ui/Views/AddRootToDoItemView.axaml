@@ -9,14 +9,26 @@
                                 mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                                 x:Class="Spravy.Ui.Views.AddRootToDoItemView"
                                 x:DataType="viewModels:AddRootToDoItemViewModel">
-    <StackPanel>
-        <TextBlock Classes="field"
-                   Text="{DynamicResource AddRootToDoItemView.Name}" />
-        <TextBox Text="{Binding Name}"
-                 Name="{x:Static views:AddRootToDoItemView.NameTextBoxName}" />
-        <TextBlock Classes="field"
-                   Text="{DynamicResource AddRootToDoItemView.Type}" />
-        <ComboBox SelectedItem="{Binding Type}"
-                  ItemsSource="{Binding ToDoItemTypes}" />
-    </StackPanel>
+    <Interaction.Behaviors>
+        <EventTriggerBehavior EventName="Initialized">
+            <InvokeCommandAction Command="{Binding InitializedCommand}" />
+        </EventTriggerBehavior>
+    </Interaction.Behaviors>
+
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+            <TextBlock Classes="field"
+                       Text="{DynamicResource AddRootToDoItemView.Name}" />
+            <TextBox Text="{Binding Name}"
+                     Name="{x:Static views:AddRootToDoItemView.NameTextBoxName}" />
+            <TextBlock Classes="field"
+                       Text="{DynamicResource AddRootToDoItemView.Url}" />
+            <TextBox Text="{Binding Url}" />
+            <TextBlock Classes="field"
+                       Text="{DynamicResource AddRootToDoItemView.Type}" />
+            <ListBox SelectedItem="{Binding Type}"
+                     ItemsSource="{Binding ToDoItemTypes}" />
+            <ContentControl Content="{Binding DescriptionContent}" />
+        </StackPanel>
+    </ScrollViewer>
 </reactiveUi:ReactiveUserControl>

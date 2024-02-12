@@ -14,6 +14,7 @@ public interface IToDoService
     Task<IEnumerable<Guid>> GetLeafToDoItemIdsAsync(Guid id, CancellationToken cancellationToken);
     Task<ToDoItem> GetToDoItemAsync(Guid id, CancellationToken cancellationToken);
     Task<IEnumerable<Guid>> GetChildrenToDoItemIdsAsync(Guid id, CancellationToken cancellationToken);
+    Task<IEnumerable<ToDoShortItem>> GetChildrenToDoItemShortsAsync(Guid id, CancellationToken cancellationToken);
     Task<IEnumerable<Guid>> GetRootToDoItemIdsAsync(CancellationToken cancellationToken);
     Task<IEnumerable<Guid>> GetFavoriteToDoItemIdsAsync(CancellationToken cancellationToken);
     Task<Guid> AddRootToDoItemAsync(AddRootToDoItemOptions options, CancellationToken cancellationToken);
