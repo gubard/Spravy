@@ -106,10 +106,7 @@
                 <Button Classes="adaptive Basic">
                     <Button.DataTemplates>
                         <DataTemplate x:DataType="models:CommandItem">
-                            <StackPanel Orientation="Horizontal">
-                                <avalonia:MaterialIcon Kind="{Binding Icon}" />
-                                <TextBlock Text="{Binding Name}" />
-                            </StackPanel>
+                            <TextBlock Text="{Binding Name}" />
                         </DataTemplate>
                     </Button.DataTemplates>
 
@@ -117,6 +114,7 @@
                         <Style Selector="MenuItem" x:DataType="models:CommandItem">
                             <Setter Property="Command" Value="{Binding Command}" />
                             <Setter Property="CommandParameter" Value="{Binding Parameter}" />
+                            <Setter Property="Icon" Value="{Binding Icon}" />
                         </Style>
                     </Button.Styles>
 

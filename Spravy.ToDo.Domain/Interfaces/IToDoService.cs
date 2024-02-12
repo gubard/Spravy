@@ -1,3 +1,4 @@
+using Spravy.Domain.Enums;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Models;
 
@@ -5,6 +6,7 @@ namespace Spravy.ToDo.Domain.Interfaces;
 
 public interface IToDoService
 {
+    Task UpdateToDoItemDescriptionTypeAsync(Guid id, DescriptionType type, CancellationToken cancellationToken);
     Task ResetToDoItemAsync(Guid id, CancellationToken cancellationToken);
     Task RandomizeChildrenOrderIndexAsync(Guid id, CancellationToken cancellationToken);
     Task<IEnumerable<ToDoShortItem>> GetParentsAsync(Guid id, CancellationToken cancellationToken);

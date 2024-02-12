@@ -8,5 +8,9 @@
                                 mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                                 x:Class="Spravy.Ui.Views.DeleteToDoItemView"
                                 x:DataType="viewModels:DeleteToDoItemViewModel">
-    <ContentControl Content="{Binding Header}" />
+    <StackPanel Orientation="Horizontal">
+        <TextBlock Text="{DynamicResource DeleteToDoItemView.Question}" Margin="0,0,3,0"/>
+        <TextBlock Text="{Binding ToDoItemName}"/>
+        <TextBlock Text="?"/>
+    </StackPanel>
 </reactiveUi:ReactiveUserControl>

@@ -3,6 +3,7 @@ using System.Text;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Spravy.Db.Extensions;
+using Spravy.Domain.Enums;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
@@ -36,6 +37,24 @@ public class EfToDoService : IToDoService
         this.dbContextFactory = dbContextFactory;
         this.httpContextAccessor = httpContextAccessor;
         this.getterToDoItemParametersService = getterToDoItemParametersService;
+    }
+
+    public async Task UpdateToDoItemDescriptionTypeAsync(
+        Guid id,
+        DescriptionType type,
+        CancellationToken cancellationToken
+    )
+    {
+        await using var context = dbContextFactory.Create();
+
+        await context.ExecuteSaveChangesTransactionAsync(
+            async c =>
+            {
+                var item = await c.FindAsync<ToDoItemEntity>(id);
+                item = item.ThrowIfNull();
+                item.DescriptionType = type;
+            }
+        );
     }
 
     public async Task ResetToDoItemAsync(Guid id, CancellationToken cancellationToken)

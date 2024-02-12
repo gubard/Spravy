@@ -2,6 +2,7 @@ using AutoMapper;
 using Google.Protobuf;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
+using Spravy.Domain.Enums;
 using Spravy.Domain.Helpers;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
@@ -20,6 +21,20 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     {
         this.toDoService = toDoService;
         this.mapper = mapper;
+    }
+
+    public override async Task<UpdateToDoItemDescriptionTypeReply> UpdateToDoItemDescriptionType(
+        UpdateToDoItemDescriptionTypeRequest request,
+        ServerCallContext context
+    )
+    {
+        await toDoService.UpdateToDoItemDescriptionTypeAsync(
+            mapper.Map<Guid>(request.Id),
+            (DescriptionType)request.Type,
+            context.CancellationToken
+        );
+
+        return new UpdateToDoItemDescriptionTypeReply();
     }
 
     public override async Task<ResetToDoItemReply> ResetToDoItem(

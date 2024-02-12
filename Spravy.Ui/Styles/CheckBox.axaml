@@ -6,7 +6,7 @@
         </Border>
     </Design.PreviewWith>
 
-    <Style Selector="CheckBox > TextBlock">
-        <Setter Property="Foreground" Value="{DynamicResource SukiLowText}"/>
+    <Style Selector="CheckBox">
+        <Setter Property="TextElement.Foreground" Value="{DynamicResource SukiLowText}" />
     </Style>
 </Styles>

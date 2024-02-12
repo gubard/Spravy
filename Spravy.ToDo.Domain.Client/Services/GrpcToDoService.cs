@@ -4,6 +4,7 @@ using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
+using Spravy.Domain.Enums;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;
 using Spravy.ToDo.Domain.Enums;
@@ -30,6 +31,32 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
     {
         this.mapper = mapper;
         this.metadataFactory = metadataFactory;
+    }
+
+    public Task UpdateToDoItemDescriptionTypeAsync(Guid id, DescriptionType type, CancellationToken cancellationToken)
+    {
+        return CallClientAsync(
+            async client =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+
+                var request = new UpdateToDoItemDescriptionTypeRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                    Type = (DescriptionTypeGrpc)type,
+                };
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                await client.UpdateToDoItemDescriptionTypeAsync(
+                    request,
+                    metadata,
+                    cancellationToken: cancellationToken
+                );
+            },
+            cancellationToken
+        );
     }
 
     public Task ResetToDoItemAsync(Guid id, CancellationToken cancellationToken)

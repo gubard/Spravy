@@ -9,6 +9,7 @@ using AutoMapper;
 using Ninject;
 using ProtoBuf;
 using ReactiveUI;
+using Spravy.Domain.Enums;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;
@@ -47,6 +48,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     private readonly PageHeaderViewModel pageHeaderViewModel;
     private Guid? parentId;
     private object[] path = ["asdas", "asdas", "asdasdasa"];
+    private DescriptionType descriptionType;
 
     public ToDoItemViewModel() : base(true)
     {
@@ -152,6 +154,12 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     {
         get => description;
         set => this.RaiseAndSetIfChanged(ref description, value);
+    }
+
+    public DescriptionType DescriptionType
+    {
+        get => descriptionType;
+        set => this.RaiseAndSetIfChanged(ref descriptionType, value);
     }
 
     public string Link

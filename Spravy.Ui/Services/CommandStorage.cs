@@ -790,18 +790,22 @@ public static class CommandStorage
 
     private static Task SetToDoDescriptionAsync(IToDoDescriptionProperty property, CancellationToken cancellationToken)
     {
-        return dialogViewer.ShowMultiStringConfirmDialogAsync(
-            async str =>
+        return dialogViewer.ShowConfirmContentDialogAsync<EditDescriptionViewModel>(
+            async viewModel =>
             {
-                await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
-                await toDoService.UpdateToDoItemDescriptionAsync(property.Id, str, cancellationToken)
+                await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
+                await toDoService.UpdateToDoItemDescriptionAsync(property.Id, viewModel.Description, cancellationToken)
+                    .ConfigureAwait(false);
+                await toDoService.UpdateToDoItemDescriptionTypeAsync(property.Id, viewModel.Type, cancellationToken)
                     .ConfigureAwait(false);
                 await property.RefreshAsync(cancellationToken).ConfigureAwait(false);
             },
-            box =>
+            _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
+            viewModel =>
             {
-                box.Text = property.Description;
-                box.Label = "Description";
+                viewModel.Description = property.Description;
+                viewModel.Type = property.DescriptionType;
+                viewModel.ToDoItemName = property.Name;
             },
             cancellationToken
         );
@@ -1297,7 +1301,7 @@ public static class CommandStorage
                     await RefreshCurrentViewAsync(cancellationToken);
                 },
                 _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
-                view => view.Header = deletable.Header,
+                view => view.ToDoItemName = deletable.Name,
                 cancellationToken
             )
             .ConfigureAwait(false);

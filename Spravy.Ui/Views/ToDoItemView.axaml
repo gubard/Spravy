@@ -26,57 +26,23 @@
                        Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
         </Grid>
 
-        <StackPanel Grid.Row="1">
-            <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
-                <controls:Stepper Steps="{Binding Path}" Index="0" HorizontalAlignment="Center" />
-            </ScrollViewer>
-
-            <Grid ColumnDefinitions="*,*">
-                <TextBox Text="{Binding Type}"
-                         UseFloatingWatermark="True"
-                         IsReadOnly="True"
-                         Classes="outline dense with-button"
-                         Theme="{StaticResource OutlineTextBox}">
-                    <TextBox.InnerLeftContent>
-                        <Button Command="{x:Static services:CommandStorage.SetToDoTypeCommand}"
-                                CommandParameter="{Binding}"
-                                Margin="4,15,4,4">
-                            <avalonia:MaterialIcon Kind="Pencil" />
-                        </Button>
-                    </TextBox.InnerLeftContent>
-                </TextBox>
-
-                <TextBox Grid.Column="1"
-                         Text="{Binding Link}"
-                         UseFloatingWatermark="True"
-                         IsReadOnly="True"
-                         Classes="outline dense with-button"
-                         Theme="{StaticResource OutlineTextBox}">
-                    <TextBox.InnerLeftContent>
-                        <Button Command="{x:Static services:CommandStorage.SetToDoLinkCommand}"
-                                CommandParameter="{Binding}"
-                                Margin="4,15,4,4">
-                            <avalonia:MaterialIcon Kind="Pencil" />
-                        </Button>
-                    </TextBox.InnerLeftContent>
-                </TextBox>
-            </Grid>
-        </StackPanel>
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
+            <controls:Stepper Steps="{Binding Path}" Index="0" HorizontalAlignment="Center" />
+        </ScrollViewer>
 
         <ScrollViewer Grid.Row="2">
             <StackPanel>
                 <Expander Margin="3"
                           IsExpanded="{Binding Description, Mode=OneWay, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}">
                     <Expander.Header>
-                        <StackPanel Orientation="Horizontal">
-                            <Button Command="{x:Static services:CommandStorage.SetToDoDescriptionCommand}"
-                                    CommandParameter="{Binding}"
-                                    Classes="Basic">
-                                <avalonia:MaterialIcon Kind="Pencil" />
-                            </Button>
-
-                            <TextBlock Text="{DynamicResource ToDoItemView.Description}" Classes="alignment-center" />
-                        </StackPanel>
+                        <Button Command="{x:Static services:CommandStorage.SetToDoDescriptionCommand}"
+                                CommandParameter="{Binding}"
+                                Classes="Basic">
+                            <StackPanel Orientation="Horizontal">
+                                <avalonia:MaterialIcon Kind="Pencil"  Margin="0,0,3,0"/>
+                                <TextBlock Text="{DynamicResource ToDoItemView.Description}" Classes="alignment-center" />
+                            </StackPanel>
+                        </Button>
                     </Expander.Header>
 
                     <mdxaml:MarkdownScrollViewer Markdown="{Binding Description}" />

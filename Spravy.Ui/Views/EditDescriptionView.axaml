@@ -1,0 +1,35 @@
+<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:EditDescriptionViewModel"
+                                xmlns="https://github.com/avaloniaui"
+                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                                xmlns:reactiveUi="http://reactiveui.net"
+                                xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
+                                xmlns:controls="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+                                mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="200"
+                                x:Class="Spravy.Ui.Views.EditDescriptionView"
+                                x:DataType="viewModels:EditDescriptionViewModel">
+    <controls:GroupBox>
+        <controls:GroupBox.Header>
+            <TextBlock Text="{Binding ToDoItemName}" Classes="h4" />
+        </controls:GroupBox.Header>
+        <StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <RadioButton Classes="GigaChips"
+                             Content="{DynamicResource DescriptionType.PlainText}"
+                             GroupName="DescriptionType"
+                             IsChecked="{Binding IsPlainText}" />
+                <RadioButton Classes="GigaChips"
+                             Content="{DynamicResource DescriptionType.Markdown}"
+                             GroupName="DescriptionType"
+                             IsChecked="{Binding IsMarkdown}" />
+            </StackPanel>
+
+            <TextBlock Classes="field"
+                       Text="{DynamicResource EditDescriptionView.Description}" />
+            <TextBox Classes="accepts-return vertical-content-alignment-top"
+                     Height="300"
+                     Text="{Binding Description}" />
+        </StackPanel>
+    </controls:GroupBox>
+</reactiveUi:ReactiveUserControl>

@@ -1,3 +1,4 @@
+using Spravy.Domain.Enums;
 using Spravy.Domain.Extensions;
 using Spravy.ToDo.Domain.Enums;
 
@@ -27,6 +28,7 @@ public class ToDoItemEntity
     public uint CurrentCircleOrderIndex { get; set; }
     public string Link { get; set; } = string.Empty;
     public bool IsRequiredCompleteInDueDate { get; set; } = true;
+    public DescriptionType DescriptionType { get; set; }
 
     public Guid? ParentId { get; set; }
     public ToDoItemEntity? Parent { get; set; }

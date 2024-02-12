@@ -7,6 +7,19 @@ import "google/protobuf/duration.proto";
 
 package spravy.to_do;
 
+enum DescriptionTypeGrpc {
+  PlainText = 0;
+  Markdown = 1;
+}
+
+message UpdateToDoItemDescriptionTypeRequest {
+  bytes Id = 1;
+  DescriptionTypeGrpc Type = 2;
+}
+
+message UpdateToDoItemDescriptionTypeReply {
+}
+
 message ResetToDoItemRequest {
   bytes Id = 1;
 }
