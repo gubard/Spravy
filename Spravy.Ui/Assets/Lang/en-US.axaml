@@ -118,12 +118,14 @@
     <system:String x:Key="ExceptionView.ErrorMessage">Error message</system:String>
 
     <!--PeriodicityOffsetToDoItemSettingsView-->
+    <system:String x:Key="PeriodicityOffsetToDoItemSettingsView.ChildrenTypes">Children types</system:String>
     <system:String x:Key="PeriodicityOffsetToDoItemSettingsView.Type">Type</system:String>
     <system:String x:Key="PeriodicityOffsetToDoItemSettingsView.DueDate">Due date</system:String>
     <system:String x:Key="PeriodicityOffsetToDoItemSettingsView.DaysOffset">Days offset</system:String>
     <system:String x:Key="PeriodicityOffsetToDoItemSettingsView.MonthsOffset">Months offset</system:String>
     <system:String x:Key="PeriodicityOffsetToDoItemSettingsView.WeeksOffset">Weeks offset</system:String>
     <system:String x:Key="PeriodicityOffsetToDoItemSettingsView.YearsOffset">Years offset</system:String>
+    <system:String x:Key="PeriodicityOffsetToDoItemSettingsView.RequiredCompleteInDueDate">Required complete by the due date</system:String>
 
     <!--PeriodicityToDoItemSettingsView-->
     <system:String x:Key="PeriodicityToDoItemSettingsView.Type">Type</system:String>

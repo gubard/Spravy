@@ -5,8 +5,6 @@
                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                 xmlns:reactiveUi="http://reactiveui.net"
-                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-                                xmlns:services="clr-namespace:Spravy.Ui.Services"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.PeriodicityOffsetToDoItemSettingsView"
                                 x:DataType="viewModels:PeriodicityOffsetToDoItemSettingsViewModel">
@@ -17,93 +15,26 @@
     </Interaction.Behaviors>
 
     <StackPanel>
-        <TextBox Text="{Binding ChildrenType}"
-                 UseFloatingWatermark="True"
-                 IsReadOnly="True"
-                 Classes="outline dense with-button"
-                 Theme="{StaticResource OutlineTextBox}">
-            <TextBox.InnerLeftContent>
-                <Button Command="{x:Static services:CommandStorage.SetToDoChildrenTypeCommand}"
-                        CommandParameter="{Binding}"
-                        Margin="4,15,4,4">
-                    <avalonia:MaterialIcon Kind="Pencil" />
-                </Button>
-            </TextBox.InnerLeftContent>
-        </TextBox>
-
-        <TextBox Text="{Binding DueDate}"
-                 UseFloatingWatermark="True"
-                 IsReadOnly="True"
-                 Classes="outline dense with-button"
-                 Theme="{StaticResource OutlineTextBox}">
-            <TextBox.InnerLeftContent>
-                <Button Command="{x:Static services:CommandStorage.SetToDoDueDateCommand}"
-                        CommandParameter="{Binding}"
-                        Margin="4,15,4,4">
-                    <avalonia:MaterialIcon Kind="Pencil" />
-                </Button>
-            </TextBox.InnerLeftContent>
-        </TextBox>
-
-        <TextBox Text="{Binding DaysOffset}"
-                 UseFloatingWatermark="True"
-                 IsReadOnly="True"
-                 Classes="outline dense with-button"
-                 Theme="{StaticResource OutlineTextBox}">
-            <TextBox.InnerLeftContent>
-                <Button Command="{x:Static services:CommandStorage.SetToDoDaysOffsetCommand}"
-                        CommandParameter="{Binding}"
-                        Margin="4,15,4,4">
-                    <avalonia:MaterialIcon Kind="Pencil" />
-                </Button>
-            </TextBox.InnerLeftContent>
-        </TextBox>
-
-        <TextBox Text="{Binding MonthsOffset}"
-                 UseFloatingWatermark="True"
-                 IsReadOnly="True"
-                 Classes="outline dense with-button"
-                 Theme="{StaticResource OutlineTextBox}">
-            <TextBox.InnerLeftContent>
-                <Button Command="{x:Static services:CommandStorage.SetToDoMonthsOffsetCommand}"
-                        CommandParameter="{Binding}"
-                        Margin="4,15,4,4">
-                    <avalonia:MaterialIcon Kind="Pencil" />
-                </Button>
-            </TextBox.InnerLeftContent>
-        </TextBox>
-
-        <TextBox Text="{Binding WeeksOffset}"
-                 UseFloatingWatermark="True"
-                 IsReadOnly="True"
-                 Classes="outline dense with-button"
-                 Theme="{StaticResource OutlineTextBox}">
-            <TextBox.InnerLeftContent>
-                <Button Command="{x:Static services:CommandStorage.SetToDoWeeksOffsetCommand}"
-                        CommandParameter="{Binding}"
-                        Margin="4,15,4,4">
-                    <avalonia:MaterialIcon Kind="Pencil" />
-                </Button>
-            </TextBox.InnerLeftContent>
-        </TextBox>
-
-        <TextBox Text="{Binding YearsOffset}"
-                 UseFloatingWatermark="True"
-                 IsReadOnly="True"
-                 Classes="outline dense with-button"
-                 Theme="{StaticResource OutlineTextBox}">
-            <TextBox.InnerLeftContent>
-                <Button Command="{x:Static services:CommandStorage.SetToDoYearsOffsetCommand}"
-                        CommandParameter="{Binding}"
-                        Margin="4,15,4,4">
-                    <avalonia:MaterialIcon Kind="Pencil" />
-                </Button>
-            </TextBox.InnerLeftContent>
-        </TextBox>
-
-        <ToggleButton Command="{x:Static services:CommandStorage.SetRequiredCompleteInDueDateCommand}"
-                      CommandParameter="{Binding}"
-                      IsChecked="{Binding IsRequiredCompleteInDueDate}"
-                      Content="Required complete by the due date" />
+        <TextBlock Classes="field"
+                   Text="{DynamicResource PeriodicityOffsetToDoItemSettingsView.ChildrenTypes}" />
+        <ListBox ItemsSource="{Binding ChildrenTypes}" SelectedItem="{Binding ChildrenType}" />
+        <TextBlock Classes="field"
+                   Text="{DynamicResource PeriodicityOffsetToDoItemSettingsView.DueDate}" />
+        <DatePicker SelectedDate="{Binding DueDate, Converter={StaticResource DateTimeOffsetToDateOnlyValueConverter}}" />
+        <TextBlock Classes="field"
+                   Text="{DynamicResource PeriodicityOffsetToDoItemSettingsView.DaysOffset}" />
+        <NumericUpDown Value="{Binding  DaysOffset}" />
+        <TextBlock Classes="field"
+                   Text="{DynamicResource PeriodicityOffsetToDoItemSettingsView.MonthsOffset}" />
+        <NumericUpDown Value="{Binding  MonthsOffset}" />
+        <TextBlock Classes="field"
+                   Text="{DynamicResource PeriodicityOffsetToDoItemSettingsView.WeeksOffset}" />
+        <NumericUpDown Value="{Binding  WeeksOffset}" />
+        <TextBlock Classes="field"
+                   Text="{DynamicResource PeriodicityOffsetToDoItemSettingsView.YearsOffset}" />
+        <NumericUpDown Value="{Binding  YearsOffset}" />
+        <TextBlock Classes="field"
+                   Text="{DynamicResource PeriodicityOffsetToDoItemSettingsView.RequiredCompleteInDueDate}" />
+        <ToggleSwitch IsChecked="{Binding IsRequiredCompleteInDueDate}" />
     </StackPanel>
 </reactiveUi:ReactiveUserControl>
