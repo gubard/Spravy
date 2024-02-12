@@ -13,7 +13,11 @@ using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 
-public class PlannedToDoItemSettingsViewModel : ViewModelBase, IToDoChildrenTypeProperty, IToDoDueDateProperty, IIsRequiredCompleteInDueDateProperty
+public class PlannedToDoItemSettingsViewModel : ViewModelBase,
+    IToDoChildrenTypeProperty,
+    IToDoDueDateProperty,
+    IIsRequiredCompleteInDueDateProperty,
+    IApplySettings
 {
     private ToDoItemChildrenType childrenType;
     private Guid id;
@@ -24,7 +28,7 @@ public class PlannedToDoItemSettingsViewModel : ViewModelBase, IToDoChildrenType
     {
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
     }
-    
+
     public bool IsRequiredCompleteInDueDate
     {
         get => isRequiredCompleteInDueDate;
@@ -71,5 +75,15 @@ public class PlannedToDoItemSettingsViewModel : ViewModelBase, IToDoChildrenType
                 IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
             }
         );
+    }
+
+    public async Task ApplySettingsAsync(CancellationToken cancellationToken)
+    {
+        await ToDoService.UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, cancellationToken).ConfigureAwait(false);
+        await ToDoService.UpdateToDoItemDueDateAsync(Id, DueDate, cancellationToken).ConfigureAwait(false);
+
+        await ToDoService
+            .UpdateToDoItemIsRequiredCompleteInDueDateAsync(Id, IsRequiredCompleteInDueDate, cancellationToken)
+            .ConfigureAwait(false);
     }
 }

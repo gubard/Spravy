@@ -46,7 +46,7 @@ public class SpravyUiProfile : Profile
                 (x, _, context) => new(
                     x.ToDoItemContent.Name,
                     x.ToDoItemContent.Type,
-                    context.Mapper.Map<Uri?>(x.ToDoItemContent.Url),
+                    context.Mapper.Map<Uri?>(x.ToDoItemContent.Link),
                     x.DescriptionContent.Description,
                     x.DescriptionContent.Type
                 )

@@ -60,7 +60,7 @@ public class AddRootToDoItemViewModel : NavigatableViewModelBase
             {
                 ToDoItemContent.Name = s.Name;
                 ToDoItemContent.Type = s.Type;
-                ToDoItemContent.Url = s.Url;
+                ToDoItemContent.Link = s.Url;
                 DescriptionContent.Description = s.Description;
                 DescriptionContent.Type = s.DescriptionType;
             }
@@ -78,7 +78,7 @@ public class AddRootToDoItemViewModel : NavigatableViewModelBase
         {
             Name = viewModel.ToDoItemContent.Name;
             Type = viewModel.ToDoItemContent.Type;
-            Url = viewModel.ToDoItemContent.Url;
+            Url = viewModel.ToDoItemContent.Link;
             Description = viewModel.DescriptionContent.Description;
             DescriptionType = viewModel.DescriptionContent.Type;
         }

@@ -16,6 +16,20 @@ public static class ObjectExtension
         };
     }
 
+    public static TObject Case<TObject>(this TObject obj, Action<TObject> action)
+    {
+        action.Invoke(obj);
+
+        return obj;
+    }
+
+    public static TObject Case<TObject>(this TObject obj, Action action)
+    {
+        action.Invoke();
+
+        return obj;
+    }
+
     public static void Randomize<T>(this T[] array)
     {
         var rand = DefaultObject<Random>.Default;

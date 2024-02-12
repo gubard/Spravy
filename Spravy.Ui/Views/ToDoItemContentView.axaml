@@ -14,7 +14,7 @@
         <TextBox Text="{Binding Name}" />
         <TextBlock Classes="field"
                    Text="{DynamicResource ToDoItemSettingsView.Url}" />
-        <TextBox Text="{Binding Url}" />
+        <TextBox Text="{Binding Link}" />
         <TextBlock Classes="field"
                    Text="{DynamicResource ToDoItemSettingsView.Type}" />
         <ListBox SelectedItem="{Binding Type}"

@@ -20,7 +20,8 @@ public class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
     IToDoMonthsOffsetProperty,
     IToDoWeeksOffsetProperty,
     IToDoYearsOffsetProperty,
-    IIsRequiredCompleteInDueDateProperty
+    IIsRequiredCompleteInDueDateProperty,
+    IApplySettings
 {
     private ToDoItemChildrenType childrenType;
     private Guid id;
@@ -111,5 +112,19 @@ public class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
                 IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
             }
         );
+    }
+
+    public async Task ApplySettingsAsync(CancellationToken cancellationToken)
+    {
+        await ToDoService.UpdateToDoItemWeeksOffsetAsync(Id, WeeksOffset, cancellationToken).ConfigureAwait(false);
+        await ToDoService.UpdateToDoItemDaysOffsetAsync(Id, DaysOffset, cancellationToken).ConfigureAwait(false);
+        await ToDoService.UpdateToDoItemYearsOffsetAsync(Id, YearsOffset, cancellationToken).ConfigureAwait(false);
+        await ToDoService.UpdateToDoItemMonthsOffsetAsync(Id, MonthsOffset, cancellationToken).ConfigureAwait(false);
+        await ToDoService.UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, cancellationToken).ConfigureAwait(false);
+        await ToDoService.UpdateToDoItemDueDateAsync(Id, DueDate, cancellationToken).ConfigureAwait(false);
+
+        await ToDoService
+            .UpdateToDoItemIsRequiredCompleteInDueDateAsync(Id, IsRequiredCompleteInDueDate, cancellationToken)
+            .ConfigureAwait(false);
     }
 }

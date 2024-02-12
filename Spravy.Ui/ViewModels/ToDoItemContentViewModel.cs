@@ -12,7 +12,7 @@ public class ToDoItemContentViewModel : NavigatableViewModelBase
 {
     private string name = string.Empty;
     private ToDoItemType type;
-    private string url = string.Empty;
+    private string link = string.Empty;
 
     public ToDoItemContentViewModel() : base(true)
     {
@@ -32,10 +32,10 @@ public class ToDoItemContentViewModel : NavigatableViewModelBase
         set => this.RaiseAndSetIfChanged(ref type, value);
     }
 
-    public string Url
+    public string Link
     {
-        get => url;
-        set => this.RaiseAndSetIfChanged(ref url, value);
+        get => link;
+        set => this.RaiseAndSetIfChanged(ref link, value);
     }
 
     public override string ViewId => TypeCache<ToDoItemContentViewModel>.Type.Name;

@@ -13,7 +13,7 @@ using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 
-public class ValueToDoItemSettingsViewModel : ViewModelBase, IToDoChildrenTypeProperty
+public class ValueToDoItemSettingsViewModel : ViewModelBase, IToDoChildrenTypeProperty, IApplySettings
 {
     private ToDoItemChildrenType childrenType;
     private Guid id;
@@ -49,5 +49,10 @@ public class ValueToDoItemSettingsViewModel : ViewModelBase, IToDoChildrenTypePr
     {
         var setting = await ToDoService.GetValueToDoItemSettingsAsync(Id, cancellationToken).ConfigureAwait(false);
         await this.InvokeUIBackgroundAsync(() => ChildrenType = setting.ChildrenType);
+    }
+
+    public Task ApplySettingsAsync(CancellationToken cancellationToken)
+    {
+        return ToDoService.UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, cancellationToken);
     }
 }

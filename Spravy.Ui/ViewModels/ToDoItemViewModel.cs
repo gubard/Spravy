@@ -72,7 +72,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
 
         this.WhenAnyValue(x => x.DescriptionType)
             .Subscribe(
-                x =>
+                _ =>
                 {
                     this.RaisePropertyChanged(nameof(IsDescriptionPlainText));
                     this.RaisePropertyChanged(nameof(IsDescriptionMarkdownText));
@@ -314,10 +314,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
                         PageHeaderViewModel.Commands.Add(CommandStorage.SwitchCompleteToDoItemItem.WithParam(this));
                     }
 
-                    if (Type != ToDoItemType.Group)
-                    {
-                        PageHeaderViewModel.Commands.Add(CommandStorage.ShowToDoSettingItem.WithParam(this));
-                    }
+                    PageHeaderViewModel.Commands.Add(CommandStorage.ShowToDoSettingItem.WithParam(this));
 
                     if (IsFavorite)
                     {

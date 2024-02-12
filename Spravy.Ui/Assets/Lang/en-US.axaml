@@ -5,6 +5,7 @@
     <system:String x:Key="InfoView.Ok">Ok</system:String>
 
     <!--AddRootToDoItemView-->
+    <system:String x:Key="ToDoItemSettingsView.Settings">Settings</system:String>
     <system:String x:Key="ToDoItemSettingsView.Name">Name</system:String>
     <system:String x:Key="ToDoItemSettingsView.Type">Type</system:String>
     <system:String x:Key="ToDoItemSettingsView.Url">URL</system:String>

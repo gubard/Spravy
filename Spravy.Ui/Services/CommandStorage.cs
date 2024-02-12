@@ -756,36 +756,16 @@ public static class CommandStorage
 
     private static Task ShowToDoSettingAsync(IToDoSettingsProperty property, CancellationToken cancellationToken)
     {
-        return property.Type switch
-        {
-            ToDoItemType.Value => dialogViewer.ShowInfoContentDialogAsync<ValueToDoItemSettingsViewModel>(
-                viewModel => viewModel.Id = property.Id,
-                cancellationToken
-            ),
-            ToDoItemType.Planned => dialogViewer.ShowInfoContentDialogAsync<PlannedToDoItemSettingsViewModel>(
-                viewModel => viewModel.Id = property.Id,
-                cancellationToken
-            ),
-            ToDoItemType.Periodicity => dialogViewer.ShowInfoContentDialogAsync<PeriodicityToDoItemSettingsViewModel>(
-                viewModel => viewModel.Id = property.Id,
-                cancellationToken
-            ),
-            ToDoItemType.PeriodicityOffset => dialogViewer
-                .ShowInfoContentDialogAsync<PeriodicityOffsetToDoItemSettingsViewModel>(
-                    viewModel => viewModel.Id = property.Id,
-                    cancellationToken
-                ),
-            ToDoItemType.Circle => dialogViewer.ShowInfoContentDialogAsync<ValueToDoItemSettingsViewModel>(
-                viewModel => viewModel.Id = property.Id,
-                cancellationToken
-            ),
-            ToDoItemType.Step => dialogViewer.ShowInfoContentDialogAsync<ValueToDoItemSettingsViewModel>(
-                viewModel => viewModel.Id = property.Id,
-                cancellationToken
-            ),
-            ToDoItemType.Group => throw new ArgumentOutOfRangeException(),
-            _ => throw new ArgumentOutOfRangeException()
-        };
+        return dialogViewer.ShowConfirmContentDialogAsync<ToDoItemSettingsViewModel>(
+            async vm =>
+            {
+                await dialogViewer.CloseContentDialogAsync(cancellationToken);
+                await property.RefreshAsync(cancellationToken);
+            },
+            _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
+            vm => vm.ToDoItemId = property.Id,
+            cancellationToken
+        );
     }
 
     private static Task SetToDoDescriptionAsync(IToDoDescriptionProperty property, CancellationToken cancellationToken)

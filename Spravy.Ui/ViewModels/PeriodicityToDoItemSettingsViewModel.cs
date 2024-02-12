@@ -19,7 +19,8 @@ public class PeriodicityToDoItemSettingsViewModel : ViewModelBase,
     IToDoChildrenTypeProperty,
     IToDoDueDateProperty,
     IToDoTypeOfPeriodicityProperty,
-    IIsRequiredCompleteInDueDateProperty
+    IIsRequiredCompleteInDueDateProperty,
+    IApplySettings
 {
     private ToDoItemChildrenType childrenType;
     private Guid id;
@@ -129,5 +130,19 @@ public class PeriodicityToDoItemSettingsViewModel : ViewModelBase,
             default:
                 throw new ArgumentOutOfRangeException();
         }
+    }
+
+    public async Task ApplySettingsAsync(CancellationToken cancellationToken)
+    {
+        await ToDoService.UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, cancellationToken).ConfigureAwait(false);
+        await ToDoService.UpdateToDoItemDueDateAsync(Id, DueDate, cancellationToken).ConfigureAwait(false);
+
+        await ToDoService
+            .UpdateToDoItemIsRequiredCompleteInDueDateAsync(Id, IsRequiredCompleteInDueDate, cancellationToken)
+            .ConfigureAwait(false);
+
+        await ToDoService
+            .UpdateToDoItemTypeOfPeriodicityAsync(Id, TypeOfPeriodicity, cancellationToken)
+            .ConfigureAwait(false);
     }
 }

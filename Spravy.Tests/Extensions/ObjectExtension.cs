@@ -101,20 +101,6 @@ public static class ObjectExtension
         return predicate.Invoke();
     }
 
-    public static TObject Case<TObject>(this TObject obj, Action<TObject> action)
-    {
-        action.Invoke(obj);
-
-        return obj;
-    }
-
-    public static TObject Case<TObject>(this TObject obj, Action action)
-    {
-        action.Invoke();
-
-        return obj;
-    }
-
     public static async Task<TObject> CaseAsync<TObject>(this TObject obj, Func<Task> action)
     {
         await action.Invoke();
