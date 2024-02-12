@@ -64,7 +64,7 @@ public static class CommandStorage
             MaterialIconKind.ReorderHorizontal,
             "Reorder"
         );
-        OpenLinkItem = CreateCommand<ToDoItemNotify>(
+        OpenLinkItem = CreateCommand<ILink>(
             OpenLinkAsync,
             MaterialIconKind.Link,
             "Open link"
@@ -1238,7 +1238,7 @@ public static class CommandStorage
         await RefreshCurrentViewAsync(cancellationToken);
     }
 
-    private static async Task OpenLinkAsync(ToDoItemNotify item, CancellationToken cancellationToken)
+    private static async Task OpenLinkAsync(ILink item, CancellationToken cancellationToken)
     {
         var link = item.Link.ThrowIfNull().ToUri();
         cancellationToken.ThrowIfCancellationRequested();

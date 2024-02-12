@@ -243,9 +243,11 @@ public class EfToDoService : IToDoService
                     .ToArrayAsync(cancellationToken);
 
                 var newEntity = mapper.Map<ToDoItemEntity>(options);
-                newEntity.Description = string.Empty;
                 newEntity.Id = id;
                 newEntity.OrderIndex = items.Length == 0 ? 0 : items.Max() + 1;
+                newEntity.Description = options.Description;
+                newEntity.DescriptionType = options.DescriptionType;
+                newEntity.Link = mapper.Map<string>(options.Link);
                 await c.Set<ToDoItemEntity>().AddAsync(newEntity, cancellationToken);
             }
         );

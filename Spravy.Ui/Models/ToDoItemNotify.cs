@@ -12,7 +12,8 @@ public class ToDoItemNotify : NotifyBase,
     ICanCompleteProperty,
     IDeletable,
     IToDoSettingsProperty,
-    ISetToDoParentItemParams
+    ISetToDoParentItemParams,
+    ILink
 {
     private Guid id;
     private string name = string.Empty;

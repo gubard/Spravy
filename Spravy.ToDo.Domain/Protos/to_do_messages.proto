@@ -445,6 +445,9 @@ message AddToDoItemReply {
 message AddRootToDoItemRequest {
   string Name = 1;
   ToDoItemTypeGrpc Type = 2;
+  string Link = 3;
+  string Description = 4;
+  DescriptionTypeGrpc DescriptionType = 5;
 }
 
 message AddRootToDoItemReply {

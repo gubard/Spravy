@@ -28,6 +28,9 @@ public class SpravyUiProfile : Profile
         CreateMap<ToDoShortItem, ToDoItemParentNotify>();
         CreateMap<ToDoItemViewModel, ToDoItemNotify>();
 
+        CreateMap<TimerItem, TimerItemNotify>()
+            .ConvertUsing((item, _, context) => context.Mapper.Map<TimerItemToDoItemFavoriteNotify>(item));
+
         CreateMap<TimerItem, TimerItemToDoItemFavoriteNotify>()
             .ConvertUsing(
                 (item, _, _) => new()
@@ -38,11 +41,16 @@ public class SpravyUiProfile : Profile
                 }
             );
 
-        CreateMap<TimerItem, TimerItemNotify>()
-            .ConvertUsing((item, _, context) => context.Mapper.Map<TimerItemToDoItemFavoriteNotify>(item));
-
         CreateMap<AddRootToDoItemViewModel, AddRootToDoItemOptions>()
-            .ConstructUsing(x => new(x.Name, x.Type));
+            .ConvertUsing(
+                (x, _, context) => new(
+                    x.Name,
+                    x.Type,
+                    context.Mapper.Map<Uri?>(x.Url),
+                    x.DescriptionContent.Description,
+                    x.DescriptionContent.Type
+                )
+            );
 
         CreateMap<AddTimerViewModel, AddTimerParameters>()
             .ConvertUsing(

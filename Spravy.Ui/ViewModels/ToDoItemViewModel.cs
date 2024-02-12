@@ -32,7 +32,8 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     IToDoSettingsProperty,
     IToDoNameProperty,
     IDeletable,
-    ISetToDoParentItemParams
+    ISetToDoParentItemParams,
+    ILink
 {
     private string name = string.Empty;
     private Guid id;
@@ -302,6 +303,11 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
                     );
 
                     PageHeaderViewModel.Commands.Add(CommandStorage.DeleteToDoItemItem.WithParam(this));
+
+                    if (!Link.IsNullOrWhiteSpace())
+                    {
+                        PageHeaderViewModel.Commands.Add(CommandStorage.OpenLinkItem.WithParam(this));
+                    }
 
                     if (IsCan != ToDoItemIsCan.None)
                     {
