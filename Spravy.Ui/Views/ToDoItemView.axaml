@@ -68,9 +68,10 @@
                 <Expander Margin="3"
                           IsExpanded="{Binding Description, Mode=OneWay, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}">
                     <Expander.Header>
-                        <StackPanel Orientation="Horizontal" Height="60">
+                        <StackPanel Orientation="Horizontal">
                             <Button Command="{x:Static services:CommandStorage.SetToDoDescriptionCommand}"
-                                    CommandParameter="{Binding}">
+                                    CommandParameter="{Binding}"
+                                    Classes="Basic">
                                 <avalonia:MaterialIcon Kind="Pencil" />
                             </Button>
 
