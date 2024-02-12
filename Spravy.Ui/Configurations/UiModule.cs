@@ -159,8 +159,18 @@ public class UiModule : NinjectModule
                 }
             );
 
-        Bind<Window>()
+        Bind<IDesktopTopLevelControl>()
             .To<MainWindow>()
+            .InSingletonScope()
+            .OnActivation(
+                (c, x) =>
+                {
+                    x.Content = c.Kernel.Get<Control>();
+                }
+            );
+        
+        Bind<ISingleViewTopLevelControl>()
+            .To<SingleView>()
             .InSingletonScope()
             .OnActivation(
                 (c, x) =>

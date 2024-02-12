@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
-using Avalonia.Collections;
 using Ninject;
 using ProtoBuf;
 using ReactiveUI;

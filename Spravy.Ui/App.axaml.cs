@@ -7,6 +7,7 @@ using Avalonia.Markup.Xaml;
 using Ninject;
 using Spravy.Domain.Di.Helpers;
 using Spravy.Domain.Extensions;
+using Spravy.Ui.Interfaces;
 
 namespace Spravy.Ui;
 
@@ -28,12 +29,12 @@ public partial class App : Application
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var window = resolver.Get<Window>();
+            var window = resolver.Get<IDesktopTopLevelControl>().As<Window>().ThrowIfNull();
             desktop.MainWindow = window;
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {
-            var control = resolver.Get<Control>();
+            var control = resolver.Get<ISingleViewTopLevelControl>().As<Control>().ThrowIfNull();
             singleViewPlatform.MainView = control;
         }
 
