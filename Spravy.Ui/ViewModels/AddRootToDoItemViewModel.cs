@@ -1,11 +1,8 @@
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Avalonia.Collections;
 using Ninject;
 using ProtoBuf;
-using ReactiveUI;
 using Spravy.Domain.Enums;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
@@ -19,35 +16,15 @@ namespace Spravy.Ui.ViewModels;
 
 public class AddRootToDoItemViewModel : NavigatableViewModelBase
 {
-    private string name = string.Empty;
-    private ToDoItemType type;
-    private string url = string.Empty;
-
     public AddRootToDoItemViewModel() : base(true)
     {
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
     }
 
-    public AvaloniaList<ToDoItemType> ToDoItemTypes { get; } = new(Enum.GetValues<ToDoItemType>());
     public ICommand InitializedCommand { get; }
 
-    public string Name
-    {
-        get => name;
-        set => this.RaiseAndSetIfChanged(ref name, value);
-    }
-
-    public ToDoItemType Type
-    {
-        get => type;
-        set => this.RaiseAndSetIfChanged(ref type, value);
-    }
-
-    public string Url
-    {
-        get => url;
-        set => this.RaiseAndSetIfChanged(ref url, value);
-    }
+    [Inject]
+    public required ToDoItemContentViewModel ToDoItemContent { get; init; }
 
     [Inject]
     public required EditDescriptionContentViewModel DescriptionContent { get; init; }
@@ -81,9 +58,9 @@ public class AddRootToDoItemViewModel : NavigatableViewModelBase
         await this.InvokeUIAsync(
             () =>
             {
-                Name = s.Name;
-                Type = s.Type;
-                Url = s.Url;
+                ToDoItemContent.Name = s.Name;
+                ToDoItemContent.Type = s.Type;
+                ToDoItemContent.Url = s.Url;
                 DescriptionContent.Description = s.Description;
                 DescriptionContent.Type = s.DescriptionType;
             }
@@ -99,9 +76,9 @@ public class AddRootToDoItemViewModel : NavigatableViewModelBase
 
         public AddRootToDoItemViewModelSetting(AddRootToDoItemViewModel viewModel)
         {
-            Name = viewModel.Name;
-            Type = viewModel.Type;
-            Url = viewModel.Url;
+            Name = viewModel.ToDoItemContent.Name;
+            Type = viewModel.ToDoItemContent.Type;
+            Url = viewModel.ToDoItemContent.Url;
             Description = viewModel.DescriptionContent.Description;
             DescriptionType = viewModel.DescriptionContent.Type;
         }

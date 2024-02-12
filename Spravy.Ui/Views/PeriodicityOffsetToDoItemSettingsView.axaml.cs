@@ -3,8 +3,8 @@ using Spravy.Ui.ViewModels;
 
 namespace Spravy.Ui.Views;
 
-public partial class
-    PeriodicityOffsetToDoItemSettingsView : ReactiveUserControl<PeriodicityOffsetToDoItemSettingsViewModel>
+public partial class PeriodicityOffsetToDoItemSettingsView
+    : ReactiveUserControl<PeriodicityOffsetToDoItemSettingsViewModel>
 {
     public PeriodicityOffsetToDoItemSettingsView()
     {

@@ -1,6 +1,14 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:system="clr-namespace:System;assembly=System.Runtime">
+    <!--InfoView-->
+    <system:String x:Key="InfoView.Ok">Ok</system:String>
+
+    <!--AddRootToDoItemView-->
+    <system:String x:Key="ToDoItemSettingsView.Name">Name</system:String>
+    <system:String x:Key="ToDoItemSettingsView.Type">Type</system:String>
+    <system:String x:Key="ToDoItemSettingsView.Url">URL</system:String>
+
     <!--DescriptionType-->
     <system:String x:Key="DescriptionType.PlainText">Plain text</system:String>
     <system:String x:Key="DescriptionType.Markdown">Markdown</system:String>
@@ -85,6 +93,7 @@
     <system:String x:Key="AddRootToDoItemView.Name">Name</system:String>
     <system:String x:Key="AddRootToDoItemView.Type">Type</system:String>
     <system:String x:Key="AddRootToDoItemView.Url">URL</system:String>
+    <system:String x:Key="AddRootToDoItemView.Header">New Task</system:String>
 
     <!--AddTimerView-->
     <system:String x:Key="AddTimerView.Item">Item</system:String>

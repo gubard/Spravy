@@ -24,7 +24,6 @@
         </StackPanel>
 
         <TextBox Classes="accepts-return vertical-content-alignment-top"
-                 Height="300"
                  Text="{Binding Description}" />
     </StackPanel>
 </reactiveUi:ReactiveUserControl>

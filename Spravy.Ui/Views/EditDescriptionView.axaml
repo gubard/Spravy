@@ -9,11 +9,13 @@
                                 mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="200"
                                 x:Class="Spravy.Ui.Views.EditDescriptionView"
                                 x:DataType="viewModels:EditDescriptionViewModel">
-    <controls:GroupBox>
-        <controls:GroupBox.Header>
-            <TextBlock Text="{Binding ToDoItemName}" Classes="h4" />
-        </controls:GroupBox.Header>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <controls:GroupBox>
+            <controls:GroupBox.Header>
+                <TextBlock Text="{Binding ToDoItemName}" Classes="h4" />
+            </controls:GroupBox.Header>
 
-        <ContentControl Content="{Binding Content}" />
-    </controls:GroupBox>
+            <ContentControl Content="{Binding Content}" />
+        </controls:GroupBox>
+    </ScrollViewer>
 </reactiveUi:ReactiveUserControl>

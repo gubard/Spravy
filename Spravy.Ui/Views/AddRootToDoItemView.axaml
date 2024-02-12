@@ -5,7 +5,7 @@
                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-                                xmlns:views="clr-namespace:Spravy.Ui.Views"
+                                xmlns:controls="clr-namespace:SukiUI.Controls;assembly=SukiUI"
                                 mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                                 x:Class="Spravy.Ui.Views.AddRootToDoItemView"
                                 x:DataType="viewModels:AddRootToDoItemViewModel">
@@ -15,20 +15,16 @@
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 
-    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-        <StackPanel>
-            <TextBlock Classes="field"
-                       Text="{DynamicResource AddRootToDoItemView.Name}" />
-            <TextBox Text="{Binding Name}"
-                     Name="{x:Static views:AddRootToDoItemView.NameTextBoxName}" />
-            <TextBlock Classes="field"
-                       Text="{DynamicResource AddRootToDoItemView.Url}" />
-            <TextBox Text="{Binding Url}" />
-            <TextBlock Classes="field"
-                       Text="{DynamicResource AddRootToDoItemView.Type}" />
-            <ListBox SelectedItem="{Binding Type}"
-                     ItemsSource="{Binding ToDoItemTypes}" />
-            <ContentControl Content="{Binding DescriptionContent}" />
-        </StackPanel>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <controls:GroupBox>
+            <controls:GroupBox.Header>
+                <TextBlock Text="{DynamicResource AddRootToDoItemView.Header}" Classes="h4" />
+            </controls:GroupBox.Header>
+
+            <StackPanel>
+                <ContentControl Content="{Binding ToDoItemContent}" />
+                <ContentControl Content="{Binding DescriptionContent}" />
+            </StackPanel>
+        </controls:GroupBox>
     </ScrollViewer>
 </reactiveUi:ReactiveUserControl>

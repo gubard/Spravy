@@ -44,9 +44,9 @@ public class SpravyUiProfile : Profile
         CreateMap<AddRootToDoItemViewModel, AddRootToDoItemOptions>()
             .ConvertUsing(
                 (x, _, context) => new(
-                    x.Name,
-                    x.Type,
-                    context.Mapper.Map<Uri?>(x.Url),
+                    x.ToDoItemContent.Name,
+                    x.ToDoItemContent.Type,
+                    context.Mapper.Map<Uri?>(x.ToDoItemContent.Url),
                     x.DescriptionContent.Description,
                     x.DescriptionContent.Type
                 )

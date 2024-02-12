@@ -19,8 +19,7 @@
         <Button x:Name="OkButton"
                 Grid.Row="1"
                 Command="{Binding OkCommand}"
-                ClickMode="Press">
-            <avalonia:MaterialIcon Kind="Check" />
-        </Button>
+                ClickMode="Press"
+                Content="{DynamicResource InfoView.Ok}" />
     </Grid>
 </reactiveUi:ReactiveUserControl>
