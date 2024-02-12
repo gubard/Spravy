@@ -1,3 +1,4 @@
+using Spravy.Domain.Enums;
 using Spravy.ToDo.Domain.Enums;
 
 namespace Spravy.ToDo.Domain.Models;
@@ -15,7 +16,8 @@ public readonly struct ToDoItem
         ToDoItemStatus status,
         ActiveToDoItem? active,
         ToDoItemIsCan isCan,
-        Guid? parentId
+        Guid? parentId,
+        DescriptionType descriptionType
     )
     {
         Id = id;
@@ -29,6 +31,7 @@ public readonly struct ToDoItem
         Active = active;
         IsCan = isCan;
         ParentId = parentId;
+        DescriptionType = descriptionType;
     }
 
     public Guid Id { get; }
@@ -42,4 +45,5 @@ public readonly struct ToDoItem
     public ActiveToDoItem? Active { get; }
     public ToDoItemIsCan IsCan { get; }
     public Guid? ParentId { get; }
+    public DescriptionType DescriptionType { get; }
 }

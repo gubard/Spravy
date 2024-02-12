@@ -60,6 +60,7 @@ message ToDoItemGrpc {
   ActiveToDoItemGrpc Active = 9;
   ToDoItemIsCanGrpc IsCan = 10;
   bytes ParentId = 11;
+  DescriptionTypeGrpc DescriptionType = 12;
 }
 
 message GetToDoItemsReply {
@@ -180,6 +181,7 @@ message GetToDoItemReply {
   ActiveToDoItemGrpc Active = 9;
   ToDoItemIsCanGrpc IsCan = 10;
   bytes ParentId = 11;
+  DescriptionTypeGrpc DescriptionType = 12;
 }
 
 message GetChildrenToDoItemIdsRequest {

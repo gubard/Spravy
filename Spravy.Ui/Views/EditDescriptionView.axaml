@@ -13,23 +13,7 @@
         <controls:GroupBox.Header>
             <TextBlock Text="{Binding ToDoItemName}" Classes="h4" />
         </controls:GroupBox.Header>
-        <StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <RadioButton Classes="GigaChips"
-                             Content="{DynamicResource DescriptionType.PlainText}"
-                             GroupName="DescriptionType"
-                             IsChecked="{Binding IsPlainText}" />
-                <RadioButton Classes="GigaChips"
-                             Content="{DynamicResource DescriptionType.Markdown}"
-                             GroupName="DescriptionType"
-                             IsChecked="{Binding IsMarkdown}" />
-            </StackPanel>
 
-            <TextBlock Classes="field"
-                       Text="{DynamicResource EditDescriptionView.Description}" />
-            <TextBox Classes="accepts-return vertical-content-alignment-top"
-                     Height="300"
-                     Text="{Binding Description}" />
-        </StackPanel>
+        <ContentControl Content="{Binding Content}" />
     </controls:GroupBox>
 </reactiveUi:ReactiveUserControl>

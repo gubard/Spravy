@@ -1,6 +1,7 @@
 using AutoMapper;
 using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
+using Spravy.Domain.Enums;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
@@ -26,6 +27,8 @@ public class SpravyToDoProfile : Profile
         CreateMap<MonthlyPeriodicity, GetMonthlyPeriodicityReply>();
         CreateMap<GetAnnuallyPeriodicityReply, AnnuallyPeriodicity>();
         CreateMap<AnnuallyPeriodicity, GetAnnuallyPeriodicityReply>();
+        CreateMap<DescriptionType, DescriptionTypeGrpc>();
+        CreateMap<DescriptionTypeGrpc, DescriptionType>();
         CreateMap<ToDoItem, ToDoItemGrpc>();
         CreateMap<ToDoItemGrpc, ToDoItem>();
         CreateMap<ToDoItem, GetToDoItemReply>();

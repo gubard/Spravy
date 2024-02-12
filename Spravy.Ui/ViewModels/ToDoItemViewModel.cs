@@ -68,6 +68,15 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
                     PageHeaderViewModel.Header = x;
                 }
             );
+
+        this.WhenAnyValue(x => x.DescriptionType)
+            .Subscribe(
+                x =>
+                {
+                    this.RaisePropertyChanged(nameof(IsDescriptionPlainText));
+                    this.RaisePropertyChanged(nameof(IsDescriptionMarkdownText));
+                }
+            );
     }
 
     public ICommand InitializedCommand { get; }
@@ -100,8 +109,6 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
         }
     }
 
-    public object Header => Name;
-
     [Inject]
     public required IToDoService ToDoService { get; set; }
 
@@ -125,6 +132,8 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
 
     public bool IsNavigateToParent => true;
     public override string ViewId => $"{TypeCache<ToDoItemViewModel>.Type.Name}:{Id}";
+    public bool IsDescriptionPlainText => DescriptionType == DescriptionType.PlainText;
+    public bool IsDescriptionMarkdownText => DescriptionType == DescriptionType.Markdown;
 
     public bool IsFavorite
     {
@@ -217,6 +226,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
                 IsFavorite = item.IsFavorite;
                 Status = item.Status;
                 ParentId = item.ParentId;
+                DescriptionType = item.DescriptionType;
             }
         );
     }

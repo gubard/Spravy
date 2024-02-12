@@ -39,13 +39,42 @@
                                 CommandParameter="{Binding}"
                                 Classes="Basic">
                             <StackPanel Orientation="Horizontal">
-                                <avalonia:MaterialIcon Kind="Pencil"  Margin="0,0,3,0"/>
+                                <avalonia:MaterialIcon Kind="Pencil" Margin="0,0,3,0" />
                                 <TextBlock Text="{DynamicResource ToDoItemView.Description}" Classes="alignment-center" />
                             </StackPanel>
                         </Button>
                     </Expander.Header>
 
-                    <mdxaml:MarkdownScrollViewer Markdown="{Binding Description}" />
+                    <Panel>
+                        <TextBlock IsVisible="{Binding IsDescriptionPlainText}" Text="{Binding Description}" />
+
+                        <mdxaml:MarkdownScrollViewer IsVisible="{Binding IsDescriptionMarkdownText}"
+                                                     Markdown="{Binding Description}">
+                            <mdxaml:MarkdownScrollViewer.Styles>
+                                <Style Selector="Border.Table">
+                                    <Setter Property="BorderThickness" Value="0" />
+                                </Style>
+
+                                <Style Selector="Border.TableHeader">
+                                    <Setter Property="Background" Value="{DynamicResource SukiCardBackground}" />
+                                    <Setter Property="BorderBrush" Value="{DynamicResource SukiControlBorderBrush}" />
+                                    <Setter Property="BorderThickness" Value="0,0,1,1" />
+                                </Style>
+
+                                <Style Selector="Border.OddTableRow">
+                                    <Setter Property="Background" Value="{DynamicResource SukiBackground}" />
+                                    <Setter Property="BorderBrush" Value="{DynamicResource SukiControlBorderBrush}" />
+                                    <Setter Property="BorderThickness" Value="0,0,1,1" />
+                                </Style>
+
+                                <Style Selector="Border.EvenTableRow">
+                                    <Setter Property="Background" Value="{DynamicResource SukiStrongBackground}" />
+                                    <Setter Property="BorderBrush" Value="{DynamicResource SukiControlBorderBrush}" />
+                                    <Setter Property="BorderThickness" Value="0,0,1,1" />
+                                </Style>
+                            </mdxaml:MarkdownScrollViewer.Styles>
+                        </mdxaml:MarkdownScrollViewer>
+                    </Panel>
                 </Expander>
 
                 <ContentControl Content="{Binding ToDoSubItemsViewModel}" />

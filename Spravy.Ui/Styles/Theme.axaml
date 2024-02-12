@@ -17,4 +17,5 @@
     <StyleInclude Source="FlyoutPresenter.axaml" />
     <StyleInclude Source="CheckBox.axaml" />
     <StyleInclude Source="TextBlock.axaml" />
+    <StyleInclude Source="Border.axaml" />
 </Styles>

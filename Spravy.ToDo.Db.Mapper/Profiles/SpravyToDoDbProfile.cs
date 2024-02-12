@@ -33,7 +33,8 @@ public class SpravyToDoDbProfile : Profile
                         parameters.Status,
                         parameters.ActiveItem,
                         parameters.IsCan,
-                        entity.ParentId
+                        entity.ParentId,
+                        entity.DescriptionType
                     );
                 }
             );

@@ -794,17 +794,28 @@ public static class CommandStorage
             async viewModel =>
             {
                 await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
-                await toDoService.UpdateToDoItemDescriptionAsync(property.Id, viewModel.Description, cancellationToken)
+
+                await toDoService.UpdateToDoItemDescriptionAsync(
+                        property.Id,
+                        viewModel.Content.Description,
+                        cancellationToken
+                    )
                     .ConfigureAwait(false);
-                await toDoService.UpdateToDoItemDescriptionTypeAsync(property.Id, viewModel.Type, cancellationToken)
+
+                await toDoService.UpdateToDoItemDescriptionTypeAsync(
+                        property.Id,
+                        viewModel.Content.Type,
+                        cancellationToken
+                    )
                     .ConfigureAwait(false);
+
                 await property.RefreshAsync(cancellationToken).ConfigureAwait(false);
             },
             _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
             viewModel =>
             {
-                viewModel.Description = property.Description;
-                viewModel.Type = property.DescriptionType;
+                viewModel.Content.Description = property.Description;
+                viewModel.Content.Type = property.DescriptionType;
                 viewModel.ToDoItemName = property.Name;
             },
             cancellationToken
