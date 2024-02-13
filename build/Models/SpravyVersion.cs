@@ -25,7 +25,7 @@ public struct SpravyVersion
         Revision = version.Revision;
     }
 
-    public readonly ulong Major;
+    public readonly ulong Major = 1;
     public readonly byte Minor;
     public readonly byte Build;
     public readonly byte Revision;
