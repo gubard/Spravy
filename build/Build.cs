@@ -74,7 +74,7 @@ class Build : NukeBuild
 
     [Solution] readonly Solution Solution;
 
-    const string FileVersion = "version.txt";
+    const string FileVersion = "/tmp/Spravy/version.txt";
 
     static string GetVersion()
     {
