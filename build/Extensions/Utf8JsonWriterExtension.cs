@@ -133,10 +133,6 @@ public static class Utf8JsonWriterExtension
             return false;
         }
 
-        foreach (var p in property.Value.EnumerateObject())
-        {
-        }
-
         writer.AddObject(property.Name, w =>
             {
                 foreach (var p in property.Value.EnumerateObject())
