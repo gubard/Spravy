@@ -104,6 +104,7 @@
     <!--AddToDoItemView-->
     <system:String x:Key="AddToDoItemView.Name">Name</system:String>
     <system:String x:Key="AddToDoItemView.Type">Type</system:String>
+    <system:String x:Key="AddToDoItemView.Header">New Task</system:String>
 
     <!--CreateUserView-->
     <system:String x:Key="CreateUserView.CreateAccountHeader">Create Account</system:String>

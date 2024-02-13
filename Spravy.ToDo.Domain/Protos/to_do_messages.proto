@@ -436,6 +436,9 @@ message AddToDoItemRequest {
   bytes ParentId = 1;
   string Name = 2;
   ToDoItemTypeGrpc Type = 3;
+  string Link = 4;
+  string Description = 5;
+  DescriptionTypeGrpc DescriptionType = 6;
 }
 
 message AddToDoItemReply {

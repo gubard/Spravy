@@ -274,7 +274,7 @@ public class EfToDoService : IToDoService
                     .ToArrayAsync(cancellationToken);
 
                 var toDoItem = mapper.Map<ToDoItemEntity>(options);
-                toDoItem.Description = string.Empty;
+                toDoItem.Description = options.Description;
                 toDoItem.Id = id;
                 toDoItem.OrderIndex = items.Length == 0 ? 0 : items.Max() + 1;
 
@@ -291,6 +291,8 @@ public class EfToDoService : IToDoService
                 toDoItem.DaysOffset = parent.DaysOffset;
                 toDoItem.MonthsOffset = parent.MonthsOffset;
                 toDoItem.YearsOffset = parent.YearsOffset;
+                toDoItem.Link = options.Link?.AbsoluteUri ?? string.Empty;
+                toDoItem.DescriptionType = options.DescriptionType;
                 await c.Set<ToDoItemEntity>().AddAsync(toDoItem, cancellationToken);
             }
         );

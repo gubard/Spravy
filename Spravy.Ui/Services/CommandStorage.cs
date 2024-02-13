@@ -740,16 +740,23 @@ public static class CommandStorage
 
     private static Task AddToDoItemChildAsync(Guid parentId, CancellationToken cancellationToken)
     {
-        return dialogViewer.ShowConfirmContentDialogAsync(
+        return dialogViewer.ShowConfirmContentDialogAsync<AddToDoItemViewModel>(
             async viewModel =>
             {
                 await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
-                var options = new AddToDoItemOptions(parentId, viewModel.Name, viewModel.Type);
+                var options = new AddToDoItemOptions(
+                    viewModel.ParentId,
+                    viewModel.ToDoItemContent.Name,
+                    viewModel.ToDoItemContent.Type,
+                    viewModel.DescriptionContent.Description,
+                    viewModel.DescriptionContent.Type,
+                    mapper.Map<Uri?>(viewModel.ToDoItemContent.Link)
+                );
                 await toDoService.AddToDoItemAsync(options, cancellationToken);
                 await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
             },
             _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
-            ActionHelper<AddToDoItemViewModel>.Empty,
+            vm => vm.ParentId = parentId,
             cancellationToken
         );
     }

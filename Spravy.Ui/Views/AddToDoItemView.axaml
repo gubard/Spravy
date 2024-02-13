@@ -4,33 +4,32 @@
                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-                                xmlns:models="clr-namespace:Spravy.Ui.Models"
-                                xmlns:views="clr-namespace:Spravy.Ui.Views"
-                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                                xmlns:controls="clr-namespace:SukiUI.Controls;assembly=SukiUI"
                                 mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                                 x:Class="Spravy.Ui.Views.AddToDoItemView"
                                 x:DataType="viewModels:AddToDoItemViewModel">
-    <StackPanel>
-        <ContentControl Content="{Binding PathViewModel}">
-            <ContentControl.DataTemplates>
-                <DataTemplate DataType="models:ToDoItemParentNotify">
-                    <TextBlock Text="{Binding Name}" />
-                </DataTemplate>
+    <Interaction.Behaviors>
+        <EventTriggerBehavior EventName="Initialized">
+            <InvokeCommandAction Command="{Binding InitializedCommand}" />
+        </EventTriggerBehavior>
+    </Interaction.Behaviors>
 
-                <DataTemplate DataType="models:RootItem">
-                    <avalonia:MaterialIcon Kind="Home" />
-                </DataTemplate>
-            </ContentControl.DataTemplates>
-        </ContentControl>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <controls:GroupBox>
+            <controls:GroupBox.Header>
+                <StackPanel>
+                    <TextBlock Text="{DynamicResource AddToDoItemView.Header}" Classes="h4" />
 
-        <TextBox Text="{Binding Name}"
-                 Classes="outline dense"
-                 Theme="{StaticResource OutlineTextBox}"
-                 Name="{x:Static views:AddToDoItemView.NameTextBoxName}"
-                 UseFloatingWatermark="True"
-                 VerticalAlignment="Top" />
-        <ComboBox Theme="{StaticResource MaterialOutlineComboBox}"
-                  SelectedItem="{Binding Type}"
-                  ItemsSource="{Binding ToDoItemTypes}" />
-    </StackPanel>
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                        <controls:Stepper Index="0" Steps="{Binding Path}" HorizontalAlignment="Left" />
+                    </ScrollViewer>
+                </StackPanel>
+            </controls:GroupBox.Header>
+
+            <StackPanel>
+                <ContentControl Content="{Binding ToDoItemContent}" />
+                <ContentControl Content="{Binding DescriptionContent}" />
+            </StackPanel>
+        </controls:GroupBox>
+    </ScrollViewer>
 </reactiveUi:ReactiveUserControl>
