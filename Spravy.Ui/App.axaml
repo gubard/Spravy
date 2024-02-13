@@ -130,7 +130,7 @@
                                           IsChecked="{Binding Value.IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanConverter}}" />
 
                             <TextBlock Text="{Binding Value.Name}"
-                                       Classes="Headline6"
+                                       Classes="h4"
                                        TextWrapping="Wrap"
                                        VerticalAlignment="Center" />
                         </WrapPanel>
