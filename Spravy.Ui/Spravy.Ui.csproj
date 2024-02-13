@@ -8,6 +8,18 @@
 
     <ItemGroup>
         <AvaloniaResource Include="Assets\**" />
+        <AvaloniaResource Include="Fonts\ShantellSans\ShantellSans-Bold.ttf" />
+        <AvaloniaResource Include="Fonts\ShantellSans\ShantellSans-BoldItalic.ttf" />
+        <AvaloniaResource Include="Fonts\ShantellSans\ShantellSans-ExtraBold.ttf" />
+        <AvaloniaResource Include="Fonts\ShantellSans\ShantellSans-ExtraBoldItalic.ttf" />
+        <AvaloniaResource Include="Fonts\ShantellSans\ShantellSans-Italic.ttf" />
+        <AvaloniaResource Include="Fonts\ShantellSans\ShantellSans-Light.ttf" />
+        <AvaloniaResource Include="Fonts\ShantellSans\ShantellSans-LightItalic.ttf" />
+        <AvaloniaResource Include="Fonts\ShantellSans\ShantellSans-Medium.ttf" />
+        <AvaloniaResource Include="Fonts\ShantellSans\ShantellSans-MediumItalic.ttf" />
+        <AvaloniaResource Include="Fonts\ShantellSans\ShantellSans-Regular.ttf" />
+        <AvaloniaResource Include="Fonts\ShantellSans\ShantellSans-SemiBold.ttf" />
+        <AvaloniaResource Include="Fonts\ShantellSans\ShantellSans-SemiBoldItalic.ttf" />
     </ItemGroup>
 
     <ItemGroup>
