@@ -27,6 +27,8 @@
     </Application.Styles>
 
     <Application.DataTemplates>
+        <DataTemplate x:DataType="services:EmptyApplySettings" />
+
         <DataTemplate x:DataType="models:DayOfYearSelectItem">
             <ContentControl Content="{Binding Days}" />
         </DataTemplate>
@@ -40,11 +42,7 @@
         </DataTemplate>
 
         <DataTemplate x:DataType="models:DayOfWeekSelectItem">
-            <StackPanel Margin="5">
-                <CheckBox IsChecked="{Binding IsSelected}"
-                          HorizontalAlignment="Center" />
-                <TextBlock Text="{Binding DayOfWeek}" />
-            </StackPanel>
+            <ToggleButton IsChecked="{Binding IsSelected}" Content="{Binding DayOfWeek}" />
         </DataTemplate>
 
         <DataTemplate x:DataType="models:TimerItemToDoItemFavoriteNotify">

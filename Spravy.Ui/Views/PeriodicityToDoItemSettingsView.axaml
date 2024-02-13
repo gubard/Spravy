@@ -29,16 +29,8 @@
         <TextBlock Classes="field"
                    Text="{DynamicResource PeriodicityToDoItemSettingsView.TypeOfPeriodicity}" />
         <ListBox ItemsSource="{Binding TypeOfPeriodicities}" SelectedItem="{Binding TypeOfPeriodicity}" />
-
-        <Grid ColumnDefinitions="Auto,*"
-              IsVisible="{Binding TypeOfPeriodicity, Converter={StaticResource TypeOfPeriodicityToIsVisible}}">
-            <Button Command="{x:Static services:CommandStorage.SetToDoPeriodicityCommand}"
-                    CommandParameter="{Binding}"
-                    Margin="4,15,4,4">
-                <avalonia:MaterialIcon Kind="Pencil" />
-            </Button>
-
-            <ItemsControl Grid.Column="1" ItemsSource="{Binding Values}" />
-        </Grid>
+        <TextBlock Classes="field"
+                   Text="{DynamicResource PeriodicityToDoItemSettingsView.Periodicity}" />
+        <ContentControl Content="{Binding Periodicity}" />
     </StackPanel>
 </reactiveUi:ReactiveUserControl>

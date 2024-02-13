@@ -80,7 +80,7 @@ public static class DialogViewerExtension
     public static Task ShowDayOfWeekSelectorInputDialogAsync(
         this IDialogViewer dialogViewer,
         Func<IEnumerable<DayOfWeek>, Task> confirmTask,
-        Action<DayOfWeekSelectorViewModel> setup,
+        Action<ToDoItemDayOfWeekSelectorViewModel> setup,
         CancellationToken cancellationToken
     )
     {

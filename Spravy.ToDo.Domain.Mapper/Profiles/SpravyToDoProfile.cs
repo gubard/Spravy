@@ -19,10 +19,32 @@ public class SpravyToDoProfile : Profile
         CreateMap<AnnuallyPeriodicity, AnnuallyPeriodicityGrpc>();
         CreateMap<MonthlyPeriodicityGrpc, MonthlyPeriodicity>();
         CreateMap<MonthlyPeriodicity, MonthlyPeriodicityGrpc>();
-        CreateMap<WeeklyPeriodicityGrpc, WeeklyPeriodicity>();
-        CreateMap<WeeklyPeriodicity, WeeklyPeriodicityGrpc>();
-        CreateMap<GetWeeklyPeriodicityReply, WeeklyPeriodicity>();
-        CreateMap<WeeklyPeriodicity, GetWeeklyPeriodicityReply>();
+        CreateMap<WeeklyPeriodicityGrpc, WeeklyPeriodicity>()
+            .ConvertUsing(x => new WeeklyPeriodicity(x.Days.Select(y => (DayOfWeek)y)));
+        CreateMap<WeeklyPeriodicity, WeeklyPeriodicityGrpc>()
+            .ConvertUsing(
+                (x, _, _) =>
+                {
+                    var result = new WeeklyPeriodicityGrpc();
+                    result.Days.AddRange(x.Days.Select(y => (DayOfWeekGrpc)y));
+
+                    return result;
+                }
+            );
+        CreateMap<GetWeeklyPeriodicityReply, WeeklyPeriodicity>()
+            .ConvertUsing(x => new WeeklyPeriodicity(x.Days.Select(y => (DayOfWeek)y)));
+        CreateMap<WeeklyPeriodicity, GetWeeklyPeriodicityReply>()
+            .ConvertUsing(
+                (x, _, _) =>
+                {
+                    var result = new GetWeeklyPeriodicityReply();
+                    result.Days.AddRange(x.Days.Select(y => (DayOfWeekGrpc)y));
+
+                    return result;
+                }
+            );
+        CreateMap<DayOfWeek, DayOfWeekGrpc>();
+        CreateMap<DayOfWeekGrpc, DayOfWeek>();
         CreateMap<GetMonthlyPeriodicityReply, MonthlyPeriodicity>();
         CreateMap<MonthlyPeriodicity, GetMonthlyPeriodicityReply>();
         CreateMap<GetAnnuallyPeriodicityReply, AnnuallyPeriodicity>();

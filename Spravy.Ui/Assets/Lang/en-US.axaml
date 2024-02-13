@@ -135,6 +135,7 @@
     <system:String x:Key="PeriodicityToDoItemSettingsView.TypeOfPeriodicity">Type of periodicity</system:String>
     <system:String x:Key="PeriodicityToDoItemSettingsView.ChildrenTypes">Children types</system:String>
     <system:String x:Key="PeriodicityToDoItemSettingsView.RequiredCompleteInDueDate">Required complete by the due date</system:String>
+    <system:String x:Key="PeriodicityToDoItemSettingsView.Periodicity">Periodicity</system:String>
 
     <!--PlannedToDoItemSettingsView-->
     <system:String x:Key="PlannedToDoItemSettingsView.Type">Type</system:String>

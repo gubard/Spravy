@@ -6,12 +6,14 @@ using System.Windows.Input;
 using Avalonia.Collections;
 using Ninject;
 using ReactiveUI;
+using Spravy.Domain.Extensions;
 using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
+using Spravy.Ui.Services;
 
 namespace Spravy.Ui.ViewModels;
 
@@ -27,6 +29,7 @@ public class PeriodicityToDoItemSettingsViewModel : ViewModelBase,
     private DateOnly dueDate;
     private TypeOfPeriodicity typeOfPeriodicity;
     private bool isRequiredCompleteInDueDate;
+    private IApplySettings? periodicity;
 
     public PeriodicityToDoItemSettingsViewModel()
     {
@@ -35,7 +38,13 @@ public class PeriodicityToDoItemSettingsViewModel : ViewModelBase,
 
     public AvaloniaList<ToDoItemChildrenType> ChildrenTypes { get; } = new(Enum.GetValues<ToDoItemChildrenType>());
     public AvaloniaList<TypeOfPeriodicity> TypeOfPeriodicities { get; } = new(Enum.GetValues<TypeOfPeriodicity>());
-    public AvaloniaList<string> Values { get; } = new();
+    public ICommand InitializedCommand { get; }
+
+    public IApplySettings? Periodicity
+    {
+        get => periodicity;
+        set => this.RaiseAndSetIfChanged(ref periodicity, value);
+    }
 
     public bool IsRequiredCompleteInDueDate
     {
@@ -70,10 +79,24 @@ public class PeriodicityToDoItemSettingsViewModel : ViewModelBase,
     [Inject]
     public required IToDoService ToDoService { get; set; }
 
-    public ICommand InitializedCommand { get; }
+    [Inject]
+    public required IKernel Resolve { get; set; }
 
     private async Task InitializedAsync(CancellationToken cancellationToken)
     {
+        this.WhenAnyValue(x => x.TypeOfPeriodicity)
+            .Subscribe(
+                x => Periodicity = x switch
+                {
+                    TypeOfPeriodicity.Daily => new EmptyApplySettings(),
+                    TypeOfPeriodicity.Weekly => Resolve.Get<ToDoItemDayOfWeekSelectorViewModel>()
+                        .Case(y => y.ToDoItemId = Id),
+                    TypeOfPeriodicity.Monthly => Resolve.Get<DayOfMonthSelectorViewModel>(),
+                    TypeOfPeriodicity.Annually => Resolve.Get<DayOfYearSelectorViewModel>(),
+                    _ => throw new ArgumentOutOfRangeException(nameof(x), x, null)
+                }
+            );
+
         await RefreshAsync(cancellationToken).ConfigureAwait(false);
     }
 
@@ -89,62 +112,22 @@ public class PeriodicityToDoItemSettingsViewModel : ViewModelBase,
                 DueDate = setting.DueDate;
                 TypeOfPeriodicity = setting.TypeOfPeriodicity;
                 IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
-                Values.Clear();
             }
         );
-
-        switch (TypeOfPeriodicity)
-        {
-            case TypeOfPeriodicity.Daily:
-                break;
-            case TypeOfPeriodicity.Weekly:
-            {
-                var periodicity = await ToDoService.GetWeeklyPeriodicityAsync(Id, cancellationToken)
-                    .ConfigureAwait(false);
-
-                await this.InvokeUIBackgroundAsync(
-                    () => Values.AddRange(periodicity.Days.Select(x => x.ToString()))
-                );
-                break;
-            }
-            case TypeOfPeriodicity.Monthly:
-            {
-                var periodicity = await ToDoService.GetMonthlyPeriodicityAsync(Id, cancellationToken)
-                    .ConfigureAwait(false);
-
-                await this.InvokeUIBackgroundAsync(
-                    () => Values.AddRange(periodicity.Days.Select(x => x.ToString()))
-                );
-
-                break;
-            }
-            case TypeOfPeriodicity.Annually:
-            {
-                var periodicity = await ToDoService.GetAnnuallyPeriodicityAsync(Id, cancellationToken)
-                    .ConfigureAwait(false);
-
-                await this.InvokeUIBackgroundAsync(
-                    () => Values.AddRange(periodicity.Days.Select(x => $"{x.Day}.{x.Month}"))
-                );
-
-                break;
-            }
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
     }
 
-    public async Task ApplySettingsAsync(CancellationToken cancellationToken)
+    public Task ApplySettingsAsync(CancellationToken cancellationToken)
     {
-        await ToDoService.UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, cancellationToken).ConfigureAwait(false);
-        await ToDoService.UpdateToDoItemDueDateAsync(Id, DueDate, cancellationToken).ConfigureAwait(false);
-
-        await ToDoService
-            .UpdateToDoItemIsRequiredCompleteInDueDateAsync(Id, IsRequiredCompleteInDueDate, cancellationToken)
-            .ConfigureAwait(false);
-
-        await ToDoService
-            .UpdateToDoItemTypeOfPeriodicityAsync(Id, TypeOfPeriodicity, cancellationToken)
-            .ConfigureAwait(false);
+        return Task.WhenAll(
+            ToDoService.UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, cancellationToken),
+            ToDoService.UpdateToDoItemDueDateAsync(Id, DueDate, cancellationToken),
+            ToDoService.UpdateToDoItemIsRequiredCompleteInDueDateAsync(
+                Id,
+                IsRequiredCompleteInDueDate,
+                cancellationToken
+            ),
+            ToDoService.UpdateToDoItemTypeOfPeriodicityAsync(Id, TypeOfPeriodicity, cancellationToken),
+            Periodicity.ThrowIfNull().ApplySettingsAsync(cancellationToken)
+        );
     }
 }
