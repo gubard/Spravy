@@ -5,8 +5,6 @@
                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                 xmlns:reactiveUi="http://reactiveui.net"
-                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-                                xmlns:services="clr-namespace:Spravy.Ui.Services"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.PlannedToDoItemSettingsView"
                                 x:DataType="viewModels:PlannedToDoItemSettingsViewModel">
@@ -17,37 +15,14 @@
     </Interaction.Behaviors>
 
     <StackPanel>
-        <TextBox Text="{Binding ChildrenType}"
-                 UseFloatingWatermark="True"
-                 IsReadOnly="True"
-                 Classes="outline dense with-button"
-                 Theme="{StaticResource OutlineTextBox}">
-            <TextBox.InnerLeftContent>
-                <Button Command="{x:Static services:CommandStorage.SetToDoChildrenTypeCommand}"
-                        CommandParameter="{Binding}"
-                        Margin="4,15,4,4">
-                    <avalonia:MaterialIcon Kind="Pencil" />
-                </Button>
-            </TextBox.InnerLeftContent>
-        </TextBox>
-
-        <TextBox Text="{Binding DueDate}"
-                 IsReadOnly="True"
-                 UseFloatingWatermark="True"
-                 Classes="outline dense with-button"
-                 Theme="{StaticResource OutlineTextBox}">
-            <TextBox.InnerLeftContent>
-                <Button Command="{x:Static services:CommandStorage.SetToDoDueDateCommand}"
-                        CommandParameter="{Binding}"
-                        Margin="4,15,4,4">
-                    <avalonia:MaterialIcon Kind="Pencil" />
-                </Button>
-            </TextBox.InnerLeftContent>
-        </TextBox>
-
-        <ToggleButton Command="{x:Static services:CommandStorage.SetRequiredCompleteInDueDateCommand}"
-                      CommandParameter="{Binding}" 
-                      IsChecked="{Binding IsRequiredCompleteInDueDate}"
-                      Content="Required complete by the due date" />
+        <TextBlock Classes="field"
+                   Text="{DynamicResource PlannedToDoItemSettingsView.ChildrenTypes}" />
+        <ListBox ItemsSource="{Binding ChildrenTypes}" SelectedItem="{Binding ChildrenType}" />
+        <TextBlock Classes="field"
+                   Text="{DynamicResource PlannedToDoItemSettingsView.DueDate}" />
+        <DatePicker SelectedDate="{Binding DueDate, Converter={StaticResource DateTimeOffsetToDateOnlyValueConverter}}" />
+        <TextBlock Classes="field"
+                   Text="{DynamicResource PlannedToDoItemSettingsView.RequiredCompleteInDueDate}" />
+        <ToggleSwitch IsChecked="{Binding IsRequiredCompleteInDueDate}" />
     </StackPanel>
 </reactiveUi:ReactiveUserControl>

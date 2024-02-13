@@ -137,10 +137,13 @@
     <!--PlannedToDoItemSettingsView-->
     <system:String x:Key="PlannedToDoItemSettingsView.Type">Type</system:String>
     <system:String x:Key="PlannedToDoItemSettingsView.DueDate">DueDate</system:String>
+    <system:String x:Key="PlannedToDoItemSettingsView.ChildrenTypes">Children types</system:String>
+    <system:String x:Key="PlannedToDoItemSettingsView.RequiredCompleteInDueDate">Required complete by the due date</system:String>
 
     <!--ToDoItemSelectorView-->
     <system:String x:Key="ToDoItemSelectorView.SearchText">Search text</system:String>
 
     <!--ValueToDoItemSettingsView-->
     <system:String x:Key="ValueToDoItemSettingsView.Type">Type</system:String>
+    <system:String x:Key="ValueToDoItemSettingsView.ChildrenTypes">Children types</system:String>
 </ResourceDictionary>

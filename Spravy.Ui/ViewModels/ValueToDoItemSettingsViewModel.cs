@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Avalonia.Collections;
 using Ninject;
 using ReactiveUI;
 using Spravy.Domain.Models;
@@ -22,6 +23,8 @@ public class ValueToDoItemSettingsViewModel : ViewModelBase, IToDoChildrenTypePr
     {
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
     }
+
+    public AvaloniaList<ToDoItemChildrenType> ChildrenTypes { get; } = new(Enum.GetValues<ToDoItemChildrenType>());
 
     public Guid Id
     {
