@@ -30,6 +30,10 @@ class Build : NukeBuild
     ///   - Microsoft VSCode           https://nuke.build/vscode
     public static int Main()
     {
+        LoadVersion();
+        Version++;
+        UpdateVersion();
+
         return Execute<Build>(x => x.Publish);
     }
 
@@ -57,6 +61,7 @@ class Build : NukeBuild
     [Parameter] readonly string StagingSshUser;
     [Parameter] readonly string StagingServerHost;
     [Parameter] readonly string MailPassword;
+    static ulong Version;
 
     static readonly Dictionary<string, string> Hosts = new();
     static readonly Dictionary<Project, ServiceOptions> ServiceOptions = new();
@@ -68,6 +73,33 @@ class Build : NukeBuild
         FtpListOption.Recursive | FtpListOption.ForceList | FtpListOption.Auto | FtpListOption.AllFiles;
 
     [Solution] readonly Solution Solution;
+
+    const string FileVersion = "version.txt";
+
+    static string GetVersion()
+    {
+        return $"{Version / 20 / 20 + 1}.{Version / 20 / 20 % 20}.{Version / 20 % 20}.{Version % 20}";
+    }
+
+    static void LoadVersion()
+    {
+        if (File.Exists(FileVersion))
+        {
+            Version = ulong.Parse(File.ReadAllText(FileVersion));
+        }
+
+        Version = 1;
+    }
+
+    static void UpdateVersion()
+    {
+        if (!File.Exists(FileVersion))
+        {
+            using var stream = File.Create(FileVersion);
+        }
+
+        File.WriteAllText(FileVersion, Version.ToString());
+    }
 
     void Setup(string host)
     {
@@ -116,6 +148,7 @@ class Build : NukeBuild
                         setting.SetProjectFile(project)
                             .EnableNoRestore()
                             .SetConfiguration(Configuration)
+                            .AddProperty("Version",GetVersion())
                     );
 
                     break;
@@ -148,6 +181,7 @@ class Build : NukeBuild
                         .EnableNoRestore()
                         .SetRuntime("linux-x64")
                         .SetConfiguration(Configuration)
+                        .AddProperty("Version",GetVersion())
                 );
 
                 break;
@@ -177,6 +211,7 @@ class Build : NukeBuild
                         .EnableNoRestore()
                         .SetRuntime("win-x64")
                         .SetConfiguration(Configuration)
+                        .AddProperty("Version",GetVersion())
                 );
 
                 break;
@@ -290,6 +325,7 @@ class Build : NukeBuild
                 .SetProperty("AndroidSigningStorePass", AndroidSigningStorePass)
                 .SetProperty("AndroidSdkDirectory", "/opt/android-sdk")
                 .DisableNoBuild()
+                .AddProperty("Version",GetVersion())
         );
 
         DeleteIfExistsDirectory(ftpClient, $"/home/{ftpUser}/Apps/Spravy.Ui.Android");
