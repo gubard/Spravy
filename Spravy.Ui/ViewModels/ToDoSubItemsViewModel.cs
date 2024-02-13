@@ -58,10 +58,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
             item.Commands.Add(CommandStorage.SwitchCompleteToDoItemItem.WithParam(item));
         }
 
-        if (item.Type != ToDoItemType.Group)
-        {
-            item.Commands.Add(CommandStorage.ShowToDoSettingItem.WithParam(item));
-        }
+        item.Commands.Add(CommandStorage.ShowToDoSettingItem.WithParam(item));
 
         if (item.IsFavorite)
         {
