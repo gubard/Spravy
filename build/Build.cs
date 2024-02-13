@@ -76,11 +76,6 @@ class Build : NukeBuild
 
     const string FileVersion = "/tmp/Spravy/version.txt";
 
-    static string GetVersion()
-    {
-        return $"{Version / 20 / 20 + 1}.{Version / 20 / 20 % 20}.{Version / 20 % 20}.{Version % 20}";
-    }
-
     static void LoadVersion()
     {
         if (File.Exists(FileVersion))
@@ -148,7 +143,7 @@ class Build : NukeBuild
                         setting.SetProjectFile(project)
                             .EnableNoRestore()
                             .SetConfiguration(Configuration)
-                            .AddProperty("Version",GetVersion())
+                            .AddProperty("Version", new SpravyVersion(Version).ToString())
                     );
 
                     break;
@@ -181,7 +176,7 @@ class Build : NukeBuild
                         .EnableNoRestore()
                         .SetRuntime("linux-x64")
                         .SetConfiguration(Configuration)
-                        .AddProperty("Version",GetVersion())
+                        .AddProperty("Version", new SpravyVersion(Version).ToString())
                 );
 
                 break;
@@ -211,7 +206,7 @@ class Build : NukeBuild
                         .EnableNoRestore()
                         .SetRuntime("win-x64")
                         .SetConfiguration(Configuration)
-                        .AddProperty("Version",GetVersion())
+                        .AddProperty("Version", new SpravyVersion(Version).ToString())
                 );
 
                 break;
@@ -325,7 +320,7 @@ class Build : NukeBuild
                 .SetProperty("AndroidSigningStorePass", AndroidSigningStorePass)
                 .SetProperty("AndroidSdkDirectory", "/opt/android-sdk")
                 .DisableNoBuild()
-                .AddProperty("Version",GetVersion())
+                .AddProperty("Version", new SpravyVersion(Version).ToString())
         );
 
         DeleteIfExistsDirectory(ftpClient, $"/home/{ftpUser}/Apps/Spravy.Ui.Android");
