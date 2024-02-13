@@ -154,8 +154,7 @@
                     <Grid Grid.Row="1"
                           Grid.Column="1"
                           ColumnDefinitions="Auto,Auto"
-                          RowDefinitions="Auto,Auto"
-                          Margin="3">
+                          RowDefinitions="Auto,Auto">
                         <Button CommandParameter="{Binding Value}">
                             <Button.DataTemplates>
                                 <DataTemplate x:DataType="models:CommandItem">
@@ -181,19 +180,13 @@
                         <Panel Grid.Column="1">
                             <Button CommandParameter="{Binding Value.Id}"
                                     Command="{x:Static services:CommandStorage.RemoveToDoItemFromFavoriteCommand}"
-                                    IsVisible="{Binding Value.IsFavorite}"
-                                    Margin="3"
-                                    Width="48"
-                                    Height="32">
+                                    IsVisible="{Binding Value.IsFavorite}">
                                 <avalonia:MaterialIcon Kind="Star" />
                             </Button>
 
                             <Button CommandParameter="{Binding Value.Id}"
                                     Command="{x:Static services:CommandStorage.AddToDoItemToFavoriteCommand}"
-                                    IsVisible="{Binding Value.IsFavorite, Converter={StaticResource ReverseBooleanValueConverter}}"
-                                    Margin="3"
-                                    Width="48"
-                                    Height="32">
+                                    IsVisible="{Binding Value.IsFavorite, Converter={StaticResource ReverseBooleanValueConverter}}">
                                 <avalonia:MaterialIcon Kind="StarOutline" />
                             </Button>
                         </Panel>
@@ -202,10 +195,7 @@
                                 Grid.Column="1"
                                 Command="{x:Static services:CommandStorage.OpenLinkCommand}"
                                 CommandParameter="{Binding Value}"
-                                IsVisible="{Binding Value.Link, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}"
-                                Margin="3"
-                                Width="48"
-                                Height="32">
+                                IsVisible="{Binding Value.Link, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}">
                             <avalonia:MaterialIcon Kind="Link" />
                         </Button>
                     </Grid>
