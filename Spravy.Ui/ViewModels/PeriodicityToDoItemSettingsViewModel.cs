@@ -33,6 +33,8 @@ public class PeriodicityToDoItemSettingsViewModel : ViewModelBase,
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
     }
 
+    public AvaloniaList<ToDoItemChildrenType> ChildrenTypes { get; } = new(Enum.GetValues<ToDoItemChildrenType>());
+    public AvaloniaList<TypeOfPeriodicity> TypeOfPeriodicities { get; } = new(Enum.GetValues<TypeOfPeriodicity>());
     public AvaloniaList<string> Values { get; } = new();
 
     public bool IsRequiredCompleteInDueDate

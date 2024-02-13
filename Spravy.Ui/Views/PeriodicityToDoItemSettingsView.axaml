@@ -17,47 +17,18 @@
     </Interaction.Behaviors>
 
     <StackPanel>
-        <TextBox Text="{Binding ChildrenType}"
-                 UseFloatingWatermark="True"
-                 IsReadOnly="True"
-                 Classes="outline dense with-button"
-                 Theme="{StaticResource OutlineTextBox}">
-            <TextBox.InnerLeftContent>
-                <Button Command="{x:Static services:CommandStorage.SetToDoChildrenTypeCommand}"
-                        CommandParameter="{Binding}"
-                        Margin="4,15,4,4">
-                    <avalonia:MaterialIcon Kind="Pencil" />
-                </Button>
-            </TextBox.InnerLeftContent>
-        </TextBox>
-
-        <TextBox Text="{Binding DueDate}"
-                 UseFloatingWatermark="True"
-                 IsReadOnly="True"
-                 Classes="outline dense with-button"
-                 Theme="{StaticResource OutlineTextBox}">
-            <TextBox.InnerLeftContent>
-                <Button Command="{x:Static services:CommandStorage.SetToDoDueDateCommand}"
-                        CommandParameter="{Binding}"
-                        Margin="4,15,4,4">
-                    <avalonia:MaterialIcon Kind="Pencil" />
-                </Button>
-            </TextBox.InnerLeftContent>
-        </TextBox>
-
-        <TextBox Text="{Binding TypeOfPeriodicity}"
-                 UseFloatingWatermark="True"
-                 IsReadOnly="True"
-                 Classes="outline dense with-button"
-                 Theme="{StaticResource OutlineTextBox}">
-            <TextBox.InnerLeftContent>
-                <Button Command="{x:Static services:CommandStorage.SetToDoTypeOfPeriodicityCommand}"
-                        CommandParameter="{Binding}"
-                        Margin="4,15,4,4">
-                    <avalonia:MaterialIcon Kind="Pencil" />
-                </Button>
-            </TextBox.InnerLeftContent>
-        </TextBox>
+        <TextBlock Classes="field"
+                   Text="{DynamicResource PeriodicityToDoItemSettingsView.ChildrenTypes}" />
+        <ListBox ItemsSource="{Binding ChildrenTypes}" SelectedItem="{Binding ChildrenType}" />
+        <TextBlock Classes="field"
+                   Text="{DynamicResource PeriodicityToDoItemSettingsView.DueDate}" />
+        <DatePicker SelectedDate="{Binding DueDate, Converter={StaticResource DateTimeOffsetToDateOnlyValueConverter}}" />
+        <TextBlock Classes="field"
+                   Text="{DynamicResource PeriodicityToDoItemSettingsView.RequiredCompleteInDueDate}" />
+        <ToggleSwitch IsChecked="{Binding IsRequiredCompleteInDueDate}" />
+        <TextBlock Classes="field"
+                   Text="{DynamicResource PeriodicityToDoItemSettingsView.TypeOfPeriodicity}" />
+        <ListBox ItemsSource="{Binding TypeOfPeriodicities}" SelectedItem="{Binding TypeOfPeriodicity}" />
 
         <Grid ColumnDefinitions="Auto,*"
               IsVisible="{Binding TypeOfPeriodicity, Converter={StaticResource TypeOfPeriodicityToIsVisible}}">
@@ -69,10 +40,5 @@
 
             <ItemsControl Grid.Column="1" ItemsSource="{Binding Values}" />
         </Grid>
-
-        <ToggleButton Command="{x:Static services:CommandStorage.SetRequiredCompleteInDueDateCommand}"
-                      CommandParameter="{Binding}" 
-                      IsChecked="{Binding IsRequiredCompleteInDueDate}"
-                      Content="Required complete by the due date" />
     </StackPanel>
 </reactiveUi:ReactiveUserControl>
