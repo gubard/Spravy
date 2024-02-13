@@ -6,16 +6,20 @@
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                 xmlns:controls="clr-namespace:SukiUI.Controls;assembly=SukiUI"
-                                xmlns:theme="clr-namespace:SukiUI.Theme;assembly=SukiUI"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.AccountSettingView"
                                 x:DataType="viewModels:AccountSettingViewModel">
-    <controls:GlassCard VerticalAlignment="Center" HorizontalAlignment="Center">
+    <controls:GlassCard>
         <controls:GroupBox Header="{Binding PageHeaderViewModel}">
             <StackPanel>
-                <TextBox IsReadOnly="True" 
-                         theme:TextBoxExtensions.Prefix="{DynamicResource AccountSettingView.Login}"
+                <TextBlock Classes="field"
+                           Text="{DynamicResource AccountSettingView.Login}" />
+                <TextBox IsReadOnly="True"
                          Text="{Binding AccountNotify.Login}" />
+                <TextBlock Classes="field"
+                           Text="{DynamicResource AccountSettingView.Version}" />
+                <TextBox IsReadOnly="True"
+                         Text="{Binding Version}" />
                 <Button Content="{DynamicResource AccountSettingView.ChangePassword}"
                         Command="{Binding ChangePasswordCommand}" />
             </StackPanel>

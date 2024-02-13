@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -21,8 +22,8 @@ public class AccountSettingViewModel : NavigatableViewModelBase
     }
 
     public override string ViewId => TypeCache<AccountSettingViewModel>.Type.Name;
-
     public ICommand ChangePasswordCommand { get; }
+    public string Version => Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? string.Empty;
 
     [Inject]
     public required AccountNotify AccountNotify { get; init; }
