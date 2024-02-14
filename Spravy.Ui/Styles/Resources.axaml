@@ -4,7 +4,6 @@
                     xmlns:enums1="clr-namespace:Spravy.Ui.Features.ToDo.Enums"
                     xmlns:system="clr-namespace:System;assembly=System.Runtime"
                     xmlns:enums="clr-namespace:Spravy.Ui.Enums">
-    <FontFamily x:Key="ShantellSansFont">avares://Fonts/ShantellSans#ShantellSans</FontFamily>
     <converters:DateTimeOffsetToDateOnlyValueConverter x:Key="DateTimeOffsetToDateOnlyValueConverter" />
     <converters:DoubleToPercentsConverter x:Key="DoubleToPercentsConverter95" Percentage=".95" />
     <converters:DoubleToPercentsConverter x:Key="DoubleToPercentsConverter85" Percentage=".85" />

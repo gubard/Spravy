@@ -12,6 +12,7 @@ using Spravy.Domain.Di.Helpers;
 using Spravy.Domain.Extensions;
 using Spravy.Ui.Android.Configurations;
 using Spravy.Ui.Configurations;
+using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 
 namespace Spravy.Ui.Android;
@@ -38,6 +39,7 @@ public class MainActivity : AvaloniaMainActivity<App>
 
         return base.CustomizeAppBuilder(builder)
             .WithInterFont()
+            .WithShantellSansFont()
             .UseReactiveUI();
     }
 

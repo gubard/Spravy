@@ -8,6 +8,7 @@ using Spravy.Tests;
 using Spravy.Ui;
 using Spravy.Ui.Configurations;
 using Spravy.Ui.Desktop.Configurations;
+using Spravy.Ui.Extensions;
 
 [assembly: AvaloniaTestApplication(typeof(TestAppBuilder))]
 
@@ -31,6 +32,8 @@ public class TestAppBuilder
 
         return AppBuilder.Configure<App>()
             .UseReactiveUI()
+            .WithShantellSansFont()
+            .WithInterFont()
             .UseHeadless(
                 new AvaloniaHeadlessPlatformOptions
                 {

@@ -7,6 +7,7 @@ using Spravy.Domain.Di.Helpers;
 using Spravy.Domain.Extensions;
 using Spravy.Ui.Configurations;
 using Spravy.Ui.Desktop.Configurations;
+using Spravy.Ui.Extensions;
 
 namespace Spravy.Ui.Desktop;
 
@@ -41,6 +42,8 @@ public class Program
 
         return AppBuilder.Configure(() => DiHelper.Kernel.ThrowIfNull().Get<Application>())
             .UsePlatformDetect()
+            .WithInterFont()
+            .WithShantellSansFont()
             .UseReactiveUI();
     }
 }

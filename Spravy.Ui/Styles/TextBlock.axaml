@@ -6,9 +6,9 @@
         </Border>
     </Design.PreviewWith>
 
-    <!--<Style Selector="TextBlock">
-        <Setter Property="FontFamily" Value="{StaticResource ShantellSansFont}" />
-    </Style>-->
+    <Style Selector="TextBlock">
+        <Setter Property="FontFamily" Value="fonts:Inter#Inter" />
+    </Style>
 
     <Style Selector="TextBlock.field">
         <Setter Property="FontWeight" Value="DemiBold" />
