@@ -35,58 +35,35 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 
     private async Task RefreshFavoriteToDoItemsAsync(CancellationToken cancellationToken)
     {
-        var ids = await ToDoService.GetFavoriteToDoItemIdsAsync(cancellationToken).ConfigureAwait(false);
+        var ids = (await ToDoService.GetFavoriteToDoItemIdsAsync(cancellationToken).ConfigureAwait(false)).ToArray();
+        await List.ClearFavoriteExceptAsync(ids);
         cancellationToken.ThrowIfCancellationRequested();
 
-        await foreach (var item in ToDoService.GetToDoItemsAsync(ids.ToArray(), 5, cancellationToken)
+        await foreach (var items in ToDoService.GetToDoItemsAsync(ids, 5, cancellationToken)
                            .ConfigureAwait(false))
         {
-            var itemNotify = Mapper.Map<IEnumerable<ToDoItemNotify>>(item).Select(SetupItem);
-            List.AddFavoritesAsync(itemNotify);
+            foreach (var item in items)
+            {
+                await List.UpdateFavoriteItemAsync(item);
+            }
+
             cancellationToken.ThrowIfCancellationRequested();
         }
     }
 
-    private ToDoItemNotify SetupItem(ToDoItemNotify item)
-    {
-        var toFavoriteCommand = CommandStorage.AddToDoItemToFavoriteItem.WithParam(item.Id);
-        item.Commands.Add(CommandStorage.AddToDoItemChildItem.WithParam(item.Id));
-        item.Commands.Add(CommandStorage.DeleteToDoItemItem.WithParam(item));
-
-        if (item.IsCan != ToDoItemIsCan.None)
-        {
-            item.Commands.Add(CommandStorage.SwitchCompleteToDoItemItem.WithParam(item));
-        }
-
-        item.Commands.Add(CommandStorage.ShowToDoSettingItem.WithParam(item));
-
-        if (item.IsFavorite)
-        {
-            toFavoriteCommand = CommandStorage.RemoveToDoItemFromFavoriteItem.WithParam(item.Id);
-        }
-
-        item.Commands.Add(toFavoriteCommand);
-        item.Commands.Add(CommandStorage.NavigateToLeafItem.WithParam(item.Id));
-        item.Commands.Add(CommandStorage.SetToDoParentItemItem.WithParam(item));
-        item.Commands.Add(CommandStorage.MoveToDoItemToRootItem.WithParam(item));
-        item.Commands.Add(CommandStorage.ToDoItemToStringItem.WithParam(item));
-        item.Commands.Add(CommandStorage.ToDoItemRandomizeChildrenOrderIndexItem.WithParam(item));
-        item.Commands.Add(CommandStorage.ChangeOrderIndexItem.WithParam(item));
-        item.Commands.Add(CommandStorage.ResetToDoItemItem.WithParam(item));
-
-        return item;
-    }
-
     private async Task RefreshToDoItemListsAsync(Guid[] ids, CancellationToken cancellationToken)
     {
-        await List.ClearAsync();
+        await List.ClearExceptAsync(ids);
         cancellationToken.ThrowIfCancellationRequested();
         await RefreshFavoriteToDoItemsAsync(cancellationToken).ConfigureAwait(false);
 
-        await foreach (var item in ToDoService.GetToDoItemsAsync(ids, 5, cancellationToken).ConfigureAwait(false))
+        await foreach (var items in ToDoService.GetToDoItemsAsync(ids, 5, cancellationToken).ConfigureAwait(false))
         {
-            var itemNotify = Mapper.Map<IEnumerable<ToDoItemNotify>>(item).Select(SetupItem);
-            await List.AddItemsAsync(itemNotify);
+            foreach (var item in items)
+            {
+                await List.UpdateItemAsync(item);
+            }
+
             cancellationToken.ThrowIfCancellationRequested();
         }
     }

@@ -27,7 +27,6 @@ public class ToDoItemNotify : NotifyBase,
     private ToDoItemIsCan isCan;
     private Guid? parentId;
 
-    public object Header => Name;
     public AvaloniaList<CommandItem> Commands { get; } = new();
 
     public ToDoItemIsCan IsCan

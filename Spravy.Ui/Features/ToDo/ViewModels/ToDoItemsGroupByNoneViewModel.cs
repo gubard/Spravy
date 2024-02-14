@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Ninject;
+using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.Features.ToDo.ViewModels;
@@ -29,5 +31,15 @@ public class ToDoItemsGroupByNoneViewModel : ViewModelBase
     public void AddItems(IEnumerable<Selected<ToDoItemNotify>> items)
     {
         Items.AddItems(items);
+    }
+    
+    public void ClearExcept(IEnumerable<Guid> ids)
+    {
+        Items.ClearExcept(ids);
+    }
+
+    public void UpdateItem(ToDoItem item)
+    {
+        Items.UpdateItem(item);
     }
 }

@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Ninject;
 using Spravy.ToDo.Domain.Enums;
+using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.Features.ToDo.ViewModels;
@@ -76,5 +78,46 @@ public class ToDoItemsGroupByStatusViewModel : ViewModelBase
         ReadyForCompleted.AddItems(items.Where(x => x.Value.Status == ToDoItemStatus.ReadyForComplete));
         Planned.AddItems(items.Where(x => x.Value.Status == ToDoItemStatus.Planned));
         Completed.AddItems(items.Where(x => x.Value.Status == ToDoItemStatus.Completed));
+    }
+
+    public void ClearExcept(IEnumerable<Guid> ids)
+    {
+        Missed.ClearExcept(ids);
+        ReadyForCompleted.ClearExcept(ids);
+        Planned.ClearExcept(ids);
+        Completed.ClearExcept(ids);
+    }
+
+    public void UpdateItem(ToDoItem item)
+    {
+        switch (item.Status)
+        {
+            case ToDoItemStatus.Miss:
+                Missed.UpdateItem(item);
+                ReadyForCompleted.RemoveItem(item.Id);
+                Planned.RemoveItem(item.Id);
+                Completed.RemoveItem(item.Id);
+                break;
+            case ToDoItemStatus.ReadyForComplete:
+                Missed.RemoveItem(item.Id);
+                ReadyForCompleted.UpdateItem(item);
+                Planned.RemoveItem(item.Id);
+                Completed.RemoveItem(item.Id);
+                break;
+            case ToDoItemStatus.Planned:
+                Missed.RemoveItem(item.Id);
+                ReadyForCompleted.RemoveItem(item.Id);
+                Planned.UpdateItem(item);
+                Completed.RemoveItem(item.Id);
+                break;
+            case ToDoItemStatus.Completed:
+                Missed.RemoveItem(item.Id);
+                ReadyForCompleted.RemoveItem(item.Id);
+                Planned.RemoveItem(item.Id);
+                Completed.UpdateItem(item);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
     }
 }

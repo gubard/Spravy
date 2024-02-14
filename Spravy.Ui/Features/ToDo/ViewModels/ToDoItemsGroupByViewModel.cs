@@ -5,6 +5,7 @@ using Spravy.Ui.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Spravy.ToDo.Domain.Models;
 
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
@@ -61,6 +62,13 @@ public class ToDoItemsGroupByViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref content, value);
     }
 
+    public void ClearExcept(IEnumerable<Guid> ids)
+    {
+        GroupByNone.ClearExcept(ids);
+        GroupByStatus.ClearExcept(ids);
+        GroupByType.ClearExcept(ids);
+    }
+
     public void Clear()
     {
         GroupByNone.Clear();
@@ -73,5 +81,12 @@ public class ToDoItemsGroupByViewModel : ViewModelBase
         GroupByNone.AddItems(items);
         GroupByStatus.AddItems(items);
         GroupByType.AddItems(items);
+    }
+
+    public void UpdateItem(ToDoItem item)
+    {
+        GroupByNone.UpdateItem(item);
+        GroupByStatus.UpdateItem(item);
+        GroupByType.UpdateItem(item);
     }
 }

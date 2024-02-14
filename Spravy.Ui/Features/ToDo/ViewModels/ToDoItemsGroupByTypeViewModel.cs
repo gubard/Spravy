@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Ninject;
 using Spravy.ToDo.Domain.Enums;
+using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.Features.ToDo.ViewModels;
@@ -121,5 +123,94 @@ public class ToDoItemsGroupByTypeViewModel : ViewModelBase
         PeriodicityOffsets.AddItems(items.Where(x => x.Value.Type == ToDoItemType.PeriodicityOffset));
         Circles.AddItems(items.Where(x => x.Value.Type == ToDoItemType.Circle));
         Steps.AddItems(items.Where(x => x.Value.Type == ToDoItemType.Step));
+    }
+
+    public void ClearExcept(IEnumerable<Guid> ids)
+    {
+        Values.ClearExcept(ids);
+        Groups.ClearExcept(ids);
+        Planneds.ClearExcept(ids);
+        Periodicitys.ClearExcept(ids);
+        PeriodicityOffsets.ClearExcept(ids);
+        Circles.ClearExcept(ids);
+        Steps.ClearExcept(ids);
+    }
+
+    public void UpdateItem(ToDoItem item)
+    {
+        switch (item.Type)
+        {
+            case ToDoItemType.Value:
+                Values.UpdateItem(item);
+                Groups.RemoveItem(item.Id);
+                Planneds.RemoveItem(item.Id);
+                Periodicitys.RemoveItem(item.Id);
+                PeriodicityOffsets.RemoveItem(item.Id);
+                Circles.RemoveItem(item.Id);
+                Steps.RemoveItem(item.Id);
+
+                break;
+            case ToDoItemType.Group:
+                Values.RemoveItem(item.Id);
+                Groups.UpdateItem(item);
+                Planneds.RemoveItem(item.Id);
+                Periodicitys.RemoveItem(item.Id);
+                PeriodicityOffsets.RemoveItem(item.Id);
+                Circles.RemoveItem(item.Id);
+                Steps.RemoveItem(item.Id);
+
+                break;
+            case ToDoItemType.Planned:
+                Values.RemoveItem(item.Id);
+                Groups.RemoveItem(item.Id);
+                Planneds.UpdateItem(item);
+                Periodicitys.RemoveItem(item.Id);
+                PeriodicityOffsets.RemoveItem(item.Id);
+                Circles.RemoveItem(item.Id);
+                Steps.RemoveItem(item.Id);
+
+                break;
+            case ToDoItemType.Periodicity:
+                Values.RemoveItem(item.Id);
+                Groups.RemoveItem(item.Id);
+                Planneds.RemoveItem(item.Id);
+                Periodicitys.UpdateItem(item);
+                PeriodicityOffsets.RemoveItem(item.Id);
+                Circles.RemoveItem(item.Id);
+                Steps.RemoveItem(item.Id);
+
+                break;
+            case ToDoItemType.PeriodicityOffset:
+                Values.RemoveItem(item.Id);
+                Groups.RemoveItem(item.Id);
+                Planneds.RemoveItem(item.Id);
+                Periodicitys.RemoveItem(item.Id);
+                PeriodicityOffsets.UpdateItem(item);
+                Circles.RemoveItem(item.Id);
+                Steps.RemoveItem(item.Id);
+
+                break;
+            case ToDoItemType.Circle:
+                Values.RemoveItem(item.Id);
+                Groups.RemoveItem(item.Id);
+                Planneds.RemoveItem(item.Id);
+                Periodicitys.RemoveItem(item.Id);
+                PeriodicityOffsets.RemoveItem(item.Id);
+                Circles.UpdateItem(item);
+                Steps.RemoveItem(item.Id);
+
+                break;
+            case ToDoItemType.Step:
+                Values.RemoveItem(item.Id);
+                Groups.RemoveItem(item.Id);
+                Planneds.RemoveItem(item.Id);
+                Periodicitys.RemoveItem(item.Id);
+                PeriodicityOffsets.RemoveItem(item.Id);
+                Circles.RemoveItem(item.Id);
+                Steps.UpdateItem(item);
+
+                break;
+            default: throw new ArgumentOutOfRangeException();
+        }
     }
 }

@@ -8,6 +8,7 @@ using Avalonia.Collections;
 using Avalonia.Threading;
 using Ninject;
 using ReactiveUI;
+using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Features.ToDo.Enums;
 using Spravy.Ui.Models;
@@ -147,6 +148,43 @@ public class MultiToDoItemsViewModel : ViewModelBase
                 Favorite.Clear();
                 ToDoItems.Clear();
                 MultiToDoItems.Clear();
+            }
+        );
+    }
+
+    public DispatcherOperation ClearFavoriteAsync()
+    {
+        return this.InvokeUIBackgroundAsync(() => Favorite.Clear());
+    }
+
+    public DispatcherOperation ClearFavoriteExceptAsync(IEnumerable<Guid> ids)
+    {
+        return this.InvokeUIBackgroundAsync(() => Favorite.ClearExcept(ids));
+    }
+
+    public DispatcherOperation ClearExceptAsync(IEnumerable<Guid> ids)
+    {
+        return this.InvokeUIBackgroundAsync(
+            () =>
+            {
+                ToDoItems.ClearExcept(ids);
+                MultiToDoItems.ClearExcept(ids);
+            }
+        );
+    }
+
+    public DispatcherOperation UpdateFavoriteItemAsync(ToDoItem item)
+    {
+        return this.InvokeUIBackgroundAsync(() => Favorite.UpdateItem(item));
+    }
+
+    public DispatcherOperation UpdateItemAsync(ToDoItem item)
+    {
+        return this.InvokeUIBackgroundAsync(
+            () =>
+            {
+                ToDoItems.UpdateItem(item);
+                MultiToDoItems.UpdateItem(item);
             }
         );
     }
