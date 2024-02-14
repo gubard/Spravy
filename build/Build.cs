@@ -98,7 +98,7 @@ class Build : NukeBuild
             using var stream = FileVersion.Create();
         }
 
-        File.WriteAllText(FileVersion, Version.ToString());
+        File.WriteAllText(FileVersion.FullName, Version.ToString());
     }
 
     void Setup(string host)
