@@ -14,9 +14,7 @@
         <CheckBox IsChecked="{Binding IsFavorite}" Content="Completed" />
 
         <TextBox IsReadOnly="True"
-                 Text="{Binding ShortItem.Name}"
-                 Classes="outline dense with-button"
-                 Theme="{StaticResource OutlineTextBox}">
+                 Text="{Binding ShortItem.Name}">
             <TextBox.InnerLeftContent>
                 <Button Command="{x:Static services:CommandStorage.SetToDoShortItemCommand}"
                         CommandParameter="{Binding}" Margin="4,15,4,4">
@@ -26,8 +24,7 @@
         </TextBox>
 
         <TextBox IsReadOnly="True"
-                 Text="{Binding DueDateTime}"
-                 Classes="outline dense with-button">
+                 Text="{Binding DueDateTime}">
             <TextBox.InnerLeftContent>
                 <Button Command="{x:Static services:CommandStorage.SetDueDateTimeCommand}"
                         CommandParameter="{Binding}"

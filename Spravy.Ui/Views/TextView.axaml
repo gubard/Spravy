@@ -9,10 +9,7 @@
                                 x:Class="Spravy.Ui.Views.TextView"
                                 x:DataType="viewModels:TextViewModel">
     <Panel>
-        <TextBox Classes="outline dense"
-                 UseFloatingWatermark="True"
-                 Text="{Binding Text}"
-                 Theme="{StaticResource OutlineTextBox}"
+        <TextBox Text="{Binding Text}"
                  AcceptsReturn="{Binding AcceptsReturn}"
                  TextWrapping="{Binding TextWrapping}"
                  IsVisible="{Binding IsReadOnly, Converter={StaticResource ReverseBooleanValueConverter}}" />

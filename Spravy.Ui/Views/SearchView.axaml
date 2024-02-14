@@ -33,7 +33,6 @@
                      BorderBrush="{Binding $self.Foreground}"
                      BorderThickness="1"
                      Classes="solo"
-                     Theme="{StaticResource SoloTextBox}"
                      Watermark="To do item name"
                      CornerRadius="32"
                      Margin="8"
