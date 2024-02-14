@@ -1,6 +1,7 @@
 using Avalonia.Media;
 using ReactiveUI;
 using Spravy.Ui.Models;
+using SukiUI;
 
 namespace Spravy.Ui.ViewModels;
 
@@ -15,7 +16,7 @@ public class TextViewModel : ViewModelBase
     public bool IsReadOnly
     {
         get => isReadOnly;
-        set =>this.RaiseAndSetIfChanged(ref isReadOnly, value);
+        set => this.RaiseAndSetIfChanged(ref isReadOnly, value);
     }
 
     public string Text
