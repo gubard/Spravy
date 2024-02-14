@@ -45,15 +45,13 @@
                                            Height="2"
                                            Fill="{Binding Value.Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                                 <TextBlock Grid.Column="1"
-                                           Text="{Binding Value.Type, Converter={StaticResource ToDoItemTypeLocalizationValueConverter}}"
-                                           Classes="Body2" />
+                                           Text="{Binding Value.Type, Converter={StaticResource ToDoItemTypeLocalizationValueConverter}}" />
                                 <Rectangle Grid.Column="2"
                                            Margin="3,0,3,0"
                                            Height="2"
                                            Fill="{Binding Value.Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                                 <TextBlock Grid.Column="3"
-                                           Text="{Binding Value.Status, Converter={StaticResource ToDoItemStatusLocalizationValueConverter}}"
-                                           Classes="Body2" />
+                                           Text="{Binding Value.Status, Converter={StaticResource ToDoItemStatusLocalizationValueConverter}}" />
                                 <Rectangle Grid.Column="4"
                                            Width="15"
                                            Margin="3,0,0,0"
@@ -62,9 +60,7 @@
                             </Grid>
 
                             <CheckBox IsChecked="{Binding IsSelect}">
-                                <TextBlock Text="{Binding Value.Name}"
-                                           Classes="Headline6"
-                                           TextWrapping="Wrap" />
+                                <TextBlock Text="{Binding Value.Name}" TextWrapping="Wrap" />
                             </CheckBox>
                         </StackPanel>
                     </controls:GlassCard>
