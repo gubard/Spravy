@@ -74,13 +74,13 @@ class Build : NukeBuild
 
     [Solution] readonly Solution Solution;
 
-    const string FileVersion = "/tmp/Spravy/version.txt";
+    static readonly FileInfo FileVersion = "/tmp/Spravy/version.txt".ToFile();
 
     static void LoadVersion()
     {
-        if (File.Exists(FileVersion))
+        if (FileVersion.Exists)
         {
-            Version = ulong.Parse(File.ReadAllText(FileVersion));
+            Version = ulong.Parse(File.ReadAllText(FileVersion.FullName));
         }
 
         Version = 1;
@@ -88,9 +88,14 @@ class Build : NukeBuild
 
     static void UpdateVersion()
     {
-        if (!File.Exists(FileVersion))
+        if (!FileVersion.Directory.Exists)
         {
-            using var stream = File.Create(FileVersion);
+            FileVersion.Directory.Create();
+        }
+
+        if (!FileVersion.Exists)
+        {
+            using var stream = FileVersion.Create();
         }
 
         File.WriteAllText(FileVersion, Version.ToString());
