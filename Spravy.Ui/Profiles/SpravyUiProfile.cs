@@ -83,5 +83,14 @@ public class SpravyUiProfile : Profile
                         Name = source.Value.Name
                     }
             );
+
+        CreateMap<ActiveToDoItem, ActiveToDoItemNotify?>()
+            .ConvertUsing(
+                (source, _, context) => new ActiveToDoItemNotify
+                {
+                    Id = context.Mapper.Map<Guid>(source.Id),
+                    Name = source.Name
+                }
+            );
     }
 }
