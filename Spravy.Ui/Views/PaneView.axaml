@@ -42,14 +42,6 @@
             </Button>
 
             <Button Command="{x:Static services:CommandStorage.NavigateToCommand}"
-                    CommandParameter="{x:Type viewModels:TimersViewModel}">
-                <Grid ColumnDefinitions="Auto,Auto">
-                    <avalonia:MaterialIcon Kind="Timer" />
-                    <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.Timers}" />
-                </Grid>
-            </Button>
-
-            <Button Command="{x:Static services:CommandStorage.NavigateToCommand}"
                     CommandParameter="{x:Type viewModels:AccountSettingViewModel}">
                 <Grid ColumnDefinitions="Auto,Auto">
                     <avalonia:MaterialIcon Kind="Settings" />
