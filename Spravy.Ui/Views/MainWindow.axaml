@@ -5,5 +5,5 @@
                      xmlns:controls="clr-namespace:SukiUI.Controls;assembly=SukiUI"
                      mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                      x:Class="Spravy.Ui.Views.MainWindow"
-                     Title="Spravy.Ui"
+                     Title="Spravy"
                      Icon="/Assets/Images/Logo.png" />
