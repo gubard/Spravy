@@ -22,10 +22,7 @@
 
     <Grid RowDefinitions="Auto,*">
         <Grid ColumnDefinitions="*,Auto">
-            <TextBox UseFloatingWatermark="True"
-                     Classes="outline dense"
-                     Theme="{StaticResource OutlineTextBox}"
-                     Text="{Binding SearchText}" />
+            <TextBox Text="{Binding SearchText}" />
 
             <Button Grid.Column="1" Command="{Binding SearchCommand}">
                 <avalonia:MaterialIcon Kind="Search" />

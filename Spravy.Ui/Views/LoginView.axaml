@@ -35,7 +35,7 @@
                 <TextBlock Classes="field"
                            Text="{DynamicResource LoginView.Password}" />
                 <TextBox Name="{x:Static views:LoginView.PasswordTextBoxName}"
-                         PasswordChar="*"
+                         Classes="password-char content-type-password"
                          Text="{Binding Password}" />
 
                 <Grid ColumnDefinitions="*,*" RowDefinitions="*,*">

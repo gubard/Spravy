@@ -24,7 +24,7 @@
                                     <StackPanel>
                                         <TextBlock Classes="field"
                                                    Text="{DynamicResource AccountSettingView.Login}" />
-                                        <TextBox IsReadOnly="True"
+                                        <TextBox Classes="read-only"
                                                  Text="{Binding AccountNotify.Login}" />
                                         <Button Content="{DynamicResource AccountSettingView.ChangePassword}"
                                                 Command="{Binding ChangePasswordCommand}" />
@@ -115,7 +115,7 @@
                                     <StackPanel>
                                         <TextBlock Classes="field"
                                                    Text="{DynamicResource AccountSettingView.Version}" />
-                                        <TextBox IsReadOnly="True"
+                                        <TextBox Classes="read-only"
                                                  Text="{Binding Version}" />
                                     </StackPanel>
                                 </controls:SettingsLayoutItem.Content>

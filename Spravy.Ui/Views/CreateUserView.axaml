@@ -22,13 +22,14 @@
         <controls:BusyArea IsBusy="{Binding IsBusy}"
                            BusyText="{DynamicResource CreateUserView.Busy}">
             <StackPanel>
-                <TextBlock Text="{DynamicResource CreateUserView.CreateAccountHeader}" 
+                <TextBlock Text="{DynamicResource CreateUserView.CreateAccountHeader}"
                            Classes="h2"
                            HorizontalAlignment="Center" />
                 <TextBlock Classes="field"
                            Text="{DynamicResource CreateUserView.Email}" />
                 <TextBox Name="{x:Static views:CreateUserView.EmailTextBoxName}"
-                         Text="{Binding Email}" />
+                         Text="{Binding Email}"
+                         Classes="content-type-email" />
                 <TextBlock Classes="field"
                            Text="{DynamicResource CreateUserView.Login}" />
                 <TextBox Name="{x:Static views:CreateUserView.LoginTextBoxName}"
@@ -36,13 +37,13 @@
                 <TextBlock Classes="field"
                            Text="{DynamicResource CreateUserView.Password}" />
                 <TextBox Name="{x:Static views:CreateUserView.PasswordTextBoxName}"
-                         PasswordChar="*"
-                         Text="{Binding Password}" />
+                         Text="{Binding Password}"
+                         Classes="content-type-password password-char" />
                 <TextBlock Classes="field"
                            Text="{DynamicResource CreateUserView.RepeatPassword}" />
                 <TextBox Name="{x:Static views:CreateUserView.RepeatPasswordTextBoxName}"
-                         PasswordChar="*"
-                         Text="{Binding RepeatPassword}" />
+                         Text="{Binding RepeatPassword}"
+                         Classes="content-type-password password-char" />
 
                 <Grid ColumnDefinitions="*,*">
                     <Button x:Name="BackButton"

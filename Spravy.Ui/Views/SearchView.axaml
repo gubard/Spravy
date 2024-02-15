@@ -30,12 +30,6 @@
 
             <TextBox Grid.Column="1"
                      Name="{x:Static views:SearchView.SearchTextTextBoxName}"
-                     BorderBrush="{Binding $self.Foreground}"
-                     BorderThickness="1"
-                     Classes="solo"
-                     Watermark="To do item name"
-                     CornerRadius="32"
-                     Margin="8"
                      Text="{Binding SearchText}">
                 <TextBox.InnerLeftContent>
                     <Border Height="{Binding $parent[TextBox].Height}" Width="{Binding $self.Bounds.Height}">

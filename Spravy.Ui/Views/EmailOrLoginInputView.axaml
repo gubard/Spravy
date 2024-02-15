@@ -6,7 +6,6 @@
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
                                 xmlns:services="clr-namespace:Spravy.Ui.Services"
-                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                                 xmlns:controls="clr-namespace:SukiUI.Controls;assembly=SukiUI"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.EmailOrLoginInputView"
@@ -14,18 +13,23 @@
     <controls:GlassCard HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         MinWidth="300">
-        <StackPanel>
-            <ContentControl Content="{Binding TextViewModel}" />
+        <controls:BusyArea BusyText="{DynamicResource EmailOrLoginInputView.Busy}"
+                           IsBusy="{Binding IsBusy}">
+            <StackPanel>
+                <TextBlock Classes="field"
+                           Text="{DynamicResource EmailOrLoginInputView.EmailOrLogin}" />
+                <TextBox Text="{Binding EmailOrLogin}" />
 
-            <Grid ColumnDefinitions="*,*">
-                <Button Command="{x:Static services:CommandStorage.BackCommand}">
-                    <avalonia:MaterialIcon Kind="ArrowLeft" />
-                </Button>
+                <Grid ColumnDefinitions="*,*">
+                    <Button Command="{x:Static services:CommandStorage.BackCommand}"
+                            Content="{DynamicResource EmailOrLoginInputView.Back}" />
 
-                <Button Grid.Column="1" Command="{Binding ForgotPasswordCommand}">
-                    <avalonia:MaterialIcon Kind="ForgotPassword" />
-                </Button>
-            </Grid>
-        </StackPanel>
+                    <Button Grid.Column="1"
+                            Classes="Flat"
+                            Command="{Binding ForgotPasswordCommand}"
+                            Content="{DynamicResource EmailOrLoginInputView.ChangePassword}" />
+                </Grid>
+            </StackPanel>
+        </controls:BusyArea>
     </controls:GlassCard>
 </reactiveUi:ReactiveUserControl>

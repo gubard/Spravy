@@ -13,7 +13,7 @@
     <StackPanel>
         <CheckBox IsChecked="{Binding IsFavorite}" Content="Completed" />
 
-        <TextBox IsReadOnly="True"
+        <TextBox Classes="read-only"
                  Text="{Binding ShortItem.Name}">
             <TextBox.InnerLeftContent>
                 <Button Command="{x:Static services:CommandStorage.SetToDoShortItemCommand}"
@@ -23,7 +23,7 @@
             </TextBox.InnerLeftContent>
         </TextBox>
 
-        <TextBox IsReadOnly="True"
+        <TextBox Classes="read-only"
                  Text="{Binding DueDateTime}">
             <TextBox.InnerLeftContent>
                 <Button Command="{x:Static services:CommandStorage.SetDueDateTimeCommand}"

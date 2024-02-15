@@ -9,10 +9,5 @@
                                 x:Class="Spravy.Ui.Views.ExceptionView"
                                 x:DataType="viewModels:ExceptionViewModel">
     <TextBox Text="{Binding FullExceptionText}"
-             IsReadOnly="True"
-             UseFloatingWatermark="True"
-             Classes="outline dense"
-             Theme="{StaticResource OutlineTextBox}"
-             AcceptsReturn="True"
-             TextWrapping="Wrap" />
+             Classes="accepts-return read-only text-wrapping-wrap" />
 </reactiveUi:ReactiveUserControl>

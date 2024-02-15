@@ -1,6 +1,12 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:system="clr-namespace:System;assembly=System.Runtime">
+    <!--EmailOrLoginInputView-->
+    <system:String x:Key="EmailOrLoginInputView.EmailOrLogin">Email or login</system:String>
+    <system:String x:Key="EmailOrLoginInputView.Back">Back</system:String>
+    <system:String x:Key="EmailOrLoginInputView.ChangePassword">Change password</system:String>
+    <system:String x:Key="EmailOrLoginInputView.Busy">Send verification code...</system:String>
+
     <!--InfoView-->
     <system:String x:Key="InfoView.Ok">Ok</system:String>
 
@@ -58,6 +64,8 @@
     <system:String x:Key="ForgotPasswordView.VerificationCode">Verification code</system:String>
     <system:String x:Key="ForgotPasswordView.NewPassword">New password</system:String>
     <system:String x:Key="ForgotPasswordView.NewRepeatPassword">New repeat password</system:String>
+    <system:String x:Key="ForgotPasswordView.ChangePassword">Change password</system:String>
+    <system:String x:Key="ForgotPasswordView.Back">Back</system:String>
 
     <!--LoginView-->
     <system:String x:Key="LoginView.WelcomeToSpravy">Welcome to Spravy</system:String>

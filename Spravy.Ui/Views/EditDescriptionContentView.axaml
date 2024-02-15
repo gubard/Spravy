@@ -23,7 +23,7 @@
                          IsChecked="{Binding IsMarkdown}" />
         </StackPanel>
 
-        <TextBox Classes="accepts-return vertical-content-alignment-top"
+        <TextBox Classes="accepts-return vertical-content-alignment-top content-type-social"
                  Text="{Binding Description}" />
     </StackPanel>
 </reactiveUi:ReactiveUserControl>

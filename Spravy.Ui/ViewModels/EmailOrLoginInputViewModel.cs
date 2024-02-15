@@ -1,9 +1,11 @@
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Ninject;
 using ProtoBuf;
+using ReactiveUI;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
@@ -17,7 +19,8 @@ namespace Spravy.Ui.ViewModels;
 
 public class EmailOrLoginInputViewModel : NavigatableViewModelBase
 {
-    private readonly TextViewModel textViewModel;
+    private string emailOrLogin = string.Empty;
+    private bool isBusy;
 
     public EmailOrLoginInputViewModel() : base(true)
     {
@@ -27,18 +30,6 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
     public override string ViewId => TypeCache<EmailOrLoginInputViewModel>.Type.Name;
 
     [Inject]
-    public required TextViewModel TextViewModel
-    {
-        get => textViewModel;
-        [MemberNotNull(nameof(textViewModel))]
-        init
-        {
-            textViewModel = value;
-            textViewModel.Label = "EmailOrLogin";
-        }
-    }
-
-    [Inject]
     public required IObjectStorage ObjectStorage { get; init; }
 
     [Inject]
@@ -46,60 +37,81 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
 
     public ICommand ForgotPasswordCommand { get; }
 
+    public bool IsBusy
+    {
+        get => isBusy;
+        set => this.RaiseAndSetIfChanged(ref isBusy, value);
+    }
+
+    public string EmailOrLogin
+    {
+        get => emailOrLogin;
+        set => this.RaiseAndSetIfChanged(ref emailOrLogin, value);
+    }
+
     private async Task ForgotPasswordAsync(CancellationToken cancellationToken)
     {
-        if (TextViewModel.Text.Contains('@'))
+        IsBusy = true;
+
+        try
         {
-            if (await AuthenticationService.IsVerifiedByEmailAsync(TextViewModel.Text, cancellationToken))
+            if (EmailOrLogin.Contains('@'))
             {
-                await AuthenticationService.UpdateVerificationCodeByEmailAsync(TextViewModel.Text, cancellationToken);
+                if (await AuthenticationService.IsVerifiedByEmailAsync(EmailOrLogin, cancellationToken))
+                {
+                    await AuthenticationService.UpdateVerificationCodeByEmailAsync(EmailOrLogin, cancellationToken);
+                }
+                else
+                {
+                    await Navigator.NavigateToAsync<VerificationCodeViewModel>(
+                        vm =>
+                        {
+                            vm.IdentifierType = UserIdentifierType.Email;
+                            vm.Identifier = EmailOrLogin;
+                        },
+                        cancellationToken
+                    );
+
+                    return;
+                }
             }
             else
             {
-                await Navigator.NavigateToAsync<VerificationCodeViewModel>(
-                    vm =>
-                    {
-                        vm.IdentifierType = UserIdentifierType.Email;
-                        vm.Identifier = TextViewModel.Text;
-                    },
-                    cancellationToken
-                );
-                
-                return;
+                if (await AuthenticationService.IsVerifiedByLoginAsync(EmailOrLogin, cancellationToken))
+                {
+                    await AuthenticationService.UpdateVerificationCodeByLoginAsync(EmailOrLogin, cancellationToken);
+                }
+                else
+                {
+                    await Navigator.NavigateToAsync<VerificationCodeViewModel>(
+                        vm =>
+                        {
+                            vm.IdentifierType = UserIdentifierType.Login;
+                            vm.Identifier = EmailOrLogin;
+                        },
+                        cancellationToken
+                    );
+
+                    return;
+                }
             }
+
+            await Navigator.NavigateToAsync<ForgotPasswordViewModel>(
+                vm =>
+                {
+                    vm.Identifier = EmailOrLogin;
+
+                    vm.IdentifierType = EmailOrLogin.Contains('@')
+                        ? UserIdentifierType.Email
+                        : UserIdentifierType.Login;
+                },
+                cancellationToken
+            );
         }
-        else
+        finally
         {
-            if (await AuthenticationService.IsVerifiedByLoginAsync(TextViewModel.Text, cancellationToken))
-            {
-                await AuthenticationService.UpdateVerificationCodeByLoginAsync(TextViewModel.Text, cancellationToken);
-            }
-            else
-            {
-                await Navigator.NavigateToAsync<VerificationCodeViewModel>(
-                    vm =>
-                    {
-                        vm.IdentifierType = UserIdentifierType.Login;
-                        vm.Identifier = TextViewModel.Text;
-                    },
-                    cancellationToken
-                );
-                
-                return;
-            }
+            IsBusy = false;
         }
-
-        await Navigator.NavigateToAsync<ForgotPasswordViewModel>(
-            vm =>
-            {
-                vm.Identifier = TextViewModel.Text;
-
-                vm.IdentifierType = TextViewModel.Text.Contains('@')
-                    ? UserIdentifierType.Email
-                    : UserIdentifierType.Login;
-            },
-            cancellationToken
-        );
     }
 
     public override void Stop()
@@ -118,7 +130,7 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
     {
         var s = setting.ThrowIfIsNotCast<EmailOrLoginInputViewModelSetting>();
 
-        await this.InvokeUIBackgroundAsync(() => TextViewModel.Text = s.Identifier);
+        await this.InvokeUIBackgroundAsync(() => EmailOrLogin = s.Identifier);
     }
 
     [ProtoContract]
@@ -130,7 +142,7 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
 
         public EmailOrLoginInputViewModelSetting(EmailOrLoginInputViewModel viewModel)
         {
-            Identifier = viewModel.TextViewModel.Text;
+            Identifier = viewModel.EmailOrLogin;
         }
 
         [ProtoMember(1)]

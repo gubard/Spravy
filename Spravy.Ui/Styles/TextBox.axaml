@@ -3,13 +3,41 @@
     <Style Selector="TextBox.vertical-content-alignment-top">
         <Setter Property="VerticalContentAlignment" Value="Top" />
     </Style>
-    
+
     <Style Selector="TextBox.accepts-return">
         <Setter Property="AcceptsReturn" Value="True" />
     </Style>
-    
+
     <Style Selector="TextBox.floating-watermark">
         <Setter Property="UseFloatingWatermark" Value="True" />
+    </Style>
+
+    <Style Selector="TextBox.read-only">
+        <Setter Property="IsReadOnly" Value="True" />
+    </Style>
+
+    <Style Selector="TextBox.content-type-email">
+        <Setter Property="TextInputOptions.ContentType" Value="Email" />
+    </Style>
+
+    <Style Selector="TextBox.content-type-password">
+        <Setter Property="TextInputOptions.ContentType" Value="Password" />
+    </Style>
+
+    <Style Selector="TextBox.password-char">
+        <Setter Property="PasswordChar" Value="*" />
+    </Style>
+
+    <Style Selector="TextBox.content-type-social">
+        <Setter Property="TextInputOptions.ContentType" Value="Social" />
+    </Style>
+
+    <Style Selector="TextBox.content-type-url">
+        <Setter Property="TextInputOptions.ContentType" Value="Url" />
+    </Style>
+
+    <Style Selector="TextBox.text-wrapping-wrap">
+        <Setter Property="TextWrapping" Value="Wrap" />
     </Style>
 
     <Style Selector="TextBox.with-button /template/ TextBlock#PART_LabelText">
