@@ -12,6 +12,7 @@ using Spravy.Domain.Extensions;
 using Spravy.Ui.Browser.Configurations;
 using Spravy.Ui.Configurations;
 using Spravy.Ui.Extensions;
+using Spravy.Ui.Helpers;
 
 [assembly: SupportedOSPlatform("browser")]
 
@@ -21,6 +22,7 @@ internal partial class Program
 {
     private static async Task Main()
     {
+        TaskHelper.ConfigureAwait = true;
         Log.Logger = new LoggerConfiguration()
             .WriteTo.Console()
             .CreateLogger();

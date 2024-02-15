@@ -193,19 +193,21 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
     {
         try
         {
-            await this.InvokeUIAsync(() => IsBusy = true);
-            var isVerified = await AuthenticationService.IsVerifiedByLoginAsync(Login, cancellationToken);
+            await this.InvokeUIBackgroundAsync(() => IsBusy = true);
+            var isVerified = await AuthenticationService.IsVerifiedByLoginAsync(Login, cancellationToken)
+                .ConfigureAwait(TaskHelper.ConfigureAwait);
 
             if (!isVerified)
             {
                 await Navigator.NavigateToAsync<VerificationCodeViewModel>(
-                    vm =>
-                    {
-                        vm.Identifier = Login;
-                        vm.IdentifierType = UserIdentifierType.Login;
-                    },
-                    cancellationToken
-                );
+                        vm =>
+                        {
+                            vm.Identifier = Login;
+                            vm.IdentifierType = UserIdentifierType.Login;
+                        },
+                        cancellationToken
+                    )
+                    .ConfigureAwait(false);
 
                 return;
             }
@@ -213,14 +215,13 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
             var user = Mapper.Map<User>(this);
             await TokenService.LoginAsync(user, cancellationToken).ConfigureAwait(false);
             Account.Login = user.Login;
-            await RememberMeAsync(cancellationToken);
-
+            await RememberMeAsync(cancellationToken).ConfigureAwait(false);
             await Navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken)
                 .ConfigureAwait(false);
         }
         finally
         {
-            await this.InvokeUIAsync(() => IsBusy = false);
+            await this.InvokeUIBackgroundAsync(() => IsBusy = false);
         }
     }
 
@@ -254,7 +255,7 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
 
             var setting = await ObjectStorage.GetObjectOrDefaultAsync<LoginViewModelSetting>(ViewId)
                 .ConfigureAwait(false);
-            await SetStateAsync(setting).ConfigureAwait(false);
+            await SetStateAsync(setting).ConfigureAwait(TaskHelper.ConfigureAwait);
 
             if (!await ObjectStorage.IsExistsAsync(StorageIds.LoginId).ConfigureAwait(false))
             {
@@ -321,6 +322,7 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
     public override async Task SetStateAsync(object setting)
     {
         var s = setting.ThrowIfIsNotCast<LoginViewModelSetting>();
+
         await this.InvokeUIBackgroundAsync(
             () =>
             {

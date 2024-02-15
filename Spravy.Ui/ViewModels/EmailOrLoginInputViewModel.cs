@@ -49,7 +49,7 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
 
     private async Task ForgotPasswordAsync(CancellationToken cancellationToken)
     {
-        IsBusy = true;
+        await this.InvokeUIBackgroundAsync(() => IsBusy = true);
 
         try
         {
@@ -108,7 +108,7 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
         }
         finally
         {
-            IsBusy = false;
+            await this.InvokeUIBackgroundAsync(() => IsBusy = false);
         }
     }
 
