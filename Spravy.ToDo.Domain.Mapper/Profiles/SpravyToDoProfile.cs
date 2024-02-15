@@ -45,10 +45,38 @@ public class SpravyToDoProfile : Profile
             );
         CreateMap<DayOfWeek, DayOfWeekGrpc>();
         CreateMap<DayOfWeekGrpc, DayOfWeek>();
-        CreateMap<GetMonthlyPeriodicityReply, MonthlyPeriodicity>();
-        CreateMap<MonthlyPeriodicity, GetMonthlyPeriodicityReply>();
-        CreateMap<GetAnnuallyPeriodicityReply, AnnuallyPeriodicity>();
-        CreateMap<AnnuallyPeriodicity, GetAnnuallyPeriodicityReply>();
+        CreateMap<GetMonthlyPeriodicityReply, MonthlyPeriodicity>()
+            .ConvertUsing(x => new MonthlyPeriodicity(x.Days.Select(y => (byte)y)));
+        CreateMap<MonthlyPeriodicity, GetMonthlyPeriodicityReply>()
+            .ConvertUsing(
+                (x, _, _) =>
+                {
+                    var result = new GetMonthlyPeriodicityReply();
+                    result.Days.AddRange(x.Days.Select(y => (uint)y));
+
+                    return result;
+                }
+            );
+        CreateMap<GetAnnuallyPeriodicityReply, AnnuallyPeriodicity>()
+            .ConvertUsing(x => new AnnuallyPeriodicity(x.Days.Select(y => new DayOfYear((byte)y.Day, (byte)y.Month))));
+        CreateMap<AnnuallyPeriodicity, GetAnnuallyPeriodicityReply>()
+            .ConvertUsing(
+                (x, _, _) =>
+                {
+                    var result = new GetAnnuallyPeriodicityReply();
+                    result.Days.AddRange(
+                        x.Days.Select(
+                            y => new DayOfYearGrpc
+                            {
+                                Day = y.Day,
+                                Month = y.Month,
+                            }
+                        )
+                    );
+
+                    return result;
+                }
+            );
         CreateMap<DescriptionType, DescriptionTypeGrpc>();
         CreateMap<DescriptionTypeGrpc, DescriptionType>();
         CreateMap<ToDoItem, ToDoItemGrpc>();

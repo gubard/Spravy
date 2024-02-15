@@ -30,15 +30,17 @@
         <DataTemplate x:DataType="services:EmptyApplySettings" />
 
         <DataTemplate x:DataType="models:DayOfYearSelectItem">
-            <ContentControl Content="{Binding Days}" />
+            <ItemsControl ItemsSource="{Binding Days}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
         </DataTemplate>
 
         <DataTemplate x:DataType="models:DayOfMonthSelectItem">
-            <StackPanel Margin="5">
-                <CheckBox IsChecked="{Binding IsSelected}"
-                          HorizontalAlignment="Center" />
-                <TextBlock Text="{Binding Day}" />
-            </StackPanel>
+            <ToggleButton IsChecked="{Binding IsSelected}" Content="{Binding Day}" />
         </DataTemplate>
 
         <DataTemplate x:DataType="models:DayOfWeekSelectItem">

@@ -1,6 +1,3 @@
-using System;
-using Avalonia;
-using Avalonia.Svg;
 using Spravy.Ui.Interfaces;
 using SukiUI.Controls;
 

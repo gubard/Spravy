@@ -1,7 +1,6 @@
 using Avalonia.Media;
 using ReactiveUI;
 using Spravy.Ui.Models;
-using SukiUI;
 
 namespace Spravy.Ui.ViewModels;
 

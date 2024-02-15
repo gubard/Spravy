@@ -1,6 +1,6 @@
-using Ninject;
+using System.Linq;
+using Avalonia.Collections;
 using ReactiveUI;
-using Spravy.Ui.ViewModels;
 
 namespace Spravy.Ui.Models;
 
@@ -8,12 +8,24 @@ public class DayOfYearSelectItem : NotifyBase
 {
     private byte month;
 
+    public DayOfYearSelectItem()
+    {
+        Days = new(
+            Enumerable.Range(1, 31)
+                .Select(
+                    x => new DayOfMonthSelectItem
+                    {
+                        Day = (byte)x
+                    }
+                )
+        );
+    }
+
     public byte Month
     {
         get => month;
         set => this.RaiseAndSetIfChanged(ref month, value);
     }
 
-    [Inject]
-    public required DayOfMonthSelectorViewModel Days { get; init; }
+    public AvaloniaList<DayOfMonthSelectItem> Days { get; }
 }

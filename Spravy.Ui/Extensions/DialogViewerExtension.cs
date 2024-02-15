@@ -95,7 +95,7 @@ public static class DialogViewerExtension
     public static Task ShowDayOfMonthSelectorInputDialogAsync(
         this IDialogViewer dialogViewer,
         Func<IEnumerable<byte>, Task> confirmTask,
-        Action<DayOfMonthSelectorViewModel> setup,
+        Action<ToDoItemDayOfMonthSelectorViewModel> setup,
         CancellationToken cancellationToken
     )
     {
@@ -110,14 +110,14 @@ public static class DialogViewerExtension
     public static Task ShowDayOfYearSelectorInputDialogAsync(
         this IDialogViewer dialogViewer,
         Func<IEnumerable<DayOfYear>, Task> confirmTask,
-        Action<DayOfYearSelectorViewModel> setup,
+        Action<ToDoItemDayOfYearSelectorViewModel> setup,
         CancellationToken cancellationToken
     )
     {
         return dialogViewer.ShowConfirmInputDialogAsync(
             view => confirmTask.Invoke(
                 view.Items.SelectMany(
-                    x => x.Days.Items.Where(y => y.IsSelected).Select(y => new DayOfYear(y.Day, x.Month))
+                    x => x.Days.Where(y => y.IsSelected).Select(y => new DayOfYear(y.Day, x.Month))
                 )
             ),
             _ => dialogViewer.CloseInputDialogAsync(cancellationToken),

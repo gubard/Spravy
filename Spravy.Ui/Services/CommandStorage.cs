@@ -992,7 +992,7 @@ public static class CommandStorage
                         {
                             foreach (var month in viewModel.Items)
                             {
-                                foreach (var day in month.Days.Items)
+                                foreach (var day in month.Days)
                                 {
                                     if (periodicity.Days.Any(x => x.Month == month.Month && x.Day == day.Day))
                                     {

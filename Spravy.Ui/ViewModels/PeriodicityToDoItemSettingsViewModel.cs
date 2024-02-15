@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -91,8 +90,10 @@ public class PeriodicityToDoItemSettingsViewModel : ViewModelBase,
                     TypeOfPeriodicity.Daily => new EmptyApplySettings(),
                     TypeOfPeriodicity.Weekly => Resolve.Get<ToDoItemDayOfWeekSelectorViewModel>()
                         .Case(y => y.ToDoItemId = Id),
-                    TypeOfPeriodicity.Monthly => Resolve.Get<DayOfMonthSelectorViewModel>(),
-                    TypeOfPeriodicity.Annually => Resolve.Get<DayOfYearSelectorViewModel>(),
+                    TypeOfPeriodicity.Monthly => Resolve.Get<ToDoItemDayOfMonthSelectorViewModel>()
+                        .Case(y => y.ToDoItemId = Id),
+                    TypeOfPeriodicity.Annually => Resolve.Get<ToDoItemDayOfYearSelectorViewModel>()
+                        .Case(y => y.ToDoItemId = Id),
                     _ => throw new ArgumentOutOfRangeException(nameof(x), x, null)
                 }
             );

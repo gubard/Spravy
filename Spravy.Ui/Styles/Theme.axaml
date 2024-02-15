@@ -18,4 +18,5 @@
     <StyleInclude Source="CheckBox.axaml" />
     <StyleInclude Source="TextBlock.axaml" />
     <StyleInclude Source="ListBox.axaml"/>
+    <StyleInclude Source="ToggleButton.axaml"/>
 </Styles>
