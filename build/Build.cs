@@ -81,6 +81,8 @@ class Build : NukeBuild
         if (FileVersion.Exists)
         {
             Version = ulong.Parse(File.ReadAllText(FileVersion.FullName));
+
+            return;
         }
 
         Version = 1;
