@@ -5,6 +5,10 @@
             <!-- Add Controls for Previewer Here -->
         </Border>
     </Design.PreviewWith>
+    
+    <Style Selector=":is(Layoutable).vertical-alignment-center">
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
 
    <Style Selector=":is(Layoutable).alignment-center">
        <Setter Property="HorizontalAlignment" Value="Center"/>
