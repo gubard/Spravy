@@ -118,8 +118,9 @@
                     </Grid>
 
                     <StackPanel Grid.Row="1">
-                        <WrapPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal">
                             <ToggleButton Classes="Switch"
+                                          VerticalAlignment="Center"
                                           Command="{x:Static services:CommandStorage.SwitchCompleteToDoItemCommand}"
                                           CommandParameter="{Binding Value}"
                                           IsVisible="{Binding Value.IsCan, Converter={StaticResource ToDoItemCanNoneToBooleanReverseConverter}}"
@@ -127,9 +128,8 @@
 
                             <TextBlock Text="{Binding Value.Name}"
                                        Classes="h4"
-                                       TextWrapping="Wrap"
                                        VerticalAlignment="Center" />
-                        </WrapPanel>
+                        </StackPanel>
 
                         <Button IsVisible="{Binding Value.Active, Converter={StaticResource NullToBooleanConverter}}"
                                 CommandParameter="{Binding Value.Active.Id}"

@@ -9,6 +9,7 @@
                                 xmlns:objectModel="clr-namespace:System.Collections.ObjectModel;assembly=System.ObjectModel"
                                 xmlns:models="clr-namespace:SukiUI.Models;assembly=SukiUI"
                                 xmlns:theming="clr-namespace:Spravy.Ui.Views"
+                                xmlns:models1="clr-namespace:Spravy.Ui.Models"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Views.AccountSettingView"
                                 x:DataType="viewModels:AccountSettingViewModel">
@@ -87,19 +88,22 @@
                                                             Spacing="10" />
                                             </ItemsPanelTemplate>
                                         </ItemsControl.ItemsPanel>
+
                                         <ItemsControl.ItemTemplate>
-                                            <DataTemplate x:DataType="models:SukiColorTheme">
+                                            <DataTemplate>
+                                                <DataTemplate.DataType>
+                                                    <x:Type TypeName="models1:Selected"
+                                                            x:TypeArguments="models:SukiColorTheme" />
+                                                </DataTemplate.DataType>
+
                                                 <RadioButton Width="50"
                                                              Height="50"
                                                              Classes="GigaChips"
                                                              Command="{Binding ((viewModels:AccountSettingViewModel)DataContext).SwitchToColorThemeCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type theming:AccountSettingView}}}"
                                                              CommandParameter="{Binding}"
-                                                             CornerRadius="50"
-                                                             GroupName="RadioColorTheme">
-                                                    <Border Margin="-30"
-                                                            Background="{Binding PrimaryBrush}"
-                                                            CornerRadius="50" />
-                                                </RadioButton>
+                                                             GroupName="RadioColorTheme"
+                                                             IsChecked="{Binding IsSelect}"
+                                                             Background="{Binding Value.PrimaryBrush}" />
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>

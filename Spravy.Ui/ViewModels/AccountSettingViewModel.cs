@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Threading;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Collections;
@@ -26,11 +27,22 @@ public class AccountSettingViewModel : NavigatableViewModelBase
 
     public AccountSettingViewModel() : base(true)
     {
-        AvailableColors = theme.ColorThemes;
+        AvailableColors = new(theme.ColorThemes.Select(x => new Selected<SukiColorTheme>(x)));
+
+        foreach (var availableColor in AvailableColors)
+        {
+            if (availableColor.Value == theme.ActiveColorTheme)
+            {
+                availableColor.IsSelect = true;
+            }
+        }
+
         isLightTheme = theme.ActiveBaseTheme == ThemeVariant.Light;
         ChangePasswordCommand = CreateCommandFromTask(TaskWork.Create(ChangePasswordAsync).RunAsync);
         SwitchToColorThemeCommand =
-            CreateCommandFromTask<SukiColorTheme>(TaskWork.Create<SukiColorTheme>(SwitchToColorTheme).RunAsync);
+            CreateCommandFromTask<Selected<SukiColorTheme>>(
+                TaskWork.Create<Selected<SukiColorTheme>>(SwitchToColorTheme).RunAsync
+            );
 
         this.WhenAnyValue(x => x.IsLightTheme)
             .Subscribe(x => theme.ChangeBaseTheme(x ? ThemeVariant.Light : ThemeVariant.Dark));
@@ -40,7 +52,7 @@ public class AccountSettingViewModel : NavigatableViewModelBase
     public ICommand ChangePasswordCommand { get; }
     public ICommand SwitchToColorThemeCommand { get; }
     public string Version => Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? string.Empty;
-    public IAvaloniaReadOnlyList<SukiColorTheme> AvailableColors { get; }
+    public AvaloniaList<Selected<SukiColorTheme>> AvailableColors { get; }
 
     [Inject]
     public required AccountNotify AccountNotify { get; init; }
@@ -96,9 +108,10 @@ public class AccountSettingViewModel : NavigatableViewModelBase
         return Task.CompletedTask;
     }
 
-    public Task SwitchToColorTheme(SukiColorTheme colorTheme, CancellationToken cancellationToken)
+    public Task SwitchToColorTheme(Selected<SukiColorTheme> colorTheme, CancellationToken cancellationToken)
     {
-        theme.ChangeColorTheme(colorTheme);
+        theme.ChangeColorTheme(colorTheme.Value);
+        colorTheme.IsSelect = true;
 
         return Task.CompletedTask;
     }
