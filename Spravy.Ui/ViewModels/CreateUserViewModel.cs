@@ -213,7 +213,7 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
             return;
         }
 
-        await this.InvokeUIAsync(() => CreateUserCommand.Execute(null));
+        await CreateUserAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public override void Stop()

@@ -20,7 +20,7 @@ public static class CreateUserViewExtension
             .Case(
                 () => createUserView.FindControl<GlassCard>(ElementNames.CreateUserCard)
                     .ThrowIfNull()
-                    .MustWidth(300)
+                    .MustWidth(400)
             )
             .ClearText(window);
     }
@@ -37,7 +37,7 @@ public static class CreateUserViewExtension
             .Case(
                 () => createUserView.FindControl<GlassCard>(ElementNames.CreateUserCard)
                     .ThrowIfNull()
-                    .MustWidth(300)
+                    .MustWidth(400)
             )
             .ClearText(window);
     }
