@@ -44,7 +44,7 @@
             </Button>
 
             <Button Command="{x:Static services:CommandStorage.NavigateToCommand}"
-                    CommandParameter="{x:Type viewModels:AccountSettingViewModel}">
+                    CommandParameter="{x:Type viewModels:SettingViewModel}">
                 <Grid ColumnDefinitions="Auto,Auto">
                     <avalonia:MaterialIcon Kind="Settings" />
                     <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.Settings}" />

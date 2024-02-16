@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -8,7 +10,11 @@ using Avalonia.Styling;
 using Ninject;
 using Spravy.Domain.Di.Helpers;
 using Spravy.Domain.Extensions;
+using Spravy.Domain.Helpers;
+using Spravy.Domain.Interfaces;
 using Spravy.Ui.Interfaces;
+using Spravy.Ui.Models;
+using SukiUI;
 
 namespace Spravy.Ui;
 
@@ -27,6 +33,26 @@ public partial class App : Application
     public override void OnFrameworkInitializationCompleted()
     {
         var resolver = Resolver.ThrowIfNull();
+        var objectStorage = resolver.Get<IObjectStorage>();
+
+        if (objectStorage.IsExistsAsync(TypeCache<SettingModel>.Type.Name).GetAwaiter().GetResult())
+        {
+            var model = objectStorage.GetObjectAsync<SettingModel>(TypeCache<SettingModel>.Type.Name)
+                .GetAwaiter()
+                .GetResult();
+
+            var theme = SukiTheme.GetInstance();
+            theme.ChangeColorTheme(theme.ColorThemes.Single(x => x.DisplayName == model.ColorTheme));
+
+            theme.ChangeBaseTheme(
+                model.BaseTheme switch
+                {
+                    "Light" => ThemeVariant.Light,
+                    "Dark" => ThemeVariant.Dark,
+                    _ => throw new ArgumentOutOfRangeException()
+                }
+            );
+        }
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {

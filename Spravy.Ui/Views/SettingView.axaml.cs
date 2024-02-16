@@ -3,9 +3,9 @@ using Spravy.Ui.ViewModels;
 
 namespace Spravy.Ui.Views;
 
-public partial class AccountSettingView : ReactiveUserControl<AccountSettingViewModel>
+public partial class SettingView : ReactiveUserControl<SettingViewModel>
 {
-    public AccountSettingView()
+    public SettingView()
     {
         InitializeComponent();
     }

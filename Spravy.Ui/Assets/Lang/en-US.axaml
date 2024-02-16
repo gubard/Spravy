@@ -54,6 +54,7 @@
     <system:String x:Key="AccountSettingView.ChangePassword">Change password</system:String>
     <system:String x:Key="AccountSettingView.Setting">Setting</system:String>
     <system:String x:Key="AccountSettingView.Version">Version</system:String>
+    <system:String x:Key="AccountSettingView.Save">Save</system:String>
 
     <!--ChangeToDoItemOrderIndexView-->
     <system:String x:Key="ChangeToDoItemOrderIndexView.Before">Before</system:String>

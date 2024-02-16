@@ -11,6 +11,7 @@ using Ninject;
 using ReactiveUI;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Domain.Helpers;
+using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
 using Spravy.Ui.Enums;
 using Spravy.Ui.Models;
@@ -19,13 +20,13 @@ using SukiUI.Models;
 
 namespace Spravy.Ui.ViewModels;
 
-public class AccountSettingViewModel : NavigatableViewModelBase
+public class SettingViewModel : NavigatableViewModelBase
 {
     private readonly SukiTheme theme = SukiTheme.GetInstance();
     private readonly PageHeaderViewModel pageHeaderViewModel;
     private bool isLightTheme;
 
-    public AccountSettingViewModel() : base(true)
+    public SettingViewModel() : base(true)
     {
         AvailableColors = new(theme.ColorThemes.Select(x => new Selected<SukiColorTheme>(x)));
 
@@ -39,6 +40,8 @@ public class AccountSettingViewModel : NavigatableViewModelBase
 
         isLightTheme = theme.ActiveBaseTheme == ThemeVariant.Light;
         ChangePasswordCommand = CreateCommandFromTask(TaskWork.Create(ChangePasswordAsync).RunAsync);
+        SaveSettingsCommand = CreateCommandFromTask(TaskWork.Create(SaveSettingsAsync).RunAsync);
+
         SwitchToColorThemeCommand =
             CreateCommandFromTask<Selected<SukiColorTheme>>(
                 TaskWork.Create<Selected<SukiColorTheme>>(SwitchToColorTheme).RunAsync
@@ -48,9 +51,10 @@ public class AccountSettingViewModel : NavigatableViewModelBase
             .Subscribe(x => theme.ChangeBaseTheme(x ? ThemeVariant.Light : ThemeVariant.Dark));
     }
 
-    public override string ViewId => TypeCache<AccountSettingViewModel>.Type.Name;
+    public override string ViewId => TypeCache<SettingViewModel>.Type.Name;
     public ICommand ChangePasswordCommand { get; }
     public ICommand SwitchToColorThemeCommand { get; }
+    public ICommand SaveSettingsCommand { get; }
     public string Version => Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? string.Empty;
     public AvaloniaList<Selected<SukiColorTheme>> AvailableColors { get; }
 
@@ -59,6 +63,9 @@ public class AccountSettingViewModel : NavigatableViewModelBase
 
     [Inject]
     public required IAuthenticationService AuthenticationService { get; init; }
+
+    [Inject]
+    public required IObjectStorage ObjectStorage { get; init; }
 
     [Inject]
     public required PageHeaderViewModel PageHeaderViewModel
@@ -76,6 +83,18 @@ public class AccountSettingViewModel : NavigatableViewModelBase
     {
         get => isLightTheme;
         set => this.RaiseAndSetIfChanged(ref isLightTheme, value);
+    }
+
+    private async Task SaveSettingsAsync(CancellationToken cancellationToken)
+    {
+        await ObjectStorage.SaveObjectAsync(
+            TypeCache<SettingModel>.Type.Name,
+            new SettingModel
+            {
+                BaseTheme = IsLightTheme ? "Light" : "Dark",
+                ColorTheme = AvailableColors.Single(x => x.IsSelect).Value.DisplayName,
+            }
+        );
     }
 
     private async Task ChangePasswordAsync(CancellationToken cancellationToken)
