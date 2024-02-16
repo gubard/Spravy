@@ -9,6 +9,7 @@ using Ninject;
 using ReactiveUI;
 using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Interfaces;
+using Spravy.Ui.Extensions;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
@@ -55,7 +56,13 @@ public class ChangeToDoItemOrderIndexViewModel : ViewModelBase
     private async Task InitializedAsync(CancellationToken cancellationToken)
     {
         var items = await ToDoService.GetSiblingsAsync(Id, cancellationToken).ConfigureAwait(false);
-        Items.Clear();
-        Items.AddRange(Mapper.Map<IEnumerable<ToDoShortItemNotify>>(items));
+
+        await this.InvokeUIBackgroundAsync(
+            () =>
+            {
+                Items.Clear();
+                Items.AddRange(Mapper.Map<IEnumerable<ToDoShortItemNotify>>(items));
+            }
+        );
     }
 }

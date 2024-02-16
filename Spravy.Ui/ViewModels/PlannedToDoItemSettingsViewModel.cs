@@ -80,13 +80,13 @@ public class PlannedToDoItemSettingsViewModel : ViewModelBase,
         );
     }
 
-    public async Task ApplySettingsAsync(CancellationToken cancellationToken)
+    public Task ApplySettingsAsync(CancellationToken cancellationToken)
     {
-        await ToDoService.UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, cancellationToken).ConfigureAwait(false);
-        await ToDoService.UpdateToDoItemDueDateAsync(Id, DueDate, cancellationToken).ConfigureAwait(false);
-
-        await ToDoService
-            .UpdateToDoItemIsRequiredCompleteInDueDateAsync(Id, IsRequiredCompleteInDueDate, cancellationToken)
-            .ConfigureAwait(false);
+        return Task.WhenAll(
+            ToDoService.UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, cancellationToken),
+            ToDoService.UpdateToDoItemDueDateAsync(Id, DueDate, cancellationToken),
+            ToDoService
+                .UpdateToDoItemIsRequiredCompleteInDueDateAsync(Id, IsRequiredCompleteInDueDate, cancellationToken)
+        );
     }
 }

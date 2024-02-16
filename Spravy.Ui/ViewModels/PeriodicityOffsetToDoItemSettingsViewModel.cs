@@ -117,17 +117,17 @@ public class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
         );
     }
 
-    public async Task ApplySettingsAsync(CancellationToken cancellationToken)
+    public Task ApplySettingsAsync(CancellationToken cancellationToken)
     {
-        await ToDoService.UpdateToDoItemWeeksOffsetAsync(Id, WeeksOffset, cancellationToken).ConfigureAwait(false);
-        await ToDoService.UpdateToDoItemDaysOffsetAsync(Id, DaysOffset, cancellationToken).ConfigureAwait(false);
-        await ToDoService.UpdateToDoItemYearsOffsetAsync(Id, YearsOffset, cancellationToken).ConfigureAwait(false);
-        await ToDoService.UpdateToDoItemMonthsOffsetAsync(Id, MonthsOffset, cancellationToken).ConfigureAwait(false);
-        await ToDoService.UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, cancellationToken).ConfigureAwait(false);
-        await ToDoService.UpdateToDoItemDueDateAsync(Id, DueDate, cancellationToken).ConfigureAwait(false);
-
-        await ToDoService
-            .UpdateToDoItemIsRequiredCompleteInDueDateAsync(Id, IsRequiredCompleteInDueDate, cancellationToken)
-            .ConfigureAwait(false);
+        return Task.WhenAll(
+            ToDoService.UpdateToDoItemWeeksOffsetAsync(Id, WeeksOffset, cancellationToken),
+            ToDoService.UpdateToDoItemWeeksOffsetAsync(Id, WeeksOffset, cancellationToken),
+            ToDoService.UpdateToDoItemYearsOffsetAsync(Id, YearsOffset, cancellationToken),
+            ToDoService.UpdateToDoItemMonthsOffsetAsync(Id, MonthsOffset, cancellationToken),
+            ToDoService.UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, cancellationToken),
+            ToDoService.UpdateToDoItemDueDateAsync(Id, DueDate, cancellationToken),
+            ToDoService
+                .UpdateToDoItemIsRequiredCompleteInDueDateAsync(Id, IsRequiredCompleteInDueDate, cancellationToken)
+        );
     }
 }

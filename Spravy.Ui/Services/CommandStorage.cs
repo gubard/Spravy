@@ -766,22 +766,20 @@ public static class CommandStorage
         return dialogViewer.ShowConfirmContentDialogAsync<ToDoItemSettingsViewModel>(
             async vm =>
             {
-                await dialogViewer.CloseContentDialogAsync(cancellationToken);
+                await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
 
-                await toDoService.UpdateToDoItemNameAsync(property.Id, vm.ToDoItemContent.Name, cancellationToken)
-                    .ConfigureAwait(false);
-
-                await toDoService.UpdateToDoItemTypeAsync(property.Id, vm.ToDoItemContent.Type, cancellationToken)
-                    .ConfigureAwait(false);
-
-                await toDoService.UpdateToDoItemLinkAsync(
-                        property.Id,
-                        mapper.Map<Uri?>(vm.ToDoItemContent.Link),
-                        cancellationToken
+                await Task.WhenAll(
+                        toDoService.UpdateToDoItemNameAsync(property.Id, vm.ToDoItemContent.Name, cancellationToken),
+                        toDoService.UpdateToDoItemTypeAsync(property.Id, vm.ToDoItemContent.Type, cancellationToken),
+                        toDoService.UpdateToDoItemLinkAsync(
+                            property.Id,
+                            mapper.Map<Uri?>(vm.ToDoItemContent.Link),
+                            cancellationToken
+                        ),
+                        vm.Settings.ThrowIfNull().ApplySettingsAsync(cancellationToken)
                     )
                     .ConfigureAwait(false);
 
-                await vm.Settings.ThrowIfNull().ApplySettingsAsync(cancellationToken).ConfigureAwait(false);
                 await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
             },
             _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
