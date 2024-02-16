@@ -4,7 +4,7 @@
     <Design.PreviewWith>
         <Border Padding="20" Width="500">
             <Button Classes="glass-card">
-                <TextBlock Text="Button > GlassCard" />
+                <TextBlock Text="Button" />
             </Button>
         </Border>
     </Design.PreviewWith>
