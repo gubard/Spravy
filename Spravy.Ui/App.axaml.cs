@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Templates;
 using Avalonia.Markup.Xaml;
+using Avalonia.Styling;
 using Ninject;
 using Spravy.Domain.Di.Helpers;
 using Spravy.Domain.Extensions;
