@@ -11,18 +11,9 @@
     <StackPanel>
         <TextBlock Classes="field"
                    Text="{DynamicResource EditDescriptionView.Description}" />
-
-        <StackPanel Orientation="Horizontal">
-            <RadioButton Classes="GigaChips"
-                         Content="{DynamicResource DescriptionType.PlainText}"
-                         GroupName="DescriptionType"
-                         IsChecked="{Binding IsPlainText}" />
-            <RadioButton Classes="GigaChips"
-                         Content="{DynamicResource DescriptionType.Markdown}"
-                         GroupName="DescriptionType"
-                         IsChecked="{Binding IsMarkdown}" />
-        </StackPanel>
-
+        <ListBox Classes="wrap-panel"
+                 SelectedItem="{Binding Type}"
+                 ItemsSource="{Binding Types}" />
         <TextBox Classes="accepts-return vertical-content-alignment-top content-type-social"
                  Text="{Binding Description}" />
     </StackPanel>
