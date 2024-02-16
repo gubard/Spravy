@@ -131,7 +131,7 @@
     <system:String x:Key="PeriodicityOffsetToDoItemSettingsView.ChildrenTypes">Children types</system:String>
     <system:String x:Key="PeriodicityOffsetToDoItemSettingsView.Type">Type</system:String>
     <system:String x:Key="PeriodicityOffsetToDoItemSettingsView.DueDate">Due date</system:String>
-    <system:String x:Key="PeriodicityOffsetToDoItemSettingsView.DaysOffset">ToDoItemDays offset</system:String>
+    <system:String x:Key="PeriodicityOffsetToDoItemSettingsView.DaysOffset">Days offset</system:String>
     <system:String x:Key="PeriodicityOffsetToDoItemSettingsView.MonthsOffset">Months offset</system:String>
     <system:String x:Key="PeriodicityOffsetToDoItemSettingsView.WeeksOffset">Weeks offset</system:String>
     <system:String x:Key="PeriodicityOffsetToDoItemSettingsView.YearsOffset">Years offset</system:String>
