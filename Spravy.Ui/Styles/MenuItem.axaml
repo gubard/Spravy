@@ -15,4 +15,8 @@
             </Button>
         </Border>
     </Design.PreviewWith>
+
+    <Style Selector="MenuItem">
+        <Setter Property="Background" Value="{DynamicResource SukiCardBackground}" />
+    </Style>
 </Styles>
