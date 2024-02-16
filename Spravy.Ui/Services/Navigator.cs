@@ -5,6 +5,7 @@ using Ninject;
 using Spravy.Domain.Models;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
+using Spravy.Ui.ViewModels;
 
 namespace Spravy.Ui.Services;
 
@@ -17,6 +18,12 @@ public class Navigator : INavigator
 
     [Inject]
     public required IContent Content { get; init; }
+
+    [Inject]
+    public required IDialogViewer DialogViewer { get; init; }
+
+    [Inject]
+    public required MainSplitViewModel MainSplitViewModel { get; init; }
 
     private async Task AddCurrentContentAsync()
     {
@@ -73,6 +80,18 @@ public class Navigator : INavigator
         if (viewModel is null)
         {
             return null;
+        }
+
+        if (await DialogViewer.CloseLastDialogAsync(cancellationToken))
+        {
+            return new EmptyNavigatable();
+        }
+
+        if (MainSplitViewModel.IsPaneOpen)
+        {
+            MainSplitViewModel.IsPaneOpen = false;
+
+            return new EmptyNavigatable();
         }
 
         await this.InvokeUIAsync(() => Content.Content = viewModel);

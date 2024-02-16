@@ -44,6 +44,7 @@ public interface IDialogViewer
     Task CloseErrorDialogAsync(CancellationToken cancellationToken);
     Task CloseInputDialogAsync(CancellationToken cancellationToken);
     Task CloseProgressDialogAsync(CancellationToken cancellationToken);
+    Task<bool> CloseLastDialogAsync(CancellationToken cancellationToken);
 
     Task ShowConfirmContentDialogAsync<TView>(
         Func<TView, Task> confirmTask,

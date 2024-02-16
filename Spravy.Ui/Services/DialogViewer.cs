@@ -133,6 +133,39 @@ public class DialogViewer : IDialogViewer
         return SafeClose(ProgressDialogHostIdentifier);
     }
 
+    public async Task<bool> CloseLastDialogAsync(CancellationToken cancellationToken)
+    {
+        if (DialogHost.IsDialogOpen(ProgressDialogHostIdentifier))
+        {
+            await SafeClose(ProgressDialogHostIdentifier);
+
+            return true;
+        }
+
+        if (DialogHost.IsDialogOpen(ErrorDialogHostIdentifier))
+        {
+            await SafeClose(ErrorDialogHostIdentifier);
+
+            return true;
+        }
+
+        if (DialogHost.IsDialogOpen(InputDialogHostIdentifier))
+        {
+            await SafeClose(InputDialogHostIdentifier);
+
+            return true;
+        }
+
+        if (DialogHost.IsDialogOpen(ContentDialogHostIdentifier))
+        {
+            await SafeClose(ContentDialogHostIdentifier);
+
+            return true;
+        }
+
+        return false;
+    }
+
     public async Task ShowConfirmContentDialogAsync<TView>(
         Func<TView, Task> confirmTask,
         Func<TView, Task> cancelTask,
