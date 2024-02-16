@@ -11,8 +11,6 @@
     </Design.PreviewWith>
 
     <Style Selector="SplitView > Grid#Container > Panel#PART_PaneRoot > ContentPresenter#PART_PanePresenter">
-        <Setter Property="Background" Value="{DynamicResource SukiGlassCardBackground}" />
         <Setter Property="CornerRadius" Value="20" />
-        <Setter Property="Padding" Value="20" />
     </Style>
 </Styles>
