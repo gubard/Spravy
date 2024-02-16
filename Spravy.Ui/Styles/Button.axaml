@@ -1,46 +1,34 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:controls="clr-namespace:SukiUI.Controls;assembly=SukiUI"
-        xmlns:theme="clr-namespace:SukiUI.Theme;assembly=SukiUI">
+        xmlns:controls="clr-namespace:SukiUI.Controls;assembly=SukiUI">
     <Design.PreviewWith>
         <Border Padding="20" Width="500">
-            <Button Classes="glass-card"
-                    Margin="5"
-                    Padding="0"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch">
-                <controls:GlassCard HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Stretch"
-                                    Margin="0"
-                                    CornerRadius="0">
-                    <TextBlock Text="Button > GlassCard" />
-                </controls:GlassCard>
+            <Button Classes="glass-card">
+                <TextBlock Text="Button > GlassCard" />
             </Button>
         </Border>
     </Design.PreviewWith>
 
+    <Style Selector="Button">
+        <Setter Property="Margin" Value="2" />
+    </Style>
+
     <Style Selector="Button.glass-card">
         <Setter Property="Template">
             <ControlTemplate>
-                <Border Padding="{TemplateBinding Padding}"
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        BoxShadow="{DynamicResource SukiLowShadow}"
-                        CornerRadius="{TemplateBinding CornerRadius}"
-                        TextElement.Foreground="{TemplateBinding Foreground}">
-                    <Border.Resources>
-                        <theme:BoolToWidthProgressConverter x:Key="WidthConverter" />
-                    </Border.Resources>
-
+                <controls:GlassCard Padding="{TemplateBinding Padding}"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="{TemplateBinding CornerRadius}"
+                                    TextElement.Foreground="{TemplateBinding Foreground}">
                     <ContentPresenter HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                       VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                                       Content="{TemplateBinding Content}"
                                       FontFamily="avares://SukiUI/CustomFont#Quicksand"
                                       FontSize="{TemplateBinding FontSize}"
-                                      FontWeight="DemiBold"
                                       RecognizesAccessKey="True" />
-                </Border>
+                </controls:GlassCard>
             </ControlTemplate>
         </Setter>
     </Style>

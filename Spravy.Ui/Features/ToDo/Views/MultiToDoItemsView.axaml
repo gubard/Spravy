@@ -10,7 +10,6 @@
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Features.ToDo.Views.MultiToDoItemsView"
                                 x:DataType="viewModels:MultiToDoItemsViewModel">
-
     <StackPanel>
         <Grid ColumnDefinitions="Auto,*"
               IsVisible="{Binding ToDoItems.GroupByNone.Items.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
