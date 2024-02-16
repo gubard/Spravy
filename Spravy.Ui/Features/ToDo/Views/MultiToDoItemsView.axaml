@@ -37,7 +37,7 @@
                         <x:Type TypeName="models:Selected" x:TypeArguments="models:ToDoItemNotify" />
                     </DataTemplate.DataType>
 
-                    <controls:GlassCard Margin="3">
+                    <controls:GlassCard>
                         <StackPanel>
                             <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto">
                                 <Rectangle Width="15"
@@ -59,9 +59,11 @@
                                            Fill="{Binding Value.Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                             </Grid>
 
-                            <CheckBox IsChecked="{Binding IsSelect}">
-                                <TextBlock Text="{Binding Value.Name}" TextWrapping="Wrap" />
-                            </CheckBox>
+                            <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
+                                <CheckBox IsChecked="{Binding IsSelect}">
+                                    <TextBlock Text="{Binding Value.Name}" />
+                                </CheckBox>
+                            </ScrollViewer>
                         </StackPanel>
                     </controls:GlassCard>
                 </DataTemplate>
