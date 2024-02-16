@@ -17,6 +17,7 @@
     <StyleInclude Source="FlyoutPresenter.axaml" />
     <StyleInclude Source="CheckBox.axaml" />
     <StyleInclude Source="TextBlock.axaml" />
-    <StyleInclude Source="ListBox.axaml"/>
-    <StyleInclude Source="ToggleButton.axaml"/>
+    <StyleInclude Source="ListBox.axaml" />
+    <StyleInclude Source="ToggleButton.axaml" />
+    <StyleInclude Source="AccessText.axaml" />
 </Styles>
