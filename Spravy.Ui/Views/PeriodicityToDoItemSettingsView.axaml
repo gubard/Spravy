@@ -17,7 +17,7 @@
     <StackPanel>
         <TextBlock Classes="field"
                    Text="{DynamicResource PeriodicityToDoItemSettingsView.ChildrenTypes}" />
-        <ListBox ItemsSource="{Binding ChildrenTypes}" SelectedItem="{Binding ChildrenType}" />
+        <ListBox Classes="wrap-panel" ItemsSource="{Binding ChildrenTypes}" SelectedItem="{Binding ChildrenType}" />
         <TextBlock Classes="field"
                    Text="{DynamicResource PeriodicityToDoItemSettingsView.DueDate}" />
         <DatePicker SelectedDate="{Binding DueDate, Converter={StaticResource DateTimeOffsetToDateOnlyValueConverter}}" />
@@ -26,7 +26,9 @@
         <ToggleSwitch IsChecked="{Binding IsRequiredCompleteInDueDate}" />
         <TextBlock Classes="field"
                    Text="{DynamicResource PeriodicityToDoItemSettingsView.TypeOfPeriodicity}" />
-        <ListBox ItemsSource="{Binding TypeOfPeriodicities}" SelectedItem="{Binding TypeOfPeriodicity}" />
+        <ListBox Classes="wrap-panel"
+                 ItemsSource="{Binding TypeOfPeriodicities}"
+                 SelectedItem="{Binding TypeOfPeriodicity}" />
         <TextBlock Classes="field"
                    Text="{DynamicResource PeriodicityToDoItemSettingsView.Periodicity}" />
         <ContentControl Content="{Binding Periodicity}" />

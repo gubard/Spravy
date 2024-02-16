@@ -17,7 +17,7 @@
     <StackPanel>
         <TextBlock Classes="field"
                    Text="{DynamicResource PeriodicityOffsetToDoItemSettingsView.ChildrenTypes}" />
-        <ListBox ItemsSource="{Binding ChildrenTypes}" SelectedItem="{Binding ChildrenType}" />
+        <ListBox Classes="wrap-panel" ItemsSource="{Binding ChildrenTypes}" SelectedItem="{Binding ChildrenType}" />
         <TextBlock Classes="field"
                    Text="{DynamicResource PeriodicityOffsetToDoItemSettingsView.DueDate}" />
         <DatePicker SelectedDate="{Binding DueDate, Converter={StaticResource DateTimeOffsetToDateOnlyValueConverter}}" />

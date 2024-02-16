@@ -9,4 +9,12 @@
     <Style Selector="ListBox">
         <Setter Property="TextElement.Foreground" Value="{DynamicResource SukiText}" />
     </Style>
+
+    <Style Selector="ListBox.wrap-panel">
+        <Setter Property="ItemsPanel">
+            <ItemsPanelTemplate>
+                <WrapPanel />
+            </ItemsPanelTemplate>
+        </Setter>
+    </Style>
 </Styles>

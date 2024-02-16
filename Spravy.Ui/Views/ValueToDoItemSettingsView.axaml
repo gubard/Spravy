@@ -17,6 +17,6 @@
     <StackPanel>
         <TextBlock Classes="field"
                    Text="{DynamicResource ValueToDoItemSettingsView.ChildrenTypes}" />
-        <ListBox ItemsSource="{Binding ChildrenTypes}" SelectedItem="{Binding ChildrenType}" />
+        <ListBox Classes="wrap-panel" ItemsSource="{Binding ChildrenTypes}" SelectedItem="{Binding ChildrenType}" />
     </StackPanel>
 </reactiveUi:ReactiveUserControl>

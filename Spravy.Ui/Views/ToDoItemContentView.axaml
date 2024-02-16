@@ -18,7 +18,8 @@
                  Text="{Binding Link}" />
         <TextBlock Classes="field"
                    Text="{DynamicResource ToDoItemSettingsView.Type}" />
-        <ListBox SelectedItem="{Binding Type}"
+        <ListBox Classes="wrap-panel"
+                 SelectedItem="{Binding Type}"
                  ItemsSource="{Binding ToDoItemTypes}" />
     </StackPanel>
 </reactiveUi:ReactiveUserControl>
