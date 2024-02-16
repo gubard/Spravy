@@ -8,7 +8,6 @@
         </ResourceDictionary>
     </Styles.Resources>
 
-    <StyleInclude Source="Button.axaml" />
     <StyleInclude Source="Layoutable.axaml" />
     <StyleInclude Source="TextBox.axaml" />
     <StyleInclude Source="TemplatedControl.axaml" />
@@ -20,4 +19,5 @@
     <StyleInclude Source="ListBox.axaml" />
     <StyleInclude Source="ToggleButton.axaml" />
     <StyleInclude Source="AccessText.axaml" />
+    <StyleInclude Source="Button.axaml" />
 </Styles>
