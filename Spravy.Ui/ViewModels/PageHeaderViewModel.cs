@@ -39,6 +39,7 @@ public class PageHeaderViewModel : ViewModelBase
             () =>
             {
                 Commands.Clear();
+
                 Commands.Add(
                     CommandStorage.MultiCompleteToDoItemsItem.WithParam(
                         items.List.MultiToDoItems.GroupByNone.Items.Items
