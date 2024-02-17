@@ -1,10 +1,13 @@
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Ninject;
 using ProtoBuf;
+using ReactiveUI;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;
@@ -22,6 +25,7 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
 {
     private readonly TaskWork refreshWork;
     private readonly PageHeaderViewModel pageHeaderViewModel;
+    private readonly ToDoSubItemsViewModel toDoSubItemsViewModel;
 
     public RootToDoItemsViewModel() : base(true)
     {
@@ -46,7 +50,27 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
     }
 
     [Inject]
-    public required ToDoSubItemsViewModel ToDoSubItemsViewModel { get; init; }
+    public required ToDoSubItemsViewModel ToDoSubItemsViewModel
+    {
+        get => toDoSubItemsViewModel;
+        [MemberNotNull(nameof(toDoSubItemsViewModel))]
+        init
+        {
+            toDoSubItemsViewModel = value;
+
+            toDoSubItemsViewModel.List.WhenAnyValue(x => x.IsMulti)
+                .Skip(1)
+                .Subscribe(
+                    x =>
+                    {
+                        if (x)
+                        {
+                            PageHeaderViewModel.SetMultiCommands(ToDoSubItemsViewModel);
+                        }
+                    }
+                );
+        }
+    }
 
     [Inject]
     public required IToDoService ToDoService { get; init; }

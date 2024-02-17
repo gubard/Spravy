@@ -83,10 +83,10 @@ public class ToDoItemsGroupByViewModel : ViewModelBase
         GroupByType.AddItems(items);
     }
 
-    public void UpdateItem(ToDoItem item)
+    public void UpdateItem(Selected<ToDoItemNotify> item, bool updateOrder)
     {
-        GroupByNone.UpdateItem(item);
-        GroupByStatus.UpdateItem(item);
-        GroupByType.UpdateItem(item);
+        GroupByNone.UpdateItem(item, updateOrder);
+        GroupByStatus.UpdateItem(item, updateOrder);
+        GroupByType.UpdateItem(item, updateOrder);
     }
 }

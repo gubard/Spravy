@@ -38,8 +38,8 @@ public class ToDoItemsGroupByNoneViewModel : ViewModelBase
         Items.ClearExcept(ids);
     }
 
-    public void UpdateItem(ToDoItem item)
+    public void UpdateItem(Selected<ToDoItemNotify> item, bool updateOrder)
     {
-        Items.UpdateItem(item);
+        Items.UpdateItem(item, updateOrder);
     }
 }

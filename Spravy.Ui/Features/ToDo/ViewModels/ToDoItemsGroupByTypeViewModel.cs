@@ -136,78 +136,78 @@ public class ToDoItemsGroupByTypeViewModel : ViewModelBase
         Steps.ClearExcept(ids);
     }
 
-    public void UpdateItem(ToDoItem item)
+    public void UpdateItem(Selected<ToDoItemNotify> item, bool updateOrder)
     {
-        switch (item.Type)
+        switch (item.Value.Type)
         {
             case ToDoItemType.Value:
-                Values.UpdateItem(item);
-                Groups.RemoveItem(item.Id);
-                Planneds.RemoveItem(item.Id);
-                Periodicitys.RemoveItem(item.Id);
-                PeriodicityOffsets.RemoveItem(item.Id);
-                Circles.RemoveItem(item.Id);
-                Steps.RemoveItem(item.Id);
+                Values.UpdateItem(item, updateOrder);
+                Groups.RemoveItem(item);
+                Planneds.RemoveItem(item);
+                Periodicitys.RemoveItem(item);
+                PeriodicityOffsets.RemoveItem(item);
+                Circles.RemoveItem(item);
+                Steps.RemoveItem(item);
 
                 break;
             case ToDoItemType.Group:
-                Values.RemoveItem(item.Id);
-                Groups.UpdateItem(item);
-                Planneds.RemoveItem(item.Id);
-                Periodicitys.RemoveItem(item.Id);
-                PeriodicityOffsets.RemoveItem(item.Id);
-                Circles.RemoveItem(item.Id);
-                Steps.RemoveItem(item.Id);
+                Values.RemoveItem(item);
+                Groups.UpdateItem(item, updateOrder);
+                Planneds.RemoveItem(item);
+                Periodicitys.RemoveItem(item);
+                PeriodicityOffsets.RemoveItem(item);
+                Circles.RemoveItem(item);
+                Steps.RemoveItem(item);
 
                 break;
             case ToDoItemType.Planned:
-                Values.RemoveItem(item.Id);
-                Groups.RemoveItem(item.Id);
-                Planneds.UpdateItem(item);
-                Periodicitys.RemoveItem(item.Id);
-                PeriodicityOffsets.RemoveItem(item.Id);
-                Circles.RemoveItem(item.Id);
-                Steps.RemoveItem(item.Id);
+                Values.RemoveItem(item);
+                Groups.RemoveItem(item);
+                Planneds.UpdateItem(item, updateOrder);
+                Periodicitys.RemoveItem(item);
+                PeriodicityOffsets.RemoveItem(item);
+                Circles.RemoveItem(item);
+                Steps.RemoveItem(item);
 
                 break;
             case ToDoItemType.Periodicity:
-                Values.RemoveItem(item.Id);
-                Groups.RemoveItem(item.Id);
-                Planneds.RemoveItem(item.Id);
-                Periodicitys.UpdateItem(item);
-                PeriodicityOffsets.RemoveItem(item.Id);
-                Circles.RemoveItem(item.Id);
-                Steps.RemoveItem(item.Id);
+                Values.RemoveItem(item);
+                Groups.RemoveItem(item);
+                Planneds.RemoveItem(item);
+                Periodicitys.UpdateItem(item, updateOrder);
+                PeriodicityOffsets.RemoveItem(item);
+                Circles.RemoveItem(item);
+                Steps.RemoveItem(item);
 
                 break;
             case ToDoItemType.PeriodicityOffset:
-                Values.RemoveItem(item.Id);
-                Groups.RemoveItem(item.Id);
-                Planneds.RemoveItem(item.Id);
-                Periodicitys.RemoveItem(item.Id);
-                PeriodicityOffsets.UpdateItem(item);
-                Circles.RemoveItem(item.Id);
-                Steps.RemoveItem(item.Id);
+                Values.RemoveItem(item);
+                Groups.RemoveItem(item);
+                Planneds.RemoveItem(item);
+                Periodicitys.RemoveItem(item);
+                PeriodicityOffsets.UpdateItem(item, updateOrder);
+                Circles.RemoveItem(item);
+                Steps.RemoveItem(item);
 
                 break;
             case ToDoItemType.Circle:
-                Values.RemoveItem(item.Id);
-                Groups.RemoveItem(item.Id);
-                Planneds.RemoveItem(item.Id);
-                Periodicitys.RemoveItem(item.Id);
-                PeriodicityOffsets.RemoveItem(item.Id);
-                Circles.UpdateItem(item);
-                Steps.RemoveItem(item.Id);
+                Values.RemoveItem(item);
+                Groups.RemoveItem(item);
+                Planneds.RemoveItem(item);
+                Periodicitys.RemoveItem(item);
+                PeriodicityOffsets.RemoveItem(item);
+                Circles.UpdateItem(item, updateOrder);
+                Steps.RemoveItem(item);
 
                 break;
             case ToDoItemType.Step:
-                Values.RemoveItem(item.Id);
-                Groups.RemoveItem(item.Id);
-                Planneds.RemoveItem(item.Id);
-                Periodicitys.RemoveItem(item.Id);
-                PeriodicityOffsets.RemoveItem(item.Id);
-                Circles.RemoveItem(item.Id);
-                Steps.UpdateItem(item);
+                Values.RemoveItem(item);
+                Groups.RemoveItem(item);
+                Planneds.RemoveItem(item);
+                Periodicitys.RemoveItem(item);
+                PeriodicityOffsets.RemoveItem(item);
+                Circles.RemoveItem(item);
+                Steps.UpdateItem(item, updateOrder);
 
                 break;
             default: throw new ArgumentOutOfRangeException();

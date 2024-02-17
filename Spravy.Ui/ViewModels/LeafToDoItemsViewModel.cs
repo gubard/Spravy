@@ -87,31 +87,7 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
 
     private async Task InitializedAsync(CancellationToken cancellationToken)
     {
-        await this.InvokeUIAsync(
-            () =>
-            {
-                PageHeaderViewModel.Commands.Add(
-                    CommandStorage.MultiCompleteToDoItemsItem.WithParam(
-                        ToDoSubItemsViewModel.List.MultiToDoItems.GroupByNone.Items.Items
-                    )
-                );
-                PageHeaderViewModel.Commands.Add(
-                    CommandStorage.MultiSetTypeToDoItemsItem.WithParam(
-                        ToDoSubItemsViewModel.List.MultiToDoItems.GroupByNone.Items.Items
-                    )
-                );
-                PageHeaderViewModel.Commands.Add(
-                    CommandStorage.MultiSetParentToDoItemsItem.WithParam(
-                        ToDoSubItemsViewModel.List.MultiToDoItems.GroupByNone.Items.Items
-                    )
-                );
-                PageHeaderViewModel.Commands.Add(
-                    CommandStorage.MultiMoveToDoItemsToRootItem.WithParam(
-                        ToDoSubItemsViewModel.List.MultiToDoItems.GroupByNone.Items.Items
-                    )
-                );
-            }
-        );
+        await PageHeaderViewModel.SetMultiCommands(ToDoSubItemsViewModel);
 
         var setting = await ObjectStorage.GetObjectOrDefaultAsync<LeafToDoItemsViewModelSetting>(ViewId)
             .ConfigureAwait(false);

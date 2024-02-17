@@ -88,33 +88,33 @@ public class ToDoItemsGroupByStatusViewModel : ViewModelBase
         Completed.ClearExcept(ids);
     }
 
-    public void UpdateItem(ToDoItem item)
+    public void UpdateItem(Selected<ToDoItemNotify> item, bool updateOrder)
     {
-        switch (item.Status)
+        switch (item.Value.Status)
         {
             case ToDoItemStatus.Miss:
-                Missed.UpdateItem(item);
-                ReadyForCompleted.RemoveItem(item.Id);
-                Planned.RemoveItem(item.Id);
-                Completed.RemoveItem(item.Id);
+                Missed.UpdateItem(item, updateOrder);
+                ReadyForCompleted.RemoveItem(item);
+                Planned.RemoveItem(item);
+                Completed.RemoveItem(item);
                 break;
             case ToDoItemStatus.ReadyForComplete:
-                Missed.RemoveItem(item.Id);
-                ReadyForCompleted.UpdateItem(item);
-                Planned.RemoveItem(item.Id);
-                Completed.RemoveItem(item.Id);
+                Missed.RemoveItem(item);
+                ReadyForCompleted.UpdateItem(item, updateOrder);
+                Planned.RemoveItem(item);
+                Completed.RemoveItem(item);
                 break;
             case ToDoItemStatus.Planned:
-                Missed.RemoveItem(item.Id);
-                ReadyForCompleted.RemoveItem(item.Id);
-                Planned.UpdateItem(item);
-                Completed.RemoveItem(item.Id);
+                Missed.RemoveItem(item);
+                ReadyForCompleted.RemoveItem(item);
+                Planned.UpdateItem(item, updateOrder);
+                Completed.RemoveItem(item);
                 break;
             case ToDoItemStatus.Completed:
-                Missed.RemoveItem(item.Id);
-                ReadyForCompleted.RemoveItem(item.Id);
-                Planned.RemoveItem(item.Id);
-                Completed.UpdateItem(item);
+                Missed.RemoveItem(item);
+                ReadyForCompleted.RemoveItem(item);
+                Planned.RemoveItem(item);
+                Completed.UpdateItem(item, updateOrder);
                 break;
             default:
                 throw new ArgumentOutOfRangeException();

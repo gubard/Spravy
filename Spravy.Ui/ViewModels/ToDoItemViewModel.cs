@@ -267,33 +267,13 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
         await this.InvokeUIBackgroundAsync(
             () =>
             {
-                PageHeaderViewModel.Commands.Clear();
-
                 if (ToDoSubItemsViewModel.List.IsMulti)
                 {
-                    PageHeaderViewModel.Commands.Add(
-                        CommandStorage.MultiCompleteToDoItemsItem.WithParam(
-                            ToDoSubItemsViewModel.List.MultiToDoItems.GroupByNone.Items.Items
-                        )
-                    );
-                    PageHeaderViewModel.Commands.Add(
-                        CommandStorage.MultiSetTypeToDoItemsItem.WithParam(
-                            ToDoSubItemsViewModel.List.MultiToDoItems.GroupByNone.Items.Items
-                        )
-                    );
-                    PageHeaderViewModel.Commands.Add(
-                        CommandStorage.MultiSetParentToDoItemsItem.WithParam(
-                            ToDoSubItemsViewModel.List.MultiToDoItems.GroupByNone.Items.Items
-                        )
-                    );
-                    PageHeaderViewModel.Commands.Add(
-                        CommandStorage.MultiMoveToDoItemsToRootItem.WithParam(
-                            ToDoSubItemsViewModel.List.MultiToDoItems.GroupByNone.Items.Items
-                        )
-                    );
+                    PageHeaderViewModel.SetMultiCommands(ToDoSubItemsViewModel);
                 }
                 else
                 {
+                    PageHeaderViewModel.Commands.Clear();
                     var toFavoriteCommand = CommandStorage.AddToDoItemToFavoriteItem.WithParam(Id);
 
                     PageHeaderViewModel.Commands.Add(

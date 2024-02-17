@@ -4,10 +4,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
 using Avalonia.Collections;
 using Avalonia.Threading;
 using Ninject;
 using ReactiveUI;
+using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Features.ToDo.Enums;
@@ -50,6 +52,9 @@ public class MultiToDoItemsViewModel : ViewModelBase
     }
 
     public AvaloniaList<GroupBy> GroupBys { get; } = new(Enum.GetValues<GroupBy>());
+
+    [Inject]
+    public required IMapper Mapper { get; init; }
 
     [Inject]
     public required ToDoItemsViewModel Favorite
@@ -175,7 +180,17 @@ public class MultiToDoItemsViewModel : ViewModelBase
 
     public DispatcherOperation UpdateFavoriteItemAsync(ToDoItem item)
     {
-        return this.InvokeUIBackgroundAsync(() => Favorite.UpdateItem(item));
+        return this.InvokeUIBackgroundAsync(
+            () =>
+            {
+                var notify = Favorite.Items.SingleOrDefault(x => x.Value.Id == item.Id)
+                             ?? new Selected<ToDoItemNotify>(Mapper.Map<ToDoItemNotify>(item));
+
+                var updateOrder = item.OrderIndex != notify.Value.OrderIndex;
+                SetupItem(notify.Value, item);
+                Favorite.UpdateItem(notify, updateOrder);
+            }
+        );
     }
 
     public DispatcherOperation UpdateItemAsync(ToDoItem item)
@@ -183,8 +198,13 @@ public class MultiToDoItemsViewModel : ViewModelBase
         return this.InvokeUIBackgroundAsync(
             () =>
             {
-                ToDoItems.UpdateItem(item);
-                MultiToDoItems.UpdateItem(item);
+                var notify = ToDoItems.GroupByNone.Items.Items.SingleOrDefault(x => x.Value.Id == item.Id)
+                             ?? new Selected<ToDoItemNotify>(Mapper.Map<ToDoItemNotify>(item));
+
+                var updateOrder = item.OrderIndex != notify.Value.OrderIndex;
+                SetupItem(notify.Value, item);
+                ToDoItems.UpdateItem(notify, updateOrder);
+                MultiToDoItems.UpdateItem(notify, updateOrder);
             }
         );
     }
@@ -230,5 +250,52 @@ public class MultiToDoItemsViewModel : ViewModelBase
                 }
             }
         );
+    }
+
+    private ToDoItemNotify SetupItem(ToDoItemNotify notify, ToDoItem item)
+    {
+        notify.Type = item.Type;
+        notify.Status = item.Status;
+        notify.Active = Mapper.Map<ActiveToDoItemNotify?>(item.Active);
+        notify.Description = item.Description;
+        notify.Link = item.Link?.AbsoluteUri ?? string.Empty;
+        notify.Name = item.Name;
+        notify.IsCan = item.IsCan;
+        notify.IsFavorite = item.IsFavorite;
+        notify.ParentId = item.ParentId;
+        notify.OrderIndex = item.OrderIndex;
+        SetupItemCommands(notify);
+
+        return notify;
+    }
+
+    private ToDoItemNotify SetupItemCommands(ToDoItemNotify item)
+    {
+        var toFavoriteCommand = CommandStorage.AddToDoItemToFavoriteItem.WithParam(item.Id);
+        item.Commands.Add(CommandStorage.AddToDoItemChildItem.WithParam(item.Id));
+        item.Commands.Add(CommandStorage.DeleteToDoItemItem.WithParam(item));
+
+        if (item.IsCan != ToDoItemIsCan.None)
+        {
+            item.Commands.Add(CommandStorage.SwitchCompleteToDoItemItem.WithParam(item));
+        }
+
+        item.Commands.Add(CommandStorage.ShowToDoSettingItem.WithParam(item));
+
+        if (item.IsFavorite)
+        {
+            toFavoriteCommand = CommandStorage.RemoveToDoItemFromFavoriteItem.WithParam(item.Id);
+        }
+
+        item.Commands.Add(toFavoriteCommand);
+        item.Commands.Add(CommandStorage.NavigateToLeafItem.WithParam(item.Id));
+        item.Commands.Add(CommandStorage.SetToDoParentItemItem.WithParam(item));
+        item.Commands.Add(CommandStorage.MoveToDoItemToRootItem.WithParam(item));
+        item.Commands.Add(CommandStorage.ToDoItemToStringItem.WithParam(item));
+        item.Commands.Add(CommandStorage.ToDoItemRandomizeChildrenOrderIndexItem.WithParam(item));
+        item.Commands.Add(CommandStorage.ChangeOrderIndexItem.WithParam(item));
+        item.Commands.Add(CommandStorage.ResetToDoItemItem.WithParam(item));
+
+        return item;
     }
 }
