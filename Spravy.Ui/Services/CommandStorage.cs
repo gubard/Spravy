@@ -418,8 +418,8 @@ public static class CommandStorage
             .Select(x => toDoService.DeleteToDoItemAsync(x, cancellationToken))
             .ToArray();
 
-        await Task.WhenAll(tasks);
-        await RefreshCurrentViewAsync(cancellationToken);
+        await Task.WhenAll(tasks).ConfigureAwait(false);
+        await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
     }
 
     private static async Task ResetToDoItemAsync(
@@ -540,17 +540,13 @@ public static class CommandStorage
         CancellationToken cancellationToken
     )
     {
-        foreach (var selected in itemsNotify)
-        {
-            if (!selected.IsSelect)
-            {
-                continue;
-            }
+        await Task.WhenAll(
+                itemsNotify.Where(x => x.IsSelect)
+                    .Select(x => toDoService.ToDoItemToRootAsync(x.Value.Id, cancellationToken))
+            )
+            .ConfigureAwait(false);
 
-            await toDoService.ToDoItemToRootAsync(selected.Value.Id, cancellationToken).ConfigureAwait(false);
-        }
-
-        await RefreshCurrentViewAsync(cancellationToken);
+        await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
     }
 
     private static Task MultiSetTypeToDoItemsAsync(
@@ -558,21 +554,17 @@ public static class CommandStorage
         CancellationToken cancellationToken
     )
     {
+        var ids = itemsNotify.Where(x => x.IsSelect).Select(x => x.Value.Id).ToArray();
+
         return dialogViewer.ShowItemSelectorDialogAsync<ToDoItemType>(
             async type =>
             {
                 await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
 
-                foreach (var item in itemsNotify)
-                {
-                    if (!item.IsSelect)
-                    {
-                        continue;
-                    }
-
-                    await toDoService.UpdateToDoItemTypeAsync(item.Value.Id, type, cancellationToken)
-                        .ConfigureAwait(false);
-                }
+                await Task.WhenAll(
+                        ids.Select(x => toDoService.UpdateToDoItemTypeAsync(x, type, cancellationToken))
+                    )
+                    .ConfigureAwait(false);
 
                 await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
             },
@@ -597,11 +589,10 @@ public static class CommandStorage
             {
                 await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
 
-                foreach (var id in ids)
-                {
-                    await toDoService.UpdateToDoItemParentAsync(id, item.Id, cancellationToken)
-                        .ConfigureAwait(false);
-                }
+                await Task.WhenAll(
+                        ids.Select(x => toDoService.UpdateToDoItemParentAsync(x, item.Id, cancellationToken))
+                    )
+                    .ConfigureAwait(false);
 
                 await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
             },
@@ -616,16 +607,17 @@ public static class CommandStorage
     )
     {
         var items = itemsNotify.Where(x => x.IsSelect).Select(x => x.Value).ToArray();
-
         await CompleteAsync(items, cancellationToken).ConfigureAwait(false);
         await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    private static async Task CompleteAsync(
+    private static Task CompleteAsync(
         IEnumerable<ToDoItemNotify> items,
         CancellationToken cancellationToken
     )
     {
+        var tasks = new List<Task>();
+
         foreach (var item in items)
         {
             switch (item.IsCan)
@@ -633,19 +625,19 @@ public static class CommandStorage
                 case ToDoItemIsCan.None:
                     break;
                 case ToDoItemIsCan.CanComplete:
-                    await toDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true, cancellationToken)
-                        .ConfigureAwait(false);
+                    tasks.Add(toDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true, cancellationToken));
 
                     break;
                 case ToDoItemIsCan.CanIncomplete:
-                    await toDoService.UpdateToDoItemCompleteStatusAsync(item.Id, false, cancellationToken)
-                        .ConfigureAwait(false);
+                    tasks.Add(toDoService.UpdateToDoItemCompleteStatusAsync(item.Id, false, cancellationToken));
 
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
+
+        return Task.WhenAll(tasks);
     }
 
     private static Task SetToDoItemNameAsync(IToDoNameProperty property, CancellationToken cancellationToken)

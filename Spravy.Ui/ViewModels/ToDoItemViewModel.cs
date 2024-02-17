@@ -197,14 +197,14 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
 
     private async Task RefreshCoreAsync(CancellationToken cancellationToken)
     {
-        await RefreshPathAsync(cancellationToken);
+        await RefreshPathAsync(cancellationToken).ConfigureAwait(false);
 
         await Task.WhenAll(
                 RefreshToDoItemAsync(),
                 RefreshToDoItemChildrenAsync(cancellationToken),
                 UpdateCommandsAsync()
             )
-            .WaitAsync(cancellationToken);
+            .ConfigureAwait(false);
     }
 
     private Task RefreshToDoItemAsync()
