@@ -12,6 +12,7 @@
                                 x:DataType="viewModels:MultiToDoItemsViewModel">
     <StackPanel>
         <Grid ColumnDefinitions="Auto,*"
+              Margin="2"
               IsVisible="{Binding ToDoItems.GroupByNone.Items.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
             <CheckBox IsChecked="{Binding IsMulti}" Content="{DynamicResource MultiToDoItemsView.IsMulti}" />
 
