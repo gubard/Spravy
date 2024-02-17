@@ -247,6 +247,11 @@ public static class CommandStorage
             MaterialIconKind.EncryptionReset,
             "Reset to-do item"
         );
+        MultiDeleteToDoItemsItem = CreateCommand<AvaloniaList<Selected<ToDoItemNotify>>>(
+            MultiDeleteToDoItemsAsync,
+            MaterialIconKind.Delete,
+            "Delete to-do items"
+        );
     }
 
     private static readonly INavigator navigator;
@@ -398,7 +403,24 @@ public static class CommandStorage
     public static ICommand SetToDoParentItemCommand => SetToDoParentItemItem.Command;
     public static CommandItem SetToDoParentItemItem { get; }
 
+    public static ICommand MultiDeleteToDoItemsCommand => MultiDeleteToDoItemsItem.Command;
+    public static CommandItem MultiDeleteToDoItemsItem { get; }
+
     public static CommandItem SelectAll { get; }
+
+    private static async Task MultiDeleteToDoItemsAsync(
+        AvaloniaList<Selected<ToDoItemNotify>> items,
+        CancellationToken cancellationToken
+    )
+    {
+        var tasks = items.Where(x => x.IsSelect)
+            .Select(x => x.Value.Id)
+            .Select(x => toDoService.DeleteToDoItemAsync(x, cancellationToken))
+            .ToArray();
+
+        await Task.WhenAll(tasks);
+        await RefreshCurrentViewAsync(cancellationToken);
+    }
 
     private static async Task ResetToDoItemAsync(
         IIdProperty property,
