@@ -475,7 +475,7 @@ class Build : NukeBuild
                     var botClient = new TelegramBotClient(TelegramToken);
                     botClient.SendTextMessageAsync(
                             chatId: "@spravy_release",
-                            text: $"Published {new SpravyVersion(Version).ToString()}"
+                            text: $"Published {new SpravyVersion(Version)}"
                         )
                         .GetAwaiter()
                         .GetResult();
