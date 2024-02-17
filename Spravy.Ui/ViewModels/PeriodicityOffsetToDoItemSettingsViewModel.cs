@@ -120,7 +120,7 @@ public class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
     public Task ApplySettingsAsync(CancellationToken cancellationToken)
     {
         return Task.WhenAll(
-            ToDoService.UpdateToDoItemWeeksOffsetAsync(Id, WeeksOffset, cancellationToken),
+            ToDoService.UpdateToDoItemDaysOffsetAsync(Id, DaysOffset, cancellationToken),
             ToDoService.UpdateToDoItemWeeksOffsetAsync(Id, WeeksOffset, cancellationToken),
             ToDoService.UpdateToDoItemYearsOffsetAsync(Id, YearsOffset, cancellationToken),
             ToDoService.UpdateToDoItemMonthsOffsetAsync(Id, MonthsOffset, cancellationToken),
