@@ -18,8 +18,9 @@
             <StackPanel Grid.Column="1">
                 <TextBlock Classes="field"
                            Text="{DynamicResource MultiToDoItemsView.GroupBy}" />
-                <ComboBox SelectedItem="{Binding GroupBy}"
-                          ItemsSource="{Binding GroupBys}" />
+                <ListBox Classes="wrap-panel"
+                         SelectedItem="{Binding GroupBy}"
+                         ItemsSource="{Binding GroupBys}" />
             </StackPanel>
         </Grid>
 
