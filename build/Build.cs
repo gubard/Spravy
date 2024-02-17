@@ -363,11 +363,13 @@ class Build : NukeBuild
         sshClient.SafeRun(
             $"echo {sshPassword} | sudo -S cp -rf /home/{ftpUser}/Apps/Spravy.Ui.Android/com.SerhiiMaksymovFOP.Spravy-Signed.aab /var/www/spravy.com.ua/html"
         );
+        sshClient.SafeRun("cd /home/vafnir/Apps/Spravy.Ui.Desktop/linux-x64");
         sshClient.SafeRun(
-            $"echo {sshPassword} | zip -r /var/www/spravy.com.ua/html/Spravy.Linux-x64.zip /home/vafnir/Apps/Spravy.Ui.Desktop/linux-x64/*"
+            $"echo {sshPassword} | zip -r /var/www/spravy.com.ua/html/Spravy.Linux-x64.zip ./*"
         );
+        sshClient.SafeRun("cd /home/vafnir/Apps/Spravy.Ui.Desktop/win-x64");
         sshClient.SafeRun(
-            $"echo {sshPassword} | zip -r /var/www/spravy.com.ua/html/Spravy.Windows-x64.zip /home/vafnir/Apps/Spravy.Ui.Desktop/win-x64/*"
+            $"echo {sshPassword} | zip -r /var/www/spravy.com.ua/html/Spravy.Windows-x64.zip ./*"
         );
         sshClient.SafeRun($"echo {sshPassword} | sudo -S chown -R $USER:$USER /var/www/spravy.com.ua/html");
         sshClient.SafeRun($"echo {sshPassword} | sudo -S chmod -R 755 /var/www/spravy.com.ua");
