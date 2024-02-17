@@ -85,7 +85,7 @@ public struct SpravyVersion
             return false;
         }
 
-        if (!byte.TryParse(values[2], out var revision))
+        if (!byte.TryParse(values[3], out var revision))
         {
             version = new SpravyVersion(1, 0, 0, 0);
 
