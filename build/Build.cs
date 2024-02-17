@@ -61,7 +61,7 @@ class Build : NukeBuild
     [Parameter] readonly string StagingSshUser;
     [Parameter] readonly string StagingServerHost;
     [Parameter] readonly string MailPassword;
-    static ulong Version;
+    static SpravyVersion Version;
 
     static readonly Dictionary<string, string> Hosts = new();
     static readonly Dictionary<Project, ServiceOptions> ServiceOptions = new();
@@ -80,12 +80,12 @@ class Build : NukeBuild
     {
         if (FileVersion.Exists)
         {
-            Version = ulong.Parse(File.ReadAllText(FileVersion.FullName));
+            SpravyVersion.TryParse(File.ReadAllText(FileVersion.FullName), out Version);
 
             return;
         }
 
-        Version = 1;
+        Version = new SpravyVersion(1, 0, 0, 0);
     }
 
     static void UpdateVersion()
@@ -150,7 +150,7 @@ class Build : NukeBuild
                         setting.SetProjectFile(project)
                             .EnableNoRestore()
                             .SetConfiguration(Configuration)
-                            .AddProperty("Version", new SpravyVersion(Version).ToString())
+                            .AddProperty("Version", Version.ToString())
                     );
 
                     break;
@@ -183,7 +183,7 @@ class Build : NukeBuild
                         .EnableNoRestore()
                         .SetRuntime("linux-x64")
                         .SetConfiguration(Configuration)
-                        .AddProperty("Version", new SpravyVersion(Version).ToString())
+                        .AddProperty("Version", Version.ToString())
                 );
 
                 break;
@@ -213,7 +213,7 @@ class Build : NukeBuild
                         .EnableNoRestore()
                         .SetRuntime("win-x64")
                         .SetConfiguration(Configuration)
-                        .AddProperty("Version", new SpravyVersion(Version).ToString())
+                        .AddProperty("Version", Version.ToString())
                 );
 
                 break;
@@ -327,7 +327,7 @@ class Build : NukeBuild
                 .SetProperty("AndroidSigningStorePass", AndroidSigningStorePass)
                 .SetProperty("AndroidSdkDirectory", "/opt/android-sdk")
                 .DisableNoBuild()
-                .AddProperty("Version", new SpravyVersion(Version).ToString())
+                .AddProperty("Version", Version.ToString())
         );
 
         DeleteIfExistsDirectory(ftpClient, $"/home/{ftpUser}/Apps/Spravy.Ui.Android");
@@ -477,7 +477,7 @@ class Build : NukeBuild
                     var botClient = new TelegramBotClient(TelegramToken);
                     botClient.SendTextMessageAsync(
                             chatId: "@spravy_release",
-                            text: $"Published {new SpravyVersion(Version)}"
+                            text: $"Published v{Version}"
                         )
                         .GetAwaiter()
                         .GetResult();

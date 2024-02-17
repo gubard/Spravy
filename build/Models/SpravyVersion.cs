@@ -2,27 +2,12 @@ namespace _build.Models;
 
 public struct SpravyVersion
 {
-    SpravyVersion(ulong major, byte minor, byte build, byte revision)
+    public SpravyVersion(ulong major, byte minor, byte build, byte revision)
     {
         Major = major;
         Minor = minor;
         Build = build;
         Revision = revision;
-    }
-
-    public SpravyVersion(ulong value)
-    {
-        var version = new SpravyVersion();
-
-        for (ulong i = 0; i < value; i++)
-        {
-            version++;
-        }
-
-        Major = version.Major;
-        Minor = version.Minor;
-        Build = version.Build;
-        Revision = version.Revision;
     }
 
     public readonly ulong Major = 1;
@@ -60,4 +45,55 @@ public struct SpravyVersion
     }
 
     public override string ToString() => $"{Major}.{Minor}.{Build}.{Revision}";
+
+    public static bool TryParse(string str, out SpravyVersion version)
+    {
+        if (str is null)
+        {
+            version = new SpravyVersion(1, 0, 0, 0);
+
+            return false;
+        }
+
+        var values = str.Split('.');
+
+        if (values.Length != 4)
+        {
+            version = new SpravyVersion(1, 0, 0, 0);
+
+            return false;
+        }
+
+        if (!ulong.TryParse(values[0], out var major))
+        {
+            version = new SpravyVersion(1, 0, 0, 0);
+
+            return false;
+        }
+
+        if (!byte.TryParse(values[1], out var minor))
+        {
+            version = new SpravyVersion(1, 0, 0, 0);
+
+            return false;
+        }
+
+        if (!byte.TryParse(values[2], out var build))
+        {
+            version = new SpravyVersion(1, 0, 0, 0);
+
+            return false;
+        }
+
+        if (!byte.TryParse(values[2], out var revision))
+        {
+            version = new SpravyVersion(1, 0, 0, 0);
+
+            return false;
+        }
+
+        version = new SpravyVersion(major, minor, build, revision);
+
+        return true;
+    }
 }
