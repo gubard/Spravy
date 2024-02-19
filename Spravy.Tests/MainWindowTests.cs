@@ -113,7 +113,7 @@ public class MainWindowTests
                             .ThrowIfNull()
                             .MustEnabled()
                             .ClickOnButton(w, output)
-                            .WhenAllTasksAsync()
+                            .WhenAllTasksAsync(output)
                             .GetAwaiter()
                             .GetResult()
                     )

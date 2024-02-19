@@ -26,9 +26,11 @@ public static class ObjectExtension
         dispatcherPriorities = dp.OrderBy(x => x.Value).ToArray();
     }
 
-    public static async Task<TObject> WhenAllTasksAsync<TObject>(this TObject obj)
+    public static async Task<TObject> WhenAllTasksAsync<TObject>(this TObject obj, ITestOutputHelper output)
     {
+        output.WriteLine($"Waiting tasks");
         await TaskWork.AllTasks;
+        output.WriteLine($"Waited tasks");
 
         return obj;
     }
