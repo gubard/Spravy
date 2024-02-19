@@ -1,5 +1,6 @@
 using Avalonia.Threading;
 using Spravy.Domain.Models;
+using Xunit.Abstractions;
 
 namespace Spravy.Tests.Extensions;
 
@@ -32,18 +33,23 @@ public static class ObjectExtension
         return obj;
     }
 
-    public static TObject WaitSeconds<TObject>(this TObject obj, byte seconds)
+    public static TObject WaitSeconds<TObject>(this TObject obj, byte seconds, ITestOutputHelper output)
     {
         for (var i = 0; i < seconds; i++)
         {
             Thread.Sleep(TimeSpan.FromSeconds(1));
-            obj.RunJobsAll();
+            obj.RunJobsAll(output);
         }
 
         return obj;
     }
 
-    public static TObject WaitSeconds<TObject>(this TObject obj, byte seconds, Action predicate)
+    public static TObject WaitSeconds<TObject>(
+        this TObject obj,
+        byte seconds,
+        Action predicate,
+        ITestOutputHelper output
+    )
     {
         for (var i = 0; i < seconds; i++)
         {
@@ -56,7 +62,7 @@ public static class ObjectExtension
             catch
             {
                 Thread.Sleep(TimeSpan.FromSeconds(1));
-                obj.RunJobsAll();
+                obj.RunJobsAll(output);
             }
         }
 
@@ -65,7 +71,7 @@ public static class ObjectExtension
         return obj;
     }
 
-    public static T WaitSeconds<TObject, T>(this TObject obj, byte seconds, Func<T> predicate)
+    public static T WaitSeconds<TObject, T>(this TObject obj, byte seconds, Func<T> predicate, ITestOutputHelper output)
     {
         for (var i = 0; i < seconds; i++)
         {
@@ -76,14 +82,19 @@ public static class ObjectExtension
             catch
             {
                 Thread.Sleep(TimeSpan.FromSeconds(1));
-                obj.RunJobsAll();
+                obj.RunJobsAll(output);
             }
         }
 
         return predicate.Invoke();
     }
 
-    public static async Task<T> WaitSecondsAsync<TObject, T>(this TObject obj, byte seconds, Func<T> predicate)
+    public static async Task<T> WaitSecondsAsync<TObject, T>(
+        this TObject obj,
+        byte seconds,
+        Func<T> predicate,
+        ITestOutputHelper output
+    )
     {
         for (var i = 0; i < seconds; i++)
         {
@@ -94,7 +105,7 @@ public static class ObjectExtension
             catch
             {
                 await Task.Delay(TimeSpan.FromSeconds(1));
-                obj.RunJobsAll();
+                obj.RunJobsAll(output);
             }
         }
 
@@ -129,9 +140,11 @@ public static class ObjectExtension
         return obj;
     }
 
-    public static TObject RunJobsInactive<TObject>(this TObject obj)
+    public static TObject RunJobsInactive<TObject>(this TObject obj, ITestOutputHelper output)
     {
+        output.WriteLine($"Running job {nameof(DispatcherPriority.Inactive)}");
         Dispatcher.UIThread.RunJobs(DispatcherPriority.Inactive);
+        output.WriteLine($"Running job {nameof(DispatcherPriority.Inactive)}");
 
         return obj;
     }
@@ -157,9 +170,11 @@ public static class ObjectExtension
         return obj;
     }
 
-    public static TObject RunJobsInvalid<TObject>(this TObject obj)
+    public static TObject RunJobsInvalid<TObject>(this TObject obj, ITestOutputHelper output)
     {
+        output.WriteLine($"Running job {nameof(DispatcherPriority.Invalid)}");
         Dispatcher.UIThread.RunJobs(DispatcherPriority.Invalid);
+        output.WriteLine($"End job {nameof(DispatcherPriority.Invalid)}");
 
         return obj;
     }
@@ -213,11 +228,11 @@ public static class ObjectExtension
         return obj;
     }
 
-    public static TObject RunJobsAll<TObject>(this TObject obj)
+    public static TObject RunJobsAll<TObject>(this TObject obj, ITestOutputHelper output)
     {
         var count = 0;
-        obj.RunJobsInvalid();
-        obj.RunJobsInactive();
+        obj.RunJobsInvalid(output);
+        obj.RunJobsInactive(output);
 
         while (count != dispatcherPriorities.Length)
         {
@@ -231,7 +246,9 @@ public static class ObjectExtension
                 }
                 else
                 {
+                    output.WriteLine($"Running job {dispatcherPriority.Value}");
                     Dispatcher.UIThread.RunJobs(dispatcherPriority);
+                    output.WriteLine($"End job {dispatcherPriority.Value}");
                 }
             }
         }
