@@ -49,12 +49,13 @@
     <system:String x:Key="ToDoItemStatus.Planned">Planned</system:String>
     <system:String x:Key="ToDoItemStatus.Completed">Completed</system:String>
 
-    <!--AccountSettingView-->
-    <system:String x:Key="AccountSettingView.Login">Login:</system:String>
-    <system:String x:Key="AccountSettingView.ChangePassword">Change password</system:String>
-    <system:String x:Key="AccountSettingView.Setting">Setting</system:String>
-    <system:String x:Key="AccountSettingView.Version">Version</system:String>
-    <system:String x:Key="AccountSettingView.Save">Save</system:String>
+    <!--SettingView-->
+    <system:String x:Key="SettingView.Login">Login:</system:String>
+    <system:String x:Key="SettingView.ChangePassword">Change password</system:String>
+    <system:String x:Key="SettingView.Setting">Setting</system:String>
+    <system:String x:Key="SettingView.Version">Version</system:String>
+    <system:String x:Key="SettingView.Save">Save</system:String>
+    <system:String x:Key="SettingView.Busy">Saving...</system:String>
 
     <!--ChangeToDoItemOrderIndexView-->
     <system:String x:Key="ChangeToDoItemOrderIndexView.Before">Before</system:String>

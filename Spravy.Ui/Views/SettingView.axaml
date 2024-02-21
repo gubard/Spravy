@@ -14,124 +14,127 @@
                                 x:Class="Spravy.Ui.Views.SettingView"
                                 x:DataType="viewModels:SettingViewModel">
     <controls:GlassCard>
-        <Grid RowDefinitions="*,Auto">
-            <ScrollViewer>
-                <controls:GroupBox Header="{Binding PageHeaderViewModel}">
-                    <controls:SettingsLayout>
-                        <controls:SettingsLayout.Items>
-                            <objectModel:ObservableCollection x:TypeArguments="controls:SettingsLayoutItem">
-                                <controls:SettingsLayoutItem Header="Account Setting">
-                                    <controls:SettingsLayoutItem.Content>
-                                        <StackPanel>
-                                            <TextBlock Classes="field"
-                                                       Text="{DynamicResource AccountSettingView.Login}" />
-                                            <TextBox Classes="read-only"
-                                                     Text="{Binding AccountNotify.Login}" />
-                                            <Button Content="{DynamicResource AccountSettingView.ChangePassword}"
-                                                    Command="{Binding ChangePasswordCommand}" />
-                                        </StackPanel>
-                                    </controls:SettingsLayoutItem.Content>
-                                </controls:SettingsLayoutItem>
+        <controls:BusyArea BusyText="{DynamicResource SettingView.Busy}"
+                           IsBusy="{Binding IsBusy}">
+            <Grid RowDefinitions="*,Auto">
+                <ScrollViewer>
+                    <controls:GroupBox Header="{Binding PageHeaderViewModel}">
+                        <controls:SettingsLayout>
+                            <controls:SettingsLayout.Items>
+                                <objectModel:ObservableCollection x:TypeArguments="controls:SettingsLayoutItem">
+                                    <controls:SettingsLayoutItem Header="Account Setting">
+                                        <controls:SettingsLayoutItem.Content>
+                                            <StackPanel>
+                                                <TextBlock Classes="field"
+                                                           Text="{DynamicResource SettingView.Login}" />
+                                                <TextBox Classes="read-only"
+                                                         Text="{Binding AccountNotify.Login}" />
+                                                <Button Content="{DynamicResource SettingView.ChangePassword}"
+                                                        Command="{Binding ChangePasswordCommand}" />
+                                            </StackPanel>
+                                        </controls:SettingsLayoutItem.Content>
+                                    </controls:SettingsLayoutItem>
 
-                                <controls:SettingsLayoutItem Header="Base Theme">
-                                    <controls:SettingsLayoutItem.Content>
-                                        <StackPanel HorizontalAlignment="Center"
-                                                    Orientation="Horizontal">
-                                            <RadioButton Width="180"
-                                                         Height="160"
-                                                         Padding="0"
-                                                         Classes="GigaChips"
-                                                         GroupName="RadioBaseTheme"
-                                                         IsChecked="{Binding IsLightTheme}">
-                                                <Border Margin="-50"
-                                                        Background="#fafafa"
-                                                        CornerRadius="{DynamicResource MediumCornerRadius}">
-                                                    <Grid>
-                                                        <TextBlock Margin="42"
-                                                                   HorizontalAlignment="Center"
-                                                                   VerticalAlignment="Bottom"
-                                                                   FontWeight="DemiBold"
-                                                                   Foreground="#555555"
-                                                                   Text="Light Mode" />
-                                                    </Grid>
-                                                </Border>
-                                            </RadioButton>
+                                    <controls:SettingsLayoutItem Header="Base Theme">
+                                        <controls:SettingsLayoutItem.Content>
+                                            <StackPanel HorizontalAlignment="Center"
+                                                        Orientation="Horizontal">
+                                                <RadioButton Width="135"
+                                                             Height="120"
+                                                             Padding="0"
+                                                             Classes="GigaChips"
+                                                             GroupName="RadioBaseTheme"
+                                                             IsChecked="{Binding IsLightTheme}">
+                                                    <Border Margin="-50"
+                                                            Background="#fafafa"
+                                                            CornerRadius="{DynamicResource MediumCornerRadius}">
+                                                        <Grid>
+                                                            <TextBlock Margin="42"
+                                                                       HorizontalAlignment="Center"
+                                                                       VerticalAlignment="Bottom"
+                                                                       FontWeight="DemiBold"
+                                                                       Foreground="#555555"
+                                                                       Text="Light Mode" />
+                                                        </Grid>
+                                                    </Border>
+                                                </RadioButton>
 
-                                            <RadioButton Width="180"
-                                                         Height="160"
-                                                         Classes="GigaChips"
-                                                         GroupName="RadioBaseTheme"
-                                                         IsChecked="{Binding !IsLightTheme}">
-                                                <Border Margin="-50"
-                                                        Background="#222222"
-                                                        CornerRadius="{DynamicResource MediumCornerRadius}">
-                                                    <Grid>
-                                                        <TextBlock Margin="42"
-                                                                   HorizontalAlignment="Center"
-                                                                   VerticalAlignment="Bottom"
-                                                                   FontWeight="DemiBold"
-                                                                   Foreground="#fafafa"
-                                                                   Text="Dark Mode" />
-                                                    </Grid>
-                                                </Border>
-                                            </RadioButton>
-                                        </StackPanel>
-                                    </controls:SettingsLayoutItem.Content>
-                                </controls:SettingsLayoutItem>
+                                                <RadioButton Width="135"
+                                                             Height="120"
+                                                             Classes="GigaChips"
+                                                             GroupName="RadioBaseTheme"
+                                                             IsChecked="{Binding !IsLightTheme}">
+                                                    <Border Margin="-50"
+                                                            Background="#222222"
+                                                            CornerRadius="{DynamicResource MediumCornerRadius}">
+                                                        <Grid>
+                                                            <TextBlock Margin="42"
+                                                                       HorizontalAlignment="Center"
+                                                                       VerticalAlignment="Bottom"
+                                                                       FontWeight="DemiBold"
+                                                                       Foreground="#fafafa"
+                                                                       Text="Dark Mode" />
+                                                        </Grid>
+                                                    </Border>
+                                                </RadioButton>
+                                            </StackPanel>
+                                        </controls:SettingsLayoutItem.Content>
+                                    </controls:SettingsLayoutItem>
 
-                                <controls:SettingsLayoutItem Header="Color Theme">
-                                    <controls:SettingsLayoutItem.Content>
-                                        <ItemsControl HorizontalAlignment="Center"
-                                                      ItemsSource="{Binding AvailableColors}">
-                                            <ItemsControl.ItemsPanel>
-                                                <ItemsPanelTemplate>
-                                                    <StackPanel HorizontalAlignment="Center"
-                                                                Orientation="Horizontal"
-                                                                Spacing="10" />
-                                                </ItemsPanelTemplate>
-                                            </ItemsControl.ItemsPanel>
+                                    <controls:SettingsLayoutItem Header="Color Theme">
+                                        <controls:SettingsLayoutItem.Content>
+                                            <ItemsControl HorizontalAlignment="Center"
+                                                          ItemsSource="{Binding AvailableColors}">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <StackPanel HorizontalAlignment="Center"
+                                                                    Orientation="Horizontal"
+                                                                    Spacing="10" />
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
 
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <DataTemplate.DataType>
-                                                        <x:Type TypeName="models1:Selected"
-                                                                x:TypeArguments="models:SukiColorTheme" />
-                                                    </DataTemplate.DataType>
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <DataTemplate.DataType>
+                                                            <x:Type TypeName="models1:Selected"
+                                                                    x:TypeArguments="models:SukiColorTheme" />
+                                                        </DataTemplate.DataType>
 
-                                                    <RadioButton Width="50"
-                                                                 Height="50"
-                                                                 Classes="GigaChips"
-                                                                 Command="{Binding ((viewModels:SettingViewModel)DataContext).SwitchToColorThemeCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type theming:SettingView}}}"
-                                                                 CommandParameter="{Binding}"
-                                                                 GroupName="RadioColorTheme"
-                                                                 IsChecked="{Binding IsSelect}"
-                                                                 Background="{Binding Value.PrimaryBrush}" />
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
-                                    </controls:SettingsLayoutItem.Content>
-                                </controls:SettingsLayoutItem>
+                                                        <RadioButton Width="50"
+                                                                     Height="50"
+                                                                     Classes="GigaChips"
+                                                                     Command="{Binding ((viewModels:SettingViewModel)DataContext).SwitchToColorThemeCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type theming:SettingView}}}"
+                                                                     CommandParameter="{Binding}"
+                                                                     GroupName="RadioColorTheme"
+                                                                     IsChecked="{Binding IsSelect}"
+                                                                     Background="{Binding Value.PrimaryBrush}" />
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </controls:SettingsLayoutItem.Content>
+                                    </controls:SettingsLayoutItem>
 
-                                <controls:SettingsLayoutItem Header="Application Info">
-                                    <controls:SettingsLayoutItem.Content>
-                                        <StackPanel>
-                                            <TextBlock Classes="field"
-                                                       Text="{DynamicResource AccountSettingView.Version}" />
-                                            <TextBox Classes="read-only"
-                                                     Text="{Binding Version}" />
-                                        </StackPanel>
-                                    </controls:SettingsLayoutItem.Content>
-                                </controls:SettingsLayoutItem>
-                            </objectModel:ObservableCollection>
-                        </controls:SettingsLayout.Items>
-                    </controls:SettingsLayout>
-                </controls:GroupBox>
-            </ScrollViewer>
+                                    <controls:SettingsLayoutItem Header="Application Info">
+                                        <controls:SettingsLayoutItem.Content>
+                                            <StackPanel>
+                                                <TextBlock Classes="field"
+                                                           Text="{DynamicResource SettingView.Version}" />
+                                                <TextBox Classes="read-only"
+                                                         Text="{Binding Version}" />
+                                            </StackPanel>
+                                        </controls:SettingsLayoutItem.Content>
+                                    </controls:SettingsLayoutItem>
+                                </objectModel:ObservableCollection>
+                            </controls:SettingsLayout.Items>
+                        </controls:SettingsLayout>
+                    </controls:GroupBox>
+                </ScrollViewer>
 
-            <Button Grid.Row="1"
-                    Classes="Flat"
-                    Command="{Binding SaveSettingsCommand}"
-                    Content="{DynamicResource AccountSettingView.Save}" />
-        </Grid>
+                <Button Grid.Row="1"
+                        Classes="Flat"
+                        Command="{Binding SaveSettingsCommand}"
+                        Content="{DynamicResource SettingView.Save}" />
+            </Grid>
+        </controls:BusyArea>
     </controls:GlassCard>
 </reactiveUi:ReactiveUserControl>

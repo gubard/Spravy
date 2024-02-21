@@ -14,6 +14,7 @@ using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
 using Spravy.Ui.Enums;
+using Spravy.Ui.Extensions;
 using Spravy.Ui.Models;
 using SukiUI;
 using SukiUI.Models;
@@ -25,6 +26,7 @@ public class SettingViewModel : NavigatableViewModelBase
     private readonly SukiTheme theme = SukiTheme.GetInstance();
     private readonly PageHeaderViewModel pageHeaderViewModel;
     private bool isLightTheme;
+    private bool isBusy;
 
     public SettingViewModel() : base(true)
     {
@@ -79,6 +81,12 @@ public class SettingViewModel : NavigatableViewModelBase
         }
     }
 
+    public bool IsBusy
+    {
+        get => isBusy;
+        set => this.RaiseAndSetIfChanged(ref isBusy, value);
+    }
+
     public bool IsLightTheme
     {
         get => isLightTheme;
@@ -87,14 +95,23 @@ public class SettingViewModel : NavigatableViewModelBase
 
     private async Task SaveSettingsAsync(CancellationToken cancellationToken)
     {
-        await ObjectStorage.SaveObjectAsync(
-            TypeCache<SettingModel>.Type.Name,
-            new SettingModel
-            {
-                BaseTheme = IsLightTheme ? "Light" : "Dark",
-                ColorTheme = AvailableColors.Single(x => x.IsSelect).Value.DisplayName,
-            }
-        );
+        try
+        {
+            this.InvokeUIBackgroundAsync(() => IsBusy = true);
+
+            await ObjectStorage.SaveObjectAsync(
+                TypeCache<SettingModel>.Type.Name,
+                new SettingModel
+                {
+                    BaseTheme = IsLightTheme ? "Light" : "Dark",
+                    ColorTheme = AvailableColors.Single(x => x.IsSelect).Value.DisplayName,
+                }
+            );
+        }
+        finally
+        {
+            this.InvokeUIBackgroundAsync(() => IsBusy = false);
+        }
     }
 
     private async Task ChangePasswordAsync(CancellationToken cancellationToken)
