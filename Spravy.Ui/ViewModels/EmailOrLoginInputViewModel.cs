@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Ninject;
 using ProtoBuf;
-using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
@@ -17,9 +17,6 @@ namespace Spravy.Ui.ViewModels;
 
 public class EmailOrLoginInputViewModel : NavigatableViewModelBase
 {
-    private string emailOrLogin = string.Empty;
-    private bool isBusy;
-
     public EmailOrLoginInputViewModel() : base(true)
     {
         ForgotPasswordCommand = CreateCommandFromTask(TaskWork.Create(ForgotPasswordAsync).RunAsync);
@@ -35,17 +32,11 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
 
     public ICommand ForgotPasswordCommand { get; }
 
-    public bool IsBusy
-    {
-        get => isBusy;
-        set => this.RaiseAndSetIfChanged(ref isBusy, value);
-    }
+    [Reactive]
+    public bool IsBusy { get; set; }
 
-    public string EmailOrLogin
-    {
-        get => emailOrLogin;
-        set => this.RaiseAndSetIfChanged(ref emailOrLogin, value);
-    }
+    [Reactive]
+    public string EmailOrLogin { get; set; } = string.Empty;
 
     private async Task ForgotPasswordAsync(CancellationToken cancellationToken)
     {

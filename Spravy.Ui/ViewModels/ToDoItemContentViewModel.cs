@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Avalonia.Collections;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using Spravy.Domain.Helpers;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.Ui.Models;
@@ -10,33 +11,20 @@ namespace Spravy.Ui.ViewModels;
 
 public class ToDoItemContentViewModel : NavigatableViewModelBase
 {
-    private string name = string.Empty;
-    private ToDoItemType type;
-    private string link = string.Empty;
-
     public ToDoItemContentViewModel() : base(true)
     {
     }
 
     public AvaloniaList<ToDoItemType> ToDoItemTypes { get; } = new(Enum.GetValues<ToDoItemType>());
 
-    public string Name
-    {
-        get => name;
-        set => this.RaiseAndSetIfChanged(ref name, value);
-    }
+    [Reactive]
+    public string Name { get; set; }
 
-    public ToDoItemType Type
-    {
-        get => type;
-        set => this.RaiseAndSetIfChanged(ref type, value);
-    }
+    [Reactive]
+    public ToDoItemType Type { get; set; }
 
-    public string Link
-    {
-        get => link;
-        set => this.RaiseAndSetIfChanged(ref link, value);
-    }
+    [Reactive]
+    public string Link { get; set; }
 
     public override string ViewId => TypeCache<ToDoItemContentViewModel>.Type.Name;
 

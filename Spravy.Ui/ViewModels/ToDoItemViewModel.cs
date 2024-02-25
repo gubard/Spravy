@@ -9,6 +9,7 @@ using AutoMapper;
 using Ninject;
 using ProtoBuf;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using Spravy.Domain.Enums;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
@@ -35,21 +36,10 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     ISetToDoParentItemParams,
     ILink
 {
-    private string name = string.Empty;
-    private Guid id;
-    private string description = string.Empty;
-    private ToDoItemType type;
-    private bool isFavorite;
-    private string link = string.Empty;
-    private ToDoItemIsCan isCan;
     private readonly TaskWork refreshToDoItemWork;
     private readonly TaskWork refreshWork;
-    private ToDoItemStatus status;
     private readonly ToDoSubItemsViewModel toDoSubItemsViewModel;
     private readonly PageHeaderViewModel pageHeaderViewModel;
-    private Guid? parentId;
-    private object[] path = ["asdas", "asdas", "asdasdasa"];
-    private DescriptionType descriptionType;
 
     public ToDoItemViewModel() : base(true)
     {
@@ -119,76 +109,43 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     [Inject]
     public required IObjectStorage ObjectStorage { get; init; }
 
-    public Guid? ParentId
-    {
-        get => parentId;
-        set => this.RaiseAndSetIfChanged(ref parentId, value);
-    }
+    [Reactive]
+    public Guid? ParentId { get; set; }
 
-    public object[] Path
-    {
-        get => path;
-        set => this.RaiseAndSetIfChanged(ref path, value);
-    }
+    [Reactive]
+    public object[] Path { get; set; } = Array.Empty<object>();
 
     public bool IsNavigateToParent => true;
     public override string ViewId => $"{TypeCache<ToDoItemViewModel>.Type.Name}:{Id}";
     public bool IsDescriptionPlainText => DescriptionType == DescriptionType.PlainText;
     public bool IsDescriptionMarkdownText => DescriptionType == DescriptionType.Markdown;
 
-    public bool IsFavorite
-    {
-        get => isFavorite;
-        set => this.RaiseAndSetIfChanged(ref isFavorite, value);
-    }
+    [Reactive]
+    public bool IsFavorite { get; set; }
 
-    public ToDoItemType Type
-    {
-        get => type;
-        set => this.RaiseAndSetIfChanged(ref type, value);
-    }
+    [Reactive]
+    public ToDoItemType Type { get; set; }
 
-    public string Name
-    {
-        get => name;
-        set => this.RaiseAndSetIfChanged(ref name, value);
-    }
+    [Reactive]
+    public string Name { get; set; } = string.Empty;
 
-    public Guid Id
-    {
-        get => id;
-        set => this.RaiseAndSetIfChanged(ref id, value);
-    }
+    [Reactive]
+    public Guid Id { get; set; }
 
-    public string Description
-    {
-        get => description;
-        set => this.RaiseAndSetIfChanged(ref description, value);
-    }
+    [Reactive]
+    public string Description { get; set; } = string.Empty;
 
-    public DescriptionType DescriptionType
-    {
-        get => descriptionType;
-        set => this.RaiseAndSetIfChanged(ref descriptionType, value);
-    }
+    [Reactive]
+    public DescriptionType DescriptionType { get; set; }
 
-    public string Link
-    {
-        get => link;
-        set => this.RaiseAndSetIfChanged(ref link, value);
-    }
+    [Reactive]
+    public string Link { get; set; } = string.Empty;
 
-    public ToDoItemIsCan IsCan
-    {
-        get => isCan;
-        set => this.RaiseAndSetIfChanged(ref isCan, value);
-    }
+    [Reactive]
+    public ToDoItemIsCan IsCan { get; set; }
 
-    public ToDoItemStatus Status
-    {
-        get => status;
-        set => this.RaiseAndSetIfChanged(ref status, value);
-    }
+    [Reactive]
+    public ToDoItemStatus Status { get; set; }
 
     public Task RefreshAsync(CancellationToken cancellationToken)
     {

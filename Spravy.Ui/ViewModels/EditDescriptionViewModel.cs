@@ -1,18 +1,13 @@
 using Ninject;
-using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 
 public class EditDescriptionViewModel : ViewModelBase
 {
-    private string toDoItemName = string.Empty;
-
-    public string ToDoItemName
-    {
-        get => toDoItemName;
-        set => this.RaiseAndSetIfChanged(ref toDoItemName, value);
-    }
+    [Reactive]
+    public string ToDoItemName { get; set; } = string.Empty;
 
     [Inject]
     public required EditDescriptionContentViewModel Content { get; init; }

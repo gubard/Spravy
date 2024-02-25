@@ -1,6 +1,7 @@
 using Avalonia.Collections;
 using Avalonia.Threading;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Models;
 using Spravy.Ui.Services;
@@ -9,27 +10,14 @@ namespace Spravy.Ui.ViewModels;
 
 public class PageHeaderViewModel : ViewModelBase
 {
-    private CommandItem? leftCommand;
-    private CommandItem? rightCommand;
-    private object? header;
+    [Reactive]
+    public CommandItem? LeftCommand { get; set; }
 
-    public CommandItem? LeftCommand
-    {
-        get => leftCommand;
-        set => this.RaiseAndSetIfChanged(ref leftCommand, value);
-    }
+    [Reactive]
+    public CommandItem? RightCommand { get; set; }
 
-    public CommandItem? RightCommand
-    {
-        get => rightCommand;
-        set => this.RaiseAndSetIfChanged(ref rightCommand, value);
-    }
-
-    public object? Header
-    {
-        get => header;
-        set => this.RaiseAndSetIfChanged(ref header, value);
-    }
+    [Reactive]
+    public object? Header { get; set; }
 
     public AvaloniaList<CommandItem> Commands { get; } = new();
 

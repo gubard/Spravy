@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Ninject;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Models;
@@ -15,10 +16,6 @@ namespace Spravy.Ui.ViewModels;
 
 public class VerificationCodeViewModel : NavigatableViewModelBase, IVerificationEmail
 {
-    private string identifier = string.Empty;
-    private UserIdentifierType identifierType;
-    private string verificationCode = string.Empty;
-
     public VerificationCodeViewModel() : base(true)
     {
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
@@ -30,23 +27,14 @@ public class VerificationCodeViewModel : NavigatableViewModelBase, IVerification
     [Inject]
     public required IAuthenticationService AuthenticationService { get; init; }
 
-    public string Identifier
-    {
-        get => identifier;
-        set => this.RaiseAndSetIfChanged(ref identifier, value);
-    }
+    [Reactive]
+    public string Identifier { get; set; } = string.Empty;
 
-    public UserIdentifierType IdentifierType
-    {
-        get => identifierType;
-        set => this.RaiseAndSetIfChanged(ref identifierType, value);
-    }
+    [Reactive]
+    public UserIdentifierType IdentifierType { get; set; }
 
-    public string VerificationCode
-    {
-        get => verificationCode;
-        set => this.RaiseAndSetIfChanged(ref verificationCode, value);
-    }
+    [Reactive]
+    public string VerificationCode { get; set; } = string.Empty;
 
     public override void Stop()
     {

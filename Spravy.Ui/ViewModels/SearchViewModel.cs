@@ -5,6 +5,7 @@ using System.Windows.Input;
 using Ninject;
 using ProtoBuf;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;
@@ -18,7 +19,6 @@ namespace Spravy.Ui.ViewModels;
 
 public class SearchViewModel : NavigatableViewModelBase, IToDoItemSearchProperties
 {
-    private string searchText = string.Empty;
     private readonly TaskWork refreshWork;
 
     public SearchViewModel() : base(true)
@@ -30,11 +30,8 @@ public class SearchViewModel : NavigatableViewModelBase, IToDoItemSearchProperti
     public ICommand InitializedCommand { get; }
     public override string ViewId => TypeCache<SearchViewModel>.Type.Name;
 
-    public string SearchText
-    {
-        get => searchText;
-        set => this.RaiseAndSetIfChanged(ref searchText, value);
-    }
+    [Reactive]
+    public string SearchText { get; set; }
 
     [Inject]
     public required ToDoSubItemsViewModel ToDoSubItemsViewModel { get; init; }

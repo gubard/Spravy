@@ -1,6 +1,6 @@
 using System;
 using Avalonia.Collections;
-using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using Spravy.Domain.Enums;
 using Spravy.Ui.Models;
 
@@ -8,20 +8,11 @@ namespace Spravy.Ui.ViewModels;
 
 public class EditDescriptionContentViewModel : ViewModelBase
 {
-    private string description = string.Empty;
-    private DescriptionType type;
-
     public AvaloniaList<DescriptionType> Types { get; } = new(Enum.GetValues<DescriptionType>());
 
-    public string Description
-    {
-        get => description;
-        set => this.RaiseAndSetIfChanged(ref description, value);
-    }
+    [Reactive]
+    public string Description { get; set; } = string.Empty;
 
-    public DescriptionType Type
-    {
-        get => type;
-        set => this.RaiseAndSetIfChanged(ref type, value);
-    }
+    [Reactive]
+    public DescriptionType Type { get; set; }
 }

@@ -7,6 +7,7 @@ using AutoMapper;
 using Avalonia.Collections;
 using Ninject;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using Spravy.Domain.Models;
 using Spravy.Domain.Extensions;
 using Spravy.ToDo.Domain.Interfaces;
@@ -17,8 +18,6 @@ namespace Spravy.Ui.ViewModels;
 
 public class ToDoItemSelectorViewModel : ViewModelBase
 {
-    private ToDoSelectorItemNotify? selectedItem;
-    private string searchText = string.Empty;
     private readonly List<ToDoSelectorItemNotify> itemsCache = new();
 
     public ToDoItemSelectorViewModel()
@@ -40,17 +39,11 @@ public class ToDoItemSelectorViewModel : ViewModelBase
 
     public Guid DefaultSelectedItemId { get; set; }
 
-    public string SearchText
-    {
-        get => searchText;
-        set => this.RaiseAndSetIfChanged(ref searchText, value);
-    }
+    [Reactive]
+    public string SearchText { get; set; } = string.Empty;
 
-    public ToDoSelectorItemNotify? SelectedItem
-    {
-        get => selectedItem;
-        set => this.RaiseAndSetIfChanged(ref selectedItem, value);
-    }
+    [Reactive]
+    public ToDoSelectorItemNotify? SelectedItem { get; set; }
 
     private async Task InitializedAsync(CancellationToken cancellationToken)
     {

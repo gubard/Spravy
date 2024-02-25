@@ -17,7 +17,7 @@
     <Grid RowDefinitions="Auto, *">
         <ContentControl Content="{Binding PageHeaderViewModel}" />
 
-        <ScrollViewer Grid.Row="1" Offset="{Binding ScrollOffset, Mode=TwoWay}">
+        <ScrollViewer Grid.Row="1">
             <ContentControl Content="{Binding ToDoSubItemsViewModel}" />
         </ScrollViewer>
     </Grid>

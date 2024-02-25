@@ -4,10 +4,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Avalonia;
 using Ninject;
 using ProtoBuf;
-using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;
@@ -23,8 +22,6 @@ namespace Spravy.Ui.ViewModels;
 
 public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
 {
-    private Guid id;
-    private Vector scrollOffset;
     private readonly TaskWork refreshWork;
     private readonly PageHeaderViewModel pageHeaderViewModel;
 
@@ -36,12 +33,6 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
 
     public ICommand InitializedCommand { get; }
     public override string ViewId => $"{TypeCache<LeafToDoItemsViewModel>.Type.Name}:{Id}";
-
-    public Vector ScrollOffset
-    {
-        get => scrollOffset;
-        set => this.RaiseAndSetIfChanged(ref scrollOffset, value);
-    }
 
     [Inject]
     public required IObjectStorage ObjectStorage { get; init; }
@@ -64,11 +55,8 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
     [Inject]
     public required ToDoSubItemsViewModel ToDoSubItemsViewModel { get; init; }
 
-    public Guid Id
-    {
-        get => id;
-        set => this.RaiseAndSetIfChanged(ref id, value);
-    }
+    [Reactive]
+    public Guid Id { get; set; }
 
     public Task RefreshAsync(CancellationToken cancellationToken)
     {
@@ -80,9 +68,7 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
         cancellationToken.ThrowIfCancellationRequested();
         var ids = await ToDoService.GetLeafToDoItemIdsAsync(Id, cancellationToken).ConfigureAwait(false);
         cancellationToken.ThrowIfCancellationRequested();
-        var offset = ScrollOffset;
         await ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, cancellationToken).ConfigureAwait(false);
-        await this.InvokeUIAsync(() => ScrollOffset = offset);
     }
 
     private async Task InitializedAsync(CancellationToken cancellationToken)

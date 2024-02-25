@@ -1,5 +1,4 @@
 using Avalonia.Controls;
-using Avalonia.Headless;
 using Avalonia.Input;
 using Spravy.Domain.Extensions;
 using Xunit.Abstractions;

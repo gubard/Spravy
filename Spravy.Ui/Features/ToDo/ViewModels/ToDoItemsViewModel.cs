@@ -5,10 +5,7 @@ using AutoMapper;
 using Avalonia.Collections;
 using Ninject;
 using ReactiveUI;
-using Spravy.ToDo.Domain.Enums;
-using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.Models;
-using Spravy.Ui.Services;
 
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 

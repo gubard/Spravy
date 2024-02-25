@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using Spravy.Domain.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
@@ -10,19 +10,14 @@ namespace Spravy.Ui.ViewModels;
 
 public class ConfirmViewModel : ViewModelBase, ISaveState
 {
-    private object? content;
-
     public ConfirmViewModel()
     {
         CancelCommand = CreateInitializedCommand(CancelAsync);
         ConfirmCommand = CreateInitializedCommand(ConfirmAsync);
     }
 
-    public object? Content
-    {
-        get => content;
-        set => this.RaiseAndSetIfChanged(ref content, value);
-    }
+    [Reactive]
+    public object? Content { get; set; }
 
     public Func<object, Task>? ConfirmTask { get; set; }
     public Func<object, Task>? CancelTask { get; set; }
@@ -43,7 +38,7 @@ public class ConfirmViewModel : ViewModelBase, ISaveState
 
     public Task SaveStateAsync()
     {
-        if (content is ISaveState saveState)
+        if (Content is ISaveState saveState)
         {
             return saveState.SaveStateAsync();
         }

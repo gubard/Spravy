@@ -5,6 +5,7 @@ using System.Windows.Input;
 using Avalonia.Collections;
 using Ninject;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
@@ -23,13 +24,6 @@ public class PeriodicityToDoItemSettingsViewModel : ViewModelBase,
     IIsRequiredCompleteInDueDateProperty,
     IApplySettings
 {
-    private ToDoItemChildrenType childrenType;
-    private Guid id;
-    private DateOnly dueDate;
-    private TypeOfPeriodicity typeOfPeriodicity;
-    private bool isRequiredCompleteInDueDate;
-    private IApplySettings? periodicity;
-
     public PeriodicityToDoItemSettingsViewModel()
     {
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
@@ -39,41 +33,23 @@ public class PeriodicityToDoItemSettingsViewModel : ViewModelBase,
     public AvaloniaList<TypeOfPeriodicity> TypeOfPeriodicities { get; } = new(Enum.GetValues<TypeOfPeriodicity>());
     public ICommand InitializedCommand { get; }
 
-    public IApplySettings? Periodicity
-    {
-        get => periodicity;
-        set => this.RaiseAndSetIfChanged(ref periodicity, value);
-    }
+    [Reactive]
+    public IApplySettings? Periodicity { get; set; }
 
-    public bool IsRequiredCompleteInDueDate
-    {
-        get => isRequiredCompleteInDueDate;
-        set => this.RaiseAndSetIfChanged(ref isRequiredCompleteInDueDate, value);
-    }
+    [Reactive]
+    public bool IsRequiredCompleteInDueDate { get; set; }
 
-    public Guid Id
-    {
-        get => id;
-        set => this.RaiseAndSetIfChanged(ref id, value);
-    }
+    [Reactive]
+    public Guid Id { get; set; }
 
-    public ToDoItemChildrenType ChildrenType
-    {
-        get => childrenType;
-        set => this.RaiseAndSetIfChanged(ref childrenType, value);
-    }
+    [Reactive]
+    public ToDoItemChildrenType ChildrenType { get; set; }
 
-    public TypeOfPeriodicity TypeOfPeriodicity
-    {
-        get => typeOfPeriodicity;
-        set => this.RaiseAndSetIfChanged(ref typeOfPeriodicity, value);
-    }
+    [Reactive]
+    public TypeOfPeriodicity TypeOfPeriodicity { get; set; }
 
-    public DateOnly DueDate
-    {
-        get => dueDate;
-        set => this.RaiseAndSetIfChanged(ref dueDate, value);
-    }
+    [Reactive]
+    public DateOnly DueDate { get; set; }
 
     [Inject]
     public required IToDoService ToDoService { get; set; }

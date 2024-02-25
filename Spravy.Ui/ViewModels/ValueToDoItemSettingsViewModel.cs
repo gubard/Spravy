@@ -5,6 +5,7 @@ using System.Windows.Input;
 using Avalonia.Collections;
 using Ninject;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
@@ -16,9 +17,6 @@ namespace Spravy.Ui.ViewModels;
 
 public class ValueToDoItemSettingsViewModel : ViewModelBase, IToDoChildrenTypeProperty, IApplySettings
 {
-    private ToDoItemChildrenType childrenType;
-    private Guid id;
-
     public ValueToDoItemSettingsViewModel()
     {
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
@@ -26,17 +24,11 @@ public class ValueToDoItemSettingsViewModel : ViewModelBase, IToDoChildrenTypePr
 
     public AvaloniaList<ToDoItemChildrenType> ChildrenTypes { get; } = new(Enum.GetValues<ToDoItemChildrenType>());
 
-    public Guid Id
-    {
-        get => id;
-        set => this.RaiseAndSetIfChanged(ref id, value);
-    }
+    [Reactive]
+    public Guid Id { get; set; }
 
-    public ToDoItemChildrenType ChildrenType
-    {
-        get => childrenType;
-        set => this.RaiseAndSetIfChanged(ref childrenType, value);
-    }
+    [Reactive]
+    public ToDoItemChildrenType ChildrenType { get; set; }
 
     [Inject]
     public required IToDoService ToDoService { get; set; }

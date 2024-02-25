@@ -4,7 +4,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Ninject;
 using Spravy.ToDo.Domain.Enums;
-using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.Features.ToDo.ViewModels;

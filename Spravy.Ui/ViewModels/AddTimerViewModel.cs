@@ -1,5 +1,5 @@
 using System;
-using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using Spravy.Domain.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
@@ -8,27 +8,15 @@ namespace Spravy.Ui.ViewModels;
 
 public class AddTimerViewModel : ViewModelBase, IToDoShortItemProperty, IDueDateTimeProperty
 {
-    private DateTimeOffset dueDateTime = DateTimeOffset.Now.ToCurrentDay();
-    private bool isFavorite;
-    private ToDoShortItemNotify? item;
-
+    [Reactive]
     public Guid EventId { get; set; }
 
-    public ToDoShortItemNotify? ShortItem
-    {
-        get => item;
-        set => this.RaiseAndSetIfChanged(ref item, value);
-    }
+    [Reactive]
+    public ToDoShortItemNotify? ShortItem { get; set; }
 
-    public DateTimeOffset DueDateTime
-    {
-        get => dueDateTime;
-        set => this.RaiseAndSetIfChanged(ref dueDateTime, value);
-    }
+    [Reactive]
+    public DateTimeOffset DueDateTime { get; set; } = DateTimeOffset.Now.ToCurrentDay();
 
-    public bool IsFavorite
-    {
-        get => isFavorite;
-        set => this.RaiseAndSetIfChanged(ref isFavorite, value);
-    }
+    [Reactive]
+    public bool IsFavorite { get; set; }
 }

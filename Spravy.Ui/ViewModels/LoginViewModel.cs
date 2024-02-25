@@ -13,6 +13,7 @@ using Avalonia.Controls;
 using Ninject;
 using ProtoBuf;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
@@ -29,13 +30,8 @@ namespace Spravy.Ui.ViewModels;
 
 public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotifyDataErrorInfo
 {
-    private string login = string.Empty;
-    private string password = string.Empty;
-    private bool isRememberMe;
     private bool loginChanged;
     private bool passwordChanged;
-    private bool tryAutoLogin;
-    private bool isBusy;
 
     public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
@@ -89,35 +85,20 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
     [Inject]
     public required IAuthenticationService AuthenticationService { get; init; }
 
-    public bool IsBusy
-    {
-        get => isBusy;
-        set => this.RaiseAndSetIfChanged(ref isBusy, value);
-    }
+    [Reactive]
+    public bool IsBusy { get; set; }
 
-    public bool TryAutoLogin
-    {
-        get => tryAutoLogin;
-        set => this.RaiseAndSetIfChanged(ref tryAutoLogin, value);
-    }
+    [Reactive]
+    public bool TryAutoLogin { get; set; }
 
-    public bool IsRememberMe
-    {
-        get => isRememberMe;
-        set => this.RaiseAndSetIfChanged(ref isRememberMe, value);
-    }
+    [Reactive]
+    public bool IsRememberMe { get; set; }
 
-    public string Login
-    {
-        get => login;
-        set => this.RaiseAndSetIfChanged(ref login, value);
-    }
+    [Reactive]
+    public string Login { get; set; } = string.Empty;
 
-    public string Password
-    {
-        get => password;
-        set => this.RaiseAndSetIfChanged(ref password, value);
-    }
+    [Reactive]
+    public string Password { get; set; } = string.Empty;
 
     public ICommand InitializedCommand { get; }
     public ICommand EnterCommand { get; }

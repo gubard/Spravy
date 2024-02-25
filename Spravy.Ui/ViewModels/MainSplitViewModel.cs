@@ -1,4 +1,4 @@
-using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 
@@ -6,25 +6,12 @@ namespace Spravy.Ui.ViewModels;
 
 public class MainSplitViewModel : ViewModelBase, IContent
 {
-    private object? content;
-    private object? pane;
-    private bool isPaneOpen;
+    [Reactive]
+    public bool IsPaneOpen { get; set; }
 
-    public bool IsPaneOpen
-    {
-        get => isPaneOpen;
-        set => this.RaiseAndSetIfChanged(ref isPaneOpen, value);
-    }
+    [Reactive]
+    public object? Content { get; set; }
 
-    public object? Content
-    {
-        get => content;
-        set => this.RaiseAndSetIfChanged(ref content, value);
-    }
-
-    public object? Pane
-    {
-        get => pane;
-        set => this.RaiseAndSetIfChanged(ref pane, value);
-    }
+    [Reactive]
+    public object? Pane { get; set; }
 }

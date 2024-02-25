@@ -9,6 +9,7 @@ using Avalonia.Collections;
 using Avalonia.Styling;
 using Ninject;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;
@@ -25,8 +26,6 @@ public class SettingViewModel : NavigatableViewModelBase
 {
     private readonly SukiTheme theme = SukiTheme.GetInstance();
     private readonly PageHeaderViewModel pageHeaderViewModel;
-    private bool isLightTheme;
-    private bool isBusy;
 
     public SettingViewModel() : base(true)
     {
@@ -40,7 +39,7 @@ public class SettingViewModel : NavigatableViewModelBase
             }
         }
 
-        isLightTheme = theme.ActiveBaseTheme == ThemeVariant.Light;
+        IsLightTheme = theme.ActiveBaseTheme == ThemeVariant.Light;
         ChangePasswordCommand = CreateCommandFromTask(TaskWork.Create(ChangePasswordAsync).RunAsync);
         SaveSettingsCommand = CreateCommandFromTask(TaskWork.Create(SaveSettingsAsync).RunAsync);
 
@@ -81,17 +80,11 @@ public class SettingViewModel : NavigatableViewModelBase
         }
     }
 
-    public bool IsBusy
-    {
-        get => isBusy;
-        set => this.RaiseAndSetIfChanged(ref isBusy, value);
-    }
+    [Reactive]
+    public bool IsBusy { get; set; }
 
-    public bool IsLightTheme
-    {
-        get => isLightTheme;
-        set => this.RaiseAndSetIfChanged(ref isLightTheme, value);
-    }
+    [Reactive]
+    public bool IsLightTheme { get; set; }
 
     private async Task SaveSettingsAsync(CancellationToken cancellationToken)
     {

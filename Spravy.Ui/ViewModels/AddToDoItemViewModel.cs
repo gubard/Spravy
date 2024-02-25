@@ -6,7 +6,7 @@ using System.Windows.Input;
 using Material.Icons;
 using Ninject;
 using ProtoBuf;
-using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using Spravy.Domain.Enums;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
@@ -21,9 +21,6 @@ namespace Spravy.Ui.ViewModels;
 
 public class AddToDoItemViewModel : NavigatableViewModelBase
 {
-    private Guid parentId;
-    private object[] path = Array.Empty<object>();
-
     public AddToDoItemViewModel() : base(true)
     {
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
@@ -31,17 +28,11 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
 
     public ICommand InitializedCommand { get; }
 
-    public object[] Path
-    {
-        get => path;
-        set => this.RaiseAndSetIfChanged(ref path, value);
-    }
+    [Reactive]
+    public object[] Path { get; set; } = Array.Empty<object>();
 
-    public Guid ParentId
-    {
-        get => parentId;
-        set => this.RaiseAndSetIfChanged(ref parentId, value);
-    }
+    [Reactive]
+    public Guid ParentId { get; set; }
 
     [Inject]
     public required ToDoItemContentViewModel ToDoItemContent { get; init; }

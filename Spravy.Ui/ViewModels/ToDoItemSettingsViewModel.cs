@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Ninject;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Models;
@@ -17,9 +18,6 @@ namespace Spravy.Ui.ViewModels;
 
 public class ToDoItemSettingsViewModel : NavigatableViewModelBase
 {
-    private IApplySettings? settings;
-    private Guid toDoItemId;
-
     public ToDoItemSettingsViewModel() : base(true)
     {
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
@@ -37,17 +35,11 @@ public class ToDoItemSettingsViewModel : NavigatableViewModelBase
     [Inject]
     public required IToDoService ToDoService { get; init; }
 
-    public IApplySettings? Settings
-    {
-        get => settings;
-        set => this.RaiseAndSetIfChanged(ref settings, value);
-    }
+    [Reactive]
+    public IApplySettings? Settings { get; set; }
 
-    public Guid ToDoItemId
-    {
-        get => toDoItemId;
-        set => this.RaiseAndSetIfChanged(ref toDoItemId, value);
-    }
+    [Reactive]
+    public Guid ToDoItemId { get; set; }
 
     private Task InitializedAsync(CancellationToken cancellationToken)
     {

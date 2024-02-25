@@ -1,44 +1,24 @@
 using Avalonia.Media;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.ViewModels;
 
 public class TextViewModel : ViewModelBase
 {
-    private string text = string.Empty;
-    private bool acceptsReturn;
-    private TextWrapping textWrapping;
-    private string label = string.Empty;
-    private bool isReadOnly;
+    [Reactive]
+    public bool IsReadOnly { get; set; }
 
-    public bool IsReadOnly
-    {
-        get => isReadOnly;
-        set => this.RaiseAndSetIfChanged(ref isReadOnly, value);
-    }
+    [Reactive]
+    public string Text { get; set; } = string.Empty;
 
-    public string Text
-    {
-        get => text;
-        set => this.RaiseAndSetIfChanged(ref text, value);
-    }
+    [Reactive]
+    public bool AcceptsReturn { get; set; }
 
-    public bool AcceptsReturn
-    {
-        get => acceptsReturn;
-        set => this.RaiseAndSetIfChanged(ref acceptsReturn, value);
-    }
+    [Reactive]
+    public TextWrapping TextWrapping { get; set; }
 
-    public TextWrapping TextWrapping
-    {
-        get => textWrapping;
-        set => this.RaiseAndSetIfChanged(ref textWrapping, value);
-    }
-
-    public string Label
-    {
-        get => label;
-        set => this.RaiseAndSetIfChanged(ref label, value);
-    }
+    [Reactive]
+    public string Label { get; set; } = string.Empty;
 }

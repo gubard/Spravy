@@ -6,7 +6,7 @@ using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
 using Ninject;
-using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Extensions;
@@ -16,10 +16,6 @@ namespace Spravy.Ui.ViewModels;
 
 public class ChangeToDoItemOrderIndexViewModel : ViewModelBase
 {
-    private Guid id;
-    private bool isAfter = true;
-    private ToDoShortItemNotify? selectedItem;
-
     public ChangeToDoItemOrderIndexViewModel()
     {
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
@@ -35,23 +31,14 @@ public class ChangeToDoItemOrderIndexViewModel : ViewModelBase
 
     public AvaloniaList<ToDoShortItemNotify> Items { get; } = new();
 
-    public ToDoShortItemNotify? SelectedItem
-    {
-        get => selectedItem;
-        set => this.RaiseAndSetIfChanged(ref selectedItem, value);
-    }
+    [Reactive]
+    public ToDoShortItemNotify? SelectedItem { get; set; }
 
-    public Guid Id
-    {
-        get => id;
-        set => this.RaiseAndSetIfChanged(ref id, value);
-    }
+    [Reactive]
+    public Guid Id { get; set; }
 
-    public bool IsAfter
-    {
-        get => isAfter;
-        set => this.RaiseAndSetIfChanged(ref isAfter, value);
-    }
+    [Reactive]
+    public bool IsAfter { get; set; } = true;
 
     private async Task InitializedAsync(CancellationToken cancellationToken)
     {

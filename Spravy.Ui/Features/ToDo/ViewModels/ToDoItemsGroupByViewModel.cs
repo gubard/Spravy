@@ -5,7 +5,6 @@ using Spravy.Ui.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Spravy.ToDo.Domain.Models;
 
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 

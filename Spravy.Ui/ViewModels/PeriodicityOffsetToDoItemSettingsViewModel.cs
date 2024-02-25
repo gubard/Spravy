@@ -5,6 +5,7 @@ using System.Windows.Input;
 using Avalonia.Collections;
 using Ninject;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
@@ -24,15 +25,6 @@ public class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
     IIsRequiredCompleteInDueDateProperty,
     IApplySettings
 {
-    private ToDoItemChildrenType childrenType;
-    private Guid id;
-    private DateOnly dueDate;
-    private ushort daysOffset;
-    private ushort monthsOffset;
-    private ushort weeksOffset;
-    private ushort yearsOffset;
-    private bool isRequiredCompleteInDueDate;
-
     public PeriodicityOffsetToDoItemSettingsViewModel()
     {
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
@@ -40,53 +32,29 @@ public class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
 
     public AvaloniaList<ToDoItemChildrenType> ChildrenTypes { get; } = new(Enum.GetValues<ToDoItemChildrenType>());
 
-    public bool IsRequiredCompleteInDueDate
-    {
-        get => isRequiredCompleteInDueDate;
-        set => this.RaiseAndSetIfChanged(ref isRequiredCompleteInDueDate, value);
-    }
+    [Reactive]
+    public bool IsRequiredCompleteInDueDate { get; set; }
 
-    public Guid Id
-    {
-        get => id;
-        set => this.RaiseAndSetIfChanged(ref id, value);
-    }
+    [Reactive]
+    public Guid Id { get; set; }
 
-    public ToDoItemChildrenType ChildrenType
-    {
-        get => childrenType;
-        set => this.RaiseAndSetIfChanged(ref childrenType, value);
-    }
+    [Reactive]
+    public ToDoItemChildrenType ChildrenType { get; set; }
 
-    public DateOnly DueDate
-    {
-        get => dueDate;
-        set => this.RaiseAndSetIfChanged(ref dueDate, value);
-    }
+    [Reactive]
+    public DateOnly DueDate { get; set; }
 
-    public ushort DaysOffset
-    {
-        get => daysOffset;
-        set => this.RaiseAndSetIfChanged(ref daysOffset, value);
-    }
+    [Reactive]
+    public ushort DaysOffset { get; set; }
 
-    public ushort MonthsOffset
-    {
-        get => monthsOffset;
-        set => this.RaiseAndSetIfChanged(ref monthsOffset, value);
-    }
+    [Reactive]
+    public ushort MonthsOffset { get; set; }
 
-    public ushort WeeksOffset
-    {
-        get => weeksOffset;
-        set => this.RaiseAndSetIfChanged(ref weeksOffset, value);
-    }
+    [Reactive]
+    public ushort WeeksOffset { get; set; }
 
-    public ushort YearsOffset
-    {
-        get => yearsOffset;
-        set => this.RaiseAndSetIfChanged(ref yearsOffset, value);
-    }
+    [Reactive]
+    public ushort YearsOffset { get; set; }
 
     [Inject]
     public required IToDoService ToDoService { get; set; }

@@ -6,6 +6,7 @@ using System.Windows.Input;
 using Avalonia.Collections;
 using Ninject;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
@@ -16,8 +17,6 @@ namespace Spravy.Ui.ViewModels;
 
 public class ToDoItemDayOfYearSelectorViewModel : ViewModelBase, IApplySettings
 {
-    private Guid toDoItemId;
-
     public ToDoItemDayOfYearSelectorViewModel()
     {
         Items = new(
@@ -39,11 +38,8 @@ public class ToDoItemDayOfYearSelectorViewModel : ViewModelBase, IApplySettings
     [Inject]
     public required IToDoService ToDoService { get; set; }
 
-    public Guid ToDoItemId
-    {
-        get => toDoItemId;
-        set => this.RaiseAndSetIfChanged(ref toDoItemId, value);
-    }
+    [Reactive]
+    public Guid ToDoItemId { get; set; }
 
     private async Task InitializedAsync(CancellationToken cancellationToken)
     {

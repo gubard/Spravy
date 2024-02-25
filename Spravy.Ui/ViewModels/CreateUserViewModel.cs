@@ -9,6 +9,7 @@ using AutoMapper;
 using Avalonia.Controls;
 using Ninject;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Models;
 using Spravy.Domain.Helpers;
@@ -23,15 +24,10 @@ namespace Spravy.Ui.ViewModels;
 
 public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperties, INotifyDataErrorInfo
 {
-    private string login = string.Empty;
-    private string password = string.Empty;
-    private string repeatPassword = string.Empty;
-    private string email = string.Empty;
     private bool emailChanged;
     private bool loginChanged;
     private bool passwordChanged;
     private bool repeatPasswordChanged;
-    private bool isBusy;
 
     public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
@@ -127,35 +123,20 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
         }
     }
 
-    public bool IsBusy
-    {
-        get => isBusy;
-        set => this.RaiseAndSetIfChanged(ref isBusy, value);
-    }
+    [Reactive]
+    public bool IsBusy { get; set; }
 
-    public string Email
-    {
-        get => email;
-        set => this.RaiseAndSetIfChanged(ref email, value);
-    }
+    [Reactive]
+    public string Email { get; set; } = string.Empty;
 
-    public string Login
-    {
-        get => login;
-        set => this.RaiseAndSetIfChanged(ref login, value);
-    }
+    [Reactive]
+    public string Login { get; set; } = string.Empty;
 
-    public string Password
-    {
-        get => password;
-        set => this.RaiseAndSetIfChanged(ref password, value);
-    }
+    [Reactive]
+    public string Password { get; set; } = string.Empty;
 
-    public string RepeatPassword
-    {
-        get => repeatPassword;
-        set => this.RaiseAndSetIfChanged(ref repeatPassword, value);
-    }
+    [Reactive]
+    public string RepeatPassword { get; set; } = string.Empty;
 
     private async Task EnterAsync(CreateUserView view, CancellationToken cancellationToken)
     {
