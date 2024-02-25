@@ -6,7 +6,6 @@ using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
 using Ninject;
-using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Spravy.Domain.Models;
 using Spravy.Domain.Extensions;

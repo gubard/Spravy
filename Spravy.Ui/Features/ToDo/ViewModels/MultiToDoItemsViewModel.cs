@@ -9,6 +9,7 @@ using Avalonia.Collections;
 using Avalonia.Threading;
 using Ninject;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.Extensions;
@@ -20,10 +21,7 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class MultiToDoItemsViewModel : ViewModelBase
 {
-    private bool isMulti;
-    private object? content;
     private readonly ToDoItemsGroupByViewModel toDoItems;
-    private GroupBy groupBy = GroupBy.ByStatus;
     private readonly ToDoItemsGroupByViewModel multiToDoItems;
     private readonly ToDoItemsViewModel favorite;
 
@@ -127,23 +125,14 @@ public class MultiToDoItemsViewModel : ViewModelBase
         }
     }
 
-    public GroupBy GroupBy
-    {
-        get => groupBy;
-        set => this.RaiseAndSetIfChanged(ref groupBy, value);
-    }
+    [Reactive]
+    public GroupBy GroupBy { get; set; } = GroupBy.ByStatus;
 
-    public bool IsMulti
-    {
-        get => isMulti;
-        set => this.RaiseAndSetIfChanged(ref isMulti, value);
-    }
+    [Reactive]
+    public bool IsMulti { get; set; }
 
-    public object? Content
-    {
-        get => content;
-        set => this.RaiseAndSetIfChanged(ref content, value);
-    }
+    [Reactive]
+    public object? Content { get; set; }
 
     public DispatcherOperation ClearAsync()
     {

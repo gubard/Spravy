@@ -1,35 +1,22 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using AutoMapper;
 using Avalonia.Collections;
-using Ninject;
-using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ToDoItemsViewModel : ViewModelBase
 {
-    private object? header;
-    private bool isExpanded = true;
     public AvaloniaList<CommandItem> Commands { get; } = new();
     public AvaloniaList<Selected<ToDoItemNotify>> Items { get; } = new();
 
-    [Inject]
-    public required IMapper Mapper { get; init; }
+    [Reactive]
+    public object? Header { get; set; }
 
-    public object? Header
-    {
-        get => header;
-        set => this.RaiseAndSetIfChanged(ref header, value);
-    }
-
-    public bool IsExpanded
-    {
-        get => isExpanded;
-        set => this.RaiseAndSetIfChanged(ref isExpanded, value);
-    }
+    [Reactive]
+    public bool IsExpanded { get; set; } = true;
 
     public void Clear()
     {

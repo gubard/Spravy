@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Collections;
 using Ninject;
-using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Enums;

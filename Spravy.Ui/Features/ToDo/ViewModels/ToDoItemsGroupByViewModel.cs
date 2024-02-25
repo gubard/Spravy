@@ -5,13 +5,12 @@ using Spravy.Ui.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using ReactiveUI.Fody.Helpers;
 
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ToDoItemsGroupByViewModel : ViewModelBase
 {
-    private GroupBy groupBy = GroupBy.ByStatus;
-    private object? content;
     private readonly ToDoItemsGroupByStatusViewModel groupByStatus;
 
     public ToDoItemsGroupByViewModel()
@@ -49,17 +48,11 @@ public class ToDoItemsGroupByViewModel : ViewModelBase
     [Inject]
     public required ToDoItemsGroupByTypeViewModel GroupByType { get; init; }
 
-    public GroupBy GroupBy
-    {
-        get => groupBy;
-        set => this.RaiseAndSetIfChanged(ref groupBy, value);
-    }
+    [Reactive]
+    public GroupBy GroupBy { get; set; } = GroupBy.ByStatus;
 
-    public object? Content
-    {
-        get => content;
-        set => this.RaiseAndSetIfChanged(ref content, value);
-    }
+    [Reactive]
+    public object? Content { get; set; }
 
     public void ClearExcept(IEnumerable<Guid> ids)
     {

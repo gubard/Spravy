@@ -1,5 +1,4 @@
 using Avalonia.Media;
-using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Spravy.Ui.Models;
 

@@ -1,6 +1,5 @@
 using Avalonia.Collections;
 using Avalonia.Threading;
-using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Models;

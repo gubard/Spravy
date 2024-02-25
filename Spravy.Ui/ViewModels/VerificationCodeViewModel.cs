@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Ninject;
-using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Domain.Helpers;

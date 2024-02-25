@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using Avalonia.Collections;
-using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Spravy.Domain.Helpers;
 using Spravy.ToDo.Domain.Enums;

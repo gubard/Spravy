@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Ninject;
 using ProtoBuf;
-using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
