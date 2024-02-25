@@ -11,13 +11,12 @@
                                 mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                                 x:Class="Spravy.Ui.Views.SearchView"
                                 x:DataType="viewModels:SearchViewModel">
-    
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
             <InvokeCommandAction Command="{Binding InitializedCommand}" />
         </EventTriggerBehavior>
     </Interaction.Behaviors>
-    
+
     <UserControl.KeyBindings>
         <KeyBinding Gesture="Enter"
                     Command="{x:Static services:CommandStorage.ToDoItemSearchCommand}"
@@ -28,19 +27,11 @@
         <Grid ColumnDefinitions="Auto,*,Auto">
             <ContentControl Content="{x:Static services:CommandStorage.SwitchPaneItem}" />
 
-            <TextBox Grid.Column="1"
-                     Name="{x:Static views:SearchView.SearchTextTextBoxName}"
-                     Text="{Binding SearchText}">
-                <TextBox.InnerLeftContent>
-                    <Border Height="{Binding $parent[TextBox].Height}" Width="{Binding $self.Bounds.Height}">
-                        <avalonia:MaterialIcon HorizontalAlignment="Center"
-                                               VerticalAlignment="Center"
-                                               Kind="Magnify"
-                                               Width="20"
-                                               Height="20" />
-                    </Border>
-                </TextBox.InnerLeftContent>
-            </TextBox>
+            <StackPanel Grid.Column="1">
+                <TextBlock Classes="field" Text="{DynamicResource SearchView.Search}" />
+                <TextBox Name="{x:Static views:SearchView.SearchTextTextBoxName}"
+                         Text="{Binding SearchText}" />
+            </StackPanel>
 
             <Button Grid.Column="2"
                     Command="{x:Static services:CommandStorage.ToDoItemSearchCommand}"

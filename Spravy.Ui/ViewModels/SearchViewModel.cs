@@ -31,7 +31,7 @@ public class SearchViewModel : NavigatableViewModelBase, IToDoItemSearchProperti
     public override string ViewId => TypeCache<SearchViewModel>.Type.Name;
 
     [Reactive]
-    public string SearchText { get; set; }
+    public string SearchText { get; set; } = string.Empty;
 
     [Inject]
     public required ToDoSubItemsViewModel ToDoSubItemsViewModel { get; init; }

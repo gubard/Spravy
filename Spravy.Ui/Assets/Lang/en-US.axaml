@@ -1,6 +1,9 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:system="clr-namespace:System;assembly=System.Runtime">
+    <!--SearchView-->
+    <system:String x:Key="SearchView.Search">Search</system:String>
+    
     <!--EmailOrLoginInputView-->
     <system:String x:Key="EmailOrLoginInputView.EmailOrLogin">Email or login</system:String>
     <system:String x:Key="EmailOrLoginInputView.Back">Back</system:String>
