@@ -90,10 +90,10 @@ public class EfAuthenticationService : IAuthenticationService
         {
             Id = Guid.NewGuid(),
             HashMethod = hasher.HashMethod,
-            Login = options.Login,
+            Login = options.Login.Trim().ToUpperInvariant(),
             Salt = salt.ToString(),
             PasswordHash = hash,
-            Email = options.Email,
+            Email = options.Email.Trim().ToUpperInvariant(),
         };
 
         await context.ExecuteSaveChangesTransactionAsync(

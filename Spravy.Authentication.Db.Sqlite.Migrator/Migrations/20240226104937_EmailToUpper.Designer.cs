@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Spravy.Authentication.Db.Contexts;
 
@@ -10,9 +11,11 @@ using Spravy.Authentication.Db.Contexts;
 namespace Spravy.Authentication.Db.Sqlite.Migrator.Migrations
 {
     [DbContext(typeof(SpravyDbAuthenticationDbContext))]
-    partial class SqliteSpravyAuthenticationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240226104937_EmailToUpper")]
+    partial class EmailToUpper
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.2");
