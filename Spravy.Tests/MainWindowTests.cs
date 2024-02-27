@@ -22,8 +22,7 @@ public class MainWindowTests
     [AvaloniaFact]
     public void CreateUserFlow()
     {
-        return;
-        output.WriteLine($"Start test: {nameof(CreateUserFlow)}");
+        Console.WriteLine($"Start test: {nameof(CreateUserFlow)}");
 
         WindowHelper.CreateWindow(output)
             .TryCatch(
