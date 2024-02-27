@@ -10,13 +10,12 @@ using Spravy.Tests.Helpers;
 using Spravy.Ui.Models;
 using Spravy.Ui.ViewModels;
 using Spravy.Ui.Views;
-using Xunit.Abstractions;
 
 namespace Spravy.Tests.Extensions;
 
 public static class WindowExtension
 {
-    public static TWindow CloseErrorDialogHost<TWindow>(this TWindow window, ITestOutputHelper output)
+    public static TWindow CloseErrorDialogHost<TWindow>(this TWindow window)
         where TWindow : Window
     {
         var dialogHost = window.GetErrorDialogHost();
@@ -39,7 +38,7 @@ public static class WindowExtension
             .ThrowIfIsNotCast<Control>()
             .FindControl<Button>(ElementNames.OkButton)
             .ThrowIfNull()
-            .ClickOnButton(window, output);
+            .ClickOnButton(window);
 
         dialogHost.IsOpen.Should().BeFalse();
 
@@ -53,11 +52,11 @@ public static class WindowExtension
         return window;
     }
 
-    public static TWindow SetKeyTextInput<TWindow>(this TWindow window, string text, ITestOutputHelper output)
+    public static TWindow SetKeyTextInput<TWindow>(this TWindow window, string text)
         where TWindow : Window
     {
-        window.KeyTextInput(text, output);
-        window.RunJobsAll(output);
+        window.SpravyKeyTextInput(text);
+        window.RunJobsAll();
 
         return window;
     }
@@ -65,69 +64,68 @@ public static class WindowExtension
     public static TWindow KeyHandleQwerty<TWindow>(
         this TWindow window,
         PhysicalKey key,
-        RawInputModifiers modifiers,
-        ITestOutputHelper output
+        RawInputModifiers modifiers
     )
         where TWindow : Window
     {
-        window.KeyPressQwerty(key, modifiers, output);
-        window.RunJobsAll(output);
-        window.KeyReleaseQwerty(key, modifiers, output);
-        window.RunJobsAll(output);
+        window.SpravyKeyPressQwerty(key, modifiers);
+        window.RunJobsAll();
+        window.SpravyKeyReleaseQwerty(key, modifiers);
+        window.RunJobsAll();
 
         return window;
     }
 
-    public static TWindow SetSize<TWindow>(this TWindow window, double width, double height, ITestOutputHelper output)
+    public static TWindow SetSize<TWindow>(this TWindow window, double width, double height)
         where TWindow : Window
     {
-        output.WriteLine($"Change window size from {window.Width}x{window.Height} to {width}x{height}");
+        Console.WriteLine($"Change window size from {window.Width}x{window.Height} to {width}x{height}");
         window.Width = width;
         window.Height = height;
-        window.RunJobsAll(output);
+        window.RunJobsAll();
 
         return window;
     }
 
-    public static TWindow SaveFrame<TWindow>(this TWindow window, ITestOutputHelper output) where TWindow : Window
+    public static TWindow SaveFrame<TWindow>(this TWindow window) where TWindow : Window
     {
-        return window.RunJobsAll(output).SaveFrame(FileHelper.GetFrameShortFile(), output);
+        return window.RunJobsAll().SaveFrame(FileHelper.GetFrameShortFile());
     }
 
-    public static async Task<TWindow> SaveFrameAsync<TWindow>(this Task<TWindow> task, ITestOutputHelper output)
+    public static async Task<TWindow> SaveFrameAsync<TWindow>(this Task<TWindow> task)
         where TWindow : Window
     {
         var window = await task;
 
-        return window.RunJobsAll(output).SaveFrame(FileHelper.GetFrameShortFile(), output);
+        return window.RunJobsAll().SaveFrame(FileHelper.GetFrameShortFile());
     }
 
-    public static TWindow SaveFrame<TWindow>(this TWindow window, FileInfo file, ITestOutputHelper output)
+    public static TWindow SaveFrame<TWindow>(this TWindow window, FileInfo file)
         where TWindow : Window
     {
-        output.WriteLine($"Capturing rendered frame");
+        Console.WriteLine($"Capturing rendered frame");
         using var bitmap = window.CaptureRenderedFrame().ThrowIfNull();
-        output.WriteLine($"Captured rendered frame");
-        output.WriteLine($"Saving rendered frame to {file}");
+        Console.WriteLine($"Captured rendered frame");
+        Console.WriteLine($"Saving rendered frame to {file}");
         bitmap.Save(file.FullName);
-        output.WriteLine($"Saved rendered frame to {file}");
+        Console.WriteLine($"Saved rendered frame to {file}");
 
         return window;
     }
 
-    public static TWindow Show<TWindow>(this TWindow window, ITestOutputHelper output) where TWindow : Window
+    public static TWindow Show<TWindow>(this TWindow window) where TWindow : Window
     {
-        output.WriteLine($"Showing {window.Name}");
+        Console.WriteLine($"Showing {window.Name}");
         window.Show();
-        output.WriteLine($"Showed {window.Name}");
+        Console.WriteLine($"Showed {window.Name}");
 
         return window;
     }
 
-    public static TWindow ShowWindow<TWindow>(this TWindow window, ITestOutputHelper output) where TWindow : Window
+    public static TWindow ShowWindow<TWindow>(this TWindow window) where TWindow : Window
     {
-        window.Show(output);
-        window.RunJobsAll(output);
+        window.Show();
+        window.RunJobsAll();
 
         return window;
     }

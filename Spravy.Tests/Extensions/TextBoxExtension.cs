@@ -1,13 +1,12 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Spravy.Domain.Extensions;
-using Xunit.Abstractions;
 
 namespace Spravy.Tests.Extensions;
 
 public static class TextBoxExtension
 {
-    public static TTextBox ClearText<TTextBox>(this TTextBox textBox, Window window, ITestOutputHelper output)
+    public static TTextBox ClearText<TTextBox>(this TTextBox textBox, Window window)
         where TTextBox : TextBox
     {
         textBox.Text.ThrowIfNullOrEmpty();
@@ -15,18 +14,18 @@ public static class TextBoxExtension
 
         for (var i = 0; i < textBox.Text.ThrowIfNull().Length; i++)
         {
-            window.KeyPressQwerty(PhysicalKey.ArrowRight, RawInputModifiers.None, output);
-            window.RunJobsAll(output);
-            window.KeyReleaseQwerty(PhysicalKey.ArrowRight, RawInputModifiers.None, output);
-            window.RunJobsAll(output);
+            window.SpravyKeyPressQwerty(PhysicalKey.ArrowRight, RawInputModifiers.None);
+            window.RunJobsAll();
+            window.SpravyKeyReleaseQwerty(PhysicalKey.ArrowRight, RawInputModifiers.None);
+            window.RunJobsAll();
         }
 
         while (textBox.Text.ThrowIfNull().Length > 0)
         {
-            window.KeyPressQwerty(PhysicalKey.Backspace, RawInputModifiers.None, output);
-            window.RunJobsAll(output);
-            window.KeyReleaseQwerty(PhysicalKey.Backspace, RawInputModifiers.None, output);
-            window.RunJobsAll(output);
+            window.SpravyKeyPressQwerty(PhysicalKey.Backspace, RawInputModifiers.None);
+            window.RunJobsAll();
+            window.SpravyKeyReleaseQwerty(PhysicalKey.Backspace, RawInputModifiers.None);
+            window.RunJobsAll();
         }
 
         return textBox;

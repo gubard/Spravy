@@ -1,32 +1,30 @@
 using Avalonia.Input;
 using FluentAssertions;
-using Xunit.Abstractions;
 
 namespace Spravy.Tests.Extensions;
 
 public static class InputElementExtension
 {
-    public static TInputElement Focus<TInputElement>(
+    public static TInputElement SpravyFocus<TInputElement>(
         this TInputElement inputElement,
         NavigationMethod method,
-        KeyModifiers keyModifiers,
-        ITestOutputHelper output
+        KeyModifiers keyModifiers
     )
         where TInputElement : InputElement
     {
-        output.WriteLine($"Focusing {inputElement.Name}");
+        Console.WriteLine($"Focusing {inputElement.Name}");
         inputElement.Focus(method, keyModifiers);
-        output.WriteLine($"Focused {inputElement.Name}");
+        Console.WriteLine($"Focused {inputElement.Name}");
 
         return inputElement;
     }
 
-    public static TInputElement FocusElement<TInputElement>(this TInputElement inputElement, ITestOutputHelper output)
+    public static TInputElement FocusElement<TInputElement>(this TInputElement inputElement)
         where TInputElement : InputElement
     {
         inputElement.IsFocused.Should().BeFalse();
-        inputElement.Focus(NavigationMethod.Unspecified, KeyModifiers.None, output);
-        inputElement.RunJobsAll(output);
+        inputElement.SpravyFocus(NavigationMethod.Unspecified, KeyModifiers.None);
+        inputElement.RunJobsAll();
         inputElement.IsFocused.Should().BeTrue();
 
         return inputElement;
