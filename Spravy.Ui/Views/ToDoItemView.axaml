@@ -26,7 +26,10 @@
                        Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
         </Grid>
 
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
+        <ScrollViewer Grid.Row="1"
+                      VerticalScrollBarVisibility="Disabled"
+                      HorizontalScrollBarVisibility="Auto"
+                      Margin="8,0,0,0">
             <controls:Stepper Steps="{Binding Path}" Index="0" HorizontalAlignment="Center" />
         </ScrollViewer>
 
