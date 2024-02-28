@@ -2,16 +2,18 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Ninject;
+using Spravy.Domain.Helpers;
 using Spravy.Domain.Models;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
+using Spravy.Ui.Models;
 using Spravy.Ui.ViewModels;
 
 namespace Spravy.Ui.Services;
 
 public class Navigator : INavigator
 {
-    private readonly QueryList<INavigatable> list = new(20);
+    private readonly QueryList<NavigatorItem> list = new(20);
 
     [Inject]
     public required IKernel Resolver { get; init; }
@@ -25,7 +27,7 @@ public class Navigator : INavigator
     [Inject]
     public required MainSplitViewModel MainSplitViewModel { get; init; }
 
-    private async Task AddCurrentContentAsync()
+    private async Task AddCurrentContentAsync(Action<object> setup)
     {
         if (Content.Content is null)
         {
@@ -41,12 +43,12 @@ public class Navigator : INavigator
         }
 
         await content.SaveStateAsync().ConfigureAwait(false);
-        list.Add(content);
+        list.Add(new NavigatorItem(content, setup));
     }
 
     public async Task NavigateToAsync(Type type, CancellationToken cancellationToken)
     {
-        await AddCurrentContentAsync();
+        await AddCurrentContentAsync(ActionHelper<object>.Empty);
         var viewModel = (INavigatable)Resolver.Get(type);
         await this.InvokeUIAsync(() => Content.Content = viewModel);
     }
@@ -54,30 +56,39 @@ public class Navigator : INavigator
     public async Task NavigateToAsync<TViewModel>(Action<TViewModel> setup, CancellationToken cancellationToken)
         where TViewModel : INavigatable
     {
-        await AddCurrentContentAsync();
-        var viewModel = Resolver.Get<TViewModel>();
+        await AddCurrentContentAsync(obj => setup.Invoke((TViewModel)obj));
 
-        await this.InvokeUIAsync(
-            () =>
-            {
-                setup.Invoke(viewModel);
-                Content.Content = viewModel;
-            }
-        );
+        if (Content.Content is IRefresh refresh && Content.Content is TViewModel vm)
+        {
+            await this.InvokeUIAsync(() => setup.Invoke(vm));
+            await refresh.RefreshAsync(cancellationToken);
+        }
+        else
+        {
+            var viewModel = Resolver.Get<TViewModel>();
+
+            await this.InvokeUIAsync(
+                () =>
+                {
+                    setup.Invoke(viewModel);
+                    Content.Content = viewModel;
+                }
+            );
+        }
     }
 
     public async Task NavigateToAsync<TViewModel>(CancellationToken cancellationToken) where TViewModel : INavigatable
     {
-        await AddCurrentContentAsync();
+        await AddCurrentContentAsync(ActionHelper<object>.Empty);
         var viewModel = Resolver.Get<TViewModel>();
         await this.InvokeUIAsync(() => Content.Content = viewModel);
     }
 
     public async Task<INavigatable?> NavigateBackAsync(CancellationToken cancellationToken)
     {
-        var viewModel = list.Pop();
+        var item = list.Pop();
 
-        if (viewModel is null)
+        if (item is null)
         {
             return null;
         }
@@ -94,15 +105,21 @@ public class Navigator : INavigator
             return new EmptyNavigatable();
         }
 
-        await this.InvokeUIAsync(() => Content.Content = viewModel);
+        await this.InvokeUIAsync(
+            () =>
+            {
+                item.Setup.Invoke(item.Navigatable);
+                Content.Content = item.Navigatable;
+            }
+        );
 
-        return viewModel;
+        return item.Navigatable;
     }
 
     public async Task NavigateToAsync<TViewModel>(TViewModel parameter, CancellationToken cancellationToken)
         where TViewModel : INavigatable
     {
-        await AddCurrentContentAsync();
+        await AddCurrentContentAsync(ActionHelper<object>.Empty);
         await this.InvokeUIAsync(() => Content.Content = parameter);
     }
 }
