@@ -22,7 +22,6 @@ internal partial class Program
 {
     private static async Task Main()
     {
-        TaskHelper.ConfigureAwait = true;
         Log.Logger = new LoggerConfiguration()
             .WriteTo.Console()
             .CreateLogger();

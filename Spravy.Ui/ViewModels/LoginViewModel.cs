@@ -175,8 +175,9 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
         try
         {
             await this.InvokeUIBackgroundAsync(() => IsBusy = true);
+
             var isVerified = await AuthenticationService.IsVerifiedByLoginAsync(Login, cancellationToken)
-                .ConfigureAwait(TaskHelper.ConfigureAwait);
+                .ConfigureAwait(false);
 
             if (!isVerified)
             {
@@ -197,6 +198,7 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
             await TokenService.LoginAsync(user, cancellationToken).ConfigureAwait(false);
             Account.Login = user.Login;
             await RememberMeAsync(cancellationToken).ConfigureAwait(false);
+
             await Navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken)
                 .ConfigureAwait(false);
         }
@@ -236,7 +238,8 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
 
             var setting = await ObjectStorage.GetObjectOrDefaultAsync<LoginViewModelSetting>(ViewId)
                 .ConfigureAwait(false);
-            await SetStateAsync(setting).ConfigureAwait(TaskHelper.ConfigureAwait);
+
+            await SetStateAsync(setting).ConfigureAwait(false);
 
             if (!await ObjectStorage.IsExistsAsync(StorageIds.LoginId).ConfigureAwait(false))
             {
@@ -248,6 +251,7 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
             var jwtToken = jwtHandler.ReadJwtToken(item.Token);
             var l = jwtToken.Claims.Single(x => x.Type == ClaimTypes.Name).Value;
             Account.Login = l;
+
             await TokenService.LoginAsync(item.Token.ThrowIfNullOrWhiteSpace(), cancellationToken)
                 .ConfigureAwait(false);
 

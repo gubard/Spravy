@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Avalonia.Collections;
 using ReactiveUI;
 using Spravy.ToDo.Domain.Enums;
@@ -26,8 +27,15 @@ public class ToDoItemNotify : NotifyBase,
     private ActiveToDoItemNotify? active;
     private ToDoItemIsCan isCan;
     private Guid? parentId;
+    private ICommand? completeCommand;
 
     public AvaloniaList<CommandItem> Commands { get; } = new();
+
+    public ICommand? CompleteCommand
+    {
+        get => completeCommand;
+        set => this.RaiseAndSetIfChanged(ref completeCommand, value);
+    }
 
     public ToDoItemIsCan IsCan
     {

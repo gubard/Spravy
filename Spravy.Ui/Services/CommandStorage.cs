@@ -1391,7 +1391,7 @@ public static class CommandStorage
         await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    private static async Task RefreshCurrentViewAsync(CancellationToken cancellationToken)
+    public static async Task RefreshCurrentViewAsync(CancellationToken cancellationToken)
     {
         if (mainSplitViewModel.Content is not IRefresh refresh)
         {

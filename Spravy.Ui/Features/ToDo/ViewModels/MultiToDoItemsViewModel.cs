@@ -10,10 +10,13 @@ using Avalonia.Threading;
 using Ninject;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
+using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Features.ToDo.Enums;
+using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 using Spravy.Ui.Services;
 
@@ -53,6 +56,9 @@ public class MultiToDoItemsViewModel : ViewModelBase
 
     [Inject]
     public required IMapper Mapper { get; init; }
+
+    [Inject]
+    public required IToDoService ToDoService { get; init; }
 
     [Inject]
     public required ToDoItemsViewModel Favorite
@@ -286,6 +292,43 @@ public class MultiToDoItemsViewModel : ViewModelBase
         item.Commands.Add(CommandStorage.ChangeOrderIndexItem.WithParam(item));
         item.Commands.Add(CommandStorage.ResetToDoItemItem.WithParam(item));
 
+        item.CompleteCommand =
+            CreateCommandFromTask<ICanCompleteProperty>(
+                TaskWork.Create<ICanCompleteProperty>(SwitchCompleteToDoItemAsync).RunAsync
+            );
+
         return item;
+    }
+
+    private async Task SwitchCompleteToDoItemAsync(
+        ICanCompleteProperty property,
+        CancellationToken cancellationToken
+    )
+    {
+        switch (property.IsCan)
+        {
+            case ToDoItemIsCan.None:
+                break;
+            case ToDoItemIsCan.CanComplete:
+                await ToDoService.UpdateToDoItemCompleteStatusAsync(
+                        property.Id,
+                        true,
+                        cancellationToken
+                    )
+                    .ConfigureAwait(false);
+                break;
+            case ToDoItemIsCan.CanIncomplete:
+                await ToDoService.UpdateToDoItemCompleteStatusAsync(
+                        property.Id,
+                        false,
+                        cancellationToken
+                    )
+                    .ConfigureAwait(false);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+
+        await CommandStorage.RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
     }
 }
