@@ -12,7 +12,6 @@ using Spravy.Domain.Extensions;
 using Spravy.Ui.Browser.Configurations;
 using Spravy.Ui.Configurations;
 using Spravy.Ui.Extensions;
-using Spravy.Ui.Helpers;
 
 [assembly: SupportedOSPlatform("browser")]
 
