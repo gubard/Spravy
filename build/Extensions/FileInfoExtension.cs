@@ -52,4 +52,14 @@ public static class FileInfoExtension
     {
         File.WriteAllText(file.FullName, text);
     }
+
+    public static string GetFileExtension(this FileInfo file)
+    {
+        return Path.GetExtension(file.FullName);
+    }
+
+    public static string GetFileNameWithoutExtension(this FileInfo file)
+    {
+        return Path.GetFileNameWithoutExtension(file.FullName);
+    }
 }

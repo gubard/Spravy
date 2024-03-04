@@ -7,7 +7,9 @@ using System.Security.Claims;
 using System.Text;
 using _build.Extensions;
 using _build.Helpers;
+using _build.Interfaces;
 using _build.Models;
+using _build.Services;
 using CliWrap;
 using FluentFTP;
 using Microsoft.IdentityModel.Tokens;
@@ -30,9 +32,7 @@ class Build : NukeBuild
     ///   - Microsoft VSCode           https://nuke.build/vscode
     public static int Main()
     {
-        LoadVersion();
-        Version++;
-        UpdateVersion();
+        Singleton.VersionService.Load();
 
         return Execute<Build>(x => x.Publish);
     }
@@ -61,7 +61,6 @@ class Build : NukeBuild
     [Parameter] readonly string StagingSshUser;
     [Parameter] readonly string StagingServerHost;
     [Parameter] readonly string MailPassword;
-    static SpravyVersion Version;
 
     static readonly Dictionary<string, string> Hosts = new();
     static readonly Dictionary<Project, ServiceOptions> ServiceOptions = new();
@@ -69,38 +68,19 @@ class Build : NukeBuild
     static string Token;
     static DirectoryInfo AndroidFolder;
 
+    ReadOnlyMemory<IProjectBuilder> Projects;
+
     const FtpListOption FtpOption =
         FtpListOption.Recursive | FtpListOption.ForceList | FtpListOption.Auto | FtpListOption.AllFiles;
 
     [Solution] readonly Solution Solution;
 
-    static readonly FileInfo FileVersion = "/tmp/Spravy/version.txt".ToFile();
-
-    static void LoadVersion()
+    protected override void OnBuildInitialized()
     {
-        if (FileVersion.Exists)
-        {
-            SpravyVersion.TryParse(File.ReadAllText(FileVersion.FullName), out Version);
+        base.OnBuildInitialized();
 
-            return;
-        }
-
-        Version = new SpravyVersion(1, 0, 0, 0);
-    }
-
-    static void UpdateVersion()
-    {
-        if (!FileVersion.Directory.Exists)
-        {
-            FileVersion.Directory.Create();
-        }
-
-        if (!FileVersion.Exists)
-        {
-            using var stream = FileVersion.Create();
-        }
-
-        File.WriteAllText(FileVersion.FullName, Version.ToString());
+        Projects = Singleton.ProjectBuilderFactory.Create(Solution.AllProjects.Select(x => new FileInfo(x.Path)))
+            .ToArray();
     }
 
     void Setup(string host)
@@ -150,7 +130,7 @@ class Build : NukeBuild
                         setting.SetProjectFile(project)
                             .EnableNoRestore()
                             .SetConfiguration(Configuration)
-                            .AddProperty("Version", Version.ToString())
+                            .AddProperty("Version", Singleton.VersionService.Version.ToString())
                     );
 
                     break;
@@ -183,7 +163,7 @@ class Build : NukeBuild
                         .EnableNoRestore()
                         .SetRuntime("linux-x64")
                         .SetConfiguration(Configuration)
-                        .AddProperty("Version", Version.ToString())
+                        .AddProperty("Version", Singleton.VersionService.Version.ToString())
                 );
 
                 break;
@@ -213,7 +193,7 @@ class Build : NukeBuild
                         .EnableNoRestore()
                         .SetRuntime("win-x64")
                         .SetConfiguration(Configuration)
-                        .AddProperty("Version", Version.ToString())
+                        .AddProperty("Version", Singleton.VersionService.Version.ToString())
                 );
 
                 break;
@@ -327,7 +307,7 @@ class Build : NukeBuild
                 .SetProperty("AndroidSigningStorePass", AndroidSigningStorePass)
                 .SetProperty("AndroidSdkDirectory", "/opt/android-sdk")
                 .DisableNoBuild()
-                .AddProperty("Version", Version.ToString())
+                .AddProperty("Version", Singleton.VersionService.Version.ToString())
         );
 
         DeleteIfExistsDirectory(ftpClient, $"/home/{ftpUser}/Apps/Spravy.Ui.Android");
@@ -475,7 +455,7 @@ class Build : NukeBuild
                     var botClient = new TelegramBotClient(TelegramToken);
                     botClient.SendTextMessageAsync(
                             chatId: "@spravy_release",
-                            text: $"Published v{Version}"
+                            text: $"Published v{Singleton.VersionService.Version}"
                         )
                         .GetAwaiter()
                         .GetResult();
