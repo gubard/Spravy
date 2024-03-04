@@ -85,6 +85,11 @@ public static class Utf8JsonWriterExtension
         string token
     )
     {
+        if (!hosts.TryGetValue(property.Name, out var port))
+        {
+            return false;
+        }
+        
         writer.AddObject(property.Name, () =>
             {
                 foreach (var obj in property.Value.EnumerateObject())
@@ -92,7 +97,7 @@ public static class Utf8JsonWriterExtension
                     switch (obj.Name)
                     {
                         case "Host":
-                            writer.AddStringValue("Host", $"https://{domain}:{hosts[property.Name]}");
+                            writer.AddStringValue("Host", $"https://{domain}:{port}");
 
                             break;
                         case "Token":
