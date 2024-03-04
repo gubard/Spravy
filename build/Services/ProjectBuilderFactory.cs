@@ -8,10 +8,14 @@ namespace _build.Services;
 public class ProjectBuilderFactory
 {
     readonly IReadOnlyDictionary<string, ushort> servicePorts;
+    readonly string token;
+    readonly string emailPassword;
 
-    public ProjectBuilderFactory(IReadOnlyDictionary<string, ushort> servicePorts)
+    public ProjectBuilderFactory(IReadOnlyDictionary<string, ushort> servicePorts, string token, string emailPassword)
     {
         this.servicePorts = servicePorts;
+        this.token = token;
+        this.emailPassword = emailPassword;
     }
 
     public IEnumerable<IProjectBuilder> Create(IEnumerable<FileInfo> csprojFiles)
@@ -27,22 +31,28 @@ public class ProjectBuilderFactory
 
             if (fileName.EndsWith(".Service"))
             {
-                yield return new ServiceProjectBuilder(csprojFile, servicePorts[fileName]);
+                yield return new ServiceProjectBuilder(
+                    csprojFile,
+                    servicePorts[fileName.GetGrpcServiceName()],
+                    token,
+                    servicePorts,
+                    emailPassword
+                );
             }
 
             if (fileName.EndsWith(".Android"))
             {
-                yield return new AndroidProjectBuilder(csprojFile);
+                yield return new AndroidProjectBuilder(csprojFile, servicePorts);
             }
 
             if (fileName.EndsWith(".Browser"))
             {
-                yield return new BrowserProjectBuilder(csprojFile);
+                yield return new BrowserProjectBuilder(csprojFile, servicePorts);
             }
-            
+
             if (fileName.EndsWith(".Desktop"))
             {
-                yield return new DesktopProjectBuilder(csprojFile);
+                yield return new DesktopProjectBuilder(csprojFile, servicePorts);
             }
         }
     }

@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using _build.Helpers;
-using _build.Models;
 using FluentFTP;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tools.DotNet;
@@ -135,44 +133,5 @@ public static class ProjectExtension
     public static bool IsUi(this Project project)
     {
         return project.Name.Contains(".Ui.");
-    }
-
-    public static void SetGetAppSettingsFile(
-        this Project project,
-        string tokenValue,
-        Dictionary<Project, ServiceOptions> serviceOptions,
-        Dictionary<string, string> hosts,
-        string domain,
-        string emailPassword
-    )
-    {
-        var appSettingsFile = project.GetAppSettingsFile();
-
-        if (!appSettingsFile.Exists)
-        {
-            return;
-        }
-
-        var token = tokenValue;
-
-        if (project.IsUi())
-        {
-            token = string.Empty;
-        }
-
-        if (serviceOptions.TryGetValue(project, out var options))
-        {
-            appSettingsFile.SetAppSettingsFile(
-                domain,
-                hosts,
-                token,
-                options.Port,
-                emailPassword
-            );
-        }
-        else
-        {
-            appSettingsFile.SetAppSettingsFile(hosts, token);
-        }
     }
 }

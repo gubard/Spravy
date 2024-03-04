@@ -10,7 +10,7 @@ public static class StreamExtension
         this Stream stream,
         JsonDocument jsonDocument,
         string domain,
-        Dictionary<string, string> hosts,
+        IReadOnlyDictionary<string, ushort> hosts,
         string token,
         uint port,
         string emailPassword
@@ -31,7 +31,7 @@ public static class StreamExtension
                 continue;
             }
 
-            if (writer.SetServices(obj, hosts, token))
+            if (writer.SetServices(obj, domain, hosts, token))
             {
                 continue;
             }
@@ -59,9 +59,9 @@ public static class StreamExtension
 
     public static void SetAppSettingsStream(
         this Stream stream,
+        string domain,
         JsonDocument jsonDocument,
-        Dictionary<string, string> hosts,
-        string token
+        IReadOnlyDictionary<string, ushort> hosts
     )
     {
         var jsonWriterOptions = new JsonWriterOptions
@@ -74,7 +74,7 @@ public static class StreamExtension
 
         foreach (var obj in jsonDocument.RootElement.EnumerateObject())
         {
-            if (writer.SetServices(obj, hosts, token))
+            if (writer.SetServices(obj, domain, hosts, string.Empty))
             {
                 continue;
             }

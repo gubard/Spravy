@@ -1,41 +1,13 @@
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Text.Json;
-using Serilog;
 
 namespace _build.Extensions;
 
 public static class FileInfoExtension
 {
-    public static void SetAppSettingsFile(
-        this FileInfo file,
-        string domain,
-        Dictionary<string, string> hosts,
-        string token,
-        uint port,
-        string emailPassword
-    )
+    public static string GetGrpcServiceName(this FileInfo file)
     {
-        var jsonDocument = file.GetJsonDocument();
-        using var stream = new MemoryStream();
-        Log.Logger.Information("Set app settings {File}", file);
-        stream.SetAppSettingsStream(jsonDocument, domain, hosts, token, port, emailPassword);
-        var jsonData = Encoding.UTF8.GetString(stream.ToArray());
-        File.WriteAllText(file.FullName, jsonData);
-    }
-
-    public static void SetAppSettingsFile(
-        this FileInfo file,
-        Dictionary<string, string> hosts,
-        string token
-    )
-    {
-        var jsonDocument = file.GetJsonDocument();
-        using var stream = new MemoryStream();
-        stream.SetAppSettingsStream(jsonDocument, hosts, token);
-        var jsonData = Encoding.UTF8.GetString(stream.ToArray());
-        File.WriteAllText(file.FullName, jsonData);
+        return $"Grpc{file.GetFileNameWithoutExtension().GetGrpcServiceName()}";
     }
 
     public static JsonDocument GetJsonDocument(this FileInfo file)

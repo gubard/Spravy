@@ -9,6 +9,7 @@ using _build.Extensions;
 using _build.Helpers;
 using _build.Interfaces;
 using _build.Models;
+using _build.Services;
 using CliWrap;
 using FluentFTP;
 using Microsoft.IdentityModel.Tokens;
@@ -31,10 +32,14 @@ class Build : NukeBuild
     ///   - Microsoft VSCode           https://nuke.build/vscode
     public static int Main()
     {
-        Singleton.VersionService.Load();
+        VersionService = new VersionService("/tmp/Spravy/version.txt".ToFile());
+        VersionService.Load();
 
         return Execute<Build>(x => x.Publish);
     }
+
+    static VersionService VersionService;
+    ProjectBuilderFactory ProjectBuilderFactory;
 
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
@@ -64,10 +69,10 @@ class Build : NukeBuild
     static readonly Dictionary<string, string> Hosts = new();
     static readonly Dictionary<Project, ServiceOptions> ServiceOptions = new();
     static readonly List<Project> ServiceProjects = new();
-    static string Token;
     static DirectoryInfo AndroidFolder;
+    IReadOnlyDictionary<string, ushort> Ports;
 
-    ReadOnlyMemory<IProjectBuilder> Projects;
+    IProjectBuilder[] Projects;
 
     const FtpListOption FtpOption =
         FtpListOption.Recursive | FtpListOption.ForceList | FtpListOption.Auto | FtpListOption.AllFiles;
@@ -78,13 +83,33 @@ class Build : NukeBuild
     {
         base.OnBuildInitialized();
 
-        Projects = Singleton.ProjectBuilderFactory.Create(Solution.AllProjects.Select(x => new FileInfo(x.Path)))
+        Ports = new Dictionary<string, ushort>
+        {
+            {
+                "Spravy.Authentication.Service".GetGrpcServiceName(), 5000
+            },
+            {
+                "Spravy.EventBus.Service".GetGrpcServiceName(), 5001
+            },
+            {
+                "Spravy.Router.Service".GetGrpcServiceName(), 5002
+            },
+            {
+                "Spravy.Schedule.Service".GetGrpcServiceName(), 5003
+            },
+            {
+                "Spravy.ToDo.Service".GetGrpcServiceName(), 5004
+            },
+        };
+
+        ProjectBuilderFactory = new ProjectBuilderFactory(Ports, CreteToken(), MailPassword);
+
+        Projects = ProjectBuilderFactory.Create(Solution.AllProjects.Select(x => new FileInfo(x.Path)))
             .ToArray();
     }
 
     void Setup(string host)
     {
-        Token = CreteToken();
         ServiceProjects.Clear();
         ServiceProjects.AddRange(Solution.GetProjects("Service"));
         ushort port = 5000;
@@ -99,15 +124,18 @@ class Build : NukeBuild
 
     void SetupAppSettings(string domain)
     {
-        foreach (var project in Solution.AllProjects)
+        foreach (var project in Projects)
         {
-            project.SetGetAppSettingsFile(Token, ServiceOptions, Hosts, domain, MailPassword);
+            project.Setup(domain);
         }
     }
 
     void Clean()
     {
-        DotNetClean(setting => setting.SetProject(Solution).SetConfiguration(Configuration));
+        foreach (var project in Projects)
+        {
+            project.Clean(Configuration);
+        }
     }
 
     void Restore()
@@ -129,7 +157,7 @@ class Build : NukeBuild
                         setting.SetProjectFile(project)
                             .EnableNoRestore()
                             .SetConfiguration(Configuration)
-                            .AddProperty("Version", Singleton.VersionService.Version.ToString())
+                            .AddProperty("Version", VersionService.Version.ToString())
                     );
 
                     break;
@@ -162,7 +190,7 @@ class Build : NukeBuild
                         .EnableNoRestore()
                         .SetRuntime("linux-x64")
                         .SetConfiguration(Configuration)
-                        .AddProperty("Version", Singleton.VersionService.Version.ToString())
+                        .AddProperty("Version", VersionService.Version.ToString())
                 );
 
                 break;
@@ -192,7 +220,7 @@ class Build : NukeBuild
                         .EnableNoRestore()
                         .SetRuntime("win-x64")
                         .SetConfiguration(Configuration)
-                        .AddProperty("Version", Singleton.VersionService.Version.ToString())
+                        .AddProperty("Version", VersionService.Version.ToString())
                 );
 
                 break;
@@ -306,7 +334,7 @@ class Build : NukeBuild
                 .SetProperty("AndroidSigningStorePass", AndroidSigningStorePass)
                 .SetProperty("AndroidSdkDirectory", "/opt/android-sdk")
                 .DisableNoBuild()
-                .AddProperty("Version", Singleton.VersionService.Version.ToString())
+                .AddProperty("Version", VersionService.Version.ToString())
         );
 
         DeleteIfExistsDirectory(ftpClient, $"/home/{ftpUser}/Apps/Spravy.Ui.Android");
@@ -454,7 +482,7 @@ class Build : NukeBuild
                     var botClient = new TelegramBotClient(TelegramToken);
                     botClient.SendTextMessageAsync(
                             chatId: "@spravy_release",
-                            text: $"Published v{Singleton.VersionService.Version}"
+                            text: $"Published v{VersionService.Version}"
                         )
                         .GetAwaiter()
                         .GetResult();

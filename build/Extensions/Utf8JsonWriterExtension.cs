@@ -80,15 +80,11 @@ public static class Utf8JsonWriterExtension
     public static bool SetServices(
         this Utf8JsonWriter writer,
         JsonProperty property,
-        Dictionary<string, string> hosts,
+        string domain,
+        IReadOnlyDictionary<string, ushort> hosts,
         string token
     )
     {
-        if (!hosts.TryGetValue(property.Name, out var host))
-        {
-            return false;
-        }
-
         writer.AddObject(property.Name, () =>
             {
                 foreach (var obj in property.Value.EnumerateObject())
@@ -96,7 +92,7 @@ public static class Utf8JsonWriterExtension
                     switch (obj.Name)
                     {
                         case "Host":
-                            writer.AddStringValue("Host", host);
+                            writer.AddStringValue("Host", $"https://{domain}:{hosts[property.Name]}");
 
                             break;
                         case "Token":
@@ -117,7 +113,7 @@ public static class Utf8JsonWriterExtension
         );
 
         Log.Information("Setup service {ServiceName}", property.Name);
-        Log.Information("Set host {Host}", host);
+        Log.Information("Set host {Domain}", domain);
 
         return true;
     }
