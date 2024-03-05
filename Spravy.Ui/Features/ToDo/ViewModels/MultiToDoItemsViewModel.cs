@@ -305,6 +305,26 @@ public class MultiToDoItemsViewModel : ViewModelBase
         CancellationToken cancellationToken
     )
     {
+        await this.InvokeUIBackgroundAsync(() => property.IsBusy = true);
+
+        try
+        {
+            await Task.WhenAll(
+                SwitchCompleteToDoItemCore(property, cancellationToken),
+                Task.Delay(TimeSpan.FromSeconds(1), cancellationToken)
+            );
+        }
+        finally
+        {
+            await this.InvokeUIBackgroundAsync(() => property.IsBusy = false);
+        }
+    }
+
+    private async Task SwitchCompleteToDoItemCore(
+        ICanCompleteProperty property,
+        CancellationToken cancellationToken
+    )
+    {
         switch (property.IsCan)
         {
             case ToDoItemIsCan.None:

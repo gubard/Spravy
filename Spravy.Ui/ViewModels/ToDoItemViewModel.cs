@@ -40,6 +40,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     private readonly TaskWork refreshWork;
     private readonly ToDoSubItemsViewModel toDoSubItemsViewModel;
     private readonly PageHeaderViewModel pageHeaderViewModel;
+    private bool isBusy;
 
     public ToDoItemViewModel() : base(true)
     {
@@ -143,6 +144,12 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
 
     [Reactive]
     public ToDoItemIsCan IsCan { get; set; }
+
+    public bool IsBusy
+    {
+        get => isBusy;
+        set => this.RaiseAndSetIfChanged(ref isBusy, value);
+    }
 
     [Reactive]
     public ToDoItemStatus Status { get; set; }

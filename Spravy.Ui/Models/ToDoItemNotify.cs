@@ -28,8 +28,15 @@ public class ToDoItemNotify : NotifyBase,
     private ToDoItemIsCan isCan;
     private Guid? parentId;
     private ICommand? completeCommand;
+    private bool isBusy;
 
     public AvaloniaList<CommandItem> Commands { get; } = new();
+
+    public bool IsBusy
+    {
+        get => isBusy;
+        set => this.RaiseAndSetIfChanged(ref isBusy, value);
+    }
 
     public ICommand? CompleteCommand
     {
