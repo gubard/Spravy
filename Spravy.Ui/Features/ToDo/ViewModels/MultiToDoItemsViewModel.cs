@@ -309,46 +309,35 @@ public class MultiToDoItemsViewModel : ViewModelBase
 
         try
         {
-            await Task.WhenAll(
-                SwitchCompleteToDoItemCore(property, cancellationToken),
-                Task.Delay(TimeSpan.FromSeconds(1), cancellationToken)
-            );
+            switch (property.IsCan)
+            {
+                case ToDoItemIsCan.None:
+                    break;
+                case ToDoItemIsCan.CanComplete:
+                    await ToDoService.UpdateToDoItemCompleteStatusAsync(
+                            property.Id,
+                            true,
+                            cancellationToken
+                        )
+                        .ConfigureAwait(false);
+                    break;
+                case ToDoItemIsCan.CanIncomplete:
+                    await ToDoService.UpdateToDoItemCompleteStatusAsync(
+                            property.Id,
+                            false,
+                            cancellationToken
+                        )
+                        .ConfigureAwait(false);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            await CommandStorage.RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
         }
         finally
         {
             await this.InvokeUIBackgroundAsync(() => property.IsBusy = false);
         }
-    }
-
-    private async Task SwitchCompleteToDoItemCore(
-        ICanCompleteProperty property,
-        CancellationToken cancellationToken
-    )
-    {
-        switch (property.IsCan)
-        {
-            case ToDoItemIsCan.None:
-                break;
-            case ToDoItemIsCan.CanComplete:
-                await ToDoService.UpdateToDoItemCompleteStatusAsync(
-                        property.Id,
-                        true,
-                        cancellationToken
-                    )
-                    .ConfigureAwait(false);
-                break;
-            case ToDoItemIsCan.CanIncomplete:
-                await ToDoService.UpdateToDoItemCompleteStatusAsync(
-                        property.Id,
-                        false,
-                        cancellationToken
-                    )
-                    .ConfigureAwait(false);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-
-        await CommandStorage.RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
     }
 }
