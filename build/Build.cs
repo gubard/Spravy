@@ -32,13 +32,10 @@ class Build : NukeBuild
     ///   - Microsoft VSCode           https://nuke.build/vscode
     public static int Main()
     {
-        VersionService = new VersionService("/tmp/Spravy/version.txt".ToFile());
-        VersionService.Load();
-
         return Execute<Build>(x => x.Publish);
     }
 
-    static VersionService VersionService;
+    VersionService VersionService;
     ProjectBuilderFactory ProjectBuilderFactory;
 
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
@@ -82,6 +79,8 @@ class Build : NukeBuild
     protected override void OnBuildInitialized()
     {
         base.OnBuildInitialized();
+        VersionService = new VersionService($"/home/{FtpUser}/storage/version.txt".ToFile());
+        VersionService.Load();
 
         Ports = new Dictionary<string, ushort>
         {
