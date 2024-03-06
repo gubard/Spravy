@@ -320,6 +320,7 @@ public class MultiToDoItemsViewModel : ViewModelBase
                             cancellationToken
                         )
                         .ConfigureAwait(false);
+
                     break;
                 case ToDoItemIsCan.CanIncomplete:
                     await ToDoService.UpdateToDoItemCompleteStatusAsync(
@@ -328,9 +329,9 @@ public class MultiToDoItemsViewModel : ViewModelBase
                             cancellationToken
                         )
                         .ConfigureAwait(false);
+
                     break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                default: throw new ArgumentOutOfRangeException();
             }
 
             await CommandStorage.RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
