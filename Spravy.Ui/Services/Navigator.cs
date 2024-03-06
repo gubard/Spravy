@@ -106,10 +106,15 @@ public class Navigator : INavigator
         }
 
         await this.InvokeUIAsync(
-            () =>
+            async () =>
             {
                 item.Setup.Invoke(item.Navigatable);
                 Content.Content = item.Navigatable;
+
+                if (item.Navigatable is IRefresh refresh)
+                {
+                    await refresh.RefreshAsync(cancellationToken);
+                }
             }
         );
 
