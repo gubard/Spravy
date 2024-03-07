@@ -29,8 +29,14 @@
                                                            Text="{DynamicResource SettingView.Login}" />
                                                 <TextBox Classes="read-only"
                                                          Text="{Binding AccountNotify.Login}" />
-                                                <Button Content="{DynamicResource SettingView.ChangePassword}"
-                                                        Command="{Binding ChangePasswordCommand}" />
+
+                                                <Grid ColumnDefinitions="*,*">
+                                                    <Button Content="{DynamicResource SettingView.ChangePassword}"
+                                                            Command="{Binding ChangePasswordCommand}" />
+                                                    <Button Grid.Column="1"
+                                                            Content="{DynamicResource SettingView.DeleteAccount}"
+                                                            Command="{Binding DeleteAccountCommand}" />
+                                                </Grid>
                                             </StackPanel>
                                         </controls:SettingsLayoutItem.Content>
                                     </controls:SettingsLayoutItem>

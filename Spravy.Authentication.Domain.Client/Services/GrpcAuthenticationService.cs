@@ -239,6 +239,42 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         );
     }
 
+    public Task DeleteUserByEmailAsync(string email, string verificationCode, CancellationToken cancellationToken)
+    {
+        return CallClientAsync(
+            async client =>
+            {
+                var request = new DeleteUserByEmailRequest
+                {
+                    Email = email,
+                    VerificationCode = verificationCode,
+                };
+
+                cancellationToken.ThrowIfCancellationRequested();
+                await client.DeleteUserByEmailAsync(request, cancellationToken: cancellationToken);
+            },
+            cancellationToken
+        );
+    }
+
+    public Task DeleteUserByLoginAsync(string login, string verificationCode, CancellationToken cancellationToken)
+    {
+        return CallClientAsync(
+            async client =>
+            {
+                var request = new DeleteUserByLoginRequest
+                {
+                    Login = login,
+                    VerificationCode = verificationCode,
+                };
+
+                cancellationToken.ThrowIfCancellationRequested();
+                await client.DeleteUserByLoginAsync(request, cancellationToken: cancellationToken);
+            },
+            cancellationToken
+        );
+    }
+
     public Task UpdatePasswordByEmailAsync(
         string email,
         string verificationCode,

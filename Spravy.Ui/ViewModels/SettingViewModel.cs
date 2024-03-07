@@ -42,6 +42,7 @@ public class SettingViewModel : NavigatableViewModelBase
         IsLightTheme = theme.ActiveBaseTheme == ThemeVariant.Light;
         ChangePasswordCommand = CreateCommandFromTask(TaskWork.Create(ChangePasswordAsync).RunAsync);
         SaveSettingsCommand = CreateCommandFromTask(TaskWork.Create(SaveSettingsAsync).RunAsync);
+        DeleteAccountCommand = CreateCommandFromTask(TaskWork.Create(DeleteAccountAsync).RunAsync);
 
         SwitchToColorThemeCommand =
             CreateCommandFromTask<Selected<SukiColorTheme>>(
@@ -54,6 +55,7 @@ public class SettingViewModel : NavigatableViewModelBase
 
     public override string ViewId => TypeCache<SettingViewModel>.Type.Name;
     public ICommand ChangePasswordCommand { get; }
+    public ICommand DeleteAccountCommand { get; }
     public ICommand SwitchToColorThemeCommand { get; }
     public ICommand SaveSettingsCommand { get; }
     public string Version => Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? string.Empty;
@@ -107,20 +109,28 @@ public class SettingViewModel : NavigatableViewModelBase
         }
     }
 
-    private async Task ChangePasswordAsync(CancellationToken cancellationToken)
+    private Task DeleteAccountAsync(CancellationToken cancellationToken)
     {
-        await AuthenticationService.UpdateVerificationCodeByLoginAsync(AccountNotify.Login, cancellationToken)
-            .ConfigureAwait(false);
+        return Navigator.NavigateToAsync<DeleteAccountViewModel>(
+            vm =>
+            {
+                vm.Identifier = AccountNotify.Login;
+                vm.IdentifierType = UserIdentifierType.Login;
+            },
+            cancellationToken
+        );
+    }
 
-        await Navigator.NavigateToAsync<ForgotPasswordViewModel>(
-                vm =>
-                {
-                    vm.Identifier = AccountNotify.Login;
-                    vm.IdentifierType = UserIdentifierType.Login;
-                },
-                cancellationToken
-            )
-            .ConfigureAwait(false);
+    private Task ChangePasswordAsync(CancellationToken cancellationToken)
+    {
+        return Navigator.NavigateToAsync<ForgotPasswordViewModel>(
+            vm =>
+            {
+                vm.Identifier = AccountNotify.Login;
+                vm.IdentifierType = UserIdentifierType.Login;
+            },
+            cancellationToken
+        );
     }
 
     public override void Stop()

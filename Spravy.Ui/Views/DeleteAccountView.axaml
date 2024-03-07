@@ -1,0 +1,36 @@
+<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:DeleteAccountViewModel"
+                                xmlns="https://github.com/avaloniaui"
+                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                                xmlns:reactiveUi="http://reactiveui.net"
+                                xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
+                                xmlns:controls="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+                                xmlns:services="clr-namespace:Spravy.Ui.Services"
+                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                                x:Class="Spravy.Ui.Views.DeleteAccountView"
+                                x:DataType="viewModels:DeleteAccountViewModel">
+    <controls:GlassCard HorizontalAlignment="Center"
+                         VerticalAlignment="Center"
+                         MinWidth="300">
+        <StackPanel>
+            <TextBlock Classes="field"
+                       Text="{DynamicResource DeleteAccountView.VerificationCode}" />
+            <TextBox Text="{Binding VerificationCode}" />
+
+            <Grid ColumnDefinitions="*,*" RowDefinitions="*,*">
+                <Button Grid.ColumnSpan="2"
+                        Command="{x:Static services:CommandStorage.SendNewVerificationCodeCommand}"
+                        CommandParameter="{Binding}"
+                        Content="{DynamicResource DeleteAccountView.SendNewCode}" />
+                <Button Grid.Row="1"
+                        Command="{x:Static services:CommandStorage.BackCommand}"
+                        Content="{DynamicResource DeleteAccountView.Back}" />
+                <Button Grid.Row="1"
+                        Grid.Column="1"
+                        Command="{Binding DeleteAccountCommand}"
+                        Content="{DynamicResource DeleteAccountView.DeleteAccount}" />
+            </Grid>
+        </StackPanel>
+    </controls:GlassCard>
+</reactiveUi:ReactiveUserControl>

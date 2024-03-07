@@ -51,8 +51,7 @@ public class ForgotPasswordViewModel : NavigatableViewModelBase, IVerificationEm
                 return AuthenticationService.UpdateVerificationCodeByEmailAsync(Identifier, cancellationToken);
             case UserIdentifierType.Login:
                 return AuthenticationService.UpdateVerificationCodeByLoginAsync(Identifier, cancellationToken);
-            default:
-                throw new ArgumentOutOfRangeException();
+            default: throw new ArgumentOutOfRangeException();
         }
     }
 

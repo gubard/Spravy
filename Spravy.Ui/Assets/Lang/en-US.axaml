@@ -1,9 +1,15 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:system="clr-namespace:System;assembly=System.Runtime">
+    <!--DeleteAccountView-->
+    <system:String x:Key="DeleteAccountView.VerificationCode">Verification Code</system:String>
+    <system:String x:Key="DeleteAccountView.SendNewCode">Send new code</system:String>
+    <system:String x:Key="DeleteAccountView.Back">Back</system:String>
+    <system:String x:Key="DeleteAccountView.DeleteAccount">Delete account</system:String>
+
     <!--SearchView-->
     <system:String x:Key="SearchView.Search">Search</system:String>
-    
+
     <!--EmailOrLoginInputView-->
     <system:String x:Key="EmailOrLoginInputView.EmailOrLogin">Email or login</system:String>
     <system:String x:Key="EmailOrLoginInputView.Back">Back</system:String>
@@ -59,6 +65,7 @@
     <system:String x:Key="SettingView.Version">Version</system:String>
     <system:String x:Key="SettingView.Save">Save</system:String>
     <system:String x:Key="SettingView.Busy">Saving...</system:String>
+    <system:String x:Key="SettingView.DeleteAccount">Delete account</system:String>
 
     <!--ChangeToDoItemOrderIndexView-->
     <system:String x:Key="ChangeToDoItemOrderIndexView.Before">Before</system:String>

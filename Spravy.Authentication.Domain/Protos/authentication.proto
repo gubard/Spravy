@@ -20,4 +20,6 @@ service AuthenticationService {
   rpc UpdateEmailNotVerifiedUserByLogin (UpdateEmailNotVerifiedUserByLoginRequest) returns (UpdateEmailNotVerifiedUserByLoginReply);
   rpc UpdatePasswordByEmail (UpdatePasswordByEmailRequest) returns (UpdatePasswordByEmailReply);
   rpc UpdatePasswordByLogin (UpdatePasswordByLoginRequest) returns (UpdatePasswordByLoginReply);
+  rpc DeleteUserByEmail (DeleteUserByEmailRequest) returns (DeleteUserByEmailReply);
+  rpc DeleteUserByLogin (DeleteUserByLoginRequest) returns (DeleteUserByLoginReply);
 }

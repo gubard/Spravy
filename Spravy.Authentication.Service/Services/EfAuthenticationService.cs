@@ -77,8 +77,9 @@ public class EfAuthenticationService : IAuthenticationService
         {
             errors.Add(error);
         }
-        
-        await foreach (var error in passwordValidator.ValidateAsync(options.Password).WithCancellation(cancellationToken))
+
+        await foreach (var error in passwordValidator.ValidateAsync(options.Password)
+                           .WithCancellation(cancellationToken))
         {
             errors.Add(error);
         }
@@ -256,6 +257,26 @@ public class EfAuthenticationService : IAuthenticationService
             .SingleAsync(x => x.Login == login && !x.IsEmailVerified, cancellationToken);
 
         userEntity.Email = newEmail;
+        await context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task DeleteUserByEmailAsync(string email, string verificationCode, CancellationToken cancellationToken)
+    {
+        var userEntity = await context.Set<UserEntity>()
+            .SingleAsync(x => x.Email == email && x.IsEmailVerified, cancellationToken);
+
+        CheckVerificationCode(verificationCode, userEntity);
+        context.Set<UserEntity>().Remove(userEntity);
+        await context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task DeleteUserByLoginAsync(string login, string verificationCode, CancellationToken cancellationToken)
+    {
+        var userEntity = await context.Set<UserEntity>()
+            .SingleAsync(x => x.Login == login && x.IsEmailVerified, cancellationToken);
+
+        CheckVerificationCode(verificationCode, userEntity);
+        context.Set<UserEntity>().Remove(userEntity);
         await context.SaveChangesAsync(cancellationToken);
     }
 
