@@ -13,6 +13,7 @@ namespace Spravy.Ui.Services;
 
 public class Navigator : INavigator
 {
+    private Action<object> lastSetup = ActionHelper<object>.Empty;
     private readonly QueryList<NavigatorItem> list = new(20);
 
     [Inject]
@@ -43,7 +44,8 @@ public class Navigator : INavigator
         }
 
         await content.SaveStateAsync().ConfigureAwait(false);
-        list.Add(new NavigatorItem(content, setup));
+        list.Add(new NavigatorItem(content, lastSetup));
+        lastSetup = setup;
     }
 
     public async Task NavigateToAsync(Type type, CancellationToken cancellationToken)
