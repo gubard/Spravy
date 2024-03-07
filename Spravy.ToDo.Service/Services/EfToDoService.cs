@@ -1077,6 +1077,7 @@ public class EfToDoService : IToDoService
                 if (items.Count > 0)
                 {
                     yield return items.ToArray();
+
                     items.Clear();
                 }
             }
@@ -1087,6 +1088,7 @@ public class EfToDoService : IToDoService
         if (items.Count > 0)
         {
             yield return items.ToArray();
+
             items.Clear();
         }
     }

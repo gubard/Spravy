@@ -2,6 +2,7 @@ using System.Runtime.CompilerServices;
 using AutoMapper;
 using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
+using Grpc.Core;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
 using Spravy.Domain.Enums;
@@ -1206,7 +1207,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         using var response = client.GetToDoItems(request, metadata, cancellationToken: cancellationToken);
         cancellationToken.ThrowIfCancellationRequested();
 
-        while (await response.ResponseStream.MoveNext(cancellationToken))
+        while (await MoveNextAsync(response, cancellationToken))
         {
             var reply = response.ResponseStream.Current;
             var item = mapper.Map<IEnumerable<ToDoItem>>(reply.Items);
@@ -1214,6 +1215,21 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
             yield return item;
 
             cancellationToken.ThrowIfCancellationRequested();
+        }
+    }
+
+    private async Task<bool> MoveNextAsync<T>(
+        AsyncServerStreamingCall<T> streamingCall,
+        CancellationToken cancellationToken
+    )
+    {
+        try
+        {
+            return await streamingCall.ResponseStream.MoveNext(cancellationToken);
+        }
+        catch (RpcException e) when (e.StatusCode == StatusCode.Cancelled)
+        {
+            return false;
         }
     }
 
