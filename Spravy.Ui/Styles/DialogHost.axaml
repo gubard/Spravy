@@ -4,6 +4,7 @@
     <Design.PreviewWith>
         <dh:DialogHost IsOpen="True">
             <Border Background="Blue" />
+
             <dh:DialogHost.DialogContent>
                 <Border Height="500"
                         Width="500"
@@ -17,7 +18,7 @@
     </Style>
 
     <Style Selector="dh|DialogOverlayPopupHost">
-        <Setter Property="Background" Value="{DynamicResource SukiGlassCardBackground}" />
+        <Setter Property="Background" Value="{DynamicResource SingleViewBackground}" />
     </Style>
 
     <Style
