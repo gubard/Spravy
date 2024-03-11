@@ -119,7 +119,7 @@ public class ProjectBuilderFactory
                         ports,
                         new[]
                         {
-                            Runtime.LinuxX64, Runtime.WinX64,
+                            Runtime.LinuxX64,// Runtime.WinX64,
                         },
                         configuration
                     ), versionService
