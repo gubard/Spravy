@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
+using Grpc.Core;
 using Material.Icons;
 using Ninject;
 using Serilog;
 using Spravy.Authentication.Domain.Interfaces;
+using Spravy.Client.Exceptions;
 using Spravy.Domain.Di.Helpers;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
@@ -1443,6 +1445,24 @@ public static class CommandStorage
         if (exception is TaskCanceledException)
         {
             return;
+        }
+
+        if (exception is RpcException rpc)
+        {
+            switch (rpc.StatusCode)
+            {
+                case StatusCode.Cancelled:
+                    return;
+            }
+        }
+
+        if (exception is GrpcException { InnerException: RpcException rpc2 })
+        {
+            switch (rpc2.StatusCode)
+            {
+                case StatusCode.Cancelled:
+                    return;
+            }
         }
 
         Log.Logger.Error(exception, "UI error");
