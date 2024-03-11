@@ -21,22 +21,22 @@ public abstract class ProjectBuilder : IProjectBuilder
 
     public void Clean()
     {
-        DotNetTasks.DotNetClean(setting =>
+        if (projectBuilderOptions.Runtimes.IsEmpty)
+        {
+            DotNetTasks.DotNetClean(setting => setting.SetProject(projectBuilderOptions.CsprojFile.FullName)
+                .SetConfiguration(projectBuilderOptions.Configuration)
+            );
+        }
+        else
+        {
+            foreach (var runtime in projectBuilderOptions.Runtimes.Span)
             {
-                var result = setting.SetProject(projectBuilderOptions.CsprojFile.FullName)
-                    .SetConfiguration(projectBuilderOptions.Configuration);
-
-                if (!projectBuilderOptions.Runtimes.IsEmpty)
-                {
-                    result = result.SetRuntime(projectBuilderOptions.Runtimes.ToArray()
-                        .Select(x => x.Name)
-                        .JoinSemicolon()
-                    );
-                }
-
-                return result;
+                DotNetTasks.DotNetClean(setting => setting.SetProject(projectBuilderOptions.CsprojFile.FullName)
+                    .SetConfiguration(projectBuilderOptions.Configuration)
+                    .SetRuntime(runtime.Name)
+                );
             }
-        );
+        }
     }
 
     public void Restore()
