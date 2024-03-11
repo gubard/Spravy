@@ -346,12 +346,13 @@ class Build : NukeBuild
 
     Target Test =>
         _ => _.DependsOn(StagingPublishServices)
-            .Executes(() => DotNetTest(s =>
-                    s.SetConfiguration(Configuration)
-                        .EnableNoRestore()
-                        .EnableNoBuild()
-                        .SetProjectFile(Solution.AllProjects.Single(x => x.Name.EndsWith(".Tests")))
-                )
+            .Executes(() =>
+                {
+                    foreach (var project in Projects.OfType<TestProjectBuilder>())
+                    {
+                        project.Test();
+                    }
+                }
             );
 
     Target ProdPublishServices =>
