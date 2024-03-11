@@ -26,14 +26,6 @@ public abstract class ProjectBuilder : IProjectBuilder
                 var result = setting.SetProject(projectBuilderOptions.CsprojFile.FullName)
                     .SetConfiguration(projectBuilderOptions.Configuration);
 
-                if (!projectBuilderOptions.Runtimes.IsEmpty)
-                {
-                    result = result.SetRuntime(projectBuilderOptions.Runtimes.ToArray()
-                        .Select(x => x.Name)
-                        .JoinSemicolon()
-                    );
-                }
-
                 return result;
             }
         );
