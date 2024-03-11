@@ -15,6 +15,13 @@ public class ProjectBuilderFactory
     readonly IReadOnlyDictionary<string, ushort> ports;
     readonly AndroidProjectBuilderOptions androidProjectBuilderOptions;
     readonly VersionService versionService;
+    readonly DirectoryInfo publishFolder;
+    readonly string ftpHost;
+    readonly string ftpUser;
+    readonly string ftpPassword;
+    readonly string sshHost;
+    readonly string sshUser;
+    readonly string sshPassword;
 
     public ProjectBuilderFactory(
         string configuration,
@@ -22,10 +29,24 @@ public class ProjectBuilderFactory
         string token,
         IReadOnlyDictionary<string, ushort> ports,
         AndroidProjectBuilderOptions androidProjectBuilderOptions,
-        VersionService versionService
+        VersionService versionService,
+        DirectoryInfo publishFolder,
+        string ftpHost,
+        string ftpUser,
+        string ftpPassword,
+        string sshHost,
+        string sshUser,
+        string sshPassword
     )
     {
         this.versionService = versionService;
+        this.publishFolder = publishFolder;
+        this.ftpHost = ftpHost;
+        this.ftpUser = ftpUser;
+        this.ftpPassword = ftpPassword;
+        this.sshHost = sshHost;
+        this.sshUser = sshUser;
+        this.sshPassword = sshPassword;
         this.emailPassword = emailPassword;
         this.token = token;
         this.configuration = configuration;
@@ -73,7 +94,16 @@ public class ProjectBuilderFactory
                     ),
                     versionService,
                     new ServiceProjectBuilderOptions(
-                        ports[csprojFile.GetFileNameWithoutExtension().GetGrpcServiceName()], token, emailPassword
+                        ports[csprojFile.GetFileNameWithoutExtension().GetGrpcServiceName()],
+                        token,
+                        emailPassword,
+                        publishFolder.Combine(csprojFile.GetFileNameWithoutExtension()),
+                        ftpHost,
+                        ftpUser,
+                        ftpPassword,
+                        sshHost,
+                        sshUser,
+                        sshPassword
                     )
                 );
             }

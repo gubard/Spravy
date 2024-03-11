@@ -111,7 +111,14 @@ class Build : NukeBuild
                     AndroidSigningKeyPass,
                     AndroidSigningStorePass
                 ),
-                VersionService
+                VersionService,
+                PathHelper.PublishFolder,
+                FtpHost,
+                FtpUser,
+                FtpPassword,
+                SshHost,
+                SshUser,
+                SshPassword
             );
 
         Projects = ProjectBuilderFactory.Create(Solution.AllProjects.Select(x => new FileInfo(x.Path)))
@@ -164,37 +171,14 @@ class Build : NukeBuild
         }
     }
 
-    void PublishServices(
-        string ftpHost,
-        string ftpUser,
-        string ftpPassword,
-        string sshHost,
-        string sshUser,
-        string sshPassword
-    )
+    void PublishServices(string sshHost, string sshUser, string sshPassword)
     {
         using var sshClient = new SshClient(CreateSshConnection(sshHost, sshUser, sshPassword));
         sshClient.Connect();
-        using var ftpClient = CreateFtpClient(ftpHost, ftpUser, ftpPassword);
-        ftpClient.Connect();
 
-        foreach (var serviceOption in ServiceOptions)
+        foreach (var project in Projects.OfType<ServiceProjectBuilder>())
         {
-            serviceOption.Key.DeployService(
-                sshClient,
-                ftpClient,
-                PathHelper.PublishFolder,
-                Configuration,
-                ftpUser,
-                sshPassword
-            );
-        }
-
-        foreach (var serviceProject in ServiceProjects)
-        {
-            var serviceName = serviceProject.Name.ToLower();
-            sshClient.SafeRun($"echo {sshPassword} | sudo -S systemctl enable {serviceName}");
-            sshClient.SafeRun($"echo {sshPassword} | sudo -S systemctl restart {serviceName}");
+            project.Publish();
         }
 
         sshClient.SafeRun($"echo {sshPassword} | sudo -S systemctl daemon-reload");
