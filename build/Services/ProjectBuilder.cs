@@ -16,22 +16,28 @@ public abstract class ProjectBuilder : IProjectBuilder
     protected readonly FileInfo appSettingsFile;
     protected readonly IReadOnlyDictionary<string, ushort> hosts;
     protected readonly ReadOnlyMemory<Runtime> runtimes;
+    protected readonly string configuration;
+    protected readonly VersionService versionService;
 
     protected ProjectBuilder(
         FileInfo csprojFile,
         IReadOnlyDictionary<string, ushort> hosts,
-        IEnumerable<Runtime> runtimes
+        IEnumerable<Runtime> runtimes,
+        string configuration,
+        VersionService versionService
     )
     {
         this.csprojFile = csprojFile;
         this.hosts = hosts;
+        this.configuration = configuration;
+        this.versionService = versionService;
         appSettingsFile = csprojFile.Directory.ToFile("appsettings.json");
         this.runtimes = runtimes.ToArray();
     }
 
     public abstract void Setup(string host);
 
-    public void Clean(string configuration)
+    public void Clean()
     {
         DotNetTasks.DotNetClean(setting =>
             {
@@ -53,6 +59,25 @@ public abstract class ProjectBuilder : IProjectBuilder
         DotNetTasks.DotNetRestore(setting =>
             {
                 var result = setting.SetProjectFile(csprojFile.FullName);
+
+                if (runtimes.IsEmpty)
+                {
+                    result = result.SetRuntime(runtimes.ToArray().Select(x => x.Name).JoinSemicolon());
+                }
+
+                return result;
+            }
+        );
+    }
+
+    public virtual void Compile()
+    {
+        DotNetTasks.DotNetBuild(setting =>
+            {
+                var result = setting.SetProjectFile(csprojFile.FullName)
+                    .EnableNoRestore()
+                    .SetConfiguration(configuration)
+                    .AddProperty("Version", versionService.Version.ToString());
 
                 if (runtimes.IsEmpty)
                 {

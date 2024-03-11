@@ -8,14 +8,18 @@ public class BrowserProjectBuilder : UiProjectBuilder
 {
     public BrowserProjectBuilder(
         FileInfo csprojFile,
-        IReadOnlyDictionary<string, ushort> hosts
+        IReadOnlyDictionary<string, ushort> hosts,
+        string configuration,
+        VersionService versionService
     ) : base(
         csprojFile,
         hosts,
         new[]
         {
             Runtime.BrowserWasm,
-        }
+        },
+        configuration,
+        versionService
     )
     {
     }

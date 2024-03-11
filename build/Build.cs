@@ -101,7 +101,8 @@ class Build : NukeBuild
             },
         };
 
-        ProjectBuilderFactory = new ProjectBuilderFactory(Ports, CreteToken(), MailPassword);
+        ProjectBuilderFactory =
+            new ProjectBuilderFactory(Ports, CreteToken(), MailPassword, Configuration, VersionService);
 
         Projects = ProjectBuilderFactory.Create(Solution.AllProjects.Select(x => new FileInfo(x.Path)))
             .ToArray();
@@ -133,7 +134,7 @@ class Build : NukeBuild
     {
         foreach (var project in Projects)
         {
-            project.Clean(Configuration);
+            project.Clean();
         }
     }
 

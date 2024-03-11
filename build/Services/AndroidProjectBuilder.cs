@@ -7,9 +7,13 @@ namespace _build.Services;
 
 public class AndroidProjectBuilder : UiProjectBuilder
 {
-    public AndroidProjectBuilder(FileInfo csprojFile, IReadOnlyDictionary<string, ushort> hosts) 
-        : base(csprojFile, hosts, Enumerable.Empty<Runtime>()
+    public AndroidProjectBuilder(
+        FileInfo csprojFile,
+        IReadOnlyDictionary<string, ushort> hosts,
+        string configuration,
+        VersionService versionService
     )
+        : base(csprojFile, hosts, Enumerable.Empty<Runtime>(), configuration, versionService)
     {
     }
 }

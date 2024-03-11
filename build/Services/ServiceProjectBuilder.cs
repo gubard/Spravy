@@ -19,8 +19,10 @@ public class ServiceProjectBuilder : ProjectBuilder
         string token,
         IReadOnlyDictionary<string, ushort> hosts,
         string emailPassword,
-        IEnumerable<Runtime> runtimes
-    ) : base(csprojFile, hosts, runtimes)
+        IEnumerable<Runtime> runtimes,
+        string configuration,
+        VersionService versionService
+    ) : base(csprojFile, hosts, runtimes, configuration, versionService)
     {
         this.port = port;
         this.token = token;
