@@ -6,6 +6,7 @@ using Grpc.Core;
 using Ninject;
 using ReactiveUI;
 using Serilog;
+using Spravy.Client.Exceptions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.ViewModels;
 
@@ -74,6 +75,15 @@ public class ViewModelBase : NotifyBase
         if (exception is RpcException rpc)
         {
             switch (rpc.StatusCode)
+            {
+                case StatusCode.Cancelled:
+                    return;
+            }
+        }
+
+        if (exception is GrpcException { InnerException: RpcException rpc2 })
+        {
+            switch (rpc2.StatusCode)
             {
                 case StatusCode.Cancelled:
                     return;
