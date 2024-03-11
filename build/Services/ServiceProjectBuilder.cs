@@ -62,7 +62,7 @@ public class ServiceProjectBuilder : ProjectBuilder
             {
                 DotNetTasks.DotNetPublish(setting => setting.SetConfiguration(projectBuilderOptions.Configuration)
                     .SetProject(projectBuilderOptions.CsprojFile.FullName)
-                    .SetOutput(serviceProjectBuilderOptions.PublishFolder.Combine(runtime.Name).FullName)
+                    .SetOutput(serviceProjectBuilderOptions.PublishFolder.FullName)
                     .EnableNoBuild()
                     .EnableNoRestore()
                     .SetRuntime(runtime.Name)
