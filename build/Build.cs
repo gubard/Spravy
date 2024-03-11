@@ -102,7 +102,18 @@ class Build : NukeBuild
         };
 
         ProjectBuilderFactory =
-            new ProjectBuilderFactory(Ports, CreteToken(), MailPassword, Configuration, VersionService);
+            new ProjectBuilderFactory(
+                Configuration,
+                MailPassword,
+                CreteToken(),
+                Ports,
+                new AndroidProjectBuilderOptions(
+                    new FileInfo($"/home/{FtpUser}/storage/sign-key.keystore"),
+                    AndroidSigningKeyPass,
+                    AndroidSigningStorePass
+                ),
+                VersionService
+            );
 
         Projects = ProjectBuilderFactory.Create(Solution.AllProjects.Select(x => new FileInfo(x.Path)))
             .ToArray();

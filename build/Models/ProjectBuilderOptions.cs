@@ -1,0 +1,30 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+
+namespace _build.Models;
+
+public class ProjectBuilderOptions
+{
+    public ProjectBuilderOptions(
+        FileInfo csprojFile,
+        FileInfo appSettingsFile,
+        IReadOnlyDictionary<string, ushort> hosts,
+        IEnumerable<Runtime> runtimes,
+        string configuration
+    )
+    {
+        CsprojFile = csprojFile;
+        AppSettingsFile = appSettingsFile;
+        Hosts = hosts;
+        Runtimes = runtimes.ToArray();
+        Configuration = configuration;
+    }
+
+    public FileInfo CsprojFile { get; }
+    public FileInfo AppSettingsFile { get; }
+    public IReadOnlyDictionary<string, ushort> Hosts { get; }
+    public ReadOnlyMemory<Runtime> Runtimes { get; }
+    public string Configuration { get; }
+}

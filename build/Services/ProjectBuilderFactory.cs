@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using _build.Extensions;
 using _build.Interfaces;
 using _build.Models;
@@ -8,25 +9,28 @@ namespace _build.Services;
 
 public class ProjectBuilderFactory
 {
-    readonly IReadOnlyDictionary<string, ushort> servicePorts;
+    readonly string configuration;
     readonly string token;
     readonly string emailPassword;
-    readonly string configuration;
+    readonly IReadOnlyDictionary<string, ushort> ports;
+    readonly AndroidProjectBuilderOptions androidProjectBuilderOptions;
     readonly VersionService versionService;
 
     public ProjectBuilderFactory(
-        IReadOnlyDictionary<string, ushort> servicePorts,
-        string token,
-        string emailPassword,
         string configuration,
+        string emailPassword,
+        string token,
+        IReadOnlyDictionary<string, ushort> ports,
+        AndroidProjectBuilderOptions androidProjectBuilderOptions,
         VersionService versionService
     )
     {
-        this.servicePorts = servicePorts;
-        this.token = token;
-        this.emailPassword = emailPassword;
-        this.configuration = configuration;
         this.versionService = versionService;
+        this.emailPassword = emailPassword;
+        this.token = token;
+        this.configuration = configuration;
+        this.ports = ports;
+        this.androidProjectBuilderOptions = androidProjectBuilderOptions;
     }
 
     public IEnumerable<IProjectBuilder> Create(IEnumerable<FileInfo> csprojFiles)
@@ -43,33 +47,67 @@ public class ProjectBuilderFactory
             if (fileName.EndsWith(".Service"))
             {
                 yield return new ServiceProjectBuilder(
-                    csprojFile,
-                    servicePorts[fileName.GetGrpcServiceName()],
-                    token,
-                    servicePorts,
-                    emailPassword,
-                    new[]
-                    {
-                        Runtime.LinuxX64
-                    },
-                    configuration,
-                    versionService
+                    new ProjectBuilderOptions(
+                        csprojFile,
+                        csprojFile.Directory.ToFile("appsettings.json"),
+                        ports,
+                        new[]
+                        {
+                            Runtime.LinuxX64,
+                        },
+                        configuration
+                    ),
+                    versionService,
+                    new ServiceProjectBuilderOptions(ports[csprojFile.GetGrpcServiceName()], token, emailPassword)
                 );
             }
 
             if (fileName.EndsWith(".Android"))
             {
-                yield return new AndroidProjectBuilder(csprojFile, servicePorts, configuration, versionService);
+                yield return new AndroidProjectBuilder(
+                    new ProjectBuilderOptions(
+                        csprojFile,
+                        csprojFile.Directory.ToFile("appsettings.json"),
+                        ports,
+                        Enumerable.Empty<Runtime>(),
+                        configuration
+                    ),
+                    versionService,
+                    androidProjectBuilderOptions
+                );
             }
 
             if (fileName.EndsWith(".Browser"))
             {
-                yield return new BrowserProjectBuilder(csprojFile, servicePorts, configuration, versionService);
+                yield return new BrowserProjectBuilder(
+                    new ProjectBuilderOptions(
+                        csprojFile,
+                        csprojFile.Directory.ToFile("appsettings.json"),
+                        ports,
+                        new[]
+                        {
+                            Runtime.BrowserWasm,
+                        },
+                        configuration
+                    ),
+                    versionService
+                );
             }
 
             if (fileName.EndsWith(".Desktop"))
             {
-                yield return new DesktopProjectBuilder(csprojFile, servicePorts, configuration, versionService);
+                yield return new DesktopProjectBuilder(
+                    new ProjectBuilderOptions(
+                        csprojFile,
+                        csprojFile.Directory.ToFile("appsettings.json"),
+                        ports,
+                        new[]
+                        {
+                            Runtime.LinuxX64, Runtime.WinX64,
+                        },
+                        configuration
+                    ), versionService
+                );
             }
         }
     }

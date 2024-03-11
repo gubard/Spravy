@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -12,23 +11,18 @@ namespace _build.Services;
 
 public abstract class UiProjectBuilder : ProjectBuilder
 {
-    protected UiProjectBuilder(
-        FileInfo csprojFile,
-        IReadOnlyDictionary<string, ushort> hosts,
-        IEnumerable<Runtime> runtimes,
-        string configuration,
-        VersionService versionService
-    ) : base(csprojFile, hosts, runtimes, configuration, versionService)
+    protected UiProjectBuilder(ProjectBuilderOptions projectBuilderOptions, VersionService versionService)
+        : base(projectBuilderOptions, versionService)
     {
     }
 
     public override void Setup(string host)
     {
-        var jsonDocument = appSettingsFile.GetJsonDocument();
+        var jsonDocument = projectBuilderOptions.AppSettingsFile.GetJsonDocument();
         using var stream = new MemoryStream();
-        stream.SetAppSettingsStream(host, jsonDocument, hosts);
+        stream.SetAppSettingsStream(host, jsonDocument, projectBuilderOptions.Hosts);
         var jsonData = Encoding.UTF8.GetString(stream.ToArray());
-        File.WriteAllText(appSettingsFile.FullName, jsonData);
+        File.WriteAllText(projectBuilderOptions.AppSettingsFile.FullName, jsonData);
     }
 
     public override void Compile()
@@ -39,14 +33,17 @@ public abstract class UiProjectBuilder : ProjectBuilder
             {
                 DotNetTasks.DotNetBuild(setting =>
                     {
-                        var result = setting.SetProjectFile(csprojFile.FullName)
+                        var result = setting.SetProjectFile(projectBuilderOptions.CsprojFile.FullName)
                             .EnableNoRestore()
-                            .SetConfiguration(configuration)
+                            .SetConfiguration(projectBuilderOptions.Configuration)
                             .AddProperty("Version", versionService.Version.ToString());
 
-                        if (runtimes.IsEmpty)
+                        if (projectBuilderOptions.Runtimes.IsEmpty)
                         {
-                            result = result.SetRuntime(runtimes.ToArray().Select(x => x.Name).JoinSemicolon());
+                            result = result.SetRuntime(projectBuilderOptions.Runtimes.ToArray()
+                                .Select(x => x.Name)
+                                .JoinSemicolon()
+                            );
                         }
 
                         return result;
