@@ -19,7 +19,6 @@ using Nuke.Common.Tools.DotNet;
 using Renci.SshNet;
 using Serilog;
 using Telegram.Bot;
-using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 namespace _build;
 

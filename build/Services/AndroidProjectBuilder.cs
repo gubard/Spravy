@@ -1,10 +1,8 @@
 using System;
-using System.Linq;
 using _build.Extensions;
 using _build.Models;
 using CliWrap;
 using Nuke.Common.Tools.DotNet;
-using Nuke.Common.Utilities;
 
 namespace _build.Services;
 

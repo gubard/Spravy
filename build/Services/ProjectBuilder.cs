@@ -1,8 +1,6 @@
-using System.Linq;
 using _build.Interfaces;
 using _build.Models;
 using Nuke.Common.Tools.DotNet;
-using Nuke.Common.Utilities;
 
 namespace _build.Services;
 

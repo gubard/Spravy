@@ -1,11 +1,9 @@
 using System;
 using System.IO;
-using System.Linq;
 using System.Text;
 using _build.Extensions;
 using _build.Models;
 using Nuke.Common.Tools.DotNet;
-using Nuke.Common.Utilities;
 
 namespace _build.Services;
 
