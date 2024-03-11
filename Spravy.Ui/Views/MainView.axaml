@@ -18,24 +18,32 @@
             Selector="dh|DialogHost.extra-small > Grid#PART_DialogHostRoot > dh|DialogOverlayPopupHost">
             <Setter Property="Width"
                     Value="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter95}}" />
+            <Setter Property="Height"
+                    Value="{Binding $parent[TopLevel].Height, Converter={StaticResource DoubleToPercentsConverter95}}" />
         </Style>
 
         <Style
             Selector="dh|DialogHost.small > Grid#PART_DialogHostRoot > dh|DialogOverlayPopupHost">
             <Setter Property="Width"
                     Value="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter85}}" />
+            <Setter Property="Height"
+                    Value="{Binding $parent[TopLevel].Height, Converter={StaticResource DoubleToPercentsConverter95}}" />
         </Style>
 
         <Style
             Selector="dh|DialogHost.medium > Grid#PART_DialogHostRoot > dh|DialogOverlayPopupHost">
             <Setter Property="Width"
                     Value="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter70}}" />
+            <Setter Property="Height"
+                    Value="{Binding $parent[TopLevel].Height, Converter={StaticResource DoubleToPercentsConverter95}}" />
         </Style>
 
         <Style
             Selector="dh|DialogHost.large > Grid#PART_DialogHostRoot > dh|DialogOverlayPopupHost">
             <Setter Property="Width"
                     Value="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter50}}" />
+            <Setter Property="Height"
+                    Value="{Binding $parent[TopLevel].Height, Converter={StaticResource DoubleToPercentsConverter95}}" />
         </Style>
 
         <Style Selector="dh|DialogHost.adaptive">
