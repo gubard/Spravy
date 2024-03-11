@@ -41,42 +41,42 @@ public abstract class ProjectBuilder : IProjectBuilder
 
     public void Restore()
     {
-        DotNetTasks.DotNetRestore(setting =>
+        if (projectBuilderOptions.Runtimes.IsEmpty)
+        {
+            DotNetTasks.DotNetRestore(setting => setting.SetProjectFile(projectBuilderOptions.CsprojFile.FullName));
+        }
+        else
+        {
+            foreach (var runtime in projectBuilderOptions.Runtimes.Span)
             {
-                var result = setting.SetProjectFile(projectBuilderOptions.CsprojFile.FullName);
-
-                if (!projectBuilderOptions.Runtimes.IsEmpty)
-                {
-                    result = result.SetRuntime(projectBuilderOptions.Runtimes.ToArray()
-                        .Select(x => x.Name)
-                        .JoinSemicolon()
-                    );
-                }
-
-                return result;
+                DotNetTasks.DotNetRestore(setting =>
+                    setting.SetProjectFile(projectBuilderOptions.CsprojFile.FullName).SetRuntime(runtime.Name)
+                );
             }
-        );
+        }
     }
 
     public virtual void Compile()
     {
-        DotNetTasks.DotNetBuild(setting =>
+        if (projectBuilderOptions.Runtimes.IsEmpty)
+        {
+            DotNetTasks.DotNetBuild(setting => setting.SetProjectFile(projectBuilderOptions.CsprojFile.FullName)
+                .EnableNoRestore()
+                .SetConfiguration(projectBuilderOptions.Configuration)
+                .AddProperty("Version", versionService.Version.ToString())
+            );
+        }
+        else
+        {
+            foreach (var runtime in projectBuilderOptions.Runtimes.Span)
             {
-                var result = setting.SetProjectFile(projectBuilderOptions.CsprojFile.FullName)
+                DotNetTasks.DotNetBuild(setting => setting.SetProjectFile(projectBuilderOptions.CsprojFile.FullName)
                     .EnableNoRestore()
                     .SetConfiguration(projectBuilderOptions.Configuration)
-                    .AddProperty("Version", versionService.Version.ToString());
-
-                if (!projectBuilderOptions.Runtimes.IsEmpty)
-                {
-                    result = result.SetRuntime(projectBuilderOptions.Runtimes.ToArray()
-                        .Select(x => x.Name)
-                        .JoinSemicolon()
-                    );
-                }
-
-                return result;
+                    .AddProperty("Version", versionService.Version.ToString())
+                    .SetRuntime(runtime.Name)
+                );
             }
-        );
+        }
     }
 }
