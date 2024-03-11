@@ -44,6 +44,20 @@ public class ProjectBuilderFactory
                 continue;
             }
 
+            if (fileName.EndsWith(".Tests"))
+            {
+                yield return new TestProjectBuilder(
+                    new ProjectBuilderOptions(
+                        csprojFile,
+                        csprojFile.Directory.ToFile("testsettings.json"),
+                        ports,
+                        Enumerable.Empty<Runtime>(),
+                        configuration
+                    ),
+                    versionService
+                );
+            }
+
             if (fileName.EndsWith(".Service"))
             {
                 yield return new ServiceProjectBuilder(
