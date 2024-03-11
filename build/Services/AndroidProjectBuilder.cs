@@ -74,7 +74,7 @@ public class AndroidProjectBuilder : UiProjectBuilder
                             .SetConfiguration(projectBuilderOptions.Configuration)
                             .AddProperty("Version", versionService.Version.ToString());
 
-                        if (projectBuilderOptions.Runtimes.IsEmpty)
+                        if (!projectBuilderOptions.Runtimes.IsEmpty)
                         {
                             result = result.SetRuntime(projectBuilderOptions.Runtimes.ToArray()
                                 .Select(x => x.Name)

@@ -38,7 +38,7 @@ public abstract class UiProjectBuilder : ProjectBuilder
                             .SetConfiguration(projectBuilderOptions.Configuration)
                             .AddProperty("Version", versionService.Version.ToString());
 
-                        if (projectBuilderOptions.Runtimes.IsEmpty)
+                        if (!projectBuilderOptions.Runtimes.IsEmpty)
                         {
                             result = result.SetRuntime(projectBuilderOptions.Runtimes.ToArray()
                                 .Select(x => x.Name)

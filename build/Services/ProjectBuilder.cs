@@ -26,7 +26,7 @@ public abstract class ProjectBuilder : IProjectBuilder
                 var result = setting.SetProject(projectBuilderOptions.CsprojFile.FullName)
                     .SetConfiguration(projectBuilderOptions.Configuration);
 
-                if (projectBuilderOptions.Runtimes.IsEmpty)
+                if (!projectBuilderOptions.Runtimes.IsEmpty)
                 {
                     result = result.SetRuntime(projectBuilderOptions.Runtimes.ToArray()
                         .Select(x => x.Name)
@@ -45,7 +45,7 @@ public abstract class ProjectBuilder : IProjectBuilder
             {
                 var result = setting.SetProjectFile(projectBuilderOptions.CsprojFile.FullName);
 
-                if (projectBuilderOptions.Runtimes.IsEmpty)
+                if (!projectBuilderOptions.Runtimes.IsEmpty)
                 {
                     result = result.SetRuntime(projectBuilderOptions.Runtimes.ToArray()
                         .Select(x => x.Name)
@@ -67,7 +67,7 @@ public abstract class ProjectBuilder : IProjectBuilder
                     .SetConfiguration(projectBuilderOptions.Configuration)
                     .AddProperty("Version", versionService.Version.ToString());
 
-                if (projectBuilderOptions.Runtimes.IsEmpty)
+                if (!projectBuilderOptions.Runtimes.IsEmpty)
                 {
                     result = result.SetRuntime(projectBuilderOptions.Runtimes.ToArray()
                         .Select(x => x.Name)
