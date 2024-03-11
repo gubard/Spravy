@@ -307,15 +307,7 @@ class Build : NukeBuild
 
     Target StagingPublishServices =>
         _ => _.DependsOn(CleanStagingDataBase, StagingCompile)
-            .Executes(() => PublishServices(
-                    StagingFtpHost,
-                    StagingFtpUser,
-                    StagingFtpPassword,
-                    StagingSshHost,
-                    StagingSshUser,
-                    StagingSshPassword
-                )
-            );
+            .Executes(() => PublishServices(StagingSshHost, StagingSshUser, StagingSshPassword));
 
     Target CleanStagingDataBase =>
         _ => _.Executes(() =>
@@ -340,7 +332,7 @@ class Build : NukeBuild
 
     Target ProdPublishServices =>
         _ => _.DependsOn(ProdCompile)
-            .Executes(() => PublishServices(FtpHost, FtpUser, FtpPassword, SshHost, SshUser, SshPassword));
+            .Executes(() => PublishServices(SshHost, SshUser, SshPassword));
 
     Target StagingPublishDesktop =>
         _ => _.DependsOn(Test)
