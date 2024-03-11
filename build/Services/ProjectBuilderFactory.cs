@@ -152,7 +152,14 @@ public class ProjectBuilderFactory
                             Runtime.LinuxX64, Runtime.WinX64,
                         },
                         configuration
-                    ), versionService
+                    ),
+                    versionService,
+                    new DesktopProjectBuilderOptions(
+                        ftpHost,
+                        ftpUser,
+                        ftpPassword,
+                        publishFolder.Combine(csprojFile.GetFileNameWithoutExtension())
+                    )
                 );
             }
         }

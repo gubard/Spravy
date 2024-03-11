@@ -184,10 +184,12 @@ class Build : NukeBuild
         sshClient.SafeRun($"echo {sshPassword} | sudo -S systemctl daemon-reload");
     }
 
-    void PublishDesktop(string ftpHost, string ftpUser, string ftpPassword)
+    void PublishDesktop()
     {
-        DeployDesktop("linux-x64", ftpHost, ftpUser, ftpPassword);
-        DeployDesktop("win-x64", ftpHost, ftpUser, ftpPassword);
+        foreach (var project in Projects.OfType<DesktopProjectBuilder>())
+        {
+            project.Publish();
+        }
     }
 
     void PublishAndroid(string ftpHost, string ftpUser, string ftpPassword)
@@ -336,10 +338,9 @@ class Build : NukeBuild
 
     Target StagingPublishDesktop =>
         _ => _.DependsOn(Test)
-            .Executes(() => PublishDesktop(StagingFtpHost, StagingFtpUser, StagingFtpPassword));
+            .Executes(PublishDesktop);
 
-    Target ProdPublishDesktop =>
-        _ => _.DependsOn(ProdPublishServices).Executes(() => PublishDesktop(FtpHost, FtpUser, FtpPassword));
+    Target ProdPublishDesktop => _ => _.DependsOn(ProdPublishServices).Executes(PublishDesktop);
 
     Target StagingPublishAndroid =>
         _ => _.DependsOn(Test)
