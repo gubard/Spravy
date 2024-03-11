@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Grpc.Core;
 using Ninject;
 using ReactiveUI;
 using Serilog;
@@ -41,7 +42,7 @@ public class ViewModelBase : NotifyBase
 
         return command;
     }
-    
+
     protected ICommand CreateCommandFromTask(Func<Task> execute, IObservable<bool> canExecute)
     {
         var command = ReactiveCommand.CreateFromTask(execute, canExecute);
@@ -68,6 +69,15 @@ public class ViewModelBase : NotifyBase
         if (exception is TaskCanceledException)
         {
             return;
+        }
+
+        if (exception is RpcException rpc)
+        {
+            switch (rpc.StatusCode)
+            {
+                case StatusCode.Cancelled:
+                    return;
+            }
         }
 
         Log.Logger.Error(exception, "UI error");
