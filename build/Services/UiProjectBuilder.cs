@@ -31,24 +31,27 @@ public abstract class UiProjectBuilder : ProjectBuilder
         {
             try
             {
-                DotNetTasks.DotNetBuild(setting =>
+                if (projectBuilderOptions.Runtimes.IsEmpty)
+                {
+                    DotNetTasks.DotNetBuild(setting => setting.SetProjectFile(projectBuilderOptions.CsprojFile.FullName)
+                        .EnableNoRestore()
+                        .SetConfiguration(projectBuilderOptions.Configuration)
+                        .AddProperty("Version", versionService.Version.ToString())
+                    );
+                }
+                else
+                {
+                    foreach (var runtime in projectBuilderOptions.Runtimes.Span)
                     {
-                        var result = setting.SetProjectFile(projectBuilderOptions.CsprojFile.FullName)
-                            .EnableNoRestore()
-                            .SetConfiguration(projectBuilderOptions.Configuration)
-                            .AddProperty("Version", versionService.Version.ToString());
-
-                        if (!projectBuilderOptions.Runtimes.IsEmpty)
-                        {
-                            result = result.SetRuntime(projectBuilderOptions.Runtimes.ToArray()
-                                .Select(x => x.Name)
-                                .JoinSemicolon()
-                            );
-                        }
-
-                        return result;
+                        DotNetTasks.DotNetBuild(setting =>
+                            setting.SetProjectFile(projectBuilderOptions.CsprojFile.FullName)
+                                .EnableNoRestore()
+                                .SetConfiguration(projectBuilderOptions.Configuration)
+                                .AddProperty("Version", versionService.Version.ToString())
+                                .SetRuntime(runtime.Name)
+                        );
                     }
-                );
+                }
             }
             catch (Exception e)
             {
