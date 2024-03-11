@@ -58,7 +58,9 @@ public class ProjectBuilderFactory
                         configuration
                     ),
                     versionService,
-                    new ServiceProjectBuilderOptions(ports[csprojFile.GetGrpcServiceName()], token, emailPassword)
+                    new ServiceProjectBuilderOptions(
+                        ports[csprojFile.GetFileNameWithoutExtension().GetGrpcServiceName()], token, emailPassword
+                    )
                 );
             }
 
