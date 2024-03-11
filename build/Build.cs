@@ -139,7 +139,10 @@ class Build : NukeBuild
 
     void Restore()
     {
-        DotNetRestore(setting => setting.SetProjectFile(Solution));
+        foreach (var project in Projects)
+        {
+            project.Restore();
+        }
     }
 
     void Compile()

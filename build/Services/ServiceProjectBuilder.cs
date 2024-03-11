@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using _build.Extensions;
+using _build.Models;
 using Serilog;
 
 namespace _build.Services;
@@ -17,8 +18,9 @@ public class ServiceProjectBuilder : ProjectBuilder
         ushort port,
         string token,
         IReadOnlyDictionary<string, ushort> hosts,
-        string emailPassword
-    ) : base(csprojFile, hosts)
+        string emailPassword,
+        IEnumerable<Runtime> runtimes
+    ) : base(csprojFile, hosts, runtimes)
     {
         this.port = port;
         this.token = token;

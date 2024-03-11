@@ -4,4 +4,5 @@ public interface IProjectBuilder
 {
     void Setup(string host);
     void Clean(string configuration);
+    void Restore();
 }

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using _build.Extensions;
 using _build.Interfaces;
+using _build.Models;
 
 namespace _build.Services;
 
@@ -36,7 +37,11 @@ public class ProjectBuilderFactory
                     servicePorts[fileName.GetGrpcServiceName()],
                     token,
                     servicePorts,
-                    emailPassword
+                    emailPassword,
+                    new[]
+                    {
+                        Runtime.LinuxX64
+                    }
                 );
             }
 
