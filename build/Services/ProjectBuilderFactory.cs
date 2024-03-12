@@ -136,8 +136,8 @@ public class ProjectBuilderFactory
                         androidSigningKeyPass,
                         androidSigningStorePass,
                         ftpHost,
-                        ftpUser,
                         ftpPassword,
+                        ftpUser,
                         publishFolder.Combine("Android")
                     )
                 );
