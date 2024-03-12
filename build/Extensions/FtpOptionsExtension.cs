@@ -1,5 +1,6 @@
 using _build.Interfaces;
 using FluentFTP;
+using Serilog;
 
 namespace _build.Extensions;
 
@@ -8,6 +9,7 @@ public static class FtpOptionsExtension
     public static FtpClient CreateFtpClient(this IFtpOptions options)
     {
         var values = options.FtpHost.Split(":");
+        Log.Logger.Information("Connecting {FtpHost} {}", options.FtpHost, options.FtpUser);
 
         if (values.Length == 2)
         {
