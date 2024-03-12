@@ -21,7 +21,7 @@ public class ServiceProjectBuilder : ProjectBuilder
         this.serviceProjectBuilderOptions = serviceProjectBuilderOptions;
     }
 
-    public override void Setup(string host)
+    public override void Setup()
     {
         var jsonDocument = projectBuilderOptions.AppSettingsFile.GetJsonDocument();
         using var stream = new MemoryStream();
@@ -29,7 +29,7 @@ public class ServiceProjectBuilder : ProjectBuilder
 
         stream.SetAppSettingsStream(
             jsonDocument,
-            host,
+            projectBuilderOptions.Domain,
             projectBuilderOptions.Hosts,
             serviceProjectBuilderOptions.Token,
             serviceProjectBuilderOptions.Port,

@@ -14,11 +14,11 @@ public abstract class UiProjectBuilder : ProjectBuilder
     {
     }
 
-    public override void Setup(string host)
+    public override void Setup()
     {
         var jsonDocument = projectBuilderOptions.AppSettingsFile.GetJsonDocument();
         using var stream = new MemoryStream();
-        stream.SetAppSettingsStream(host, jsonDocument, projectBuilderOptions.Hosts);
+        stream.SetAppSettingsStream(projectBuilderOptions.Domain, jsonDocument, projectBuilderOptions.Hosts);
         var jsonData = Encoding.UTF8.GetString(stream.ToArray());
         File.WriteAllText(projectBuilderOptions.AppSettingsFile.FullName, jsonData);
     }

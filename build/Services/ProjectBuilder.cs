@@ -15,7 +15,7 @@ public abstract class ProjectBuilder : IProjectBuilder
         this.versionService = versionService;
     }
 
-    public abstract void Setup(string host);
+    public abstract void Setup();
 
     public void Clean()
     {

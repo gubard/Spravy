@@ -22,6 +22,7 @@ public class ProjectBuilderFactory
     readonly string sshHost;
     readonly string sshUser;
     readonly string sshPassword;
+    readonly string domain;
 
     public ProjectBuilderFactory(
         string configuration,
@@ -36,7 +37,8 @@ public class ProjectBuilderFactory
         string ftpPassword,
         string sshHost,
         string sshUser,
-        string sshPassword
+        string sshPassword,
+        string domain
     )
     {
         this.versionService = versionService;
@@ -47,6 +49,7 @@ public class ProjectBuilderFactory
         this.sshHost = sshHost;
         this.sshUser = sshUser;
         this.sshPassword = sshPassword;
+        this.domain = domain;
         this.emailPassword = emailPassword;
         this.token = token;
         this.configuration = configuration;
@@ -73,7 +76,8 @@ public class ProjectBuilderFactory
                         csprojFile.Directory.ToFile("testsettings.json"),
                         ports,
                         Enumerable.Empty<Runtime>(),
-                        configuration
+                        configuration,
+                        domain
                     ),
                     versionService
                 );
@@ -90,7 +94,8 @@ public class ProjectBuilderFactory
                         {
                             Runtime.LinuxX64,
                         },
-                        configuration
+                        configuration,
+                        domain
                     ),
                     versionService,
                     new ServiceProjectBuilderOptions(
@@ -116,7 +121,8 @@ public class ProjectBuilderFactory
                         csprojFile.Directory.ToFile("appsettings.json"),
                         ports,
                         Enumerable.Empty<Runtime>(),
-                        configuration
+                        configuration,
+                        domain
                     ),
                     versionService,
                     androidProjectBuilderOptions
@@ -134,9 +140,18 @@ public class ProjectBuilderFactory
                         {
                             Runtime.BrowserWasm,
                         },
-                        configuration
+                        configuration,
+                        domain
                     ),
-                    versionService
+                    versionService,
+                    new BrowserProjectBuilderOptions(
+                        ftpHost,
+                        ftpUser,
+                        ftpPassword,
+                        sshHost,
+                        sshUser,
+                        sshPassword
+                    )
                 );
             }
 
@@ -151,7 +166,8 @@ public class ProjectBuilderFactory
                         {
                             Runtime.LinuxX64, Runtime.WinX64,
                         },
-                        configuration
+                        configuration,
+                        domain
                     ),
                     versionService,
                     new DesktopProjectBuilderOptions(

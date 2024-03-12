@@ -2,7 +2,7 @@ namespace _build.Interfaces;
 
 public interface IProjectBuilder
 {
-    void Setup(string host);
+    void Setup();
     void Clean();
     void Restore();
     void Compile();

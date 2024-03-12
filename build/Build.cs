@@ -61,8 +61,6 @@ class Build : NukeBuild
     [Parameter] readonly string StagingServerHost;
     [Parameter] readonly string MailPassword;
 
-    static readonly Dictionary<string, string> Hosts = new();
-    static readonly Dictionary<Project, ServiceOptions> ServiceOptions = new();
     static readonly List<Project> ServiceProjects = new();
     static DirectoryInfo AndroidFolder;
     IReadOnlyDictionary<string, ushort> Ports;
@@ -122,7 +120,8 @@ class Build : NukeBuild
             StagingFtpPassword,
             StagingSshHost,
             StagingSshUser,
-            StagingSshPassword
+            StagingSshPassword,
+            StagingServerHost
         );
     }
 
@@ -149,29 +148,16 @@ class Build : NukeBuild
             FtpPassword,
             SshHost,
             SshUser,
-            SshPassword
+            SshPassword,
+            ServerHost
         );
     }
 
-    void Setup(string host)
-    {
-        ServiceProjects.Clear();
-        ServiceProjects.AddRange(Solution.GetProjects("Service"));
-        ushort port = 5000;
-
-        foreach (var serviceProject in ServiceProjects)
-        {
-            ServiceOptions[serviceProject] = new ServiceOptions(port, serviceProject.Name);
-            Hosts[serviceProject.GetOptionsName()] = $"https://{host}:{port}";
-            port++;
-        }
-    }
-
-    void SetupAppSettings(string domain)
+    void SetupAppSettings()
     {
         foreach (var project in Projects)
         {
-            project.Setup(domain);
+            project.Setup();
         }
     }
 
@@ -236,32 +222,27 @@ class Build : NukeBuild
         }
     }
 
-    Target StagingSetup => _ => _.Executes(() => Setup(StagingServerHost));
-    Target ProdSetup => _ => _.DependsOn(StagingPublishBrowser).Executes(() => Setup(ServerHost));
-
     Target StagingSetupAppSettings =>
-        _ => _.DependsOn(StagingSetup)
-            .Executes(() =>
-                {
-                    Projects = CreateProdFactory()
-                        .Create(Solution.AllProjects.Select(x => new FileInfo(x.Path)))
-                        .ToArray();
+        _ => _.Executes(() =>
+            {
+                Projects = CreateProdFactory()
+                    .Create(Solution.AllProjects.Select(x => new FileInfo(x.Path)))
+                    .ToArray();
 
-                    SetupAppSettings(StagingServerHost);
-                }
-            );
+                SetupAppSettings();
+            }
+        );
 
     Target ProdSetupAppSettings =>
-        _ => _.DependsOn(ProdSetup)
-            .Executes(() =>
-                {
-                    Projects = CreateStagingFactory()
-                        .Create(Solution.AllProjects.Select(x => new FileInfo(x.Path)))
-                        .ToArray();
+        _ => _.Executes(() =>
+            {
+                Projects = CreateStagingFactory()
+                    .Create(Solution.AllProjects.Select(x => new FileInfo(x.Path)))
+                    .ToArray();
 
-                    SetupAppSettings(ServerHost);
-                }
-            );
+                SetupAppSettings();
+            }
+        );
 
     Target StagingClean => _ => _.DependsOn(StagingSetupAppSettings).Executes(Clean);
     Target ProdClean => _ => _.DependsOn(ProdSetupAppSettings).Executes(Clean);
@@ -316,28 +297,12 @@ class Build : NukeBuild
     Target StagingPublishBrowser =>
         _ => _
             .DependsOn(StagingPublishAndroid, StagingPublishDesktop)
-            .Executes(() => PublishBrowser(
-                    StagingFtpHost,
-                    StagingFtpUser,
-                    StagingFtpPassword,
-                    StagingSshHost,
-                    StagingSshUser,
-                    StagingSshPassword
-                )
-            );
+            .Executes(PublishBrowser);
 
     Target ProdPublishBrowser =>
         _ => _
             .DependsOn(ProdPublishAndroid, ProdPublishDesktop)
-            .Executes(() => PublishBrowser(
-                    FtpHost,
-                    FtpUser,
-                    FtpPassword,
-                    SshHost,
-                    SshUser,
-                    SshPassword
-                )
-            );
+            .Executes(PublishBrowser);
 
     Target Publish =>
         _ => _.DependsOn(ProdPublishBrowser)
@@ -389,17 +354,5 @@ class Build : NukeBuild
         }
 
         return new ConnectionInfo(values[0], sshUser, password);
-    }
-
-    FtpClient CreateFtpClient(string ftpHost, string ftpUser, string fptPassword)
-    {
-        var values = ftpHost.Split(":");
-
-        if (values.Length == 2)
-        {
-            return new FtpClient(values[0], ftpUser, fptPassword, int.Parse(values[1]));
-        }
-
-        return new FtpClient(ftpHost, ftpUser, fptPassword);
     }
 }

@@ -10,7 +10,7 @@ public class TestProjectBuilder : ProjectBuilder
     {
     }
 
-    public override void Setup(string host)
+    public override void Setup()
     {
     }
 
