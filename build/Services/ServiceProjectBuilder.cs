@@ -42,7 +42,7 @@ public class ServiceProjectBuilder : ProjectBuilder
 
     public void Publish()
     {
-        serviceProjectBuilderOptions.PublishFolder.Delete(true);
+        serviceProjectBuilderOptions.PublishFolder.DeleteIfExits();
         using var sshClient = serviceProjectBuilderOptions.CreateSshClient();
         sshClient.Connect();
         using var ftpClient = serviceProjectBuilderOptions.CreateFtpClient();

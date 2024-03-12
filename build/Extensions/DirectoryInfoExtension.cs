@@ -33,4 +33,15 @@ public static class DirectoryInfoExtension
         folder.Create();
         Log.Logger.Information("Created {Folder}", folder);
     }
+
+    public static void DeleteIfExits(this DirectoryInfo folder)
+    {
+        if (!folder.Exists)
+        {
+            return;
+        }
+
+        folder.Delete(true);
+        Log.Logger.Information("Delete {Folder}", folder);
+    }
 }

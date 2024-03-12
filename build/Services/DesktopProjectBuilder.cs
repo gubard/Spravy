@@ -26,7 +26,7 @@ public class DesktopProjectBuilder : UiProjectBuilder
         foreach (var runtime in projectBuilderOptions.Runtimes.Span)
         {
             var output = desktopProjectBuilderOptions.PublishFolder.Combine(runtime.Name);
-            output.Delete(true);
+            output.DeleteIfExits();
 
             DotNetTasks.DotNetPublish(setting => setting.SetConfiguration(projectBuilderOptions.Configuration)
                 .SetProject(projectBuilderOptions.CsprojFile.FullName)

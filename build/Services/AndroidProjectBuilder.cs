@@ -120,7 +120,7 @@ public class AndroidProjectBuilder : UiProjectBuilder
 
     public void Publish()
     {
-        androidProjectBuilderOptions.PublishFolder.Delete(true);
+        androidProjectBuilderOptions.PublishFolder.DeleteIfExits();
         using var ftpClient = androidProjectBuilderOptions.CreateFtpClient();
         ftpClient.Connect();
 
