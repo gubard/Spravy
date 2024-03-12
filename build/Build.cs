@@ -216,7 +216,7 @@ class Build : NukeBuild
         );
 
     Target ProdSetupAppSettings =>
-        _ => _.DependsOn(Test)
+        _ => _.DependsOn(StagingPublishBrowser)
             .Executes(() =>
                 {
                     Projects = CreateStagingFactory()
@@ -266,7 +266,7 @@ class Build : NukeBuild
             .Executes(() => PublishServices(SshHost, SshUser, SshPassword));
 
     Target StagingPublishDesktop =>
-        _ => _.DependsOn(StagingPublishBrowser)
+        _ => _.DependsOn(Test)
             .Executes(PublishDesktop);
 
     Target ProdPublishDesktop => _ => _.DependsOn(ProdPublishServices).Executes(PublishDesktop);
