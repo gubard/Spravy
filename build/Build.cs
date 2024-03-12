@@ -10,14 +10,10 @@ using _build.Helpers;
 using _build.Interfaces;
 using _build.Models;
 using _build.Services;
-using CliWrap;
-using FluentFTP;
 using Microsoft.IdentityModel.Tokens;
 using Nuke.Common;
 using Nuke.Common.ProjectModel;
-using Nuke.Common.Tools.DotNet;
 using Renci.SshNet;
-using Serilog;
 using Telegram.Bot;
 
 namespace _build;
@@ -234,15 +230,16 @@ class Build : NukeBuild
         );
 
     Target ProdSetupAppSettings =>
-        _ => _.Executes(() =>
-            {
-                Projects = CreateStagingFactory()
-                    .Create(Solution.AllProjects.Select(x => new FileInfo(x.Path)))
-                    .ToArray();
+        _ => _.DependsOn(Test)
+            .Executes(() =>
+                {
+                    Projects = CreateStagingFactory()
+                        .Create(Solution.AllProjects.Select(x => new FileInfo(x.Path)))
+                        .ToArray();
 
-                SetupAppSettings();
-            }
-        );
+                    SetupAppSettings();
+                }
+            );
 
     Target StagingClean => _ => _.DependsOn(StagingSetupAppSettings).Executes(Clean);
     Target ProdClean => _ => _.DependsOn(ProdSetupAppSettings).Executes(Clean);
