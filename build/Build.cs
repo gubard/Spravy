@@ -35,7 +35,6 @@ class Build : NukeBuild
     }
 
     VersionService VersionService;
-    ProjectBuilderFactory ProjectBuilderFactory;
 
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
@@ -68,16 +67,15 @@ class Build : NukeBuild
     static DirectoryInfo AndroidFolder;
     IReadOnlyDictionary<string, ushort> Ports;
 
+    string Token;
     IProjectBuilder[] Projects;
-
-    const FtpListOption FtpOption =
-        FtpListOption.Recursive | FtpListOption.ForceList | FtpListOption.Auto | FtpListOption.AllFiles;
 
     [Solution] readonly Solution Solution;
 
     protected override void OnBuildInitialized()
     {
         base.OnBuildInitialized();
+        Token = CreteToken();
         VersionService = new VersionService($"/home/{FtpUser}/storage/version.txt".ToFile());
         VersionService.Load();
 
@@ -99,30 +97,60 @@ class Build : NukeBuild
                 "Spravy.ToDo.Service".GetGrpcServiceName(), 5004
             },
         };
+    }
 
-        ProjectBuilderFactory =
-            new ProjectBuilderFactory(
-                Configuration,
-                MailPassword,
-                CreteToken(),
-                Ports,
-                new AndroidProjectBuilderOptions(
-                    new FileInfo($"/home/{FtpUser}/storage/sign-key.keystore"),
-                    AndroidSigningKeyPass,
-                    AndroidSigningStorePass
-                ),
-                VersionService,
-                PathHelper.PublishFolder,
+    ProjectBuilderFactory CreateStagingFactory()
+    {
+        return new ProjectBuilderFactory(
+            Configuration,
+            MailPassword,
+            Token,
+            Ports,
+            new AndroidProjectBuilderOptions(
+                new FileInfo($"/home/{StagingFtpUser}/storage/sign-key.keystore"),
+                AndroidSigningKeyPass,
+                AndroidSigningStorePass,
+                StagingFtpHost,
+                StagingFtpUser,
+                StagingFtpPassword,
+                PathHelper.PublishFolder.Combine("Android")
+            ),
+            VersionService,
+            PathHelper.PublishFolder,
+            StagingFtpHost,
+            StagingFtpUser,
+            StagingFtpPassword,
+            StagingSshHost,
+            StagingSshUser,
+            StagingSshPassword
+        );
+    }
+
+    ProjectBuilderFactory CreateProdFactory()
+    {
+        return new ProjectBuilderFactory(
+            Configuration,
+            MailPassword,
+            Token,
+            Ports,
+            new AndroidProjectBuilderOptions(
+                new FileInfo($"/home/{FtpUser}/storage/sign-key.keystore"),
+                AndroidSigningKeyPass,
+                AndroidSigningStorePass,
                 FtpHost,
                 FtpUser,
                 FtpPassword,
-                SshHost,
-                SshUser,
-                SshPassword
-            );
-
-        Projects = ProjectBuilderFactory.Create(Solution.AllProjects.Select(x => new FileInfo(x.Path)))
-            .ToArray();
+                PathHelper.PublishFolder.Combine("Android")
+            ),
+            VersionService,
+            PathHelper.PublishFolder,
+            FtpHost,
+            FtpUser,
+            FtpPassword,
+            SshHost,
+            SshUser,
+            SshPassword
+        );
     }
 
     void Setup(string host)
@@ -192,62 +220,12 @@ class Build : NukeBuild
         }
     }
 
-    void PublishAndroid(string ftpHost, string ftpUser, string ftpPassword)
+    void PublishAndroid()
     {
-        using var ftpClient = CreateFtpClient(ftpHost, ftpUser, ftpPassword);
-        ftpClient.Connect();
-        var keyStoreFile = new FileInfo("/tmp/Spravy/sign-key.keystore");
-
-        if (keyStoreFile.Directory is null)
+        foreach (var project in Projects.OfType<AndroidProjectBuilder>())
         {
-            throw new NullReferenceException();
+            project.Publish();
         }
-
-        keyStoreFile.Directory.CreateIfNotExits();
-
-        if (!keyStoreFile.Exists)
-        {
-            Cli.Wrap("keytool")
-                .WithArguments(new[]
-                    {
-                        "-genkey",
-                        "-v",
-                        "-keystore",
-                        keyStoreFile.FullName,
-                        "-alias",
-                        "spravy",
-                        "-keyalg",
-                        "RSA",
-                        "-keysize",
-                        "2048",
-                        "-validity",
-                        "10000",
-                        "-dname",
-                        "CN=Serhii Maksymov, OU=Serhii Maksymov FOP, O=Serhii Maksymov FOP, L=Kharkiv, S=Kharkiv State, C=Ukraine",
-                        "-storepass",
-                        AndroidSigningStorePass,
-                    }
-                )
-                .RunCommand();
-        }
-
-        var android = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Android");
-
-        AndroidFolder = android.PublishProject(PathHelper.PublishFolder, Configuration, setting =>
-            setting
-                .SetProperty("AndroidKeyStore", "true")
-                .SetProperty("AndroidSigningKeyStore", keyStoreFile.FullName)
-                .SetProperty("AndroidSigningKeyAlias", "spravy")
-                .SetProperty("AndroidSigningKeyPass", AndroidSigningKeyPass)
-                .SetProperty("AndroidSigningStorePass", AndroidSigningStorePass)
-                .SetProperty("AndroidSdkDirectory", "/opt/android-sdk")
-                .DisableNoBuild()
-                .AddProperty("Version", VersionService.Version.ToString())
-        );
-
-        DeleteIfExistsDirectory(ftpClient, $"/home/{ftpUser}/Apps/Spravy.Ui.Android");
-        CreateIfNotExistsDirectory(ftpClient, $"/home/{ftpUser}/Apps");
-        ftpClient.UploadDirectory(AndroidFolder.FullName, $"/home/{ftpUser}/Apps/Spravy.Ui.Android");
     }
 
     void PublishBrowser(
@@ -294,9 +272,28 @@ class Build : NukeBuild
     Target ProdSetup => _ => _.DependsOn(StagingPublishBrowser).Executes(() => Setup(ServerHost));
 
     Target StagingSetupAppSettings =>
-        _ => _.DependsOn(StagingSetup).Executes(() => SetupAppSettings(StagingServerHost));
+        _ => _.DependsOn(StagingSetup)
+            .Executes(() =>
+                {
+                    Projects = CreateProdFactory()
+                        .Create(Solution.AllProjects.Select(x => new FileInfo(x.Path)))
+                        .ToArray();
 
-    Target ProdSetupAppSettings => _ => _.DependsOn(ProdSetup).Executes(() => SetupAppSettings(ServerHost));
+                    SetupAppSettings(StagingServerHost);
+                }
+            );
+
+    Target ProdSetupAppSettings =>
+        _ => _.DependsOn(ProdSetup)
+            .Executes(() =>
+                {
+                    Projects = CreateStagingFactory()
+                        .Create(Solution.AllProjects.Select(x => new FileInfo(x.Path)))
+                        .ToArray();
+
+                    SetupAppSettings(ServerHost);
+                }
+            );
 
     Target StagingClean => _ => _.DependsOn(StagingSetupAppSettings).Executes(Clean);
     Target ProdClean => _ => _.DependsOn(ProdSetupAppSettings).Executes(Clean);
@@ -344,10 +341,9 @@ class Build : NukeBuild
 
     Target StagingPublishAndroid =>
         _ => _.DependsOn(Test)
-            .Executes(() => PublishAndroid(StagingFtpHost, StagingFtpUser, StagingFtpPassword));
+            .Executes(PublishAndroid);
 
-    Target ProdPublishAndroid =>
-        _ => _.DependsOn(ProdPublishServices).Executes(() => PublishAndroid(FtpHost, FtpUser, FtpPassword));
+    Target ProdPublishAndroid => _ => _.DependsOn(ProdPublishServices).Executes(PublishAndroid);
 
     Target StagingPublishBrowser =>
         _ => _
@@ -388,78 +384,6 @@ class Build : NukeBuild
                         .GetResult();
                 }
             );
-
-    void DeployDesktop(string runtime, string ftpHost, string ftpUser, string fptPassword)
-    {
-        using var ftpClient = CreateFtpClient(ftpHost, ftpUser, fptPassword);
-        ftpClient.Connect();
-        var desktop = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Desktop").ThrowIfNull();
-        var desktopFolder = desktop.PublishProject(PathHelper.PublishFolder.Combine(runtime), Configuration,
-            settings => settings.SetRuntime(runtime)
-        );
-        ftpClient.DeleteIfExistsFolder($"/home/{ftpUser}/Apps/Spravy.Ui.Desktop".ToFolder().Combine(runtime));
-        ftpClient.CreateIfNotExistsDirectory($"/home/{ftpUser}/Apps/Spravy.Ui.Desktop".ToFolder().Combine(runtime));
-        ftpClient.UploadDirectory(desktopFolder.FullName, $"/home/{ftpUser}/Apps/Spravy.Ui.Desktop/{runtime}");
-    }
-
-    static void CreateIfNotExistsDirectory(FtpClient client, string path)
-    {
-        if (client.DirectoryExists(path))
-        {
-            return;
-        }
-
-        client.CreateDirectory(path, true);
-    }
-
-    static void DeleteIfExistsDirectory(FtpClient client, string path)
-    {
-        if (!client.DirectoryExists(path))
-        {
-            return;
-        }
-
-        try
-        {
-            client.DeleteDirectory(path, FtpOption);
-        }
-        catch
-        {
-            Log.Error("{Path}", path);
-
-            throw;
-        }
-    }
-
-    static void CopyDirectory(string sourceDir, string destinationDir, bool recursive)
-    {
-        var dir = new DirectoryInfo(sourceDir);
-
-        if (!dir.Exists)
-        {
-            throw new DirectoryNotFoundException($"Source directory not found: {dir.FullName}");
-        }
-
-        var dirs = dir.GetDirectories();
-        Directory.CreateDirectory(destinationDir);
-
-        foreach (var file in dir.GetFiles())
-        {
-            var targetFilePath = Path.Combine(destinationDir, file.Name);
-            file.CopyTo(targetFilePath);
-        }
-
-        if (!recursive)
-        {
-            return;
-        }
-
-        foreach (var subDir in dirs)
-        {
-            var newDestinationDir = Path.Combine(destinationDir, subDir.Name);
-            CopyDirectory(subDir.FullName, newDestinationDir, true);
-        }
-    }
 
     string CreteToken()
     {

@@ -80,13 +80,17 @@ public class AndroidProjectBuilder : UiProjectBuilder
                         DotNetTasks.DotNetBuild(setting =>
                             setting.SetProjectFile(projectBuilderOptions.CsprojFile.FullName)
                                 .SetProperty("AndroidKeyStore", "true")
-                                .SetProperty("AndroidSigningKeyStore",
+                                .SetProperty(
+                                    "AndroidSigningKeyStore",
                                     androidProjectBuilderOptions.KeyStoreFile.FullName
                                 )
                                 .SetProperty("AndroidSigningKeyAlias", "spravy")
-                                .SetProperty("AndroidSigningKeyPass", androidProjectBuilderOptions.AndroidSigningKeyPass
+                                .SetProperty(
+                                    "AndroidSigningKeyPass",
+                                    androidProjectBuilderOptions.AndroidSigningKeyPass
                                 )
-                                .SetProperty("AndroidSigningStorePass",
+                                .SetProperty(
+                                    "AndroidSigningStorePass",
                                     androidProjectBuilderOptions.AndroidSigningStorePass
                                 )
                                 .SetProperty("AndroidSdkDirectory", "/opt/android-sdk")
@@ -112,5 +116,33 @@ public class AndroidProjectBuilder : UiProjectBuilder
                 throw;
             }
         }
+    }
+
+    public void Publish()
+    {
+        using var ftpClient = androidProjectBuilderOptions.CreateFtpClient();
+        ftpClient.Connect();
+
+        DotNetTasks.DotNetPublish(setting => setting.SetProject(projectBuilderOptions.CsprojFile.FullName)
+            .SetProperty("AndroidKeyStore", "true")
+            .SetProperty("AndroidSigningKeyStore", androidProjectBuilderOptions.KeyStoreFile.FullName)
+            .SetProperty("AndroidSigningKeyAlias", "spravy")
+            .SetProperty("AndroidSigningKeyPass", androidProjectBuilderOptions.AndroidSigningKeyPass)
+            .SetProperty("AndroidSigningStorePass", androidProjectBuilderOptions.AndroidSigningStorePass)
+            .SetProperty("AndroidSdkDirectory", "/opt/android-sdk")
+            .SetConfiguration(projectBuilderOptions.Configuration)
+            .AddProperty("Version", versionService.Version.ToString())
+            .SetOutput(androidProjectBuilderOptions.PublishFolder.FullName)
+            .EnableNoRestore()
+            .EnableNoBuild()
+        );
+
+        ftpClient.DeleteIfExistsDirectory($"/home/{androidProjectBuilderOptions.FtpUser}/Apps/Spravy.Ui.Android");
+        ftpClient.CreateIfNotExistsDirectory($"/home/{androidProjectBuilderOptions.FtpUser}/Apps");
+
+        ftpClient.UploadDirectory(
+            androidProjectBuilderOptions.PublishFolder.FullName,
+            $"/home/{androidProjectBuilderOptions.FtpUser}/Apps/Spravy.Ui.Android"
+        );
     }
 }
