@@ -228,44 +228,12 @@ class Build : NukeBuild
         }
     }
 
-    void PublishBrowser(
-        string ftpHost,
-        string ftpUser,
-        string ftpPassword,
-        string sshHost,
-        string sshUser,
-        string sshPassword
-    )
+    void PublishBrowser()
     {
-        using var sshClient = new SshClient(CreateSshConnection(ftpHost, ftpUser, ftpPassword));
-        sshClient.Connect();
-        using var ftpClient = CreateFtpClient(sshHost, sshUser, sshPassword);
-        ftpClient.Connect();
-        var browserProject = Solution.AllProjects.Single(x => x.Name == "Spravy.Ui.Browser").ThrowIfNull();
-        var appBundlePath = "bin/Release/net8.0/browser-wasm/AppBundle";
-        var appBundleFolder = Path.Combine(browserProject.Directory, appBundlePath).ToFolder();
-        ftpClient.DeleteIfExistsFolder($"/home/{ftpUser}/{browserProject.Name}".ToFolder());
-        ftpClient.UploadDirectory(appBundleFolder.FullName, $"/home/{ftpUser}/{browserProject.Name}");
-        sshClient.SafeRun($"echo {sshPassword} | sudo -S rm -rf /var/www/spravy.com.ua/html/*");
-        sshClient.SafeRun(
-            $"echo {sshPassword} | sudo -S cp -rf /home/{ftpUser}/{browserProject.Name}/* /var/www/spravy.com.ua/html"
-        );
-        sshClient.SafeRun(
-            $"echo {sshPassword} | sudo -S cp -rf /home/{ftpUser}/Apps/Spravy.Ui.Android/com.SerhiiMaksymovFOP.Spravy-Signed.apk /var/www/spravy.com.ua/html"
-        );
-        sshClient.SafeRun(
-            $"echo {sshPassword} | sudo -S cp -rf /home/{ftpUser}/Apps/Spravy.Ui.Android/com.SerhiiMaksymovFOP.Spravy-Signed.aab /var/www/spravy.com.ua/html"
-        );
-        sshClient.SafeRun(
-            $"cd /home/vafnir/Apps/Spravy.Ui.Desktop/linux-x64 && echo {sshPassword} | zip -r /var/www/spravy.com.ua/html/Spravy.Linux-x64.zip ./*"
-        );
-        sshClient.SafeRun(
-            $"cd /home/vafnir/Apps/Spravy.Ui.Desktop/win-x64 && echo {sshPassword} | zip -r /var/www/spravy.com.ua/html/Spravy.Windows-x64.zip ./*"
-        );
-        sshClient.SafeRun($"echo {sshPassword} | sudo -S chown -R $USER:$USER /var/www/spravy.com.ua/html");
-        sshClient.SafeRun($"echo {sshPassword} | sudo -S chmod -R 755 /var/www/spravy.com.ua");
-        sshClient.SafeRun($"echo {sshPassword} | sudo -S systemctl restart nginx");
-        sshClient.SafeRun($"echo {sshPassword} | sudo -S systemctl reload nginx");
+        foreach (var project in Projects.OfType<BrowserProjectBuilder>())
+        {
+            project.Publish();
+        }
     }
 
     Target StagingSetup => _ => _.Executes(() => Setup(StagingServerHost));
