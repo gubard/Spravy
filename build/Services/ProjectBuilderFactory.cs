@@ -133,8 +133,8 @@ public class ProjectBuilderFactory
                     versionService,
                     new AndroidProjectBuilderOptions(
                         keyStoreFile,
-                        AndroidSigningKeyPass,
-                        AndroidSigningStorePass,
+                        androidSigningKeyPass,
+                        androidSigningStorePass,
                         ftpHost,
                         ftpUser,
                         ftpPassword,
