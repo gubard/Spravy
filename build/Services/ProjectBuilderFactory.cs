@@ -13,7 +13,6 @@ public class ProjectBuilderFactory
     readonly string token;
     readonly string emailPassword;
     readonly IReadOnlyDictionary<string, ushort> ports;
-    readonly AndroidProjectBuilderOptions androidProjectBuilderOptions;
     readonly VersionService versionService;
     readonly DirectoryInfo publishFolder;
     readonly string ftpHost;
@@ -23,13 +22,15 @@ public class ProjectBuilderFactory
     readonly string sshUser;
     readonly string sshPassword;
     readonly string domain;
+    readonly FileInfo keyStoreFile;
+    readonly string androidSigningKeyPass;
+    readonly string androidSigningStorePass;
 
     public ProjectBuilderFactory(
         string configuration,
         string emailPassword,
         string token,
         IReadOnlyDictionary<string, ushort> ports,
-        AndroidProjectBuilderOptions androidProjectBuilderOptions,
         VersionService versionService,
         DirectoryInfo publishFolder,
         string ftpHost,
@@ -38,7 +39,10 @@ public class ProjectBuilderFactory
         string sshHost,
         string sshUser,
         string sshPassword,
-        string domain
+        string domain,
+        FileInfo keyStoreFile,
+        string androidSigningKeyPass,
+        string androidSigningStorePass
     )
     {
         this.versionService = versionService;
@@ -50,11 +54,13 @@ public class ProjectBuilderFactory
         this.sshUser = sshUser;
         this.sshPassword = sshPassword;
         this.domain = domain;
+        this.keyStoreFile = keyStoreFile;
+        this.androidSigningKeyPass = androidSigningKeyPass;
+        this.androidSigningStorePass = androidSigningStorePass;
         this.emailPassword = emailPassword;
         this.token = token;
         this.configuration = configuration;
         this.ports = ports;
-        this.androidProjectBuilderOptions = androidProjectBuilderOptions;
     }
 
     public IEnumerable<IProjectBuilder> Create(IEnumerable<FileInfo> csprojFiles)
@@ -125,7 +131,15 @@ public class ProjectBuilderFactory
                         domain
                     ),
                     versionService,
-                    androidProjectBuilderOptions
+                    new AndroidProjectBuilderOptions(
+                        keyStoreFile,
+                        AndroidSigningKeyPass,
+                        AndroidSigningStorePass,
+                        ftpHost,
+                        ftpUser,
+                        ftpPassword,
+                        publishFolder.Combine("Android")
+                    )
                 );
             }
 

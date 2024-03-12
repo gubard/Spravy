@@ -8,7 +8,6 @@ using System.Text;
 using _build.Extensions;
 using _build.Helpers;
 using _build.Interfaces;
-using _build.Models;
 using _build.Services;
 using Microsoft.IdentityModel.Tokens;
 using Nuke.Common;
@@ -57,7 +56,6 @@ class Build : NukeBuild
     [Parameter] readonly string StagingServerHost;
     [Parameter] readonly string MailPassword;
 
-    static readonly List<Project> ServiceProjects = new();
     static DirectoryInfo AndroidFolder;
     IReadOnlyDictionary<string, ushort> Ports;
 
@@ -100,15 +98,6 @@ class Build : NukeBuild
             MailPassword,
             Token,
             Ports,
-            new AndroidProjectBuilderOptions(
-                new FileInfo($"/home/{StagingFtpUser}/storage/sign-key.keystore"),
-                AndroidSigningKeyPass,
-                AndroidSigningStorePass,
-                StagingFtpHost,
-                StagingFtpUser,
-                StagingFtpPassword,
-                PathHelper.PublishFolder.Combine("Android")
-            ),
             VersionService,
             PathHelper.PublishFolder,
             StagingFtpHost,
@@ -117,7 +106,10 @@ class Build : NukeBuild
             StagingSshHost,
             StagingSshUser,
             StagingSshPassword,
-            StagingServerHost
+            StagingServerHost,
+            new FileInfo($"/home/{StagingFtpUser}/storage/sign-key.keystore"),
+            AndroidSigningKeyPass,
+            AndroidSigningStorePass
         );
     }
 
@@ -128,15 +120,6 @@ class Build : NukeBuild
             MailPassword,
             Token,
             Ports,
-            new AndroidProjectBuilderOptions(
-                new FileInfo($"/home/{FtpUser}/storage/sign-key.keystore"),
-                AndroidSigningKeyPass,
-                AndroidSigningStorePass,
-                FtpHost,
-                FtpUser,
-                FtpPassword,
-                PathHelper.PublishFolder.Combine("Android")
-            ),
             VersionService,
             PathHelper.PublishFolder,
             FtpHost,
@@ -145,7 +128,10 @@ class Build : NukeBuild
             SshHost,
             SshUser,
             SshPassword,
-            ServerHost
+            ServerHost,
+            new FileInfo($"/home/{StagingFtpUser}/storage/sign-key.keystore"),
+            AndroidSigningKeyPass,
+            AndroidSigningStorePass
         );
     }
 
