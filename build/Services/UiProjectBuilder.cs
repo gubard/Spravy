@@ -50,6 +50,8 @@ public abstract class UiProjectBuilder : ProjectBuilder
                         );
                     }
                 }
+
+                break;
             }
             catch (Exception e)
             {

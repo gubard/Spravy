@@ -101,6 +101,8 @@ public class AndroidProjectBuilder : UiProjectBuilder
                         );
                     }
                 }
+
+                break;
             }
             catch (Exception e)
             {
