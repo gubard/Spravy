@@ -4,7 +4,7 @@ using _build.Interfaces;
 
 namespace _build.Models;
 
-public class DesktopProjectBuilderOptions : ProjectBuilderOptions, IFtpOptions, IPublished
+public class DesktopProjectBuilderOptions : ProjectBuilderOptions, IPublished
 {
     public DesktopProjectBuilderOptions(
         FileInfo csprojFile,

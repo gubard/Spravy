@@ -50,7 +50,28 @@ public class BrowserProjectBuilder : UiProjectBuilder
 
         foreach (var published in browserOptions.Publisheds)
         {
-            sshClient.RunSudo(browserOptions, $"cp -rf {published.GetAppFolder()} {versionFolder}");
+            if (published.IsNeedZip)
+            {
+                if (published.Runtimes.IsEmpty)
+                {
+                    sshClient.RunCommand(
+                        $"cd {published.GetAppFolder()} && zip -r {versionFolder.Combine(published.GetProjectName()).ToFile($"{published.GetProjectName()}.zip")} ./*"
+                    );
+                }
+                else
+                {
+                    foreach (var runtime in published.Runtimes.Span)
+                    {
+                        sshClient.RunCommand(
+                            $"cd {published.GetAppFolder().Combine(runtime.Name)} && zip -r {versionFolder.Combine(published.GetProjectName()).ToFile($"{published.GetProjectName()}.{runtime.Name}.zip")} ./*"
+                        );
+                    }
+                }
+            }
+            else
+            {
+                sshClient.RunSudo(browserOptions, $"cp -rf {published.GetAppFolder()} {versionFolder}");
+            }
         }
 
         sshClient.RunSudo(browserOptions, $"chown -R $USER:$USER {browserFolder}");

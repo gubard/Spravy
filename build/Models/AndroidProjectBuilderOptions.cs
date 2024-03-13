@@ -4,7 +4,7 @@ using _build.Interfaces;
 
 namespace _build.Models;
 
-public class AndroidProjectBuilderOptions : ProjectBuilderOptions, IFtpOptions, IPublished
+public class AndroidProjectBuilderOptions : ProjectBuilderOptions, IPublished
 {
     public AndroidProjectBuilderOptions(
         FileInfo csprojFile,

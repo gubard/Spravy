@@ -9,10 +9,12 @@ using _build.Extensions;
 using _build.Helpers;
 using _build.Interfaces;
 using _build.Services;
+using FluentFTP;
 using Microsoft.IdentityModel.Tokens;
 using Nuke.Common;
 using Nuke.Common.ProjectModel;
 using Renci.SshNet;
+using Serilog;
 using Telegram.Bot;
 
 namespace _build;
@@ -292,7 +294,28 @@ class Build : NukeBuild
     Target StagingPublishBrowser =>
         _ => _
             .DependsOn(StagingPublishAndroid, StagingPublishDesktop)
-            .Executes(PublishBrowser);
+            .Executes(() =>
+                {
+                    PublishBrowser();
+
+                    using var ftpClient = CreateFtpClient(StagingFtpHost, StagingFtpUser, StagingFtpPassword);
+                    ftpClient.Connect();
+                    var html = PathHelper.WwwFolder.Combine(StagingServerHost).Combine("html");
+
+                    var items = ftpClient.GetListing(html.Combine("downloads").FullName, FtpListOption.Recursive)
+                        .Where(x => x.Type == FtpObjectType.File)
+                        .Select(x => x.FullName.Replace(html.FullName, $"https://{StagingServerHost}"));
+
+                    var botClient = new TelegramBotClient(TelegramToken);
+
+                    botClient.SendTextMessageAsync(
+                            "@spravy_release",
+                            $"Published Staging v{VersionService.Version}{Environment.NewLine}{string.Join(Environment.NewLine, items)}"
+                        )
+                        .GetAwaiter()
+                        .GetResult();
+                }
+            );
 
     Target ProdPublishBrowser =>
         _ => _
@@ -303,10 +326,19 @@ class Build : NukeBuild
         _ => _.DependsOn(ProdPublishBrowser)
             .Executes(() =>
                 {
+                    using var ftpClient = CreateFtpClient(FtpHost, FtpUser, FtpPassword);
+                    ftpClient.Connect();
+                    var html = PathHelper.WwwFolder.Combine(ServerHost).Combine("html");
+
+                    var items = ftpClient.GetListing(html.Combine("downloads").FullName, FtpListOption.Recursive)
+                        .Where(x => x.Type == FtpObjectType.File)
+                        .Select(x => x.FullName.Replace(html.FullName, $"https://{ServerHost}"));
+
                     var botClient = new TelegramBotClient(TelegramToken);
+
                     botClient.SendTextMessageAsync(
-                            chatId: "@spravy_release",
-                            text: $"Published v{VersionService.Version}"
+                            "@spravy_release",
+                            $"Published Prod v{VersionService.Version}{Environment.NewLine}{string.Join(Environment.NewLine, items)}"
                         )
                         .GetAwaiter()
                         .GetResult();
@@ -349,5 +381,18 @@ class Build : NukeBuild
         }
 
         return new ConnectionInfo(values[0], sshUser, password);
+    }
+
+    FtpClient CreateFtpClient(string ftpHost, string ftpUser, string ftpPassword)
+    {
+        var values = ftpHost.Split(":");
+        Log.Logger.Information("Connecting {FtpHost} {FtpUser}", ftpHost, ftpUser);
+
+        if (values.Length == 2)
+        {
+            return new FtpClient(values[0], ftpUser, ftpPassword, int.Parse(values[1]));
+        }
+
+        return new FtpClient(ftpHost, ftpUser, ftpPassword);
     }
 }
