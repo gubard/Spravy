@@ -34,10 +34,7 @@ public class BrowserProjectBuilder : UiProjectBuilder
         var appBundleFolder =
             Path.Combine(options.CsprojFile.Directory.FullName, appBundlePath).ToFolder();
 
-        ftpClient.DeleteIfExistsFolder(
-            $"/home/{browserOptions.FtpUser}/{options.GetProjectName()}"
-                .ToFolder()
-        );
+        ftpClient.DeleteIfExistsFolder(browserOptions.GetAppFolder());
 
         ftpClient.UploadDirectory(appBundleFolder.FullName,
             browserOptions.GetAppFolder().FullName
@@ -62,14 +59,10 @@ public class BrowserProjectBuilder : UiProjectBuilder
             );
         }
 
-        sshClient.SafeRun(
-            $"echo {browserOptions.SshPassword} | sudo -S chown -R $USER:$USER /var/www/spravy.com.ua/html"
+        sshClient.SafeRun($"echo {browserOptions.SshPassword} | sudo -S chown -R $USER:$USER {PathHelper.BrowserFolder}"
         );
 
-        sshClient.SafeRun(
-            $"echo {browserOptions.SshPassword} | sudo -S chmod -R 755 /var/www/spravy.com.ua"
-        );
-
+        sshClient.SafeRun($"echo {browserOptions.SshPassword} | sudo -S chmod -R 755 {PathHelper.UrlFolder}");
         sshClient.SafeRun($"echo {browserOptions.SshPassword} | sudo -S systemctl restart nginx");
         sshClient.SafeRun($"echo {browserOptions.SshPassword} | sudo -S systemctl reload nginx");
     }
