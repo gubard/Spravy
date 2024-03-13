@@ -20,10 +20,6 @@ public class BrowserProjectBuilder : UiProjectBuilder
 
     public void Publish()
     {
-        using var sshClient = browserOptions.CreateSshClient();
-        sshClient.Connect();
-        using var ftpClient = browserOptions.CreateFtpClient();
-        ftpClient.Connect();
         var appBundlePath = "bin/Release/net8.0/browser-wasm/AppBundle";
 
         if (options.CsprojFile.Directory is null)
@@ -34,6 +30,10 @@ public class BrowserProjectBuilder : UiProjectBuilder
         var appBundleFolder =
             Path.Combine(options.CsprojFile.Directory.FullName, appBundlePath).ToFolder();
 
+        using var sshClient = browserOptions.CreateSshClient();
+        sshClient.Connect();
+        using var ftpClient = browserOptions.CreateFtpClient();
+        ftpClient.Connect();
         ftpClient.DeleteIfExistsFolder(browserOptions.GetAppFolder());
 
         ftpClient.UploadDirectory(appBundleFolder.FullName,
