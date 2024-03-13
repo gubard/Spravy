@@ -1,11 +1,18 @@
+using System.Collections.Generic;
 using System.IO;
 using _build.Interfaces;
 
 namespace _build.Models;
 
-public class AndroidProjectBuilderOptions : IFtpOptions
+public class AndroidProjectBuilderOptions : ProjectBuilderOptions, IFtpOptions
 {
     public AndroidProjectBuilderOptions(
+        FileInfo csprojFile,
+        FileInfo appSettingsFile,
+        IReadOnlyDictionary<string, ushort> hosts,
+        IEnumerable<Runtime> runtimes,
+        string configuration,
+        string domain,
         FileInfo keyStoreFile,
         string androidSigningKeyPass,
         string androidSigningStorePass,
@@ -13,7 +20,7 @@ public class AndroidProjectBuilderOptions : IFtpOptions
         string ftpPassword,
         string ftpUser,
         DirectoryInfo publishFolder
-    )
+    ) : base(csprojFile, appSettingsFile, hosts, runtimes, configuration, domain)
     {
         KeyStoreFile = keyStoreFile;
         AndroidSigningKeyPass = androidSigningKeyPass;

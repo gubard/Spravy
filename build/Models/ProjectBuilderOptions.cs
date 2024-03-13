@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using _build.Interfaces;
 
 namespace _build.Models;
 
-public class ProjectBuilderOptions
+public class ProjectBuilderOptions : ICsprojFile
 {
     public ProjectBuilderOptions(
         FileInfo csprojFile,

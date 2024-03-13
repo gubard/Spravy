@@ -9,11 +9,10 @@ public class DesktopProjectBuilder : UiProjectBuilder
     readonly DesktopProjectBuilderOptions desktopProjectBuilderOptions;
 
     public DesktopProjectBuilder(
-        ProjectBuilderOptions projectBuilderOptions,
         VersionService versionService,
         DesktopProjectBuilderOptions desktopProjectBuilderOptions
     )
-        : base(projectBuilderOptions, versionService)
+        : base(desktopProjectBuilderOptions, versionService)
     {
         this.desktopProjectBuilderOptions = desktopProjectBuilderOptions;
     }

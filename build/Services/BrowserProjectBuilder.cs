@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using _build.Extensions;
 using _build.Models;
@@ -9,11 +10,10 @@ public class BrowserProjectBuilder : UiProjectBuilder
     readonly BrowserProjectBuilderOptions browserProjectBuilderOptions;
 
     public BrowserProjectBuilder(
-        ProjectBuilderOptions projectBuilderOptions,
         VersionService versionService,
         BrowserProjectBuilderOptions browserProjectBuilderOptions
     )
-        : base(projectBuilderOptions, versionService)
+        : base(browserProjectBuilderOptions, versionService)
     {
         this.browserProjectBuilderOptions = browserProjectBuilderOptions;
     }
@@ -26,16 +26,21 @@ public class BrowserProjectBuilder : UiProjectBuilder
         ftpClient.Connect();
         var appBundlePath = "bin/Release/net8.0/browser-wasm/AppBundle";
 
+        if (projectBuilderOptions.CsprojFile.Directory is null)
+        {
+            throw new NullReferenceException();
+        }
+
         var appBundleFolder =
             Path.Combine(projectBuilderOptions.CsprojFile.Directory.FullName, appBundlePath).ToFolder();
 
         ftpClient.DeleteIfExistsFolder(
-            $"/home/{browserProjectBuilderOptions.FtpUser}/{projectBuilderOptions.CsprojFile.GetFileNameWithoutExtension()}"
+            $"/home/{browserProjectBuilderOptions.FtpUser}/{projectBuilderOptions.GetProjectName()}"
                 .ToFolder()
         );
 
         ftpClient.UploadDirectory(appBundleFolder.FullName,
-            $"/home/{browserProjectBuilderOptions.FtpUser}/{projectBuilderOptions.CsprojFile.GetFileNameWithoutExtension()}"
+            $"/home/{browserProjectBuilderOptions.FtpUser}/{projectBuilderOptions.GetProjectName()}"
         );
 
         sshClient.SafeRun(
@@ -43,7 +48,7 @@ public class BrowserProjectBuilder : UiProjectBuilder
         );
 
         sshClient.SafeRun(
-            $"echo {browserProjectBuilderOptions.SshPassword} | sudo -S cp -rf /home/{browserProjectBuilderOptions.FtpUser}/{projectBuilderOptions.CsprojFile.GetFileNameWithoutExtension()}/* /var/www/spravy.com.ua/html"
+            $"echo {browserProjectBuilderOptions.SshPassword} | sudo -S cp -rf /home/{browserProjectBuilderOptions.FtpUser}/{projectBuilderOptions.GetProjectName()}/* /var/www/spravy.com.ua/html"
         );
 
         sshClient.SafeRun(

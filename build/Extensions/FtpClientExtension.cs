@@ -16,22 +16,22 @@ public static class FtpClientExtension
         client.CreateDirectory(path, true);
     }
 
-    public static void DeleteIfExistsDirectory(this FtpClient client, string path)
+    public static void DeleteIfExistsDirectory(this FtpClient client, DirectoryInfo folder)
     {
-        if (!client.DirectoryExists(path))
+        if (!client.DirectoryExists(folder.FullName))
         {
             return;
         }
 
         try
         {
-            client.DeleteDirectory(path,
+            client.DeleteDirectory(folder.FullName,
                 FtpListOption.Recursive | FtpListOption.ForceList | FtpListOption.Auto | FtpListOption.AllFiles
             );
         }
         catch
         {
-            Log.Error("{Path}", path);
+            Log.Error("{Path}", folder);
 
             throw;
         }

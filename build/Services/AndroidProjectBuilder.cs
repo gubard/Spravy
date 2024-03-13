@@ -11,11 +11,10 @@ public class AndroidProjectBuilder : UiProjectBuilder
     readonly AndroidProjectBuilderOptions androidProjectBuilderOptions;
 
     public AndroidProjectBuilder(
-        ProjectBuilderOptions projectBuilderOptions,
         VersionService versionService,
         AndroidProjectBuilderOptions androidProjectBuilderOptions
     )
-        : base(projectBuilderOptions, versionService)
+        : base(androidProjectBuilderOptions, versionService)
     {
         this.androidProjectBuilderOptions = androidProjectBuilderOptions;
     }
@@ -67,18 +66,46 @@ public class AndroidProjectBuilder : UiProjectBuilder
         {
             try
             {
-                DotNetTasks.DotNetPublish(setting => setting.SetProject(projectBuilderOptions.CsprojFile.FullName)
-                    .SetProperty("AndroidKeyStore", "true")
-                    .SetProperty("AndroidSigningKeyStore", androidProjectBuilderOptions.KeyStoreFile.FullName)
-                    .SetProperty("AndroidSigningKeyAlias", "spravy")
-                    .SetProperty("AndroidSigningKeyPass", androidProjectBuilderOptions.AndroidSigningKeyPass)
-                    .SetProperty("AndroidSigningStorePass", androidProjectBuilderOptions.AndroidSigningStorePass)
-                    .SetProperty("AndroidSdkDirectory", "/opt/android-sdk")
-                    .SetConfiguration(projectBuilderOptions.Configuration)
-                    .AddProperty("Version", versionService.Version.ToString())
-                    .SetOutput(androidProjectBuilderOptions.PublishFolder.FullName)
-                    .EnableNoRestore()
-                );
+                if (projectBuilderOptions.Runtimes.IsEmpty)
+                {
+                    DotNetTasks.DotNetPublish(setting => setting.SetProject(projectBuilderOptions.CsprojFile.FullName)
+                        .SetProperty("AndroidKeyStore", "true")
+                        .SetProperty("AndroidSigningKeyStore", androidProjectBuilderOptions.KeyStoreFile.FullName)
+                        .SetProperty("AndroidSigningKeyAlias", "spravy")
+                        .SetProperty("AndroidSigningKeyPass", androidProjectBuilderOptions.AndroidSigningKeyPass)
+                        .SetProperty("AndroidSigningStorePass", androidProjectBuilderOptions.AndroidSigningStorePass)
+                        .SetProperty("AndroidSdkDirectory", "/opt/android-sdk")
+                        .SetConfiguration(projectBuilderOptions.Configuration)
+                        .AddProperty("Version", versionService.Version.ToString())
+                        .SetOutput(androidProjectBuilderOptions.PublishFolder.FullName)
+                        .EnableNoRestore()
+                    );
+                }
+                else
+                {
+                    foreach (var runtime in projectBuilderOptions.Runtimes.Span)
+                    {
+                        DotNetTasks.DotNetPublish(setting =>
+                            setting.SetProject(projectBuilderOptions.CsprojFile.FullName)
+                                .SetProperty("AndroidKeyStore", "true")
+                                .SetProperty("AndroidSigningKeyStore",
+                                    androidProjectBuilderOptions.KeyStoreFile.FullName
+                                )
+                                .SetProperty("AndroidSigningKeyAlias", "spravy")
+                                .SetProperty("AndroidSigningKeyPass", androidProjectBuilderOptions.AndroidSigningKeyPass
+                                )
+                                .SetProperty("AndroidSigningStorePass",
+                                    androidProjectBuilderOptions.AndroidSigningStorePass
+                                )
+                                .SetProperty("AndroidSdkDirectory", "/opt/android-sdk")
+                                .SetConfiguration(projectBuilderOptions.Configuration)
+                                .AddProperty("Version", versionService.Version.ToString())
+                                .SetOutput(androidProjectBuilderOptions.PublishFolder.Combine(runtime.Name).FullName)
+                                .EnableNoRestore()
+                                .SetRuntime(runtime.Name)
+                        );
+                    }
+                }
             }
             catch (Exception e)
             {
@@ -96,13 +123,12 @@ public class AndroidProjectBuilder : UiProjectBuilder
             }
         }
 
-
-        ftpClient.DeleteIfExistsDirectory($"/home/{androidProjectBuilderOptions.FtpUser}/Apps/Spravy.Ui.Android");
-        ftpClient.CreateIfNotExistsDirectory($"/home/{androidProjectBuilderOptions.FtpUser}/Apps");
+        ftpClient.DeleteIfExistsDirectory(androidProjectBuilderOptions.GetAppFolder());
+        ftpClient.CreateIfNotExistsDirectory(androidProjectBuilderOptions.GetAppsFolder());
 
         ftpClient.UploadDirectory(
             androidProjectBuilderOptions.PublishFolder.FullName,
-            $"/home/{androidProjectBuilderOptions.FtpUser}/Apps/Spravy.Ui.Android"
+            androidProjectBuilderOptions.GetAppFolder().FullName
         );
     }
 }

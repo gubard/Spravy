@@ -67,32 +67,32 @@ public class ProjectBuilderFactory
     {
         foreach (var csprojFile in csprojFiles)
         {
-            var fileName = csprojFile.GetFileNameWithoutExtension();
+            var projectName = csprojFile.GetFileNameWithoutExtension();
 
-            if (fileName == "Spravy.Service")
+            if (projectName == "Spravy.Service")
             {
                 continue;
             }
 
-            if (fileName.EndsWith(".Tests"))
+            if (projectName.EndsWith(".Tests"))
             {
-                yield return new TestProjectBuilder(
-                    new ProjectBuilderOptions(
-                        csprojFile,
-                        csprojFile.Directory.ToFile("testsettings.json"),
-                        ports,
-                        Enumerable.Empty<Runtime>(),
-                        configuration,
-                        domain
-                    ),
-                    versionService
+                var projectBuilderOptions = new ProjectBuilderOptions(
+                    csprojFile,
+                    csprojFile.Directory.ToFile("testsettings.json"),
+                    ports,
+                    Enumerable.Empty<Runtime>(),
+                    configuration,
+                    domain
                 );
+
+                yield return new TestProjectBuilder(projectBuilderOptions, versionService);
             }
 
-            if (fileName.EndsWith(".Service"))
+            if (projectName.EndsWith(".Service"))
             {
                 yield return new ServiceProjectBuilder(
-                    new ProjectBuilderOptions(
+                    versionService,
+                    new ServiceProjectBuilderOptions(
                         csprojFile,
                         csprojFile.Directory.ToFile("appsettings.json"),
                         ports,
@@ -101,14 +101,11 @@ public class ProjectBuilderFactory
                             Runtime.LinuxX64,
                         },
                         configuration,
-                        domain
-                    ),
-                    versionService,
-                    new ServiceProjectBuilderOptions(
+                        domain,
                         ports[csprojFile.GetFileNameWithoutExtension().GetGrpcServiceName()],
                         token,
                         emailPassword,
-                        publishFolder.Combine(csprojFile.GetFileNameWithoutExtension()),
+                        publishFolder.Combine(projectName),
                         ftpHost,
                         ftpUser,
                         ftpPassword,
@@ -119,34 +116,33 @@ public class ProjectBuilderFactory
                 );
             }
 
-            if (fileName.EndsWith(".Android"))
+            if (projectName.EndsWith(".Android"))
             {
                 yield return new AndroidProjectBuilder(
-                    new ProjectBuilderOptions(
+                    versionService,
+                    new AndroidProjectBuilderOptions(
                         csprojFile,
                         csprojFile.Directory.ToFile("appsettings.json"),
                         ports,
                         Enumerable.Empty<Runtime>(),
                         configuration,
-                        domain
-                    ),
-                    versionService,
-                    new AndroidProjectBuilderOptions(
+                        domain,
                         keyStoreFile,
                         androidSigningKeyPass,
                         androidSigningStorePass,
                         ftpHost,
                         ftpPassword,
                         ftpUser,
-                        publishFolder.Combine("Android")
+                        publishFolder.Combine(projectName)
                     )
                 );
             }
 
-            if (fileName.EndsWith(".Browser"))
+            if (projectName.EndsWith(".Browser"))
             {
                 yield return new BrowserProjectBuilder(
-                    new ProjectBuilderOptions(
+                    versionService,
+                    new BrowserProjectBuilderOptions(
                         csprojFile,
                         csprojFile.Directory.ToFile("appsettings.json"),
                         ports,
@@ -155,10 +151,7 @@ public class ProjectBuilderFactory
                             Runtime.BrowserWasm,
                         },
                         configuration,
-                        domain
-                    ),
-                    versionService,
-                    new BrowserProjectBuilderOptions(
+                        domain,
                         ftpHost,
                         ftpUser,
                         ftpPassword,
@@ -169,10 +162,11 @@ public class ProjectBuilderFactory
                 );
             }
 
-            if (fileName.EndsWith(".Desktop"))
+            if (projectName.EndsWith(".Desktop"))
             {
                 yield return new DesktopProjectBuilder(
-                    new ProjectBuilderOptions(
+                    versionService,
+                    new DesktopProjectBuilderOptions(
                         csprojFile,
                         csprojFile.Directory.ToFile("appsettings.json"),
                         ports,
@@ -181,14 +175,11 @@ public class ProjectBuilderFactory
                             Runtime.LinuxX64, Runtime.WinX64,
                         },
                         configuration,
-                        domain
-                    ),
-                    versionService,
-                    new DesktopProjectBuilderOptions(
+                        domain,
                         ftpHost,
                         ftpUser,
                         ftpPassword,
-                        publishFolder.Combine(csprojFile.GetFileNameWithoutExtension())
+                        publishFolder.Combine(projectName)
                     )
                 );
             }

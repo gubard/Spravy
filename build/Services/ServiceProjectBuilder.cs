@@ -13,10 +13,9 @@ public class ServiceProjectBuilder : ProjectBuilder
     readonly ServiceProjectBuilderOptions serviceProjectBuilderOptions;
 
     public ServiceProjectBuilder(
-        ProjectBuilderOptions projectBuilderOptions,
         VersionService versionService,
         ServiceProjectBuilderOptions serviceProjectBuilderOptions
-    ) : base(projectBuilderOptions, versionService)
+    ) : base(serviceProjectBuilderOptions, versionService)
     {
         this.serviceProjectBuilderOptions = serviceProjectBuilderOptions;
     }
@@ -72,36 +71,36 @@ public class ServiceProjectBuilder : ProjectBuilder
         }
 
         ftpClient.DeleteIfExistsFolder(
-            $"/home/{serviceProjectBuilderOptions.FtpUser}/{projectBuilderOptions.CsprojFile.GetFileNameWithoutExtension()}"
+            $"/home/{serviceProjectBuilderOptions.FtpUser}/{projectBuilderOptions.GetProjectName()}"
                 .ToFolder()
         );
 
         ftpClient.UploadDirectory(serviceProjectBuilderOptions.PublishFolder.FullName,
-            $"/home/{serviceProjectBuilderOptions.FtpUser}/{projectBuilderOptions.CsprojFile.GetFileNameWithoutExtension()}"
+            $"/home/{serviceProjectBuilderOptions.FtpUser}/{projectBuilderOptions.GetProjectName()}"
         );
 
         sshClient.SafeRun(
-            $"echo {serviceProjectBuilderOptions.SshPassword} | sudo -S rm /etc/systemd/system/{projectBuilderOptions.CsprojFile.GetFileNameWithoutExtension().ToLower()}"
+            $"echo {serviceProjectBuilderOptions.SshPassword} | sudo -S rm /etc/systemd/system/{projectBuilderOptions.GetProjectName().ToLower()}"
         );
 
         PathHelper.ServicesFolder.CreateIfNotExits();
 
         var serviceFile =
-            PathHelper.ServicesFolder.ToFile(projectBuilderOptions.CsprojFile.GetFileNameWithoutExtension().ToLower());
+            PathHelper.ServicesFolder.ToFile(projectBuilderOptions.GetProjectName().ToLower());
 
         serviceFile.WriteAllText(GetDaemonConfig());
         ftpClient.CreateIfNotExistsDirectory(PathHelper.ServicesFolder);
         ftpClient.UploadFile(serviceFile.FullName, serviceFile.FullName);
 
         sshClient.SafeRun(
-            $"echo {serviceProjectBuilderOptions.SshPassword} | sudo -S cp {serviceFile} /etc/systemd/system/{projectBuilderOptions.CsprojFile.GetFileNameWithoutExtension().ToLower()}"
+            $"echo {serviceProjectBuilderOptions.SshPassword} | sudo -S cp {serviceFile} /etc/systemd/system/{projectBuilderOptions.GetProjectName().ToLower()}"
         );
 
         sshClient.SafeRun(
-            $"echo {serviceProjectBuilderOptions.SshPassword} | sudo -S systemctl enable {projectBuilderOptions.CsprojFile.GetFileNameWithoutExtension().ToLower()}"
+            $"echo {serviceProjectBuilderOptions.SshPassword} | sudo -S systemctl enable {projectBuilderOptions.GetProjectName().ToLower()}"
         );
         sshClient.SafeRun(
-            $"echo {serviceProjectBuilderOptions.SshPassword} | sudo -S systemctl restart {projectBuilderOptions.CsprojFile.GetFileNameWithoutExtension().ToLower()}"
+            $"echo {serviceProjectBuilderOptions.SshPassword} | sudo -S systemctl restart {projectBuilderOptions.GetProjectName().ToLower()}"
         );
     }
 
@@ -109,17 +108,17 @@ public class ServiceProjectBuilder : ProjectBuilder
     {
         return $"""
                 [Unit]
-                Description={projectBuilderOptions.CsprojFile.GetFileNameWithoutExtension()}
+                Description={projectBuilderOptions.GetProjectName()}
                 After=network.target
 
                 [Service]
-                WorkingDirectory=/home/{serviceProjectBuilderOptions.FtpUser}/{projectBuilderOptions.CsprojFile.GetFileNameWithoutExtension()}
-                ExecStart=/usr/bin/dotnet /home/{serviceProjectBuilderOptions.FtpUser}/{projectBuilderOptions.CsprojFile.GetFileNameWithoutExtension()}/{projectBuilderOptions.CsprojFile.GetFileNameWithoutExtension()}.dll
+                WorkingDirectory=/home/{serviceProjectBuilderOptions.FtpUser}/{projectBuilderOptions.GetProjectName()}
+                ExecStart=/usr/bin/dotnet /home/{serviceProjectBuilderOptions.FtpUser}/{projectBuilderOptions.GetProjectName()}/{projectBuilderOptions.GetProjectName()}.dll
                 Restart=always
                 # Restart service after 10 seconds if the dotnet service crashes:
                 RestartSec=10
                 KillSignal=SIGINT
-                SyslogIdentifier={projectBuilderOptions.CsprojFile.GetFileNameWithoutExtension().ToLower().Replace(",", "-")}
+                SyslogIdentifier={projectBuilderOptions.GetProjectName().ToLower().Replace(",", "-")}
                 User={serviceProjectBuilderOptions.FtpUser}
                 Environment=ASPNETCORE_ENVIRONMENT=Production
                 Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false

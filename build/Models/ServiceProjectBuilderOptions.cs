@@ -1,11 +1,18 @@
+using System.Collections.Generic;
 using System.IO;
 using _build.Interfaces;
 
 namespace _build.Models;
 
-public class ServiceProjectBuilderOptions : IFtpOptions, ISshOptions
+public class ServiceProjectBuilderOptions : ProjectBuilderOptions, IFtpOptions, ISshOptions
 {
     public ServiceProjectBuilderOptions(
+        FileInfo csprojFile,
+        FileInfo appSettingsFile,
+        IReadOnlyDictionary<string, ushort> hosts,
+        IEnumerable<Runtime> runtimes,
+        string configuration,
+        string domain,
         ushort port,
         string token,
         string emailPassword,
@@ -16,7 +23,7 @@ public class ServiceProjectBuilderOptions : IFtpOptions, ISshOptions
         string sshHost,
         string sshUser,
         string sshPassword
-    )
+    ) : base(csprojFile, appSettingsFile, hosts, runtimes, configuration, domain)
     {
         Port = port;
         Token = token;

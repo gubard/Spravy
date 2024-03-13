@@ -1,3 +1,4 @@
+using System.IO;
 using _build.Interfaces;
 using FluentFTP;
 using Serilog;
@@ -17,5 +18,10 @@ public static class FtpOptionsExtension
         }
 
         return new FtpClient(options.FtpHost, options.FtpUser, options.FtpPassword);
+    }
+
+    public static DirectoryInfo GetAppsFolder(this IFtpOptions options)
+    {
+        return  $"/home/{options.FtpUser}/Apps".ToFolder();
     }
 }
