@@ -303,7 +303,9 @@ class Build : NukeBuild
                     var html = PathHelper.WwwFolder.Combine(StagingServerHost).Combine("html");
 
                     var items = ftpClient.GetListing(html.Combine("downloads").FullName, FtpListOption.Recursive)
-                        .Where(x => x.Type == FtpObjectType.File)
+                        .Where(x => x.Type == FtpObjectType.File
+                                    && (x.Name.EndsWith(".zip") || x.Name.EndsWith(".apk") || x.Name.EndsWith(".aab"))
+                        )
                         .Select(x => x.FullName.Replace(html.FullName, $"https://{StagingServerHost}"));
 
                     var botClient = new TelegramBotClient(TelegramToken);
@@ -331,7 +333,9 @@ class Build : NukeBuild
                     var html = PathHelper.WwwFolder.Combine(ServerHost).Combine("html");
 
                     var items = ftpClient.GetListing(html.Combine("downloads").FullName, FtpListOption.Recursive)
-                        .Where(x => x.Type == FtpObjectType.File)
+                        .Where(x => x.Type == FtpObjectType.File
+                                    && (x.Name.EndsWith(".zip") || x.Name.EndsWith(".apk") || x.Name.EndsWith(".aab"))
+                        )
                         .Select(x => x.FullName.Replace(html.FullName, $"https://{ServerHost}"));
 
                     var botClient = new TelegramBotClient(TelegramToken);
