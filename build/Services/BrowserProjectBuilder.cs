@@ -3,6 +3,7 @@ using System.IO;
 using _build.Extensions;
 using _build.Helpers;
 using _build.Models;
+using Serilog;
 
 namespace _build.Services;
 
@@ -52,6 +53,8 @@ public class BrowserProjectBuilder : UiProjectBuilder
         {
             if (published.IsNeedZip)
             {
+                Log.Information("Zip {ProjectName}", published.GetProjectName());
+
                 if (published.Runtimes.IsEmpty)
                 {
                     sshClient.RunCommand(
@@ -70,6 +73,7 @@ public class BrowserProjectBuilder : UiProjectBuilder
             }
             else
             {
+                Log.Information("Copy {ProjectName}", published.GetProjectName());
                 sshClient.RunSudo(browserOptions, $"cp -rf {published.GetAppFolder()} {versionFolder}");
             }
         }
