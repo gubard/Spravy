@@ -57,7 +57,7 @@ public class BrowserProjectBuilder : UiProjectBuilder
 
                 if (published.Runtimes.IsEmpty)
                 {
-                    sshClient.RunCommand(
+                    sshClient.SafeRun(
                         $"cd {published.GetAppFolder()} && zip -r {versionFolder.Combine(published.GetProjectName()).ToFile($"{published.GetProjectName()}.zip")} ./*"
                     );
                 }
@@ -65,7 +65,7 @@ public class BrowserProjectBuilder : UiProjectBuilder
                 {
                     foreach (var runtime in published.Runtimes.Span)
                     {
-                        sshClient.RunCommand(
+                        sshClient.SafeRun(
                             $"cd {published.GetAppFolder().Combine(runtime.Name)} && zip -r {versionFolder.Combine(published.GetProjectName()).ToFile($"{published.GetProjectName()}.{runtime.Name}.zip")} ./*"
                         );
                     }
