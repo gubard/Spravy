@@ -1,4 +1,5 @@
 using System;
+using _build.Interfaces;
 using Renci.SshNet;
 using Serilog;
 
@@ -20,5 +21,10 @@ public static class SshClientExtension
         {
             Log.Error("SSH result: {Error}", runCommand.Result);
         }
+    }
+
+    public static void RunSudo(this SshClient client, ISshOptions options, string command)
+    {
+        client.RunCommand($"echo {options.SshPassword} | sudo -S {command}");
     }
 }

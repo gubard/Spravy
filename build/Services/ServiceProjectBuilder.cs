@@ -85,10 +85,7 @@ public class ServiceProjectBuilder : ProjectBuilder
             );
         }
 
-        sshClient.SafeRun(
-            $"echo {ServiceOptions.SshPassword} | sudo -S rm /etc/systemd/system/{options.GetServiceName()}"
-        );
-
+        sshClient.RunSudo(ServiceOptions, $"rm /etc/systemd/system/{options.GetServiceName()}");
         PathHelper.ServicesFolder.CreateIfNotExits();
 
         var serviceFile =
@@ -97,10 +94,7 @@ public class ServiceProjectBuilder : ProjectBuilder
         serviceFile.WriteAllText(GetDaemonConfig());
         ftpClient.CreateIfNotExistsFolder(PathHelper.ServicesFolder);
         ftpClient.UploadFile(serviceFile.FullName, serviceFile.FullName);
-
-        sshClient.SafeRun(
-            $"echo {ServiceOptions.SshPassword} | sudo -S cp {serviceFile} /etc/systemd/system/{options.GetServiceName()}"
-        );
+        sshClient.RunSudo(ServiceOptions, $"cp {serviceFile} /etc/systemd/system/{options.GetServiceName()}");
     }
 
     string GetDaemonConfig()

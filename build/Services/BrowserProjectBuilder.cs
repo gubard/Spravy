@@ -43,25 +43,19 @@ public class BrowserProjectBuilder : UiProjectBuilder
         var urlFolder = PathHelper.WwwFolder.Combine(browserOptions.Domain);
         var browserFolder = urlFolder.Combine("html");
         var browserDownloadsFolder = browserFolder.Combine("downloads");
-        sshClient.SafeRun($"echo {browserOptions.SshPassword} | sudo -S rm -rf {browserFolder}/*");
-
-        sshClient.SafeRun(
-            $"echo {browserOptions.SshPassword} | sudo -S cp -rf {browserOptions.GetAppFolder()}/* {browserFolder}"
-        );
-
+        sshClient.RunSudo(browserOptions, $"rm -rf {browserFolder}/*");
+        sshClient.RunSudo(browserOptions, $" cp -rf {browserOptions.GetAppFolder()}/* {browserFolder}");
         var versionFolder = browserDownloadsFolder.Combine(versionService.Version.ToString());
-        sshClient.SafeRun($"echo {browserOptions.SshPassword} | sudo -S mkdir -p {versionFolder}");
+        sshClient.RunSudo(browserOptions, $"mkdir -p {versionFolder}");
 
         foreach (var published in browserOptions.Publisheds)
         {
-            sshClient.SafeRun(
-                $"echo {browserOptions.SshPassword} | sudo -S cp -rf {published.GetAppFolder()} {versionFolder}"
-            );
+            sshClient.RunSudo(browserOptions, $"cp -rf {published.GetAppFolder()} {versionFolder}");
         }
 
-        sshClient.SafeRun($"echo {browserOptions.SshPassword} | sudo -S chown -R $USER:$USER {browserFolder}");
-        sshClient.SafeRun($"echo {browserOptions.SshPassword} | sudo -S chmod -R 755 {urlFolder}");
-        sshClient.SafeRun($"echo {browserOptions.SshPassword} | sudo -S systemctl restart nginx");
-        sshClient.SafeRun($"echo {browserOptions.SshPassword} | sudo -S systemctl reload nginx");
+        sshClient.RunSudo(browserOptions, $"chown -R $USER:$USER {browserFolder}");
+        sshClient.RunSudo(browserOptions, $"chmod -R 755 {urlFolder}");
+        sshClient.RunSudo(browserOptions, "systemctl restart nginx");
+        sshClient.RunSudo(browserOptions, "systemctl reload nginx");
     }
 }
