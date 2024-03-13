@@ -178,7 +178,18 @@ class Build : NukeBuild
             project.Publish();
         }
 
+        sshClient.SafeRun($"echo {sshPassword} | sudo -S chown -R $USER:$USER /etc/letsencrypt");
         sshClient.SafeRun($"echo {sshPassword} | sudo -S systemctl daemon-reload");
+
+        foreach (var project in Projects.OfType<ServiceProjectBuilder>())
+        {
+            sshClient.SafeRun(
+                $"echo {project.ServiceOptions.SshPassword} | sudo -S systemctl enable {project.ServiceOptions.GetServiceName()}"
+            );
+            sshClient.SafeRun(
+                $"echo {project.ServiceOptions.SshPassword} | sudo -S systemctl restart {project.ServiceOptions.GetServiceName()}"
+            );
+        }
     }
 
     void PublishDesktop()

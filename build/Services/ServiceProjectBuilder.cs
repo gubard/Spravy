@@ -10,15 +10,15 @@ namespace _build.Services;
 
 public class ServiceProjectBuilder : ProjectBuilder
 {
-    readonly ServiceProjectBuilderOptions serviceOptions;
-
     public ServiceProjectBuilder(
         VersionService versionService,
         ServiceProjectBuilderOptions serviceOptions
     ) : base(serviceOptions, versionService)
     {
-        this.serviceOptions = serviceOptions;
+        this.ServiceOptions = serviceOptions;
     }
+
+    public ServiceProjectBuilderOptions ServiceOptions { get; }
 
     public override void Setup()
     {
@@ -30,9 +30,9 @@ public class ServiceProjectBuilder : ProjectBuilder
             jsonDocument,
             options.Domain,
             options.Hosts,
-            serviceOptions.Token,
-            serviceOptions.Port,
-            serviceOptions.EmailPassword
+            ServiceOptions.Token,
+            ServiceOptions.Port,
+            ServiceOptions.EmailPassword
         );
 
         var jsonData = Encoding.UTF8.GetString(stream.ToArray());
@@ -45,7 +45,7 @@ public class ServiceProjectBuilder : ProjectBuilder
         {
             DotNetTasks.DotNetPublish(setting => setting.SetConfiguration(options.Configuration)
                 .SetProject(options.CsprojFile.FullName)
-                .SetOutput(serviceOptions.PublishFolder.FullName)
+                .SetOutput(ServiceOptions.PublishFolder.FullName)
                 .EnableNoBuild()
                 .EnableNoRestore()
             );
@@ -56,7 +56,7 @@ public class ServiceProjectBuilder : ProjectBuilder
             {
                 DotNetTasks.DotNetPublish(setting => setting.SetConfiguration(options.Configuration)
                     .SetProject(options.CsprojFile.FullName)
-                    .SetOutput(serviceOptions.PublishFolder.Combine(runtime.Name).FullName)
+                    .SetOutput(ServiceOptions.PublishFolder.Combine(runtime.Name).FullName)
                     .EnableNoBuild()
                     .EnableNoRestore()
                     .SetRuntime(runtime.Name)
@@ -64,29 +64,29 @@ public class ServiceProjectBuilder : ProjectBuilder
             }
         }
 
-        using var sshClient = serviceOptions.CreateSshClient();
+        using var sshClient = ServiceOptions.CreateSshClient();
         sshClient.Connect();
-        using var ftpClient = serviceOptions.CreateFtpClient();
+        using var ftpClient = ServiceOptions.CreateFtpClient();
         ftpClient.Connect();
-        ftpClient.DeleteIfExistsFolder(serviceOptions.GetAppFolder());
+        ftpClient.DeleteIfExistsFolder(ServiceOptions.GetAppFolder());
 
         if (options.Runtimes.IsEmpty)
         {
             ftpClient.UploadDirectory(
-                serviceOptions.PublishFolder.FullName,
-                serviceOptions.GetAppFolder().FullName
+                ServiceOptions.PublishFolder.FullName,
+                ServiceOptions.GetAppFolder().FullName
             );
         }
         else
         {
             ftpClient.UploadDirectory(
-                serviceOptions.PublishFolder.Combine(serviceOptions.Runtime.Name).FullName,
-                serviceOptions.GetAppFolder().FullName
+                ServiceOptions.PublishFolder.Combine(ServiceOptions.Runtime.Name).FullName,
+                ServiceOptions.GetAppFolder().FullName
             );
         }
 
         sshClient.SafeRun(
-            $"echo {serviceOptions.SshPassword} | sudo -S rm /etc/systemd/system/{options.GetServiceName()}"
+            $"echo {ServiceOptions.SshPassword} | sudo -S rm /etc/systemd/system/{options.GetServiceName()}"
         );
 
         PathHelper.ServicesFolder.CreateIfNotExits();
@@ -99,14 +99,7 @@ public class ServiceProjectBuilder : ProjectBuilder
         ftpClient.UploadFile(serviceFile.FullName, serviceFile.FullName);
 
         sshClient.SafeRun(
-            $"echo {serviceOptions.SshPassword} | sudo -S cp {serviceFile} /etc/systemd/system/{options.GetServiceName()}"
-        );
-
-        sshClient.SafeRun(
-            $"echo {serviceOptions.SshPassword} | sudo -S systemctl enable {options.GetServiceName()}"
-        );
-        sshClient.SafeRun(
-            $"echo {serviceOptions.SshPassword} | sudo -S systemctl restart {options.GetServiceName()}"
+            $"echo {ServiceOptions.SshPassword} | sudo -S cp {serviceFile} /etc/systemd/system/{options.GetServiceName()}"
         );
     }
 
@@ -118,14 +111,14 @@ public class ServiceProjectBuilder : ProjectBuilder
                 After=network.target
 
                 [Service]
-                WorkingDirectory={serviceOptions.GetAppFolder()}
-                ExecStart=/usr/bin/dotnet {serviceOptions.GetAppDll()}
+                WorkingDirectory={ServiceOptions.GetAppFolder()}
+                ExecStart=/usr/bin/dotnet {ServiceOptions.GetAppDll()}
                 Restart=always
                 # Restart service after 10 seconds if the dotnet service crashes:
                 RestartSec=10
                 KillSignal=SIGINT
                 SyslogIdentifier={options.GetServiceName().Replace(",", "-")}
-                User={serviceOptions.FtpUser}
+                User={ServiceOptions.FtpUser}
                 Environment=ASPNETCORE_ENVIRONMENT=Production
                 Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
 
