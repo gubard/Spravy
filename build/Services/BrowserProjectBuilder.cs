@@ -52,10 +52,10 @@ public class BrowserProjectBuilder : UiProjectBuilder
         var versionFolder = PathHelper.BrowserDownloadsFolder.Combine(versionService.Version.ToString());
         ftpClient.CreateIfNotExistsDirectory(versionFolder);
 
-        foreach (var publishFolder in browserOptions.PublishFolders)
+        foreach (var published in browserOptions.Publisheds)
         {
             sshClient.SafeRun(
-                $"echo {browserOptions.SshPassword} | sudo -S cp -rf {publishFolder.PublishFolder} {versionFolder}"
+                $"echo {browserOptions.SshPassword} | sudo -S cp -rf {published.GetAppFolder()} {versionFolder}"
             );
         }
 
