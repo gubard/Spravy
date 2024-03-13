@@ -58,8 +58,6 @@ public class AndroidProjectBuilder : UiProjectBuilder
         }
 
         androidOptions.PublishFolder.DeleteIfExits();
-        using var ftpClient = androidOptions.CreateFtpClient();
-        ftpClient.Connect();
 
         for (var i = 0; i < 3; i++)
         {
@@ -122,6 +120,8 @@ public class AndroidProjectBuilder : UiProjectBuilder
             }
         }
 
+        using var ftpClient = androidOptions.CreateFtpClient();
+        ftpClient.Connect();
         ftpClient.DeleteIfExistsDirectory(androidOptions.GetAppFolder());
         ftpClient.CreateIfNotExistsDirectory(androidOptions.GetAppsFolder());
 

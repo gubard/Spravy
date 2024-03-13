@@ -18,9 +18,6 @@ public class DesktopProjectBuilder : UiProjectBuilder
 
     public void Publish()
     {
-        using var ftpClient = desktopOptions.CreateFtpClient();
-        ftpClient.Connect();
-
         if (options.Runtimes.IsEmpty)
         {
             desktopOptions.PublishFolder.DeleteIfExits();
@@ -49,6 +46,8 @@ public class DesktopProjectBuilder : UiProjectBuilder
             }
         }
 
+        using var ftpClient = desktopOptions.CreateFtpClient();
+        ftpClient.Connect();
         ftpClient.DeleteIfExistsFolder(desktopOptions.GetAppFolder());
         ftpClient.CreateIfNotExistsDirectory(desktopOptions.GetAppsFolder());
 

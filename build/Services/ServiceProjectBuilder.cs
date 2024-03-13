@@ -73,7 +73,6 @@ public class ServiceProjectBuilder : ProjectBuilder
         sshClient.Connect();
         using var ftpClient = serviceOptions.CreateFtpClient();
         ftpClient.Connect();
-
         ftpClient.DeleteIfExistsFolder(serviceOptions.GetAppFolder());
 
         if (options.Runtimes.IsEmpty)
