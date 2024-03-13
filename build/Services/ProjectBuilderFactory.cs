@@ -111,7 +111,8 @@ public class ProjectBuilderFactory
                         ftpPassword,
                         sshHost,
                         sshUser,
-                        sshPassword
+                        sshPassword,
+                        Runtime.LinuxX64
                     )
                 );
             }

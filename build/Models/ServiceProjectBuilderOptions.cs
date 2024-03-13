@@ -22,7 +22,8 @@ public class ServiceProjectBuilderOptions : ProjectBuilderOptions, IFtpOptions, 
         string ftpPassword,
         string sshHost,
         string sshUser,
-        string sshPassword
+        string sshPassword,
+        Runtime runtime
     ) : base(csprojFile, appSettingsFile, hosts, runtimes, configuration, domain)
     {
         Port = port;
@@ -35,6 +36,7 @@ public class ServiceProjectBuilderOptions : ProjectBuilderOptions, IFtpOptions, 
         SshHost = sshHost;
         SshUser = sshUser;
         SshPassword = sshPassword;
+        Runtime = runtime;
     }
 
     public ushort Port { get; }
@@ -47,4 +49,5 @@ public class ServiceProjectBuilderOptions : ProjectBuilderOptions, IFtpOptions, 
     public string SshHost { get; }
     public string SshUser { get; }
     public string SshPassword { get; }
+    public Runtime Runtime { get; }
 }

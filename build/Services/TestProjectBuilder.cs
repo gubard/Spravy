@@ -5,8 +5,8 @@ namespace _build.Services;
 
 public class TestProjectBuilder : ProjectBuilder
 {
-    public TestProjectBuilder(ProjectBuilderOptions projectBuilderOptions, VersionService versionService)
-        : base(projectBuilderOptions, versionService)
+    public TestProjectBuilder(ProjectBuilderOptions options, VersionService versionService)
+        : base(options, versionService)
     {
     }
 
@@ -17,10 +17,10 @@ public class TestProjectBuilder : ProjectBuilder
     public void Test()
     {
         DotNetTasks.DotNetTest(s =>
-            s.SetConfiguration(projectBuilderOptions.Configuration)
+            s.SetConfiguration(options.Configuration)
                 .EnableNoRestore()
                 .EnableNoBuild()
-                .SetProjectFile(projectBuilderOptions.CsprojFile.FullName)
+                .SetProjectFile(options.CsprojFile.FullName)
         );
     }
 }

@@ -8,4 +8,9 @@ public static class CsprojFileExtension
     {
         return csprojFile.CsprojFile.GetFileNameWithoutExtension();
     }
+    
+    public static string GetServiceName(this ICsprojFile csprojFile)
+    {
+        return csprojFile.GetProjectName().ToLower();
+    }
 }

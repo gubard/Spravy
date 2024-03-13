@@ -6,12 +6,12 @@ namespace _build.Services;
 
 public abstract class ProjectBuilder : IProjectBuilder
 {
-    protected readonly ProjectBuilderOptions projectBuilderOptions;
+    protected readonly ProjectBuilderOptions options;
     protected readonly VersionService versionService;
 
-    protected ProjectBuilder(ProjectBuilderOptions projectBuilderOptions, VersionService versionService)
+    protected ProjectBuilder(ProjectBuilderOptions options, VersionService versionService)
     {
-        this.projectBuilderOptions = projectBuilderOptions;
+        this.options = options;
         this.versionService = versionService;
     }
 
@@ -19,18 +19,18 @@ public abstract class ProjectBuilder : IProjectBuilder
 
     public void Clean()
     {
-        if (projectBuilderOptions.Runtimes.IsEmpty)
+        if (options.Runtimes.IsEmpty)
         {
-            DotNetTasks.DotNetClean(setting => setting.SetProject(projectBuilderOptions.CsprojFile.FullName)
-                .SetConfiguration(projectBuilderOptions.Configuration)
+            DotNetTasks.DotNetClean(setting => setting.SetProject(options.CsprojFile.FullName)
+                .SetConfiguration(options.Configuration)
             );
         }
         else
         {
-            foreach (var runtime in projectBuilderOptions.Runtimes.Span)
+            foreach (var runtime in options.Runtimes.Span)
             {
-                DotNetTasks.DotNetClean(setting => setting.SetProject(projectBuilderOptions.CsprojFile.FullName)
-                    .SetConfiguration(projectBuilderOptions.Configuration)
+                DotNetTasks.DotNetClean(setting => setting.SetProject(options.CsprojFile.FullName)
+                    .SetConfiguration(options.Configuration)
                     .SetRuntime(runtime.Name)
                 );
             }
@@ -39,16 +39,16 @@ public abstract class ProjectBuilder : IProjectBuilder
 
     public void Restore()
     {
-        if (projectBuilderOptions.Runtimes.IsEmpty)
+        if (options.Runtimes.IsEmpty)
         {
-            DotNetTasks.DotNetRestore(setting => setting.SetProjectFile(projectBuilderOptions.CsprojFile.FullName));
+            DotNetTasks.DotNetRestore(setting => setting.SetProjectFile(options.CsprojFile.FullName));
         }
         else
         {
-            foreach (var runtime in projectBuilderOptions.Runtimes.Span)
+            foreach (var runtime in options.Runtimes.Span)
             {
                 DotNetTasks.DotNetRestore(setting =>
-                    setting.SetProjectFile(projectBuilderOptions.CsprojFile.FullName).SetRuntime(runtime.Name)
+                    setting.SetProjectFile(options.CsprojFile.FullName).SetRuntime(runtime.Name)
                 );
             }
         }
@@ -56,21 +56,21 @@ public abstract class ProjectBuilder : IProjectBuilder
 
     public virtual void Compile()
     {
-        if (projectBuilderOptions.Runtimes.IsEmpty)
+        if (options.Runtimes.IsEmpty)
         {
-            DotNetTasks.DotNetBuild(setting => setting.SetProjectFile(projectBuilderOptions.CsprojFile.FullName)
+            DotNetTasks.DotNetBuild(setting => setting.SetProjectFile(options.CsprojFile.FullName)
                 .EnableNoRestore()
-                .SetConfiguration(projectBuilderOptions.Configuration)
+                .SetConfiguration(options.Configuration)
                 .AddProperty("Version", versionService.Version.ToString())
             );
         }
         else
         {
-            foreach (var runtime in projectBuilderOptions.Runtimes.Span)
+            foreach (var runtime in options.Runtimes.Span)
             {
-                DotNetTasks.DotNetBuild(setting => setting.SetProjectFile(projectBuilderOptions.CsprojFile.FullName)
+                DotNetTasks.DotNetBuild(setting => setting.SetProjectFile(options.CsprojFile.FullName)
                     .EnableNoRestore()
-                    .SetConfiguration(projectBuilderOptions.Configuration)
+                    .SetConfiguration(options.Configuration)
                     .AddProperty("Version", versionService.Version.ToString())
                     .SetRuntime(runtime.Name)
                 );

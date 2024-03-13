@@ -9,18 +9,18 @@ namespace _build.Services;
 
 public abstract class UiProjectBuilder : ProjectBuilder
 {
-    protected UiProjectBuilder(ProjectBuilderOptions projectBuilderOptions, VersionService versionService)
-        : base(projectBuilderOptions, versionService)
+    protected UiProjectBuilder(ProjectBuilderOptions options, VersionService versionService)
+        : base(options, versionService)
     {
     }
 
     public override void Setup()
     {
-        var jsonDocument = projectBuilderOptions.AppSettingsFile.GetJsonDocument();
+        var jsonDocument = options.AppSettingsFile.GetJsonDocument();
         using var stream = new MemoryStream();
-        stream.SetAppSettingsStream(projectBuilderOptions.Domain, jsonDocument, projectBuilderOptions.Hosts);
+        stream.SetAppSettingsStream(options.Domain, jsonDocument, options.Hosts);
         var jsonData = Encoding.UTF8.GetString(stream.ToArray());
-        File.WriteAllText(projectBuilderOptions.AppSettingsFile.FullName, jsonData);
+        File.WriteAllText(options.AppSettingsFile.FullName, jsonData);
     }
 
     public override void Compile()
@@ -29,22 +29,22 @@ public abstract class UiProjectBuilder : ProjectBuilder
         {
             try
             {
-                if (projectBuilderOptions.Runtimes.IsEmpty)
+                if (options.Runtimes.IsEmpty)
                 {
-                    DotNetTasks.DotNetBuild(setting => setting.SetProjectFile(projectBuilderOptions.CsprojFile.FullName)
+                    DotNetTasks.DotNetBuild(setting => setting.SetProjectFile(options.CsprojFile.FullName)
                         .EnableNoRestore()
-                        .SetConfiguration(projectBuilderOptions.Configuration)
+                        .SetConfiguration(options.Configuration)
                         .AddProperty("Version", versionService.Version.ToString())
                     );
                 }
                 else
                 {
-                    foreach (var runtime in projectBuilderOptions.Runtimes.Span)
+                    foreach (var runtime in options.Runtimes.Span)
                     {
                         DotNetTasks.DotNetBuild(setting =>
-                            setting.SetProjectFile(projectBuilderOptions.CsprojFile.FullName)
+                            setting.SetProjectFile(options.CsprojFile.FullName)
                                 .EnableNoRestore()
-                                .SetConfiguration(projectBuilderOptions.Configuration)
+                                .SetConfiguration(options.Configuration)
                                 .AddProperty("Version", versionService.Version.ToString())
                                 .SetRuntime(runtime.Name)
                         );

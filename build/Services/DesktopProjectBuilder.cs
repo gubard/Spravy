@@ -6,48 +6,55 @@ namespace _build.Services;
 
 public class DesktopProjectBuilder : UiProjectBuilder
 {
-    readonly DesktopProjectBuilderOptions desktopProjectBuilderOptions;
+    readonly DesktopProjectBuilderOptions desktopOptions;
 
     public DesktopProjectBuilder(
         VersionService versionService,
-        DesktopProjectBuilderOptions desktopProjectBuilderOptions
-    )
-        : base(desktopProjectBuilderOptions, versionService)
+        DesktopProjectBuilderOptions desktopOptions
+    ) : base(desktopOptions, versionService)
     {
-        this.desktopProjectBuilderOptions = desktopProjectBuilderOptions;
+        this.desktopOptions = desktopOptions;
     }
 
     public void Publish()
     {
-        using var ftpClient = desktopProjectBuilderOptions.CreateFtpClient();
+        using var ftpClient = desktopOptions.CreateFtpClient();
         ftpClient.Connect();
 
-        foreach (var runtime in projectBuilderOptions.Runtimes.Span)
+        if (options.Runtimes.IsEmpty)
         {
-            var output = desktopProjectBuilderOptions.PublishFolder.Combine(runtime.Name);
-            output.DeleteIfExits();
+            desktopOptions.PublishFolder.DeleteIfExits();
 
-            DotNetTasks.DotNetPublish(setting => setting.SetConfiguration(projectBuilderOptions.Configuration)
-                .SetProject(projectBuilderOptions.CsprojFile.FullName)
-                .SetOutput(output.FullName)
+            DotNetTasks.DotNetPublish(setting => setting.SetConfiguration(options.Configuration)
+                .SetProject(options.CsprojFile.FullName)
+                .SetOutput(desktopOptions.PublishFolder.FullName)
                 .EnableNoBuild()
                 .EnableNoRestore()
-                .SetRuntime(runtime.Name)
-            );
-
-            ftpClient.DeleteIfExistsFolder($"/home/{desktopProjectBuilderOptions.FtpUser}/Apps/Spravy.Ui.Desktop"
-                .ToFolder()
-                .Combine(runtime.Name)
-            );
-
-            ftpClient.CreateIfNotExistsDirectory($"/home/{desktopProjectBuilderOptions.FtpUser}/Apps/Spravy.Ui.Desktop"
-                .ToFolder()
-                .Combine(runtime.Name)
-            );
-
-            ftpClient.UploadDirectory(output.FullName,
-                $"/home/{desktopProjectBuilderOptions.FtpUser}/Apps/Spravy.Ui.Desktop/{runtime.Name}"
             );
         }
+        else
+        {
+            foreach (var runtime in options.Runtimes.Span)
+            {
+                var output = desktopOptions.PublishFolder.Combine(runtime.Name);
+                output.DeleteIfExits();
+
+                DotNetTasks.DotNetPublish(setting => setting.SetConfiguration(options.Configuration)
+                    .SetProject(options.CsprojFile.FullName)
+                    .SetOutput(output.FullName)
+                    .EnableNoBuild()
+                    .EnableNoRestore()
+                    .SetRuntime(runtime.Name)
+                );
+            }
+        }
+
+        ftpClient.DeleteIfExistsFolder(desktopOptions.GetAppFolder());
+        ftpClient.CreateIfNotExistsDirectory(desktopOptions.GetAppsFolder());
+
+        ftpClient.UploadDirectory(
+            desktopOptions.PublishFolder.FullName,
+            desktopOptions.GetAppFolder().FullName
+        );
     }
 }
