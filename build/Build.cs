@@ -208,7 +208,7 @@ class Build : NukeBuild
     Target StagingSetupAppSettings =>
         _ => _.Executes(() =>
             {
-                Projects = CreateProdFactory()
+                Projects = CreateStagingFactory()
                     .Create(Solution.AllProjects.Select(x => new FileInfo(x.Path)))
                     .ToArray();
 
@@ -220,7 +220,7 @@ class Build : NukeBuild
         _ => _.DependsOn(StagingPublishBrowser)
             .Executes(() =>
                 {
-                    Projects = CreateStagingFactory()
+                    Projects = CreateProdFactory()
                         .Create(Solution.AllProjects.Select(x => new FileInfo(x.Path)))
                         .ToArray();
 
