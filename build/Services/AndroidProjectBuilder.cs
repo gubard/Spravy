@@ -122,7 +122,7 @@ public class AndroidProjectBuilder : UiProjectBuilder
 
         using var ftpClient = androidOptions.CreateFtpClient();
         ftpClient.Connect();
-        ftpClient.DeleteIfExistsDirectory(androidOptions.GetAppFolder());
+        ftpClient.DeleteIfExistsFolder(androidOptions.GetAppFolder());
         ftpClient.CreateIfNotExistsDirectory(androidOptions.GetAppsFolder());
 
         ftpClient.UploadDirectory(

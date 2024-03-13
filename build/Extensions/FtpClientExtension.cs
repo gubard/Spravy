@@ -16,27 +16,6 @@ public static class FtpClientExtension
         client.CreateDirectory(path, true);
     }
 
-    public static void DeleteIfExistsDirectory(this FtpClient client, DirectoryInfo folder)
-    {
-        if (!client.DirectoryExists(folder.FullName))
-        {
-            return;
-        }
-
-        try
-        {
-            client.DeleteDirectory(folder.FullName,
-                FtpListOption.Recursive | FtpListOption.ForceList | FtpListOption.Auto | FtpListOption.AllFiles
-            );
-        }
-        catch
-        {
-            Log.Error("{Path}", folder);
-
-            throw;
-        }
-    }
-
     public static void DeleteIfExistsFolder(this FtpClient client, DirectoryInfo folder)
     {
         if (!client.DirectoryExists(folder.FullName))
