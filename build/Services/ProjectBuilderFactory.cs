@@ -65,6 +65,8 @@ public class ProjectBuilderFactory
 
     public IEnumerable<IProjectBuilder> Create(IEnumerable<FileInfo> csprojFiles)
     {
+        var publishFolders = new List<IPublished>();
+
         foreach (var csprojFile in csprojFiles)
         {
             var projectName = csprojFile.GetFileNameWithoutExtension();
@@ -121,20 +123,21 @@ public class ProjectBuilderFactory
             {
                 yield return new AndroidProjectBuilder(
                     versionService,
-                    new AndroidProjectBuilderOptions(
-                        csprojFile,
-                        csprojFile.Directory.ToFile("appsettings.json"),
-                        ports,
-                        Enumerable.Empty<Runtime>(),
-                        configuration,
-                        domain,
-                        keyStoreFile,
-                        androidSigningKeyPass,
-                        androidSigningStorePass,
-                        ftpHost,
-                        ftpPassword,
-                        ftpUser,
-                        publishFolder.Combine(projectName)
+                    publishFolders.AddItem(new AndroidProjectBuilderOptions(
+                            csprojFile,
+                            csprojFile.Directory.ToFile("appsettings.json"),
+                            ports,
+                            Enumerable.Empty<Runtime>(),
+                            configuration,
+                            domain,
+                            keyStoreFile,
+                            androidSigningKeyPass,
+                            androidSigningStorePass,
+                            ftpHost,
+                            ftpPassword,
+                            ftpUser,
+                            publishFolder.Combine(projectName)
+                        )
                     )
                 );
             }
@@ -159,7 +162,7 @@ public class ProjectBuilderFactory
                         sshHost,
                         sshUser,
                         sshPassword,
-                        publishFolder.Combine(projectName)
+                        publishFolders
                     )
                 );
             }
@@ -168,20 +171,21 @@ public class ProjectBuilderFactory
             {
                 yield return new DesktopProjectBuilder(
                     versionService,
-                    new DesktopProjectBuilderOptions(
-                        csprojFile,
-                        csprojFile.Directory.ToFile("appsettings.json"),
-                        ports,
-                        new[]
-                        {
-                            Runtime.LinuxX64, Runtime.WinX64,
-                        },
-                        configuration,
-                        domain,
-                        ftpHost,
-                        ftpUser,
-                        ftpPassword,
-                        publishFolder.Combine(projectName)
+                    publishFolders.AddItem(new DesktopProjectBuilderOptions(
+                            csprojFile,
+                            csprojFile.Directory.ToFile("appsettings.json"),
+                            ports,
+                            new[]
+                            {
+                                Runtime.LinuxX64, Runtime.WinX64,
+                            },
+                            configuration,
+                            domain,
+                            ftpHost,
+                            ftpUser,
+                            ftpPassword,
+                            publishFolder.Combine(projectName)
+                        )
                     )
                 );
             }

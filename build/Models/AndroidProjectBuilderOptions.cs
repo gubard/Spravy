@@ -4,7 +4,7 @@ using _build.Interfaces;
 
 namespace _build.Models;
 
-public class AndroidProjectBuilderOptions : ProjectBuilderOptions, IFtpOptions
+public class AndroidProjectBuilderOptions : ProjectBuilderOptions, IFtpOptions, IPublished
 {
     public AndroidProjectBuilderOptions(
         FileInfo csprojFile,
@@ -38,4 +38,5 @@ public class AndroidProjectBuilderOptions : ProjectBuilderOptions, IFtpOptions
     public string FtpUser { get; }
     public string FtpPassword { get; }
     public DirectoryInfo PublishFolder { get; }
+    public bool IsNeedZip => false;
 }

@@ -4,7 +4,7 @@ using _build.Interfaces;
 
 namespace _build.Models;
 
-public class DesktopProjectBuilderOptions : ProjectBuilderOptions, IFtpOptions
+public class DesktopProjectBuilderOptions : ProjectBuilderOptions, IFtpOptions, IPublished
 {
     public DesktopProjectBuilderOptions(
         FileInfo csprojFile,
@@ -29,4 +29,5 @@ public class DesktopProjectBuilderOptions : ProjectBuilderOptions, IFtpOptions
     public string FtpUser { get; }
     public string FtpPassword { get; }
     public DirectoryInfo PublishFolder { get; }
+    public bool IsNeedZip => true;
 }

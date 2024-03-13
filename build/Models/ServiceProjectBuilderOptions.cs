@@ -4,7 +4,7 @@ using _build.Interfaces;
 
 namespace _build.Models;
 
-public class ServiceProjectBuilderOptions : ProjectBuilderOptions, IFtpOptions, ISshOptions
+public class ServiceProjectBuilderOptions : ProjectBuilderOptions, IFtpOptions, ISshOptions, IPublishFolder
 {
     public ServiceProjectBuilderOptions(
         FileInfo csprojFile,

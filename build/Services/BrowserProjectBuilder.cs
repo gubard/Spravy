@@ -1,8 +1,8 @@
 using System;
 using System.IO;
 using _build.Extensions;
+using _build.Helpers;
 using _build.Models;
-using Nuke.Common.Tools.DotNet;
 
 namespace _build.Services;
 
@@ -20,29 +20,6 @@ public class BrowserProjectBuilder : UiProjectBuilder
 
     public void Publish()
     {
-        if (options.Runtimes.IsEmpty)
-        {
-            DotNetTasks.DotNetPublish(setting => setting.SetConfiguration(options.Configuration)
-                .SetProject(options.CsprojFile.FullName)
-                .SetOutput(browserOptions.PublishFolder.FullName)
-                .EnableNoBuild()
-                .EnableNoRestore()
-            );
-        }
-        else
-        {
-            foreach (var runtime in options.Runtimes.Span)
-            {
-                DotNetTasks.DotNetPublish(setting => setting.SetConfiguration(options.Configuration)
-                    .SetProject(options.CsprojFile.FullName)
-                    .SetOutput( browserOptions.PublishFolder.Combine(runtime.Name).FullName)
-                    .EnableNoBuild()
-                    .EnableNoRestore()
-                    .SetRuntime(runtime.Name)
-                );
-            }
-        }
-
         using var sshClient = browserOptions.CreateSshClient();
         sshClient.Connect();
         using var ftpClient = browserOptions.CreateFtpClient();
@@ -63,32 +40,27 @@ public class BrowserProjectBuilder : UiProjectBuilder
         );
 
         ftpClient.UploadDirectory(appBundleFolder.FullName,
-            $"/home/{browserOptions.FtpUser}/{options.GetProjectName()}"
+            browserOptions.GetAppFolder().FullName
         );
 
         sshClient.SafeRun(
-            $"echo {browserOptions.SshPassword} | sudo -S rm -rf /var/www/spravy.com.ua/html/*"
+            $"echo {browserOptions.SshPassword} | sudo -S rm -rf {PathHelper.BrowserFolder}/*"
         );
 
         sshClient.SafeRun(
-            $"echo {browserOptions.SshPassword} | sudo -S cp -rf /home/{browserOptions.FtpUser}/{options.GetProjectName()}/* /var/www/spravy.com.ua/html"
+            $"echo {browserOptions.SshPassword} | sudo -S cp -rf {browserOptions.GetAppFolder()}/* {PathHelper.BrowserFolder}"
         );
 
-        sshClient.SafeRun(
-            $"echo {browserOptions.SshPassword} | sudo -S cp -rf /home/{browserOptions.FtpUser}/Apps/Spravy.Ui.Android/com.SerhiiMaksymovFOP.Spravy-Signed.apk /var/www/spravy.com.ua/html"
-        );
+        ftpClient.CreateIfNotExistsDirectory(PathHelper.BrowserDownloadsFolder);
+        var versionFolder = PathHelper.BrowserDownloadsFolder.Combine(versionService.Version.ToString());
+        ftpClient.CreateIfNotExistsDirectory(versionFolder);
 
-        sshClient.SafeRun(
-            $"echo {browserOptions.SshPassword} | sudo -S cp -rf /home/{browserOptions.FtpUser}/Apps/Spravy.Ui.Android/com.SerhiiMaksymovFOP.Spravy-Signed.aab /var/www/spravy.com.ua/html"
-        );
-
-        sshClient.SafeRun(
-            $"cd /home/vafnir/Apps/Spravy.Ui.Desktop/linux-x64 && echo {browserOptions.SshPassword} | zip -r /var/www/spravy.com.ua/html/Spravy.Linux-x64.zip ./*"
-        );
-
-        sshClient.SafeRun(
-            $"cd /home/vafnir/Apps/Spravy.Ui.Desktop/win-x64 && echo {browserOptions.SshPassword} | zip -r /var/www/spravy.com.ua/html/Spravy.Windows-x64.zip ./*"
-        );
+        foreach (var publishFolder in browserOptions.PublishFolders)
+        {
+            sshClient.SafeRun(
+                $"echo {browserOptions.SshPassword} | sudo -S cp -rf {publishFolder.PublishFolder} {versionFolder}"
+            );
+        }
 
         sshClient.SafeRun(
             $"echo {browserOptions.SshPassword} | sudo -S chown -R $USER:$USER /var/www/spravy.com.ua/html"
