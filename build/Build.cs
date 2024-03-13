@@ -26,7 +26,7 @@ class Build : NukeBuild
     ///   - Microsoft VSCode           https://nuke.build/vscode
     public static int Main()
     {
-        return Execute<Build>(x => x.Publish);
+        return Execute<Build>(x => x.ProdPublish);
     }
 
     VersionService VersionService;
@@ -299,7 +299,7 @@ class Build : NukeBuild
             .DependsOn(ProdPublishAndroid, ProdPublishDesktop)
             .Executes(PublishBrowser);
 
-    Target Publish =>
+    Target ProdPublish =>
         _ => _.DependsOn(ProdPublishBrowser)
             .Executes(() =>
                 {
