@@ -18,7 +18,8 @@ public class BrowserProjectBuilderOptions : ProjectBuilderOptions, IFtpOptions, 
         string ftpPassword,
         string sshHost,
         string sshUser,
-        string sshPassword
+        string sshPassword,
+        DirectoryInfo publishFolder
     ) : base(csprojFile, appSettingsFile, hosts, runtimes, configuration, domain)
     {
         FtpHost = ftpHost;
@@ -27,6 +28,7 @@ public class BrowserProjectBuilderOptions : ProjectBuilderOptions, IFtpOptions, 
         SshHost = sshHost;
         SshUser = sshUser;
         SshPassword = sshPassword;
+        PublishFolder = publishFolder;
     }
 
     public string FtpHost { get; }
@@ -35,4 +37,5 @@ public class BrowserProjectBuilderOptions : ProjectBuilderOptions, IFtpOptions, 
     public string SshHost { get; }
     public string SshUser { get; }
     public string SshPassword { get; }
+    public DirectoryInfo PublishFolder { get; }
 }

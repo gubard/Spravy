@@ -158,7 +158,8 @@ public class ProjectBuilderFactory
                         ftpPassword,
                         sshHost,
                         sshUser,
-                        sshPassword
+                        sshPassword,
+                        publishFolder.Combine(projectName)
                     )
                 );
             }

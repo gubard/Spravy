@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using _build.Extensions;
 using _build.Models;
+using Nuke.Common.Tools.DotNet;
 
 namespace _build.Services;
 
@@ -19,6 +20,34 @@ public class BrowserProjectBuilder : UiProjectBuilder
 
     public void Publish()
     {
+        if (options.Runtimes.IsEmpty)
+        {
+            browserOptions.PublishFolder.DeleteIfExits();
+
+            DotNetTasks.DotNetPublish(setting => setting.SetConfiguration(options.Configuration)
+                .SetProject(options.CsprojFile.FullName)
+                .SetOutput(browserOptions.PublishFolder.FullName)
+                .EnableNoBuild()
+                .EnableNoRestore()
+            );
+        }
+        else
+        {
+            foreach (var runtime in options.Runtimes.Span)
+            {
+                var output = browserOptions.PublishFolder.Combine(runtime.Name);
+                output.DeleteIfExits();
+
+                DotNetTasks.DotNetPublish(setting => setting.SetConfiguration(options.Configuration)
+                    .SetProject(options.CsprojFile.FullName)
+                    .SetOutput(output.FullName)
+                    .EnableNoBuild()
+                    .EnableNoRestore()
+                    .SetRuntime(runtime.Name)
+                );
+            }
+        }
+
         using var sshClient = browserOptions.CreateSshClient();
         sshClient.Connect();
         using var ftpClient = browserOptions.CreateFtpClient();
