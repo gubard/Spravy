@@ -54,7 +54,7 @@ public class BrowserProjectBuilder : UiProjectBuilder
             if (published.IsNeedZip)
             {
                 Log.Information("Zip {ProjectName}", published.GetProjectName());
-                sshClient.RunSudo(browserOptions, $"mkdir - p {versionFolder.Combine(published.GetProjectName())}");
+                sshClient.RunSudo(browserOptions, $"mkdir -p {versionFolder.Combine(published.GetProjectName())}");
 
                 if (published.Runtimes.IsEmpty)
                 {
