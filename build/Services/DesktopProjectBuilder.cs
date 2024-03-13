@@ -44,7 +44,7 @@ public class DesktopProjectBuilder : UiProjectBuilder
         using var ftpClient = desktopOptions.CreateFtpClient();
         ftpClient.Connect();
         ftpClient.DeleteIfExistsFolder(desktopOptions.GetAppFolder());
-        ftpClient.CreateIfNotExistsDirectory(desktopOptions.GetAppsFolder());
+        ftpClient.CreateIfNotExistsFolder(desktopOptions.GetAppsFolder());
 
         ftpClient.UploadDirectory(
             desktopOptions.PublishFolder.FullName,

@@ -95,7 +95,7 @@ public class ServiceProjectBuilder : ProjectBuilder
             PathHelper.ServicesFolder.ToFile(options.GetServiceName());
 
         serviceFile.WriteAllText(GetDaemonConfig());
-        ftpClient.CreateIfNotExistsDirectory(PathHelper.ServicesFolder);
+        ftpClient.CreateIfNotExistsFolder(PathHelper.ServicesFolder);
         ftpClient.UploadFile(serviceFile.FullName, serviceFile.FullName);
 
         sshClient.SafeRun(

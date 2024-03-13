@@ -114,7 +114,7 @@ public static class ProjectExtension
         PathHelper.ServicesFolder.CreateIfNotExits();
         var serviceFile = PathHelper.ServicesFolder.ToFile(project.Name.ToLower());
         serviceFile.WriteAllText(project.GetDaemonConfig(ftpUser));
-        ftpClient.CreateIfNotExistsDirectory(PathHelper.ServicesFolder);
+        ftpClient.CreateIfNotExistsFolder(PathHelper.ServicesFolder);
         ftpClient.UploadFile(serviceFile.FullName, serviceFile.FullName);
         sshClient.SafeRun($"echo {sshPassword} | sudo -S cp {serviceFile} /etc/systemd/system/{project.Name.ToLower()}"
         );
