@@ -24,18 +24,8 @@ public static class FtpClientExtension
         }
 
         var options = FtpListOption.Recursive | FtpListOption.ForceList | FtpListOption.Auto | FtpListOption.AllFiles;
-
-        try
-        {
-            client.DeleteDirectory(folder.FullName, options);
-            Log.Logger.Information("Delete FTP folder {Folder}", folder);
-        }
-        catch
-        {
-            Log.Error("{Path}", folder.FullName);
-
-            throw;
-        }
+        client.DeleteDirectory(folder.FullName, options);
+        Log.Logger.Information("Delete FTP folder {Folder}", folder);
     }
 
     public static void CreateIfNotExistsFolder(this FtpClient client, DirectoryInfo folder)
