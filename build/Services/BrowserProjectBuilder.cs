@@ -54,11 +54,12 @@ public class BrowserProjectBuilder : UiProjectBuilder
             if (published.IsNeedZip)
             {
                 Log.Information("Zip {ProjectName}", published.GetProjectName());
+                sshClient.RunSudo(browserOptions, $"mkdir - p {versionFolder.Combine(published.GetProjectName())}");
 
                 if (published.Runtimes.IsEmpty)
                 {
                     sshClient.SafeRun(
-                        $"cd {published.GetAppFolder()} && zip -r {versionFolder.Combine(published.GetProjectName()).ToFile($"{published.GetProjectName()}.zip")} ./*"
+                        $"cd {published.GetAppFolder()} && echo {browserOptions.SshPassword} | sudo -S  zip -r {versionFolder.Combine(published.GetProjectName()).ToFile($"{published.GetProjectName()}.zip")} ./*"
                     );
                 }
                 else
@@ -66,7 +67,7 @@ public class BrowserProjectBuilder : UiProjectBuilder
                     foreach (var runtime in published.Runtimes.Span)
                     {
                         sshClient.SafeRun(
-                            $"cd {published.GetAppFolder().Combine(runtime.Name)} && zip -r {versionFolder.Combine(published.GetProjectName()).ToFile($"{published.GetProjectName()}.{runtime.Name}.zip")} ./*"
+                            $"cd {published.GetAppFolder().Combine(runtime.Name)} && echo {browserOptions.SshPassword} | sudo -S zip -r {versionFolder.Combine(published.GetProjectName()).ToFile($"{published.GetProjectName()}.{runtime.Name}.zip")} ./*"
                         );
                     }
                 }
