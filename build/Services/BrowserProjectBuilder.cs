@@ -49,9 +49,8 @@ public class BrowserProjectBuilder : UiProjectBuilder
             $"echo {browserOptions.SshPassword} | sudo -S cp -rf {browserOptions.GetAppFolder()}/* {browserFolder}"
         );
 
-        ftpClient.CreateIfNotExistsFolder(browserDownloadsFolder);
         var versionFolder = browserDownloadsFolder.Combine(versionService.Version.ToString());
-        ftpClient.CreateIfNotExistsFolder(versionFolder);
+        sshClient.SafeRun($"echo {browserOptions.SshPassword} | sudo -S mkdir -p {versionFolder}");
 
         foreach (var published in browserOptions.Publisheds)
         {
