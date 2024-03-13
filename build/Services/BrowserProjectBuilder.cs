@@ -44,9 +44,9 @@ public class BrowserProjectBuilder : UiProjectBuilder
         var browserFolder = urlFolder.Combine("html");
         var browserDownloadsFolder = browserFolder.Combine("downloads");
         sshClient.RunSudo(browserOptions, $"rm -rf {browserFolder}/*");
-        sshClient.RunSudo(browserOptions, $" cp -rf {browserOptions.GetAppFolder()}/* {browserFolder}");
         var versionFolder = browserDownloadsFolder.Combine(versionService.Version.ToString());
         sshClient.RunSudo(browserOptions, $"mkdir -p {versionFolder}");
+        sshClient.RunSudo(browserOptions, $" cp -rf {browserOptions.GetAppFolder()}/* {browserFolder}");
 
         foreach (var published in browserOptions.Publisheds)
         {
