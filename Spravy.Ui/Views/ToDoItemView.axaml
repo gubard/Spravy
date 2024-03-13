@@ -49,9 +49,12 @@
                     </Expander.Header>
 
                     <Panel>
-                        <TextBlock IsVisible="{Binding IsDescriptionPlainText}" Text="{Binding Description}" />
+                        <TextBlock Margin="0,12,0,0"
+                                   IsVisible="{Binding IsDescriptionPlainText}"
+                                   Text="{Binding Description}" />
 
-                        <mdxaml:MarkdownScrollViewer IsVisible="{Binding IsDescriptionMarkdownText}"
+                        <mdxaml:MarkdownScrollViewer Margin="0,7,0,0"
+                                                     IsVisible="{Binding IsDescriptionMarkdownText}"
                                                      Markdown="{Binding Description}">
                             <mdxaml:MarkdownScrollViewer.Styles>
                                 <Style Selector="Border.Table">
