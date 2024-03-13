@@ -89,7 +89,7 @@ public static class Utf8JsonWriterExtension
         {
             return false;
         }
-        
+
         writer.AddObject(property.Name, () =>
             {
                 foreach (var obj in property.Value.EnumerateObject())
@@ -155,7 +155,7 @@ public static class Utf8JsonWriterExtension
 
     public static bool SetDomain(this Utf8JsonWriter writer, JsonProperty property, string domain)
     {
-        if (property.Name != "Urls")
+        if (property.Name != "Urls" && property.Name != "UrlDomain")
         {
             return false;
         }
