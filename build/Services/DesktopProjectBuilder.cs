@@ -20,8 +20,6 @@ public class DesktopProjectBuilder : UiProjectBuilder
     {
         if (options.Runtimes.IsEmpty)
         {
-            desktopOptions.PublishFolder.DeleteIfExits();
-
             DotNetTasks.DotNetPublish(setting => setting.SetConfiguration(options.Configuration)
                 .SetProject(options.CsprojFile.FullName)
                 .SetOutput(desktopOptions.PublishFolder.FullName)
@@ -33,12 +31,9 @@ public class DesktopProjectBuilder : UiProjectBuilder
         {
             foreach (var runtime in options.Runtimes.Span)
             {
-                var output = desktopOptions.PublishFolder.Combine(runtime.Name);
-                output.DeleteIfExits();
-
                 DotNetTasks.DotNetPublish(setting => setting.SetConfiguration(options.Configuration)
                     .SetProject(options.CsprojFile.FullName)
-                    .SetOutput(output.FullName)
+                    .SetOutput(desktopOptions.PublishFolder.Combine(runtime.Name).FullName)
                     .EnableNoBuild()
                     .EnableNoRestore()
                     .SetRuntime(runtime.Name)

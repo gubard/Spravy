@@ -43,8 +43,6 @@ public class ServiceProjectBuilder : ProjectBuilder
     {
         if (options.Runtimes.IsEmpty)
         {
-            serviceOptions.PublishFolder.DeleteIfExits();
-
             DotNetTasks.DotNetPublish(setting => setting.SetConfiguration(options.Configuration)
                 .SetProject(options.CsprojFile.FullName)
                 .SetOutput(serviceOptions.PublishFolder.FullName)
@@ -56,9 +54,6 @@ public class ServiceProjectBuilder : ProjectBuilder
         {
             foreach (var runtime in options.Runtimes.Span)
             {
-                var output = serviceOptions.PublishFolder.Combine(runtime.Name);
-                output.DeleteIfExits();
-
                 DotNetTasks.DotNetPublish(setting => setting.SetConfiguration(options.Configuration)
                     .SetProject(options.CsprojFile.FullName)
                     .SetOutput(serviceOptions.PublishFolder.Combine(runtime.Name).FullName)

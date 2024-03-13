@@ -57,8 +57,6 @@ public class AndroidProjectBuilder : UiProjectBuilder
                 .RunCommand();
         }
 
-        androidOptions.PublishFolder.DeleteIfExits();
-
         for (var i = 0; i < 3; i++)
         {
             try
