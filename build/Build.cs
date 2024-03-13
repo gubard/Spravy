@@ -67,8 +67,7 @@ class Build : NukeBuild
     protected override void OnBuildInitialized()
     {
         base.OnBuildInitialized();
-        PathHelper.PublishFolder.DeleteIfExits();
-        PathHelper.ServicesFolder.DeleteIfExits();
+        PathHelper.TempFolder.DeleteIfExits();
         Token = CreteToken();
         VersionService = new VersionService($"/home/{FtpUser}/storage/version.txt".ToFile());
         VersionService.Load();
