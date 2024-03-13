@@ -40,16 +40,17 @@ public class BrowserProjectBuilder : UiProjectBuilder
             browserOptions.GetAppFolder().FullName
         );
 
-        sshClient.SafeRun(
-            $"echo {browserOptions.SshPassword} | sudo -S rm -rf {PathHelper.BrowserFolder}/*"
-        );
+        var urlFolder = PathHelper.WwwFolder.Combine(browserOptions.Domain);
+        var browserFolder = urlFolder.Combine("html");
+        var browserDownloadsFolder = browserFolder.Combine("downloads");
+        sshClient.SafeRun($"echo {browserOptions.SshPassword} | sudo -S rm -rf {browserFolder}/*");
 
         sshClient.SafeRun(
-            $"echo {browserOptions.SshPassword} | sudo -S cp -rf {browserOptions.GetAppFolder()}/* {PathHelper.BrowserFolder}"
+            $"echo {browserOptions.SshPassword} | sudo -S cp -rf {browserOptions.GetAppFolder()}/* {browserFolder}"
         );
 
-        ftpClient.CreateIfNotExistsDirectory(PathHelper.BrowserDownloadsFolder);
-        var versionFolder = PathHelper.BrowserDownloadsFolder.Combine(versionService.Version.ToString());
+        ftpClient.CreateIfNotExistsDirectory(browserDownloadsFolder);
+        var versionFolder = browserDownloadsFolder.Combine(versionService.Version.ToString());
         ftpClient.CreateIfNotExistsDirectory(versionFolder);
 
         foreach (var published in browserOptions.Publisheds)
@@ -59,10 +60,8 @@ public class BrowserProjectBuilder : UiProjectBuilder
             );
         }
 
-        sshClient.SafeRun($"echo {browserOptions.SshPassword} | sudo -S chown -R $USER:$USER {PathHelper.BrowserFolder}"
-        );
-
-        sshClient.SafeRun($"echo {browserOptions.SshPassword} | sudo -S chmod -R 755 {PathHelper.UrlFolder}");
+        sshClient.SafeRun($"echo {browserOptions.SshPassword} | sudo -S chown -R $USER:$USER {browserFolder}");
+        sshClient.SafeRun($"echo {browserOptions.SshPassword} | sudo -S chmod -R 755 {urlFolder}");
         sshClient.SafeRun($"echo {browserOptions.SshPassword} | sudo -S systemctl restart nginx");
         sshClient.SafeRun($"echo {browserOptions.SshPassword} | sudo -S systemctl reload nginx");
     }

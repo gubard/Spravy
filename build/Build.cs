@@ -130,7 +130,7 @@ class Build : NukeBuild
             SshUser,
             SshPassword,
             ServerHost,
-            new FileInfo($"/home/{StagingFtpUser}/storage/sign-key.keystore"),
+            new FileInfo($"/home/{FtpUser}/storage/sign-key.keystore"),
             AndroidSigningKeyPass,
             AndroidSigningStorePass
         );
