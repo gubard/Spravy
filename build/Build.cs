@@ -339,7 +339,7 @@ class Build : NukeBuild
                                     && (x.Name.EndsWith(".zip") || x.Name.EndsWith(".apk") || x.Name.EndsWith(".aab"))
                         )
                         .Select(x => x.FullName.Replace(html.FullName,
-                                $"{Path.GetFileNameWithoutExtension(x.Name)}{Environment.NewLine}https://{StagingServerHost}"
+                                $"{Path.GetFileNameWithoutExtension(x.Name)}{Environment.NewLine}https://{ServerHost}"
                             )
                         );
 
