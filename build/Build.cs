@@ -29,7 +29,7 @@ class Build : NukeBuild
     ///   - Microsoft VSCode           https://nuke.build/vscode
     public static int Main()
     {
-        return Execute<Build>(x => x.ProdPublish);
+        return Execute<Build>(x => x.ProdPublishBrowser);
     }
 
     VersionService VersionService;
@@ -330,12 +330,10 @@ class Build : NukeBuild
     Target ProdPublishBrowser =>
         _ => _
             .DependsOn(ProdPublishAndroid, ProdPublishDesktop)
-            .Executes(PublishBrowser);
-
-    Target ProdPublish =>
-        _ => _.DependsOn(ProdPublishBrowser)
             .Executes(() =>
                 {
+                    PublishBrowser();
+
                     using var ftpClient = CreateFtpClient(FtpHost, FtpUser, FtpPassword);
                     ftpClient.Connect();
                     var html = PathHelper.WwwFolder.Combine(ServerHost).Combine("html");
