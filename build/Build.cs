@@ -368,8 +368,8 @@ class Build : NukeBuild
     {
         switch (Path.GetExtension(name).ToUpperInvariant())
         {
-            case ".APK": return "APK";
-            case ".AAB": return "AAB";
+            case ".APK": return ".APK";
+            case ".AAB": return ".AAB";
 
             case ".ZIP":
                 return Path.GetExtension(Path.GetFileNameWithoutExtension(name)).ThrowIfNull().ToUpperInvariant();
