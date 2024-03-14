@@ -6,16 +6,6 @@ namespace _build.Extensions;
 
 public static class FtpClientExtension
 {
-    public static void CreateIfNotExistsFolder(this FtpClient client, string path)
-    {
-        if (client.DirectoryExists(path))
-        {
-            return;
-        }
-
-        client.CreateDirectory(path, true);
-    }
-
     public static void DeleteIfExistsFolder(this FtpClient client, DirectoryInfo folder)
     {
         if (!client.DirectoryExists(folder.FullName))

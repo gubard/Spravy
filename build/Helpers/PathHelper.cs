@@ -9,6 +9,4 @@ public static class PathHelper
     public static readonly DirectoryInfo PublishFolder = TempFolder.Combine("publish");
     public static readonly DirectoryInfo ServicesFolder = TempFolder.Combine("services");
     public static readonly DirectoryInfo WwwFolder = "/".ToFolder().Combine("var", "www");
-    //public static readonly DirectoryInfo BrowserFolder = UrlFolder.Combine("html");
-    //public static readonly DirectoryInfo BrowserDownloadsFolder = BrowserFolder.Combine("downloads");
 }
