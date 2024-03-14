@@ -16,6 +16,7 @@ using Nuke.Common.ProjectModel;
 using Renci.SshNet;
 using Serilog;
 using Telegram.Bot;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace _build;
 
@@ -305,8 +306,10 @@ class Build : NukeBuild
                         .Where(x => x.Type == FtpObjectType.File
                                     && (x.Name.EndsWith(".zip") || x.Name.EndsWith(".apk") || x.Name.EndsWith(".aab"))
                         )
-                        .Select(x => x.FullName.Replace(html.FullName,
-                                $"{Path.GetFileNameWithoutExtension(x.Name)}{Environment.NewLine}https://{StagingServerHost}"
+                        .Select(x => InlineKeyboardButton.WithUrl(
+                                Path.GetFileNameWithoutExtension(x.Name),
+                                x.FullName.Replace(html.FullName, $"https://{StagingServerHost}"
+                                )
                             )
                         );
 
@@ -314,7 +317,8 @@ class Build : NukeBuild
 
                     botClient.SendTextMessageAsync(
                             "@spravy_release",
-                            $"Published Staging v{VersionService.Version}{Environment.NewLine}{string.Join(Environment.NewLine, items)}"
+                            $"Published Staging v{VersionService.Version}",
+                            replyMarkup: new InlineKeyboardMarkup(items)
                         )
                         .GetAwaiter()
                         .GetResult();
@@ -338,8 +342,9 @@ class Build : NukeBuild
                         .Where(x => x.Type == FtpObjectType.File
                                     && (x.Name.EndsWith(".zip") || x.Name.EndsWith(".apk") || x.Name.EndsWith(".aab"))
                         )
-                        .Select(x => x.FullName.Replace(html.FullName,
-                                $"{Path.GetFileNameWithoutExtension(x.Name)}{Environment.NewLine}https://{ServerHost}"
+                        .Select(x => InlineKeyboardButton.WithUrl(
+                                Path.GetFileNameWithoutExtension(x.Name),
+                                x.FullName.Replace(html.FullName, $"https://{ServerHost}")
                             )
                         );
 
@@ -347,7 +352,8 @@ class Build : NukeBuild
 
                     botClient.SendTextMessageAsync(
                             "@spravy_release",
-                            $"Published Prod v{VersionService.Version}{Environment.NewLine}{string.Join(Environment.NewLine, items)}"
+                            $"Published Prod v{VersionService.Version}",
+                            replyMarkup: new InlineKeyboardMarkup(items)
                         )
                         .GetAwaiter()
                         .GetResult();
