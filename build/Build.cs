@@ -304,10 +304,12 @@ class Build : NukeBuild
 
                     var items = ftpClient.GetListing(html.Combine("downloads").FullName, FtpListOption.Recursive)
                         .Where(x => x.Type == FtpObjectType.File
-                                    && (x.Name.EndsWith(".zip") || x.Name.EndsWith(".apk") || x.Name.EndsWith(".aab"))
+                                    && (x.Name.EndsWith(".zip")
+                                        || ((x.Name.EndsWith(".apk") || x.Name.EndsWith(".aab"))
+                                            && x.Name.Contains("Spravy-Signed")))
                         )
                         .Select(x => InlineKeyboardButton.WithUrl(
-                                Path.GetFileNameWithoutExtension(x.Name),
+                                GetButtonName(x.Name),
                                 x.FullName.Replace(html.FullName, $"https://{StagingServerHost}"
                                 )
                             )
@@ -340,10 +342,12 @@ class Build : NukeBuild
 
                     var items = ftpClient.GetListing(html.Combine("downloads").FullName, FtpListOption.Recursive)
                         .Where(x => x.Type == FtpObjectType.File
-                                    && (x.Name.EndsWith(".zip") || x.Name.EndsWith(".apk") || x.Name.EndsWith(".aab"))
+                                    && (x.Name.EndsWith(".zip")
+                                        || ((x.Name.EndsWith(".apk") || x.Name.EndsWith(".aab"))
+                                            && x.Name.Contains("Spravy-Signed")))
                         )
                         .Select(x => InlineKeyboardButton.WithUrl(
-                                Path.GetFileNameWithoutExtension(x.Name),
+                                GetButtonName(x.Name),
                                 x.FullName.Replace(html.FullName, $"https://{ServerHost}")
                             )
                         );
@@ -359,6 +363,20 @@ class Build : NukeBuild
                         .GetResult();
                 }
             );
+
+    string GetButtonName(string name)
+    {
+        switch (Path.GetExtension(name).ToUpperInvariant())
+        {
+            case ".APK": return "APK";
+            case ".AAB": return "AAB";
+
+            case ".ZIP":
+                return Path.GetExtension(Path.GetFileNameWithoutExtension(name)).ThrowIfNull().ToUpperInvariant();
+
+            default: throw new ArgumentOutOfRangeException(name);
+        }
+    }
 
     string CreteToken()
     {
