@@ -364,16 +364,13 @@ class Build : NukeBuild
 
     string GetButtonName(string name)
     {
-        switch (Path.GetExtension(name).ToUpperInvariant())
+        return Path.GetExtension(name).ToUpperInvariant() switch
         {
-            case ".APK": return ".APK";
-            case ".AAB": return ".AAB";
-
-            case ".ZIP":
-                return Path.GetExtension(Path.GetFileNameWithoutExtension(name)).ThrowIfNull().ToUpperInvariant();
-
-            default: throw new ArgumentOutOfRangeException(name);
-        }
+            ".APK" => ".APK",
+            ".AAB" => ".AAB",
+            ".ZIP" => Path.GetExtension(Path.GetFileNameWithoutExtension(name)).ThrowIfNull().ToUpperInvariant(),
+            _ => throw new ArgumentOutOfRangeException(name)
+        };
     }
 
     string CreteToken()
