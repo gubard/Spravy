@@ -71,6 +71,7 @@ public class EfAuthenticationService : IAuthenticationService
 
     public async Task CreateUserAsync(CreateUserOptions options, CancellationToken cancellationToken)
     {
+        var email = options.Email.Trim().ToUpperInvariant();
         var errors = new List<ValidationResult>();
 
         await foreach (var error in loginValidator.ValidateAsync(options.Login).WithCancellation(cancellationToken))
@@ -91,10 +92,10 @@ public class EfAuthenticationService : IAuthenticationService
         {
             Id = Guid.NewGuid(),
             HashMethod = hasher.HashMethod,
-            Login = options.Login.Trim().ToUpperInvariant(),
+            Login = options.Login.Trim(),
             Salt = salt.ToString(),
             PasswordHash = hash,
-            Email = options.Email.Trim().ToUpperInvariant(),
+            Email = email,
         };
 
         await context.ExecuteSaveChangesTransactionAsync(
@@ -109,7 +110,7 @@ public class EfAuthenticationService : IAuthenticationService
                 }
 
                 user = await c.Set<UserEntity>()
-                    .SingleOrDefaultAsync(x => x.Email == options.Email, cancellationToken);
+                    .SingleOrDefaultAsync(x => x.Email == email, cancellationToken);
 
                 if (user is not null)
                 {
@@ -154,6 +155,8 @@ public class EfAuthenticationService : IAuthenticationService
 
     public async Task UpdateVerificationCodeByLoginAsync(string login, CancellationToken cancellationToken)
     {
+        login = login.Trim();
+
         var userEntity = await context.Set<UserEntity>()
             .SingleAsync(x => x.Login == login, cancellationToken);
 
@@ -173,6 +176,8 @@ public class EfAuthenticationService : IAuthenticationService
 
     public async Task UpdateVerificationCodeByEmailAsync(string email, CancellationToken cancellationToken)
     {
+        email = email.Trim().ToUpperInvariant();
+
         var userEntity = await context.Set<UserEntity>()
             .SingleAsync(x => x.Email == email, cancellationToken);
 
@@ -186,6 +191,8 @@ public class EfAuthenticationService : IAuthenticationService
 
     public async Task<bool> IsVerifiedByLoginAsync(string login, CancellationToken cancellationToken)
     {
+        login = login.Trim();
+
         var userEntity = await context.Set<UserEntity>()
             .AsNoTracking()
             .SingleAsync(x => x.Login == login, cancellationToken);
@@ -195,6 +202,8 @@ public class EfAuthenticationService : IAuthenticationService
 
     public async Task<bool> IsVerifiedByEmailAsync(string email, CancellationToken cancellationToken)
     {
+        email = email.Trim().ToUpperInvariant();
+
         var userEntity = await context.Set<UserEntity>()
             .AsNoTracking()
             .SingleAsync(x => x.Email == email, cancellationToken);
@@ -208,6 +217,8 @@ public class EfAuthenticationService : IAuthenticationService
         CancellationToken cancellationToken
     )
     {
+        login = login.Trim();
+
         var userEntity = await context.Set<UserEntity>()
             .SingleAsync(x => x.Login == login, cancellationToken);
 
@@ -224,6 +235,8 @@ public class EfAuthenticationService : IAuthenticationService
         CancellationToken cancellationToken
     )
     {
+        email = email.Trim().ToUpperInvariant();
+
         var userEntity = await context.Set<UserEntity>()
             .SingleAsync(x => x.Email == email, cancellationToken);
 
@@ -240,6 +253,8 @@ public class EfAuthenticationService : IAuthenticationService
         CancellationToken cancellationToken
     )
     {
+        email = email.Trim().ToUpperInvariant();
+
         var userEntity = await context.Set<UserEntity>()
             .SingleAsync(x => x.Email == email && !x.IsEmailVerified, cancellationToken);
 
@@ -253,6 +268,8 @@ public class EfAuthenticationService : IAuthenticationService
         CancellationToken cancellationToken
     )
     {
+        login = login.Trim();
+
         var userEntity = await context.Set<UserEntity>()
             .SingleAsync(x => x.Login == login && !x.IsEmailVerified, cancellationToken);
 
@@ -262,6 +279,8 @@ public class EfAuthenticationService : IAuthenticationService
 
     public async Task DeleteUserByEmailAsync(string email, string verificationCode, CancellationToken cancellationToken)
     {
+        email = email.Trim().ToUpperInvariant();
+
         var userEntity = await context.Set<UserEntity>()
             .SingleAsync(x => x.Email == email && x.IsEmailVerified, cancellationToken);
 
@@ -272,6 +291,8 @@ public class EfAuthenticationService : IAuthenticationService
 
     public async Task DeleteUserByLoginAsync(string login, string verificationCode, CancellationToken cancellationToken)
     {
+        login = login.Trim();
+
         var userEntity = await context.Set<UserEntity>()
             .SingleAsync(x => x.Login == login && x.IsEmailVerified, cancellationToken);
 
@@ -287,6 +308,8 @@ public class EfAuthenticationService : IAuthenticationService
         CancellationToken cancellationToken
     )
     {
+        email = email.Trim().ToUpperInvariant();
+
         var userEntity = await context.Set<UserEntity>()
             .SingleAsync(x => x.Email == email && x.IsEmailVerified, cancellationToken);
 
@@ -307,6 +330,8 @@ public class EfAuthenticationService : IAuthenticationService
         CancellationToken cancellationToken
     )
     {
+        login = login.Trim();
+
         var userEntity = await context.Set<UserEntity>()
             .SingleAsync(x => x.Login == login && x.IsEmailVerified, cancellationToken);
 
