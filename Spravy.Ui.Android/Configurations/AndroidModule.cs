@@ -34,16 +34,20 @@ public class AndroidModule : NinjectModule
         Bind<ContextWrapper>().ToConstant(contextWrapper);
 
         Bind<GrpcAuthenticationServiceOptions>()
-            .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcAuthenticationServiceOptions>());
+            .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcAuthenticationServiceOptions>())
+            .InSingletonScope();
 
         Bind<GrpcScheduleServiceOptions>()
-            .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcScheduleServiceOptions>());
+            .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcScheduleServiceOptions>())
+            .InSingletonScope();
 
         Bind<GrpcToDoServiceOptions>()
-            .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcToDoServiceOptions>());
+            .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcToDoServiceOptions>())
+            .InSingletonScope();
 
         Bind<GrpcEventBusServiceOptions>()
-            .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcEventBusServiceOptions>());
+            .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcEventBusServiceOptions>())
+            .InSingletonScope();
 
         Bind<IConfiguration>()
             .ToMethod(

@@ -21,26 +21,30 @@ public class BrowserModule : NinjectModule
     public override void Load()
     {
         Bind<IOpenerLink>().To<BrowserOpenerLink>();
-        
+
         Bind<GrpcAuthenticationServiceOptions>()
             .ToMethod(
                 context => context.Kernel.GetConfigurationSection<GrpcAuthenticationServiceOptions>("GrpcRouterService")
-            );
+            )
+            .InSingletonScope();
 
         Bind<GrpcScheduleServiceOptions>()
             .ToMethod(
                 context => context.Kernel.GetConfigurationSection<GrpcScheduleServiceOptions>("GrpcRouterService")
-            );
+            )
+            .InSingletonScope();
 
         Bind<GrpcToDoServiceOptions>()
             .ToMethod(
                 context => context.Kernel.GetConfigurationSection<GrpcToDoServiceOptions>("GrpcRouterService")
-            );
+            )
+            .InSingletonScope();
 
         Bind<GrpcEventBusServiceOptions>()
             .ToMethod(
                 context => context.Kernel.GetConfigurationSection<GrpcEventBusServiceOptions>("GrpcRouterService")
-            );
+            )
+            .InSingletonScope();
 
         Bind<IConfiguration>()
             .ToMethod(
