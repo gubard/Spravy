@@ -40,7 +40,9 @@
                     <Expander.Header>
                         <Button Command="{x:Static services:CommandStorage.SetToDoDescriptionCommand}"
                                 CommandParameter="{Binding}"
-                                Classes="Basic">
+                                Classes="Basic"
+                                Margin="0"
+                                Padding="0">
                             <StackPanel Orientation="Horizontal">
                                 <avalonia:MaterialIcon Kind="Pencil" Margin="0,0,3,0" />
                                 <TextBlock Text="{DynamicResource ToDoItemView.Description}" Classes="alignment-center" />
