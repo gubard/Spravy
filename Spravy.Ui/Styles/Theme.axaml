@@ -20,4 +20,5 @@
     <StyleInclude Source="ToggleButton.axaml" />
     <StyleInclude Source="AccessText.axaml" />
     <StyleInclude Source="Button.axaml" />
+    <StyleInclude Source="Expander.axaml" />
 </Styles>

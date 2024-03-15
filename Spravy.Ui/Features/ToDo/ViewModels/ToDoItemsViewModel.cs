@@ -13,7 +13,7 @@ public class ToDoItemsViewModel : ViewModelBase
     public AvaloniaList<Selected<ToDoItemNotify>> Items { get; } = new();
 
     [Reactive]
-    public object? Header { get; set; }
+    public string? Header { get; set; }
 
     [Reactive]
     public bool IsExpanded { get; set; } = true;
