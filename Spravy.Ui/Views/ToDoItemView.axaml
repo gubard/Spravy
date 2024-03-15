@@ -48,16 +48,6 @@
                         </Button>
                     </Expander.Header>
 
-                    <Expander.Styles>
-                        <Style Selector="TextBlock#PlainTextTextBlock">
-                            <Setter Property="Margin" Value="0,12,0,0" />
-                        </Style>
-
-                        <Style Selector="mdxaml|MarkdownScrollViewer#MarkdownTextMarkdownScrollViewer">
-                            <Setter Property="Margin" Value="0,7,0,0" />
-                        </Style>
-                    </Expander.Styles>
-
                     <Panel>
                         <TextBlock x:Name="PlainTextTextBlock"
                                    IsVisible="{Binding IsDescriptionPlainText}"
