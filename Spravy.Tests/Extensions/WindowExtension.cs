@@ -107,6 +107,7 @@ public static class WindowExtension
         using var bitmap = window.CaptureRenderedFrame().ThrowIfNull();
         Console.WriteLine($"Captured rendered frame");
         Console.WriteLine($"Saving rendered frame to {file}");
+        file.Directory.ThrowIfNull().Create();
         bitmap.Save(file.FullName);
         Console.WriteLine($"Saved rendered frame to {file}");
 
