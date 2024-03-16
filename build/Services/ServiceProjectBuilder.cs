@@ -22,9 +22,9 @@ public class ServiceProjectBuilder : ProjectBuilder
 
     public override void Setup()
     {
+        Log.Logger.Information("Set app settings {File}", options.AppSettingsFile);
         var jsonDocument = options.AppSettingsFile.GetJsonDocument();
         using var stream = new MemoryStream();
-        Log.Logger.Information("Set app settings {File}", options.AppSettingsFile);
 
         stream.SetAppSettingsStream(
             jsonDocument,

@@ -1,5 +1,6 @@
 using _build.Models;
 using Nuke.Common.Tools.DotNet;
+using Serilog;
 
 namespace _build.Services;
 
@@ -12,6 +13,7 @@ public class TestProjectBuilder : ProjectBuilder
 
     public override void Setup()
     {
+        Log.Logger.Information("Set app settings {File}", options.AppSettingsFile);
     }
 
     public void Test()
