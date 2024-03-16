@@ -43,7 +43,7 @@ class Build : NukeBuild
     [Parameter] readonly string FtpUser;
     [Parameter] readonly string SshHost;
     [Parameter] readonly string SshUser;
-    [Parameter] readonly string ServerHost;
+    [Parameter] readonly string Domain;
     [Parameter] readonly string JwtKey;
     [Parameter] readonly string JwtIssuer;
     [Parameter] readonly string JwtAudience;
@@ -56,7 +56,7 @@ class Build : NukeBuild
     [Parameter] readonly string StagingFtpUser;
     [Parameter] readonly string StagingSshHost;
     [Parameter] readonly string StagingSshUser;
-    [Parameter] readonly string StagingServerHost;
+    [Parameter] readonly string StagingDomain;
     [Parameter] readonly string MailPassword;
 
     static DirectoryInfo AndroidFolder;
@@ -110,7 +110,7 @@ class Build : NukeBuild
             StagingSshHost,
             StagingSshUser,
             StagingSshPassword,
-            StagingServerHost,
+            StagingDomain,
             new FileInfo($"/home/{StagingFtpUser}/storage/sign-key.keystore"),
             AndroidSigningKeyPass,
             AndroidSigningStorePass
@@ -132,7 +132,7 @@ class Build : NukeBuild
             SshHost,
             SshUser,
             SshPassword,
-            ServerHost,
+            Domain,
             new FileInfo($"/home/{FtpUser}/storage/sign-key.keystore"),
             AndroidSigningKeyPass,
             AndroidSigningStorePass
@@ -298,7 +298,7 @@ class Build : NukeBuild
             .Executes(() =>
                 {
                     PublishBrowser();
-                    SendTelegramTextMessage(StagingFtpHost, StagingFtpUser, StagingFtpPassword, StagingServerHost);
+                    SendTelegramTextMessage(StagingFtpHost, StagingFtpUser, StagingFtpPassword, StagingDomain);
                 }
             );
 
@@ -308,15 +308,15 @@ class Build : NukeBuild
             .Executes(() =>
                 {
                     PublishBrowser();
-                    SendTelegramTextMessage(FtpHost, FtpUser, FtpPassword, ServerHost);
+                    SendTelegramTextMessage(FtpHost, FtpUser, FtpPassword, Domain);
                 }
             );
 
-    void SendTelegramTextMessage(string ftpHost, string ftpUser, string ftpPassword, string host)
+    void SendTelegramTextMessage(string ftpHost, string ftpUser, string ftpPassword, string domain)
     {
         using var ftpClient = CreateFtpClient(ftpHost, ftpUser, ftpPassword);
         ftpClient.Connect();
-        var html = PathHelper.WwwFolder.Combine(host).Combine("html");
+        var html = PathHelper.WwwFolder.Combine(domain).Combine("html");
 
         var items = ftpClient.GetListing(html.Combine("downloads").FullName, FtpListOption.Recursive)
             .Where(x => x.Type == FtpObjectType.File
@@ -326,7 +326,7 @@ class Build : NukeBuild
             )
             .Select(x => InlineKeyboardButton.WithUrl(
                     GetButtonName(x.Name),
-                    x.FullName.Replace(html.FullName, $"https://{host}")
+                    x.FullName.Replace(html.FullName, $"https://{domain}")
                 )
             );
 
