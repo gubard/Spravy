@@ -4,6 +4,7 @@ using System.Text;
 using _build.Extensions;
 using _build.Models;
 using Nuke.Common.Tools.DotNet;
+using Serilog;
 
 namespace _build.Services;
 
@@ -16,6 +17,7 @@ public abstract class UiProjectBuilder : ProjectBuilder
 
     public override void Setup()
     {
+        Log.Logger.Information("Set app settings {File}", options.AppSettingsFile);
         var jsonDocument = options.AppSettingsFile.GetJsonDocument();
         using var stream = new MemoryStream();
         stream.SetAppSettingsStream(options.Domain, jsonDocument, options.Hosts);
