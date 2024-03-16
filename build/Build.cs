@@ -298,32 +298,7 @@ class Build : NukeBuild
             .Executes(() =>
                 {
                     PublishBrowser();
-                    using var ftpClient = CreateFtpClient(StagingFtpHost, StagingFtpUser, StagingFtpPassword);
-                    ftpClient.Connect();
-                    var html = PathHelper.WwwFolder.Combine(StagingServerHost).Combine("html");
-
-                    var items = ftpClient.GetListing(html.Combine("downloads").FullName, FtpListOption.Recursive)
-                        .Where(x => x.Type == FtpObjectType.File
-                                    && (x.Name.EndsWith(".zip")
-                                        || ((x.Name.EndsWith(".apk") || x.Name.EndsWith(".aab"))
-                                            && x.Name.Contains("Spravy-Signed")))
-                        )
-                        .Select(x => InlineKeyboardButton.WithUrl(
-                                GetButtonName(x.Name),
-                                x.FullName.Replace(html.FullName, $"https://{StagingServerHost}"
-                                )
-                            )
-                        );
-
-                    var botClient = new TelegramBotClient(TelegramToken);
-
-                    botClient.SendTextMessageAsync(
-                            "@spravy_release",
-                            $"Published Staging v{VersionService.Version}",
-                            replyMarkup: new InlineKeyboardMarkup(items)
-                        )
-                        .GetAwaiter()
-                        .GetResult();
+                    SendTelegramTextMessage(StagingFtpHost, StagingFtpUser, StagingFtpPassword, StagingServerHost);
                 }
             );
 
@@ -333,34 +308,38 @@ class Build : NukeBuild
             .Executes(() =>
                 {
                     PublishBrowser();
-
-                    using var ftpClient = CreateFtpClient(FtpHost, FtpUser, FtpPassword);
-                    ftpClient.Connect();
-                    var html = PathHelper.WwwFolder.Combine(ServerHost).Combine("html");
-
-                    var items = ftpClient.GetListing(html.Combine("downloads").FullName, FtpListOption.Recursive)
-                        .Where(x => x.Type == FtpObjectType.File
-                                    && (x.Name.EndsWith(".zip")
-                                        || ((x.Name.EndsWith(".apk") || x.Name.EndsWith(".aab"))
-                                            && x.Name.Contains("Spravy-Signed")))
-                        )
-                        .Select(x => InlineKeyboardButton.WithUrl(
-                                GetButtonName(x.Name),
-                                x.FullName.Replace(html.FullName, $"https://{ServerHost}")
-                            )
-                        );
-
-                    var botClient = new TelegramBotClient(TelegramToken);
-
-                    botClient.SendTextMessageAsync(
-                            "@spravy_release",
-                            $"Published Prod v{VersionService.Version}",
-                            replyMarkup: new InlineKeyboardMarkup(items)
-                        )
-                        .GetAwaiter()
-                        .GetResult();
+                    SendTelegramTextMessage(FtpHost, FtpUser, FtpPassword, ServerHost);
                 }
             );
+
+    void SendTelegramTextMessage(string ftpHost, string ftpUser, string ftpPassword, string host)
+    {
+        using var ftpClient = CreateFtpClient(ftpHost, ftpUser, ftpPassword);
+        ftpClient.Connect();
+        var html = PathHelper.WwwFolder.Combine(host).Combine("html");
+
+        var items = ftpClient.GetListing(html.Combine("downloads").FullName, FtpListOption.Recursive)
+            .Where(x => x.Type == FtpObjectType.File
+                        && (x.Name.EndsWith(".zip")
+                            || ((x.Name.EndsWith(".apk") || x.Name.EndsWith(".aab"))
+                                && x.Name.Contains("Spravy-Signed")))
+            )
+            .Select(x => InlineKeyboardButton.WithUrl(
+                    GetButtonName(x.Name),
+                    x.FullName.Replace(html.FullName, $"https://{host}")
+                )
+            );
+
+        var botClient = new TelegramBotClient(TelegramToken);
+
+        botClient.SendTextMessageAsync(
+                "@spravy_release",
+                $"Published Prod v{VersionService.Version}",
+                replyMarkup: new InlineKeyboardMarkup(items)
+            )
+            .GetAwaiter()
+            .GetResult();
+    }
 
     string GetButtonName(string name)
     {
