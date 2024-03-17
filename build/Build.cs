@@ -298,7 +298,8 @@ class Build : NukeBuild
             .Executes(() =>
                 {
                     PublishBrowser();
-                    SendTelegramTextMessage(StagingFtpHost, StagingFtpUser, StagingFtpPassword, StagingDomain);
+                    SendTelegramTextMessage("Staging", StagingFtpHost, StagingFtpUser, StagingFtpPassword, StagingDomain
+                    );
                 }
             );
 
@@ -308,11 +309,11 @@ class Build : NukeBuild
             .Executes(() =>
                 {
                     PublishBrowser();
-                    SendTelegramTextMessage(FtpHost, FtpUser, FtpPassword, Domain);
+                    SendTelegramTextMessage("Prod", FtpHost, FtpUser, FtpPassword, Domain);
                 }
             );
 
-    void SendTelegramTextMessage(string ftpHost, string ftpUser, string ftpPassword, string domain)
+    void SendTelegramTextMessage(string name, string ftpHost, string ftpUser, string ftpPassword, string domain)
     {
         using var ftpClient = CreateFtpClient(ftpHost, ftpUser, ftpPassword);
         ftpClient.Connect();
@@ -334,7 +335,7 @@ class Build : NukeBuild
 
         botClient.SendTextMessageAsync(
                 "@spravy_release",
-                $"Published Prod v{VersionService.Version}",
+                $"Published {name} v{VersionService.Version}",
                 replyMarkup: new InlineKeyboardMarkup(items)
             )
             .GetAwaiter()
