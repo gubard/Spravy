@@ -298,7 +298,13 @@ class Build : NukeBuild
             .Executes(() =>
                 {
                     PublishBrowser();
-                    SendTelegramTextMessage("Staging", StagingFtpHost, StagingFtpUser, StagingFtpPassword, StagingDomain
+
+                    SendTelegramTextMessage(
+                        "Staging",
+                        StagingFtpHost,
+                        StagingFtpUser,
+                        StagingFtpPassword,
+                        StagingDomain
                     );
                 }
             );
