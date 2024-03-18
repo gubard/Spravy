@@ -17,4 +17,7 @@ public static partial class JSInterop
 
     [JSImport("windowOpen", "window.js")]
     public static partial void WindowOpen(string url);
+
+    [JSImport("getCurrentUrl", "window.js")]
+    public static partial string GetCurrentUrl();
 }
