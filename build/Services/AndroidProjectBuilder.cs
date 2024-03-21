@@ -128,7 +128,6 @@ public class AndroidProjectBuilder : UiProjectBuilder
                         .SetConfiguration(options.Configuration)
                         .AddProperty("Version", versionService.Version.ToString())
                         .SetOutput(androidOptions.PublishFolder.FullName)
-                        .EnableNoRestore()
                     );
                 }
                 else
@@ -146,7 +145,6 @@ public class AndroidProjectBuilder : UiProjectBuilder
                                 .SetConfiguration(options.Configuration)
                                 .AddProperty("Version", versionService.Version.ToString())
                                 .SetOutput(androidOptions.PublishFolder.Combine(runtime.Name).FullName)
-                                .EnableNoRestore()
                                 .SetRuntime(runtime.Name)
                         );
                     }
