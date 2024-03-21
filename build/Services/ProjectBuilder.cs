@@ -1,3 +1,5 @@
+using System.IO;
+using _build.Extensions;
 using _build.Interfaces;
 using _build.Models;
 using Nuke.Common.Tools.DotNet;
@@ -15,10 +17,23 @@ public abstract class ProjectBuilder : IProjectBuilder
         this.versionService = versionService;
     }
 
+    DirectoryInfo GetBinFolder()
+    {
+        return options.CsprojFile.Directory.Combine("bin");
+    }
+
+    DirectoryInfo GetObjFolder()
+    {
+        return options.CsprojFile.Directory.Combine("obj");
+    }
+
     public abstract void Setup();
 
     public void Clean()
     {
+        GetBinFolder().DeleteIfExits();
+        GetObjFolder().DeleteIfExits();
+
         if (options.Runtimes.IsEmpty)
         {
             DotNetTasks.DotNetClean(setting => setting.SetProject(options.CsprojFile.FullName)
