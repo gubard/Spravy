@@ -20,7 +20,7 @@ public class AndroidProjectBuilder : UiProjectBuilder
 
     public override void Compile()
     {
-        if (androidOptions.KeyStoreFile.Directory is null)
+    /*    if (androidOptions.KeyStoreFile.Directory is null)
         {
             throw new NullReferenceException();
         }
@@ -107,7 +107,7 @@ public class AndroidProjectBuilder : UiProjectBuilder
 
                 throw;
             }
-        }
+        }*/
     }
 
     public void Publish()
