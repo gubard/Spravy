@@ -18,10 +18,6 @@ public class AndroidProjectBuilder : UiProjectBuilder
         this.androidOptions = androidOptions;
     }
 
-    public override void Compile()
-    {
-    }
-
     public void Publish()
     {
         if (androidOptions.KeyStoreFile.Directory is null)
