@@ -138,15 +138,10 @@ public class AndroidProjectBuilder : UiProjectBuilder
                         DotNetTasks.DotNetPublish(setting =>
                             setting.SetProject(options.CsprojFile.FullName)
                                 .SetProperty("AndroidKeyStore", "true")
-                                .SetProperty("AndroidSigningKeyStore",
-                                    androidOptions.KeyStoreFile.FullName
-                                )
+                                .SetProperty("AndroidSigningKeyStore", androidOptions.KeyStoreFile.FullName)
                                 .SetProperty("AndroidSigningKeyAlias", "spravy")
-                                .SetProperty("AndroidSigningKeyPass", androidOptions.AndroidSigningKeyPass
-                                )
-                                .SetProperty("AndroidSigningStorePass",
-                                    androidOptions.AndroidSigningStorePass
-                                )
+                                .SetProperty("AndroidSigningKeyPass", androidOptions.AndroidSigningKeyPass)
+                                .SetProperty("AndroidSigningStorePass", androidOptions.AndroidSigningStorePass)
                                 .SetProperty("AndroidSdkDirectory", "/opt/android-sdk")
                                 .SetConfiguration(options.Configuration)
                                 .AddProperty("Version", versionService.Version.ToString())
