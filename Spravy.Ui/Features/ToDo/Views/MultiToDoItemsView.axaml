@@ -38,7 +38,7 @@
                         <x:Type TypeName="models:Selected" x:TypeArguments="models:ToDoItemNotify" />
                     </DataTemplate.DataType>
 
-                    <controls:GlassCard>
+                    <controls:GlassCard Padding="7">
                         <StackPanel>
                             <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto">
                                 <Rectangle Width="15"
