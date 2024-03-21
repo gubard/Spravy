@@ -18,7 +18,7 @@ public class AndroidProjectBuilder : UiProjectBuilder
         this.androidOptions = androidOptions;
     }
 
-    public void Publish()
+    public override void Compile()
     {
         if (androidOptions.KeyStoreFile.Directory is null)
         {
@@ -53,6 +53,65 @@ public class AndroidProjectBuilder : UiProjectBuilder
                 .RunCommand();
         }
 
+        for (var i = 0; i < 3; i++)
+        {
+            try
+            {
+                if (options.Runtimes.IsEmpty)
+                {
+                    DotNetTasks.DotNetBuild(setting => setting.SetProjectFile(options.CsprojFile.FullName)
+                        .EnableNoRestore()
+                        .SetProperty("AndroidKeyStore", "true")
+                        .SetProperty("AndroidSigningKeyStore", androidOptions.KeyStoreFile.FullName)
+                        .SetProperty("AndroidSigningKeyAlias", "spravy")
+                        .SetProperty("AndroidSigningKeyPass", androidOptions.AndroidSigningKeyPass)
+                        .SetProperty("AndroidSigningStorePass", androidOptions.AndroidSigningStorePass)
+                        .SetProperty("AndroidSdkDirectory", "/opt/android-sdk")
+                        .SetConfiguration(options.Configuration)
+                        .AddProperty("Version", versionService.Version.ToString())
+                    );
+                }
+                else
+                {
+                    foreach (var runtime in options.Runtimes.Span)
+                    {
+                        DotNetTasks.DotNetBuild(setting =>
+                            setting.SetProjectFile(options.CsprojFile.FullName)
+                                .EnableNoRestore()
+                                .SetProperty("AndroidKeyStore", "true")
+                                .SetProperty("AndroidSigningKeyStore", androidOptions.KeyStoreFile.FullName)
+                                .SetProperty("AndroidSigningKeyAlias", "spravy")
+                                .SetProperty("AndroidSigningKeyPass", androidOptions.AndroidSigningKeyPass)
+                                .SetProperty("AndroidSigningStorePass", androidOptions.AndroidSigningStorePass)
+                                .SetProperty("AndroidSdkDirectory", "/opt/android-sdk")
+                                .SetConfiguration(options.Configuration)
+                                .AddProperty("Version", versionService.Version.ToString())
+                                .SetRuntime(runtime.Name)
+                        );
+                    }
+                }
+
+                break;
+            }
+            catch (Exception e)
+            {
+                if (i == 2)
+                {
+                    throw;
+                }
+
+                if (e.ToString().Contains("CompileAvaloniaXamlTask"))
+                {
+                    continue;
+                }
+
+                throw;
+            }
+        }
+    }
+
+    public void Publish()
+    {
         for (var i = 0; i < 3; i++)
         {
             try
