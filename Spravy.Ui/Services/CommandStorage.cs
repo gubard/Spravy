@@ -1400,7 +1400,13 @@ public static class CommandStorage
             return;
         }
 
-        await refresh.RefreshAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            await refresh.RefreshAsync(cancellationToken).ConfigureAwait(false);
+        }
+        catch (GrpcException e) when (e.InnerException is OperationCanceledException)
+        {
+        }
     }
 
     private static Task NavigateToToDoItemAsync(Guid id, CancellationToken cancellationToken)
