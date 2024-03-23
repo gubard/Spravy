@@ -14,17 +14,15 @@
     <Grid RowDefinitions="*,Auto"
           ColumnDefinitions="*,*">
         <ContentControl Grid.ColumnSpan="2" Content="{Binding Content}" />
-
         <Button Grid.Row="1"
                 Command="{Binding CancelCommand}"
                 ClickMode="Press"
                 Content="{DynamicResource ConfirmView.Cancel}" />
-
         <Button Grid.Row="1"
                 Grid.Column="1"
                 Command="{Binding ConfirmCommand}"
                 ClickMode="Press"
-                Content="{DynamicResource ConfirmView.Ok}" 
-                Classes="Flat"/>
+                Content="{DynamicResource ConfirmView.Ok}"
+                Classes="Flat" />
     </Grid>
 </reactiveUi:ReactiveUserControl>

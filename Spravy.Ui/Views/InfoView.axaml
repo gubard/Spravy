@@ -14,11 +14,11 @@
 
     <Grid RowDefinitions="*,Auto">
         <ContentControl Content="{Binding Content}" />
-
         <Button x:Name="OkButton"
                 Grid.Row="1"
                 Command="{Binding OkCommand}"
                 ClickMode="Press"
-                Content="{DynamicResource InfoView.Ok}" />
+                Content="{DynamicResource InfoView.Ok}"
+                Classes="Flat" />
     </Grid>
 </reactiveUi:ReactiveUserControl>
