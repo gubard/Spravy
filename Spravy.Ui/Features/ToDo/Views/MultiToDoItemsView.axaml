@@ -29,7 +29,6 @@
                         IsVisible="{Binding Favorite.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
         <ContentControl IsVisible="{Binding IsMulti, Converter={StaticResource ReverseBooleanValueConverter}}"
                         Content="{Binding Content}" />
-
         <ContentControl IsVisible="{Binding IsMulti}"
                         Content="{Binding Content}">
             <ContentControl.DataTemplates>
@@ -38,7 +37,7 @@
                         <x:Type TypeName="models:Selected" x:TypeArguments="models:ToDoItemNotify" />
                     </DataTemplate.DataType>
 
-                    <controls:GlassCard Padding="7">
+                    <CheckBox Classes="GigaChips content-alignment-stretch" IsChecked="{Binding IsSelect}">
                         <StackPanel>
                             <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto">
                                 <Rectangle Width="15"
@@ -61,12 +60,10 @@
                             </Grid>
 
                             <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
-                                <CheckBox IsChecked="{Binding IsSelect}">
-                                    <TextBlock Text="{Binding Value.Name}" />
-                                </CheckBox>
+                                <TextBlock Text="{Binding Value.Name}" />
                             </ScrollViewer>
                         </StackPanel>
-                    </controls:GlassCard>
+                    </CheckBox>
                 </DataTemplate>
             </ContentControl.DataTemplates>
         </ContentControl>
