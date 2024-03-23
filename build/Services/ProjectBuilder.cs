@@ -52,7 +52,7 @@ public abstract class ProjectBuilder : IProjectBuilder
         }
     }
 
-    public void Restore()
+    public virtual void Restore()
     {
         if (options.Runtimes.IsEmpty)
         {
