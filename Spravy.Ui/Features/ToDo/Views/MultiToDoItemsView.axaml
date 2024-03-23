@@ -60,7 +60,7 @@
                             </Grid>
 
                             <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
-                                <TextBlock Text="{Binding Value.Name}" />
+                                <TextBlock Classes="h4" Text="{Binding Value.Name}" />
                             </ScrollViewer>
                         </StackPanel>
                     </CheckBox>
