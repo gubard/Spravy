@@ -55,7 +55,9 @@ public class SearchViewModel : NavigatableViewModelBase, IToDoItemSearchProperti
     private async Task RefreshCoreAsync(CancellationToken cancellationToken)
     {
         var ids = await ToDoService.SearchToDoItemIdsAsync(SearchText, cancellationToken).ConfigureAwait(false);
-        await ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, cancellationToken).ConfigureAwait(false);
+
+        await ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken)
+            .ConfigureAwait(false);
     }
 
     public override void Stop()

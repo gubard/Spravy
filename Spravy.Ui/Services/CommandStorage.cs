@@ -894,7 +894,7 @@ public static class CommandStorage
     {
         var ids = await toDoService.SearchToDoItemIdsAsync(properties.SearchText, cancellationToken)
             .ConfigureAwait(false);
-        await properties.ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), properties, cancellationToken)
+        await properties.ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), properties, false, cancellationToken)
             .ConfigureAwait(false);
     }
 

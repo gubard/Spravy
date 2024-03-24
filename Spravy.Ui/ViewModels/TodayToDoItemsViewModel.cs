@@ -68,7 +68,8 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IRefresh
         cancellationToken.ThrowIfCancellationRequested();
         var ids = await ToDoService.GetTodayToDoItemsAsync(cancellationToken).ConfigureAwait(false);
         cancellationToken.ThrowIfCancellationRequested();
-        await ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, cancellationToken).ConfigureAwait(false);
-        cancellationToken.ThrowIfCancellationRequested();
+
+        await ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken)
+            .ConfigureAwait(false);
     }
 }

@@ -48,26 +48,41 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
         }
     }
 
-    private async Task RefreshToDoItemListsAsync(Guid[] ids, CancellationToken cancellationToken)
+    private async Task RefreshToDoItemListsAsync(Guid[] ids, bool autoOrder, CancellationToken cancellationToken)
     {
         await List.ClearExceptAsync(ids);
         cancellationToken.ThrowIfCancellationRequested();
         await RefreshFavoriteToDoItemsAsync(cancellationToken).ConfigureAwait(false);
+        uint orderIndex = 1;
 
         await foreach (var items in ToDoService.GetToDoItemsAsync(ids, 5, cancellationToken).ConfigureAwait(false))
         {
             foreach (var item in items)
             {
-                await List.UpdateItemAsync(item);
+                if (autoOrder)
+                {
+                    await List.UpdateItemAsync(item.WithOrderIndex(orderIndex));
+                }
+                else
+                {
+                    await List.UpdateItemAsync(item);
+                }
+
+                orderIndex++;
             }
 
             cancellationToken.ThrowIfCancellationRequested();
         }
     }
 
-    public async Task UpdateItemsAsync(Guid[] ids, IRefresh refresh, CancellationToken cancellationToken)
+    public async Task UpdateItemsAsync(
+        Guid[] ids,
+        IRefresh refresh,
+        bool autoOrder,
+        CancellationToken cancellationToken
+    )
     {
         refreshToDoItem = refresh;
-        await RefreshToDoItemListsAsync(ids, cancellationToken).ConfigureAwait(false);
+        await RefreshToDoItemListsAsync(ids, autoOrder, cancellationToken).ConfigureAwait(false);
     }
 }
