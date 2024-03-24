@@ -29,7 +29,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 
     private async Task RefreshFavoriteToDoItemsAsync(CancellationToken cancellationToken)
     {
-        var ids = (await ToDoService.GetFavoriteToDoItemIdsAsync(cancellationToken).ConfigureAwait(false)).ToArray();
+        var ids = await ToDoService.GetFavoriteToDoItemIdsAsync(cancellationToken).ConfigureAwait(false).ToArrayAsync();
         await List.ClearFavoriteExceptAsync(ids);
         cancellationToken.ThrowIfCancellationRequested();
 

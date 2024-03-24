@@ -8,7 +8,21 @@ namespace Spravy.Domain.Extensions;
 
 public static class ObjectExtension
 {
-    public static T[] ToArray<T>(this T obj)
+    public static async Task<T[]> ToArrayAsync<T>(this ConfiguredTaskAwaitable<IEnumerable<T>> task)
+    {
+        var enumerable = await task;
+
+        return enumerable.ToArray();
+    }
+
+    public static async Task<T[]> ToArrayAsync<T>(this Task<IEnumerable<T>> task)
+    {
+        var enumerable = await task;
+
+        return enumerable.ToArray();
+    }
+
+    public static T[] AsArray<T>(this T obj)
     {
         return new[]
         {
