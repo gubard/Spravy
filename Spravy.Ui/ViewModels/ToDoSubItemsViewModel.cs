@@ -22,9 +22,6 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
     [Inject]
     public required IToDoService ToDoService { get; init; }
 
-    [Inject]
-    public required IMapper Mapper { get; init; }
-
     public async Task RefreshAsync(CancellationToken cancellationToken)
     {
         await refreshToDoItem.ThrowIfNull().RefreshAsync(cancellationToken).ConfigureAwait(false);
