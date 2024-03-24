@@ -13,7 +13,9 @@
         <Grid ColumnDefinitions="Auto,*"
               Margin="2"
               IsVisible="{Binding ToDoItems.GroupByNone.Items.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
-            <ToggleButton Classes="alignment-center" IsChecked="{Binding IsMulti}" Content="{DynamicResource MultiToDoItemsView.IsMulti}" />
+            <ToggleButton Classes="alignment-center"
+                          IsChecked="{Binding IsMulti}"
+                          Content="{DynamicResource MultiToDoItemsView.IsMulti}" />
 
             <StackPanel Grid.Column="1">
                 <TextBlock Classes="field"
