@@ -81,7 +81,8 @@ public class ScheduleHostedService : IHostedService
                                 );
                                 c.Set<TimerEntity>().Remove(timer);
                             }
-                        }
+                        },
+                        cancellationToken
                     );
                 }
                 catch (Exception e)
@@ -94,7 +95,7 @@ public class ScheduleHostedService : IHostedService
                 logger.Log(LogLevel.Error, e, null);
             }
 
-            await Task.Delay(TimeSpan.FromSeconds(1));
+            await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
         }
     }
 }

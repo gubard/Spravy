@@ -119,7 +119,8 @@ public class EventBusHostedService : IHostedService
                 }
 
                 item.IsFavorite = eventContent.IsFavorite;
-            }
+            },
+            CancellationToken.None
         );
     }
 }

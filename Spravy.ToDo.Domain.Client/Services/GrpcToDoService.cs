@@ -34,6 +34,32 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         this.metadataFactory = metadataFactory;
     }
 
+    public Task CloneToDoItemAsync(Guid cloneId, Guid? parentId, CancellationToken cancellationToken)
+    {
+        return CallClientAsync(
+            async client =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+
+                var request = new CloneToDoItemRequest
+                {
+                    CloneId = mapper.Map<ByteString>(cloneId),
+                    ParentId = mapper.Map<ByteString>(parentId),
+                };
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                await client.CloneToDoItemAsync(
+                    request,
+                    metadata,
+                    cancellationToken: cancellationToken
+                );
+            },
+            cancellationToken
+        );
+    }
+
     public Task UpdateToDoItemDescriptionTypeAsync(Guid id, DescriptionType type, CancellationToken cancellationToken)
     {
         return CallClientAsync(

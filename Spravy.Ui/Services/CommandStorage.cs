@@ -254,6 +254,11 @@ public static class CommandStorage
             MaterialIconKind.Delete,
             "Delete to-do items"
         );
+        CloneToDoItemItem = CreateCommand<ToDoItemNotify>(
+            CloneToDoItemAsync,
+            MaterialIconKind.FileMove,
+            "Clone to-do item"
+        );
     }
 
     private static readonly INavigator navigator;
@@ -266,6 +271,9 @@ public static class CommandStorage
     private static readonly ITokenService tokenService;
     private static readonly IObjectStorage objectStorage;
     private static readonly IClipboardService clipboard;
+
+    public static ICommand CloneToDoItemCommand => CloneToDoItemItem.Command;
+    public static CommandItem CloneToDoItemItem { get; }
 
     public static ICommand ResetToDoItemCommand => ResetToDoItemItem.Command;
     public static CommandItem ResetToDoItemItem { get; }
@@ -1276,6 +1284,21 @@ public static class CommandStorage
                 },
                 _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
                 viewModel => viewModel.Id = item.Id,
+                cancellationToken
+            )
+            .ConfigureAwait(false);
+    }
+
+    private static async Task CloneToDoItemAsync(IIdProperty id, CancellationToken cancellationToken)
+    {
+        await dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
+                async itemNotify =>
+                {
+                    await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
+                    await toDoService.CloneToDoItemAsync(id.Id, itemNotify.Id, cancellationToken);
+                    await RefreshCurrentViewAsync(cancellationToken);
+                },
+                view => view.DefaultSelectedItemId = id.Id,
                 cancellationToken
             )
             .ConfigureAwait(false);

@@ -118,7 +118,8 @@ public class EfAuthenticationService : IAuthenticationService
                 }
 
                 await c.Set<UserEntity>().AddAsync(newUser, cancellationToken);
-            }
+            },
+            cancellationToken
         );
     }
 

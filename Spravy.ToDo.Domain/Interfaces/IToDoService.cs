@@ -6,6 +6,7 @@ namespace Spravy.ToDo.Domain.Interfaces;
 
 public interface IToDoService
 {
+    Task CloneToDoItemAsync(Guid cloneId, Guid? parentId, CancellationToken cancellationToken);
     Task UpdateToDoItemDescriptionTypeAsync(Guid id, DescriptionType type, CancellationToken cancellationToken);
     Task ResetToDoItemAsync(Guid id, CancellationToken cancellationToken);
     Task RandomizeChildrenOrderIndexAsync(Guid id, CancellationToken cancellationToken);

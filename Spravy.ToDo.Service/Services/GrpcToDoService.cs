@@ -23,6 +23,20 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         this.mapper = mapper;
     }
 
+    public override async Task<CloneToDoItemReply> CloneToDoItem(
+        CloneToDoItemRequest request,
+        ServerCallContext context
+    )
+    {
+        await toDoService.CloneToDoItemAsync(
+            mapper.Map<Guid>(request.CloneId),
+            mapper.Map<Guid?>(request.ParentId),
+            context.CancellationToken
+        );
+
+        return new CloneToDoItemReply();
+    }
+
     public override async Task<GetChildrenToDoItemShortsReply> GetChildrenToDoItemShorts(
         GetChildrenToDoItemShortsRequest request,
         ServerCallContext context

@@ -270,13 +270,8 @@ public class MultiToDoItemsViewModel : ViewModelBase
         var toFavoriteCommand = CommandStorage.AddToDoItemToFavoriteItem.WithParam(item.Id);
         item.Commands.Add(CommandStorage.AddToDoItemChildItem.WithParam(item.Id));
         item.Commands.Add(CommandStorage.DeleteToDoItemItem.WithParam(item));
-
-        /*if (item.IsCan != ToDoItemIsCan.None)
-        {
-            item.Commands.Add(CommandStorage.SwitchCompleteToDoItemItem.WithParam(item));
-        }*/
-
         item.Commands.Add(CommandStorage.ShowToDoSettingItem.WithParam(item));
+        item.Commands.Add(CommandStorage.CloneToDoItemItem.WithParam(item));
 
         if (item.IsFavorite)
         {

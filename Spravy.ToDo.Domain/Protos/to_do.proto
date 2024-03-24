@@ -7,6 +7,7 @@ import "Protos/to_do_messages.proto";
 package spravy.to_do;
 
 service ToDoService {
+  rpc CloneToDoItem (CloneToDoItemRequest) returns (CloneToDoItemReply);
   rpc GetChildrenToDoItemShorts (GetChildrenToDoItemShortsRequest) returns (GetChildrenToDoItemShortsReply);
   rpc UpdateToDoItemDescriptionType (UpdateToDoItemDescriptionTypeRequest) returns (UpdateToDoItemDescriptionTypeReply);
   rpc AddRootToDoItem (AddRootToDoItemRequest) returns (AddRootToDoItemReply);

@@ -35,20 +35,21 @@ public static class DbContextExtension
 
     public static async Task ExecuteSaveChangesTransactionAsync<TDbContext>(
         this TDbContext context,
-        Func<TDbContext, Task> func
+        Func<TDbContext, Task> func,
+        CancellationToken cancellationToken
     )
         where TDbContext : DbContext
     {
-        await using var transaction = await context.Database.BeginTransactionAsync();
+        await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
 
         try
         {
             await context.ExecuteSaveChangesAsync(func);
-            await transaction.CommitAsync();
+            await transaction.CommitAsync(cancellationToken);
         }
         catch
         {
-            await transaction.RollbackAsync();
+            await transaction.RollbackAsync(cancellationToken);
 
             throw;
         }

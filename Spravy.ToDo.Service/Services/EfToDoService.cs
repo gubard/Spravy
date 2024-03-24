@@ -39,6 +39,43 @@ public class EfToDoService : IToDoService
         this.getterToDoItemParametersService = getterToDoItemParametersService;
     }
 
+    public async Task CloneToDoItemAsync(Guid cloneId, Guid? parentId, CancellationToken cancellationToken)
+    {
+        await using var context = dbContextFactory.Create();
+
+        var clone = await context.Set<ToDoItemEntity>()
+            .AsNoTracking()
+            .SingleAsync(x => x.Id == cloneId, cancellationToken);
+
+        await context.ExecuteSaveChangesTransactionAsync(
+            c => AddCloneAsync(c, clone, parentId, cancellationToken),
+            cancellationToken
+        );
+    }
+
+    private async Task AddCloneAsync(
+        SpravyDbToDoDbContext context,
+        ToDoItemEntity clone,
+        Guid? parentId,
+        CancellationToken cancellationToken
+    )
+    {
+        var id = clone.Id;
+        clone.Id = Guid.NewGuid();
+        clone.ParentId = parentId;
+        await context.AddAsync(clone, cancellationToken);
+
+        var items = await context.Set<ToDoItemEntity>()
+            .AsNoTracking()
+            .Where(x => x.ParentId == id)
+            .ToArrayAsync(cancellationToken);
+
+        foreach (var item in items)
+        {
+            await AddCloneAsync(context, item, clone.Id, cancellationToken);
+        }
+    }
+
     public async Task UpdateToDoItemDescriptionTypeAsync(
         Guid id,
         DescriptionType type,
@@ -53,7 +90,8 @@ public class EfToDoService : IToDoService
                 var item = await c.FindAsync<ToDoItemEntity>(id);
                 item = item.ThrowIfNull();
                 item.DescriptionType = type;
-            }
+            },
+            cancellationToken
         );
     }
 
@@ -68,7 +106,8 @@ public class EfToDoService : IToDoService
                 item = item.ThrowIfNull();
                 await CircleCompletionAsync(context, item, cancellationToken);
                 await StepCompletionAsync(context, item, cancellationToken);
-            }
+            },
+            cancellationToken
         );
     }
 
@@ -89,7 +128,8 @@ public class EfToDoService : IToDoService
                 {
                     children[i].OrderIndex = (uint)i;
                 }
-            }
+            },
+            cancellationToken
         );
     }
 
@@ -249,7 +289,8 @@ public class EfToDoService : IToDoService
                 newEntity.DescriptionType = options.DescriptionType;
                 newEntity.Link = mapper.Map<string>(options.Link);
                 await c.Set<ToDoItemEntity>().AddAsync(newEntity, cancellationToken);
-            }
+            },
+            cancellationToken
         );
 
         return id;
@@ -294,7 +335,8 @@ public class EfToDoService : IToDoService
                 toDoItem.Link = options.Link?.AbsoluteUri ?? string.Empty;
                 toDoItem.DescriptionType = options.DescriptionType;
                 await c.Set<ToDoItemEntity>().AddAsync(toDoItem, cancellationToken);
-            }
+            },
+            cancellationToken
         );
 
         return id;
@@ -322,7 +364,8 @@ public class EfToDoService : IToDoService
 
                 c.Set<ToDoItemEntity>().Remove(item);
                 await NormalizeOrderIndexAsync(c, item.ParentId, cancellationToken);
-            }
+            },
+            cancellationToken
         );
     }
 
@@ -358,7 +401,8 @@ public class EfToDoService : IToDoService
                 var item = await c.Set<ToDoItemEntity>().FindAsync(id);
                 item = item.ThrowIfNull();
                 item.TypeOfPeriodicity = type;
-            }
+            },
+            cancellationToken
         );
     }
 
@@ -372,7 +416,8 @@ public class EfToDoService : IToDoService
                 var item = await c.Set<ToDoItemEntity>().FindAsync(id);
                 item = item.ThrowIfNull();
                 item.DueDate = dueDate;
-            }
+            },
+            cancellationToken
         );
     }
 
@@ -438,7 +483,8 @@ public class EfToDoService : IToDoService
                 {
                     item.IsCompleted = false;
                 }
-            }
+            },
+            cancellationToken
         );
     }
 
@@ -561,7 +607,8 @@ public class EfToDoService : IToDoService
                 var item = await c.Set<ToDoItemEntity>().FindAsync(id);
                 item = item.ThrowIfNull();
                 item.Name = name;
-            }
+            },
+            cancellationToken
         );
     }
 
@@ -597,7 +644,8 @@ public class EfToDoService : IToDoService
                 item.OrderIndex = orderIndex;
                 await c.SaveChangesAsync(cancellationToken);
                 await NormalizeOrderIndexAsync(c, item.ParentId, cancellationToken);
-            }
+            },
+            cancellationToken
         );
     }
 
@@ -611,7 +659,8 @@ public class EfToDoService : IToDoService
                 var item = await c.Set<ToDoItemEntity>().FindAsync(id);
                 item = item.ThrowIfNull();
                 item.Description = description;
-            }
+            },
+            cancellationToken
         );
     }
 
@@ -625,7 +674,8 @@ public class EfToDoService : IToDoService
                 var item = await c.Set<ToDoItemEntity>().FindAsync(id);
                 item = item.ThrowIfNull();
                 item.Type = type;
-            }
+            },
+            cancellationToken
         );
     }
 
@@ -639,7 +689,8 @@ public class EfToDoService : IToDoService
                 var item = await c.Set<ToDoItemEntity>().FindAsync(id);
                 item = item.ThrowIfNull();
                 item.IsFavorite = true;
-            }
+            },
+            cancellationToken
         );
     }
 
@@ -653,7 +704,8 @@ public class EfToDoService : IToDoService
                 var item = await c.Set<ToDoItemEntity>().FindAsync(id);
                 item = item.ThrowIfNull();
                 item.IsFavorite = false;
-            }
+            },
+            cancellationToken
         );
     }
 
@@ -671,7 +723,8 @@ public class EfToDoService : IToDoService
                 var item = await c.Set<ToDoItemEntity>().FindAsync(id);
                 item = item.ThrowIfNull();
                 item.IsRequiredCompleteInDueDate = value;
-            }
+            },
+            cancellationToken
         );
     }
 
@@ -716,7 +769,8 @@ public class EfToDoService : IToDoService
                 var item = await c.Set<ToDoItemEntity>().FindAsync(id);
                 item = item.ThrowIfNull();
                 item.SetDaysOfYear(periodicity.Days);
-            }
+            },
+            cancellationToken
         );
     }
 
@@ -734,7 +788,8 @@ public class EfToDoService : IToDoService
                 var item = await c.Set<ToDoItemEntity>().FindAsync(id);
                 item = item.ThrowIfNull();
                 item.SetDaysOfMonth(periodicity.Days);
-            }
+            },
+            cancellationToken
         );
     }
 
@@ -752,7 +807,8 @@ public class EfToDoService : IToDoService
                 var item = await c.Set<ToDoItemEntity>().FindAsync(id);
                 item = item.ThrowIfNull();
                 item.SetDaysOfWeek(periodicity.Days);
-            }
+            },
+            cancellationToken
         );
     }
 
@@ -804,7 +860,8 @@ public class EfToDoService : IToDoService
                 entity = entity.ThrowIfNull();
                 entity.ParentId = parentId;
                 entity.OrderIndex = items.Length == 0 ? 0 : items.Max() + 1;
-            }
+            },
+            cancellationToken
         );
     }
 
@@ -821,12 +878,13 @@ public class EfToDoService : IToDoService
                     .AsNoTracking()
                     .Where(x => x.ParentId == null)
                     .Select(x => x.OrderIndex)
-                    .ToArrayAsync();
+                    .ToArrayAsync(cancellationToken);
 
                 entity = entity.ThrowIfNull();
                 entity.ParentId = null;
                 entity.OrderIndex = items.Length == 0 ? 0 : items.Max() + 1;
-            }
+            },
+            cancellationToken
         );
     }
 
@@ -853,7 +911,8 @@ public class EfToDoService : IToDoService
                 var item = await c.Set<ToDoItemEntity>().FindAsync(id);
                 item = item.ThrowIfNull();
                 item.DaysOffset = days;
-            }
+            },
+            cancellationToken
         );
     }
 
@@ -867,7 +926,8 @@ public class EfToDoService : IToDoService
                 var item = await c.Set<ToDoItemEntity>().FindAsync(id);
                 item = item.ThrowIfNull();
                 item.MonthsOffset = months;
-            }
+            },
+            cancellationToken
         );
     }
 
@@ -881,7 +941,8 @@ public class EfToDoService : IToDoService
                 var item = await c.Set<ToDoItemEntity>().FindAsync(id);
                 item = item.ThrowIfNull();
                 item.WeeksOffset = weeks;
-            }
+            },
+            cancellationToken
         );
     }
 
@@ -895,7 +956,8 @@ public class EfToDoService : IToDoService
                 var item = await c.Set<ToDoItemEntity>().FindAsync(id);
                 item = item.ThrowIfNull();
                 item.YearsOffset = years;
-            }
+            },
+            cancellationToken
         );
     }
 
@@ -913,7 +975,8 @@ public class EfToDoService : IToDoService
                 var item = await c.Set<ToDoItemEntity>().FindAsync(id);
                 item = item.ThrowIfNull();
                 item.ChildrenType = type;
-            }
+            },
+            cancellationToken
         );
     }
 
@@ -984,7 +1047,8 @@ public class EfToDoService : IToDoService
                 var value = await c.FindAsync<ToDoItemEntity>(id);
                 value = value.ThrowIfNull();
                 value.Link = mapper.Map<string>(link) ?? string.Empty;
-            }
+            },
+            cancellationToken
         );
     }
 

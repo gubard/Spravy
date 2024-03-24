@@ -259,6 +259,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
                     }
 
                     PageHeaderViewModel.Commands.Add(CommandStorage.ShowToDoSettingItem.WithParam(this));
+                    PageHeaderViewModel.Commands.Add(CommandStorage.CloneToDoItemItem.WithParam(this));
 
                     if (IsFavorite)
                     {
