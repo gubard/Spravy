@@ -118,18 +118,18 @@
                         </Grid>
 
                         <StackPanel Grid.Row="1">
-                            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
-                                <StackPanel Orientation="Horizontal">
-                                    <ToggleButton Classes="Switch vertical-alignment-center"
-                                                  Margin="5,0,0,0"
-                                                  Command="{Binding Value.CompleteCommand}"
-                                                  CommandParameter="{Binding Value}"
-                                                  IsVisible="{Binding Value.IsCan, Converter={StaticResource ToDoItemCanNoneToBooleanReverseConverter}}"
-                                                  IsChecked="{Binding Value.IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanConverter}}" />
-                                    <TextBlock Classes="h4 vertical-alignment-center"
-                                               Text="{Binding Value.Name}" />
-                                </StackPanel>
-                            </ScrollViewer>
+                            <Grid ColumnDefinitions="Auto,*">
+                                <ToggleButton Classes="Switch vertical-alignment-center"
+                                              Margin="5,0,0,0"
+                                              Command="{Binding Value.CompleteCommand}"
+                                              CommandParameter="{Binding Value}"
+                                              IsVisible="{Binding Value.IsCan, Converter={StaticResource ToDoItemCanNoneToBooleanReverseConverter}}"
+                                              IsChecked="{Binding Value.IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanConverter}}" />
+                                <TextBlock Grid.Column="1"
+                                           Classes="h4 vertical-alignment-center"
+                                           Text="{Binding Value.Name}"
+                                           TextWrapping="Wrap" />
+                            </Grid>
 
                             <Button
                                 IsVisible="{Binding Value.Active, Converter={StaticResource NullToBooleanConverter}}"
