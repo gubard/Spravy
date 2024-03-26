@@ -20,6 +20,16 @@ public class GrpcPasswordService : PasswordServiceBase
         this.mapper = mapper;
     }
 
+    public override async Task<GetPasswordItemReply> GetPasswordItem(
+        GetPasswordItemRequest request,
+        ServerCallContext context
+    )
+    {
+        var item = await passwordService.GetPasswordItemAsync(mapper.Map<Guid>(request.Id), context.CancellationToken);
+
+        return mapper.Map<GetPasswordItemReply>(item);
+    }
+
     public override async Task<AddPasswordItemReply> AddPasswordItem(
         AddPasswordItemRequest request,
         ServerCallContext context

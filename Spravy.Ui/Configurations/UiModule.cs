@@ -33,6 +33,7 @@ using Spravy.EventBus.Protos;
 using Spravy.PasswordGenerator.Domain.Client.Models;
 using Spravy.PasswordGenerator.Domain.Client.Services;
 using Spravy.PasswordGenerator.Domain.Interfaces;
+using Spravy.PasswordGenerator.Domain.Mapper.Profiles;
 using Spravy.PasswordGenerator.Protos;
 using Spravy.Schedule.Domain.Client.Models;
 using Spravy.Schedule.Domain.Client.Services;
@@ -189,6 +190,7 @@ public class UiModule : NinjectModule
         expression.AddProfile<SpravyAuthenticationProfile>();
         expression.AddProfile<SpravyScheduleProfile>();
         expression.AddProfile<SpravyEventBusProfile>();
+        expression.AddProfile<SpravyPasswordGeneratorProfile>();
     }
 
     private void RegisterViewModels(NinjectModule module)

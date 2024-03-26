@@ -70,6 +70,28 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
         );
     }
 
+    public Task<PasswordItem> GetPasswordItemAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return CallClientAsync(
+            async client =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+                var request = new GetPasswordItemRequest();
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var reply = await client.GetPasswordItemAsync(
+                    request,
+                    metadata,
+                    cancellationToken: cancellationToken
+                );
+
+                return mapper.Map<PasswordItem>(reply);
+            },
+            cancellationToken
+        );
+    }
+
     public Task RemovePasswordItemAsync(Guid id, CancellationToken cancellationToken)
     {
         return CallClientAsync(

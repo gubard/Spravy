@@ -97,7 +97,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
             pageHeaderViewModel = value;
             pageHeaderViewModel.Header = Name;
             pageHeaderViewModel.LeftCommand = CommandStorage.NavigateToCurrentToDoItemItem;
-            pageHeaderViewModel.RightCommand = CommandStorage.SetToDoItemNameItem.WithParam(this);
+            pageHeaderViewModel.RightCommand = CommandStorage.ShowToDoSettingItem.WithParam(this);
         }
     }
 
@@ -241,13 +241,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
                 {
                     PageHeaderViewModel.Commands.Clear();
                     var toFavoriteCommand = CommandStorage.AddToDoItemToFavoriteItem.WithParam(Id);
-
-                    PageHeaderViewModel.Commands.Add(
-                        CommandStorage.AddToDoItemChildItem.WithParam(
-                            Path[^1].As<ToDoItemParentNotify>().ThrowIfNull().Id
-                        )
-                    );
-
+                    PageHeaderViewModel.Commands.Add(CommandStorage.AddToDoItemChildItem.WithParam(this));
                     PageHeaderViewModel.Commands.Add(CommandStorage.DeleteToDoItemItem.WithParam(this));
 
                     if (!Link.IsNullOrWhiteSpace())
@@ -260,7 +254,6 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
                         PageHeaderViewModel.Commands.Add(CommandStorage.SwitchCompleteToDoItemItem.WithParam(this));
                     }
 
-                    PageHeaderViewModel.Commands.Add(CommandStorage.ShowToDoSettingItem.WithParam(this));
                     PageHeaderViewModel.Commands.Add(CommandStorage.CloneToDoItemItem.WithParam(this));
 
                     if (IsFavorite)

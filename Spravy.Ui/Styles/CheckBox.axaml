@@ -8,5 +8,6 @@
 
     <Style Selector="CheckBox">
         <Setter Property="TextElement.Foreground" Value="{DynamicResource SukiLowText}" />
+        <Setter Property="Margin" Value="3" />
     </Style>
 </Styles>

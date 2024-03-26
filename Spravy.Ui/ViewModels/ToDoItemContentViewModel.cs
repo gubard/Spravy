@@ -17,13 +17,13 @@ public class ToDoItemContentViewModel : NavigatableViewModelBase
     public AvaloniaList<ToDoItemType> ToDoItemTypes { get; } = new(Enum.GetValues<ToDoItemType>());
 
     [Reactive]
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     [Reactive]
     public ToDoItemType Type { get; set; }
 
     [Reactive]
-    public string Link { get; set; }
+    public string Link { get; set; } = string.Empty;
 
     public override string ViewId => TypeCache<ToDoItemContentViewModel>.Type.Name;
 

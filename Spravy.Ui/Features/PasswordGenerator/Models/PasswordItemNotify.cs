@@ -1,10 +1,11 @@
 using System;
 using ReactiveUI.Fody.Helpers;
+using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.Features.PasswordGenerator.Models;
 
-public class PasswordItemNotify : NotifyBase
+public class PasswordItemNotify : NotifyBase, IIdProperty
 {
     [Reactive]
     public Guid Id { get; set; }

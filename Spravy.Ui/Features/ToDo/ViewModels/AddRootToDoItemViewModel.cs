@@ -11,8 +11,9 @@ using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Models;
+using Spravy.Ui.ViewModels;
 
-namespace Spravy.Ui.ViewModels;
+namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class AddRootToDoItemViewModel : NavigatableViewModelBase
 {

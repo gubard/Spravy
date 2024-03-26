@@ -44,6 +44,15 @@ public class EfPasswordService : IPasswordService
         return mapper.Map<IEnumerable<PasswordItem>>(items);
     }
 
+    public async Task<PasswordItem> GetPasswordItemAsync(Guid id, CancellationToken cancellationToken)
+    {
+        await using var context = dbContextFactory.Create();
+        var item = await context.FindAsync<PasswordItemEntity>(id);
+        item = item.ThrowIfNull();
+
+        return mapper.Map<PasswordItem>(item);
+    }
+
     public async Task RemovePasswordItemAsync(Guid id, CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();

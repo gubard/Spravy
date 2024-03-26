@@ -3,9 +3,9 @@ using Avalonia.Controls.Metadata;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
-using Spravy.Ui.ViewModels;
+using Spravy.Ui.Features.ToDo.ViewModels;
 
-namespace Spravy.Ui.Views;
+namespace Spravy.Ui.Features.ToDo.Views;
 
 [TemplatePart(NameTextBoxName, typeof(TextBox))]
 public partial class AddRootToDoItemView : ReactiveUserControl<AddRootToDoItemViewModel>

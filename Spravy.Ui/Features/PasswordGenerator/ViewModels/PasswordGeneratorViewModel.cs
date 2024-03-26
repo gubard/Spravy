@@ -11,13 +11,14 @@ using Spravy.Domain.Models;
 using Spravy.PasswordGenerator.Domain.Interfaces;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Features.PasswordGenerator.Models;
+using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 using Spravy.Ui.Services;
 using Spravy.Ui.ViewModels;
 
 namespace Spravy.Ui.Features.PasswordGenerator.ViewModels;
 
-public class PasswordGeneratorViewModel : NavigatableViewModelBase
+public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
 {
     private readonly PageHeaderViewModel pageHeaderViewModel;
 
@@ -47,20 +48,13 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase
             pageHeaderViewModel = value;
             pageHeaderViewModel.Header = "Password generator";
             pageHeaderViewModel.LeftCommand = CommandStorage.NavigateToCurrentToDoItemItem;
+            pageHeaderViewModel.Commands.Add(CommandStorage.AddPasswordItemItem);
         }
     }
 
-    private async Task InitializedAsync(CancellationToken cancellationToken)
+    private Task InitializedAsync(CancellationToken cancellationToken)
     {
-        var items = await PasswordService.GetPasswordItemsAsync(cancellationToken);
-
-        await this.InvokeUIBackgroundAsync(
-            () =>
-            {
-                Items.Clear();
-                Items.AddRange(Mapper.Map<IEnumerable<PasswordItemNotify>>(items));
-            }
-        );
+        return RefreshAsync(cancellationToken);
     }
 
     public override void Stop()
@@ -75,5 +69,18 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase
     public override Task SaveStateAsync()
     {
         return Task.CompletedTask;
+    }
+
+    public async Task RefreshAsync(CancellationToken cancellationToken)
+    {
+        var items = await PasswordService.GetPasswordItemsAsync(cancellationToken);
+
+        await this.InvokeUIBackgroundAsync(
+            () =>
+            {
+                Items.Clear();
+                Items.AddRange(Mapper.Map<IEnumerable<PasswordItemNotify>>(items));
+            }
+        );
     }
 }

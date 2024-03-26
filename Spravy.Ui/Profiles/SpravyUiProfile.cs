@@ -10,6 +10,10 @@ using Spravy.Ui.ViewModels;
 using Google.Protobuf;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Models;
+using Spravy.PasswordGenerator.Domain.Models;
+using Spravy.Ui.Features.PasswordGenerator.Models;
+using Spravy.Ui.Features.PasswordGenerator.ViewModels;
+using Spravy.Ui.Features.ToDo.ViewModels;
 
 namespace Spravy.Ui.Profiles;
 
@@ -27,6 +31,8 @@ public class SpravyUiProfile : Profile
         CreateMap<LoginViewModel, User>();
         CreateMap<ToDoShortItem, ToDoItemParentNotify>();
         CreateMap<ToDoItemViewModel, ToDoItemNotify>();
+        CreateMap<PasswordItem, PasswordItemNotify>();
+        CreateMap<AddPasswordItemViewModel, AddPasswordOptions>();
 
         CreateMap<TimerItem, TimerItemNotify>()
             .ConvertUsing((item, _, context) => context.Mapper.Map<TimerItemToDoItemFavoriteNotify>(item));

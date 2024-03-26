@@ -1,6 +1,19 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:system="clr-namespace:System;assembly=System.Runtime">
+    <!--AddPasswordItemView-->
+    <system:String x:Key="AddPasswordItemView.Header">New password</system:String>
+    <system:String x:Key="AddPasswordItemView.Name">Name</system:String>
+    <system:String x:Key="AddPasswordItemView.Key">Key</system:String>
+    <system:String x:Key="AddPasswordItemView.Length">Length</system:String>
+    <system:String x:Key="AddPasswordItemView.AvailableCharacters">Available characters</system:String>
+    <system:String x:Key="AddPasswordItemView.CustomAvailableCharacters">Custom available characters</system:String>
+    <system:String x:Key="AddPasswordItemView.Regex">Regex</system:String>
+    <system:String x:Key="AddPasswordItemView.AvailableUpperLatin">Available upper latin</system:String>
+    <system:String x:Key="AddPasswordItemView.AvailableLowerLatin">Available lower latin</system:String>
+    <system:String x:Key="AddPasswordItemView.AvailableNumber">Available number</system:String>
+    <system:String x:Key="AddPasswordItemView.AvailableSpecialSymbols">Available special symbols</system:String>
+
     <!--DeleteAccountView-->
     <system:String x:Key="DeleteAccountView.VerificationCode">Verification Code</system:String>
     <system:String x:Key="DeleteAccountView.SendNewCode">Send new code</system:String>

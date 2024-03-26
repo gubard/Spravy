@@ -1,13 +1,14 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:models="clr-namespace:Spravy.Ui.Models"
-             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             xmlns:dialogHostAvalonia="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
-             xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-             xmlns:services="clr-namespace:Spravy.Ui.Services"
-             xmlns:sukiUi="clr-namespace:SukiUI;assembly=SukiUI"
-             xmlns:icons="clr-namespace:Material.Icons;assembly=Material.Icons"
-             xmlns:controls="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+             xmlns:m="clr-namespace:Spravy.Ui.Models"
+             xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:dh="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
+             xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
+             xmlns:s="clr-namespace:Spravy.Ui.Services"
+             xmlns:su="clr-namespace:SukiUI;assembly=SukiUI"
+             xmlns:i="clr-namespace:Material.Icons;assembly=Material.Icons"
+             xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+             xmlns:pm="clr-namespace:Spravy.Ui.Features.PasswordGenerator.Models"
              x:Class="Spravy.Ui.App"
              RequestedThemeVariant="Dark">
     <Application.Resources>
@@ -21,16 +22,27 @@
     </Application.Resources>
 
     <Application.Styles>
-        <sukiUi:SukiTheme ThemeColor="Green" />
-        <avalonia:MaterialIconStyles />
-        <dialogHostAvalonia:DialogHostStyles />
+        <su:SukiTheme ThemeColor="Green" />
+        <mi:MaterialIconStyles />
+        <dh:DialogHostStyles />
         <StyleInclude Source="avares://Spravy.Ui/Styles/Theme.axaml" />
     </Application.Styles>
 
     <Application.DataTemplates>
-        <DataTemplate x:DataType="services:EmptyApplySettings" />
+        <DataTemplate x:DataType="pm:PasswordItemNotify">
+            <Button Classes="alignment-stretch glass-card">
+                <Grid ColumnDefinitions="*,Auto">
+                    <TextBlock Classes="text-wrap" Text="{Binding Name}" />
+                    <Button Grid.Column="1"
+                            Content="{x:Static i:MaterialIconKind.Settings}"
+                            Command="{x:Static s:CommandStorage.ShowPasswordItemSettingCommand}" />
+                </Grid>
+            </Button>
+        </DataTemplate>
 
-        <DataTemplate x:DataType="models:DayOfYearSelectItem">
+        <DataTemplate x:DataType="s:EmptyApplySettings" />
+
+        <DataTemplate x:DataType="m:DayOfYearSelectItem">
             <ItemsControl ItemsSource="{Binding Days}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -40,60 +52,60 @@
             </ItemsControl>
         </DataTemplate>
 
-        <DataTemplate x:DataType="models:DayOfMonthSelectItem">
+        <DataTemplate x:DataType="m:DayOfMonthSelectItem">
             <ToggleButton IsChecked="{Binding IsSelected}" Content="{Binding Day}" />
         </DataTemplate>
 
-        <DataTemplate x:DataType="models:DayOfWeekSelectItem">
+        <DataTemplate x:DataType="m:DayOfWeekSelectItem">
             <ToggleButton IsChecked="{Binding IsSelected}" Content="{Binding DayOfWeek}" />
         </DataTemplate>
 
-        <DataTemplate x:DataType="models:TimerItemToDoItemFavoriteNotify">
+        <DataTemplate x:DataType="m:TimerItemToDoItemFavoriteNotify">
             <StackPanel>
                 <CheckBox IsChecked="{Binding IsFavorite}" />
                 <TextBlock Text="{Binding DueDateTime, StringFormat=\{0:yyyy.MM.dd HH:mm zzz\}}" />
             </StackPanel>
         </DataTemplate>
 
-        <DataTemplate x:DataType="models:CommandItem">
+        <DataTemplate x:DataType="m:CommandItem">
             <Button Classes="Basic" Command="{Binding Command}" CommandParameter="{Binding Parameter}">
-                <avalonia:MaterialIcon Kind="{Binding Icon}" />
+                <mi:MaterialIcon Kind="{Binding Icon}" />
             </Button>
         </DataTemplate>
 
-        <TreeDataTemplate DataType="models:ToDoSelectorItemNotify" ItemsSource="{Binding Children}">
+        <TreeDataTemplate DataType="m:ToDoSelectorItemNotify" ItemsSource="{Binding Children}">
             <TextBlock Text="{Binding Name}" />
         </TreeDataTemplate>
 
-        <DataTemplate DataType="models:ToDoItemParentNotify">
-            <Button Command="{x:Static services:CommandStorage.NavigateToToDoItemCommand}"
+        <DataTemplate DataType="m:ToDoItemParentNotify">
+            <Button Command="{x:Static s:CommandStorage.NavigateToToDoItemCommand}"
                     CommandParameter="{Binding Id}"
                     Content="{Binding Name}"
                     Classes="Basic" />
         </DataTemplate>
 
-        <DataTemplate DataType="models:RootItem">
-            <Button Command="{x:Static services:CommandStorage.NavigateToCommand}"
-                    CommandParameter="{x:Type viewModels:RootToDoItemsViewModel}"
-                    Content="{x:Static icons:MaterialIconKind.Home}"
+        <DataTemplate DataType="m:RootItem">
+            <Button Command="{x:Static s:CommandStorage.NavigateToCommand}"
+                    CommandParameter="{x:Type vm:RootToDoItemsViewModel}"
+                    Content="{x:Static i:MaterialIconKind.Home}"
                     Classes="Basic" />
         </DataTemplate>
 
-        <DataTemplate DataType="models:ToDoShortItemNotify">
+        <DataTemplate DataType="m:ToDoShortItemNotify">
             <TextBlock Text="{Binding Name}" />
         </DataTemplate>
 
-        <DataTemplate DataType="icons:MaterialIconKind">
-            <avalonia:MaterialIcon Kind="{Binding}" />
+        <DataTemplate DataType="i:MaterialIconKind">
+            <mi:MaterialIcon Kind="{Binding}" />
         </DataTemplate>
 
         <DataTemplate>
             <DataTemplate.DataType>
-                <x:Type TypeName="models:Selected" x:TypeArguments="models:ToDoItemNotify" />
+                <x:Type TypeName="m:Selected" x:TypeArguments="m:ToDoItemNotify" />
             </DataTemplate.DataType>
 
-            <controls:BusyArea IsBusy="{Binding Value.IsBusy}">
-                <Button Command="{x:Static services:CommandStorage.NavigateToToDoItemCommand}"
+            <c:BusyArea IsBusy="{Binding Value.IsBusy}">
+                <Button Command="{x:Static s:CommandStorage.NavigateToToDoItemCommand}"
                         CommandParameter="{Binding Value.Id}"
                         Classes="alignment-stretch glass-card">
                     <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,*">
@@ -134,7 +146,7 @@
                             <Button
                                 IsVisible="{Binding Value.Active, Converter={StaticResource NullToBooleanConverter}}"
                                 CommandParameter="{Binding Value.Active.Id}"
-                                Command="{x:Static services:CommandStorage.NavigateToToDoItemCommand}">
+                                Command="{x:Static s:CommandStorage.NavigateToToDoItemCommand}">
                                 <TextBlock Text="{Binding Value.Active.Name}"
                                            TextWrapping="Wrap" />
                             </Button>
@@ -146,13 +158,13 @@
                               RowDefinitions="Auto,Auto">
                             <Button CommandParameter="{Binding Value}">
                                 <Button.DataTemplates>
-                                    <DataTemplate x:DataType="models:CommandItem">
+                                    <DataTemplate x:DataType="m:CommandItem">
                                         <TextBlock Text="{Binding Name}" />
                                     </DataTemplate>
                                 </Button.DataTemplates>
 
                                 <Button.Styles>
-                                    <Style Selector="MenuItem" x:DataType="models:CommandItem">
+                                    <Style Selector="MenuItem" x:DataType="m:CommandItem">
                                         <Setter Property="Command" Value="{Binding Command}" />
                                         <Setter Property="CommandParameter" Value="{Binding Parameter}" />
                                         <Setter Property="Icon" Value="{Binding Icon}" />
@@ -163,34 +175,34 @@
                                     <MenuFlyout ItemsSource="{Binding Value.Commands}" />
                                 </Button.Flyout>
 
-                                <avalonia:MaterialIcon Kind="DotsHorizontal" />
+                                <mi:MaterialIcon Kind="DotsHorizontal" />
                             </Button>
 
                             <Panel Grid.Column="1">
                                 <Button CommandParameter="{Binding Value.Id}"
-                                        Command="{x:Static services:CommandStorage.RemoveToDoItemFromFavoriteCommand}"
+                                        Command="{x:Static s:CommandStorage.RemoveToDoItemFromFavoriteCommand}"
                                         IsVisible="{Binding Value.IsFavorite}">
-                                    <avalonia:MaterialIcon Kind="Star" />
+                                    <mi:MaterialIcon Kind="Star" />
                                 </Button>
 
                                 <Button CommandParameter="{Binding Value.Id}"
-                                        Command="{x:Static services:CommandStorage.AddToDoItemToFavoriteCommand}"
+                                        Command="{x:Static s:CommandStorage.AddToDoItemToFavoriteCommand}"
                                         IsVisible="{Binding Value.IsFavorite, Converter={StaticResource ReverseBooleanValueConverter}}">
-                                    <avalonia:MaterialIcon Kind="StarOutline" />
+                                    <mi:MaterialIcon Kind="StarOutline" />
                                 </Button>
                             </Panel>
 
                             <Button Grid.Row="1"
                                     Grid.Column="1"
-                                    Command="{x:Static services:CommandStorage.OpenLinkCommand}"
+                                    Command="{x:Static s:CommandStorage.OpenLinkCommand}"
                                     CommandParameter="{Binding Value}"
                                     IsVisible="{Binding Value.Link, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}">
-                                <avalonia:MaterialIcon Kind="Link" />
+                                <mi:MaterialIcon Kind="Link" />
                             </Button>
                         </Grid>
                     </Grid>
                 </Button>
-            </controls:BusyArea>
+            </c:BusyArea>
         </DataTemplate>
     </Application.DataTemplates>
 </Application>

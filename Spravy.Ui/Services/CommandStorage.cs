@@ -16,11 +16,15 @@ using Spravy.Domain.Di.Helpers;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;
+using Spravy.PasswordGenerator.Domain.Interfaces;
+using Spravy.PasswordGenerator.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.Enums;
 using Spravy.Ui.Extensions;
+using Spravy.Ui.Features.PasswordGenerator.ViewModels;
+using Spravy.Ui.Features.ToDo.ViewModels;
 using Spravy.Ui.Helpers;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
@@ -34,6 +38,7 @@ public static class CommandStorage
     {
         var kernel = DiHelper.Kernel.ThrowIfNull();
         clipboard = kernel.Get<IClipboardService>();
+        passwordService = kernel.Get<IPasswordService>();
         objectStorage = kernel.Get<IObjectStorage>();
         mapper = kernel.Get<IMapper>();
         tokenService = kernel.Get<ITokenService>();
@@ -164,7 +169,7 @@ public static class CommandStorage
             MaterialIconKind.Settings,
             "Show to-do setting"
         );
-        AddToDoItemChildItem = CreateCommand<Guid>(
+        AddToDoItemChildItem = CreateCommand<IIdProperty>(
             AddToDoItemChildAsync,
             MaterialIconKind.Plus,
             "Add child task"
@@ -259,6 +264,16 @@ public static class CommandStorage
             MaterialIconKind.FileMove,
             "Clone to-do item"
         );
+        AddPasswordItemItem = CreateCommand(
+            AddPasswordItemAsync,
+            MaterialIconKind.Plus,
+            "Add password item"
+        );
+        ShowPasswordItemSettingItem = CreateCommand<IIdProperty>(
+            ShowPasswordItemSettingAsync,
+            MaterialIconKind.Settings,
+            "Show password setting"
+        );
     }
 
     private static readonly INavigator navigator;
@@ -271,6 +286,7 @@ public static class CommandStorage
     private static readonly ITokenService tokenService;
     private static readonly IObjectStorage objectStorage;
     private static readonly IClipboardService clipboard;
+    private static readonly IPasswordService passwordService;
 
     public static ICommand CloneToDoItemCommand => CloneToDoItemItem.Command;
     public static CommandItem CloneToDoItemItem { get; }
@@ -416,7 +432,45 @@ public static class CommandStorage
     public static ICommand MultiDeleteToDoItemsCommand => MultiDeleteToDoItemsItem.Command;
     public static CommandItem MultiDeleteToDoItemsItem { get; }
 
+    public static ICommand AddPasswordItemCommand => AddPasswordItemItem.Command;
+    public static CommandItem AddPasswordItemItem { get; }
+
+    public static ICommand ShowPasswordItemSettingCommand => ShowPasswordItemSettingItem.Command;
+    public static CommandItem ShowPasswordItemSettingItem { get; }
+
     public static CommandItem SelectAll { get; }
+
+    private static Task ShowPasswordItemSettingAsync(IIdProperty idProperty, CancellationToken cancellationToken)
+    {
+        return dialogViewer.ShowConfirmContentDialogAsync(
+            async vm =>
+            {
+                await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
+                await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
+            },
+            _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
+            ActionHelper<PasswordItemSettingsViewModel>.Empty,
+            cancellationToken
+        );
+    }
+
+    private static Task AddPasswordItemAsync(CancellationToken cancellationToken)
+    {
+        return dialogViewer.ShowConfirmContentDialogAsync(
+            async vm =>
+            {
+                await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
+
+                await passwordService.AddPasswordItemAsync(mapper.Map<AddPasswordOptions>(vm), cancellationToken)
+                    .ConfigureAwait(false);
+
+                await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
+            },
+            _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
+            ActionHelper<AddPasswordItemViewModel>.Empty,
+            cancellationToken
+        );
+    }
 
     private static async Task MultiDeleteToDoItemsAsync(
         AvaloniaList<Selected<ToDoItemNotify>> items,
@@ -762,12 +816,13 @@ public static class CommandStorage
         return navigator.NavigateToAsync<LeafToDoItemsViewModel>(vm => vm.Id = id, cancellationToken);
     }
 
-    private static Task AddToDoItemChildAsync(Guid parentId, CancellationToken cancellationToken)
+    private static Task AddToDoItemChildAsync(IIdProperty item, CancellationToken cancellationToken)
     {
         return dialogViewer.ShowConfirmContentDialogAsync<AddToDoItemViewModel>(
             async viewModel =>
             {
                 await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
+
                 var options = new AddToDoItemOptions(
                     viewModel.ParentId,
                     viewModel.ToDoItemContent.Name,
@@ -776,11 +831,12 @@ public static class CommandStorage
                     viewModel.DescriptionContent.Type,
                     mapper.Map<Uri?>(viewModel.ToDoItemContent.Link)
                 );
+
                 await toDoService.AddToDoItemAsync(options, cancellationToken);
                 await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
             },
             _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
-            vm => vm.ParentId = parentId,
+            vm => vm.ParentId = item.Id,
             cancellationToken
         );
     }
