@@ -84,7 +84,7 @@ public static class CommandStorage
         SetToDoShortItemItem = CreateCommand<IToDoShortItemProperty>(
             SetToDoShortItemAsync,
             MaterialIconKind.Pencil,
-            "Set to do item"
+            "Set to-do item"
         );
         SetDueDateTimeItem = CreateCommand<IDueDateTimeProperty>(
             SetDueDateTimeAsync,
@@ -137,32 +137,32 @@ public static class CommandStorage
         AddRootToDoItemItem = CreateCommand(
             AddRootToDoItemAsync,
             MaterialIconKind.Plus,
-            "Add root to do item"
+            "Add root to-do item"
         );
         ToDoItemSearchItem = CreateCommand<IToDoItemSearchProperties>(
             ToDoItemSearchAsync,
             MaterialIconKind.Search,
-            "Search to do item"
+            "Search to-do item"
         );
         SetToDoTypeItem = CreateCommand<IToDoTypeProperty>(
             SetToDoTypeAsync,
             MaterialIconKind.Pencil,
-            "Set to do item type"
+            "Set to-do item type"
         );
         SetToDoLinkItem = CreateCommand<IToDoLinkProperty>(
             SetToDoLinkAsync,
             MaterialIconKind.Pencil,
-            "Set to do item link"
+            "Set to-do item link"
         );
         SetToDoDescriptionItem = CreateCommand<IToDoDescriptionProperty>(
             SetToDoDescriptionAsync,
             MaterialIconKind.Pencil,
-            "Set to do item description"
+            "Set to-do item description"
         );
         ShowToDoSettingItem = CreateCommand<IToDoSettingsProperty>(
             ShowToDoSettingAsync,
             MaterialIconKind.Settings,
-            "Show to do setting"
+            "Show to-do setting"
         );
         AddToDoItemChildItem = CreateCommand<Guid>(
             AddToDoItemChildAsync,
@@ -177,17 +177,17 @@ public static class CommandStorage
         SetToDoParentItemItem = CreateCommand<ISetToDoParentItemParams>(
             SetToDoParentItemAsync,
             MaterialIconKind.SwapHorizontal,
-            "Set to do item parent"
+            "Set to-do item parent"
         );
         MoveToDoItemToRootItem = CreateCommand<IIdProperty>(
             MoveToDoItemToRootAsync,
             MaterialIconKind.FamilyTree,
-            "Move to do item to root"
+            "Move to-do item to root"
         );
         ToDoItemToStringItem = CreateCommand<IIdProperty>(
             ToDoItemToStringAsync,
             MaterialIconKind.ContentCopy,
-            "Copy to do item"
+            "Copy to-do item"
         );
         ToDoItemRandomizeChildrenOrderIndexItem = CreateCommand<IIdProperty>(
             ToDoItemRandomizeChildrenOrderIndexAsync,
@@ -197,22 +197,22 @@ public static class CommandStorage
         NavigateToCurrentToDoItemItem = CreateCommand(
             NavigateToCurrentToDoItemAsync,
             MaterialIconKind.ArrowRight,
-            "Open current to do item"
+            "Open current to-do item"
         );
         SetToDoItemNameItem = CreateCommand<IToDoNameProperty>(
             SetToDoItemNameAsync,
             MaterialIconKind.Pencil,
-            "Open current to do item"
+            "Open current to-do item"
         );
         MultiCompleteToDoItemsItem = CreateCommand<AvaloniaList<Selected<ToDoItemNotify>>>(
             MultiSwitchCompleteToDoItemsAsync,
             MaterialIconKind.CheckAll,
-            "Complete all to do items"
+            "Complete all to-do items"
         );
         MultiSetParentToDoItemsItem = CreateCommand<AvaloniaList<Selected<ToDoItemNotify>>>(
             MultiSetParentToDoItemsAsync,
             MaterialIconKind.SwapHorizontal,
-            "Set parent for all to do items"
+            "Set parent for all to-do items"
         );
         MultiMoveToDoItemsToRootItem = CreateCommand<AvaloniaList<Selected<ToDoItemNotify>>>(
             MultiMoveToDoItemsToRootAsync,
@@ -222,7 +222,7 @@ public static class CommandStorage
         MultiSetTypeToDoItemsItem = CreateCommand<AvaloniaList<Selected<ToDoItemNotify>>>(
             MultiSetTypeToDoItemsAsync,
             MaterialIconKind.Switch,
-            "Set type all to do items"
+            "Set type all to-do items"
         );
         VerificationEmailItem = CreateCommand<IVerificationEmail>(
             VerificationEmailAsync,
