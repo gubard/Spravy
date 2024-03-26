@@ -1,24 +1,24 @@
-<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:AddTimerViewModel"
-                                xmlns="https://github.com/avaloniaui"
-                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                                xmlns:reactiveUi="http://reactiveui.net"
-                                xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-                                xmlns:services="clr-namespace:Spravy.Ui.Services"
-                                mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
-                                x:Class="Spravy.Ui.Views.AddTimerView"
-                                x:DataType="viewModels:AddTimerViewModel">
+<ru:ReactiveUserControl x:TypeArguments="vm:AddTimerViewModel"
+                        xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:ru="http://reactiveui.net"
+                        xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
+                        xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                        xmlns:s="clr-namespace:Spravy.Ui.Services"
+                        mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
+                        x:Class="Spravy.Ui.Views.AddTimerView"
+                        x:DataType="vm:AddTimerViewModel">
     <StackPanel>
         <CheckBox IsChecked="{Binding IsFavorite}" Content="Completed" />
 
         <TextBox Classes="read-only"
                  Text="{Binding ShortItem.Name}">
             <TextBox.InnerLeftContent>
-                <Button Command="{x:Static services:CommandStorage.SetToDoShortItemCommand}"
+                <Button Command="{x:Static s:CommandStorage.SetToDoShortItemCommand}"
                         CommandParameter="{Binding}" Margin="4,15,4,4">
-                    <avalonia:MaterialIcon Kind="Pencil" />
+                    <mi:MaterialIcon Kind="Pencil" />
                 </Button>
             </TextBox.InnerLeftContent>
         </TextBox>
@@ -26,12 +26,12 @@
         <TextBox Classes="read-only"
                  Text="{Binding DueDateTime}">
             <TextBox.InnerLeftContent>
-                <Button Command="{x:Static services:CommandStorage.SetDueDateTimeCommand}"
+                <Button Command="{x:Static s:CommandStorage.SetDueDateTimeCommand}"
                         CommandParameter="{Binding}"
                         Margin="4,15,4,4">
-                    <avalonia:MaterialIcon Kind="Pencil" />
+                    <mi:MaterialIcon Kind="Pencil" />
                 </Button>
             </TextBox.InnerLeftContent>
         </TextBox>
     </StackPanel>
-</reactiveUi:ReactiveUserControl>
+</ru:ReactiveUserControl>

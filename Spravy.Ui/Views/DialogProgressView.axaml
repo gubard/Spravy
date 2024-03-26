@@ -1,15 +1,15 @@
-<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:DialogProgressViewModel"
-                                xmlns="https://github.com/avaloniaui"
-                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                                xmlns:reactiveUi="http://reactiveui.net"
-                                xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-                                xmlns:controls1="clr-namespace:SukiUI.Controls;assembly=SukiUI"
-                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                                x:Class="Spravy.Ui.Views.DialogProgressView"
-                                x:DataType="viewModels:DialogProgressViewModel">
-    <controls1:GlassCard CornerRadius="24" Padding="4" Margin="4" HorizontalAlignment="Center" VerticalAlignment="Center">
+<ru:ReactiveUserControl x:TypeArguments="vm:DialogProgressViewModel"
+                        xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:ru="http://reactiveui.net"
+                        xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
+                        xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+                        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                        x:Class="Spravy.Ui.Views.DialogProgressView"
+                        x:DataType="vm:DialogProgressViewModel">
+    <c:GlassCard CornerRadius="24" Padding="4" Margin="4" HorizontalAlignment="Center" VerticalAlignment="Center">
         <ProgressBar Classes="circular" Height="100" Width="100" />
-    </controls1:GlassCard>
-</reactiveUi:ReactiveUserControl>
+    </c:GlassCard>
+</ru:ReactiveUserControl>

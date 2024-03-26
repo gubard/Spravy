@@ -1,13 +1,13 @@
-<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:TodayToDoItemsViewModel"
-                                xmlns="https://github.com/avaloniaui"
-                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                                xmlns:reactiveUi="http://reactiveui.net"
-                                xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                                x:Class="Spravy.Ui.Views.TodayToDoItemsView"
-                                x:DataType="viewModels:TodayToDoItemsViewModel">
+<ru:ReactiveUserControl x:TypeArguments="vm:TodayToDoItemsViewModel"
+                        xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:ru="http://reactiveui.net"
+                        xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
+                        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                        x:Class="Spravy.Ui.Views.TodayToDoItemsView"
+                        x:DataType="vm:TodayToDoItemsViewModel">
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
             <InvokeCommandAction Command="{Binding InitializedCommand}" />
@@ -21,4 +21,4 @@
             <ContentControl Content="{Binding ToDoSubItemsViewModel}" />
         </ScrollViewer>
     </Grid>
-</reactiveUi:ReactiveUserControl>
+</ru:ReactiveUserControl>

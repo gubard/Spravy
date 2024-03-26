@@ -1,13 +1,13 @@
-<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:PeriodicityOffsetToDoItemSettingsViewModel"
-                                xmlns="https://github.com/avaloniaui"
-                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                                xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-                                xmlns:reactiveUi="http://reactiveui.net"
-                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                                x:Class="Spravy.Ui.Views.PeriodicityOffsetToDoItemSettingsView"
-                                x:DataType="viewModels:PeriodicityOffsetToDoItemSettingsViewModel">
+<ru:ReactiveUserControl x:TypeArguments="vm:PeriodicityOffsetToDoItemSettingsViewModel"
+                        xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
+                        xmlns:ru="http://reactiveui.net"
+                        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                        x:Class="Spravy.Ui.Views.PeriodicityOffsetToDoItemSettingsView"
+                        x:DataType="vm:PeriodicityOffsetToDoItemSettingsViewModel">
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
             <InvokeCommandAction Command="{Binding InitializedCommand}" />
@@ -48,4 +48,4 @@
                    Text="{DynamicResource PeriodicityOffsetToDoItemSettingsView.RequiredCompleteInDueDate}" />
         <ToggleSwitch IsChecked="{Binding IsRequiredCompleteInDueDate}" />
     </StackPanel>
-</reactiveUi:ReactiveUserControl>
+</ru:ReactiveUserControl>

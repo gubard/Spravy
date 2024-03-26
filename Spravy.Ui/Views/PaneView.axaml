@@ -1,17 +1,17 @@
-<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:PaneViewModel"
-                                xmlns="https://github.com/avaloniaui"
-                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                                xmlns:reactiveUi="http://reactiveui.net"
-                                xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-                                xmlns:services="clr-namespace:Spravy.Ui.Services"
-                                xmlns:controls="clr-namespace:SukiUI.Controls;assembly=SukiUI"
-                                mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
-                                x:Class="Spravy.Ui.Views.PaneView"
-                                x:DataType="viewModels:PaneViewModel">
-    <controls:GlassCard IsOpaque="True">
+<ru:ReactiveUserControl x:TypeArguments="vm:PaneViewModel"
+                        xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:ru="http://reactiveui.net"
+                        xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
+                        xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                        xmlns:s="clr-namespace:Spravy.Ui.Services"
+                        xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+                        mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
+                        x:Class="Spravy.Ui.Views.PaneView"
+                        x:DataType="vm:PaneViewModel">
+    <c:GlassCard IsOpaque="True">
         <StackPanel>
             <TextBlock Text="{Binding Account.Login}" Classes="h2" Margin="5" />
             <Border Height="1"
@@ -19,44 +19,44 @@
                     Background="{DynamicResource SukiControlBorderBrush}"
                     BorderThickness="0" />
 
-            <Button Command="{x:Static services:CommandStorage.NavigateToCommand}"
-                    CommandParameter="{x:Type viewModels:RootToDoItemsViewModel}">
+            <Button Command="{x:Static s:CommandStorage.NavigateToCommand}"
+                    CommandParameter="{x:Type vm:RootToDoItemsViewModel}">
                 <Grid ColumnDefinitions="Auto,Auto">
-                    <avalonia:MaterialIcon Kind="Checks" />
+                    <mi:MaterialIcon Kind="Checks" />
                     <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.ToDoItems}" />
                 </Grid>
             </Button>
 
-            <Button Command="{x:Static services:CommandStorage.NavigateToCommand}"
-                    CommandParameter="{x:Type viewModels:TodayToDoItemsViewModel}">
+            <Button Command="{x:Static s:CommandStorage.NavigateToCommand}"
+                    CommandParameter="{x:Type vm:TodayToDoItemsViewModel}">
                 <Grid ColumnDefinitions="Auto,Auto">
-                    <avalonia:MaterialIcon Kind="CalendarToday" />
+                    <mi:MaterialIcon Kind="CalendarToday" />
                     <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.TodayToDoItems}" />
                 </Grid>
             </Button>
 
-            <Button Command="{x:Static services:CommandStorage.NavigateToCommand}"
-                    CommandParameter="{x:Type viewModels:SearchViewModel}">
+            <Button Command="{x:Static s:CommandStorage.NavigateToCommand}"
+                    CommandParameter="{x:Type vm:SearchViewModel}">
                 <Grid ColumnDefinitions="Auto,Auto">
-                    <avalonia:MaterialIcon Kind="Search" />
+                    <mi:MaterialIcon Kind="Search" />
                     <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.Search}" />
                 </Grid>
             </Button>
 
-            <Button Command="{x:Static services:CommandStorage.NavigateToCommand}"
-                    CommandParameter="{x:Type viewModels:SettingViewModel}">
+            <Button Command="{x:Static s:CommandStorage.NavigateToCommand}"
+                    CommandParameter="{x:Type vm:SettingViewModel}">
                 <Grid ColumnDefinitions="Auto,Auto">
-                    <avalonia:MaterialIcon Kind="Settings" />
+                    <mi:MaterialIcon Kind="Settings" />
                     <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.Settings}" />
                 </Grid>
             </Button>
 
-            <Button Command="{x:Static services:CommandStorage.LogoutCommand}">
+            <Button Command="{x:Static s:CommandStorage.LogoutCommand}">
                 <Grid ColumnDefinitions="Auto,Auto">
-                    <avalonia:MaterialIcon Kind="Logout" />
+                    <mi:MaterialIcon Kind="Logout" />
                     <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.Logout}" />
                 </Grid>
             </Button>
         </StackPanel>
-    </controls:GlassCard>
-</reactiveUi:ReactiveUserControl>
+    </c:GlassCard>
+</ru:ReactiveUserControl>

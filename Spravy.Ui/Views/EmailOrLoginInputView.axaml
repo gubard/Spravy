@@ -1,27 +1,27 @@
-<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:EmailOrLoginInputViewModel"
-                                xmlns="https://github.com/avaloniaui"
-                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                                xmlns:reactiveUi="http://reactiveui.net"
-                                xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-                                xmlns:services="clr-namespace:Spravy.Ui.Services"
-                                xmlns:controls="clr-namespace:SukiUI.Controls;assembly=SukiUI"
-                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                                x:Class="Spravy.Ui.Views.EmailOrLoginInputView"
-                                x:DataType="viewModels:EmailOrLoginInputViewModel">
-    <controls:GlassCard HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        MinWidth="300">
-        <controls:BusyArea BusyText="{DynamicResource EmailOrLoginInputView.Busy}"
-                           IsBusy="{Binding IsBusy}">
+<ru:ReactiveUserControl x:TypeArguments="vm:EmailOrLoginInputViewModel"
+                        xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:ru="http://reactiveui.net"
+                        xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
+                        xmlns:s="clr-namespace:Spravy.Ui.Services"
+                        xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+                        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                        x:Class="Spravy.Ui.Views.EmailOrLoginInputView"
+                        x:DataType="vm:EmailOrLoginInputViewModel">
+    <c:GlassCard HorizontalAlignment="Center"
+                 VerticalAlignment="Center"
+                 MinWidth="300">
+        <c:BusyArea BusyText="{DynamicResource EmailOrLoginInputView.Busy}"
+                    IsBusy="{Binding IsBusy}">
             <StackPanel>
                 <TextBlock Classes="field"
                            Text="{DynamicResource EmailOrLoginInputView.EmailOrLogin}" />
                 <TextBox Text="{Binding EmailOrLogin}" />
 
                 <Grid ColumnDefinitions="*,*">
-                    <Button Command="{x:Static services:CommandStorage.BackCommand}"
+                    <Button Command="{x:Static s:CommandStorage.BackCommand}"
                             Content="{DynamicResource EmailOrLoginInputView.Back}" />
 
                     <Button Grid.Column="1"
@@ -30,6 +30,6 @@
                             Content="{DynamicResource EmailOrLoginInputView.ChangePassword}" />
                 </Grid>
             </StackPanel>
-        </controls:BusyArea>
-    </controls:GlassCard>
-</reactiveUi:ReactiveUserControl>
+        </c:BusyArea>
+    </c:GlassCard>
+</ru:ReactiveUserControl>

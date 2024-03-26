@@ -1,21 +1,21 @@
-<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:EditDescriptionViewModel"
-                                xmlns="https://github.com/avaloniaui"
-                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                                xmlns:reactiveUi="http://reactiveui.net"
-                                xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-                                xmlns:controls="clr-namespace:SukiUI.Controls;assembly=SukiUI"
-                                mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="200"
-                                x:Class="Spravy.Ui.Views.EditDescriptionView"
-                                x:DataType="viewModels:EditDescriptionViewModel">
+<ru:ReactiveUserControl x:TypeArguments="vm:EditDescriptionViewModel"
+                        xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:ru="http://reactiveui.net"
+                        xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
+                        xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+                        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="200"
+                        x:Class="Spravy.Ui.Views.EditDescriptionView"
+                        x:DataType="vm:EditDescriptionViewModel">
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-        <controls:GroupBox>
-            <controls:GroupBox.Header>
+        <c:GroupBox>
+            <c:GroupBox.Header>
                 <TextBlock Text="{Binding ToDoItemName}" Classes="h4" />
-            </controls:GroupBox.Header>
+            </c:GroupBox.Header>
 
             <ContentControl Content="{Binding Content}" />
-        </controls:GroupBox>
+        </c:GroupBox>
     </ScrollViewer>
-</reactiveUi:ReactiveUserControl>
+</ru:ReactiveUserControl>

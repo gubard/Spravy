@@ -1,13 +1,13 @@
-<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:EditDescriptionContentViewModel"
-                                xmlns="https://github.com/avaloniaui"
-                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                                xmlns:reactiveUi="http://reactiveui.net"
-                                xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                                x:Class="Spravy.Ui.Views.EditDescriptionContentView"
-                                x:DataType="viewModels:EditDescriptionContentViewModel">
+<ru:ReactiveUserControl x:TypeArguments="vm:EditDescriptionContentViewModel"
+                        xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:ru="http://reactiveui.net"
+                        xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
+                        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                        x:Class="Spravy.Ui.Views.EditDescriptionContentView"
+                        x:DataType="vm:EditDescriptionContentViewModel">
     <StackPanel>
         <TextBlock Classes="field"
                    Text="{DynamicResource EditDescriptionView.Description}" />
@@ -17,4 +17,4 @@
         <TextBox Classes="accepts-return vertical-content-alignment-top content-type-social"
                  Text="{Binding Description}" />
     </StackPanel>
-</reactiveUi:ReactiveUserControl>
+</ru:ReactiveUserControl>

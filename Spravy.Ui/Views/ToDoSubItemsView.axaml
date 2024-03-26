@@ -1,16 +1,16 @@
-<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:ToDoSubItemsViewModel"
-                                xmlns="https://github.com/avaloniaui"
-                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                                xmlns:reactiveUi="http://reactiveui.net"
-                                xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-                                xmlns:ir="clr-namespace:Avalonia.Xaml.Interactions.Responsive;assembly=Avalonia.Xaml.Interactions.Responsive"
-                                xmlns:helpers="clr-namespace:Spravy.Ui.Helpers"
-                                xmlns:controls="clr-namespace:SukiUI.Controls;assembly=SukiUI"
-                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                                x:Class="Spravy.Ui.Views.ToDoSubItemsView"
-                                x:DataType="viewModels:ToDoSubItemsViewModel">
+<ru:ReactiveUserControl x:TypeArguments="vm:ToDoSubItemsViewModel"
+                        xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:ru="http://reactiveui.net"
+                        xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
+                        xmlns:ir="clr-namespace:Avalonia.Xaml.Interactions.Responsive;assembly=Avalonia.Xaml.Interactions.Responsive"
+                        xmlns:h="clr-namespace:Spravy.Ui.Helpers"
+                        xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+                        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                        x:Class="Spravy.Ui.Views.ToDoSubItemsView"
+                        x:DataType="vm:ToDoSubItemsViewModel">
     <UserControl.Styles>
         <Style Selector="UniformGrid.adaptive">
             <Setter Property="(Interaction.Behaviors)">
@@ -18,9 +18,9 @@
                     <BehaviorCollection>
                         <ir:AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
                             <ir:AdaptiveClassSetter MinWidth="0"
-                                                    MaxWidth="{x:Static helpers:MaterialDesignSize.MinMedium}"
+                                                    MaxWidth="{x:Static h:MaterialDesignSize.MinMedium}"
                                                     ClassName="small" />
-                            <ir:AdaptiveClassSetter MinWidth="{x:Static helpers:MaterialDesignSize.MinMedium}"
+                            <ir:AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinMedium}"
                                                     MaxWidth="Infinity"
                                                     ClassName="wide" />
                         </ir:AdaptiveBehavior>
@@ -35,9 +35,9 @@
                     <BehaviorCollection>
                         <ir:AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
                             <ir:AdaptiveClassSetter MinWidth="0"
-                                                    MaxWidth="{x:Static helpers:MaterialDesignSize.MinMedium}"
+                                                    MaxWidth="{x:Static h:MaterialDesignSize.MinMedium}"
                                                     ClassName="small" />
-                            <ir:AdaptiveClassSetter MinWidth="{x:Static helpers:MaterialDesignSize.MinMedium}"
+                            <ir:AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinMedium}"
                                                     MaxWidth="Infinity"
                                                     ClassName="wide" />
                         </ir:AdaptiveBehavior>
@@ -68,9 +68,9 @@
             <Style Selector="Expander">
                 <Setter Property="VerticalAlignment" Value="Top" />
             </Style>
-            <Style Selector="controls|GlassCard">
+            <Style Selector="c|GlassCard">
                 <Setter Property="Margin" Value="0,0,0,5" />
             </Style>
         </ContentControl.Styles>
     </ContentControl>
-</reactiveUi:ReactiveUserControl>
+</ru:ReactiveUserControl>

@@ -1,16 +1,16 @@
-<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:SearchViewModel"
-                                xmlns="https://github.com/avaloniaui"
-                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                                xmlns:reactiveUi="http://reactiveui.net"
-                                xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-                                xmlns:views="clr-namespace:Spravy.Ui.Views"
-                                xmlns:services="clr-namespace:Spravy.Ui.Services"
-                                mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
-                                x:Class="Spravy.Ui.Views.SearchView"
-                                x:DataType="viewModels:SearchViewModel">
+<ru:ReactiveUserControl x:TypeArguments="vm:SearchViewModel"
+                        xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:ru="http://reactiveui.net"
+                        xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
+                        xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                        xmlns:v="clr-namespace:Spravy.Ui.Views"
+                        xmlns:s="clr-namespace:Spravy.Ui.Services"
+                        mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
+                        x:Class="Spravy.Ui.Views.SearchView"
+                        x:DataType="vm:SearchViewModel">
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
             <InvokeCommandAction Command="{Binding InitializedCommand}" />
@@ -19,24 +19,24 @@
 
     <UserControl.KeyBindings>
         <KeyBinding Gesture="Enter"
-                    Command="{x:Static services:CommandStorage.ToDoItemSearchCommand}"
+                    Command="{x:Static s:CommandStorage.ToDoItemSearchCommand}"
                     CommandParameter="{Binding}" />
     </UserControl.KeyBindings>
 
     <Grid RowDefinitions="Auto,*">
         <Grid ColumnDefinitions="Auto,*,Auto">
-            <ContentControl Content="{x:Static services:CommandStorage.SwitchPaneItem}" />
+            <ContentControl Content="{x:Static s:CommandStorage.SwitchPaneItem}" />
 
             <StackPanel Grid.Column="1">
                 <TextBlock Classes="field" Text="{DynamicResource SearchView.Search}" />
-                <TextBox Name="{x:Static views:SearchView.SearchTextTextBoxName}"
+                <TextBox Name="{x:Static v:SearchView.SearchTextTextBoxName}"
                          Text="{Binding SearchText}" />
             </StackPanel>
 
             <Button Grid.Column="2"
-                    Command="{x:Static services:CommandStorage.ToDoItemSearchCommand}"
+                    Command="{x:Static s:CommandStorage.ToDoItemSearchCommand}"
                     CommandParameter="{Binding}">
-                <avalonia:MaterialIcon Kind="Search" />
+                <mi:MaterialIcon Kind="Search" />
             </Button>
         </Grid>
 
@@ -44,4 +44,4 @@
             <ContentControl Content="{Binding ToDoSubItemsViewModel}" />
         </ScrollViewer>
     </Grid>
-</reactiveUi:ReactiveUserControl>
+</ru:ReactiveUserControl>

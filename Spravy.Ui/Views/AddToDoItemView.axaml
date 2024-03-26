@@ -1,13 +1,14 @@
-<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:AddToDoItemViewModel" xmlns="https://github.com/avaloniaui"
-                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                                xmlns:reactiveUi="http://reactiveui.net"
-                                xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-                                xmlns:controls="clr-namespace:SukiUI.Controls;assembly=SukiUI"
-                                mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
-                                x:Class="Spravy.Ui.Views.AddToDoItemView"
-                                x:DataType="viewModels:AddToDoItemViewModel">
+<ru:ReactiveUserControl x:TypeArguments="vm:AddToDoItemViewModel"
+                        xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:ru="http://reactiveui.net"
+                        xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
+                        xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+                        mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
+                        x:Class="Spravy.Ui.Views.AddToDoItemView"
+                        x:DataType="vm:AddToDoItemViewModel">
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
             <InvokeCommandAction Command="{Binding InitializedCommand}" />
@@ -15,21 +16,21 @@
     </Interaction.Behaviors>
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-        <controls:GroupBox>
-            <controls:GroupBox.Header>
+        <c:GroupBox>
+            <c:GroupBox.Header>
                 <StackPanel>
                     <TextBlock Text="{DynamicResource AddToDoItemView.Header}" Classes="h4" />
 
                     <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
-                        <controls:Stepper Index="0" Steps="{Binding Path}" HorizontalAlignment="Left" />
+                        <c:Stepper Index="0" Steps="{Binding Path}" HorizontalAlignment="Left" />
                     </ScrollViewer>
                 </StackPanel>
-            </controls:GroupBox.Header>
+            </c:GroupBox.Header>
 
             <StackPanel>
                 <ContentControl Content="{Binding ToDoItemContent}" />
                 <ContentControl Content="{Binding DescriptionContent}" />
             </StackPanel>
-        </controls:GroupBox>
+        </c:GroupBox>
     </ScrollViewer>
-</reactiveUi:ReactiveUserControl>
+</ru:ReactiveUserControl>

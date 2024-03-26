@@ -1,17 +1,17 @@
-<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:ToDoItemSelectorViewModel"
-                                xmlns="https://github.com/avaloniaui"
-                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                                xmlns:reactiveUi="http://reactiveui.net"
-                                xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-                                xmlns:models="clr-namespace:Spravy.Ui.Models"
-                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                                x:Class="Spravy.Ui.Views.ToDoItemSelectorView"
-                                x:DataType="viewModels:ToDoItemSelectorViewModel">
+<ru:ReactiveUserControl x:TypeArguments="vm:ToDoItemSelectorViewModel"
+                        xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:ru="http://reactiveui.net"
+                        xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
+                        xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                        xmlns:m="clr-namespace:Spravy.Ui.Models"
+                        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                        x:Class="Spravy.Ui.Views.ToDoItemSelectorView"
+                        x:DataType="vm:ToDoItemSelectorViewModel">
     <Design.DataContext>
-        <viewModels:ToDoItemSelectorViewModel />
+        <vm:ToDoItemSelectorViewModel />
     </Design.DataContext>
 
     <Interaction.Behaviors>
@@ -25,7 +25,7 @@
             <TextBox Text="{Binding SearchText}" />
 
             <Button Grid.Column="1" Command="{Binding SearchCommand}">
-                <avalonia:MaterialIcon Kind="Search" />
+                <mi:MaterialIcon Kind="Search" />
             </Button>
         </Grid>
 
@@ -34,10 +34,10 @@
                   SelectionMode="Single"
                   SelectedItem="{Binding SelectedItem}">
             <TreeView.Styles>
-                <Style Selector="TreeViewItem" x:DataType="models:ToDoSelectorItemNotify">
+                <Style Selector="TreeViewItem" x:DataType="m:ToDoSelectorItemNotify">
                     <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
                 </Style>
             </TreeView.Styles>
         </TreeView>
     </Grid>
-</reactiveUi:ReactiveUserControl>
+</ru:ReactiveUserControl>

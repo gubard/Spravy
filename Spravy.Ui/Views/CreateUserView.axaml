@@ -1,54 +1,54 @@
-<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:CreateUserViewModel"
-                                xmlns="https://github.com/avaloniaui"
-                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                                xmlns:reactiveUi="http://reactiveui.net"
-                                xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-                                xmlns:views="clr-namespace:Spravy.Ui.Views"
-                                xmlns:services="clr-namespace:Spravy.Ui.Services"
-                                xmlns:controls="clr-namespace:SukiUI.Controls;assembly=SukiUI"
-                                mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
-                                x:Class="Spravy.Ui.Views.CreateUserView"
-                                x:DataType="viewModels:CreateUserViewModel">
+<ru:ReactiveUserControl x:TypeArguments="vm:CreateUserViewModel"
+                        xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:ru="http://reactiveui.net"
+                        xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
+                        xmlns:v="clr-namespace:Spravy.Ui.Views"
+                        xmlns:s="clr-namespace:Spravy.Ui.Services"
+                        xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+                        mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
+                        x:Class="Spravy.Ui.Views.CreateUserView"
+                        x:DataType="vm:CreateUserViewModel">
     <UserControl.KeyBindings>
         <KeyBinding Gesture="Enter" Command="{Binding EnterCommand}" CommandParameter="{Binding $self}" />
     </UserControl.KeyBindings>
 
-    <controls:GlassCard x:Name="CreateUserCard"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Width="400">
-        <controls:BusyArea IsBusy="{Binding IsBusy}"
-                           BusyText="{DynamicResource CreateUserView.Busy}">
+    <c:GlassCard x:Name="CreateUserCard"
+                 HorizontalAlignment="Center"
+                 VerticalAlignment="Center"
+                 Width="400">
+        <c:BusyArea IsBusy="{Binding IsBusy}"
+                    BusyText="{DynamicResource CreateUserView.Busy}">
             <StackPanel>
                 <TextBlock Text="{DynamicResource CreateUserView.CreateAccountHeader}"
                            Classes="h2"
                            HorizontalAlignment="Center" />
                 <TextBlock Classes="field"
                            Text="{DynamicResource CreateUserView.Email}" />
-                <TextBox Name="{x:Static views:CreateUserView.EmailTextBoxName}"
+                <TextBox Name="{x:Static v:CreateUserView.EmailTextBoxName}"
                          Text="{Binding Email}"
                          Classes="content-type-email" />
                 <TextBlock Classes="field"
                            Text="{DynamicResource CreateUserView.Login}" />
-                <TextBox Name="{x:Static views:CreateUserView.LoginTextBoxName}"
+                <TextBox Name="{x:Static v:CreateUserView.LoginTextBoxName}"
                          Text="{Binding Login}" />
                 <TextBlock Classes="field"
                            Text="{DynamicResource CreateUserView.Password}" />
-                <TextBox Name="{x:Static views:CreateUserView.PasswordTextBoxName}"
+                <TextBox Name="{x:Static v:CreateUserView.PasswordTextBoxName}"
                          Text="{Binding Password}"
                          Classes="content-type-password password-char" />
                 <TextBlock Classes="field"
                            Text="{DynamicResource CreateUserView.RepeatPassword}" />
-                <TextBox Name="{x:Static views:CreateUserView.RepeatPasswordTextBoxName}"
+                <TextBox Name="{x:Static v:CreateUserView.RepeatPasswordTextBoxName}"
                          Text="{Binding RepeatPassword}"
                          Classes="content-type-password password-char" />
 
                 <Grid ColumnDefinitions="*,*">
                     <Button x:Name="BackButton"
-                            Command="{x:Static services:CommandStorage.NavigateToCommand}"
-                            CommandParameter="{x:Type viewModels:LoginViewModel}"
+                            Command="{x:Static s:CommandStorage.NavigateToCommand}"
+                            CommandParameter="{x:Type vm:LoginViewModel}"
                             Content="{DynamicResource CreateUserView.Back}" />
 
                     <Button x:Name="CreateUserButton"
@@ -58,6 +58,6 @@
                             Classes="Flat" />
                 </Grid>
             </StackPanel>
-        </controls:BusyArea>
-    </controls:GlassCard>
-</reactiveUi:ReactiveUserControl>
+        </c:BusyArea>
+    </c:GlassCard>
+</ru:ReactiveUserControl>

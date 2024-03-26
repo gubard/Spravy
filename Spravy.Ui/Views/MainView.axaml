@@ -4,8 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
              xmlns:dh="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
-             xmlns:services="clr-namespace:Spravy.Ui.Services"
-             xmlns:helpers="clr-namespace:Spravy.Ui.Helpers"
+             xmlns:s="clr-namespace:Spravy.Ui.Services"
+             xmlns:h="clr-namespace:Spravy.Ui.Helpers"
              mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
              x:Class="Spravy.Ui.Views.MainView"
              x:DataType="vm:MainViewModel">
@@ -52,24 +52,24 @@
                     <BehaviorCollection>
                         <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
                             <AdaptiveClassSetter MinWidth="0"
-                                                 MaxWidth="{x:Static helpers:MaterialDesignSize.MaxExtraSmall}"
+                                                 MaxWidth="{x:Static h:MaterialDesignSize.MaxExtraSmall}"
                                                  ClassName="extra-small" />
                         </AdaptiveBehavior>
 
                         <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
-                            <AdaptiveClassSetter MinWidth="{x:Static helpers:MaterialDesignSize.MinSmall}"
-                                                 MaxWidth="{x:Static helpers:MaterialDesignSize.MaxSmall}"
+                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinSmall}"
+                                                 MaxWidth="{x:Static h:MaterialDesignSize.MaxSmall}"
                                                  ClassName="small" />
                         </AdaptiveBehavior>
 
                         <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
-                            <AdaptiveClassSetter MinWidth="{x:Static helpers:MaterialDesignSize.MinMedium}"
-                                                 MaxWidth="{x:Static helpers:MaterialDesignSize.MaxMedium}"
+                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinMedium}"
+                                                 MaxWidth="{x:Static h:MaterialDesignSize.MaxMedium}"
                                                  ClassName="medium" />
                         </AdaptiveBehavior>
 
                         <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
-                            <AdaptiveClassSetter MinWidth="{x:Static helpers:MaterialDesignSize.MinLarge}"
+                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinLarge}"
                                                  MaxWidth="Infinity"
                                                  ClassName="large" />
                         </AdaptiveBehavior>
@@ -81,16 +81,16 @@
 
     <dh:DialogHost x:Name="ErrorDialogHost"
                    Classes="adaptive"
-                   Identifier="{x:Static services:DialogViewer.ErrorDialogHostIdentifier}">
+                   Identifier="{x:Static s:DialogViewer.ErrorDialogHostIdentifier}">
         <dh:DialogHost x:Name="ProgressDialogHost"
                        Classes="adaptive"
-                       Identifier="{x:Static services:DialogViewer.ProgressDialogHostIdentifier}">
+                       Identifier="{x:Static s:DialogViewer.ProgressDialogHostIdentifier}">
             <dh:DialogHost x:Name="InputDialogHost"
                            Classes="adaptive"
-                           Identifier="{x:Static services:DialogViewer.InputDialogHostIdentifier}">
+                           Identifier="{x:Static s:DialogViewer.InputDialogHostIdentifier}">
                 <dh:DialogHost x:Name="ContentDialogHost"
                                Classes="adaptive"
-                               Identifier="{x:Static services:DialogViewer.ContentDialogHostIdentifier}">
+                               Identifier="{x:Static s:DialogViewer.ContentDialogHostIdentifier}">
                     <ContentControl x:Name="MainContent" Content="{Binding MainSplitViewModel}" />
                 </dh:DialogHost>
             </dh:DialogHost>

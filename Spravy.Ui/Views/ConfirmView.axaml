@@ -1,12 +1,13 @@
-<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:ConfirmViewModel" xmlns="https://github.com/avaloniaui"
-                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                                xmlns:reactiveUi="http://reactiveui.net"
-                                xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-                                mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
-                                x:Class="Spravy.Ui.Views.ConfirmView"
-                                x:DataType="viewModels:ConfirmViewModel">
+<ru:ReactiveUserControl x:TypeArguments="vm:ConfirmViewModel"
+                        xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:ru="http://reactiveui.net"
+                        xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
+                        mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
+                        x:Class="Spravy.Ui.Views.ConfirmView"
+                        x:DataType="vm:ConfirmViewModel">
     <UserControl.KeyBindings>
         <KeyBinding Gesture="Ctrl+Enter" Command="{Binding ConfirmCommand}" />
     </UserControl.KeyBindings>
@@ -25,4 +26,4 @@
                 Content="{DynamicResource ConfirmView.Ok}"
                 Classes="Flat" />
     </Grid>
-</reactiveUi:ReactiveUserControl>
+</ru:ReactiveUserControl>

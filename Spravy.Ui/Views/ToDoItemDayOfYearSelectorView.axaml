@@ -1,14 +1,14 @@
-<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:ToDoItemDayOfYearSelectorViewModel"
-                                xmlns="https://github.com/avaloniaui"
-                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                                xmlns:reactiveUi="http://reactiveui.net"
-                                xmlns:viewModels="clr-namespace:Spravy.Ui.ViewModels"
-                                xmlns:models="clr-namespace:Spravy.Ui.Models"
-                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                                x:Class="Spravy.Ui.Views.ToDoItemDayOfYearSelectorView"
-                                x:DataType="viewModels:ToDoItemDayOfYearSelectorViewModel">
+<ru:ReactiveUserControl x:TypeArguments="vm:ToDoItemDayOfYearSelectorViewModel"
+                        xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:ru="http://reactiveui.net"
+                        xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
+                        xmlns:m="clr-namespace:Spravy.Ui.Models"
+                        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                        x:Class="Spravy.Ui.Views.ToDoItemDayOfYearSelectorView"
+                        x:DataType="vm:ToDoItemDayOfYearSelectorViewModel">
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
             <InvokeCommandAction Command="{Binding InitializedCommand}" />
@@ -17,9 +17,9 @@
 
     <TabControl ItemsSource="{Binding Items}">
         <TabControl.ItemTemplate>
-            <DataTemplate x:DataType="models:DayOfYearSelectItem">
+            <DataTemplate x:DataType="m:DayOfYearSelectItem">
                 <TextBlock Text="{Binding Month}" />
             </DataTemplate>
         </TabControl.ItemTemplate>
     </TabControl>
-</reactiveUi:ReactiveUserControl>
+</ru:ReactiveUserControl>
