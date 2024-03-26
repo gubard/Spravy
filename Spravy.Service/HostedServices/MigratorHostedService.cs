@@ -58,8 +58,10 @@ public class MigratorHostedService<TDbContext> : IHostedService where TDbContext
 
         foreach (var dataBaseFile in dataBaseFiles)
         {
+            logger.LogInformation("Start migration {MigrationId} {DataBaseFile}", migrationId, dataBaseFile);
             await using var spravyToDoDbContext = dbContextFactory.Create($"DataSource={dataBaseFile}");
             await spravyToDoDbContext.Database.MigrateAsync(cancellationToken);
+            logger.LogInformation("End migration {MigrationId} {DataBaseFile}", migrationId, dataBaseFile);
         }
 
         if (migrationFile.Exists)

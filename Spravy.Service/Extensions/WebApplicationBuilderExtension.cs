@@ -33,6 +33,19 @@ public static class WebApplicationBuilderExtension
         return builder.BuildSpravy<TService, TAssemblyMark>(args, Enumerable.Empty<Type>(), setupServiceCollection);
     }
 
+    public static WebApplication BuildSpravy<TService1, TService2, TAssemblyMark>(
+        this WebApplicationBuilder builder,
+        string[] args,
+        Action<IServiceCollection> setupServiceCollection
+    ) where TService1 : class where TService2 : class where TAssemblyMark : IAssemblyMark
+    {
+        return builder.BuildSpravy<TService1, TService2, TAssemblyMark>(
+            args,
+            Enumerable.Empty<Type>(),
+            setupServiceCollection
+        );
+    }
+
     public static WebApplication BuildSpravy<TService1, TService2, TService3, TService4, TAssemblyMark>(
         this WebApplicationBuilder builder,
         string[] args,
@@ -90,6 +103,40 @@ public static class WebApplicationBuilderExtension
         }
 
         app.MapGrpcService<TService>().EnableGrpcWeb();
+
+        return app;
+    }
+
+    public static WebApplication BuildSpravy<TService1, TService2, TAssemblyMark>(
+        this WebApplicationBuilder builder,
+        string[] args,
+        IEnumerable<Type> middlewares,
+        Action<IServiceCollection> setupServiceCollection
+    ) where TService1 : class where TService2 : class where TAssemblyMark : IAssemblyMark
+    {
+        builder.AddSpravy<TAssemblyMark>(args);
+        setupServiceCollection.Invoke(builder.Services);
+        var app = builder.Build();
+        app.UseSerilogRequestLogging();
+
+        if (app.Environment.IsProduction())
+        {
+            app.UseHsts();
+        }
+
+        app.UseRouting();
+        app.UseGrpcWeb(ServiceDefaults.DefaultGrpcWebOptions);
+        app.UseCors();
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        foreach (var middleware in middlewares)
+        {
+            app.UseMiddleware(middleware);
+        }
+
+        app.MapGrpcService<TService1>().EnableGrpcWeb();
+        app.MapGrpcService<TService2>().EnableGrpcWeb();
 
         return app;
     }

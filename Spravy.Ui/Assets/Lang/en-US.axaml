@@ -94,6 +94,7 @@
     <system:String x:Key="PaneView.Search">Search</system:String>
     <system:String x:Key="PaneView.Timers">Timers</system:String>
     <system:String x:Key="PaneView.Settings">Settings</system:String>
+    <system:String x:Key="PaneView.PasswordGenerator">Password generator</system:String>
     <system:String x:Key="PaneView.Logout">Logout</system:String>
 
     <!--RootToDoItemsView-->

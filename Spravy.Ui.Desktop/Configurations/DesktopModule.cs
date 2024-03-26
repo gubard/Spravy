@@ -9,6 +9,7 @@ using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;
 using Spravy.EventBus.Domain.Client.Models;
+using Spravy.PasswordGenerator.Domain.Client.Models;
 using Spravy.Schedule.Domain.Client.Models;
 using Spravy.ToDo.Domain.Client.Models;
 using Spravy.Ui.Interfaces;
@@ -24,6 +25,10 @@ public class DesktopModule : NinjectModule
     {
         Bind<IObjectStorage>().To<SqliteObjectStorage>();
         Bind<IOpenerLink>().To<OpenerLink>();
+
+        Bind<GrpcPasswordServiceOptions>()
+            .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcPasswordServiceOptions>())
+            .InSingletonScope();
 
         Bind<GrpcAuthenticationServiceOptions>()
             .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcAuthenticationServiceOptions>())

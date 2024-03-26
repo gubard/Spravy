@@ -30,6 +30,10 @@ using Spravy.EventBus.Domain.Client.Services;
 using Spravy.EventBus.Domain.Interfaces;
 using Spravy.EventBus.Domain.Mapper.Profiles;
 using Spravy.EventBus.Protos;
+using Spravy.PasswordGenerator.Domain.Client.Models;
+using Spravy.PasswordGenerator.Domain.Client.Services;
+using Spravy.PasswordGenerator.Domain.Interfaces;
+using Spravy.PasswordGenerator.Protos;
 using Spravy.Schedule.Domain.Client.Models;
 using Spravy.Schedule.Domain.Client.Services;
 using Spravy.Schedule.Domain.Interfaces;
@@ -77,6 +81,9 @@ public class UiModule : NinjectModule
         this.BindGrpcService<GrpcEventBusService, EventBusService.EventBusServiceClient,
             GrpcEventBusServiceOptions>(useCache);
 
+        this.BindGrpcService<GrpcPasswordService, PasswordService.PasswordServiceClient,
+            GrpcPasswordServiceOptions>(useCache);
+
         Bind<AccountNotify>().ToSelf().InSingletonScope();
         Bind<ISerializer>().To<ProtobufSerializer>();
         Bind<ICacheValidator<Uri, GrpcChannel>>().To<GrpcChannelCacheValidator>();
@@ -89,6 +96,7 @@ public class UiModule : NinjectModule
         Bind<DailyPeriodicityViewModel>().ToSelf();
         Bind<ITokenService>().To<TokenService>().InSingletonScope();
         Bind<IAuthenticationService>().ToMethod(context => context.Kernel.Get<GrpcAuthenticationService>());
+        Bind<IPasswordService>().ToMethod(context => context.Kernel.Get<GrpcPasswordService>());
         Bind<IScheduleService>().ToMethod(context => context.Kernel.Get<GrpcScheduleService>());
         //Bind<IKeeper<TokenResult>>().To<StaticKeeper<TokenResult>>();
         Bind<IKeeper<Guid>>().To<StaticKeeper<Guid>>();
@@ -163,20 +171,14 @@ public class UiModule : NinjectModule
             .To<MainWindow>()
             .InSingletonScope()
             .OnActivation(
-                (c, x) =>
-                {
-                    x.Content = c.Kernel.Get<Control>();
-                }
+                (c, x) => { x.Content = c.Kernel.Get<Control>(); }
             );
-        
+
         Bind<ISingleViewTopLevelControl>()
             .To<SingleView>()
             .InSingletonScope()
             .OnActivation(
-                (c, x) =>
-                {
-                    x.Content = c.Kernel.Get<Control>();
-                }
+                (c, x) => { x.Content = c.Kernel.Get<Control>(); }
             );
     }
 

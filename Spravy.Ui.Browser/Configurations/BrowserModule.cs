@@ -7,6 +7,7 @@ using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Services;
 using Spravy.EventBus.Domain.Client.Models;
+using Spravy.PasswordGenerator.Domain.Client.Models;
 using Spravy.Schedule.Domain.Client.Models;
 using Spravy.ToDo.Domain.Client.Models;
 using Spravy.Ui.Browser.Services;
@@ -21,6 +22,12 @@ public class BrowserModule : NinjectModule
     public override void Load()
     {
         Bind<IOpenerLink>().To<BrowserOpenerLink>();
+
+        Bind<GrpcPasswordServiceOptions>()
+            .ToMethod(
+                context => context.Kernel.GetConfigurationSection<GrpcPasswordServiceOptions>("GrpcPasswordService")
+            )
+            .InSingletonScope();
 
         Bind<GrpcAuthenticationServiceOptions>()
             .ToMethod(

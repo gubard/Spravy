@@ -49,6 +49,8 @@
       <ProjectReference Include="..\Spravy.EventBus.Domain.Client\Spravy.EventBus.Domain.Client.csproj" />
       <ProjectReference Include="..\Spravy.EventBus.Domain.Mapper\Spravy.EventBus.Domain.Mapper.csproj" />
       <ProjectReference Include="..\Spravy.EventBus.Domain\Spravy.EventBus.Domain.csproj" />
+      <ProjectReference Include="..\Spravy.PasswordGenerator.Domain.Client\Spravy.PasswordGenerator.Domain.Client.csproj" />
+      <ProjectReference Include="..\Spravy.PasswordGenerator.Domain\Spravy.PasswordGenerator.Domain.csproj" />
       <ProjectReference Include="..\Spravy.Schedule.Domain.Client\Spravy.Schedule.Domain.Client.csproj" />
       <ProjectReference Include="..\Spravy.Schedule.Domain\Spravy.Schedule.Domain.csproj" />
       <ProjectReference Include="..\Spravy.ToDo.Domain.Client\Spravy.ToDo.Domain.Client.csproj" />
@@ -59,6 +61,10 @@
     <ItemGroup>
       <Compile Update="Features\ToDo\Views\ToDoItemsView.axaml.cs">
         <DependentUpon>ToDoItemsView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Features\PasswordGenerator\Views\PasswordGeneratorView.axaml.cs">
+        <DependentUpon>PasswordGeneratorView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
     </ItemGroup>

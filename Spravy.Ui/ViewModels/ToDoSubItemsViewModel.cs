@@ -1,8 +1,6 @@
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using Ninject;
 using Spravy.Domain.Extensions;
 using Spravy.ToDo.Domain.Interfaces;

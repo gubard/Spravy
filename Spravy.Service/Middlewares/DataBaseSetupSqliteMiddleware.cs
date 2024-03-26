@@ -42,6 +42,11 @@ public class DataBaseSetupSqliteMiddleware<TDbContext> where TDbContext : DbCont
             return;
         }
 
+        if (dataBaseFile.Directory is not null && !dataBaseFile.Directory.Exists)
+        {
+            dataBaseFile.Directory.Create();
+        }
+
         await using var spravyToDoDbContext = spravyToDoDbContextFactory.Create($"DataSource={dataBaseFile}");
         await spravyToDoDbContext.Database.MigrateAsync();
     }

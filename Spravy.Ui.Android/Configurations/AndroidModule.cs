@@ -10,6 +10,7 @@ using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;
 using Spravy.EventBus.Domain.Client.Models;
+using Spravy.PasswordGenerator.Domain.Client.Models;
 using Spravy.Schedule.Domain.Client.Models;
 using Spravy.ToDo.Domain.Client.Models;
 using Spravy.Ui.Android.Services;
@@ -45,6 +46,10 @@ public class AndroidModule : NinjectModule
             .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcToDoServiceOptions>())
             .InSingletonScope();
 
+        Bind<GrpcPasswordServiceOptions>()
+            .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcPasswordServiceOptions>())
+            .InSingletonScope();
+        
         Bind<GrpcEventBusServiceOptions>()
             .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcEventBusServiceOptions>())
             .InSingletonScope();

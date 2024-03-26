@@ -11,6 +11,17 @@ public static class DbContextExtension
         await context.SaveChangesAsync();
     }
 
+    public static Task ExecuteSaveChangesAsync<TDbContext>(
+        this TDbContext context,
+        Action<TDbContext> func
+    )
+        where TDbContext : DbContext
+    {
+        func.Invoke(context);
+
+        return context.SaveChangesAsync();
+    }
+
     public static async ValueTask ExecuteSaveChangesAsync<TDbContext>(
         this TDbContext context,
         Func<TDbContext, ValueTask> func
@@ -90,6 +101,27 @@ public static class DbContextExtension
             await transaction.CommitAsync();
 
             return result;
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+
+            throw;
+        }
+    }
+
+    public static async Task ExecuteSaveChangesTransactionAsync<TDbContext>(
+        this TDbContext context,
+        Action<TDbContext> action
+    )
+        where TDbContext : DbContext
+    {
+        await using var transaction = await context.Database.BeginTransactionAsync();
+
+        try
+        {
+            await context.ExecuteSaveChangesAsync(action);
+            await transaction.CommitAsync();
         }
         catch
         {

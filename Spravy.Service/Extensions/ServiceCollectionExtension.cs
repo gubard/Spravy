@@ -17,6 +17,31 @@ namespace Spravy.Service.Extensions;
 
 public static class ServiceCollectionExtension
 {
+    public static IServiceCollection AddSpravySqliteFolderContext<TDbContext, TAssemblyMark, TDbContextSetup>(
+        this IServiceCollection serviceCollection
+    )
+        where TDbContext : SpravyDbContext, IDbContextCreator<TDbContext>
+        where TAssemblyMark : IAssemblyMark
+        where TDbContextSetup : IDbContextSetup
+    {
+        serviceCollection.AddTransient<IFactory<FileInfo>, SqliteDbFileFactory>();
+        serviceCollection.AddTransient<IFactory<TDbContext>, SqliteDbContextFactory<TDbContext>>();
+        serviceCollection.AddTransient<ICacheValidator<string, TDbContext>, DbContextCacheValidator<TDbContext>>();
+
+        serviceCollection.AddTransient(
+            sp => new DbContextFactory<TDbContext, TAssemblyMark>(sp.GetRequiredService<TDbContextSetup>())
+        );
+
+        serviceCollection.AddTransient<IFactory<string, TDbContext>>(
+            sp => new CacheFactory<string, TDbContext>(
+                sp.GetRequiredService<DbContextFactory<TDbContext, TAssemblyMark>>(),
+                sp.GetRequiredService<ICacheValidator<string, TDbContext>>()
+            )
+        );
+
+        return serviceCollection;
+    }
+
     public static IServiceCollection AddSpravySqliteFolderContext<TDbContext, TAssemblyMark>(
         this IServiceCollection serviceCollection
     )

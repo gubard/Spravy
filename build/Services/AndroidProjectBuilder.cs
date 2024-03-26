@@ -1,7 +1,6 @@
 using System;
 using _build.Extensions;
 using _build.Models;
-using CliWrap;
 using Nuke.Common.Tools.DotNet;
 
 namespace _build.Services;

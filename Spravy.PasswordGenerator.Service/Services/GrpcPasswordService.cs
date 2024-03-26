@@ -1,0 +1,54 @@
+using AutoMapper;
+using Grpc.Core;
+using Microsoft.AspNetCore.Authorization;
+using Spravy.PasswordGenerator.Domain.Interfaces;
+using Spravy.PasswordGenerator.Domain.Models;
+using Spravy.PasswordGenerator.Protos;
+using static Spravy.PasswordGenerator.Protos.PasswordService;
+
+namespace Spravy.PasswordGenerator.Service.Services;
+
+[Authorize]
+public class GrpcPasswordService : PasswordServiceBase
+{
+    private readonly IPasswordService passwordService;
+    private readonly IMapper mapper;
+
+    public GrpcPasswordService(IPasswordService passwordService, IMapper mapper)
+    {
+        this.passwordService = passwordService;
+        this.mapper = mapper;
+    }
+
+    public override async Task<AddPasswordItemReply> AddPasswordItem(
+        AddPasswordItemRequest request,
+        ServerCallContext context
+    )
+    {
+        await passwordService.AddPasswordItemAsync(mapper.Map<AddPasswordOptions>(request), context.CancellationToken);
+
+        return new AddPasswordItemReply();
+    }
+
+    public override async Task<GetPasswordItemsReply> GetPasswordItems(
+        GetPasswordItemsRequest request,
+        ServerCallContext context
+    )
+    {
+        var passwordItems = await passwordService.GetPasswordItemsAsync(context.CancellationToken);
+        var reply = new GetPasswordItemsReply();
+        reply.Items.AddRange(passwordItems.Select(item => mapper.Map<PasswordItemGrpc>(item)));
+
+        return reply;
+    }
+
+    public override async Task<RemovePasswordItemReply> RemovePasswordItem(
+        RemovePasswordItemRequest request,
+        ServerCallContext context
+    )
+    {
+        await passwordService.RemovePasswordItemAsync(mapper.Map<Guid>(request.Id), context.CancellationToken);
+
+        return new RemovePasswordItemReply();
+    }
+}
