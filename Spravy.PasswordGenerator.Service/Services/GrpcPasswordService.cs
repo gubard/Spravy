@@ -68,13 +68,13 @@ public class GrpcPasswordService : PasswordServiceBase
         return reply;
     }
 
-    public override async Task<RemovePasswordItemReply> RemovePasswordItem(
-        RemovePasswordItemRequest request,
+    public override async Task<DeletePasswordItemReply> DeletePasswordItem(
+        DeletePasswordItemRequest request,
         ServerCallContext context
     )
     {
-        await passwordService.RemovePasswordItemAsync(mapper.Map<Guid>(request.Id), context.CancellationToken);
+        await passwordService.DeletePasswordItemAsync(mapper.Map<Guid>(request.Id), context.CancellationToken);
 
-        return new RemovePasswordItemReply();
+        return new DeletePasswordItemReply();
     }
 }

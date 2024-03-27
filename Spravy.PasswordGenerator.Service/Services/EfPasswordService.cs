@@ -62,7 +62,7 @@ public class EfPasswordService : IPasswordService
         return mapper.Map<PasswordItem>(item);
     }
 
-    public async Task RemovePasswordItemAsync(Guid id, CancellationToken cancellationToken)
+    public async Task DeletePasswordItemAsync(Guid id, CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();
         var item = await context.FindAsync<PasswordItemEntity>(id);
@@ -81,5 +81,101 @@ public class EfPasswordService : IPasswordService
             $"{userSecret}{item.Key}",
             mapper.Map<GeneratePasswordOptions>(item)
         );
+    }
+
+    public async Task UpdatePasswordItemNameAsync(Guid id, string name, CancellationToken cancellationToken)
+    {
+        await using var context = dbContextFactory.Create();
+        var item = await context.FindAsync<PasswordItemEntity>(id);
+        item = item.ThrowIfNull();
+        await context.ExecuteSaveChangesTransactionAsync(_ => item.Name = name);
+    }
+
+    public async Task UpdatePasswordItemKeyAsync(Guid id, string key, CancellationToken cancellationToken)
+    {
+        await using var context = dbContextFactory.Create();
+        var item = await context.FindAsync<PasswordItemEntity>(id);
+        item = item.ThrowIfNull();
+        await context.ExecuteSaveChangesTransactionAsync(_ => item.Key = key);
+    }
+
+    public async Task UpdatePasswordItemLengthAsync(Guid id, ushort length, CancellationToken cancellationToken)
+    {
+        await using var context = dbContextFactory.Create();
+        var item = await context.FindAsync<PasswordItemEntity>(id);
+        item = item.ThrowIfNull();
+        await context.ExecuteSaveChangesTransactionAsync(_ => item.Length = length);
+    }
+
+    public async Task UpdatePasswordItemRegexAsync(Guid id, string regex, CancellationToken cancellationToken)
+    {
+        await using var context = dbContextFactory.Create();
+        var item = await context.FindAsync<PasswordItemEntity>(id);
+        item = item.ThrowIfNull();
+        await context.ExecuteSaveChangesTransactionAsync(_ => item.Regex = regex);
+    }
+
+    public async Task UpdatePasswordItemIsAvailableNumberAsync(
+        Guid id,
+        bool isAvailableNumber,
+        CancellationToken cancellationToken
+    )
+    {
+        await using var context = dbContextFactory.Create();
+        var item = await context.FindAsync<PasswordItemEntity>(id);
+        item = item.ThrowIfNull();
+        await context.ExecuteSaveChangesTransactionAsync(_ => item.IsAvailableNumber = isAvailableNumber);
+    }
+
+    public async Task UpdatePasswordItemIsAvailableLowerLatinAsync(
+        Guid id,
+        bool isAvailableLowerLatin,
+        CancellationToken cancellationToken
+    )
+    {
+        await using var context = dbContextFactory.Create();
+        var item = await context.FindAsync<PasswordItemEntity>(id);
+        item = item.ThrowIfNull();
+        await context.ExecuteSaveChangesTransactionAsync(_ => item.IsAvailableLowerLatin = isAvailableLowerLatin);
+    }
+
+    public async Task UpdatePasswordItemIsAvailableSpecialSymbolsAsync(
+        Guid id,
+        bool isAvailableSpecialSymbols,
+        CancellationToken cancellationToken
+    )
+    {
+        await using var context = dbContextFactory.Create();
+        var item = await context.FindAsync<PasswordItemEntity>(id);
+        item = item.ThrowIfNull();
+        await context.ExecuteSaveChangesTransactionAsync(
+            _ => item.IsAvailableSpecialSymbols = isAvailableSpecialSymbols
+        );
+    }
+
+    public async Task UpdatePasswordItemCustomAvailableCharactersAsync(
+        Guid id,
+        string customAvailableCharacters,
+        CancellationToken cancellationToken
+    )
+    {
+        await using var context = dbContextFactory.Create();
+        var item = await context.FindAsync<PasswordItemEntity>(id);
+        item = item.ThrowIfNull();
+        await context.ExecuteSaveChangesTransactionAsync(
+            _ => item.CustomAvailableCharacters = customAvailableCharacters
+        );
+    }
+
+    public async Task UpdatePasswordItemIsAvailableUpperLatinAsync(
+        Guid id,
+        bool isAvailableUpperLatin,
+        CancellationToken cancellationToken
+    )
+    {
+        await using var context = dbContextFactory.Create();
+        var item = await context.FindAsync<PasswordItemEntity>(id);
+        item = item.ThrowIfNull();
+        await context.ExecuteSaveChangesTransactionAsync(_ => item.IsAvailableUpperLatin = isAvailableUpperLatin);
     }
 }

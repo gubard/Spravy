@@ -465,7 +465,7 @@ public static class CommandStorage
             {
                 await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
 
-                await passwordService.RemovePasswordItemAsync(idProperty.Id, cancellationToken)
+                await passwordService.DeletePasswordItemAsync(idProperty.Id, cancellationToken)
                     .ConfigureAwait(false);
 
                 await RefreshCurrentViewAsync(cancellationToken);
