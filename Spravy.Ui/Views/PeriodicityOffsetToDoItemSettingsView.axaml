@@ -30,7 +30,6 @@
                 <TextBlock Classes="field"
                            Text="{DynamicResource PeriodicityOffsetToDoItemSettingsView.MonthsOffset}" />
                 <NumericUpDown Value="{Binding  MonthsOffset}" />
-
             </StackPanel>
 
             <StackPanel Grid.Column="1">
@@ -40,7 +39,6 @@
                 <TextBlock Classes="field"
                            Text="{DynamicResource PeriodicityOffsetToDoItemSettingsView.YearsOffset}" />
                 <NumericUpDown Value="{Binding  YearsOffset}" />
-
             </StackPanel>
         </Grid>
 
