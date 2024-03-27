@@ -8,4 +8,5 @@ public interface IPasswordService
     Task<IEnumerable<PasswordItem>> GetPasswordItemsAsync(CancellationToken cancellationToken);
     Task<PasswordItem> GetPasswordItemAsync(Guid id, CancellationToken cancellationToken);
     Task RemovePasswordItemAsync(Guid id, CancellationToken cancellationToken);
+    Task<string> GeneratePasswordAsync(Guid id, CancellationToken cancellationToken);
 }

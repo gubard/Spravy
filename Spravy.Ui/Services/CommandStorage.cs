@@ -274,6 +274,12 @@ public static class CommandStorage
             MaterialIconKind.Settings,
             "Show password setting"
         );
+
+        GeneratePasswordItem = CreateCommand<IIdProperty>(
+            GeneratePasswordAsync,
+            MaterialIconKind.Regeneration,
+            "Generate password"
+        );
     }
 
     private static readonly INavigator navigator;
@@ -287,6 +293,9 @@ public static class CommandStorage
     private static readonly IObjectStorage objectStorage;
     private static readonly IClipboardService clipboard;
     private static readonly IPasswordService passwordService;
+
+    public static ICommand GeneratePasswordCommand => GeneratePasswordItem.Command;
+    public static CommandItem GeneratePasswordItem { get; }
 
     public static ICommand CloneToDoItemCommand => CloneToDoItemItem.Command;
     public static CommandItem CloneToDoItemItem { get; }
@@ -439,6 +448,12 @@ public static class CommandStorage
     public static CommandItem ShowPasswordItemSettingItem { get; }
 
     public static CommandItem SelectAll { get; }
+
+    private static async Task GeneratePasswordAsync(IIdProperty idProperty, CancellationToken cancellationToken)
+    {
+        var password = await passwordService.GeneratePasswordAsync(idProperty.Id, cancellationToken);
+        await clipboard.SetTextAsync(password);
+    }
 
     private static Task ShowPasswordItemSettingAsync(IIdProperty idProperty, CancellationToken cancellationToken)
     {

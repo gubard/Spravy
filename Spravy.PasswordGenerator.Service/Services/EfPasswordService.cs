@@ -14,11 +14,20 @@ public class EfPasswordService : IPasswordService
 {
     private readonly IFactory<PasswordDbContext> dbContextFactory;
     private readonly IMapper mapper;
+    private readonly IUserSecretService userSecretService;
+    private readonly IPasswordGenerator passwordGenerator;
 
-    public EfPasswordService(IFactory<PasswordDbContext> dbContextFactory, IMapper mapper)
+    public EfPasswordService(
+        IFactory<PasswordDbContext> dbContextFactory,
+        IMapper mapper,
+        IUserSecretService userSecretService,
+        IPasswordGenerator passwordGenerator
+    )
     {
         this.dbContextFactory = dbContextFactory;
         this.mapper = mapper;
+        this.userSecretService = userSecretService;
+        this.passwordGenerator = passwordGenerator;
     }
 
     public async Task AddPasswordItemAsync(AddPasswordOptions options, CancellationToken cancellationToken)
@@ -59,5 +68,19 @@ public class EfPasswordService : IPasswordService
         var item = await context.FindAsync<PasswordItemEntity>(id);
         item = item.ThrowIfNull();
         await context.ExecuteSaveChangesTransactionAsync(c => c.Remove(item));
+    }
+
+    public async Task<string> GeneratePasswordAsync(Guid id, CancellationToken cancellationToken)
+    {
+        await using var context = dbContextFactory.Create();
+        var item = await context.FindAsync<PasswordItemEntity>(id);
+        item = item.ThrowIfNull();
+        var userSecret = await userSecretService.GetUserSecretAsync(cancellationToken);
+
+        return passwordGenerator.GeneratePassword(
+            $"{userSecret}{item.Key}",
+            mapper.Map<GeneratePasswordOptions>(item),
+            cancellationToken
+        );
     }
 }

@@ -117,6 +117,33 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
         );
     }
 
+    public Task<string> GeneratePasswordAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return CallClientAsync(
+            async client =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var metadata = await metadataFactory.CreateAsync(cancellationToken);
+
+                var request = new GeneratePasswordRequest()
+                {
+                    Id = mapper.Map<ByteString>(id),
+                };
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var reply = await client.GeneratePasswordAsync(
+                    request,
+                    metadata,
+                    cancellationToken: cancellationToken
+                );
+
+                return reply.Password;
+            },
+            cancellationToken
+        );
+    }
+
     public static GrpcPasswordService CreateGrpcService(
         IFactory<Uri, PasswordServiceClient> grpcClientFactory,
         Uri host,
