@@ -488,6 +488,41 @@ public static class CommandStorage
             async vm =>
             {
                 await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
+                await passwordService.UpdatePasswordItemKeyAsync(idProperty.Id, vm.Key, cancellationToken);
+                await passwordService.UpdatePasswordItemLengthAsync(idProperty.Id, vm.Length, cancellationToken);
+                await passwordService.UpdatePasswordItemNameAsync(idProperty.Id, vm.Name, cancellationToken);
+                await passwordService.UpdatePasswordItemRegexAsync(idProperty.Id, vm.Regex, cancellationToken);
+
+                await passwordService.UpdatePasswordItemCustomAvailableCharactersAsync(
+                    idProperty.Id,
+                    vm.CustomAvailableCharacters,
+                    cancellationToken
+                );
+
+                await passwordService.UpdatePasswordItemIsAvailableNumberAsync(
+                    idProperty.Id,
+                    vm.IsAvailableNumber,
+                    cancellationToken
+                );
+
+                await passwordService.UpdatePasswordItemIsAvailableLowerLatinAsync(
+                    idProperty.Id,
+                    vm.IsAvailableLowerLatin,
+                    cancellationToken
+                );
+
+                await passwordService.UpdatePasswordItemIsAvailableSpecialSymbolsAsync(
+                    idProperty.Id,
+                    vm.IsAvailableSpecialSymbols,
+                    cancellationToken
+                );
+
+                await passwordService.UpdatePasswordItemIsAvailableUpperLatinAsync(
+                    idProperty.Id,
+                    vm.IsAvailableUpperLatin,
+                    cancellationToken
+                );
+
                 await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
             },
             _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
