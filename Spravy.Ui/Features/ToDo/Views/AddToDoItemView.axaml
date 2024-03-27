@@ -4,10 +4,10 @@
                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:ru="http://reactiveui.net"
-                        xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
                         xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+                        xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
-                        x:Class="Spravy.Ui.Views.AddToDoItemView"
+                        x:Class="Spravy.Ui.Features.ToDo.Views.AddToDoItemView"
                         x:DataType="vm:AddToDoItemViewModel">
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">

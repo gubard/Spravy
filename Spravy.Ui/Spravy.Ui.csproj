@@ -57,19 +57,4 @@
       <ProjectReference Include="..\Spravy.ToDo.Domain.Mapper\Spravy.ToDo.Domain.Mapper.csproj" />
       <ProjectReference Include="..\Spravy.ToDo.Domain\Spravy.ToDo.Domain.csproj" />
     </ItemGroup>
-
-    <ItemGroup>
-      <Compile Update="Features\ToDo\Views\ToDoItemsView.axaml.cs">
-        <DependentUpon>ToDoItemsView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Features\PasswordGenerator\Views\PasswordGeneratorView.axaml.cs">
-        <DependentUpon>PasswordGeneratorView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Features\ToDo\Views\AddRootToDoItemView.axaml.cs">
-        <DependentUpon>AddRootToDoItemView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-    </ItemGroup>
 </Project>
