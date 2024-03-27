@@ -77,7 +77,12 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 var metadata = await metadataFactory.CreateAsync(cancellationToken);
-                var request = new GetPasswordItemRequest();
+
+                var request = new GetPasswordItemRequest
+                {
+                    Id = mapper.Map<ByteString>(id),
+                };
+
                 cancellationToken.ThrowIfCancellationRequested();
 
                 var reply = await client.GetPasswordItemAsync(

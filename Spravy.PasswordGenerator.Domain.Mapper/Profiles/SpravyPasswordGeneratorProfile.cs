@@ -16,6 +16,8 @@ public class SpravyPasswordGeneratorProfile : Profile
         CreateMap<AddPasswordOptions, AddPasswordItemRequest>();
         CreateMap<AddPasswordItemRequest, AddPasswordOptions>();
         CreateMap<PasswordItem, PasswordItemGrpc>();
+        CreateMap<PasswordItem, GetPasswordItemReply>();
+        CreateMap<GetPasswordItemReply, PasswordItem>();
         CreateMap<PasswordItemGrpc, PasswordItem>();
     }
 }

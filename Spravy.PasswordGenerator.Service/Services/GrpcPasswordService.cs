@@ -77,4 +77,132 @@ public class GrpcPasswordService : PasswordServiceBase
 
         return new DeletePasswordItemReply();
     }
+
+    public override async Task<UpdatePasswordItemNameReply> UpdatePasswordItemName(
+        UpdatePasswordItemNameRequest request,
+        ServerCallContext context
+    )
+    {
+        await passwordService.UpdatePasswordItemNameAsync(
+            mapper.Map<Guid>(request.Id),
+            request.Name,
+            context.CancellationToken
+        );
+
+        return new UpdatePasswordItemNameReply();
+    }
+
+    public override async Task<UpdatePasswordItemKeyReply> UpdatePasswordItemKey(
+        UpdatePasswordItemKeyRequest request,
+        ServerCallContext context
+    )
+    {
+        await passwordService.UpdatePasswordItemKeyAsync(
+            mapper.Map<Guid>(request.Id),
+            request.Key,
+            context.CancellationToken
+        );
+
+        return new UpdatePasswordItemKeyReply();
+    }
+
+    public override async Task<UpdatePasswordItemLengthReply> UpdatePasswordItemLength(
+        UpdatePasswordItemLengthRequest request,
+        ServerCallContext context
+    )
+    {
+        await passwordService.UpdatePasswordItemLengthAsync(
+            mapper.Map<Guid>(request.Id),
+            (ushort)request.Length,
+            context.CancellationToken
+        );
+
+        return new UpdatePasswordItemLengthReply();
+    }
+
+    public override async Task<UpdatePasswordItemRegexReply> UpdatePasswordItemRegex(
+        UpdatePasswordItemRegexRequest request,
+        ServerCallContext context
+    )
+    {
+        await passwordService.UpdatePasswordItemRegexAsync(
+            mapper.Map<Guid>(request.Id),
+            request.Regex,
+            context.CancellationToken
+        );
+
+        return new UpdatePasswordItemRegexReply();
+    }
+
+    public override async Task<UpdatePasswordItemCustomAvailableCharactersReply>
+        UpdatePasswordItemCustomAvailableCharacters(
+            UpdatePasswordItemCustomAvailableCharactersRequest request,
+            ServerCallContext context
+        )
+    {
+        await passwordService.UpdatePasswordItemCustomAvailableCharactersAsync(
+            mapper.Map<Guid>(request.Id),
+            request.CustomAvailableCharacters,
+            context.CancellationToken
+        );
+
+        return new UpdatePasswordItemCustomAvailableCharactersReply();
+    }
+
+    public override async Task<UpdatePasswordItemIsAvailableNumberReply> UpdatePasswordItemIsAvailableNumber(
+        UpdatePasswordItemIsAvailableNumberRequest request,
+        ServerCallContext context
+    )
+    {
+        await passwordService.UpdatePasswordItemIsAvailableNumberAsync(
+            mapper.Map<Guid>(request.Id),
+            request.IsAvailableNumber,
+            context.CancellationToken
+        );
+
+        return new UpdatePasswordItemIsAvailableNumberReply();
+    }
+
+    public override async Task<UpdatePasswordItemIsAvailableLowerLatinReply> UpdatePasswordItemIsAvailableLowerLatin(
+        UpdatePasswordItemIsAvailableLowerLatinRequest request,
+        ServerCallContext context
+    )
+    {
+        await passwordService.UpdatePasswordItemIsAvailableLowerLatinAsync(
+            mapper.Map<Guid>(request.Id),
+            request.IsAvailableLowerLatin,
+            context.CancellationToken
+        );
+
+        return new UpdatePasswordItemIsAvailableLowerLatinReply();
+    }
+
+    public override async Task<UpdatePasswordItemIsAvailableSpecialSymbolsReply>
+        UpdatePasswordItemIsAvailableSpecialSymbols(
+            UpdatePasswordItemIsAvailableSpecialSymbolsRequest request,
+            ServerCallContext context
+        )
+    {
+        await passwordService.UpdatePasswordItemIsAvailableSpecialSymbolsAsync(
+            mapper.Map<Guid>(request.Id),
+            request.IsAvailableSpecialSymbols,
+            context.CancellationToken
+        );
+
+        return new UpdatePasswordItemIsAvailableSpecialSymbolsReply();
+    }
+
+    public override async Task<UpdatePasswordItemIsAvailableUpperLatinReply> UpdatePasswordItemIsAvailableUpperLatin(
+        UpdatePasswordItemIsAvailableUpperLatinRequest request,
+        ServerCallContext context
+    )
+    {
+        await passwordService.UpdatePasswordItemIsAvailableUpperLatinAsync(
+            mapper.Map<Guid>(request.Id),
+            request.IsAvailableUpperLatin,
+            context.CancellationToken
+        );
+
+        return new UpdatePasswordItemIsAvailableUpperLatinReply();
+    }
 }
