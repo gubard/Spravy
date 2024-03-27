@@ -488,40 +488,53 @@ public static class CommandStorage
             async vm =>
             {
                 await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
-                await passwordService.UpdatePasswordItemKeyAsync(idProperty.Id, vm.Key, cancellationToken);
-                await passwordService.UpdatePasswordItemLengthAsync(idProperty.Id, vm.Length, cancellationToken);
-                await passwordService.UpdatePasswordItemNameAsync(idProperty.Id, vm.Name, cancellationToken);
-                await passwordService.UpdatePasswordItemRegexAsync(idProperty.Id, vm.Regex, cancellationToken);
+
+                await passwordService.UpdatePasswordItemKeyAsync(idProperty.Id, vm.Key, cancellationToken)
+                    .ConfigureAwait(false);
+
+                await passwordService.UpdatePasswordItemLengthAsync(idProperty.Id, vm.Length, cancellationToken)
+                    .ConfigureAwait(false);
+
+                await passwordService.UpdatePasswordItemNameAsync(idProperty.Id, vm.Name, cancellationToken)
+                    .ConfigureAwait(false);
+
+                await passwordService.UpdatePasswordItemRegexAsync(idProperty.Id, vm.Regex, cancellationToken)
+                    .ConfigureAwait(false);
 
                 await passwordService.UpdatePasswordItemCustomAvailableCharactersAsync(
-                    idProperty.Id,
-                    vm.CustomAvailableCharacters,
-                    cancellationToken
-                );
+                        idProperty.Id,
+                        vm.CustomAvailableCharacters,
+                        cancellationToken
+                    )
+                    .ConfigureAwait(false);
 
                 await passwordService.UpdatePasswordItemIsAvailableNumberAsync(
-                    idProperty.Id,
-                    vm.IsAvailableNumber,
-                    cancellationToken
-                );
+                        idProperty.Id,
+                        vm.IsAvailableNumber,
+                        cancellationToken
+                    )
+                    .ConfigureAwait(false);
 
                 await passwordService.UpdatePasswordItemIsAvailableLowerLatinAsync(
-                    idProperty.Id,
-                    vm.IsAvailableLowerLatin,
-                    cancellationToken
-                );
+                        idProperty.Id,
+                        vm.IsAvailableLowerLatin,
+                        cancellationToken
+                    )
+                    .ConfigureAwait(false);
 
                 await passwordService.UpdatePasswordItemIsAvailableSpecialSymbolsAsync(
-                    idProperty.Id,
-                    vm.IsAvailableSpecialSymbols,
-                    cancellationToken
-                );
+                        idProperty.Id,
+                        vm.IsAvailableSpecialSymbols,
+                        cancellationToken
+                    )
+                    .ConfigureAwait(false);
 
                 await passwordService.UpdatePasswordItemIsAvailableUpperLatinAsync(
-                    idProperty.Id,
-                    vm.IsAvailableUpperLatin,
-                    cancellationToken
-                );
+                        idProperty.Id,
+                        vm.IsAvailableUpperLatin,
+                        cancellationToken
+                    )
+                    .ConfigureAwait(false);
 
                 await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
             },
