@@ -92,6 +92,12 @@ class Build : NukeBuild
             {
                 "Spravy.ToDo.Service".GetGrpcServiceName(), 5004
             },
+            {
+                "Spravy.PasswordGenerator.Service".GetGrpcServiceName(), 5005
+            },
+            {
+                "Spravy.Password.Service".GetGrpcServiceName(), 5005
+            },
         };
     }
 
