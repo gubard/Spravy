@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Spravy.PasswordGenerator.Db.Sqlite.Migrator.Migrations
+namespace Spravy.PasswordGenerator.Db.Sqlite.Migrator.Migrations.PasswordDb
 {
     /// <inheritdoc />
-    public partial class InitializePasswordDbContext : Migration
+    public partial class InitializeUserSecretDbContext : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,7 +18,11 @@ namespace Spravy.PasswordGenerator.Db.Sqlite.Migrator.Migrations
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     Key = table.Column<string>(type: "TEXT", nullable: false),
-                    AvailableCharacters = table.Column<string>(type: "TEXT", nullable: false),
+                    IsAvailableUpperLatin = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsAvailableLowerLatin = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsAvailableNumber = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsAvailableSpecialSymbols = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CustomAvailableCharacters = table.Column<string>(type: "TEXT", nullable: false),
                     Length = table.Column<ushort>(type: "INTEGER", nullable: false),
                     Regex = table.Column<string>(type: "TEXT", nullable: false)
                 },

@@ -79,8 +79,7 @@ public class EfPasswordService : IPasswordService
 
         return passwordGenerator.GeneratePassword(
             $"{userSecret}{item.Key}",
-            mapper.Map<GeneratePasswordOptions>(item),
-            cancellationToken
+            mapper.Map<GeneratePasswordOptions>(item)
         );
     }
 }

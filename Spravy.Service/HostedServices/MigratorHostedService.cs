@@ -4,73 +4,43 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Spravy.Db.Sqlite.Extensions;
 using Spravy.Db.Sqlite.Models;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 
 namespace Spravy.Service.HostedServices;
 
-public class MigratorHostedService<TDbContext> : IHostedService where TDbContext : DbContext
+public class FileMigratorHostedService<TDbContext> : IHostedService where TDbContext : DbContext
 {
-    private const string MigrationFileName = ".migration";
-    private readonly SqliteFolderOptions sqliteFolderOptions;
-    private readonly IFactory<string, TDbContext> dbContextFactory;
-    private readonly ILogger<MigratorHostedService<TDbContext>> logger;
+    private readonly ILogger<FileMigratorHostedService<TDbContext>> logger;
+    private readonly SqliteFileOptions sqliteFileOptions;
+    private readonly IFactory<string, TDbContext> spravyAuthenticationDbContextFactory;
 
-    public MigratorHostedService(
-        SqliteFolderOptions sqliteFolderOptions,
-        IFactory<string, TDbContext> dbContextFactory,
-        ILogger<MigratorHostedService<TDbContext>> logger
+    public FileMigratorHostedService(
+        SqliteFileOptions sqliteFileOptions,
+        IFactory<string, TDbContext> spravyAuthenticationDbContextFactory,
+        ILogger<FileMigratorHostedService<TDbContext>> logger
     )
     {
-        this.sqliteFolderOptions = sqliteFolderOptions;
-        this.dbContextFactory = dbContextFactory;
+        this.sqliteFileOptions = sqliteFileOptions;
+        this.spravyAuthenticationDbContextFactory = spravyAuthenticationDbContextFactory;
         this.logger = logger;
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        var migrationFile = sqliteFolderOptions.DataBasesFolder.ThrowIfNullOrWhiteSpace()
-            .ToDirectory()
-            .ToFile(MigrationFileName);
+        var dataBaseFile = sqliteFileOptions.DataBaseFile.ThrowIfNull().ToFile();
+        logger.LogInformation("Start migration {DataBaseFile}", dataBaseFile);
+        await using var context = spravyAuthenticationDbContextFactory.Create(dataBaseFile.ToSqliteConnectionString());
 
-        cancellationToken.ThrowIfCancellationRequested();
-        var migrationId = GetMigrationId();
-
-        logger.LogInformation("Start migration to {MigrationId}", migrationId);
-
-        if (!await IsNeedMigration(migrationFile, migrationId))
+        if (dataBaseFile.Directory is not null && !dataBaseFile.Directory.Exists)
         {
-            logger.LogInformation("End migration to {MigrationId}", migrationId);
-
-            return;
+            dataBaseFile.Directory.Create();
         }
 
-        var dataBasesFolder = sqliteFolderOptions.DataBasesFolder.ThrowIfNullOrWhiteSpace().ToDirectory();
-
-        if (!dataBasesFolder.Exists)
-        {
-            dataBasesFolder.Create();
-        }
-
-        var dataBaseFiles = dataBasesFolder.GetFiles("*.db");
-        cancellationToken.ThrowIfCancellationRequested();
-
-        foreach (var dataBaseFile in dataBaseFiles)
-        {
-            logger.LogInformation("Start migration {MigrationId} {DataBaseFile}", migrationId, dataBaseFile);
-            await using var spravyToDoDbContext = dbContextFactory.Create($"DataSource={dataBaseFile}");
-            await spravyToDoDbContext.Database.MigrateAsync(cancellationToken);
-            logger.LogInformation("End migration {MigrationId} {DataBaseFile}", migrationId, dataBaseFile);
-        }
-
-        if (migrationFile.Exists)
-        {
-            migrationFile.Delete();
-        }
-
-        await migrationFile.WriteAllTextAsync(migrationId);
-        logger.LogInformation("End migration to {MigrationId}", migrationId);
+        await context.Database.MigrateAsync(cancellationToken);
+        logger.LogInformation("End migration {DataBaseFile}", dataBaseFile);
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
@@ -100,17 +70,5 @@ public class MigratorHostedService<TDbContext> : IHostedService where TDbContext
             .Select(x => x.ThrowIfNull().Id)
             .OrderByDescending(x => x)
             .First();
-    }
-
-    private async Task<bool> IsNeedMigration(FileInfo migrationFile, string migrationId)
-    {
-        if (!migrationFile.Exists)
-        {
-            return true;
-        }
-
-        var text = await migrationFile.ReadAllTextAsync();
-
-        return migrationId != text;
     }
 }

@@ -32,7 +32,7 @@ public static class ServiceCollectionExtension
 {
     public static IServiceCollection RegisterSchedule(this IServiceCollection serviceCollection)
     {
-        serviceCollection.AddHostedService<MigratorHostedService<SpravyDbScheduleDbContext>>();
+        serviceCollection.AddHostedService<FolderMigratorHostedService<SpravyDbScheduleDbContext>>();
         serviceCollection
             .AddMapperConfiguration<SpravyScheduleProfile, SpravyScheduleDbProfile, SpravyAuthenticationProfile>();
         serviceCollection.AddSpravySqliteFolderContext<SpravyDbScheduleDbContext, SpravyScheduleDbSqliteMigratorMark>();

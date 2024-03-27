@@ -7,7 +7,6 @@ using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Mapper.Profiles;
 using Spravy.Authentication.Domain.Models;
 using Spravy.Authentication.Service.Helpers;
-using Spravy.Authentication.Service.HostedServices;
 using Spravy.Authentication.Service.Interfaces;
 using Spravy.Authentication.Service.Models;
 using Spravy.Authentication.Service.Services;
@@ -30,6 +29,7 @@ using Spravy.Client.Extensions;
 using Spravy.Core.Options;
 using Spravy.Core.Services;
 using Spravy.EventBus.Protos;
+using Spravy.Service.HostedServices;
 
 namespace Spravy.Authentication.Service.Extensions;
 
@@ -37,7 +37,7 @@ public static class ServiceCollectionExtension
 {
     public static IServiceCollection RegisterAuthentication(this IServiceCollection serviceCollection)
     {
-        serviceCollection.AddHostedService<MigratorHostedService>();
+        serviceCollection.AddHostedService<FileMigratorHostedService<SpravyDbAuthenticationDbContext>>();
         serviceCollection.AddMapperConfiguration<SpravyAuthenticationProfile, SpravyAuthenticationDbProfile>();
         serviceCollection.AddSingleton<IDbContextSetup, SqliteAuthenticationDbContextSetup>();
         serviceCollection.AddSingleton<ITokenFactory, JwtTokenFactory>();

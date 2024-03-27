@@ -4,5 +4,5 @@ namespace Spravy.PasswordGenerator.Domain.Interfaces;
 
 public interface IPasswordGenerator
 {
-    string GeneratePassword(string key, GeneratePasswordOptions options, CancellationToken cancellationToken);
+    string GeneratePassword(string key, GeneratePasswordOptions passwordOptions);
 }

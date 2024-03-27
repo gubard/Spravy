@@ -8,11 +8,11 @@ using Spravy.PasswordGenerator.Db.Contexts;
 
 #nullable disable
 
-namespace Spravy.PasswordGenerator.Db.Sqlite.Migrator.Migrations
+namespace Spravy.PasswordGenerator.Db.Sqlite.Migrator.Migrations.PasswordDb
 {
     [DbContext(typeof(PasswordDbContext))]
-    [Migration("20240326190750_AddIs")]
-    partial class AddIs
+    [Migration("20240327104753_InitializeUserSecretDbContext")]
+    partial class InitializeUserSecretDbContext
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

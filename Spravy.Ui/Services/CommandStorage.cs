@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
+using Avalonia.Controls;
 using Grpc.Core;
 using Material.Icons;
 using Ninject;
@@ -29,6 +30,7 @@ using Spravy.Ui.Helpers;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 using Spravy.Ui.ViewModels;
+using Spravy.Ui.Views;
 
 namespace Spravy.Ui.Services;
 
@@ -274,10 +276,14 @@ public static class CommandStorage
             MaterialIconKind.Settings,
             "Show password setting"
         );
-
         GeneratePasswordItem = CreateCommand<IIdProperty>(
             GeneratePasswordAsync,
             MaterialIconKind.Regeneration,
+            "Generate password"
+        );
+        RemovePasswordItemItem = CreateCommand<IIdProperty>(
+            RemovePasswordItemAsync,
+            MaterialIconKind.Delete,
             "Generate password"
         );
     }
@@ -293,6 +299,9 @@ public static class CommandStorage
     private static readonly IObjectStorage objectStorage;
     private static readonly IClipboardService clipboard;
     private static readonly IPasswordService passwordService;
+
+    public static ICommand RemovePasswordItemCommand => RemovePasswordItemItem.Command;
+    public static CommandItem RemovePasswordItemItem { get; }
 
     public static ICommand GeneratePasswordCommand => GeneratePasswordItem.Command;
     public static CommandItem GeneratePasswordItem { get; }
@@ -449,6 +458,24 @@ public static class CommandStorage
 
     public static CommandItem SelectAll { get; }
 
+    private static Task RemovePasswordItemAsync(IIdProperty idProperty, CancellationToken cancellationToken)
+    {
+        return dialogViewer.ShowConfirmContentDialogAsync<TextViewModel>(
+            async _ =>
+            {
+                await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
+
+                await passwordService.RemovePasswordItemAsync(idProperty.Id, cancellationToken)
+                    .ConfigureAwait(false);
+
+                await RefreshCurrentViewAsync(cancellationToken);
+            },
+            _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
+            view => view.Text = "Are you sure?",
+            cancellationToken
+        );
+    }
+
     private static async Task GeneratePasswordAsync(IIdProperty idProperty, CancellationToken cancellationToken)
     {
         var password = await passwordService.GeneratePasswordAsync(idProperty.Id, cancellationToken);
@@ -457,14 +484,14 @@ public static class CommandStorage
 
     private static Task ShowPasswordItemSettingAsync(IIdProperty idProperty, CancellationToken cancellationToken)
     {
-        return dialogViewer.ShowConfirmContentDialogAsync(
+        return dialogViewer.ShowConfirmContentDialogAsync<PasswordItemSettingsViewModel>(
             async vm =>
             {
                 await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
                 await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
             },
             _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
-            ActionHelper<PasswordItemSettingsViewModel>.Empty,
+            vm => vm.Id = idProperty.Id,
             cancellationToken
         );
     }
