@@ -49,11 +49,11 @@ public static class ServiceCollectionExtension
             SpravyEventBusProfile,
             SpravyAuthenticationProfile>();
 
-        /*serviceCollection.AddGrpcService2<GrpcAuthenticationService,
+        /*serviceCollection.AddGrpcService<GrpcAuthenticationService,
             Spravy.Authentication.Protos.AuthenticationService.AuthenticationServiceClient,
             GrpcAuthenticationServiceOptions>();
 
-        serviceCollection.AddGrpcService<GrpcEventBusService,
+        serviceCollection.AddGrpcServiceAuth<GrpcEventBusService,
             EventBusService.EventBusServiceClient,
             GrpcEventBusServiceOptions>();*/
 

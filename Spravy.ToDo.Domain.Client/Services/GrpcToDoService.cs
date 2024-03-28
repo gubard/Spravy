@@ -18,7 +18,7 @@ namespace Spravy.ToDo.Domain.Client.Services;
 
 public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
     IToDoService,
-    IGrpcServiceCreator<GrpcToDoService, ToDoServiceClient>
+    IGrpcServiceCreatorAuth<GrpcToDoService, ToDoServiceClient>
 {
     private readonly IMapper mapper;
     private readonly IMetadataFactory metadataFactory;
@@ -27,8 +27,9 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         IFactory<Uri, ToDoServiceClient> grpcClientFactory,
         Uri host,
         IMapper mapper,
-        IMetadataFactory metadataFactory
-    ) : base(grpcClientFactory, host)
+        IMetadataFactory metadataFactory,
+        ISerializer serializer
+    ) : base(grpcClientFactory, host, serializer)
     {
         this.mapper = mapper;
         this.metadataFactory = metadataFactory;
@@ -1263,9 +1264,10 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         IFactory<Uri, ToDoServiceClient> grpcClientFactory,
         Uri host,
         IMapper mapper,
-        IMetadataFactory metadataFactory
+        IMetadataFactory metadataFactory,
+        ISerializer serializer
     )
     {
-        return new(grpcClientFactory, host, mapper, metadataFactory);
+        return new(grpcClientFactory, host, mapper, metadataFactory, serializer);
     }
 }

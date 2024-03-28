@@ -12,7 +12,7 @@ namespace Spravy.PasswordGenerator.Domain.Client.Services;
 
 public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
     IPasswordService,
-    IGrpcServiceCreator<GrpcPasswordService, PasswordServiceClient>
+    IGrpcServiceCreatorAuth<GrpcPasswordService, PasswordServiceClient>
 {
     private readonly IMapper mapper;
     private readonly IMetadataFactory metadataFactory;
@@ -21,8 +21,9 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
         IFactory<Uri, PasswordServiceClient> grpcClientFactory,
         Uri host,
         IMapper mapper,
-        IMetadataFactory metadataFactory
-    ) : base(grpcClientFactory, host)
+        IMetadataFactory metadataFactory,
+        ISerializer serializer
+    ) : base(grpcClientFactory, host, serializer)
     {
         this.mapper = mapper;
         this.metadataFactory = metadataFactory;
@@ -407,9 +408,10 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
         IFactory<Uri, PasswordServiceClient> grpcClientFactory,
         Uri host,
         IMapper mapper,
-        IMetadataFactory metadataFactory
+        IMetadataFactory metadataFactory,
+        ISerializer serializer
     )
     {
-        return new(grpcClientFactory, host, mapper, metadataFactory);
+        return new(grpcClientFactory, host, mapper, metadataFactory, serializer);
     }
 }

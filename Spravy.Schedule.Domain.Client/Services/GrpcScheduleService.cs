@@ -12,7 +12,7 @@ namespace Spravy.Schedule.Domain.Client.Services;
 
 public class GrpcScheduleService : GrpcServiceBase<ScheduleServiceClient>,
     IScheduleService,
-    IGrpcServiceCreator<GrpcScheduleService, ScheduleServiceClient>
+    IGrpcServiceCreatorAuth<GrpcScheduleService, ScheduleServiceClient>
 {
     private readonly IMapper mapper;
     private readonly IMetadataFactory metadataFactory;
@@ -21,8 +21,9 @@ public class GrpcScheduleService : GrpcServiceBase<ScheduleServiceClient>,
         IFactory<Uri, ScheduleServiceClient> grpcClientFactory,
         Uri host,
         IMapper mapper,
-        IMetadataFactory metadataFactory
-    ) : base(grpcClientFactory, host)
+        IMetadataFactory metadataFactory,
+        ISerializer serializer
+    ) : base(grpcClientFactory, host, serializer)
     {
         this.mapper = mapper;
         this.metadataFactory = metadataFactory;
@@ -85,9 +86,10 @@ public class GrpcScheduleService : GrpcServiceBase<ScheduleServiceClient>,
         IFactory<Uri, ScheduleServiceClient> grpcClientFactory,
         Uri host,
         IMapper mapper,
-        IMetadataFactory metadataFactory
+        IMetadataFactory metadataFactory,
+        ISerializer serializer
     )
     {
-        return new GrpcScheduleService(grpcClientFactory, host, mapper, metadataFactory);
+        return new GrpcScheduleService(grpcClientFactory, host, mapper, metadataFactory, serializer);
     }
 }

@@ -13,7 +13,7 @@ namespace Spravy.EventBus.Domain.Client.Services;
 
 public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
     IEventBusService,
-    IGrpcServiceCreator<GrpcEventBusService, EventBusServiceClient>
+    IGrpcServiceCreatorAuth<GrpcEventBusService, EventBusServiceClient>
 {
     private readonly IMapper mapper;
     private readonly IMetadataFactory metadataFactory;
@@ -22,8 +22,9 @@ public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
         IFactory<Uri, EventBusServiceClient> grpcClientFactory,
         Uri host,
         IMapper mapper,
-        IMetadataFactory metadataFactory
-    ) : base(grpcClientFactory, host)
+        IMetadataFactory metadataFactory,
+        ISerializer serializer
+    ) : base(grpcClientFactory, host, serializer)
     {
         this.mapper = mapper;
         this.metadataFactory = metadataFactory;
@@ -107,9 +108,10 @@ public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
         IFactory<Uri, EventBusServiceClient> grpcClientFactory,
         Uri host,
         IMapper mapper,
-        IMetadataFactory metadataFactory
+        IMetadataFactory metadataFactory,
+        ISerializer serializer
     )
     {
-        return new(grpcClientFactory, host, mapper, metadataFactory);
+        return new(grpcClientFactory, host, mapper, metadataFactory, serializer);
     }
 }

@@ -15,11 +15,11 @@ namespace Spravy.Domain.Di.Extensions;
 
 public static class NinjectModuleExtension
 {
-    public static NinjectModule BindGrpcService2<TGrpcService, TGrpcClient, TGrpcOptions>(
+    public static NinjectModule BindGrpcService<TGrpcService, TGrpcClient, TGrpcOptions>(
         this NinjectModule module,
         bool useCache = true
     )
-        where TGrpcService : GrpcServiceBase<TGrpcClient>, IGrpcServiceCreator2<TGrpcService, TGrpcClient>
+        where TGrpcService : GrpcServiceBase<TGrpcClient>, IGrpcServiceCreator<TGrpcService, TGrpcClient>
         where TGrpcClient : ClientBase
         where TGrpcOptions : class, IGrpcOptionsValue
     {
@@ -64,19 +64,20 @@ public static class NinjectModuleExtension
                     var grpcClientFactory = context.Kernel.GetRequiredService<IFactory<Uri, TGrpcClient>>();
                     var host = options.Host.ThrowIfNull().ToUri();
                     var mapper = context.Kernel.GetRequiredService<IMapper>();
+                    var serializer = context.Kernel.GetRequiredService<ISerializer>();
 
-                    return TGrpcService.CreateGrpcService(grpcClientFactory, host, mapper);
+                    return TGrpcService.CreateGrpcService(grpcClientFactory, host, mapper, serializer);
                 }
             );
 
         return module;
     }
 
-    public static NinjectModule BindGrpcService<TGrpcService, TGrpcClient, TGrpcOptions>(
+    public static NinjectModule BindGrpcServiceAuth<TGrpcService, TGrpcClient, TGrpcOptions>(
         this NinjectModule module,
         bool useCache = true
     )
-        where TGrpcService : GrpcServiceBase<TGrpcClient>, IGrpcServiceCreator<TGrpcService, TGrpcClient>
+        where TGrpcService : GrpcServiceBase<TGrpcClient>, IGrpcServiceCreatorAuth<TGrpcService, TGrpcClient>
         where TGrpcClient : ClientBase
         where TGrpcOptions : class, IGrpcOptionsValue
     {
@@ -122,8 +123,9 @@ public static class NinjectModuleExtension
                     var mapper = context.Kernel.GetRequiredService<IMapper>();
                     var host = options.Host.ThrowIfNull().ToUri();
                     var metadataFactory = CreateMetadataFactory(options, context.Kernel);
+                    var serializer = context.Kernel.GetRequiredService<ISerializer>();
 
-                    return TGrpcService.CreateGrpcService(factory, host, mapper, metadataFactory);
+                    return TGrpcService.CreateGrpcService(factory, host, mapper, metadataFactory, serializer);
                 }
             );
 

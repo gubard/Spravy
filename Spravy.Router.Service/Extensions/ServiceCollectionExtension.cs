@@ -37,7 +37,7 @@ public static class ServiceCollectionExtension
 {
     public static IServiceCollection RegisterRouter(this IServiceCollection serviceCollection)
     {
-        serviceCollection.AddGrpcService<GrpcToDoService, ToDoService.ToDoServiceClient, GrpcToDoServiceOptions>();
+        serviceCollection.AddGrpcServiceAuth<GrpcToDoService, ToDoService.ToDoServiceClient, GrpcToDoServiceOptions>();
         serviceCollection.AddTransient<IEventBusService>(sp => sp.GetRequiredService<GrpcEventBusService>());
         serviceCollection.AddTransient<IScheduleService>(sp => sp.GetRequiredService<GrpcScheduleService>());
         serviceCollection.AddTransient<IToDoService>(sp => sp.GetRequiredService<GrpcToDoService>());
@@ -52,15 +52,15 @@ public static class ServiceCollectionExtension
             SpravyScheduleProfile,
             SpravyToDoProfile>();
 
-        serviceCollection.AddGrpcService2<GrpcAuthenticationService,
+        serviceCollection.AddGrpcService<GrpcAuthenticationService,
             AuthenticationService.AuthenticationServiceClient,
             GrpcAuthenticationServiceOptions>();
 
-        serviceCollection.AddGrpcService<GrpcEventBusService,
+        serviceCollection.AddGrpcServiceAuth<GrpcEventBusService,
             EventBusService.EventBusServiceClient,
             GrpcEventBusServiceOptions>();
 
-        serviceCollection.AddGrpcService<GrpcScheduleService,
+        serviceCollection.AddGrpcServiceAuth<GrpcScheduleService,
             ScheduleService.ScheduleServiceClient,
             GrpcScheduleServiceOptions>();
 

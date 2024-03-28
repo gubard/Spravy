@@ -17,13 +17,15 @@ public class EventBusServiceFactory : IFactory<string, IEventBusService>
     private readonly IFactory<Uri, EventBusService.EventBusServiceClient> eventBusServiceClientFactory;
     private readonly GrpcEventBusServiceOptions options;
     private readonly ITokenService tokenService;
+    private readonly ISerializer serializer;
 
     public EventBusServiceFactory(
         IMapper mapper,
         IHttpHeaderFactory httpHeaderFactory,
         IFactory<Uri, EventBusService.EventBusServiceClient> eventBusServiceClientFactory,
         GrpcEventBusServiceOptions options,
-        ITokenService tokenService
+        ITokenService tokenService,
+        ISerializer serializer
     )
     {
         this.mapper = mapper;
@@ -31,6 +33,7 @@ public class EventBusServiceFactory : IFactory<string, IEventBusService>
         this.eventBusServiceClientFactory = eventBusServiceClientFactory;
         this.options = options;
         this.tokenService = tokenService;
+        this.serializer = serializer;
     }
 
     public IEventBusService Create(string key)
@@ -50,6 +53,6 @@ public class EventBusServiceFactory : IFactory<string, IEventBusService>
         var metadataFactory = new MetadataFactory(new CombineHttpHeaderFactory(headers));
         var host = options.Host.ThrowIfNull().ToUri();
 
-        return new GrpcEventBusService(eventBusServiceClientFactory, host, mapper, metadataFactory);
+        return new GrpcEventBusService(eventBusServiceClientFactory, host, mapper, metadataFactory, serializer);
     }
 }

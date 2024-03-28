@@ -12,15 +12,16 @@ namespace Spravy.Authentication.Domain.Client.Services;
 
 public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceClient>,
     IAuthenticationService,
-    IGrpcServiceCreator2<GrpcAuthenticationService, AuthenticationServiceClient>
+    IGrpcServiceCreator<GrpcAuthenticationService, AuthenticationServiceClient>
 {
     private readonly IMapper mapper;
 
     public GrpcAuthenticationService(
         IFactory<Uri, AuthenticationServiceClient> grpcClientFactory,
         Uri host,
+        ISerializer serializer,
         IMapper mapper
-    ) : base(grpcClientFactory, host)
+    ) : base(grpcClientFactory, host, serializer)
     {
         this.mapper = mapper;
     }
@@ -54,8 +55,6 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
                 var request = mapper.Map<CreateUserRequest>(options);
                 cancellationToken.ThrowIfCancellationRequested();
                 await client.CreateUserAsync(request);
-                
-                return new Error();
             },
             cancellationToken
         );
@@ -330,9 +329,10 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
     public static GrpcAuthenticationService CreateGrpcService(
         IFactory<Uri, AuthenticationServiceClient> grpcClientFactory,
         Uri host,
-        IMapper mapper
+        IMapper mapper,
+        ISerializer serializer
     )
     {
-        return new GrpcAuthenticationService(grpcClientFactory, host, mapper);
+        return new GrpcAuthenticationService(grpcClientFactory, host, serializer, mapper);
     }
 }

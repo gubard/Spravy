@@ -71,7 +71,7 @@ public static class ServiceCollectionExtension
         serviceCollection.AddSpravySqliteFileDbContext<SpravyDbAuthenticationDbContext,
             SpravyAuthenticationDbSqliteMigratorMark>();
 
-        serviceCollection.AddGrpcService<GrpcEventBusService,
+        serviceCollection.AddGrpcServiceAuth<GrpcEventBusService,
             EventBusService.EventBusServiceClient,
             GrpcEventBusServiceOptions>();
 

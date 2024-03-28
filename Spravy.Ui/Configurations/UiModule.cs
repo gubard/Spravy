@@ -70,19 +70,19 @@ public class UiModule : NinjectModule
         Bind<IPropertyValidator>().To<PropertyValidator>();
         Bind<StorageDbContext>().ToMethod(c => new StorageDbContext(c.Kernel.GetRequiredService<IDbContextSetup>()));
 
-        this.BindGrpcService2<GrpcAuthenticationService, AuthenticationService.AuthenticationServiceClient,
+        this.BindGrpcService<GrpcAuthenticationService, AuthenticationService.AuthenticationServiceClient,
             GrpcAuthenticationServiceOptions>(useCache);
 
-        this.BindGrpcService<GrpcScheduleService, ScheduleService.ScheduleServiceClient,
+        this.BindGrpcServiceAuth<GrpcScheduleService, ScheduleService.ScheduleServiceClient,
             GrpcScheduleServiceOptions>(useCache);
 
-        this.BindGrpcService<GrpcToDoService, ToDoService.ToDoServiceClient,
+        this.BindGrpcServiceAuth<GrpcToDoService, ToDoService.ToDoServiceClient,
             GrpcToDoServiceOptions>(useCache);
 
-        this.BindGrpcService<GrpcEventBusService, EventBusService.EventBusServiceClient,
+        this.BindGrpcServiceAuth<GrpcEventBusService, EventBusService.EventBusServiceClient,
             GrpcEventBusServiceOptions>(useCache);
 
-        this.BindGrpcService<GrpcPasswordService, PasswordService.PasswordServiceClient,
+        this.BindGrpcServiceAuth<GrpcPasswordService, PasswordService.PasswordServiceClient,
             GrpcPasswordServiceOptions>(useCache);
 
         Bind<AccountNotify>().ToSelf().InSingletonScope();
