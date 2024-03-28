@@ -32,7 +32,7 @@ public static class ConfiguredTaskAwaitableExtension
         }
         else
         {
-            await func.Invoke();
+            await func.Invoke().ConfigureAwait(false);
         }
     }
 }
