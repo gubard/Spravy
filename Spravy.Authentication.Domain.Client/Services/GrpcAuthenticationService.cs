@@ -46,7 +46,7 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         );
     }
 
-    public Task CreateUserAsync(CreateUserOptions options, CancellationToken cancellationToken)
+    public Task<Error> CreateUserAsync(CreateUserOptions options, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
@@ -54,6 +54,8 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
                 var request = mapper.Map<CreateUserRequest>(options);
                 cancellationToken.ThrowIfCancellationRequested();
                 await client.CreateUserAsync(request);
+                
+                return new Error();
             },
             cancellationToken
         );

@@ -2,7 +2,7 @@ namespace Spravy.Domain.Models;
 
 public abstract class ValidationResultValue<TValue> : ValidationResult
 {
-    protected ValidationResultValue(Guid id, TValue value) : base(id)
+    protected ValidationResultValue(Guid id, string name, TValue value) : base(id, name)
     {
         Value = value;
     }

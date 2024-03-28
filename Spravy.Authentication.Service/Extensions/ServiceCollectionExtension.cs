@@ -41,6 +41,7 @@ public static class ServiceCollectionExtension
         serviceCollection.AddMapperConfiguration<SpravyAuthenticationProfile, SpravyAuthenticationDbProfile>();
         serviceCollection.AddSingleton<IDbContextSetup, SqliteAuthenticationDbContextSetup>();
         serviceCollection.AddSingleton<ITokenFactory, JwtTokenFactory>();
+        serviceCollection.AddSingleton<ISerializer, ProtobufSerializer>();
         serviceCollection.AddSingleton<JwtSecurityTokenHandler>();
         serviceCollection.AddSingleton<IKeeper<TokenResult>, StaticKeeper<TokenResult>>();
         serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<JwtTokenFactoryOptions>());

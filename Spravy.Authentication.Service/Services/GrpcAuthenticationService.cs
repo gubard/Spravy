@@ -1,9 +1,13 @@
 using AutoMapper;
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Models;
 using Spravy.Authentication.Protos;
+using Spravy.Domain.Exceptions;
+using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
+using Spravy.Service.Extensions;
 using static Spravy.Authentication.Protos.AuthenticationService;
 
 namespace Spravy.Authentication.Service.Services;
@@ -12,11 +16,17 @@ public class GrpcAuthenticationService : AuthenticationServiceBase
 {
     private readonly IAuthenticationService authenticationService;
     private readonly IMapper mapper;
+    private readonly ISerializer serializer;
 
-    public GrpcAuthenticationService(IAuthenticationService authenticationService, IMapper mapper)
+    public GrpcAuthenticationService(
+        IAuthenticationService authenticationService,
+        IMapper mapper,
+        ISerializer serializer
+    )
     {
         this.authenticationService = authenticationService;
         this.mapper = mapper;
+        this.serializer = serializer;
     }
 
     public override async Task<UpdatePasswordByLoginReply> UpdatePasswordByLogin(
@@ -160,9 +170,14 @@ public class GrpcAuthenticationService : AuthenticationServiceBase
     public override async Task<CreateUserReply> CreateUser(CreateUserRequest request, ServerCallContext context)
     {
         var options = mapper.Map<CreateUserOptions>(request);
-        await authenticationService.CreateUserAsync(options, context.CancellationToken);
+        var error = await authenticationService.CreateUserAsync(options, context.CancellationToken);
 
-        return new CreateUserReply();
+        if (!error.IsError)
+        {
+            return new CreateUserReply();
+        }
+
+        throw await error.ToRpcExceptionAsync(serializer);
     }
 
     public override async Task<LoginReply> Login(LoginRequest request, ServerCallContext context)

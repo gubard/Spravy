@@ -1,11 +1,14 @@
-namespace Spravy.Domain.Models;
-
-public abstract class ValidationResult
+namespace Spravy.Domain.Models
 {
-    protected ValidationResult(Guid id)
+    public abstract class ValidationResult
     {
-        Id = id;
-    }
+        protected ValidationResult(Guid id, string name)
+        {
+            Id = id;
+            Name = name;
+        }
 
-    public Guid Id { get; }
+        public Guid Id { get; }
+        public string Name { get; }
+    }
 }

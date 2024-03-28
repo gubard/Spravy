@@ -69,7 +69,10 @@ public class EfAuthenticationService : IAuthenticationService
         return tokenResult;
     }
 
-    public async Task CreateUserAsync(CreateUserOptions options, CancellationToken cancellationToken)
+    public async Task<Error> CreateUserAsync(
+        CreateUserOptions options,
+        CancellationToken cancellationToken
+    )
     {
         var email = options.Email.Trim().ToUpperInvariant();
         var errors = new List<ValidationResult>();
@@ -77,12 +80,16 @@ public class EfAuthenticationService : IAuthenticationService
         await foreach (var error in loginValidator.ValidateAsync(options.Login).WithCancellation(cancellationToken))
         {
             errors.Add(error);
+
+            return new Error(errors.ToArray());
         }
 
         await foreach (var error in passwordValidator.ValidateAsync(options.Password)
                            .WithCancellation(cancellationToken))
         {
             errors.Add(error);
+
+            return new Error(errors.ToArray());
         }
 
         var salt = Guid.NewGuid();
@@ -106,7 +113,9 @@ public class EfAuthenticationService : IAuthenticationService
 
                 if (user is not null)
                 {
-                    throw new UserWithLoginExistsException(options.Login);
+                    errors.Add(UserWithLoginExistsValidationResult.Default);
+
+                    return;
                 }
 
                 user = await c.Set<UserEntity>()
@@ -114,13 +123,17 @@ public class EfAuthenticationService : IAuthenticationService
 
                 if (user is not null)
                 {
-                    throw new UserWithEmilExistsException(options.Email);
+                    errors.Add(UserWithEmailExistsValidationResult.Default);
+
+                    return;
                 }
 
                 await c.Set<UserEntity>().AddAsync(newUser, cancellationToken);
             },
             cancellationToken
         );
+
+        return new Error(errors.ToArray());
     }
 
     public async Task<TokenResult> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)

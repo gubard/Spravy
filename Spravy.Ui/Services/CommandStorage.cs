@@ -261,7 +261,7 @@ public static class CommandStorage
             MaterialIconKind.Delete,
             "Delete to-do items"
         );
-        CloneToDoItemItem = CreateCommand<ToDoItemNotify>(
+        CloneToDoItemItem = CreateCommand<IIdProperty>(
             CloneToDoItemAsync,
             MaterialIconKind.FileMove,
             "Clone to-do item"
