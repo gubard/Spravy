@@ -9,6 +9,7 @@
              xmlns:i="clr-namespace:Material.Icons;assembly=Material.Icons"
              xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
              xmlns:pm="clr-namespace:Spravy.Ui.Features.PasswordGenerator.Models"
+             xmlns:lm="clr-namespace:Spravy.Ui.Features.Localizations.Models"
              x:Class="Spravy.Ui.App"
              RequestedThemeVariant="Dark">
     <Application.Resources>
@@ -29,6 +30,14 @@
     </Application.Styles>
 
     <Application.DataTemplates>
+        <DataTemplate x:DataType="lm:HeaderView">
+            <TextBlock Text="{Binding Text}" Classes="h4" />
+        </DataTemplate>
+
+        <DataTemplate x:DataType="lm:TextView">
+            <TextBlock Text="{Binding Text}" />
+        </DataTemplate>
+
         <DataTemplate x:DataType="pm:PasswordItemNotify">
             <Button Classes="alignment-stretch glass-card"
                     Command="{x:Static s:CommandStorage.GeneratePasswordCommand}"

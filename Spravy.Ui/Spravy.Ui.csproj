@@ -35,6 +35,7 @@
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
         <PackageReference Include="ReactiveUI.Fody" Version="19.5.41" />
         <PackageReference Include="Serilog.Sinks.Console" Version="5.0.1" />
+        <PackageReference Include="SmartFormat" Version="3.3.2" />
         <PackageReference Include="SukiUI" Version="6.0.0-beta3" />
         <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.4.1" />
     </ItemGroup>
@@ -63,5 +64,17 @@
         <DependentUpon>ExceptionView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Features\ToDo\Views\DeleteToDoItemView.axaml.cs">
+        <DependentUpon>DeleteToDoItemView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Features\ToDo\Views\ToDoItemView.axaml.cs">
+        <DependentUpon>ToDoItemView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <UpToDateCheckInput Remove="Features\Localizations\Styles\Resources.axaml" />
     </ItemGroup>
 </Project>

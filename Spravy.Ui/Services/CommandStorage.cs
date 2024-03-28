@@ -1496,7 +1496,7 @@ public static class CommandStorage
                     await RefreshCurrentViewAsync(cancellationToken);
                 },
                 _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
-                view => view.ToDoItemName = deletable.Name,
+                view => view.ToDoItemId = deletable.Id,
                 cancellationToken
             )
             .ConfigureAwait(false);

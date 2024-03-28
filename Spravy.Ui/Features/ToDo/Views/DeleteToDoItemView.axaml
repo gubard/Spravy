@@ -1,0 +1,39 @@
+<ru:ReactiveUserControl x:TypeArguments="vm:DeleteToDoItemViewModel"
+                        xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:ru="http://reactiveui.net"
+                        xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+                        xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+                        xmlns:mi="clr-namespace:Material.Icons;assembly=Material.Icons"
+                        xmlns:m="clr-namespace:Spravy.Ui.Models"
+                        mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
+                        x:Class="Spravy.Ui.Features.ToDo.Views.DeleteToDoItemView"
+                        x:DataType="vm:DeleteToDoItemViewModel">
+    <Interaction.Behaviors>
+        <EventTriggerBehavior EventName="Initialized">
+            <InvokeCommandAction Command="{Binding InitializedCommand}" />
+        </EventTriggerBehavior>
+    </Interaction.Behaviors>
+
+    <c:GroupBox>
+        <c:GroupBox.Header>
+            <ContentControl Content="{Binding DeleteText}" />
+        </c:GroupBox.Header>
+
+        <c:GroupBox.DataTemplates>
+            <DataTemplate DataType="m:ToDoItemParentNotify">
+                <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5,0,5,0" />
+            </DataTemplate>
+
+            <DataTemplate DataType="m:RootItem">
+                <ContentControl Content="{x:Static mi:MaterialIconKind.Home}" Margin="5,0,5,0" />
+            </DataTemplate>
+        </c:GroupBox.DataTemplates>
+
+        <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
+            <c:Stepper Steps="{Binding Path}" Index="0" HorizontalAlignment="Center" />
+        </ScrollViewer>
+    </c:GroupBox>
+</ru:ReactiveUserControl>

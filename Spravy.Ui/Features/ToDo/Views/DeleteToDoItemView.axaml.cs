@@ -1,7 +1,7 @@
 using Avalonia.ReactiveUI;
-using Spravy.Ui.ViewModels;
+using Spravy.Ui.Features.ToDo.ViewModels;
 
-namespace Spravy.Ui.Views;
+namespace Spravy.Ui.Features.ToDo.Views;
 
 public partial class DeleteToDoItemView : ReactiveUserControl<DeleteToDoItemViewModel>
 {

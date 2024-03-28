@@ -22,8 +22,9 @@ using Spravy.Ui.Features.ToDo.Enums;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 using Spravy.Ui.Services;
+using Spravy.Ui.ViewModels;
 
-namespace Spravy.Ui.ViewModels;
+namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ToDoItemViewModel : NavigatableViewModelBase,
     IToDoItemOrderChanger,
@@ -201,7 +202,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     {
         var parents = await ToDoService.GetParentsAsync(Id, cancellationToken).ConfigureAwait(false);
 
-        await this.InvokeUIAsync(
+        await this.InvokeUIBackgroundAsync(
             () => Path = new RootItem().To<object>()
                 .ToEnumerable()
                 .Concat(parents.Select(x => Mapper.Map<ToDoItemParentNotify>(x)))

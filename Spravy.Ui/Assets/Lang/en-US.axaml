@@ -1,189 +1,190 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:system="clr-namespace:System;assembly=System.Runtime">
+                    xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+                    xmlns:m="clr-namespace:Spravy.Ui.Features.Localizations.Models">
     <!--PasswordGeneratorView-->
-    <system:String x:Key="PasswordGeneratorView.Add">Create password</system:String>
+    <sys:String x:Key="PasswordGeneratorView.Add">Create password</sys:String>
 
     <!--AddPasswordItemView-->
-    <system:String x:Key="AddPasswordItemView.Header">New password</system:String>
-    <system:String x:Key="AddPasswordItemView.Name">Name</system:String>
-    <system:String x:Key="AddPasswordItemView.Key">Key</system:String>
-    <system:String x:Key="AddPasswordItemView.Length">Length</system:String>
-    <system:String x:Key="AddPasswordItemView.AvailableCharacters">Available characters</system:String>
-    <system:String x:Key="AddPasswordItemView.CustomAvailableCharacters">Custom available characters</system:String>
-    <system:String x:Key="AddPasswordItemView.Regex">Regex</system:String>
-    <system:String x:Key="AddPasswordItemView.AvailableUpperLatin">Available upper latin</system:String>
-    <system:String x:Key="AddPasswordItemView.AvailableLowerLatin">Available lower latin</system:String>
-    <system:String x:Key="AddPasswordItemView.AvailableNumber">Available number</system:String>
-    <system:String x:Key="AddPasswordItemView.AvailableSpecialSymbols">Available special symbols</system:String>
+    <sys:String x:Key="AddPasswordItemView.Header">New password</sys:String>
+    <sys:String x:Key="AddPasswordItemView.Name">Name</sys:String>
+    <sys:String x:Key="AddPasswordItemView.Key">Key</sys:String>
+    <sys:String x:Key="AddPasswordItemView.Length">Length</sys:String>
+    <sys:String x:Key="AddPasswordItemView.AvailableCharacters">Available characters</sys:String>
+    <sys:String x:Key="AddPasswordItemView.CustomAvailableCharacters">Custom available characters</sys:String>
+    <sys:String x:Key="AddPasswordItemView.Regex">Regex</sys:String>
+    <sys:String x:Key="AddPasswordItemView.AvailableUpperLatin">Available upper latin</sys:String>
+    <sys:String x:Key="AddPasswordItemView.AvailableLowerLatin">Available lower latin</sys:String>
+    <sys:String x:Key="AddPasswordItemView.AvailableNumber">Available number</sys:String>
+    <sys:String x:Key="AddPasswordItemView.AvailableSpecialSymbols">Available special symbols</sys:String>
 
     <!--DeleteAccountView-->
-    <system:String x:Key="DeleteAccountView.VerificationCode">Verification Code</system:String>
-    <system:String x:Key="DeleteAccountView.SendNewCode">Send new code</system:String>
-    <system:String x:Key="DeleteAccountView.Back">Back</system:String>
-    <system:String x:Key="DeleteAccountView.DeleteAccount">Delete account</system:String>
+    <sys:String x:Key="DeleteAccountView.VerificationCode">Verification Code</sys:String>
+    <sys:String x:Key="DeleteAccountView.SendNewCode">Send new code</sys:String>
+    <sys:String x:Key="DeleteAccountView.Back">Back</sys:String>
+    <sys:String x:Key="DeleteAccountView.DeleteAccount">Delete account</sys:String>
 
     <!--SearchView-->
-    <system:String x:Key="SearchView.Search">Search</system:String>
+    <sys:String x:Key="SearchView.Search">Search</sys:String>
 
     <!--EmailOrLoginInputView-->
-    <system:String x:Key="EmailOrLoginInputView.EmailOrLogin">Email or login</system:String>
-    <system:String x:Key="EmailOrLoginInputView.Back">Back</system:String>
-    <system:String x:Key="EmailOrLoginInputView.ChangePassword">Change password</system:String>
-    <system:String x:Key="EmailOrLoginInputView.Busy">Send verification code...</system:String>
+    <sys:String x:Key="EmailOrLoginInputView.EmailOrLogin">Email or login</sys:String>
+    <sys:String x:Key="EmailOrLoginInputView.Back">Back</sys:String>
+    <sys:String x:Key="EmailOrLoginInputView.ChangePassword">Change password</sys:String>
+    <sys:String x:Key="EmailOrLoginInputView.Busy">Send verification code...</sys:String>
 
     <!--InfoView-->
-    <system:String x:Key="InfoView.Ok">Ok</system:String>
+    <sys:String x:Key="InfoView.Ok">Ok</sys:String>
 
     <!--AddRootToDoItemView-->
-    <system:String x:Key="ToDoItemSettingsView.Settings">Settings</system:String>
-    <system:String x:Key="ToDoItemSettingsView.Name">Name</system:String>
-    <system:String x:Key="ToDoItemSettingsView.Type">Type</system:String>
-    <system:String x:Key="ToDoItemSettingsView.Url">URL</system:String>
+    <sys:String x:Key="ToDoItemSettingsView.Settings">Settings</sys:String>
+    <sys:String x:Key="ToDoItemSettingsView.Name">Name</sys:String>
+    <sys:String x:Key="ToDoItemSettingsView.Type">Type</sys:String>
+    <sys:String x:Key="ToDoItemSettingsView.Url">URL</sys:String>
 
     <!--DescriptionType-->
-    <system:String x:Key="DescriptionType.PlainText">Plain text</system:String>
-    <system:String x:Key="DescriptionType.Markdown">Markdown</system:String>
+    <sys:String x:Key="DescriptionType.PlainText">Plain text</sys:String>
+    <sys:String x:Key="DescriptionType.Markdown">Markdown</sys:String>
 
     <!--EditDescriptionView-->
-    <system:String x:Key="EditDescriptionView.Description">Description</system:String>
+    <sys:String x:Key="EditDescriptionView.Description">Description</sys:String>
 
     <!--DeleteToDoItemView-->
-    <system:String x:Key="DeleteToDoItemView.Question">Are you sure you want to delete</system:String>
+    <sys:String x:Key="{x:Static m:TextView.DeleteToDoItemView_QuestionKey}">Are you sure you want to delete "{ToDoItemName}"?</sys:String>
 
     <!--ConfirmView-->
-    <system:String x:Key="ConfirmView.Ok">Ok</system:String>
-    <system:String x:Key="ConfirmView.Cancel">Cancel</system:String>
+    <sys:String x:Key="ConfirmView.Ok">Ok</sys:String>
+    <sys:String x:Key="ConfirmView.Cancel">Cancel</sys:String>
 
     <!--MultiToDoItemsView-->
-    <system:String x:Key="MultiToDoItemsView.IsMulti">Select a few</system:String>
-    <system:String x:Key="MultiToDoItemsView.GroupBy">Group by</system:String>
+    <sys:String x:Key="MultiToDoItemsView.IsMulti">Select a few</sys:String>
+    <sys:String x:Key="MultiToDoItemsView.GroupBy">Group by</sys:String>
 
     <!--ToDoItemType-->
-    <system:String x:Key="ToDoItemType.Value">Value</system:String>
-    <system:String x:Key="ToDoItemType.Group">Group</system:String>
-    <system:String x:Key="ToDoItemType.Planned">Planned</system:String>
-    <system:String x:Key="ToDoItemType.Periodicity">Periodicity</system:String>
-    <system:String x:Key="ToDoItemType.PeriodicityOffset">Periodicity offset</system:String>
-    <system:String x:Key="ToDoItemType.Circle">Circle</system:String>
-    <system:String x:Key="ToDoItemType.Step">Step</system:String>
+    <sys:String x:Key="ToDoItemType.Value">Value</sys:String>
+    <sys:String x:Key="ToDoItemType.Group">Group</sys:String>
+    <sys:String x:Key="ToDoItemType.Planned">Planned</sys:String>
+    <sys:String x:Key="ToDoItemType.Periodicity">Periodicity</sys:String>
+    <sys:String x:Key="ToDoItemType.PeriodicityOffset">Periodicity offset</sys:String>
+    <sys:String x:Key="ToDoItemType.Circle">Circle</sys:String>
+    <sys:String x:Key="ToDoItemType.Step">Step</sys:String>
 
     <!--ToDoItemStatus-->
-    <system:String x:Key="ToDoItemStatus.Miss">Miss</system:String>
-    <system:String x:Key="ToDoItemStatus.ReadyForComplete">Ready for complete</system:String>
-    <system:String x:Key="ToDoItemStatus.Planned">Planned</system:String>
-    <system:String x:Key="ToDoItemStatus.Completed">Completed</system:String>
+    <sys:String x:Key="ToDoItemStatus.Miss">Miss</sys:String>
+    <sys:String x:Key="ToDoItemStatus.ReadyForComplete">Ready for complete</sys:String>
+    <sys:String x:Key="ToDoItemStatus.Planned">Planned</sys:String>
+    <sys:String x:Key="ToDoItemStatus.Completed">Completed</sys:String>
 
     <!--SettingView-->
-    <system:String x:Key="SettingView.Login">Login:</system:String>
-    <system:String x:Key="SettingView.ChangePassword">Change password</system:String>
-    <system:String x:Key="SettingView.Setting">Setting</system:String>
-    <system:String x:Key="SettingView.Version">Version</system:String>
-    <system:String x:Key="SettingView.Save">Save</system:String>
-    <system:String x:Key="SettingView.Busy">Saving...</system:String>
-    <system:String x:Key="SettingView.DeleteAccount">Delete account</system:String>
+    <sys:String x:Key="SettingView.Login">Login:</sys:String>
+    <sys:String x:Key="SettingView.ChangePassword">Change password</sys:String>
+    <sys:String x:Key="SettingView.Setting">Setting</sys:String>
+    <sys:String x:Key="SettingView.Version">Version</sys:String>
+    <sys:String x:Key="SettingView.Save">Save</sys:String>
+    <sys:String x:Key="SettingView.Busy">Saving...</sys:String>
+    <sys:String x:Key="SettingView.DeleteAccount">Delete account</sys:String>
 
     <!--ChangeToDoItemOrderIndexView-->
-    <system:String x:Key="ChangeToDoItemOrderIndexView.Before">Before</system:String>
-    <system:String x:Key="ChangeToDoItemOrderIndexView.After">After</system:String>
+    <sys:String x:Key="ChangeToDoItemOrderIndexView.Before">Before</sys:String>
+    <sys:String x:Key="ChangeToDoItemOrderIndexView.After">After</sys:String>
 
     <!--ForgotPasswordView-->
-    <system:String x:Key="ForgotPasswordView.SendNewCode">Send new code</system:String>
-    <system:String x:Key="ForgotPasswordView.VerificationCode">Verification code</system:String>
-    <system:String x:Key="ForgotPasswordView.NewPassword">New password</system:String>
-    <system:String x:Key="ForgotPasswordView.NewRepeatPassword">New repeat password</system:String>
-    <system:String x:Key="ForgotPasswordView.ChangePassword">Change password</system:String>
-    <system:String x:Key="ForgotPasswordView.Back">Back</system:String>
+    <sys:String x:Key="ForgotPasswordView.SendNewCode">Send new code</sys:String>
+    <sys:String x:Key="ForgotPasswordView.VerificationCode">Verification code</sys:String>
+    <sys:String x:Key="ForgotPasswordView.NewPassword">New password</sys:String>
+    <sys:String x:Key="ForgotPasswordView.NewRepeatPassword">New repeat password</sys:String>
+    <sys:String x:Key="ForgotPasswordView.ChangePassword">Change password</sys:String>
+    <sys:String x:Key="ForgotPasswordView.Back">Back</sys:String>
 
     <!--LoginView-->
-    <system:String x:Key="LoginView.WelcomeToSpravy">Welcome to Spravy</system:String>
-    <system:String x:Key="LoginView.RememberMe">Remember Me</system:String>
-    <system:String x:Key="LoginView.ForgotPassword">Forgot password</system:String>
-    <system:String x:Key="LoginView.Login">Login</system:String>
-    <system:String x:Key="LoginView.Password">Password</system:String>
-    <system:String x:Key="LoginView.CreateAccount">Create account</system:String>
-    <system:String x:Key="LoginView.Busy">Login...</system:String>
+    <sys:String x:Key="LoginView.WelcomeToSpravy">Welcome to Spravy</sys:String>
+    <sys:String x:Key="LoginView.RememberMe">Remember Me</sys:String>
+    <sys:String x:Key="LoginView.ForgotPassword">Forgot password</sys:String>
+    <sys:String x:Key="LoginView.Login">Login</sys:String>
+    <sys:String x:Key="LoginView.Password">Password</sys:String>
+    <sys:String x:Key="LoginView.CreateAccount">Create account</sys:String>
+    <sys:String x:Key="LoginView.Busy">Login...</sys:String>
 
     <!--PaneView-->
-    <system:String x:Key="PaneView.ToDoItems">To-do Items</system:String>
-    <system:String x:Key="PaneView.TodayToDoItems">Today to-do items</system:String>
-    <system:String x:Key="PaneView.Search">Search</system:String>
-    <system:String x:Key="PaneView.Timers">Timers</system:String>
-    <system:String x:Key="PaneView.Settings">Settings</system:String>
-    <system:String x:Key="PaneView.PasswordGenerator">Password generator</system:String>
-    <system:String x:Key="PaneView.Logout">Logout</system:String>
+    <sys:String x:Key="PaneView.ToDoItems">To-do Items</sys:String>
+    <sys:String x:Key="PaneView.TodayToDoItems">Today to-do items</sys:String>
+    <sys:String x:Key="PaneView.Search">Search</sys:String>
+    <sys:String x:Key="PaneView.Timers">Timers</sys:String>
+    <sys:String x:Key="PaneView.Settings">Settings</sys:String>
+    <sys:String x:Key="PaneView.PasswordGenerator">Password generator</sys:String>
+    <sys:String x:Key="PaneView.Logout">Logout</sys:String>
 
     <!--RootToDoItemsView-->
-    <system:String x:Key="RootToDoItemsView.CreateTask">Create Task</system:String>
+    <sys:String x:Key="RootToDoItemsView.CreateTask">Create Task</sys:String>
 
     <!--ToDoItemView-->
-    <system:String x:Key="ToDoItemView.Description">Description</system:String>
-    <system:String x:Key="ToDoItemView.Type">Type</system:String>
-    <system:String x:Key="ToDoItemView.Link">Link</system:String>
+    <sys:String x:Key="ToDoItemView.Description">Description</sys:String>
+    <sys:String x:Key="ToDoItemView.Type">Type</sys:String>
+    <sys:String x:Key="ToDoItemView.Link">Link</sys:String>
 
     <!--VerificationCodeView-->
-    <system:String x:Key="VerificationCodeView.SendNewCode">Send new code</system:String>
-    <system:String x:Key="VerificationCodeView.ChangeEmail">Change email</system:String>
-    <system:String x:Key="VerificationCodeView.VerificationCode">Verification code</system:String>
-    <system:String x:Key="VerificationCodeView.Back">Back</system:String>
-    <system:String x:Key="VerificationCodeView.SubmitCode">Submit code</system:String>
+    <sys:String x:Key="VerificationCodeView.SendNewCode">Send new code</sys:String>
+    <sys:String x:Key="VerificationCodeView.ChangeEmail">Change email</sys:String>
+    <sys:String x:Key="VerificationCodeView.VerificationCode">Verification code</sys:String>
+    <sys:String x:Key="VerificationCodeView.Back">Back</sys:String>
+    <sys:String x:Key="VerificationCodeView.SubmitCode">Submit code</sys:String>
 
     <!--AddRootToDoItemView-->
-    <system:String x:Key="AddRootToDoItemView.Name">Name</system:String>
-    <system:String x:Key="AddRootToDoItemView.Type">Type</system:String>
-    <system:String x:Key="AddRootToDoItemView.Url">URL</system:String>
-    <system:String x:Key="AddRootToDoItemView.Header">New Task</system:String>
+    <sys:String x:Key="AddRootToDoItemView.Name">Name</sys:String>
+    <sys:String x:Key="AddRootToDoItemView.Type">Type</sys:String>
+    <sys:String x:Key="AddRootToDoItemView.Url">URL</sys:String>
+    <sys:String x:Key="AddRootToDoItemView.Header">New Task</sys:String>
 
     <!--AddTimerView-->
-    <system:String x:Key="AddTimerView.Item">Item</system:String>
-    <system:String x:Key="AddTimerView.DueDateTime">Due date time</system:String>
+    <sys:String x:Key="AddTimerView.Item">Item</sys:String>
+    <sys:String x:Key="AddTimerView.DueDateTime">Due date time</sys:String>
 
     <!--AddToDoItemView-->
-    <system:String x:Key="AddToDoItemView.Name">Name</system:String>
-    <system:String x:Key="AddToDoItemView.Type">Type</system:String>
-    <system:String x:Key="AddToDoItemView.Header">New Task</system:String>
+    <sys:String x:Key="AddToDoItemView.Name">Name</sys:String>
+    <sys:String x:Key="AddToDoItemView.Type">Type</sys:String>
+    <sys:String x:Key="AddToDoItemView.Header">New Task</sys:String>
 
     <!--CreateUserView-->
-    <system:String x:Key="CreateUserView.CreateAccountHeader">Create Account</system:String>
-    <system:String x:Key="CreateUserView.Email">Email</system:String>
-    <system:String x:Key="CreateUserView.Login">Login</system:String>
-    <system:String x:Key="CreateUserView.Password">Password</system:String>
-    <system:String x:Key="CreateUserView.RepeatPassword">Repeat password</system:String>
-    <system:String x:Key="CreateUserView.CreateAccount">Create account</system:String>
-    <system:String x:Key="CreateUserView.Back">Back</system:String>
-    <system:String x:Key="CreateUserView.Busy">Create account...</system:String>
+    <sys:String x:Key="CreateUserView.CreateAccountHeader">Create Account</sys:String>
+    <sys:String x:Key="CreateUserView.Email">Email</sys:String>
+    <sys:String x:Key="CreateUserView.Login">Login</sys:String>
+    <sys:String x:Key="CreateUserView.Password">Password</sys:String>
+    <sys:String x:Key="CreateUserView.RepeatPassword">Repeat password</sys:String>
+    <sys:String x:Key="CreateUserView.CreateAccount">Create account</sys:String>
+    <sys:String x:Key="CreateUserView.Back">Back</sys:String>
+    <sys:String x:Key="CreateUserView.Busy">Create account...</sys:String>
 
     <!--ExceptionView-->
-    <system:String x:Key="ExceptionView.ErrorMessage">Error message</system:String>
+    <sys:String x:Key="ExceptionView.ErrorMessage">Error message</sys:String>
 
     <!--PeriodicityOffsetToDoItemSettingsView-->
-    <system:String x:Key="PeriodicityOffsetToDoItemSettingsView.ChildrenTypes">Children types</system:String>
-    <system:String x:Key="PeriodicityOffsetToDoItemSettingsView.Type">Type</system:String>
-    <system:String x:Key="PeriodicityOffsetToDoItemSettingsView.DueDate">Due date</system:String>
-    <system:String x:Key="PeriodicityOffsetToDoItemSettingsView.DaysOffset">Days offset</system:String>
-    <system:String x:Key="PeriodicityOffsetToDoItemSettingsView.MonthsOffset">Months offset</system:String>
-    <system:String x:Key="PeriodicityOffsetToDoItemSettingsView.WeeksOffset">Weeks offset</system:String>
-    <system:String x:Key="PeriodicityOffsetToDoItemSettingsView.YearsOffset">Years offset</system:String>
-    <system:String x:Key="PeriodicityOffsetToDoItemSettingsView.RequiredCompleteInDueDate">Required complete by the due date</system:String>
+    <sys:String x:Key="PeriodicityOffsetToDoItemSettingsView.ChildrenTypes">Children types</sys:String>
+    <sys:String x:Key="PeriodicityOffsetToDoItemSettingsView.Type">Type</sys:String>
+    <sys:String x:Key="PeriodicityOffsetToDoItemSettingsView.DueDate">Due date</sys:String>
+    <sys:String x:Key="PeriodicityOffsetToDoItemSettingsView.DaysOffset">Days offset</sys:String>
+    <sys:String x:Key="PeriodicityOffsetToDoItemSettingsView.MonthsOffset">Months offset</sys:String>
+    <sys:String x:Key="PeriodicityOffsetToDoItemSettingsView.WeeksOffset">Weeks offset</sys:String>
+    <sys:String x:Key="PeriodicityOffsetToDoItemSettingsView.YearsOffset">Years offset</sys:String>
+    <sys:String x:Key="PeriodicityOffsetToDoItemSettingsView.RequiredCompleteInDueDate">Required complete by the due date</sys:String>
 
     <!--PeriodicityToDoItemSettingsView-->
-    <system:String x:Key="PeriodicityToDoItemSettingsView.Type">Type</system:String>
-    <system:String x:Key="PeriodicityToDoItemSettingsView.DueDate">Due date</system:String>
-    <system:String x:Key="PeriodicityToDoItemSettingsView.TypeOfPeriodicity">Type of periodicity</system:String>
-    <system:String x:Key="PeriodicityToDoItemSettingsView.ChildrenTypes">Children types</system:String>
-    <system:String x:Key="PeriodicityToDoItemSettingsView.RequiredCompleteInDueDate">Required complete by the due date</system:String>
-    <system:String x:Key="PeriodicityToDoItemSettingsView.Periodicity">Periodicity</system:String>
+    <sys:String x:Key="PeriodicityToDoItemSettingsView.Type">Type</sys:String>
+    <sys:String x:Key="PeriodicityToDoItemSettingsView.DueDate">Due date</sys:String>
+    <sys:String x:Key="PeriodicityToDoItemSettingsView.TypeOfPeriodicity">Type of periodicity</sys:String>
+    <sys:String x:Key="PeriodicityToDoItemSettingsView.ChildrenTypes">Children types</sys:String>
+    <sys:String x:Key="PeriodicityToDoItemSettingsView.RequiredCompleteInDueDate">Required complete by the due date</sys:String>
+    <sys:String x:Key="PeriodicityToDoItemSettingsView.Periodicity">Periodicity</sys:String>
 
     <!--PlannedToDoItemSettingsView-->
-    <system:String x:Key="PlannedToDoItemSettingsView.Type">Type</system:String>
-    <system:String x:Key="PlannedToDoItemSettingsView.DueDate">DueDate</system:String>
-    <system:String x:Key="PlannedToDoItemSettingsView.ChildrenTypes">Children types</system:String>
-    <system:String x:Key="PlannedToDoItemSettingsView.RequiredCompleteInDueDate">Required complete by the due date</system:String>
+    <sys:String x:Key="PlannedToDoItemSettingsView.Type">Type</sys:String>
+    <sys:String x:Key="PlannedToDoItemSettingsView.DueDate">DueDate</sys:String>
+    <sys:String x:Key="PlannedToDoItemSettingsView.ChildrenTypes">Children types</sys:String>
+    <sys:String x:Key="PlannedToDoItemSettingsView.RequiredCompleteInDueDate">Required complete by the due date</sys:String>
 
     <!--ToDoItemSelectorView-->
-    <system:String x:Key="ToDoItemSelectorView.SearchText">Search text</system:String>
+    <sys:String x:Key="ToDoItemSelectorView.SearchText">Search text</sys:String>
 
     <!--ValueToDoItemSettingsView-->
-    <system:String x:Key="ValueToDoItemSettingsView.Type">Type</system:String>
-    <system:String x:Key="ValueToDoItemSettingsView.ChildrenTypes">Children types</system:String>
+    <sys:String x:Key="ValueToDoItemSettingsView.Type">Type</sys:String>
+    <sys:String x:Key="ValueToDoItemSettingsView.ChildrenTypes">Children types</sys:String>
 </ResourceDictionary>

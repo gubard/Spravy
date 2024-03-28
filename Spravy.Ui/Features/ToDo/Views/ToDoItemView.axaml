@@ -4,13 +4,13 @@
                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:ru="http://reactiveui.net"
-                        xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
                         xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                         xmlns:mdxaml="https://github.com/whistyun/Markdown.Avalonia"
                         xmlns:s="clr-namespace:Spravy.Ui.Services"
                         xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+                        xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                        x:Class="Spravy.Ui.Views.ToDoItemView"
+                        x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemView"
                         x:DataType="vm:ToDoItemViewModel">
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">

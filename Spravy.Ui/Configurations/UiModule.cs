@@ -47,6 +47,7 @@ using Spravy.ToDo.Domain.Mapper.Profiles;
 using Spravy.ToDo.Protos;
 using Spravy.Ui.DataTemplates;
 using Spravy.Ui.Extensions;
+using Spravy.Ui.Features.ToDo.ViewModels;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 using Spravy.Ui.Profiles;
