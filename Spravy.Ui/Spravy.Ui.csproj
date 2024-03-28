@@ -57,4 +57,11 @@
       <ProjectReference Include="..\Spravy.ToDo.Domain.Mapper\Spravy.ToDo.Domain.Mapper.csproj" />
       <ProjectReference Include="..\Spravy.ToDo.Domain\Spravy.ToDo.Domain.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Features\ErrorHandling\Views\ExceptionView.axaml.cs">
+        <DependentUpon>ExceptionView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+    </ItemGroup>
 </Project>

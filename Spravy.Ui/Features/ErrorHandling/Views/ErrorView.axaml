@@ -1,0 +1,26 @@
+<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:ErrorViewModel"
+                                xmlns="https://github.com/avaloniaui"
+                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                                xmlns:reactiveUi="http://reactiveui.net"
+                                xmlns:viewModels="clr-namespace:Spravy.Ui.Features.ErrorHandling.ViewModels"
+                                xmlns:m="clr-namespace:Spravy.Domain.Models;assembly=Spravy.Domain"
+                                xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                                x:Class="Spravy.Ui.Features.ErrorHandling.Views.ErrorView"
+                                x:DataType="viewModels:ErrorViewModel">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <ItemsControl ItemsSource="{Binding ValidationResults}">
+            <ItemsControl.DataTemplates>
+                <DataTemplate x:DataType="m:ValidationResult">
+                    <c:PropertyGrid Item="{Binding}" >
+                        <c:PropertyGrid.DataTemplates>
+                            <c:PropertyGridTemplateSelector UseSukiHost="False" />
+                        </c:PropertyGrid.DataTemplates>
+                    </c:PropertyGrid>
+                </DataTemplate>
+            </ItemsControl.DataTemplates>
+        </ItemsControl>
+    </ScrollViewer>
+</reactiveUi:ReactiveUserControl>

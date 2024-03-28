@@ -3,7 +3,7 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Spravy.Ui.Models;
 
-namespace Spravy.Ui.ViewModels;
+namespace Spravy.Ui.Features.ErrorHandling.ViewModels;
 
 public class ExceptionViewModel : ViewModelBase
 {

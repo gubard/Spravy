@@ -4,9 +4,9 @@
                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:ru="http://reactiveui.net"
-                        xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
+                        xmlns:vm="clr-namespace:Spravy.Ui.Features.ErrorHandling.ViewModels"
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
-                        x:Class="Spravy.Ui.Views.ExceptionView"
+                        x:Class="Spravy.Ui.Features.ErrorHandling.Views.ExceptionView"
                         x:DataType="vm:ExceptionViewModel">
     <TextBox Text="{Binding FullExceptionText}"
              Classes="accepts-return read-only text-wrapping-wrap" />

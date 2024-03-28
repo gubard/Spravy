@@ -7,8 +7,8 @@ using Ninject;
 using ReactiveUI;
 using Serilog;
 using Spravy.Client.Exceptions;
+using Spravy.Ui.Features.ErrorHandling.ViewModels;
 using Spravy.Ui.Interfaces;
-using Spravy.Ui.ViewModels;
 
 namespace Spravy.Ui.Models;
 

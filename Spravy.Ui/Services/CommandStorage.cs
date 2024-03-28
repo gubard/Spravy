@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
-using Avalonia.Controls;
 using Grpc.Core;
 using Material.Icons;
 using Ninject;
@@ -24,13 +23,13 @@ using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.Enums;
 using Spravy.Ui.Extensions;
+using Spravy.Ui.Features.ErrorHandling.ViewModels;
 using Spravy.Ui.Features.PasswordGenerator.ViewModels;
 using Spravy.Ui.Features.ToDo.ViewModels;
 using Spravy.Ui.Helpers;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 using Spravy.Ui.ViewModels;
-using Spravy.Ui.Views;
 
 namespace Spravy.Ui.Services;
 

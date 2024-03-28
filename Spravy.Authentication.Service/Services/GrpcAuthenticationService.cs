@@ -1,10 +1,8 @@
 using AutoMapper;
-using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Models;
 using Spravy.Authentication.Protos;
-using Spravy.Domain.Exceptions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
 using Spravy.Service.Extensions;

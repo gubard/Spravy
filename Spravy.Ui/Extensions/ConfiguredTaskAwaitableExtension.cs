@@ -3,8 +3,8 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Spravy.Domain.Models;
+using Spravy.Ui.Features.ErrorHandling.ViewModels;
 using Spravy.Ui.Interfaces;
-using Spravy.Ui.ViewModels;
 
 namespace Spravy.Ui.Extensions;
 
@@ -20,13 +20,13 @@ public static class ConfiguredTaskAwaitableExtension
 
         if (error.IsError)
         {
-            await dialogViewer.ShowInfoErrorDialogAsync<ExceptionViewModel>(
+            await dialogViewer.ShowInfoErrorDialogAsync<ErrorViewModel>(
                 async _ =>
                 {
                     await dialogViewer.CloseErrorDialogAsync(CancellationToken.None);
                     await dialogViewer.CloseProgressDialogAsync(CancellationToken.None);
                 },
-                viewModel => viewModel.Exception = new Exception(),
+                viewModel => viewModel.ValidationResults.AddRange(error.ValidationResults.ToArray()),
                 CancellationToken.None
             );
         }
