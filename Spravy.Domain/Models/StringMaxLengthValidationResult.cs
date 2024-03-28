@@ -9,5 +9,5 @@ public class StringMaxLengthValidationResult : ValidationResult
         MaxLength = maxLength;
     }
 
-    public ushort MaxLength { get; }
+    public ushort MaxLength { get; protected set; }
 }

@@ -27,9 +27,11 @@ public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBas
             cancellationToken.ThrowIfCancellationRequested();
             await func.Invoke(client);
         }
-        catch (RpcException exception)
+        catch (RpcException exception) when(exception.StatusCode == StatusCode.InvalidArgument)
         {
-            return await exception.ToErrorAsync(serializer);
+            var error = await exception.ToErrorAsync(serializer);
+
+            return error;
         }
         catch (Exception e)
         {

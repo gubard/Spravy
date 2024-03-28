@@ -23,6 +23,7 @@ using Spravy.Service.Extensions;
 using Spravy.Service.HostedServices;
 using Spravy.Service.Services;
 using Spravy.Client.Extensions;
+using Spravy.Core.Services;
 using Spravy.EventBus.Protos;
 using IAuthenticationService = Spravy.Authentication.Domain.Interfaces.IAuthenticationService;
 
@@ -47,6 +48,7 @@ public static class ServiceCollectionExtension
         serviceCollection.AddSingleton<ContextAccessorUserIdHttpHeaderFactory>();
         serviceCollection.AddSingleton<TimeZoneHttpHeaderFactory>();
         serviceCollection.AddTransient<IHttpHeaderFactory, TimeZoneHttpHeaderFactory>();
+        serviceCollection.AddTransient<ISerializer, ProtobufSerializer>();
         serviceCollection.AddTransient<IScheduleService, EfScheduleService>();
 
         serviceCollection.AddGrpcService<GrpcAuthenticationService,

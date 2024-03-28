@@ -33,7 +33,7 @@ public class LocalStorageObjectStorage : IObjectStorage
     public async Task SaveObjectAsync(string id, object obj)
     {
         await using var stream = new MemoryStream();
-        await serializer.SerializeAsync(obj, stream);
+        serializer.Serialize(obj, stream);
         var bytes = stream.ToArray();
         var value = Convert.ToBase64String(bytes);
         JSInterop.LocalStorageSetItem(id, value);
@@ -45,6 +45,6 @@ public class LocalStorageObjectStorage : IObjectStorage
         var bytes = Convert.FromBase64String(value);
         await using var stream = new MemoryStream(bytes);
 
-        return await serializer.DeserializeAsync<TObject>(stream);
+        return serializer.Deserialize<TObject>(stream);
     }
 }

@@ -317,18 +317,26 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
             await this.InvokeUIAsync(() => IsBusy = true);
             var options = Mapper.Map<CreateUserOptions>(this);
             cancellationToken.ThrowIfCancellationRequested();
-            await AuthenticationService.CreateUserAsync(options, cancellationToken).ConfigureAwait(false);
-            cancellationToken.ThrowIfCancellationRequested();
 
-            await Navigator.NavigateToAsync<VerificationCodeViewModel>(
-                    vm =>
+            await AuthenticationService.CreateUserAsync(options, cancellationToken)
+                .ConfigureAwait(false)
+                .IfSuccessAsync(
+                    DialogViewer,
+                    async () =>
                     {
-                        vm.Identifier = Email;
-                        vm.IdentifierType = UserIdentifierType.Email;
-                    },
-                    cancellationToken
-                )
-                .ConfigureAwait(false);
+                        cancellationToken.ThrowIfCancellationRequested();
+
+                        await Navigator.NavigateToAsync<VerificationCodeViewModel>(
+                                vm =>
+                                {
+                                    vm.Identifier = Email;
+                                    vm.IdentifierType = UserIdentifierType.Email;
+                                },
+                                cancellationToken
+                            )
+                            .ConfigureAwait(false);
+                    }
+                );
         }
         finally
         {

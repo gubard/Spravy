@@ -14,8 +14,8 @@ public static class ErrorExtension
         foreach (var result in error.ValidationResults.ToArray())
         {
             await using var stream = new MemoryStream();
-            await serializer.SerializeAsync(result, stream);
-            metadata.Add(result.Id.ToString(), stream.ToArray());
+            serializer.Serialize(result, stream);
+            metadata.Add($"{result.Id}-bin", stream.ToArray());
         }
 
         return metadata;

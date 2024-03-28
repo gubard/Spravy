@@ -9,5 +9,5 @@ public class ValidCharsValidationResult : ValidationResult
         ValidChars = validChars;
     }
 
-    public ReadOnlyMemory<char> ValidChars { get; }
+    public ReadOnlyMemory<char> ValidChars { get; protected set; }
 }

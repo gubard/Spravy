@@ -35,7 +35,7 @@ public class SqliteObjectStorage : IObjectStorage
     {
         var item = await storageDbContext.FindAsync<StorageEntity>(id);
         await using var steam = new MemoryStream();
-        await serializer.SerializeAsync(obj, steam);
+         serializer.Serialize(obj, steam);
         steam.Position = 0;
 
         if (item is null)
@@ -62,7 +62,7 @@ public class SqliteObjectStorage : IObjectStorage
         item = item.ThrowIfNull();
         await using var stream = item.Value.ToMemoryStream();
         stream.Position = 0;
-        var result = await serializer.DeserializeAsync<TObject>(stream);
+        var result =  serializer.Deserialize<TObject>(stream);
 
         return result;
     }

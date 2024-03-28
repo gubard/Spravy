@@ -113,7 +113,7 @@ public class EfAuthenticationService : IAuthenticationService
 
                 if (user is not null)
                 {
-                    errors.Add(UserWithLoginExistsValidationResult.Default);
+                    errors.Add(new UserWithLoginExistsValidationResult());
 
                     return;
                 }
@@ -123,7 +123,7 @@ public class EfAuthenticationService : IAuthenticationService
 
                 if (user is not null)
                 {
-                    errors.Add(UserWithEmailExistsValidationResult.Default);
+                    errors.Add(new UserWithEmailExistsValidationResult());
 
                     return;
                 }

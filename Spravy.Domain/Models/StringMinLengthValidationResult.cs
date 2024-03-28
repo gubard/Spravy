@@ -9,5 +9,5 @@ public class StringMinLengthValidationResult : ValidationResult
         MinLength = minLength;
     }
 
-    public ushort MinLength { get; }
+    public ushort MinLength { get; protected set; }
 }
