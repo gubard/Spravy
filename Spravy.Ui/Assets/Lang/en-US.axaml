@@ -1,7 +1,9 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:sys="clr-namespace:System;assembly=System.Runtime"
-                    xmlns:m="clr-namespace:Spravy.Ui.Features.Localizations.Models">
+                    xmlns:sys="clr-namespace:System;assembly=System.Runtime">
+    <!--DeletePasswordItemView-->
+    <sys:String x:Key="DeletePasswordItemView.Header">Are you sure you want to delete "{PasswordItemName}"?</sys:String>
+
     <!--PasswordGeneratorView-->
     <sys:String x:Key="PasswordGeneratorView.Add">Create password</sys:String>
 

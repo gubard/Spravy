@@ -281,7 +281,7 @@ public static class CommandStorage
             "Generate password"
         );
         RemovePasswordItemItem = CreateCommand<IIdProperty>(
-            RemovePasswordItemAsync,
+            DeletePasswordItemAsync,
             MaterialIconKind.Delete,
             "Generate password"
         );
@@ -457,9 +457,9 @@ public static class CommandStorage
 
     public static CommandItem SelectAll { get; }
 
-    private static Task RemovePasswordItemAsync(IIdProperty idProperty, CancellationToken cancellationToken)
+    private static Task DeletePasswordItemAsync(IIdProperty idProperty, CancellationToken cancellationToken)
     {
-        return dialogViewer.ShowConfirmContentDialogAsync<TextViewModel>(
+        return dialogViewer.ShowConfirmContentDialogAsync<DeletePasswordItemViewModel>(
             async _ =>
             {
                 await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
@@ -470,7 +470,7 @@ public static class CommandStorage
                 await RefreshCurrentViewAsync(cancellationToken);
             },
             _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
-            view => view.Text = "Are you sure?",
+            view => view.PasswordItemId = idProperty.Id,
             cancellationToken
         );
     }
