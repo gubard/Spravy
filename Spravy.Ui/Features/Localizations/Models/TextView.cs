@@ -8,8 +8,6 @@ public class TextView
 {
     private static readonly Application application = Application.Current.ThrowIfNull();
 
-    public const string DeleteToDoItemView_QuestionKey = "DeleteToDoItemView.Question";
-
     public TextView(string key)
     {
         Key = key;

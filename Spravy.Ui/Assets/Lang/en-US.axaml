@@ -50,7 +50,8 @@
     <sys:String x:Key="EditDescriptionView.Description">Description</sys:String>
 
     <!--DeleteToDoItemView-->
-    <sys:String x:Key="{x:Static m:TextView.DeleteToDoItemView_QuestionKey}">Are you sure you want to delete "{ToDoItemName}"?</sys:String>
+    <sys:String x:Key="DeleteToDoItemView.Header">Are you sure you want to delete "{ToDoItemName}"?</sys:String>
+    <sys:String x:Key="DeleteToDoItemView.Body">You also delete all child to-do items:</sys:String>
 
     <!--ConfirmView-->
     <sys:String x:Key="ConfirmView.Ok">Ok</sys:String>

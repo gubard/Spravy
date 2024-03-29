@@ -17,23 +17,32 @@
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 
-    <c:GroupBox>
-        <c:GroupBox.Header>
-            <ContentControl Content="{Binding DeleteText}" />
-        </c:GroupBox.Header>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <c:GroupBox>
+            <c:GroupBox.Header>
+                <ContentControl Content="{Binding DeleteText}" />
+            </c:GroupBox.Header>
 
-        <c:GroupBox.DataTemplates>
-            <DataTemplate DataType="m:ToDoItemParentNotify">
-                <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5,0,5,0" />
-            </DataTemplate>
+            <c:GroupBox.DataTemplates>
+                <DataTemplate DataType="m:ToDoItemParentNotify">
+                    <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5,0,5,0" />
+                </DataTemplate>
 
-            <DataTemplate DataType="m:RootItem">
-                <ContentControl Content="{x:Static mi:MaterialIconKind.Home}" Margin="5,0,5,0" />
-            </DataTemplate>
-        </c:GroupBox.DataTemplates>
+                <DataTemplate DataType="m:RootItem">
+                    <ContentControl Content="{x:Static mi:MaterialIconKind.Home}" Margin="5,0,5,0" />
+                </DataTemplate>
+            </c:GroupBox.DataTemplates>
 
-        <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
-            <c:Stepper Steps="{Binding Path}" Index="0" HorizontalAlignment="Center" />
-        </ScrollViewer>
-    </c:GroupBox>
+            <StackPanel>
+                <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
+                    <c:Stepper Steps="{Binding Path}" Index="0" HorizontalAlignment="Center" />
+                </ScrollViewer>
+
+                <TextBlock
+                    IsVisible="{Binding ChildrenText, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}"
+                    Text="{DynamicResource DeleteToDoItemView.Body}" />
+                <TextBlock Text="{Binding ChildrenText}" />
+            </StackPanel>
+        </c:GroupBox>
+    </ScrollViewer>
 </ru:ReactiveUserControl>
