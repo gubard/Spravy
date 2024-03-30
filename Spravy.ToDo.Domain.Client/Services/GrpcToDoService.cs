@@ -381,7 +381,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                             cancellationToken.ThrowIfCancellationRequested();
                             var reply = await client.GetRootToDoItemIdsAsync(request, value);
 
-                            return mapper.Map<ReadOnlyMemory<Guid>>(reply.Ids).ToResult();
+                            return mapper.Map<Guid[]>(reply.Ids).ToReadOnlyMemory().ToResult();
                         }
                     );
             },
@@ -409,7 +409,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                 cancellationToken: cancellationToken
                             );
 
-                            return mapper.Map<ReadOnlyMemory<Guid>>(reply.Ids).ToResult();
+                            return mapper.Map<Guid[]>(reply.Ids).ToReadOnlyMemory().ToResult();
                         }
                     );
             },
@@ -1600,7 +1600,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         while (await MoveNextAsync(response, cancellationToken))
         {
             var reply = response.ResponseStream.Current;
-            var item = mapper.Map<ReadOnlyMemory<ToDoItem>>(reply.Items);
+            var item = mapper.Map<ToDoItem[]>(reply.Items);
 
             yield return item;
 

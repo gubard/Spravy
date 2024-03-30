@@ -119,7 +119,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         await foreach (var item in toDoService.GetToDoItemsAsync(ids, request.ChunkSize, context.CancellationToken))
         {
             var reply = new GetToDoItemsReply();
-            reply.Items.AddRange(mapper.Map<IEnumerable<ToDoItemGrpc>>(item));
+            reply.Items.AddRange(mapper.Map<ToDoItemGrpc[]>(item.ToArray()));
             await responseStream.WriteAsync(reply);
         }
     }
@@ -245,16 +245,22 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         return reply;
     }
 
-    public override async Task<GetRootToDoItemIdsReply> GetRootToDoItemIds(
+    public override Task<GetRootToDoItemIdsReply> GetRootToDoItemIds(
         GetRootToDoItemIdsRequest request,
         ServerCallContext context
     )
     {
-        var ids = await toDoService.GetRootToDoItemIdsAsync(context.CancellationToken);
-        var reply = new GetRootToDoItemIdsReply();
-        reply.Ids.AddRange(mapper.Map<IEnumerable<ByteString>>(ids));
+        return toDoService.GetRootToDoItemIdsAsync(context.CancellationToken)
+            .HandleAsync(
+                serializer,
+                ids =>
+                {
+                    var reply = new GetRootToDoItemIdsReply();
+                    reply.Ids.AddRange(mapper.Map<IEnumerable<ByteString>>(ids.ToArray()));
 
-        return reply;
+                    return reply;
+                }
+            );
     }
 
     public override async Task<GetLeafToDoItemIdsReply> GetLeafToDoItemIds(
@@ -269,16 +275,22 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         return reply;
     }
 
-    public override async Task<GetFavoriteToDoItemIdsRequestReply> GetFavoriteToDoItemIds(
+    public override Task<GetFavoriteToDoItemIdsRequestReply> GetFavoriteToDoItemIds(
         GetFavoriteToDoItemIdsRequest request,
         ServerCallContext context
     )
     {
-        var ids = await toDoService.GetFavoriteToDoItemIdsAsync(context.CancellationToken);
-        var reply = new GetFavoriteToDoItemIdsRequestReply();
-        reply.Ids.AddRange(mapper.Map<IEnumerable<ByteString>>(ids));
+        return toDoService.GetFavoriteToDoItemIdsAsync(context.CancellationToken)
+            .HandleAsync(
+                serializer,
+                ids =>
+                {
+                    var reply = new GetFavoriteToDoItemIdsRequestReply();
+                    reply.Ids.AddRange(mapper.Map<IEnumerable<ByteString>>(ids.ToArray()));
 
-        return reply;
+                    return reply;
+                }
+            );
     }
 
     public override async Task<GetChildrenToDoItemIdsReply> GetChildrenToDoItemIds(

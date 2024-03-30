@@ -4,6 +4,7 @@ using Spravy.Authentication.Domain.Mapper.Profiles;
 using Spravy.Authentication.Domain.Services;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
+using Spravy.Core.Services;
 using Spravy.Db.Interfaces;
 using Spravy.Db.Sqlite.Models;
 using Spravy.Di.Extensions;
@@ -32,6 +33,7 @@ public static class ServiceCollectionExtension
         //serviceCollection.AddHostedService<EventBusHostedService>();
         serviceCollection.AddSpravySqliteFolderContext<SpravyDbToDoDbContext, SpravyToDoDbSqliteMigratorMark>();
         serviceCollection.AddSingleton<ITokenService, TokenService>();
+        serviceCollection.AddTransient<ISerializer, ProtobufSerializer>();
         serviceCollection.AddSingleton<IDbContextSetup, SqliteToDoDbContextSetup>();
         serviceCollection.AddSingleton<IFactory<string, SpravyDbToDoDbContext>, SpravyToDoDbContextFactory>();
         //serviceCollection.AddSingleton<IEventBusService>(sp => sp.GetRequiredService<GrpcEventBusService>());
