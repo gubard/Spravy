@@ -63,7 +63,7 @@ public static class NinjectModuleExtension
                     var options = context.Kernel.GetRequiredService<TGrpcOptions>();
                     var grpcClientFactory = context.Kernel.GetRequiredService<IFactory<Uri, TGrpcClient>>();
                     var host = options.Host.ThrowIfNull().ToUri();
-                    var mapper = context.Kernel.GetRequiredService<IMapper>();
+                    var mapper = context.Kernel.GetRequiredService<IConverter>();
                     var serializer = context.Kernel.GetRequiredService<ISerializer>();
 
                     return TGrpcService.CreateGrpcService(grpcClientFactory, host, mapper, serializer);
@@ -120,7 +120,7 @@ public static class NinjectModuleExtension
                 {
                     var options = context.Kernel.GetRequiredService<TGrpcOptions>();
                     var factory = context.Kernel.GetRequiredService<IFactory<Uri, TGrpcClient>>();
-                    var mapper = context.Kernel.GetRequiredService<IMapper>();
+                    var mapper = context.Kernel.GetRequiredService<IConverter>();
                     var host = options.Host.ThrowIfNull().ToUri();
                     var metadataFactory = CreateMetadataFactory(options, context.Kernel);
                     var serializer = context.Kernel.GetRequiredService<ISerializer>();

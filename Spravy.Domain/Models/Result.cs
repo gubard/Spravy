@@ -34,6 +34,8 @@ public readonly struct Result
 
 public readonly struct Result<TValue>
 {
+    private readonly TValue value = default;
+
     public Result()
     {
         Errors = new ReadOnlyMemory<Error>([DefaultObject<DefaultCtorResultError<TValue>>.Default]);
@@ -56,11 +58,12 @@ public readonly struct Result<TValue>
 
     public Result(TValue value)
     {
-        Value = value;
+        this.value = value;
     }
 
     public ReadOnlyMemory<Error> Errors { get; }
-    public TValue? Value { get; }
+
+    public TValue Value => IsHasError ? throw new Exception("Result has error") : value;
 
     public bool IsHasError => !Errors.IsEmpty;
 }

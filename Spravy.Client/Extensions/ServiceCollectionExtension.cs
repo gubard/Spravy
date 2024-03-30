@@ -54,7 +54,7 @@ public static class ServiceCollectionExtension
                 return TGrpcService.CreateGrpcService(
                     sp.GetRequiredService<IFactory<Uri, TGrpcClient>>(),
                     options.Host.ThrowIfNull().ToUri(),
-                    sp.GetRequiredService<IMapper>(),
+                    sp.GetRequiredService<IConverter>(),
                     sp.GetRequiredService<ISerializer>()
                 );
             }
@@ -104,7 +104,7 @@ public static class ServiceCollectionExtension
                 return TGrpcService.CreateGrpcService(
                     sp.GetRequiredService<IFactory<Uri, TGrpcClient>>(),
                     options.Host.ThrowIfNull().ToUri(),
-                    sp.GetRequiredService<IMapper>(),
+                    sp.GetRequiredService<IConverter>(),
                     CreateMetadataFactory(options, sp),
                     sp.GetRequiredService<ISerializer>()
                 );

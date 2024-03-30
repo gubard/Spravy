@@ -15,35 +15,37 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
     IAuthenticationService,
     IGrpcServiceCreator<GrpcAuthenticationService, AuthenticationServiceClient>
 {
-    private readonly IMapper mapper;
+    private readonly IConverter converter;
 
     public GrpcAuthenticationService(
         IFactory<Uri, AuthenticationServiceClient> grpcClientFactory,
         Uri host,
         ISerializer serializer,
-        IMapper mapper
+        IConverter converter
     ) : base(grpcClientFactory, host, serializer)
     {
-        this.mapper = mapper;
+        this.converter = converter;
     }
 
     public Task<Result<TokenResult>> LoginAsync(User user, CancellationToken cancellationToken)
     {
         return CallClientAsync(
-            async client =>
-            {
-                var userGrpc = mapper.Map<UserGrpc>(user);
+            client =>
+                converter.Convert<UserGrpc>(user)
+                    .IfSuccessAsync(
+                        async userGrpc =>
+                        {
+                            var request = new LoginRequest
+                            {
+                                User = userGrpc,
+                            };
 
-                var request = new LoginRequest
-                {
-                    User = userGrpc,
-                };
+                            cancellationToken.ThrowIfCancellationRequested();
+                            var reply = await client.LoginAsync(request);
 
-                cancellationToken.ThrowIfCancellationRequested();
-                var reply = await client.LoginAsync(request);
-
-                return mapper.Map<TokenResult>(reply).ToResult();
-            },
+                            return converter.Convert<TokenResult>(reply);
+                        }
+                    ),
             cancellationToken
         );
     }
@@ -51,14 +53,17 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
     public Task<Result> CreateUserAsync(CreateUserOptions options, CancellationToken cancellationToken)
     {
         return CallClientAsync(
-            async client =>
-            {
-                var request = mapper.Map<CreateUserRequest>(options);
-                cancellationToken.ThrowIfCancellationRequested();
-                await client.CreateUserAsync(request);
+            client =>
+                converter.Convert<CreateUserRequest>(options)
+                    .IfSuccessAsync(
+                        async request =>
+                        {
+                            cancellationToken.ThrowIfCancellationRequested();
+                            await client.CreateUserAsync(request);
 
-                return Result.Success;
-            },
+                            return Result.Success;
+                        }
+                    ),
             cancellationToken
         );
     }
@@ -68,8 +73,6 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         return CallClientAsync(
             async client =>
             {
-                cancellationToken.ThrowIfCancellationRequested();
-
                 var reply = await client.RefreshTokenAsync(
                     new RefreshTokenRequest
                     {
@@ -77,7 +80,7 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
                     }
                 );
 
-                return mapper.Map<TokenResult>(reply).ToResult();
+                return converter.Convert<TokenResult>(reply);
             },
             cancellationToken
         );
@@ -88,8 +91,6 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         return CallClientAsync(
             async client =>
             {
-                cancellationToken.ThrowIfCancellationRequested();
-
                 await client.UpdateVerificationCodeByLoginAsync(
                     new UpdateVerificationCodeByLoginRequest
                     {
@@ -108,8 +109,6 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         return CallClientAsync(
             async client =>
             {
-                cancellationToken.ThrowIfCancellationRequested();
-
                 await client.UpdateVerificationCodeByEmailAsync(
                     new UpdateVerificationCodeByEmailRequest
                     {
@@ -128,8 +127,6 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         return CallClientAsync(
             async client =>
             {
-                cancellationToken.ThrowIfCancellationRequested();
-
                 var reply = await client.IsVerifiedByLoginAsync(
                     new IsVerifiedByLoginRequest
                     {
@@ -148,8 +145,6 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         return CallClientAsync(
             async client =>
             {
-                cancellationToken.ThrowIfCancellationRequested();
-
                 var reply = await client.IsVerifiedByEmailAsync(
                     new IsVerifiedByEmailRequest
                     {
@@ -368,10 +363,10 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
     public static GrpcAuthenticationService CreateGrpcService(
         IFactory<Uri, AuthenticationServiceClient> grpcClientFactory,
         Uri host,
-        IMapper mapper,
+        IConverter converter,
         ISerializer serializer
     )
     {
-        return new GrpcAuthenticationService(grpcClientFactory, host, serializer, mapper);
+        return new GrpcAuthenticationService(grpcClientFactory, host, serializer, converter);
     }
 }

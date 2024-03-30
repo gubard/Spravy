@@ -3,6 +3,7 @@ using Google.Protobuf;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Spravy.Domain.Enums;
+using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;
 using Spravy.Service.Extensions;
@@ -27,48 +28,51 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         this.serializer = serializer;
     }
 
-    public override async Task<CloneToDoItemReply> CloneToDoItem(
+    public override Task<CloneToDoItemReply> CloneToDoItem(
         CloneToDoItemRequest request,
         ServerCallContext context
     )
     {
-        await toDoService.CloneToDoItemAsync(
-            mapper.Map<Guid>(request.CloneId),
-            mapper.Map<Guid?>(request.ParentId),
-            context.CancellationToken
-        );
-
-        return new CloneToDoItemReply();
+        return toDoService.CloneToDoItemAsync(
+                mapper.Map<Guid>(request.CloneId),
+                mapper.Map<Guid?>(request.ParentId),
+                context.CancellationToken
+            )
+            .HandleAsync<CloneToDoItemReply>(serializer);
     }
 
-    public override async Task<GetChildrenToDoItemShortsReply> GetChildrenToDoItemShorts(
+    public override Task<GetChildrenToDoItemShortsReply> GetChildrenToDoItemShorts(
         GetChildrenToDoItemShortsRequest request,
         ServerCallContext context
     )
     {
-        var items = await toDoService.GetChildrenToDoItemShortsAsync(
-            mapper.Map<Guid>(request.Id),
-            context.CancellationToken
-        );
+        return toDoService.GetChildrenToDoItemShortsAsync(
+                mapper.Map<Guid>(request.Id),
+                context.CancellationToken
+            )
+            .HandleAsync(
+                serializer,
+                items =>
+                {
+                    var result = new GetChildrenToDoItemShortsReply();
+                    result.Items.AddRange(mapper.Map<IEnumerable<ToDoShortItemGrpc>>(items));
 
-        var result = new GetChildrenToDoItemShortsReply();
-        result.Items.AddRange(mapper.Map<IEnumerable<ToDoShortItemGrpc>>(items));
-
-        return result;
+                    return result;
+                }
+            );
     }
 
-    public override async Task<UpdateToDoItemDescriptionTypeReply> UpdateToDoItemDescriptionType(
+    public override Task<UpdateToDoItemDescriptionTypeReply> UpdateToDoItemDescriptionType(
         UpdateToDoItemDescriptionTypeRequest request,
         ServerCallContext context
     )
     {
-        await toDoService.UpdateToDoItemDescriptionTypeAsync(
-            mapper.Map<Guid>(request.Id),
-            (DescriptionType)request.Type,
-            context.CancellationToken
-        );
-
-        return new UpdateToDoItemDescriptionTypeReply();
+        return toDoService.UpdateToDoItemDescriptionTypeAsync(
+                mapper.Map<Guid>(request.Id),
+                (DescriptionType)request.Type,
+                context.CancellationToken
+            )
+            .HandleAsync<UpdateToDoItemDescriptionTypeReply>(serializer);
     }
 
     public override async Task<ResetToDoItemReply> ResetToDoItem(
@@ -222,27 +226,34 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         return reply;
     }
 
-    public override async Task<GetPlannedToDoItemSettingsReply> GetPlannedToDoItemSettings(
+    public override Task<GetPlannedToDoItemSettingsReply> GetPlannedToDoItemSettings(
         GetPlannedToDoItemSettingsRequest request,
         ServerCallContext context
     )
     {
-        var settings = await toDoService.GetPlannedToDoItemSettingsAsync(
-            mapper.Map<Guid>(request.Id),
-            context.CancellationToken
-        );
-        var reply = mapper.Map<GetPlannedToDoItemSettingsReply>(settings);
-
-        return reply;
+        return toDoService.GetPlannedToDoItemSettingsAsync(
+                mapper.Map<Guid>(request.Id),
+                context.CancellationToken
+            )
+            .HandleAsync(
+                serializer,
+                settings => mapper.Map<GetPlannedToDoItemSettingsReply>(settings)
+            );
     }
 
-    public override async Task<GetParentsReply> GetParents(GetParentsRequest request, ServerCallContext context)
+    public override Task<GetParentsReply> GetParents(GetParentsRequest request, ServerCallContext context)
     {
-        var parents = await toDoService.GetParentsAsync(mapper.Map<Guid>(request.Id), context.CancellationToken);
-        var reply = new GetParentsReply();
-        reply.Parents.AddRange(mapper.Map<IEnumerable<ToDoShortItemGrpc>>(parents));
+        return toDoService.GetParentsAsync(mapper.Map<Guid>(request.Id), context.CancellationToken)
+            .HandleAsync(
+                serializer,
+                parents =>
+                {
+                    var reply = new GetParentsReply();
+                    reply.Parents.AddRange(mapper.Map<ToDoShortItemGrpc[]>(parents.ToArray()));
 
-        return reply;
+                    return reply;
+                }
+            );
     }
 
     public override Task<GetRootToDoItemIdsReply> GetRootToDoItemIds(

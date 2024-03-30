@@ -81,6 +81,33 @@ public static class ObjectExtension
         return array;
     }
 
+    public static ReadOnlyMemory<T> Combine<T>(this ReadOnlyMemory<T> memory, params ReadOnlyMemory<T>[] memories)
+    {
+        if (memories.Length == 0)
+        {
+            return memory;
+        }
+
+        var length = memory.Length;
+
+        foreach (var readOnlyMemory in memories)
+        {
+            length += readOnlyMemory.Length;
+        }
+
+        var result = new Memory<T>(new T[length]);
+        memory.CopyTo(result);
+        var index = memory.Length;
+
+        foreach (var readOnlyMemory in memories)
+        {
+            readOnlyMemory.Span.CopyTo(result.Span.Slice(index));
+            index += readOnlyMemory.Length;
+        }
+
+        return result;
+    }
+
     public static ReadOnlyMemory<T> ToReadOnlyMemory<T>(this T obj)
     {
         return new ReadOnlyMemory<T>([obj]);

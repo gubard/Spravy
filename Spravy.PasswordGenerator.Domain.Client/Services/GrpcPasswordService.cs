@@ -16,18 +16,18 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
     IPasswordService,
     IGrpcServiceCreatorAuth<GrpcPasswordService, PasswordServiceClient>
 {
-    private readonly IMapper mapper;
+    private readonly IConverter converter;
     private readonly IMetadataFactory metadataFactory;
 
     public GrpcPasswordService(
         IFactory<Uri, PasswordServiceClient> grpcClientFactory,
         Uri host,
-        IMapper mapper,
+        IConverter converter,
         IMetadataFactory metadataFactory,
         ISerializer serializer
     ) : base(grpcClientFactory, host, serializer)
     {
-        this.mapper = mapper;
+        this.converter = converter;
         this.metadataFactory = metadataFactory;
     }
 
@@ -35,16 +35,11 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
     {
         return CallClientAsync(
             client =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                return metadataFactory.CreateAsync(cancellationToken)
+                metadataFactory.CreateAsync(cancellationToken)
                     .IfSuccessAsync(
-                        async value =>
+                        converter.Convert<AddPasswordItemRequest>(options),
+                        async (value, request) =>
                         {
-                            var request = mapper.Map<AddPasswordItemRequest>(options);
-                            cancellationToken.ThrowIfCancellationRequested();
-
                             await client.AddPasswordItemAsync(
                                 request,
                                 value,
@@ -53,8 +48,7 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
 
                             return Result.Success;
                         }
-                    );
-            },
+                    ),
             cancellationToken
         );
     }
@@ -63,15 +57,11 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
     {
         return CallClientAsync(
             client =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                return metadataFactory.CreateAsync(cancellationToken)
+                metadataFactory.CreateAsync(cancellationToken)
                     .IfSuccessAsync(
                         async value =>
                         {
                             var request = new GetPasswordItemsRequest();
-                            cancellationToken.ThrowIfCancellationRequested();
 
                             var reply = await client.GetPasswordItemsAsync(
                                 request,
@@ -79,10 +69,10 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
                                 cancellationToken: cancellationToken
                             );
 
-                            return mapper.Map<ReadOnlyMemory<PasswordItem>>(reply.Items).ToResult();
+                            return converter.Convert<PasswordItem[]>(reply.Items)
+                                .IfSuccess(items => items.ToReadOnlyMemory().ToResult());
                         }
-                    );
-            },
+                    ),
             cancellationToken
         );
     }
@@ -91,19 +81,15 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
     {
         return CallClientAsync(
             client =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                return metadataFactory.CreateAsync(cancellationToken)
+                metadataFactory.CreateAsync(cancellationToken)
                     .IfSuccessAsync(
-                        async value =>
+                        converter.Convert<ByteString>(id),
+                        async (value, i) =>
                         {
                             var request = new GetPasswordItemRequest
                             {
-                                Id = mapper.Map<ByteString>(id),
+                                Id = i,
                             };
-
-                            cancellationToken.ThrowIfCancellationRequested();
 
                             var reply = await client.GetPasswordItemAsync(
                                 request,
@@ -111,10 +97,9 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
                                 cancellationToken: cancellationToken
                             );
 
-                            return mapper.Map<PasswordItem>(reply).ToResult();
+                            return converter.Convert<PasswordItem>(reply);
                         }
-                    );
-            },
+                    ),
             cancellationToken
         );
     }
@@ -123,19 +108,15 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
     {
         return CallClientAsync(
             client =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                return metadataFactory.CreateAsync(cancellationToken)
+                metadataFactory.CreateAsync(cancellationToken)
                     .IfSuccessAsync(
-                        async value =>
+                        converter.Convert<ByteString>(id),
+                        async (value, i) =>
                         {
                             var request = new DeletePasswordItemRequest
                             {
-                                Id = mapper.Map<ByteString>(id),
+                                Id = i,
                             };
-
-                            cancellationToken.ThrowIfCancellationRequested();
 
                             await client.DeletePasswordItemAsync(
                                 request,
@@ -145,8 +126,7 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
 
                             return Result.Success;
                         }
-                    );
-            },
+                    ),
             cancellationToken
         );
     }
@@ -160,14 +140,13 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
 
                 return metadataFactory.CreateAsync(cancellationToken)
                     .IfSuccessAsync(
-                        async value =>
+                        converter.Convert<ByteString>(id),
+                        async (value, i) =>
                         {
                             var request = new GeneratePasswordRequest
                             {
-                                Id = mapper.Map<ByteString>(id),
+                                Id = i,
                             };
-
-                            cancellationToken.ThrowIfCancellationRequested();
 
                             var reply = await client.GeneratePasswordAsync(
                                 request,
@@ -187,20 +166,16 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
     {
         return CallClientAsync(
             client =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                return metadataFactory.CreateAsync(cancellationToken)
+                metadataFactory.CreateAsync(cancellationToken)
                     .IfSuccessAsync(
-                        async value =>
+                        converter.Convert<ByteString>(id),
+                        async (value, i) =>
                         {
                             var request = new UpdatePasswordItemNameRequest
                             {
-                                Id = mapper.Map<ByteString>(id),
+                                Id = i,
                                 Name = name,
                             };
-
-                            cancellationToken.ThrowIfCancellationRequested();
 
                             await client.UpdatePasswordItemNameAsync(
                                 request,
@@ -210,8 +185,7 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
 
                             return Result.Success;
                         }
-                    );
-            },
+                    ),
             cancellationToken
         );
     }
@@ -220,20 +194,16 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
     {
         return CallClientAsync(
             client =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                return metadataFactory.CreateAsync(cancellationToken)
+                metadataFactory.CreateAsync(cancellationToken)
                     .IfSuccessAsync(
-                        async value =>
+                        converter.Convert<ByteString>(id),
+                        async (value, i) =>
                         {
                             var request = new UpdatePasswordItemKeyRequest
                             {
-                                Id = mapper.Map<ByteString>(id),
+                                Id = i,
                                 Key = key,
                             };
-
-                            cancellationToken.ThrowIfCancellationRequested();
 
                             await client.UpdatePasswordItemKeyAsync(
                                 request,
@@ -243,8 +213,7 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
 
                             return Result.Success;
                         }
-                    );
-            },
+                    ),
             cancellationToken
         );
     }
@@ -253,19 +222,16 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
     {
         return CallClientAsync(
             client =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                return metadataFactory.CreateAsync(cancellationToken)
+                metadataFactory.CreateAsync(cancellationToken)
                     .IfSuccessAsync(
-                        async value =>
+                        converter.Convert<ByteString>(id),
+                        async (value, i) =>
                         {
                             var request = new UpdatePasswordItemLengthRequest
                             {
-                                Id = mapper.Map<ByteString>(id),
+                                Id = i,
                                 Length = length,
                             };
-
-                            cancellationToken.ThrowIfCancellationRequested();
 
                             await client.UpdatePasswordItemLengthAsync(
                                 request,
@@ -275,8 +241,7 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
 
                             return Result.Success;
                         }
-                    );
-            },
+                    ),
             cancellationToken
         );
     }
@@ -285,20 +250,16 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
     {
         return CallClientAsync(
             client =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                return metadataFactory.CreateAsync(cancellationToken)
+                metadataFactory.CreateAsync(cancellationToken)
                     .IfSuccessAsync(
-                        async value =>
+                        converter.Convert<ByteString>(id),
+                        async (value, i) =>
                         {
                             var request = new UpdatePasswordItemRegexRequest
                             {
-                                Id = mapper.Map<ByteString>(id),
+                                Id = i,
                                 Regex = regex,
                             };
-
-                            cancellationToken.ThrowIfCancellationRequested();
 
                             await client.UpdatePasswordItemRegexAsync(
                                 request,
@@ -308,8 +269,7 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
 
                             return Result.Success;
                         }
-                    );
-            },
+                    ),
             cancellationToken
         );
     }
@@ -322,20 +282,16 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
     {
         return CallClientAsync(
             client =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                return metadataFactory.CreateAsync(cancellationToken)
+                metadataFactory.CreateAsync(cancellationToken)
                     .IfSuccessAsync(
-                        async value =>
+                        converter.Convert<ByteString>(id),
+                        async (value, i) =>
                         {
                             var request = new UpdatePasswordItemIsAvailableNumberRequest
                             {
-                                Id = mapper.Map<ByteString>(id),
+                                Id = i,
                                 IsAvailableNumber = isAvailableNumber,
                             };
-
-                            cancellationToken.ThrowIfCancellationRequested();
 
                             await client.UpdatePasswordItemIsAvailableNumberAsync(
                                 request,
@@ -345,8 +301,7 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
 
                             return Result.Success;
                         }
-                    );
-            },
+                    ),
             cancellationToken
         );
     }
@@ -359,20 +314,16 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
     {
         return CallClientAsync(
             client =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                return metadataFactory.CreateAsync(cancellationToken)
+                metadataFactory.CreateAsync(cancellationToken)
                     .IfSuccessAsync(
-                        async value =>
+                        converter.Convert<ByteString>(id),
+                        async (value, i) =>
                         {
                             var request = new UpdatePasswordItemIsAvailableLowerLatinRequest
                             {
-                                Id = mapper.Map<ByteString>(id),
+                                Id = i,
                                 IsAvailableLowerLatin = isAvailableLowerLatin,
                             };
-
-                            cancellationToken.ThrowIfCancellationRequested();
 
                             await client.UpdatePasswordItemIsAvailableLowerLatinAsync(
                                 request,
@@ -382,8 +333,7 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
 
                             return Result.Success;
                         }
-                    );
-            },
+                    ),
             cancellationToken
         );
     }
@@ -396,19 +346,16 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
     {
         return CallClientAsync(
             client =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                return metadataFactory.CreateAsync(cancellationToken)
+                metadataFactory.CreateAsync(cancellationToken)
                     .IfSuccessAsync(
-                        async value =>
+                        converter.Convert<ByteString>(id),
+                        async (value, i) =>
                         {
                             var request = new UpdatePasswordItemIsAvailableSpecialSymbolsRequest
                             {
-                                Id = mapper.Map<ByteString>(id),
+                                Id = i,
                                 IsAvailableSpecialSymbols = isAvailableSpecialSymbols,
                             };
-
-                            cancellationToken.ThrowIfCancellationRequested();
 
                             await client.UpdatePasswordItemIsAvailableSpecialSymbolsAsync(
                                 request,
@@ -418,8 +365,7 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
 
                             return Result.Success;
                         }
-                    );
-            },
+                    ),
             cancellationToken
         );
     }
@@ -432,20 +378,16 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
     {
         return CallClientAsync(
             client =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                return metadataFactory.CreateAsync(cancellationToken)
+                metadataFactory.CreateAsync(cancellationToken)
                     .IfSuccessAsync(
-                        async value =>
+                        converter.Convert<ByteString>(id),
+                        async (value, i) =>
                         {
                             var request = new UpdatePasswordItemCustomAvailableCharactersRequest
                             {
-                                Id = mapper.Map<ByteString>(id),
+                                Id = i,
                                 CustomAvailableCharacters = customAvailableCharacters,
                             };
-
-                            cancellationToken.ThrowIfCancellationRequested();
 
                             await client.UpdatePasswordItemCustomAvailableCharactersAsync(
                                 request,
@@ -455,8 +397,7 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
 
                             return Result.Success;
                         }
-                    );
-            },
+                    ),
             cancellationToken
         );
     }
@@ -469,20 +410,16 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
     {
         return CallClientAsync(
             client =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                return metadataFactory.CreateAsync(cancellationToken)
+                metadataFactory.CreateAsync(cancellationToken)
                     .IfSuccessAsync(
-                        async value =>
+                        converter.Convert<ByteString>(id),
+                        async (value, i) =>
                         {
                             var request = new UpdatePasswordItemIsAvailableUpperLatinRequest
                             {
-                                Id = mapper.Map<ByteString>(id),
+                                Id = i,
                                 IsAvailableUpperLatin = isAvailableUpperLatin,
                             };
-
-                            cancellationToken.ThrowIfCancellationRequested();
 
                             await client.UpdatePasswordItemIsAvailableUpperLatinAsync(
                                 request,
@@ -492,8 +429,7 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
 
                             return Result.Success;
                         }
-                    );
-            },
+                    ),
             cancellationToken
         );
     }
@@ -501,11 +437,11 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
     public static GrpcPasswordService CreateGrpcService(
         IFactory<Uri, PasswordServiceClient> grpcClientFactory,
         Uri host,
-        IMapper mapper,
+        IConverter converter,
         IMetadataFactory metadataFactory,
         ISerializer serializer
     )
     {
-        return new(grpcClientFactory, host, mapper, metadataFactory, serializer);
+        return new(grpcClientFactory, host, converter, metadataFactory, serializer);
     }
 }

@@ -17,18 +17,18 @@ public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
     IEventBusService,
     IGrpcServiceCreatorAuth<GrpcEventBusService, EventBusServiceClient>
 {
-    private readonly IMapper mapper;
+    private readonly IConverter converter;
     private readonly IMetadataFactory metadataFactory;
 
     public GrpcEventBusService(
         IFactory<Uri, EventBusServiceClient> grpcClientFactory,
         Uri host,
-        IMapper mapper,
+        IConverter converter,
         IMetadataFactory metadataFactory,
         ISerializer serializer
     ) : base(grpcClientFactory, host, serializer)
     {
-        this.mapper = mapper;
+        this.converter = converter;
         this.metadataFactory = metadataFactory;
     }
 
@@ -44,26 +44,23 @@ public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
     {
         return CallClientAsync(
             client =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                return metadataFactory.CreateAsync(cancellationToken)
+                metadataFactory.CreateAsync(cancellationToken)
                     .IfSuccessAsync(
-                        async value =>
+                        converter.Convert<ByteString>(eventId),
+                        converter.Convert<ByteString>(content),
+                        async (value, ei, c) =>
                         {
                             var request = new PublishEventRequest
                             {
-                                EventId = mapper.Map<ByteString>(eventId),
-                                Content = ByteString.CopyFrom(content),
+                                EventId = ei,
+                                Content = c,
                             };
 
-                            cancellationToken.ThrowIfCancellationRequested();
                             await client.PublishEventAsync(request, value, cancellationToken: cancellationToken);
 
                             return Result.Success;
                         }
-                    );
-            },
+                    ),
             cancellationToken
         );
     }
@@ -75,16 +72,13 @@ public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
     {
         return CallClientAsync(
             client =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                return metadataFactory.CreateAsync(cancellationToken)
+                metadataFactory.CreateAsync(cancellationToken)
                     .IfSuccessAsync(
-                        async value =>
+                        converter.Convert<ByteString[]>(eventIds.ToArray()),
+                        async (value, ei) =>
                         {
                             var request = new GetEventsRequest();
-                            request.EventIds.AddRange(mapper.Map<IEnumerable<ByteString>>(eventIds.ToArray()));
-                            cancellationToken.ThrowIfCancellationRequested();
+                            request.EventIds.AddRange(ei);
 
                             var events = await client.GetEventsAsync(
                                 request,
@@ -92,10 +86,10 @@ public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
                                 cancellationToken: cancellationToken
                             );
 
-                            return mapper.Map<ReadOnlyMemory<EventValue>>(events.Events).ToResult();
+                            return converter.Convert<EventValue[]>(events.Events)
+                                .IfSuccess(e => e.ToReadOnlyMemory().ToResult());
                         }
-                    );
-            },
+                    ),
             cancellationToken
         );
     }
@@ -107,7 +101,7 @@ public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
     )
     {
         var request = new SubscribeEventsRequest();
-        request.EventIds.AddRange(mapper.Map<IEnumerable<ByteString>>(eventIds));
+        request.EventIds.AddRange(converter.Convert<ByteString[]>(eventIds).Value);
         cancellationToken.ThrowIfCancellationRequested();
         var metadata = await metadataFactory.CreateAsync(cancellationToken);
         using var response = client.SubscribeEvents(request, metadata.Value, cancellationToken: cancellationToken);
@@ -116,9 +110,9 @@ public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
         while (await response.ResponseStream.MoveNext(cancellationToken))
         {
             var reply = response.ResponseStream.Current;
-            var eventValue = mapper.Map<EventValue>(reply);
+            var eventValue = converter.Convert<EventValue>(reply);
 
-            yield return eventValue;
+            yield return eventValue.Value;
 
             cancellationToken.ThrowIfCancellationRequested();
         }
@@ -127,11 +121,11 @@ public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
     public static GrpcEventBusService CreateGrpcService(
         IFactory<Uri, EventBusServiceClient> grpcClientFactory,
         Uri host,
-        IMapper mapper,
+        IConverter converter,
         IMetadataFactory metadataFactory,
         ISerializer serializer
     )
     {
-        return new(grpcClientFactory, host, mapper, metadataFactory, serializer);
+        return new(grpcClientFactory, host, converter, metadataFactory, serializer);
     }
 }

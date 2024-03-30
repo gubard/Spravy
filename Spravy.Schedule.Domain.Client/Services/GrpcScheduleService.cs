@@ -16,18 +16,18 @@ public class GrpcScheduleService : GrpcServiceBase<ScheduleServiceClient>,
     IScheduleService,
     IGrpcServiceCreatorAuth<GrpcScheduleService, ScheduleServiceClient>
 {
-    private readonly IMapper mapper;
+    private readonly IConverter converter;
     private readonly IMetadataFactory metadataFactory;
 
     public GrpcScheduleService(
         IFactory<Uri, ScheduleServiceClient> grpcClientFactory,
         Uri host,
-        IMapper mapper,
+        IConverter converter,
         IMetadataFactory metadataFactory,
         ISerializer serializer
     ) : base(grpcClientFactory, host, serializer)
     {
-        this.mapper = mapper;
+        this.converter = converter;
         this.metadataFactory = metadataFactory;
     }
 
@@ -35,21 +35,16 @@ public class GrpcScheduleService : GrpcServiceBase<ScheduleServiceClient>,
     {
         return CallClientAsync(
             client =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                return metadataFactory.CreateAsync(cancellationToken)
+                metadataFactory.CreateAsync(cancellationToken)
                     .IfSuccessAsync(
-                        async value =>
+                        converter.Convert<AddTimerRequest>(parameters),
+                        async (value, request) =>
                         {
-                            var request = mapper.Map<AddTimerRequest>(parameters);
-                            cancellationToken.ThrowIfCancellationRequested();
                             await client.AddTimerAsync(request, value);
 
                             return Result.Success;
                         }
-                    );
-            },
+                    ),
             cancellationToken
         );
     }
@@ -58,21 +53,17 @@ public class GrpcScheduleService : GrpcServiceBase<ScheduleServiceClient>,
     {
         return CallClientAsync(
             client =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                return metadataFactory.CreateAsync(cancellationToken)
+                metadataFactory.CreateAsync(cancellationToken)
                     .IfSuccessAsync(
                         async value =>
                         {
                             var request = new GetListTimesRequest();
-                            cancellationToken.ThrowIfCancellationRequested();
                             var timers = await client.GetListTimesAsync(request, value);
 
-                            return mapper.Map<ReadOnlyMemory<TimerItem>>(timers.Items).ToResult();
+                            return converter.Convert<TimerItem[]>(timers.Items)
+                                .IfSuccess(items => items.ToReadOnlyMemory().ToResult());
                         }
-                    );
-            },
+                    ),
             cancellationToken
         );
     }
@@ -81,27 +72,24 @@ public class GrpcScheduleService : GrpcServiceBase<ScheduleServiceClient>,
     {
         return CallClientAsync(
             client =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                return metadataFactory.CreateAsync(cancellationToken)
+                metadataFactory.CreateAsync(cancellationToken)
                     .IfSuccessAsync(
-                        async value =>
+                        converter.Convert<ByteString>(id),
+                        async (value, i) =>
                         {
                             cancellationToken.ThrowIfCancellationRequested();
 
                             await client.RemoveTimerAsync(
                                 new RemoveTimerRequest
                                 {
-                                    Id = mapper.Map<ByteString>(id),
+                                    Id = i,
                                 },
                                 value
                             );
 
                             return Result.Success;
                         }
-                    );
-            },
+                    ),
             cancellationToken
         );
     }
@@ -109,11 +97,11 @@ public class GrpcScheduleService : GrpcServiceBase<ScheduleServiceClient>,
     public static GrpcScheduleService CreateGrpcService(
         IFactory<Uri, ScheduleServiceClient> grpcClientFactory,
         Uri host,
-        IMapper mapper,
+        IConverter converter,
         IMetadataFactory metadataFactory,
         ISerializer serializer
     )
     {
-        return new GrpcScheduleService(grpcClientFactory, host, mapper, metadataFactory, serializer);
+        return new GrpcScheduleService(grpcClientFactory, host, converter, metadataFactory, serializer);
     }
 }

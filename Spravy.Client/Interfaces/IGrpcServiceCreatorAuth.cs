@@ -11,7 +11,7 @@ public interface IGrpcServiceCreatorAuth<out TGrpcService, in TGrpcClient>
     static abstract TGrpcService CreateGrpcService(
         IFactory<Uri, TGrpcClient> grpcClientFactory,
         Uri host,
-        IMapper mapper,
+        IConverter mapper,
         IMetadataFactory metadataFactory,
         ISerializer serializer
     );
@@ -23,7 +23,7 @@ public interface IGrpcServiceCreator<out TGrpcService, in TGrpcClient>
     static abstract TGrpcService CreateGrpcService(
         IFactory<Uri, TGrpcClient> grpcClientFactory,
         Uri host,
-        IMapper mapper,
+        IConverter mapper,
         ISerializer serializer
     );
 }
