@@ -11,14 +11,14 @@ namespace Spravy.Ui.Extensions;
 public static class ConfiguredTaskAwaitableExtension
 {
     public static async Task IfSuccessAsync(
-        this ConfiguredTaskAwaitable<Error> task,
+        this ConfiguredTaskAwaitable<Result> task,
         IDialogViewer dialogViewer,
         Func<Task> func
     )
     {
         var error = await task;
 
-        if (error.IsError)
+        if (error.IsHasError)
         {
             await dialogViewer.ShowInfoErrorDialogAsync<ErrorViewModel>(
                 async _ =>

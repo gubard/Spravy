@@ -1,4 +1,6 @@
-namespace Spravy.Domain.Models;
+using Spravy.Domain.Models;
+
+namespace Spravy.Domain.ValidationResults;
 
 public class UnknownValidationResult : ValidationResult
 {

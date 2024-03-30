@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace Spravy.Domain.Models;
+namespace Spravy.Domain.ValidationResults;
 
 public abstract class ValidationResult
 {

@@ -19,7 +19,7 @@ public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBas
         this.serializer = serializer;
     }
 
-    protected async Task<Error> CallClientAsync(Func<TGrpcClient, Task> func, CancellationToken cancellationToken)
+    protected async Task<Result> CallClientAsync(Func<TGrpcClient, Task> func, CancellationToken cancellationToken)
     {
         try
         {
@@ -38,7 +38,7 @@ public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBas
             throw new GrpcException(host, e);
         }
 
-        return new Error();
+        return new Result();
     }
 
     protected async Task<TResult> CallClientAsync<TResult>(

@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Avalonia.Collections;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Models;
+using Spravy.Domain.ValidationResults;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.Features.ErrorHandling.ViewModels;

@@ -1,5 +1,6 @@
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
+using Spravy.Domain.ValidationResults;
 
 namespace Spravy.Domain.Services;
 

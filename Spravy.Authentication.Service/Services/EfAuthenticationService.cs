@@ -12,6 +12,7 @@ using Spravy.Domain.Enums;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
+using Spravy.Domain.ValidationResults;
 using Spravy.Service.Extensions;
 
 namespace Spravy.Authentication.Service.Services;
@@ -69,7 +70,7 @@ public class EfAuthenticationService : IAuthenticationService
         return tokenResult;
     }
 
-    public async Task<Error> CreateUserAsync(
+    public async Task<Result> CreateUserAsync(
         CreateUserOptions options,
         CancellationToken cancellationToken
     )
@@ -81,7 +82,7 @@ public class EfAuthenticationService : IAuthenticationService
         {
             errors.Add(error);
 
-            return new Error(errors.ToArray());
+            return new Result(errors.ToArray());
         }
 
         await foreach (var error in passwordValidator.ValidateAsync(options.Password)
@@ -89,7 +90,7 @@ public class EfAuthenticationService : IAuthenticationService
         {
             errors.Add(error);
 
-            return new Error(errors.ToArray());
+            return new Result(errors.ToArray());
         }
 
         var salt = Guid.NewGuid();
@@ -133,7 +134,7 @@ public class EfAuthenticationService : IAuthenticationService
             cancellationToken
         );
 
-        return new Error(errors.ToArray());
+        return new Result(errors.ToArray());
     }
 
     public async Task<TokenResult> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)

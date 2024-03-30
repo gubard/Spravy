@@ -47,7 +47,7 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         );
     }
 
-    public Task<Error> CreateUserAsync(CreateUserOptions options, CancellationToken cancellationToken)
+    public Task<Result> CreateUserAsync(CreateUserOptions options, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>

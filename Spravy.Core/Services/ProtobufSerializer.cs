@@ -3,6 +3,7 @@ using ProtoBuf.Meta;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
+using Spravy.Domain.ValidationResults;
 
 namespace Spravy.Core.Services;
 

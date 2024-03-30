@@ -4,6 +4,7 @@ using Spravy.Domain.Exceptions;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
+using Spravy.Domain.ValidationResults;
 
 namespace Spravy.Client.Extensions;
 
@@ -14,7 +15,7 @@ public static class RpcExceptionExtension
     private static readonly MethodInfo DeserializeAsyncMethod =
         typeof(ISerializer).GetMethod(nameof(ISerializer.Deserialize)).ThrowIfNull();
 
-    public static async Task<Error> ToErrorAsync(this RpcException exception, ISerializer serializer)
+    public static async Task<Result> ToErrorAsync(this RpcException exception, ISerializer serializer)
     {
         var validationResults = new List<ValidationResult>();
 
@@ -49,10 +50,10 @@ public static class RpcExceptionExtension
 
         if (validationResults.Any())
         {
-            return new Error(validationResults.ToArray());
+            return new Result(validationResults.ToArray());
         }
 
-        return new Error();
+        return new Result();
     }
 
     public static Func<ISerializer, MemoryStream, ValidationResult> GetFunc(Type type)

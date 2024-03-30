@@ -170,7 +170,7 @@ public class GrpcAuthenticationService : AuthenticationServiceBase
         var options = mapper.Map<CreateUserOptions>(request);
         var error = await authenticationService.CreateUserAsync(options, context.CancellationToken);
 
-        if (!error.IsError)
+        if (!error.IsHasError)
         {
             return new CreateUserReply();
         }
