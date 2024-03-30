@@ -16,15 +16,15 @@ public class ContextAccessorAuthorizationHttpHeaderFactory : IHttpHeaderFactory
         this.httpContextAccessor = httpContextAccessor;
     }
 
-    public Task<IEnumerable<HttpHeaderItem>> CreateHeaderItemsAsync(CancellationToken cancellationToken)
+    public Task<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsAsync(CancellationToken cancellationToken)
     {
         var authorization = httpContextAccessor
             .HttpContext
             .ThrowIfNull()
             .GetAuthorizationHeader();
 
-        return Task.FromResult(
-            new HttpHeaderItem(HttpNames.HeaderAuthorizationName, authorization).ToEnumerable()
-        );
+        return new HttpHeaderItem(HttpNames.HeaderAuthorizationName, authorization).ToReadOnlyMemory()
+            .ToResult()
+            .ToTaskResult();
     }
 }

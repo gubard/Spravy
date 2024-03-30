@@ -1,7 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
 using Spravy.Domain.ValidationResults;
 
 namespace Spravy.Domain.Services;
@@ -15,7 +14,7 @@ public class ValidCharsValidationRule : IValidationRule<string>
         _validChars = validChars;
     }
 
-    public Task<bool> ValidateAsync(string? value, [MaybeNullWhen(true)] out ValidationResult result)
+    public Task<bool> ValidateAsync(string? value, [MaybeNullWhen(true)] out Error result)
     {
         if (value is null)
         {
@@ -30,7 +29,7 @@ public class ValidCharsValidationRule : IValidationRule<string>
             return true.ToTaskResult();
         }
 
-        result = new ValidCharsValidationResult(_validChars);
+        result = new ValidCharsError(_validChars);
 
         return false.ToTaskResult();
     }

@@ -1,3 +1,4 @@
+using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
 
@@ -5,29 +6,32 @@ namespace Spravy.Domain.Services;
 
 public class CombineHttpHeaderFactory : IHttpHeaderFactory
 {
-    private readonly IEnumerable<IHttpHeaderFactory> factories;
+    private readonly ReadOnlyMemory<IHttpHeaderFactory> factories;
 
     public CombineHttpHeaderFactory(params IHttpHeaderFactory[] factories)
     {
         this.factories = factories;
     }
-    
-    public CombineHttpHeaderFactory(IEnumerable<IHttpHeaderFactory> factories)
-    {
-        this.factories = factories;
-    }
 
-    public async Task<IEnumerable<HttpHeaderItem>> CreateHeaderItemsAsync(CancellationToken cancellationToken)
+    public async Task<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsAsync(
+        CancellationToken cancellationToken
+    )
     {
         var result = new List<HttpHeaderItem>();
 
-        foreach (var factory in factories)
+        foreach (var factory in factories.ToArray())
         {
             cancellationToken.ThrowIfCancellationRequested();
             var headers = await factory.CreateHeaderItemsAsync(cancellationToken);
-            result.AddRange(headers);
+
+            if (headers.IsHasError)
+            {
+                return headers;
+            }
+
+            result.AddRange(headers.Value.Span);
         }
 
-        return result;
+        return result.ToReadOnlyMemory().ToResult();
     }
 }

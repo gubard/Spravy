@@ -1,12 +1,10 @@
-using Spravy.Domain.Models;
-
 namespace Spravy.Domain.ValidationResults;
 
-public class StringMaxLengthValidationResult : ValidationResult
+public class StringMaxLengthError : Error
 {
     public static readonly Guid MainId = new("B554DD15-82E1-4B54-AEB4-88CFF95CCCEA");
 
-    public StringMaxLengthValidationResult(ushort maxLength) : base(MainId, "StringMaxLength")
+    public StringMaxLengthError(ushort maxLength) : base(MainId, "StringMaxLength")
     {
         MaxLength = maxLength;
     }

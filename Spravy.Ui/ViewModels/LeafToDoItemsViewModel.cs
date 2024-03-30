@@ -63,12 +63,16 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
         return refreshWork.RunAsync();
     }
 
-    private async Task RefreshCoreAsync(CancellationToken cancellationToken)
+    private Task RefreshCoreAsync(CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        var ids = await ToDoService.GetLeafToDoItemIdsAsync(Id, cancellationToken).ConfigureAwait(false);
-        cancellationToken.ThrowIfCancellationRequested();
-        await ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, true, cancellationToken).ConfigureAwait(false);
+
+        return ToDoService.GetLeafToDoItemIdsAsync(Id, cancellationToken)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                DialogViewer,
+                ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, true, cancellationToken)
+            );
     }
 
     private async Task InitializedAsync(CancellationToken cancellationToken)

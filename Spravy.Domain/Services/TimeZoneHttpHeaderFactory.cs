@@ -6,8 +6,8 @@ namespace Spravy.Domain.Services;
 
 public class TimeZoneHttpHeaderFactory : IHttpHeaderFactory
 {
-    public Task<IEnumerable<HttpHeaderItem>> CreateHeaderItemsAsync(CancellationToken cancellationToken)
+    public Task<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsAsync(CancellationToken cancellationToken)
     {
-        return HttpHeaderItem.TimeZoneOffset().ToEnumerable().ToTaskResult();
+        return HttpHeaderItem.TimeZoneOffset().ToReadOnlyMemory().ToResult().ToTaskResult();
     }
 }

@@ -1,12 +1,10 @@
-using Spravy.Domain.Models;
-
 namespace Spravy.Domain.ValidationResults;
 
-public class UnknownValidationResult : ValidationResult
+public class UnknownError : Error
 {
     public static readonly Guid MainId = new("D02032B7-8B2A-4164-A347-7C2441E6D96D");
     
-    public UnknownValidationResult(Guid validationResultId) : base(MainId, "Unknown")
+    public UnknownError(Guid validationResultId) : base(MainId, "Unknown")
     {
         ValidationResultId = validationResultId;
     }

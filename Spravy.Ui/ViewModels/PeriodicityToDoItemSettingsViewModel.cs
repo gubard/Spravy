@@ -77,20 +77,25 @@ public class PeriodicityToDoItemSettingsViewModel : ViewModelBase,
         await RefreshAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task RefreshAsync(CancellationToken cancellationToken)
+    public Task RefreshAsync(CancellationToken cancellationToken)
     {
-        var setting = await ToDoService.GetPeriodicityToDoItemSettingsAsync(Id, cancellationToken)
-            .ConfigureAwait(false);
-
-        await this.InvokeUIBackgroundAsync(
-            () =>
-            {
-                ChildrenType = setting.ChildrenType;
-                DueDate = setting.DueDate;
-                TypeOfPeriodicity = setting.TypeOfPeriodicity;
-                IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
-            }
-        );
+        return ToDoService.GetPeriodicityToDoItemSettingsAsync(Id, cancellationToken)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                DialogViewer,
+                async setting =>
+                {
+                    await this.InvokeUIBackgroundAsync(
+                        () =>
+                        {
+                            ChildrenType = setting.ChildrenType;
+                            DueDate = setting.DueDate;
+                            TypeOfPeriodicity = setting.TypeOfPeriodicity;
+                            IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
+                        }
+                    );
+                }
+            );
     }
 
     public Task ApplySettingsAsync(CancellationToken cancellationToken)

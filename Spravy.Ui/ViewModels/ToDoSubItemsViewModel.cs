@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Ninject;
 using Spravy.Domain.Extensions;
 using Spravy.ToDo.Domain.Interfaces;
+using Spravy.Ui.Extensions;
 using Spravy.Ui.Features.ToDo.ViewModels;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
@@ -25,22 +26,29 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
         await refreshToDoItem.ThrowIfNull().RefreshAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    private async Task RefreshFavoriteToDoItemsAsync(CancellationToken cancellationToken)
+    private Task RefreshFavoriteToDoItemsAsync(CancellationToken cancellationToken)
     {
-        var ids = await ToDoService.GetFavoriteToDoItemIdsAsync(cancellationToken).ConfigureAwait(false).ToArrayAsync();
-        await List.ClearFavoriteExceptAsync(ids);
-        cancellationToken.ThrowIfCancellationRequested();
+        return ToDoService.GetFavoriteToDoItemIdsAsync(cancellationToken)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                DialogViewer,
+                async ids =>
+                {
+                    await List.ClearFavoriteExceptAsync(ids.ToArray());
+                    cancellationToken.ThrowIfCancellationRequested();
 
-        await foreach (var items in ToDoService.GetToDoItemsAsync(ids, 5, cancellationToken)
-                           .ConfigureAwait(false))
-        {
-            foreach (var item in items)
-            {
-                await List.UpdateFavoriteItemAsync(item);
-            }
+                    await foreach (var items in ToDoService.GetToDoItemsAsync(ids.ToArray(), 5, cancellationToken)
+                                       .ConfigureAwait(false))
+                    {
+                        foreach (var item in items.ToArray())
+                        {
+                            await List.UpdateFavoriteItemAsync(item);
+                        }
 
-            cancellationToken.ThrowIfCancellationRequested();
-        }
+                        cancellationToken.ThrowIfCancellationRequested();
+                    }
+                }
+            );
     }
 
     private async Task RefreshToDoItemListsAsync(Guid[] ids, bool autoOrder, CancellationToken cancellationToken)
@@ -52,7 +60,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 
         await foreach (var items in ToDoService.GetToDoItemsAsync(ids, 5, cancellationToken).ConfigureAwait(false))
         {
-            foreach (var item in items)
+            foreach (var item in items.ToArray())
             {
                 if (autoOrder)
                 {

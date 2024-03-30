@@ -52,12 +52,14 @@ public class SearchViewModel : NavigatableViewModelBase, IToDoItemSearchProperti
         return refreshWork.RunAsync();
     }
 
-    private async Task RefreshCoreAsync(CancellationToken cancellationToken)
+    private Task RefreshCoreAsync(CancellationToken cancellationToken)
     {
-        var ids = await ToDoService.SearchToDoItemIdsAsync(SearchText, cancellationToken).ConfigureAwait(false);
-
-        await ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken)
-            .ConfigureAwait(false);
+        return ToDoService.SearchToDoItemIdsAsync(SearchText, cancellationToken)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                DialogViewer,
+                ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken)
+            );
     }
 
     public override void Stop()

@@ -46,7 +46,7 @@ public class EventBusServiceFactory : IFactory<string, IEventBusService>
         var headers = new[]
         {
             httpHeaderFactory,
-            new ValuesHttpHeaderFactory(HttpHeaderItem.CreateUserId(key).ToEnumerable()),
+            new ValuesHttpHeaderFactory(HttpHeaderItem.CreateUserId(key).ToReadOnlyMemory()),
             new TokenHttpHeaderFactory(tokenService),
         };
 

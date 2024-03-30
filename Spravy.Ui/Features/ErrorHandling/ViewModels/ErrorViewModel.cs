@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 using Avalonia.Collections;
 using Spravy.Domain.Helpers;
-using Spravy.Domain.Models;
 using Spravy.Domain.ValidationResults;
 using Spravy.Ui.Models;
 
@@ -15,7 +14,7 @@ public class ErrorViewModel : NavigatableViewModelBase
 
     public override string ViewId => TypeCache<ErrorViewModel>.Type.Name;
 
-    public AvaloniaList<ValidationResult> ValidationResults { get; } = new();
+    public AvaloniaList<Error> ValidationResults { get; } = new();
 
     public override void Stop()
     {

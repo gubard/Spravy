@@ -7,6 +7,7 @@ using Ninject;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Interfaces;
+using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 using Spravy.Ui.Services;
@@ -63,13 +64,13 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IRefresh
         return Task.CompletedTask;
     }
 
-    public async Task RefreshAsync(CancellationToken cancellationToken)
+    public Task RefreshAsync(CancellationToken cancellationToken)
     {
-        cancellationToken.ThrowIfCancellationRequested();
-        var ids = await ToDoService.GetTodayToDoItemsAsync(cancellationToken).ConfigureAwait(false);
-        cancellationToken.ThrowIfCancellationRequested();
-
-        await ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken)
-            .ConfigureAwait(false);
+        return ToDoService.GetTodayToDoItemsAsync(cancellationToken)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                DialogViewer,
+                ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken)
+            );
     }
 }

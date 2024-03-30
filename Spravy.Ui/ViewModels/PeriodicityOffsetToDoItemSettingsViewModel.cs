@@ -65,23 +65,28 @@ public class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
         return RefreshAsync(cancellationToken);
     }
 
-    public async Task RefreshAsync(CancellationToken cancellationToken)
+    public Task RefreshAsync(CancellationToken cancellationToken)
     {
-        var setting = await ToDoService.GetPeriodicityOffsetToDoItemSettingsAsync(Id, cancellationToken)
-            .ConfigureAwait(false);
-
-        await this.InvokeUIBackgroundAsync(
-            () =>
-            {
-                ChildrenType = setting.ChildrenType;
-                DueDate = setting.DueDate;
-                MonthsOffset = setting.MonthsOffset;
-                YearsOffset = setting.YearsOffset;
-                DaysOffset = setting.DaysOffset;
-                WeeksOffset = setting.WeeksOffset;
-                IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
-            }
-        );
+        return ToDoService.GetPeriodicityOffsetToDoItemSettingsAsync(Id, cancellationToken)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                DialogViewer,
+                async setting =>
+                {
+                    await this.InvokeUIBackgroundAsync(
+                        () =>
+                        {
+                            ChildrenType = setting.ChildrenType;
+                            DueDate = setting.DueDate;
+                            MonthsOffset = setting.MonthsOffset;
+                            YearsOffset = setting.YearsOffset;
+                            DaysOffset = setting.DaysOffset;
+                            WeeksOffset = setting.WeeksOffset;
+                            IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
+                        }
+                    );
+                }
+            );
     }
 
     public Task ApplySettingsAsync(CancellationToken cancellationToken)

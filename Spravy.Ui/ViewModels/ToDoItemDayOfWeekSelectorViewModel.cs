@@ -9,6 +9,7 @@ using ReactiveUI.Fody.Helpers;
 using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
+using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 
@@ -40,18 +41,23 @@ public class ToDoItemDayOfWeekSelectorViewModel : ViewModelBase, IApplySettings
     [Reactive]
     public Guid ToDoItemId { get; set; }
 
-    private async Task InitializedAsync(CancellationToken cancellationToken)
+    private Task InitializedAsync(CancellationToken cancellationToken)
     {
-        var weeklyPeriodicity = await ToDoService.GetWeeklyPeriodicityAsync(ToDoItemId, cancellationToken)
-            .ConfigureAwait(false);
-
-        foreach (var item in Items)
-        {
-            if (weeklyPeriodicity.Days.Contains(item.DayOfWeek))
-            {
-                item.IsSelected = true;
-            }
-        }
+        return ToDoService.GetWeeklyPeriodicityAsync(ToDoItemId, cancellationToken)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                DialogViewer,
+                async weeklyPeriodicity =>
+                {
+                    foreach (var item in Items)
+                    {
+                        if (weeklyPeriodicity.Days.Contains(item.DayOfWeek))
+                        {
+                            await this.InvokeUIBackgroundAsync(() => item.IsSelected = true);
+                        }
+                    }
+                }
+            );
     }
 
     public Task ApplySettingsAsync(CancellationToken cancellationToken)

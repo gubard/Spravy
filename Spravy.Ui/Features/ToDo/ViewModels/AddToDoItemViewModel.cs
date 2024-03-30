@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Google.Protobuf.WellKnownTypes;
 using Material.Icons;
 using Ninject;
 using ProtoBuf;
@@ -56,15 +57,21 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
             .ConfigureAwait(false);
 
         await SetStateAsync(setting).ConfigureAwait(false);
-        var parents = await ToDoService.GetParentsAsync(ParentId, cancellationToken).ConfigureAwait(false);
+        await ToDoService.GetParentsAsync(ParentId, cancellationToken)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                DialogViewer,
+                async parents =>
+                {
+                    var path = MaterialIconKind.Home.As<object>()
+                        .ToEnumerable()
+                        .Concat(parents.ToArray().Select(x => x.Name))
+                        .Select(x => x.ThrowIfNull())
+                        .ToArray();
 
-        var path = MaterialIconKind.Home.As<object>()
-            .ToEnumerable()
-            .Concat(parents.Select(x => x.Name))
-            .Select(x => x.ThrowIfNull())
-            .ToArray();
-
-        await this.InvokeUIBackgroundAsync(() => Path = path);
+                    await this.InvokeUIBackgroundAsync(() => Path = path);
+                }
+            );
     }
 
 

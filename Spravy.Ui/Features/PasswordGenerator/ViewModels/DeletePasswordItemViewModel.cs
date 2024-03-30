@@ -8,6 +8,7 @@ using Spravy.Ui.Features.Localizations.Models;
 using Spravy.Ui.Models;
 using System;
 using System.Threading;
+using Google.Protobuf.WellKnownTypes;
 using Ninject;
 using Spravy.PasswordGenerator.Domain.Interfaces;
 using Spravy.Ui.Extensions;
@@ -58,9 +59,13 @@ public class DeletePasswordItemViewModel : NavigatableViewModelBase
         return Task.CompletedTask;
     }
 
-    private async Task InitializedAsync(CancellationToken cancellationToken)
+    private Task InitializedAsync(CancellationToken cancellationToken)
     {
-        var item = await PasswordService.GetPasswordItemAsync(PasswordItemId, cancellationToken);
-        await this.InvokeUIBackgroundAsync(() => PasswordItemName = item.Name);
+        return PasswordService.GetPasswordItemAsync(PasswordItemId, cancellationToken)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                DialogViewer,
+                async value => { await this.InvokeUIBackgroundAsync(() => PasswordItemName = value.Name); }
+            );
     }
 }

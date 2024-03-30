@@ -1,7 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
 using Spravy.Domain.ValidationResults;
 
 namespace Spravy.Domain.Services;
@@ -15,7 +14,7 @@ public class StringMaxLengthValidationRule : IValidationRule<string>
         this.maxLength = maxLength;
     }
 
-    public Task<bool> ValidateAsync(string? value, [MaybeNullWhen(true)] out ValidationResult result)
+    public Task<bool> ValidateAsync(string? value, [MaybeNullWhen(true)] out Error result)
     {
         if (value is null)
         {
@@ -26,7 +25,7 @@ public class StringMaxLengthValidationRule : IValidationRule<string>
 
         if (value.Length > maxLength)
         {
-            result = new StringMaxLengthValidationResult(maxLength);
+            result = new StringMaxLengthError(maxLength);
 
             return false.ToTaskResult();
         }

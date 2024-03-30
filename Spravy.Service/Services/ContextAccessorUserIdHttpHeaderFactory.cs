@@ -16,10 +16,10 @@ public class ContextAccessorUserIdHttpHeaderFactory : IHttpHeaderFactory
         this.httpContextAccessor = httpContextAccessor;
     }
 
-    public Task<IEnumerable<HttpHeaderItem>> CreateHeaderItemsAsync(CancellationToken cancellationToken)
+    public Task<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsAsync(CancellationToken cancellationToken)
     {
         var userId = httpContextAccessor.HttpContext.ThrowIfNull().GetUserId();
 
-        return Task.FromResult(new HttpHeaderItem(HttpNames.HeaderUserIdName, userId).ToEnumerable());
+        return new HttpHeaderItem(HttpNames.HeaderUserIdName, userId).ToReadOnlyMemory().ToResult().ToTaskResult();
     }
 }

@@ -1,8 +1,11 @@
 using AutoMapper;
 using Google.Protobuf;
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Spravy.Domain.Helpers;
+using Spravy.Domain.Interfaces;
+using Spravy.Service.Extensions;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
@@ -15,11 +18,13 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
 {
     private readonly IToDoService toDoService;
     private readonly IMapper mapper;
+    private readonly ISerializer serializer;
 
-    public GrpcToDoService(IToDoService toDoService, IMapper mapper)
+    public GrpcToDoService(IToDoService toDoService, IMapper mapper, ISerializer serializer)
     {
         this.toDoService = toDoService;
         this.mapper = mapper;
+        this.serializer = serializer;
     }
 
     public override async Task<UpdateToDoItemIsRequiredCompleteInDueDateReply>
@@ -542,20 +547,22 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         return new();
     }
 
-    public override async Task<ToDoItemToStringReply> ToDoItemToString(
+    public override Task<ToDoItemToStringReply> ToDoItemToString(
         ToDoItemToStringRequest request,
         ServerCallContext context
     )
     {
-        var value = await toDoService.ToDoItemToStringAsync(
-            mapper.Map<ToDoItemToStringOptions>(request),
-            context.CancellationToken
-        );
-
-        return new()
-        {
-            Value = value,
-        };
+        return toDoService.ToDoItemToStringAsync(
+                mapper.Map<ToDoItemToStringOptions>(request),
+                context.CancellationToken
+            )
+            .HandleAsync(
+                serializer,
+                value => new ToDoItemToStringReply
+                {
+                    Value = value,
+                }
+            );
     }
 
     public override async Task<UpdateToDoItemDaysOffsetReply> UpdateToDoItemDaysOffset(

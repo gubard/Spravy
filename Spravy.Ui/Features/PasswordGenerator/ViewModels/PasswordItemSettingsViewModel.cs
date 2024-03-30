@@ -53,23 +53,29 @@ public class PasswordItemSettingsViewModel : ViewModelBase
     [Reactive]
     public string CustomAvailableCharacters { get; set; } = string.Empty;
 
-    private async Task InitializedAsync(CancellationToken cancellationToken)
+    private Task InitializedAsync(CancellationToken cancellationToken)
     {
-        var item = await PasswordService.GetPasswordItemAsync(Id, cancellationToken);
-
-        await this.InvokeUIBackgroundAsync(
-            () =>
-            {
-                Name = item.Name;
-                Regex = item.Regex;
-                Key = item.Key;
-                Length = item.Length;
-                IsAvailableUpperLatin = item.IsAvailableUpperLatin;
-                IsAvailableLowerLatin = item.IsAvailableLowerLatin;
-                IsAvailableNumber = item.IsAvailableNumber;
-                IsAvailableSpecialSymbols = item.IsAvailableSpecialSymbols;
-                CustomAvailableCharacters = item.CustomAvailableCharacters;
-            }
-        );
+        return PasswordService.GetPasswordItemAsync(Id, cancellationToken)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                DialogViewer,
+                async value =>
+                {
+                    await this.InvokeUIBackgroundAsync(
+                        () =>
+                        {
+                            Name = value.Name;
+                            Regex = value.Regex;
+                            Key = value.Key;
+                            Length = value.Length;
+                            IsAvailableUpperLatin = value.IsAvailableUpperLatin;
+                            IsAvailableLowerLatin = value.IsAvailableLowerLatin;
+                            IsAvailableNumber = value.IsAvailableNumber;
+                            IsAvailableSpecialSymbols = value.IsAvailableSpecialSymbols;
+                            CustomAvailableCharacters = value.CustomAvailableCharacters;
+                        }
+                    );
+                }
+            );
     }
 }

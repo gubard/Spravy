@@ -92,14 +92,14 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
         return refreshWork.RunAsync();
     }
 
-    private async Task RefreshCoreAsync(CancellationToken cancellationToken)
+    private Task RefreshCoreAsync(CancellationToken cancellationToken)
     {
-        cancellationToken.ThrowIfCancellationRequested();
-        var ids = await ToDoService.GetRootToDoItemIdsAsync(cancellationToken).ConfigureAwait(false);
-        cancellationToken.ThrowIfCancellationRequested();
-
-        await ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken)
-            .ConfigureAwait(false);
+        return ToDoService.GetRootToDoItemIdsAsync(cancellationToken)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                DialogViewer,
+                ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken)
+            );
     }
 
     public override void Stop()

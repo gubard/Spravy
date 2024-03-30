@@ -13,7 +13,7 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <ItemsControl ItemsSource="{Binding ValidationResults}">
             <ItemsControl.DataTemplates>
-                <DataTemplate x:DataType="validationResults:ValidationResult">
+                <DataTemplate x:DataType="validationResults:Error">
                     <StackPanel>
                         <TextBlock Text="{Binding Id}" />
                         <TextBlock Text="{Binding Name}" />

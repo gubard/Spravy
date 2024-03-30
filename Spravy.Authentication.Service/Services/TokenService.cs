@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Models;
 using Spravy.Domain.Enums;
+using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
 
@@ -15,10 +16,12 @@ public class TokenService : ITokenService
     public TokenService(ITokenFactory tokenFactory)
     {
         this.tokenFactory = tokenFactory;
-        token = tokenFactory.Create(new UserTokenClaims("authentication.service", Guid.Empty, Role.Service, string.Empty));
+        token = tokenFactory.Create(
+            new UserTokenClaims("authentication.service", Guid.Empty, Role.Service, string.Empty)
+        );
     }
 
-    public Task<string> GetTokenAsync(CancellationToken cancellationToken)
+    public Task<Result<string>> GetTokenAsync(CancellationToken cancellationToken)
     {
         var jwtHandler = new JwtSecurityTokenHandler();
         var jwtToken = jwtHandler.ReadJwtToken(token.Token);
@@ -26,26 +29,23 @@ public class TokenService : ITokenService
 
         if (expires > DateTimeOffset.Now)
         {
-            return Task.FromResult(token.Token);
+            return new Result<string>(token.Token).ToTaskResult();
         }
 
-        token = tokenFactory.Create(new UserTokenClaims("authentication.service", Guid.Empty, Role.Service, string.Empty));
+        token = tokenFactory.Create(
+            new UserTokenClaims("authentication.service", Guid.Empty, Role.Service, string.Empty)
+        );
 
-        return Task.FromResult(token.Token);
+        return new Result<string>(token.Token).ToTaskResult();
     }
 
-    public Task LoginAsync(User user, CancellationToken cancellationToken)
+    public Task<Result> LoginAsync(User user, CancellationToken cancellationToken)
     {
         throw new NotSupportedException();
     }
 
-    public Task LoginAsync(string refreshToken, CancellationToken cancellationToken)
+    public Task<Result> LoginAsync(string refreshToken, CancellationToken cancellationToken)
     {
         throw new NotSupportedException();
-    }
-
-    public void Login(TokenResult tokenResult, CancellationToken cancellationToken)
-    {
-        token = tokenResult;
     }
 }

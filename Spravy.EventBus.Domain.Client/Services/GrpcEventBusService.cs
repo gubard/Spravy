@@ -3,7 +3,9 @@ using AutoMapper;
 using Google.Protobuf;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
+using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
+using Spravy.Domain.Models;
 using Spravy.EventBus.Domain.Interfaces;
 using Spravy.EventBus.Domain.Models;
 using Spravy.EventBus.Protos;
@@ -38,43 +40,61 @@ public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
         );
     }
 
-    public Task PublishEventAsync(Guid eventId, byte[] content, CancellationToken cancellationToken)
+    public Task<Result> PublishEventAsync(Guid eventId, byte[] content, CancellationToken cancellationToken)
     {
         return CallClientAsync(
-            async client =>
+            client =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                var metadata = await metadataFactory.CreateAsync(cancellationToken);
 
-                var request = new PublishEventRequest
-                {
-                    EventId = mapper.Map<ByteString>(eventId),
-                    Content = ByteString.CopyFrom(content),
-                };
+                return metadataFactory.CreateAsync(cancellationToken)
+                    .IfSuccessAsync(
+                        async value =>
+                        {
+                            var request = new PublishEventRequest
+                            {
+                                EventId = mapper.Map<ByteString>(eventId),
+                                Content = ByteString.CopyFrom(content),
+                            };
 
-                cancellationToken.ThrowIfCancellationRequested();
-                await client.PublishEventAsync(request, metadata, cancellationToken: cancellationToken);
+                            cancellationToken.ThrowIfCancellationRequested();
+                            await client.PublishEventAsync(request, value, cancellationToken: cancellationToken);
+
+                            return Result.Success;
+                        }
+                    );
             },
             cancellationToken
         );
     }
 
-    public Task<IEnumerable<EventValue>> GetEventsAsync(
+    public Task<Result<ReadOnlyMemory<EventValue>>> GetEventsAsync(
         ReadOnlyMemory<Guid> eventIds,
         CancellationToken cancellationToken
     )
     {
         return CallClientAsync(
-            async client =>
+            client =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                var metadata = await metadataFactory.CreateAsync(cancellationToken);
-                var request = new GetEventsRequest();
-                request.EventIds.AddRange(mapper.Map<IEnumerable<ByteString>>(eventIds.ToArray()));
-                cancellationToken.ThrowIfCancellationRequested();
-                var events = await client.GetEventsAsync(request, metadata, cancellationToken: cancellationToken);
 
-                return mapper.Map<IEnumerable<EventValue>>(events.Events);
+                return metadataFactory.CreateAsync(cancellationToken)
+                    .IfSuccessAsync(
+                        async value =>
+                        {
+                            var request = new GetEventsRequest();
+                            request.EventIds.AddRange(mapper.Map<IEnumerable<ByteString>>(eventIds.ToArray()));
+                            cancellationToken.ThrowIfCancellationRequested();
+
+                            var events = await client.GetEventsAsync(
+                                request,
+                                value,
+                                cancellationToken: cancellationToken
+                            );
+
+                            return mapper.Map<ReadOnlyMemory<EventValue>>(events.Events).ToResult();
+                        }
+                    );
             },
             cancellationToken
         );
@@ -90,7 +110,7 @@ public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
         request.EventIds.AddRange(mapper.Map<IEnumerable<ByteString>>(eventIds));
         cancellationToken.ThrowIfCancellationRequested();
         var metadata = await metadataFactory.CreateAsync(cancellationToken);
-        using var response = client.SubscribeEvents(request, metadata, cancellationToken: cancellationToken);
+        using var response = client.SubscribeEvents(request, metadata.Value, cancellationToken: cancellationToken);
         cancellationToken.ThrowIfCancellationRequested();
 
         while (await response.ResponseStream.MoveNext(cancellationToken))

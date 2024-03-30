@@ -3,11 +3,22 @@ using System.Runtime.CompilerServices;
 using Spravy.Domain.Exceptions;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Models;
+using Spravy.Domain.ValidationResults;
 
 namespace Spravy.Domain.Extensions;
 
 public static class ObjectExtension
 {
+    public static Result<TValue> ToResult<TValue>(this ReadOnlyMemory<Error> errors)
+    {
+        return new Result<TValue>(errors);
+    }
+
+    public static Result<TValue> ToResult<TValue>(this TValue value)
+    {
+        return new Result<TValue>(value);
+    }
+
     public static async Task<T[]> ToArrayAsync<T>(this ConfiguredTaskAwaitable<IEnumerable<T>> task)
     {
         var enumerable = await task;
@@ -58,6 +69,21 @@ public static class ObjectExtension
     public static IEnumerable<T> ToEnumerable<T>(this T obj)
     {
         yield return obj;
+    }
+
+    public static ReadOnlyMemory<T> ToReadOnlyMemory<T>(this List<T> list)
+    {
+        return list.ToArray();
+    }
+
+    public static ReadOnlyMemory<T> ToReadOnlyMemory<T>(this T[] array)
+    {
+        return array;
+    }
+
+    public static ReadOnlyMemory<T> ToReadOnlyMemory<T>(this T obj)
+    {
+        return new ReadOnlyMemory<T>([obj]);
     }
 
     public static void ThrowDisposedException<T>(this T obj) where T : notnull

@@ -3,6 +3,7 @@ using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Models;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
+using Spravy.Domain.Extensions;
 
 namespace Spravy.Authentication.Domain.Services;
 
@@ -16,36 +17,45 @@ public class TokenService : ITokenService
         this.authenticationService = authenticationService;
     }
 
-    public async Task<string> GetTokenAsync(CancellationToken cancellationToken)
+    public Task<Result<string>> GetTokenAsync(CancellationToken cancellationToken)
     {
         var jwtHandler = new JwtSecurityTokenHandler();
         var jwtToken = jwtHandler.ReadJwtToken(token.Token);
 
         if (jwtToken.ValidTo == default)
         {
-            return token.Token;
+            return new Result<string>(token.Token).ToTaskResult();
         }
 
         DateTimeOffset expires = jwtToken.ValidTo;
 
         if (expires > DateTimeOffset.Now)
         {
-            return token.Token;
+            return new Result<string>(token.Token).ToTaskResult();
         }
 
         cancellationToken.ThrowIfCancellationRequested();
-        token = await authenticationService.RefreshTokenAsync(token.RefreshToken, cancellationToken);
 
-        return token.Token;
+        return authenticationService.RefreshTokenAsync(token.RefreshToken, cancellationToken)
+            .IfSuccessAsync(
+                value =>
+                {
+                    token = value;
+
+                    return token.Token;
+                }
+            );
     }
 
-    public async Task LoginAsync(User user, CancellationToken cancellationToken)
+    public Task<Result> LoginAsync(User user, CancellationToken cancellationToken)
     {
-        token = await authenticationService.LoginAsync(user, cancellationToken);
+        return authenticationService.LoginAsync(user, cancellationToken)
+            .IfSuccessAsync<TokenResult>(value => token = value);
     }
 
-    public async Task LoginAsync(string refreshToken, CancellationToken cancellationToken)
+    public Task<Result> LoginAsync(string refreshToken, CancellationToken cancellationToken)
     {
-        token = await authenticationService.RefreshTokenAsync(refreshToken, cancellationToken);
+        return authenticationService.RefreshTokenAsync(refreshToken, cancellationToken)
+            .IfSuccessAsync<TokenResult>(value => token = value);
     }
 }

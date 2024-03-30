@@ -1,9 +1,12 @@
 using AutoMapper;
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Models;
 using Spravy.Authentication.Protos;
+using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
+using Spravy.Service.Extensions;
 
 namespace Spravy.Router.Service.Services;
 
@@ -11,14 +14,17 @@ public class GrpcAuthenticationService : AuthenticationService.AuthenticationSer
 {
     private readonly IAuthenticationService authenticationService;
     private readonly IMapper mapper;
+    private readonly ISerializer serializer;
 
     public GrpcAuthenticationService(
         IAuthenticationService authenticationService,
-        IMapper mapper
+        IMapper mapper,
+        ISerializer serializer
     )
     {
         this.authenticationService = authenticationService;
         this.mapper = mapper;
+        this.serializer = serializer;
     }
 
     public override async Task<UpdateEmailNotVerifiedUserByLoginReply> UpdateEmailNotVerifiedUserByLogin(
@@ -133,30 +139,34 @@ public class GrpcAuthenticationService : AuthenticationService.AuthenticationSer
         return new UpdatePasswordByEmailReply();
     }
 
-    public override async Task<IsVerifiedByLoginReply> IsVerifiedByLogin(
+    public override Task<IsVerifiedByLoginReply> IsVerifiedByLogin(
         IsVerifiedByLoginRequest request,
         ServerCallContext context
     )
     {
-        var result = await authenticationService.IsVerifiedByLoginAsync(request.Login, context.CancellationToken);
-
-        return new IsVerifiedByLoginReply
-        {
-            IsVerified = result,
-        };
+        return authenticationService.IsVerifiedByLoginAsync(request.Login, context.CancellationToken)
+            .HandleAsync(
+                serializer,
+                value => new IsVerifiedByLoginReply
+                {
+                    IsVerified = value,
+                }
+            );
     }
 
-    public override async Task<IsVerifiedByEmailReply> IsVerifiedByEmail(
+    public override Task<IsVerifiedByEmailReply> IsVerifiedByEmail(
         IsVerifiedByEmailRequest request,
         ServerCallContext context
     )
     {
-        var result = await authenticationService.IsVerifiedByEmailAsync(request.Email, context.CancellationToken);
-
-        return new IsVerifiedByEmailReply
-        {
-            IsVerified = result,
-        };
+        return authenticationService.IsVerifiedByEmailAsync(request.Email, context.CancellationToken)
+            .HandleAsync(
+                serializer,
+                value => new IsVerifiedByEmailReply
+                {
+                    IsVerified = value,
+                }
+            );
     }
 
     public override async Task<CreateUserReply> CreateUser(CreateUserRequest request, ServerCallContext context)
@@ -167,13 +177,12 @@ public class GrpcAuthenticationService : AuthenticationService.AuthenticationSer
         return new CreateUserReply();
     }
 
-    public override async Task<LoginReply> Login(LoginRequest request, ServerCallContext context)
+    public override Task<LoginReply> Login(LoginRequest request, ServerCallContext context)
     {
         var user = mapper.Map<User>(request.User);
-        var result = await authenticationService.LoginAsync(user, context.CancellationToken);
-        var reply = mapper.Map<LoginReply>(result);
 
-        return reply;
+        return authenticationService.LoginAsync(user, context.CancellationToken)
+            .HandleAsync(serializer, token => mapper.Map<LoginReply>(token));
     }
 
     public override async Task<RefreshTokenReply> RefreshToken(RefreshTokenRequest request, ServerCallContext context)

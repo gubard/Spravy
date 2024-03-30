@@ -55,24 +55,41 @@ public class DeleteToDoItemViewModel : ViewModelBase
             }
         );
 
-    private async Task InitializedAsync(CancellationToken cancellationToken)
+    private Task InitializedAsync(CancellationToken cancellationToken)
     {
-        var item = await ToDoService.GetToDoItemAsync(ToDoItemId, cancellationToken);
         var toDoItemToStringOptions = new ToDoItemToStringOptions(Enum.GetValues<ToDoItemStatus>(), ToDoItemId);
-        var childrenText = await ToDoService.ToDoItemToStringAsync(toDoItemToStringOptions, cancellationToken);
-        var parents = await ToDoService.GetParentsAsync(ToDoItemId, cancellationToken).ConfigureAwait(false);
 
-        await this.InvokeUIBackgroundAsync(
-            () =>
-            {
-                Path = new RootItem().To<object>()
-                    .ToEnumerable()
-                    .Concat(parents.Select(x => Mapper.Map<ToDoItemParentNotify>(x)))
-                    .ToArray();
+        return ToDoService.GetToDoItemAsync(ToDoItemId, cancellationToken)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                DialogViewer,
+                item => ToDoService.ToDoItemToStringAsync(toDoItemToStringOptions, cancellationToken)
+                    .ConfigureAwait(false)
+                    .IfSuccessAsync(
+                        DialogViewer,
+                        childrenText => ToDoService.GetParentsAsync(ToDoItemId, cancellationToken)
+                            .ConfigureAwait(false)
+                            .IfSuccessAsync(
+                                DialogViewer,
+                                async parents =>
+                                {
+                                    await this.InvokeUIBackgroundAsync(
+                                        () =>
+                                        {
+                                            Path = new RootItem().To<object>()
+                                                .ToEnumerable()
+                                                .Concat(
+                                                    parents.ToArray().Select(x => Mapper.Map<ToDoItemParentNotify>(x))
+                                                )
+                                                .ToArray();
 
-                ToDoItemName = item.Name;
-                ChildrenText = childrenText;
-            }
-        );
+                                            ToDoItemName = item.Name;
+                                            ChildrenText = childrenText;
+                                        }
+                                    );
+                                }
+                            )
+                    )
+            );
     }
 }

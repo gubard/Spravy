@@ -65,19 +65,24 @@ public class ToDoItemSettingsViewModel : NavigatableViewModelBase
         return RefreshAsync(cancellationToken);
     }
 
-    public async Task RefreshAsync(CancellationToken cancellationToken)
+    public Task RefreshAsync(CancellationToken cancellationToken)
     {
-        var toDoItem = await ToDoService.GetToDoItemAsync(ToDoItemId, cancellationToken)
-            .ConfigureAwait(false);
-
-        await this.InvokeUIBackgroundAsync(
-            () =>
-            {
-                ToDoItemContent.Name = toDoItem.Name;
-                ToDoItemContent.Link = toDoItem.Link?.AbsoluteUri ?? string.Empty;
-                ToDoItemContent.Type = toDoItem.Type;
-            }
-        );
+        return ToDoService.GetToDoItemAsync(ToDoItemId, cancellationToken)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                DialogViewer,
+                async toDoItem =>
+                {
+                    await this.InvokeUIBackgroundAsync(
+                        () =>
+                        {
+                            ToDoItemContent.Name = toDoItem.Name;
+                            ToDoItemContent.Link = toDoItem.Link?.AbsoluteUri ?? string.Empty;
+                            ToDoItemContent.Type = toDoItem.Type;
+                        }
+                    );
+                }
+            );
     }
 
     public override void Stop()

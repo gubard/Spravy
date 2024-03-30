@@ -4,6 +4,7 @@ using Spravy.Authentication.Domain.Models;
 using Spravy.Authentication.Protos;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
+using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
 using static Spravy.Authentication.Protos.AuthenticationService;
@@ -26,7 +27,7 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         this.mapper = mapper;
     }
 
-    public Task<TokenResult> LoginAsync(User user, CancellationToken cancellationToken)
+    public Task<Result<TokenResult>> LoginAsync(User user, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
@@ -41,7 +42,7 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
                 cancellationToken.ThrowIfCancellationRequested();
                 var reply = await client.LoginAsync(request);
 
-                return mapper.Map<TokenResult>(reply);
+                return mapper.Map<TokenResult>(reply).ToResult();
             },
             cancellationToken
         );
@@ -55,12 +56,14 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
                 var request = mapper.Map<CreateUserRequest>(options);
                 cancellationToken.ThrowIfCancellationRequested();
                 await client.CreateUserAsync(request);
+
+                return Result.Success;
             },
             cancellationToken
         );
     }
 
-    public Task<TokenResult> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
+    public Task<Result<TokenResult>> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
@@ -74,13 +77,13 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
                     }
                 );
 
-                return mapper.Map<TokenResult>(reply);
+                return mapper.Map<TokenResult>(reply).ToResult();
             },
             cancellationToken
         );
     }
 
-    public Task UpdateVerificationCodeByLoginAsync(string login, CancellationToken cancellationToken)
+    public Task<Result> UpdateVerificationCodeByLoginAsync(string login, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
@@ -93,12 +96,14 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
                         Login = login,
                     }
                 );
+
+                return Result.Success;
             },
             cancellationToken
         );
     }
 
-    public Task UpdateVerificationCodeByEmailAsync(string email, CancellationToken cancellationToken)
+    public Task<Result> UpdateVerificationCodeByEmailAsync(string email, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
@@ -111,12 +116,14 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
                         Email = email
                     }
                 );
+
+                return Result.Success;
             },
             cancellationToken
         );
     }
 
-    public Task<bool> IsVerifiedByLoginAsync(string login, CancellationToken cancellationToken)
+    public Task<Result<bool>> IsVerifiedByLoginAsync(string login, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
@@ -130,13 +137,13 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
                     }
                 );
 
-                return reply.IsVerified;
+                return reply.IsVerified.ToResult();
             },
             cancellationToken
         );
     }
 
-    public Task<bool> IsVerifiedByEmailAsync(string email, CancellationToken cancellationToken)
+    public Task<Result<bool>> IsVerifiedByEmailAsync(string email, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             async client =>
@@ -150,13 +157,17 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
                     }
                 );
 
-                return reply.IsVerified;
+                return reply.IsVerified.ToResult();
             },
             cancellationToken
         );
     }
 
-    public Task VerifiedEmailByLoginAsync(string login, string verificationCode, CancellationToken cancellationToken)
+    public Task<Result> VerifiedEmailByLoginAsync(
+        string login,
+        string verificationCode,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             async client =>
@@ -170,12 +181,18 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
                         VerificationCode = verificationCode,
                     }
                 );
+
+                return Result.Success;
             },
             cancellationToken
         );
     }
 
-    public Task VerifiedEmailByEmailAsync(string email, string verificationCode, CancellationToken cancellationToken)
+    public Task<Result> VerifiedEmailByEmailAsync(
+        string email,
+        string verificationCode,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             async client =>
@@ -189,12 +206,14 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
                         VerificationCode = verificationCode,
                     }
                 );
+
+                return Result.Success;
             },
             cancellationToken
         );
     }
 
-    public Task UpdateEmailNotVerifiedUserByEmailAsync(
+    public Task<Result> UpdateEmailNotVerifiedUserByEmailAsync(
         string email,
         string newEmail,
         CancellationToken cancellationToken
@@ -212,12 +231,14 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
                         NewEmail = newEmail,
                     }
                 );
+
+                return Result.Success;
             },
             cancellationToken
         );
     }
 
-    public Task UpdateEmailNotVerifiedUserByLoginAsync(
+    public Task<Result> UpdateEmailNotVerifiedUserByLoginAsync(
         string login,
         string newEmail,
         CancellationToken cancellationToken
@@ -235,12 +256,18 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
                         NewEmail = newEmail,
                     }
                 );
+
+                return Result.Success;
             },
             cancellationToken
         );
     }
 
-    public Task DeleteUserByEmailAsync(string email, string verificationCode, CancellationToken cancellationToken)
+    public Task<Result> DeleteUserByEmailAsync(
+        string email,
+        string verificationCode,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             async client =>
@@ -253,12 +280,18 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
 
                 cancellationToken.ThrowIfCancellationRequested();
                 await client.DeleteUserByEmailAsync(request, cancellationToken: cancellationToken);
+
+                return Result.Success;
             },
             cancellationToken
         );
     }
 
-    public Task DeleteUserByLoginAsync(string login, string verificationCode, CancellationToken cancellationToken)
+    public Task<Result> DeleteUserByLoginAsync(
+        string login,
+        string verificationCode,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             async client =>
@@ -271,12 +304,14 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
 
                 cancellationToken.ThrowIfCancellationRequested();
                 await client.DeleteUserByLoginAsync(request, cancellationToken: cancellationToken);
+
+                return Result.Success;
             },
             cancellationToken
         );
     }
 
-    public Task UpdatePasswordByEmailAsync(
+    public Task<Result> UpdatePasswordByEmailAsync(
         string email,
         string verificationCode,
         string newPassword,
@@ -296,12 +331,14 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
                         NewPassword = newPassword,
                     }
                 );
+
+                return Result.Success;
             },
             cancellationToken
         );
     }
 
-    public Task UpdatePasswordByLoginAsync(
+    public Task<Result> UpdatePasswordByLoginAsync(
         string login,
         string verificationCode,
         string newPassword,
@@ -321,6 +358,8 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
                         NewPassword = newPassword,
                     }
                 );
+
+                return Result.Success;
             },
             cancellationToken
         );

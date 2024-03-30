@@ -2,7 +2,6 @@ using ProtoBuf;
 using ProtoBuf.Meta;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
 using Spravy.Domain.ValidationResults;
 
 namespace Spravy.Core.Services;
@@ -12,37 +11,37 @@ public class ProtobufSerializer : ISerializer
     static ProtobufSerializer()
     {
         RuntimeTypeModel.Default.Case(
-                rtm => rtm.Add<UserWithLoginExistsValidationResult>()
-                    .Case(mt => mt.AddField(1, nameof(UserWithLoginExistsValidationResult.Id)))
-                    .Case(mt => mt.AddField(2, nameof(UserWithLoginExistsValidationResult.Name)))
+                rtm => rtm.Add<UserWithLoginExistsError>()
+                    .Case(mt => mt.AddField(1, nameof(UserWithLoginExistsError.Id)))
+                    .Case(mt => mt.AddField(2, nameof(UserWithLoginExistsError.Name)))
             )
             .Case(
-                rtm => rtm.Add<NotNullValidationResult>()
-                    .Case(mt => mt.AddField(1, nameof(NotNullValidationResult.Id)))
-                    .Case(mt => mt.AddField(2, nameof(NotNullValidationResult.Name)))
+                rtm => rtm.Add<NotNullError>()
+                    .Case(mt => mt.AddField(1, nameof(NotNullError.Id)))
+                    .Case(mt => mt.AddField(2, nameof(NotNullError.Name)))
             )
             .Case(
-                rtm => rtm.Add<StringMaxLengthValidationResult>()
-                    .Case(mt => mt.AddField(1, nameof(StringMaxLengthValidationResult.Id)))
-                    .Case(mt => mt.AddField(2, nameof(StringMaxLengthValidationResult.Name)))
-                    .Case(mt => mt.AddField(3, nameof(StringMaxLengthValidationResult.MaxLength)))
+                rtm => rtm.Add<StringMaxLengthError>()
+                    .Case(mt => mt.AddField(1, nameof(StringMaxLengthError.Id)))
+                    .Case(mt => mt.AddField(2, nameof(StringMaxLengthError.Name)))
+                    .Case(mt => mt.AddField(3, nameof(StringMaxLengthError.MaxLength)))
             )
             .Case(
-                rtm => rtm.Add<StringMinLengthValidationResult>()
-                    .Case(mt => mt.AddField(1, nameof(StringMinLengthValidationResult.Id)))
-                    .Case(mt => mt.AddField(2, nameof(StringMinLengthValidationResult.Name)))
-                    .Case(mt => mt.AddField(3, nameof(StringMinLengthValidationResult.MinLength)))
+                rtm => rtm.Add<StringMinLengthError>()
+                    .Case(mt => mt.AddField(1, nameof(StringMinLengthError.Id)))
+                    .Case(mt => mt.AddField(2, nameof(StringMinLengthError.Name)))
+                    .Case(mt => mt.AddField(3, nameof(StringMinLengthError.MinLength)))
             )
             .Case(
-                rtm => rtm.Add<UserWithEmailExistsValidationResult>()
-                    .Case(mt => mt.AddField(1, nameof(UserWithEmailExistsValidationResult.Id)))
-                    .Case(mt => mt.AddField(2, nameof(UserWithEmailExistsValidationResult.Name)))
+                rtm => rtm.Add<UserWithEmailExistsError>()
+                    .Case(mt => mt.AddField(1, nameof(UserWithEmailExistsError.Id)))
+                    .Case(mt => mt.AddField(2, nameof(UserWithEmailExistsError.Name)))
             )
             .Case(
-                rtm => rtm.Add<ValidCharsValidationResult>()
-                    .Case(mt => mt.AddField(1, nameof(ValidCharsValidationResult.Id)))
-                    .Case(mt => mt.AddField(2, nameof(ValidCharsValidationResult.Name)))
-                    .Case(mt => mt.AddField(2, nameof(ValidCharsValidationResult.ValidChars)))
+                rtm => rtm.Add<ValidCharsError>()
+                    .Case(mt => mt.AddField(1, nameof(ValidCharsError.Id)))
+                    .Case(mt => mt.AddField(2, nameof(ValidCharsError.Name)))
+                    .Case(mt => mt.AddField(2, nameof(ValidCharsError.ValidChars)))
             );
     }
 

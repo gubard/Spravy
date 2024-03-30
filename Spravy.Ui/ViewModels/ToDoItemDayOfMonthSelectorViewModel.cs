@@ -9,6 +9,7 @@ using ReactiveUI.Fody.Helpers;
 using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
+using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 
@@ -40,18 +41,23 @@ public class ToDoItemDayOfMonthSelectorViewModel : ViewModelBase, IApplySettings
     [Reactive]
     public Guid ToDoItemId { get; set; }
 
-    private async Task InitializedAsync(CancellationToken cancellationToken)
+    private Task InitializedAsync(CancellationToken cancellationToken)
     {
-        var monthlyPeriodicity = await ToDoService.GetMonthlyPeriodicityAsync(ToDoItemId, cancellationToken)
-            .ConfigureAwait(false);
-
-        foreach (var item in Items)
-        {
-            if (monthlyPeriodicity.Days.Contains(item.Day))
-            {
-                item.IsSelected = true;
-            }
-        }
+        return ToDoService.GetMonthlyPeriodicityAsync(ToDoItemId, cancellationToken)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                DialogViewer,
+                async monthlyPeriodicity =>
+                {
+                    foreach (var item in Items)
+                    {
+                        if (monthlyPeriodicity.Days.Contains(item.Day))
+                        {
+                            await this.InvokeUIBackgroundAsync(() => item.IsSelected = true);
+                        }
+                    }
+                }
+            );
     }
 
     public Task ApplySettingsAsync(CancellationToken cancellationToken)

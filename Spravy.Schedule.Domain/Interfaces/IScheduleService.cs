@@ -1,10 +1,11 @@
+using Spravy.Domain.Models;
 using Spravy.Schedule.Domain.Models;
 
 namespace Spravy.Schedule.Domain.Interfaces;
 
 public interface IScheduleService
 {
-    Task AddTimerAsync(AddTimerParameters parameters, CancellationToken cancellationToken);
-    Task<IEnumerable<TimerItem>> GetListTimesAsync(CancellationToken cancellationToken);
-    Task RemoveTimerAsync(Guid id, CancellationToken cancellationToken);
+    Task<Result> AddTimerAsync(AddTimerParameters parameters, CancellationToken cancellationToken);
+    Task<Result<ReadOnlyMemory<TimerItem>>> GetListTimesAsync(CancellationToken cancellationToken);
+    Task<Result> RemoveTimerAsync(Guid id, CancellationToken cancellationToken);
 }

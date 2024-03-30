@@ -475,10 +475,11 @@ public static class CommandStorage
         );
     }
 
-    private static async Task GeneratePasswordAsync(IIdProperty idProperty, CancellationToken cancellationToken)
+    private static Task GeneratePasswordAsync(IIdProperty idProperty, CancellationToken cancellationToken)
     {
-        var password = await passwordService.GeneratePasswordAsync(idProperty.Id, cancellationToken);
-        await clipboard.SetTextAsync(password);
+        return passwordService.GeneratePasswordAsync(idProperty.Id, cancellationToken)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(dialogViewer, password => clipboard.SetTextAsync(password));
     }
 
     private static Task ShowPasswordItemSettingAsync(IIdProperty idProperty, CancellationToken cancellationToken)
@@ -812,23 +813,25 @@ public static class CommandStorage
         );
     }
 
-    private static async Task NavigateToCurrentToDoItemAsync(CancellationToken cancellationToken)
+    private static Task NavigateToCurrentToDoItemAsync(CancellationToken cancellationToken)
     {
-        var activeToDoItem = await toDoService.GetCurrentActiveToDoItemAsync(cancellationToken).ConfigureAwait(false);
+        return toDoService.GetCurrentActiveToDoItemAsync(cancellationToken)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                dialogViewer,
+                activeToDoItem =>
+                {
+                    if (activeToDoItem.HasValue)
+                    {
+                        return navigator.NavigateToAsync<ToDoItemViewModel>(
+                            viewModel => viewModel.Id = activeToDoItem.Value.Id,
+                            cancellationToken
+                        );
+                    }
 
-        if (activeToDoItem.HasValue)
-        {
-            await navigator.NavigateToAsync<ToDoItemViewModel>(
-                    viewModel => viewModel.Id = activeToDoItem.Value.Id,
-                    cancellationToken
-                )
-                .ConfigureAwait(false);
-        }
-        else
-        {
-            await navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken)
-                .ConfigureAwait(false);
-        }
+                    return navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken);
+                }
+            );
     }
 
     private static Task ToDoItemRandomizeChildrenOrderIndexAsync(
@@ -863,10 +866,10 @@ public static class CommandStorage
                 var statuses = view.Statuses.Where(x => x.IsChecked).Select(x => x.Item);
                 var options = new ToDoItemToStringOptions(statuses, property.Id);
                 cancellationToken.ThrowIfCancellationRequested();
-                var text = await toDoService.ToDoItemToStringAsync(options, cancellationToken)
-                    .ConfigureAwait(false);
-                cancellationToken.ThrowIfCancellationRequested();
-                await clipboard.SetTextAsync(text).ConfigureAwait(false);
+
+                await toDoService.ToDoItemToStringAsync(options, cancellationToken)
+                    .ConfigureAwait(false)
+                    .IfSuccessAsync(dialogViewer, text => clipboard.SetTextAsync(text));
             },
             _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
             ActionHelper<ToDoItemToStringSettingsViewModel>.Empty,
@@ -877,6 +880,7 @@ public static class CommandStorage
     private static async Task MoveToDoItemToRootAsync(IIdProperty property, CancellationToken cancellationToken)
     {
         await toDoService.ToDoItemToRootAsync(property.Id, cancellationToken).ConfigureAwait(false);
+
         await navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken)
             .ConfigureAwait(false);
     }
@@ -1032,15 +1036,22 @@ public static class CommandStorage
         );
     }
 
-    private static async Task ToDoItemSearchAsync(
+    private static Task ToDoItemSearchAsync(
         IToDoItemSearchProperties properties,
         CancellationToken cancellationToken
     )
     {
-        var ids = await toDoService.SearchToDoItemIdsAsync(properties.SearchText, cancellationToken)
-            .ConfigureAwait(false);
-        await properties.ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), properties, false, cancellationToken)
-            .ConfigureAwait(false);
+        return toDoService.SearchToDoItemIdsAsync(properties.SearchText, cancellationToken)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                dialogViewer,
+                ids => properties.ToDoSubItemsViewModel.UpdateItemsAsync(
+                    ids.ToArray(),
+                    properties,
+                    false,
+                    cancellationToken
+                )
+            );
     }
 
     private static Task AddRootToDoItemAsync(CancellationToken cancellationToken)
@@ -1062,7 +1073,7 @@ public static class CommandStorage
         );
     }
 
-    private static async Task SetToDoPeriodicityAsync(
+    private static Task SetToDoPeriodicityAsync(
         IToDoTypeOfPeriodicityProperty property,
         CancellationToken cancellationToken
     )
@@ -1071,108 +1082,105 @@ public static class CommandStorage
         {
             case TypeOfPeriodicity.Weekly:
             {
-                var periodicity = await toDoService.GetWeeklyPeriodicityAsync(property.Id, cancellationToken)
-                    .ConfigureAwait(false);
-
-                await dialogViewer.ShowDayOfWeekSelectorInputDialogAsync(
-                        async days =>
-                        {
-                            await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
-                            await toDoService.UpdateToDoItemWeeklyPeriodicityAsync(
-                                    property.Id,
-                                    new WeeklyPeriodicity(days),
-                                    cancellationToken
-                                )
-                                .ConfigureAwait(false);
-                            await property.RefreshAsync(cancellationToken).ConfigureAwait(false);
-                            await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
-                        },
-                        viewModel =>
-                        {
-                            foreach (var item in viewModel.Items)
+                return toDoService.GetWeeklyPeriodicityAsync(property.Id, cancellationToken)
+                    .ConfigureAwait(false)
+                    .IfSuccessAsync(
+                        dialogViewer,
+                        periodicity => dialogViewer.ShowDayOfWeekSelectorInputDialogAsync(
+                            async days =>
                             {
-                                if (periodicity.Days.Contains(item.DayOfWeek))
+                                await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
+                                await toDoService.UpdateToDoItemWeeklyPeriodicityAsync(
+                                        property.Id,
+                                        new WeeklyPeriodicity(days),
+                                        cancellationToken
+                                    )
+                                    .ConfigureAwait(false);
+                                await property.RefreshAsync(cancellationToken).ConfigureAwait(false);
+                                await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
+                            },
+                            viewModel =>
+                            {
+                                foreach (var item in viewModel.Items)
                                 {
-                                    item.IsSelected = true;
+                                    if (periodicity.Days.Contains(item.DayOfWeek))
+                                    {
+                                        item.IsSelected = true;
+                                    }
                                 }
-                            }
-                        },
-                        cancellationToken
-                    )
-                    .ConfigureAwait(false);
-
-                break;
+                            },
+                            cancellationToken
+                        )
+                    );
             }
             case TypeOfPeriodicity.Monthly:
             {
-                var periodicity = await toDoService.GetMonthlyPeriodicityAsync(property.Id, cancellationToken)
-                    .ConfigureAwait(false);
-
-                await dialogViewer.ShowDayOfMonthSelectorInputDialogAsync(
-                        async days =>
-                        {
-                            await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
-                            await toDoService.UpdateToDoItemMonthlyPeriodicityAsync(
-                                    property.Id,
-                                    new MonthlyPeriodicity(days),
-                                    cancellationToken
-                                )
-                                .ConfigureAwait(false);
-                            await property.RefreshAsync(cancellationToken).ConfigureAwait(false);
-                            await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
-                        },
-                        viewModel =>
-                        {
-                            foreach (var item in viewModel.Items)
+                return toDoService.GetMonthlyPeriodicityAsync(property.Id, cancellationToken)
+                    .ConfigureAwait(false)
+                    .IfSuccessAsync(
+                        dialogViewer,
+                        periodicity => dialogViewer.ShowDayOfMonthSelectorInputDialogAsync(
+                            async days =>
                             {
-                                if (periodicity.Days.Contains(item.Day))
+                                await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
+                                await toDoService.UpdateToDoItemMonthlyPeriodicityAsync(
+                                        property.Id,
+                                        new MonthlyPeriodicity(days),
+                                        cancellationToken
+                                    )
+                                    .ConfigureAwait(false);
+                                await property.RefreshAsync(cancellationToken).ConfigureAwait(false);
+                                await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
+                            },
+                            viewModel =>
+                            {
+                                foreach (var item in viewModel.Items)
                                 {
-                                    item.IsSelected = true;
+                                    if (periodicity.Days.Contains(item.Day))
+                                    {
+                                        item.IsSelected = true;
+                                    }
                                 }
-                            }
-                        },
-                        cancellationToken
-                    )
-                    .ConfigureAwait(false);
-
-                break;
+                            },
+                            cancellationToken
+                        )
+                    );
             }
             case TypeOfPeriodicity.Annually:
             {
-                var periodicity = await toDoService.GetAnnuallyPeriodicityAsync(property.Id, cancellationToken)
-                    .ConfigureAwait(false);
-
-                await dialogViewer.ShowDayOfYearSelectorInputDialogAsync(
-                        async days =>
-                        {
-                            await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
-                            await toDoService.UpdateToDoItemAnnuallyPeriodicityAsync(
-                                    property.Id,
-                                    new AnnuallyPeriodicity(days),
-                                    cancellationToken
-                                )
-                                .ConfigureAwait(false);
-                            await property.RefreshAsync(cancellationToken).ConfigureAwait(false);
-                            await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
-                        },
-                        viewModel =>
-                        {
-                            foreach (var month in viewModel.Items)
+                return toDoService.GetAnnuallyPeriodicityAsync(property.Id, cancellationToken)
+                    .ConfigureAwait(false)
+                    .IfSuccessAsync(
+                        dialogViewer,
+                        periodicity => dialogViewer.ShowDayOfYearSelectorInputDialogAsync(
+                            async days =>
                             {
-                                foreach (var day in month.Days)
+                                await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
+                                await toDoService.UpdateToDoItemAnnuallyPeriodicityAsync(
+                                        property.Id,
+                                        new AnnuallyPeriodicity(days),
+                                        cancellationToken
+                                    )
+                                    .ConfigureAwait(false);
+                                await property.RefreshAsync(cancellationToken).ConfigureAwait(false);
+                                await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
+                            },
+                            viewModel =>
+                            {
+                                foreach (var month in viewModel.Items)
                                 {
-                                    if (periodicity.Days.Any(x => x.Month == month.Month && x.Day == day.Day))
+                                    foreach (var day in month.Days)
                                     {
-                                        day.IsSelected = true;
+                                        if (periodicity.Days.Any(x => x.Month == month.Month && x.Day == day.Day))
+                                        {
+                                            day.IsSelected = true;
+                                        }
                                     }
                                 }
-                            }
-                        },
-                        cancellationToken
-                    )
-                    .ConfigureAwait(false);
-
-                break;
+                            },
+                            cancellationToken
+                        )
+                    );
             }
             case TypeOfPeriodicity.Daily:
                 throw new ArgumentOutOfRangeException();
@@ -1321,21 +1329,27 @@ public static class CommandStorage
         await cancellationToken.InvokeUIAsync(() => mainSplitViewModel.IsPaneOpen = false);
     }
 
-    private static async Task RememberMeAsync(ILoginProperties properties, CancellationToken cancellationToken)
+    private static Task RememberMeAsync(ILoginProperties properties, CancellationToken cancellationToken)
     {
         if (!properties.IsRememberMe)
         {
-            return;
+            return Task.CompletedTask;
         }
 
-        var token = await tokenService.GetTokenAsync(cancellationToken).ConfigureAwait(false);
+        return tokenService.GetTokenAsync(cancellationToken)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                dialogViewer,
+                token =>
+                {
+                    var item = new LoginStorageItem
+                    {
+                        Token = token,
+                    };
 
-        var item = new LoginStorageItem
-        {
-            Token = token,
-        };
-
-        await objectStorage.SaveObjectAsync(StorageIds.LoginId, item).ConfigureAwait(false);
+                    return objectStorage.SaveObjectAsync(StorageIds.LoginId, item);
+                }
+            );
     }
 
     private static async Task NavigateToAsync(Type type, CancellationToken cancellationToken)
@@ -1449,19 +1463,25 @@ public static class CommandStorage
             .ConfigureAwait(false);
     }
 
-    private static async Task ChangeToActiveDoItemAsync(CancellationToken cancellationToken)
+    private static Task ChangeToActiveDoItemAsync(CancellationToken cancellationToken)
     {
-        var item = await toDoService.GetCurrentActiveToDoItemAsync(cancellationToken).ConfigureAwait(false);
+        return toDoService.GetCurrentActiveToDoItemAsync(cancellationToken)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                dialogViewer,
+                item =>
+                {
+                    if (item is null)
+                    {
+                        return navigator.NavigateToAsync<RootToDoItemsViewModel>(cancellationToken);
+                    }
 
-        if (item is null)
-        {
-            await navigator.NavigateToAsync<RootToDoItemsViewModel>(cancellationToken).ConfigureAwait(false);
-        }
-        else
-        {
-            await navigator.NavigateToAsync<ToDoItemViewModel>(view => view.Id = item.Value.Id, cancellationToken)
-                .ConfigureAwait(false);
-        }
+                    return navigator.NavigateToAsync<ToDoItemViewModel>(
+                        view => view.Id = item.Value.Id,
+                        cancellationToken
+                    );
+                }
+            );
     }
 
     private static async Task DeleteToDoItemAsync(IDeletable deletable, CancellationToken cancellationToken)

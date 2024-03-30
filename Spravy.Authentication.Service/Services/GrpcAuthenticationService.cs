@@ -27,171 +27,159 @@ public class GrpcAuthenticationService : AuthenticationServiceBase
         this.serializer = serializer;
     }
 
-    public override async Task<UpdatePasswordByLoginReply> UpdatePasswordByLogin(
+    public override Task<UpdatePasswordByLoginReply> UpdatePasswordByLogin(
         UpdatePasswordByLoginRequest request,
         ServerCallContext context
     )
     {
-        await authenticationService.UpdatePasswordByLoginAsync(
-            request.Login,
-            request.VerificationCode,
-            request.NewPassword,
-            context.CancellationToken
-        );
-
-        return new UpdatePasswordByLoginReply();
+        return authenticationService.UpdatePasswordByLoginAsync(
+                request.Login,
+                request.VerificationCode,
+                request.NewPassword,
+                context.CancellationToken
+            )
+            .HandleAsync<UpdatePasswordByLoginReply>(serializer);
     }
 
-    public override async Task<UpdatePasswordByEmailReply> UpdatePasswordByEmail(
+    public override Task<UpdatePasswordByEmailReply> UpdatePasswordByEmail(
         UpdatePasswordByEmailRequest request,
         ServerCallContext context
     )
     {
-        await authenticationService.UpdatePasswordByEmailAsync(
-            request.Email,
-            request.VerificationCode,
-            request.NewPassword,
-            context.CancellationToken
-        );
-
-        return new UpdatePasswordByEmailReply();
+        return authenticationService.UpdatePasswordByEmailAsync(
+                request.Email,
+                request.VerificationCode,
+                request.NewPassword,
+                context.CancellationToken
+            )
+            .HandleAsync<UpdatePasswordByEmailReply>(serializer);
     }
 
-    public override async Task<UpdateEmailNotVerifiedUserByLoginReply> UpdateEmailNotVerifiedUserByLogin(
+    public override Task<UpdateEmailNotVerifiedUserByLoginReply> UpdateEmailNotVerifiedUserByLogin(
         UpdateEmailNotVerifiedUserByLoginRequest request,
         ServerCallContext context
     )
     {
-        await authenticationService.UpdateEmailNotVerifiedUserByLoginAsync(
-            request.Login,
-            request.NewEmail,
-            context.CancellationToken
-        );
-
-        return new UpdateEmailNotVerifiedUserByLoginReply();
+        return authenticationService.UpdateEmailNotVerifiedUserByLoginAsync(
+                request.Login,
+                request.NewEmail,
+                context.CancellationToken
+            )
+            .HandleAsync<UpdateEmailNotVerifiedUserByLoginReply>(serializer);
     }
 
-    public override async Task<UpdateEmailNotVerifiedUserByEmailReply> UpdateEmailNotVerifiedUserByEmail(
+    public override Task<UpdateEmailNotVerifiedUserByEmailReply> UpdateEmailNotVerifiedUserByEmail(
         UpdateEmailNotVerifiedUserByEmailRequest request,
         ServerCallContext context
     )
     {
-        await authenticationService.UpdateEmailNotVerifiedUserByEmailAsync(
-            request.Email,
-            request.NewEmail,
-            context.CancellationToken
-        );
-
-        return new UpdateEmailNotVerifiedUserByEmailReply();
+        return authenticationService.UpdateEmailNotVerifiedUserByEmailAsync(
+                request.Email,
+                request.NewEmail,
+                context.CancellationToken
+            )
+            .HandleAsync<UpdateEmailNotVerifiedUserByEmailReply>(serializer);
     }
 
-    public override async Task<UpdateVerificationCodeByLoginReply> UpdateVerificationCodeByLogin(
+    public override Task<UpdateVerificationCodeByLoginReply> UpdateVerificationCodeByLogin(
         UpdateVerificationCodeByLoginRequest request,
         ServerCallContext context
     )
     {
-        await authenticationService.UpdateVerificationCodeByLoginAsync(
-            request.Login,
-            context.CancellationToken
-        );
-
-        return new UpdateVerificationCodeByLoginReply();
+        return authenticationService.UpdateVerificationCodeByLoginAsync(
+                request.Login,
+                context.CancellationToken
+            )
+            .HandleAsync<UpdateVerificationCodeByLoginReply>(serializer);
     }
 
-    public override async Task<UpdateVerificationCodeByEmailReply> UpdateVerificationCodeByEmail(
+    public override Task<UpdateVerificationCodeByEmailReply> UpdateVerificationCodeByEmail(
         UpdateVerificationCodeByEmailRequest request,
         ServerCallContext context
     )
     {
-        await authenticationService.UpdateVerificationCodeByEmailAsync(
-            request.Email,
-            context.CancellationToken
-        );
-
-        return new UpdateVerificationCodeByEmailReply();
+        return authenticationService.UpdateVerificationCodeByEmailAsync(
+                request.Email,
+                context.CancellationToken
+            )
+            .HandleAsync<UpdateVerificationCodeByEmailReply>(serializer);
     }
 
-    public override async Task<VerifiedEmailByLoginReply> VerifiedEmailByLogin(
+    public override Task<VerifiedEmailByLoginReply> VerifiedEmailByLogin(
         VerifiedEmailByLoginRequest request,
         ServerCallContext context
     )
     {
-        await authenticationService.VerifiedEmailByLoginAsync(
-            request.Login,
-            request.VerificationCode,
-            context.CancellationToken
-        );
-
-        return new VerifiedEmailByLoginReply();
+        return authenticationService.VerifiedEmailByLoginAsync(
+                request.Login,
+                request.VerificationCode,
+                context.CancellationToken
+            )
+            .HandleAsync<VerifiedEmailByLoginReply>(serializer);
     }
 
-    public override async Task<VerifiedEmailByEmailReply> VerifiedEmailByEmail(
+    public override Task<VerifiedEmailByEmailReply> VerifiedEmailByEmail(
         VerifiedEmailByEmailRequest request,
         ServerCallContext context
     )
     {
-        await authenticationService.VerifiedEmailByEmailAsync(
-            request.Email,
-            request.VerificationCode,
-            context.CancellationToken
-        );
-
-        return new VerifiedEmailByEmailReply();
+        return authenticationService.VerifiedEmailByEmailAsync(
+                request.Email,
+                request.VerificationCode,
+                context.CancellationToken
+            )
+            .HandleAsync<VerifiedEmailByEmailReply>(serializer);
     }
 
-    public override async Task<IsVerifiedByLoginReply> IsVerifiedByLogin(
+    public override Task<IsVerifiedByLoginReply> IsVerifiedByLogin(
         IsVerifiedByLoginRequest request,
         ServerCallContext context
     )
     {
-        var result = await authenticationService.IsVerifiedByLoginAsync(request.Login, context.CancellationToken);
-
-        return new IsVerifiedByLoginReply
-        {
-            IsVerified = result
-        };
+        return authenticationService.IsVerifiedByLoginAsync(request.Login, context.CancellationToken)
+            .HandleAsync(
+                serializer,
+                value => new IsVerifiedByLoginReply
+                {
+                    IsVerified = value,
+                }
+            );
     }
 
-    public override async Task<IsVerifiedByEmailReply> IsVerifiedByEmail(
+    public override Task<IsVerifiedByEmailReply> IsVerifiedByEmail(
         IsVerifiedByEmailRequest request,
         ServerCallContext context
     )
     {
-        var result = await authenticationService.IsVerifiedByEmailAsync(request.Email, context.CancellationToken);
-
-        return new IsVerifiedByEmailReply
-        {
-            IsVerified = result
-        };
+        return authenticationService.IsVerifiedByEmailAsync(request.Email, context.CancellationToken)
+            .HandleAsync(
+                serializer,
+                value => new IsVerifiedByEmailReply
+                {
+                    IsVerified = value,
+                }
+            );
     }
 
-    public override async Task<CreateUserReply> CreateUser(CreateUserRequest request, ServerCallContext context)
+    public override Task<CreateUserReply> CreateUser(CreateUserRequest request, ServerCallContext context)
     {
         var options = mapper.Map<CreateUserOptions>(request);
-        var error = await authenticationService.CreateUserAsync(options, context.CancellationToken);
 
-        if (!error.IsHasError)
-        {
-            return new CreateUserReply();
-        }
-
-        throw await error.ToRpcExceptionAsync(serializer);
+        return authenticationService.CreateUserAsync(options, context.CancellationToken)
+            .HandleAsync<CreateUserReply>(serializer);
     }
 
-    public override async Task<LoginReply> Login(LoginRequest request, ServerCallContext context)
+    public override Task<LoginReply> Login(LoginRequest request, ServerCallContext context)
     {
         var user = mapper.Map<User>(request.User);
-        var result = await authenticationService.LoginAsync(user, context.CancellationToken);
-        var reply = mapper.Map<LoginReply>(result);
 
-        return reply;
+        return authenticationService.LoginAsync(user, context.CancellationToken)
+            .HandleAsync(serializer, value => mapper.Map<LoginReply>(value));
     }
 
-    public override async Task<RefreshTokenReply> RefreshToken(RefreshTokenRequest request, ServerCallContext context)
+    public override Task<RefreshTokenReply> RefreshToken(RefreshTokenRequest request, ServerCallContext context)
     {
-        var result = await authenticationService.RefreshTokenAsync(request.RefreshToken, context.CancellationToken);
-        var reply = mapper.Map<RefreshTokenReply>(result);
-
-        return reply;
+        return authenticationService.RefreshTokenAsync(request.RefreshToken, context.CancellationToken)
+            .HandleAsync(serializer, value => mapper.Map<RefreshTokenReply>(value));
     }
 }

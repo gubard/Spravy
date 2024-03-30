@@ -1,6 +1,7 @@
 using Grpc.Core;
 using Spravy.Client.Exceptions;
 using Spravy.Client.Extensions;
+using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
 
@@ -19,30 +20,8 @@ public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBas
         this.serializer = serializer;
     }
 
-    protected async Task<Result> CallClientAsync(Func<TGrpcClient, Task> func, CancellationToken cancellationToken)
-    {
-        try
-        {
-            var client = grpcClientFactory.Create(host);
-            cancellationToken.ThrowIfCancellationRequested();
-            await func.Invoke(client);
-        }
-        catch (RpcException exception) when(exception.StatusCode == StatusCode.InvalidArgument)
-        {
-            var error = await exception.ToErrorAsync(serializer);
-
-            return error;
-        }
-        catch (Exception e)
-        {
-            throw new GrpcException(host, e);
-        }
-
-        return new Result();
-    }
-
-    protected async Task<TResult> CallClientAsync<TResult>(
-        Func<TGrpcClient, Task<TResult>> func,
+    protected async Task<Result> CallClientAsync(
+        Func<TGrpcClient, Task<Result>> func,
         CancellationToken cancellationToken
     )
     {
@@ -50,9 +29,36 @@ public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBas
         {
             var client = grpcClientFactory.Create(host);
             cancellationToken.ThrowIfCancellationRequested();
-            var result = await func.Invoke(client);
 
-            return result;
+            return await func.Invoke(client);
+        }
+        catch (RpcException exception) when (exception.StatusCode == StatusCode.InvalidArgument)
+        {
+            return await exception.ToErrorAsync(serializer);
+        }
+        catch (Exception e)
+        {
+            throw new GrpcException(host, e);
+        }
+    }
+
+    protected async Task<Result<TValue>> CallClientAsync<TValue>(
+        Func<TGrpcClient, Task<Result<TValue>>> func,
+        CancellationToken cancellationToken
+    )
+    {
+        try
+        {
+            var client = grpcClientFactory.Create(host);
+            cancellationToken.ThrowIfCancellationRequested();
+
+            return await func.Invoke(client);
+        }
+        catch (RpcException exception) when (exception.StatusCode == StatusCode.InvalidArgument)
+        {
+            var error = await exception.ToErrorAsync(serializer);
+
+            return error.Errors.ToResult<TValue>();
         }
         catch (Exception e)
         {

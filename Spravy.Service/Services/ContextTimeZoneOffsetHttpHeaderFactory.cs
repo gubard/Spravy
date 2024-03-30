@@ -16,15 +16,15 @@ public class ContextTimeZoneOffsetHttpHeaderFactory : IHttpHeaderFactory
         this.httpContextAccessor = httpContextAccessor;
     }
 
-    public Task<IEnumerable<HttpHeaderItem>> CreateHeaderItemsAsync(CancellationToken cancellationToken)
+    public Task<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsAsync(CancellationToken cancellationToken)
     {
         var authorization = httpContextAccessor
             .HttpContext
             .ThrowIfNull()
             .GetTimeZoneOffsetHeader();
 
-        return Task.FromResult(
-            new HttpHeaderItem(HttpNames.HeaderTimeZoneOffsetName, authorization).ToEnumerable()
-        );
+        return new HttpHeaderItem(HttpNames.HeaderTimeZoneOffsetName, authorization).ToReadOnlyMemory()
+            .ToResult()
+            .ToTaskResult();
     }
 }

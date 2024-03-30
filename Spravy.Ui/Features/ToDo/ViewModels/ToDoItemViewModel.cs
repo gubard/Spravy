@@ -177,45 +177,59 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
         return refreshToDoItemWork.RunAsync();
     }
 
-    private async Task RefreshToDoItemCore(CancellationToken cancellationToken)
+    private Task RefreshToDoItemCore(CancellationToken cancellationToken)
     {
-        var item = await ToDoService.GetToDoItemAsync(Id, cancellationToken).ConfigureAwait(false);
-
-        await this.InvokeUIBackgroundAsync(
-            () =>
-            {
-                Link = item.Link?.AbsoluteUri ?? string.Empty;
-                Description = item.Description;
-                Name = item.Name;
-                Type = item.Type;
-                IsCan = item.IsCan;
-                IsFavorite = item.IsFavorite;
-                Status = item.Status;
-                ParentId = item.ParentId;
-                DescriptionType = item.DescriptionType;
-            }
-        );
+        return ToDoService.GetToDoItemAsync(Id, cancellationToken)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                DialogViewer,
+                async item =>
+                {
+                    await this.InvokeUIBackgroundAsync(
+                        () =>
+                        {
+                            Link = item.Link?.AbsoluteUri ?? string.Empty;
+                            Description = item.Description;
+                            Name = item.Name;
+                            Type = item.Type;
+                            IsCan = item.IsCan;
+                            IsFavorite = item.IsFavorite;
+                            Status = item.Status;
+                            ParentId = item.ParentId;
+                            DescriptionType = item.DescriptionType;
+                        }
+                    );
+                }
+            );
     }
 
 
-    private async Task RefreshPathAsync(CancellationToken cancellationToken)
+    private Task RefreshPathAsync(CancellationToken cancellationToken)
     {
-        var parents = await ToDoService.GetParentsAsync(Id, cancellationToken).ConfigureAwait(false);
-
-        await this.InvokeUIBackgroundAsync(
-            () => Path = new RootItem().To<object>()
-                .ToEnumerable()
-                .Concat(parents.Select(x => Mapper.Map<ToDoItemParentNotify>(x)))
-                .ToArray()
-        );
+        return ToDoService.GetParentsAsync(Id, cancellationToken)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                DialogViewer,
+                async parents =>
+                {
+                    await this.InvokeUIBackgroundAsync(
+                        () => Path = new RootItem().To<object>()
+                            .ToEnumerable()
+                            .Concat(parents.ToArray().Select(x => Mapper.Map<ToDoItemParentNotify>(x)))
+                            .ToArray()
+                    );
+                }
+            );
     }
 
-    private async Task RefreshToDoItemChildrenAsync(CancellationToken cancellationToken)
+    private Task RefreshToDoItemChildrenAsync(CancellationToken cancellationToken)
     {
-        var ids = await ToDoService.GetChildrenToDoItemIdsAsync(Id, cancellationToken).ConfigureAwait(false);
-
-        await ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken)
-            .ConfigureAwait(false);
+        return ToDoService.GetChildrenToDoItemIdsAsync(Id, cancellationToken)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                DialogViewer,
+                ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken)
+            );
     }
 
     private async Task InitializedAsync(CancellationToken cancellationToken)

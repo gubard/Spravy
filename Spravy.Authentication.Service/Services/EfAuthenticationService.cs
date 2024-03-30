@@ -52,7 +52,7 @@ public class EfAuthenticationService : IAuthenticationService
         this.randomString = randomString;
     }
 
-    public async Task<TokenResult> LoginAsync(User user, CancellationToken cancellationToken)
+    public async Task<Result<TokenResult>> LoginAsync(User user, CancellationToken cancellationToken)
     {
         var userEntity = await context.Set<UserEntity>()
             .AsNoTracking()
@@ -60,14 +60,14 @@ public class EfAuthenticationService : IAuthenticationService
 
         if (userEntity is null)
         {
-            throw new UserNotFondException(user.Login);
+            return new Result<TokenResult>(new UserWithLoginExistsError(user.Login));
         }
 
         CheckPassword(user.Password, userEntity);
         var userTokenClaims = mapper.Map<UserTokenClaims>(userEntity);
         var tokenResult = tokenFactory.Create(userTokenClaims);
 
-        return tokenResult;
+        return new Result<TokenResult>(tokenResult);
     }
 
     public async Task<Result> CreateUserAsync(
@@ -76,21 +76,16 @@ public class EfAuthenticationService : IAuthenticationService
     )
     {
         var email = options.Email.Trim().ToUpperInvariant();
-        var errors = new List<ValidationResult>();
 
         await foreach (var error in loginValidator.ValidateAsync(options.Login).WithCancellation(cancellationToken))
         {
-            errors.Add(error);
-
-            return new Result(errors.ToArray());
+            return new Result(error);
         }
 
         await foreach (var error in passwordValidator.ValidateAsync(options.Password)
                            .WithCancellation(cancellationToken))
         {
-            errors.Add(error);
-
-            return new Result(errors.ToArray());
+            return new Result(error);
         }
 
         var salt = Guid.NewGuid();
@@ -106,7 +101,7 @@ public class EfAuthenticationService : IAuthenticationService
             Email = email,
         };
 
-        await context.ExecuteSaveChangesTransactionAsync(
+        return await context.ExecuteSaveChangesTransactionAsync(
             async c =>
             {
                 var user = await c.Set<UserEntity>()
@@ -114,9 +109,7 @@ public class EfAuthenticationService : IAuthenticationService
 
                 if (user is not null)
                 {
-                    errors.Add(new UserWithLoginExistsValidationResult());
-
-                    return;
+                    return new Result(new UserWithLoginExistsError(options.Login));
                 }
 
                 user = await c.Set<UserEntity>()
@@ -124,20 +117,18 @@ public class EfAuthenticationService : IAuthenticationService
 
                 if (user is not null)
                 {
-                    errors.Add(new UserWithEmailExistsValidationResult());
-
-                    return;
+                    return new Result(new UserWithEmailExistsError());
                 }
 
                 await c.Set<UserEntity>().AddAsync(newUser, cancellationToken);
+
+                return Result.Success;
             },
             cancellationToken
         );
-
-        return new Result(errors.ToArray());
     }
 
-    public async Task<TokenResult> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
+    public async Task<Result<TokenResult>> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
     {
         var jwtHandler = new JwtSecurityTokenHandler();
         var jwtToken = jwtHandler.ReadJwtToken(refreshToken);
@@ -156,19 +147,19 @@ public class EfAuthenticationService : IAuthenticationService
                 var userTokenClaims = mapper.Map<UserTokenClaims>(userEntity);
                 var tokenResult = tokenFactory.Create(userTokenClaims);
 
-                return tokenResult;
+                return new Result<TokenResult>(tokenResult);
             }
             case Role.Service:
             {
                 var tokenResult = tokenFactory.Create();
 
-                return tokenResult;
+                return new Result<TokenResult>(tokenResult);
             }
             default: throw new ArgumentOutOfRangeException();
         }
     }
 
-    public async Task UpdateVerificationCodeByLoginAsync(string login, CancellationToken cancellationToken)
+    public async Task<Result> UpdateVerificationCodeByLoginAsync(string login, CancellationToken cancellationToken)
     {
         login = login.Trim();
 
@@ -187,9 +178,11 @@ public class EfAuthenticationService : IAuthenticationService
             verificationCode,
             cancellationToken
         );
+
+        return Result.Success;
     }
 
-    public async Task UpdateVerificationCodeByEmailAsync(string email, CancellationToken cancellationToken)
+    public async Task<Result> UpdateVerificationCodeByEmailAsync(string email, CancellationToken cancellationToken)
     {
         email = email.Trim().ToUpperInvariant();
 
@@ -202,9 +195,11 @@ public class EfAuthenticationService : IAuthenticationService
         userEntity.VerificationCodeHash = hash;
         await context.SaveChangesAsync(cancellationToken);
         await emailService.SendEmailAsync("VerificationCode", email, verificationCode, cancellationToken);
+
+        return Result.Success;
     }
 
-    public async Task<bool> IsVerifiedByLoginAsync(string login, CancellationToken cancellationToken)
+    public async Task<Result<bool>> IsVerifiedByLoginAsync(string login, CancellationToken cancellationToken)
     {
         login = login.Trim();
 
@@ -212,10 +207,10 @@ public class EfAuthenticationService : IAuthenticationService
             .AsNoTracking()
             .SingleAsync(x => x.Login == login, cancellationToken);
 
-        return userEntity.IsEmailVerified;
+        return new Result<bool>(userEntity.IsEmailVerified);
     }
 
-    public async Task<bool> IsVerifiedByEmailAsync(string email, CancellationToken cancellationToken)
+    public async Task<Result<bool>> IsVerifiedByEmailAsync(string email, CancellationToken cancellationToken)
     {
         email = email.Trim().ToUpperInvariant();
 
@@ -223,10 +218,10 @@ public class EfAuthenticationService : IAuthenticationService
             .AsNoTracking()
             .SingleAsync(x => x.Email == email, cancellationToken);
 
-        return userEntity.IsEmailVerified;
+        return new Result<bool>(userEntity.IsEmailVerified);
     }
 
-    public async Task VerifiedEmailByLoginAsync(
+    public async Task<Result> VerifiedEmailByLoginAsync(
         string login,
         string verificationCode,
         CancellationToken cancellationToken
@@ -242,9 +237,11 @@ public class EfAuthenticationService : IAuthenticationService
         userEntity.VerificationCodeMethod = null;
         userEntity.VerificationCodeHash = null;
         await context.SaveChangesAsync(cancellationToken);
+
+        return Result.Success;
     }
 
-    public async Task VerifiedEmailByEmailAsync(
+    public async Task<Result> VerifiedEmailByEmailAsync(
         string email,
         string verificationCode,
         CancellationToken cancellationToken
@@ -260,9 +257,11 @@ public class EfAuthenticationService : IAuthenticationService
         userEntity.VerificationCodeMethod = null;
         userEntity.VerificationCodeHash = null;
         await context.SaveChangesAsync(cancellationToken);
+
+        return Result.Success;
     }
 
-    public async Task UpdateEmailNotVerifiedUserByEmailAsync(
+    public async Task<Result> UpdateEmailNotVerifiedUserByEmailAsync(
         string email,
         string newEmail,
         CancellationToken cancellationToken
@@ -275,9 +274,11 @@ public class EfAuthenticationService : IAuthenticationService
 
         userEntity.Email = newEmail;
         await context.SaveChangesAsync(cancellationToken);
+
+        return Result.Success;
     }
 
-    public async Task UpdateEmailNotVerifiedUserByLoginAsync(
+    public async Task<Result> UpdateEmailNotVerifiedUserByLoginAsync(
         string login,
         string newEmail,
         CancellationToken cancellationToken
@@ -290,9 +291,15 @@ public class EfAuthenticationService : IAuthenticationService
 
         userEntity.Email = newEmail;
         await context.SaveChangesAsync(cancellationToken);
+
+        return Result.Success;
     }
 
-    public async Task DeleteUserByEmailAsync(string email, string verificationCode, CancellationToken cancellationToken)
+    public async Task<Result> DeleteUserByEmailAsync(
+        string email,
+        string verificationCode,
+        CancellationToken cancellationToken
+    )
     {
         email = email.Trim().ToUpperInvariant();
 
@@ -302,9 +309,15 @@ public class EfAuthenticationService : IAuthenticationService
         CheckVerificationCode(verificationCode, userEntity);
         context.Set<UserEntity>().Remove(userEntity);
         await context.SaveChangesAsync(cancellationToken);
+
+        return Result.Success;
     }
 
-    public async Task DeleteUserByLoginAsync(string login, string verificationCode, CancellationToken cancellationToken)
+    public async Task<Result> DeleteUserByLoginAsync(
+        string login,
+        string verificationCode,
+        CancellationToken cancellationToken
+    )
     {
         login = login.Trim();
 
@@ -314,9 +327,11 @@ public class EfAuthenticationService : IAuthenticationService
         CheckVerificationCode(verificationCode, userEntity);
         context.Set<UserEntity>().Remove(userEntity);
         await context.SaveChangesAsync(cancellationToken);
+
+        return Result.Success;
     }
 
-    public async Task UpdatePasswordByEmailAsync(
+    public async Task<Result> UpdatePasswordByEmailAsync(
         string email,
         string verificationCode,
         string newPassword,
@@ -336,9 +351,11 @@ public class EfAuthenticationService : IAuthenticationService
         userEntity.HashMethod = newHasher.HashMethod;
         userEntity.PasswordHash = hash;
         await context.SaveChangesAsync(cancellationToken);
+
+        return Result.Success;
     }
 
-    public async Task UpdatePasswordByLoginAsync(
+    public async Task<Result> UpdatePasswordByLoginAsync(
         string login,
         string verificationCode,
         string newPassword,
@@ -358,6 +375,8 @@ public class EfAuthenticationService : IAuthenticationService
         userEntity.HashMethod = newHasher.HashMethod;
         userEntity.PasswordHash = hash;
         await context.SaveChangesAsync(cancellationToken);
+
+        return Result.Success;
     }
 
     private void Check(string code, string hashMethod, string valueHash)

@@ -39,10 +39,14 @@ public class ValueToDoItemSettingsViewModel : ViewModelBase, IToDoChildrenTypePr
         await RefreshAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task RefreshAsync(CancellationToken cancellationToken)
+    public Task RefreshAsync(CancellationToken cancellationToken)
     {
-        var setting = await ToDoService.GetValueToDoItemSettingsAsync(Id, cancellationToken).ConfigureAwait(false);
-        await this.InvokeUIBackgroundAsync(() => ChildrenType = setting.ChildrenType);
+        return ToDoService.GetValueToDoItemSettingsAsync(Id, cancellationToken)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                DialogViewer,
+                async setting => { await this.InvokeUIBackgroundAsync(() => ChildrenType = setting.ChildrenType); }
+            );
     }
 
     public Task ApplySettingsAsync(CancellationToken cancellationToken)

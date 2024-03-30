@@ -9,6 +9,7 @@ using ReactiveUI.Fody.Helpers;
 using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
+using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 
@@ -40,21 +41,28 @@ public class ToDoItemDayOfYearSelectorViewModel : ViewModelBase, IApplySettings
     [Reactive]
     public Guid ToDoItemId { get; set; }
 
-    private async Task InitializedAsync(CancellationToken cancellationToken)
+    private Task InitializedAsync(CancellationToken cancellationToken)
     {
-        var annuallyPeriodicity = await ToDoService.GetAnnuallyPeriodicityAsync(ToDoItemId, cancellationToken)
-            .ConfigureAwait(false);
-
-        foreach (var item in Items)
-        {
-            foreach (var day in item.Days)
-            {
-                if (annuallyPeriodicity.Days.Where(x => x.Month == item.Month).Select(x => x.Day).Contains(day.Day))
+        return ToDoService.GetAnnuallyPeriodicityAsync(ToDoItemId, cancellationToken)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                DialogViewer,
+                async annuallyPeriodicity =>
                 {
-                    day.IsSelected = true;
+                    foreach (var item in Items)
+                    {
+                        foreach (var day in item.Days)
+                        {
+                            if (annuallyPeriodicity.Days.Where(x => x.Month == item.Month)
+                                .Select(x => x.Day)
+                                .Contains(day.Day))
+                            {
+                                this.InvokeUIBackgroundAsync(() => day.IsSelected = true);
+                            }
+                        }
+                    }
                 }
-            }
-        }
+            );
     }
 
     public Task ApplySettingsAsync(CancellationToken cancellationToken)

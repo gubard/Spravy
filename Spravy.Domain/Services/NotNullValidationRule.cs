@@ -2,18 +2,17 @@ using System.Diagnostics.CodeAnalysis;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
 using Spravy.Domain.ValidationResults;
 
 namespace Spravy.Domain.Services;
 
 public class NotNullValidationRule<TObject> : IValidationRule<TObject> where TObject : class
 {
-    public Task<bool> ValidateAsync(TObject? value, [MaybeNullWhen(true)] out ValidationResult result)
+    public Task<bool> ValidateAsync(TObject? value, [MaybeNullWhen(true)] out Error result)
     {
         if (value is null)
         {
-            result = DefaultObject<NotNullValidationResult>.Default;
+            result = DefaultObject<NotNullError>.Default;
 
             return false.ToTaskResult();
         }

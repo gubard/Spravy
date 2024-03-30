@@ -10,14 +10,14 @@ namespace Spravy.Client.Extensions;
 
 public static class RpcExceptionExtension
 {
-    private static readonly Dictionary<Type, Func<ISerializer, MemoryStream, ValidationResult>> chace = new();
+    private static readonly Dictionary<Type, Func<ISerializer, MemoryStream, Error>> chace = new();
 
     private static readonly MethodInfo DeserializeAsyncMethod =
         typeof(ISerializer).GetMethod(nameof(ISerializer.Deserialize)).ThrowIfNull();
 
     public static async Task<Result> ToErrorAsync(this RpcException exception, ISerializer serializer)
     {
-        var validationResults = new List<ValidationResult>();
+        var errors = new List<Error>();
 
         foreach (var trailer in exception.Trailers)
         {
@@ -37,7 +37,7 @@ public static class RpcExceptionExtension
 
             if (type is null)
             {
-                validationResults.Add(new UnknownValidationResult(guid));
+                errors.Add(new UnknownError(guid));
 
                 continue;
             }
@@ -45,18 +45,18 @@ public static class RpcExceptionExtension
             var func = GetFunc(type);
             await using var stream = new MemoryStream();
             var validationResult = func.Invoke(serializer, stream);
-            validationResults.Add(validationResult);
+            errors.Add(validationResult);
         }
 
-        if (validationResults.Any())
+        if (errors.Any())
         {
-            return new Result(validationResults.ToArray());
+            return new Result(errors.ToArray());
         }
 
-        return new Result();
+        return Result.Success;
     }
 
-    public static Func<ISerializer, MemoryStream, ValidationResult> GetFunc(Type type)
+    public static Func<ISerializer, MemoryStream, Error> GetFunc(Type type)
     {
         if (chace.TryGetValue(type, out var func))
         {
@@ -66,10 +66,10 @@ public static class RpcExceptionExtension
         var serializer = typeof(ISerializer).ToParameter();
         var memoryStream = typeof(MemoryStream).ToParameter();
 
-        chace[type] = (Func<ISerializer, MemoryStream, ValidationResult>)DeserializeAsyncMethod
+        chace[type] = (Func<ISerializer, MemoryStream, Error>)DeserializeAsyncMethod
             .MakeGenericMethod(type)
             .ToCall(serializer, memoryStream)
-            .ToConvert(typeof(ValidationResult))
+            .ToConvert(typeof(Error))
             .ToLambda(
                 [serializer, memoryStream]
             )
@@ -81,34 +81,34 @@ public static class RpcExceptionExtension
 
     public static Type? GetValidationResultType(Guid id)
     {
-        if (NotNullValidationResult.MainId == id)
+        if (NotNullError.MainId == id)
         {
-            return typeof(NotNullValidationResult);
+            return typeof(NotNullError);
         }
 
-        if (StringMaxLengthValidationResult.MainId == id)
+        if (StringMaxLengthError.MainId == id)
         {
-            return typeof(StringMaxLengthValidationResult);
+            return typeof(StringMaxLengthError);
         }
 
-        if (StringMinLengthValidationResult.MainId == id)
+        if (StringMinLengthError.MainId == id)
         {
-            return typeof(StringMinLengthValidationResult);
+            return typeof(StringMinLengthError);
         }
 
-        if (UserWithEmailExistsValidationResult.MainId == id)
+        if (UserWithEmailExistsError.MainId == id)
         {
-            return typeof(UserWithEmailExistsValidationResult);
+            return typeof(UserWithEmailExistsError);
         }
 
-        if (UserWithLoginExistsValidationResult.MainId == id)
+        if (UserWithLoginExistsError.MainId == id)
         {
-            return typeof(UserWithLoginExistsValidationResult);
+            return typeof(UserWithLoginExistsError);
         }
 
-        if (ValidCharsValidationResult.MainId == id)
+        if (ValidCharsError.MainId == id)
         {
-            return typeof(ValidCharsValidationResult);
+            return typeof(ValidCharsError);
         }
 
         return null;

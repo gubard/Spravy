@@ -1,3 +1,4 @@
+using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
 
@@ -5,15 +6,15 @@ namespace Spravy.Domain.Services;
 
 public class ValuesHttpHeaderFactory : IHttpHeaderFactory
 {
-    private readonly IEnumerable<HttpHeaderItem> items;
+    private readonly ReadOnlyMemory<HttpHeaderItem> items;
 
-    public ValuesHttpHeaderFactory(IEnumerable<HttpHeaderItem> items)
+    public ValuesHttpHeaderFactory(ReadOnlyMemory<HttpHeaderItem> items)
     {
         this.items = items;
     }
 
-    public Task<IEnumerable<HttpHeaderItem>> CreateHeaderItemsAsync(CancellationToken cancellationToken)
+    public Task<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsAsync(CancellationToken cancellationToken)
     {
-        return Task.FromResult(items);
+        return items.ToResult().ToTaskResult();
     }
 }

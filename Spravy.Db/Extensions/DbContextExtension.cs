@@ -4,6 +4,18 @@ namespace Spravy.Db.Extensions;
 
 public static class DbContextExtension
 {
+    public static async Task<TResult> ExecuteSaveChangesAsync<TDbContext, TResult>(
+        this TDbContext context,
+        Func<TDbContext, Task<TResult>> func
+    )
+        where TDbContext : DbContext
+    {
+        var result = await func.Invoke(context);
+        await context.SaveChangesAsync();
+
+        return result;
+    }
+
     public static async Task ExecuteSaveChangesAsync<TDbContext>(this TDbContext context, Func<TDbContext, Task> func)
         where TDbContext : DbContext
     {
@@ -64,6 +76,31 @@ public static class DbContextExtension
 
             throw;
         }
+    }
+
+    public static async Task<TResult> ExecuteSaveChangesTransactionAsync<TDbContext, TResult>(
+        this TDbContext context,
+        Func<TDbContext, Task<TResult>> func,
+        CancellationToken cancellationToken
+    )
+        where TDbContext : DbContext
+    {
+        await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
+        TResult result;
+
+        try
+        {
+            result = await context.ExecuteSaveChangesAsync(func);
+            await transaction.CommitAsync(cancellationToken);
+        }
+        catch
+        {
+            await transaction.RollbackAsync(cancellationToken);
+
+            throw;
+        }
+
+        return result;
     }
 
     public static async ValueTask ExecuteSaveChangesTransactionValueAsync<TDbContext>(

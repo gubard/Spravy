@@ -176,31 +176,43 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
         {
             await this.InvokeUIBackgroundAsync(() => IsBusy = true);
 
-            var isVerified = await AuthenticationService.IsVerifiedByLoginAsync(Login, cancellationToken)
-                .ConfigureAwait(false);
-
-            if (!isVerified)
-            {
-                await Navigator.NavigateToAsync<VerificationCodeViewModel>(
-                        vm =>
+            await AuthenticationService.IsVerifiedByLoginAsync(Login, cancellationToken)
+                .ConfigureAwait(false)
+                .IfSuccessAsync(
+                    DialogViewer,
+                    isVerified =>
+                    {
+                        if (!isVerified)
                         {
-                            vm.Identifier = Login;
-                            vm.IdentifierType = UserIdentifierType.Login;
-                        },
-                        cancellationToken
-                    )
-                    .ConfigureAwait(false);
+                            return Navigator.NavigateToAsync<VerificationCodeViewModel>(
+                                vm =>
+                                {
+                                    vm.Identifier = Login;
+                                    vm.IdentifierType = UserIdentifierType.Login;
+                                },
+                                cancellationToken
+                            );
+                        }
 
-                return;
-            }
+                        var user = Mapper.Map<User>(this);
+                        return TokenService.LoginAsync(user, cancellationToken)
+                            .ConfigureAwait(false)
+                            .IfSuccessAsync(
+                                DialogViewer,
+                                async () =>
+                                {
+                                    await this.InvokeUIBackgroundAsync(() => Account.Login = user.Login);
+                                    await RememberMeAsync(cancellationToken).ConfigureAwait(false);
 
-            var user = Mapper.Map<User>(this);
-            await TokenService.LoginAsync(user, cancellationToken).ConfigureAwait(false);
-            Account.Login = user.Login;
-            await RememberMeAsync(cancellationToken).ConfigureAwait(false);
-
-            await Navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken)
-                .ConfigureAwait(false);
+                                    await Navigator.NavigateToAsync(
+                                            ActionHelper<RootToDoItemsViewModel>.Empty,
+                                            cancellationToken
+                                        )
+                                        .ConfigureAwait(false);
+                                }
+                            );
+                    }
+                );
         }
         finally
         {
@@ -208,21 +220,27 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
         }
     }
 
-    private async Task RememberMeAsync(CancellationToken cancellationToken)
+    private Task RememberMeAsync(CancellationToken cancellationToken)
     {
         if (!IsRememberMe)
         {
-            return;
+            return Task.CompletedTask;
         }
 
-        var token = await TokenService.GetTokenAsync(cancellationToken).ConfigureAwait(false);
+        return TokenService.GetTokenAsync(cancellationToken)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                DialogViewer,
+                token =>
+                {
+                    var item = new LoginStorageItem
+                    {
+                        Token = token,
+                    };
 
-        var item = new LoginStorageItem
-        {
-            Token = token,
-        };
-
-        await ObjectStorage.SaveObjectAsync(StorageIds.LoginId, item).ConfigureAwait(false);
+                    return ObjectStorage.SaveObjectAsync(StorageIds.LoginId, item);
+                }
+            );
     }
 
     private async Task InitializedAsync(CancellationToken cancellationToken)

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Spravy.Db.Extensions;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
+using Spravy.Domain.Models;
 using Spravy.Schedule.Db.Contexts;
 using Spravy.Schedule.Db.Models;
 using Spravy.Schedule.Domain.Interfaces;
@@ -21,9 +22,10 @@ public class EfScheduleService : IScheduleService
         this.dbContextFactory = dbContextFactory;
     }
 
-    public async Task AddTimerAsync(AddTimerParameters parameters, CancellationToken cancellationToken)
+    public async Task<Result> AddTimerAsync(AddTimerParameters parameters, CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();
+
         var newTimer = new TimerEntity
         {
             Id = Guid.NewGuid(),
@@ -35,18 +37,20 @@ public class EfScheduleService : IScheduleService
         await context.ExecuteSaveChangesTransactionAsync(
             c => c.Set<TimerEntity>().AddAsync(newTimer, cancellationToken)
         );
+
+        return Result.Success;
     }
 
-    public async Task<IEnumerable<TimerItem>> GetListTimesAsync(CancellationToken cancellationToken)
+    public async Task<Result<ReadOnlyMemory<TimerItem>>> GetListTimesAsync(CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();
         var timers = await context.Set<TimerEntity>().AsNoTracking().ToArrayAsync(cancellationToken);
-        var result = mapper.Map<IEnumerable<TimerItem>>(timers);
+        var result = mapper.Map<ReadOnlyMemory<TimerItem>>(timers);
 
-        return result;
+        return result.ToResult();
     }
 
-    public async Task RemoveTimerAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<Result> RemoveTimerAsync(Guid id, CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();
 
@@ -57,5 +61,7 @@ public class EfScheduleService : IScheduleService
                 c.Set<TimerEntity>().Remove(timer.ThrowIfNull());
             }
         );
+
+        return Result.Success;
     }
 }

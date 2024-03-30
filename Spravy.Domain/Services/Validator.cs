@@ -1,5 +1,4 @@
 using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
 using Spravy.Domain.ValidationResults;
 
 namespace Spravy.Domain.Services;
@@ -13,7 +12,7 @@ public abstract class Validator<TValue> : IValidator<TValue>
         this.rules = rules;
     }
 
-    public async IAsyncEnumerable<ValidationResult> ValidateAsync(TValue value)
+    public async IAsyncEnumerable<Error> ValidateAsync(TValue value)
     {
         foreach (var rule in rules.Span.ToArray())
         {

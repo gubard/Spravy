@@ -9,7 +9,20 @@ public static class ResultExtension
     {
         var stringBuilder = new StringBuilder();
 
-        foreach (var validationResult in result.ValidationResults.Span)
+        foreach (var validationResult in result.Errors.Span)
+        {
+            stringBuilder.Append(validationResult.Name);
+            stringBuilder.Append(";");
+        }
+
+        return stringBuilder.ToString();
+    }
+    
+    public static string GetTitle<TValue>(this Result<TValue> result)
+    {
+        var stringBuilder = new StringBuilder();
+
+        foreach (var validationResult in result.Errors.Span)
         {
             stringBuilder.Append(validationResult.Name);
             stringBuilder.Append(";");
