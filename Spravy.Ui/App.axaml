@@ -31,11 +31,11 @@
 
     <Application.DataTemplates>
         <DataTemplate x:DataType="lm:HeaderView">
-            <TextBlock Text="{Binding Text}" Classes="h4" />
+            <TextBlock Text="{Binding Text}" Classes="h4 text-wrap" />
         </DataTemplate>
 
         <DataTemplate x:DataType="lm:TextView">
-            <TextBlock Text="{Binding Text}" />
+            <TextBlock Text="{Binding Text}" Classes="text-wrap" />
         </DataTemplate>
 
         <DataTemplate x:DataType="pm:PasswordItemNotify">
