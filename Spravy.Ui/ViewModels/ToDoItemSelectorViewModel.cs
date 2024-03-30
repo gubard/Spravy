@@ -125,6 +125,7 @@ public class ToDoItemSelectorViewModel : ViewModelBase
             return;
         }
 
+        SelectedItem.IsExpanded = true;
         var current = SelectedItem;
 
         while (current.Parent is not null)
