@@ -1,5 +1,4 @@
 using System.Runtime.CompilerServices;
-using AutoMapper;
 using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;

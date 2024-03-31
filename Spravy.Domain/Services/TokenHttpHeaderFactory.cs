@@ -17,9 +17,7 @@ public class TokenHttpHeaderFactory : IHttpHeaderFactory
         CancellationToken cancellationToken
     )
     {
-        cancellationToken.ThrowIfCancellationRequested();
-
         return tokenService.GetTokenAsync(cancellationToken)
-            .IfSuccessAsync(value => HttpHeaderItem.CreateBearerAuthorization(value).ToReadOnlyMemory());
+            .IfSuccessAsync(value => HttpHeaderItem.CreateBearerAuthorization(value).ToReadOnlyMemory().ToResult());
     }
 }

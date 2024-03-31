@@ -1,6 +1,5 @@
 using AutoMapper;
 using Google.Protobuf;
-using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Spravy.Domain.Helpers;

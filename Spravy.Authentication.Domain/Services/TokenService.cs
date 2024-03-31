@@ -42,7 +42,7 @@ public class TokenService : ITokenService
                 {
                     token = value;
 
-                    return token.Token;
+                    return token.Token.ToResult();
                 }
             );
     }

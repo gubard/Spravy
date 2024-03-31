@@ -8,7 +8,6 @@ using Spravy.Ui.Features.Localizations.Models;
 using Spravy.Ui.Models;
 using System;
 using System.Threading;
-using Google.Protobuf.WellKnownTypes;
 using Ninject;
 using Spravy.PasswordGenerator.Domain.Interfaces;
 using Spravy.Ui.Extensions;

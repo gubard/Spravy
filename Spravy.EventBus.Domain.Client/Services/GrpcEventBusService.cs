@@ -1,5 +1,4 @@
 using System.Runtime.CompilerServices;
-using AutoMapper;
 using Google.Protobuf;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;

@@ -14,7 +14,7 @@ public static class ResultExtension
             return new Result<TReturn>(result.Errors);
         }
 
-        return action.Invoke(result.Value.ThrowIfNull());
+        return action.Invoke(result.Value);
     }
 
     public static Task<Result> IfSuccessAsync<TValue>(this Result<TValue> result, Func<TValue, Task<Result>> action)
@@ -24,7 +24,7 @@ public static class ResultExtension
             return new Result(result.Errors).ToTaskResult();
         }
 
-        return action.Invoke(result.Value.ThrowIfNull());
+        return action.Invoke(result.Value);
     }
 
     public static Task<Result<TReturn>> IfSuccessAsync<TValue, TReturn>(
@@ -37,7 +37,7 @@ public static class ResultExtension
             return new Result<TReturn>(result.Errors).ToTaskResult();
         }
 
-        return action.Invoke(result.Value.ThrowIfNull());
+        return action.Invoke(result.Value);
     }
 
     public static async Task<Result> IfSuccessAsync<TValue>(this Task<Result<TValue>> task, Action<TValue> action)
@@ -49,9 +49,25 @@ public static class ResultExtension
             return new Result(result.Errors);
         }
 
-        action.Invoke(result.Value.ThrowIfNull());
+        action.Invoke(result.Value);
 
         return Result.Success;
+    }
+
+    public static Task<Result> IfSuccessAsync<TValue, TArg>(
+        this Result<TValue> result,
+        Result<TArg> arg,
+        Func<TValue, TArg, Task<Result>> func
+    )
+    {
+        var errors = arg.Errors.Combine(result.Errors);
+
+        if (!errors.IsEmpty)
+        {
+            return new Result(errors).ToTaskResult();
+        }
+
+        return func.Invoke(result.Value, arg.Value);
     }
 
     public static async Task<Result> IfSuccessAsync<TValue>(
@@ -66,7 +82,7 @@ public static class ResultExtension
             return new Result(result.Errors);
         }
 
-        return action.Invoke(result.Value.ThrowIfNull());
+        return action.Invoke(result.Value);
     }
 
     public static async Task<Result> IfSuccessAsync<TValue>(
@@ -81,7 +97,7 @@ public static class ResultExtension
             return new Result(result.Errors);
         }
 
-        return await action.Invoke(result.Value.ThrowIfNull());
+        return await action.Invoke(result.Value);
     }
 
     public static async Task<Result> IfSuccessAsync<TValue, TArg1, TArg2>(
@@ -92,30 +108,14 @@ public static class ResultExtension
     )
     {
         var result = await task;
+        var errors = arg1.Errors.Combine(arg2.Errors, result.Errors);
 
-        if (arg1.IsHasError)
+        if (!errors.IsEmpty)
         {
-            if (arg2.IsHasError)
-            {
-                return new Result(arg1.Errors.Combine(arg2.Errors));
-            }
-            else
-            {
-                return new Result(arg1.Errors);
-            }
+            return new Result(errors);
         }
 
-        if (arg2.IsHasError)
-        {
-            return new Result(arg2.Errors);
-        }
-
-        if (result.IsHasError)
-        {
-            return new Result(result.Errors);
-        }
-
-        return await func.Invoke(result.Value.ThrowIfNull(), arg1.Value, arg2.Value);
+        return await func.Invoke(result.Value, arg1.Value, arg2.Value);
     }
 
     public static async Task<Result> IfSuccessAsync<TValue, TArg>(
@@ -125,18 +125,14 @@ public static class ResultExtension
     )
     {
         var result = await task;
+        var errors = arg.Errors.Combine(result.Errors);
 
-        if (arg.IsHasError)
+        if (!errors.IsEmpty)
         {
-            return new Result(arg.Errors);
+            return new Result(errors);
         }
 
-        if (result.IsHasError)
-        {
-            return new Result(result.Errors);
-        }
-
-        return await func.Invoke(result.Value.ThrowIfNull(), arg.Value);
+        return await func.Invoke(result.Value, arg.Value);
     }
 
     public static async Task<Result<TReturn>> IfSuccessAsync<TValue, TArg, TReturn>(
@@ -146,23 +142,19 @@ public static class ResultExtension
     )
     {
         var result = await task;
+        var errors = arg.Errors.Combine(result.Errors);
 
-        if (arg.IsHasError)
+        if (!errors.IsEmpty)
         {
-            return new Result<TReturn>(arg.Errors);
+            return new Result<TReturn>(errors);
         }
 
-        if (result.IsHasError)
-        {
-            return new Result<TReturn>(result.Errors);
-        }
-
-        return await func.Invoke(result.Value.ThrowIfNull(), arg.Value);
+        return await func.Invoke(result.Value, arg.Value);
     }
 
     public static async Task<Result<TReturn>> IfSuccessAsync<TValue, TReturn>(
         this Task<Result<TValue>> task,
-        Func<TValue, TReturn> action
+        Func<TValue, Result<TReturn>> action
     )
     {
         var result = await task;
@@ -172,7 +164,7 @@ public static class ResultExtension
             return new Result<TReturn>(result.Errors);
         }
 
-        return new Result<TReturn>(action.Invoke(result.Value.ThrowIfNull()));
+        return action.Invoke(result.Value);
     }
 
     public static async Task<Result<TReturn>> IfSuccessAsync<TValue, TReturn>(
@@ -187,6 +179,6 @@ public static class ResultExtension
             return new Result<TReturn>(result.Errors);
         }
 
-        return await action.Invoke(result.Value.ThrowIfNull());
+        return await action.Invoke(result.Value);
     }
 }

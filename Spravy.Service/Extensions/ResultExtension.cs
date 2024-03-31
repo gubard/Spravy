@@ -53,7 +53,22 @@ public static class ResultExtension
             throw await result.ToRpcExceptionAsync(serializer);
         }
 
-        return func.Invoke(result.Value.ThrowIfNull());
+        return func.Invoke(result.Value);
+    }
+    
+    public static async Task<TValue> HandleAsync<TValue>(
+        this Task<Result<TValue>> task,
+        ISerializer serializer
+    )
+    {
+        var result = await task;
+
+        if (result.IsHasError)
+        {
+            throw await result.ToRpcExceptionAsync(serializer);
+        }
+
+        return result.Value;
     }
 
     public static async Task<Metadata> GetMetadataAsync<TValue>(this Result<TValue> result, ISerializer serializer)

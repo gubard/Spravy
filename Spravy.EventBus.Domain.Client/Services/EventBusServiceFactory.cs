@@ -1,4 +1,3 @@
-using AutoMapper;
 using Spravy.Client.Services;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;

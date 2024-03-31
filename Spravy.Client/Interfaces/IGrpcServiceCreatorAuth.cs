@@ -1,4 +1,3 @@
-using AutoMapper;
 using Grpc.Core;
 using Spravy.Client.Services;
 using Spravy.Domain.Interfaces;

@@ -3,7 +3,6 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Spravy.Authentication.Db.Contexts;
 using Spravy.Authentication.Db.Models;
-using Spravy.Authentication.Domain.Exceptions;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Models;
 using Spravy.Authentication.Service.Interfaces;

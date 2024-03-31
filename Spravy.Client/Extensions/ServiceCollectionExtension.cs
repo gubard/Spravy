@@ -1,4 +1,3 @@
-using AutoMapper;
 using Grpc.Core;
 using Grpc.Net.Client;
 using Microsoft.Extensions.DependencyInjection;

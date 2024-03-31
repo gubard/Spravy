@@ -1,5 +1,4 @@
 using AutoMapper;
-using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Models;

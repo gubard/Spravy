@@ -30,7 +30,7 @@ public class MetadataFactory : IMetadataFactory
                         metadata.Add(item.Name, item.Value);
                     }
 
-                    return metadata;
+                    return metadata.ToResult();
                 }
             );
     }

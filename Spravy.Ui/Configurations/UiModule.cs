@@ -88,6 +88,7 @@ public class UiModule : NinjectModule
 
         Bind<AccountNotify>().ToSelf().InSingletonScope();
         Bind<ISerializer>().To<ProtobufSerializer>();
+        Bind<IConverter>().To<AutoMapperConverter>();
         Bind<ICacheValidator<Uri, GrpcChannel>>().To<GrpcChannelCacheValidator>();
         Bind<IViewLocator>().To<ModuleViewLocator>();
         Bind<INavigator>().To<Navigator>().InSingletonScope();
