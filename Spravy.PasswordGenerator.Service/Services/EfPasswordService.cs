@@ -53,7 +53,7 @@ public class EfPasswordService : IPasswordService
         await using var context = dbContextFactory.Create();
         var items = await context.Set<PasswordItemEntity>().AsNoTracking().ToArrayAsync(cancellationToken);
 
-        return mapper.Map<ReadOnlyMemory<PasswordItem>>(items).ToResult();
+        return mapper.Map<PasswordItem[]>(items).ToReadOnlyMemory().ToResult();
     }
 
     public async Task<Result<PasswordItem>> GetPasswordItemAsync(Guid id, CancellationToken cancellationToken)

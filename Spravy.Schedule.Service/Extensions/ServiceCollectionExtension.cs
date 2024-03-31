@@ -38,6 +38,7 @@ public static class ServiceCollectionExtension
             .AddMapperConfiguration<SpravyScheduleProfile, SpravyScheduleDbProfile, SpravyAuthenticationProfile>();
         serviceCollection.AddSpravySqliteFolderContext<SpravyDbScheduleDbContext, SpravyScheduleDbSqliteMigratorMark>();
         serviceCollection.AddSingleton<ITokenService, TokenService>();
+        serviceCollection.AddSingleton<IConverter, AutoMapperConverter>();
         serviceCollection.AddSingleton<IFactory<string, SpravyDbScheduleDbContext>, SpravyScheduleDbContextFactory>();
         serviceCollection.AddSingleton<IDbContextSetup, SqliteScheduleDbContextSetup>();
         serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<SqliteFolderOptions>());

@@ -68,7 +68,7 @@ public class GrpcPasswordService : PasswordServiceBase
                 value =>
                 {
                     var reply = new GetPasswordItemsReply();
-                    reply.Items.AddRange(value.ToArray().Select(item => mapper.Map<PasswordItemGrpc>(item)));
+                    reply.Items.AddRange(mapper.Map<PasswordItemGrpc[]>(value.ToArray()));
 
                     return reply;
                 }

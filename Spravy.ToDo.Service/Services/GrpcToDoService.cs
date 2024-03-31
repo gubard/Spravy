@@ -3,7 +3,6 @@ using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Spravy.Domain.Enums;
 using Spravy.Domain.Extensions;
-using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;
 using Spravy.Service.Extensions;
 using Spravy.ToDo.Domain.Enums;

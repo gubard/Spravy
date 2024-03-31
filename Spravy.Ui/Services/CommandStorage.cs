@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
+using Avalonia.Controls.Notifications;
 using Grpc.Core;
 using Material.Icons;
 using Ninject;
@@ -40,6 +41,7 @@ public static class CommandStorage
         var kernel = DiHelper.Kernel.ThrowIfNull();
         clipboard = kernel.Get<IClipboardService>();
         passwordService = kernel.Get<IPasswordService>();
+        spravyNotificationManager = kernel.Get<ISpravyNotificationManager>();
         objectStorage = kernel.Get<IObjectStorage>();
         mapper = kernel.Get<IMapper>();
         tokenService = kernel.Get<ITokenService>();
@@ -298,6 +300,7 @@ public static class CommandStorage
     private static readonly IObjectStorage objectStorage;
     private static readonly IClipboardService clipboard;
     private static readonly IPasswordService passwordService;
+    private static readonly ISpravyNotificationManager spravyNotificationManager;
 
     public static ICommand RemovePasswordItemCommand => RemovePasswordItemItem.Command;
     public static CommandItem RemovePasswordItemItem { get; }
@@ -479,7 +482,14 @@ public static class CommandStorage
     {
         return passwordService.GeneratePasswordAsync(idProperty.Id, cancellationToken)
             .ConfigureAwait(false)
-            .IfSuccessAsync(dialogViewer, password => clipboard.SetTextAsync(password));
+            .IfSuccessAsync(
+                dialogViewer,
+                async password =>
+                {
+                    await clipboard.SetTextAsync(password);
+                    await spravyNotificationManager.ShowAsync<TextViewModel>(cancellationToken);
+                }
+            );
     }
 
     private static Task ShowPasswordItemSettingAsync(IIdProperty idProperty, CancellationToken cancellationToken)

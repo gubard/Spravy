@@ -1,3 +1,4 @@
+using Spravy.Core.Services;
 using Spravy.Db.Interfaces;
 using Spravy.Db.Sqlite.Extensions;
 using Spravy.Db.Sqlite.Models;
@@ -24,6 +25,7 @@ public static class ServiceCollectionExtension
         serviceCollection.AddHostedService<FolderMigratorHostedService<PasswordDbContext>>();
         serviceCollection.AddHostedService<FileMigratorHostedService<UserSecretDbContext>>();
         serviceCollection.AddTransient<IPasswordService, EfPasswordService>();
+        serviceCollection.AddTransient<ISerializer, ProtobufSerializer>();
         serviceCollection.AddTransient<SqlitePasswordDbContextSetup>();
         serviceCollection.AddTransient<IDbContextSetup, SqliteUserSecretDbContextSetup>();
         serviceCollection.AddTransient<IUserSecretService, EfUserSecretService>();

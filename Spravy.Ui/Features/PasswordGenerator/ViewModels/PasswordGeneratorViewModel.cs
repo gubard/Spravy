@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
@@ -70,16 +69,22 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
         return Task.CompletedTask;
     }
 
-    public async Task RefreshAsync(CancellationToken cancellationToken)
+    public Task RefreshAsync(CancellationToken cancellationToken)
     {
-        var items = await PasswordService.GetPasswordItemsAsync(cancellationToken);
-
-        await this.InvokeUIBackgroundAsync(
-            () =>
-            {
-                Items.Clear();
-                Items.AddRange(Mapper.Map<IEnumerable<PasswordItemNotify>>(items));
-            }
-        );
+        return PasswordService.GetPasswordItemsAsync(cancellationToken)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                DialogViewer,
+                async items =>
+                {
+                    await this.InvokeUIBackgroundAsync(
+                        () =>
+                        {
+                            Items.Clear();
+                            Items.AddRange(Mapper.Map<PasswordItemNotify[]>(items.ToArray()));
+                        }
+                    );
+                }
+            );
     }
 }

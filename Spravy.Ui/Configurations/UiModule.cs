@@ -4,6 +4,7 @@ using AutoMapper;
 using Avalonia;
 using Avalonia.Collections;
 using Avalonia.Controls;
+using Avalonia.Controls.Notifications;
 using Avalonia.Controls.Templates;
 using Grpc.Net.Client;
 using Microsoft.Extensions.DependencyInjection;
@@ -86,9 +87,13 @@ public class UiModule : NinjectModule
         this.BindGrpcServiceAuth<GrpcPasswordService, PasswordService.PasswordServiceClient,
             GrpcPasswordServiceOptions>(useCache);
 
+        Bind<IManagedNotificationManager>()
+            .ToMethod(_ => new WindowNotificationManager(Application.Current.ThrowIfNull().GetTopLevel()));
+
         Bind<AccountNotify>().ToSelf().InSingletonScope();
         Bind<ISerializer>().To<ProtobufSerializer>();
         Bind<IConverter>().To<AutoMapperConverter>();
+        Bind<ISpravyNotificationManager>().To<NotificationManager>();
         Bind<ICacheValidator<Uri, GrpcChannel>>().To<GrpcChannelCacheValidator>();
         Bind<IViewLocator>().To<ModuleViewLocator>();
         Bind<INavigator>().To<Navigator>().InSingletonScope();
