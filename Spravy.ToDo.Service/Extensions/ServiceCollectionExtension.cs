@@ -33,6 +33,7 @@ public static class ServiceCollectionExtension
         //serviceCollection.AddHostedService<EventBusHostedService>();
         serviceCollection.AddSpravySqliteFolderContext<SpravyDbToDoDbContext, SpravyToDoDbSqliteMigratorMark>();
         serviceCollection.AddSingleton<ITokenService, TokenService>();
+        serviceCollection.AddSingleton<IConverter, AutoMapperConverter>();
         serviceCollection.AddTransient<ISerializer, ProtobufSerializer>();
         serviceCollection.AddSingleton<IDbContextSetup, SqliteToDoDbContextSetup>();
         serviceCollection.AddSingleton<IFactory<string, SpravyDbToDoDbContext>, SpravyToDoDbContextFactory>();
