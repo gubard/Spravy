@@ -259,7 +259,7 @@ public class EfToDoService : IToDoService
             .OrderBy(x => x.OrderIndex)
             .ToArrayAsync(cancellationToken);
 
-        return mapper.Map<ReadOnlyMemory<ToDoShortItem>>(items).ToResult();
+        return mapper.Map<ToDoShortItem>(items).ToReadOnlyMemory().ToResult();
     }
 
     public async Task<Result<ReadOnlyMemory<Guid>>> GetRootToDoItemIdsAsync(CancellationToken cancellationToken)
@@ -1087,7 +1087,7 @@ public class EfToDoService : IToDoService
             .OrderBy(x => x.OrderIndex)
             .ToArrayAsync(cancellationToken);
 
-        return mapper.Map<ReadOnlyMemory<ToDoShortItem>>(items).ToResult();
+        return mapper.Map<ToDoShortItem[]>(items).ToReadOnlyMemory().ToResult();
     }
 
     public async Task<Result<ActiveToDoItem?>> GetCurrentActiveToDoItemAsync(CancellationToken cancellationToken)
