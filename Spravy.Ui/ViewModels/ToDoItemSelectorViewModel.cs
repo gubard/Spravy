@@ -54,12 +54,17 @@ public class ToDoItemSelectorViewModel : ViewModelBase
     {
         await this.InvokeUIBackgroundAsync(() => Roots.Clear());
 
-        var items = await ToDoService.GetToDoSelectorItemsAsync(IgnoreIds.ToArray(), cancellationToken)
-            .ConfigureAwait(false);
-
-        itemsCache.Clear();
-        itemsCache.AddRange(Mapper.Map<IEnumerable<ToDoSelectorItemNotify>>(items));
-        await this.InvokeUIBackgroundAsync(() => Roots.AddRange(itemsCache));
+        await ToDoService.GetToDoSelectorItemsAsync(IgnoreIds.ToArray(), cancellationToken)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                DialogViewer,
+                async items =>
+                {
+                    itemsCache.Clear();
+                    itemsCache.AddRange(Mapper.Map<ToDoSelectorItemNotify[]>(items.ToArray()));
+                    await this.InvokeUIBackgroundAsync(() => Roots.AddRange(itemsCache));
+                }
+            );
     }
 
     private async Task SearchAsync(CancellationToken cancellationToken)

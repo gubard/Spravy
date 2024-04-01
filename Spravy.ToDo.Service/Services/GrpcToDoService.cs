@@ -616,7 +616,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
                     context.CancellationToken
                 )
             )
-            .IfSuccessAsync(toDoSelectorItems => converter.Convert<ToDoSelectorItemGrpc[]>(toDoSelectorItems))
+            .IfSuccessAsync(toDoSelectorItems => converter.Convert<ToDoSelectorItemGrpc[]>(toDoSelectorItems.ToArray()))
             .HandleAsync(
                 serializer,
                 toDoSelectorItems =>
@@ -747,7 +747,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     {
         return converter.Convert<Guid>(request.Id)
             .IfSuccessAsync(id => toDoService.GetSiblingsAsync(id, context.CancellationToken))
-            .IfSuccessAsync(items => converter.Convert<ToDoShortItemGrpc[]>(items))
+            .IfSuccessAsync(items => converter.Convert<ToDoShortItemGrpc[]>(items.ToArray()))
             .HandleAsync(
                 serializer,
                 items =>

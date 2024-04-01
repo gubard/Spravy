@@ -40,16 +40,22 @@ public class ChangeToDoItemOrderIndexViewModel : ViewModelBase
     [Reactive]
     public bool IsAfter { get; set; } = true;
 
-    private async Task InitializedAsync(CancellationToken cancellationToken)
+    private Task InitializedAsync(CancellationToken cancellationToken)
     {
-        var items = await ToDoService.GetSiblingsAsync(Id, cancellationToken).ConfigureAwait(false);
-
-        await this.InvokeUIBackgroundAsync(
-            () =>
-            {
-                Items.Clear();
-                Items.AddRange(Mapper.Map<IEnumerable<ToDoShortItemNotify>>(items));
-            }
-        );
+        return ToDoService.GetSiblingsAsync(Id, cancellationToken)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                DialogViewer,
+                async items =>
+                {
+                    await this.InvokeUIBackgroundAsync(
+                        () =>
+                        {
+                            Items.Clear();
+                            Items.AddRange(Mapper.Map<ToDoShortItemNotify[]>(items.ToArray()));
+                        }
+                    );
+                }
+            );
     }
 }
