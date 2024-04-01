@@ -226,7 +226,7 @@ public class MultiToDoItemsViewModel : ViewModelBase
 
     private async Task SelectAllAsync(AvaloniaList<Selected<ToDoItemNotify>> items, CancellationToken cancellationToken)
     {
-        await this.InvokeUIAsync(
+        await this.InvokeUIBackgroundAsync(
             () =>
             {
                 if (items.All(x => x.IsSelect))

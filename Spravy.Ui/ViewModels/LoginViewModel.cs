@@ -247,7 +247,7 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
     {
         try
         {
-            await this.InvokeUIAsync(() => IsBusy = true);
+            await this.InvokeUIBackgroundAsync(() => IsBusy = true);
 
             if (!TryAutoLogin)
             {
@@ -278,7 +278,7 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
         }
         finally
         {
-            await this.InvokeUIAsync(() => IsBusy = false);
+            await this.InvokeUIBackgroundAsync(() => IsBusy = false);
         }
     }
 
@@ -310,7 +310,7 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
             return;
         }
 
-        await this.InvokeUIAsync(() => LoginCommand.Execute(null));
+        await this.InvokeUIBackgroundAsync(() => LoginCommand.Execute(null));
     }
 
     public override void Stop()

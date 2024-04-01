@@ -314,7 +314,7 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
     {
         try
         {
-            await this.InvokeUIAsync(() => IsBusy = true);
+            await this.InvokeUIBackgroundAsync(() => IsBusy = true);
             var options = Mapper.Map<CreateUserOptions>(this);
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -340,7 +340,7 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
         }
         finally
         {
-            await this.InvokeUIAsync(() => IsBusy = false);
+            await this.InvokeUIBackgroundAsync(() => IsBusy = false);
         }
     }
 }

@@ -52,7 +52,7 @@ public class Navigator : INavigator
     {
         await AddCurrentContentAsync(ActionHelper<object>.Empty);
         var viewModel = (INavigatable)Resolver.Get(type);
-        await this.InvokeUIAsync(() => Content.Content = viewModel);
+        await this.InvokeUIBackgroundAsync(() => Content.Content = viewModel);
     }
 
     public async Task NavigateToAsync<TViewModel>(Action<TViewModel> setup, CancellationToken cancellationToken)
@@ -62,14 +62,14 @@ public class Navigator : INavigator
 
         if (Content.Content is IRefresh refresh && Content.Content is TViewModel vm)
         {
-            await this.InvokeUIAsync(() => setup.Invoke(vm));
+            await this.InvokeUIBackgroundAsync(() => setup.Invoke(vm));
             await refresh.RefreshAsync(cancellationToken);
         }
         else
         {
             var viewModel = Resolver.Get<TViewModel>();
 
-            await this.InvokeUIAsync(
+            await this.InvokeUIBackgroundAsync(
                 () =>
                 {
                     setup.Invoke(viewModel);
@@ -83,7 +83,7 @@ public class Navigator : INavigator
     {
         await AddCurrentContentAsync(ActionHelper<object>.Empty);
         var viewModel = Resolver.Get<TViewModel>();
-        await this.InvokeUIAsync(() => Content.Content = viewModel);
+        await this.InvokeUIBackgroundAsync(() => Content.Content = viewModel);
     }
 
     public async Task<INavigatable?> NavigateBackAsync(CancellationToken cancellationToken)
@@ -107,7 +107,7 @@ public class Navigator : INavigator
             return new EmptyNavigatable();
         }
 
-        await this.InvokeUIAsync(
+        await this.InvokeUIBackgroundAsync(
             async () =>
             {
                 item.Setup.Invoke(item.Navigatable);
@@ -127,6 +127,6 @@ public class Navigator : INavigator
         where TViewModel : INavigatable
     {
         await AddCurrentContentAsync(ActionHelper<object>.Empty);
-        await this.InvokeUIAsync(() => Content.Content = parameter);
+        await this.InvokeUIBackgroundAsync(() => Content.Content = parameter);
     }
 }

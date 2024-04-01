@@ -76,7 +76,7 @@ public class SearchViewModel : NavigatableViewModelBase, IToDoItemSearchProperti
     public override async Task SetStateAsync(object setting)
     {
         var s = setting.ThrowIfIsNotCast<SearchViewModelSetting>();
-        await this.InvokeUIAsync(() => SearchText = s.SearchText);
+        await this.InvokeUIBackgroundAsync(() => SearchText = s.SearchText);
     }
 
     [ProtoContract]

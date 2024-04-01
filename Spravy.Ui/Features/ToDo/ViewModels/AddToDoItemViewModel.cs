@@ -87,7 +87,7 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
     {
         var s = setting.ThrowIfIsNotCast<AddToDoItemViewModelSetting>();
 
-        await this.InvokeUIAsync(
+        await this.InvokeUIBackgroundAsync(
             () =>
             {
                 ToDoItemContent.Name = s.Name;

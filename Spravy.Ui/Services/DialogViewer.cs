@@ -215,14 +215,14 @@ public class DialogViewer : IDialogViewer
         return SafeClose(InputDialogHostIdentifier);
     }
 
-    private Task ShowView(object content, string identifier)
+    private async Task ShowView(object content, string identifier)
     {
         if (DialogHost.IsDialogOpen(identifier))
         {
-            return Task.CompletedTask;
+            return;
         }
 
-        return this.InvokeUIAsync(
+        await this.InvokeUIBackgroundAsync(
             () => DialogHost.Show(
                 content,
                 identifier
@@ -244,6 +244,6 @@ public class DialogViewer : IDialogViewer
             await saveState.SaveStateAsync();
         }
 
-        await this.InvokeUIAsync(() => DialogHost.Close(identifier));
+        await this.InvokeUIBackgroundAsync(() => DialogHost.Close(identifier));
     }
 }

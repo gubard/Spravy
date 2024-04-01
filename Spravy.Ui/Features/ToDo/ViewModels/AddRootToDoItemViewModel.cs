@@ -56,7 +56,7 @@ public class AddRootToDoItemViewModel : NavigatableViewModelBase
     {
         var s = setting.ThrowIfIsNotCast<AddRootToDoItemViewModelSetting>();
 
-        await this.InvokeUIAsync(
+        await this.InvokeUIBackgroundAsync(
             () =>
             {
                 ToDoItemContent.Name = s.Name;

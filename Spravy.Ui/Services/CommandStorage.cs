@@ -1337,7 +1337,7 @@ public static class CommandStorage
         }
 
         await navigator.NavigateToAsync(ActionHelper<LoginViewModel>.Empty, cancellationToken).ConfigureAwait(false);
-        await cancellationToken.InvokeUIAsync(() => mainSplitViewModel.IsPaneOpen = false);
+        await cancellationToken.InvokeUIBackgroundAsync(() => mainSplitViewModel.IsPaneOpen = false);
     }
 
     private static Task RememberMeAsync(ILoginProperties properties, CancellationToken cancellationToken)
@@ -1366,7 +1366,7 @@ public static class CommandStorage
     private static async Task NavigateToAsync(Type type, CancellationToken cancellationToken)
     {
         await navigator.NavigateToAsync(type, cancellationToken);
-        await cancellationToken.InvokeUIAsync(() => mainSplitViewModel.IsPaneOpen = false);
+        await cancellationToken.InvokeUIBackgroundAsync(() => mainSplitViewModel.IsPaneOpen = false);
     }
 
     private static Task BackAsync(CancellationToken cancellationToken)
@@ -1538,7 +1538,7 @@ public static class CommandStorage
         CancellationToken cancellationToken
     )
     {
-        await cancellationToken.InvokeUIAsync(
+        await cancellationToken.InvokeUIBackgroundAsync(
             () =>
             {
                 if (items.All(x => x.IsSelect))
@@ -1618,7 +1618,7 @@ public static class CommandStorage
     private static async Task SwitchPaneAsync(CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        await cancellationToken.InvokeUIAsync(() => mainSplitViewModel.IsPaneOpen = !mainSplitViewModel.IsPaneOpen);
+        await cancellationToken.InvokeUIBackgroundAsync(() => mainSplitViewModel.IsPaneOpen = !mainSplitViewModel.IsPaneOpen);
     }
 
     public static CommandItem CreateCommand(

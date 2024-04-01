@@ -117,7 +117,7 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
     {
         var s = setting.ThrowIfIsNotCast<RootToDoItemsViewModelSetting>();
 
-        await this.InvokeUIAsync(
+        await this.InvokeUIBackgroundAsync(
             () =>
             {
                 ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;

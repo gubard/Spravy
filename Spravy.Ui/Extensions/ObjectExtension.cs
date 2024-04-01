@@ -11,6 +11,11 @@ public static class ObjectExtension
         return Dispatcher.UIThread.InvokeAsync(callback, DispatcherPriority.Background);
     }
 
+    public static Task InvokeUIBackgroundAsync<TObject>(this TObject _, Func<Task> callback)
+    {
+        return Dispatcher.UIThread.InvokeAsync(callback, DispatcherPriority.Background);
+    }
+
     public static DispatcherOperation<TResult> InvokeUIBackgroundAsync<TObject, TResult>(
         this TObject _,
         Func<TResult> callback
