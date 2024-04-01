@@ -35,7 +35,7 @@ public class DeletePasswordItemViewModel : NavigatableViewModelBase
     [Inject]
     public required IPasswordService PasswordService { get; init; }
 
-    public HeaderView DeleteText =>
+    public Header4View DeleteText =>
         new(
             "DeletePasswordItemView.Header",
             new

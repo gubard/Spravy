@@ -9,6 +9,7 @@ using Spravy.Domain.Helpers;
 using Spravy.Domain.Models;
 using Spravy.PasswordGenerator.Domain.Interfaces;
 using Spravy.Ui.Extensions;
+using Spravy.Ui.Features.Localizations.Models;
 using Spravy.Ui.Features.PasswordGenerator.Models;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
@@ -45,7 +46,7 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
         init
         {
             pageHeaderViewModel = value;
-            pageHeaderViewModel.Header = "Password generator";
+            pageHeaderViewModel.Header = new Header3View("PasswordGeneratorView.Header");
             pageHeaderViewModel.LeftCommand = CommandStorage.NavigateToCurrentToDoItemItem;
         }
     }

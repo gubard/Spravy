@@ -25,6 +25,7 @@ using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.Enums;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Features.ErrorHandling.ViewModels;
+using Spravy.Ui.Features.Localizations.Models;
 using Spravy.Ui.Features.PasswordGenerator.ViewModels;
 using Spravy.Ui.Features.ToDo.ViewModels;
 using Spravy.Ui.Helpers;
@@ -487,7 +488,7 @@ public static class CommandStorage
                 async password =>
                 {
                     await clipboard.SetTextAsync(password);
-                    await spravyNotificationManager.ShowAsync<TextViewModel>(cancellationToken);
+                    await spravyNotificationManager.ShowAsync(new TextView("PasswordGeneratorView.Notification.CopyPassword", idProperty),cancellationToken);
                 }
             );
     }

@@ -41,7 +41,9 @@ public class TextView
                 return str;
             }
 
-            return Smart.Format(str, Parameters);
+            var result = Smart.Format(str, Parameters);
+
+            return result;
         }
     }
 }

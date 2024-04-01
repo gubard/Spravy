@@ -93,7 +93,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     )
     {
         return toDoService.GetTodayToDoItemsAsync(context.CancellationToken)
-            .IfSuccessAsync(ids => converter.Convert<ByteString[]>(ids))
+            .IfSuccessAsync(ids => converter.Convert<ByteString[]>(ids.ToArray()))
             .HandleAsync(
                 serializer,
                 ids =>

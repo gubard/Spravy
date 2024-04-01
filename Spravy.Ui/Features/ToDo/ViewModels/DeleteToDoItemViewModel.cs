@@ -46,7 +46,7 @@ public class DeleteToDoItemViewModel : ViewModelBase
     [Inject]
     public required IMapper Mapper { get; set; }
 
-    public HeaderView DeleteText =>
+    public Header4View DeleteText =>
         new(
             "DeleteToDoItemView.Header",
             new

@@ -6,4 +6,5 @@ namespace Spravy.Ui.Interfaces;
 public interface ISpravyNotificationManager
 {
     Task ShowAsync<TView>(CancellationToken cancellationToken);
+    Task ShowAsync(object view,CancellationToken cancellationToken);
 }

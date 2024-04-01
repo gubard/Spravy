@@ -23,4 +23,9 @@ public class NotificationManager : ISpravyNotificationManager
         var view = kernel.Get<TView>();
         await this.InvokeUIBackgroundAsync(() => managedNotificationManager.Show(view));
     }
+
+    public async Task ShowAsync(object view, CancellationToken cancellationToken)
+    {
+        await this.InvokeUIBackgroundAsync(() => managedNotificationManager.Show(view));
+    }
 }

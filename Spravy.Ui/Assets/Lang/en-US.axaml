@@ -5,7 +5,9 @@
     <sys:String x:Key="DeletePasswordItemView.Header">Are you sure you want to delete "{PasswordItemName}"?</sys:String>
 
     <!--PasswordGeneratorView-->
+    <sys:String x:Key="PasswordGeneratorView.Header">Password generator</sys:String>
     <sys:String x:Key="PasswordGeneratorView.Add">Create password</sys:String>
+    <sys:String x:Key="PasswordGeneratorView.Notification.CopyPassword">Copied password {Name}</sys:String>
 
     <!--AddPasswordItemView-->
     <sys:String x:Key="AddPasswordItemView.Header">New password</sys:String>

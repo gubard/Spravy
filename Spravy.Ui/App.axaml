@@ -30,8 +30,12 @@
     </Application.Styles>
 
     <Application.DataTemplates>
-        <DataTemplate x:DataType="lm:HeaderView">
+        <DataTemplate x:DataType="lm:Header4View">
             <TextBlock Text="{Binding Text}" Classes="h4 text-wrap" />
+        </DataTemplate>
+        
+        <DataTemplate x:DataType="lm:Header3View">
+            <TextBlock Text="{Binding Text}" Classes="h3 text-wrap" />
         </DataTemplate>
 
         <DataTemplate x:DataType="lm:TextView">
