@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Ninject;
 using Spravy.Domain.Extensions;
+using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Features.ToDo.ViewModels;
@@ -21,9 +22,11 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
     [Inject]
     public required IToDoService ToDoService { get; init; }
 
-    public async Task RefreshAsync(CancellationToken cancellationToken)
+    public async Task<Result> RefreshAsync(CancellationToken cancellationToken)
     {
         await refreshToDoItem.ThrowIfNull().RefreshAsync(cancellationToken).ConfigureAwait(false);
+        
+        return Result.Success;
     }
 
     private Task RefreshFavoriteToDoItemsAsync(CancellationToken cancellationToken)

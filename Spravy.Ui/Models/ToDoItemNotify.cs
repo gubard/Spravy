@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Collections;
 using ReactiveUI;
+using Spravy.Domain.Extensions;
+using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.Ui.Interfaces;
 
@@ -104,9 +106,9 @@ public class ToDoItemNotify : NotifyBase,
         set => this.RaiseAndSetIfChanged(ref active, value);
     }
 
-    public Task RefreshAsync(CancellationToken cancellationToken)
+    public Task<Result> RefreshAsync(CancellationToken cancellationToken)
     {
-        return Task.CompletedTask;
+        return Result.Success.ToTaskResult();
     }
 
     public Guid? ParentId

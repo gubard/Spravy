@@ -6,6 +6,7 @@ using Avalonia.Collections;
 using Ninject;
 using ReactiveUI.Fody.Helpers;
 using Spravy.Domain.Models;
+using Spravy.Domain.Extensions;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Extensions;
@@ -39,13 +40,17 @@ public class ValueToDoItemSettingsViewModel : ViewModelBase, IToDoChildrenTypePr
         await RefreshAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    public Task RefreshAsync(CancellationToken cancellationToken)
+    public Task<Result> RefreshAsync(CancellationToken cancellationToken)
     {
         return ToDoService.GetValueToDoItemSettingsAsync(Id, cancellationToken)
             .ConfigureAwait(false)
             .IfSuccessAsync(
-                DialogViewer,
-                async setting => { await this.InvokeUIBackgroundAsync(() => ChildrenType = setting.ChildrenType); }
+                async setting =>
+                {
+                    await this.InvokeUIBackgroundAsync(() => ChildrenType = setting.ChildrenType);
+
+                    return Result.Success;
+                }
             );
     }
 

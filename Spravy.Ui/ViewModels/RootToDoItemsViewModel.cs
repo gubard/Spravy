@@ -86,9 +86,11 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
         await refreshWork.RunAsync().ConfigureAwait(false);
     }
 
-    public Task RefreshAsync(CancellationToken cancellationToken)
+    public async Task<Result> RefreshAsync(CancellationToken cancellationToken)
     {
-        return refreshWork.RunAsync();
+        await refreshWork.RunAsync();
+
+        return Result.Success;
     }
 
     private Task RefreshCoreAsync(CancellationToken cancellationToken)

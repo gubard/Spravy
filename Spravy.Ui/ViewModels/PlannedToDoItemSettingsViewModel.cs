@@ -6,6 +6,7 @@ using Avalonia.Collections;
 using Ninject;
 using ReactiveUI;
 using Spravy.Domain.Models;
+using Spravy.Domain.Extensions;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Extensions;
@@ -66,12 +67,11 @@ public class PlannedToDoItemSettingsViewModel : ViewModelBase,
         await RefreshAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    public Task RefreshAsync(CancellationToken cancellationToken)
+    public Task<Result> RefreshAsync(CancellationToken cancellationToken)
     {
         return ToDoService.GetPlannedToDoItemSettingsAsync(Id, cancellationToken)
             .ConfigureAwait(false)
             .IfSuccessAsync(
-                DialogViewer,
                 async setting =>
                 {
                     await this.InvokeUIBackgroundAsync(
@@ -82,6 +82,8 @@ public class PlannedToDoItemSettingsViewModel : ViewModelBase,
                             IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
                         }
                     );
+
+                    return Result.Success;
                 }
             );
     }

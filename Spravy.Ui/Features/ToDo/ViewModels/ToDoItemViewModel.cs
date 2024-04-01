@@ -155,9 +155,11 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     [Reactive]
     public ToDoItemStatus Status { get; set; }
 
-    public Task RefreshAsync(CancellationToken cancellationToken)
+    public async Task<Result> RefreshAsync(CancellationToken cancellationToken)
     {
-        return refreshWork.RunAsync();
+        await refreshWork.RunAsync();
+
+        return Result.Success;
     }
 
     private async Task RefreshCoreAsync(CancellationToken cancellationToken)

@@ -6,6 +6,7 @@ using Avalonia.Collections;
 using Ninject;
 using ReactiveUI.Fody.Helpers;
 using Spravy.Domain.Models;
+using Spravy.Domain.Extensions;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Extensions;
@@ -65,12 +66,11 @@ public class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
         return RefreshAsync(cancellationToken);
     }
 
-    public Task RefreshAsync(CancellationToken cancellationToken)
+    public Task<Result> RefreshAsync(CancellationToken cancellationToken)
     {
         return ToDoService.GetPeriodicityOffsetToDoItemSettingsAsync(Id, cancellationToken)
             .ConfigureAwait(false)
             .IfSuccessAsync(
-                DialogViewer,
                 async setting =>
                 {
                     await this.InvokeUIBackgroundAsync(
@@ -85,6 +85,8 @@ public class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
                             IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
                         }
                     );
+
+                    return Result.Success;
                 }
             );
     }

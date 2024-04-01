@@ -77,12 +77,11 @@ public class PeriodicityToDoItemSettingsViewModel : ViewModelBase,
         await RefreshAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    public Task RefreshAsync(CancellationToken cancellationToken)
+    public Task<Result> RefreshAsync(CancellationToken cancellationToken)
     {
         return ToDoService.GetPeriodicityToDoItemSettingsAsync(Id, cancellationToken)
             .ConfigureAwait(false)
             .IfSuccessAsync(
-                DialogViewer,
                 async setting =>
                 {
                     await this.InvokeUIBackgroundAsync(
@@ -94,6 +93,8 @@ public class PeriodicityToDoItemSettingsViewModel : ViewModelBase,
                             IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
                         }
                     );
+
+                    return Result.Success;
                 }
             );
     }

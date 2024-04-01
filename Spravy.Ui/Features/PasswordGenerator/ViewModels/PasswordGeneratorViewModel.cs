@@ -7,6 +7,7 @@ using Avalonia.Collections;
 using Ninject;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Models;
+using Spravy.Domain.Extensions;
 using Spravy.PasswordGenerator.Domain.Interfaces;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Features.Localizations.Models;
@@ -70,12 +71,11 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
         return Task.CompletedTask;
     }
 
-    public Task RefreshAsync(CancellationToken cancellationToken)
+    public Task<Result> RefreshAsync(CancellationToken cancellationToken)
     {
         return PasswordService.GetPasswordItemsAsync(cancellationToken)
             .ConfigureAwait(false)
             .IfSuccessAsync(
-                DialogViewer,
                 async items =>
                 {
                     await this.InvokeUIBackgroundAsync(
@@ -85,6 +85,8 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
                             Items.AddRange(Mapper.Map<PasswordItemNotify[]>(items.ToArray()));
                         }
                     );
+
+                    return Result.Success;
                 }
             );
     }

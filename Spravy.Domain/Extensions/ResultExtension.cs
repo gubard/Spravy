@@ -1,9 +1,25 @@
+using System.Runtime.CompilerServices;
 using Spravy.Domain.Models;
 
 namespace Spravy.Domain.Extensions;
 
 public static class ResultExtension
 {
+    public static async Task<Result> IfSuccessAsync<TValue>(
+        this ConfiguredTaskAwaitable<Result<TValue>> task,
+        Func<TValue, Task<Result>> action
+    )
+    {
+        var result = await task;
+        
+        if (result.IsHasError)
+        {
+            return new Result(result.Errors);
+        }
+
+        return await action.Invoke(result.Value);
+    }
+
     public static Result<TReturn> IfSuccess<TValue, TReturn>(
         this Result<TValue> result,
         Func<TValue, Result<TReturn>> action

@@ -46,9 +46,11 @@ public class SearchViewModel : NavigatableViewModelBase, IToDoItemSearchProperti
         await SetStateAsync(setting).ConfigureAwait(false);
     }
 
-    public Task RefreshAsync(CancellationToken cancellationToken)
+    public async Task<Result> RefreshAsync(CancellationToken cancellationToken)
     {
-        return refreshWork.RunAsync();
+        await refreshWork.RunAsync();
+
+        return Result.Success;
     }
 
     private Task RefreshCoreAsync(CancellationToken cancellationToken)
