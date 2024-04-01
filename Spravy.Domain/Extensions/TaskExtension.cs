@@ -1,3 +1,6 @@
+using System.Runtime.CompilerServices;
+using Spravy.Domain.Models;
+
 namespace Spravy.Domain.Extensions;
 
 public static class TaskExtension
@@ -5,5 +8,29 @@ public static class TaskExtension
     public static Task WhenAll(this IEnumerable<Task> tasks)
     {
         return Task.WhenAll(tasks);
+    }
+
+    public static async Task<Result> WhenAll(
+        this ConfiguredTaskAwaitable<Result> task,
+        params ConfiguredTaskAwaitable<Result>[] tasks
+    )
+    {
+        var result = await task;
+        var errors = result.Errors;
+
+        foreach (var t in tasks)
+        {
+            var r = await t;
+            errors = errors.Combine(r.Errors);
+        }
+
+        return new Result(errors);
+    }
+
+    public static async Task<Result> ToResult<TReturn>(this ConfiguredTaskAwaitable<Result<TReturn>> task)
+    {
+        var result = await task;
+
+        return new Result(result.Errors);
     }
 }
