@@ -8,8 +8,8 @@ namespace Spravy.Service.Extensions;
 
 public static class ResultExtension
 {
-    public static async Task<TReturn> HandleAsync<TReturn>(
-        this Task<Result> task,
+    public static async ValueTask<TReturn> HandleAsync<TReturn>(
+        this ValueTask<Result> task,
         ISerializer serializer
     ) where TReturn : class, new()
     {
@@ -23,8 +23,8 @@ public static class ResultExtension
         return DefaultObject<TReturn>.Default;
     }
 
-    public static async Task<TReturn> HandleAsync<TReturn>(
-        this Task<Result> task,
+    public static async ValueTask<TReturn> HandleAsync<TReturn>(
+        this ValueTask<Result> task,
         ISerializer serializer,
         Func<TReturn> func
     )
@@ -39,8 +39,8 @@ public static class ResultExtension
         return func.Invoke();
     }
 
-    public static async Task<TReturn> HandleAsync<TValue, TReturn>(
-        this Task<Result<TValue>> task,
+    public static async ValueTask<TReturn> HandleAsync<TValue, TReturn>(
+        this ValueTask<Result<TValue>> task,
         ISerializer serializer,
         Func<TValue, TReturn> func
     )
@@ -54,9 +54,9 @@ public static class ResultExtension
 
         return func.Invoke(result.Value);
     }
-    
-    public static async Task<TValue> HandleAsync<TValue>(
-        this Task<Result<TValue>> task,
+
+    public static async ValueTask<TValue> HandleAsync<TValue>(
+        this ValueTask<Result<TValue>> task,
         ISerializer serializer
     )
     {
@@ -70,35 +70,35 @@ public static class ResultExtension
         return result.Value;
     }
 
-    public static async Task<Metadata> GetMetadataAsync<TValue>(this Result<TValue> result, ISerializer serializer)
+    public static async ValueTask<Metadata> GetMetadataAsync<TValue>(this Result<TValue> result, ISerializer serializer)
     {
         var metadata = new Metadata();
 
         foreach (var validationResult in result.Errors.ToArray())
         {
             await using var stream = new MemoryStream();
-            serializer.Serialize(validationResult, stream);
+            await serializer.Serialize(validationResult, stream);
             metadata.Add($"{validationResult.Id}-bin", stream.ToArray());
         }
 
         return metadata;
     }
 
-    public static async Task<Metadata> GetMetadataAsync(this Result result, ISerializer serializer)
+    public static async ValueTask<Metadata> GetMetadataAsync(this Result result, ISerializer serializer)
     {
         var metadata = new Metadata();
 
         foreach (var validationResult in result.Errors.ToArray())
         {
             await using var stream = new MemoryStream();
-            serializer.Serialize(validationResult, stream);
+            await serializer.Serialize(validationResult, stream);
             metadata.Add($"{validationResult.Id}-bin", stream.ToArray());
         }
 
         return metadata;
     }
 
-    public static async Task<RpcException> ToRpcExceptionAsync(this Result result, ISerializer serializer)
+    public static async ValueTask<RpcException> ToRpcExceptionAsync(this Result result, ISerializer serializer)
     {
         if (!result.IsHasError)
         {
@@ -111,7 +111,7 @@ public static class ResultExtension
         );
     }
 
-    public static async Task<RpcException> ToRpcExceptionAsync<TValue>(
+    public static async ValueTask<RpcException> ToRpcExceptionAsync<TValue>(
         this Result<TValue> result,
         ISerializer serializer
     )
