@@ -13,7 +13,7 @@ public class CombineHttpHeaderFactory : IHttpHeaderFactory
         this.factories = factories;
     }
 
-    public async Task<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsAsync(
+    public async ValueTask<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsAsync(
         CancellationToken cancellationToken
     )
     {

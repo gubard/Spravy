@@ -1,8 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
+using Spravy.Domain.Errors;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;
-using Spravy.Domain.ValidationResults;
 
 namespace Spravy.Domain.Services;
 

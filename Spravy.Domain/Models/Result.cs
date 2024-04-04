@@ -1,12 +1,15 @@
+using System.Runtime.CompilerServices;
+using Spravy.Domain.Errors;
 using Spravy.Domain.Exceptions;
 using Spravy.Domain.Helpers;
-using Spravy.Domain.ValidationResults;
 
 namespace Spravy.Domain.Models;
 
-public readonly struct Result
+public class Result
 {
     public static readonly Result Success = new(true);
+    public static readonly ValueTask<Result> SuccessValueTask = ValueTask.FromResult(Success);
+    public static readonly ConfiguredValueTaskAwaitable<Result> AwaitableFalse = SuccessValueTask.ConfigureAwait(false);
 
     private Result(bool _)
     {
@@ -32,8 +35,12 @@ public readonly struct Result
     public bool IsHasError => !Errors.IsEmpty;
 }
 
-public readonly struct Result<TValue>
+public class Result<TValue>
 {
+    public static readonly Result<TValue> DefaultSuccess = new(default(TValue));
+    public static readonly ValueTask<Result<TValue>> DefaultSuccessValueTask = ValueTask.FromResult(DefaultSuccess);
+    public static readonly ConfiguredValueTaskAwaitable<Result<TValue>> DefaultAwaitableFalse = DefaultSuccessValueTask.ConfigureAwait(false);
+    
     private readonly TValue value = default;
 
     public Result()

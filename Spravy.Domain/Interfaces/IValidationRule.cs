@@ -1,5 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using Spravy.Domain.ValidationResults;
+using Spravy.Domain.Errors;
 
 namespace Spravy.Domain.Interfaces;
 

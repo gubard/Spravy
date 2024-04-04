@@ -5,6 +5,7 @@ using System.Windows.Input;
 using Material.Icons;
 using ReactiveUI;
 using Spravy.Domain.Models;
+using Spravy.Ui.Services;
 
 namespace Spravy.Ui.Models;
 
@@ -49,7 +50,7 @@ public class CommandItem
     public object? Parameter { get; }
     public IObservable<Exception> ThrownExceptions { get; }
 
-    public static CommandItem Create(MaterialIconKind icon, string name, Func<CancellationToken, Task> func)
+    public static CommandItem Create(MaterialIconKind icon, string name, Func<CancellationToken, ValueTask<Result>> func)
     {
         var work = TaskWork.Create(func);
         var command = ReactiveCommand.CreateFromTask(() => work.RunAsync());
@@ -60,7 +61,7 @@ public class CommandItem
     public static CommandItem Create<TParam>(
         MaterialIconKind icon,
         string name,
-        Func<TParam, CancellationToken, Task> func
+        Func<TParam, CancellationToken, ValueTask<Result>> func
     )
     {
         var work = TaskWork.Create(func);
@@ -73,7 +74,7 @@ public class CommandItem
         MaterialIconKind icon,
         string name,
         object parameter,
-        Func<CancellationToken, Task> func
+        Func<CancellationToken, ValueTask<Result>> func
     )
     {
         var work = TaskWork.Create(func);
@@ -86,7 +87,7 @@ public class CommandItem
         MaterialIconKind icon,
         string name,
         object parameter,
-        Func<TParam, CancellationToken, Task> func
+        Func<TParam, CancellationToken, ValueTask<Result>> func
     )
     {
         var work = TaskWork.Create(func);

@@ -1,6 +1,8 @@
+using System.Threading.Tasks;
 using Avalonia.Collections;
 using Avalonia.Threading;
 using ReactiveUI.Fody.Helpers;
+using Spravy.Domain.Models;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Models;
 using Spravy.Ui.Services;
@@ -20,7 +22,7 @@ public class PageHeaderViewModel : ViewModelBase
 
     public AvaloniaList<CommandItem> Commands { get; } = new();
 
-    public DispatcherOperation SetMultiCommands(ToDoSubItemsViewModel items)
+    public ValueTask<Result> SetMultiCommands(ToDoSubItemsViewModel items)
     {
         return this.InvokeUIBackgroundAsync(
             () =>

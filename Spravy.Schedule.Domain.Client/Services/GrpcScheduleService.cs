@@ -1,4 +1,5 @@
 using Google.Protobuf;
+using Spravy.Client.Extensions;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
 using Spravy.Domain.Extensions;
@@ -30,65 +31,67 @@ public class GrpcScheduleService : GrpcServiceBase<ScheduleServiceClient>,
         this.metadataFactory = metadataFactory;
     }
 
-    public Task<Result> AddTimerAsync(AddTimerParameters parameters, CancellationToken cancellationToken)
+    public ValueTask<Result> AddTimerAsync(AddTimerParameters parameters, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             client =>
                 metadataFactory.CreateAsync(cancellationToken)
+                    .ConfigureAwait(false)
                     .IfSuccessAsync(
                         converter.Convert<AddTimerRequest>(parameters),
-                        async (value, request) =>
-                        {
-                            await client.AddTimerAsync(request, value);
-
-                            return Result.Success;
-                        }
-                    ),
+                        (value, request) => client.AddTimerAsync(request, value)
+                            .ToValueTaskResultOnly()
+                            .ConfigureAwait(false)
+                    )
+                    .ConfigureAwait(false),
             cancellationToken
         );
     }
 
-    public Task<Result<ReadOnlyMemory<TimerItem>>> GetListTimesAsync(CancellationToken cancellationToken)
+    public ValueTask<Result<ReadOnlyMemory<TimerItem>>> GetListTimesAsync(CancellationToken cancellationToken)
     {
         return CallClientAsync(
             client =>
                 metadataFactory.CreateAsync(cancellationToken)
+                    .ConfigureAwait(false)
                     .IfSuccessAsync(
-                        async value =>
-                        {
-                            var request = new GetListTimesRequest();
-                            var timers = await client.GetListTimesAsync(request, value);
-
-                            return converter.Convert<TimerItem[]>(timers.Items)
-                                .IfSuccess(items => items.ToReadOnlyMemory().ToResult());
-                        }
-                    ),
+                        value =>
+                            client.GetListTimesAsync(new GetListTimesRequest(), value)
+                                .ToValueTaskResultValueOnly()
+                                .ConfigureAwait(false)
+                                .IfSuccessAsync(
+                                    timers => converter.Convert<TimerItem[]>(timers.Items)
+                                        .IfSuccess(items => items.ToReadOnlyMemory().ToResult())
+                                        .ToValueTaskResult()
+                                        .ConfigureAwait(false)
+                                )
+                                .ConfigureAwait(false)
+                    )
+                    .ConfigureAwait(false),
             cancellationToken
         );
     }
 
-    public Task<Result> RemoveTimerAsync(Guid id, CancellationToken cancellationToken)
+    public ValueTask<Result> RemoveTimerAsync(Guid id, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             client =>
                 metadataFactory.CreateAsync(cancellationToken)
+                    .ConfigureAwait(false)
                     .IfSuccessAsync(
                         converter.Convert<ByteString>(id),
-                        async (value, i) =>
-                        {
-                            cancellationToken.ThrowIfCancellationRequested();
-
-                            await client.RemoveTimerAsync(
-                                new RemoveTimerRequest
-                                {
-                                    Id = i,
-                                },
-                                value
-                            );
-
-                            return Result.Success;
-                        }
-                    ),
+                        (value, i) =>
+                            client.RemoveTimerAsync(
+                                    new RemoveTimerRequest
+                                    {
+                                        Id = i,
+                                    },
+                                    value
+                                )
+                                .ToValueTaskResultOnly()
+                                .ConfigureAwait(false)
+                    )
+                    .ConfigureAwait(false),
             cancellationToken
         );
     }

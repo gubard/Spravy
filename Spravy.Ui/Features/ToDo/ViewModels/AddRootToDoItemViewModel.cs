@@ -11,6 +11,7 @@ using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Models;
+using Spravy.Ui.Services;
 using Spravy.Ui.ViewModels;
 
 namespace Spravy.Ui.Features.ToDo.ViewModels;
@@ -35,37 +36,39 @@ public class AddRootToDoItemViewModel : NavigatableViewModelBase
 
     public override string ViewId => TypeCache<AddRootToDoItemViewModel>.Type.Name;
 
-    private async Task InitializedAsync(CancellationToken cancellationToken)
+    private ValueTask<Result> InitializedAsync(CancellationToken cancellationToken)
     {
-        var setting = await ObjectStorage.GetObjectOrDefaultAsync<AddRootToDoItemViewModelSetting>(ViewId)
-            .ConfigureAwait(false);
-
-        await SetStateAsync(setting).ConfigureAwait(false);
+        return ObjectStorage.GetObjectOrDefaultAsync<AddRootToDoItemViewModelSetting>(ViewId)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(s => SetStateAsync(s).ConfigureAwait(false));
     }
 
-    public override void Stop()
+    public override Result Stop()
     {
+        return Result.Success;
     }
 
-    public override Task SaveStateAsync()
+    public override ValueTask<Result> SaveStateAsync()
     {
         return ObjectStorage.SaveObjectAsync(ViewId, new AddRootToDoItemViewModelSetting(this));
     }
 
-    public override async Task SetStateAsync(object setting)
+    public override ValueTask<Result> SetStateAsync(object setting)
     {
-        var s = setting.ThrowIfIsNotCast<AddRootToDoItemViewModelSetting>();
-
-        await this.InvokeUIBackgroundAsync(
-            () =>
-            {
-                ToDoItemContent.Name = s.Name;
-                ToDoItemContent.Type = s.Type;
-                ToDoItemContent.Link = s.Link;
-                DescriptionContent.Description = s.Description;
-                DescriptionContent.Type = s.DescriptionType;
-            }
-        );
+        return setting.CastObject<AddRootToDoItemViewModelSetting>()
+            .IfSuccessAsync(
+                s => this.InvokeUIBackgroundAsync(
+                        () =>
+                        {
+                            ToDoItemContent.Name = s.Name;
+                            ToDoItemContent.Type = s.Type;
+                            ToDoItemContent.Link = s.Link;
+                            DescriptionContent.Description = s.Description;
+                            DescriptionContent.Type = s.DescriptionType;
+                        }
+                    )
+                    .ConfigureAwait(false)
+            );
     }
 
     [ProtoContract]

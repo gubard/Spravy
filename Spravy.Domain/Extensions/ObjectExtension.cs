@@ -1,9 +1,9 @@
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
+using Spravy.Domain.Errors;
 using Spravy.Domain.Exceptions;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Models;
-using Spravy.Domain.ValidationResults;
 
 namespace Spravy.Domain.Extensions;
 
@@ -137,6 +137,16 @@ public static class ObjectExtension
     {
         return (T)obj;
     }
+    
+    public static Result<T> CastObject<T>(this object obj)
+    {
+        if (obj is T item)
+        {
+            return item.ToResult();
+        }
+
+        return new Result<T>(new CastError(obj.GetType(), typeof(T)));
+    }
 
     public static T? As<T>(this object value) where T : class
     {
@@ -215,5 +225,10 @@ public static class ObjectExtension
     public static Task<T> ToTaskResult<T>(this T value)
     {
         return Task.FromResult(value);
+    }
+    
+    public static ValueTask<T> ToValueTaskResult<T>(this T value)
+    {
+        return ValueTask.FromResult(value);
     }
 }

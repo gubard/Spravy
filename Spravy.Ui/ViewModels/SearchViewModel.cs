@@ -12,6 +12,7 @@ using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
+using Spravy.Ui.Services;
 
 namespace Spravy.Ui.ViewModels;
 
@@ -40,43 +41,44 @@ public class SearchViewModel : NavigatableViewModelBase, IToDoItemSearchProperti
     [Inject]
     public required IObjectStorage ObjectStorage { get; init; }
 
-    private async Task InitializedAsync(CancellationToken cancellationToken)
+    private ValueTask<Result> InitializedAsync(CancellationToken cancellationToken)
     {
-        var setting = await ObjectStorage.GetObjectOrDefaultAsync<SearchViewModelSetting>(ViewId).ConfigureAwait(false);
-        await SetStateAsync(setting).ConfigureAwait(false);
+        return ObjectStorage.GetObjectOrDefaultAsync<SearchViewModelSetting>(ViewId)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(setting => SetStateAsync(setting).ConfigureAwait(false));
     }
 
-    public async Task<Result> RefreshAsync(CancellationToken cancellationToken)
+    public ValueTask<Result> RefreshAsync(CancellationToken cancellationToken)
     {
-        await refreshWork.RunAsync();
-
-        return Result.Success;
+        return refreshWork.RunAsync().ToValueTaskResultOnly();
     }
 
-    private Task RefreshCoreAsync(CancellationToken cancellationToken)
+    private ValueTask<Result> RefreshCoreAsync(CancellationToken cancellationToken)
     {
         return ToDoService.SearchToDoItemIdsAsync(SearchText, cancellationToken)
             .ConfigureAwait(false)
             .IfSuccessAsync(
-                DialogViewer,
                 ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken)
+                    .ConfigureAwait(false)
             );
     }
 
-    public override void Stop()
+    public override Result Stop()
     {
         refreshWork.Cancel();
+
+        return Result.Success;
     }
 
-    public override Task SaveStateAsync()
+    public override ValueTask<Result> SaveStateAsync()
     {
         return ObjectStorage.SaveObjectAsync(ViewId, new SearchViewModelSetting(this));
     }
 
-    public override async Task SetStateAsync(object setting)
+    public override ValueTask<Result> SetStateAsync(object setting)
     {
-        var s = setting.ThrowIfIsNotCast<SearchViewModelSetting>();
-        await this.InvokeUIBackgroundAsync(() => SearchText = s.SearchText);
+        return setting.CastObject<SearchViewModelSetting>()
+            .IfSuccessAsync(s => this.InvokeUIBackgroundAsync(() => SearchText = s.SearchText).ConfigureAwait(false));
     }
 
     [ProtoContract]

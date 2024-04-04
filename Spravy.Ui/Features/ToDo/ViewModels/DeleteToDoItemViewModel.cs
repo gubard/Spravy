@@ -15,6 +15,7 @@ using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Features.Localizations.Models;
 using Spravy.Ui.Models;
+using Spravy.Ui.Services;
 
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
@@ -55,41 +56,36 @@ public class DeleteToDoItemViewModel : ViewModelBase
             }
         );
 
-    private Task InitializedAsync(CancellationToken cancellationToken)
+    private ValueTask<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         var toDoItemToStringOptions = new ToDoItemToStringOptions(Enum.GetValues<ToDoItemStatus>(), ToDoItemId);
 
         return ToDoService.GetToDoItemAsync(ToDoItemId, cancellationToken)
             .ConfigureAwait(false)
             .IfSuccessAsync(
-                DialogViewer,
                 item => ToDoService.ToDoItemToStringAsync(toDoItemToStringOptions, cancellationToken)
                     .ConfigureAwait(false)
                     .IfSuccessAsync(
-                        DialogViewer,
                         childrenText => ToDoService.GetParentsAsync(ToDoItemId, cancellationToken)
                             .ConfigureAwait(false)
                             .IfSuccessAsync(
-                                DialogViewer,
-                                async parents =>
-                                {
-                                    await this.InvokeUIBackgroundAsync(
+                                parents => this.InvokeUIBackgroundAsync(
                                         () =>
                                         {
                                             Path = new RootItem().To<object>()
                                                 .ToEnumerable()
-                                                .Concat(
-                                                    parents.ToArray().Select(x => Mapper.Map<ToDoItemParentNotify>(x))
-                                                )
+                                                .Concat(Mapper.Map<ToDoItemParentNotify[]>(parents.ToArray()))
                                                 .ToArray();
 
                                             ToDoItemName = item.Name;
                                             ChildrenText = childrenText;
                                         }
-                                    );
-                                }
+                                    )
+                                    .ConfigureAwait(false)
                             )
+                            .ConfigureAwait(false)
                     )
+                    .ConfigureAwait(false)
             );
     }
 }

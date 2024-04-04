@@ -15,11 +15,12 @@ public class MetadataFactory : IMetadataFactory
         this.httpHeaderFactory = httpHeaderFactory;
     }
 
-    public Task<Result<Metadata>> CreateAsync(CancellationToken cancellationToken)
+    public ValueTask<Result<Metadata>> CreateAsync(CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         return httpHeaderFactory.CreateHeaderItemsAsync(cancellationToken)
+            .ConfigureAwait(false)
             .IfSuccessAsync(
                 value =>
                 {
@@ -30,7 +31,7 @@ public class MetadataFactory : IMetadataFactory
                         metadata.Add(item.Name, item.Value);
                     }
 
-                    return metadata.ToResult();
+                    return metadata.ToResult().ToValueTaskResult().ConfigureAwait(false);
                 }
             );
     }

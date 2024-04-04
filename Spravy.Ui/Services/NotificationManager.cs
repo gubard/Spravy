@@ -2,6 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls.Notifications;
 using Ninject;
+using Spravy.Domain.Models;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 
@@ -18,14 +19,15 @@ public class NotificationManager : ISpravyNotificationManager
         this.kernel = kernel;
     }
 
-    public async Task ShowAsync<TView>(CancellationToken cancellationToken)
+    public ValueTask<Result> ShowAsync<TView>(CancellationToken cancellationToken)
     {
         var view = kernel.Get<TView>();
-        await this.InvokeUIBackgroundAsync(() => managedNotificationManager.Show(view));
+
+        return this.InvokeUIBackgroundAsync(() => managedNotificationManager.Show(view));
     }
 
-    public async Task ShowAsync(object view, CancellationToken cancellationToken)
+    public ValueTask<Result> ShowAsync(object view, CancellationToken cancellationToken)
     {
-        await this.InvokeUIBackgroundAsync(() => managedNotificationManager.Show(view));
+        return this.InvokeUIBackgroundAsync(() => managedNotificationManager.Show(view));
     }
 }

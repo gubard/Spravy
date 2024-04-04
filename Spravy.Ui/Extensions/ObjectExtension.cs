@@ -1,36 +1,33 @@
 using System;
 using System.Threading.Tasks;
 using Avalonia.Threading;
+using Spravy.Domain.Models;
 
 namespace Spravy.Ui.Extensions;
 
 public static class ObjectExtension
 {
-    public static DispatcherOperation InvokeUIBackgroundAsync<TObject>(this TObject _, Action callback)
+    public static async ValueTask<Result> InvokeUIBackgroundAsync<TObject>(this TObject _, Action callback)
     {
-        return Dispatcher.UIThread.InvokeAsync(callback, DispatcherPriority.Background);
+        await Dispatcher.UIThread.InvokeAsync(callback, DispatcherPriority.Background);
+
+        return Result.Success;
     }
 
-    public static Task InvokeUIBackgroundAsync<TObject>(this TObject _, Func<Task> callback)
+    public static async ValueTask<Result> InvokeUIBackgroundAsync<TObject>(this TObject _, Func<Task> callback)
     {
-        return Dispatcher.UIThread.InvokeAsync(callback, DispatcherPriority.Background);
+        await Dispatcher.UIThread.InvokeAsync(callback, DispatcherPriority.Background);
+
+        return Result.Success;
     }
 
-    public static DispatcherOperation<TResult> InvokeUIBackgroundAsync<TObject, TResult>(
+    public static async ValueTask<Result<TResult>> InvokeUIBackgroundAsync<TObject, TResult>(
         this TObject _,
-        Func<TResult> callback
+        Func<Result<TResult>> callback
     )
     {
-        return Dispatcher.UIThread.InvokeAsync(callback, DispatcherPriority.Background);
-    }
+        var result = await Dispatcher.UIThread.InvokeAsync(callback, DispatcherPriority.Background);
 
-    public static DispatcherOperation InvokeUIAsync<TObject>(this TObject _, Action callback)
-    {
-        return Dispatcher.UIThread.InvokeAsync(callback);
-    }
-
-    public static Task InvokeUIAsync<TObject>(this TObject _, Func<Task> callback)
-    {
-        return Dispatcher.UIThread.InvokeAsync(callback);
+        return result;
     }
 }

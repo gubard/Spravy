@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
+using Spravy.Domain.Models;
 using Spravy.Ui.Browser.Helpers;
 
 namespace Spravy.Ui.Browser.Services;
@@ -16,35 +17,43 @@ public class LocalStorageObjectStorage : IObjectStorage
         this.serializer = serializer;
     }
 
-    public Task<bool> IsExistsAsync(string id)
+    public ValueTask<Result<bool>> IsExistsAsync(string id)
     {
         var value = JSInterop.LocalStorageGetItem(id);
 
-        return Task.FromResult(!value.IsNullOrWhiteSpace());
+        return (!value.IsNullOrWhiteSpace()).ToResult().ToValueTaskResult();
     }
 
-    public Task DeleteAsync(string id)
+    public ValueTask<Result> DeleteAsync(string id)
     {
         JSInterop.LocalStorageRemoveItem(id);
 
-        return Task.CompletedTask;
+        return Result.SuccessValueTask;
     }
 
-    public async Task SaveObjectAsync(string id, object obj)
+    public async ValueTask<Result> SaveObjectAsync(string id, object obj)
     {
         await using var stream = new MemoryStream();
-        serializer.Serialize(obj, stream);
+        var result = await serializer.Serialize(obj, stream);
+
+        if (result.IsHasError)
+        {
+            return result;
+        }
+
         var bytes = stream.ToArray();
         var value = Convert.ToBase64String(bytes);
         JSInterop.LocalStorageSetItem(id, value);
+
+        return Result.Success;
     }
 
-    public async Task<TObject> GetObjectAsync<TObject>(string id)
+    public async ValueTask<Result<TObject>> GetObjectAsync<TObject>(string id)
     {
         var value = JSInterop.LocalStorageGetItem(id);
         var bytes = Convert.FromBase64String(value);
         await using var stream = new MemoryStream(bytes);
 
-        return serializer.Deserialize<TObject>(stream);
+        return await serializer.Deserialize<TObject>(stream);
     }
 }

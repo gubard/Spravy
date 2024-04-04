@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Ninject;
@@ -8,6 +9,7 @@ using Spravy.Ui.Models;
 using Spravy.Ui.ViewModels;
 using DialogHostAvalonia;
 using Spravy.Domain.Extensions;
+using Spravy.Domain.Models;
 
 namespace Spravy.Ui.Services;
 
@@ -21,99 +23,134 @@ public class DialogViewer : IDialogViewer
     [Inject]
     public required IKernel Resolver { get; init; }
 
-    public async Task ShowContentDialogAsync<TView>(Action<TView> setupView, CancellationToken cancellationToken)
-        where TView : ViewModelBase
-    {
-        var content = Resolver.Get<TView>();
-
-        if (content is null)
-        {
-            throw new NullReferenceException();
-        }
-
-        await this.InvokeUIBackgroundAsync(() => setupView.Invoke(content));
-        cancellationToken.ThrowIfCancellationRequested();
-        await ShowView(content, ContentDialogHostIdentifier).ConfigureAwait(false);
-    }
-
-    public async Task ShowProgressDialogAsync<TView>(Action<TView> setupView, CancellationToken cancellationToken)
-        where TView : ViewModelBase
-    {
-        var content = Resolver.Get<TView>();
-
-        if (content is null)
-        {
-            throw new NullReferenceException();
-        }
-
-        await this.InvokeUIBackgroundAsync(() => setupView.Invoke(content));
-        cancellationToken.ThrowIfCancellationRequested();
-        await ShowView(content, ProgressDialogHostIdentifier).ConfigureAwait(false);
-    }
-
-    public async Task ShowErrorDialogAsync<TView>(Action<TView> setupView, CancellationToken cancellationToken)
-        where TView : ViewModelBase
-    {
-        var content = Resolver.Get<TView>();
-
-        if (content is null)
-        {
-            throw new NullReferenceException();
-        }
-
-        await this.InvokeUIBackgroundAsync(() => setupView.Invoke(content));
-        cancellationToken.ThrowIfCancellationRequested();
-        await ShowView(content, ErrorDialogHostIdentifier).ConfigureAwait(false);
-    }
-
-    public async Task ShowInfoErrorDialogAsync<TView>(
-        Func<TView, Task> okTask,
+    public ValueTask<Result> ShowContentDialogAsync<TView>(
         Action<TView> setupView,
         CancellationToken cancellationToken
     )
         where TView : ViewModelBase
     {
         var content = Resolver.Get<TView>();
-        await this.InvokeUIBackgroundAsync(() => setupView.Invoke(content));
-        var infoViewModel = Resolver.Get<InfoViewModel>();
-        infoViewModel.Content = content;
-        infoViewModel.OkTask = view => okTask.Invoke((TView)view);
-        cancellationToken.ThrowIfCancellationRequested();
-        await ShowView(infoViewModel, ErrorDialogHostIdentifier).ConfigureAwait(false);
+
+        if (content is null)
+        {
+            throw new NullReferenceException();
+        }
+
+        return this.InvokeUIBackgroundAsync(() => setupView.Invoke(content))
+            .ConfigureAwait(false)
+            .IfSuccessAsync(() => ShowView(content, ContentDialogHostIdentifier).ConfigureAwait(false));
     }
 
-    public async Task ShowInfoInputDialogAsync<TView>(
-        Func<TView, Task> okTask,
+    public ValueTask<Result> ShowProgressDialogAsync<TView>(
         Action<TView> setupView,
         CancellationToken cancellationToken
     )
         where TView : ViewModelBase
     {
         var content = Resolver.Get<TView>();
-        await this.InvokeUIBackgroundAsync(() => setupView.Invoke(content));
-        var infoViewModel = Resolver.Get<InfoViewModel>();
-        infoViewModel.Content = content;
-        infoViewModel.OkTask = view => okTask.Invoke((TView)view);
-        cancellationToken.ThrowIfCancellationRequested();
-        await ShowView(infoViewModel, InputDialogHostIdentifier).ConfigureAwait(false);
+
+        if (content is null)
+        {
+            throw new NullReferenceException();
+        }
+
+        return this.InvokeUIBackgroundAsync(() => setupView.Invoke(content))
+            .ConfigureAwait(false)
+            .IfSuccessAsync(() => ShowView(content, ProgressDialogHostIdentifier).ConfigureAwait(false));
     }
 
-    public async Task ShowInfoContentDialogAsync<TView>(
-        Func<TView, Task> okTask,
+    public ValueTask<Result> ShowErrorDialogAsync<TView>(
+        Action<TView> setupView,
+        CancellationToken cancellationToken
+    )
+        where TView : ViewModelBase
+    {
+        var content = Resolver.Get<TView>();
+
+        if (content is null)
+        {
+            throw new NullReferenceException();
+        }
+
+        return this.InvokeUIBackgroundAsync(() => setupView.Invoke(content))
+            .ConfigureAwait(false)
+            .IfSuccessAsync(() => ShowView(content, ErrorDialogHostIdentifier).ConfigureAwait(false));
+    }
+
+    public ValueTask<Result> ShowInfoErrorDialogAsync<TView>(
+        Func<TView, ConfiguredValueTaskAwaitable<Result>> okTask,
+        Action<TView> setupView,
+        CancellationToken cancellationToken
+    )
+        where TView : ViewModelBase
+    {
+        var content = Resolver.Get<TView>();
+
+        return this.InvokeUIBackgroundAsync(() => setupView.Invoke(content))
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                () =>
+                {
+                    var infoViewModel = Resolver.Get<InfoViewModel>();
+                    infoViewModel.Content = content;
+                    infoViewModel.OkTask = view => okTask.Invoke((TView)view);
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    return ShowView(infoViewModel, ErrorDialogHostIdentifier).ConfigureAwait(false);
+                }
+            );
+    }
+
+    public ValueTask<Result> ShowInfoInputDialogAsync<TView>(
+        Func<TView, ConfiguredValueTaskAwaitable<Result>> okTask,
+        Action<TView> setupView,
+        CancellationToken cancellationToken
+    )
+        where TView : ViewModelBase
+    {
+        var content = Resolver.Get<TView>();
+
+        return this.InvokeUIBackgroundAsync(() => setupView.Invoke(content))
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                () =>
+                {
+                    var infoViewModel = Resolver.Get<InfoViewModel>();
+                    infoViewModel.Content = content;
+                    infoViewModel.OkTask = view => okTask.Invoke((TView)view);
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    return ShowView(infoViewModel, InputDialogHostIdentifier).ConfigureAwait(false);
+                }
+            );
+    }
+
+    public ValueTask<Result> ShowInfoContentDialogAsync<TView>(
+        Func<TView, ConfiguredValueTaskAwaitable<Result>> okTask,
         Action<TView> setupView,
         CancellationToken cancellationToken
     ) where TView : ViewModelBase
     {
         var content = Resolver.Get<TView>();
-        await this.InvokeUIBackgroundAsync(() => setupView.Invoke(content));
-        var infoViewModel = Resolver.Get<InfoViewModel>();
-        infoViewModel.Content = content;
-        infoViewModel.OkTask = view => okTask.Invoke((TView)view);
-        cancellationToken.ThrowIfCancellationRequested();
-        await ShowView(infoViewModel, ContentDialogHostIdentifier).ConfigureAwait(false);
+        return this.InvokeUIBackgroundAsync(() => setupView.Invoke(content))
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                () =>
+                {
+                    var infoViewModel = Resolver.Get<InfoViewModel>();
+                    infoViewModel.Content = content;
+                    infoViewModel.OkTask = view => okTask.Invoke((TView)view);
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    return ShowView(infoViewModel, ContentDialogHostIdentifier).ConfigureAwait(false);
+                }
+            );
     }
 
-    public async Task ShowInputDialogAsync<TView>(Action<TView> setupView, CancellationToken cancellationToken)
+    public ValueTask<Result> ShowInputDialogAsync<TView>(
+        Action<TView> setupView,
+        CancellationToken cancellationToken
+    )
         where TView : ViewModelBase
     {
         var content = Resolver.Get<TView>();
@@ -123,106 +160,122 @@ public class DialogViewer : IDialogViewer
             throw new NullReferenceException();
         }
 
-        await this.InvokeUIBackgroundAsync(() => setupView.Invoke(content));
-        cancellationToken.ThrowIfCancellationRequested();
-        await ShowView(content, InputDialogHostIdentifier).ConfigureAwait(false);
+        return this.InvokeUIBackgroundAsync(() => setupView.Invoke(content))
+            .ConfigureAwait(false)
+            .IfSuccessAsync(() => ShowView(content, InputDialogHostIdentifier).ConfigureAwait(false));
     }
 
-    public Task CloseProgressDialogAsync(CancellationToken cancellationToken)
+    public ValueTask<Result> CloseProgressDialogAsync(CancellationToken cancellationToken)
     {
         return SafeClose(ProgressDialogHostIdentifier);
     }
 
-    public async Task<bool> CloseLastDialogAsync(CancellationToken cancellationToken)
+    public ValueTask<Result<bool>> CloseLastDialogAsync(CancellationToken cancellationToken)
     {
         if (DialogHost.IsDialogOpen(ProgressDialogHostIdentifier))
         {
-            await SafeClose(ProgressDialogHostIdentifier);
-
-            return true;
+            return SafeClose(ProgressDialogHostIdentifier)
+                .ConfigureAwait(false)
+                .IfSuccessAsync(() => true.ToResult().ToValueTaskResult().ConfigureAwait(false));
         }
 
         if (DialogHost.IsDialogOpen(ErrorDialogHostIdentifier))
         {
-            await SafeClose(ErrorDialogHostIdentifier);
-
-            return true;
+            return SafeClose(ErrorDialogHostIdentifier)
+                .ConfigureAwait(false)
+                .IfSuccessAsync(() => true.ToResult().ToValueTaskResult().ConfigureAwait(false));
         }
 
         if (DialogHost.IsDialogOpen(InputDialogHostIdentifier))
         {
-            await SafeClose(InputDialogHostIdentifier);
-
-            return true;
+            return SafeClose(InputDialogHostIdentifier)
+                .ConfigureAwait(false)
+                .IfSuccessAsync(() => true.ToResult().ToValueTaskResult().ConfigureAwait(false));
         }
 
         if (DialogHost.IsDialogOpen(ContentDialogHostIdentifier))
         {
-            await SafeClose(ContentDialogHostIdentifier);
-
-            return true;
+            return SafeClose(ContentDialogHostIdentifier)
+                .ConfigureAwait(false)
+                .IfSuccessAsync(() => true.ToResult().ToValueTaskResult().ConfigureAwait(false));
         }
 
-        return false;
+        return false.ToResult().ToValueTaskResult();
     }
 
-    public async Task ShowConfirmContentDialogAsync<TView>(
-        Func<TView, Task> confirmTask,
-        Func<TView, Task> cancelTask,
+    public ValueTask<Result> ShowConfirmContentDialogAsync<TView>(
+        Func<TView, ConfiguredValueTaskAwaitable<Result>> confirmTask,
+        Func<TView, ConfiguredValueTaskAwaitable<Result>> cancelTask,
         Action<TView> setupView,
         CancellationToken cancellationToken
     ) where TView : ViewModelBase
     {
         var content = Resolver.Get<TView>();
-        await this.InvokeUIBackgroundAsync(() => setupView.Invoke(content));
-        var confirmViewModel = Resolver.Get<ConfirmViewModel>();
-        confirmViewModel.Content = content;
-        confirmViewModel.ConfirmTask = view => confirmTask.Invoke((TView)view);
-        confirmViewModel.CancelTask = view => cancelTask.Invoke((TView)view);
-        cancellationToken.ThrowIfCancellationRequested();
-        await ShowView(confirmViewModel, ContentDialogHostIdentifier).ConfigureAwait(false);
+
+        return this.InvokeUIBackgroundAsync(() => setupView.Invoke(content))
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                () =>
+                {
+                    var confirmViewModel = Resolver.Get<ConfirmViewModel>();
+                    confirmViewModel.Content = content;
+                    confirmViewModel.ConfirmTask = view => confirmTask.Invoke((TView)view);
+                    confirmViewModel.CancelTask = view => cancelTask.Invoke((TView)view);
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    return ShowView(confirmViewModel, ContentDialogHostIdentifier).ConfigureAwait(false);
+                }
+            );
     }
 
-    public async Task ShowConfirmInputDialogAsync<TView>(
-        Func<TView, Task> confirmTask,
-        Func<TView, Task> cancelTask,
+    public ValueTask<Result> ShowConfirmInputDialogAsync<TView>(
+        Func<TView, ConfiguredValueTaskAwaitable<Result>> confirmTask,
+        Func<TView, ConfiguredValueTaskAwaitable<Result>> cancelTask,
         Action<TView> setupView,
         CancellationToken cancellationToken
     ) where TView : ViewModelBase
     {
         var content = Resolver.Get<TView>();
-        await this.InvokeUIBackgroundAsync(() => setupView.Invoke(content));
-        var confirmViewModel = Resolver.Get<ConfirmViewModel>();
-        confirmViewModel.Content = content;
-        confirmViewModel.ConfirmTask = view => confirmTask.Invoke((TView)view);
-        confirmViewModel.CancelTask = view => cancelTask.Invoke((TView)view);
-        cancellationToken.ThrowIfCancellationRequested();
-        await ShowView(confirmViewModel, InputDialogHostIdentifier).ConfigureAwait(false);
+
+        return this.InvokeUIBackgroundAsync(() => setupView.Invoke(content))
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                () =>
+                {
+                    var confirmViewModel = Resolver.Get<ConfirmViewModel>();
+                    confirmViewModel.Content = content;
+                    confirmViewModel.ConfirmTask = view => confirmTask.Invoke((TView)view);
+                    confirmViewModel.CancelTask = view => cancelTask.Invoke((TView)view);
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    return ShowView(confirmViewModel, InputDialogHostIdentifier).ConfigureAwait(false);
+                }
+            );
     }
 
-    public Task CloseContentDialogAsync(CancellationToken cancellationToken)
+    public ValueTask<Result> CloseContentDialogAsync(CancellationToken cancellationToken)
     {
         return SafeClose(ContentDialogHostIdentifier);
     }
 
-    public Task CloseErrorDialogAsync(CancellationToken cancellationToken)
+    public ValueTask<Result> CloseErrorDialogAsync(CancellationToken cancellationToken)
     {
         return SafeClose(ErrorDialogHostIdentifier);
     }
 
-    public Task CloseInputDialogAsync(CancellationToken cancellationToken)
+    public ValueTask<Result> CloseInputDialogAsync(CancellationToken cancellationToken)
     {
         return SafeClose(InputDialogHostIdentifier);
     }
 
-    private async Task ShowView(object content, string identifier)
+    private ValueTask<Result> ShowView(object content, string identifier)
     {
         if (DialogHost.IsDialogOpen(identifier))
         {
-            return;
+            return Result.SuccessValueTask;
         }
 
-        await this.InvokeUIBackgroundAsync(
+        return this.InvokeUIBackgroundAsync(
             () => DialogHost.Show(
                 content,
                 identifier
@@ -230,20 +283,29 @@ public class DialogViewer : IDialogViewer
         );
     }
 
-    private async Task SafeClose(string identifier)
+    private ValueTask<Result> SafeClose(string identifier)
     {
         if (!DialogHost.IsDialogOpen(identifier))
         {
-            return;
+            return Result.SuccessValueTask;
         }
 
         var content = DialogHost.GetDialogSession(identifier).ThrowIfNull().Content.ThrowIfNull();
 
-        if (content is ISaveState saveState)
-        {
-            await saveState.SaveStateAsync();
-        }
+        return Result.AwaitableFalse.IfSuccessAsync(
+                () =>
+                {
+                    if (content is ISaveState saveState)
+                    {
+                        return saveState.SaveStateAsync().ConfigureAwait(false);
+                    }
 
-        await this.InvokeUIBackgroundAsync(() => DialogHost.Close(identifier));
+                    return Result.AwaitableFalse;
+                }
+            )
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                () => this.InvokeUIBackgroundAsync(() => DialogHost.Close(identifier)).ConfigureAwait(false)
+            );
     }
 }

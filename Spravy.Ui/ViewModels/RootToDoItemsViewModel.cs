@@ -77,53 +77,58 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
     [Inject]
     public required IObjectStorage ObjectStorage { get; init; }
 
-    private async Task InitializedAsync(CancellationToken cancellationToken)
+    private ValueTask<Result> InitializedAsync(CancellationToken cancellationToken)
     {
-        var setting = await ObjectStorage.GetObjectOrDefaultAsync<RootToDoItemsViewModelSetting>(ViewId)
-            .ConfigureAwait(false);
-
-        await SetStateAsync(setting).ConfigureAwait(false);
-        await refreshWork.RunAsync().ConfigureAwait(false);
+        return ObjectStorage.GetObjectOrDefaultAsync<RootToDoItemsViewModelSetting>(ViewId)
+            .ConfigureAwait(false)
+            .IfSuccessAllAsync(
+                setting => SetStateAsync(setting).ConfigureAwait(false),
+                _ => refreshWork.RunAsync().ToValueTaskResultOnly().ConfigureAwait(false)
+            );
     }
 
-    public async Task<Result> RefreshAsync(CancellationToken cancellationToken)
+    public async ValueTask<Result> RefreshAsync(CancellationToken cancellationToken)
     {
         await refreshWork.RunAsync();
 
         return Result.Success;
     }
 
-    private Task RefreshCoreAsync(CancellationToken cancellationToken)
+    private ValueTask<Result> RefreshCoreAsync(CancellationToken cancellationToken)
     {
         return ToDoService.GetRootToDoItemIdsAsync(cancellationToken)
             .ConfigureAwait(false)
             .IfSuccessAsync(
-                DialogViewer,
                 ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken)
+                    .ConfigureAwait(false)
             );
     }
 
-    public override void Stop()
+    public override Result Stop()
     {
         refreshWork.Cancel();
+
+        return Result.Success;
     }
 
-    public override Task SaveStateAsync()
+    public override ValueTask<Result> SaveStateAsync()
     {
         return ObjectStorage.SaveObjectAsync(ViewId, new RootToDoItemsViewModelSetting(this));
     }
 
-    public override async Task SetStateAsync(object setting)
+    public override ValueTask<Result> SetStateAsync(object setting)
     {
-        var s = setting.ThrowIfIsNotCast<RootToDoItemsViewModelSetting>();
-
-        await this.InvokeUIBackgroundAsync(
-            () =>
-            {
-                ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
-                ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
-            }
-        );
+        return setting.CastObject<RootToDoItemsViewModelSetting>()
+            .IfSuccessAsync(
+                s => this.InvokeUIBackgroundAsync(
+                        () =>
+                        {
+                            ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
+                            ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
+                        }
+                    )
+                    .ConfigureAwait(false)
+            );
     }
 
     [ProtoContract]

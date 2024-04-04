@@ -57,7 +57,7 @@ public class PeriodicityToDoItemSettingsViewModel : ViewModelBase,
     [Inject]
     public required IKernel Resolve { get; set; }
 
-    private async Task InitializedAsync(CancellationToken cancellationToken)
+    private ValueTask<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         this.WhenAnyValue(x => x.TypeOfPeriodicity)
             .Subscribe(
@@ -74,17 +74,15 @@ public class PeriodicityToDoItemSettingsViewModel : ViewModelBase,
                 }
             );
 
-        await RefreshAsync(cancellationToken).ConfigureAwait(false);
+        return RefreshAsync(cancellationToken);
     }
 
-    public Task<Result> RefreshAsync(CancellationToken cancellationToken)
+    public ValueTask<Result> RefreshAsync(CancellationToken cancellationToken)
     {
         return ToDoService.GetPeriodicityToDoItemSettingsAsync(Id, cancellationToken)
             .ConfigureAwait(false)
             .IfSuccessAsync(
-                async setting =>
-                {
-                    await this.InvokeUIBackgroundAsync(
+                setting => this.InvokeUIBackgroundAsync(
                         () =>
                         {
                             ChildrenType = setting.ChildrenType;
@@ -92,25 +90,26 @@ public class PeriodicityToDoItemSettingsViewModel : ViewModelBase,
                             TypeOfPeriodicity = setting.TypeOfPeriodicity;
                             IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
                         }
-                    );
-
-                    return Result.Success;
-                }
+                    )
+                    .ConfigureAwait(false)
             );
     }
 
-    public Task ApplySettingsAsync(CancellationToken cancellationToken)
+    public ValueTask<Result> ApplySettingsAsync(CancellationToken cancellationToken)
     {
-        return Task.WhenAll(
-            ToDoService.UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, cancellationToken),
-            ToDoService.UpdateToDoItemDueDateAsync(Id, DueDate, cancellationToken),
-            ToDoService.UpdateToDoItemIsRequiredCompleteInDueDateAsync(
-                Id,
-                IsRequiredCompleteInDueDate,
-                cancellationToken
-            ),
-            ToDoService.UpdateToDoItemTypeOfPeriodicityAsync(Id, TypeOfPeriodicity, cancellationToken),
-            Periodicity.ThrowIfNull().ApplySettingsAsync(cancellationToken)
+        return Result.AwaitableFalse.IfSuccessAllAsync(
+            () => ToDoService.UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, cancellationToken)
+                .ConfigureAwait(false),
+            () => ToDoService.UpdateToDoItemDueDateAsync(Id, DueDate, cancellationToken).ConfigureAwait(false),
+            () => ToDoService.UpdateToDoItemIsRequiredCompleteInDueDateAsync(
+                    Id,
+                    IsRequiredCompleteInDueDate,
+                    cancellationToken
+                )
+                .ConfigureAwait(false),
+            () => ToDoService.UpdateToDoItemTypeOfPeriodicityAsync(Id, TypeOfPeriodicity, cancellationToken)
+                .ConfigureAwait(false),
+            () => Periodicity.ThrowIfNull().ApplySettingsAsync(cancellationToken).ConfigureAwait(false)
         );
     }
 }

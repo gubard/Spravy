@@ -1,8 +1,9 @@
 using System.Threading.Tasks;
+using Spravy.Domain.Models;
 
 namespace Spravy.Ui.Interfaces;
 
 public interface IClipboardService
 {
-    Task SetTextAsync(string? text);
+    ValueTask<Result> SetTextAsync(string? text);
 }

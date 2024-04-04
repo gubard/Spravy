@@ -10,6 +10,7 @@ using Spravy.Domain.Models;
 using Spravy.Ui.Enums;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
+using Spravy.Ui.Services;
 
 namespace Spravy.Ui.ViewModels;
 
@@ -35,21 +36,22 @@ public class VerificationCodeViewModel : NavigatableViewModelBase, IVerification
     [Reactive]
     public string VerificationCode { get; set; } = string.Empty;
 
-    public override void Stop()
+    public override Result Stop()
     {
+        return Result.Success;
     }
 
-    public override Task SaveStateAsync()
+    public override ValueTask<Result> SaveStateAsync()
     {
-        return Task.CompletedTask;
+        return Result.SuccessValueTask;
     }
 
-    public override Task SetStateAsync(object setting)
+    public override ValueTask<Result> SetStateAsync(object setting)
     {
-        return Task.CompletedTask;
+        return Result.SuccessValueTask;
     }
 
-    private Task InitializedAsync(CancellationToken cancellationToken)
+    private ValueTask<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         switch (IdentifierType)
         {
@@ -57,8 +59,7 @@ public class VerificationCodeViewModel : NavigatableViewModelBase, IVerification
                 return AuthenticationService.UpdateVerificationCodeByEmailAsync(Identifier, cancellationToken);
             case UserIdentifierType.Login:
                 return AuthenticationService.UpdateVerificationCodeByLoginAsync(Identifier, cancellationToken);
-            default:
-                throw new ArgumentOutOfRangeException();
+            default: throw new ArgumentOutOfRangeException();
         }
     }
 }

@@ -1,5 +1,6 @@
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
+using Spravy.Domain.Models;
 
 namespace Spravy.Domain.Services;
 
@@ -19,22 +20,22 @@ public class FilesObjectStorage : IObjectStorage
         this.serializer = serializer;
     }
 
-    public Task<bool> IsExistsAsync(string id)
+    public ValueTask<Result<bool>> IsExistsAsync(string id)
     {
         var file = root.ToFile(id);
 
-        return file.Exists.ToTaskResult();
+        return file.Exists.ToResult().ToValueTaskResult();
     }
 
-    public Task DeleteAsync(string id)
+    public ValueTask<Result> DeleteAsync(string id)
     {
         var file = root.ToFile(id);
         file.Delete();
 
-        return Task.CompletedTask;
+        return Result.SuccessValueTask;
     }
 
-    public async Task SaveObjectAsync(string id, object obj)
+    public async ValueTask<Result> SaveObjectAsync(string id, object obj)
     {
         var file = root.ToFile(id);
 
@@ -44,14 +45,15 @@ public class FilesObjectStorage : IObjectStorage
         }
 
         await using var stream = file.Create();
-        serializer.Serialize(obj, stream);
+
+        return await serializer.Serialize(obj, stream);
     }
 
-    public async Task<TObject> GetObjectAsync<TObject>(string id)
+    public async ValueTask<Result<TObject>> GetObjectAsync<TObject>(string id)
     {
         var file = root.ToFile(id);
         await using var stream = file.OpenRead();
 
-        return serializer.Deserialize<TObject>(stream);
+        return await serializer.Deserialize<TObject>(stream);
     }
 }

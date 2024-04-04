@@ -6,14 +6,14 @@
                         xmlns:ru="http://reactiveui.net"
                         xmlns:vm="clr-namespace:Spravy.Ui.Features.ErrorHandling.ViewModels"
                         xmlns:m="clr-namespace:Spravy.Domain.Models;assembly=Spravy.Domain"
-                        xmlns:validationResults="clr-namespace:Spravy.Domain.ValidationResults;assembly=Spravy.Domain"
+                        xmlns:errors="clr-namespace:Spravy.Domain.Errors;assembly=Spravy.Domain"
                         mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
                         x:Class="Spravy.Ui.Features.ErrorHandling.Views.ErrorView"
                         x:DataType="vm:ErrorViewModel">
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <ItemsControl ItemsSource="{Binding ValidationResults}">
             <ItemsControl.DataTemplates>
-                <DataTemplate x:DataType="validationResults:Error">
+                <DataTemplate x:DataType="errors:Error">
                     <StackPanel>
                         <TextBlock Text="{Binding Id}" />
                         <TextBlock Text="{Binding Name}" />

@@ -1,7 +1,10 @@
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Avalonia.Collections;
+using Spravy.Domain.Errors;
+using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
-using Spravy.Domain.ValidationResults;
+using Spravy.Domain.Models;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.Features.ErrorHandling.ViewModels;
@@ -16,17 +19,18 @@ public class ErrorViewModel : NavigatableViewModelBase
 
     public AvaloniaList<Error> ValidationResults { get; } = new();
 
-    public override void Stop()
+    public override Result Stop()
     {
+        return Result.Success;
     }
 
-    public override Task SetStateAsync(object setting)
+    public override ValueTask<Result> SetStateAsync(object setting)
     {
-        return Task.CompletedTask;
+        return Result.SuccessValueTask;
     }
 
-    public override Task SaveStateAsync()
+    public override ValueTask<Result> SaveStateAsync()
     {
-        return Task.CompletedTask;
+        return Result.SuccessValueTask;
     }
 }

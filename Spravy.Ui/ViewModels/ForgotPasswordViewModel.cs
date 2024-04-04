@@ -5,11 +5,13 @@ using System.Windows.Input;
 using Ninject;
 using ReactiveUI.Fody.Helpers;
 using Spravy.Authentication.Domain.Interfaces;
+using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Models;
 using Spravy.Ui.Enums;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
+using Spravy.Ui.Services;
 
 namespace Spravy.Ui.ViewModels;
 
@@ -43,7 +45,7 @@ public class ForgotPasswordViewModel : NavigatableViewModelBase, IVerificationEm
     [Reactive]
     public string NewRepeatPassword { get; set; } = string.Empty;
 
-    private Task InitializedAsync(CancellationToken cancellationToken)
+    private ValueTask<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         switch (IdentifierType)
         {
@@ -55,43 +57,49 @@ public class ForgotPasswordViewModel : NavigatableViewModelBase, IVerificationEm
         }
     }
 
-    private async Task ForgotPasswordAsync(CancellationToken cancellationToken)
+    private ValueTask<Result> ForgotPasswordAsync(CancellationToken cancellationToken)
     {
-        switch (IdentifierType)
-        {
-            case UserIdentifierType.Email:
-                await AuthenticationService.UpdatePasswordByEmailAsync(
-                    Identifier,
-                    VerificationCode.ToUpperInvariant(),
-                    NewPassword,
-                    cancellationToken
-                );
-                break;
-            case UserIdentifierType.Login:
-                await AuthenticationService.UpdatePasswordByLoginAsync(
-                    Identifier,
-                    VerificationCode.ToUpperInvariant(),
-                    NewPassword,
-                    cancellationToken
-                );
-                break;
-            default: throw new ArgumentOutOfRangeException();
-        }
-
-        await Navigator.NavigateToAsync<LoginViewModel>(cancellationToken);
+        return Result.AwaitableFalse.IfSuccessAsync(
+                () =>
+                {
+                    switch (IdentifierType)
+                    {
+                        case UserIdentifierType.Email:
+                            return AuthenticationService.UpdatePasswordByEmailAsync(
+                                    Identifier,
+                                    VerificationCode.ToUpperInvariant(),
+                                    NewPassword,
+                                    cancellationToken
+                                )
+                                .ConfigureAwait(false);
+                        case UserIdentifierType.Login:
+                            return AuthenticationService.UpdatePasswordByLoginAsync(
+                                    Identifier,
+                                    VerificationCode.ToUpperInvariant(),
+                                    NewPassword,
+                                    cancellationToken
+                                )
+                                .ConfigureAwait(false);
+                        default: throw new ArgumentOutOfRangeException();
+                    }
+                }
+            )
+            .ConfigureAwait(false)
+            .IfSuccessAsync(() => Navigator.NavigateToAsync<LoginViewModel>(cancellationToken).ConfigureAwait(false));
     }
 
-    public override void Stop()
+    public override Result Stop()
     {
+        return Result.Success;
     }
 
-    public override Task SaveStateAsync()
+    public override ValueTask<Result> SaveStateAsync()
     {
-        return Task.CompletedTask;
+        return Result.SuccessValueTask;
     }
 
-    public override Task SetStateAsync(object setting)
+    public override ValueTask<Result> SetStateAsync(object setting)
     {
-        return Task.CompletedTask;
+        return Result.SuccessValueTask;
     }
 }

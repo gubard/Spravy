@@ -1,6 +1,7 @@
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Models;
 using Spravy.Authentication.Protos;
+using Spravy.Client.Extensions;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
 using Spravy.Domain.Extensions;
@@ -26,286 +27,251 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         this.converter = converter;
     }
 
-    public Task<Result<TokenResult>> LoginAsync(User user, CancellationToken cancellationToken)
+    public ValueTask<Result<TokenResult>> LoginAsync(User user, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             client =>
                 converter.Convert<UserGrpc>(user)
                     .IfSuccessAsync(
-                        async userGrpc =>
-                        {
-                            var request = new LoginRequest
-                            {
-                                User = userGrpc,
-                            };
-
-                            cancellationToken.ThrowIfCancellationRequested();
-                            var reply = await client.LoginAsync(request);
-
-                            return converter.Convert<TokenResult>(reply);
-                        }
-                    ),
+                        userGrpc => client.LoginAsync(
+                                new LoginRequest
+                                {
+                                    User = userGrpc,
+                                }
+                            )
+                            .ToValueTaskResultValueOnly()
+                            .ConfigureAwait(false)
+                            .IfSuccessAsync(
+                                reply => converter.Convert<TokenResult>(reply)
+                                    .ToValueTaskResult()
+                                    .ConfigureAwait(false)
+                            )
+                            .ConfigureAwait(false)
+                    )
+                    .ConfigureAwait(false),
             cancellationToken
         );
     }
 
-    public Task<Result> CreateUserAsync(CreateUserOptions options, CancellationToken cancellationToken)
+    public ValueTask<Result> CreateUserAsync(CreateUserOptions options, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             client =>
                 converter.Convert<CreateUserRequest>(options)
                     .IfSuccessAsync(
-                        async request =>
-                        {
-                            cancellationToken.ThrowIfCancellationRequested();
-                            await client.CreateUserAsync(request);
-
-                            return Result.Success;
-                        }
-                    ),
+                        request => client.CreateUserAsync(request).ToValueTaskResultOnly().ConfigureAwait(false)
+                    )
+                    .ConfigureAwait(false),
             cancellationToken
         );
     }
 
-    public Task<Result<TokenResult>> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
+    public ValueTask<Result<TokenResult>> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
     {
         return CallClientAsync(
-            async client =>
-            {
-                var reply = await client.RefreshTokenAsync(
+            client => client.RefreshTokenAsync(
                     new RefreshTokenRequest
                     {
                         RefreshToken = refreshToken,
                     }
-                );
-
-                return converter.Convert<TokenResult>(reply);
-            },
+                )
+                .ToValueTaskResultValueOnly()
+                .ConfigureAwait(false)
+                .IfSuccessAsync(
+                    reply => converter.Convert<TokenResult>(reply).ToValueTaskResult().ConfigureAwait(false)
+                )
+                .ConfigureAwait(false),
             cancellationToken
         );
     }
 
-    public Task<Result> UpdateVerificationCodeByLoginAsync(string login, CancellationToken cancellationToken)
+    public ValueTask<Result> UpdateVerificationCodeByLoginAsync(string login, CancellationToken cancellationToken)
     {
         return CallClientAsync(
-            async client =>
-            {
-                await client.UpdateVerificationCodeByLoginAsync(
+            client => client.UpdateVerificationCodeByLoginAsync(
                     new UpdateVerificationCodeByLoginRequest
                     {
                         Login = login,
                     }
-                );
-
-                return Result.Success;
-            },
+                )
+                .ToValueTaskResultOnly()
+                .ConfigureAwait(false),
             cancellationToken
         );
     }
 
-    public Task<Result> UpdateVerificationCodeByEmailAsync(string email, CancellationToken cancellationToken)
+    public ValueTask<Result> UpdateVerificationCodeByEmailAsync(string email, CancellationToken cancellationToken)
     {
         return CallClientAsync(
-            async client =>
-            {
-                await client.UpdateVerificationCodeByEmailAsync(
+            client => client.UpdateVerificationCodeByEmailAsync(
                     new UpdateVerificationCodeByEmailRequest
                     {
                         Email = email
                     }
-                );
-
-                return Result.Success;
-            },
+                )
+                .ToValueTaskResultOnly()
+                .ConfigureAwait(false),
             cancellationToken
         );
     }
 
-    public Task<Result<bool>> IsVerifiedByLoginAsync(string login, CancellationToken cancellationToken)
+    public ValueTask<Result<bool>> IsVerifiedByLoginAsync(string login, CancellationToken cancellationToken)
     {
         return CallClientAsync(
-            async client =>
-            {
-                var reply = await client.IsVerifiedByLoginAsync(
+            client => client.IsVerifiedByLoginAsync(
                     new IsVerifiedByLoginRequest
                     {
                         Login = login
                     }
-                );
-
-                return reply.IsVerified.ToResult();
-            },
+                )
+                .ToValueTaskResultValueOnly()
+                .ConfigureAwait(false)
+                .IfSuccessAsync(reply => reply.IsVerified.ToResult().ToValueTaskResult().ConfigureAwait(false))
+                .ConfigureAwait(false),
             cancellationToken
         );
     }
 
-    public Task<Result<bool>> IsVerifiedByEmailAsync(string email, CancellationToken cancellationToken)
+    public ValueTask<Result<bool>> IsVerifiedByEmailAsync(string email, CancellationToken cancellationToken)
     {
         return CallClientAsync(
-            async client =>
-            {
-                var reply = await client.IsVerifiedByEmailAsync(
+            client => client.IsVerifiedByEmailAsync(
                     new IsVerifiedByEmailRequest
                     {
                         Email = email
                     }
-                );
-
-                return reply.IsVerified.ToResult();
-            },
+                )
+                .ToValueTaskResultValueOnly()
+                .ConfigureAwait(false)
+                .IfSuccessAsync(reply => reply.IsVerified.ToResult().ToValueTaskResult().ConfigureAwait(false))
+                .ConfigureAwait(false),
             cancellationToken
         );
     }
 
-    public Task<Result> VerifiedEmailByLoginAsync(
+    public ValueTask<Result> VerifiedEmailByLoginAsync(
         string login,
         string verificationCode,
         CancellationToken cancellationToken
     )
     {
         return CallClientAsync(
-            async client =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                await client.VerifiedEmailByLoginAsync(
+            client => client.VerifiedEmailByLoginAsync(
                     new VerifiedEmailByLoginRequest
                     {
                         Login = login,
                         VerificationCode = verificationCode,
                     }
-                );
-
-                return Result.Success;
-            },
+                )
+                .ToValueTaskResultOnly()
+                .ConfigureAwait(false),
             cancellationToken
         );
     }
 
-    public Task<Result> VerifiedEmailByEmailAsync(
+    public ValueTask<Result> VerifiedEmailByEmailAsync(
         string email,
         string verificationCode,
         CancellationToken cancellationToken
     )
     {
         return CallClientAsync(
-            async client =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                await client.VerifiedEmailByEmailAsync(
+            client => client.VerifiedEmailByEmailAsync(
                     new VerifiedEmailByEmailRequest
                     {
                         Email = email,
                         VerificationCode = verificationCode,
                     }
-                );
-
-                return Result.Success;
-            },
+                )
+                .ToValueTaskResultOnly()
+                .ConfigureAwait(false),
             cancellationToken
         );
     }
 
-    public Task<Result> UpdateEmailNotVerifiedUserByEmailAsync(
+    public ValueTask<Result> UpdateEmailNotVerifiedUserByEmailAsync(
         string email,
         string newEmail,
         CancellationToken cancellationToken
     )
     {
         return CallClientAsync(
-            async client =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                await client.UpdateEmailNotVerifiedUserByEmailAsync(
+            client => client.UpdateEmailNotVerifiedUserByEmailAsync(
                     new UpdateEmailNotVerifiedUserByEmailRequest
                     {
                         Email = email,
                         NewEmail = newEmail,
                     }
-                );
-
-                return Result.Success;
-            },
+                )
+                .ToValueTaskResultOnly()
+                .ConfigureAwait(false),
             cancellationToken
         );
     }
 
-    public Task<Result> UpdateEmailNotVerifiedUserByLoginAsync(
+    public ValueTask<Result> UpdateEmailNotVerifiedUserByLoginAsync(
         string login,
         string newEmail,
         CancellationToken cancellationToken
     )
     {
         return CallClientAsync(
-            async client =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                await client.UpdateEmailNotVerifiedUserByLoginAsync(
+            client => client.UpdateEmailNotVerifiedUserByLoginAsync(
                     new UpdateEmailNotVerifiedUserByLoginRequest
                     {
                         Login = login,
                         NewEmail = newEmail,
                     }
-                );
-
-                return Result.Success;
-            },
+                )
+                .ToValueTaskResultOnly()
+                .ConfigureAwait(false),
             cancellationToken
         );
     }
 
-    public Task<Result> DeleteUserByEmailAsync(
+    public ValueTask<Result> DeleteUserByEmailAsync(
         string email,
         string verificationCode,
         CancellationToken cancellationToken
     )
     {
         return CallClientAsync(
-            async client =>
-            {
-                var request = new DeleteUserByEmailRequest
-                {
-                    Email = email,
-                    VerificationCode = verificationCode,
-                };
-
-                cancellationToken.ThrowIfCancellationRequested();
-                await client.DeleteUserByEmailAsync(request, cancellationToken: cancellationToken);
-
-                return Result.Success;
-            },
+            client => client.DeleteUserByEmailAsync(
+                    new DeleteUserByEmailRequest
+                    {
+                        Email = email,
+                        VerificationCode = verificationCode,
+                    },
+                    cancellationToken: cancellationToken
+                )
+                .ToValueTaskResultOnly()
+                .ConfigureAwait(false),
             cancellationToken
         );
     }
 
-    public Task<Result> DeleteUserByLoginAsync(
+    public ValueTask<Result> DeleteUserByLoginAsync(
         string login,
         string verificationCode,
         CancellationToken cancellationToken
     )
     {
         return CallClientAsync(
-            async client =>
-            {
-                var request = new DeleteUserByLoginRequest
-                {
-                    Login = login,
-                    VerificationCode = verificationCode,
-                };
-
-                cancellationToken.ThrowIfCancellationRequested();
-                await client.DeleteUserByLoginAsync(request, cancellationToken: cancellationToken);
-
-                return Result.Success;
-            },
+            client => client.DeleteUserByLoginAsync(
+                    new DeleteUserByLoginRequest
+                    {
+                        Login = login,
+                        VerificationCode = verificationCode,
+                    },
+                    cancellationToken: cancellationToken
+                )
+                .ToValueTaskResultOnly()
+                .ConfigureAwait(false),
             cancellationToken
         );
     }
 
-    public Task<Result> UpdatePasswordByEmailAsync(
+    public ValueTask<Result> UpdatePasswordByEmailAsync(
         string email,
         string verificationCode,
         string newPassword,
@@ -313,26 +279,21 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
     )
     {
         return CallClientAsync(
-            async client =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                await client.UpdatePasswordByEmailAsync(
+            client => client.UpdatePasswordByEmailAsync(
                     new UpdatePasswordByEmailRequest
                     {
                         Email = email,
                         VerificationCode = verificationCode,
                         NewPassword = newPassword,
                     }
-                );
-
-                return Result.Success;
-            },
+                )
+                .ToValueTaskResultOnly()
+                .ConfigureAwait(false),
             cancellationToken
         );
     }
 
-    public Task<Result> UpdatePasswordByLoginAsync(
+    public ValueTask<Result> UpdatePasswordByLoginAsync(
         string login,
         string verificationCode,
         string newPassword,
@@ -340,21 +301,16 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
     )
     {
         return CallClientAsync(
-            async client =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                await client.UpdatePasswordByLoginAsync(
+            client => client.UpdatePasswordByLoginAsync(
                     new UpdatePasswordByLoginRequest
                     {
                         Login = login,
                         VerificationCode = verificationCode,
                         NewPassword = newPassword,
                     }
-                );
-
-                return Result.Success;
-            },
+                )
+                .ToValueTaskResultOnly()
+                .ConfigureAwait(false),
             cancellationToken
         );
     }

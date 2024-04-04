@@ -8,10 +8,10 @@ using Spravy.Authentication.Domain.Models;
 using Spravy.Authentication.Service.Interfaces;
 using Spravy.Db.Extensions;
 using Spravy.Domain.Enums;
+using Spravy.Domain.Errors;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
-using Spravy.Domain.ValidationResults;
 using Spravy.Service.Extensions;
 
 namespace Spravy.Authentication.Service.Services;

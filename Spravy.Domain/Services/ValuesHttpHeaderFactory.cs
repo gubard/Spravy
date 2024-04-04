@@ -13,8 +13,8 @@ public class ValuesHttpHeaderFactory : IHttpHeaderFactory
         this.items = items;
     }
 
-    public Task<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsAsync(CancellationToken cancellationToken)
+    public ValueTask<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsAsync(CancellationToken cancellationToken)
     {
-        return items.ToResult().ToTaskResult();
+        return items.ToResult().ToValueTaskResult();
     }
 }

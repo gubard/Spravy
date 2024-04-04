@@ -1,17 +1,28 @@
 using Spravy.Domain.Interfaces;
+using Spravy.Domain.Models;
 
 namespace Spravy.Domain.Extensions;
 
 public static class ObjectStorageExtension
 {
-    public static async Task<TObject> GetObjectOrDefaultAsync<TObject>(this IObjectStorage objectStorage, string id)
+    public static ValueTask<Result<TObject>> GetObjectOrDefaultAsync<TObject>(
+        this IObjectStorage objectStorage,
+        string id
+    )
         where TObject : new()
     {
-        if (await objectStorage.IsExistsAsync(id))
-        {
-            return await objectStorage.GetObjectAsync<TObject>(id);
-        }
+        return objectStorage.IsExistsAsync(id)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                value =>
+                {
+                    if (value)
+                    {
+                        return objectStorage.GetObjectAsync<TObject>(id).ConfigureAwait(false);
+                    }
 
-        return new TObject();
+                    return new TObject().ToResult().ToValueTaskResult().ConfigureAwait(false);
+                }
+            );
     }
 }

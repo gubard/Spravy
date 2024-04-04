@@ -35,11 +35,12 @@ public partial class App : Application
         var resolver = Resolver.ThrowIfNull();
         var objectStorage = resolver.Get<IObjectStorage>();
 
-        if (objectStorage.IsExistsAsync(TypeCache<SettingModel>.Type.Name).GetAwaiter().GetResult())
+        if (objectStorage.IsExistsAsync(TypeCache<SettingModel>.Type.Name).GetAwaiter().GetResult().Value)
         {
             var model = objectStorage.GetObjectAsync<SettingModel>(TypeCache<SettingModel>.Type.Name)
                 .GetAwaiter()
-                .GetResult();
+                .GetResult()
+                .Value;
 
             var theme = SukiTheme.GetInstance();
             theme.ChangeColorTheme(theme.ColorThemes.Single(x => x.DisplayName == model.ColorTheme));

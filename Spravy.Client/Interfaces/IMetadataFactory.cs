@@ -5,5 +5,5 @@ namespace Spravy.Client.Interfaces;
 
 public interface IMetadataFactory
 {
-    Task<Result<Metadata>> CreateAsync(CancellationToken cancellationToken);
+    ValueTask<Result<Metadata>> CreateAsync(CancellationToken cancellationToken);
 }

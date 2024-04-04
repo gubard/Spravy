@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -52,42 +53,39 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
         }
     }
 
-    private Task InitializedAsync(CancellationToken cancellationToken)
+    private ValueTask<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         return RefreshAsync(cancellationToken);
     }
 
-    public override void Stop()
+    public override Result Stop()
     {
+        return Result.Success;
     }
 
-    public override Task SetStateAsync(object setting)
+    public override ValueTask<Result> SetStateAsync(object setting)
     {
-        return Task.CompletedTask;
+        return Result.SuccessValueTask;
     }
 
-    public override Task SaveStateAsync()
+    public override ValueTask<Result> SaveStateAsync()
     {
-        return Task.CompletedTask;
+        return Result.SuccessValueTask;
     }
 
-    public Task<Result> RefreshAsync(CancellationToken cancellationToken)
+    public ValueTask<Result> RefreshAsync(CancellationToken cancellationToken)
     {
         return PasswordService.GetPasswordItemsAsync(cancellationToken)
             .ConfigureAwait(false)
             .IfSuccessAsync(
-                async items =>
-                {
-                    await this.InvokeUIBackgroundAsync(
+                items => this.InvokeUIBackgroundAsync(
                         () =>
                         {
                             Items.Clear();
                             Items.AddRange(Mapper.Map<PasswordItemNotify[]>(items.ToArray()));
                         }
-                    );
-
-                    return Result.Success;
-                }
+                    )
+                    .ConfigureAwait(false)
             );
     }
 }

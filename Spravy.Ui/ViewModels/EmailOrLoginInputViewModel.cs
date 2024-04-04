@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -12,6 +13,7 @@ using Spravy.Domain.Models;
 using Spravy.Ui.Enums;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Models;
+using Spravy.Ui.Services;
 
 namespace Spravy.Ui.ViewModels;
 
@@ -38,30 +40,29 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
     [Reactive]
     public string EmailOrLogin { get; set; } = string.Empty;
 
-    private async Task ForgotPasswordAsync(CancellationToken cancellationToken)
+    private ValueTask<Result> ForgotPasswordAsync(CancellationToken cancellationToken)
     {
-        await this.InvokeUIBackgroundAsync(() => IsBusy = true);
-
-        try
+        return this.InvokeUIBackgroundAsync(() => IsBusy = true)
+            .ConfigureAwait(false)
+            .IfSuccessTryFinallyAsync(
+                () =>
+                {
+                      if (EmailOrLogin.Contains('@'))
         {
-            if (EmailOrLogin.Contains('@'))
-            {
-                await AuthenticationService.IsVerifiedByEmailAsync(EmailOrLogin, cancellationToken)
-                    .ConfigureAwait(false)
-                    .IfSuccessAsync(
-                        DialogViewer,
-                        value =>
+            return AuthenticationService.IsVerifiedByEmailAsync(EmailOrLogin, cancellationToken)
+                .ConfigureAwait(false)
+                .IfSuccessAsync(
+                    value =>
+                    {
+                        if (value)
                         {
-                            if (value)
-                            {
-                                return AuthenticationService.UpdateVerificationCodeByEmailAsync(
-                                        EmailOrLogin,
-                                        cancellationToken
-                                    )
-                                    .ConfigureAwait(false)
-                                    .IfSuccessAsync(
-                                        DialogViewer,
-                                        () => Navigator.NavigateToAsync<ForgotPasswordViewModel>(
+                            return AuthenticationService.UpdateVerificationCodeByEmailAsync(
+                                    EmailOrLogin,
+                                    cancellationToken
+                                )
+                                .ConfigureAwait(false)
+                                .IfSuccessAsync(
+                                    () => Navigator.NavigateToAsync<ForgotPasswordViewModel>(
                                             vm =>
                                             {
                                                 vm.Identifier = EmailOrLogin;
@@ -72,72 +73,79 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
                                             },
                                             cancellationToken
                                         )
-                                    );
-                            }
+                                        .ConfigureAwait(false)
+                                )
+                                .ConfigureAwait(false);
+                        }
 
-                            return Navigator.NavigateToAsync<VerificationCodeViewModel>(
+                        return Navigator.NavigateToAsync<VerificationCodeViewModel>(
                                 vm =>
                                 {
                                     vm.IdentifierType = UserIdentifierType.Email;
                                     vm.Identifier = EmailOrLogin;
                                 },
                                 cancellationToken
-                            );
-                        }
-                    );
-            }
-            else
-            {
-                await AuthenticationService.IsVerifiedByLoginAsync(EmailOrLogin, cancellationToken)
-                    .ConfigureAwait(false)
-                    .IfSuccessAsync(
-                        DialogViewer,
-                        value =>
-                        {
-                            if (value)
-                            {
-                                return AuthenticationService
-                                    .UpdateVerificationCodeByLoginAsync(EmailOrLogin, cancellationToken)
+                            )
+                            .ConfigureAwait(false);
+                    }
+                )
+                .ConfigureAwait(false);
+        }
+
+        return AuthenticationService.IsVerifiedByLoginAsync(EmailOrLogin, cancellationToken)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                value =>
+                {
+                    if (value)
+                    {
+                        return AuthenticationService
+                            .UpdateVerificationCodeByLoginAsync(EmailOrLogin, cancellationToken)
+                            .ConfigureAwait(false)
+                            .IfSuccessAsync(
+                                () => Navigator.NavigateToAsync<ForgotPasswordViewModel>(
+                                        vm =>
+                                        {
+                                            vm.Identifier = EmailOrLogin;
+
+                                            vm.IdentifierType = EmailOrLogin.Contains('@')
+                                                ? UserIdentifierType.Email
+                                                : UserIdentifierType.Login;
+                                        },
+                                        cancellationToken
+                                    )
                                     .ConfigureAwait(false)
-                                    .IfSuccessAsync(
-                                        DialogViewer,
-                                        () => Navigator.NavigateToAsync<ForgotPasswordViewModel>(
-                                            vm =>
-                                            {
-                                                vm.Identifier = EmailOrLogin;
+                            )
+                            .ConfigureAwait(false);
+                    }
 
-                                                vm.IdentifierType = EmailOrLogin.Contains('@')
-                                                    ? UserIdentifierType.Email
-                                                    : UserIdentifierType.Login;
-                                            },
-                                            cancellationToken
-                                        )
-                                    );
-                            }
-
-                            return Navigator.NavigateToAsync<VerificationCodeViewModel>(
-                                vm =>
-                                {
-                                    vm.IdentifierType = UserIdentifierType.Login;
-                                    vm.Identifier = EmailOrLogin;
-                                },
-                                cancellationToken
-                            );
-                        }
-                    );
-            }
-        }
-        finally
-        {
-            await this.InvokeUIBackgroundAsync(() => IsBusy = false);
-        }
+                    return Navigator.NavigateToAsync<VerificationCodeViewModel>(
+                            vm =>
+                            {
+                                vm.IdentifierType = UserIdentifierType.Login;
+                                vm.Identifier = EmailOrLogin;
+                            },
+                            cancellationToken
+                        )
+                        .ConfigureAwait(false);
+                }
+            )
+            .ConfigureAwait(false);
+                },
+                () => this.InvokeUIBackgroundAsync(() => IsBusy = false)
+                    .ConfigureAwait(false)
+                    .ToValueTask()
+                    .ConfigureAwait(false)
+            );
+        ;
     }
 
-    public override void Stop()
+    public override Result Stop()
     {
+        return Result.Success;
     }
 
-    public override Task SaveStateAsync()
+    public override ValueTask<Result> SaveStateAsync()
     {
         return ObjectStorage.SaveObjectAsync(
             ViewId,
@@ -145,11 +153,11 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
         );
     }
 
-    public override async Task SetStateAsync(object setting)
+    public override ValueTask<Result> SetStateAsync(object setting)
     {
         var s = setting.ThrowIfIsNotCast<EmailOrLoginInputViewModelSetting>();
 
-        await this.InvokeUIBackgroundAsync(() => EmailOrLogin = s.Identifier);
+        return this.InvokeUIBackgroundAsync(() => EmailOrLogin = s.Identifier);
     }
 
     [ProtoContract]

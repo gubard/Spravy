@@ -7,11 +7,12 @@ using AutoMapper;
 using Avalonia.Collections;
 using Ninject;
 using ReactiveUI.Fody.Helpers;
-using Spravy.Domain.Models;
 using Spravy.Domain.Extensions;
+using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Models;
+using Spravy.Ui.Services;
 
 namespace Spravy.Ui.ViewModels;
 
@@ -44,48 +45,62 @@ public class ToDoItemSelectorViewModel : ViewModelBase
     [Reactive]
     public ToDoSelectorItemNotify? SelectedItem { get; set; }
 
-    private async Task InitializedAsync(CancellationToken cancellationToken)
+    private ValueTask<Result> InitializedAsync(CancellationToken cancellationToken)
     {
-        await Refresh(cancellationToken);
-        SetItem(DefaultSelectedItemId);
-    }
-
-    private async Task Refresh(CancellationToken cancellationToken)
-    {
-        await this.InvokeUIBackgroundAsync(() => Roots.Clear());
-
-        await ToDoService.GetToDoSelectorItemsAsync(IgnoreIds.ToArray(), cancellationToken)
+        return Refresh(cancellationToken)
             .ConfigureAwait(false)
             .IfSuccessAsync(
-                DialogViewer,
-                async items =>
+                () =>
                 {
-                    itemsCache.Clear();
-                    itemsCache.AddRange(Mapper.Map<ToDoSelectorItemNotify[]>(items.ToArray()));
-                    await this.InvokeUIBackgroundAsync(() => Roots.AddRange(itemsCache));
+                    SetItem(DefaultSelectedItemId);
+
+                    return Result.AwaitableFalse;
                 }
             );
     }
 
-    private async Task SearchAsync(CancellationToken cancellationToken)
+    private ValueTask<Result> Refresh(CancellationToken cancellationToken)
     {
-        await this.InvokeUIBackgroundAsync(() => Roots.Clear());
+        return this.InvokeUIBackgroundAsync(() => Roots.Clear())
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                () => ToDoService.GetToDoSelectorItemsAsync(IgnoreIds.ToArray(), cancellationToken)
+                    .ConfigureAwait(false)
+                    .IfSuccessAsync(
+                        items =>
+                        {
+                            itemsCache.Clear();
+                            itemsCache.AddRange(Mapper.Map<ToDoSelectorItemNotify[]>(items.ToArray()));
 
-        if (SearchText.IsNullOrWhiteSpace())
-        {
-            await this.InvokeUIBackgroundAsync(() => Roots.AddRange(itemsCache));
+                            return this.InvokeUIBackgroundAsync(() => Roots.AddRange(itemsCache)).ConfigureAwait(false);
+                        }
+                    )
+                    .ConfigureAwait(false)
+            );
+    }
 
-            return;
-        }
+    private ValueTask<Result> SearchAsync(CancellationToken cancellationToken)
+    {
+        return this.InvokeUIBackgroundAsync(() => Roots.Clear())
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                () =>
+                {
+                    if (SearchText.IsNullOrWhiteSpace())
+                    {
+                        return this.InvokeUIBackgroundAsync(() => Roots.AddRange(itemsCache)).ConfigureAwait(false);
+                    }
 
-        var result = new List<ToDoSelectorItemNotify>();
+                    var result = new List<ToDoSelectorItemNotify>();
 
-        foreach (var item in itemsCache)
-        {
-            Search(item, result);
-        }
+                    foreach (var item in itemsCache)
+                    {
+                        Search(item, result);
+                    }
 
-        await this.InvokeUIBackgroundAsync(() => Roots.AddRange(result));
+                    return this.InvokeUIBackgroundAsync(() => Roots.AddRange(result)).ConfigureAwait(false);
+                }
+            );
     }
 
     private void Search(ToDoSelectorItemNotify item, List<ToDoSelectorItemNotify> result)

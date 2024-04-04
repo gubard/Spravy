@@ -106,9 +106,9 @@ public class ToDoItemNotify : NotifyBase,
         set => this.RaiseAndSetIfChanged(ref active, value);
     }
 
-    public Task<Result> RefreshAsync(CancellationToken cancellationToken)
+    public ValueTask<Result> RefreshAsync(CancellationToken cancellationToken)
     {
-        return Result.Success.ToTaskResult();
+        return Result.Success.ToValueTaskResult();
     }
 
     public Guid? ParentId

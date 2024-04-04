@@ -1,6 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Spravy.Domain.Helpers;
+using Spravy.Domain.Models;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 
@@ -14,22 +15,23 @@ public class GroupToDoItemSettingsViewModel : NavigatableViewModelBase, IApplySe
 
     public override string ViewId => TypeCache<GroupToDoItemSettingsViewModel>.Type.Name;
 
-    public override void Stop()
+    public override Result Stop()
     {
+        return Result.Success;
     }
 
-    public override Task SetStateAsync(object setting)
+    public override ValueTask<Result> SetStateAsync(object setting)
     {
-        return Task.CompletedTask;
+        return Result.SuccessValueTask;
     }
 
-    public override Task SaveStateAsync()
+    public override ValueTask<Result> SaveStateAsync()
     {
-        return Task.CompletedTask;
+        return Result.SuccessValueTask;
     }
 
-    public Task ApplySettingsAsync(CancellationToken cancellationToken)
+    public ValueTask<Result> ApplySettingsAsync(CancellationToken cancellationToken)
     {
-        return Task.CompletedTask;
+        return Result.SuccessValueTask;
     }
 }

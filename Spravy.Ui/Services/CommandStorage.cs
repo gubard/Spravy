@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
-using Avalonia.Controls.Notifications;
 using Grpc.Core;
 using Material.Icons;
 using Ninject;
@@ -17,6 +17,7 @@ using Spravy.Domain.Di.Helpers;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;
+using Spravy.Domain.Models;
 using Spravy.PasswordGenerator.Domain.Interfaces;
 using Spravy.PasswordGenerator.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
@@ -461,191 +462,203 @@ public static class CommandStorage
 
     public static CommandItem SelectAll { get; }
 
-    private static Task DeletePasswordItemAsync(IIdProperty idProperty, CancellationToken cancellationToken)
+    private static ValueTask<Result> DeletePasswordItemAsync(
+        IIdProperty idProperty,
+        CancellationToken cancellationToken
+    )
     {
         return dialogViewer.ShowConfirmContentDialogAsync<DeletePasswordItemViewModel>(
-            async _ =>
-            {
-                await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
-
-                await passwordService.DeletePasswordItemAsync(idProperty.Id, cancellationToken)
-                    .ConfigureAwait(false);
-
-                await RefreshCurrentViewAsync(cancellationToken);
-            },
-            _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
+            _ => dialogViewer.CloseContentDialogAsync(cancellationToken)
+                .ConfigureAwait(false)
+                .IfSuccessAsync(
+                    () => passwordService.DeletePasswordItemAsync(idProperty.Id, cancellationToken)
+                        .ConfigureAwait(false)
+                )
+                .ConfigureAwait(false)
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false))
+                .ConfigureAwait(false),
+            _ => dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false),
             view => view.PasswordItemId = idProperty.Id,
             cancellationToken
         );
     }
 
-    private static Task GeneratePasswordAsync(IIdProperty idProperty, CancellationToken cancellationToken)
+    private static ValueTask<Result> GeneratePasswordAsync(IIdProperty idProperty, CancellationToken cancellationToken)
     {
         return passwordService.GeneratePasswordAsync(idProperty.Id, cancellationToken)
             .ConfigureAwait(false)
             .IfSuccessAsync(
-                dialogViewer,
-                async password =>
-                {
-                    await clipboard.SetTextAsync(password);
-                    await spravyNotificationManager.ShowAsync(new TextView("PasswordGeneratorView.Notification.CopyPassword", idProperty),cancellationToken);
-                }
+                password => clipboard.SetTextAsync(password).ConfigureAwait(false)
+            )
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                () => spravyNotificationManager.ShowAsync(
+                        new TextView("PasswordGeneratorView.Notification.CopyPassword", idProperty),
+                        cancellationToken
+                    )
+                    .ConfigureAwait(false)
             );
     }
 
-    private static Task ShowPasswordItemSettingAsync(IIdProperty idProperty, CancellationToken cancellationToken)
+    private static ValueTask<Result> ShowPasswordItemSettingAsync(
+        IIdProperty idProperty,
+        CancellationToken cancellationToken
+    )
     {
         return dialogViewer.ShowConfirmContentDialogAsync<PasswordItemSettingsViewModel>(
-            async vm =>
-            {
-                await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
-
-                await passwordService.UpdatePasswordItemKeyAsync(idProperty.Id, vm.Key, cancellationToken)
-                    .ConfigureAwait(false);
-
-                await passwordService.UpdatePasswordItemLengthAsync(idProperty.Id, vm.Length, cancellationToken)
-                    .ConfigureAwait(false);
-
-                await passwordService.UpdatePasswordItemNameAsync(idProperty.Id, vm.Name, cancellationToken)
-                    .ConfigureAwait(false);
-
-                await passwordService.UpdatePasswordItemRegexAsync(idProperty.Id, vm.Regex, cancellationToken)
-                    .ConfigureAwait(false);
-
-                await passwordService.UpdatePasswordItemCustomAvailableCharactersAsync(
-                        idProperty.Id,
-                        vm.CustomAvailableCharacters,
-                        cancellationToken
-                    )
-                    .ConfigureAwait(false);
-
-                await passwordService.UpdatePasswordItemIsAvailableNumberAsync(
-                        idProperty.Id,
-                        vm.IsAvailableNumber,
-                        cancellationToken
-                    )
-                    .ConfigureAwait(false);
-
-                await passwordService.UpdatePasswordItemIsAvailableLowerLatinAsync(
-                        idProperty.Id,
-                        vm.IsAvailableLowerLatin,
-                        cancellationToken
-                    )
-                    .ConfigureAwait(false);
-
-                await passwordService.UpdatePasswordItemIsAvailableSpecialSymbolsAsync(
-                        idProperty.Id,
-                        vm.IsAvailableSpecialSymbols,
-                        cancellationToken
-                    )
-                    .ConfigureAwait(false);
-
-                await passwordService.UpdatePasswordItemIsAvailableUpperLatinAsync(
-                        idProperty.Id,
-                        vm.IsAvailableUpperLatin,
-                        cancellationToken
-                    )
-                    .ConfigureAwait(false);
-
-                await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
-            },
-            _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
+            vm => dialogViewer.CloseContentDialogAsync(cancellationToken)
+                .ConfigureAwait(false)
+                .IfSuccessAllAsync(
+                    () => passwordService.UpdatePasswordItemKeyAsync(idProperty.Id, vm.Key, cancellationToken)
+                        .ConfigureAwait(false),
+                    () => passwordService.UpdatePasswordItemLengthAsync(idProperty.Id, vm.Length, cancellationToken)
+                        .ConfigureAwait(false),
+                    () => passwordService.UpdatePasswordItemNameAsync(idProperty.Id, vm.Name, cancellationToken)
+                        .ConfigureAwait(false),
+                    () => passwordService.UpdatePasswordItemRegexAsync(idProperty.Id, vm.Regex, cancellationToken)
+                        .ConfigureAwait(false),
+                    () => passwordService.UpdatePasswordItemCustomAvailableCharactersAsync(
+                            idProperty.Id,
+                            vm.CustomAvailableCharacters,
+                            cancellationToken
+                        )
+                        .ConfigureAwait(false),
+                    () => passwordService.UpdatePasswordItemIsAvailableNumberAsync(
+                            idProperty.Id,
+                            vm.IsAvailableNumber,
+                            cancellationToken
+                        )
+                        .ConfigureAwait(false),
+                    () => passwordService.UpdatePasswordItemIsAvailableLowerLatinAsync(
+                            idProperty.Id,
+                            vm.IsAvailableLowerLatin,
+                            cancellationToken
+                        )
+                        .ConfigureAwait(false),
+                    () => passwordService.UpdatePasswordItemIsAvailableSpecialSymbolsAsync(
+                            idProperty.Id,
+                            vm.IsAvailableSpecialSymbols,
+                            cancellationToken
+                        )
+                        .ConfigureAwait(false),
+                    () => passwordService.UpdatePasswordItemIsAvailableUpperLatinAsync(
+                            idProperty.Id,
+                            vm.IsAvailableUpperLatin,
+                            cancellationToken
+                        )
+                        .ConfigureAwait(false)
+                )
+                .ConfigureAwait(false)
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false))
+                .ConfigureAwait(false),
+            _ => dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false),
             vm => vm.Id = idProperty.Id,
             cancellationToken
         );
     }
 
-    private static Task AddPasswordItemAsync(CancellationToken cancellationToken)
+    private static ValueTask<Result> AddPasswordItemAsync(CancellationToken cancellationToken)
     {
         return dialogViewer.ShowConfirmContentDialogAsync(
-            async vm =>
-            {
-                await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
-
-                await passwordService.AddPasswordItemAsync(mapper.Map<AddPasswordOptions>(vm), cancellationToken)
-                    .ConfigureAwait(false);
-
-                await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
-            },
-            _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
+            vm => dialogViewer.CloseContentDialogAsync(cancellationToken)
+                .ConfigureAwait(false)
+                .IfSuccessAsync(
+                    () => passwordService.AddPasswordItemAsync(mapper.Map<AddPasswordOptions>(vm), cancellationToken)
+                        .ConfigureAwait(false)
+                )
+                .ConfigureAwait(false)
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false))
+                .ConfigureAwait(false),
+            _ => dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false),
             ActionHelper<AddPasswordItemViewModel>.Empty,
             cancellationToken
         );
     }
 
-    private static async Task MultiDeleteToDoItemsAsync(
+    private static ValueTask<Result> MultiDeleteToDoItemsAsync(
         AvaloniaList<Selected<ToDoItemNotify>> items,
         CancellationToken cancellationToken
     )
     {
-        var tasks = items.Where(x => x.IsSelect)
-            .Select(x => x.Value.Id)
-            .Select(x => toDoService.DeleteToDoItemAsync(x, cancellationToken))
-            .ToArray();
+        return Result.AwaitableFalse.IfSuccessAllAsync(
+                items.Where(x => x.IsSelect)
+                    .Select(x => x.Value.Id)
+                    .Select<Guid, Func<ConfiguredValueTaskAwaitable<Result>>>(
+                        x =>
+                        {
+                            var y = x;
 
-        await Task.WhenAll(tasks).ConfigureAwait(false);
-        await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
+                            return () => toDoService.DeleteToDoItemAsync(y, cancellationToken).ConfigureAwait(false);
+                        }
+                    )
+                    .ToArray()
+            )
+            .ConfigureAwait(false)
+            .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false));
     }
 
-    private static async Task ResetToDoItemAsync(
+    private static ValueTask<Result> ResetToDoItemAsync(
         IIdProperty property,
         CancellationToken cancellationToken
     )
     {
-        await toDoService.ResetToDoItemAsync(property.Id, cancellationToken).ConfigureAwait(false);
-        await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
+        return toDoService.ResetToDoItemAsync(property.Id, cancellationToken)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false));
     }
 
-    private static async Task SetRequiredCompleteInDueDateAsync(
+    private static ValueTask<Result> SetRequiredCompleteInDueDateAsync(
         IIsRequiredCompleteInDueDateProperty property,
         CancellationToken cancellationToken
     )
     {
-        await toDoService.UpdateToDoItemIsRequiredCompleteInDueDateAsync(
+        return toDoService.UpdateToDoItemIsRequiredCompleteInDueDateAsync(
                 property.Id,
                 property.IsRequiredCompleteInDueDate,
                 cancellationToken
             )
-            .ConfigureAwait(false);
-
-        await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
+            .ConfigureAwait(false)
+            .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false));
     }
 
-    private static Task UpdateEmailNotVerifiedUserAsync(
+    private static ValueTask<Result> UpdateEmailNotVerifiedUserAsync(
         IVerificationEmail verificationEmail,
         CancellationToken cancellationToken
     )
     {
         return dialogViewer.ShowSingleStringConfirmDialogAsync(
-            async newEmail =>
-            {
-                switch (verificationEmail.IdentifierType)
-                {
-                    case UserIdentifierType.Email:
-                        await authenticationService.UpdateEmailNotVerifiedUserByEmailAsync(
-                            verificationEmail.Identifier,
-                            newEmail,
-                            cancellationToken
-                        );
-                        break;
-                    case UserIdentifierType.Login:
-                        await authenticationService.UpdateEmailNotVerifiedUserByLoginAsync(
-                            verificationEmail.Identifier,
-                            newEmail,
-                            cancellationToken
-                        );
-                        break;
-                    default: throw new ArgumentOutOfRangeException();
-                }
-
-                await dialogViewer.CloseInputDialogAsync(cancellationToken);
-            },
+            newEmail => dialogViewer.CloseInputDialogAsync(cancellationToken)
+                .ConfigureAwait(false)
+                .IfSuccessAllAsync(
+                    () =>
+                    {
+                        switch (verificationEmail.IdentifierType)
+                        {
+                            case UserIdentifierType.Email:
+                                return authenticationService.UpdateEmailNotVerifiedUserByEmailAsync(
+                                        verificationEmail.Identifier,
+                                        newEmail,
+                                        cancellationToken
+                                    )
+                                    .ConfigureAwait(false);
+                            case UserIdentifierType.Login:
+                                return authenticationService.UpdateEmailNotVerifiedUserByLoginAsync(
+                                        verificationEmail.Identifier,
+                                        newEmail,
+                                        cancellationToken
+                                    )
+                                    .ConfigureAwait(false);
+                            default: throw new ArgumentOutOfRangeException();
+                        }
+                    }
+                )
+                .ConfigureAwait(false),
             ActionHelper<TextViewModel>.Empty,
             cancellationToken
         );
     }
 
-    private static Task SendNewVerificationCodeAsync(
+    private static ValueTask<Result> SendNewVerificationCodeAsync(
         IVerificationEmail verificationEmail,
         CancellationToken cancellationToken
     )
@@ -663,12 +676,11 @@ public static class CommandStorage
                     verificationEmail.Identifier,
                     cancellationToken
                 );
-            default:
-                throw new ArgumentOutOfRangeException();
+            default: throw new ArgumentOutOfRangeException();
         }
     }
 
-    private static async Task VerificationEmailAsync(
+    private static ValueTask<Result> VerificationEmailAsync(
         IVerificationEmail verificationEmail,
         CancellationToken cancellationToken
     )
@@ -676,45 +688,52 @@ public static class CommandStorage
         switch (verificationEmail.IdentifierType)
         {
             case UserIdentifierType.Email:
-                await authenticationService.VerifiedEmailByEmailAsync(
-                    verificationEmail.Identifier,
-                    verificationEmail.VerificationCode.ToUpperInvariant(),
-                    cancellationToken
-                );
-
-                await navigator.NavigateToAsync<LoginViewModel>(cancellationToken);
-
-                return;
+                return authenticationService.VerifiedEmailByEmailAsync(
+                        verificationEmail.Identifier,
+                        verificationEmail.VerificationCode.ToUpperInvariant(),
+                        cancellationToken
+                    )
+                    .ConfigureAwait(false)
+                    .IfSuccessAsync(
+                        () => navigator.NavigateToAsync<LoginViewModel>(cancellationToken).ConfigureAwait(false)
+                    );
             case UserIdentifierType.Login:
-                await authenticationService.VerifiedEmailByLoginAsync(
-                    verificationEmail.Identifier,
-                    verificationEmail.VerificationCode.ToUpperInvariant(),
-                    cancellationToken
-                );
-
-                await navigator.NavigateToAsync<LoginViewModel>(cancellationToken);
-
-                return;
-            default:
-                throw new ArgumentOutOfRangeException();
+                return authenticationService.VerifiedEmailByLoginAsync(
+                        verificationEmail.Identifier,
+                        verificationEmail.VerificationCode.ToUpperInvariant(),
+                        cancellationToken
+                    )
+                    .ConfigureAwait(false)
+                    .IfSuccessAsync(
+                        () => navigator.NavigateToAsync<LoginViewModel>(cancellationToken).ConfigureAwait(false)
+                    );
+            default: throw new ArgumentOutOfRangeException();
         }
     }
 
-    private static async Task MultiMoveToDoItemsToRootAsync(
+    private static ValueTask<Result> MultiMoveToDoItemsToRootAsync(
         AvaloniaList<Selected<ToDoItemNotify>> itemsNotify,
         CancellationToken cancellationToken
     )
     {
-        await Task.WhenAll(
+        return Result.AwaitableFalse.IfSuccessAllAsync(
                 itemsNotify.Where(x => x.IsSelect)
-                    .Select(x => toDoService.ToDoItemToRootAsync(x.Value.Id, cancellationToken))
-            )
-            .ConfigureAwait(false);
+                    .Select<Selected<ToDoItemNotify>, Func<ConfiguredValueTaskAwaitable<Result>>>(
+                        x =>
+                        {
+                            var id = x.Value.Id;
 
-        await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
+                            return () =>
+                                toDoService.ToDoItemToRootAsync(id, cancellationToken).ConfigureAwait(false);
+                        }
+                    )
+                    .ToArray()
+            )
+            .ConfigureAwait(false)
+            .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false));
     }
 
-    private static Task MultiSetTypeToDoItemsAsync(
+    private static ValueTask<Result> MultiSetTypeToDoItemsAsync(
         AvaloniaList<Selected<ToDoItemNotify>> itemsNotify,
         CancellationToken cancellationToken
     )
@@ -722,17 +741,23 @@ public static class CommandStorage
         var ids = itemsNotify.Where(x => x.IsSelect).Select(x => x.Value.Id).ToArray();
 
         return dialogViewer.ShowItemSelectorDialogAsync<ToDoItemType>(
-            async type =>
-            {
-                await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
+            type => dialogViewer.CloseInputDialogAsync(cancellationToken)
+                .ConfigureAwait(false)
+                .IfSuccessAllAsync(
+                    ids.Select<Guid, Func<ConfiguredValueTaskAwaitable<Result>>>(
+                            x =>
+                            {
+                                var y = x;
 
-                await Task.WhenAll(
-                        ids.Select(x => toDoService.UpdateToDoItemTypeAsync(x, type, cancellationToken))
-                    )
-                    .ConfigureAwait(false);
-
-                await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
-            },
+                                return () => toDoService.UpdateToDoItemTypeAsync(y, type, cancellationToken)
+                                    .ConfigureAwait(false);
+                            }
+                        )
+                        .ToArray()
+                )
+                .ConfigureAwait(false)
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false))
+                .ConfigureAwait(false),
             viewModel =>
             {
                 viewModel.Items.AddRange(Enum.GetValues<ToDoItemType>().OfType<object>());
@@ -742,7 +767,7 @@ public static class CommandStorage
         );
     }
 
-    private static Task MultiSetParentToDoItemsAsync(
+    private static ValueTask<Result> MultiSetParentToDoItemsAsync(
         AvaloniaList<Selected<ToDoItemNotify>> itemsNotify,
         CancellationToken cancellationToken
     )
@@ -750,38 +775,46 @@ public static class CommandStorage
         var ids = itemsNotify.Where(x => x.IsSelect).Select(x => x.Value.Id).ToArray();
 
         return dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
-            async item =>
-            {
-                await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
+            item => dialogViewer.CloseInputDialogAsync(cancellationToken)
+                .ConfigureAwait(false)
+                .IfSuccessAllAsync(
+                    ids.Select<Guid, Func<ConfiguredValueTaskAwaitable<Result>>>(
+                            x =>
+                            {
+                                var y = x;
 
-                await Task.WhenAll(
-                        ids.Select(x => toDoService.UpdateToDoItemParentAsync(x, item.Id, cancellationToken))
-                    )
-                    .ConfigureAwait(false);
-
-                await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
-            },
+                                return () => toDoService.UpdateToDoItemParentAsync(y, item.Id, cancellationToken)
+                                    .ConfigureAwait(false);
+                            }
+                        )
+                        .ToArray()
+                )
+                .ConfigureAwait(false)
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false))
+                .ConfigureAwait(false),
             viewModel => viewModel.IgnoreIds.AddRange(ids),
             cancellationToken
         );
     }
 
-    private static async Task MultiSwitchCompleteToDoItemsAsync(
+    private static ValueTask<Result> MultiSwitchCompleteToDoItemsAsync(
         AvaloniaList<Selected<ToDoItemNotify>> itemsNotify,
         CancellationToken cancellationToken
     )
     {
         var items = itemsNotify.Where(x => x.IsSelect).Select(x => x.Value).ToArray();
-        await CompleteAsync(items, cancellationToken).ConfigureAwait(false);
-        await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
+
+        return CompleteAsync(items, cancellationToken)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false));
     }
 
-    private static Task CompleteAsync(
+    private static ValueTask<Result> CompleteAsync(
         IEnumerable<ToDoItemNotify> items,
         CancellationToken cancellationToken
     )
     {
-        var tasks = new List<Task>();
+        var tasks = new List<Func<ConfiguredValueTaskAwaitable<Result>>>();
 
         foreach (var item in items)
         {
@@ -790,11 +823,17 @@ public static class CommandStorage
                 case ToDoItemIsCan.None:
                     break;
                 case ToDoItemIsCan.CanComplete:
-                    tasks.Add(toDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true, cancellationToken));
+                    tasks.Add(
+                        () => toDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true, cancellationToken)
+                            .ConfigureAwait(false)
+                    );
 
                     break;
                 case ToDoItemIsCan.CanIncomplete:
-                    tasks.Add(toDoService.UpdateToDoItemCompleteStatusAsync(item.Id, false, cancellationToken));
+                    tasks.Add(
+                        () => toDoService.UpdateToDoItemCompleteStatusAsync(item.Id, false, cancellationToken)
+                            .ConfigureAwait(false)
+                    );
 
                     break;
                 default:
@@ -802,19 +841,25 @@ public static class CommandStorage
             }
         }
 
-        return Task.WhenAll(tasks);
+        return Result.AwaitableFalse.IfSuccessAllAsync(tasks.ToArray());
     }
 
-    private static Task SetToDoItemNameAsync(IToDoNameProperty property, CancellationToken cancellationToken)
+    private static ValueTask<Result> SetToDoItemNameAsync(
+        IToDoNameProperty property,
+        CancellationToken cancellationToken
+    )
     {
         return dialogViewer.ShowSingleStringConfirmDialogAsync(
-            async str =>
-            {
-                await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
-                await toDoService.UpdateToDoItemNameAsync(property.Id, str, cancellationToken)
-                    .ConfigureAwait(false);
-                await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
-            },
+            str => dialogViewer.CloseInputDialogAsync(cancellationToken)
+                .ConfigureAwait(false)
+                .IfSuccessAsync(
+                    () =>
+                        toDoService.UpdateToDoItemNameAsync(property.Id, str, cancellationToken)
+                            .ConfigureAwait(false)
+                )
+                .ConfigureAwait(false)
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false))
+                .ConfigureAwait(false),
             box =>
             {
                 box.Text = property.Name;
@@ -824,41 +869,44 @@ public static class CommandStorage
         );
     }
 
-    private static Task NavigateToCurrentToDoItemAsync(CancellationToken cancellationToken)
+    private static ValueTask<Result> NavigateToCurrentToDoItemAsync(CancellationToken cancellationToken)
     {
         return toDoService.GetCurrentActiveToDoItemAsync(cancellationToken)
             .ConfigureAwait(false)
             .IfSuccessAsync(
-                dialogViewer,
                 activeToDoItem =>
                 {
                     if (activeToDoItem.HasValue)
                     {
                         return navigator.NavigateToAsync<ToDoItemViewModel>(
-                            viewModel => viewModel.Id = activeToDoItem.Value.Id,
-                            cancellationToken
-                        );
+                                viewModel => viewModel.Id = activeToDoItem.Value.Id,
+                                cancellationToken
+                            )
+                            .ConfigureAwait(false);
                     }
 
-                    return navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken);
+                    return navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken)
+                        .ConfigureAwait(false);
                 }
             );
     }
 
-    private static Task ToDoItemRandomizeChildrenOrderIndexAsync(
+    private static ValueTask<Result> ToDoItemRandomizeChildrenOrderIndexAsync(
         IIdProperty property,
         CancellationToken cancellationToken
     )
     {
         return dialogViewer.ShowConfirmContentDialogAsync<TextViewModel>(
-            async _ =>
-            {
-                await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
-                await toDoService.RandomizeChildrenOrderIndexAsync(property.Id, cancellationToken)
-                    .ConfigureAwait(false);
-                await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
-            },
-            async _ => await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false),
+            _ => dialogViewer.CloseContentDialogAsync(cancellationToken)
+                .ConfigureAwait(false)
+                .IfSuccessAsync(
+                    () => toDoService.RandomizeChildrenOrderIndexAsync(property.Id, cancellationToken)
+                        .ConfigureAwait(false)
+                )
+                .ConfigureAwait(false)
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false))
+                .ConfigureAwait(false),
+            _ => dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false),
             viewModel =>
             {
                 viewModel.Text = "Are you sure?";
@@ -868,44 +916,55 @@ public static class CommandStorage
         );
     }
 
-    private static Task ToDoItemToStringAsync(IIdProperty property, CancellationToken cancellationToken)
+    private static ValueTask<Result> ToDoItemToStringAsync(IIdProperty property, CancellationToken cancellationToken)
     {
         return dialogViewer.ShowConfirmContentDialogAsync(
-            async view =>
+            view =>
             {
-                await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
                 var statuses = view.Statuses.Where(x => x.IsChecked).Select(x => x.Item);
                 var options = new ToDoItemToStringOptions(statuses, property.Id);
-                cancellationToken.ThrowIfCancellationRequested();
 
-                await toDoService.ToDoItemToStringAsync(options, cancellationToken)
+                return dialogViewer.CloseContentDialogAsync(cancellationToken)
                     .ConfigureAwait(false)
-                    .IfSuccessAsync(dialogViewer, text => clipboard.SetTextAsync(text));
+                    .IfSuccessAsync(
+                        () => toDoService.ToDoItemToStringAsync(options, cancellationToken)
+                            .ConfigureAwait(false)
+                            .IfSuccessAsync(text => clipboard.SetTextAsync(text).ConfigureAwait(false))
+                            .ConfigureAwait(false)
+                    )
+                    .ConfigureAwait(false);
             },
-            _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
+            _ => dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false),
             ActionHelper<ToDoItemToStringSettingsViewModel>.Empty,
             cancellationToken
         );
     }
 
-    private static async Task MoveToDoItemToRootAsync(IIdProperty property, CancellationToken cancellationToken)
+    private static ValueTask<Result> MoveToDoItemToRootAsync(IIdProperty property, CancellationToken cancellationToken)
     {
-        await toDoService.ToDoItemToRootAsync(property.Id, cancellationToken).ConfigureAwait(false);
-
-        await navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken)
-            .ConfigureAwait(false);
+        return toDoService.ToDoItemToRootAsync(property.Id, cancellationToken)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                () => navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken)
+                    .ConfigureAwait(false)
+            );
     }
 
-    private static Task SetToDoParentItemAsync(ISetToDoParentItemParams property, CancellationToken cancellationToken)
+    private static ValueTask<Result> SetToDoParentItemAsync(
+        ISetToDoParentItemParams property,
+        CancellationToken cancellationToken
+    )
     {
         return dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
-            async item =>
-            {
-                await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
-                await toDoService.UpdateToDoItemParentAsync(property.Id, item.Id, cancellationToken)
-                    .ConfigureAwait(false);
-                await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
-            },
+            item => dialogViewer.CloseInputDialogAsync(cancellationToken)
+                .ConfigureAwait(false)
+                .IfSuccessAsync(
+                    () => toDoService.UpdateToDoItemParentAsync(property.Id, item.Id, cancellationToken)
+                        .ConfigureAwait(false)
+                )
+                .ConfigureAwait(false)
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false))
+                .ConfigureAwait(false),
             viewModel =>
             {
                 viewModel.IgnoreIds.Add(property.Id);
@@ -915,18 +974,16 @@ public static class CommandStorage
         );
     }
 
-    private static Task NavigateToLeafAsync(Guid id, CancellationToken cancellationToken)
+    private static ValueTask<Result> NavigateToLeafAsync(Guid id, CancellationToken cancellationToken)
     {
         return navigator.NavigateToAsync<LeafToDoItemsViewModel>(vm => vm.Id = id, cancellationToken);
     }
 
-    private static Task AddToDoItemChildAsync(IIdProperty item, CancellationToken cancellationToken)
+    private static ValueTask<Result> AddToDoItemChildAsync(IIdProperty item, CancellationToken cancellationToken)
     {
         return dialogViewer.ShowConfirmContentDialogAsync<AddToDoItemViewModel>(
-            async viewModel =>
+            viewModel =>
             {
-                await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
-
                 var options = new AddToDoItemOptions(
                     viewModel.ParentId,
                     viewModel.ToDoItemContent.Name,
@@ -936,66 +993,82 @@ public static class CommandStorage
                     mapper.Map<Uri?>(viewModel.ToDoItemContent.Link)
                 );
 
-                await toDoService.AddToDoItemAsync(options, cancellationToken);
-                await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
+                return dialogViewer.CloseContentDialogAsync(cancellationToken)
+                    .ConfigureAwait(false)
+                    .IfSuccessAsync(
+                        () => toDoService.AddToDoItemAsync(options, cancellationToken)
+                            .ConfigureAwait(false)
+                            .ToResultOnly()
+                            .ConfigureAwait(false)
+                    )
+                    .ConfigureAwait(false)
+                    .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false))
+                    .ConfigureAwait(false);
             },
-            _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
+            _ => dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false),
             vm => vm.ParentId = item.Id,
             cancellationToken
         );
     }
 
-    private static Task ShowToDoSettingAsync(IToDoSettingsProperty property, CancellationToken cancellationToken)
+    private static ValueTask<Result> ShowToDoSettingAsync(
+        IToDoSettingsProperty property,
+        CancellationToken cancellationToken
+    )
     {
         return dialogViewer.ShowConfirmContentDialogAsync<ToDoItemSettingsViewModel>(
-            async vm =>
-            {
-                await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
-
-                await Task.WhenAll(
-                        toDoService.UpdateToDoItemNameAsync(property.Id, vm.ToDoItemContent.Name, cancellationToken),
-                        toDoService.UpdateToDoItemTypeAsync(property.Id, vm.ToDoItemContent.Type, cancellationToken),
-                        toDoService.UpdateToDoItemLinkAsync(
+            vm => dialogViewer.CloseContentDialogAsync(cancellationToken)
+                .ConfigureAwait(false)
+                .IfSuccessAllAsync(
+                    () => toDoService.UpdateToDoItemNameAsync(
+                            property.Id,
+                            vm.ToDoItemContent.Name,
+                            cancellationToken
+                        )
+                        .ConfigureAwait(false),
+                    () => toDoService.UpdateToDoItemLinkAsync(
                             property.Id,
                             mapper.Map<Uri?>(vm.ToDoItemContent.Link),
                             cancellationToken
-                        ),
-                        vm.Settings.ThrowIfNull().ApplySettingsAsync(cancellationToken)
-                    )
-                    .ConfigureAwait(false);
-
-                await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
-            },
-            _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
+                        )
+                        .ConfigureAwait(false),
+                    () => toDoService.UpdateToDoItemTypeAsync(
+                            property.Id,
+                            vm.ToDoItemContent.Type,
+                            cancellationToken
+                        )
+                        .ConfigureAwait(false),
+                    () => vm.Settings.ThrowIfNull().ApplySettingsAsync(cancellationToken).ConfigureAwait(false)
+                )
+                .ConfigureAwait(false)
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false))
+                .ConfigureAwait(false),
+            _ => dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false),
             vm => vm.ToDoItemId = property.Id,
             cancellationToken
         );
     }
 
-    private static Task SetToDoDescriptionAsync(IToDoDescriptionProperty property, CancellationToken cancellationToken)
+    private static ValueTask<Result> SetToDoDescriptionAsync(
+        IToDoDescriptionProperty property,
+        CancellationToken cancellationToken
+    )
     {
         return dialogViewer.ShowConfirmContentDialogAsync<EditDescriptionViewModel>(
-            async viewModel =>
-            {
-                await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
-
-                await toDoService.UpdateToDoItemDescriptionAsync(
-                        property.Id,
-                        viewModel.Content.Description,
-                        cancellationToken
-                    )
-                    .ConfigureAwait(false);
-
-                await toDoService.UpdateToDoItemDescriptionTypeAsync(
-                        property.Id,
-                        viewModel.Content.Type,
-                        cancellationToken
-                    )
-                    .ConfigureAwait(false);
-
-                await property.RefreshAsync(cancellationToken).ConfigureAwait(false);
-            },
-            _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
+            viewModel => dialogViewer.CloseContentDialogAsync(cancellationToken)
+                .ConfigureAwait(false)
+                .IfSuccessAsync(
+                    () => toDoService.UpdateToDoItemDescriptionAsync(
+                            property.Id,
+                            viewModel.Content.Description,
+                            cancellationToken
+                        )
+                        .ConfigureAwait(false)
+                )
+                .ConfigureAwait(false)
+                .IfSuccessAsync(() => property.RefreshAsync(cancellationToken).ConfigureAwait(false))
+                .ConfigureAwait(false),
+            _ => dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false),
             viewModel =>
             {
                 viewModel.Content.Description = property.Description;
@@ -1006,20 +1079,22 @@ public static class CommandStorage
         );
     }
 
-    private static Task SetToDoLinkAsync(IToDoLinkProperty property, CancellationToken cancellationToken)
+    private static ValueTask<Result> SetToDoLinkAsync(IToDoLinkProperty property, CancellationToken cancellationToken)
     {
         return dialogViewer.ShowSingleStringConfirmDialogAsync(
-            async value =>
-            {
-                await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
-                await toDoService.UpdateToDoItemLinkAsync(
-                        property.Id,
-                        value.IsNullOrWhiteSpace() ? null : value.ToUri(),
-                        cancellationToken
-                    )
-                    .ConfigureAwait(false);
-                await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
-            },
+            value => dialogViewer.CloseInputDialogAsync(cancellationToken)
+                .ConfigureAwait(false)
+                .IfSuccessAsync(
+                    () => toDoService.UpdateToDoItemLinkAsync(
+                            property.Id,
+                            value.IsNullOrWhiteSpace() ? null : value.ToUri(),
+                            cancellationToken
+                        )
+                        .ConfigureAwait(false)
+                )
+                .ConfigureAwait(false)
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false))
+                .ConfigureAwait(false),
             textBox =>
             {
                 textBox.Text = property.Link;
@@ -1029,15 +1104,18 @@ public static class CommandStorage
         );
     }
 
-    private static Task SetToDoTypeAsync(IToDoTypeProperty property, CancellationToken cancellationToken)
+    private static ValueTask<Result> SetToDoTypeAsync(IToDoTypeProperty property, CancellationToken cancellationToken)
     {
         return dialogViewer.ShowItemSelectorDialogAsync<ToDoItemType>(
-            async item =>
-            {
-                await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
-                await toDoService.UpdateToDoItemTypeAsync(property.Id, item, cancellationToken).ConfigureAwait(false);
-                await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
-            },
+            item => dialogViewer.CloseInputDialogAsync(cancellationToken)
+                .ConfigureAwait(false)
+                .IfSuccessAsync(
+                    () => toDoService.UpdateToDoItemTypeAsync(property.Id, item, cancellationToken)
+                        .ConfigureAwait(false)
+                )
+                .ConfigureAwait(false)
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false))
+                .ConfigureAwait(false),
             viewModel =>
             {
                 viewModel.Items.AddRange(Enum.GetValues<ToDoItemType>().OfType<object>());
@@ -1047,7 +1125,7 @@ public static class CommandStorage
         );
     }
 
-    private static Task ToDoItemSearchAsync(
+    private static ValueTask<Result> ToDoItemSearchAsync(
         IToDoItemSearchProperties properties,
         CancellationToken cancellationToken
     )
@@ -1055,36 +1133,42 @@ public static class CommandStorage
         return toDoService.SearchToDoItemIdsAsync(properties.SearchText, cancellationToken)
             .ConfigureAwait(false)
             .IfSuccessAsync(
-                dialogViewer,
                 ids => properties.ToDoSubItemsViewModel.UpdateItemsAsync(
-                    ids.ToArray(),
-                    properties,
-                    false,
-                    cancellationToken
-                )
+                        ids.ToArray(),
+                        properties,
+                        false,
+                        cancellationToken
+                    )
+                    .ConfigureAwait(false)
             );
     }
 
-    private static Task AddRootToDoItemAsync(CancellationToken cancellationToken)
+    private static ValueTask<Result> AddRootToDoItemAsync(CancellationToken cancellationToken)
     {
         return dialogViewer.ShowConfirmContentDialogAsync(
-            async view =>
+            view =>
             {
-                await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
-                cancellationToken.ThrowIfCancellationRequested();
                 var options = mapper.Map<AddRootToDoItemOptions>(view);
-                cancellationToken.ThrowIfCancellationRequested();
-                await toDoService.AddRootToDoItemAsync(options, cancellationToken).ConfigureAwait(false);
-                cancellationToken.ThrowIfCancellationRequested();
-                await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
+
+                return dialogViewer.CloseContentDialogAsync(cancellationToken)
+                    .ConfigureAwait(false)
+                    .IfSuccessAsync(
+                        () => toDoService.AddRootToDoItemAsync(options, cancellationToken)
+                            .ConfigureAwait(false)
+                            .ToResultOnly()
+                            .ConfigureAwait(false)
+                    )
+                    .ConfigureAwait(false)
+                    .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false))
+                    .ConfigureAwait(false);
             },
-            async _ => await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false),
+            _ => dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false),
             ActionHelper<AddRootToDoItemViewModel>.Empty,
             cancellationToken
         );
     }
 
-    private static Task SetToDoPeriodicityAsync(
+    private static ValueTask<Result> SetToDoPeriodicityAsync(
         IToDoTypeOfPeriodicityProperty property,
         CancellationToken cancellationToken
     )
@@ -1096,32 +1180,39 @@ public static class CommandStorage
                 return toDoService.GetWeeklyPeriodicityAsync(property.Id, cancellationToken)
                     .ConfigureAwait(false)
                     .IfSuccessAsync(
-                        dialogViewer,
                         periodicity => dialogViewer.ShowDayOfWeekSelectorInputDialogAsync(
-                            async days =>
-                            {
-                                await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
-                                await toDoService.UpdateToDoItemWeeklyPeriodicityAsync(
-                                        property.Id,
-                                        new WeeklyPeriodicity(days),
-                                        cancellationToken
+                                days => dialogViewer.CloseInputDialogAsync(cancellationToken)
+                                    .ConfigureAwait(false)
+                                    .IfSuccessAsync(
+                                        () => toDoService.UpdateToDoItemWeeklyPeriodicityAsync(
+                                                property.Id,
+                                                new WeeklyPeriodicity(days),
+                                                cancellationToken
+                                            )
+                                            .ConfigureAwait(false)
                                     )
-                                    .ConfigureAwait(false);
-                                await property.RefreshAsync(cancellationToken).ConfigureAwait(false);
-                                await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
-                            },
-                            viewModel =>
-                            {
-                                foreach (var item in viewModel.Items)
+                                    .ConfigureAwait(false)
+                                    .IfSuccessAsync(
+                                        () => property.RefreshAsync(cancellationToken).ConfigureAwait(false)
+                                    )
+                                    .ConfigureAwait(false)
+                                    .IfSuccessAsync(
+                                        () => RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false)
+                                    )
+                                    .ConfigureAwait(false),
+                                viewModel =>
                                 {
-                                    if (periodicity.Days.Contains(item.DayOfWeek))
+                                    foreach (var item in viewModel.Items)
                                     {
-                                        item.IsSelected = true;
+                                        if (periodicity.Days.Contains(item.DayOfWeek))
+                                        {
+                                            item.IsSelected = true;
+                                        }
                                     }
-                                }
-                            },
-                            cancellationToken
-                        )
+                                },
+                                cancellationToken
+                            )
+                            .ConfigureAwait(false)
                     );
             }
             case TypeOfPeriodicity.Monthly:
@@ -1129,32 +1220,39 @@ public static class CommandStorage
                 return toDoService.GetMonthlyPeriodicityAsync(property.Id, cancellationToken)
                     .ConfigureAwait(false)
                     .IfSuccessAsync(
-                        dialogViewer,
                         periodicity => dialogViewer.ShowDayOfMonthSelectorInputDialogAsync(
-                            async days =>
-                            {
-                                await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
-                                await toDoService.UpdateToDoItemMonthlyPeriodicityAsync(
-                                        property.Id,
-                                        new MonthlyPeriodicity(days),
-                                        cancellationToken
+                                days => dialogViewer.CloseInputDialogAsync(cancellationToken)
+                                    .ConfigureAwait(false)
+                                    .IfSuccessAsync(
+                                        () => toDoService.UpdateToDoItemMonthlyPeriodicityAsync(
+                                                property.Id,
+                                                new MonthlyPeriodicity(days),
+                                                cancellationToken
+                                            )
+                                            .ConfigureAwait(false)
                                     )
-                                    .ConfigureAwait(false);
-                                await property.RefreshAsync(cancellationToken).ConfigureAwait(false);
-                                await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
-                            },
-                            viewModel =>
-                            {
-                                foreach (var item in viewModel.Items)
+                                    .ConfigureAwait(false)
+                                    .IfSuccessAsync(
+                                        () => property.RefreshAsync(cancellationToken).ConfigureAwait(false)
+                                    )
+                                    .ConfigureAwait(false)
+                                    .IfSuccessAsync(
+                                        () => RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false)
+                                    )
+                                    .ConfigureAwait(false),
+                                viewModel =>
                                 {
-                                    if (periodicity.Days.Contains(item.Day))
+                                    foreach (var item in viewModel.Items)
                                     {
-                                        item.IsSelected = true;
+                                        if (periodicity.Days.Contains(item.Day))
+                                        {
+                                            item.IsSelected = true;
+                                        }
                                     }
-                                }
-                            },
-                            cancellationToken
-                        )
+                                },
+                                cancellationToken
+                            )
+                            .ConfigureAwait(false)
                     );
             }
             case TypeOfPeriodicity.Annually:
@@ -1162,35 +1260,42 @@ public static class CommandStorage
                 return toDoService.GetAnnuallyPeriodicityAsync(property.Id, cancellationToken)
                     .ConfigureAwait(false)
                     .IfSuccessAsync(
-                        dialogViewer,
                         periodicity => dialogViewer.ShowDayOfYearSelectorInputDialogAsync(
-                            async days =>
-                            {
-                                await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
-                                await toDoService.UpdateToDoItemAnnuallyPeriodicityAsync(
-                                        property.Id,
-                                        new AnnuallyPeriodicity(days),
-                                        cancellationToken
+                                days => dialogViewer.CloseInputDialogAsync(cancellationToken)
+                                    .ConfigureAwait(false)
+                                    .IfSuccessAsync(
+                                        () => toDoService.UpdateToDoItemAnnuallyPeriodicityAsync(
+                                                property.Id,
+                                                new AnnuallyPeriodicity(days),
+                                                cancellationToken
+                                            )
+                                            .ConfigureAwait(false)
                                     )
-                                    .ConfigureAwait(false);
-                                await property.RefreshAsync(cancellationToken).ConfigureAwait(false);
-                                await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
-                            },
-                            viewModel =>
-                            {
-                                foreach (var month in viewModel.Items)
+                                    .ConfigureAwait(false)
+                                    .IfSuccessAsync(
+                                        () => property.RefreshAsync(cancellationToken).ConfigureAwait(false)
+                                    )
+                                    .ConfigureAwait(false)
+                                    .IfSuccessAsync(
+                                        () => RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false)
+                                    )
+                                    .ConfigureAwait(false),
+                                viewModel =>
                                 {
-                                    foreach (var day in month.Days)
+                                    foreach (var month in viewModel.Items)
                                     {
-                                        if (periodicity.Days.Any(x => x.Month == month.Month && x.Day == day.Day))
+                                        foreach (var day in month.Days)
                                         {
-                                            day.IsSelected = true;
+                                            if (periodicity.Days.Any(x => x.Month == month.Month && x.Day == day.Day))
+                                            {
+                                                day.IsSelected = true;
+                                            }
                                         }
                                     }
-                                }
-                            },
-                            cancellationToken
-                        )
+                                },
+                                cancellationToken
+                            )
+                            .ConfigureAwait(false)
                     );
             }
             case TypeOfPeriodicity.Daily:
@@ -1200,20 +1305,24 @@ public static class CommandStorage
         }
     }
 
-    private static Task SetToDoTypeOfPeriodicityAsync(
+    private static ValueTask<Result> SetToDoTypeOfPeriodicityAsync(
         IToDoTypeOfPeriodicityProperty property,
         CancellationToken cancellationToken
     )
     {
         return dialogViewer.ShowItemSelectorDialogAsync<TypeOfPeriodicity>(
-            async value =>
-            {
-                await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
-                await toDoService.UpdateToDoItemTypeOfPeriodicityAsync(property.Id, value, cancellationToken)
-                    .ConfigureAwait(false);
-                await property.RefreshAsync(cancellationToken).ConfigureAwait(false);
-                await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
-            },
+            value => dialogViewer.CloseInputDialogAsync(cancellationToken)
+                .ConfigureAwait(false)
+                .IfSuccessAsync(
+                    () =>
+                        toDoService.UpdateToDoItemTypeOfPeriodicityAsync(property.Id, value, cancellationToken)
+                            .ConfigureAwait(false)
+                )
+                .ConfigureAwait(false)
+                .IfSuccessAsync(() => property.RefreshAsync(cancellationToken).ConfigureAwait(false))
+                .ConfigureAwait(false)
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false))
+                .ConfigureAwait(false),
             calendar =>
             {
                 calendar.Items.AddRange(Enum.GetValues<TypeOfPeriodicity>().OfType<object>());
@@ -1223,103 +1332,136 @@ public static class CommandStorage
         );
     }
 
-    private static Task SetToDoYearsOffsetAsync(IToDoYearsOffsetProperty property, CancellationToken cancellationToken)
+    private static ValueTask<Result> SetToDoYearsOffsetAsync(
+        IToDoYearsOffsetProperty property,
+        CancellationToken cancellationToken
+    )
     {
         return dialogViewer.ShowNumberUInt16InputDialogAsync(
-            async value =>
-            {
-                await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
-                await toDoService.UpdateToDoItemYearsOffsetAsync(property.Id, value, cancellationToken)
-                    .ConfigureAwait(false);
-                await property.RefreshAsync(cancellationToken).ConfigureAwait(false);
-                await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
-            },
+            value => dialogViewer.CloseInputDialogAsync(cancellationToken)
+                .ConfigureAwait(false)
+                .IfSuccessAsync(
+                    () => toDoService.UpdateToDoItemYearsOffsetAsync(property.Id, value, cancellationToken)
+                        .ConfigureAwait(false)
+                )
+                .ConfigureAwait(false)
+                .IfSuccessAsync(() => property.RefreshAsync(cancellationToken).ConfigureAwait(false))
+                .ConfigureAwait(false)
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false))
+                .ConfigureAwait(false),
             calendar => calendar.Value = property.YearsOffset,
             cancellationToken
         );
     }
 
-    private static Task SetToDoWeeksOffsetAsync(IToDoWeeksOffsetProperty property, CancellationToken cancellationToken)
+    private static ValueTask<Result> SetToDoWeeksOffsetAsync(
+        IToDoWeeksOffsetProperty property,
+        CancellationToken cancellationToken
+    )
     {
         return dialogViewer.ShowNumberUInt16InputDialogAsync(
-            async value =>
-            {
-                await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
-                await toDoService.UpdateToDoItemWeeksOffsetAsync(property.Id, value, cancellationToken)
-                    .ConfigureAwait(false);
-                await property.RefreshAsync(cancellationToken).ConfigureAwait(false);
-                await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
-            },
+            value => dialogViewer.CloseInputDialogAsync(cancellationToken)
+                .ConfigureAwait(false)
+                .IfSuccessAsync(
+                    () => toDoService.UpdateToDoItemWeeksOffsetAsync(property.Id, value, cancellationToken)
+                        .ConfigureAwait(false)
+                )
+                .ConfigureAwait(false)
+                .IfSuccessAsync(() => property.RefreshAsync(cancellationToken).ConfigureAwait(false))
+                .ConfigureAwait(false)
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false))
+                .ConfigureAwait(false),
             calendar => calendar.Value = property.WeeksOffset,
             cancellationToken
         );
     }
 
-    private static Task SetToDoMonthsOffsetAsync(
+    private static ValueTask<Result> SetToDoMonthsOffsetAsync(
         IToDoMonthsOffsetProperty property,
         CancellationToken cancellationToken
     )
     {
         return dialogViewer.ShowNumberUInt16InputDialogAsync(
-            async value =>
-            {
-                await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
-                await toDoService.UpdateToDoItemMonthsOffsetAsync(property.Id, value, cancellationToken)
-                    .ConfigureAwait(false);
-                await property.RefreshAsync(cancellationToken).ConfigureAwait(false);
-                await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
-            },
+            value => dialogViewer.CloseInputDialogAsync(cancellationToken)
+                .ConfigureAwait(false)
+                .IfSuccessAsync(
+                    () => toDoService.UpdateToDoItemMonthsOffsetAsync(property.Id, value, cancellationToken)
+                        .ConfigureAwait(false)
+                )
+                .ConfigureAwait(false)
+                .IfSuccessAsync(() => property.RefreshAsync(cancellationToken).ConfigureAwait(false))
+                .ConfigureAwait(false)
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false))
+                .ConfigureAwait(false),
             calendar => calendar.Value = property.MonthsOffset,
             cancellationToken
         );
     }
 
-    private static Task SetToDoDaysOffsetAsync(IToDoDaysOffsetProperty property, CancellationToken cancellationToken)
+    private static ValueTask<Result> SetToDoDaysOffsetAsync(
+        IToDoDaysOffsetProperty property,
+        CancellationToken cancellationToken
+    )
     {
         return dialogViewer.ShowNumberUInt16InputDialogAsync(
-            async value =>
+            value =>
             {
-                await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
-                await toDoService.UpdateToDoItemDaysOffsetAsync(property.Id, value, cancellationToken)
+                return dialogViewer.CloseInputDialogAsync(cancellationToken)
+                    .ConfigureAwait(false)
+                    .IfSuccessAsync(
+                        () => toDoService.UpdateToDoItemDaysOffsetAsync(property.Id, value, cancellationToken)
+                            .ConfigureAwait(false)
+                    )
+                    .ConfigureAwait(false)
+                    .IfSuccessAsync(() => property.RefreshAsync(cancellationToken).ConfigureAwait(false))
+                    .ConfigureAwait(false)
+                    .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false))
                     .ConfigureAwait(false);
-                await property.RefreshAsync(cancellationToken).ConfigureAwait(false);
-                await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
             },
             calendar => calendar.Value = property.DaysOffset,
             cancellationToken
         );
     }
 
-    private static Task SetToDoDueDateAsync(IToDoDueDateProperty property, CancellationToken cancellationToken)
+    private static ValueTask<Result> SetToDoDueDateAsync(
+        IToDoDueDateProperty property,
+        CancellationToken cancellationToken
+    )
     {
         return dialogViewer.ShowDateConfirmDialogAsync(
-            async value =>
-            {
-                await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
-                await toDoService.UpdateToDoItemDueDateAsync(property.Id, value.ToDateOnly(), cancellationToken)
-                    .ConfigureAwait(false);
-                await property.RefreshAsync(cancellationToken).ConfigureAwait(false);
-                await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
-            },
+            value => dialogViewer.CloseInputDialogAsync(cancellationToken)
+                .ConfigureAwait(false)
+                .IfSuccessAsync(
+                    () => toDoService.UpdateToDoItemDueDateAsync(property.Id, value.ToDateOnly(), cancellationToken)
+                        .ConfigureAwait(false)
+                )
+                .ConfigureAwait(false)
+                .IfSuccessAsync(() => property.RefreshAsync(cancellationToken).ConfigureAwait(false))
+                .ConfigureAwait(false)
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false))
+                .ConfigureAwait(false),
             calendar => calendar.SelectedDate = property.DueDate.ToDateTime(),
             cancellationToken
         );
     }
 
-    private static Task SetToDoChildrenTypeAsync(
+    private static ValueTask<Result> SetToDoChildrenTypeAsync(
         IToDoChildrenTypeProperty property,
         CancellationToken cancellationToken
     )
     {
         return dialogViewer.ShowItemSelectorDialogAsync<ToDoItemChildrenType>(
-            async item =>
-            {
-                await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
-                await toDoService.UpdateToDoItemChildrenTypeAsync(property.Id, item, cancellationToken)
-                    .ConfigureAwait(false);
-                await property.RefreshAsync(cancellationToken).ConfigureAwait(false);
-                await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
-            },
+            item => dialogViewer.CloseInputDialogAsync(cancellationToken)
+                .ConfigureAwait(false)
+                .IfSuccessAsync(
+                    () => toDoService.UpdateToDoItemChildrenTypeAsync(property.Id, item, cancellationToken)
+                        .ConfigureAwait(false)
+                )
+                .ConfigureAwait(false)
+                .IfSuccessAsync(() => property.RefreshAsync(cancellationToken).ConfigureAwait(false))
+                .ConfigureAwait(false)
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false))
+                .ConfigureAwait(false),
             viewModel =>
             {
                 viewModel.Items.AddRange(Enum.GetValues<ToDoItemChildrenType>().OfType<object>());
@@ -1329,28 +1471,43 @@ public static class CommandStorage
         );
     }
 
-    private static async Task LogoutAsync(CancellationToken cancellationToken)
+    private static ValueTask<Result> LogoutAsync(CancellationToken cancellationToken)
     {
-        if (await objectStorage.IsExistsAsync(StorageIds.LoginId).ConfigureAwait(false))
-        {
-            await objectStorage.DeleteAsync(StorageIds.LoginId).ConfigureAwait(false);
-        }
+        return objectStorage.IsExistsAsync(StorageIds.LoginId)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                value =>
+                {
+                    if (value)
+                    {
+                        return objectStorage.DeleteAsync(StorageIds.LoginId).ConfigureAwait(false);
+                    }
 
-        await navigator.NavigateToAsync(ActionHelper<LoginViewModel>.Empty, cancellationToken).ConfigureAwait(false);
-        await cancellationToken.InvokeUIBackgroundAsync(() => mainSplitViewModel.IsPaneOpen = false);
+                    return Result.AwaitableFalse;
+                }
+            )
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                () => navigator.NavigateToAsync(ActionHelper<LoginViewModel>.Empty, cancellationToken)
+                    .ConfigureAwait(false)
+            )
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                () => cancellationToken.InvokeUIBackgroundAsync(() => mainSplitViewModel.IsPaneOpen = false)
+                    .ConfigureAwait(false)
+            );
     }
 
-    private static Task RememberMeAsync(ILoginProperties properties, CancellationToken cancellationToken)
+    private static ValueTask<Result> RememberMeAsync(ILoginProperties properties, CancellationToken cancellationToken)
     {
         if (!properties.IsRememberMe)
         {
-            return Task.CompletedTask;
+            return Result.SuccessValueTask;
         }
 
         return tokenService.GetTokenAsync(cancellationToken)
             .ConfigureAwait(false)
             .IfSuccessAsync(
-                dialogViewer,
                 token =>
                 {
                     var item = new LoginStorageItem
@@ -1358,55 +1515,69 @@ public static class CommandStorage
                         Token = token,
                     };
 
-                    return objectStorage.SaveObjectAsync(StorageIds.LoginId, item);
+                    return objectStorage.SaveObjectAsync(StorageIds.LoginId, item).ConfigureAwait(false);
                 }
             );
     }
 
-    private static async Task NavigateToAsync(Type type, CancellationToken cancellationToken)
+    private static ValueTask<Result> NavigateToAsync(Type type, CancellationToken cancellationToken)
     {
-        await navigator.NavigateToAsync(type, cancellationToken);
-        await cancellationToken.InvokeUIBackgroundAsync(() => mainSplitViewModel.IsPaneOpen = false);
+        return navigator.NavigateToAsync(type, cancellationToken)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                () => cancellationToken.InvokeUIBackgroundAsync(() => mainSplitViewModel.IsPaneOpen = false)
+                    .ConfigureAwait(false)
+            );
     }
 
-    private static Task BackAsync(CancellationToken cancellationToken)
+    private static async ValueTask<Result> BackAsync(CancellationToken cancellationToken)
     {
-        return navigator.NavigateBackAsync(cancellationToken);
+        var result = await navigator.NavigateBackAsync(cancellationToken);
+
+        return new Result(result.Errors);
     }
 
-    private static async Task SetDueDateTimeAsync(IDueDateTimeProperty property, CancellationToken cancellationToken)
+    private static ValueTask<Result> SetDueDateTimeAsync(
+        IDueDateTimeProperty property,
+        CancellationToken cancellationToken
+    )
     {
-        await dialogViewer.ShowDateTimeConfirmDialogAsync(
-                async value =>
-                {
-                    await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
-                    await cancellationToken.InvokeUIBackgroundAsync(() => property.DueDateTime = value);
-                },
-                calendar =>
-                {
-                    calendar.SelectedDate = DateTimeOffset.Now.ToCurrentDay().DateTime;
-                    calendar.SelectedTime = TimeSpan.Zero;
-                },
-                cancellationToken
-            )
-            .ConfigureAwait(false);
+        return dialogViewer.ShowDateTimeConfirmDialogAsync(
+            value => dialogViewer.CloseInputDialogAsync(cancellationToken)
+                .ConfigureAwait(false)
+                .IfSuccessAsync(
+                    () => cancellationToken.InvokeUIBackgroundAsync(() => property.DueDateTime = value)
+                        .ConfigureAwait(false)
+                )
+                .ConfigureAwait(false),
+            calendar =>
+            {
+                calendar.SelectedDate = DateTimeOffset.Now.ToCurrentDay().DateTime;
+                calendar.SelectedTime = TimeSpan.Zero;
+            },
+            cancellationToken
+        );
     }
 
-    private static Task SetToDoShortItemAsync(IToDoShortItemProperty property, CancellationToken cancellationToken)
+    private static ValueTask<Result> SetToDoShortItemAsync(
+        IToDoShortItemProperty property,
+        CancellationToken cancellationToken
+    )
     {
         return dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
-            async itemNotify =>
-            {
-                await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
-
-                await cancellationToken.InvokeUIBackgroundAsync(
-                    () => property.ShortItem = new()
-                    {
-                        Id = itemNotify.Id,
-                        Name = itemNotify.Name
-                    }
-                );
-            },
+            itemNotify => dialogViewer.CloseInputDialogAsync(cancellationToken)
+                .ConfigureAwait(false)
+                .IfSuccessAsync(
+                    () => cancellationToken.InvokeUIBackgroundAsync(
+                            () => property.ShortItem = new()
+                            {
+                                Id = itemNotify.Id,
+                                Name = itemNotify.Name
+                            }
+                        )
+                        .ConfigureAwait(false)
+                )
+                .ConfigureAwait(false),
             view =>
             {
                 if (property.ShortItem is null)
@@ -1415,130 +1586,147 @@ public static class CommandStorage
                 }
 
                 view.DefaultSelectedItemId = property.ShortItem.Id;
+
+                return;
             },
             cancellationToken
         );
     }
 
-    private static async Task RemoveFavoriteToDoItemAsync(Guid id, CancellationToken cancellationToken)
+    private static ValueTask<Result> RemoveFavoriteToDoItemAsync(Guid id, CancellationToken cancellationToken)
     {
-        await toDoService.RemoveFavoriteToDoItemAsync(id, cancellationToken).ConfigureAwait(false);
-        await RefreshCurrentViewAsync(cancellationToken);
+        return toDoService.RemoveFavoriteToDoItemAsync(id, cancellationToken)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false));
     }
 
-    private static async Task AddFavoriteToDoItemAsync(Guid id, CancellationToken cancellationToken)
+    private static ValueTask<Result> AddFavoriteToDoItemAsync(Guid id, CancellationToken cancellationToken)
     {
-        await toDoService.AddFavoriteToDoItemAsync(id, cancellationToken).ConfigureAwait(false);
-        await RefreshCurrentViewAsync(cancellationToken);
+        return toDoService.AddFavoriteToDoItemAsync(id, cancellationToken)
+            .ConfigureAwait(false)
+            .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false));
     }
 
-    private static async Task OpenLinkAsync(ILink item, CancellationToken cancellationToken)
+    private static ValueTask<Result> OpenLinkAsync(ILink item, CancellationToken cancellationToken)
     {
         var link = item.Link.ThrowIfNull().ToUri();
-        cancellationToken.ThrowIfCancellationRequested();
-        await openerLink.OpenLinkAsync(link, cancellationToken).ConfigureAwait(false);
+
+        return openerLink.OpenLinkAsync(link, cancellationToken);
     }
 
-    private static async Task ChangeOrderIndexAsync(ToDoItemNotify item, CancellationToken cancellationToken)
+    private static ValueTask<Result> ChangeOrderIndexAsync(ToDoItemNotify item, CancellationToken cancellationToken)
     {
-        await dialogViewer.ShowConfirmContentDialogAsync<ChangeToDoItemOrderIndexViewModel>(
-                async viewModel =>
-                {
-                    await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
-                    var targetId = viewModel.SelectedItem.ThrowIfNull().Id;
-                    var options = new UpdateOrderIndexToDoItemOptions(viewModel.Id, targetId, viewModel.IsAfter);
-                    cancellationToken.ThrowIfCancellationRequested();
-                    await toDoService.UpdateToDoItemOrderIndexAsync(options, cancellationToken).ConfigureAwait(false);
-                    cancellationToken.ThrowIfCancellationRequested();
-                    await RefreshCurrentViewAsync(cancellationToken);
-                },
-                _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
-                viewModel => viewModel.Id = item.Id,
-                cancellationToken
-            )
-            .ConfigureAwait(false);
+        return dialogViewer.ShowConfirmContentDialogAsync<ChangeToDoItemOrderIndexViewModel>(
+            viewModel =>
+            {
+                var targetId = viewModel.SelectedItem.ThrowIfNull().Id;
+                var options = new UpdateOrderIndexToDoItemOptions(viewModel.Id, targetId, viewModel.IsAfter);
+
+                return dialogViewer.CloseContentDialogAsync(cancellationToken)
+                    .ConfigureAwait(false)
+                    .IfSuccessAsync(
+                        () =>
+                            toDoService.UpdateToDoItemOrderIndexAsync(options, cancellationToken)
+                                .ConfigureAwait(false)
+                    )
+                    .ConfigureAwait(false)
+                    .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false))
+                    .ConfigureAwait(false);
+            },
+            _ => dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false),
+            viewModel => viewModel.Id = item.Id,
+            cancellationToken
+        );
     }
 
-    private static async Task CloneToDoItemAsync(IIdProperty id, CancellationToken cancellationToken)
+    private static ValueTask<Result> CloneToDoItemAsync(IIdProperty id, CancellationToken cancellationToken)
     {
-        await dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
-                async itemNotify =>
-                {
-                    await dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false);
-                    await toDoService.CloneToDoItemAsync(id.Id, itemNotify.Id, cancellationToken);
-                    await RefreshCurrentViewAsync(cancellationToken);
-                },
-                view => view.DefaultSelectedItemId = id.Id,
-                cancellationToken
-            )
-            .ConfigureAwait(false);
+        return dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
+            itemNotify => dialogViewer.CloseInputDialogAsync(cancellationToken)
+                .ConfigureAwait(false)
+                .IfSuccessAsync(
+                    () => toDoService.CloneToDoItemAsync(id.Id, itemNotify.Id, cancellationToken)
+                        .ConfigureAwait(false)
+                )
+                .ConfigureAwait(false)
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false))
+                .ConfigureAwait(false),
+            view => view.DefaultSelectedItemId = id.Id,
+            cancellationToken
+        );
     }
 
-    private static Task ChangeToActiveDoItemAsync(CancellationToken cancellationToken)
+    private static ValueTask<Result> ChangeToActiveDoItemAsync(CancellationToken cancellationToken)
     {
         return toDoService.GetCurrentActiveToDoItemAsync(cancellationToken)
             .ConfigureAwait(false)
             .IfSuccessAsync(
-                dialogViewer,
                 item =>
                 {
                     if (item is null)
                     {
-                        return navigator.NavigateToAsync<RootToDoItemsViewModel>(cancellationToken);
+                        return navigator.NavigateToAsync<RootToDoItemsViewModel>(cancellationToken)
+                            .ConfigureAwait(false);
                     }
 
                     return navigator.NavigateToAsync<ToDoItemViewModel>(
-                        view => view.Id = item.Value.Id,
-                        cancellationToken
-                    );
+                            view => view.Id = item.Value.Id,
+                            cancellationToken
+                        )
+                        .ConfigureAwait(false);
                 }
             );
     }
 
-    private static async Task DeleteToDoItemAsync(IDeletable deletable, CancellationToken cancellationToken)
+    private static ValueTask<Result> DeleteToDoItemAsync(
+        IDeletable deletable,
+        CancellationToken cancellationToken
+    )
     {
-        await dialogViewer.ShowConfirmContentDialogAsync<DeleteToDoItemViewModel>(
-                async _ =>
-                {
-                    await dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false);
-
-                    await toDoService.DeleteToDoItemAsync(deletable.Id, cancellationToken)
-                        .ConfigureAwait(false);
-
-                    if (deletable.IsNavigateToParent)
+        return dialogViewer.ShowConfirmContentDialogAsync<DeleteToDoItemViewModel>(
+            _ => dialogViewer.CloseContentDialogAsync(cancellationToken)
+                .ConfigureAwait(false)
+                .IfSuccessAsync(
+                    () => toDoService.DeleteToDoItemAsync(deletable.Id, cancellationToken)
+                        .ConfigureAwait(false)
+                )
+                .ConfigureAwait(false)
+                .IfSuccessAsync(
+                    () =>
                     {
-                        if (deletable.ParentId is null)
+                        if (deletable.IsNavigateToParent)
                         {
-                            await navigator.NavigateToAsync<RootToDoItemsViewModel>(cancellationToken)
-                                .ConfigureAwait(false);
-                        }
-                        else
-                        {
-                            await navigator.NavigateToAsync<ToDoItemViewModel>(
+                            if (deletable.ParentId is null)
+                            {
+                                return navigator.NavigateToAsync<RootToDoItemsViewModel>(cancellationToken)
+                                    .ConfigureAwait(false);
+                            }
+
+                            return navigator.NavigateToAsync<ToDoItemViewModel>(
                                     viewModel => viewModel.Id = deletable.ParentId.Value,
                                     cancellationToken
                                 )
                                 .ConfigureAwait(false);
                         }
 
-                        return;
+                        return Result.AwaitableFalse;
                     }
-
-                    await RefreshCurrentViewAsync(cancellationToken);
-                },
-                _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
-                view => view.ToDoItemId = deletable.Id,
-                cancellationToken
-            )
-            .ConfigureAwait(false);
+                )
+                .ConfigureAwait(false)
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false))
+                .ConfigureAwait(false),
+            _ => dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false),
+            view => view.ToDoItemId = deletable.Id,
+            cancellationToken
+        );
     }
 
-    private static async Task SelectAllAsync(
+    private static ValueTask<Result> SelectAllAsync(
         AvaloniaList<Selected<ToDoItemNotify>> items,
         CancellationToken cancellationToken
     )
     {
-        await cancellationToken.InvokeUIBackgroundAsync(
+        return cancellationToken.InvokeUIBackgroundAsync(
             () =>
             {
                 if (items.All(x => x.IsSelect))
@@ -1559,70 +1747,67 @@ public static class CommandStorage
         );
     }
 
-    private static async Task SwitchCompleteToDoItemAsync(
+    private static ValueTask<Result> SwitchCompleteToDoItemAsync(
         ICanCompleteProperty property,
         CancellationToken cancellationToken
     )
     {
-        switch (property.IsCan)
-        {
-            case ToDoItemIsCan.None:
-                break;
-            case ToDoItemIsCan.CanComplete:
-                await toDoService.UpdateToDoItemCompleteStatusAsync(
-                        property.Id,
-                        true,
-                        cancellationToken
-                    )
-                    .ConfigureAwait(false);
-                break;
-            case ToDoItemIsCan.CanIncomplete:
-                await toDoService.UpdateToDoItemCompleteStatusAsync(
-                        property.Id,
-                        false,
-                        cancellationToken
-                    )
-                    .ConfigureAwait(false);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-
-
-        await RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false);
+        return Result.AwaitableFalse.IfSuccessAsync(
+                () =>
+                {
+                    switch (property.IsCan)
+                    {
+                        case ToDoItemIsCan.None:
+                            return Result.AwaitableFalse;
+                        case ToDoItemIsCan.CanComplete:
+                            return toDoService.UpdateToDoItemCompleteStatusAsync(
+                                    property.Id,
+                                    true,
+                                    cancellationToken
+                                )
+                                .ConfigureAwait(false);
+                        case ToDoItemIsCan.CanIncomplete:
+                            return toDoService.UpdateToDoItemCompleteStatusAsync(
+                                    property.Id,
+                                    false,
+                                    cancellationToken
+                                )
+                                .ConfigureAwait(false);
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                }
+            )
+            .ConfigureAwait(false)
+            .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false));
     }
 
-    public static async Task RefreshCurrentViewAsync(CancellationToken cancellationToken)
+    public static ValueTask<Result> RefreshCurrentViewAsync(CancellationToken cancellationToken)
     {
         if (mainSplitViewModel.Content is not IRefresh refresh)
         {
-            return;
+            return Result.SuccessValueTask;
         }
 
-        try
-        {
-            await refresh.RefreshAsync(cancellationToken).ConfigureAwait(false);
-        }
-        catch (GrpcException e) when (e.InnerException is OperationCanceledException)
-        {
-        }
+        return refresh.RefreshAsync(cancellationToken);
     }
 
-    private static Task NavigateToToDoItemAsync(Guid id, CancellationToken cancellationToken)
+    private static ValueTask<Result> NavigateToToDoItemAsync(Guid id, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         return navigator.NavigateToAsync<ToDoItemViewModel>(vm => vm.Id = id, cancellationToken);
     }
 
-    private static async Task SwitchPaneAsync(CancellationToken cancellationToken)
+    private static ValueTask<Result> SwitchPaneAsync(CancellationToken cancellationToken)
     {
-        cancellationToken.ThrowIfCancellationRequested();
-        await cancellationToken.InvokeUIBackgroundAsync(() => mainSplitViewModel.IsPaneOpen = !mainSplitViewModel.IsPaneOpen);
+        return cancellationToken.InvokeUIBackgroundAsync(
+            () => mainSplitViewModel.IsPaneOpen = !mainSplitViewModel.IsPaneOpen
+        );
     }
 
     public static CommandItem CreateCommand(
-        Func<CancellationToken, Task> func,
+        Func<CancellationToken, ValueTask<Result>> func,
         MaterialIconKind icon,
         string name
     )
@@ -1634,7 +1819,7 @@ public static class CommandStorage
     }
 
     public static CommandItem CreateCommand<TParam>(
-        Func<TParam, CancellationToken, Task> func,
+        Func<TParam, CancellationToken, ValueTask<Result>> func,
         MaterialIconKind icon,
         string name
     )
@@ -1673,11 +1858,12 @@ public static class CommandStorage
         Log.Logger.Error(exception, "UI error");
 
         await dialogViewer.ShowInfoErrorDialogAsync<ExceptionViewModel>(
-            async _ =>
-            {
-                await dialogViewer.CloseErrorDialogAsync(CancellationToken.None);
-                await dialogViewer.CloseProgressDialogAsync(CancellationToken.None);
-            },
+            _ => dialogViewer.CloseErrorDialogAsync(CancellationToken.None)
+                .ConfigureAwait(false)
+                .IfSuccessAsync(
+                    () => dialogViewer.CloseProgressDialogAsync(CancellationToken.None).ConfigureAwait(false)
+                )
+                .ConfigureAwait(false),
             viewModel => viewModel.Exception = exception,
             CancellationToken.None
         );

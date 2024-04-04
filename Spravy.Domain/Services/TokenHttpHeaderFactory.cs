@@ -13,11 +13,18 @@ public class TokenHttpHeaderFactory : IHttpHeaderFactory
         this.tokenService = tokenService;
     }
 
-    public Task<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsAsync(
+    public ValueTask<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsAsync(
         CancellationToken cancellationToken
     )
     {
         return tokenService.GetTokenAsync(cancellationToken)
-            .IfSuccessAsync(value => HttpHeaderItem.CreateBearerAuthorization(value).ToReadOnlyMemory().ToResult());
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                value => HttpHeaderItem.CreateBearerAuthorization(value)
+                    .ToReadOnlyMemory()
+                    .ToResult()
+                    .ToValueTaskResult()
+                    .ConfigureAwait(false)
+            );
     }
 }

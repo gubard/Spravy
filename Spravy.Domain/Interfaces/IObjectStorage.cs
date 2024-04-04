@@ -1,9 +1,11 @@
+using Spravy.Domain.Models;
+
 namespace Spravy.Domain.Interfaces;
 
 public interface IObjectStorage
 {
-    Task<bool> IsExistsAsync(string id);
-    Task DeleteAsync(string id);
-    Task SaveObjectAsync(string id, object obj);
-    Task<TObject> GetObjectAsync<TObject>(string id);
+    ValueTask<Result<bool>> IsExistsAsync(string id);
+    ValueTask<Result> DeleteAsync(string id);
+    ValueTask<Result> SaveObjectAsync(string id, object obj);
+    ValueTask<Result<TObject>> GetObjectAsync<TObject>(string id);
 }

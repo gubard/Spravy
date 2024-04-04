@@ -9,20 +9,20 @@ using Spravy.Ui.Models;
 using System;
 using System.Threading;
 using Ninject;
+using Spravy.Domain.Extensions;
 using Spravy.PasswordGenerator.Domain.Interfaces;
 using Spravy.Ui.Extensions;
+using Spravy.Ui.Services;
 
 namespace Spravy.Ui.Features.PasswordGenerator.ViewModels;
 
-public class DeletePasswordItemViewModel : NavigatableViewModelBase
+public class DeletePasswordItemViewModel : ViewModelBase
 {
-    public DeletePasswordItemViewModel() : base(true)
+    public DeletePasswordItemViewModel()
     {
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
         this.WhenAnyValue(x => x.PasswordItemName).Subscribe(_ => this.RaisePropertyChanged(nameof(DeleteText)));
     }
-
-    public override string ViewId => TypeCache<DeletePasswordItemViewModel>.Type.Name;
 
     public ICommand InitializedCommand { get; }
 
@@ -44,27 +44,12 @@ public class DeletePasswordItemViewModel : NavigatableViewModelBase
             }
         );
 
-    public override void Stop()
-    {
-    }
-
-    public override Task SetStateAsync(object setting)
-    {
-        return Task.CompletedTask;
-    }
-
-    public override Task SaveStateAsync()
-    {
-        return Task.CompletedTask;
-    }
-
-    private Task InitializedAsync(CancellationToken cancellationToken)
+    private ValueTask<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         return PasswordService.GetPasswordItemAsync(PasswordItemId, cancellationToken)
             .ConfigureAwait(false)
             .IfSuccessAsync(
-                DialogViewer,
-                async value => { await this.InvokeUIBackgroundAsync(() => PasswordItemName = value.Name); }
+                value => this.InvokeUIBackgroundAsync(() => PasswordItemName = value.Name).ConfigureAwait(false)
             );
     }
 }

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Avalonia.Collections;
 using ReactiveUI.Fody.Helpers;
 using Spravy.Domain.Helpers;
+using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.Ui.Models;
 
@@ -27,17 +28,18 @@ public class ToDoItemContentViewModel : NavigatableViewModelBase
 
     public override string ViewId => TypeCache<ToDoItemContentViewModel>.Type.Name;
 
-    public override void Stop()
+    public override Result Stop()
     {
+        return Result.Success;
     }
 
-    public override Task SetStateAsync(object setting)
+    public override ValueTask<Result> SetStateAsync(object setting)
     {
-        return Task.CompletedTask;
+        return Result.SuccessValueTask;
     }
 
-    public override Task SaveStateAsync()
+    public override ValueTask<Result> SaveStateAsync()
     {
-        return Task.CompletedTask;
+        return Result.SuccessValueTask;
     }
 }

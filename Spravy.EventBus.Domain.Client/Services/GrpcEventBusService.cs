@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using Google.Protobuf;
+using Spravy.Client.Extensions;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
 using Spravy.Domain.Extensions;
@@ -39,32 +40,33 @@ public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
         );
     }
 
-    public Task<Result> PublishEventAsync(Guid eventId, byte[] content, CancellationToken cancellationToken)
+    public ValueTask<Result> PublishEventAsync(Guid eventId, byte[] content, CancellationToken cancellationToken)
     {
         return CallClientAsync(
-            client =>
-                metadataFactory.CreateAsync(cancellationToken)
-                    .IfSuccessAsync(
-                        converter.Convert<ByteString>(eventId),
-                        converter.Convert<ByteString>(content),
-                        async (value, ei, c) =>
+            client => metadataFactory.CreateAsync(cancellationToken)
+                .ConfigureAwait(false)
+                .IfSuccessAsync(
+                    converter.Convert<ByteString>(eventId),
+                    converter.Convert<ByteString>(content),
+                    (value, ei, c) =>
+                    {
+                        var request = new PublishEventRequest
                         {
-                            var request = new PublishEventRequest
-                            {
-                                EventId = ei,
-                                Content = c,
-                            };
+                            EventId = ei,
+                            Content = c,
+                        };
 
-                            await client.PublishEventAsync(request, value, cancellationToken: cancellationToken);
-
-                            return Result.Success;
-                        }
-                    ),
+                        return client.PublishEventAsync(request, value, cancellationToken: cancellationToken)
+                            .ToValueTaskResultOnly()
+                            .ConfigureAwait(false);
+                    }
+                )
+                .ConfigureAwait(false),
             cancellationToken
         );
     }
 
-    public Task<Result<ReadOnlyMemory<EventValue>>> GetEventsAsync(
+    public ValueTask<Result<ReadOnlyMemory<EventValue>>> GetEventsAsync(
         ReadOnlyMemory<Guid> eventIds,
         CancellationToken cancellationToken
     )
@@ -72,23 +74,34 @@ public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
         return CallClientAsync(
             client =>
                 metadataFactory.CreateAsync(cancellationToken)
+                    .ConfigureAwait(false)
                     .IfSuccessAsync(
                         converter.Convert<ByteString[]>(eventIds.ToArray()),
-                        async (value, ei) =>
+                        (value, ei) =>
                         {
                             var request = new GetEventsRequest();
                             request.EventIds.AddRange(ei);
 
-                            var events = await client.GetEventsAsync(
-                                request,
-                                value,
-                                cancellationToken: cancellationToken
-                            );
-
-                            return converter.Convert<EventValue[]>(events.Events)
-                                .IfSuccess(e => e.ToReadOnlyMemory().ToResult());
+                            return client.GetEventsAsync(
+                                    request,
+                                    value,
+                                    cancellationToken: cancellationToken
+                                )
+                                .ToValueTaskResultValueOnly()
+                                .ConfigureAwait(false)
+                                .IfSuccessAsync(
+                                    events => converter.Convert<EventValue[]>(events.Events)
+                                        .IfSuccess(
+                                            e => e.ToReadOnlyMemory()
+                                                .ToResult()
+                                        )
+                                        .ToValueTaskResult()
+                                        .ConfigureAwait(false)
+                                )
+                                .ConfigureAwait(false);
                         }
-                    ),
+                    )
+                    .ConfigureAwait(false),
             cancellationToken
         );
     }

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Reactive.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -12,12 +13,14 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Models;
+using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Models;
 using Spravy.Ui.Enums;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
+using Spravy.Ui.Services;
 using Spravy.Ui.Views;
 
 namespace Spravy.Ui.ViewModels;
@@ -138,77 +141,78 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
     [Reactive]
     public string RepeatPassword { get; set; } = string.Empty;
 
-    private async Task EnterAsync(CreateUserView view, CancellationToken cancellationToken)
+    private ValueTask<Result> EnterAsync(CreateUserView view, CancellationToken cancellationToken)
     {
         var emailTextBox = view.FindControl<TextBox>(CreateUserView.EmailTextBoxName);
 
         if (emailTextBox is null)
         {
-            return;
+            return Result.SuccessValueTask;
         }
 
         var loginTextBox = view.FindControl<TextBox>(CreateUserView.LoginTextBoxName);
 
         if (loginTextBox is null)
         {
-            return;
+            return Result.SuccessValueTask;
         }
 
         if (emailTextBox.IsFocused)
         {
             loginTextBox.Focus();
 
-            return;
+            return Result.SuccessValueTask;
         }
 
         var passwordTextBox = view.FindControl<TextBox>(CreateUserView.PasswordTextBoxName);
 
         if (passwordTextBox is null)
         {
-            return;
+            return Result.SuccessValueTask;
         }
 
         if (loginTextBox.IsFocused)
         {
             passwordTextBox.Focus();
 
-            return;
+            return Result.SuccessValueTask;
         }
 
         var repeatPasswordTextBox = view.FindControl<TextBox>(CreateUserView.RepeatPasswordTextBoxName);
 
         if (repeatPasswordTextBox is null)
         {
-            return;
+            return Result.SuccessValueTask;
         }
 
         if (passwordTextBox.IsFocused)
         {
             repeatPasswordTextBox.Focus();
 
-            return;
+            return Result.SuccessValueTask;
         }
 
         if (HasErrors)
         {
-            return;
+            return Result.SuccessValueTask;
         }
 
-        await CreateUserAsync(cancellationToken).ConfigureAwait(false);
+        return CreateUserAsync(cancellationToken);
     }
 
-    public override void Stop()
+    public override Result Stop()
     {
+        return Result.Success;
     }
 
-    public override Task SaveStateAsync()
+    public override ValueTask<Result> SaveStateAsync()
     {
-        return Task.CompletedTask;
+        return Result.SuccessValueTask;
     }
 
-    public override Task SetStateAsync(object setting)
+    public override ValueTask<Result> SetStateAsync(object setting)
     {
-        return Task.CompletedTask;
+        return Result.SuccessValueTask;
     }
 
     public IEnumerable GetErrors(string? propertyName)
@@ -310,37 +314,34 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
         }
     }
 
-    private async Task CreateUserAsync(CancellationToken cancellationToken)
+    private ValueTask<Result> CreateUserAsync(CancellationToken cancellationToken)
     {
-        try
-        {
-            await this.InvokeUIBackgroundAsync(() => IsBusy = true);
-            var options = Mapper.Map<CreateUserOptions>(this);
-            cancellationToken.ThrowIfCancellationRequested();
+        return this.InvokeUIBackgroundAsync(() => IsBusy = true)
+            .ConfigureAwait(false)
+            .IfSuccessTryFinallyAsync(
+                () =>
+                {
+                    var options = Mapper.Map<CreateUserOptions>(this);
 
-            await AuthenticationService.CreateUserAsync(options, cancellationToken)
-                .ConfigureAwait(false)
-                .IfSuccessAsync(
-                    DialogViewer,
-                    async () =>
-                    {
-                        cancellationToken.ThrowIfCancellationRequested();
-
-                        await Navigator.NavigateToAsync<VerificationCodeViewModel>(
-                                vm =>
-                                {
-                                    vm.Identifier = Email;
-                                    vm.IdentifierType = UserIdentifierType.Email;
-                                },
-                                cancellationToken
-                            )
-                            .ConfigureAwait(false);
-                    }
-                );
-        }
-        finally
-        {
-            await this.InvokeUIBackgroundAsync(() => IsBusy = false);
-        }
+                    return AuthenticationService.CreateUserAsync(options, cancellationToken)
+                        .ConfigureAwait(false)
+                        .IfSuccessAsync(
+                            () => Navigator.NavigateToAsync<VerificationCodeViewModel>(
+                                    vm =>
+                                    {
+                                        vm.Identifier = Email;
+                                        vm.IdentifierType = UserIdentifierType.Email;
+                                    },
+                                    cancellationToken
+                                )
+                                .ConfigureAwait(false)
+                        )
+                        .ConfigureAwait(false);
+                },
+                () => this.InvokeUIBackgroundAsync(() => IsBusy = false)
+                    .ConfigureAwait(false)
+                    .ToValueTask()
+                    .ConfigureAwait(false)
+            );
     }
 }

@@ -1,6 +1,6 @@
 using Spravy.Domain.Models;
 
-namespace Spravy.Domain.ValidationResults;
+namespace Spravy.Domain.Errors;
 
 public class DefaultCtorResultError : Error
 {

@@ -6,8 +6,8 @@ namespace Spravy.Domain.Services;
 
 public class EmptyHttpHeaderFactory : IHttpHeaderFactory
 {
-    public Task<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsAsync(CancellationToken cancellationToken)
+    public ValueTask<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsAsync(CancellationToken cancellationToken)
     {
-        return ReadOnlyMemory<HttpHeaderItem>.Empty.ToResult().ToTaskResult();
+        return ReadOnlyMemory<HttpHeaderItem>.Empty.ToResult().ToValueTaskResult();
     }
 }

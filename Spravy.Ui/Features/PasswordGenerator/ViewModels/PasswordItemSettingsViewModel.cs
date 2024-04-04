@@ -4,10 +4,12 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Ninject;
 using ReactiveUI.Fody.Helpers;
+using Spravy.Domain.Extensions;
 using Spravy.Domain.Models;
 using Spravy.PasswordGenerator.Domain.Interfaces;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Models;
+using Spravy.Ui.Services;
 
 namespace Spravy.Ui.Features.PasswordGenerator.ViewModels;
 
@@ -53,15 +55,12 @@ public class PasswordItemSettingsViewModel : ViewModelBase
     [Reactive]
     public string CustomAvailableCharacters { get; set; } = string.Empty;
 
-    private Task InitializedAsync(CancellationToken cancellationToken)
+    private ValueTask<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         return PasswordService.GetPasswordItemAsync(Id, cancellationToken)
             .ConfigureAwait(false)
             .IfSuccessAsync(
-                DialogViewer,
-                async value =>
-                {
-                    await this.InvokeUIBackgroundAsync(
+                value => this.InvokeUIBackgroundAsync(
                         () =>
                         {
                             Name = value.Name;
@@ -74,8 +73,8 @@ public class PasswordItemSettingsViewModel : ViewModelBase
                             IsAvailableSpecialSymbols = value.IsAvailableSpecialSymbols;
                             CustomAvailableCharacters = value.CustomAvailableCharacters;
                         }
-                    );
-                }
+                    )
+                    .ConfigureAwait(false)
             );
     }
 }

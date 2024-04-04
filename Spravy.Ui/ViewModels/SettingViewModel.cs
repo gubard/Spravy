@@ -11,12 +11,14 @@ using Ninject;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Spravy.Authentication.Domain.Interfaces;
+using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
 using Spravy.Ui.Enums;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Models;
+using Spravy.Ui.Services;
 using SukiUI;
 using SukiUI.Models;
 
@@ -88,28 +90,28 @@ public class SettingViewModel : NavigatableViewModelBase
     [Reactive]
     public bool IsLightTheme { get; set; }
 
-    private async Task SaveSettingsAsync(CancellationToken cancellationToken)
+    private ValueTask<Result> SaveSettingsAsync(CancellationToken cancellationToken)
     {
-        try
-        {
-            this.InvokeUIBackgroundAsync(() => IsBusy = true);
-
-            await ObjectStorage.SaveObjectAsync(
-                TypeCache<SettingModel>.Type.Name,
-                new SettingModel
-                {
-                    BaseTheme = IsLightTheme ? "Light" : "Dark",
-                    ColorTheme = AvailableColors.Single(x => x.IsSelect).Value.DisplayName,
-                }
+        return this.InvokeUIBackgroundAsync(() => IsBusy = true)
+            .ConfigureAwait(false)
+            .IfSuccessTryFinallyAsync(
+                () => ObjectStorage.SaveObjectAsync(
+                        TypeCache<SettingModel>.Type.Name,
+                        new SettingModel
+                        {
+                            BaseTheme = IsLightTheme ? "Light" : "Dark",
+                            ColorTheme = AvailableColors.Single(x => x.IsSelect).Value.DisplayName,
+                        }
+                    )
+                    .ConfigureAwait(false),
+                () => this.InvokeUIBackgroundAsync(() => IsBusy = false)
+                    .ConfigureAwait(false)
+                    .ToValueTask()
+                    .ConfigureAwait(false)
             );
-        }
-        finally
-        {
-            this.InvokeUIBackgroundAsync(() => IsBusy = false);
-        }
     }
 
-    private Task DeleteAccountAsync(CancellationToken cancellationToken)
+    private ValueTask<Result> DeleteAccountAsync(CancellationToken cancellationToken)
     {
         return Navigator.NavigateToAsync<DeleteAccountViewModel>(
             vm =>
@@ -121,7 +123,7 @@ public class SettingViewModel : NavigatableViewModelBase
         );
     }
 
-    private Task ChangePasswordAsync(CancellationToken cancellationToken)
+    private ValueTask<Result> ChangePasswordAsync(CancellationToken cancellationToken)
     {
         return Navigator.NavigateToAsync<ForgotPasswordViewModel>(
             vm =>
@@ -133,25 +135,26 @@ public class SettingViewModel : NavigatableViewModelBase
         );
     }
 
-    public override void Stop()
+    public override Result Stop()
     {
+        return Result.Success;
     }
 
-    public override Task SaveStateAsync()
+    public override ValueTask<Result> SaveStateAsync()
     {
-        return Task.CompletedTask;
+        return Result.SuccessValueTask;
     }
 
-    public override Task SetStateAsync(object setting)
+    public override ValueTask<Result> SetStateAsync(object setting)
     {
-        return Task.CompletedTask;
+        return Result.SuccessValueTask;
     }
 
-    public Task SwitchToColorTheme(Selected<SukiColorTheme> colorTheme, CancellationToken cancellationToken)
+    public ValueTask<Result> SwitchToColorTheme(Selected<SukiColorTheme> colorTheme, CancellationToken cancellationToken)
     {
         theme.ChangeColorTheme(colorTheme.Value);
         colorTheme.IsSelect = true;
 
-        return Task.CompletedTask;
+        return Result.SuccessValueTask;
     }
 }

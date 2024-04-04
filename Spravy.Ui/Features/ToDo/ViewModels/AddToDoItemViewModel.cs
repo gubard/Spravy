@@ -7,6 +7,7 @@ using Material.Icons;
 using Ninject;
 using ProtoBuf;
 using ReactiveUI.Fody.Helpers;
+using Spravy.Domain.Di.Helpers;
 using Spravy.Domain.Enums;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
@@ -15,7 +16,9 @@ using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Extensions;
+using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
+using Spravy.Ui.Services;
 using Spravy.Ui.ViewModels;
 
 namespace Spravy.Ui.Features.ToDo.ViewModels;
@@ -50,53 +53,57 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
 
     public override string ViewId => $"{TypeCache<AddToDoItemViewModel>.Type.Name}:{ParentId}";
 
-    private async Task InitializedAsync(CancellationToken cancellationToken)
+    private ValueTask<Result> InitializedAsync(CancellationToken cancellationToken)
     {
-        var setting = await ObjectStorage.GetObjectOrDefaultAsync<AddToDoItemViewModelSetting>(ViewId)
-            .ConfigureAwait(false);
-
-        await SetStateAsync(setting).ConfigureAwait(false);
-        await ToDoService.GetParentsAsync(ParentId, cancellationToken)
+        return ObjectStorage.GetObjectOrDefaultAsync<AddToDoItemViewModelSetting>(ViewId)
             .ConfigureAwait(false)
-            .IfSuccessAsync(
-                DialogViewer,
-                async parents =>
-                {
-                    var path = MaterialIconKind.Home.As<object>()
-                        .ToEnumerable()
-                        .Concat(parents.ToArray().Select(x => x.Name))
-                        .Select(x => x.ThrowIfNull())
-                        .ToArray();
+            .IfSuccessAsync(setting => SetStateAsync(setting).ConfigureAwait(false))
+            .ConfigureAwait(false)
+            .IfSuccessAllAsync(
+                () => ToDoService.GetParentsAsync(ParentId, cancellationToken)
+                    .ConfigureAwait(false)
+                    .IfSuccessAsync(
+                        parents =>
+                        {
+                            var path = MaterialIconKind.Home.As<object>()
+                                .ToEnumerable()
+                                .Concat(parents.ToArray().Select(x => x.Name))
+                                .Select(x => x.ThrowIfNull())
+                                .ToArray();
 
-                    await this.InvokeUIBackgroundAsync(() => Path = path);
-                }
+                            return this.InvokeUIBackgroundAsync(() => Path = path).ConfigureAwait(false);
+                        }
+                    )
+                    .ConfigureAwait(false)
             );
     }
 
-
-    public override void Stop()
+    public override Result Stop()
     {
+        return Result.Success;
     }
 
-    public override Task SaveStateAsync()
+    public override ValueTask<Result> SaveStateAsync()
     {
         return ObjectStorage.SaveObjectAsync(ViewId, new AddToDoItemViewModelSetting(this));
     }
 
-    public override async Task SetStateAsync(object setting)
+    public override ValueTask<Result> SetStateAsync(object setting)
     {
-        var s = setting.ThrowIfIsNotCast<AddToDoItemViewModelSetting>();
-
-        await this.InvokeUIBackgroundAsync(
-            () =>
-            {
-                ToDoItemContent.Name = s.Name;
-                ToDoItemContent.Type = s.Type;
-                ToDoItemContent.Link = s.Link;
-                DescriptionContent.Description = s.Description;
-                DescriptionContent.Type = s.DescriptionType;
-            }
-        );
+        return setting.CastObject<AddToDoItemViewModelSetting>()
+            .IfSuccessAsync(
+                s => this.InvokeUIBackgroundAsync(
+                        () =>
+                        {
+                            ToDoItemContent.Name = s.Name;
+                            ToDoItemContent.Type = s.Type;
+                            ToDoItemContent.Link = s.Link;
+                            DescriptionContent.Description = s.Description;
+                            DescriptionContent.Type = s.DescriptionType;
+                        }
+                    )
+                    .ConfigureAwait(false)
+            );
     }
 
     [ProtoContract]

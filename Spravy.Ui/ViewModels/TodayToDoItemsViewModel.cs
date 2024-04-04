@@ -7,7 +7,6 @@ using Spravy.Domain.Helpers;
 using Spravy.Domain.Models;
 using Spravy.Domain.Extensions;
 using Spravy.ToDo.Domain.Interfaces;
-using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 using Spravy.Ui.Services;
@@ -45,37 +44,33 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IRefresh
     public ICommand InitializedCommand { get; }
     public override string ViewId => TypeCache<TodayToDoItemsViewModel>.Type.Name;
 
-    private Task InitializedAsync(CancellationToken cancellationToken)
+    private ValueTask<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         return RefreshAsync(cancellationToken);
     }
 
-    public override void Stop()
+    public override Result Stop()
     {
+        return Result.Success;
     }
 
-    public override Task SaveStateAsync()
+    public override ValueTask<Result> SaveStateAsync()
     {
-        return Task.CompletedTask;
+        return Result.SuccessValueTask;
     }
 
-    public override Task SetStateAsync(object setting)
+    public override ValueTask<Result> SetStateAsync(object setting)
     {
-        return Task.CompletedTask;
+        return Result.SuccessValueTask;
     }
 
-    public Task<Result> RefreshAsync(CancellationToken cancellationToken)
+    public ValueTask<Result> RefreshAsync(CancellationToken cancellationToken)
     {
         return ToDoService.GetTodayToDoItemsAsync(cancellationToken)
             .ConfigureAwait(false)
             .IfSuccessAsync(
-                async ids =>
-                {
-                    await ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken)
-                        .ConfigureAwait(false);
-
-                    return Result.Success;
-                }
+                ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken)
+                    .ConfigureAwait(false)
             );
     }
 }

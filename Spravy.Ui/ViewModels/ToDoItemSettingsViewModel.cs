@@ -13,6 +13,7 @@ using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
+using Spravy.Ui.Services;
 
 namespace Spravy.Ui.ViewModels;
 
@@ -41,7 +42,7 @@ public class ToDoItemSettingsViewModel : NavigatableViewModelBase
     [Reactive]
     public Guid ToDoItemId { get; set; }
 
-    private Task InitializedAsync(CancellationToken cancellationToken)
+    private ValueTask<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         ToDoItemContent.WhenAnyValue(x => x.Type)
             .Subscribe(
@@ -65,37 +66,35 @@ public class ToDoItemSettingsViewModel : NavigatableViewModelBase
         return RefreshAsync(cancellationToken);
     }
 
-    public Task RefreshAsync(CancellationToken cancellationToken)
+    public ValueTask<Result> RefreshAsync(CancellationToken cancellationToken)
     {
         return ToDoService.GetToDoItemAsync(ToDoItemId, cancellationToken)
             .ConfigureAwait(false)
             .IfSuccessAsync(
-                DialogViewer,
-                async toDoItem =>
-                {
-                    await this.InvokeUIBackgroundAsync(
+                toDoItem => this.InvokeUIBackgroundAsync(
                         () =>
                         {
                             ToDoItemContent.Name = toDoItem.Name;
                             ToDoItemContent.Link = toDoItem.Link?.AbsoluteUri ?? string.Empty;
                             ToDoItemContent.Type = toDoItem.Type;
                         }
-                    );
-                }
+                    )
+                    .ConfigureAwait(false)
             );
     }
 
-    public override void Stop()
+    public override Result Stop()
     {
+        return Result.Success;
     }
 
-    public override Task SetStateAsync(object setting)
+    public override ValueTask<Result> SetStateAsync(object setting)
     {
-        return Task.CompletedTask;
+        return Result.SuccessValueTask;
     }
 
-    public override Task SaveStateAsync()
+    public override ValueTask<Result> SaveStateAsync()
     {
-        return Task.CompletedTask;
+        return Result.SuccessValueTask;
     }
 }

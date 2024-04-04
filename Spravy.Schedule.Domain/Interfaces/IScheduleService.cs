@@ -5,7 +5,7 @@ namespace Spravy.Schedule.Domain.Interfaces;
 
 public interface IScheduleService
 {
-    Task<Result> AddTimerAsync(AddTimerParameters parameters, CancellationToken cancellationToken);
-    Task<Result<ReadOnlyMemory<TimerItem>>> GetListTimesAsync(CancellationToken cancellationToken);
-    Task<Result> RemoveTimerAsync(Guid id, CancellationToken cancellationToken);
+    ValueTask<Result> AddTimerAsync(AddTimerParameters parameters, CancellationToken cancellationToken);
+    ValueTask<Result<ReadOnlyMemory<TimerItem>>> GetListTimesAsync(CancellationToken cancellationToken);
+    ValueTask<Result> RemoveTimerAsync(Guid id, CancellationToken cancellationToken);
 }

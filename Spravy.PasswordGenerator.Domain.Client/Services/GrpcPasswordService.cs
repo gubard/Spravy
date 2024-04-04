@@ -1,4 +1,5 @@
 using Google.Protobuf;
+using Spravy.Client.Extensions;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
 using Spravy.Domain.Extensions;
@@ -30,250 +31,244 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
         this.metadataFactory = metadataFactory;
     }
 
-    public Task<Result> AddPasswordItemAsync(AddPasswordOptions options, CancellationToken cancellationToken)
+    public ValueTask<Result> AddPasswordItemAsync(AddPasswordOptions options, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             client =>
-                metadataFactory.CreateAsync(cancellationToken)
+                converter.Convert<AddPasswordItemRequest>(options)
                     .IfSuccessAsync(
-                        converter.Convert<AddPasswordItemRequest>(options),
-                        async (value, request) =>
-                        {
-                            await client.AddPasswordItemAsync(
-                                request,
-                                value,
-                                cancellationToken: cancellationToken
-                            );
-
-                            return Result.Success;
-                        }
-                    ),
+                        request => metadataFactory.CreateAsync(cancellationToken)
+                            .ConfigureAwait(false)
+                            .IfSuccessAsync(
+                                value => client.AddPasswordItemAsync(
+                                        request,
+                                        value,
+                                        cancellationToken: cancellationToken
+                                    )
+                                    .ToValueTaskResultOnly()
+                                    .ConfigureAwait(false)
+                            )
+                            .ConfigureAwait(false)
+                    )
+                    .ConfigureAwait(false),
             cancellationToken
         );
     }
 
-    public Task<Result<ReadOnlyMemory<PasswordItem>>> GetPasswordItemsAsync(CancellationToken cancellationToken)
+    public ValueTask<Result<ReadOnlyMemory<PasswordItem>>> GetPasswordItemsAsync(CancellationToken cancellationToken)
     {
         return CallClientAsync(
             client =>
                 metadataFactory.CreateAsync(cancellationToken)
+                    .ConfigureAwait(false)
                     .IfSuccessAsync(
-                        async value =>
-                        {
-                            var request = new GetPasswordItemsRequest();
-
-                            var reply = await client.GetPasswordItemsAsync(
-                                request,
+                        value => client.GetPasswordItemsAsync(
+                                new GetPasswordItemsRequest(),
                                 value,
                                 cancellationToken: cancellationToken
-                            );
-
-                            return converter.Convert<PasswordItem[]>(reply.Items)
-                                .IfSuccess(items => items.ToReadOnlyMemory().ToResult());
-                        }
-                    ),
+                            )
+                            .ToValueTaskResultValueOnly()
+                            .ConfigureAwait(false)
+                            .IfSuccessAsync(
+                                reply => converter.Convert<PasswordItem[]>(reply.Items)
+                                    .IfSuccess(items => items.ToReadOnlyMemory().ToResult())
+                                    .ToValueTaskResult()
+                                    .ConfigureAwait(false)
+                            )
+                            .ConfigureAwait(false)
+                    )
+                    .ConfigureAwait(false),
             cancellationToken
         );
     }
 
-    public Task<Result<PasswordItem>> GetPasswordItemAsync(Guid id, CancellationToken cancellationToken)
+    public ValueTask<Result<PasswordItem>> GetPasswordItemAsync(Guid id, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             client =>
                 metadataFactory.CreateAsync(cancellationToken)
+                    .ConfigureAwait(false)
                     .IfSuccessAsync(
                         converter.Convert<ByteString>(id),
-                        async (value, i) =>
-                        {
-                            var request = new GetPasswordItemRequest
-                            {
-                                Id = i,
-                            };
-
-                            var reply = await client.GetPasswordItemAsync(
-                                request,
-                                value,
-                                cancellationToken: cancellationToken
-                            );
-
-                            return converter.Convert<PasswordItem>(reply);
-                        }
-                    ),
+                        (value, i) =>
+                            client.GetPasswordItemAsync(
+                                    new GetPasswordItemRequest
+                                    {
+                                        Id = i,
+                                    },
+                                    value,
+                                    cancellationToken: cancellationToken
+                                )
+                                .ToValueTaskResultValueOnly()
+                                .ConfigureAwait(false)
+                                .IfSuccessAsync(
+                                    reply => converter.Convert<PasswordItem>(reply)
+                                        .ToValueTaskResult()
+                                        .ConfigureAwait(false)
+                                )
+                                .ConfigureAwait(false)
+                    )
+                    .ConfigureAwait(false),
             cancellationToken
         );
     }
 
-    public Task<Result> DeletePasswordItemAsync(Guid id, CancellationToken cancellationToken)
+    public ValueTask<Result> DeletePasswordItemAsync(Guid id, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             client =>
                 metadataFactory.CreateAsync(cancellationToken)
+                    .ConfigureAwait(false)
                     .IfSuccessAsync(
                         converter.Convert<ByteString>(id),
-                        async (value, i) =>
-                        {
-                            var request = new DeletePasswordItemRequest
-                            {
-                                Id = i,
-                            };
-
-                            await client.DeletePasswordItemAsync(
-                                request,
-                                value,
-                                cancellationToken: cancellationToken
-                            );
-
-                            return Result.Success;
-                        }
-                    ),
+                        (value, i) =>
+                            client.DeletePasswordItemAsync(
+                                    new DeletePasswordItemRequest
+                                    {
+                                        Id = i,
+                                    },
+                                    value,
+                                    cancellationToken: cancellationToken
+                                )
+                                .ToValueTaskResultOnly()
+                                .ConfigureAwait(false)
+                    )
+                    .ConfigureAwait(false),
             cancellationToken
         );
     }
 
-    public Task<Result<string>> GeneratePasswordAsync(Guid id, CancellationToken cancellationToken)
+    public ValueTask<Result<string>> GeneratePasswordAsync(Guid id, CancellationToken cancellationToken)
     {
         return CallClientAsync(
-            client =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                return metadataFactory.CreateAsync(cancellationToken)
-                    .IfSuccessAsync(
-                        converter.Convert<ByteString>(id),
-                        async (value, i) =>
-                        {
-                            var request = new GeneratePasswordRequest
-                            {
-                                Id = i,
-                            };
-
-                            var reply = await client.GeneratePasswordAsync(
-                                request,
+            client => metadataFactory.CreateAsync(cancellationToken)
+                .ConfigureAwait(false)
+                .IfSuccessAsync(
+                    converter.Convert<ByteString>(id),
+                    (value, i) =>
+                        client.GeneratePasswordAsync(
+                                new GeneratePasswordRequest
+                                {
+                                    Id = i,
+                                },
                                 value,
                                 cancellationToken: cancellationToken
-                            );
-
-                            return reply.Password.ToResult();
-                        }
-                    );
-            },
+                            )
+                            .ToValueTaskResultValueOnly()
+                            .ConfigureAwait(false)
+                            .IfSuccessAsync(
+                                reply => reply.Password.ToResult().ToValueTaskResult().ConfigureAwait(false)
+                            )
+                            .ConfigureAwait(false)
+                )
+                .ConfigureAwait(false),
             cancellationToken
         );
     }
 
-    public Task<Result> UpdatePasswordItemNameAsync(Guid id, string name, CancellationToken cancellationToken)
+    public ValueTask<Result> UpdatePasswordItemNameAsync(Guid id, string name, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             client =>
                 metadataFactory.CreateAsync(cancellationToken)
+                    .ConfigureAwait(false)
                     .IfSuccessAsync(
                         converter.Convert<ByteString>(id),
-                        async (value, i) =>
-                        {
-                            var request = new UpdatePasswordItemNameRequest
-                            {
-                                Id = i,
-                                Name = name,
-                            };
-
-                            await client.UpdatePasswordItemNameAsync(
-                                request,
-                                value,
-                                cancellationToken: cancellationToken
-                            );
-
-                            return Result.Success;
-                        }
-                    ),
+                        (value, i) =>
+                            client.UpdatePasswordItemNameAsync(
+                                    new UpdatePasswordItemNameRequest
+                                    {
+                                        Id = i,
+                                        Name = name,
+                                    },
+                                    value,
+                                    cancellationToken: cancellationToken
+                                )
+                                .ToValueTaskResultOnly()
+                                .ConfigureAwait(false)
+                    )
+                    .ConfigureAwait(false),
             cancellationToken
         );
     }
 
-    public Task<Result> UpdatePasswordItemKeyAsync(Guid id, string key, CancellationToken cancellationToken)
+    public ValueTask<Result> UpdatePasswordItemKeyAsync(Guid id, string key, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             client =>
                 metadataFactory.CreateAsync(cancellationToken)
+                    .ConfigureAwait(false)
                     .IfSuccessAsync(
                         converter.Convert<ByteString>(id),
-                        async (value, i) =>
-                        {
-                            var request = new UpdatePasswordItemKeyRequest
-                            {
-                                Id = i,
-                                Key = key,
-                            };
-
-                            await client.UpdatePasswordItemKeyAsync(
-                                request,
+                        (value, i) => client.UpdatePasswordItemKeyAsync(
+                                new UpdatePasswordItemKeyRequest
+                                {
+                                    Id = i,
+                                    Key = key,
+                                },
                                 value,
                                 cancellationToken: cancellationToken
-                            );
-
-                            return Result.Success;
-                        }
-                    ),
+                            )
+                            .ToValueTaskResultOnly()
+                            .ConfigureAwait(false)
+                    )
+                    .ConfigureAwait(false),
             cancellationToken
         );
     }
 
-    public Task<Result> UpdatePasswordItemLengthAsync(Guid id, ushort length, CancellationToken cancellationToken)
+    public ValueTask<Result> UpdatePasswordItemLengthAsync(Guid id, ushort length, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             client =>
                 metadataFactory.CreateAsync(cancellationToken)
+                    .ConfigureAwait(false)
                     .IfSuccessAsync(
                         converter.Convert<ByteString>(id),
-                        async (value, i) =>
-                        {
-                            var request = new UpdatePasswordItemLengthRequest
-                            {
-                                Id = i,
-                                Length = length,
-                            };
-
-                            await client.UpdatePasswordItemLengthAsync(
-                                request,
+                        (value, i) => client.UpdatePasswordItemLengthAsync(
+                                new UpdatePasswordItemLengthRequest
+                                {
+                                    Id = i,
+                                    Length = length,
+                                },
                                 value,
                                 cancellationToken: cancellationToken
-                            );
-
-                            return Result.Success;
-                        }
-                    ),
+                            )
+                            .ToValueTaskResultOnly()
+                            .ConfigureAwait(false)
+                    )
+                    .ConfigureAwait(false),
             cancellationToken
         );
     }
 
-    public Task<Result> UpdatePasswordItemRegexAsync(Guid id, string regex, CancellationToken cancellationToken)
+    public ValueTask<Result> UpdatePasswordItemRegexAsync(Guid id, string regex, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             client =>
                 metadataFactory.CreateAsync(cancellationToken)
+                    .ConfigureAwait(false)
                     .IfSuccessAsync(
                         converter.Convert<ByteString>(id),
-                        async (value, i) =>
-                        {
-                            var request = new UpdatePasswordItemRegexRequest
-                            {
-                                Id = i,
-                                Regex = regex,
-                            };
-
-                            await client.UpdatePasswordItemRegexAsync(
-                                request,
-                                value,
-                                cancellationToken: cancellationToken
-                            );
-
-                            return Result.Success;
-                        }
-                    ),
+                        (value, i) =>
+                            client.UpdatePasswordItemRegexAsync(
+                                    new UpdatePasswordItemRegexRequest
+                                    {
+                                        Id = i,
+                                        Regex = regex,
+                                    },
+                                    value,
+                                    cancellationToken: cancellationToken
+                                )
+                                .ToValueTaskResultOnly()
+                                .ConfigureAwait(false)
+                    )
+                    .ConfigureAwait(false),
             cancellationToken
         );
     }
 
-    public Task<Result> UpdatePasswordItemIsAvailableNumberAsync(
+    public ValueTask<Result> UpdatePasswordItemIsAvailableNumberAsync(
         Guid id,
         bool isAvailableNumber,
         CancellationToken cancellationToken
@@ -282,30 +277,27 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
         return CallClientAsync(
             client =>
                 metadataFactory.CreateAsync(cancellationToken)
+                    .ConfigureAwait(false)
                     .IfSuccessAsync(
                         converter.Convert<ByteString>(id),
-                        async (value, i) =>
-                        {
-                            var request = new UpdatePasswordItemIsAvailableNumberRequest
-                            {
-                                Id = i,
-                                IsAvailableNumber = isAvailableNumber,
-                            };
-
-                            await client.UpdatePasswordItemIsAvailableNumberAsync(
-                                request,
+                        (value, i) => client.UpdatePasswordItemIsAvailableNumberAsync(
+                                new UpdatePasswordItemIsAvailableNumberRequest
+                                {
+                                    Id = i,
+                                    IsAvailableNumber = isAvailableNumber,
+                                },
                                 value,
                                 cancellationToken: cancellationToken
-                            );
-
-                            return Result.Success;
-                        }
-                    ),
+                            )
+                            .ToValueTaskResultOnly()
+                            .ConfigureAwait(false)
+                    )
+                    .ConfigureAwait(false),
             cancellationToken
         );
     }
 
-    public Task<Result> UpdatePasswordItemIsAvailableLowerLatinAsync(
+    public ValueTask<Result> UpdatePasswordItemIsAvailableLowerLatinAsync(
         Guid id,
         bool isAvailableLowerLatin,
         CancellationToken cancellationToken
@@ -314,30 +306,27 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
         return CallClientAsync(
             client =>
                 metadataFactory.CreateAsync(cancellationToken)
+                    .ConfigureAwait(false)
                     .IfSuccessAsync(
                         converter.Convert<ByteString>(id),
-                        async (value, i) =>
-                        {
-                            var request = new UpdatePasswordItemIsAvailableLowerLatinRequest
-                            {
-                                Id = i,
-                                IsAvailableLowerLatin = isAvailableLowerLatin,
-                            };
-
-                            await client.UpdatePasswordItemIsAvailableLowerLatinAsync(
-                                request,
+                        (value, i) => client.UpdatePasswordItemIsAvailableLowerLatinAsync(
+                                new UpdatePasswordItemIsAvailableLowerLatinRequest
+                                {
+                                    Id = i,
+                                    IsAvailableLowerLatin = isAvailableLowerLatin,
+                                },
                                 value,
                                 cancellationToken: cancellationToken
-                            );
-
-                            return Result.Success;
-                        }
-                    ),
+                            )
+                            .ToValueTaskResultOnly()
+                            .ConfigureAwait(false)
+                    )
+                    .ConfigureAwait(false),
             cancellationToken
         );
     }
 
-    public Task<Result> UpdatePasswordItemIsAvailableSpecialSymbolsAsync(
+    public ValueTask<Result> UpdatePasswordItemIsAvailableSpecialSymbolsAsync(
         Guid id,
         bool isAvailableSpecialSymbols,
         CancellationToken cancellationToken
@@ -346,30 +335,27 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
         return CallClientAsync(
             client =>
                 metadataFactory.CreateAsync(cancellationToken)
+                    .ConfigureAwait(false)
                     .IfSuccessAsync(
                         converter.Convert<ByteString>(id),
-                        async (value, i) =>
-                        {
-                            var request = new UpdatePasswordItemIsAvailableSpecialSymbolsRequest
-                            {
-                                Id = i,
-                                IsAvailableSpecialSymbols = isAvailableSpecialSymbols,
-                            };
-
-                            await client.UpdatePasswordItemIsAvailableSpecialSymbolsAsync(
-                                request,
+                        (value, i) => client.UpdatePasswordItemIsAvailableSpecialSymbolsAsync(
+                                new UpdatePasswordItemIsAvailableSpecialSymbolsRequest
+                                {
+                                    Id = i,
+                                    IsAvailableSpecialSymbols = isAvailableSpecialSymbols,
+                                },
                                 value,
                                 cancellationToken: cancellationToken
-                            );
-
-                            return Result.Success;
-                        }
-                    ),
+                            )
+                            .ToValueTaskResultOnly()
+                            .ConfigureAwait(false)
+                    )
+                    .ConfigureAwait(false),
             cancellationToken
         );
     }
 
-    public Task<Result> UpdatePasswordItemCustomAvailableCharactersAsync(
+    public ValueTask<Result> UpdatePasswordItemCustomAvailableCharactersAsync(
         Guid id,
         string customAvailableCharacters,
         CancellationToken cancellationToken
@@ -378,30 +364,27 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
         return CallClientAsync(
             client =>
                 metadataFactory.CreateAsync(cancellationToken)
+                    .ConfigureAwait(false)
                     .IfSuccessAsync(
                         converter.Convert<ByteString>(id),
-                        async (value, i) =>
-                        {
-                            var request = new UpdatePasswordItemCustomAvailableCharactersRequest
-                            {
-                                Id = i,
-                                CustomAvailableCharacters = customAvailableCharacters,
-                            };
-
-                            await client.UpdatePasswordItemCustomAvailableCharactersAsync(
-                                request,
+                        (value, i) => client.UpdatePasswordItemCustomAvailableCharactersAsync(
+                                new UpdatePasswordItemCustomAvailableCharactersRequest
+                                {
+                                    Id = i,
+                                    CustomAvailableCharacters = customAvailableCharacters,
+                                },
                                 value,
                                 cancellationToken: cancellationToken
-                            );
-
-                            return Result.Success;
-                        }
-                    ),
+                            )
+                            .ToValueTaskResultOnly()
+                            .ConfigureAwait(false)
+                    )
+                    .ConfigureAwait(false),
             cancellationToken
         );
     }
 
-    public Task<Result> UpdatePasswordItemIsAvailableUpperLatinAsync(
+    public ValueTask<Result> UpdatePasswordItemIsAvailableUpperLatinAsync(
         Guid id,
         bool isAvailableUpperLatin,
         CancellationToken cancellationToken
@@ -410,25 +393,22 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
         return CallClientAsync(
             client =>
                 metadataFactory.CreateAsync(cancellationToken)
+                    .ConfigureAwait(false)
                     .IfSuccessAsync(
                         converter.Convert<ByteString>(id),
-                        async (value, i) =>
-                        {
-                            var request = new UpdatePasswordItemIsAvailableUpperLatinRequest
-                            {
-                                Id = i,
-                                IsAvailableUpperLatin = isAvailableUpperLatin,
-                            };
-
-                            await client.UpdatePasswordItemIsAvailableUpperLatinAsync(
-                                request,
+                        (value, i) => client.UpdatePasswordItemIsAvailableUpperLatinAsync(
+                                new UpdatePasswordItemIsAvailableUpperLatinRequest
+                                {
+                                    Id = i,
+                                    IsAvailableUpperLatin = isAvailableUpperLatin,
+                                },
                                 value,
                                 cancellationToken: cancellationToken
-                            );
-
-                            return Result.Success;
-                        }
-                    ),
+                            )
+                            .ToValueTaskResultOnly()
+                            .ConfigureAwait(false)
+                    )
+                    .ConfigureAwait(false),
             cancellationToken
         );
     }

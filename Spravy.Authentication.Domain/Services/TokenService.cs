@@ -17,45 +17,62 @@ public class TokenService : ITokenService
         this.authenticationService = authenticationService;
     }
 
-    public Task<Result<string>> GetTokenAsync(CancellationToken cancellationToken)
+    public ValueTask<Result<string>> GetTokenAsync(CancellationToken cancellationToken)
     {
         var jwtHandler = new JwtSecurityTokenHandler();
         var jwtToken = jwtHandler.ReadJwtToken(token.Token);
 
         if (jwtToken.ValidTo == default)
         {
-            return new Result<string>(token.Token).ToTaskResult();
+            return new Result<string>(token.Token).ToValueTaskResult();
         }
 
         DateTimeOffset expires = jwtToken.ValidTo;
 
         if (expires > DateTimeOffset.Now)
         {
-            return new Result<string>(token.Token).ToTaskResult();
+            return new Result<string>(token.Token).ToValueTaskResult();
         }
 
         cancellationToken.ThrowIfCancellationRequested();
 
         return authenticationService.RefreshTokenAsync(token.RefreshToken, cancellationToken)
+            .ConfigureAwait(false)
             .IfSuccessAsync(
                 value =>
                 {
                     token = value;
 
-                    return token.Token.ToResult();
+                    return token.Token.ToResult().ToValueTaskResult().ConfigureAwait(false);
                 }
             );
     }
 
-    public Task<Result> LoginAsync(User user, CancellationToken cancellationToken)
+    public ValueTask<Result> LoginAsync(User user, CancellationToken cancellationToken)
     {
         return authenticationService.LoginAsync(user, cancellationToken)
-            .IfSuccessAsync<TokenResult>(value => token = value);
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                value =>
+                {
+                    token = value;
+
+                    return Result.AwaitableFalse;
+                }
+            );
     }
 
-    public Task<Result> LoginAsync(string refreshToken, CancellationToken cancellationToken)
+    public ValueTask<Result> LoginAsync(string refreshToken, CancellationToken cancellationToken)
     {
         return authenticationService.RefreshTokenAsync(refreshToken, cancellationToken)
-            .IfSuccessAsync<TokenResult>(value => token = value);
+            .ConfigureAwait(false)
+            .IfSuccessAsync(
+                value =>
+                {
+                    token = value;
+
+                    return Result.AwaitableFalse;
+                }
+            );
     }
 }

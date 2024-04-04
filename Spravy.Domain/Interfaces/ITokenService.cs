@@ -4,7 +4,7 @@ namespace Spravy.Domain.Interfaces;
 
 public interface ITokenService
 {
-    Task<Result<string>> GetTokenAsync(CancellationToken cancellationToken);
-    Task<Result> LoginAsync(User user, CancellationToken cancellationToken);
-    Task<Result> LoginAsync(string refreshToken, CancellationToken cancellationToken);
+    ValueTask<Result<string>> GetTokenAsync(CancellationToken cancellationToken);
+    ValueTask<Result> LoginAsync(User user, CancellationToken cancellationToken);
+    ValueTask<Result> LoginAsync(string refreshToken, CancellationToken cancellationToken);
 }

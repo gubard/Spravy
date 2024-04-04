@@ -64,7 +64,12 @@ public class MainActivity : AvaloniaMainActivity<App>
     {
         var viewModel = await Navigator.NavigateBackAsync(CancellationToken.None);
 
-        if (viewModel is null)
+        if (viewModel.IsHasError)
+        {
+            return;
+        }
+
+        if (viewModel.Value is null)
         {
             base.OnBackPressed();
         }

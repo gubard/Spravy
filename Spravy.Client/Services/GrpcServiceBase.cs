@@ -1,6 +1,8 @@
+using System.Runtime.CompilerServices;
 using Grpc.Core;
 using Spravy.Client.Exceptions;
 using Spravy.Client.Extensions;
+using Spravy.Domain.Errors;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
@@ -20,8 +22,8 @@ public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBas
         this.serializer = serializer;
     }
 
-    protected async Task<Result> CallClientAsync(
-        Func<TGrpcClient, Task<Result>> func,
+    protected async ValueTask<Result> CallClientAsync(
+        Func<TGrpcClient, ConfiguredValueTaskAwaitable<Result>> func,
         CancellationToken cancellationToken
     )
     {
@@ -32,9 +34,46 @@ public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBas
 
             return await func.Invoke(client);
         }
-        catch (RpcException exception) when (exception.StatusCode == StatusCode.InvalidArgument)
+        catch (RpcException exception)
         {
-            return await exception.ToErrorAsync(serializer);
+            switch (exception.StatusCode)
+            {
+                case StatusCode.OK:
+                    throw;
+                case StatusCode.Cancelled:
+                    throw;
+                case StatusCode.Unknown:
+                    throw;
+                case StatusCode.InvalidArgument:
+                    return await exception.ToErrorAsync(serializer);
+                case StatusCode.DeadlineExceeded:
+                    throw;
+                case StatusCode.NotFound:
+                    throw;
+                case StatusCode.AlreadyExists:
+                    throw;
+                case StatusCode.PermissionDenied:
+                    throw;
+                case StatusCode.Unauthenticated:
+                    throw;
+                case StatusCode.ResourceExhausted:
+                    throw;
+                case StatusCode.FailedPrecondition:
+                    throw;
+                case StatusCode.Aborted:
+                    throw;
+                case StatusCode.OutOfRange:
+                    throw;
+                case StatusCode.Unimplemented:
+                    throw;
+                case StatusCode.Internal:
+                    throw;
+                case StatusCode.Unavailable:
+                    return new Result(new ServiceUnavailableError(host.ToString()));
+                case StatusCode.DataLoss:
+                    throw;
+                default: throw new ArgumentOutOfRangeException();
+            }
         }
         catch (Exception e)
         {
@@ -42,8 +81,8 @@ public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBas
         }
     }
 
-    protected async Task<Result<TValue>> CallClientAsync<TValue>(
-        Func<TGrpcClient, Task<Result<TValue>>> func,
+    protected async ValueTask<Result<TValue>> CallClientAsync<TValue>(
+        Func<TGrpcClient, ConfiguredValueTaskAwaitable<Result<TValue>>> func,
         CancellationToken cancellationToken
     )
     {
@@ -54,11 +93,48 @@ public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBas
 
             return await func.Invoke(client);
         }
-        catch (RpcException exception) when (exception.StatusCode == StatusCode.InvalidArgument)
+        catch (RpcException exception)
         {
-            var error = await exception.ToErrorAsync(serializer);
+            switch (exception.StatusCode)
+            {
+                case StatusCode.OK:
+                    throw;
+                case StatusCode.Cancelled:
+                    throw;
+                case StatusCode.Unknown:
+                    throw;
+                case StatusCode.InvalidArgument:
+                    var error = await exception.ToErrorAsync(serializer);
 
-            return error.Errors.ToResult<TValue>();
+                    return error.Errors.ToResult<TValue>();
+                case StatusCode.DeadlineExceeded:
+                    throw;
+                case StatusCode.NotFound:
+                    throw;
+                case StatusCode.AlreadyExists:
+                    throw;
+                case StatusCode.PermissionDenied:
+                    throw;
+                case StatusCode.Unauthenticated:
+                    throw;
+                case StatusCode.ResourceExhausted:
+                    throw;
+                case StatusCode.FailedPrecondition:
+                    throw;
+                case StatusCode.Aborted:
+                    throw;
+                case StatusCode.OutOfRange:
+                    throw;
+                case StatusCode.Unimplemented:
+                    throw;
+                case StatusCode.Internal:
+                    throw;
+                case StatusCode.Unavailable:
+                    return new Result<TValue>(new ServiceUnavailableError(host.ToString()));
+                case StatusCode.DataLoss:
+                    throw;
+                default: throw new ArgumentOutOfRangeException();
+            }
         }
         catch (Exception e)
         {

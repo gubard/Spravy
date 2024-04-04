@@ -1,10 +1,10 @@
 using System.Reflection;
 using Grpc.Core;
+using Spravy.Domain.Errors;
 using Spravy.Domain.Exceptions;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
-using Spravy.Domain.ValidationResults;
 
 namespace Spravy.Client.Extensions;
 

@@ -1,13 +1,14 @@
 using System.Threading;
 using System.Threading.Tasks;
+using Spravy.Domain.Models;
 using Spravy.Ui.Interfaces;
 
 namespace Spravy.Ui.Services;
 
 public class EmptyApplySettings : IApplySettings
 {
-    public Task ApplySettingsAsync(CancellationToken cancellationToken)
+    public ValueTask<Result> ApplySettingsAsync(CancellationToken cancellationToken)
     {
-        return Task.CompletedTask;
+        return Result.SuccessValueTask;
     }
 }

@@ -1,4 +1,4 @@
-namespace Spravy.Domain.ValidationResults;
+namespace Spravy.Domain.Errors;
 
 public class ValidCharsError : Error
 {

@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Input.Platform;
 using Spravy.Domain.Extensions;
+using Spravy.Domain.Models;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 
@@ -15,8 +16,10 @@ public class TopLevelClipboardService : IClipboardService
         .Clipboard
         .ThrowIfNull();
 
-    public Task SetTextAsync(string? text)
+    public async ValueTask<Result> SetTextAsync(string? text)
     {
-        return clipboard.SetTextAsync(text);
+        await clipboard.SetTextAsync(text);
+
+        return Result.Success;
     }
 }
