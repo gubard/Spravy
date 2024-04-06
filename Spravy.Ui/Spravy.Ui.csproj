@@ -17,15 +17,15 @@
         <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.10" />
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
         <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.10" />
-        <PackageReference Include="Avalonia.Xaml.Interactions" Version="11.0.10.1" />
-        <PackageReference Include="Avalonia.Xaml.Interactions.Custom" Version="11.0.10.1" />
-        <PackageReference Include="Avalonia.Xaml.Interactions.DragAndDrop" Version="11.0.10.1" />
-        <PackageReference Include="Avalonia.Xaml.Interactions.Responsive" Version="11.0.10.1" />
+        <PackageReference Include="Avalonia.Xaml.Interactions" Version="11.0.10.4" />
+        <PackageReference Include="Avalonia.Xaml.Interactions.Custom" Version="11.0.10.4" />
+        <PackageReference Include="Avalonia.Xaml.Interactions.DragAndDrop" Version="11.0.10.4" />
+        <PackageReference Include="Avalonia.Xaml.Interactions.Responsive" Version="11.0.10.4" />
         <PackageReference Include="DialogHost.Avalonia" Version="0.7.7" />
-        <PackageReference Include="Google.Protobuf" Version="3.26.0" />
-        <PackageReference Include="Grpc.Net.Client" Version="2.61.0" />
-        <PackageReference Include="Grpc.Net.Client.Web" Version="2.61.0" />
-        <PackageReference Include="Grpc.Net.ClientFactory" Version="2.61.0" />
+        <PackageReference Include="Google.Protobuf" Version="3.26.1" />
+        <PackageReference Include="Grpc.Net.Client" Version="2.62.0" />
+        <PackageReference Include="Grpc.Net.Client.Web" Version="2.62.0" />
+        <PackageReference Include="Grpc.Net.ClientFactory" Version="2.62.0" />
         <PackageReference Include="Grpc.Tools" Version="2.62.0">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -37,7 +37,7 @@
         <PackageReference Include="Serilog.Sinks.Console" Version="5.0.1" />
         <PackageReference Include="SmartFormat" Version="3.3.2" />
         <PackageReference Include="SukiUI" Version="6.0.0-beta4" />
-        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.4.1" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.5.1" />
     </ItemGroup>
 
     <ItemGroup>
