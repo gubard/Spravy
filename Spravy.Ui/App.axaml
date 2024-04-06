@@ -152,8 +152,8 @@
 
                         <StackPanel Grid.Row="1">
                             <Grid ColumnDefinitions="Auto,*">
-                                <ToggleButton Classes="Switch vertical-alignment-center"
-                                              Margin="5,0,0,0"
+                                <ToggleButton Classes="Switch alignment-top"
+                                              Margin="5,5,0,0"
                                               Command="{Binding Value.CompleteCommand}"
                                               CommandParameter="{Binding Value}"
                                               IsVisible="{Binding Value.IsCan, Converter={StaticResource ToDoItemCanNoneToBooleanReverseConverter}}"
