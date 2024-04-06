@@ -22,7 +22,7 @@ public class EfScheduleService : IScheduleService
         this.dbContextFactory = dbContextFactory;
     }
 
-    public async Task<Result> AddTimerAsync(AddTimerParameters parameters, CancellationToken cancellationToken)
+    public async ValueTask<Result> AddTimerAsync(AddTimerParameters parameters, CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();
 
@@ -41,7 +41,7 @@ public class EfScheduleService : IScheduleService
         return Result.Success;
     }
 
-    public async Task<Result<ReadOnlyMemory<TimerItem>>> GetListTimesAsync(CancellationToken cancellationToken)
+    public async ValueTask<Result<ReadOnlyMemory<TimerItem>>> GetListTimesAsync(CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();
         var timers = await context.Set<TimerEntity>().AsNoTracking().ToArrayAsync(cancellationToken);
@@ -50,7 +50,7 @@ public class EfScheduleService : IScheduleService
         return result.ToResult();
     }
 
-    public async Task<Result> RemoveTimerAsync(Guid id, CancellationToken cancellationToken)
+    public async ValueTask<Result> RemoveTimerAsync(Guid id, CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();
 

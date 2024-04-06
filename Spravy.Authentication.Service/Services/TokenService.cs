@@ -21,7 +21,7 @@ public class TokenService : ITokenService
         );
     }
 
-    public Task<Result<string>> GetTokenAsync(CancellationToken cancellationToken)
+    public ValueTask<Result<string>> GetTokenAsync(CancellationToken cancellationToken)
     {
         var jwtHandler = new JwtSecurityTokenHandler();
         var jwtToken = jwtHandler.ReadJwtToken(token.Token);
@@ -29,22 +29,22 @@ public class TokenService : ITokenService
 
         if (expires > DateTimeOffset.Now)
         {
-            return new Result<string>(token.Token).ToTaskResult();
+            return new Result<string>(token.Token).ToValueTaskResult();
         }
 
         token = tokenFactory.Create(
             new UserTokenClaims("authentication.service", Guid.Empty, Role.Service, string.Empty)
         );
 
-        return new Result<string>(token.Token).ToTaskResult();
+        return new Result<string>(token.Token).ToValueTaskResult();
     }
 
-    public Task<Result> LoginAsync(User user, CancellationToken cancellationToken)
+    public ValueTask<Result> LoginAsync(User user, CancellationToken cancellationToken)
     {
         throw new NotSupportedException();
     }
 
-    public Task<Result> LoginAsync(string refreshToken, CancellationToken cancellationToken)
+    public ValueTask<Result> LoginAsync(string refreshToken, CancellationToken cancellationToken)
     {
         throw new NotSupportedException();
     }

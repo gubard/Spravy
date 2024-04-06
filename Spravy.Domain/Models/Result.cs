@@ -2,6 +2,7 @@ using System.Runtime.CompilerServices;
 using Spravy.Domain.Errors;
 using Spravy.Domain.Exceptions;
 using Spravy.Domain.Helpers;
+using Spravy.Domain.Interfaces;
 
 namespace Spravy.Domain.Models;
 
@@ -39,8 +40,10 @@ public class Result<TValue>
 {
     public static readonly Result<TValue> DefaultSuccess = new(default(TValue));
     public static readonly ValueTask<Result<TValue>> DefaultSuccessValueTask = ValueTask.FromResult(DefaultSuccess);
-    public static readonly ConfiguredValueTaskAwaitable<Result<TValue>> DefaultAwaitableFalse = DefaultSuccessValueTask.ConfigureAwait(false);
-    
+
+    public static readonly ConfiguredValueTaskAwaitable<Result<TValue>> DefaultAwaitableFalse =
+        DefaultSuccessValueTask.ConfigureAwait(false);
+
     private readonly TValue value = default;
 
     public Result()

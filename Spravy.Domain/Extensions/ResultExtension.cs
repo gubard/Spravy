@@ -243,6 +243,38 @@ public static class ResultExtension
         return await action.Invoke(result.Value);
     }
 
+    public static async ValueTask<Result> IfSuccessAsync<TValue, TArg>(
+        this Result<TValue> result,
+        Result<TArg> arg,
+        Func<TValue, TArg, ConfiguredValueTaskAwaitable<Result>> action
+    )
+    {
+        var r = new Result(result.Errors.Combine(arg.Errors));
+
+        if (r.IsHasError)
+        {
+            return new Result(r.Errors);
+        }
+
+        return await action.Invoke(result.Value, arg.Value);
+    }
+
+    public static async ValueTask<Result<TReturn>> IfSuccessAsync<TValue, TArg, TReturn>(
+        this Result<TValue> result,
+        Result<TArg> arg,
+        Func<TValue, TArg, ConfiguredValueTaskAwaitable<Result<TReturn>>> action
+    )
+    {
+        var r = new Result<TReturn>(result.Errors.Combine(arg.Errors));
+
+        if (r.IsHasError)
+        {
+            return new Result<TReturn>(r.Errors);
+        }
+
+        return await action.Invoke(result.Value, arg.Value);
+    }
+
     public static async ValueTask<Result<TReturn>> IfSuccessAsync<TValue, TReturn>(
         this Result<TValue> result,
         Func<TValue, ConfiguredValueTaskAwaitable<Result<TReturn>>> action
@@ -269,6 +301,21 @@ public static class ResultExtension
         }
 
         return await action.Invoke(result.Value);
+    }
+
+    public static async ValueTask<Result<TReturn>> IfSuccessAsync<TValue, TReturn>(
+        this ConfiguredValueTaskAwaitable<Result<TValue>> task,
+        Func<TValue, Result<TReturn>> action
+    )
+    {
+        var result = await task;
+
+        if (result.IsHasError)
+        {
+            return new Result<TReturn>(result.Errors);
+        }
+
+        return action.Invoke(result.Value);
     }
 
     public static async ValueTask<Result> IfSuccessAsync<TValue>(

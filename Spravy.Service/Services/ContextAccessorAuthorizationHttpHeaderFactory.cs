@@ -16,7 +16,7 @@ public class ContextAccessorAuthorizationHttpHeaderFactory : IHttpHeaderFactory
         this.httpContextAccessor = httpContextAccessor;
     }
 
-    public Task<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsAsync(CancellationToken cancellationToken)
+    public ValueTask<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsAsync(CancellationToken cancellationToken)
     {
         var authorization = httpContextAccessor
             .HttpContext
@@ -25,6 +25,6 @@ public class ContextAccessorAuthorizationHttpHeaderFactory : IHttpHeaderFactory
 
         return new HttpHeaderItem(HttpNames.HeaderAuthorizationName, authorization).ToReadOnlyMemory()
             .ToResult()
-            .ToTaskResult();
+            .ToValueTaskResult();
     }
 }

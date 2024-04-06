@@ -31,7 +31,7 @@ public class EfPasswordService : IPasswordService
         this.passwordGenerator = passwordGenerator;
     }
 
-    public async Task<Result> AddPasswordItemAsync(AddPasswordOptions options, CancellationToken cancellationToken)
+    public async ValueTask<Result> AddPasswordItemAsync(AddPasswordOptions options, CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();
 
@@ -48,7 +48,7 @@ public class EfPasswordService : IPasswordService
         return Result.Success;
     }
 
-    public async Task<Result<ReadOnlyMemory<PasswordItem>>> GetPasswordItemsAsync(CancellationToken cancellationToken)
+    public async ValueTask<Result<ReadOnlyMemory<PasswordItem>>> GetPasswordItemsAsync(CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();
         var items = await context.Set<PasswordItemEntity>().AsNoTracking().ToArrayAsync(cancellationToken);
@@ -56,7 +56,7 @@ public class EfPasswordService : IPasswordService
         return mapper.Map<PasswordItem[]>(items).ToReadOnlyMemory().ToResult();
     }
 
-    public async Task<Result<PasswordItem>> GetPasswordItemAsync(Guid id, CancellationToken cancellationToken)
+    public async ValueTask<Result<PasswordItem>> GetPasswordItemAsync(Guid id, CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();
         var item = await context.FindAsync<PasswordItemEntity>(id);
@@ -65,7 +65,7 @@ public class EfPasswordService : IPasswordService
         return mapper.Map<PasswordItem>(item).ToResult();
     }
 
-    public async Task<Result> DeletePasswordItemAsync(Guid id, CancellationToken cancellationToken)
+    public async ValueTask<Result> DeletePasswordItemAsync(Guid id, CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();
         var item = await context.FindAsync<PasswordItemEntity>(id);
@@ -75,7 +75,7 @@ public class EfPasswordService : IPasswordService
         return Result.Success;
     }
 
-    public async Task<Result<string>> GeneratePasswordAsync(Guid id, CancellationToken cancellationToken)
+    public async ValueTask<Result<string>> GeneratePasswordAsync(Guid id, CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();
         var item = await context.FindAsync<PasswordItemEntity>(id);
@@ -89,7 +89,7 @@ public class EfPasswordService : IPasswordService
             .ToResult();
     }
 
-    public async Task<Result> UpdatePasswordItemNameAsync(Guid id, string name, CancellationToken cancellationToken)
+    public async ValueTask<Result> UpdatePasswordItemNameAsync(Guid id, string name, CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();
         var item = await context.FindAsync<PasswordItemEntity>(id);
@@ -99,7 +99,7 @@ public class EfPasswordService : IPasswordService
         return Result.Success;
     }
 
-    public async Task<Result> UpdatePasswordItemKeyAsync(Guid id, string key, CancellationToken cancellationToken)
+    public async ValueTask<Result> UpdatePasswordItemKeyAsync(Guid id, string key, CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();
         var item = await context.FindAsync<PasswordItemEntity>(id);
@@ -109,7 +109,7 @@ public class EfPasswordService : IPasswordService
         return Result.Success;
     }
 
-    public async Task<Result> UpdatePasswordItemLengthAsync(Guid id, ushort length, CancellationToken cancellationToken)
+    public async ValueTask<Result> UpdatePasswordItemLengthAsync(Guid id, ushort length, CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();
         var item = await context.FindAsync<PasswordItemEntity>(id);
@@ -119,7 +119,7 @@ public class EfPasswordService : IPasswordService
         return Result.Success;
     }
 
-    public async Task<Result> UpdatePasswordItemRegexAsync(Guid id, string regex, CancellationToken cancellationToken)
+    public async ValueTask<Result> UpdatePasswordItemRegexAsync(Guid id, string regex, CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();
         var item = await context.FindAsync<PasswordItemEntity>(id);
@@ -129,7 +129,7 @@ public class EfPasswordService : IPasswordService
         return Result.Success;
     }
 
-    public async Task<Result> UpdatePasswordItemIsAvailableNumberAsync(
+    public async ValueTask<Result> UpdatePasswordItemIsAvailableNumberAsync(
         Guid id,
         bool isAvailableNumber,
         CancellationToken cancellationToken
@@ -143,7 +143,7 @@ public class EfPasswordService : IPasswordService
         return Result.Success;
     }
 
-    public async Task<Result> UpdatePasswordItemIsAvailableLowerLatinAsync(
+    public async ValueTask<Result> UpdatePasswordItemIsAvailableLowerLatinAsync(
         Guid id,
         bool isAvailableLowerLatin,
         CancellationToken cancellationToken
@@ -157,7 +157,7 @@ public class EfPasswordService : IPasswordService
         return Result.Success;
     }
 
-    public async Task<Result> UpdatePasswordItemIsAvailableSpecialSymbolsAsync(
+    public async ValueTask<Result> UpdatePasswordItemIsAvailableSpecialSymbolsAsync(
         Guid id,
         bool isAvailableSpecialSymbols,
         CancellationToken cancellationToken
@@ -174,7 +174,7 @@ public class EfPasswordService : IPasswordService
         return Result.Success;
     }
 
-    public async Task<Result> UpdatePasswordItemCustomAvailableCharactersAsync(
+    public async ValueTask<Result> UpdatePasswordItemCustomAvailableCharactersAsync(
         Guid id,
         string customAvailableCharacters,
         CancellationToken cancellationToken
@@ -191,7 +191,7 @@ public class EfPasswordService : IPasswordService
         return Result.Success;
     }
 
-    public async Task<Result> UpdatePasswordItemIsAvailableUpperLatinAsync(
+    public async ValueTask<Result> UpdatePasswordItemIsAvailableUpperLatinAsync(
         Guid id,
         bool isAvailableUpperLatin,
         CancellationToken cancellationToken

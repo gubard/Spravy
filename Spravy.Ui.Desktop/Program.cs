@@ -17,6 +17,8 @@ public class Program
     [STAThread]
     public static void Main(string[] args)
     {
+        var r = Result.Success;
+        var r2 = Result<object>.DefaultSuccess;
         Log.Logger = new LoggerConfiguration()
             .WriteTo.Console()
             .CreateLogger();

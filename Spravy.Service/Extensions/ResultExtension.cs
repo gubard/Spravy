@@ -8,7 +8,7 @@ namespace Spravy.Service.Extensions;
 
 public static class ResultExtension
 {
-    public static async ValueTask<TReturn> HandleAsync<TReturn>(
+    public static async Task<TReturn> HandleAsync<TReturn>(
         this ValueTask<Result> task,
         ISerializer serializer
     ) where TReturn : class, new()
@@ -23,7 +23,7 @@ public static class ResultExtension
         return DefaultObject<TReturn>.Default;
     }
 
-    public static async ValueTask<TReturn> HandleAsync<TReturn>(
+    public static async Task<TReturn> HandleAsync<TReturn>(
         this ValueTask<Result> task,
         ISerializer serializer,
         Func<TReturn> func
@@ -39,7 +39,7 @@ public static class ResultExtension
         return func.Invoke();
     }
 
-    public static async ValueTask<TReturn> HandleAsync<TValue, TReturn>(
+    public static async Task<TReturn> HandleAsync<TValue, TReturn>(
         this ValueTask<Result<TValue>> task,
         ISerializer serializer,
         Func<TValue, TReturn> func
@@ -55,7 +55,7 @@ public static class ResultExtension
         return func.Invoke(result.Value);
     }
 
-    public static async ValueTask<TValue> HandleAsync<TValue>(
+    public static async Task<TValue> HandleAsync<TValue>(
         this ValueTask<Result<TValue>> task,
         ISerializer serializer
     )

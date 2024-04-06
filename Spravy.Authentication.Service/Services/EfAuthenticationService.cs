@@ -51,7 +51,7 @@ public class EfAuthenticationService : IAuthenticationService
         this.randomString = randomString;
     }
 
-    public async Task<Result<TokenResult>> LoginAsync(User user, CancellationToken cancellationToken)
+    public async ValueTask<Result<TokenResult>> LoginAsync(User user, CancellationToken cancellationToken)
     {
         var userEntity = await context.Set<UserEntity>()
             .AsNoTracking()
@@ -69,7 +69,7 @@ public class EfAuthenticationService : IAuthenticationService
         return new Result<TokenResult>(tokenResult);
     }
 
-    public async Task<Result> CreateUserAsync(
+    public async ValueTask<Result> CreateUserAsync(
         CreateUserOptions options,
         CancellationToken cancellationToken
     )
@@ -127,7 +127,7 @@ public class EfAuthenticationService : IAuthenticationService
         );
     }
 
-    public async Task<Result<TokenResult>> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
+    public async ValueTask<Result<TokenResult>> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
     {
         var jwtHandler = new JwtSecurityTokenHandler();
         var jwtToken = jwtHandler.ReadJwtToken(refreshToken);
@@ -158,7 +158,7 @@ public class EfAuthenticationService : IAuthenticationService
         }
     }
 
-    public async Task<Result> UpdateVerificationCodeByLoginAsync(string login, CancellationToken cancellationToken)
+    public async ValueTask<Result> UpdateVerificationCodeByLoginAsync(string login, CancellationToken cancellationToken)
     {
         login = login.Trim();
 
@@ -181,7 +181,7 @@ public class EfAuthenticationService : IAuthenticationService
         return Result.Success;
     }
 
-    public async Task<Result> UpdateVerificationCodeByEmailAsync(string email, CancellationToken cancellationToken)
+    public async ValueTask<Result> UpdateVerificationCodeByEmailAsync(string email, CancellationToken cancellationToken)
     {
         email = email.Trim().ToUpperInvariant();
 
@@ -198,7 +198,7 @@ public class EfAuthenticationService : IAuthenticationService
         return Result.Success;
     }
 
-    public async Task<Result<bool>> IsVerifiedByLoginAsync(string login, CancellationToken cancellationToken)
+    public async ValueTask<Result<bool>> IsVerifiedByLoginAsync(string login, CancellationToken cancellationToken)
     {
         login = login.Trim();
 
@@ -209,7 +209,7 @@ public class EfAuthenticationService : IAuthenticationService
         return new Result<bool>(userEntity.IsEmailVerified);
     }
 
-    public async Task<Result<bool>> IsVerifiedByEmailAsync(string email, CancellationToken cancellationToken)
+    public async ValueTask<Result<bool>> IsVerifiedByEmailAsync(string email, CancellationToken cancellationToken)
     {
         email = email.Trim().ToUpperInvariant();
 
@@ -220,7 +220,7 @@ public class EfAuthenticationService : IAuthenticationService
         return new Result<bool>(userEntity.IsEmailVerified);
     }
 
-    public async Task<Result> VerifiedEmailByLoginAsync(
+    public async ValueTask<Result> VerifiedEmailByLoginAsync(
         string login,
         string verificationCode,
         CancellationToken cancellationToken
@@ -240,7 +240,7 @@ public class EfAuthenticationService : IAuthenticationService
         return Result.Success;
     }
 
-    public async Task<Result> VerifiedEmailByEmailAsync(
+    public async ValueTask<Result> VerifiedEmailByEmailAsync(
         string email,
         string verificationCode,
         CancellationToken cancellationToken
@@ -260,7 +260,7 @@ public class EfAuthenticationService : IAuthenticationService
         return Result.Success;
     }
 
-    public async Task<Result> UpdateEmailNotVerifiedUserByEmailAsync(
+    public async ValueTask<Result> UpdateEmailNotVerifiedUserByEmailAsync(
         string email,
         string newEmail,
         CancellationToken cancellationToken
@@ -277,7 +277,7 @@ public class EfAuthenticationService : IAuthenticationService
         return Result.Success;
     }
 
-    public async Task<Result> UpdateEmailNotVerifiedUserByLoginAsync(
+    public async ValueTask<Result> UpdateEmailNotVerifiedUserByLoginAsync(
         string login,
         string newEmail,
         CancellationToken cancellationToken
@@ -294,7 +294,7 @@ public class EfAuthenticationService : IAuthenticationService
         return Result.Success;
     }
 
-    public async Task<Result> DeleteUserByEmailAsync(
+    public async ValueTask<Result> DeleteUserByEmailAsync(
         string email,
         string verificationCode,
         CancellationToken cancellationToken
@@ -312,7 +312,7 @@ public class EfAuthenticationService : IAuthenticationService
         return Result.Success;
     }
 
-    public async Task<Result> DeleteUserByLoginAsync(
+    public async ValueTask<Result> DeleteUserByLoginAsync(
         string login,
         string verificationCode,
         CancellationToken cancellationToken
@@ -330,7 +330,7 @@ public class EfAuthenticationService : IAuthenticationService
         return Result.Success;
     }
 
-    public async Task<Result> UpdatePasswordByEmailAsync(
+    public async ValueTask<Result> UpdatePasswordByEmailAsync(
         string email,
         string verificationCode,
         string newPassword,
@@ -354,7 +354,7 @@ public class EfAuthenticationService : IAuthenticationService
         return Result.Success;
     }
 
-    public async Task<Result> UpdatePasswordByLoginAsync(
+    public async ValueTask<Result> UpdatePasswordByLoginAsync(
         string login,
         string verificationCode,
         string newPassword,

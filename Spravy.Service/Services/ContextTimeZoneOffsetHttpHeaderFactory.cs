@@ -16,7 +16,7 @@ public class ContextTimeZoneOffsetHttpHeaderFactory : IHttpHeaderFactory
         this.httpContextAccessor = httpContextAccessor;
     }
 
-    public Task<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsAsync(CancellationToken cancellationToken)
+    public ValueTask<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsAsync(CancellationToken cancellationToken)
     {
         var authorization = httpContextAccessor
             .HttpContext
@@ -25,6 +25,6 @@ public class ContextTimeZoneOffsetHttpHeaderFactory : IHttpHeaderFactory
 
         return new HttpHeaderItem(HttpNames.HeaderTimeZoneOffsetName, authorization).ToReadOnlyMemory()
             .ToResult()
-            .ToTaskResult();
+            .ToValueTaskResult();
     }
 }
