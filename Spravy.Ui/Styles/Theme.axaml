@@ -22,4 +22,5 @@
     <StyleInclude Source="Button.axaml" />
     <StyleInclude Source="Expander.axaml" />
     <StyleInclude Source="ContentControl.axaml" />
+    <StyleInclude Source="ScrollViewer.axaml" />
 </Styles>

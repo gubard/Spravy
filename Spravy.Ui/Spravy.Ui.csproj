@@ -36,7 +36,7 @@
         <PackageReference Include="ReactiveUI.Fody" Version="19.5.41" />
         <PackageReference Include="Serilog.Sinks.Console" Version="5.0.1" />
         <PackageReference Include="SmartFormat" Version="3.3.2" />
-        <PackageReference Include="SukiUI" Version="6.0.0-beta3" />
+        <PackageReference Include="SukiUI" Version="6.0.0-beta4" />
         <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.4.1" />
     </ItemGroup>
 
