@@ -8,7 +8,6 @@ using ReactiveUI;
 using Serilog;
 using Spravy.Client.Exceptions;
 using Spravy.Domain.Extensions;
-using Spravy.Domain.Models;
 using Spravy.Ui.Features.ErrorHandling.ViewModels;
 using Spravy.Ui.Interfaces;
 
@@ -96,11 +95,9 @@ public class ViewModelBase : NotifyBase
 
         await DialogViewer.ShowInfoErrorDialogAsync<ExceptionViewModel>(
             _ => DialogViewer.CloseErrorDialogAsync(CancellationToken.None)
-                .ConfigureAwait(false)
                 .IfSuccessAsync(
-                    () => DialogViewer.CloseProgressDialogAsync(CancellationToken.None).ConfigureAwait(false)
-                )
-                .ConfigureAwait(false),
+                    () => DialogViewer.CloseProgressDialogAsync(CancellationToken.None)
+                ),
             viewModel => viewModel.Exception = exception,
             CancellationToken.None
         );

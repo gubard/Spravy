@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -7,7 +8,6 @@ using Material.Icons;
 using Ninject;
 using ProtoBuf;
 using ReactiveUI.Fody.Helpers;
-using Spravy.Domain.Di.Helpers;
 using Spravy.Domain.Enums;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
@@ -16,7 +16,6 @@ using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Extensions;
-using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 using Spravy.Ui.Services;
 using Spravy.Ui.ViewModels;
@@ -53,15 +52,12 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
 
     public override string ViewId => $"{TypeCache<AddToDoItemViewModel>.Type.Name}:{ParentId}";
 
-    private ValueTask<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         return ObjectStorage.GetObjectOrDefaultAsync<AddToDoItemViewModelSetting>(ViewId)
-            .ConfigureAwait(false)
-            .IfSuccessAsync(setting => SetStateAsync(setting).ConfigureAwait(false))
-            .ConfigureAwait(false)
+            .IfSuccessAsync(SetStateAsync)
             .IfSuccessAllAsync(
                 () => ToDoService.GetParentsAsync(ParentId, cancellationToken)
-                    .ConfigureAwait(false)
                     .IfSuccessAsync(
                         parents =>
                         {
@@ -71,10 +67,9 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
                                 .Select(x => x.ThrowIfNull())
                                 .ToArray();
 
-                            return this.InvokeUIBackgroundAsync(() => Path = path).ConfigureAwait(false);
+                            return this.InvokeUIBackgroundAsync(() => Path = path);
                         }
                     )
-                    .ConfigureAwait(false)
             );
     }
 
@@ -83,12 +78,12 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
         return Result.Success;
     }
 
-    public override ValueTask<Result> SaveStateAsync()
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync()
     {
         return ObjectStorage.SaveObjectAsync(ViewId, new AddToDoItemViewModelSetting(this));
     }
 
-    public override ValueTask<Result> SetStateAsync(object setting)
+    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting)
     {
         return setting.CastObject<AddToDoItemViewModelSetting>()
             .IfSuccessAsync(
@@ -102,7 +97,6 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
                             DescriptionContent.Type = s.DescriptionType;
                         }
                     )
-                    .ConfigureAwait(false)
             );
     }
 

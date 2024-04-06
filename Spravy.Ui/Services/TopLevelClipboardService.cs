@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Input.Platform;
@@ -16,7 +17,12 @@ public class TopLevelClipboardService : IClipboardService
         .Clipboard
         .ThrowIfNull();
 
-    public async ValueTask<Result> SetTextAsync(string? text)
+    public ConfiguredValueTaskAwaitable<Result> SetTextAsync(string? text)
+    {
+        return SetTextCore(text).ConfigureAwait(false);
+    }
+
+    public async ValueTask<Result> SetTextCore(string? text)
     {
         await clipboard.SetTextAsync(text);
 

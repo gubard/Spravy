@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Grpc.Core;
 using Spravy.Domain.Errors;
 using Spravy.Domain.Exceptions;
@@ -15,7 +16,12 @@ public static class RpcExceptionExtension
     private static readonly MethodInfo DeserializeAsyncMethod =
         typeof(ISerializer).GetMethod(nameof(ISerializer.Deserialize)).ThrowIfNull();
 
-    public static async Task<Result> ToErrorAsync(this RpcException exception, ISerializer serializer)
+    public static ConfiguredValueTaskAwaitable<Result> ToErrorAsync(this RpcException exception, ISerializer serializer)
+    {
+        return ToErrorCore(exception, serializer).ConfigureAwait(false);
+    }
+
+    private static async ValueTask<Result> ToErrorCore(this RpcException exception, ISerializer serializer)
     {
         var errors = new List<Error>();
 

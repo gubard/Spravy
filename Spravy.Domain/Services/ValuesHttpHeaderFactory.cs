@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
@@ -13,8 +14,8 @@ public class ValuesHttpHeaderFactory : IHttpHeaderFactory
         this.items = items;
     }
 
-    public ValueTask<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsAsync(CancellationToken cancellationToken)
     {
-        return items.ToResult().ToValueTaskResult();
+        return items.ToResult().ToValueTaskResult().ConfigureAwait(false);
     }
 }

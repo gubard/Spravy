@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Models;
 using Spravy.Authentication.Protos;
@@ -27,7 +28,7 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         this.converter = converter;
     }
 
-    public ValueTask<Result<TokenResult>> LoginAsync(User user, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<TokenResult>> LoginAsync(User user, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             client =>
@@ -46,27 +47,30 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
                                     .ToValueTaskResult()
                                     .ConfigureAwait(false)
                             )
-                            .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                    ),
             cancellationToken
         );
     }
 
-    public ValueTask<Result> CreateUserAsync(CreateUserOptions options, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> CreateUserAsync(
+        CreateUserOptions options,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             client =>
                 converter.Convert<CreateUserRequest>(options)
                     .IfSuccessAsync(
                         request => client.CreateUserAsync(request).ToValueTaskResultOnly().ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                    ),
             cancellationToken
         );
     }
 
-    public ValueTask<Result<TokenResult>> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<TokenResult>> RefreshTokenAsync(
+        string refreshToken,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             client => client.RefreshTokenAsync(
@@ -79,13 +83,15 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
                 .ConfigureAwait(false)
                 .IfSuccessAsync(
                     reply => converter.Convert<TokenResult>(reply).ToValueTaskResult().ConfigureAwait(false)
-                )
-                .ConfigureAwait(false),
+                ),
             cancellationToken
         );
     }
 
-    public ValueTask<Result> UpdateVerificationCodeByLoginAsync(string login, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> UpdateVerificationCodeByLoginAsync(
+        string login,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             client => client.UpdateVerificationCodeByLoginAsync(
@@ -100,7 +106,10 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         );
     }
 
-    public ValueTask<Result> UpdateVerificationCodeByEmailAsync(string email, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> UpdateVerificationCodeByEmailAsync(
+        string email,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             client => client.UpdateVerificationCodeByEmailAsync(
@@ -115,7 +124,10 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         );
     }
 
-    public ValueTask<Result<bool>> IsVerifiedByLoginAsync(string login, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<bool>> IsVerifiedByLoginAsync(
+        string login,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             client => client.IsVerifiedByLoginAsync(
@@ -126,13 +138,15 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
                 )
                 .ToValueTaskResultValueOnly()
                 .ConfigureAwait(false)
-                .IfSuccessAsync(reply => reply.IsVerified.ToResult().ToValueTaskResult().ConfigureAwait(false))
-                .ConfigureAwait(false),
+                .IfSuccessAsync(reply => reply.IsVerified.ToResult().ToValueTaskResult().ConfigureAwait(false)),
             cancellationToken
         );
     }
 
-    public ValueTask<Result<bool>> IsVerifiedByEmailAsync(string email, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<bool>> IsVerifiedByEmailAsync(
+        string email,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             client => client.IsVerifiedByEmailAsync(
@@ -143,13 +157,12 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
                 )
                 .ToValueTaskResultValueOnly()
                 .ConfigureAwait(false)
-                .IfSuccessAsync(reply => reply.IsVerified.ToResult().ToValueTaskResult().ConfigureAwait(false))
-                .ConfigureAwait(false),
+                .IfSuccessAsync(reply => reply.IsVerified.ToResult().ToValueTaskResult().ConfigureAwait(false)),
             cancellationToken
         );
     }
 
-    public ValueTask<Result> VerifiedEmailByLoginAsync(
+    public ConfiguredValueTaskAwaitable<Result> VerifiedEmailByLoginAsync(
         string login,
         string verificationCode,
         CancellationToken cancellationToken
@@ -169,7 +182,7 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         );
     }
 
-    public ValueTask<Result> VerifiedEmailByEmailAsync(
+    public ConfiguredValueTaskAwaitable<Result> VerifiedEmailByEmailAsync(
         string email,
         string verificationCode,
         CancellationToken cancellationToken
@@ -189,7 +202,7 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         );
     }
 
-    public ValueTask<Result> UpdateEmailNotVerifiedUserByEmailAsync(
+    public ConfiguredValueTaskAwaitable<Result> UpdateEmailNotVerifiedUserByEmailAsync(
         string email,
         string newEmail,
         CancellationToken cancellationToken
@@ -209,7 +222,7 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         );
     }
 
-    public ValueTask<Result> UpdateEmailNotVerifiedUserByLoginAsync(
+    public ConfiguredValueTaskAwaitable<Result> UpdateEmailNotVerifiedUserByLoginAsync(
         string login,
         string newEmail,
         CancellationToken cancellationToken
@@ -229,7 +242,7 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         );
     }
 
-    public ValueTask<Result> DeleteUserByEmailAsync(
+    public ConfiguredValueTaskAwaitable<Result> DeleteUserByEmailAsync(
         string email,
         string verificationCode,
         CancellationToken cancellationToken
@@ -250,7 +263,7 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         );
     }
 
-    public ValueTask<Result> DeleteUserByLoginAsync(
+    public ConfiguredValueTaskAwaitable<Result> DeleteUserByLoginAsync(
         string login,
         string verificationCode,
         CancellationToken cancellationToken
@@ -271,7 +284,7 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         );
     }
 
-    public ValueTask<Result> UpdatePasswordByEmailAsync(
+    public ConfiguredValueTaskAwaitable<Result> UpdatePasswordByEmailAsync(
         string email,
         string verificationCode,
         string newPassword,
@@ -293,7 +306,7 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         );
     }
 
-    public ValueTask<Result> UpdatePasswordByLoginAsync(
+    public ConfiguredValueTaskAwaitable<Result> UpdatePasswordByLoginAsync(
         string login,
         string verificationCode,
         string newPassword,

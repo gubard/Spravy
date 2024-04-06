@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
@@ -20,22 +21,27 @@ public class FilesObjectStorage : IObjectStorage
         this.serializer = serializer;
     }
 
-    public ValueTask<Result<bool>> IsExistsAsync(string id)
+    public ConfiguredValueTaskAwaitable<Result<bool>> IsExistsAsync(string id)
     {
         var file = root.ToFile(id);
 
-        return file.Exists.ToResult().ToValueTaskResult();
+        return file.Exists.ToResult().ToValueTaskResult().ConfigureAwait(false);
     }
 
-    public ValueTask<Result> DeleteAsync(string id)
+    public ConfiguredValueTaskAwaitable<Result> DeleteAsync(string id)
     {
         var file = root.ToFile(id);
         file.Delete();
 
-        return Result.SuccessValueTask;
+        return Result.AwaitableFalse;
     }
 
-    public async ValueTask<Result> SaveObjectAsync(string id, object obj)
+    public ConfiguredValueTaskAwaitable<Result> SaveObjectAsync(string id, object obj)
+    {
+        return SaveObjectCore(id, obj).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result> SaveObjectCore(string id, object obj)
     {
         var file = root.ToFile(id);
 
@@ -49,7 +55,12 @@ public class FilesObjectStorage : IObjectStorage
         return await serializer.Serialize(obj, stream);
     }
 
-    public async ValueTask<Result<TObject>> GetObjectAsync<TObject>(string id)
+    public ConfiguredValueTaskAwaitable<Result<TObject>> GetObjectAsync<TObject>(string id)
+    {
+        return GetObjectCore<TObject>(id).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result<TObject>> GetObjectCore<TObject>(string id)
     {
         var file = root.ToFile(id);
         await using var stream = file.OpenRead();

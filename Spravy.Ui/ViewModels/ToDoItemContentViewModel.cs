@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Avalonia.Collections;
 using ReactiveUI.Fody.Helpers;
@@ -33,13 +34,13 @@ public class ToDoItemContentViewModel : NavigatableViewModelBase
         return Result.Success;
     }
 
-    public override ValueTask<Result> SetStateAsync(object setting)
+    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting)
     {
-        return Result.SuccessValueTask;
+        return Result.AwaitableFalse;
     }
 
-    public override ValueTask<Result> SaveStateAsync()
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync()
     {
-        return Result.SuccessValueTask;
+        return Result.AwaitableFalse;
     }
 }

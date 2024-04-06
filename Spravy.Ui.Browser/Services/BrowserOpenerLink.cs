@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Spravy.Domain.Models;
@@ -9,10 +10,10 @@ namespace Spravy.Ui.Browser.Services;
 
 public class BrowserOpenerLink : IOpenerLink
 {
-    public ValueTask<Result> OpenLinkAsync(Uri link, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> OpenLinkAsync(Uri link, CancellationToken cancellationToken)
     {
         JSInterop.WindowOpen(link.AbsoluteUri);
 
-        return Result.SuccessValueTask;
+        return Result.AwaitableFalse;
     }
 }

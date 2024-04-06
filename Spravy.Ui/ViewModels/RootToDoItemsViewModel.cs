@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Reactive.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -77,30 +78,32 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
     [Inject]
     public required IObjectStorage ObjectStorage { get; init; }
 
-    private ValueTask<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         return ObjectStorage.GetObjectOrDefaultAsync<RootToDoItemsViewModelSetting>(ViewId)
-            .ConfigureAwait(false)
             .IfSuccessAllAsync(
-                setting => SetStateAsync(setting).ConfigureAwait(false),
+                SetStateAsync,
                 _ => refreshWork.RunAsync().ToValueTaskResultOnly().ConfigureAwait(false)
             );
     }
 
-    public async ValueTask<Result> RefreshAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
+    {
+        return RefreshCore(cancellationToken).ConfigureAwait(false);
+    }
+
+    public async ValueTask<Result> RefreshCore(CancellationToken cancellationToken)
     {
         await refreshWork.RunAsync();
 
         return Result.Success;
     }
 
-    private ValueTask<Result> RefreshCoreAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> RefreshCoreAsync(CancellationToken cancellationToken)
     {
         return ToDoService.GetRootToDoItemIdsAsync(cancellationToken)
-            .ConfigureAwait(false)
             .IfSuccessAsync(
                 ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken)
-                    .ConfigureAwait(false)
             );
     }
 
@@ -111,23 +114,22 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
         return Result.Success;
     }
 
-    public override ValueTask<Result> SaveStateAsync()
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync()
     {
         return ObjectStorage.SaveObjectAsync(ViewId, new RootToDoItemsViewModelSetting(this));
     }
 
-    public override ValueTask<Result> SetStateAsync(object setting)
+    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting)
     {
         return setting.CastObject<RootToDoItemsViewModelSetting>()
             .IfSuccessAsync(
                 s => this.InvokeUIBackgroundAsync(
-                        () =>
-                        {
-                            ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
-                            ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
-                        }
-                    )
-                    .ConfigureAwait(false)
+                    () =>
+                    {
+                        ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
+                        ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
+                    }
+                )
             );
     }
 

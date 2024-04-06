@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Threading;
 using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Collections;
@@ -90,28 +91,25 @@ public class SettingViewModel : NavigatableViewModelBase
     [Reactive]
     public bool IsLightTheme { get; set; }
 
-    private ValueTask<Result> SaveSettingsAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> SaveSettingsAsync(CancellationToken cancellationToken)
     {
         return this.InvokeUIBackgroundAsync(() => IsBusy = true)
-            .ConfigureAwait(false)
             .IfSuccessTryFinallyAsync(
                 () => ObjectStorage.SaveObjectAsync(
-                        TypeCache<SettingModel>.Type.Name,
-                        new SettingModel
-                        {
-                            BaseTheme = IsLightTheme ? "Light" : "Dark",
-                            ColorTheme = AvailableColors.Single(x => x.IsSelect).Value.DisplayName,
-                        }
-                    )
-                    .ConfigureAwait(false),
+                    TypeCache<SettingModel>.Type.Name,
+                    new SettingModel
+                    {
+                        BaseTheme = IsLightTheme ? "Light" : "Dark",
+                        ColorTheme = AvailableColors.Single(x => x.IsSelect).Value.DisplayName,
+                    }
+                ),
                 () => this.InvokeUIBackgroundAsync(() => IsBusy = false)
-                    .ConfigureAwait(false)
                     .ToValueTask()
                     .ConfigureAwait(false)
             );
     }
 
-    private ValueTask<Result> DeleteAccountAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> DeleteAccountAsync(CancellationToken cancellationToken)
     {
         return Navigator.NavigateToAsync<DeleteAccountViewModel>(
             vm =>
@@ -123,7 +121,7 @@ public class SettingViewModel : NavigatableViewModelBase
         );
     }
 
-    private ValueTask<Result> ChangePasswordAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> ChangePasswordAsync(CancellationToken cancellationToken)
     {
         return Navigator.NavigateToAsync<ForgotPasswordViewModel>(
             vm =>
@@ -140,21 +138,24 @@ public class SettingViewModel : NavigatableViewModelBase
         return Result.Success;
     }
 
-    public override ValueTask<Result> SaveStateAsync()
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync()
     {
-        return Result.SuccessValueTask;
+        return Result.AwaitableFalse;
     }
 
-    public override ValueTask<Result> SetStateAsync(object setting)
+    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting)
     {
-        return Result.SuccessValueTask;
+        return Result.AwaitableFalse;
     }
 
-    public ValueTask<Result> SwitchToColorTheme(Selected<SukiColorTheme> colorTheme, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> SwitchToColorTheme(
+        Selected<SukiColorTheme> colorTheme,
+        CancellationToken cancellationToken
+    )
     {
         theme.ChangeColorTheme(colorTheme.Value);
         colorTheme.IsSelect = true;
 
-        return Result.SuccessValueTask;
+        return Result.AwaitableFalse;
     }
 }

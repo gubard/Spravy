@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -41,25 +42,22 @@ public class SearchViewModel : NavigatableViewModelBase, IToDoItemSearchProperti
     [Inject]
     public required IObjectStorage ObjectStorage { get; init; }
 
-    private ValueTask<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         return ObjectStorage.GetObjectOrDefaultAsync<SearchViewModelSetting>(ViewId)
-            .ConfigureAwait(false)
-            .IfSuccessAsync(setting => SetStateAsync(setting).ConfigureAwait(false));
+            .IfSuccessAsync(SetStateAsync);
     }
 
-    public ValueTask<Result> RefreshAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
     {
-        return refreshWork.RunAsync().ToValueTaskResultOnly();
+        return refreshWork.RunAsync().ToValueTaskResultOnly().ConfigureAwait(false);
     }
 
-    private ValueTask<Result> RefreshCoreAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> RefreshCoreAsync(CancellationToken cancellationToken)
     {
         return ToDoService.SearchToDoItemIdsAsync(SearchText, cancellationToken)
-            .ConfigureAwait(false)
             .IfSuccessAsync(
                 ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken)
-                    .ConfigureAwait(false)
             );
     }
 
@@ -70,15 +68,15 @@ public class SearchViewModel : NavigatableViewModelBase, IToDoItemSearchProperti
         return Result.Success;
     }
 
-    public override ValueTask<Result> SaveStateAsync()
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync()
     {
         return ObjectStorage.SaveObjectAsync(ViewId, new SearchViewModelSetting(this));
     }
 
-    public override ValueTask<Result> SetStateAsync(object setting)
+    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting)
     {
         return setting.CastObject<SearchViewModelSetting>()
-            .IfSuccessAsync(s => this.InvokeUIBackgroundAsync(() => SearchText = s.SearchText).ConfigureAwait(false));
+            .IfSuccessAsync(s => this.InvokeUIBackgroundAsync(() => SearchText = s.SearchText));
     }
 
     [ProtoContract]

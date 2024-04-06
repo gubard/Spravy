@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using Avalonia.Collections;
-using Avalonia.Threading;
 using Ninject;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -142,12 +142,12 @@ public class MultiToDoItemsViewModel : ViewModelBase
     [Reactive]
     public object? Content { get; set; }
 
-    public ValueTask<Result> ClearFavoriteExceptAsync(IEnumerable<Guid> ids)
+    public ConfiguredValueTaskAwaitable<Result> ClearFavoriteExceptAsync(IEnumerable<Guid> ids)
     {
         return this.InvokeUIBackgroundAsync(() => Favorite.ClearExcept(ids));
     }
 
-    public ValueTask<Result> ClearExceptAsync(IEnumerable<Guid> ids)
+    public ConfiguredValueTaskAwaitable<Result> ClearExceptAsync(IEnumerable<Guid> ids)
     {
         return this.InvokeUIBackgroundAsync(
             () =>
@@ -158,7 +158,7 @@ public class MultiToDoItemsViewModel : ViewModelBase
         );
     }
 
-    public ValueTask<Result> UpdateFavoriteItemAsync(ToDoItem item)
+    public ConfiguredValueTaskAwaitable<Result> UpdateFavoriteItemAsync(ToDoItem item)
     {
         return this.InvokeUIBackgroundAsync(
             () =>
@@ -173,7 +173,7 @@ public class MultiToDoItemsViewModel : ViewModelBase
         );
     }
 
-    public ValueTask<Result> UpdateItemAsync(ToDoItem item)
+    public ConfiguredValueTaskAwaitable<Result> UpdateItemAsync(ToDoItem item)
     {
         return this.InvokeUIBackgroundAsync(
             () =>
@@ -237,23 +237,21 @@ public class MultiToDoItemsViewModel : ViewModelBase
         return item;
     }
 
-    private ValueTask<Result> SwitchCompleteToDoItemAsync(
+    private ConfiguredValueTaskAwaitable<Result> SwitchCompleteToDoItemAsync(
         ICanCompleteProperty property,
         CancellationToken cancellationToken
     )
     {
         return this.InvokeUIBackgroundAsync(() => property.IsBusy = true)
-            .ConfigureAwait(false)
             .IfSuccessTryFinallyAsync(
-                () => SwitchCompleteToDoItemCore(property, cancellationToken).ConfigureAwait(false),
+                () => SwitchCompleteToDoItemCore(property, cancellationToken),
                 () => this.InvokeUIBackgroundAsync(() => property.IsBusy = false)
-                    .ConfigureAwait(false)
                     .ToValueTask()
                     .ConfigureAwait(false)
             );
     }
 
-    private ValueTask<Result> SwitchCompleteToDoItemCore(
+    private ConfiguredValueTaskAwaitable<Result> SwitchCompleteToDoItemCore(
         ICanCompleteProperty property,
         CancellationToken cancellationToken
     )
@@ -261,28 +259,23 @@ public class MultiToDoItemsViewModel : ViewModelBase
         switch (property.IsCan)
         {
             case ToDoItemIsCan.None:
-                return Result.SuccessValueTask;
+                return Result.AwaitableFalse;
             case ToDoItemIsCan.CanComplete:
                 return ToDoService.UpdateToDoItemCompleteStatusAsync(
                         property.Id,
                         true,
                         cancellationToken
                     )
-                    .ConfigureAwait(false)
-                    .IfSuccessAsync(
-                        () => CommandStorage.RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false)
-                    );
+                    .IfSuccessAsync(() => CommandStorage.RefreshCurrentViewAsync(cancellationToken));
             case ToDoItemIsCan.CanIncomplete:
                 return ToDoService.UpdateToDoItemCompleteStatusAsync(
                         property.Id,
                         false,
                         cancellationToken
                     )
-                    .ConfigureAwait(false)
-                    .IfSuccessAsync(
-                        () => CommandStorage.RefreshCurrentViewAsync(cancellationToken).ConfigureAwait(false)
-                    );
-            default: return new Result(new ValueOutOfRangeError(property.IsCan)).ToValueTaskResult();
+                    .IfSuccessAsync(() => CommandStorage.RefreshCurrentViewAsync(cancellationToken));
+            default:
+                return new Result(new ValueOutOfRangeError(property.IsCan)).ToValueTaskResult().ConfigureAwait(false);
         }
     }
 }

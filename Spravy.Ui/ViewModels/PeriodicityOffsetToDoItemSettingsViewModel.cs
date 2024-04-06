@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -62,46 +63,44 @@ public class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
 
     public ICommand InitializedCommand { get; }
 
-    private ValueTask<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         return RefreshAsync(cancellationToken);
     }
 
-    public ValueTask<Result> RefreshAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
     {
         return ToDoService.GetPeriodicityOffsetToDoItemSettingsAsync(Id, cancellationToken)
-            .ConfigureAwait(false)
             .IfSuccessAsync(
                 setting => this.InvokeUIBackgroundAsync(
-                        () =>
-                        {
-                            ChildrenType = setting.ChildrenType;
-                            DueDate = setting.DueDate;
-                            MonthsOffset = setting.MonthsOffset;
-                            YearsOffset = setting.YearsOffset;
-                            DaysOffset = setting.DaysOffset;
-                            WeeksOffset = setting.WeeksOffset;
-                            IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
-                        }
-                    )
-                    .ConfigureAwait(false)
+                    () =>
+                    {
+                        ChildrenType = setting.ChildrenType;
+                        DueDate = setting.DueDate;
+                        MonthsOffset = setting.MonthsOffset;
+                        YearsOffset = setting.YearsOffset;
+                        DaysOffset = setting.DaysOffset;
+                        WeeksOffset = setting.WeeksOffset;
+                        IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
+                    }
+                )
             );
     }
 
-    public ValueTask<Result> ApplySettingsAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
     {
         return Result.AwaitableFalse.IfSuccessAllAsync(
-            () => ToDoService.UpdateToDoItemDaysOffsetAsync(Id, DaysOffset, cancellationToken).ConfigureAwait(false),
-            () => ToDoService.UpdateToDoItemWeeksOffsetAsync(Id, WeeksOffset, cancellationToken).ConfigureAwait(false),
-            () => ToDoService.UpdateToDoItemYearsOffsetAsync(Id, YearsOffset, cancellationToken).ConfigureAwait(false),
-            () => ToDoService.UpdateToDoItemMonthsOffsetAsync(Id, MonthsOffset, cancellationToken)
-                .ConfigureAwait(false),
-            () => ToDoService.UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, cancellationToken)
-                .ConfigureAwait(false),
-            () => ToDoService.UpdateToDoItemDueDateAsync(Id, DueDate, cancellationToken).ConfigureAwait(false),
-            () => ToDoService
-                .UpdateToDoItemIsRequiredCompleteInDueDateAsync(Id, IsRequiredCompleteInDueDate, cancellationToken)
-                .ConfigureAwait(false)
+            () => ToDoService.UpdateToDoItemDaysOffsetAsync(Id, DaysOffset, cancellationToken),
+            () => ToDoService.UpdateToDoItemWeeksOffsetAsync(Id, WeeksOffset, cancellationToken),
+            () => ToDoService.UpdateToDoItemYearsOffsetAsync(Id, YearsOffset, cancellationToken),
+            () => ToDoService.UpdateToDoItemMonthsOffsetAsync(Id, MonthsOffset, cancellationToken),
+            () => ToDoService.UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, cancellationToken),
+            () => ToDoService.UpdateToDoItemDueDateAsync(Id, DueDate, cancellationToken),
+            () => ToDoService.UpdateToDoItemIsRequiredCompleteInDueDateAsync(
+                Id,
+                IsRequiredCompleteInDueDate,
+                cancellationToken
+            )
         );
     }
 }

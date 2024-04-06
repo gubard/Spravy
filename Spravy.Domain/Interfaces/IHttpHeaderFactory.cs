@@ -1,8 +1,11 @@
+using System.Runtime.CompilerServices;
 using Spravy.Domain.Models;
 
 namespace Spravy.Domain.Interfaces;
 
 public interface IHttpHeaderFactory
 {
-    ValueTask<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsAsync(CancellationToken cancellationToken);
+    ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsAsync(
+        CancellationToken cancellationToken
+    );
 }

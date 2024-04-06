@@ -45,10 +45,9 @@ public class ToDoItemDayOfYearSelectorViewModel : ViewModelBase, IApplySettings
     [Reactive]
     public Guid ToDoItemId { get; set; }
 
-    private ValueTask<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         return ToDoService.GetAnnuallyPeriodicityAsync(ToDoItemId, cancellationToken)
-            .ConfigureAwait(false)
             .IfSuccessAsync(
                 annuallyPeriodicity =>
                 {
@@ -66,18 +65,17 @@ public class ToDoItemDayOfYearSelectorViewModel : ViewModelBase, IApplySettings
 
                                 items.Add(
                                     () => this.InvokeUIBackgroundAsync(() => d.IsSelected = true)
-                                        .ConfigureAwait(false)
                                 );
                             }
                         }
                     }
 
-                    return Result.AwaitableFalse.IfSuccessAllAsync(items.ToArray()).ConfigureAwait(false);
+                    return Result.AwaitableFalse.IfSuccessAllAsync(items.ToArray());
                 }
             );
     }
 
-    public ValueTask<Result> ApplySettingsAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
     {
         return ToDoService.UpdateToDoItemAnnuallyPeriodicityAsync(
             ToDoItemId,

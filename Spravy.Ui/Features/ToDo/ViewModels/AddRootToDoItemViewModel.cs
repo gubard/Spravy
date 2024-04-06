@@ -1,5 +1,5 @@
+using System.Runtime.CompilerServices;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Ninject;
 using ProtoBuf;
@@ -36,11 +36,10 @@ public class AddRootToDoItemViewModel : NavigatableViewModelBase
 
     public override string ViewId => TypeCache<AddRootToDoItemViewModel>.Type.Name;
 
-    private ValueTask<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         return ObjectStorage.GetObjectOrDefaultAsync<AddRootToDoItemViewModelSetting>(ViewId)
-            .ConfigureAwait(false)
-            .IfSuccessAsync(s => SetStateAsync(s).ConfigureAwait(false));
+            .IfSuccessAsync(SetStateAsync);
     }
 
     public override Result Stop()
@@ -48,12 +47,12 @@ public class AddRootToDoItemViewModel : NavigatableViewModelBase
         return Result.Success;
     }
 
-    public override ValueTask<Result> SaveStateAsync()
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync()
     {
         return ObjectStorage.SaveObjectAsync(ViewId, new AddRootToDoItemViewModelSetting(this));
     }
 
-    public override ValueTask<Result> SetStateAsync(object setting)
+    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting)
     {
         return setting.CastObject<AddRootToDoItemViewModelSetting>()
             .IfSuccessAsync(
@@ -67,7 +66,6 @@ public class AddRootToDoItemViewModel : NavigatableViewModelBase
                             DescriptionContent.Type = s.DescriptionType;
                         }
                     )
-                    .ConfigureAwait(false)
             );
     }
 

@@ -1,7 +1,9 @@
+using System.Runtime.CompilerServices;
 using MailKit.Net.Smtp;
 using MimeKit;
 using Spravy.Core.Options;
 using Spravy.Domain.Interfaces;
+using Spravy.Domain.Models;
 
 namespace Spravy.Core.Services;
 
@@ -14,7 +16,17 @@ public class EmailService : IEmailService
         this.options = options;
     }
 
-    public async Task SendEmailAsync(
+    public ConfiguredValueTaskAwaitable<Result> SendEmailAsync(
+        string subject,
+        string recipientEmail,
+        string text,
+        CancellationToken cancellationToken
+    )
+    {
+        return SendEmailCore(subject, recipientEmail, text, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async ValueTask<Result> SendEmailCore(
         string subject,
         string recipientEmail,
         string text,
@@ -36,5 +48,7 @@ public class EmailService : IEmailService
         await client.AuthenticateAsync(options.Login, options.Password, cancellationToken);
         await client.SendAsync(message, cancellationToken);
         await client.DisconnectAsync(true, cancellationToken);
+
+        return Result.Success;
     }
 }

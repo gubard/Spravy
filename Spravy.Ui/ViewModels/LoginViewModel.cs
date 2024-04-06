@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -171,69 +172,57 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
         }
     }
 
-    private ValueTask<Result> LoginAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> LoginAsync(CancellationToken cancellationToken)
     {
         return this.InvokeUIBackgroundAsync(() => IsBusy = true)
-            .ConfigureAwait(false)
             .IfSuccessTryFinallyAsync(
                 () => AuthenticationService.IsVerifiedByLoginAsync(Login, cancellationToken)
-                    .ConfigureAwait(false)
                     .IfSuccessAsync(
                         isVerified =>
                         {
                             if (!isVerified)
                             {
                                 return Navigator.NavigateToAsync<VerificationCodeViewModel>(
-                                        vm =>
-                                        {
-                                            vm.Identifier = Login;
-                                            vm.IdentifierType = UserIdentifierType.Login;
-                                        },
-                                        cancellationToken
-                                    )
-                                    .ConfigureAwait(false);
+                                    vm =>
+                                    {
+                                        vm.Identifier = Login;
+                                        vm.IdentifierType = UserIdentifierType.Login;
+                                    },
+                                    cancellationToken
+                                );
                             }
 
                             var user = Mapper.Map<User>(this);
 
                             return TokenService.LoginAsync(user, cancellationToken)
-                                .ConfigureAwait(false)
                                 .IfSuccessAsync(
                                     () => this.InvokeUIBackgroundAsync(() => Account.Login = user.Login)
-                                        .ConfigureAwait(false)
                                         .IfSuccessAsync(
-                                            () => RememberMeAsync(cancellationToken).ConfigureAwait(false)
+                                            () => RememberMeAsync(cancellationToken)
                                         )
-                                        .ConfigureAwait(false)
                                         .IfSuccessAsync(
                                             () => Navigator.NavigateToAsync(
                                                     ActionHelper<RootToDoItemsViewModel>.Empty,
                                                     cancellationToken
                                                 )
-                                                .ConfigureAwait(false)
                                         )
-                                        .ConfigureAwait(false)
-                                )
-                                .ConfigureAwait(false);
+                                );
                         }
-                    )
-                    .ConfigureAwait(false),
+                    ),
                 () => this.InvokeUIBackgroundAsync(() => IsBusy = false)
-                    .ConfigureAwait(false)
                     .ToValueTask()
                     .ConfigureAwait(false)
             );
     }
 
-    private ValueTask<Result> RememberMeAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> RememberMeAsync(CancellationToken cancellationToken)
     {
         if (!IsRememberMe)
         {
-            return Result.SuccessValueTask;
+            return Result.AwaitableFalse;
         }
 
         return TokenService.GetTokenAsync(cancellationToken)
-            .ConfigureAwait(false)
             .IfSuccessAsync(
                 token =>
                 {
@@ -242,15 +231,14 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
                         Token = token,
                     };
 
-                    return ObjectStorage.SaveObjectAsync(StorageIds.LoginId, item).ConfigureAwait(false);
+                    return ObjectStorage.SaveObjectAsync(StorageIds.LoginId, item);
                 }
             );
     }
 
-    private ValueTask<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         return this.InvokeUIBackgroundAsync(() => IsBusy = true)
-            .ConfigureAwait(false)
             .IfSuccessTryFinallyAsync(
                 () =>
                 {
@@ -260,16 +248,13 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
                     }
 
                     return ObjectStorage.GetObjectOrDefaultAsync<LoginViewModelSetting>(ViewId)
-                        .ConfigureAwait(false)
                         .IfSuccessAsync(
                             setting =>
                             {
                                 return SetStateAsync(setting)
-                                    .ConfigureAwait(false)
                                     .IfSuccessAsync(
-                                        () => ObjectStorage.IsExistsAsync(StorageIds.LoginId).ConfigureAwait(false)
+                                        () => ObjectStorage.IsExistsAsync(StorageIds.LoginId)
                                     )
-                                    .ConfigureAwait(false)
                                     .IfSuccessAsync(
                                         value =>
                                         {
@@ -279,7 +264,6 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
                                             }
 
                                             return ObjectStorage.GetObjectAsync<LoginStorageItem>(StorageIds.LoginId)
-                                                .ConfigureAwait(false)
                                                 .IfSuccessAsync(
                                                     item =>
                                                     {
@@ -293,58 +277,51 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
                                                                 item.Token.ThrowIfNullOrWhiteSpace(),
                                                                 cancellationToken
                                                             )
-                                                            .ConfigureAwait(false)
                                                             .IfSuccessAsync(
                                                                 () => Navigator.NavigateToAsync(
                                                                         ActionHelper<RootToDoItemsViewModel>.Empty,
                                                                         cancellationToken
                                                                     )
-                                                                    .ConfigureAwait(false)
-                                                            )
-                                                            .ConfigureAwait(false);
+                                                            );
                                                     }
-                                                )
-                                                .ConfigureAwait(false);
+                                                );
                                         }
-                                    )
-                                    .ConfigureAwait(false);
+                                    );
                             }
-                        )
-                        .ConfigureAwait(false);
+                        );
                 },
                 () => this.InvokeUIBackgroundAsync(() => IsBusy = false)
-                    .ConfigureAwait(false)
                     .ToValueTask()
                     .ConfigureAwait(false)
             );
     }
 
-    private ValueTask<Result> EnterAsync(LoginView view, CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> EnterAsync(LoginView view, CancellationToken cancellationToken)
     {
         var loginTextBox = view.FindControl<TextBox>(LoginView.LoginTextBoxName);
 
         if (loginTextBox is null)
         {
-            return Result.SuccessValueTask;
+            return Result.AwaitableFalse;
         }
 
         var passwordTextBox = view.FindControl<TextBox>(LoginView.PasswordTextBoxName);
 
         if (passwordTextBox is null)
         {
-            return Result.SuccessValueTask;
+            return Result.AwaitableFalse;
         }
 
         if (loginTextBox.IsFocused)
         {
             passwordTextBox.Focus();
 
-            return Result.SuccessValueTask;
+            return Result.AwaitableFalse;
         }
 
         if (HasErrors)
         {
-            return Result.SuccessValueTask;
+            return Result.AwaitableFalse;
         }
 
         return this.InvokeUIBackgroundAsync(() => LoginCommand.Execute(null));
@@ -355,23 +332,22 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
         return Result.Success;
     }
 
-    public override ValueTask<Result> SaveStateAsync()
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync()
     {
         return ObjectStorage.SaveObjectAsync(ViewId, new LoginViewModelSetting(this));
     }
 
-    public override ValueTask<Result> SetStateAsync(object setting)
+    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting)
     {
         return setting.CastObject<LoginViewModelSetting>()
             .IfSuccessAsync(
                 s => this.InvokeUIBackgroundAsync(
-                        () =>
-                        {
-                            TryAutoLogin = false;
-                            Login = s.Login;
-                        }
-                    )
-                    .ConfigureAwait(false)
+                    () =>
+                    {
+                        TryAutoLogin = false;
+                        Login = s.Login;
+                    }
+                )
             );
     }
 

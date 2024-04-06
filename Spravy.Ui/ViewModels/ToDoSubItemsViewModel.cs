@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Ninject;
@@ -21,24 +22,19 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
     [Inject]
     public required IToDoService ToDoService { get; init; }
 
-    public async ValueTask<Result> RefreshAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
     {
-        await refreshToDoItem.ThrowIfNull().RefreshAsync(cancellationToken).ConfigureAwait(false);
-
-        return Result.Success;
+        return refreshToDoItem.ThrowIfNull().RefreshAsync(cancellationToken);
     }
 
-    private ValueTask<Result> RefreshFavoriteToDoItemsAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> RefreshFavoriteToDoItemsAsync(CancellationToken cancellationToken)
     {
         return ToDoService.GetFavoriteToDoItemIdsAsync(cancellationToken)
-            .ConfigureAwait(false)
             .IfSuccessAsync(
                 ids => List.ClearFavoriteExceptAsync(ids.ToArray())
-                    .ConfigureAwait(false)
                     .IfSuccessAsync(
                         () => RefreshFavoriteToDoItemsCore(ids, cancellationToken).ConfigureAwait(false)
                     )
-                    .ConfigureAwait(false)
             );
     }
 
@@ -65,16 +61,14 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
         return Result.Success;
     }
 
-    private ValueTask<Result> RefreshToDoItemListsAsync(
+    private ConfiguredValueTaskAwaitable<Result> RefreshToDoItemListsAsync(
         Guid[] ids,
         bool autoOrder,
         CancellationToken cancellationToken
     )
     {
         return List.ClearExceptAsync(ids)
-            .ConfigureAwait(false)
-            .IfSuccessAsync(() => RefreshFavoriteToDoItemsAsync(cancellationToken).ConfigureAwait(false))
-            .ConfigureAwait(false)
+            .IfSuccessAsync(() => RefreshFavoriteToDoItemsAsync(cancellationToken))
             .IfSuccessAsync(() => RefreshToDoItemListsCore(ids, autoOrder, cancellationToken).ConfigureAwait(false));
     }
 
@@ -116,7 +110,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
         return Result.Success;
     }
 
-    public ValueTask<Result> UpdateItemsAsync(
+    public ConfiguredValueTaskAwaitable<Result> UpdateItemsAsync(
         Guid[] ids,
         IRefresh refresh,
         bool autoOrder,

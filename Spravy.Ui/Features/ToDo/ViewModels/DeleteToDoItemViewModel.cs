@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -56,18 +57,15 @@ public class DeleteToDoItemViewModel : ViewModelBase
             }
         );
 
-    private ValueTask<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         var toDoItemToStringOptions = new ToDoItemToStringOptions(Enum.GetValues<ToDoItemStatus>(), ToDoItemId);
 
         return ToDoService.GetToDoItemAsync(ToDoItemId, cancellationToken)
-            .ConfigureAwait(false)
             .IfSuccessAsync(
                 item => ToDoService.ToDoItemToStringAsync(toDoItemToStringOptions, cancellationToken)
-                    .ConfigureAwait(false)
                     .IfSuccessAsync(
                         childrenText => ToDoService.GetParentsAsync(ToDoItemId, cancellationToken)
-                            .ConfigureAwait(false)
                             .IfSuccessAsync(
                                 parents => this.InvokeUIBackgroundAsync(
                                         () =>
@@ -81,11 +79,8 @@ public class DeleteToDoItemViewModel : ViewModelBase
                                             ChildrenText = childrenText;
                                         }
                                     )
-                                    .ConfigureAwait(false)
                             )
-                            .ConfigureAwait(false)
                     )
-                    .ConfigureAwait(false)
             );
     }
 }

@@ -40,13 +40,13 @@ public class ConfirmViewModel : ViewModelBase, ISaveState
         return await ConfirmTask.ThrowIfNull().Invoke(con);
     }
 
-    public ValueTask<Result> SaveStateAsync()
+    public ConfiguredValueTaskAwaitable<Result> SaveStateAsync()
     {
         if (Content is ISaveState saveState)
         {
             return saveState.SaveStateAsync();
         }
 
-        return Result.SuccessValueTask;
+        return Result.AwaitableFalse;
     }
 }

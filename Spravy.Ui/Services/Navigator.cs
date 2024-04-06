@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Ninject;
@@ -29,11 +30,11 @@ public class Navigator : INavigator
     [Inject]
     public required MainSplitViewModel MainSplitViewModel { get; init; }
 
-    private ValueTask<Result> AddCurrentContentAsync(Action<object> setup)
+    private ConfiguredValueTaskAwaitable<Result> AddCurrentContentAsync(Action<object> setup)
     {
         if (Content.Content is null)
         {
-            return Result.SuccessValueTask;
+            return Result.AwaitableFalse;
         }
 
         var content = (INavigatable)Content.Content;
@@ -41,11 +42,10 @@ public class Navigator : INavigator
 
         if (!content.IsPooled)
         {
-            return Result.SuccessValueTask;
+            return Result.AwaitableFalse;
         }
 
         return content.SaveStateAsync()
-            .ConfigureAwait(false)
             .IfSuccessAsync(
                 () =>
                 {
@@ -57,73 +57,66 @@ public class Navigator : INavigator
             );
     }
 
-    public ValueTask<Result> NavigateToAsync(Type type, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> NavigateToAsync(Type type, CancellationToken cancellationToken)
     {
         var viewModel = (INavigatable)Resolver.Get(type);
 
         return AddCurrentContentAsync(ActionHelper<object>.Empty)
-            .ConfigureAwait(false)
             .IfSuccessAsync(
-                () => this.InvokeUIBackgroundAsync(() => Content.Content = viewModel).ConfigureAwait(false)
+                () => this.InvokeUIBackgroundAsync(() => Content.Content = viewModel)
             );
     }
 
-    public ValueTask<Result> NavigateToAsync<TViewModel>(
+    public ConfiguredValueTaskAwaitable<Result> NavigateToAsync<TViewModel>(
         Action<TViewModel> setup,
         CancellationToken cancellationToken
     )
         where TViewModel : INavigatable
     {
         return AddCurrentContentAsync(obj => setup.Invoke((TViewModel)obj))
-            .ConfigureAwait(false)
             .IfSuccessAsync(
                 () =>
                 {
                     if (Content.Content is IRefresh refresh && Content.Content is TViewModel vm)
                     {
                         return this.InvokeUIBackgroundAsync(() => setup.Invoke(vm))
-                            .ConfigureAwait(false)
-                            .IfSuccessAsync(() => refresh.RefreshAsync(cancellationToken).ConfigureAwait(false))
-                            .ConfigureAwait(false);
+                            .IfSuccessAsync(() => refresh.RefreshAsync(cancellationToken));
                     }
 
                     var viewModel = Resolver.Get<TViewModel>();
 
                     return this.InvokeUIBackgroundAsync(
-                            () =>
-                            {
-                                setup.Invoke(viewModel);
-                                Content.Content = viewModel;
-                            }
-                        )
-                        .ConfigureAwait(false);
+                        () =>
+                        {
+                            setup.Invoke(viewModel);
+                            Content.Content = viewModel;
+                        }
+                    );
                 }
             );
     }
 
-    public ValueTask<Result> NavigateToAsync<TViewModel>(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> NavigateToAsync<TViewModel>(CancellationToken cancellationToken)
         where TViewModel : INavigatable
     {
         var viewModel = Resolver.Get<TViewModel>();
 
         return AddCurrentContentAsync(ActionHelper<object>.Empty)
-            .ConfigureAwait(false)
             .IfSuccessAsync(
-                () => this.InvokeUIBackgroundAsync(() => Content.Content = viewModel).ConfigureAwait(false)
+                () => this.InvokeUIBackgroundAsync(() => Content.Content = viewModel)
             );
     }
 
-    public ValueTask<Result<INavigatable?>> NavigateBackAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<INavigatable?>> NavigateBackAsync(CancellationToken cancellationToken)
     {
         var item = list.Pop();
 
         if (item is null)
         {
-            return Result<INavigatable?>.DefaultSuccessValueTask;
+            return Result<INavigatable?>.DefaultAwaitableFalse;
         }
 
         return DialogViewer.CloseLastDialogAsync(cancellationToken)
-            .ConfigureAwait(false)
             .IfSuccessAsync(
                 value =>
                 {
@@ -156,22 +149,20 @@ public class Navigator : INavigator
                             }
                         )
                         .ConfigureAwait(false)
-                        .IfSuccessAsync(() => item.Navigatable.ToResult().ToValueTaskResult().ConfigureAwait(false))
-                        .ConfigureAwait(false);
+                        .IfSuccessAsync(() => item.Navigatable.ToResult().ToValueTaskResult().ConfigureAwait(false));
                 }
             );
     }
 
-    public ValueTask<Result> NavigateToAsync<TViewModel>(
+    public ConfiguredValueTaskAwaitable<Result> NavigateToAsync<TViewModel>(
         TViewModel parameter,
         CancellationToken cancellationToken
     )
         where TViewModel : INavigatable
     {
         return AddCurrentContentAsync(ActionHelper<object>.Empty)
-            .ConfigureAwait(false)
             .IfSuccessAsync(
-                () => this.InvokeUIBackgroundAsync(() => Content.Content = parameter).ConfigureAwait(false)
+                () => this.InvokeUIBackgroundAsync(() => Content.Content = parameter)
             );
     }
 }

@@ -27,8 +27,8 @@ public static class ToDoItemOrderChangerExtension
         var id = args.SourceItem.Id;
         var isAfter = GetIsAfter(args);
         var options = new UpdateOrderIndexToDoItemOptions(id, args.TargetItem.Id, isAfter);
-        await changer.ToDoService.UpdateToDoItemOrderIndexAsync(options, cancellationToken).ConfigureAwait(false);
-        await changer.RefreshAsync(cancellationToken).ConfigureAwait(false);
+        await changer.ToDoService.UpdateToDoItemOrderIndexAsync(options, cancellationToken);
+        await changer.RefreshAsync(cancellationToken);
     }
 
     private static bool GetIsAfter(MovedDragDropArgs<ToDoSubItemNotify> args)

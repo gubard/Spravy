@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Http;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
@@ -16,10 +17,15 @@ public class ContextAccessorUserIdHttpHeaderFactory : IHttpHeaderFactory
         this.httpContextAccessor = httpContextAccessor;
     }
 
-    public ValueTask<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsAsync(
+        CancellationToken cancellationToken
+    )
     {
         var userId = httpContextAccessor.HttpContext.ThrowIfNull().GetUserId();
 
-        return new HttpHeaderItem(HttpNames.HeaderUserIdName, userId).ToReadOnlyMemory().ToResult().ToValueTaskResult();
+        return new HttpHeaderItem(HttpNames.HeaderUserIdName, userId).ToReadOnlyMemory()
+            .ToResult()
+            .ToValueTaskResult()
+            .ConfigureAwait(false);
     }
 }

@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Grpc.Core;
 using Spravy.Client.Interfaces;
 using Spravy.Domain.Extensions;
@@ -15,12 +16,11 @@ public class MetadataFactory : IMetadataFactory
         this.httpHeaderFactory = httpHeaderFactory;
     }
 
-    public ValueTask<Result<Metadata>> CreateAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<Metadata>> CreateAsync(CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         return httpHeaderFactory.CreateHeaderItemsAsync(cancellationToken)
-            .ConfigureAwait(false)
             .IfSuccessAsync(
                 value =>
                 {

@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Spravy.Db.Models;
 using Spravy.Db.Services;
 using Spravy.Domain.Extensions;
@@ -17,14 +18,24 @@ public class SqliteObjectStorage : IObjectStorage
         this.serializer = serializer;
     }
 
-    public async ValueTask<Result<bool>> IsExistsAsync(string id)
+    public ConfiguredValueTaskAwaitable<Result<bool>> IsExistsAsync(string id)
+    {
+        return IsExistsCore(id).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result<bool>> IsExistsCore(string id)
     {
         var item = await storageDbContext.FindAsync<StorageEntity>(id);
 
         return (item is not null).ToResult();
     }
 
-    public async ValueTask<Result> DeleteAsync(string id)
+    public ConfiguredValueTaskAwaitable<Result> DeleteAsync(string id)
+    {
+        return DeleteCore(id).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result> DeleteCore(string id)
     {
         var item = await storageDbContext.FindAsync<StorageEntity>(id);
         item = item.ThrowIfNull();
@@ -34,7 +45,12 @@ public class SqliteObjectStorage : IObjectStorage
         return Result.Success;
     }
 
-    public async ValueTask<Result> SaveObjectAsync(string id, object obj)
+    public ConfiguredValueTaskAwaitable<Result> SaveObjectAsync(string id, object obj)
+    {
+        return SaveObjectCore(id, obj).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result> SaveObjectCore(string id, object obj)
     {
         var item = await storageDbContext.FindAsync<StorageEntity>(id);
         await using var steam = new MemoryStream();
@@ -67,7 +83,12 @@ public class SqliteObjectStorage : IObjectStorage
         return Result.Success;
     }
 
-    public async ValueTask<Result<TObject>> GetObjectAsync<TObject>(string id)
+    public ConfiguredValueTaskAwaitable<Result<TObject>> GetObjectAsync<TObject>(string id)
+    {
+        return GetObjectCore<TObject>(id).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result<TObject>> GetObjectCore<TObject>(string id)
     {
         var item = await storageDbContext.FindAsync<StorageEntity>(id);
         item = item.ThrowIfNull();

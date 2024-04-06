@@ -2,7 +2,6 @@ using System.Runtime.CompilerServices;
 using Spravy.Domain.Errors;
 using Spravy.Domain.Exceptions;
 using Spravy.Domain.Helpers;
-using Spravy.Domain.Interfaces;
 
 namespace Spravy.Domain.Models;
 

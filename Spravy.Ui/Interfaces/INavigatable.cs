@@ -1,5 +1,4 @@
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using Spravy.Domain.Models;
 
 namespace Spravy.Ui.Interfaces;
@@ -10,5 +9,5 @@ public interface INavigatable : ISaveState
     string ViewId { get; }
 
     Result Stop();
-    ValueTask<Result> SetStateAsync(object setting);
+    ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting);
 }

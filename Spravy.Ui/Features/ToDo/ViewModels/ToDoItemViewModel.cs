@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -23,7 +24,6 @@ using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 using Spravy.Ui.Services;
 using Spravy.Ui.ViewModels;
-using Spravy.Domain.Extensions;
 
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
@@ -156,21 +156,25 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     [Reactive]
     public ToDoItemStatus Status { get; set; }
 
-    public async ValueTask<Result> RefreshAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
+    {
+        return RefreshCore(cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result> RefreshCore(CancellationToken cancellationToken)
     {
         await refreshWork.RunAsync();
 
         return Result.Success;
     }
 
-    private ValueTask<Result> RefreshCoreAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> RefreshCoreAsync(CancellationToken cancellationToken)
     {
         return RefreshPathAsync(cancellationToken)
-            .ConfigureAwait(false)
             .IfSuccessAllAsync(
                 () => RefreshToDoItemAsync().ConfigureAwait(false),
-                () => RefreshToDoItemChildrenAsync(cancellationToken).ConfigureAwait(false),
-                () => UpdateCommandsAsync().ConfigureAwait(false)
+                () => RefreshToDoItemChildrenAsync(cancellationToken),
+                UpdateCommandsAsync
             );
     }
 
@@ -181,116 +185,107 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
         return Result.Success;
     }
 
-    private ValueTask<Result> RefreshToDoItemCore(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> RefreshToDoItemCore(CancellationToken cancellationToken)
     {
         return ToDoService.GetToDoItemAsync(Id, cancellationToken)
-            .ConfigureAwait(false)
             .IfSuccessAsync(
                 item =>
                     this.InvokeUIBackgroundAsync(
-                            () =>
-                            {
-                                Link = item.Link?.AbsoluteUri ?? string.Empty;
-                                Description = item.Description;
-                                Name = item.Name;
-                                Type = item.Type;
-                                IsCan = item.IsCan;
-                                IsFavorite = item.IsFavorite;
-                                Status = item.Status;
-                                ParentId = item.ParentId;
-                                DescriptionType = item.DescriptionType;
-                            }
-                        )
-                        .ConfigureAwait(false)
+                        () =>
+                        {
+                            Link = item.Link?.AbsoluteUri ?? string.Empty;
+                            Description = item.Description;
+                            Name = item.Name;
+                            Type = item.Type;
+                            IsCan = item.IsCan;
+                            IsFavorite = item.IsFavorite;
+                            Status = item.Status;
+                            ParentId = item.ParentId;
+                            DescriptionType = item.DescriptionType;
+                        }
+                    )
             );
     }
 
 
-    private ValueTask<Result> RefreshPathAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> RefreshPathAsync(CancellationToken cancellationToken)
     {
         return ToDoService.GetParentsAsync(Id, cancellationToken)
-            .ConfigureAwait(false)
             .IfSuccessAsync(
                 parents =>
                     this.InvokeUIBackgroundAsync(
-                            () => Path = new RootItem().To<object>()
-                                .ToEnumerable()
-                                .Concat(parents.ToArray().Select(x => Mapper.Map<ToDoItemParentNotify>(x)))
-                                .ToArray()
-                        )
-                        .ConfigureAwait(false)
+                        () => Path = new RootItem().To<object>()
+                            .ToEnumerable()
+                            .Concat(parents.ToArray().Select(x => Mapper.Map<ToDoItemParentNotify>(x)))
+                            .ToArray()
+                    )
             );
     }
 
-    private ValueTask<Result> RefreshToDoItemChildrenAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> RefreshToDoItemChildrenAsync(CancellationToken cancellationToken)
     {
         return ToDoService.GetChildrenToDoItemIdsAsync(Id, cancellationToken)
-            .ConfigureAwait(false)
             .IfSuccessAsync(
                 ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken)
-                    .ConfigureAwait(false)
             );
     }
 
-    private ValueTask<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         return ObjectStorage.GetObjectOrDefaultAsync<ToDoItemViewModelSetting>(ViewId)
-            .ConfigureAwait(false)
-            .IfSuccessAsync(s => SetStateAsync(s).ConfigureAwait(false))
-            .ConfigureAwait(false)
-            .IfSuccessAllAsync(() => RefreshAsync(cancellationToken).ConfigureAwait(false));
+            .IfSuccessAsync(SetStateAsync)
+            .IfSuccessAllAsync(() => RefreshAsync(cancellationToken));
     }
 
-    private ValueTask<Result> UpdateCommandsAsync()
+    private ConfiguredValueTaskAwaitable<Result> UpdateCommandsAsync()
     {
-        return refreshToDoItemWork.Current.ConfigureAwait(false)
+        return refreshToDoItemWork.Current
             .IfSuccessAsync(
                 () => this.InvokeUIBackgroundAsync(
-                        () =>
+                    () =>
+                    {
+                        if (ToDoSubItemsViewModel.List.IsMulti)
                         {
-                            if (ToDoSubItemsViewModel.List.IsMulti)
+                            PageHeaderViewModel.SetMultiCommands(ToDoSubItemsViewModel);
+                        }
+                        else
+                        {
+                            PageHeaderViewModel.Commands.Clear();
+                            var toFavoriteCommand = CommandStorage.AddToDoItemToFavoriteItem.WithParam(Id);
+                            PageHeaderViewModel.Commands.Add(CommandStorage.AddToDoItemChildItem.WithParam(this));
+                            PageHeaderViewModel.Commands.Add(CommandStorage.DeleteToDoItemItem.WithParam(this));
+
+                            if (!Link.IsNullOrWhiteSpace())
                             {
-                                PageHeaderViewModel.SetMultiCommands(ToDoSubItemsViewModel);
+                                PageHeaderViewModel.Commands.Add(CommandStorage.OpenLinkItem.WithParam(this));
                             }
-                            else
+
+                            if (IsCan != ToDoItemIsCan.None)
                             {
-                                PageHeaderViewModel.Commands.Clear();
-                                var toFavoriteCommand = CommandStorage.AddToDoItemToFavoriteItem.WithParam(Id);
-                                PageHeaderViewModel.Commands.Add(CommandStorage.AddToDoItemChildItem.WithParam(this));
-                                PageHeaderViewModel.Commands.Add(CommandStorage.DeleteToDoItemItem.WithParam(this));
-
-                                if (!Link.IsNullOrWhiteSpace())
-                                {
-                                    PageHeaderViewModel.Commands.Add(CommandStorage.OpenLinkItem.WithParam(this));
-                                }
-
-                                if (IsCan != ToDoItemIsCan.None)
-                                {
-                                    PageHeaderViewModel.Commands.Add(
-                                        CommandStorage.SwitchCompleteToDoItemItem.WithParam(this)
-                                    );
-                                }
-
-                                PageHeaderViewModel.Commands.Add(CommandStorage.CloneToDoItemItem.WithParam(this));
-
-                                if (IsFavorite)
-                                {
-                                    toFavoriteCommand = CommandStorage.RemoveToDoItemFromFavoriteItem.WithParam(Id);
-                                }
-
-                                PageHeaderViewModel.Commands.Add(toFavoriteCommand);
-                                PageHeaderViewModel.Commands.Add(CommandStorage.NavigateToLeafItem.WithParam(Id));
-                                PageHeaderViewModel.Commands.Add(CommandStorage.SetToDoParentItemItem.WithParam(this));
-                                PageHeaderViewModel.Commands.Add(CommandStorage.MoveToDoItemToRootItem.WithParam(this));
-                                PageHeaderViewModel.Commands.Add(CommandStorage.ToDoItemToStringItem.WithParam(this));
-                                PageHeaderViewModel.Commands.Add(CommandStorage.ResetToDoItemItem.WithParam(this));
                                 PageHeaderViewModel.Commands.Add(
-                                    CommandStorage.ToDoItemRandomizeChildrenOrderIndexItem.WithParam(this)
+                                    CommandStorage.SwitchCompleteToDoItemItem.WithParam(this)
                                 );
                             }
+
+                            PageHeaderViewModel.Commands.Add(CommandStorage.CloneToDoItemItem.WithParam(this));
+
+                            if (IsFavorite)
+                            {
+                                toFavoriteCommand = CommandStorage.RemoveToDoItemFromFavoriteItem.WithParam(Id);
+                            }
+
+                            PageHeaderViewModel.Commands.Add(toFavoriteCommand);
+                            PageHeaderViewModel.Commands.Add(CommandStorage.NavigateToLeafItem.WithParam(Id));
+                            PageHeaderViewModel.Commands.Add(CommandStorage.SetToDoParentItemItem.WithParam(this));
+                            PageHeaderViewModel.Commands.Add(CommandStorage.MoveToDoItemToRootItem.WithParam(this));
+                            PageHeaderViewModel.Commands.Add(CommandStorage.ToDoItemToStringItem.WithParam(this));
+                            PageHeaderViewModel.Commands.Add(CommandStorage.ResetToDoItemItem.WithParam(this));
+                            PageHeaderViewModel.Commands.Add(
+                                CommandStorage.ToDoItemRandomizeChildrenOrderIndexItem.WithParam(this)
+                            );
                         }
-                    )
-                    .ConfigureAwait(false)
+                    }
+                )
             );
     }
 
@@ -302,23 +297,22 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
         return Result.Success;
     }
 
-    public override ValueTask<Result> SaveStateAsync()
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync()
     {
         return ObjectStorage.SaveObjectAsync(ViewId, new ToDoItemViewModelSetting(this));
     }
 
-    public override ValueTask<Result> SetStateAsync(object setting)
+    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting)
     {
         return setting.CastObject<ToDoItemViewModelSetting>()
             .IfSuccessAsync(
                 s => this.InvokeUIBackgroundAsync(
-                        () =>
-                        {
-                            ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
-                            ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
-                        }
-                    )
-                    .ConfigureAwait(false)
+                    () =>
+                    {
+                        ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
+                        ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
+                    }
+                )
             );
     }
 

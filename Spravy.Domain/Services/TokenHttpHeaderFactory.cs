@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
@@ -13,12 +14,11 @@ public class TokenHttpHeaderFactory : IHttpHeaderFactory
         this.tokenService = tokenService;
     }
 
-    public ValueTask<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsAsync(
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsAsync(
         CancellationToken cancellationToken
     )
     {
         return tokenService.GetTokenAsync(cancellationToken)
-            .ConfigureAwait(false)
             .IfSuccessAsync(
                 value => HttpHeaderItem.CreateBearerAuthorization(value)
                     .ToReadOnlyMemory()

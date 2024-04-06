@@ -22,7 +22,7 @@ public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBas
         this.serializer = serializer;
     }
 
-    protected async ValueTask<Result> CallClientAsync(
+    protected ConfiguredValueTaskAwaitable<Result> CallClientAsync(
         Func<TGrpcClient, ConfiguredValueTaskAwaitable<Result>> func,
         CancellationToken cancellationToken
     )
@@ -32,7 +32,7 @@ public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBas
             var client = grpcClientFactory.Create(host);
             cancellationToken.ThrowIfCancellationRequested();
 
-            return await func.Invoke(client);
+            return func.Invoke(client);
         }
         catch (RpcException exception)
         {
@@ -45,7 +45,7 @@ public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBas
                 case StatusCode.Unknown:
                     throw;
                 case StatusCode.InvalidArgument:
-                    return await exception.ToErrorAsync(serializer);
+                    return exception.ToErrorAsync(serializer);
                 case StatusCode.DeadlineExceeded:
                     throw;
                 case StatusCode.NotFound:
@@ -69,7 +69,8 @@ public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBas
                 case StatusCode.Internal:
                     throw;
                 case StatusCode.Unavailable:
-                    return new Result(new ServiceUnavailableError(host.ToString()));
+                    return new Result(new ServiceUnavailableError(host.ToString())).ToValueTaskResult()
+                        .ConfigureAwait(false);
                 case StatusCode.DataLoss:
                     throw;
                 default: throw new ArgumentOutOfRangeException();
@@ -81,7 +82,15 @@ public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBas
         }
     }
 
-    protected async ValueTask<Result<TValue>> CallClientAsync<TValue>(
+    protected ConfiguredValueTaskAwaitable<Result<TValue>> CallClientAsync<TValue>(
+        Func<TGrpcClient, ConfiguredValueTaskAwaitable<Result<TValue>>> func,
+        CancellationToken cancellationToken
+    )
+    {
+        return CallClientCore(func, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result<TValue>> CallClientCore<TValue>(
         Func<TGrpcClient, ConfiguredValueTaskAwaitable<Result<TValue>>> func,
         CancellationToken cancellationToken
     )

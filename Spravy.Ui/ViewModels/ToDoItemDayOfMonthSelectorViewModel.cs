@@ -44,10 +44,9 @@ public class ToDoItemDayOfMonthSelectorViewModel : ViewModelBase, IApplySettings
     [Reactive]
     public Guid ToDoItemId { get; set; }
 
-    private ValueTask<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         return ToDoService.GetMonthlyPeriodicityAsync(ToDoItemId, cancellationToken)
-            .ConfigureAwait(false)
             .IfSuccessAsync(
                 monthlyPeriodicity => Result.AwaitableFalse.IfSuccessAllAsync(
                         Items.Where(x => monthlyPeriodicity.Days.Contains(x.Day))
@@ -55,18 +54,16 @@ public class ToDoItemDayOfMonthSelectorViewModel : ViewModelBase, IApplySettings
                                 x =>
                                 {
                                     var y = x;
-                                    
-                                    return () => this.InvokeUIBackgroundAsync(() => y.IsSelected = true)
-                                        .ConfigureAwait(false);
+
+                                    return () => this.InvokeUIBackgroundAsync(() => y.IsSelected = true);
                                 }
                             )
                             .ToArray()
                     )
-                    .ConfigureAwait(false)
             );
     }
 
-    public ValueTask<Result> ApplySettingsAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
     {
         return ToDoService.UpdateToDoItemMonthlyPeriodicityAsync(
             ToDoItemId,

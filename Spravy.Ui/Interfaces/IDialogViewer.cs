@@ -9,53 +9,53 @@ namespace Spravy.Ui.Interfaces;
 
 public interface IDialogViewer
 {
-    ValueTask<Result> ShowContentDialogAsync<TView>(Action<TView> setupView, CancellationToken cancellationToken)
+    ConfiguredValueTaskAwaitable<Result> ShowContentDialogAsync<TView>(Action<TView> setupView, CancellationToken cancellationToken)
         where TView : ViewModelBase;
 
-    ValueTask<Result> ShowProgressDialogAsync<TView>(Action<TView> setupView, CancellationToken cancellationToken)
+    ConfiguredValueTaskAwaitable<Result> ShowProgressDialogAsync<TView>(Action<TView> setupView, CancellationToken cancellationToken)
         where TView : ViewModelBase;
 
-    ValueTask<Result> ShowErrorDialogAsync<TView>(Action<TView> setupView, CancellationToken cancellationToken)
+    ConfiguredValueTaskAwaitable<Result> ShowErrorDialogAsync<TView>(Action<TView> setupView, CancellationToken cancellationToken)
         where TView : ViewModelBase;
 
-    ValueTask<Result> ShowInfoErrorDialogAsync<TView>(
+    ConfiguredValueTaskAwaitable<Result> ShowInfoErrorDialogAsync<TView>(
         Func<TView, ConfiguredValueTaskAwaitable<Result>> okTask,
         Action<TView> setupView,
         CancellationToken cancellationToken
     )
         where TView : ViewModelBase;
 
-    ValueTask<Result> ShowInfoInputDialogAsync<TView>(
+    ConfiguredValueTaskAwaitable<Result> ShowInfoInputDialogAsync<TView>(
         Func<TView, ConfiguredValueTaskAwaitable<Result>> okTask,
         Action<TView> setupView,
         CancellationToken cancellationToken
     )
         where TView : ViewModelBase;
 
-    ValueTask<Result> ShowInfoContentDialogAsync<TView>(
+    ConfiguredValueTaskAwaitable<Result> ShowInfoContentDialogAsync<TView>(
         Func<TView, ConfiguredValueTaskAwaitable<Result>> okTask,
         Action<TView> setupView,
         CancellationToken cancellationToken
     )
         where TView : ViewModelBase;
 
-    ValueTask<Result> ShowInputDialogAsync<TView>(Action<TView> setupView, CancellationToken cancellationToken)
+    ConfiguredValueTaskAwaitable<Result> ShowInputDialogAsync<TView>(Action<TView> setupView, CancellationToken cancellationToken)
         where TView : ViewModelBase;
 
-    ValueTask<Result> CloseContentDialogAsync(CancellationToken cancellationToken);
-    ValueTask<Result> CloseErrorDialogAsync(CancellationToken cancellationToken);
-    ValueTask<Result> CloseInputDialogAsync(CancellationToken cancellationToken);
-    ValueTask<Result> CloseProgressDialogAsync(CancellationToken cancellationToken);
-    ValueTask<Result<bool>> CloseLastDialogAsync(CancellationToken cancellationToken);
+    ConfiguredValueTaskAwaitable<Result> CloseContentDialogAsync(CancellationToken cancellationToken);
+    ConfiguredValueTaskAwaitable<Result> CloseErrorDialogAsync(CancellationToken cancellationToken);
+    ConfiguredValueTaskAwaitable<Result> CloseInputDialogAsync(CancellationToken cancellationToken);
+    ConfiguredValueTaskAwaitable<Result> CloseProgressDialogAsync(CancellationToken cancellationToken);
+    ConfiguredValueTaskAwaitable<Result<bool>> CloseLastDialogAsync(CancellationToken cancellationToken);
 
-    ValueTask<Result> ShowConfirmContentDialogAsync<TView>(
+    ConfiguredValueTaskAwaitable<Result> ShowConfirmContentDialogAsync<TView>(
         Func<TView, ConfiguredValueTaskAwaitable<Result>> confirmTask,
         Func<TView, ConfiguredValueTaskAwaitable<Result>> cancelTask,
         Action<TView> setupView,
         CancellationToken cancellationToken
     ) where TView : ViewModelBase;
 
-    ValueTask<Result> ShowConfirmInputDialogAsync<TView>(
+    ConfiguredValueTaskAwaitable<Result> ShowConfirmInputDialogAsync<TView>(
         Func<TView, ConfiguredValueTaskAwaitable<Result>> confirmTask,
         Func<TView, ConfiguredValueTaskAwaitable<Result>> cancelTask,
         Action<TView> setupView,

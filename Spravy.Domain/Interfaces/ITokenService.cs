@@ -1,10 +1,11 @@
+using System.Runtime.CompilerServices;
 using Spravy.Domain.Models;
 
 namespace Spravy.Domain.Interfaces;
 
 public interface ITokenService
 {
-    ValueTask<Result<string>> GetTokenAsync(CancellationToken cancellationToken);
-    ValueTask<Result> LoginAsync(User user, CancellationToken cancellationToken);
-    ValueTask<Result> LoginAsync(string refreshToken, CancellationToken cancellationToken);
+    ConfiguredValueTaskAwaitable<Result<string>> GetTokenAsync(CancellationToken cancellationToken);
+    ConfiguredValueTaskAwaitable<Result> LoginAsync(User user, CancellationToken cancellationToken);
+    ConfiguredValueTaskAwaitable<Result> LoginAsync(string refreshToken, CancellationToken cancellationToken);
 }

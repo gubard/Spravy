@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,7 +11,7 @@ namespace Spravy.Ui.Services;
 
 public class OpenerLink : IOpenerLink
 {
-    public ValueTask<Result> OpenLinkAsync(Uri link, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> OpenLinkAsync(Uri link, CancellationToken cancellationToken)
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
@@ -24,21 +25,21 @@ public class OpenerLink : IOpenerLink
             cancellationToken.ThrowIfCancellationRequested();
             Process.Start(info);
 
-            return Result.SuccessValueTask;
+            return Result.AwaitableFalse;
         }
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         {
             Process.Start("xdg-open", link.AbsoluteUri);
 
-            return Result.SuccessValueTask;
+            return Result.AwaitableFalse;
         }
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {
             Process.Start("open", link.AbsoluteUri);
 
-            return Result.SuccessValueTask;
+            return Result.AwaitableFalse;
         }
 
         throw new NotSupportedException();

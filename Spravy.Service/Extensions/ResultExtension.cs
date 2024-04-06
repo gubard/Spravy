@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Grpc.Core;
 using Spravy.Domain.Exceptions;
 using Spravy.Domain.Helpers;
@@ -9,7 +10,7 @@ namespace Spravy.Service.Extensions;
 public static class ResultExtension
 {
     public static async Task<TReturn> HandleAsync<TReturn>(
-        this ValueTask<Result> task,
+        this ConfiguredValueTaskAwaitable<Result> task,
         ISerializer serializer
     ) where TReturn : class, new()
     {
@@ -24,7 +25,7 @@ public static class ResultExtension
     }
 
     public static async Task<TReturn> HandleAsync<TReturn>(
-        this ValueTask<Result> task,
+        this ConfiguredValueTaskAwaitable<Result> task,
         ISerializer serializer,
         Func<TReturn> func
     )
@@ -40,7 +41,7 @@ public static class ResultExtension
     }
 
     public static async Task<TReturn> HandleAsync<TValue, TReturn>(
-        this ValueTask<Result<TValue>> task,
+        this ConfiguredValueTaskAwaitable<Result<TValue>> task,
         ISerializer serializer,
         Func<TValue, TReturn> func
     )
@@ -56,7 +57,7 @@ public static class ResultExtension
     }
 
     public static async Task<TValue> HandleAsync<TValue>(
-        this ValueTask<Result<TValue>> task,
+        this ConfiguredValueTaskAwaitable<Result<TValue>> task,
         ISerializer serializer
     )
     {

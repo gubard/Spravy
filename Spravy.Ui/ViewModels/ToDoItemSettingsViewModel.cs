@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -42,7 +43,7 @@ public class ToDoItemSettingsViewModel : NavigatableViewModelBase
     [Reactive]
     public Guid ToDoItemId { get; set; }
 
-    private ValueTask<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         ToDoItemContent.WhenAnyValue(x => x.Type)
             .Subscribe(
@@ -66,10 +67,9 @@ public class ToDoItemSettingsViewModel : NavigatableViewModelBase
         return RefreshAsync(cancellationToken);
     }
 
-    public ValueTask<Result> RefreshAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
     {
         return ToDoService.GetToDoItemAsync(ToDoItemId, cancellationToken)
-            .ConfigureAwait(false)
             .IfSuccessAsync(
                 toDoItem => this.InvokeUIBackgroundAsync(
                         () =>
@@ -79,7 +79,6 @@ public class ToDoItemSettingsViewModel : NavigatableViewModelBase
                             ToDoItemContent.Type = toDoItem.Type;
                         }
                     )
-                    .ConfigureAwait(false)
             );
     }
 
@@ -88,13 +87,13 @@ public class ToDoItemSettingsViewModel : NavigatableViewModelBase
         return Result.Success;
     }
 
-    public override ValueTask<Result> SetStateAsync(object setting)
+    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting)
     {
-        return Result.SuccessValueTask;
+        return Result.AwaitableFalse;
     }
 
-    public override ValueTask<Result> SaveStateAsync()
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync()
     {
-        return Result.SuccessValueTask;
+        return Result.AwaitableFalse;
     }
 }

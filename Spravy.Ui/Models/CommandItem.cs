@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -50,7 +51,11 @@ public class CommandItem
     public object? Parameter { get; }
     public IObservable<Exception> ThrownExceptions { get; }
 
-    public static CommandItem Create(MaterialIconKind icon, string name, Func<CancellationToken, ValueTask<Result>> func)
+    public static CommandItem Create(
+        MaterialIconKind icon,
+        string name,
+        Func<CancellationToken, ConfiguredValueTaskAwaitable<Result>> func
+    )
     {
         var work = TaskWork.Create(func);
         var command = ReactiveCommand.CreateFromTask(() => work.RunAsync());
@@ -61,7 +66,7 @@ public class CommandItem
     public static CommandItem Create<TParam>(
         MaterialIconKind icon,
         string name,
-        Func<TParam, CancellationToken, ValueTask<Result>> func
+        Func<TParam, CancellationToken, ConfiguredValueTaskAwaitable<Result>> func
     )
     {
         var work = TaskWork.Create(func);
@@ -74,7 +79,7 @@ public class CommandItem
         MaterialIconKind icon,
         string name,
         object parameter,
-        Func<CancellationToken, ValueTask<Result>> func
+        Func<CancellationToken, ConfiguredValueTaskAwaitable<Result>> func
     )
     {
         var work = TaskWork.Create(func);
@@ -87,7 +92,7 @@ public class CommandItem
         MaterialIconKind icon,
         string name,
         object parameter,
-        Func<TParam, CancellationToken, ValueTask<Result>> func
+        Func<TParam, CancellationToken, ConfiguredValueTaskAwaitable<Result>> func
     )
     {
         var work = TaskWork.Create(func);

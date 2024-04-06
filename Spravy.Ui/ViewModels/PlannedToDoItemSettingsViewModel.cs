@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -63,37 +64,33 @@ public class PlannedToDoItemSettingsViewModel : ViewModelBase,
 
     public ICommand InitializedCommand { get; }
 
-    private ValueTask<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         return RefreshAsync(cancellationToken);
     }
 
-    public ValueTask<Result> RefreshAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
     {
         return ToDoService.GetPlannedToDoItemSettingsAsync(Id, cancellationToken)
-            .ConfigureAwait(false)
             .IfSuccessAsync(
                 setting => this.InvokeUIBackgroundAsync(
-                        () =>
-                        {
-                            ChildrenType = setting.ChildrenType;
-                            DueDate = setting.DueDate;
-                            IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
-                        }
-                    )
-                    .ConfigureAwait(false)
+                    () =>
+                    {
+                        ChildrenType = setting.ChildrenType;
+                        DueDate = setting.DueDate;
+                        IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
+                    }
+                )
             );
     }
 
-    public ValueTask<Result> ApplySettingsAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
     {
         return Result.AwaitableFalse.IfSuccessAllAsync(
-            () => ToDoService.UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, cancellationToken)
-                .ConfigureAwait(false),
-            () => ToDoService.UpdateToDoItemDueDateAsync(Id, DueDate, cancellationToken).ConfigureAwait(false),
+            () => ToDoService.UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, cancellationToken),
+            () => ToDoService.UpdateToDoItemDueDateAsync(Id, DueDate, cancellationToken),
             () => ToDoService
                 .UpdateToDoItemIsRequiredCompleteInDueDateAsync(Id, IsRequiredCompleteInDueDate, cancellationToken)
-                .ConfigureAwait(false)
         );
     }
 }

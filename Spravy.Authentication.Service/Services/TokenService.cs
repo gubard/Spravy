@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Runtime.CompilerServices;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Models;
 using Spravy.Domain.Enums;
@@ -21,7 +22,7 @@ public class TokenService : ITokenService
         );
     }
 
-    public ValueTask<Result<string>> GetTokenAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<string>> GetTokenAsync(CancellationToken cancellationToken)
     {
         var jwtHandler = new JwtSecurityTokenHandler();
         var jwtToken = jwtHandler.ReadJwtToken(token.Token);
@@ -29,22 +30,22 @@ public class TokenService : ITokenService
 
         if (expires > DateTimeOffset.Now)
         {
-            return new Result<string>(token.Token).ToValueTaskResult();
+            return new Result<string>(token.Token).ToValueTaskResult().ConfigureAwait(false);
         }
 
         token = tokenFactory.Create(
             new UserTokenClaims("authentication.service", Guid.Empty, Role.Service, string.Empty)
         );
 
-        return new Result<string>(token.Token).ToValueTaskResult();
+        return new Result<string>(token.Token).ToValueTaskResult().ConfigureAwait(false);
     }
 
-    public ValueTask<Result> LoginAsync(User user, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> LoginAsync(User user, CancellationToken cancellationToken)
     {
         throw new NotSupportedException();
     }
 
-    public ValueTask<Result> LoginAsync(string refreshToken, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> LoginAsync(string refreshToken, CancellationToken cancellationToken)
     {
         throw new NotSupportedException();
     }

@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
+using Spravy.Domain.Models;
 using Spravy.PasswordGenerator.Domain.Interfaces;
 using Spravy.PasswordGenerator.Domain.Models;
 
@@ -20,7 +21,7 @@ public class PasswordGenerator : IPasswordGenerator
         this.options = options;
     }
 
-    public string GeneratePassword(string key, GeneratePasswordOptions passwordOptions)
+    public Result<string> GeneratePassword(string key, GeneratePasswordOptions passwordOptions)
     {
         var bytes = stringToBytes.StringToBytes(key);
         using var sha = SHA512.Create();
@@ -32,7 +33,7 @@ public class PasswordGenerator : IPasswordGenerator
 
         if (passwordOptions.Regex.IsNullOrWhiteSpace())
         {
-            return Encoding.ASCII.GetString(resultBytes);
+            return Encoding.ASCII.GetString(resultBytes).ToResult();
         }
 
         while (!Regex.IsMatch(Encoding.ASCII.GetString(resultBytes), passwordOptions.Regex))
@@ -47,7 +48,7 @@ public class PasswordGenerator : IPasswordGenerator
             }
         }
 
-        return Encoding.ASCII.GetString(resultBytes);
+        return Encoding.ASCII.GetString(resultBytes).ToResult();
     }
 
     private void GeneratePassword(

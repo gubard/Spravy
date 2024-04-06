@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Spravy.Domain.Helpers;
@@ -20,18 +21,18 @@ public class GroupToDoItemSettingsViewModel : NavigatableViewModelBase, IApplySe
         return Result.Success;
     }
 
-    public override ValueTask<Result> SetStateAsync(object setting)
+    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting)
     {
-        return Result.SuccessValueTask;
+        return Result.AwaitableFalse;
     }
 
-    public override ValueTask<Result> SaveStateAsync()
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync()
     {
-        return Result.SuccessValueTask;
+        return Result.AwaitableFalse;
     }
 
-    public ValueTask<Result> ApplySettingsAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
     {
-        return Result.SuccessValueTask;
+        return Result.AwaitableFalse;
     }
 }

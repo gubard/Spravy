@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Spravy.Domain.Models;
@@ -7,8 +8,8 @@ namespace Spravy.Ui.Services;
 
 public class EmptyApplySettings : IApplySettings
 {
-    public ValueTask<Result> ApplySettingsAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
     {
-        return Result.SuccessValueTask;
+        return Result.AwaitableFalse;
     }
 }

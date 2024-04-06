@@ -1,8 +1,6 @@
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using Avalonia.Collections;
 using Spravy.Domain.Errors;
-using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Models;
 using Spravy.Ui.Models;
@@ -24,13 +22,13 @@ public class ErrorViewModel : NavigatableViewModelBase
         return Result.Success;
     }
 
-    public override ValueTask<Result> SetStateAsync(object setting)
+    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting)
     {
-        return Result.SuccessValueTask;
+        return Result.AwaitableFalse;
     }
 
-    public override ValueTask<Result> SaveStateAsync()
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync()
     {
-        return Result.SuccessValueTask;
+        return Result.AwaitableFalse;
     }
 }

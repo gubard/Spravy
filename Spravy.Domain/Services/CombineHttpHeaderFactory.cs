@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
@@ -13,7 +14,14 @@ public class CombineHttpHeaderFactory : IHttpHeaderFactory
         this.factories = factories;
     }
 
-    public async ValueTask<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsAsync(
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsAsync(
+        CancellationToken cancellationToken
+    )
+    {
+        return CreateHeaderItemsCore(cancellationToken).ConfigureAwait(false);
+    }
+
+    public async ValueTask<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsCore(
         CancellationToken cancellationToken
     )
     {

@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Models;
 using Spravy.Ui.Interfaces;
@@ -10,9 +10,9 @@ public class EmptyNavigatable : INavigatable
     public bool IsPooled => false;
     public string ViewId => TypeCache<EmptyNavigatable>.Type.Name;
 
-    public ValueTask<Result> SaveStateAsync()
+    public ConfiguredValueTaskAwaitable<Result> SaveStateAsync()
     {
-        return Result.SuccessValueTask;
+        return Result.AwaitableFalse;
     }
 
     public Result Stop()
@@ -20,8 +20,8 @@ public class EmptyNavigatable : INavigatable
         return Result.Success;
     }
 
-    public ValueTask<Result> SetStateAsync(object setting)
+    public ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting)
     {
-        return Result.SuccessValueTask;
+        return Result.AwaitableFalse;
     }
 }

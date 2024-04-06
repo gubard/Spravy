@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Spravy.Db.Extensions;
@@ -22,7 +23,15 @@ public class EfScheduleService : IScheduleService
         this.dbContextFactory = dbContextFactory;
     }
 
-    public async ValueTask<Result> AddTimerAsync(AddTimerParameters parameters, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> AddTimerAsync(
+        AddTimerParameters parameters,
+        CancellationToken cancellationToken
+    )
+    {
+        return AddTimerCore(parameters, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result> AddTimerCore(AddTimerParameters parameters, CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();
 
@@ -41,7 +50,14 @@ public class EfScheduleService : IScheduleService
         return Result.Success;
     }
 
-    public async ValueTask<Result<ReadOnlyMemory<TimerItem>>> GetListTimesAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<TimerItem>>> GetListTimesAsync(
+        CancellationToken cancellationToken
+    )
+    {
+        return GetListTimesCore(cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result<ReadOnlyMemory<TimerItem>>> GetListTimesCore(CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();
         var timers = await context.Set<TimerEntity>().AsNoTracking().ToArrayAsync(cancellationToken);
@@ -50,7 +66,12 @@ public class EfScheduleService : IScheduleService
         return result.ToResult();
     }
 
-    public async ValueTask<Result> RemoveTimerAsync(Guid id, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> RemoveTimerAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return RemoveTimerCore(id, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result> RemoveTimerCore(Guid id, CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();
 

@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Android.Content;
@@ -16,11 +17,11 @@ public class AndroidOpenerLink : IOpenerLink
         this.contextWrapper = contextWrapper;
     }
 
-    public ValueTask<Result> OpenLinkAsync(Uri link, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> OpenLinkAsync(Uri link, CancellationToken cancellationToken)
     {
         var intent = new Intent(Intent.ActionView, global::Android.Net.Uri.Parse(link.AbsoluteUri));
         contextWrapper.StartActivity(intent);
 
-        return Result.SuccessValueTask;
+        return Result.AwaitableFalse;
     }
 }

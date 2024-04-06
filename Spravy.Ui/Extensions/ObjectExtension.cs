@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using Spravy.Domain.Models;
@@ -7,7 +8,12 @@ namespace Spravy.Ui.Extensions;
 
 public static class ObjectExtension
 {
-    public static async ValueTask<Result> InvokeUIBackgroundAsync<TObject>(this TObject _, Action callback)
+    public static ConfiguredValueTaskAwaitable<Result> InvokeUIBackgroundAsync<TObject>(this TObject _, Action callback)
+    {
+        return InvokeUIBackgroundCore(_, callback).ConfigureAwait(false);
+    }
+
+    private static async ValueTask<Result> InvokeUIBackgroundCore<TObject>(this TObject _, Action callback)
     {
         await Dispatcher.UIThread.InvokeAsync(callback, DispatcherPriority.Background);
 

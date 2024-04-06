@@ -44,10 +44,9 @@ public class ToDoItemDayOfWeekSelectorViewModel : ViewModelBase, IApplySettings
     [Reactive]
     public Guid ToDoItemId { get; set; }
 
-    private ValueTask<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         return ToDoService.GetWeeklyPeriodicityAsync(ToDoItemId, cancellationToken)
-            .ConfigureAwait(false)
             .IfSuccessAsync(
                 weeklyPeriodicity => Result.AwaitableFalse.IfSuccessAllAsync(
                         Items.Where(x => weeklyPeriodicity.Days.Contains(x.DayOfWeek))
@@ -56,17 +55,15 @@ public class ToDoItemDayOfWeekSelectorViewModel : ViewModelBase, IApplySettings
                                 {
                                     var y = x;
 
-                                    return () => this.InvokeUIBackgroundAsync(() => y.IsSelected = true)
-                                        .ConfigureAwait(false);
+                                    return () => this.InvokeUIBackgroundAsync(() => y.IsSelected = true);
                                 }
                             )
                             .ToArray()
                     )
-                    .ConfigureAwait(false)
             );
     }
 
-    public ValueTask<Result> ApplySettingsAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
     {
         return ToDoService.UpdateToDoItemWeeklyPeriodicityAsync(
             ToDoItemId,

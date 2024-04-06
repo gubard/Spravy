@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls.Notifications;
@@ -19,14 +20,14 @@ public class NotificationManager : ISpravyNotificationManager
         this.kernel = kernel;
     }
 
-    public ValueTask<Result> ShowAsync<TView>(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> ShowAsync<TView>(CancellationToken cancellationToken)
     {
         var view = kernel.Get<TView>();
 
         return this.InvokeUIBackgroundAsync(() => managedNotificationManager.Show(view));
     }
 
-    public ValueTask<Result> ShowAsync(object view, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> ShowAsync(object view, CancellationToken cancellationToken)
     {
         return this.InvokeUIBackgroundAsync(() => managedNotificationManager.Show(view));
     }

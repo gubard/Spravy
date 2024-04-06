@@ -15,7 +15,7 @@ namespace Spravy.Ui.Extensions;
 
 public static class DialogViewerExtension
 {
-    public static ValueTask<Result> ShowNumberUInt16InputDialogAsync(
+    public static ConfiguredValueTaskAwaitable<Result> ShowNumberUInt16InputDialogAsync(
         this IDialogViewer dialogViewer,
         Func<ushort, ConfiguredValueTaskAwaitable<Result>> confirmTask,
         Action<NumberViewModel> setup,
@@ -24,26 +24,26 @@ public static class DialogViewerExtension
     {
         return dialogViewer.ShowConfirmInputDialogAsync(
             viewModel => confirmTask.Invoke((ushort)viewModel.Value),
-            _ => dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false),
+            _ => dialogViewer.CloseInputDialogAsync(cancellationToken),
             setup,
             cancellationToken
         );
     }
 
-    public static ValueTask<Result> ShowInfoContentDialogAsync<TView>(
+    public static ConfiguredValueTaskAwaitable<Result> ShowInfoContentDialogAsync<TView>(
         this IDialogViewer dialogViewer,
         Action<TView> setupView,
         CancellationToken cancellationToken
     ) where TView : ViewModelBase
     {
         return dialogViewer.ShowInfoContentDialogAsync(
-            _ => dialogViewer.CloseContentDialogAsync(cancellationToken).ConfigureAwait(false),
+            _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
             setupView,
             cancellationToken
         );
     }
 
-    public static ValueTask<Result> ShowSingleStringConfirmDialogAsync(
+    public static ConfiguredValueTaskAwaitable<Result> ShowSingleStringConfirmDialogAsync(
         this IDialogViewer dialogViewer,
         Func<string, ConfiguredValueTaskAwaitable<Result>> confirmTask,
         Action<TextViewModel> setup,
@@ -52,13 +52,13 @@ public static class DialogViewerExtension
     {
         return dialogViewer.ShowConfirmInputDialogAsync(
             view => confirmTask.Invoke(view.Text.ThrowIfNull()),
-            _ => dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false),
+            _ => dialogViewer.CloseInputDialogAsync(cancellationToken),
             setup,
             cancellationToken
         );
     }
 
-    public static ValueTask<Result> ShowMultiStringConfirmDialogAsync(
+    public static ConfiguredValueTaskAwaitable<Result> ShowMultiStringConfirmDialogAsync(
         this IDialogViewer dialogViewer,
         Func<string, ConfiguredValueTaskAwaitable<Result>> confirmTask,
         Action<TextViewModel> setup,
@@ -67,7 +67,7 @@ public static class DialogViewerExtension
     {
         return dialogViewer.ShowConfirmInputDialogAsync(
             view => confirmTask.Invoke(view.Text.ThrowIfNull()),
-            _ => dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false),
+            _ => dialogViewer.CloseInputDialogAsync(cancellationToken),
             (TextViewModel textBox) =>
             {
                 textBox.AcceptsReturn = true;
@@ -78,7 +78,7 @@ public static class DialogViewerExtension
         );
     }
 
-    public static ValueTask<Result> ShowDayOfWeekSelectorInputDialogAsync(
+    public static ConfiguredValueTaskAwaitable<Result> ShowDayOfWeekSelectorInputDialogAsync(
         this IDialogViewer dialogViewer,
         Func<IEnumerable<DayOfWeek>, ConfiguredValueTaskAwaitable<Result>> confirmTask,
         Action<ToDoItemDayOfWeekSelectorViewModel> setup,
@@ -87,13 +87,13 @@ public static class DialogViewerExtension
     {
         return dialogViewer.ShowConfirmInputDialogAsync(
             view => confirmTask.Invoke(view.Items.Where(x => x.IsSelected).Select(x => x.DayOfWeek)),
-            _ => dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false),
+            _ => dialogViewer.CloseInputDialogAsync(cancellationToken),
             setup,
             cancellationToken
         );
     }
 
-    public static ValueTask<Result> ShowDayOfMonthSelectorInputDialogAsync(
+    public static ConfiguredValueTaskAwaitable<Result> ShowDayOfMonthSelectorInputDialogAsync(
         this IDialogViewer dialogViewer,
         Func<IEnumerable<byte>, ConfiguredValueTaskAwaitable<Result>> confirmTask,
         Action<ToDoItemDayOfMonthSelectorViewModel> setup,
@@ -102,13 +102,13 @@ public static class DialogViewerExtension
     {
         return dialogViewer.ShowConfirmInputDialogAsync(
             view => confirmTask.Invoke(view.Items.Where(x => x.IsSelected).Select(x => x.Day)),
-            _ => dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false),
+            _ => dialogViewer.CloseInputDialogAsync(cancellationToken),
             setup,
             cancellationToken
         );
     }
 
-    public static ValueTask<Result> ShowDayOfYearSelectorInputDialogAsync(
+    public static ConfiguredValueTaskAwaitable<Result> ShowDayOfYearSelectorInputDialogAsync(
         this IDialogViewer dialogViewer,
         Func<IEnumerable<DayOfYear>, ConfiguredValueTaskAwaitable<Result>> confirmTask,
         Action<ToDoItemDayOfYearSelectorViewModel> setup,
@@ -121,13 +121,13 @@ public static class DialogViewerExtension
                     x => x.Days.Where(y => y.IsSelected).Select(y => new DayOfYear(y.Day, x.Month))
                 )
             ),
-            _ => dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false),
+            _ => dialogViewer.CloseInputDialogAsync(cancellationToken),
             setup,
             cancellationToken
         );
     }
 
-    public static ValueTask<Result> ShowDateConfirmDialogAsync(
+    public static ConfiguredValueTaskAwaitable<Result> ShowDateConfirmDialogAsync(
         this IDialogViewer dialogViewer,
         Func<DateTime, ConfiguredValueTaskAwaitable<Result>> confirmTask,
         Action<CalendarViewModel> setup,
@@ -136,13 +136,13 @@ public static class DialogViewerExtension
     {
         return dialogViewer.ShowConfirmInputDialogAsync(
             view => confirmTask.Invoke(view.SelectedDate.ThrowIfNullStruct()),
-            _ => dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false),
+            _ => dialogViewer.CloseInputDialogAsync(cancellationToken),
             setup,
             cancellationToken
         );
     }
 
-    public static ValueTask<Result> ShowItemSelectorDialogAsync<TItem>(
+    public static ConfiguredValueTaskAwaitable<Result> ShowItemSelectorDialogAsync<TItem>(
         this IDialogViewer dialogViewer,
         Func<TItem, ConfiguredValueTaskAwaitable<Result>> confirmTask,
         Action<ItemSelectorViewModel> setup,
@@ -151,13 +151,13 @@ public static class DialogViewerExtension
     {
         return dialogViewer.ShowConfirmInputDialogAsync(
             view => confirmTask.Invoke(view.SelectedItem.ThrowIfNull().ThrowIfIsNotCast<TItem>()),
-            _ => dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false),
+            _ => dialogViewer.CloseInputDialogAsync(cancellationToken),
             setup,
             cancellationToken
         );
     }
 
-    public static ValueTask<Result> ShowDateTimeConfirmDialogAsync(
+    public static ConfiguredValueTaskAwaitable<Result> ShowDateTimeConfirmDialogAsync(
         this IDialogViewer dialogViewer,
         Func<DateTime, ConfiguredValueTaskAwaitable<Result>> confirmTask,
         Action<DateTimeViewModel>? setupCalendar,
@@ -168,13 +168,13 @@ public static class DialogViewerExtension
             viewModel => confirmTask.Invoke(
                 viewModel.SelectedDate.ThrowIfNullStruct().Add(viewModel.SelectedTime.ThrowIfNullStruct())
             ),
-            _ => dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false),
+            _ => dialogViewer.CloseInputDialogAsync(cancellationToken),
             viewModel => setupCalendar?.Invoke(viewModel),
             cancellationToken
         );
     }
 
-    public static ValueTask<Result> ShowToDoItemSelectorConfirmDialogAsync(
+    public static ConfiguredValueTaskAwaitable<Result> ShowToDoItemSelectorConfirmDialogAsync(
         this IDialogViewer dialogViewer,
         Func<ToDoSelectorItemNotify, ConfiguredValueTaskAwaitable<Result>> confirmTask,
         Action<ToDoItemSelectorViewModel> setup,
@@ -183,7 +183,7 @@ public static class DialogViewerExtension
     {
         return dialogViewer.ShowConfirmInputDialogAsync(
             view => confirmTask.Invoke(view.SelectedItem.ThrowIfNull()),
-            _ => dialogViewer.CloseInputDialogAsync(cancellationToken).ConfigureAwait(false),
+            _ => dialogViewer.CloseInputDialogAsync(cancellationToken),
             setup,
             cancellationToken
         );

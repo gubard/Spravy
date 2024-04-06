@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -45,10 +46,9 @@ public class ToDoItemSelectorViewModel : ViewModelBase
     [Reactive]
     public ToDoSelectorItemNotify? SelectedItem { get; set; }
 
-    private ValueTask<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         return Refresh(cancellationToken)
-            .ConfigureAwait(false)
             .IfSuccessAsync(
                 () =>
                 {
@@ -59,36 +59,32 @@ public class ToDoItemSelectorViewModel : ViewModelBase
             );
     }
 
-    private ValueTask<Result> Refresh(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> Refresh(CancellationToken cancellationToken)
     {
         return this.InvokeUIBackgroundAsync(() => Roots.Clear())
-            .ConfigureAwait(false)
             .IfSuccessAsync(
                 () => ToDoService.GetToDoSelectorItemsAsync(IgnoreIds.ToArray(), cancellationToken)
-                    .ConfigureAwait(false)
                     .IfSuccessAsync(
                         items =>
                         {
                             itemsCache.Clear();
                             itemsCache.AddRange(Mapper.Map<ToDoSelectorItemNotify[]>(items.ToArray()));
 
-                            return this.InvokeUIBackgroundAsync(() => Roots.AddRange(itemsCache)).ConfigureAwait(false);
+                            return this.InvokeUIBackgroundAsync(() => Roots.AddRange(itemsCache));
                         }
                     )
-                    .ConfigureAwait(false)
             );
     }
 
-    private ValueTask<Result> SearchAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> SearchAsync(CancellationToken cancellationToken)
     {
         return this.InvokeUIBackgroundAsync(() => Roots.Clear())
-            .ConfigureAwait(false)
             .IfSuccessAsync(
                 () =>
                 {
                     if (SearchText.IsNullOrWhiteSpace())
                     {
-                        return this.InvokeUIBackgroundAsync(() => Roots.AddRange(itemsCache)).ConfigureAwait(false);
+                        return this.InvokeUIBackgroundAsync(() => Roots.AddRange(itemsCache));
                     }
 
                     var result = new List<ToDoSelectorItemNotify>();
@@ -98,7 +94,7 @@ public class ToDoItemSelectorViewModel : ViewModelBase
                         Search(item, result);
                     }
 
-                    return this.InvokeUIBackgroundAsync(() => Roots.AddRange(result)).ConfigureAwait(false);
+                    return this.InvokeUIBackgroundAsync(() => Roots.AddRange(result));
                 }
             );
     }

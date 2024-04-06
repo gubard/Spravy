@@ -1,6 +1,8 @@
+using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
 using Spravy.Db.Extensions;
 using Spravy.Domain.Extensions;
+using Spravy.Domain.Models;
 using Spravy.PasswordGenerator.Db.Contexts;
 using Spravy.PasswordGenerator.Db.Models;
 using Spravy.PasswordGenerator.Domain.Interfaces;
@@ -19,7 +21,14 @@ public class EfUserSecretService : IUserSecretService
         this.httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<byte[]> GetUserSecretAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<byte>>> GetUserSecretAsync(
+        CancellationToken cancellationToken
+    )
+    {
+        return GetUserSecretCore(cancellationToken).ConfigureAwait(false);
+    }
+
+    public async ValueTask<Result<ReadOnlyMemory<byte>>> GetUserSecretCore(CancellationToken cancellationToken)
     {
         var userId = httpContextAccessor.GetUserId().ToGuid();
         var user = await context.Set<UserSecretEntity>()
@@ -28,7 +37,7 @@ public class EfUserSecretService : IUserSecretService
 
         if (user is not null)
         {
-            return user.Secret;
+            return user.Secret.ToReadOnlyMemory().ToResult();
         }
 
         var secret = Guid.NewGuid().ToByteArray();
@@ -45,6 +54,6 @@ public class EfUserSecretService : IUserSecretService
             )
         );
 
-        return secret;
+        return secret.ToReadOnlyMemory().ToResult();
     }
 }

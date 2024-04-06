@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -6,8 +7,8 @@ using AutoMapper;
 using Avalonia.Collections;
 using Ninject;
 using ReactiveUI.Fody.Helpers;
-using Spravy.Domain.Models;
 using Spravy.Domain.Extensions;
+using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Models;
@@ -41,10 +42,9 @@ public class ChangeToDoItemOrderIndexViewModel : ViewModelBase
     [Reactive]
     public bool IsAfter { get; set; } = true;
 
-    private ValueTask<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         return ToDoService.GetSiblingsAsync(Id, cancellationToken)
-            .ConfigureAwait(false)
             .IfSuccessAsync(
                 items => this.InvokeUIBackgroundAsync(
                         () =>
@@ -53,7 +53,6 @@ public class ChangeToDoItemOrderIndexViewModel : ViewModelBase
                             Items.AddRange(Mapper.Map<ToDoShortItemNotify[]>(items.ToArray()));
                         }
                     )
-                    .ConfigureAwait(false)
             );
     }
 }

@@ -34,7 +34,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         return converter.Convert<Guid>(request.CloneId)
             .IfSuccessAsync(
                 converter.Convert<Guid?>(request.ParentId),
-                (ci, pi) => toDoService.CloneToDoItemAsync(ci, pi, context.CancellationToken).ConfigureAwait(false)
+                (ci, pi) => toDoService.CloneToDoItemAsync(ci, pi, context.CancellationToken)
             )
             .HandleAsync<CloneToDoItemReply>(serializer);
     }
@@ -47,11 +47,9 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         return converter.Convert<Guid>(request.Id)
             .IfSuccessAsync(
                 i => toDoService.GetChildrenToDoItemShortsAsync(i, context.CancellationToken)
-                    .ConfigureAwait(false)
                     .IfSuccessAsync(
                         items => converter.Convert<ToDoShortItemGrpc[]>(items).ToValueTaskResult().ConfigureAwait(false)
                     )
-                    .ConfigureAwait(false)
             )
             .HandleAsync(
                 serializer,
@@ -73,11 +71,10 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         return converter.Convert<Guid>(request.Id)
             .IfSuccessAsync(
                 i => toDoService.UpdateToDoItemDescriptionTypeAsync(
-                        i,
-                        (DescriptionType)request.Type,
-                        context.CancellationToken
-                    )
-                    .ConfigureAwait(false)
+                    i,
+                    (DescriptionType)request.Type,
+                    context.CancellationToken
+                )
             )
             .HandleAsync<UpdateToDoItemDescriptionTypeReply>(serializer);
     }
@@ -88,7 +85,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     )
     {
         return converter.Convert<Guid>(request.Id)
-            .IfSuccessAsync(i => toDoService.ResetToDoItemAsync(i, context.CancellationToken).ConfigureAwait(false))
+            .IfSuccessAsync(i => toDoService.ResetToDoItemAsync(i, context.CancellationToken))
             .HandleAsync<ResetToDoItemReply>(serializer);
     }
 
@@ -98,7 +95,6 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     )
     {
         return toDoService.GetTodayToDoItemsAsync(context.CancellationToken)
-            .ConfigureAwait(false)
             .IfSuccessAsync(ids => converter.Convert<ByteString[]>(ids.ToArray()))
             .HandleAsync(
                 serializer,
@@ -121,11 +117,10 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         return converter.Convert<Guid>(request.Id)
             .IfSuccessAsync(
                 i => toDoService.UpdateToDoItemIsRequiredCompleteInDueDateAsync(
-                        i,
-                        request.IsRequiredCompleteInDueDate,
-                        context.CancellationToken
-                    )
-                    .ConfigureAwait(false)
+                    i,
+                    request.IsRequiredCompleteInDueDate,
+                    context.CancellationToken
+                )
             )
             .HandleAsync<UpdateToDoItemIsRequiredCompleteInDueDateReply>(serializer);
     }
@@ -153,7 +148,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     {
         return converter.Convert<Guid>(request.Id)
             .IfSuccessAsync(
-                i => toDoService.RandomizeChildrenOrderIndexAsync(i, context.CancellationToken).ConfigureAwait(false)
+                i => toDoService.RandomizeChildrenOrderIndexAsync(i, context.CancellationToken)
             )
             .HandleAsync<RandomizeChildrenOrderIndexReply>(serializer);
     }
@@ -166,9 +161,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         return converter.Convert<Guid>(request.Id)
             .IfSuccessAsync(
                 i => toDoService.GetPeriodicityOffsetToDoItemSettingsAsync(i, context.CancellationToken)
-                    .ConfigureAwait(false)
             )
-            .ConfigureAwait(false)
             .IfSuccessAsync(s => converter.Convert<GetPeriodicityOffsetToDoItemSettingsReply>(s))
             .HandleAsync(serializer);
     }
@@ -180,9 +173,8 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     {
         return converter.Convert<Guid>(request.Id)
             .IfSuccessAsync(
-                i => toDoService.GetMonthlyPeriodicityAsync(i, context.CancellationToken).ConfigureAwait(false)
+                i => toDoService.GetMonthlyPeriodicityAsync(i, context.CancellationToken)
             )
-            .ConfigureAwait(false)
             .IfSuccessAsync(p => converter.Convert<GetMonthlyPeriodicityReply>(p))
             .HandleAsync(serializer, p => p);
     }
@@ -194,9 +186,8 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     {
         return converter.Convert<Guid>(request.Id)
             .IfSuccessAsync(
-                i => toDoService.GetWeeklyPeriodicityAsync(i, context.CancellationToken).ConfigureAwait(false)
+                i => toDoService.GetWeeklyPeriodicityAsync(i, context.CancellationToken)
             )
-            .ConfigureAwait(false)
             .IfSuccessAsync(i => converter.Convert<GetWeeklyPeriodicityReply>(i))
             .HandleAsync(serializer);
     }
@@ -208,9 +199,8 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     {
         return converter.Convert<Guid>(request.Id)
             .IfSuccessAsync(
-                i => toDoService.GetAnnuallyPeriodicityAsync(i, context.CancellationToken).ConfigureAwait(false)
+                i => toDoService.GetAnnuallyPeriodicityAsync(i, context.CancellationToken)
             )
-            .ConfigureAwait(false)
             .IfSuccessAsync(p => converter.Convert<GetAnnuallyPeriodicityReply>(p))
             .HandleAsync(serializer);
     }
@@ -222,9 +212,8 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     {
         return converter.Convert<Guid>(request.Id)
             .IfSuccessAsync(
-                i => toDoService.GetPeriodicityToDoItemSettingsAsync(i, context.CancellationToken).ConfigureAwait(false)
+                i => toDoService.GetPeriodicityToDoItemSettingsAsync(i, context.CancellationToken)
             )
-            .ConfigureAwait(false)
             .IfSuccessAsync(s => converter.Convert<GetPeriodicityToDoItemSettingsReply>(s))
             .HandleAsync(serializer, p => p);
     }
@@ -236,9 +225,8 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     {
         return converter.Convert<Guid>(request.Id)
             .IfSuccessAsync(
-                i => toDoService.GetValueToDoItemSettingsAsync(i, context.CancellationToken).ConfigureAwait(false)
+                i => toDoService.GetValueToDoItemSettingsAsync(i, context.CancellationToken)
             )
-            .ConfigureAwait(false)
             .IfSuccessAsync(s => converter.Convert<GetValueToDoItemSettingsReply>(s))
             .HandleAsync(serializer);
     }
@@ -250,9 +238,8 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     {
         return converter.Convert<Guid>(request.Id)
             .IfSuccessAsync(
-                i => toDoService.GetPlannedToDoItemSettingsAsync(i, context.CancellationToken).ConfigureAwait(false)
+                i => toDoService.GetPlannedToDoItemSettingsAsync(i, context.CancellationToken)
             )
-            .ConfigureAwait(false)
             .IfSuccessAsync(s => converter.Convert<GetPlannedToDoItemSettingsReply>(s))
             .HandleAsync(serializer);
     }
@@ -260,8 +247,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     public override Task<GetParentsReply> GetParents(GetParentsRequest request, ServerCallContext context)
     {
         return converter.Convert<Guid>(request.Id)
-            .IfSuccessAsync(i => toDoService.GetParentsAsync(i, context.CancellationToken).ConfigureAwait(false))
-            .ConfigureAwait(false)
+            .IfSuccessAsync(i => toDoService.GetParentsAsync(i, context.CancellationToken))
             .IfSuccessAsync(p => converter.Convert<ToDoShortItemGrpc[]>(p.ToArray()))
             .HandleAsync(
                 serializer,
@@ -281,7 +267,6 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     )
     {
         return toDoService.GetRootToDoItemIdsAsync(context.CancellationToken)
-            .ConfigureAwait(false)
             .IfSuccessAsync(ids => converter.Convert<ByteString[]>(ids.ToArray()))
             .HandleAsync(
                 serializer,
@@ -302,9 +287,8 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     {
         return converter.Convert<Guid>(request.Id)
             .IfSuccessAsync(
-                i => toDoService.GetLeafToDoItemIdsAsync(i, context.CancellationToken).ConfigureAwait(false)
+                i => toDoService.GetLeafToDoItemIdsAsync(i, context.CancellationToken)
             )
-            .ConfigureAwait(false)
             .IfSuccessAsync(ids => converter.Convert<ByteString[]>(ids.ToArray()))
             .HandleAsync(
                 serializer,
@@ -324,7 +308,6 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     )
     {
         return toDoService.GetFavoriteToDoItemIdsAsync(context.CancellationToken)
-            .ConfigureAwait(false)
             .IfSuccessAsync(ids => converter.Convert<ByteString[]>(ids.ToArray()))
             .HandleAsync(
                 serializer,
@@ -345,9 +328,8 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     {
         return converter.Convert<Guid>(request.Id)
             .IfSuccessAsync(
-                i => toDoService.GetChildrenToDoItemIdsAsync(i, context.CancellationToken).ConfigureAwait(false)
+                i => toDoService.GetChildrenToDoItemIdsAsync(i, context.CancellationToken)
             )
-            .ConfigureAwait(false)
             .IfSuccessAsync(ids => converter.Convert<ByteString[]>(ids.ToArray()))
             .HandleAsync(
                 serializer,
@@ -367,7 +349,6 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     )
     {
         return toDoService.SearchToDoItemIdsAsync(request.SearchText, context.CancellationToken)
-            .ConfigureAwait(false)
             .IfSuccessAsync(ids => converter.Convert<ByteString[]>(ids.ToArray()))
             .HandleAsync(
                 serializer,
@@ -384,8 +365,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     public override Task<GetToDoItemReply> GetToDoItem(GetToDoItemRequest request, ServerCallContext context)
     {
         return converter.Convert<Guid>(request.Id)
-            .IfSuccessAsync(id => toDoService.GetToDoItemAsync(id, context.CancellationToken).ConfigureAwait(false))
-            .ConfigureAwait(false)
+            .IfSuccessAsync(id => toDoService.GetToDoItemAsync(id, context.CancellationToken))
             .IfSuccessAsync(toDoItem => converter.Convert<GetToDoItemReply>(toDoItem))
             .HandleAsync(serializer);
     }
@@ -396,7 +376,6 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     )
     {
         return toDoService.GetCurrentActiveToDoItemAsync(context.CancellationToken)
-            .ConfigureAwait(false)
             .IfSuccessAsync(toDoItem => converter.Convert<ActiveToDoItemGrpc>(toDoItem))
             .HandleAsync(
                 serializer,
@@ -416,7 +395,6 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
             .IfSuccessAsync(
                 converter.Convert<Uri>(request.Link),
                 (id, link) => toDoService.UpdateToDoItemLinkAsync(id, link, context.CancellationToken)
-                    .ConfigureAwait(false)
             )
             .HandleAsync<UpdateToDoItemLinkReply>(serializer);
     }
@@ -429,12 +407,10 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         return converter.Convert<AddRootToDoItemOptions>(request)
             .IfSuccessAsync(
                 options => toDoService.AddRootToDoItemAsync(
-                        options,
-                        context.CancellationToken
-                    )
-                    .ConfigureAwait(false)
+                    options,
+                    context.CancellationToken
+                )
             )
-            .ConfigureAwait(false)
             .IfSuccessAsync(id => converter.Convert<ByteString>(id))
             .HandleAsync(
                 serializer,
@@ -451,12 +427,10 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         return converter.Convert<AddToDoItemOptions>(request)
             .IfSuccessAsync(
                 options => toDoService.AddToDoItemAsync(
-                        options,
-                        context.CancellationToken
-                    )
-                    .ConfigureAwait(false)
+                    options,
+                    context.CancellationToken
+                )
             )
-            .ConfigureAwait(false)
             .IfSuccessAsync(id => converter.Convert<ByteString>(id))
             .HandleAsync(
                 serializer,
@@ -473,7 +447,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     )
     {
         return converter.Convert<Guid>(request.Id)
-            .IfSuccessAsync(id => toDoService.DeleteToDoItemAsync(id, context.CancellationToken).ConfigureAwait(false))
+            .IfSuccessAsync(id => toDoService.DeleteToDoItemAsync(id, context.CancellationToken))
             .HandleAsync<DeleteToDoItemReply>(serializer);
     }
 
@@ -485,11 +459,10 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         return converter.Convert<Guid>(request.Id)
             .IfSuccessAsync(
                 id => toDoService.UpdateToDoItemTypeOfPeriodicityAsync(
-                        id,
-                        (TypeOfPeriodicity)request.Type,
-                        context.CancellationToken
-                    )
-                    .ConfigureAwait(false)
+                    id,
+                    (TypeOfPeriodicity)request.Type,
+                    context.CancellationToken
+                )
             )
             .HandleAsync<UpdateToDoItemTypeOfPeriodicityReply>(serializer);
         ;
@@ -504,11 +477,10 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
             .IfSuccessAsync(
                 converter.Convert<DateOnly>(request.DueDate),
                 (id, dueDate) => toDoService.UpdateToDoItemDueDateAsync(
-                        id,
-                        dueDate,
-                        context.CancellationToken
-                    )
-                    .ConfigureAwait(false)
+                    id,
+                    dueDate,
+                    context.CancellationToken
+                )
             )
             .HandleAsync<UpdateToDoItemDueDateReply>(serializer);
     }
@@ -521,7 +493,6 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         return converter.Convert<Guid>(request.Id)
             .IfSuccessAsync(
                 id => toDoService.UpdateToDoItemCompleteStatusAsync(id, request.IsCompleted, context.CancellationToken)
-                    .ConfigureAwait(false)
             )
             .HandleAsync<UpdateToDoItemCompleteStatusReply>(serializer);
     }
@@ -534,11 +505,10 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         return converter.Convert<Guid>(request.Id)
             .IfSuccessAsync(
                 id => toDoService.UpdateToDoItemNameAsync(
-                        id,
-                        request.Name,
-                        context.CancellationToken
-                    )
-                    .ConfigureAwait(false)
+                    id,
+                    request.Name,
+                    context.CancellationToken
+                )
             )
             .HandleAsync<UpdateToDoItemNameReply>(serializer);
     }
@@ -551,7 +521,6 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         return converter.Convert<UpdateOrderIndexToDoItemOptions>(request)
             .IfSuccessAsync(
                 options => toDoService.UpdateToDoItemOrderIndexAsync(options, context.CancellationToken)
-                    .ConfigureAwait(false)
             )
             .HandleAsync<UpdateToDoItemOrderIndexReply>(serializer);
     }
@@ -564,11 +533,10 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         return converter.Convert<Guid>(request.Id)
             .IfSuccessAsync(
                 id => toDoService.UpdateToDoItemDescriptionAsync(
-                        id,
-                        request.Description,
-                        context.CancellationToken
-                    )
-                    .ConfigureAwait(false)
+                    id,
+                    request.Description,
+                    context.CancellationToken
+                )
             )
             .HandleAsync<UpdateToDoItemDescriptionReply>(serializer);
     }
@@ -581,11 +549,10 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         return converter.Convert<Guid>(request.Id)
             .IfSuccessAsync(
                 id => toDoService.UpdateToDoItemTypeAsync(
-                        id,
-                        (ToDoItemType)request.Type,
-                        context.CancellationToken
-                    )
-                    .ConfigureAwait(false)
+                    id,
+                    (ToDoItemType)request.Type,
+                    context.CancellationToken
+                )
             )
             .HandleAsync<UpdateToDoItemTypeReply>(serializer);
     }
@@ -597,7 +564,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     {
         return converter.Convert<Guid>(request.Id)
             .IfSuccessAsync(
-                id => toDoService.AddFavoriteToDoItemAsync(id, context.CancellationToken).ConfigureAwait(false)
+                id => toDoService.AddFavoriteToDoItemAsync(id, context.CancellationToken)
             )
             .HandleAsync<AddFavoriteToDoItemReply>(serializer);
     }
@@ -609,7 +576,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     {
         return converter.Convert<Guid>(request.Id)
             .IfSuccessAsync(
-                id => toDoService.RemoveFavoriteToDoItemAsync(id, context.CancellationToken).ConfigureAwait(false)
+                id => toDoService.RemoveFavoriteToDoItemAsync(id, context.CancellationToken)
             )
             .HandleAsync<RemoveFavoriteToDoItemReply>(serializer);
     }
@@ -623,11 +590,10 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
             .IfSuccessAsync(
                 converter.Convert<AnnuallyPeriodicity>(request.Periodicity),
                 (id, periodicity) => toDoService.UpdateToDoItemAnnuallyPeriodicityAsync(
-                        id,
-                        periodicity,
-                        context.CancellationToken
-                    )
-                    .ConfigureAwait(false)
+                    id,
+                    periodicity,
+                    context.CancellationToken
+                )
             )
             .HandleAsync<UpdateToDoItemAnnuallyPeriodicityReply>(serializer);
     }
@@ -641,11 +607,10 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
             .IfSuccessAsync(
                 converter.Convert<MonthlyPeriodicity>(request.Periodicity),
                 (id, periodicity) => toDoService.UpdateToDoItemMonthlyPeriodicityAsync(
-                        id,
-                        periodicity,
-                        context.CancellationToken
-                    )
-                    .ConfigureAwait(false)
+                    id,
+                    periodicity,
+                    context.CancellationToken
+                )
             )
             .HandleAsync<UpdateToDoItemMonthlyPeriodicityReply>(serializer);
     }
@@ -659,11 +624,10 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
             .IfSuccessAsync(
                 converter.Convert<WeeklyPeriodicity>(request.Periodicity),
                 (id, periodicity) => toDoService.UpdateToDoItemWeeklyPeriodicityAsync(
-                        id,
-                        periodicity,
-                        context.CancellationToken
-                    )
-                    .ConfigureAwait(false)
+                    id,
+                    periodicity,
+                    context.CancellationToken
+                )
             )
             .HandleAsync<UpdateToDoItemWeeklyPeriodicityReply>(serializer);
     }
@@ -676,12 +640,10 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         return converter.Convert<Guid[]>(request.IgnoreIds)
             .IfSuccessAsync(
                 ignoreIds => toDoService.GetToDoSelectorItemsAsync(
-                        ignoreIds,
-                        context.CancellationToken
-                    )
-                    .ConfigureAwait(false)
+                    ignoreIds,
+                    context.CancellationToken
+                )
             )
-            .ConfigureAwait(false)
             .IfSuccessAsync(toDoSelectorItems => converter.Convert<ToDoSelectorItemGrpc[]>(toDoSelectorItems.ToArray()))
             .HandleAsync(
                 serializer,
@@ -706,7 +668,6 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
             .IfSuccessAsync(
                 converter.Convert<Guid>(request.ParentId),
                 (id, pi) => toDoService.UpdateToDoItemParentAsync(id, pi, context.CancellationToken)
-                    .ConfigureAwait(false)
             )
             .HandleAsync<UpdateToDoItemParentReply>(serializer);
     }
@@ -714,7 +675,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     public override Task<ToDoItemToRootReply> ToDoItemToRoot(ToDoItemToRootRequest request, ServerCallContext context)
     {
         return converter.Convert<Guid>(request.Id)
-            .IfSuccessAsync(id => toDoService.ToDoItemToRootAsync(id, context.CancellationToken).ConfigureAwait(false))
+            .IfSuccessAsync(id => toDoService.ToDoItemToRootAsync(id, context.CancellationToken))
             .HandleAsync<ToDoItemToRootReply>(serializer);
     }
 
@@ -725,7 +686,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     {
         return converter.Convert<ToDoItemToStringOptions>(request)
             .IfSuccessAsync(
-                options => toDoService.ToDoItemToStringAsync(options, context.CancellationToken).ConfigureAwait(false)
+                options => toDoService.ToDoItemToStringAsync(options, context.CancellationToken)
             )
             .HandleAsync(
                 serializer,
@@ -744,7 +705,6 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         return converter.Convert<Guid>(request.Id)
             .IfSuccessAsync(
                 id => toDoService.UpdateToDoItemDaysOffsetAsync(id, (ushort)request.Days, context.CancellationToken)
-                    .ConfigureAwait(false)
             )
             .HandleAsync<UpdateToDoItemDaysOffsetReply>(serializer);
     }
@@ -757,11 +717,10 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         return converter.Convert<Guid>(request.Id)
             .IfSuccessAsync(
                 id => toDoService.UpdateToDoItemMonthsOffsetAsync(
-                        id,
-                        (ushort)request.Months,
-                        context.CancellationToken
-                    )
-                    .ConfigureAwait(false)
+                    id,
+                    (ushort)request.Months,
+                    context.CancellationToken
+                )
             )
             .HandleAsync<UpdateToDoItemMonthsOffsetReply>(serializer);
     }
@@ -774,11 +733,10 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         return converter.Convert<Guid>(request.Id)
             .IfSuccessAsync(
                 id => toDoService.UpdateToDoItemWeeksOffsetAsync(
-                        id,
-                        (ushort)request.Weeks,
-                        context.CancellationToken
-                    )
-                    .ConfigureAwait(false)
+                    id,
+                    (ushort)request.Weeks,
+                    context.CancellationToken
+                )
             )
             .HandleAsync<UpdateToDoItemWeeksOffsetReply>(serializer);
     }
@@ -791,11 +749,10 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         return converter.Convert<Guid>(request.Id)
             .IfSuccessAsync(
                 id => toDoService.UpdateToDoItemYearsOffsetAsync(
-                        id,
-                        (ushort)request.Years,
-                        context.CancellationToken
-                    )
-                    .ConfigureAwait(false)
+                    id,
+                    (ushort)request.Years,
+                    context.CancellationToken
+                )
             )
             .HandleAsync<UpdateToDoItemYearsOffsetReply>(serializer);
     }
@@ -808,11 +765,10 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         return converter.Convert<Guid>(request.Id)
             .IfSuccessAsync(
                 id => toDoService.UpdateToDoItemChildrenTypeAsync(
-                        id,
-                        (ToDoItemChildrenType)request.Type,
-                        context.CancellationToken
-                    )
-                    .ConfigureAwait(false)
+                    id,
+                    (ToDoItemChildrenType)request.Type,
+                    context.CancellationToken
+                )
             )
             .HandleAsync<UpdateToDoItemChildrenTypeReply>(serializer);
     }
@@ -820,8 +776,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     public override Task<GetSiblingsReply> GetSiblings(GetSiblingsRequest request, ServerCallContext context)
     {
         return converter.Convert<Guid>(request.Id)
-            .IfSuccessAsync(id => toDoService.GetSiblingsAsync(id, context.CancellationToken).ConfigureAwait(false))
-            .ConfigureAwait(false)
+            .IfSuccessAsync(id => toDoService.GetSiblingsAsync(id, context.CancellationToken))
             .IfSuccessAsync(items => converter.Convert<ToDoShortItemGrpc[]>(items.ToArray()))
             .HandleAsync(
                 serializer,

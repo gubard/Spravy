@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Google.Protobuf;
 using Spravy.Client.Extensions;
 using Spravy.Client.Interfaces;
@@ -31,12 +32,11 @@ public class GrpcScheduleService : GrpcServiceBase<ScheduleServiceClient>,
         this.metadataFactory = metadataFactory;
     }
 
-    public ValueTask<Result> AddTimerAsync(AddTimerParameters parameters, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> AddTimerAsync(AddTimerParameters parameters, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             client =>
                 metadataFactory.CreateAsync(cancellationToken)
-                    .ConfigureAwait(false)
                     .IfSuccessAsync(
                         converter.Convert<AddTimerRequest>(parameters),
                         (value, request) => client.AddTimerAsync(request, value)
@@ -48,12 +48,11 @@ public class GrpcScheduleService : GrpcServiceBase<ScheduleServiceClient>,
         );
     }
 
-    public ValueTask<Result<ReadOnlyMemory<TimerItem>>> GetListTimesAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<TimerItem>>> GetListTimesAsync(CancellationToken cancellationToken)
     {
         return CallClientAsync(
             client =>
                 metadataFactory.CreateAsync(cancellationToken)
-                    .ConfigureAwait(false)
                     .IfSuccessAsync(
                         value =>
                             client.GetListTimesAsync(new GetListTimesRequest(), value)
@@ -65,19 +64,16 @@ public class GrpcScheduleService : GrpcServiceBase<ScheduleServiceClient>,
                                         .ToValueTaskResult()
                                         .ConfigureAwait(false)
                                 )
-                                .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                    ),
             cancellationToken
         );
     }
 
-    public ValueTask<Result> RemoveTimerAsync(Guid id, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> RemoveTimerAsync(Guid id, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             client =>
                 metadataFactory.CreateAsync(cancellationToken)
-                    .ConfigureAwait(false)
                     .IfSuccessAsync(
                         converter.Convert<ByteString>(id),
                         (value, i) =>

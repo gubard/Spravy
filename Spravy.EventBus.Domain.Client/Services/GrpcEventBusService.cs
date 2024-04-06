@@ -40,11 +40,10 @@ public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
         );
     }
 
-    public ValueTask<Result> PublishEventAsync(Guid eventId, byte[] content, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> PublishEventAsync(Guid eventId, byte[] content, CancellationToken cancellationToken)
     {
         return CallClientAsync(
             client => metadataFactory.CreateAsync(cancellationToken)
-                .ConfigureAwait(false)
                 .IfSuccessAsync(
                     converter.Convert<ByteString>(eventId),
                     converter.Convert<ByteString>(content),
@@ -66,7 +65,7 @@ public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
         );
     }
 
-    public ValueTask<Result<ReadOnlyMemory<EventValue>>> GetEventsAsync(
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<EventValue>>> GetEventsAsync(
         ReadOnlyMemory<Guid> eventIds,
         CancellationToken cancellationToken
     )
@@ -74,7 +73,6 @@ public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
         return CallClientAsync(
             client =>
                 metadataFactory.CreateAsync(cancellationToken)
-                    .ConfigureAwait(false)
                     .IfSuccessAsync(
                         converter.Convert<ByteString[]>(eventIds.ToArray()),
                         (value, ei) =>
@@ -97,8 +95,7 @@ public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
                                         )
                                         .ToValueTaskResult()
                                         .ConfigureAwait(false)
-                                )
-                                .ConfigureAwait(false);
+                                );
                         }
                     )
                     .ConfigureAwait(false),

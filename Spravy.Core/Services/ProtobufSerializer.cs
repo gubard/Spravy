@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using ProtoBuf;
 using ProtoBuf.Meta;
 using Spravy.Domain.Errors;
@@ -46,15 +47,15 @@ public class ProtobufSerializer : ISerializer
             );
     }
 
-    public ValueTask<Result> Serialize(object obj, Stream stream)
+    public ConfiguredValueTaskAwaitable<Result> Serialize(object obj, Stream stream)
     {
         Serializer.Serialize(stream, obj);
 
-        return Result.SuccessValueTask;
+        return Result.AwaitableFalse;
     }
 
-    public ValueTask<Result<TObject>> Deserialize<TObject>(Stream stream)
+    public ConfiguredValueTaskAwaitable<Result<TObject>> Deserialize<TObject>(Stream stream)
     {
-        return Serializer.Deserialize<TObject>(stream).ToResult().ToValueTaskResult();
+        return Serializer.Deserialize<TObject>(stream).ToResult().ToValueTaskResult().ConfigureAwait(false);
     }
 }

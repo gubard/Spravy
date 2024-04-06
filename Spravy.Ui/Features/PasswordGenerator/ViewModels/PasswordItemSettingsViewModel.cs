@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -55,10 +56,9 @@ public class PasswordItemSettingsViewModel : ViewModelBase
     [Reactive]
     public string CustomAvailableCharacters { get; set; } = string.Empty;
 
-    private ValueTask<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         return PasswordService.GetPasswordItemAsync(Id, cancellationToken)
-            .ConfigureAwait(false)
             .IfSuccessAsync(
                 value => this.InvokeUIBackgroundAsync(
                         () =>
@@ -74,7 +74,6 @@ public class PasswordItemSettingsViewModel : ViewModelBase
                             CustomAvailableCharacters = value.CustomAvailableCharacters;
                         }
                     )
-                    .ConfigureAwait(false)
             );
     }
 }

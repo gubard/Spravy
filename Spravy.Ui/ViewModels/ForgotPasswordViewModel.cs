@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -45,7 +46,7 @@ public class ForgotPasswordViewModel : NavigatableViewModelBase, IVerificationEm
     [Reactive]
     public string NewRepeatPassword { get; set; } = string.Empty;
 
-    private ValueTask<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         switch (IdentifierType)
         {
@@ -57,7 +58,7 @@ public class ForgotPasswordViewModel : NavigatableViewModelBase, IVerificationEm
         }
     }
 
-    private ValueTask<Result> ForgotPasswordAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> ForgotPasswordAsync(CancellationToken cancellationToken)
     {
         return Result.AwaitableFalse.IfSuccessAsync(
                 () =>
@@ -66,26 +67,23 @@ public class ForgotPasswordViewModel : NavigatableViewModelBase, IVerificationEm
                     {
                         case UserIdentifierType.Email:
                             return AuthenticationService.UpdatePasswordByEmailAsync(
-                                    Identifier,
-                                    VerificationCode.ToUpperInvariant(),
-                                    NewPassword,
-                                    cancellationToken
-                                )
-                                .ConfigureAwait(false);
+                                Identifier,
+                                VerificationCode.ToUpperInvariant(),
+                                NewPassword,
+                                cancellationToken
+                            );
                         case UserIdentifierType.Login:
                             return AuthenticationService.UpdatePasswordByLoginAsync(
-                                    Identifier,
-                                    VerificationCode.ToUpperInvariant(),
-                                    NewPassword,
-                                    cancellationToken
-                                )
-                                .ConfigureAwait(false);
+                                Identifier,
+                                VerificationCode.ToUpperInvariant(),
+                                NewPassword,
+                                cancellationToken
+                            );
                         default: throw new ArgumentOutOfRangeException();
                     }
                 }
             )
-            .ConfigureAwait(false)
-            .IfSuccessAsync(() => Navigator.NavigateToAsync<LoginViewModel>(cancellationToken).ConfigureAwait(false));
+            .IfSuccessAsync(() => Navigator.NavigateToAsync<LoginViewModel>(cancellationToken));
     }
 
     public override Result Stop()
@@ -93,13 +91,13 @@ public class ForgotPasswordViewModel : NavigatableViewModelBase, IVerificationEm
         return Result.Success;
     }
 
-    public override ValueTask<Result> SaveStateAsync()
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync()
     {
-        return Result.SuccessValueTask;
+        return Result.AwaitableFalse;
     }
 
-    public override ValueTask<Result> SetStateAsync(object setting)
+    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting)
     {
-        return Result.SuccessValueTask;
+        return Result.AwaitableFalse;
     }
 }

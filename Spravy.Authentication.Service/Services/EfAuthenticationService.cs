@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Runtime.CompilerServices;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Spravy.Authentication.Db.Contexts;
@@ -51,7 +52,12 @@ public class EfAuthenticationService : IAuthenticationService
         this.randomString = randomString;
     }
 
-    public async ValueTask<Result<TokenResult>> LoginAsync(User user, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<TokenResult>> LoginAsync(User user, CancellationToken cancellationToken)
+    {
+        return LoginCore(user, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result<TokenResult>> LoginCore(User user, CancellationToken cancellationToken)
     {
         var userEntity = await context.Set<UserEntity>()
             .AsNoTracking()
@@ -69,7 +75,15 @@ public class EfAuthenticationService : IAuthenticationService
         return new Result<TokenResult>(tokenResult);
     }
 
-    public async ValueTask<Result> CreateUserAsync(
+    public ConfiguredValueTaskAwaitable<Result> CreateUserAsync(
+        CreateUserOptions options,
+        CancellationToken cancellationToken
+    )
+    {
+        return CreateUserCore(options, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result> CreateUserCore(
         CreateUserOptions options,
         CancellationToken cancellationToken
     )
@@ -127,7 +141,18 @@ public class EfAuthenticationService : IAuthenticationService
         );
     }
 
-    public async ValueTask<Result<TokenResult>> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<TokenResult>> RefreshTokenAsync(
+        string refreshToken,
+        CancellationToken cancellationToken
+    )
+    {
+        return RefreshTokenCore(refreshToken, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result<TokenResult>> RefreshTokenCore(
+        string refreshToken,
+        CancellationToken cancellationToken
+    )
     {
         var jwtHandler = new JwtSecurityTokenHandler();
         var jwtToken = jwtHandler.ReadJwtToken(refreshToken);
@@ -158,7 +183,15 @@ public class EfAuthenticationService : IAuthenticationService
         }
     }
 
-    public async ValueTask<Result> UpdateVerificationCodeByLoginAsync(string login, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> UpdateVerificationCodeByLoginAsync(
+        string login,
+        CancellationToken cancellationToken
+    )
+    {
+        return UpdateVerificationCodeByLoginCore(login, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result> UpdateVerificationCodeByLoginCore(string login, CancellationToken cancellationToken)
     {
         login = login.Trim();
 
@@ -181,7 +214,15 @@ public class EfAuthenticationService : IAuthenticationService
         return Result.Success;
     }
 
-    public async ValueTask<Result> UpdateVerificationCodeByEmailAsync(string email, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> UpdateVerificationCodeByEmailAsync(
+        string email,
+        CancellationToken cancellationToken
+    )
+    {
+        return UpdateVerificationCodeByEmailCore(email, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result> UpdateVerificationCodeByEmailCore(string email, CancellationToken cancellationToken)
     {
         email = email.Trim().ToUpperInvariant();
 
@@ -198,7 +239,15 @@ public class EfAuthenticationService : IAuthenticationService
         return Result.Success;
     }
 
-    public async ValueTask<Result<bool>> IsVerifiedByLoginAsync(string login, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<bool>> IsVerifiedByLoginAsync(
+        string login,
+        CancellationToken cancellationToken
+    )
+    {
+        return IsVerifiedByLoginCore(login, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result<bool>> IsVerifiedByLoginCore(string login, CancellationToken cancellationToken)
     {
         login = login.Trim();
 
@@ -209,7 +258,15 @@ public class EfAuthenticationService : IAuthenticationService
         return new Result<bool>(userEntity.IsEmailVerified);
     }
 
-    public async ValueTask<Result<bool>> IsVerifiedByEmailAsync(string email, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<bool>> IsVerifiedByEmailAsync(
+        string email,
+        CancellationToken cancellationToken
+    )
+    {
+        return IsVerifiedByEmailCore(email, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result<bool>> IsVerifiedByEmailCore(string email, CancellationToken cancellationToken)
     {
         email = email.Trim().ToUpperInvariant();
 
@@ -220,7 +277,16 @@ public class EfAuthenticationService : IAuthenticationService
         return new Result<bool>(userEntity.IsEmailVerified);
     }
 
-    public async ValueTask<Result> VerifiedEmailByLoginAsync(
+    public ConfiguredValueTaskAwaitable<Result> VerifiedEmailByLoginAsync(
+        string login,
+        string verificationCode,
+        CancellationToken cancellationToken
+    )
+    {
+        return VerifiedEmailByLoginCore(login, verificationCode, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result> VerifiedEmailByLoginCore(
         string login,
         string verificationCode,
         CancellationToken cancellationToken
@@ -240,7 +306,16 @@ public class EfAuthenticationService : IAuthenticationService
         return Result.Success;
     }
 
-    public async ValueTask<Result> VerifiedEmailByEmailAsync(
+    public ConfiguredValueTaskAwaitable<Result> VerifiedEmailByEmailAsync(
+        string email,
+        string verificationCode,
+        CancellationToken cancellationToken
+    )
+    {
+        return VerifiedEmailByEmailCore(email, verificationCode, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result> VerifiedEmailByEmailCore(
         string email,
         string verificationCode,
         CancellationToken cancellationToken
@@ -260,7 +335,16 @@ public class EfAuthenticationService : IAuthenticationService
         return Result.Success;
     }
 
-    public async ValueTask<Result> UpdateEmailNotVerifiedUserByEmailAsync(
+    public ConfiguredValueTaskAwaitable<Result> UpdateEmailNotVerifiedUserByEmailAsync(
+        string email,
+        string newEmail,
+        CancellationToken cancellationToken
+    )
+    {
+        return UpdateEmailNotVerifiedUserByEmailCore(email, newEmail, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async ValueTask<Result> UpdateEmailNotVerifiedUserByEmailCore(
         string email,
         string newEmail,
         CancellationToken cancellationToken
@@ -277,7 +361,16 @@ public class EfAuthenticationService : IAuthenticationService
         return Result.Success;
     }
 
-    public async ValueTask<Result> UpdateEmailNotVerifiedUserByLoginAsync(
+    public ConfiguredValueTaskAwaitable<Result> UpdateEmailNotVerifiedUserByLoginAsync(
+        string login,
+        string newEmail,
+        CancellationToken cancellationToken
+    )
+    {
+        return UpdateEmailNotVerifiedUserByLoginCore(login, newEmail, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result> UpdateEmailNotVerifiedUserByLoginCore(
         string login,
         string newEmail,
         CancellationToken cancellationToken
@@ -294,7 +387,16 @@ public class EfAuthenticationService : IAuthenticationService
         return Result.Success;
     }
 
-    public async ValueTask<Result> DeleteUserByEmailAsync(
+    public ConfiguredValueTaskAwaitable<Result> DeleteUserByEmailAsync(
+        string email,
+        string verificationCode,
+        CancellationToken cancellationToken
+    )
+    {
+        return DeleteUserByEmailCore(email, verificationCode, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result> DeleteUserByEmailCore(
         string email,
         string verificationCode,
         CancellationToken cancellationToken
@@ -312,7 +414,16 @@ public class EfAuthenticationService : IAuthenticationService
         return Result.Success;
     }
 
-    public async ValueTask<Result> DeleteUserByLoginAsync(
+    public ConfiguredValueTaskAwaitable<Result> DeleteUserByLoginAsync(
+        string login,
+        string verificationCode,
+        CancellationToken cancellationToken
+    )
+    {
+        return DeleteUserByLoginCore(login, verificationCode, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result> DeleteUserByLoginCore(
         string login,
         string verificationCode,
         CancellationToken cancellationToken
@@ -330,7 +441,17 @@ public class EfAuthenticationService : IAuthenticationService
         return Result.Success;
     }
 
-    public async ValueTask<Result> UpdatePasswordByEmailAsync(
+    public ConfiguredValueTaskAwaitable<Result> UpdatePasswordByEmailAsync(
+        string email,
+        string verificationCode,
+        string newPassword,
+        CancellationToken cancellationToken
+    )
+    {
+        return UpdatePasswordByEmailCore(email, verificationCode, newPassword, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result> UpdatePasswordByEmailCore(
         string email,
         string verificationCode,
         string newPassword,
@@ -354,7 +475,17 @@ public class EfAuthenticationService : IAuthenticationService
         return Result.Success;
     }
 
-    public async ValueTask<Result> UpdatePasswordByLoginAsync(
+    public ConfiguredValueTaskAwaitable<Result> UpdatePasswordByLoginAsync(
+        string login,
+        string verificationCode,
+        string newPassword,
+        CancellationToken cancellationToken
+    )
+    {
+        return UpdatePasswordByLoginCore(login, verificationCode, newPassword, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result> UpdatePasswordByLoginCore(
         string login,
         string verificationCode,
         string newPassword,

@@ -1,12 +1,13 @@
 using System;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Collections;
 using Ninject;
 using ReactiveUI.Fody.Helpers;
-using Spravy.Domain.Models;
 using Spravy.Domain.Extensions;
+using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Extensions;
@@ -36,21 +37,20 @@ public class ValueToDoItemSettingsViewModel : ViewModelBase, IToDoChildrenTypePr
 
     public ICommand InitializedCommand { get; }
 
-    private ValueTask<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         return RefreshAsync(cancellationToken);
     }
 
-    public ValueTask<Result> RefreshAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
     {
         return ToDoService.GetValueToDoItemSettingsAsync(Id, cancellationToken)
-            .ConfigureAwait(false)
             .IfSuccessAsync(
-                setting => this.InvokeUIBackgroundAsync(() => ChildrenType = setting.ChildrenType).ConfigureAwait(false)
+                setting => this.InvokeUIBackgroundAsync(() => ChildrenType = setting.ChildrenType)
             );
     }
 
-    public ValueTask<Result> ApplySettingsAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
     {
         return ToDoService.UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, cancellationToken);
     }

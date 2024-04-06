@@ -39,7 +39,16 @@ public class EfToDoService : IToDoService
         this.getterToDoItemParametersService = getterToDoItemParametersService;
     }
 
-    public async ValueTask<Result> CloneToDoItemAsync(Guid cloneId, Guid? parentId, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> CloneToDoItemAsync(
+        Guid cloneId,
+        Guid? parentId,
+        CancellationToken cancellationToken
+    )
+    {
+        return CloneToDoItemCore(cloneId, parentId, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result> CloneToDoItemCore(Guid cloneId, Guid? parentId, CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();
 
@@ -80,7 +89,16 @@ public class EfToDoService : IToDoService
         return Result.Success;
     }
 
-    public async ValueTask<Result> UpdateToDoItemDescriptionTypeAsync(
+    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemDescriptionTypeAsync(
+        Guid id,
+        DescriptionType type,
+        CancellationToken cancellationToken
+    )
+    {
+        return UpdateToDoItemDescriptionTypeCore(id, type, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async ValueTask<Result> UpdateToDoItemDescriptionTypeCore(
         Guid id,
         DescriptionType type,
         CancellationToken cancellationToken
@@ -101,7 +119,12 @@ public class EfToDoService : IToDoService
         return Result.Success;
     }
 
-    public async ValueTask<Result> ResetToDoItemAsync(Guid id, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> ResetToDoItemAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return ResetToDoItemCore(id, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result> ResetToDoItemCore(Guid id, CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();
 
@@ -119,7 +142,15 @@ public class EfToDoService : IToDoService
         return Result.Success;
     }
 
-    public async ValueTask<Result> RandomizeChildrenOrderIndexAsync(Guid id, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> RandomizeChildrenOrderIndexAsync(
+        Guid id,
+        CancellationToken cancellationToken
+    )
+    {
+        return RandomizeChildrenOrderIndexCore(id, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async ValueTask<Result> RandomizeChildrenOrderIndexCore(Guid id, CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();
 
@@ -143,7 +174,16 @@ public class EfToDoService : IToDoService
         return Result.Success;
     }
 
-    public async ValueTask<Result<ReadOnlyMemory<ToDoShortItem>>> GetParentsAsync(
+
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoShortItem>>> GetParentsAsync(
+        Guid id,
+        CancellationToken cancellationToken
+    )
+    {
+        return GetParentsCore(id, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async ValueTask<Result<ReadOnlyMemory<ToDoShortItem>>> GetParentsCore(
         Guid id,
         CancellationToken cancellationToken
     )
@@ -163,7 +203,15 @@ public class EfToDoService : IToDoService
         return parents.ToArray().ToReadOnlyMemory().ToResult();
     }
 
-    public async ValueTask<Result<ReadOnlyMemory<Guid>>> SearchToDoItemIdsAsync(
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> SearchToDoItemIdsAsync(
+        string searchText,
+        CancellationToken cancellationToken
+    )
+    {
+        return SearchToDoItemIdsCore(searchText, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async ValueTask<Result<ReadOnlyMemory<Guid>>> SearchToDoItemIdsCore(
         string searchText,
         CancellationToken cancellationToken
     )
@@ -180,7 +228,15 @@ public class EfToDoService : IToDoService
         return items.ToReadOnlyMemory().ToResult();
     }
 
-    public async ValueTask<Result<ReadOnlyMemory<Guid>>> GetLeafToDoItemIdsAsync(
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetLeafToDoItemIdsAsync(
+        Guid id,
+        CancellationToken cancellationToken
+    )
+    {
+        return GetLeafToDoItemIdsCore(id, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async ValueTask<Result<ReadOnlyMemory<Guid>>> GetLeafToDoItemIdsCore(
         Guid id,
         CancellationToken cancellationToken
     )
@@ -211,7 +267,12 @@ public class EfToDoService : IToDoService
         return result.ToArray().ToReadOnlyMemory().ToResult();
     }
 
-    public async ValueTask<Result<ToDoItem>> GetToDoItemAsync(Guid id, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<ToDoItem>> GetToDoItemAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return GetToDoItemCore(id, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async ValueTask<Result<ToDoItem>> GetToDoItemCore(Guid id, CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();
         var item = await context.Set<ToDoItemEntity>().FindAsync(id);
@@ -229,7 +290,15 @@ public class EfToDoService : IToDoService
         return result.ToResult();
     }
 
-    public async ValueTask<Result<ReadOnlyMemory<Guid>>> GetChildrenToDoItemIdsAsync(
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetChildrenToDoItemIdsAsync(
+        Guid id,
+        CancellationToken cancellationToken
+    )
+    {
+        return GetChildrenToDoItemIdsCore(id, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result<ReadOnlyMemory<Guid>>> GetChildrenToDoItemIdsCore(
         Guid id,
         CancellationToken cancellationToken
     )
@@ -246,7 +315,15 @@ public class EfToDoService : IToDoService
         return ids.ToReadOnlyMemory().ToResult();
     }
 
-    public async ValueTask<Result<ReadOnlyMemory<ToDoShortItem>>> GetChildrenToDoItemShortsAsync(
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoShortItem>>> GetChildrenToDoItemShortsAsync(
+        Guid id,
+        CancellationToken cancellationToken
+    )
+    {
+        return GetChildrenToDoItemShortsCore(id, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result<ReadOnlyMemory<ToDoShortItem>>> GetChildrenToDoItemShortsCore(
         Guid id,
         CancellationToken cancellationToken
     )
@@ -262,7 +339,14 @@ public class EfToDoService : IToDoService
         return mapper.Map<ToDoShortItem>(items).ToReadOnlyMemory().ToResult();
     }
 
-    public async ValueTask<Result<ReadOnlyMemory<Guid>>> GetRootToDoItemIdsAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetRootToDoItemIdsAsync(
+        CancellationToken cancellationToken
+    )
+    {
+        return GetRootToDoItemIdsCore(cancellationToken).ConfigureAwait(false);
+    }
+
+    public async ValueTask<Result<ReadOnlyMemory<Guid>>> GetRootToDoItemIdsCore(CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();
 
@@ -276,7 +360,14 @@ public class EfToDoService : IToDoService
         return ids.ToReadOnlyMemory().ToResult();
     }
 
-    public async ValueTask<Result<ReadOnlyMemory<Guid>>> GetFavoriteToDoItemIdsAsync(
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetFavoriteToDoItemIdsAsync(
+        CancellationToken cancellationToken
+    )
+    {
+        return GetFavoriteToDoItemIdsCore(cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result<ReadOnlyMemory<Guid>>> GetFavoriteToDoItemIdsCore(
         CancellationToken cancellationToken
     )
     {
@@ -292,7 +383,15 @@ public class EfToDoService : IToDoService
         return ids.ToReadOnlyMemory().ToResult();
     }
 
-    public async ValueTask<Result<Guid>> AddRootToDoItemAsync(
+    public ConfiguredValueTaskAwaitable<Result<Guid>> AddRootToDoItemAsync(
+        AddRootToDoItemOptions options,
+        CancellationToken cancellationToken
+    )
+    {
+        return AddRootToDoItemCore(options, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async ValueTask<Result<Guid>> AddRootToDoItemCore(
         AddRootToDoItemOptions options,
         CancellationToken cancellationToken
     )
@@ -323,7 +422,15 @@ public class EfToDoService : IToDoService
         return id.ToResult();
     }
 
-    public async ValueTask<Result<Guid>> AddToDoItemAsync(
+    public ConfiguredValueTaskAwaitable<Result<Guid>> AddToDoItemAsync(
+        AddToDoItemOptions options,
+        CancellationToken cancellationToken
+    )
+    {
+        return AddToDoItemCore(options, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result<Guid>> AddToDoItemCore(
         AddToDoItemOptions options,
         CancellationToken cancellationToken
     )
@@ -372,7 +479,12 @@ public class EfToDoService : IToDoService
         return id.ToResult();
     }
 
-    public async ValueTask<Result> DeleteToDoItemAsync(Guid id, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> DeleteToDoItemAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return DeleteToDoItemCore(id, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async ValueTask<Result> DeleteToDoItemCore(Guid id, CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();
 
@@ -425,7 +537,16 @@ public class EfToDoService : IToDoService
         return Result.Success;
     }
 
-    public async ValueTask<Result> UpdateToDoItemTypeOfPeriodicityAsync(
+    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemTypeOfPeriodicityAsync(
+        Guid id,
+        TypeOfPeriodicity type,
+        CancellationToken cancellationToken
+    )
+    {
+        return UpdateToDoItemTypeOfPeriodicityCore(id, type, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result> UpdateToDoItemTypeOfPeriodicityCore(
         Guid id,
         TypeOfPeriodicity type,
         CancellationToken cancellationToken
@@ -446,7 +567,16 @@ public class EfToDoService : IToDoService
         return Result.Success;
     }
 
-    public async ValueTask<Result> UpdateToDoItemDueDateAsync(
+    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemDueDateAsync(
+        Guid id,
+        DateOnly dueDate,
+        CancellationToken cancellationToken
+    )
+    {
+        return UpdateToDoItemDueDateCore(id, dueDate, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result> UpdateToDoItemDueDateCore(
         Guid id,
         DateOnly dueDate,
         CancellationToken cancellationToken
@@ -467,7 +597,16 @@ public class EfToDoService : IToDoService
         return Result.Success;
     }
 
-    public async ValueTask<Result> UpdateToDoItemCompleteStatusAsync(
+    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemCompleteStatusAsync(
+        Guid id,
+        bool isComplete,
+        CancellationToken cancellationToken
+    )
+    {
+        return UpdateToDoItemCompleteStatusCore(id, isComplete, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async ValueTask<Result> UpdateToDoItemCompleteStatusCore(
         Guid id,
         bool isComplete,
         CancellationToken cancellationToken
@@ -655,7 +794,16 @@ public class EfToDoService : IToDoService
         return Result.Success;
     }
 
-    public async ValueTask<Result> UpdateToDoItemNameAsync(Guid id, string name, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemNameAsync(
+        Guid id,
+        string name,
+        CancellationToken cancellationToken
+    )
+    {
+        return UpdateToDoItemNameCore(id, name, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result> UpdateToDoItemNameCore(Guid id, string name, CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();
 
@@ -672,7 +820,15 @@ public class EfToDoService : IToDoService
         return Result.Success;
     }
 
-    public async ValueTask<Result> UpdateToDoItemOrderIndexAsync(
+    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemOrderIndexAsync(
+        UpdateOrderIndexToDoItemOptions options,
+        CancellationToken cancellationToken
+    )
+    {
+        return UpdateToDoItemOrderIndexCore(options, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result> UpdateToDoItemOrderIndexCore(
         UpdateOrderIndexToDoItemOptions options,
         CancellationToken cancellationToken
     )
@@ -711,7 +867,16 @@ public class EfToDoService : IToDoService
         return Result.Success;
     }
 
-    public async ValueTask<Result> UpdateToDoItemDescriptionAsync(
+    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemDescriptionAsync(
+        Guid id,
+        string description,
+        CancellationToken cancellationToken
+    )
+    {
+        return UpdateToDoItemDescriptionCore(id, description, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result> UpdateToDoItemDescriptionCore(
         Guid id,
         string description,
         CancellationToken cancellationToken
@@ -732,7 +897,16 @@ public class EfToDoService : IToDoService
         return Result.Success;
     }
 
-    public async ValueTask<Result> UpdateToDoItemTypeAsync(
+    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemTypeAsync(
+        Guid id,
+        ToDoItemType type,
+        CancellationToken cancellationToken
+    )
+    {
+        return UpdateToDoItemTypeCore(id, type, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result> UpdateToDoItemTypeCore(
         Guid id,
         ToDoItemType type,
         CancellationToken cancellationToken
@@ -753,7 +927,12 @@ public class EfToDoService : IToDoService
         return Result.Success;
     }
 
-    public async ValueTask<Result> AddFavoriteToDoItemAsync(Guid id, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> AddFavoriteToDoItemAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return AddFavoriteToDoItemCore(id, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async ValueTask<Result> AddFavoriteToDoItemCore(Guid id, CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();
 
@@ -770,7 +949,15 @@ public class EfToDoService : IToDoService
         return Result.Success;
     }
 
-    public async ValueTask<Result> RemoveFavoriteToDoItemAsync(Guid id, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> RemoveFavoriteToDoItemAsync(
+        Guid id,
+        CancellationToken cancellationToken
+    )
+    {
+        return RemoveFavoriteToDoItemCore(id, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result> RemoveFavoriteToDoItemCore(Guid id, CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();
 
@@ -787,7 +974,16 @@ public class EfToDoService : IToDoService
         return Result.Success;
     }
 
-    public async ValueTask<Result> UpdateToDoItemIsRequiredCompleteInDueDateAsync(
+    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemIsRequiredCompleteInDueDateAsync(
+        Guid id,
+        bool value,
+        CancellationToken cancellationToken
+    )
+    {
+        return UpdateToDoItemIsRequiredCompleteInDueDateCore(id, value, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result> UpdateToDoItemIsRequiredCompleteInDueDateCore(
         Guid id,
         bool value,
         CancellationToken cancellationToken
@@ -808,7 +1004,14 @@ public class EfToDoService : IToDoService
         return Result.Success;
     }
 
-    public async ValueTask<Result<ReadOnlyMemory<Guid>>> GetTodayToDoItemsAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetTodayToDoItemsAsync(
+        CancellationToken cancellationToken
+    )
+    {
+        return GetTodayToDoItemsCore(cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result<ReadOnlyMemory<Guid>>> GetTodayToDoItemsCore(CancellationToken cancellationToken)
     {
         var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
         await using var context = dbContextFactory.Create();
@@ -837,7 +1040,16 @@ public class EfToDoService : IToDoService
             .ToResult();
     }
 
-    public async ValueTask<Result> UpdateToDoItemAnnuallyPeriodicityAsync(
+    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemAnnuallyPeriodicityAsync(
+        Guid id,
+        AnnuallyPeriodicity periodicity,
+        CancellationToken cancellationToken
+    )
+    {
+        return UpdateToDoItemAnnuallyPeriodicityCore(id, periodicity, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async ValueTask<Result> UpdateToDoItemAnnuallyPeriodicityCore(
         Guid id,
         AnnuallyPeriodicity periodicity,
         CancellationToken cancellationToken
@@ -858,7 +1070,16 @@ public class EfToDoService : IToDoService
         return Result.Success;
     }
 
-    public async ValueTask<Result> UpdateToDoItemMonthlyPeriodicityAsync(
+    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemMonthlyPeriodicityAsync(
+        Guid id,
+        MonthlyPeriodicity periodicity,
+        CancellationToken cancellationToken
+    )
+    {
+        return UpdateToDoItemMonthlyPeriodicityCore(id, periodicity, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async ValueTask<Result> UpdateToDoItemMonthlyPeriodicityCore(
         Guid id,
         MonthlyPeriodicity periodicity,
         CancellationToken cancellationToken
@@ -879,7 +1100,16 @@ public class EfToDoService : IToDoService
         return Result.Success;
     }
 
-    public async ValueTask<Result> UpdateToDoItemWeeklyPeriodicityAsync(
+    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemWeeklyPeriodicityAsync(
+        Guid id,
+        WeeklyPeriodicity periodicity,
+        CancellationToken cancellationToken
+    )
+    {
+        return UpdateToDoItemWeeklyPeriodicityCore(id, periodicity, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async ValueTask<Result> UpdateToDoItemWeeklyPeriodicityCore(
         Guid id,
         WeeklyPeriodicity periodicity,
         CancellationToken cancellationToken
@@ -900,7 +1130,15 @@ public class EfToDoService : IToDoService
         return Result.Success;
     }
 
-    public async ValueTask<Result<ReadOnlyMemory<ToDoSelectorItem>>> GetToDoSelectorItemsAsync(
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoSelectorItem>>> GetToDoSelectorItemsAsync(
+        Guid[] ignoreIds,
+        CancellationToken cancellationToken
+    )
+    {
+        return GetToDoSelectorItemsCore(ignoreIds, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async ValueTask<Result<ReadOnlyMemory<ToDoSelectorItem>>> GetToDoSelectorItemsCore(
         Guid[] ignoreIds,
         CancellationToken cancellationToken
     )
@@ -925,7 +1163,16 @@ public class EfToDoService : IToDoService
         return result.ToReadOnlyMemory().ToResult();
     }
 
-    public async ValueTask<Result> UpdateToDoItemParentAsync(
+    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemParentAsync(
+        Guid id,
+        Guid parentId,
+        CancellationToken cancellationToken
+    )
+    {
+        return UpdateToDoItemParentCore(id, parentId, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async ValueTask<Result> UpdateToDoItemParentCore(
         Guid id,
         Guid parentId,
         CancellationToken cancellationToken
@@ -947,7 +1194,7 @@ public class EfToDoService : IToDoService
                     .AsNoTracking()
                     .Where(x => x.ParentId == parentId)
                     .Select(x => x.OrderIndex)
-                    .ToArrayAsync();
+                    .ToArrayAsync(cancellationToken);
 
                 entity = entity.ThrowIfNull();
                 entity.ParentId = parentId;
@@ -959,7 +1206,12 @@ public class EfToDoService : IToDoService
         return Result.Success;
     }
 
-    public async ValueTask<Result> ToDoItemToRootAsync(Guid id, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> ToDoItemToRootAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return ToDoItemToRootCore(id, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result> ToDoItemToRootCore(Guid id, CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();
 
@@ -984,7 +1236,15 @@ public class EfToDoService : IToDoService
         return Result.Success;
     }
 
-    public async ValueTask<Result<string>> ToDoItemToStringAsync(
+    public ConfiguredValueTaskAwaitable<Result<string>> ToDoItemToStringAsync(
+        ToDoItemToStringOptions options,
+        CancellationToken cancellationToken
+    )
+    {
+        return ToDoItemToStringCore(options, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result<string>> ToDoItemToStringCore(
         ToDoItemToStringOptions options,
         CancellationToken cancellationToken
     )
@@ -997,7 +1257,16 @@ public class EfToDoService : IToDoService
         return builder.ToString().ToResult();
     }
 
-    public async ValueTask<Result> UpdateToDoItemDaysOffsetAsync(
+    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemDaysOffsetAsync(
+        Guid id,
+        ushort days,
+        CancellationToken cancellationToken
+    )
+    {
+        return UpdateToDoItemDaysOffsetCore(id, days, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async ValueTask<Result> UpdateToDoItemDaysOffsetCore(
         Guid id,
         ushort days,
         CancellationToken cancellationToken
@@ -1018,7 +1287,16 @@ public class EfToDoService : IToDoService
         return Result.Success;
     }
 
-    public async ValueTask<Result> UpdateToDoItemMonthsOffsetAsync(
+    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemMonthsOffsetAsync(
+        Guid id,
+        ushort months,
+        CancellationToken cancellationToken
+    )
+    {
+        return UpdateToDoItemMonthsOffsetCore(id, months, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async ValueTask<Result> UpdateToDoItemMonthsOffsetCore(
         Guid id,
         ushort months,
         CancellationToken cancellationToken
@@ -1039,7 +1317,16 @@ public class EfToDoService : IToDoService
         return Result.Success;
     }
 
-    public async ValueTask<Result> UpdateToDoItemWeeksOffsetAsync(
+    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemWeeksOffsetAsync(
+        Guid id,
+        ushort weeks,
+        CancellationToken cancellationToken
+    )
+    {
+        return UpdateToDoItemWeeksOffsetCore(id, weeks, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async ValueTask<Result> UpdateToDoItemWeeksOffsetCore(
         Guid id,
         ushort weeks,
         CancellationToken cancellationToken
@@ -1060,7 +1347,16 @@ public class EfToDoService : IToDoService
         return Result.Success;
     }
 
-    public async ValueTask<Result> UpdateToDoItemYearsOffsetAsync(
+    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemYearsOffsetAsync(
+        Guid id,
+        ushort years,
+        CancellationToken cancellationToken
+    )
+    {
+        return UpdateToDoItemYearsOffsetCore(id, years, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result> UpdateToDoItemYearsOffsetCore(
         Guid id,
         ushort years,
         CancellationToken cancellationToken
@@ -1081,7 +1377,16 @@ public class EfToDoService : IToDoService
         return Result.Success;
     }
 
-    public async ValueTask<Result> UpdateToDoItemChildrenTypeAsync(
+    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemChildrenTypeAsync(
+        Guid id,
+        ToDoItemChildrenType type,
+        CancellationToken cancellationToken
+    )
+    {
+        return UpdateToDoItemChildrenTypeCore(id, type, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async ValueTask<Result> UpdateToDoItemChildrenTypeCore(
         Guid id,
         ToDoItemChildrenType type,
         CancellationToken cancellationToken
@@ -1102,7 +1407,15 @@ public class EfToDoService : IToDoService
         return Result.Success;
     }
 
-    public async ValueTask<Result<ReadOnlyMemory<ToDoShortItem>>> GetSiblingsAsync(
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoShortItem>>> GetSiblingsAsync(
+        Guid id,
+        CancellationToken cancellationToken
+    )
+    {
+        return GetSiblingsCore(id, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result<ReadOnlyMemory<ToDoShortItem>>> GetSiblingsCore(
         Guid id,
         CancellationToken cancellationToken
     )
@@ -1119,7 +1432,14 @@ public class EfToDoService : IToDoService
         return mapper.Map<ToDoShortItem[]>(items).ToReadOnlyMemory().ToResult();
     }
 
-    public async ValueTask<Result<ActiveToDoItem?>> GetCurrentActiveToDoItemAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<ActiveToDoItem?>> GetCurrentActiveToDoItemAsync(
+        CancellationToken cancellationToken
+    )
+    {
+        return GetCurrentActiveToDoItemCore(cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result<ActiveToDoItem?>> GetCurrentActiveToDoItemCore(CancellationToken cancellationToken)
     {
         var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
         await using var context = dbContextFactory.Create();
@@ -1160,10 +1480,18 @@ public class EfToDoService : IToDoService
         }
 
         return new Result<ActiveToDoItem?>((ActiveToDoItem?)null);
-        ;
     }
 
-    public async ValueTask<Result> UpdateToDoItemLinkAsync(Guid id, Uri? link, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemLinkAsync(
+        Guid id,
+        Uri? link,
+        CancellationToken cancellationToken
+    )
+    {
+        return UpdateToDoItemLinkCore(id, link, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async ValueTask<Result> UpdateToDoItemLinkCore(Guid id, Uri? link, CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();
 
@@ -1180,7 +1508,15 @@ public class EfToDoService : IToDoService
         return Result.Success;
     }
 
-    public async ValueTask<Result<PlannedToDoItemSettings>> GetPlannedToDoItemSettingsAsync(
+    public ConfiguredValueTaskAwaitable<Result<PlannedToDoItemSettings>> GetPlannedToDoItemSettingsAsync(
+        Guid id,
+        CancellationToken cancellationToken
+    )
+    {
+        return GetPlannedToDoItemSettingsCore(id, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async ValueTask<Result<PlannedToDoItemSettings>> GetPlannedToDoItemSettingsCore(
         Guid id,
         CancellationToken cancellationToken
     )
@@ -1192,7 +1528,15 @@ public class EfToDoService : IToDoService
         return mapper.Map<PlannedToDoItemSettings>(item).ToResult();
     }
 
-    public async ValueTask<Result<ValueToDoItemSettings>> GetValueToDoItemSettingsAsync(
+    public ConfiguredValueTaskAwaitable<Result<ValueToDoItemSettings>> GetValueToDoItemSettingsAsync(
+        Guid id,
+        CancellationToken cancellationToken
+    )
+    {
+        return GetValueToDoItemSettingsCore(id, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async ValueTask<Result<ValueToDoItemSettings>> GetValueToDoItemSettingsCore(
         Guid id,
         CancellationToken cancellationToken
     )
@@ -1204,7 +1548,15 @@ public class EfToDoService : IToDoService
         return mapper.Map<ValueToDoItemSettings>(item).ToResult();
     }
 
-    public async ValueTask<Result<PeriodicityToDoItemSettings>> GetPeriodicityToDoItemSettingsAsync(
+    public ConfiguredValueTaskAwaitable<Result<PeriodicityToDoItemSettings>> GetPeriodicityToDoItemSettingsAsync(
+        Guid id,
+        CancellationToken cancellationToken
+    )
+    {
+        return GetPeriodicityToDoItemSettingsCore(id, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result<PeriodicityToDoItemSettings>> GetPeriodicityToDoItemSettingsCore(
         Guid id,
         CancellationToken cancellationToken
     )
@@ -1216,7 +1568,15 @@ public class EfToDoService : IToDoService
         return mapper.Map<PeriodicityToDoItemSettings>(item).ToResult();
     }
 
-    public async ValueTask<Result<WeeklyPeriodicity>> GetWeeklyPeriodicityAsync(
+    public ConfiguredValueTaskAwaitable<Result<WeeklyPeriodicity>> GetWeeklyPeriodicityAsync(
+        Guid id,
+        CancellationToken cancellationToken
+    )
+    {
+        return GetWeeklyPeriodicityCore(id, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async ValueTask<Result<WeeklyPeriodicity>> GetWeeklyPeriodicityCore(
         Guid id,
         CancellationToken cancellationToken
     )
@@ -1228,7 +1588,15 @@ public class EfToDoService : IToDoService
         return mapper.Map<WeeklyPeriodicity>(item).ToResult();
     }
 
-    public async ValueTask<Result<MonthlyPeriodicity>> GetMonthlyPeriodicityAsync(
+    public ConfiguredValueTaskAwaitable<Result<MonthlyPeriodicity>> GetMonthlyPeriodicityAsync(
+        Guid id,
+        CancellationToken cancellationToken
+    )
+    {
+        return GetMonthlyPeriodicityCore(id, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async ValueTask<Result<MonthlyPeriodicity>> GetMonthlyPeriodicityCore(
         Guid id,
         CancellationToken cancellationToken
     )
@@ -1240,7 +1608,15 @@ public class EfToDoService : IToDoService
         return mapper.Map<MonthlyPeriodicity>(item).ToResult();
     }
 
-    public async ValueTask<Result<AnnuallyPeriodicity>> GetAnnuallyPeriodicityAsync(
+    public ConfiguredValueTaskAwaitable<Result<AnnuallyPeriodicity>> GetAnnuallyPeriodicityAsync(
+        Guid id,
+        CancellationToken cancellationToken
+    )
+    {
+        return GetAnnuallyPeriodicityCore(id, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async ValueTask<Result<AnnuallyPeriodicity>> GetAnnuallyPeriodicityCore(
         Guid id,
         CancellationToken cancellationToken
     )
@@ -1252,7 +1628,16 @@ public class EfToDoService : IToDoService
         return mapper.Map<AnnuallyPeriodicity>(item).ToResult();
     }
 
-    public async ValueTask<Result<PeriodicityOffsetToDoItemSettings>> GetPeriodicityOffsetToDoItemSettingsAsync(
+    public ConfiguredValueTaskAwaitable<Result<PeriodicityOffsetToDoItemSettings>>
+        GetPeriodicityOffsetToDoItemSettingsAsync(
+            Guid id,
+            CancellationToken cancellationToken
+        )
+    {
+        return GetPeriodicityOffsetToDoItemSettingsCore(id, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result<PeriodicityOffsetToDoItemSettings>> GetPeriodicityOffsetToDoItemSettingsCore(
         Guid id,
         CancellationToken cancellationToken
     )

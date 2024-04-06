@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
@@ -17,21 +18,26 @@ public class LocalStorageObjectStorage : IObjectStorage
         this.serializer = serializer;
     }
 
-    public ValueTask<Result<bool>> IsExistsAsync(string id)
+    public ConfiguredValueTaskAwaitable<Result<bool>> IsExistsAsync(string id)
     {
         var value = JSInterop.LocalStorageGetItem(id);
 
-        return (!value.IsNullOrWhiteSpace()).ToResult().ToValueTaskResult();
+        return (!value.IsNullOrWhiteSpace()).ToResult().ToValueTaskResult().ConfigureAwait(false);
     }
 
-    public ValueTask<Result> DeleteAsync(string id)
+    public ConfiguredValueTaskAwaitable<Result> DeleteAsync(string id)
     {
         JSInterop.LocalStorageRemoveItem(id);
 
-        return Result.SuccessValueTask;
+        return Result.AwaitableFalse;
     }
 
-    public async ValueTask<Result> SaveObjectAsync(string id, object obj)
+    public ConfiguredValueTaskAwaitable<Result> SaveObjectAsync(string id, object obj)
+    {
+        return SaveObjectCore(id, obj).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result> SaveObjectCore(string id, object obj)
     {
         await using var stream = new MemoryStream();
         var result = await serializer.Serialize(obj, stream);
@@ -48,7 +54,12 @@ public class LocalStorageObjectStorage : IObjectStorage
         return Result.Success;
     }
 
-    public async ValueTask<Result<TObject>> GetObjectAsync<TObject>(string id)
+    public ConfiguredValueTaskAwaitable<Result<TObject>> GetObjectAsync<TObject>(string id)
+    {
+        return GetObjectCore<TObject>(id).ConfigureAwait(false);
+    }
+
+    public async ValueTask<Result<TObject>> GetObjectCore<TObject>(string id)
     {
         var value = JSInterop.LocalStorageGetItem(id);
         var bytes = Convert.FromBase64String(value);

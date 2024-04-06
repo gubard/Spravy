@@ -2,11 +2,11 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using Spravy.Domain.Helpers;
 using Spravy.Domain.Models;
 using Spravy.Ui.Features.Localizations.Models;
 using Spravy.Ui.Models;
 using System;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using Ninject;
 using Spravy.Domain.Extensions;
@@ -44,12 +44,11 @@ public class DeletePasswordItemViewModel : ViewModelBase
             }
         );
 
-    private ValueTask<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         return PasswordService.GetPasswordItemAsync(PasswordItemId, cancellationToken)
-            .ConfigureAwait(false)
             .IfSuccessAsync(
-                value => this.InvokeUIBackgroundAsync(() => PasswordItemName = value.Name).ConfigureAwait(false)
+                value => this.InvokeUIBackgroundAsync(() => PasswordItemName = value.Name)
             );
     }
 }
