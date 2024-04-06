@@ -37,7 +37,11 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         this.metadataFactory = metadataFactory;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> CloneToDoItemAsync(Guid cloneId, Guid? parentId, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> CloneToDoItemAsync(
+        Guid cloneId,
+        Guid? parentId,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             client =>
@@ -113,7 +117,10 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> RandomizeChildrenOrderIndexAsync(Guid id, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> RandomizeChildrenOrderIndexAsync(
+        Guid id,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             client => metadataFactory.CreateAsync(cancellationToken)
@@ -187,7 +194,8 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                             .ToValueTaskResultValueOnly()
                             .ConfigureAwait(false)
                             .IfSuccessAsync(
-                                reply => converter.Convert<ReadOnlyMemory<Guid>>(reply.Ids)
+                                reply => converter.Convert<Guid[]>(reply.Ids)
+                                    .IfSuccess(ids => ids.ToReadOnlyMemory().ToResult())
                                     .ToValueTaskResult()
                                     .ConfigureAwait(false)
                             )
@@ -196,7 +204,10 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetLeafToDoItemIdsAsync(Guid id, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetLeafToDoItemIdsAsync(
+        Guid id,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             client => metadataFactory.CreateAsync(cancellationToken)
@@ -214,7 +225,8 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                             .ToValueTaskResultValueOnly()
                             .ConfigureAwait(false)
                             .IfSuccessAsync(
-                                reply => converter.Convert<ReadOnlyMemory<Guid>>(reply.Ids)
+                                reply => converter.Convert<Guid[]>(reply.Ids)
+                                    .IfSuccess(ids => ids.ToReadOnlyMemory().ToResult())
                                     .ToValueTaskResult()
                                     .ConfigureAwait(false)
                             )
@@ -317,7 +329,9 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetRootToDoItemIdsAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetRootToDoItemIdsAsync(
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             client => metadataFactory.CreateAsync(cancellationToken)
@@ -337,7 +351,9 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetFavoriteToDoItemIdsAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetFavoriteToDoItemIdsAsync(
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             client => metadataFactory.CreateAsync(cancellationToken)
@@ -387,7 +403,10 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result<Guid>> AddToDoItemAsync(AddToDoItemOptions options, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<Guid>> AddToDoItemAsync(
+        AddToDoItemOptions options,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             client =>
@@ -464,7 +483,11 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemDueDateAsync(Guid id, DateOnly dueDate, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemDueDateAsync(
+        Guid id,
+        DateOnly dueDate,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             client =>
@@ -519,7 +542,11 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemNameAsync(Guid id, string name, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemNameAsync(
+        Guid id,
+        string name,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             client =>
@@ -597,7 +624,11 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemTypeAsync(Guid id, ToDoItemType type, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemTypeAsync(
+        Guid id,
+        ToDoItemType type,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             client =>
@@ -646,7 +677,10 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> RemoveFavoriteToDoItemAsync(Guid id, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> RemoveFavoriteToDoItemAsync(
+        Guid id,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             client =>
@@ -699,7 +733,9 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetTodayToDoItemsAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetTodayToDoItemsAsync(
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             client =>
@@ -849,7 +885,11 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemParentAsync(Guid id, Guid parentId, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemParentAsync(
+        Guid id,
+        Guid parentId,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             client =>
@@ -926,7 +966,11 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemDaysOffsetAsync(Guid id, ushort days, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemDaysOffsetAsync(
+        Guid id,
+        ushort days,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             client =>
@@ -980,7 +1024,11 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemWeeksOffsetAsync(Guid id, ushort weeks, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemWeeksOffsetAsync(
+        Guid id,
+        ushort weeks,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             client =>
@@ -1005,7 +1053,11 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemYearsOffsetAsync(Guid id, ushort years, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemYearsOffsetAsync(
+        Guid id,
+        ushort years,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             client =>
@@ -1092,7 +1144,9 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result<ActiveToDoItem?>> GetCurrentActiveToDoItemAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<ActiveToDoItem?>> GetCurrentActiveToDoItemAsync(
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             client =>
@@ -1116,7 +1170,11 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemLinkAsync(Guid id, Uri? link, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemLinkAsync(
+        Guid id,
+        Uri? link,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             client =>
@@ -1238,7 +1296,10 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result<WeeklyPeriodicity>> GetWeeklyPeriodicityAsync(Guid id, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<WeeklyPeriodicity>> GetWeeklyPeriodicityAsync(
+        Guid id,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             client =>
@@ -1331,10 +1392,11 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result<PeriodicityOffsetToDoItemSettings>> GetPeriodicityOffsetToDoItemSettingsAsync(
-        Guid id,
-        CancellationToken cancellationToken
-    )
+    public ConfiguredValueTaskAwaitable<Result<PeriodicityOffsetToDoItemSettings>>
+        GetPeriodicityOffsetToDoItemSettingsAsync(
+            Guid id,
+            CancellationToken cancellationToken
+        )
     {
         return CallClientAsync(
             client =>
