@@ -12,6 +12,12 @@
                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                         x:Class="Spravy.Ui.Views.SettingView"
                         x:DataType="vm:SettingViewModel">
+    <Interaction.Behaviors>
+        <EventTriggerBehavior EventName="Initialized">
+            <InvokeCommandAction Command="{Binding InitializedCommand}" />
+        </EventTriggerBehavior>
+    </Interaction.Behaviors>
+
     <c:BusyArea BusyText="{DynamicResource SettingView.Busy}"
                 IsBusy="{Binding IsBusy}">
         <Grid RowDefinitions="*,Auto">

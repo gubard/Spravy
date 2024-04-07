@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
@@ -24,7 +23,6 @@ public class ToDoItemSelectorViewModel : ViewModelBase
     public ToDoItemSelectorViewModel()
     {
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
-        SearchCommand = CreateInitializedCommand(TaskWork.Create(SearchAsync).RunAsync);
     }
 
     [Inject]
@@ -35,7 +33,7 @@ public class ToDoItemSelectorViewModel : ViewModelBase
 
     public AvaloniaList<ToDoSelectorItemNotify> Roots { get; } = new();
     public ICommand InitializedCommand { get; }
-    public ICommand SearchCommand { get; }
+    public ICommand SearchCommand { get; protected set; }
     public List<Guid> IgnoreIds { get; } = new();
 
     public Guid DefaultSelectedItemId { get; set; }
@@ -48,6 +46,8 @@ public class ToDoItemSelectorViewModel : ViewModelBase
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
+        SearchCommand = CreateCommandFromTask(TaskWork.Create(SearchAsync).RunAsync);
+
         return Refresh(cancellationToken)
             .IfSuccessAsync(
                 () =>

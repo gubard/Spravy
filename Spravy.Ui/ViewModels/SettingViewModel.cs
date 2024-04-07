@@ -4,7 +4,6 @@ using System.Threading;
 using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Collections;
 using Avalonia.Styling;
@@ -32,6 +31,7 @@ public class SettingViewModel : NavigatableViewModelBase
 
     public SettingViewModel() : base(true)
     {
+        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
         AvailableColors = new(theme.ColorThemes.Select(x => new Selected<SukiColorTheme>(x)));
 
         foreach (var availableColor in AvailableColors)
@@ -43,24 +43,14 @@ public class SettingViewModel : NavigatableViewModelBase
         }
 
         IsLightTheme = theme.ActiveBaseTheme == ThemeVariant.Light;
-        ChangePasswordCommand = CreateCommandFromTask(TaskWork.Create(ChangePasswordAsync).RunAsync);
-        SaveSettingsCommand = CreateCommandFromTask(TaskWork.Create(SaveSettingsAsync).RunAsync);
-        DeleteAccountCommand = CreateCommandFromTask(TaskWork.Create(DeleteAccountAsync).RunAsync);
-
-        SwitchToColorThemeCommand =
-            CreateCommandFromTask<Selected<SukiColorTheme>>(
-                TaskWork.Create<Selected<SukiColorTheme>>(SwitchToColorTheme).RunAsync
-            );
-
-        this.WhenAnyValue(x => x.IsLightTheme)
-            .Subscribe(x => theme.ChangeBaseTheme(x ? ThemeVariant.Light : ThemeVariant.Dark));
     }
 
     public override string ViewId => TypeCache<SettingViewModel>.Type.Name;
-    public ICommand ChangePasswordCommand { get; }
-    public ICommand DeleteAccountCommand { get; }
-    public ICommand SwitchToColorThemeCommand { get; }
-    public ICommand SaveSettingsCommand { get; }
+    public ICommand ChangePasswordCommand { get; protected set; }
+    public ICommand DeleteAccountCommand { get; protected set; }
+    public ICommand SwitchToColorThemeCommand { get; protected set; }
+    public ICommand SaveSettingsCommand { get; protected set; }
+    public ICommand InitializedCommand { get; }
     public string Version => Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? string.Empty;
     public AvaloniaList<Selected<SukiColorTheme>> AvailableColors { get; }
 
@@ -82,6 +72,7 @@ public class SettingViewModel : NavigatableViewModelBase
         {
             pageHeaderViewModel = value;
             pageHeaderViewModel.Header = "Settings";
+            Disposables.Add(pageHeaderViewModel);
         }
     }
 
@@ -90,6 +81,25 @@ public class SettingViewModel : NavigatableViewModelBase
 
     [Reactive]
     public bool IsLightTheme { get; set; }
+
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
+    {
+        ChangePasswordCommand = CreateCommandFromTask(TaskWork.Create(ChangePasswordAsync).RunAsync);
+        SaveSettingsCommand = CreateCommandFromTask(TaskWork.Create(SaveSettingsAsync).RunAsync);
+        DeleteAccountCommand = CreateCommandFromTask(TaskWork.Create(DeleteAccountAsync).RunAsync);
+
+        SwitchToColorThemeCommand =
+            CreateCommandFromTask<Selected<SukiColorTheme>>(
+                TaskWork.Create<Selected<SukiColorTheme>>(SwitchToColorTheme).RunAsync
+            );
+
+        Disposables.Add(
+            this.WhenAnyValue(x => x.IsLightTheme)
+                .Subscribe(x => theme.ChangeBaseTheme(x ? ThemeVariant.Light : ThemeVariant.Dark))
+        );
+
+        return Result.AwaitableFalse;
+    }
 
     private ConfiguredValueTaskAwaitable<Result> SaveSettingsAsync(CancellationToken cancellationToken)
     {

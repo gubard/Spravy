@@ -4,6 +4,7 @@ using System.Threading;
 using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
+using DynamicData;
 using Ninject;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Models;
@@ -49,6 +50,7 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
             pageHeaderViewModel = value;
             pageHeaderViewModel.Header = new Header3View("PasswordGeneratorView.Header");
             pageHeaderViewModel.LeftCommand = CommandStorage.NavigateToCurrentToDoItemItem;
+            Disposables.Add(pageHeaderViewModel);
         }
     }
 

@@ -35,54 +35,10 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
 
     public CreateUserViewModel() : base(true)
     {
-        var createUserWork = TaskWork.Create(CreateUserAsync);
-        EnterCommand = CreateCommandFromTask<CreateUserView>(TaskWork.Create<CreateUserView>(EnterAsync).RunAsync);
-
-        this.WhenAnyValue(x => x.Email)
-            .Skip(1)
-            .Subscribe(
-                _ =>
-                {
-                    emailChanged = true;
-                    this.RaisePropertyChanged(nameof(HasErrors));
-                }
-            );
-
-        this.WhenAnyValue(x => x.Login)
-            .Skip(1)
-            .Subscribe(
-                _ =>
-                {
-                    loginChanged = true;
-                    this.RaisePropertyChanged(nameof(HasErrors));
-                }
-            );
-
-        this.WhenAnyValue(x => x.Password)
-            .Skip(1)
-            .Subscribe(
-                _ =>
-                {
-                    passwordChanged = true;
-                    this.RaisePropertyChanged(nameof(HasErrors));
-                }
-            );
-
-        this.WhenAnyValue(x => x.RepeatPassword)
-            .Skip(1)
-            .Subscribe(
-                _ =>
-                {
-                    repeatPasswordChanged = true;
-                    this.RaisePropertyChanged(nameof(HasErrors));
-                }
-            );
-
-        CreateUserCommand = CreateCommandFromTask(
-            createUserWork.RunAsync,
-            this.WhenAnyValue(x => x.HasErrors).Select(x => !x)
-        );
+        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
     }
+
+    public ICommand InitializedCommand { get; }
 
     [Inject]
     public required IPropertyValidator PropertyValidator { get; init; }
@@ -93,9 +49,24 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
     [Inject]
     public required IAuthenticationService AuthenticationService { get; init; }
 
-    public ICommand EnterCommand { get; }
-    public ICommand CreateUserCommand { get; }
+    public ICommand EnterCommand { get; protected set; }
+    public ICommand CreateUserCommand { get; protected set; }
     public override string ViewId => TypeCache<CreateUserViewModel>.Type.Name;
+
+    [Reactive]
+    public bool IsBusy { get; set; }
+
+    [Reactive]
+    public string Email { get; set; } = string.Empty;
+
+    [Reactive]
+    public string Login { get; set; } = string.Empty;
+
+    [Reactive]
+    public string Password { get; set; } = string.Empty;
+
+    [Reactive]
+    public string RepeatPassword { get; set; } = string.Empty;
 
     public bool HasErrors
     {
@@ -125,20 +96,66 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
         }
     }
 
-    [Reactive]
-    public bool IsBusy { get; set; }
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
+    {
+        var createUserWork = TaskWork.Create(CreateUserAsync);
+        EnterCommand = CreateCommandFromTask<CreateUserView>(TaskWork.Create<CreateUserView>(EnterAsync).RunAsync);
 
-    [Reactive]
-    public string Email { get; set; } = string.Empty;
+        Disposables.Add(
+            this.WhenAnyValue(x => x.Email)
+                .Skip(1)
+                .Subscribe(
+                    _ =>
+                    {
+                        emailChanged = true;
+                        this.RaisePropertyChanged(nameof(HasErrors));
+                    }
+                )
+        );
 
-    [Reactive]
-    public string Login { get; set; } = string.Empty;
+        Disposables.Add(
+            this.WhenAnyValue(x => x.Login)
+                .Skip(1)
+                .Subscribe(
+                    _ =>
+                    {
+                        loginChanged = true;
+                        this.RaisePropertyChanged(nameof(HasErrors));
+                    }
+                )
+        );
 
-    [Reactive]
-    public string Password { get; set; } = string.Empty;
+        Disposables.Add(
+            this.WhenAnyValue(x => x.Password)
+                .Skip(1)
+                .Subscribe(
+                    _ =>
+                    {
+                        passwordChanged = true;
+                        this.RaisePropertyChanged(nameof(HasErrors));
+                    }
+                )
+        );
 
-    [Reactive]
-    public string RepeatPassword { get; set; } = string.Empty;
+        Disposables.Add(
+            this.WhenAnyValue(x => x.RepeatPassword)
+                .Skip(1)
+                .Subscribe(
+                    _ =>
+                    {
+                        repeatPasswordChanged = true;
+                        this.RaisePropertyChanged(nameof(HasErrors));
+                    }
+                )
+        );
+
+        CreateUserCommand = CreateCommandFromTask(
+            createUserWork.RunAsync,
+            this.WhenAnyValue(x => x.HasErrors).Select(x => !x)
+        );
+
+        return Result.AwaitableFalse;
+    }
 
     private ConfiguredValueTaskAwaitable<Result> EnterAsync(CreateUserView view, CancellationToken cancellationToken)
     {
@@ -324,13 +341,13 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
                     return AuthenticationService.CreateUserAsync(options, cancellationToken)
                         .IfSuccessAsync(
                             () => Navigator.NavigateToAsync<VerificationCodeViewModel>(
-                                    vm =>
-                                    {
-                                        vm.Identifier = Email;
-                                        vm.IdentifierType = UserIdentifierType.Email;
-                                    },
-                                    cancellationToken
-                                )
+                                vm =>
+                                {
+                                    vm.Identifier = Email;
+                                    vm.IdentifierType = UserIdentifierType.Email;
+                                },
+                                cancellationToken
+                            )
                         );
                 },
                 () => this.InvokeUIBackgroundAsync(() => IsBusy = false)

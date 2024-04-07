@@ -1,6 +1,5 @@
 using System;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using Avalonia.Collections;
 using ReactiveUI.Fody.Helpers;
 using Spravy.Domain.Helpers;

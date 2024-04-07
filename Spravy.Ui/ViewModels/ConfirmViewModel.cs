@@ -14,8 +14,8 @@ public class ConfirmViewModel : ViewModelBase, ISaveState
 {
     public ConfirmViewModel()
     {
-        CancelCommand = CreateInitializedCommand(async () => await CancelAsync());
-        ConfirmCommand = CreateInitializedCommand(async () => await ConfirmAsync());
+        CancelCommand = CreateCommandFromTask(async () => await CancelAsync());
+        ConfirmCommand = CreateCommandFromTask(async () => await ConfirmAsync());
     }
 
     [Reactive]

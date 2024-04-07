@@ -1,6 +1,5 @@
 using System.Runtime.CompilerServices;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Ninject;
 using ProtoBuf;
@@ -21,10 +20,12 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
 {
     public EmailOrLoginInputViewModel() : base(true)
     {
-        ForgotPasswordCommand = CreateCommandFromTask(TaskWork.Create(ForgotPasswordAsync).RunAsync);
+        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
     }
 
+    public ICommand InitializedCommand { get; }
     public override string ViewId => TypeCache<EmailOrLoginInputViewModel>.Type.Name;
+    public ICommand ForgotPasswordCommand { get; protected set; }
 
     [Inject]
     public required IObjectStorage ObjectStorage { get; init; }
@@ -32,13 +33,18 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
     [Inject]
     public required IAuthenticationService AuthenticationService { get; init; }
 
-    public ICommand ForgotPasswordCommand { get; }
-
     [Reactive]
     public bool IsBusy { get; set; }
 
     [Reactive]
     public string EmailOrLogin { get; set; } = string.Empty;
+
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
+    {
+        ForgotPasswordCommand = CreateCommandFromTask(TaskWork.Create(ForgotPasswordAsync).RunAsync);
+
+        return Result.AwaitableFalse;
+    }
 
     private ConfiguredValueTaskAwaitable<Result> ForgotPasswordAsync(CancellationToken cancellationToken)
     {

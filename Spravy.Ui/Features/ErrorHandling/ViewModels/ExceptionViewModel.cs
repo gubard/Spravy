@@ -1,12 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows.Input;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Spravy.Domain.Models;
-using Spravy.Ui.Features.ToDo.ViewModels;
 using Spravy.Ui.Models;
 using Spravy.Ui.Services;
 

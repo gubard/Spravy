@@ -19,7 +19,6 @@ public class DeleteAccountViewModel : NavigatableViewModelBase
     public DeleteAccountViewModel() : base(true)
     {
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
-        DeleteAccountCommand = CreateInitializedCommand(TaskWork.Create(DeleteAccountAsync).RunAsync);
     }
 
     [Inject]
@@ -36,7 +35,7 @@ public class DeleteAccountViewModel : NavigatableViewModelBase
 
     public override string ViewId => TypeCache<DeleteAccountViewModel>.Type.Name;
     public ICommand InitializedCommand { get; }
-    public ICommand DeleteAccountCommand { get; }
+    public ICommand DeleteAccountCommand { get; protected set; }
 
     public override Result Stop()
     {
@@ -81,6 +80,8 @@ public class DeleteAccountViewModel : NavigatableViewModelBase
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
+        DeleteAccountCommand = CreateCommandFromTask(TaskWork.Create(DeleteAccountAsync).RunAsync);
+
         switch (IdentifierType)
         {
             case UserIdentifierType.Email:

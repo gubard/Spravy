@@ -1,7 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using System.Threading.Tasks;
 using Ninject;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
@@ -62,9 +61,7 @@ public class Navigator : INavigator
         var viewModel = (INavigatable)Resolver.Get(type);
 
         return AddCurrentContentAsync(ActionHelper<object>.Empty)
-            .IfSuccessAsync(
-                () => this.InvokeUIBackgroundAsync(() => Content.Content = viewModel)
-            );
+            .IfSuccessAsync(() => this.InvokeUIBackgroundAsync(() => Content.Content = viewModel));
     }
 
     public ConfiguredValueTaskAwaitable<Result> NavigateToAsync<TViewModel>(
@@ -81,6 +78,11 @@ public class Navigator : INavigator
                     {
                         return this.InvokeUIBackgroundAsync(() => setup.Invoke(vm))
                             .IfSuccessAsync(() => refresh.RefreshAsync(cancellationToken));
+                    }
+
+                    if (Content.Content is IDisposable disposable)
+                    {
+                        disposable.Dispose();
                     }
 
                     var viewModel = Resolver.Get<TViewModel>();
@@ -102,9 +104,7 @@ public class Navigator : INavigator
         var viewModel = Resolver.Get<TViewModel>();
 
         return AddCurrentContentAsync(ActionHelper<object>.Empty)
-            .IfSuccessAsync(
-                () => this.InvokeUIBackgroundAsync(() => Content.Content = viewModel)
-            );
+            .IfSuccessAsync(() => this.InvokeUIBackgroundAsync(() => Content.Content = viewModel));
     }
 
     public ConfiguredValueTaskAwaitable<Result<INavigatable?>> NavigateBackAsync(CancellationToken cancellationToken)
@@ -161,8 +161,6 @@ public class Navigator : INavigator
         where TViewModel : INavigatable
     {
         return AddCurrentContentAsync(ActionHelper<object>.Empty)
-            .IfSuccessAsync(
-                () => this.InvokeUIBackgroundAsync(() => Content.Content = parameter)
-            );
+            .IfSuccessAsync(() => this.InvokeUIBackgroundAsync(() => Content.Content = parameter));
     }
 }

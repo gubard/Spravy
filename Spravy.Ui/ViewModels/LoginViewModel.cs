@@ -7,7 +7,6 @@ using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Controls;
@@ -39,34 +38,7 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
 
     public LoginViewModel() : base(true)
     {
-        EnterCommand = CreateCommandFromTask<LoginView>(TaskWork.Create<LoginView>(EnterAsync).RunAsync);
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
-
-        LoginCommand = CreateCommandFromTask(
-            TaskWork.Create(LoginAsync).RunAsync,
-            this.WhenAnyValue(x => x.HasErrors).Select(x => !x)
-        );
-
-
-        this.WhenAnyValue(x => x.Login)
-            .Skip(1)
-            .Subscribe(
-                _ =>
-                {
-                    loginChanged = true;
-                    this.RaisePropertyChanged(nameof(HasErrors));
-                }
-            );
-
-        this.WhenAnyValue(x => x.Password)
-            .Skip(1)
-            .Subscribe(
-                _ =>
-                {
-                    passwordChanged = true;
-                    this.RaisePropertyChanged(nameof(HasErrors));
-                }
-            );
     }
 
     [Inject]
@@ -103,8 +75,8 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
     public string Password { get; set; } = string.Empty;
 
     public ICommand InitializedCommand { get; }
-    public ICommand EnterCommand { get; }
-    public ICommand LoginCommand { get; }
+    public ICommand EnterCommand { get; protected set; }
+    public ICommand LoginCommand { get; protected set; }
     public override string ViewId => TypeCache<LoginViewModel>.Type.Name;
 
     public IEnumerable GetErrors(string? propertyName)
@@ -202,9 +174,9 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
                                         )
                                         .IfSuccessAsync(
                                             () => Navigator.NavigateToAsync(
-                                                    ActionHelper<RootToDoItemsViewModel>.Empty,
-                                                    cancellationToken
-                                                )
+                                                ActionHelper<RootToDoItemsViewModel>.Empty,
+                                                cancellationToken
+                                            )
                                         )
                                 );
                         }
@@ -238,6 +210,37 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
+        EnterCommand = CreateCommandFromTask<LoginView>(TaskWork.Create<LoginView>(EnterAsync).RunAsync);
+
+        LoginCommand = CreateCommandFromTask(
+            TaskWork.Create(LoginAsync).RunAsync,
+            this.WhenAnyValue(x => x.HasErrors).Select(x => !x)
+        );
+
+        Disposables.Add(
+            this.WhenAnyValue(x => x.Login)
+                .Skip(1)
+                .Subscribe(
+                    _ =>
+                    {
+                        loginChanged = true;
+                        this.RaisePropertyChanged(nameof(HasErrors));
+                    }
+                )
+        );
+
+        Disposables.Add(
+            this.WhenAnyValue(x => x.Password)
+                .Skip(1)
+                .Subscribe(
+                    _ =>
+                    {
+                        passwordChanged = true;
+                        this.RaisePropertyChanged(nameof(HasErrors));
+                    }
+                )
+        );
+
         return this.InvokeUIBackgroundAsync(() => IsBusy = true)
             .IfSuccessTryFinallyAsync(
                 () =>
@@ -279,9 +282,9 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
                                                             )
                                                             .IfSuccessAsync(
                                                                 () => Navigator.NavigateToAsync(
-                                                                        ActionHelper<RootToDoItemsViewModel>.Empty,
-                                                                        cancellationToken
-                                                                    )
+                                                                    ActionHelper<RootToDoItemsViewModel>.Empty,
+                                                                    cancellationToken
+                                                                )
                                                             );
                                                     }
                                                 );

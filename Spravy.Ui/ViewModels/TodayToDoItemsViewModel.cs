@@ -1,7 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Ninject;
 using Spravy.Domain.Extensions;
@@ -39,6 +38,7 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IRefresh
             pageHeaderViewModel = value;
             pageHeaderViewModel.Header = "Today to-do";
             pageHeaderViewModel.LeftCommand = CommandStorage.NavigateToCurrentToDoItemItem;
+            Disposables.Add(pageHeaderViewModel);
         }
     }
 

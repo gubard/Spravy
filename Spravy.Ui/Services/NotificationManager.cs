@@ -1,6 +1,5 @@
 using System.Runtime.CompilerServices;
 using System.Threading;
-using System.Threading.Tasks;
 using Avalonia.Controls.Notifications;
 using Ninject;
 using Spravy.Domain.Models;

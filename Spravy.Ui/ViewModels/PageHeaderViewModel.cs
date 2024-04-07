@@ -1,5 +1,6 @@
+using System;
+using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using Avalonia.Collections;
 using ReactiveUI.Fody.Helpers;
 using Spravy.Domain.Models;
@@ -54,6 +55,8 @@ public class PageHeaderViewModel : ViewModelBase
                         items.List.MultiToDoItems.GroupByNone.Items.Items
                     )
                 );
+
+                Disposables.AddRange(Commands.Select(x => (IDisposable)x.Command));
             }
         );
     }

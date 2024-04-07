@@ -5,7 +5,12 @@ using Spravy.Ui.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Windows.Input;
 using ReactiveUI.Fody.Helpers;
+using Spravy.Domain.Models;
+using Spravy.Ui.Services;
 
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
@@ -15,20 +20,10 @@ public class ToDoItemsGroupByViewModel : ViewModelBase
 
     public ToDoItemsGroupByViewModel()
     {
-        this.WhenAnyValue(x => x.GroupBy)
-            .Subscribe(
-                x =>
-                {
-                    Content = x switch
-                    {
-                        GroupBy.None => GroupByNone,
-                        GroupBy.ByStatus => GroupByStatus,
-                        GroupBy.ByType => GroupByType,
-                        _ => throw new ArgumentOutOfRangeException(nameof(x), x, null)
-                    };
-                }
-            );
+        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
     }
+
+    public ICommand InitializedCommand { get; }
 
     [Inject]
     public required ToDoItemsGroupByNoneViewModel GroupByNone { get; init; }
@@ -53,6 +48,27 @@ public class ToDoItemsGroupByViewModel : ViewModelBase
 
     [Reactive]
     public object? Content { get; set; }
+
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
+    {
+        Disposables.Add(
+            this.WhenAnyValue(x => x.GroupBy)
+                .Subscribe(
+                    x =>
+                    {
+                        Content = x switch
+                        {
+                            GroupBy.None => GroupByNone,
+                            GroupBy.ByStatus => GroupByStatus,
+                            GroupBy.ByType => GroupByType,
+                            _ => throw new ArgumentOutOfRangeException(nameof(x), x, null)
+                        };
+                    }
+                )
+        );
+
+        return Result.AwaitableFalse;
+    }
 
     public void ClearExcept(IEnumerable<Guid> ids)
     {

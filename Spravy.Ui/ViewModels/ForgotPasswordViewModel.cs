@@ -1,7 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Ninject;
 using ReactiveUI.Fody.Helpers;
@@ -20,14 +19,13 @@ public class ForgotPasswordViewModel : NavigatableViewModelBase, IVerificationEm
 {
     public ForgotPasswordViewModel() : base(true)
     {
-        ForgotPasswordCommand = CreateCommandFromTask(TaskWork.Create(ForgotPasswordAsync).RunAsync);
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
     }
 
     [Inject]
     public required IAuthenticationService AuthenticationService { get; init; }
 
-    public ICommand ForgotPasswordCommand { get; }
+    public ICommand ForgotPasswordCommand { get; protected set; }
     public override string ViewId => TypeCache<ForgotPasswordViewModel>.Type.Name;
     public ICommand InitializedCommand { get; }
 
@@ -48,6 +46,8 @@ public class ForgotPasswordViewModel : NavigatableViewModelBase, IVerificationEm
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
+        ForgotPasswordCommand = CreateCommandFromTask(TaskWork.Create(ForgotPasswordAsync).RunAsync);
+
         switch (IdentifierType)
         {
             case UserIdentifierType.Email:

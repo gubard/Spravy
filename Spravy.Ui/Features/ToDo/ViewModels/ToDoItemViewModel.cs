@@ -49,28 +49,6 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
         refreshWork = TaskWork.Create(RefreshCoreAsync);
         refreshToDoItemWork = TaskWork.Create(RefreshToDoItemCore);
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
-
-        this.WhenAnyValue(x => x.Name)
-            .Subscribe(
-                x =>
-                {
-                    if (PageHeaderViewModel is null)
-                    {
-                        return;
-                    }
-
-                    PageHeaderViewModel.Header = x;
-                }
-            );
-
-        this.WhenAnyValue(x => x.DescriptionType)
-            .Subscribe(
-                _ =>
-                {
-                    this.RaisePropertyChanged(nameof(IsDescriptionPlainText));
-                    this.RaisePropertyChanged(nameof(IsDescriptionMarkdownText));
-                }
-            );
     }
 
     public ICommand InitializedCommand { get; }
@@ -83,9 +61,12 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
         init
         {
             toDoSubItemsViewModel = value;
-            toDoSubItemsViewModel.List.WhenAnyValue(x => x.IsMulti)
-                .Skip(1)
-                .Subscribe(_ => UpdateCommandsAsync());
+
+            Disposables.Add(
+                toDoSubItemsViewModel.List.WhenAnyValue(x => x.IsMulti)
+                    .Skip(1)
+                    .Subscribe(_ => UpdateCommandsAsync())
+            );
         }
     }
 
@@ -99,7 +80,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
             pageHeaderViewModel = value;
             pageHeaderViewModel.Header = Name;
             pageHeaderViewModel.LeftCommand = CommandStorage.NavigateToCurrentToDoItemItem;
-            pageHeaderViewModel.RightCommand = CommandStorage.ShowToDoSettingItem.WithParam(this);
+            Disposables.Add(pageHeaderViewModel);
         }
     }
 
@@ -147,11 +128,8 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     [Reactive]
     public ToDoItemIsCan IsCan { get; set; }
 
-    public bool IsBusy
-    {
-        get => isBusy;
-        set => this.RaiseAndSetIfChanged(ref isBusy, value);
-    }
+    [Reactive]
+    public bool IsBusy { get; set; }
 
     [Reactive]
     public ToDoItemStatus Status { get; set; }
@@ -224,6 +202,32 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
 
     private ConfiguredValueTaskAwaitable<Result> RefreshToDoItemChildrenAsync(CancellationToken cancellationToken)
     {
+        Disposables.Add(
+            this.WhenAnyValue(x => x.Name)
+                .Subscribe(
+                    x =>
+                    {
+                        if (PageHeaderViewModel is null)
+                        {
+                            return;
+                        }
+
+                        PageHeaderViewModel.Header = x;
+                    }
+                )
+        );
+
+        Disposables.Add(
+            this.WhenAnyValue(x => x.DescriptionType)
+                .Subscribe(
+                    _ =>
+                    {
+                        this.RaisePropertyChanged(nameof(IsDescriptionPlainText));
+                        this.RaisePropertyChanged(nameof(IsDescriptionMarkdownText));
+                    }
+                )
+        );
+
         return ToDoService.GetChildrenToDoItemIdsAsync(Id, cancellationToken)
             .IfSuccessAsync(
                 ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken)
@@ -232,6 +236,8 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
+        pageHeaderViewModel.RightCommand = CommandStorage.ShowToDoSettingItem.WithParam(this);
+
         return ObjectStorage.GetObjectOrDefaultAsync<ToDoItemViewModelSetting>(ViewId)
             .IfSuccessAsync(SetStateAsync)
             .IfSuccessAllAsync(() => RefreshAsync(cancellationToken));

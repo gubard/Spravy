@@ -11,6 +11,12 @@
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                         x:Class="Spravy.Ui.Views.CreateUserView"
                         x:DataType="vm:CreateUserViewModel">
+    <Interaction.Behaviors>
+        <EventTriggerBehavior EventName="Initialized">
+            <InvokeCommandAction Command="{Binding InitializedCommand}" />
+        </EventTriggerBehavior>
+    </Interaction.Behaviors>
+
     <UserControl.KeyBindings>
         <KeyBinding Gesture="Enter" Command="{Binding EnterCommand}" CommandParameter="{Binding $self}" />
     </UserControl.KeyBindings>
