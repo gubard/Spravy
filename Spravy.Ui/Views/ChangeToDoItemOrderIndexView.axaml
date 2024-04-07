@@ -21,7 +21,7 @@
             <TextBlock Text="{DynamicResource ChangeToDoItemOrderIndexView.After}" Classes="alignment-center" />
         </StackPanel>
 
-        <ScrollViewer Grid.Row="1">
+        <ScrollViewer Classes="mini" Grid.Row="1">
             <ListBox ItemsSource="{Binding Items}"
                      SelectionMode="Single"
                      SelectedItem="{Binding SelectedItem}" />

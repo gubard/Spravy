@@ -34,7 +34,7 @@
             <c:Stepper Steps="{Binding Path}" Index="0" HorizontalAlignment="Center" />
         </ScrollViewer>
 
-        <ScrollViewer Grid.Row="2">
+        <ScrollViewer Classes="mini" Grid.Row="2">
             <StackPanel>
                 <Expander Margin="3"
                           IsExpanded="{Binding Description, Mode=OneWay, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}">

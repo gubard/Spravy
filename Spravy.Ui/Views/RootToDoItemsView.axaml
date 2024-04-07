@@ -19,7 +19,7 @@
     <Grid RowDefinitions="Auto,*, Auto">
         <ContentControl Content="{Binding PageHeaderViewModel}" />
 
-        <ScrollViewer Grid.Row="1">
+        <ScrollViewer Classes="mini" Grid.Row="1">
             <ContentControl Content="{Binding ToDoSubItemsViewModel}" />
         </ScrollViewer>
 

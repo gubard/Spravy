@@ -15,7 +15,7 @@
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <ScrollViewer Classes="mini" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <c:GroupBox>
             <c:GroupBox.Header>
                 <TextBlock Text="{DynamicResource AddRootToDoItemView.Header}" Classes="h4" />

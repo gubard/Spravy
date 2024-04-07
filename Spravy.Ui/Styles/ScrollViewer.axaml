@@ -35,7 +35,8 @@
                     <ScrollBar Name="PART_VerticalScrollBar"
                                VerticalAlignment="Stretch"
                                HorizontalAlignment="Right"
-                               Orientation="Vertical" />
+                               Orientation="Vertical" 
+                               MaxWidth="5" />
                 </Panel>
             </ControlTemplate>
         </Setter>

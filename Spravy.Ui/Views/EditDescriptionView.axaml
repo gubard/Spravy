@@ -9,7 +9,7 @@
                         mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="200"
                         x:Class="Spravy.Ui.Views.EditDescriptionView"
                         x:DataType="vm:EditDescriptionViewModel">
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <ScrollViewer Classes="mini" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <c:GroupBox>
             <c:GroupBox.Header>
                 <TextBlock Text="{Binding ToDoItemName}" Classes="h4" />

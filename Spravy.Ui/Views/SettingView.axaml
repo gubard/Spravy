@@ -15,7 +15,7 @@
     <c:BusyArea BusyText="{DynamicResource SettingView.Busy}"
                 IsBusy="{Binding IsBusy}">
         <Grid RowDefinitions="*,Auto">
-            <ScrollViewer>
+            <ScrollViewer Classes="mini">
                 <c:GroupBox Header="{Binding PageHeaderViewModel}">
                     <ItemsControl Margin="20">
                         <c:GroupBox Header="Account Setting">

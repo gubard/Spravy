@@ -15,13 +15,13 @@
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <ScrollViewer Classes="mini" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <c:GroupBox>
             <c:GroupBox.Header>
                 <StackPanel>
                     <TextBlock Text="{DynamicResource AddToDoItemView.Header}" Classes="h4" />
 
-                    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                    <ScrollViewer Classes="mini" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
                         <c:Stepper Index="0" Steps="{Binding Path}" HorizontalAlignment="Left" />
                     </ScrollViewer>
                 </StackPanel>

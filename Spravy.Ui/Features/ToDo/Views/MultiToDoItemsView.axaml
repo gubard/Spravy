@@ -63,7 +63,8 @@
                                                Fill="{Binding Value.Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                                 </Grid>
 
-                                <ScrollViewer VerticalScrollBarVisibility="Disabled"
+                                <ScrollViewer Classes="mini"
+                                              VerticalScrollBarVisibility="Disabled"
                                               HorizontalScrollBarVisibility="Auto">
                                     <TextBlock Classes="h4" Text="{Binding Value.Name}" />
                                 </ScrollViewer>
