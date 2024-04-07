@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
 using Ninject;
@@ -32,27 +33,10 @@ public class MultiToDoItemsViewModel : ViewModelBase
 
     public MultiToDoItemsViewModel()
     {
-        this.WhenAnyValue(x => x.IsMulti).Subscribe(x => Content = x ? MultiToDoItems : ToDoItems);
-
-        this.WhenAnyValue(x => x.GroupBy)
-            .Subscribe(
-                x =>
-                {
-                    if (ToDoItems is null)
-                    {
-                        return;
-                    }
-
-                    if (MultiToDoItems is null)
-                    {
-                        return;
-                    }
-
-                    ToDoItems.GroupBy = x;
-                    MultiToDoItems.GroupBy = x;
-                }
-            );
+        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
     }
+    
+    public ICommand InitializedCommand { get; }
 
     public AvaloniaList<GroupBy> GroupBys { get; } = new(Enum.GetValues<GroupBy>());
 
@@ -141,6 +125,32 @@ public class MultiToDoItemsViewModel : ViewModelBase
 
     [Reactive]
     public object? Content { get; set; }
+    
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
+    {
+        this.WhenAnyValue(x => x.IsMulti).Subscribe(x => Content = x ? MultiToDoItems : ToDoItems);
+
+        this.WhenAnyValue(x => x.GroupBy)
+            .Subscribe(
+                x =>
+                {
+                    if (ToDoItems is null)
+                    {
+                        return;
+                    }
+
+                    if (MultiToDoItems is null)
+                    {
+                        return;
+                    }
+
+                    ToDoItems.GroupBy = x;
+                    MultiToDoItems.GroupBy = x;
+                }
+            );
+
+        return Result.AwaitableFalse;
+    }
 
     public ConfiguredValueTaskAwaitable<Result> ClearFavoriteExceptAsync(IEnumerable<Guid> ids)
     {

@@ -41,6 +41,7 @@ public class ViewModelBase : NotifyBase
     {
         var command = ReactiveCommand.CreateFromTask(execute);
         SetupCommand(command);
+        Disposables.Add(command);
 
         return command;
     }
@@ -49,6 +50,7 @@ public class ViewModelBase : NotifyBase
     {
         var command = ReactiveCommand.CreateFromTask(execute, canExecute);
         SetupCommand(command);
+        Disposables.Add(command);
 
         return command;
     }
@@ -57,6 +59,7 @@ public class ViewModelBase : NotifyBase
     {
         var command = ReactiveCommand.CreateFromTask(execute);
         SetupCommand(command);
+        Disposables.Add(command);
 
         return command;
     }

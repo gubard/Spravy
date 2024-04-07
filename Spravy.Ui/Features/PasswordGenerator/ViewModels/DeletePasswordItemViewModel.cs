@@ -21,7 +21,6 @@ public class DeletePasswordItemViewModel : ViewModelBase
     public DeletePasswordItemViewModel()
     {
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
-        this.WhenAnyValue(x => x.PasswordItemName).Subscribe(_ => this.RaisePropertyChanged(nameof(DeleteText)));
     }
 
     public ICommand InitializedCommand { get; }
@@ -46,6 +45,10 @@ public class DeletePasswordItemViewModel : ViewModelBase
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
+        Disposables.Add(
+            this.WhenAnyValue(x => x.PasswordItemName).Subscribe(_ => this.RaisePropertyChanged(nameof(DeleteText)))
+        );
+
         return PasswordService.GetPasswordItemAsync(PasswordItemId, cancellationToken)
             .IfSuccessAsync(
                 value => this.InvokeUIBackgroundAsync(() => PasswordItemName = value.Name)

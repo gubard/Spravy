@@ -25,7 +25,6 @@ public class DeleteToDoItemViewModel : ViewModelBase
     public DeleteToDoItemViewModel()
     {
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
-        this.WhenAnyValue(x => x.ToDoItemName).Subscribe(_ => this.RaisePropertyChanged(nameof(DeleteText)));
     }
 
     public ICommand InitializedCommand { get; }
@@ -59,6 +58,10 @@ public class DeleteToDoItemViewModel : ViewModelBase
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
+        Disposables.Add(
+            this.WhenAnyValue(x => x.ToDoItemName).Subscribe(_ => this.RaisePropertyChanged(nameof(DeleteText)))
+        );
+
         var toDoItemToStringOptions = new ToDoItemToStringOptions(Enum.GetValues<ToDoItemStatus>(), ToDoItemId);
 
         return ToDoService.GetToDoItemAsync(ToDoItemId, cancellationToken)
@@ -68,17 +71,17 @@ public class DeleteToDoItemViewModel : ViewModelBase
                         childrenText => ToDoService.GetParentsAsync(ToDoItemId, cancellationToken)
                             .IfSuccessAsync(
                                 parents => this.InvokeUIBackgroundAsync(
-                                        () =>
-                                        {
-                                            Path = new RootItem().To<object>()
-                                                .ToEnumerable()
-                                                .Concat(Mapper.Map<ToDoItemParentNotify[]>(parents.ToArray()))
-                                                .ToArray();
+                                    () =>
+                                    {
+                                        Path = new RootItem().To<object>()
+                                            .ToEnumerable()
+                                            .Concat(Mapper.Map<ToDoItemParentNotify[]>(parents.ToArray()))
+                                            .ToArray();
 
-                                            ToDoItemName = item.Name;
-                                            ChildrenText = childrenText;
-                                        }
-                                    )
+                                        ToDoItemName = item.Name;
+                                        ChildrenText = childrenText;
+                                    }
+                                )
                             )
                     )
             );
