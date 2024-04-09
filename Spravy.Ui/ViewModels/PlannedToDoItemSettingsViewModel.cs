@@ -79,13 +79,15 @@ public class PlannedToDoItemSettingsViewModel : ViewModelBase,
                         DueDate = setting.DueDate;
                         IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
                     }
-                )
+                ),
+                cancellationToken
             );
     }
 
     public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
     {
         return Result.AwaitableFalse.IfSuccessAllAsync(
+            cancellationToken,
             () => ToDoService.UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, cancellationToken),
             () => ToDoService.UpdateToDoItemDueDateAsync(Id, DueDate, cancellationToken),
             () => ToDoService

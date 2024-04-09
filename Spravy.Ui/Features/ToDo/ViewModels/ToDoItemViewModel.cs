@@ -65,7 +65,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
             Disposables.Add(
                 toDoSubItemsViewModel.List.WhenAnyValue(x => x.IsMulti)
                     .Skip(1)
-                    .Subscribe(_ => UpdateCommandsAsync())
+                    .Subscribe(_ => UpdateCommandsAsync(CancellationToken.None))
             );
         }
     }
@@ -150,9 +150,10 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     {
         return RefreshPathAsync(cancellationToken)
             .IfSuccessAllAsync(
+                cancellationToken,
                 () => RefreshToDoItemAsync().ConfigureAwait(false),
                 () => RefreshToDoItemChildrenAsync(cancellationToken),
-                UpdateCommandsAsync
+                () => UpdateCommandsAsync(cancellationToken)
             );
     }
 
@@ -181,7 +182,8 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
                             ParentId = item.ParentId;
                             DescriptionType = item.DescriptionType;
                         }
-                    )
+                    ),
+                cancellationToken
             );
     }
 
@@ -196,7 +198,8 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
                             .ToEnumerable()
                             .Concat(parents.ToArray().Select(x => Mapper.Map<ToDoItemParentNotify>(x)))
                             .ToArray()
-                    )
+                    ),
+                cancellationToken
             );
     }
 
@@ -230,7 +233,8 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
 
         return ToDoService.GetChildrenToDoItemIdsAsync(Id, cancellationToken)
             .IfSuccessAsync(
-                ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken)
+                ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken),
+                cancellationToken
             );
     }
 
@@ -238,12 +242,12 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     {
         pageHeaderViewModel.RightCommand = CommandStorage.ShowToDoSettingItem.WithParam(this);
 
-        return ObjectStorage.GetObjectOrDefaultAsync<ToDoItemViewModelSetting>(ViewId)
-            .IfSuccessAsync(SetStateAsync)
-            .IfSuccessAllAsync(() => RefreshAsync(cancellationToken));
+        return ObjectStorage.GetObjectOrDefaultAsync<ToDoItemViewModelSetting>(ViewId, cancellationToken)
+            .IfSuccessAsync(obj => SetStateAsync(obj, cancellationToken), cancellationToken)
+            .IfSuccessAllAsync(cancellationToken, () => RefreshAsync(cancellationToken));
     }
 
-    private ConfiguredValueTaskAwaitable<Result> UpdateCommandsAsync()
+    private ConfiguredValueTaskAwaitable<Result> UpdateCommandsAsync(CancellationToken cancellationToken)
     {
         return refreshToDoItemWork.Current
             .IfSuccessAsync(
@@ -291,7 +295,8 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
                             );
                         }
                     }
-                )
+                ),
+                cancellationToken
             );
     }
 
@@ -303,12 +308,15 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
         return Result.Success;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync()
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
     {
         return ObjectStorage.SaveObjectAsync(ViewId, new ToDoItemViewModelSetting(this));
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting)
+    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
+        object setting,
+        CancellationToken cancellationToken
+    )
     {
         return setting.CastObject<ToDoItemViewModelSetting>()
             .IfSuccessAsync(
@@ -318,7 +326,8 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
                         ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
                         ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
                     }
-                )
+                ),
+                cancellationToken
             );
     }
 

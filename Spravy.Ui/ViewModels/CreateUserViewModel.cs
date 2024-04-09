@@ -221,12 +221,15 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
         return Result.Success;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync()
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
     {
         return Result.AwaitableFalse;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting)
+    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
+        object setting,
+        CancellationToken cancellationToken
+    )
     {
         return Result.AwaitableFalse;
     }
@@ -347,12 +350,14 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
                                     vm.IdentifierType = UserIdentifierType.Email;
                                 },
                                 cancellationToken
-                            )
+                            ),
+                            cancellationToken
                         );
                 },
                 () => this.InvokeUIBackgroundAsync(() => IsBusy = false)
                     .ToValueTask()
-                    .ConfigureAwait(false)
+                    .ConfigureAwait(false),
+                cancellationToken
             );
     }
 }

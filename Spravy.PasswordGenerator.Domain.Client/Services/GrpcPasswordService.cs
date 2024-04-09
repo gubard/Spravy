@@ -32,7 +32,10 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
         this.metadataFactory = metadataFactory;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> AddPasswordItemAsync(AddPasswordOptions options, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> AddPasswordItemAsync(
+        AddPasswordOptions options,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             client =>
@@ -46,14 +49,18 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
                                         cancellationToken: cancellationToken
                                     )
                                     .ToValueTaskResultOnly()
-                                    .ConfigureAwait(false)
-                            )
+                                    .ConfigureAwait(false),
+                                cancellationToken
+                            ),
+                        cancellationToken
                     ),
             cancellationToken
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<PasswordItem>>> GetPasswordItemsAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<PasswordItem>>> GetPasswordItemsAsync(
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             client =>
@@ -70,14 +77,19 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
                                 reply => converter.Convert<PasswordItem[]>(reply.Items)
                                     .IfSuccess(items => items.ToReadOnlyMemory().ToResult())
                                     .ToValueTaskResult()
-                                    .ConfigureAwait(false)
-                            )
+                                    .ConfigureAwait(false),
+                                cancellationToken
+                            ),
+                        cancellationToken
                     ),
             cancellationToken
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result<PasswordItem>> GetPasswordItemAsync(Guid id, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<PasswordItem>> GetPasswordItemAsync(
+        Guid id,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             client =>
@@ -98,10 +110,11 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
                                 .IfSuccessAsync(
                                     reply => converter.Convert<PasswordItem>(reply)
                                         .ToValueTaskResult()
-                                        .ConfigureAwait(false)
-                                )
-                    )
-                    .ConfigureAwait(false),
+                                        .ConfigureAwait(false),
+                                    cancellationToken
+                                ),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -123,14 +136,17 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
                                     cancellationToken: cancellationToken
                                 )
                                 .ToValueTaskResultOnly()
-                                .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                                .ConfigureAwait(false),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result<string>> GeneratePasswordAsync(Guid id, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<string>> GeneratePasswordAsync(
+        Guid id,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             client => metadataFactory.CreateAsync(cancellationToken)
@@ -148,15 +164,20 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
                             .ToValueTaskResultValueOnly()
                             .ConfigureAwait(false)
                             .IfSuccessAsync(
-                                reply => reply.Password.ToResult().ToValueTaskResult().ConfigureAwait(false)
-                            )
-                )
-                .ConfigureAwait(false),
+                                reply => reply.Password.ToResult().ToValueTaskResult().ConfigureAwait(false),
+                                cancellationToken
+                            ),
+                    cancellationToken
+                ),
             cancellationToken
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemNameAsync(Guid id, string name, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemNameAsync(
+        Guid id,
+        string name,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             client =>
@@ -174,14 +195,18 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
                                     cancellationToken: cancellationToken
                                 )
                                 .ToValueTaskResultOnly()
-                                .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                                .ConfigureAwait(false),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemKeyAsync(Guid id, string key, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemKeyAsync(
+        Guid id,
+        string key,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             client =>
@@ -198,14 +223,18 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
                                 cancellationToken: cancellationToken
                             )
                             .ToValueTaskResultOnly()
-                            .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                            .ConfigureAwait(false),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemLengthAsync(Guid id, ushort length, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemLengthAsync(
+        Guid id,
+        ushort length,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             client =>
@@ -222,14 +251,18 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
                                 cancellationToken: cancellationToken
                             )
                             .ToValueTaskResultOnly()
-                            .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                            .ConfigureAwait(false),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemRegexAsync(Guid id, string regex, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemRegexAsync(
+        Guid id,
+        string regex,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             client =>
@@ -247,9 +280,9 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
                                     cancellationToken: cancellationToken
                                 )
                                 .ToValueTaskResultOnly()
-                                .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                                .ConfigureAwait(false),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -275,9 +308,9 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
                                 cancellationToken: cancellationToken
                             )
                             .ToValueTaskResultOnly()
-                            .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                            .ConfigureAwait(false),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -303,9 +336,9 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
                                 cancellationToken: cancellationToken
                             )
                             .ToValueTaskResultOnly()
-                            .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                            .ConfigureAwait(false),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -331,9 +364,9 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
                                 cancellationToken: cancellationToken
                             )
                             .ToValueTaskResultOnly()
-                            .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                            .ConfigureAwait(false),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -359,9 +392,9 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
                                 cancellationToken: cancellationToken
                             )
                             .ToValueTaskResultOnly()
-                            .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                            .ConfigureAwait(false),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -387,9 +420,9 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
                                 cancellationToken: cancellationToken
                             )
                             .ToValueTaskResultOnly()
-                            .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                            .ConfigureAwait(false),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }

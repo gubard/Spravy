@@ -55,7 +55,8 @@ public class ToDoItemSelectorViewModel : ViewModelBase
                     SetItem(DefaultSelectedItemId);
 
                     return Result.AwaitableFalse;
-                }
+                },
+                cancellationToken
             );
     }
 
@@ -71,8 +72,10 @@ public class ToDoItemSelectorViewModel : ViewModelBase
                             itemsCache.AddRange(Mapper.Map<ToDoSelectorItemNotify[]>(items.ToArray()));
 
                             return this.InvokeUIBackgroundAsync(() => Roots.AddRange(itemsCache));
-                        }
-                    )
+                        },
+                        cancellationToken
+                    ),
+                cancellationToken
             );
     }
 
@@ -95,7 +98,8 @@ public class ToDoItemSelectorViewModel : ViewModelBase
                     }
 
                     return this.InvokeUIBackgroundAsync(() => Roots.AddRange(result));
-                }
+                },
+                cancellationToken
             );
     }
 

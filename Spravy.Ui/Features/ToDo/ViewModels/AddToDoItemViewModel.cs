@@ -53,9 +53,10 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
-        return ObjectStorage.GetObjectOrDefaultAsync<AddToDoItemViewModelSetting>(ViewId)
-            .IfSuccessAsync(SetStateAsync)
+        return ObjectStorage.GetObjectOrDefaultAsync<AddToDoItemViewModelSetting>(ViewId, cancellationToken)
+            .IfSuccessAsync(obj => SetStateAsync(obj, cancellationToken), cancellationToken)
             .IfSuccessAllAsync(
+                cancellationToken,
                 () => ToDoService.GetParentsAsync(ParentId, cancellationToken)
                     .IfSuccessAsync(
                         parents =>
@@ -67,7 +68,8 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
                                 .ToArray();
 
                             return this.InvokeUIBackgroundAsync(() => Path = path);
-                        }
+                        },
+                        cancellationToken
                     )
             );
     }
@@ -77,25 +79,29 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
         return Result.Success;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync()
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
     {
         return ObjectStorage.SaveObjectAsync(ViewId, new AddToDoItemViewModelSetting(this));
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting)
+    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
+        object setting,
+        CancellationToken cancellationToken
+    )
     {
         return setting.CastObject<AddToDoItemViewModelSetting>()
             .IfSuccessAsync(
                 s => this.InvokeUIBackgroundAsync(
-                        () =>
-                        {
-                            ToDoItemContent.Name = s.Name;
-                            ToDoItemContent.Type = s.Type;
-                            ToDoItemContent.Link = s.Link;
-                            DescriptionContent.Description = s.Description;
-                            DescriptionContent.Type = s.DescriptionType;
-                        }
-                    )
+                    () =>
+                    {
+                        ToDoItemContent.Name = s.Name;
+                        ToDoItemContent.Type = s.Type;
+                        ToDoItemContent.Link = s.Link;
+                        DescriptionContent.Description = s.Description;
+                        DescriptionContent.Type = s.DescriptionType;
+                    }
+                ),
+                cancellationToken
             );
     }
 

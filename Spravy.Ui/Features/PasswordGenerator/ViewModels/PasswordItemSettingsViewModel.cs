@@ -72,7 +72,7 @@ public class PasswordItemSettingsViewModel : ViewModelBase
                             IsAvailableSpecialSymbols = value.IsAvailableSpecialSymbols;
                             CustomAvailableCharacters = value.CustomAvailableCharacters;
                         }
-                    )
+                    ),cancellationToken
             );
     }
 }

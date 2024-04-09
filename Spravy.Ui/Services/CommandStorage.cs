@@ -470,9 +470,10 @@ public static class CommandStorage
         return dialogViewer.ShowConfirmContentDialogAsync<DeletePasswordItemViewModel>(
             _ => dialogViewer.CloseContentDialogAsync(cancellationToken)
                 .IfSuccessAsync(
-                    () => passwordService.DeletePasswordItemAsync(idProperty.Id, cancellationToken)
+                    () => passwordService.DeletePasswordItemAsync(idProperty.Id, cancellationToken),
+                    cancellationToken
                 )
-                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken)),
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
             _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
             view => view.PasswordItemId = idProperty.Id,
             cancellationToken
@@ -486,13 +487,15 @@ public static class CommandStorage
     {
         return passwordService.GeneratePasswordAsync(idProperty.Id, cancellationToken)
             .IfSuccessAsync(
-                password => clipboard.SetTextAsync(password)
+                password => clipboard.SetTextAsync(password),
+                cancellationToken
             )
             .IfSuccessAsync(
                 () => spravyNotificationManager.ShowAsync(
                     new TextView("PasswordGeneratorView.Notification.CopyPassword", idProperty),
                     cancellationToken
-                )
+                ),
+                cancellationToken
             );
     }
 
@@ -504,6 +507,7 @@ public static class CommandStorage
         return dialogViewer.ShowConfirmContentDialogAsync<PasswordItemSettingsViewModel>(
             vm => dialogViewer.CloseContentDialogAsync(cancellationToken)
                 .IfSuccessAllAsync(
+                    cancellationToken,
                     () => passwordService.UpdatePasswordItemKeyAsync(idProperty.Id, vm.Key, cancellationToken),
                     () => passwordService.UpdatePasswordItemLengthAsync(idProperty.Id, vm.Length, cancellationToken),
                     () => passwordService.UpdatePasswordItemNameAsync(idProperty.Id, vm.Name, cancellationToken),
@@ -534,7 +538,7 @@ public static class CommandStorage
                         cancellationToken
                     )
                 )
-                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken)),
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
             _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
             vm => vm.Id = idProperty.Id,
             cancellationToken
@@ -546,9 +550,10 @@ public static class CommandStorage
         return dialogViewer.ShowConfirmContentDialogAsync(
             vm => dialogViewer.CloseContentDialogAsync(cancellationToken)
                 .IfSuccessAsync(
-                    () => passwordService.AddPasswordItemAsync(mapper.Map<AddPasswordOptions>(vm), cancellationToken)
+                    () => passwordService.AddPasswordItemAsync(mapper.Map<AddPasswordOptions>(vm), cancellationToken),
+                    cancellationToken
                 )
-                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken)),
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
             _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
             ActionHelper<AddPasswordItemViewModel>.Empty,
             cancellationToken
@@ -561,6 +566,7 @@ public static class CommandStorage
     )
     {
         return Result.AwaitableFalse.IfSuccessAllAsync(
+                cancellationToken,
                 items.Where(x => x.IsSelect)
                     .Select(x => x.Value.Id)
                     .Select<Guid, Func<ConfiguredValueTaskAwaitable<Result>>>(
@@ -573,7 +579,7 @@ public static class CommandStorage
                     )
                     .ToArray()
             )
-            .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken));
+            .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken);
     }
 
     private static ConfiguredValueTaskAwaitable<Result> ResetToDoItemAsync(
@@ -582,7 +588,7 @@ public static class CommandStorage
     )
     {
         return toDoService.ResetToDoItemAsync(property.Id, cancellationToken)
-            .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken));
+            .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken);
     }
 
     private static ConfiguredValueTaskAwaitable<Result> SetRequiredCompleteInDueDateAsync(
@@ -595,7 +601,7 @@ public static class CommandStorage
                 property.IsRequiredCompleteInDueDate,
                 cancellationToken
             )
-            .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken));
+            .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken);
     }
 
     private static ConfiguredValueTaskAwaitable<Result> UpdateEmailNotVerifiedUserAsync(
@@ -606,6 +612,7 @@ public static class CommandStorage
         return dialogViewer.ShowSingleStringConfirmDialogAsync(
             newEmail => dialogViewer.CloseInputDialogAsync(cancellationToken)
                 .IfSuccessAllAsync(
+                    cancellationToken,
                     () =>
                     {
                         switch (verificationEmail.IdentifierType)
@@ -669,7 +676,8 @@ public static class CommandStorage
                         cancellationToken
                     )
                     .IfSuccessAsync(
-                        () => navigator.NavigateToAsync<LoginViewModel>(cancellationToken)
+                        () => navigator.NavigateToAsync<LoginViewModel>(cancellationToken),
+                        cancellationToken
                     );
             case UserIdentifierType.Login:
                 return authenticationService.VerifiedEmailByLoginAsync(
@@ -678,7 +686,8 @@ public static class CommandStorage
                         cancellationToken
                     )
                     .IfSuccessAsync(
-                        () => navigator.NavigateToAsync<LoginViewModel>(cancellationToken)
+                        () => navigator.NavigateToAsync<LoginViewModel>(cancellationToken),
+                        cancellationToken
                     );
             default: throw new ArgumentOutOfRangeException();
         }
@@ -690,6 +699,7 @@ public static class CommandStorage
     )
     {
         return Result.AwaitableFalse.IfSuccessAllAsync(
+                cancellationToken,
                 itemsNotify.Where(x => x.IsSelect)
                     .Select<Selected<ToDoItemNotify>, Func<ConfiguredValueTaskAwaitable<Result>>>(
                         x =>
@@ -702,7 +712,7 @@ public static class CommandStorage
                     )
                     .ToArray()
             )
-            .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken));
+            .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken);
     }
 
     private static ConfiguredValueTaskAwaitable<Result> MultiSetTypeToDoItemsAsync(
@@ -715,6 +725,7 @@ public static class CommandStorage
         return dialogViewer.ShowItemSelectorDialogAsync<ToDoItemType>(
             type => dialogViewer.CloseInputDialogAsync(cancellationToken)
                 .IfSuccessAllAsync(
+                    cancellationToken,
                     ids.Select<Guid, Func<ConfiguredValueTaskAwaitable<Result>>>(
                             x =>
                             {
@@ -726,7 +737,7 @@ public static class CommandStorage
                         )
                         .ToArray()
                 )
-                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken)),
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
             viewModel =>
             {
                 viewModel.Items.AddRange(Enum.GetValues<ToDoItemType>().OfType<object>());
@@ -746,6 +757,7 @@ public static class CommandStorage
         return dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
             item => dialogViewer.CloseInputDialogAsync(cancellationToken)
                 .IfSuccessAllAsync(
+                    cancellationToken,
                     ids.Select<Guid, Func<ConfiguredValueTaskAwaitable<Result>>>(
                             x =>
                             {
@@ -757,7 +769,7 @@ public static class CommandStorage
                         )
                         .ToArray()
                 )
-                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken)),
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
             viewModel => viewModel.IgnoreIds.AddRange(ids),
             cancellationToken
         );
@@ -771,7 +783,7 @@ public static class CommandStorage
         var items = itemsNotify.Where(x => x.IsSelect).Select(x => x.Value).ToArray();
 
         return CompleteAsync(items, cancellationToken)
-            .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken));
+            .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken);
     }
 
     private static ConfiguredValueTaskAwaitable<Result> CompleteAsync(
@@ -804,7 +816,7 @@ public static class CommandStorage
             }
         }
 
-        return Result.AwaitableFalse.IfSuccessAllAsync(tasks.ToArray());
+        return Result.AwaitableFalse.IfSuccessAllAsync(cancellationToken, tasks.ToArray());
     }
 
     private static ConfiguredValueTaskAwaitable<Result> SetToDoItemNameAsync(
@@ -816,9 +828,10 @@ public static class CommandStorage
             str => dialogViewer.CloseInputDialogAsync(cancellationToken)
                 .IfSuccessAsync(
                     () =>
-                        toDoService.UpdateToDoItemNameAsync(property.Id, str, cancellationToken)
+                        toDoService.UpdateToDoItemNameAsync(property.Id, str, cancellationToken),
+                    cancellationToken
                 )
-                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken)),
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
             box =>
             {
                 box.Text = property.Name;
@@ -839,15 +852,14 @@ public static class CommandStorage
                     if (activeToDoItem.HasValue)
                     {
                         return navigator.NavigateToAsync<ToDoItemViewModel>(
-                                viewModel => viewModel.Id = activeToDoItem.Value.Id,
-                                cancellationToken
-                            )
-                            ;
+                            viewModel => viewModel.Id = activeToDoItem.Value.Id,
+                            cancellationToken
+                        );
                     }
 
-                    return navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken)
-                        ;
-                }
+                    return navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken);
+                },
+                cancellationToken
             );
     }
 
@@ -859,9 +871,10 @@ public static class CommandStorage
         return dialogViewer.ShowConfirmContentDialogAsync<TextViewModel>(
             _ => dialogViewer.CloseContentDialogAsync(cancellationToken)
                 .IfSuccessAsync(
-                    () => toDoService.RandomizeChildrenOrderIndexAsync(property.Id, cancellationToken)
+                    () => toDoService.RandomizeChildrenOrderIndexAsync(property.Id, cancellationToken),
+                    cancellationToken
                 )
-                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken)),
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
             _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
             viewModel =>
             {
@@ -886,7 +899,8 @@ public static class CommandStorage
                 return dialogViewer.CloseContentDialogAsync(cancellationToken)
                     .IfSuccessAsync(
                         () => toDoService.ToDoItemToStringAsync(options, cancellationToken)
-                            .IfSuccessAsync(text => clipboard.SetTextAsync(text))
+                            .IfSuccessAsync(text => clipboard.SetTextAsync(text), cancellationToken),
+                        cancellationToken
                     );
             },
             _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
@@ -902,7 +916,8 @@ public static class CommandStorage
     {
         return toDoService.ToDoItemToRootAsync(property.Id, cancellationToken)
             .IfSuccessAsync(
-                () => navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken)
+                () => navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken),
+                cancellationToken
             );
     }
 
@@ -914,9 +929,10 @@ public static class CommandStorage
         return dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
             item => dialogViewer.CloseInputDialogAsync(cancellationToken)
                 .IfSuccessAsync(
-                    () => toDoService.UpdateToDoItemParentAsync(property.Id, item.Id, cancellationToken)
+                    () => toDoService.UpdateToDoItemParentAsync(property.Id, item.Id, cancellationToken),
+                    cancellationToken
                 )
-                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken)),
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
             viewModel =>
             {
                 viewModel.IgnoreIds.Add(property.Id);
@@ -952,8 +968,8 @@ public static class CommandStorage
                 );
 
                 return dialogViewer.CloseContentDialogAsync(cancellationToken)
-                    .IfSuccessAsync(() => toDoService.AddToDoItemAsync(options, cancellationToken))
-                    .IfSuccessAsync(_ => RefreshCurrentViewAsync(cancellationToken));
+                    .IfSuccessAsync(() => toDoService.AddToDoItemAsync(options, cancellationToken), cancellationToken)
+                    .IfSuccessAsync(_ => RefreshCurrentViewAsync(cancellationToken), cancellationToken);
             },
             _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
             vm => vm.ParentId = item.Id,
@@ -969,6 +985,7 @@ public static class CommandStorage
         return dialogViewer.ShowConfirmContentDialogAsync<ToDoItemSettingsViewModel>(
             vm => dialogViewer.CloseContentDialogAsync(cancellationToken)
                 .IfSuccessAllAsync(
+                    cancellationToken,
                     () => toDoService.UpdateToDoItemNameAsync(
                         property.Id,
                         vm.ToDoItemContent.Name,
@@ -986,7 +1003,7 @@ public static class CommandStorage
                     ),
                     () => vm.Settings.ThrowIfNull().ApplySettingsAsync(cancellationToken)
                 )
-                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken)),
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
             _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
             vm => vm.ToDoItemId = property.Id,
             cancellationToken
@@ -1005,9 +1022,10 @@ public static class CommandStorage
                         property.Id,
                         viewModel.Content.Description,
                         cancellationToken
-                    )
+                    ),
+                    cancellationToken
                 )
-                .IfSuccessAsync(() => property.RefreshAsync(cancellationToken)),
+                .IfSuccessAsync(() => property.RefreshAsync(cancellationToken), cancellationToken),
             _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
             viewModel =>
             {
@@ -1031,9 +1049,10 @@ public static class CommandStorage
                         property.Id,
                         value.IsNullOrWhiteSpace() ? null : value.ToUri(),
                         cancellationToken
-                    )
+                    ),
+                    cancellationToken
                 )
-                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken)),
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
             textBox =>
             {
                 textBox.Text = property.Link;
@@ -1051,9 +1070,10 @@ public static class CommandStorage
         return dialogViewer.ShowItemSelectorDialogAsync<ToDoItemType>(
             item => dialogViewer.CloseInputDialogAsync(cancellationToken)
                 .IfSuccessAsync(
-                    () => toDoService.UpdateToDoItemTypeAsync(property.Id, item, cancellationToken)
+                    () => toDoService.UpdateToDoItemTypeAsync(property.Id, item, cancellationToken),
+                    cancellationToken
                 )
-                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken)),
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
             viewModel =>
             {
                 viewModel.Items.AddRange(Enum.GetValues<ToDoItemType>().OfType<object>());
@@ -1075,7 +1095,8 @@ public static class CommandStorage
                     properties,
                     false,
                     cancellationToken
-                )
+                ),
+                cancellationToken
             );
     }
 
@@ -1087,8 +1108,11 @@ public static class CommandStorage
                 var options = mapper.Map<AddRootToDoItemOptions>(view);
 
                 return dialogViewer.CloseContentDialogAsync(cancellationToken)
-                    .IfSuccessAsync(() => toDoService.AddRootToDoItemAsync(options, cancellationToken))
-                    .IfSuccessAsync(_ => RefreshCurrentViewAsync(cancellationToken));
+                    .IfSuccessAsync(
+                        () => toDoService.AddRootToDoItemAsync(options, cancellationToken),
+                        cancellationToken
+                    )
+                    .IfSuccessAsync(_ => RefreshCurrentViewAsync(cancellationToken), cancellationToken);
             },
             _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
             ActionHelper<AddRootToDoItemViewModel>.Empty,
@@ -1114,13 +1138,16 @@ public static class CommandStorage
                                         property.Id,
                                         new WeeklyPeriodicity(days),
                                         cancellationToken
-                                    )
+                                    ),
+                                    cancellationToken
                                 )
                                 .IfSuccessAsync(
-                                    () => property.RefreshAsync(cancellationToken)
+                                    () => property.RefreshAsync(cancellationToken),
+                                    cancellationToken
                                 )
                                 .IfSuccessAsync(
-                                    () => RefreshCurrentViewAsync(cancellationToken)
+                                    () => RefreshCurrentViewAsync(cancellationToken),
+                                    cancellationToken
                                 ),
                             viewModel =>
                             {
@@ -1133,7 +1160,8 @@ public static class CommandStorage
                                 }
                             },
                             cancellationToken
-                        )
+                        ),
+                        cancellationToken
                     );
             }
             case TypeOfPeriodicity.Monthly:
@@ -1147,13 +1175,16 @@ public static class CommandStorage
                                         property.Id,
                                         new MonthlyPeriodicity(days),
                                         cancellationToken
-                                    )
+                                    ),
+                                    cancellationToken
                                 )
                                 .IfSuccessAsync(
-                                    () => property.RefreshAsync(cancellationToken)
+                                    () => property.RefreshAsync(cancellationToken),
+                                    cancellationToken
                                 )
                                 .IfSuccessAsync(
-                                    () => RefreshCurrentViewAsync(cancellationToken)
+                                    () => RefreshCurrentViewAsync(cancellationToken),
+                                    cancellationToken
                                 ),
                             viewModel =>
                             {
@@ -1166,7 +1197,8 @@ public static class CommandStorage
                                 }
                             },
                             cancellationToken
-                        )
+                        ),
+                        cancellationToken
                     );
             }
             case TypeOfPeriodicity.Annually:
@@ -1180,13 +1212,16 @@ public static class CommandStorage
                                         property.Id,
                                         new AnnuallyPeriodicity(days),
                                         cancellationToken
-                                    )
+                                    ),
+                                    cancellationToken
                                 )
                                 .IfSuccessAsync(
-                                    () => property.RefreshAsync(cancellationToken)
+                                    () => property.RefreshAsync(cancellationToken),
+                                    cancellationToken
                                 )
                                 .IfSuccessAsync(
-                                    () => RefreshCurrentViewAsync(cancellationToken)
+                                    () => RefreshCurrentViewAsync(cancellationToken),
+                                    cancellationToken
                                 ),
                             viewModel =>
                             {
@@ -1202,7 +1237,8 @@ public static class CommandStorage
                                 }
                             },
                             cancellationToken
-                        )
+                        ),
+                        cancellationToken
                     );
             }
             case TypeOfPeriodicity.Daily:
@@ -1221,10 +1257,11 @@ public static class CommandStorage
             value => dialogViewer.CloseInputDialogAsync(cancellationToken)
                 .IfSuccessAsync(
                     () =>
-                        toDoService.UpdateToDoItemTypeOfPeriodicityAsync(property.Id, value, cancellationToken)
+                        toDoService.UpdateToDoItemTypeOfPeriodicityAsync(property.Id, value, cancellationToken),
+                    cancellationToken
                 )
-                .IfSuccessAsync(() => property.RefreshAsync(cancellationToken))
-                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken)),
+                .IfSuccessAsync(() => property.RefreshAsync(cancellationToken), cancellationToken)
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
             calendar =>
             {
                 calendar.Items.AddRange(Enum.GetValues<TypeOfPeriodicity>().OfType<object>());
@@ -1242,10 +1279,11 @@ public static class CommandStorage
         return dialogViewer.ShowNumberUInt16InputDialogAsync(
             value => dialogViewer.CloseInputDialogAsync(cancellationToken)
                 .IfSuccessAsync(
-                    () => toDoService.UpdateToDoItemYearsOffsetAsync(property.Id, value, cancellationToken)
+                    () => toDoService.UpdateToDoItemYearsOffsetAsync(property.Id, value, cancellationToken),
+                    cancellationToken
                 )
-                .IfSuccessAsync(() => property.RefreshAsync(cancellationToken))
-                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken)),
+                .IfSuccessAsync(() => property.RefreshAsync(cancellationToken), cancellationToken)
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
             calendar => calendar.Value = property.YearsOffset,
             cancellationToken
         );
@@ -1259,10 +1297,11 @@ public static class CommandStorage
         return dialogViewer.ShowNumberUInt16InputDialogAsync(
             value => dialogViewer.CloseInputDialogAsync(cancellationToken)
                 .IfSuccessAsync(
-                    () => toDoService.UpdateToDoItemWeeksOffsetAsync(property.Id, value, cancellationToken)
+                    () => toDoService.UpdateToDoItemWeeksOffsetAsync(property.Id, value, cancellationToken),
+                    cancellationToken
                 )
-                .IfSuccessAsync(() => property.RefreshAsync(cancellationToken))
-                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken)),
+                .IfSuccessAsync(() => property.RefreshAsync(cancellationToken), cancellationToken)
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
             calendar => calendar.Value = property.WeeksOffset,
             cancellationToken
         );
@@ -1276,10 +1315,11 @@ public static class CommandStorage
         return dialogViewer.ShowNumberUInt16InputDialogAsync(
             value => dialogViewer.CloseInputDialogAsync(cancellationToken)
                 .IfSuccessAsync(
-                    () => toDoService.UpdateToDoItemMonthsOffsetAsync(property.Id, value, cancellationToken)
+                    () => toDoService.UpdateToDoItemMonthsOffsetAsync(property.Id, value, cancellationToken),
+                    cancellationToken
                 )
-                .IfSuccessAsync(() => property.RefreshAsync(cancellationToken))
-                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken)),
+                .IfSuccessAsync(() => property.RefreshAsync(cancellationToken), cancellationToken)
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
             calendar => calendar.Value = property.MonthsOffset,
             cancellationToken
         );
@@ -1295,10 +1335,11 @@ public static class CommandStorage
             {
                 return dialogViewer.CloseInputDialogAsync(cancellationToken)
                         .IfSuccessAsync(
-                            () => toDoService.UpdateToDoItemDaysOffsetAsync(property.Id, value, cancellationToken)
+                            () => toDoService.UpdateToDoItemDaysOffsetAsync(property.Id, value, cancellationToken),
+                            cancellationToken
                         )
-                        .IfSuccessAsync(() => property.RefreshAsync(cancellationToken))
-                        .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken))
+                        .IfSuccessAsync(() => property.RefreshAsync(cancellationToken), cancellationToken)
+                        .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken)
                     ;
             },
             calendar => calendar.Value = property.DaysOffset,
@@ -1314,10 +1355,11 @@ public static class CommandStorage
         return dialogViewer.ShowDateConfirmDialogAsync(
             value => dialogViewer.CloseInputDialogAsync(cancellationToken)
                 .IfSuccessAsync(
-                    () => toDoService.UpdateToDoItemDueDateAsync(property.Id, value.ToDateOnly(), cancellationToken)
+                    () => toDoService.UpdateToDoItemDueDateAsync(property.Id, value.ToDateOnly(), cancellationToken),
+                    cancellationToken
                 )
-                .IfSuccessAsync(() => property.RefreshAsync(cancellationToken))
-                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken)),
+                .IfSuccessAsync(() => property.RefreshAsync(cancellationToken), cancellationToken)
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
             calendar => calendar.SelectedDate = property.DueDate.ToDateTime(),
             cancellationToken
         );
@@ -1331,10 +1373,11 @@ public static class CommandStorage
         return dialogViewer.ShowItemSelectorDialogAsync<ToDoItemChildrenType>(
             item => dialogViewer.CloseInputDialogAsync(cancellationToken)
                 .IfSuccessAsync(
-                    () => toDoService.UpdateToDoItemChildrenTypeAsync(property.Id, item, cancellationToken)
+                    () => toDoService.UpdateToDoItemChildrenTypeAsync(property.Id, item, cancellationToken),
+                    cancellationToken
                 )
-                .IfSuccessAsync(() => property.RefreshAsync(cancellationToken))
-                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken)),
+                .IfSuccessAsync(() => property.RefreshAsync(cancellationToken), cancellationToken)
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
             viewModel =>
             {
                 viewModel.Items.AddRange(Enum.GetValues<ToDoItemChildrenType>().OfType<object>());
@@ -1356,13 +1399,16 @@ public static class CommandStorage
                     }
 
                     return Result.AwaitableFalse;
-                }
+                },
+                cancellationToken
             )
             .IfSuccessAsync(
-                () => navigator.NavigateToAsync(ActionHelper<LoginViewModel>.Empty, cancellationToken)
+                () => navigator.NavigateToAsync(ActionHelper<LoginViewModel>.Empty, cancellationToken),
+                cancellationToken
             )
             .IfSuccessAsync(
-                () => cancellationToken.InvokeUIBackgroundAsync(() => mainSplitViewModel.IsPaneOpen = false)
+                () => cancellationToken.InvokeUIBackgroundAsync(() => mainSplitViewModel.IsPaneOpen = false),
+                cancellationToken
             );
     }
 
@@ -1386,7 +1432,8 @@ public static class CommandStorage
                     };
 
                     return objectStorage.SaveObjectAsync(StorageIds.LoginId, item);
-                }
+                },
+                cancellationToken
             );
     }
 
@@ -1394,7 +1441,8 @@ public static class CommandStorage
     {
         return navigator.NavigateToAsync(type, cancellationToken)
             .IfSuccessAsync(
-                () => cancellationToken.InvokeUIBackgroundAsync(() => mainSplitViewModel.IsPaneOpen = false)
+                () => cancellationToken.InvokeUIBackgroundAsync(() => mainSplitViewModel.IsPaneOpen = false),
+                cancellationToken
             );
     }
 
@@ -1418,7 +1466,8 @@ public static class CommandStorage
         return dialogViewer.ShowDateTimeConfirmDialogAsync(
             value => dialogViewer.CloseInputDialogAsync(cancellationToken)
                 .IfSuccessAsync(
-                    () => cancellationToken.InvokeUIBackgroundAsync(() => property.DueDateTime = value)
+                    () => cancellationToken.InvokeUIBackgroundAsync(() => property.DueDateTime = value),
+                    cancellationToken
                 ),
             calendar =>
             {
@@ -1443,7 +1492,8 @@ public static class CommandStorage
                             Id = itemNotify.Id,
                             Name = itemNotify.Name
                         }
-                    )
+                    ),
+                    cancellationToken
                 ),
             view =>
             {
@@ -1466,7 +1516,7 @@ public static class CommandStorage
     )
     {
         return toDoService.RemoveFavoriteToDoItemAsync(id, cancellationToken)
-            .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken));
+            .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken);
     }
 
     private static ConfiguredValueTaskAwaitable<Result> AddFavoriteToDoItemAsync(
@@ -1475,7 +1525,7 @@ public static class CommandStorage
     )
     {
         return toDoService.AddFavoriteToDoItemAsync(id, cancellationToken)
-            .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken));
+            .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken);
     }
 
     private static ConfiguredValueTaskAwaitable<Result> OpenLinkAsync(ILink item, CancellationToken cancellationToken)
@@ -1499,9 +1549,10 @@ public static class CommandStorage
                 return dialogViewer.CloseContentDialogAsync(cancellationToken)
                     .IfSuccessAsync(
                         () =>
-                            toDoService.UpdateToDoItemOrderIndexAsync(options, cancellationToken)
+                            toDoService.UpdateToDoItemOrderIndexAsync(options, cancellationToken),
+                        cancellationToken
                     )
-                    .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken));
+                    .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken);
             },
             _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
             viewModel => viewModel.Id = item.Id,
@@ -1517,9 +1568,10 @@ public static class CommandStorage
         return dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
             itemNotify => dialogViewer.CloseInputDialogAsync(cancellationToken)
                 .IfSuccessAsync(
-                    () => toDoService.CloneToDoItemAsync(id.Id, itemNotify.Id, cancellationToken)
+                    () => toDoService.CloneToDoItemAsync(id.Id, itemNotify.Id, cancellationToken),
+                    cancellationToken
                 )
-                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken)),
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
             view => view.DefaultSelectedItemId = id.Id,
             cancellationToken
         );
@@ -1540,7 +1592,8 @@ public static class CommandStorage
                         view => view.Id = item.Value.Id,
                         cancellationToken
                     );
-                }
+                },
+                cancellationToken
             );
     }
 
@@ -1552,7 +1605,8 @@ public static class CommandStorage
         return dialogViewer.ShowConfirmContentDialogAsync<DeleteToDoItemViewModel>(
             _ => dialogViewer.CloseContentDialogAsync(cancellationToken)
                 .IfSuccessAsync(
-                    () => toDoService.DeleteToDoItemAsync(deletable.Id, cancellationToken)
+                    () => toDoService.DeleteToDoItemAsync(deletable.Id, cancellationToken),
+                    cancellationToken
                 )
                 .IfSuccessAsync(
                     () =>
@@ -1571,9 +1625,10 @@ public static class CommandStorage
                         }
 
                         return Result.AwaitableFalse;
-                    }
+                    },
+                    cancellationToken
                 )
-                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken)),
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
             _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
             view => view.ToDoItemId = deletable.Id,
             cancellationToken
@@ -1633,9 +1688,10 @@ public static class CommandStorage
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
-                }
+                },
+                cancellationToken
             )
-            .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken));
+            .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken);
     }
 
     public static ConfiguredValueTaskAwaitable<Result> RefreshCurrentViewAsync(CancellationToken cancellationToken)
@@ -1719,7 +1775,8 @@ public static class CommandStorage
         await dialogViewer.ShowInfoErrorDialogAsync<ExceptionViewModel>(
             _ => dialogViewer.CloseErrorDialogAsync(CancellationToken.None)
                 .IfSuccessAsync(
-                    () => dialogViewer.CloseProgressDialogAsync(CancellationToken.None)
+                    () => dialogViewer.CloseProgressDialogAsync(CancellationToken.None),
+                    CancellationToken.None
                 ),
             viewModel => viewModel.Exception = exception,
             CancellationToken.None

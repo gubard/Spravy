@@ -75,7 +75,8 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
                                                             : UserIdentifierType.Login;
                                                     },
                                                     cancellationToken
-                                                )
+                                                ),
+                                                cancellationToken
                                             );
                                     }
 
@@ -87,7 +88,8 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
                                         },
                                         cancellationToken
                                     );
-                                }
+                                },
+                                cancellationToken
                             );
                     }
 
@@ -110,7 +112,8 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
                                                         : UserIdentifierType.Login;
                                                 },
                                                 cancellationToken
-                                            )
+                                            ),
+                                            cancellationToken
                                         );
                                 }
 
@@ -122,12 +125,14 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
                                     },
                                     cancellationToken
                                 );
-                            }
+                            },
+                            cancellationToken
                         );
                 },
                 () => this.InvokeUIBackgroundAsync(() => IsBusy = false)
                     .ToValueTask()
-                    .ConfigureAwait(false)
+                    .ConfigureAwait(false),
+                cancellationToken
             );
         ;
     }
@@ -137,7 +142,7 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
         return Result.Success;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync()
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
     {
         return ObjectStorage.SaveObjectAsync(
             ViewId,
@@ -145,7 +150,10 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
         );
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting)
+    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
+        object setting,
+        CancellationToken cancellationToken
+    )
     {
         var s = setting.ThrowIfIsNotCast<EmailOrLoginInputViewModelSetting>();
 

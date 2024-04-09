@@ -45,7 +45,8 @@ public class ValueToDoItemSettingsViewModel : ViewModelBase, IToDoChildrenTypePr
     {
         return ToDoService.GetValueToDoItemSettingsAsync(Id, cancellationToken)
             .IfSuccessAsync(
-                setting => this.InvokeUIBackgroundAsync(() => ChildrenType = setting.ChildrenType)
+                setting => this.InvokeUIBackgroundAsync(() => ChildrenType = setting.ChildrenType),
+                cancellationToken
             );
     }
 

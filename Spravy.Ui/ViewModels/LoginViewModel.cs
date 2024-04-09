@@ -170,20 +170,25 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
                                 .IfSuccessAsync(
                                     () => this.InvokeUIBackgroundAsync(() => Account.Login = user.Login)
                                         .IfSuccessAsync(
-                                            () => RememberMeAsync(cancellationToken)
+                                            () => RememberMeAsync(cancellationToken),
+                                            cancellationToken
                                         )
                                         .IfSuccessAsync(
                                             () => Navigator.NavigateToAsync(
                                                 ActionHelper<RootToDoItemsViewModel>.Empty,
                                                 cancellationToken
-                                            )
-                                        )
+                                            ),
+                                            cancellationToken
+                                        ),
+                                    cancellationToken
                                 );
-                        }
+                        },
+                        cancellationToken
                     ),
                 () => this.InvokeUIBackgroundAsync(() => IsBusy = false)
                     .ToValueTask()
-                    .ConfigureAwait(false)
+                    .ConfigureAwait(false),
+                cancellationToken
             );
     }
 
@@ -204,7 +209,8 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
                     };
 
                     return ObjectStorage.SaveObjectAsync(StorageIds.LoginId, item);
-                }
+                },
+                cancellationToken
             );
     }
 
@@ -250,13 +256,14 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
                         return Result.AwaitableFalse;
                     }
 
-                    return ObjectStorage.GetObjectOrDefaultAsync<LoginViewModelSetting>(ViewId)
+                    return ObjectStorage.GetObjectOrDefaultAsync<LoginViewModelSetting>(ViewId, cancellationToken)
                         .IfSuccessAsync(
                             setting =>
                             {
-                                return SetStateAsync(setting)
+                                return SetStateAsync(setting, cancellationToken)
                                     .IfSuccessAsync(
-                                        () => ObjectStorage.IsExistsAsync(StorageIds.LoginId)
+                                        () => ObjectStorage.IsExistsAsync(StorageIds.LoginId),
+                                        cancellationToken
                                     )
                                     .IfSuccessAsync(
                                         value =>
@@ -284,18 +291,23 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
                                                                 () => Navigator.NavigateToAsync(
                                                                     ActionHelper<RootToDoItemsViewModel>.Empty,
                                                                     cancellationToken
-                                                                )
+                                                                ),
+                                                                cancellationToken
                                                             );
-                                                    }
+                                                    },
+                                                    cancellationToken
                                                 );
-                                        }
+                                        },
+                                        cancellationToken
                                     );
-                            }
+                            },
+                            cancellationToken
                         );
                 },
                 () => this.InvokeUIBackgroundAsync(() => IsBusy = false)
                     .ToValueTask()
-                    .ConfigureAwait(false)
+                    .ConfigureAwait(false),
+                cancellationToken
             );
     }
 
@@ -335,12 +347,15 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
         return Result.Success;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync()
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
     {
         return ObjectStorage.SaveObjectAsync(ViewId, new LoginViewModelSetting(this));
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting)
+    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
+        object setting,
+        CancellationToken cancellationToken
+    )
     {
         return setting.CastObject<LoginViewModelSetting>()
             .IfSuccessAsync(
@@ -350,7 +365,8 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
                         TryAutoLogin = false;
                         Login = s.Login;
                     }
-                )
+                ),
+                cancellationToken
             );
     }
 

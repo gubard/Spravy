@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using ReactiveUI.Fody.Helpers;
@@ -40,11 +41,11 @@ public class ConfirmViewModel : ViewModelBase, ISaveState
         return await ConfirmTask.ThrowIfNull().Invoke(con);
     }
 
-    public ConfiguredValueTaskAwaitable<Result> SaveStateAsync()
+    public ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
     {
         if (Content is ISaveState saveState)
         {
-            return saveState.SaveStateAsync();
+            return saveState.SaveStateAsync(cancellationToken);
         }
 
         return Result.AwaitableFalse;

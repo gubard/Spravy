@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using System.Threading;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Models;
 using Spravy.Ui.Interfaces;
@@ -10,7 +11,7 @@ public class EmptyNavigatable : INavigatable
     public bool IsPooled => false;
     public string ViewId => TypeCache<EmptyNavigatable>.Type.Name;
 
-    public ConfiguredValueTaskAwaitable<Result> SaveStateAsync()
+    public ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
     {
         return Result.AwaitableFalse;
     }
@@ -20,7 +21,7 @@ public class EmptyNavigatable : INavigatable
         return Result.Success;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting)
+    public ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting, CancellationToken cancellationToken)
     {
         return Result.AwaitableFalse;
     }

@@ -99,7 +99,8 @@ public class ViewModelBase : NotifyBase
         await DialogViewer.ShowInfoErrorDialogAsync<ExceptionViewModel>(
             _ => DialogViewer.CloseErrorDialogAsync(CancellationToken.None)
                 .IfSuccessAsync(
-                    () => DialogViewer.CloseProgressDialogAsync(CancellationToken.None)
+                    () => DialogViewer.CloseProgressDialogAsync(CancellationToken.None),
+                    CancellationToken.None
                 ),
             viewModel => viewModel.Exception = exception,
             CancellationToken.None

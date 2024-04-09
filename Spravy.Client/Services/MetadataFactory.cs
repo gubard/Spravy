@@ -32,7 +32,8 @@ public class MetadataFactory : IMetadataFactory
                     }
 
                     return metadata.ToResult().ToValueTaskResult().ConfigureAwait(false);
-                }
+                },
+                cancellationToken
             );
     }
 }

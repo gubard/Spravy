@@ -48,17 +48,19 @@ public class ToDoItemDayOfMonthSelectorViewModel : ViewModelBase, IApplySettings
         return ToDoService.GetMonthlyPeriodicityAsync(ToDoItemId, cancellationToken)
             .IfSuccessAsync(
                 monthlyPeriodicity => Result.AwaitableFalse.IfSuccessAllAsync(
-                        Items.Where(x => monthlyPeriodicity.Days.Contains(x.Day))
-                            .Select<DayOfMonthSelectItem, Func<ConfiguredValueTaskAwaitable<Result>>>(
-                                x =>
-                                {
-                                    var y = x;
+                    cancellationToken,
+                    Items.Where(x => monthlyPeriodicity.Days.Contains(x.Day))
+                        .Select<DayOfMonthSelectItem, Func<ConfiguredValueTaskAwaitable<Result>>>(
+                            x =>
+                            {
+                                var y = x;
 
-                                    return () => this.InvokeUIBackgroundAsync(() => y.IsSelected = true);
-                                }
-                            )
-                            .ToArray()
-                    )
+                                return () => this.InvokeUIBackgroundAsync(() => y.IsSelected = true);
+                            }
+                        )
+                        .ToArray()
+                ),
+                cancellationToken
             );
     }
 

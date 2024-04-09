@@ -29,7 +29,10 @@ public class Navigator : INavigator
     [Inject]
     public required MainSplitViewModel MainSplitViewModel { get; init; }
 
-    private ConfiguredValueTaskAwaitable<Result> AddCurrentContentAsync(Action<object> setup)
+    private ConfiguredValueTaskAwaitable<Result> AddCurrentContentAsync(
+        Action<object> setup,
+        CancellationToken cancellationToken
+    )
     {
         if (Content.Content is null)
         {
@@ -44,7 +47,7 @@ public class Navigator : INavigator
             return Result.AwaitableFalse;
         }
 
-        return content.SaveStateAsync()
+        return content.SaveStateAsync(cancellationToken)
             .IfSuccessAsync(
                 () =>
                 {
@@ -52,7 +55,8 @@ public class Navigator : INavigator
                     lastSetup = setup;
 
                     return Result.AwaitableFalse;
-                }
+                },
+                cancellationToken
             );
     }
 
@@ -60,8 +64,8 @@ public class Navigator : INavigator
     {
         var viewModel = (INavigatable)Resolver.Get(type);
 
-        return AddCurrentContentAsync(ActionHelper<object>.Empty)
-            .IfSuccessAsync(() => this.InvokeUIBackgroundAsync(() => Content.Content = viewModel));
+        return AddCurrentContentAsync(ActionHelper<object>.Empty, cancellationToken)
+            .IfSuccessAsync(() => this.InvokeUIBackgroundAsync(() => Content.Content = viewModel), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> NavigateToAsync<TViewModel>(
@@ -70,14 +74,14 @@ public class Navigator : INavigator
     )
         where TViewModel : INavigatable
     {
-        return AddCurrentContentAsync(obj => setup.Invoke((TViewModel)obj))
+        return AddCurrentContentAsync(obj => setup.Invoke((TViewModel)obj), cancellationToken)
             .IfSuccessAsync(
                 () =>
                 {
                     if (Content.Content is IRefresh refresh && Content.Content is TViewModel vm)
                     {
                         return this.InvokeUIBackgroundAsync(() => setup.Invoke(vm))
-                            .IfSuccessAsync(() => refresh.RefreshAsync(cancellationToken));
+                            .IfSuccessAsync(() => refresh.RefreshAsync(cancellationToken), cancellationToken);
                     }
 
                     if (Content.Content is IDisposable disposable)
@@ -94,7 +98,8 @@ public class Navigator : INavigator
                             Content.Content = viewModel;
                         }
                     );
-                }
+                },
+                cancellationToken
             );
     }
 
@@ -103,8 +108,8 @@ public class Navigator : INavigator
     {
         var viewModel = Resolver.Get<TViewModel>();
 
-        return AddCurrentContentAsync(ActionHelper<object>.Empty)
-            .IfSuccessAsync(() => this.InvokeUIBackgroundAsync(() => Content.Content = viewModel));
+        return AddCurrentContentAsync(ActionHelper<object>.Empty, cancellationToken)
+            .IfSuccessAsync(() => this.InvokeUIBackgroundAsync(() => Content.Content = viewModel), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result<INavigatable?>> NavigateBackAsync(CancellationToken cancellationToken)
@@ -149,8 +154,12 @@ public class Navigator : INavigator
                             }
                         )
                         .ConfigureAwait(false)
-                        .IfSuccessAsync(() => item.Navigatable.ToResult().ToValueTaskResult().ConfigureAwait(false));
-                }
+                        .IfSuccessAsync(
+                            () => item.Navigatable.ToResult().ToValueTaskResult().ConfigureAwait(false),
+                            cancellationToken
+                        );
+                },
+                cancellationToken
             );
     }
 
@@ -160,7 +169,7 @@ public class Navigator : INavigator
     )
         where TViewModel : INavigatable
     {
-        return AddCurrentContentAsync(ActionHelper<object>.Empty)
-            .IfSuccessAsync(() => this.InvokeUIBackgroundAsync(() => Content.Content = parameter));
+        return AddCurrentContentAsync(ActionHelper<object>.Empty, cancellationToken)
+            .IfSuccessAsync(() => this.InvokeUIBackgroundAsync(() => Content.Content = parameter), cancellationToken);
     }
 }

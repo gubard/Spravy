@@ -45,8 +45,10 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
                             .IfSuccessAsync(
                                 reply => converter.Convert<TokenResult>(reply)
                                     .ToValueTaskResult()
-                                    .ConfigureAwait(false)
-                            )
+                                    .ConfigureAwait(false),
+                                cancellationToken
+                            ),
+                        cancellationToken
                     ),
             cancellationToken
         );
@@ -61,7 +63,8 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
             client =>
                 converter.Convert<CreateUserRequest>(options)
                     .IfSuccessAsync(
-                        request => client.CreateUserAsync(request).ToValueTaskResultOnly().ConfigureAwait(false)
+                        request => client.CreateUserAsync(request).ToValueTaskResultOnly().ConfigureAwait(false),
+                        cancellationToken
                     ),
             cancellationToken
         );
@@ -82,7 +85,8 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
                 .ToValueTaskResultValueOnly()
                 .ConfigureAwait(false)
                 .IfSuccessAsync(
-                    reply => converter.Convert<TokenResult>(reply).ToValueTaskResult().ConfigureAwait(false)
+                    reply => converter.Convert<TokenResult>(reply).ToValueTaskResult().ConfigureAwait(false),
+                    cancellationToken
                 ),
             cancellationToken
         );
@@ -138,7 +142,10 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
                 )
                 .ToValueTaskResultValueOnly()
                 .ConfigureAwait(false)
-                .IfSuccessAsync(reply => reply.IsVerified.ToResult().ToValueTaskResult().ConfigureAwait(false)),
+                .IfSuccessAsync(
+                    reply => reply.IsVerified.ToResult().ToValueTaskResult().ConfigureAwait(false),
+                    cancellationToken
+                ),
             cancellationToken
         );
     }
@@ -157,7 +164,10 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
                 )
                 .ToValueTaskResultValueOnly()
                 .ConfigureAwait(false)
-                .IfSuccessAsync(reply => reply.IsVerified.ToResult().ToValueTaskResult().ConfigureAwait(false)),
+                .IfSuccessAsync(
+                    reply => reply.IsVerified.ToResult().ToValueTaskResult().ConfigureAwait(false),
+                    cancellationToken
+                ),
             cancellationToken
         );
     }

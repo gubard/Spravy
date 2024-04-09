@@ -50,7 +50,8 @@ public class DeletePasswordItemViewModel : ViewModelBase
 
         return PasswordService.GetPasswordItemAsync(PasswordItemId, cancellationToken)
             .IfSuccessAsync(
-                value => this.InvokeUIBackgroundAsync(() => PasswordItemName = value.Name)
+                value => this.InvokeUIBackgroundAsync(() => PasswordItemName = value.Name),
+                cancellationToken
             );
     }
 }

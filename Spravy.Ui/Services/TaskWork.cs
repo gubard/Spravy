@@ -37,7 +37,8 @@ public class TaskWork
             await dialogViewer.ShowInfoErrorDialogAsync<ErrorViewModel>(
                 _ => dialogViewer.CloseErrorDialogAsync(CancellationToken.None)
                     .IfSuccessAsync(
-                        () => dialogViewer.CloseProgressDialogAsync(CancellationToken.None)
+                        () => dialogViewer.CloseProgressDialogAsync(CancellationToken.None),
+                        CancellationToken.None
                     ),
                 viewModel => viewModel.ValidationResults.AddRange(result.Errors.ToArray()),
                 CancellationToken.None
@@ -57,7 +58,8 @@ public class TaskWork
             await dialogViewer.ShowInfoErrorDialogAsync<ErrorViewModel>(
                 _ => dialogViewer.CloseErrorDialogAsync(CancellationToken.None)
                     .IfSuccessAsync(
-                        () => dialogViewer.CloseProgressDialogAsync(CancellationToken.None)
+                        () => dialogViewer.CloseProgressDialogAsync(CancellationToken.None),
+                        CancellationToken.None
                     ),
                 viewModel => viewModel.ValidationResults.AddRange(result.Errors.ToArray()),
                 CancellationToken.None

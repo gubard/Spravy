@@ -55,12 +55,15 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IRefresh
         return Result.Success;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync()
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
     {
         return Result.AwaitableFalse;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting)
+    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
+        object setting,
+        CancellationToken cancellationToken
+    )
     {
         return Result.AwaitableFalse;
     }
@@ -69,7 +72,8 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IRefresh
     {
         return ToDoService.GetTodayToDoItemsAsync(cancellationToken)
             .IfSuccessAsync(
-                ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken)
+                ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken),
+                cancellationToken
             );
     }
 }

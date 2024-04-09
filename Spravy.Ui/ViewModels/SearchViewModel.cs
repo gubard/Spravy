@@ -43,8 +43,8 @@ public class SearchViewModel : NavigatableViewModelBase, IToDoItemSearchProperti
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
-        return ObjectStorage.GetObjectOrDefaultAsync<SearchViewModelSetting>(ViewId)
-            .IfSuccessAsync(SetStateAsync);
+        return ObjectStorage.GetObjectOrDefaultAsync<SearchViewModelSetting>(ViewId, cancellationToken)
+            .IfSuccessAsync(obj => SetStateAsync(obj, cancellationToken), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
@@ -56,7 +56,8 @@ public class SearchViewModel : NavigatableViewModelBase, IToDoItemSearchProperti
     {
         return ToDoService.SearchToDoItemIdsAsync(SearchText, cancellationToken)
             .IfSuccessAsync(
-                ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken)
+                ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken),
+                cancellationToken
             );
     }
 
@@ -67,15 +68,18 @@ public class SearchViewModel : NavigatableViewModelBase, IToDoItemSearchProperti
         return Result.Success;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync()
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
     {
         return ObjectStorage.SaveObjectAsync(ViewId, new SearchViewModelSetting(this));
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting)
+    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
+        object setting,
+        CancellationToken cancellationToken
+    )
     {
         return setting.CastObject<SearchViewModelSetting>()
-            .IfSuccessAsync(s => this.InvokeUIBackgroundAsync(() => SearchText = s.SearchText));
+            .IfSuccessAsync(s => this.InvokeUIBackgroundAsync(() => SearchText = s.SearchText), cancellationToken);
     }
 
     [ProtoContract]

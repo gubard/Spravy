@@ -58,9 +58,8 @@ public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
                         return client.PublishEventAsync(request, value, cancellationToken: cancellationToken)
                             .ToValueTaskResultOnly()
                             .ConfigureAwait(false);
-                    }
-                )
-                .ConfigureAwait(false),
+                    },cancellationToken
+                ),
             cancellationToken
         );
     }
@@ -94,11 +93,10 @@ public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
                                                 .ToResult()
                                         )
                                         .ToValueTaskResult()
-                                        .ConfigureAwait(false)
+                                        .ConfigureAwait(false),cancellationToken
                                 );
-                        }
-                    )
-                    .ConfigureAwait(false),
+                        }, cancellationToken
+                    ),
             cancellationToken
         );
     }

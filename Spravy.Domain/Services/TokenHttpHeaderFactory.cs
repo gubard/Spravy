@@ -24,7 +24,8 @@ public class TokenHttpHeaderFactory : IHttpHeaderFactory
                     .ToReadOnlyMemory()
                     .ToResult()
                     .ToValueTaskResult()
-                    .ConfigureAwait(false)
+                    .ConfigureAwait(false),
+                cancellationToken
             );
     }
 }

@@ -77,7 +77,8 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
 
         return ToDoService.GetLeafToDoItemIdsAsync(Id, cancellationToken)
             .IfSuccessAsync(
-                ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, true, cancellationToken)
+                ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, true, cancellationToken),
+                cancellationToken
             );
     }
 
@@ -85,10 +86,11 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
     {
         return PageHeaderViewModel.SetMultiCommands(ToDoSubItemsViewModel)
             .IfSuccessAsync(
-                () => ObjectStorage.GetObjectOrDefaultAsync<LeafToDoItemsViewModelSetting>(ViewId)
-                    .IfSuccessAsync(SetStateAsync)
+                () => ObjectStorage.GetObjectOrDefaultAsync<LeafToDoItemsViewModelSetting>(ViewId, cancellationToken)
+                    .IfSuccessAsync(obj => SetStateAsync(obj, cancellationToken), cancellationToken),
+                cancellationToken
             )
-            .IfSuccessAsync(() => RefreshAsync(cancellationToken));
+            .IfSuccessAsync(() => RefreshAsync(cancellationToken), cancellationToken);
     }
 
     public override Result Stop()
@@ -98,7 +100,7 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
         return Result.Success;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync()
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
     {
         return ObjectStorage.SaveObjectAsync(
             ViewId,
@@ -106,7 +108,10 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
         );
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting)
+    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
+        object setting,
+        CancellationToken cancellationToken
+    )
     {
         return setting.CastObject<LeafToDoItemsViewModelSetting>()
             .IfSuccessAsync(
@@ -116,7 +121,8 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
                         ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
                         ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
                     }
-                )
+                ),
+                cancellationToken
             );
     }
 

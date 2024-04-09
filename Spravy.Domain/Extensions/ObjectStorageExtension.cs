@@ -8,7 +8,8 @@ public static class ObjectStorageExtension
 {
     public static ConfiguredValueTaskAwaitable<Result<TObject>> GetObjectOrDefaultAsync<TObject>(
         this IObjectStorage objectStorage,
-        string id
+        string id,
+        CancellationToken cancellationToken
     )
         where TObject : new()
     {
@@ -22,7 +23,8 @@ public static class ObjectStorageExtension
                     }
 
                     return new TObject().ToResult().ToValueTaskResult().ConfigureAwait(false);
-                }
+                },
+                cancellationToken
             );
     }
 }

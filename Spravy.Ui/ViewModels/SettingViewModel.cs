@@ -115,7 +115,8 @@ public class SettingViewModel : NavigatableViewModelBase
                 ),
                 () => this.InvokeUIBackgroundAsync(() => IsBusy = false)
                     .ToValueTask()
-                    .ConfigureAwait(false)
+                    .ConfigureAwait(false),
+                cancellationToken
             );
     }
 
@@ -148,12 +149,15 @@ public class SettingViewModel : NavigatableViewModelBase
         return Result.Success;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync()
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
     {
         return Result.AwaitableFalse;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting)
+    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
+        object setting,
+        CancellationToken cancellationToken
+    )
     {
         return Result.AwaitableFalse;
     }
@@ -174,7 +178,8 @@ public class SettingViewModel : NavigatableViewModelBase
                 ),
                 () => this.InvokeUIBackgroundAsync(() => IsBusy = false)
                     .ToValueTask()
-                    .ConfigureAwait(false)
+                    .ConfigureAwait(false),
+                cancellationToken
             );
     }
 }

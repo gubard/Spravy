@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using Spravy.Domain.Errors;
 using Spravy.Domain.Models;
 
 namespace Spravy.Domain.Extensions;
@@ -12,29 +13,19 @@ public static class ResultExtension
         return Result.Success;
     }
 
-    public static async ValueTask<Result> ToResultOnly<TValue>(this ConfiguredValueTaskAwaitable<Result<TValue>> task)
-    {
-        var result = await task;
-
-        if (result.IsHasError)
-        {
-            return new Result(result.Errors);
-        }
-
-        return Result.Success;
-    }
-
     public static ConfiguredValueTaskAwaitable<Result<TReturn>> IfSuccessAsync<TReturn>(
         this ConfiguredValueTaskAwaitable<Result> task,
-        Func<ConfiguredValueTaskAwaitable<Result<TReturn>>> func
+        Func<ConfiguredValueTaskAwaitable<Result<TReturn>>> func,
+        CancellationToken cancellationToken
     )
     {
-        return IfSuccessCore(task, func).ConfigureAwait(false);
+        return IfSuccessCore(task, func, cancellationToken).ConfigureAwait(false);
     }
 
     private static async ValueTask<Result<TReturn>> IfSuccessCore<TReturn>(
         ConfiguredValueTaskAwaitable<Result> task,
-        Func<ConfiguredValueTaskAwaitable<Result<TReturn>>> func
+        Func<ConfiguredValueTaskAwaitable<Result<TReturn>>> func,
+        CancellationToken cancellationToken
     )
     {
         var result = await task;
@@ -42,141 +33,112 @@ public static class ResultExtension
         if (result.IsHasError)
         {
             return new Result<TReturn>(result.Errors);
+        }
+
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return Result<TReturn>.CanceledByUserError;
         }
 
         return await func.Invoke();
     }
 
-    public static async ValueTask<Result> IfSuccessAsync<TValue, TArg>(
+    private static async ValueTask<Result> IfSuccessCore<TValue, TArg>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
         Result<TArg> arg,
-        Func<TValue, TArg, ConfiguredValueTaskAwaitable<Result>> func
+        Func<TValue, TArg, ConfiguredValueTaskAwaitable<Result>> func,
+        CancellationToken cancellationToken
     )
     {
-        if (arg.IsHasError)
+        var result = await task;
+        var errors = arg.Errors.Combine(result.Errors);
+
+        if (!errors.IsEmpty)
         {
-            return new Result(arg.Errors);
+            return new Result(errors);
         }
 
-        var result = await task;
-
-        if (result.IsHasError)
+        if (cancellationToken.IsCancellationRequested)
         {
-            return new Result(result.Errors);
+            return Result.CanceledByUserError;
         }
 
         return await func.Invoke(result.Value, arg.Value);
     }
 
-    public static async ValueTask<Result<TReturn>> IfSuccessAsync<TValue, TArg, TReturn>(
+    public static ConfiguredValueTaskAwaitable<Result> IfSuccessAsync<TValue, TArg>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
         Result<TArg> arg,
-        Func<TValue, TArg, ConfiguredValueTaskAwaitable<Result<TReturn>>> func
+        Func<TValue, TArg, ConfiguredValueTaskAwaitable<Result>> func,
+        CancellationToken cancellationToken
     )
     {
-        if (arg.IsHasError)
+        return IfSuccessCore(task, arg, func, cancellationToken).ConfigureAwait(false);
+    }
+
+    public static ConfiguredValueTaskAwaitable<Result<TReturn>> IfSuccessAsync<TValue, TArg, TReturn>(
+        this ConfiguredValueTaskAwaitable<Result<TValue>> task,
+        Result<TArg> arg,
+        Func<TValue, TArg, ConfiguredValueTaskAwaitable<Result<TReturn>>> func,
+        CancellationToken cancellationToken
+    )
+    {
+        return IfSuccessCore(task, arg, func, cancellationToken).ConfigureAwait(false);
+    }
+
+    private static async ValueTask<Result<TReturn>> IfSuccessCore<TValue, TArg, TReturn>(
+        this ConfiguredValueTaskAwaitable<Result<TValue>> task,
+        Result<TArg> arg,
+        Func<TValue, TArg, ConfiguredValueTaskAwaitable<Result<TReturn>>> func,
+        CancellationToken cancellationToken
+    )
+    {
+        var result = await task;
+        var errors = arg.Errors.Combine(result.Errors);
+
+        if (!errors.IsEmpty)
         {
-            return new Result<TReturn>(arg.Errors);
+            return new Result<TReturn>(errors);
         }
 
-        var result = await task;
-
-        if (result.IsHasError)
+        if (cancellationToken.IsCancellationRequested)
         {
-            return new Result<TReturn>(result.Errors);
+            return Result<TReturn>.CanceledByUserError;
         }
 
         return await func.Invoke(result.Value, arg.Value);
     }
 
-    public static async ValueTask<Result<TReturn>> IfSuccessAsync<TArg, TReturn>(
-        this ConfiguredValueTaskAwaitable<Result> task,
-        Result<TArg> arg,
-        Func<TArg, ConfiguredValueTaskAwaitable<Result<TReturn>>> func
-    )
-    {
-        if (arg.IsHasError)
-        {
-            return new Result<TReturn>(arg.Errors);
-        }
-
-        var result = await task;
-
-        if (result.IsHasError)
-        {
-            return new Result<TReturn>(result.Errors);
-        }
-
-        return await func.Invoke(arg.Value);
-    }
-
-    public static async ValueTask<Result<TReturn>> IfSuccessAsync<TArg1, TArg2, TReturn>(
-        this ConfiguredValueTaskAwaitable<Result> task,
-        Result<TArg1> arg1,
-        Result<TArg2> arg2,
-        Func<TArg1, TArg2, ConfiguredValueTaskAwaitable<Result<TReturn>>> func
-    )
-    {
-        var arg = new Result(arg1.Errors.Combine(arg2.Errors));
-
-        if (arg.IsHasError)
-        {
-            return new Result<TReturn>(arg.Errors);
-        }
-
-        var result = await task;
-
-        if (result.IsHasError)
-        {
-            return new Result<TReturn>(result.Errors);
-        }
-
-        return await func.Invoke(arg1.Value, arg2.Value);
-    }
-
-    public static async ValueTask<Result<TReturn>> IfSuccessAsync<TValue, TArg1, TArg2, TReturn>(
+    public static ConfiguredValueTaskAwaitable<Result> IfSuccessAsync<TValue, TArg1, TArg2>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
         Result<TArg1> arg1,
         Result<TArg2> arg2,
-        Func<TValue, TArg1, TArg2, ConfiguredValueTaskAwaitable<Result<TReturn>>> func
+        Func<TValue, TArg1, TArg2, ConfiguredValueTaskAwaitable<Result>> func,
+        CancellationToken cancellationToken
     )
     {
-        var arg = new Result(arg1.Errors.Combine(arg2.Errors));
-
-        if (arg.IsHasError)
-        {
-            return new Result<TReturn>(arg.Errors);
-        }
-
-        var result = await task;
-
-        if (result.IsHasError)
-        {
-            return new Result<TReturn>(result.Errors);
-        }
-
-        return await func.Invoke(result.Value, arg1.Value, arg2.Value);
+        return IfSuccessCore(task, arg1, arg2, func, cancellationToken).ConfigureAwait(false);
     }
 
-    public static async ValueTask<Result> IfSuccessAsync<TValue, TArg1, TArg2>(
+    private static async ValueTask<Result> IfSuccessCore<TValue, TArg1, TArg2>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
         Result<TArg1> arg1,
         Result<TArg2> arg2,
-        Func<TValue, TArg1, TArg2, ConfiguredValueTaskAwaitable<Result>> func
+        Func<TValue, TArg1, TArg2, ConfiguredValueTaskAwaitable<Result>> func,
+        CancellationToken cancellationToken
     )
     {
-        var arg = new Result(arg1.Errors.Combine(arg2.Errors));
+        var result = await task;
+        var errors = arg1.Errors.Combine(arg2.Errors, result.Errors);
 
-        if (arg.IsHasError)
+        if (!errors.IsEmpty)
         {
-            return new Result(arg.Errors);
+            return new Result(errors);
         }
 
-        var result = await task;
-
-        if (result.IsHasError)
+        if (cancellationToken.IsCancellationRequested)
         {
-            return new Result(result.Errors);
+            return Result.CanceledByUserError;
         }
 
         return await func.Invoke(result.Value, arg1.Value, arg2.Value);
@@ -184,15 +146,17 @@ public static class ResultExtension
 
     public static ConfiguredValueTaskAwaitable<Result> IfSuccessAsync(
         this ConfiguredValueTaskAwaitable<Result> task,
-        Func<ConfiguredValueTaskAwaitable<Result>> func
+        Func<ConfiguredValueTaskAwaitable<Result>> func,
+        CancellationToken cancellationToken
     )
     {
-        return IfSuccessCore(task, func).ConfigureAwait(false);
+        return IfSuccessCore(task, func, cancellationToken).ConfigureAwait(false);
     }
 
     private static async ValueTask<Result> IfSuccessCore(
         this ConfiguredValueTaskAwaitable<Result> task,
-        Func<ConfiguredValueTaskAwaitable<Result>> func
+        Func<ConfiguredValueTaskAwaitable<Result>> func,
+        CancellationToken cancellationToken
     )
     {
         var result = await task;
@@ -200,6 +164,11 @@ public static class ResultExtension
         if (result.IsHasError)
         {
             return new Result(result.Errors);
+        }
+
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return Result.CanceledByUserError;
         }
 
         return await func.Invoke();
@@ -207,39 +176,66 @@ public static class ResultExtension
 
     public static ConfiguredValueTaskAwaitable<Result> IfSuccessAllAsync(
         this ConfiguredValueTaskAwaitable<Result> task,
+        CancellationToken cancellationToken,
         params Func<ConfiguredValueTaskAwaitable<Result>>[] funcs
     )
     {
-        return IfSuccessAllCore(task, funcs).ConfigureAwait(false);
+        return IfSuccessAllCore(task, cancellationToken, funcs).ConfigureAwait(false);
     }
 
-    public static async ValueTask<Result> IfSuccessAllCore(
+    private static async ValueTask<Result> IfSuccessAllCore(
         this ConfiguredValueTaskAwaitable<Result> task,
+        CancellationToken cancellationToken,
         params Func<ConfiguredValueTaskAwaitable<Result>>[] funcs
     )
     {
-        var tasks = funcs.Select(x => x.Invoke()).ToArray();
         var result = await task;
+
+        if (result.IsHasError)
+        {
+            return new Result(result.Errors);
+        }
+
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return Result.CanceledByUserError;
+        }
+
+        var tasks = funcs.Select(x => x.Invoke()).ToArray();
+        var errors = ReadOnlyMemory<Error>.Empty;
 
         foreach (var awaitable in tasks)
         {
             var r = await awaitable;
-            result = new Result(result.Errors.Combine(r.Errors));
+
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return Result.CanceledByUserError;
+            }
+
+            errors = errors.Combine(r.Errors);
         }
 
-        return result;
+        if (errors.IsEmpty)
+        {
+            return Result.Success;
+        }
+
+        return new Result(errors);
     }
 
     public static ConfiguredValueTaskAwaitable<Result> IfSuccessAllAsync<TValue>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
+        CancellationToken cancellationToke,
         params Func<TValue, ConfiguredValueTaskAwaitable<Result>>[] funcs
     )
     {
-        return IfSuccessAllCore(task, funcs).ConfigureAwait(false);
+        return IfSuccessAllCore(task, cancellationToke, funcs).ConfigureAwait(false);
     }
 
-    public static async ValueTask<Result> IfSuccessAllCore<TValue>(
+    private static async ValueTask<Result> IfSuccessAllCore<TValue>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
+        CancellationToken cancellationToken,
         params Func<TValue, ConfiguredValueTaskAwaitable<Result>>[] funcs
     )
     {
@@ -250,34 +246,52 @@ public static class ResultExtension
             return new Result(result.Errors);
         }
 
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return Result.CanceledByUserError;
+        }
+
         var tasks = funcs.Select(x => x.Invoke(result.Value)).ToArray();
-        var res = Result.Success;
+        var errors = ReadOnlyMemory<Error>.Empty;
 
         foreach (var awaitable in tasks)
         {
             var r = await awaitable;
-            res = new Result(res.Errors.Combine(r.Errors));
+
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return Result.CanceledByUserError;
+            }
+
+            errors = errors.Combine(r.Errors);
         }
 
-        return res;
+        return new Result(errors);
     }
 
     public static ConfiguredValueTaskAwaitable<Result> IfSuccessAsync<TValue>(
         this Result<TValue> result,
-        Func<TValue, ConfiguredValueTaskAwaitable<Result>> action
+        Func<TValue, ConfiguredValueTaskAwaitable<Result>> action,
+        CancellationToken cancellationToken
     )
     {
-        return IfSuccessCore(result, action).ConfigureAwait(false);
+        return IfSuccessCore(result, action, cancellationToken).ConfigureAwait(false);
     }
 
     private static async ValueTask<Result> IfSuccessCore<TValue>(
         this Result<TValue> result,
-        Func<TValue, ConfiguredValueTaskAwaitable<Result>> action
+        Func<TValue, ConfiguredValueTaskAwaitable<Result>> action,
+        CancellationToken cancellationToken
     )
     {
         if (result.IsHasError)
         {
             return new Result(result.Errors);
+        }
+
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return Result.CanceledByUserError;
         }
 
         return await action.Invoke(result.Value);
@@ -286,38 +300,29 @@ public static class ResultExtension
     public static ConfiguredValueTaskAwaitable<Result> IfSuccessAsync<TValue, TArg>(
         this Result<TValue> result,
         Result<TArg> arg,
-        Func<TValue, TArg, ConfiguredValueTaskAwaitable<Result>> action
+        Func<TValue, TArg, ConfiguredValueTaskAwaitable<Result>> action,
+        CancellationToken cancellationToken
     )
     {
-        var r = new Result(result.Errors.Combine(arg.Errors));
+        var errors = result.Errors.Combine(arg.Errors);
 
-        if (r.IsHasError)
+        if (!errors.IsEmpty)
         {
-            return new Result(r.Errors).ToValueTaskResult().ConfigureAwait(false);
+            return new Result(errors).ToValueTaskResult().ConfigureAwait(false);
+        }
+
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return Result.CanceledByUserError.ToValueTaskResult().ConfigureAwait(false);
         }
 
         return action.Invoke(result.Value, arg.Value);
     }
 
-    public static async ValueTask<Result<TReturn>> IfSuccessAsync<TValue, TArg, TReturn>(
-        this Result<TValue> result,
-        Result<TArg> arg,
-        Func<TValue, TArg, ConfiguredValueTaskAwaitable<Result<TReturn>>> action
-    )
-    {
-        var r = new Result<TReturn>(result.Errors.Combine(arg.Errors));
-
-        if (r.IsHasError)
-        {
-            return new Result<TReturn>(r.Errors);
-        }
-
-        return await action.Invoke(result.Value, arg.Value);
-    }
-
     public static ConfiguredValueTaskAwaitable<Result<TReturn>> IfSuccessAsync<TValue, TReturn>(
         this Result<TValue> result,
-        Func<TValue, ConfiguredValueTaskAwaitable<Result<TReturn>>> action
+        Func<TValue, ConfiguredValueTaskAwaitable<Result<TReturn>>> action,
+        CancellationToken cancellationToken
     )
     {
         if (result.IsHasError)
@@ -325,20 +330,27 @@ public static class ResultExtension
             return new Result<TReturn>(result.Errors).ToValueTaskResult().ConfigureAwait(false);
         }
 
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return Result<TReturn>.CanceledByUserError.ToValueTaskResult().ConfigureAwait(false);
+        }
+
         return action.Invoke(result.Value);
     }
 
     public static ConfiguredValueTaskAwaitable<Result<TReturn>> IfSuccessAsync<TValue, TReturn>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
-        Func<TValue, ConfiguredValueTaskAwaitable<Result<TReturn>>> action
+        Func<TValue, ConfiguredValueTaskAwaitable<Result<TReturn>>> action,
+        CancellationToken cancellationToken
     )
     {
-        return IfSuccessCore(task, action).ConfigureAwait(false);
+        return IfSuccessCore(task, action, cancellationToken).ConfigureAwait(false);
     }
 
-    public static async ValueTask<Result<TReturn>> IfSuccessCore<TValue, TReturn>(
+    private static async ValueTask<Result<TReturn>> IfSuccessCore<TValue, TReturn>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
-        Func<TValue, ConfiguredValueTaskAwaitable<Result<TReturn>>> action
+        Func<TValue, ConfiguredValueTaskAwaitable<Result<TReturn>>> action,
+        CancellationToken cancellationToken
     )
     {
         var result = await task;
@@ -346,6 +358,11 @@ public static class ResultExtension
         if (result.IsHasError)
         {
             return new Result<TReturn>(result.Errors);
+        }
+
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return Result<TReturn>.CanceledByUserError;
         }
 
         return await action.Invoke(result.Value);
@@ -353,15 +370,17 @@ public static class ResultExtension
 
     public static ConfiguredValueTaskAwaitable<Result<TReturn>> IfSuccessAsync<TValue, TReturn>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
-        Func<TValue, Result<TReturn>> action
+        Func<TValue, Result<TReturn>> action,
+        CancellationToken cancellationToken
     )
     {
-        return IfSuccessCore(task, action).ConfigureAwait(false);
+        return IfSuccessCore(task, action, cancellationToken).ConfigureAwait(false);
     }
 
-    public static async ValueTask<Result<TReturn>> IfSuccessCore<TValue, TReturn>(
+    private static async ValueTask<Result<TReturn>> IfSuccessCore<TValue, TReturn>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
-        Func<TValue, Result<TReturn>> action
+        Func<TValue, Result<TReturn>> action,
+        CancellationToken cancellationToken
     )
     {
         var result = await task;
@@ -371,20 +390,27 @@ public static class ResultExtension
             return new Result<TReturn>(result.Errors);
         }
 
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return Result<TReturn>.CanceledByUserError;
+        }
+
         return action.Invoke(result.Value);
     }
 
     public static ConfiguredValueTaskAwaitable<Result> IfSuccessAsync<TValue>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
-        Func<TValue, ConfiguredValueTaskAwaitable<Result>> action
+        Func<TValue, ConfiguredValueTaskAwaitable<Result>> action,
+        CancellationToken cancellationToken
     )
     {
-        return IfSuccessCore(task, action).ConfigureAwait(false);
+        return IfSuccessCore(task, action, cancellationToken).ConfigureAwait(false);
     }
 
     private static async ValueTask<Result> IfSuccessCore<TValue>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
-        Func<TValue, ConfiguredValueTaskAwaitable<Result>> action
+        Func<TValue, ConfiguredValueTaskAwaitable<Result>> action,
+        CancellationToken cancellationToken
     )
     {
         var result = await task;
@@ -392,6 +418,11 @@ public static class ResultExtension
         if (result.IsHasError)
         {
             return new Result(result.Errors);
+        }
+
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return Result.CanceledByUserError;
         }
 
         return await action.Invoke(result.Value);
@@ -413,16 +444,18 @@ public static class ResultExtension
     public static ConfiguredValueTaskAwaitable<Result> IfSuccessTryFinallyAsync(
         this ConfiguredValueTaskAwaitable<Result> task,
         Func<ConfiguredValueTaskAwaitable<Result>> funcTry,
-        Func<ConfiguredValueTaskAwaitable> funcFinally
+        Func<ConfiguredValueTaskAwaitable> funcFinally,
+        CancellationToken cancellationToken
     )
     {
-        return IfSuccessTryFinallyCore(task, funcTry, funcFinally).ConfigureAwait(false);
+        return IfSuccessTryFinallyCore(task, funcTry, funcFinally, cancellationToken).ConfigureAwait(false);
     }
 
-    public static async ValueTask<Result> IfSuccessTryFinallyCore(
+    private static async ValueTask<Result> IfSuccessTryFinallyCore(
         this ConfiguredValueTaskAwaitable<Result> task,
         Func<ConfiguredValueTaskAwaitable<Result>> funcTry,
-        Func<ConfiguredValueTaskAwaitable> funcFinally
+        Func<ConfiguredValueTaskAwaitable> funcFinally,
+        CancellationToken cancellationToken
     )
     {
         try
@@ -432,6 +465,11 @@ public static class ResultExtension
             if (result.IsHasError)
             {
                 return new Result(result.Errors);
+            }
+
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return Result.CanceledByUserError;
             }
 
             return await funcTry.Invoke();

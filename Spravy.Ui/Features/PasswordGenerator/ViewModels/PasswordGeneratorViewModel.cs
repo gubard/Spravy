@@ -64,12 +64,12 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
         return Result.Success;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting)
+    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting, CancellationToken cancellationToken)
     {
         return Result.AwaitableFalse;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync()
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync( CancellationToken cancellationToken)
     {
         return Result.AwaitableFalse;
     }
@@ -84,7 +84,7 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
                             Items.Clear();
                             Items.AddRange(Mapper.Map<PasswordItemNotify[]>(items.ToArray()));
                         }
-                    )
+                    ),cancellationToken
             );
     }
 }

@@ -44,7 +44,8 @@ public class TokenService : ITokenService
                     token = value;
 
                     return token.Token.ToResult().ToValueTaskResult().ConfigureAwait(false);
-                }
+                },
+                cancellationToken
             );
     }
 
@@ -57,7 +58,8 @@ public class TokenService : ITokenService
                     token = value;
 
                     return Result.AwaitableFalse;
-                }
+                },
+                cancellationToken
             );
     }
 
@@ -70,7 +72,8 @@ public class TokenService : ITokenService
                     token = value;
 
                     return Result.AwaitableFalse;
-                }
+                },
+                cancellationToken
             );
     }
 }

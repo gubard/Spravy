@@ -80,9 +80,12 @@ public class DeleteToDoItemViewModel : ViewModelBase
                                         ToDoItemName = item.Name;
                                         ChildrenText = childrenText;
                                     }
-                                )
-                            )
-                    )
+                                ),
+                                cancellationToken
+                            ),
+                        cancellationToken
+                    ),
+                cancellationToken
             );
     }
 }

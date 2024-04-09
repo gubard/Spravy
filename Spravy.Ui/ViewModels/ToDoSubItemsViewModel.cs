@@ -33,8 +33,10 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
             .IfSuccessAsync(
                 ids => List.ClearFavoriteExceptAsync(ids.ToArray())
                     .IfSuccessAsync(
-                        () => RefreshFavoriteToDoItemsCore(ids, cancellationToken).ConfigureAwait(false)
-                    )
+                        () => RefreshFavoriteToDoItemsCore(ids, cancellationToken).ConfigureAwait(false),
+                        cancellationToken
+                    ),
+                cancellationToken
             );
     }
 
@@ -68,8 +70,11 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
     )
     {
         return List.ClearExceptAsync(ids)
-            .IfSuccessAsync(() => RefreshFavoriteToDoItemsAsync(cancellationToken))
-            .IfSuccessAsync(() => RefreshToDoItemListsCore(ids, autoOrder, cancellationToken).ConfigureAwait(false));
+            .IfSuccessAsync(() => RefreshFavoriteToDoItemsAsync(cancellationToken), cancellationToken)
+            .IfSuccessAsync(
+                () => RefreshToDoItemListsCore(ids, autoOrder, cancellationToken).ConfigureAwait(false),
+                cancellationToken
+            );
     }
 
     private async ValueTask<Result> RefreshToDoItemListsCore(

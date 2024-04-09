@@ -82,13 +82,15 @@ public class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
                         WeeksOffset = setting.WeeksOffset;
                         IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
                     }
-                )
+                ),
+                cancellationToken
             );
     }
 
     public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
     {
         return Result.AwaitableFalse.IfSuccessAllAsync(
+            cancellationToken,
             () => ToDoService.UpdateToDoItemDaysOffsetAsync(Id, DaysOffset, cancellationToken),
             () => ToDoService.UpdateToDoItemWeeksOffsetAsync(Id, WeeksOffset, cancellationToken),
             () => ToDoService.UpdateToDoItemYearsOffsetAsync(Id, YearsOffset, cancellationToken),

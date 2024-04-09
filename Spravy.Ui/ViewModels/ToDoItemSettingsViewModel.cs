@@ -71,13 +71,14 @@ public class ToDoItemSettingsViewModel : NavigatableViewModelBase
         return ToDoService.GetToDoItemAsync(ToDoItemId, cancellationToken)
             .IfSuccessAsync(
                 toDoItem => this.InvokeUIBackgroundAsync(
-                        () =>
-                        {
-                            ToDoItemContent.Name = toDoItem.Name;
-                            ToDoItemContent.Link = toDoItem.Link?.AbsoluteUri ?? string.Empty;
-                            ToDoItemContent.Type = toDoItem.Type;
-                        }
-                    )
+                    () =>
+                    {
+                        ToDoItemContent.Name = toDoItem.Name;
+                        ToDoItemContent.Link = toDoItem.Link?.AbsoluteUri ?? string.Empty;
+                        ToDoItemContent.Type = toDoItem.Type;
+                    }
+                ),
+                cancellationToken
             );
     }
 
@@ -86,12 +87,15 @@ public class ToDoItemSettingsViewModel : NavigatableViewModelBase
         return Result.Success;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting)
+    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
+        object setting,
+        CancellationToken cancellationToken
+    )
     {
         return Result.AwaitableFalse;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync()
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
     {
         return Result.AwaitableFalse;
     }

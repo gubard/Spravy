@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using System.Threading;
 using Spravy.Domain.Models;
 using Spravy.Ui.Interfaces;
 
@@ -15,6 +16,6 @@ public abstract class NavigatableViewModelBase : ViewModelBase, INavigatable
     public abstract string ViewId { get; }
 
     public abstract Result Stop();
-    public abstract ConfiguredValueTaskAwaitable<Result> SaveStateAsync();
-    public abstract ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting);
+    public abstract ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken);
+    public abstract ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting, CancellationToken cancellationToken);
 }

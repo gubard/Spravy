@@ -60,9 +60,9 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                     cancellationToken: cancellationToken
                                 )
                                 .ToValueTaskResultOnly()
-                                .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                                .ConfigureAwait(false),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -88,9 +88,9 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                 cancellationToken: cancellationToken
                             )
                             .ToValueTaskResultOnly()
-                            .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                            .ConfigureAwait(false),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -110,9 +110,9 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                             cancellationToken: cancellationToken
                         )
                         .ToValueTaskResultOnly()
-                        .ConfigureAwait(false)
-                )
-                .ConfigureAwait(false),
+                        .ConfigureAwait(false),
+                    cancellationToken
+                ),
             cancellationToken
         );
     }
@@ -136,9 +136,9 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                 cancellationToken: cancellationToken
                             )
                             .ToValueTaskResultOnly()
-                            .ConfigureAwait(false)
-                )
-                .ConfigureAwait(false),
+                            .ConfigureAwait(false),
+                    cancellationToken
+                ),
             cancellationToken
         );
     }
@@ -166,10 +166,11 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                             reply => converter.Convert<ToDoShortItem[]>(reply.Parents)
                                 .IfSuccess(p => p.ToReadOnlyMemory().ToResult())
                                 .ToValueTaskResult()
-                                .ConfigureAwait(false)
-                        )
-                )
-                .ConfigureAwait(false),
+                                .ConfigureAwait(false),
+                            cancellationToken
+                        ),
+                    cancellationToken
+                ),
             cancellationToken
         );
     }
@@ -197,8 +198,10 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                 reply => converter.Convert<Guid[]>(reply.Ids)
                                     .IfSuccess(ids => ids.ToReadOnlyMemory().ToResult())
                                     .ToValueTaskResult()
-                                    .ConfigureAwait(false)
-                            )
+                                    .ConfigureAwait(false),
+                                cancellationToken
+                            ),
+                        cancellationToken
                     ),
             cancellationToken
         );
@@ -228,10 +231,11 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                 reply => converter.Convert<Guid[]>(reply.Ids)
                                     .IfSuccess(ids => ids.ToReadOnlyMemory().ToResult())
                                     .ToValueTaskResult()
-                                    .ConfigureAwait(false)
-                            )
-                )
-                .ConfigureAwait(false),
+                                    .ConfigureAwait(false),
+                                cancellationToken
+                            ),
+                    cancellationToken
+                ),
             cancellationToken
         );
     }
@@ -254,10 +258,11 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                             .ToValueTaskResultValueOnly()
                             .ConfigureAwait(false)
                             .IfSuccessAsync(
-                                reply => converter.Convert<ToDoItem>(reply).ToValueTaskResult().ConfigureAwait(false)
-                            )
-                )
-                .ConfigureAwait(false),
+                                reply => converter.Convert<ToDoItem>(reply).ToValueTaskResult().ConfigureAwait(false),
+                                cancellationToken
+                            ),
+                    cancellationToken
+                ),
             cancellationToken
         );
     }
@@ -289,10 +294,11 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                             .ToResult()
                                     )
                                     .ToValueTaskResult()
-                                    .ConfigureAwait(false)
-                            )
-                )
-                .ConfigureAwait(false),
+                                    .ConfigureAwait(false),
+                                cancellationToken
+                            ),
+                    cancellationToken
+                ),
             cancellationToken
         );
     }
@@ -321,10 +327,11 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                 reply => converter.Convert<ToDoShortItem[]>(reply.Items)
                                     .IfSuccess(items => items.ToReadOnlyMemory().ToResult())
                                     .ToValueTaskResult()
-                                    .ConfigureAwait(false)
-                            )
-                )
-                .ConfigureAwait(false),
+                                    .ConfigureAwait(false),
+                                cancellationToken
+                            ),
+                    cancellationToken
+                ),
             cancellationToken
         );
     }
@@ -344,8 +351,10 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                 reply => converter.Convert<Guid[]>(reply.Ids)
                                     .IfSuccess(ids => ids.ToReadOnlyMemory().ToResult())
                                     .ToValueTaskResult()
-                                    .ConfigureAwait(false)
-                            )
+                                    .ConfigureAwait(false),
+                                cancellationToken
+                            ),
+                    cancellationToken
                 ),
             cancellationToken
         );
@@ -370,8 +379,10 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                 reply => converter.Convert<Guid[]>(reply.Ids)
                                     .IfSuccess(ids => ids.ToReadOnlyMemory().ToResult())
                                     .ToValueTaskResult()
-                                    .ConfigureAwait(false)
-                            )
+                                    .ConfigureAwait(false),
+                                cancellationToken
+                            ),
+                    cancellationToken
                 ),
             cancellationToken
         );
@@ -395,10 +406,11 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                             .ToValueTaskResultValueOnly()
                             .ConfigureAwait(false)
                             .IfSuccessAsync(
-                                id => converter.Convert<Guid>(id.Id).ToValueTaskResult().ConfigureAwait(false)
-                            )
-                )
-                .ConfigureAwait(false),
+                                id => converter.Convert<Guid>(id.Id).ToValueTaskResult().ConfigureAwait(false),
+                                cancellationToken
+                            ),
+                    cancellationToken
+                ),
             cancellationToken
         );
     }
@@ -422,10 +434,11 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                 .ToValueTaskResultValueOnly()
                                 .ConfigureAwait(false)
                                 .IfSuccessAsync(
-                                    id => converter.Convert<Guid>(id.Id).ToValueTaskResult().ConfigureAwait(false)
-                                )
-                    )
-                    .ConfigureAwait(false),
+                                    id => converter.Convert<Guid>(id.Id).ToValueTaskResult().ConfigureAwait(false),
+                                    cancellationToken
+                                ),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -447,9 +460,9 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                     cancellationToken: cancellationToken
                                 )
                                 .ToValueTaskResultOnly()
-                                .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                                .ConfigureAwait(false),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -476,9 +489,9 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                     cancellationToken: cancellationToken
                                 )
                                 .ToValueTaskResultOnly()
-                                .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                                .ConfigureAwait(false),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -506,9 +519,9 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                     cancellationToken: cancellationToken
                                 )
                                 .ToValueTaskResultOnly()
-                                .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                                .ConfigureAwait(false),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -535,9 +548,9 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                     cancellationToken: cancellationToken
                                 )
                                 .ToValueTaskResultOnly()
-                                .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                                .ConfigureAwait(false),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -564,9 +577,9 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                     cancellationToken: cancellationToken
                                 )
                                 .ToValueTaskResultOnly()
-                                .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                                .ConfigureAwait(false),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -588,9 +601,9 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                     cancellationToken: cancellationToken
                                 )
                                 .ToValueTaskResultOnly()
-                                .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                                .ConfigureAwait(false),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -617,9 +630,9 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                     cancellationToken: cancellationToken
                                 )
                                 .ToValueTaskResultOnly()
-                                .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                                .ConfigureAwait(false),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -646,9 +659,9 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                     cancellationToken: cancellationToken
                                 )
                                 .ToValueTaskResultOnly()
-                                .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                                .ConfigureAwait(false),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -670,9 +683,9 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                     cancellationToken: cancellationToken
                                 )
                                 .ToValueTaskResultOnly()
-                                .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                                .ConfigureAwait(false),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -697,9 +710,9 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                     cancellationToken: cancellationToken
                                 )
                                 .ToValueTaskResultOnly()
-                                .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                                .ConfigureAwait(false),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -726,9 +739,9 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                     cancellationToken: cancellationToken
                                 )
                                 .ToValueTaskResultOnly()
-                                .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                                .ConfigureAwait(false),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -753,8 +766,10 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                     reply => converter.Convert<Guid[]>(reply.Ids)
                                         .IfSuccess(ids => ids.ToReadOnlyMemory().ToResult())
                                         .ToValueTaskResult()
-                                        .ConfigureAwait(false)
-                                )
+                                        .ConfigureAwait(false),
+                                    cancellationToken
+                                ),
+                        cancellationToken
                     ),
             cancellationToken
         );
@@ -783,9 +798,9 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                     cancellationToken: cancellationToken
                                 )
                                 .ToValueTaskResultOnly()
-                                .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                                .ConfigureAwait(false),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -813,9 +828,9 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                     cancellationToken: cancellationToken
                                 )
                                 .ToValueTaskResultOnly()
-                                .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                                .ConfigureAwait(false),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -843,9 +858,9 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                     cancellationToken: cancellationToken
                                 )
                                 .ToValueTaskResultOnly()
-                                .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                                .ConfigureAwait(false),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -876,11 +891,12 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                     reply => converter.Convert<ToDoSelectorItem[]>(reply.Items)
                                         .IfSuccess(items => items.ToReadOnlyMemory().ToResult())
                                         .ToValueTaskResult()
-                                        .ConfigureAwait(false)
+                                        .ConfigureAwait(false),
+                                    cancellationToken
                                 );
-                        }
-                    )
-                    .ConfigureAwait(false),
+                        },
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -908,9 +924,9 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                     cancellationToken: cancellationToken
                                 )
                                 .ToValueTaskResultOnly()
-                                .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                                .ConfigureAwait(false),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -932,9 +948,9 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                     cancellationToken: cancellationToken
                                 )
                                 .ToValueTaskResultOnly()
-                                .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                                .ConfigureAwait(false),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -958,10 +974,11 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                 .ToValueTaskResultValueOnly()
                                 .ConfigureAwait(false)
                                 .IfSuccessAsync(
-                                    reply => reply.Value.ToResult().ToValueTaskResult().ConfigureAwait(false)
-                                )
-                    )
-                    .ConfigureAwait(false),
+                                    reply => reply.Value.ToResult().ToValueTaskResult().ConfigureAwait(false),
+                                    cancellationToken
+                                ),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -988,9 +1005,9 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                     cancellationToken: cancellationToken
                                 )
                                 .ToValueTaskResultOnly()
-                                .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                                .ConfigureAwait(false),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -1017,9 +1034,9 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                     cancellationToken: cancellationToken
                                 )
                                 .ToValueTaskResultOnly()
-                                .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                                .ConfigureAwait(false),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -1046,9 +1063,9 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                     cancellationToken: cancellationToken
                                 )
                                 .ToValueTaskResultOnly()
-                                .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                                .ConfigureAwait(false),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -1075,9 +1092,9 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                     cancellationToken: cancellationToken
                                 )
                                 .ToValueTaskResultOnly()
-                                .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                                .ConfigureAwait(false),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -1104,9 +1121,9 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                     cancellationToken: cancellationToken
                                 )
                                 .ToValueTaskResultOnly()
-                                .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                                .ConfigureAwait(false),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -1136,10 +1153,11 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                     items => converter.Convert<ToDoShortItem[]>(items.Items)
                                         .IfSuccess(it => it.ToReadOnlyMemory().ToResult())
                                         .ToValueTaskResult()
-                                        .ConfigureAwait(false)
-                                )
-                    )
-                    .ConfigureAwait(false),
+                                        .ConfigureAwait(false),
+                                    cancellationToken
+                                ),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -1163,8 +1181,10 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                 .IfSuccessAsync(
                                     reply => converter.Convert<ActiveToDoItem?>(reply.Item)
                                         .ToValueTaskResult()
-                                        .ConfigureAwait(false)
-                                )
+                                        .ConfigureAwait(false),
+                                    cancellationToken
+                                ),
+                        cancellationToken
                     ),
             cancellationToken
         );
@@ -1193,9 +1213,9 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                     cancellationToken: cancellationToken
                                 )
                                 .ToValueTaskResultOnly()
-                                .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                                .ConfigureAwait(false),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -1224,10 +1244,11 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                 .IfSuccessAsync(
                                     reply => converter.Convert<PlannedToDoItemSettings>(reply)
                                         .ToValueTaskResult()
-                                        .ConfigureAwait(false)
-                                )
-                    )
-                    .ConfigureAwait(false),
+                                        .ConfigureAwait(false),
+                                    cancellationToken
+                                ),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -1256,10 +1277,11 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                 .IfSuccessAsync(
                                     reply => converter.Convert<ValueToDoItemSettings>(reply)
                                         .ToValueTaskResult()
-                                        .ConfigureAwait(false)
-                                )
-                    )
-                    .ConfigureAwait(false),
+                                        .ConfigureAwait(false),
+                                    cancellationToken
+                                ),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -1288,10 +1310,11 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                 .IfSuccessAsync(
                                     reply => converter.Convert<PeriodicityToDoItemSettings>(reply)
                                         .ToValueTaskResult()
-                                        .ConfigureAwait(false)
-                                )
-                    )
-                    .ConfigureAwait(false),
+                                        .ConfigureAwait(false),
+                                    cancellationToken
+                                ),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -1320,10 +1343,11 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                 .IfSuccessAsync(
                                     reply => converter.Convert<WeeklyPeriodicity>(reply)
                                         .ToValueTaskResult()
-                                        .ConfigureAwait(false)
-                                )
-                    )
-                    .ConfigureAwait(false),
+                                        .ConfigureAwait(false),
+                                    cancellationToken
+                                ),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -1352,10 +1376,11 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                 .IfSuccessAsync(
                                     reply => converter.Convert<MonthlyPeriodicity>(reply)
                                         .ToValueTaskResult()
-                                        .ConfigureAwait(false)
-                                )
-                    )
-                    .ConfigureAwait(false),
+                                        .ConfigureAwait(false),
+                                    cancellationToken
+                                ),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -1384,10 +1409,11 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                 .IfSuccessAsync(
                                     reply => converter.Convert<AnnuallyPeriodicity>(reply)
                                         .ToValueTaskResult()
-                                        .ConfigureAwait(false)
-                                )
-                    )
-                    .ConfigureAwait(false),
+                                        .ConfigureAwait(false),
+                                    cancellationToken
+                                ),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
@@ -1417,10 +1443,11 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                 .IfSuccessAsync(
                                     reply => converter.Convert<PeriodicityOffsetToDoItemSettings>(reply)
                                         .ToValueTaskResult()
-                                        .ConfigureAwait(false)
-                                )
-                    )
-                    .ConfigureAwait(false),
+                                        .ConfigureAwait(false),
+                                    cancellationToken
+                                ),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }

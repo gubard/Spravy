@@ -48,17 +48,19 @@ public class ToDoItemDayOfWeekSelectorViewModel : ViewModelBase, IApplySettings
         return ToDoService.GetWeeklyPeriodicityAsync(ToDoItemId, cancellationToken)
             .IfSuccessAsync(
                 weeklyPeriodicity => Result.AwaitableFalse.IfSuccessAllAsync(
-                        Items.Where(x => weeklyPeriodicity.Days.Contains(x.DayOfWeek))
-                            .Select<DayOfWeekSelectItem, Func<ConfiguredValueTaskAwaitable<Result>>>(
-                                x =>
-                                {
-                                    var y = x;
+                    cancellationToken,
+                    Items.Where(x => weeklyPeriodicity.Days.Contains(x.DayOfWeek))
+                        .Select<DayOfWeekSelectItem, Func<ConfiguredValueTaskAwaitable<Result>>>(
+                            x =>
+                            {
+                                var y = x;
 
-                                    return () => this.InvokeUIBackgroundAsync(() => y.IsSelected = true);
-                                }
-                            )
-                            .ToArray()
-                    )
+                                return () => this.InvokeUIBackgroundAsync(() => y.IsSelected = true);
+                            }
+                        )
+                        .ToArray()
+                ),
+                cancellationToken
             );
     }
 

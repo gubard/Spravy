@@ -34,7 +34,7 @@ public class MultiToDoItemsViewModel : ViewModelBase
     {
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
     }
-    
+
     public ICommand InitializedCommand { get; }
     public AvaloniaList<GroupBy> GroupBys { get; } = new(Enum.GetValues<GroupBy>());
 
@@ -123,7 +123,7 @@ public class MultiToDoItemsViewModel : ViewModelBase
 
     [Reactive]
     public object? Content { get; set; }
-    
+
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         this.WhenAnyValue(x => x.IsMulti).Subscribe(x => Content = x ? MultiToDoItems : ToDoItems);
@@ -255,7 +255,8 @@ public class MultiToDoItemsViewModel : ViewModelBase
                 () => SwitchCompleteToDoItemCore(property, cancellationToken),
                 () => this.InvokeUIBackgroundAsync(() => property.IsBusy = false)
                     .ToValueTask()
-                    .ConfigureAwait(false)
+                    .ConfigureAwait(false),
+                cancellationToken
             );
     }
 
@@ -274,14 +275,14 @@ public class MultiToDoItemsViewModel : ViewModelBase
                         true,
                         cancellationToken
                     )
-                    .IfSuccessAsync(() => CommandStorage.RefreshCurrentViewAsync(cancellationToken));
+                    .IfSuccessAsync(() => CommandStorage.RefreshCurrentViewAsync(cancellationToken), cancellationToken);
             case ToDoItemIsCan.CanIncomplete:
                 return ToDoService.UpdateToDoItemCompleteStatusAsync(
                         property.Id,
                         false,
                         cancellationToken
                     )
-                    .IfSuccessAsync(() => CommandStorage.RefreshCurrentViewAsync(cancellationToken));
+                    .IfSuccessAsync(() => CommandStorage.RefreshCurrentViewAsync(cancellationToken), cancellationToken);
             default:
                 return new Result(new ValueOutOfRangeError(property.IsCan)).ToValueTaskResult().ConfigureAwait(false);
         }

@@ -32,7 +32,10 @@ public class GrpcScheduleService : GrpcServiceBase<ScheduleServiceClient>,
         this.metadataFactory = metadataFactory;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> AddTimerAsync(AddTimerParameters parameters, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> AddTimerAsync(
+        AddTimerParameters parameters,
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             client =>
@@ -41,14 +44,16 @@ public class GrpcScheduleService : GrpcServiceBase<ScheduleServiceClient>,
                         converter.Convert<AddTimerRequest>(parameters),
                         (value, request) => client.AddTimerAsync(request, value)
                             .ToValueTaskResultOnly()
-                            .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                            .ConfigureAwait(false),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<TimerItem>>> GetListTimesAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<TimerItem>>> GetListTimesAsync(
+        CancellationToken cancellationToken
+    )
     {
         return CallClientAsync(
             client =>
@@ -62,8 +67,10 @@ public class GrpcScheduleService : GrpcServiceBase<ScheduleServiceClient>,
                                     timers => converter.Convert<TimerItem[]>(timers.Items)
                                         .IfSuccess(items => items.ToReadOnlyMemory().ToResult())
                                         .ToValueTaskResult()
-                                        .ConfigureAwait(false)
-                                )
+                                        .ConfigureAwait(false),
+                                    cancellationToken
+                                ),
+                        cancellationToken
                     ),
             cancellationToken
         );
@@ -85,9 +92,9 @@ public class GrpcScheduleService : GrpcServiceBase<ScheduleServiceClient>,
                                     value
                                 )
                                 .ToValueTaskResultOnly()
-                                .ConfigureAwait(false)
-                    )
-                    .ConfigureAwait(false),
+                                .ConfigureAwait(false),
+                        cancellationToken
+                    ),
             cancellationToken
         );
     }

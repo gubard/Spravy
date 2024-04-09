@@ -38,8 +38,8 @@ public class AddRootToDoItemViewModel : NavigatableViewModelBase
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
-        return ObjectStorage.GetObjectOrDefaultAsync<AddRootToDoItemViewModelSetting>(ViewId)
-            .IfSuccessAsync(SetStateAsync);
+        return ObjectStorage.GetObjectOrDefaultAsync<AddRootToDoItemViewModelSetting>(ViewId, cancellationToken)
+            .IfSuccessAsync(obj => SetStateAsync(obj, cancellationToken), cancellationToken);
     }
 
     public override Result Stop()
@@ -47,25 +47,29 @@ public class AddRootToDoItemViewModel : NavigatableViewModelBase
         return Result.Success;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync()
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
     {
         return ObjectStorage.SaveObjectAsync(ViewId, new AddRootToDoItemViewModelSetting(this));
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting)
+    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
+        object setting,
+        CancellationToken cancellationToken
+    )
     {
         return setting.CastObject<AddRootToDoItemViewModelSetting>()
             .IfSuccessAsync(
                 s => this.InvokeUIBackgroundAsync(
-                        () =>
-                        {
-                            ToDoItemContent.Name = s.Name;
-                            ToDoItemContent.Type = s.Type;
-                            ToDoItemContent.Link = s.Link;
-                            DescriptionContent.Description = s.Description;
-                            DescriptionContent.Type = s.DescriptionType;
-                        }
-                    )
+                    () =>
+                    {
+                        ToDoItemContent.Name = s.Name;
+                        ToDoItemContent.Type = s.Type;
+                        ToDoItemContent.Link = s.Link;
+                        DescriptionContent.Description = s.Description;
+                        DescriptionContent.Type = s.DescriptionType;
+                    }
+                ),
+                cancellationToken
             );
     }
 

@@ -37,7 +37,10 @@ public class DialogViewer : IDialogViewer
         }
 
         return this.InvokeUIBackgroundAsync(() => setupView.Invoke(content))
-            .IfSuccessAsync(() => ShowView(content, ContentDialogHostIdentifier).ConfigureAwait(false));
+            .IfSuccessAsync(
+                () => ShowView(content, ContentDialogHostIdentifier).ConfigureAwait(false),
+                cancellationToken
+            );
     }
 
     public ConfiguredValueTaskAwaitable<Result> ShowProgressDialogAsync<TView>(
@@ -54,7 +57,10 @@ public class DialogViewer : IDialogViewer
         }
 
         return this.InvokeUIBackgroundAsync(() => setupView.Invoke(content))
-            .IfSuccessAsync(() => ShowView(content, ProgressDialogHostIdentifier).ConfigureAwait(false));
+            .IfSuccessAsync(
+                () => ShowView(content, ProgressDialogHostIdentifier).ConfigureAwait(false),
+                cancellationToken
+            );
     }
 
     public ConfiguredValueTaskAwaitable<Result> ShowErrorDialogAsync<TView>(
@@ -71,7 +77,10 @@ public class DialogViewer : IDialogViewer
         }
 
         return this.InvokeUIBackgroundAsync(() => setupView.Invoke(content))
-            .IfSuccessAsync(() => ShowView(content, ErrorDialogHostIdentifier).ConfigureAwait(false));
+            .IfSuccessAsync(
+                () => ShowView(content, ErrorDialogHostIdentifier).ConfigureAwait(false),
+                cancellationToken
+            );
     }
 
     public ConfiguredValueTaskAwaitable<Result> ShowInfoErrorDialogAsync<TView>(
@@ -93,7 +102,8 @@ public class DialogViewer : IDialogViewer
                     cancellationToken.ThrowIfCancellationRequested();
 
                     return ShowView(infoViewModel, ErrorDialogHostIdentifier).ConfigureAwait(false);
-                }
+                },
+                cancellationToken
             );
     }
 
@@ -116,7 +126,8 @@ public class DialogViewer : IDialogViewer
                     cancellationToken.ThrowIfCancellationRequested();
 
                     return ShowView(infoViewModel, InputDialogHostIdentifier).ConfigureAwait(false);
-                }
+                },
+                cancellationToken
             );
     }
 
@@ -137,7 +148,8 @@ public class DialogViewer : IDialogViewer
                     cancellationToken.ThrowIfCancellationRequested();
 
                     return ShowView(infoViewModel, ContentDialogHostIdentifier).ConfigureAwait(false);
-                }
+                },
+                cancellationToken
             );
     }
 
@@ -155,38 +167,41 @@ public class DialogViewer : IDialogViewer
         }
 
         return this.InvokeUIBackgroundAsync(() => setupView.Invoke(content))
-            .IfSuccessAsync(() => ShowView(content, InputDialogHostIdentifier).ConfigureAwait(false));
+            .IfSuccessAsync(
+                () => ShowView(content, InputDialogHostIdentifier).ConfigureAwait(false),
+                cancellationToken
+            );
     }
 
     public ConfiguredValueTaskAwaitable<Result> CloseProgressDialogAsync(CancellationToken cancellationToken)
     {
-        return SafeClose(ProgressDialogHostIdentifier);
+        return SafeClose(ProgressDialogHostIdentifier, cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result<bool>> CloseLastDialogAsync(CancellationToken cancellationToken)
     {
         if (DialogHost.IsDialogOpen(ProgressDialogHostIdentifier))
         {
-            return SafeClose(ProgressDialogHostIdentifier)
-                .IfSuccessAsync(() => true.ToResult().ToValueTaskResult().ConfigureAwait(false));
+            return SafeClose(ProgressDialogHostIdentifier, cancellationToken)
+                .IfSuccessAsync(() => true.ToResult().ToValueTaskResult().ConfigureAwait(false), cancellationToken);
         }
 
         if (DialogHost.IsDialogOpen(ErrorDialogHostIdentifier))
         {
-            return SafeClose(ErrorDialogHostIdentifier)
-                .IfSuccessAsync(() => true.ToResult().ToValueTaskResult().ConfigureAwait(false));
+            return SafeClose(ErrorDialogHostIdentifier, cancellationToken)
+                .IfSuccessAsync(() => true.ToResult().ToValueTaskResult().ConfigureAwait(false), cancellationToken);
         }
 
         if (DialogHost.IsDialogOpen(InputDialogHostIdentifier))
         {
-            return SafeClose(InputDialogHostIdentifier)
-                .IfSuccessAsync(() => true.ToResult().ToValueTaskResult().ConfigureAwait(false));
+            return SafeClose(InputDialogHostIdentifier, cancellationToken)
+                .IfSuccessAsync(() => true.ToResult().ToValueTaskResult().ConfigureAwait(false), cancellationToken);
         }
 
         if (DialogHost.IsDialogOpen(ContentDialogHostIdentifier))
         {
-            return SafeClose(ContentDialogHostIdentifier)
-                .IfSuccessAsync(() => true.ToResult().ToValueTaskResult().ConfigureAwait(false));
+            return SafeClose(ContentDialogHostIdentifier, cancellationToken)
+                .IfSuccessAsync(() => true.ToResult().ToValueTaskResult().ConfigureAwait(false), cancellationToken);
         }
 
         return false.ToResult().ToValueTaskResult().ConfigureAwait(false);
@@ -212,7 +227,8 @@ public class DialogViewer : IDialogViewer
                     cancellationToken.ThrowIfCancellationRequested();
 
                     return ShowView(confirmViewModel, ContentDialogHostIdentifier).ConfigureAwait(false);
-                }
+                },
+                cancellationToken
             );
     }
 
@@ -236,23 +252,24 @@ public class DialogViewer : IDialogViewer
                     cancellationToken.ThrowIfCancellationRequested();
 
                     return ShowView(confirmViewModel, InputDialogHostIdentifier).ConfigureAwait(false);
-                }
+                },
+                cancellationToken
             );
     }
 
     public ConfiguredValueTaskAwaitable<Result> CloseContentDialogAsync(CancellationToken cancellationToken)
     {
-        return SafeClose(ContentDialogHostIdentifier);
+        return SafeClose(ContentDialogHostIdentifier, cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> CloseErrorDialogAsync(CancellationToken cancellationToken)
     {
-        return SafeClose(ErrorDialogHostIdentifier);
+        return SafeClose(ErrorDialogHostIdentifier, cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> CloseInputDialogAsync(CancellationToken cancellationToken)
     {
-        return SafeClose(InputDialogHostIdentifier);
+        return SafeClose(InputDialogHostIdentifier, cancellationToken);
     }
 
     private ValueTask<Result> ShowView(object content, string identifier)
@@ -270,7 +287,7 @@ public class DialogViewer : IDialogViewer
         );
     }
 
-    private ConfiguredValueTaskAwaitable<Result> SafeClose(string identifier)
+    private ConfiguredValueTaskAwaitable<Result> SafeClose(string identifier, CancellationToken cancellationToken)
     {
         if (!DialogHost.IsDialogOpen(identifier))
         {
@@ -284,14 +301,16 @@ public class DialogViewer : IDialogViewer
                 {
                     if (content is ISaveState saveState)
                     {
-                        return saveState.SaveStateAsync();
+                        return saveState.SaveStateAsync(cancellationToken);
                     }
 
                     return Result.AwaitableFalse;
-                }
+                },
+                cancellationToken
             )
             .IfSuccessAsync(
-                () => this.InvokeUIBackgroundAsync(() => DialogHost.Close(identifier))
+                () => this.InvokeUIBackgroundAsync(() => DialogHost.Close(identifier)),
+                cancellationToken
             );
     }
 }

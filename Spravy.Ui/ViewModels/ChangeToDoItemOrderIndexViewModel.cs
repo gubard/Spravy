@@ -51,7 +51,7 @@ public class ChangeToDoItemOrderIndexViewModel : ViewModelBase
                             Items.Clear();
                             Items.AddRange(Mapper.Map<ToDoShortItemNotify[]>(items.ToArray()));
                         }
-                    )
+                    ),cancellationToken
             );
     }
 }
