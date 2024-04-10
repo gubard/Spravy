@@ -20,7 +20,8 @@
         <ListBox Classes="wrap-panel" ItemsSource="{Binding ChildrenTypes}" SelectedItem="{Binding ChildrenType}" />
         <TextBlock Classes="field"
                    Text="{DynamicResource PeriodicityToDoItemSettingsView.DueDate}" />
-        <DatePicker SelectedDate="{Binding DueDate, Converter={StaticResource DateTimeOffsetToDateOnlyValueConverter}}" />
+        <CalendarDatePicker
+            SelectedDate="{Binding DueDate, Converter={StaticResource DateTimeToDateOnlyValueConverter}}" />
         <TextBlock Classes="field"
                    Text="{DynamicResource PeriodicityToDoItemSettingsView.RequiredCompleteInDueDate}" />
         <ToggleSwitch IsChecked="{Binding IsRequiredCompleteInDueDate}" />

@@ -28,8 +28,8 @@
             <ControlTemplate>
                 <Grid ColumnDefinitions="*,Auto"
                       Background="{TemplateBinding Background}">
-                    <DatePicker Name="{x:Static controls:NullableDatePicker.DatePickerPartName}"
-                                SelectedDate="{TemplateBinding SelectedDate, Mode=TwoWay}" />
+                    <CalendarDatePicker Name="{x:Static controls:NullableDatePicker.DatePickerPartName}"
+                                        SelectedDate="{TemplateBinding SelectedDate, Mode=TwoWay}" />
 
                     <Button Grid.Column="1"
                             Name="{x:Static controls:NullableDatePicker.ClearButtonPartName}">

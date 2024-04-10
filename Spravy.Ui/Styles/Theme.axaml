@@ -23,4 +23,5 @@
     <StyleInclude Source="Expander.axaml" />
     <StyleInclude Source="ContentControl.axaml" />
     <StyleInclude Source="ScrollViewer.axaml" />
+    <StyleInclude Source="CalendarDatePicker.axaml" />
 </Styles>
