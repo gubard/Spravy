@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,9 +16,20 @@ namespace Spravy.Ui.ViewModels;
 public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 {
     private IRefresh? refreshToDoItem;
+    private readonly MultiToDoItemsViewModel list;
 
     [Inject]
-    public required MultiToDoItemsViewModel List { get; init; }
+    public required MultiToDoItemsViewModel List
+    {
+        get => list;
+        [MemberNotNull(nameof(list))]
+        init
+        {
+            list?.Dispose();
+            list = value;
+            Disposables.Add(list);
+        }
+    }
 
     [Inject]
     public required IToDoService ToDoService { get; init; }

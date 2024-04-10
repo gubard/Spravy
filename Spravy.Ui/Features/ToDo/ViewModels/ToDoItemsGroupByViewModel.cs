@@ -8,6 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows.Input;
+using DynamicData;
 using ReactiveUI.Fody.Helpers;
 using Spravy.Domain.Models;
 using Spravy.Ui.Services;
@@ -17,6 +18,7 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 public class ToDoItemsGroupByViewModel : ViewModelBase
 {
     private readonly ToDoItemsGroupByStatusViewModel groupByStatus;
+    private readonly ToDoItemsGroupByTypeViewModel groupByType;
 
     public ToDoItemsGroupByViewModel()
     {
@@ -35,13 +37,25 @@ public class ToDoItemsGroupByViewModel : ViewModelBase
         [MemberNotNull(nameof(groupByStatus))]
         init
         {
+            groupByStatus?.Dispose();
             groupByStatus = value;
             Content = groupByStatus;
+            Disposables.Add(groupByStatus);
         }
     }
 
     [Inject]
-    public required ToDoItemsGroupByTypeViewModel GroupByType { get; init; }
+    public required ToDoItemsGroupByTypeViewModel GroupByType
+    {
+        get => groupByType;
+        [MemberNotNull(nameof(groupByType))]
+        init
+        {
+            groupByType?.Dispose();
+            groupByType = value;
+            Disposables.Add(groupByType);
+        }
+    }
 
     [Reactive]
     public GroupBy GroupBy { get; set; } = GroupBy.ByStatus;

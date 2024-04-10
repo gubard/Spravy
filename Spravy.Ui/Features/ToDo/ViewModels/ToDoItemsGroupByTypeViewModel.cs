@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Ninject;
 using Spravy.ToDo.Domain.Enums;
+using Spravy.Ui.Features.Localizations.Models;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.Features.ToDo.ViewModels;
@@ -25,8 +26,10 @@ public class ToDoItemsGroupByTypeViewModel : ViewModelBase
         [MemberNotNull(nameof(values))]
         init
         {
+            values?.Dispose();
             values = value;
-            values.Header = "Values";
+            values.Header = new TextView("ToDoItemsGroupByTypeView.Values");
+            Disposables.Add(values);
         }
     }
 
@@ -37,8 +40,10 @@ public class ToDoItemsGroupByTypeViewModel : ViewModelBase
         [MemberNotNull(nameof(groups))]
         init
         {
+            groups?.Dispose();
             groups = value;
-            groups.Header = "Groups";
+            groups.Header = new TextView("ToDoItemsGroupByTypeView.Groups");
+            Disposables.Add(groups);
         }
     }
 
@@ -49,8 +54,10 @@ public class ToDoItemsGroupByTypeViewModel : ViewModelBase
         [MemberNotNull(nameof(planneds))]
         init
         {
+            planneds?.Dispose();
             planneds = value;
-            planneds.Header = "Planneds";
+            planneds.Header = new TextView("ToDoItemsGroupByTypeView.Planneds");
+            Disposables.Add(planneds);
         }
     }
 
@@ -61,8 +68,10 @@ public class ToDoItemsGroupByTypeViewModel : ViewModelBase
         [MemberNotNull(nameof(periodicitys))]
         init
         {
+            periodicitys?.Dispose();
             periodicitys = value;
-            periodicitys.Header = "Periodicitys";
+            periodicitys.Header = new TextView("ToDoItemsGroupByTypeView.Periodicitys");
+            Disposables.Add(periodicitys);
         }
     }
 
@@ -73,8 +82,10 @@ public class ToDoItemsGroupByTypeViewModel : ViewModelBase
         [MemberNotNull(nameof(periodicityOffsets))]
         init
         {
+            periodicityOffsets?.Dispose();
             periodicityOffsets = value;
-            periodicityOffsets.Header = "PeriodicityOffsets";
+            periodicityOffsets.Header = new TextView("ToDoItemsGroupByTypeView.PeriodicityOffsets");
+            Disposables.Add(periodicityOffsets);
         }
     }
 
@@ -85,8 +96,10 @@ public class ToDoItemsGroupByTypeViewModel : ViewModelBase
         [MemberNotNull(nameof(circles))]
         init
         {
+            circles?.Dispose();
             circles = value;
-            circles.Header = "Circles";
+            circles.Header = new TextView("ToDoItemsGroupByTypeView.Circles");
+            Disposables.Add(circles);
         }
     }
 
@@ -97,8 +110,10 @@ public class ToDoItemsGroupByTypeViewModel : ViewModelBase
         [MemberNotNull(nameof(steps))]
         init
         {
+            steps?.Dispose();
             steps = value;
-            steps.Header = "Steps";
+            steps.Header = new TextView("ToDoItemsGroupByTypeView.Steps");
+            Disposables.Add(steps);
         }
     }
 

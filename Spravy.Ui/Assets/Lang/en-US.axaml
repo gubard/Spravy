@@ -1,6 +1,24 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=System.Runtime">
+    <!--ToDoItemsGroupByTypeView-->
+    <sys:String x:Key="ToDoItemsGroupByTypeView.Values">Completed</sys:String>
+    <sys:String x:Key="ToDoItemsGroupByTypeView.Groups">Groups</sys:String>
+    <sys:String x:Key="ToDoItemsGroupByTypeView.Planneds">Planneds</sys:String>
+    <sys:String x:Key="ToDoItemsGroupByTypeView.Periodicitys">Periodicitys</sys:String>
+    <sys:String x:Key="ToDoItemsGroupByTypeView.PeriodicityOffsets">PeriodicityOffsets</sys:String>
+    <sys:String x:Key="ToDoItemsGroupByTypeView.Circles">Circles</sys:String>
+    <sys:String x:Key="ToDoItemsGroupByTypeView.Steps">Steps</sys:String>
+
+    <!--ToDoItemsGroupByStatusView-->
+    <sys:String x:Key="ToDoItemsGroupByStatusView.Completed">Completed</sys:String>
+    <sys:String x:Key="ToDoItemsGroupByStatusView.Planned">Planned</sys:String>
+    <sys:String x:Key="ToDoItemsGroupByStatusView.ReadyForCompleted">ReadyForCompleted</sys:String>
+    <sys:String x:Key="ToDoItemsGroupByStatusView.Missed">Missed</sys:String>
+
+    <!--ToDoItemsGroupByNoneView-->
+    <sys:String x:Key="ToDoItemsGroupByNoneView.Header">Items</sys:String>
+
     <!--DeletePasswordItemView-->
     <sys:String x:Key="DeletePasswordItemView.Header">Are you sure you want to delete "{PasswordItemName}"?</sys:String>
 
@@ -64,6 +82,7 @@
     <!--MultiToDoItemsView-->
     <sys:String x:Key="MultiToDoItemsView.IsMulti">Select a few</sys:String>
     <sys:String x:Key="MultiToDoItemsView.GroupBy">Group by</sys:String>
+    <sys:String x:Key="MultiToDoItemsView.Favorite">Favorite</sys:String>
 
     <!--ToDoItemType-->
     <sys:String x:Key="ToDoItemType.Value">Value</sys:String>

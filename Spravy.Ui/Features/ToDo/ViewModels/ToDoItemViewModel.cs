@@ -60,6 +60,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
         [MemberNotNull(nameof(toDoSubItemsViewModel))]
         init
         {
+            toDoSubItemsViewModel?.Dispose();
             toDoSubItemsViewModel = value;
 
             Disposables.Add(
@@ -67,6 +68,8 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
                     .Skip(1)
                     .Subscribe(_ => UpdateCommandsAsync(CancellationToken.None))
             );
+
+            Disposables.Add(toDoSubItemsViewModel);
         }
     }
 

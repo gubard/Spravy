@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Ninject;
 using Spravy.ToDo.Domain.Enums;
+using Spravy.Ui.Features.Localizations.Models;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.Features.ToDo.ViewModels;
@@ -23,7 +24,7 @@ public class ToDoItemsGroupByStatusViewModel : ViewModelBase
         init
         {
             missed = value;
-            missed.Header = "Missed";
+            missed.Header = new TextView("ToDoItemsGroupByStatusView.Missed");
         }
     }
 
@@ -35,7 +36,7 @@ public class ToDoItemsGroupByStatusViewModel : ViewModelBase
         init
         {
             readyForCompleted = value;
-            readyForCompleted.Header = "ReadyForCompleted";
+            readyForCompleted.Header = new TextView("ToDoItemsGroupByStatusView.ReadyForCompleted");
         }
     }
 
@@ -47,7 +48,7 @@ public class ToDoItemsGroupByStatusViewModel : ViewModelBase
         init
         {
             planned = value;
-            planned.Header = "Planned";
+            planned.Header = new TextView("ToDoItemsGroupByStatusView.Planned");
         }
     }
 
@@ -59,7 +60,7 @@ public class ToDoItemsGroupByStatusViewModel : ViewModelBase
         init
         {
             completed = value;
-            completed.Header = "Completed";
+            completed.Header = new TextView("ToDoItemsGroupByStatusView.Completed");
         }
     }
 

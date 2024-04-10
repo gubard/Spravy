@@ -17,6 +17,7 @@ using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.Extensions;
+using Spravy.Ui.Features.Localizations.Models;
 using Spravy.Ui.Features.ToDo.Enums;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
@@ -51,8 +52,10 @@ public class MultiToDoItemsViewModel : ViewModelBase
         [MemberNotNull(nameof(favorite))]
         init
         {
+            favorite?.Dispose();
             favorite = value;
-            favorite.Header = "Favorite";
+            favorite.Header = new TextView("MultiToDoItemsView.Favorite");
+            Disposables.Add(favorite);
         }
     }
 
@@ -63,8 +66,10 @@ public class MultiToDoItemsViewModel : ViewModelBase
         [MemberNotNull(nameof(toDoItems))]
         init
         {
+            favorite?.Dispose();
             toDoItems = value;
             Content = toDoItems;
+            Disposables.Add(favorite);
         }
     }
 
@@ -126,26 +131,18 @@ public class MultiToDoItemsViewModel : ViewModelBase
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
-        this.WhenAnyValue(x => x.IsMulti).Subscribe(x => Content = x ? MultiToDoItems : ToDoItems);
+        Disposables.Add(this.WhenAnyValue(x => x.IsMulti).Subscribe(x => Content = x ? MultiToDoItems : ToDoItems));
 
-        this.WhenAnyValue(x => x.GroupBy)
-            .Subscribe(
-                x =>
-                {
-                    if (ToDoItems is null)
+        Disposables.Add(
+            this.WhenAnyValue(x => x.GroupBy)
+                .Subscribe(
+                    x =>
                     {
-                        return;
+                        ToDoItems.GroupBy = x;
+                        MultiToDoItems.GroupBy = x;
                     }
-
-                    if (MultiToDoItems is null)
-                    {
-                        return;
-                    }
-
-                    ToDoItems.GroupBy = x;
-                    MultiToDoItems.GroupBy = x;
-                }
-            );
+                )
+        );
 
         return Result.AwaitableFalse;
     }
