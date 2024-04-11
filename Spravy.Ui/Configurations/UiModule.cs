@@ -91,6 +91,7 @@ public class UiModule : NinjectModule
             .ToMethod(_ => new WindowNotificationManager(Application.Current.ThrowIfNull().GetTopLevel()));
 
         Bind<AccountNotify>().ToSelf().InSingletonScope();
+        Bind<IErrorHandler>().To<ErrorHandler>();
         Bind<ISerializer>().To<ProtobufSerializer>();
         Bind<IConverter>().To<AutoMapperConverter>();
         Bind<ISpravyNotificationManager>().To<NotificationManager>();
