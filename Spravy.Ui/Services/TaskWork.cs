@@ -14,14 +14,14 @@ namespace Spravy.Ui.Services;
 public class TaskWork
 {
     private readonly Delegate del;
-    private readonly IDialogViewer dialogViewer;
+    private readonly IErrorHandler errorHandler;
     private CancellationTokenSource cancellationTokenSource = new();
     private ConfiguredValueTaskAwaitable<Result>? current;
 
-    private TaskWork(Delegate del, IDialogViewer dialogViewer)
+    private TaskWork(Delegate del, IErrorHandler errorHandler)
     {
         this.del = del;
-        this.dialogViewer = dialogViewer;
+        this.errorHandler = errorHandler;
     }
 
     public ConfiguredValueTaskAwaitable<Result> Current => current.ThrowIfNullStruct();
@@ -31,40 +31,18 @@ public class TaskWork
         Cancel();
         current = (ConfiguredValueTaskAwaitable<Result>)del.DynamicInvoke(cancellationTokenSource.Token).ThrowIfNull();
         var result = await Current;
-
-        if (result.IsHasError)
-        {
-            await dialogViewer.ShowInfoErrorDialogAsync<ErrorViewModel>(
-                _ => dialogViewer.CloseErrorDialogAsync(CancellationToken.None)
-                    .IfSuccessAsync(
-                        () => dialogViewer.CloseProgressDialogAsync(CancellationToken.None),
-                        CancellationToken.None
-                    ),
-                viewModel => viewModel.ValidationResults.AddRange(result.Errors.ToArray()),
-                CancellationToken.None
-            );
-        }
+        await errorHandler.ErrorsHandleAsync(result.Errors, CancellationToken.None);
     }
 
     public async Task RunAsync<T>(T value)
     {
         Cancel();
+
         current = (ConfiguredValueTaskAwaitable<Result>)del.DynamicInvoke(value, cancellationTokenSource.Token)
             .ThrowIfNull();
-        var result = await Current;
 
-        if (result.IsHasError)
-        {
-            await dialogViewer.ShowInfoErrorDialogAsync<ErrorViewModel>(
-                _ => dialogViewer.CloseErrorDialogAsync(CancellationToken.None)
-                    .IfSuccessAsync(
-                        () => dialogViewer.CloseProgressDialogAsync(CancellationToken.None),
-                        CancellationToken.None
-                    ),
-                viewModel => viewModel.ValidationResults.AddRange(result.Errors.ToArray()),
-                CancellationToken.None
-            );
-        }
+        var result = await Current;
+        await errorHandler.ErrorsHandleAsync(result.Errors, CancellationToken.None);
     }
 
     public void Cancel()
@@ -75,11 +53,11 @@ public class TaskWork
 
     public static TaskWork Create(Func<CancellationToken, ConfiguredValueTaskAwaitable<Result>> task)
     {
-        return new(task, DiHelper.Kernel.ThrowIfNull().Get<IDialogViewer>());
+        return new(task, DiHelper.Kernel.ThrowIfNull().Get<IErrorHandler>());
     }
 
     public static TaskWork Create<T>(Func<T, CancellationToken, ConfiguredValueTaskAwaitable<Result>> task)
     {
-        return new(task, DiHelper.Kernel.ThrowIfNull().Get<IDialogViewer>());
+        return new(task, DiHelper.Kernel.ThrowIfNull().Get<IErrorHandler>());
     }
 }

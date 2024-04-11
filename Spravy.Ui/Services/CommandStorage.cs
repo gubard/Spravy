@@ -53,6 +53,8 @@ public static class CommandStorage
         dialogViewer = kernel.Get<IDialogViewer>();
         mainSplitViewModel = kernel.Get<MainSplitViewModel>();
         toDoService = kernel.Get<IToDoService>();
+        errorHandler = kernel.Get<IErrorHandler>();
+
         SwitchPaneItem = CreateCommand(SwitchPaneAsync, MaterialIconKind.Menu, "Open pane");
         NavigateToToDoItemItem = CreateCommand<Guid>(NavigateToToDoItemAsync, MaterialIconKind.ListBox, "Open");
         SwitchCompleteToDoItemItem = CreateCommand<ICanCompleteProperty>(
@@ -303,6 +305,7 @@ public static class CommandStorage
     private static readonly IClipboardService clipboard;
     private static readonly IPasswordService passwordService;
     private static readonly ISpravyNotificationManager spravyNotificationManager;
+    private static readonly IErrorHandler errorHandler;
 
     public static ICommand RemovePasswordItemCommand => RemovePasswordItemItem.Command;
     public static CommandItem RemovePasswordItemItem { get; }
@@ -1747,39 +1750,6 @@ public static class CommandStorage
 
     private static async void OnNextError(Exception exception)
     {
-        if (exception is TaskCanceledException)
-        {
-            return;
-        }
-
-        if (exception is RpcException rpc)
-        {
-            switch (rpc.StatusCode)
-            {
-                case StatusCode.Cancelled:
-                    return;
-            }
-        }
-
-        if (exception is GrpcException { InnerException: RpcException rpc2 })
-        {
-            switch (rpc2.StatusCode)
-            {
-                case StatusCode.Cancelled:
-                    return;
-            }
-        }
-
-        Log.Logger.Error(exception, "UI error");
-
-        await dialogViewer.ShowInfoErrorDialogAsync<ExceptionViewModel>(
-            _ => dialogViewer.CloseErrorDialogAsync(CancellationToken.None)
-                .IfSuccessAsync(
-                    () => dialogViewer.CloseProgressDialogAsync(CancellationToken.None),
-                    CancellationToken.None
-                ),
-            viewModel => viewModel.Exception = exception,
-            CancellationToken.None
-        );
+        await errorHandler.ExceptionHandleAsync(exception, CancellationToken.None);
     }
 }

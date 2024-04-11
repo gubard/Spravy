@@ -19,7 +19,7 @@ public class ViewModelBase : NotifyBase
     public required INavigator Navigator { get; init; }
 
     [Inject]
-    public required IDialogViewer DialogViewer { get; set; }
+    public required IErrorHandler ErrorHandler { get; set; }
 
     protected ICommand CreateInitializedCommand(Func<Task> execute)
     {
@@ -71,39 +71,6 @@ public class ViewModelBase : NotifyBase
 
     private async void OnNextError(Exception exception)
     {
-        if (exception is TaskCanceledException)
-        {
-            return;
-        }
-
-        if (exception is RpcException rpc)
-        {
-            switch (rpc.StatusCode)
-            {
-                case StatusCode.Cancelled:
-                    return;
-            }
-        }
-
-        if (exception is GrpcException { InnerException: RpcException rpc2 })
-        {
-            switch (rpc2.StatusCode)
-            {
-                case StatusCode.Cancelled:
-                    return;
-            }
-        }
-
-        Log.Logger.Error(exception, "UI error");
-
-        await DialogViewer.ShowInfoErrorDialogAsync<ExceptionViewModel>(
-            _ => DialogViewer.CloseErrorDialogAsync(CancellationToken.None)
-                .IfSuccessAsync(
-                    () => DialogViewer.CloseProgressDialogAsync(CancellationToken.None),
-                    CancellationToken.None
-                ),
-            viewModel => viewModel.Exception = exception,
-            CancellationToken.None
-        );
+        await ErrorHandler.ExceptionHandleAsync(exception, CancellationToken.None);
     }
 }
