@@ -75,8 +75,13 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
     public string Password { get; set; } = string.Empty;
 
     public ICommand InitializedCommand { get; }
+
+    [Reactive]
     public ICommand EnterCommand { get; protected set; }
+
+    [Reactive]
     public ICommand LoginCommand { get; protected set; }
+
     public override string ViewId => TypeCache<LoginViewModel>.Type.Name;
 
     public IEnumerable GetErrors(string? propertyName)

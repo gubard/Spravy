@@ -46,10 +46,6 @@ public class SettingViewModel : NavigatableViewModelBase
     }
 
     public override string ViewId => TypeCache<SettingViewModel>.Type.Name;
-    public ICommand ChangePasswordCommand { get; protected set; }
-    public ICommand DeleteAccountCommand { get; protected set; }
-    public ICommand SwitchToColorThemeCommand { get; protected set; }
-    public ICommand SaveSettingsCommand { get; protected set; }
     public ICommand InitializedCommand { get; }
     public string Version => Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? string.Empty;
     public AvaloniaList<Selected<SukiColorTheme>> AvailableColors { get; }
@@ -75,6 +71,18 @@ public class SettingViewModel : NavigatableViewModelBase
             Disposables.Add(pageHeaderViewModel);
         }
     }
+
+    [Reactive]
+    public ICommand ChangePasswordCommand { get; protected set; }
+
+    [Reactive]
+    public ICommand DeleteAccountCommand { get; protected set; }
+
+    [Reactive]
+    public ICommand SwitchToColorThemeCommand { get; protected set; }
+
+    [Reactive]
+    public ICommand SaveSettingsCommand { get; protected set; }
 
     [Reactive]
     public bool IsBusy { get; set; }

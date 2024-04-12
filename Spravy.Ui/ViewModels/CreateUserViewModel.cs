@@ -49,9 +49,13 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
     [Inject]
     public required IAuthenticationService AuthenticationService { get; init; }
 
-    public ICommand EnterCommand { get; protected set; }
-    public ICommand CreateUserCommand { get; protected set; }
     public override string ViewId => TypeCache<CreateUserViewModel>.Type.Name;
+
+    [Reactive]
+    public ICommand EnterCommand { get; protected set; }
+
+    [Reactive]
+    public ICommand CreateUserCommand { get; protected set; }
 
     [Reactive]
     public bool IsBusy { get; set; }

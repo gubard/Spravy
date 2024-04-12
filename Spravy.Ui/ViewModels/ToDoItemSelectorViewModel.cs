@@ -33,10 +33,12 @@ public class ToDoItemSelectorViewModel : ViewModelBase
 
     public AvaloniaList<ToDoSelectorItemNotify> Roots { get; } = new();
     public ICommand InitializedCommand { get; }
-    public ICommand SearchCommand { get; protected set; }
     public List<Guid> IgnoreIds { get; } = new();
 
     public Guid DefaultSelectedItemId { get; set; }
+
+    [Reactive]
+    public ICommand SearchCommand { get; protected set; }
 
     [Reactive]
     public string SearchText { get; set; } = string.Empty;

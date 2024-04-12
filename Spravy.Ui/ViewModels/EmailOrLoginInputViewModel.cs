@@ -25,13 +25,15 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
 
     public ICommand InitializedCommand { get; }
     public override string ViewId => TypeCache<EmailOrLoginInputViewModel>.Type.Name;
-    public ICommand ForgotPasswordCommand { get; protected set; }
 
     [Inject]
     public required IObjectStorage ObjectStorage { get; init; }
 
     [Inject]
     public required IAuthenticationService AuthenticationService { get; init; }
+
+    [Reactive]
+    public ICommand ForgotPasswordCommand { get; protected set; }
 
     [Reactive]
     public bool IsBusy { get; set; }

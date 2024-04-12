@@ -25,9 +25,11 @@ public class ForgotPasswordViewModel : NavigatableViewModelBase, IVerificationEm
     [Inject]
     public required IAuthenticationService AuthenticationService { get; init; }
 
-    public ICommand ForgotPasswordCommand { get; protected set; }
     public override string ViewId => TypeCache<ForgotPasswordViewModel>.Type.Name;
     public ICommand InitializedCommand { get; }
+
+    [Reactive]
+    public ICommand ForgotPasswordCommand { get; protected set; }
 
     [Reactive]
     public string Identifier { get; set; } = string.Empty;

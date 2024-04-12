@@ -33,9 +33,11 @@ public class DeleteAccountViewModel : NavigatableViewModelBase
     [Reactive]
     public string Identifier { get; set; } = string.Empty;
 
+    [Reactive]
+    public ICommand DeleteAccountCommand { get; protected set; }
+
     public override string ViewId => TypeCache<DeleteAccountViewModel>.Type.Name;
     public ICommand InitializedCommand { get; }
-    public ICommand DeleteAccountCommand { get; protected set; }
 
     public override Result Stop()
     {
