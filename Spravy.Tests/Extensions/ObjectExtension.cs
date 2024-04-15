@@ -215,7 +215,9 @@ public static class ObjectExtension
 
     public static TObject RunJobsAll<TObject>(this TObject obj)
     {
-        var count = 0;
+        Dispatcher.UIThread.RunJobs();
+        return obj;
+        /*var count = 0;
         obj.RunJobsInvalid();
         obj.RunJobsInactive();
 
@@ -236,7 +238,7 @@ public static class ObjectExtension
             }
         }
 
-        return obj;
+        return obj;*/
     }
 
     public static TObject RunJobsAll<TObject>(this TObject obj, ulong count)
