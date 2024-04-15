@@ -13,3 +13,4 @@ tools/
 *.pfx
 storage/
 *.binlog
+*.DotSettings

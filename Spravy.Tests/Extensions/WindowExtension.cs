@@ -92,6 +92,17 @@ public static class WindowExtension
         return window.RunJobsAll().SaveFrame(FileHelper.GetFrameShortFile());
     }
 
+    public static TWindow LogCurrentState<TWindow>(this TWindow window) where TWindow : Window
+    {
+        var mainContent = window.Find<ContentControl>("MainContent");
+        var errorDialogHost = window.Find<DialogHost>("ErrorDialogHost");
+        var progressDialogHost = window.Find<DialogHost>("ProgressDialogHost");
+        var inputDialogHost = window.Find<DialogHost>("InputDialogHost");
+        var contentDialogHost = window.Find<DialogHost>("ContentDialogHost");
+
+        return window;
+    }
+
     public static async Task<TWindow> SaveFrameAsync<TWindow>(this Task<TWindow> task)
         where TWindow : Window
     {
@@ -103,9 +114,9 @@ public static class WindowExtension
     public static TWindow SaveFrame<TWindow>(this TWindow window, FileInfo file)
         where TWindow : Window
     {
-        Console.WriteLine($"Capturing rendered frame");
+        Console.WriteLine("Capturing rendered frame");
         using var bitmap = window.CaptureRenderedFrame().ThrowIfNull();
-        Console.WriteLine($"Captured rendered frame");
+        Console.WriteLine("Captured rendered frame");
         Console.WriteLine($"Saving rendered frame to {file}");
         file.Directory.ThrowIfNull().Create();
         bitmap.Save(file.FullName);
@@ -201,7 +212,7 @@ public static class WindowExtension
             .Skip(1)
             .Single()
             .ThrowIfIsNotCast<Panel>()
-            .Children
+            .Children   
             .Should()
             .HaveCount(2)
             .And

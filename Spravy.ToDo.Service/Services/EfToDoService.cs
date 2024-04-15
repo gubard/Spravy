@@ -133,7 +133,7 @@ public class EfToDoService : IToDoService
             {
                 var item = await c.FindAsync<ToDoItemEntity>(id);
                 item = item.ThrowIfNull();
-                await CircleCompletionAsync(context, item, cancellationToken);
+                await CircleCompletionAsync(context, item, false, cancellationToken);
                 await StepCompletionAsync(context, item, cancellationToken);
             },
             cancellationToken
@@ -665,7 +665,7 @@ public class EfToDoService : IToDoService
 
                     UpdateDueDate(item, offset, cancellationToken);
                     item.LastCompleted = DateTimeOffset.Now;
-                    await CircleCompletionAsync(context, item, cancellationToken);
+                    await CircleCompletionAsync(context, item, true, cancellationToken);
                     await StepCompletionAsync(context, item, cancellationToken);
                 }
                 else
@@ -711,33 +711,39 @@ public class EfToDoService : IToDoService
     private async ValueTask<Result> CircleCompletionAsync(
         SpravyDbToDoDbContext context,
         ToDoItemEntity item,
+        bool moveCircleOrderIndex,
         CancellationToken cancellationToken
     )
     {
-        var children = await context.Set<ToDoItemEntity>()
+        var circleChildren = await context.Set<ToDoItemEntity>()
             .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Circle)
             .OrderBy(x => x.OrderIndex)
             .ToArrayAsync(cancellationToken);
 
-        var childrenOrderIndexCount = children.DistinctBy(x => x.OrderIndex).Count();
+        var childrenOrderIndexCount = circleChildren.DistinctBy(x => x.OrderIndex).Count();
 
-        if (childrenOrderIndexCount != children.Length)
+        if (childrenOrderIndexCount != circleChildren.Length)
         {
             await NormalizeOrderIndexAsync(context, item.Id, cancellationToken);
 
-            children = await context.Set<ToDoItemEntity>()
+            circleChildren = await context.Set<ToDoItemEntity>()
                 .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Circle)
                 .OrderBy(x => x.OrderIndex)
                 .ToArrayAsync(cancellationToken);
         }
 
-        if (children.Length != 0)
+        if (circleChildren.Length != 0)
         {
-            var next = children.FirstOrDefault(x => x.OrderIndex > item.CurrentCircleOrderIndex);
-            var nextOrderIndex = next?.OrderIndex ?? children.First().OrderIndex;
-            item.CurrentCircleOrderIndex = nextOrderIndex;
+            var nextOrderIndex = item.CurrentCircleOrderIndex;
 
-            foreach (var child in children)
+            if (moveCircleOrderIndex)
+            {
+                var next = circleChildren.FirstOrDefault(x => x.OrderIndex > item.CurrentCircleOrderIndex);
+                nextOrderIndex = next?.OrderIndex ?? circleChildren.First().OrderIndex;
+                item.CurrentCircleOrderIndex = nextOrderIndex;
+            }
+
+            foreach (var child in circleChildren)
             {
                 child.IsCompleted = child.OrderIndex != nextOrderIndex;
             }
@@ -750,45 +756,7 @@ public class EfToDoService : IToDoService
 
         foreach (var group in groups)
         {
-            await CircleCompletionAsync(context, group, cancellationToken);
-        }
-
-        return Result.Success;
-    }
-
-    private async ValueTask<Result> CircleSkipAsync(
-        SpravyDbToDoDbContext context,
-        ToDoItemEntity item,
-        CancellationToken cancellationToken
-    )
-    {
-        var children = await context.Set<ToDoItemEntity>()
-            .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Circle)
-            .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync(cancellationToken);
-
-        if (children.Length != 0)
-        {
-            var next = children.SingleOrDefault(x => x.OrderIndex == item.CurrentCircleOrderIndex)
-                       ?? children.FirstOrDefault(x => x.OrderIndex > item.CurrentCircleOrderIndex);
-
-            var nextOrderIndex = next?.OrderIndex ?? children.First().OrderIndex;
-            item.CurrentCircleOrderIndex = nextOrderIndex;
-
-            foreach (var child in children)
-            {
-                child.IsCompleted = child.OrderIndex != nextOrderIndex;
-            }
-        }
-
-        var groups = await context.Set<ToDoItemEntity>()
-            .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Group)
-            .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync(cancellationToken);
-
-        foreach (var group in groups)
-        {
-            await CircleCompletionAsync(context, group, cancellationToken);
+            await CircleCompletionAsync(context, group, moveCircleOrderIndex, cancellationToken);
         }
 
         return Result.Success;

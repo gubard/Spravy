@@ -109,7 +109,7 @@ public class MainWindowTests
                     )
                     .Case(() => w.GetCurrentView<VerificationCodeView, VerificationCodeViewModel>())
                     .SaveFrame(),
-                (w, _) => w.SaveFrame()
+                (w, _) => w.SaveFrame().LogCurrentState()
             );
 
         Console.WriteLine($"End test: {nameof(CreateUserFlow)}");
