@@ -24,11 +24,16 @@ public class ResetToDoItemViewModel : NavigatableViewModelBase
 
     public ICommand InitializedCommand { get; }
     [Reactive] public Guid Id { get; set; }
-    [Reactive] public bool IsCompleteTask { get; set; }
+    [Reactive] public bool IsCompleteCurrentTask { get; set; }
+    [Reactive] public bool IsCompleteChildrenTask { get; set; }
     [Reactive] public bool IsMoveCircleOrderIndex { get; set; } = true;
     [Reactive] public bool IsOnlyCompletedTasks { get; set; }
     [Inject] public required IObjectStorage ObjectStorage { get; init; }
-    public override string ViewId => $"{TypeCache<ResetToDoItemViewModel>.Type.Name}:{Id}";
+
+    public override string ViewId
+    {
+        get => $"{TypeCache<ResetToDoItemViewModel>.Type.Name}:{Id}";
+    }
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
@@ -51,9 +56,10 @@ public class ResetToDoItemViewModel : NavigatableViewModelBase
                 s => this.InvokeUIBackgroundAsync(
                     () =>
                     {
-                        IsCompleteTask = s.IsCompleteTask;
+                        IsCompleteChildrenTask = s.IsCompleteTask;
                         IsMoveCircleOrderIndex = s.IsMoveCircleOrderIndex;
                         IsOnlyCompletedTasks = s.IsOnlyCompletedTasks;
+                        IsCompleteCurrentTask = s.IsCompleteCurrentTask;
                     }
                 ),
                 cancellationToken
@@ -70,9 +76,10 @@ public class ResetToDoItemViewModel : NavigatableViewModelBase
     {
         public ResetToDoItemViewModelSetting(ResetToDoItemViewModel viewModel)
         {
-            IsCompleteTask = viewModel.IsCompleteTask;
+            IsCompleteTask = viewModel.IsCompleteChildrenTask;
             IsMoveCircleOrderIndex = viewModel.IsMoveCircleOrderIndex;
             IsOnlyCompletedTasks = viewModel.IsOnlyCompletedTasks;
+            IsCompleteCurrentTask = viewModel.IsCompleteCurrentTask;
         }
 
         public ResetToDoItemViewModelSetting()
@@ -83,5 +90,6 @@ public class ResetToDoItemViewModel : NavigatableViewModelBase
         [ProtoMember(1)] public bool IsCompleteTask { get; set; }
         [ProtoMember(2)] public bool IsMoveCircleOrderIndex { get; set; } = true;
         [ProtoMember(3)] public bool IsOnlyCompletedTasks { get; set; }
+        [ProtoMember(4)] public bool IsCompleteCurrentTask { get; set; }
     }
 }

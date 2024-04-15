@@ -15,10 +15,12 @@
     </Interaction.Behaviors>
 
     <StackPanel>
-        <CheckBox IsChecked="{Binding IsCompleteTask}" Content="{DynamicResource ResetToDoItemView.CompleteTask}" />
+        <CheckBox IsChecked="{Binding IsCompleteChildrenTask}" Content="{DynamicResource ResetToDoItemView.CompleteTask}" />
         <CheckBox IsChecked="{Binding IsMoveCircleOrderIndex}"
                   Content="{DynamicResource ResetToDoItemView.MoveCircleOrderIndex}" />
         <CheckBox IsChecked="{Binding IsOnlyCompletedTasks}"
+                  Content="{DynamicResource ResetToDoItemView.OnlyCompletedTasks}" />
+        <CheckBox IsChecked="{Binding IsCompleteCurrentTask}"
                   Content="{DynamicResource ResetToDoItemView.OnlyCompletedTasks}" />
     </StackPanel>
 </ru:ReactiveUserControl>

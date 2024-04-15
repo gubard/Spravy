@@ -138,7 +138,7 @@ public class EfToDoService : IToDoService
                 var item = await c.FindAsync<ToDoItemEntity>(options.Id);
                 item = item.ThrowIfNull();
 
-                if (options.IsCompleteTask)
+                if (options.IsCompleteCurrentTask)
                 {
                     item.IsCompleted = true;
                     UpdateDueDate(item, offset, cancellationToken);
@@ -148,12 +148,12 @@ public class EfToDoService : IToDoService
                     context,
                     item,
                     options.IsMoveCircleOrderIndex,
-                    options.IsCompleteTask,
+                    options.IsCompleteChildrenTask,
                     options.IsOnlyCompletedTasks,
                     cancellationToken
                 );
 
-                await StepCompletionAsync(context, item, options.IsCompleteTask, cancellationToken);
+                await StepCompletionAsync(context, item, options.IsCompleteChildrenTask, cancellationToken);
             },
             cancellationToken
         );

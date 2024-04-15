@@ -5,6 +5,7 @@
     <sys:String x:Key="ResetToDoItemView.CompleteTask">Complete task</sys:String>
     <sys:String x:Key="ResetToDoItemView.MoveCircleOrderIndex">Move circle order index</sys:String>
     <sys:String x:Key="ResetToDoItemView.OnlyCompletedTasks">Only completed tasks</sys:String>
+    <sys:String x:Key="ResetToDoItemView.CompleteCurrentTask">Complete current task</sys:String>
 
     <!--ToDoItemsGroupByTypeView-->
     <sys:String x:Key="ToDoItemsGroupByTypeView.Values">Completed</sys:String>

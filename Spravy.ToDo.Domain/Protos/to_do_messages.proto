@@ -41,6 +41,7 @@ message ResetToDoItemRequest {
   bool IsCompleteTask = 2;
   bool IsMoveCircleOrderIndex = 3;
   bool IsOnlyCompletedTasks = 4;
+  bool IsCompleteCurrentTask = 5;
 }
 
 message ResetToDoItemReply {
