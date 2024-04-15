@@ -11,7 +11,6 @@ public static class WindowHelper
     public static Window CreateWindow()
     {
         var window = DiHelper.Kernel.ThrowIfNull().Get<IDesktopTopLevelControl>().As<Window>().ThrowIfNull();
-        Console.WriteLine($"Create window: {window.Name}");
 
         return window;
     }

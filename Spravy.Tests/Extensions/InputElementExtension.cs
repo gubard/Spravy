@@ -12,9 +12,7 @@ public static class InputElementExtension
     )
         where TInputElement : InputElement
     {
-        Console.WriteLine($"Focusing {inputElement.Name}");
         inputElement.Focus(method, keyModifiers);
-        Console.WriteLine($"Focused {inputElement.Name}");
 
         return inputElement;
     }

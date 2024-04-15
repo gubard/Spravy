@@ -131,9 +131,7 @@ public static class ObjectExtension
 
     public static TObject RunJobsInactive<TObject>(this TObject obj)
     {
-        Console.WriteLine($"Running job {nameof(DispatcherPriority.Inactive)}");
         Dispatcher.UIThread.RunJobs(DispatcherPriority.Inactive);
-        Console.WriteLine($"Running job {nameof(DispatcherPriority.Inactive)}");
 
         return obj;
     }
@@ -161,9 +159,7 @@ public static class ObjectExtension
 
     public static TObject RunJobsInvalid<TObject>(this TObject obj)
     {
-        Console.WriteLine($"Running job {nameof(DispatcherPriority.Invalid)}");
         Dispatcher.UIThread.RunJobs(DispatcherPriority.Invalid);
-        Console.WriteLine($"End job {nameof(DispatcherPriority.Invalid)}");
 
         return obj;
     }
@@ -235,9 +231,7 @@ public static class ObjectExtension
                 }
                 else
                 {
-                    Console.WriteLine($"Running job {dispatcherPriority.Value}");
                     Dispatcher.UIThread.RunJobs(dispatcherPriority);
-                    Console.WriteLine($"End job {dispatcherPriority.Value}");
                 }
             }
         }

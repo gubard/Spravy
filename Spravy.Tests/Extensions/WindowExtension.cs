@@ -79,7 +79,6 @@ public static class WindowExtension
     public static TWindow SetSize<TWindow>(this TWindow window, double width, double height)
         where TWindow : Window
     {
-        Console.WriteLine($"Change window size from {window.Width}x{window.Height} to {width}x{height}");
         window.Width = width;
         window.Height = height;
         window.RunJobsAll();
@@ -110,22 +109,16 @@ public static class WindowExtension
     public static TWindow SaveFrame<TWindow>(this TWindow window, FileInfo file)
         where TWindow : Window
     {
-        Console.WriteLine("Capturing rendered frame");
         using var bitmap = window.CaptureRenderedFrame().ThrowIfNull();
-        Console.WriteLine("Captured rendered frame");
-        Console.WriteLine($"Saving rendered frame to {file}");
         file.Directory.ThrowIfNull().Create();
         bitmap.Save(file.FullName);
-        Console.WriteLine($"Saved rendered frame to {file}");
 
         return window;
     }
 
     public static TWindow Show<TWindow>(this TWindow window) where TWindow : Window
     {
-        Console.WriteLine($"Showing {window.Name}");
         window.Show();
-        Console.WriteLine($"Showed {window.Name}");
 
         return window;
     }

@@ -9,7 +9,6 @@ public static class ButtonExtension
 {
     public static Button ClickOnButton(this Button button, Window window)
     {
-        Console.WriteLine($"Clicking on {button.Name}");
         var position = button.TranslatePoint(new Point(0, 0), window).ThrowIfNullStruct().Center(button.Bounds);
         window.SpravyMouseMove(position, RawInputModifiers.None);
         window.RunJobsAll();
@@ -17,7 +16,6 @@ public static class ButtonExtension
         window.RunJobsAll();
         window.SpravyMouseUp(position, MouseButton.Left, RawInputModifiers.None);
         window.RunJobsAll();
-        Console.WriteLine($"Clicked on {button.Name}");
 
         return button;
     }

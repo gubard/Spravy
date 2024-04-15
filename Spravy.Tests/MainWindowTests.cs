@@ -14,8 +14,6 @@ public class MainWindowTests
     [AvaloniaFact]
     public void CreateUserFlow()
     {
-        Console.WriteLine($"Start test: {nameof(CreateUserFlow)}");
-
         WindowHelper.CreateWindow()
             .TryCatch(
                 w => w.SetSize(1000, 1000)
@@ -113,7 +111,6 @@ public class MainWindowTests
                 (w, _) => w.SaveFrame().LogCurrentState()
             );
 
-        Console.WriteLine($"End test: {nameof(CreateUserFlow)}");
         /*using var imapClient = new ImapClient(
                                    TestAppBuilder.Configuration.GetSection("EmailServer:Host").Value,
                                    TestAppBuilder.Configuration.GetSection("EmailAccount:Email").Value,
