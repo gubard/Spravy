@@ -586,7 +586,7 @@ public static class CommandStorage
         CancellationToken cancellationToken
     )
     {
-        return dialogViewer.ShowConfirmContentDialogAsync(
+        return dialogViewer.ShowConfirmContentDialogAsync<ResetToDoItemViewModel>(
             vm => dialogViewer.CloseContentDialogAsync(cancellationToken)
                 .IfSuccessAsync(
                     () => toDoService.ResetToDoItemAsync(mapper.Map<ResetToDoItemOptions>(vm), cancellationToken),
@@ -594,7 +594,7 @@ public static class CommandStorage
                 )
                 .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
             _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
-            ActionHelper<ResetToDoItemViewModel>.Empty,
+            vm => vm.Id = property.Id,
             cancellationToken
         );
     }
