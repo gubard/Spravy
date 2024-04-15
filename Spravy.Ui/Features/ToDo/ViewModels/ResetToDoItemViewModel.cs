@@ -26,6 +26,7 @@ public class ResetToDoItemViewModel : NavigatableViewModelBase
     [Reactive] public Guid Id { get; set; }
     [Reactive] public bool IsCompleteTask { get; set; }
     [Reactive] public bool IsMoveCircleOrderIndex { get; set; } = true;
+    [Reactive] public bool IsOnlyCompletedTasks { get; set; }
     [Inject] public required IObjectStorage ObjectStorage { get; init; }
     public override string ViewId => $"{TypeCache<ResetToDoItemViewModel>.Type.Name}:{Id}";
 
@@ -52,6 +53,7 @@ public class ResetToDoItemViewModel : NavigatableViewModelBase
                     {
                         IsCompleteTask = s.IsCompleteTask;
                         IsMoveCircleOrderIndex = s.IsMoveCircleOrderIndex;
+                        IsOnlyCompletedTasks = s.IsOnlyCompletedTasks;
                     }
                 ),
                 cancellationToken
@@ -70,6 +72,7 @@ public class ResetToDoItemViewModel : NavigatableViewModelBase
         {
             IsCompleteTask = viewModel.IsCompleteTask;
             IsMoveCircleOrderIndex = viewModel.IsMoveCircleOrderIndex;
+            IsOnlyCompletedTasks = viewModel.IsOnlyCompletedTasks;
         }
 
         public ResetToDoItemViewModelSetting()
@@ -78,6 +81,7 @@ public class ResetToDoItemViewModel : NavigatableViewModelBase
 
 
         [ProtoMember(1)] public bool IsCompleteTask { get; set; }
-        [ProtoMember(2)] public bool IsMoveCircleOrderIndex { get; set; }
+        [ProtoMember(2)] public bool IsMoveCircleOrderIndex { get; set; } = true;
+        [ProtoMember(3)] public bool IsOnlyCompletedTasks { get; set; }
     }
 }
