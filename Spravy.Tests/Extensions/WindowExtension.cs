@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Headless;
@@ -94,6 +95,16 @@ public static class WindowExtension
     public static TWindow LogCurrentState<TWindow>(this TWindow window) where TWindow : Window
     {
         var controls = window.GetMainControls();
+        Console.WriteLine($"Content: {controls.Content}");
+        Console.WriteLine($"ContentDialogHost: {controls.ContentDialogHost.IsOpen}");
+        Console.WriteLine($"ErrorDialogHost: {controls.ErrorDialogHost.IsOpen}");
+        Console.WriteLine($"InputDialogHost: {controls.InputDialogHost.IsOpen}");
+        Console.WriteLine($"ProgressDialogHost: {controls.ProgressDialogHost.IsOpen}");
+
+        if (controls.Content is INotifyDataErrorInfo notifyDataErrorInfo)
+        {
+            Console.WriteLine($"HasError: {notifyDataErrorInfo.HasErrors}");
+        }
 
         return window;
     }
@@ -153,17 +164,17 @@ public static class WindowExtension
         ) GetMainControls(this Window window)
     {
         var errorDialogHost = window.GetErrorDialogHost();
-        
+
         var progressDialogHost = errorDialogHost.Content
             .ThrowIfNull()
             .ThrowIfIsNotCast<DialogHost>()
             .Case(dh => dh.Identifier.Should().Be("ProgressDialogHost"));
-        
+
         var inputDialogHost = progressDialogHost.Content
             .ThrowIfNull()
             .ThrowIfIsNotCast<DialogHost>()
             .Case(dh => dh.Identifier.Should().Be("InputDialogHost"));
-        
+
         var contentDialogHost = inputDialogHost.Content
             .ThrowIfNull()
             .ThrowIfIsNotCast<DialogHost>()
