@@ -19,34 +19,4 @@ public static class ButtonExtension
 
         return button;
     }
-
-    public static Button ClickOnButton(
-        this Button button,
-        Window window,
-        byte seconds,
-        Action predicate
-    )
-    {
-        return button.ClickOnButton(window).WaitSeconds(seconds, predicate);
-    }
-
-    public static T ClickOnButton<T>(
-        this Button button,
-        Window window,
-        byte seconds,
-        Func<T> predicate
-    )
-    {
-        return button.ClickOnButton(window).WaitSeconds(seconds, predicate);
-    }
-
-    public static Task<T> ClickOnButtonAsync<T>(
-        this Button button,
-        Window window,
-        byte seconds,
-        Func<T> predicate
-    )
-    {
-        return button.ClickOnButton(window).WaitSecondsAsync(seconds, predicate);
-    }
 }
