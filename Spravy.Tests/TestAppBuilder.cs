@@ -32,14 +32,14 @@ public class TestAppBuilder
 
         return AppBuilder.Configure<App>()
             .UseReactiveUI()
-            .WithShantellSansFont()
-            .WithInterFont()
+            .UseSkia()
             .UseHeadless(
                 new AvaloniaHeadlessPlatformOptions
                 {
                     UseHeadlessDrawing = false
                 }
             )
-            .UseSkia();
+            .WithShantellSansFont()
+            .WithInterFont();
     }
 }

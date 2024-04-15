@@ -94,11 +94,7 @@ public static class WindowExtension
 
     public static TWindow LogCurrentState<TWindow>(this TWindow window) where TWindow : Window
     {
-        var mainContent = window.Find<ContentControl>("MainContent");
-        var errorDialogHost = window.Find<DialogHost>("ErrorDialogHost");
-        var progressDialogHost = window.Find<DialogHost>("ProgressDialogHost");
-        var inputDialogHost = window.Find<DialogHost>("InputDialogHost");
-        var contentDialogHost = window.Find<DialogHost>("ContentDialogHost");
+        var controls = window.GetMainControls();
 
         return window;
     }
@@ -153,6 +149,52 @@ public static class WindowExtension
             .ThrowIfNull()
             .ThrowIfIsNotCast<DialogHost>()
             .Case(dh => dh.Identifier.Should().Be("ErrorDialogHost"));
+    }
+
+    public static (
+        DialogHost ErrorDialogHost,
+        DialogHost ProgressDialogHost,
+        DialogHost InputDialogHost,
+        DialogHost ContentDialogHost,
+        object Content
+        ) GetMainControls(this Window window)
+    {
+        var errorDialogHost = window.GetErrorDialogHost();
+        
+        var progressDialogHost = errorDialogHost.Content
+            .ThrowIfNull()
+            .ThrowIfIsNotCast<DialogHost>()
+            .Case(dh => dh.Identifier.Should().Be("ProgressDialogHost"));
+        
+        var inputDialogHost = progressDialogHost.Content
+            .ThrowIfNull()
+            .ThrowIfIsNotCast<DialogHost>()
+            .Case(dh => dh.Identifier.Should().Be("InputDialogHost"));
+        
+        var contentDialogHost = inputDialogHost.Content
+            .ThrowIfNull()
+            .ThrowIfIsNotCast<DialogHost>()
+            .Case(dh => dh.Identifier.Should().Be("ContentDialogHost"));
+
+        var content = contentDialogHost
+            .Content
+            .ThrowIfNull()
+            .ThrowIfIsNotCast<ContentControl>()
+            .GetVisualChildren()
+            .Single()
+            .ThrowIfIsNotCast<ContentPresenter>()
+            .Child
+            .ThrowIfNull()
+            .ThrowIfIsNotCast<MainSplitView>()
+            .Case(w => w.DataContext.ThrowIfNull().ThrowIfIsNotCast<MainSplitViewModel>())
+            .Content
+            .ThrowIfNull()
+            .ThrowIfIsNotCast<SplitView>()
+            .Case(sv => sv.Pane.ThrowIfNull().ThrowIfIsNotCast<PaneViewModel>())
+            .Content
+            .ThrowIfNull();
+
+        return (errorDialogHost, progressDialogHost, inputDialogHost, contentDialogHost, content);
     }
 
     public static TView GetCurrentView<TView, TViewModel>(this Window window)
@@ -212,7 +254,7 @@ public static class WindowExtension
             .Skip(1)
             .Single()
             .ThrowIfIsNotCast<Panel>()
-            .Children   
+            .Children
             .Should()
             .HaveCount(2)
             .And

@@ -245,6 +245,16 @@ public static class ObjectExtension
         return obj;
     }
 
+    public static TObject RunJobsAll<TObject>(this TObject obj, uint count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            obj.RunJobsAll();
+        }
+
+        return obj;
+    }
+
     public static TObject TryCatch<TObject>(this TObject obj, Action<TObject> @try, Action<TObject, Exception> @catch)
     {
         try

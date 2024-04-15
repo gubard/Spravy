@@ -22,11 +22,6 @@ public static class ButtonExtension
         return button;
     }
 
-    public static Button ClickOnButton(this Button button, Window window, byte seconds)
-    {
-        return button.ClickOnButton(window).WaitSeconds(seconds);
-    }
-
     public static Button ClickOnButton(
         this Button button,
         Window window,

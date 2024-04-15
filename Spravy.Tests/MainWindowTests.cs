@@ -14,7 +14,6 @@ public class MainWindowTests
     [AvaloniaFact]
     public void CreateUserFlow()
     {
-        return;
         Console.WriteLine($"Start test: {nameof(CreateUserFlow)}");
 
         WindowHelper.CreateWindow()
@@ -26,6 +25,7 @@ public class MainWindowTests
                                 () => w.GetCurrentView<LoginView, LoginViewModel>()
                                     .FindControl<Button>(ElementNames.CreateUserButton)
                                     .ThrowIfNull()
+                                    .RunJobsAll(256)
                                     .ClickOnButton(w)
                             )
                             .Case(
@@ -106,6 +106,7 @@ public class MainWindowTests
                             .ThrowIfNull()
                             .MustEnabled()
                             .ClickOnButton(w)
+                            .RunJobsAll(1024)
                     )
                     .Case(() => w.GetCurrentView<VerificationCodeView, VerificationCodeViewModel>())
                     .SaveFrame(),
