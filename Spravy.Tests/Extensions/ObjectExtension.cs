@@ -239,9 +239,9 @@ public static class ObjectExtension
         return obj;
     }
 
-    public static TObject RunJobsAll<TObject>(this TObject obj, uint count)
+    public static TObject RunJobsAll<TObject>(this TObject obj, ulong count)
     {
-        for (int i = 0; i < count; i++)
+        for (ulong i = 0; i < count; i++)
         {
             obj.RunJobsAll();
         }

@@ -23,7 +23,7 @@ public class MainWindowTests
                                 () => w.GetCurrentView<LoginView, LoginViewModel>()
                                     .FindControl<Button>(ElementNames.CreateUserButton)
                                     .ThrowIfNull()
-                                    .RunJobsAll(512)
+                                    .RunJobsAll(1ul << 9)
                                     .ClickOnButton(w)
                             )
                             .Case(
@@ -104,7 +104,7 @@ public class MainWindowTests
                             .ThrowIfNull()
                             .MustEnabled()
                             .ClickOnButton(w)
-                            .RunJobsAll(8192)
+                            .RunJobsAll(1ul << 15)
                     )
                     .Case(() => w.GetCurrentView<VerificationCodeView, VerificationCodeViewModel>())
                     .SaveFrame(),
