@@ -33,6 +33,7 @@ public class SpravyUiProfile : Profile
         CreateMap<ToDoItemViewModel, ToDoItemNotify>();
         CreateMap<PasswordItem, PasswordItemNotify>();
         CreateMap<AddPasswordItemViewModel, AddPasswordOptions>();
+        CreateMap<ResetToDoItemViewModel, ResetToDoItemOptions>();
 
         CreateMap<TimerItem, TimerItemNotify>()
             .ConvertUsing((item, _, context) => context.Mapper.Map<TimerItemToDoItemFavoriteNotify>(item));

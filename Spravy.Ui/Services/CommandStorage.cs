@@ -7,12 +7,9 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
-using Grpc.Core;
 using Material.Icons;
 using Ninject;
-using Serilog;
 using Spravy.Authentication.Domain.Interfaces;
-using Spravy.Client.Exceptions;
 using Spravy.Domain.Di.Helpers;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
@@ -25,7 +22,6 @@ using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.Enums;
 using Spravy.Ui.Extensions;
-using Spravy.Ui.Features.ErrorHandling.ViewModels;
 using Spravy.Ui.Features.Localizations.Models;
 using Spravy.Ui.Features.PasswordGenerator.ViewModels;
 using Spravy.Ui.Features.ToDo.ViewModels;
@@ -590,8 +586,17 @@ public static class CommandStorage
         CancellationToken cancellationToken
     )
     {
-        return toDoService.ResetToDoItemAsync(property.Id, cancellationToken)
-            .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken);
+        return dialogViewer.ShowConfirmContentDialogAsync(
+            vm => dialogViewer.CloseContentDialogAsync(cancellationToken)
+                .IfSuccessAsync(
+                    () => toDoService.ResetToDoItemAsync(mapper.Map<ResetToDoItemOptions>(vm), cancellationToken),
+                    cancellationToken
+                )
+                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
+            _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
+            ActionHelper<ResetToDoItemViewModel>.Empty,
+            cancellationToken
+        );
     }
 
     private static ConfiguredValueTaskAwaitable<Result> SetRequiredCompleteInDueDateAsync(
@@ -797,7 +802,6 @@ public static class CommandStorage
         var tasks = new List<Func<ConfiguredValueTaskAwaitable<Result>>>();
 
         foreach (var item in items)
-        {
             switch (item.IsCan)
             {
                 case ToDoItemIsCan.None:
@@ -817,7 +821,6 @@ public static class CommandStorage
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-        }
 
         return Result.AwaitableFalse.IfSuccessAllAsync(cancellationToken, tasks.ToArray());
     }
@@ -853,12 +856,10 @@ public static class CommandStorage
                 activeToDoItem =>
                 {
                     if (activeToDoItem.HasValue)
-                    {
                         return navigator.NavigateToAsync<ToDoItemViewModel>(
                             viewModel => viewModel.Id = activeToDoItem.Value.Id,
                             cancellationToken
                         );
-                    }
 
                     return navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken);
                 },
@@ -1155,12 +1156,8 @@ public static class CommandStorage
                             viewModel =>
                             {
                                 foreach (var item in viewModel.Items)
-                                {
                                     if (periodicity.Days.Contains(item.DayOfWeek))
-                                    {
                                         item.IsSelected = true;
-                                    }
-                                }
                             },
                             cancellationToken
                         ),
@@ -1192,12 +1189,8 @@ public static class CommandStorage
                             viewModel =>
                             {
                                 foreach (var item in viewModel.Items)
-                                {
                                     if (periodicity.Days.Contains(item.Day))
-                                    {
                                         item.IsSelected = true;
-                                    }
-                                }
                             },
                             cancellationToken
                         ),
@@ -1229,15 +1222,9 @@ public static class CommandStorage
                             viewModel =>
                             {
                                 foreach (var month in viewModel.Items)
-                                {
-                                    foreach (var day in month.Days)
-                                    {
-                                        if (periodicity.Days.Any(x => x.Month == month.Month && x.Day == day.Day))
-                                        {
-                                            day.IsSelected = true;
-                                        }
-                                    }
-                                }
+                                foreach (var day in month.Days)
+                                    if (periodicity.Days.Any(x => x.Month == month.Month && x.Day == day.Day))
+                                        day.IsSelected = true;
                             },
                             cancellationToken
                         ),
@@ -1396,10 +1383,7 @@ public static class CommandStorage
             .IfSuccessAsync(
                 value =>
                 {
-                    if (value)
-                    {
-                        return objectStorage.DeleteAsync(StorageIds.LoginId);
-                    }
+                    if (value) return objectStorage.DeleteAsync(StorageIds.LoginId);
 
                     return Result.AwaitableFalse;
                 },
@@ -1420,10 +1404,7 @@ public static class CommandStorage
         CancellationToken cancellationToken
     )
     {
-        if (!properties.IsRememberMe)
-        {
-            return Result.AwaitableFalse;
-        }
+        if (!properties.IsRememberMe) return Result.AwaitableFalse;
 
         return tokenService.GetTokenAsync(cancellationToken)
             .IfSuccessAsync(
@@ -1431,7 +1412,7 @@ public static class CommandStorage
                 {
                     var item = new LoginStorageItem
                     {
-                        Token = token,
+                        Token = token
                     };
 
                     return objectStorage.SaveObjectAsync(StorageIds.LoginId, item);
@@ -1490,7 +1471,7 @@ public static class CommandStorage
             itemNotify => dialogViewer.CloseInputDialogAsync(cancellationToken)
                 .IfSuccessAsync(
                     () => cancellationToken.InvokeUIBackgroundAsync(
-                        () => property.ShortItem = new()
+                        () => property.ShortItem = new ToDoShortItemNotify
                         {
                             Id = itemNotify.Id,
                             Name = itemNotify.Name
@@ -1500,14 +1481,9 @@ public static class CommandStorage
                 ),
             view =>
             {
-                if (property.ShortItem is null)
-                {
-                    return;
-                }
+                if (property.ShortItem is null) return;
 
                 view.DefaultSelectedItemId = property.ShortItem.Id;
-
-                return;
             },
             cancellationToken
         );
@@ -1586,10 +1562,7 @@ public static class CommandStorage
             .IfSuccessAsync(
                 item =>
                 {
-                    if (item is null)
-                    {
-                        return navigator.NavigateToAsync<RootToDoItemsViewModel>(cancellationToken);
-                    }
+                    if (item is null) return navigator.NavigateToAsync<RootToDoItemsViewModel>(cancellationToken);
 
                     return navigator.NavigateToAsync<ToDoItemViewModel>(
                         view => view.Id = item.Value.Id,
@@ -1617,9 +1590,7 @@ public static class CommandStorage
                         if (deletable.IsNavigateToParent)
                         {
                             if (deletable.ParentId is null)
-                            {
                                 return navigator.NavigateToAsync<RootToDoItemsViewModel>(cancellationToken);
-                            }
 
                             return navigator.NavigateToAsync<ToDoItemViewModel>(
                                 viewModel => viewModel.Id = deletable.ParentId.Value,
@@ -1647,19 +1618,11 @@ public static class CommandStorage
             () =>
             {
                 if (items.All(x => x.IsSelect))
-                {
                     foreach (var item in items)
-                    {
                         item.IsSelect = false;
-                    }
-                }
                 else
-                {
                     foreach (var item in items)
-                    {
                         item.IsSelect = true;
-                    }
-                }
             }
         );
     }
@@ -1699,10 +1662,7 @@ public static class CommandStorage
 
     public static ConfiguredValueTaskAwaitable<Result> RefreshCurrentViewAsync(CancellationToken cancellationToken)
     {
-        if (mainSplitViewModel.Content is not IRefresh refresh)
-        {
-            return Result.AwaitableFalse;
-        }
+        if (mainSplitViewModel.Content is not IRefresh refresh) return Result.AwaitableFalse;
 
         return refresh.RefreshAsync(cancellationToken);
     }

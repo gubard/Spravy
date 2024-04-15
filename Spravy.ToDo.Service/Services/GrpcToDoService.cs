@@ -90,9 +90,9 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return converter.Convert<Guid>(request.Id)
+        return converter.Convert<ResetToDoItemOptions>(request)
             .IfSuccessAsync(
-                i => toDoService.ResetToDoItemAsync(i, context.CancellationToken),
+                options => toDoService.ResetToDoItemAsync(options, context.CancellationToken),
                 context.CancellationToken
             )
             .HandleAsync<ResetToDoItemReply>(serializer);
@@ -465,7 +465,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
                 serializer,
                 id => new AddToDoItemReply
                 {
-                    Id = id,
+                    Id = id
                 }
             );
     }
@@ -745,7 +745,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
                 serializer,
                 value => new ToDoItemToStringReply
                 {
-                    Value = value,
+                    Value = value
                 }
             );
     }

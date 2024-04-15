@@ -59,7 +59,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     )
     {
         await toDoService.ResetToDoItemAsync(
-            mapper.Map<Guid>(request.Id),
+            mapper.Map<ResetToDoItemOptions>(request),
             context.CancellationToken
         );
 

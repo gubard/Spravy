@@ -19,8 +19,11 @@ public class SpravyToDoProfile : Profile
         CreateMap<AnnuallyPeriodicity, AnnuallyPeriodicityGrpc>();
         CreateMap<MonthlyPeriodicityGrpc, MonthlyPeriodicity>();
         CreateMap<MonthlyPeriodicity, MonthlyPeriodicityGrpc>();
+        CreateMap<ResetToDoItemOptions, ResetToDoItemRequest>();
+        CreateMap<ResetToDoItemRequest, ResetToDoItemOptions>();
         CreateMap<WeeklyPeriodicityGrpc, WeeklyPeriodicity>()
             .ConvertUsing(x => new WeeklyPeriodicity(x.Days.Select(y => (DayOfWeek)y)));
+
         CreateMap<WeeklyPeriodicity, WeeklyPeriodicityGrpc>()
             .ConvertUsing(
                 (x, _, _) =>
@@ -69,7 +72,7 @@ public class SpravyToDoProfile : Profile
                             y => new DayOfYearGrpc
                             {
                                 Day = y.Day,
-                                Month = y.Month,
+                                Month = y.Month
                             }
                         )
                     );
@@ -110,7 +113,7 @@ public class SpravyToDoProfile : Profile
         CreateMap<TimeSpan?, Duration?>().ConvertUsing(x => TimeSpanToDuration(x));
         CreateMap<Duration?, TimeSpan?>().ConvertUsing(x => DurationToTimeSpanNull(x));
         CreateMap<Duration, TimeSpan>().ConvertUsing(x => DurationToTimeSpan(x));
-        CreateMap<DayOfYearGrpc, DayOfYear>().ConstructUsing(x => new((byte)x.Day, (byte)x.Month));
+        CreateMap<DayOfYearGrpc, DayOfYear>().ConstructUsing(x => new DayOfYear((byte)x.Day, (byte)x.Month));
         CreateMap<DateTimeOffsetGrpc, DateTimeOffset?>().ConvertUsing(x => ToNullableDateTimeOffset(x));
         CreateMap<DateTimeOffsetGrpc, DateTimeOffset>().ConvertUsing(x => ToDateTimeOffset(x));
         CreateMap<DateTimeOffset?, Timestamp?>().ConvertUsing(x => ToTimestamp(x));
@@ -126,7 +129,7 @@ public class SpravyToDoProfile : Profile
 
         CreateMap<ToDoItemToStringRequest, ToDoItemToStringOptions>()
             .ConstructUsing(
-                (x, context) => new(
+                (x, context) => new ToDoItemToStringOptions(
                     context.Mapper.Map<IEnumerable<ToDoItemStatus>>(x.Statuses),
                     context.Mapper.Map<Guid>(x.Id)
                 )
@@ -150,11 +153,11 @@ public class SpravyToDoProfile : Profile
             );
 
         CreateMap<MonthlyPeriodicityGrpc, MonthlyPeriodicity>()
-            .ConvertUsing((source, _, _) => new(source.Days.ToByteArray()));
+            .ConvertUsing((source, _, _) => new MonthlyPeriodicity(source.Days.ToByteArray()));
 
         CreateMap<ToDoSelectorItemGrpc, ToDoSelectorItem>()
             .ConvertUsing(
-                (source, _, resolutionContext) => new(
+                (source, _, resolutionContext) => new ToDoSelectorItem(
                     resolutionContext.Mapper.Map<Guid>(source.Id),
                     source.Name,
                     resolutionContext.Mapper.Map<ToDoSelectorItem[]>(source.Children)
@@ -164,23 +167,23 @@ public class SpravyToDoProfile : Profile
         CreateMap<AnnuallyPeriodicityGrpc, AnnuallyPeriodicity>()
             .ConvertUsing(
                 (source, _, context) =>
-                    new(context.Mapper.Map<IEnumerable<DayOfYear>>(source.Days))
+                    new AnnuallyPeriodicity(context.Mapper.Map<IEnumerable<DayOfYear>>(source.Days))
             );
 
         CreateMap<DayOfYear, DayOfYearGrpc>()
             .ConvertUsing(
-                (source, _, _) => new()
+                (source, _, _) => new DayOfYearGrpc
                 {
                     Day = source.Day,
-                    Month = source.Month,
+                    Month = source.Month
                 }
             );
 
         CreateMap<MonthlyPeriodicity, MonthlyPeriodicityGrpc>()
             .ConvertUsing(
-                (source, _, _) => new()
+                (source, _, _) => new MonthlyPeriodicityGrpc
                 {
-                    Days = ByteString.CopyFrom(Enumerable.ToArray(source.Days))
+                    Days = ByteString.CopyFrom(source.Days.ToArray())
                 }
             );
 
@@ -226,7 +229,7 @@ public class SpravyToDoProfile : Profile
                         source.Weekly.Days.Select(x => (DayOfWeek)x)
                     ),
                     ToDoItemPeriodicityGrpc.PeriodicityOneofCase.Monthly => new MonthlyPeriodicity(
-                        Enumerable.ToArray(source.Monthly.Days)
+                        source.Monthly.Days.ToArray()
                     ),
                     ToDoItemPeriodicityGrpc.PeriodicityOneofCase.Annually => new AnnuallyPeriodicity(
                         resolutionContext.Mapper.Map<IEnumerable<DayOfYear>>(source.Annually.Days)
@@ -239,7 +242,7 @@ public class SpravyToDoProfile : Profile
             .ConvertUsing(x => x.HasValue ? ByteString.CopyFrom(x.Value.ToByteArray()) : ByteString.Empty);
 
         CreateMap<ByteString, Guid>()
-            .ConstructUsing(x => new(x.ToByteArray()));
+            .ConstructUsing(x => new Guid(x.ToByteArray()));
 
         CreateMap<ByteString, Guid?>()
             .ConvertUsing(x => x.IsEmpty ? null : new Guid(x.ToByteArray()));
@@ -248,10 +251,7 @@ public class SpravyToDoProfile : Profile
             .ConvertUsing(
                 (source, _, resolutionContext) =>
                 {
-                    if (source is null)
-                    {
-                        return null;
-                    }
+                    if (source is null) return null;
 
                     return new ActiveToDoItem(resolutionContext.Mapper.Map<Guid>(source.Id), source.Name);
                 }
@@ -259,16 +259,16 @@ public class SpravyToDoProfile : Profile
 
         CreateMap<DateTimeOffset, DateTimeOffsetGrpc>()
             .ConvertUsing(
-                (source, _, _) => new()
+                (source, _, _) => new DateTimeOffsetGrpc
                 {
                     Date = ToTimestamp(source),
-                    Offset = OffsetToDuration(source),
+                    Offset = OffsetToDuration(source)
                 }
             );
 
         CreateMap<DateTimeOffset?, DateTimeOffsetGrpc>()
             .ConvertUsing(
-                x => new()
+                x => new DateTimeOffsetGrpc
                 {
                     Date = ToTimestamp(x),
                     Offset = OffsetToDuration(x)
@@ -277,7 +277,7 @@ public class SpravyToDoProfile : Profile
 
         CreateMap<UpdateToDoItemOrderIndexRequest, UpdateOrderIndexToDoItemOptions>()
             .ConstructUsing(
-                (src, res) => new(
+                (src, res) => new UpdateOrderIndexToDoItemOptions(
                     res.Mapper.Map<Guid>(src.Id),
                     res.Mapper.Map<Guid>(src.TargetId),
                     src.IsAfter
@@ -289,7 +289,7 @@ public class SpravyToDoProfile : Profile
     {
         var date = grpc.Date.ToDateTimeOffset();
 
-        return new(
+        return new DateTimeOffset(
             date.Year,
             date.Month,
             date.Day,
@@ -302,10 +302,7 @@ public class SpravyToDoProfile : Profile
 
     private DateTimeOffset? ToNullableDateTimeOffset(DateTimeOffsetGrpc grpc)
     {
-        if (grpc.Date is null)
-        {
-            return null;
-        }
+        if (grpc.Date is null) return null;
 
         var date = grpc.Date.ToDateTimeOffset();
 
@@ -347,10 +344,7 @@ public class SpravyToDoProfile : Profile
 
     private Timestamp? ToTimestamp(DateTimeOffset? date)
     {
-        if (!date.HasValue)
-        {
-            return null;
-        }
+        if (!date.HasValue) return null;
 
         return date.Value.Add(date.Value.Offset).ToTimestamp();
     }

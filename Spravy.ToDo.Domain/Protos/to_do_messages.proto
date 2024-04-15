@@ -38,6 +38,8 @@ message UpdateToDoItemDescriptionTypeReply {
 
 message ResetToDoItemRequest {
   bytes Id = 1;
+  bool IsCompleteTask = 2;
+  bool IsMoveCircleOrderIndex = 3;
 }
 
 message ResetToDoItemReply {

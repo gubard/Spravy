@@ -54,7 +54,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                     new CloneToDoItemRequest
                                     {
                                         CloneId = ci,
-                                        ParentId = pi,
+                                        ParentId = pi
                                     },
                                     value,
                                     cancellationToken: cancellationToken
@@ -82,7 +82,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                 new UpdateToDoItemDescriptionTypeRequest
                                 {
                                     Id = i,
-                                    Type = (DescriptionTypeGrpc)type,
+                                    Type = (DescriptionTypeGrpc)type
                                 },
                                 value,
                                 cancellationToken: cancellationToken
@@ -95,17 +95,15 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> ResetToDoItemAsync(Guid id, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> ResetToDoItemAsync(ResetToDoItemOptions options,
+        CancellationToken cancellationToken)
     {
         return CallClientAsync(
             client => metadataFactory.CreateAsync(cancellationToken)
                 .IfSuccessAsync(
-                    converter.Convert<ByteString>(id),
-                    (value, i) => client.ResetToDoItemAsync(
-                            new ResetToDoItemRequest
-                            {
-                                Id = i,
-                            },
+                    converter.Convert<ResetToDoItemRequest>(options),
+                    (value, request) => client.ResetToDoItemAsync(
+                            request,
                             value,
                             cancellationToken: cancellationToken
                         )
@@ -130,7 +128,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                         client.RandomizeChildrenOrderIndexAsync(
                                 new RandomizeChildrenOrderIndexRequest
                                 {
-                                    Id = i,
+                                    Id = i
                                 },
                                 value,
                                 cancellationToken: cancellationToken
@@ -155,7 +153,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                     (value, i) => client.GetParentsAsync(
                             new GetParentsRequest
                             {
-                                Id = i,
+                                Id = i
                             },
                             value,
                             cancellationToken: cancellationToken
@@ -187,7 +185,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                         value => client.SearchToDoItemIdsAsync(
                                 new SearchToDoItemIdsRequest
                                 {
-                                    SearchText = searchText,
+                                    SearchText = searchText
                                 },
                                 value,
                                 cancellationToken: cancellationToken
@@ -220,7 +218,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                         client.GetLeafToDoItemIdsAsync(
                                 new GetLeafToDoItemIdsRequest
                                 {
-                                    Id = i,
+                                    Id = i
                                 },
                                 value,
                                 cancellationToken: cancellationToken
@@ -250,7 +248,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                         client.GetToDoItemAsync(
                                 new GetToDoItemRequest
                                 {
-                                    Id = i,
+                                    Id = i
                                 },
                                 value,
                                 cancellationToken: cancellationToken
@@ -280,7 +278,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                         client.GetChildrenToDoItemIdsAsync(
                                 new GetChildrenToDoItemIdsRequest
                                 {
-                                    Id = i,
+                                    Id = i
                                 },
                                 value,
                                 cancellationToken: cancellationToken
@@ -316,7 +314,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                         client.GetChildrenToDoItemShortsAsync(
                                 new GetChildrenToDoItemShortsRequest
                                 {
-                                    Id = i,
+                                    Id = i
                                 },
                                 value,
                                 cancellationToken: cancellationToken
@@ -483,7 +481,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                     new UpdateToDoItemTypeOfPeriodicityRequest
                                     {
                                         Id = i,
-                                        Type = (TypeOfPeriodicityGrpc)type,
+                                        Type = (TypeOfPeriodicityGrpc)type
                                     },
                                     value,
                                     cancellationToken: cancellationToken
@@ -513,7 +511,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                     new UpdateToDoItemDueDateRequest
                                     {
                                         Id = i,
-                                        DueDate = dd,
+                                        DueDate = dd
                                     },
                                     value,
                                     cancellationToken: cancellationToken
@@ -542,7 +540,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                     new UpdateToDoItemCompleteStatusRequest
                                     {
                                         Id = i,
-                                        IsCompleted = isComplete,
+                                        IsCompleted = isComplete
                                     },
                                     value,
                                     cancellationToken: cancellationToken
@@ -568,10 +566,10 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                         converter.Convert<ByteString>(id),
                         (value, i) =>
                             client.UpdateToDoItemNameAsync(
-                                    new UpdateToDoItemNameRequest()
+                                    new UpdateToDoItemNameRequest
                                     {
                                         Id = i,
-                                        Name = name,
+                                        Name = name
                                     },
                                     value,
                                     cancellationToken: cancellationToken
@@ -624,7 +622,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                     new UpdateToDoItemDescriptionRequest
                                     {
                                         Description = description,
-                                        Id = i,
+                                        Id = i
                                     },
                                     value,
                                     cancellationToken: cancellationToken
@@ -653,7 +651,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                     new UpdateToDoItemTypeRequest
                                     {
                                         Id = i,
-                                        Type = (ToDoItemTypeGrpc)type,
+                                        Type = (ToDoItemTypeGrpc)type
                                     },
                                     value,
                                     cancellationToken: cancellationToken
@@ -675,9 +673,9 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                         converter.Convert<ByteString>(id),
                         (value, i) =>
                             client.AddFavoriteToDoItemAsync(
-                                    new()
+                                    new AddFavoriteToDoItemRequest
                                     {
-                                        Id = i,
+                                        Id = i
                                     },
                                     value,
                                     cancellationToken: cancellationToken
@@ -702,9 +700,9 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                         converter.Convert<ByteString>(id),
                         (value, i) =>
                             client.RemoveFavoriteToDoItemAsync(
-                                    new()
+                                    new RemoveFavoriteToDoItemRequest
                                     {
-                                        Id = i,
+                                        Id = i
                                     },
                                     value,
                                     cancellationToken: cancellationToken
@@ -733,7 +731,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                     new UpdateToDoItemIsRequiredCompleteInDueDateRequest
                                     {
                                         Id = i,
-                                        IsRequiredCompleteInDueDate = value,
+                                        IsRequiredCompleteInDueDate = value
                                     },
                                     metadata,
                                     cancellationToken: cancellationToken
@@ -789,10 +787,10 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                         converter.Convert<AnnuallyPeriodicityGrpc>(periodicity),
                         (value, i, p) =>
                             client.UpdateToDoItemAnnuallyPeriodicityAsync(
-                                    new()
+                                    new UpdateToDoItemAnnuallyPeriodicityRequest
                                     {
                                         Periodicity = p,
-                                        Id = i,
+                                        Id = i
                                     },
                                     value,
                                     cancellationToken: cancellationToken
@@ -819,10 +817,10 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                         converter.Convert<MonthlyPeriodicityGrpc>(periodicity),
                         (value, i, p) =>
                             client.UpdateToDoItemMonthlyPeriodicityAsync(
-                                    new()
+                                    new UpdateToDoItemMonthlyPeriodicityRequest
                                     {
                                         Periodicity = p,
-                                        Id = i,
+                                        Id = i
                                     },
                                     value,
                                     cancellationToken: cancellationToken
@@ -849,10 +847,10 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                         converter.Convert<WeeklyPeriodicityGrpc>(periodicity),
                         (value, i, p) =>
                             client.UpdateToDoItemWeeklyPeriodicityAsync(
-                                    new()
+                                    new UpdateToDoItemWeeklyPeriodicityRequest
                                     {
                                         Periodicity = p,
-                                        Id = i,
+                                        Id = i
                                     },
                                     value,
                                     cancellationToken: cancellationToken
@@ -915,10 +913,10 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                         converter.Convert<ByteString>(parentId),
                         (value, i, pi) =>
                             client.UpdateToDoItemParentAsync(
-                                    new()
+                                    new UpdateToDoItemParentRequest
                                     {
                                         Id = i,
-                                        ParentId = pi,
+                                        ParentId = pi
                                     },
                                     value,
                                     cancellationToken: cancellationToken
@@ -940,9 +938,9 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                         converter.Convert<ByteString>(id),
                         (value, i) =>
                             client.ToDoItemToRootAsync(
-                                    new()
+                                    new ToDoItemToRootRequest
                                     {
-                                        Id = i,
+                                        Id = i
                                     },
                                     value,
                                     cancellationToken: cancellationToken
@@ -996,7 +994,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                         converter.Convert<ByteString>(id),
                         (value, i) =>
                             client.UpdateToDoItemDaysOffsetAsync(
-                                    new()
+                                    new UpdateToDoItemDaysOffsetRequest
                                     {
                                         Id = i,
                                         Days = days
@@ -1025,7 +1023,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                         converter.Convert<ByteString>(id),
                         (value, i) =>
                             client.UpdateToDoItemMonthsOffsetAsync(
-                                    new()
+                                    new UpdateToDoItemMonthsOffsetRequest
                                     {
                                         Id = i,
                                         Months = months
@@ -1054,7 +1052,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                         converter.Convert<ByteString>(id),
                         (value, i) =>
                             client.UpdateToDoItemWeeksOffsetAsync(
-                                    new()
+                                    new UpdateToDoItemWeeksOffsetRequest
                                     {
                                         Id = i,
                                         Weeks = weeks
@@ -1083,7 +1081,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                         converter.Convert<ByteString>(id),
                         (value, i) =>
                             client.UpdateToDoItemYearsOffsetAsync(
-                                    new()
+                                    new UpdateToDoItemYearsOffsetRequest
                                     {
                                         Id = i,
                                         Years = years
@@ -1112,7 +1110,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                         converter.Convert<ByteString>(id),
                         (value, i) =>
                             client.UpdateToDoItemChildrenTypeAsync(
-                                    new()
+                                    new UpdateToDoItemChildrenTypeRequest
                                     {
                                         Id = i,
                                         Type = (ToDoItemChildrenTypeGrpc)type
@@ -1142,7 +1140,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                             client.GetSiblingsAsync(
                                     new GetSiblingsRequest
                                     {
-                                        Id = i,
+                                        Id = i
                                     },
                                     value,
                                     cancellationToken: cancellationToken
@@ -1207,7 +1205,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                     new UpdateToDoItemLinkRequest
                                     {
                                         Id = i,
-                                        Link = l ?? string.Empty,
+                                        Link = l ?? string.Empty
                                     },
                                     value,
                                     cancellationToken: cancellationToken
@@ -1234,7 +1232,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                             client.GetPlannedToDoItemSettingsAsync(
                                     new GetPlannedToDoItemSettingsRequest
                                     {
-                                        Id = i,
+                                        Id = i
                                     },
                                     value,
                                     cancellationToken: cancellationToken
@@ -1267,7 +1265,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                             client.GetValueToDoItemSettingsAsync(
                                     new GetValueToDoItemSettingsRequest
                                     {
-                                        Id = i,
+                                        Id = i
                                     },
                                     value,
                                     cancellationToken: cancellationToken
@@ -1300,7 +1298,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                             client.GetPeriodicityToDoItemSettingsAsync(
                                     new GetPeriodicityToDoItemSettingsRequest
                                     {
-                                        Id = i,
+                                        Id = i
                                     },
                                     value,
                                     cancellationToken: cancellationToken
@@ -1333,7 +1331,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                             client.GetWeeklyPeriodicityAsync(
                                     new GetWeeklyPeriodicityRequest
                                     {
-                                        Id = i,
+                                        Id = i
                                     },
                                     value,
                                     cancellationToken: cancellationToken
@@ -1399,7 +1397,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                             client.GetAnnuallyPeriodicityAsync(
                                     new GetAnnuallyPeriodicityRequest
                                     {
-                                        Id = i,
+                                        Id = i
                                     },
                                     value,
                                     cancellationToken: cancellationToken
@@ -1433,7 +1431,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                             client.GetPeriodicityOffsetToDoItemSettingsAsync(
                                     new GetPeriodicityOffsetToDoItemSettingsRequest
                                     {
-                                        Id = i,
+                                        Id = i
                                     },
                                     value,
                                     cancellationToken: cancellationToken
@@ -1479,7 +1477,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
 
         var request = new GetToDoItemsRequest
         {
-            ChunkSize = chunkSize,
+            ChunkSize = chunkSize
         };
 
         request.Ids.AddRange(converter.Convert<ByteString[]>(ids).Value);
@@ -1522,6 +1520,6 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         ISerializer serializer
     )
     {
-        return new(grpcClientFactory, host, mapper, metadataFactory, serializer);
+        return new GrpcToDoService(grpcClientFactory, host, mapper, metadataFactory, serializer);
     }
 }
