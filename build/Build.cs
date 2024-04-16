@@ -347,7 +347,7 @@ class Build : NukeBuild
 
         botClient.SendTextMessageAsync(
                 "@spravy_release",
-                $"Published {name} v{VersionService.Version}",
+                $"Published {name} v{VersionService.Version}({VersionService.Version.Code})",
                 replyMarkup: new InlineKeyboardMarkup(items)
             )
             .GetAwaiter()
