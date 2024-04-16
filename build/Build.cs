@@ -237,7 +237,7 @@ class Build : NukeBuild
         );
 
     Target ProdSetupAppSettings =>
-        _ => _.DependsOn(StagingPublishBrowser)
+        _ => _.DependsOn(Test)
             .Executes(() =>
                 {
                     Projects = CreateProdFactory()
@@ -272,7 +272,7 @@ class Build : NukeBuild
         );
 
     Target Test =>
-        _ => _.DependsOn(StagingPublishServices)
+        _ => _.DependsOn(StagingPublishBrowser)
             .Executes(() =>
                 {
                     foreach (var project in Projects.OfType<TestProjectBuilder>())
@@ -287,13 +287,13 @@ class Build : NukeBuild
             .Executes(() => PublishServices(SshHost, SshUser, SshPassword));
 
     Target StagingPublishDesktop =>
-        _ => _.DependsOn(Test)
+        _ => _.DependsOn(StagingPublishServices)
             .Executes(PublishDesktop);
 
     Target ProdPublishDesktop => _ => _.DependsOn(ProdPublishServices).Executes(PublishDesktop);
 
     Target StagingPublishAndroid =>
-        _ => _.DependsOn(Test)
+        _ => _.DependsOn(StagingPublishServices)
             .Executes(PublishAndroid);
 
     Target ProdPublishAndroid => _ => _.DependsOn(ProdPublishServices).Executes(PublishAndroid);
