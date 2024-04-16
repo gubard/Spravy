@@ -21,6 +21,6 @@
         <CheckBox IsChecked="{Binding IsOnlyCompletedTasks}"
                   Content="{DynamicResource ResetToDoItemView.OnlyCompletedTasks}" />
         <CheckBox IsChecked="{Binding IsCompleteCurrentTask}"
-                  Content="{DynamicResource ResetToDoItemView.OnlyCompletedTasks}" />
+                  Content="{DynamicResource ResetToDoItemView.CompleteCurrentTask}" />
     </StackPanel>
 </ru:ReactiveUserControl>
