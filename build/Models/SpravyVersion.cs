@@ -14,8 +14,7 @@ public struct SpravyVersion
     public readonly byte Minor;
     public readonly byte Build;
     public readonly byte Revision;
-    public ulong Code => Major + Minor * 20ul + Build * 20ul + Revision * 20ul;
-    public string AndroidVersion => $"{Major}.{Minor}.{Build * 20ul + Revision * 20ul}";
+    public ulong Code => (Major - 1) * 800ul + Minor * 400ul + Build * 20ul + Revision;
 
     public static SpravyVersion operator ++(SpravyVersion version)
     {
