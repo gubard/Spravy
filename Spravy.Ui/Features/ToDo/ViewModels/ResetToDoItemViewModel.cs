@@ -56,7 +56,7 @@ public class ResetToDoItemViewModel : NavigatableViewModelBase
                 s => this.InvokeUIBackgroundAsync(
                     () =>
                     {
-                        IsCompleteChildrenTask = s.IsCompleteTask;
+                        IsCompleteChildrenTask = s.IsCompleteChildrenTask;
                         IsMoveCircleOrderIndex = s.IsMoveCircleOrderIndex;
                         IsOnlyCompletedTasks = s.IsOnlyCompletedTasks;
                         IsCompleteCurrentTask = s.IsCompleteCurrentTask;
@@ -76,7 +76,7 @@ public class ResetToDoItemViewModel : NavigatableViewModelBase
     {
         public ResetToDoItemViewModelSetting(ResetToDoItemViewModel viewModel)
         {
-            IsCompleteTask = viewModel.IsCompleteChildrenTask;
+            IsCompleteChildrenTask = viewModel.IsCompleteChildrenTask;
             IsMoveCircleOrderIndex = viewModel.IsMoveCircleOrderIndex;
             IsOnlyCompletedTasks = viewModel.IsOnlyCompletedTasks;
             IsCompleteCurrentTask = viewModel.IsCompleteCurrentTask;
@@ -87,7 +87,7 @@ public class ResetToDoItemViewModel : NavigatableViewModelBase
         }
 
 
-        [ProtoMember(1)] public bool IsCompleteTask { get; set; }
+        [ProtoMember(1)] public bool IsCompleteChildrenTask { get; set; }
         [ProtoMember(2)] public bool IsMoveCircleOrderIndex { get; set; } = true;
         [ProtoMember(3)] public bool IsOnlyCompletedTasks { get; set; }
         [ProtoMember(4)] public bool IsCompleteCurrentTask { get; set; }

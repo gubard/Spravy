@@ -38,7 +38,7 @@ message UpdateToDoItemDescriptionTypeReply {
 
 message ResetToDoItemRequest {
   bytes Id = 1;
-  bool IsCompleteTask = 2;
+  bool IsCompleteChildrenTask = 2;
   bool IsMoveCircleOrderIndex = 3;
   bool IsOnlyCompletedTasks = 4;
   bool IsCompleteCurrentTask = 5;

@@ -303,160 +303,312 @@ public static class CommandStorage
     private static readonly ISpravyNotificationManager spravyNotificationManager;
     private static readonly IErrorHandler errorHandler;
 
-    public static ICommand RemovePasswordItemCommand => RemovePasswordItemItem.Command;
+    public static ICommand RemovePasswordItemCommand
+    {
+        get => RemovePasswordItemItem.Command;
+    }
     public static CommandItem RemovePasswordItemItem { get; }
 
-    public static ICommand GeneratePasswordCommand => GeneratePasswordItem.Command;
+    public static ICommand GeneratePasswordCommand
+    {
+        get => GeneratePasswordItem.Command;
+    }
     public static CommandItem GeneratePasswordItem { get; }
 
-    public static ICommand CloneToDoItemCommand => CloneToDoItemItem.Command;
+    public static ICommand CloneToDoItemCommand
+    {
+        get => CloneToDoItemItem.Command;
+    }
     public static CommandItem CloneToDoItemItem { get; }
 
-    public static ICommand ResetToDoItemCommand => ResetToDoItemItem.Command;
+    public static ICommand ResetToDoItemCommand
+    {
+        get => ResetToDoItemItem.Command;
+    }
     public static CommandItem ResetToDoItemItem { get; }
 
-    public static ICommand SetRequiredCompleteInDueDateCommand => SetRequiredCompleteInDueDateItem.Command;
+    public static ICommand SetRequiredCompleteInDueDateCommand
+    {
+        get => SetRequiredCompleteInDueDateItem.Command;
+    }
     public static CommandItem SetRequiredCompleteInDueDateItem { get; }
 
-    public static ICommand UpdateEmailNotVerifiedUserByCommand => UpdateEmailNotVerifiedUserByItem.Command;
+    public static ICommand UpdateEmailNotVerifiedUserByCommand
+    {
+        get => UpdateEmailNotVerifiedUserByItem.Command;
+    }
     public static CommandItem UpdateEmailNotVerifiedUserByItem { get; }
 
-    public static ICommand SendNewVerificationCodeCommand => SendNewVerificationCodeItem.Command;
+    public static ICommand SendNewVerificationCodeCommand
+    {
+        get => SendNewVerificationCodeItem.Command;
+    }
     public static CommandItem SendNewVerificationCodeItem { get; }
 
-    public static ICommand VerificationEmailCommand => VerificationEmailItem.Command;
+    public static ICommand VerificationEmailCommand
+    {
+        get => VerificationEmailItem.Command;
+    }
     public static CommandItem VerificationEmailItem { get; }
 
-    public static ICommand MultiSetTypeToDoItemsCommand => MultiSetTypeToDoItemsItem.Command;
+    public static ICommand MultiSetTypeToDoItemsCommand
+    {
+        get => MultiSetTypeToDoItemsItem.Command;
+    }
     public static CommandItem MultiSetTypeToDoItemsItem { get; }
 
-    public static ICommand MultiMoveToDoItemsToRootCommand => MultiMoveToDoItemsToRootItem.Command;
+    public static ICommand MultiMoveToDoItemsToRootCommand
+    {
+        get => MultiMoveToDoItemsToRootItem.Command;
+    }
     public static CommandItem MultiMoveToDoItemsToRootItem { get; }
 
-    public static ICommand MultiSetParentToDoItemsCommand => MultiSetParentToDoItemsItem.Command;
+    public static ICommand MultiSetParentToDoItemsCommand
+    {
+        get => MultiSetParentToDoItemsItem.Command;
+    }
     public static CommandItem MultiSetParentToDoItemsItem { get; }
 
-    public static ICommand MultiCompleteToDoItemsCommand => MultiCompleteToDoItemsItem.Command;
+    public static ICommand MultiCompleteToDoItemsCommand
+    {
+        get => MultiCompleteToDoItemsItem.Command;
+    }
     public static CommandItem MultiCompleteToDoItemsItem { get; }
 
-    public static ICommand SetToDoItemNameCommand => SetToDoItemNameItem.Command;
+    public static ICommand SetToDoItemNameCommand
+    {
+        get => SetToDoItemNameItem.Command;
+    }
     public static CommandItem SetToDoItemNameItem { get; }
 
-    public static ICommand NavigateToCurrentToDoItemCommand => NavigateToCurrentToDoItemItem.Command;
+    public static ICommand NavigateToCurrentToDoItemCommand
+    {
+        get => NavigateToCurrentToDoItemItem.Command;
+    }
     public static CommandItem NavigateToCurrentToDoItemItem { get; }
 
 
-    public static ICommand ToDoItemRandomizeChildrenOrderIndexCommand =>
-        ToDoItemRandomizeChildrenOrderIndexItem.Command;
+    public static ICommand ToDoItemRandomizeChildrenOrderIndexCommand
+    {
+        get => ToDoItemRandomizeChildrenOrderIndexItem.Command;
+    }
 
     public static CommandItem ToDoItemRandomizeChildrenOrderIndexItem { get; }
 
-    public static ICommand ToDoItemToStringCommand => ToDoItemToStringItem.Command;
+    public static ICommand ToDoItemToStringCommand
+    {
+        get => ToDoItemToStringItem.Command;
+    }
     public static CommandItem ToDoItemToStringItem { get; }
 
-    public static ICommand MoveToDoItemToRootCommand => MoveToDoItemToRootItem.Command;
+    public static ICommand MoveToDoItemToRootCommand
+    {
+        get => MoveToDoItemToRootItem.Command;
+    }
     public static CommandItem MoveToDoItemToRootItem { get; }
 
-    public static ICommand NavigateToLeafCommand => NavigateToLeafItem.Command;
+    public static ICommand NavigateToLeafCommand
+    {
+        get => NavigateToLeafItem.Command;
+    }
     public static CommandItem NavigateToLeafItem { get; }
 
-    public static ICommand AddToDoItemChildCommand => AddToDoItemChildItem.Command;
+    public static ICommand AddToDoItemChildCommand
+    {
+        get => AddToDoItemChildItem.Command;
+    }
     public static CommandItem AddToDoItemChildItem { get; }
 
-    public static ICommand ShowToDoSettingCommand => ShowToDoSettingItem.Command;
+    public static ICommand ShowToDoSettingCommand
+    {
+        get => ShowToDoSettingItem.Command;
+    }
     public static CommandItem ShowToDoSettingItem { get; }
 
-    public static ICommand SetToDoDescriptionCommand => SetToDoDescriptionItem.Command;
+    public static ICommand SetToDoDescriptionCommand
+    {
+        get => SetToDoDescriptionItem.Command;
+    }
     public static CommandItem SetToDoDescriptionItem { get; }
 
-    public static ICommand SetToDoLinkCommand => SetToDoLinkItem.Command;
+    public static ICommand SetToDoLinkCommand
+    {
+        get => SetToDoLinkItem.Command;
+    }
     public static CommandItem SetToDoLinkItem { get; }
 
-    public static ICommand SetToDoTypeCommand => SetToDoTypeItem.Command;
+    public static ICommand SetToDoTypeCommand
+    {
+        get => SetToDoTypeItem.Command;
+    }
     public static CommandItem SetToDoTypeItem { get; }
 
-    public static ICommand ToDoItemSearchCommand => ToDoItemSearchItem.Command;
+    public static ICommand ToDoItemSearchCommand
+    {
+        get => ToDoItemSearchItem.Command;
+    }
     public static CommandItem ToDoItemSearchItem { get; }
 
-    public static ICommand SwitchPaneCommand => SwitchPaneItem.Command;
+    public static ICommand SwitchPaneCommand
+    {
+        get => SwitchPaneItem.Command;
+    }
     public static CommandItem SwitchPaneItem { get; }
 
-    public static ICommand SwitchCompleteToDoItemCommand => SwitchCompleteToDoItemItem.Command;
+    public static ICommand SwitchCompleteToDoItemCommand
+    {
+        get => SwitchCompleteToDoItemItem.Command;
+    }
     public static CommandItem SwitchCompleteToDoItemItem { get; }
 
-    public static ICommand ChangeToActiveDoItemCommand => ChangeToActiveDoItemItem.Command;
+    public static ICommand ChangeToActiveDoItemCommand
+    {
+        get => ChangeToActiveDoItemItem.Command;
+    }
     public static CommandItem ChangeToActiveDoItemItem { get; }
 
-    public static ICommand ChangeOrderIndexCommand => ChangeOrderIndexItem.Command;
+    public static ICommand ChangeOrderIndexCommand
+    {
+        get => ChangeOrderIndexItem.Command;
+    }
     public static CommandItem ChangeOrderIndexItem { get; }
 
-    public static ICommand DeleteToDoItemCommand => DeleteToDoItemItem.Command;
+    public static ICommand DeleteToDoItemCommand
+    {
+        get => DeleteToDoItemItem.Command;
+    }
     public static CommandItem DeleteToDoItemItem { get; }
 
-    public static ICommand NavigateToToDoItemCommand => NavigateToToDoItemItem.Command;
+    public static ICommand NavigateToToDoItemCommand
+    {
+        get => NavigateToToDoItemItem.Command;
+    }
     public static CommandItem NavigateToToDoItemItem { get; }
 
-    public static ICommand OpenLinkCommand => OpenLinkItem.Command;
+    public static ICommand OpenLinkCommand
+    {
+        get => OpenLinkItem.Command;
+    }
     public static CommandItem OpenLinkItem { get; }
 
-    public static ICommand RemoveToDoItemFromFavoriteCommand => RemoveToDoItemFromFavoriteItem.Command;
+    public static ICommand RemoveToDoItemFromFavoriteCommand
+    {
+        get => RemoveToDoItemFromFavoriteItem.Command;
+    }
     public static CommandItem RemoveToDoItemFromFavoriteItem { get; }
 
-    public static ICommand AddToDoItemToFavoriteCommand => AddToDoItemToFavoriteItem.Command;
+    public static ICommand AddToDoItemToFavoriteCommand
+    {
+        get => AddToDoItemToFavoriteItem.Command;
+    }
     public static CommandItem AddToDoItemToFavoriteItem { get; }
 
-    public static ICommand SetToDoShortItemCommand => SetToDoShortItemItem.Command;
+    public static ICommand SetToDoShortItemCommand
+    {
+        get => SetToDoShortItemItem.Command;
+    }
     public static CommandItem SetToDoShortItemItem { get; }
 
-    public static ICommand SetDueDateTimeCommand => SetDueDateTimeItem.Command;
+    public static ICommand SetDueDateTimeCommand
+    {
+        get => SetDueDateTimeItem.Command;
+    }
     public static CommandItem SetDueDateTimeItem { get; }
 
-    public static ICommand BackCommand => BackItem.Command;
+    public static ICommand BackCommand
+    {
+        get => BackItem.Command;
+    }
     public static CommandItem BackItem { get; }
 
-    public static ICommand NavigateToCommand => NavigateToItem.Command;
+    public static ICommand NavigateToCommand
+    {
+        get => NavigateToItem.Command;
+    }
     public static CommandItem NavigateToItem { get; }
 
-    public static ICommand LogoutCommand => LogoutItem.Command;
+    public static ICommand LogoutCommand
+    {
+        get => LogoutItem.Command;
+    }
     public static CommandItem LogoutItem { get; }
 
-    public static ICommand SetToDoChildrenTypeCommand => SetToDoChildrenTypeItem.Command;
+    public static ICommand SetToDoChildrenTypeCommand
+    {
+        get => SetToDoChildrenTypeItem.Command;
+    }
     public static CommandItem SetToDoChildrenTypeItem { get; }
 
-    public static ICommand SetToDoDueDateCommand => SetToDoDueDateItem.Command;
+    public static ICommand SetToDoDueDateCommand
+    {
+        get => SetToDoDueDateItem.Command;
+    }
     public static CommandItem SetToDoDueDateItem { get; }
 
-    public static ICommand SetToDoDaysOffsetCommand => SetToDoDaysOffsetItem.Command;
+    public static ICommand SetToDoDaysOffsetCommand
+    {
+        get => SetToDoDaysOffsetItem.Command;
+    }
     public static CommandItem SetToDoDaysOffsetItem { get; }
 
-    public static ICommand SetToDoMonthsOffsetCommand => SetToDoMonthsOffsetItem.Command;
+    public static ICommand SetToDoMonthsOffsetCommand
+    {
+        get => SetToDoMonthsOffsetItem.Command;
+    }
     public static CommandItem SetToDoMonthsOffsetItem { get; }
 
-    public static ICommand SetToDoWeeksOffsetCommand => SetToDoWeeksOffsetItem.Command;
+    public static ICommand SetToDoWeeksOffsetCommand
+    {
+        get => SetToDoWeeksOffsetItem.Command;
+    }
     public static CommandItem SetToDoWeeksOffsetItem { get; }
 
-    public static ICommand SetToDoYearsOffsetCommand => SetToDoYearsOffsetItem.Command;
+    public static ICommand SetToDoYearsOffsetCommand
+    {
+        get => SetToDoYearsOffsetItem.Command;
+    }
     public static CommandItem SetToDoYearsOffsetItem { get; }
 
-    public static ICommand SetToDoTypeOfPeriodicityCommand => SetToDoTypeOfPeriodicityItem.Command;
+    public static ICommand SetToDoTypeOfPeriodicityCommand
+    {
+        get => SetToDoTypeOfPeriodicityItem.Command;
+    }
     public static CommandItem SetToDoTypeOfPeriodicityItem { get; }
 
-    public static ICommand SetToDoPeriodicityCommand => SetToDoPeriodicityItem.Command;
+    public static ICommand SetToDoPeriodicityCommand
+    {
+        get => SetToDoPeriodicityItem.Command;
+    }
     public static CommandItem SetToDoPeriodicityItem { get; }
 
-    public static ICommand AddRootToDoItemCommand => AddRootToDoItemItem.Command;
+    public static ICommand AddRootToDoItemCommand
+    {
+        get => AddRootToDoItemItem.Command;
+    }
     public static CommandItem AddRootToDoItemItem { get; }
 
-    public static ICommand SetToDoParentItemCommand => SetToDoParentItemItem.Command;
+    public static ICommand SetToDoParentItemCommand
+    {
+        get => SetToDoParentItemItem.Command;
+    }
     public static CommandItem SetToDoParentItemItem { get; }
 
-    public static ICommand MultiDeleteToDoItemsCommand => MultiDeleteToDoItemsItem.Command;
+    public static ICommand MultiDeleteToDoItemsCommand
+    {
+        get => MultiDeleteToDoItemsItem.Command;
+    }
     public static CommandItem MultiDeleteToDoItemsItem { get; }
 
-    public static ICommand AddPasswordItemCommand => AddPasswordItemItem.Command;
+    public static ICommand AddPasswordItemCommand
+    {
+        get => AddPasswordItemItem.Command;
+    }
     public static CommandItem AddPasswordItemItem { get; }
 
-    public static ICommand ShowPasswordItemSettingCommand => ShowPasswordItemSettingItem.Command;
+    public static ICommand ShowPasswordItemSettingCommand
+    {
+        get => ShowPasswordItemSettingItem.Command;
+    }
     public static CommandItem ShowPasswordItemSettingItem { get; }
 
     public static CommandItem SelectAll { get; }
@@ -588,10 +740,7 @@ public static class CommandStorage
     {
         return dialogViewer.ShowConfirmContentDialogAsync<ResetToDoItemViewModel>(
             vm => dialogViewer.CloseContentDialogAsync(cancellationToken)
-                .IfSuccessAsync(
-                    () => toDoService.ResetToDoItemAsync(mapper.Map<ResetToDoItemOptions>(vm), cancellationToken),
-                    cancellationToken
-                )
+                .IfSuccessAsync(() => toDoService.ResetToDoItemAsync(mapper.Map<ResetToDoItemOptions>(vm), cancellationToken), cancellationToken)
                 .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
             _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
             vm => vm.Id = property.Id,
