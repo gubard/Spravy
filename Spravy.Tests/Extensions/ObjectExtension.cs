@@ -15,6 +15,7 @@ public static class ObjectExtension
     {
         for (ulong i = 0; i < count; i++)
         {
+            Thread.Sleep(1);
             obj.RunJobsAll();
         }
 
