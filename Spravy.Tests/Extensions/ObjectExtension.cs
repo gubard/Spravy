@@ -8,9 +8,6 @@ public static class ObjectExtension
     {
         for (ulong i = 0; i < count; i++)
         {
-            Task.Yield().GetAwaiter().GetResult();
-            Task.Delay(10).GetAwaiter().GetResult();
-            Thread.Sleep(10);
             Dispatcher.UIThread.RunJobs();
         }
 
