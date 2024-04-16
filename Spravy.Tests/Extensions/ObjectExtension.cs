@@ -10,7 +10,7 @@ public static class ObjectExtension
         {
             Task.Yield().GetAwaiter().GetResult();
             Thread.Sleep(1);
-            obj.RunJobsAll();
+            Dispatcher.UIThread.RunJobs();
         }
 
         return obj;
