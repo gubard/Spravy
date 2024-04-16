@@ -14,7 +14,6 @@ public class MainWindowTests
     [AvaloniaFact]
     public void CreateUserFlow()
     {
-        return;
         WindowHelper.CreateWindow()
             .TryCatch(
                 w => w.SetSize(1000, 1000)
@@ -105,7 +104,7 @@ public class MainWindowTests
                             .ThrowIfNull()
                             .MustEnabled()
                             .ClickOnButton(w)
-                            .RunJobsAll(1ul << 19)
+                            .RunJobsAll(1ul << 20)
                     )
                     .Case(() => w.GetCurrentView<VerificationCodeView, VerificationCodeViewModel>())
                     .SaveFrame(),
