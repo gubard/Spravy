@@ -2,7 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=System.Runtime">
     <!--ResetToDoItemView-->
-    <sys:String x:Key="ResetToDoItemView.CompleteTask">Complete task</sys:String>
+    <sys:String x:Key="ResetToDoItemView.CompleteChildrenTask">Complete children task</sys:String>
     <sys:String x:Key="ResetToDoItemView.MoveCircleOrderIndex">Move circle order index</sys:String>
     <sys:String x:Key="ResetToDoItemView.OnlyCompletedTasks">Only completed tasks</sys:String>
     <sys:String x:Key="ResetToDoItemView.CompleteCurrentTask">Complete current task</sys:String>

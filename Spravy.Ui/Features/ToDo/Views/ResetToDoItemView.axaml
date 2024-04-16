@@ -15,7 +15,8 @@
     </Interaction.Behaviors>
 
     <StackPanel>
-        <CheckBox IsChecked="{Binding IsCompleteChildrenTask}" Content="{DynamicResource ResetToDoItemView.CompleteTask}" />
+        <CheckBox IsChecked="{Binding IsCompleteChildrenTask}"
+                  Content="{DynamicResource ResetToDoItemView.CompleteChildrenTask}" />
         <CheckBox IsChecked="{Binding IsMoveCircleOrderIndex}"
                   Content="{DynamicResource ResetToDoItemView.MoveCircleOrderIndex}" />
         <CheckBox IsChecked="{Binding IsOnlyCompletedTasks}"
