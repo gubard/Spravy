@@ -4,17 +4,11 @@ namespace Spravy.Tests.Extensions;
 
 public static class ObjectExtension
 {
-    public static TObject RunJobsAll<TObject>(this TObject obj)
-    {
-        Dispatcher.UIThread.RunJobs();
-
-        return obj;
-    }
-
-    public static TObject RunJobsAll<TObject>(this TObject obj, ulong count)
+    public static TObject RunJobsAll<TObject>(this TObject obj, ulong count = 1)
     {
         for (ulong i = 0; i < count; i++)
         {
+            Task.Yield().GetAwaiter().GetResult();
             Thread.Sleep(1);
             obj.RunJobsAll();
         }
