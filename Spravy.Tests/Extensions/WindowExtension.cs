@@ -8,6 +8,7 @@ using DialogHostAvalonia;
 using FluentAssertions;
 using Spravy.Domain.Extensions;
 using Spravy.Tests.Helpers;
+using Spravy.Ui.Features.ErrorHandling.ViewModels;
 using Spravy.Ui.Models;
 using Spravy.Ui.ViewModels;
 using Spravy.Ui.Views;
@@ -104,6 +105,11 @@ public static class WindowExtension
         if (controls.Content is INotifyDataErrorInfo notifyDataErrorInfo)
         {
             Console.WriteLine($"HasError: {notifyDataErrorInfo.HasErrors}");
+        }
+
+        if (controls.ErrorDialogHost.DialogContent is ExceptionViewModel viewModel)
+        {
+            Console.WriteLine(viewModel.Exception?.ToString());
         }
 
         return window;
