@@ -18,10 +18,18 @@ public static class ObjectExtension
         for (ulong i = 0; i < count; i++)
         {
             Dispatcher.UIThread.RunJobs();
-            Thread.Sleep(100);
         }
 
         Console.WriteLine($"RunJobsAll end {count}");
+
+        return obj;
+    }
+
+    public static TObject RunJobsAll<TObject>(this TObject obj, TimeSpan waitTime)
+    {
+        Dispatcher.UIThread.RunJobs();
+        Dispatcher.UIThread.Post(() => Task.Delay(waitTime), DispatcherPriority.SystemIdle);
+        Dispatcher.UIThread.RunJobs();
 
         return obj;
     }
