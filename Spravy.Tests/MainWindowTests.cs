@@ -24,7 +24,7 @@ public class MainWindowTests
                                     .FindControl<Button>(ElementNames.CreateUserButton)
                                     .ThrowIfNull()
                                     .ClickOnButton(w)
-                                    .RunJobsAll(1ul << 6)
+                                    .RunJobsAll(1ul << 7)
                             )
                             .Case(
                                 () => w.GetCurrentView<CreateUserView, CreateUserViewModel>()
