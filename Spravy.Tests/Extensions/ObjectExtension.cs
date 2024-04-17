@@ -4,22 +4,24 @@ namespace Spravy.Tests.Extensions;
 
 public static class ObjectExtension
 {
-    public static TObject RunJobsAll<TObject>(this TObject obj, ulong count = 1)
+    public static TObject RunJobsAll<TObject>(this TObject obj)
     {
-        if (count != 1)
-        {
-            Console.WriteLine($"RunJobsAll start {count}");
-        }
-        
+        Dispatcher.UIThread.RunJobs();
+
+        return obj;
+    }
+
+    public static TObject RunJobsAll<TObject>(this TObject obj, ulong count)
+    {
+        Console.WriteLine($"RunJobsAll start {count}");
+
         for (ulong i = 0; i < count; i++)
         {
             Dispatcher.UIThread.RunJobs();
+            Thread.Sleep(100);
         }
-        
-        if (count != 1)
-        {
-            Console.WriteLine($"RunJobsAll end {count}");
-        }
+
+        Console.WriteLine($"RunJobsAll end {count}");
 
         return obj;
     }
