@@ -27,9 +27,11 @@ public static class ObjectExtension
 
     public static TObject RunJobsAll<TObject>(this TObject obj, TimeSpan waitTime)
     {
+        Console.WriteLine($"RunJobsAll Start");
         Dispatcher.UIThread.RunJobs();
         Dispatcher.UIThread.Post(() => Task.Delay(waitTime), DispatcherPriority.SystemIdle);
         Dispatcher.UIThread.RunJobs();
+        Console.WriteLine($"RunJobsAll End");
 
         return obj;
     }
