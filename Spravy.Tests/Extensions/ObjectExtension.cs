@@ -11,26 +11,17 @@ public static class ObjectExtension
         return obj;
     }
 
-    public static TObject RunJobsAll<TObject>(this TObject obj, ulong count)
+    public static TObject RunJobsAll<TObject>(this TObject obj, ulong seconds)
     {
-        Console.WriteLine($"RunJobsAll start {count}");
+        Console.WriteLine("RunJobsAll Start");
 
-        for (ulong i = 0; i < count; i++)
+        for (ulong i = 0; i < seconds; i++)
         {
+            Dispatcher.UIThread.RunJobs();
+            Dispatcher.UIThread.Post(() => Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false).GetAwaiter().GetResult());
             Dispatcher.UIThread.RunJobs();
         }
 
-        Console.WriteLine($"RunJobsAll end {count}");
-
-        return obj;
-    }
-
-    public static TObject RunJobsAll<TObject>(this TObject obj, TimeSpan waitTime)
-    {
-        Console.WriteLine("RunJobsAll Start");
-        Dispatcher.UIThread.RunJobs();
-        Dispatcher.UIThread.Post(() => Task.Delay(waitTime).ConfigureAwait(false).GetAwaiter().GetResult());
-        Dispatcher.UIThread.RunJobs();
         Console.WriteLine("RunJobsAll End");
 
         return obj;
