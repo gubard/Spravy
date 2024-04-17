@@ -29,7 +29,7 @@ public static class ObjectExtension
     {
         Console.WriteLine("RunJobsAll Start");
         Dispatcher.UIThread.RunJobs();
-        Dispatcher.UIThread.Post(() => Task.Delay(waitTime), DispatcherPriority.MaxValue);
+        Dispatcher.UIThread.InvokeAsync(() => Task.Delay(waitTime), DispatcherPriority.SystemIdle);
         Dispatcher.UIThread.RunJobs();
         Console.WriteLine("RunJobsAll End");
 
