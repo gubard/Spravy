@@ -105,7 +105,7 @@ public class MainWindowTests
                             .ThrowIfNull()
                             .MustEnabled()
                             .ClickOnButton(w)
-                            .RunJobsAll(1)
+                            .RunJobsAll(2)
                     )
                     .Case(() => w.GetCurrentView<VerificationCodeView, VerificationCodeViewModel>())
                     .Case(() =>
