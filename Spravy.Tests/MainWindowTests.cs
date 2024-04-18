@@ -1,3 +1,4 @@
+using System.Text;
 using AE.Net.Mail;
 using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
@@ -12,6 +13,11 @@ namespace Spravy.Tests;
 
 public class MainWindowTests
 {
+    static MainWindowTests()
+    {
+        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+    }
+
     [AvaloniaFact]
     public void CreateUserFlow()
     {
