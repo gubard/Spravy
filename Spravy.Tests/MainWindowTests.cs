@@ -1,3 +1,4 @@
+using AE.Net.Mail;
 using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.Input;
@@ -24,7 +25,7 @@ public class MainWindowTests
                                     .FindControl<Button>(ElementNames.CreateUserButton)
                                     .ThrowIfNull()
                                     .ClickOnButton(w)
-                                    .RunJobsAll(5)
+                                    .RunJobsAll(1)
                             )
                             .Case(
                                 () => w.GetCurrentView<CreateUserView, CreateUserViewModel>()
@@ -104,28 +105,32 @@ public class MainWindowTests
                             .ThrowIfNull()
                             .MustEnabled()
                             .ClickOnButton(w)
-                            .RunJobsAll(15)
+                            .RunJobsAll(1)
                     )
                     .Case(() => w.GetCurrentView<VerificationCodeView, VerificationCodeViewModel>())
+                    .Case(() =>
+                    {
+                        using var imapClient = new ImapClient(
+                            TestAppBuilder.Configuration.GetSection("EmailServer:Host").Value,
+                            TestAppBuilder.Configuration.GetSection("EmailAccount:Email").Value,
+                            TestAppBuilder.Configuration.GetSection("EmailAccount:Password").Value,
+                            AuthMethods.Login,
+                            993,
+                            true
+                        );
+
+                        using var pop = new Pop3Client(
+                            TestAppBuilder.Configuration.GetSection("EmailServer:Host").Value,
+                            TestAppBuilder.Configuration.GetSection("EmailAccount:Email").Value,
+                            TestAppBuilder.Configuration.GetSection("EmailAccount:Password").Value,
+                            995,
+                            true
+                        );
+
+                        var messages = imapClient.SearchMessages(SearchCondition.From(""));
+                    })
                     .SaveFrame(),
                 (w, _) => w.SaveFrame().LogCurrentState()
             );
-
-        /*using var imapClient = new ImapClient(
-                                   TestAppBuilder.Configuration.GetSection("EmailServer:Host").Value,
-                                   TestAppBuilder.Configuration.GetSection("EmailAccount:Email").Value,
-                                   TestAppBuilder.Configuration.GetSection("EmailAccount:Password").Value,
-                                   AuthMethods.Login,
-                                   993,
-                                   true
-                               );
-                               using var pop = new Pop3Client(
-                                   TestAppBuilder.Configuration.GetSection("EmailServer:Host").Value,
-                                   TestAppBuilder.Configuration.GetSection("EmailAccount:Email").Value,
-                                   TestAppBuilder.Configuration.GetSection("EmailAccount:Password").Value,
-                                   995,
-                                   true
-                               );
-                               var messages = imapClient.SearchMessages(SearchCondition.From(""));*/
     }
 }
