@@ -1,11 +1,16 @@
 using System.Text;
-using AE.Net.Mail;
 using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.Input;
+using MailKit;
+using MailKit.Net.Imap;
+using MailKit.Security;
+using MimeKit;
 using Spravy.Domain.Extensions;
 using Spravy.Tests.Extensions;
 using Spravy.Tests.Helpers;
+using Spravy.Ui.Features.Authentication.ViewModels;
+using Spravy.Ui.Features.Authentication.Views;
 using Spravy.Ui.ViewModels;
 using Spravy.Ui.Views;
 
@@ -99,6 +104,53 @@ public class MainWindowTests
                             )
                             .Case(() => w.KeyHandleQwerty(PhysicalKey.Enter, RawInputModifiers.None))
                     )
+                    .Case(() =>
+                    {
+                        using var client = new ImapClient();
+
+                        try
+                        {
+                            client.Connect(
+                                TestAppBuilder.Configuration.GetSection("EmailServer:Host").Value,
+                                993,
+                                SecureSocketOptions.SslOnConnect
+                            );
+
+                            client.Authenticate(
+                                TestAppBuilder.Configuration.GetSection("EmailAccount:Email").Value,
+                                TestAppBuilder.Configuration.GetSection("EmailAccount:Password").Value
+                            );
+
+                            var inbox = client.Inbox;
+                            var i = 0;
+
+                            while (true)
+                            {
+                                i++;
+                                inbox.Open(FolderAccess.ReadWrite);
+
+                                if (inbox.Count == 0)
+                                {
+                                    inbox.Close();
+
+                                    return;
+                                }
+
+                                var trash = client.GetFolder("Trash");
+                                inbox.MoveTo(0, trash);
+                                inbox.Close();
+
+                                if (i == 100)
+                                {
+                                    return;
+                                }
+                            }
+                        }
+                        finally
+                        {
+                            client.Disconnect(true);
+                        }
+                    })
                     .Case(
                         () => w.GetCurrentView<CreateUserView, CreateUserViewModel>()
                             .Case(
@@ -113,36 +165,59 @@ public class MainWindowTests
                             .ClickOnButton(w)
                             .RunJobsAll(2)
                     )
-                    .Case(() => w.GetCurrentView<VerificationCodeView, VerificationCodeViewModel>())
-                    .Case(() =>
-                    {
-                        /*using var imapClient = new ImapClient(
-                            TestAppBuilder.Configuration.GetSection("EmailServer:Host").Value,
-                            TestAppBuilder.Configuration.GetSection("EmailAccount:Email").Value,
-                            TestAppBuilder.Configuration.GetSection("EmailAccount:Password").Value,
-                            AuthMethods.Login,
-                            993,
-                            true
-                        );*/
-
-                        using var pop = new Pop3Client(
-                            TestAppBuilder.Configuration.GetSection("EmailServer:Host").Value,
-                            TestAppBuilder.Configuration.GetSection("EmailAccount:Email").Value,
-                            TestAppBuilder.Configuration.GetSection("EmailAccount:Password").Value,
-                            995,
-                            true
-                        );
-
-                        var message = pop.GetMessage(0);
-                        Console.WriteLine(message.Body);
-
-                        /*var messages = imapClient.SearchMessages(SearchCondition.From("noreply@spravy.com.ua"));
-
-                        foreach (var message in messages)
+                    .Case(() => w.GetCurrentView<VerificationCodeView, VerificationCodeViewModel>()
+                        .FindControl<TextBox>("VerificationCodeTextBox")
+                        .ThrowIfNull()
+                        .Case(tb =>
                         {
-                            Console.WriteLine(message.Value.Body);
-                        }*/
-                    })
+                            using var client = new ImapClient();
+
+                            try
+                            {
+                                client.Connect(
+                                    TestAppBuilder.Configuration.GetSection("EmailServer:Host").Value,
+                                    993,
+                                    SecureSocketOptions.SslOnConnect
+                                );
+
+                                client.Authenticate(
+                                    TestAppBuilder.Configuration.GetSection("EmailAccount:Email").Value,
+                                    TestAppBuilder.Configuration.GetSection("EmailAccount:Password").Value
+                                );
+
+                                var inbox = client.Inbox;
+                                var i = 0;
+
+                                while (true)
+                                {
+                                    Thread.Sleep(TimeSpan.FromSeconds(1));
+                                    i++;
+                                    inbox.Open(FolderAccess.ReadWrite);
+
+                                    if (inbox.Count == 0)
+                                    {
+                                        inbox.Close();
+                                        
+                                        if (i == 100)
+                                        {
+                                            throw new Exception("Inbox timeout");
+                                        }
+
+                                        continue;
+                                    }
+
+                                    var message = inbox.GetMessage(0);
+                                    tb.FocusElement();
+                                    w.SetKeyTextInput(message.TextBody);
+
+                                    return;
+                                }
+                            }
+                            finally
+                            {
+                                client.Disconnect(true);
+                            }
+                        }))
                     .SaveFrame(),
                 (w, _) => w.SaveFrame().LogCurrentState()
             );

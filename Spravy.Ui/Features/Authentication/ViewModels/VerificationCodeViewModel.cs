@@ -12,7 +12,7 @@ using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 using Spravy.Ui.Services;
 
-namespace Spravy.Ui.ViewModels;
+namespace Spravy.Ui.Features.Authentication.ViewModels;
 
 public class VerificationCodeViewModel : NavigatableViewModelBase, IVerificationEmail
 {

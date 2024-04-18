@@ -4,7 +4,6 @@ using System.Threading;
 using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
-using DynamicData;
 using Ninject;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Models;

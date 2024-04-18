@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using DynamicData;
 using Ninject;
 using Spravy.Ui.Features.Localizations.Models;
 using Spravy.Ui.Models;

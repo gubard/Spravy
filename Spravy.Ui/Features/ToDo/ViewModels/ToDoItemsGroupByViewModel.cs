@@ -8,7 +8,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows.Input;
-using DynamicData;
 using ReactiveUI.Fody.Helpers;
 using Spravy.Domain.Models;
 using Spravy.Ui.Services;

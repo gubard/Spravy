@@ -17,6 +17,7 @@ using Spravy.Domain.Helpers;
 using Spravy.Domain.Models;
 using Spravy.Ui.Enums;
 using Spravy.Ui.Extensions;
+using Spravy.Ui.Features.Authentication.ViewModels;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 using Spravy.Ui.Services;

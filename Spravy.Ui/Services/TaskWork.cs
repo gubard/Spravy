@@ -6,7 +6,6 @@ using Ninject;
 using Spravy.Domain.Di.Helpers;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Models;
-using Spravy.Ui.Features.ErrorHandling.ViewModels;
 using Spravy.Ui.Interfaces;
 
 namespace Spravy.Ui.Services;

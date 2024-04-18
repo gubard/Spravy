@@ -5,7 +5,6 @@ using Ninject;
 using Serilog;
 using Spravy.Domain.Di.Helpers;
 using Spravy.Domain.Extensions;
-using Spravy.Domain.Models;
 using Spravy.Ui.Configurations;
 using Spravy.Ui.Desktop.Configurations;
 using Spravy.Ui.Extensions;

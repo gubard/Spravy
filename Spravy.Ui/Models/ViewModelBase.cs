@@ -2,13 +2,8 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Grpc.Core;
 using Ninject;
 using ReactiveUI;
-using Serilog;
-using Spravy.Client.Exceptions;
-using Spravy.Domain.Extensions;
-using Spravy.Ui.Features.ErrorHandling.ViewModels;
 using Spravy.Ui.Interfaces;
 
 namespace Spravy.Ui.Models;
