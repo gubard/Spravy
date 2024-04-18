@@ -13,16 +13,12 @@ public static class ObjectExtension
 
     public static TObject RunJobsAll<TObject>(this TObject obj, ulong seconds)
     {
-        Console.WriteLine("RunJobsAll Start");
-
         for (ulong i = 0; i < seconds; i++)
         {
             Dispatcher.UIThread.RunJobs();
             Dispatcher.UIThread.Post(() => Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false).GetAwaiter().GetResult());
             Dispatcher.UIThread.RunJobs();
         }
-
-        Console.WriteLine("RunJobsAll End");
 
         return obj;
     }

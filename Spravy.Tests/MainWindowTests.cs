@@ -116,14 +116,14 @@ public class MainWindowTests
                     .Case(() => w.GetCurrentView<VerificationCodeView, VerificationCodeViewModel>())
                     .Case(() =>
                     {
-                        using var imapClient = new ImapClient(
+                        /*using var imapClient = new ImapClient(
                             TestAppBuilder.Configuration.GetSection("EmailServer:Host").Value,
                             TestAppBuilder.Configuration.GetSection("EmailAccount:Email").Value,
                             TestAppBuilder.Configuration.GetSection("EmailAccount:Password").Value,
                             AuthMethods.Login,
                             993,
                             true
-                        );
+                        );*/
 
                         using var pop = new Pop3Client(
                             TestAppBuilder.Configuration.GetSection("EmailServer:Host").Value,
@@ -132,13 +132,16 @@ public class MainWindowTests
                             995,
                             true
                         );
-                        
-                        var messages = imapClient.SearchMessages(SearchCondition.From("noreply@spravy.com.ua"));
+
+                        var message = pop.GetMessage(0);
+                        Console.WriteLine(message.Body);
+
+                        /*var messages = imapClient.SearchMessages(SearchCondition.From("noreply@spravy.com.ua"));
 
                         foreach (var message in messages)
                         {
                             Console.WriteLine(message.Value.Body);
-                        }
+                        }*/
                     })
                     .SaveFrame(),
                 (w, _) => w.SaveFrame().LogCurrentState()
