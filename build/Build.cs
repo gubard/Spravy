@@ -23,14 +23,11 @@ namespace _build;
 class Build : NukeBuild
 {
     /// Support plugins are available for:
-    ///   - JetBrains ReSharper        https://nuke.build/resharper
-    ///   - JetBrains Rider            https://nuke.build/rider
-    ///   - Microsoft VisualStudio     https://nuke.build/visualstudio
-    ///   - Microsoft VSCode           https://nuke.build/vscode
-    public static int Main()
-    {
-        return Execute<Build>(x => x.ProdPublishBrowser);
-    }
+    /// - JetBrains ReSharper        https://nuke.build/resharper
+    /// - JetBrains Rider            https://nuke.build/rider
+    /// - Microsoft VisualStudio     https://nuke.build/visualstudio
+    /// - Microsoft VSCode           https://nuke.build/vscode
+    public static int Main() => Execute<Build>(x => x.ProdPublishBrowser);
 
     VersionService VersionService;
 
@@ -58,6 +55,8 @@ class Build : NukeBuild
     [Parameter] readonly string StagingSshUser;
     [Parameter] readonly string StagingDomain;
     [Parameter] readonly string MailPassword;
+    [Parameter] readonly string EmailAccountPassword;
+    [Parameter] readonly string EmailAccount2Password;
 
     static DirectoryInfo AndroidFolder;
     IReadOnlyDictionary<string, ushort> Ports;
@@ -97,53 +96,51 @@ class Build : NukeBuild
             },
             {
                 "Spravy.Password.Service".GetGrpcServiceName(), 5005
-            },
+            }
         };
     }
 
-    ProjectBuilderFactory CreateStagingFactory()
-    {
-        return new ProjectBuilderFactory(
-            Configuration,
-            MailPassword,
-            Token,
-            Ports,
-            VersionService,
-            PathHelper.PublishFolder,
-            StagingFtpHost,
-            StagingFtpUser,
-            StagingFtpPassword,
-            StagingSshHost,
-            StagingSshUser,
-            StagingSshPassword,
-            StagingDomain,
-            new FileInfo($"/home/{StagingFtpUser}/storage/sign-key.keystore"),
-            AndroidSigningKeyPass,
-            AndroidSigningStorePass
-        );
-    }
+    ProjectBuilderFactory CreateStagingFactory() => new(
+        Configuration,
+        MailPassword,
+        Token,
+        Ports,
+        VersionService,
+        PathHelper.PublishFolder,
+        StagingFtpHost,
+        StagingFtpUser,
+        StagingFtpPassword,
+        StagingSshHost,
+        StagingSshUser,
+        StagingSshPassword,
+        StagingDomain,
+        new FileInfo($"/home/{StagingFtpUser}/storage/sign-key.keystore"),
+        AndroidSigningKeyPass,
+        AndroidSigningStorePass,
+        EmailAccountPassword,
+        EmailAccount2Password
+    );
 
-    ProjectBuilderFactory CreateProdFactory()
-    {
-        return new ProjectBuilderFactory(
-            Configuration,
-            MailPassword,
-            Token,
-            Ports,
-            VersionService,
-            PathHelper.PublishFolder,
-            FtpHost,
-            FtpUser,
-            FtpPassword,
-            SshHost,
-            SshUser,
-            SshPassword,
-            Domain,
-            new FileInfo($"/home/{FtpUser}/storage/sign-key.keystore"),
-            AndroidSigningKeyPass,
-            AndroidSigningStorePass
-        );
-    }
+    ProjectBuilderFactory CreateProdFactory() => new(
+        Configuration,
+        MailPassword,
+        Token,
+        Ports,
+        VersionService,
+        PathHelper.PublishFolder,
+        FtpHost,
+        FtpUser,
+        FtpPassword,
+        SshHost,
+        SshUser,
+        SshPassword,
+        Domain,
+        new FileInfo($"/home/{FtpUser}/storage/sign-key.keystore"),
+        AndroidSigningKeyPass,
+        AndroidSigningStorePass,
+        EmailAccountPassword,
+        EmailAccount2Password
+    );
 
     void SetupAppSettings()
     {
@@ -193,10 +190,10 @@ class Build : NukeBuild
         foreach (var project in Projects.OfType<ServiceProjectBuilder>())
         {
             sshClient.SafeRun(
-                $"echo {project.ServiceOptions.SshPassword} | sudo -S systemctl enable {project.ServiceOptions.GetServiceName()}"
+                $"echo {project.Options.SshPassword} | sudo -S systemctl enable {project.Options.GetServiceName()}"
             );
             sshClient.SafeRun(
-                $"echo {project.ServiceOptions.SshPassword} | sudo -S systemctl restart {project.ServiceOptions.GetServiceName()}"
+                $"echo {project.Options.SshPassword} | sudo -S systemctl restart {project.Options.GetServiceName()}"
             );
         }
     }
@@ -334,8 +331,8 @@ class Build : NukeBuild
         var items = ftpClient.GetListing(html.Combine("downloads").FullName, FtpListOption.Recursive)
             .Where(x => x.Type == FtpObjectType.File
                         && (x.Name.EndsWith(".zip")
-                            || ((x.Name.EndsWith(".apk") || x.Name.EndsWith(".aab"))
-                                && x.Name.Contains("Spravy-Signed")))
+                            || (x.Name.EndsWith(".apk") || x.Name.EndsWith(".aab"))
+                            && x.Name.Contains("Spravy-Signed"))
             )
             .Select(x => InlineKeyboardButton.WithUrl(
                     GetButtonName(x.Name),
@@ -354,16 +351,13 @@ class Build : NukeBuild
             .GetResult();
     }
 
-    string GetButtonName(string name)
+    string GetButtonName(string name) => Path.GetExtension(name).ToUpperInvariant() switch
     {
-        return Path.GetExtension(name).ToUpperInvariant() switch
-        {
-            ".APK" => ".APK",
-            ".AAB" => ".AAB",
-            ".ZIP" => Path.GetExtension(Path.GetFileNameWithoutExtension(name)).ThrowIfNull().ToUpperInvariant(),
-            _ => throw new ArgumentOutOfRangeException(name)
-        };
-    }
+        ".APK" => ".APK",
+        ".AAB" => ".AAB",
+        ".ZIP" => Path.GetExtension(Path.GetFileNameWithoutExtension(name)).ThrowIfNull().ToUpperInvariant(),
+        _ => throw new ArgumentOutOfRangeException(name)
+    };
 
     string CreteToken()
     {
@@ -374,7 +368,7 @@ class Build : NukeBuild
 
         var claims = new List<Claim>
         {
-            new(ClaimTypes.Role, "Service"),
+            new(ClaimTypes.Role, "Service")
         };
 
         var token = new JwtSecurityToken(

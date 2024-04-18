@@ -25,6 +25,8 @@ public class ProjectBuilderFactory
     readonly FileInfo keyStoreFile;
     readonly string androidSigningKeyPass;
     readonly string androidSigningStorePass;
+    readonly string emailAccountPassword;
+    readonly string emailAccount2Password;
 
     public ProjectBuilderFactory(
         string configuration,
@@ -42,8 +44,9 @@ public class ProjectBuilderFactory
         string domain,
         FileInfo keyStoreFile,
         string androidSigningKeyPass,
-        string androidSigningStorePass
-    )
+        string androidSigningStorePass,
+        string emailAccountPassword,
+        string emailAccount2Password)
     {
         this.versionService = versionService;
         this.publishFolder = publishFolder;
@@ -57,6 +60,8 @@ public class ProjectBuilderFactory
         this.keyStoreFile = keyStoreFile;
         this.androidSigningKeyPass = androidSigningKeyPass;
         this.androidSigningStorePass = androidSigningStorePass;
+        this.emailAccountPassword = emailAccountPassword;
+        this.emailAccount2Password = emailAccount2Password;
         this.emailPassword = emailPassword;
         this.token = token;
         this.configuration = configuration;
@@ -78,13 +83,15 @@ public class ProjectBuilderFactory
 
             if (projectName.EndsWith(".Tests"))
             {
-                var projectBuilderOptions = new ProjectBuilderOptions(
+                var projectBuilderOptions = new TestProjectBuilderOptions(
                     csprojFile,
                     csprojFile.Directory.ToFile("testsettings.json"),
                     ports,
                     Enumerable.Empty<Runtime>(),
                     configuration,
-                    domain
+                    domain,
+                    emailAccountPassword,
+                    emailAccount2Password
                 );
 
                 yield return new TestProjectBuilder(projectBuilderOptions, versionService);
@@ -100,7 +107,7 @@ public class ProjectBuilderFactory
                         ports,
                         new[]
                         {
-                            Runtime.LinuxX64,
+                            Runtime.LinuxX64
                         },
                         configuration,
                         domain,
@@ -152,7 +159,7 @@ public class ProjectBuilderFactory
                         ports,
                         new[]
                         {
-                            Runtime.BrowserWasm,
+                            Runtime.BrowserWasm
                         },
                         configuration,
                         domain,
@@ -177,7 +184,8 @@ public class ProjectBuilderFactory
                             ports,
                             new[]
                             {
-                                Runtime.LinuxX64, Runtime.WinX64,
+                                Runtime.LinuxX64,
+                                Runtime.WinX64
                             },
                             configuration,
                             domain,

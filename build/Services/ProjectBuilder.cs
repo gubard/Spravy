@@ -6,26 +6,21 @@ using Nuke.Common.Tools.DotNet;
 
 namespace _build.Services;
 
-public abstract class ProjectBuilder : IProjectBuilder
+public abstract class ProjectBuilder<TOptions> : IProjectBuilder where TOptions : ProjectBuilderOptions
 {
-    protected readonly ProjectBuilderOptions options;
     protected readonly VersionService versionService;
 
-    protected ProjectBuilder(ProjectBuilderOptions options, VersionService versionService)
+    protected ProjectBuilder(TOptions options, VersionService versionService)
     {
-        this.options = options;
+        Options = options;
         this.versionService = versionService;
     }
 
-    DirectoryInfo GetBinFolder()
-    {
-        return options.CsprojFile.Directory.Combine("bin");
-    }
+    public TOptions Options { get; }
 
-    DirectoryInfo GetObjFolder()
-    {
-        return options.CsprojFile.Directory.Combine("obj");
-    }
+    DirectoryInfo GetBinFolder() => Options.CsprojFile.Directory.Combine("bin");
+
+    DirectoryInfo GetObjFolder() => Options.CsprojFile.Directory.Combine("obj");
 
     public abstract void Setup();
 
@@ -34,18 +29,18 @@ public abstract class ProjectBuilder : IProjectBuilder
         GetBinFolder().DeleteIfExits();
         GetObjFolder().DeleteIfExits();
 
-        if (options.Runtimes.IsEmpty)
+        if (Options.Runtimes.IsEmpty)
         {
-            DotNetTasks.DotNetClean(setting => setting.SetProject(options.CsprojFile.FullName)
-                .SetConfiguration(options.Configuration)
+            DotNetTasks.DotNetClean(setting => setting.SetProject(Options.CsprojFile.FullName)
+                .SetConfiguration(Options.Configuration)
             );
         }
         else
         {
-            foreach (var runtime in options.Runtimes.Span)
+            foreach (var runtime in Options.Runtimes.Span)
             {
-                DotNetTasks.DotNetClean(setting => setting.SetProject(options.CsprojFile.FullName)
-                    .SetConfiguration(options.Configuration)
+                DotNetTasks.DotNetClean(setting => setting.SetProject(Options.CsprojFile.FullName)
+                    .SetConfiguration(Options.Configuration)
                     .SetRuntime(runtime.Name)
                 );
             }
@@ -54,16 +49,16 @@ public abstract class ProjectBuilder : IProjectBuilder
 
     public virtual void Restore()
     {
-        if (options.Runtimes.IsEmpty)
+        if (Options.Runtimes.IsEmpty)
         {
-            DotNetTasks.DotNetRestore(setting => setting.SetProjectFile(options.CsprojFile.FullName));
+            DotNetTasks.DotNetRestore(setting => setting.SetProjectFile(Options.CsprojFile.FullName));
         }
         else
         {
-            foreach (var runtime in options.Runtimes.Span)
+            foreach (var runtime in Options.Runtimes.Span)
             {
                 DotNetTasks.DotNetRestore(setting =>
-                    setting.SetProjectFile(options.CsprojFile.FullName).SetRuntime(runtime.Name)
+                    setting.SetProjectFile(Options.CsprojFile.FullName).SetRuntime(runtime.Name)
                 );
             }
         }
@@ -71,21 +66,21 @@ public abstract class ProjectBuilder : IProjectBuilder
 
     public virtual void Compile()
     {
-        if (options.Runtimes.IsEmpty)
+        if (Options.Runtimes.IsEmpty)
         {
-            DotNetTasks.DotNetBuild(setting => setting.SetProjectFile(options.CsprojFile.FullName)
+            DotNetTasks.DotNetBuild(setting => setting.SetProjectFile(Options.CsprojFile.FullName)
                 .EnableNoRestore()
-                .SetConfiguration(options.Configuration)
+                .SetConfiguration(Options.Configuration)
                 .AddProperty("Version", versionService.Version.ToString())
             );
         }
         else
         {
-            foreach (var runtime in options.Runtimes.Span)
+            foreach (var runtime in Options.Runtimes.Span)
             {
-                DotNetTasks.DotNetBuild(setting => setting.SetProjectFile(options.CsprojFile.FullName)
+                DotNetTasks.DotNetBuild(setting => setting.SetProjectFile(Options.CsprojFile.FullName)
                     .EnableNoRestore()
-                    .SetConfiguration(options.Configuration)
+                    .SetConfiguration(Options.Configuration)
                     .AddProperty("Version", versionService.Version.ToString())
                     .SetRuntime(runtime.Name)
                 );

@@ -8,55 +8,52 @@ using Serilog;
 
 namespace _build.Services;
 
-public class ServiceProjectBuilder : ProjectBuilder
+public class ServiceProjectBuilder : ProjectBuilder<ServiceProjectBuilderOptions>
 {
     public ServiceProjectBuilder(
         VersionService versionService,
         ServiceProjectBuilderOptions serviceOptions
     ) : base(serviceOptions, versionService)
     {
-        this.ServiceOptions = serviceOptions;
     }
-
-    public ServiceProjectBuilderOptions ServiceOptions { get; }
 
     public override void Setup()
     {
-        Log.Logger.Information("Set app settings {File}", options.AppSettingsFile);
-        var jsonDocument = options.AppSettingsFile.GetJsonDocument();
+        Log.Logger.Information("Set app settings {File}", Options.AppSettingsFile);
+        var jsonDocument = Options.AppSettingsFile.GetJsonDocument();
         using var stream = new MemoryStream();
 
         stream.SetAppSettingsStream(
             jsonDocument,
-            options.Domain,
-            options.Hosts,
-            ServiceOptions.Token,
-            ServiceOptions.Port,
-            ServiceOptions.EmailPassword
+            Options.Domain,
+            Options.Hosts,
+            Options.Token,
+            Options.Port,
+            Options.EmailPassword
         );
 
         var jsonData = Encoding.UTF8.GetString(stream.ToArray());
-        File.WriteAllText(options.AppSettingsFile.FullName, jsonData);
+        File.WriteAllText(Options.AppSettingsFile.FullName, jsonData);
     }
 
     public void Publish()
     {
-        if (options.Runtimes.IsEmpty)
+        if (Options.Runtimes.IsEmpty)
         {
-            DotNetTasks.DotNetPublish(setting => setting.SetConfiguration(options.Configuration)
-                .SetProject(options.CsprojFile.FullName)
-                .SetOutput(ServiceOptions.PublishFolder.FullName)
+            DotNetTasks.DotNetPublish(setting => setting.SetConfiguration(Options.Configuration)
+                .SetProject(Options.CsprojFile.FullName)
+                .SetOutput(Options.PublishFolder.FullName)
                 .EnableNoBuild()
                 .EnableNoRestore()
             );
         }
         else
         {
-            foreach (var runtime in options.Runtimes.Span)
+            foreach (var runtime in Options.Runtimes.Span)
             {
-                DotNetTasks.DotNetPublish(setting => setting.SetConfiguration(options.Configuration)
-                    .SetProject(options.CsprojFile.FullName)
-                    .SetOutput(ServiceOptions.PublishFolder.Combine(runtime.Name).FullName)
+                DotNetTasks.DotNetPublish(setting => setting.SetConfiguration(Options.Configuration)
+                    .SetProject(Options.CsprojFile.FullName)
+                    .SetOutput(Options.PublishFolder.Combine(runtime.Name).FullName)
                     .EnableNoBuild()
                     .EnableNoRestore()
                     .SetRuntime(runtime.Name)
@@ -64,60 +61,57 @@ public class ServiceProjectBuilder : ProjectBuilder
             }
         }
 
-        using var sshClient = ServiceOptions.CreateSshClient();
+        using var sshClient = Options.CreateSshClient();
         sshClient.Connect();
-        using var ftpClient = ServiceOptions.CreateFtpClient();
+        using var ftpClient = Options.CreateFtpClient();
         ftpClient.Connect();
-        ftpClient.DeleteIfExistsFolder(ServiceOptions.GetAppFolder());
+        ftpClient.DeleteIfExistsFolder(Options.GetAppFolder());
 
-        if (options.Runtimes.IsEmpty)
+        if (Options.Runtimes.IsEmpty)
         {
             ftpClient.UploadDirectory(
-                ServiceOptions.PublishFolder.FullName,
-                ServiceOptions.GetAppFolder().FullName
+                Options.PublishFolder.FullName,
+                Options.GetAppFolder().FullName
             );
         }
         else
         {
             ftpClient.UploadDirectory(
-                ServiceOptions.PublishFolder.Combine(ServiceOptions.Runtime.Name).FullName,
-                ServiceOptions.GetAppFolder().FullName
+                Options.PublishFolder.Combine(Options.Runtime.Name).FullName,
+                Options.GetAppFolder().FullName
             );
         }
 
-        sshClient.RunSudo(ServiceOptions, $"rm /etc/systemd/system/{options.GetServiceName()}");
+        sshClient.RunSudo(Options, $"rm /etc/systemd/system/{Options.GetServiceName()}");
         PathHelper.ServicesFolder.CreateIfNotExits();
 
         var serviceFile =
-            PathHelper.ServicesFolder.ToFile(options.GetServiceName());
+            PathHelper.ServicesFolder.ToFile(Options.GetServiceName());
 
         serviceFile.WriteAllText(GetDaemonConfig());
         ftpClient.CreateIfNotExistsFolder(PathHelper.ServicesFolder);
         ftpClient.UploadFile(serviceFile.FullName, serviceFile.FullName);
-        sshClient.RunSudo(ServiceOptions, $"cp {serviceFile} /etc/systemd/system/{options.GetServiceName()}");
+        sshClient.RunSudo(Options, $"cp {serviceFile} /etc/systemd/system/{Options.GetServiceName()}");
     }
 
-    string GetDaemonConfig()
-    {
-        return $"""
-                [Unit]
-                Description={options.GetProjectName()}
-                After=network.target
+    string GetDaemonConfig() => $"""
+                                 [Unit]
+                                 Description={Options.GetProjectName()}
+                                 After=network.target
 
-                [Service]
-                WorkingDirectory={ServiceOptions.GetAppFolder()}
-                ExecStart=/usr/bin/dotnet {ServiceOptions.GetAppDll()}
-                Restart=always
-                # Restart service after 10 seconds if the dotnet service crashes:
-                RestartSec=10
-                KillSignal=SIGINT
-                SyslogIdentifier={options.GetServiceName().Replace(",", "-")}
-                User={ServiceOptions.FtpUser}
-                Environment=ASPNETCORE_ENVIRONMENT=Production
-                Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
+                                 [Service]
+                                 WorkingDirectory={Options.GetAppFolder()}
+                                 ExecStart=/usr/bin/dotnet {Options.GetAppDll()}
+                                 Restart=always
+                                 # Restart service after 10 seconds if the dotnet service crashes:
+                                 RestartSec=10
+                                 KillSignal=SIGINT
+                                 SyslogIdentifier={Options.GetServiceName().Replace(",", "-")}
+                                 User={Options.FtpUser}
+                                 Environment=ASPNETCORE_ENVIRONMENT=Production
+                                 Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
 
-                [Install]
-                WantedBy=multi-user.target
-                """;
-    }
+                                 [Install]
+                                 WantedBy=multi-user.target
+                                 """;
 }

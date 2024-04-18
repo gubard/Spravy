@@ -8,21 +8,21 @@ using Serilog;
 
 namespace _build.Services;
 
-public abstract class UiProjectBuilder : ProjectBuilder
+public abstract class UiProjectBuilder<TOptions> : ProjectBuilder<TOptions> where TOptions : ProjectBuilderOptions
 {
-    protected UiProjectBuilder(ProjectBuilderOptions options, VersionService versionService)
+    protected UiProjectBuilder(TOptions options, VersionService versionService)
         : base(options, versionService)
     {
     }
 
     public override void Setup()
     {
-        Log.Logger.Information("Set app settings {File}", options.AppSettingsFile);
-        var jsonDocument = options.AppSettingsFile.GetJsonDocument();
+        Log.Logger.Information("Set app settings {File}", Options.AppSettingsFile);
+        var jsonDocument = Options.AppSettingsFile.GetJsonDocument();
         using var stream = new MemoryStream();
-        stream.SetAppSettingsStream(options.Domain, jsonDocument, options.Hosts);
+        stream.SetAppSettingsStream(Options.Domain, jsonDocument, Options.Hosts);
         var jsonData = Encoding.UTF8.GetString(stream.ToArray());
-        File.WriteAllText(options.AppSettingsFile.FullName, jsonData);
+        File.WriteAllText(Options.AppSettingsFile.FullName, jsonData);
     }
 
     public override void Compile()
@@ -31,22 +31,22 @@ public abstract class UiProjectBuilder : ProjectBuilder
         {
             try
             {
-                if (options.Runtimes.IsEmpty)
+                if (Options.Runtimes.IsEmpty)
                 {
-                    DotNetTasks.DotNetBuild(setting => setting.SetProjectFile(options.CsprojFile.FullName)
+                    DotNetTasks.DotNetBuild(setting => setting.SetProjectFile(Options.CsprojFile.FullName)
                         .EnableNoRestore()
-                        .SetConfiguration(options.Configuration)
+                        .SetConfiguration(Options.Configuration)
                         .AddProperty("Version", versionService.Version.ToString())
                     );
                 }
                 else
                 {
-                    foreach (var runtime in options.Runtimes.Span)
+                    foreach (var runtime in Options.Runtimes.Span)
                     {
                         DotNetTasks.DotNetBuild(setting =>
-                            setting.SetProjectFile(options.CsprojFile.FullName)
+                            setting.SetProjectFile(Options.CsprojFile.FullName)
                                 .EnableNoRestore()
-                                .SetConfiguration(options.Configuration)
+                                .SetConfiguration(Options.Configuration)
                                 .AddProperty("Version", versionService.Version.ToString())
                                 .SetRuntime(runtime.Name)
                         );

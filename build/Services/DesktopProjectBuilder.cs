@@ -4,36 +4,33 @@ using Nuke.Common.Tools.DotNet;
 
 namespace _build.Services;
 
-public class DesktopProjectBuilder : UiProjectBuilder
+public class DesktopProjectBuilder : UiProjectBuilder<DesktopProjectBuilderOptions>
 {
-    readonly DesktopProjectBuilderOptions desktopOptions;
-
     public DesktopProjectBuilder(
         VersionService versionService,
         DesktopProjectBuilderOptions desktopOptions
     ) : base(desktopOptions, versionService)
     {
-        this.desktopOptions = desktopOptions;
     }
 
     public void Publish()
     {
-        if (options.Runtimes.IsEmpty)
+        if (Options.Runtimes.IsEmpty)
         {
-            DotNetTasks.DotNetPublish(setting => setting.SetConfiguration(options.Configuration)
-                .SetProject(options.CsprojFile.FullName)
-                .SetOutput(desktopOptions.PublishFolder.FullName)
+            DotNetTasks.DotNetPublish(setting => setting.SetConfiguration(Options.Configuration)
+                .SetProject(Options.CsprojFile.FullName)
+                .SetOutput(Options.PublishFolder.FullName)
                 .EnableNoBuild()
                 .EnableNoRestore()
             );
         }
         else
         {
-            foreach (var runtime in options.Runtimes.Span)
+            foreach (var runtime in Options.Runtimes.Span)
             {
-                DotNetTasks.DotNetPublish(setting => setting.SetConfiguration(options.Configuration)
-                    .SetProject(options.CsprojFile.FullName)
-                    .SetOutput(desktopOptions.PublishFolder.Combine(runtime.Name).FullName)
+                DotNetTasks.DotNetPublish(setting => setting.SetConfiguration(Options.Configuration)
+                    .SetProject(Options.CsprojFile.FullName)
+                    .SetOutput(Options.PublishFolder.Combine(runtime.Name).FullName)
                     .EnableNoBuild()
                     .EnableNoRestore()
                     .SetRuntime(runtime.Name)
@@ -41,14 +38,14 @@ public class DesktopProjectBuilder : UiProjectBuilder
             }
         }
 
-        using var ftpClient = desktopOptions.CreateFtpClient();
+        using var ftpClient = Options.CreateFtpClient();
         ftpClient.Connect();
-        ftpClient.DeleteIfExistsFolder(desktopOptions.GetAppFolder());
-        ftpClient.CreateIfNotExistsFolder(desktopOptions.GetAppsFolder());
+        ftpClient.DeleteIfExistsFolder(Options.GetAppFolder());
+        ftpClient.CreateIfNotExistsFolder(Options.GetAppsFolder());
 
         ftpClient.UploadDirectory(
-            desktopOptions.PublishFolder.FullName,
-            desktopOptions.GetAppFolder().FullName
+            Options.PublishFolder.FullName,
+            Options.GetAppFolder().FullName
         );
     }
 }

@@ -5,16 +5,13 @@ using Nuke.Common.Tools.DotNet;
 
 namespace _build.Services;
 
-public class AndroidProjectBuilder : UiProjectBuilder
+public class AndroidProjectBuilder : UiProjectBuilder<AndroidProjectBuilderOptions>
 {
-    readonly AndroidProjectBuilderOptions androidOptions;
-
     public AndroidProjectBuilder(
         VersionService versionService,
         AndroidProjectBuilderOptions androidOptions
     ) : base(androidOptions, versionService)
     {
-        this.androidOptions = androidOptions;
     }
 
     public override void Compile()
@@ -27,38 +24,38 @@ public class AndroidProjectBuilder : UiProjectBuilder
         {
             try
             {
-                if (options.Runtimes.IsEmpty)
+                if (Options.Runtimes.IsEmpty)
                 {
-                    DotNetTasks.DotNetPublish(setting => setting.SetProject(options.CsprojFile.FullName)
+                    DotNetTasks.DotNetPublish(setting => setting.SetProject(Options.CsprojFile.FullName)
                         .SetProperty("AndroidKeyStore", "true")
-                        .SetProperty("AndroidSigningKeyStore", androidOptions.KeyStoreFile.FullName)
+                        .SetProperty("AndroidSigningKeyStore", Options.KeyStoreFile.FullName)
                         .SetProperty("AndroidSigningKeyAlias", "spravy")
-                        .SetProperty("AndroidSigningKeyPass", androidOptions.AndroidSigningKeyPass)
-                        .SetProperty("AndroidSigningStorePass", androidOptions.AndroidSigningStorePass)
+                        .SetProperty("AndroidSigningKeyPass", Options.AndroidSigningKeyPass)
+                        .SetProperty("AndroidSigningStorePass", Options.AndroidSigningStorePass)
                         .SetProperty("AndroidSdkDirectory", "/opt/android-sdk")
                         .SetProperty("ApplicationVersion", versionService.Version.Code)
-                        .SetConfiguration(options.Configuration)
+                        .SetConfiguration(Options.Configuration)
                         .AddProperty("Version", versionService.Version.ToString())
-                        .SetOutput(androidOptions.PublishFolder.FullName)
+                        .SetOutput(Options.PublishFolder.FullName)
                         .SetNoRestore(true)
                     );
                 }
                 else
                 {
-                    foreach (var runtime in options.Runtimes.Span)
+                    foreach (var runtime in Options.Runtimes.Span)
                     {
                         DotNetTasks.DotNetPublish(setting =>
-                            setting.SetProject(options.CsprojFile.FullName)
+                            setting.SetProject(Options.CsprojFile.FullName)
                                 .SetProperty("AndroidKeyStore", "true")
-                                .SetProperty("AndroidSigningKeyStore", androidOptions.KeyStoreFile.FullName)
+                                .SetProperty("AndroidSigningKeyStore", Options.KeyStoreFile.FullName)
                                 .SetProperty("AndroidSigningKeyAlias", "spravy")
-                                .SetProperty("AndroidSigningKeyPass", androidOptions.AndroidSigningKeyPass)
-                                .SetProperty("AndroidSigningStorePass", androidOptions.AndroidSigningStorePass)
+                                .SetProperty("AndroidSigningKeyPass", Options.AndroidSigningKeyPass)
+                                .SetProperty("AndroidSigningStorePass", Options.AndroidSigningStorePass)
                                 .SetProperty("AndroidSdkDirectory", "/opt/android-sdk")
                                 .SetProperty("ApplicationVersion", versionService.Version.Code)
-                                .SetConfiguration(options.Configuration)
+                                .SetConfiguration(Options.Configuration)
                                 .AddProperty("Version", versionService.Version.ToString())
-                                .SetOutput(androidOptions.PublishFolder.Combine(runtime.Name).FullName)
+                                .SetOutput(Options.PublishFolder.Combine(runtime.Name).FullName)
                                 .SetRuntime(runtime.Name)
                                 .SetNoRestore(true)
                         );
@@ -83,14 +80,14 @@ public class AndroidProjectBuilder : UiProjectBuilder
             }
         }
 
-        using var ftpClient = androidOptions.CreateFtpClient();
+        using var ftpClient = Options.CreateFtpClient();
         ftpClient.Connect();
-        ftpClient.DeleteIfExistsFolder(androidOptions.GetAppFolder());
-        ftpClient.CreateIfNotExistsFolder(androidOptions.GetAppsFolder());
+        ftpClient.DeleteIfExistsFolder(Options.GetAppFolder());
+        ftpClient.CreateIfNotExistsFolder(Options.GetAppsFolder());
 
         ftpClient.UploadDirectory(
-            androidOptions.PublishFolder.FullName,
-            androidOptions.GetAppFolder().FullName
+            Options.PublishFolder.FullName,
+            Options.GetAppFolder().FullName
         );
     }
 }

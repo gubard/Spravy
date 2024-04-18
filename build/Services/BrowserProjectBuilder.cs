@@ -7,59 +7,56 @@ using Serilog;
 
 namespace _build.Services;
 
-public class BrowserProjectBuilder : UiProjectBuilder
+public class BrowserProjectBuilder : UiProjectBuilder<BrowserProjectBuilderOptions>
 {
-    readonly BrowserProjectBuilderOptions browserOptions;
-
     public BrowserProjectBuilder(
         VersionService versionService,
         BrowserProjectBuilderOptions browserOptions
     ) : base(browserOptions, versionService)
     {
-        this.browserOptions = browserOptions;
     }
 
     public void Publish()
     {
         var appBundlePath = "bin/Release/net8.0/browser-wasm/AppBundle";
 
-        if (options.CsprojFile.Directory is null)
+        if (Options.CsprojFile.Directory is null)
         {
             throw new NullReferenceException();
         }
 
         var appBundleFolder =
-            Path.Combine(options.CsprojFile.Directory.FullName, appBundlePath).ToFolder();
+            Path.Combine(Options.CsprojFile.Directory.FullName, appBundlePath).ToFolder();
 
-        using var sshClient = browserOptions.CreateSshClient();
+        using var sshClient = Options.CreateSshClient();
         sshClient.Connect();
-        using var ftpClient = browserOptions.CreateFtpClient();
+        using var ftpClient = Options.CreateFtpClient();
         ftpClient.Connect();
-        ftpClient.DeleteIfExistsFolder(browserOptions.GetAppFolder());
+        ftpClient.DeleteIfExistsFolder(Options.GetAppFolder());
 
         ftpClient.UploadDirectory(appBundleFolder.FullName,
-            browserOptions.GetAppFolder().FullName
+            Options.GetAppFolder().FullName
         );
 
-        var urlFolder = PathHelper.WwwFolder.Combine(browserOptions.Domain);
+        var urlFolder = PathHelper.WwwFolder.Combine(Options.Domain);
         var browserFolder = urlFolder.Combine("html");
         var browserDownloadsFolder = browserFolder.Combine("downloads");
-        sshClient.RunSudo(browserOptions, $"rm -rf {browserFolder}/*");
+        sshClient.RunSudo(Options, $"rm -rf {browserFolder}/*");
         var versionFolder = browserDownloadsFolder.Combine(versionService.Version.ToString());
-        sshClient.RunSudo(browserOptions, $"mkdir -p {versionFolder}");
-        sshClient.RunSudo(browserOptions, $" cp -rf {browserOptions.GetAppFolder()}/* {browserFolder}");
+        sshClient.RunSudo(Options, $"mkdir -p {versionFolder}");
+        sshClient.RunSudo(Options, $" cp -rf {Options.GetAppFolder()}/* {browserFolder}");
 
-        foreach (var published in browserOptions.Publisheds)
+        foreach (var published in Options.Publisheds)
         {
             if (published.IsNeedZip)
             {
                 Log.Information("Zip {ProjectName}", published.GetProjectName());
-                sshClient.RunSudo(browserOptions, $"mkdir -p {versionFolder.Combine(published.GetProjectName())}");
+                sshClient.RunSudo(Options, $"mkdir -p {versionFolder.Combine(published.GetProjectName())}");
 
                 if (published.Runtimes.IsEmpty)
                 {
                     sshClient.SafeRun(
-                        $"cd {published.GetAppFolder()} && echo {browserOptions.SshPassword} | sudo -S  zip -r {versionFolder.Combine(published.GetProjectName()).ToFile($"{published.GetProjectName()}.zip")} ./*"
+                        $"cd {published.GetAppFolder()} && echo {Options.SshPassword} | sudo -S  zip -r {versionFolder.Combine(published.GetProjectName()).ToFile($"{published.GetProjectName()}.zip")} ./*"
                     );
                 }
                 else
@@ -67,7 +64,7 @@ public class BrowserProjectBuilder : UiProjectBuilder
                     foreach (var runtime in published.Runtimes.Span)
                     {
                         sshClient.SafeRun(
-                            $"cd {published.GetAppFolder().Combine(runtime.Name)} && echo {browserOptions.SshPassword} | sudo -S zip -r {versionFolder.Combine(published.GetProjectName()).ToFile($"{published.GetProjectName()}.{runtime.Name}.zip")} ./*"
+                            $"cd {published.GetAppFolder().Combine(runtime.Name)} && echo {Options.SshPassword} | sudo -S zip -r {versionFolder.Combine(published.GetProjectName()).ToFile($"{published.GetProjectName()}.{runtime.Name}.zip")} ./*"
                         );
                     }
                 }
@@ -75,13 +72,13 @@ public class BrowserProjectBuilder : UiProjectBuilder
             else
             {
                 Log.Information("Copy {ProjectName}", published.GetProjectName());
-                sshClient.RunSudo(browserOptions, $"cp -rf {published.GetAppFolder()} {versionFolder}");
+                sshClient.RunSudo(Options, $"cp -rf {published.GetAppFolder()} {versionFolder}");
             }
         }
 
-        sshClient.RunSudo(browserOptions, $"chown -R $USER:$USER {browserFolder}");
-        sshClient.RunSudo(browserOptions, $"chmod -R 755 {urlFolder}");
-        sshClient.RunSudo(browserOptions, "systemctl restart nginx");
-        sshClient.RunSudo(browserOptions, "systemctl reload nginx");
+        sshClient.RunSudo(Options, $"chown -R $USER:$USER {browserFolder}");
+        sshClient.RunSudo(Options, $"chmod -R 755 {urlFolder}");
+        sshClient.RunSudo(Options, "systemctl restart nginx");
+        sshClient.RunSudo(Options, "systemctl reload nginx");
     }
 }
