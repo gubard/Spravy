@@ -126,8 +126,13 @@ public class MainWindowTests
                             995,
                             true
                         );
+                        
+                        var messages = imapClient.SearchMessages(SearchCondition.From("noreply@spravy.com.ua"));
 
-                        var messages = imapClient.SearchMessages(SearchCondition.From(""));
+                        foreach (var message in messages)
+                        {
+                            Console.WriteLine(message.Value.Body);
+                        }
                     })
                     .SaveFrame(),
                 (w, _) => w.SaveFrame().LogCurrentState()
