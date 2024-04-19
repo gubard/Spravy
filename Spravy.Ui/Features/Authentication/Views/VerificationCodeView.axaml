@@ -48,7 +48,8 @@
                         CommandParameter="{x:Type vm:LoginViewModel}"
                         Content="{DynamicResource VerificationCodeView.Back}" />
 
-                <Button Grid.Row="1"
+                <Button x:Name="VerificationEmailButton"
+                        Grid.Row="1"
                         Grid.Column="1"
                         Command="{x:Static s:CommandStorage.VerificationEmailCommand}"
                         CommandParameter="{Binding }"

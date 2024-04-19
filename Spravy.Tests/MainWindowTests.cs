@@ -119,8 +119,16 @@ public class MainWindowTests
                         .FindControl<TextBox>("VerificationCodeTextBox")
                         .ThrowIfNull()
                         .FocusElement()
-                        .Case(() => w.SetKeyTextInput(TestAppBuilder.Configuration.GetImapConnection()
-                            .GetLastEmailText())))
+                        .Case(() => w.SetKeyTextInput(
+                                TestAppBuilder.Configuration.GetImapConnection().GetLastEmailText()
+                            )
+                        )
+                        .FindControl<Button>("VerificationEmailButton")
+                        .ThrowIfNull()
+                        .MustEnabled()
+                        .ClickOnButton(w)
+                    )
+                    .Case(() => w.GetCurrentView<RootToDoItemsView, RootToDoItemsViewModel>())
                     .SaveFrame(),
                 (w, _) => w.SaveFrame().LogCurrentState()
             );
