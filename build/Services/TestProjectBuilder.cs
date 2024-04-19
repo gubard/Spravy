@@ -36,7 +36,7 @@ public class TestProjectBuilder : ProjectBuilder<TestProjectBuilderOptions>
     {
         var jsonWriterOptions = new JsonWriterOptions
         {
-            Indented = true
+            Indented = true,
         };
 
         using var writer = new Utf8JsonWriter(stream, jsonWriterOptions);
@@ -68,8 +68,11 @@ public class TestProjectBuilder : ProjectBuilder<TestProjectBuilderOptions>
             {
                 if (obj.Name == "Password")
                 {
-                    writer.AddStringValue("Password",
-                        property.Name == "EmailAccount" ? Options.EmailAccountPassword : Options.EmailAccount2Password);
+                    writer.AddStringValue(
+                        "Password",
+                        property.Name == "EmailAccount" ? Options.EmailAccountPassword : Options.EmailAccount2Password
+                    );
+
                     continue;
                 }
 
