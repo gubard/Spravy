@@ -84,11 +84,11 @@ public class ResetToDoItemViewModel : NavigatableViewModelBase
 
         public ResetToDoItemViewModelSetting()
         {
+            IsMoveCircleOrderIndex = true;
         }
 
-
         [ProtoMember(1)] public bool IsCompleteChildrenTask { get; set; }
-        [ProtoMember(2)] public bool IsMoveCircleOrderIndex { get; set; } = true;
+        [ProtoMember(2)] public bool IsMoveCircleOrderIndex { get; set; }
         [ProtoMember(3)] public bool IsOnlyCompletedTasks { get; set; }
         [ProtoMember(4)] public bool IsCompleteCurrentTask { get; set; }
     }
