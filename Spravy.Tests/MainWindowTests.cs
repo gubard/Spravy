@@ -5,7 +5,6 @@ using Avalonia.Input;
 using MailKit;
 using MailKit.Net.Imap;
 using MailKit.Security;
-using MimeKit;
 using Spravy.Domain.Extensions;
 using Spravy.Tests.Extensions;
 using Spravy.Tests.Helpers;
@@ -110,6 +109,9 @@ public class MainWindowTests
 
                         try
                         {
+                            Console.WriteLine(
+                                $"{TestAppBuilder.Configuration.GetSection("EmailServer:Host").Value} {TestAppBuilder.Configuration.GetSection("EmailAccount:Email").Value} {TestAppBuilder.Configuration.GetSection("EmailAccount:Password").Value}");
+
                             client.Connect(
                                 TestAppBuilder.Configuration.GetSection("EmailServer:Host").Value,
                                 993,
@@ -197,7 +199,7 @@ public class MainWindowTests
                                     if (inbox.Count == 0)
                                     {
                                         inbox.Close();
-                                        
+
                                         if (i == 100)
                                         {
                                             throw new Exception("Inbox timeout");
