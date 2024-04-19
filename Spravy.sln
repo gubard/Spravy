@@ -124,6 +124,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.PasswordGenerator.Db
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.PasswordGenerator.Db.Mapper", "Spravy.PasswordGenerator.Db.Mapper\Spravy.PasswordGenerator.Db.Mapper.csproj", "{B12DE399-C5B0-4213-988F-4ECED92ACDF9}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Feedback", "Feedback", "{D686B281-B959-48D0-9E74-57C95D5AE4D0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Feedback.Domain", "Spravy.Feedback.Domain\Spravy.Feedback.Domain.csproj", "{621F6387-1B81-4137-901A-134622956BD8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -348,6 +352,10 @@ Global
 		{B12DE399-C5B0-4213-988F-4ECED92ACDF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B12DE399-C5B0-4213-988F-4ECED92ACDF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B12DE399-C5B0-4213-988F-4ECED92ACDF9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{621F6387-1B81-4137-901A-134622956BD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{621F6387-1B81-4137-901A-134622956BD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{621F6387-1B81-4137-901A-134622956BD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{621F6387-1B81-4137-901A-134622956BD8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{8DA7C381-65E0-4216-9021-D4CB7A186453} = {AE245578-F16D-44FB-8F2C-496CBE7C1D53}
@@ -395,5 +403,6 @@ Global
 		{9B169846-1E08-4827-A4BE-0FCAAECC6ABD} = {E98A988F-269B-47AA-9095-8540F145A1A1}
 		{2E94B42B-FF09-44DD-B32F-C0B380467373} = {E98A988F-269B-47AA-9095-8540F145A1A1}
 		{B12DE399-C5B0-4213-988F-4ECED92ACDF9} = {E98A988F-269B-47AA-9095-8540F145A1A1}
+		{621F6387-1B81-4137-901A-134622956BD8} = {D686B281-B959-48D0-9E74-57C95D5AE4D0}
 	EndGlobalSection
 EndGlobal

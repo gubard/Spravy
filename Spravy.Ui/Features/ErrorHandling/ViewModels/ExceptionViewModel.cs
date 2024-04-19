@@ -23,11 +23,11 @@ public class ExceptionViewModel : ViewModelBase
     public Exception? Exception { get; set; }
 
     [Reactive]
-    public string? FullExceptionText { get; set; }
+    public string Message { get; set; } = string.Empty;
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
-        Disposables.Add(this.WhenAnyValue(x => x.Exception).Subscribe(x => FullExceptionText = x?.ToString()));
+        Disposables.Add(this.WhenAnyValue(x => x.Exception).Subscribe(x => Message = x?.Message ?? string.Empty));
 
         return Result.AwaitableFalse;
     }

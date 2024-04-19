@@ -14,6 +14,6 @@
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 
-    <TextBox Text="{Binding FullExceptionText}"
+    <TextBox Text="{Binding Message}"
              Classes="accepts-return read-only text-wrapping-wrap" />
 </ru:ReactiveUserControl>
