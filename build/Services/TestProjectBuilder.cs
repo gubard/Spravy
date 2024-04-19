@@ -36,7 +36,7 @@ public class TestProjectBuilder : ProjectBuilder<TestProjectBuilderOptions>
     {
         var jsonWriterOptions = new JsonWriterOptions
         {
-            Indented = true,
+            Indented = true
         };
 
         using var writer = new Utf8JsonWriter(stream, jsonWriterOptions);
@@ -57,7 +57,7 @@ public class TestProjectBuilder : ProjectBuilder<TestProjectBuilderOptions>
 
     bool SetEmailAccount(Utf8JsonWriter writer, JsonProperty property)
     {
-        if (property.Name != "EmailAccount" || property.Name != "EmailAccount2")
+        if (property.Name != "EmailAccount" && property.Name != "EmailAccount2")
         {
             return false;
         }
@@ -68,6 +68,8 @@ public class TestProjectBuilder : ProjectBuilder<TestProjectBuilderOptions>
             {
                 if (obj.Name == "Password")
                 {
+                    Log.Information("Set password for {Name}", property.Name);
+
                     writer.AddStringValue(
                         "Password",
                         property.Name == "EmailAccount" ? Options.EmailAccountPassword : Options.EmailAccount2Password
