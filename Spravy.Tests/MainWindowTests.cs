@@ -2,9 +2,6 @@ using System.Text;
 using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.Input;
-using MailKit;
-using MailKit.Net.Imap;
-using MailKit.Security;
 using Spravy.Domain.Extensions;
 using Spravy.Tests.Extensions;
 using Spravy.Tests.Helpers;
@@ -103,56 +100,7 @@ public class MainWindowTests
                             )
                             .Case(() => w.KeyHandleQwerty(PhysicalKey.Enter, RawInputModifiers.None))
                     )
-                    .Case(() =>
-                    {
-                        using var client = new ImapClient();
-
-                        try
-                        {
-                            Console.WriteLine(
-                                $"{TestAppBuilder.Configuration.GetSection("EmailServer:Host").Value} {TestAppBuilder.Configuration.GetSection("EmailAccount:Email").Value} {TestAppBuilder.Configuration.GetSection("EmailAccount:Password").Value}");
-
-                            client.Connect(
-                                TestAppBuilder.Configuration.GetSection("EmailServer:Host").Value,
-                                993,
-                                SecureSocketOptions.SslOnConnect
-                            );
-
-                            client.Authenticate(
-                                TestAppBuilder.Configuration.GetSection("EmailAccount:Email").Value,
-                                TestAppBuilder.Configuration.GetSection("EmailAccount:Password").Value
-                            );
-
-                            var inbox = client.Inbox;
-                            var i = 0;
-
-                            while (true)
-                            {
-                                i++;
-                                inbox.Open(FolderAccess.ReadWrite);
-
-                                if (inbox.Count == 0)
-                                {
-                                    inbox.Close();
-
-                                    return;
-                                }
-
-                                var trash = client.GetFolder("Trash");
-                                inbox.MoveTo(0, trash);
-                                inbox.Close();
-
-                                if (i == 100)
-                                {
-                                    return;
-                                }
-                            }
-                        }
-                        finally
-                        {
-                            client.Disconnect(true);
-                        }
-                    })
+                    .Case(() => TestAppBuilder.Configuration.GetImapConnection().ClearInbox())
                     .Case(
                         () => w.GetCurrentView<CreateUserView, CreateUserViewModel>()
                             .Case(
@@ -170,56 +118,9 @@ public class MainWindowTests
                     .Case(() => w.GetCurrentView<VerificationCodeView, VerificationCodeViewModel>()
                         .FindControl<TextBox>("VerificationCodeTextBox")
                         .ThrowIfNull()
-                        .Case(tb =>
-                        {
-                            using var client = new ImapClient();
-
-                            try
-                            {
-                                client.Connect(
-                                    TestAppBuilder.Configuration.GetSection("EmailServer:Host").Value,
-                                    993,
-                                    SecureSocketOptions.SslOnConnect
-                                );
-
-                                client.Authenticate(
-                                    TestAppBuilder.Configuration.GetSection("EmailAccount:Email").Value,
-                                    TestAppBuilder.Configuration.GetSection("EmailAccount:Password").Value
-                                );
-
-                                var inbox = client.Inbox;
-                                var i = 0;
-
-                                while (true)
-                                {
-                                    Thread.Sleep(TimeSpan.FromSeconds(1));
-                                    i++;
-                                    inbox.Open(FolderAccess.ReadWrite);
-
-                                    if (inbox.Count == 0)
-                                    {
-                                        inbox.Close();
-
-                                        if (i == 100)
-                                        {
-                                            throw new Exception("Inbox timeout");
-                                        }
-
-                                        continue;
-                                    }
-
-                                    var message = inbox.GetMessage(0);
-                                    tb.FocusElement();
-                                    w.SetKeyTextInput(message.TextBody);
-
-                                    return;
-                                }
-                            }
-                            finally
-                            {
-                                client.Disconnect(true);
-                            }
-                        }))
+                        .FocusElement()
+                        .Case(() => w.SetKeyTextInput(TestAppBuilder.Configuration.GetImapConnection()
+                            .GetLastEmailText())))
                     .SaveFrame(),
                 (w, _) => w.SaveFrame().LogCurrentState()
             );
