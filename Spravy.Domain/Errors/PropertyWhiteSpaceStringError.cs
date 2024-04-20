@@ -1,0 +1,17 @@
+namespace Spravy.Domain.Errors;
+
+public class PropertyWhiteSpaceStringError : Error
+{
+    public static readonly Guid MainId = new("890C8ABC-6D54-49BC-A947-3B08D698AD31");
+
+    protected PropertyWhiteSpaceStringError() : base(MainId, "PropertyWhiteSpaceString")
+    {
+    }
+
+    public PropertyWhiteSpaceStringError(string propertyName) : base(MainId, "PropertyWhiteSpaceString")
+    {
+        PropertyName = propertyName;
+    }
+
+    public string PropertyName { get; protected set; }
+}

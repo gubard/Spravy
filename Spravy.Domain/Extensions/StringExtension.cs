@@ -1,7 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Spravy.Domain.Errors;
 using Spravy.Domain.Exceptions;
+using Spravy.Domain.Models;
 
 namespace Spravy.Domain.Extensions;
 
@@ -19,7 +21,30 @@ public static class StringExtension
 
     public static Uri ToUri(this string str)
     {
-        return new(str);
+        return new Uri(str);
+    }
+
+    public static Result<string> CheckNullOrWhiteSpaceProperty(this string? propertyValue, string propertyName)
+    {
+        if (propertyValue is null)
+        {
+            return new Result<string>(new PropertyNullValueError(propertyName));
+        }
+
+        if (propertyValue == string.Empty)
+        {
+            return new Result<string>(new PropertyEmptyStringError(propertyName));
+        }
+
+        for (var index = 0; index < propertyValue.Length; ++index)
+        {
+            if (!char.IsWhiteSpace(propertyValue[index]))
+            {
+                return new Result<string>(propertyValue);
+            }
+        }
+
+        return new Result<string>(new PropertyWhiteSpaceStringError(propertyName));
     }
 
     public static string ThrowIfNullOrWhiteSpace(
@@ -45,12 +70,12 @@ public static class StringExtension
 
     public static FileInfo ToFile(this string path)
     {
-        return new(path);
+        return new FileInfo(path);
     }
 
     public static DirectoryInfo ToDirectory(this string path)
     {
-        return new(path);
+        return new DirectoryInfo(path);
     }
 
     public static string ToConsoleLine(this string line)

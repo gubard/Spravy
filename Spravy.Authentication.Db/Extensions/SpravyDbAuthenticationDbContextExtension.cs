@@ -20,10 +20,11 @@ public static class SpravyDbAuthenticationDbContextExtension
         {
             if (!user.IsEmailVerified)
             {
-                return new Result<UserEntity>(new UserNotVerifiedError(
-                    user.Login.ThrowIfNullOrWhiteSpace(),
-                    user.Email.ThrowIfNullOrWhiteSpace()
-                ));
+                return Result.Success.IfSuccess(
+                    user.Login.CheckNullOrWhiteSpaceProperty(nameof(user.Login)),
+                    user.Email.CheckNullOrWhiteSpaceProperty(nameof(user.Email)),
+                    (l, e) => new Result<UserEntity>(new UserNotVerifiedError(l, e))
+                );
             }
 
             return new Result<UserEntity>(user);

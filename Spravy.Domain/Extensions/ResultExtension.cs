@@ -441,6 +441,23 @@ public static class ResultExtension
         return action.Invoke(result.Value);
     }
 
+    public static Result<TReturn> IfSuccess<TArg1, TArg2, TReturn>(
+        this Result result,
+        Result<TArg1> arg1,
+        Result<TArg2> arg2,
+        Func<TArg1, TArg2, Result<TReturn>> action
+    )
+    {
+        var errors = result.Errors.Combine(arg1.Errors, arg2.Errors);
+
+        if (!errors.IsEmpty)
+        {
+            return new Result<TReturn>(errors);
+        }
+
+        return action.Invoke(arg1.Value, arg2.Value);
+    }
+
     public static ConfiguredValueTaskAwaitable<Result> IfSuccessTryFinallyAsync(
         this ConfiguredValueTaskAwaitable<Result> task,
         Func<ConfiguredValueTaskAwaitable<Result>> funcTry,
