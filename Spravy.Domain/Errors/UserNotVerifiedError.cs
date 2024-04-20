@@ -4,9 +4,8 @@ public class UserNotVerifiedError : Error
 {
     public static readonly Guid MainId = new("CAAE89FE-827F-4770-B7A3-511ED6AB61CB");
 
-    protected UserNotVerifiedError(string email) : base(MainId, "UserNotVerifiedError")
+    protected UserNotVerifiedError() : base(MainId, "UserNotVerifiedError")
     {
-        Email = email;
     }
 
     public UserNotVerifiedError(string login, string email) : base(MainId, "UserNotVerifiedError")
