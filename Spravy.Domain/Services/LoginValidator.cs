@@ -7,7 +7,7 @@ public class LoginValidator : Validator<string>, ILoginValidator
     public static readonly LoginValidator Default = new(
         new IValidationRule<string>[]
         {
-            new NotNullValidationRule<string>(),
+            new SourceNotNullValidationRule<string>(),
             new StringMaxLengthValidationRule(256),
             new StringMinLengthValidationRule(4),
             new ValidCharsValidationRule(

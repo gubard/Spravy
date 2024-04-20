@@ -7,7 +7,7 @@ public class PasswordValidator : Validator<string>, IPasswordValidator
     public static readonly PasswordValidator Default = new(
         new IValidationRule<string>[]
         {
-            new NotNullValidationRule<string>(),
+            new SourceNotNullValidationRule<string>(),
             new StringMaxLengthValidationRule(512),
             new StringMinLengthValidationRule(8),
             new ValidCharsValidationRule(

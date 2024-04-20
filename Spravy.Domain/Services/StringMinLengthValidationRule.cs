@@ -1,7 +1,8 @@
-using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using Spravy.Domain.Errors;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
+using Spravy.Domain.Models;
 
 namespace Spravy.Domain.Services;
 
@@ -14,24 +15,18 @@ public class StringMinLengthValidationRule : IValidationRule<string>
         this.minLength = minLength;
     }
 
-    public Task<bool> ValidateAsync(string? value, [MaybeNullWhen(true)] out Error result)
+    public ConfiguredValueTaskAwaitable<Result> ValidateAsync(string? value, string sourceName)
     {
         if (value is null)
         {
-            result = null;
-
-            return true.ToTaskResult();
+            return Result.AwaitableFalse;
         }
 
         if (value.Length < minLength)
         {
-            result = new StringMinLengthError(minLength);
-
-            return false.ToTaskResult();
+            return new Result(new StringMinLengthError(minLength)).ToValueTaskResult().ConfigureAwait(false);
         }
 
-        result = null;
-
-        return true.ToTaskResult();
+        return Result.AwaitableFalse;
     }
 }

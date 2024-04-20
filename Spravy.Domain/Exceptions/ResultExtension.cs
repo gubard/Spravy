@@ -11,7 +11,7 @@ public static class ResultExtension
 
         foreach (var validationResult in result.Errors.Span)
         {
-            stringBuilder.Append(validationResult.Name);
+            stringBuilder.Append(validationResult.Message);
             stringBuilder.Append(";");
         }
 
@@ -24,7 +24,7 @@ public static class ResultExtension
 
         foreach (var validationResult in result.Errors.Span)
         {
-            stringBuilder.Append(validationResult.Name);
+            stringBuilder.Append(validationResult.Message);
             stringBuilder.Append(";");
         }
 

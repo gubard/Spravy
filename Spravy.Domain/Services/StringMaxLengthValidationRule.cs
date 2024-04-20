@@ -1,7 +1,8 @@
-using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using Spravy.Domain.Errors;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
+using Spravy.Domain.Models;
 
 namespace Spravy.Domain.Services;
 
@@ -14,24 +15,18 @@ public class StringMaxLengthValidationRule : IValidationRule<string>
         this.maxLength = maxLength;
     }
 
-    public Task<bool> ValidateAsync(string? value, [MaybeNullWhen(true)] out Error result)
+    public ConfiguredValueTaskAwaitable<Result> ValidateAsync(string? value, string sourceName)
     {
         if (value is null)
         {
-            result = null;
-
-            return true.ToTaskResult();
+            return Result.AwaitableFalse;
         }
 
         if (value.Length > maxLength)
         {
-            result = new StringMaxLengthError(maxLength);
-
-            return false.ToTaskResult();
+            return new Result(new StringMaxLengthError(maxLength)).ToValueTaskResult().ConfigureAwait(false);
         }
 
-        result = null;
-
-        return true.ToTaskResult();
+        return Result.AwaitableFalse;
     }
 }

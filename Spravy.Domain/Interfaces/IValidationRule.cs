@@ -1,9 +1,9 @@
-using System.Diagnostics.CodeAnalysis;
-using Spravy.Domain.Errors;
+using System.Runtime.CompilerServices;
+using Spravy.Domain.Models;
 
 namespace Spravy.Domain.Interfaces;
 
 public interface IValidationRule<in TValue>
 {
-    Task<bool> ValidateAsync(TValue value, [MaybeNullWhen(true)] out Error result);
+    ConfiguredValueTaskAwaitable<Result> ValidateAsync(TValue value, string sourceName);
 }

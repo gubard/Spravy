@@ -6,6 +6,7 @@ public class UserWithLoginNotExistsError : Error
 
     protected UserWithLoginNotExistsError() : base(MainId, "UserWithLoginNotExists")
     {
+        Login = string.Empty;
     }
 
     public UserWithLoginNotExistsError(string login) : base(MainId, "UserWithLoginNotExists")

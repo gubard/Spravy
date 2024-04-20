@@ -2,7 +2,7 @@ namespace Spravy.Domain.Errors;
 
 public abstract class ErrorValue<TValue> : Error
 {
-    protected ErrorValue(Guid id, string name, TValue value) : base(id, name)
+    protected ErrorValue(Guid id, TValue value) : base(id)
     {
         Value = value;
     }

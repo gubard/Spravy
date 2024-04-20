@@ -1,8 +1,8 @@
-using Spravy.Domain.Errors;
+using Spravy.Domain.Models;
 
 namespace Spravy.Domain.Interfaces;
 
 public interface IValidator<in TValue>
 {
-    IAsyncEnumerable<Error> ValidateAsync(TValue value);
+    IAsyncEnumerable<Result> ValidateAsync(TValue value, string sourceName);
 }

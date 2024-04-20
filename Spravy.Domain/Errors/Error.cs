@@ -2,12 +2,11 @@ namespace Spravy.Domain.Errors;
 
 public abstract class Error
 {
-    protected Error(Guid id, string name)
+    protected Error(Guid id)
     {
         Id = id;
-        Name = name;
     }
 
     public Guid Id { get; protected set; }
-    public string Name { get; protected set; }
+    public abstract string Message { get; }
 }
