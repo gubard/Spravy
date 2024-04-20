@@ -101,7 +101,7 @@ public class EfPasswordService : IPasswordService
         await using var context = dbContextFactory.Create();
         var item = await context.FindAsync<PasswordItemEntity>(id);
         item = item.ThrowIfNull();
-        await context.ExecuteSaveChangesTransactionAsync(c => c.Remove(item));
+        await context.ExecuteSaveChangesTransactionAsync(c => c.Remove(item), cancellationToken);
 
         return Result.Success;
     }
@@ -136,16 +136,20 @@ public class EfPasswordService : IPasswordService
         return UpdatePasswordItemNameCore(id, name, cancellationToken).ConfigureAwait(false);
     }
 
-    public async ValueTask<Result> UpdatePasswordItemNameCore(
+    private async ValueTask<Result> UpdatePasswordItemNameCore(
         Guid id,
         string name,
         CancellationToken cancellationToken
     )
     {
         await using var context = dbContextFactory.Create();
-        var item = await context.FindAsync<PasswordItemEntity>(id);
-        item = item.ThrowIfNull();
-        await context.ExecuteSaveChangesTransactionAsync(_ => item.Name = name);
+
+        await context.ExecuteSaveChangesTransactionAsync(async c =>
+        {
+            var item = await c.FindAsync<PasswordItemEntity>(id);
+            item = item.ThrowIfNull();
+            item.Name = name;
+        }, cancellationToken);
 
         return Result.Success;
     }
@@ -159,12 +163,16 @@ public class EfPasswordService : IPasswordService
         return UpdatePasswordItemKeyCore(id, key, cancellationToken).ConfigureAwait(false);
     }
 
-    public async ValueTask<Result> UpdatePasswordItemKeyCore(Guid id, string key, CancellationToken cancellationToken)
+    private async ValueTask<Result> UpdatePasswordItemKeyCore(Guid id, string key, CancellationToken cancellationToken)
     {
         await using var context = dbContextFactory.Create();
-        var item = await context.FindAsync<PasswordItemEntity>(id);
-        item = item.ThrowIfNull();
-        await context.ExecuteSaveChangesTransactionAsync(_ => item.Key = key);
+
+        await context.ExecuteSaveChangesTransactionAsync(async c =>
+        {
+            var item = await c.FindAsync<PasswordItemEntity>(id);
+            item = item.ThrowIfNull();
+            item.Key = key;
+        }, cancellationToken);
 
         return Result.Success;
     }
@@ -185,9 +193,13 @@ public class EfPasswordService : IPasswordService
     )
     {
         await using var context = dbContextFactory.Create();
-        var item = await context.FindAsync<PasswordItemEntity>(id);
-        item = item.ThrowIfNull();
-        await context.ExecuteSaveChangesTransactionAsync(_ => item.Length = length);
+
+        await context.ExecuteSaveChangesTransactionAsync(async c =>
+        {
+            var item = await c.FindAsync<PasswordItemEntity>(id);
+            item = item.ThrowIfNull();
+            item.Length = length;
+        }, cancellationToken);
 
         return Result.Success;
     }
@@ -208,9 +220,13 @@ public class EfPasswordService : IPasswordService
     )
     {
         await using var context = dbContextFactory.Create();
-        var item = await context.FindAsync<PasswordItemEntity>(id);
-        item = item.ThrowIfNull();
-        await context.ExecuteSaveChangesTransactionAsync(_ => item.Regex = regex);
+
+        await context.ExecuteSaveChangesTransactionAsync(async c =>
+        {
+            var item = await c.FindAsync<PasswordItemEntity>(id);
+            item = item.ThrowIfNull();
+            item.Regex = regex;
+        }, cancellationToken);
 
         return Result.Success;
     }
@@ -231,9 +247,14 @@ public class EfPasswordService : IPasswordService
     )
     {
         await using var context = dbContextFactory.Create();
-        var item = await context.FindAsync<PasswordItemEntity>(id);
-        item = item.ThrowIfNull();
-        await context.ExecuteSaveChangesTransactionAsync(_ => item.IsAvailableNumber = isAvailableNumber);
+
+        await context.ExecuteSaveChangesTransactionAsync(async c =>
+            {
+                var item = await c.FindAsync<PasswordItemEntity>(id);
+                item = item.ThrowIfNull();
+                item.IsAvailableNumber = isAvailableNumber;
+            },
+            cancellationToken);
 
         return Result.Success;
     }
@@ -255,9 +276,14 @@ public class EfPasswordService : IPasswordService
     )
     {
         await using var context = dbContextFactory.Create();
-        var item = await context.FindAsync<PasswordItemEntity>(id);
-        item = item.ThrowIfNull();
-        await context.ExecuteSaveChangesTransactionAsync(_ => item.IsAvailableLowerLatin = isAvailableLowerLatin);
+
+        await context.ExecuteSaveChangesTransactionAsync(async c =>
+            {
+                var item = await c.FindAsync<PasswordItemEntity>(id);
+                item = item.ThrowIfNull();
+                item.IsAvailableLowerLatin = isAvailableLowerLatin;
+            },
+            cancellationToken);
 
         return Result.Success;
     }
@@ -279,11 +305,15 @@ public class EfPasswordService : IPasswordService
     )
     {
         await using var context = dbContextFactory.Create();
-        var item = await context.FindAsync<PasswordItemEntity>(id);
-        item = item.ThrowIfNull();
+
 
         await context.ExecuteSaveChangesTransactionAsync(
-            _ => item.IsAvailableSpecialSymbols = isAvailableSpecialSymbols
+            async c =>
+            {
+                var item = await c.FindAsync<PasswordItemEntity>(id);
+                item = item.ThrowIfNull();
+                item.IsAvailableSpecialSymbols = isAvailableSpecialSymbols;
+            }, cancellationToken
         );
 
         return Result.Success;
@@ -306,11 +336,15 @@ public class EfPasswordService : IPasswordService
     )
     {
         await using var context = dbContextFactory.Create();
-        var item = await context.FindAsync<PasswordItemEntity>(id);
-        item = item.ThrowIfNull();
+
 
         await context.ExecuteSaveChangesTransactionAsync(
-            _ => item.CustomAvailableCharacters = customAvailableCharacters
+            async c =>
+            {
+                var item = await c.FindAsync<PasswordItemEntity>(id);
+                item = item.ThrowIfNull();
+                item.CustomAvailableCharacters = customAvailableCharacters;
+            }, cancellationToken
         );
 
         return Result.Success;
@@ -333,9 +367,14 @@ public class EfPasswordService : IPasswordService
     )
     {
         await using var context = dbContextFactory.Create();
-        var item = await context.FindAsync<PasswordItemEntity>(id);
-        item = item.ThrowIfNull();
-        await context.ExecuteSaveChangesTransactionAsync(_ => item.IsAvailableUpperLatin = isAvailableUpperLatin);
+
+        await context.ExecuteSaveChangesTransactionAsync(async c =>
+            {
+                var item = await c.FindAsync<PasswordItemEntity>(id);
+                item = item.ThrowIfNull();
+                item.IsAvailableUpperLatin = isAvailableUpperLatin;
+            },
+            cancellationToken);
 
         return Result.Success;
     }

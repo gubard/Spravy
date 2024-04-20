@@ -657,38 +657,41 @@ public static class CommandStorage
     {
         return dialogViewer.ShowConfirmContentDialogAsync<PasswordItemSettingsViewModel>(
             vm => dialogViewer.CloseContentDialogAsync(cancellationToken)
-                .IfSuccessAllAsync(
-                    cancellationToken,
+                .IfSuccessAsync(
                     () => passwordService.UpdatePasswordItemKeyAsync(idProperty.Id, vm.Key, cancellationToken),
-                    () => passwordService.UpdatePasswordItemLengthAsync(idProperty.Id, vm.Length, cancellationToken),
+                    cancellationToken)
+                .IfSuccessAsync(
+                    () => passwordService.UpdatePasswordItemLengthAsync(idProperty.Id, vm.Length,
+                        cancellationToken), cancellationToken).IfSuccessAsync(
                     () => passwordService.UpdatePasswordItemNameAsync(idProperty.Id, vm.Name, cancellationToken),
+                    cancellationToken).IfSuccessAsync(
                     () => passwordService.UpdatePasswordItemRegexAsync(idProperty.Id, vm.Regex, cancellationToken),
+                    cancellationToken).IfSuccessAsync(
                     () => passwordService.UpdatePasswordItemCustomAvailableCharactersAsync(
                         idProperty.Id,
                         vm.CustomAvailableCharacters,
                         cancellationToken
-                    ),
+                    ), cancellationToken).IfSuccessAsync(
                     () => passwordService.UpdatePasswordItemIsAvailableNumberAsync(
                         idProperty.Id,
                         vm.IsAvailableNumber,
                         cancellationToken
-                    ),
+                    ), cancellationToken).IfSuccessAsync(
                     () => passwordService.UpdatePasswordItemIsAvailableLowerLatinAsync(
                         idProperty.Id,
                         vm.IsAvailableLowerLatin,
                         cancellationToken
-                    ),
+                    ), cancellationToken).IfSuccessAsync(
                     () => passwordService.UpdatePasswordItemIsAvailableSpecialSymbolsAsync(
                         idProperty.Id,
                         vm.IsAvailableSpecialSymbols,
                         cancellationToken
-                    ),
+                    ), cancellationToken).IfSuccessAsync(
                     () => passwordService.UpdatePasswordItemIsAvailableUpperLatinAsync(
                         idProperty.Id,
                         vm.IsAvailableUpperLatin,
                         cancellationToken
-                    )
-                )
+                    ), cancellationToken)
                 .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
             _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
             vm => vm.Id = idProperty.Id,
@@ -740,7 +743,9 @@ public static class CommandStorage
     {
         return dialogViewer.ShowConfirmContentDialogAsync<ResetToDoItemViewModel>(
             vm => dialogViewer.CloseContentDialogAsync(cancellationToken)
-                .IfSuccessAsync(() => toDoService.ResetToDoItemAsync(mapper.Map<ResetToDoItemOptions>(vm), cancellationToken), cancellationToken)
+                .IfSuccessAsync(
+                    () => toDoService.ResetToDoItemAsync(mapper.Map<ResetToDoItemOptions>(vm), cancellationToken),
+                    cancellationToken)
                 .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
             _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
             vm => vm.Id = property.Id,
