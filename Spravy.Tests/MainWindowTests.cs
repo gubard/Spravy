@@ -127,7 +127,7 @@ public class MainWindowTests
                         .ThrowIfNull()
                         .MustEnabled()
                         .ClickOnButton(w)
-                        .RunJobsAll(1)
+                        .RunJobsAll(2)
                     )
                     .Case(() => w.GetCurrentView<RootToDoItemsView, RootToDoItemsViewModel>())
                     .SaveFrame(),
