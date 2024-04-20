@@ -52,7 +52,7 @@ public class FilesObjectStorage : IObjectStorage
 
         await using var stream = file.Create();
 
-        return await serializer.Serialize(obj, stream);
+        return await serializer.SerializeAsync(obj, stream);
     }
 
     public ConfiguredValueTaskAwaitable<Result<TObject>> GetObjectAsync<TObject>(string id)
@@ -65,6 +65,6 @@ public class FilesObjectStorage : IObjectStorage
         var file = root.ToFile(id);
         await using var stream = file.OpenRead();
 
-        return await serializer.Deserialize<TObject>(stream);
+        return await serializer.DeserializeAsync<TObject>(stream);
     }
 }

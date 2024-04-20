@@ -5,6 +5,7 @@ namespace Spravy.Domain.Interfaces;
 
 public interface ISerializer
 {
-    ConfiguredValueTaskAwaitable<Result> Serialize(object obj, Stream stream);
-    ConfiguredValueTaskAwaitable<Result<TObject>> Deserialize<TObject>(Stream stream);
+    ConfiguredValueTaskAwaitable<Result> SerializeAsync(object obj, Stream stream);
+    ConfiguredValueTaskAwaitable<Result<TObject>> DeserializeAsync<TObject>(Stream stream);
+    Result<TObject> Deserialize<TObject>(Stream stream);
 }

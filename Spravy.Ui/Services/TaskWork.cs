@@ -23,12 +23,16 @@ public class TaskWork
         this.errorHandler = errorHandler;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> Current => current.ThrowIfNullStruct();
+    public ConfiguredValueTaskAwaitable<Result> Current
+    {
+        get => current.ThrowIfNullStruct();
+    }
 
     public async Task RunAsync()
     {
         Cancel();
-        current = (ConfiguredValueTaskAwaitable<Result>)del.DynamicInvoke(cancellationTokenSource.Token).ThrowIfNull();
+        var value = del.DynamicInvoke(cancellationTokenSource.Token).ThrowIfNull();
+        current = (ConfiguredValueTaskAwaitable<Result>)value;
         var result = await Current;
         await errorHandler.ErrorsHandleAsync(result.Errors, CancellationToken.None);
     }
@@ -36,10 +40,8 @@ public class TaskWork
     public async Task RunAsync<T>(T value)
     {
         Cancel();
-
-        current = (ConfiguredValueTaskAwaitable<Result>)del.DynamicInvoke(value, cancellationTokenSource.Token)
-            .ThrowIfNull();
-
+        var v = del.DynamicInvoke(value, cancellationTokenSource.Token).ThrowIfNull();
+        current = (ConfiguredValueTaskAwaitable<Result>)v;
         var result = await Current;
         await errorHandler.ErrorsHandleAsync(result.Errors, CancellationToken.None);
     }
@@ -47,16 +49,16 @@ public class TaskWork
     public void Cancel()
     {
         cancellationTokenSource.Cancel();
-        cancellationTokenSource = new();
+        cancellationTokenSource = new CancellationTokenSource();
     }
 
     public static TaskWork Create(Func<CancellationToken, ConfiguredValueTaskAwaitable<Result>> task)
     {
-        return new(task, DiHelper.Kernel.ThrowIfNull().Get<IErrorHandler>());
+        return new TaskWork(task, DiHelper.Kernel.ThrowIfNull().Get<IErrorHandler>());
     }
 
     public static TaskWork Create<T>(Func<T, CancellationToken, ConfiguredValueTaskAwaitable<Result>> task)
     {
-        return new(task, DiHelper.Kernel.ThrowIfNull().Get<IErrorHandler>());
+        return new TaskWork(task, DiHelper.Kernel.ThrowIfNull().Get<IErrorHandler>());
     }
 }

@@ -7,7 +7,10 @@ using Avalonia.Browser;
 using Avalonia.ReactiveUI;
 using Ninject;
 using Serilog;
+using Spravy.Client.Extensions;
+using Spravy.Core.Services;
 using Spravy.Domain.Di.Helpers;
+using Spravy.Domain.Errors;
 using Spravy.Domain.Extensions;
 using Spravy.Ui.Browser.Configurations;
 using Spravy.Ui.Configurations;
@@ -17,10 +20,13 @@ using Spravy.Ui.Extensions;
 
 namespace Spravy.Ui.Browser;
 
-internal partial class Program
+class Program
 {
     private static async Task Main()
     {
+        RpcExceptionExtension.LoadErrors(typeof(Error).Assembly);
+        ProtobufSerializer.LoadErrors(typeof(Error).Assembly);
+
         Log.Logger = new LoggerConfiguration()
             .WriteTo.Console()
             .CreateLogger();

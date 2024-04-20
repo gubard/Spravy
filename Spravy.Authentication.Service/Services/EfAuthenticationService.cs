@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Spravy.Authentication.Db.Contexts;
+using Spravy.Authentication.Db.Extensions;
 using Spravy.Authentication.Db.Models;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Models;
@@ -59,17 +60,21 @@ public class EfAuthenticationService : IAuthenticationService
 
     private async ValueTask<Result<TokenResult>> LoginCore(User user, CancellationToken cancellationToken)
     {
-        var userEntity = await context.Set<UserEntity>()
-            .AsNoTracking()
-            .SingleOrDefaultAsync(x => x.Login == user.Login && x.IsEmailVerified, cancellationToken);
+        var userEntity = await context.GetVerifiedUserByLoginAsync(user.Login, cancellationToken);
 
-        if (userEntity is null)
+        if (userEntity.IsHasError)
         {
-            return new Result<TokenResult>(new UserWithLoginExistsError(user.Login));
+            return new Result<TokenResult>(userEntity.Errors);
         }
 
-        CheckPassword(user.Password, userEntity);
-        var userTokenClaims = mapper.Map<UserTokenClaims>(userEntity);
+        var check = CheckPassword(user.Password, userEntity.Value);
+
+        if (check.IsHasError)
+        {
+            return new Result<TokenResult>(check.Errors);
+        }
+
+        var userTokenClaims = mapper.Map<UserTokenClaims>(userEntity.Value);
         var tokenResult = tokenFactory.Create(userTokenClaims);
 
         return new Result<TokenResult>(tokenResult);
@@ -111,7 +116,7 @@ public class EfAuthenticationService : IAuthenticationService
             Login = options.Login.Trim(),
             Salt = salt.ToString(),
             PasswordHash = hash,
-            Email = email,
+            Email = email
         };
 
         return await context.ExecuteSaveChangesTransactionAsync(
@@ -244,18 +249,10 @@ public class EfAuthenticationService : IAuthenticationService
         CancellationToken cancellationToken
     )
     {
-        return IsVerifiedByLoginCore(login, cancellationToken).ConfigureAwait(false);
-    }
-
-    private async ValueTask<Result<bool>> IsVerifiedByLoginCore(string login, CancellationToken cancellationToken)
-    {
         login = login.Trim();
 
-        var userEntity = await context.Set<UserEntity>()
-            .AsNoTracking()
-            .SingleAsync(x => x.Login == login, cancellationToken);
-
-        return new Result<bool>(userEntity.IsEmailVerified);
+        return context.GetUserByLoginAsync(login, cancellationToken)
+            .IfSuccessAsync(user => user.IsEmailVerified.ToResult(), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result<bool>> IsVerifiedByEmailAsync(
@@ -509,29 +506,31 @@ public class EfAuthenticationService : IAuthenticationService
         return Result.Success;
     }
 
-    private void Check(string code, string hashMethod, string valueHash)
+    private Result Check(string code, string hashMethod, string valueHash)
     {
         var newHasher = hasherFactory.Create(hashMethod.ThrowIfNullOrWhiteSpace());
         var hash = newHasher.ComputeHash(code);
 
         if (hash != valueHash)
         {
-            throw new Exception();
+            return new Result(new WrongPassword());
         }
+
+        return Result.Success;
     }
 
-    private void CheckVerificationCode(string code, UserEntity entity)
+    private Result CheckVerificationCode(string code, UserEntity entity)
     {
-        Check(
+        return Check(
             code,
             entity.VerificationCodeMethod.ThrowIfNullOrWhiteSpace(),
             entity.VerificationCodeHash.ThrowIfNullOrWhiteSpace()
         );
     }
 
-    private void CheckPassword(string password, UserEntity entity)
+    private Result CheckPassword(string password, UserEntity entity)
     {
-        Check(
+        return Check(
             $"{entity.Salt};{password}",
             entity.HashMethod.ThrowIfNullOrWhiteSpace(),
             entity.PasswordHash.ThrowIfNullOrWhiteSpace()

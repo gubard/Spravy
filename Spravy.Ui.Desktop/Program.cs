@@ -3,7 +3,10 @@ using Avalonia;
 using Avalonia.ReactiveUI;
 using Ninject;
 using Serilog;
+using Spravy.Client.Extensions;
+using Spravy.Core.Services;
 using Spravy.Domain.Di.Helpers;
+using Spravy.Domain.Errors;
 using Spravy.Domain.Extensions;
 using Spravy.Ui.Configurations;
 using Spravy.Ui.Desktop.Configurations;
@@ -16,6 +19,9 @@ public class Program
     [STAThread]
     public static void Main(string[] args)
     {
+        RpcExceptionExtension.LoadErrors(typeof(Error).Assembly);
+        ProtobufSerializer.LoadErrors(typeof(Error).Assembly);
+
         Log.Logger = new LoggerConfiguration()
             .WriteTo.Console()
             .CreateLogger();

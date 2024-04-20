@@ -2,6 +2,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using Spravy.Client.Extensions;
+using Spravy.Core.Services;
+using Spravy.Domain.Errors;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Service.Helpers;
@@ -10,6 +13,12 @@ namespace Spravy.Service.Extensions;
 
 public static class WebApplicationBuilderExtension
 {
+    static WebApplicationBuilderExtension()
+    {
+        RpcExceptionExtension.LoadErrors(typeof(Error).Assembly);
+        ProtobufSerializer.LoadErrors(typeof(Error).Assembly);
+    }
+
     public static WebApplicationBuilder AddSpravy<TAssemblyMark>(this WebApplicationBuilder builder, string[] args)
         where TAssemblyMark : IAssemblyMark
     {

@@ -8,7 +8,10 @@ using Avalonia.ReactiveUI;
 using Ninject;
 using Serilog;
 using Serilog.Core;
+using Spravy.Client.Extensions;
+using Spravy.Core.Services;
 using Spravy.Domain.Di.Helpers;
+using Spravy.Domain.Errors;
 using Spravy.Domain.Extensions;
 using Spravy.Ui.Android.Configurations;
 using Spravy.Ui.Configurations;
@@ -26,9 +29,18 @@ namespace Spravy.Ui.Android;
 )]
 public class MainActivity : AvaloniaMainActivity<App>
 {
+    static MainActivity()
+    {
+        RpcExceptionExtension.LoadErrors(typeof(Error).Assembly);
+        ProtobufSerializer.LoadErrors(typeof(Error).Assembly);
+    }
+
     private INavigator? navigator;
 
-    private INavigator Navigator => navigator ??= DiHelper.Kernel.ThrowIfNull().Get<INavigator>();
+    private INavigator Navigator
+    {
+        get => navigator ??= DiHelper.Kernel.ThrowIfNull().Get<INavigator>();
+    }
 
     protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)
     {

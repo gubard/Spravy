@@ -1,5 +1,3 @@
-using System.ComponentModel;
-
 namespace Spravy.Domain.Errors;
 
 public abstract class Error
@@ -10,9 +8,6 @@ public abstract class Error
         Name = name;
     }
 
-    [Category(nameof(Error)), DisplayName(nameof(Name))]
     public Guid Id { get; protected set; }
-
-    [Category(nameof(Error)), DisplayName(nameof(Id))]
     public string Name { get; protected set; }
 }

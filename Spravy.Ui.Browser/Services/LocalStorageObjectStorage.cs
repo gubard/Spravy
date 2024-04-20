@@ -40,7 +40,7 @@ public class LocalStorageObjectStorage : IObjectStorage
     private async ValueTask<Result> SaveObjectCore(string id, object obj)
     {
         await using var stream = new MemoryStream();
-        var result = await serializer.Serialize(obj, stream);
+        var result = await serializer.SerializeAsync(obj, stream);
 
         if (result.IsHasError)
         {
@@ -65,6 +65,6 @@ public class LocalStorageObjectStorage : IObjectStorage
         var bytes = Convert.FromBase64String(value);
         await using var stream = new MemoryStream(bytes);
 
-        return await serializer.Deserialize<TObject>(stream);
+        return await serializer.DeserializeAsync<TObject>(stream);
     }
 }

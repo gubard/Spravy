@@ -78,7 +78,7 @@ public static class ResultExtension
         foreach (var validationResult in result.Errors.ToArray())
         {
             await using var stream = new MemoryStream();
-            await serializer.Serialize(validationResult, stream);
+            await serializer.SerializeAsync(validationResult, stream);
             metadata.Add($"{validationResult.Id}-bin", stream.ToArray());
         }
 
@@ -92,7 +92,7 @@ public static class ResultExtension
         foreach (var validationResult in result.Errors.ToArray())
         {
             await using var stream = new MemoryStream();
-            await serializer.Serialize(validationResult, stream);
+            await serializer.SerializeAsync(validationResult, stream);
             metadata.Add($"{validationResult.Id}-bin", stream.ToArray());
         }
 

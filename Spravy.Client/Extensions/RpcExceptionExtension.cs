@@ -11,10 +11,25 @@ namespace Spravy.Client.Extensions;
 
 public static class RpcExceptionExtension
 {
+    private static readonly Dictionary<Guid, Type> errors = new();
     private static readonly Dictionary<Type, Func<ISerializer, MemoryStream, Error>> chace = new();
 
     private static readonly MethodInfo DeserializeAsyncMethod =
         typeof(ISerializer).GetMethod(nameof(ISerializer.Deserialize)).ThrowIfNull();
+
+    public static void LoadErrors(Assembly assembly)
+    {
+        var errorTypes = assembly.GetTypes()
+            .Where(x => typeof(Error).IsAssignableFrom(x) && x is { IsAbstract: false, IsGenericType: false }).ToArray();
+
+        foreach (var errorType in errorTypes)
+        {
+            errors.Add(
+                (Guid)errorType.GetField("MainId", BindingFlags.Static | BindingFlags.Public)?.GetValue(null)
+                    .ThrowIfNull(),
+                errorType);
+        }
+    }
 
     public static ConfiguredValueTaskAwaitable<Result> ToErrorAsync(this RpcException exception, ISerializer serializer)
     {
@@ -75,6 +90,7 @@ public static class RpcExceptionExtension
         chace[type] = (Func<ISerializer, MemoryStream, Error>)DeserializeAsyncMethod
             .MakeGenericMethod(type)
             .ToCall(serializer, memoryStream)
+            .ToProperty(typeof(Result<>).MakeGenericType(type).GetProperty(nameof(Result<object>.Value)).ThrowIfNull())
             .ToConvert(typeof(Error))
             .ToLambda(
                 [serializer, memoryStream]
@@ -84,39 +100,8 @@ public static class RpcExceptionExtension
         return chace[type];
     }
 
-
     public static Type? GetValidationResultType(Guid id)
     {
-        if (NotNullError.MainId == id)
-        {
-            return typeof(NotNullError);
-        }
-
-        if (StringMaxLengthError.MainId == id)
-        {
-            return typeof(StringMaxLengthError);
-        }
-
-        if (StringMinLengthError.MainId == id)
-        {
-            return typeof(StringMinLengthError);
-        }
-
-        if (UserWithEmailExistsError.MainId == id)
-        {
-            return typeof(UserWithEmailExistsError);
-        }
-
-        if (UserWithLoginExistsError.MainId == id)
-        {
-            return typeof(UserWithLoginExistsError);
-        }
-
-        if (ValidCharsError.MainId == id)
-        {
-            return typeof(ValidCharsError);
-        }
-
-        return null;
+        return errors.GetValueOrDefault(id);
     }
 }

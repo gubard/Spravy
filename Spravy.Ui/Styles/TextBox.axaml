@@ -36,7 +36,7 @@
         <Setter Property="TextInputOptions.ContentType" Value="Url" />
     </Style>
 
-    <Style Selector="TextBox.text-wrapping-wrap">
+    <Style Selector="TextBox.text-wrap">
         <Setter Property="TextWrapping" Value="Wrap" />
     </Style>
 
