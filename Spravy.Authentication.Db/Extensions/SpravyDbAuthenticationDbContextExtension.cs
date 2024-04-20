@@ -16,31 +16,18 @@ public static class SpravyDbAuthenticationDbContextExtension
         CancellationToken cancellationToken
     )
     {
-        return GetUserByLoginCore(context, login, cancellationToken).ConfigureAwait(false);
-    }
-
-    private static async ValueTask<Result<UserEntity>> GetVerifiedUserByLoginCore(
-        this SpravyDbAuthenticationDbContext context,
-        string login,
-        CancellationToken cancellationToken
-    )
-    {
-        var user = await context.GetUserByLoginAsync(login, cancellationToken);
-
-        if (user.IsHasError)
+        return context.GetUserByLoginAsync(login, cancellationToken).IfSuccessAsync(user =>
         {
-            return new Result<UserEntity>(user.Errors);
-        }
+            if (!user.IsEmailVerified)
+            {
+                return new Result<UserEntity>(new UserNotVerifiedError(
+                    user.Login.ThrowIfNullOrWhiteSpace(),
+                    user.Email.ThrowIfNullOrWhiteSpace()
+                ));
+            }
 
-        if (!user.Value.IsEmailVerified)
-        {
-            return new Result<UserEntity>(new UserNotVerifiedError(
-                user.Value.Login.ThrowIfNullOrWhiteSpace(),
-                user.Value.Email.ThrowIfNullOrWhiteSpace()
-            ));
-        }
-
-        return new Result<UserEntity>(user.Value);
+            return new Result<UserEntity>(user);
+        }, cancellationToken);
     }
 
     public static ConfiguredValueTaskAwaitable<Result<UserEntity>> GetUserByLoginAsync(

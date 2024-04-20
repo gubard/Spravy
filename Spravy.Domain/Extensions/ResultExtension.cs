@@ -370,16 +370,16 @@ public static class ResultExtension
 
     public static ConfiguredValueTaskAwaitable<Result<TReturn>> IfSuccessAsync<TValue, TReturn>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
-        Func<TValue, Result<TReturn>> action,
+        Func<TValue, Result<TReturn>> func,
         CancellationToken cancellationToken
     )
     {
-        return IfSuccessCore(task, action, cancellationToken).ConfigureAwait(false);
+        return IfSuccessCore(task, func, cancellationToken).ConfigureAwait(false);
     }
 
     private static async ValueTask<Result<TReturn>> IfSuccessCore<TValue, TReturn>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
-        Func<TValue, Result<TReturn>> action,
+        Func<TValue, Result<TReturn>> func,
         CancellationToken cancellationToken
     )
     {
@@ -395,7 +395,7 @@ public static class ResultExtension
             return Result<TReturn>.CanceledByUserError;
         }
 
-        return action.Invoke(result.Value);
+        return func.Invoke(result.Value);
     }
 
     public static ConfiguredValueTaskAwaitable<Result> IfSuccessAsync<TValue>(
