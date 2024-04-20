@@ -10,7 +10,6 @@ namespace Spravy.Authentication.Db.Extensions;
 
 public static class SpravyDbAuthenticationDbContextExtension
 {
-
     public static ConfiguredValueTaskAwaitable<Result<UserEntity>> GetVerifiedUserByLoginAsync(
         this SpravyDbAuthenticationDbContext context,
         string login,
@@ -26,27 +25,22 @@ public static class SpravyDbAuthenticationDbContextExtension
         CancellationToken cancellationToken
     )
     {
-        var users = await context.Set<UserEntity>().Where(x => x.Login == login).ToArrayAsync(cancellationToken);
+        var user = await context.GetUserByLoginAsync(login, cancellationToken);
 
-        if (users.Length == 0)
+        if (user.IsHasError)
         {
-            return new Result<UserEntity>(new UserWithLoginExistsError(login));
+            return new Result<UserEntity>(user.Errors);
         }
 
-        if (users.Length > 1)
-        {
-            return new Result<UserEntity>(new MultiUsersWithSameLoginError(login));
-        }
-
-        if (!users[0].IsEmailVerified)
+        if (!user.Value.IsEmailVerified)
         {
             return new Result<UserEntity>(new UserNotVerifiedError(
-                users[0].Login.ThrowIfNullOrWhiteSpace(),
-                users[0].Email.ThrowIfNullOrWhiteSpace()
+                user.Value.Login.ThrowIfNullOrWhiteSpace(),
+                user.Value.Email.ThrowIfNullOrWhiteSpace()
             ));
         }
 
-        return new Result<UserEntity>(users[0]);
+        return new Result<UserEntity>(user.Value);
     }
 
     public static ConfiguredValueTaskAwaitable<Result<UserEntity>> GetUserByLoginAsync(
@@ -68,7 +62,7 @@ public static class SpravyDbAuthenticationDbContextExtension
 
         if (users.Length == 0)
         {
-            return new Result<UserEntity>(new UserWithLoginExistsError(login));
+            return new Result<UserEntity>(new UserWithLoginNotExistsError(login));
         }
 
         if (users.Length > 1)
