@@ -24,9 +24,6 @@ class Program
 {
     private static async Task Main()
     {
-        RpcExceptionExtension.LoadErrors(typeof(Error).Assembly);
-        ProtobufSerializer.LoadErrors(typeof(Error).Assembly);
-
         Log.Logger = new LoggerConfiguration()
             .WriteTo.Console()
             .CreateLogger();

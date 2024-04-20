@@ -11,7 +11,15 @@ namespace Spravy.Core.Services;
 
 public class ProtobufSerializer : ISerializer
 {
-    public static void LoadErrors(Assembly assembly)
+    static ProtobufSerializer()
+    {
+        foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+        {
+            LoadErrors(assembly);
+        }
+    }
+
+    private static void LoadErrors(Assembly assembly)
     {
         var errorTypes = assembly.GetTypes()
             .Where(x => typeof(Error).IsAssignableFrom(x) && x is { IsAbstract: false, IsGenericType: false })
@@ -19,8 +27,29 @@ public class ProtobufSerializer : ISerializer
 
         foreach (var errorType in errorTypes)
         {
+            var defaultConstructor = errorType.GetConstructor(
+                                         BindingFlags.Instance | BindingFlags.Public,
+                                         null,
+                                         [],
+                                         null
+                                     )
+                                     ?? errorType.GetConstructor(
+                                         BindingFlags.Instance | BindingFlags.NonPublic,
+                                         null,
+                                         [],
+                                         null
+                                     );
+
+            if (defaultConstructor is null)
+            {
+                throw new NullReferenceException();
+            }
+
             var metaType = RuntimeTypeModel.Default.Add(errorType);
-            var fields = errorType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+
+            var fields = errorType.GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                .Where(x => x.CanWrite)
+                .ToArray();
 
             for (var i = 0; i < fields.Length; i++)
             {

@@ -29,12 +29,6 @@ namespace Spravy.Ui.Android;
 )]
 public class MainActivity : AvaloniaMainActivity<App>
 {
-    static MainActivity()
-    {
-        RpcExceptionExtension.LoadErrors(typeof(Error).Assembly);
-        ProtobufSerializer.LoadErrors(typeof(Error).Assembly);
-    }
-
     private INavigator? navigator;
 
     private INavigator Navigator

@@ -14,6 +14,7 @@ using Spravy.Domain.Errors;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
+using Spravy.ToDo.Domain.Errors;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.Extensions;
@@ -281,7 +282,7 @@ public class MultiToDoItemsViewModel : ViewModelBase
                     )
                     .IfSuccessAsync(() => CommandStorage.RefreshCurrentViewAsync(cancellationToken), cancellationToken);
             default:
-                return new Result(new ValueOutOfRangeError(property.IsCan)).ToValueTaskResult().ConfigureAwait(false);
+                return new Result(new ToDoItemIsCanOutOfRangeError(property.IsCan)).ToValueTaskResult().ConfigureAwait(false);
         }
     }
 }

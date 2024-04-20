@@ -1,36 +1,32 @@
-using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using Spravy.Domain.Errors;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
+using Spravy.Domain.Models;
 
 namespace Spravy.Domain.Services;
 
 public class ValidCharsValidationRule : IValidationRule<string>
 {
-    private readonly ReadOnlyMemory<char> _validChars;
+    private readonly ReadOnlyMemory<char> validChars;
 
     public ValidCharsValidationRule(ReadOnlyMemory<char> validChars)
     {
-        _validChars = validChars;
+        this.validChars = validChars;
     }
 
-    public Task<bool> ValidateAsync(string? value, [MaybeNullWhen(true)] out Error result)
+    public ConfiguredValueTaskAwaitable<Result> ValidateAsync(string? value, string sourceName)
     {
         if (value is null)
         {
-            result = null;
-
-            return true.ToTaskResult();
+            return Result.AwaitableFalse;
         }
 
-        if (value.AsSpan().IndexOfAnyExcept(_validChars.Span) == -1)
+        if (value.AsSpan().IndexOfAnyExcept(validChars.Span) == -1)
         {
-            result = null;
-            return true.ToTaskResult();
+            return Result.AwaitableFalse;
         }
 
-        result = new ValidCharsError(_validChars);
-
-        return false.ToTaskResult();
+        return new Result(new VariableInvalidCharsError(validChars, sourceName)).ToValueTaskResult().ConfigureAwait(false);
     }
 }

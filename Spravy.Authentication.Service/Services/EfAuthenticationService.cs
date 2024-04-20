@@ -95,15 +95,21 @@ public class EfAuthenticationService : IAuthenticationService
     {
         var email = options.Email.Trim().ToUpperInvariant();
 
-        await foreach (var error in loginValidator.ValidateAsync(options.Login).WithCancellation(cancellationToken))
+        await foreach (var error in loginValidator.ValidateAsync(options.Login, nameof(options.Login)).WithCancellation(cancellationToken))
         {
-            return new Result(error);
+            if (error.IsHasError)
+            {
+                return error;
+            }
         }
 
-        await foreach (var error in passwordValidator.ValidateAsync(options.Password)
+        await foreach (var error in passwordValidator.ValidateAsync(options.Password, nameof(options.Password))
                            .WithCancellation(cancellationToken))
         {
-            return new Result(error);
+            if (error.IsHasError)
+            {
+                return error;
+            }
         }
 
         var salt = Guid.NewGuid();

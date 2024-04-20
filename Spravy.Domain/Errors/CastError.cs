@@ -1,3 +1,5 @@
+using Spravy.Domain.Models;
+
 namespace Spravy.Domain.Errors;
 
 public class CastError : Error
@@ -6,6 +8,8 @@ public class CastError : Error
 
     protected CastError() : base(MainId)
     {
+        InputType = typeof(UnknownType);
+        OutputType = typeof(UnknownType);
     }
 
     public CastError(Type inputType, Type outputType) : base(MainId)

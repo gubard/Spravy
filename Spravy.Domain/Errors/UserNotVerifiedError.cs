@@ -4,11 +4,13 @@ public class UserNotVerifiedError : Error
 {
     public static readonly Guid MainId = new("CAAE89FE-827F-4770-B7A3-511ED6AB61CB");
 
-    protected UserNotVerifiedError() : base(MainId, "UserNotVerifiedError")
+    protected UserNotVerifiedError() : base(MainId)
     {
+        Login = string.Empty;
+        Email = string.Empty;
     }
 
-    public UserNotVerifiedError(string login, string email) : base(MainId, "UserNotVerifiedError")
+    public UserNotVerifiedError(string login, string email) : base(MainId)
     {
         Login = login;
         Email = email;
@@ -16,4 +18,9 @@ public class UserNotVerifiedError : Error
 
     public string Login { get; protected set; }
     public string Email { get; protected set; }
+
+    public override string Message
+    {
+        get => $"User {Login}<{Email}> is not verified";
+    }
 }

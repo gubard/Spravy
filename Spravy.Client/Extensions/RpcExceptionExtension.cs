@@ -17,10 +17,19 @@ public static class RpcExceptionExtension
     private static readonly MethodInfo DeserializeAsyncMethod =
         typeof(ISerializer).GetMethod(nameof(ISerializer.Deserialize)).ThrowIfNull();
 
-    public static void LoadErrors(Assembly assembly)
+    static RpcExceptionExtension()
+    {
+        foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+        {
+            LoadErrors(assembly);
+        }
+    }
+
+    private static void LoadErrors(Assembly assembly)
     {
         var errorTypes = assembly.GetTypes()
-            .Where(x => typeof(Error).IsAssignableFrom(x) && x is { IsAbstract: false, IsGenericType: false }).ToArray();
+            .Where(x => typeof(Error).IsAssignableFrom(x) && x is { IsAbstract: false, IsGenericType: false })
+            .ToArray();
 
         foreach (var errorType in errorTypes)
         {

@@ -19,9 +19,6 @@ public class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        RpcExceptionExtension.LoadErrors(typeof(Error).Assembly);
-        ProtobufSerializer.LoadErrors(typeof(Error).Assembly);
-
         Log.Logger = new LoggerConfiguration()
             .WriteTo.Console()
             .CreateLogger();

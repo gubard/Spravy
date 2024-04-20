@@ -13,12 +13,6 @@ namespace Spravy.Service.Extensions;
 
 public static class WebApplicationBuilderExtension
 {
-    static WebApplicationBuilderExtension()
-    {
-        RpcExceptionExtension.LoadErrors(typeof(Error).Assembly);
-        ProtobufSerializer.LoadErrors(typeof(Error).Assembly);
-    }
-
     public static WebApplicationBuilder AddSpravy<TAssemblyMark>(this WebApplicationBuilder builder, string[] args)
         where TAssemblyMark : IAssemblyMark
     {

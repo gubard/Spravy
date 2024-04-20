@@ -8,17 +8,21 @@ using Avalonia.Controls.Templates;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
 using Ninject;
+using Spravy.Client.Extensions;
+using Spravy.Core.Services;
 using Spravy.Domain.Di.Helpers;
+using Spravy.Domain.Errors;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;
+using Spravy.ToDo.Domain.Errors;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 using SukiUI;
 
 namespace Spravy.Ui;
 
-public partial class App : Application
+public class App : Application
 {
     [Inject]
     public IKernel? Resolver { get; init; } = DiHelper.Kernel;

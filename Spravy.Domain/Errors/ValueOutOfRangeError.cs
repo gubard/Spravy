@@ -1,13 +1,16 @@
 namespace Spravy.Domain.Errors;
 
-public class ValueOutOfRangeError : Error
+public abstract class ValueOutOfRangeError<TValue> : Error
 {
-    public static readonly Guid MainId = new("95E4337C-DFA4-415F-8AD3-D528B8294610");
-
-    public ValueOutOfRangeError(object value) : base(MainId, $"Value {value} out of range")
+    public ValueOutOfRangeError(TValue value, Guid id) : base(id)
     {
         Value = value;
     }
 
-    public object Value { get; protected set; }
+    public TValue Value { get; protected set; }
+
+    public override string Message
+    {
+        get => $"Value {Value} is out of range.";
+    }
 }
