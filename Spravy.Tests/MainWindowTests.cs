@@ -127,9 +127,9 @@ public class MainWindowTests
                         .ThrowIfNull()
                         .MustEnabled()
                         .ClickOnButton(w)
-                        .RunJobsAll(2)
+                        .RunJobsAll(3)
                     )
-                    .Case(() => w.GetCurrentView<RootToDoItemsView, RootToDoItemsViewModel>())
+                    .Case(() => w.GetCurrentView<LoginView, LoginViewModel>())
                     .SaveFrame(),
                 (w, _) => w.SaveFrame().LogCurrentState()
             );
