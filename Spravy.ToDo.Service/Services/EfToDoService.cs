@@ -14,6 +14,7 @@ using Spravy.ToDo.Db.Mapper.Profiles;
 using Spravy.ToDo.Db.Models;
 using Spravy.ToDo.Db.Services;
 using Spravy.ToDo.Domain.Enums;
+using Spravy.ToDo.Domain.Errors;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
 
@@ -631,7 +632,7 @@ public class EfToDoService : IToDoService
         var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
         await using var context = dbContextFactory.Create();
 
-        await context.ExecuteSaveChangesTransactionAsync(
+       return await context.ExecuteSaveChangesTransactionAsync(
             async c =>
             {
                 var item = await c.Set<ToDoItemEntity>().FindAsync(id);
@@ -649,7 +650,7 @@ public class EfToDoService : IToDoService
 
                     if (!parameters.IsCan.HasFlag(ToDoItemIsCan.CanComplete))
                     {
-                        throw new ArgumentException();
+                        return new Result(new ToDoItemAlreadyCompleteError(item.Id, item.Name));
                     }
 
                     switch (item.Type)
@@ -688,11 +689,11 @@ public class EfToDoService : IToDoService
                 {
                     item.IsCompleted = false;
                 }
+
+                return Result.Success;
             },
             cancellationToken
         );
-
-        return Result.Success;
     }
 
     private async ValueTask<Result> StepCompletionAsync(
@@ -785,7 +786,8 @@ public class EfToDoService : IToDoService
 
         foreach (var group in groups)
         {
-            await CircleCompletionAsync(context, group, moveCircleOrderIndex, completeTask, onlyCompletedTasks, cancellationToken);
+            await CircleCompletionAsync(context, group, moveCircleOrderIndex, completeTask, onlyCompletedTasks,
+                cancellationToken);
         }
 
         return Result.Success;
