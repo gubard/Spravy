@@ -6,6 +6,7 @@
              xmlns:dh="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
              xmlns:s="clr-namespace:Spravy.Ui.Services"
              xmlns:h="clr-namespace:Spravy.Ui.Helpers"
+             xmlns:views="clr-namespace:Spravy.Ui.Views"
              mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
              x:Class="Spravy.Ui.Views.MainView"
              x:DataType="vm:MainViewModel">
@@ -79,19 +80,20 @@
         </Style>
     </UserControl.Styles>
 
-    <dh:DialogHost x:Name="ErrorDialogHost"
+    <dh:DialogHost Name="{x:Static views:MainView.ErrorDialogHostName}"
                    Classes="adaptive"
                    Identifier="{x:Static s:DialogViewer.ErrorDialogHostIdentifier}">
-        <dh:DialogHost x:Name="ProgressDialogHost"
+        <dh:DialogHost Name="{x:Static views:MainView.ProgressDialogHostName}"
                        Classes="adaptive"
                        Identifier="{x:Static s:DialogViewer.ProgressDialogHostIdentifier}">
-            <dh:DialogHost x:Name="InputDialogHost"
+            <dh:DialogHost Name="{x:Static views:MainView.InputDialogHostName}"
                            Classes="adaptive"
                            Identifier="{x:Static s:DialogViewer.InputDialogHostIdentifier}">
-                <dh:DialogHost x:Name="ContentDialogHost"
+                <dh:DialogHost Name="{x:Static views:MainView.ContentDialogHostName}"
                                Classes="adaptive"
                                Identifier="{x:Static s:DialogViewer.ContentDialogHostIdentifier}">
-                    <ContentControl x:Name="MainContent" Content="{Binding MainSplitViewModel}" />
+                    <ContentControl Name="{x:Static views:MainView.MainContentName}"
+                                    Content="{Binding MainSplitViewModel}" />
                 </dh:DialogHost>
             </dh:DialogHost>
         </dh:DialogHost>

@@ -5,6 +5,7 @@
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:ru="http://reactiveui.net"
                         xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
+                        xmlns:v="clr-namespace:Spravy.Ui.Views"
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                         x:Class="Spravy.Ui.Views.InfoView"
                         x:DataType="vm:InfoViewModel">
@@ -14,7 +15,7 @@
 
     <Grid RowDefinitions="*,Auto">
         <ContentControl Content="{Binding Content}" />
-        <Button x:Name="OkButton"
+        <Button Name="{x:Static v:InfoView.OkButtonName}"
                 Grid.Row="1"
                 Command="{Binding OkCommand}"
                 ClickMode="Press"

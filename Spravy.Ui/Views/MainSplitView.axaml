@@ -5,6 +5,7 @@
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:ru="http://reactiveui.net"
                         xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
+                        xmlns:v="clr-namespace:Spravy.Ui.Views"
                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                         x:Class="Spravy.Ui.Views.MainSplitView"
                         x:DataType="vm:MainSplitViewModel">
@@ -13,5 +14,5 @@
                IsPaneOpen="{Binding IsPaneOpen}"
                OpenPaneLength="300"
                PanePlacement="Left"
-               x:Name="MainSplit" />
+               Name="{x:Static v:MainSplitView.MainSplitViewName}" />
 </ru:ReactiveUserControl>

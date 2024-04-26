@@ -1,4 +1,4 @@
-<ru:ReactiveUserControl x:TypeArguments="viewModels:VerificationCodeViewModel"
+<ru:ReactiveUserControl x:TypeArguments="avm:VerificationCodeViewModel"
                         xmlns="https://github.com/avaloniaui"
                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -7,10 +7,11 @@
                         xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
                         xmlns:s="clr-namespace:Spravy.Ui.Services"
                         xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
-                        xmlns:viewModels="clr-namespace:Spravy.Ui.Features.Authentication.ViewModels"
+                        xmlns:avm="clr-namespace:Spravy.Ui.Features.Authentication.ViewModels"
+                        xmlns:v="clr-namespace:Spravy.Ui.Features.Authentication.Views"
                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                         x:Class="Spravy.Ui.Features.Authentication.Views.VerificationCodeView"
-                        x:DataType="viewModels:VerificationCodeViewModel">
+                        x:DataType="avm:VerificationCodeViewModel">
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
             <InvokeCommandAction Command="{Binding InitializedCommand}" />
@@ -30,7 +31,7 @@
 
             <TextBlock Classes="field"
                        Text="{DynamicResource VerificationCodeView.VerificationCode}" />
-            <TextBox x:Name="VerificationCodeTextBox" Text="{Binding VerificationCode}" />
+            <TextBox Name="{x:Static v:VerificationCodeView.VerificationCodeTextBoxName}" Text="{Binding VerificationCode}" />
 
             <Grid ColumnDefinitions="*,*" RowDefinitions="*,*">
                 <Button Command="{x:Static s:CommandStorage.SendNewVerificationCodeCommand}"
@@ -48,7 +49,7 @@
                         CommandParameter="{x:Type vm:LoginViewModel}"
                         Content="{DynamicResource VerificationCodeView.Back}" />
 
-                <Button x:Name="VerificationEmailButton"
+                <Button Name="{x:Static v:VerificationCodeView.VerificationEmailButtonName}"
                         Grid.Row="1"
                         Grid.Column="1"
                         Command="{x:Static s:CommandStorage.VerificationEmailCommand}"
