@@ -319,14 +319,14 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
 
     private ConfiguredValueTaskAwaitable<Result> EnterAsync(LoginView view, CancellationToken cancellationToken)
     {
-        var loginTextBox = view.FindControl<TextBox>(LoginView.LoginTextBoxName);
+        var loginTextBox = view.FindControl<TextBox>("LoginTextBox");
 
         if (loginTextBox is null)
         {
             return Result.AwaitableFalse;
         }
 
-        var passwordTextBox = view.FindControl<TextBox>(LoginView.PasswordTextBoxName);
+        var passwordTextBox = view.FindControl<TextBox>("PasswordTextBox");
 
         if (passwordTextBox is null)
         {
