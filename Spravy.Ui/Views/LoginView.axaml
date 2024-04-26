@@ -52,6 +52,7 @@
                             Content="{DynamicResource LoginView.CreateAccount}" />
                     <Button Grid.Row="1"
                             Grid.Column="1"
+                            Name="LoginButton"
                             Command="{Binding LoginCommand}"
                             Content="{DynamicResource LoginView.Login}"
                             Classes="Flat" />
