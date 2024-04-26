@@ -30,11 +30,11 @@
                 <TextBlock Text="{DynamicResource LoginView.WelcomeToSpravy}" Classes="h2" HorizontalAlignment="Center" />
                 <TextBlock Classes="field"
                            Text="{DynamicResource LoginView.Login}" />
-                <TextBox Name="{x:Static v:LoginView.LoginTextBoxName}"
+                <TextBox x:Name="LoginTextBox"
                          Text="{Binding Login}" />
                 <TextBlock Classes="field"
                            Text="{DynamicResource LoginView.Password}" />
-                <TextBox Name="{x:Static v:LoginView.PasswordTextBoxName}"
+                <TextBox x:Name="PasswordTextBox"
                          Classes="password-char content-type-password"
                          Text="{Binding Password}" />
 
