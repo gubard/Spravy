@@ -10,12 +10,13 @@ public static class ButtonExtension
     public static Button ClickOnButton(this Button button, Window window)
     {
         var position = button.TranslatePoint(new Point(0, 0), window).ThrowIfNullStruct().Center(button.Bounds);
+        window.RunJobsAll(1);
         window.SpravyMouseMove(position, RawInputModifiers.None);
-        window.RunJobsAll();
+        window.RunJobsAll(1);
         window.SpravyMouseDown(position, MouseButton.Left, RawInputModifiers.None);
-        window.RunJobsAll();
+        window.RunJobsAll(1);
         window.SpravyMouseUp(position, MouseButton.Left, RawInputModifiers.None);
-        window.RunJobsAll();
+        window.RunJobsAll(1);
 
         return button;
     }
