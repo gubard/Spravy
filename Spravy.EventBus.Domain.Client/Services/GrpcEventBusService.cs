@@ -109,10 +109,8 @@ public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
     {
         var request = new SubscribeEventsRequest();
         request.EventIds.AddRange(converter.Convert<ByteString[]>(eventIds).Value);
-        cancellationToken.ThrowIfCancellationRequested();
         var metadata = await metadataFactory.CreateAsync(cancellationToken);
         using var response = client.SubscribeEvents(request, metadata.Value, cancellationToken: cancellationToken);
-        cancellationToken.ThrowIfCancellationRequested();
 
         while (await response.ResponseStream.MoveNext(cancellationToken))
         {
@@ -120,8 +118,6 @@ public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
             var eventValue = converter.Convert<EventValue>(reply);
 
             yield return eventValue.Value;
-
-            cancellationToken.ThrowIfCancellationRequested();
         }
     }
 

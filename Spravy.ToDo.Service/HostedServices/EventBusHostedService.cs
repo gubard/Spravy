@@ -3,6 +3,7 @@ using Spravy.Db.Sqlite.Extensions;
 using Spravy.Db.Sqlite.Models;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
+using Spravy.Domain.Models;
 using Spravy.EventBus.Domain.Helpers;
 using Spravy.EventBus.Domain.Interfaces;
 using Spravy.EventBus.Domain.Models;
@@ -75,7 +76,8 @@ public class EventBusHostedService : IHostedService
 
                 try
                 {
-                    var eventBusService = spravyEventBusServiceFactory.Create(file.GetFileNameWithoutExtension());
+                    var eventBusService = spravyEventBusServiceFactory.Create(file.GetFileNameWithoutExtension())
+                        .ThrowIfError();
                     var stream = eventBusService.SubscribeEventsAsync(eventIds.ToArray(), source.Token);
                     logger.LogInformation("Connected for events {File}", file);
 
@@ -89,7 +91,7 @@ public class EventBusHostedService : IHostedService
                 }
                 catch (Exception e)
                 {
-                    source.Cancel();
+                    await source.CancelAsync();
                     throw new FileException($"Can't handle file {file}.", e, file);
                 }
             }
@@ -104,23 +106,18 @@ public class EventBusHostedService : IHostedService
 
     private async Task ChangeFavoriteAsync(FileInfo file, EventValue eventValue)
     {
-        await using var context = spravyToDoDbContext.Create(file.ToSqliteConnectionString());
         var eventContent = ChangeToDoItemIsFavoriteEvent.Parser.ParseFrom(eventValue.Content);
         var id = new Guid(eventContent.ToDoItemId.ToByteArray());
 
-        await context.ExecuteSaveChangesTransactionAsync(
-            async c =>
-            {
-                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
-
-                if (item is null)
+        await spravyToDoDbContext.Create(file.ToSqliteConnectionString()).IfSuccessAsync(context =>
+            context.AtomicExecuteAsync(
+                () => context.FindEntityAsync<ToDoItemEntity>(id).IfSuccessAsync(item =>
                 {
-                    return;
-                }
+                    item.IsFavorite = eventContent.IsFavorite;
 
-                item.IsFavorite = eventContent.IsFavorite;
-            },
-            CancellationToken.None
-        );
+                    return Result.Success;
+                }, CancellationToken.None),
+                CancellationToken.None
+            ), CancellationToken.None).ThrowIfErrorAsync();
     }
 }

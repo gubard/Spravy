@@ -1,11 +1,13 @@
+using Spravy.Domain.Models;
+
 namespace Spravy.Domain.Interfaces;
 
-public interface IFactory<in TKey, out TValue> where TValue : notnull
+public interface IFactory<in TKey, TValue> where TValue : notnull
 {
-    TValue Create(TKey key);
+    Result<TValue> Create(TKey key);
 }
 
-public interface IFactory<out TValue> where TValue : notnull
+public interface IFactory<TValue> where TValue : notnull
 {
-    TValue Create();
+    Result<TValue> Create();
 }

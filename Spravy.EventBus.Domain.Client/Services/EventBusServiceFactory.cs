@@ -35,7 +35,7 @@ public class EventBusServiceFactory : IFactory<string, IEventBusService>
         this.serializer = serializer;
     }
 
-    public IEventBusService Create(string key)
+    public Result<IEventBusService> Create(string key)
     {
         if (!options.Token.IsNullOrWhiteSpace())
         {
@@ -52,6 +52,6 @@ public class EventBusServiceFactory : IFactory<string, IEventBusService>
         var metadataFactory = new MetadataFactory(new CombineHttpHeaderFactory(headers));
         var host = options.Host.ThrowIfNull().ToUri();
 
-        return new GrpcEventBusService(eventBusServiceClientFactory, host, converter, metadataFactory, serializer);
+        return new GrpcEventBusService(eventBusServiceClientFactory, host, converter, metadataFactory, serializer).ToResult<IEventBusService>();
     }
 }

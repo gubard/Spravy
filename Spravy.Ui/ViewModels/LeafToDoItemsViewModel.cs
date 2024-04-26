@@ -73,8 +73,6 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
 
     private ConfiguredValueTaskAwaitable<Result> RefreshCoreAsync(CancellationToken cancellationToken)
     {
-        cancellationToken.ThrowIfCancellationRequested();
-
         return ToDoService.GetLeafToDoItemIdsAsync(Id, cancellationToken)
             .IfSuccessAsync(
                 ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, true, cancellationToken),

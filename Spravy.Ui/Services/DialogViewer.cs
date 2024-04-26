@@ -99,7 +99,6 @@ public class DialogViewer : IDialogViewer
                     var infoViewModel = Resolver.Get<InfoViewModel>();
                     infoViewModel.Content = content;
                     infoViewModel.OkTask = view => okTask.Invoke((TView)view);
-                    cancellationToken.ThrowIfCancellationRequested();
 
                     return ShowView(infoViewModel, ErrorDialogHostIdentifier).ConfigureAwait(false);
                 },
@@ -123,7 +122,6 @@ public class DialogViewer : IDialogViewer
                     var infoViewModel = Resolver.Get<InfoViewModel>();
                     infoViewModel.Content = content;
                     infoViewModel.OkTask = view => okTask.Invoke((TView)view);
-                    cancellationToken.ThrowIfCancellationRequested();
 
                     return ShowView(infoViewModel, InputDialogHostIdentifier).ConfigureAwait(false);
                 },
@@ -145,7 +143,6 @@ public class DialogViewer : IDialogViewer
                     var infoViewModel = Resolver.Get<InfoViewModel>();
                     infoViewModel.Content = content;
                     infoViewModel.OkTask = view => okTask.Invoke((TView)view);
-                    cancellationToken.ThrowIfCancellationRequested();
 
                     return ShowView(infoViewModel, ContentDialogHostIdentifier).ConfigureAwait(false);
                 },
@@ -224,7 +221,6 @@ public class DialogViewer : IDialogViewer
                     confirmViewModel.Content = content;
                     confirmViewModel.ConfirmTask = view => confirmTask.Invoke((TView)view);
                     confirmViewModel.CancelTask = view => cancelTask.Invoke((TView)view);
-                    cancellationToken.ThrowIfCancellationRequested();
 
                     return ShowView(confirmViewModel, ContentDialogHostIdentifier).ConfigureAwait(false);
                 },
@@ -249,7 +245,6 @@ public class DialogViewer : IDialogViewer
                     confirmViewModel.Content = content;
                     confirmViewModel.ConfirmTask = view => confirmTask.Invoke((TView)view);
                     confirmViewModel.CancelTask = view => cancelTask.Invoke((TView)view);
-                    cancellationToken.ThrowIfCancellationRequested();
 
                     return ShowView(confirmViewModel, InputDialogHostIdentifier).ConfigureAwait(false);
                 },

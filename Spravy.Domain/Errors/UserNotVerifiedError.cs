@@ -24,3 +24,28 @@ public class UserNotVerifiedError : Error
         get => $"User {Login}<{Email}> is not verified";
     }
 }
+
+public class UserVerifiedError : Error
+{
+    public static readonly Guid MainId = new("CAAE89FE-827F-4770-B7A3-511ED6AB61CB");
+
+    protected UserVerifiedError() : base(MainId)
+    {
+        Login = string.Empty;
+        Email = string.Empty;
+    }
+
+    public UserVerifiedError(string login, string email) : base(MainId)
+    {
+        Login = login;
+        Email = email;
+    }
+
+    public string Login { get; protected set; }
+    public string Email { get; protected set; }
+
+    public override string Message
+    {
+        get => $"User {Login}<{Email}> is verified";
+    }
+}

@@ -62,9 +62,9 @@ public class Result<TValue>
         }
     }
 
-    public Result(Error validationResults)
+    public Result(Error error)
     {
-        Errors = new ReadOnlyMemory<Error>([validationResults]);
+        Errors = new ReadOnlyMemory<Error>([error]);
     }
 
     public Result(TValue value)

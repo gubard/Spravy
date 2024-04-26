@@ -10,7 +10,6 @@ using Avalonia.Collections;
 using Ninject;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using Spravy.Domain.Errors;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Enums;

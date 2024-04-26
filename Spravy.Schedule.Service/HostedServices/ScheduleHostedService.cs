@@ -1,9 +1,11 @@
+using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
 using Spravy.Db.Extensions;
 using Spravy.Db.Sqlite.Extensions;
 using Spravy.Db.Sqlite.Models;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
+using Spravy.Domain.Models;
 using Spravy.EventBus.Domain.Interfaces;
 using Spravy.Schedule.Db.Contexts;
 using Spravy.Schedule.Db.Models;
@@ -56,34 +58,38 @@ public class ScheduleHostedService : IHostedService
             {
                 try
                 {
-                    await using var context =
-                        spravyScheduleDbContextFactory.Create(file.ToSqliteConnectionString());
+                    spravyScheduleDbContextFactory.Create(file.ToSqliteConnectionString()).IfSuccessAsync(context =>
+                        context.AtomicExecuteAsync(
+                            () =>
+                                context.Set<TimerEntity>()
+                                    .AsNoTracking()
+                                    .ToArrayEntitiesAsync(cancellationToken)
+                                    .IfSuccessAllInOrderAsync(timers =>
+                                    {
+                                        var tasks = new List<Func<ConfiguredValueTaskAwaitable<Result>>>();
 
-                    await context.ExecuteSaveChangesTransactionAsync(
-                        async c =>
-                        {
-                            var timers = await c.Set<TimerEntity>()
-                                .AsNoTracking()
-                                .ToArrayAsync(cancellationToken);
+                                        foreach (var timer in timers.Span)
+                                        {
+                                            if (timer.DueDateTime > DateTimeOffset.Now)
+                                            {
+                                                continue;
+                                            }
 
-                            foreach (var timer in timers)
-                            {
-                                if (timer.DueDateTime > DateTimeOffset.Now)
-                                {
-                                    continue;
-                                }
+                                            tasks.Add(() => eventBusServiceFactory
+                                                .Create(file.GetFileNameWithoutExtension())
+                                                .IfSuccessAsync(eventBusService => eventBusService.PublishEventAsync(
+                                                        timer.EventId,
+                                                        timer.Content,
+                                                        cancellationToken
+                                                    )
+                                                    .IfSuccessAsync(() => context.RemoveEntity(timer),
+                                                        cancellationToken), cancellationToken));
+                                        }
 
-                                var eventBusService = eventBusServiceFactory.Create(file.GetFileNameWithoutExtension());
-                                await eventBusService.PublishEventAsync(
-                                    timer.EventId,
-                                    timer.Content,
-                                    cancellationToken
-                                );
-                                c.Set<TimerEntity>().Remove(timer);
-                            }
-                        },
-                        cancellationToken
-                    );
+                                        return tasks.ToArray();
+                                    }, cancellationToken),
+                            cancellationToken
+                        ), cancellationToken);
                 }
                 catch (Exception e)
                 {

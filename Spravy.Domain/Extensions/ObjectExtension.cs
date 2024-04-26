@@ -55,15 +55,39 @@ public static class ObjectExtension
         return obj;
     }
 
-    public static void Randomize<T>(this T[] array)
+    public static ReadOnlyMemory<T> Randomize<T>(this ReadOnlyMemory<T> array)
     {
         var rand = DefaultObject<Random>.Default;
+        var result = new T[array.Length];
 
         for (var i = array.Length - 1; i > 0; i--)
         {
             var randomIndex = rand.Next(0, i + 1);
-            (array[i], array[randomIndex]) = (array[randomIndex], array[i]);
+            result[i] = array.Span[randomIndex];
         }
+
+        return result.ToReadOnlyMemory();
+    }
+
+    public static uint Max(this ReadOnlyMemory<uint> array)
+    {
+        if (array.IsEmpty)
+        {
+            throw new EmptyEnumerableException(nameof(array));
+        }
+
+        var result = array.Span[0];
+        var span = array.Span;
+
+        for (var i = array.Length - 1; i > 0; i--)
+        {
+            if (span[i] > result)
+            {
+                result = span[i];
+            }
+        }
+
+        return result;
     }
 
     public static IEnumerable<T> ToEnumerable<T>(this T obj)
@@ -137,7 +161,7 @@ public static class ObjectExtension
     {
         return (T)obj;
     }
-    
+
     public static Result<T> CastObject<T>(this object obj)
     {
         if (obj is T item)
@@ -226,7 +250,7 @@ public static class ObjectExtension
     {
         return Task.FromResult(value);
     }
-    
+
     public static ValueTask<T> ToValueTaskResult<T>(this T value)
     {
         return ValueTask.FromResult(value);

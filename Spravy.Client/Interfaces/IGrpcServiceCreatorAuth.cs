@@ -4,7 +4,7 @@ using Spravy.Domain.Interfaces;
 
 namespace Spravy.Client.Interfaces;
 
-public interface IGrpcServiceCreatorAuth<out TGrpcService, in TGrpcClient>
+public interface IGrpcServiceCreatorAuth<out TGrpcService, TGrpcClient>
     where TGrpcService : GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBase
 {
     static abstract TGrpcService CreateGrpcService(
@@ -16,7 +16,7 @@ public interface IGrpcServiceCreatorAuth<out TGrpcService, in TGrpcClient>
     );
 }
 
-public interface IGrpcServiceCreator<out TGrpcService, in TGrpcClient>
+public interface IGrpcServiceCreator<out TGrpcService, TGrpcClient>
     where TGrpcService : GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBase
 {
     static abstract TGrpcService CreateGrpcService(

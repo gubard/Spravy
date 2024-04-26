@@ -14,7 +14,7 @@ public struct SpravyVersion
     public readonly byte Minor;
     public readonly byte Build;
     public readonly byte Revision;
-    public ulong Code => (Major - 1) * 800ul + Minor * 400ul + Build * 20ul + Revision;
+    public ulong Code => (Major - 1) * 9261ul + Minor * 441ul + Build * 21ul + Revision;
 
     public static SpravyVersion operator ++(SpravyVersion version)
     {

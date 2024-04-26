@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Spravy.Db.Interfaces;
+using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
+using Spravy.Domain.Models;
 
 namespace Spravy.Db.Sqlite.Services;
 
@@ -15,7 +17,7 @@ public class DbContextFactory<TDbContext, TAssemblyMark> : IFactory<string, TDbC
         this.dbContextSetup = dbContextSetup;
     }
 
-    public TDbContext Create(string key)
+    public Result<TDbContext> Create(string key)
     {
         var options = new DbContextOptionsBuilder()
             .UseSqlite(key, b => b.MigrationsAssembly(TAssemblyMark.AssemblyFullName))
@@ -23,6 +25,6 @@ public class DbContextFactory<TDbContext, TAssemblyMark> : IFactory<string, TDbC
 
         var context = TDbContext.CreateDbContext(dbContextSetup, options);
 
-        return context;
+        return context.ToResult();
     }
 }

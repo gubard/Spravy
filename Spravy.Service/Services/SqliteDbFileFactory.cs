@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Spravy.Db.Sqlite.Models;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
+using Spravy.Domain.Models;
 using Spravy.Service.Extensions;
 
 namespace Spravy.Service.Services;
@@ -17,12 +18,12 @@ public class SqliteDbFileFactory : IFactory<FileInfo>
         this.httpContextAccessor = httpContextAccessor;
     }
 
-    public FileInfo Create()
+    public Result<FileInfo> Create()
     {
         var userId = httpContextAccessor.GetUserId();
         var fileName = $"{userId}.db";
         var file = sqliteFolderOptions.DataBasesFolder.ThrowIfNull().ToDirectory().ToFile(fileName);
 
-        return file;
+        return file.ToResult();
     }
 }

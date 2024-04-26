@@ -37,41 +37,25 @@ public class EfPasswordService : IPasswordService
         CancellationToken cancellationToken
     )
     {
-        return AddPasswordItemCore(options, cancellationToken).ConfigureAwait(false);
-    }
-
-    private async ValueTask<Result> AddPasswordItemCore(AddPasswordOptions options, CancellationToken cancellationToken)
-    {
-        await using var context = dbContextFactory.Create();
-
-        await context.ExecuteSaveChangesTransactionAsync(
-            c =>
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(
+            () =>
             {
                 var item = mapper.Map<PasswordItemEntity>(options);
                 item.Id = Guid.NewGuid();
 
-                return c.AddAsync(item, cancellationToken);
-            }
-        );
-
-        return Result.Success;
+                return context.AddEntityAsync(item, cancellationToken).ToResultOnlyAsync();
+            }, cancellationToken
+        ), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<PasswordItem>>> GetPasswordItemsAsync(
         CancellationToken cancellationToken
     )
     {
-        return GetPasswordItemsCore(cancellationToken).ConfigureAwait(false);
-    }
-
-    private async ValueTask<Result<ReadOnlyMemory<PasswordItem>>> GetPasswordItemsCore(
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-        var items = await context.Set<PasswordItemEntity>().AsNoTracking().ToArrayAsync(cancellationToken);
-
-        return mapper.Map<PasswordItem[]>(items).ToReadOnlyMemory().ToResult();
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context =>
+            context.Set<PasswordItemEntity>().AsNoTracking().ToArrayEntitiesAsync(cancellationToken)
+                .IfSuccessAsync(items => mapper.Map<PasswordItem[]>(items).ToReadOnlyMemory().ToResult(),
+                    cancellationToken), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result<PasswordItem>> GetPasswordItemAsync(
@@ -79,31 +63,19 @@ public class EfPasswordService : IPasswordService
         CancellationToken cancellationToken
     )
     {
-        return GetPasswordItemCore(id, cancellationToken).ConfigureAwait(false);
-    }
-
-    private async ValueTask<Result<PasswordItem>> GetPasswordItemCore(Guid id, CancellationToken cancellationToken)
-    {
-        await using var context = dbContextFactory.Create();
-        var item = await context.FindAsync<PasswordItemEntity>(id);
-        item = item.ThrowIfNull();
-
-        return mapper.Map<PasswordItem>(item).ToResult();
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context =>
+                context.FindEntityAsync<PasswordItemEntity>(id)
+                    .IfSuccessAsync(item => mapper.Map<PasswordItem>(item).ToResult(), cancellationToken),
+            cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> DeletePasswordItemAsync(Guid id, CancellationToken cancellationToken)
     {
-        return DeletePasswordItemCore(id, cancellationToken).ConfigureAwait(false);
-    }
-
-    private async ValueTask<Result> DeletePasswordItemCore(Guid id, CancellationToken cancellationToken)
-    {
-        await using var context = dbContextFactory.Create();
-        var item = await context.FindAsync<PasswordItemEntity>(id);
-        item = item.ThrowIfNull();
-        await context.ExecuteSaveChangesTransactionAsync(c => c.Remove(item), cancellationToken);
-
-        return Result.Success;
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context =>
+                context.AtomicExecuteAsync(
+                    () => context.FindEntityAsync<PasswordItemEntity>(id)
+                        .IfSuccessAsync(context.RemoveEntity, cancellationToken), cancellationToken),
+            cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result<string>> GeneratePasswordAsync(
@@ -111,20 +83,13 @@ public class EfPasswordService : IPasswordService
         CancellationToken cancellationToken
     )
     {
-        return GeneratePasswordCore(id, cancellationToken).ConfigureAwait(false);
-    }
-
-    private async ValueTask<Result<string>> GeneratePasswordCore(Guid id, CancellationToken cancellationToken)
-    {
-        await using var context = dbContextFactory.Create();
-        var item = await context.FindAsync<PasswordItemEntity>(id);
-        item = item.ThrowIfNull();
-        var userSecret = await userSecretService.GetUserSecretAsync(cancellationToken);
-
-        return passwordGenerator.GeneratePassword(
-            $"{userSecret}{item.Key}",
-            mapper.Map<GeneratePasswordOptions>(item)
-        );
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context =>
+            context.FindEntityAsync<PasswordItemEntity>(id)
+                .IfSuccessAsync(item => userSecretService.GetUserSecretAsync(cancellationToken).IfSuccessAsync(
+                    userSecret => passwordGenerator.GeneratePassword(
+                        $"{userSecret}{item.Key}",
+                        mapper.Map<GeneratePasswordOptions>(item)
+                    ), cancellationToken), cancellationToken), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemNameAsync(
@@ -133,25 +98,14 @@ public class EfPasswordService : IPasswordService
         CancellationToken cancellationToken
     )
     {
-        return UpdatePasswordItemNameCore(id, name, cancellationToken).ConfigureAwait(false);
-    }
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(() => context
+            .FindEntityAsync<PasswordItemEntity>(id).IfSuccessAsync(
+                item =>
+                {
+                    item.Name = name;
 
-    private async ValueTask<Result> UpdatePasswordItemNameCore(
-        Guid id,
-        string name,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-
-        await context.ExecuteSaveChangesTransactionAsync(async c =>
-        {
-            var item = await c.FindAsync<PasswordItemEntity>(id);
-            item = item.ThrowIfNull();
-            item.Name = name;
-        }, cancellationToken);
-
-        return Result.Success;
+                    return Result.Success;
+                }, cancellationToken), cancellationToken), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemKeyAsync(
@@ -160,21 +114,14 @@ public class EfPasswordService : IPasswordService
         CancellationToken cancellationToken
     )
     {
-        return UpdatePasswordItemKeyCore(id, key, cancellationToken).ConfigureAwait(false);
-    }
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(() => context
+            .FindEntityAsync<PasswordItemEntity>(id).IfSuccessAsync(
+                item =>
+                {
+                    item.Key = key;
 
-    private async ValueTask<Result> UpdatePasswordItemKeyCore(Guid id, string key, CancellationToken cancellationToken)
-    {
-        await using var context = dbContextFactory.Create();
-
-        await context.ExecuteSaveChangesTransactionAsync(async c =>
-        {
-            var item = await c.FindAsync<PasswordItemEntity>(id);
-            item = item.ThrowIfNull();
-            item.Key = key;
-        }, cancellationToken);
-
-        return Result.Success;
+                    return Result.Success;
+                }, cancellationToken), cancellationToken), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemLengthAsync(
@@ -183,25 +130,13 @@ public class EfPasswordService : IPasswordService
         CancellationToken cancellationToken
     )
     {
-        return UpdatePasswordItemLengthCore(id, length, cancellationToken).ConfigureAwait(false);
-    }
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(() =>
+            context.FindEntityAsync<PasswordItemEntity>(id).IfSuccessAsync(item =>
+            {
+                item.Length = length;
 
-    private async ValueTask<Result> UpdatePasswordItemLengthCore(
-        Guid id,
-        ushort length,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-
-        await context.ExecuteSaveChangesTransactionAsync(async c =>
-        {
-            var item = await c.FindAsync<PasswordItemEntity>(id);
-            item = item.ThrowIfNull();
-            item.Length = length;
-        }, cancellationToken);
-
-        return Result.Success;
+                return Result.Success;
+            }, cancellationToken), cancellationToken), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemRegexAsync(
@@ -210,25 +145,13 @@ public class EfPasswordService : IPasswordService
         CancellationToken cancellationToken
     )
     {
-        return UpdatePasswordItemRegexCore(id, regex, cancellationToken).ConfigureAwait(false);
-    }
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(() =>
+            context.FindEntityAsync<PasswordItemEntity>(id).IfSuccessAsync(item =>
+            {
+                item.Regex = regex;
 
-    private async ValueTask<Result> UpdatePasswordItemRegexCore(
-        Guid id,
-        string regex,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-
-        await context.ExecuteSaveChangesTransactionAsync(async c =>
-        {
-            var item = await c.FindAsync<PasswordItemEntity>(id);
-            item = item.ThrowIfNull();
-            item.Regex = regex;
-        }, cancellationToken);
-
-        return Result.Success;
+                return Result.Success;
+            }, cancellationToken), cancellationToken), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemIsAvailableNumberAsync(
@@ -237,26 +160,13 @@ public class EfPasswordService : IPasswordService
         CancellationToken cancellationToken
     )
     {
-        return UpdatePasswordItemIsAvailableNumberCore(id, isAvailableNumber, cancellationToken).ConfigureAwait(false);
-    }
-
-    private async ValueTask<Result> UpdatePasswordItemIsAvailableNumberCore(
-        Guid id,
-        bool isAvailableNumber,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-
-        await context.ExecuteSaveChangesTransactionAsync(async c =>
-            {
-                var item = await c.FindAsync<PasswordItemEntity>(id);
-                item = item.ThrowIfNull();
-                item.IsAvailableNumber = isAvailableNumber;
-            },
-            cancellationToken);
-
-        return Result.Success;
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(() =>
+                context.FindEntityAsync<PasswordItemEntity>(id).IfSuccessAsync(item =>
+                {
+                    item.IsAvailableNumber = isAvailableNumber;
+                    return Result.Success;
+                }, cancellationToken),
+            cancellationToken), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemIsAvailableLowerLatinAsync(
@@ -265,27 +175,14 @@ public class EfPasswordService : IPasswordService
         CancellationToken cancellationToken
     )
     {
-        return UpdatePasswordItemIsAvailableLowerLatinCore(id, isAvailableLowerLatin, cancellationToken)
-            .ConfigureAwait(false);
-    }
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context
+            .FindEntityAsync<PasswordItemEntity>(id).IfSuccessAsync(
+                item =>
+                {
+                    item.IsAvailableLowerLatin = isAvailableLowerLatin;
 
-    private async ValueTask<Result> UpdatePasswordItemIsAvailableLowerLatinCore(
-        Guid id,
-        bool isAvailableLowerLatin,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-
-        await context.ExecuteSaveChangesTransactionAsync(async c =>
-            {
-                var item = await c.FindAsync<PasswordItemEntity>(id);
-                item = item.ThrowIfNull();
-                item.IsAvailableLowerLatin = isAvailableLowerLatin;
-            },
-            cancellationToken);
-
-        return Result.Success;
+                    return Result.Success;
+                }, cancellationToken), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemIsAvailableSpecialSymbolsAsync(
@@ -294,29 +191,16 @@ public class EfPasswordService : IPasswordService
         CancellationToken cancellationToken
     )
     {
-        return UpdatePasswordItemIsAvailableSpecialSymbolsCore(id, isAvailableSpecialSymbols, cancellationToken)
-            .ConfigureAwait(false);
-    }
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(
+            () => context.FindEntityAsync<PasswordItemEntity>(id)
+                .IfSuccessAsync(item =>
+                {
+                    item.IsAvailableSpecialSymbols = isAvailableSpecialSymbols;
 
-    private async ValueTask<Result> UpdatePasswordItemIsAvailableSpecialSymbolsCore(
-        Guid id,
-        bool isAvailableSpecialSymbols,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-
-
-        await context.ExecuteSaveChangesTransactionAsync(
-            async c =>
-            {
-                var item = await c.FindAsync<PasswordItemEntity>(id);
-                item = item.ThrowIfNull();
-                item.IsAvailableSpecialSymbols = isAvailableSpecialSymbols;
-            }, cancellationToken
-        );
-
-        return Result.Success;
+                    return Result.Success;
+                }, cancellationToken),
+            cancellationToken
+        ), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemCustomAvailableCharactersAsync(
@@ -325,29 +209,15 @@ public class EfPasswordService : IPasswordService
         CancellationToken cancellationToken
     )
     {
-        return UpdatePasswordItemCustomAvailableCharactersCore(id, customAvailableCharacters, cancellationToken)
-            .ConfigureAwait(false);
-    }
-
-    private async ValueTask<Result> UpdatePasswordItemCustomAvailableCharactersCore(
-        Guid id,
-        string customAvailableCharacters,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-
-
-        await context.ExecuteSaveChangesTransactionAsync(
-            async c =>
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(
+            () => context.FindEntityAsync<PasswordItemEntity>(id).IfSuccessAsync(item =>
             {
-                var item = await c.FindAsync<PasswordItemEntity>(id);
-                item = item.ThrowIfNull();
                 item.CustomAvailableCharacters = customAvailableCharacters;
-            }, cancellationToken
-        );
 
-        return Result.Success;
+                return Result.Success;
+            }, cancellationToken)
+            , cancellationToken
+        ), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemIsAvailableUpperLatinAsync(
@@ -356,26 +226,13 @@ public class EfPasswordService : IPasswordService
         CancellationToken cancellationToken
     )
     {
-        return UpdatePasswordItemIsAvailableUpperLatinCore(id, isAvailableUpperLatin, cancellationToken)
-            .ConfigureAwait(false);
-    }
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(() =>
+                context.FindEntityAsync<PasswordItemEntity>(id).IfSuccessAsync(item =>
+                {
+                    item.IsAvailableUpperLatin = isAvailableUpperLatin;
 
-    private async ValueTask<Result> UpdatePasswordItemIsAvailableUpperLatinCore(
-        Guid id,
-        bool isAvailableUpperLatin,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-
-        await context.ExecuteSaveChangesTransactionAsync(async c =>
-            {
-                var item = await c.FindAsync<PasswordItemEntity>(id);
-                item = item.ThrowIfNull();
-                item.IsAvailableUpperLatin = isAvailableUpperLatin;
-            },
-            cancellationToken);
-
-        return Result.Success;
+                    return Result.Success;
+                }, cancellationToken),
+            cancellationToken), cancellationToken);
     }
 }

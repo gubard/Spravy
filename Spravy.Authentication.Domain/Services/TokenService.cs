@@ -35,8 +35,6 @@ public class TokenService : ITokenService
             return new Result<string>(token.Token).ToValueTaskResult().ConfigureAwait(false);
         }
 
-        cancellationToken.ThrowIfCancellationRequested();
-
         return authenticationService.RefreshTokenAsync(token.RefreshToken, cancellationToken)
             .IfSuccessAsync(
                 value =>

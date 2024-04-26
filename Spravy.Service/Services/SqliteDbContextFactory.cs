@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Spravy.Db.Interfaces;
 using Spravy.Db.Sqlite.Extensions;
+using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
+using Spravy.Domain.Models;
 
 namespace Spravy.Service.Services;
 
@@ -20,11 +22,9 @@ public class SqliteDbContextFactory<TDbContext> : IFactory<TDbContext>
         this.fileFactory = fileFactory;
     }
 
-    public TDbContext Create()
+    public Result<TDbContext> Create()
     {
-        var connectionString = fileFactory.Create().ToSqliteConnectionString();
-        var dbContext = dbContextFactory.Create(connectionString);
-
-        return dbContext;
+        return fileFactory.Create().IfSuccess(connectionString =>
+            dbContextFactory.Create(connectionString.ToSqliteConnectionString()));
     }
 }

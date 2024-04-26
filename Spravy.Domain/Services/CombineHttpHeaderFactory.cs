@@ -29,7 +29,6 @@ public class CombineHttpHeaderFactory : IHttpHeaderFactory
 
         foreach (var factory in factories.ToArray())
         {
-            cancellationToken.ThrowIfCancellationRequested();
             var headers = await factory.CreateHeaderItemsAsync(cancellationToken);
 
             if (headers.IsHasError)

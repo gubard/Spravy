@@ -1481,10 +1481,8 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         };
 
         request.Ids.AddRange(converter.Convert<ByteString[]>(ids).Value);
-        cancellationToken.ThrowIfCancellationRequested();
         var metadata = await metadataFactory.CreateAsync(cancellationToken);
         using var response = client.GetToDoItems(request, metadata.Value, cancellationToken: cancellationToken);
-        cancellationToken.ThrowIfCancellationRequested();
 
         while (await MoveNextAsync(response, cancellationToken))
         {
@@ -1492,8 +1490,6 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
             var item = converter.Convert<ToDoItem[]>(reply.Items);
 
             yield return item.Value;
-
-            cancellationToken.ThrowIfCancellationRequested();
         }
     }
 

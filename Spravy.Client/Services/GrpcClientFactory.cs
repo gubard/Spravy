@@ -1,7 +1,9 @@
 using Grpc.Core;
 using Grpc.Net.Client;
+using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;
+using Spravy.Domain.Models;
 
 namespace Spravy.Client.Services;
 
@@ -14,11 +16,9 @@ public class GrpcClientFactory<TGrpcClient> : IFactory<Uri, TGrpcClient> where T
         this.grpcChannelFactory = grpcChannelFactory;
     }
 
-    public TGrpcClient Create(Uri key)
+    public Result<TGrpcClient> Create(Uri key)
     {
-        var channel = grpcChannelFactory.Create(key);
-        var client = TypeCtorHelper<TGrpcClient, ChannelBase>.CtorFunc.Invoke(channel);
-
-        return client;
+        return grpcChannelFactory.Create(key).IfSuccess(channel =>
+            TypeCtorHelper<TGrpcClient, ChannelBase>.CtorFunc.Invoke(channel).ToResult());
     }
 }

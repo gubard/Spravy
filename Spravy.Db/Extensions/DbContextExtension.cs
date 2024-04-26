@@ -1,97 +1,86 @@
+using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Spravy.Db.Errors;
+using Spravy.Domain.Extensions;
+using Spravy.Domain.Models;
 
 namespace Spravy.Db.Extensions;
 
 public static class DbContextExtension
 {
-    public static async Task<TResult> ExecuteSaveChangesAsync<TDbContext, TResult>(
+    public static Result RemoveEntity<TEntity>(this DbContext context, TEntity entity) where TEntity : class
+    {
+        context.Remove(entity);
+
+        return Result.Success;
+    }
+
+    public static ConfiguredValueTaskAwaitable<Result<EntityEntry<TEntity>>> AddEntityAsync<TEntity>(
+        this DbContext context,
+        TEntity entity,
+        CancellationToken cancellationToken) where TEntity : class
+    {
+        return AddEntityCore(context, entity, cancellationToken).ConfigureAwait(false);
+    }
+
+    private static async ValueTask<Result<EntityEntry<TEntity>>> AddEntityCore<TEntity>(
+        this DbContext context,
+        TEntity entity,
+        CancellationToken cancellationToken) where TEntity : class
+    {
+        var value = await context.AddAsync(entity, cancellationToken);
+
+        return value.ToResult();
+    }
+
+    public static ConfiguredValueTaskAwaitable<Result<TEntity>> FindEntityAsync<TEntity>(
+        this DbContext context,
+        object key
+    ) where TEntity : class
+    {
+        return FindEntityCore<TEntity>(context, key).ConfigureAwait(false);
+    }
+
+    private static async ValueTask<Result<TEntity>> FindEntityCore<TEntity>(
+        this DbContext context,
+        object key
+    )
+        where TEntity : class
+    {
+        var value = await context.FindAsync<TEntity>(key);
+
+        if (value is null)
+        {
+            return new Result<TEntity>(new NotFoundEntityError(typeof(TEntity), key));
+        }
+
+        return value.ToResult();
+    }
+
+    public static ConfiguredValueTaskAwaitable<Result<TReturn>> AtomicExecuteAsync<TDbContext, TReturn>(
         this TDbContext context,
-        Func<TDbContext, Task<TResult>> func
+        Func<ConfiguredValueTaskAwaitable<Result<TReturn>>> func,
+        CancellationToken cancellationToken
     )
         where TDbContext : DbContext
     {
-        var result = await func.Invoke(context);
-        await context.SaveChangesAsync();
-
-        return result;
+        return AtomicExecuteCore(context, func, cancellationToken).ConfigureAwait(false);
     }
 
-    public static async Task ExecuteSaveChangesAsync<TDbContext>(this TDbContext context, Func<TDbContext, Task> func)
-        where TDbContext : DbContext
-    {
-        await func.Invoke(context);
-        await context.SaveChangesAsync();
-    }
-
-    public static Task ExecuteSaveChangesAsync<TDbContext>(
+    private static async ValueTask<Result<TReturn>> AtomicExecuteCore<TDbContext, TReturn>(
         this TDbContext context,
-        Action<TDbContext> func
-    )
-        where TDbContext : DbContext
-    {
-        func.Invoke(context);
-
-        return context.SaveChangesAsync();
-    }
-
-    public static async ValueTask ExecuteSaveChangesAsync<TDbContext>(
-        this TDbContext context,
-        Func<TDbContext, ValueTask> func
-    )
-        where TDbContext : DbContext
-    {
-        await func.Invoke(context);
-        await context.SaveChangesAsync();
-    }
-
-    public static async ValueTask<TResult> ExecuteSaveChangesAsync<TDbContext, TResult>(
-        this TDbContext context,
-        Func<TDbContext, ValueTask<TResult>> func
-    )
-        where TDbContext : DbContext
-    {
-        var result = await func.Invoke(context);
-        await context.SaveChangesAsync();
-
-        return result;
-    }
-
-    public static async Task ExecuteSaveChangesTransactionAsync<TDbContext>(
-        this TDbContext context,
-        Func<TDbContext, Task> func,
+        Func<ConfiguredValueTaskAwaitable<Result<TReturn>>> func,
         CancellationToken cancellationToken
     )
         where TDbContext : DbContext
     {
         await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
+        Result<TReturn> result;
 
         try
         {
-            await context.ExecuteSaveChangesAsync(func);
-            await transaction.CommitAsync(cancellationToken);
-        }
-        catch
-        {
-            await transaction.RollbackAsync(cancellationToken);
-
-            throw;
-        }
-    }
-
-    public static async Task<TResult> ExecuteSaveChangesTransactionAsync<TDbContext, TResult>(
-        this TDbContext context,
-        Func<TDbContext, Task<TResult>> func,
-        CancellationToken cancellationToken
-    )
-        where TDbContext : DbContext
-    {
-        await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
-        TResult result;
-
-        try
-        {
-            result = await context.ExecuteSaveChangesAsync(func);
-            await transaction.CommitAsync(cancellationToken);
+            result = await func.Invoke();
         }
         catch
         {
@@ -100,66 +89,42 @@ public static class DbContextExtension
             throw;
         }
 
+        if (result.IsHasError)
+        {
+            await transaction.RollbackAsync(cancellationToken);
+        }
+        else
+        {
+            await context.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+        }
+
         return result;
     }
 
-    public static async ValueTask ExecuteSaveChangesTransactionValueAsync<TDbContext>(
+    public static ConfiguredValueTaskAwaitable<Result> AtomicExecuteAsync<TDbContext>(
         this TDbContext context,
-        Func<TDbContext, ValueTask> func
+        Func<ConfiguredValueTaskAwaitable<Result>> func,
+        CancellationToken cancellationToken
     )
         where TDbContext : DbContext
     {
-        await using var transaction = await context.Database.BeginTransactionAsync();
-
-        try
-        {
-            await context.ExecuteSaveChangesAsync(func);
-            await transaction.CommitAsync();
-        }
-        catch
-        {
-            await transaction.RollbackAsync();
-
-            throw;
-        }
+        return AtomicExecuteCore(context, func, cancellationToken).ConfigureAwait(false);
     }
 
-    public static async ValueTask<TResult> ExecuteSaveChangesTransactionAsync<TDbContext, TResult>(
+    private static async ValueTask<Result> AtomicExecuteCore<TDbContext>(
         this TDbContext context,
-        Func<TDbContext, ValueTask<TResult>> func
-    )
-        where TDbContext : DbContext
-    {
-        await using var transaction = await context.Database.BeginTransactionAsync();
-
-        try
-        {
-            var result = await context.ExecuteSaveChangesAsync(func);
-            await transaction.CommitAsync();
-
-            return result;
-        }
-        catch
-        {
-            await transaction.RollbackAsync();
-
-            throw;
-        }
-    }
-
-    public static async Task ExecuteSaveChangesTransactionAsync<TDbContext>(
-        this TDbContext context,
-        Action<TDbContext> action,
+        Func<ConfiguredValueTaskAwaitable<Result>> func,
         CancellationToken cancellationToken
     )
         where TDbContext : DbContext
     {
         await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
+        Result result;
 
         try
         {
-            await context.ExecuteSaveChangesAsync(action);
-            await transaction.CommitAsync(cancellationToken);
+            result = await func.Invoke();
         }
         catch
         {
@@ -167,5 +132,17 @@ public static class DbContextExtension
 
             throw;
         }
+
+        if (result.IsHasError)
+        {
+            await transaction.RollbackAsync(cancellationToken);
+        }
+        else
+        {
+            await context.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+        }
+
+        return result;
     }
 }

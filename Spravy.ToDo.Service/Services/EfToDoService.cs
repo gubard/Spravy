@@ -46,23 +46,11 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return CloneToDoItemCore(cloneId, parentId, cancellationToken).ConfigureAwait(false);
-    }
-
-    private async ValueTask<Result> CloneToDoItemCore(Guid cloneId, Guid? parentId, CancellationToken cancellationToken)
-    {
-        await using var context = dbContextFactory.Create();
-
-        var clone = await context.Set<ToDoItemEntity>()
-            .AsNoTracking()
-            .SingleAsync(x => x.Id == cloneId, cancellationToken);
-
-        await context.ExecuteSaveChangesTransactionAsync(
-            async c => await AddCloneAsync(c, clone, parentId, cancellationToken),
-            cancellationToken
-        );
-
-        return Result.Success;
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context =>
+            context.AtomicExecuteAsync(() =>
+                context.FindEntityAsync<ToDoItemEntity>(cloneId).IfSuccessAsync(
+                    clone => AddCloneAsync(context, clone, parentId, cancellationToken).ConfigureAwait(false),
+                    cancellationToken), cancellationToken), cancellationToken);
     }
 
     private async ValueTask<Result> AddCloneAsync(
@@ -96,28 +84,14 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return UpdateToDoItemDescriptionTypeCore(id, type, cancellationToken).ConfigureAwait(false);
-    }
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(() => context
+            .FindEntityAsync<ToDoItemEntity>(id).IfSuccessAsync(
+                item =>
+                {
+                    item.DescriptionType = type;
 
-    public async ValueTask<Result> UpdateToDoItemDescriptionTypeCore(
-        Guid id,
-        DescriptionType type,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-
-        await context.ExecuteSaveChangesTransactionAsync(
-            async c =>
-            {
-                var item = await c.FindAsync<ToDoItemEntity>(id);
-                item = item.ThrowIfNull();
-                item.DescriptionType = type;
-            },
-            cancellationToken
-        );
-
-        return Result.Success;
+                    return Result.Success;
+                }, cancellationToken), cancellationToken), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> ResetToDoItemAsync(
@@ -125,41 +99,30 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return ResetToDoItemCore(options, cancellationToken).ConfigureAwait(false);
-    }
-
-    private async ValueTask<Result> ResetToDoItemCore(ResetToDoItemOptions options, CancellationToken cancellationToken)
-    {
         var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
-        await using var context = dbContextFactory.Create();
 
-        await context.ExecuteSaveChangesTransactionAsync(
-            async c =>
-            {
-                var item = await c.FindAsync<ToDoItemEntity>(options.Id);
-                item = item.ThrowIfNull();
-
-                if (options.IsCompleteCurrentTask)
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(() => context
+            .FindEntityAsync<ToDoItemEntity>(options.Id).IfSuccessAsync(
+                item =>
                 {
-                    item.IsCompleted = true;
-                    UpdateDueDate(item, offset, cancellationToken);
-                }
+                    if (options.IsCompleteCurrentTask)
+                    {
+                        item.IsCompleted = true;
+                        UpdateDueDate(item, offset, cancellationToken);
+                    }
 
-                await CircleCompletionAsync(
-                    context,
-                    item,
-                    options.IsMoveCircleOrderIndex,
-                    options.IsCompleteChildrenTask,
-                    options.IsOnlyCompletedTasks,
-                    cancellationToken
-                );
-
-                await StepCompletionAsync(context, item, options.IsCompleteChildrenTask, cancellationToken);
-            },
-            cancellationToken
-        );
-
-        return Result.Success;
+                    return CircleCompletionAsync(
+                            context,
+                            item,
+                            options.IsMoveCircleOrderIndex,
+                            options.IsCompleteChildrenTask,
+                            options.IsOnlyCompletedTasks,
+                            cancellationToken
+                        ).ConfigureAwait(false)
+                        .IfSuccessAsync(
+                            () => StepCompletionAsync(context, item, options.IsCompleteChildrenTask, cancellationToken),
+                            cancellationToken);
+                }, cancellationToken), cancellationToken), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> RandomizeChildrenOrderIndexAsync(
@@ -167,57 +130,45 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return RandomizeChildrenOrderIndexCore(id, cancellationToken).ConfigureAwait(false);
-    }
-
-    public async ValueTask<Result> RandomizeChildrenOrderIndexCore(Guid id, CancellationToken cancellationToken)
-    {
-        await using var context = dbContextFactory.Create();
-
-        await context.ExecuteSaveChangesTransactionAsync(
-            async c =>
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(() => context
+            .Set<ToDoItemEntity>()
+            .Where(x => x.ParentId == id)
+            .ToArrayEntitiesAsync(cancellationToken).IfSuccessAsync(children =>
             {
-                var children = await c.Set<ToDoItemEntity>()
-                    .Where(x => x.ParentId == id)
-                    .ToArrayAsync(cancellationToken);
+                var random = children.Randomize();
 
-                children.Randomize();
+                for (var i = children.Length - 1; i > 0; i--)
+                {
+                    random.Span[i].OrderIndex = (uint)i;
+                }
 
-                for (var i = children.Length - 1; i > 0; i--) children[i].OrderIndex = (uint)i;
-            },
-            cancellationToken
-        );
-
-        return Result.Success;
+                return Result.Success;
+            }, cancellationToken), cancellationToken), cancellationToken);
     }
-
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoShortItem>>> GetParentsAsync(
         Guid id,
         CancellationToken cancellationToken
     )
     {
-        return GetParentsCore(id, cancellationToken).ConfigureAwait(false);
-    }
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(() => context
+            .FindEntityAsync<ToDoItemEntity>(id).IfSuccessAsync(
+                item =>
+                {
+                    var parents = new List<ToDoShortItem>
+                    {
+                        new(item.Id, item.Name)
+                    };
 
-    public async ValueTask<Result<ReadOnlyMemory<ToDoShortItem>>> GetParentsCore(
-        Guid id,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-        var item = await context.FindAsync<ToDoItemEntity>(id);
-        item = item.ThrowIfNull();
+                    return GetParentsAsync(context, id, parents, cancellationToken).ConfigureAwait(false)
+                        .IfSuccessAsync(() =>
+                        {
+                            parents.Reverse();
 
-        var parents = new List<ToDoShortItem>
-        {
-            new(item.Id, item.Name)
-        };
-
-        await GetParentsAsync(context, id, parents, cancellationToken);
-        parents.Reverse();
-
-        return parents.ToArray().ToReadOnlyMemory().ToResult();
+                            return parents.ToArray().ToReadOnlyMemory().ToResult();
+                        }, cancellationToken);
+                }, cancellationToken
+            ), cancellationToken), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> SearchToDoItemIdsAsync(
@@ -225,24 +176,12 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return SearchToDoItemIdsCore(searchText, cancellationToken).ConfigureAwait(false);
-    }
-
-    public async ValueTask<Result<ReadOnlyMemory<Guid>>> SearchToDoItemIdsCore(
-        string searchText,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-
-        var items = await context.Set<ToDoItemEntity>()
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.Name.Contains(searchText))
             .OrderBy(x => x.OrderIndex)
             .Select(x => x.Id)
-            .ToArrayAsync(cancellationToken);
-
-        return items.ToReadOnlyMemory().ToResult();
+            .ToArrayEntitiesAsync(cancellationToken), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetLeafToDoItemIdsAsync(
@@ -250,61 +189,44 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return GetLeafToDoItemIdsCore(id, cancellationToken).ConfigureAwait(false);
-    }
-
-    public async ValueTask<Result<ReadOnlyMemory<Guid>>> GetLeafToDoItemIdsCore(
-        Guid id,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-
-        var entities = await context.Set<ToDoItemEntity>()
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.ParentId == id)
             .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync(cancellationToken);
-
-        if (entities.IsEmpty())
-        {
-            return ReadOnlyMemory<Guid>.Empty.ToResult();
-        }
-
-        var result = new List<Guid>();
-
-        foreach (var entity in entities)
-        {
-            await foreach (var item in GetLeafToDoItemIdsAsync(context, entity, cancellationToken))
+            .ToArrayEntitiesAsync(cancellationToken)
+            .IfSuccessAsync(entities =>
             {
-                result.Add(item);
-            }
-        }
+                if (entities.IsEmpty)
+                {
+                    return ReadOnlyMemory<Guid>.Empty.ToResult().ToValueTaskResult().ConfigureAwait(false);
+                }
 
-        return result.ToArray().ToReadOnlyMemory().ToResult();
+                var result = new List<Guid>();
+
+                return entities.IfSuccessAsync(e => GetLeafToDoItemIdsAsync(context, e, cancellationToken)
+                        .ConfigureAwait(false)
+                        .IfSuccessAsync(i =>
+                        {
+                            result.Add(i);
+
+                            return Result.Success;
+                        }, cancellationToken), cancellationToken)
+                    .IfSuccessAsync(() => result.ToArray().ToReadOnlyMemory().ToResult(), cancellationToken);
+            }, cancellationToken), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result<ToDoItem>> GetToDoItemAsync(Guid id, CancellationToken cancellationToken)
     {
-        return GetToDoItemCore(id, cancellationToken).ConfigureAwait(false);
-    }
-
-    public async ValueTask<Result<ToDoItem>> GetToDoItemCore(Guid id, CancellationToken cancellationToken)
-    {
-        await using var context = dbContextFactory.Create();
-        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
-        item = item.ThrowIfNull();
-
-        var parameters = await getterToDoItemParametersService.GetToDoItemParametersAsync(
-            context,
-            item,
-            httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset(),
-            cancellationToken
-        );
-
-        var result = mapper.Map<ToDoItem>(item, a => a.Items.Add(SpravyToDoDbProfile.ParametersName, parameters));
-
-        return result.ToResult();
+        return dbContextFactory.Create()
+            .IfSuccessDisposeAsync(context => context.FindEntityAsync<ToDoItemEntity>(id)
+                .IfSuccessAsync(item => getterToDoItemParametersService.GetToDoItemParametersAsync(
+                    context,
+                    item,
+                    httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset(),
+                    cancellationToken
+                ).IfSuccessAsync(parameters =>
+                    mapper.Map<ToDoItem>(item, a => a.Items.Add(SpravyToDoDbProfile.ParametersName, parameters))
+                        .ToResult(), cancellationToken), cancellationToken), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetChildrenToDoItemIdsAsync(
@@ -312,24 +234,12 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return GetChildrenToDoItemIdsCore(id, cancellationToken).ConfigureAwait(false);
-    }
-
-    private async ValueTask<Result<ReadOnlyMemory<Guid>>> GetChildrenToDoItemIdsCore(
-        Guid id,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-
-        var ids = await context.Set<ToDoItemEntity>()
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.ParentId == id)
             .OrderBy(x => x.OrderIndex)
             .Select(x => x.Id)
-            .ToArrayAsync(cancellationToken);
-
-        return ids.ToReadOnlyMemory().ToResult();
+            .ToArrayEntitiesAsync(cancellationToken), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoShortItem>>> GetChildrenToDoItemShortsAsync(
@@ -337,67 +247,38 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return GetChildrenToDoItemShortsCore(id, cancellationToken).ConfigureAwait(false);
-    }
-
-    private async ValueTask<Result<ReadOnlyMemory<ToDoShortItem>>> GetChildrenToDoItemShortsCore(
-        Guid id,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-
-        var items = await context.Set<ToDoItemEntity>()
-            .AsNoTracking()
-            .Where(x => x.ParentId == id)
-            .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync(cancellationToken);
-
-        return mapper.Map<ToDoShortItem>(items).ToReadOnlyMemory().ToResult();
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.Set<ToDoItemEntity>()
+                .AsNoTracking()
+                .Where(x => x.ParentId == id)
+                .OrderBy(x => x.OrderIndex)
+                .ToArrayEntitiesAsync(cancellationToken)
+                .IfSuccessAsync(items => mapper.Map<ToDoShortItem>(items).ToReadOnlyMemory().ToResult(),
+                    cancellationToken),
+            cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetRootToDoItemIdsAsync(
         CancellationToken cancellationToken
     )
     {
-        return GetRootToDoItemIdsCore(cancellationToken).ConfigureAwait(false);
-    }
-
-    public async ValueTask<Result<ReadOnlyMemory<Guid>>> GetRootToDoItemIdsCore(CancellationToken cancellationToken)
-    {
-        await using var context = dbContextFactory.Create();
-
-        var ids = await context.Set<ToDoItemEntity>()
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.ParentId == null)
             .OrderBy(x => x.OrderIndex)
             .Select(x => x.Id)
-            .ToArrayAsync(cancellationToken);
-
-        return ids.ToReadOnlyMemory().ToResult();
+            .ToArrayEntitiesAsync(cancellationToken), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetFavoriteToDoItemIdsAsync(
         CancellationToken cancellationToken
     )
     {
-        return GetFavoriteToDoItemIdsCore(cancellationToken).ConfigureAwait(false);
-    }
-
-    private async ValueTask<Result<ReadOnlyMemory<Guid>>> GetFavoriteToDoItemIdsCore(
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-
-        var ids = await context.Set<ToDoItemEntity>()
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .OrderBy(x => x.OrderIndex)
             .Where(x => x.IsFavorite)
             .Select(x => x.Id)
-            .ToArrayAsync(cancellationToken);
-
-        return ids.ToReadOnlyMemory().ToResult();
+            .ToArrayEntitiesAsync(cancellationToken), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result<Guid>> AddRootToDoItemAsync(
@@ -405,38 +286,29 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return AddRootToDoItemCore(options, cancellationToken).ConfigureAwait(false);
-    }
-
-    public async ValueTask<Result<Guid>> AddRootToDoItemCore(
-        AddRootToDoItemOptions options,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
         var id = Guid.NewGuid();
 
-        await context.ExecuteSaveChangesTransactionAsync(
-            async c =>
-            {
-                var items = await c.Set<ToDoItemEntity>()
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(
+            () =>
+                context.Set<ToDoItemEntity>()
                     .AsNoTracking()
                     .Where(x => x.ParentId == null)
                     .Select(x => x.OrderIndex)
-                    .ToArrayAsync(cancellationToken);
+                    .ToArrayEntitiesAsync(cancellationToken)
+                    .IfSuccessAsync(items =>
+                    {
+                        var newEntity = mapper.Map<ToDoItemEntity>(options);
+                        newEntity.Id = id;
+                        newEntity.OrderIndex = items.Length == 0 ? 0 : items.Max() + 1;
+                        newEntity.Description = options.Description;
+                        newEntity.DescriptionType = options.DescriptionType;
+                        newEntity.Link = mapper.Map<string>(options.Link);
 
-                var newEntity = mapper.Map<ToDoItemEntity>(options);
-                newEntity.Id = id;
-                newEntity.OrderIndex = items.Length == 0 ? 0 : items.Max() + 1;
-                newEntity.Description = options.Description;
-                newEntity.DescriptionType = options.DescriptionType;
-                newEntity.Link = mapper.Map<string>(options.Link);
-                await c.Set<ToDoItemEntity>().AddAsync(newEntity, cancellationToken);
-            },
+                        return context.AddEntityAsync(newEntity, cancellationToken)
+                            .IfSuccessAsync(_ => id.ToResult(), cancellationToken);
+                    }, cancellationToken),
             cancellationToken
-        );
-
-        return id.ToResult();
+        ), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result<Guid>> AddToDoItemAsync(
@@ -444,90 +316,66 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return AddToDoItemCore(options, cancellationToken).ConfigureAwait(false);
-    }
-
-    private async ValueTask<Result<Guid>> AddToDoItemCore(
-        AddToDoItemOptions options,
-        CancellationToken cancellationToken
-    )
-    {
-        var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
-        await using var context = dbContextFactory.Create();
         var id = Guid.NewGuid();
+        var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
 
-        await context.ExecuteSaveChangesTransactionAsync(
-            async c =>
-            {
-                var parent = await c.Set<ToDoItemEntity>().FindAsync(options.ParentId);
-                parent = parent.ThrowIfNull();
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(
+            () => context.FindEntityAsync<ToDoItemEntity>(options.ParentId).IfSuccessAsync(parent => context
+                .Set<ToDoItemEntity>()
+                .AsNoTracking()
+                .Where(x => x.ParentId == options.ParentId)
+                .Select(x => x.OrderIndex)
+                .ToArrayEntitiesAsync(cancellationToken)
+                .IfSuccessAsync(items =>
+                {
+                    var toDoItem = mapper.Map<ToDoItemEntity>(options);
+                    toDoItem.Description = options.Description;
+                    toDoItem.Id = id;
+                    toDoItem.OrderIndex = items.Length == 0 ? 0 : items.Max() + 1;
 
-                var items = await c.Set<ToDoItemEntity>()
-                    .AsNoTracking()
-                    .Where(x => x.ParentId == options.ParentId)
-                    .Select(x => x.OrderIndex)
-                    .ToArrayAsync(cancellationToken);
+                    toDoItem.DueDate =
+                        parent.DueDate < DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly()
+                            ? DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly()
+                            : parent.DueDate;
 
-                var toDoItem = mapper.Map<ToDoItemEntity>(options);
-                toDoItem.Description = options.Description;
-                toDoItem.Id = id;
-                toDoItem.OrderIndex = items.Length == 0 ? 0 : items.Max() + 1;
+                    toDoItem.TypeOfPeriodicity = parent.TypeOfPeriodicity;
+                    toDoItem.DaysOfMonth = parent.DaysOfMonth;
+                    toDoItem.DaysOfWeek = parent.DaysOfWeek;
+                    toDoItem.DaysOfYear = parent.DaysOfYear;
+                    toDoItem.WeeksOffset = parent.WeeksOffset;
+                    toDoItem.DaysOffset = parent.DaysOffset;
+                    toDoItem.MonthsOffset = parent.MonthsOffset;
+                    toDoItem.YearsOffset = parent.YearsOffset;
+                    toDoItem.Link = options.Link?.AbsoluteUri ?? string.Empty;
+                    toDoItem.DescriptionType = options.DescriptionType;
 
-                toDoItem.DueDate =
-                    parent.DueDate < DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly()
-                        ? DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly()
-                        : parent.DueDate;
-
-                toDoItem.TypeOfPeriodicity = parent.TypeOfPeriodicity;
-                toDoItem.DaysOfMonth = parent.DaysOfMonth;
-                toDoItem.DaysOfWeek = parent.DaysOfWeek;
-                toDoItem.DaysOfYear = parent.DaysOfYear;
-                toDoItem.WeeksOffset = parent.WeeksOffset;
-                toDoItem.DaysOffset = parent.DaysOffset;
-                toDoItem.MonthsOffset = parent.MonthsOffset;
-                toDoItem.YearsOffset = parent.YearsOffset;
-                toDoItem.Link = options.Link?.AbsoluteUri ?? string.Empty;
-                toDoItem.DescriptionType = options.DescriptionType;
-                await c.Set<ToDoItemEntity>().AddAsync(toDoItem, cancellationToken);
-            },
+                    return context.AddEntityAsync(toDoItem, cancellationToken)
+                        .IfSuccessAsync(_ => id.ToResult(), cancellationToken);
+                }, cancellationToken), cancellationToken),
             cancellationToken
-        );
-
-        return id.ToResult();
+        ), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> DeleteToDoItemAsync(Guid id, CancellationToken cancellationToken)
     {
-        return DeleteToDoItemCore(id, cancellationToken).ConfigureAwait(false);
-    }
-
-    public async ValueTask<Result> DeleteToDoItemCore(Guid id, CancellationToken cancellationToken)
-    {
-        await using var context = dbContextFactory.Create();
-
-        await context.ExecuteSaveChangesTransactionAsync(
-            async c =>
-            {
-                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
-                item = item.ThrowIfNull();
-
-                var children = await c.Set<ToDoItemEntity>()
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(
+            () =>
+                context.FindEntityAsync<ToDoItemEntity>(id).IfSuccessAsync(item => context
+                    .Set<ToDoItemEntity>()
                     .AsNoTracking()
                     .Where(x => x.ParentId == id)
-                    .ToArrayAsync(cancellationToken);
-
-                foreach (var child in children)
-                {
-                    await DeleteToDoItemAsync(child.Id, context, cancellationToken);
-                }
-
-                c.Set<ToDoItemEntity>().Remove(item);
-                await NormalizeOrderIndexAsync(c, item.ParentId, cancellationToken);
-            },
+                    .ToArrayEntitiesAsync(cancellationToken)
+                    .IfSuccessAsync(children =>
+                        children.IfSuccessAsync(
+                                child => DeleteToDoItemAsync(child.Id, context, cancellationToken)
+                                    .ConfigureAwait(false),
+                                cancellationToken)
+                            .IfSuccessAsync(
+                                () => context.RemoveEntity(item).IfSuccessAsync(
+                                    () => NormalizeOrderIndexAsync(context, item.ParentId, cancellationToken),
+                                    cancellationToken), cancellationToken), cancellationToken), cancellationToken),
             cancellationToken
-        );
-
-        return Result.Success;
+        ), cancellationToken);
     }
 
     private async ValueTask<Result> DeleteToDoItemAsync(
@@ -560,28 +408,13 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return UpdateToDoItemTypeOfPeriodicityCore(id, type, cancellationToken).ConfigureAwait(false);
-    }
-
-    private async ValueTask<Result> UpdateToDoItemTypeOfPeriodicityCore(
-        Guid id,
-        TypeOfPeriodicity type,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-
-        await context.ExecuteSaveChangesTransactionAsync(
-            async c =>
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(() => context
+            .FindEntityAsync<ToDoItemEntity>(id).IfSuccessAsync(item =>
             {
-                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
-                item = item.ThrowIfNull();
                 item.TypeOfPeriodicity = type;
-            },
-            cancellationToken
-        );
 
-        return Result.Success;
+                return Result.Success;
+            }, cancellationToken), cancellationToken), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemDueDateAsync(
@@ -590,28 +423,13 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return UpdateToDoItemDueDateCore(id, dueDate, cancellationToken).ConfigureAwait(false);
-    }
-
-    private async ValueTask<Result> UpdateToDoItemDueDateCore(
-        Guid id,
-        DateOnly dueDate,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-
-        await context.ExecuteSaveChangesTransactionAsync(
-            async c =>
-            {
-                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
-                item = item.ThrowIfNull();
-                item.DueDate = dueDate;
-            },
-            cancellationToken
-        );
-
-        return Result.Success;
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(() => context
+            .FindEntityAsync<ToDoItemEntity>(id).IfSuccessAsync(
+                item =>
+                {
+                    item.DueDate = dueDate;
+                    return Result.Success;
+                }, cancellationToken), cancellationToken), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemCompleteStatusAsync(
@@ -620,110 +438,96 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return UpdateToDoItemCompleteStatusCore(id, isComplete, cancellationToken).ConfigureAwait(false);
-    }
-
-    public async ValueTask<Result> UpdateToDoItemCompleteStatusCore(
-        Guid id,
-        bool isComplete,
-        CancellationToken cancellationToken
-    )
-    {
         var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
-        await using var context = dbContextFactory.Create();
 
-       return await context.ExecuteSaveChangesTransactionAsync(
-            async c =>
-            {
-                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
-                item = item.ThrowIfNull();
-
-                if (isComplete)
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(() => context
+            .FindEntityAsync<ToDoItemEntity>(id).IfSuccessAsync(
+                item =>
                 {
-                    var parameters =
-                        await getterToDoItemParametersService.GetToDoItemParametersAsync(
+                    if (isComplete)
+                    {
+                        return getterToDoItemParametersService.GetToDoItemParametersAsync(
                             context,
                             item,
                             offset,
                             cancellationToken
-                        );
+                        ).IfSuccessAsync(parameters =>
+                        {
+                            if (!parameters.IsCan.HasFlag(ToDoItemIsCan.CanComplete))
+                            {
+                                return new Result(new ToDoItemAlreadyCompleteError(item.Id, item.Name))
+                                    .ToValueTaskResult().ConfigureAwait(false);
+                            }
 
-                    if (!parameters.IsCan.HasFlag(ToDoItemIsCan.CanComplete))
-                    {
-                        return new Result(new ToDoItemAlreadyCompleteError(item.Id, item.Name));
+                            switch (item.Type)
+                            {
+                                case ToDoItemType.Value:
+                                    item.IsCompleted = true;
+
+                                    break;
+                                case ToDoItemType.Group:
+                                    break;
+                                case ToDoItemType.Planned:
+                                    item.IsCompleted = true;
+
+                                    break;
+                                case ToDoItemType.Periodicity:
+                                    break;
+                                case ToDoItemType.PeriodicityOffset:
+                                    break;
+                                case ToDoItemType.Circle:
+                                    item.IsCompleted = true;
+
+                                    break;
+                                case ToDoItemType.Step:
+                                    item.IsCompleted = true;
+
+                                    break;
+                                default: throw new ArgumentOutOfRangeException();
+                            }
+
+                            UpdateDueDate(item, offset, cancellationToken);
+                            item.LastCompleted = DateTimeOffset.Now;
+
+                            return CircleCompletionAsync(context, item, true, false, false, cancellationToken)
+                                .ConfigureAwait(false)
+                                .IfSuccessAsync(
+                                    () => StepCompletionAsync(context, item, false, cancellationToken),
+                                    cancellationToken);
+                        }, cancellationToken);
                     }
 
-                    switch (item.Type)
-                    {
-                        case ToDoItemType.Value:
-                            item.IsCompleted = true;
-
-                            break;
-                        case ToDoItemType.Group:
-                            break;
-                        case ToDoItemType.Planned:
-                            item.IsCompleted = true;
-
-                            break;
-                        case ToDoItemType.Periodicity:
-                            break;
-                        case ToDoItemType.PeriodicityOffset:
-                            break;
-                        case ToDoItemType.Circle:
-                            item.IsCompleted = true;
-
-                            break;
-                        case ToDoItemType.Step:
-                            item.IsCompleted = true;
-
-                            break;
-                        default: throw new ArgumentOutOfRangeException();
-                    }
-
-                    UpdateDueDate(item, offset, cancellationToken);
-                    item.LastCompleted = DateTimeOffset.Now;
-                    await CircleCompletionAsync(context, item, true, false, false, cancellationToken);
-                    await StepCompletionAsync(context, item, false, cancellationToken);
-                }
-                else
-                {
                     item.IsCompleted = false;
-                }
 
-                return Result.Success;
-            },
-            cancellationToken
-        );
+                    return Result.AwaitableFalse;
+                }, cancellationToken), cancellationToken), cancellationToken);
     }
 
-    private async ValueTask<Result> StepCompletionAsync(
+    private ConfiguredValueTaskAwaitable<Result> StepCompletionAsync(
         SpravyDbToDoDbContext context,
         ToDoItemEntity item,
         bool completeTask,
         CancellationToken cancellationToken
     )
     {
-        var steps = await context.Set<ToDoItemEntity>()
+        return context.Set<ToDoItemEntity>()
             .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Step)
             .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync(cancellationToken);
+            .ToArrayEntitiesAsync(cancellationToken).IfSuccessAsync(steps =>
+            {
+                foreach (var step in steps.Span)
+                {
+                    step.IsCompleted = completeTask;
+                }
 
-        foreach (var step in steps)
-        {
-            step.IsCompleted = completeTask;
-        }
-
-        var groups = await context.Set<ToDoItemEntity>()
-            .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Group)
-            .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync(cancellationToken);
-
-        foreach (var group in groups)
-        {
-            await StepCompletionAsync(context, group, completeTask, cancellationToken);
-        }
-
-        return Result.Success;
+                return context.Set<ToDoItemEntity>()
+                    .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Group)
+                    .OrderBy(x => x.OrderIndex)
+                    .ToArrayEntitiesAsync(cancellationToken).IfSuccessAsync(
+                        groups => groups.IfSuccessAsync(
+                            group => StepCompletionAsync(context, group, completeTask, cancellationToken),
+                            cancellationToken), cancellationToken);
+            }, cancellationToken);
     }
 
     private async ValueTask<Result> CircleCompletionAsync(
@@ -799,24 +603,15 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return UpdateToDoItemNameCore(id, name, cancellationToken).ConfigureAwait(false);
-    }
-
-    private async ValueTask<Result> UpdateToDoItemNameCore(Guid id, string name, CancellationToken cancellationToken)
-    {
-        await using var context = dbContextFactory.Create();
-
-        await context.ExecuteSaveChangesTransactionAsync(
-            async c =>
+        return dbContextFactory.Create().IfSuccessAsync(context => context.AtomicExecuteAsync(
+            () => context.FindEntityAsync<ToDoItemEntity>(id).IfSuccessAsync(item =>
             {
-                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
-                item = item.ThrowIfNull();
                 item.Name = name;
-            },
-            cancellationToken
-        );
 
-        return Result.Success;
+                return Result.Success;
+            }, cancellationToken),
+            cancellationToken
+        ), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemOrderIndexAsync(
@@ -824,46 +619,28 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return UpdateToDoItemOrderIndexCore(options, cancellationToken).ConfigureAwait(false);
-    }
-
-    private async ValueTask<Result> UpdateToDoItemOrderIndexCore(
-        UpdateOrderIndexToDoItemOptions options,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-
-        await context.ExecuteSaveChangesTransactionAsync(
-            async c =>
-            {
-                var item = await c.Set<ToDoItemEntity>().FindAsync(options.Id);
-                item = item.ThrowIfNull();
-                var targetItem = await c.Set<ToDoItemEntity>().FindAsync(options.TargetId);
-                targetItem = targetItem.ThrowIfNull();
-                var orderIndex = options.IsAfter ? targetItem.OrderIndex + 1 : targetItem.OrderIndex;
-
-                var items = await c.Set<ToDoItemEntity>()
-                    .Where(
-                        x => x.ParentId == item.ParentId
-                             && x.Id != item.Id
-                             && x.OrderIndex >= orderIndex
-                    )
-                    .ToArrayAsync(cancellationToken);
-
-                foreach (var itemEntity in items)
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(
+            () => context.FindEntityAsync<ToDoItemEntity>(options.Id).IfSuccessAsync(item =>
+                context.FindEntityAsync<ToDoItemEntity>(options.TargetId).IfSuccessAsync(targetItem =>
                 {
-                    itemEntity.OrderIndex++;
-                }
+                    var orderIndex = options.IsAfter ? targetItem.OrderIndex + 1 : targetItem.OrderIndex;
 
-                item.OrderIndex = orderIndex;
-                await c.SaveChangesAsync(cancellationToken);
-                await NormalizeOrderIndexAsync(c, item.ParentId, cancellationToken);
-            },
+                    return context.Set<ToDoItemEntity>()
+                        .Where(x => x.ParentId == item.ParentId && x.Id != item.Id && x.OrderIndex >= orderIndex)
+                        .ToArrayEntitiesAsync(cancellationToken).IfSuccessAsync(items =>
+                        {
+                            foreach (var itemEntity in items.Span)
+                            {
+                                itemEntity.OrderIndex++;
+                            }
+
+                            item.OrderIndex = orderIndex;
+
+                            return NormalizeOrderIndexAsync(context, item.ParentId, cancellationToken);
+                        }, cancellationToken);
+                }, cancellationToken), cancellationToken),
             cancellationToken
-        );
-
-        return Result.Success;
+        ), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemDescriptionAsync(
@@ -872,28 +649,15 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return UpdateToDoItemDescriptionCore(id, description, cancellationToken).ConfigureAwait(false);
-    }
-
-    private async ValueTask<Result> UpdateToDoItemDescriptionCore(
-        Guid id,
-        string description,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-
-        await context.ExecuteSaveChangesTransactionAsync(
-            async c =>
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(
+            () => context.FindEntityAsync<ToDoItemEntity>(id).IfSuccessAsync(item =>
             {
-                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
-                item = item.ThrowIfNull();
                 item.Description = description;
-            },
-            cancellationToken
-        );
 
-        return Result.Success;
+                return Result.Success;
+            }, cancellationToken),
+            cancellationToken
+        ), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemTypeAsync(
@@ -902,50 +666,28 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return UpdateToDoItemTypeCore(id, type, cancellationToken).ConfigureAwait(false);
-    }
-
-    private async ValueTask<Result> UpdateToDoItemTypeCore(
-        Guid id,
-        ToDoItemType type,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-
-        await context.ExecuteSaveChangesTransactionAsync(
-            async c =>
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(
+            () => context.FindEntityAsync<ToDoItemEntity>(id).IfSuccessAsync(item =>
             {
-                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
-                item = item.ThrowIfNull();
                 item.Type = type;
-            },
-            cancellationToken
-        );
 
-        return Result.Success;
+                return Result.Success;
+            }, cancellationToken),
+            cancellationToken
+        ), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> AddFavoriteToDoItemAsync(Guid id, CancellationToken cancellationToken)
     {
-        return AddFavoriteToDoItemCore(id, cancellationToken).ConfigureAwait(false);
-    }
-
-    public async ValueTask<Result> AddFavoriteToDoItemCore(Guid id, CancellationToken cancellationToken)
-    {
-        await using var context = dbContextFactory.Create();
-
-        await context.ExecuteSaveChangesTransactionAsync(
-            async c =>
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(
+            () => context.FindEntityAsync<ToDoItemEntity>(id).IfSuccessAsync(item =>
             {
-                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
-                item = item.ThrowIfNull();
                 item.IsFavorite = true;
-            },
-            cancellationToken
-        );
 
-        return Result.Success;
+                return Result.Success;
+            }, cancellationToken),
+            cancellationToken
+        ), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> RemoveFavoriteToDoItemAsync(
@@ -953,24 +695,15 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return RemoveFavoriteToDoItemCore(id, cancellationToken).ConfigureAwait(false);
-    }
-
-    private async ValueTask<Result> RemoveFavoriteToDoItemCore(Guid id, CancellationToken cancellationToken)
-    {
-        await using var context = dbContextFactory.Create();
-
-        await context.ExecuteSaveChangesTransactionAsync(
-            async c =>
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(
+            () => context.FindEntityAsync<ToDoItemEntity>(id).IfSuccessAsync(item =>
             {
-                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
-                item = item.ThrowIfNull();
                 item.IsFavorite = false;
-            },
-            cancellationToken
-        );
 
-        return Result.Success;
+                return Result.Success;
+            }, cancellationToken),
+            cancellationToken
+        ), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemIsRequiredCompleteInDueDateAsync(
@@ -979,43 +712,24 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return UpdateToDoItemIsRequiredCompleteInDueDateCore(id, value, cancellationToken).ConfigureAwait(false);
-    }
-
-    private async ValueTask<Result> UpdateToDoItemIsRequiredCompleteInDueDateCore(
-        Guid id,
-        bool value,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-
-        await context.ExecuteSaveChangesTransactionAsync(
-            async c =>
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(
+            () => context.FindEntityAsync<ToDoItemEntity>(id).IfSuccessAsync(item =>
             {
-                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
-                item = item.ThrowIfNull();
                 item.IsRequiredCompleteInDueDate = value;
-            },
-            cancellationToken
-        );
 
-        return Result.Success;
+                return Result.Success;
+            }, cancellationToken),
+            cancellationToken
+        ), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetTodayToDoItemsAsync(
         CancellationToken cancellationToken
     )
     {
-        return GetTodayToDoItemsCore(cancellationToken).ConfigureAwait(false);
-    }
-
-    private async ValueTask<Result<ReadOnlyMemory<Guid>>> GetTodayToDoItemsCore(CancellationToken cancellationToken)
-    {
         var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
-        await using var context = dbContextFactory.Create();
 
-        var items = await context.Set<ToDoItemEntity>()
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(
                 x => !x.IsCompleted
@@ -1030,13 +744,13 @@ public class EfToDoService : IToDoService
                     x.DueDate
                 }
             )
-            .ToArrayAsync(cancellationToken);
-
-        return items.Where(x => x.DueDate <= DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
-            .Select(x => x.Id)
-            .ToArray()
-            .ToReadOnlyMemory()
-            .ToResult();
+            .ToArrayEntitiesAsync(cancellationToken)
+            .IfSuccessAsync(items => items.ToArray()
+                .Where(x => x.DueDate <= DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
+                .Select(x => x.Id)
+                .ToArray()
+                .ToReadOnlyMemory()
+                .ToResult(), cancellationToken), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemAnnuallyPeriodicityAsync(
@@ -1045,28 +759,15 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return UpdateToDoItemAnnuallyPeriodicityCore(id, periodicity, cancellationToken).ConfigureAwait(false);
-    }
-
-    public async ValueTask<Result> UpdateToDoItemAnnuallyPeriodicityCore(
-        Guid id,
-        AnnuallyPeriodicity periodicity,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-
-        await context.ExecuteSaveChangesTransactionAsync(
-            async c =>
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(
+            () => context.FindEntityAsync<ToDoItemEntity>(id).IfSuccessAsync(item =>
             {
-                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
-                item = item.ThrowIfNull();
                 item.SetDaysOfYear(periodicity.Days);
-            },
-            cancellationToken
-        );
 
-        return Result.Success;
+                return Result.Success;
+            }, cancellationToken),
+            cancellationToken
+        ), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemMonthlyPeriodicityAsync(
@@ -1075,28 +776,15 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return UpdateToDoItemMonthlyPeriodicityCore(id, periodicity, cancellationToken).ConfigureAwait(false);
-    }
-
-    public async ValueTask<Result> UpdateToDoItemMonthlyPeriodicityCore(
-        Guid id,
-        MonthlyPeriodicity periodicity,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-
-        await context.ExecuteSaveChangesTransactionAsync(
-            async c =>
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(
+            () => context.FindEntityAsync<ToDoItemEntity>(id).IfSuccessAsync(item =>
             {
-                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
-                item = item.ThrowIfNull();
                 item.SetDaysOfMonth(periodicity.Days);
-            },
-            cancellationToken
-        );
 
-        return Result.Success;
+                return Result.Success;
+            }, cancellationToken),
+            cancellationToken
+        ), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemWeeklyPeriodicityAsync(
@@ -1105,28 +793,15 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return UpdateToDoItemWeeklyPeriodicityCore(id, periodicity, cancellationToken).ConfigureAwait(false);
-    }
-
-    public async ValueTask<Result> UpdateToDoItemWeeklyPeriodicityCore(
-        Guid id,
-        WeeklyPeriodicity periodicity,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-
-        await context.ExecuteSaveChangesTransactionAsync(
-            async c =>
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(
+            () => context.FindEntityAsync<ToDoItemEntity>(id).IfSuccessAsync(item =>
             {
-                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
-                item = item.ThrowIfNull();
                 item.SetDaysOfWeek(periodicity.Days);
-            },
-            cancellationToken
-        );
 
-        return Result.Success;
+                return Result.Success;
+            }, cancellationToken),
+            cancellationToken
+        ), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoSelectorItem>>> GetToDoSelectorItemsAsync(
@@ -1134,32 +809,19 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return GetToDoSelectorItemsCore(ignoreIds, cancellationToken).ConfigureAwait(false);
-    }
-
-    public async ValueTask<Result<ReadOnlyMemory<ToDoSelectorItem>>> GetToDoSelectorItemsCore(
-        Guid[] ignoreIds,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-
-        var items = await context.Set<ToDoItemEntity>()
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context
+            .Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.ParentId == null && !ignoreIds.Contains(x.Id))
             .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync(cancellationToken);
-
-        var result = new ToDoSelectorItem[items.Length];
-
-        for (var i = 0; i < result.Length; i++)
-        {
-            var item = items[i];
-            var children = await GetToDoSelectorItemsAsync(context, item.Id, ignoreIds, cancellationToken);
-            result[i] = new ToDoSelectorItem(item.Id, item.Name, children);
-        }
-
-        return result.ToReadOnlyMemory().ToResult();
+            .ToArrayEntitiesAsync(cancellationToken)
+            .IfSuccessAsync(items =>
+                items.IfSuccessAsync(item =>
+                        GetToDoSelectorItemsAsync(context, item.Id, ignoreIds, cancellationToken).IfSuccessAsync(
+                            children =>
+                                new ToDoSelectorItem(item.Id, item.Name, children.ToArray()).ToResult(),
+                            cancellationToken),
+                    cancellationToken), cancellationToken), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemParentAsync(
@@ -1168,68 +830,40 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return UpdateToDoItemParentCore(id, parentId, cancellationToken).ConfigureAwait(false);
-    }
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(
+            () => context.FindEntityAsync<ToDoItemEntity>(id).IfSuccessAsync(entity => context.Set<ToDoItemEntity>()
+                .AsNoTracking()
+                .Where(x => x.ParentId == parentId)
+                .Select(x => x.OrderIndex)
+                .ToArrayEntitiesAsync(cancellationToken).IfSuccessAsync(items =>
+                {
+                    entity = entity.ThrowIfNull();
+                    entity.ParentId = parentId;
+                    entity.OrderIndex = items.Length == 0 ? 0 : items.Max() + 1;
 
-    public async ValueTask<Result> UpdateToDoItemParentCore(
-        Guid id,
-        Guid parentId,
-        CancellationToken cancellationToken
-    )
-    {
-        if (id == parentId) throw new Exception();
-
-        await using var context = dbContextFactory.Create();
-
-        await context.ExecuteSaveChangesTransactionAsync(
-            async c =>
-            {
-                var entity = await c.Set<ToDoItemEntity>().FindAsync(id);
-
-                var items = await c.Set<ToDoItemEntity>()
-                    .AsNoTracking()
-                    .Where(x => x.ParentId == parentId)
-                    .Select(x => x.OrderIndex)
-                    .ToArrayAsync(cancellationToken);
-
-                entity = entity.ThrowIfNull();
-                entity.ParentId = parentId;
-                entity.OrderIndex = items.Length == 0 ? 0 : items.Max() + 1;
-            },
+                    return Result.Success;
+                }, cancellationToken), cancellationToken),
             cancellationToken
-        );
-
-        return Result.Success;
+        ), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> ToDoItemToRootAsync(Guid id, CancellationToken cancellationToken)
     {
-        return ToDoItemToRootCore(id, cancellationToken).ConfigureAwait(false);
-    }
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(
+            () => context.FindEntityAsync<ToDoItemEntity>(id).IfSuccessAsync(entity => context.Set<ToDoItemEntity>()
+                .AsNoTracking()
+                .Where(x => x.ParentId == null)
+                .Select(x => x.OrderIndex)
+                .ToArrayEntitiesAsync(cancellationToken).IfSuccessAsync(items =>
+                {
+                    entity = entity.ThrowIfNull();
+                    entity.ParentId = null;
+                    entity.OrderIndex = items.Length == 0 ? 0 : items.Max() + 1;
 
-    private async ValueTask<Result> ToDoItemToRootCore(Guid id, CancellationToken cancellationToken)
-    {
-        await using var context = dbContextFactory.Create();
-
-        await context.ExecuteSaveChangesTransactionAsync(
-            async c =>
-            {
-                var entity = await c.Set<ToDoItemEntity>().FindAsync(id);
-
-                var items = await c.Set<ToDoItemEntity>()
-                    .AsNoTracking()
-                    .Where(x => x.ParentId == null)
-                    .Select(x => x.OrderIndex)
-                    .ToArrayAsync(cancellationToken);
-
-                entity = entity.ThrowIfNull();
-                entity.ParentId = null;
-                entity.OrderIndex = items.Length == 0 ? 0 : items.Max() + 1;
-            },
+                    return Result.Success;
+                }, cancellationToken), cancellationToken),
             cancellationToken
-        );
-
-        return Result.Success;
+        ), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result<string>> ToDoItemToStringAsync(
@@ -1237,20 +871,15 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return ToDoItemToStringCore(options, cancellationToken).ConfigureAwait(false);
-    }
-
-    private async ValueTask<Result<string>> ToDoItemToStringCore(
-        ToDoItemToStringOptions options,
-        CancellationToken cancellationToken
-    )
-    {
         var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
-        await using var context = dbContextFactory.Create();
-        var builder = new StringBuilder();
-        await ToDoItemToStringAsync(context, options, 0, builder, offset, cancellationToken);
 
-        return builder.ToString().ToResult();
+        return dbContextFactory.Create().IfSuccessAsync(context =>
+        {
+            var builder = new StringBuilder();
+
+            return ToDoItemToStringAsync(context, options, 0, builder, offset, cancellationToken)
+                .IfSuccessAsync(() => builder.ToString().ToResult(), cancellationToken);
+        }, cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemDaysOffsetAsync(
@@ -1259,28 +888,15 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return UpdateToDoItemDaysOffsetCore(id, days, cancellationToken).ConfigureAwait(false);
-    }
-
-    public async ValueTask<Result> UpdateToDoItemDaysOffsetCore(
-        Guid id,
-        ushort days,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-
-        await context.ExecuteSaveChangesTransactionAsync(
-            async c =>
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(
+            () => context.FindEntityAsync<ToDoItemEntity>(id).IfSuccessAsync(item =>
             {
-                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
-                item = item.ThrowIfNull();
                 item.DaysOffset = days;
-            },
-            cancellationToken
-        );
 
-        return Result.Success;
+                return Result.Success;
+            }, cancellationToken),
+            cancellationToken
+        ), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemMonthsOffsetAsync(
@@ -1289,28 +905,15 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return UpdateToDoItemMonthsOffsetCore(id, months, cancellationToken).ConfigureAwait(false);
-    }
-
-    public async ValueTask<Result> UpdateToDoItemMonthsOffsetCore(
-        Guid id,
-        ushort months,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-
-        await context.ExecuteSaveChangesTransactionAsync(
-            async c =>
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(
+            () => context.FindEntityAsync<ToDoItemEntity>(id).IfSuccessAsync(item =>
             {
-                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
-                item = item.ThrowIfNull();
                 item.MonthsOffset = months;
-            },
-            cancellationToken
-        );
 
-        return Result.Success;
+                return Result.Success;
+            }, cancellationToken),
+            cancellationToken
+        ), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemWeeksOffsetAsync(
@@ -1319,28 +922,15 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return UpdateToDoItemWeeksOffsetCore(id, weeks, cancellationToken).ConfigureAwait(false);
-    }
-
-    public async ValueTask<Result> UpdateToDoItemWeeksOffsetCore(
-        Guid id,
-        ushort weeks,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-
-        await context.ExecuteSaveChangesTransactionAsync(
-            async c =>
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(
+            () => context.FindEntityAsync<ToDoItemEntity>(id).IfSuccessAsync(item =>
             {
-                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
-                item = item.ThrowIfNull();
                 item.WeeksOffset = weeks;
-            },
-            cancellationToken
-        );
 
-        return Result.Success;
+                return Result.Success;
+            }, cancellationToken),
+            cancellationToken
+        ), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemYearsOffsetAsync(
@@ -1349,28 +939,15 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return UpdateToDoItemYearsOffsetCore(id, years, cancellationToken).ConfigureAwait(false);
-    }
-
-    private async ValueTask<Result> UpdateToDoItemYearsOffsetCore(
-        Guid id,
-        ushort years,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-
-        await context.ExecuteSaveChangesTransactionAsync(
-            async c =>
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(
+            () => context.FindEntityAsync<ToDoItemEntity>(id).IfSuccessAsync(item =>
             {
-                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
-                item = item.ThrowIfNull();
                 item.YearsOffset = years;
-            },
-            cancellationToken
-        );
 
-        return Result.Success;
+                return Result.Success;
+            }, cancellationToken),
+            cancellationToken
+        ), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemChildrenTypeAsync(
@@ -1379,28 +956,15 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return UpdateToDoItemChildrenTypeCore(id, type, cancellationToken).ConfigureAwait(false);
-    }
-
-    public async ValueTask<Result> UpdateToDoItemChildrenTypeCore(
-        Guid id,
-        ToDoItemChildrenType type,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-
-        await context.ExecuteSaveChangesTransactionAsync(
-            async c =>
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(
+            () => context.FindEntityAsync<ToDoItemEntity>(id).IfSuccessAsync(item =>
             {
-                var item = await c.Set<ToDoItemEntity>().FindAsync(id);
-                item = item.ThrowIfNull();
                 item.ChildrenType = type;
-            },
-            cancellationToken
-        );
 
-        return Result.Success;
+                return Result.Success;
+            }, cancellationToken),
+            cancellationToken
+        ), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoShortItem>>> GetSiblingsAsync(
@@ -1408,71 +972,45 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return GetSiblingsCore(id, cancellationToken).ConfigureAwait(false);
-    }
-
-    private async ValueTask<Result<ReadOnlyMemory<ToDoShortItem>>> GetSiblingsCore(
-        Guid id,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-        var item = await context.FindAsync<ToDoItemEntity>(id);
-        item = item.ThrowIfNull();
-
-        var items = await context.Set<ToDoItemEntity>()
-            .Where(x => x.ParentId == item.ParentId && x.Id != item.Id)
-            .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync(cancellationToken);
-
-        return mapper.Map<ToDoShortItem[]>(items).ToReadOnlyMemory().ToResult();
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.FindEntityAsync<ToDoItemEntity>(id)
+            .IfSuccessAsync(item => context.Set<ToDoItemEntity>()
+                .Where(x => x.ParentId == item.ParentId && x.Id != item.Id)
+                .OrderBy(x => x.OrderIndex)
+                .ToArrayEntitiesAsync(cancellationToken)
+                .IfSuccessAsync(items => mapper.Map<ToDoShortItem[]>(items).ToReadOnlyMemory().ToResult(),
+                    cancellationToken), cancellationToken), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result<ActiveToDoItem?>> GetCurrentActiveToDoItemAsync(
         CancellationToken cancellationToken
     )
     {
-        return GetCurrentActiveToDoItemCore(cancellationToken).ConfigureAwait(false);
-    }
-
-    private async ValueTask<Result<ActiveToDoItem?>> GetCurrentActiveToDoItemCore(CancellationToken cancellationToken)
-    {
         var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
-        await using var context = dbContextFactory.Create();
 
-        var items = await context.Set<ToDoItemEntity>()
-            .Where(x => x.ParentId == null)
-            .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync(cancellationToken);
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.Set<ToDoItemEntity>()
+                .Where(x => x.ParentId == null)
+                .OrderBy(x => x.OrderIndex)
+                .ToArrayEntitiesAsync(cancellationToken).IfSuccessAsync(items => items.IfSuccessAsync(item =>
+                    getterToDoItemParametersService.GetToDoItemParametersAsync(
+                        context,
+                        item,
+                        offset,
+                        cancellationToken
+                    ).IfSuccessAsync(parameters =>
+                    {
+                        if (parameters.ActiveItem is not null)
+                        {
+                            return parameters.ActiveItem.ToResult();
+                        }
 
-        foreach (var item in items)
-        {
-            var parameters =
-                await getterToDoItemParametersService.GetToDoItemParametersAsync(
-                    context,
-                    item,
-                    offset,
-                    cancellationToken
-                );
-
-            if (parameters.ActiveItem is not null) return parameters.ActiveItem.ToResult();
-
-            switch (parameters.Status)
+                        return new Result<ActiveToDoItem?>((ActiveToDoItem?)null);
+                    }, cancellationToken), cancellationToken), cancellationToken), cancellationToken)
+            .IfSuccessAsync(items =>
             {
-                case ToDoItemStatus.Miss:
-                    return new Result<ActiveToDoItem?>((ActiveToDoItem?)null);
-                case ToDoItemStatus.ReadyForComplete:
-                    return new Result<ActiveToDoItem?>((ActiveToDoItem?)null);
-                case ToDoItemStatus.Planned:
-                    break;
-                case ToDoItemStatus.Completed:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
+                var item = items.ToArray().FirstOrDefault(x => x is not null);
 
-        return new Result<ActiveToDoItem?>((ActiveToDoItem?)null);
+                return new Result<ActiveToDoItem?>(item);
+            }, cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemLinkAsync(
@@ -1481,24 +1019,15 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return UpdateToDoItemLinkCore(id, link, cancellationToken).ConfigureAwait(false);
-    }
-
-    public async ValueTask<Result> UpdateToDoItemLinkCore(Guid id, Uri? link, CancellationToken cancellationToken)
-    {
-        await using var context = dbContextFactory.Create();
-
-        await context.ExecuteSaveChangesTransactionAsync(
-            async c =>
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(
+            () => context.FindEntityAsync<ToDoItemEntity>(id).IfSuccessAsync(value =>
             {
-                var value = await c.FindAsync<ToDoItemEntity>(id);
-                value = value.ThrowIfNull();
                 value.Link = mapper.Map<string>(link) ?? string.Empty;
-            },
-            cancellationToken
-        );
 
-        return Result.Success;
+                return Result.Success;
+            }, cancellationToken),
+            cancellationToken
+        ), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result<PlannedToDoItemSettings>> GetPlannedToDoItemSettingsAsync(
@@ -1506,19 +1035,11 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return GetPlannedToDoItemSettingsCore(id, cancellationToken).ConfigureAwait(false);
-    }
-
-    public async ValueTask<Result<PlannedToDoItemSettings>> GetPlannedToDoItemSettingsCore(
-        Guid id,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
-        item = item.ThrowIfNull();
-
-        return mapper.Map<PlannedToDoItemSettings>(item).ToResult();
+        return dbContextFactory.Create()
+            .IfSuccessDisposeAsync(
+                context => context.FindEntityAsync<ToDoItemEntity>(id)
+                    .IfSuccessAsync(item => mapper.Map<PlannedToDoItemSettings>(item).ToResult(), cancellationToken),
+                cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result<ValueToDoItemSettings>> GetValueToDoItemSettingsAsync(
@@ -1526,19 +1047,11 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return GetValueToDoItemSettingsCore(id, cancellationToken).ConfigureAwait(false);
-    }
-
-    public async ValueTask<Result<ValueToDoItemSettings>> GetValueToDoItemSettingsCore(
-        Guid id,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
-        item = item.ThrowIfNull();
-
-        return mapper.Map<ValueToDoItemSettings>(item).ToResult();
+        return dbContextFactory.Create()
+            .IfSuccessDisposeAsync(
+                context => context.FindEntityAsync<ToDoItemEntity>(id)
+                    .IfSuccessAsync(item => mapper.Map<ValueToDoItemSettings>(item).ToResult(), cancellationToken),
+                cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result<PeriodicityToDoItemSettings>> GetPeriodicityToDoItemSettingsAsync(
@@ -1546,19 +1059,11 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return GetPeriodicityToDoItemSettingsCore(id, cancellationToken).ConfigureAwait(false);
-    }
-
-    private async ValueTask<Result<PeriodicityToDoItemSettings>> GetPeriodicityToDoItemSettingsCore(
-        Guid id,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
-        item = item.ThrowIfNull();
-
-        return mapper.Map<PeriodicityToDoItemSettings>(item).ToResult();
+        return dbContextFactory.Create()
+            .IfSuccessAsync(
+                context => context.FindEntityAsync<ToDoItemEntity>(id)
+                    .IfSuccessAsync(item => mapper.Map<PeriodicityToDoItemSettings>(item).ToResult(),
+                        cancellationToken), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result<WeeklyPeriodicity>> GetWeeklyPeriodicityAsync(
@@ -1566,19 +1071,11 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return GetWeeklyPeriodicityCore(id, cancellationToken).ConfigureAwait(false);
-    }
-
-    public async ValueTask<Result<WeeklyPeriodicity>> GetWeeklyPeriodicityCore(
-        Guid id,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
-        item = item.ThrowIfNull();
-
-        return mapper.Map<WeeklyPeriodicity>(item).ToResult();
+        return dbContextFactory.Create()
+            .IfSuccessDisposeAsync(
+                context => context.FindEntityAsync<ToDoItemEntity>(id)
+                    .IfSuccessAsync(item => mapper.Map<WeeklyPeriodicity>(item).ToResult(), cancellationToken),
+                cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result<MonthlyPeriodicity>> GetMonthlyPeriodicityAsync(
@@ -1586,19 +1083,11 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return GetMonthlyPeriodicityCore(id, cancellationToken).ConfigureAwait(false);
-    }
-
-    public async ValueTask<Result<MonthlyPeriodicity>> GetMonthlyPeriodicityCore(
-        Guid id,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
-        item = item.ThrowIfNull();
-
-        return mapper.Map<MonthlyPeriodicity>(item).ToResult();
+        return dbContextFactory.Create()
+            .IfSuccessDisposeAsync(
+                context => context.FindEntityAsync<ToDoItemEntity>(id)
+                    .IfSuccessAsync(item => mapper.Map<MonthlyPeriodicity>(item).ToResult(), cancellationToken),
+                cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result<AnnuallyPeriodicity>> GetAnnuallyPeriodicityAsync(
@@ -1606,19 +1095,11 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        return GetAnnuallyPeriodicityCore(id, cancellationToken).ConfigureAwait(false);
-    }
-
-    public async ValueTask<Result<AnnuallyPeriodicity>> GetAnnuallyPeriodicityCore(
-        Guid id,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
-        item = item.ThrowIfNull();
-
-        return mapper.Map<AnnuallyPeriodicity>(item).ToResult();
+        return dbContextFactory.Create()
+            .IfSuccessDisposeAsync(
+                context => context.FindEntityAsync<ToDoItemEntity>(id)
+                    .IfSuccessAsync(item => mapper.Map<AnnuallyPeriodicity>(item).ToResult(), cancellationToken),
+                cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result<PeriodicityOffsetToDoItemSettings>>
@@ -1627,19 +1108,11 @@ public class EfToDoService : IToDoService
             CancellationToken cancellationToken
         )
     {
-        return GetPeriodicityOffsetToDoItemSettingsCore(id, cancellationToken).ConfigureAwait(false);
-    }
-
-    private async ValueTask<Result<PeriodicityOffsetToDoItemSettings>> GetPeriodicityOffsetToDoItemSettingsCore(
-        Guid id,
-        CancellationToken cancellationToken
-    )
-    {
-        await using var context = dbContextFactory.Create();
-        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
-        item = item.ThrowIfNull();
-
-        return mapper.Map<PeriodicityOffsetToDoItemSettings>(item).ToResult();
+        return dbContextFactory.Create()
+            .IfSuccessDisposeAsync(
+                context => context.FindEntityAsync<ToDoItemEntity>(id).IfSuccessAsync(
+                    item => mapper.Map<PeriodicityOffsetToDoItemSettings>(item).ToResult(), cancellationToken),
+                cancellationToken);
     }
 
     public async IAsyncEnumerable<ReadOnlyMemory<ToDoItem>> GetToDoItemsAsync(
@@ -1652,8 +1125,6 @@ public class EfToDoService : IToDoService
 
         for (var i = 0; i < ids.Length; i++)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             if (i % chunkSize == 0)
                 if (items.Count > 0)
                 {
@@ -1673,7 +1144,7 @@ public class EfToDoService : IToDoService
         }
     }
 
-    private async ValueTask ToDoItemToStringAsync(
+    private ConfiguredValueTaskAwaitable<Result> ToDoItemToStringAsync(
         SpravyDbToDoDbContext context,
         ToDoItemToStringOptions options,
         ushort level,
@@ -1682,64 +1153,59 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        var items = await context.Set<ToDoItemEntity>()
+        return context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.ParentId == options.Id)
             .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync(cancellationToken);
+            .ToArrayEntitiesAsync(cancellationToken)
+            .IfSuccessAsync(items => items.IfSuccessAsync(item => getterToDoItemParametersService
+                .GetToDoItemParametersAsync(
+                    context,
+                    item,
+                    offset,
+                    cancellationToken
+                ).IfSuccessAsync(parameters =>
+                {
+                    if (!options.Statuses.Span.ToArray().Contains(parameters.Status))
+                    {
+                        return Result.AwaitableFalse;
+                    }
 
-        foreach (var item in items)
-        {
-            var parameters = await getterToDoItemParametersService.GetToDoItemParametersAsync(
-                context,
-                item,
-                offset,
-                cancellationToken
-            );
+                    builder.Duplicate(" ", level);
+                    builder.Append(item.Name);
+                    builder.AppendLine();
 
-            if (!options.Statuses.Span.ToArray().Contains(parameters.Status)) continue;
-
-            builder.Duplicate(" ", level);
-            builder.Append(item.Name);
-            builder.AppendLine();
-
-            await ToDoItemToStringAsync(
-                context,
-                new ToDoItemToStringOptions(options.Statuses.ToArray(), item.Id),
-                (ushort)(level + 1),
-                builder,
-                offset,
-                cancellationToken
-            );
-        }
+                    return ToDoItemToStringAsync(
+                        context,
+                        new ToDoItemToStringOptions(options.Statuses.ToArray(), item.Id),
+                        (ushort)(level + 1),
+                        builder,
+                        offset,
+                        cancellationToken
+                    );
+                }, cancellationToken), cancellationToken), cancellationToken);
     }
 
-    private async ValueTask<ToDoSelectorItem[]> GetToDoSelectorItemsAsync(
+    private ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoSelectorItem>>> GetToDoSelectorItemsAsync(
         SpravyDbToDoDbContext context,
         Guid id,
         Guid[] ignoreIds,
         CancellationToken cancellationToken
     )
     {
-        var items = await context.Set<ToDoItemEntity>()
+        return context.Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x => x.ParentId == id && !ignoreIds.Contains(x.Id))
             .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync(cancellationToken);
-
-        var result = new ToDoSelectorItem[items.Length];
-
-        for (var i = 0; i < result.Length; i++)
-        {
-            var item = items[i];
-            var children = await GetToDoSelectorItemsAsync(context, item.Id, ignoreIds, cancellationToken);
-            result[i] = new ToDoSelectorItem(item.Id, item.Name, children);
-        }
-
-        return result;
+            .ToArrayEntitiesAsync(cancellationToken).IfSuccessAsync(items =>
+                items.IfSuccessAsync(
+                    item => GetToDoSelectorItemsAsync(context, item.Id, ignoreIds, cancellationToken)
+                        .IfSuccessAsync(children =>
+                            new ToDoSelectorItem(item.Id, item.Name, children.ToArray()).ToResult(), cancellationToken),
+                    cancellationToken), cancellationToken);
     }
 
-    private async IAsyncEnumerable<Guid> GetLeafToDoItemIdsAsync(
+    private async IAsyncEnumerable<Result<Guid>> GetLeafToDoItemIdsAsync(
         SpravyDbToDoDbContext context,
         ToDoItemEntity itemEntity,
         [EnumeratorCancellation] CancellationToken cancellationToken
@@ -1753,7 +1219,7 @@ public class EfToDoService : IToDoService
 
         if (entities.IsEmpty())
         {
-            yield return itemEntity.Id;
+            yield return itemEntity.Id.ToResult();
 
             yield break;
         }
@@ -1767,22 +1233,29 @@ public class EfToDoService : IToDoService
         }
     }
 
-    private async ValueTask NormalizeOrderIndexAsync(
+    private ConfiguredValueTaskAwaitable<Result> NormalizeOrderIndexAsync(
         SpravyDbToDoDbContext context,
         Guid? parentId,
         CancellationToken cancellationToken
     )
     {
-        var items = await context.Set<ToDoItemEntity>()
+        return context.Set<ToDoItemEntity>()
             .Where(x => x.ParentId == parentId)
-            .ToArrayAsync(cancellationToken);
+            .ToArrayEntitiesAsync(cancellationToken)
+            .IfSuccessAsync(items =>
+            {
+                var ordered = items.ToArray().OrderBy(x => x.OrderIndex).ToArray();
 
-        var ordered = items.OrderBy(x => x.OrderIndex).ToArray();
+                for (var index = 0u; index < ordered.LongLength; index++)
+                {
+                    ordered[index].OrderIndex = index;
+                }
 
-        for (var index = 0u; index < ordered.LongLength; index++) ordered[index].OrderIndex = index;
+                return Result.Success;
+            }, cancellationToken);
     }
 
-    private async ValueTask GetParentsAsync(
+    private async ValueTask<Result> GetParentsAsync(
         SpravyDbToDoDbContext context,
         Guid id,
         List<ToDoShortItem> parents,
@@ -1793,10 +1266,14 @@ public class EfToDoService : IToDoService
             .Include(x => x.Parent)
             .SingleAsync(x => x.Id == id, cancellationToken);
 
-        if (parent.Parent is null) return;
+        if (parent.Parent is null)
+        {
+            return Result.Success;
+        }
 
         parents.Add(mapper.Map<ToDoShortItem>(parent.Parent));
-        await GetParentsAsync(context, parent.Parent.Id, parents, cancellationToken);
+
+        return await GetParentsAsync(context, parent.Parent.Id, parents, cancellationToken);
     }
 
     private void UpdateDueDate(ToDoItemEntity item, TimeSpan offset, CancellationToken cancellationToken)

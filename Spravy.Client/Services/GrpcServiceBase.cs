@@ -29,10 +29,7 @@ public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBas
     {
         try
         {
-            var client = grpcClientFactory.Create(host);
-            cancellationToken.ThrowIfCancellationRequested();
-
-            return func.Invoke(client);
+            return grpcClientFactory.Create(host).IfSuccessAsync(func.Invoke, cancellationToken);
         }
         catch (RpcException exception)
         {
@@ -97,10 +94,7 @@ public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBas
     {
         try
         {
-            var client = grpcClientFactory.Create(host);
-            cancellationToken.ThrowIfCancellationRequested();
-
-            return await func.Invoke(client);
+            return await grpcClientFactory.Create(host).IfSuccessAsync(func.Invoke, cancellationToken);
         }
         catch (RpcException exception)
         {
@@ -158,6 +152,6 @@ public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBas
     {
         var client = grpcClientFactory.Create(host);
 
-        return func.Invoke(client, cancellationToken);
+        return func.Invoke(client.Value, cancellationToken);
     }
 }

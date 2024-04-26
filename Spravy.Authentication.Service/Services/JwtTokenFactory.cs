@@ -6,6 +6,7 @@ using Spravy.Authentication.Domain.Models;
 using Spravy.Authentication.Service.Models;
 using Spravy.Domain.Enums;
 using Spravy.Domain.Extensions;
+using Spravy.Domain.Models;
 
 namespace Spravy.Authentication.Service.Services;
 
@@ -20,7 +21,7 @@ public class JwtTokenFactory : ITokenFactory
         this.jwtSecurityTokenHandler = jwtSecurityTokenHandler;
     }
 
-    public TokenResult Create(UserTokenClaims user)
+    public Result<TokenResult> Create(UserTokenClaims user)
     {
         var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(options.Key.ThrowIfNullOrWhiteSpace()));
         var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
@@ -46,7 +47,7 @@ public class JwtTokenFactory : ITokenFactory
             DateTime.UtcNow.AddDays(options.RefreshExpiresDays)
         );
 
-        return new TokenResult(jwt, refreshJwt);
+        return new TokenResult(jwt, refreshJwt).ToResult();
     }
 
     private string CreateToken(
@@ -68,7 +69,7 @@ public class JwtTokenFactory : ITokenFactory
         return jwt;
     }
 
-    public TokenResult Create()
+    public Result<TokenResult> Create()
     {
         var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(options.Key.ThrowIfNullOrWhiteSpace()));
         var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
@@ -91,6 +92,6 @@ public class JwtTokenFactory : ITokenFactory
             DateTime.UtcNow.AddDays(options.RefreshExpiresDays)
         );
 
-        return new TokenResult(jwt, refreshJwt);
+        return new TokenResult(jwt, refreshJwt).ToResult();
     }
 }

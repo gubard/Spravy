@@ -21,7 +21,6 @@ public class OpenerLink : IOpenerLink
                 UseShellExecute = true
             };
 
-            cancellationToken.ThrowIfCancellationRequested();
             Process.Start(info);
 
             return Result.AwaitableFalse;

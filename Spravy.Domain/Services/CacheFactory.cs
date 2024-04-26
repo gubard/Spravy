@@ -1,5 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
+using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
+using Spravy.Domain.Models;
 
 namespace Spravy.Domain.Services;
 
@@ -17,7 +19,7 @@ public class CacheFactory<TKey, TValue> : IFactory<TKey, TValue>, ICache<TKey, T
         this.cacheValidator = cacheValidator;
     }
 
-    public TValue Create(TKey key)
+    public Result<TValue> Create(TKey key)
     {
         if (!cache.TryGetValue(key, out var value))
         {
@@ -26,7 +28,7 @@ public class CacheFactory<TKey, TValue> : IFactory<TKey, TValue>, ICache<TKey, T
 
         if (cacheValidator.IsValid(key, value))
         {
-            return value;
+            return value.ToResult();
         }
 
         cache.Remove(key);
@@ -34,12 +36,14 @@ public class CacheFactory<TKey, TValue> : IFactory<TKey, TValue>, ICache<TKey, T
         return CreateNewValue(key);
     }
 
-    private TValue CreateNewValue(TKey key)
+    private Result<TValue> CreateNewValue(TKey key)
     {
-        var value = factory.Create(key);
-        cache.Add(key, value);
+        return factory.Create(key).IfSuccess(value =>
+        {
+            cache.Add(key, value);
 
-        return value;
+            return value.ToResult();
+        });
     }
 
     public bool TryGetCacheValue(TKey key, [MaybeNullWhen(false)] out TValue value)

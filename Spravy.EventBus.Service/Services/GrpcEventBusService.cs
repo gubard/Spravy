@@ -62,7 +62,7 @@ public class GrpcEventBusService : EventBusServiceBase
         var userId = context.GetHttpContext().GetUserId();
         var id = mapper.Map<Guid>(request.EventId);
         logger.LogInformation("{UserId} push event {Id}", userId, id);
-        await eventStorage.AddEventAsync(id, request.Content.ToByteArray());
+        await eventStorage.AddEventAsync(id, request.Content.ToByteArray(), context.CancellationToken);
 
         return new PublishEventReply();
     }

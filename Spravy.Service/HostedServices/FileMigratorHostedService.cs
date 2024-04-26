@@ -32,7 +32,7 @@ public class FileMigratorHostedService<TDbContext> : IHostedService where TDbCon
     {
         var dataBaseFile = sqliteFileOptions.DataBaseFile.ThrowIfNull().ToFile();
         logger.LogInformation("Start migration {DataBaseFile}", dataBaseFile);
-        await using var context = spravyAuthenticationDbContextFactory.Create(dataBaseFile.ToSqliteConnectionString());
+        await using var context = spravyAuthenticationDbContextFactory.Create(dataBaseFile.ToSqliteConnectionString()).ThrowIfError();
 
         if (dataBaseFile.Directory is not null && !dataBaseFile.Directory.Exists)
         {

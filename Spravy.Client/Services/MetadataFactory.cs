@@ -18,8 +18,6 @@ public class MetadataFactory : IMetadataFactory
 
     public ConfiguredValueTaskAwaitable<Result<Metadata>> CreateAsync(CancellationToken cancellationToken)
     {
-        cancellationToken.ThrowIfCancellationRequested();
-
         return httpHeaderFactory.CreateHeaderItemsAsync(cancellationToken)
             .IfSuccessAsync(
                 value =>

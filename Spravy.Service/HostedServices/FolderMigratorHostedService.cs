@@ -34,9 +34,7 @@ public class FolderMigratorHostedService<TDbContext> : IHostedService where TDbC
             .ToDirectory()
             .ToFile(MigrationFileName);
 
-        cancellationToken.ThrowIfCancellationRequested();
         var migrationId = GetMigrationId();
-
         logger.LogInformation("Start migration to {MigrationId}", migrationId);
 
         if (!await IsNeedMigration(migrationFile, migrationId))
@@ -54,12 +52,11 @@ public class FolderMigratorHostedService<TDbContext> : IHostedService where TDbC
         }
 
         var dataBaseFiles = dataBasesFolder.GetFiles("*.db");
-        cancellationToken.ThrowIfCancellationRequested();
 
         foreach (var dataBaseFile in dataBaseFiles)
         {
             logger.LogInformation("Start migration {MigrationId} {DataBaseFile}", migrationId, dataBaseFile);
-            await using var spravyToDoDbContext = dbContextFactory.Create($"DataSource={dataBaseFile}");
+            await using var spravyToDoDbContext = dbContextFactory.Create($"DataSource={dataBaseFile}").ThrowIfError();
             await spravyToDoDbContext.Database.MigrateAsync(cancellationToken);
             logger.LogInformation("End migration {MigrationId} {DataBaseFile}", migrationId, dataBaseFile);
         }

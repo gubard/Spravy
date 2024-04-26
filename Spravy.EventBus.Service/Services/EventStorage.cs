@@ -1,7 +1,9 @@
+using System.Runtime.CompilerServices;
 using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 using Spravy.Db.Extensions;
+using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
+using Spravy.Domain.Models;
 using Spravy.EventBus.Db.Contexts;
 using Spravy.EventBus.Db.Models;
 using Spravy.EventBus.Domain.Models;
@@ -27,26 +29,27 @@ public class EventStorage
         this.fileFactory = fileFactory;
     }
 
-    public async Task AddEventAsync(Guid id, byte[] content)
+    public ConfiguredValueTaskAwaitable<Result> AddEventAsync(Guid id,
+        byte[] content,
+        CancellationToken cancellationToken)
     {
-        await using var context = dbContextFactory.Create();
-
         var newEvent = new EventEntity
         {
             EventId = id,
             Content = content,
-            Id = Guid.NewGuid(),
+            Id = Guid.NewGuid()
         };
 
-        await context.ExecuteSaveChangesTransactionAsync(
-            c => c.Set<EventEntity>().AddAsync(newEvent)
-        );
+        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(
+            () => context.Set<EventEntity>().AddEntityAsync(newEvent, cancellationToken).ToResultOnlyAsync(),
+            cancellationToken
+        ), cancellationToken);
     }
 
     public async Task<IEnumerable<EventValue>> PushEventAsync(Guid[] eventIds)
     {
         return Enumerable.Empty<EventValue>();
-        var file = fileFactory.Create();
+        /*var file = fileFactory.Create();
 
         if (!lastWriteTimeUtc.TryGetValue(file.FullName, out var date))
         {
@@ -59,7 +62,7 @@ public class EventStorage
 
         await using var context = dbContextFactory.Create();
 
-        var result = await context.ExecuteSaveChangesTransactionAsync(
+        var result = await context.AtomicExecuteAsync(
             async c =>
             {
                 var removed = await c.Set<EventEntity>()
@@ -89,6 +92,6 @@ public class EventStorage
 
         lastWriteTimeUtc[file.FullName] = file.LastWriteTimeUtc;
 
-        return result;
+        return result;*/
     }
 }
