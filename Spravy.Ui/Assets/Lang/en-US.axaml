@@ -145,7 +145,7 @@
     <sys:String x:Key="PaneView.Logout">Logout</sys:String>
 
     <!--RootToDoItemsView-->
-    <sys:String x:Key="RootToDoItemsView.CreateTask">Create Task</sys:String>
+    <sys:String x:Key="RootToDoItemsView.CreateTask">Create To-Do Item</sys:String>
 
     <!--ToDoItemView-->
     <sys:String x:Key="ToDoItemView.Description">Description</sys:String>

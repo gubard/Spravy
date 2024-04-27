@@ -13,4 +13,5 @@ public static class ElementNames
     public const string VerificationCodeTextBox = "verification-code-text-box";
     public const string VerificationEmailButton = "verification-email-button";
     public const string LoginButton = "login-button";
+    public const string AddRootToDoItemButton = "add-root-to-do-item-button";
 }

@@ -7,6 +7,7 @@
                         xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
                         xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                         xmlns:s="clr-namespace:Spravy.Ui.Services"
+                        xmlns:v="clr-namespace:Spravy.Ui.Views"
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                         x:Class="Spravy.Ui.Views.RootToDoItemsView"
                         x:DataType="vm:RootToDoItemsViewModel">
@@ -24,6 +25,7 @@
         </ScrollViewer>
 
         <Button Grid.Row="2"
+                Name="{x:Static v:RootToDoItemsView.AddRootToDoItemButtonName}"
                 Command="{x:Static s:CommandStorage.AddRootToDoItemCommand}"
                 Height="64"
                 Classes="Flat">

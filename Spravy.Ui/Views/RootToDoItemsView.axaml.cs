@@ -6,6 +6,8 @@ namespace Spravy.Ui.Views;
 
 public partial class RootToDoItemsView : ReactiveUserControl<RootToDoItemsViewModel>
 {
+    public const string AddRootToDoItemButtonName = "add-root-to-do-item-button";
+    
     public RootToDoItemsView()
     {
         InitializeComponent();

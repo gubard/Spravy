@@ -275,4 +275,39 @@ public static class WindowExtension
             .ThrowIfNull()
             .ThrowIfIsNotCast<TView>();
     }
+    
+    public static TView GetContentDialogView<TView, TViewModel>(this Window window)
+        where TView : UserControl where TViewModel : ViewModelBase
+    {
+        return window.GetErrorDialogHost()
+            .Content
+            .ThrowIfNull()
+            .ThrowIfIsNotCast<DialogHost>()
+            .Case(dh => dh.Identifier.Should().Be("ProgressDialogHost"))
+            .Content
+            .ThrowIfNull()
+            .ThrowIfIsNotCast<DialogHost>()
+            .Case(dh => dh.Identifier.Should().Be("InputDialogHost"))
+            .Content
+            .ThrowIfNull()
+            .ThrowIfIsNotCast<DialogHost>()
+            .Case(dh => dh.Identifier.Should().Be("ContentDialogHost"))
+            .Case(dh => dh.IsOpen.Should().Be(true))
+            .Case(dh=>dh .DialogContent
+                .ThrowIfNull()
+                .Case(dc => dc.ThrowIfIsNotCast<TViewModel>()))
+            .GetVisualChildren()
+            .Skip(2)
+            .Single()
+            .ThrowIfIsNotCast<DialogOverlayPopupHost>()
+            .GetVisualChildren()
+            .Single()
+            .ThrowIfIsNotCast<Border>()
+            .GetVisualChildren()
+            .Single()
+            .ThrowIfIsNotCast<ContentPresenter>()
+            .GetVisualChildren()
+            .Single()
+            .ThrowIfIsNotCast<TView>();
+    }
 }

@@ -3,15 +3,18 @@ using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.Input;
 using Spravy.Domain.Extensions;
+using Spravy.Tests.Attributes;
 using Spravy.Tests.Extensions;
 using Spravy.Tests.Helpers;
 using Spravy.Ui.Features.Authentication.ViewModels;
 using Spravy.Ui.Features.Authentication.Views;
 using Spravy.Ui.ViewModels;
 using Spravy.Ui.Views;
+using Xunit;
 
 namespace Spravy.Tests;
 
+[TestCaseOrderer("Spravy.Tests.Services.PriorityOrderer", "Spravy.Tests")]
 public class MainWindowTests
 {
     static MainWindowTests()
@@ -19,7 +22,7 @@ public class MainWindowTests
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
     }
 
-    [AvaloniaFact]
+    [AvaloniaFact, TestPriority(1)]
     public void CreateUserFlow()
     {
         WindowHelper.CreateWindow()
@@ -144,7 +147,39 @@ public class MainWindowTests
                         .ClickOn(w)
                         .RunJobsAll(2))
                     .Case(() => w.GetCurrentView<RootToDoItemsView, RootToDoItemsViewModel>())
-                    .SaveFrame(),
+                    .SaveFrame()
+                    .Close(),
+                (w, _) => w.SaveFrame().LogCurrentState()
+            );
+    }
+
+    [AvaloniaFact, TestPriority(2)]
+    public void TestReorderToDoItemFlow()
+    {
+        WindowHelper.CreateWindow()
+            .TryCatch(
+                w => w.SetSize(1000, 1000)
+                    .ShowWindow()
+                    .Case(() => w.GetCurrentView<LoginView, LoginViewModel>()
+                        .Case(view => view.FindControl<TextBox>(ElementNames.LoginTextBox)
+                            .ThrowIfNull()
+                            .FocusElement())
+                        .Case(() => w.SetKeyTextInput(TextHelper.TextLength4))
+                        .Case(view => view.FindControl<TextBox>(ElementNames.PasswordTextBox)
+                            .ThrowIfNull()
+                            .FocusElement())
+                        .Case(() => w.SetKeyTextInput(TextHelper.TextLength8))
+                        .FindControl<Button>(ElementNames.LoginButton)
+                        .ThrowIfNull()
+                        .ClickOn(w)
+                        .RunJobsAll(2))
+                    .Case(() => w.GetCurrentView<RootToDoItemsView, RootToDoItemsViewModel>()
+                        .FindControl<Button>(ElementNames.AddRootToDoItemButton)
+                        .ThrowIfNull()
+                        .ClickOn(w))
+                    .Case(() => w.GetContentDialogView<ConfirmView, ConfirmViewModel>())
+                    .SaveFrame()
+                    .Close(),
                 (w, _) => w.SaveFrame().LogCurrentState()
             );
     }
