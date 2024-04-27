@@ -30,4 +30,13 @@ public static class TextBoxExtension
 
         return textBox;
     }
+    
+    public static TTextBox SetText<TTextBox>(this TTextBox textBox, Window window, string text)
+        where TTextBox : TextBox
+    {
+        textBox.FocusElement();
+        window.SetKeyTextInput(text);
+
+        return textBox;
+    }
 }

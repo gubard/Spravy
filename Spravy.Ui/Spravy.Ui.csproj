@@ -76,6 +76,10 @@
         <DependentUpon>VerificationCodeView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Features\ToDo\Views\RootToDoItemsView.axaml.cs">
+        <DependentUpon>RootToDoItemsView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 
     <ItemGroup>

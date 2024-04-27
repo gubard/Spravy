@@ -2,12 +2,15 @@ using System.Text;
 using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.Input;
+using FluentAssertions;
 using Spravy.Domain.Extensions;
 using Spravy.Tests.Attributes;
 using Spravy.Tests.Extensions;
 using Spravy.Tests.Helpers;
 using Spravy.Ui.Features.Authentication.ViewModels;
 using Spravy.Ui.Features.Authentication.Views;
+using Spravy.Ui.Features.ToDo.ViewModels;
+using Spravy.Ui.Features.ToDo.Views;
 using Spravy.Ui.ViewModels;
 using Spravy.Ui.Views;
 using Xunit;
@@ -154,13 +157,14 @@ public class MainWindowTests
     }
 
     [AvaloniaFact, TestPriority(2)]
-    public void TestReorderToDoItemFlow()
+    public void TestAddToDoItemFlow()
     {
         WindowHelper.CreateWindow()
             .TryCatch(
                 w => w.SetSize(1000, 1000)
                     .ShowWindow()
                     .Case(() => w.GetCurrentView<LoginView, LoginViewModel>()
+                        .RunJobsAll(1)
                         .Case(view => view.FindControl<TextBox>(ElementNames.LoginTextBox)
                             .ThrowIfNull()
                             .FocusElement())
@@ -172,12 +176,43 @@ public class MainWindowTests
                         .FindControl<Button>(ElementNames.LoginButton)
                         .ThrowIfNull()
                         .ClickOn(w)
-                        .RunJobsAll(2))
+                        .RunJobsAll(1))
                     .Case(() => w.GetCurrentView<RootToDoItemsView, RootToDoItemsViewModel>()
                         .FindControl<Button>(ElementNames.AddRootToDoItemButton)
                         .ThrowIfNull()
-                        .ClickOn(w))
-                    .Case(() => w.GetContentDialogView<ConfirmView, ConfirmViewModel>())
+                        .ClickOn(w)
+                        .RunJobsAll(1)
+                        .Case(() => w.GetContentDialogView<ConfirmView, ConfirmViewModel>()
+                            .Case(c => c.FindControl<ContentControl>(ElementNames.ContentContentControl)
+                                .ThrowIfNull()
+                                .GetContentView<AddRootToDoItemView>()
+                                .FindControl<ContentControl>(ElementNames.ToDoItemContentContentControl)
+                                .ThrowIfNull()
+                                .GetContentView<ToDoItemContentView>()
+                                .FindControl<TextBox>(ElementNames.NameTextBox)
+                                .ThrowIfNull()
+                                .SetText(w, "To-Do item 1"))
+                            .Case(c => c.FindControl<Button>(ElementNames.OkButton)
+                                .ThrowIfNull()
+                                .ClickOn(w)))
+                        .Case(r => r.FindControl<ContentControl>(ElementNames.ToDoSubItemsContentControl)
+                            .ThrowIfNull()
+                            .GetContentView<ToDoSubItemsView>()
+                            .FindControl<ContentControl>(ElementNames.ListContentControl)
+                            .ThrowIfNull()
+                            .GetContentView<MultiToDoItemsView>()
+                            .FindControl<ContentControl>(ElementNames.ContentContentControl)
+                            .ThrowIfNull()
+                            .GetContentView<ToDoItemsGroupByView>()
+                            .FindControl<ContentControl>(ElementNames.ContentContentControl)
+                            .ThrowIfNull()
+                            .GetContentView<ToDoItemsGroupByStatusView>()
+                            .FindControl<ContentControl>(ElementNames.ReadyForCompletedContentControl)
+                            .ThrowIfNull()
+                            .GetContentView<ToDoItemsView>()
+                            .FindControl<ItemsControl>(ElementNames.ItemsItemsControl)
+                            .ThrowIfNull()
+                            .Case(i => i.ItemCount.Should().Be(1))))
                     .SaveFrame()
                     .Close(),
                 (w, _) => w.SaveFrame().LogCurrentState()

@@ -9,6 +9,7 @@
                         xmlns:s="clr-namespace:Spravy.Ui.Services"
                         xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
                         xmlns:pg="clr-namespace:Spravy.Ui.Features.PasswordGenerator.ViewModels"
+                        xmlns:viewModels="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                         x:Class="Spravy.Ui.Views.PaneView"
                         x:DataType="vm:PaneViewModel">
@@ -21,7 +22,7 @@
                     BorderThickness="0" />
 
             <Button Command="{x:Static s:CommandStorage.NavigateToCommand}"
-                    CommandParameter="{x:Type vm:RootToDoItemsViewModel}">
+                    CommandParameter="{x:Type viewModels:RootToDoItemsViewModel}">
                 <Grid ColumnDefinitions="Auto,Auto">
                     <mi:MaterialIcon Kind="Checks" />
                     <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.ToDoItems}" />

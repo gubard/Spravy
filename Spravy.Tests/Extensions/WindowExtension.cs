@@ -190,12 +190,7 @@ public static class WindowExtension
             .Content
             .ThrowIfNull()
             .ThrowIfIsNotCast<ContentControl>()
-            .GetVisualChildren()
-            .Single()
-            .ThrowIfIsNotCast<ContentPresenter>()
-            .Child
-            .ThrowIfNull()
-            .ThrowIfIsNotCast<MainSplitView>()
+            .GetContentView<MainSplitView>()
             .Case(w => w.DataContext.ThrowIfNull().ThrowIfIsNotCast<MainSplitViewModel>())
             .Content
             .ThrowIfNull()
@@ -226,12 +221,7 @@ public static class WindowExtension
             .Content
             .ThrowIfNull()
             .ThrowIfIsNotCast<ContentControl>()
-            .GetVisualChildren()
-            .Single()
-            .ThrowIfIsNotCast<ContentPresenter>()
-            .Child
-            .ThrowIfNull()
-            .ThrowIfIsNotCast<MainSplitView>()
+            .GetContentView<MainSplitView>()
             .Case(w => w.DataContext.ThrowIfNull().ThrowIfIsNotCast<MainSplitViewModel>())
             .Content
             .ThrowIfNull()
@@ -297,7 +287,10 @@ public static class WindowExtension
                 .ThrowIfNull()
                 .Case(dc => dc.ThrowIfIsNotCast<TViewModel>()))
             .GetVisualChildren()
-            .Skip(2)
+            .Single()
+            .ThrowIfIsNotCast<Grid>()
+            .Children
+            .TakeLast(1)
             .Single()
             .ThrowIfIsNotCast<DialogOverlayPopupHost>()
             .GetVisualChildren()

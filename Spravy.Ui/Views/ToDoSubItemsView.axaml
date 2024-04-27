@@ -8,6 +8,7 @@
                         xmlns:ir="clr-namespace:Avalonia.Xaml.Interactions.Responsive;assembly=Avalonia.Xaml.Interactions.Responsive"
                         xmlns:h="clr-namespace:Spravy.Ui.Helpers"
                         xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+                        xmlns:v="clr-namespace:Spravy.Ui.Views"
                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                         x:Class="Spravy.Ui.Views.ToDoSubItemsView"
                         x:DataType="vm:ToDoSubItemsViewModel">
@@ -63,7 +64,7 @@
         </Style>
     </UserControl.Styles>
 
-    <ContentControl Content="{Binding List}">
+    <ContentControl Name="{x:Static v:ToDoSubItemsView.ListContentControlName}" Content="{Binding List}">
         <ContentControl.Styles>
             <Style Selector="Expander">
                 <Setter Property="VerticalAlignment" Value="Top" />

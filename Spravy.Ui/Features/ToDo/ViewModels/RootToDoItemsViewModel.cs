@@ -18,8 +18,9 @@ using Spravy.Ui.Features.ToDo.Enums;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 using Spravy.Ui.Services;
+using Spravy.Ui.ViewModels;
 
-namespace Spravy.Ui.ViewModels;
+namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
 {

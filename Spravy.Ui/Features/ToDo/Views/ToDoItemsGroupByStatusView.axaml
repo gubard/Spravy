@@ -6,6 +6,7 @@
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
                                 xmlns:helpers="clr-namespace:Spravy.Ui.Helpers"
+                                xmlns:views="clr-namespace:Spravy.Ui.Features.ToDo.Views"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemsGroupByStatusView"
                                 x:DataType="viewModels:ToDoItemsGroupByStatusViewModel">
@@ -80,7 +81,8 @@
     <ItemsControl Classes="adaptive">
         <ContentControl Content="{Binding Missed}"
                         IsVisible="{Binding Missed.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
-        <ContentControl Content="{Binding ReadyForCompleted}"
+        <ContentControl Name="{x:Static views:ToDoItemsGroupByStatusView.ReadyForCompletedContentControlName}"
+                        Content="{Binding ReadyForCompleted}"
                         IsVisible="{Binding ReadyForCompleted.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
         <ContentControl Content="{Binding Planned}"
                         IsVisible="{Binding Planned.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />

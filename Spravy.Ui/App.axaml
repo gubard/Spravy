@@ -10,6 +10,7 @@
              xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
              xmlns:pm="clr-namespace:Spravy.Ui.Features.PasswordGenerator.Models"
              xmlns:lm="clr-namespace:Spravy.Ui.Features.Localizations.Models"
+             xmlns:viewModels="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
              x:Class="Spravy.Ui.App"
              RequestedThemeVariant="Dark">
     <Application.Resources>
@@ -109,7 +110,7 @@
 
         <DataTemplate DataType="m:RootItem">
             <Button Command="{x:Static s:CommandStorage.NavigateToCommand}"
-                    CommandParameter="{x:Type vm:RootToDoItemsViewModel}"
+                    CommandParameter="{x:Type viewModels:RootToDoItemsViewModel}"
                     Content="{x:Static i:MaterialIconKind.Home}"
                     Classes="Basic" />
         </DataTemplate>

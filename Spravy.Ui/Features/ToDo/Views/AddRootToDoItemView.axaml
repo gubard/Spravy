@@ -6,6 +6,7 @@
                         xmlns:ru="http://reactiveui.net"
                         xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
                         xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+                        xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                         x:Class="Spravy.Ui.Features.ToDo.Views.AddRootToDoItemView"
                         x:DataType="vm:AddRootToDoItemViewModel">
@@ -22,7 +23,8 @@
             </c:GroupBox.Header>
 
             <StackPanel>
-                <ContentControl Content="{Binding ToDoItemContent}" />
+                <ContentControl Name="{x:Static v:AddRootToDoItemView.ToDoItemContentContentControlName}"
+                                Content="{Binding ToDoItemContent}" />
                 <ContentControl Content="{Binding DescriptionContent}" />
             </StackPanel>
         </c:GroupBox>

@@ -7,6 +7,7 @@
                         xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
                         xmlns:m="clr-namespace:Spravy.Ui.Models"
                         xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+                        xmlns:views="clr-namespace:Spravy.Ui.Features.ToDo.Views"
                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                         x:Class="Spravy.Ui.Features.ToDo.Views.MultiToDoItemsView"
                         x:DataType="vm:MultiToDoItemsViewModel">
@@ -35,7 +36,8 @@
 
         <ContentControl Content="{Binding Favorite}"
                         IsVisible="{Binding Favorite.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
-        <ContentControl IsVisible="{Binding IsMulti, Converter={StaticResource ReverseBooleanValueConverter}}"
+        <ContentControl Name="{x:Static views:MultiToDoItemsView.ContentContentControlName}"
+                        IsVisible="{Binding IsMulti, Converter={StaticResource ReverseBooleanValueConverter}}"
                         Content="{Binding Content}" />
 
         <ContentControl IsVisible="{Binding IsMulti}"

@@ -5,6 +5,7 @@
                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+                                xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemsGroupByView"
                                 x:DataType="viewModels:ToDoItemsGroupByViewModel">
@@ -14,5 +15,5 @@
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 
-    <ContentControl Content="{Binding Content}" />
+    <ContentControl Name="{x:Static v:ToDoItemsGroupByView.ContentContentControlName}" Content="{Binding Content}" />
 </reactiveUi:ReactiveUserControl>

@@ -1,6 +1,4 @@
 using Avalonia.Threading;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Helpers;
 
 namespace Spravy.Tests.Extensions;
 

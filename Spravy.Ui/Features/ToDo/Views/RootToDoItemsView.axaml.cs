@@ -1,13 +1,14 @@
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
-using Spravy.Ui.ViewModels;
+using Spravy.Ui.Features.ToDo.ViewModels;
 
-namespace Spravy.Ui.Views;
+namespace Spravy.Ui.Features.ToDo.Views;
 
 public partial class RootToDoItemsView : ReactiveUserControl<RootToDoItemsViewModel>
 {
     public const string AddRootToDoItemButtonName = "add-root-to-do-item-button";
-    
+    public const string ToDoSubItemsContentControlName = "to-do-sub-items-content-control";
+
     public RootToDoItemsView()
     {
         InitializeComponent();

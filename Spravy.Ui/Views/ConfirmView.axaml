@@ -5,6 +5,7 @@
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:ru="http://reactiveui.net"
                         xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
+                        xmlns:v="clr-namespace:Spravy.Ui.Views"
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                         x:Class="Spravy.Ui.Views.ConfirmView"
                         x:DataType="vm:ConfirmViewModel">
@@ -14,12 +15,16 @@
 
     <Grid RowDefinitions="*,Auto"
           ColumnDefinitions="*,*">
-        <ContentControl Grid.ColumnSpan="2" Content="{Binding Content}" />
-        <Button Grid.Row="1"
+        <ContentControl Name="{x:Static v:ConfirmView.ContentContentControlName}"
+                        Grid.ColumnSpan="2"
+                        Content="{Binding Content}" />
+        <Button Name="{x:Static v:ConfirmView.CancelButtonName}"
+                Grid.Row="1"
                 Command="{Binding CancelCommand}"
                 ClickMode="Press"
                 Content="{DynamicResource ConfirmView.Cancel}" />
-        <Button Grid.Row="1"
+        <Button Name="{x:Static v:ConfirmView.OkButtonName}"
+                Grid.Row="1"
                 Grid.Column="1"
                 Command="{Binding ConfirmCommand}"
                 ClickMode="Press"

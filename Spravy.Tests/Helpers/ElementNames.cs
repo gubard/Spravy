@@ -14,4 +14,11 @@ public static class ElementNames
     public const string VerificationEmailButton = "verification-email-button";
     public const string LoginButton = "login-button";
     public const string AddRootToDoItemButton = "add-root-to-do-item-button";
+    public const string ContentContentControl = "content-content-control";
+    public const string ToDoItemContentContentControl = "to-do-item-content-content-control";
+    public const string NameTextBox = "name-text-box";
+    public const string ToDoSubItemsContentControl = "to-do-sub-items-content-control";
+    public const string ListContentControl = "list-content-control";
+    public const string ReadyForCompletedContentControl = "ready-for-completed-content-control";
+    public const string ItemsItemsControl = "items-items-control";
 }
