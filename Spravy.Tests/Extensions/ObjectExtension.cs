@@ -18,11 +18,7 @@ public static class ObjectExtension
         for (ulong i = 0; i < seconds; i++)
         {
             Dispatcher.UIThread.RunJobs();
-            var task = Dispatcher.UIThread.InvokeAsync(() => Task.Delay(TimeSpan.FromSeconds(1)));
-
-            CycleHelper.While(() => !task.IsCompleted, () => Thread.Sleep(TimeSpan.FromMilliseconds(100)))
-                .ThrowIfError();
-
+            Dispatcher.UIThread.Post(() => Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false).GetAwaiter().GetResult());
             Dispatcher.UIThread.RunJobs();
         }
 

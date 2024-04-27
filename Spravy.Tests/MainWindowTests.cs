@@ -31,7 +31,7 @@ public class MainWindowTests
                                 () => w.GetCurrentView<LoginView, LoginViewModel>()
                                     .FindControl<Button>(ElementNames.CreateUserButton)
                                     .ThrowIfNull()
-                                    .RunJobsAll(3)
+                                    .RunJobsAll(1)
                                     .ClickOn(w)
                             )
                             .Case(
