@@ -33,6 +33,7 @@ public class MainWindowTests
                                     .ThrowIfNull()
                                     .RunJobsAll(1)
                                     .ClickOn(w)
+                                    .RunJobsAll(1)
                             )
                             .Case(
                                 () => w.GetCurrentView<CreateUserView, CreateUserViewModel>()
@@ -140,7 +141,8 @@ public class MainWindowTests
                         .Case(() => w.SetKeyTextInput(TextHelper.TextLength8))
                         .FindControl<Button>(ElementNames.LoginButton)
                         .ThrowIfNull()
-                        .ClickOn(w))
+                        .ClickOn(w)
+                        .RunJobsAll(1))
                     .Case(() => w.GetCurrentView<RootToDoItemsView, RootToDoItemsViewModel>())
                     .SaveFrame(),
                 (w, _) => w.SaveFrame().LogCurrentState()
