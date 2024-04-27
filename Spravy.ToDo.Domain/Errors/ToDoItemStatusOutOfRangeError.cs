@@ -5,7 +5,7 @@ namespace Spravy.ToDo.Domain.Errors;
 
 public class ToDoItemStatusOutOfRangeError : ValueOutOfRangeError<ToDoItemStatus>
 {
-    public static readonly Guid MainId = new("7AA58F11-9755-4F49-9478-85EA1778EA9D");
+    public static readonly Guid MainId = new("68A7FCB8-35CB-427F-8A89-A90591519F9B");
 
     protected ToDoItemStatusOutOfRangeError() : base(ToDoItemStatus.Miss, MainId)
     {

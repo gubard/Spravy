@@ -48,7 +48,7 @@ public class ErrorHandler : IErrorHandler
                     () => dialogViewer.CloseProgressDialogAsync(CancellationToken.None),
                     CancellationToken.None
                 ),
-            viewModel => viewModel.ValidationResults.AddRange(errors.ToArray()),
+            viewModel => viewModel.Errors.AddRange(errors.ToArray()),
             CancellationToken.None
         );
     }

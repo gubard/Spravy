@@ -11,7 +11,7 @@
                         x:Class="Spravy.Ui.Features.ErrorHandling.Views.ErrorView"
                         x:DataType="vm:ErrorViewModel">
     <ScrollViewer Classes="mini" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-        <ItemsControl ItemsSource="{Binding ValidationResults}">
+        <ItemsControl ItemsSource="{Binding Errors}">
             <ItemsControl.DataTemplates>
                 <DataTemplate x:DataType="errors:Error">
                     <StackPanel>

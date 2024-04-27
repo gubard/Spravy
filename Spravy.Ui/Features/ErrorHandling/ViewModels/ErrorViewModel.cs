@@ -16,7 +16,7 @@ public class ErrorViewModel : NavigatableViewModelBase
 
     public override string ViewId => TypeCache<ErrorViewModel>.Type.Name;
 
-    public AvaloniaList<Error> ValidationResults { get; } = new();
+    public AvaloniaList<Error> Errors { get; } = new();
 
     public override Result Stop()
     {

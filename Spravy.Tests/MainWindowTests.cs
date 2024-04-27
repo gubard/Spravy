@@ -176,7 +176,7 @@ public class MainWindowTests
                         .FindControl<Button>(ElementNames.LoginButton)
                         .ThrowIfNull()
                         .ClickOn(w)
-                        .RunJobsAll(1))
+                        .RunJobsAll(4))
                     .Case(() => w.GetCurrentView<RootToDoItemsView, RootToDoItemsViewModel>()
                         .FindControl<Button>(ElementNames.AddRootToDoItemButton)
                         .ThrowIfNull()

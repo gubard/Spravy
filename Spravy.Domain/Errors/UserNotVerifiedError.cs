@@ -27,7 +27,7 @@ public class UserNotVerifiedError : Error
 
 public class UserVerifiedError : Error
 {
-    public static readonly Guid MainId = new("CAAE89FE-827F-4770-B7A3-511ED6AB61CB");
+    public static readonly Guid MainId = new("3E08B5FD-6C08-4605-8A58-E580058F564D");
 
     protected UserVerifiedError() : base(MainId)
     {

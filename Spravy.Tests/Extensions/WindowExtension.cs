@@ -107,9 +107,14 @@ public static class WindowExtension
             Console.WriteLine($"HasError: {notifyDataErrorInfo.HasErrors}");
         }
 
-        if (controls.ErrorDialogHost.DialogContent is ExceptionViewModel viewModel)
+        switch (controls.ErrorDialogHost.DialogContent)
         {
-            Console.WriteLine(viewModel.Exception?.ToString());
+            case InfoViewModel { Content: ExceptionViewModel exception }:
+                Console.WriteLine(exception.Exception?.ToString());
+                break;
+            case InfoViewModel { Content: ErrorViewModel error }:
+                Console.WriteLine(string.Join(Environment.NewLine, error.Errors.Select(x => x.Message)));
+                break;
         }
 
         return window;
@@ -265,7 +270,7 @@ public static class WindowExtension
             .ThrowIfNull()
             .ThrowIfIsNotCast<TView>();
     }
-    
+
     public static TView GetContentDialogView<TView, TViewModel>(this Window window)
         where TView : UserControl where TViewModel : ViewModelBase
     {
@@ -283,7 +288,7 @@ public static class WindowExtension
             .ThrowIfIsNotCast<DialogHost>()
             .Case(dh => dh.Identifier.Should().Be("ContentDialogHost"))
             .Case(dh => dh.IsOpen.Should().Be(true))
-            .Case(dh=>dh .DialogContent
+            .Case(dh => dh.DialogContent
                 .ThrowIfNull()
                 .Case(dc => dc.ThrowIfIsNotCast<TViewModel>()))
             .GetVisualChildren()
