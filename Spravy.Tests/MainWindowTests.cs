@@ -142,7 +142,7 @@ public class MainWindowTests
                         .FindControl<Button>(ElementNames.LoginButton)
                         .ThrowIfNull()
                         .ClickOn(w)
-                        .RunJobsAll(1))
+                        .RunJobsAll(2))
                     .Case(() => w.GetCurrentView<RootToDoItemsView, RootToDoItemsViewModel>())
                     .SaveFrame(),
                 (w, _) => w.SaveFrame().LogCurrentState()
