@@ -40,7 +40,7 @@ public static class WindowExtension
             .ThrowIfIsNotCast<Control>()
             .FindControl<Button>(ElementNames.OkButton)
             .ThrowIfNull()
-            .ClickOnButton(window);
+            .ClickOn(window);
 
         dialogHost.IsOpen.Should().BeFalse();
 
