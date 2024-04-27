@@ -150,6 +150,7 @@ public class MainWindowTests
                         .ClickOn(w)
                         .RunJobsAll(2))
                     .Case(() => w.GetCurrentView<RootToDoItemsView, RootToDoItemsViewModel>())
+                    .SaveFrame()
                     .Close(),
                 (w, _) => w.SaveFrame().LogCurrentState()
             );
@@ -212,6 +213,7 @@ public class MainWindowTests
                             .FindControl<ItemsControl>(ElementNames.ItemsItemsControl)
                             .ThrowIfNull()
                             .Case(i => i.ItemCount.Should().Be(1))))
+                    .SaveFrame()
                     .Close(),
                 (w, _) => w.SaveFrame().LogCurrentState()
             );
