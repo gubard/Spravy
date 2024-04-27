@@ -1,10 +1,13 @@
+using Spravy.Domain.Errors;
+using Spravy.Domain.Models;
+
 namespace Spravy.Domain.Helpers;
 
 public static class CycleHelper
 {
     public const ulong MaxCycleCount = ulong.MaxValue;
 
-    public static void While(Func<bool> predicate, Action action)
+    public static Result While(Func<bool> predicate, Action action)
     {
         var count = 0ul;
 
@@ -15,8 +18,10 @@ public static class CycleHelper
 
             if (count == MaxCycleCount)
             {
-                throw new Exception("Max cycle count reached");
+                return new Result(new MaxCycleCountReachedError(MaxCycleCount));
             }
         }
+        
+        return Result.Success;
     }
 }

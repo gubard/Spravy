@@ -223,6 +223,14 @@ public static class ResultExtension
 
         return result.Value;
     }
+    
+    public static void ThrowIfError(this Result result)
+    {
+        if (result.IsHasError)
+        {
+            throw new ErrorsException(result.Errors);
+        }
+    }
 
     public static string GetTitle(this Result result)
     {

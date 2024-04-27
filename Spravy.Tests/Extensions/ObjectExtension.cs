@@ -1,4 +1,5 @@
 using Avalonia.Threading;
+using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
 
 namespace Spravy.Tests.Extensions;
@@ -18,7 +19,10 @@ public static class ObjectExtension
         {
             Dispatcher.UIThread.RunJobs();
             var task = Dispatcher.UIThread.InvokeAsync(() => Task.Delay(TimeSpan.FromSeconds(1)));
-            CycleHelper.While(() => !task.IsCompleted, () => Thread.Sleep(TimeSpan.FromMilliseconds(100)));
+
+            CycleHelper.While(() => !task.IsCompleted, () => Thread.Sleep(TimeSpan.FromMilliseconds(100)))
+                .ThrowIfError();
+
             Dispatcher.UIThread.RunJobs();
         }
 
