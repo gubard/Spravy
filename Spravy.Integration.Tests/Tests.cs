@@ -212,8 +212,9 @@ public class Tests
                         .RunJobsAll(1)
                         .Case(view => view.FindControl<TextBox>(ElementNames.LoginTextBox)
                             .ThrowIfNull()
-                            .FocusInput(w))
-                        .Case(() => w.SetKeyTextInput(TextHelper.TextLength4))
+                            .Text
+                            .Should()
+                            .Be(TextHelper.TextLength4))
                         .Case(view => view.FindControl<TextBox>(ElementNames.PasswordTextBox)
                             .ThrowIfNull()
                             .FocusInput(w))
