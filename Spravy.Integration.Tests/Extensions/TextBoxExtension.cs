@@ -2,7 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Spravy.Domain.Extensions;
 
-namespace Spravy.Tests.Extensions;
+namespace Spravy.Integration.Tests.Extensions;
 
 public static class TextBoxExtension
 {

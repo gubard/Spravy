@@ -7,13 +7,13 @@ using Avalonia.VisualTree;
 using DialogHostAvalonia;
 using FluentAssertions;
 using Spravy.Domain.Extensions;
-using Spravy.Tests.Helpers;
+using Spravy.Integration.Tests.Helpers;
 using Spravy.Ui.Features.ErrorHandling.ViewModels;
 using Spravy.Ui.Models;
 using Spravy.Ui.ViewModels;
 using Spravy.Ui.Views;
 
-namespace Spravy.Tests.Extensions;
+namespace Spravy.Integration.Tests.Extensions;
 
 public static class WindowExtension
 {
@@ -155,7 +155,7 @@ public static class WindowExtension
 
     public static DialogHost GetErrorDialogHost(this Window window)
     {
-        return window.ThrowIfIsNotCast<MainWindow>()
+        return window.ThrowIfIsNotCast<CreateUser>()
             .Content
             .ThrowIfNull()
             .ThrowIfIsNotCast<MainView>()

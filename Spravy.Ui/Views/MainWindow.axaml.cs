@@ -3,9 +3,9 @@ using SukiUI.Controls;
 
 namespace Spravy.Ui.Views;
 
-public partial class MainWindow : SukiWindow, IDesktopTopLevelControl
+public partial class CreateUser : SukiWindow, IDesktopTopLevelControl
 {
-    public MainWindow()
+    public CreateUser()
     {
         InitializeComponent();
     }

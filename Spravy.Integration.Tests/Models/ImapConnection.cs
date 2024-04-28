@@ -1,4 +1,4 @@
-namespace Spravy.Tests.Models;
+namespace Spravy.Integration.Tests.Models;
 
 public class ImapConnection
 {

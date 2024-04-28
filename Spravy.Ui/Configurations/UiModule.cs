@@ -177,7 +177,7 @@ public class UiModule : NinjectModule
             );
 
         Bind<IDesktopTopLevelControl>()
-            .To<MainWindow>()
+            .To<CreateUser>()
             .InSingletonScope()
             .OnActivation(
                 (c, x) => { x.Content = c.Kernel.Get<Control>(); }

@@ -1,7 +1,7 @@
 using Avalonia.Input;
 using FluentAssertions;
 
-namespace Spravy.Tests.Extensions;
+namespace Spravy.Integration.Tests.Extensions;
 
 public static class InputElementExtension
 {

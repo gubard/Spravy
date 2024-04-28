@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Configuration;
-using Spravy.Tests.Models;
+using Spravy.Integration.Tests.Models;
 
-namespace Spravy.Tests.Extensions;
+namespace Spravy.Integration.Tests.Extensions;
 
 public static class ConfigurationExtension
 {

@@ -1,4 +1,4 @@
-namespace Spravy.Tests.Helpers;
+namespace Spravy.Integration.Tests.Helpers;
 
 public static class TextHelper
 {

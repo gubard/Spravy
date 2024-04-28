@@ -1,6 +1,6 @@
 using Spravy.Domain.Extensions;
 
-namespace Spravy.Tests.Helpers;
+namespace Spravy.Integration.Tests.Helpers;
 
 public static class FileHelper
 {

@@ -4,7 +4,7 @@ using Spravy.Domain.Di.Helpers;
 using Spravy.Domain.Extensions;
 using Spravy.Ui.Interfaces;
 
-namespace Spravy.Tests.Helpers;
+namespace Spravy.Integration.Tests.Helpers;
 
 public static class WindowHelper
 {

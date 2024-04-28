@@ -1,31 +1,29 @@
 using System.Text;
 using Avalonia.Controls;
-using Avalonia.Headless.XUnit;
+using Avalonia.Headless.NUnit;
 using Avalonia.Input;
 using FluentAssertions;
 using Spravy.Domain.Extensions;
-using Spravy.Tests.Attributes;
-using Spravy.Tests.Extensions;
-using Spravy.Tests.Helpers;
+using Spravy.Integration.Tests.Extensions;
+using Spravy.Integration.Tests.Helpers;
 using Spravy.Ui.Features.Authentication.ViewModels;
 using Spravy.Ui.Features.Authentication.Views;
 using Spravy.Ui.Features.ToDo.ViewModels;
 using Spravy.Ui.Features.ToDo.Views;
 using Spravy.Ui.ViewModels;
 using Spravy.Ui.Views;
-using Xunit;
 
-namespace Spravy.Tests;
+namespace Spravy.Integration.Tests;
 
-[TestCaseOrderer("Spravy.Tests.Services.PriorityOrderer", "Spravy.Tests")]
-public class MainWindowTests
+[ParallelizableAttribute]
+public class Tests
 {
-    static MainWindowTests()
+    static Tests()
     {
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
     }
 
-    [AvaloniaFact, TestPriority(1)]
+    [AvaloniaTest, Order(1)]
     public void CreateUserFlow()
     {
         WindowHelper.CreateWindow()
@@ -156,7 +154,7 @@ public class MainWindowTests
             );
     }
 
-    [AvaloniaFact, TestPriority(2)]
+    [AvaloniaTest, Order(2)]
     public void TestAddToDoItemFlow()
     {
         WindowHelper.CreateWindow()

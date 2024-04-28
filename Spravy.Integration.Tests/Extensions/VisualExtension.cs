@@ -4,7 +4,7 @@ using Avalonia.Input;
 using FluentAssertions;
 using Spravy.Domain.Extensions;
 
-namespace Spravy.Tests.Extensions;
+namespace Spravy.Integration.Tests.Extensions;
 
 public static class VisualExtension
 {

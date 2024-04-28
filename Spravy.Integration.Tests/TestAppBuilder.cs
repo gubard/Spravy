@@ -4,15 +4,12 @@ using Avalonia.ReactiveUI;
 using Microsoft.Extensions.Configuration;
 using Ninject;
 using Spravy.Domain.Di.Helpers;
-using Spravy.Tests;
 using Spravy.Ui;
 using Spravy.Ui.Configurations;
 using Spravy.Ui.Desktop.Configurations;
 using Spravy.Ui.Extensions;
 
-[assembly: AvaloniaTestApplication(typeof(TestAppBuilder))]
-
-namespace Spravy.Tests;
+namespace Spravy.Integration.Tests;
 
 public class TestAppBuilder
 {
