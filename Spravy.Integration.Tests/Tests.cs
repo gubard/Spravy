@@ -15,6 +15,7 @@ using Spravy.Ui.Views;
 
 namespace Spravy.Integration.Tests;
 
+[TestFixture]
 public class Tests
 {
     static Tests()
