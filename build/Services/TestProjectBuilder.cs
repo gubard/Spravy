@@ -1,4 +1,5 @@
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.Json;
 using _build.Extensions;
@@ -25,12 +26,24 @@ public class TestProjectBuilder : ProjectBuilder<TestProjectBuilderOptions>
         File.WriteAllText(Options.AppSettingsFile.FullName, jsonData);
     }
 
-    public void Test() => DotNetTasks.DotNetTest(s =>
-        s.SetConfiguration(Options.Configuration)
-            .EnableNoRestore()
-            .EnableNoBuild()
-            .SetProjectFile(Options.CsprojFile.FullName)
-    );
+    public void Test()
+    {
+        for (var i = 0ul; i < ulong.MaxValue; i++)
+        {
+            var output = DotNetTasks.DotNetTest(s =>
+                s.SetConfiguration(Options.Configuration)
+                    .EnableNoRestore()
+                    .EnableNoBuild()
+                    .SetProjectFile(Options.CsprojFile.FullName)
+                    .SetFilter($"Priority={i}")
+            );
+
+            if (output.Any(x => x.Text.Contains("No test matches the given testcase filter")))
+            {
+                break;
+            }
+        }
+    }
 
     void SetAppSettingsStream(Stream stream, JsonDocument jsonDocument)
     {
