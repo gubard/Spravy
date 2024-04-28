@@ -227,7 +227,7 @@ public class Tests
                         .FindControl<Button>(ElementNames.AddRootToDoItemButton)
                         .ThrowIfNull()
                         .ClickOn(w)
-                        .RunJobsAll(1)
+                        .RunJobsAll(2)
                         .Case(() => w.GetContentDialogView<ConfirmView, ConfirmViewModel>()
                             .Case(c => c.FindControl<ContentControl>(ElementNames.ContentContentControl)
                                 .ThrowIfNull()

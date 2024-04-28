@@ -8,7 +8,7 @@ using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.Ui.Models;
 
-namespace Spravy.Ui.ViewModels;
+namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ToDoItemContentViewModel : NavigatableViewModelBase
 {
