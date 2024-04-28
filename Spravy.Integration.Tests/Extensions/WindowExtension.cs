@@ -155,7 +155,7 @@ public static class WindowExtension
 
     public static DialogHost GetErrorDialogHost(this Window window)
     {
-        return window.ThrowIfIsNotCast<CreateUser>()
+        return window.ThrowIfIsNotCast<MainWindow>()
             .Content
             .ThrowIfNull()
             .ThrowIfIsNotCast<MainView>()
