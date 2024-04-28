@@ -1,13 +1,16 @@
 using System.Text;
 using Avalonia.Controls;
+using Avalonia.Controls.Presenters;
 using Avalonia.Headless.NUnit;
 using Avalonia.Input;
+using Avalonia.VisualTree;
 using FluentAssertions;
 using Spravy.Domain.Extensions;
 using Spravy.Integration.Tests.Extensions;
 using Spravy.Integration.Tests.Helpers;
 using Spravy.Ui.Features.Authentication.ViewModels;
 using Spravy.Ui.Features.Authentication.Views;
+using Spravy.Ui.Features.ErrorHandling.Views;
 using Spravy.Ui.Features.ToDo.ViewModels;
 using Spravy.Ui.Features.ToDo.Views;
 using Spravy.Ui.ViewModels;
@@ -33,9 +36,53 @@ public class Tests
                     .Case(
                         () => w.Case(
                                 () => w.GetCurrentView<LoginView, LoginViewModel>()
+                                    .RunJobsAll(1)
+                                    .Case(l => l.FindControl<TextBox>(ElementNames.LoginTextBox)
+                                        .ThrowIfNull()
+                                        .SetText(w, TextHelper.TextLength4))
+                                    .Case(l => l.FindControl<TextBox>(ElementNames.PasswordTextBox)
+                                        .ThrowIfNull()
+                                        .SetText(w, TextHelper.TextLength8))
+                                    .Case(l => l.FindControl<Button>(ElementNames.LoginButton)
+                                        .ThrowIfNull()
+                                        .ClickOn(w)
+                                        .RunJobsAll(5))
+                                    .Case(() => w.GetErrorDialogView<InfoView, InfoViewModel>()
+                                        .Case(i => i.FindControl<ContentControl>(ElementNames.ContentContentControl)
+                                            .ThrowIfNull()
+                                            .GetContentView<ErrorView>()
+                                            .FindControl<ItemsControl>(ElementNames.ErrorsItemsControl)
+                                            .ThrowIfNull()
+                                            .Case(ic => ic.ItemCount.Should().Be(1))
+                                            .GetVisualChildren()
+                                            .Single()
+                                            .ThrowIfIsNotCast<Border>()
+                                            .Child
+                                            .ThrowIfNull()
+                                            .GetVisualChildren()
+                                            .Single()
+                                            .ThrowIfIsNotCast<StackPanel>()
+                                            .Children
+                                            .Single()
+                                            .ThrowIfIsNotCast<ContentPresenter>()
+                                            .Child
+                                            .ThrowIfNull()
+                                            .ThrowIfIsNotCast<StackPanel>()
+                                            .Children
+                                            .ElementAt(1)
+                                            .ThrowIfIsNotCast<TextBlock>()
+                                            .Text
+                                            .Should()
+                                            .Be($"User with login \"{TextHelper.TextLength4}\" not exists"))
+                                        .FindControl<Button>(ElementNames.OkButton)
+                                        .ThrowIfNull()
+                                        .ClickOn(w))
+                                    .Case(l => l.FindControl<TextBox>(ElementNames.LoginTextBox)
+                                        .ThrowIfNull()
+                                        .FocusInput(w)
+                                        .ClearText(w))
                                     .FindControl<Button>(ElementNames.CreateUserButton)
                                     .ThrowIfNull()
-                                    .RunJobsAll(1)
                                     .ClickOn(w)
                                     .RunJobsAll(1)
                             )
@@ -123,7 +170,7 @@ public class Tests
                     .Case(() => w.GetCurrentView<VerificationCodeView, VerificationCodeViewModel>()
                         .FindControl<TextBox>(ElementNames.VerificationCodeTextBox)
                         .ThrowIfNull()
-                        .FocusElement()
+                        .FocusInput(w)
                         .Case(() => w.SetKeyTextInput(
                                 TestAppBuilder.Configuration.GetImapConnection().GetLastEmailText()
                             )
@@ -137,11 +184,11 @@ public class Tests
                     .Case(() => w.GetCurrentView<LoginView, LoginViewModel>()
                         .Case(view => view.FindControl<TextBox>(ElementNames.LoginTextBox)
                             .ThrowIfNull()
-                            .FocusElement())
+                            .FocusInput(w))
                         .Case(() => w.SetKeyTextInput(TextHelper.TextLength4))
                         .Case(view => view.FindControl<TextBox>(ElementNames.PasswordTextBox)
                             .ThrowIfNull()
-                            .FocusElement())
+                            .FocusInput(w))
                         .Case(() => w.SetKeyTextInput(TextHelper.TextLength8))
                         .FindControl<Button>(ElementNames.LoginButton)
                         .ThrowIfNull()
@@ -165,11 +212,11 @@ public class Tests
                         .RunJobsAll(1)
                         .Case(view => view.FindControl<TextBox>(ElementNames.LoginTextBox)
                             .ThrowIfNull()
-                            .FocusElement())
+                            .FocusInput(w))
                         .Case(() => w.SetKeyTextInput(TextHelper.TextLength4))
                         .Case(view => view.FindControl<TextBox>(ElementNames.PasswordTextBox)
                             .ThrowIfNull()
-                            .FocusElement())
+                            .FocusInput(w))
                         .Case(() => w.SetKeyTextInput(TextHelper.TextLength8))
                         .FindControl<Button>(ElementNames.LoginButton)
                         .ThrowIfNull()

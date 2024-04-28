@@ -16,7 +16,7 @@ public static class VisualExtension
         {
             inputElement.MustEnabled();
         }
-        
+
         var position = visual.TranslatePoint(new Point(0, 0), window).ThrowIfNullStruct().Center(visual.Bounds);
         window.RunJobsAll();
         window.SpravyMouseMove(position, RawInputModifiers.None);
@@ -28,7 +28,7 @@ public static class VisualExtension
 
         return visual;
     }
-    
+
     public static TVisual MustWidth<TVisual>(this TVisual visual, double width) where TVisual : Visual
     {
         visual.Bounds.Width.Should().Be(width);

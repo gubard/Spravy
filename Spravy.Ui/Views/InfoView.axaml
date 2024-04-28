@@ -14,7 +14,7 @@
     </UserControl.KeyBindings>
 
     <Grid RowDefinitions="*,Auto">
-        <ContentControl Content="{Binding Content}" />
+        <ContentControl Name="{x:Static v:InfoView.ContentContentControlName}" Content="{Binding Content}" />
         <Button Name="{x:Static v:InfoView.OkButtonName}"
                 Grid.Row="1"
                 Command="{Binding OkCommand}"

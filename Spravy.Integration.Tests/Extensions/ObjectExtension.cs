@@ -25,13 +25,16 @@ public static class ObjectExtension
 
     public static TObject TryCatch<TObject>(this TObject obj, Action<TObject> @try, Action<TObject, Exception> @catch)
     {
+        TObject a = obj;
+        
         try
         {
-            @try.Invoke(obj);
+            @try.Invoke(a);
         }
         catch (Exception e)
         {
             @catch.Invoke(obj, e);
+
             throw;
         }
 

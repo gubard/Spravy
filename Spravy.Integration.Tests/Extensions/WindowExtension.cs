@@ -155,7 +155,7 @@ public static class WindowExtension
 
     public static DialogHost GetErrorDialogHost(this Window window)
     {
-        return window.ThrowIfIsNotCast<MainWindow>()
+        var errorDialogHost = window.ThrowIfIsNotCast<MainWindow>()
             .Content
             .ThrowIfNull()
             .ThrowIfIsNotCast<MainView>()
@@ -164,6 +164,8 @@ public static class WindowExtension
             .ThrowIfNull()
             .ThrowIfIsNotCast<DialogHost>()
             .Case(dh => dh.Identifier.Should().Be("ErrorDialogHost"));
+
+        return errorDialogHost;
     }
 
     public static (
@@ -287,6 +289,32 @@ public static class WindowExtension
             .ThrowIfNull()
             .ThrowIfIsNotCast<DialogHost>()
             .Case(dh => dh.Identifier.Should().Be("ContentDialogHost"))
+            .Case(dh => dh.IsOpen.Should().Be(true))
+            .Case(dh => dh.DialogContent
+                .ThrowIfNull()
+                .Case(dc => dc.ThrowIfIsNotCast<TViewModel>()))
+            .GetVisualChildren()
+            .Single()
+            .ThrowIfIsNotCast<Grid>()
+            .Children
+            .TakeLast(1)
+            .Single()
+            .ThrowIfIsNotCast<DialogOverlayPopupHost>()
+            .GetVisualChildren()
+            .Single()
+            .ThrowIfIsNotCast<Border>()
+            .GetVisualChildren()
+            .Single()
+            .ThrowIfIsNotCast<ContentPresenter>()
+            .GetVisualChildren()
+            .Single()
+            .ThrowIfIsNotCast<TView>();
+    }
+
+    public static TView GetErrorDialogView<TView, TViewModel>(this Window window)
+        where TView : UserControl where TViewModel : ViewModelBase
+    {
+        return window.GetErrorDialogHost()
             .Case(dh => dh.IsOpen.Should().Be(true))
             .Case(dh => dh.DialogContent
                 .ThrowIfNull()
