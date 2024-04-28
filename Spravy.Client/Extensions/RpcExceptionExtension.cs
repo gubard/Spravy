@@ -73,7 +73,7 @@ public static class RpcExceptionExtension
             }
 
             var func = GetFunc(type);
-            await using var stream = new MemoryStream();
+            await using var stream = new MemoryStream(trailer.ValueBytes);
             var validationResult = func.Invoke(serializer, stream);
             errors.Add(validationResult);
         }
@@ -101,9 +101,7 @@ public static class RpcExceptionExtension
             .ToCall(serializer, memoryStream)
             .ToProperty(typeof(Result<>).MakeGenericType(type).GetProperty(nameof(Result<object>.Value)).ThrowIfNull())
             .ToConvert(typeof(Error))
-            .ToLambda(
-                [serializer, memoryStream]
-            )
+            .ToLambda([serializer, memoryStream])
             .Compile();
 
         return chace[type];
