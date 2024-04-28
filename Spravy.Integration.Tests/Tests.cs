@@ -23,7 +23,7 @@ public class Tests
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
     }
 
-    [AvaloniaTest, Order(1), Property("Priority", "1")]
+    [AvaloniaTest, Order(0), Property("Priority", "0")]
     public void CreateUserFlow()
     {
         WindowHelper.CreateWindow()
@@ -154,7 +154,7 @@ public class Tests
             );
     }
 
-    [AvaloniaTest, Order(2), Property("Priority", "2")]
+    [AvaloniaTest, Order(1), Property("Priority", "1")]
     public void TestAddToDoItemFlow()
     {
         WindowHelper.CreateWindow()
