@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Spravy.Domain.Extensions;
+using Spravy.Domain.Helpers;
 
 namespace Spravy.Integration.Tests.Extensions;
 
@@ -20,13 +21,14 @@ public static class TextBoxExtension
             window.RunJobsAll();
         }
 
-        while (textBox.Text.ThrowIfNull().Length > 0)
-        {
-            window.SpravyKeyPressQwerty(PhysicalKey.Backspace, RawInputModifiers.None);
-            window.RunJobsAll();
-            window.SpravyKeyReleaseQwerty(PhysicalKey.Backspace, RawInputModifiers.None);
-            window.RunJobsAll();
-        }
+        CycleHelper.While(() => textBox.Text.ThrowIfNull().Length > 0, () =>
+            {
+                window.SpravyKeyPressQwerty(PhysicalKey.Backspace, RawInputModifiers.None);
+                window.RunJobsAll();
+                window.SpravyKeyReleaseQwerty(PhysicalKey.Backspace, RawInputModifiers.None);
+                window.RunJobsAll();
+            })
+            .ThrowIfError();
 
         return textBox;
     }
@@ -39,7 +41,7 @@ public static class TextBoxExtension
 
         return textBox;
     }
-    
+
     public static TTextBox FocusInput<TTextBox>(this TTextBox textBox, Window window)
         where TTextBox : TextBox
     {
