@@ -15,7 +15,6 @@ using Spravy.Ui.Views;
 
 namespace Spravy.Integration.Tests;
 
-[ParallelizableAttribute]
 public class Tests
 {
     static Tests()
