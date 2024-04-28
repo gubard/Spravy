@@ -18,6 +18,6 @@ public class UserWithEmailNotExistsError : Error
 
     public override string Message
     {
-        get => $"User with login \"{Email}\" not exists";
+        get => $"User with email \"{Email}\" not exists";
     }
 }

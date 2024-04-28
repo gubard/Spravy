@@ -7,6 +7,6 @@ public abstract class Error
         Id = id;
     }
 
-    public Guid Id { get; protected set; }
+    public Guid Id { get; }
     public abstract string Message { get; }
 }
