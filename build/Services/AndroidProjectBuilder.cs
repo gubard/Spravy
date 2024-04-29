@@ -18,6 +18,10 @@ public class AndroidProjectBuilder : UiProjectBuilder<AndroidProjectBuilderOptio
     {
     }
 
+    public override void Restore()
+    {
+    }
+
     public void Publish()
     {
         for (var i = 0; i < 3; i++)
@@ -37,7 +41,6 @@ public class AndroidProjectBuilder : UiProjectBuilder<AndroidProjectBuilderOptio
                         .SetConfiguration(Options.Configuration)
                         .AddProperty("Version", versionService.Version.ToString())
                         .SetOutput(Options.PublishFolder.FullName)
-                        .SetNoRestore(true)
                     );
                 }
                 else
@@ -57,7 +60,6 @@ public class AndroidProjectBuilder : UiProjectBuilder<AndroidProjectBuilderOptio
                                 .AddProperty("Version", versionService.Version.ToString())
                                 .SetOutput(Options.PublishFolder.Combine(runtime.Name).FullName)
                                 .SetRuntime(runtime.Name)
-                                .SetNoRestore(true)
                         );
                     }
                 }
