@@ -228,7 +228,7 @@ public class Tests
                             .Case(c => c.FindControl<Button>(ElementNames.OkButton)
                                 .ThrowIfNull()
                                 .ClickOn(w)
-                                .RunJobsAll(2)))
+                                .RunJobsAll(3)))
                         .Case(r => r.FindControl<ContentControl>(ElementNames.ToDoSubItemsContentControl)
                             .ThrowIfNull()
                             .GetContentView<ToDoSubItemsView>()
