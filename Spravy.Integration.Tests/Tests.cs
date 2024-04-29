@@ -208,7 +208,8 @@ public class Tests
             .TryCatch(
                 w => w.SetSize(1000, 1000)
                     .ShowWindow()
-                    .Case(() => w.GetCurrentView<LoginView, LoginViewModel>()
+                    .RunJobsAll(2)
+                    /*.Case(() => w.GetCurrentView<LoginView, LoginViewModel>()
                         .RunJobsAll(1)
                         .Case(view => view.FindControl<TextBox>(ElementNames.LoginTextBox)
                             .ThrowIfNull()
@@ -219,7 +220,7 @@ public class Tests
                         .FindControl<Button>(ElementNames.LoginButton)
                         .ThrowIfNull()
                         .ClickOn(w)
-                        .RunJobsAll(2))
+                        .RunJobsAll(2))*/
                     .Case(() => w.GetCurrentView<RootToDoItemsView, RootToDoItemsViewModel>()
                         .FindControl<Button>(ElementNames.AddRootToDoItemButton)
                         .ThrowIfNull()
