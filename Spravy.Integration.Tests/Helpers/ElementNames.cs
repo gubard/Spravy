@@ -22,5 +22,6 @@ public static class ElementNames
     public const string ReadyForCompletedContentControl = "ready-for-completed-content-control";
     public const string ItemsItemsControl = "items-items-control";
     public const string ErrorsItemsControl = "errors-items-control";
-     public const string RememberMeCheckBoxName = "remember-me-check-box";
+    public const string RememberMeCheckBoxName = "remember-me-check-box";
+    public const string ItemsListBox = "items-list-box";
 }

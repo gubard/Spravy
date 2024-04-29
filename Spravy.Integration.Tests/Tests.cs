@@ -1,6 +1,9 @@
 using System.Text;
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Diagnostics;
 using Avalonia.Controls.Presenters;
+using Avalonia.Controls.Primitives;
 using Avalonia.Headless.NUnit;
 using Avalonia.Input;
 using Avalonia.VisualTree;
@@ -15,6 +18,7 @@ using Spravy.Ui.Features.ToDo.ViewModels;
 using Spravy.Ui.Features.ToDo.Views;
 using Spravy.Ui.ViewModels;
 using Spravy.Ui.Views;
+using SukiUI.Controls;
 
 namespace Spravy.Integration.Tests;
 
@@ -208,56 +212,98 @@ public class Tests
             .TryCatch(
                 w => w.SetSize(1000, 1000)
                     .ShowWindow()
-                    .RunJobsAll(2)
-                    /*.Case(() => w.GetCurrentView<LoginView, LoginViewModel>()
-                        .RunJobsAll(1)
-                        .Case(view => view.FindControl<TextBox>(ElementNames.LoginTextBox)
-                            .ThrowIfNull()
-                            .SetText(w, TextHelper.TextLength4))
-                        .Case(view => view.FindControl<TextBox>(ElementNames.PasswordTextBox)
-                            .ThrowIfNull()
-                            .SetText(w, TextHelper.TextLength8))
-                        .FindControl<Button>(ElementNames.LoginButton)
-                        .ThrowIfNull()
-                        .ClickOn(w)
-                        .RunJobsAll(2))*/
+                    .RunJobsAll(5)
                     .Case(() => w.GetCurrentView<RootToDoItemsView, RootToDoItemsViewModel>()
-                        .FindControl<Button>(ElementNames.AddRootToDoItemButton)
+                        .AddToDoItem(w, "To-Do item 1")
+                        .AddToDoItem(w, "To-Do item 2"))
+                    .Close(),
+                (w, _) => w.SaveFrame().LogCurrentState()
+            );
+    }
+
+    [AvaloniaTest, Order(2), Property("Priority", "2")]
+    public void TestChangeToDoItemFlow()
+    {
+        WindowHelper.CreateWindow()
+            .TryCatch(
+                w => w.SetSize(1000, 1000)
+                    .ShowWindow()
+                    .RunJobsAll(5)
+                    .Case(() => w.GetCurrentView<RootToDoItemsView, RootToDoItemsViewModel>()
+                        .GetDoItemItemsControl()
                         .ThrowIfNull()
+                        .GetVisualChildren()
+                        .Single()
+                        .Case(a => a.ToString())
+                        .ThrowIfIsNotCast<Border>()
+                        .Child
+                        .ThrowIfNull()
+                        .ThrowIfIsNotCast<ItemsPresenter>()
+                        .GetVisualChildren()
+                        .Single()
+                        .ThrowIfIsNotCast<VirtualizingStackPanel>()
+                        .Children
+                        .Last()
+                        .ThrowIfIsNotCast<ContentPresenter>()
+                        .Child
+                        .ThrowIfNull()
+                        .ThrowIfIsNotCast<BusyArea>()
+                        .Content
+                        .ThrowIfNull()
+                        .ThrowIfIsNotCast<Button>()
+                        .Content
+                        .ThrowIfNull()
+                        .ThrowIfIsNotCast<Grid>()
+                        .Children
+                        .Last()
+                        .ThrowIfIsNotCast<Grid>()
+                        .Children
+                        .First()
+                        .ThrowIfIsNotCast<Button>()
                         .ClickOn(w)
-                        .RunJobsAll(2)
-                        .Case(() => w.GetContentDialogView<ConfirmView, ConfirmViewModel>()
-                            .Case(c => c.FindControl<ContentControl>(ElementNames.ContentContentControl)
-                                .ThrowIfNull()
-                                .GetContentView<AddRootToDoItemView>()
-                                .FindControl<ContentControl>(ElementNames.ToDoItemContentContentControl)
-                                .ThrowIfNull()
-                                .GetContentView<ToDoItemContentView>()
-                                .FindControl<TextBox>(ElementNames.NameTextBox)
-                                .ThrowIfNull()
-                                .SetText(w, "To-Do item 1"))
-                            .Case(c => c.FindControl<Button>(ElementNames.OkButton)
-                                .ThrowIfNull()
-                                .ClickOn(w)
-                                .RunJobsAll(3)))
-                        .Case(r => r.FindControl<ContentControl>(ElementNames.ToDoSubItemsContentControl)
-                            .ThrowIfNull()
-                            .GetContentView<ToDoSubItemsView>()
-                            .FindControl<ContentControl>(ElementNames.ListContentControl)
-                            .ThrowIfNull()
-                            .GetContentView<MultiToDoItemsView>()
-                            .FindControl<ContentControl>(ElementNames.ContentContentControl)
-                            .ThrowIfNull()
-                            .GetContentView<ToDoItemsGroupByView>()
-                            .FindControl<ContentControl>(ElementNames.ContentContentControl)
-                            .ThrowIfNull()
-                            .GetContentView<ToDoItemsGroupByStatusView>()
-                            .FindControl<ContentControl>(ElementNames.ReadyForCompletedContentControl)
-                            .ThrowIfNull()
-                            .GetContentView<ToDoItemsView>()
-                            .FindControl<ItemsControl>(ElementNames.ItemsItemsControl)
-                            .ThrowIfNull()
-                            .Case(i => i.ItemCount.Should().Be(1))))
+                        .RunJobsAll(1)
+                        .Flyout
+                        .ThrowIfNull()
+                        .ThrowIfIsNotCast<IPopupHostProvider>()
+                        .PopupHost
+                        .ThrowIfNull()
+                        .ThrowIfIsNotCast<Visual>()
+                        .GetVisualChildren()
+                        .Single()
+                        .ThrowIfIsNotCast<LayoutTransformControl>()
+                        .Child
+                        .ThrowIfNull()
+                        .ThrowIfIsNotCast<VisualLayerManager>()
+                        .Child
+                        .ThrowIfNull()
+                        .ThrowIfIsNotCast<ContentPresenter>()
+                        .Child
+                        .ThrowIfNull()
+                        .ThrowIfIsNotCast<MenuFlyoutPresenter>()
+                        .GetVisualChildren()
+                        .Single()
+                        .ThrowIfIsNotCast<Panel>()
+                        .Children
+                        .Last()
+                        .ThrowIfIsNotCast<Border>()
+                        .Child
+                        .ThrowIfNull()
+                        .ThrowIfIsNotCast<ItemsPresenter>()
+                        .GetVisualChildren()
+                        .Single()
+                        .ThrowIfIsNotCast<StackPanel>()
+                        .Children
+                        .ElementAt(10)
+                        .ClickOn(w)
+                        .RunJobsAll(2))
+                    .Case(() => w.GetContentDialogView<ConfirmView, ConfirmViewModel>()
+                        .FindControl<ContentControl>(ElementNames.ContentContentControl)
+                        .ThrowIfNull()
+                        .GetContentView<ChangeToDoItemOrderIndexView>()
+                        .GetControl<ListBox>(ElementNames.ItemsListBox)
+                        .ItemCount
+                        .Should()
+                        .Be(1))
                     .Close(),
                 (w, _) => w.SaveFrame().LogCurrentState()
             );

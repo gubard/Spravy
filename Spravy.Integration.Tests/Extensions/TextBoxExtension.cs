@@ -10,7 +10,11 @@ public static class TextBoxExtension
     public static TTextBox ClearText<TTextBox>(this TTextBox textBox, Window window)
         where TTextBox : TextBox
     {
-        textBox.Text.ThrowIfNullOrEmpty();
+        if (textBox.Text.IsNullOrWhiteSpace())
+        {
+            return textBox;
+        }
+
         textBox.FocusInput(window);
 
         for (var i = 0; i < textBox.Text.ThrowIfNull().Length; i++)

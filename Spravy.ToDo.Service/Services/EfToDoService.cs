@@ -977,7 +977,7 @@ public class EfToDoService : IToDoService
                 .Where(x => x.ParentId == item.ParentId && x.Id != item.Id)
                 .OrderBy(x => x.OrderIndex)
                 .ToArrayEntitiesAsync(cancellationToken)
-                .IfSuccessAsync(items => mapper.Map<ToDoShortItem[]>(items).ToReadOnlyMemory().ToResult(),
+                .IfSuccessAsync(items => mapper.Map<ToDoShortItem[]>(items.ToArray()).ToReadOnlyMemory().ToResult(),
                     cancellationToken), cancellationToken), cancellationToken);
     }
 

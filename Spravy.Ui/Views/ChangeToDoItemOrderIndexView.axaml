@@ -5,6 +5,7 @@
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
                         xmlns:ru="http://reactiveui.net"
+                        xmlns:v="clr-namespace:Spravy.Ui.Views"
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                         x:Class="Spravy.Ui.Views.ChangeToDoItemOrderIndexView"
                         x:DataType="vm:ChangeToDoItemOrderIndexViewModel">
@@ -22,7 +23,8 @@
         </StackPanel>
 
         <ScrollViewer Classes="mini" Grid.Row="1">
-            <ListBox ItemsSource="{Binding Items}"
+            <ListBox Name="{x:Static v:ChangeToDoItemOrderIndexView.ItemsListBoxName}"
+                     ItemsSource="{Binding Items}"
                      SelectionMode="Single"
                      SelectedItem="{Binding SelectedItem}" />
         </ScrollViewer>
