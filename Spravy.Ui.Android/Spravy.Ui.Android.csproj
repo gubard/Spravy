@@ -29,7 +29,6 @@
         <LogicalName>ILLink.Descriptors.xml</LogicalName>
       </EmbeddedResource>
 
-      <None Remove="appsettings.json" />
       <EmbeddedResource Include="appsettings.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </EmbeddedResource>
