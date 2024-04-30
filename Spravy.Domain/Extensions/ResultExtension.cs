@@ -95,8 +95,13 @@ public static class ResultExtension
         CancellationToken cancellationToken
     )
     {
-        await foreach (var result in enumerable.WithCancellation(cancellationToken))
+        await foreach (var result in enumerable)
         {
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return Result.CanceledByUserError;
+            }
+
             if (result.IsHasError)
             {
                 return new Result(result.Errors);
@@ -223,7 +228,7 @@ public static class ResultExtension
 
         return result.Value;
     }
-    
+
     public static void ThrowIfError(this Result result)
     {
         if (result.IsHasError)
