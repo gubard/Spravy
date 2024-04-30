@@ -33,6 +33,7 @@ public class AndroidProjectBuilder : UiProjectBuilder<AndroidProjectBuilderOptio
                         .SetProperty("AndroidSdkDirectory", "/opt/android-sdk")
                         .SetProperty("ApplicationVersion", versionService.Version.Code)
                         .SetProperty("Version", versionService.Version.ToString())
+                        .SetNoIncremental(true)
                     );
                 }
                 else
@@ -52,6 +53,7 @@ public class AndroidProjectBuilder : UiProjectBuilder<AndroidProjectBuilderOptio
                                 .SetConfiguration(Options.Configuration)
                                 .SetProperty("Version", versionService.Version.ToString())
                                 .SetRuntime(runtime.Name)
+                                .SetNoIncremental(true)
                         );
                     }
                 }
