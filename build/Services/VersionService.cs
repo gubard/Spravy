@@ -31,7 +31,7 @@ public class VersionService
             return;
         }
 
-        version = new SpravyVersion(1, 0, 0, 0);
+        version = new(1, 0, 0, 0);
     }
 
     void UpdateVersion()

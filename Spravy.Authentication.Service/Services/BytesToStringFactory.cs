@@ -15,6 +15,6 @@ public class BytesToStringFactory : IFactory<string, Named<IBytesToString>>
             return NamedHelper.BytesToUpperCaseHexString.ToResult();
         }
 
-        return new Result<Named<IBytesToString>>(new NotFoundNamedError(key));
+        return new(new NotFoundNamedError(key));
     }
 }

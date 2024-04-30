@@ -5,8 +5,8 @@ namespace Spravy.Ui.Models;
 
 public class DayOfWeekSelectItem : NotifyBase
 {
-    private bool isSelected;
     private DayOfWeek dayOfWeek;
+    private bool isSelected;
 
     public bool IsSelected
     {

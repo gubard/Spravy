@@ -16,7 +16,7 @@ public static class JwtBearerOptionsExtension
         var key = Encoding.UTF8.GetBytes(jwtOptions.Key.ThrowIfNullOrWhiteSpace());
         var symmetricSecurityKey = new SymmetricSecurityKey(key);
 
-        options.TokenValidationParameters = new TokenValidationParameters
+        options.TokenValidationParameters = new()
         {
             ValidIssuer = jwtOptions.Issuer.ThrowIfNull(),
             ValidAudience = jwtOptions.Audience.ThrowIfNull(),

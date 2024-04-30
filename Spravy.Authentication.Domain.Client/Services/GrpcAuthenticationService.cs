@@ -30,28 +30,15 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
 
     public ConfiguredValueTaskAwaitable<Result<TokenResult>> LoginAsync(User user, CancellationToken cancellationToken)
     {
-        return CallClientAsync(
-            client =>
-                converter.Convert<UserGrpc>(user)
-                    .IfSuccessAsync(
-                        userGrpc => client.LoginAsync(
-                                new LoginRequest
-                                {
-                                    User = userGrpc,
-                                }
-                            )
-                            .ToValueTaskResultValueOnly()
-                            .ConfigureAwait(false)
-                            .IfSuccessAsync(
-                                reply => converter.Convert<TokenResult>(reply)
-                                    .ToValueTaskResult()
-                                    .ConfigureAwait(false),
-                                cancellationToken
-                            ),
-                        cancellationToken
-                    ),
-            cancellationToken
-        );
+        return CallClientAsync(client => converter.Convert<UserGrpc>(user)
+           .IfSuccessAsync(userGrpc => client.LoginAsync(new()
+                {
+                    User = userGrpc,
+                })
+               .ToValueTaskResultValueOnly()
+               .ConfigureAwait(false)
+               .IfSuccessAsync(reply => converter.Convert<TokenResult>(reply).ToValueTaskResult().ConfigureAwait(false),
+                    cancellationToken), cancellationToken), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> CreateUserAsync(
@@ -60,14 +47,9 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
     )
     {
         return CallClientAsync(
-            client =>
-                converter.Convert<CreateUserRequest>(options)
-                    .IfSuccessAsync(
-                        request => client.CreateUserAsync(request).ToValueTaskResultOnly().ConfigureAwait(false),
-                        cancellationToken
-                    ),
-            cancellationToken
-        );
+            client => converter.Convert<CreateUserRequest>(options)
+               .IfSuccessAsync(request => client.CreateUserAsync(request).ToValueTaskResultOnly().ConfigureAwait(false),
+                    cancellationToken), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result<TokenResult>> RefreshTokenAsync(
@@ -75,21 +57,14 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         CancellationToken cancellationToken
     )
     {
-        return CallClientAsync(
-            client => client.RefreshTokenAsync(
-                    new RefreshTokenRequest
-                    {
-                        RefreshToken = refreshToken,
-                    }
-                )
-                .ToValueTaskResultValueOnly()
-                .ConfigureAwait(false)
-                .IfSuccessAsync(
-                    reply => converter.Convert<TokenResult>(reply).ToValueTaskResult().ConfigureAwait(false),
-                    cancellationToken
-                ),
-            cancellationToken
-        );
+        return CallClientAsync(client => client.RefreshTokenAsync(new()
+            {
+                RefreshToken = refreshToken,
+            })
+           .ToValueTaskResultValueOnly()
+           .ConfigureAwait(false)
+           .IfSuccessAsync(reply => converter.Convert<TokenResult>(reply).ToValueTaskResult().ConfigureAwait(false),
+                cancellationToken), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateVerificationCodeByLoginAsync(
@@ -97,17 +72,12 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         CancellationToken cancellationToken
     )
     {
-        return CallClientAsync(
-            client => client.UpdateVerificationCodeByLoginAsync(
-                    new UpdateVerificationCodeByLoginRequest
-                    {
-                        Login = login,
-                    }
-                )
-                .ToValueTaskResultOnly()
-                .ConfigureAwait(false),
-            cancellationToken
-        );
+        return CallClientAsync(client => client.UpdateVerificationCodeByLoginAsync(new()
+            {
+                Login = login,
+            })
+           .ToValueTaskResultOnly()
+           .ConfigureAwait(false), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateVerificationCodeByEmailAsync(
@@ -115,17 +85,12 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         CancellationToken cancellationToken
     )
     {
-        return CallClientAsync(
-            client => client.UpdateVerificationCodeByEmailAsync(
-                    new UpdateVerificationCodeByEmailRequest
-                    {
-                        Email = email
-                    }
-                )
-                .ToValueTaskResultOnly()
-                .ConfigureAwait(false),
-            cancellationToken
-        );
+        return CallClientAsync(client => client.UpdateVerificationCodeByEmailAsync(new()
+            {
+                Email = email,
+            })
+           .ToValueTaskResultOnly()
+           .ConfigureAwait(false), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result<bool>> IsVerifiedByLoginAsync(
@@ -133,21 +98,14 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         CancellationToken cancellationToken
     )
     {
-        return CallClientAsync(
-            client => client.IsVerifiedByLoginAsync(
-                    new IsVerifiedByLoginRequest
-                    {
-                        Login = login
-                    }
-                )
-                .ToValueTaskResultValueOnly()
-                .ConfigureAwait(false)
-                .IfSuccessAsync(
-                    reply => reply.IsVerified.ToResult().ToValueTaskResult().ConfigureAwait(false),
-                    cancellationToken
-                ),
-            cancellationToken
-        );
+        return CallClientAsync(client => client.IsVerifiedByLoginAsync(new()
+            {
+                Login = login,
+            })
+           .ToValueTaskResultValueOnly()
+           .ConfigureAwait(false)
+           .IfSuccessAsync(reply => reply.IsVerified.ToResult().ToValueTaskResult().ConfigureAwait(false),
+                cancellationToken), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result<bool>> IsVerifiedByEmailAsync(
@@ -155,21 +113,14 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         CancellationToken cancellationToken
     )
     {
-        return CallClientAsync(
-            client => client.IsVerifiedByEmailAsync(
-                    new IsVerifiedByEmailRequest
-                    {
-                        Email = email
-                    }
-                )
-                .ToValueTaskResultValueOnly()
-                .ConfigureAwait(false)
-                .IfSuccessAsync(
-                    reply => reply.IsVerified.ToResult().ToValueTaskResult().ConfigureAwait(false),
-                    cancellationToken
-                ),
-            cancellationToken
-        );
+        return CallClientAsync(client => client.IsVerifiedByEmailAsync(new()
+            {
+                Email = email,
+            })
+           .ToValueTaskResultValueOnly()
+           .ConfigureAwait(false)
+           .IfSuccessAsync(reply => reply.IsVerified.ToResult().ToValueTaskResult().ConfigureAwait(false),
+                cancellationToken), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> VerifiedEmailByLoginAsync(
@@ -178,18 +129,13 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         CancellationToken cancellationToken
     )
     {
-        return CallClientAsync(
-            client => client.VerifiedEmailByLoginAsync(
-                    new VerifiedEmailByLoginRequest
-                    {
-                        Login = login,
-                        VerificationCode = verificationCode,
-                    }
-                )
-                .ToValueTaskResultOnly()
-                .ConfigureAwait(false),
-            cancellationToken
-        );
+        return CallClientAsync(client => client.VerifiedEmailByLoginAsync(new()
+            {
+                Login = login,
+                VerificationCode = verificationCode,
+            })
+           .ToValueTaskResultOnly()
+           .ConfigureAwait(false), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> VerifiedEmailByEmailAsync(
@@ -198,18 +144,13 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         CancellationToken cancellationToken
     )
     {
-        return CallClientAsync(
-            client => client.VerifiedEmailByEmailAsync(
-                    new VerifiedEmailByEmailRequest
-                    {
-                        Email = email,
-                        VerificationCode = verificationCode,
-                    }
-                )
-                .ToValueTaskResultOnly()
-                .ConfigureAwait(false),
-            cancellationToken
-        );
+        return CallClientAsync(client => client.VerifiedEmailByEmailAsync(new()
+            {
+                Email = email,
+                VerificationCode = verificationCode,
+            })
+           .ToValueTaskResultOnly()
+           .ConfigureAwait(false), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateEmailNotVerifiedUserByEmailAsync(
@@ -218,18 +159,13 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         CancellationToken cancellationToken
     )
     {
-        return CallClientAsync(
-            client => client.UpdateEmailNotVerifiedUserByEmailAsync(
-                    new UpdateEmailNotVerifiedUserByEmailRequest
-                    {
-                        Email = email,
-                        NewEmail = newEmail,
-                    }
-                )
-                .ToValueTaskResultOnly()
-                .ConfigureAwait(false),
-            cancellationToken
-        );
+        return CallClientAsync(client => client.UpdateEmailNotVerifiedUserByEmailAsync(new()
+            {
+                Email = email,
+                NewEmail = newEmail,
+            })
+           .ToValueTaskResultOnly()
+           .ConfigureAwait(false), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateEmailNotVerifiedUserByLoginAsync(
@@ -238,18 +174,13 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         CancellationToken cancellationToken
     )
     {
-        return CallClientAsync(
-            client => client.UpdateEmailNotVerifiedUserByLoginAsync(
-                    new UpdateEmailNotVerifiedUserByLoginRequest
-                    {
-                        Login = login,
-                        NewEmail = newEmail,
-                    }
-                )
-                .ToValueTaskResultOnly()
-                .ConfigureAwait(false),
-            cancellationToken
-        );
+        return CallClientAsync(client => client.UpdateEmailNotVerifiedUserByLoginAsync(new()
+            {
+                Login = login,
+                NewEmail = newEmail,
+            })
+           .ToValueTaskResultOnly()
+           .ConfigureAwait(false), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> DeleteUserByEmailAsync(
@@ -258,19 +189,13 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         CancellationToken cancellationToken
     )
     {
-        return CallClientAsync(
-            client => client.DeleteUserByEmailAsync(
-                    new DeleteUserByEmailRequest
-                    {
-                        Email = email,
-                        VerificationCode = verificationCode,
-                    },
-                    cancellationToken: cancellationToken
-                )
-                .ToValueTaskResultOnly()
-                .ConfigureAwait(false),
-            cancellationToken
-        );
+        return CallClientAsync(client => client.DeleteUserByEmailAsync(new()
+            {
+                Email = email,
+                VerificationCode = verificationCode,
+            }, cancellationToken: cancellationToken)
+           .ToValueTaskResultOnly()
+           .ConfigureAwait(false), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> DeleteUserByLoginAsync(
@@ -279,19 +204,13 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         CancellationToken cancellationToken
     )
     {
-        return CallClientAsync(
-            client => client.DeleteUserByLoginAsync(
-                    new DeleteUserByLoginRequest
-                    {
-                        Login = login,
-                        VerificationCode = verificationCode,
-                    },
-                    cancellationToken: cancellationToken
-                )
-                .ToValueTaskResultOnly()
-                .ConfigureAwait(false),
-            cancellationToken
-        );
+        return CallClientAsync(client => client.DeleteUserByLoginAsync(new()
+            {
+                Login = login,
+                VerificationCode = verificationCode,
+            }, cancellationToken: cancellationToken)
+           .ToValueTaskResultOnly()
+           .ConfigureAwait(false), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdatePasswordByEmailAsync(
@@ -301,19 +220,14 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         CancellationToken cancellationToken
     )
     {
-        return CallClientAsync(
-            client => client.UpdatePasswordByEmailAsync(
-                    new UpdatePasswordByEmailRequest
-                    {
-                        Email = email,
-                        VerificationCode = verificationCode,
-                        NewPassword = newPassword,
-                    }
-                )
-                .ToValueTaskResultOnly()
-                .ConfigureAwait(false),
-            cancellationToken
-        );
+        return CallClientAsync(client => client.UpdatePasswordByEmailAsync(new()
+            {
+                Email = email,
+                VerificationCode = verificationCode,
+                NewPassword = newPassword,
+            })
+           .ToValueTaskResultOnly()
+           .ConfigureAwait(false), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdatePasswordByLoginAsync(
@@ -323,19 +237,14 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         CancellationToken cancellationToken
     )
     {
-        return CallClientAsync(
-            client => client.UpdatePasswordByLoginAsync(
-                    new UpdatePasswordByLoginRequest
-                    {
-                        Login = login,
-                        VerificationCode = verificationCode,
-                        NewPassword = newPassword,
-                    }
-                )
-                .ToValueTaskResultOnly()
-                .ConfigureAwait(false),
-            cancellationToken
-        );
+        return CallClientAsync(client => client.UpdatePasswordByLoginAsync(new()
+            {
+                Login = login,
+                VerificationCode = verificationCode,
+                NewPassword = newPassword,
+            })
+           .ToValueTaskResultOnly()
+           .ConfigureAwait(false), cancellationToken);
     }
 
     public static GrpcAuthenticationService CreateGrpcService(
@@ -345,6 +254,6 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         ISerializer serializer
     )
     {
-        return new GrpcAuthenticationService(grpcClientFactory, host, serializer, converter);
+        return new(grpcClientFactory, host, serializer, converter);
     }
 }

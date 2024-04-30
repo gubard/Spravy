@@ -15,7 +15,7 @@ public class GrpcChannelCacheValidator : ICacheValidator<Uri, GrpcChannel>
             ConnectivityState.Ready => true,
             ConnectivityState.TransientFailure => false,
             ConnectivityState.Shutdown => false,
-            _ => throw new ArgumentOutOfRangeException(nameof(value.State), value.State, null)
+            _ => throw new ArgumentOutOfRangeException(nameof(value.State), value.State, null),
         };
     }
 }

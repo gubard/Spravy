@@ -19,19 +19,16 @@ public class MetadataFactory : IMetadataFactory
     public ConfiguredValueTaskAwaitable<Result<Metadata>> CreateAsync(CancellationToken cancellationToken)
     {
         return httpHeaderFactory.CreateHeaderItemsAsync(cancellationToken)
-            .IfSuccessAsync(
-                value =>
+           .IfSuccessAsync(value =>
+            {
+                var metadata = new Metadata();
+
+                foreach (var item in value.Span)
                 {
-                    var metadata = new Metadata();
+                    metadata.Add(item.Name, item.Value);
+                }
 
-                    foreach (var item in value.Span)
-                    {
-                        metadata.Add(item.Name, item.Value);
-                    }
-
-                    return metadata.ToResult().ToValueTaskResult().ConfigureAwait(false);
-                },
-                cancellationToken
-            );
+                return metadata.ToResult().ToValueTaskResult().ConfigureAwait(false);
+            }, cancellationToken);
     }
 }

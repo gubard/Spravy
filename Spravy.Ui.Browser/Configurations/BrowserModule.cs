@@ -24,45 +24,34 @@ public class BrowserModule : NinjectModule
         Bind<IOpenerLink>().To<BrowserOpenerLink>();
 
         Bind<GrpcPasswordServiceOptions>()
-            .ToMethod(
-                context => context.Kernel.GetConfigurationSection<GrpcPasswordServiceOptions>("GrpcPasswordService")
-            )
-            .InSingletonScope();
+           .ToMethod(context =>
+                context.Kernel.GetConfigurationSection<GrpcPasswordServiceOptions>("GrpcPasswordService"))
+           .InSingletonScope();
 
         Bind<GrpcAuthenticationServiceOptions>()
-            .ToMethod(
-                context => context.Kernel.GetConfigurationSection<GrpcAuthenticationServiceOptions>("GrpcRouterService")
-            )
-            .InSingletonScope();
+           .ToMethod(context =>
+                context.Kernel.GetConfigurationSection<GrpcAuthenticationServiceOptions>("GrpcRouterService"))
+           .InSingletonScope();
 
         Bind<GrpcScheduleServiceOptions>()
-            .ToMethod(
-                context => context.Kernel.GetConfigurationSection<GrpcScheduleServiceOptions>("GrpcRouterService")
-            )
-            .InSingletonScope();
+           .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcScheduleServiceOptions>("GrpcRouterService"))
+           .InSingletonScope();
 
         Bind<GrpcToDoServiceOptions>()
-            .ToMethod(
-                context => context.Kernel.GetConfigurationSection<GrpcToDoServiceOptions>("GrpcRouterService")
-            )
-            .InSingletonScope();
+           .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcToDoServiceOptions>("GrpcRouterService"))
+           .InSingletonScope();
 
         Bind<GrpcEventBusServiceOptions>()
-            .ToMethod(
-                context => context.Kernel.GetConfigurationSection<GrpcEventBusServiceOptions>("GrpcRouterService")
-            )
-            .InSingletonScope();
+           .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcEventBusServiceOptions>("GrpcRouterService"))
+           .InSingletonScope();
 
         Bind<IConfiguration>()
-            .ToMethod(
-                _ =>
-                {
-                    using var stream = SpravyUiBrowserMark.GetResourceStream(FileNames.DefaultConfigFileName)
-                        .ThrowIfNull();
+           .ToMethod(_ =>
+            {
+                using var stream = SpravyUiBrowserMark.GetResourceStream(FileNames.DefaultConfigFileName).ThrowIfNull();
 
-                    return new ConfigurationBuilder().AddJsonStream(stream).Build();
-                }
-            );
+                return new ConfigurationBuilder().AddJsonStream(stream).Build();
+            });
 
         Bind<IObjectStorage>().To<LocalStorageObjectStorage>();
         Bind<IStringToBytes>().To<StringToUtf8Bytes>();

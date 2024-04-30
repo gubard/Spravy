@@ -37,16 +37,12 @@ public static class ServiceCollectionExtension
         serviceCollection.AddMapperConfiguration<SpravyPasswordGeneratorDbProfile, SpravyPasswordGeneratorProfile>();
         serviceCollection.AddTransient<IFactory<string, UserSecretDbContext>, UserSecretDbContextFactory>();
 
-        serviceCollection.AddSpravySqliteFolderContext<
-            PasswordDbContext,
-            SpravyPasswordGeneratorDbSqliteMigratorMark,
-            SqlitePasswordDbContextSetup
-        >();
+        serviceCollection
+           .AddSpravySqliteFolderContext<PasswordDbContext, SpravyPasswordGeneratorDbSqliteMigratorMark,
+                SqlitePasswordDbContextSetup>();
 
-        serviceCollection.AddSpravySqliteFileDbContext<
-            UserSecretDbContext,
-            SpravyPasswordGeneratorDbSqliteMigratorMark
-        >();
+        serviceCollection
+           .AddSpravySqliteFileDbContext<UserSecretDbContext, SpravyPasswordGeneratorDbSqliteMigratorMark>();
 
         return serviceCollection;
     }

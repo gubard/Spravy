@@ -5,10 +5,8 @@ namespace _build.Extensions;
 
 public static class DirectoryInfoExtension
 {
-    public static FileInfo ToFile(this DirectoryInfo folder, string fileName)
-    {
-        return Path.Combine(folder.FullName, fileName).ToFile();
-    }
+    public static FileInfo ToFile(this DirectoryInfo folder, string fileName) =>
+        Path.Combine(folder.FullName, fileName).ToFile();
 
     public static DirectoryInfo Combine(this DirectoryInfo folder, params string[] parts)
     {

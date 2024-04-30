@@ -27,6 +27,16 @@ public class ConfirmViewModel : ViewModelBase, ISaveState
     public ICommand CancelCommand { get; }
     public ICommand ConfirmCommand { get; }
 
+    public ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
+    {
+        if (Content is ISaveState saveState)
+        {
+            return saveState.SaveStateAsync(cancellationToken);
+        }
+
+        return Result.AwaitableFalse;
+    }
+
     private async ValueTask<Result> CancelAsync()
     {
         var con = Content.ThrowIfNull();
@@ -39,15 +49,5 @@ public class ConfirmViewModel : ViewModelBase, ISaveState
         var con = Content.ThrowIfNull();
 
         return await ConfirmTask.ThrowIfNull().Invoke(con);
-    }
-
-    public ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
-    {
-        if (Content is ISaveState saveState)
-        {
-            return saveState.SaveStateAsync(cancellationToken);
-        }
-
-        return Result.AwaitableFalse;
     }
 }

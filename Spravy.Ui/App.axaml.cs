@@ -38,21 +38,19 @@ public class App : Application
         if (objectStorage.IsExistsAsync(TypeCache<SettingModel>.Type.Name).GetAwaiter().GetResult().Value)
         {
             var model = objectStorage.GetObjectAsync<SettingModel>(TypeCache<SettingModel>.Type.Name)
-                .GetAwaiter()
-                .GetResult()
-                .Value;
+               .GetAwaiter()
+               .GetResult()
+               .Value;
 
             var theme = SukiTheme.GetInstance();
             theme.ChangeColorTheme(theme.ColorThemes.Single(x => x.DisplayName == model.ColorTheme));
 
-            theme.ChangeBaseTheme(
-                model.BaseTheme switch
-                {
-                    "Light" => ThemeVariant.Light,
-                    "Dark" => ThemeVariant.Dark,
-                    _ => throw new ArgumentOutOfRangeException()
-                }
-            );
+            theme.ChangeBaseTheme(model.BaseTheme switch
+            {
+                "Light" => ThemeVariant.Light,
+                "Dark" => ThemeVariant.Dark,
+                _ => throw new ArgumentOutOfRangeException(),
+            });
         }
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)

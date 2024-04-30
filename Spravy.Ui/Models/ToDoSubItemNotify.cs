@@ -6,15 +6,15 @@ namespace Spravy.Ui.Models;
 
 public abstract class ToDoSubItemNotify : NotifyBase, IEquatable<ToDoSubItemNotify>
 {
+    private ActiveToDoItemNotify? active;
+    private string description = string.Empty;
     private Guid id;
+    private bool isFavorite;
+    private bool isVisible = true;
+    private Uri? link;
     private string name = string.Empty;
     private ulong orderIndex;
     private ToDoItemStatus status;
-    private string description = string.Empty;
-    private bool isFavorite;
-    private ActiveToDoItemNotify? active;
-    private bool isVisible = true;
-    private Uri? link;
 
     public Uri? Link
     {

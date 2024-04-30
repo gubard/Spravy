@@ -14,12 +14,9 @@ public class SpravyPasswordGeneratorDbProfile : Profile
         CreateMap<PasswordItemEntity, PasswordItem>();
 
         CreateMap<PasswordItemEntity, GeneratePasswordOptions>()
-            .ConvertUsing(
-                x => new GeneratePasswordOptions(
+           .ConvertUsing(x =>
+                new(
                     $"{x.IsAvailableNumber.IfTrueElseEmpty(StringHelper.Number)}{x.IsAvailableLowerLatin.IfTrueElseEmpty(StringHelper.LowerLatin)}{x.IsAvailableUpperLatin.IfTrueElseEmpty(StringHelper.UpperLatin)}{x.IsAvailableSpecialSymbols.IfTrueElseEmpty(StringHelper.SpecialSymbols)}{x.CustomAvailableCharacters}",
-                    x.Length,
-                    x.Regex
-                )
-            );
+                    x.Length, x.Regex));
     }
 }

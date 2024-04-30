@@ -25,7 +25,11 @@ public class ToDoItemSettingsViewModel : NavigatableViewModelBase
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
     }
 
-    public override string ViewId => TypeCache<ToDoItemSettingsViewModel>.Type.Name;
+    public override string ViewId
+    {
+        get => TypeCache<ToDoItemSettingsViewModel>.Type.Name;
+    }
+
     public ICommand InitializedCommand { get; }
 
     [Inject]
@@ -46,23 +50,19 @@ public class ToDoItemSettingsViewModel : NavigatableViewModelBase
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         ToDoItemContent.WhenAnyValue(x => x.Type)
-            .Subscribe(
-                x => Settings = x switch
-                {
-                    ToDoItemType.Value => Resolver.Get<ValueToDoItemSettingsViewModel>().Case(vm => vm.Id = ToDoItemId),
-                    ToDoItemType.Planned => Resolver.Get<PlannedToDoItemSettingsViewModel>()
-                        .Case(vm => vm.Id = ToDoItemId),
-                    ToDoItemType.Periodicity => Resolver.Get<PeriodicityToDoItemSettingsViewModel>()
-                        .Case(vm => vm.Id = ToDoItemId),
-                    ToDoItemType.PeriodicityOffset => Resolver.Get<PeriodicityOffsetToDoItemSettingsViewModel>()
-                        .Case(vm => vm.Id = ToDoItemId),
-                    ToDoItemType.Circle => Resolver.Get<ValueToDoItemSettingsViewModel>()
-                        .Case(vm => vm.Id = ToDoItemId),
-                    ToDoItemType.Step => Resolver.Get<ValueToDoItemSettingsViewModel>().Case(vm => vm.Id = ToDoItemId),
-                    ToDoItemType.Group => Resolver.Get<GroupToDoItemSettingsViewModel>(),
-                    _ => throw new ArgumentOutOfRangeException()
-                }
-            );
+           .Subscribe(x => Settings = x switch
+            {
+                ToDoItemType.Value => Resolver.Get<ValueToDoItemSettingsViewModel>().Case(vm => vm.Id = ToDoItemId),
+                ToDoItemType.Planned => Resolver.Get<PlannedToDoItemSettingsViewModel>().Case(vm => vm.Id = ToDoItemId),
+                ToDoItemType.Periodicity => Resolver.Get<PeriodicityToDoItemSettingsViewModel>()
+                   .Case(vm => vm.Id = ToDoItemId),
+                ToDoItemType.PeriodicityOffset => Resolver.Get<PeriodicityOffsetToDoItemSettingsViewModel>()
+                   .Case(vm => vm.Id = ToDoItemId),
+                ToDoItemType.Circle => Resolver.Get<ValueToDoItemSettingsViewModel>().Case(vm => vm.Id = ToDoItemId),
+                ToDoItemType.Step => Resolver.Get<ValueToDoItemSettingsViewModel>().Case(vm => vm.Id = ToDoItemId),
+                ToDoItemType.Group => Resolver.Get<GroupToDoItemSettingsViewModel>(),
+                _ => throw new ArgumentOutOfRangeException(),
+            });
 
         return RefreshAsync(cancellationToken);
     }
@@ -70,17 +70,12 @@ public class ToDoItemSettingsViewModel : NavigatableViewModelBase
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
     {
         return ToDoService.GetToDoItemAsync(ToDoItemId, cancellationToken)
-            .IfSuccessAsync(
-                toDoItem => this.InvokeUIBackgroundAsync(
-                    () =>
-                    {
-                        ToDoItemContent.Name = toDoItem.Name;
-                        ToDoItemContent.Link = toDoItem.Link?.AbsoluteUri ?? string.Empty;
-                        ToDoItemContent.Type = toDoItem.Type;
-                    }
-                ),
-                cancellationToken
-            );
+           .IfSuccessAsync(toDoItem => this.InvokeUIBackgroundAsync(() =>
+            {
+                ToDoItemContent.Name = toDoItem.Name;
+                ToDoItemContent.Link = toDoItem.Link?.AbsoluteUri ?? string.Empty;
+                ToDoItemContent.Type = toDoItem.Type;
+            }), cancellationToken);
     }
 
     public override Result Stop()

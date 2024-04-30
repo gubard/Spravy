@@ -11,8 +11,8 @@ namespace Spravy.PasswordGenerator.Service.Services;
 [Authorize]
 public class GrpcUserSecretService : UserSecretServiceBase
 {
-    private readonly IUserSecretService userSecretService;
     private readonly IMapper mapper;
+    private readonly IUserSecretService userSecretService;
 
     public GrpcUserSecretService(IUserSecretService userSecretService, IMapper mapper)
     {

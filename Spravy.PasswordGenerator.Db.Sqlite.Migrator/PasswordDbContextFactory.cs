@@ -18,9 +18,9 @@ public class PasswordDbContextFactory : IFactory<string, PasswordDbContext>
 
     public Result<PasswordDbContext> Create(string key)
     {
-        var options = new DbContextOptionsBuilder()
-            .UseSqlite(key, b => b.MigrationsAssembly(SpravyPasswordGeneratorDbSqliteMigratorMark.AssemblyFullName))
-            .Options;
+        var options = new DbContextOptionsBuilder().UseSqlite(key,
+                b => b.MigrationsAssembly(SpravyPasswordGeneratorDbSqliteMigratorMark.AssemblyFullName))
+           .Options;
 
         return new PasswordDbContext(options, dbContextSetup).ToResult();
     }

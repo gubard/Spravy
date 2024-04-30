@@ -49,16 +49,16 @@ public class TaskWork
     public void Cancel()
     {
         cancellationTokenSource.Cancel();
-        cancellationTokenSource = new CancellationTokenSource();
+        cancellationTokenSource = new();
     }
 
     public static TaskWork Create(Func<CancellationToken, ConfiguredValueTaskAwaitable<Result>> task)
     {
-        return new TaskWork(task, DiHelper.Kernel.ThrowIfNull().Get<IErrorHandler>());
+        return new(task, DiHelper.Kernel.ThrowIfNull().Get<IErrorHandler>());
     }
 
     public static TaskWork Create<T>(Func<T, CancellationToken, ConfiguredValueTaskAwaitable<Result>> task)
     {
-        return new TaskWork(task, DiHelper.Kernel.ThrowIfNull().Get<IErrorHandler>());
+        return new(task, DiHelper.Kernel.ThrowIfNull().Get<IErrorHandler>());
     }
 }

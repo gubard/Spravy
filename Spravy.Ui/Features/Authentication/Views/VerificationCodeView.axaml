@@ -31,7 +31,8 @@
 
             <TextBlock Classes="field"
                        Text="{DynamicResource VerificationCodeView.VerificationCode}" />
-            <TextBox Name="{x:Static v:VerificationCodeView.VerificationCodeTextBoxName}" Text="{Binding VerificationCode}" />
+            <TextBox Name="{x:Static v:VerificationCodeView.VerificationCodeTextBoxName}"
+                     Text="{Binding VerificationCode}" />
 
             <Grid ColumnDefinitions="*,*" RowDefinitions="*,*">
                 <Button Command="{x:Static s:CommandStorage.SendNewVerificationCodeCommand}"

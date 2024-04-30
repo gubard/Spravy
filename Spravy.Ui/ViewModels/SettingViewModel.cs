@@ -1,9 +1,9 @@
-using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
-using System.Threading;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Windows.Input;
 using Avalonia.Collections;
 using Avalonia.Styling;
@@ -26,8 +26,8 @@ namespace Spravy.Ui.ViewModels;
 
 public class SettingViewModel : NavigatableViewModelBase
 {
-    private readonly SukiTheme theme = SukiTheme.GetInstance();
     private readonly PageHeaderViewModel pageHeaderViewModel;
+    private readonly SukiTheme theme = SukiTheme.GetInstance();
 
     public SettingViewModel() : base(true)
     {
@@ -45,9 +45,18 @@ public class SettingViewModel : NavigatableViewModelBase
         IsLightTheme = theme.ActiveBaseTheme == ThemeVariant.Light;
     }
 
-    public override string ViewId => TypeCache<SettingViewModel>.Type.Name;
+    public override string ViewId
+    {
+        get => TypeCache<SettingViewModel>.Type.Name;
+    }
+
     public ICommand InitializedCommand { get; }
-    public string Version => Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? string.Empty;
+
+    public string Version
+    {
+        get => Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? string.Empty;
+    }
+
     public AvaloniaList<Selected<SukiColorTheme>> AvailableColors { get; }
 
     [Inject]
@@ -97,14 +106,12 @@ public class SettingViewModel : NavigatableViewModelBase
         DeleteAccountCommand = CreateCommandFromTask(TaskWork.Create(DeleteAccountAsync).RunAsync);
 
         SwitchToColorThemeCommand =
-            CreateCommandFromTask<Selected<SukiColorTheme>>(
-                TaskWork.Create<Selected<SukiColorTheme>>(SwitchToColorTheme).RunAsync
-            );
+            CreateCommandFromTask<Selected<SukiColorTheme>>(TaskWork
+               .Create<Selected<SukiColorTheme>>(SwitchToColorTheme)
+               .RunAsync);
 
-        Disposables.Add(
-            this.WhenAnyValue(x => x.IsLightTheme)
-                .Subscribe(x => theme.ChangeBaseTheme(x ? ThemeVariant.Light : ThemeVariant.Dark))
-        );
+        Disposables.Add(this.WhenAnyValue(x => x.IsLightTheme)
+           .Subscribe(x => theme.ChangeBaseTheme(x ? ThemeVariant.Light : ThemeVariant.Dark)));
 
         return Result.AwaitableFalse;
     }
@@ -112,44 +119,31 @@ public class SettingViewModel : NavigatableViewModelBase
     private ConfiguredValueTaskAwaitable<Result> SaveSettingsAsync(CancellationToken cancellationToken)
     {
         return this.InvokeUIBackgroundAsync(() => IsBusy = true)
-            .IfSuccessTryFinallyAsync(
-                () => ObjectStorage.SaveObjectAsync(
-                    TypeCache<SettingModel>.Type.Name,
+           .IfSuccessTryFinallyAsync(() => ObjectStorage.SaveObjectAsync(TypeCache<SettingModel>.Type.Name,
                     new SettingModel
                     {
                         BaseTheme = IsLightTheme ? "Light" : "Dark",
                         ColorTheme = AvailableColors.Single(x => x.IsSelect).Value.DisplayName,
-                    }
-                ),
-                () => this.InvokeUIBackgroundAsync(() => IsBusy = false)
-                    .ToValueTask()
-                    .ConfigureAwait(false),
-                cancellationToken
-            );
+                    }), () => this.InvokeUIBackgroundAsync(() => IsBusy = false).ToValueTask().ConfigureAwait(false),
+                cancellationToken);
     }
 
     private ConfiguredValueTaskAwaitable<Result> DeleteAccountAsync(CancellationToken cancellationToken)
     {
-        return Navigator.NavigateToAsync<DeleteAccountViewModel>(
-            vm =>
-            {
-                vm.Identifier = AccountNotify.Login;
-                vm.IdentifierType = UserIdentifierType.Login;
-            },
-            cancellationToken
-        );
+        return Navigator.NavigateToAsync<DeleteAccountViewModel>(vm =>
+        {
+            vm.Identifier = AccountNotify.Login;
+            vm.IdentifierType = UserIdentifierType.Login;
+        }, cancellationToken);
     }
 
     private ConfiguredValueTaskAwaitable<Result> ChangePasswordAsync(CancellationToken cancellationToken)
     {
-        return Navigator.NavigateToAsync<ForgotPasswordViewModel>(
-            vm =>
-            {
-                vm.Identifier = AccountNotify.Login;
-                vm.IdentifierType = UserIdentifierType.Login;
-            },
-            cancellationToken
-        );
+        return Navigator.NavigateToAsync<ForgotPasswordViewModel>(vm =>
+        {
+            vm.Identifier = AccountNotify.Login;
+            vm.IdentifierType = UserIdentifierType.Login;
+        }, cancellationToken);
     }
 
     public override Result Stop()
@@ -176,18 +170,11 @@ public class SettingViewModel : NavigatableViewModelBase
     )
     {
         return this.InvokeUIBackgroundAsync(() => IsBusy = true)
-            .IfSuccessTryFinallyAsync(
-                () => this.InvokeUIBackgroundAsync(
-                    () =>
-                    {
-                        theme.ChangeColorTheme(colorTheme.Value);
-                        colorTheme.IsSelect = true;
-                    }
-                ),
-                () => this.InvokeUIBackgroundAsync(() => IsBusy = false)
-                    .ToValueTask()
-                    .ConfigureAwait(false),
-                cancellationToken
-            );
+           .IfSuccessTryFinallyAsync(() => this.InvokeUIBackgroundAsync(() =>
+                {
+                    theme.ChangeColorTheme(colorTheme.Value);
+                    colorTheme.IsSelect = true;
+                }), () => this.InvokeUIBackgroundAsync(() => IsBusy = false).ToValueTask().ConfigureAwait(false),
+                cancellationToken);
     }
 }

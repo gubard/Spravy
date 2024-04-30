@@ -11,7 +11,8 @@ public static class DbSetExtension
     public static ConfiguredValueTaskAwaitable<Result<EntityEntry<TEntity>>> AddEntityAsync<TEntity>(
         this DbSet<TEntity> dbSet,
         TEntity entity,
-        CancellationToken cancellationToken) where TEntity : class
+        CancellationToken cancellationToken
+    ) where TEntity : class
     {
         return AddEntityCore(dbSet, entity, cancellationToken).ConfigureAwait(false);
     }
@@ -19,7 +20,8 @@ public static class DbSetExtension
     private static async ValueTask<Result<EntityEntry<TEntity>>> AddEntityCore<TEntity>(
         this DbSet<TEntity> dbSet,
         TEntity entity,
-        CancellationToken cancellationToken) where TEntity : class
+        CancellationToken cancellationToken
+    ) where TEntity : class
     {
         var value = await dbSet.AddAsync(entity, cancellationToken);
 

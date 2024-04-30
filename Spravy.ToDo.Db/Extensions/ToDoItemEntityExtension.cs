@@ -33,15 +33,14 @@ public static class ToDoItemEntityExtension
             return Enumerable.Empty<DayOfYear>();
         }
 
-        return item.DaysOfYear.Split(";")
-            .Select(
-                x =>
-                {
-                    var value = x.Split(".");
+        return item.DaysOfYear
+           .Split(";")
+           .Select(x =>
+            {
+                var value = x.Split(".");
 
-                    return new DayOfYear(byte.Parse(value[1]), byte.Parse(value[0]));
-                }
-            );
+                return new DayOfYear(byte.Parse(value[1]), byte.Parse(value[0]));
+            });
     }
 
     public static void SetDaysOfYear(this ToDoItemEntity item, IEnumerable<DayOfYear> daysOfYear)

@@ -57,9 +57,10 @@
                                    IsVisible="{Binding IsDescriptionPlainText}"
                                    Text="{Binding Description}" />
 
-                        <mdxaml:MarkdownScrollViewer Name="{x:Static v:ToDoItemView.MarkdownTextMarkdownScrollViewerName}"
-                                                     IsVisible="{Binding IsDescriptionMarkdownText}"
-                                                     Markdown="{Binding Description}">
+                        <mdxaml:MarkdownScrollViewer
+                            Name="{x:Static v:ToDoItemView.MarkdownTextMarkdownScrollViewerName}"
+                            IsVisible="{Binding IsDescriptionMarkdownText}"
+                            Markdown="{Binding Description}">
                             <mdxaml:MarkdownScrollViewer.Styles>
                                 <Style Selector="Border.Table">
                                     <Setter Property="BorderThickness" Value="0" />

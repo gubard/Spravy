@@ -32,73 +32,6 @@ public class GrpcScheduleService : GrpcServiceBase<ScheduleServiceClient>,
         this.metadataFactory = metadataFactory;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> AddTimerAsync(
-        AddTimerParameters parameters,
-        CancellationToken cancellationToken
-    )
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory.CreateAsync(cancellationToken)
-                    .IfSuccessAsync(
-                        converter.Convert<AddTimerRequest>(parameters),
-                        (value, request) => client.AddTimerAsync(request, value)
-                            .ToValueTaskResultOnly()
-                            .ConfigureAwait(false),
-                        cancellationToken
-                    ),
-            cancellationToken
-        );
-    }
-
-    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<TimerItem>>> GetListTimesAsync(
-        CancellationToken cancellationToken
-    )
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory.CreateAsync(cancellationToken)
-                    .IfSuccessAsync(
-                        value =>
-                            client.GetListTimesAsync(new GetListTimesRequest(), value)
-                                .ToValueTaskResultValueOnly()
-                                .ConfigureAwait(false)
-                                .IfSuccessAsync(
-                                    timers => converter.Convert<TimerItem[]>(timers.Items)
-                                        .IfSuccess(items => items.ToReadOnlyMemory().ToResult())
-                                        .ToValueTaskResult()
-                                        .ConfigureAwait(false),
-                                    cancellationToken
-                                ),
-                        cancellationToken
-                    ),
-            cancellationToken
-        );
-    }
-
-    public ConfiguredValueTaskAwaitable<Result> RemoveTimerAsync(Guid id, CancellationToken cancellationToken)
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory.CreateAsync(cancellationToken)
-                    .IfSuccessAsync(
-                        converter.Convert<ByteString>(id),
-                        (value, i) =>
-                            client.RemoveTimerAsync(
-                                    new RemoveTimerRequest
-                                    {
-                                        Id = i,
-                                    },
-                                    value
-                                )
-                                .ToValueTaskResultOnly()
-                                .ConfigureAwait(false),
-                        cancellationToken
-                    ),
-            cancellationToken
-        );
-    }
-
     public static GrpcScheduleService CreateGrpcService(
         IFactory<Uri, ScheduleServiceClient> grpcClientFactory,
         Uri host,
@@ -107,6 +40,47 @@ public class GrpcScheduleService : GrpcServiceBase<ScheduleServiceClient>,
         ISerializer serializer
     )
     {
-        return new GrpcScheduleService(grpcClientFactory, host, converter, metadataFactory, serializer);
+        return new(grpcClientFactory, host, converter, metadataFactory, serializer);
+    }
+
+    public ConfiguredValueTaskAwaitable<Result> AddTimerAsync(
+        AddTimerParameters parameters,
+        CancellationToken cancellationToken
+    )
+    {
+        return CallClientAsync(
+            client => metadataFactory.CreateAsync(cancellationToken)
+               .IfSuccessAsync(converter.Convert<AddTimerRequest>(parameters),
+                    (value, request) => client.AddTimerAsync(request, value)
+                       .ToValueTaskResultOnly()
+                       .ConfigureAwait(false), cancellationToken), cancellationToken);
+    }
+
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<TimerItem>>> GetListTimesAsync(
+        CancellationToken cancellationToken
+    )
+    {
+        return CallClientAsync(
+            client => metadataFactory.CreateAsync(cancellationToken)
+               .IfSuccessAsync(
+                    value => client.GetListTimesAsync(new(), value)
+                       .ToValueTaskResultValueOnly()
+                       .ConfigureAwait(false)
+                       .IfSuccessAsync(
+                            timers => converter.Convert<TimerItem[]>(timers.Items)
+                               .IfSuccess(items => items.ToReadOnlyMemory().ToResult())
+                               .ToValueTaskResult()
+                               .ConfigureAwait(false), cancellationToken), cancellationToken), cancellationToken);
+    }
+
+    public ConfiguredValueTaskAwaitable<Result> RemoveTimerAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return CallClientAsync(client => metadataFactory.CreateAsync(cancellationToken)
+           .IfSuccessAsync(converter.Convert<ByteString>(id), (value, i) => client.RemoveTimerAsync(new()
+                {
+                    Id = i,
+                }, value)
+               .ToValueTaskResultOnly()
+               .ConfigureAwait(false), cancellationToken), cancellationToken);
     }
 }

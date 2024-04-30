@@ -3,7 +3,6 @@
              xmlns:m="clr-namespace:Spravy.Ui.Models"
              xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:dh="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
-             xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
              xmlns:s="clr-namespace:Spravy.Ui.Services"
              xmlns:su="clr-namespace:SukiUI;assembly=SukiUI"
              xmlns:i="clr-namespace:Material.Icons;assembly=Material.Icons"

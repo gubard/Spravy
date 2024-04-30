@@ -14,7 +14,10 @@ public class ErrorViewModel : NavigatableViewModelBase
     {
     }
 
-    public override string ViewId => TypeCache<ErrorViewModel>.Type.Name;
+    public override string ViewId
+    {
+        get => TypeCache<ErrorViewModel>.Type.Name;
+    }
 
     public AvaloniaList<Error> Errors { get; } = new();
 

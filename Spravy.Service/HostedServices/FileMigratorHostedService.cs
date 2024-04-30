@@ -14,8 +14,8 @@ namespace Spravy.Service.HostedServices;
 public class FileMigratorHostedService<TDbContext> : IHostedService where TDbContext : DbContext
 {
     private readonly ILogger<FileMigratorHostedService<TDbContext>> logger;
-    private readonly SqliteFileOptions sqliteFileOptions;
     private readonly IFactory<string, TDbContext> spravyAuthenticationDbContextFactory;
+    private readonly SqliteFileOptions sqliteFileOptions;
 
     public FileMigratorHostedService(
         SqliteFileOptions sqliteFileOptions,
@@ -32,7 +32,9 @@ public class FileMigratorHostedService<TDbContext> : IHostedService where TDbCon
     {
         var dataBaseFile = sqliteFileOptions.DataBaseFile.ThrowIfNull().ToFile();
         logger.LogInformation("Start migration {DataBaseFile}", dataBaseFile);
-        await using var context = spravyAuthenticationDbContextFactory.Create(dataBaseFile.ToSqliteConnectionString()).ThrowIfError();
+
+        await using var context = spravyAuthenticationDbContextFactory.Create(dataBaseFile.ToSqliteConnectionString())
+           .ThrowIfError();
 
         if (dataBaseFile.Directory is not null && !dataBaseFile.Directory.Exists)
         {
@@ -50,25 +52,24 @@ public class FileMigratorHostedService<TDbContext> : IHostedService where TDbCon
 
     private string GetMigrationId()
     {
-        return AppDomain.CurrentDomain.GetAssemblies()
-            .SelectMany(x => x.GetTypes())
-            .Where(
-                x =>
+        return AppDomain.CurrentDomain
+           .GetAssemblies()
+           .SelectMany(x => x.GetTypes())
+           .Where(x =>
+            {
+                var dbContextAttribute = x.GetCustomAttribute<DbContextAttribute>();
+
+                if (dbContextAttribute is null)
                 {
-                    var dbContextAttribute = x.GetCustomAttribute<DbContextAttribute>();
-
-                    if (dbContextAttribute is null)
-                    {
-                        return false;
-                    }
-
-                    return dbContextAttribute.ContextType == typeof(TDbContext);
+                    return false;
                 }
-            )
-            .Select(x => x.GetCustomAttribute<MigrationAttribute>())
-            .Where(x => x is not null)
-            .Select(x => x.ThrowIfNull().Id)
-            .OrderByDescending(x => x)
-            .First();
+
+                return dbContextAttribute.ContextType == typeof(TDbContext);
+            })
+           .Select(x => x.GetCustomAttribute<MigrationAttribute>())
+           .Where(x => x is not null)
+           .Select(x => x.ThrowIfNull().Id)
+           .OrderByDescending(x => x)
+           .First();
     }
 }

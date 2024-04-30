@@ -9,10 +9,8 @@ namespace _build.Services;
 
 public class BrowserProjectBuilder : UiProjectBuilder<BrowserProjectBuilderOptions>
 {
-    public BrowserProjectBuilder(
-        VersionService versionService,
-        BrowserProjectBuilderOptions browserOptions
-    ) : base(browserOptions, versionService)
+    public BrowserProjectBuilder(VersionService versionService, BrowserProjectBuilderOptions browserOptions) : base(
+        browserOptions, versionService)
     {
     }
 
@@ -25,19 +23,13 @@ public class BrowserProjectBuilder : UiProjectBuilder<BrowserProjectBuilderOptio
             throw new NullReferenceException();
         }
 
-        var appBundleFolder =
-            Path.Combine(Options.CsprojFile.Directory.FullName, appBundlePath).ToFolder();
-
+        var appBundleFolder = Path.Combine(Options.CsprojFile.Directory.FullName, appBundlePath).ToFolder();
         using var sshClient = Options.CreateSshClient();
         sshClient.Connect();
         using var ftpClient = Options.CreateFtpClient();
         ftpClient.Connect();
         ftpClient.DeleteIfExistsFolder(Options.GetAppFolder());
-
-        ftpClient.UploadDirectory(appBundleFolder.FullName,
-            Options.GetAppFolder().FullName
-        );
-
+        ftpClient.UploadDirectory(appBundleFolder.FullName, Options.GetAppFolder().FullName);
         var urlFolder = PathHelper.WwwFolder.Combine(Options.Domain);
         var browserFolder = urlFolder.Combine("html");
         var browserDownloadsFolder = browserFolder.Combine("downloads");
@@ -56,16 +48,14 @@ public class BrowserProjectBuilder : UiProjectBuilder<BrowserProjectBuilderOptio
                 if (published.Runtimes.IsEmpty)
                 {
                     sshClient.SafeRun(
-                        $"cd {published.GetAppFolder()} && echo {Options.SshPassword} | sudo -S  zip -r {versionFolder.Combine(published.GetProjectName()).ToFile($"{published.GetProjectName()}.zip")} ./*"
-                    );
+                        $"cd {published.GetAppFolder()} && echo {Options.SshPassword} | sudo -S  zip -r {versionFolder.Combine(published.GetProjectName()).ToFile($"{published.GetProjectName()}.zip")} ./*");
                 }
                 else
                 {
                     foreach (var runtime in published.Runtimes.Span)
                     {
                         sshClient.SafeRun(
-                            $"cd {published.GetAppFolder().Combine(runtime.Name)} && echo {Options.SshPassword} | sudo -S zip -r {versionFolder.Combine(published.GetProjectName()).ToFile($"{published.GetProjectName()}.{runtime.Name}.zip")} ./*"
-                        );
+                            $"cd {published.GetAppFolder().Combine(runtime.Name)} && echo {Options.SshPassword} | sudo -S zip -r {versionFolder.Combine(published.GetProjectName()).ToFile($"{published.GetProjectName()}.{runtime.Name}.zip")} ./*");
                     }
                 }
             }

@@ -58,21 +58,17 @@ public class PasswordItemSettingsViewModel : ViewModelBase
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         return PasswordService.GetPasswordItemAsync(Id, cancellationToken)
-            .IfSuccessAsync(
-                value => this.InvokeUIBackgroundAsync(
-                        () =>
-                        {
-                            Name = value.Name;
-                            Regex = value.Regex;
-                            Key = value.Key;
-                            Length = value.Length;
-                            IsAvailableUpperLatin = value.IsAvailableUpperLatin;
-                            IsAvailableLowerLatin = value.IsAvailableLowerLatin;
-                            IsAvailableNumber = value.IsAvailableNumber;
-                            IsAvailableSpecialSymbols = value.IsAvailableSpecialSymbols;
-                            CustomAvailableCharacters = value.CustomAvailableCharacters;
-                        }
-                    ),cancellationToken
-            );
+           .IfSuccessAsync(value => this.InvokeUIBackgroundAsync(() =>
+            {
+                Name = value.Name;
+                Regex = value.Regex;
+                Key = value.Key;
+                Length = value.Length;
+                IsAvailableUpperLatin = value.IsAvailableUpperLatin;
+                IsAvailableLowerLatin = value.IsAvailableLowerLatin;
+                IsAvailableNumber = value.IsAvailableNumber;
+                IsAvailableSpecialSymbols = value.IsAvailableSpecialSymbols;
+                CustomAvailableCharacters = value.CustomAvailableCharacters;
+            }), cancellationToken);
     }
 }

@@ -8,6 +8,6 @@ public class SpravyEventBusDbProfile : Profile
 {
     public SpravyEventBusDbProfile()
     {
-        CreateMap<EventEntity, EventValue>().ConstructUsing(x => new EventValue(x.EventId, x.Content));
+        CreateMap<EventEntity, EventValue>().ConstructUsing(x => new(x.EventId, x.Content));
     }
 }

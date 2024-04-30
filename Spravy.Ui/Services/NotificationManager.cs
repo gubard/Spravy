@@ -10,8 +10,8 @@ namespace Spravy.Ui.Services;
 
 public class NotificationManager : ISpravyNotificationManager
 {
-    private readonly IManagedNotificationManager managedNotificationManager;
     private readonly IKernel kernel;
+    private readonly IManagedNotificationManager managedNotificationManager;
 
     public NotificationManager(IManagedNotificationManager managedNotificationManager, IKernel kernel)
     {

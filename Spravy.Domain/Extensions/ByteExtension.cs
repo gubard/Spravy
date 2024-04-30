@@ -4,6 +4,6 @@ public static class ByteExtension
 {
     public static MemoryStream ToMemoryStream(this byte[] bytes)
     {
-        return new MemoryStream(bytes);
+        return new(bytes);
     }
 }

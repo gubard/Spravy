@@ -5,5 +5,5 @@ public enum LazyDependencyInjectorOptions
     None,
     PublicationOnly,
     ExecutionAndPublication,
-    ThreadSafe
+    ThreadSafe,
 }

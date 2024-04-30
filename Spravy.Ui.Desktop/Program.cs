@@ -16,14 +16,11 @@ public class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        Log.Logger = new LoggerConfiguration()
-            .WriteTo.Console()
-            .CreateLogger();
+        Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
 
         try
         {
-            BuildAvaloniaApp()
-                .StartWithClassicDesktopLifetime(args);
+            BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
         }
         catch (Exception ex)
         {
@@ -42,9 +39,9 @@ public class Program
         DiHelper.Kernel = new StandardKernel(new UiModule(true), DesktopModule.Default);
 
         return AppBuilder.Configure(() => DiHelper.Kernel.ThrowIfNull().Get<Application>())
-            .UsePlatformDetect()
-            .WithInterFont()
-            .WithShantellSansFont()
-            .UseReactiveUI();
+           .UsePlatformDetect()
+           .WithInterFont()
+           .WithShantellSansFont()
+           .UseReactiveUI();
     }
 }

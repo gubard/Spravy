@@ -15,16 +15,16 @@ public readonly struct HttpHeaderItem
 
     public static HttpHeaderItem CreateBearerAuthorization(string token)
     {
-        return new HttpHeaderItem(HttpNames.HeaderAuthorizationName, $"{HttpNames.BearerAuthorizationName} {token}");
+        return new(HttpNames.HeaderAuthorizationName, $"{HttpNames.BearerAuthorizationName} {token}");
     }
 
     public static HttpHeaderItem CreateUserId(string userId)
     {
-        return new HttpHeaderItem(HttpNames.HeaderUserIdName, userId);
+        return new(HttpNames.HeaderUserIdName, userId);
     }
 
     public static HttpHeaderItem TimeZoneOffset()
     {
-        return new HttpHeaderItem(HttpNames.HeaderTimeZoneOffsetName, DateTimeOffset.Now.Offset.ToString());
+        return new(HttpNames.HeaderTimeZoneOffsetName, DateTimeOffset.Now.Offset.ToString());
     }
 }

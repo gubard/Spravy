@@ -19,6 +19,6 @@ public class SpravyDbToDoDbContext : SpravyDbContext, IDbContextCreator<SpravyDb
 
     public static SpravyDbToDoDbContext CreateDbContext(IDbContextSetup setup, DbContextOptions options)
     {
-        return new SpravyDbToDoDbContext(options, setup);
+        return new(options, setup);
     }
 }

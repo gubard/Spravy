@@ -5,9 +5,9 @@ using System.Windows.Input;
 using AutoMapper;
 using Avalonia.Collections;
 using Ninject;
+using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Models;
-using Spravy.Domain.Extensions;
 using Spravy.PasswordGenerator.Domain.Interfaces;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Features.Localizations.Models;
@@ -28,7 +28,10 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
     }
 
-    public override string ViewId => TypeCache<PasswordGeneratorViewModel>.Type.Name;
+    public override string ViewId
+    {
+        get => TypeCache<PasswordGeneratorViewModel>.Type.Name;
+    }
 
     public AvaloniaList<PasswordItemNotify> Items { get; } = new();
     public ICommand InitializedCommand { get; }
@@ -53,6 +56,16 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
         }
     }
 
+    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
+    {
+        return PasswordService.GetPasswordItemsAsync(cancellationToken)
+           .IfSuccessAsync(items => this.InvokeUIBackgroundAsync(() =>
+            {
+                Items.Clear();
+                Items.AddRange(Mapper.Map<PasswordItemNotify[]>(items.ToArray()));
+            }), cancellationToken);
+    }
+
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         return RefreshAsync(cancellationToken);
@@ -63,27 +76,16 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
         return Result.Success;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting, CancellationToken cancellationToken)
+    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
+        object setting,
+        CancellationToken cancellationToken
+    )
     {
         return Result.AwaitableFalse;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync( CancellationToken cancellationToken)
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
     {
         return Result.AwaitableFalse;
-    }
-
-    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
-    {
-        return PasswordService.GetPasswordItemsAsync(cancellationToken)
-            .IfSuccessAsync(
-                items => this.InvokeUIBackgroundAsync(
-                        () =>
-                        {
-                            Items.Clear();
-                            Items.AddRange(Mapper.Map<PasswordItemNotify[]>(items.ToArray()));
-                        }
-                    ),cancellationToken
-            );
     }
 }

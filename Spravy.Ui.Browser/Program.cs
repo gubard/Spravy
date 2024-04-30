@@ -17,13 +17,11 @@ using Spravy.Ui.Extensions;
 
 namespace Spravy.Ui.Browser;
 
-class Program
+internal class Program
 {
     private static async Task Main()
     {
-        Log.Logger = new LoggerConfiguration()
-            .WriteTo.Console()
-            .CreateLogger();
+        Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
 
         try
         {
@@ -31,11 +29,7 @@ class Program
             await JSHost.ImportAsync("localStorage.js", "./localStorage.js");
             await JSHost.ImportAsync("window.js", "./window.js");
             DiHelper.Kernel = new StandardKernel(BrowserModule.Default, new UiModule(false));
-
-            await BuildAvaloniaApp()
-                .WithInterFont()
-                .UseReactiveUI()
-                .StartBrowserAppAsync("out");
+            await BuildAvaloniaApp().WithInterFont().UseReactiveUI().StartBrowserAppAsync("out");
         }
         catch (Exception ex)
         {
@@ -50,8 +44,8 @@ class Program
     public static AppBuilder BuildAvaloniaApp()
     {
         return AppBuilder.Configure(() => DiHelper.Kernel.ThrowIfNull().Get<Application>())
-            .UseReactiveUI()
-            .WithInterFont()
-            .WithShantellSansFont();
+           .UseReactiveUI()
+           .WithInterFont()
+           .WithShantellSansFont();
     }
 }

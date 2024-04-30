@@ -5,8 +5,8 @@ using System.Windows.Input;
 using Avalonia.Collections;
 using Ninject;
 using ReactiveUI;
-using Spravy.Domain.Models;
 using Spravy.Domain.Extensions;
+using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Extensions;
@@ -23,8 +23,8 @@ public class PlannedToDoItemSettingsViewModel : ViewModelBase,
     IApplySettings
 {
     private ToDoItemChildrenType childrenType;
-    private Guid id;
     private DateOnly dueDate;
+    private Guid id;
     private bool isRequiredCompleteInDueDate;
 
     public PlannedToDoItemSettingsViewModel()
@@ -33,6 +33,20 @@ public class PlannedToDoItemSettingsViewModel : ViewModelBase,
     }
 
     public AvaloniaList<ToDoItemChildrenType> ChildrenTypes { get; } = new(Enum.GetValues<ToDoItemChildrenType>());
+
+    [Inject]
+    public required IToDoService ToDoService { get; set; }
+
+    public ICommand InitializedCommand { get; }
+
+    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
+    {
+        return Result.AwaitableFalse.IfSuccessAllAsync(cancellationToken,
+            () => ToDoService.UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, cancellationToken),
+            () => ToDoService.UpdateToDoItemDueDateAsync(Id, DueDate, cancellationToken),
+            () => ToDoService.UpdateToDoItemIsRequiredCompleteInDueDateAsync(Id, IsRequiredCompleteInDueDate,
+                cancellationToken));
+    }
 
     public bool IsRequiredCompleteInDueDate
     {
@@ -52,46 +66,25 @@ public class PlannedToDoItemSettingsViewModel : ViewModelBase,
         set => this.RaiseAndSetIfChanged(ref childrenType, value);
     }
 
+    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
+    {
+        return ToDoService.GetPlannedToDoItemSettingsAsync(Id, cancellationToken)
+           .IfSuccessAsync(setting => this.InvokeUIBackgroundAsync(() =>
+            {
+                ChildrenType = setting.ChildrenType;
+                DueDate = setting.DueDate;
+                IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
+            }), cancellationToken);
+    }
+
     public DateOnly DueDate
     {
         get => dueDate;
         set => this.RaiseAndSetIfChanged(ref dueDate, value);
     }
 
-    [Inject]
-    public required IToDoService ToDoService { get; set; }
-
-    public ICommand InitializedCommand { get; }
-
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         return RefreshAsync(cancellationToken);
-    }
-
-    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
-    {
-        return ToDoService.GetPlannedToDoItemSettingsAsync(Id, cancellationToken)
-            .IfSuccessAsync(
-                setting => this.InvokeUIBackgroundAsync(
-                    () =>
-                    {
-                        ChildrenType = setting.ChildrenType;
-                        DueDate = setting.DueDate;
-                        IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
-                    }
-                ),
-                cancellationToken
-            );
-    }
-
-    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
-    {
-        return Result.AwaitableFalse.IfSuccessAllAsync(
-            cancellationToken,
-            () => ToDoService.UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, cancellationToken),
-            () => ToDoService.UpdateToDoItemDueDateAsync(Id, DueDate, cancellationToken),
-            () => ToDoService
-                .UpdateToDoItemIsRequiredCompleteInDueDateAsync(Id, IsRequiredCompleteInDueDate, cancellationToken)
-        );
     }
 }

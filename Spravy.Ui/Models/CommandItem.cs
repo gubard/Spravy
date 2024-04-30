@@ -102,6 +102,6 @@ public class CommandItem
 
     public CommandItem WithParam(object parameter)
     {
-        return new CommandItem(Icon, Command, Name, parameter, Work, ThrownExceptions);
+        return new(Icon, Command, Name, parameter, Work, ThrownExceptions);
     }
 }

@@ -17,27 +17,14 @@ public class SpravyToDoDbProfile : Profile
     public SpravyToDoDbProfile()
     {
         CreateMap<ToDoItemEntity, ToDoItem>()
-            .ConvertUsing(
-                (entity, _, context) =>
-                {
-                    var parameters = (ToDoItemParameters)context.Items[ParametersName];
+           .ConvertUsing((entity, _, context) =>
+            {
+                var parameters = (ToDoItemParameters)context.Items[ParametersName];
 
-                    return new ToDoItem(
-                        entity.Id,
-                        entity.Name,
-                        entity.IsFavorite,
-                        entity.Type,
-                        entity.Description,
-                        context.Mapper.Map<Uri?>(entity.Link),
-                        entity.OrderIndex,
-                        parameters.Status,
-                        parameters.ActiveItem,
-                        parameters.IsCan,
-                        entity.ParentId,
-                        entity.DescriptionType
-                    );
-                }
-            );
+                return new(entity.Id, entity.Name, entity.IsFavorite, entity.Type, entity.Description,
+                    context.Mapper.Map<Uri?>(entity.Link), entity.OrderIndex, parameters.Status, parameters.ActiveItem,
+                    parameters.IsCan, entity.ParentId, entity.DescriptionType);
+            });
 
         CreateMap<ToDoItemEntity, PlannedToDoItemSettings>();
         CreateMap<ToDoItemEntity, ValueToDoItemSettings>();
@@ -51,11 +38,7 @@ public class SpravyToDoDbProfile : Profile
         CreateMap<AddToDoItemOptions, ToDoItemEntity>();
         CreateMap<string?, Uri?>().ConvertUsing(str => str.IsNullOrWhiteSpace() ? null : new Uri(str));
         CreateMap<Uri?, string?>().ConvertUsing(uri => uri == null ? string.Empty : uri.AbsoluteUri);
-
-        CreateMap<ToDoItemEntity, AnnuallyPeriodicity>()
-            .ConstructUsing(x => new(x.GetDaysOfYear()));
-
-        CreateMap<ToDoItemEntity, ActiveToDoItem>()
-            .ConvertUsing((source, _, _) => new(source.Id, source.Name));
+        CreateMap<ToDoItemEntity, AnnuallyPeriodicity>().ConstructUsing(x => new(x.GetDaysOfYear()));
+        CreateMap<ToDoItemEntity, ActiveToDoItem>().ConvertUsing((source, _, _) => new(source.Id, source.Name));
     }
 }

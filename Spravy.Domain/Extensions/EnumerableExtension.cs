@@ -59,11 +59,10 @@ public static class EnumerableExtension
 
     public static IEnumerable<TItem> ThrowIfNullOrEmpty<TItem>(
         this IEnumerable<TItem>? enumerable,
-        [CallerArgumentExpression(nameof(enumerable))]
-        string paramName = ""
+        [CallerArgumentExpression(nameof(enumerable))] string paramName = ""
     )
     {
-        var array = Enumerable.ToArray(enumerable.ThrowIfNull());
+        var array = enumerable.ThrowIfNull().ToArray();
         array.ThrowIfNull(paramName);
         array.ThrowIfEmpty(paramName);
 
@@ -72,11 +71,10 @@ public static class EnumerableExtension
 
     public static IEnumerable<TItem> ThrowIfEmpty<TItem>(
         this IEnumerable<TItem> enumerable,
-        [CallerArgumentExpression(nameof(enumerable))]
-        string paramName = ""
+        [CallerArgumentExpression(nameof(enumerable))] string paramName = ""
     )
     {
-        var array = Enumerable.ToArray(enumerable);
+        var array = enumerable.ToArray();
 
         return array.IsEmpty() ? throw new EmptyEnumerableException(paramName) : array;
     }
@@ -87,8 +85,7 @@ public static class EnumerableExtension
         return string.Join(separator, enumerable.OfType<object>());
     }
 
-    public static string JoinString<TEnumerable>(this TEnumerable enumerable)
-        where TEnumerable : IEnumerable
+    public static string JoinString<TEnumerable>(this TEnumerable enumerable) where TEnumerable : IEnumerable
     {
         return enumerable.JoinString(string.Empty);
     }

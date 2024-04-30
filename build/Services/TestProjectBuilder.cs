@@ -11,8 +11,8 @@ namespace _build.Services;
 
 public class TestProjectBuilder : ProjectBuilder<TestProjectBuilderOptions>
 {
-    public TestProjectBuilder(TestProjectBuilderOptions options, VersionService versionService)
-        : base(options, versionService)
+    public TestProjectBuilder(TestProjectBuilderOptions options, VersionService versionService) : base(options,
+        versionService)
     {
     }
 
@@ -32,11 +32,10 @@ public class TestProjectBuilder : ProjectBuilder<TestProjectBuilderOptions>
         {
             var output = DotNetTasks.DotNetTest(s =>
                 s.SetConfiguration(Options.Configuration)
-                    .EnableNoRestore()
-                    .EnableNoBuild()
-                    .SetProjectFile(Options.CsprojFile.FullName)
-                    .SetFilter($"Priority={i}")
-            );
+                   .EnableNoRestore()
+                   .EnableNoBuild()
+                   .SetProjectFile(Options.CsprojFile.FullName)
+                   .SetFilter($"Priority={i}"));
 
             if (output.Any(x => x.Text.Contains("No test matches the given testcase filter")))
             {
@@ -49,7 +48,7 @@ public class TestProjectBuilder : ProjectBuilder<TestProjectBuilderOptions>
     {
         var jsonWriterOptions = new JsonWriterOptions
         {
-            Indented = true
+            Indented = true,
         };
 
         using var writer = new Utf8JsonWriter(stream, jsonWriterOptions);
@@ -83,10 +82,8 @@ public class TestProjectBuilder : ProjectBuilder<TestProjectBuilderOptions>
                 {
                     Log.Information("Set password for {Name}", property.Name);
 
-                    writer.AddStringValue(
-                        "Password",
-                        property.Name == "EmailAccount" ? Options.EmailAccountPassword : Options.EmailAccount2Password
-                    );
+                    writer.AddStringValue("Password",
+                        property.Name == "EmailAccount" ? Options.EmailAccountPassword : Options.EmailAccount2Password);
 
                     continue;
                 }

@@ -9,15 +9,15 @@ public static class MemoryExtension
     {
         if (memory.IsEmpty)
         {
-            return new Result<T>(new EmptyArrayError(arrayName));
+            return new(new EmptyArrayError(arrayName));
         }
 
         if (memory.Length == 1)
         {
-            return new Result<T>(memory.Span[0]);
+            return new(memory.Span[0]);
         }
 
-        return new Result<T>(new MultiValuesArrayError(arrayName, (ulong)memory.Length));
+        return new(new MultiValuesArrayError(arrayName, (ulong)memory.Length));
     }
 
     public static T GetSingle<T>(this Memory<T> memory)
@@ -27,6 +27,6 @@ public static class MemoryExtension
             return memory.Span[0];
         }
 
-        throw new Exception(memory.Length.ToString());
+        throw new(memory.Length.ToString());
     }
 }

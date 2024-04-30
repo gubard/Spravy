@@ -10,8 +10,8 @@ namespace Spravy.Schedule.Service.Services;
 [Authorize]
 public class GrpcScheduleService : ScheduleService.ScheduleServiceBase
 {
-    private readonly IScheduleService scheduleService;
     private readonly IMapper mapper;
+    private readonly IScheduleService scheduleService;
 
     public GrpcScheduleService(IScheduleService scheduleService, IMapper mapper)
     {
@@ -24,7 +24,7 @@ public class GrpcScheduleService : ScheduleService.ScheduleServiceBase
         var parameters = mapper.Map<AddTimerParameters>(request.Parameters);
         await scheduleService.AddTimerAsync(parameters, context.CancellationToken);
 
-        return new AddTimerReply();
+        return new();
     }
 
     public override async Task<RemoveTimerReply> RemoveTimer(RemoveTimerRequest request, ServerCallContext context)
@@ -32,7 +32,7 @@ public class GrpcScheduleService : ScheduleService.ScheduleServiceBase
         var id = mapper.Map<Guid>(request.Id);
         await scheduleService.RemoveTimerAsync(id, context.CancellationToken);
 
-        return new RemoveTimerReply();
+        return new();
     }
 
     public override async Task<GetListTimesReply> GetListTimes(GetListTimesRequest request, ServerCallContext context)

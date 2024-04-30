@@ -2,8 +2,8 @@ namespace Spravy.Domain.Exceptions;
 
 public class NotFondConstructorException : Exception
 {
-    public NotFondConstructorException(Type type, Type typeParameter)
-        : base($"Type {type} not have constructor with parameter type {typeParameter}.")
+    public NotFondConstructorException(Type type, Type typeParameter) : base(
+        $"Type {type} not have constructor with parameter type {typeParameter}.")
     {
         Type = type;
         TypeParameter = typeParameter;

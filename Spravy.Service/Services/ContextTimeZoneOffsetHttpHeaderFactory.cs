@@ -21,14 +21,11 @@ public class ContextTimeZoneOffsetHttpHeaderFactory : IHttpHeaderFactory
         CancellationToken cancellationToken
     )
     {
-        var authorization = httpContextAccessor
-            .HttpContext
-            .ThrowIfNull()
-            .GetTimeZoneOffsetHeader();
+        var authorization = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffsetHeader();
 
         return new HttpHeaderItem(HttpNames.HeaderTimeZoneOffsetName, authorization).ToReadOnlyMemory()
-            .ToResult()
-            .ToValueTaskResult()
-            .ConfigureAwait(false);
+           .ToResult()
+           .ToValueTaskResult()
+           .ConfigureAwait(false);
     }
 }

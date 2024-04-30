@@ -10,18 +10,12 @@ public static class ConstructorInfoExtension
         return Expression.New(constructor);
     }
 
-    public static NewExpression ToNew(
-        this ConstructorInfo constructor,
-        IEnumerable<Expression> expressions
-    )
+    public static NewExpression ToNew(this ConstructorInfo constructor, IEnumerable<Expression> expressions)
     {
         return Expression.New(constructor, expressions);
     }
 
-    public static NewExpression ToNew(
-        this ConstructorInfo constructor,
-        params Expression[] expressions
-    )
+    public static NewExpression ToNew(this ConstructorInfo constructor, params Expression[] expressions)
     {
         return Expression.New(constructor, expressions);
     }

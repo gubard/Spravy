@@ -18,9 +18,9 @@ public class TestAppBuilder
     static TestAppBuilder()
     {
         Configuration = new ConfigurationBuilder().AddJsonFile("testsettings.json")
-            .AddEnvironmentVariables("Spravy_")
-            .AddCommandLine(Environment.GetCommandLineArgs())
-            .Build();
+           .AddEnvironmentVariables("Spravy_")
+           .AddCommandLine(Environment.GetCommandLineArgs())
+           .Build();
     }
 
     public static AppBuilder BuildAvaloniaApp()
@@ -28,15 +28,13 @@ public class TestAppBuilder
         DiHelper.Kernel = new StandardKernel(new UiModule(true), DesktopModule.Default);
 
         return AppBuilder.Configure<App>()
-            .UseReactiveUI()
-            .UseSkia()
-            .UseHeadless(
-                new AvaloniaHeadlessPlatformOptions
-                {
-                    UseHeadlessDrawing = false
-                }
-            )
-            .WithShantellSansFont()
-            .WithInterFont();
+           .UseReactiveUI()
+           .UseSkia()
+           .UseHeadless(new()
+            {
+                UseHeadlessDrawing = false,
+            })
+           .WithShantellSansFont()
+           .WithInterFont();
     }
 }

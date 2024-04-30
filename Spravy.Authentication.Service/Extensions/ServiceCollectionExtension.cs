@@ -10,8 +10,11 @@ using Spravy.Authentication.Service.Helpers;
 using Spravy.Authentication.Service.Interfaces;
 using Spravy.Authentication.Service.Models;
 using Spravy.Authentication.Service.Services;
+using Spravy.Client.Extensions;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
+using Spravy.Core.Options;
+using Spravy.Core.Services;
 using Spravy.Db.Interfaces;
 using Spravy.Db.Sqlite.Extensions;
 using Spravy.Db.Sqlite.Models;
@@ -23,13 +26,10 @@ using Spravy.Domain.Services;
 using Spravy.EventBus.Domain.Client.Models;
 using Spravy.EventBus.Domain.Client.Services;
 using Spravy.EventBus.Domain.Interfaces;
-using Spravy.Service.Extensions;
-using Spravy.Service.Services;
-using Spravy.Client.Extensions;
-using Spravy.Core.Options;
-using Spravy.Core.Services;
 using Spravy.EventBus.Protos;
+using Spravy.Service.Extensions;
 using Spravy.Service.HostedServices;
+using Spravy.Service.Services;
 
 namespace Spravy.Authentication.Service.Extensions;
 
@@ -59,32 +59,29 @@ public static class ServiceCollectionExtension
         serviceCollection.AddTransient(_ => NamedHelper.StringToUtf8Bytes.ToRef());
         serviceCollection.AddSingleton<TimeZoneHttpHeaderFactory>();
         serviceCollection.AddTransient<IEmailService, EmailService>();
-        serviceCollection.AddTransient<IRandom<string>>(
-            _ => new RandomString("QAZWSXEDCRFVTGBYHNUJMIKOP0123456789", 6)
-        );
+
+        serviceCollection.AddTransient<IRandom<string>>(_ =>
+            new RandomString("QAZWSXEDCRFVTGBYHNUJMIKOP0123456789", 6));
+
         serviceCollection.AddTransient(sp => sp.GetConfigurationSection<EmailOptions>());
         serviceCollection.AddTransient<IPasswordValidator>(_ => PasswordValidator.Default);
         serviceCollection.AddTransient<ILoginValidator>(_ => LoginValidator.Default);
         serviceCollection.AddTransient<IAuthenticationService, EfAuthenticationService>();
         serviceCollection.AddTransient<IHasher, Hasher>();
 
-        serviceCollection.AddSpravySqliteFileDbContext<SpravyDbAuthenticationDbContext,
-            SpravyAuthenticationDbSqliteMigratorMark>();
+        serviceCollection
+           .AddSpravySqliteFileDbContext<SpravyDbAuthenticationDbContext, SpravyAuthenticationDbSqliteMigratorMark>();
 
-        serviceCollection.AddGrpcServiceAuth<GrpcEventBusService,
-            EventBusService.EventBusServiceClient,
-            GrpcEventBusServiceOptions>();
+        serviceCollection
+           .AddGrpcServiceAuth<GrpcEventBusService, EventBusService.EventBusServiceClient,
+                GrpcEventBusServiceOptions>();
 
-        serviceCollection.AddTransient<IFactory<string,
-                SpravyDbAuthenticationDbContext>,
-            SpravyAuthenticationDbContextFactory>();
+        serviceCollection
+           .AddTransient<IFactory<string, SpravyDbAuthenticationDbContext>, SpravyAuthenticationDbContextFactory>();
 
-        serviceCollection.AddTransient<IHttpHeaderFactory>(
-            sp => new CombineHttpHeaderFactory(
-                sp.GetRequiredService<ContextAccessorUserIdHttpHeaderFactory>(),
-                sp.GetRequiredService<TimeZoneHttpHeaderFactory>()
-            )
-        );
+        serviceCollection.AddTransient<IHttpHeaderFactory>(sp =>
+            new CombineHttpHeaderFactory(sp.GetRequiredService<ContextAccessorUserIdHttpHeaderFactory>(),
+                sp.GetRequiredService<TimeZoneHttpHeaderFactory>()));
 
         return serviceCollection;
     }

@@ -23,7 +23,7 @@ public static class ToDoItemOrderChangerExtension
         {
             return;
         }
-        
+
         var id = args.SourceItem.Id;
         var isAfter = GetIsAfter(args);
         var options = new UpdateOrderIndexToDoItemOptions(id, args.TargetItem.Id, isAfter);
@@ -37,12 +37,12 @@ public static class ToDoItemOrderChangerExtension
         {
             return true;
         }
-        
+
         if (args.TargetIndex == args.SourceIndex - 1)
         {
             return false;
         }
-        
+
         return args.Item.Bounds.IsBottom(args.PointerPosition);
     }
 }

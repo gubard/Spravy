@@ -12,11 +12,11 @@ public class AddTimerViewModel : ViewModelBase, IToDoShortItemProperty, IDueDate
     public Guid EventId { get; set; }
 
     [Reactive]
-    public ToDoShortItemNotify? ShortItem { get; set; }
+    public bool IsFavorite { get; set; }
 
     [Reactive]
     public DateTimeOffset DueDateTime { get; set; } = DateTimeOffset.Now.ToCurrentDay();
 
     [Reactive]
-    public bool IsFavorite { get; set; }
+    public ToDoShortItemNotify? ShortItem { get; set; }
 }

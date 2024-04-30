@@ -67,7 +67,7 @@ public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBas
                     throw;
                 case StatusCode.Unavailable:
                     return new Result(new ServiceUnavailableError(host.ToString())).ToValueTaskResult()
-                        .ConfigureAwait(false);
+                       .ConfigureAwait(false);
                 case StatusCode.DataLoss:
                     throw;
                 default: throw new ArgumentOutOfRangeException();
@@ -133,7 +133,7 @@ public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBas
                 case StatusCode.Internal:
                     throw;
                 case StatusCode.Unavailable:
-                    return new Result<TValue>(new ServiceUnavailableError(host.ToString()));
+                    return new(new ServiceUnavailableError(host.ToString()));
                 case StatusCode.DataLoss:
                     throw;
                 default: throw new ArgumentOutOfRangeException();

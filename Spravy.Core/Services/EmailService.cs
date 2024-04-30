@@ -40,7 +40,7 @@ public class EmailService : IEmailService
 
         message.Body = new TextPart("plain")
         {
-            Text = text
+            Text = text,
         };
 
         using var client = new SmtpClient();

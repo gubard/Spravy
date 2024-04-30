@@ -5,40 +5,40 @@ option csharp_namespace = "Spravy.EventBus.Protos";
 package spravy.event_bus;
 
 message PublishEventRequest {
-  bytes EventId = 1;
-  bytes Content = 2;
+    bytes EventId = 1;
+    bytes Content = 2;
 }
 
 message PublishEventReply {
 }
 
 message GetEventsRequest {
-  repeated bytes EventIds = 1;
+    repeated bytes EventIds = 1;
 }
 
 message GetEventsReply {
-  repeated Event Events = 1;
+    repeated Event Events = 1;
 }
 
 message SubscribeEventsRequest {
-  repeated bytes EventIds = 1;
+    repeated bytes EventIds = 1;
 }
 
 message SubscribeEventsReply {
-  bytes EventId = 1;
-  bytes Content = 2;
+    bytes EventId = 1;
+    bytes Content = 2;
 }
 
 message ChangeToDoItemIsFavoriteEvent {
-  bytes ToDoItemId = 1;
-  bool IsFavorite = 2;
+    bytes ToDoItemId = 1;
+    bool IsFavorite = 2;
 }
 
 message AddRootToDoItemEvent {
-  bytes ToDoItemId = 1;
+    bytes ToDoItemId = 1;
 }
 
 message Event {
-  bytes EventId = 1;
-  bytes Content = 2;
+    bytes EventId = 1;
+    bytes Content = 2;
 }

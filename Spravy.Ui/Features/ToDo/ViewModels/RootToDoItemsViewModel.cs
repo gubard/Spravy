@@ -24,8 +24,8 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
 {
-    private readonly TaskWork refreshWork;
     private readonly PageHeaderViewModel pageHeaderViewModel;
+    private readonly TaskWork refreshWork;
     private readonly ToDoSubItemsViewModel toDoSubItemsViewModel;
 
     public RootToDoItemsViewModel() : base(true)
@@ -35,7 +35,11 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
     }
 
     public ICommand InitializedCommand { get; }
-    public override string ViewId => TypeCache<RootToDoItemsViewModel>.Type.Name;
+
+    public override string ViewId
+    {
+        get => TypeCache<RootToDoItemsViewModel>.Type.Name;
+    }
 
     [Inject]
     public required PageHeaderViewModel PageHeaderViewModel
@@ -60,39 +64,35 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
         {
             toDoSubItemsViewModel = value;
 
-            toDoSubItemsViewModel.List.WhenAnyValue(x => x.IsMulti)
-                .Skip(1)
-                .Subscribe(
-                    x =>
+            toDoSubItemsViewModel.List
+               .WhenAnyValue(x => x.IsMulti)
+               .Skip(1)
+               .Subscribe(x =>
+                {
+                    if (x)
                     {
-                        if (x)
-                        {
-                            PageHeaderViewModel.SetMultiCommands(ToDoSubItemsViewModel);
-                        }
+                        PageHeaderViewModel.SetMultiCommands(ToDoSubItemsViewModel);
                     }
-                );
+                });
         }
     }
 
     [Inject]
-    public required IToDoService ToDoService { get; init; }
-
-    [Inject]
     public required IObjectStorage ObjectStorage { get; init; }
 
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
-    {
-        return ObjectStorage.GetObjectOrDefaultAsync<RootToDoItemsViewModelSetting>(ViewId, cancellationToken)
-            .IfSuccessAllAsync(
-                cancellationToken,
-                obj => SetStateAsync(obj, cancellationToken),
-                _ => refreshWork.RunAsync().ToValueTaskResultOnly().ConfigureAwait(false)
-            );
-    }
+    [Inject]
+    public required IToDoService ToDoService { get; init; }
 
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
     {
         return RefreshCore(cancellationToken).ConfigureAwait(false);
+    }
+
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
+    {
+        return ObjectStorage.GetObjectOrDefaultAsync<RootToDoItemsViewModelSetting>(ViewId, cancellationToken)
+           .IfSuccessAllAsync(cancellationToken, obj => SetStateAsync(obj, cancellationToken),
+                _ => refreshWork.RunAsync().ToValueTaskResultOnly().ConfigureAwait(false));
     }
 
     public async ValueTask<Result> RefreshCore(CancellationToken cancellationToken)
@@ -105,10 +105,8 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
     private ConfiguredValueTaskAwaitable<Result> RefreshCoreAsync(CancellationToken cancellationToken)
     {
         return ToDoService.GetRootToDoItemIdsAsync(cancellationToken)
-            .IfSuccessAsync(
-                ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken),
-                cancellationToken
-            );
+           .IfSuccessAsync(ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken),
+                cancellationToken);
     }
 
     public override Result Stop()
@@ -129,20 +127,15 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
     )
     {
         return setting.CastObject<RootToDoItemsViewModelSetting>()
-            .IfSuccessAsync(
-                s => this.InvokeUIBackgroundAsync(
-                    () =>
-                    {
-                        ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
-                        ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
-                    }
-                ),
-                cancellationToken
-            );
+           .IfSuccessAsync(s => this.InvokeUIBackgroundAsync(() =>
+            {
+                ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
+                ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
+            }), cancellationToken);
     }
 
     [ProtoContract]
-    class RootToDoItemsViewModelSetting
+    private class RootToDoItemsViewModelSetting
     {
         public RootToDoItemsViewModelSetting(RootToDoItemsViewModel viewModel)
         {

@@ -4,8 +4,8 @@ namespace Spravy.Domain.Exceptions;
 
 public class RecursionTypeExpressionInvokeException : Exception
 {
-    public RecursionTypeExpressionInvokeException(Type type, Expression expression)
-        : base($"{type} contains in parameters {expression}.")
+    public RecursionTypeExpressionInvokeException(Type type, Expression expression) : base(
+        $"{type} contains in parameters {expression}.")
     {
         Type = type;
         Expression = expression;

@@ -25,33 +25,31 @@ public class ValueToDoItemSettingsViewModel : ViewModelBase, IToDoChildrenTypePr
 
     public AvaloniaList<ToDoItemChildrenType> ChildrenTypes { get; } = new(Enum.GetValues<ToDoItemChildrenType>());
 
+    [Inject]
+    public required IToDoService ToDoService { get; set; }
+
+    public ICommand InitializedCommand { get; }
+
+    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
+    {
+        return ToDoService.UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, cancellationToken);
+    }
+
     [Reactive]
     public Guid Id { get; set; }
 
     [Reactive]
     public ToDoItemChildrenType ChildrenType { get; set; }
 
-    [Inject]
-    public required IToDoService ToDoService { get; set; }
-
-    public ICommand InitializedCommand { get; }
+    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
+    {
+        return ToDoService.GetValueToDoItemSettingsAsync(Id, cancellationToken)
+           .IfSuccessAsync(setting => this.InvokeUIBackgroundAsync(() => ChildrenType = setting.ChildrenType),
+                cancellationToken);
+    }
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         return RefreshAsync(cancellationToken);
-    }
-
-    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
-    {
-        return ToDoService.GetValueToDoItemSettingsAsync(Id, cancellationToken)
-            .IfSuccessAsync(
-                setting => this.InvokeUIBackgroundAsync(() => ChildrenType = setting.ChildrenType),
-                cancellationToken
-            );
-    }
-
-    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
-    {
-        return ToDoService.UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, cancellationToken);
     }
 }

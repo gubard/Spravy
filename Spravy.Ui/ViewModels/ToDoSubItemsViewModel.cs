@@ -15,8 +15,8 @@ namespace Spravy.Ui.ViewModels;
 
 public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 {
-    private IRefresh? refreshToDoItem;
     private readonly MultiToDoItemsViewModel list;
+    private IRefresh? refreshToDoItem;
 
     [Inject]
     public required MultiToDoItemsViewModel List
@@ -42,14 +42,10 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
     private ConfiguredValueTaskAwaitable<Result> RefreshFavoriteToDoItemsAsync(CancellationToken cancellationToken)
     {
         return ToDoService.GetFavoriteToDoItemIdsAsync(cancellationToken)
-            .IfSuccessAsync(
+           .IfSuccessAsync(
                 ids => List.ClearFavoriteExceptAsync(ids.ToArray())
-                    .IfSuccessAsync(
-                        () => RefreshFavoriteToDoItemsCore(ids, cancellationToken).ConfigureAwait(false),
-                        cancellationToken
-                    ),
-                cancellationToken
-            );
+                   .IfSuccessAsync(() => RefreshFavoriteToDoItemsCore(ids, cancellationToken).ConfigureAwait(false),
+                        cancellationToken), cancellationToken);
     }
 
     private async ValueTask<Result> RefreshFavoriteToDoItemsCore(
@@ -57,9 +53,8 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
         CancellationToken cancellationToken
     )
     {
-        await foreach (var items in ToDoService
-                           .GetToDoItemsAsync(ids.ToArray(), 5, cancellationToken)
-                           .ConfigureAwait(false))
+        await foreach (var items in ToDoService.GetToDoItemsAsync(ids.ToArray(), 5, cancellationToken)
+           .ConfigureAwait(false))
         {
             foreach (var item in items.ToArray())
             {
@@ -82,11 +77,9 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
     )
     {
         return List.ClearExceptAsync(ids)
-            .IfSuccessAsync(() => RefreshFavoriteToDoItemsAsync(cancellationToken), cancellationToken)
-            .IfSuccessAsync(
-                () => RefreshToDoItemListsCore(ids, autoOrder, cancellationToken).ConfigureAwait(false),
-                cancellationToken
-            );
+           .IfSuccessAsync(() => RefreshFavoriteToDoItemsAsync(cancellationToken), cancellationToken)
+           .IfSuccessAsync(() => RefreshToDoItemListsCore(ids, autoOrder, cancellationToken).ConfigureAwait(false),
+                cancellationToken);
     }
 
     private async ValueTask<Result> RefreshToDoItemListsCore(

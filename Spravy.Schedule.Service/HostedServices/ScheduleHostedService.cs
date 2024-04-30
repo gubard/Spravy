@@ -14,10 +14,10 @@ namespace Spravy.Schedule.Service.HostedServices;
 
 public class ScheduleHostedService : IHostedService
 {
-    private readonly IFactory<string, SpravyDbScheduleDbContext> spravyScheduleDbContextFactory;
-    private readonly SqliteFolderOptions sqliteFolderOptions;
     private readonly IFactory<string, IEventBusService> eventBusServiceFactory;
     private readonly ILogger<ScheduleHostedService> logger;
+    private readonly IFactory<string, SpravyDbScheduleDbContext> spravyScheduleDbContextFactory;
+    private readonly SqliteFolderOptions sqliteFolderOptions;
     private readonly Dictionary<string, Task> tasks = new();
 
     public ScheduleHostedService(
@@ -58,38 +58,34 @@ public class ScheduleHostedService : IHostedService
             {
                 try
                 {
-                    spravyScheduleDbContextFactory.Create(file.ToSqliteConnectionString()).IfSuccessAsync(context =>
-                        context.AtomicExecuteAsync(
-                            () =>
-                                context.Set<TimerEntity>()
-                                    .AsNoTracking()
-                                    .ToArrayEntitiesAsync(cancellationToken)
-                                    .IfSuccessAllInOrderAsync(timers =>
+                    spravyScheduleDbContextFactory.Create(file.ToSqliteConnectionString())
+                       .IfSuccessAsync(context => context.AtomicExecuteAsync(() => context.Set<TimerEntity>()
+                           .AsNoTracking()
+                           .ToArrayEntitiesAsync(cancellationToken)
+                           .IfSuccessAllInOrderAsync(timers =>
+                            {
+                                var tasks = new List<Func<ConfiguredValueTaskAwaitable<Result>>>();
+
+                                foreach (var timer in timers.Span)
+                                {
+                                    if (timer.DueDateTime > DateTimeOffset.Now)
                                     {
-                                        var tasks = new List<Func<ConfiguredValueTaskAwaitable<Result>>>();
+                                        continue;
+                                    }
 
-                                        foreach (var timer in timers.Span)
-                                        {
-                                            if (timer.DueDateTime > DateTimeOffset.Now)
-                                            {
-                                                continue;
-                                            }
+                                    tasks.Add(() => eventBusServiceFactory
+                                       .Create(file.GetFileNameWithoutExtension())
+                                       .IfSuccessAsync(
+                                            eventBusService =>
+                                                eventBusService
+                                                   .PublishEventAsync(timer.EventId, timer.Content, cancellationToken)
+                                                   .IfSuccessAsync(() => context.RemoveEntity(timer),
+                                                        cancellationToken),
+                                            cancellationToken));
+                                }
 
-                                            tasks.Add(() => eventBusServiceFactory
-                                                .Create(file.GetFileNameWithoutExtension())
-                                                .IfSuccessAsync(eventBusService => eventBusService.PublishEventAsync(
-                                                        timer.EventId,
-                                                        timer.Content,
-                                                        cancellationToken
-                                                    )
-                                                    .IfSuccessAsync(() => context.RemoveEntity(timer),
-                                                        cancellationToken), cancellationToken));
-                                        }
-
-                                        return tasks.ToArray();
-                                    }, cancellationToken),
-                            cancellationToken
-                        ), cancellationToken);
+                                return tasks.ToArray();
+                            }, cancellationToken), cancellationToken), cancellationToken);
                 }
                 catch (Exception e)
                 {

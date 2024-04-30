@@ -11,7 +11,7 @@ public class SpravyScheduleProfile : Profile
     public SpravyScheduleProfile()
     {
         CreateMap<Guid, ByteString>().ConvertUsing(x => ByteString.CopyFrom(x.ToByteArray()));
-        CreateMap<ByteString, Guid>().ConstructUsing(x => new Guid(x.ToByteArray()));
+        CreateMap<ByteString, Guid>().ConstructUsing(x => new(x.ToByteArray()));
         CreateMap<byte[], ByteString>().ConvertUsing(x => ByteString.CopyFrom(x));
         CreateMap<ByteString, byte[]>().ConstructUsing(x => x.ToByteArray());
         CreateMap<Stream, ByteString>().ConvertUsing(x => ByteString.FromStream(x));
@@ -24,42 +24,29 @@ public class SpravyScheduleProfile : Profile
         CreateMap<DateTimeOffsetGrpc, DateTimeOffset>().ConvertUsing(x => ToDateTimeOffset(x));
 
         CreateMap<DateTimeOffset, DateTimeOffsetGrpc>()
-            .ConvertUsing(
-                (source, _, _) => new DateTimeOffsetGrpc
-                {
-                    Date = ToTimestamp(source),
-                    Offset = OffsetToDuration(source),
-                }
-            );
+           .ConvertUsing((source, _, _) => new()
+            {
+                Date = ToTimestamp(source),
+                Offset = OffsetToDuration(source),
+            });
 
         CreateMap<AddTimerParameters, AddTimerRequest>()
-            .ConvertUsing(
-                (source, _, resolutionContext) => new AddTimerRequest
+           .ConvertUsing((source, _, resolutionContext) => new()
+            {
+                Parameters = new()
                 {
-                    Parameters = new AddTimerParametersGrpc
-                    {
-                        DueDateTime = resolutionContext.Mapper.Map<DateTimeOffsetGrpc>(source.DueDateTime),
-                        EventId = resolutionContext.Mapper.Map<ByteString>(source.EventId),
-                        Content = resolutionContext.Mapper.Map<ByteString>(source.Content),
-                    }
-                }
-            );
+                    DueDateTime = resolutionContext.Mapper.Map<DateTimeOffsetGrpc>(source.DueDateTime),
+                    EventId = resolutionContext.Mapper.Map<ByteString>(source.EventId),
+                    Content = resolutionContext.Mapper.Map<ByteString>(source.Content),
+                },
+            });
     }
-
 
     private DateTimeOffset ToDateTimeOffset(DateTimeOffsetGrpc grpc)
     {
         var date = grpc.Date.ToDateTimeOffset();
 
-        return new DateTimeOffset(
-            date.Year,
-            date.Month,
-            date.Day,
-            date.Hour,
-            date.Minute,
-            date.Second,
-            grpc.Offset.ToTimeSpan()
-        );
+        return new(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, grpc.Offset.ToTimeSpan());
     }
 
     private DateTimeOffset? ToNullableDateTimeOffset(DateTimeOffsetGrpc grpc)
@@ -71,15 +58,8 @@ public class SpravyScheduleProfile : Profile
 
         var date = grpc.Date.ToDateTimeOffset();
 
-        return new DateTimeOffset(
-            date.Year,
-            date.Month,
-            date.Day,
-            date.Hour,
-            date.Minute,
-            date.Second,
-            grpc.Offset.ToTimeSpan()
-        );
+        return new DateTimeOffset(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second,
+            grpc.Offset.ToTimeSpan());
     }
 
     private Duration? OffsetToDuration(DateTimeOffset? date)

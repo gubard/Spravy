@@ -9,8 +9,8 @@ namespace Spravy.Db.Sqlite.Services;
 
 public class SqliteObjectStorage : IObjectStorage
 {
-    private readonly StorageDbContext storageDbContext;
     private readonly ISerializer serializer;
+    private readonly StorageDbContext storageDbContext;
 
     public SqliteObjectStorage(StorageDbContext storageDbContext, ISerializer serializer)
     {
@@ -23,16 +23,26 @@ public class SqliteObjectStorage : IObjectStorage
         return IsExistsCore(id).ConfigureAwait(false);
     }
 
+    public ConfiguredValueTaskAwaitable<Result> DeleteAsync(string id)
+    {
+        return DeleteCore(id).ConfigureAwait(false);
+    }
+
+    public ConfiguredValueTaskAwaitable<Result> SaveObjectAsync(string id, object obj)
+    {
+        return SaveObjectCore(id, obj).ConfigureAwait(false);
+    }
+
+    public ConfiguredValueTaskAwaitable<Result<TObject>> GetObjectAsync<TObject>(string id)
+    {
+        return GetObjectCore<TObject>(id).ConfigureAwait(false);
+    }
+
     private async ValueTask<Result<bool>> IsExistsCore(string id)
     {
         var item = await storageDbContext.FindAsync<StorageEntity>(id);
 
         return (item is not null).ToResult();
-    }
-
-    public ConfiguredValueTaskAwaitable<Result> DeleteAsync(string id)
-    {
-        return DeleteCore(id).ConfigureAwait(false);
     }
 
     private async ValueTask<Result> DeleteCore(string id)
@@ -43,11 +53,6 @@ public class SqliteObjectStorage : IObjectStorage
         await storageDbContext.SaveChangesAsync();
 
         return Result.Success;
-    }
-
-    public ConfiguredValueTaskAwaitable<Result> SaveObjectAsync(string id, object obj)
-    {
-        return SaveObjectCore(id, obj).ConfigureAwait(false);
     }
 
     private async ValueTask<Result> SaveObjectCore(string id, object obj)
@@ -81,11 +86,6 @@ public class SqliteObjectStorage : IObjectStorage
         await storageDbContext.SaveChangesAsync();
 
         return Result.Success;
-    }
-
-    public ConfiguredValueTaskAwaitable<Result<TObject>> GetObjectAsync<TObject>(string id)
-    {
-        return GetObjectCore<TObject>(id).ConfigureAwait(false);
     }
 
     private async ValueTask<Result<TObject>> GetObjectCore<TObject>(string id)

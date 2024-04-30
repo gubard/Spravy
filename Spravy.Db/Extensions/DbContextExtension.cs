@@ -19,7 +19,8 @@ public static class DbContextExtension
     public static ConfiguredValueTaskAwaitable<Result<EntityEntry<TEntity>>> AddEntityAsync<TEntity>(
         this DbContext context,
         TEntity entity,
-        CancellationToken cancellationToken) where TEntity : class
+        CancellationToken cancellationToken
+    ) where TEntity : class
     {
         return AddEntityCore(context, entity, cancellationToken).ConfigureAwait(false);
     }
@@ -27,7 +28,8 @@ public static class DbContextExtension
     private static async ValueTask<Result<EntityEntry<TEntity>>> AddEntityCore<TEntity>(
         this DbContext context,
         TEntity entity,
-        CancellationToken cancellationToken) where TEntity : class
+        CancellationToken cancellationToken
+    ) where TEntity : class
     {
         var value = await context.AddAsync(entity, cancellationToken);
 
@@ -42,17 +44,14 @@ public static class DbContextExtension
         return FindEntityCore<TEntity>(context, key).ConfigureAwait(false);
     }
 
-    private static async ValueTask<Result<TEntity>> FindEntityCore<TEntity>(
-        this DbContext context,
-        object key
-    )
+    private static async ValueTask<Result<TEntity>> FindEntityCore<TEntity>(this DbContext context, object key)
         where TEntity : class
     {
         var value = await context.FindAsync<TEntity>(key);
 
         if (value is null)
         {
-            return new Result<TEntity>(new NotFoundEntityError(typeof(TEntity), key));
+            return new(new NotFoundEntityError(typeof(TEntity), key));
         }
 
         return value.ToResult();
@@ -62,8 +61,7 @@ public static class DbContextExtension
         this TDbContext context,
         Func<ConfiguredValueTaskAwaitable<Result<TReturn>>> func,
         CancellationToken cancellationToken
-    )
-        where TDbContext : DbContext
+    ) where TDbContext : DbContext
     {
         return AtomicExecuteCore(context, func, cancellationToken).ConfigureAwait(false);
     }
@@ -72,8 +70,7 @@ public static class DbContextExtension
         this TDbContext context,
         Func<ConfiguredValueTaskAwaitable<Result<TReturn>>> func,
         CancellationToken cancellationToken
-    )
-        where TDbContext : DbContext
+    ) where TDbContext : DbContext
     {
         await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
         Result<TReturn> result;
@@ -106,8 +103,7 @@ public static class DbContextExtension
         this TDbContext context,
         Func<ConfiguredValueTaskAwaitable<Result>> func,
         CancellationToken cancellationToken
-    )
-        where TDbContext : DbContext
+    ) where TDbContext : DbContext
     {
         return AtomicExecuteCore(context, func, cancellationToken).ConfigureAwait(false);
     }
@@ -116,8 +112,7 @@ public static class DbContextExtension
         this TDbContext context,
         Func<ConfiguredValueTaskAwaitable<Result>> func,
         CancellationToken cancellationToken
-    )
-        where TDbContext : DbContext
+    ) where TDbContext : DbContext
     {
         await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
         Result result;

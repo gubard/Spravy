@@ -24,13 +24,13 @@ public static class TaskExtension
             errors = errors.Combine(r.Errors);
         }
 
-        return new Result(errors);
+        return new(errors);
     }
 
     public static async Task<Result> ToResult<TReturn>(this ConfiguredTaskAwaitable<Result<TReturn>> task)
     {
         var result = await task;
 
-        return new Result(result.Errors);
+        return new(result.Errors);
     }
 }

@@ -12,11 +12,11 @@ namespace Spravy.EventBus.Domain.Client.Services;
 public class EventBusServiceFactory : IFactory<string, IEventBusService>
 {
     private readonly IConverter converter;
-    private readonly IHttpHeaderFactory httpHeaderFactory;
     private readonly IFactory<Uri, EventBusService.EventBusServiceClient> eventBusServiceClientFactory;
+    private readonly IHttpHeaderFactory httpHeaderFactory;
     private readonly GrpcEventBusServiceOptions options;
-    private readonly ITokenService tokenService;
     private readonly ISerializer serializer;
+    private readonly ITokenService tokenService;
 
     public EventBusServiceFactory(
         IConverter converter,
@@ -52,6 +52,7 @@ public class EventBusServiceFactory : IFactory<string, IEventBusService>
         var metadataFactory = new MetadataFactory(new CombineHttpHeaderFactory(headers));
         var host = options.Host.ThrowIfNull().ToUri();
 
-        return new GrpcEventBusService(eventBusServiceClientFactory, host, converter, metadataFactory, serializer).ToResult<IEventBusService>();
+        return new GrpcEventBusService(eventBusServiceClientFactory, host, converter, metadataFactory, serializer)
+           .ToResult<IEventBusService>();
     }
 }

@@ -6,7 +6,7 @@ public class TreeNode<TKey, TValue> where TKey : notnull
 
     public TreeNode(TKey key, TValue value, IEnumerable<TreeNode<TKey, TValue>> nodes)
     {
-        this.nodes = new ();
+        this.nodes = new();
         Key = key;
         Value = value;
 
@@ -21,7 +21,10 @@ public class TreeNode<TKey, TValue> where TKey : notnull
         Nodes = this.nodes.Values;
     }
 
-    public TreeNode<TKey, TValue> this[TKey key] => nodes[key];
+    public TreeNode<TKey, TValue> this[TKey key]
+    {
+        get => nodes[key];
+    }
 
     public TreeNode<TKey, TValue> this[params TKey[] keys]
     {

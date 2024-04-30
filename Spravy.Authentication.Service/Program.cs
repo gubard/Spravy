@@ -4,17 +4,15 @@ using Spravy.Authentication.Service.Extensions;
 using Spravy.Authentication.Service.Services;
 using Spravy.Service.Extensions;
 
-Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console()
-    .CreateLogger();
+Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
 
 try
 {
     Log.Information("Starting web app");
 
     WebApplication.CreateBuilder(args)
-        .BuildSpravy<GrpcAuthenticationService, SpravyAuthenticationServiceMark>(args, x => x.RegisterAuthentication())
-        .Run();
+       .BuildSpravy<GrpcAuthenticationService, SpravyAuthenticationServiceMark>(args, x => x.RegisterAuthentication())
+       .Run();
 }
 catch (Exception ex)
 {

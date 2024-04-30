@@ -2,8 +2,7 @@
 
 public class TypeNotRegisterException : Exception
 {
-    public TypeNotRegisterException(Type type)
-        : base($"Type {type} not register.")
+    public TypeNotRegisterException(Type type) : base($"Type {type} not register.")
     {
         Type = type;
     }

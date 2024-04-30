@@ -5,28 +5,15 @@ namespace _build.Extensions;
 
 public static class FileInfoExtension
 {
-    public static string GetGrpcServiceName(this FileInfo file)
-    {
-        return $"Grpc{file.GetFileNameWithoutExtension().GetGrpcServiceName()}";
-    }
+    public static string GetGrpcServiceName(this FileInfo file) =>
+        $"Grpc{file.GetFileNameWithoutExtension().GetGrpcServiceName()}";
 
-    public static JsonDocument GetJsonDocument(this FileInfo file)
-    {
-        return JsonDocument.Parse(file.ReadAllText());
-    }
+    public static JsonDocument GetJsonDocument(this FileInfo file) => JsonDocument.Parse(file.ReadAllText());
 
-    public static string ReadAllText(this FileInfo file)
-    {
-        return File.ReadAllText(file.FullName);
-    }
+    public static string ReadAllText(this FileInfo file) => File.ReadAllText(file.FullName);
 
-    public static void WriteAllText(this FileInfo file, string text)
-    {
-        File.WriteAllText(file.FullName, text);
-    }
+    public static void WriteAllText(this FileInfo file, string text) => File.WriteAllText(file.FullName, text);
 
-    public static string GetFileNameWithoutExtension(this FileInfo file)
-    {
-        return Path.GetFileNameWithoutExtension(file.FullName);
-    }
+    public static string GetFileNameWithoutExtension(this FileInfo file) =>
+        Path.GetFileNameWithoutExtension(file.FullName);
 }

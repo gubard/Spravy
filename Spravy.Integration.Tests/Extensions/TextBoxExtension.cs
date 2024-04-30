@@ -7,8 +7,7 @@ namespace Spravy.Integration.Tests.Extensions;
 
 public static class TextBoxExtension
 {
-    public static TTextBox ClearText<TTextBox>(this TTextBox textBox, Window window)
-        where TTextBox : TextBox
+    public static TTextBox ClearText<TTextBox>(this TTextBox textBox, Window window) where TTextBox : TextBox
     {
         if (textBox.Text.IsNullOrWhiteSpace())
         {
@@ -32,13 +31,12 @@ public static class TextBoxExtension
                 window.SpravyKeyReleaseQwerty(PhysicalKey.Backspace, RawInputModifiers.None);
                 window.RunJobsAll();
             })
-            .ThrowIfError();
+           .ThrowIfError();
 
         return textBox;
     }
 
-    public static TTextBox SetText<TTextBox>(this TTextBox textBox, Window window, string text)
-        where TTextBox : TextBox
+    public static TTextBox SetText<TTextBox>(this TTextBox textBox, Window window, string text) where TTextBox : TextBox
     {
         textBox.FocusInput(window);
         window.SetKeyTextInput(text);
@@ -46,12 +44,9 @@ public static class TextBoxExtension
         return textBox;
     }
 
-    public static TTextBox FocusInput<TTextBox>(this TTextBox textBox, Window window)
-        where TTextBox : TextBox
+    public static TTextBox FocusInput<TTextBox>(this TTextBox textBox, Window window) where TTextBox : TextBox
     {
-        textBox.ClickOn(window)
-            .RunJobsAll(2)
-            .MustFocused();
+        textBox.ClickOn(window).RunJobsAll(2).MustFocused();
 
         return textBox;
     }

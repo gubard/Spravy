@@ -48,30 +48,27 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
     [Inject]
     public required IToDoService ToDoService { get; init; }
 
-
-    public override string ViewId => $"{TypeCache<AddToDoItemViewModel>.Type.Name}:{ParentId}";
+    public override string ViewId
+    {
+        get => $"{TypeCache<AddToDoItemViewModel>.Type.Name}:{ParentId}";
+    }
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         return ObjectStorage.GetObjectOrDefaultAsync<AddToDoItemViewModelSetting>(ViewId, cancellationToken)
-            .IfSuccessAsync(obj => SetStateAsync(obj, cancellationToken), cancellationToken)
-            .IfSuccessAllAsync(
-                cancellationToken,
-                () => ToDoService.GetParentsAsync(ParentId, cancellationToken)
-                    .IfSuccessAsync(
-                        parents =>
-                        {
-                            var path = MaterialIconKind.Home.As<object>()
-                                .ToEnumerable()
-                                .Concat(parents.ToArray().Select(x => x.Name))
-                                .Select(x => x.ThrowIfNull())
-                                .ToArray();
+           .IfSuccessAsync(obj => SetStateAsync(obj, cancellationToken), cancellationToken)
+           .IfSuccessAllAsync(cancellationToken, () => ToDoService.GetParentsAsync(ParentId, cancellationToken)
+               .IfSuccessAsync(parents =>
+                {
+                    var path = MaterialIconKind.Home
+                       .As<object>()
+                       .ToEnumerable()
+                       .Concat(parents.ToArray().Select(x => x.Name))
+                       .Select(x => x.ThrowIfNull())
+                       .ToArray();
 
-                            return this.InvokeUIBackgroundAsync(() => Path = path);
-                        },
-                        cancellationToken
-                    )
-            );
+                    return this.InvokeUIBackgroundAsync(() => Path = path);
+                }, cancellationToken));
     }
 
     public override Result Stop()
@@ -90,23 +87,18 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
     )
     {
         return setting.CastObject<AddToDoItemViewModelSetting>()
-            .IfSuccessAsync(
-                s => this.InvokeUIBackgroundAsync(
-                    () =>
-                    {
-                        ToDoItemContent.Name = s.Name;
-                        ToDoItemContent.Type = s.Type;
-                        ToDoItemContent.Link = s.Link;
-                        DescriptionContent.Description = s.Description;
-                        DescriptionContent.Type = s.DescriptionType;
-                    }
-                ),
-                cancellationToken
-            );
+           .IfSuccessAsync(s => this.InvokeUIBackgroundAsync(() =>
+            {
+                ToDoItemContent.Name = s.Name;
+                ToDoItemContent.Type = s.Type;
+                ToDoItemContent.Link = s.Link;
+                DescriptionContent.Description = s.Description;
+                DescriptionContent.Type = s.DescriptionType;
+            }), cancellationToken);
     }
 
     [ProtoContract]
-    class AddToDoItemViewModelSetting
+    private class AddToDoItemViewModelSetting
     {
         public AddToDoItemViewModelSetting()
         {

@@ -51,58 +51,46 @@ public class ToDoItemSelectorViewModel : ViewModelBase
         SearchCommand = CreateCommandFromTask(TaskWork.Create(SearchAsync).RunAsync);
 
         return Refresh(cancellationToken)
-            .IfSuccessAsync(
-                () =>
-                {
-                    SetItem(DefaultSelectedItemId);
+           .IfSuccessAsync(() =>
+            {
+                SetItem(DefaultSelectedItemId);
 
-                    return Result.AwaitableFalse;
-                },
-                cancellationToken
-            );
+                return Result.AwaitableFalse;
+            }, cancellationToken);
     }
 
     private ConfiguredValueTaskAwaitable<Result> Refresh(CancellationToken cancellationToken)
     {
         return this.InvokeUIBackgroundAsync(() => Roots.Clear())
-            .IfSuccessAsync(
-                () => ToDoService.GetToDoSelectorItemsAsync(IgnoreIds.ToArray(), cancellationToken)
-                    .IfSuccessAsync(
-                        items =>
-                        {
-                            itemsCache.Clear();
-                            itemsCache.AddRange(Mapper.Map<ToDoSelectorItemNotify[]>(items.ToArray()));
+           .IfSuccessAsync(() => ToDoService.GetToDoSelectorItemsAsync(IgnoreIds.ToArray(), cancellationToken)
+               .IfSuccessAsync(items =>
+                {
+                    itemsCache.Clear();
+                    itemsCache.AddRange(Mapper.Map<ToDoSelectorItemNotify[]>(items.ToArray()));
 
-                            return this.InvokeUIBackgroundAsync(() => Roots.AddRange(itemsCache));
-                        },
-                        cancellationToken
-                    ),
-                cancellationToken
-            );
+                    return this.InvokeUIBackgroundAsync(() => Roots.AddRange(itemsCache));
+                }, cancellationToken), cancellationToken);
     }
 
     private ConfiguredValueTaskAwaitable<Result> SearchAsync(CancellationToken cancellationToken)
     {
         return this.InvokeUIBackgroundAsync(() => Roots.Clear())
-            .IfSuccessAsync(
-                () =>
+           .IfSuccessAsync(() =>
+            {
+                if (SearchText.IsNullOrWhiteSpace())
                 {
-                    if (SearchText.IsNullOrWhiteSpace())
-                    {
-                        return this.InvokeUIBackgroundAsync(() => Roots.AddRange(itemsCache));
-                    }
+                    return this.InvokeUIBackgroundAsync(() => Roots.AddRange(itemsCache));
+                }
 
-                    var result = new List<ToDoSelectorItemNotify>();
+                var result = new List<ToDoSelectorItemNotify>();
 
-                    foreach (var item in itemsCache)
-                    {
-                        Search(item, result);
-                    }
+                foreach (var item in itemsCache)
+                {
+                    Search(item, result);
+                }
 
-                    return this.InvokeUIBackgroundAsync(() => Roots.AddRange(result));
-                },
-                cancellationToken
-            );
+                return this.InvokeUIBackgroundAsync(() => Roots.AddRange(result));
+            }, cancellationToken);
     }
 
     private void Search(ToDoSelectorItemNotify item, List<ToDoSelectorItemNotify> result)

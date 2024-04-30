@@ -13,7 +13,7 @@ public static class RectExtension
 
         return false;
     }
-    
+
     public static bool IsBottom(this Rect rect, Point point)
     {
         if (rect.Height / 2 <= point.Y)

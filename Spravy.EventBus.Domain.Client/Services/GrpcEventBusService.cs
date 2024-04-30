@@ -34,34 +34,29 @@ public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
 
     public IAsyncEnumerable<EventValue> SubscribeEventsAsync(Guid[] eventIds, CancellationToken cancellationToken)
     {
-        return CallClientAsync(
-            (client, token) => SubscribeEventsAsyncCore(client, eventIds, token),
-            cancellationToken
-        );
+        return CallClientAsync((client, token) => SubscribeEventsAsyncCore(client, eventIds, token), cancellationToken);
     }
 
-    public ConfiguredValueTaskAwaitable<Result> PublishEventAsync(Guid eventId, byte[] content, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> PublishEventAsync(
+        Guid eventId,
+        byte[] content,
+        CancellationToken cancellationToken
+    )
     {
-        return CallClientAsync(
-            client => metadataFactory.CreateAsync(cancellationToken)
-                .IfSuccessAsync(
-                    converter.Convert<ByteString>(eventId),
-                    converter.Convert<ByteString>(content),
-                    (value, ei, c) =>
+        return CallClientAsync(client => metadataFactory.CreateAsync(cancellationToken)
+           .IfSuccessAsync(converter.Convert<ByteString>(eventId), converter.Convert<ByteString>(content),
+                (value, ei, c) =>
+                {
+                    var request = new PublishEventRequest
                     {
-                        var request = new PublishEventRequest
-                        {
-                            EventId = ei,
-                            Content = c,
-                        };
+                        EventId = ei,
+                        Content = c,
+                    };
 
-                        return client.PublishEventAsync(request, value, cancellationToken: cancellationToken)
-                            .ToValueTaskResultOnly()
-                            .ConfigureAwait(false);
-                    },cancellationToken
-                ),
-            cancellationToken
-        );
+                    return client.PublishEventAsync(request, value, cancellationToken: cancellationToken)
+                       .ToValueTaskResultOnly()
+                       .ConfigureAwait(false);
+                }, cancellationToken), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<EventValue>>> GetEventsAsync(
@@ -69,36 +64,32 @@ public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
         CancellationToken cancellationToken
     )
     {
-        return CallClientAsync(
-            client =>
-                metadataFactory.CreateAsync(cancellationToken)
-                    .IfSuccessAsync(
-                        converter.Convert<ByteString[]>(eventIds.ToArray()),
-                        (value, ei) =>
-                        {
-                            var request = new GetEventsRequest();
-                            request.EventIds.AddRange(ei);
+        return CallClientAsync(client => metadataFactory.CreateAsync(cancellationToken)
+           .IfSuccessAsync(converter.Convert<ByteString[]>(eventIds.ToArray()), (value, ei) =>
+            {
+                var request = new GetEventsRequest();
+                request.EventIds.AddRange(ei);
 
-                            return client.GetEventsAsync(
-                                    request,
-                                    value,
-                                    cancellationToken: cancellationToken
-                                )
-                                .ToValueTaskResultValueOnly()
-                                .ConfigureAwait(false)
-                                .IfSuccessAsync(
-                                    events => converter.Convert<EventValue[]>(events.Events)
-                                        .IfSuccess(
-                                            e => e.ToReadOnlyMemory()
-                                                .ToResult()
-                                        )
-                                        .ToValueTaskResult()
-                                        .ConfigureAwait(false),cancellationToken
-                                );
-                        }, cancellationToken
-                    ),
-            cancellationToken
-        );
+                return client.GetEventsAsync(request, value, cancellationToken: cancellationToken)
+                   .ToValueTaskResultValueOnly()
+                   .ConfigureAwait(false)
+                   .IfSuccessAsync(
+                        events => converter.Convert<EventValue[]>(events.Events)
+                           .IfSuccess(e => e.ToReadOnlyMemory().ToResult())
+                           .ToValueTaskResult()
+                           .ConfigureAwait(false), cancellationToken);
+            }, cancellationToken), cancellationToken);
+    }
+
+    public static GrpcEventBusService CreateGrpcService(
+        IFactory<Uri, EventBusServiceClient> grpcClientFactory,
+        Uri host,
+        IConverter converter,
+        IMetadataFactory metadataFactory,
+        ISerializer serializer
+    )
+    {
+        return new(grpcClientFactory, host, converter, metadataFactory, serializer);
     }
 
     private async IAsyncEnumerable<EventValue> SubscribeEventsAsyncCore(
@@ -119,16 +110,5 @@ public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
 
             yield return eventValue.Value;
         }
-    }
-
-    public static GrpcEventBusService CreateGrpcService(
-        IFactory<Uri, EventBusServiceClient> grpcClientFactory,
-        Uri host,
-        IConverter converter,
-        IMetadataFactory metadataFactory,
-        ISerializer serializer
-    )
-    {
-        return new(grpcClientFactory, host, converter, metadataFactory, serializer);
     }
 }

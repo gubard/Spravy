@@ -13,9 +13,9 @@ namespace Spravy.EventBus.Service.Services;
 [Authorize]
 public class GrpcEventBusService : EventBusServiceBase
 {
-    private readonly IMapper mapper;
     private readonly EventStorage eventStorage;
     private readonly ILogger<GrpcEventBusService> logger;
+    private readonly IMapper mapper;
 
     public GrpcEventBusService(IMapper mapper, EventStorage eventStorage, ILogger<GrpcEventBusService> logger)
     {
@@ -64,7 +64,7 @@ public class GrpcEventBusService : EventBusServiceBase
         logger.LogInformation("{UserId} push event {Id}", userId, id);
         await eventStorage.AddEventAsync(id, request.Content.ToByteArray(), context.CancellationToken);
 
-        return new PublishEventReply();
+        return new();
     }
 
     public override async Task<GetEventsReply> GetEvents(GetEventsRequest request, ServerCallContext context)
@@ -89,9 +89,9 @@ public class GrpcEventBusService : EventBusServiceBase
             var eventValue = await eventStorage.PushEventAsync(eventIds);
             await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
 
-            return new IsSuccessValue<IEnumerable<EventValue>>(eventValue);
+            return new(eventValue);
         }
 
-        return new IsSuccessValue<IEnumerable<EventValue>>();
+        return new();
     }
 }

@@ -25,39 +25,28 @@ public class PageHeaderViewModel : ViewModelBase
 
     public ConfiguredValueTaskAwaitable<Result> SetMultiCommands(ToDoSubItemsViewModel items)
     {
-        return this.InvokeUIBackgroundAsync(
-            () =>
-            {
-                Commands.Clear();
+        return this.InvokeUIBackgroundAsync(() =>
+        {
+            Commands.Clear();
 
-                Commands.Add(
-                    CommandStorage.MultiCompleteToDoItemsItem.WithParam(
-                        items.List.MultiToDoItems.GroupByNone.Items.Items
-                    )
-                );
-                Commands.Add(
-                    CommandStorage.MultiSetTypeToDoItemsItem.WithParam(
-                        items.List.MultiToDoItems.GroupByNone.Items.Items
-                    )
-                );
-                Commands.Add(
-                    CommandStorage.MultiSetParentToDoItemsItem.WithParam(
-                        items.List.MultiToDoItems.GroupByNone.Items.Items
-                    )
-                );
-                Commands.Add(
-                    CommandStorage.MultiMoveToDoItemsToRootItem.WithParam(
-                        items.List.MultiToDoItems.GroupByNone.Items.Items
-                    )
-                );
-                Commands.Add(
-                    CommandStorage.MultiDeleteToDoItemsItem.WithParam(
-                        items.List.MultiToDoItems.GroupByNone.Items.Items
-                    )
-                );
+            Commands.Add(
+                CommandStorage.MultiCompleteToDoItemsItem.WithParam(items.List.MultiToDoItems.GroupByNone.Items.Items));
 
-                Disposables.AddRange(Commands.Select(x => (IDisposable)x.Command));
-            }
-        );
+            Commands.Add(
+                CommandStorage.MultiSetTypeToDoItemsItem.WithParam(items.List.MultiToDoItems.GroupByNone.Items.Items));
+
+            Commands.Add(
+                CommandStorage.MultiSetParentToDoItemsItem.WithParam(items.List.MultiToDoItems.GroupByNone.Items
+                   .Items));
+
+            Commands.Add(
+                CommandStorage.MultiMoveToDoItemsToRootItem.WithParam(items.List.MultiToDoItems.GroupByNone.Items
+                   .Items));
+
+            Commands.Add(
+                CommandStorage.MultiDeleteToDoItemsItem.WithParam(items.List.MultiToDoItems.GroupByNone.Items.Items));
+
+            Disposables.AddRange(Commands.Select(x => (IDisposable)x.Command));
+        });
     }
 }

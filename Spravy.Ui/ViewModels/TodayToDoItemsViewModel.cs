@@ -43,7 +43,18 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IRefresh
     }
 
     public ICommand InitializedCommand { get; }
-    public override string ViewId => TypeCache<TodayToDoItemsViewModel>.Type.Name;
+
+    public override string ViewId
+    {
+        get => TypeCache<TodayToDoItemsViewModel>.Type.Name;
+    }
+
+    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
+    {
+        return ToDoService.GetTodayToDoItemsAsync(cancellationToken)
+           .IfSuccessAsync(ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken),
+                cancellationToken);
+    }
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
@@ -66,14 +77,5 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IRefresh
     )
     {
         return Result.AwaitableFalse;
-    }
-
-    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
-    {
-        return ToDoService.GetTodayToDoItemsAsync(cancellationToken)
-            .IfSuccessAsync(
-                ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken),
-                cancellationToken
-            );
     }
 }

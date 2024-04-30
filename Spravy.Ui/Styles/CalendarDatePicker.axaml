@@ -11,12 +11,13 @@
         <Setter Property="BorderBrush" Value="{DynamicResource SukiControlBorderBrush}" />
         <Setter Property="CornerRadius" Value="{DynamicResource SmallCornerRadius}" />
     </Style>
-    
+
     <Style Selector="CalendarDatePicker /template/ Calendar#PART_Calendar">
         <Setter Property="Background" Value="{DynamicResource SukiCardBackground}" />
     </Style>
-    
-    <Style Selector="CalendarDatePicker /template/ Calendar#PART_Calendar /template/ CalendarItem#PART_CalendarItem /template/ Grid#PART_MonthView.CalendarView TextBlock">
+
+    <Style
+        Selector="CalendarDatePicker /template/ Calendar#PART_Calendar /template/ CalendarItem#PART_CalendarItem /template/ Grid#PART_MonthView.CalendarView TextBlock">
         <Setter Property="Foreground" Value="{DynamicResource SukiText}" />
     </Style>
 </Styles>

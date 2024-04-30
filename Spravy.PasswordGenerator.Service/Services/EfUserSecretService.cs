@@ -27,28 +27,26 @@ public class EfUserSecretService : IUserSecretService
     {
         var userId = httpContextAccessor.GetUserId().ToGuid();
 
-        return context.AtomicExecuteAsync(
-            () => context.Set<UserSecretEntity>()
-                .AsNoTracking()
-                .SingleOrDefaultEntityAsync(x => x.UserId == userId, cancellationToken)
-                .IfSuccessAsync(user =>
+        return context.AtomicExecuteAsync(() => context.Set<UserSecretEntity>()
+           .AsNoTracking()
+           .SingleOrDefaultEntityAsync(x => x.UserId == userId, cancellationToken)
+           .IfSuccessAsync(user =>
+            {
+                if (user is not null)
                 {
-                    if (user is not null)
+                    return user.Secret.ToReadOnlyMemory().ToResult().ToValueTaskResult().ConfigureAwait(false);
+                }
+
+                var secret = Guid.NewGuid().ToByteArray();
+
+                return context.Set<UserSecretEntity>()
+                   .AddEntityAsync(new()
                     {
-                        return user.Secret.ToReadOnlyMemory().ToResult().ToValueTaskResult().ConfigureAwait(false);
-                    }
-
-                    var secret = Guid.NewGuid().ToByteArray();
-
-                    return context.Set<UserSecretEntity>().AddEntityAsync(
-                        new UserSecretEntity
-                        {
-                            Secret = secret,
-                            UserId = userId,
-                            Id = Guid.NewGuid()
-                        },
-                        cancellationToken
-                    ).IfSuccessAsync(_ => secret.ToReadOnlyMemory().ToResult(), cancellationToken);
-                }, cancellationToken), cancellationToken);
+                        Secret = secret,
+                        UserId = userId,
+                        Id = Guid.NewGuid(),
+                    }, cancellationToken)
+                   .IfSuccessAsync(_ => secret.ToReadOnlyMemory().ToResult(), cancellationToken);
+            }, cancellationToken), cancellationToken);
     }
 }

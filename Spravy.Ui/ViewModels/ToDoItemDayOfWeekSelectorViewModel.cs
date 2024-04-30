@@ -9,7 +9,6 @@ using ReactiveUI.Fody.Helpers;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Interfaces;
-using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
@@ -21,15 +20,11 @@ public class ToDoItemDayOfWeekSelectorViewModel : ViewModelBase, IApplySettings
 {
     public ToDoItemDayOfWeekSelectorViewModel()
     {
-        Items = new(
-            Enum.GetValues<DayOfWeek>()
-                .Select(
-                    x => new DayOfWeekSelectItem
-                    {
-                        DayOfWeek = x,
-                    }
-                )
-        );
+        Items = new(Enum.GetValues<DayOfWeek>()
+           .Select(x => new DayOfWeekSelectItem
+            {
+                DayOfWeek = x,
+            }));
 
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
     }
@@ -43,33 +38,23 @@ public class ToDoItemDayOfWeekSelectorViewModel : ViewModelBase, IApplySettings
     [Reactive]
     public Guid ToDoItemId { get; set; }
 
+    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
+    {
+        return ToDoService.UpdateToDoItemWeeklyPeriodicityAsync(ToDoItemId,
+            new(Items.Where(x => x.IsSelected).Select(x => x.DayOfWeek)), cancellationToken);
+    }
+
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         return ToDoService.GetWeeklyPeriodicityAsync(ToDoItemId, cancellationToken)
-            .IfSuccessAsync(
-                weeklyPeriodicity => Result.AwaitableFalse.IfSuccessAllAsync(
-                    cancellationToken,
-                    Items.Where(x => weeklyPeriodicity.Days.Contains(x.DayOfWeek))
-                        .Select<DayOfWeekSelectItem, Func<ConfiguredValueTaskAwaitable<Result>>>(
-                            x =>
-                            {
-                                var y = x;
+           .IfSuccessAsync(weeklyPeriodicity => Result.AwaitableFalse.IfSuccessAllAsync(cancellationToken,
+                Items.Where(x => weeklyPeriodicity.Days.Contains(x.DayOfWeek))
+                   .Select<DayOfWeekSelectItem, Func<ConfiguredValueTaskAwaitable<Result>>>(x =>
+                    {
+                        var y = x;
 
-                                return () => this.InvokeUIBackgroundAsync(() => y.IsSelected = true);
-                            }
-                        )
-                        .ToArray()
-                ),
-                cancellationToken
-            );
-    }
-
-    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
-    {
-        return ToDoService.UpdateToDoItemWeeklyPeriodicityAsync(
-            ToDoItemId,
-            new WeeklyPeriodicity(Items.Where(x => x.IsSelected).Select(x => x.DayOfWeek)),
-            cancellationToken
-        );
+                        return () => this.InvokeUIBackgroundAsync(() => y.IsSelected = true);
+                    })
+                   .ToArray()), cancellationToken);
     }
 }

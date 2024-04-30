@@ -10,8 +10,7 @@ namespace _build.Services;
 
 public abstract class UiProjectBuilder<TOptions> : ProjectBuilder<TOptions> where TOptions : ProjectBuilderOptions
 {
-    protected UiProjectBuilder(TOptions options, VersionService versionService)
-        : base(options, versionService)
+    protected UiProjectBuilder(TOptions options, VersionService versionService) : base(options, versionService)
     {
     }
 
@@ -34,10 +33,9 @@ public abstract class UiProjectBuilder<TOptions> : ProjectBuilder<TOptions> wher
                 if (Options.Runtimes.IsEmpty)
                 {
                     DotNetTasks.DotNetBuild(setting => setting.SetProjectFile(Options.CsprojFile.FullName)
-                        .EnableNoRestore()
-                        .SetConfiguration(Options.Configuration)
-                        .AddProperty("Version", versionService.Version.ToString())
-                    );
+                       .EnableNoRestore()
+                       .SetConfiguration(Options.Configuration)
+                       .AddProperty("Version", versionService.Version.ToString()));
                 }
                 else
                 {
@@ -45,11 +43,10 @@ public abstract class UiProjectBuilder<TOptions> : ProjectBuilder<TOptions> wher
                     {
                         DotNetTasks.DotNetBuild(setting =>
                             setting.SetProjectFile(Options.CsprojFile.FullName)
-                                .EnableNoRestore()
-                                .SetConfiguration(Options.Configuration)
-                                .AddProperty("Version", versionService.Version.ToString())
-                                .SetRuntime(runtime.Name)
-                        );
+                               .EnableNoRestore()
+                               .SetConfiguration(Options.Configuration)
+                               .AddProperty("Version", versionService.Version.ToString())
+                               .SetRuntime(runtime.Name));
                     }
                 }
 

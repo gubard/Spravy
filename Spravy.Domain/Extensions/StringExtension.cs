@@ -21,36 +21,35 @@ public static class StringExtension
 
     public static Uri ToUri(this string str)
     {
-        return new Uri(str);
+        return new(str);
     }
 
     public static Result<string> CheckNullOrWhiteSpaceProperty(this string? propertyValue, string propertyName)
     {
         if (propertyValue is null)
         {
-            return new Result<string>(new PropertyNullValueError(propertyName));
+            return new(new PropertyNullValueError(propertyName));
         }
 
         if (propertyValue == string.Empty)
         {
-            return new Result<string>(new PropertyEmptyStringError(propertyName));
+            return new(new PropertyEmptyStringError(propertyName));
         }
 
         for (var index = 0; index < propertyValue.Length; ++index)
         {
             if (!char.IsWhiteSpace(propertyValue[index]))
             {
-                return new Result<string>(propertyValue);
+                return new(propertyValue);
             }
         }
 
-        return new Result<string>(new PropertyWhiteSpaceStringError(propertyName));
+        return new(new PropertyWhiteSpaceStringError(propertyName));
     }
 
     public static string ThrowIfNullOrWhiteSpace(
         this string? str,
-        [CallerArgumentExpression(nameof(str))]
-        string paramName = ""
+        [CallerArgumentExpression(nameof(str))] string paramName = ""
     )
     {
         str = str.ThrowIfNull(paramName);
@@ -70,12 +69,12 @@ public static class StringExtension
 
     public static FileInfo ToFile(this string path)
     {
-        return new FileInfo(path);
+        return new(path);
     }
 
     public static DirectoryInfo ToDirectory(this string path)
     {
-        return new DirectoryInfo(path);
+        return new(path);
     }
 
     public static string ToConsoleLine(this string line)

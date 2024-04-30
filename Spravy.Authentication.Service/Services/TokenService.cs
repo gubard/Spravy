@@ -17,9 +17,9 @@ public class TokenService : ITokenService
     public TokenService(ITokenFactory tokenFactory)
     {
         this.tokenFactory = tokenFactory;
-        token = tokenFactory.Create(
-            new UserTokenClaims("authentication.service", Guid.Empty, Role.Service, string.Empty)
-        ).ThrowIfError();
+
+        token = tokenFactory.Create(new("authentication.service", Guid.Empty, Role.Service, string.Empty))
+           .ThrowIfError();
     }
 
     public ConfiguredValueTaskAwaitable<Result<string>> GetTokenAsync(CancellationToken cancellationToken)
@@ -33,14 +33,13 @@ public class TokenService : ITokenService
             return new Result<string>(token.Token).ToValueTaskResult().ConfigureAwait(false);
         }
 
-        return tokenFactory.Create(
-            new UserTokenClaims("authentication.service", Guid.Empty, Role.Service, string.Empty)
-        ).IfSuccessAsync(t =>
-        {
-            token = t;
+        return tokenFactory.Create(new("authentication.service", Guid.Empty, Role.Service, string.Empty))
+           .IfSuccessAsync(t =>
+            {
+                token = t;
 
-            return new Result<string>(token.Token).ToValueTaskResult().ConfigureAwait(false);
-        }, cancellationToken);
+                return new Result<string>(token.Token).ToValueTaskResult().ConfigureAwait(false);
+            }, cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> LoginAsync(User user, CancellationToken cancellationToken)

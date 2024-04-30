@@ -16,6 +16,6 @@ public class SpravyDbScheduleDbContext : SpravyDbContext, IDbContextCreator<Spra
 
     public static SpravyDbScheduleDbContext CreateDbContext(IDbContextSetup setup, DbContextOptions options)
     {
-        return new SpravyDbScheduleDbContext(options, setup);
+        return new(options, setup);
     }
 }

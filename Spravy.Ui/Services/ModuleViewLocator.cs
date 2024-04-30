@@ -18,9 +18,10 @@ public class ModuleViewLocator : IViewLocator
 
         var type = viewModel.GetType();
 
-        var ns = type.Namespace.ThrowIfNullOrWhiteSpace()
-            .Replace(".ViewModels.", ".Views.")
-            .Replace(".ViewModels", ".Views");
+        var ns = type.Namespace
+           .ThrowIfNullOrWhiteSpace()
+           .Replace(".ViewModels.", ".Views.")
+           .Replace(".ViewModels", ".Views");
 
         var viewName = $"{ns}.{type.Name.Substring(0, type.Name.Length - 5)}";
         var viewType = type.Assembly.GetType(viewName).ThrowIfNull(viewName);

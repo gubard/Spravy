@@ -2,7 +2,13 @@ namespace Spravy.ToDo.Domain.Models;
 
 public readonly struct ResetToDoItemOptions
 {
-    public ResetToDoItemOptions(Guid id, bool isCompleteChildrenTask, bool isMoveCircleOrderIndex, bool isOnlyCompletedTasks, bool isCompleteCurrentTask)
+    public ResetToDoItemOptions(
+        Guid id,
+        bool isCompleteChildrenTask,
+        bool isMoveCircleOrderIndex,
+        bool isOnlyCompletedTasks,
+        bool isCompleteCurrentTask
+    )
     {
         Id = id;
         IsCompleteChildrenTask = isCompleteChildrenTask;

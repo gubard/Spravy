@@ -44,14 +44,10 @@ public class ChangeToDoItemOrderIndexViewModel : ViewModelBase
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         return ToDoService.GetSiblingsAsync(Id, cancellationToken)
-            .IfSuccessAsync(
-                items => this.InvokeUIBackgroundAsync(
-                        () =>
-                        {
-                            Items.Clear();
-                            Items.AddRange(Mapper.Map<ToDoShortItemNotify[]>(items.ToArray()));
-                        }
-                    ),cancellationToken
-            );
+           .IfSuccessAsync(items => this.InvokeUIBackgroundAsync(() =>
+            {
+                Items.Clear();
+                Items.AddRange(Mapper.Map<ToDoShortItemNotify[]>(items.ToArray()));
+            }), cancellationToken);
     }
 }

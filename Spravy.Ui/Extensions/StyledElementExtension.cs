@@ -10,7 +10,7 @@ public static class StyledElementExtension
         {
             return default;
         }
-        
+
         if (element.Parent is T result)
         {
             return result;

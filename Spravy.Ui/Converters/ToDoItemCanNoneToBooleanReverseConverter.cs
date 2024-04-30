@@ -17,7 +17,7 @@ public class ToDoItemCanNoneToBooleanReverseConverter : IValueConverter
         return isCan switch
         {
             ToDoItemIsCan.None => false,
-            _ => true
+            _ => true,
         };
     }
 

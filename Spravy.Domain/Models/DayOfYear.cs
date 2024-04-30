@@ -11,7 +11,6 @@ public readonly struct DayOfYear : IComparable<DayOfYear>
     public byte Day { get; }
     public byte Month { get; }
 
-
     public int CompareTo(DayOfYear other)
     {
         var year = DateTime.Now.Year;

@@ -7,9 +7,9 @@ namespace Spravy.Ui.Models;
 public class ToDoSelectorItemNotify : NotifyBase
 {
     private Guid id;
+    private bool isExpanded;
     private string name = string.Empty;
     private ToDoSelectorItemNotify? parent;
-    private bool isExpanded;
 
     public bool IsExpanded
     {

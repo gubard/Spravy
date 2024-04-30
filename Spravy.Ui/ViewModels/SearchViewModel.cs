@@ -27,13 +27,11 @@ public class SearchViewModel : NavigatableViewModelBase, IToDoItemSearchProperti
     }
 
     public ICommand InitializedCommand { get; }
-    public override string ViewId => TypeCache<SearchViewModel>.Type.Name;
 
-    [Reactive]
-    public string SearchText { get; set; } = string.Empty;
-
-    [Inject]
-    public required ToDoSubItemsViewModel ToDoSubItemsViewModel { get; init; }
+    public override string ViewId
+    {
+        get => TypeCache<SearchViewModel>.Type.Name;
+    }
 
     [Inject]
     public required IToDoService ToDoService { get; init; }
@@ -41,24 +39,28 @@ public class SearchViewModel : NavigatableViewModelBase, IToDoItemSearchProperti
     [Inject]
     public required IObjectStorage ObjectStorage { get; init; }
 
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
-    {
-        return ObjectStorage.GetObjectOrDefaultAsync<SearchViewModelSetting>(ViewId, cancellationToken)
-            .IfSuccessAsync(obj => SetStateAsync(obj, cancellationToken), cancellationToken);
-    }
+    [Reactive]
+    public string SearchText { get; set; } = string.Empty;
+
+    [Inject]
+    public required ToDoSubItemsViewModel ToDoSubItemsViewModel { get; init; }
 
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
     {
         return refreshWork.RunAsync().ToValueTaskResultOnly().ConfigureAwait(false);
     }
 
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
+    {
+        return ObjectStorage.GetObjectOrDefaultAsync<SearchViewModelSetting>(ViewId, cancellationToken)
+           .IfSuccessAsync(obj => SetStateAsync(obj, cancellationToken), cancellationToken);
+    }
+
     private ConfiguredValueTaskAwaitable<Result> RefreshCoreAsync(CancellationToken cancellationToken)
     {
         return ToDoService.SearchToDoItemIdsAsync(SearchText, cancellationToken)
-            .IfSuccessAsync(
-                ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken),
-                cancellationToken
-            );
+           .IfSuccessAsync(ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken),
+                cancellationToken);
     }
 
     public override Result Stop()
@@ -79,11 +81,11 @@ public class SearchViewModel : NavigatableViewModelBase, IToDoItemSearchProperti
     )
     {
         return setting.CastObject<SearchViewModelSetting>()
-            .IfSuccessAsync(s => this.InvokeUIBackgroundAsync(() => SearchText = s.SearchText), cancellationToken);
+           .IfSuccessAsync(s => this.InvokeUIBackgroundAsync(() => SearchText = s.SearchText), cancellationToken);
     }
 
     [ProtoContract]
-    class SearchViewModelSetting
+    private class SearchViewModelSetting
     {
         public SearchViewModelSetting(SearchViewModel viewModel)
         {

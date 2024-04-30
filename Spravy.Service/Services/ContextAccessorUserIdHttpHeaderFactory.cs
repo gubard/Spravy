@@ -24,8 +24,8 @@ public class ContextAccessorUserIdHttpHeaderFactory : IHttpHeaderFactory
         var userId = httpContextAccessor.HttpContext.ThrowIfNull().GetUserId();
 
         return new HttpHeaderItem(HttpNames.HeaderUserIdName, userId).ToReadOnlyMemory()
-            .ToResult()
-            .ToValueTaskResult()
-            .ConfigureAwait(false);
+           .ToResult()
+           .ToValueTaskResult()
+           .ConfigureAwait(false);
     }
 }

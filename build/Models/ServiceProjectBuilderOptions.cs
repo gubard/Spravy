@@ -42,12 +42,12 @@ public class ServiceProjectBuilderOptions : ProjectBuilderOptions, IFtpOptions, 
     public ushort Port { get; }
     public string Token { get; }
     public string EmailPassword { get; }
-    public DirectoryInfo PublishFolder { get; }
+    public Runtime Runtime { get; }
     public string FtpHost { get; }
     public string FtpUser { get; }
     public string FtpPassword { get; }
+    public DirectoryInfo PublishFolder { get; }
     public string SshHost { get; }
     public string SshUser { get; }
     public string SshPassword { get; }
-    public Runtime Runtime { get; }
 }

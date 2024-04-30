@@ -59,7 +59,7 @@ public static class ImapConnectionExtension
 
                     if (i == 100)
                     {
-                        throw new Exception("Inbox timeout");
+                        throw new("Inbox timeout");
                     }
 
                     continue;

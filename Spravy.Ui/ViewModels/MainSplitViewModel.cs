@@ -10,8 +10,8 @@ public class MainSplitViewModel : ViewModelBase, IContent
     public bool IsPaneOpen { get; set; }
 
     [Reactive]
-    public object? Content { get; set; }
+    public object? Pane { get; set; }
 
     [Reactive]
-    public object? Pane { get; set; }
+    public object? Content { get; set; }
 }

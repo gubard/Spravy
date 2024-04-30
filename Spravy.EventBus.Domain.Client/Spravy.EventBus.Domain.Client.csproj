@@ -6,10 +6,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Google.Protobuf" Version="3.26.1" />
-        <PackageReference Include="Grpc.Net.Client" Version="2.62.0" />
-        <PackageReference Include="Grpc.Net.Client.Web" Version="2.62.0" />
-        <PackageReference Include="Grpc.Net.ClientFactory" Version="2.62.0" />
+        <PackageReference Include="Google.Protobuf" Version="3.26.1"/>
+        <PackageReference Include="Grpc.Net.Client" Version="2.62.0"/>
+        <PackageReference Include="Grpc.Net.Client.Web" Version="2.62.0"/>
+        <PackageReference Include="Grpc.Net.ClientFactory" Version="2.62.0"/>
         <PackageReference Include="Grpc.Tools" Version="2.62.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -27,9 +27,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Spravy.Authentication.Domain\Spravy.Authentication.Domain.csproj" />
-      <ProjectReference Include="..\Spravy.Client\Spravy.Client.csproj" />
-      <ProjectReference Include="..\Spravy.Domain\Spravy.Domain.csproj" />
-      <ProjectReference Include="..\Spravy.EventBus.Domain.Mapper\Spravy.EventBus.Domain.Mapper.csproj" />
+        <ProjectReference Include="..\Spravy.Authentication.Domain\Spravy.Authentication.Domain.csproj"/>
+        <ProjectReference Include="..\Spravy.Client\Spravy.Client.csproj"/>
+        <ProjectReference Include="..\Spravy.Domain\Spravy.Domain.csproj"/>
+        <ProjectReference Include="..\Spravy.EventBus.Domain.Mapper\Spravy.EventBus.Domain.Mapper.csproj"/>
     </ItemGroup>
 </Project>

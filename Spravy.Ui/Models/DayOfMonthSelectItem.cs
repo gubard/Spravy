@@ -4,8 +4,8 @@ namespace Spravy.Ui.Models;
 
 public class DayOfMonthSelectItem : NotifyBase
 {
-    private bool isSelected;
     private byte day;
+    private bool isSelected;
 
     public bool IsSelected
     {

@@ -44,13 +44,9 @@ public class ErrorHandler : IErrorHandler
 
         return dialogViewer.ShowInfoErrorDialogAsync<ErrorViewModel>(
             _ => dialogViewer.CloseErrorDialogAsync(CancellationToken.None)
-                .IfSuccessAsync(
-                    () => dialogViewer.CloseProgressDialogAsync(CancellationToken.None),
-                    CancellationToken.None
-                ),
-            viewModel => viewModel.Errors.AddRange(errors.ToArray()),
-            CancellationToken.None
-        );
+               .IfSuccessAsync(() => dialogViewer.CloseProgressDialogAsync(CancellationToken.None),
+                    CancellationToken.None), viewModel => viewModel.Errors.AddRange(errors.ToArray()),
+            CancellationToken.None);
     }
 
     public ConfiguredValueTaskAwaitable<Result> ExceptionHandleAsync(Exception exception, CancellationToken token)
@@ -69,7 +65,7 @@ public class ErrorHandler : IErrorHandler
             }
         }
 
-        if (exception is GrpcException { InnerException: RpcException rpc2 })
+        if (exception is GrpcException { InnerException: RpcException rpc2, })
         {
             switch (rpc2.StatusCode)
             {
@@ -82,12 +78,7 @@ public class ErrorHandler : IErrorHandler
 
         return dialogViewer.ShowInfoErrorDialogAsync<ExceptionViewModel>(
             _ => dialogViewer.CloseErrorDialogAsync(token)
-                .IfSuccessAsync(
-                    () => dialogViewer.CloseProgressDialogAsync(token),
-                    token
-                ),
-            viewModel => viewModel.Exception = exception,
-            token
-        );
+               .IfSuccessAsync(() => dialogViewer.CloseProgressDialogAsync(token), token),
+            viewModel => viewModel.Exception = exception, token);
     }
 }

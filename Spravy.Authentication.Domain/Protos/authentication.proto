@@ -2,24 +2,24 @@ syntax = "proto3";
 
 option csharp_namespace = "Spravy.Authentication.Protos";
 
-import "Protos/authentication_messages.proto";
-
 package spravy.authentication;
 
+import "Protos/authentication_messages.proto";
+
 service AuthenticationService {
-  rpc Login (LoginRequest) returns (LoginReply);
-  rpc CreateUser (CreateUserRequest) returns (CreateUserReply);
-  rpc RefreshToken (RefreshTokenRequest) returns (RefreshTokenReply);
-  rpc UpdateVerificationCodeByLogin (UpdateVerificationCodeByLoginRequest) returns (UpdateVerificationCodeByLoginReply);
-  rpc UpdateVerificationCodeByEmail (UpdateVerificationCodeByEmailRequest) returns (UpdateVerificationCodeByEmailReply);
-  rpc IsVerifiedByLogin (IsVerifiedByLoginRequest) returns (IsVerifiedByLoginReply);
-  rpc IsVerifiedByEmail (IsVerifiedByEmailRequest) returns (IsVerifiedByEmailReply);
-  rpc VerifiedEmailByLogin (VerifiedEmailByLoginRequest) returns (VerifiedEmailByLoginReply);
-  rpc VerifiedEmailByEmail (VerifiedEmailByEmailRequest) returns (VerifiedEmailByEmailReply);
-  rpc UpdateEmailNotVerifiedUserByEmail (UpdateEmailNotVerifiedUserByEmailRequest) returns (UpdateEmailNotVerifiedUserByEmailReply);
-  rpc UpdateEmailNotVerifiedUserByLogin (UpdateEmailNotVerifiedUserByLoginRequest) returns (UpdateEmailNotVerifiedUserByLoginReply);
-  rpc UpdatePasswordByEmail (UpdatePasswordByEmailRequest) returns (UpdatePasswordByEmailReply);
-  rpc UpdatePasswordByLogin (UpdatePasswordByLoginRequest) returns (UpdatePasswordByLoginReply);
-  rpc DeleteUserByEmail (DeleteUserByEmailRequest) returns (DeleteUserByEmailReply);
-  rpc DeleteUserByLogin (DeleteUserByLoginRequest) returns (DeleteUserByLoginReply);
+    rpc Login (LoginRequest) returns (LoginReply);
+    rpc CreateUser (CreateUserRequest) returns (CreateUserReply);
+    rpc RefreshToken (RefreshTokenRequest) returns (RefreshTokenReply);
+    rpc UpdateVerificationCodeByLogin (UpdateVerificationCodeByLoginRequest) returns (UpdateVerificationCodeByLoginReply);
+    rpc UpdateVerificationCodeByEmail (UpdateVerificationCodeByEmailRequest) returns (UpdateVerificationCodeByEmailReply);
+    rpc IsVerifiedByLogin (IsVerifiedByLoginRequest) returns (IsVerifiedByLoginReply);
+    rpc IsVerifiedByEmail (IsVerifiedByEmailRequest) returns (IsVerifiedByEmailReply);
+    rpc VerifiedEmailByLogin (VerifiedEmailByLoginRequest) returns (VerifiedEmailByLoginReply);
+    rpc VerifiedEmailByEmail (VerifiedEmailByEmailRequest) returns (VerifiedEmailByEmailReply);
+    rpc UpdateEmailNotVerifiedUserByEmail (UpdateEmailNotVerifiedUserByEmailRequest) returns (UpdateEmailNotVerifiedUserByEmailReply);
+    rpc UpdateEmailNotVerifiedUserByLogin (UpdateEmailNotVerifiedUserByLoginRequest) returns (UpdateEmailNotVerifiedUserByLoginReply);
+    rpc UpdatePasswordByEmail (UpdatePasswordByEmailRequest) returns (UpdatePasswordByEmailReply);
+    rpc UpdatePasswordByLogin (UpdatePasswordByLoginRequest) returns (UpdatePasswordByLoginReply);
+    rpc DeleteUserByEmail (DeleteUserByEmailRequest) returns (DeleteUserByEmailReply);
+    rpc DeleteUserByLogin (DeleteUserByLoginRequest) returns (DeleteUserByLoginReply);
 }

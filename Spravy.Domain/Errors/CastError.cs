@@ -22,6 +22,7 @@ public class CastError : Error
     {
         get => $"Can't cast {InputType} to {OutputType}.";
     }
+
     public Type InputType { get; protected set; }
     public Type OutputType { get; protected set; }
 }

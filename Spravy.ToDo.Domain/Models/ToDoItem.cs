@@ -49,19 +49,7 @@ public readonly struct ToDoItem
 
     public ToDoItem WithOrderIndex(uint orderIndex)
     {
-        return new ToDoItem(
-            Id,
-            Name,
-            IsFavorite,
-            Type,
-            Description,
-            Link,
-            orderIndex,
-            Status,
-            Active,
-            IsCan,
-            ParentId,
-            DescriptionType
-        );
+        return new(Id, Name, IsFavorite, Type, Description, Link, orderIndex, Status, Active, IsCan, ParentId,
+            DescriptionType);
     }
 }

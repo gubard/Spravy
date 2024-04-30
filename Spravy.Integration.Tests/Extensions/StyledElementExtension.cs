@@ -11,7 +11,7 @@ public static class StyledElementExtension
 
         return styledElement;
     }
-    
+
     public static TStyleable MustNotHasError<TStyleable>(this TStyleable styledElement) where TStyleable : StyledElement
     {
         styledElement.Classes.Should().NotContain(":error");

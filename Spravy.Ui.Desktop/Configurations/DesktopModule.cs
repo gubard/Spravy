@@ -27,41 +27,32 @@ public class DesktopModule : NinjectModule
         Bind<IOpenerLink>().To<OpenerLink>();
 
         Bind<GrpcPasswordServiceOptions>()
-            .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcPasswordServiceOptions>())
-            .InSingletonScope();
+           .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcPasswordServiceOptions>())
+           .InSingletonScope();
 
         Bind<GrpcAuthenticationServiceOptions>()
-            .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcAuthenticationServiceOptions>())
-            .InSingletonScope();
+           .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcAuthenticationServiceOptions>())
+           .InSingletonScope();
 
         Bind<GrpcScheduleServiceOptions>()
-            .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcScheduleServiceOptions>())
-            .InSingletonScope();
+           .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcScheduleServiceOptions>())
+           .InSingletonScope();
 
         Bind<GrpcToDoServiceOptions>()
-            .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcToDoServiceOptions>())
-            .InSingletonScope();
+           .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcToDoServiceOptions>())
+           .InSingletonScope();
 
         Bind<GrpcEventBusServiceOptions>()
-            .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcEventBusServiceOptions>())
-            .InSingletonScope();
+           .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcEventBusServiceOptions>())
+           .InSingletonScope();
 
         Bind<IConfiguration>()
-            .ToMethod(
-                _ =>
-                    new ConfigurationBuilder().AddJsonFile(FileNames.DefaultConfigFileName).Build()
-            );
+           .ToMethod(_ => new ConfigurationBuilder().AddJsonFile(FileNames.DefaultConfigFileName).Build());
 
         Bind<IDbContextSetup>()
-            .ToMethod<SqliteDbContextSetup>(
-                c => new SqliteDbContextSetup(
-                    new[]
-                    {
-                        new StorageEntityTypeConfiguration()
-                    },
-                    "./storage/storage.db".ToFile(),
-                    true
-                )
-            );
+           .ToMethod<SqliteDbContextSetup>(c => new(new[]
+            {
+                new StorageEntityTypeConfiguration(),
+            }, "./storage/storage.db".ToFile(), true));
     }
 }

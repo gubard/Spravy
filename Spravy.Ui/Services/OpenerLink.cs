@@ -18,7 +18,7 @@ public class OpenerLink : IOpenerLink
 
             var info = new ProcessStartInfo(url)
             {
-                UseShellExecute = true
+                UseShellExecute = true,
             };
 
             Process.Start(info);

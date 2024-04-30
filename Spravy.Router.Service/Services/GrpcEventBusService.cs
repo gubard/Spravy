@@ -10,9 +10,9 @@ namespace Spravy.Router.Service.Services;
 [Authorize]
 public class GrpcEventBusService : EventBusService.EventBusServiceBase
 {
-    private readonly IMapper mapper;
     private readonly IEventBusService eventBusService;
     private readonly ILogger<GrpcEventBusService> logger;
+    private readonly IMapper mapper;
 
     public GrpcEventBusService(IMapper mapper, ILogger<GrpcEventBusService> logger, IEventBusService eventBusService)
     {
@@ -44,9 +44,9 @@ public class GrpcEventBusService : EventBusService.EventBusServiceBase
         var userId = context.GetHttpContext().GetUserId();
         var id = mapper.Map<Guid>(request.EventId);
         logger.LogInformation("{UserId} push event {Id}", userId, id);
-        await eventBusService.PublishEventAsync(id, request.Content.ToByteArray(),context.CancellationToken);
+        await eventBusService.PublishEventAsync(id, request.Content.ToByteArray(), context.CancellationToken);
 
-        return new PublishEventReply();
+        return new();
     }
 
     public override async Task<GetEventsReply> GetEvents(GetEventsRequest request, ServerCallContext context)
@@ -54,7 +54,7 @@ public class GrpcEventBusService : EventBusService.EventBusServiceBase
         var userId = context.GetHttpContext().GetUserId();
         var eventIds = mapper.Map<Guid[]>(request.EventIds);
         logger.LogInformation("{UserId} get events {EventIds}", userId, eventIds);
-        var eventValues = await eventBusService.GetEventsAsync(eventIds,context.CancellationToken);
+        var eventValues = await eventBusService.GetEventsAsync(eventIds, context.CancellationToken);
         var reply = new GetEventsReply();
         reply.Events.AddRange(mapper.Map<IEnumerable<Event>>(eventValues));
 

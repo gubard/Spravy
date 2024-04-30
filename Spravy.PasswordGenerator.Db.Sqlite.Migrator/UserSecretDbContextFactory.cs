@@ -18,9 +18,9 @@ public class UserSecretDbContextFactory : IFactory<string, UserSecretDbContext>
 
     public Result<UserSecretDbContext> Create(string key)
     {
-        var options = new DbContextOptionsBuilder()
-            .UseSqlite(key, b => b.MigrationsAssembly(SpravyPasswordGeneratorDbSqliteMigratorMark.AssemblyFullName))
-            .Options;
+        var options = new DbContextOptionsBuilder().UseSqlite(key,
+                b => b.MigrationsAssembly(SpravyPasswordGeneratorDbSqliteMigratorMark.AssemblyFullName))
+           .Options;
 
         return new UserSecretDbContext(options, dbContextSetup).ToResult();
     }

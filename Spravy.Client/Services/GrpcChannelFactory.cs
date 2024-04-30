@@ -10,8 +10,8 @@ namespace Spravy.Client.Services;
 
 public class GrpcChannelFactory : IFactory<Uri, GrpcChannel>
 {
-    private readonly GrpcChannelType grpcChannelType;
     private readonly ChannelCredentials channelCredentials;
+    private readonly GrpcChannelType grpcChannelType;
 
     public GrpcChannelFactory(GrpcChannelType grpcChannelType, ChannelCredentials channelCredentials)
     {

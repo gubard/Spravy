@@ -16,13 +16,9 @@ public static class CreateUserViewExtension
     ) where TTextBox : TextBox
     {
         return textBox.Case(() => window.SetKeyTextInput(text))
-            .MustHasError()
-            .Case(
-                () => createUserView.FindControl<GlassCard>(ElementNames.CreateUserCard)
-                    .ThrowIfNull()
-                    .MustWidth(400)
-            )
-            .ClearText(window);
+           .MustHasError()
+           .Case(() => createUserView.FindControl<GlassCard>(ElementNames.CreateUserCard).ThrowIfNull().MustWidth(400))
+           .ClearText(window);
     }
 
     public static TTextBox ValidateCreateUserViewTextBox<TTextBox>(
@@ -33,12 +29,8 @@ public static class CreateUserViewExtension
     ) where TTextBox : TextBox
     {
         return textBox.Case(() => window.SetKeyTextInput(text))
-            .MustNotHasError()
-            .Case(
-                () => createUserView.FindControl<GlassCard>(ElementNames.CreateUserCard)
-                    .ThrowIfNull()
-                    .MustWidth(400)
-            )
-            .ClearText(window);
+           .MustNotHasError()
+           .Case(() => createUserView.FindControl<GlassCard>(ElementNames.CreateUserCard).ThrowIfNull().MustWidth(400))
+           .ClearText(window);
     }
 }

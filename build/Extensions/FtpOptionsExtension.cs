@@ -14,14 +14,11 @@ public static class FtpOptionsExtension
 
         if (values.Length == 2)
         {
-            return new FtpClient(values[0], options.FtpUser, options.FtpPassword, int.Parse(values[1]));
+            return new(values[0], options.FtpUser, options.FtpPassword, int.Parse(values[1]));
         }
 
-        return new FtpClient(options.FtpHost, options.FtpUser, options.FtpPassword);
+        return new(options.FtpHost, options.FtpUser, options.FtpPassword);
     }
 
-    public static DirectoryInfo GetAppsFolder(this IFtpOptions options)
-    {
-        return  $"/home/{options.FtpUser}/Apps".ToFolder();
-    }
+    public static DirectoryInfo GetAppsFolder(this IFtpOptions options) => $"/home/{options.FtpUser}/Apps".ToFolder();
 }

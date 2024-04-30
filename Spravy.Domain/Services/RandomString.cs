@@ -5,8 +5,8 @@ namespace Spravy.Domain.Services;
 
 public class RandomString : IRandom<string>
 {
-    private readonly string values;
     private readonly byte length;
+    private readonly string values;
 
     public RandomString(string values, byte length)
     {

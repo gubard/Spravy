@@ -15,12 +15,12 @@ public class SpravyAuthenticationDbContextFactory : IFactory<string, SpravyDbAut
     {
         this.dbContextSetup = dbContextSetup;
     }
-    
+
     public Result<SpravyDbAuthenticationDbContext> Create(string key)
     {
-        var options = new DbContextOptionsBuilder()
-            .UseSqlite(key, b => b.MigrationsAssembly(SpravyAuthenticationDbSqliteMigratorMark.AssemblyFullName))
-            .Options;
+        var options = new DbContextOptionsBuilder().UseSqlite(key,
+                b => b.MigrationsAssembly(SpravyAuthenticationDbSqliteMigratorMark.AssemblyFullName))
+           .Options;
 
         return new SpravyDbAuthenticationDbContext(options, dbContextSetup).ToResult();
     }

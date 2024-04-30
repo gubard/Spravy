@@ -8,13 +8,13 @@
 
 
     <ItemGroup>
-      <PackageReference Include="AutoMapper" Version="13.0.1" />
+        <PackageReference Include="AutoMapper" Version="13.0.1"/>
     </ItemGroup>
 
 
     <ItemGroup>
-      <ProjectReference Include="..\Spravy.EventBus.Db\Spravy.EventBus.Db.csproj" />
-      <ProjectReference Include="..\Spravy.EventBus.Domain\Spravy.EventBus.Domain.csproj" />
+        <ProjectReference Include="..\Spravy.EventBus.Db\Spravy.EventBus.Db.csproj"/>
+        <ProjectReference Include="..\Spravy.EventBus.Domain\Spravy.EventBus.Domain.csproj"/>
     </ItemGroup>
 
 </Project>

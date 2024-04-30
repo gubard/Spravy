@@ -18,10 +18,10 @@ public static class CycleHelper
 
             if (count == MaxCycleCount)
             {
-                return new Result(new MaxCycleCountReachedError(MaxCycleCount));
+                return new(new MaxCycleCountReachedError(MaxCycleCount));
             }
         }
-        
+
         return Result.Success;
     }
 }

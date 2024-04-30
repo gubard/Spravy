@@ -16,7 +16,10 @@ public static class ObjectExtension
         for (ulong i = 0; i < seconds; i++)
         {
             Dispatcher.UIThread.RunJobs();
-            Dispatcher.UIThread.Post(() => Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false).GetAwaiter().GetResult());
+
+            Dispatcher.UIThread.Post(() =>
+                Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false).GetAwaiter().GetResult());
+
             Dispatcher.UIThread.RunJobs();
         }
 
@@ -25,8 +28,8 @@ public static class ObjectExtension
 
     public static TObject TryCatch<TObject>(this TObject obj, Action<TObject> @try, Action<TObject, Exception> @catch)
     {
-        TObject a = obj;
-        
+        var a = obj;
+
         try
         {
             @try.Invoke(a);
@@ -54,6 +57,7 @@ public static class ObjectExtension
         catch (Exception e)
         {
             @catch.Invoke(obj, e);
+
             throw;
         }
 

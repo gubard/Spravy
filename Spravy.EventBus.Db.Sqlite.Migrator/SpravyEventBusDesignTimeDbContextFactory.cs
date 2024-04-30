@@ -9,12 +9,10 @@ public class SpravyEventBusDesignTimeDbContextFactory : IDesignTimeDbContextFact
 {
     public SpravyDbEventBusDbContext CreateDbContext(string[] args)
     {
-        var options = new DbContextOptionsBuilder().UseSqlite(
-                args[0],
-                b => b.MigrationsAssembly(SpravyEventBusDbSqliteMigratorMark.AssemblyFullName)
-            )
-            .Options;
+        var options = new DbContextOptionsBuilder().UseSqlite(args[0],
+                b => b.MigrationsAssembly(SpravyEventBusDbSqliteMigratorMark.AssemblyFullName))
+           .Options;
 
-        return new SpravyDbEventBusDbContext(options, new SqliteEventBusDbContextSetup());
+        return new(options, new SqliteEventBusDbContextSetup());
     }
 }

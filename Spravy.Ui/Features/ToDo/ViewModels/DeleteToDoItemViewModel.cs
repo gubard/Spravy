@@ -46,46 +46,33 @@ public class DeleteToDoItemViewModel : ViewModelBase
     [Inject]
     public required IMapper Mapper { get; set; }
 
-    public Header4View DeleteText =>
-        new(
-            "DeleteToDoItemView.Header",
-            new
-            {
-                ToDoItemName
-            }
-        );
+    public Header4View DeleteText
+    {
+        get => new("DeleteToDoItemView.Header", new
+        {
+            ToDoItemName,
+        });
+    }
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
-        Disposables.Add(
-            this.WhenAnyValue(x => x.ToDoItemName).Subscribe(_ => this.RaisePropertyChanged(nameof(DeleteText)))
-        );
+        Disposables.Add(this.WhenAnyValue(x => x.ToDoItemName)
+           .Subscribe(_ => this.RaisePropertyChanged(nameof(DeleteText))));
 
         var toDoItemToStringOptions = new ToDoItemToStringOptions(Enum.GetValues<ToDoItemStatus>(), ToDoItemId);
 
         return ToDoService.GetToDoItemAsync(ToDoItemId, cancellationToken)
-            .IfSuccessAsync(
-                item => ToDoService.ToDoItemToStringAsync(toDoItemToStringOptions, cancellationToken)
-                    .IfSuccessAsync(
-                        childrenText => ToDoService.GetParentsAsync(ToDoItemId, cancellationToken)
-                            .IfSuccessAsync(
-                                parents => this.InvokeUIBackgroundAsync(
-                                    () =>
-                                    {
-                                        Path = new RootItem().To<object>()
-                                            .ToEnumerable()
-                                            .Concat(Mapper.Map<ToDoItemParentNotify[]>(parents.ToArray()))
-                                            .ToArray();
+           .IfSuccessAsync(item => ToDoService.ToDoItemToStringAsync(toDoItemToStringOptions, cancellationToken)
+               .IfSuccessAsync(childrenText => ToDoService.GetParentsAsync(ToDoItemId, cancellationToken)
+                   .IfSuccessAsync(parents => this.InvokeUIBackgroundAsync(() =>
+                    {
+                        Path = new RootItem().To<object>()
+                           .ToEnumerable()
+                           .Concat(Mapper.Map<ToDoItemParentNotify[]>(parents.ToArray()))
+                           .ToArray();
 
-                                        ToDoItemName = item.Name;
-                                        ChildrenText = childrenText;
-                                    }
-                                ),
-                                cancellationToken
-                            ),
-                        cancellationToken
-                    ),
-                cancellationToken
-            );
+                        ToDoItemName = item.Name;
+                        ChildrenText = childrenText;
+                    }), cancellationToken), cancellationToken), cancellationToken);
     }
 }

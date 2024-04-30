@@ -9,9 +9,9 @@ namespace Spravy.Service.Middlewares;
 
 public class DataBaseSetupSqliteMiddleware<TDbContext> where TDbContext : DbContext
 {
-    private readonly SqliteFolderOptions sqliteFolderOptions;
-    private readonly IFactory<string, TDbContext> spravyToDoDbContextFactory;
     private readonly RequestDelegate next;
+    private readonly IFactory<string, TDbContext> spravyToDoDbContextFactory;
+    private readonly SqliteFolderOptions sqliteFolderOptions;
 
     public DataBaseSetupSqliteMiddleware(
         RequestDelegate next,
@@ -33,9 +33,10 @@ public class DataBaseSetupSqliteMiddleware<TDbContext> where TDbContext : DbCont
 
     private async Task SetupDataBaseAsync(string userId)
     {
-        var dataBaseFile = sqliteFolderOptions.DataBasesFolder.ThrowIfNullOrWhiteSpace()
-            .ToDirectory()
-            .ToFile($"{userId}.db");
+        var dataBaseFile = sqliteFolderOptions.DataBasesFolder
+           .ThrowIfNullOrWhiteSpace()
+           .ToDirectory()
+           .ToFile($"{userId}.db");
 
         if (dataBaseFile.Exists)
         {

@@ -18,16 +18,16 @@ public readonly struct ToDoItemParameters
 
     public ToDoItemParameters With(ToDoItemStatus status)
     {
-        return new ToDoItemParameters(ActiveItem, status, IsCan);
+        return new(ActiveItem, status, IsCan);
     }
 
     public ToDoItemParameters With(ActiveToDoItem? activeToDoItem)
     {
-        return new ToDoItemParameters(activeToDoItem, Status, IsCan);
+        return new(activeToDoItem, Status, IsCan);
     }
 
     public ToDoItemParameters With(ToDoItemIsCan isCan)
     {
-        return new ToDoItemParameters(ActiveItem, Status, isCan);
+        return new(ActiveItem, Status, isCan);
     }
 }

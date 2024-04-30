@@ -19,13 +19,11 @@ public class TokenHttpHeaderFactory : IHttpHeaderFactory
     )
     {
         return tokenService.GetTokenAsync(cancellationToken)
-            .IfSuccessAsync(
+           .IfSuccessAsync(
                 value => HttpHeaderItem.CreateBearerAuthorization(value)
-                    .ToReadOnlyMemory()
-                    .ToResult()
-                    .ToValueTaskResult()
-                    .ConfigureAwait(false),
-                cancellationToken
-            );
+                   .ToReadOnlyMemory()
+                   .ToResult()
+                   .ToValueTaskResult()
+                   .ConfigureAwait(false), cancellationToken);
     }
 }

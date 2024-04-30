@@ -24,7 +24,9 @@ public class StringMinLengthValidationRule : IValidationRule<string>
 
         if (value.Length < minLength)
         {
-            return new Result(new VariableStringMinLengthError(minLength, sourceName, (uint)value.Length)).ToValueTaskResult().ConfigureAwait(false);
+            return new Result(new VariableStringMinLengthError(minLength, sourceName, (uint)value.Length))
+               .ToValueTaskResult()
+               .ConfigureAwait(false);
         }
 
         return Result.AwaitableFalse;

@@ -22,7 +22,11 @@ public class VerificationCodeViewModel : NavigatableViewModelBase, IVerification
     }
 
     public ICommand InitializedCommand { get; }
-    public override string ViewId => TypeCache<VerificationCodeViewModel>.Type.Name;
+
+    public override string ViewId
+    {
+        get => TypeCache<VerificationCodeViewModel>.Type.Name;
+    }
 
     [Inject]
     public required IAuthenticationService AuthenticationService { get; init; }
@@ -46,7 +50,10 @@ public class VerificationCodeViewModel : NavigatableViewModelBase, IVerification
         return Result.AwaitableFalse;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting, CancellationToken cancellationToken)
+    public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
+        object setting,
+        CancellationToken cancellationToken
+    )
     {
         return Result.AwaitableFalse;
     }

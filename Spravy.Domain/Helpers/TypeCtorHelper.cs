@@ -10,7 +10,7 @@ public static class TypeCtorHelper<TType, TParam>
     {
         var ctorParams = new[]
         {
-            typeof(TParam)
+            typeof(TParam),
         };
 
         var variable = typeof(TParam).ToVariableAutoName();

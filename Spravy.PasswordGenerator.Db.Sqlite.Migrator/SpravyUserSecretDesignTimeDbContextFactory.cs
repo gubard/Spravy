@@ -9,12 +9,10 @@ public class SpravyUserSecretDesignTimeDbContextFactory : IDesignTimeDbContextFa
 {
     public UserSecretDbContext CreateDbContext(string[] args)
     {
-        var options = new DbContextOptionsBuilder().UseSqlite(
-                args[0],
-                b => b.MigrationsAssembly(SpravyPasswordGeneratorDbSqliteMigratorMark.AssemblyFullName)
-            )
-            .Options;
+        var options = new DbContextOptionsBuilder().UseSqlite(args[0],
+                b => b.MigrationsAssembly(SpravyPasswordGeneratorDbSqliteMigratorMark.AssemblyFullName))
+           .Options;
 
-        return new UserSecretDbContext(options, new SqliteUserSecretDbContextSetup());
+        return new(options, new SqliteUserSecretDbContextSetup());
     }
 }

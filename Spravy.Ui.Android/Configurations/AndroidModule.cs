@@ -35,45 +35,37 @@ public class AndroidModule : NinjectModule
         Bind<ContextWrapper>().ToConstant(contextWrapper);
 
         Bind<GrpcAuthenticationServiceOptions>()
-            .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcAuthenticationServiceOptions>())
-            .InSingletonScope();
+           .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcAuthenticationServiceOptions>())
+           .InSingletonScope();
 
         Bind<GrpcScheduleServiceOptions>()
-            .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcScheduleServiceOptions>())
-            .InSingletonScope();
+           .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcScheduleServiceOptions>())
+           .InSingletonScope();
 
         Bind<GrpcToDoServiceOptions>()
-            .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcToDoServiceOptions>())
-            .InSingletonScope();
+           .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcToDoServiceOptions>())
+           .InSingletonScope();
 
         Bind<GrpcPasswordServiceOptions>()
-            .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcPasswordServiceOptions>())
-            .InSingletonScope();
-        
+           .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcPasswordServiceOptions>())
+           .InSingletonScope();
+
         Bind<GrpcEventBusServiceOptions>()
-            .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcEventBusServiceOptions>())
-            .InSingletonScope();
+           .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcEventBusServiceOptions>())
+           .InSingletonScope();
 
         Bind<IConfiguration>()
-            .ToMethod(
-                _ =>
-                {
-                    using var stream = SpravyUiAndroidMark.GetResourceStream(FileNames.DefaultConfigFileName);
+           .ToMethod(_ =>
+            {
+                using var stream = SpravyUiAndroidMark.GetResourceStream(FileNames.DefaultConfigFileName);
 
-                    return new ConfigurationBuilder().AddJsonStream(stream.ThrowIfNull()).Build();
-                }
-            );
+                return new ConfigurationBuilder().AddJsonStream(stream.ThrowIfNull()).Build();
+            });
 
         Bind<IDbContextSetup>()
-            .ToMethod<SqliteDbContextSetup>(
-                c => new SqliteDbContextSetup(
-                    new[]
-                    {
-                        new StorageEntityTypeConfiguration()
-                    },
-                    FileSystem.AppDataDirectory.ToDirectory().ToFile("storage.db"),
-                    true
-                )
-            );
+           .ToMethod<SqliteDbContextSetup>(c => new(new[]
+            {
+                new StorageEntityTypeConfiguration(),
+            }, FileSystem.AppDataDirectory.ToDirectory().ToFile("storage.db"), true));
     }
 }

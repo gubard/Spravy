@@ -32,8 +32,6 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
     private bool passwordChanged;
     private bool repeatPasswordChanged;
 
-    public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
-
     public CreateUserViewModel() : base(true)
     {
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
@@ -50,7 +48,10 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
     [Inject]
     public required IAuthenticationService AuthenticationService { get; init; }
 
-    public override string ViewId => TypeCache<CreateUserViewModel>.Type.Name;
+    public override string ViewId
+    {
+        get => TypeCache<CreateUserViewModel>.Type.Name;
+    }
 
     [Reactive]
     public ICommand EnterCommand { get; protected set; }
@@ -73,6 +74,8 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
     [Reactive]
     public string RepeatPassword { get; set; } = string.Empty;
 
+    public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
+
     public bool HasErrors
     {
         get
@@ -83,21 +86,112 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
             }
 
             var hasError = PropertyValidator.ValidLogin(Login, nameof(Login)) is not null
-                           || PropertyValidator.ValidLength(Login, 4, 512, nameof(Login)) is not null
-                           || PropertyValidator.ValidEmail(Email, nameof(Email)) is not null
-                           || PropertyValidator.ValidLength(Email, 6, 50, nameof(Email)) is not null
-                           || PropertyValidator.ValidPassword(Password, nameof(Password)) is not null
-                           || PropertyValidator.ValidLength(Password, 8, 512, nameof(Password)) is not null
-                           || PropertyValidator.ValidPassword(RepeatPassword, nameof(RepeatPassword)) is not null
-                           || PropertyValidator.ValidLength(RepeatPassword, 8, 512, nameof(RepeatPassword)) is not null
-                           || PropertyValidator.ValidEquals(
-                               Password,
-                               RepeatPassword,
-                               nameof(Password),
-                               nameof(RepeatPassword)
-                           ) is not null;
+             || PropertyValidator.ValidLength(Login, 4, 512, nameof(Login)) is not null
+             || PropertyValidator.ValidEmail(Email, nameof(Email)) is not null
+             || PropertyValidator.ValidLength(Email, 6, 50, nameof(Email)) is not null
+             || PropertyValidator.ValidPassword(Password, nameof(Password)) is not null
+             || PropertyValidator.ValidLength(Password, 8, 512, nameof(Password)) is not null
+             || PropertyValidator.ValidPassword(RepeatPassword, nameof(RepeatPassword)) is not null
+             || PropertyValidator.ValidLength(RepeatPassword, 8, 512, nameof(RepeatPassword)) is not null
+             || PropertyValidator.ValidEquals(Password, RepeatPassword, nameof(Password), nameof(RepeatPassword)) is not
+                    null;
 
             return hasError;
+        }
+    }
+
+    public IEnumerable GetErrors(string? propertyName)
+    {
+        switch (propertyName)
+        {
+            case nameof(Login):
+            {
+                if (loginChanged)
+                {
+                    var valid = PropertyValidator.ValidLogin(Login, nameof(Login));
+                    var validLength = PropertyValidator.ValidLength(Login, 4, 512, nameof(Login));
+
+                    if (valid is not null)
+                    {
+                        yield return valid;
+                    }
+
+                    if (validLength is not null)
+                    {
+                        yield return validLength;
+                    }
+                }
+
+                break;
+            }
+            case nameof(Email):
+            {
+                if (emailChanged)
+                {
+                    var valid = PropertyValidator.ValidEmail(Email, nameof(Email));
+                    var validLength = PropertyValidator.ValidLength(Email, 6, 50, nameof(Email));
+
+                    if (valid is not null)
+                    {
+                        yield return valid;
+                    }
+
+                    if (validLength is not null)
+                    {
+                        yield return validLength;
+                    }
+                }
+
+                break;
+            }
+            case nameof(Password):
+            {
+                if (passwordChanged)
+                {
+                    var valid = PropertyValidator.ValidPassword(Password, nameof(Password));
+                    var validLength = PropertyValidator.ValidLength(Password, 8, 512, nameof(Password));
+
+                    if (valid is not null)
+                    {
+                        yield return valid;
+                    }
+
+                    if (validLength is not null)
+                    {
+                        yield return validLength;
+                    }
+                }
+
+                break;
+            }
+            case nameof(RepeatPassword):
+            {
+                if (repeatPasswordChanged)
+                {
+                    var valid = PropertyValidator.ValidPassword(RepeatPassword, nameof(RepeatPassword));
+                    var validLength = PropertyValidator.ValidLength(RepeatPassword, 8, 512, nameof(RepeatPassword));
+
+                    var validEquals = PropertyValidator.ValidEquals(Password, RepeatPassword, nameof(Password),
+                        nameof(RepeatPassword));
+
+                    if (valid is not null)
+                    {
+                        yield return valid;
+                    }
+
+                    if (validLength is not null)
+                    {
+                        yield return validLength;
+                    }
+
+                    if (validEquals is not null)
+                    {
+                        yield return validEquals;
+                    }
+                }
+
+                break;
+            }
         }
     }
 
@@ -106,58 +200,40 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
         var createUserWork = TaskWork.Create(CreateUserAsync);
         EnterCommand = CreateCommandFromTask<CreateUserView>(TaskWork.Create<CreateUserView>(EnterAsync).RunAsync);
 
-        Disposables.Add(
-            this.WhenAnyValue(x => x.Email)
-                .Skip(1)
-                .Subscribe(
-                    _ =>
-                    {
-                        emailChanged = true;
-                        this.RaisePropertyChanged(nameof(HasErrors));
-                    }
-                )
-        );
+        Disposables.Add(this.WhenAnyValue(x => x.Email)
+           .Skip(1)
+           .Subscribe(_ =>
+            {
+                emailChanged = true;
+                this.RaisePropertyChanged(nameof(HasErrors));
+            }));
 
-        Disposables.Add(
-            this.WhenAnyValue(x => x.Login)
-                .Skip(1)
-                .Subscribe(
-                    _ =>
-                    {
-                        loginChanged = true;
-                        this.RaisePropertyChanged(nameof(HasErrors));
-                    }
-                )
-        );
+        Disposables.Add(this.WhenAnyValue(x => x.Login)
+           .Skip(1)
+           .Subscribe(_ =>
+            {
+                loginChanged = true;
+                this.RaisePropertyChanged(nameof(HasErrors));
+            }));
 
-        Disposables.Add(
-            this.WhenAnyValue(x => x.Password)
-                .Skip(1)
-                .Subscribe(
-                    _ =>
-                    {
-                        passwordChanged = true;
-                        this.RaisePropertyChanged(nameof(HasErrors));
-                    }
-                )
-        );
+        Disposables.Add(this.WhenAnyValue(x => x.Password)
+           .Skip(1)
+           .Subscribe(_ =>
+            {
+                passwordChanged = true;
+                this.RaisePropertyChanged(nameof(HasErrors));
+            }));
 
-        Disposables.Add(
-            this.WhenAnyValue(x => x.RepeatPassword)
-                .Skip(1)
-                .Subscribe(
-                    _ =>
-                    {
-                        repeatPasswordChanged = true;
-                        this.RaisePropertyChanged(nameof(HasErrors));
-                    }
-                )
-        );
+        Disposables.Add(this.WhenAnyValue(x => x.RepeatPassword)
+           .Skip(1)
+           .Subscribe(_ =>
+            {
+                repeatPasswordChanged = true;
+                this.RaisePropertyChanged(nameof(HasErrors));
+            }));
 
         CreateUserCommand = CreateCommandFromTask(
-            createUserWork.RunAsync,
-            this.WhenAnyValue(x => x.HasErrors).Select(x => !x)
-        );
+            createUserWork.RunAsync, this.WhenAnyValue(x => x.HasErrors).Select(x => !x));
 
         return Result.AwaitableFalse;
     }
@@ -239,130 +315,20 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
         return Result.AwaitableFalse;
     }
 
-    public IEnumerable GetErrors(string? propertyName)
-    {
-        switch (propertyName)
-        {
-            case nameof(Login):
-            {
-                if (loginChanged)
-                {
-                    var valid = PropertyValidator.ValidLogin(Login, nameof(Login));
-                    var validLength = PropertyValidator.ValidLength(Login, 4, 512, nameof(Login));
-
-                    if (valid is not null)
-                    {
-                        yield return valid;
-                    }
-
-                    if (validLength is not null)
-                    {
-                        yield return validLength;
-                    }
-                }
-
-                break;
-            }
-            case nameof(Email):
-            {
-                if (emailChanged)
-                {
-                    var valid = PropertyValidator.ValidEmail(Email, nameof(Email));
-                    var validLength = PropertyValidator.ValidLength(Email, 6, 50, nameof(Email));
-
-                    if (valid is not null)
-                    {
-                        yield return valid;
-                    }
-
-                    if (validLength is not null)
-                    {
-                        yield return validLength;
-                    }
-                }
-
-                break;
-            }
-            case nameof(Password):
-            {
-                if (passwordChanged)
-                {
-                    var valid = PropertyValidator.ValidPassword(Password, nameof(Password));
-                    var validLength = PropertyValidator.ValidLength(Password, 8, 512, nameof(Password));
-
-                    if (valid is not null)
-                    {
-                        yield return valid;
-                    }
-
-                    if (validLength is not null)
-                    {
-                        yield return validLength;
-                    }
-                }
-
-                break;
-            }
-            case nameof(RepeatPassword):
-            {
-                if (repeatPasswordChanged)
-                {
-                    var valid = PropertyValidator.ValidPassword(RepeatPassword, nameof(RepeatPassword));
-                    var validLength = PropertyValidator.ValidLength(RepeatPassword, 8, 512, nameof(RepeatPassword));
-
-                    var validEquals = PropertyValidator.ValidEquals(
-                        Password,
-                        RepeatPassword,
-                        nameof(Password),
-                        nameof(RepeatPassword)
-                    );
-
-                    if (valid is not null)
-                    {
-                        yield return valid;
-                    }
-
-                    if (validLength is not null)
-                    {
-                        yield return validLength;
-                    }
-
-                    if (validEquals is not null)
-                    {
-                        yield return validEquals;
-                    }
-                }
-
-                break;
-            }
-        }
-    }
-
     private ConfiguredValueTaskAwaitable<Result> CreateUserAsync(CancellationToken cancellationToken)
     {
         return this.InvokeUIBackgroundAsync(() => IsBusy = true)
-            .IfSuccessTryFinallyAsync(
-                () =>
+           .IfSuccessTryFinallyAsync(() =>
                 {
                     var options = Mapper.Map<CreateUserOptions>(this);
 
                     return AuthenticationService.CreateUserAsync(options, cancellationToken)
-                        .IfSuccessAsync(
-                            () => Navigator.NavigateToAsync<VerificationCodeViewModel>(
-                                vm =>
-                                {
-                                    vm.Identifier = Email;
-                                    vm.IdentifierType = UserIdentifierType.Email;
-                                },
-                                cancellationToken
-                            ),
-                            cancellationToken
-                        );
-                },
-                () => this.InvokeUIBackgroundAsync(() => IsBusy = false)
-                    .ToValueTask()
-                    .ConfigureAwait(false),
-                cancellationToken
-            );
+                       .IfSuccessAsync(() => Navigator.NavigateToAsync<VerificationCodeViewModel>(vm =>
+                        {
+                            vm.Identifier = Email;
+                            vm.IdentifierType = UserIdentifierType.Email;
+                        }, cancellationToken), cancellationToken);
+                }, () => this.InvokeUIBackgroundAsync(() => IsBusy = false).ToValueTask().ConfigureAwait(false),
+                cancellationToken);
     }
 }

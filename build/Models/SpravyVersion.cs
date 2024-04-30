@@ -42,7 +42,7 @@ public struct SpravyVersion
             major++;
         }
 
-        return new SpravyVersion(major, minor, build, revision);
+        return new(major, minor, build, revision);
     }
 
     public override string ToString() => $"{Major}.{Minor}.{Build}.{Revision}";
@@ -51,7 +51,7 @@ public struct SpravyVersion
     {
         if (str is null)
         {
-            version = new SpravyVersion(1, 0, 0, 0);
+            version = new(1, 0, 0, 0);
 
             return false;
         }
@@ -60,40 +60,40 @@ public struct SpravyVersion
 
         if (values.Length != 4)
         {
-            version = new SpravyVersion(1, 0, 0, 0);
+            version = new(1, 0, 0, 0);
 
             return false;
         }
 
         if (!ulong.TryParse(values[0], out var major))
         {
-            version = new SpravyVersion(1, 0, 0, 0);
+            version = new(1, 0, 0, 0);
 
             return false;
         }
 
         if (!byte.TryParse(values[1], out var minor))
         {
-            version = new SpravyVersion(1, 0, 0, 0);
+            version = new(1, 0, 0, 0);
 
             return false;
         }
 
         if (!byte.TryParse(values[2], out var build))
         {
-            version = new SpravyVersion(1, 0, 0, 0);
+            version = new(1, 0, 0, 0);
 
             return false;
         }
 
         if (!byte.TryParse(values[3], out var revision))
         {
-            version = new SpravyVersion(1, 0, 0, 0);
+            version = new(1, 0, 0, 0);
 
             return false;
         }
 
-        version = new SpravyVersion(major, minor, build, revision);
+        version = new(major, minor, build, revision);
 
         return true;
     }

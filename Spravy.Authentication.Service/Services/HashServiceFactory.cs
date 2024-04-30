@@ -16,6 +16,6 @@ public class HashServiceFactory : IFactory<string, Named<IHashService>>
             return NamedHelper.Sha512Hash.ToResult();
         }
 
-        return new Result<Named<IHashService>>(new NotFoundNamedError(key));
+        return new(new NotFoundNamedError(key));
     }
 }

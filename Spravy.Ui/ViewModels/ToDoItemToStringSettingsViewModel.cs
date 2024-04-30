@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Avalonia.Collections;
 using Spravy.ToDo.Domain.Enums;
@@ -9,14 +10,12 @@ public class ToDoItemToStringSettingsViewModel : ViewModelBase
 {
     public ToDoItemToStringSettingsViewModel()
     {
-        var items = System.Enum.GetValues<ToDoItemStatus>()
-            .Select(
-                x => new CheckedItem<ToDoItemStatus>
-                {
-                    Item = x,
-                    IsChecked = true
-                }
-            );
+        var items = Enum.GetValues<ToDoItemStatus>()
+           .Select(x => new CheckedItem<ToDoItemStatus>
+            {
+                Item = x,
+                IsChecked = true,
+            });
 
         Statuses.AddRange(items);
     }

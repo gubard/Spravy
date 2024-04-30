@@ -13,10 +13,10 @@ namespace Spravy.EventBus.Service.Services;
 public class EventStorage
 {
     private static readonly TimeSpan EventLiveTime = TimeSpan.FromMinutes(1);
+    private static readonly Dictionary<string, DateTime> lastWriteTimeUtc = new();
     private readonly IFactory<SpravyDbEventBusDbContext> dbContextFactory;
     private readonly IFactory<FileInfo> fileFactory;
     private readonly IMapper mapper;
-    private static readonly Dictionary<string, DateTime> lastWriteTimeUtc = new();
 
     public EventStorage(
         IFactory<SpravyDbEventBusDbContext> dbContextFactory,
@@ -29,21 +29,24 @@ public class EventStorage
         this.fileFactory = fileFactory;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> AddEventAsync(Guid id,
+    public ConfiguredValueTaskAwaitable<Result> AddEventAsync(
+        Guid id,
         byte[] content,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken
+    )
     {
         var newEvent = new EventEntity
         {
             EventId = id,
             Content = content,
-            Id = Guid.NewGuid()
+            Id = Guid.NewGuid(),
         };
 
-        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(
-            () => context.Set<EventEntity>().AddEntityAsync(newEvent, cancellationToken).ToResultOnlyAsync(),
-            cancellationToken
-        ), cancellationToken);
+        return dbContextFactory.Create()
+           .IfSuccessDisposeAsync(
+                context => context.AtomicExecuteAsync(
+                    () => context.Set<EventEntity>().AddEntityAsync(newEvent, cancellationToken).ToResultOnlyAsync(),
+                    cancellationToken), cancellationToken);
     }
 
     public async Task<IEnumerable<EventValue>> PushEventAsync(Guid[] eventIds)

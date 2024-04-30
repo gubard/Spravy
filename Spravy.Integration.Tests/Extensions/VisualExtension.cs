@@ -17,7 +17,7 @@ public static class VisualExtension
             inputElement.MustEnabled();
         }
 
-        var position = visual.TranslatePoint(new Point(0, 0), window).ThrowIfNullStruct().Center(visual.Bounds);
+        var position = visual.TranslatePoint(new(0, 0), window).ThrowIfNullStruct().Center(visual.Bounds);
         window.RunJobsAll();
         window.SpravyMouseMove(position, RawInputModifiers.None);
         window.RunJobsAll();

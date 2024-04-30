@@ -33,33 +33,36 @@ public class EfScheduleService : IScheduleService
             Id = Guid.NewGuid(),
             EventId = parameters.EventId,
             DueDateTime = parameters.DueDateTime,
-            Content = parameters.Content
+            Content = parameters.Content,
         };
 
-        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(
-            () => context.Set<TimerEntity>().AddEntityAsync(newTimer, cancellationToken).ToResultOnlyAsync(),
-            cancellationToken
-        ), cancellationToken);
+        return dbContextFactory.Create()
+           .IfSuccessDisposeAsync(
+                context => context.AtomicExecuteAsync(
+                    () => context.Set<TimerEntity>().AddEntityAsync(newTimer, cancellationToken).ToResultOnlyAsync(),
+                    cancellationToken), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<TimerItem>>> GetListTimesAsync(
         CancellationToken cancellationToken
     )
     {
-        return dbContextFactory.Create().IfSuccessDisposeAsync(context =>
-                context.AtomicExecuteAsync(() =>
-                        context.Set<TimerEntity>().AsNoTracking().ToArrayEntitiesAsync(cancellationToken)
-                            .IfSuccessAsync(timers => mapper.Map<ReadOnlyMemory<TimerItem>>(timers).ToResult(),
-                                cancellationToken),
-                    cancellationToken),
-            cancellationToken);
+        return dbContextFactory.Create()
+           .IfSuccessDisposeAsync(
+                context => context.AtomicExecuteAsync(
+                    () => context.Set<TimerEntity>()
+                       .AsNoTracking()
+                       .ToArrayEntitiesAsync(cancellationToken)
+                       .IfSuccessAsync(timers => mapper.Map<ReadOnlyMemory<TimerItem>>(timers).ToResult(),
+                            cancellationToken), cancellationToken), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> RemoveTimerAsync(Guid id, CancellationToken cancellationToken)
     {
-        return dbContextFactory.Create().IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(() =>
-                context.FindEntityAsync<TimerEntity>(id)
-                    .IfSuccessAsync(context.RemoveEntity, cancellationToken), cancellationToken),
-            cancellationToken);
+        return dbContextFactory.Create()
+           .IfSuccessDisposeAsync(
+                context => context.AtomicExecuteAsync(
+                    () => context.FindEntityAsync<TimerEntity>(id)
+                       .IfSuccessAsync(context.RemoveEntity, cancellationToken), cancellationToken), cancellationToken);
     }
 }

@@ -22,42 +22,27 @@ public static class ServiceCollectionExtension
         serviceCollection.AddTransient<ICacheValidator<Uri, GrpcChannel>, GrpcChannelCacheValidator>();
         serviceCollection.AddTransient(sp => sp.GetConfigurationSection<TGrpcOptions>());
 
-        serviceCollection.AddTransient<IFactory<Uri, TGrpcClient>>(
-            sp =>
-            {
-                var options = sp.GetConfigurationSection<TGrpcOptions>();
+        serviceCollection.AddTransient<IFactory<Uri, TGrpcClient>>(sp =>
+        {
+            var options = sp.GetConfigurationSection<TGrpcOptions>();
 
-                var grpcChannelCacheFactory = new CacheFactory<Uri, GrpcChannel>(
-                    new GrpcChannelFactory(
-                        options.ChannelType,
-                        options.ChannelCredentialType.GetChannelCredentials()
-                    ),
-                    sp.GetRequiredService<ICacheValidator<Uri, GrpcChannel>>()
-                );
+            var grpcChannelCacheFactory = new CacheFactory<Uri, GrpcChannel>(
+                new GrpcChannelFactory(options.ChannelType, options.ChannelCredentialType.GetChannelCredentials()),
+                sp.GetRequiredService<ICacheValidator<Uri, GrpcChannel>>());
 
-                return new CacheFactory<Uri, TGrpcClient>(
-                    new GrpcClientFactory<TGrpcClient>(grpcChannelCacheFactory),
-                    new GrpcClientCacheValidator<TGrpcClient>(
-                        sp.GetRequiredService<ICacheValidator<Uri, GrpcChannel>>(),
-                        grpcChannelCacheFactory
-                    )
-                );
-            }
-        );
+            return new CacheFactory<Uri, TGrpcClient>(new GrpcClientFactory<TGrpcClient>(grpcChannelCacheFactory),
+                new GrpcClientCacheValidator<TGrpcClient>(sp.GetRequiredService<ICacheValidator<Uri, GrpcChannel>>(),
+                    grpcChannelCacheFactory));
+        });
 
-        serviceCollection.AddTransient<TGrpcService>(
-            sp =>
-            {
-                var options = sp.GetConfigurationSection<TGrpcOptions>();
+        serviceCollection.AddTransient<TGrpcService>(sp =>
+        {
+            var options = sp.GetConfigurationSection<TGrpcOptions>();
 
-                return TGrpcService.CreateGrpcService(
-                    sp.GetRequiredService<IFactory<Uri, TGrpcClient>>(),
-                    options.Host.ThrowIfNull().ToUri(),
-                    sp.GetRequiredService<IConverter>(),
-                    sp.GetRequiredService<ISerializer>()
-                );
-            }
-        );
+            return TGrpcService.CreateGrpcService(sp.GetRequiredService<IFactory<Uri, TGrpcClient>>(),
+                options.Host.ThrowIfNull().ToUri(), sp.GetRequiredService<IConverter>(),
+                sp.GetRequiredService<ISerializer>());
+        });
 
         return serviceCollection;
     }
@@ -72,43 +57,27 @@ public static class ServiceCollectionExtension
         serviceCollection.AddTransient<ICacheValidator<Uri, GrpcChannel>, GrpcChannelCacheValidator>();
         serviceCollection.AddTransient(sp => sp.GetConfigurationSection<TGrpcOptions>());
 
-        serviceCollection.AddTransient<IFactory<Uri, TGrpcClient>>(
-            sp =>
-            {
-                var options = sp.GetConfigurationSection<TGrpcOptions>();
+        serviceCollection.AddTransient<IFactory<Uri, TGrpcClient>>(sp =>
+        {
+            var options = sp.GetConfigurationSection<TGrpcOptions>();
 
-                var grpcChannelCacheFactory = new CacheFactory<Uri, GrpcChannel>(
-                    new GrpcChannelFactory(
-                        options.ChannelType,
-                        options.ChannelCredentialType.GetChannelCredentials()
-                    ),
-                    sp.GetRequiredService<ICacheValidator<Uri, GrpcChannel>>()
-                );
+            var grpcChannelCacheFactory = new CacheFactory<Uri, GrpcChannel>(
+                new GrpcChannelFactory(options.ChannelType, options.ChannelCredentialType.GetChannelCredentials()),
+                sp.GetRequiredService<ICacheValidator<Uri, GrpcChannel>>());
 
-                return new CacheFactory<Uri, TGrpcClient>(
-                    new GrpcClientFactory<TGrpcClient>(grpcChannelCacheFactory),
-                    new GrpcClientCacheValidator<TGrpcClient>(
-                        sp.GetRequiredService<ICacheValidator<Uri, GrpcChannel>>(),
-                        grpcChannelCacheFactory
-                    )
-                );
-            }
-        );
+            return new CacheFactory<Uri, TGrpcClient>(new GrpcClientFactory<TGrpcClient>(grpcChannelCacheFactory),
+                new GrpcClientCacheValidator<TGrpcClient>(sp.GetRequiredService<ICacheValidator<Uri, GrpcChannel>>(),
+                    grpcChannelCacheFactory));
+        });
 
-        serviceCollection.AddTransient<TGrpcService>(
-            sp =>
-            {
-                var options = sp.GetConfigurationSection<TGrpcOptions>();
+        serviceCollection.AddTransient<TGrpcService>(sp =>
+        {
+            var options = sp.GetConfigurationSection<TGrpcOptions>();
 
-                return TGrpcService.CreateGrpcService(
-                    sp.GetRequiredService<IFactory<Uri, TGrpcClient>>(),
-                    options.Host.ThrowIfNull().ToUri(),
-                    sp.GetRequiredService<IConverter>(),
-                    CreateMetadataFactory(options, sp),
-                    sp.GetRequiredService<ISerializer>()
-                );
-            }
-        );
+            return TGrpcService.CreateGrpcService(sp.GetRequiredService<IFactory<Uri, TGrpcClient>>(),
+                options.Host.ThrowIfNull().ToUri(), sp.GetRequiredService<IConverter>(),
+                CreateMetadataFactory(options, sp), sp.GetRequiredService<ISerializer>());
+        });
 
         return serviceCollection;
     }
@@ -128,9 +97,7 @@ public static class ServiceCollectionExtension
         var tokenHttpHeaderFactory = new TokenHttpHeaderFactory(tokenService);
 
         var combineHttpHeaderFactory = new CombineHttpHeaderFactory(
-            serviceProvider.GetRequiredService<IHttpHeaderFactory>(),
-            tokenHttpHeaderFactory
-        );
+            serviceProvider.GetRequiredService<IHttpHeaderFactory>(), tokenHttpHeaderFactory);
 
         return new MetadataFactory(combineHttpHeaderFactory);
     }

@@ -18,10 +18,6 @@ public abstract class ProjectBuilder<TOptions> : IProjectBuilder where TOptions 
 
     public TOptions Options { get; }
 
-    DirectoryInfo GetBinFolder() => Options.CsprojFile.Directory.Combine("bin");
-
-    DirectoryInfo GetObjFolder() => Options.CsprojFile.Directory.Combine("obj");
-
     public abstract void Setup();
 
     public void Clean()
@@ -29,17 +25,15 @@ public abstract class ProjectBuilder<TOptions> : IProjectBuilder where TOptions 
         if (Options.Runtimes.IsEmpty)
         {
             DotNetTasks.DotNetClean(setting => setting.SetProject(Options.CsprojFile.FullName)
-                .SetConfiguration(Options.Configuration)
-            );
+               .SetConfiguration(Options.Configuration));
         }
         else
         {
             foreach (var runtime in Options.Runtimes.Span)
             {
                 DotNetTasks.DotNetClean(setting => setting.SetProject(Options.CsprojFile.FullName)
-                    .SetConfiguration(Options.Configuration)
-                    .SetRuntime(runtime.Name)
-                );
+                   .SetConfiguration(Options.Configuration)
+                   .SetRuntime(runtime.Name));
             }
         }
 
@@ -58,8 +52,7 @@ public abstract class ProjectBuilder<TOptions> : IProjectBuilder where TOptions 
             foreach (var runtime in Options.Runtimes.Span)
             {
                 DotNetTasks.DotNetRestore(setting =>
-                    setting.SetProjectFile(Options.CsprojFile.FullName).SetRuntime(runtime.Name)
-                );
+                    setting.SetProjectFile(Options.CsprojFile.FullName).SetRuntime(runtime.Name));
             }
         }
     }
@@ -69,22 +62,24 @@ public abstract class ProjectBuilder<TOptions> : IProjectBuilder where TOptions 
         if (Options.Runtimes.IsEmpty)
         {
             DotNetTasks.DotNetBuild(setting => setting.SetProjectFile(Options.CsprojFile.FullName)
-                .EnableNoRestore()
-                .SetConfiguration(Options.Configuration)
-                .AddProperty("Version", versionService.Version.ToString())
-            );
+               .EnableNoRestore()
+               .SetConfiguration(Options.Configuration)
+               .AddProperty("Version", versionService.Version.ToString()));
         }
         else
         {
             foreach (var runtime in Options.Runtimes.Span)
             {
                 DotNetTasks.DotNetBuild(setting => setting.SetProjectFile(Options.CsprojFile.FullName)
-                    .EnableNoRestore()
-                    .SetConfiguration(Options.Configuration)
-                    .AddProperty("Version", versionService.Version.ToString())
-                    .SetRuntime(runtime.Name)
-                );
+                   .EnableNoRestore()
+                   .SetConfiguration(Options.Configuration)
+                   .AddProperty("Version", versionService.Version.ToString())
+                   .SetRuntime(runtime.Name));
             }
         }
     }
+
+    DirectoryInfo GetBinFolder() => Options.CsprojFile.Directory.Combine("bin");
+
+    DirectoryInfo GetObjFolder() => Options.CsprojFile.Directory.Combine("obj");
 }

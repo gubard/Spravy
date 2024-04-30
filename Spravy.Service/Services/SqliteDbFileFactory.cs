@@ -9,8 +9,8 @@ namespace Spravy.Service.Services;
 
 public class SqliteDbFileFactory : IFactory<FileInfo>
 {
-    private readonly SqliteFolderOptions sqliteFolderOptions;
     private readonly IHttpContextAccessor httpContextAccessor;
+    private readonly SqliteFolderOptions sqliteFolderOptions;
 
     public SqliteDbFileFactory(SqliteFolderOptions sqliteFolderOptions, IHttpContextAccessor httpContextAccessor)
     {

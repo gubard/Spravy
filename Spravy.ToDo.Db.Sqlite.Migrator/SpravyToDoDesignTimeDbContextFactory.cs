@@ -10,11 +10,9 @@ public class SpravyToDoDesignTimeDbContextFactory : IDesignTimeDbContextFactory<
     public SpravyDbToDoDbContext CreateDbContext(string[] args)
     {
         var options = new DbContextOptionsBuilder().UseSqlite(
-                args[0],
-                b => b.MigrationsAssembly(SpravyToDoDbSqliteMigratorMark.AssemblyFullName)
-            )
-            .Options;
+                args[0], b => b.MigrationsAssembly(SpravyToDoDbSqliteMigratorMark.AssemblyFullName))
+           .Options;
 
-        return new SpravyDbToDoDbContext(options, new SqliteToDoDbContextSetup());
+        return new(options, new SqliteToDoDbContextSetup());
     }
 }

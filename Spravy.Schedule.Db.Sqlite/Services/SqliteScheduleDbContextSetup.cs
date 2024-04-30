@@ -6,9 +6,16 @@ namespace Spravy.Schedule.Db.Sqlite.Services;
 
 public class SqliteScheduleDbContextSetup : IDbContextSetup
 {
-    public bool AutoCreateDataBase => false;
-    public bool DataBaseCreated => true;
-    
+    public bool AutoCreateDataBase
+    {
+        get => false;
+    }
+
+    public bool DataBaseCreated
+    {
+        get => true;
+    }
+
     public void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new TimerEntityTypeConfiguration());

@@ -18,7 +18,7 @@ public class Result
 
     public Result()
     {
-        Errors = new ReadOnlyMemory<Error>([DefaultObject<DefaultCtorResultError>.Default]);
+        Errors = new([DefaultObject<DefaultCtorResultError>.Default,]);
     }
 
     public Result(ReadOnlyMemory<Error> errors)
@@ -28,12 +28,15 @@ public class Result
 
     public Result(Error error)
     {
-        Errors = new ReadOnlyMemory<Error>([error]);
+        Errors = new([error,]);
     }
 
     public ReadOnlyMemory<Error> Errors { get; }
 
-    public bool IsHasError => !Errors.IsEmpty;
+    public bool IsHasError
+    {
+        get => !Errors.IsEmpty;
+    }
 }
 
 public class Result<TValue>
@@ -45,11 +48,11 @@ public class Result<TValue>
     public static readonly ConfiguredValueTaskAwaitable<Result<TValue>> DefaultAwaitableFalse =
         DefaultSuccessValueTask.ConfigureAwait(false);
 
-    private readonly TValue value = default;
+    private readonly TValue value;
 
     public Result()
     {
-        Errors = new ReadOnlyMemory<Error>([DefaultObject<DefaultCtorResultError<TValue>>.Default]);
+        Errors = new([DefaultObject<DefaultCtorResultError<TValue>>.Default,]);
     }
 
     public Result(ReadOnlyMemory<Error> errors)
@@ -64,7 +67,7 @@ public class Result<TValue>
 
     public Result(Error error)
     {
-        Errors = new ReadOnlyMemory<Error>([error]);
+        Errors = new([error,]);
     }
 
     public Result(TValue value)
@@ -74,7 +77,13 @@ public class Result<TValue>
 
     public ReadOnlyMemory<Error> Errors { get; }
 
-    public TValue Value => IsHasError ? throw new Exception("Result has error") : value;
+    public TValue Value
+    {
+        get => IsHasError ? throw new("Result has error") : value;
+    }
 
-    public bool IsHasError => !Errors.IsEmpty;
+    public bool IsHasError
+    {
+        get => !Errors.IsEmpty;
+    }
 }

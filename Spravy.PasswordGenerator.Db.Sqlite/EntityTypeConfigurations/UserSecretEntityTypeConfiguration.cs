@@ -10,6 +10,7 @@ public class UserSecretEntityTypeConfiguration : IEntityTypeConfiguration<UserSe
     {
         builder.ToTable("UserSecrets");
         builder.HasKey(x => x.Id);
-        builder.HasIndex(x => x.UserId).IsUnique();;
+        builder.HasIndex(x => x.UserId).IsUnique();
+        ;
     }
 }

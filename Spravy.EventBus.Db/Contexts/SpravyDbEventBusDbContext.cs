@@ -16,6 +16,6 @@ public class SpravyDbEventBusDbContext : SpravyDbContext, IDbContextCreator<Spra
 
     public static SpravyDbEventBusDbContext CreateDbContext(IDbContextSetup setup, DbContextOptions options)
     {
-        return new SpravyDbEventBusDbContext(options, setup);
+        return new(options, setup);
     }
 }

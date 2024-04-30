@@ -7,10 +7,8 @@ public static class ConfigurationExtension
 {
     public static ImapConnection GetImapConnection(this IConfiguration configuration)
     {
-        return new ImapConnection(
-            configuration.GetSection("EmailServer:Host").Value,
+        return new(configuration.GetSection("EmailServer:Host").Value,
             configuration.GetSection("EmailAccount:Email").Value,
-            configuration.GetSection("EmailAccount:Password").Value
-        );
+            configuration.GetSection("EmailAccount:Password").Value);
     }
 }

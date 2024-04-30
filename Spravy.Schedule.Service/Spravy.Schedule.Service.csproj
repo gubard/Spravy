@@ -7,13 +7,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Grpc.AspNetCore" Version="2.62.0" />
+        <PackageReference Include="Grpc.AspNetCore" Version="2.62.0"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="..\.dockerignore">
-        <Link>.dockerignore</Link>
-      </Content>
+        <Content Include="..\.dockerignore">
+            <Link>.dockerignore</Link>
+        </Content>
     </ItemGroup>
 
     <ItemGroup>
@@ -26,14 +26,14 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Spravy.Authentication.Domain.Client\Spravy.Authentication.Domain.Client.csproj" />
-      <ProjectReference Include="..\Spravy.Core\Spravy.Core.csproj" />
-      <ProjectReference Include="..\Spravy.Db.Sqlite\Spravy.Db.Sqlite.csproj" />
-      <ProjectReference Include="..\Spravy.EventBus.Domain.Client\Spravy.EventBus.Domain.Client.csproj" />
-      <ProjectReference Include="..\Spravy.EventBus.Domain\Spravy.EventBus.Domain.csproj" />
-      <ProjectReference Include="..\Spravy.Schedule.Db.Mapper\Spravy.Schedule.Db.Mapper.csproj" />
-      <ProjectReference Include="..\Spravy.Schedule.Db.Sqlite.Migrator\Spravy.Schedule.Db.Sqlite.Migrator.csproj" />
-      <ProjectReference Include="..\Spravy.Schedule.Domain.Mapper\Spravy.Schedule.Domain.Mapper.csproj" />
-      <ProjectReference Include="..\Spravy.Service\Spravy.Service.csproj" />
+        <ProjectReference Include="..\Spravy.Authentication.Domain.Client\Spravy.Authentication.Domain.Client.csproj"/>
+        <ProjectReference Include="..\Spravy.Core\Spravy.Core.csproj"/>
+        <ProjectReference Include="..\Spravy.Db.Sqlite\Spravy.Db.Sqlite.csproj"/>
+        <ProjectReference Include="..\Spravy.EventBus.Domain.Client\Spravy.EventBus.Domain.Client.csproj"/>
+        <ProjectReference Include="..\Spravy.EventBus.Domain\Spravy.EventBus.Domain.csproj"/>
+        <ProjectReference Include="..\Spravy.Schedule.Db.Mapper\Spravy.Schedule.Db.Mapper.csproj"/>
+        <ProjectReference Include="..\Spravy.Schedule.Db.Sqlite.Migrator\Spravy.Schedule.Db.Sqlite.Migrator.csproj"/>
+        <ProjectReference Include="..\Spravy.Schedule.Domain.Mapper\Spravy.Schedule.Domain.Mapper.csproj"/>
+        <ProjectReference Include="..\Spravy.Service\Spravy.Service.csproj"/>
     </ItemGroup>
 </Project>

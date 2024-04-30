@@ -12,7 +12,5 @@ public static class NamedHelper
     public static readonly Named<IStringToBytes> StringToUtf8Bytes = new("UTF8", new StringToUtf8Bytes());
 
     public static readonly Named<IBytesToString> BytesToUpperCaseHexString = new(
-        "UpperCaseHex",
-        new BytesToUpperCaseHexString()
-    );
+        "UpperCaseHex", new BytesToUpperCaseHexString());
 }

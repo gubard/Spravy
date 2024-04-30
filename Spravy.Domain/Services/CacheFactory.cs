@@ -9,14 +9,19 @@ public class CacheFactory<TKey, TValue> : IFactory<TKey, TValue>, ICache<TKey, T
     where TValue : notnull where TKey : notnull
 {
     private static readonly Dictionary<TKey, TValue> cache = new();
+    private readonly ICacheValidator<TKey, TValue> cacheValidator;
 
     private readonly IFactory<TKey, TValue> factory;
-    private readonly ICacheValidator<TKey, TValue> cacheValidator;
 
     public CacheFactory(IFactory<TKey, TValue> factory, ICacheValidator<TKey, TValue> cacheValidator)
     {
         this.factory = factory;
         this.cacheValidator = cacheValidator;
+    }
+
+    public bool TryGetCacheValue(TKey key, [MaybeNullWhen(false)] out TValue value)
+    {
+        return cache.TryGetValue(key, out value);
     }
 
     public Result<TValue> Create(TKey key)
@@ -38,16 +43,12 @@ public class CacheFactory<TKey, TValue> : IFactory<TKey, TValue>, ICache<TKey, T
 
     private Result<TValue> CreateNewValue(TKey key)
     {
-        return factory.Create(key).IfSuccess(value =>
-        {
-            cache.Add(key, value);
+        return factory.Create(key)
+           .IfSuccess(value =>
+            {
+                cache.Add(key, value);
 
-            return value.ToResult();
-        });
-    }
-
-    public bool TryGetCacheValue(TKey key, [MaybeNullWhen(false)] out TValue value)
-    {
-        return cache.TryGetValue(key, out value);
+                return value.ToResult();
+            });
     }
 }

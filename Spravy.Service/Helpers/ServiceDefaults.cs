@@ -6,6 +6,6 @@ public static class ServiceDefaults
 {
     public static readonly GrpcWebOptions DefaultGrpcWebOptions = new()
     {
-        DefaultEnabled = true
+        DefaultEnabled = true,
     };
 }

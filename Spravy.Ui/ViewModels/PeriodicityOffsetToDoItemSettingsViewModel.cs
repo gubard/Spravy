@@ -5,8 +5,8 @@ using System.Windows.Input;
 using Avalonia.Collections;
 using Ninject;
 using ReactiveUI.Fody.Helpers;
-using Spravy.Domain.Models;
 using Spravy.Domain.Extensions;
+using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Extensions;
@@ -33,6 +33,24 @@ public class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
 
     public AvaloniaList<ToDoItemChildrenType> ChildrenTypes { get; } = new(Enum.GetValues<ToDoItemChildrenType>());
 
+    [Inject]
+    public required IToDoService ToDoService { get; set; }
+
+    public ICommand InitializedCommand { get; }
+
+    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
+    {
+        return Result.AwaitableFalse.IfSuccessAllAsync(cancellationToken,
+            () => ToDoService.UpdateToDoItemDaysOffsetAsync(Id, DaysOffset, cancellationToken),
+            () => ToDoService.UpdateToDoItemWeeksOffsetAsync(Id, WeeksOffset, cancellationToken),
+            () => ToDoService.UpdateToDoItemYearsOffsetAsync(Id, YearsOffset, cancellationToken),
+            () => ToDoService.UpdateToDoItemMonthsOffsetAsync(Id, MonthsOffset, cancellationToken),
+            () => ToDoService.UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, cancellationToken),
+            () => ToDoService.UpdateToDoItemDueDateAsync(Id, DueDate, cancellationToken),
+            () => ToDoService.UpdateToDoItemIsRequiredCompleteInDueDateAsync(Id, IsRequiredCompleteInDueDate,
+                cancellationToken));
+    }
+
     [Reactive]
     public bool IsRequiredCompleteInDueDate { get; set; }
 
@@ -42,11 +60,26 @@ public class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
     [Reactive]
     public ToDoItemChildrenType ChildrenType { get; set; }
 
-    [Reactive]
-    public DateOnly DueDate { get; set; }
+    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
+    {
+        return ToDoService.GetPeriodicityOffsetToDoItemSettingsAsync(Id, cancellationToken)
+           .IfSuccessAsync(setting => this.InvokeUIBackgroundAsync(() =>
+            {
+                ChildrenType = setting.ChildrenType;
+                DueDate = setting.DueDate;
+                MonthsOffset = setting.MonthsOffset;
+                YearsOffset = setting.YearsOffset;
+                DaysOffset = setting.DaysOffset;
+                WeeksOffset = setting.WeeksOffset;
+                IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
+            }), cancellationToken);
+    }
 
     [Reactive]
     public ushort DaysOffset { get; set; }
+
+    [Reactive]
+    public DateOnly DueDate { get; set; }
 
     [Reactive]
     public ushort MonthsOffset { get; set; }
@@ -57,51 +90,8 @@ public class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
     [Reactive]
     public ushort YearsOffset { get; set; }
 
-    [Inject]
-    public required IToDoService ToDoService { get; set; }
-
-    public ICommand InitializedCommand { get; }
-
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         return RefreshAsync(cancellationToken);
-    }
-
-    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
-    {
-        return ToDoService.GetPeriodicityOffsetToDoItemSettingsAsync(Id, cancellationToken)
-            .IfSuccessAsync(
-                setting => this.InvokeUIBackgroundAsync(
-                    () =>
-                    {
-                        ChildrenType = setting.ChildrenType;
-                        DueDate = setting.DueDate;
-                        MonthsOffset = setting.MonthsOffset;
-                        YearsOffset = setting.YearsOffset;
-                        DaysOffset = setting.DaysOffset;
-                        WeeksOffset = setting.WeeksOffset;
-                        IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
-                    }
-                ),
-                cancellationToken
-            );
-    }
-
-    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
-    {
-        return Result.AwaitableFalse.IfSuccessAllAsync(
-            cancellationToken,
-            () => ToDoService.UpdateToDoItemDaysOffsetAsync(Id, DaysOffset, cancellationToken),
-            () => ToDoService.UpdateToDoItemWeeksOffsetAsync(Id, WeeksOffset, cancellationToken),
-            () => ToDoService.UpdateToDoItemYearsOffsetAsync(Id, YearsOffset, cancellationToken),
-            () => ToDoService.UpdateToDoItemMonthsOffsetAsync(Id, MonthsOffset, cancellationToken),
-            () => ToDoService.UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, cancellationToken),
-            () => ToDoService.UpdateToDoItemDueDateAsync(Id, DueDate, cancellationToken),
-            () => ToDoService.UpdateToDoItemIsRequiredCompleteInDueDateAsync(
-                Id,
-                IsRequiredCompleteInDueDate,
-                cancellationToken
-            )
-        );
     }
 }

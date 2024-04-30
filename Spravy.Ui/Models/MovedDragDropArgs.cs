@@ -5,7 +5,14 @@ namespace Spravy.Ui.Models;
 
 public class MovedDragDropArgs<TItem>
 {
-    public MovedDragDropArgs(TItem sourceItem, int sourceIndex, TItem targetItem, int targetIndex, ListBoxItem item, Point pointerPosition)
+    public MovedDragDropArgs(
+        TItem sourceItem,
+        int sourceIndex,
+        TItem targetItem,
+        int targetIndex,
+        ListBoxItem item,
+        Point pointerPosition
+    )
     {
         SourceItem = sourceItem;
         SourceIndex = sourceIndex;

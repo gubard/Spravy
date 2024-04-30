@@ -14,7 +14,7 @@ public partial class CreateUserView : ReactiveUserControl<CreateUserViewModel>
     public const string CreateUserCardName = "create-user-card";
     public const string BackButtonName = "back-button";
     public const string CreateUserButtonName = "create-user-button";
-    
+
     public CreateUserView()
     {
         InitializeComponent();

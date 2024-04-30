@@ -6,21 +6,16 @@ using Spravy.Schedule.Service.Services;
 using Spravy.Service.Extensions;
 using Spravy.Service.Middlewares;
 
-Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console()
-    .CreateLogger();
+Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
 
 try
 {
     Log.Information("Starting web app");
 
     WebApplication.CreateBuilder(args)
-        .BuildSpravy<GrpcScheduleService, SpravyScheduleServiceMark>(
-            args,
-            typeof(DataBaseSetupSqliteMiddleware<SpravyDbScheduleDbContext>),
-            x => x.RegisterSchedule()
-        )
-        .Run();
+       .BuildSpravy<GrpcScheduleService, SpravyScheduleServiceMark>(args,
+            typeof(DataBaseSetupSqliteMiddleware<SpravyDbScheduleDbContext>), x => x.RegisterSchedule())
+       .Run();
 }
 catch (Exception ex)
 {

@@ -28,37 +28,28 @@ public static class ServiceCollectionExtension
         serviceCollection.AddTransient<IFactory<TDbContext>, SqliteDbContextFactory<TDbContext>>();
         serviceCollection.AddTransient<ICacheValidator<string, TDbContext>, DbContextCacheValidator<TDbContext>>();
 
-        serviceCollection.AddTransient(
-            sp => new DbContextFactory<TDbContext, TAssemblyMark>(sp.GetRequiredService<TDbContextSetup>())
-        );
+        serviceCollection.AddTransient(sp =>
+            new DbContextFactory<TDbContext, TAssemblyMark>(sp.GetRequiredService<TDbContextSetup>()));
 
-        serviceCollection.AddTransient<IFactory<string, TDbContext>>(
-            sp => new CacheFactory<string, TDbContext>(
-                sp.GetRequiredService<DbContextFactory<TDbContext, TAssemblyMark>>(),
-                sp.GetRequiredService<ICacheValidator<string, TDbContext>>()
-            )
-        );
+        serviceCollection.AddTransient<IFactory<string, TDbContext>>(sp =>
+            new CacheFactory<string, TDbContext>(sp.GetRequiredService<DbContextFactory<TDbContext, TAssemblyMark>>(),
+                sp.GetRequiredService<ICacheValidator<string, TDbContext>>()));
 
         return serviceCollection;
     }
 
     public static IServiceCollection AddSpravySqliteFolderContext<TDbContext, TAssemblyMark>(
         this IServiceCollection serviceCollection
-    )
-        where TDbContext : SpravyDbContext, IDbContextCreator<TDbContext>
-        where TAssemblyMark : IAssemblyMark
+    ) where TDbContext : SpravyDbContext, IDbContextCreator<TDbContext> where TAssemblyMark : IAssemblyMark
     {
         serviceCollection.AddTransient<IFactory<FileInfo>, SqliteDbFileFactory>();
         serviceCollection.AddTransient<IFactory<TDbContext>, SqliteDbContextFactory<TDbContext>>();
         serviceCollection.AddTransient<DbContextFactory<TDbContext, TAssemblyMark>>();
         serviceCollection.AddTransient<ICacheValidator<string, TDbContext>, DbContextCacheValidator<TDbContext>>();
 
-        serviceCollection.AddTransient<IFactory<string, TDbContext>>(
-            sp => new CacheFactory<string, TDbContext>(
-                sp.GetRequiredService<DbContextFactory<TDbContext, TAssemblyMark>>(),
-                sp.GetRequiredService<ICacheValidator<string, TDbContext>>()
-            )
-        );
+        serviceCollection.AddTransient<IFactory<string, TDbContext>>(sp =>
+            new CacheFactory<string, TDbContext>(sp.GetRequiredService<DbContextFactory<TDbContext, TAssemblyMark>>(),
+                sp.GetRequiredService<ICacheValidator<string, TDbContext>>()));
 
         return serviceCollection;
     }
@@ -77,10 +68,10 @@ public static class ServiceCollectionExtension
         serviceCollection.AddSpravyAuthentication(configuration);
 
         var persistKeysDirectory = "/".ToDirectory()
-            .Combine("tmp")
-            .Combine("spravy")
-            .Combine(TAssemblyMark.AssemblyName.Name.ThrowIfNullOrWhiteSpace())
-            .CreateIfNotExists();
+           .Combine("tmp")
+           .Combine("spravy")
+           .Combine(TAssemblyMark.AssemblyName.Name.ThrowIfNullOrWhiteSpace())
+           .CreateIfNotExists();
 
         serviceCollection.AddDataProtection().PersistKeysToFileSystem(persistKeysDirectory);
 
@@ -89,21 +80,14 @@ public static class ServiceCollectionExtension
 
     public static IServiceCollection AddMapperConfiguration<TProfile1, TProfile2, TProfile3>(
         this IServiceCollection serviceCollection
-    )
-        where TProfile1 : Profile, new()
-        where TProfile2 : Profile, new()
-        where TProfile3 : Profile, new()
+    ) where TProfile1 : Profile, new() where TProfile2 : Profile, new() where TProfile3 : Profile, new()
     {
-        serviceCollection.AddSingleton(
-            _ => new MapperConfiguration(
-                cfg =>
-                {
-                    cfg.AddProfile<TProfile1>();
-                    cfg.AddProfile<TProfile2>();
-                    cfg.AddProfile<TProfile3>();
-                }
-            )
-        );
+        serviceCollection.AddSingleton(_ => new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<TProfile1>();
+            cfg.AddProfile<TProfile2>();
+            cfg.AddProfile<TProfile3>();
+        }));
 
         return serviceCollection;
     }
@@ -116,50 +100,34 @@ public static class ServiceCollectionExtension
         where TProfile3 : Profile, new()
         where TProfile4 : Profile, new()
     {
-        serviceCollection.AddSingleton(
-            _ => new MapperConfiguration(
-                cfg =>
-                {
-                    cfg.AddProfile<TProfile1>();
-                    cfg.AddProfile<TProfile2>();
-                    cfg.AddProfile<TProfile3>();
-                    cfg.AddProfile<TProfile4>();
-                }
-            )
-        );
+        serviceCollection.AddSingleton(_ => new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<TProfile1>();
+            cfg.AddProfile<TProfile2>();
+            cfg.AddProfile<TProfile3>();
+            cfg.AddProfile<TProfile4>();
+        }));
 
         return serviceCollection;
     }
 
     public static IServiceCollection AddMapperConfiguration<TProfile1, TProfile2>(
         this IServiceCollection serviceCollection
-    )
-        where TProfile1 : Profile, new()
-        where TProfile2 : Profile, new()
+    ) where TProfile1 : Profile, new() where TProfile2 : Profile, new()
     {
-        serviceCollection.AddSingleton(
-            _ => new MapperConfiguration(
-                cfg =>
-                {
-                    cfg.AddProfile<TProfile1>();
-                    cfg.AddProfile<TProfile2>();
-                }
-            )
-        );
+        serviceCollection.AddSingleton(_ => new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<TProfile1>();
+            cfg.AddProfile<TProfile2>();
+        }));
 
         return serviceCollection;
     }
 
-    public static IServiceCollection AddMapperConfiguration<TProfile>(
-        this IServiceCollection serviceCollection
-    )
+    public static IServiceCollection AddMapperConfiguration<TProfile>(this IServiceCollection serviceCollection)
         where TProfile : Profile, new()
     {
-        serviceCollection.AddSingleton(
-            _ => new MapperConfiguration(
-                cfg => { cfg.AddProfile<TProfile>(); }
-            )
-        );
+        serviceCollection.AddSingleton(_ => new MapperConfiguration(cfg => { cfg.AddProfile<TProfile>(); }));
 
         return serviceCollection;
     }
@@ -170,7 +138,7 @@ public static class ServiceCollectionExtension
     )
     {
         serviceCollection.AddAuthentication(x => x.SetJwtBearerDefaults())
-            .AddJwtBearer(x => x.SetJwtOptions(configuration));
+           .AddJwtBearer(x => x.SetJwtOptions(configuration));
 
         return serviceCollection;
     }

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Ninject;
-using Spravy.Ui.Features.Localizations.Models;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.Features.ToDo.ViewModels;
@@ -20,7 +19,7 @@ public class ToDoItemsGroupByNoneViewModel : ViewModelBase
         {
             items?.Dispose();
             items = value;
-            items.Header = new TextView("ToDoItemsGroupByNoneView.Header");
+            items.Header = new("ToDoItemsGroupByNoneView.Header");
             Disposables.Add(items);
         }
     }
@@ -29,12 +28,12 @@ public class ToDoItemsGroupByNoneViewModel : ViewModelBase
     {
         Items.Clear();
     }
-    
+
     public void AddItems(IEnumerable<Selected<ToDoItemNotify>> items)
     {
         Items.AddItems(items);
     }
-    
+
     public void ClearExcept(IEnumerable<Guid> ids)
     {
         Items.ClearExcept(ids);

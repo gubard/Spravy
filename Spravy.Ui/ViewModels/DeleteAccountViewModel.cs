@@ -36,7 +36,11 @@ public class DeleteAccountViewModel : NavigatableViewModelBase
     [Reactive]
     public ICommand DeleteAccountCommand { get; protected set; }
 
-    public override string ViewId => TypeCache<DeleteAccountViewModel>.Type.Name;
+    public override string ViewId
+    {
+        get => TypeCache<DeleteAccountViewModel>.Type.Name;
+    }
+
     public ICommand InitializedCommand { get; }
 
     public override Result Stop()
@@ -59,29 +63,23 @@ public class DeleteAccountViewModel : NavigatableViewModelBase
 
     private ConfiguredValueTaskAwaitable<Result> DeleteAccountAsync(CancellationToken cancellationToken)
     {
-        return Result.AwaitableFalse.IfSuccessAsync(
-                () =>
+        return Result.AwaitableFalse
+           .IfSuccessAsync(() =>
+            {
+                switch (IdentifierType)
                 {
-                    switch (IdentifierType)
-                    {
-                        case UserIdentifierType.Email:
-                            return AuthenticationService.DeleteUserByEmailAsync(
-                                Identifier,
-                                VerificationCode.ToUpperInvariant(),
-                                cancellationToken
-                            );
-                        case UserIdentifierType.Login:
-                            return AuthenticationService.DeleteUserByEmailAsync(
-                                Identifier,
-                                VerificationCode.ToUpperInvariant(),
-                                cancellationToken
-                            );
-                        default: throw new ArgumentOutOfRangeException();
-                    }
-                },
-                cancellationToken
-            )
-            .IfSuccessAsync(() => Navigator.NavigateToAsync<LoginViewModel>(cancellationToken), cancellationToken);
+                    case UserIdentifierType.Email:
+                        return AuthenticationService.DeleteUserByEmailAsync(Identifier,
+                            VerificationCode.ToUpperInvariant(),
+                            cancellationToken);
+                    case UserIdentifierType.Login:
+                        return AuthenticationService.DeleteUserByEmailAsync(Identifier,
+                            VerificationCode.ToUpperInvariant(),
+                            cancellationToken);
+                    default: throw new ArgumentOutOfRangeException();
+                }
+            }, cancellationToken)
+           .IfSuccessAsync(() => Navigator.NavigateToAsync<LoginViewModel>(cancellationToken), cancellationToken);
     }
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)

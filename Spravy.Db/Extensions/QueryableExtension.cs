@@ -12,19 +12,16 @@ public static class QueryableExtension
         this IQueryable<TEntity> context,
         Expression<Func<TEntity, bool>> predicate,
         CancellationToken cancellationToken
-    )
-        where TEntity : class
+    ) where TEntity : class
     {
-        return SingleOrDefaultEntityCore(context, predicate, cancellationToken)
-            .ConfigureAwait(false);
+        return SingleOrDefaultEntityCore(context, predicate, cancellationToken).ConfigureAwait(false);
     }
 
     private static async ValueTask<Result<TEntity>> SingleOrDefaultEntityCore<TEntity>(
         this IQueryable<TEntity> context,
         Expression<Func<TEntity, bool>> predicate,
         CancellationToken cancellationToken
-    )
-        where TEntity : class
+    ) where TEntity : class
     {
         var value = await context.SingleOrDefaultAsync(predicate, cancellationToken);
 
@@ -33,14 +30,16 @@ public static class QueryableExtension
 
     public static ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<TSource>>> ToArrayEntitiesAsync<TSource>(
         this IQueryable<TSource> source,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken
+    )
     {
         return source.ToArrayEntitiesCore(cancellationToken).ConfigureAwait(false);
     }
 
     private static async ValueTask<Result<ReadOnlyMemory<TSource>>> ToArrayEntitiesCore<TSource>(
         this IQueryable<TSource> source,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken
+    )
     {
         var array = await source.ToArrayAsync(cancellationToken);
 

@@ -5,8 +5,8 @@ namespace Spravy.Ui.Models;
 
 public abstract class TimerItemNotify : NotifyBase
 {
-    private Guid id;
     private DateTimeOffset dueDateTime;
+    private Guid id;
 
     public Guid Id
     {

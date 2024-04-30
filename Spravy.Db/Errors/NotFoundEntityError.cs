@@ -6,11 +6,11 @@ namespace Spravy.Db.Errors;
 public class NotFoundEntityError : Error
 {
     public static readonly Guid MainId = new("FC0579CC-DD09-4C3C-B631-7E97B590BA22");
-    
+
     protected NotFoundEntityError() : base(MainId)
     {
         Type = typeof(UnknownType);
-        Key = new object();
+        Key = new();
     }
 
     public NotFoundEntityError(Type type, object key) : base(MainId)

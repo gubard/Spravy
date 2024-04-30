@@ -16,19 +16,18 @@ public static class SpravyDbAuthenticationDbContextExtension
         CancellationToken cancellationToken
     )
     {
-        return context.GetUserByEmailAsync(email, cancellationToken).IfSuccessAsync(user =>
-        {
-            if (user.IsEmailVerified)
+        return context.GetUserByEmailAsync(email, cancellationToken)
+           .IfSuccessAsync(user =>
             {
-                return Result.Success.IfSuccess(
-                    user.Login.CheckNullOrWhiteSpaceProperty(nameof(user.Login)),
-                    user.Email.CheckNullOrWhiteSpaceProperty(nameof(user.Email)),
-                    (l, e) => new Result<UserEntity>(new UserVerifiedError(l, e))
-                );
-            }
+                if (user.IsEmailVerified)
+                {
+                    return Result.Success.IfSuccess(user.Login.CheckNullOrWhiteSpaceProperty(nameof(user.Login)),
+                        user.Email.CheckNullOrWhiteSpaceProperty(nameof(user.Email)),
+                        (l, e) => new Result<UserEntity>(new UserVerifiedError(l, e)));
+                }
 
-            return new Result<UserEntity>(user);
-        }, cancellationToken);
+                return new(user);
+            }, cancellationToken);
     }
 
     public static ConfiguredValueTaskAwaitable<Result<UserEntity>> GetNotVerifiedUserByLoginAsync(
@@ -37,40 +36,38 @@ public static class SpravyDbAuthenticationDbContextExtension
         CancellationToken cancellationToken
     )
     {
-        return context.GetUserByLoginAsync(login, cancellationToken).IfSuccessAsync(user =>
-        {
-            if (!user.IsEmailVerified)
+        return context.GetUserByLoginAsync(login, cancellationToken)
+           .IfSuccessAsync(user =>
             {
-                return Result.Success.IfSuccess(
-                    user.Login.CheckNullOrWhiteSpaceProperty(nameof(user.Login)),
-                    user.Email.CheckNullOrWhiteSpaceProperty(nameof(user.Email)),
-                    (l, e) => new Result<UserEntity>(new UserVerifiedError(l, e))
-                );
-            }
+                if (!user.IsEmailVerified)
+                {
+                    return Result.Success.IfSuccess(user.Login.CheckNullOrWhiteSpaceProperty(nameof(user.Login)),
+                        user.Email.CheckNullOrWhiteSpaceProperty(nameof(user.Email)),
+                        (l, e) => new Result<UserEntity>(new UserVerifiedError(l, e)));
+                }
 
-            return new Result<UserEntity>(user);
-        }, cancellationToken);
+                return new(user);
+            }, cancellationToken);
     }
-    
+
     public static ConfiguredValueTaskAwaitable<Result<UserEntity>> GetVerifiedUserByEmailAsync(
         this SpravyDbAuthenticationDbContext context,
         string email,
         CancellationToken cancellationToken
     )
     {
-        return context.GetUserByEmailAsync(email, cancellationToken).IfSuccessAsync(user =>
-        {
-            if (!user.IsEmailVerified)
+        return context.GetUserByEmailAsync(email, cancellationToken)
+           .IfSuccessAsync(user =>
             {
-                return Result.Success.IfSuccess(
-                    user.Login.CheckNullOrWhiteSpaceProperty(nameof(user.Login)),
-                    user.Email.CheckNullOrWhiteSpaceProperty(nameof(user.Email)),
-                    (l, e) => new Result<UserEntity>(new UserNotVerifiedError(l, e))
-                );
-            }
+                if (!user.IsEmailVerified)
+                {
+                    return Result.Success.IfSuccess(user.Login.CheckNullOrWhiteSpaceProperty(nameof(user.Login)),
+                        user.Email.CheckNullOrWhiteSpaceProperty(nameof(user.Email)),
+                        (l, e) => new Result<UserEntity>(new UserNotVerifiedError(l, e)));
+                }
 
-            return new Result<UserEntity>(user);
-        }, cancellationToken);
+                return new(user);
+            }, cancellationToken);
     }
 
     public static ConfiguredValueTaskAwaitable<Result<UserEntity>> GetVerifiedUserByLoginAsync(
@@ -79,19 +76,18 @@ public static class SpravyDbAuthenticationDbContextExtension
         CancellationToken cancellationToken
     )
     {
-        return context.GetUserByLoginAsync(login, cancellationToken).IfSuccessAsync(user =>
-        {
-            if (!user.IsEmailVerified)
+        return context.GetUserByLoginAsync(login, cancellationToken)
+           .IfSuccessAsync(user =>
             {
-                return Result.Success.IfSuccess(
-                    user.Login.CheckNullOrWhiteSpaceProperty(nameof(user.Login)),
-                    user.Email.CheckNullOrWhiteSpaceProperty(nameof(user.Email)),
-                    (l, e) => new Result<UserEntity>(new UserNotVerifiedError(l, e))
-                );
-            }
+                if (!user.IsEmailVerified)
+                {
+                    return Result.Success.IfSuccess(user.Login.CheckNullOrWhiteSpaceProperty(nameof(user.Login)),
+                        user.Email.CheckNullOrWhiteSpaceProperty(nameof(user.Email)),
+                        (l, e) => new Result<UserEntity>(new UserNotVerifiedError(l, e)));
+                }
 
-            return new Result<UserEntity>(user);
-        }, cancellationToken);
+                return new(user);
+            }, cancellationToken);
     }
 
     public static ConfiguredValueTaskAwaitable<Result<UserEntity>> GetUserByLoginAsync(
@@ -113,15 +109,15 @@ public static class SpravyDbAuthenticationDbContextExtension
 
         if (users.Length == 0)
         {
-            return new Result<UserEntity>(new UserWithLoginNotExistsError(login));
+            return new(new UserWithLoginNotExistsError(login));
         }
 
         if (users.Length > 1)
         {
-            return new Result<UserEntity>(new MultiUsersWithSameLoginError(login));
+            return new(new MultiUsersWithSameLoginError(login));
         }
 
-        return new Result<UserEntity>(users[0]);
+        return new(users[0]);
     }
 
     public static ConfiguredValueTaskAwaitable<Result<UserEntity>> GetUserByEmailAsync(
@@ -143,14 +139,14 @@ public static class SpravyDbAuthenticationDbContextExtension
 
         if (users.Length == 0)
         {
-            return new Result<UserEntity>(new UserWithEmailNotExistsError(email));
+            return new(new UserWithEmailNotExistsError(email));
         }
 
         if (users.Length > 1)
         {
-            return new Result<UserEntity>(new MultiUsersWithSameEmailError(email));
+            return new(new MultiUsersWithSameEmailError(email));
         }
 
-        return new Result<UserEntity>(users[0]);
+        return new(users[0]);
     }
 }

@@ -16,6 +16,6 @@ public class PasswordDbContext : SpravyDbContext, IDbContextCreator<PasswordDbCo
 
     public static PasswordDbContext CreateDbContext(IDbContextSetup setup, DbContextOptions options)
     {
-        return new PasswordDbContext(options, setup);
+        return new(options, setup);
     }
 }

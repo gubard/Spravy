@@ -37,6 +37,11 @@ public class LocalStorageObjectStorage : IObjectStorage
         return SaveObjectCore(id, obj).ConfigureAwait(false);
     }
 
+    public ConfiguredValueTaskAwaitable<Result<TObject>> GetObjectAsync<TObject>(string id)
+    {
+        return GetObjectCore<TObject>(id).ConfigureAwait(false);
+    }
+
     private async ValueTask<Result> SaveObjectCore(string id, object obj)
     {
         await using var stream = new MemoryStream();
@@ -52,11 +57,6 @@ public class LocalStorageObjectStorage : IObjectStorage
         JSInterop.LocalStorageSetItem(id, value);
 
         return Result.Success;
-    }
-
-    public ConfiguredValueTaskAwaitable<Result<TObject>> GetObjectAsync<TObject>(string id)
-    {
-        return GetObjectCore<TObject>(id).ConfigureAwait(false);
     }
 
     public async ValueTask<Result<TObject>> GetObjectCore<TObject>(string id)

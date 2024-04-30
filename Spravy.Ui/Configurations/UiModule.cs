@@ -70,7 +70,7 @@ public class UiModule : NinjectModule
     public override void Load()
     {
         Bind<IPropertyValidator>().To<PropertyValidator>();
-        Bind<StorageDbContext>().ToMethod(c => new StorageDbContext(c.Kernel.GetRequiredService<IDbContextSetup>()));
+        Bind<StorageDbContext>().ToMethod(c => new(c.Kernel.GetRequiredService<IDbContextSetup>()));
 
         this.BindGrpcService<GrpcAuthenticationService, AuthenticationService.AuthenticationServiceClient,
             GrpcAuthenticationServiceOptions>(useCache);
@@ -78,8 +78,7 @@ public class UiModule : NinjectModule
         this.BindGrpcServiceAuth<GrpcScheduleService, ScheduleService.ScheduleServiceClient,
             GrpcScheduleServiceOptions>(useCache);
 
-        this.BindGrpcServiceAuth<GrpcToDoService, ToDoService.ToDoServiceClient,
-            GrpcToDoServiceOptions>(useCache);
+        this.BindGrpcServiceAuth<GrpcToDoService, ToDoService.ToDoServiceClient, GrpcToDoServiceOptions>(useCache);
 
         this.BindGrpcServiceAuth<GrpcEventBusService, EventBusService.EventBusServiceClient,
             GrpcEventBusServiceOptions>(useCache);
@@ -88,7 +87,7 @@ public class UiModule : NinjectModule
             GrpcPasswordServiceOptions>(useCache);
 
         Bind<IManagedNotificationManager>()
-            .ToMethod(_ => new WindowNotificationManager(Application.Current.ThrowIfNull().GetTopLevel()));
+           .ToMethod(_ => new WindowNotificationManager(Application.Current.ThrowIfNull().GetTopLevel()));
 
         Bind<AccountNotify>().ToSelf().InSingletonScope();
         Bind<IErrorHandler>().To<ErrorHandler>();
@@ -112,7 +111,7 @@ public class UiModule : NinjectModule
         Bind<ToDoItemViewModel>().ToSelf();
         Bind<Control>().To<MainView>().OnActivation((c, x) => x.DataContext = c.Kernel.Get<MainViewModel>());
         //RegisterViewModels(this)
-        Bind<MapperConfiguration>().ToMethod(_ => new MapperConfiguration(SetupMapperConfiguration));
+        Bind<MapperConfiguration>().ToMethod(_ => new(SetupMapperConfiguration));
         Bind<IEventBusService>().ToMethod(context => context.Kernel.Get<GrpcEventBusService>());
         Bind<IDataTemplate>().To<ModuleDataTemplate>();
         Bind<IMetadataFactory>().To<MetadataFactory>();
@@ -124,71 +123,52 @@ public class UiModule : NinjectModule
         Bind<IContent>().ToMethod(x => x.Kernel.Get<MainSplitViewModel>());
 
         Bind<AvaloniaList<DayOfYearSelectItem>>()
-            .ToMethod(
-                context => new AvaloniaList<DayOfYearSelectItem>(
-                    Enumerable.Range(1, 12)
-                        .Select(
-                            x =>
-                            {
-                                var item = context.Kernel.Get<DayOfYearSelectItem>();
-                                item.Month = (byte)x;
+           .ToMethod(context => new(Enumerable.Range(1, 12)
+               .Select(x =>
+                {
+                    var item = context.Kernel.Get<DayOfYearSelectItem>();
+                    item.Month = (byte)x;
 
-                                return item;
-                            }
-                        )
-                )
-            );
+                    return item;
+                })));
 
         Bind<IHttpHeaderFactory>()
-            .ToMethod(
-                context => new CombineHttpHeaderFactory(
-                    context.Kernel.Get<TokenHttpHeaderFactory>(),
-                    context.Kernel.Get<TimeZoneHttpHeaderFactory>()
-                )
-            );
+           .ToMethod(context => new CombineHttpHeaderFactory(context.Kernel.Get<TokenHttpHeaderFactory>(),
+                context.Kernel.Get<TimeZoneHttpHeaderFactory>()));
 
         Bind<IClipboardService>()
-            .ToMethod(
-                _ =>
+           .ToMethod(_ =>
+            {
+                var topLevel = Application.Current.ThrowIfNull("Application").GetTopLevel();
+
+                if (topLevel is null)
                 {
-                    var topLevel = Application.Current.ThrowIfNull("Application")
-                        .GetTopLevel();
-
-                    if (topLevel is null)
-                    {
-                        return new CodeClipboardService();
-                    }
-
-                    return new TopLevelClipboardService();
+                    return new CodeClipboardService();
                 }
-            );
+
+                return new TopLevelClipboardService();
+            });
 
         Bind<MainSplitViewModel>()
-            .ToSelf()
-            .InSingletonScope()
-            .OnActivation(
-                (c, x) =>
-                {
-                    var login = c.Kernel.Get<LoginViewModel>();
-                    login.TryAutoLogin = true;
-                    x.Pane = c.Kernel.Get<PaneViewModel>();
-                    x.Content = login;
-                }
-            );
+           .ToSelf()
+           .InSingletonScope()
+           .OnActivation((c, x) =>
+            {
+                var login = c.Kernel.Get<LoginViewModel>();
+                login.TryAutoLogin = true;
+                x.Pane = c.Kernel.Get<PaneViewModel>();
+                x.Content = login;
+            });
 
         Bind<IDesktopTopLevelControl>()
-            .To<MainWindow>()
-            .InSingletonScope()
-            .OnActivation(
-                (c, x) => { x.Content = c.Kernel.Get<Control>(); }
-            );
+           .To<MainWindow>()
+           .InSingletonScope()
+           .OnActivation((c, x) => { x.Content = c.Kernel.Get<Control>(); });
 
         Bind<ISingleViewTopLevelControl>()
-            .To<SingleView>()
-            .InSingletonScope()
-            .OnActivation(
-                (c, x) => { x.Content = c.Kernel.Get<Control>(); }
-            );
+           .To<SingleView>()
+           .InSingletonScope()
+           .OnActivation((c, x) => { x.Content = c.Kernel.Get<Control>(); });
     }
 
     public static void SetupMapperConfiguration(IMapperConfigurationExpression expression)
@@ -222,10 +202,7 @@ public class UiModule : NinjectModule
                     continue;
                 }
 
-                var ns = type.Namespace
-                    .Replace(".Views.", ".ViewModels.")
-                    .Replace(".Views", ".ViewModels");
-
+                var ns = type.Namespace.Replace(".Views.", ".ViewModels.").Replace(".Views", ".ViewModels");
                 var viewModelName = $"{ns}.{type.Name}Model";
                 var viewModelType = assembly.GetType(viewModelName);
 
@@ -237,8 +214,8 @@ public class UiModule : NinjectModule
                 module.Bind(viewModelType).ToSelf();
 
                 module.Bind(type)
-                    .ToSelf()
-                    .OnActivation((c, x) => ((StyledElement)x).DataContext = c.Kernel.Get(viewModelType));
+                   .ToSelf()
+                   .OnActivation((c, x) => ((StyledElement)x).DataContext = c.Kernel.Get(viewModelType));
             }
         }
     }

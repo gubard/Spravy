@@ -4,17 +4,16 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Ninject;
 using Spravy.ToDo.Domain.Enums;
-using Spravy.Ui.Features.Localizations.Models;
 using Spravy.Ui.Models;
 
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ToDoItemsGroupByStatusViewModel : ViewModelBase
 {
-    private readonly ToDoItemsViewModel missed;
-    private readonly ToDoItemsViewModel readyForCompleted;
-    private readonly ToDoItemsViewModel planned;
     private readonly ToDoItemsViewModel completed;
+    private readonly ToDoItemsViewModel missed;
+    private readonly ToDoItemsViewModel planned;
+    private readonly ToDoItemsViewModel readyForCompleted;
 
     [Inject]
     public required ToDoItemsViewModel Missed
@@ -24,7 +23,7 @@ public class ToDoItemsGroupByStatusViewModel : ViewModelBase
         init
         {
             missed = value;
-            missed.Header = new TextView("ToDoItemsGroupByStatusView.Missed");
+            missed.Header = new("ToDoItemsGroupByStatusView.Missed");
         }
     }
 
@@ -36,7 +35,7 @@ public class ToDoItemsGroupByStatusViewModel : ViewModelBase
         init
         {
             readyForCompleted = value;
-            readyForCompleted.Header = new TextView("ToDoItemsGroupByStatusView.ReadyForCompleted");
+            readyForCompleted.Header = new("ToDoItemsGroupByStatusView.ReadyForCompleted");
         }
     }
 
@@ -48,7 +47,7 @@ public class ToDoItemsGroupByStatusViewModel : ViewModelBase
         init
         {
             planned = value;
-            planned.Header = new TextView("ToDoItemsGroupByStatusView.Planned");
+            planned.Header = new("ToDoItemsGroupByStatusView.Planned");
         }
     }
 
@@ -60,7 +59,7 @@ public class ToDoItemsGroupByStatusViewModel : ViewModelBase
         init
         {
             completed = value;
-            completed.Header = new TextView("ToDoItemsGroupByStatusView.Completed");
+            completed.Header = new("ToDoItemsGroupByStatusView.Completed");
         }
     }
 
@@ -97,24 +96,28 @@ public class ToDoItemsGroupByStatusViewModel : ViewModelBase
                 ReadyForCompleted.RemoveItem(item);
                 Planned.RemoveItem(item);
                 Completed.RemoveItem(item);
+
                 break;
             case ToDoItemStatus.ReadyForComplete:
                 Missed.RemoveItem(item);
                 ReadyForCompleted.UpdateItem(item, updateOrder);
                 Planned.RemoveItem(item);
                 Completed.RemoveItem(item);
+
                 break;
             case ToDoItemStatus.Planned:
                 Missed.RemoveItem(item);
                 ReadyForCompleted.RemoveItem(item);
                 Planned.UpdateItem(item, updateOrder);
                 Completed.RemoveItem(item);
+
                 break;
             case ToDoItemStatus.Completed:
                 Missed.RemoveItem(item);
                 ReadyForCompleted.RemoveItem(item);
                 Planned.RemoveItem(item);
                 Completed.UpdateItem(item, updateOrder);
+
                 break;
             default:
                 throw new ArgumentOutOfRangeException();

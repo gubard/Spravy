@@ -34,12 +34,15 @@ public class AddRootToDoItemViewModel : NavigatableViewModelBase
     [Inject]
     public required IObjectStorage ObjectStorage { get; init; }
 
-    public override string ViewId => TypeCache<AddRootToDoItemViewModel>.Type.Name;
+    public override string ViewId
+    {
+        get => TypeCache<AddRootToDoItemViewModel>.Type.Name;
+    }
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         return ObjectStorage.GetObjectOrDefaultAsync<AddRootToDoItemViewModelSetting>(ViewId, cancellationToken)
-            .IfSuccessAsync(obj => SetStateAsync(obj, cancellationToken), cancellationToken);
+           .IfSuccessAsync(obj => SetStateAsync(obj, cancellationToken), cancellationToken);
     }
 
     public override Result Stop()
@@ -58,23 +61,18 @@ public class AddRootToDoItemViewModel : NavigatableViewModelBase
     )
     {
         return setting.CastObject<AddRootToDoItemViewModelSetting>()
-            .IfSuccessAsync(
-                s => this.InvokeUIBackgroundAsync(
-                    () =>
-                    {
-                        ToDoItemContent.Name = s.Name;
-                        ToDoItemContent.Type = s.Type;
-                        ToDoItemContent.Link = s.Link;
-                        DescriptionContent.Description = s.Description;
-                        DescriptionContent.Type = s.DescriptionType;
-                    }
-                ),
-                cancellationToken
-            );
+           .IfSuccessAsync(s => this.InvokeUIBackgroundAsync(() =>
+            {
+                ToDoItemContent.Name = s.Name;
+                ToDoItemContent.Type = s.Type;
+                ToDoItemContent.Link = s.Link;
+                DescriptionContent.Description = s.Description;
+                DescriptionContent.Type = s.DescriptionType;
+            }), cancellationToken);
     }
 
     [ProtoContract]
-    class AddRootToDoItemViewModelSetting
+    private class AddRootToDoItemViewModelSetting
     {
         public AddRootToDoItemViewModelSetting()
         {

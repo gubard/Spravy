@@ -11,12 +11,12 @@ public static class ObjectExtension
 {
     public static Result<TValue> ToResult<TValue>(this ReadOnlyMemory<Error> errors)
     {
-        return new Result<TValue>(errors);
+        return new(errors);
     }
 
     public static Result<TValue> ToResult<TValue>(this TValue value)
     {
-        return new Result<TValue>(value);
+        return new(value);
     }
 
     public static async Task<T[]> ToArrayAsync<T>(this ConfiguredTaskAwaitable<IEnumerable<T>> task)
@@ -37,7 +37,7 @@ public static class ObjectExtension
     {
         return new[]
         {
-            obj
+            obj,
         };
     }
 
@@ -134,7 +134,7 @@ public static class ObjectExtension
 
     public static ReadOnlyMemory<T> ToReadOnlyMemory<T>(this T obj)
     {
-        return new ReadOnlyMemory<T>([obj]);
+        return new([obj,]);
     }
 
     public static void ThrowDisposedException<T>(this T obj) where T : notnull
@@ -154,7 +154,7 @@ public static class ObjectExtension
 
     public static IsSuccessValue<T> ToSuccessValue<T>(this T obj)
     {
-        return new IsSuccessValue<T>(obj);
+        return new(obj);
     }
 
     public static T ThrowIfIsNotCast<T>(this object obj)
@@ -169,7 +169,7 @@ public static class ObjectExtension
             return item.ToResult();
         }
 
-        return new Result<T>(new CastError(obj.GetType(), typeof(T)));
+        return new(new CastError(obj.GetType(), typeof(T)));
     }
 
     public static T? As<T>(this object value) where T : class
@@ -182,11 +182,7 @@ public static class ObjectExtension
         return (T)value;
     }
 
-    public static T ThrowIfNull<T>(
-        this T? obj,
-        [CallerArgumentExpression(nameof(obj))]
-        string paramName = ""
-    )
+    public static T ThrowIfNull<T>(this T? obj, [CallerArgumentExpression(nameof(obj))] string paramName = "")
     {
         if (obj is null)
         {
@@ -196,11 +192,8 @@ public static class ObjectExtension
         return obj;
     }
 
-    public static T ThrowIfNullStruct<T>(
-        this T? obj,
-        [CallerArgumentExpression(nameof(obj))]
-        string paramName = ""
-    ) where T : struct
+    public static T ThrowIfNullStruct<T>(this T? obj, [CallerArgumentExpression(nameof(obj))] string paramName = "")
+        where T : struct
     {
         return obj ?? throw new ArgumentNullException(paramName);
     }
@@ -208,10 +201,8 @@ public static class ObjectExtension
     public static TObj ThrowIfNotEquals<TObj>(
         this TObj obj,
         TObj expected,
-        [CallerArgumentExpression(nameof(obj))]
-        string name = ""
-    )
-        where TObj : notnull
+        [CallerArgumentExpression(nameof(obj))] string name = ""
+    ) where TObj : notnull
     {
         if (obj.Equals(expected))
         {
@@ -243,7 +234,7 @@ public static class ObjectExtension
 
     public static Ref<T> ToRef<T>(this T value) where T : struct
     {
-        return new Ref<T>(value);
+        return new(value);
     }
 
     public static Task<T> ToTaskResult<T>(this T value)

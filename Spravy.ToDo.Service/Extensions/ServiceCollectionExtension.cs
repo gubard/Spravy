@@ -47,10 +47,9 @@ public static class ServiceCollectionExtension
         serviceCollection.AddTransient<IToDoService, EfToDoService>();
         serviceCollection.AddTransient<GetterToDoItemParametersService>();
 
-        serviceCollection.AddMapperConfiguration<SpravyToDoProfile,
-            SpravyToDoDbProfile,
-            SpravyEventBusProfile,
-            SpravyAuthenticationProfile>();
+        serviceCollection
+           .AddMapperConfiguration<SpravyToDoProfile, SpravyToDoDbProfile, SpravyEventBusProfile,
+                SpravyAuthenticationProfile>();
 
         /*serviceCollection.AddGrpcService<GrpcAuthenticationService,
             Spravy.Authentication.Protos.AuthenticationService.AuthenticationServiceClient,
@@ -60,16 +59,12 @@ public static class ServiceCollectionExtension
             EventBusService.EventBusServiceClient,
             GrpcEventBusServiceOptions>();*/
 
-        serviceCollection.AddSingleton<IAuthenticationService>(
-            sp => sp.GetRequiredService<GrpcAuthenticationService>()
-        );
+        serviceCollection.AddSingleton<IAuthenticationService>(sp =>
+            sp.GetRequiredService<GrpcAuthenticationService>());
 
-        serviceCollection.AddSingleton<IHttpHeaderFactory>(
-            sp => new CombineHttpHeaderFactory(
-                sp.GetRequiredService<TimeZoneHttpHeaderFactory>(),
-                sp.GetRequiredService<ContextAccessorUserIdHttpHeaderFactory>()
-            )
-        );
+        serviceCollection.AddSingleton<IHttpHeaderFactory>(sp =>
+            new CombineHttpHeaderFactory(sp.GetRequiredService<TimeZoneHttpHeaderFactory>(),
+                sp.GetRequiredService<ContextAccessorUserIdHttpHeaderFactory>()));
 
         return serviceCollection;
     }

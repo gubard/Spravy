@@ -18,8 +18,8 @@ public class GetterToDoItemParametersService
         CancellationToken cancellationToken
     )
     {
-        return GetToDoItemParametersAsync(context, entity, offset, new ToDoItemParameters(), cancellationToken)
-            .IfSuccessAsync(parameters => CheckActiveItem(parameters, entity).ToResult(), cancellationToken);
+        return GetToDoItemParametersAsync(context, entity, offset, new(), cancellationToken)
+           .IfSuccessAsync(parameters => CheckActiveItem(parameters, entity).ToResult(), cancellationToken);
     }
 
     private ConfiguredValueTaskAwaitable<Result<ToDoItemParameters>> GetToDoItemParametersAsync(
@@ -32,26 +32,14 @@ public class GetterToDoItemParametersService
     {
         if (IsDueable(entity))
         {
-            return GetToDoItemParametersAsync(
-                context,
-                entity,
-                entity.DueDate,
-                offset,
-                parameters,
-                false,
-                cancellationToken
-            ).ConfigureAwait(false);
+            return GetToDoItemParametersAsync(context, entity, entity.DueDate, offset, parameters, false,
+                    cancellationToken)
+               .ConfigureAwait(false);
         }
 
-        return GetToDoItemParametersAsync(
-            context,
-            entity,
-            DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly(),
-            offset,
-            parameters,
-            false,
-            cancellationToken
-        ).ConfigureAwait(false);
+        return GetToDoItemParametersAsync(context, entity, DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly(), offset,
+                parameters, false, cancellationToken)
+           .ConfigureAwait(false);
     }
 
     private async ValueTask<Result<ToDoItemParameters>> GetToDoItemParametersAsync(
@@ -66,10 +54,7 @@ public class GetterToDoItemParametersService
     {
         if (entity.IsCompleted && IsCompletable(entity))
         {
-            return parameters.With(ToDoItemIsCan.CanIncomplete)
-                .With(null)
-                .With(ToDoItemStatus.Completed)
-                .ToResult();
+            return parameters.With(ToDoItemIsCan.CanIncomplete).With(null).With(ToDoItemStatus.Completed).ToResult();
         }
 
         var isMiss = false;
@@ -85,35 +70,29 @@ public class GetterToDoItemParametersService
 
                 if (entity.DueDate > dueDate)
                 {
-                    return parameters.With(null)
-                        .With(ToDoItemStatus.Planned)
-                        .With(ToDoItemIsCan.None)
-                        .ToResult();
+                    return parameters.With(null).With(ToDoItemStatus.Planned).With(ToDoItemIsCan.None).ToResult();
                 }
             }
             else
             {
                 if (entity.DueDate < DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly()
-                    && entity.IsRequiredCompleteInDueDate)
+                 && entity.IsRequiredCompleteInDueDate)
                 {
                     isMiss = true;
                 }
 
                 if (entity.DueDate > DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
                 {
-                    return parameters.With(null)
-                        .With(ToDoItemStatus.Planned)
-                        .With(ToDoItemIsCan.None)
-                        .ToResult();
+                    return parameters.With(null).With(ToDoItemStatus.Planned).With(ToDoItemIsCan.None).ToResult();
                 }
             }
         }
 
         var items = await context.Set<ToDoItemEntity>()
-            .AsNoTracking()
-            .Where(x => x.ParentId == entity.Id)
-            .OrderBy(x => x.OrderIndex)
-            .ToArrayAsync(cancellationToken);
+           .AsNoTracking()
+           .Where(x => x.ParentId == entity.Id)
+           .OrderBy(x => x.OrderIndex)
+           .ToArrayAsync(cancellationToken);
 
         ActiveToDoItem? firstReadyForComplete = null;
         ActiveToDoItem? firstMiss = null;
@@ -127,14 +106,7 @@ public class GetterToDoItemParametersService
             }
 
             var result = await GetToDoItemParametersAsync(
-                context,
-                item,
-                dueDate,
-                offset,
-                parameters,
-                true,
-                cancellationToken
-            );
+                context, item, dueDate, offset, parameters, true, cancellationToken);
 
             if (result.IsHasError)
             {
@@ -147,6 +119,7 @@ public class GetterToDoItemParametersService
             {
                 case ToDoItemStatus.Miss:
                     firstMiss ??= parameters.ActiveItem ?? ToActiveToDoItem(item);
+
                     break;
                 case ToDoItemStatus.ReadyForComplete:
                     firstReadyForComplete ??= parameters.ActiveItem ?? ToActiveToDoItem(item);
@@ -154,6 +127,7 @@ public class GetterToDoItemParametersService
                     break;
                 case ToDoItemStatus.Planned:
                     hasPlanned = true;
+
                     break;
                 case ToDoItemStatus.Completed:
                     break;
@@ -169,9 +143,9 @@ public class GetterToDoItemParametersService
             if (isMiss)
             {
                 return parameters.With(ToDoItemStatus.Miss)
-                    .With(ToDoItemIsCan.None)
-                    .With(firstActive ?? ToActiveToDoItem(entity))
-                    .ToResult();
+                   .With(ToDoItemIsCan.None)
+                   .With(firstActive ?? ToActiveToDoItem(entity))
+                   .ToResult();
             }
 
             if (firstMiss is not null)
@@ -190,8 +164,9 @@ public class GetterToDoItemParametersService
             }
 
             return parameters.With(ToDoItemStatus.ReadyForComplete)
-                .With(ToDoItemIsCan.None)
-                .With(firstReadyForComplete).ToResult();
+               .With(ToDoItemIsCan.None)
+               .With(firstReadyForComplete)
+               .ToResult();
         }
 
         if (isMiss)
@@ -202,17 +177,20 @@ public class GetterToDoItemParametersService
                     if (firstActive.HasValue)
                     {
                         return parameters.With(ToDoItemStatus.Miss)
-                            .With(ToDoItemIsCan.None)
-                            .With(firstActive).ToResult();
+                           .With(ToDoItemIsCan.None)
+                           .With(firstActive)
+                           .ToResult();
                     }
 
                     return parameters.With(ToDoItemStatus.Miss)
-                        .With(ToDoItemIsCan.CanComplete)
-                        .With(ToActiveToDoItem(entity)).ToResult();
+                       .With(ToDoItemIsCan.CanComplete)
+                       .With(ToActiveToDoItem(entity))
+                       .ToResult();
                 case ToDoItemChildrenType.IgnoreCompletion:
                     return parameters.With(ToDoItemStatus.Miss)
-                        .With(ToDoItemIsCan.CanComplete)
-                        .With(firstActive ?? ToActiveToDoItem(entity)).ToResult();
+                       .With(ToDoItemIsCan.CanComplete)
+                       .With(firstActive ?? ToActiveToDoItem(entity))
+                       .ToResult();
                 default: throw new ArgumentOutOfRangeException();
             }
         }
@@ -222,13 +200,12 @@ public class GetterToDoItemParametersService
             switch (entity.ChildrenType)
             {
                 case ToDoItemChildrenType.RequireCompletion:
-                    return parameters.With(ToDoItemStatus.Miss)
-                        .With(ToDoItemIsCan.None)
-                        .With(firstMiss).ToResult();
+                    return parameters.With(ToDoItemStatus.Miss).With(ToDoItemIsCan.None).With(firstMiss).ToResult();
                 case ToDoItemChildrenType.IgnoreCompletion:
                     return parameters.With(ToDoItemStatus.Miss)
-                        .With(ToDoItemIsCan.CanComplete)
-                        .With(firstMiss).ToResult();
+                       .With(ToDoItemIsCan.CanComplete)
+                       .With(firstMiss)
+                       .ToResult();
                 default: throw new ArgumentOutOfRangeException();
             }
         }
@@ -239,19 +216,19 @@ public class GetterToDoItemParametersService
             {
                 case ToDoItemChildrenType.RequireCompletion:
                     return parameters.With(ToDoItemStatus.ReadyForComplete)
-                        .With(ToDoItemIsCan.None)
-                        .With(firstReadyForComplete).ToResult();
+                       .With(ToDoItemIsCan.None)
+                       .With(firstReadyForComplete)
+                       .ToResult();
                 case ToDoItemChildrenType.IgnoreCompletion:
                     return parameters.With(ToDoItemStatus.ReadyForComplete)
-                        .With(ToDoItemIsCan.CanComplete)
-                        .With(firstReadyForComplete).ToResult();
+                       .With(ToDoItemIsCan.CanComplete)
+                       .With(firstReadyForComplete)
+                       .ToResult();
                 default: throw new ArgumentOutOfRangeException();
             }
         }
 
-        return parameters.With(ToDoItemStatus.ReadyForComplete)
-            .With(ToDoItemIsCan.CanComplete)
-            .With(null).ToResult();
+        return parameters.With(ToDoItemStatus.ReadyForComplete).With(ToDoItemIsCan.CanComplete).With(null).ToResult();
     }
 
     private bool IsDueable(ToDoItemEntity entity)
@@ -265,7 +242,7 @@ public class GetterToDoItemParametersService
             ToDoItemType.PeriodicityOffset => true,
             ToDoItemType.Circle => false,
             ToDoItemType.Step => false,
-            _ => throw new ArgumentOutOfRangeException()
+            _ => throw new ArgumentOutOfRangeException(),
         };
     }
 
@@ -280,7 +257,7 @@ public class GetterToDoItemParametersService
             ToDoItemType.PeriodicityOffset => false,
             ToDoItemType.Circle => true,
             ToDoItemType.Step => true,
-            _ => throw new ArgumentOutOfRangeException()
+            _ => throw new ArgumentOutOfRangeException(),
         };
     }
 
@@ -295,7 +272,7 @@ public class GetterToDoItemParametersService
             ToDoItemType.PeriodicityOffset => false,
             ToDoItemType.Circle => false,
             ToDoItemType.Step => false,
-            _ => throw new ArgumentOutOfRangeException()
+            _ => throw new ArgumentOutOfRangeException(),
         };
     }
 

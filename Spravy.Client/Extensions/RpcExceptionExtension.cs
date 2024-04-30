@@ -28,15 +28,15 @@ public static class RpcExceptionExtension
     private static void LoadErrors(Assembly assembly)
     {
         var errorTypes = assembly.GetTypes()
-            .Where(x => typeof(Error).IsAssignableFrom(x) && x is { IsAbstract: false, IsGenericType: false })
-            .ToArray();
+           .Where(x => typeof(Error).IsAssignableFrom(x) && x is { IsAbstract: false, IsGenericType: false, })
+           .ToArray();
 
         foreach (var errorType in errorTypes)
         {
             errors.Add(
-                (Guid)errorType.GetField("MainId", BindingFlags.Static | BindingFlags.Public)?.GetValue(null)
-                    .ThrowIfNull(),
-                errorType);
+                (Guid)errorType.GetField("MainId", BindingFlags.Static | BindingFlags.Public)
+                  ?.GetValue(null)
+                   .ThrowIfNull(), errorType);
         }
     }
 
@@ -80,7 +80,7 @@ public static class RpcExceptionExtension
 
         if (errors.Any())
         {
-            return new Result(errors.ToArray());
+            return new(errors.ToArray());
         }
 
         return Result.Success;
@@ -96,13 +96,12 @@ public static class RpcExceptionExtension
         var serializer = typeof(ISerializer).ToParameter();
         var memoryStream = typeof(MemoryStream).ToParameter();
 
-        chace[type] = (Func<ISerializer, MemoryStream, Error>)DeserializeAsyncMethod
-            .MakeGenericMethod(type)
-            .ToCall(serializer, memoryStream)
-            .ToProperty(typeof(Result<>).MakeGenericType(type).GetProperty(nameof(Result<object>.Value)).ThrowIfNull())
-            .ToConvert(typeof(Error))
-            .ToLambda([serializer, memoryStream])
-            .Compile();
+        chace[type] = (Func<ISerializer, MemoryStream, Error>)DeserializeAsyncMethod.MakeGenericMethod(type)
+           .ToCall(serializer, memoryStream)
+           .ToProperty(typeof(Result<>).MakeGenericType(type).GetProperty(nameof(Result<object>.Value)).ThrowIfNull())
+           .ToConvert(typeof(Error))
+           .ToLambda([serializer, memoryStream,])
+           .Compile();
 
         return chace[type];
     }

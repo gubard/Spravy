@@ -15,6 +15,6 @@ public class StringToBytesFactory : IFactory<string, Named<IStringToBytes>>
             return NamedHelper.StringToUtf8Bytes.ToResult();
         }
 
-        return new Result<Named<IStringToBytes>>(new NotFoundNamedError(key));
+        return new(new NotFoundNamedError(key));
     }
 }

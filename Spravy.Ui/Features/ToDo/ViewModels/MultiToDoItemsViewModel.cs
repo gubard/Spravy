@@ -17,7 +17,6 @@ using Spravy.ToDo.Domain.Errors;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Models;
 using Spravy.Ui.Extensions;
-using Spravy.Ui.Features.Localizations.Models;
 using Spravy.Ui.Features.ToDo.Enums;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
@@ -27,9 +26,9 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class MultiToDoItemsViewModel : ViewModelBase
 {
-    private readonly ToDoItemsGroupByViewModel toDoItems;
-    private readonly ToDoItemsGroupByViewModel multiToDoItems;
     private readonly ToDoItemsViewModel favorite;
+    private readonly ToDoItemsGroupByViewModel multiToDoItems;
+    private readonly ToDoItemsGroupByViewModel toDoItems;
 
     public MultiToDoItemsViewModel()
     {
@@ -54,7 +53,7 @@ public class MultiToDoItemsViewModel : ViewModelBase
         {
             favorite?.Dispose();
             favorite = value;
-            favorite.Header = new TextView("MultiToDoItemsView.Favorite");
+            favorite.Header = new("MultiToDoItemsView.Favorite");
             Disposables.Add(favorite);
         }
     }
@@ -81,42 +80,42 @@ public class MultiToDoItemsViewModel : ViewModelBase
         init
         {
             multiToDoItems = value;
+
             multiToDoItems.GroupByNone.Items.Commands.Add(
-                CommandStorage.SelectAll.WithParam(multiToDoItems.GroupByNone.Items.Items)
-            );
+                CommandStorage.SelectAll.WithParam(multiToDoItems.GroupByNone.Items.Items));
+
             multiToDoItems.GroupByStatus.Missed.Commands.Add(
-                CommandStorage.SelectAll.WithParam(multiToDoItems.GroupByStatus.Missed.Items)
-            );
+                CommandStorage.SelectAll.WithParam(multiToDoItems.GroupByStatus.Missed.Items));
+
             multiToDoItems.GroupByStatus.Completed.Commands.Add(
-                CommandStorage.SelectAll.WithParam(multiToDoItems.GroupByStatus.Completed.Items)
-            );
+                CommandStorage.SelectAll.WithParam(multiToDoItems.GroupByStatus.Completed.Items));
+
             multiToDoItems.GroupByStatus.Planned.Commands.Add(
-                CommandStorage.SelectAll.WithParam(multiToDoItems.GroupByStatus.Planned.Items)
-            );
+                CommandStorage.SelectAll.WithParam(multiToDoItems.GroupByStatus.Planned.Items));
+
             multiToDoItems.GroupByStatus.ReadyForCompleted.Commands.Add(
-                CommandStorage.SelectAll.WithParam(multiToDoItems.GroupByStatus.ReadyForCompleted.Items)
-            );
+                CommandStorage.SelectAll.WithParam(multiToDoItems.GroupByStatus.ReadyForCompleted.Items));
+
             multiToDoItems.GroupByType.Groups.Commands.Add(
-                CommandStorage.SelectAll.WithParam(multiToDoItems.GroupByType.Groups.Items)
-            );
+                CommandStorage.SelectAll.WithParam(multiToDoItems.GroupByType.Groups.Items));
+
             multiToDoItems.GroupByType.Circles.Commands.Add(
-                CommandStorage.SelectAll.WithParam(multiToDoItems.GroupByType.Circles.Items)
-            );
+                CommandStorage.SelectAll.WithParam(multiToDoItems.GroupByType.Circles.Items));
+
             multiToDoItems.GroupByType.Periodicitys.Commands.Add(
-                CommandStorage.SelectAll.WithParam(multiToDoItems.GroupByType.Periodicitys.Items)
-            );
+                CommandStorage.SelectAll.WithParam(multiToDoItems.GroupByType.Periodicitys.Items));
+
             multiToDoItems.GroupByType.Planneds.Commands.Add(
-                CommandStorage.SelectAll.WithParam(multiToDoItems.GroupByType.Planneds.Items)
-            );
+                CommandStorage.SelectAll.WithParam(multiToDoItems.GroupByType.Planneds.Items));
+
             multiToDoItems.GroupByType.Steps.Commands.Add(
-                CommandStorage.SelectAll.WithParam(multiToDoItems.GroupByType.Steps.Items)
-            );
+                CommandStorage.SelectAll.WithParam(multiToDoItems.GroupByType.Steps.Items));
+
             multiToDoItems.GroupByType.Values.Commands.Add(
-                CommandStorage.SelectAll.WithParam(multiToDoItems.GroupByType.Values.Items)
-            );
+                CommandStorage.SelectAll.WithParam(multiToDoItems.GroupByType.Values.Items));
+
             multiToDoItems.GroupByType.PeriodicityOffsets.Commands.Add(
-                CommandStorage.SelectAll.WithParam(multiToDoItems.GroupByType.PeriodicityOffsets.Items)
-            );
+                CommandStorage.SelectAll.WithParam(multiToDoItems.GroupByType.PeriodicityOffsets.Items));
         }
     }
 
@@ -133,16 +132,12 @@ public class MultiToDoItemsViewModel : ViewModelBase
     {
         Disposables.Add(this.WhenAnyValue(x => x.IsMulti).Subscribe(x => Content = x ? MultiToDoItems : ToDoItems));
 
-        Disposables.Add(
-            this.WhenAnyValue(x => x.GroupBy)
-                .Subscribe(
-                    x =>
-                    {
-                        ToDoItems.GroupBy = x;
-                        MultiToDoItems.GroupBy = x;
-                    }
-                )
-        );
+        Disposables.Add(this.WhenAnyValue(x => x.GroupBy)
+           .Subscribe(x =>
+            {
+                ToDoItems.GroupBy = x;
+                MultiToDoItems.GroupBy = x;
+            }));
 
         return Result.AwaitableFalse;
     }
@@ -154,44 +149,38 @@ public class MultiToDoItemsViewModel : ViewModelBase
 
     public ConfiguredValueTaskAwaitable<Result> ClearExceptAsync(IEnumerable<Guid> ids)
     {
-        return this.InvokeUIBackgroundAsync(
-            () =>
-            {
-                ToDoItems.ClearExcept(ids);
-                MultiToDoItems.ClearExcept(ids);
-            }
-        );
+        return this.InvokeUIBackgroundAsync(() =>
+        {
+            ToDoItems.ClearExcept(ids);
+            MultiToDoItems.ClearExcept(ids);
+        });
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateFavoriteItemAsync(ToDoItem item)
     {
-        return this.InvokeUIBackgroundAsync(
-            () =>
-            {
-                var notify = Favorite.Items.SingleOrDefault(x => x.Value.Id == item.Id)
-                             ?? new Selected<ToDoItemNotify>(Mapper.Map<ToDoItemNotify>(item));
+        return this.InvokeUIBackgroundAsync(() =>
+        {
+            var notify = Favorite.Items.SingleOrDefault(x => x.Value.Id == item.Id)
+             ?? new Selected<ToDoItemNotify>(Mapper.Map<ToDoItemNotify>(item));
 
-                var updateOrder = item.OrderIndex != notify.Value.OrderIndex;
-                SetupItem(notify.Value, item);
-                Favorite.UpdateItem(notify, updateOrder);
-            }
-        );
+            var updateOrder = item.OrderIndex != notify.Value.OrderIndex;
+            SetupItem(notify.Value, item);
+            Favorite.UpdateItem(notify, updateOrder);
+        });
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateItemAsync(ToDoItem item)
     {
-        return this.InvokeUIBackgroundAsync(
-            () =>
-            {
-                var notify = ToDoItems.GroupByNone.Items.Items.SingleOrDefault(x => x.Value.Id == item.Id)
-                             ?? new Selected<ToDoItemNotify>(Mapper.Map<ToDoItemNotify>(item));
+        return this.InvokeUIBackgroundAsync(() =>
+        {
+            var notify = ToDoItems.GroupByNone.Items.Items.SingleOrDefault(x => x.Value.Id == item.Id)
+             ?? new Selected<ToDoItemNotify>(Mapper.Map<ToDoItemNotify>(item));
 
-                var updateOrder = item.OrderIndex != notify.Value.OrderIndex;
-                SetupItem(notify.Value, item);
-                ToDoItems.UpdateItem(notify, updateOrder);
-                MultiToDoItems.UpdateItem(notify, updateOrder);
-            }
-        );
+            var updateOrder = item.OrderIndex != notify.Value.OrderIndex;
+            SetupItem(notify.Value, item);
+            ToDoItems.UpdateItem(notify, updateOrder);
+            MultiToDoItems.UpdateItem(notify, updateOrder);
+        });
     }
 
     private ToDoItemNotify SetupItem(ToDoItemNotify notify, ToDoItem item)
@@ -235,9 +224,9 @@ public class MultiToDoItemsViewModel : ViewModelBase
         item.Commands.Add(CommandStorage.ResetToDoItemItem.WithParam(item));
 
         item.CompleteCommand =
-            CreateCommandFromTask<ICanCompleteProperty>(
-                TaskWork.Create<ICanCompleteProperty>(SwitchCompleteToDoItemAsync).RunAsync
-            );
+            CreateCommandFromTask<ICanCompleteProperty>(TaskWork
+               .Create<ICanCompleteProperty>(SwitchCompleteToDoItemAsync)
+               .RunAsync);
 
         return item;
     }
@@ -248,13 +237,9 @@ public class MultiToDoItemsViewModel : ViewModelBase
     )
     {
         return this.InvokeUIBackgroundAsync(() => property.IsBusy = true)
-            .IfSuccessTryFinallyAsync(
-                () => SwitchCompleteToDoItemCore(property, cancellationToken),
-                () => this.InvokeUIBackgroundAsync(() => property.IsBusy = false)
-                    .ToValueTask()
-                    .ConfigureAwait(false),
-                cancellationToken
-            );
+           .IfSuccessTryFinallyAsync(() => SwitchCompleteToDoItemCore(property, cancellationToken),
+                () => this.InvokeUIBackgroundAsync(() => property.IsBusy = false).ToValueTask().ConfigureAwait(false),
+                cancellationToken);
     }
 
     private ConfiguredValueTaskAwaitable<Result> SwitchCompleteToDoItemCore(
@@ -267,21 +252,14 @@ public class MultiToDoItemsViewModel : ViewModelBase
             case ToDoItemIsCan.None:
                 return Result.AwaitableFalse;
             case ToDoItemIsCan.CanComplete:
-                return ToDoService.UpdateToDoItemCompleteStatusAsync(
-                        property.Id,
-                        true,
-                        cancellationToken
-                    )
-                    .IfSuccessAsync(() => CommandStorage.RefreshCurrentViewAsync(cancellationToken), cancellationToken);
+                return ToDoService.UpdateToDoItemCompleteStatusAsync(property.Id, true, cancellationToken)
+                   .IfSuccessAsync(() => CommandStorage.RefreshCurrentViewAsync(cancellationToken), cancellationToken);
             case ToDoItemIsCan.CanIncomplete:
-                return ToDoService.UpdateToDoItemCompleteStatusAsync(
-                        property.Id,
-                        false,
-                        cancellationToken
-                    )
-                    .IfSuccessAsync(() => CommandStorage.RefreshCurrentViewAsync(cancellationToken), cancellationToken);
+                return ToDoService.UpdateToDoItemCompleteStatusAsync(property.Id, false, cancellationToken)
+                   .IfSuccessAsync(() => CommandStorage.RefreshCurrentViewAsync(cancellationToken), cancellationToken);
             default:
-                return new Result(new ToDoItemIsCanOutOfRangeError(property.IsCan)).ToValueTaskResult().ConfigureAwait(false);
+                return new Result(new ToDoItemIsCanOutOfRangeError(property.IsCan)).ToValueTaskResult()
+                   .ConfigureAwait(false);
         }
     }
 }

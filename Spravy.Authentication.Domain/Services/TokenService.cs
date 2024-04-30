@@ -2,9 +2,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Runtime.CompilerServices;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Models;
+using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
-using Spravy.Domain.Extensions;
 
 namespace Spravy.Authentication.Domain.Services;
 
@@ -36,42 +36,33 @@ public class TokenService : ITokenService
         }
 
         return authenticationService.RefreshTokenAsync(token.RefreshToken, cancellationToken)
-            .IfSuccessAsync(
-                value =>
-                {
-                    token = value;
+           .IfSuccessAsync(value =>
+            {
+                token = value;
 
-                    return token.Token.ToResult().ToValueTaskResult().ConfigureAwait(false);
-                },
-                cancellationToken
-            );
+                return token.Token.ToResult().ToValueTaskResult().ConfigureAwait(false);
+            }, cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> LoginAsync(User user, CancellationToken cancellationToken)
     {
         return authenticationService.LoginAsync(user, cancellationToken)
-            .IfSuccessAsync(
-                value =>
-                {
-                    token = value;
+           .IfSuccessAsync(value =>
+            {
+                token = value;
 
-                    return Result.AwaitableFalse;
-                },
-                cancellationToken
-            );
+                return Result.AwaitableFalse;
+            }, cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> LoginAsync(string refreshToken, CancellationToken cancellationToken)
     {
         return authenticationService.RefreshTokenAsync(refreshToken, cancellationToken)
-            .IfSuccessAsync(
-                value =>
-                {
-                    token = value;
+           .IfSuccessAsync(value =>
+            {
+                token = value;
 
-                    return Result.AwaitableFalse;
-                },
-                cancellationToken
-            );
+                return Result.AwaitableFalse;
+            }, cancellationToken);
     }
 }

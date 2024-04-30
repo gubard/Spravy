@@ -11,31 +11,31 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Avalonia.Android" Version="11.0.10" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.4" />
-        <PackageReference Include="Serilog.Sinks.Xamarin" Version="1.0.0" />
-        <PackageReference Include="Xamarin.Essentials" Version="1.8.1" />
+        <PackageReference Include="Avalonia.Android" Version="11.0.10"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.4"/>
+        <PackageReference Include="Serilog.Sinks.Xamarin" Version="1.0.0"/>
+        <PackageReference Include="Xamarin.Essentials" Version="1.8.1"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Spravy.Core\Spravy.Core.csproj" />
-        <ProjectReference Include="..\Spravy.Db.Sqlite\Spravy.Db.Sqlite.csproj" />
-        <ProjectReference Include="..\Spravy.Ui\Spravy.Ui.csproj" />
+        <ProjectReference Include="..\Spravy.Core\Spravy.Core.csproj"/>
+        <ProjectReference Include="..\Spravy.Db.Sqlite\Spravy.Db.Sqlite.csproj"/>
+        <ProjectReference Include="..\Spravy.Ui\Spravy.Ui.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <EmbeddedResource Include="ILLink.Descriptors.xml">
-        <LogicalName>ILLink.Descriptors.xml</LogicalName>
-      </EmbeddedResource>
+        <EmbeddedResource Include="ILLink.Descriptors.xml">
+            <LogicalName>ILLink.Descriptors.xml</LogicalName>
+        </EmbeddedResource>
 
-      <EmbeddedResource Include="appsettings.json">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </EmbeddedResource>
+        <EmbeddedResource Include="appsettings.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
-      <AndroidResource Include="..\Spravy.Ui\Assets\Images\Logo.png">
-        <Link>Resources\drawable\Icon.png</Link>
-      </AndroidResource>
+        <AndroidResource Include="..\Spravy.Ui\Assets\Images\Logo.png">
+            <Link>Resources\drawable\Icon.png</Link>
+        </AndroidResource>
     </ItemGroup>
 </Project>

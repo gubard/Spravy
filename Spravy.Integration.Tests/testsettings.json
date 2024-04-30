@@ -2,11 +2,11 @@
   "EmailServer": {
     "Host": "mail.spravy.com.ua"
   },
-  "EmailAccount":{
+  "EmailAccount": {
     "Email": "staging@spravy.com.ua",
     "Password": null
   },
-  "EmailAccount2":{
+  "EmailAccount2": {
     "Email": "staging2@spravy.com.ua",
     "Password": null
   }

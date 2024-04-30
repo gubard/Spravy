@@ -27,6 +27,7 @@ public class ValidCharsValidationRule : IValidationRule<string>
             return Result.AwaitableFalse;
         }
 
-        return new Result(new VariableInvalidCharsError(validChars, sourceName)).ToValueTaskResult().ConfigureAwait(false);
+        return new Result(new VariableInvalidCharsError(validChars, sourceName)).ToValueTaskResult()
+           .ConfigureAwait(false);
     }
 }

@@ -7,10 +7,7 @@ namespace Spravy.Integration.Tests.Extensions;
 
 public static class TopLevelExtension
 {
-    public static TopLevel SpravyKeyTextInput(
-        this TopLevel topLevel,
-        string text
-    )
+    public static TopLevel SpravyKeyTextInput(this TopLevel topLevel, string text)
     {
         topLevel.KeyTextInput(text);
 
@@ -39,11 +36,7 @@ public static class TopLevelExtension
         return topLevel;
     }
 
-    public static TopLevel SpravyMouseMove(
-        this TopLevel topLevel,
-        Point point,
-        RawInputModifiers modifiers
-    )
+    public static TopLevel SpravyMouseMove(this TopLevel topLevel, Point point, RawInputModifiers modifiers)
     {
         topLevel.MouseMove(point, modifiers);
 

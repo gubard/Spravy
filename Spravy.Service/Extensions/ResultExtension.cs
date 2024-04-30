@@ -107,10 +107,7 @@ public static class ResultExtension
             throw new EmptyEnumerableException(nameof(result.Errors));
         }
 
-        return new RpcException(
-            new Status(StatusCode.InvalidArgument, result.GetTitle()),
-            await result.GetMetadataAsync(serializer)
-        );
+        return new(new(StatusCode.InvalidArgument, result.GetTitle()), await result.GetMetadataAsync(serializer));
     }
 
     public static async ValueTask<RpcException> ToRpcExceptionAsync<TValue>(
@@ -123,9 +120,6 @@ public static class ResultExtension
             throw new EmptyEnumerableException(nameof(result.Errors));
         }
 
-        return new RpcException(
-            new Status(StatusCode.InvalidArgument, result.GetTitle()),
-            await result.GetMetadataAsync(serializer)
-        );
+        return new(new(StatusCode.InvalidArgument, result.GetTitle()), await result.GetMetadataAsync(serializer));
     }
 }

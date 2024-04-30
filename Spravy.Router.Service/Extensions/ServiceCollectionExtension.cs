@@ -29,7 +29,8 @@ using Spravy.Service.Extensions;
 using Spravy.Service.Services;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Mapper.Profiles;
-using AuthenticationService = AuthenticationClient::Spravy.Authentication.Protos.AuthenticationService;
+using AuthenticationService = AuthenticationService;
+using Protos_AuthenticationService = AuthenticationClient::Spravy.Authentication.Protos.AuthenticationService;
 
 namespace Spravy.Router.Service.Extensions;
 
@@ -47,34 +48,29 @@ public static class ServiceCollectionExtension
         serviceCollection.AddSingleton<ContextAccessorAuthorizationHttpHeaderFactory>();
         serviceCollection.AddSingleton<ContextTimeZoneOffsetHttpHeaderFactory>();
 
-        serviceCollection.AddMapperConfiguration<SpravyAuthenticationProfile,
-            SpravyEventBusProfile,
-            SpravyScheduleProfile,
-            SpravyToDoProfile>();
+        serviceCollection
+           .AddMapperConfiguration<SpravyAuthenticationProfile, SpravyEventBusProfile, SpravyScheduleProfile,
+                SpravyToDoProfile>();
 
-        serviceCollection.AddGrpcService<GrpcAuthenticationService,
-            AuthenticationService.AuthenticationServiceClient,
-            GrpcAuthenticationServiceOptions>();
+        serviceCollection
+           .AddGrpcService<GrpcAuthenticationService, Protos_AuthenticationService.AuthenticationServiceClient,
+                GrpcAuthenticationServiceOptions>();
 
-        serviceCollection.AddGrpcServiceAuth<GrpcEventBusService,
-            EventBusService.EventBusServiceClient,
-            GrpcEventBusServiceOptions>();
+        serviceCollection
+           .AddGrpcServiceAuth<GrpcEventBusService, EventBusService.EventBusServiceClient,
+                GrpcEventBusServiceOptions>();
 
-        serviceCollection.AddGrpcServiceAuth<GrpcScheduleService,
-            ScheduleService.ScheduleServiceClient,
-            GrpcScheduleServiceOptions>();
+        serviceCollection
+           .AddGrpcServiceAuth<GrpcScheduleService, ScheduleService.ScheduleServiceClient,
+                GrpcScheduleServiceOptions>();
 
-        serviceCollection.AddTransient<IAuthenticationService>(
-            sp => sp.GetRequiredService<GrpcAuthenticationService>()
-        );
+        serviceCollection.AddTransient<IAuthenticationService>(sp =>
+            sp.GetRequiredService<GrpcAuthenticationService>());
 
-        serviceCollection.AddTransient<IHttpHeaderFactory>(
-            sp => new CombineHttpHeaderFactory(
-                sp.GetRequiredService<ContextAccessorUserIdHttpHeaderFactory>(),
+        serviceCollection.AddTransient<IHttpHeaderFactory>(sp =>
+            new CombineHttpHeaderFactory(sp.GetRequiredService<ContextAccessorUserIdHttpHeaderFactory>(),
                 sp.GetRequiredService<ContextAccessorAuthorizationHttpHeaderFactory>(),
-                sp.GetRequiredService<ContextTimeZoneOffsetHttpHeaderFactory>()
-            )
-        );
+                sp.GetRequiredService<ContextTimeZoneOffsetHttpHeaderFactory>()));
 
         return serviceCollection;
     }

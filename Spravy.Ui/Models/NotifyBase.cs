@@ -14,7 +14,7 @@ public class NotifyBase : ReactiveObject, IDisposable
         {
             disposable.Dispose();
         }
-        
+
         Disposables.Clear();
     }
 }

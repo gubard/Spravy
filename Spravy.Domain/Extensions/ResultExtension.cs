@@ -33,7 +33,7 @@ public static class ResultExtension
 
             if (result.IsHasError)
             {
-                return new Result<ReadOnlyMemory<TReturn>>(result.Errors);
+                return new(result.Errors);
             }
 
             if (cancellationToken.IsCancellationRequested)
@@ -68,7 +68,7 @@ public static class ResultExtension
 
             if (result.IsHasError)
             {
-                return new Result(result.Errors);
+                return new(result.Errors);
             }
 
             if (cancellationToken.IsCancellationRequested)
@@ -104,7 +104,7 @@ public static class ResultExtension
 
             if (result.IsHasError)
             {
-                return new Result(result.Errors);
+                return new(result.Errors);
             }
 
             var item = func.Invoke(result.Value);
@@ -137,7 +137,7 @@ public static class ResultExtension
 
         if (result.IsHasError)
         {
-            return new Result(result.Errors);
+            return new(result.Errors);
         }
 
         if (cancellationToken.IsCancellationRequested)
@@ -203,7 +203,7 @@ public static class ResultExtension
 
         if (result.IsHasError)
         {
-            return new Result(result.Errors);
+            return new(result.Errors);
         }
 
         return Result.Success;
@@ -289,7 +289,7 @@ public static class ResultExtension
 
         if (result.IsHasError)
         {
-            return new Result<TReturn>(result.Errors);
+            return new(result.Errors);
         }
 
         if (cancellationToken.IsCancellationRequested)
@@ -312,7 +312,7 @@ public static class ResultExtension
 
         if (!errors.IsEmpty)
         {
-            return new Result(errors);
+            return new(errors);
         }
 
         if (cancellationToken.IsCancellationRequested)
@@ -355,7 +355,7 @@ public static class ResultExtension
 
         if (!errors.IsEmpty)
         {
-            return new Result<TReturn>(errors);
+            return new(errors);
         }
 
         if (cancellationToken.IsCancellationRequested)
@@ -390,7 +390,7 @@ public static class ResultExtension
 
         if (!errors.IsEmpty)
         {
-            return new Result(errors);
+            return new(errors);
         }
 
         if (cancellationToken.IsCancellationRequested)
@@ -420,7 +420,7 @@ public static class ResultExtension
 
         if (result.IsHasError)
         {
-            return new Result<TReturn>(result.Errors);
+            return new(result.Errors);
         }
 
         if (cancellationToken.IsCancellationRequested)
@@ -450,7 +450,7 @@ public static class ResultExtension
 
         if (result.IsHasError)
         {
-            return new Result(result.Errors);
+            return new(result.Errors);
         }
 
         if (cancellationToken.IsCancellationRequested)
@@ -480,7 +480,7 @@ public static class ResultExtension
 
         if (result.IsHasError)
         {
-            return new Result(result.Errors);
+            return new(result.Errors);
         }
 
         if (cancellationToken.IsCancellationRequested)
@@ -510,7 +510,7 @@ public static class ResultExtension
 
         if (result.IsHasError)
         {
-            return new Result(result.Errors);
+            return new(result.Errors);
         }
 
         if (cancellationToken.IsCancellationRequested)
@@ -538,7 +538,7 @@ public static class ResultExtension
             return Result.Success;
         }
 
-        return new Result(errors);
+        return new(errors);
     }
 
     public static ConfiguredValueTaskAwaitable<Result> IfSuccessAllAsync<TValue>(
@@ -560,7 +560,7 @@ public static class ResultExtension
 
         if (result.IsHasError)
         {
-            return new Result(result.Errors);
+            return new(result.Errors);
         }
 
         if (cancellationToken.IsCancellationRequested)
@@ -583,7 +583,7 @@ public static class ResultExtension
             errors = errors.Combine(r.Errors);
         }
 
-        return new Result(errors);
+        return new(errors);
     }
 
     public static ConfiguredValueTaskAwaitable<Result> IfSuccessAsync(
@@ -603,7 +603,7 @@ public static class ResultExtension
     {
         if (result.IsHasError)
         {
-            return new Result(result.Errors);
+            return new(result.Errors);
         }
 
         if (cancellationToken.IsCancellationRequested)
@@ -631,7 +631,7 @@ public static class ResultExtension
     {
         if (result.IsHasError)
         {
-            return new Result(result.Errors);
+            return new(result.Errors);
         }
 
         if (cancellationToken.IsCancellationRequested)
@@ -702,7 +702,7 @@ public static class ResultExtension
 
         if (result.IsHasError)
         {
-            return new Result<TReturn>(result.Errors);
+            return new(result.Errors);
         }
 
         if (cancellationToken.IsCancellationRequested)
@@ -732,7 +732,7 @@ public static class ResultExtension
 
         if (result.IsHasError)
         {
-            return new Result<TReturn>(result.Errors);
+            return new(result.Errors);
         }
 
         if (cancellationToken.IsCancellationRequested)
@@ -760,7 +760,7 @@ public static class ResultExtension
     {
         if (result.IsHasError)
         {
-            return new Result<TReturn>(result.Errors);
+            return new(result.Errors);
         }
 
         await using var value = result.Value;
@@ -790,7 +790,7 @@ public static class ResultExtension
     {
         if (result.IsHasError)
         {
-            return new Result(result.Errors);
+            return new(result.Errors);
         }
 
         await using var value = result.Value;
@@ -822,7 +822,7 @@ public static class ResultExtension
 
         if (result.IsHasError)
         {
-            return new Result(result.Errors);
+            return new(result.Errors);
         }
 
         if (cancellationToken.IsCancellationRequested)
@@ -852,7 +852,7 @@ public static class ResultExtension
 
         if (result.IsHasError)
         {
-            return new Result(result.Errors);
+            return new(result.Errors);
         }
 
         if (cancellationToken.IsCancellationRequested)
@@ -863,14 +863,11 @@ public static class ResultExtension
         return await action.Invoke(result.Value);
     }
 
-    public static Result<TReturn> IfSuccess<TReturn>(
-        this Result result,
-        Func<Result<TReturn>> action
-    )
+    public static Result<TReturn> IfSuccess<TReturn>(this Result result, Func<Result<TReturn>> action)
     {
         if (result.IsHasError)
         {
-            return new Result<TReturn>(result.Errors);
+            return new(result.Errors);
         }
 
         return action.Invoke();
@@ -883,33 +880,27 @@ public static class ResultExtension
     {
         if (result.IsHasError)
         {
-            return new Result<TReturn>(result.Errors);
+            return new(result.Errors);
         }
 
         return action.Invoke(result.Value);
     }
 
-    public static Result IfSuccess<TValue>(
-        this Result<TValue> result,
-        Func<TValue, Result> action
-    )
+    public static Result IfSuccess<TValue>(this Result<TValue> result, Func<TValue, Result> action)
     {
         if (result.IsHasError)
         {
-            return new Result(result.Errors);
+            return new(result.Errors);
         }
 
         return action.Invoke(result.Value);
     }
 
-    public static Result IfSuccess(
-        this Result result,
-        Func<Result> action
-    )
+    public static Result IfSuccess(this Result result, Func<Result> action)
     {
         if (result.IsHasError)
         {
-            return new Result(result.Errors);
+            return new(result.Errors);
         }
 
         return action.Invoke();
@@ -926,7 +917,7 @@ public static class ResultExtension
 
         if (!errors.IsEmpty)
         {
-            return new Result<TReturn>(errors);
+            return new(errors);
         }
 
         return action.Invoke(arg1.Value, arg2.Value);
@@ -943,7 +934,7 @@ public static class ResultExtension
 
         if (!errors.IsEmpty)
         {
-            return new Result<TReturn>(errors);
+            return new(errors);
         }
 
         return action.Invoke(result.Value, arg1.Value, arg2.Value);
@@ -972,7 +963,7 @@ public static class ResultExtension
 
             if (result.IsHasError)
             {
-                return new Result(result.Errors);
+                return new(result.Errors);
             }
 
             if (cancellationToken.IsCancellationRequested)

@@ -12,8 +12,8 @@ namespace Spravy.PasswordGenerator.Domain.Services;
 
 public class PasswordGenerator : IPasswordGenerator
 {
-    private readonly IStringToBytes stringToBytes;
     private readonly PasswordGeneratorOptions options;
+    private readonly IStringToBytes stringToBytes;
 
     public PasswordGenerator(IStringToBytes stringToBytes, PasswordGeneratorOptions options)
     {
@@ -38,13 +38,13 @@ public class PasswordGenerator : IPasswordGenerator
 
         while (!Regex.IsMatch(Encoding.ASCII.GetString(resultBytes), passwordOptions.Regex))
         {
-            hash = new ReadOnlySpan<byte>(sha.ComputeHash(resultBytes.ToArray()));
+            hash = new(sha.ComputeHash(resultBytes.ToArray()));
             GeneratePassword(resultBytes, hash, availableBytes, sha);
             tryCount++;
 
             if (tryCount == options.TryCount)
             {
-                throw new Exception("Password generation failed");
+                throw new("Password generation failed");
             }
         }
 
@@ -89,11 +89,11 @@ public class PasswordGenerator : IPasswordGenerator
                 {
                     if (i == currentIndex)
                     {
-                        throw new Exception("Password generation failed");
+                        throw new("Password generation failed");
                     }
 
                     currentIndex = i;
-                    hash = new ReadOnlySpan<byte>(sha.ComputeHash(resultBytes.ToArray()));
+                    hash = new(sha.ComputeHash(resultBytes.ToArray()));
                     hashIndex = 0;
                 }
             }

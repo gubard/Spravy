@@ -6,15 +6,46 @@ namespace Spravy.PasswordGenerator.Domain.Interfaces;
 
 public interface IPasswordService
 {
-    ConfiguredValueTaskAwaitable<Result> AddPasswordItemAsync(AddPasswordOptions options, CancellationToken cancellationToken);
-    ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<PasswordItem>>> GetPasswordItemsAsync(CancellationToken cancellationToken);
-    ConfiguredValueTaskAwaitable<Result<PasswordItem>> GetPasswordItemAsync(Guid id, CancellationToken cancellationToken);
+    ConfiguredValueTaskAwaitable<Result> AddPasswordItemAsync(
+        AddPasswordOptions options,
+        CancellationToken cancellationToken
+    );
+
+    ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<PasswordItem>>> GetPasswordItemsAsync(
+        CancellationToken cancellationToken
+    );
+
+    ConfiguredValueTaskAwaitable<Result<PasswordItem>> GetPasswordItemAsync(
+        Guid id,
+        CancellationToken cancellationToken
+    );
+
     ConfiguredValueTaskAwaitable<Result> DeletePasswordItemAsync(Guid id, CancellationToken cancellationToken);
     ConfiguredValueTaskAwaitable<Result<string>> GeneratePasswordAsync(Guid id, CancellationToken cancellationToken);
-    ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemNameAsync(Guid id, string name, CancellationToken cancellationToken);
-    ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemKeyAsync(Guid id, string key, CancellationToken cancellationToken);
-    ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemLengthAsync(Guid id, ushort length, CancellationToken cancellationToken);
-    ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemRegexAsync(Guid id, string regex, CancellationToken cancellationToken);
+
+    ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemNameAsync(
+        Guid id,
+        string name,
+        CancellationToken cancellationToken
+    );
+
+    ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemKeyAsync(
+        Guid id,
+        string key,
+        CancellationToken cancellationToken
+    );
+
+    ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemLengthAsync(
+        Guid id,
+        ushort length,
+        CancellationToken cancellationToken
+    );
+
+    ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemRegexAsync(
+        Guid id,
+        string regex,
+        CancellationToken cancellationToken
+    );
 
     ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemIsAvailableNumberAsync(
         Guid id,

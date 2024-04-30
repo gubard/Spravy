@@ -6,21 +6,16 @@ using Spravy.EventBus.Service.Services;
 using Spravy.Service.Extensions;
 using Spravy.Service.Middlewares;
 
-Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console()
-    .CreateLogger();
+Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
 
 try
 {
     Log.Information("Starting web app");
 
     WebApplication.CreateBuilder(args)
-        .BuildSpravy<GrpcEventBusService, SpravyEventBusServiceMark>(
-            args,
-            typeof(DataBaseSetupSqliteMiddleware<SpravyDbEventBusDbContext>),
-            x => x.RegisterEventBus()
-        )
-        .Run();
+       .BuildSpravy<GrpcEventBusService, SpravyEventBusServiceMark>(args,
+            typeof(DataBaseSetupSqliteMiddleware<SpravyDbEventBusDbContext>), x => x.RegisterEventBus())
+       .Run();
 }
 catch (Exception ex)
 {

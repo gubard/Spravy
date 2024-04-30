@@ -18,7 +18,7 @@ public class Tree<TKey, TValue> where TKey : notnull
                 return Root;
             }
 
-            throw new ($"Expected root key {key}.");
+            throw new($"Expected root key {key}.");
         }
     }
 

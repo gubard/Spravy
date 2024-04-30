@@ -6,8 +6,15 @@ namespace Spravy.EventBus.Db.Sqlite.Services;
 
 public class SqliteEventBusDbContextSetup : IDbContextSetup
 {
-    public bool AutoCreateDataBase => false;
-    public bool DataBaseCreated => true;
+    public bool AutoCreateDataBase
+    {
+        get => false;
+    }
+
+    public bool DataBaseCreated
+    {
+        get => true;
+    }
 
     public void OnModelCreating(ModelBuilder modelBuilder)
     {

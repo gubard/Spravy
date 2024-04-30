@@ -36,8 +36,6 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
     private bool loginChanged;
     private bool passwordChanged;
 
-    public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
-
     public LoginViewModel() : base(true)
     {
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
@@ -45,9 +43,6 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
 
     [Inject]
     public required IMapper Mapper { get; init; }
-
-    [Inject]
-    public required AccountNotify Account { get; init; }
 
     [Inject]
     public required ITokenService TokenService { get; init; }
@@ -68,9 +63,6 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
     public bool TryAutoLogin { get; set; }
 
     [Reactive]
-    public bool IsRememberMe { get; set; }
-
-    [Reactive]
     public string Login { get; set; } = string.Empty;
 
     [Reactive]
@@ -84,7 +76,18 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
     [Reactive]
     public ICommand LoginCommand { get; protected set; }
 
-    public override string ViewId => TypeCache<LoginViewModel>.Type.Name;
+    public override string ViewId
+    {
+        get => TypeCache<LoginViewModel>.Type.Name;
+    }
+
+    [Inject]
+    public required AccountNotify Account { get; init; }
+
+    [Reactive]
+    public bool IsRememberMe { get; set; }
+
+    public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
     public IEnumerable GetErrors(string? propertyName)
     {
@@ -143,9 +146,9 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
             }
 
             var hasError = PropertyValidator.ValidLogin(Login, nameof(Login)) is not null
-                           || PropertyValidator.ValidLength(Login, 4, 512, nameof(Login)) is not null
-                           || PropertyValidator.ValidPassword(Password, nameof(Password)) is not null
-                           || PropertyValidator.ValidLength(Password, 8, 512, nameof(Password)) is not null;
+             || PropertyValidator.ValidLength(Login, 4, 512, nameof(Login)) is not null
+             || PropertyValidator.ValidPassword(Password, nameof(Password)) is not null
+             || PropertyValidator.ValidLength(Password, 8, 512, nameof(Password)) is not null;
 
             return hasError;
         }
@@ -154,49 +157,30 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
     private ConfiguredValueTaskAwaitable<Result> LoginAsync(CancellationToken cancellationToken)
     {
         return this.InvokeUIBackgroundAsync(() => IsBusy = true)
-            .IfSuccessTryFinallyAsync(
-                () => AuthenticationService.IsVerifiedByLoginAsync(Login, cancellationToken)
-                    .IfSuccessAsync(
-                        isVerified =>
+           .IfSuccessTryFinallyAsync(() => AuthenticationService.IsVerifiedByLoginAsync(Login, cancellationToken)
+                   .IfSuccessAsync(isVerified =>
+                    {
+                        if (!isVerified)
                         {
-                            if (!isVerified)
+                            return Navigator.NavigateToAsync<VerificationCodeViewModel>(vm =>
                             {
-                                return Navigator.NavigateToAsync<VerificationCodeViewModel>(
-                                    vm =>
-                                    {
-                                        vm.Identifier = Login;
-                                        vm.IdentifierType = UserIdentifierType.Login;
-                                    },
-                                    cancellationToken
-                                );
-                            }
+                                vm.Identifier = Login;
+                                vm.IdentifierType = UserIdentifierType.Login;
+                            }, cancellationToken);
+                        }
 
-                            var user = Mapper.Map<User>(this);
+                        var user = Mapper.Map<User>(this);
 
-                            return TokenService.LoginAsync(user, cancellationToken)
-                                .IfSuccessAsync(
-                                    () => this.InvokeUIBackgroundAsync(() => Account.Login = user.Login)
-                                        .IfSuccessAsync(
-                                            () => RememberMeAsync(cancellationToken),
-                                            cancellationToken
-                                        )
-                                        .IfSuccessAsync(
-                                            () => Navigator.NavigateToAsync(
-                                                ActionHelper<RootToDoItemsViewModel>.Empty,
-                                                cancellationToken
-                                            ),
-                                            cancellationToken
-                                        ),
-                                    cancellationToken
-                                );
-                        },
-                        cancellationToken
-                    ),
-                () => this.InvokeUIBackgroundAsync(() => IsBusy = false)
-                    .ToValueTask()
-                    .ConfigureAwait(false),
-                cancellationToken
-            );
+                        return TokenService.LoginAsync(user, cancellationToken)
+                           .IfSuccessAsync(
+                                () => this.InvokeUIBackgroundAsync(() => Account.Login = user.Login)
+                                   .IfSuccessAsync(() => RememberMeAsync(cancellationToken), cancellationToken)
+                                   .IfSuccessAsync(
+                                        () => Navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty,
+                                            cancellationToken), cancellationToken), cancellationToken);
+                    }, cancellationToken),
+                () => this.InvokeUIBackgroundAsync(() => IsBusy = false).ToValueTask().ConfigureAwait(false),
+                cancellationToken);
     }
 
     private ConfiguredValueTaskAwaitable<Result> RememberMeAsync(CancellationToken cancellationToken)
@@ -207,56 +191,42 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
         }
 
         return TokenService.GetTokenAsync(cancellationToken)
-            .IfSuccessAsync(
-                token =>
+           .IfSuccessAsync(token =>
+            {
+                var item = new LoginStorageItem
                 {
-                    var item = new LoginStorageItem
-                    {
-                        Token = token,
-                    };
+                    Token = token,
+                };
 
-                    return ObjectStorage.SaveObjectAsync(StorageIds.LoginId, item);
-                },
-                cancellationToken
-            );
+                return ObjectStorage.SaveObjectAsync(StorageIds.LoginId, item);
+            }, cancellationToken);
     }
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         EnterCommand = CreateCommandFromTask<LoginView>(TaskWork.Create<LoginView>(EnterAsync).RunAsync);
 
-        LoginCommand = CreateCommandFromTask(
-            TaskWork.Create(LoginAsync).RunAsync,
-            this.WhenAnyValue(x => x.HasErrors).Select(x => !x)
-        );
+        LoginCommand = CreateCommandFromTask(TaskWork.Create(LoginAsync).RunAsync,
+            this.WhenAnyValue(x => x.HasErrors).Select(x => !x));
 
-        Disposables.Add(
-            this.WhenAnyValue(x => x.Login)
-                .Skip(1)
-                .Subscribe(
-                    _ =>
-                    {
-                        loginChanged = true;
-                        this.RaisePropertyChanged(nameof(HasErrors));
-                    }
-                )
-        );
+        Disposables.Add(this.WhenAnyValue(x => x.Login)
+           .Skip(1)
+           .Subscribe(_ =>
+            {
+                loginChanged = true;
+                this.RaisePropertyChanged(nameof(HasErrors));
+            }));
 
-        Disposables.Add(
-            this.WhenAnyValue(x => x.Password)
-                .Skip(1)
-                .Subscribe(
-                    _ =>
-                    {
-                        passwordChanged = true;
-                        this.RaisePropertyChanged(nameof(HasErrors));
-                    }
-                )
-        );
+        Disposables.Add(this.WhenAnyValue(x => x.Password)
+           .Skip(1)
+           .Subscribe(_ =>
+            {
+                passwordChanged = true;
+                this.RaisePropertyChanged(nameof(HasErrors));
+            }));
 
         return this.InvokeUIBackgroundAsync(() => IsBusy = true)
-            .IfSuccessTryFinallyAsync(
-                () =>
+           .IfSuccessTryFinallyAsync(() =>
                 {
                     if (!TryAutoLogin)
                     {
@@ -264,58 +234,36 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
                     }
 
                     return ObjectStorage.GetObjectOrDefaultAsync<LoginViewModelSetting>(ViewId, cancellationToken)
-                        .IfSuccessAsync(
-                            setting =>
-                            {
-                                return SetStateAsync(setting, cancellationToken)
-                                    .IfSuccessAsync(
-                                        () => ObjectStorage.IsExistsAsync(StorageIds.LoginId),
-                                        cancellationToken
-                                    )
-                                    .IfSuccessAsync(
-                                        value =>
+                       .IfSuccessAsync(setting =>
+                        {
+                            return SetStateAsync(setting, cancellationToken)
+                               .IfSuccessAsync(() => ObjectStorage.IsExistsAsync(StorageIds.LoginId), cancellationToken)
+                               .IfSuccessAsync(value =>
+                                {
+                                    if (!value)
+                                    {
+                                        return Result.AwaitableFalse;
+                                    }
+
+                                    return ObjectStorage.GetObjectAsync<LoginStorageItem>(StorageIds.LoginId)
+                                       .IfSuccessAsync(item =>
                                         {
-                                            if (!value)
-                                            {
-                                                return Result.AwaitableFalse;
-                                            }
+                                            var jwtHandler = new JwtSecurityTokenHandler();
+                                            var jwtToken = jwtHandler.ReadJwtToken(item.Token);
+                                            var l = jwtToken.Claims.Single(x => x.Type == ClaimTypes.Name).Value;
+                                            Account.Login = l;
 
-                                            return ObjectStorage.GetObjectAsync<LoginStorageItem>(StorageIds.LoginId)
-                                                .IfSuccessAsync(
-                                                    item =>
-                                                    {
-                                                        var jwtHandler = new JwtSecurityTokenHandler();
-                                                        var jwtToken = jwtHandler.ReadJwtToken(item.Token);
-                                                        var l = jwtToken.Claims.Single(x => x.Type == ClaimTypes.Name)
-                                                            .Value;
-                                                        Account.Login = l;
-
-                                                        return TokenService.LoginAsync(
-                                                                item.Token.ThrowIfNullOrWhiteSpace(),
-                                                                cancellationToken
-                                                            )
-                                                            .IfSuccessAsync(
-                                                                () => Navigator.NavigateToAsync(
-                                                                    ActionHelper<RootToDoItemsViewModel>.Empty,
-                                                                    cancellationToken
-                                                                ),
-                                                                cancellationToken
-                                                            );
-                                                    },
-                                                    cancellationToken
-                                                );
-                                        },
-                                        cancellationToken
-                                    );
-                            },
-                            cancellationToken
-                        );
-                },
-                () => this.InvokeUIBackgroundAsync(() => IsBusy = false)
-                    .ToValueTask()
-                    .ConfigureAwait(false),
-                cancellationToken
-            );
+                                            return TokenService.LoginAsync(item.Token.ThrowIfNullOrWhiteSpace(),
+                                                    cancellationToken)
+                                               .IfSuccessAsync(
+                                                    () => Navigator.NavigateToAsync(
+                                                        ActionHelper<RootToDoItemsViewModel>.Empty,
+                                                        cancellationToken), cancellationToken);
+                                        }, cancellationToken);
+                                }, cancellationToken);
+                        }, cancellationToken);
+                }, () => this.InvokeUIBackgroundAsync(() => IsBusy = false).ToValueTask().ConfigureAwait(false),
+                cancellationToken);
     }
 
     private ConfiguredValueTaskAwaitable<Result> EnterAsync(LoginView view, CancellationToken cancellationToken)
@@ -365,20 +313,15 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
     )
     {
         return setting.CastObject<LoginViewModelSetting>()
-            .IfSuccessAsync(
-                s => this.InvokeUIBackgroundAsync(
-                    () =>
-                    {
-                        TryAutoLogin = false;
-                        Login = s.Login;
-                    }
-                ),
-                cancellationToken
-            );
+           .IfSuccessAsync(s => this.InvokeUIBackgroundAsync(() =>
+            {
+                TryAutoLogin = false;
+                Login = s.Login;
+            }), cancellationToken);
     }
 
     [ProtoContract]
-    class LoginViewModelSetting
+    private class LoginViewModelSetting
     {
         public LoginViewModelSetting(LoginViewModel viewModel)
         {

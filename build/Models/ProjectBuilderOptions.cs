@@ -25,10 +25,11 @@ public class ProjectBuilderOptions : ICsprojFile
         Domain = domain;
     }
 
-    public FileInfo CsprojFile { get; }
     public FileInfo AppSettingsFile { get; }
     public IReadOnlyDictionary<string, ushort> Hosts { get; }
     public ReadOnlyMemory<Runtime> Runtimes { get; }
     public string Configuration { get; }
     public string Domain { get; }
+
+    public FileInfo CsprojFile { get; }
 }

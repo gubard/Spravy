@@ -8,9 +8,6 @@ namespace Spravy.Ui.Features.PasswordGenerator.Models;
 public class PasswordItemNotify : NotifyBase, IIdProperty
 {
     [Reactive]
-    public Guid Id { get; set; }
-
-    [Reactive]
     public string Name { get; set; } = string.Empty;
 
     [Reactive]
@@ -24,4 +21,7 @@ public class PasswordItemNotify : NotifyBase, IIdProperty
 
     [Reactive]
     public string Regex { get; set; } = string.Empty;
+
+    [Reactive]
+    public Guid Id { get; set; }
 }

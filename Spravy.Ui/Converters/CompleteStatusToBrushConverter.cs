@@ -19,7 +19,7 @@ public class CompleteStatusToBrushConverter : IValueConverter
         {
             CompleteStatus.Complete => Brushes.Green,
             CompleteStatus.Incomplete => Brushes.Aqua,
-            _ => throw new ArgumentOutOfRangeException()
+            _ => throw new ArgumentOutOfRangeException(),
         };
     }
 

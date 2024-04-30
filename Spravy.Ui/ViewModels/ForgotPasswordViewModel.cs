@@ -25,11 +25,21 @@ public class ForgotPasswordViewModel : NavigatableViewModelBase, IVerificationEm
     [Inject]
     public required IAuthenticationService AuthenticationService { get; init; }
 
-    public override string ViewId => TypeCache<ForgotPasswordViewModel>.Type.Name;
+    public override string ViewId
+    {
+        get => TypeCache<ForgotPasswordViewModel>.Type.Name;
+    }
+
     public ICommand InitializedCommand { get; }
 
     [Reactive]
     public ICommand ForgotPasswordCommand { get; protected set; }
+
+    [Reactive]
+    public string NewPassword { get; set; } = string.Empty;
+
+    [Reactive]
+    public string NewRepeatPassword { get; set; } = string.Empty;
 
     [Reactive]
     public string Identifier { get; set; } = string.Empty;
@@ -39,12 +49,6 @@ public class ForgotPasswordViewModel : NavigatableViewModelBase, IVerificationEm
 
     [Reactive]
     public string VerificationCode { get; set; } = string.Empty;
-
-    [Reactive]
-    public string NewPassword { get; set; } = string.Empty;
-
-    [Reactive]
-    public string NewRepeatPassword { get; set; } = string.Empty;
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
@@ -62,31 +66,21 @@ public class ForgotPasswordViewModel : NavigatableViewModelBase, IVerificationEm
 
     private ConfiguredValueTaskAwaitable<Result> ForgotPasswordAsync(CancellationToken cancellationToken)
     {
-        return Result.AwaitableFalse.IfSuccessAsync(
-                () =>
+        return Result.AwaitableFalse
+           .IfSuccessAsync(() =>
+            {
+                switch (IdentifierType)
                 {
-                    switch (IdentifierType)
-                    {
-                        case UserIdentifierType.Email:
-                            return AuthenticationService.UpdatePasswordByEmailAsync(
-                                Identifier,
-                                VerificationCode.ToUpperInvariant(),
-                                NewPassword,
-                                cancellationToken
-                            );
-                        case UserIdentifierType.Login:
-                            return AuthenticationService.UpdatePasswordByLoginAsync(
-                                Identifier,
-                                VerificationCode.ToUpperInvariant(),
-                                NewPassword,
-                                cancellationToken
-                            );
-                        default: throw new ArgumentOutOfRangeException();
-                    }
-                },
-                cancellationToken
-            )
-            .IfSuccessAsync(() => Navigator.NavigateToAsync<LoginViewModel>(cancellationToken), cancellationToken);
+                    case UserIdentifierType.Email:
+                        return AuthenticationService.UpdatePasswordByEmailAsync(Identifier,
+                            VerificationCode.ToUpperInvariant(), NewPassword, cancellationToken);
+                    case UserIdentifierType.Login:
+                        return AuthenticationService.UpdatePasswordByLoginAsync(Identifier,
+                            VerificationCode.ToUpperInvariant(), NewPassword, cancellationToken);
+                    default: throw new ArgumentOutOfRangeException();
+                }
+            }, cancellationToken)
+           .IfSuccessAsync(() => Navigator.NavigateToAsync<LoginViewModel>(cancellationToken), cancellationToken);
     }
 
     public override Result Stop()

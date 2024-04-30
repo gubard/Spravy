@@ -7,8 +7,7 @@ public static class AppBuilderExtension
 {
     public static AppBuilder WithShantellSansFont(this AppBuilder appBuilder)
     {
-        return appBuilder.ConfigureFonts(
-            fontManager => fontManager.AddFontCollection(new ShantellSansFontCollection())
-        );
+        return appBuilder.ConfigureFonts(fontManager =>
+            fontManager.AddFontCollection(new ShantellSansFontCollection()));
     }
 }

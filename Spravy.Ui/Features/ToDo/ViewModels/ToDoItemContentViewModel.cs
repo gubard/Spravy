@@ -27,7 +27,10 @@ public class ToDoItemContentViewModel : NavigatableViewModelBase
     [Reactive]
     public string Link { get; set; } = string.Empty;
 
-    public override string ViewId => TypeCache<ToDoItemContentViewModel>.Type.Name;
+    public override string ViewId
+    {
+        get => TypeCache<ToDoItemContentViewModel>.Type.Name;
+    }
 
     public override Result Stop()
     {

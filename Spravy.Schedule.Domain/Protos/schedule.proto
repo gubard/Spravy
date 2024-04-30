@@ -2,12 +2,12 @@ syntax = "proto3";
 
 option csharp_namespace = "Spravy.Schedule.Protos";
 
-import "Protos/schedule_messages.proto";
-
 package spravy.schedule;
 
+import "Protos/schedule_messages.proto";
+
 service ScheduleService {
-  rpc AddTimer (AddTimerRequest) returns (AddTimerReply);
-  rpc GetListTimes (GetListTimesRequest) returns (GetListTimesReply);
-  rpc RemoveTimer (RemoveTimerRequest) returns (RemoveTimerReply);
+    rpc AddTimer (AddTimerRequest) returns (AddTimerReply);
+    rpc GetListTimes (GetListTimesRequest) returns (GetListTimesReply);
+    rpc RemoveTimer (RemoveTimerRequest) returns (RemoveTimerReply);
 }

@@ -31,11 +31,12 @@ public class BrowserProjectBuilderOptions : ProjectBuilderOptions, IFtpOptions, 
         Publisheds = publisheds;
     }
 
+    public IEnumerable<IPublished> Publisheds { get; }
+
     public string FtpHost { get; }
     public string FtpUser { get; }
     public string FtpPassword { get; }
     public string SshHost { get; }
     public string SshUser { get; }
     public string SshPassword { get; }
-    public IEnumerable<IPublished> Publisheds { get; }
 }

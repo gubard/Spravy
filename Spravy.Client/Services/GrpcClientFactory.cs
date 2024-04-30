@@ -18,7 +18,7 @@ public class GrpcClientFactory<TGrpcClient> : IFactory<Uri, TGrpcClient> where T
 
     public Result<TGrpcClient> Create(Uri key)
     {
-        return grpcChannelFactory.Create(key).IfSuccess(channel =>
-            TypeCtorHelper<TGrpcClient, ChannelBase>.CtorFunc.Invoke(channel).ToResult());
+        return grpcChannelFactory.Create(key)
+           .IfSuccess(channel => TypeCtorHelper<TGrpcClient, ChannelBase>.CtorFunc.Invoke(channel).ToResult());
     }
 }

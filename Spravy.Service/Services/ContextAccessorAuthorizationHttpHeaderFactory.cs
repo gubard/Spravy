@@ -21,14 +21,11 @@ public class ContextAccessorAuthorizationHttpHeaderFactory : IHttpHeaderFactory
         CancellationToken cancellationToken
     )
     {
-        var authorization = httpContextAccessor
-            .HttpContext
-            .ThrowIfNull()
-            .GetAuthorizationHeader();
+        var authorization = httpContextAccessor.HttpContext.ThrowIfNull().GetAuthorizationHeader();
 
         return new HttpHeaderItem(HttpNames.HeaderAuthorizationName, authorization).ToReadOnlyMemory()
-            .ToResult()
-            .ToValueTaskResult()
-            .ConfigureAwait(false);
+           .ToResult()
+           .ToValueTaskResult()
+           .ConfigureAwait(false);
     }
 }

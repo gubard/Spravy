@@ -22,7 +22,11 @@ public class SqliteDbContextSetup : IDbContextSetup
     }
 
     public bool AutoCreateDataBase { get; }
-    public bool DataBaseCreated => dataBaseFile.Exists;
+
+    public bool DataBaseCreated
+    {
+        get => dataBaseFile.Exists;
+    }
 
     public void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -41,7 +45,7 @@ public class SqliteDbContextSetup : IDbContextSetup
 
         if (AutoCreateDataBase)
         {
-            if (dataBaseFile is { Exists: false, Directory.Exists: false })
+            if (dataBaseFile is { Exists: false, Directory.Exists: false, })
             {
                 dataBaseFile.Directory.Create();
             }

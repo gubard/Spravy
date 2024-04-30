@@ -34,7 +34,8 @@
             </c:GroupBox.DataTemplates>
 
             <StackPanel>
-                <ScrollViewer Classes="mini" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
+                <ScrollViewer Classes="mini" VerticalScrollBarVisibility="Disabled"
+                              HorizontalScrollBarVisibility="Auto">
                     <c:Stepper Steps="{Binding Path}" Index="0" HorizontalAlignment="Center" />
                 </ScrollViewer>
 

@@ -5,129 +5,129 @@ option csharp_namespace = "Spravy.Authentication.Protos";
 package spravy.authentication;
 
 message DeleteUserByLoginRequest {
-  string Login = 1;
-  string VerificationCode = 2;
+    string Login = 1;
+    string VerificationCode = 2;
 }
 
 message DeleteUserByLoginReply {
 }
 
 message DeleteUserByEmailRequest {
-  string Email = 1;
-  string VerificationCode = 2;
+    string Email = 1;
+    string VerificationCode = 2;
 }
 
 message DeleteUserByEmailReply {
 }
 
 message LoginRequest {
-  UserGrpc User = 1;
+    UserGrpc User = 1;
 }
 
 message LoginReply {
-  string Token = 1;
-  string RefreshToken = 2;
+    string Token = 1;
+    string RefreshToken = 2;
 }
 
 message CreateUserRequest {
-  string Login = 1;
-  string Password = 2;
-  string Email = 3;
+    string Login = 1;
+    string Password = 2;
+    string Email = 3;
 }
 
 message CreateUserReply {
 }
 
 message UserGrpc {
-  string Login = 1;
-  string Password = 2;
-  bool  IsVerified = 3;
+    string Login = 1;
+    string Password = 2;
+    bool IsVerified = 3;
 }
 
 message RefreshTokenRequest {
-  string RefreshToken = 1;
+    string RefreshToken = 1;
 }
 
 message RefreshTokenReply {
-  string Token = 1;
-  string RefreshToken = 2;
+    string Token = 1;
+    string RefreshToken = 2;
 }
 
 message UpdateVerificationCodeByEmailRequest {
-  string Email = 1;
+    string Email = 1;
 }
 
 message UpdateVerificationCodeByEmailReply {
 }
 
 message IsVerifiedByEmailRequest {
-  string Email = 1;
+    string Email = 1;
 }
 
 message IsVerifiedByEmailReply {
-  bool IsVerified = 1;
+    bool IsVerified = 1;
 }
 
 message VerifiedEmailByEmailRequest {
-  string Email = 1;
-  string VerificationCode = 2;
+    string Email = 1;
+    string VerificationCode = 2;
 }
 
 message VerifiedEmailByEmailReply {
 }
 
 message UpdateVerificationCodeByLoginRequest {
-  string Login = 1;
+    string Login = 1;
 }
 
 message UpdateVerificationCodeByLoginReply {
 }
 
 message IsVerifiedByLoginRequest {
-  string Login = 1;
+    string Login = 1;
 }
 
 message IsVerifiedByLoginReply {
-  bool IsVerified = 1;
+    bool IsVerified = 1;
 }
 
 message VerifiedEmailByLoginRequest {
-  string Login = 1;
-  string VerificationCode = 2;
+    string Login = 1;
+    string VerificationCode = 2;
 }
 
 message VerifiedEmailByLoginReply {
 }
 
 message UpdateEmailNotVerifiedUserByEmailRequest {
-  string Email = 1;
-  string NewEmail = 2;
+    string Email = 1;
+    string NewEmail = 2;
 }
 
 message UpdateEmailNotVerifiedUserByEmailReply {
 }
 
 message UpdateEmailNotVerifiedUserByLoginRequest {
-  string Login = 1;
-  string NewEmail = 2;
+    string Login = 1;
+    string NewEmail = 2;
 }
 
 message UpdateEmailNotVerifiedUserByLoginReply {
 }
 
 message UpdatePasswordByEmailRequest {
-  string Email = 1;
-  string VerificationCode = 2;
-  string NewPassword = 3;
+    string Email = 1;
+    string VerificationCode = 2;
+    string NewPassword = 3;
 }
 
 message UpdatePasswordByEmailReply {
 }
 
 message UpdatePasswordByLoginRequest {
-  string Login = 1;
-  string VerificationCode = 2;
-  string NewPassword = 3;
+    string Login = 1;
+    string VerificationCode = 2;
+    string NewPassword = 3;
 }
 
 message UpdatePasswordByLoginReply {

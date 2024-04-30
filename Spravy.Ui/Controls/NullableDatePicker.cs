@@ -11,20 +11,20 @@ namespace Spravy.Ui.Controls;
 [TemplatePart(DatePickerPartName, typeof(DatePicker))]
 public class NullableDatePicker : TemplatedControl
 {
+    public const string ClearButtonPartName = "PART_ClearButton";
+    public const string DatePickerPartName = "PART_DatePicker";
+
     /// <summary>
-    /// Defines the <see cref="SelectedDate"/> Property
+    ///     Defines the <see cref="SelectedDate" /> Property
     /// </summary>
     public static readonly StyledProperty<DateTimeOffset?> SelectedDateProperty =
         DatePicker.SelectedDateProperty.AddOwner<NullableDatePicker>();
-
-    public const string ClearButtonPartName = "PART_ClearButton";
-    public const string DatePickerPartName = "PART_DatePicker";
 
     private Button? clearButton;
     private DatePicker? datePicker;
 
     /// <summary>
-    /// Gets or sets the Selected Date for the picker, can be null
+    ///     Gets or sets the Selected Date for the picker, can be null
     /// </summary>
     public DateTimeOffset? SelectedDate
     {

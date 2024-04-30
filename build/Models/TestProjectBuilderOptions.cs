@@ -5,7 +5,6 @@ namespace _build.Models;
 
 public class TestProjectBuilderOptions : ProjectBuilderOptions
 {
-
     public TestProjectBuilderOptions(
         FileInfo csprojFile,
         FileInfo appSettingsFile,
@@ -14,20 +13,13 @@ public class TestProjectBuilderOptions : ProjectBuilderOptions
         string configuration,
         string domain,
         string emailAccountPassword,
-        string emailAccount2Password)
-        : base(
-            csprojFile,
-            appSettingsFile,
-            hosts,
-            runtimes,
-            configuration,
-            domain
-        )
+        string emailAccount2Password
+    ) : base(csprojFile, appSettingsFile, hosts, runtimes, configuration, domain)
     {
         EmailAccountPassword = emailAccountPassword;
         EmailAccount2Password = emailAccount2Password;
     }
-    
+
     public string EmailAccountPassword { get; }
     public string EmailAccount2Password { get; }
 }
