@@ -12,14 +12,6 @@ public class AndroidProjectBuilder : UiProjectBuilder<AndroidProjectBuilderOptio
     {
     }
 
-    public override void Restore()
-    {
-    }
-
-    public override void Compile()
-    {
-    }
-
     public void Publish()
     {
         for (var i = 0; i < 3; i++)
