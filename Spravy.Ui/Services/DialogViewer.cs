@@ -303,9 +303,6 @@ public class DialogViewer : IDialogViewer
                 },
                 cancellationToken
             )
-            .IfSuccessAsync(
-                () => this.InvokeUIBackgroundAsync(() => DialogHost.Close(identifier)),
-                cancellationToken
-            );
+            .IfSuccessAsync(() => this.InvokeUIBackgroundAsync(() => DialogHost.Close(identifier)), cancellationToken);
     }
 }
