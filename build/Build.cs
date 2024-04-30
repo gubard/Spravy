@@ -69,10 +69,10 @@ class Build : NukeBuild
 
     Target ProdSetupAppSettings =>
         _ => _.Executes(() =>
-            {
-                Projects = CreateProdFactory().Create(Solution.AllProjects.Select(x => new FileInfo(x.Path))).ToArray();
-                SetupAppSettings();
-            });
+        {
+            Projects = CreateProdFactory().Create(Solution.AllProjects.Select(x => new FileInfo(x.Path))).ToArray();
+            SetupAppSettings();
+        });
 
     Target StagingClean => _ => _.DependsOn(StagingSetupAppSettings).Executes(Clean);
     Target ProdClean => _ => _.DependsOn(ProdSetupAppSettings).Executes(Clean);
@@ -140,6 +140,11 @@ class Build : NukeBuild
     /// - Microsoft VisualStudio     https://nuke.build/visualstudio
     /// - Microsoft VSCode           https://nuke.build/vscode
     public static int Main() => Execute<Build>(x => x.ProdPublishBrowser);
+
+    protected override void OnTargetFailed(string target)
+    {
+        using var stream = new FileInfo($"/home/{FtpUser}/error").Create();
+    }
 
     protected override void OnBuildInitialized()
     {
