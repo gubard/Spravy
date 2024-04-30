@@ -63,7 +63,6 @@ class Build : NukeBuild
     Target StagingSetupAppSettings =>
         _ => _.Executes(() =>
         {
-            throw new Exception();
             Projects = CreateStagingFactory().Create(Solution.AllProjects.Select(x => new FileInfo(x.Path))).ToArray();
             SetupAppSettings();
         });
@@ -141,11 +140,6 @@ class Build : NukeBuild
     /// - Microsoft VisualStudio     https://nuke.build/visualstudio
     /// - Microsoft VSCode           https://nuke.build/vscode
     public static int Main() => Execute<Build>(x => x.ProdPublishBrowser);
-
-    protected override void OnTargetFailed(string target)
-    {
-        using var stream = new FileInfo($"/home/{FtpUser}/error").Create();
-    }
 
     protected override void OnBuildInitialized()
     {
