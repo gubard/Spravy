@@ -13,68 +13,13 @@ public class AndroidProjectBuilder : UiProjectBuilder<AndroidProjectBuilderOptio
     ) : base(androidOptions, versionService)
     {
     }
+    
+    public override void Restore()
+    {
+    }
 
     public override void Compile()
     {
-        for (var i = 0; i < 3; i++)
-        {
-            try
-            {
-                if (Options.Runtimes.IsEmpty)
-                {
-                    DotNetTasks.DotNetBuild(setting => setting.SetProjectFile(Options.CsprojFile.FullName)
-                        .EnableNoRestore()
-                        .SetConfiguration(Options.Configuration)
-                        .SetProperty("AndroidKeyStore", "true")
-                        .SetProperty("AndroidSigningKeyStore", Options.KeyStoreFile.FullName)
-                        .SetProperty("AndroidSigningKeyAlias", "spravy")
-                        .SetProperty("AndroidSigningKeyPass", Options.AndroidSigningKeyPass)
-                        .SetProperty("AndroidSigningStorePass", Options.AndroidSigningStorePass)
-                        .SetProperty("AndroidSdkDirectory", "/opt/android-sdk")
-                        .SetProperty("ApplicationVersion", versionService.Version.Code)
-                        .SetProperty("Version", versionService.Version.ToString())
-                        .SetNoIncremental(true)
-                    );
-                }
-                else
-                {
-                    foreach (var runtime in Options.Runtimes.Span)
-                    {
-                        DotNetTasks.DotNetBuild(setting =>
-                            setting.SetProjectFile(Options.CsprojFile.FullName)
-                                .EnableNoRestore()
-                                .SetProperty("AndroidKeyStore", "true")
-                                .SetProperty("AndroidSigningKeyStore", Options.KeyStoreFile.FullName)
-                                .SetProperty("AndroidSigningKeyAlias", "spravy")
-                                .SetProperty("AndroidSigningKeyPass", Options.AndroidSigningKeyPass)
-                                .SetProperty("AndroidSigningStorePass", Options.AndroidSigningStorePass)
-                                .SetProperty("AndroidSdkDirectory", "/opt/android-sdk")
-                                .SetProperty("ApplicationVersion", versionService.Version.Code)
-                                .SetConfiguration(Options.Configuration)
-                                .SetProperty("Version", versionService.Version.ToString())
-                                .SetRuntime(runtime.Name)
-                                .SetNoIncremental(true)
-                        );
-                    }
-                }
-
-                break;
-            }
-            catch (Exception e)
-            {
-                if (i == 2)
-                {
-                    throw;
-                }
-
-                if (e.ToString().Contains("CompileAvaloniaXamlTask"))
-                {
-                    continue;
-                }
-
-                throw;
-            }
-        }
     }
 
     public void Publish()
@@ -96,8 +41,8 @@ public class AndroidProjectBuilder : UiProjectBuilder<AndroidProjectBuilderOptio
                         .SetProperty("Version", versionService.Version.ToString())
                         .SetConfiguration(Options.Configuration)
                         .SetOutput(Options.PublishFolder.FullName)
-                        .EnableNoBuild()
-                        .EnableNoRestore()
+                        .DisableNoBuild()
+                        .DisableNoRestore()
                     );
                 }
                 else
@@ -117,8 +62,8 @@ public class AndroidProjectBuilder : UiProjectBuilder<AndroidProjectBuilderOptio
                                 .SetConfiguration(Options.Configuration)
                                 .SetOutput(Options.PublishFolder.Combine(runtime.Name).FullName)
                                 .SetRuntime(runtime.Name)
-                                .EnableNoBuild()
-                                .EnableNoRestore()
+                                .DisableNoBuild()
+                                .DisableNoRestore()
                         );
                     }
                 }
