@@ -1,8 +1,11 @@
 using System.Runtime.CompilerServices;
+using System.Threading;
+using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
+using Spravy.Ui.Interfaces;
 
-namespace Spravy.Domain.Extensions;
+namespace Spravy.Ui.Extensions;
 
 public static class ObjectStorageExtension
 {
@@ -10,7 +13,7 @@ public static class ObjectStorageExtension
         this IObjectStorage objectStorage,
         string id,
         CancellationToken cancellationToken
-    ) where TObject : new()
+    ) where TObject : IViewModelSetting<TObject>
     {
         return objectStorage.IsExistsAsync(id)
            .IfSuccessAsync(value =>
@@ -20,7 +23,7 @@ public static class ObjectStorageExtension
                     return objectStorage.GetObjectAsync<TObject>(id);
                 }
 
-                return new TObject().ToResult().ToValueTaskResult().ConfigureAwait(false);
+                return TObject.Default.ToResult().ToValueTaskResult().ConfigureAwait(false);
             }, cancellationToken);
     }
 }

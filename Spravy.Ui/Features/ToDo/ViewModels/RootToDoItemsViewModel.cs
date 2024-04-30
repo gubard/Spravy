@@ -135,8 +135,16 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
     }
 
     [ProtoContract]
-    private class RootToDoItemsViewModelSetting
+    private class RootToDoItemsViewModelSetting : IViewModelSetting<RootToDoItemsViewModelSetting>
     {
+        static RootToDoItemsViewModelSetting()
+        {
+            Default = new()
+            {
+                GroupBy = GroupBy.ByStatus,
+            };
+        }
+
         public RootToDoItemsViewModelSetting(RootToDoItemsViewModel viewModel)
         {
             GroupBy = viewModel.ToDoSubItemsViewModel.List.GroupBy;
@@ -148,9 +156,11 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
         }
 
         [ProtoMember(1)]
-        public GroupBy GroupBy { get; set; } = GroupBy.ByStatus;
+        public GroupBy GroupBy { get; set; }
 
         [ProtoMember(2)]
         public bool IsMulti { get; set; }
+
+        public static RootToDoItemsViewModelSetting Default { get; }
     }
 }

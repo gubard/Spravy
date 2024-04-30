@@ -10,6 +10,7 @@ using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
 using Spravy.Ui.Extensions;
+using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 using Spravy.Ui.Services;
 
@@ -79,7 +80,7 @@ public class ResetToDoItemViewModel : NavigatableViewModelBase
     }
 
     [ProtoContract]
-    private class ResetToDoItemViewModelSetting
+    private class ResetToDoItemViewModelSetting : IViewModelSetting<ResetToDoItemViewModelSetting>
     {
         public ResetToDoItemViewModelSetting(ResetToDoItemViewModel viewModel)
         {
@@ -91,7 +92,14 @@ public class ResetToDoItemViewModel : NavigatableViewModelBase
 
         public ResetToDoItemViewModelSetting()
         {
-            IsMoveCircleOrderIndex = true;
+        }
+
+        static ResetToDoItemViewModelSetting()
+        {
+            Default = new()
+            {
+                IsMoveCircleOrderIndex = true,
+            };
         }
 
         [ProtoMember(1)]
@@ -105,5 +113,7 @@ public class ResetToDoItemViewModel : NavigatableViewModelBase
 
         [ProtoMember(4)]
         public bool IsCompleteCurrentTask { get; set; }
+
+        public static ResetToDoItemViewModelSetting Default { get; }
     }
 }

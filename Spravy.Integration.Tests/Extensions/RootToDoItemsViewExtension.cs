@@ -1,5 +1,8 @@
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Diagnostics;
 using Avalonia.Controls.Presenters;
+using Avalonia.Controls.Primitives;
 using Avalonia.VisualTree;
 using FluentAssertions;
 using Spravy.Domain.Extensions;
@@ -13,27 +16,110 @@ namespace Spravy.Integration.Tests.Extensions;
 
 public static class RootToDoItemsViewExtension
 {
+    public static MenuItem GetToDoItemReset(this RootToDoItemsView view, Index index)
+    {
+        return view.GetToDoItemDotsStackPanel(index)
+           .Children
+           .ElementAt(11)
+           .ThrowIfIsNotCast<MenuItem>();
+    }
+
+    public static MenuItem GetToDoItemReorder(this RootToDoItemsView view, Index index)
+    {
+        return view.GetToDoItemDotsStackPanel(index).Children.ElementAt(10).ThrowIfIsNotCast<MenuItem>();
+    }
+
+    public static StackPanel GetToDoItemDotsStackPanel(this RootToDoItemsView view, Index index)
+    {
+        return view.GetToDoItemDotsButton(index)
+           .Flyout
+           .ThrowIfNull()
+           .ThrowIfIsNotCast<IPopupHostProvider>()
+           .PopupHost
+           .ThrowIfNull()
+           .ThrowIfIsNotCast<Visual>()
+           .GetVisualChildren()
+           .Single()
+           .ThrowIfIsNotCast<LayoutTransformControl>()
+           .Child
+           .ThrowIfNull()
+           .ThrowIfIsNotCast<VisualLayerManager>()
+           .Child
+           .ThrowIfNull()
+           .ThrowIfIsNotCast<ContentPresenter>()
+           .Child
+           .ThrowIfNull()
+           .ThrowIfIsNotCast<MenuFlyoutPresenter>()
+           .GetVisualChildren()
+           .Single()
+           .ThrowIfIsNotCast<Panel>()
+           .Children
+           .Last()
+           .ThrowIfIsNotCast<Border>()
+           .Child
+           .ThrowIfNull()
+           .ThrowIfIsNotCast<ItemsPresenter>()
+           .GetVisualChildren()
+           .Single()
+           .ThrowIfIsNotCast<StackPanel>();
+    }
+
+    public static Button GetToDoItemDotsButton(this RootToDoItemsView view, Index index)
+    {
+        return view.GetToDoItemButton(index)
+           .Content
+           .ThrowIfNull()
+           .ThrowIfIsNotCast<Grid>()
+           .Children
+           .Last()
+           .ThrowIfIsNotCast<Grid>()
+           .Children
+           .First()
+           .ThrowIfIsNotCast<Button>();
+    }
+
+    public static Button GetToDoItemButton(this RootToDoItemsView view, Index index)
+    {
+        return view.GetDoItemItemsControl()
+           .ThrowIfNull()
+           .GetVisualChildren()
+           .Single()
+           .Case(a => a.ToString())
+           .ThrowIfIsNotCast<Border>()
+           .Child
+           .ThrowIfNull()
+           .ThrowIfIsNotCast<ItemsPresenter>()
+           .GetVisualChildren()
+           .Single()
+           .ThrowIfIsNotCast<VirtualizingStackPanel>()
+           .Children
+           .ElementAt(index)
+           .ThrowIfIsNotCast<ContentPresenter>()
+           .Child
+           .ThrowIfNull()
+           .ThrowIfIsNotCast<BusyArea>()
+           .Content
+           .ThrowIfNull()
+           .ThrowIfIsNotCast<Button>();
+    }
+
     public static RootToDoItemsView AddToDoItem(this RootToDoItemsView view, Window window, string name)
     {
         var toDoItemCount = view.GetDoItemItemsControl()?.ItemCount ?? 0;
 
         view
-           .Case(() => view.FindControl<Button>(ElementNames.AddRootToDoItemButton)
-               .ThrowIfNull()
+           .Case(() => view.GetControl<Button>(ElementNames.AddRootToDoItemButton)
                .ClickOn(window)
                .RunJobsAll(2))
            .Case(() => window.GetContentDialogView<ConfirmView, ConfirmViewModel>()
-               .Case(c => c.FindControl<ContentControl>(ElementNames.ContentContentControl)
-                   .ThrowIfNull()
+               .Case(c => c.GetControl<ContentControl>(ElementNames.ContentContentControl)
                    .GetContentView<AddRootToDoItemView>()
-                   .FindControl<ContentControl>(ElementNames.ToDoItemContentContentControl)
-                   .ThrowIfNull()
+                   .GetControl<ContentControl>(ElementNames.ToDoItemContentContentControl)
                    .GetContentView<ToDoItemContentView>()
-                   .FindControl<TextBox>(ElementNames.NameTextBox)
-                   .ThrowIfNull()
+                   .GetControl<TextBox>(ElementNames.NameTextBox)
                    .ClearText(window)
                    .SetText(window, name))
-               .Case(c => c.FindControl<Button>(ElementNames.OkButton).ThrowIfNull().ClickOn(window).RunJobsAll(5)))
+               .Case(c => c.GetControl<Button>(ElementNames.OkButton).ClickOn(window).RunJobsAll(5)))
            .GetDoItemItemsControl()
            .ThrowIfNull()
            .Case(ic => ic.ItemCount.Should().Be(toDoItemCount + 1))
@@ -76,20 +162,15 @@ public static class RootToDoItemsViewExtension
 
     public static ItemsControl? GetDoItemItemsControl(this RootToDoItemsView view)
     {
-        var children = view.FindControl<ContentControl>(ElementNames.ToDoSubItemsContentControl)
-           .ThrowIfNull()
+        var children = view.GetControl<ContentControl>(ElementNames.ToDoSubItemsContentControl)
            .GetContentView<ToDoSubItemsView>()
-           .FindControl<ContentControl>(ElementNames.ListContentControl)
-           .ThrowIfNull()
+           .GetControl<ContentControl>(ElementNames.ListContentControl)
            .GetContentView<MultiToDoItemsView>()
-           .FindControl<ContentControl>(ElementNames.ContentContentControl)
-           .ThrowIfNull()
+           .GetControl<ContentControl>(ElementNames.ContentContentControl)
            .GetContentView<ToDoItemsGroupByView>()
-           .FindControl<ContentControl>(ElementNames.ContentContentControl)
-           .ThrowIfNull()
+           .GetControl<ContentControl>(ElementNames.ContentContentControl)
            .GetContentView<ToDoItemsGroupByStatusView>()
-           .FindControl<ContentControl>(ElementNames.ReadyForCompletedContentControl)
-           .ThrowIfNull()
+           .GetControl<ContentControl>(ElementNames.ReadyForCompletedContentControl)
            .GetVisualChildren()
            .ToArray();
 
@@ -99,8 +180,7 @@ public static class RootToDoItemsViewExtension
                .GetVisualChildren()
                .Single()
                .ThrowIfIsNotCast<ToDoItemsView>()
-               .FindControl<ItemsControl>(ElementNames.ItemsItemsControl)
-               .ThrowIfNull();
+               .GetControl<ItemsControl>(ElementNames.ItemsItemsControl);
         }
 
         return null;

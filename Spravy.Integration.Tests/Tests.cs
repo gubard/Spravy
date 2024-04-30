@@ -1,9 +1,6 @@
 using System.Text;
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Diagnostics;
 using Avalonia.Controls.Presenters;
-using Avalonia.Controls.Primitives;
 using Avalonia.Headless.NUnit;
 using Avalonia.Input;
 using Avalonia.VisualTree;
@@ -18,7 +15,6 @@ using Spravy.Ui.Features.ToDo.ViewModels;
 using Spravy.Ui.Features.ToDo.Views;
 using Spravy.Ui.ViewModels;
 using Spravy.Ui.Views;
-using SukiUI.Controls;
 
 namespace Spravy.Integration.Tests;
 
@@ -42,11 +38,9 @@ public class Tests
                    .Case(() => w
                        .Case(() => w.GetCurrentView<LoginView, LoginViewModel>()
                            .RunJobsAll(1)
-                           .Case(l => l.FindControl<TextBox>(ElementNames.LoginTextBox)
-                               .ThrowIfNull()
+                           .Case(l => l.GetControl<TextBox>(ElementNames.LoginTextBox)
                                .SetText(w, TextHelper.TextLength4))
-                           .Case(l => l.FindControl<TextBox>(ElementNames.PasswordTextBox)
-                               .ThrowIfNull()
+                           .Case(l => l.GetControl<TextBox>(ElementNames.PasswordTextBox)
                                .SetText(w, TextHelper.TextLength8))
                            .Case(l => l.FindControl<Button>(ElementNames.LoginButton)
                                .ThrowIfNull()
@@ -210,70 +204,8 @@ public class Tests
                    .ShowWindow()
                    .RunJobsAll(5)
                    .Case(() => w.GetCurrentView<RootToDoItemsView, RootToDoItemsViewModel>()
-                       .GetDoItemItemsControl()
-                       .ThrowIfNull()
-                       .GetVisualChildren()
-                       .Single()
-                       .Case(a => a.ToString())
-                       .ThrowIfIsNotCast<Border>()
-                       .Child
-                       .ThrowIfNull()
-                       .ThrowIfIsNotCast<ItemsPresenter>()
-                       .GetVisualChildren()
-                       .Single()
-                       .ThrowIfIsNotCast<VirtualizingStackPanel>()
-                       .Children
-                       .Last()
-                       .ThrowIfIsNotCast<ContentPresenter>()
-                       .Child
-                       .ThrowIfNull()
-                       .ThrowIfIsNotCast<BusyArea>()
-                       .Content
-                       .ThrowIfNull()
-                       .ThrowIfIsNotCast<Button>()
-                       .Content
-                       .ThrowIfNull()
-                       .ThrowIfIsNotCast<Grid>()
-                       .Children
-                       .Last()
-                       .ThrowIfIsNotCast<Grid>()
-                       .Children
-                       .First()
-                       .ThrowIfIsNotCast<Button>()
-                       .ClickOn(w)
-                       .RunJobsAll(1)
-                       .Flyout
-                       .ThrowIfNull()
-                       .ThrowIfIsNotCast<IPopupHostProvider>()
-                       .PopupHost
-                       .ThrowIfNull()
-                       .ThrowIfIsNotCast<Visual>()
-                       .GetVisualChildren()
-                       .Single()
-                       .ThrowIfIsNotCast<LayoutTransformControl>()
-                       .Child
-                       .ThrowIfNull()
-                       .ThrowIfIsNotCast<VisualLayerManager>()
-                       .Child
-                       .ThrowIfNull()
-                       .ThrowIfIsNotCast<ContentPresenter>()
-                       .Child
-                       .ThrowIfNull()
-                       .ThrowIfIsNotCast<MenuFlyoutPresenter>()
-                       .GetVisualChildren()
-                       .Single()
-                       .ThrowIfIsNotCast<Panel>()
-                       .Children
-                       .Last()
-                       .ThrowIfIsNotCast<Border>()
-                       .Child
-                       .ThrowIfNull()
-                       .ThrowIfIsNotCast<ItemsPresenter>()
-                       .GetVisualChildren()
-                       .Single()
-                       .ThrowIfIsNotCast<StackPanel>()
-                       .Children
-                       .ElementAt(10)
+                       .Case(r => r.GetToDoItemDotsButton(0).ClickOn(w).RunJobsAll(1))
+                       .GetToDoItemReorder(0)
                        .ClickOn(w)
                        .RunJobsAll(2))
                    .Case(() => w.GetContentDialogView<ConfirmView, ConfirmViewModel>()
@@ -284,6 +216,46 @@ public class Tests
                        .ItemCount
                        .Should()
                        .Be(1))
+                   .Close(), (w, _) => w.SaveFrame().LogCurrentState());
+    }
+
+    [AvaloniaTest]
+    [Order(3)]
+    [Property("Priority", "3")]
+    public void TestResetToDoItemFlow()
+    {
+        WindowHelper.CreateWindow()
+           .TryCatch(
+                w => w.SetSize(1000, 1000)
+                   .ShowWindow()
+                   .RunJobsAll(5)
+                   .Case(() => w.GetCurrentView<RootToDoItemsView, RootToDoItemsViewModel>()
+                       .Case(r => r.GetToDoItemDotsButton(0).ClickOn(w).RunJobsAll(1))
+                       .GetToDoItemReset(0)
+                       .ClickOn(w)
+                       .RunJobsAll(2))
+                   .Case(() => w.GetContentDialogView<ConfirmView, ConfirmViewModel>()
+                       .Case(c => c.GetControl<ContentControl>(ElementNames.ContentContentControl)
+                           .GetContentView<ResetToDoItemView>()
+                           .GetControl<CheckBox>(ElementNames.IsMoveCircleOrderIndexCheckBoxName)
+                           .Case(cc => cc.IsChecked.Should().Be(true))
+                           .ClickOn(w))
+                       .GetControl<Button>(ElementNames.OkButton)
+                       .ClickOn(w)
+                       .RunJobsAll(1))
+                   .Case(() => w.GetCurrentView<RootToDoItemsView, RootToDoItemsViewModel>()
+                       .Case(r => r.GetToDoItemDotsButton(0).ClickOn(w).RunJobsAll(1))
+                       .GetToDoItemReset(0)
+                       .ClickOn(w)
+                       .RunJobsAll(2))
+                   .Case(() => w.GetContentDialogView<ConfirmView, ConfirmViewModel>()
+                       .Case(c => c.FindControl<ContentControl>(ElementNames.ContentContentControl)
+                           .ThrowIfNull()
+                           .GetContentView<ResetToDoItemView>()
+                           .GetControl<CheckBox>(ElementNames.IsMoveCircleOrderIndexCheckBoxName)
+                           .IsChecked
+                           .Should()
+                           .Be(false)))
                    .Close(), (w, _) => w.SaveFrame().LogCurrentState());
     }
 }

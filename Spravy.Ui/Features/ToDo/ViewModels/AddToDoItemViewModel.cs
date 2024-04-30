@@ -15,6 +15,7 @@ using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.Ui.Extensions;
+using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 using Spravy.Ui.Services;
 using Spravy.Ui.ViewModels;
@@ -98,8 +99,13 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
     }
 
     [ProtoContract]
-    private class AddToDoItemViewModelSetting
+    private class AddToDoItemViewModelSetting : IViewModelSetting<AddToDoItemViewModelSetting>
     {
+        static AddToDoItemViewModelSetting()
+        {
+            Default = new();
+        }
+
         public AddToDoItemViewModelSetting()
         {
         }
@@ -127,5 +133,7 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
 
         [ProtoMember(5)]
         public DescriptionType DescriptionType { get; set; }
+
+        public static AddToDoItemViewModelSetting Default { get; }
     }
 }

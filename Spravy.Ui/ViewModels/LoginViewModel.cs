@@ -321,7 +321,7 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
     }
 
     [ProtoContract]
-    private class LoginViewModelSetting
+    private class LoginViewModelSetting : IViewModelSetting<LoginViewModelSetting>
     {
         public LoginViewModelSetting(LoginViewModel viewModel)
         {
@@ -332,7 +332,14 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
         {
         }
 
+        static LoginViewModelSetting()
+        {
+            Default = new();
+        }
+
         [ProtoMember(1)]
         public string Login { get; set; } = string.Empty;
+
+        public static LoginViewModelSetting Default { get; }
     }
 }

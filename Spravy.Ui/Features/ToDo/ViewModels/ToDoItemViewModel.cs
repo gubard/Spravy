@@ -311,7 +311,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     }
 
     [ProtoContract]
-    private class ToDoItemViewModelSetting
+    private class ToDoItemViewModelSetting : IViewModelSetting<ToDoItemViewModelSetting>
     {
         public ToDoItemViewModelSetting(ToDoItemViewModel viewModel)
         {
@@ -322,11 +322,21 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
         public ToDoItemViewModelSetting()
         {
         }
+        
+        static ToDoItemViewModelSetting()
+        {
+            Default = new ()
+            {
+                GroupBy = GroupBy.ByStatus,
+            };
+        }
 
         [ProtoMember(1)]
-        public GroupBy GroupBy { get; set; } = GroupBy.ByStatus;
+        public GroupBy GroupBy { get; set; }
 
         [ProtoMember(2)]
         public bool IsMulti { get; set; }
+
+        public static ToDoItemViewModelSetting Default { get; }
     }
 }

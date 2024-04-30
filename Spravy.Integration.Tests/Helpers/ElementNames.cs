@@ -24,4 +24,5 @@ public static class ElementNames
     public const string ErrorsItemsControl = "errors-items-control";
     public const string RememberMeCheckBoxName = "remember-me-check-box";
     public const string ItemsListBox = "items-list-box";
+    public const string IsMoveCircleOrderIndexCheckBoxName = "is-move-circle-order-index-check-box";
 }

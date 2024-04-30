@@ -10,6 +10,7 @@ using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.Ui.Extensions;
+using Spravy.Ui.Interfaces;
 using Spravy.Ui.Models;
 using Spravy.Ui.Services;
 using Spravy.Ui.ViewModels;
@@ -72,8 +73,13 @@ public class AddRootToDoItemViewModel : NavigatableViewModelBase
     }
 
     [ProtoContract]
-    private class AddRootToDoItemViewModelSetting
+    private class AddRootToDoItemViewModelSetting : IViewModelSetting<AddRootToDoItemViewModelSetting>
     {
+        static AddRootToDoItemViewModelSetting()
+        {
+            Default = new();
+        }
+        
         public AddRootToDoItemViewModelSetting()
         {
         }
@@ -101,5 +107,7 @@ public class AddRootToDoItemViewModel : NavigatableViewModelBase
 
         [ProtoMember(5)]
         public DescriptionType DescriptionType { get; set; }
+
+        public static AddRootToDoItemViewModelSetting Default { get; }
     }
 }

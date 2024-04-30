@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using Microsoft.EntityFrameworkCore;
 using Spravy.Db.Models;
 using Spravy.Db.Services;
 using Spravy.Domain.Extensions;
@@ -90,6 +91,7 @@ public class SqliteObjectStorage : IObjectStorage
 
     private async ValueTask<Result<TObject>> GetObjectCore<TObject>(string id)
     {
+        var t = await storageDbContext.Set<StorageEntity>().ToArrayAsync();
         var item = await storageDbContext.FindAsync<StorageEntity>(id);
         item = item.ThrowIfNull();
         await using var stream = item.Value.ToMemoryStream();

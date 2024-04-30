@@ -117,7 +117,7 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
     }
 
     [ProtoContract]
-    private class LeafToDoItemsViewModelSetting
+    private class LeafToDoItemsViewModelSetting : IViewModelSetting<LeafToDoItemsViewModelSetting>
     {
         public LeafToDoItemsViewModelSetting(LeafToDoItemsViewModel viewModel)
         {
@@ -129,10 +129,20 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
         {
         }
 
+        static LeafToDoItemsViewModelSetting()
+        {
+            Default = new()
+            {
+                GroupBy = GroupBy.ByStatus,
+            };
+        }
+
         [ProtoMember(1)]
-        public GroupBy GroupBy { get; set; } = GroupBy.ByStatus;
+        public GroupBy GroupBy { get; set; }
 
         [ProtoMember(2)]
         public bool IsMulti { get; set; }
+
+        public static LeafToDoItemsViewModelSetting Default { get; }
     }
 }

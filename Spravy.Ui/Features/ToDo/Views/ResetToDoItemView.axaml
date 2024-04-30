@@ -5,6 +5,7 @@
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:ru="http://reactiveui.net"
                         xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+                        xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                         x:Class="Spravy.Ui.Features.ToDo.Views.ResetToDoItemView"
                         x:DataType="vm:ResetToDoItemViewModel">
@@ -17,7 +18,8 @@
     <StackPanel>
         <CheckBox IsChecked="{Binding IsCompleteChildrenTask}"
                   Content="{DynamicResource ResetToDoItemView.CompleteChildrenTask}" />
-        <CheckBox IsChecked="{Binding IsMoveCircleOrderIndex}"
+        <CheckBox Name="{x:Static v:ResetToDoItemView.IsMoveCircleOrderIndexCheckBoxName}" 
+                  IsChecked="{Binding IsMoveCircleOrderIndex}"
                   Content="{DynamicResource ResetToDoItemView.MoveCircleOrderIndex}" />
         <CheckBox IsChecked="{Binding IsOnlyCompletedTasks}"
                   Content="{DynamicResource ResetToDoItemView.OnlyCompletedTasks}" />

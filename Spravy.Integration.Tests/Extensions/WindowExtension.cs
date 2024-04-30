@@ -37,8 +37,7 @@ public static class WindowExtension
            .GetVisualChildren()
            .Single()
            .ThrowIfIsNotCast<Control>()
-           .FindControl<Button>(ElementNames.OkButton)
-           .ThrowIfNull()
+           .GetControl<Button>(ElementNames.OkButton)
            .ClickOn(window);
 
         dialogHost.IsOpen.Should().BeFalse();

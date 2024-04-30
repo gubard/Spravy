@@ -85,7 +85,7 @@ public class SearchViewModel : NavigatableViewModelBase, IToDoItemSearchProperti
     }
 
     [ProtoContract]
-    private class SearchViewModelSetting
+    private class SearchViewModelSetting : IViewModelSetting<SearchViewModelSetting>
     {
         public SearchViewModelSetting(SearchViewModel viewModel)
         {
@@ -96,7 +96,14 @@ public class SearchViewModel : NavigatableViewModelBase, IToDoItemSearchProperti
         {
         }
 
+        static SearchViewModelSetting()
+        {
+            Default = new();
+        }
+
         [ProtoMember(1)]
         public string SearchText { get; set; } = string.Empty;
+
+        public static SearchViewModelSetting Default { get; }
     }
 }
