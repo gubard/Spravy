@@ -13,13 +13,13 @@ using Spravy.ToDo.Protos;
 namespace Spravy.Router.Service.Services;
 
 [Authorize]
-public class GrpcToDoService : ToDoService.ToDoServiceBase
+public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
 {
     private readonly IMapper mapper;
     private readonly ISerializer serializer;
     private readonly IToDoService toDoService;
 
-    public GrpcToDoService(IToDoService toDoService, IMapper mapper, ISerializer serializer)
+    public GrpcRouterToDoService(IToDoService toDoService, IMapper mapper, ISerializer serializer)
     {
         this.toDoService = toDoService;
         this.mapper = mapper;

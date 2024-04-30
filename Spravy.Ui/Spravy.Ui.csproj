@@ -7,56 +7,56 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <AvaloniaResource Include="Assets\**"/>
+        <AvaloniaResource Include="Assets\**" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoMapper" Version="13.0.1"/>
-        <PackageReference Include="Avalonia" Version="11.0.10"/>
-        <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.10"/>
-        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.10"/>
+        <PackageReference Include="AutoMapper" Version="13.0.1" />
+        <PackageReference Include="Avalonia" Version="11.0.10" />
+        <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.10" />
+        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.10" />
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.10"/>
-        <PackageReference Include="Avalonia.Xaml.Interactions" Version="11.0.10.4"/>
-        <PackageReference Include="Avalonia.Xaml.Interactions.Custom" Version="11.0.10.4"/>
-        <PackageReference Include="Avalonia.Xaml.Interactions.DragAndDrop" Version="11.0.10.4"/>
-        <PackageReference Include="Avalonia.Xaml.Interactions.Responsive" Version="11.0.10.4"/>
-        <PackageReference Include="DialogHost.Avalonia" Version="0.7.7"/>
-        <PackageReference Include="Google.Protobuf" Version="3.26.1"/>
-        <PackageReference Include="Grpc.Net.Client" Version="2.62.0"/>
-        <PackageReference Include="Grpc.Net.Client.Web" Version="2.62.0"/>
-        <PackageReference Include="Grpc.Net.ClientFactory" Version="2.62.0"/>
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.10" />
+        <PackageReference Include="Avalonia.Xaml.Interactions" Version="11.0.10.4" />
+        <PackageReference Include="Avalonia.Xaml.Interactions.Custom" Version="11.0.10.4" />
+        <PackageReference Include="Avalonia.Xaml.Interactions.DragAndDrop" Version="11.0.10.4" />
+        <PackageReference Include="Avalonia.Xaml.Interactions.Responsive" Version="11.0.10.4" />
+        <PackageReference Include="DialogHost.Avalonia" Version="0.7.7" />
+        <PackageReference Include="Google.Protobuf" Version="3.26.1" />
+        <PackageReference Include="Grpc.Net.Client" Version="2.62.0" />
+        <PackageReference Include="Grpc.Net.Client.Web" Version="2.62.0" />
+        <PackageReference Include="Grpc.Net.ClientFactory" Version="2.62.0" />
         <PackageReference Include="Grpc.Tools" Version="2.62.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Markdown.Avalonia" Version="11.0.2"/>
-        <PackageReference Include="Material.Icons.Avalonia" Version="2.1.9"/>
-        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0"/>
-        <PackageReference Include="ReactiveUI.Fody" Version="19.5.41"/>
-        <PackageReference Include="Serilog.Sinks.Console" Version="5.0.1"/>
-        <PackageReference Include="SmartFormat" Version="3.3.2"/>
-        <PackageReference Include="SukiUI" Version="6.0.0-beta4"/>
-        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.5.1"/>
+        <PackageReference Include="Markdown.Avalonia" Version="11.0.2" />
+        <PackageReference Include="Material.Icons.Avalonia" Version="2.1.9" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
+        <PackageReference Include="ReactiveUI.Fody" Version="19.5.41" />
+        <PackageReference Include="Serilog.Sinks.Console" Version="5.0.1" />
+        <PackageReference Include="SmartFormat" Version="3.3.2" />
+        <PackageReference Include="SukiUI" Version="6.0.0-beta4" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.5.1" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Spravy.Authentication.Domain.Client\Spravy.Authentication.Domain.Client.csproj"/>
-        <ProjectReference Include="..\Spravy.Authentication.Domain.Mapper\Spravy.Authentication.Domain.Mapper.csproj"/>
-        <ProjectReference Include="..\Spravy.Core\Spravy.Core.csproj"/>
-        <ProjectReference Include="..\Spravy.Db.Sqlite\Spravy.Db.Sqlite.csproj"/>
-        <ProjectReference Include="..\Spravy.Db\Spravy.Db.csproj"/>
-        <ProjectReference Include="..\Spravy.Domain.Di\Spravy.Domain.Di.csproj"/>
-        <ProjectReference Include="..\Spravy.EventBus.Domain.Client\Spravy.EventBus.Domain.Client.csproj"/>
-        <ProjectReference Include="..\Spravy.EventBus.Domain.Mapper\Spravy.EventBus.Domain.Mapper.csproj"/>
-        <ProjectReference Include="..\Spravy.EventBus.Domain\Spravy.EventBus.Domain.csproj"/>
-        <ProjectReference Include="..\Spravy.PasswordGenerator.Domain.Client\Spravy.PasswordGenerator.Domain.Client.csproj"/>
-        <ProjectReference Include="..\Spravy.PasswordGenerator.Domain\Spravy.PasswordGenerator.Domain.csproj"/>
-        <ProjectReference Include="..\Spravy.Schedule.Domain.Client\Spravy.Schedule.Domain.Client.csproj"/>
-        <ProjectReference Include="..\Spravy.Schedule.Domain\Spravy.Schedule.Domain.csproj"/>
-        <ProjectReference Include="..\Spravy.ToDo.Domain.Client\Spravy.ToDo.Domain.Client.csproj"/>
-        <ProjectReference Include="..\Spravy.ToDo.Domain.Mapper\Spravy.ToDo.Domain.Mapper.csproj"/>
-        <ProjectReference Include="..\Spravy.ToDo.Domain\Spravy.ToDo.Domain.csproj"/>
+        <ProjectReference Include="..\Spravy.Authentication.Domain.Client\Spravy.Authentication.Domain.Client.csproj" />
+        <ProjectReference Include="..\Spravy.Authentication.Domain.Mapper\Spravy.Authentication.Domain.Mapper.csproj" />
+        <ProjectReference Include="..\Spravy.Core\Spravy.Core.csproj" />
+        <ProjectReference Include="..\Spravy.Db.Sqlite\Spravy.Db.Sqlite.csproj" />
+        <ProjectReference Include="..\Spravy.Db\Spravy.Db.csproj" />
+        <ProjectReference Include="..\Spravy.Domain.Di\Spravy.Domain.Di.csproj" />
+        <ProjectReference Include="..\Spravy.EventBus.Domain.Client\Spravy.EventBus.Domain.Client.csproj" />
+        <ProjectReference Include="..\Spravy.EventBus.Domain.Mapper\Spravy.EventBus.Domain.Mapper.csproj" />
+        <ProjectReference Include="..\Spravy.EventBus.Domain\Spravy.EventBus.Domain.csproj" />
+        <ProjectReference Include="..\Spravy.PasswordGenerator.Domain.Client\Spravy.PasswordGenerator.Domain.Client.csproj" />
+        <ProjectReference Include="..\Spravy.PasswordGenerator.Domain\Spravy.PasswordGenerator.Domain.csproj" />
+        <ProjectReference Include="..\Spravy.Schedule.Domain.Client\Spravy.Schedule.Domain.Client.csproj" />
+        <ProjectReference Include="..\Spravy.Schedule.Domain\Spravy.Schedule.Domain.csproj" />
+        <ProjectReference Include="..\Spravy.ToDo.Domain.Client\Spravy.ToDo.Domain.Client.csproj" />
+        <ProjectReference Include="..\Spravy.ToDo.Domain.Mapper\Spravy.ToDo.Domain.Mapper.csproj" />
+        <ProjectReference Include="..\Spravy.ToDo.Domain\Spravy.ToDo.Domain.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -87,6 +87,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <UpToDateCheckInput Remove="Features\Localizations\Styles\Resources.axaml"/>
+        <UpToDateCheckInput Remove="Features\Localizations\Styles\Resources.axaml" />
     </ItemGroup>
 </Project>

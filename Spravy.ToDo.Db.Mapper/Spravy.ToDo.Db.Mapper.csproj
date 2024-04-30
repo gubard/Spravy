@@ -6,11 +6,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoMapper" Version="13.0.1"/>
+        <PackageReference Include="AutoMapper" Version="13.0.1" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Spravy.ToDo.Db\Spravy.ToDo.Db.csproj"/>
-        <ProjectReference Include="..\Spravy.ToDo.Domain\Spravy.ToDo.Domain.csproj"/>
+        <ProjectReference Include="..\Spravy.ToDo.Db\Spravy.ToDo.Db.csproj" />
+        <ProjectReference Include="..\Spravy.ToDo.Domain\Spravy.ToDo.Domain.csproj" />
     </ItemGroup>
 </Project>

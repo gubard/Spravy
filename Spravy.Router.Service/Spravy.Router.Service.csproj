@@ -7,8 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Grpc.AspNetCore" Version="2.62.0"/>
-        <PackageReference Include="Grpc.Core" Version="2.46.6"/>
+        <PackageReference Include="Grpc.AspNetCore" Version="2.62.0" />
+        <PackageReference Include="Grpc.Core" Version="2.46.6" />
     </ItemGroup>
 
     <ItemGroup>
@@ -18,11 +18,11 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Spravy.Authentication.Domain.Client\Spravy.Authentication.Domain.Client.csproj" Aliases="AuthenticationClient"/>
-        <ProjectReference Include="..\Spravy.EventBus.Domain.Client\Spravy.EventBus.Domain.Client.csproj" Aliases="AuthenticationEventBus"/>
-        <ProjectReference Include="..\Spravy.Schedule.Domain.Client\Spravy.Schedule.Domain.Client.csproj" Aliases="AuthenticationSchedule"/>
-        <ProjectReference Include="..\Spravy.Service\Spravy.Service.csproj"/>
-        <ProjectReference Include="..\Spravy.ToDo.Domain.Client\Spravy.ToDo.Domain.Client.csproj" Aliases="AuthenticationToDo"/>
+        <ProjectReference Include="..\Spravy.Authentication.Domain.Client\Spravy.Authentication.Domain.Client.csproj" Aliases="AuthenticationClient" />
+        <ProjectReference Include="..\Spravy.EventBus.Domain.Client\Spravy.EventBus.Domain.Client.csproj" Aliases="AuthenticationEventBus" />
+        <ProjectReference Include="..\Spravy.Schedule.Domain.Client\Spravy.Schedule.Domain.Client.csproj" Aliases="AuthenticationSchedule" />
+        <ProjectReference Include="..\Spravy.Service\Spravy.Service.csproj" />
+        <ProjectReference Include="..\Spravy.ToDo.Domain.Client\Spravy.ToDo.Domain.Client.csproj" Aliases="AuthenticationToDo" />
     </ItemGroup>
 
     <ItemGroup>

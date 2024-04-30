@@ -9,13 +9,13 @@ using Spravy.Service.Extensions;
 
 namespace Spravy.Router.Service.Services;
 
-public class GrpcAuthenticationService : AuthenticationService.AuthenticationServiceBase
+public class GrpcRouterAuthenticationService : AuthenticationService.AuthenticationServiceBase
 {
     private readonly IAuthenticationService authenticationService;
     private readonly IMapper mapper;
     private readonly ISerializer serializer;
 
-    public GrpcAuthenticationService(
+    public GrpcRouterAuthenticationService(
         IAuthenticationService authenticationService,
         IMapper mapper,
         ISerializer serializer

@@ -11,7 +11,7 @@ try
     Log.Information("Starting web app");
 
     WebApplication.CreateBuilder(args)
-       .BuildSpravy<GrpcAuthenticationService, GrpcEventBusService, GrpcScheduleService, GrpcToDoService,
+       .BuildSpravy<GrpcRouterAuthenticationService, GrpcRouterEventBusService, GrpcRouterRouterScheduleService, GrpcRouterToDoService,
             SpravyRouterServiceMark>(args, x => x.RegisterRouter())
        .Run();
 }

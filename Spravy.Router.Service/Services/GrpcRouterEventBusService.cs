@@ -8,13 +8,13 @@ using Spravy.Service.Extensions;
 namespace Spravy.Router.Service.Services;
 
 [Authorize]
-public class GrpcEventBusService : EventBusService.EventBusServiceBase
+public class GrpcRouterEventBusService : EventBusService.EventBusServiceBase
 {
     private readonly IEventBusService eventBusService;
-    private readonly ILogger<GrpcEventBusService> logger;
+    private readonly ILogger<GrpcRouterEventBusService> logger;
     private readonly IMapper mapper;
 
-    public GrpcEventBusService(IMapper mapper, ILogger<GrpcEventBusService> logger, IEventBusService eventBusService)
+    public GrpcRouterEventBusService(IMapper mapper, ILogger<GrpcRouterEventBusService> logger, IEventBusService eventBusService)
     {
         this.mapper = mapper;
         this.logger = logger;

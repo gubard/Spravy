@@ -6,7 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Spravy.EventBus.Db.Sqlite\Spravy.EventBus.Db.Sqlite.csproj"/>
+        <ProjectReference Include="..\Spravy.EventBus.Db.Sqlite\Spravy.EventBus.Db.Sqlite.csproj" />
     </ItemGroup>
 
     <ItemGroup>

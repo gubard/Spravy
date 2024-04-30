@@ -1,12 +1,12 @@
-extern alias AuthenticationClient;
+extern alias AuthenticationToDo;
 extern alias AuthenticationEventBus;
 extern alias AuthenticationSchedule;
-extern alias AuthenticationToDo;
+extern alias AuthenticationClient;
 using AuthenticationClient::Spravy.Authentication.Domain.Client.Models;
 using AuthenticationClient::Spravy.Authentication.Domain.Client.Services;
+using AuthenticationClient::Spravy.Authentication.Protos;
 using AuthenticationEventBus::Spravy.EventBus.Domain.Client.Models;
 using AuthenticationEventBus::Spravy.EventBus.Domain.Client.Services;
-using AuthenticationEventBus::Spravy.EventBus.Protos;
 using AuthenticationSchedule::Spravy.Schedule.Domain.Client.Models;
 using AuthenticationSchedule::Spravy.Schedule.Domain.Client.Services;
 using AuthenticationSchedule::Spravy.Schedule.Protos;
@@ -29,8 +29,7 @@ using Spravy.Service.Extensions;
 using Spravy.Service.Services;
 using Spravy.ToDo.Domain.Interfaces;
 using Spravy.ToDo.Domain.Mapper.Profiles;
-using AuthenticationService = AuthenticationService;
-using Protos_AuthenticationService = AuthenticationClient::Spravy.Authentication.Protos.AuthenticationService;
+using Protos_EventBusService = AuthenticationEventBus::Spravy.EventBus.Protos.EventBusService;
 
 namespace Spravy.Router.Service.Extensions;
 
@@ -53,11 +52,11 @@ public static class ServiceCollectionExtension
                 SpravyToDoProfile>();
 
         serviceCollection
-           .AddGrpcService<GrpcAuthenticationService, Protos_AuthenticationService.AuthenticationServiceClient,
+           .AddGrpcService<GrpcAuthenticationService, AuthenticationService.AuthenticationServiceClient,
                 GrpcAuthenticationServiceOptions>();
 
         serviceCollection
-           .AddGrpcServiceAuth<GrpcEventBusService, EventBusService.EventBusServiceClient,
+           .AddGrpcServiceAuth<GrpcEventBusService, Protos_EventBusService.EventBusServiceClient,
                 GrpcEventBusServiceOptions>();
 
         serviceCollection

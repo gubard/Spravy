@@ -10,13 +10,12 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.4"/>
-        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.4" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
     </ItemGroup>
 
-
     <ItemGroup>
-        <ProjectReference Include="..\Spravy.Authentication.Db.Sqlite\Spravy.Authentication.Db.Sqlite.csproj"/>
-        <ProjectReference Include="..\Spravy.Domain\Spravy.Domain.csproj"/>
+        <ProjectReference Include="..\Spravy.Authentication.Db.Sqlite\Spravy.Authentication.Db.Sqlite.csproj" />
+        <ProjectReference Include="..\Spravy.Domain\Spravy.Domain.csproj" />
     </ItemGroup>
 </Project>

@@ -18,15 +18,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Avalonia.Desktop" Version="11.0.10"/>
+        <PackageReference Include="Avalonia.Desktop" Version="11.0.10" />
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.10"/>
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.10" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Spravy.Core\Spravy.Core.csproj"/>
-        <ProjectReference Include="..\Spravy.Db.Sqlite\Spravy.Db.Sqlite.csproj"/>
-        <ProjectReference Include="..\Spravy.Ui\Spravy.Ui.csproj"/>
+        <ProjectReference Include="..\Spravy.Core\Spravy.Core.csproj" />
+        <ProjectReference Include="..\Spravy.Db.Sqlite\Spravy.Db.Sqlite.csproj" />
+        <ProjectReference Include="..\Spravy.Ui\Spravy.Ui.csproj" />
     </ItemGroup>
 
     <ItemGroup>

@@ -11,7 +11,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <WasmExtraFilesToDeploy Include="AppBundle\**"/>
+        <WasmExtraFilesToDeploy Include="AppBundle\**" />
 
         <WasmExtraFilesToDeploy Include="..\Spravy.Ui\Assets\Images\Logo.png">
             <Link>AppBundle/Logo.png</Link>
@@ -20,11 +20,11 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Avalonia.Browser" Version="11.0.10"/>
+        <PackageReference Include="Avalonia.Browser" Version="11.0.10" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Spravy.Ui\Spravy.Ui.csproj"/>
+        <ProjectReference Include="..\Spravy.Ui\Spravy.Ui.csproj" />
     </ItemGroup>
 
     <ItemGroup>

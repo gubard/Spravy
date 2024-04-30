@@ -8,12 +8,12 @@ using Spravy.Schedule.Protos;
 namespace Spravy.Router.Service.Services;
 
 [Authorize]
-public class GrpcScheduleService : ScheduleService.ScheduleServiceBase
+public class GrpcRouterRouterScheduleService : ScheduleService.ScheduleServiceBase
 {
     private readonly IMapper mapper;
     private readonly IScheduleService scheduleService;
 
-    public GrpcScheduleService(IScheduleService scheduleService, IMapper mapper)
+    public GrpcRouterRouterScheduleService(IScheduleService scheduleService, IMapper mapper)
     {
         this.scheduleService = scheduleService;
         this.mapper = mapper;
