@@ -96,8 +96,8 @@ public class AndroidProjectBuilder : UiProjectBuilder<AndroidProjectBuilderOptio
                         .SetProperty("Version", versionService.Version.ToString())
                         .SetConfiguration(Options.Configuration)
                         .SetOutput(Options.PublishFolder.FullName)
-                        .DisableNoBuild()
-                        .DisableNoRestore()
+                        .EnableNoBuild()
+                        .EnableNoRestore()
                     );
                 }
                 else
@@ -117,8 +117,8 @@ public class AndroidProjectBuilder : UiProjectBuilder<AndroidProjectBuilderOptio
                                 .SetConfiguration(Options.Configuration)
                                 .SetOutput(Options.PublishFolder.Combine(runtime.Name).FullName)
                                 .SetRuntime(runtime.Name)
-                                .DisableNoBuild()
-                                .DisableNoRestore()
+                                .EnableNoBuild()
+                                .EnableNoRestore()
                         );
                     }
                 }
