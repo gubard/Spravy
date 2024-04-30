@@ -68,8 +68,7 @@ class Build : NukeBuild
         });
 
     Target ProdSetupAppSettings =>
-        _ => _.DependsOn(Test)
-           .Executes(() =>
+        _ => _.Executes(() =>
             {
                 Projects = CreateProdFactory().Create(Solution.AllProjects.Select(x => new FileInfo(x.Path))).ToArray();
                 SetupAppSettings();
