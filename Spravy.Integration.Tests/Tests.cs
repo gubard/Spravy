@@ -239,7 +239,12 @@ public class Tests
                            .GetContentView<ResetToDoItemView>()
                            .GetControl<CheckBox>(ElementNames.IsMoveCircleOrderIndexCheckBoxName)
                            .Case(cc => cc.IsChecked.Should().Be(true))
-                           .ClickOn(w))
+                           .ClickOn(w)
+                           .RunJobsAll(1)
+                           .Case(cc => cc.IsChecked = false)
+                           .IsChecked
+                           .Should()
+                           .Be(false))
                        .GetControl<Button>(ElementNames.OkButton)
                        .ClickOn(w)
                        .RunJobsAll(1))
