@@ -26,9 +26,6 @@ public abstract class ProjectBuilder<TOptions> : IProjectBuilder where TOptions 
 
     public void Clean()
     {
-        GetBinFolder().DeleteIfExits();
-        GetObjFolder().DeleteIfExits();
-
         if (Options.Runtimes.IsEmpty)
         {
             DotNetTasks.DotNetClean(setting => setting.SetProject(Options.CsprojFile.FullName)
@@ -45,6 +42,9 @@ public abstract class ProjectBuilder<TOptions> : IProjectBuilder where TOptions 
                 );
             }
         }
+
+        GetBinFolder().DeleteIfExits();
+        GetObjFolder().DeleteIfExits();
     }
 
     public virtual void Restore()
