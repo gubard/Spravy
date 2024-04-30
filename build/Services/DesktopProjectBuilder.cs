@@ -6,8 +6,8 @@ namespace _build.Services;
 
 public class DesktopProjectBuilder : UiProjectBuilder<DesktopProjectBuilderOptions>
 {
-    public DesktopProjectBuilder(VersionService versionService, DesktopProjectBuilderOptions desktopOptions) : base(
-        desktopOptions, versionService)
+    public DesktopProjectBuilder(VersionService versionService, DesktopProjectBuilderOptions desktopOptions)
+        : base(desktopOptions, versionService)
     {
     }
 

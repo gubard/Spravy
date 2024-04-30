@@ -11,8 +11,8 @@ namespace _build.Services;
 
 public class TestProjectBuilder : ProjectBuilder<TestProjectBuilderOptions>
 {
-    public TestProjectBuilder(TestProjectBuilderOptions options, VersionService versionService) : base(options,
-        versionService)
+    public TestProjectBuilder(TestProjectBuilderOptions options, VersionService versionService) 
+        : base(options, versionService)
     {
     }
 
