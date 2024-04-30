@@ -63,6 +63,7 @@ class Build : NukeBuild
     Target StagingSetupAppSettings =>
         _ => _.Executes(() =>
         {
+            throw new Exception();
             Projects = CreateStagingFactory().Create(Solution.AllProjects.Select(x => new FileInfo(x.Path))).ToArray();
             SetupAppSettings();
         });
