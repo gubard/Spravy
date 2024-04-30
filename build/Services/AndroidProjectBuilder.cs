@@ -77,6 +77,6 @@ public class AndroidProjectBuilder : UiProjectBuilder<AndroidProjectBuilderOptio
         ftpClient.Connect();
         ftpClient.DeleteIfExistsFolder(Options.GetAppFolder());
         ftpClient.CreateIfNotExistsFolder(Options.GetAppsFolder());
-        ftpClient.UploadDirectory(Options.PublishFolder.FullName, Options.GetAppFolder().FullName);
+        ftpClient.UploadDirectory(Options.PublishFolder, Options.GetAppFolder());
     }
 }

@@ -28,4 +28,10 @@ public static class FtpClientExtension
         client.CreateDirectory(folder.FullName);
         Log.Logger.Information("Create FTP folder {Folder}", folder);
     }
+
+    public static void UploadDirectory(this FtpClient client, DirectoryInfo localFolder, DirectoryInfo remoteFolder)
+    {
+        client.UploadDirectory(localFolder.FullName, remoteFolder.FullName);
+        Log.Logger.Information("Upload {LocalFolder} to {RemoteFolder}", localFolder, remoteFolder);
+    }
 }
