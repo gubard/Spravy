@@ -47,7 +47,7 @@ public class TestModule : NinjectModule
            .InSingletonScope();
 
         Bind<IConfiguration>()
-           .ToMethod(_ => new ConfigurationBuilder().AddJsonFile(FileNames.DefaultConfigFileName).Build());
+           .ToMethod(_ => new ConfigurationBuilder().AddJsonFile("testsettings.json").Build());
 
         Bind<IDbContextSetup>()
            .ToMethod<SqliteDbContextSetup>(c => new(new[]
