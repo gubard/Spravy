@@ -9,5 +9,10 @@
   "EmailAccount2": {
     "Email": "staging2@spravy.com.ua",
     "Password": null
+  },
+  "GrpcRouterService": {
+    "Host": "http://localhost:5004",
+    "ChannelType": "GrpcWeb",
+    "ChannelCredentialType": "Insecure"
   }
 }

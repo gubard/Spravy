@@ -4,6 +4,7 @@ using Avalonia.ReactiveUI;
 using Microsoft.Extensions.Configuration;
 using Ninject;
 using Spravy.Domain.Di.Helpers;
+using Spravy.Integration.Tests.Configurations;
 using Spravy.Ui;
 using Spravy.Ui.Configurations;
 using Spravy.Ui.Desktop.Configurations;
@@ -25,7 +26,7 @@ public class TestAppBuilder
 
     public static AppBuilder BuildAvaloniaApp()
     {
-        DiHelper.Kernel = new StandardKernel(new UiModule(true), DesktopModule.Default);
+        DiHelper.Kernel = new StandardKernel(new UiModule(true), TestModule.Default);
 
         return AppBuilder.Configure<App>()
            .UseReactiveUI()

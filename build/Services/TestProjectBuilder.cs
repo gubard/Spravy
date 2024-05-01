@@ -61,6 +61,11 @@ public class TestProjectBuilder : ProjectBuilder<TestProjectBuilderOptions>
                 continue;
             }
 
+            if (writer.SetServices(obj, Options.Domain, Options.Hosts, string.Empty))
+            {
+                continue;
+            }
+
             obj.WriteTo(writer);
         }
 

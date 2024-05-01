@@ -1,36 +1,37 @@
 using Microsoft.Extensions.Configuration;
 using Ninject.Modules;
 using Spravy.Authentication.Domain.Client.Models;
+using Spravy.Db.Interfaces;
+using Spravy.Db.Sqlite.EntityTypeConfigurations;
+using Spravy.Db.Sqlite.Services;
 using Spravy.Di.Extensions;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;
-using Spravy.Domain.Services;
 using Spravy.EventBus.Domain.Client.Models;
 using Spravy.PasswordGenerator.Domain.Client.Models;
 using Spravy.Schedule.Domain.Client.Models;
 using Spravy.ToDo.Domain.Client.Models;
-using Spravy.Ui.Browser.Services;
 using Spravy.Ui.Interfaces;
+using Spravy.Ui.Services;
 
-namespace Spravy.Ui.Browser.Configurations;
+namespace Spravy.Integration.Tests.Configurations;
 
-public class BrowserModule : NinjectModule
+public class TestModule : NinjectModule
 {
-    public static readonly BrowserModule Default = new();
+    public static readonly TestModule Default = new();
 
     public override void Load()
     {
-        Bind<IOpenerLink>().To<BrowserOpenerLink>();
+        Bind<IObjectStorage>().To<SqliteObjectStorage>();
+        Bind<IOpenerLink>().To<OpenerLink>();
 
         Bind<GrpcPasswordServiceOptions>()
-           .ToMethod(context =>
-                context.Kernel.GetConfigurationSection<GrpcPasswordServiceOptions>("GrpcRouterService"))
+           .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcPasswordServiceOptions>("GrpcRouterService"))
            .InSingletonScope();
 
         Bind<GrpcAuthenticationServiceOptions>()
-           .ToMethod(context =>
-                context.Kernel.GetConfigurationSection<GrpcAuthenticationServiceOptions>("GrpcRouterService"))
+           .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcAuthenticationServiceOptions>("GrpcRouterService"))
            .InSingletonScope();
 
         Bind<GrpcScheduleServiceOptions>()
@@ -46,15 +47,12 @@ public class BrowserModule : NinjectModule
            .InSingletonScope();
 
         Bind<IConfiguration>()
-           .ToMethod(_ =>
+           .ToMethod(_ => new ConfigurationBuilder().AddJsonFile(FileNames.DefaultConfigFileName).Build());
+
+        Bind<IDbContextSetup>()
+           .ToMethod<SqliteDbContextSetup>(c => new(new[]
             {
-                using var stream = SpravyUiBrowserMark.GetResourceStream(FileNames.DefaultConfigFileName).ThrowIfNull();
-
-                return new ConfigurationBuilder().AddJsonStream(stream).Build();
-            });
-
-        Bind<IObjectStorage>().To<LocalStorageObjectStorage>();
-        Bind<IStringToBytes>().To<StringToUtf8Bytes>();
-        Bind<IBytesToString>().To<Utf8BytesToString>();
+                new StorageEntityTypeConfiguration(),
+            }, "./storage/storage.db".ToFile(), true));
     }
 }
