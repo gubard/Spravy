@@ -72,20 +72,6 @@ public class EfToDoService : IToDoService
                     }, cancellationToken), cancellationToken), cancellationToken);
     }
 
-    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetToDoItemDependencyAsync(
-        Guid id,
-        CancellationToken cancellationToken
-    )
-    {
-        return dbContextFactory.Create()
-           .IfSuccessDisposeAsync(
-                context => context.Set<DependencyToDoItemEntity>()
-                   .AsNoTracking()
-                   .Where(x => x.ToDoItemId == id)
-                   .Select(x => x.DependencyToDoItemId)
-                   .ToArrayEntitiesAsync(cancellationToken), cancellationToken);
-    }
-
     public ConfiguredValueTaskAwaitable<Result> ResetToDoItemAsync(
         ResetToDoItemOptions options,
         CancellationToken cancellationToken
@@ -222,23 +208,6 @@ public class EfToDoService : IToDoService
                                 parameters => mapper.Map<ToDoItem>(item,
                                         a => a.Items.Add(SpravyToDoDbProfile.ParametersName, parameters))
                                    .ToResult(), cancellationToken), cancellationToken), cancellationToken);
-    }
-
-    public ConfiguredValueTaskAwaitable<Result> AddToDoItemDependencyAsync(
-        Guid id,
-        Guid toDoItemDependencyId,
-        CancellationToken cancellationToken
-    )
-    {
-        return dbContextFactory.Create()
-           .IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(() => context.AddEntityAsync(
-                    new DependencyToDoItemEntity
-                    {
-                        Id = Guid.NewGuid(),
-                        ToDoItemId = id,
-                        DependencyToDoItemId = toDoItemDependencyId,
-                    }, cancellationToken), cancellationToken)
-               .ToResultOnlyAsync(), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetChildrenToDoItemIdsAsync(
@@ -1016,7 +985,16 @@ public class EfToDoService : IToDoService
                         cancellationToken), cancellationToken);
     }
 
-    public async IAsyncEnumerable<ReadOnlyMemory<ToDoItem>> GetToDoItemsAsync(
+    public ConfiguredCancelableAsyncEnumerable<Result<ReadOnlyMemory<ToDoItem>>> GetToDoItemsAsync(
+        Guid[] ids,
+        uint chunkSize,
+        CancellationToken cancellationToken
+    )
+    {
+        return GetToDoItemsCore(ids, chunkSize, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async IAsyncEnumerable<Result<ReadOnlyMemory<ToDoItem>>> GetToDoItemsCore(
         Guid[] ids,
         uint chunkSize,
         [EnumeratorCancellation] CancellationToken cancellationToken
@@ -1026,11 +1004,18 @@ public class EfToDoService : IToDoService
 
         for (var i = 0; i < ids.Length; i++)
         {
+            if (cancellationToken.IsCancellationRequested)
+            {
+                yield return Result<ReadOnlyMemory<ToDoItem>>.CanceledByUserError;
+
+                yield break;
+            }
+
             if (i % chunkSize == 0)
             {
                 if (items.Count > 0)
                 {
-                    yield return items.ToArray();
+                    yield return items.ToArray().ToReadOnlyMemory().ToResult();
 
                     items.Clear();
                 }
@@ -1041,7 +1026,7 @@ public class EfToDoService : IToDoService
 
         if (items.Count > 0)
         {
-            yield return items.ToArray();
+            yield return items.ToArray().ToReadOnlyMemory().ToResult();
 
             items.Clear();
         }

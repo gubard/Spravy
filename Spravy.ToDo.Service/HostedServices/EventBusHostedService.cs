@@ -84,9 +84,9 @@ public class EventBusHostedService : IHostedService
 
                     await foreach (var eventValue in stream)
                     {
-                        if (eventValue.Id == EventIdHelper.ChangeFavoriteId)
+                        if (eventValue.ThrowIfError().Id == EventIdHelper.ChangeFavoriteId)
                         {
-                            await ChangeFavoriteAsync(file, eventValue);
+                            await ChangeFavoriteAsync(file, eventValue.Value);
                         }
                     }
                 }

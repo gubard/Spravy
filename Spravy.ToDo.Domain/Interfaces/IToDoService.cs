@@ -15,17 +15,6 @@ public interface IToDoService
     ConfiguredValueTaskAwaitable<Result> ToDoItemToRootAsync(Guid id, CancellationToken cancellationToken);
     ConfiguredValueTaskAwaitable<Result<ToDoItem>> GetToDoItemAsync(Guid id, CancellationToken cancellationToken);
 
-    ConfiguredValueTaskAwaitable<Result> AddToDoItemDependencyAsync(
-        Guid id,
-        Guid toDoItemDependencyId,
-        CancellationToken cancellationToken
-    );
-
-    ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetToDoItemDependencyAsync(
-        Guid id,
-        CancellationToken cancellationToken
-    );
-
     ConfiguredValueTaskAwaitable<Result> ResetToDoItemAsync(
         ResetToDoItemOptions options,
         CancellationToken cancellationToken
@@ -251,7 +240,7 @@ public interface IToDoService
         CancellationToken cancellationToken
     );
 
-    IAsyncEnumerable<ReadOnlyMemory<ToDoItem>> GetToDoItemsAsync(
+    ConfiguredCancelableAsyncEnumerable<Result<ReadOnlyMemory<ToDoItem>>> GetToDoItemsAsync(
         Guid[] ids,
         uint chunkSize,
         CancellationToken cancellationToken

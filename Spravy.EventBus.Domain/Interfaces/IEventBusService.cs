@@ -6,7 +6,7 @@ namespace Spravy.EventBus.Domain.Interfaces;
 
 public interface IEventBusService
 {
-    IAsyncEnumerable<EventValue> SubscribeEventsAsync(Guid[] eventIds, CancellationToken cancellationToken);
+    ConfiguredCancelableAsyncEnumerable<Result<EventValue>> SubscribeEventsAsync(Guid[] eventIds, CancellationToken cancellationToken);
 
     ConfiguredValueTaskAwaitable<Result> PublishEventAsync(
         Guid eventId,

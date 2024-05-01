@@ -220,7 +220,7 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         await foreach (var item in toDoService.GetToDoItemsAsync(ids, request.ChunkSize, context.CancellationToken))
         {
             var reply = new GetToDoItemsReply();
-            reply.Items.AddRange(mapper.Map<IEnumerable<ToDoItemGrpc>>(item));
+            reply.Items.AddRange(mapper.Map<ToDoItemGrpc[]>(item.Value.ToArray()));
             await responseStream.WriteAsync(reply);
         }
     }

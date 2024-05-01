@@ -145,8 +145,8 @@ public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBas
         }
     }
 
-    protected IAsyncEnumerable<TResult> CallClientAsync<TResult>(
-        Func<TGrpcClient, CancellationToken, IAsyncEnumerable<TResult>> func,
+    protected ConfiguredCancelableAsyncEnumerable<TResult> CallClientAsync<TResult>(
+        Func<TGrpcClient, CancellationToken, ConfiguredCancelableAsyncEnumerable<TResult>> func,
         CancellationToken cancellationToken
     )
     {

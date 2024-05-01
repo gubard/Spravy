@@ -32,9 +32,14 @@ public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
         this.metadataFactory = metadataFactory;
     }
 
-    public IAsyncEnumerable<EventValue> SubscribeEventsAsync(Guid[] eventIds, CancellationToken cancellationToken)
+    public ConfiguredCancelableAsyncEnumerable<Result<EventValue>> SubscribeEventsAsync(
+        Guid[] eventIds,
+        CancellationToken cancellationToken
+    )
     {
-        return CallClientAsync((client, token) => SubscribeEventsAsyncCore(client, eventIds, token), cancellationToken);
+        return CallClientAsync(
+            (client, token) => SubscribeEventsAsyncCore(client, eventIds, token).ConfigureAwait(false),
+            cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> PublishEventAsync(
@@ -92,14 +97,23 @@ public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
         return new(grpcClientFactory, host, converter, metadataFactory, serializer);
     }
 
-    private async IAsyncEnumerable<EventValue> SubscribeEventsAsyncCore(
+    private async IAsyncEnumerable<Result<EventValue>> SubscribeEventsAsyncCore(
         EventBusServiceClient client,
         Guid[] eventIds,
         [EnumeratorCancellation] CancellationToken cancellationToken
     )
     {
         var request = new SubscribeEventsRequest();
-        request.EventIds.AddRange(converter.Convert<ByteString[]>(eventIds).Value);
+        var eventIdsByteString = converter.Convert<ByteString[]>(eventIds);
+
+        if (eventIdsByteString.IsHasError)
+        {
+            yield return new(eventIdsByteString.Errors);
+
+            yield break;
+        }
+
+        request.EventIds.AddRange(eventIdsByteString.Value);
         var metadata = await metadataFactory.CreateAsync(cancellationToken);
         using var response = client.SubscribeEvents(request, metadata.Value, cancellationToken: cancellationToken);
 
@@ -108,7 +122,7 @@ public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
             var reply = response.ResponseStream.Current;
             var eventValue = converter.Convert<EventValue>(reply);
 
-            yield return eventValue.Value;
+            yield return eventValue.Value.ToResult();
         }
     }
 }

@@ -174,17 +174,7 @@ public static class CommandStorage
 
         RemovePasswordItemItem = CreateCommand<IIdProperty>(
             DeletePasswordItemAsync, MaterialIconKind.Delete, "Generate password");
-        
-        AddDependencyItem = CreateCommand<ISetToDoParentItemParams>(
-            AddDependencyAsync, MaterialIconKind.Delete, "Add dependency");
     }
-    
-    public static ICommand AddDependencyCommand
-    {
-        get => AddDependencyItem.Command;
-    }
-
-    public static CommandItem AddDependencyItem { get; }
 
     public static ICommand RemovePasswordItemCommand
     {
@@ -544,22 +534,6 @@ public static class CommandStorage
     public static CommandItem ShowPasswordItemSettingItem { get; }
 
     public static CommandItem SelectAll { get; }
-    
-    private static ConfiguredValueTaskAwaitable<Result> AddDependencyAsync(
-        ISetToDoParentItemParams property,
-        CancellationToken cancellationToken
-    )
-    {
-        return dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
-            item => dialogViewer.CloseInputDialogAsync(cancellationToken)
-               .IfSuccessAsync(() => toDoService.AddToDoItemDependencyAsync(property.Id, item.Id, cancellationToken),
-                    cancellationToken)
-               .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken), viewModel =>
-            {
-                viewModel.IgnoreIds.Add(property.Id);
-                viewModel.DefaultSelectedItemId = property.ParentId.GetValueOrDefault();
-            }, cancellationToken);
-    }
 
     private static ConfiguredValueTaskAwaitable<Result> DeletePasswordItemAsync(
         IIdProperty idProperty,

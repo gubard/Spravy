@@ -82,23 +82,6 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                .ConfigureAwait(false), cancellationToken), cancellationToken);
     }
 
-    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetToDoItemDependencyAsync(
-        Guid id,
-        CancellationToken cancellationToken
-    )
-    {
-        return CallClientAsync(client => metadataFactory.CreateAsync(cancellationToken)
-               .IfSuccessAsync(converter.Convert<ByteString>(id), (value, i) => client.GetToDoItemDependencyAsync(new()
-                    {
-                        ToDoItemId = i,
-                    }, value, cancellationToken: cancellationToken)
-                   .ToValueTaskResultValueOnly()
-                   .ConfigureAwait(false)
-                   .IfSuccessAsync(reply => converter.Convert<Guid[]>(reply.Ids), cancellationToken)
-                   .IfSuccessAsync(ids => ids.ToReadOnlyMemory().ToResult(), cancellationToken), cancellationToken),
-            cancellationToken);
-    }
-
     public ConfiguredValueTaskAwaitable<Result> ResetToDoItemAsync(
         ResetToDoItemOptions options,
         CancellationToken cancellationToken
@@ -195,24 +178,6 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                .ConfigureAwait(false)
                .IfSuccessAsync(reply => converter.Convert<ToDoItem>(reply).ToValueTaskResult().ConfigureAwait(false),
                     cancellationToken), cancellationToken), cancellationToken);
-    }
-
-    public ConfiguredValueTaskAwaitable<Result> AddToDoItemDependencyAsync(
-        Guid id,
-        Guid toDoItemDependencyId,
-        CancellationToken cancellationToken
-    )
-    {
-        return CallClientAsync(client => metadataFactory.CreateAsync(cancellationToken)
-           .IfSuccessAsync(converter.Convert<ByteString>(id), converter.Convert<ByteString>(toDoItemDependencyId),
-                (metadata, i, di) => client.AddToDoItemDependencyAsync(new()
-                    {
-                        ToDoItemId = i,
-                        DependencyToDoItemId = di,
-                    }, metadata, cancellationToken: cancellationToken)
-                   .ToValueTaskResultValueOnly()
-                   .ConfigureAwait(false)
-                   .ToResultOnlyAsync(), cancellationToken), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetChildrenToDoItemIdsAsync(
@@ -875,17 +840,17 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                            .ConfigureAwait(false), cancellationToken), cancellationToken), cancellationToken);
     }
 
-    public IAsyncEnumerable<ReadOnlyMemory<ToDoItem>> GetToDoItemsAsync(
+    public ConfiguredCancelableAsyncEnumerable<Result<ReadOnlyMemory<ToDoItem>>> GetToDoItemsAsync(
         Guid[] ids,
         uint chunkSize,
         CancellationToken cancellationToken
     )
     {
-        return CallClientAsync((client, token) => GetToDoItemsAsyncCore(client, ids, chunkSize, token),
+        return CallClientAsync((client, token) => GetToDoItemsCore(client, ids, chunkSize, token).ConfigureAwait(false),
             cancellationToken);
     }
 
-    private async IAsyncEnumerable<ReadOnlyMemory<ToDoItem>> GetToDoItemsAsyncCore(
+    private async IAsyncEnumerable<Result<ReadOnlyMemory<ToDoItem>>> GetToDoItemsCore(
         ToDoServiceClient client,
         Guid[] ids,
         uint chunkSize,
@@ -894,7 +859,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
     {
         if (!ids.Any())
         {
-            yield return ReadOnlyMemory<ToDoItem>.Empty;
+            yield return ReadOnlyMemory<ToDoItem>.Empty.ToResult();
 
             yield break;
         }
@@ -904,16 +869,25 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
             ChunkSize = chunkSize,
         };
 
-        request.Ids.AddRange(converter.Convert<ByteString[]>(ids).Value);
+        var idsByteString = converter.Convert<ByteString[]>(ids);
+
+        if (idsByteString.IsHasError)
+        {
+            yield return new(idsByteString.Errors);
+
+            yield break;
+        }
+
+        request.Ids.AddRange(idsByteString.Value);
         var metadata = await metadataFactory.CreateAsync(cancellationToken);
         using var response = client.GetToDoItems(request, metadata.Value, cancellationToken: cancellationToken);
 
         while (await MoveNextAsync(response, cancellationToken))
         {
             var reply = response.ResponseStream.Current;
-            var item = converter.Convert<ToDoItem[]>(reply.Items);
+            var item = converter.Convert<ToDoItem[]>(reply.Items.ToArray()).IfSuccess(x => x.ToReadOnlyMemory().ToResult());
 
-            yield return item.Value;
+            yield return item;
         }
     }
 

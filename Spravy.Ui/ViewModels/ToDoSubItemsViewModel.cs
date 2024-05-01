@@ -43,7 +43,12 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
         await foreach (var items in ToDoService.GetToDoItemsAsync(ids.ToArray(), 5, cancellationToken)
            .ConfigureAwait(false))
         {
-            foreach (var item in items.ToArray())
+            if (items.IsHasError)
+            {
+                return new(items.Errors);
+            }
+
+            foreach (var item in items.Value.ToArray())
             {
                 var result = await List.UpdateFavoriteItemAsync(item);
 
@@ -79,7 +84,12 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger
 
         await foreach (var items in ToDoService.GetToDoItemsAsync(ids, 5, cancellationToken).ConfigureAwait(false))
         {
-            foreach (var item in items.ToArray())
+            if (items.IsHasError)
+            {
+                return new(items.Errors);
+            }
+
+            foreach (var item in items.Value.ToArray())
             {
                 if (autoOrder)
                 {
