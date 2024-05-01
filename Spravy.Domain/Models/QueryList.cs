@@ -5,9 +5,9 @@ namespace Spravy.Domain.Models;
 public class QueryList<T> where T : class
 {
     private readonly T?[] array;
-    private readonly byte size;
+    private readonly ulong size;
 
-    public QueryList(byte size)
+    public QueryList(ulong size)
     {
         this.size = size;
         array = new T[size];
