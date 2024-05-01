@@ -7,6 +7,22 @@ package spravy.to_do;
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 
+message GetToDoItemDependencyRequest {
+    bytes ToDoItemId = 1;
+}
+
+message GetToDoItemDependencyReply {
+    repeated bytes Ids = 1;
+}
+
+message AddDependencyToDoItemRequest {
+    bytes ToDoItemId = 1;
+    bytes DependencyToDoItemId = 2;
+}
+
+message AddDependencyToDoItemReply {
+}
+
 message CloneToDoItemRequest {
     bytes CloneId = 1;
     bytes ParentId = 2;

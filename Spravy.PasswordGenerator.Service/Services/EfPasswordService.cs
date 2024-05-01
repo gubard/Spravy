@@ -56,7 +56,7 @@ public class EfPasswordService : IPasswordService
                 context => context.Set<PasswordItemEntity>()
                    .AsNoTracking()
                    .ToArrayEntitiesAsync(cancellationToken)
-                   .IfSuccessAsync(items => mapper.Map<PasswordItem[]>(items).ToReadOnlyMemory().ToResult(),
+                   .IfSuccessAsync(items => mapper.Map<PasswordItem[]>(items.ToArray()).ToReadOnlyMemory().ToResult(),
                         cancellationToken), cancellationToken);
     }
 

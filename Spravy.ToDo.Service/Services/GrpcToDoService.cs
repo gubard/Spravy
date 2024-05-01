@@ -26,6 +26,37 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         this.serializer = serializer;
     }
 
+    public override Task<GetToDoItemDependencyReply> GetToDoItemDependency(
+        GetToDoItemDependencyRequest request,
+        ServerCallContext context
+    )
+    {
+        return converter.Convert<Guid>(request.ToDoItemId)
+           .IfSuccessAsync(toDoItemId => toDoService.GetToDoItemDependencyAsync(toDoItemId, context.CancellationToken),
+                context.CancellationToken)
+           .IfSuccessAsync(ids => converter.Convert<ByteString[]>(ids.ToArray()), context.CancellationToken)
+           .HandleAsync(serializer, ids =>
+            {
+                var reply = new GetToDoItemDependencyReply();
+                reply.Ids.AddRange(ids);
+
+                return reply;
+            });
+    }
+
+    public override Task<AddDependencyToDoItemReply> AddToDoItemDependency(
+        AddDependencyToDoItemRequest request,
+        ServerCallContext context
+    )
+    {
+        return converter.Convert<Guid>(request.ToDoItemId)
+           .IfSuccessAsync(converter.Convert<Guid>(request.DependencyToDoItemId),
+                (toDoItemId, dependencyToDoItemId) =>
+                    toDoService.AddToDoItemDependencyAsync(toDoItemId, dependencyToDoItemId, context.CancellationToken),
+                context.CancellationToken)
+           .HandleAsync<AddDependencyToDoItemReply>(serializer);
+    }
+
     public override Task<CloneToDoItemReply> CloneToDoItem(CloneToDoItemRequest request, ServerCallContext context)
     {
         return converter.Convert<Guid>(request.CloneId)

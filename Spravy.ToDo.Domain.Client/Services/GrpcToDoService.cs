@@ -82,6 +82,23 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                .ConfigureAwait(false), cancellationToken), cancellationToken);
     }
 
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetToDoItemDependencyAsync(
+        Guid id,
+        CancellationToken cancellationToken
+    )
+    {
+        return CallClientAsync(client => metadataFactory.CreateAsync(cancellationToken)
+               .IfSuccessAsync(converter.Convert<ByteString>(id), (value, i) => client.GetToDoItemDependencyAsync(new()
+                    {
+                        ToDoItemId = i,
+                    }, value, cancellationToken: cancellationToken)
+                   .ToValueTaskResultValueOnly()
+                   .ConfigureAwait(false)
+                   .IfSuccessAsync(reply => converter.Convert<Guid[]>(reply.Ids), cancellationToken)
+                   .IfSuccessAsync(ids => ids.ToReadOnlyMemory().ToResult(), cancellationToken), cancellationToken),
+            cancellationToken);
+    }
+
     public ConfiguredValueTaskAwaitable<Result> ResetToDoItemAsync(
         ResetToDoItemOptions options,
         CancellationToken cancellationToken
@@ -170,14 +187,32 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
     public ConfiguredValueTaskAwaitable<Result<ToDoItem>> GetToDoItemAsync(Guid id, CancellationToken cancellationToken)
     {
         return CallClientAsync(client => metadataFactory.CreateAsync(cancellationToken)
-           .IfSuccessAsync(converter.Convert<ByteString>(id), (value, i) => client.GetToDoItemAsync(new()
+           .IfSuccessAsync(converter.Convert<ByteString>(id), (metadata, i) => client.GetToDoItemAsync(new()
                 {
                     Id = i,
-                }, value, cancellationToken: cancellationToken)
+                }, metadata, cancellationToken: cancellationToken)
                .ToValueTaskResultValueOnly()
                .ConfigureAwait(false)
                .IfSuccessAsync(reply => converter.Convert<ToDoItem>(reply).ToValueTaskResult().ConfigureAwait(false),
                     cancellationToken), cancellationToken), cancellationToken);
+    }
+
+    public ConfiguredValueTaskAwaitable<Result> AddToDoItemDependencyAsync(
+        Guid id,
+        Guid toDoItemDependencyId,
+        CancellationToken cancellationToken
+    )
+    {
+        return CallClientAsync(client => metadataFactory.CreateAsync(cancellationToken)
+           .IfSuccessAsync(converter.Convert<ByteString>(id), converter.Convert<ByteString>(toDoItemDependencyId),
+                (metadata, i, di) => client.AddToDoItemDependencyAsync(new()
+                    {
+                        ToDoItemId = i,
+                        DependencyToDoItemId = di,
+                    }, metadata, cancellationToken: cancellationToken)
+                   .ToValueTaskResultValueOnly()
+                   .ConfigureAwait(false)
+                   .ToResultOnlyAsync(), cancellationToken), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetChildrenToDoItemIdsAsync(

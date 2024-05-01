@@ -72,6 +72,20 @@ public class EfToDoService : IToDoService
                     }, cancellationToken), cancellationToken), cancellationToken);
     }
 
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetToDoItemDependencyAsync(
+        Guid id,
+        CancellationToken cancellationToken
+    )
+    {
+        return dbContextFactory.Create()
+           .IfSuccessDisposeAsync(
+                context => context.Set<DependencyToDoItemEntity>()
+                   .AsNoTracking()
+                   .Where(x => x.ToDoItemId == id)
+                   .Select(x => x.DependencyToDoItemId)
+                   .ToArrayEntitiesAsync(cancellationToken), cancellationToken);
+    }
+
     public ConfiguredValueTaskAwaitable<Result> ResetToDoItemAsync(
         ResetToDoItemOptions options,
         CancellationToken cancellationToken
@@ -208,6 +222,23 @@ public class EfToDoService : IToDoService
                                 parameters => mapper.Map<ToDoItem>(item,
                                         a => a.Items.Add(SpravyToDoDbProfile.ParametersName, parameters))
                                    .ToResult(), cancellationToken), cancellationToken), cancellationToken);
+    }
+
+    public ConfiguredValueTaskAwaitable<Result> AddToDoItemDependencyAsync(
+        Guid id,
+        Guid toDoItemDependencyId,
+        CancellationToken cancellationToken
+    )
+    {
+        return dbContextFactory.Create()
+           .IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(() => context.AddEntityAsync(
+                    new DependencyToDoItemEntity
+                    {
+                        Id = Guid.NewGuid(),
+                        ToDoItemId = id,
+                        DependencyToDoItemId = toDoItemDependencyId,
+                    }, cancellationToken), cancellationToken)
+               .ToResultOnlyAsync(), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetChildrenToDoItemIdsAsync(

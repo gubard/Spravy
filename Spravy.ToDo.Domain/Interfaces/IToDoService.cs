@@ -8,16 +8,28 @@ namespace Spravy.ToDo.Domain.Interfaces;
 
 public interface IToDoService
 {
-    ConfiguredValueTaskAwaitable<Result> ResetToDoItemAsync(
-        ResetToDoItemOptions options,
-        CancellationToken cancellationToken
-    );
-
     ConfiguredValueTaskAwaitable<Result> RandomizeChildrenOrderIndexAsync(Guid id, CancellationToken cancellationToken);
     ConfiguredValueTaskAwaitable<Result> DeleteToDoItemAsync(Guid id, CancellationToken cancellationToken);
     ConfiguredValueTaskAwaitable<Result> AddFavoriteToDoItemAsync(Guid id, CancellationToken cancellationToken);
     ConfiguredValueTaskAwaitable<Result> RemoveFavoriteToDoItemAsync(Guid id, CancellationToken cancellationToken);
     ConfiguredValueTaskAwaitable<Result> ToDoItemToRootAsync(Guid id, CancellationToken cancellationToken);
+    ConfiguredValueTaskAwaitable<Result<ToDoItem>> GetToDoItemAsync(Guid id, CancellationToken cancellationToken);
+
+    ConfiguredValueTaskAwaitable<Result> AddToDoItemDependencyAsync(
+        Guid id,
+        Guid toDoItemDependencyId,
+        CancellationToken cancellationToken
+    );
+
+    ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetToDoItemDependencyAsync(
+        Guid id,
+        CancellationToken cancellationToken
+    );
+
+    ConfiguredValueTaskAwaitable<Result> ResetToDoItemAsync(
+        ResetToDoItemOptions options,
+        CancellationToken cancellationToken
+    );
 
     ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoShortItem>>> GetParentsAsync(
         Guid id,
@@ -33,8 +45,6 @@ public interface IToDoService
         Guid id,
         CancellationToken cancellationToken
     );
-
-    ConfiguredValueTaskAwaitable<Result<ToDoItem>> GetToDoItemAsync(Guid id, CancellationToken cancellationToken);
 
     ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetChildrenToDoItemIdsAsync(
         Guid id,

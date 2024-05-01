@@ -195,7 +195,7 @@ public static class ResultExtension
         return ToResultOnlyCore(task).ConfigureAwait(false);
     }
 
-    public static async ValueTask<Result> ToResultOnlyCore<TValue>(
+    private static async ValueTask<Result> ToResultOnlyCore<TValue>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task
     )
     {
