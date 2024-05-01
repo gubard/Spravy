@@ -54,7 +54,22 @@ public class SettingViewModel : NavigatableViewModelBase
 
     public string Version
     {
-        get => Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? string.Empty;
+        get
+        {
+            var versionString = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? string.Empty;
+
+            if (versionString.IsNullOrWhiteSpace())
+            {
+                return "1.0.0.0(0)";
+            }
+
+            if (!SpravyVersion.TryParse(versionString, out var version))
+            {
+                return "1.0.0.0(0)";
+            }
+
+            return $"{version}({version.Code})";
+        }
     }
 
     public AvaloniaList<Selected<SukiColorTheme>> AvailableColors { get; }
