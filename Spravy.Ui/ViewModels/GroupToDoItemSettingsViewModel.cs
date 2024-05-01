@@ -1,10 +1,3 @@
-using System.Runtime.CompilerServices;
-using System.Threading;
-using Spravy.Domain.Helpers;
-using Spravy.Domain.Models;
-using Spravy.Ui.Interfaces;
-using Spravy.Ui.Models;
-
 namespace Spravy.Ui.ViewModels;
 
 public class GroupToDoItemSettingsViewModel : NavigatableViewModelBase, IApplySettings

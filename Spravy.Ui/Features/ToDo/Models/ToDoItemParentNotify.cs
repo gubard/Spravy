@@ -1,9 +1,6 @@
-using System;
-using ReactiveUI;
+namespace Spravy.Ui.Features.ToDo.Models;
 
-namespace Spravy.Ui.Models;
-
-public class ToDoShortItemNotify : NotifyBase
+public class ToDoItemParentNotify : NotifyBase
 {
     private Guid id;
     private string name = string.Empty;

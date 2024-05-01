@@ -1,5 +1,3 @@
-using ProtoBuf;
-
 namespace Spravy.Ui.Models;
 
 [ProtoContract]

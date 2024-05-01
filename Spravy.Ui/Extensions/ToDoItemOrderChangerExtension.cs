@@ -1,9 +1,3 @@
-using System.Threading;
-using System.Threading.Tasks;
-using Spravy.ToDo.Domain.Models;
-using Spravy.Ui.Interfaces;
-using Spravy.Ui.Models;
-
 namespace Spravy.Ui.Extensions;
 
 public static class ToDoItemOrderChangerExtension

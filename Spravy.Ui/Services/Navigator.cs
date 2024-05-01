@@ -1,15 +1,3 @@
-using System;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using Ninject;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Helpers;
-using Spravy.Domain.Models;
-using Spravy.Ui.Extensions;
-using Spravy.Ui.Interfaces;
-using Spravy.Ui.Models;
-using Spravy.Ui.ViewModels;
-
 namespace Spravy.Ui.Services;
 
 public class Navigator : INavigator

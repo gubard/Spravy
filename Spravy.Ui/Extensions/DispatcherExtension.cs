@@ -1,6 +1,3 @@
-using System;
-using Avalonia.Threading;
-
 namespace Spravy.Ui.Extensions;
 
 public static class DispatcherExtension

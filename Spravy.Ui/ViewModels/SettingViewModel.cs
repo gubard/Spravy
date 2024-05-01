@@ -1,27 +1,3 @@
-using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Windows.Input;
-using Avalonia.Collections;
-using Avalonia.Styling;
-using Ninject;
-using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
-using Spravy.Authentication.Domain.Interfaces;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Helpers;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
-using Spravy.Ui.Enums;
-using Spravy.Ui.Extensions;
-using Spravy.Ui.Models;
-using Spravy.Ui.Services;
-using SukiUI;
-using SukiUI.Models;
-
 namespace Spravy.Ui.ViewModels;
 
 public class SettingViewModel : NavigatableViewModelBase

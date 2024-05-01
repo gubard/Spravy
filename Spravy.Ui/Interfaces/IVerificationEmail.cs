@@ -1,5 +1,3 @@
-using Spravy.Ui.Enums;
-
 namespace Spravy.Ui.Interfaces;
 
 public interface IVerificationEmail

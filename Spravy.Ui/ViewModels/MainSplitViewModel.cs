@@ -1,7 +1,3 @@
-using ReactiveUI.Fody.Helpers;
-using Spravy.Ui.Interfaces;
-using Spravy.Ui.Models;
-
 namespace Spravy.Ui.ViewModels;
 
 public class MainSplitViewModel : ViewModelBase, IContent

@@ -1,5 +1,3 @@
-using Avalonia;
-
 namespace Spravy.Ui.Extensions;
 
 public static class StyledElementExtension

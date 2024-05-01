@@ -1,19 +1,15 @@
-using Avalonia;
-using SmartFormat;
-using Spravy.Domain.Extensions;
-
 namespace Spravy.Ui.Features.Localizations.Models;
 
-public class TextView
+public class TextLocalization
 {
     private static readonly Application application = Application.Current.ThrowIfNull();
 
-    public TextView(string key)
+    public TextLocalization(string key)
     {
         Key = key;
     }
 
-    public TextView(string key, object? parameters)
+    public TextLocalization(string key, object? parameters)
     {
         Key = key;
         Parameters = parameters;

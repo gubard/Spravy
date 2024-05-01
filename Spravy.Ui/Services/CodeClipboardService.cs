@@ -1,7 +1,3 @@
-using System.Runtime.CompilerServices;
-using Spravy.Domain.Models;
-using Spravy.Ui.Interfaces;
-
 namespace Spravy.Ui.Services;
 
 public class CodeClipboardService : IClipboardService

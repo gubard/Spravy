@@ -1,8 +1,3 @@
-using System;
-using System.Globalization;
-using Avalonia.Data.Converters;
-using Spravy.Domain.Extensions;
-
 namespace Spravy.Ui.Converters;
 
 public class EmptyStringToNullConverter : IValueConverter

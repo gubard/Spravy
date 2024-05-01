@@ -1,7 +1,3 @@
-using System;
-using System.Globalization;
-using Avalonia.Data.Converters;
-
 namespace Spravy.Ui.Converters;
 
 public class Int32PositiveToBooleanConverter : IValueConverter

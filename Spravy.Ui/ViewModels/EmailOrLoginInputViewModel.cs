@@ -1,20 +1,3 @@
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Windows.Input;
-using Ninject;
-using ProtoBuf;
-using ReactiveUI.Fody.Helpers;
-using Spravy.Authentication.Domain.Interfaces;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Helpers;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
-using Spravy.Ui.Enums;
-using Spravy.Ui.Extensions;
-using Spravy.Ui.Features.Authentication.ViewModels;
-using Spravy.Ui.Models;
-using Spravy.Ui.Services;
-
 namespace Spravy.Ui.ViewModels;
 
 public class EmailOrLoginInputViewModel : NavigatableViewModelBase

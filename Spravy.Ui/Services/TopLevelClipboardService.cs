@@ -1,12 +1,3 @@
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-using Avalonia;
-using Avalonia.Input.Platform;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Models;
-using Spravy.Ui.Extensions;
-using Spravy.Ui.Interfaces;
-
 namespace Spravy.Ui.Services;
 
 public class TopLevelClipboardService : IClipboardService

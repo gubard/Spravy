@@ -1,5 +1,3 @@
-using Spravy.Domain.Enums;
-
 namespace Spravy.Ui.Interfaces;
 
 public interface IToDoDescriptionProperty : IRefresh, IIdProperty

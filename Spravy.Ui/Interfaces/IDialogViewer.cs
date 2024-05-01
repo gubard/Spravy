@@ -1,9 +1,3 @@
-using System;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using Spravy.Domain.Models;
-using Spravy.Ui.Models;
-
 namespace Spravy.Ui.Interfaces;
 
 public interface IDialogViewer

@@ -1,6 +1,3 @@
-using ReactiveUI.Fody.Helpers;
-using Spravy.Ui.Models;
-
 namespace Spravy.Ui.Features.PasswordGenerator.ViewModels;
 
 public class AddPasswordItemViewModel : ViewModelBase

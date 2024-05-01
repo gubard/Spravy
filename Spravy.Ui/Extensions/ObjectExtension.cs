@@ -1,9 +1,3 @@
-using System;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-using Avalonia.Threading;
-using Spravy.Domain.Models;
-
 namespace Spravy.Ui.Extensions;
 
 public static class ObjectExtension

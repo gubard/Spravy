@@ -1,7 +1,3 @@
-using Spravy.Domain.Extensions;
-using Spravy.Ui.Helpers;
-using Spravy.Ui.Interfaces;
-
 namespace Spravy.Ui.Services;
 
 public class PropertyValidator : IPropertyValidator

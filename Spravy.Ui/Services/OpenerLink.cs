@@ -1,11 +1,3 @@
-using System;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Threading;
-using Spravy.Domain.Models;
-using Spravy.Ui.Interfaces;
-
 namespace Spravy.Ui.Services;
 
 public class OpenerLink : IOpenerLink

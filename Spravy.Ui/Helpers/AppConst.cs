@@ -1,5 +1,3 @@
-using System;
-
 namespace Spravy.Ui.Helpers;
 
 public static class AppConst

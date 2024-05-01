@@ -1,6 +1,3 @@
-using System;
-using ReactiveUI;
-
 namespace Spravy.Ui.Models;
 
 public class DayOfWeekSelectItem : NotifyBase

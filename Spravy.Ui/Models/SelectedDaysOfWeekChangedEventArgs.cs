@@ -1,5 +1,3 @@
-using System;
-
 namespace Spravy.Ui.Models;
 
 public readonly struct SelectedDaysOfWeekChangedEventArgs

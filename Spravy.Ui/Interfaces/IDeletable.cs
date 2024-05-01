@@ -1,5 +1,3 @@
-using System;
-
 namespace Spravy.Ui.Interfaces;
 
 public interface IDeletable

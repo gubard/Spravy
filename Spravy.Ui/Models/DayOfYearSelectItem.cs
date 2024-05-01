@@ -1,7 +1,3 @@
-using System.Linq;
-using Avalonia.Collections;
-using ReactiveUI;
-
 namespace Spravy.Ui.Models;
 
 public class DayOfYearSelectItem : NotifyBase

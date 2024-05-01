@@ -1,9 +1,3 @@
-using System;
-using System.Linq;
-using Avalonia.Collections;
-using Spravy.ToDo.Domain.Enums;
-using Spravy.Ui.Models;
-
 namespace Spravy.Ui.ViewModels;
 
 public class ToDoItemToStringSettingsViewModel : ViewModelBase

@@ -1,9 +1,3 @@
-using Avalonia.Controls;
-using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
-using Avalonia.ReactiveUI;
-using Spravy.Ui.ViewModels;
-
 namespace Spravy.Ui.Views;
 
 public partial class SearchView : ReactiveUserControl<SearchViewModel>

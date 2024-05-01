@@ -1,13 +1,3 @@
-using System;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using Avalonia.Collections;
-using ReactiveUI.Fody.Helpers;
-using Spravy.Domain.Helpers;
-using Spravy.Domain.Models;
-using Spravy.ToDo.Domain.Enums;
-using Spravy.Ui.Models;
-
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ToDoItemContentViewModel : NavigatableViewModelBase

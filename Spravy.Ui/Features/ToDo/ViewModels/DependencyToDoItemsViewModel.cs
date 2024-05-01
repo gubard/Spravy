@@ -1,9 +1,3 @@
-using System;
-using Avalonia.Collections;
-using ReactiveUI.Fody.Helpers;
-using Spravy.Ui.Features.ToDo.Models;
-using Spravy.Ui.Models;
-
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class DependencyToDoItemsViewModel : ViewModelBase

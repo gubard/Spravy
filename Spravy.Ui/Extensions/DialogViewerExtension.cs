@@ -1,15 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using Avalonia.Media;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Models;
-using Spravy.Ui.Interfaces;
-using Spravy.Ui.Models;
-using Spravy.Ui.ViewModels;
-
 namespace Spravy.Ui.Extensions;
 
 public static class DialogViewerExtension
@@ -126,11 +114,11 @@ public static class DialogViewerExtension
     public static ConfiguredValueTaskAwaitable<Result> ShowDateTimeConfirmDialogAsync(
         this IDialogViewer dialogViewer,
         Func<DateTime, ConfiguredValueTaskAwaitable<Result>> confirmTask,
-        Action<DateTimeViewModel>? setupCalendar,
+        Action<SpravyDateTimeViewModel>? setupCalendar,
         CancellationToken cancellationToken
     )
     {
-        return dialogViewer.ShowConfirmInputDialogAsync<DateTimeViewModel>(
+        return dialogViewer.ShowConfirmInputDialogAsync<SpravyDateTimeViewModel>(
             viewModel => confirmTask.Invoke(
                 viewModel.SelectedDate.ThrowIfNullStruct().Add(viewModel.SelectedTime.ThrowIfNullStruct())),
             _ => dialogViewer.CloseInputDialogAsync(cancellationToken), viewModel => setupCalendar?.Invoke(viewModel),

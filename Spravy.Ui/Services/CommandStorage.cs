@@ -1,35 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using AutoMapper;
-using Avalonia.Collections;
-using Material.Icons;
-using Ninject;
-using Spravy.Authentication.Domain.Interfaces;
-using Spravy.Domain.Di.Helpers;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Helpers;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
-using Spravy.PasswordGenerator.Domain.Interfaces;
-using Spravy.PasswordGenerator.Domain.Models;
-using Spravy.ToDo.Domain.Enums;
-using Spravy.ToDo.Domain.Interfaces;
-using Spravy.ToDo.Domain.Models;
-using Spravy.Ui.Enums;
-using Spravy.Ui.Extensions;
-using Spravy.Ui.Features.Localizations.Models;
-using Spravy.Ui.Features.PasswordGenerator.ViewModels;
-using Spravy.Ui.Features.ToDo.ViewModels;
-using Spravy.Ui.Helpers;
-using Spravy.Ui.Interfaces;
-using Spravy.Ui.Models;
-using Spravy.Ui.ViewModels;
-
 namespace Spravy.Ui.Services;
 
 public static class CommandStorage
@@ -616,7 +584,7 @@ public static class CommandStorage
            .IfSuccessAsync(password => clipboard.SetTextAsync(password), cancellationToken)
            .IfSuccessAsync(
                 () => spravyNotificationManager.ShowAsync(
-                    new TextView("PasswordGeneratorView.Notification.CopyPassword", idProperty), cancellationToken),
+                    new TextLocalization("PasswordGeneratorView.Notification.CopyPassword", idProperty), cancellationToken),
                 cancellationToken);
     }
 

@@ -1,18 +1,3 @@
-using System;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Windows.Input;
-using Ninject;
-using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Models;
-using Spravy.PasswordGenerator.Domain.Interfaces;
-using Spravy.Ui.Extensions;
-using Spravy.Ui.Features.Localizations.Models;
-using Spravy.Ui.Models;
-using Spravy.Ui.Services;
-
 namespace Spravy.Ui.Features.PasswordGenerator.ViewModels;
 
 public class DeletePasswordItemViewModel : ViewModelBase
@@ -33,7 +18,7 @@ public class DeletePasswordItemViewModel : ViewModelBase
     [Inject]
     public required IPasswordService PasswordService { get; init; }
 
-    public Header4View DeleteText
+    public Header4Localization DeleteText
     {
         get => new("DeletePasswordItemView.Header", new
         {

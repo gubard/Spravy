@@ -1,10 +1,3 @@
-using Avalonia.Controls;
-using Avalonia.Controls.Templates;
-using Ninject;
-using ReactiveUI;
-using Spravy.Domain.Extensions;
-using Spravy.Ui.Models;
-
 namespace Spravy.Ui.DataTemplates;
 
 public class ModuleDataTemplate : IDataTemplate

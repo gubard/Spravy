@@ -1,11 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using Ninject;
-using Spravy.ToDo.Domain.Enums;
-using Spravy.Ui.Models;
-
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ToDoItemsGroupByStatusViewModel : ViewModelBase

@@ -1,5 +1,3 @@
-using Spravy.Domain.Models;
-
 namespace Spravy.Ui.Models;
 
 public readonly struct SelectedSelectedDaysOfYearEventArgs

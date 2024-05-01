@@ -1,9 +1,3 @@
-using System;
-using ReactiveUI.Fody.Helpers;
-using Spravy.Domain.Extensions;
-using Spravy.Ui.Interfaces;
-using Spravy.Ui.Models;
-
 namespace Spravy.Ui.ViewModels;
 
 public class AddTimerViewModel : ViewModelBase, IToDoShortItemProperty, IDueDateTimeProperty

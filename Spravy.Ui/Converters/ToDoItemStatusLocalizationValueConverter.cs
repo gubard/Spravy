@@ -1,11 +1,3 @@
-using System;
-using System.Globalization;
-using Avalonia;
-using Avalonia.Data.Converters;
-using Spravy.Domain.Extensions;
-using Spravy.ToDo.Domain.Enums;
-using Spravy.Ui.Extensions;
-
 namespace Spravy.Ui.Converters;
 
 public class ToDoItemStatusLocalizationValueConverter : IValueConverter

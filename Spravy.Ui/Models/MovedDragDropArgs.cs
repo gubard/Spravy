@@ -1,6 +1,3 @@
-using Avalonia;
-using Avalonia.Controls;
-
 namespace Spravy.Ui.Models;
 
 public class MovedDragDropArgs<TItem>

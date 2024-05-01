@@ -1,6 +1,3 @@
-using Ninject;
-using Spravy.Ui.Models;
-
 namespace Spravy.Ui.ViewModels;
 
 public class PaneViewModel : ViewModelBase

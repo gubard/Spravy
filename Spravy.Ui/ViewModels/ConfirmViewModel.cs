@@ -1,14 +1,3 @@
-using System;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using ReactiveUI.Fody.Helpers;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Models;
-using Spravy.Ui.Interfaces;
-using Spravy.Ui.Models;
-
 namespace Spravy.Ui.ViewModels;
 
 public class ConfirmViewModel : ViewModelBase, ISaveState

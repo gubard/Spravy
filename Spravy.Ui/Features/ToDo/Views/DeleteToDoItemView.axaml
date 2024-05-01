@@ -8,6 +8,7 @@
                         xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
                         xmlns:mi="clr-namespace:Material.Icons;assembly=Material.Icons"
                         xmlns:m="clr-namespace:Spravy.Ui.Models"
+                        xmlns:models="clr-namespace:Spravy.Ui.Features.ToDo.Models"
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                         x:Class="Spravy.Ui.Features.ToDo.Views.DeleteToDoItemView"
                         x:DataType="vm:DeleteToDoItemViewModel">
@@ -24,7 +25,7 @@
             </c:GroupBox.Header>
 
             <c:GroupBox.DataTemplates>
-                <DataTemplate DataType="m:ToDoItemParentNotify">
+                <DataTemplate DataType="models:ToDoItemParentNotify">
                     <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5,0,5,0" />
                 </DataTemplate>
 

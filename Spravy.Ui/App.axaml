@@ -10,6 +10,7 @@
              xmlns:pm="clr-namespace:Spravy.Ui.Features.PasswordGenerator.Models"
              xmlns:lm="clr-namespace:Spravy.Ui.Features.Localizations.Models"
              xmlns:viewModels="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+             xmlns:models="clr-namespace:Spravy.Ui.Features.ToDo.Models"
              x:Class="Spravy.Ui.App"
              RequestedThemeVariant="Dark">
     <Application.Resources>
@@ -30,15 +31,15 @@
     </Application.Styles>
 
     <Application.DataTemplates>
-        <DataTemplate x:DataType="lm:Header4View">
+        <DataTemplate x:DataType="lm:Header4Localization">
             <TextBlock Text="{Binding Text}" Classes="h4 text-wrap" />
         </DataTemplate>
 
-        <DataTemplate x:DataType="lm:Header3View">
+        <DataTemplate x:DataType="lm:Header3Localization">
             <TextBlock Text="{Binding Text}" Classes="h3 text-wrap" />
         </DataTemplate>
 
-        <DataTemplate x:DataType="lm:TextView">
+        <DataTemplate x:DataType="lm:TextLocalization">
             <TextBlock Text="{Binding Text}"
                        Classes="text-wrap alignment-center"
                        Foreground="{DynamicResource SukiText}" />
@@ -96,11 +97,11 @@
             </Button>
         </DataTemplate>
 
-        <TreeDataTemplate DataType="m:ToDoSelectorItemNotify" ItemsSource="{Binding Children}">
+        <TreeDataTemplate DataType="models:ToDoSelectorItemNotify" ItemsSource="{Binding Children}">
             <TextBlock Text="{Binding Name}" />
         </TreeDataTemplate>
 
-        <DataTemplate DataType="m:ToDoItemParentNotify">
+        <DataTemplate DataType="models:ToDoItemParentNotify">
             <Button Command="{x:Static s:CommandStorage.NavigateToToDoItemCommand}"
                     CommandParameter="{Binding Id}"
                     Content="{Binding Name}"
@@ -114,7 +115,7 @@
                     Classes="Basic" />
         </DataTemplate>
 
-        <DataTemplate DataType="m:ToDoShortItemNotify">
+        <DataTemplate DataType="models:ToDoShortItemNotify">
             <TextBlock Text="{Binding Name}" />
         </DataTemplate>
 
@@ -124,7 +125,7 @@
 
         <DataTemplate>
             <DataTemplate.DataType>
-                <x:Type TypeName="m:Selected" x:TypeArguments="m:ToDoItemNotify" />
+                <x:Type TypeName="m:Selected" x:TypeArguments="models:ToDoItemNotify" />
             </DataTemplate.DataType>
 
             <c:BusyArea IsBusy="{Binding Value.IsBusy}">

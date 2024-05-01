@@ -1,28 +1,3 @@
-using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Reactive.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Windows.Input;
-using AutoMapper;
-using Avalonia.Controls;
-using Ninject;
-using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
-using Spravy.Authentication.Domain.Interfaces;
-using Spravy.Authentication.Domain.Models;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Helpers;
-using Spravy.Domain.Models;
-using Spravy.Ui.Enums;
-using Spravy.Ui.Extensions;
-using Spravy.Ui.Features.Authentication.ViewModels;
-using Spravy.Ui.Interfaces;
-using Spravy.Ui.Models;
-using Spravy.Ui.Services;
-using Spravy.Ui.Views;
-
 namespace Spravy.Ui.ViewModels;
 
 public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperties, INotifyDataErrorInfo

@@ -1,11 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Avalonia.Collections;
-using ReactiveUI.Fody.Helpers;
-using Spravy.Ui.Features.Localizations.Models;
-using Spravy.Ui.Models;
-
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ToDoItemsViewModel : ViewModelBase
@@ -14,7 +6,7 @@ public class ToDoItemsViewModel : ViewModelBase
     public AvaloniaList<Selected<ToDoItemNotify>> Items { get; } = new();
 
     [Reactive]
-    public TextView? Header { get; set; }
+    public TextLocalization? Header { get; set; }
 
     [Reactive]
     public bool IsExpanded { get; set; } = true;

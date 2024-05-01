@@ -1,22 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Windows.Input;
-using AutoMapper;
-using Avalonia.Collections;
-using Ninject;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Helpers;
-using Spravy.Domain.Models;
-using Spravy.PasswordGenerator.Domain.Interfaces;
-using Spravy.Ui.Extensions;
-using Spravy.Ui.Features.Localizations.Models;
-using Spravy.Ui.Features.PasswordGenerator.Models;
-using Spravy.Ui.Interfaces;
-using Spravy.Ui.Models;
-using Spravy.Ui.Services;
-using Spravy.Ui.ViewModels;
-
 namespace Spravy.Ui.Features.PasswordGenerator.ViewModels;
 
 public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
@@ -50,7 +31,7 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
         init
         {
             pageHeaderViewModel = value;
-            pageHeaderViewModel.Header = new Header3View("PasswordGeneratorView.Header");
+            pageHeaderViewModel.Header = new Header3Localization("PasswordGeneratorView.Header");
             pageHeaderViewModel.LeftCommand = CommandStorage.NavigateToCurrentToDoItemItem;
             Disposables.Add(pageHeaderViewModel);
         }

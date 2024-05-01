@@ -1,9 +1,3 @@
-using System.Runtime.CompilerServices;
-using System.Threading;
-using Spravy.Domain.Helpers;
-using Spravy.Domain.Models;
-using Spravy.Ui.Interfaces;
-
 namespace Spravy.Ui.Services;
 
 public class EmptyNavigatable : INavigatable

@@ -1,13 +1,3 @@
-using System;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Threading.Tasks;
-using Ninject;
-using Spravy.Domain.Di.Helpers;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Models;
-using Spravy.Ui.Interfaces;
-
 namespace Spravy.Ui.Services;
 
 public class TaskWork

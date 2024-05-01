@@ -1,9 +1,3 @@
-using System;
-using System.Globalization;
-using Avalonia.Data.Converters;
-using Avalonia.Media;
-using Spravy.Ui.Enums;
-
 namespace Spravy.Ui.Converters;
 
 public class CompleteStatusToBrushConverter : IValueConverter

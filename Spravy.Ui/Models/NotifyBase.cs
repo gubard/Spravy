@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using ReactiveUI;
-
 namespace Spravy.Ui.Models;
 
 public class NotifyBase : ReactiveObject, IDisposable

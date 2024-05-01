@@ -1,8 +1,4 @@
-using System;
-using ReactiveUI;
-using Spravy.ToDo.Domain.Enums;
-
-namespace Spravy.Ui.Models;
+namespace Spravy.Ui.Features.ToDo.Models;
 
 public abstract class ToDoSubItemNotify : NotifyBase, IEquatable<ToDoSubItemNotify>
 {

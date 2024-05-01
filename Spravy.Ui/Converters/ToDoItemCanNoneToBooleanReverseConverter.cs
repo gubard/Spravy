@@ -1,8 +1,3 @@
-using System;
-using System.Globalization;
-using Avalonia.Data.Converters;
-using Spravy.ToDo.Domain.Enums;
-
 namespace Spravy.Ui.Converters;
 
 public class ToDoItemCanNoneToBooleanReverseConverter : IValueConverter

@@ -1,5 +1,3 @@
-using ReactiveUI;
-
 namespace Spravy.Ui.Models;
 
 public class TimerItemToDoItemFavoriteNotify : TimerItemNotify

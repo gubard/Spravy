@@ -1,6 +1,3 @@
-using System;
-using ReactiveUI;
-
 namespace Spravy.Ui.Models;
 
 public abstract class TimerItemNotify : NotifyBase

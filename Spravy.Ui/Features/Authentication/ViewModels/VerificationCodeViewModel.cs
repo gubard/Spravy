@@ -1,17 +1,3 @@
-using System;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Windows.Input;
-using Ninject;
-using ReactiveUI.Fody.Helpers;
-using Spravy.Authentication.Domain.Interfaces;
-using Spravy.Domain.Helpers;
-using Spravy.Domain.Models;
-using Spravy.Ui.Enums;
-using Spravy.Ui.Interfaces;
-using Spravy.Ui.Models;
-using Spravy.Ui.Services;
-
 namespace Spravy.Ui.Features.Authentication.ViewModels;
 
 public class VerificationCodeViewModel : NavigatableViewModelBase, IVerificationEmail

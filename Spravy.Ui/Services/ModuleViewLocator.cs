@@ -1,7 +1,3 @@
-using Ninject;
-using ReactiveUI;
-using Spravy.Domain.Extensions;
-
 namespace Spravy.Ui.Services;
 
 public class ModuleViewLocator : IViewLocator

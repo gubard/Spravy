@@ -1,6 +1,3 @@
-using System;
-using Avalonia.Media.Fonts;
-
 namespace Spravy.Ui.Services;
 
 public class ShantellSansFontCollection : EmbeddedFontCollection

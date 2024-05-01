@@ -1,6 +1,3 @@
-using System;
-using Spravy.Ui.Interfaces;
-
 namespace Spravy.Ui.Models;
 
 public class NavigatorItem

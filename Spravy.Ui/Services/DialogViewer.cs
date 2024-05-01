@@ -1,16 +1,3 @@
-using System;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Threading.Tasks;
-using DialogHostAvalonia;
-using Ninject;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Models;
-using Spravy.Ui.Extensions;
-using Spravy.Ui.Interfaces;
-using Spravy.Ui.Models;
-using Spravy.Ui.ViewModels;
-
 namespace Spravy.Ui.Services;
 
 public class DialogViewer : IDialogViewer

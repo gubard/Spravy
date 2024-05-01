@@ -1,20 +1,3 @@
-using System;
-using System.IO;
-using AutoMapper;
-using Google.Protobuf;
-using Spravy.Authentication.Domain.Models;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Models;
-using Spravy.EventBus.Protos;
-using Spravy.PasswordGenerator.Domain.Models;
-using Spravy.Schedule.Domain.Models;
-using Spravy.ToDo.Domain.Models;
-using Spravy.Ui.Features.PasswordGenerator.Models;
-using Spravy.Ui.Features.PasswordGenerator.ViewModels;
-using Spravy.Ui.Features.ToDo.ViewModels;
-using Spravy.Ui.Models;
-using Spravy.Ui.ViewModels;
-
 namespace Spravy.Ui.Profiles;
 
 public class SpravyUiProfile : Profile

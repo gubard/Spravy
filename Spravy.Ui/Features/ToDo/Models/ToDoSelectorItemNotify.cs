@@ -1,8 +1,4 @@
-using System;
-using Avalonia.Collections;
-using ReactiveUI;
-
-namespace Spravy.Ui.Models;
+namespace Spravy.Ui.Features.ToDo.Models;
 
 public class ToDoSelectorItemNotify : NotifyBase
 {

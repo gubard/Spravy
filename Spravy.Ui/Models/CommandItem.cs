@@ -1,12 +1,3 @@
-using System;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Windows.Input;
-using Material.Icons;
-using ReactiveUI;
-using Spravy.Domain.Models;
-using Spravy.Ui.Services;
-
 namespace Spravy.Ui.Models;
 
 public class CommandItem

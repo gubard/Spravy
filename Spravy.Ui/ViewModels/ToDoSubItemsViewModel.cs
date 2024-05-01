@@ -1,16 +1,3 @@
-using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Threading.Tasks;
-using Ninject;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Models;
-using Spravy.ToDo.Domain.Interfaces;
-using Spravy.Ui.Features.ToDo.ViewModels;
-using Spravy.Ui.Interfaces;
-using Spravy.Ui.Models;
-
 namespace Spravy.Ui.ViewModels;
 
 public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger

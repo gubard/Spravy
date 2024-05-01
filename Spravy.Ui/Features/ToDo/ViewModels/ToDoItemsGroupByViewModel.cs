@@ -1,17 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Windows.Input;
-using Ninject;
-using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
-using Spravy.Domain.Models;
-using Spravy.Ui.Features.ToDo.Enums;
-using Spravy.Ui.Models;
-using Spravy.Ui.Services;
-
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ToDoItemsGroupByViewModel : ViewModelBase

@@ -1,13 +1,3 @@
-using System;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using Avalonia.Collections;
-using ReactiveUI.Fody.Helpers;
-using Spravy.Domain.Models;
-using Spravy.Ui.Extensions;
-using Spravy.Ui.Models;
-using Spravy.Ui.Services;
-
 namespace Spravy.Ui.ViewModels;
 
 public class PageHeaderViewModel : ViewModelBase

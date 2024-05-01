@@ -1,25 +1,3 @@
-using System;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Windows.Input;
-using Material.Icons;
-using Ninject;
-using ProtoBuf;
-using ReactiveUI.Fody.Helpers;
-using Spravy.Domain.Enums;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Helpers;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
-using Spravy.ToDo.Domain.Enums;
-using Spravy.ToDo.Domain.Interfaces;
-using Spravy.Ui.Extensions;
-using Spravy.Ui.Interfaces;
-using Spravy.Ui.Models;
-using Spravy.Ui.Services;
-using Spravy.Ui.ViewModels;
-
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class AddToDoItemViewModel : NavigatableViewModelBase

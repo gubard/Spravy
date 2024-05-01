@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using Ninject;
-using Spravy.Ui.Models;
-
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ToDoItemsGroupByNoneViewModel : ViewModelBase

@@ -1,7 +1,3 @@
-using Ninject;
-using ReactiveUI.Fody.Helpers;
-using Spravy.Ui.Models;
-
 namespace Spravy.Ui.ViewModels;
 
 public class EditDescriptionViewModel : ViewModelBase

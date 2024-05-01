@@ -1,17 +1,3 @@
-using System;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Threading.Tasks;
-using Grpc.Core;
-using Serilog;
-using Spravy.Client.Exceptions;
-using Spravy.Domain.Errors;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Models;
-using Spravy.Ui.Features.ErrorHandling.ViewModels;
-using Spravy.Ui.Interfaces;
-
 namespace Spravy.Ui.Services;
 
 public class ErrorHandler : IErrorHandler

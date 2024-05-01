@@ -1,5 +1,3 @@
-using Spravy.Ui.Models;
-
 namespace Spravy.Ui.Interfaces;
 
 public interface ILoginProperties

@@ -1,11 +1,3 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using Ninject;
-using ReactiveUI;
-using Spravy.Ui.Interfaces;
-
 namespace Spravy.Ui.Models;
 
 public class ViewModelBase : NotifyBase

@@ -1,20 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Windows.Input;
-using Avalonia.Collections;
-using Ninject;
-using ReactiveUI.Fody.Helpers;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Models;
-using Spravy.ToDo.Domain.Interfaces;
-using Spravy.Ui.Extensions;
-using Spravy.Ui.Interfaces;
-using Spravy.Ui.Models;
-using Spravy.Ui.Services;
-
 namespace Spravy.Ui.ViewModels;
 
 public class ToDoItemDayOfYearSelectorViewModel : ViewModelBase, IApplySettings

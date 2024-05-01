@@ -1,21 +1,3 @@
-using System;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Windows.Input;
-using Ninject;
-using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Helpers;
-using Spravy.Domain.Models;
-using Spravy.ToDo.Domain.Enums;
-using Spravy.ToDo.Domain.Interfaces;
-using Spravy.Ui.Extensions;
-using Spravy.Ui.Features.ToDo.ViewModels;
-using Spravy.Ui.Interfaces;
-using Spravy.Ui.Models;
-using Spravy.Ui.Services;
-
 namespace Spravy.Ui.ViewModels;
 
 public class ToDoItemSettingsViewModel : NavigatableViewModelBase

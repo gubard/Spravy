@@ -1,22 +1,3 @@
-using System;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Windows.Input;
-using AutoMapper;
-using Ninject;
-using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Models;
-using Spravy.ToDo.Domain.Enums;
-using Spravy.ToDo.Domain.Interfaces;
-using Spravy.ToDo.Domain.Models;
-using Spravy.Ui.Extensions;
-using Spravy.Ui.Features.Localizations.Models;
-using Spravy.Ui.Models;
-using Spravy.Ui.Services;
-
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class DeleteToDoItemViewModel : ViewModelBase
@@ -46,7 +27,7 @@ public class DeleteToDoItemViewModel : ViewModelBase
     [Inject]
     public required IMapper Mapper { get; set; }
 
-    public Header4View DeleteText
+    public Header4Localization DeleteText
     {
         get => new("DeleteToDoItemView.Header", new
         {

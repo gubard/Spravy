@@ -1,6 +1,3 @@
-using Avalonia;
-using Spravy.Ui.Services;
-
 namespace Spravy.Ui.Extensions;
 
 public static class AppBuilderExtension

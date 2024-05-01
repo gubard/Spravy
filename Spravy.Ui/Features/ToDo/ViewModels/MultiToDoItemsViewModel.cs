@@ -1,27 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Windows.Input;
-using AutoMapper;
-using Avalonia.Collections;
-using Ninject;
-using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Models;
-using Spravy.ToDo.Domain.Enums;
-using Spravy.ToDo.Domain.Errors;
-using Spravy.ToDo.Domain.Interfaces;
-using Spravy.ToDo.Domain.Models;
-using Spravy.Ui.Extensions;
-using Spravy.Ui.Features.ToDo.Enums;
-using Spravy.Ui.Interfaces;
-using Spravy.Ui.Models;
-using Spravy.Ui.Services;
-
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class MultiToDoItemsViewModel : ViewModelBase

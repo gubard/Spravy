@@ -1,14 +1,4 @@
-using System;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Windows.Input;
-using Avalonia.Collections;
-using ReactiveUI;
-using Spravy.Domain.Models;
-using Spravy.ToDo.Domain.Enums;
-using Spravy.Ui.Interfaces;
-
-namespace Spravy.Ui.Models;
+namespace Spravy.Ui.Features.ToDo.Models;
 
 public class ToDoItemNotify : NotifyBase,
     ICanCompleteProperty,
