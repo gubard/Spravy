@@ -1,4 +1,4 @@
-namespace _build.Models;
+namespace Spravy.Domain.Models;
 
 public readonly struct SpravyVersion
 {
