@@ -14,7 +14,7 @@ namespace Spravy.Ui.Services;
 
 public class Navigator : INavigator
 {
-    private readonly QueryList<NavigatorItem> list = new(20);
+    private readonly QueryList<NavigatorItem> list = new(5);
     private Action<object> lastSetup = ActionHelper<object>.Empty;
 
     [Inject]
