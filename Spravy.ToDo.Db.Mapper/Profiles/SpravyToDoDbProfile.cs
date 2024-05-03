@@ -8,24 +8,10 @@ namespace Spravy.ToDo.Db.Mapper.Profiles;
 
 public class SpravyToDoDbProfile : Profile
 {
-    public const string StatusName = "Status";
-    public const string ParentsName = "Parents";
-    public const string ItemsName = "Items";
-    public const string ActiveName = "Active";
     public const string ParametersName = "Parameters";
-
+    
     public SpravyToDoDbProfile()
     {
-        CreateMap<ToDoItemEntity, ToDoItem>()
-           .ConvertUsing((entity, _, context) =>
-            {
-                var parameters = (ToDoItemParameters)context.Items[ParametersName];
-
-                return new(entity.Id, entity.Name, entity.IsFavorite, entity.Type, entity.Description,
-                    context.Mapper.Map<Uri?>(entity.Link), entity.OrderIndex, parameters.Status, parameters.ActiveItem,
-                    parameters.IsCan, entity.ParentId, entity.DescriptionType, entity.ReferenceId);
-            });
-        
         CreateMap<ToDoItemEntity, ReferenceToDoItemSettings>();
         CreateMap<ReferenceToDoItemSettings, ToDoItemEntity>();
         CreateMap<ToDoItemEntity, PlannedToDoItemSettings>();
@@ -42,5 +28,15 @@ public class SpravyToDoDbProfile : Profile
         CreateMap<Uri?, string?>().ConvertUsing(uri => uri == null ? string.Empty : uri.AbsoluteUri);
         CreateMap<ToDoItemEntity, AnnuallyPeriodicity>().ConstructUsing(x => new(x.GetDaysOfYear()));
         CreateMap<ToDoItemEntity, ActiveToDoItem>().ConvertUsing((source, _, _) => new(source.Id, source.Name));
+        
+        CreateMap<ToDoItemEntity, ToDoItem>()
+           .ConvertUsing((entity, _, context) =>
+            {
+                var parameters = (ToDoItemParameters)context.Items[ParametersName];
+                
+                return new(entity.Id, entity.Name, entity.IsFavorite, entity.Type, entity.Description,
+                    context.Mapper.Map<Uri?>(entity.Link), entity.OrderIndex, parameters.Status, parameters.ActiveItem,
+                    parameters.IsCan, entity.ParentId, entity.DescriptionType, entity.ReferenceId);
+            });
     }
 }
