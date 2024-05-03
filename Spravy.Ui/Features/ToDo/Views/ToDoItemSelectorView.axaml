@@ -1,0 +1,43 @@
+<ru:ReactiveUserControl x:TypeArguments="viewModels:ToDoItemSelectorViewModel"
+                        xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:ru="http://reactiveui.net"
+                        xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                        xmlns:models="clr-namespace:Spravy.Ui.Features.ToDo.Models"
+                        xmlns:viewModels="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+                        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                        x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemSelectorView"
+                        x:DataType="viewModels:ToDoItemSelectorViewModel">
+    <Design.DataContext>
+        <viewModels:ToDoItemSelectorViewModel />
+    </Design.DataContext>
+
+    <Interaction.Behaviors>
+        <EventTriggerBehavior EventName="Initialized">
+            <InvokeCommandAction Command="{Binding InitializedCommand}" />
+        </EventTriggerBehavior>
+    </Interaction.Behaviors>
+
+    <Grid RowDefinitions="Auto,*">
+        <Grid ColumnDefinitions="*,Auto">
+            <TextBox Text="{Binding SearchText}" />
+
+            <Button Grid.Column="1" Command="{Binding SearchCommand}">
+                <mi:MaterialIcon Kind="Search" />
+            </Button>
+        </Grid>
+
+        <TreeView Grid.Row="1"
+                  ItemsSource="{Binding Roots}"
+                  SelectionMode="Single"
+                  SelectedItem="{Binding SelectedItem}">
+            <TreeView.Styles>
+                <Style Selector="TreeViewItem" x:DataType="models:ToDoSelectorItemNotify">
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
+                </Style>
+            </TreeView.Styles>
+        </TreeView>
+    </Grid>
+</ru:ReactiveUserControl>

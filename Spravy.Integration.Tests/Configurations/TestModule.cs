@@ -6,7 +6,6 @@ using Spravy.Db.Sqlite.EntityTypeConfigurations;
 using Spravy.Db.Sqlite.Services;
 using Spravy.Di.Extensions;
 using Spravy.Domain.Extensions;
-using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;
 using Spravy.EventBus.Domain.Client.Models;
 using Spravy.PasswordGenerator.Domain.Client.Models;
@@ -27,23 +26,23 @@ public class TestModule : NinjectModule
         Bind<IOpenerLink>().To<OpenerLink>();
 
         Bind<GrpcPasswordServiceOptions>()
-           .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcPasswordServiceOptions>("GrpcRouterService"))
+           .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcPasswordServiceOptions>())
            .InSingletonScope();
 
         Bind<GrpcAuthenticationServiceOptions>()
-           .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcAuthenticationServiceOptions>("GrpcRouterService"))
+           .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcAuthenticationServiceOptions>())
            .InSingletonScope();
 
         Bind<GrpcScheduleServiceOptions>()
-           .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcScheduleServiceOptions>("GrpcRouterService"))
+           .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcScheduleServiceOptions>())
            .InSingletonScope();
 
         Bind<GrpcToDoServiceOptions>()
-           .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcToDoServiceOptions>("GrpcRouterService"))
+           .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcToDoServiceOptions>())
            .InSingletonScope();
 
         Bind<GrpcEventBusServiceOptions>()
-           .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcEventBusServiceOptions>("GrpcRouterService"))
+           .ToMethod(context => context.Kernel.GetConfigurationSection<GrpcEventBusServiceOptions>())
            .InSingletonScope();
 
         Bind<IConfiguration>()

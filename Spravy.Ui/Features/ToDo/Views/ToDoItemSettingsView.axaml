@@ -1,0 +1,32 @@
+<ru:ReactiveUserControl x:TypeArguments="viewModels:ToDoItemSettingsViewModel"
+                        xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:ru="http://reactiveui.net"
+                        xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+                        xmlns:viewModels="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+                        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                        x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemSettingsView"
+                        x:DataType="viewModels:ToDoItemSettingsViewModel">
+    <Interaction.Behaviors>
+        <EventTriggerBehavior EventName="Initialized">
+            <InvokeCommandAction Command="{Binding InitializedCommand}" />
+        </EventTriggerBehavior>
+    </Interaction.Behaviors>
+
+    <ScrollViewer Classes="mini"
+                  HorizontalScrollBarVisibility="Disabled"
+                  VerticalScrollBarVisibility="Auto">
+        <c:GroupBox>
+            <c:GroupBox.Header>
+                <TextBlock Text="{DynamicResource ToDoItemSettingsView.Settings}" Classes="h4" />
+            </c:GroupBox.Header>
+
+            <StackPanel>
+                <ContentControl Content="{Binding ToDoItemContent}" />
+                <ContentControl Content="{Binding Settings}" />
+            </StackPanel>
+        </c:GroupBox>
+    </ScrollViewer>
+</ru:ReactiveUserControl>

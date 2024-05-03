@@ -7,7 +7,6 @@ using Spravy.Domain.Di.Helpers;
 using Spravy.Integration.Tests.Configurations;
 using Spravy.Ui;
 using Spravy.Ui.Configurations;
-using Spravy.Ui.Desktop.Configurations;
 using Spravy.Ui.Extensions;
 
 namespace Spravy.Integration.Tests;

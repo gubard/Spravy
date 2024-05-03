@@ -9,4 +9,5 @@ public enum ToDoItemType
     PeriodicityOffset,
     Circle,
     Step,
+    Reference,
 }
