@@ -43,6 +43,7 @@ public class ToDoItemSettingsViewModel : NavigatableViewModelBase
                 ToDoItemType.Circle => Resolver.Get<ValueToDoItemSettingsViewModel>().Case(vm => vm.Id = ToDoItemId),
                 ToDoItemType.Step => Resolver.Get<ValueToDoItemSettingsViewModel>().Case(vm => vm.Id = ToDoItemId),
                 ToDoItemType.Group => Resolver.Get<GroupToDoItemSettingsViewModel>(),
+                ToDoItemType.Reference => Resolver.Get<ReferenceToDoItemSettingsViewModel>(),
                 _ => throw new ArgumentOutOfRangeException(),
             });
 
