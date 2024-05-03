@@ -25,7 +25,9 @@ public class SpravyToDoDbProfile : Profile
                     context.Mapper.Map<Uri?>(entity.Link), entity.OrderIndex, parameters.Status, parameters.ActiveItem,
                     parameters.IsCan, entity.ParentId, entity.DescriptionType, entity.ReferenceId);
             });
-
+        
+        CreateMap<ToDoItemEntity, ReferenceToDoItemSettings>();
+        CreateMap<ReferenceToDoItemSettings, ToDoItemEntity>();
         CreateMap<ToDoItemEntity, PlannedToDoItemSettings>();
         CreateMap<ToDoItemEntity, ValueToDoItemSettings>();
         CreateMap<ToDoItemEntity, PeriodicityToDoItemSettings>();
