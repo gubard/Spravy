@@ -25,6 +25,7 @@ public class ToDoItemTypeLocalizationValueConverter : IValueConverter
             case ToDoItemType.PeriodicityOffset: return application.GetResource("ToDoItemType.PeriodicityOffset");
             case ToDoItemType.Circle: return application.GetResource("ToDoItemType.Circle");
             case ToDoItemType.Step: return application.GetResource("ToDoItemType.Step");
+            case ToDoItemType.Reference: return application.GetResource("ToDoItemType.Reference");
             default: throw new ArgumentOutOfRangeException();
         }
     }

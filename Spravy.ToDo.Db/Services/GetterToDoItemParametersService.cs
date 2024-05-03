@@ -1,10 +1,12 @@
 using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
+using Spravy.Db.Extensions;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Models;
 using Spravy.ToDo.Db.Contexts;
 using Spravy.ToDo.Db.Models;
 using Spravy.ToDo.Domain.Enums;
+using Spravy.ToDo.Domain.Errors;
 using Spravy.ToDo.Domain.Models;
 
 namespace Spravy.ToDo.Db.Services;
@@ -21,7 +23,7 @@ public class GetterToDoItemParametersService
         return GetToDoItemParametersAsync(context, entity, offset, new(), cancellationToken)
            .IfSuccessAsync(parameters => CheckActiveItem(parameters, entity).ToResult(), cancellationToken);
     }
-
+    
     private ConfiguredValueTaskAwaitable<Result<ToDoItemParameters>> GetToDoItemParametersAsync(
         SpravyDbToDoDbContext context,
         ToDoItemEntity entity,
@@ -30,18 +32,22 @@ public class GetterToDoItemParametersService
         CancellationToken cancellationToken
     )
     {
-        if (IsDueable(entity))
-        {
-            return GetToDoItemParametersAsync(context, entity, entity.DueDate, offset, parameters, false,
-                    cancellationToken)
-               .ConfigureAwait(false);
-        }
-
-        return GetToDoItemParametersAsync(context, entity, DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly(), offset,
-                parameters, false, cancellationToken)
-           .ConfigureAwait(false);
+        return IsDueableAsync(context, entity, cancellationToken)
+           .IfSuccessAsync(isDueable =>
+            {
+                if (isDueable)
+                {
+                    return GetToDoItemParametersAsync(context, entity, entity.DueDate, offset, parameters, false, new(),
+                            cancellationToken)
+                       .ConfigureAwait(false);
+                }
+                
+                return GetToDoItemParametersAsync(context, entity, DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly(),
+                        offset, parameters, false, new(), cancellationToken)
+                   .ConfigureAwait(false);
+            }, cancellationToken);
     }
-
+    
     private async ValueTask<Result<ToDoItemParameters>> GetToDoItemParametersAsync(
         SpravyDbToDoDbContext context,
         ToDoItemEntity entity,
@@ -49,17 +55,47 @@ public class GetterToDoItemParametersService
         TimeSpan offset,
         ToDoItemParameters parameters,
         bool useDueDate,
+        List<Guid> ignoreIds,
         CancellationToken cancellationToken
     )
     {
-        if (entity.IsCompleted && IsCompletable(entity))
+        if (entity.Type == ToDoItemType.Reference)
+        {
+            if (entity.ReferenceId.HasValue)
+            {
+                ignoreIds.Add(entity.Id);
+                
+                return await context.FindEntityAsync<ToDoItemEntity>(entity.ReferenceId.Value)
+                   .IfSuccessAsync(
+                        item => GetToDoItemParametersAsync(context, item, dueDate, offset, parameters, useDueDate,
+                                ignoreIds, cancellationToken)
+                           .ConfigureAwait(false), cancellationToken);
+            }
+            
+            return parameters.With(ToDoItemIsCan.None).With(null).With(ToDoItemStatus.Miss).ToResult();
+        }
+        
+        var isCompletable = IsCompletable(entity);
+        
+        if (isCompletable.IsHasError)
+        {
+            return new(isCompletable.Errors);
+        }
+        
+        if (entity.IsCompleted && isCompletable.Value)
         {
             return parameters.With(ToDoItemIsCan.CanIncomplete).With(null).With(ToDoItemStatus.Completed).ToResult();
         }
-
+        
         var isMiss = false;
-
-        if (IsDueable(entity))
+        var isDueable = await IsDueableAsync(context, entity, cancellationToken);
+        
+        if (isDueable.IsHasError)
+        {
+            return new(isDueable.Errors);
+        }
+        
+        if (isDueable.Value)
         {
             if (useDueDate)
             {
@@ -67,7 +103,7 @@ public class GetterToDoItemParametersService
                 {
                     isMiss = true;
                 }
-
+                
                 if (entity.DueDate > dueDate)
                 {
                     return parameters.With(null).With(ToDoItemStatus.Planned).With(ToDoItemIsCan.None).ToResult();
@@ -80,54 +116,54 @@ public class GetterToDoItemParametersService
                 {
                     isMiss = true;
                 }
-
+                
                 if (entity.DueDate > DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
                 {
                     return parameters.With(null).With(ToDoItemStatus.Planned).With(ToDoItemIsCan.None).ToResult();
                 }
             }
         }
-
+        
         var items = await context.Set<ToDoItemEntity>()
            .AsNoTracking()
-           .Where(x => x.ParentId == entity.Id)
+           .Where(x => x.ParentId == entity.Id && !ignoreIds.Contains(x.Id))
            .OrderBy(x => x.OrderIndex)
            .ToArrayAsync(cancellationToken);
-
+        
         ActiveToDoItem? firstReadyForComplete = null;
         ActiveToDoItem? firstMiss = null;
         var hasPlanned = false;
-
+        
         foreach (var item in items)
         {
             if (firstMiss.HasValue)
             {
                 break;
             }
-
-            var result = await GetToDoItemParametersAsync(
-                context, item, dueDate, offset, parameters, true, cancellationToken);
-
+            
+            var result = await GetToDoItemParametersAsync(context, item, dueDate, offset, parameters, true, ignoreIds,
+                cancellationToken);
+            
             if (result.IsHasError)
             {
                 return result;
             }
-
+            
             parameters = result.Value;
-
+            
             switch (parameters.Status)
             {
                 case ToDoItemStatus.Miss:
                     firstMiss ??= parameters.ActiveItem ?? ToActiveToDoItem(item);
-
+                    
                     break;
                 case ToDoItemStatus.ReadyForComplete:
                     firstReadyForComplete ??= parameters.ActiveItem ?? ToActiveToDoItem(item);
-
+                    
                     break;
                 case ToDoItemStatus.Planned:
                     hasPlanned = true;
-
+                    
                     break;
                 case ToDoItemStatus.Completed:
                     break;
@@ -135,10 +171,16 @@ public class GetterToDoItemParametersService
                     throw new ArgumentOutOfRangeException();
             }
         }
-
+        
         var firstActive = firstMiss ?? firstReadyForComplete;
-
-        if (IsGroup(entity))
+        var isGroup = IsGroup(entity);
+        
+        if (isGroup.IsHasError)
+        {
+            return new(isGroup.Errors);
+        }
+        
+        if (isGroup.Value)
         {
             if (isMiss)
             {
@@ -147,28 +189,28 @@ public class GetterToDoItemParametersService
                    .With(firstActive ?? ToActiveToDoItem(entity))
                    .ToResult();
             }
-
+            
             if (firstMiss is not null)
             {
                 return parameters.With(ToDoItemStatus.Miss).With(ToDoItemIsCan.None).With(firstMiss).ToResult();
             }
-
+            
             if (firstReadyForComplete is null)
             {
                 if (hasPlanned)
                 {
                     return parameters.With(ToDoItemStatus.Planned).With(ToDoItemIsCan.None).With(null).ToResult();
                 }
-
+                
                 return parameters.With(ToDoItemStatus.Completed).With(ToDoItemIsCan.None).With(null).ToResult();
             }
-
+            
             return parameters.With(ToDoItemStatus.ReadyForComplete)
                .With(ToDoItemIsCan.None)
                .With(firstReadyForComplete)
                .ToResult();
         }
-
+        
         if (isMiss)
         {
             switch (entity.ChildrenType)
@@ -181,7 +223,7 @@ public class GetterToDoItemParametersService
                            .With(firstActive)
                            .ToResult();
                     }
-
+                    
                     return parameters.With(ToDoItemStatus.Miss)
                        .With(ToDoItemIsCan.CanComplete)
                        .With(ToActiveToDoItem(entity))
@@ -194,7 +236,7 @@ public class GetterToDoItemParametersService
                 default: throw new ArgumentOutOfRangeException();
             }
         }
-
+        
         if (firstMiss is not null)
         {
             switch (entity.ChildrenType)
@@ -209,7 +251,7 @@ public class GetterToDoItemParametersService
                 default: throw new ArgumentOutOfRangeException();
             }
         }
-
+        
         if (firstReadyForComplete is not null)
         {
             switch (entity.ChildrenType)
@@ -227,62 +269,97 @@ public class GetterToDoItemParametersService
                 default: throw new ArgumentOutOfRangeException();
             }
         }
-
+        
         return parameters.With(ToDoItemStatus.ReadyForComplete).With(ToDoItemIsCan.CanComplete).With(null).ToResult();
     }
-
-    private bool IsDueable(ToDoItemEntity entity)
+    
+    private ConfiguredValueTaskAwaitable<Result<bool>> IsDueableAsync(
+        SpravyDbToDoDbContext context,
+        ToDoItemEntity entity,
+        CancellationToken cancellationToken
+    )
     {
         return entity.Type switch
         {
-            ToDoItemType.Value => false,
-            ToDoItemType.Group => false,
-            ToDoItemType.Planned => true,
-            ToDoItemType.Periodicity => true,
-            ToDoItemType.PeriodicityOffset => true,
-            ToDoItemType.Circle => false,
-            ToDoItemType.Step => false,
-            _ => throw new ArgumentOutOfRangeException(),
+            ToDoItemType.Value => false.ToResult().ToValueTaskResult().ConfigureAwait(false),
+            ToDoItemType.Group => false.ToResult().ToValueTaskResult().ConfigureAwait(false),
+            ToDoItemType.Planned => true.ToResult().ToValueTaskResult().ConfigureAwait(false),
+            ToDoItemType.Periodicity => true.ToResult().ToValueTaskResult().ConfigureAwait(false),
+            ToDoItemType.PeriodicityOffset => true.ToResult().ToValueTaskResult().ConfigureAwait(false),
+            ToDoItemType.Circle => false.ToResult().ToValueTaskResult().ConfigureAwait(false),
+            ToDoItemType.Step => false.ToResult().ToValueTaskResult().ConfigureAwait(false),
+            ToDoItemType.Reference => entity.ReferenceId.HasValue
+                ? context.FindEntityAsync<ToDoItemEntity>(entity.ReferenceId.Value)
+                   .IfSuccessAsync(item => IsDueableAsync(context, item, cancellationToken), cancellationToken)
+                : false.ToResult().ToValueTaskResult().ConfigureAwait(false),
+            _ => new Result<bool>(new ToDoItemTypeOutOfRangeError(entity.Type)).ToValueTaskResult()
+               .ConfigureAwait(false),
         };
     }
-
-    private bool IsCompletable(ToDoItemEntity entity)
+    
+    private ConfiguredValueTaskAwaitable<Result<DateOnly>> GetDueDateAsync(
+        SpravyDbToDoDbContext context,
+        ToDoItemEntity entity,
+        CancellationToken cancellationToken
+    )
     {
         return entity.Type switch
         {
-            ToDoItemType.Value => true,
-            ToDoItemType.Group => false,
-            ToDoItemType.Planned => true,
-            ToDoItemType.Periodicity => false,
-            ToDoItemType.PeriodicityOffset => false,
-            ToDoItemType.Circle => true,
-            ToDoItemType.Step => true,
-            _ => throw new ArgumentOutOfRangeException(),
+            ToDoItemType.Value => entity.DueDate.ToResult().ToValueTaskResult().ConfigureAwait(false),
+            ToDoItemType.Group => entity.DueDate.ToResult().ToValueTaskResult().ConfigureAwait(false),
+            ToDoItemType.Planned => entity.DueDate.ToResult().ToValueTaskResult().ConfigureAwait(false),
+            ToDoItemType.Periodicity => entity.DueDate.ToResult().ToValueTaskResult().ConfigureAwait(false),
+            ToDoItemType.PeriodicityOffset => entity.DueDate.ToResult().ToValueTaskResult().ConfigureAwait(false),
+            ToDoItemType.Circle => entity.DueDate.ToResult().ToValueTaskResult().ConfigureAwait(false),
+            ToDoItemType.Step => entity.DueDate.ToResult().ToValueTaskResult().ConfigureAwait(false),
+            ToDoItemType.Reference => entity.ReferenceId.HasValue
+                ? context.FindEntityAsync<ToDoItemEntity>(entity.ReferenceId.Value)
+                   .IfSuccessAsync(item => GetDueDateAsync(context, item, cancellationToken), cancellationToken)
+                : DateOnly.MinValue.ToResult().ToValueTaskResult().ConfigureAwait(false),
+            _ => new Result<DateOnly>(new ToDoItemTypeOutOfRangeError(entity.Type)).ToValueTaskResult()
+               .ConfigureAwait(false),
         };
     }
-
-    private bool IsGroup(ToDoItemEntity entity)
+    
+    private Result<bool> IsCompletable(ToDoItemEntity entity)
     {
         return entity.Type switch
         {
-            ToDoItemType.Value => false,
-            ToDoItemType.Group => true,
-            ToDoItemType.Planned => false,
-            ToDoItemType.Periodicity => false,
-            ToDoItemType.PeriodicityOffset => false,
-            ToDoItemType.Circle => false,
-            ToDoItemType.Step => false,
-            _ => throw new ArgumentOutOfRangeException(),
+            ToDoItemType.Value => true.ToResult(),
+            ToDoItemType.Group => false.ToResult(),
+            ToDoItemType.Planned => true.ToResult(),
+            ToDoItemType.Periodicity => false.ToResult(),
+            ToDoItemType.PeriodicityOffset => false.ToResult(),
+            ToDoItemType.Circle => true.ToResult(),
+            ToDoItemType.Step => true.ToResult(),
+            ToDoItemType.Reference => false.ToResult(),
+            _ => new(new ToDoItemTypeOutOfRangeError(entity.Type)),
         };
     }
-
+    
+    private Result<bool> IsGroup(ToDoItemEntity entity)
+    {
+        return entity.Type switch
+        {
+            ToDoItemType.Value => false.ToResult(),
+            ToDoItemType.Group => true.ToResult(),
+            ToDoItemType.Planned => false.ToResult(),
+            ToDoItemType.Periodicity => false.ToResult(),
+            ToDoItemType.PeriodicityOffset => false.ToResult(),
+            ToDoItemType.Circle => false.ToResult(),
+            ToDoItemType.Step => false.ToResult(),
+            ToDoItemType.Reference => false.ToResult(),
+            _ => new(new ToDoItemTypeOutOfRangeError(entity.Type)),
+        };
+    }
+    
     private ToDoItemParameters CheckActiveItem(ToDoItemParameters parameters, ToDoItemEntity entity)
     {
         return parameters.ActiveItem.HasValue && parameters.ActiveItem.Value.Id == entity.ParentId
             ? parameters.With(null)
             : parameters;
     }
-
+    
     private ActiveToDoItem? ToActiveToDoItem(ToDoItemEntity entity)
     {
         return entity.ParentId is null ? null : new ActiveToDoItem(entity.ParentId.Value, entity.Name);

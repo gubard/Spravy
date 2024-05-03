@@ -130,7 +130,7 @@
 
             <c:BusyArea IsBusy="{Binding Value.IsBusy}">
                 <Button Command="{x:Static s:CommandStorage.NavigateToToDoItemCommand}"
-                        CommandParameter="{Binding Value.Id}"
+                        CommandParameter="{Binding Value.CurrentId}"
                         Classes="alignment-stretch glass-card content-alignment-stretch">
                     <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,*">
                         <Grid Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*,Auto,Auto">

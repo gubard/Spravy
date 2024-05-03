@@ -4,7 +4,7 @@ using Spravy.ToDo.Domain.Enums;
 
 namespace Spravy.ToDo.Db.Models;
 
-public class ToDoItemEntity
+public record ToDoItemEntity
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = string.Empty;
@@ -29,6 +29,9 @@ public class ToDoItemEntity
     public string Link { get; set; } = string.Empty;
     public bool IsRequiredCompleteInDueDate { get; set; } = true;
     public DescriptionType DescriptionType { get; set; }
+
+    public Guid? ReferenceId { get; set; }
+    public ToDoItemEntity? Reference { get; set; }
 
     public Guid? ParentId { get; set; }
     public ToDoItemEntity? Parent { get; set; }

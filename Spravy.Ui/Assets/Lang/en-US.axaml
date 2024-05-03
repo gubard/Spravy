@@ -98,6 +98,7 @@
     <sys:String x:Key="ToDoItemType.PeriodicityOffset">Periodicity offset</sys:String>
     <sys:String x:Key="ToDoItemType.Circle">Circle</sys:String>
     <sys:String x:Key="ToDoItemType.Step">Step</sys:String>
+    <sys:String x:Key="ToDoItemType.Reference">Reference</sys:String>
 
     <!--ToDoItemStatus-->
     <sys:String x:Key="ToDoItemStatus.Miss">Miss</sys:String>

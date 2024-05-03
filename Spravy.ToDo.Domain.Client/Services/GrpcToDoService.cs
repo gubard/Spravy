@@ -24,7 +24,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
 {
     private readonly IConverter converter;
     private readonly IMetadataFactory metadataFactory;
-
+    
     public GrpcToDoService(
         IFactory<Uri, ToDoServiceClient> grpcClientFactory,
         Uri host,
@@ -36,7 +36,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         this.converter = converter;
         this.metadataFactory = metadataFactory;
     }
-
+    
     public static GrpcToDoService CreateGrpcService(
         IFactory<Uri, ToDoServiceClient> grpcClientFactory,
         Uri host,
@@ -47,7 +47,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
     {
         return new(grpcClientFactory, host, mapper, metadataFactory, serializer);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result> CloneToDoItemAsync(
         Guid cloneId,
         Guid? parentId,
@@ -64,7 +64,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                    .ToValueTaskResultOnly()
                    .ConfigureAwait(false), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemDescriptionTypeAsync(
         Guid id,
         DescriptionType type,
@@ -81,7 +81,42 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                .ToValueTaskResultOnly()
                .ConfigureAwait(false), cancellationToken), cancellationToken);
     }
-
+    
+    public ConfiguredValueTaskAwaitable<Result<ReferenceToDoItemSettings>> GetReferenceToDoItemSettingsAsync(
+        Guid id,
+        CancellationToken cancellationToken
+    )
+    {
+        return CallClientAsync(client => metadataFactory.CreateAsync(cancellationToken)
+               .IfSuccessAsync(converter.Convert<ByteString>(id), (metadata, i) => client
+                   .GetReferenceToDoItemSettingsAsync(
+                        new()
+                        {
+                            Id = i,
+                        }, metadata, cancellationToken: cancellationToken)
+                   .ToValueTaskResultValueOnly()
+                   .ConfigureAwait(false), cancellationToken)
+               .IfSuccessAsync(reply => converter.Convert<ReferenceToDoItemSettings>(reply), cancellationToken),
+            cancellationToken);
+    }
+    
+    public ConfiguredValueTaskAwaitable<Result> UpdateReferenceToDoItemAsync(
+        Guid id,
+        Guid referenceId,
+        CancellationToken cancellationToken
+    )
+    {
+        return CallClientAsync(client => metadataFactory.CreateAsync(cancellationToken)
+           .IfSuccessAsync(converter.Convert<ByteString>(id), converter.Convert<ByteString>(referenceId),
+                (metadata, i, ri) => client.UpdateReferenceToDoItemAsync(new()
+                    {
+                        Id = i,
+                        ReferenceId = ri,
+                    }, metadata, cancellationToken: cancellationToken)
+                   .ToValueTaskResultOnly()
+                   .ConfigureAwait(false), cancellationToken), cancellationToken);
+    }
+    
     public ConfiguredValueTaskAwaitable<Result> ResetToDoItemAsync(
         ResetToDoItemOptions options,
         CancellationToken cancellationToken
@@ -94,7 +129,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                        .ToValueTaskResultOnly()
                        .ConfigureAwait(false), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result> RandomizeChildrenOrderIndexAsync(
         Guid id,
         CancellationToken cancellationToken
@@ -109,7 +144,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                .ToValueTaskResultOnly()
                .ConfigureAwait(false), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoShortItem>>> GetParentsAsync(
         Guid id,
         CancellationToken cancellationToken
@@ -128,7 +163,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                        .ToValueTaskResult()
                        .ConfigureAwait(false), cancellationToken), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> SearchToDoItemIdsAsync(
         string searchText,
         CancellationToken cancellationToken
@@ -147,7 +182,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                        .ToValueTaskResult()
                        .ConfigureAwait(false), cancellationToken), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetLeafToDoItemIdsAsync(
         Guid id,
         CancellationToken cancellationToken
@@ -166,7 +201,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                        .ToValueTaskResult()
                        .ConfigureAwait(false), cancellationToken), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result<ToDoItem>> GetToDoItemAsync(Guid id, CancellationToken cancellationToken)
     {
         return CallClientAsync(client => metadataFactory.CreateAsync(cancellationToken)
@@ -179,7 +214,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                .IfSuccessAsync(reply => converter.Convert<ToDoItem>(reply).ToValueTaskResult().ConfigureAwait(false),
                     cancellationToken), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetChildrenToDoItemIdsAsync(
         Guid id,
         CancellationToken cancellationToken
@@ -198,7 +233,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                        .ToValueTaskResult()
                        .ConfigureAwait(false), cancellationToken), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoShortItem>>> GetChildrenToDoItemShortsAsync(
         Guid id,
         CancellationToken cancellationToken
@@ -217,7 +252,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                        .ToValueTaskResult()
                        .ConfigureAwait(false), cancellationToken), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetRootToDoItemIdsAsync(
         CancellationToken cancellationToken
     )
@@ -234,7 +269,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                .ToValueTaskResult()
                                .ConfigureAwait(false), cancellationToken), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetFavoriteToDoItemIdsAsync(
         CancellationToken cancellationToken
     )
@@ -251,7 +286,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                .ToValueTaskResult()
                                .ConfigureAwait(false), cancellationToken), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result<Guid>> AddRootToDoItemAsync(
         AddRootToDoItemOptions options,
         CancellationToken cancellationToken
@@ -266,7 +301,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                        .IfSuccessAsync(id => converter.Convert<Guid>(id.Id).ToValueTaskResult().ConfigureAwait(false),
                             cancellationToken), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result<Guid>> AddToDoItemAsync(
         AddToDoItemOptions options,
         CancellationToken cancellationToken
@@ -281,7 +316,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                        .IfSuccessAsync(id => converter.Convert<Guid>(id.Id).ToValueTaskResult().ConfigureAwait(false),
                             cancellationToken), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result> DeleteToDoItemAsync(Guid id, CancellationToken cancellationToken)
     {
         return CallClientAsync(client => metadataFactory.CreateAsync(cancellationToken)
@@ -292,7 +327,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                .ToValueTaskResultOnly()
                .ConfigureAwait(false), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemTypeOfPeriodicityAsync(
         Guid id,
         TypeOfPeriodicity type,
@@ -309,7 +344,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                .ToValueTaskResultOnly()
                .ConfigureAwait(false), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemDueDateAsync(
         Guid id,
         DateOnly dueDate,
@@ -326,7 +361,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                    .ToValueTaskResultOnly()
                    .ConfigureAwait(false), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemCompleteStatusAsync(
         Guid id,
         bool isComplete,
@@ -343,7 +378,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                .ToValueTaskResultOnly()
                .ConfigureAwait(false), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemNameAsync(
         Guid id,
         string name,
@@ -359,7 +394,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                .ToValueTaskResultOnly()
                .ConfigureAwait(false), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemOrderIndexAsync(
         UpdateOrderIndexToDoItemOptions options,
         CancellationToken cancellationToken
@@ -373,7 +408,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                            .ToValueTaskResultOnly()
                            .ConfigureAwait(false), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemDescriptionAsync(
         Guid id,
         string description,
@@ -389,7 +424,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                .ToValueTaskResultOnly()
                .ConfigureAwait(false), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemTypeAsync(
         Guid id,
         ToDoItemType type,
@@ -405,7 +440,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                .ToValueTaskResultOnly()
                .ConfigureAwait(false), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result> AddFavoriteToDoItemAsync(Guid id, CancellationToken cancellationToken)
     {
         return CallClientAsync(client => metadataFactory.CreateAsync(cancellationToken)
@@ -416,7 +451,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                .ToValueTaskResultOnly()
                .ConfigureAwait(false), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result> RemoveFavoriteToDoItemAsync(
         Guid id,
         CancellationToken cancellationToken
@@ -430,7 +465,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                .ToValueTaskResultOnly()
                .ConfigureAwait(false), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemIsRequiredCompleteInDueDateAsync(
         Guid id,
         bool value,
@@ -447,7 +482,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                .ToValueTaskResultOnly()
                .ConfigureAwait(false), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetTodayToDoItemsAsync(
         CancellationToken cancellationToken
     )
@@ -464,7 +499,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                .ToValueTaskResult()
                                .ConfigureAwait(false), cancellationToken), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemAnnuallyPeriodicityAsync(
         Guid id,
         AnnuallyPeriodicity periodicity,
@@ -481,7 +516,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                    .ToValueTaskResultOnly()
                    .ConfigureAwait(false), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemMonthlyPeriodicityAsync(
         Guid id,
         MonthlyPeriodicity periodicity,
@@ -498,7 +533,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                    .ToValueTaskResultOnly()
                    .ConfigureAwait(false), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemWeeklyPeriodicityAsync(
         Guid id,
         WeeklyPeriodicity periodicity,
@@ -515,7 +550,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                    .ToValueTaskResultOnly()
                    .ConfigureAwait(false), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoSelectorItem>>> GetToDoSelectorItemsAsync(
         Guid[] ignoreIds,
         CancellationToken cancellationToken
@@ -526,7 +561,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
             {
                 var request = new GetToDoSelectorItemsRequest();
                 request.IgnoreIds.AddRange(ii);
-
+                
                 return client.GetToDoSelectorItemsAsync(request, value, cancellationToken: cancellationToken)
                    .ToValueTaskResultValueOnly()
                    .ConfigureAwait(false)
@@ -537,7 +572,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                            .ConfigureAwait(false), cancellationToken);
             }, cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemParentAsync(
         Guid id,
         Guid parentId,
@@ -554,7 +589,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                    .ToValueTaskResultOnly()
                    .ConfigureAwait(false), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result> ToDoItemToRootAsync(Guid id, CancellationToken cancellationToken)
     {
         return CallClientAsync(client => metadataFactory.CreateAsync(cancellationToken)
@@ -565,7 +600,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                .ToValueTaskResultOnly()
                .ConfigureAwait(false), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result<string>> ToDoItemToStringAsync(
         ToDoItemToStringOptions options,
         CancellationToken cancellationToken
@@ -581,7 +616,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                        .IfSuccessAsync(reply => reply.Value.ToResult().ToValueTaskResult().ConfigureAwait(false),
                             cancellationToken), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemDaysOffsetAsync(
         Guid id,
         ushort days,
@@ -597,7 +632,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                .ToValueTaskResultOnly()
                .ConfigureAwait(false), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemMonthsOffsetAsync(
         Guid id,
         ushort months,
@@ -613,7 +648,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                .ToValueTaskResultOnly()
                .ConfigureAwait(false), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemWeeksOffsetAsync(
         Guid id,
         ushort weeks,
@@ -629,7 +664,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                .ToValueTaskResultOnly()
                .ConfigureAwait(false), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemYearsOffsetAsync(
         Guid id,
         ushort years,
@@ -645,7 +680,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                .ToValueTaskResultOnly()
                .ConfigureAwait(false), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemChildrenTypeAsync(
         Guid id,
         ToDoItemChildrenType type,
@@ -661,7 +696,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                .ToValueTaskResultOnly()
                .ConfigureAwait(false), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoShortItem>>> GetSiblingsAsync(
         Guid id,
         CancellationToken cancellationToken
@@ -680,7 +715,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                        .ToValueTaskResult()
                        .ConfigureAwait(false), cancellationToken), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result<ActiveToDoItem?>> GetCurrentActiveToDoItemAsync(
         CancellationToken cancellationToken
     )
@@ -698,7 +733,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                                .ToValueTaskResult()
                                .ConfigureAwait(false), cancellationToken), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemLinkAsync(
         Guid id,
         Uri? link,
@@ -706,16 +741,16 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
     )
     {
         return CallClientAsync(client => metadataFactory.CreateAsync(cancellationToken)
-           .IfSuccessAsync(converter.Convert<string?>(link), converter.Convert<ByteString>(id), (value, l, i) =>
-                client.UpdateToDoItemLinkAsync(new()
-                    {
-                        Id = i,
-                        Link = l ?? string.Empty,
-                    }, value, cancellationToken: cancellationToken)
-                   .ToValueTaskResultOnly()
-                   .ConfigureAwait(false), cancellationToken), cancellationToken);
+           .IfSuccessAsync(converter.Convert<string?>(link), converter.Convert<ByteString>(id), (value, l, i) => client
+               .UpdateToDoItemLinkAsync(new()
+                {
+                    Id = i,
+                    Link = l ?? string.Empty,
+                }, value, cancellationToken: cancellationToken)
+               .ToValueTaskResultOnly()
+               .ConfigureAwait(false), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result<PlannedToDoItemSettings>> GetPlannedToDoItemSettingsAsync(
         Guid id,
         CancellationToken cancellationToken
@@ -734,7 +769,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                        .ConfigureAwait(false),
                     cancellationToken), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result<ValueToDoItemSettings>> GetValueToDoItemSettingsAsync(
         Guid id,
         CancellationToken cancellationToken
@@ -751,7 +786,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                     reply => converter.Convert<ValueToDoItemSettings>(reply).ToValueTaskResult().ConfigureAwait(false),
                     cancellationToken), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result<PeriodicityToDoItemSettings>> GetPeriodicityToDoItemSettingsAsync(
         Guid id,
         CancellationToken cancellationToken
@@ -771,7 +806,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                        .ConfigureAwait(false),
                     cancellationToken), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result<WeeklyPeriodicity>> GetWeeklyPeriodicityAsync(
         Guid id,
         CancellationToken cancellationToken
@@ -788,7 +823,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                     reply => converter.Convert<WeeklyPeriodicity>(reply).ToValueTaskResult().ConfigureAwait(false),
                     cancellationToken), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result<MonthlyPeriodicity>> GetMonthlyPeriodicityAsync(
         Guid id,
         CancellationToken cancellationToken
@@ -805,7 +840,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                     reply => converter.Convert<MonthlyPeriodicity>(reply).ToValueTaskResult().ConfigureAwait(false),
                     cancellationToken), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result<AnnuallyPeriodicity>> GetAnnuallyPeriodicityAsync(
         Guid id,
         CancellationToken cancellationToken
@@ -822,24 +857,24 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
                     reply => converter.Convert<AnnuallyPeriodicity>(reply).ToValueTaskResult().ConfigureAwait(false),
                     cancellationToken), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result<PeriodicityOffsetToDoItemSettings>>
         GetPeriodicityOffsetToDoItemSettingsAsync(Guid id, CancellationToken cancellationToken)
     {
         return CallClientAsync(client => metadataFactory.CreateAsync(cancellationToken)
-           .IfSuccessAsync(converter.Convert<ByteString>(id), (value, i) =>
-                client.GetPeriodicityOffsetToDoItemSettingsAsync(new()
-                    {
-                        Id = i,
-                    }, value, cancellationToken: cancellationToken)
-                   .ToValueTaskResultValueOnly()
-                   .ConfigureAwait(false)
-                   .IfSuccessAsync(
-                        reply => converter.Convert<PeriodicityOffsetToDoItemSettings>(reply)
-                           .ToValueTaskResult()
-                           .ConfigureAwait(false), cancellationToken), cancellationToken), cancellationToken);
+           .IfSuccessAsync(converter.Convert<ByteString>(id), (value, i) => client
+               .GetPeriodicityOffsetToDoItemSettingsAsync(new()
+                {
+                    Id = i,
+                }, value, cancellationToken: cancellationToken)
+               .ToValueTaskResultValueOnly()
+               .ConfigureAwait(false)
+               .IfSuccessAsync(
+                    reply => converter.Convert<PeriodicityOffsetToDoItemSettings>(reply)
+                       .ToValueTaskResult()
+                       .ConfigureAwait(false), cancellationToken), cancellationToken), cancellationToken);
     }
-
+    
     public ConfiguredCancelableAsyncEnumerable<Result<ReadOnlyMemory<ToDoItem>>> GetToDoItemsAsync(
         Guid[] ids,
         uint chunkSize,
@@ -849,7 +884,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         return CallClientAsync((client, token) => GetToDoItemsCore(client, ids, chunkSize, token).ConfigureAwait(false),
             cancellationToken);
     }
-
+    
     private async IAsyncEnumerable<Result<ReadOnlyMemory<ToDoItem>>> GetToDoItemsCore(
         ToDoServiceClient client,
         Guid[] ids,
@@ -860,37 +895,39 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
         if (!ids.Any())
         {
             yield return ReadOnlyMemory<ToDoItem>.Empty.ToResult();
-
+            
             yield break;
         }
-
+        
         var request = new GetToDoItemsRequest
         {
             ChunkSize = chunkSize,
         };
-
+        
         var idsByteString = converter.Convert<ByteString[]>(ids);
-
+        
         if (idsByteString.IsHasError)
         {
             yield return new(idsByteString.Errors);
-
+            
             yield break;
         }
-
+        
         request.Ids.AddRange(idsByteString.Value);
         var metadata = await metadataFactory.CreateAsync(cancellationToken);
         using var response = client.GetToDoItems(request, metadata.Value, cancellationToken: cancellationToken);
-
+        
         while (await MoveNextAsync(response, cancellationToken))
         {
             var reply = response.ResponseStream.Current;
-            var item = converter.Convert<ToDoItem[]>(reply.Items.ToArray()).IfSuccess(x => x.ToReadOnlyMemory().ToResult());
-
+            
+            var item = converter.Convert<ToDoItem[]>(reply.Items.ToArray())
+               .IfSuccess(x => x.ToReadOnlyMemory().ToResult());
+            
             yield return item;
         }
     }
-
+    
     private async ValueTask<bool> MoveNextAsync<T>(
         AsyncServerStreamingCall<T> streamingCall,
         CancellationToken cancellationToken

@@ -179,7 +179,7 @@ public class MultiToDoItemsViewModel : ViewModelBase
     private ToDoItemNotify SetupItemCommands(ToDoItemNotify item)
     {
         item.Commands.Clear();
-        var toFavoriteCommand = CommandStorage.AddToDoItemToFavoriteItem.WithParam(item.Id);
+        var toFavoriteCommand = CommandStorage.AddToDoItemToFavoriteItem.WithParam(item.CurrentId);
         item.Commands.Add(CommandStorage.AddToDoItemChildItem.WithParam(item));
         item.Commands.Add(CommandStorage.DeleteToDoItemItem.WithParam(item));
         item.Commands.Add(CommandStorage.ShowToDoSettingItem.WithParam(item));
@@ -187,11 +187,11 @@ public class MultiToDoItemsViewModel : ViewModelBase
 
         if (item.IsFavorite)
         {
-            toFavoriteCommand = CommandStorage.RemoveToDoItemFromFavoriteItem.WithParam(item.Id);
+            toFavoriteCommand = CommandStorage.RemoveToDoItemFromFavoriteItem.WithParam(item.CurrentId);
         }
 
         item.Commands.Add(toFavoriteCommand);
-        item.Commands.Add(CommandStorage.NavigateToLeafItem.WithParam(item.Id));
+        item.Commands.Add(CommandStorage.NavigateToLeafItem.WithParam(item.CurrentId));
         item.Commands.Add(CommandStorage.SetToDoParentItemItem.WithParam(item));
         item.Commands.Add(CommandStorage.MoveToDoItemToRootItem.WithParam(item));
         item.Commands.Add(CommandStorage.ToDoItemToStringItem.WithParam(item));
@@ -228,10 +228,10 @@ public class MultiToDoItemsViewModel : ViewModelBase
             case ToDoItemIsCan.None:
                 return Result.AwaitableFalse;
             case ToDoItemIsCan.CanComplete:
-                return ToDoService.UpdateToDoItemCompleteStatusAsync(property.Id, true, cancellationToken)
+                return ToDoService.UpdateToDoItemCompleteStatusAsync(property.CurrentId, true, cancellationToken)
                    .IfSuccessAsync(() => CommandStorage.RefreshCurrentViewAsync(cancellationToken), cancellationToken);
             case ToDoItemIsCan.CanIncomplete:
-                return ToDoService.UpdateToDoItemCompleteStatusAsync(property.Id, false, cancellationToken)
+                return ToDoService.UpdateToDoItemCompleteStatusAsync(property.CurrentId, false, cancellationToken)
                    .IfSuccessAsync(() => CommandStorage.RefreshCurrentViewAsync(cancellationToken), cancellationToken);
             default:
                 return new Result(new ToDoItemIsCanOutOfRangeError(property.IsCan)).ToValueTaskResult()

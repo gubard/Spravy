@@ -91,6 +91,9 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
 
     [Reactive]
     public Guid Id { get; set; }
+    
+    [Reactive]
+    public Guid? ReferenceId { get; set; }
 
     [Reactive]
     public ToDoItemIsCan IsCan { get; set; }
@@ -100,7 +103,12 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
 
     [Reactive]
     public Guid? ParentId { get; set; }
-
+    
+    public Guid CurrentId
+    {
+        get => ReferenceId ?? Id;
+    }
+    
     public bool IsNavigateToParent
     {
         get => true;
@@ -223,7 +231,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
             else
             {
                 PageHeaderViewModel.Commands.Clear();
-                var toFavoriteCommand = CommandStorage.AddToDoItemToFavoriteItem.WithParam(Id);
+                var toFavoriteCommand = CommandStorage.AddToDoItemToFavoriteItem.WithParam(CurrentId);
                 PageHeaderViewModel.Commands.Add(CommandStorage.AddToDoItemChildItem.WithParam(this));
                 PageHeaderViewModel.Commands.Add(CommandStorage.DeleteToDoItemItem.WithParam(this));
 
@@ -241,11 +249,11 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
 
                 if (IsFavorite)
                 {
-                    toFavoriteCommand = CommandStorage.RemoveToDoItemFromFavoriteItem.WithParam(Id);
+                    toFavoriteCommand = CommandStorage.RemoveToDoItemFromFavoriteItem.WithParam(CurrentId);
                 }
 
                 PageHeaderViewModel.Commands.Add(toFavoriteCommand);
-                PageHeaderViewModel.Commands.Add(CommandStorage.NavigateToLeafItem.WithParam(Id));
+                PageHeaderViewModel.Commands.Add(CommandStorage.NavigateToLeafItem.WithParam(CurrentId));
                 PageHeaderViewModel.Commands.Add(CommandStorage.SetToDoParentItemItem.WithParam(this));
                 PageHeaderViewModel.Commands.Add(CommandStorage.MoveToDoItemToRootItem.WithParam(this));
                 PageHeaderViewModel.Commands.Add(CommandStorage.ToDoItemToStringItem.WithParam(this));

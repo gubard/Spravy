@@ -45,7 +45,7 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
     {
         var ids = await toDoService.GetTodayToDoItemsAsync(context.CancellationToken);
         var result = new GetTodayToDoItemsReply();
-        result.Ids.AddRange(mapper.Map<IEnumerable<ByteString>>(ids));
+        result.Ids.AddRange(mapper.Map<ByteString[]>(ids));
 
         return result;
     }
@@ -93,7 +93,7 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
     {
         var ids = await toDoService.GetRootToDoItemIdsAsync(context.CancellationToken);
         var reply = new GetRootToDoItemIdsReply();
-        reply.Ids.AddRange(mapper.Map<IEnumerable<ByteString>>(ids));
+        reply.Ids.AddRange(mapper.Map<ByteString[]>(ids));
 
         return reply;
     }
@@ -131,7 +131,7 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
     {
         var ids = await toDoService.GetLeafToDoItemIdsAsync(mapper.Map<Guid>(request.Id), context.CancellationToken);
         var reply = new GetLeafToDoItemIdsReply();
-        reply.Ids.AddRange(mapper.Map<IEnumerable<ByteString>>(ids));
+        reply.Ids.AddRange(mapper.Map<ByteString[]>(ids));
 
         return reply;
     }
@@ -143,7 +143,7 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
     {
         var ids = await toDoService.GetFavoriteToDoItemIdsAsync(context.CancellationToken);
         var reply = new GetFavoriteToDoItemIdsRequestReply();
-        reply.Ids.AddRange(mapper.Map<IEnumerable<ByteString>>(ids));
+        reply.Ids.AddRange(mapper.Map<ByteString[]>(ids));
 
         return reply;
     }
@@ -169,7 +169,7 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
             context.CancellationToken);
 
         var reply = new GetChildrenToDoItemIdsReply();
-        reply.Ids.AddRange(mapper.Map<IEnumerable<ByteString>>(ids));
+        reply.Ids.AddRange(mapper.Map<ByteString[]>(ids));
 
         return reply;
     }
@@ -194,7 +194,7 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
     {
         var ids = await toDoService.SearchToDoItemIdsAsync(request.SearchText, context.CancellationToken);
         var reply = new SearchToDoItemIdsReply();
-        reply.Ids.AddRange(mapper.Map<IEnumerable<ByteString>>(ids));
+        reply.Ids.AddRange(mapper.Map<ByteString[]>(ids));
 
         return reply;
     }
@@ -277,7 +277,7 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         var id = mapper.Map<Guid>(request.Id);
         var items = await toDoService.GetSiblingsAsync(id, context.CancellationToken);
         var reply = new GetSiblingsReply();
-        reply.Items.AddRange(mapper.Map<IEnumerable<ToDoShortItemGrpc>>(items));
+        reply.Items.AddRange(mapper.Map<ToDoShortItemGrpc[]>(items));
 
         return reply;
     }
@@ -286,7 +286,7 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
     {
         var parents = await toDoService.GetParentsAsync(mapper.Map<Guid>(request.Id), context.CancellationToken);
         var reply = new GetParentsReply();
-        reply.Parents.AddRange(mapper.Map<IEnumerable<ToDoShortItemGrpc>>(parents));
+        reply.Parents.AddRange(mapper.Map<ToDoShortItemGrpc[]>(parents));
 
         return reply;
     }
@@ -468,7 +468,7 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
             context.CancellationToken);
 
         var reply = new GetToDoSelectorItemsReply();
-        reply.Items.AddRange(mapper.Map<IEnumerable<ToDoSelectorItemGrpc>>(items));
+        reply.Items.AddRange(mapper.Map<ToDoSelectorItemGrpc[]>(items));
 
         return reply;
     }

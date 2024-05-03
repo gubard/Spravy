@@ -7,6 +7,22 @@ package spravy.to_do;
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 
+message GetReferenceToDoItemSettingsRequest {
+  bytes id = 1;
+}
+
+message GetReferenceToDoItemSettingsReply {
+  bytes reference_id = 1;
+}
+
+message UpdateReferenceToDoItemRequest {
+  bytes id = 1;
+  bytes reference_id = 2;
+}
+
+message UpdateReferenceToDoItemReply {
+}
+
 message CloneToDoItemRequest {
     bytes clone_id = 1;
     bytes parent_id = 2;
@@ -80,6 +96,7 @@ message ToDoItemGrpc {
     ToDoItemIsCanGrpc is_can = 10;
     bytes parent_id = 11;
     DescriptionTypeGrpc description_type = 12;
+    bytes reference_id = 13;
 }
 
 message GetToDoItemsReply {
@@ -201,6 +218,7 @@ message GetToDoItemReply {
     ToDoItemIsCanGrpc is_can = 10;
     bytes parent_id = 11;
     DescriptionTypeGrpc description_type = 12;
+    bytes reference_id = 13;
 }
 
 message GetChildrenToDoItemIdsRequest {

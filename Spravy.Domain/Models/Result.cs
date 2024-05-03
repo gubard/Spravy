@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using Spravy.Domain.Errors;
 using Spravy.Domain.Exceptions;
+using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
 
 namespace Spravy.Domain.Models;
@@ -79,7 +80,7 @@ public class Result<TValue>
 
     public TValue Value
     {
-        get => IsHasError ? throw new("Result has error") : value;
+        get => IsHasError ? throw new ErrorsException(Errors) : value;
     }
 
     public bool IsHasError

@@ -6,9 +6,4 @@ public partial class ToDoItemSelectorView : ReactiveUserControl<ToDoItemSelector
     {
         InitializeComponent();
     }
-
-    private void InitializeComponent()
-    {
-        AvaloniaXamlLoader.Load(this);
-    }
 }

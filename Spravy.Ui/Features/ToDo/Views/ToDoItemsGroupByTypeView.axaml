@@ -92,5 +92,7 @@
                         IsVisible="{Binding Periodicitys.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
         <ContentControl Content="{Binding PeriodicityOffsets}"
                         IsVisible="{Binding PeriodicityOffsets.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
+        <ContentControl Content="{Binding References}"
+                        IsVisible="{Binding References.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
     </ItemsControl>
 </reactiveUi:ReactiveUserControl>

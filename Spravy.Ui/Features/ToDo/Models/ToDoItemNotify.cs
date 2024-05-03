@@ -5,107 +5,63 @@ public class ToDoItemNotify : NotifyBase,
     IDeletable,
     IToDoSettingsProperty,
     ISetToDoParentItemParams,
-    ILink
+    ILink,
+    ICurrentIdProperty
 {
-    private ActiveToDoItemNotify? active;
-    private ICommand? completeCommand;
-    private string description = string.Empty;
-    private Guid id;
-    private bool isBusy;
-    private ToDoItemIsCan isCan;
-    private bool isFavorite;
-    private string link = string.Empty;
-    private string name = string.Empty;
-    private uint orderIndex;
-    private Guid? parentId;
-    private ToDoItemStatus status;
-    private ToDoItemType type;
-
     public AvaloniaList<CommandItem> Commands { get; } = new();
-
-    public ICommand? CompleteCommand
-    {
-        get => completeCommand;
-        set => this.RaiseAndSetIfChanged(ref completeCommand, value);
-    }
-
-    public bool IsFavorite
-    {
-        get => isFavorite;
-        set => this.RaiseAndSetIfChanged(ref isFavorite, value);
-    }
-
-    public string Description
-    {
-        get => description;
-        set => this.RaiseAndSetIfChanged(ref description, value);
-    }
-
-    public uint OrderIndex
-    {
-        get => orderIndex;
-        set => this.RaiseAndSetIfChanged(ref orderIndex, value);
-    }
-
-    public ToDoItemStatus Status
-    {
-        get => status;
-        set => this.RaiseAndSetIfChanged(ref status, value);
-    }
-
-    public ActiveToDoItemNotify? Active
-    {
-        get => active;
-        set => this.RaiseAndSetIfChanged(ref active, value);
-    }
-
-    public bool IsBusy
-    {
-        get => isBusy;
-        set => this.RaiseAndSetIfChanged(ref isBusy, value);
-    }
-
-    public ToDoItemIsCan IsCan
-    {
-        get => isCan;
-        set => this.RaiseAndSetIfChanged(ref isCan, value);
-    }
-
-    public Guid Id
-    {
-        get => id;
-        set => this.RaiseAndSetIfChanged(ref id, value);
-    }
-
-    public string Name
-    {
-        get => name;
-        set => this.RaiseAndSetIfChanged(ref name, value);
-    }
-
-    public Guid? ParentId
-    {
-        get => parentId;
-        set => this.RaiseAndSetIfChanged(ref parentId, value);
-    }
-
+    
+    [Reactive]
+    public ICommand? CompleteCommand { get; set; }
+    
+    [Reactive]
+    public bool IsFavorite { get; set; }
+    
+    [Reactive]
+    public string Description { get; set; } = string.Empty;
+    
+    [Reactive]
+    public uint OrderIndex { get; set; }
+    
+    [Reactive]
+    public ToDoItemStatus Status { get; set; }
+    
+    [Reactive]
+    public ActiveToDoItemNotify? Active { get; set; }
+    
+    [Reactive]
+    public bool IsBusy { get; set; }
+    
+    [Reactive]
+    public ToDoItemIsCan IsCan { get; set; }
+    
+    [Reactive]
+    public Guid Id { get; set; }
+    
+    [Reactive]
+    public string Name { get; set; } = string.Empty;
+    
+    [Reactive]
+    public Guid? ParentId { get; set; }
+    
+    [Reactive]
+    public Guid? ReferenceId { get; set; }
+    
     public bool IsNavigateToParent
     {
         get => false;
     }
-
-    public string Link
+    
+    [Reactive]
+    public string Link { get; set; } = string.Empty;
+    
+    [Reactive]
+    public ToDoItemType Type { get; set; }
+    
+    public Guid CurrentId
     {
-        get => link;
-        set => this.RaiseAndSetIfChanged(ref link, value);
+        get => ReferenceId ?? Id;
     }
-
-    public ToDoItemType Type
-    {
-        get => type;
-        set => this.RaiseAndSetIfChanged(ref type, value);
-    }
-
+    
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
     {
         return Result.AwaitableFalse;

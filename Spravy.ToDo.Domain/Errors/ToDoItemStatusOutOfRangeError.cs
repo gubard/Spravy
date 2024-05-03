@@ -11,7 +11,7 @@ public class ToDoItemStatusOutOfRangeError : ValueOutOfRangeError<ToDoItemStatus
     {
     }
 
-    public ToDoItemStatusOutOfRangeError(ToDoItemStatus value) : base(value, MainId)
+    public ToDoItemStatusOutOfRangeError(ToDoItemStatus status) : base(status, MainId)
     {
     }
 }

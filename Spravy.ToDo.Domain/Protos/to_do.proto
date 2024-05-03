@@ -56,4 +56,6 @@ service ToDoService {
     rpc UpdateToDoItemIsRequiredCompleteInDueDate (UpdateToDoItemIsRequiredCompleteInDueDateRequest) returns (UpdateToDoItemIsRequiredCompleteInDueDateReply);
     rpc GetTodayToDoItems (GetTodayToDoItemsRequest) returns (GetTodayToDoItemsReply);
     rpc ResetToDoItem (ResetToDoItemRequest) returns (ResetToDoItemReply);
+    rpc UpdateReferenceToDoItem (UpdateReferenceToDoItemRequest) returns (UpdateReferenceToDoItemReply);
+    rpc GetReferenceToDoItemSettings (GetReferenceToDoItemSettingsRequest) returns (GetReferenceToDoItemSettingsReply);
 }
