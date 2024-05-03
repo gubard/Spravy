@@ -19,7 +19,7 @@ public class DialogViewer : IDialogViewer
 
         if (content is null)
         {
-            throw new NullReferenceException();
+            return new Result(new NotFoundTypeError(typeof(TView))).ToValueTaskResult().ConfigureAwait(false);
         }
 
         return this.InvokeUIBackgroundAsync(() => setupView.Invoke(content))
@@ -36,7 +36,7 @@ public class DialogViewer : IDialogViewer
 
         if (content is null)
         {
-            throw new NullReferenceException();
+            return new Result(new NotFoundTypeError(typeof(TView))).ToValueTaskResult().ConfigureAwait(false);
         }
 
         return this.InvokeUIBackgroundAsync(() => setupView.Invoke(content))
@@ -53,7 +53,7 @@ public class DialogViewer : IDialogViewer
 
         if (content is null)
         {
-            throw new NullReferenceException();
+            return new Result(new NotFoundTypeError(typeof(TView))).ToValueTaskResult().ConfigureAwait(false);
         }
 
         return this.InvokeUIBackgroundAsync(() => setupView.Invoke(content))
@@ -126,7 +126,7 @@ public class DialogViewer : IDialogViewer
 
         if (content is null)
         {
-            throw new NullReferenceException();
+            return new Result(new NotFoundTypeError(typeof(TView))).ToValueTaskResult().ConfigureAwait(false);
         }
 
         return this.InvokeUIBackgroundAsync(() => setupView.Invoke(content))
