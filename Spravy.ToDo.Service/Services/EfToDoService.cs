@@ -127,7 +127,6 @@ public class EfToDoService : IToDoService
                .IfSuccessAsync(
                     item => CircleCompletionAsync(context, item, options.IsMoveCircleOrderIndex,
                             options.IsCompleteChildrenTask, options.IsOnlyCompletedTasks, cancellationToken)
-                       .ConfigureAwait(false)
                        .IfSuccessAsync(
                             () => StepCompletionAsync(context, item, options.IsCompleteChildrenTask, cancellationToken),
                             cancellationToken), cancellationToken), cancellationToken), cancellationToken);
@@ -505,7 +504,6 @@ public class EfToDoService : IToDoService
                                         
                                         return CircleCompletionAsync(context, item, true, false, false,
                                                 cancellationToken)
-                                           .ConfigureAwait(false)
                                            .IfSuccessAsync(
                                                 () => StepCompletionAsync(context, item, false, cancellationToken),
                                                 cancellationToken);
@@ -1179,13 +1177,18 @@ public class EfToDoService : IToDoService
                         ToDoItemType.Periodicity => Result.AwaitableFalse,
                         ToDoItemType.PeriodicityOffset => Result.AwaitableFalse,
                         ToDoItemType.Circle => Result.AwaitableFalse,
-                        ToDoItemType.Step => Result.Execute(() => i.IsCompleted = completeTask).ToValueTaskResult().ConfigureAwait(false),
-                        ToDoItemType.Reference => new Result(new ToDoItemTypeOutOfRangeError(i.Type)).ToValueTaskResult().ConfigureAwait(false),
-                        _ => new Result(new ToDoItemTypeOutOfRangeError(i.Type)).ToValueTaskResult().ConfigureAwait(false),
+                        ToDoItemType.Step => Result.Execute(() => i.IsCompleted = completeTask)
+                           .ToValueTaskResult()
+                           .ConfigureAwait(false),
+                        ToDoItemType.Reference => new Result(new ToDoItemTypeOutOfRangeError(i.Type))
+                           .ToValueTaskResult()
+                           .ConfigureAwait(false),
+                        _ => new Result(new ToDoItemTypeOutOfRangeError(i.Type)).ToValueTaskResult()
+                           .ConfigureAwait(false),
                     }, cancellationToken), cancellationToken), cancellationToken);
     }
     
-    private async ValueTask<Result> CircleCompletionAsync(
+    private ConfiguredValueTaskAwaitable<Result> CircleCompletionAsync(
         SpravyDbToDoDbContext context,
         ToDoItemEntity item,
         bool moveCircleOrderIndex,
@@ -1194,55 +1197,70 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
-        var circleChildren = await context.Set<ToDoItemEntity>()
+        return context.Set<ToDoItemEntity>()
            .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Circle)
            .OrderBy(x => x.OrderIndex)
-           .ToArrayAsync(cancellationToken);
-        
-        if (circleChildren.Length != 0)
-        {
-            if (!onlyCompletedTasks || circleChildren.All(x => x.IsCompleted))
+           .ToArrayEntitiesAsync(cancellationToken)
+           .IfSuccessAsync(circleChildren =>
             {
-                var nextOrderIndex = item.CurrentCircleOrderIndex;
-                
-                if (moveCircleOrderIndex)
+                if (circleChildren.Length != 0)
                 {
-                    var next = circleChildren.FirstOrDefault(x => x.OrderIndex > item.CurrentCircleOrderIndex);
-                    nextOrderIndex = next?.OrderIndex ?? circleChildren.First().OrderIndex;
-                    item.CurrentCircleOrderIndex = nextOrderIndex;
+                    if (!onlyCompletedTasks || circleChildren.ToArray().All(x => x.IsCompleted))
+                    {
+                        var nextOrderIndex = item.CurrentCircleOrderIndex;
+                        
+                        if (moveCircleOrderIndex)
+                        {
+                            var next = circleChildren.ToArray()
+                               .FirstOrDefault(x => x.OrderIndex > item.CurrentCircleOrderIndex);
+                            
+                            nextOrderIndex = next?.OrderIndex ?? circleChildren.ToArray().First().OrderIndex;
+                            item.CurrentCircleOrderIndex = nextOrderIndex;
+                        }
+                        
+                        foreach (var child in circleChildren.Span)
+                        {
+                            if (completeTask)
+                            {
+                                child.IsCompleted = true;
+                            }
+                            else
+                            {
+                                child.IsCompleted = child.OrderIndex != nextOrderIndex;
+                            }
+                        }
+                    }
                 }
                 
-                foreach (var child in circleChildren)
-                {
-                    if (completeTask)
+                return context.Set<ToDoItemEntity>()
+                   .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Group)
+                   .OrderBy(x => x.OrderIndex)
+                   .ToArrayEntitiesAsync(cancellationToken)
+                   .IfSuccessForEachAsync(
+                        group => CircleCompletionAsync(context, group, moveCircleOrderIndex, completeTask,
+                            onlyCompletedTasks, cancellationToken), cancellationToken);
+            }, cancellationToken)
+           .IfSuccessAsync(() => context.Set<ToDoItemEntity>()
+               .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Reference && x.ReferenceId.HasValue)
+               .OrderBy(x => x.OrderIndex)
+               .ToArrayEntitiesAsync(cancellationToken)
+               .IfSuccessForEachAsync(reference => context.FindEntityAsync<ToDoItemEntity>(reference.ReferenceId.Value)
+                   .IfSuccessAsync(i => i.Type switch
                     {
-                        child.IsCompleted = true;
-                    }
-                    else
-                    {
-                        child.IsCompleted = child.OrderIndex != nextOrderIndex;
-                    }
-                }
-            }
-        }
-        
-        var groups = await context.Set<ToDoItemEntity>()
-           .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Group)
-           .OrderBy(x => x.OrderIndex)
-           .ToArrayAsync(cancellationToken);
-        
-        foreach (var group in groups)
-        {
-            var result = await CircleCompletionAsync(context, group, moveCircleOrderIndex, completeTask,
-                onlyCompletedTasks, cancellationToken);
-            
-            if (result.IsHasError)
-            {
-                return result;
-            }
-        }
-        
-        return Result.Success;
+                        ToDoItemType.Value => Result.AwaitableFalse,
+                        ToDoItemType.Group => CircleCompletionAsync(context, i, moveCircleOrderIndex, completeTask,
+                            onlyCompletedTasks, cancellationToken),
+                        ToDoItemType.Planned => Result.AwaitableFalse,
+                        ToDoItemType.Periodicity => Result.AwaitableFalse,
+                        ToDoItemType.PeriodicityOffset => Result.AwaitableFalse,
+                        ToDoItemType.Circle => Result.AwaitableFalse,
+                        ToDoItemType.Step => Result.AwaitableFalse,
+                        ToDoItemType.Reference => new Result(new ToDoItemTypeOutOfRangeError(i.Type))
+                           .ToValueTaskResult()
+                           .ConfigureAwait(false),
+                        _ => new Result(new ToDoItemTypeOutOfRangeError(i.Type)).ToValueTaskResult()
+                           .ConfigureAwait(false),
+                    }, cancellationToken), cancellationToken), cancellationToken);
     }
     
     private ConfiguredValueTaskAwaitable<Result> ToDoItemToStringAsync(
