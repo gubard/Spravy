@@ -216,7 +216,8 @@ public class EfToDoService : IToDoService
                     
                     var result = new List<Guid>();
                     
-                    return entities.IfSuccessAsync(e => GetLeafToDoItemIdsAsync(context, e, cancellationToken)
+                    return entities.ToResult()
+                       .IfSuccessForEachAsync(e => GetLeafToDoItemIdsAsync(context, e, cancellationToken)
                            .ConfigureAwait(false)
                            .IfSuccessAsync(i =>
                             {
@@ -399,17 +400,15 @@ public class EfToDoService : IToDoService
                                .AsNoTracking()
                                .Where(x => x.ParentId == id)
                                .ToArrayEntitiesAsync(cancellationToken)
+                               .IfSuccessForEachAsync(
+                                    child => DeleteToDoItemAsync(child.Id, context, cancellationToken)
+                                       .ConfigureAwait(false), cancellationToken)
                                .IfSuccessAsync(
-                                    children => children
+                                    () => context.RemoveEntity(item)
                                        .IfSuccessAsync(
-                                            child => DeleteToDoItemAsync(child.Id, context, cancellationToken)
-                                               .ConfigureAwait(false), cancellationToken)
-                                       .IfSuccessAsync(
-                                            () => context.RemoveEntity(item)
-                                               .IfSuccessAsync(
-                                                    () => NormalizeOrderIndexAsync(context, item.ParentId,
-                                                        cancellationToken), cancellationToken), cancellationToken),
-                                    cancellationToken), cancellationToken), cancellationToken), cancellationToken);
+                                            () => NormalizeOrderIndexAsync(context, item.ParentId, cancellationToken),
+                                            cancellationToken), cancellationToken), cancellationToken),
+                    cancellationToken), cancellationToken);
     }
     
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemTypeOfPeriodicityAsync(
@@ -737,12 +736,11 @@ public class EfToDoService : IToDoService
                    .Where(x => x.ParentId == null && !ignoreIds.Contains(x.Id) && x.Type != ToDoItemType.Reference)
                    .OrderBy(x => x.OrderIndex)
                    .ToArrayEntitiesAsync(cancellationToken)
-                   .IfSuccessAsync(
-                        items => items.IfSuccessAsync(
-                            item => GetToDoSelectorItemsAsync(context, item.Id, ignoreIds, cancellationToken)
-                               .IfSuccessAsync(
-                                    children => new ToDoSelectorItem(item.Id, item.Name, children.ToArray()).ToResult(),
-                                    cancellationToken), cancellationToken), cancellationToken), cancellationToken);
+                   .IfSuccessForEachAsync(
+                        item => GetToDoSelectorItemsAsync(context, item.Id, ignoreIds, cancellationToken)
+                           .IfSuccessAsync(
+                                children => new ToDoSelectorItem(item.Id, item.Name, children.ToArray()).ToResult(),
+                                cancellationToken), cancellationToken), cancellationToken);
     }
     
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemParentAsync(
@@ -920,7 +918,7 @@ public class EfToDoService : IToDoService
                .Where(x => x.ParentId == null)
                .OrderBy(x => x.OrderIndex)
                .ToArrayEntitiesAsync(cancellationToken)
-               .IfSuccessAsync(items => items.IfSuccessAsync(item => getterToDoItemParametersService
+               .IfSuccessForEachAsync(item => getterToDoItemParametersService
                    .GetToDoItemParametersAsync(context, item, offset, cancellationToken)
                    .IfSuccessAsync(parameters =>
                     {
@@ -930,13 +928,13 @@ public class EfToDoService : IToDoService
                         }
                         
                         return new((ActiveToDoItem?)null);
-                    }, cancellationToken), cancellationToken), cancellationToken), cancellationToken)
-           .IfSuccessAsync(items =>
-            {
-                var item = items.ToArray().FirstOrDefault(x => x is not null);
-                
-                return new Result<ActiveToDoItem?>(item);
-            }, cancellationToken);
+                    }, cancellationToken), cancellationToken)
+               .IfSuccessAsync(items =>
+                {
+                    var item = items.ToArray().FirstOrDefault(x => x is not null);
+                    
+                    return new Result<ActiveToDoItem?>(item);
+                }, cancellationToken), cancellationToken);
     }
     
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemLinkAsync(
@@ -1165,11 +1163,26 @@ public class EfToDoService : IToDoService
                    .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Group)
                    .OrderBy(x => x.OrderIndex)
                    .ToArrayEntitiesAsync(cancellationToken)
-                   .IfSuccessAsync(
-                        groups => groups.IfSuccessAsync(
-                            group => StepCompletionAsync(context, group, completeTask, cancellationToken),
-                            cancellationToken), cancellationToken);
-            }, cancellationToken);
+                   .IfSuccessForEachAsync(group => StepCompletionAsync(context, group, completeTask, cancellationToken),
+                        cancellationToken);
+            }, cancellationToken)
+           .IfSuccessAsync(() => context.Set<ToDoItemEntity>()
+               .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Reference && x.ReferenceId.HasValue)
+               .OrderBy(x => x.OrderIndex)
+               .ToArrayEntitiesAsync(cancellationToken)
+               .IfSuccessForEachAsync(reference => context.FindEntityAsync<ToDoItemEntity>(reference.ReferenceId.Value)
+                   .IfSuccessAsync(i => i.Type switch
+                    {
+                        ToDoItemType.Value => Result.AwaitableFalse,
+                        ToDoItemType.Group => StepCompletionAsync(context, i, completeTask, cancellationToken),
+                        ToDoItemType.Planned => Result.AwaitableFalse,
+                        ToDoItemType.Periodicity => Result.AwaitableFalse,
+                        ToDoItemType.PeriodicityOffset => Result.AwaitableFalse,
+                        ToDoItemType.Circle => Result.AwaitableFalse,
+                        ToDoItemType.Step => Result.Execute(() => i.IsCompleted = completeTask).ToValueTaskResult().ConfigureAwait(false),
+                        ToDoItemType.Reference => new Result(new ToDoItemTypeOutOfRangeError(i.Type)).ToValueTaskResult().ConfigureAwait(false),
+                        _ => new Result(new ToDoItemTypeOutOfRangeError(i.Type)).ToValueTaskResult().ConfigureAwait(false),
+                    }, cancellationToken), cancellationToken), cancellationToken);
     }
     
     private async ValueTask<Result> CircleCompletionAsync(
@@ -1185,18 +1198,6 @@ public class EfToDoService : IToDoService
            .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Circle)
            .OrderBy(x => x.OrderIndex)
            .ToArrayAsync(cancellationToken);
-        
-        var childrenOrderIndexCount = circleChildren.DistinctBy(x => x.OrderIndex).Count();
-        
-        if (childrenOrderIndexCount != circleChildren.Length)
-        {
-            await NormalizeOrderIndexAsync(context, item.Id, cancellationToken);
-            
-            circleChildren = await context.Set<ToDoItemEntity>()
-               .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Circle)
-               .OrderBy(x => x.OrderIndex)
-               .ToArrayAsync(cancellationToken);
-        }
         
         if (circleChildren.Length != 0)
         {
@@ -1232,8 +1233,13 @@ public class EfToDoService : IToDoService
         
         foreach (var group in groups)
         {
-            await CircleCompletionAsync(context, group, moveCircleOrderIndex, completeTask, onlyCompletedTasks,
-                cancellationToken);
+            var result = await CircleCompletionAsync(context, group, moveCircleOrderIndex, completeTask,
+                onlyCompletedTasks, cancellationToken);
+            
+            if (result.IsHasError)
+            {
+                return result;
+            }
         }
         
         return Result.Success;
@@ -1253,7 +1259,7 @@ public class EfToDoService : IToDoService
            .Where(x => x.ParentId == options.Id)
            .OrderBy(x => x.OrderIndex)
            .ToArrayEntitiesAsync(cancellationToken)
-           .IfSuccessAsync(items => items.IfSuccessAsync(item => getterToDoItemParametersService
+           .IfSuccessForEachAsync(item => getterToDoItemParametersService
                .GetToDoItemParametersAsync(context, item, offset, cancellationToken)
                .IfSuccessAsync(parameters =>
                 {
@@ -1268,7 +1274,7 @@ public class EfToDoService : IToDoService
                     
                     return ToDoItemToStringAsync(context, new(options.Statuses.ToArray(), item.Id), (ushort)(level + 1),
                         builder, offset, cancellationToken);
-                }, cancellationToken), cancellationToken), cancellationToken);
+                }, cancellationToken), cancellationToken);
     }
     
     private ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoSelectorItem>>> GetToDoSelectorItemsAsync(
@@ -1283,12 +1289,10 @@ public class EfToDoService : IToDoService
            .Where(x => x.ParentId == id && !ignoreIds.Contains(x.Id) && x.Type != ToDoItemType.Reference)
            .OrderBy(x => x.OrderIndex)
            .ToArrayEntitiesAsync(cancellationToken)
-           .IfSuccessAsync(
-                items => items.IfSuccessAsync(
-                    item => GetToDoSelectorItemsAsync(context, item.Id, ignoreIds, cancellationToken)
-                       .IfSuccessAsync(
-                            children => new ToDoSelectorItem(item.Id, item.Name, children.ToArray()).ToResult(),
-                            cancellationToken), cancellationToken), cancellationToken);
+           .IfSuccessForEachAsync(
+                item => GetToDoSelectorItemsAsync(context, item.Id, ignoreIds, cancellationToken)
+                   .IfSuccessAsync(children => new ToDoSelectorItem(item.Id, item.Name, children.ToArray()).ToResult(),
+                        cancellationToken), cancellationToken);
     }
     
     private async IAsyncEnumerable<Result<Guid>> GetLeafToDoItemIdsAsync(

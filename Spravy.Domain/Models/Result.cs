@@ -38,6 +38,13 @@ public class Result
     {
         get => !Errors.IsEmpty;
     }
+    
+    public static Result Execute(Action action)
+    {
+        action.Invoke();
+        
+        return Result.Success;
+    }
 }
 
 public class Result<TValue>
