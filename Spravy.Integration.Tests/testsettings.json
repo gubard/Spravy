@@ -10,9 +10,29 @@
     "Email": "staging2@spravy.com.ua",
     "Password": null
   },
-  "GrpcRouterService": {
-    "Host": "http://localhost:5002",
-    "ChannelType": "GrpcWeb",
+  "GrpcToDoService": {
+    "Host": "http://localhost:5004",
+    "ChannelType": "Default",
+    "ChannelCredentialType": "Insecure"
+  },
+  "GrpcAuthenticationService": {
+    "Host": "http://localhost:5000",
+    "ChannelType": "Default",
+    "ChannelCredentialType": "Insecure"
+  },
+  "GrpcEventBusService": {
+    "Host": "http://localhost:5001",
+    "ChannelType": "Default",
+    "ChannelCredentialType": "Insecure"
+  },
+  "GrpcScheduleService": {
+    "Host": "http://localhost:5003",
+    "ChannelType": "Default",
+    "ChannelCredentialType": "Insecure"
+  },
+  "GrpcPasswordService": {
+    "Host": "http://localhost:5005",
+    "ChannelType": "Default",
     "ChannelCredentialType": "Insecure"
   }
 }

@@ -50,7 +50,7 @@ public class TestModule : NinjectModule
            .ToMethod(_ => new ConfigurationBuilder().AddJsonFile("testsettings.json").Build());
 
         Bind<IDbContextSetup>()
-           .ToMethod<SqliteDbContextSetup>(c => new(new[]
+           .ToMethod<SqliteDbContextSetup>(_ => new(new[]
             {
                 new StorageEntityTypeConfiguration(),
             }, "./storage/storage.db".ToFile(), true));
