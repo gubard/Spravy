@@ -114,6 +114,7 @@
     <sys:String x:Key="SettingView.Save">Save</sys:String>
     <sys:String x:Key="SettingView.Busy">Saving...</sys:String>
     <sys:String x:Key="SettingView.DeleteAccount">Delete account</sys:String>
+    <sys:String x:Key="SettingView.SaveSetting">Save setting</sys:String>
 
     <!--ChangeToDoItemOrderIndexView-->
     <sys:String x:Key="ChangeToDoItemOrderIndexView.Before">Before</sys:String>
