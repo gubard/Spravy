@@ -89,6 +89,7 @@
                 </Expander>
 
                 <ContentControl Content="{Binding ToDoSubItemsViewModel}" />
+                <ContentControl Content="{Binding FastAddToDoItemViewModel}" />
             </StackPanel>
         </ScrollViewer>
     </Grid>

@@ -1,0 +1,29 @@
+<ru:ReactiveUserControl x:TypeArguments="vm:FastAddToDoItemViewModel"
+                        xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:ru="http://reactiveui.net"
+                        xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+                        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                        x:Class="Spravy.Ui.Features.ToDo.Views.FastAddToDoItemView"
+                        x:DataType="vm:FastAddToDoItemViewModel">
+    <StackPanel>
+        <ListBox ItemsSource="{Binding Types}" SelectedItem="{Binding Type}" SelectionMode="Single">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+        </ListBox>
+
+        <Grid ColumnDefinitions="*,Auto">
+            <TextBox Text="{Binding Name}" />
+
+            <Button Grid.Column="1" Command="{Binding AddToDoItemCommand}">
+                <avalonia:MaterialIcon Kind="Plus" />
+            </Button>
+        </Grid>
+    </StackPanel>
+</ru:ReactiveUserControl>

@@ -21,8 +21,11 @@
         <ContentControl Content="{Binding PageHeaderViewModel}" />
 
         <ScrollViewer Classes="mini" Grid.Row="1">
-            <ContentControl Name="{x:Static views:RootToDoItemsView.ToDoSubItemsContentControlName}"
-                            Content="{Binding ToDoSubItemsViewModel}" />
+            <StackPanel>
+                <ContentControl Name="{x:Static views:RootToDoItemsView.ToDoSubItemsContentControlName}"
+                                Content="{Binding ToDoSubItemsViewModel}" />
+                <ContentControl Content="{Binding FastAddToDoItemViewModel}" />
+            </StackPanel>
         </ScrollViewer>
 
         <Button Grid.Row="2"
