@@ -179,18 +179,10 @@ public class MultiToDoItemsViewModel : ViewModelBase
     private ToDoItemNotify SetupItemCommands(ToDoItemNotify item)
     {
         item.Commands.Clear();
-        var toFavoriteCommand = CommandStorage.AddToDoItemToFavoriteItem.WithParam(item.CurrentId);
         item.Commands.Add(CommandStorage.AddToDoItemChildItem.WithParam(item));
         item.Commands.Add(CommandStorage.DeleteToDoItemItem.WithParam(item));
         item.Commands.Add(CommandStorage.ShowToDoSettingItem.WithParam(item));
         item.Commands.Add(CommandStorage.CloneToDoItemItem.WithParam(item));
-
-        if (item.IsFavorite)
-        {
-            toFavoriteCommand = CommandStorage.RemoveToDoItemFromFavoriteItem.WithParam(item.CurrentId);
-        }
-
-        item.Commands.Add(toFavoriteCommand);
         item.Commands.Add(CommandStorage.NavigateToLeafItem.WithParam(item.CurrentId));
         item.Commands.Add(CommandStorage.SetToDoParentItemItem.WithParam(item));
         item.Commands.Add(CommandStorage.MoveToDoItemToRootItem.WithParam(item));

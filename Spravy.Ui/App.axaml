@@ -203,13 +203,13 @@
                             </Button>
 
                             <Panel Grid.Column="1">
-                                <Button CommandParameter="{Binding Value.Id}"
+                                <Button CommandParameter="{Binding Value.CurrentId}"
                                         Command="{x:Static s:CommandStorage.RemoveToDoItemFromFavoriteCommand}"
                                         IsVisible="{Binding Value.IsFavorite}">
                                     <mi:MaterialIcon Kind="Star" />
                                 </Button>
 
-                                <Button CommandParameter="{Binding Value.Id}"
+                                <Button CommandParameter="{Binding Value.CurrentId}"
                                         Command="{x:Static s:CommandStorage.AddToDoItemToFavoriteCommand}"
                                         IsVisible="{Binding Value.IsFavorite, Converter={StaticResource ReverseBooleanValueConverter}}">
                                     <mi:MaterialIcon Kind="StarOutline" />
