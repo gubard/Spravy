@@ -396,19 +396,10 @@ public class EfToDoService : IToDoService
                 context => context.AtomicExecuteAsync(
                     () => context.FindEntityAsync<ToDoItemEntity>(id)
                        .IfSuccessAsync(
-                            item => context.Set<ToDoItemEntity>()
-                               .AsNoTracking()
-                               .Where(x => x.ParentId == id)
-                               .ToArrayEntitiesAsync(cancellationToken)
-                               .IfSuccessForEachAsync(
-                                    child => DeleteToDoItemAsync(child.Id, context, cancellationToken)
-                                       .ConfigureAwait(false), cancellationToken)
+                            item => DeleteToDoItemAsync(id, context, cancellationToken)
                                .IfSuccessAsync(
-                                    () => context.RemoveEntity(item)
-                                       .IfSuccessAsync(
-                                            () => NormalizeOrderIndexAsync(context, item.ParentId, cancellationToken),
-                                            cancellationToken), cancellationToken), cancellationToken),
-                    cancellationToken), cancellationToken);
+                                    () => NormalizeOrderIndexAsync(context, item.ParentId, cancellationToken),
+                                    cancellationToken), cancellationToken), cancellationToken), cancellationToken);
     }
     
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemTypeOfPeriodicityAsync(
@@ -1116,28 +1107,29 @@ public class EfToDoService : IToDoService
         return Result.Success;
     }
     
-    private async ValueTask<Result> DeleteToDoItemAsync(
+    private ConfiguredValueTaskAwaitable<Result> DeleteToDoItemAsync(
         Guid id,
         SpravyDbToDoDbContext context,
         CancellationToken cancellationToken
     )
     {
-        var item = await context.Set<ToDoItemEntity>().FindAsync(id);
-        item = item.ThrowIfNull();
-        
-        var children = await context.Set<ToDoItemEntity>()
-           .AsNoTracking()
-           .Where(x => x.ParentId == id)
-           .ToArrayAsync(cancellationToken);
-        
-        foreach (var child in children)
-        {
-            await DeleteToDoItemAsync(child.Id, context, cancellationToken);
-        }
-        
-        context.Set<ToDoItemEntity>().Remove(item);
-        
-        return Result.Success;
+        return context.FindEntityAsync<ToDoItemEntity>(id)
+           .IfSuccessAsync(item => context.Set<ToDoItemEntity>()
+               .AsNoTracking()
+               .Where(x => x.ParentId == id)
+               .ToArrayEntitiesAsync(cancellationToken)
+               .IfSuccessForEachAsync(child => DeleteToDoItemAsync(child.Id, context, cancellationToken),
+                    cancellationToken)
+               .IfSuccessAsync(() => context.Set<ToDoItemEntity>()
+                   .Where(x => x.ReferenceId == id)
+                   .ToArrayEntitiesAsync(cancellationToken)
+                   .IfSuccessForEachAsync(i =>
+                    {
+                        i.ReferenceId = null;
+                        
+                        return Result.AwaitableFalse;
+                    }, cancellationToken), cancellationToken)
+               .IfSuccessAsync(() => context.RemoveEntity(item), cancellationToken), cancellationToken);
     }
     
     private ConfiguredValueTaskAwaitable<Result> StepCompletionAsync(

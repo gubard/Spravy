@@ -171,6 +171,7 @@ public class MultiToDoItemsViewModel : ViewModelBase
         notify.IsFavorite = item.IsFavorite;
         notify.ParentId = item.ParentId;
         notify.OrderIndex = item.OrderIndex;
+        notify.ReferenceId = item.ReferenceId;
         SetupItemCommands(notify);
 
         return notify;

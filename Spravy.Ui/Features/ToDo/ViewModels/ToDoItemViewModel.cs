@@ -172,6 +172,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
                 Status = item.Status;
                 ParentId = item.ParentId;
                 DescriptionType = item.DescriptionType;
+                ReferenceId = item.ReferenceId;
             }), cancellationToken);
     }
 
