@@ -161,7 +161,7 @@ public static class CommandStorage
         MultiDeleteToDoItemsItem = CreateCommand<AvaloniaList<Selected<ToDoItemNotify>>>(MultiDeleteToDoItemsAsync,
             MaterialIconKind.Delete, "Delete to-do items");
 
-        CloneToDoItemItem = CreateCommand<ICurrentIdProperty>(
+        CloneToDoItemItem = CreateCommand<IIdProperty>(
             CloneToDoItemAsync, MaterialIconKind.FileMove, "Clone to-do item");
 
         AddPasswordItemItem = CreateCommand(AddPasswordItemAsync, MaterialIconKind.Plus, "Add password item");
@@ -1362,16 +1362,16 @@ public static class CommandStorage
     }
 
     private static ConfiguredValueTaskAwaitable<Result> CloneToDoItemAsync(
-        ICurrentIdProperty id,
+        IIdProperty id,
         CancellationToken cancellationToken
     )
     {
         return dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
             itemNotify => dialogViewer.CloseInputDialogAsync(cancellationToken)
-               .IfSuccessAsync(() => toDoService.CloneToDoItemAsync(id.CurrentId, itemNotify.Id, cancellationToken),
+               .IfSuccessAsync(() => toDoService.CloneToDoItemAsync(id.Id, itemNotify.Id, cancellationToken),
                     cancellationToken)
                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
-            view => view.DefaultSelectedItemId = id.CurrentId, cancellationToken);
+            view => view.DefaultSelectedItemId = id.Id, cancellationToken);
     }
 
     private static ConfiguredValueTaskAwaitable<Result> ChangeToActiveDoItemAsync(CancellationToken cancellationToken)
