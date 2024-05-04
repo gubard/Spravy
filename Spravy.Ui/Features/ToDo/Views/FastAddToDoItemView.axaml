@@ -13,7 +13,7 @@
         <ListBox ItemsSource="{Binding Types}" SelectedItem="{Binding Type}" SelectionMode="Single">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal" />
+                    <WrapPanel Orientation="Horizontal" />
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
         </ListBox>
