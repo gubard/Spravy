@@ -4,7 +4,7 @@ public class MainProgressBarViewModel : ViewModelBase
 {
     public MainProgressBarViewModel()
     {
-        this.WhenAnyValue(x => x.Maximum).Subscribe(x => IsIndeterminate = Math.Abs(x - 1) < 0.1);
+        this.WhenAnyValue(x => x.Value).Subscribe(x => IsIndeterminate = Math.Abs(x) < 0.1);
     }
     
     [Reactive]

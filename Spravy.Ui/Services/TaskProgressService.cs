@@ -7,9 +7,9 @@ public class TaskProgressService : ITaskProgressService
     [Inject]
     public required MainProgressBarViewModel MainProgressBar { get; init; }
     
-    public ConfiguredValueTaskAwaitable<Result<TaskProgressItem>> AddItemAsync(double impact)
+    public ConfiguredValueTaskAwaitable<Result<TaskProgressItem>> AddItemAsync(ushort impact)
     {
-        var result = new TaskProgressItem(this, impact);
+        var result = new TaskProgressItem(impact);
         items.Add(result);
         
         return this.InvokeUIBackgroundAsync(() => MainProgressBar.Maximum += impact)
@@ -19,7 +19,7 @@ public class TaskProgressService : ITaskProgressService
                .IfSuccess(() => result.AddDisposable(result.WhenAnyValue(x => x.Impact)
                    .Subscribe(x =>
                     {
-                        if (Math.Abs(x - result.Progress) < 0.1)
+                        if (x == result.Progress)
                         {
                             DeleteItemAsync(result);
                         }
@@ -32,6 +32,15 @@ public class TaskProgressService : ITaskProgressService
         if (items.Remove(item))
         {
             item.Dispose();
+            
+            if (items.Count == 0)
+            {
+                return this.InvokeUIBackgroundAsync(() =>
+                {
+                    MainProgressBar.Maximum = 0;
+                    MainProgressBar.Value = 0;
+                });
+            }
             
             return this.InvokeUIBackgroundAsync(() => MainProgressBar.Maximum -= item.Impact);
         }

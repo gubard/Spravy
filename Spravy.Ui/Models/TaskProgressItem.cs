@@ -2,18 +2,15 @@ namespace Spravy.Ui.Models;
 
 public class TaskProgressItem : NotifyBase
 {
-    private readonly ITaskProgressService progressService;
-    
-    public TaskProgressItem(ITaskProgressService progressService, double impact)
+    public TaskProgressItem(ushort impact)
     {
         Impact = impact;
-        this.progressService = progressService;
     }
     
-    public double Impact { get; }
+    public ushort Impact { get; }
     
     [Reactive]
-    public double Progress { get; set; }
+    public ushort Progress { get; set; }
     
     public Result AddDisposable(IDisposable disposable)
     {

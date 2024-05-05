@@ -4,7 +4,7 @@ public static class TaskProgressServicePropertyExtension
 {
     public static ConfiguredValueTaskAwaitable<Result> RunProgressAsync<TTaskProgressServiceProperty>(
         this TTaskProgressServiceProperty property,
-        double impact,
+        ushort impact,
         Func<TaskProgressItem, ConfiguredValueTaskAwaitable<Result>> func,
         CancellationToken cancellationToken
     ) where TTaskProgressServiceProperty : ITaskProgressServiceProperty
