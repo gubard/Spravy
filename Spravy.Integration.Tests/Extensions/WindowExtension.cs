@@ -154,6 +154,10 @@ public static class WindowExtension
            .Case(w => w.DataContext.ThrowIfNull().ThrowIfIsNotCast<MainViewModel>())
            .Content
            .ThrowIfNull()
+           .ThrowIfIsNotCast<Panel>()
+           .Children
+           .Last()
+           .ThrowIfNull()
            .ThrowIfIsNotCast<DialogHost>()
            .Case(dh => dh.Identifier.Should().Be("ErrorDialogHost"));
 
