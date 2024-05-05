@@ -103,7 +103,7 @@ public class EfAuthenticationService : IAuthenticationService
     {
         login = login.Trim();
 
-        return context.AtomicExecuteAsync(() => context.GetUserByEmailAsync(login, cancellationToken)
+        return context.AtomicExecuteAsync(() => context.GetUserByLoginAsync(login, cancellationToken)
            .IfSuccessAsync(userEntity =>
             {
                 var verificationCode = randomString.GetRandom().ThrowIfNull();
