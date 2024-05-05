@@ -4,6 +4,7 @@
                     xmlns:enums1="clr-namespace:Spravy.Ui.Features.ToDo.Enums"
                     xmlns:system="clr-namespace:System;assembly=System.Runtime"
                     xmlns:enums="clr-namespace:Spravy.Ui.Enums">
+    <converters:DoubleZeroToBooleanConverter x:Key="DoubleZeroToBooleanConverter" />
     <converters:DateTimeOffsetToDateOnlyValueConverter x:Key="DateTimeOffsetToDateOnlyValueConverter" />
     <converters:DateTimeToDateOnlyValueConverter x:Key="DateTimeToDateOnlyValueConverter" />
     <converters:DoubleToPercentsConverter x:Key="DoubleToPercentsConverter95" Percentage=".95" />

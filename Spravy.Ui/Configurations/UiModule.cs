@@ -63,6 +63,8 @@ public class UiModule : NinjectModule
         Bind<LeafToDoItemsViewModel>().ToSelf();
         Bind<LeafToDoItemsView>().ToSelf();
         Bind<IContent>().ToMethod(x => x.Kernel.Get<MainSplitViewModel>());
+        Bind<MainProgressBarViewModel>().ToSelf().InSingletonScope();
+        Bind<ITaskProgressService>().To<TaskProgressService>().InSingletonScope();
 
         Bind<AvaloniaList<DayOfYearSelectItem>>()
            .ToMethod(context => new(Enumerable.Range(1, 12)
@@ -121,44 +123,5 @@ public class UiModule : NinjectModule
         expression.AddProfile<SpravyScheduleProfile>();
         expression.AddProfile<SpravyEventBusProfile>();
         expression.AddProfile<SpravyPasswordGeneratorProfile>();
-    }
-
-    private void RegisterViewModels(NinjectModule module)
-    {
-        var styledElementType = typeof(StyledElement);
-        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-
-        foreach (var assembly in assemblies)
-        {
-            var types = assembly.GetTypes();
-
-            foreach (var type in types)
-            {
-                if (type.Namespace.IsNullOrWhiteSpace())
-                {
-                    continue;
-                }
-
-                if (!styledElementType.IsAssignableFrom(type))
-                {
-                    continue;
-                }
-
-                var ns = type.Namespace.Replace(".Views.", ".ViewModels.").Replace(".Views", ".ViewModels");
-                var viewModelName = $"{ns}.{type.Name}Model";
-                var viewModelType = assembly.GetType(viewModelName);
-
-                if (viewModelType is null)
-                {
-                    continue;
-                }
-
-                module.Bind(viewModelType).ToSelf();
-
-                module.Bind(type)
-                   .ToSelf()
-                   .OnActivation((c, x) => ((StyledElement)x).DataContext = c.Kernel.Get(viewModelType));
-            }
-        }
     }
 }

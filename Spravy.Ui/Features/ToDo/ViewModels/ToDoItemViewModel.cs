@@ -9,7 +9,8 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     IToDoNameProperty,
     IDeletable,
     ISetToDoParentItemParams,
-    ILink
+    ILink,
+    ITaskProgressServiceProperty
 {
     private readonly PageHeaderViewModel pageHeaderViewModel;
     private readonly TaskWork refreshToDoItemWork;
@@ -129,6 +130,9 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     [Inject]
     public required IToDoService ToDoService { get; set; }
     
+    [Inject]
+    public required ITaskProgressService TaskProgressService { get; init; }
+    
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
     {
         return RefreshCore(cancellationToken).ConfigureAwait(false);
@@ -219,12 +223,15 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
-        pageHeaderViewModel.RightCommand = CommandStorage.ShowToDoSettingItem.WithParam(this);
-        FastAddToDoItemViewModel.Refresh = this;
-        
-        return ObjectStorage.GetObjectOrDefaultAsync<ToDoItemViewModelSetting>(ViewId, cancellationToken)
-           .IfSuccessAsync(obj => SetStateAsync(obj, cancellationToken), cancellationToken)
-           .IfSuccessAllAsync(cancellationToken, () => RefreshAsync(cancellationToken));
+        return this.RunProgressAsync(() =>
+        {
+            pageHeaderViewModel.RightCommand = CommandStorage.ShowToDoSettingItem.WithParam(this);
+            FastAddToDoItemViewModel.Refresh = this;
+            
+            return ObjectStorage.GetObjectOrDefaultAsync<ToDoItemViewModelSetting>(ViewId, cancellationToken)
+               .IfSuccessAsync(obj => SetStateAsync(obj, cancellationToken), cancellationToken)
+               .IfSuccessAllAsync(cancellationToken, () => RefreshAsync(cancellationToken));
+        }, cancellationToken);
     }
     
     private ConfiguredValueTaskAwaitable<Result> UpdateCommandsAsync(CancellationToken cancellationToken)

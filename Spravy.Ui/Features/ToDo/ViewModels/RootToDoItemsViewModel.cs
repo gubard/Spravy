@@ -1,10 +1,11 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderChanger
+public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderChanger, ITaskProgressServiceProperty
 {
     private readonly PageHeaderViewModel pageHeaderViewModel;
     private readonly TaskWork refreshWork;
     private readonly ToDoSubItemsViewModel toDoSubItemsViewModel;
+    private readonly FastAddToDoItemViewModel fastAddToDoItemViewModel;
     
     public RootToDoItemsViewModel() : base(true)
     {
@@ -20,7 +21,19 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
     }
     
     [Inject]
-    public required FastAddToDoItemViewModel FastAddToDoItemViewModel { get; init; }
+    public required FastAddToDoItemViewModel FastAddToDoItemViewModel
+    {
+        get => fastAddToDoItemViewModel;
+        [MemberNotNull(nameof(fastAddToDoItemViewModel))]
+        init
+        {
+            fastAddToDoItemViewModel = value;
+            fastAddToDoItemViewModel.Refresh = this;
+        }
+    }
+    
+    [Inject]
+    public required ITaskProgressService TaskProgressService { get; init; }
     
     [Inject]
     public required PageHeaderViewModel PageHeaderViewModel
@@ -71,11 +84,10 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
     
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
-        FastAddToDoItemViewModel.Refresh = this;
-        
-        return ObjectStorage.GetObjectOrDefaultAsync<RootToDoItemsViewModelSetting>(ViewId, cancellationToken)
-           .IfSuccessAllAsync(cancellationToken, obj => SetStateAsync(obj, cancellationToken),
-                _ => refreshWork.RunAsync().ToValueTaskResultOnly().ConfigureAwait(false));
+        return this.RunProgressAsync(
+            () => ObjectStorage.GetObjectOrDefaultAsync<RootToDoItemsViewModelSetting>(ViewId, cancellationToken)
+               .IfSuccessAllAsync(cancellationToken, obj => SetStateAsync(obj, cancellationToken),
+                    _ => refreshWork.RunAsync().ToValueTaskResultOnly().ConfigureAwait(false)), cancellationToken);
     }
     
     public async ValueTask<Result> RefreshCore(CancellationToken cancellationToken)
