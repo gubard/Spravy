@@ -63,7 +63,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
                     return result;
                 }
                 
-                progressItem.Progress++;
+                await this.InvokeUIBackgroundAsync(() => progressItem.Progress++);
             }
         }
         
@@ -122,7 +122,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
                 }
                 
                 orderIndex++;
-                progressItem.Progress++;
+                await this.InvokeUIBackgroundAsync(() => progressItem.Progress++);
             }
         }
         
