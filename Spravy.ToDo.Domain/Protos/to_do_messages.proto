@@ -96,7 +96,6 @@ message ToDoItemGrpc {
     ToDoItemIsCanGrpc is_can = 10;
     bytes parent_id = 11;
     DescriptionTypeGrpc description_type = 12;
-    bytes reference_id = 13;
 }
 
 message GetToDoItemsReply {
@@ -218,7 +217,6 @@ message GetToDoItemReply {
     ToDoItemIsCanGrpc is_can = 10;
     bytes parent_id = 11;
     DescriptionTypeGrpc description_type = 12;
-    bytes reference_id = 13;
 }
 
 message GetChildrenToDoItemIdsRequest {

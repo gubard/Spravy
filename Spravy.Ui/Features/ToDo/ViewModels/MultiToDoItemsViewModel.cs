@@ -132,26 +132,28 @@ public class MultiToDoItemsViewModel : ViewModelBase
         });
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateFavoriteItemAsync(ToDoItem item)
+    public ConfiguredValueTaskAwaitable<Result> UpdateFavoriteItemAsync(ToDoItem item, Guid? referenceId)
     {
         return this.InvokeUIBackgroundAsync(() =>
         {
             var notify = Favorite.Items.SingleOrDefault(x => x.Value.Id == item.Id)
              ?? new Selected<ToDoItemNotify>(Mapper.Map<ToDoItemNotify>(item));
-
+            
+            notify.Value.ReferenceId = referenceId;
             var updateOrder = item.OrderIndex != notify.Value.OrderIndex;
             SetupItem(notify.Value, item);
             Favorite.UpdateItem(notify, updateOrder);
         });
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateItemAsync(ToDoItem item)
+    public ConfiguredValueTaskAwaitable<Result> UpdateItemAsync(ToDoItem item, Guid? referenceId)
     {
         return this.InvokeUIBackgroundAsync(() =>
         {
             var notify = ToDoItems.GroupByNone.Items.Items.SingleOrDefault(x => x.Value.Id == item.Id)
              ?? new Selected<ToDoItemNotify>(Mapper.Map<ToDoItemNotify>(item));
-
+            
+            notify.Value.ReferenceId = referenceId;
             var updateOrder = item.OrderIndex != notify.Value.OrderIndex;
             SetupItem(notify.Value, item);
             ToDoItems.UpdateItem(notify, updateOrder);
@@ -171,7 +173,6 @@ public class MultiToDoItemsViewModel : ViewModelBase
         notify.IsFavorite = item.IsFavorite;
         notify.ParentId = item.ParentId;
         notify.OrderIndex = item.OrderIndex;
-        notify.ReferenceId = item.ReferenceId;
         SetupItemCommands(notify);
 
         return notify;

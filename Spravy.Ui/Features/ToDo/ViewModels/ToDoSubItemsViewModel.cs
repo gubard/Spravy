@@ -56,7 +56,21 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
             
             foreach (var item in items.Value.ToArray())
             {
-                var result = await List.UpdateFavoriteItemAsync(item);
+                Guid? referenceId = null;
+                
+                if (item.Type == ToDoItemType.Reference)
+                {
+                    var reference = await ToDoService.GetReferenceToDoItemSettingsAsync(item.Id, cancellationToken);
+                    
+                    if (reference.IsHasError)
+                    {
+                        return new (reference.Errors);
+                    }
+                    
+                    referenceId = reference.Value.ReferenceId;
+                }
+                
+                var result = await List.UpdateFavoriteItemAsync(item, referenceId);
                 
                 if (result.IsHasError)
                 {
@@ -102,9 +116,23 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
             
             foreach (var item in items.Value.ToArray())
             {
+                Guid? referenceId = null;
+                
+                if (item.Type == ToDoItemType.Reference)
+                {
+                    var reference = await ToDoService.GetReferenceToDoItemSettingsAsync(item.Id, cancellationToken);
+                    
+                    if (reference.IsHasError)
+                    {
+                        return new (reference.Errors);
+                    }
+                    
+                    referenceId = reference.Value.ReferenceId;
+                }
+                
                 if (autoOrder)
                 {
-                    var result = await List.UpdateItemAsync(item.WithOrderIndex(orderIndex));
+                    var result = await List.UpdateItemAsync(item.WithOrderIndex(orderIndex), referenceId);
                     
                     if (result.IsHasError)
                     {
@@ -113,7 +141,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
                 }
                 else
                 {
-                    var result = await List.UpdateItemAsync(item);
+                    var result = await List.UpdateItemAsync(item, referenceId);
                     
                     if (result.IsHasError)
                     {

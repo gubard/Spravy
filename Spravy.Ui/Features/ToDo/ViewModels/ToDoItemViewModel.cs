@@ -168,19 +168,39 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     private ConfiguredValueTaskAwaitable<Result> RefreshToDoItemCore(CancellationToken cancellationToken)
     {
         return ToDoService.GetToDoItemAsync(Id, cancellationToken)
-           .IfSuccessAsync(item => this.InvokeUIBackgroundAsync(() =>
+           .IfSuccessAsync(item =>
             {
-                Link = item.Link?.AbsoluteUri ?? string.Empty;
-                Description = item.Description;
-                Name = item.Name;
-                Type = item.Type;
-                IsCan = item.IsCan;
-                IsFavorite = item.IsFavorite;
-                Status = item.Status;
-                ParentId = item.ParentId;
-                DescriptionType = item.DescriptionType;
-                ReferenceId = item.ReferenceId;
-            }), cancellationToken);
+                if (item.Type == ToDoItemType.Reference)
+                {
+                    return ToDoService.GetReferenceToDoItemSettingsAsync(Id, cancellationToken)
+                       .IfSuccessAsync(reference => this.InvokeUIBackgroundAsync(() =>
+                        {
+                            Link = item.Link?.AbsoluteUri ?? string.Empty;
+                            Description = item.Description;
+                            Name = item.Name;
+                            Type = item.Type;
+                            IsCan = item.IsCan;
+                            IsFavorite = item.IsFavorite;
+                            Status = item.Status;
+                            ParentId = item.ParentId;
+                            DescriptionType = item.DescriptionType;
+                            ReferenceId = reference.ReferenceId;
+                        }), cancellationToken);
+                }
+                
+                return this.InvokeUIBackgroundAsync(() =>
+                {
+                    Link = item.Link?.AbsoluteUri ?? string.Empty;
+                    Description = item.Description;
+                    Name = item.Name;
+                    Type = item.Type;
+                    IsCan = item.IsCan;
+                    IsFavorite = item.IsFavorite;
+                    Status = item.Status;
+                    ParentId = item.ParentId;
+                    DescriptionType = item.DescriptionType;
+                });
+            }, cancellationToken);
     }
     
     private ConfiguredValueTaskAwaitable<Result> RefreshPathAsync(CancellationToken cancellationToken)
