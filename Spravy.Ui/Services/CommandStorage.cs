@@ -41,9 +41,6 @@ public static class CommandStorage
         
         DeleteToDoItemItem = CreateCommand<IDeletable>(DeleteToDoItemAsync, MaterialIconKind.Delete, "Delete");
         
-        ChangeToActiveDoItemItem = CreateCommand(
-            ChangeToActiveDoItemAsync, MaterialIconKind.ArrowRight, "Go to active");
-        
         ChangeOrderIndexItem = CreateCommand<ToDoItemNotify>(
             ChangeOrderIndexAsync, MaterialIconKind.ReorderHorizontal, "Reorder");
         
@@ -64,41 +61,10 @@ public static class CommandStorage
         BackItem = CreateCommand(BackAsync, MaterialIconKind.ArrowLeft, "Back");
         NavigateToItem = CreateCommand<Type>(NavigateToAsync, MaterialIconKind.ArrowLeft, "Navigate to");
         LogoutItem = CreateCommand(LogoutAsync, MaterialIconKind.Logout, "Logout");
-        
-        SetToDoChildrenTypeItem = CreateCommand<IToDoChildrenTypeProperty>(
-            SetToDoChildrenTypeAsync, MaterialIconKind.Pencil, "Set children type");
-        
-        SetToDoDueDateItem = CreateCommand<IToDoDueDateProperty>(
-            SetToDoDueDateAsync, MaterialIconKind.Pencil, "Set due date");
-        
-        SetToDoDaysOffsetItem = CreateCommand<IToDoDaysOffsetProperty>(
-            SetToDoDaysOffsetAsync, MaterialIconKind.Pencil, "Set days offset");
-        
-        SetToDoMonthsOffsetItem = CreateCommand<IToDoMonthsOffsetProperty>(
-            SetToDoMonthsOffsetAsync, MaterialIconKind.Pencil, "Set months offset");
-        
-        SetToDoWeeksOffsetItem = CreateCommand<IToDoWeeksOffsetProperty>(
-            SetToDoWeeksOffsetAsync, MaterialIconKind.Pencil, "Set weeks offset");
-        
-        SetToDoYearsOffsetItem = CreateCommand<IToDoYearsOffsetProperty>(
-            SetToDoYearsOffsetAsync, MaterialIconKind.Pencil, "Set years offset");
-        
-        SetToDoTypeOfPeriodicityItem = CreateCommand<IToDoTypeOfPeriodicityProperty>(SetToDoTypeOfPeriodicityAsync,
-            MaterialIconKind.Pencil, "Set type of periodicity");
-        
-        SetToDoPeriodicityItem = CreateCommand<IToDoTypeOfPeriodicityProperty>(
-            SetToDoPeriodicityAsync, MaterialIconKind.Pencil, "Set periodicity");
-        
         AddRootToDoItemItem = CreateCommand(AddRootToDoItemAsync, MaterialIconKind.Plus, "Add root to-do item");
         
         ToDoItemSearchItem = CreateCommand<IToDoItemSearchProperties>(
             ToDoItemSearchAsync, MaterialIconKind.Search, "Search to-do item");
-        
-        SetToDoTypeItem = CreateCommand<IToDoTypeProperty>(
-            SetToDoTypeAsync, MaterialIconKind.Pencil, "Set to-do item type");
-        
-        SetToDoLinkItem = CreateCommand<IToDoLinkProperty>(
-            SetToDoLinkAsync, MaterialIconKind.Pencil, "Set to-do item link");
         
         SetToDoDescriptionItem = CreateCommand<IToDoDescriptionProperty>(SetToDoDescriptionAsync,
             MaterialIconKind.Pencil, "Set to-do item description");
@@ -126,9 +92,6 @@ public static class CommandStorage
         NavigateToCurrentToDoItemItem = CreateCommand(NavigateToCurrentToDoItemAsync, MaterialIconKind.ArrowRight,
             "Open current to-do item");
         
-        SetToDoItemNameItem = CreateCommand<IToDoNameProperty>(
-            SetToDoItemNameAsync, MaterialIconKind.Pencil, "Open current to-do item");
-        
         MultiCompleteToDoItemsItem = CreateCommand<AvaloniaList<Selected<ToDoItemNotify>>>(
             MultiSwitchCompleteToDoItemsAsync, MaterialIconKind.CheckAll, "Complete all to-do items");
         
@@ -141,14 +104,8 @@ public static class CommandStorage
         MultiSetTypeToDoItemsItem = CreateCommand<AvaloniaList<Selected<ToDoItemNotify>>>(MultiSetTypeToDoItemsAsync,
             MaterialIconKind.Switch, "Set type all to-do items");
         
-        VerificationEmailItem = CreateCommand<IVerificationEmail>(VerificationEmailAsync,
-            MaterialIconKind.EmailVerified, "Verification email");
-        
         SendNewVerificationCodeItem = CreateCommand<IVerificationEmail>(SendNewVerificationCodeAsync,
             MaterialIconKind.CodeString, "Verification email");
-        
-        UpdateEmailNotVerifiedUserByItem = CreateCommand<IVerificationEmail>(UpdateEmailNotVerifiedUserAsync,
-            MaterialIconKind.EmailCheck, "Change email");
         
         ResetToDoItemItem = CreateCommand<ICurrentIdProperty>(
             ResetToDoItemAsync, MaterialIconKind.EncryptionReset, "Reset to-do item");
@@ -184,17 +141,8 @@ public static class CommandStorage
     }
     
     public static CommandItem GeneratePasswordItem { get; }
-    
     public static CommandItem CloneToDoItemItem { get; }
-    
     public static CommandItem ResetToDoItemItem { get; }
-    
-    public static ICommand UpdateEmailNotVerifiedUserByCommand
-    {
-        get => UpdateEmailNotVerifiedUserByItem.Command;
-    }
-    
-    public static CommandItem UpdateEmailNotVerifiedUserByItem { get; }
     
     public static ICommand SendNewVerificationCodeCommand
     {
@@ -202,91 +150,16 @@ public static class CommandStorage
     }
     
     public static CommandItem SendNewVerificationCodeItem { get; }
-    
-    public static CommandItem VerificationEmailItem { get; }
-    
-    public static ICommand MultiSetTypeToDoItemsCommand
-    {
-        get => MultiSetTypeToDoItemsItem.Command;
-    }
-    
     public static CommandItem MultiSetTypeToDoItemsItem { get; }
-    
-    public static ICommand MultiMoveToDoItemsToRootCommand
-    {
-        get => MultiMoveToDoItemsToRootItem.Command;
-    }
-    
     public static CommandItem MultiMoveToDoItemsToRootItem { get; }
-    
-    public static ICommand MultiSetParentToDoItemsCommand
-    {
-        get => MultiSetParentToDoItemsItem.Command;
-    }
-    
     public static CommandItem MultiSetParentToDoItemsItem { get; }
-    
-    public static ICommand MultiCompleteToDoItemsCommand
-    {
-        get => MultiCompleteToDoItemsItem.Command;
-    }
-    
     public static CommandItem MultiCompleteToDoItemsItem { get; }
-    
-    public static ICommand SetToDoItemNameCommand
-    {
-        get => SetToDoItemNameItem.Command;
-    }
-    
-    public static CommandItem SetToDoItemNameItem { get; }
-    
-    public static ICommand NavigateToCurrentToDoItemCommand
-    {
-        get => NavigateToCurrentToDoItemItem.Command;
-    }
-    
     public static CommandItem NavigateToCurrentToDoItemItem { get; }
-    
-    public static ICommand ToDoItemRandomizeChildrenOrderIndexCommand
-    {
-        get => ToDoItemRandomizeChildrenOrderIndexItem.Command;
-    }
-    
     public static CommandItem ToDoItemRandomizeChildrenOrderIndexItem { get; }
-    
-    public static ICommand ToDoItemToStringCommand
-    {
-        get => ToDoItemToStringItem.Command;
-    }
-    
     public static CommandItem ToDoItemToStringItem { get; }
-    
-    public static ICommand MoveToDoItemToRootCommand
-    {
-        get => MoveToDoItemToRootItem.Command;
-    }
-    
     public static CommandItem MoveToDoItemToRootItem { get; }
-    
-    public static ICommand NavigateToLeafCommand
-    {
-        get => NavigateToLeafItem.Command;
-    }
-    
     public static CommandItem NavigateToLeafItem { get; }
-    
-    public static ICommand AddToDoItemChildCommand
-    {
-        get => AddToDoItemChildItem.Command;
-    }
-    
     public static CommandItem AddToDoItemChildItem { get; }
-    
-    public static ICommand ShowToDoSettingCommand
-    {
-        get => ShowToDoSettingItem.Command;
-    }
-    
     public static CommandItem ShowToDoSettingItem { get; }
     
     public static ICommand SetToDoDescriptionCommand
@@ -295,20 +168,6 @@ public static class CommandStorage
     }
     
     public static CommandItem SetToDoDescriptionItem { get; }
-    
-    public static ICommand SetToDoLinkCommand
-    {
-        get => SetToDoLinkItem.Command;
-    }
-    
-    public static CommandItem SetToDoLinkItem { get; }
-    
-    public static ICommand SetToDoTypeCommand
-    {
-        get => SetToDoTypeItem.Command;
-    }
-    
-    public static CommandItem SetToDoTypeItem { get; }
     
     public static ICommand ToDoItemSearchCommand
     {
@@ -323,33 +182,8 @@ public static class CommandStorage
     }
     
     public static CommandItem SwitchPaneItem { get; }
-    
-    public static ICommand SwitchCompleteToDoItemCommand
-    {
-        get => SwitchCompleteToDoItemItem.Command;
-    }
-    
     public static CommandItem SwitchCompleteToDoItemItem { get; }
-    
-    public static ICommand ChangeToActiveDoItemCommand
-    {
-        get => ChangeToActiveDoItemItem.Command;
-    }
-    
-    public static CommandItem ChangeToActiveDoItemItem { get; }
-    
-    public static ICommand ChangeOrderIndexCommand
-    {
-        get => ChangeOrderIndexItem.Command;
-    }
-    
     public static CommandItem ChangeOrderIndexItem { get; }
-    
-    public static ICommand DeleteToDoItemCommand
-    {
-        get => DeleteToDoItemItem.Command;
-    }
-    
     public static CommandItem DeleteToDoItemItem { get; }
     
     public static ICommand NavigateToToDoItemCommand
@@ -415,81 +249,13 @@ public static class CommandStorage
     
     public static CommandItem LogoutItem { get; }
     
-    public static ICommand SetToDoChildrenTypeCommand
-    {
-        get => SetToDoChildrenTypeItem.Command;
-    }
-    
-    public static CommandItem SetToDoChildrenTypeItem { get; }
-    
-    public static ICommand SetToDoDueDateCommand
-    {
-        get => SetToDoDueDateItem.Command;
-    }
-    
-    public static CommandItem SetToDoDueDateItem { get; }
-    
-    public static ICommand SetToDoDaysOffsetCommand
-    {
-        get => SetToDoDaysOffsetItem.Command;
-    }
-    
-    public static CommandItem SetToDoDaysOffsetItem { get; }
-    
-    public static ICommand SetToDoMonthsOffsetCommand
-    {
-        get => SetToDoMonthsOffsetItem.Command;
-    }
-    
-    public static CommandItem SetToDoMonthsOffsetItem { get; }
-    
-    public static ICommand SetToDoWeeksOffsetCommand
-    {
-        get => SetToDoWeeksOffsetItem.Command;
-    }
-    
-    public static CommandItem SetToDoWeeksOffsetItem { get; }
-    
-    public static ICommand SetToDoYearsOffsetCommand
-    {
-        get => SetToDoYearsOffsetItem.Command;
-    }
-    
-    public static CommandItem SetToDoYearsOffsetItem { get; }
-    
-    public static ICommand SetToDoTypeOfPeriodicityCommand
-    {
-        get => SetToDoTypeOfPeriodicityItem.Command;
-    }
-    
-    public static CommandItem SetToDoTypeOfPeriodicityItem { get; }
-    
-    public static ICommand SetToDoPeriodicityCommand
-    {
-        get => SetToDoPeriodicityItem.Command;
-    }
-    
-    public static CommandItem SetToDoPeriodicityItem { get; }
-    
     public static ICommand AddRootToDoItemCommand
     {
         get => AddRootToDoItemItem.Command;
     }
     
     public static CommandItem AddRootToDoItemItem { get; }
-    
-    public static ICommand SetToDoParentItemCommand
-    {
-        get => SetToDoParentItemItem.Command;
-    }
-    
     public static CommandItem SetToDoParentItemItem { get; }
-    
-    public static ICommand MultiDeleteToDoItemsCommand
-    {
-        get => MultiDeleteToDoItemsItem.Command;
-    }
-    
     public static CommandItem MultiDeleteToDoItemsItem { get; }
     
     public static ICommand AddPasswordItemCommand
@@ -619,28 +385,6 @@ public static class CommandStorage
             cancellationToken);
     }
     
-    private static ConfiguredValueTaskAwaitable<Result> UpdateEmailNotVerifiedUserAsync(
-        IVerificationEmail verificationEmail,
-        CancellationToken cancellationToken
-    )
-    {
-        return dialogViewer.ShowSingleStringConfirmDialogAsync(newEmail => dialogViewer
-           .CloseInputDialogAsync(cancellationToken)
-           .IfSuccessAllAsync(cancellationToken, () =>
-            {
-                switch (verificationEmail.IdentifierType)
-                {
-                    case UserIdentifierType.Email:
-                        return authenticationService.UpdateEmailNotVerifiedUserByEmailAsync(
-                            verificationEmail.Identifier, newEmail, cancellationToken);
-                    case UserIdentifierType.Login:
-                        return authenticationService.UpdateEmailNotVerifiedUserByLoginAsync(
-                            verificationEmail.Identifier, newEmail, cancellationToken);
-                    default: throw new ArgumentOutOfRangeException();
-                }
-            }), ActionHelper<TextViewModel>.Empty, cancellationToken);
-    }
-    
     private static ConfiguredValueTaskAwaitable<Result> SendNewVerificationCodeAsync(
         IVerificationEmail verificationEmail,
         CancellationToken cancellationToken
@@ -654,29 +398,6 @@ public static class CommandStorage
             case UserIdentifierType.Login:
                 return authenticationService.UpdateVerificationCodeByLoginAsync(verificationEmail.Identifier,
                     cancellationToken);
-            default: throw new ArgumentOutOfRangeException();
-        }
-    }
-    
-    private static ConfiguredValueTaskAwaitable<Result> VerificationEmailAsync(
-        IVerificationEmail verificationEmail,
-        CancellationToken cancellationToken
-    )
-    {
-        switch (verificationEmail.IdentifierType)
-        {
-            case UserIdentifierType.Email:
-                return authenticationService
-                   .VerifiedEmailByEmailAsync(verificationEmail.Identifier,
-                        verificationEmail.VerificationCode.ToUpperInvariant(), cancellationToken)
-                   .IfSuccessAsync(() => navigator.NavigateToAsync<LoginViewModel>(cancellationToken),
-                        cancellationToken);
-            case UserIdentifierType.Login:
-                return authenticationService
-                   .VerifiedEmailByLoginAsync(verificationEmail.Identifier,
-                        verificationEmail.VerificationCode.ToUpperInvariant(), cancellationToken)
-                   .IfSuccessAsync(() => navigator.NavigateToAsync<LoginViewModel>(cancellationToken),
-                        cancellationToken);
             default: throw new ArgumentOutOfRangeException();
         }
     }
@@ -779,22 +500,6 @@ public static class CommandStorage
         }
         
         return Result.AwaitableFalse.IfSuccessAllAsync(cancellationToken, tasks.ToArray());
-    }
-    
-    private static ConfiguredValueTaskAwaitable<Result> SetToDoItemNameAsync(
-        IToDoNameProperty property,
-        CancellationToken cancellationToken
-    )
-    {
-        return dialogViewer.ShowSingleStringConfirmDialogAsync(
-            str => dialogViewer.CloseInputDialogAsync(cancellationToken)
-               .IfSuccessAsync(() => toDoService.UpdateToDoItemNameAsync(property.Id, str, cancellationToken),
-                    cancellationToken)
-               .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken), box =>
-            {
-                box.Text = property.Name;
-                box.Label = "Name";
-            }, cancellationToken);
     }
     
     private static ConfiguredValueTaskAwaitable<Result> NavigateToCurrentToDoItemAsync(
@@ -941,39 +646,6 @@ public static class CommandStorage
             }, cancellationToken);
     }
     
-    private static ConfiguredValueTaskAwaitable<Result> SetToDoLinkAsync(
-        IToDoLinkProperty property,
-        CancellationToken cancellationToken
-    )
-    {
-        return dialogViewer.ShowSingleStringConfirmDialogAsync(
-            value => dialogViewer.CloseInputDialogAsync(cancellationToken)
-               .IfSuccessAsync(
-                    () => toDoService.UpdateToDoItemLinkAsync(property.Id,
-                        value.IsNullOrWhiteSpace() ? null : value.ToUri(), cancellationToken), cancellationToken)
-               .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken), textBox =>
-            {
-                textBox.Text = property.Link;
-                textBox.Label = "Link";
-            }, cancellationToken);
-    }
-    
-    private static ConfiguredValueTaskAwaitable<Result> SetToDoTypeAsync(
-        IToDoTypeProperty property,
-        CancellationToken cancellationToken
-    )
-    {
-        return dialogViewer.ShowItemSelectorDialogAsync<ToDoItemType>(
-            item => dialogViewer.CloseInputDialogAsync(cancellationToken)
-               .IfSuccessAsync(() => toDoService.UpdateToDoItemTypeAsync(property.Id, item, cancellationToken),
-                    cancellationToken)
-               .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken), viewModel =>
-            {
-                viewModel.Items.AddRange(Enum.GetValues<ToDoItemType>().OfType<object>());
-                viewModel.SelectedItem = property.Type;
-            }, cancellationToken);
-    }
-    
     private static ConfiguredValueTaskAwaitable<Result> ToDoItemSearchAsync(
         IToDoItemSearchProperties properties,
         CancellationToken cancellationToken
@@ -998,191 +670,6 @@ public static class CommandStorage
             }, _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
             ActionHelper<AddRootToDoItemViewModel>.Empty,
             cancellationToken);
-    }
-    
-    private static ConfiguredValueTaskAwaitable<Result> SetToDoPeriodicityAsync(
-        IToDoTypeOfPeriodicityProperty property,
-        CancellationToken cancellationToken
-    )
-    {
-        switch (property.TypeOfPeriodicity)
-        {
-            case TypeOfPeriodicity.Weekly:
-            {
-                return toDoService.GetWeeklyPeriodicityAsync(property.Id, cancellationToken)
-                   .IfSuccessAsync(periodicity => dialogViewer.ShowDayOfWeekSelectorInputDialogAsync(
-                        days => dialogViewer.CloseInputDialogAsync(cancellationToken)
-                           .IfSuccessAsync(
-                                () => toDoService.UpdateToDoItemWeeklyPeriodicityAsync(property.Id, new(days),
-                                    cancellationToken), cancellationToken)
-                           .IfSuccessAsync(() => property.RefreshAsync(cancellationToken), cancellationToken)
-                           .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
-                        viewModel =>
-                        {
-                            foreach (var item in viewModel.Items)
-                            {
-                                if (periodicity.Days.Contains(item.DayOfWeek))
-                                {
-                                    item.IsSelected = true;
-                                }
-                            }
-                        }, cancellationToken), cancellationToken);
-            }
-            case TypeOfPeriodicity.Monthly:
-            {
-                return toDoService.GetMonthlyPeriodicityAsync(property.Id, cancellationToken)
-                   .IfSuccessAsync(periodicity => dialogViewer.ShowDayOfMonthSelectorInputDialogAsync(
-                        days => dialogViewer.CloseInputDialogAsync(cancellationToken)
-                           .IfSuccessAsync(
-                                () => toDoService.UpdateToDoItemMonthlyPeriodicityAsync(property.Id, new(days),
-                                    cancellationToken), cancellationToken)
-                           .IfSuccessAsync(() => property.RefreshAsync(cancellationToken), cancellationToken)
-                           .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
-                        viewModel =>
-                        {
-                            foreach (var item in viewModel.Items)
-                            {
-                                if (periodicity.Days.Contains(item.Day))
-                                {
-                                    item.IsSelected = true;
-                                }
-                            }
-                        }, cancellationToken), cancellationToken);
-            }
-            case TypeOfPeriodicity.Annually:
-            {
-                return toDoService.GetAnnuallyPeriodicityAsync(property.Id, cancellationToken)
-                   .IfSuccessAsync(periodicity => dialogViewer.ShowDayOfYearSelectorInputDialogAsync(
-                        days => dialogViewer.CloseInputDialogAsync(cancellationToken)
-                           .IfSuccessAsync(
-                                () => toDoService.UpdateToDoItemAnnuallyPeriodicityAsync(property.Id, new(days),
-                                    cancellationToken), cancellationToken)
-                           .IfSuccessAsync(() => property.RefreshAsync(cancellationToken), cancellationToken)
-                           .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
-                        viewModel =>
-                        {
-                            foreach (var month in viewModel.Items)
-                            foreach (var day in month.Days)
-                            {
-                                if (periodicity.Days.Any(x => x.Month == month.Month && x.Day == day.Day))
-                                {
-                                    day.IsSelected = true;
-                                }
-                            }
-                        }, cancellationToken), cancellationToken);
-            }
-            case TypeOfPeriodicity.Daily:
-                throw new ArgumentOutOfRangeException();
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-    }
-    
-    private static ConfiguredValueTaskAwaitable<Result> SetToDoTypeOfPeriodicityAsync(
-        IToDoTypeOfPeriodicityProperty property,
-        CancellationToken cancellationToken
-    )
-    {
-        return dialogViewer.ShowItemSelectorDialogAsync<TypeOfPeriodicity>(
-            value => dialogViewer.CloseInputDialogAsync(cancellationToken)
-               .IfSuccessAsync(
-                    () => toDoService.UpdateToDoItemTypeOfPeriodicityAsync(property.Id, value, cancellationToken),
-                    cancellationToken)
-               .IfSuccessAsync(() => property.RefreshAsync(cancellationToken), cancellationToken)
-               .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken), calendar =>
-            {
-                calendar.Items.AddRange(Enum.GetValues<TypeOfPeriodicity>().OfType<object>());
-                calendar.SelectedItem = property.TypeOfPeriodicity;
-            }, cancellationToken);
-    }
-    
-    private static ConfiguredValueTaskAwaitable<Result> SetToDoYearsOffsetAsync(
-        IToDoYearsOffsetProperty property,
-        CancellationToken cancellationToken
-    )
-    {
-        return dialogViewer.ShowNumberUInt16InputDialogAsync(
-            value => dialogViewer.CloseInputDialogAsync(cancellationToken)
-               .IfSuccessAsync(() => toDoService.UpdateToDoItemYearsOffsetAsync(property.Id, value, cancellationToken),
-                    cancellationToken)
-               .IfSuccessAsync(() => property.RefreshAsync(cancellationToken), cancellationToken)
-               .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
-            calendar => calendar.Value = property.YearsOffset, cancellationToken);
-    }
-    
-    private static ConfiguredValueTaskAwaitable<Result> SetToDoWeeksOffsetAsync(
-        IToDoWeeksOffsetProperty property,
-        CancellationToken cancellationToken
-    )
-    {
-        return dialogViewer.ShowNumberUInt16InputDialogAsync(
-            value => dialogViewer.CloseInputDialogAsync(cancellationToken)
-               .IfSuccessAsync(() => toDoService.UpdateToDoItemWeeksOffsetAsync(property.Id, value, cancellationToken),
-                    cancellationToken)
-               .IfSuccessAsync(() => property.RefreshAsync(cancellationToken), cancellationToken)
-               .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
-            calendar => calendar.Value = property.WeeksOffset, cancellationToken);
-    }
-    
-    private static ConfiguredValueTaskAwaitable<Result> SetToDoMonthsOffsetAsync(
-        IToDoMonthsOffsetProperty property,
-        CancellationToken cancellationToken
-    )
-    {
-        return dialogViewer.ShowNumberUInt16InputDialogAsync(
-            value => dialogViewer.CloseInputDialogAsync(cancellationToken)
-               .IfSuccessAsync(() => toDoService.UpdateToDoItemMonthsOffsetAsync(property.Id, value, cancellationToken),
-                    cancellationToken)
-               .IfSuccessAsync(() => property.RefreshAsync(cancellationToken), cancellationToken)
-               .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
-            calendar => calendar.Value = property.MonthsOffset, cancellationToken);
-    }
-    
-    private static ConfiguredValueTaskAwaitable<Result> SetToDoDaysOffsetAsync(
-        IToDoDaysOffsetProperty property,
-        CancellationToken cancellationToken
-    )
-    {
-        return dialogViewer.ShowNumberUInt16InputDialogAsync(value =>
-        {
-            return dialogViewer.CloseInputDialogAsync(cancellationToken)
-               .IfSuccessAsync(() => toDoService.UpdateToDoItemDaysOffsetAsync(property.Id, value, cancellationToken),
-                    cancellationToken)
-               .IfSuccessAsync(() => property.RefreshAsync(cancellationToken), cancellationToken)
-               .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken);
-        }, calendar => calendar.Value = property.DaysOffset, cancellationToken);
-    }
-    
-    private static ConfiguredValueTaskAwaitable<Result> SetToDoDueDateAsync(
-        IToDoDueDateProperty property,
-        CancellationToken cancellationToken
-    )
-    {
-        return dialogViewer.ShowDateConfirmDialogAsync(
-            value => dialogViewer.CloseInputDialogAsync(cancellationToken)
-               .IfSuccessAsync(
-                    () => toDoService.UpdateToDoItemDueDateAsync(property.Id, value.ToDateOnly(), cancellationToken),
-                    cancellationToken)
-               .IfSuccessAsync(() => property.RefreshAsync(cancellationToken), cancellationToken)
-               .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
-            calendar => calendar.SelectedDate = property.DueDate.ToDateTime(), cancellationToken);
-    }
-    
-    private static ConfiguredValueTaskAwaitable<Result> SetToDoChildrenTypeAsync(
-        IToDoChildrenTypeProperty property,
-        CancellationToken cancellationToken
-    )
-    {
-        return dialogViewer.ShowItemSelectorDialogAsync<ToDoItemChildrenType>(
-            item => dialogViewer.CloseInputDialogAsync(cancellationToken)
-               .IfSuccessAsync(() => toDoService.UpdateToDoItemChildrenTypeAsync(property.Id, item, cancellationToken),
-                    cancellationToken)
-               .IfSuccessAsync(() => property.RefreshAsync(cancellationToken), cancellationToken)
-               .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken), viewModel =>
-            {
-                viewModel.Items.AddRange(Enum.GetValues<ToDoItemChildrenType>().OfType<object>());
-                viewModel.SelectedItem = property.ChildrenType;
-            }, cancellationToken);
     }
     
     private static ConfiguredValueTaskAwaitable<Result> LogoutAsync(CancellationToken cancellationToken)
@@ -1315,20 +802,6 @@ public static class CommandStorage
             view => view.DefaultSelectedItemId = id.Id, cancellationToken);
     }
     
-    private static ConfiguredValueTaskAwaitable<Result> ChangeToActiveDoItemAsync(CancellationToken cancellationToken)
-    {
-        return toDoService.GetCurrentActiveToDoItemAsync(cancellationToken)
-           .IfSuccessAsync(item =>
-            {
-                if (item is null)
-                {
-                    return navigator.NavigateToAsync<RootToDoItemsViewModel>(cancellationToken);
-                }
-                
-                return navigator.NavigateToAsync<ToDoItemViewModel>(view => view.Id = item.Value.Id, cancellationToken);
-            }, cancellationToken);
-    }
-    
     private static ConfiguredValueTaskAwaitable<Result> DeleteToDoItemAsync(
         IDeletable deletable,
         CancellationToken cancellationToken
@@ -1431,7 +904,7 @@ public static class CommandStorage
             mainSplitViewModel.IsPaneOpen = !mainSplitViewModel.IsPaneOpen);
     }
     
-    public static CommandItem CreateCommand(
+    private static CommandItem CreateCommand(
         Func<CancellationToken, ConfiguredValueTaskAwaitable<Result>> func,
         MaterialIconKind icon,
         string name
@@ -1443,7 +916,7 @@ public static class CommandStorage
         return result;
     }
     
-    public static CommandItem CreateCommand<TParam>(
+    private static CommandItem CreateCommand<TParam>(
         Func<TParam, CancellationToken, ConfiguredValueTaskAwaitable<Result>> func,
         MaterialIconKind icon,
         string name
