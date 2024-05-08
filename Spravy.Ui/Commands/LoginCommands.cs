@@ -11,7 +11,15 @@ public class LoginCommands
     private readonly ITokenService tokenService;
     private readonly IObjectStorage objectStorage;
     
-    public LoginCommands(IAuthenticationService authenticationService, INavigator navigator, IConverter converter, AccountNotify account, ITokenService tokenService, IObjectStorage objectStorage, IErrorHandler errorHandler)
+    public LoginCommands(
+        IAuthenticationService authenticationService,
+        INavigator navigator,
+        IConverter converter,
+        AccountNotify account,
+        ITokenService tokenService,
+        IObjectStorage objectStorage,
+        IErrorHandler errorHandler
+    )
     {
         this.authenticationService = authenticationService;
         this.navigator = navigator;
