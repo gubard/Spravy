@@ -13,38 +13,47 @@ public class TaskProgressService : ITaskProgressService
         items.Add(result);
         
         return this.InvokeUIBackgroundAsync(() => MainProgressBar.Maximum += impact)
-           .IfSuccessAsync(() => result
-               .AddDisposable(result.WhenAnyValue(x => x.Progress)
-                   .Subscribe(x => MainProgressBar.Value = items.Sum(y => y.Progress)))
-               .IfSuccess(() => result.AddDisposable(result.WhenAnyValue(x => x.Impact)
-                   .Subscribe(x =>
+           .IfSuccessAsync(() => result.AddDisposable(result.WhenAnyValue(x => x.Progress)
+                   .Subscribe(_ =>
                     {
-                        if (x == result.Progress)
+                        var span = CollectionsMarshal.AsSpan(items);
+                        
+                        if (IsAllFinished(span))
                         {
-                            DeleteItemAsync(result);
+                            items.Clear();
+                            MainProgressBar.Value = 0;
+                            MainProgressBar.Maximum = 0;
                         }
-                    })))
+                        else
+                        {
+                            MainProgressBar.Value = GetAllProgress(span);
+                        }
+                    }))
                .IfSuccess(() => result.ToResult()), CancellationToken.None);
     }
     
-    public ConfiguredValueTaskAwaitable<Result> DeleteItemAsync(TaskProgressItem item)
+    private bool IsAllFinished(Span<TaskProgressItem> span)
     {
-        if (items.Remove(item))
+        for (var index = 0; index < span.Length; index++)
         {
-            item.Dispose();
-            
-            if (items.Count == 0)
+            if (!span[index].IsFinished)
             {
-                return this.InvokeUIBackgroundAsync(() =>
-                {
-                    MainProgressBar.Maximum = 0;
-                    MainProgressBar.Value = 0;
-                });
+                return false;
             }
-            
-            return this.InvokeUIBackgroundAsync(() => MainProgressBar.Maximum -= item.Impact);
         }
         
-        return Result.AwaitableFalse;
+        return true;
+    }
+    
+    private ushort GetAllProgress(Span<TaskProgressItem> span)
+    {
+        ushort result = 0;
+        
+        for (var index = 0; index < span.Length; index++)
+        {
+            result += span[index].Progress;
+        }
+        
+        return result;
     }
 }

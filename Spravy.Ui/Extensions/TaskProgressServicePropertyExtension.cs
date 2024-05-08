@@ -11,9 +11,7 @@ public static class TaskProgressServicePropertyExtension
     {
         return property.TaskProgressService
            .AddItemAsync(impact)
-           .IfSuccessTryFinallyAsync(func,
-                item => property.TaskProgressService.DeleteItemAsync(item).ToValueTask().ConfigureAwait(false),
-                cancellationToken);
+           .IfSuccessTryFinallyAsync(func, item => item.Finish(), cancellationToken);
     }
     
     public static ConfiguredValueTaskAwaitable<Result> RunProgressAsync<TTaskProgressServiceProperty>(
@@ -24,8 +22,6 @@ public static class TaskProgressServicePropertyExtension
     {
         return property.TaskProgressService
            .AddItemAsync(1)
-           .IfSuccessTryFinallyAsync(_ => func.Invoke(),
-                item => property.TaskProgressService.DeleteItemAsync(item).ToValueTask().ConfigureAwait(false),
-                cancellationToken);
+           .IfSuccessTryFinallyAsync(_ => func.Invoke(), item => item.Finish(), cancellationToken);
     }
 }

@@ -12,10 +12,20 @@ public class TaskProgressItem : NotifyBase
     [Reactive]
     public ushort Progress { get; set; }
     
+    public bool IsFinished
+    {
+        get => Progress >= Impact;
+    }
+    
     public Result AddDisposable(IDisposable disposable)
     {
         Disposables.Add(disposable);
         
         return Result.Success;
+    }
+    
+    public void Finish()
+    {
+        Progress = Impact;
     }
 }
