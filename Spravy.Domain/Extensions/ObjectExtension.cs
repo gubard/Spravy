@@ -136,7 +136,17 @@ public static class ObjectExtension
     {
         return new([obj,]);
     }
-
+    
+    public static Result<T> IfNotNull<T>(this T? obj, string propertyName)
+    {
+        if (obj is null)
+        {
+            return new(new PropertyNullValueError(propertyName));
+        }
+        
+        return new(obj);
+    }
+    
     public static void ThrowDisposedException<T>(this T obj) where T : notnull
     {
         throw new ObjectDisposedException<T>(obj);

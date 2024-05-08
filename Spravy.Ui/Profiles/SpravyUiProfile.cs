@@ -1,3 +1,5 @@
+using Spravy.Ui.Features.Timer.ViewModels;
+
 namespace Spravy.Ui.Profiles;
 
 public class SpravyUiProfile : Profile

@@ -1,4 +1,4 @@
-namespace Spravy.Ui.ViewModels;
+namespace Spravy.Ui.Features.Timer.ViewModels;
 
 public class AddTimerViewModel : ViewModelBase, IToDoShortItemProperty, IDueDateTimeProperty
 {

@@ -4,11 +4,11 @@
                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:ru="http://reactiveui.net"
-                        xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
                         xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                         xmlns:s="clr-namespace:Spravy.Ui.Services"
+                        xmlns:vm="clr-namespace:Spravy.Ui.Features.Timer.ViewModels"
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
-                        x:Class="Spravy.Ui.Views.AddTimerView"
+                        x:Class="Spravy.Ui.Features.Timer.Views.AddTimerView"
                         x:DataType="vm:AddTimerViewModel">
     <StackPanel>
         <CheckBox IsChecked="{Binding IsFavorite}" Content="Completed" />
@@ -17,7 +17,8 @@
                  Text="{Binding ShortItem.Name}">
             <TextBox.InnerLeftContent>
                 <Button Command="{x:Static s:CommandStorage.SetToDoShortItemCommand}"
-                        CommandParameter="{Binding}" Margin="4,15,4,4">
+                        CommandParameter="{Binding}"
+                        Margin="4,15,4,4">
                     <mi:MaterialIcon Kind="Pencil" />
                 </Button>
             </TextBox.InnerLeftContent>

@@ -1,4 +1,6 @@
 // global using directives
+global using Spravy.Ui.Commands;
+global using Spravy.Ui.Settings;
 global using System;
 global using System.Collections;
 global using System.Linq;

@@ -132,6 +132,10 @@
           <DependentUpon>ToDoSubItemsView.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="Features\Timer\Views\AddTimerView.axaml.cs">
+          <DependentUpon>AddTimerView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
     </ItemGroup>
 
     <ItemGroup>
