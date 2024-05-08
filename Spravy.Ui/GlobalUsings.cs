@@ -1,6 +1,7 @@
 // global using directives
-global using Spravy.Ui.Commands;
-global using Spravy.Ui.Settings;
+global using Spravy.Ui.Features.Authentication.Commands;
+global using Spravy.Ui.Features.Authentication.Settings;
+global using Spravy.Ui.Features.Authentication.Views;
 global using System;
 global using System.Collections;
 global using System.Linq;

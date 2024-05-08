@@ -1,4 +1,4 @@
-namespace Spravy.Ui.Views;
+namespace Spravy.Ui.Features.Authentication.Views;
 
 public partial class LoginView : ReactiveUserControl<LoginViewModel>
 {

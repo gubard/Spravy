@@ -189,12 +189,7 @@ public static class CommandStorage
     }
 
     public static CommandItem GeneratePasswordItem { get; }
-
-    public static ICommand CloneToDoItemCommand
-    {
-        get => CloneToDoItemItem.Command;
-    }
-
+    
     public static CommandItem CloneToDoItemItem { get; }
 
     public static ICommand ResetToDoItemCommand

@@ -1,4 +1,4 @@
-﻿namespace Spravy.Ui.Settings;
+﻿namespace Spravy.Ui.Features.Authentication.Settings;
 
 [ProtoContract]
 public class LoginViewModelSetting : IViewModelSetting<LoginViewModelSetting>

@@ -8,6 +8,7 @@
                         xmlns:v="clr-namespace:Spravy.Ui.Views"
                         xmlns:s="clr-namespace:Spravy.Ui.Services"
                         xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+                        xmlns:viewModels="clr-namespace:Spravy.Ui.Features.Authentication.ViewModels"
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                         x:Class="Spravy.Ui.Views.CreateUserView"
                         x:DataType="vm:CreateUserViewModel">
@@ -54,7 +55,7 @@
                 <Grid ColumnDefinitions="*,*">
                     <Button Name="{x:Static v:CreateUserView.BackButtonName}"
                             Command="{x:Static s:CommandStorage.NavigateToCommand}"
-                            CommandParameter="{x:Type vm:LoginViewModel}"
+                            CommandParameter="{x:Type viewModels:LoginViewModel}"
                             Content="{DynamicResource CreateUserView.Back}" />
 
                     <Button Name="{x:Static v:CreateUserView.CreateUserButtonName}"

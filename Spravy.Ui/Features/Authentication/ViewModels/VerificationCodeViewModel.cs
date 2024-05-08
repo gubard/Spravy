@@ -4,10 +4,7 @@ public class VerificationCodeViewModel : NavigatableViewModelBase, IVerification
 {
     public VerificationCodeViewModel() : base(true)
     {
-        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
     }
-
-    public ICommand InitializedCommand { get; }
 
     public override string ViewId
     {
@@ -15,7 +12,7 @@ public class VerificationCodeViewModel : NavigatableViewModelBase, IVerification
     }
 
     [Inject]
-    public required IAuthenticationService AuthenticationService { get; init; }
+    public required VerificationCodeCommands Commands { get; init; }
 
     [Reactive]
     public string Identifier { get; set; } = string.Empty;
@@ -42,17 +39,5 @@ public class VerificationCodeViewModel : NavigatableViewModelBase, IVerification
     )
     {
         return Result.AwaitableFalse;
-    }
-
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
-    {
-        switch (IdentifierType)
-        {
-            case UserIdentifierType.Email:
-                return AuthenticationService.UpdateVerificationCodeByEmailAsync(Identifier, cancellationToken);
-            case UserIdentifierType.Login:
-                return AuthenticationService.UpdateVerificationCodeByLoginAsync(Identifier, cancellationToken);
-            default: throw new ArgumentOutOfRangeException();
-        }
     }
 }

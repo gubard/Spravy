@@ -1,6 +1,4 @@
-﻿using Spravy.Ui.Settings;
-
-namespace Spravy.Ui.Commands;
+﻿namespace Spravy.Ui.Features.Authentication.Commands;
 
 public class LoginCommands
 {
