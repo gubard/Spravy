@@ -248,6 +248,7 @@ public class EfToDoService : IToDoService
                                         ParentId = item.ParentId,
                                         Type = ToDoItemType.Reference,
                                         OrderIndex = item.OrderIndex,
+                                        Name = item.Name
                                     }, a => a.Items.Add(SpravyToDoDbProfile.ParametersName, parameters))
                                    .ToResult(), cancellationToken);
                         }
