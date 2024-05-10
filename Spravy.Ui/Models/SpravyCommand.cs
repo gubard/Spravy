@@ -1,4 +1,5 @@
 ﻿using Spravy.Ui.Errors;
+using Spravy.Ui.Features.PasswordGenerator.Interfaces;
 
 namespace Spravy.Ui.Models;
 
@@ -6,6 +7,7 @@ public class SpravyCommand
 {
     private static readonly Dictionary<Type, SpravyCommand> createNavigateToCache;
     private static readonly Dictionary<Guid, SpravyCommand> deletePasswordItemCache;
+    private static readonly Dictionary<Guid, SpravyCommand> generatePasswordCache;
     private static SpravyCommand? _sendNewVerificationCode;
     private static SpravyCommand? _back;
     
@@ -13,6 +15,7 @@ public class SpravyCommand
     {
         createNavigateToCache = new();
         deletePasswordItemCache = new();
+        generatePasswordCache = new();
     }
     
     private SpravyCommand(TaskWork work, ICommand command)
@@ -23,6 +26,35 @@ public class SpravyCommand
     
     public TaskWork Work { get; }
     public ICommand Command { get; }
+    
+    public static SpravyCommand CreateGeneratePassword(
+        IPasswordItem passwordItem,
+        IPasswordService passwordService,
+        IClipboardService clipboard,
+        ISpravyNotificationManager spravyNotificationManager,
+        IErrorHandler errorHandler
+    )
+    {
+        if (generatePasswordCache.TryGetValue(passwordItem.Id, out var value))
+        {
+            return value;
+        }
+        
+        ConfiguredValueTaskAwaitable<Result> GeneratePasswordAsync(CancellationToken cancellationToken)
+        {
+            return passwordService.GeneratePasswordAsync(passwordItem.Id, cancellationToken)
+               .IfSuccessAsync(clipboard.SetTextAsync, cancellationToken)
+               .IfSuccessAsync(
+                    () => spravyNotificationManager.ShowAsync(
+                        new TextLocalization("PasswordGeneratorView.Notification.CopyPassword", passwordItem), cancellationToken),
+                    cancellationToken);
+        }
+        
+        var result = Create(GeneratePasswordAsync, errorHandler);
+        generatePasswordCache.Add(passwordItem.Id, result);
+        
+        return result;
+    }
     
     public static SpravyCommand CreateDeletePasswordItem(
         Guid id,

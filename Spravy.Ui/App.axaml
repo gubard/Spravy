@@ -47,8 +47,7 @@
 
         <DataTemplate x:DataType="pm:PasswordItemNotify">
             <Button Classes="alignment-stretch glass-card content-alignment-stretch"
-                    Command="{x:Static s:CommandStorage.GeneratePasswordCommand}"
-                    CommandParameter="{Binding}">
+                    Command="{Binding GeneratePassword.Command}">
                 <Grid ColumnDefinitions="*,Auto">
                     <TextBlock Classes="text-wrap h4" Text="{Binding Name}" />
 

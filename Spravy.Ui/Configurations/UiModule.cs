@@ -1,3 +1,6 @@
+using Spravy.Ui.Features.PasswordGenerator.Interfaces;
+using Spravy.Ui.Features.PasswordGenerator.Services;
+
 namespace Spravy.Ui.Configurations;
 
 public class UiModule : NinjectModule
@@ -66,7 +69,8 @@ public class UiModule : NinjectModule
         Bind<MainProgressBarViewModel>().ToSelf().InSingletonScope();
         Bind<ITaskProgressService>().To<TaskProgressService>().InSingletonScope();
         Bind<IUiApplicationService>().To<UiApplicationService>().InSingletonScope();
-
+        Bind<IPasswordItemCache>().To<PasswordItemCache>().InSingletonScope();
+        
         Bind<AvaloniaList<DayOfYearSelectItem>>()
            .ToMethod(context => new(Enumerable.Range(1, 12)
                .Select(x =>

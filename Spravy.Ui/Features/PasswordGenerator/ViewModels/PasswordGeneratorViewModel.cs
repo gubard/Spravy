@@ -1,3 +1,5 @@
+using Spravy.Ui.Features.PasswordGenerator.Interfaces;
+
 namespace Spravy.Ui.Features.PasswordGenerator.ViewModels;
 
 public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
@@ -18,10 +20,7 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
     public ICommand InitializedCommand { get; }
     
     [Inject]
-    public required IDialogViewer DialogViewer { get; init; }
-    
-    [Inject]
-    public required IUiApplicationService UiApplicationService { get; init; }
+    public required IPasswordItemCache PasswordItemCache { get; init; }
     
     [Inject]
     public required IPasswordService PasswordService { get; init; }
@@ -42,15 +41,13 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
     
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
     {
+        Items.Clear();
+        
         return PasswordService.GetPasswordItemsAsync(cancellationToken)
-           .IfSuccessAsync(items => this.InvokeUIBackgroundAsync(() =>
+           .IfSuccessForEachAsync(item => this.InvokeUIBackgroundAsync(() =>
             {
-                Items.Clear();
-                
-                foreach (var item in items.Span)
-                {
-                    Items.Add(new(item, PasswordService, DialogViewer, UiApplicationService, ErrorHandler));
-                }
+                Items.Add(PasswordItemCache.GetPasswordItem(item.Id));
+                PasswordItemCache.UpdatePasswordItem(item);
             }), cancellationToken);
     }
     

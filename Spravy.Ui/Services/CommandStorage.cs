@@ -120,17 +120,8 @@ public static class CommandStorage
         
         ShowPasswordItemSettingItem = CreateCommand<IIdProperty>(ShowPasswordItemSettingAsync,
             MaterialIconKind.Settings, "Show password setting");
-        
-        GeneratePasswordItem = CreateCommand<IIdProperty>(
-            GeneratePasswordAsync, MaterialIconKind.Regeneration, "Generate password");
     }
     
-    public static ICommand GeneratePasswordCommand
-    {
-        get => GeneratePasswordItem.Command;
-    }
-    
-    public static CommandItem GeneratePasswordItem { get; }
     public static CommandItem CloneToDoItemItem { get; }
     public static CommandItem ResetToDoItemItem { get; }
     
@@ -263,19 +254,6 @@ public static class CommandStorage
     public static CommandItem ShowPasswordItemSettingItem { get; }
     
     public static CommandItem SelectAll { get; }
-    
-    private static ConfiguredValueTaskAwaitable<Result> GeneratePasswordAsync(
-        IIdProperty idProperty,
-        CancellationToken cancellationToken
-    )
-    {
-        return passwordService.GeneratePasswordAsync(idProperty.Id, cancellationToken)
-           .IfSuccessAsync(password => clipboard.SetTextAsync(password), cancellationToken)
-           .IfSuccessAsync(
-                () => spravyNotificationManager.ShowAsync(
-                    new TextLocalization("PasswordGeneratorView.Notification.CopyPassword", idProperty),
-                    cancellationToken), cancellationToken);
-    }
     
     private static ConfiguredValueTaskAwaitable<Result> ShowPasswordItemSettingAsync(
         IIdProperty idProperty,

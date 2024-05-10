@@ -1,19 +1,27 @@
+using Spravy.Ui.Features.PasswordGenerator.Interfaces;
+
 namespace Spravy.Ui.Features.PasswordGenerator.Models;
 
-public class PasswordItemNotify : NotifyBase, IIdProperty
+public class PasswordItemNotify : NotifyBase, IPasswordItem, IIdProperty
 {
     public PasswordItemNotify(
         PasswordItem passwordItem,
         IPasswordService passwordService,
         IDialogViewer dialogViewer,
         IUiApplicationService uiApplicationService,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        IClipboardService clipboardService,
+        ISpravyNotificationManager spravyNotificationManager
     )
     {
         Name = passwordItem.Name;
+        Id = passwordItem.Id;
         
-        DeletePasswordItem = SpravyCommand.CreateDeletePasswordItem(passwordItem.Id, passwordService, dialogViewer,
+        DeletePasswordItem = SpravyCommand.CreateDeletePasswordItem(Id, passwordService, dialogViewer,
             uiApplicationService, errorHandler);
+        
+        GeneratePassword = SpravyCommand.CreateGeneratePassword(this, passwordService, clipboardService,
+            spravyNotificationManager, errorHandler);
     }
     
     [Reactive]
@@ -22,5 +30,6 @@ public class PasswordItemNotify : NotifyBase, IIdProperty
     [Reactive]
     public Guid Id { get; set; }
     
-    public SpravyCommand DeletePasswordItem { get; }
+    public SpravyCommand DeletePasswordItem { get; private set; }
+    public SpravyCommand GeneratePassword { get; private set; }
 }
