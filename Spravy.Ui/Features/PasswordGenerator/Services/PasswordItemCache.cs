@@ -49,15 +49,7 @@ public class PasswordItemCache : IPasswordItemCache
     
     public void UpdatePasswordItem(PasswordItem passwordItem)
     {
-        if (cache.TryGetValue(passwordItem.Id, out var value))
-        {
-            value.Name = passwordItem.Name;
-        }
-        else
-        {
-            cache.Add(passwordItem.Id,
-                new(passwordItem, passwordService, dialogViewer, uiApplicationService, errorHandler, clipboardService,
-                    spravyNotificationManager));
-        }
+        var item = GetPasswordItem(passwordItem.Id);
+        item.Name = passwordItem.Name;
     }
 }

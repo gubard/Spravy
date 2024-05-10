@@ -5,8 +5,7 @@ public class ToDoItemNotify : NotifyBase,
     IDeletable,
     IToDoSettingsProperty,
     ISetToDoParentItemParams,
-    ILink,
-    ICurrentIdProperty
+    ILink
 {
     public AvaloniaList<CommandItem> Commands { get; } = new();
     
