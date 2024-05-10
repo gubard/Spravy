@@ -57,8 +57,7 @@
                                 Command="{x:Static s:CommandStorage.ShowPasswordItemSettingCommand}"
                                 CommandParameter="{Binding}" />
                         <Button Content="{x:Static i:MaterialIconKind.Delete}"
-                                Command="{x:Static s:CommandStorage.RemovePasswordItemCommand}"
-                                CommandParameter="{Binding}" />
+                                Command="{Binding DeletePasswordItem.Command}" />
                     </StackPanel>
                 </Grid>
             </Button>

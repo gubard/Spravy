@@ -16,7 +16,6 @@ public class SpravyUiProfile : Profile
         CreateMap<LoginViewModel, User>();
         CreateMap<ToDoShortItem, ToDoItemParentNotify>();
         CreateMap<ToDoItemViewModel, ToDoItemNotify>();
-        CreateMap<PasswordItem, PasswordItemNotify>();
         CreateMap<AddPasswordItemViewModel, AddPasswordOptions>();
         CreateMap<ResetToDoItemViewModel, ResetToDoItemOptions>();
 

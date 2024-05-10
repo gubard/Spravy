@@ -65,6 +65,7 @@ public class UiModule : NinjectModule
         Bind<IContent>().ToMethod(x => x.Kernel.Get<MainSplitViewModel>());
         Bind<MainProgressBarViewModel>().ToSelf().InSingletonScope();
         Bind<ITaskProgressService>().To<TaskProgressService>().InSingletonScope();
+        Bind<IUiApplicationService>().To<UiApplicationService>().InSingletonScope();
 
         Bind<AvaloniaList<DayOfYearSelectItem>>()
            .ToMethod(context => new(Enumerable.Range(1, 12)

@@ -123,17 +123,7 @@ public static class CommandStorage
         
         GeneratePasswordItem = CreateCommand<IIdProperty>(
             GeneratePasswordAsync, MaterialIconKind.Regeneration, "Generate password");
-        
-        RemovePasswordItemItem = CreateCommand<IIdProperty>(
-            DeletePasswordItemAsync, MaterialIconKind.Delete, "Generate password");
     }
-    
-    public static ICommand RemovePasswordItemCommand
-    {
-        get => RemovePasswordItemItem.Command;
-    }
-    
-    public static CommandItem RemovePasswordItemItem { get; }
     
     public static ICommand GeneratePasswordCommand
     {
@@ -273,20 +263,6 @@ public static class CommandStorage
     public static CommandItem ShowPasswordItemSettingItem { get; }
     
     public static CommandItem SelectAll { get; }
-    
-    private static ConfiguredValueTaskAwaitable<Result> DeletePasswordItemAsync(
-        IIdProperty idProperty,
-        CancellationToken cancellationToken
-    )
-    {
-        return dialogViewer.ShowConfirmContentDialogAsync<DeletePasswordItemViewModel>(
-            _ => dialogViewer.CloseContentDialogAsync(cancellationToken)
-               .IfSuccessAsync(() => passwordService.DeletePasswordItemAsync(idProperty.Id, cancellationToken),
-                    cancellationToken)
-               .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
-            _ => dialogViewer.CloseContentDialogAsync(cancellationToken), view => view.PasswordItemId = idProperty.Id,
-            cancellationToken);
-    }
     
     private static ConfiguredValueTaskAwaitable<Result> GeneratePasswordAsync(
         IIdProperty idProperty,

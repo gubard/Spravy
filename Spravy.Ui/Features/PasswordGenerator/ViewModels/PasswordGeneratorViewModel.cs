@@ -3,26 +3,29 @@ namespace Spravy.Ui.Features.PasswordGenerator.ViewModels;
 public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
 {
     private readonly PageHeaderViewModel pageHeaderViewModel;
-
+    
     public PasswordGeneratorViewModel() : base(true)
     {
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
     }
-
+    
     public override string ViewId
     {
         get => TypeCache<PasswordGeneratorViewModel>.Type.Name;
     }
-
+    
     public AvaloniaList<PasswordItemNotify> Items { get; } = new();
     public ICommand InitializedCommand { get; }
-
+    
     [Inject]
-    public required IMapper Mapper { get; init; }
-
+    public required IDialogViewer DialogViewer { get; init; }
+    
+    [Inject]
+    public required IUiApplicationService UiApplicationService { get; init; }
+    
     [Inject]
     public required IPasswordService PasswordService { get; init; }
-
+    
     [Inject]
     public required PageHeaderViewModel PageHeaderViewModel
     {
@@ -36,27 +39,31 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
             Disposables.Add(pageHeaderViewModel);
         }
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
     {
         return PasswordService.GetPasswordItemsAsync(cancellationToken)
            .IfSuccessAsync(items => this.InvokeUIBackgroundAsync(() =>
             {
                 Items.Clear();
-                Items.AddRange(Mapper.Map<PasswordItemNotify[]>(items.ToArray()));
+                
+                foreach (var item in items.Span)
+                {
+                    Items.Add(new(item, PasswordService, DialogViewer, UiApplicationService, ErrorHandler));
+                }
             }), cancellationToken);
     }
-
+    
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         return RefreshAsync(cancellationToken);
     }
-
+    
     public override Result Stop()
     {
         return Result.Success;
     }
-
+    
     public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
         object setting,
         CancellationToken cancellationToken
@@ -64,7 +71,7 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
     {
         return Result.AwaitableFalse;
     }
-
+    
     public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
     {
         return Result.AwaitableFalse;

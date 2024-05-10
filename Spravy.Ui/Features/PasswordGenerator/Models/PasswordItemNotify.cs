@@ -2,21 +2,25 @@ namespace Spravy.Ui.Features.PasswordGenerator.Models;
 
 public class PasswordItemNotify : NotifyBase, IIdProperty
 {
+    public PasswordItemNotify(
+        PasswordItem passwordItem,
+        IPasswordService passwordService,
+        IDialogViewer dialogViewer,
+        IUiApplicationService uiApplicationService,
+        IErrorHandler errorHandler
+    )
+    {
+        Name = passwordItem.Name;
+        
+        DeletePasswordItem = SpravyCommand.CreateDeletePasswordItem(passwordItem.Id, passwordService, dialogViewer,
+            uiApplicationService, errorHandler);
+    }
+    
     [Reactive]
-    public string Name { get; set; } = string.Empty;
-
-    [Reactive]
-    public string Key { get; set; } = string.Empty;
-
-    [Reactive]
-    public string AvailableCharacters { get; set; } = string.Empty;
-
-    [Reactive]
-    public ushort Length { get; set; }
-
-    [Reactive]
-    public string Regex { get; set; } = string.Empty;
-
+    public string Name { get; set; }
+    
     [Reactive]
     public Guid Id { get; set; }
+    
+    public SpravyCommand DeletePasswordItem { get; }
 }

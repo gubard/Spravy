@@ -5,12 +5,14 @@ namespace Spravy.Ui.Models;
 public class SpravyCommand
 {
     private static readonly Dictionary<Type, SpravyCommand> createNavigateToCache;
+    private static readonly Dictionary<Guid, SpravyCommand> deletePasswordItemCache;
     private static SpravyCommand? _sendNewVerificationCode;
     private static SpravyCommand? _back;
     
     static SpravyCommand()
     {
         createNavigateToCache = new();
+        deletePasswordItemCache = new();
     }
     
     private SpravyCommand(TaskWork work, ICommand command)
@@ -21,6 +23,36 @@ public class SpravyCommand
     
     public TaskWork Work { get; }
     public ICommand Command { get; }
+    
+    public static SpravyCommand CreateDeletePasswordItem(
+        Guid id,
+        IPasswordService passwordService,
+        IDialogViewer dialogViewer,
+        IUiApplicationService uiApplicationService,
+        IErrorHandler errorHandler
+    )
+    {
+        if (deletePasswordItemCache.TryGetValue(id, out var value))
+        {
+            return value;
+        }
+        
+        ConfiguredValueTaskAwaitable<Result> DeletePasswordItemAsync(CancellationToken cancellationToken)
+        {
+            return dialogViewer.ShowConfirmContentDialogAsync<DeletePasswordItemViewModel>(
+                _ => dialogViewer.CloseContentDialogAsync(cancellationToken)
+                   .IfSuccessAsync(() => passwordService.DeletePasswordItemAsync(id, cancellationToken),
+                        cancellationToken)
+                   .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
+                        cancellationToken), _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
+                view => view.PasswordItemId = id, cancellationToken);
+        }
+        
+        var result = Create(DeletePasswordItemAsync, errorHandler);
+        deletePasswordItemCache.Add(id, result);
+        
+        return result;
+    }
     
     public static SpravyCommand CreateBack(INavigator navigator, IErrorHandler errorHandler)
     {
