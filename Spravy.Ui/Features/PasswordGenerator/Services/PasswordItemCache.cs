@@ -47,9 +47,10 @@ public class PasswordItemCache : IPasswordItemCache
         return result;
     }
     
-    public void UpdatePasswordItem(PasswordItem passwordItem)
+    public ConfiguredValueTaskAwaitable<Result> UpdateAsync(PasswordItem passwordItem)
     {
         var item = GetPasswordItem(passwordItem.Id);
-        item.Name = passwordItem.Name;
+        
+        return this.InvokeUIBackgroundAsync(() => item.Name = passwordItem.Name);
     }
 }

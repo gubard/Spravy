@@ -9,6 +9,7 @@ public class ToDoCache : IToDoCache
     private readonly Dictionary<Guid, ToDoItemParentNotify> toDoItemParentCache;
     private readonly Dictionary<Guid, ToDoSelectorItemNotify> toDoSelectorItemCache;
     private readonly Dictionary<Guid, ToDoShortItemNotify> toDoShortItemCache;
+    private readonly Dictionary<Guid, ReadOnlyMemory<object>> toDoItemParentsCache;
     
     public ToDoCache()
     {
@@ -17,6 +18,7 @@ public class ToDoCache : IToDoCache
         toDoItemParentCache = new();
         toDoSelectorItemCache = new();
         toDoShortItemCache = new();
+        toDoItemParentsCache = new();
     }
     
     public ToDoShortItemNotify GetToDoShortItem(Guid id)
@@ -93,6 +95,34 @@ public class ToDoCache : IToDoCache
         return result;
     }
     
+    public Result<ReadOnlyMemory<object>> GetToDoItemParents(Guid id)
+    {
+        if (toDoItemParentsCache.TryGetValue(id, out var value))
+        {
+            return value.ToResult();
+        }
+        
+        var result = new ReadOnlyMemory<object>([RootItem.Default, GetToDoItemParent(id),]);
+        toDoItemParentsCache.Add(id, result);
+        
+        return result.ToResult();
+    }
+    
+    public ConfiguredValueTaskAwaitable<Result> UpdateParentsAsync(
+        Guid id,
+        ReadOnlyMemory<ToDoShortItem> parents,
+        CancellationToken cancellationToken
+    )
+    {
+        toDoItemParentsCache[id] = new(RootItem.Default
+           .As<object>()
+           .ToEnumerable()
+           .Concat(parents.ToArray().Select(x => GetToDoItemParent(x.Id)))
+           .ToArray()!);
+        
+        return parents.ToResult().IfSuccessForEachAsync(UpdateAsync, cancellationToken);
+    }
+    
     public ToDoItemNotify GetToDoItem(Guid id)
     {
         if (toDoItemCache.TryGetValue(id, out var value))
@@ -113,34 +143,56 @@ public class ToDoCache : IToDoCache
         return result;
     }
     
-    public void Update(ToDoItem toDoItem)
+    public ConfiguredValueTaskAwaitable<Result> UpdateAsync(ToDoShortItem toDoItem)
     {
-        ActiveToDoItemNotify? itemActive = null;
-        
-        if (toDoItem.Active.HasValue)
-        {
-            itemActive = GetActiveToDoItem(toDoItem.Active.Value.Id);
-            itemActive.Name = toDoItem.Active.Value.Name;
-        }
-        
         var shortItem = GetToDoShortItem(toDoItem.Id);
-        shortItem.Name = toDoItem.Name;
         var selector = GetToDoSelectorItem(toDoItem.Id);
-        selector.Name = toDoItem.Name;
         var parent = GetToDoItemParent(toDoItem.Id);
-        parent.Name = toDoItem.Name;
         var active = GetActiveToDoItem(toDoItem.Id);
-        active.Name = toDoItem.Name;
         var item = GetToDoItem(toDoItem.Id);
-        item.Name = toDoItem.Name;
-        item.OrderIndex = toDoItem.OrderIndex;
-        item.Description = item.Description;
-        item.Link = item.Link;
-        item.IsCan = item.IsCan;
-        item.IsFavorite = item.IsFavorite;
-        item.Status = toDoItem.Status;
-        item.ParentId = toDoItem.ParentId;
-        item.Type = toDoItem.Type;
-        item.Active = itemActive;
+        
+        return this.InvokeUIBackgroundAsync(() =>
+        {
+            shortItem.Name = toDoItem.Name;
+            selector.Name = toDoItem.Name;
+            parent.Name = toDoItem.Name;
+            active.Name = toDoItem.Name;
+            item.Name = toDoItem.Name;
+        });
+    }
+    
+    public ConfiguredValueTaskAwaitable<Result> UpdateAsync(ToDoItem toDoItem)
+    {
+        var shortItem = GetToDoShortItem(toDoItem.Id);
+        var selector = GetToDoSelectorItem(toDoItem.Id);
+        var parent = GetToDoItemParent(toDoItem.Id);
+        var active = GetActiveToDoItem(toDoItem.Id);
+        var item = GetToDoItem(toDoItem.Id);
+        
+        return this.InvokeUIBackgroundAsync(() =>
+        {
+            ActiveToDoItemNotify? itemActive = null;
+            
+            if (toDoItem.Active.HasValue)
+            {
+                itemActive = GetActiveToDoItem(toDoItem.Active.Value.Id);
+                itemActive.Name = toDoItem.Active.Value.Name;
+            }
+            
+            shortItem.Name = toDoItem.Name;
+            selector.Name = toDoItem.Name;
+            parent.Name = toDoItem.Name;
+            active.Name = toDoItem.Name;
+            item.Name = toDoItem.Name;
+            item.OrderIndex = toDoItem.OrderIndex;
+            item.Description = toDoItem.Description;
+            item.Link = toDoItem.Link?.AbsoluteUri ?? string.Empty;
+            item.IsCan = toDoItem.IsCan;
+            item.IsFavorite = toDoItem.IsFavorite;
+            item.Status = toDoItem.Status;
+            item.ParentId = toDoItem.ParentId;
+            item.Type = toDoItem.Type;
+            item.Active = itemActive;
+        });
     }
 }

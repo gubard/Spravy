@@ -47,7 +47,7 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
            .IfSuccessForEachAsync(item => this.InvokeUIBackgroundAsync(() =>
             {
                 Items.Add(PasswordItemCache.GetPasswordItem(item.Id));
-                PasswordItemCache.UpdatePasswordItem(item);
+                PasswordItemCache.UpdateAsync(item);
             }), cancellationToken);
     }
     

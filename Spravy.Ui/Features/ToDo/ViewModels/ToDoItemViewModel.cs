@@ -1,3 +1,5 @@
+using Spravy.Ui.Features.ToDo.Interfaces;
+
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ToDoItemViewModel : NavigatableViewModelBase,
@@ -70,7 +72,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     public required IObjectStorage ObjectStorage { get; init; }
     
     [Reactive]
-    public object[] Path { get; set; } = Array.Empty<object>();
+    public object[] Path { get; set; } = [RootItem.Default];
     
     public override string ViewId
     {
@@ -108,6 +110,21 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     [Reactive]
     public Guid? ParentId { get; set; }
     
+    [Reactive]
+    public string Name { get; set; } = string.Empty;
+    
+    [Reactive]
+    public string Description { get; set; } = string.Empty;
+    
+    [Reactive]
+    public DescriptionType DescriptionType { get; set; }
+    
+    [Reactive]
+    public string Link { get; set; } = string.Empty;
+    
+    [Reactive]
+    public ToDoItemType Type { get; set; }
+    
     public Guid CurrentId
     {
         get => ReferenceId ?? Id;
@@ -118,14 +135,8 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
         get => true;
     }
     
-    [Reactive]
-    public string Name { get; set; } = string.Empty;
-    
-    [Reactive]
-    public string Description { get; set; } = string.Empty;
-    
-    [Reactive]
-    public DescriptionType DescriptionType { get; set; }
+    [Inject]
+    public required IToDoCache ToDoCache { get; set; }
     
     [Inject]
     public required IToDoService ToDoService { get; set; }
@@ -137,12 +148,6 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     {
         return RefreshCore(cancellationToken).ConfigureAwait(false);
     }
-    
-    [Reactive]
-    public string Link { get; set; } = string.Empty;
-    
-    [Reactive]
-    public ToDoItemType Type { get; set; }
     
     private async ValueTask<Result> RefreshCore(CancellationToken cancellationToken)
     {
@@ -205,13 +210,12 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     
     private ConfiguredValueTaskAwaitable<Result> RefreshPathAsync(CancellationToken cancellationToken)
     {
-        return ToDoService.GetParentsAsync(Id, cancellationToken)
-           .IfSuccessAsync(
-                parents => this.InvokeUIBackgroundAsync(() =>
-                    Path = new RootItem().To<object>()
-                       .ToEnumerable()
-                       .Concat(parents.ToArray().Select(x => Mapper.Map<ToDoItemParentNotify>(x)))
-                       .ToArray()), cancellationToken);
+        return ToDoCache.GetToDoItemParents(Id)
+           .IfSuccessAsync(parents => this.InvokeUIBackgroundAsync(() => Path = parents.ToArray()), cancellationToken)
+           .IfSuccessAsync(() => ToDoService.GetParentsAsync(Id, cancellationToken), cancellationToken)
+           .IfSuccessAsync(parents => ToDoCache.UpdateParentsAsync(Id, parents, cancellationToken), cancellationToken)
+           .IfSuccessAsync(() => ToDoCache.GetToDoItemParents(Id), cancellationToken)
+           .IfSuccessAsync(parents => this.InvokeUIBackgroundAsync(() => Path = parents.ToArray()), cancellationToken);
     }
     
     private ConfiguredValueTaskAwaitable<Result> RefreshToDoItemChildrenAsync(CancellationToken cancellationToken)
