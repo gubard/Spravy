@@ -91,12 +91,18 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
             SpravyCommand.Create(
                 cancellationToken => dialogViewer.ShowConfirmContentDialogAsync<ToDoItemSettingsViewModel>(
                     vm => dialogViewer.CloseContentDialogAsync(cancellationToken)
-                       .IfSuccessAsync(() => toDoService.UpdateToDoItemNameAsync(Id, vm.ToDoItemContent.Name, cancellationToken), cancellationToken)
-                       .IfSuccessAsync(() => converter.Convert<Uri?>(vm.ToDoItemContent.Link)
-                           .IfSuccessAsync(uri => toDoService.UpdateToDoItemLinkAsync(Id, uri, cancellationToken),
-                                cancellationToken), cancellationToken)
-                       .IfSuccessAsync(  () => toDoService.UpdateToDoItemTypeAsync(Id, vm.ToDoItemContent.Type, cancellationToken), cancellationToken)
-                       .IfSuccessAsync(   () => vm.Settings.ThrowIfNull().ApplySettingsAsync(cancellationToken), cancellationToken)
+                       .IfSuccessAsync(
+                            () => toDoService.UpdateToDoItemNameAsync(Id, vm.ToDoItemContent.Name, cancellationToken),
+                            cancellationToken)
+                       .IfSuccessAsync(
+                            () => converter.Convert<Uri?>(vm.ToDoItemContent.Link)
+                               .IfSuccessAsync(uri => toDoService.UpdateToDoItemLinkAsync(Id, uri, cancellationToken),
+                                    cancellationToken), cancellationToken)
+                       .IfSuccessAsync(
+                            () => toDoService.UpdateToDoItemTypeAsync(Id, vm.ToDoItemContent.Type, cancellationToken),
+                            cancellationToken)
+                       .IfSuccessAsync(() => vm.Settings.ThrowIfNull().ApplySettingsAsync(cancellationToken),
+                            cancellationToken)
                        .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                             cancellationToken), _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
                     vm => vm.ToDoItemId = Id, cancellationToken), errorHandler));
@@ -335,8 +341,19 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
             Commands.Add(RandomizeChildrenOrderItem);
             Commands.Add(ChangeOrderItem);
             Commands.Add(ResetItem);
-            AllCommands.Add(CompleteItem);
+            
+            if (IsCan.HasFlag(ToDoItemIsCan.CanComplete))
+            {
+                AllCommands.Add(CompleteItem);
+            }
+            
             AllCommands.Add(IsFavorite ? RemoveFromFavoriteItem : AddToFavoriteItem);
+            
+            if (!Link.IsNullOrWhiteSpace())
+            {
+                AllCommands.Add(OpenLinkItem);
+            }
+            
             AllCommands.AddRange(Commands);
         });
     }

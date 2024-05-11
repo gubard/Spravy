@@ -6,6 +6,7 @@ public class ToDoCache : IToDoCache
 {
     private readonly Dictionary<Guid, ToDoItemEntityNotify> cache;
     private readonly Dictionary<Guid, ActiveToDoItemNotify> activeCache;
+    private readonly Dictionary<Guid, ReadOnlyMemory<ToDoItemEntityNotify>> childrenCache;
     private readonly IToDoService toDoService;
     private readonly IUiApplicationService uiApplicationService;
     private readonly IErrorHandler errorHandler;
@@ -14,6 +15,7 @@ public class ToDoCache : IToDoCache
     private readonly INavigator navigator;
     private readonly IDialogViewer dialogViewer;
     private readonly IOpenerLink openerLink;
+    private ReadOnlyMemory<ToDoItemEntityNotify> rootItems = ReadOnlyMemory<ToDoItemEntityNotify>.Empty;
     
     public ToDoCache(
         IToDoService toDoService,
@@ -36,6 +38,7 @@ public class ToDoCache : IToDoCache
         this.openerLink = openerLink;
         this.dialogViewer = dialogViewer;
         cache = new();
+        childrenCache = new();
     }
     
     public Result<ActiveToDoItemNotify> GetActive(Guid id)
@@ -49,6 +52,18 @@ public class ToDoCache : IToDoCache
         activeCache.Add(id, result);
         
         return result.ToResult();
+    }
+    
+    public Result<ReadOnlyMemory<ToDoItemEntityNotify>> GetChildrenItems(Guid id)
+    {
+        if (childrenCache.TryGetValue(id, out var value))
+        {
+            return value.ToResult();
+        }
+        
+        childrenCache.Add(id, ReadOnlyMemory<ToDoItemEntityNotify>.Empty);
+        
+        return ReadOnlyMemory<ToDoItemEntityNotify>.Empty.ToResult();
     }
     
     public Result<ToDoItemEntityNotify> GetToDoItem(Guid id)
@@ -123,6 +138,33 @@ public class ToDoCache : IToDoCache
                         ps => this.InvokeUIBackgroundAsync(() =>
                             item.Path = RootItem.Default.As<object>().ToEnumerable().Concat(ps.ToArray()).ToArray()!),
                         cancellationToken), cancellationToken);
+    }
+    
+    public Result<ReadOnlyMemory<ToDoItemEntityNotify>> UpdateRootItems(ReadOnlyMemory<Guid> roots)
+    {
+        return roots.ToResult()
+           .IfSuccessForEach(GetToDoItem)
+           .IfSuccess(items =>
+            {
+                rootItems = items;
+                
+                return rootItems.ToResult();
+            });
+    }
+    
+    public Result<ReadOnlyMemory<ToDoItemEntityNotify>> GetRootItems()
+    {
+        return rootItems.ToResult();
+    }
+    
+    public Result<ReadOnlyMemory<ToDoItemEntityNotify>> UpdateChildrenItems(Guid id, ReadOnlyMemory<Guid> items)
+    {
+        return items.ToResult().IfSuccessForEach(GetToDoItem).IfSuccess(x =>
+        {
+            childrenCache[id] = x;
+            
+            return x.ToResult();
+        });
     }
     
     public ConfiguredValueTaskAwaitable<Result<ToDoItemEntityNotify>> UpdateAsync(

@@ -83,7 +83,7 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
     
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
     {
-        return RefreshCore(cancellationToken).ConfigureAwait(false);
+        return RefreshCore().ConfigureAwait(false);
     }
     
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
@@ -95,7 +95,7 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
                     cancellationToken), cancellationToken);
     }
     
-    public async ValueTask<Result> RefreshCore(CancellationToken cancellationToken)
+    public async ValueTask<Result> RefreshCore()
     {
         await refreshWork.RunAsync();
         
@@ -104,9 +104,12 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
     
     private ConfiguredValueTaskAwaitable<Result> RefreshCoreAsync(CancellationToken cancellationToken)
     {
-        return ToDoService.GetRootToDoItemIdsAsync(cancellationToken)
-           .IfSuccessForEachAsync(id => ToDoCache.GetToDoItem(id), cancellationToken)
-           .IfSuccessAsync(ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken),
+        return ToDoCache.GetRootItems()
+           .IfSuccessAsync(items => ToDoSubItemsViewModel.ClearExceptAsync(items), cancellationToken)
+           .IfSuccessAsync(() => ToDoService.GetRootToDoItemIdsAsync(cancellationToken), cancellationToken)
+           .IfSuccessAsync(ids => ToDoCache.UpdateRootItems(ids), cancellationToken)
+           .IfSuccessAsync(
+                items => ToDoSubItemsViewModel.UpdateItemsAsync(items.ToArray(), this, false, cancellationToken),
                 cancellationToken);
     }
     

@@ -28,11 +28,6 @@ public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceP
     [Reactive]
     public ToDoItemEntityNotify? Item { get; set; }
     
-    public bool IsNavigateToParent
-    {
-        get => true;
-    }
-    
     public override string ViewId
     {
         get => $"{TypeCache<ToDoItemViewModel>.Type.Name}:{Id}";
@@ -49,10 +44,10 @@ public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceP
     
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
     {
-        return RefreshCore(cancellationToken).ConfigureAwait(false);
+        return RefreshCore().ConfigureAwait(false);
     }
     
-    private async ValueTask<Result> RefreshCore(CancellationToken cancellationToken)
+    private async ValueTask<Result> RefreshCore()
     {
         await refreshWork.RunAsync();
         
@@ -63,7 +58,9 @@ public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceP
     {
         FastAddToDoItemViewModel.ParentId = Id;
         
-        return RefreshPathAsync(cancellationToken)
+        return ToDoCache.GetChildrenItems(Id)
+           .IfSuccessAsync(items => ToDoSubItemsViewModel.ClearExceptAsync(items), cancellationToken)
+           .IfSuccessAsync(() => RefreshPathAsync(cancellationToken), cancellationToken)
            .IfSuccessAsync(() => RefreshToDoItemCore(cancellationToken), cancellationToken)
            .IfSuccessAsync(() => RefreshToDoItemChildrenAsync(cancellationToken), cancellationToken);
     }
@@ -86,7 +83,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceP
     private ConfiguredValueTaskAwaitable<Result> RefreshToDoItemChildrenAsync(CancellationToken cancellationToken)
     {
         return ToDoService.GetChildrenToDoItemIdsAsync(Id, cancellationToken)
-           .IfSuccessForEachAsync(id => ToDoCache.GetToDoItem(id), cancellationToken)
+           .IfSuccessAsync(ids => ToDoCache.UpdateChildrenItems(Id, ids), cancellationToken)
            .IfSuccessAsync(items => ToDoSubItemsViewModel.UpdateItemsAsync(items, this, false, cancellationToken),
                 cancellationToken);
     }

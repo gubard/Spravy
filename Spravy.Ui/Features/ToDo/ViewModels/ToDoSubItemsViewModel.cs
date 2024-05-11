@@ -109,6 +109,11 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
                 cancellationToken);
     }
     
+    public ConfiguredValueTaskAwaitable<Result> ClearExceptAsync(ReadOnlyMemory<ToDoItemEntityNotify> items)
+    {
+        return List.ClearExceptAsync(items);
+    }
+    
     private async ValueTask<Result> RefreshToDoItemListsCore(
         ReadOnlyMemory<ToDoItemEntityNotify> ids,
         bool autoOrder,

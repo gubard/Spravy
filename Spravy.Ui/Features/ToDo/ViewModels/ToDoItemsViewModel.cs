@@ -31,6 +31,10 @@ public class ToDoItemsViewModel : ViewModelBase
             {
                 Items.Remove(item);
             }
+            else
+            {
+                UpdateItem(item);
+            }
         }
     }
     
