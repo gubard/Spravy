@@ -64,7 +64,7 @@ public class VerificationCodeCommands
     {
         return dialogViewer.ShowSingleStringConfirmDialogAsync(newEmail => dialogViewer
            .CloseInputDialogAsync(cancellationToken)
-           .IfSuccessAllAsync(cancellationToken, () =>
+           .IfSuccessAsync(() =>
             {
                 switch (verificationEmail.IdentifierType)
                 {
@@ -79,7 +79,7 @@ public class VerificationCodeCommands
                            .ToValueTaskResult()
                            .ConfigureAwait(false);
                 }
-            }), ActionHelper<TextViewModel>.Empty, cancellationToken);
+            }, cancellationToken), ActionHelper<TextViewModel>.Empty, cancellationToken);
     }
     
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(

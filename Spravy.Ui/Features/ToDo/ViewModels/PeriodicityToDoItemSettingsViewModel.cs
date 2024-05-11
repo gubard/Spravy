@@ -27,13 +27,16 @@ public class PeriodicityToDoItemSettingsViewModel : ViewModelBase,
 
     public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
     {
-        return Result.AwaitableFalse.IfSuccessAllAsync(cancellationToken,
-            () => ToDoService.UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, cancellationToken),
-            () => ToDoService.UpdateToDoItemDueDateAsync(Id, DueDate, cancellationToken),
-            () => ToDoService.UpdateToDoItemIsRequiredCompleteInDueDateAsync(Id, IsRequiredCompleteInDueDate,
-                cancellationToken),
-            () => ToDoService.UpdateToDoItemTypeOfPeriodicityAsync(Id, TypeOfPeriodicity, cancellationToken),
-            () => Periodicity.ThrowIfNull().ApplySettingsAsync(cancellationToken));
+        return ToDoService.UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, cancellationToken)
+           .IfSuccessAsync(() => ToDoService.UpdateToDoItemDueDateAsync(Id, DueDate, cancellationToken),
+                cancellationToken)
+           .IfSuccessAsync(() => ToDoService.UpdateToDoItemIsRequiredCompleteInDueDateAsync(Id, IsRequiredCompleteInDueDate,
+                    cancellationToken),
+                cancellationToken)
+           .IfSuccessAsync(() => ToDoService.UpdateToDoItemTypeOfPeriodicityAsync(Id, TypeOfPeriodicity, cancellationToken),
+                cancellationToken)
+           .IfSuccessAsync( () => Periodicity.ThrowIfNull().ApplySettingsAsync(cancellationToken),
+                cancellationToken);
     }
 
     [Reactive]

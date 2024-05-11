@@ -90,8 +90,9 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
     {
         return this.RunProgressAsync(
             () => ObjectStorage.GetObjectOrDefaultAsync<RootToDoItemsViewModelSetting>(ViewId, cancellationToken)
-               .IfSuccessAllAsync(cancellationToken, obj => SetStateAsync(obj, cancellationToken),
-                    _ => refreshWork.RunAsync().ToValueTaskResultOnly().ConfigureAwait(false)), cancellationToken);
+               .IfSuccessAsync(obj => SetStateAsync(obj, cancellationToken), cancellationToken)
+               .IfSuccessAsync(() => refreshWork.RunAsync().ToValueTaskResultOnly().ConfigureAwait(false),
+                    cancellationToken), cancellationToken);
     }
     
     public async ValueTask<Result> RefreshCore(CancellationToken cancellationToken)
@@ -104,7 +105,7 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
     private ConfiguredValueTaskAwaitable<Result> RefreshCoreAsync(CancellationToken cancellationToken)
     {
         return ToDoService.GetRootToDoItemIdsAsync(cancellationToken)
-           .IfSuccessForEachAsync(id=>ToDoCache.GetToDoItem(id),cancellationToken)
+           .IfSuccessForEachAsync(id => ToDoCache.GetToDoItem(id), cancellationToken)
            .IfSuccessAsync(ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken),
                 cancellationToken);
     }

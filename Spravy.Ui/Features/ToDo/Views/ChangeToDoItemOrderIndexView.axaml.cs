@@ -1,4 +1,4 @@
-﻿namespace Spravy.Ui.Views;
+﻿namespace Spravy.Ui.Features.ToDo.Views;
 
 public partial class ChangeToDoItemOrderIndexView : ReactiveUserControl<ChangeToDoItemOrderIndexViewModel>
 {

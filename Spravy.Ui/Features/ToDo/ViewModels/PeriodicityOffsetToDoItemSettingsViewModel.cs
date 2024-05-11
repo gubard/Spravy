@@ -24,15 +24,19 @@ public class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
 
     public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
     {
-        return Result.AwaitableFalse.IfSuccessAllAsync(cancellationToken,
-            () => ToDoService.UpdateToDoItemDaysOffsetAsync(Id, DaysOffset, cancellationToken),
-            () => ToDoService.UpdateToDoItemWeeksOffsetAsync(Id, WeeksOffset, cancellationToken),
-            () => ToDoService.UpdateToDoItemYearsOffsetAsync(Id, YearsOffset, cancellationToken),
-            () => ToDoService.UpdateToDoItemMonthsOffsetAsync(Id, MonthsOffset, cancellationToken),
-            () => ToDoService.UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, cancellationToken),
-            () => ToDoService.UpdateToDoItemDueDateAsync(Id, DueDate, cancellationToken),
-            () => ToDoService.UpdateToDoItemIsRequiredCompleteInDueDateAsync(Id, IsRequiredCompleteInDueDate,
-                cancellationToken));
+        return ToDoService.UpdateToDoItemDaysOffsetAsync(Id, DaysOffset, cancellationToken)
+           .IfSuccessAsync(() => ToDoService.UpdateToDoItemWeeksOffsetAsync(Id, WeeksOffset, cancellationToken),
+                cancellationToken)
+           .IfSuccessAsync(() => ToDoService.UpdateToDoItemYearsOffsetAsync(Id, YearsOffset, cancellationToken),
+                cancellationToken)
+           .IfSuccessAsync(() => ToDoService.UpdateToDoItemMonthsOffsetAsync(Id, MonthsOffset, cancellationToken),
+                cancellationToken)
+           .IfSuccessAsync(() => ToDoService.UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, cancellationToken),
+                cancellationToken)
+           .IfSuccessAsync(() => ToDoService.UpdateToDoItemDueDateAsync(Id, DueDate, cancellationToken),
+                cancellationToken)
+           .IfSuccessAsync(() => ToDoService.UpdateToDoItemIsRequiredCompleteInDueDateAsync(Id, IsRequiredCompleteInDueDate, cancellationToken),
+                cancellationToken);
     }
 
     [Reactive]

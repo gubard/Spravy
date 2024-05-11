@@ -64,8 +64,8 @@ public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceP
         FastAddToDoItemViewModel.ParentId = Id;
         
         return RefreshPathAsync(cancellationToken)
-           .IfSuccessAllAsync(cancellationToken, () => RefreshToDoItemCore(cancellationToken),
-                () => RefreshToDoItemChildrenAsync(cancellationToken));
+           .IfSuccessAsync(() => RefreshToDoItemCore(cancellationToken), cancellationToken)
+           .IfSuccessAsync(() => RefreshToDoItemChildrenAsync(cancellationToken), cancellationToken);
     }
     
     private ConfiguredValueTaskAwaitable<Result> RefreshToDoItemCore(CancellationToken cancellationToken)
@@ -99,7 +99,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceP
             
             return ObjectStorage.GetObjectOrDefaultAsync<ToDoItemViewModelSetting>(ViewId, cancellationToken)
                .IfSuccessAsync(obj => SetStateAsync(obj, cancellationToken), cancellationToken)
-               .IfSuccessAllAsync(cancellationToken, () => RefreshAsync(cancellationToken));
+               .IfSuccessAsync(() => RefreshAsync(cancellationToken), cancellationToken);
         }, cancellationToken);
     }
     

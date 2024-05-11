@@ -3,11 +3,12 @@
                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                        xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
                         xmlns:ru="http://reactiveui.net"
-                        xmlns:v="clr-namespace:Spravy.Ui.Views"
+                        xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+                        xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
+                        xmlns:models="clr-namespace:Spravy.Ui.Features.ToDo.Models"
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
-                        x:Class="Spravy.Ui.Views.ChangeToDoItemOrderIndexView"
+                        x:Class="Spravy.Ui.Features.ToDo.Views.ChangeToDoItemOrderIndexView"
                         x:DataType="vm:ChangeToDoItemOrderIndexViewModel">
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
@@ -26,7 +27,13 @@
             <ListBox Name="{x:Static v:ChangeToDoItemOrderIndexView.ItemsListBoxName}"
                      ItemsSource="{Binding Items}"
                      SelectionMode="Single"
-                     SelectedItem="{Binding SelectedItem}" />
+                     SelectedItem="{Binding SelectedItem}">
+                <ListBox.DataTemplates>
+                    <DataTemplate DataType="models:ToDoItemEntityNotify">
+                        <TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                </ListBox.DataTemplates>
+            </ListBox>
         </ScrollViewer>
     </Grid>
 </ru:ReactiveUserControl>

@@ -44,17 +44,27 @@ public class ToDoItemsViewModel : ViewModelBase
             return;
         }
         
-        if (needIndex == Items.Count)
+        if (indexOf == -1)
         {
-            Items.Add(item);
-        }
-        else if (indexOf == -1)
-        {
-            Items.Insert(needIndex, item);
+            if (needIndex == Items.Count)
+            {
+                Items.Add(item);
+            }
+            else
+            {
+                Items.Insert(needIndex, item);
+            }
         }
         else
         {
-            Items.Move(indexOf, needIndex);
+            if (needIndex == Items.Count)
+            {
+                Items.Move(indexOf, needIndex - 1);
+            }
+            else
+            {
+                Items.Move(indexOf, needIndex);
+            }
         }
     }
     
