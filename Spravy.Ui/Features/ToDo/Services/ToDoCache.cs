@@ -5,16 +5,50 @@ namespace Spravy.Ui.Features.ToDo.Services;
 public class ToDoCache : IToDoCache
 {
     private readonly Dictionary<Guid, ToDoItemEntityNotify> cache;
+    private readonly Dictionary<Guid, ActiveToDoItemNotify> activeCache;
     private readonly IToDoService toDoService;
     private readonly IUiApplicationService uiApplicationService;
     private readonly IErrorHandler errorHandler;
+    private readonly IClipboardService clipboardService;
+    private readonly IConverter converter;
+    private readonly INavigator navigator;
+    private readonly IDialogViewer dialogViewer;
+    private readonly IOpenerLink openerLink;
     
-    public ToDoCache(IToDoService toDoService, IUiApplicationService uiApplicationService, IErrorHandler errorHandler)
+    public ToDoCache(
+        IToDoService toDoService,
+        IUiApplicationService uiApplicationService,
+        IErrorHandler errorHandler,
+        IClipboardService clipboardService,
+        IConverter converter,
+        INavigator navigator,
+        IOpenerLink openerLink,
+        IDialogViewer dialogViewer
+    )
     {
+        activeCache = new();
         this.toDoService = toDoService;
         this.uiApplicationService = uiApplicationService;
         this.errorHandler = errorHandler;
+        this.clipboardService = clipboardService;
+        this.converter = converter;
+        this.navigator = navigator;
+        this.openerLink = openerLink;
+        this.dialogViewer = dialogViewer;
         cache = new();
+    }
+    
+    public Result<ActiveToDoItemNotify> GetActive(Guid id)
+    {
+        if (activeCache.TryGetValue(id, out var value))
+        {
+            return value.ToResult();
+        }
+        
+        var result = new ActiveToDoItemNotify(id, navigator, errorHandler);
+        activeCache.Add(id, result);
+        
+        return result.ToResult();
     }
     
     public Result<ToDoItemEntityNotify> GetToDoItem(Guid id)
@@ -24,7 +58,9 @@ public class ToDoCache : IToDoCache
             return value.ToResult();
         }
         
-        var result = new ToDoItemEntityNotify(id, toDoService, uiApplicationService, errorHandler);
+        var result = new ToDoItemEntityNotify(id, toDoService, navigator, uiApplicationService, dialogViewer, converter,
+            clipboardService, openerLink, errorHandler);
+        
         cache.Add(id, result);
         
         return result.ToResult();
@@ -41,12 +77,9 @@ public class ToDoCache : IToDoCache
                 if (toDoItem.Active.HasValue)
                 {
                     return UpdateAsync(toDoItem.Active.Value, cancellationToken)
-                       .IfSuccessAsync(
-                            () => GetToDoItem(toDoItem.Active.Value.Id)
-                               .IfSuccessAsync(i => this.InvokeUIBackgroundAsync(() => item.Active = i),
-                                    cancellationToken),
-                            cancellationToken)
-                       .IfSuccessAsync(() => UpdatePropertiesAsync(item, toDoItem, cancellationToken), cancellationToken);
+                       .IfSuccessAsync(i => this.InvokeUIBackgroundAsync(() => item.Active = i), cancellationToken)
+                       .IfSuccessAsync(() => UpdatePropertiesAsync(item, toDoItem, cancellationToken),
+                            cancellationToken);
                 }
                 
                 return UpdatePropertiesAsync(item, toDoItem, cancellationToken);
@@ -72,6 +105,7 @@ public class ToDoCache : IToDoCache
                 item.OrderIndex = toDoItem.OrderIndex;
                 item.ParentId = toDoItem.ParentId;
             })
+           .IfSuccessAsync(item.UpdateCommandsAsync, cancellationToken)
            .IfSuccessAsync(item.ToResult, cancellationToken);
     }
     
@@ -84,27 +118,32 @@ public class ToDoCache : IToDoCache
         return GetToDoItem(id)
            .IfSuccessAsync(
                 item => parents.ToResult()
-                   .IfSuccessForEachAsync(
-                        p => UpdateAsync(p, cancellationToken)
-                           .IfSuccessAsync(() => GetToDoItem(p.Id), cancellationToken), cancellationToken)
+                   .IfSuccessForEachAsync(p => UpdateAsync(p, cancellationToken), cancellationToken)
                    .IfSuccessAsync(
                         ps => this.InvokeUIBackgroundAsync(() =>
                             item.Path = RootItem.Default.As<object>().ToEnumerable().Concat(ps.ToArray()).ToArray()!),
                         cancellationToken), cancellationToken);
     }
     
-    public ConfiguredValueTaskAwaitable<Result> UpdateAsync(
+    public ConfiguredValueTaskAwaitable<Result<ToDoItemEntityNotify>> UpdateAsync(
         ToDoShortItem shortItem,
         CancellationToken cancellationToken
     )
     {
         return GetToDoItem(shortItem.Id)
-           .IfSuccessAsync(item => this.InvokeUIBackgroundAsync(() => item.Name = shortItem.Name), cancellationToken);
+           .IfSuccessAsync(
+                item => this.InvokeUIBackgroundAsync(() => item.Name = shortItem.Name)
+                   .IfSuccessAsync(item.ToResult, cancellationToken), cancellationToken);
     }
     
-    public ConfiguredValueTaskAwaitable<Result> UpdateAsync(ActiveToDoItem active, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<ActiveToDoItemNotify>> UpdateAsync(
+        ActiveToDoItem active,
+        CancellationToken cancellationToken
+    )
     {
-        return GetToDoItem(active.Id)
-           .IfSuccessAsync(item => this.InvokeUIBackgroundAsync(() => item.Name = active.Name), cancellationToken);
+        return GetActive(active.Id)
+           .IfSuccessAsync(
+                item => this.InvokeUIBackgroundAsync(() => item.Name = active.Name)
+                   .IfSuccessAsync(item.ToResult, cancellationToken), cancellationToken);
     }
 }

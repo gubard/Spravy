@@ -1,6 +1,22 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=System.Runtime">
+    <!--Command-->
+    <sys:String x:Key="Command.Complete">Complete</sys:String>
+    <sys:String x:Key="Command.AddChildToDoItem">Add child to-do item</sys:String>
+    <sys:String x:Key="Command.Delete">Delete</sys:String>
+    <sys:String x:Key="Command.OpenLeaf">Open leaf</sys:String>
+    <sys:String x:Key="Command.ChangeParent">Change parent</sys:String>
+    <sys:String x:Key="Command.MakeAsRootToDoItem">Make as root to-do item</sys:String>
+    <sys:String x:Key="Command.CopyToClipboard">Copy to clipboard item</sys:String>
+    <sys:String x:Key="Command.RandomizeChildrenOrder">Randomize children order</sys:String>
+    <sys:String x:Key="Command.Reset">Reset</sys:String>
+    <sys:String x:Key="Command.Reorder">Reorder</sys:String>
+    <sys:String x:Key="Command.Setting">Setting</sys:String>
+    <sys:String x:Key="Command.AddToFavorite">Add to favorite</sys:String>
+    <sys:String x:Key="Command.RemoveFromFavorite">Remove from favorite</sys:String>
+    <sys:String x:Key="Command.OpenLink">Open link</sys:String>
+    
     <!--ResetToDoItemView-->
     <sys:String x:Key="ResetToDoItemView.CompleteChildrenTask">Complete children task</sys:String>
     <sys:String x:Key="ResetToDoItemView.MoveCircleOrderIndex">Move circle order index</sys:String>

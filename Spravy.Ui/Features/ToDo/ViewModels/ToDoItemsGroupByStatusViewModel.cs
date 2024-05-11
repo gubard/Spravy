@@ -63,15 +63,7 @@ public class ToDoItemsGroupByStatusViewModel : ViewModelBase
         Completed.Clear();
     }
 
-    public void AddItems(IEnumerable<ToDoItemEntityNotify> items)
-    {
-        Missed.AddItems(items.Where(x => x.Status == ToDoItemStatus.Miss));
-        ReadyForCompleted.AddItems(items.Where(x => x.Status == ToDoItemStatus.ReadyForComplete));
-        Planned.AddItems(items.Where(x => x.Status == ToDoItemStatus.Planned));
-        Completed.AddItems(items.Where(x => x.Status == ToDoItemStatus.Completed));
-    }
-
-    public void ClearExcept(ReadOnlyMemory<Guid> ids)
+    public void ClearExcept(ReadOnlyMemory<ToDoItemEntityNotify> ids)
     {
         Missed.ClearExcept(ids);
         ReadyForCompleted.ClearExcept(ids);

@@ -160,7 +160,7 @@ public class EfToDoService : IToDoService
     )
     {
         return dbContextFactory.Create()
-           .IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(() => context
+           .IfSuccessDisposeAsync(context => context
                .FindEntityAsync<ToDoItemEntity>(id)
                .IfSuccessAsync(item =>
                 {
@@ -177,7 +177,7 @@ public class EfToDoService : IToDoService
                             
                             return parents.ToArray().ToReadOnlyMemory().ToResult();
                         }, cancellationToken);
-                }, cancellationToken), cancellationToken), cancellationToken);
+                }, cancellationToken), cancellationToken);
     }
     
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> SearchToDoItemIdsAsync(
@@ -1365,6 +1365,7 @@ public class EfToDoService : IToDoService
     )
     {
         var parent = await context.Set<ToDoItemEntity>()
+           .AsNoTracking()
            .Include(x => x.Parent)
            .SingleAsync(x => x.Id == id, cancellationToken);
         

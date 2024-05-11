@@ -119,19 +119,7 @@ public class ToDoItemsGroupByTypeViewModel : ViewModelBase
         References.Clear();
     }
     
-    public void AddItems(IEnumerable<ToDoItemEntityNotify> items)
-    {
-        Values.AddItems(items.Where(x => x.Type == ToDoItemType.Value));
-        Groups.AddItems(items.Where(x => x.Type == ToDoItemType.Group));
-        Planneds.AddItems(items.Where(x => x.Type == ToDoItemType.Planned));
-        Periodicitys.AddItems(items.Where(x => x.Type == ToDoItemType.Periodicity));
-        PeriodicityOffsets.AddItems(items.Where(x => x.Type == ToDoItemType.PeriodicityOffset));
-        Circles.AddItems(items.Where(x => x.Type == ToDoItemType.Circle));
-        Steps.AddItems(items.Where(x => x.Type == ToDoItemType.Step));
-        References.AddItems(items.Where(x => x.Type == ToDoItemType.Reference));
-    }
-    
-    public void ClearExcept(ReadOnlyMemory<Guid> ids)
+    public void ClearExcept(ReadOnlyMemory<ToDoItemEntityNotify> ids)
     {
         Values.ClearExcept(ids);
         Groups.ClearExcept(ids);

@@ -105,17 +105,12 @@
                     Classes="Basic" />
         </DataTemplate>
 
-        <DataTemplate DataType="models:ToDoShortItemNotify">
-            <TextBlock Text="{Binding Name}" />
-        </DataTemplate>
-
         <DataTemplate DataType="i:MaterialIconKind">
             <mi:MaterialIcon Kind="{Binding}" />
         </DataTemplate>
 
         <DataTemplate DataType="models:ToDoItemEntityNotify">
-            <Button Command="{x:Static s:CommandStorage.NavigateToToDoItemCommand}"
-                    CommandParameter="{Binding CurrentId}"
+            <Button Command="{Binding NavigateToCurrentItem.Command}"
                     Classes="alignment-stretch glass-card content-alignment-stretch">
                 <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,*">
                     <Grid Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*,Auto,Auto">
@@ -142,8 +137,7 @@
                         <Grid ColumnDefinitions="Auto,*">
                             <ToggleButton Classes="Switch alignment-top"
                                           Margin="5,5,0,0"
-                                          Command="{Binding Complete.Command}"
-                                          CommandParameter="{Binding }"
+                                          Command="{Binding CompleteItem.Item.Command}"
                                           IsVisible="{Binding IsCan, Converter={StaticResource ToDoItemCanNoneToBooleanReverseConverter}}"
                                           IsChecked="{Binding IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanConverter}}" />
                             <TextBlock Grid.Column="1"
@@ -154,7 +148,7 @@
 
                         <Button
                             IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}"
-                            Command="{x:Static s:CommandStorage.NavigateToToDoItemCommand}">
+                            Command="{Binding Active.NavigateToCurrentItem.Command}">
                             <TextBlock Text="{Binding Active.Name}" TextWrapping="Wrap" />
                         </Button>
                     </StackPanel>
@@ -165,16 +159,15 @@
                           RowDefinitions="Auto,Auto">
                         <Button CommandParameter="{Binding }">
                             <Button.DataTemplates>
-                                <DataTemplate x:DataType="m:CommandItem">
-                                    <TextBlock Text="{Binding Name}" />
+                                <DataTemplate x:DataType="m:SpravyCommandNotify">
+                                    <ContentControl Content="{Binding Text}" />
                                 </DataTemplate>
                             </Button.DataTemplates>
 
                             <Button.Styles>
-                                <Style Selector="MenuItem" x:DataType="m:CommandItem">
-                                    <Setter Property="Command" Value="{Binding Command}" />
-                                    <Setter Property="CommandParameter" Value="{Binding Parameter}" />
-                                    <Setter Property="Icon" Value="{Binding Icon}" />
+                                <Style Selector="MenuItem" x:DataType="m:SpravyCommandNotify">
+                                    <Setter Property="Command" Value="{Binding Item.Command}" />
+                                    <Setter Property="Icon" Value="{Binding Kind}" />
                                 </Style>
                             </Button.Styles>
 

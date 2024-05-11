@@ -16,20 +16,33 @@ public class ToDoItemsViewModel : ViewModelBase
         Items.Clear();
     }
     
-    public void AddItems(IEnumerable<ToDoItemEntityNotify> items)
+    public void AddItems(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
-        Items.AddRange(items);
+        Items.AddRange(items.ToArray());
     }
     
-    public void ClearExcept(ReadOnlyMemory<Guid> ids)
+    public void ClearExcept(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
-        Items.RemoveAll(Items.Where(x => !ids.Span.Contains(x.Id)));
+        for (var index = 0; index < Items.Count; index++)
+        {
+            var item = Items[index];
+            
+            if (!items.Span.Contains(item))
+            {
+                Items.Remove(item);
+            }
+        }
     }
     
     public void UpdateItem(ToDoItemEntityNotify item)
     {
-        var indexOf = Items.IndexOf(item);
+        var indexOf = IndexOf(item);
         var needIndex = GetNeedIndex(item);
+        
+        if (indexOf == needIndex)
+        {
+            return;
+        }
         
         if (needIndex == Items.Count)
         {
@@ -37,12 +50,30 @@ public class ToDoItemsViewModel : ViewModelBase
         }
         else if (indexOf == -1)
         {
-            Items.Insert(GetNeedIndex(item), item);
+            Items.Insert(needIndex, item);
         }
         else
         {
             Items.Move(indexOf, needIndex);
         }
+    }
+    
+    private int IndexOf(ToDoItemEntityNotify obj)
+    {
+        if (Items.Count == 0)
+        {
+            return -1;
+        }
+        
+        for (var i = 0; i < Items.Count; i++)
+        {
+            if (obj.Id == Items[i].Id)
+            {
+                return i;
+            }
+        }
+        
+        return -1;
     }
     
     private int GetNeedIndex(ToDoItemEntityNotify obj)
@@ -52,7 +83,7 @@ public class ToDoItemsViewModel : ViewModelBase
             return 0;
         }
         
-        if (obj.OrderIndex >= Items[^1].OrderIndex)
+        if (obj.OrderIndex > Items[^1].OrderIndex)
         {
             return Items.Count;
         }
@@ -61,10 +92,15 @@ public class ToDoItemsViewModel : ViewModelBase
         {
             if (obj.Id == Items[i].Id)
             {
-                continue;
+                return i;
             }
             
-            if (obj.OrderIndex >= Items[i].OrderIndex)
+            if (obj.OrderIndex == Items[i].OrderIndex)
+            {
+                return i;
+            }
+            
+            if (obj.OrderIndex > Items[i].OrderIndex)
             {
                 continue;
             }
@@ -73,28 +109,6 @@ public class ToDoItemsViewModel : ViewModelBase
         }
         
         return Items.Count;
-    }
-    
-    private void AddSorted(ToDoItemEntityNotify obj)
-    {
-        if (Items.Count == 0 || obj.OrderIndex >= Items[^1].OrderIndex)
-        {
-            Items.Add(obj);
-            
-            return;
-        }
-        
-        for (var i = 0; i < Items.Count; i++)
-        {
-            if (obj.OrderIndex >= Items[i].OrderIndex)
-            {
-                continue;
-            }
-            
-            Items.Insert(i, obj);
-            
-            break;
-        }
     }
     
     public void RemoveItem(ToDoItemEntityNotify item)

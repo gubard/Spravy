@@ -27,13 +27,15 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
     {
         return ToDoService.GetFavoriteToDoItemIdsAsync(cancellationToken)
            .IfSuccessAsync(
-                ids => this.RunProgressAsync((ushort)ids.Length,
-                    item => List.ClearFavoriteExceptAsync(ids.ToArray())
-                       .IfSuccessAsync(() => ids.ToResult().IfSuccessForEach(x => ToDoCache.GetToDoItem(x)),
-                            cancellationToken)
+                items => this.RunProgressAsync((ushort)items.Length,
+                    item => items.ToResult()
+                       .IfSuccessForEach(x => ToDoCache.GetToDoItem(x))
                        .IfSuccessAsync(
-                            items => RefreshFavoriteToDoItemsCore(items, item, cancellationToken).ConfigureAwait(false),
-                            cancellationToken), cancellationToken), cancellationToken);
+                            itemsNotify => List.ClearFavoriteExceptAsync(itemsNotify)
+                               .IfSuccessAsync(
+                                    () => RefreshFavoriteToDoItemsCore(itemsNotify, item, cancellationToken)
+                                       .ConfigureAwait(false), cancellationToken), cancellationToken),
+                    cancellationToken), cancellationToken);
     }
     
     private async ValueTask<Result> RefreshFavoriteToDoItemsCore(
@@ -97,7 +99,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
         CancellationToken cancellationToken
     )
     {
-        return List.ClearExceptAsync(items.ToArray().Select(x => x.Id).ToArray())
+        return List.ClearExceptAsync(items)
            .IfSuccessAsync(
                 () => items.ToResult().IfSuccessForEachAsync(item => List.UpdateItemAsync(item), cancellationToken),
                 cancellationToken)

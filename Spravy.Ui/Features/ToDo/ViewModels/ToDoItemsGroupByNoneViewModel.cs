@@ -21,12 +21,12 @@ public class ToDoItemsGroupByNoneViewModel : ViewModelBase
         Items.Clear();
     }
 
-    public void AddItems(IEnumerable<ToDoItemEntityNotify> items)
+    public void AddItems(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
         Items.AddItems(items);
     }
 
-    public void ClearExcept(ReadOnlyMemory<Guid> ids)
+    public void ClearExcept(ReadOnlyMemory<ToDoItemEntityNotify> ids)
     {
         Items.ClearExcept(ids);
     }

@@ -5,7 +5,6 @@
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:ru="http://reactiveui.net"
                         xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
-                        xmlns:m="clr-namespace:Spravy.Ui.Models"
                         xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
                         xmlns:views="clr-namespace:Spravy.Ui.Features.ToDo.Views"
                         xmlns:models="clr-namespace:Spravy.Ui.Features.ToDo.Models"

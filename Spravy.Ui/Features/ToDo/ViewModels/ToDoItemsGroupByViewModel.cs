@@ -52,25 +52,11 @@ public class ToDoItemsGroupByViewModel : ViewModelBase
         return Result.AwaitableFalse;
     }
 
-    public void ClearExcept(ReadOnlyMemory<Guid> ids)
+    public void ClearExcept(ReadOnlyMemory<ToDoItemEntityNotify> ids)
     {
         GroupByNone.ClearExcept(ids);
         GroupByStatus.ClearExcept(ids);
         GroupByType.ClearExcept(ids);
-    }
-
-    public void Clear()
-    {
-        GroupByNone.Clear();
-        GroupByStatus.Clear();
-        GroupByType.Clear();
-    }
-
-    public void AddItems(IEnumerable<ToDoItemEntityNotify> items)
-    {
-        GroupByNone.AddItems(items);
-        GroupByStatus.AddItems(items);
-        GroupByType.AddItems(items);
     }
 
     public void UpdateItem(ToDoItemEntityNotify item)

@@ -114,12 +114,12 @@ public class MultiToDoItemsViewModel : ViewModelBase
         return Result.AwaitableFalse;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> ClearFavoriteExceptAsync(ReadOnlyMemory<Guid> ids)
+    public ConfiguredValueTaskAwaitable<Result> ClearFavoriteExceptAsync(ReadOnlyMemory<ToDoItemEntityNotify> ids)
     {
         return this.InvokeUIBackgroundAsync(() => Favorite.ClearExcept(ids));
     }
 
-    public ConfiguredValueTaskAwaitable<Result> ClearExceptAsync(ReadOnlyMemory<Guid> ids)
+    public ConfiguredValueTaskAwaitable<Result> ClearExceptAsync(ReadOnlyMemory<ToDoItemEntityNotify> ids)
     {
         return this.InvokeUIBackgroundAsync(() =>
         {

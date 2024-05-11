@@ -8,6 +8,7 @@
                         xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
                         xmlns:mi="clr-namespace:Material.Icons;assembly=Material.Icons"
                         xmlns:m="clr-namespace:Spravy.Ui.Models"
+                        xmlns:s="clr-namespace:Spravy.Ui.Services"
                         xmlns:models="clr-namespace:Spravy.Ui.Features.ToDo.Models"
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                         x:Class="Spravy.Ui.Features.ToDo.Views.DeleteToDoItemView"
@@ -33,7 +34,16 @@
             <StackPanel>
                 <ScrollViewer Classes="mini" VerticalScrollBarVisibility="Disabled"
                               HorizontalScrollBarVisibility="Auto">
-                    <c:Stepper Steps="{Binding Path}" Index="0" HorizontalAlignment="Center" />
+                    <c:Stepper Steps="{Binding Path}" Index="0" HorizontalAlignment="Center">
+                        <c:Stepper.DataTemplates>
+                            <DataTemplate DataType="models:ToDoItemEntityNotify">
+                                <Button Command="{x:Static s:CommandStorage.NavigateToToDoItemCommand}"
+                                        CommandParameter="{Binding Id}"
+                                        Content="{Binding Name}"
+                                        Classes="Basic" />
+                            </DataTemplate>
+                        </c:Stepper.DataTemplates>
+                    </c:Stepper>
                 </ScrollViewer>
 
                 <TextBlock

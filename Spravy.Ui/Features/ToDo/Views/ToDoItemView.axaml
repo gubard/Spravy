@@ -10,7 +10,10 @@
                         xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
                         xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
                         xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
-                        xmlns:models="clr-namespace:Spravy.Ui.Features.ToDo.Models"
+                        xmlns:m="clr-namespace:Spravy.Ui.Features.ToDo.Models"
+                        xmlns:co="clr-namespace:SukiUI.Content;assembly=SukiUI"
+                        xmlns:sm="clr-namespace:Spravy.Ui.Models"
+                        xmlns:h="clr-namespace:Spravy.Ui.Helpers"
                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                         x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemView"
                         x:DataType="vm:ToDoItemViewModel">
@@ -20,9 +23,120 @@
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 
+    <UserControl.Styles>
+        <Style Selector="ItemsControl.adaptive">
+            <Setter Property="(Interaction.Behaviors)">
+                <BehaviorCollectionTemplate>
+                    <BehaviorCollection>
+                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
+                            <AdaptiveClassSetter MinWidth="0"
+                                                 MaxWidth="{x:Static h:MaterialDesignSize.MinMedium}"
+                                                 ClassName="small" />
+                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinMedium}"
+                                                 MaxWidth="Infinity"
+                                                 ClassName="wide" />
+                        </AdaptiveBehavior>
+                    </BehaviorCollection>
+                </BehaviorCollectionTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="Button.adaptive">
+            <Setter Property="(Interaction.Behaviors)">
+                <BehaviorCollectionTemplate>
+                    <BehaviorCollection>
+                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
+                            <AdaptiveClassSetter MinWidth="0"
+                                                 MaxWidth="{x:Static h:MaterialDesignSize.MinMedium}"
+                                                 ClassName="small" />
+                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinMedium}"
+                                                 MaxWidth="Infinity"
+                                                 ClassName="wide" />
+                        </AdaptiveBehavior>
+                    </BehaviorCollection>
+                </BehaviorCollectionTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="ItemsControl.small">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+
+        <Style Selector="ItemsControl.wide">
+            <Setter Property="IsVisible" Value="True" />
+        </Style>
+
+        <Style Selector="Button.small">
+            <Setter Property="IsVisible" Value="True" />
+        </Style>
+
+        <Style Selector="Button.wide">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+    </UserControl.Styles>
+
     <Grid RowDefinitions="Auto, Auto,*">
         <Grid RowDefinitions="*,4">
-            <ContentControl Content="{Binding PageHeaderViewModel}" />
+            <Panel>
+                <Grid ColumnDefinitions="Auto,*,Auto">
+                    <StackPanel Orientation="Horizontal">
+                        <Button Classes="Basic" Command="{x:Static s:CommandStorage.SwitchPaneCommand}">
+                            <PathIcon Data="{x:Static co:Icons.Menu}" />
+                        </Button>
+
+                        <ContentControl Content="{x:Static  s:CommandStorage.NavigateToCurrentToDoItemItem}" />
+                    </StackPanel>
+
+                    <ScrollViewer Grid.Column="1"
+                                  VerticalScrollBarVisibility="Disabled"
+                                  HorizontalScrollBarVisibility="Auto"
+                                  HorizontalAlignment="Left"
+                                  Classes="mini">
+                        <TextBlock Text="{Binding Item.Name}" Classes="h3" />
+                    </ScrollViewer>
+
+                    <Panel Grid.Column="2"
+                           IsVisible="{Binding Item.AllCommands.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
+                        <ItemsControl HorizontalAlignment="Right"
+                                      VerticalAlignment="Center"
+                                      ItemsSource="{Binding Item.AllCommands}"
+                                      Classes="adaptive">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+
+                            <ItemsControl.DataTemplates>
+                                <DataTemplate DataType="sm:SpravyCommandNotify">
+                                    <Button Classes="Basic" Command="{Binding Item.Command}" Content="{Binding Kind}" />
+                                </DataTemplate>
+                            </ItemsControl.DataTemplates>
+                        </ItemsControl>
+
+                        <Button Classes="adaptive Basic">
+                            <Button.DataTemplates>
+                                <DataTemplate x:DataType="sm:SpravyCommandNotify">
+                                    <ContentControl Content="{Binding Text}" />
+                                </DataTemplate>
+                            </Button.DataTemplates>
+
+                            <Button.Styles>
+                                <Style Selector="MenuItem" x:DataType="sm:SpravyCommandNotify">
+                                    <Setter Property="Command" Value="{Binding Item.Command}" />
+                                    <Setter Property="Icon" Value="{Binding Kind}" />
+                                </Style>
+                            </Button.Styles>
+
+                            <Button.Flyout>
+                                <MenuFlyout ItemsSource="{Binding Item.AllCommands}" />
+                            </Button.Flyout>
+
+                            <mi:MaterialIcon Kind="DotsHorizontal" />
+                        </Button>
+                    </Panel>
+                </Grid>
+            </Panel>
 
             <Rectangle Grid.Row="1"
                        Fill="{Binding Item.Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
@@ -35,7 +149,7 @@
                       Margin="8,0,0,0">
             <c:Stepper Steps="{Binding Item.Path}" Index="0" HorizontalAlignment="Center">
                 <c:Stepper.DataTemplates>
-                    <DataTemplate DataType="models:ToDoItemEntityNotify">
+                    <DataTemplate DataType="m:ToDoItemEntityNotify">
                         <Button Command="{x:Static s:CommandStorage.NavigateToToDoItemCommand}"
                                 CommandParameter="{Binding Id}"
                                 Content="{Binding Name}"
