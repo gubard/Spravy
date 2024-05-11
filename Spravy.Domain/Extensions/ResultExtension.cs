@@ -8,6 +8,135 @@ namespace Spravy.Domain.Extensions;
 
 public static class ResultExtension
 {
+    public static Result<ReadOnlyMemory<TReturn>> IfSuccessForEach<TValue, TReturn>(
+        this Result<ReadOnlyMemory<TValue>> values,
+        Func<TValue, Result<TReturn>> func
+    )
+    {
+        if (values.IsHasError)
+        {
+            return new(values.Errors);
+        }
+        
+        var array = new TReturn[values.Value.Length];
+        var valuesArray = values.Value.ToArray();
+        
+        for (var index = 0; index < valuesArray.Length; index++)
+        {
+            var value = valuesArray[index];
+            var result = func.Invoke(value);
+            
+            if (result.IsHasError)
+            {
+                return new(result.Errors);
+            }
+            
+            array[index] = result.Value;
+        }
+        
+        return array.ToReadOnlyMemory().ToResult();
+    }
+    
+    public static ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<TReturn>>> IfSuccessForEachAsync<TValue, TReturn>(
+        this ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<TValue>>> task,
+        Func<TValue, Result<TReturn>> func,
+        CancellationToken cancellationToken
+    )
+    {
+        return IfSuccessForEachCore(task, func, cancellationToken).ConfigureAwait(false);
+    }
+    
+    private static async ValueTask<Result<ReadOnlyMemory<TReturn>>> IfSuccessForEachCore<TValue, TReturn>(
+        this ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<TValue>>> task,
+        Func<TValue, Result<TReturn>> func,
+        CancellationToken cancellationToken
+    )
+    {
+        var values = await task;
+        
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return Result<ReadOnlyMemory<TReturn>>.CanceledByUserError;
+        }
+        
+        if (values.IsHasError)
+        {
+            return new(values.Errors);
+        }
+        
+        var array = new TReturn[values.Value.Length];
+        var valuesArray = values.Value.ToArray();
+        
+        for (var index = 0; index < valuesArray.Length; index++)
+        {
+            var value = valuesArray[index];
+            var result = func.Invoke(value);
+            
+            if (result.IsHasError)
+            {
+                return new(result.Errors);
+            }
+            
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return Result<ReadOnlyMemory<TReturn>>.CanceledByUserError;
+            }
+            
+            array[index] = result.Value;
+        }
+        
+        return array.ToReadOnlyMemory().ToResult();
+    }
+    
+    public static ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<TReturn>>> IfSuccessForEachAsync<TValue, TReturn>(
+        this Result<ReadOnlyMemory<TValue>> values,
+        Func<TValue, ConfiguredValueTaskAwaitable<Result<TReturn>>> func,
+        CancellationToken cancellationToken
+    )
+    {
+        return IfSuccessForEachCore(values, func, cancellationToken).ConfigureAwait(false);
+    }
+    
+    private static async ValueTask<Result<ReadOnlyMemory<TReturn>>> IfSuccessForEachCore<TValue, TReturn>(
+        this Result<ReadOnlyMemory<TValue>> values,
+        Func<TValue, ConfiguredValueTaskAwaitable<Result<TReturn>>> func,
+        CancellationToken cancellationToken
+    )
+    {
+        if (values.IsHasError)
+        {
+            return new(values.Errors);
+        }
+        
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return Result<ReadOnlyMemory<TReturn>>.CanceledByUserError;
+        }
+        
+        var array = new TReturn[values.Value.Length];
+        var valuesArray = values.Value.ToArray();
+        
+        for (var index = 0; index < valuesArray.Length; index++)
+        {
+            var value = valuesArray[index];
+            var result = await func.Invoke(value);
+            
+            if (result.IsHasError)
+            {
+                return new(result.Errors);
+            }
+            
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return Result<ReadOnlyMemory<TReturn>>.CanceledByUserError;
+            }
+            
+            array[index] = result.Value;
+        }
+        
+        return array.ToReadOnlyMemory().ToResult();
+    }
+    
     public static ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<TReturn>>> IfSuccessForEachAsync<TValue, TReturn>(
         this ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<TValue>>> task,
         Func<TValue, ConfiguredValueTaskAwaitable<Result<TReturn>>> func,
@@ -24,6 +153,11 @@ public static class ResultExtension
     )
     {
         var values = await task;
+        
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return Result<ReadOnlyMemory<TReturn>>.CanceledByUserError;
+        }
         
         if (values.IsHasError)
         {
@@ -72,6 +206,11 @@ public static class ResultExtension
         if (values.IsHasError)
         {
             return new(values.Errors);
+        }
+        
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return Result.CanceledByUserError;
         }
         
         foreach (var value in values.Value.ToArray())

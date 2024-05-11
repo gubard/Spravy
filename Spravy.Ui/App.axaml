@@ -98,13 +98,6 @@
             <TextBlock Text="{Binding Name}" />
         </TreeDataTemplate>
 
-        <DataTemplate DataType="models:ToDoItemParentNotify">
-            <Button Command="{x:Static s:CommandStorage.NavigateToToDoItemCommand}"
-                    CommandParameter="{Binding Id}"
-                    Content="{Binding Name}"
-                    Classes="Basic" />
-        </DataTemplate>
-
         <DataTemplate DataType="m:RootItem">
             <Button Command="{x:Static s:CommandStorage.NavigateToCommand}"
                     CommandParameter="{x:Type viewModels:RootToDoItemsViewModel}"
@@ -120,55 +113,49 @@
             <mi:MaterialIcon Kind="{Binding}" />
         </DataTemplate>
 
-        <DataTemplate>
-            <DataTemplate.DataType>
-                <x:Type TypeName="m:Selected" x:TypeArguments="models:ToDoItemNotify" />
-            </DataTemplate.DataType>
-
+        <DataTemplate DataType="models:ToDoItemEntityNotify">
             <Button Command="{x:Static s:CommandStorage.NavigateToToDoItemCommand}"
-                    CommandParameter="{Binding Value.CurrentId}"
+                    CommandParameter="{Binding CurrentId}"
                     Classes="alignment-stretch glass-card content-alignment-stretch">
                 <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,*">
                     <Grid Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*,Auto,Auto">
                         <Rectangle Width="15"
                                    Margin="0,0,3,0"
                                    Height="2"
-                                   Fill="{Binding Value.Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
+                                   Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                         <TextBlock Grid.Column="1"
-                                   Text="{Binding Value.Type, Converter={StaticResource ToDoItemTypeLocalizationValueConverter}}" />
+                                   Text="{Binding Type, Converter={StaticResource ToDoItemTypeLocalizationValueConverter}}" />
                         <Rectangle Grid.Column="2"
                                    Margin="3,0,3,0"
                                    Height="2"
-                                   Fill="{Binding Value.Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
+                                   Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                         <TextBlock Grid.Column="3"
-                                   Text="{Binding Value.Status, Converter={StaticResource ToDoItemStatusLocalizationValueConverter}}" />
+                                   Text="{Binding Status, Converter={StaticResource ToDoItemStatusLocalizationValueConverter}}" />
                         <Rectangle Grid.Column="4"
                                    Width="15"
                                    Margin="3,0,0,0"
                                    Height="2"
-                                   Fill="{Binding Value.Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
+                                   Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                     </Grid>
 
                     <StackPanel Grid.Row="1">
                         <Grid ColumnDefinitions="Auto,*">
                             <ToggleButton Classes="Switch alignment-top"
                                           Margin="5,5,0,0"
-                                          Command="{Binding Value.CompleteCommand}"
-                                          CommandParameter="{Binding Value}"
-                                          IsVisible="{Binding Value.IsCan, Converter={StaticResource ToDoItemCanNoneToBooleanReverseConverter}}"
-                                          IsChecked="{Binding Value.IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanConverter}}" />
+                                          Command="{Binding Complete.Command}"
+                                          CommandParameter="{Binding }"
+                                          IsVisible="{Binding IsCan, Converter={StaticResource ToDoItemCanNoneToBooleanReverseConverter}}"
+                                          IsChecked="{Binding IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanConverter}}" />
                             <TextBlock Grid.Column="1"
                                        Classes="h4 vertical-alignment-center"
-                                       Text="{Binding Value.Name}"
+                                       Text="{Binding Name}"
                                        TextWrapping="Wrap" />
                         </Grid>
 
                         <Button
-                            IsVisible="{Binding Value.Active, Converter={StaticResource NullToBooleanConverter}}"
-                            CommandParameter="{Binding Value.Active.Id}"
+                            IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}"
                             Command="{x:Static s:CommandStorage.NavigateToToDoItemCommand}">
-                            <TextBlock Text="{Binding Value.Active.Name}"
-                                       TextWrapping="Wrap" />
+                            <TextBlock Text="{Binding Active.Name}" TextWrapping="Wrap" />
                         </Button>
                     </StackPanel>
 
@@ -176,7 +163,7 @@
                           Grid.Column="1"
                           ColumnDefinitions="Auto,Auto"
                           RowDefinitions="Auto,Auto">
-                        <Button CommandParameter="{Binding Value}">
+                        <Button CommandParameter="{Binding }">
                             <Button.DataTemplates>
                                 <DataTemplate x:DataType="m:CommandItem">
                                     <TextBlock Text="{Binding Name}" />
@@ -192,22 +179,22 @@
                             </Button.Styles>
 
                             <Button.Flyout>
-                                <MenuFlyout ItemsSource="{Binding Value.Commands}" />
+                                <MenuFlyout ItemsSource="{Binding Commands}" />
                             </Button.Flyout>
 
                             <mi:MaterialIcon Kind="DotsHorizontal" />
                         </Button>
 
                         <Panel Grid.Column="1">
-                            <Button CommandParameter="{Binding Value.CurrentId}"
+                            <Button CommandParameter="{Binding CurrentId}"
                                     Command="{x:Static s:CommandStorage.RemoveToDoItemFromFavoriteCommand}"
-                                    IsVisible="{Binding Value.IsFavorite}">
+                                    IsVisible="{Binding IsFavorite}">
                                 <mi:MaterialIcon Kind="Star" />
                             </Button>
 
-                            <Button CommandParameter="{Binding Value.CurrentId}"
+                            <Button CommandParameter="{Binding CurrentId}"
                                     Command="{x:Static s:CommandStorage.AddToDoItemToFavoriteCommand}"
-                                    IsVisible="{Binding Value.IsFavorite, Converter={StaticResource ReverseBooleanValueConverter}}">
+                                    IsVisible="{Binding IsFavorite, Converter={StaticResource ReverseBooleanValueConverter}}">
                                 <mi:MaterialIcon Kind="StarOutline" />
                             </Button>
                         </Panel>
@@ -215,8 +202,8 @@
                         <Button Grid.Row="1"
                                 Grid.Column="1"
                                 Command="{x:Static s:CommandStorage.OpenLinkCommand}"
-                                CommandParameter="{Binding Value}"
-                                IsVisible="{Binding Value.Link, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}">
+                                CommandParameter="{Binding }"
+                                IsVisible="{Binding Link, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}">
                             <mi:MaterialIcon Kind="Link" />
                         </Button>
                     </Grid>

@@ -6,7 +6,6 @@ public class SpravyUiProfile : Profile
 {
     public SpravyUiProfile()
     {
-        CreateMap<ToDoItem, ToDoItemNotify>();
         CreateMap<ToDoShortItemNotify, ToDoShortItem>();
         CreateMap<ToDoShortItem, ToDoShortItemNotify>();
         CreateMap<ToDoSelectorItem, ToDoSelectorItemNotify>();
@@ -14,8 +13,6 @@ public class SpravyUiProfile : Profile
         CreateMap<CreateUserViewModel, CreateUserOptions>();
         CreateMap<CreateUserViewModel, User>();
         CreateMap<LoginViewModel, User>();
-        CreateMap<ToDoShortItem, ToDoItemParentNotify>();
-        CreateMap<ToDoItemViewModel, ToDoItemNotify>();
         CreateMap<AddPasswordItemViewModel, AddPasswordOptions>();
         CreateMap<ResetToDoItemViewModel, ResetToDoItemOptions>();
 

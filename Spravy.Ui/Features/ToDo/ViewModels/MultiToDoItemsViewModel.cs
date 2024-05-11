@@ -128,104 +128,17 @@ public class MultiToDoItemsViewModel : ViewModelBase
         });
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateFavoriteItemAsync(ToDoItem item, Guid? referenceId)
+    public ConfiguredValueTaskAwaitable<Result> UpdateFavoriteItemAsync(ToDoItemEntityNotify item)
+    {
+        return this.InvokeUIBackgroundAsync(() =>Favorite.UpdateItem(item));
+    }
+
+    public ConfiguredValueTaskAwaitable<Result> UpdateItemAsync(ToDoItemEntityNotify item)
     {
         return this.InvokeUIBackgroundAsync(() =>
         {
-            var notify = Favorite.Items.SingleOrDefault(x => x.Value.Id == item.Id)
-             ?? new Selected<ToDoItemNotify>(Mapper.Map<ToDoItemNotify>(item));
-            
-            notify.Value.ReferenceId = referenceId;
-            var updateOrder = item.OrderIndex != notify.Value.OrderIndex;
-            SetupItem(notify.Value, item);
-            Favorite.UpdateItem(notify, updateOrder);
+            ToDoItems.UpdateItem(item);
+            MultiToDoItems.UpdateItem(item);
         });
-    }
-
-    public ConfiguredValueTaskAwaitable<Result> UpdateItemAsync(ToDoItem item, Guid? referenceId)
-    {
-        return this.InvokeUIBackgroundAsync(() =>
-        {
-            var notify = ToDoItems.GroupByNone.Items.Items.SingleOrDefault(x => x.Value.Id == item.Id)
-             ?? new Selected<ToDoItemNotify>(Mapper.Map<ToDoItemNotify>(item));
-            
-            notify.Value.ReferenceId = referenceId;
-            var updateOrder = item.OrderIndex != notify.Value.OrderIndex;
-            SetupItem(notify.Value, item);
-            ToDoItems.UpdateItem(notify, updateOrder);
-            MultiToDoItems.UpdateItem(notify, updateOrder);
-        });
-    }
-    
-    public ConfiguredValueTaskAwaitable<Result> UpdateItemAsync(Selected<ToDoItemNotify> item, Guid? referenceId)
-    {
-        return this.InvokeUIBackgroundAsync(() =>
-        {
-            item.Value.ReferenceId = referenceId;
-            SetupItemCommands(item.Value);
-            ToDoItems.UpdateItem(item, true);
-            MultiToDoItems.UpdateItem(item, true);
-        });
-    }
-
-    private ToDoItemNotify SetupItem(ToDoItemNotify notify, ToDoItem item)
-    {
-        notify.Type = item.Type;
-        notify.Status = item.Status;
-        notify.Active = Mapper.Map<ActiveToDoItemNotify?>(item.Active);
-        notify.Description = item.Description;
-        notify.Link = item.Link?.AbsoluteUri ?? string.Empty;
-        notify.Name = item.Name;
-        notify.IsCan = item.IsCan;
-        notify.IsFavorite = item.IsFavorite;
-        notify.ParentId = item.ParentId;
-        notify.OrderIndex = item.OrderIndex;
-        SetupItemCommands(notify);
-
-        return notify;
-    }
-
-    private ToDoItemNotify SetupItemCommands(ToDoItemNotify item)
-    {
-        item.Commands.Clear();
-        item.Commands.Add(CommandStorage.AddToDoItemChildItem.WithParam(item));
-        item.Commands.Add(CommandStorage.DeleteToDoItemItem.WithParam(item));
-        item.Commands.Add(CommandStorage.ShowToDoSettingItem.WithParam(item));
-        item.Commands.Add(CommandStorage.CloneToDoItemItem.WithParam(item));
-        item.Commands.Add(CommandStorage.NavigateToLeafItem.WithParam(item.CurrentId));
-        item.Commands.Add(CommandStorage.SetToDoParentItemItem.WithParam(item));
-        item.Commands.Add(CommandStorage.MoveToDoItemToRootItem.WithParam(item));
-        item.Commands.Add(CommandStorage.ToDoItemToStringItem.WithParam(item));
-        item.Commands.Add(CommandStorage.ToDoItemRandomizeChildrenOrderIndexItem.WithParam(item));
-        item.Commands.Add(CommandStorage.ChangeOrderIndexItem.WithParam(item));
-        item.Commands.Add(CommandStorage.ResetToDoItemItem.WithParam(item));
-
-        item.CompleteCommand =
-            CreateCommandFromTask<ICanCompleteProperty>(TaskWork
-               .Create<ICanCompleteProperty>(SwitchCompleteToDoItemAsync)
-               .RunAsync);
-
-        return item;
-    }
-
-    private ConfiguredValueTaskAwaitable<Result> SwitchCompleteToDoItemAsync(
-        ICanCompleteProperty property,
-        CancellationToken cancellationToken
-    )
-    {
-        switch (property.IsCan)
-        {
-            case ToDoItemIsCan.None:
-                return Result.AwaitableFalse;
-            case ToDoItemIsCan.CanComplete:
-                return ToDoService.UpdateToDoItemCompleteStatusAsync(property.CurrentId, true, cancellationToken)
-                   .IfSuccessAsync(() => CommandStorage.RefreshCurrentViewAsync(cancellationToken), cancellationToken);
-            case ToDoItemIsCan.CanIncomplete:
-                return ToDoService.UpdateToDoItemCompleteStatusAsync(property.CurrentId, false, cancellationToken)
-                   .IfSuccessAsync(() => CommandStorage.RefreshCurrentViewAsync(cancellationToken), cancellationToken);
-            default:
-                return new Result(new ToDoItemIsCanOutOfRangeError(property.IsCan)).ToValueTaskResult()
-                   .ConfigureAwait(false);
-        }
     }
 }

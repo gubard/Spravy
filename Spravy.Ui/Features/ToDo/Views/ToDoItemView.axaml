@@ -10,6 +10,7 @@
                         xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
                         xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
                         xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
+                        xmlns:models="clr-namespace:Spravy.Ui.Features.ToDo.Models"
                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                         x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemView"
                         x:DataType="vm:ToDoItemViewModel">
@@ -24,7 +25,7 @@
             <ContentControl Content="{Binding PageHeaderViewModel}" />
 
             <Rectangle Grid.Row="1"
-                       Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
+                       Fill="{Binding Item.Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
         </Grid>
 
         <ScrollViewer Grid.Row="1"
@@ -32,13 +33,22 @@
                       VerticalScrollBarVisibility="Disabled"
                       HorizontalScrollBarVisibility="Auto"
                       Margin="8,0,0,0">
-            <c:Stepper Steps="{Binding Path}" Index="0" HorizontalAlignment="Center" />
+            <c:Stepper Steps="{Binding Item.Path}" Index="0" HorizontalAlignment="Center">
+                <c:Stepper.DataTemplates>
+                    <DataTemplate DataType="models:ToDoItemEntityNotify">
+                        <Button Command="{x:Static s:CommandStorage.NavigateToToDoItemCommand}"
+                                CommandParameter="{Binding Id}"
+                                Content="{Binding Name}"
+                                Classes="Basic" />
+                    </DataTemplate>
+                </c:Stepper.DataTemplates>
+            </c:Stepper>
         </ScrollViewer>
 
         <ScrollViewer Classes="mini" Grid.Row="2">
             <StackPanel>
                 <Expander Margin="3"
-                          IsExpanded="{Binding Description, Mode=OneWay, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}">
+                          IsExpanded="{Binding Item.Description, Mode=OneWay, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}">
                     <Expander.Header>
                         <Button Command="{x:Static s:CommandStorage.SetToDoDescriptionCommand}"
                                 CommandParameter="{Binding}"
@@ -54,13 +64,13 @@
 
                     <Panel>
                         <TextBlock Name="{x:Static v:ToDoItemView.PlainTextTextBlockName}"
-                                   IsVisible="{Binding IsDescriptionPlainText}"
-                                   Text="{Binding Description}" />
+                                   IsVisible="{Binding Item.IsDescriptionPlainText}"
+                                   Text="{Binding Item.Description}" />
 
                         <mdxaml:MarkdownScrollViewer
                             Name="{x:Static v:ToDoItemView.MarkdownTextMarkdownScrollViewerName}"
-                            IsVisible="{Binding IsDescriptionMarkdownText}"
-                            Markdown="{Binding Description}">
+                            IsVisible="{Binding Item.IsDescriptionMarkdownText}"
+                            Markdown="{Binding Item.Description}">
                             <mdxaml:MarkdownScrollViewer.Styles>
                                 <Style Selector="Border.Table">
                                     <Setter Property="BorderThickness" Value="0" />

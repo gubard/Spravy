@@ -44,38 +44,34 @@
         <ContentControl IsVisible="{Binding IsMulti}"
                         Content="{Binding Content}">
             <ContentControl.DataTemplates>
-                <DataTemplate>
-                    <DataTemplate.DataType>
-                        <x:Type TypeName="m:Selected" x:TypeArguments="models:ToDoItemNotify" />
-                    </DataTemplate.DataType>
-
-                    <ToggleButton Classes="content-alignment-stretch" Padding="0" IsChecked="{Binding IsSelect}">
+                <DataTemplate DataType="models:ToDoItemEntityNotify">
+                    <ToggleButton Classes="content-alignment-stretch" Padding="0" IsChecked="{Binding IsSelected}">
                         <c:GlassCard Margin="0" CornerRadius="0" Padding="5">
                             <StackPanel>
                                 <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto">
                                     <Rectangle Width="15"
                                                Margin="0,0,3,0"
                                                Height="2"
-                                               Fill="{Binding Value.Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
+                                               Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                                     <TextBlock Grid.Column="1"
-                                               Text="{Binding Value.Type, Converter={StaticResource ToDoItemTypeLocalizationValueConverter}}" />
+                                               Text="{Binding Type, Converter={StaticResource ToDoItemTypeLocalizationValueConverter}}" />
                                     <Rectangle Grid.Column="2"
                                                Margin="3,0,3,0"
                                                Height="2"
-                                               Fill="{Binding Value.Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
+                                               Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                                     <TextBlock Grid.Column="3"
-                                               Text="{Binding Value.Status, Converter={StaticResource ToDoItemStatusLocalizationValueConverter}}" />
+                                               Text="{Binding Status, Converter={StaticResource ToDoItemStatusLocalizationValueConverter}}" />
                                     <Rectangle Grid.Column="4"
                                                Width="15"
                                                Margin="3,0,0,0"
                                                Height="2"
-                                               Fill="{Binding Value.Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
+                                               Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                                 </Grid>
 
                                 <ScrollViewer Classes="mini"
                                               VerticalScrollBarVisibility="Disabled"
                                               HorizontalScrollBarVisibility="Auto">
-                                    <TextBlock Classes="h4" Text="{Binding Value.Name}" />
+                                    <TextBlock Classes="h4" Text="{Binding Name}" />
                                 </ScrollViewer>
                             </StackPanel>
                         </c:GlassCard>

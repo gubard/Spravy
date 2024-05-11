@@ -63,12 +63,12 @@ public class ToDoItemsGroupByStatusViewModel : ViewModelBase
         Completed.Clear();
     }
 
-    public void AddItems(IEnumerable<Selected<ToDoItemNotify>> items)
+    public void AddItems(IEnumerable<ToDoItemEntityNotify> items)
     {
-        Missed.AddItems(items.Where(x => x.Value.Status == ToDoItemStatus.Miss));
-        ReadyForCompleted.AddItems(items.Where(x => x.Value.Status == ToDoItemStatus.ReadyForComplete));
-        Planned.AddItems(items.Where(x => x.Value.Status == ToDoItemStatus.Planned));
-        Completed.AddItems(items.Where(x => x.Value.Status == ToDoItemStatus.Completed));
+        Missed.AddItems(items.Where(x => x.Status == ToDoItemStatus.Miss));
+        ReadyForCompleted.AddItems(items.Where(x => x.Status == ToDoItemStatus.ReadyForComplete));
+        Planned.AddItems(items.Where(x => x.Status == ToDoItemStatus.Planned));
+        Completed.AddItems(items.Where(x => x.Status == ToDoItemStatus.Completed));
     }
 
     public void ClearExcept(ReadOnlyMemory<Guid> ids)
@@ -79,12 +79,12 @@ public class ToDoItemsGroupByStatusViewModel : ViewModelBase
         Completed.ClearExcept(ids);
     }
 
-    public void UpdateItem(Selected<ToDoItemNotify> item, bool updateOrder)
+    public void UpdateItem(ToDoItemEntityNotify item)
     {
-        switch (item.Value.Status)
+        switch (item.Status)
         {
             case ToDoItemStatus.Miss:
-                Missed.UpdateItem(item, updateOrder);
+                Missed.UpdateItem(item);
                 ReadyForCompleted.RemoveItem(item);
                 Planned.RemoveItem(item);
                 Completed.RemoveItem(item);
@@ -92,7 +92,7 @@ public class ToDoItemsGroupByStatusViewModel : ViewModelBase
                 break;
             case ToDoItemStatus.ReadyForComplete:
                 Missed.RemoveItem(item);
-                ReadyForCompleted.UpdateItem(item, updateOrder);
+                ReadyForCompleted.UpdateItem(item);
                 Planned.RemoveItem(item);
                 Completed.RemoveItem(item);
 
@@ -100,7 +100,7 @@ public class ToDoItemsGroupByStatusViewModel : ViewModelBase
             case ToDoItemStatus.Planned:
                 Missed.RemoveItem(item);
                 ReadyForCompleted.RemoveItem(item);
-                Planned.UpdateItem(item, updateOrder);
+                Planned.UpdateItem(item);
                 Completed.RemoveItem(item);
 
                 break;
@@ -108,7 +108,7 @@ public class ToDoItemsGroupByStatusViewModel : ViewModelBase
                 Missed.RemoveItem(item);
                 ReadyForCompleted.RemoveItem(item);
                 Planned.RemoveItem(item);
-                Completed.UpdateItem(item, updateOrder);
+                Completed.UpdateItem(item);
 
                 break;
             default:

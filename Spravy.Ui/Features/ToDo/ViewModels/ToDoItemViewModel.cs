@@ -2,17 +2,7 @@ using Spravy.Ui.Features.ToDo.Interfaces;
 
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class ToDoItemViewModel : NavigatableViewModelBase,
-    IToDoItemOrderChanger,
-    ICanCompleteProperty,
-    IToDoLinkProperty,
-    IToDoDescriptionProperty,
-    IToDoSettingsProperty,
-    IToDoNameProperty,
-    IDeletable,
-    ISetToDoParentItemParams,
-    ILink,
-    ITaskProgressServiceProperty
+public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceProperty, IRefresh
 {
     private readonly PageHeaderViewModel pageHeaderViewModel;
     private readonly TaskWork refreshToDoItemWork;
@@ -21,25 +11,6 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     
     public ToDoItemViewModel() : base(true)
     {
-        this.WhenAnyValue(x => x.Name)
-           .Subscribe(x =>
-            {
-                if (PageHeaderViewModel is null)
-                {
-                    return;
-                }
-                
-                PageHeaderViewModel.Header = x;
-            });
-        
-        this.WhenAnyValue(x => x.DescriptionType)
-           .Subscribe(_ =>
-            {
-                this.RaisePropertyChanged(nameof(IsDescriptionPlainText));
-                this.RaisePropertyChanged(nameof(IsDescriptionMarkdownText));
-            });
-        
-        this.WhenAnyValue(x => x.Id).Subscribe(x => FastAddToDoItemViewModel.ParentId = x);
         refreshWork = TaskWork.Create(RefreshCoreAsync);
         refreshToDoItemWork = TaskWork.Create(RefreshToDoItemCore);
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
@@ -74,7 +45,6 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
         init
         {
             pageHeaderViewModel = value;
-            pageHeaderViewModel.Header = Name;
             pageHeaderViewModel.LeftCommand = CommandStorage.NavigateToCurrentToDoItemItem;
         }
     }
@@ -82,46 +52,10 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     [Inject]
     public required IObjectStorage ObjectStorage { get; init; }
     
-    [Reactive]
-    public object[] Path { get; set; } = [RootItem.Default,];
-    
-    [Reactive]
-    public bool IsFavorite { get; set; }
-    
-    [Reactive]
-    public ToDoItemStatus Status { get; set; }
-    
-    [Reactive]
     public Guid Id { get; set; }
     
     [Reactive]
-    public Guid? ReferenceId { get; set; }
-    
-    [Reactive]
-    public ToDoItemIsCan IsCan { get; set; }
-    
-    [Reactive]
-    public Guid? ParentId { get; set; }
-    
-    [Reactive]
-    public string Name { get; set; } = string.Empty;
-    
-    [Reactive]
-    public string Description { get; set; } = string.Empty;
-    
-    [Reactive]
-    public DescriptionType DescriptionType { get; set; }
-    
-    [Reactive]
-    public string Link { get; set; } = string.Empty;
-    
-    [Reactive]
-    public ToDoItemType Type { get; set; }
-    
-    public Guid CurrentId
-    {
-        get => ReferenceId ?? Id;
-    }
+    public ToDoItemEntityNotify? Item { get; set; }
     
     public bool IsNavigateToParent
     {
@@ -131,16 +65,6 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     public override string ViewId
     {
         get => $"{TypeCache<ToDoItemViewModel>.Type.Name}:{Id}";
-    }
-    
-    public bool IsDescriptionPlainText
-    {
-        get => DescriptionType == DescriptionType.PlainText;
-    }
-    
-    public bool IsDescriptionMarkdownText
-    {
-        get => DescriptionType == DescriptionType.Markdown;
     }
     
     [Inject]
@@ -166,6 +90,8 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     
     private ConfiguredValueTaskAwaitable<Result> RefreshCoreAsync(CancellationToken cancellationToken)
     {
+        FastAddToDoItemViewModel.ParentId = Id;
+        
         return RefreshPathAsync(cancellationToken)
            .IfSuccessAllAsync(cancellationToken, () => RefreshToDoItemAsync().ConfigureAwait(false),
                 () => RefreshToDoItemChildrenAsync(cancellationToken), () => UpdateCommandsAsync(cancellationToken));
@@ -181,69 +107,27 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     private ConfiguredValueTaskAwaitable<Result> RefreshToDoItemCore(CancellationToken cancellationToken)
     {
         return ToDoCache.GetToDoItem(Id)
-           .IfSuccessAsync(item => this.InvokeUIBackgroundAsync(() => this.InvokeUIBackgroundAsync(() =>
+           .IfSuccessAsync(item => this.InvokeUIBackgroundAsync(() =>
             {
-                Link = item.Value.Link;
-                Description = item.Value.Description;
-                Name = item.Value.Name;
-                Type = item.Value.Type;
-                IsCan = item.Value.IsCan;
-                IsFavorite = item.Value.IsFavorite;
-                Status = item.Value.Status;
-                ParentId = item.Value.ParentId;
-                DescriptionType = item.Value.DescriptionType;
-            })), cancellationToken)
+                Item = item;
+                pageHeaderViewModel.Header = Item.Name;
+            }), cancellationToken)
            .IfSuccessAsync(() => ToDoService.GetToDoItemAsync(Id, cancellationToken), cancellationToken)
-           .IfSuccessAsync(item => ToDoCache.UpdateAsync(item, cancellationToken)
-               .IfSuccessAsync(() =>
-                {
-                    if (item.Type == ToDoItemType.Reference)
-                    {
-                        return ToDoService.GetReferenceToDoItemSettingsAsync(Id, cancellationToken)
-                           .IfSuccessAsync(reference => this.InvokeUIBackgroundAsync(() =>
-                            {
-                                Link = item.Link?.AbsoluteUri ?? string.Empty;
-                                Description = item.Description;
-                                Name = item.Name;
-                                Type = item.Type;
-                                IsCan = item.IsCan;
-                                IsFavorite = item.IsFavorite;
-                                Status = item.Status;
-                                ParentId = item.ParentId;
-                                DescriptionType = item.DescriptionType;
-                                ReferenceId = reference.ReferenceId;
-                            }), cancellationToken);
-                    }
-                    
-                    return this.InvokeUIBackgroundAsync(() =>
-                    {
-                        Link = item.Link?.AbsoluteUri ?? string.Empty;
-                        Description = item.Description;
-                        Name = item.Name;
-                        Type = item.Type;
-                        IsCan = item.IsCan;
-                        IsFavorite = item.IsFavorite;
-                        Status = item.Status;
-                        ParentId = item.ParentId;
-                        DescriptionType = item.DescriptionType;
-                    });
-                }, cancellationToken), cancellationToken);
+           .IfSuccessAsync(item => ToDoCache.UpdateAsync(item, cancellationToken), cancellationToken)
+           .ToResultOnlyAsync();
     }
     
     private ConfiguredValueTaskAwaitable<Result> RefreshPathAsync(CancellationToken cancellationToken)
     {
-        return ToDoCache.GetToDoItemParents(Id)
-           .IfSuccessAsync(parents => this.InvokeUIBackgroundAsync(() => Path = parents.ToArray()), cancellationToken)
-           .IfSuccessAsync(() => ToDoService.GetParentsAsync(Id, cancellationToken), cancellationToken)
-           .IfSuccessAsync(parents => ToDoCache.UpdateParentsAsync(Id, parents, cancellationToken), cancellationToken)
-           .IfSuccessAsync(() => ToDoCache.GetToDoItemParents(Id), cancellationToken)
-           .IfSuccessAsync(parents => this.InvokeUIBackgroundAsync(() => Path = parents.ToArray()), cancellationToken);
+        return ToDoService.GetParentsAsync(Id, cancellationToken)
+           .IfSuccessAsync(parents => ToDoCache.UpdateAsync(Id, parents, cancellationToken), cancellationToken);
     }
     
     private ConfiguredValueTaskAwaitable<Result> RefreshToDoItemChildrenAsync(CancellationToken cancellationToken)
     {
         return ToDoService.GetChildrenToDoItemIdsAsync(Id, cancellationToken)
-           .IfSuccessAsync(ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken),
+           .IfSuccessForEachAsync(id => ToDoCache.GetToDoItem(id), cancellationToken)
+           .IfSuccessAsync(items => ToDoSubItemsViewModel.UpdateItemsAsync(items, this, false, cancellationToken),
                 cancellationToken);
     }
     
@@ -262,47 +146,48 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     
     private ConfiguredValueTaskAwaitable<Result> UpdateCommandsAsync(CancellationToken cancellationToken)
     {
-        return refreshToDoItemWork.Current.IfSuccessAsync(() => this.InvokeUIBackgroundAsync(() =>
-        {
-            if (ToDoSubItemsViewModel.List.IsMulti)
+        return Item.IfNotNull(nameof(Item))
+           .IfSuccessAsync(item => refreshToDoItemWork.Current.IfSuccessAsync(() => this.InvokeUIBackgroundAsync(() =>
             {
-                PageHeaderViewModel.SetMultiCommands(ToDoSubItemsViewModel);
-            }
-            else
-            {
-                PageHeaderViewModel.Commands.Clear();
-                var toFavoriteCommand = CommandStorage.AddToDoItemToFavoriteItem.WithParam(CurrentId);
-                PageHeaderViewModel.Commands.Add(CommandStorage.AddToDoItemChildItem.WithParam(this));
-                PageHeaderViewModel.Commands.Add(CommandStorage.DeleteToDoItemItem.WithParam(this));
-                
-                if (!Link.IsNullOrWhiteSpace())
+                if (ToDoSubItemsViewModel.List.IsMulti)
                 {
-                    PageHeaderViewModel.Commands.Add(CommandStorage.OpenLinkItem.WithParam(this));
+                    PageHeaderViewModel.SetMultiCommands(ToDoSubItemsViewModel);
                 }
-                
-                if (IsCan != ToDoItemIsCan.None)
+                else
                 {
-                    PageHeaderViewModel.Commands.Add(CommandStorage.SwitchCompleteToDoItemItem.WithParam(this));
+                    PageHeaderViewModel.Commands.Clear();
+                    var toFavoriteCommand = CommandStorage.AddToDoItemToFavoriteItem.WithParam(item.CurrentId);
+                    PageHeaderViewModel.Commands.Add(CommandStorage.AddToDoItemChildItem.WithParam(this));
+                    PageHeaderViewModel.Commands.Add(CommandStorage.DeleteToDoItemItem.WithParam(this));
+                    
+                    if (!item.Link.IsNullOrWhiteSpace())
+                    {
+                        PageHeaderViewModel.Commands.Add(CommandStorage.OpenLinkItem.WithParam(this));
+                    }
+                    
+                    if (item.IsCan != ToDoItemIsCan.None)
+                    {
+                        PageHeaderViewModel.Commands.Add(CommandStorage.SwitchCompleteToDoItemItem.WithParam(this));
+                    }
+                    
+                    PageHeaderViewModel.Commands.Add(CommandStorage.CloneToDoItemItem.WithParam(this));
+                    
+                    if (item.IsFavorite)
+                    {
+                        toFavoriteCommand = CommandStorage.RemoveToDoItemFromFavoriteItem.WithParam(item.CurrentId);
+                    }
+                    
+                    PageHeaderViewModel.Commands.Add(toFavoriteCommand);
+                    PageHeaderViewModel.Commands.Add(CommandStorage.NavigateToLeafItem.WithParam(item.CurrentId));
+                    PageHeaderViewModel.Commands.Add(CommandStorage.SetToDoParentItemItem.WithParam(this));
+                    PageHeaderViewModel.Commands.Add(CommandStorage.MoveToDoItemToRootItem.WithParam(this));
+                    PageHeaderViewModel.Commands.Add(CommandStorage.ToDoItemToStringItem.WithParam(this));
+                    PageHeaderViewModel.Commands.Add(CommandStorage.ResetToDoItemItem.WithParam(this));
+                    
+                    PageHeaderViewModel.Commands.Add(CommandStorage.ToDoItemRandomizeChildrenOrderIndexItem
+                       .WithParam(this));
                 }
-                
-                PageHeaderViewModel.Commands.Add(CommandStorage.CloneToDoItemItem.WithParam(this));
-                
-                if (IsFavorite)
-                {
-                    toFavoriteCommand = CommandStorage.RemoveToDoItemFromFavoriteItem.WithParam(CurrentId);
-                }
-                
-                PageHeaderViewModel.Commands.Add(toFavoriteCommand);
-                PageHeaderViewModel.Commands.Add(CommandStorage.NavigateToLeafItem.WithParam(CurrentId));
-                PageHeaderViewModel.Commands.Add(CommandStorage.SetToDoParentItemItem.WithParam(this));
-                PageHeaderViewModel.Commands.Add(CommandStorage.MoveToDoItemToRootItem.WithParam(this));
-                PageHeaderViewModel.Commands.Add(CommandStorage.ToDoItemToStringItem.WithParam(this));
-                PageHeaderViewModel.Commands.Add(CommandStorage.ResetToDoItemItem.WithParam(this));
-                
-                PageHeaderViewModel.Commands.Add(CommandStorage.ToDoItemRandomizeChildrenOrderIndexItem
-                   .WithParam(this));
-            }
-        }), cancellationToken);
+            }), cancellationToken), cancellationToken);
     }
     
     public override Result Stop()

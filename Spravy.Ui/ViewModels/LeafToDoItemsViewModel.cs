@@ -1,26 +1,28 @@
+using Spravy.Ui.Features.ToDo.Interfaces;
+
 namespace Spravy.Ui.ViewModels;
 
 public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
 {
     private readonly PageHeaderViewModel pageHeaderViewModel;
     private readonly TaskWork refreshWork;
-
+    
     public LeafToDoItemsViewModel() : base(true)
     {
         refreshWork = TaskWork.Create(RefreshCoreAsync);
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
     }
-
+    
     public ICommand InitializedCommand { get; }
-
+    
     public override string ViewId
     {
         get => $"{TypeCache<LeafToDoItemsViewModel>.Type.Name}:{Id}";
     }
-
+    
     [Inject]
     public required IObjectStorage ObjectStorage { get; init; }
-
+    
     [Inject]
     public required PageHeaderViewModel PageHeaderViewModel
     {
@@ -32,35 +34,39 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
             pageHeaderViewModel.LeftCommand = CommandStorage.NavigateToCurrentToDoItemItem;
         }
     }
-
+    
     [Inject]
     public required IToDoService ToDoService { get; init; }
-
+    
+    [Inject]
+    public required IToDoCache ToDoCache { get; init; }
+    
     [Inject]
     public required ToDoSubItemsViewModel ToDoSubItemsViewModel { get; init; }
-
+    
     [Reactive]
     public Guid Id { get; set; }
-
+    
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
     {
         return RefreshCore(cancellationToken).ConfigureAwait(false);
     }
-
+    
     private async ValueTask<Result> RefreshCore(CancellationToken cancellationToken)
     {
         await refreshWork.RunAsync();
-
+        
         return Result.Success;
     }
-
+    
     private ConfiguredValueTaskAwaitable<Result> RefreshCoreAsync(CancellationToken cancellationToken)
     {
         return ToDoService.GetLeafToDoItemIdsAsync(Id, cancellationToken)
+           .IfSuccessForEachAsync(id => ToDoCache.GetToDoItem(id), cancellationToken)
            .IfSuccessAsync(ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, true, cancellationToken),
                 cancellationToken);
     }
-
+    
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         return PageHeaderViewModel.SetMultiCommands(ToDoSubItemsViewModel)
@@ -69,19 +75,19 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
                    .IfSuccessAsync(obj => SetStateAsync(obj, cancellationToken), cancellationToken), cancellationToken)
            .IfSuccessAsync(() => RefreshAsync(cancellationToken), cancellationToken);
     }
-
+    
     public override Result Stop()
     {
         refreshWork.Cancel();
-
+        
         return Result.Success;
     }
-
+    
     public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
     {
         return ObjectStorage.SaveObjectAsync(ViewId, new LeafToDoItemsViewModelSetting(this));
     }
-
+    
     public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
         object setting,
         CancellationToken cancellationToken
@@ -94,7 +100,7 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
                 ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
             }), cancellationToken);
     }
-
+    
     [ProtoContract]
     private class LeafToDoItemsViewModelSetting : IViewModelSetting<LeafToDoItemsViewModelSetting>
     {
@@ -103,11 +109,11 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
             GroupBy = viewModel.ToDoSubItemsViewModel.List.GroupBy;
             IsMulti = viewModel.ToDoSubItemsViewModel.List.IsMulti;
         }
-
+        
         public LeafToDoItemsViewModelSetting()
         {
         }
-
+        
         static LeafToDoItemsViewModelSetting()
         {
             Default = new()
@@ -115,13 +121,13 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
                 GroupBy = GroupBy.ByStatus,
             };
         }
-
+        
         [ProtoMember(1)]
         public GroupBy GroupBy { get; set; }
-
+        
         [ProtoMember(2)]
         public bool IsMulti { get; set; }
-
+        
         public static LeafToDoItemsViewModelSetting Default { get; }
     }
 }

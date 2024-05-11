@@ -29,18 +29,21 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
            .IfSuccessAsync(
                 ids => this.RunProgressAsync((ushort)ids.Length,
                     item => List.ClearFavoriteExceptAsync(ids.ToArray())
+                       .IfSuccessAsync(() => ids.ToResult().IfSuccessForEach(x => ToDoCache.GetToDoItem(x)),
+                            cancellationToken)
                        .IfSuccessAsync(
-                            () => RefreshFavoriteToDoItemsCore(ids, item, cancellationToken).ConfigureAwait(false),
+                            items => RefreshFavoriteToDoItemsCore(items, item, cancellationToken).ConfigureAwait(false),
                             cancellationToken), cancellationToken), cancellationToken);
     }
     
     private async ValueTask<Result> RefreshFavoriteToDoItemsCore(
-        ReadOnlyMemory<Guid> ids,
+        ReadOnlyMemory<ToDoItemEntityNotify> ids,
         TaskProgressItem progressItem,
         CancellationToken cancellationToken
     )
     {
-        await foreach (var items in ToDoService.GetToDoItemsAsync(ids.ToArray(), 5, cancellationToken)
+        await foreach (var items in ToDoService
+           .GetToDoItemsAsync(ids.ToArray().Select(x => x.Id).ToArray(), 5, cancellationToken)
            .ConfigureAwait(false))
         {
             if (items.IsHasError)
@@ -50,7 +53,12 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
             
             foreach (var item in items.Value.ToArray())
             {
-                Guid? referenceId = null;
+                var i = await ToDoCache.UpdateAsync(item, cancellationToken);
+                
+                if (i.IsHasError)
+                {
+                    return new(i.Errors);
+                }
                 
                 if (item.Type == ToDoItemType.Reference)
                 {
@@ -61,10 +69,14 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
                         return new(reference.Errors);
                     }
                     
-                    referenceId = reference.Value.ReferenceId;
+                    i.Value.ReferenceId = reference.Value.ReferenceId;
+                }
+                else
+                {
+                    i.Value.ReferenceId = null;
                 }
                 
-                var result = await List.UpdateFavoriteItemAsync(item, referenceId);
+                var result = await List.UpdateFavoriteItemAsync(i.Value);
                 
                 if (result.IsHasError)
                 {
@@ -79,21 +91,24 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
     }
     
     private ConfiguredValueTaskAwaitable<Result> RefreshToDoItemListsAsync(
-        ReadOnlyMemory<Guid> ids,
+        ReadOnlyMemory<ToDoItemEntityNotify> items,
         bool autoOrder,
         TaskProgressItem progressItem,
         CancellationToken cancellationToken
     )
     {
-        return List.ClearExceptAsync(ids)
+        return List.ClearExceptAsync(items.ToArray().Select(x => x.Id).ToArray())
+           .IfSuccessAsync(
+                () => items.ToResult().IfSuccessForEachAsync(item => List.UpdateItemAsync(item), cancellationToken),
+                cancellationToken)
            .IfSuccessAsync(() => RefreshFavoriteToDoItemsAsync(cancellationToken), cancellationToken)
            .IfSuccessAsync(
-                () => RefreshToDoItemListsCore(ids, autoOrder, progressItem, cancellationToken).ConfigureAwait(false),
+                () => RefreshToDoItemListsCore(items, autoOrder, progressItem, cancellationToken).ConfigureAwait(false),
                 cancellationToken);
     }
     
     private async ValueTask<Result> RefreshToDoItemListsCore(
-        ReadOnlyMemory<Guid> ids,
+        ReadOnlyMemory<ToDoItemEntityNotify> ids,
         bool autoOrder,
         TaskProgressItem progressItem,
         CancellationToken cancellationToken
@@ -101,7 +116,9 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
     {
         uint orderIndex = 1;
         
-        await foreach (var items in ToDoService.GetToDoItemsAsync(ids, 5, cancellationToken).ConfigureAwait(false))
+        await foreach (var items in ToDoService
+           .GetToDoItemsAsync(ids.ToArray().Select(x => x.Id).ToArray(), 5, cancellationToken)
+           .ConfigureAwait(false))
         {
             if (items.IsHasError)
             {
@@ -110,7 +127,12 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
             
             foreach (var item in items.Value.ToArray())
             {
-                Guid? referenceId = null;
+                var i = await ToDoCache.UpdateAsync(item, cancellationToken);
+                
+                if (i.IsHasError)
+                {
+                    return new(i.Errors);
+                }
                 
                 if (item.Type == ToDoItemType.Reference)
                 {
@@ -121,12 +143,17 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
                         return new(reference.Errors);
                     }
                     
-                    referenceId = reference.Value.ReferenceId;
+                    i.Value.ReferenceId = reference.Value.ReferenceId;
+                }
+                else
+                {
+                    i.Value.ReferenceId = null;
                 }
                 
                 if (autoOrder)
                 {
-                    var result = await List.UpdateItemAsync(item.WithOrderIndex(orderIndex), referenceId);
+                    i.Value.OrderIndex = orderIndex;
+                    var result = await List.UpdateItemAsync(i.Value);
                     
                     if (result.IsHasError)
                     {
@@ -135,7 +162,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
                 }
                 else
                 {
-                    var result = await List.UpdateItemAsync(item, referenceId);
+                    var result = await List.UpdateItemAsync(i.Value);
                     
                     if (result.IsHasError)
                     {
@@ -152,7 +179,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
     }
     
     public ConfiguredValueTaskAwaitable<Result> UpdateItemsAsync(
-        ReadOnlyMemory<Guid> ids,
+        ReadOnlyMemory<ToDoItemEntityNotify> ids,
         IRefresh refresh,
         bool autoOrder,
         CancellationToken cancellationToken
@@ -161,11 +188,6 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
         refreshToDoItem = refresh;
         
         return this.RunProgressAsync((ushort)ids.Length,
-            item => ids.ToResult()
-               .IfSuccessForEachAsync(
-                    id => ToDoCache.GetToDoItem(id)
-                       .IfSuccessAsync(toDoItem => List.UpdateItemAsync(toDoItem, null), cancellationToken),
-                    cancellationToken)
-               .IfSuccessAsync(() => RefreshToDoItemListsAsync(ids, autoOrder, item, cancellationToken), cancellationToken), cancellationToken);
+            item => RefreshToDoItemListsAsync(ids, autoOrder, item, cancellationToken), cancellationToken);
     }
 }

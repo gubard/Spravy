@@ -1,3 +1,5 @@
+using Spravy.Ui.Features.ToDo.Interfaces;
+
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderChanger, ITaskProgressServiceProperty
@@ -76,6 +78,9 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
     [Inject]
     public required IToDoService ToDoService { get; init; }
     
+    [Inject]
+    public required IToDoCache ToDoCache { get; init; }
+    
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
     {
         return RefreshCore(cancellationToken).ConfigureAwait(false);
@@ -99,6 +104,7 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
     private ConfiguredValueTaskAwaitable<Result> RefreshCoreAsync(CancellationToken cancellationToken)
     {
         return ToDoService.GetRootToDoItemIdsAsync(cancellationToken)
+           .IfSuccessForEachAsync(id=>ToDoCache.GetToDoItem(id),cancellationToken)
            .IfSuccessAsync(ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken),
                 cancellationToken);
     }

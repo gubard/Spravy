@@ -21,7 +21,7 @@ public class ToDoItemsGroupByNoneViewModel : ViewModelBase
         Items.Clear();
     }
 
-    public void AddItems(IEnumerable<Selected<ToDoItemNotify>> items)
+    public void AddItems(IEnumerable<ToDoItemEntityNotify> items)
     {
         Items.AddItems(items);
     }
@@ -31,8 +31,8 @@ public class ToDoItemsGroupByNoneViewModel : ViewModelBase
         Items.ClearExcept(ids);
     }
 
-    public void UpdateItem(Selected<ToDoItemNotify> item, bool updateOrder)
+    public void UpdateItem(ToDoItemEntityNotify item)
     {
-        Items.UpdateItem(item, updateOrder);
+        Items.UpdateItem(item);
     }
 }

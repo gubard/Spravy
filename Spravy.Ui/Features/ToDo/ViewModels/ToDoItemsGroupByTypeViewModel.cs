@@ -119,16 +119,16 @@ public class ToDoItemsGroupByTypeViewModel : ViewModelBase
         References.Clear();
     }
     
-    public void AddItems(IEnumerable<Selected<ToDoItemNotify>> items)
+    public void AddItems(IEnumerable<ToDoItemEntityNotify> items)
     {
-        Values.AddItems(items.Where(x => x.Value.Type == ToDoItemType.Value));
-        Groups.AddItems(items.Where(x => x.Value.Type == ToDoItemType.Group));
-        Planneds.AddItems(items.Where(x => x.Value.Type == ToDoItemType.Planned));
-        Periodicitys.AddItems(items.Where(x => x.Value.Type == ToDoItemType.Periodicity));
-        PeriodicityOffsets.AddItems(items.Where(x => x.Value.Type == ToDoItemType.PeriodicityOffset));
-        Circles.AddItems(items.Where(x => x.Value.Type == ToDoItemType.Circle));
-        Steps.AddItems(items.Where(x => x.Value.Type == ToDoItemType.Step));
-        References.AddItems(items.Where(x => x.Value.Type == ToDoItemType.Reference));
+        Values.AddItems(items.Where(x => x.Type == ToDoItemType.Value));
+        Groups.AddItems(items.Where(x => x.Type == ToDoItemType.Group));
+        Planneds.AddItems(items.Where(x => x.Type == ToDoItemType.Planned));
+        Periodicitys.AddItems(items.Where(x => x.Type == ToDoItemType.Periodicity));
+        PeriodicityOffsets.AddItems(items.Where(x => x.Type == ToDoItemType.PeriodicityOffset));
+        Circles.AddItems(items.Where(x => x.Type == ToDoItemType.Circle));
+        Steps.AddItems(items.Where(x => x.Type == ToDoItemType.Step));
+        References.AddItems(items.Where(x => x.Type == ToDoItemType.Reference));
     }
     
     public void ClearExcept(ReadOnlyMemory<Guid> ids)
@@ -143,12 +143,12 @@ public class ToDoItemsGroupByTypeViewModel : ViewModelBase
         References.ClearExcept(ids);
     }
     
-    public void UpdateItem(Selected<ToDoItemNotify> item, bool updateOrder)
+    public void UpdateItem(ToDoItemEntityNotify item)
     {
-        switch (item.Value.Type)
+        switch (item.Type)
         {
             case ToDoItemType.Value:
-                Values.UpdateItem(item, updateOrder);
+                Values.UpdateItem(item);
                 Groups.RemoveItem(item);
                 Planneds.RemoveItem(item);
                 Periodicitys.RemoveItem(item);
@@ -160,7 +160,7 @@ public class ToDoItemsGroupByTypeViewModel : ViewModelBase
                 break;
             case ToDoItemType.Group:
                 Values.RemoveItem(item);
-                Groups.UpdateItem(item, updateOrder);
+                Groups.UpdateItem(item);
                 Planneds.RemoveItem(item);
                 Periodicitys.RemoveItem(item);
                 PeriodicityOffsets.RemoveItem(item);
@@ -172,7 +172,7 @@ public class ToDoItemsGroupByTypeViewModel : ViewModelBase
             case ToDoItemType.Planned:
                 Values.RemoveItem(item);
                 Groups.RemoveItem(item);
-                Planneds.UpdateItem(item, updateOrder);
+                Planneds.UpdateItem(item);
                 Periodicitys.RemoveItem(item);
                 PeriodicityOffsets.RemoveItem(item);
                 Circles.RemoveItem(item);
@@ -184,7 +184,7 @@ public class ToDoItemsGroupByTypeViewModel : ViewModelBase
                 Values.RemoveItem(item);
                 Groups.RemoveItem(item);
                 Planneds.RemoveItem(item);
-                Periodicitys.UpdateItem(item, updateOrder);
+                Periodicitys.UpdateItem(item);
                 PeriodicityOffsets.RemoveItem(item);
                 Circles.RemoveItem(item);
                 Steps.RemoveItem(item);
@@ -196,7 +196,7 @@ public class ToDoItemsGroupByTypeViewModel : ViewModelBase
                 Groups.RemoveItem(item);
                 Planneds.RemoveItem(item);
                 Periodicitys.RemoveItem(item);
-                PeriodicityOffsets.UpdateItem(item, updateOrder);
+                PeriodicityOffsets.UpdateItem(item);
                 Circles.RemoveItem(item);
                 Steps.RemoveItem(item);
                 References.RemoveItem(item);
@@ -208,7 +208,7 @@ public class ToDoItemsGroupByTypeViewModel : ViewModelBase
                 Planneds.RemoveItem(item);
                 Periodicitys.RemoveItem(item);
                 PeriodicityOffsets.RemoveItem(item);
-                Circles.UpdateItem(item, updateOrder);
+                Circles.UpdateItem(item);
                 Steps.RemoveItem(item);
                 References.RemoveItem(item);
                 
@@ -220,7 +220,7 @@ public class ToDoItemsGroupByTypeViewModel : ViewModelBase
                 Periodicitys.RemoveItem(item);
                 PeriodicityOffsets.RemoveItem(item);
                 Circles.RemoveItem(item);
-                Steps.UpdateItem(item, updateOrder);
+                Steps.UpdateItem(item);
                 References.RemoveItem(item);
                 
                 break;
@@ -232,7 +232,7 @@ public class ToDoItemsGroupByTypeViewModel : ViewModelBase
                 PeriodicityOffsets.RemoveItem(item);
                 Circles.RemoveItem(item);
                 Steps.RemoveItem(item);
-                References.UpdateItem(item, updateOrder);
+                References.UpdateItem(item);
                 
                 break;
             default: throw new ArgumentOutOfRangeException();

@@ -1,3 +1,5 @@
+using Spravy.Ui.Features.ToDo.Interfaces;
+
 namespace Spravy.Ui.Services;
 
 public static class CommandStorage
@@ -6,21 +8,21 @@ public static class CommandStorage
     private static readonly IDialogViewer dialogViewer;
     private static readonly MainSplitViewModel mainSplitViewModel;
     private static readonly IToDoService toDoService;
+    private static readonly IToDoCache toDoCache;
     private static readonly IOpenerLink openerLink;
     private static readonly IMapper mapper;
     private static readonly IAuthenticationService authenticationService;
     private static readonly IObjectStorage objectStorage;
     private static readonly IClipboardService clipboard;
     private static readonly IPasswordService passwordService;
-    private static readonly ISpravyNotificationManager spravyNotificationManager;
     private static readonly IErrorHandler errorHandler;
     
     static CommandStorage()
     {
         var kernel = DiHelper.Kernel.ThrowIfNull();
+        toDoCache = kernel.Get<IToDoCache>();
         clipboard = kernel.Get<IClipboardService>();
         passwordService = kernel.Get<IPasswordService>();
-        spravyNotificationManager = kernel.Get<ISpravyNotificationManager>();
         objectStorage = kernel.Get<IObjectStorage>();
         mapper = kernel.Get<IMapper>();
         authenticationService = kernel.Get<IAuthenticationService>();
@@ -36,12 +38,12 @@ public static class CommandStorage
         SwitchCompleteToDoItemItem = CreateCommand<ICanCompleteProperty>(
             SwitchCompleteToDoItemAsync, MaterialIconKind.Check, "Complete");
         
-        SelectAll = CreateCommand<AvaloniaList<Selected<ToDoItemNotify>>>(SelectAllAsync, MaterialIconKind.CheckAll,
+        SelectAll = CreateCommand<AvaloniaList<ToDoItemEntityNotify>>(SelectAllAsync, MaterialIconKind.CheckAll,
             "Select all");
         
         DeleteToDoItemItem = CreateCommand<IDeletable>(DeleteToDoItemAsync, MaterialIconKind.Delete, "Delete");
         
-        ChangeOrderIndexItem = CreateCommand<ToDoItemNotify>(
+        ChangeOrderIndexItem = CreateCommand<ToDoItemEntityNotify>(
             ChangeOrderIndexAsync, MaterialIconKind.ReorderHorizontal, "Reorder");
         
         OpenLinkItem = CreateCommand<ILink>(OpenLinkAsync, MaterialIconKind.Link, "Open link");
@@ -92,16 +94,16 @@ public static class CommandStorage
         NavigateToCurrentToDoItemItem = CreateCommand(NavigateToCurrentToDoItemAsync, MaterialIconKind.ArrowRight,
             "Open current to-do item");
         
-        MultiCompleteToDoItemsItem = CreateCommand<AvaloniaList<Selected<ToDoItemNotify>>>(
+        MultiCompleteToDoItemsItem = CreateCommand<AvaloniaList<ToDoItemEntityNotify>>(
             MultiSwitchCompleteToDoItemsAsync, MaterialIconKind.CheckAll, "Complete all to-do items");
         
-        MultiSetParentToDoItemsItem = CreateCommand<AvaloniaList<Selected<ToDoItemNotify>>>(
-            MultiSetParentToDoItemsAsync, MaterialIconKind.SwapHorizontal, "Set parent for all to-do items");
+        MultiSetParentToDoItemsItem = CreateCommand<AvaloniaList<ToDoItemEntityNotify>>(MultiSetParentToDoItemsAsync,
+            MaterialIconKind.SwapHorizontal, "Set parent for all to-do items");
         
-        MultiMoveToDoItemsToRootItem = CreateCommand<AvaloniaList<Selected<ToDoItemNotify>>>(
-            MultiMoveToDoItemsToRootAsync, MaterialIconKind.FamilyTree, "Move items to root");
+        MultiMoveToDoItemsToRootItem = CreateCommand<AvaloniaList<ToDoItemEntityNotify>>(MultiMoveToDoItemsToRootAsync,
+            MaterialIconKind.FamilyTree, "Move items to root");
         
-        MultiSetTypeToDoItemsItem = CreateCommand<AvaloniaList<Selected<ToDoItemNotify>>>(MultiSetTypeToDoItemsAsync,
+        MultiSetTypeToDoItemsItem = CreateCommand<AvaloniaList<ToDoItemEntityNotify>>(MultiSetTypeToDoItemsAsync,
             MaterialIconKind.Switch, "Set type all to-do items");
         
         SendNewVerificationCodeItem = CreateCommand<IVerificationEmail>(SendNewVerificationCodeAsync,
@@ -110,7 +112,7 @@ public static class CommandStorage
         ResetToDoItemItem = CreateCommand<ICurrentIdProperty>(
             ResetToDoItemAsync, MaterialIconKind.EncryptionReset, "Reset to-do item");
         
-        MultiDeleteToDoItemsItem = CreateCommand<AvaloniaList<Selected<ToDoItemNotify>>>(MultiDeleteToDoItemsAsync,
+        MultiDeleteToDoItemsItem = CreateCommand<AvaloniaList<ToDoItemEntityNotify>>(MultiDeleteToDoItemsAsync,
             MaterialIconKind.Delete, "Delete to-do items");
         
         CloneToDoItemItem = CreateCommand<IIdProperty>(
@@ -307,13 +309,13 @@ public static class CommandStorage
     }
     
     private static ConfiguredValueTaskAwaitable<Result> MultiDeleteToDoItemsAsync(
-        AvaloniaList<Selected<ToDoItemNotify>> items,
+        AvaloniaList<ToDoItemEntityNotify> items,
         CancellationToken cancellationToken
     )
     {
         return Result.AwaitableFalse
-           .IfSuccessAllAsync(cancellationToken, items.Where(x => x.IsSelect)
-               .Select(x => x.Value.Id)
+           .IfSuccessAllAsync(cancellationToken, items.Where(x => x.IsSelected)
+               .Select(x => x.Id)
                .Select<Guid, Func<ConfiguredValueTaskAwaitable<Result>>>(x =>
                 {
                     var y = x;
@@ -357,15 +359,15 @@ public static class CommandStorage
     }
     
     private static ConfiguredValueTaskAwaitable<Result> MultiMoveToDoItemsToRootAsync(
-        AvaloniaList<Selected<ToDoItemNotify>> itemsNotify,
+        AvaloniaList<ToDoItemEntityNotify> itemsNotify,
         CancellationToken cancellationToken
     )
     {
         return Result.AwaitableFalse
-           .IfSuccessAllAsync(cancellationToken, itemsNotify.Where(x => x.IsSelect)
-               .Select<Selected<ToDoItemNotify>, Func<ConfiguredValueTaskAwaitable<Result>>>(x =>
+           .IfSuccessAllAsync(cancellationToken, itemsNotify.Where(x => x.IsSelected)
+               .Select<ToDoItemEntityNotify, Func<ConfiguredValueTaskAwaitable<Result>>>(x =>
                 {
-                    var id = x.Value.Id;
+                    var id = x.Id;
                     
                     return () => toDoService.ToDoItemToRootAsync(id, cancellationToken);
                 })
@@ -374,11 +376,11 @@ public static class CommandStorage
     }
     
     private static ConfiguredValueTaskAwaitable<Result> MultiSetTypeToDoItemsAsync(
-        AvaloniaList<Selected<ToDoItemNotify>> itemsNotify,
+        AvaloniaList<ToDoItemEntityNotify> itemsNotify,
         CancellationToken cancellationToken
     )
     {
-        var ids = itemsNotify.Where(x => x.IsSelect).Select(x => x.Value.Id).ToArray();
+        var ids = itemsNotify.Where(x => x.IsSelected).Select(x => x.Id).ToArray();
         
         return dialogViewer.ShowItemSelectorDialogAsync<ToDoItemType>(type => dialogViewer
            .CloseInputDialogAsync(cancellationToken)
@@ -397,11 +399,11 @@ public static class CommandStorage
     }
     
     private static ConfiguredValueTaskAwaitable<Result> MultiSetParentToDoItemsAsync(
-        AvaloniaList<Selected<ToDoItemNotify>> itemsNotify,
+        AvaloniaList<ToDoItemEntityNotify> itemsNotify,
         CancellationToken cancellationToken
     )
     {
-        var ids = itemsNotify.Where(x => x.IsSelect).Select(x => x.Value.Id).ToArray();
+        var ids = itemsNotify.Where(x => x.IsSelected).Select(x => x.Id).ToArray();
         
         return dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(item => dialogViewer
                .CloseInputDialogAsync(cancellationToken)
@@ -417,18 +419,18 @@ public static class CommandStorage
     }
     
     private static ConfiguredValueTaskAwaitable<Result> MultiSwitchCompleteToDoItemsAsync(
-        AvaloniaList<Selected<ToDoItemNotify>> itemsNotify,
+        AvaloniaList<ToDoItemEntityNotify> itemsNotify,
         CancellationToken cancellationToken
     )
     {
-        var items = itemsNotify.Where(x => x.IsSelect).Select(x => x.Value).ToArray();
+        var items = itemsNotify.Where(x => x.IsSelected).ToArray();
         
         return CompleteAsync(items, cancellationToken)
            .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken);
     }
     
     private static ConfiguredValueTaskAwaitable<Result> CompleteAsync(
-        IEnumerable<ToDoItemNotify> items,
+        IEnumerable<ToDoItemEntityNotify> items,
         CancellationToken cancellationToken
     )
     {
@@ -606,6 +608,7 @@ public static class CommandStorage
     )
     {
         return toDoService.SearchToDoItemIdsAsync(properties.SearchText, cancellationToken)
+           .IfSuccessForEachAsync(id => toDoCache.GetToDoItem(id), cancellationToken)
            .IfSuccessAsync(
                 ids => properties.ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), properties, false,
                     cancellationToken), cancellationToken);
@@ -726,7 +729,7 @@ public static class CommandStorage
     }
     
     private static ConfiguredValueTaskAwaitable<Result> ChangeOrderIndexAsync(
-        ToDoItemNotify item,
+        ToDoItemEntityNotify item,
         CancellationToken cancellationToken
     )
     {
@@ -786,24 +789,24 @@ public static class CommandStorage
     }
     
     private static ConfiguredValueTaskAwaitable<Result> SelectAllAsync(
-        AvaloniaList<Selected<ToDoItemNotify>> items,
+        AvaloniaList<ToDoItemEntityNotify> items,
         CancellationToken cancellationToken
     )
     {
         return cancellationToken.InvokeUIBackgroundAsync(() =>
         {
-            if (items.All(x => x.IsSelect))
+            if (items.All(x => x.IsSelected))
             {
                 foreach (var item in items)
                 {
-                    item.IsSelect = false;
+                    item.IsSelected = false;
                 }
             }
             else
             {
                 foreach (var item in items)
                 {
-                    item.IsSelect = true;
+                    item.IsSelected = true;
                 }
             }
         });

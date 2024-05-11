@@ -2,14 +2,42 @@ namespace Spravy.Ui.Features.ToDo.Models;
 
 public class ToDoItemEntityNotify : NotifyBase
 {
-    public ToDoItemEntityNotify(Guid id)
+    public ToDoItemEntityNotify(
+        Guid id,
+        IToDoService toDoService,
+        IUiApplicationService uiApplicationService,
+        IErrorHandler errorHandler
+    )
     {
         Path = [RootItem.Default,];
         Id = id;
         Description = "Loading...";
         Name = "Loading...";
-        Link = "Loading...";
+        Link = string.Empty;
+        Status = ToDoItemStatus.ReadyForComplete;
         this.WhenAnyValue(x => x.ReferenceId).Subscribe(_ => this.RaisePropertyChanged(nameof(CurrentId)));
+        Commands = new();
+        
+        Complete = SpravyCommand.Create(cancellationToken =>
+        {
+            return Result.AwaitableFalse
+               .IfSuccessAsync(() =>
+                {
+                    switch (IsCan)
+                    {
+                        case ToDoItemIsCan.None:
+                            return Result.AwaitableFalse;
+                        case ToDoItemIsCan.CanComplete:
+                            return toDoService.UpdateToDoItemCompleteStatusAsync(CurrentId, true, cancellationToken);
+                        case ToDoItemIsCan.CanIncomplete:
+                            return toDoService.UpdateToDoItemCompleteStatusAsync(CurrentId, false, cancellationToken);
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                }, cancellationToken)
+               .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
+                    cancellationToken);
+        }, errorHandler);
         
         this.WhenAnyValue(x => x.DescriptionType)
            .Subscribe(_ =>
@@ -20,6 +48,8 @@ public class ToDoItemEntityNotify : NotifyBase
     }
     
     public Guid Id { get; }
+    
+    public SpravyCommand Complete { get; }
     
     [Reactive]
     public object[] Path { get; set; }
@@ -62,6 +92,8 @@ public class ToDoItemEntityNotify : NotifyBase
     
     [Reactive]
     public ToDoItemType Type { get; set; }
+    
+    public AvaloniaList<SpravyCommandNotify> Commands { get; }
     
     public bool IsDescriptionPlainText
     {

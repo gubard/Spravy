@@ -1,3 +1,5 @@
+using Spravy.Ui.Features.ToDo.Interfaces;
+
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class DeleteToDoItemViewModel : ViewModelBase
@@ -23,6 +25,9 @@ public class DeleteToDoItemViewModel : ViewModelBase
 
     [Inject]
     public required IToDoService ToDoService { get; init; }
+    
+    [Inject]
+    public required IToDoCache ToDoCache { get; init; }
 
     [Inject]
     public required IMapper Mapper { get; set; }
@@ -46,11 +51,7 @@ public class DeleteToDoItemViewModel : ViewModelBase
                .IfSuccessAsync(childrenText => ToDoService.GetParentsAsync(ToDoItemId, cancellationToken)
                    .IfSuccessAsync(parents => this.InvokeUIBackgroundAsync(() =>
                     {
-                        Path = new RootItem().To<object>()
-                           .ToEnumerable()
-                           .Concat(Mapper.Map<ToDoItemParentNotify[]>(parents.ToArray()))
-                           .ToArray();
-
+                        Path = ToDoCache.GetToDoItem(ToDoItemId).Value.Path;
                         ToDoItemName = item.Name;
                         ChildrenText = childrenText;
                     }), cancellationToken), cancellationToken), cancellationToken);

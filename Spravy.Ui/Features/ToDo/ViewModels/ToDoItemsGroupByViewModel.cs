@@ -66,17 +66,17 @@ public class ToDoItemsGroupByViewModel : ViewModelBase
         GroupByType.Clear();
     }
 
-    public void AddItems(IEnumerable<Selected<ToDoItemNotify>> items)
+    public void AddItems(IEnumerable<ToDoItemEntityNotify> items)
     {
         GroupByNone.AddItems(items);
         GroupByStatus.AddItems(items);
         GroupByType.AddItems(items);
     }
 
-    public void UpdateItem(Selected<ToDoItemNotify> item, bool updateOrder)
+    public void UpdateItem(ToDoItemEntityNotify item)
     {
-        GroupByNone.UpdateItem(item, updateOrder);
-        GroupByStatus.UpdateItem(item, updateOrder);
-        GroupByType.UpdateItem(item, updateOrder);
+        GroupByNone.UpdateItem(item);
+        GroupByStatus.UpdateItem(item);
+        GroupByType.UpdateItem(item);
     }
 }

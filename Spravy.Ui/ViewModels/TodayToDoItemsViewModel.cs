@@ -1,3 +1,5 @@
+using Spravy.Ui.Features.ToDo.Interfaces;
+
 namespace Spravy.Ui.ViewModels;
 
 public class TodayToDoItemsViewModel : NavigatableViewModelBase, IRefresh
@@ -14,6 +16,9 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IRefresh
 
     [Inject]
     public required ToDoSubItemsViewModel ToDoSubItemsViewModel { get; init; }
+    
+    [Inject]
+    public required IToDoCache ToDoCache { get; init; }
 
     [Inject]
     public required PageHeaderViewModel PageHeaderViewModel
@@ -38,6 +43,7 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IRefresh
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
     {
         return ToDoService.GetTodayToDoItemsAsync(cancellationToken)
+           .IfSuccessForEachAsync(id => ToDoCache.GetToDoItem(id), cancellationToken)
            .IfSuccessAsync(ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken),
                 cancellationToken);
     }

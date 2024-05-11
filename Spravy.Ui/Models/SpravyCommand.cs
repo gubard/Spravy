@@ -8,6 +8,7 @@ public class SpravyCommand
     private static readonly Dictionary<Type, SpravyCommand> createNavigateToCache;
     private static readonly Dictionary<Guid, SpravyCommand> deletePasswordItemCache;
     private static readonly Dictionary<Guid, SpravyCommand> generatePasswordCache;
+    private static readonly Dictionary<Guid, SpravyCommand> completeCache;
     private static SpravyCommand? _sendNewVerificationCode;
     private static SpravyCommand? _back;
     private static SpravyCommand? _navigateToCurrentToDoItem;
@@ -17,6 +18,7 @@ public class SpravyCommand
         createNavigateToCache = new();
         deletePasswordItemCache = new();
         generatePasswordCache = new();
+        completeCache = new();
     }
     
     private SpravyCommand(TaskWork work, ICommand command)
