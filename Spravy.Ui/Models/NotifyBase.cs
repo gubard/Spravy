@@ -1,16 +1,5 @@
 namespace Spravy.Ui.Models;
 
-public class NotifyBase : ReactiveObject, IDisposable
+public class NotifyBase : ReactiveObject
 {
-    protected List<IDisposable> Disposables = new();
-
-    public void Dispose()
-    {
-        foreach (var disposable in Disposables)
-        {
-            disposable.Dispose();
-        }
-
-        Disposables.Clear();
-    }
 }

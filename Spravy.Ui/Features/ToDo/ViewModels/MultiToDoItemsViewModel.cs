@@ -27,10 +27,8 @@ public class MultiToDoItemsViewModel : ViewModelBase
         [MemberNotNull(nameof(favorite))]
         init
         {
-            favorite?.Dispose();
             favorite = value;
             favorite.Header = new("MultiToDoItemsView.Favorite");
-            Disposables.Add(favorite);
         }
     }
 
@@ -41,10 +39,8 @@ public class MultiToDoItemsViewModel : ViewModelBase
         [MemberNotNull(nameof(toDoItems))]
         init
         {
-            favorite?.Dispose();
             toDoItems = value;
             Content = toDoItems;
-            Disposables.Add(favorite);
         }
     }
 
@@ -106,14 +102,14 @@ public class MultiToDoItemsViewModel : ViewModelBase
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
-        Disposables.Add(this.WhenAnyValue(x => x.IsMulti).Subscribe(x => Content = x ? MultiToDoItems : ToDoItems));
-
-        Disposables.Add(this.WhenAnyValue(x => x.GroupBy)
+        this.WhenAnyValue(x => x.IsMulti).Subscribe(x => Content = x ? MultiToDoItems : ToDoItems);
+        
+        this.WhenAnyValue(x => x.GroupBy)
            .Subscribe(x =>
             {
                 ToDoItems.GroupBy = x;
                 MultiToDoItems.GroupBy = x;
-            }));
+            });
 
         return Result.AwaitableFalse;
     }
@@ -213,17 +209,6 @@ public class MultiToDoItemsViewModel : ViewModelBase
     }
 
     private ConfiguredValueTaskAwaitable<Result> SwitchCompleteToDoItemAsync(
-        ICanCompleteProperty property,
-        CancellationToken cancellationToken
-    )
-    {
-        return this.InvokeUIBackgroundAsync(() => property.IsBusy = true)
-           .IfSuccessTryFinallyAsync(() => SwitchCompleteToDoItemCore(property, cancellationToken),
-                () => this.InvokeUIBackgroundAsync(() => property.IsBusy = false).ToValueTask().ConfigureAwait(false),
-                cancellationToken);
-    }
-
-    private ConfiguredValueTaskAwaitable<Result> SwitchCompleteToDoItemCore(
         ICanCompleteProperty property,
         CancellationToken cancellationToken
     )

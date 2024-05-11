@@ -71,7 +71,6 @@ public class SettingViewModel : NavigatableViewModelBase
         {
             pageHeaderViewModel = value;
             pageHeaderViewModel.Header = "Settings";
-            Disposables.Add(pageHeaderViewModel);
         }
     }
     
@@ -104,8 +103,8 @@ public class SettingViewModel : NavigatableViewModelBase
                .Create<Selected<SukiColorTheme>>(SwitchToColorTheme)
                .RunAsync);
         
-        Disposables.Add(this.WhenAnyValue(x => x.IsLightTheme)
-           .Subscribe(x => theme.ChangeBaseTheme(x ? ThemeVariant.Light : ThemeVariant.Dark)));
+        this.WhenAnyValue(x => x.IsLightTheme)
+           .Subscribe(x => theme.ChangeBaseTheme(x ? ThemeVariant.Light : ThemeVariant.Dark));
         
         return Result.AwaitableFalse;
     }

@@ -17,7 +17,7 @@ public class ExceptionViewModel : ViewModelBase
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
-        Disposables.Add(this.WhenAnyValue(x => x.Exception).Subscribe(x => Message = x?.Message ?? string.Empty));
+        this.WhenAnyValue(x => x.Exception).Subscribe(x => Message = x?.Message ?? string.Empty);
 
         return Result.AwaitableFalse;
     }

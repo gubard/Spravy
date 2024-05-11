@@ -25,7 +25,6 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IRefresh
             pageHeaderViewModel = value;
             pageHeaderViewModel.Header = "Today to-do";
             pageHeaderViewModel.LeftCommand = CommandStorage.NavigateToCurrentToDoItemItem;
-            Disposables.Add(pageHeaderViewModel);
         }
     }
 

@@ -37,8 +37,7 @@ public class DeleteToDoItemViewModel : ViewModelBase
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
-        Disposables.Add(this.WhenAnyValue(x => x.ToDoItemName)
-           .Subscribe(_ => this.RaisePropertyChanged(nameof(DeleteText))));
+        this.WhenAnyValue(x => x.ToDoItemName).Subscribe(_ => this.RaisePropertyChanged(nameof(DeleteText)));
 
         var toDoItemToStringOptions = new ToDoItemToStringOptions(Enum.GetValues<ToDoItemStatus>(), ToDoItemId);
 

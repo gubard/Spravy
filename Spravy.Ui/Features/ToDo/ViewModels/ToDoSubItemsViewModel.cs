@@ -4,21 +4,10 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITaskProgressServiceProperty
 {
-    private readonly MultiToDoItemsViewModel list;
     private IRefresh? refreshToDoItem;
     
     [Inject]
-    public required MultiToDoItemsViewModel List
-    {
-        get => list;
-        [MemberNotNull(nameof(list))]
-        init
-        {
-            list?.Dispose();
-            list = value;
-            Disposables.Add(list);
-        }
-    }
+    public required MultiToDoItemsViewModel List { get; init; }
     
     [Inject]
     public required IToDoService ToDoService { get; init; }

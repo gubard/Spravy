@@ -45,7 +45,6 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
             pageHeaderViewModel = value;
             pageHeaderViewModel.Header = "Spravy";
             pageHeaderViewModel.LeftCommand = CommandStorage.NavigateToCurrentToDoItemItem;
-            Disposables.Add(pageHeaderViewModel);
         }
     }
     

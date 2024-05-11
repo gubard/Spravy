@@ -35,7 +35,6 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
             pageHeaderViewModel = value;
             pageHeaderViewModel.Header = new Header3Localization("PasswordGeneratorView.Header");
             pageHeaderViewModel.LeftCommand = CommandStorage.NavigateToCurrentToDoItemItem;
-            Disposables.Add(pageHeaderViewModel);
         }
     }
     

@@ -30,7 +30,6 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
         {
             pageHeaderViewModel = value;
             pageHeaderViewModel.LeftCommand = CommandStorage.NavigateToCurrentToDoItemItem;
-            Disposables.Add(pageHeaderViewModel);
         }
     }
 

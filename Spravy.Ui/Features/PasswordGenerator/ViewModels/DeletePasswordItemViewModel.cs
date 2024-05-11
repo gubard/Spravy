@@ -28,8 +28,7 @@ public class DeletePasswordItemViewModel : ViewModelBase
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
-        Disposables.Add(this.WhenAnyValue(x => x.PasswordItemName)
-           .Subscribe(_ => this.RaisePropertyChanged(nameof(DeleteText))));
+        this.WhenAnyValue(x => x.PasswordItemName).Subscribe(_ => this.RaisePropertyChanged(nameof(DeleteText)));
 
         return PasswordService.GetPasswordItemAsync(PasswordItemId, cancellationToken)
            .IfSuccessAsync(value => this.InvokeUIBackgroundAsync(() => PasswordItemName = value.Name),

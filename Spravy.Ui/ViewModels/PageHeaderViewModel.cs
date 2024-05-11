@@ -35,8 +35,6 @@ public class PageHeaderViewModel : ViewModelBase
 
             Commands.Add(
                 CommandStorage.MultiDeleteToDoItemsItem.WithParam(items.List.MultiToDoItems.GroupByNone.Items.Items));
-
-            Disposables.AddRange(Commands.Select(x => (IDisposable)x.Command));
         });
     }
 }

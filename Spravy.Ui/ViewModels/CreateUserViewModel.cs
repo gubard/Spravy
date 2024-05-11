@@ -174,38 +174,38 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
     {
         var createUserWork = TaskWork.Create(CreateUserAsync);
         EnterCommand = CreateCommandFromTask<CreateUserView>(TaskWork.Create<CreateUserView>(EnterAsync).RunAsync);
-
-        Disposables.Add(this.WhenAnyValue(x => x.Email)
+        
+        this.WhenAnyValue(x => x.Email)
            .Skip(1)
            .Subscribe(_ =>
             {
                 emailChanged = true;
                 this.RaisePropertyChanged(nameof(HasErrors));
-            }));
-
-        Disposables.Add(this.WhenAnyValue(x => x.Login)
+            });
+        
+        this.WhenAnyValue(x => x.Login)
            .Skip(1)
            .Subscribe(_ =>
             {
                 loginChanged = true;
                 this.RaisePropertyChanged(nameof(HasErrors));
-            }));
-
-        Disposables.Add(this.WhenAnyValue(x => x.Password)
+            });
+        
+        this.WhenAnyValue(x => x.Password)
            .Skip(1)
            .Subscribe(_ =>
             {
                 passwordChanged = true;
                 this.RaisePropertyChanged(nameof(HasErrors));
-            }));
-
-        Disposables.Add(this.WhenAnyValue(x => x.RepeatPassword)
+            });
+        
+        this.WhenAnyValue(x => x.RepeatPassword)
            .Skip(1)
            .Subscribe(_ =>
             {
                 repeatPasswordChanged = true;
                 this.RaisePropertyChanged(nameof(HasErrors));
-            }));
+            });
 
         CreateUserCommand = CreateCommandFromTask(
             createUserWork.RunAsync, this.WhenAnyValue(x => x.HasErrors).Select(x => !x));

@@ -54,15 +54,12 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
         [MemberNotNull(nameof(toDoSubItemsViewModel))]
         init
         {
-            toDoSubItemsViewModel?.Dispose();
             toDoSubItemsViewModel = value;
             
-            Disposables.Add(toDoSubItemsViewModel.List
+            toDoSubItemsViewModel.List
                .WhenAnyValue(x => x.IsMulti)
                .Skip(1)
-               .Subscribe(_ => UpdateCommandsAsync(CancellationToken.None)));
-            
-            Disposables.Add(toDoSubItemsViewModel);
+               .Subscribe(_ => UpdateCommandsAsync(CancellationToken.None));
         }
     }
     
@@ -79,7 +76,6 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
             pageHeaderViewModel = value;
             pageHeaderViewModel.Header = Name;
             pageHeaderViewModel.LeftCommand = CommandStorage.NavigateToCurrentToDoItemItem;
-            Disposables.Add(pageHeaderViewModel);
         }
     }
     
@@ -103,9 +99,6 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     
     [Reactive]
     public ToDoItemIsCan IsCan { get; set; }
-    
-    [Reactive]
-    public bool IsBusy { get; set; }
     
     [Reactive]
     public Guid? ParentId { get; set; }

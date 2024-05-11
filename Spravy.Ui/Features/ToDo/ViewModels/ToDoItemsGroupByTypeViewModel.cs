@@ -18,10 +18,8 @@ public class ToDoItemsGroupByTypeViewModel : ViewModelBase
         [MemberNotNull(nameof(values))]
         init
         {
-            values?.Dispose();
             values = value;
             values.Header = new("ToDoItemsGroupByTypeView.Values");
-            Disposables.Add(values);
         }
     }
     
@@ -32,10 +30,8 @@ public class ToDoItemsGroupByTypeViewModel : ViewModelBase
         [MemberNotNull(nameof(groups))]
         init
         {
-            groups?.Dispose();
             groups = value;
             groups.Header = new("ToDoItemsGroupByTypeView.Groups");
-            Disposables.Add(groups);
         }
     }
     
@@ -46,10 +42,8 @@ public class ToDoItemsGroupByTypeViewModel : ViewModelBase
         [MemberNotNull(nameof(planneds))]
         init
         {
-            planneds?.Dispose();
             planneds = value;
             planneds.Header = new("ToDoItemsGroupByTypeView.Planneds");
-            Disposables.Add(planneds);
         }
     }
     
@@ -60,10 +54,8 @@ public class ToDoItemsGroupByTypeViewModel : ViewModelBase
         [MemberNotNull(nameof(periodicitys))]
         init
         {
-            periodicitys?.Dispose();
             periodicitys = value;
             periodicitys.Header = new("ToDoItemsGroupByTypeView.Periodicitys");
-            Disposables.Add(periodicitys);
         }
     }
     
@@ -74,10 +66,8 @@ public class ToDoItemsGroupByTypeViewModel : ViewModelBase
         [MemberNotNull(nameof(periodicityOffsets))]
         init
         {
-            periodicityOffsets?.Dispose();
             periodicityOffsets = value;
             periodicityOffsets.Header = new("ToDoItemsGroupByTypeView.PeriodicityOffsets");
-            Disposables.Add(periodicityOffsets);
         }
     }
     
@@ -88,10 +78,8 @@ public class ToDoItemsGroupByTypeViewModel : ViewModelBase
         [MemberNotNull(nameof(circles))]
         init
         {
-            circles?.Dispose();
             circles = value;
             circles.Header = new("ToDoItemsGroupByTypeView.Circles");
-            Disposables.Add(circles);
         }
     }
     
@@ -102,10 +90,8 @@ public class ToDoItemsGroupByTypeViewModel : ViewModelBase
         [MemberNotNull(nameof(steps))]
         init
         {
-            steps?.Dispose();
             steps = value;
             steps.Header = new("ToDoItemsGroupByTypeView.Steps");
-            Disposables.Add(steps);
         }
     }
     
@@ -116,10 +102,8 @@ public class ToDoItemsGroupByTypeViewModel : ViewModelBase
         [MemberNotNull(nameof(references))]
         init
         {
-            references?.Dispose();
             references = value;
             references.Header = new("ToDoItemsGroupByTypeView.Reference");
-            Disposables.Add(references);
         }
     }
     

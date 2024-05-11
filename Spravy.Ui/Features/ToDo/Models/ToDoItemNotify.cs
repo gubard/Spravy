@@ -28,9 +28,6 @@ public class ToDoItemNotify : NotifyBase,
     public ActiveToDoItemNotify? Active { get; set; }
     
     [Reactive]
-    public bool IsBusy { get; set; }
-    
-    [Reactive]
     public ToDoItemIsCan IsCan { get; set; }
     
     [Reactive]

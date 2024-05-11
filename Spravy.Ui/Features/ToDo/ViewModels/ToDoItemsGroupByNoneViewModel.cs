@@ -11,10 +11,8 @@ public class ToDoItemsGroupByNoneViewModel : ViewModelBase
         [MemberNotNull(nameof(items))]
         init
         {
-            items?.Dispose();
             items = value;
             items.Header = new("ToDoItemsGroupByNoneView.Header");
-            Disposables.Add(items);
         }
     }
 

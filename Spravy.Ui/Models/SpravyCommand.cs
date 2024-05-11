@@ -10,6 +10,7 @@ public class SpravyCommand
     private static readonly Dictionary<Guid, SpravyCommand> generatePasswordCache;
     private static SpravyCommand? _sendNewVerificationCode;
     private static SpravyCommand? _back;
+    private static SpravyCommand? _navigateToCurrentToDoItem;
     
     static SpravyCommand()
     {
@@ -26,6 +27,37 @@ public class SpravyCommand
     
     public TaskWork Work { get; }
     public ICommand Command { get; }
+    
+    public static SpravyCommand CreateNavigateToCurrentToDoItem(
+        IToDoService toDoService,
+        INavigator navigator,
+        IErrorHandler errorHandler
+    )
+    {
+        if (_navigateToCurrentToDoItem is not null)
+        {
+            return _navigateToCurrentToDoItem;
+        }
+        
+        ConfiguredValueTaskAwaitable<Result> NavigateToCurrentToDoItemAsync(CancellationToken cancellationToken)
+        {
+            return toDoService.GetCurrentActiveToDoItemAsync(cancellationToken)
+               .IfSuccessAsync(activeToDoItem =>
+                {
+                    if (activeToDoItem.HasValue)
+                    {
+                        return navigator.NavigateToAsync<ToDoItemViewModel>(
+                            viewModel => viewModel.Id = activeToDoItem.Value.Id, cancellationToken);
+                    }
+                    
+                    return navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken);
+                }, cancellationToken);
+        }
+        
+        _navigateToCurrentToDoItem = Create(NavigateToCurrentToDoItemAsync, errorHandler);
+        
+        return _navigateToCurrentToDoItem;
+    }
     
     public static SpravyCommand CreateGeneratePassword(
         IPasswordItem passwordItem,
@@ -46,8 +78,8 @@ public class SpravyCommand
                .IfSuccessAsync(clipboard.SetTextAsync, cancellationToken)
                .IfSuccessAsync(
                     () => spravyNotificationManager.ShowAsync(
-                        new TextLocalization("PasswordGeneratorView.Notification.CopyPassword", passwordItem), cancellationToken),
-                    cancellationToken);
+                        new TextLocalization("PasswordGeneratorView.Notification.CopyPassword", passwordItem),
+                        cancellationToken), cancellationToken);
         }
         
         var result = Create(GeneratePasswordAsync, errorHandler);

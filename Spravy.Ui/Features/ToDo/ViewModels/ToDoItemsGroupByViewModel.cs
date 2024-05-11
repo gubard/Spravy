@@ -3,8 +3,7 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 public class ToDoItemsGroupByViewModel : ViewModelBase
 {
     private readonly ToDoItemsGroupByStatusViewModel groupByStatus;
-    private readonly ToDoItemsGroupByTypeViewModel groupByType;
-
+    
     public ToDoItemsGroupByViewModel()
     {
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
@@ -22,26 +21,14 @@ public class ToDoItemsGroupByViewModel : ViewModelBase
         [MemberNotNull(nameof(groupByStatus))]
         init
         {
-            groupByStatus?.Dispose();
             groupByStatus = value;
             Content = groupByStatus;
-            Disposables.Add(groupByStatus);
         }
     }
 
     [Inject]
-    public required ToDoItemsGroupByTypeViewModel GroupByType
-    {
-        get => groupByType;
-        [MemberNotNull(nameof(groupByType))]
-        init
-        {
-            groupByType?.Dispose();
-            groupByType = value;
-            Disposables.Add(groupByType);
-        }
-    }
-
+    public required ToDoItemsGroupByTypeViewModel GroupByType { get; init; }
+    
     [Reactive]
     public GroupBy GroupBy { get; set; } = GroupBy.ByStatus;
 
@@ -50,7 +37,7 @@ public class ToDoItemsGroupByViewModel : ViewModelBase
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
-        Disposables.Add(this.WhenAnyValue(x => x.GroupBy)
+        this.WhenAnyValue(x => x.GroupBy)
            .Subscribe(x =>
             {
                 Content = x switch
@@ -60,7 +47,7 @@ public class ToDoItemsGroupByViewModel : ViewModelBase
                     GroupBy.ByType => GroupByType,
                     _ => throw new ArgumentOutOfRangeException(nameof(x), x, null),
                 };
-            }));
+            });
 
         return Result.AwaitableFalse;
     }

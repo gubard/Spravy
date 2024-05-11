@@ -13,7 +13,9 @@ public class TaskProgressService : ITaskProgressService
         items.Add(result);
         
         return this.InvokeUIBackgroundAsync(() => MainProgressBar.Maximum += impact)
-           .IfSuccessAsync(() => result.AddDisposable(result.WhenAnyValue(x => x.Progress)
+           .IfSuccessAsync(() =>
+            {
+                result.WhenAnyValue(x => x.Progress)
                    .Subscribe(_ =>
                     {
                         var span = CollectionsMarshal.AsSpan(items);
@@ -28,8 +30,10 @@ public class TaskProgressService : ITaskProgressService
                         {
                             MainProgressBar.Value = GetAllProgress(span);
                         }
-                    }))
-               .IfSuccess(() => result.ToResult()), CancellationToken.None);
+                    });
+                
+                return result.ToResult();
+            }, CancellationToken.None);
     }
     
     private bool IsAllFinished(Span<TaskProgressItem> span)
