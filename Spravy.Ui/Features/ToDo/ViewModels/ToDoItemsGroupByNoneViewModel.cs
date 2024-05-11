@@ -28,7 +28,7 @@ public class ToDoItemsGroupByNoneViewModel : ViewModelBase
         Items.AddItems(items);
     }
 
-    public void ClearExcept(IEnumerable<Guid> ids)
+    public void ClearExcept(ReadOnlyMemory<Guid> ids)
     {
         Items.ClearExcept(ids);
     }

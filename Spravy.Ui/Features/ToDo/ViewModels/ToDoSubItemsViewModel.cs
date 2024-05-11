@@ -1,3 +1,5 @@
+using Spravy.Ui.Features.ToDo.Interfaces;
+
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITaskProgressServiceProperty
@@ -20,6 +22,9 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
     
     [Inject]
     public required IToDoService ToDoService { get; init; }
+    
+    [Inject]
+    public required IToDoCache ToDoCache { get; init; }
     
     [Inject]
     public required ITaskProgressService TaskProgressService { get; init; }
@@ -64,7 +69,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
                     
                     if (reference.IsHasError)
                     {
-                        return new (reference.Errors);
+                        return new(reference.Errors);
                     }
                     
                     referenceId = reference.Value.ReferenceId;
@@ -85,7 +90,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
     }
     
     private ConfiguredValueTaskAwaitable<Result> RefreshToDoItemListsAsync(
-        Guid[] ids,
+        ReadOnlyMemory<Guid> ids,
         bool autoOrder,
         TaskProgressItem progressItem,
         CancellationToken cancellationToken
@@ -99,7 +104,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
     }
     
     private async ValueTask<Result> RefreshToDoItemListsCore(
-        Guid[] ids,
+        ReadOnlyMemory<Guid> ids,
         bool autoOrder,
         TaskProgressItem progressItem,
         CancellationToken cancellationToken
@@ -124,7 +129,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
                     
                     if (reference.IsHasError)
                     {
-                        return new (reference.Errors);
+                        return new(reference.Errors);
                     }
                     
                     referenceId = reference.Value.ReferenceId;
@@ -158,7 +163,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
     }
     
     public ConfiguredValueTaskAwaitable<Result> UpdateItemsAsync(
-        Guid[] ids,
+        ReadOnlyMemory<Guid> ids,
         IRefresh refresh,
         bool autoOrder,
         CancellationToken cancellationToken
@@ -167,6 +172,11 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
         refreshToDoItem = refresh;
         
         return this.RunProgressAsync((ushort)ids.Length,
-            item => RefreshToDoItemListsAsync(ids, autoOrder, item, cancellationToken), cancellationToken);
+            item => ids.ToResult()
+               .IfSuccessForEachAsync(
+                    id => ToDoCache.GetToDoItem(id)
+                       .IfSuccessAsync(toDoItem => List.UpdateItemAsync(toDoItem, null), cancellationToken),
+                    cancellationToken)
+               .IfSuccessAsync(() => RefreshToDoItemListsAsync(ids, autoOrder, item, cancellationToken), cancellationToken), cancellationToken);
     }
 }

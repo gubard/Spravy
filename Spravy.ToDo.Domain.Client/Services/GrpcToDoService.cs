@@ -876,7 +876,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
     }
     
     public ConfiguredCancelableAsyncEnumerable<Result<ReadOnlyMemory<ToDoItem>>> GetToDoItemsAsync(
-        Guid[] ids,
+        ReadOnlyMemory<Guid> ids,
         uint chunkSize,
         CancellationToken cancellationToken
     )
@@ -887,12 +887,12 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
     
     private async IAsyncEnumerable<Result<ReadOnlyMemory<ToDoItem>>> GetToDoItemsCore(
         ToDoServiceClient client,
-        Guid[] ids,
+        ReadOnlyMemory<Guid> ids,
         uint chunkSize,
         [EnumeratorCancellation] CancellationToken cancellationToken
     )
     {
-        if (!ids.Any())
+        if (ids.IsEmpty)
         {
             yield return ReadOnlyMemory<ToDoItem>.Empty.ToResult();
             
@@ -904,7 +904,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
             ChunkSize = chunkSize,
         };
         
-        var idsByteString = converter.Convert<ByteString[]>(ids);
+        var idsByteString = converter.Convert<ByteString[]>(ids.ToArray());
         
         if (idsByteString.IsHasError)
         {

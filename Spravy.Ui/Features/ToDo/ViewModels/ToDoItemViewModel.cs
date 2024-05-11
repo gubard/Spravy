@@ -18,10 +18,28 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     private readonly TaskWork refreshToDoItemWork;
     private readonly TaskWork refreshWork;
     private readonly ToDoSubItemsViewModel toDoSubItemsViewModel;
-    private bool isBusy;
     
     public ToDoItemViewModel() : base(true)
     {
+        this.WhenAnyValue(x => x.Name)
+           .Subscribe(x =>
+            {
+                if (PageHeaderViewModel is null)
+                {
+                    return;
+                }
+                
+                PageHeaderViewModel.Header = x;
+            });
+        
+        this.WhenAnyValue(x => x.DescriptionType)
+           .Subscribe(_ =>
+            {
+                this.RaisePropertyChanged(nameof(IsDescriptionPlainText));
+                this.RaisePropertyChanged(nameof(IsDescriptionMarkdownText));
+            });
+        
+        this.WhenAnyValue(x => x.Id).Subscribe(x => FastAddToDoItemViewModel.ParentId = x);
         refreshWork = TaskWork.Create(RefreshCoreAsync);
         refreshToDoItemWork = TaskWork.Create(RefreshToDoItemCore);
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
@@ -66,28 +84,10 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     }
     
     [Inject]
-    public required IMapper Mapper { get; set; }
-    
-    [Inject]
     public required IObjectStorage ObjectStorage { get; init; }
     
     [Reactive]
-    public object[] Path { get; set; } = [RootItem.Default];
-    
-    public override string ViewId
-    {
-        get => $"{TypeCache<ToDoItemViewModel>.Type.Name}:{Id}";
-    }
-    
-    public bool IsDescriptionPlainText
-    {
-        get => DescriptionType == DescriptionType.PlainText;
-    }
-    
-    public bool IsDescriptionMarkdownText
-    {
-        get => DescriptionType == DescriptionType.Markdown;
-    }
+    public object[] Path { get; set; } = [RootItem.Default,];
     
     [Reactive]
     public bool IsFavorite { get; set; }
@@ -135,6 +135,21 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
         get => true;
     }
     
+    public override string ViewId
+    {
+        get => $"{TypeCache<ToDoItemViewModel>.Type.Name}:{Id}";
+    }
+    
+    public bool IsDescriptionPlainText
+    {
+        get => DescriptionType == DescriptionType.PlainText;
+    }
+    
+    public bool IsDescriptionMarkdownText
+    {
+        get => DescriptionType == DescriptionType.Markdown;
+    }
+    
     [Inject]
     public required IToDoCache ToDoCache { get; set; }
     
@@ -172,40 +187,54 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     
     private ConfiguredValueTaskAwaitable<Result> RefreshToDoItemCore(CancellationToken cancellationToken)
     {
-        return ToDoService.GetToDoItemAsync(Id, cancellationToken)
-           .IfSuccessAsync(item =>
+        return ToDoCache.GetToDoItem(Id)
+           .IfSuccessAsync(item => this.InvokeUIBackgroundAsync(() => this.InvokeUIBackgroundAsync(() =>
             {
-                if (item.Type == ToDoItemType.Reference)
+                Link = item.Value.Link;
+                Description = item.Value.Description;
+                Name = item.Value.Name;
+                Type = item.Value.Type;
+                IsCan = item.Value.IsCan;
+                IsFavorite = item.Value.IsFavorite;
+                Status = item.Value.Status;
+                ParentId = item.Value.ParentId;
+                DescriptionType = item.Value.DescriptionType;
+            })), cancellationToken)
+           .IfSuccessAsync(() => ToDoService.GetToDoItemAsync(Id, cancellationToken), cancellationToken)
+           .IfSuccessAsync(item => ToDoCache.UpdateAsync(item, cancellationToken)
+               .IfSuccessAsync(() =>
                 {
-                    return ToDoService.GetReferenceToDoItemSettingsAsync(Id, cancellationToken)
-                       .IfSuccessAsync(reference => this.InvokeUIBackgroundAsync(() =>
-                        {
-                            Link = item.Link?.AbsoluteUri ?? string.Empty;
-                            Description = item.Description;
-                            Name = item.Name;
-                            Type = item.Type;
-                            IsCan = item.IsCan;
-                            IsFavorite = item.IsFavorite;
-                            Status = item.Status;
-                            ParentId = item.ParentId;
-                            DescriptionType = item.DescriptionType;
-                            ReferenceId = reference.ReferenceId;
-                        }), cancellationToken);
-                }
-                
-                return this.InvokeUIBackgroundAsync(() =>
-                {
-                    Link = item.Link?.AbsoluteUri ?? string.Empty;
-                    Description = item.Description;
-                    Name = item.Name;
-                    Type = item.Type;
-                    IsCan = item.IsCan;
-                    IsFavorite = item.IsFavorite;
-                    Status = item.Status;
-                    ParentId = item.ParentId;
-                    DescriptionType = item.DescriptionType;
-                });
-            }, cancellationToken);
+                    if (item.Type == ToDoItemType.Reference)
+                    {
+                        return ToDoService.GetReferenceToDoItemSettingsAsync(Id, cancellationToken)
+                           .IfSuccessAsync(reference => this.InvokeUIBackgroundAsync(() =>
+                            {
+                                Link = item.Link?.AbsoluteUri ?? string.Empty;
+                                Description = item.Description;
+                                Name = item.Name;
+                                Type = item.Type;
+                                IsCan = item.IsCan;
+                                IsFavorite = item.IsFavorite;
+                                Status = item.Status;
+                                ParentId = item.ParentId;
+                                DescriptionType = item.DescriptionType;
+                                ReferenceId = reference.ReferenceId;
+                            }), cancellationToken);
+                    }
+                    
+                    return this.InvokeUIBackgroundAsync(() =>
+                    {
+                        Link = item.Link?.AbsoluteUri ?? string.Empty;
+                        Description = item.Description;
+                        Name = item.Name;
+                        Type = item.Type;
+                        IsCan = item.IsCan;
+                        IsFavorite = item.IsFavorite;
+                        Status = item.Status;
+                        ParentId = item.ParentId;
+                        DescriptionType = item.DescriptionType;
+                    });
+                }, cancellationToken), cancellationToken);
     }
     
     private ConfiguredValueTaskAwaitable<Result> RefreshPathAsync(CancellationToken cancellationToken)
@@ -220,26 +249,6 @@ public class ToDoItemViewModel : NavigatableViewModelBase,
     
     private ConfiguredValueTaskAwaitable<Result> RefreshToDoItemChildrenAsync(CancellationToken cancellationToken)
     {
-        Disposables.Add(this.WhenAnyValue(x => x.Name)
-           .Subscribe(x =>
-            {
-                if (PageHeaderViewModel is null)
-                {
-                    return;
-                }
-                
-                PageHeaderViewModel.Header = x;
-            }));
-        
-        Disposables.Add(this.WhenAnyValue(x => x.DescriptionType)
-           .Subscribe(_ =>
-            {
-                this.RaisePropertyChanged(nameof(IsDescriptionPlainText));
-                this.RaisePropertyChanged(nameof(IsDescriptionMarkdownText));
-            }));
-        
-        Disposables.Add(this.WhenAnyValue(x => x.Id).Subscribe(x => FastAddToDoItemViewModel.ParentId = x));
-        
         return ToDoService.GetChildrenToDoItemIdsAsync(Id, cancellationToken)
            .IfSuccessAsync(ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken),
                 cancellationToken);

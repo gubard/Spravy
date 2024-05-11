@@ -118,12 +118,12 @@ public class MultiToDoItemsViewModel : ViewModelBase
         return Result.AwaitableFalse;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> ClearFavoriteExceptAsync(IEnumerable<Guid> ids)
+    public ConfiguredValueTaskAwaitable<Result> ClearFavoriteExceptAsync(ReadOnlyMemory<Guid> ids)
     {
         return this.InvokeUIBackgroundAsync(() => Favorite.ClearExcept(ids));
     }
 
-    public ConfiguredValueTaskAwaitable<Result> ClearExceptAsync(IEnumerable<Guid> ids)
+    public ConfiguredValueTaskAwaitable<Result> ClearExceptAsync(ReadOnlyMemory<Guid> ids)
     {
         return this.InvokeUIBackgroundAsync(() =>
         {
@@ -158,6 +158,17 @@ public class MultiToDoItemsViewModel : ViewModelBase
             SetupItem(notify.Value, item);
             ToDoItems.UpdateItem(notify, updateOrder);
             MultiToDoItems.UpdateItem(notify, updateOrder);
+        });
+    }
+    
+    public ConfiguredValueTaskAwaitable<Result> UpdateItemAsync(Selected<ToDoItemNotify> item, Guid? referenceId)
+    {
+        return this.InvokeUIBackgroundAsync(() =>
+        {
+            item.Value.ReferenceId = referenceId;
+            SetupItemCommands(item.Value);
+            ToDoItems.UpdateItem(item, true);
+            MultiToDoItems.UpdateItem(item, true);
         });
     }
 

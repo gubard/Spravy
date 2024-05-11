@@ -252,7 +252,7 @@ public interface IToDoService
     );
     
     ConfiguredCancelableAsyncEnumerable<Result<ReadOnlyMemory<ToDoItem>>> GetToDoItemsAsync(
-        Guid[] ids,
+        ReadOnlyMemory<Guid> ids,
         uint chunkSize,
         CancellationToken cancellationToken
     );

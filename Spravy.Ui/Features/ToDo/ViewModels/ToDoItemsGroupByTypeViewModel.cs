@@ -147,7 +147,7 @@ public class ToDoItemsGroupByTypeViewModel : ViewModelBase
         References.AddItems(items.Where(x => x.Value.Type == ToDoItemType.Reference));
     }
     
-    public void ClearExcept(IEnumerable<Guid> ids)
+    public void ClearExcept(ReadOnlyMemory<Guid> ids)
     {
         Values.ClearExcept(ids);
         Groups.ClearExcept(ids);

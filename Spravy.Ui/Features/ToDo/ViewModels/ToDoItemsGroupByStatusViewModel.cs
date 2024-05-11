@@ -71,7 +71,7 @@ public class ToDoItemsGroupByStatusViewModel : ViewModelBase
         Completed.AddItems(items.Where(x => x.Value.Status == ToDoItemStatus.Completed));
     }
 
-    public void ClearExcept(IEnumerable<Guid> ids)
+    public void ClearExcept(ReadOnlyMemory<Guid> ids)
     {
         Missed.ClearExcept(ids);
         ReadyForCompleted.ClearExcept(ids);

@@ -21,9 +21,9 @@ public class ToDoItemsViewModel : ViewModelBase
         Items.AddRange(items);
     }
 
-    public void ClearExcept(IEnumerable<Guid> ids)
+    public void ClearExcept(ReadOnlyMemory<Guid> ids)
     {
-        Items.RemoveAll(Items.Where(x => !ids.Contains(x.Value.Id)));
+        Items.RemoveAll(Items.Where(x => !ids.Span.Contains(x.Value.Id)));
     }
 
     public void UpdateItem(Selected<ToDoItemNotify> item, bool updateOrder)

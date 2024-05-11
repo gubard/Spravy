@@ -1028,7 +1028,7 @@ public class EfToDoService : IToDoService
     }
     
     public ConfiguredCancelableAsyncEnumerable<Result<ReadOnlyMemory<ToDoItem>>> GetToDoItemsAsync(
-        Guid[] ids,
+        ReadOnlyMemory<Guid> ids,
         uint chunkSize,
         CancellationToken cancellationToken
     )
@@ -1037,7 +1037,7 @@ public class EfToDoService : IToDoService
     }
     
     private async IAsyncEnumerable<Result<ReadOnlyMemory<ToDoItem>>> GetToDoItemsCore(
-        Guid[] ids,
+        ReadOnlyMemory<Guid> ids,
         uint chunkSize,
         [EnumeratorCancellation] CancellationToken cancellationToken
     )
@@ -1063,7 +1063,7 @@ public class EfToDoService : IToDoService
                 }
             }
             
-            var item = await GetToDoItemAsync(ids[i], cancellationToken);
+            var item = await GetToDoItemAsync(ids.Span[i], cancellationToken);
             
             if (item.IsHasError)
             {

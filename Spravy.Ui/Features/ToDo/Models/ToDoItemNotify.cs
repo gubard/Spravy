@@ -45,6 +45,9 @@ public class ToDoItemNotify : NotifyBase,
     [Reactive]
     public Guid? ReferenceId { get; set; }
     
+    [Reactive]
+    public DescriptionType DescriptionType { get; set; }
+    
     public bool IsNavigateToParent
     {
         get => false;

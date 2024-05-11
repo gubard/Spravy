@@ -65,7 +65,7 @@ public class ToDoItemsGroupByViewModel : ViewModelBase
         return Result.AwaitableFalse;
     }
 
-    public void ClearExcept(IEnumerable<Guid> ids)
+    public void ClearExcept(ReadOnlyMemory<Guid> ids)
     {
         GroupByNone.ClearExcept(ids);
         GroupByStatus.ClearExcept(ids);
