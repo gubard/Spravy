@@ -133,9 +133,6 @@ public static class RootToDoItemsViewExtension
            .ThrowIfIsNotCast<ContentPresenter>()
            .Child
            .ThrowIfNull()
-           .ThrowIfIsNotCast<BusyArea>()
-           .Content
-           .ThrowIfNull()
            .ThrowIfIsNotCast<Button>()
            .Content
            .ThrowIfNull()
