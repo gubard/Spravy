@@ -88,11 +88,8 @@ public static class RootToDoItemsViewExtension
     public static RootToDoItemsView AddToDoItem(this RootToDoItemsView view, Window window, string name)
     {
         var toDoItemCount = view.GetDoItemItemsControl()?.ItemCount ?? 0;
-
-        view
-           .Case(() => view.GetControl<Button>(ElementNames.AddRootToDoItemButton)
-               .ClickOn(window)
-               .RunJobsAll(2))
+        
+        view.Case(() => view.GetControl<Button>(ElementNames.AddRootToDoItemButton).ClickOn(window).RunJobsAll(2))
            .Case(() => window.GetContentDialogView<ConfirmView, ConfirmViewModel>()
                .Case(c => c.GetControl<ContentControl>(ElementNames.ContentContentControl)
                    .GetContentView<AddRootToDoItemView>()
@@ -101,7 +98,7 @@ public static class RootToDoItemsViewExtension
                    .GetControl<TextBox>(ElementNames.NameTextBox)
                    .ClearText(window)
                    .SetText(window, name))
-               .Case(c => c.GetControl<Button>(ElementNames.OkButton).ClickOn(window).RunJobsAll(6)))
+               .Case(c => c.GetControl<Button>(ElementNames.OkButton).ClickOn(window).RunJobsAll(5)))
            .GetDoItemItemsControl()
            .ThrowIfNull()
            .Case(ic => ic.ItemCount.Should().Be(toDoItemCount + 1))
@@ -132,9 +129,9 @@ public static class RootToDoItemsViewExtension
            .Children
            .ElementAt(1)
            .ThrowIfIsNotCast<TextBlock>()
-           .Text
-           .Should()
-           .Be(name);
+           .Case(tb => tb.Text.Should().Be("Loading..."))
+           .RunJobsAll(2)
+           .Case(tb => tb.Text.Should().Be(name));
 
         return view;
     }
