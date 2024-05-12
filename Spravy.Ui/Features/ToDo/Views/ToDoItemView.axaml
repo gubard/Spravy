@@ -19,7 +19,7 @@
                         x:DataType="vm:ToDoItemViewModel">
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
-            <InvokeCommandAction Command="{Binding InitializedCommand}" />
+            <InvokeCommandAction Command="{Binding Commands.InitializedCommand.Command}" CommandParameter="{Binding}" />
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 
@@ -84,7 +84,9 @@
                             <PathIcon Data="{x:Static co:Icons.Menu}" />
                         </Button>
 
-                        <ContentControl Content="{x:Static  s:CommandStorage.NavigateToCurrentToDoItemItem}" />
+                        <Button Classes="Basic" Command="{Binding Commands.NavigateToCurrentToDo.Command}">
+                            <mi:MaterialIcon Kind="ArrowRight" />
+                        </Button>
                     </StackPanel>
 
                     <ScrollViewer Grid.Column="1"

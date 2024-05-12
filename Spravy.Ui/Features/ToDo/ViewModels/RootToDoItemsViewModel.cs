@@ -7,7 +7,6 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
     private readonly PageHeaderViewModel pageHeaderViewModel;
     private readonly TaskWork refreshWork;
     private readonly ToDoSubItemsViewModel toDoSubItemsViewModel;
-    private readonly FastAddToDoItemViewModel fastAddToDoItemViewModel;
     
     public RootToDoItemsViewModel() : base(true)
     {
@@ -23,16 +22,7 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
     }
     
     [Inject]
-    public required FastAddToDoItemViewModel FastAddToDoItemViewModel
-    {
-        get => fastAddToDoItemViewModel;
-        [MemberNotNull(nameof(fastAddToDoItemViewModel))]
-        init
-        {
-            fastAddToDoItemViewModel = value;
-            fastAddToDoItemViewModel.Refresh = this;
-        }
-    }
+    public required FastAddToDoItemViewModel FastAddToDoItemViewModel { get; init; }
     
     [Inject]
     public required ITaskProgressService TaskProgressService { get; init; }

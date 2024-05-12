@@ -1,4 +1,6 @@
+using Spravy.Ui.Features.ToDo.Commands;
 using Spravy.Ui.Features.ToDo.Interfaces;
+using Spravy.Ui.Features.ToDo.Settings;
 
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
@@ -9,10 +11,10 @@ public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceP
     public ToDoItemViewModel() : base(true)
     {
         refreshWork = TaskWork.Create(RefreshCoreAsync);
-        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
     }
     
-    public ICommand InitializedCommand { get; }
+    [Inject]
+    public required ToDoItemCommands Commands { get; init; }
     
     [Inject]
     public required ToDoSubItemsViewModel ToDoSubItemsViewModel { get; init; }
@@ -83,24 +85,11 @@ public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceP
     private ConfiguredValueTaskAwaitable<Result> RefreshToDoItemChildrenAsync(CancellationToken cancellationToken)
     {
         return ToDoCache.GetChildrenItems(Id)
-           .IfSuccessAsync(items => ToDoSubItemsViewModel.ClearExceptAsync(items),
-                cancellationToken)
+           .IfSuccessAsync(items => ToDoSubItemsViewModel.ClearExceptAsync(items), cancellationToken)
            .IfSuccessAsync(() => ToDoService.GetChildrenToDoItemIdsAsync(Id, cancellationToken), cancellationToken)
            .IfSuccessAsync(ids => ToDoCache.UpdateChildrenItems(Id, ids), cancellationToken)
            .IfSuccessAsync(items => ToDoSubItemsViewModel.UpdateItemsAsync(items, this, false, cancellationToken),
                 cancellationToken);
-    }
-    
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
-    {
-        return this.RunProgressAsync(() =>
-        {
-            FastAddToDoItemViewModel.Refresh = this;
-            
-            return ObjectStorage.GetObjectOrDefaultAsync<ToDoItemViewModelSetting>(ViewId, cancellationToken)
-               .IfSuccessAsync(obj => SetStateAsync(obj, cancellationToken), cancellationToken)
-               .IfSuccessAsync(() => RefreshAsync(cancellationToken), cancellationToken);
-        }, cancellationToken);
     }
     
     public override Result Stop()
@@ -126,35 +115,5 @@ public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceP
                 ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
                 ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
             }), cancellationToken);
-    }
-    
-    [ProtoContract]
-    private class ToDoItemViewModelSetting : IViewModelSetting<ToDoItemViewModelSetting>
-    {
-        public ToDoItemViewModelSetting(ToDoItemViewModel viewModel)
-        {
-            GroupBy = viewModel.ToDoSubItemsViewModel.List.GroupBy;
-            IsMulti = viewModel.ToDoSubItemsViewModel.List.IsMulti;
-        }
-        
-        public ToDoItemViewModelSetting()
-        {
-        }
-        
-        static ToDoItemViewModelSetting()
-        {
-            Default = new()
-            {
-                GroupBy = GroupBy.ByStatus,
-            };
-        }
-        
-        [ProtoMember(1)]
-        public GroupBy GroupBy { get; set; }
-        
-        [ProtoMember(2)]
-        public bool IsMulti { get; set; }
-        
-        public static ToDoItemViewModelSetting Default { get; }
     }
 }

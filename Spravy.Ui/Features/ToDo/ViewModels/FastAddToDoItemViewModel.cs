@@ -22,7 +22,7 @@ public class FastAddToDoItemViewModel : ViewModelBase
                 await ToDoService.AddRootToDoItemAsync(options, CancellationToken.None);
             }
             
-            await Refresh.RefreshAsync(CancellationToken.None);
+            await UiApplicationService.RefreshCurrentViewAsync(CancellationToken.None);
         });
     }
     
@@ -32,6 +32,9 @@ public class FastAddToDoItemViewModel : ViewModelBase
     [Inject]
     public required IToDoService ToDoService { get; init; }
     
+    [Inject]
+    public required IUiApplicationService UiApplicationService { get; init; }
+    
     [Reactive]
     public string Name { get; set; }
     
@@ -40,6 +43,4 @@ public class FastAddToDoItemViewModel : ViewModelBase
     
     [Reactive]
     public Guid? ParentId { get; set; }
-    
-    public IRefresh? Refresh { get; set; }
 }
