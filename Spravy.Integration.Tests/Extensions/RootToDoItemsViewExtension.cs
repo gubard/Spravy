@@ -126,44 +126,9 @@ public static class RootToDoItemsViewExtension
            .Children
            .ElementAt(1)
            .ThrowIfIsNotCast<TextBlock>()
-           .Text
-           .Should()
-           .Be("Loading...")
-           .RunJobsAll(1);
-        
-        view.GetDoItemItemsControl()
-           .ThrowIfNull()
-           .Case(ic => ic.ItemCount.Should().Be(toDoItemCount + 1))
-           .GetVisualChildren()
-           .Single()
-           .ThrowIfIsNotCast<Border>()
-           .Child
-           .ThrowIfNull()
-           .ThrowIfIsNotCast<ItemsPresenter>()
-           .GetVisualChildren()
-           .Single()
-           .ThrowIfIsNotCast<VirtualizingStackPanel>()
-           .Children
-           .Last()
-           .ThrowIfIsNotCast<ContentPresenter>()
-           .Child
-           .ThrowIfNull()
-           .ThrowIfIsNotCast<Button>()
-           .Content
-           .ThrowIfNull()
-           .ThrowIfIsNotCast<Grid>()
-           .Children
-           .ElementAt(1)
-           .ThrowIfIsNotCast<StackPanel>()
-           .Children
-           .First()
-           .ThrowIfIsNotCast<Grid>()
-           .Children
-           .ElementAt(1)
-           .ThrowIfIsNotCast<TextBlock>()
-           .Text
-           .Should()
-           .Be(name);
+           .Case(tb => tb.Text.Should().Be("Loading..."))
+           .RunJobsAll(3)
+           .Case(tb => tb.Text.Should().Be(name));
         
         return view;
     }
