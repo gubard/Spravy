@@ -1,12 +1,3 @@
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using ProtoBuf;
-using ProtoBuf.Meta;
-using Spravy.Domain.Errors;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
-
 namespace Spravy.Core.Services;
 
 public class ProtobufSerializer : ISerializer
@@ -19,7 +10,7 @@ public class ProtobufSerializer : ISerializer
         }
     }
 
-    public ConfiguredValueTaskAwaitable<Result> SerializeAsync(object obj, Stream stream)
+    public ConfiguredValueTaskAwaitable<Result> SerializeAsync<T>(T obj, Stream stream)
     {
         Serializer.Serialize(stream, obj);
 

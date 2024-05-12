@@ -1,5 +1,3 @@
-using Spravy.Domain.Interfaces;
-
 namespace Spravy.Core.Options;
 
 public class EmailOptions : IOptionsValue
