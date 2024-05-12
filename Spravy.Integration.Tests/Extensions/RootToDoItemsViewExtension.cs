@@ -101,7 +101,7 @@ public static class RootToDoItemsViewExtension
                    .GetControl<TextBox>(ElementNames.NameTextBox)
                    .ClearText(window)
                    .SetText(window, name))
-               .Case(c => c.GetControl<Button>(ElementNames.OkButton).ClickOn(window).RunJobsAll(5)))
+               .Case(c => c.GetControl<Button>(ElementNames.OkButton).ClickOn(window).RunJobsAll(6)))
            .GetDoItemItemsControl()
            .ThrowIfNull()
            .Case(ic => ic.ItemCount.Should().Be(toDoItemCount + 1))
