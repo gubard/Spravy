@@ -9,18 +9,18 @@ public class NotFoundEntityError : Error
 
     protected NotFoundEntityError() : base(MainId)
     {
-        Type = typeof(UnknownType);
-        Key = new();
+        Type = string.Empty;
+        Key = string.Empty;
     }
 
-    public NotFoundEntityError(Type type, object key) : base(MainId)
+    public NotFoundEntityError(string type, string key) : base(MainId)
     {
         Type = type;
         Key = key;
     }
 
-    public Type Type { get; protected set; }
-    public object Key { get; protected set; }
+    public string Type { get; protected set; }
+    public string Key { get; protected set; }
 
     public override string Message
     {

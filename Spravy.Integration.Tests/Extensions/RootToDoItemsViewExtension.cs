@@ -127,7 +127,7 @@ public static class RootToDoItemsViewExtension
            .ElementAt(1)
            .ThrowIfIsNotCast<TextBlock>()
            .Case(tb => tb.Text.Should().Be("Loading..."))
-           .RunJobsAll(3)
+           .RunJobsAll(4)
            .Case(tb => tb.Text.Should().Be(name));
         
         return view;

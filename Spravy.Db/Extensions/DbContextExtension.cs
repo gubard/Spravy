@@ -51,7 +51,7 @@ public static class DbContextExtension
 
         if (value is null)
         {
-            return new(new NotFoundEntityError(typeof(TEntity), key));
+            return new(new NotFoundEntityError(typeof(TEntity).Name, key.ToString().ThrowIfNull()));
         }
 
         return value.ToResult();
