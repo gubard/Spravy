@@ -184,7 +184,7 @@ public class Tests
            .TryCatch(
                 w => w.SetSize(1000, 1000)
                    .ShowWindow()
-                   .RunJobsAll(5)
+                   .RunJobsAll(6)
                    .Case(() => w.GetCurrentView<RootToDoItemsView, RootToDoItemsViewModel>()
                        .Case(r => r.GetToDoItemDotsButton(0).ClickOn(w).RunJobsAll(1))
                        .GetToDoItemReorder(0)
