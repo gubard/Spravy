@@ -1,8 +1,3 @@
-using Avalonia.Controls;
-using Avalonia.Input;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Helpers;
-
 namespace Spravy.Integration.Tests.Extensions;
 
 public static class TextBoxExtension

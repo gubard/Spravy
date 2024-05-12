@@ -1,18 +1,3 @@
-using System.ComponentModel;
-using Avalonia.Controls;
-using Avalonia.Controls.Presenters;
-using Avalonia.Headless;
-using Avalonia.Input;
-using Avalonia.VisualTree;
-using DialogHostAvalonia;
-using FluentAssertions;
-using Spravy.Domain.Extensions;
-using Spravy.Integration.Tests.Helpers;
-using Spravy.Ui.Features.ErrorHandling.ViewModels;
-using Spravy.Ui.Models;
-using Spravy.Ui.ViewModels;
-using Spravy.Ui.Views;
-
 namespace Spravy.Integration.Tests.Extensions;
 
 public static class WindowExtension

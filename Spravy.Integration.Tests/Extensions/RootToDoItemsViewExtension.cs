@@ -1,17 +1,3 @@
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Controls.Diagnostics;
-using Avalonia.Controls.Presenters;
-using Avalonia.Controls.Primitives;
-using Avalonia.VisualTree;
-using FluentAssertions;
-using Spravy.Domain.Extensions;
-using Spravy.Integration.Tests.Helpers;
-using Spravy.Ui.Features.ToDo.Views;
-using Spravy.Ui.ViewModels;
-using Spravy.Ui.Views;
-using SukiUI.Controls;
-
 namespace Spravy.Integration.Tests.Extensions;
 
 public static class RootToDoItemsViewExtension

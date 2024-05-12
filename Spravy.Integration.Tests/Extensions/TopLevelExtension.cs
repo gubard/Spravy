@@ -1,8 +1,3 @@
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Headless;
-using Avalonia.Input;
-
 namespace Spravy.Integration.Tests.Extensions;
 
 public static class TopLevelExtension

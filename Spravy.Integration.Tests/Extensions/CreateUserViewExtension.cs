@@ -1,9 +1,3 @@
-using Avalonia.Controls;
-using Spravy.Domain.Extensions;
-using Spravy.Integration.Tests.Helpers;
-using Spravy.Ui.Views;
-using SukiUI.Controls;
-
 namespace Spravy.Integration.Tests.Extensions;
 
 public static class CreateUserViewExtension

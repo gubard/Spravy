@@ -1,8 +1,3 @@
-using MailKit;
-using MailKit.Net.Imap;
-using MailKit.Security;
-using Spravy.Integration.Tests.Models;
-
 namespace Spravy.Integration.Tests.Extensions;
 
 public static class ImapConnectionExtension

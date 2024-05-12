@@ -1,19 +1,3 @@
-using Microsoft.Extensions.Configuration;
-using Ninject.Modules;
-using Spravy.Authentication.Domain.Client.Models;
-using Spravy.Db.Interfaces;
-using Spravy.Db.Sqlite.EntityTypeConfigurations;
-using Spravy.Db.Sqlite.Services;
-using Spravy.Di.Extensions;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
-using Spravy.EventBus.Domain.Client.Models;
-using Spravy.PasswordGenerator.Domain.Client.Models;
-using Spravy.Schedule.Domain.Client.Models;
-using Spravy.ToDo.Domain.Client.Models;
-using Spravy.Ui.Interfaces;
-using Spravy.Ui.Services;
-
 namespace Spravy.Integration.Tests.Configurations;
 
 public class TestModule : NinjectModule

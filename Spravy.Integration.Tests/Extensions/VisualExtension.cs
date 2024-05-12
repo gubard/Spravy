@@ -1,9 +1,3 @@
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Input;
-using FluentAssertions;
-using Spravy.Domain.Extensions;
-
 namespace Spravy.Integration.Tests.Extensions;
 
 public static class VisualExtension

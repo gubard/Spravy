@@ -1,7 +1,3 @@
-using Avalonia.Controls;
-using Avalonia.VisualTree;
-using Spravy.Domain.Extensions;
-
 namespace Spravy.Integration.Tests.Extensions;
 
 public static class ContentControlExtension

@@ -1,5 +1,3 @@
-using Serilog;
-
 namespace Spravy.Integration.Tests;
 
 [SetUpFixture]

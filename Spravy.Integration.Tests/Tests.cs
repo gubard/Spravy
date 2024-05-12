@@ -1,21 +1,3 @@
-using System.Text;
-using Avalonia.Controls;
-using Avalonia.Controls.Presenters;
-using Avalonia.Headless.NUnit;
-using Avalonia.Input;
-using Avalonia.VisualTree;
-using FluentAssertions;
-using Spravy.Domain.Extensions;
-using Spravy.Integration.Tests.Extensions;
-using Spravy.Integration.Tests.Helpers;
-using Spravy.Ui.Features.Authentication.ViewModels;
-using Spravy.Ui.Features.Authentication.Views;
-using Spravy.Ui.Features.ErrorHandling.Views;
-using Spravy.Ui.Features.ToDo.ViewModels;
-using Spravy.Ui.Features.ToDo.Views;
-using Spravy.Ui.ViewModels;
-using Spravy.Ui.Views;
-
 namespace Spravy.Integration.Tests;
 
 [TestFixture]

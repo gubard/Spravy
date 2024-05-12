@@ -1,5 +1,3 @@
-using Avalonia.Threading;
-
 namespace Spravy.Integration.Tests.Extensions;
 
 public static class ObjectExtension

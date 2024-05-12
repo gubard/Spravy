@@ -1,5 +1,3 @@
-using Spravy.Domain.Extensions;
-
 namespace Spravy.Integration.Tests.Helpers;
 
 public static class FileHelper
