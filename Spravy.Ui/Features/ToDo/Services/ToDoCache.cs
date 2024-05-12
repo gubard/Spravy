@@ -97,7 +97,8 @@ public class ToDoCache : IToDoCache
                             cancellationToken);
                 }
                 
-                return UpdatePropertiesAsync(item, toDoItem, cancellationToken);
+                return this.InvokeUIBackgroundAsync(() => item.Active = null)
+                   .IfSuccessAsync(() => UpdatePropertiesAsync(item, toDoItem, cancellationToken), cancellationToken);
             }, cancellationToken);
     }
     
@@ -159,12 +160,14 @@ public class ToDoCache : IToDoCache
     
     public Result<ReadOnlyMemory<ToDoItemEntityNotify>> UpdateChildrenItems(Guid id, ReadOnlyMemory<Guid> items)
     {
-        return items.ToResult().IfSuccessForEach(GetToDoItem).IfSuccess(x =>
-        {
-            childrenCache[id] = x;
-            
-            return x.ToResult();
-        });
+        return items.ToResult()
+           .IfSuccessForEach(GetToDoItem)
+           .IfSuccess(x =>
+            {
+                childrenCache[id] = x;
+                
+                return x.ToResult();
+            });
     }
     
     public ConfiguredValueTaskAwaitable<Result<ToDoItemEntityNotify>> UpdateAsync(
