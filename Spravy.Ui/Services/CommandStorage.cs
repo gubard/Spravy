@@ -55,8 +55,8 @@ public static class CommandStorage
         ToDoItemSearchItem = CreateCommand<IToDoItemSearchProperties>(
             ToDoItemSearchAsync, MaterialIconKind.Search, "Search to-do item");
         
-        SetToDoDescriptionItem = CreateCommand<IToDoDescriptionProperty>(SetToDoDescriptionAsync,
-            MaterialIconKind.Pencil, "Set to-do item description");
+        SetToDoDescriptionItem = CreateCommand<ToDoItemEntityNotify>(SetToDoDescriptionAsync, MaterialIconKind.Pencil,
+            "Set to-do item description");
         
         NavigateToCurrentToDoItemItem = CreateCommand(NavigateToCurrentToDoItemAsync, MaterialIconKind.ArrowRight,
             "Open current to-do item");
@@ -427,7 +427,7 @@ public static class CommandStorage
     }
     
     private static ConfiguredValueTaskAwaitable<Result> SetToDoDescriptionAsync(
-        IToDoDescriptionProperty property,
+        ToDoItemEntityNotify property,
         CancellationToken cancellationToken
     )
     {
@@ -436,7 +436,7 @@ public static class CommandStorage
                .IfSuccessAsync(
                     () => toDoService.UpdateToDoItemDescriptionAsync(property.Id, viewModel.Content.Description,
                         cancellationToken), cancellationToken)
-               .IfSuccessAsync(() => property.RefreshAsync(cancellationToken), cancellationToken),
+               .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
             _ => dialogViewer.CloseContentDialogAsync(cancellationToken), viewModel =>
             {
                 viewModel.Content.Description = property.Description;

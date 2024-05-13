@@ -167,7 +167,7 @@
                           IsExpanded="{Binding Item.Description, Mode=OneWay, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}">
                     <Expander.Header>
                         <Button Command="{x:Static s:CommandStorage.SetToDoDescriptionCommand}"
-                                CommandParameter="{Binding}"
+                                CommandParameter="{Binding Item}"
                                 Classes="Basic"
                                 Margin="0"
                                 Padding="0">
