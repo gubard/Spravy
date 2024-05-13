@@ -98,7 +98,7 @@
                     </ScrollViewer>
 
                     <Panel Grid.Column="2"
-                           IsVisible="{Binding Item.AllCommands.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
+                           IsVisible="{Binding CommandItems.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
                         <ItemsControl HorizontalAlignment="Right"
                                       VerticalAlignment="Center"
                                       ItemsSource="{Binding CommandItems}"
