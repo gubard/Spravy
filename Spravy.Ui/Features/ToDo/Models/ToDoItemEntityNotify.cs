@@ -205,7 +205,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
         
         NavigateToCurrentItem =
             SpravyCommand.Create(
-                cancellationToken => navigator.NavigateToAsync<ToDoItemViewModel>(vm => vm.Id = id, cancellationToken),
+                cancellationToken => navigator.NavigateToAsync<ToDoItemViewModel>(vm => vm.Id = CurrentId, cancellationToken),
                 errorHandler);
         
         CloneItem = new(MaterialIconKind.Copyleft, new("Command.Clone"),
