@@ -22,7 +22,7 @@ public class DialogViewer : IDialogViewer
             return new Result(new NotFoundTypeError(typeof(TView))).ToValueTaskResult().ConfigureAwait(false);
         }
 
-        return this.InvokeUIBackgroundAsync(() => setupView.Invoke(content))
+        return this.InvokeUiBackgroundAsync(() => setupView.Invoke(content))
            .IfSuccessAsync(() => ShowView(content, ContentDialogHostIdentifier).ConfigureAwait(false),
                 cancellationToken);
     }
@@ -39,7 +39,7 @@ public class DialogViewer : IDialogViewer
             return new Result(new NotFoundTypeError(typeof(TView))).ToValueTaskResult().ConfigureAwait(false);
         }
 
-        return this.InvokeUIBackgroundAsync(() => setupView.Invoke(content))
+        return this.InvokeUiBackgroundAsync(() => setupView.Invoke(content))
            .IfSuccessAsync(() => ShowView(content, ProgressDialogHostIdentifier).ConfigureAwait(false),
                 cancellationToken);
     }
@@ -56,7 +56,7 @@ public class DialogViewer : IDialogViewer
             return new Result(new NotFoundTypeError(typeof(TView))).ToValueTaskResult().ConfigureAwait(false);
         }
 
-        return this.InvokeUIBackgroundAsync(() => setupView.Invoke(content))
+        return this.InvokeUiBackgroundAsync(() => setupView.Invoke(content))
            .IfSuccessAsync(() => ShowView(content, ErrorDialogHostIdentifier).ConfigureAwait(false), cancellationToken);
     }
 
@@ -68,7 +68,7 @@ public class DialogViewer : IDialogViewer
     {
         var content = Resolver.Get<TView>();
 
-        return this.InvokeUIBackgroundAsync(() => setupView.Invoke(content))
+        return this.InvokeUiBackgroundAsync(() => setupView.Invoke(content))
            .IfSuccessAsync(() =>
             {
                 var infoViewModel = Resolver.Get<InfoViewModel>();
@@ -87,7 +87,7 @@ public class DialogViewer : IDialogViewer
     {
         var content = Resolver.Get<TView>();
 
-        return this.InvokeUIBackgroundAsync(() => setupView.Invoke(content))
+        return this.InvokeUiBackgroundAsync(() => setupView.Invoke(content))
            .IfSuccessAsync(() =>
             {
                 var infoViewModel = Resolver.Get<InfoViewModel>();
@@ -106,7 +106,7 @@ public class DialogViewer : IDialogViewer
     {
         var content = Resolver.Get<TView>();
 
-        return this.InvokeUIBackgroundAsync(() => setupView.Invoke(content))
+        return this.InvokeUiBackgroundAsync(() => setupView.Invoke(content))
            .IfSuccessAsync(() =>
             {
                 var infoViewModel = Resolver.Get<InfoViewModel>();
@@ -129,7 +129,7 @@ public class DialogViewer : IDialogViewer
             return new Result(new NotFoundTypeError(typeof(TView))).ToValueTaskResult().ConfigureAwait(false);
         }
 
-        return this.InvokeUIBackgroundAsync(() => setupView.Invoke(content))
+        return this.InvokeUiBackgroundAsync(() => setupView.Invoke(content))
            .IfSuccessAsync(() => ShowView(content, InputDialogHostIdentifier).ConfigureAwait(false), cancellationToken);
     }
 
@@ -176,7 +176,7 @@ public class DialogViewer : IDialogViewer
     {
         var content = Resolver.Get<TView>();
 
-        return this.InvokeUIBackgroundAsync(() => setupView.Invoke(content))
+        return this.InvokeUiBackgroundAsync(() => setupView.Invoke(content))
            .IfSuccessAsync(() =>
             {
                 var confirmViewModel = Resolver.Get<ConfirmViewModel>();
@@ -197,7 +197,7 @@ public class DialogViewer : IDialogViewer
     {
         var content = Resolver.Get<TView>();
 
-        return this.InvokeUIBackgroundAsync(() => setupView.Invoke(content))
+        return this.InvokeUiBackgroundAsync(() => setupView.Invoke(content))
            .IfSuccessAsync(() =>
             {
                 var confirmViewModel = Resolver.Get<ConfirmViewModel>();
@@ -231,7 +231,7 @@ public class DialogViewer : IDialogViewer
             return Result.SuccessValueTask;
         }
 
-        return this.InvokeUIBackgroundAsync(() => DialogHost.Show(content, identifier));
+        return this.InvokeUiBackgroundAsync(() => DialogHost.Show(content, identifier));
     }
 
     private ConfiguredValueTaskAwaitable<Result> SafeClose(string identifier, CancellationToken cancellationToken)
@@ -253,6 +253,6 @@ public class DialogViewer : IDialogViewer
 
                 return Result.AwaitableFalse;
             }, cancellationToken)
-           .IfSuccessAsync(() => this.InvokeUIBackgroundAsync(() => DialogHost.Close(identifier)), cancellationToken);
+           .IfSuccessAsync(() => this.InvokeUiBackgroundAsync(() => DialogHost.Close(identifier)), cancellationToken);
     }
 }

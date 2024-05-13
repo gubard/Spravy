@@ -338,7 +338,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
     
     public ConfiguredValueTaskAwaitable<Result> UpdateCommandsAsync()
     {
-        return this.InvokeUIBackgroundAsync(() =>
+        return this.InvokeUiBackgroundAsync(() =>
         {
             Commands.Clear();
             AllCommands.Clear();

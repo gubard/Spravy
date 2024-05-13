@@ -54,7 +54,7 @@ public class ToDoItemSettingsViewModel : NavigatableViewModelBase
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
     {
         return ToDoService.GetToDoItemAsync(ToDoItemId, cancellationToken)
-           .IfSuccessAsync(toDoItem => this.InvokeUIBackgroundAsync(() =>
+           .IfSuccessAsync(toDoItem => this.InvokeUiBackgroundAsync(() =>
             {
                 ToDoItemContent.Name = toDoItem.Name;
                 ToDoItemContent.Link = toDoItem.Link?.AbsoluteUri ?? string.Empty;

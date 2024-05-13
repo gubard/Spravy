@@ -46,7 +46,7 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
                        .Select(x => x.ThrowIfNull())
                        .ToArray();
                     
-                    return this.InvokeUIBackgroundAsync(() => Path = path);
+                    return this.InvokeUiBackgroundAsync(() => Path = path);
                 }, cancellationToken), cancellationToken);
     }
     
@@ -66,7 +66,7 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
     )
     {
         return setting.CastObject<AddToDoItemViewModelSetting>()
-           .IfSuccessAsync(s => this.InvokeUIBackgroundAsync(() =>
+           .IfSuccessAsync(s => this.InvokeUiBackgroundAsync(() =>
             {
                 ToDoItemContent.Name = s.Name;
                 ToDoItemContent.Type = s.Type;

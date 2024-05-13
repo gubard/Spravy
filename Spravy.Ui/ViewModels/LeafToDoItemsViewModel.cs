@@ -94,7 +94,7 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
     )
     {
         return setting.CastObject<LeafToDoItemsViewModelSetting>()
-           .IfSuccessAsync(s => this.InvokeUIBackgroundAsync(() =>
+           .IfSuccessAsync(s => this.InvokeUiBackgroundAsync(() =>
             {
                 ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
                 ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;

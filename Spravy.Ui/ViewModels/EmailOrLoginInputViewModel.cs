@@ -38,7 +38,7 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
 
     private ConfiguredValueTaskAwaitable<Result> ForgotPasswordAsync(CancellationToken cancellationToken)
     {
-        return this.InvokeUIBackgroundAsync(() => IsBusy = true)
+        return this.InvokeUiBackgroundAsync(() => IsBusy = true)
            .IfSuccessTryFinallyAsync(() =>
                 {
                     if (EmailOrLogin.Contains('@'))
@@ -91,7 +91,7 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
                                 vm.Identifier = EmailOrLogin;
                             }, cancellationToken);
                         }, cancellationToken);
-                }, () => this.InvokeUIBackgroundAsync(() => IsBusy = false).ToValueTask().ConfigureAwait(false),
+                }, () => this.InvokeUiBackgroundAsync(() => IsBusy = false).ToValueTask().ConfigureAwait(false),
                 cancellationToken);
 
         ;
@@ -114,7 +114,7 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
     {
         var s = setting.ThrowIfIsNotCast<EmailOrLoginInputViewModelSetting>();
 
-        return this.InvokeUIBackgroundAsync(() => EmailOrLogin = s.Identifier);
+        return this.InvokeUiBackgroundAsync(() => EmailOrLogin = s.Identifier);
     }
 
     [ProtoContract]

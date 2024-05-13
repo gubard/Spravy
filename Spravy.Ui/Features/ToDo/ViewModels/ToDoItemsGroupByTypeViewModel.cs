@@ -107,16 +107,35 @@ public class ToDoItemsGroupByTypeViewModel : ViewModelBase
         }
     }
     
-    public void ClearExcept(ReadOnlyMemory<ToDoItemEntityNotify> items)
+    public ConfiguredValueTaskAwaitable<Result> ClearExceptAsync(
+        ReadOnlyMemory<ToDoItemEntityNotify> items,
+        CancellationToken cancellationToken
+    )
     {
-        Values.ClearExcept(items.ToArray().Where(x => x.Type == ToDoItemType.Value).ToArray());
-        Groups.ClearExcept(items.ToArray().Where(x => x.Type == ToDoItemType.Group).ToArray());
-        Planneds.ClearExcept(items.ToArray().Where(x => x.Type == ToDoItemType.Planned).ToArray());
-        Periodicitys.ClearExcept(items.ToArray().Where(x => x.Type == ToDoItemType.Periodicity).ToArray());
-        PeriodicityOffsets.ClearExcept(items.ToArray().Where(x => x.Type == ToDoItemType.PeriodicityOffset).ToArray());
-        Circles.ClearExcept(items.ToArray().Where(x => x.Type == ToDoItemType.Circle).ToArray());
-        Steps.ClearExcept(items.ToArray().Where(x => x.Type == ToDoItemType.Step).ToArray());
-        References.ClearExcept(items.ToArray().Where(x => x.Type == ToDoItemType.Reference).ToArray());
+        return Values.ClearExceptAsync(items.ToArray().Where(x => x.Type == ToDoItemType.Value).ToArray())
+           .IfSuccessAsync(
+                () => Groups.ClearExceptAsync(items.ToArray().Where(x => x.Type == ToDoItemType.Group).ToArray()),
+                cancellationToken)
+           .IfSuccessAsync(
+                () => Planneds.ClearExceptAsync(items.ToArray().Where(x => x.Type == ToDoItemType.Planned).ToArray()),
+                cancellationToken)
+           .IfSuccessAsync(
+                () => Periodicitys.ClearExceptAsync(items.ToArray()
+                   .Where(x => x.Type == ToDoItemType.Periodicity)
+                   .ToArray()), cancellationToken)
+           .IfSuccessAsync(
+                () => PeriodicityOffsets.ClearExceptAsync(items.ToArray()
+                   .Where(x => x.Type == ToDoItemType.PeriodicityOffset)
+                   .ToArray()), cancellationToken)
+           .IfSuccessAsync(
+                () => Circles.ClearExceptAsync(items.ToArray().Where(x => x.Type == ToDoItemType.Circle).ToArray()),
+                cancellationToken)
+           .IfSuccessAsync(
+                () => Steps.ClearExceptAsync(items.ToArray().Where(x => x.Type == ToDoItemType.Step).ToArray()),
+                cancellationToken)
+           .IfSuccessAsync(
+                () => References.ClearExceptAsync(
+                    items.ToArray().Where(x => x.Type == ToDoItemType.Reference).ToArray()), cancellationToken);
     }
     
     public void UpdateItem(ToDoItemEntityNotify item)

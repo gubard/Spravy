@@ -71,7 +71,7 @@ public class SearchViewModel : NavigatableViewModelBase, IToDoItemSearchProperti
     )
     {
         return setting.CastObject<SearchViewModelSetting>()
-           .IfSuccessAsync(s => this.InvokeUIBackgroundAsync(() => SearchText = s.SearchText), cancellationToken);
+           .IfSuccessAsync(s => this.InvokeUiBackgroundAsync(() => SearchText = s.SearchText), cancellationToken);
     }
     
     [ProtoContract]

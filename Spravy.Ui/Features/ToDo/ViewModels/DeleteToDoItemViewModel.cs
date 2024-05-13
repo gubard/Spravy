@@ -49,7 +49,7 @@ public class DeleteToDoItemViewModel : ViewModelBase
         return ToDoService.GetToDoItemAsync(ToDoItemId, cancellationToken)
            .IfSuccessAsync(item => ToDoService.ToDoItemToStringAsync(toDoItemToStringOptions, cancellationToken)
                .IfSuccessAsync(childrenText => ToDoService.GetParentsAsync(ToDoItemId, cancellationToken)
-                   .IfSuccessAsync(parents => this.InvokeUIBackgroundAsync(() =>
+                   .IfSuccessAsync(parents => this.InvokeUiBackgroundAsync(() =>
                     {
                         Path = ToDoCache.GetToDoItem(ToDoItemId).Value.Path;
                         ToDoItemName = item.Name;

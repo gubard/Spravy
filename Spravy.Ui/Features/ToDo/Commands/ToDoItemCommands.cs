@@ -29,6 +29,8 @@ public class ToDoItemCommands : ITaskProgressServiceProperty
         CancellationToken cancellationToken
     )
     {
+        viewModel.FastAddToDoItemViewModel.ParentId = viewModel.Id;
+        
         return this.RunProgressAsync(
             () => objectStorage.GetObjectOrDefaultAsync<ToDoItemViewModelSetting>(viewModel.ViewId, cancellationToken)
                .IfSuccessAsync(obj => viewModel.SetStateAsync(obj, cancellationToken), cancellationToken)

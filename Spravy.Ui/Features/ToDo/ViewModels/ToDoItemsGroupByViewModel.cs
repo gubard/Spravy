@@ -6,12 +6,12 @@ public class ToDoItemsGroupByViewModel : ViewModelBase
     {
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
     }
-
+    
     public ICommand InitializedCommand { get; }
-
+    
     [Inject]
     public required ToDoItemsGroupByNoneViewModel GroupByNone { get; init; }
-
+    
     [Inject]
     public required ToDoItemsGroupByStatusViewModel GroupByStatus { get; init; }
     
@@ -20,10 +20,10 @@ public class ToDoItemsGroupByViewModel : ViewModelBase
     
     [Reactive]
     public GroupBy GroupBy { get; set; } = GroupBy.ByStatus;
-
+    
     [Reactive]
     public object? Content { get; set; }
-
+    
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         Content = GroupByStatus;
@@ -39,17 +39,20 @@ public class ToDoItemsGroupByViewModel : ViewModelBase
                     _ => throw new ArgumentOutOfRangeException(nameof(x), x, null),
                 };
             });
-
+        
         return Result.AwaitableFalse;
     }
-
-    public void ClearExcept(ReadOnlyMemory<ToDoItemEntityNotify> ids)
+    
+    public ConfiguredValueTaskAwaitable<Result> ClearExcept(
+        ReadOnlyMemory<ToDoItemEntityNotify> ids,
+        CancellationToken cancellationToken
+    )
     {
-        GroupByNone.ClearExcept(ids);
-        GroupByStatus.ClearExcept(ids);
-        GroupByType.ClearExcept(ids);
+        return GroupByNone.ClearExceptAsync(ids)
+           .IfSuccessAsync(() => GroupByStatus.ClearExceptAsync(ids, cancellationToken), cancellationToken)
+           .IfSuccessAsync(() => GroupByType.ClearExceptAsync(ids, cancellationToken), cancellationToken);
     }
-
+    
     public void UpdateItem(ToDoItemEntityNotify item)
     {
         GroupByNone.UpdateItem(item);

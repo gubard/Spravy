@@ -55,15 +55,24 @@ public class ToDoItemsGroupByStatusViewModel : ViewModelBase
         }
     }
     
-    public void ClearExcept(ReadOnlyMemory<ToDoItemEntityNotify> items)
+    public ConfiguredValueTaskAwaitable<Result> ClearExceptAsync(
+        ReadOnlyMemory<ToDoItemEntityNotify> items,
+        CancellationToken cancellationToken
+    )
     {
-        Missed.ClearExcept(items.ToArray().Where(x => x.Status == ToDoItemStatus.Miss).ToArray());
-        Planned.ClearExcept(items.ToArray().Where(x => x.Status == ToDoItemStatus.Planned).ToArray());
-        Completed.ClearExcept(items.ToArray().Where(x => x.Status == ToDoItemStatus.Completed).ToArray());
-        
-        ReadyForCompleted.ClearExcept(items.ToArray()
-           .Where(x => x.Status == ToDoItemStatus.ReadyForComplete)
-           .ToArray());
+        return Missed.ClearExceptAsync(items.ToArray().Where(x => x.Status == ToDoItemStatus.Miss).ToArray())
+           .IfSuccessAsync(
+                () => ReadyForCompleted.ClearExceptAsync(items.ToArray()
+                   .Where(x => x.Status == ToDoItemStatus.ReadyForComplete)
+                   .ToArray()), cancellationToken)
+           .IfSuccessAsync(
+                () => Planned.ClearExceptAsync(items.ToArray()
+                   .Where(x => x.Status == ToDoItemStatus.Planned)
+                   .ToArray()), cancellationToken)
+           .IfSuccessAsync(
+                () => Completed.ClearExceptAsync(items.ToArray()
+                   .Where(x => x.Status == ToDoItemStatus.Completed)
+                   .ToArray()), cancellationToken);
     }
     
     public void UpdateItem(ToDoItemEntityNotify item)

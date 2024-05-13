@@ -139,7 +139,7 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
     )
     {
         return setting.CastObject<LoginViewModelSetting>()
-           .IfSuccessAsync(s => this.InvokeUIBackgroundAsync(() =>
+           .IfSuccessAsync(s => this.InvokeUiBackgroundAsync(() =>
             {
                 TryAutoLogin = false;
                 Login = s.Login;

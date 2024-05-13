@@ -486,14 +486,14 @@ public static class CommandStorage
             }, cancellationToken)
            .IfSuccessAsync(() => navigator.NavigateToAsync(ActionHelper<LoginViewModel>.Empty, cancellationToken),
                 cancellationToken)
-           .IfSuccessAsync(() => cancellationToken.InvokeUIBackgroundAsync(() => mainSplitViewModel.IsPaneOpen = false),
+           .IfSuccessAsync(() => cancellationToken.InvokeUiBackgroundAsync(() => mainSplitViewModel.IsPaneOpen = false),
                 cancellationToken);
     }
     
     private static ConfiguredValueTaskAwaitable<Result> NavigateToAsync(Type type, CancellationToken cancellationToken)
     {
         return navigator.NavigateToAsync(type, cancellationToken)
-           .IfSuccessAsync(() => cancellationToken.InvokeUIBackgroundAsync(() => mainSplitViewModel.IsPaneOpen = false),
+           .IfSuccessAsync(() => cancellationToken.InvokeUiBackgroundAsync(() => mainSplitViewModel.IsPaneOpen = false),
                 cancellationToken);
     }
     
@@ -516,7 +516,7 @@ public static class CommandStorage
     {
         return dialogViewer.ShowDateTimeConfirmDialogAsync(
             value => dialogViewer.CloseInputDialogAsync(cancellationToken)
-               .IfSuccessAsync(() => cancellationToken.InvokeUIBackgroundAsync(() => property.DueDateTime = value),
+               .IfSuccessAsync(() => cancellationToken.InvokeUiBackgroundAsync(() => property.DueDateTime = value),
                     cancellationToken), calendar =>
             {
                 calendar.SelectedDate = DateTimeOffset.Now.ToCurrentDay().DateTime;
@@ -567,7 +567,7 @@ public static class CommandStorage
         CancellationToken cancellationToken
     )
     {
-        return cancellationToken.InvokeUIBackgroundAsync(() =>
+        return cancellationToken.InvokeUiBackgroundAsync(() =>
         {
             if (items.All(x => x.IsSelected))
             {
@@ -606,7 +606,7 @@ public static class CommandStorage
     
     private static ConfiguredValueTaskAwaitable<Result> SwitchPaneAsync(CancellationToken cancellationToken)
     {
-        return cancellationToken.InvokeUIBackgroundAsync(() =>
+        return cancellationToken.InvokeUiBackgroundAsync(() =>
             mainSplitViewModel.IsPaneOpen = !mainSplitViewModel.IsPaneOpen);
     }
     

@@ -45,7 +45,7 @@ public class PasswordItemSettingsViewModel : ViewModelBase
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         return PasswordService.GetPasswordItemAsync(Id, cancellationToken)
-           .IfSuccessAsync(value => this.InvokeUIBackgroundAsync(() =>
+           .IfSuccessAsync(value => this.InvokeUiBackgroundAsync(() =>
             {
                 Name = value.Name;
                 Regex = value.Regex;

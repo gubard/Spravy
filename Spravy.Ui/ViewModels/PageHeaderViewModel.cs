@@ -15,7 +15,7 @@ public class PageHeaderViewModel : ViewModelBase
 
     public ConfiguredValueTaskAwaitable<Result> SetMultiCommands(ToDoSubItemsViewModel items)
     {
-        return this.InvokeUIBackgroundAsync(() =>
+        return this.InvokeUiBackgroundAsync(() =>
         {
             Commands.Clear();
 

@@ -49,7 +49,7 @@ public class ResetToDoItemViewModel : NavigatableViewModelBase
     )
     {
         return setting.CastObject<ResetToDoItemViewModelSetting>()
-           .IfSuccessAsync(s => this.InvokeUIBackgroundAsync(() =>
+           .IfSuccessAsync(s => this.InvokeUiBackgroundAsync(() =>
             {
                 IsCompleteChildrenTask = s.IsCompleteChildrenTask;
                 IsMoveCircleOrderIndex = s.IsMoveCircleOrderIndex;

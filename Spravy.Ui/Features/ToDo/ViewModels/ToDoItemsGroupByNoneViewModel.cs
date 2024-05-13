@@ -3,7 +3,7 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 public class ToDoItemsGroupByNoneViewModel : ViewModelBase
 {
     private readonly ToDoItemsViewModel items;
-
+    
     [Inject]
     public required ToDoItemsViewModel Items
     {
@@ -15,12 +15,12 @@ public class ToDoItemsGroupByNoneViewModel : ViewModelBase
             items.Header = new("ToDoItemsGroupByNoneView.Header");
         }
     }
-
-    public void ClearExcept(ReadOnlyMemory<ToDoItemEntityNotify> ids)
+    
+    public ConfiguredValueTaskAwaitable<Result> ClearExceptAsync(ReadOnlyMemory<ToDoItemEntityNotify> ids)
     {
-        Items.ClearExcept(ids);
+        return Items.ClearExceptAsync(ids);
     }
-
+    
     public void UpdateItem(ToDoItemEntityNotify item)
     {
         Items.UpdateItem(item);

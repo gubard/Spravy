@@ -51,7 +51,7 @@ public class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
     {
         return ToDoService.GetPeriodicityOffsetToDoItemSettingsAsync(Id, cancellationToken)
-           .IfSuccessAsync(setting => this.InvokeUIBackgroundAsync(() =>
+           .IfSuccessAsync(setting => this.InvokeUiBackgroundAsync(() =>
             {
                 ChildrenType = setting.ChildrenType;
                 DueDate = setting.DueDate;

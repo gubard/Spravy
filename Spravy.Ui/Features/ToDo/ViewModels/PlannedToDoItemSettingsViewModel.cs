@@ -54,7 +54,7 @@ public class PlannedToDoItemSettingsViewModel : ViewModelBase,
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
     {
         return ToDoService.GetPlannedToDoItemSettingsAsync(Id, cancellationToken)
-           .IfSuccessAsync(setting => this.InvokeUIBackgroundAsync(() =>
+           .IfSuccessAsync(setting => this.InvokeUiBackgroundAsync(() =>
             {
                 ChildrenType = setting.ChildrenType;
                 DueDate = setting.DueDate;

@@ -11,22 +11,17 @@ public class ToDoItemsViewModel : ViewModelBase
     [Reactive]
     public bool IsExpanded { get; set; } = true;
     
-    public void ClearExcept(ReadOnlyMemory<ToDoItemEntityNotify> items)
+    public ConfiguredValueTaskAwaitable<Result> ClearExceptAsync(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
-        for (var index = 0; index < Items.Count; index++)
+        return this.InvokeUiBackgroundAsync(() =>
         {
-            var item = Items[index];
+            Items.RemoveAll(Items.Where(x => !items.Span.Contains(x)));
             
-            if (!items.Span.Contains(item))
+            foreach (var item in items.Span)
             {
-                Items.Remove(item);
+                UpdateItem(item);
             }
-        }
-        
-        for (var index = 0; index < items.Span.Length; index++)
-        {
-            UpdateItem(items.Span[index]);
-        }
+        });
     }
     
     public void UpdateItem(ToDoItemEntityNotify item)

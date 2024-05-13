@@ -37,7 +37,7 @@ public class ToDoItemDayOfWeekSelectorViewModel : ViewModelBase, IApplySettings
                     {
                         var y = x;
 
-                        return () => this.InvokeUIBackgroundAsync(() => y.IsSelected = true);
+                        return () => this.InvokeUiBackgroundAsync(() => y.IsSelected = true);
                     })
                    .ToArray()), cancellationToken);
     }

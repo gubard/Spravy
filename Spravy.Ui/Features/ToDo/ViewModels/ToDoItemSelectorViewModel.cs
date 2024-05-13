@@ -45,25 +45,25 @@ public class ToDoItemSelectorViewModel : ViewModelBase
 
     private ConfiguredValueTaskAwaitable<Result> Refresh(CancellationToken cancellationToken)
     {
-        return this.InvokeUIBackgroundAsync(() => Roots.Clear())
+        return this.InvokeUiBackgroundAsync(() => Roots.Clear())
            .IfSuccessAsync(() => ToDoService.GetToDoSelectorItemsAsync(IgnoreIds.ToArray(), cancellationToken)
                .IfSuccessAsync(items =>
                 {
                     itemsCache.Clear();
                     itemsCache.AddRange(Mapper.Map<ToDoSelectorItemNotify[]>(items.ToArray()));
 
-                    return this.InvokeUIBackgroundAsync(() => Roots.AddRange(itemsCache));
+                    return this.InvokeUiBackgroundAsync(() => Roots.AddRange(itemsCache));
                 }, cancellationToken), cancellationToken);
     }
 
     private ConfiguredValueTaskAwaitable<Result> SearchAsync(CancellationToken cancellationToken)
     {
-        return this.InvokeUIBackgroundAsync(() => Roots.Clear())
+        return this.InvokeUiBackgroundAsync(() => Roots.Clear())
            .IfSuccessAsync(() =>
             {
                 if (SearchText.IsNullOrWhiteSpace())
                 {
-                    return this.InvokeUIBackgroundAsync(() => Roots.AddRange(itemsCache));
+                    return this.InvokeUiBackgroundAsync(() => Roots.AddRange(itemsCache));
                 }
 
                 var result = new List<ToDoSelectorItemNotify>();
@@ -73,7 +73,7 @@ public class ToDoItemSelectorViewModel : ViewModelBase
                     Search(item, result);
                 }
 
-                return this.InvokeUIBackgroundAsync(() => Roots.AddRange(result));
+                return this.InvokeUiBackgroundAsync(() => Roots.AddRange(result));
             }, cancellationToken);
     }
 

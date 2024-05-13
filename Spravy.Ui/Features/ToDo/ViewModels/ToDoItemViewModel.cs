@@ -75,17 +75,16 @@ public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceP
     {
         FastAddToDoItemViewModel.ParentId = Id;
         
-        return ToDoCache.GetChildrenItems(Id)
-           .IfSuccessAsync(items => ToDoSubItemsViewModel.ClearExceptAsync(items), cancellationToken)
-           .IfSuccessAsync(() => RefreshPathAsync(cancellationToken), cancellationToken)
-           .IfSuccessAsync(() => RefreshToDoItemCore(cancellationToken), cancellationToken)
-           .IfSuccessAsync(() => RefreshToDoItemChildrenAsync(cancellationToken), cancellationToken);
+        return Result.AwaitableFalse.IfSuccessAllAsync(cancellationToken,
+            () => RefreshToDoItemChildrenAsync(cancellationToken), 
+            () => RefreshToDoItemCore(cancellationToken),
+            () => RefreshPathAsync(cancellationToken));
     }
     
     private ConfiguredValueTaskAwaitable<Result> RefreshToDoItemCore(CancellationToken cancellationToken)
     {
         return ToDoCache.GetToDoItem(Id)
-           .IfSuccessAsync(item => this.InvokeUIBackgroundAsync(() => Item = item), cancellationToken)
+           .IfSuccessAsync(item => this.InvokeUiBackgroundAsync(() => Item = item), cancellationToken)
            .IfSuccessAsync(() => ToDoService.GetToDoItemAsync(Id, cancellationToken), cancellationToken)
            .IfSuccessAsync(item => ToDoCache.UpdateAsync(item, cancellationToken), cancellationToken)
            .ToResultOnlyAsync();
@@ -100,7 +99,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceP
     private ConfiguredValueTaskAwaitable<Result> RefreshToDoItemChildrenAsync(CancellationToken cancellationToken)
     {
         return ToDoCache.GetChildrenItems(Id)
-           .IfSuccessAsync(items => ToDoSubItemsViewModel.ClearExceptAsync(items), cancellationToken)
+           .IfSuccessAsync(items => ToDoSubItemsViewModel.ClearExceptAsync(items, cancellationToken), cancellationToken)
            .IfSuccessAsync(() => ToDoService.GetChildrenToDoItemIdsAsync(Id, cancellationToken), cancellationToken)
            .IfSuccessAsync(ids => ToDoCache.UpdateChildrenItems(Id, ids), cancellationToken)
            .IfSuccessAsync(items => ToDoSubItemsViewModel.UpdateItemsAsync(items, this, false, cancellationToken),
@@ -125,7 +124,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceP
     )
     {
         return setting.CastObject<ToDoItemViewModelSetting>()
-           .IfSuccessAsync(s => this.InvokeUIBackgroundAsync(() =>
+           .IfSuccessAsync(s => this.InvokeUiBackgroundAsync(() =>
             {
                 ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
                 ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;

@@ -95,9 +95,9 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
     private ConfiguredValueTaskAwaitable<Result> RefreshCoreAsync(CancellationToken cancellationToken)
     {
         return ToDoCache.GetRootItems()
-           .IfSuccessAsync(items => ToDoSubItemsViewModel.ClearExceptAsync(items), cancellationToken)
+           .IfSuccessAsync(items => ToDoSubItemsViewModel.ClearExceptAsync(items, cancellationToken), cancellationToken)
            .IfSuccessAsync(() => ToDoService.GetRootToDoItemIdsAsync(cancellationToken), cancellationToken)
-           .IfSuccessAsync(ids => ToDoCache.UpdateRootItems(ids), cancellationToken)
+           .IfSuccessAsync(items => ToDoCache.UpdateRootItems(items), cancellationToken)
            .IfSuccessAsync(
                 items => ToDoSubItemsViewModel.UpdateItemsAsync(items.ToArray(), this, false, cancellationToken),
                 cancellationToken);
@@ -121,7 +121,7 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
     )
     {
         return setting.CastObject<RootToDoItemsViewModelSetting>()
-           .IfSuccessAsync(s => this.InvokeUIBackgroundAsync(() =>
+           .IfSuccessAsync(s => this.InvokeUiBackgroundAsync(() =>
             {
                 ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
                 ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;

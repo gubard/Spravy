@@ -92,12 +92,12 @@ public class ToDoCache : IToDoCache
                 if (toDoItem.Active.HasValue)
                 {
                     return UpdateAsync(toDoItem.Active.Value, cancellationToken)
-                       .IfSuccessAsync(i => this.InvokeUIBackgroundAsync(() => item.Active = i), cancellationToken)
+                       .IfSuccessAsync(i => this.InvokeUiBackgroundAsync(() => item.Active = i), cancellationToken)
                        .IfSuccessAsync(() => UpdatePropertiesAsync(item, toDoItem, cancellationToken),
                             cancellationToken);
                 }
                 
-                return this.InvokeUIBackgroundAsync(() => item.Active = null)
+                return this.InvokeUiBackgroundAsync(() => item.Active = null)
                    .IfSuccessAsync(() => UpdatePropertiesAsync(item, toDoItem, cancellationToken), cancellationToken);
             }, cancellationToken);
     }
@@ -108,7 +108,7 @@ public class ToDoCache : IToDoCache
         CancellationToken cancellationToken
     )
     {
-        return this.InvokeUIBackgroundAsync(() =>
+        return this.InvokeUiBackgroundAsync(() =>
             {
                 item.Description = toDoItem.Description;
                 item.DescriptionType = toDoItem.DescriptionType;
@@ -136,7 +136,7 @@ public class ToDoCache : IToDoCache
                 item => parents.ToResult()
                    .IfSuccessForEachAsync(p => UpdateAsync(p, cancellationToken), cancellationToken)
                    .IfSuccessAsync(
-                        ps => this.InvokeUIBackgroundAsync(() =>
+                        ps => this.InvokeUiBackgroundAsync(() =>
                             item.Path = RootItem.Default.As<object>().ToEnumerable().Concat(ps.ToArray()).ToArray()!),
                         cancellationToken), cancellationToken);
     }
@@ -177,7 +177,7 @@ public class ToDoCache : IToDoCache
     {
         return GetToDoItem(shortItem.Id)
            .IfSuccessAsync(
-                item => this.InvokeUIBackgroundAsync(() => item.Name = shortItem.Name)
+                item => this.InvokeUiBackgroundAsync(() => item.Name = shortItem.Name)
                    .IfSuccessAsync(item.ToResult, cancellationToken), cancellationToken);
     }
     
@@ -188,7 +188,7 @@ public class ToDoCache : IToDoCache
     {
         return GetActive(active.Id)
            .IfSuccessAsync(
-                item => this.InvokeUIBackgroundAsync(() => item.Name = active.Name)
+                item => this.InvokeUiBackgroundAsync(() => item.Name = active.Name)
                    .IfSuccessAsync(item.ToResult, cancellationToken), cancellationToken);
     }
 }

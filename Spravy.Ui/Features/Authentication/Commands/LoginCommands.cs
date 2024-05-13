@@ -43,7 +43,7 @@ public class LoginCommands
         CancellationToken cancellationToken
     )
     {
-        return this.InvokeUIBackgroundAsync(() => viewModel.IsBusy = true)
+        return this.InvokeUiBackgroundAsync(() => viewModel.IsBusy = true)
            .IfSuccessTryFinallyAsync(() => authenticationService
                    .IsVerifiedByLoginAsync(viewModel.Login, cancellationToken)
                    .IfSuccessAsync(isVerified =>
@@ -61,7 +61,7 @@ public class LoginCommands
                            .IfSuccessAsync(
                                 user => tokenService.LoginAsync(user, cancellationToken)
                                    .IfSuccessAsync(
-                                        () => this.InvokeUIBackgroundAsync(() => account.Login = user.Login)
+                                        () => this.InvokeUiBackgroundAsync(() => account.Login = user.Login)
                                            .IfSuccessAsync(() => RememberMeAsync(viewModel, cancellationToken),
                                                 cancellationToken)
                                            .IfSuccessAsync(
@@ -70,7 +70,7 @@ public class LoginCommands
                                                     cancellationToken), cancellationToken), cancellationToken),
                                 cancellationToken);
                     }, cancellationToken),
-                () => this.InvokeUIBackgroundAsync(() => viewModel.IsBusy = false).ToValueTask().ConfigureAwait(false),
+                () => this.InvokeUiBackgroundAsync(() => viewModel.IsBusy = false).ToValueTask().ConfigureAwait(false),
                 cancellationToken);
     }
     
@@ -101,7 +101,7 @@ public class LoginCommands
         CancellationToken cancellationToken
     )
     {
-        return this.InvokeUIBackgroundAsync(() => viewModel.IsBusy = true)
+        return this.InvokeUiBackgroundAsync(() => viewModel.IsBusy = true)
            .IfSuccessTryFinallyAsync(() =>
                 {
                     if (!viewModel.TryAutoLogin)
@@ -140,7 +140,7 @@ public class LoginCommands
                                 }, cancellationToken);
                         }, cancellationToken);
                 },
-                () => this.InvokeUIBackgroundAsync(() => viewModel.IsBusy = false).ToValueTask().ConfigureAwait(false),
+                () => this.InvokeUiBackgroundAsync(() => viewModel.IsBusy = false).ToValueTask().ConfigureAwait(false),
                 cancellationToken);
     }
     
