@@ -24,7 +24,7 @@
     <sys:String x:Key="ResetToDoItemView.CompleteCurrentTask">Complete current task</sys:String>
 
     <!--ToDoItemsGroupByTypeView-->
-    <sys:String x:Key="ToDoItemsGroupByTypeView.Values">Completed</sys:String>
+    <sys:String x:Key="ToDoItemsGroupByTypeView.Values">Values</sys:String>
     <sys:String x:Key="ToDoItemsGroupByTypeView.Groups">Groups</sys:String>
     <sys:String x:Key="ToDoItemsGroupByTypeView.Planneds">Planneds</sys:String>
     <sys:String x:Key="ToDoItemsGroupByTypeView.Periodicitys">Periodicitys</sys:String>

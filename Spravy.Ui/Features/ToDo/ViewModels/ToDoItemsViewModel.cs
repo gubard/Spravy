@@ -31,10 +31,11 @@ public class ToDoItemsViewModel : ViewModelBase
             {
                 Items.Remove(item);
             }
-            else
-            {
-                UpdateItem(item);
-            }
+        }
+        
+        for (var index = 0; index < items.Span.Length; index++)
+        {
+            UpdateItem(items.Span[index]);
         }
     }
     
