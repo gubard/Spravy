@@ -11,7 +11,7 @@
                                 x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemsGroupByStatusView"
                                 x:DataType="viewModels:ToDoItemsGroupByStatusViewModel">
     <UserControl.Styles>
-        <Style Selector="ItemsControl.adaptive">
+        <Style Selector="ItemsControl.adaptive-to-do-items-group-by-status-view">
             <Setter Property="(Interaction.Behaviors)">
                 <BehaviorCollectionTemplate>
                     <BehaviorCollection>
@@ -78,7 +78,7 @@
         </Style>
     </UserControl.Styles>
 
-    <ItemsControl Classes="adaptive">
+    <ItemsControl Classes="adaptive-to-do-items-group-by-status-view">
         <ContentControl Content="{Binding Missed}"
                         IsVisible="{Binding Missed.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
         <ContentControl Name="{x:Static views:ToDoItemsGroupByStatusView.ReadyForCompletedContentControlName}"

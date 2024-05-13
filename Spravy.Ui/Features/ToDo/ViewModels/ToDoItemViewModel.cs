@@ -11,7 +11,24 @@ public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceP
     public ToDoItemViewModel() : base(true)
     {
         refreshWork = TaskWork.Create(RefreshCoreAsync);
+        CommandItems = new();
+        
+        this.WhenAnyValue(x => x.Item)
+           .Subscribe(x =>
+            {
+                CommandItems.Clear();
+                
+                if (x is null)
+                {
+                    return;
+                }
+                
+                CommandItems.AddRange(x.AllCommands);
+            });
     }
+    
+    public Guid Id { get; set; }
+    public AvaloniaList<SpravyCommandNotify> CommandItems { get; }
     
     [Inject]
     public required ToDoItemCommands Commands { get; init; }
@@ -24,8 +41,6 @@ public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceP
     
     [Inject]
     public required IObjectStorage ObjectStorage { get; init; }
-    
-    public Guid Id { get; set; }
     
     [Reactive]
     public ToDoItemEntityNotify? Item { get; set; }

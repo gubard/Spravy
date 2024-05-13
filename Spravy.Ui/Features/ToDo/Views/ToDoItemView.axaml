@@ -24,7 +24,7 @@
     </Interaction.Behaviors>
 
     <UserControl.Styles>
-        <Style Selector="ItemsControl.adaptive">
+        <Style Selector="ItemsControl.adaptive-to-Do-item-view">
             <Setter Property="(Interaction.Behaviors)">
                 <BehaviorCollectionTemplate>
                     <BehaviorCollection>
@@ -41,7 +41,7 @@
             </Setter>
         </Style>
 
-        <Style Selector="Button.adaptive">
+        <Style Selector="Button.adaptive-to-Do-item-view">
             <Setter Property="(Interaction.Behaviors)">
                 <BehaviorCollectionTemplate>
                     <BehaviorCollection>
@@ -101,8 +101,8 @@
                            IsVisible="{Binding Item.AllCommands.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
                         <ItemsControl HorizontalAlignment="Right"
                                       VerticalAlignment="Center"
-                                      ItemsSource="{Binding Item.AllCommands}"
-                                      Classes="adaptive">
+                                      ItemsSource="{Binding CommandItems}"
+                                      Classes="adaptive-to-Do-item-view">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <WrapPanel Orientation="Horizontal" />
@@ -116,7 +116,7 @@
                             </ItemsControl.DataTemplates>
                         </ItemsControl>
 
-                        <Button Classes="adaptive Basic">
+                        <Button Classes="adaptive-to-Do-item-view Basic">
                             <Button.DataTemplates>
                                 <DataTemplate x:DataType="sm:SpravyCommandNotify">
                                     <ContentControl Content="{Binding Text}" />
@@ -131,7 +131,7 @@
                             </Button.Styles>
 
                             <Button.Flyout>
-                                <MenuFlyout ItemsSource="{Binding Item.AllCommands}" />
+                                <MenuFlyout ItemsSource="{Binding CommandItems}" />
                             </Button.Flyout>
 
                             <mi:MaterialIcon Kind="DotsHorizontal" />
