@@ -2,8 +2,6 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ToDoItemsGroupByViewModel : ViewModelBase
 {
-    private readonly ToDoItemsGroupByStatusViewModel groupByStatus;
-    
     public ToDoItemsGroupByViewModel()
     {
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
@@ -15,17 +13,8 @@ public class ToDoItemsGroupByViewModel : ViewModelBase
     public required ToDoItemsGroupByNoneViewModel GroupByNone { get; init; }
 
     [Inject]
-    public required ToDoItemsGroupByStatusViewModel GroupByStatus
-    {
-        get => groupByStatus;
-        [MemberNotNull(nameof(groupByStatus))]
-        init
-        {
-            groupByStatus = value;
-            Content = groupByStatus;
-        }
-    }
-
+    public required ToDoItemsGroupByStatusViewModel GroupByStatus { get; init; }
+    
     [Inject]
     public required ToDoItemsGroupByTypeViewModel GroupByType { get; init; }
     
@@ -37,6 +26,8 @@ public class ToDoItemsGroupByViewModel : ViewModelBase
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
+        Content = GroupByStatus;
+        
         this.WhenAnyValue(x => x.GroupBy)
            .Subscribe(x =>
             {
