@@ -119,16 +119,16 @@ public class ToDoItemsGroupByTypeViewModel : ViewModelBase
         References.Clear();
     }
     
-    public void ClearExcept(ReadOnlyMemory<ToDoItemEntityNotify> ids)
+    public void ClearExcept(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
-        Values.ClearExcept(ids);
-        Groups.ClearExcept(ids);
-        Planneds.ClearExcept(ids);
-        Periodicitys.ClearExcept(ids);
-        PeriodicityOffsets.ClearExcept(ids);
-        Circles.ClearExcept(ids);
-        Steps.ClearExcept(ids);
-        References.ClearExcept(ids);
+        Values.ClearExcept(items.ToArray().Where(x => x.Type == ToDoItemType.Value).ToArray());
+        Groups.ClearExcept(items.ToArray().Where(x => x.Type == ToDoItemType.Group).ToArray());
+        Planneds.ClearExcept(items.ToArray().Where(x => x.Type == ToDoItemType.Planned).ToArray());
+        Periodicitys.ClearExcept(items.ToArray().Where(x => x.Type == ToDoItemType.Periodicity).ToArray());
+        PeriodicityOffsets.ClearExcept(items.ToArray().Where(x => x.Type == ToDoItemType.PeriodicityOffset).ToArray());
+        Circles.ClearExcept(items.ToArray().Where(x => x.Type == ToDoItemType.Circle).ToArray());
+        Steps.ClearExcept(items.ToArray().Where(x => x.Type == ToDoItemType.Step).ToArray());
+        References.ClearExcept(items.ToArray().Where(x => x.Type == ToDoItemType.Reference).ToArray());
     }
     
     public void UpdateItem(ToDoItemEntityNotify item)

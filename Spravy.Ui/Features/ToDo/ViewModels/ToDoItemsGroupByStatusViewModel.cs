@@ -6,7 +6,7 @@ public class ToDoItemsGroupByStatusViewModel : ViewModelBase
     private readonly ToDoItemsViewModel missed;
     private readonly ToDoItemsViewModel planned;
     private readonly ToDoItemsViewModel readyForCompleted;
-
+    
     [Inject]
     public required ToDoItemsViewModel Missed
     {
@@ -18,7 +18,7 @@ public class ToDoItemsGroupByStatusViewModel : ViewModelBase
             missed.Header = new("ToDoItemsGroupByStatusView.Missed");
         }
     }
-
+    
     [Inject]
     public required ToDoItemsViewModel ReadyForCompleted
     {
@@ -30,7 +30,7 @@ public class ToDoItemsGroupByStatusViewModel : ViewModelBase
             readyForCompleted.Header = new("ToDoItemsGroupByStatusView.ReadyForCompleted");
         }
     }
-
+    
     [Inject]
     public required ToDoItemsViewModel Planned
     {
@@ -42,7 +42,7 @@ public class ToDoItemsGroupByStatusViewModel : ViewModelBase
             planned.Header = new("ToDoItemsGroupByStatusView.Planned");
         }
     }
-
+    
     [Inject]
     public required ToDoItemsViewModel Completed
     {
@@ -54,23 +54,18 @@ public class ToDoItemsGroupByStatusViewModel : ViewModelBase
             completed.Header = new("ToDoItemsGroupByStatusView.Completed");
         }
     }
-
-    public void Clear()
+    
+    public void ClearExcept(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
-        Missed.Clear();
-        ReadyForCompleted.Clear();
-        Planned.Clear();
-        Completed.Clear();
+        Missed.ClearExcept(items.ToArray().Where(x => x.Status == ToDoItemStatus.Miss).ToArray());
+        Planned.ClearExcept(items.ToArray().Where(x => x.Status == ToDoItemStatus.Planned).ToArray());
+        Completed.ClearExcept(items.ToArray().Where(x => x.Status == ToDoItemStatus.Completed).ToArray());
+        
+        ReadyForCompleted.ClearExcept(items.ToArray()
+           .Where(x => x.Status == ToDoItemStatus.ReadyForComplete)
+           .ToArray());
     }
-
-    public void ClearExcept(ReadOnlyMemory<ToDoItemEntityNotify> ids)
-    {
-        Missed.ClearExcept(ids);
-        ReadyForCompleted.ClearExcept(ids);
-        Planned.ClearExcept(ids);
-        Completed.ClearExcept(ids);
-    }
-
+    
     public void UpdateItem(ToDoItemEntityNotify item)
     {
         switch (item.Status)
@@ -80,28 +75,28 @@ public class ToDoItemsGroupByStatusViewModel : ViewModelBase
                 ReadyForCompleted.RemoveItem(item);
                 Planned.RemoveItem(item);
                 Completed.RemoveItem(item);
-
+                
                 break;
             case ToDoItemStatus.ReadyForComplete:
                 Missed.RemoveItem(item);
                 ReadyForCompleted.UpdateItem(item);
                 Planned.RemoveItem(item);
                 Completed.RemoveItem(item);
-
+                
                 break;
             case ToDoItemStatus.Planned:
                 Missed.RemoveItem(item);
                 ReadyForCompleted.RemoveItem(item);
                 Planned.UpdateItem(item);
                 Completed.RemoveItem(item);
-
+                
                 break;
             case ToDoItemStatus.Completed:
                 Missed.RemoveItem(item);
                 ReadyForCompleted.RemoveItem(item);
                 Planned.RemoveItem(item);
                 Completed.UpdateItem(item);
-
+                
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
