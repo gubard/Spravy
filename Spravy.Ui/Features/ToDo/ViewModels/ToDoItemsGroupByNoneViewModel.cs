@@ -16,16 +16,6 @@ public class ToDoItemsGroupByNoneViewModel : ViewModelBase
         }
     }
 
-    public void Clear()
-    {
-        Items.Clear();
-    }
-
-    public void AddItems(ReadOnlyMemory<ToDoItemEntityNotify> items)
-    {
-        Items.AddItems(items);
-    }
-
     public void ClearExcept(ReadOnlyMemory<ToDoItemEntityNotify> ids)
     {
         Items.ClearExcept(ids);

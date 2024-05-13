@@ -11,16 +11,6 @@ public class ToDoItemsViewModel : ViewModelBase
     [Reactive]
     public bool IsExpanded { get; set; } = true;
     
-    public void Clear()
-    {
-        Items.Clear();
-    }
-    
-    public void AddItems(ReadOnlyMemory<ToDoItemEntityNotify> items)
-    {
-        Items.AddRange(items.ToArray());
-    }
-    
     public void ClearExcept(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
         for (var index = 0; index < Items.Count; index++)

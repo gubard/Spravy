@@ -107,18 +107,6 @@ public class ToDoItemsGroupByTypeViewModel : ViewModelBase
         }
     }
     
-    public void Clear()
-    {
-        Values.Clear();
-        Groups.Clear();
-        Planneds.Clear();
-        Periodicitys.Clear();
-        PeriodicityOffsets.Clear();
-        Circles.Clear();
-        Steps.Clear();
-        References.Clear();
-    }
-    
     public void ClearExcept(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
         Values.ClearExcept(items.ToArray().Where(x => x.Type == ToDoItemType.Value).ToArray());
