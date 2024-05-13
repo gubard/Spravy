@@ -31,6 +31,7 @@ public class SpravyCommand
     public static SpravyCommand CreateNavigateToCurrentToDoItem(
         IToDoService toDoService,
         INavigator navigator,
+        ITaskProgressService taskProgressService,
         IErrorHandler errorHandler
     )
     {
@@ -41,7 +42,8 @@ public class SpravyCommand
         
         ConfiguredValueTaskAwaitable<Result> NavigateToCurrentToDoItemAsync(CancellationToken cancellationToken)
         {
-            return toDoService.GetCurrentActiveToDoItemAsync(cancellationToken)
+            return taskProgressService.RunProgressAsync(() => toDoService
+               .GetCurrentActiveToDoItemAsync(cancellationToken)
                .IfSuccessAsync(activeToDoItem =>
                 {
                     if (activeToDoItem.HasValue)
@@ -51,7 +53,7 @@ public class SpravyCommand
                     }
                     
                     return navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken);
-                }, cancellationToken);
+                }, cancellationToken), cancellationToken);
         }
         
         _navigateToCurrentToDoItem = Create(NavigateToCurrentToDoItemAsync, errorHandler);

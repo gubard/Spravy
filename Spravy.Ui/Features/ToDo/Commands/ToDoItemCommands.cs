@@ -16,7 +16,7 @@ public class ToDoItemCommands : ITaskProgressServiceProperty
     {
         this.objectStorage = objectStorage;
         TaskProgressService = taskProgressService;
-        NavigateToCurrentToDo = SpravyCommand.CreateNavigateToCurrentToDoItem(toDoService, navigator, errorHandler);
+        NavigateToCurrentToDo = SpravyCommand.CreateNavigateToCurrentToDoItem(toDoService, navigator, taskProgressService, errorHandler);
         InitializedCommand = SpravyCommand.Create<ToDoItemViewModel>(InitializedAsync, errorHandler);
     }
     
@@ -31,7 +31,7 @@ public class ToDoItemCommands : ITaskProgressServiceProperty
     {
         viewModel.FastAddToDoItemViewModel.ParentId = viewModel.Id;
         
-        return this.RunProgressAsync(
+        return TaskProgressService.RunProgressAsync(
             () => objectStorage.GetObjectOrDefaultAsync<ToDoItemViewModelSetting>(viewModel.ViewId, cancellationToken)
                .IfSuccessAsync(obj => viewModel.SetStateAsync(obj, cancellationToken), cancellationToken)
                .IfSuccessAsync(() => viewModel.RefreshAsync(cancellationToken), cancellationToken), cancellationToken);

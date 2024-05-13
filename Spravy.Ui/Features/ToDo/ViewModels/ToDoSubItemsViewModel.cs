@@ -27,7 +27,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
     {
         return ToDoService.GetFavoriteToDoItemIdsAsync(cancellationToken)
            .IfSuccessAsync(
-                items => this.RunProgressAsync((ushort)items.Length,
+                items => TaskProgressService.RunProgressAsync((ushort)items.Length,
                     item => items.ToResult()
                        .IfSuccessForEach(x => ToDoCache.GetToDoItem(x))
                        .IfSuccessAsync(
@@ -191,7 +191,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
     {
         refreshToDoItem = refresh;
         
-        return this.RunProgressAsync((ushort)ids.Length,
+        return TaskProgressService.RunProgressAsync((ushort)ids.Length,
             item => RefreshToDoItemListsAsync(ids, autoOrder, item, cancellationToken), cancellationToken);
     }
 }

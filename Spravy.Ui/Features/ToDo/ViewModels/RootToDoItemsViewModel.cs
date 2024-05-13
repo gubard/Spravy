@@ -78,7 +78,7 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
     
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
-        return this.RunProgressAsync(
+        return TaskProgressService.RunProgressAsync(
             () => ObjectStorage.GetObjectOrDefaultAsync<RootToDoItemsViewModelSetting>(ViewId, cancellationToken)
                .IfSuccessAsync(obj => SetStateAsync(obj, cancellationToken), cancellationToken)
                .IfSuccessAsync(() => refreshWork.RunAsync().ToValueTaskResultOnly().ConfigureAwait(false),
