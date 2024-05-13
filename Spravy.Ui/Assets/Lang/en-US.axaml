@@ -16,6 +16,7 @@
     <sys:String x:Key="Command.AddToFavorite">Add to favorite</sys:String>
     <sys:String x:Key="Command.RemoveFromFavorite">Remove from favorite</sys:String>
     <sys:String x:Key="Command.OpenLink">Open link</sys:String>
+    <sys:String x:Key="Command.Clone">Clone</sys:String>
     
     <!--ResetToDoItemView-->
     <sys:String x:Key="ResetToDoItemView.CompleteChildrenTask">Complete children task</sys:String>

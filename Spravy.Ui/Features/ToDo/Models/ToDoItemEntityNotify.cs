@@ -207,6 +207,16 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
             SpravyCommand.Create(
                 cancellationToken => navigator.NavigateToAsync<ToDoItemViewModel>(vm => vm.Id = id, cancellationToken),
                 errorHandler);
+        
+        CloneItem = new(MaterialIconKind.Copyleft, new("Command.Clone"),
+            SpravyCommand.Create(
+                cancellationToken => dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
+                    itemNotify => dialogViewer.CloseInputDialogAsync(cancellationToken)
+                       .IfSuccessAsync(() => toDoService.CloneToDoItemAsync(Id, itemNotify.Id, cancellationToken),
+                            cancellationToken)
+                       .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
+                            cancellationToken), view => view.DefaultSelectedItemId = Id, cancellationToken),
+                errorHandler));
     }
     
     public Guid Id { get; }
@@ -224,6 +234,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
     public SpravyCommandNotify RandomizeChildrenOrderItem { get; }
     public SpravyCommandNotify ChangeOrderItem { get; }
     public SpravyCommandNotify ResetItem { get; }
+    public SpravyCommandNotify CloneItem { get; }
     public SpravyCommand NavigateToCurrentItem { get; }
     public AvaloniaList<SpravyCommandNotify> Commands { get; }
     public AvaloniaList<SpravyCommandNotify> AllCommands { get; }
@@ -341,6 +352,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
             Commands.Add(RandomizeChildrenOrderItem);
             Commands.Add(ChangeOrderItem);
             Commands.Add(ResetItem);
+            Commands.Add(CloneItem);
             
             if (IsCan.HasFlag(ToDoItemIsCan.CanComplete))
             {
