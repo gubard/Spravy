@@ -6,7 +6,6 @@ public class ToDoCache : IToDoCache
 {
     private readonly Dictionary<Guid, ToDoItemEntityNotify> cache;
     private readonly Dictionary<Guid, ActiveToDoItemNotify> activeCache;
-    private readonly Dictionary<Guid, ReadOnlyMemory<ToDoItemEntityNotify>> childrenCache;
     private readonly IToDoService toDoService;
     private readonly IUiApplicationService uiApplicationService;
     private readonly IErrorHandler errorHandler;
@@ -38,7 +37,6 @@ public class ToDoCache : IToDoCache
         this.openerLink = openerLink;
         this.dialogViewer = dialogViewer;
         cache = new();
-        childrenCache = new();
     }
     
     public Result<ActiveToDoItemNotify> GetActive(Guid id)
@@ -52,18 +50,6 @@ public class ToDoCache : IToDoCache
         activeCache.Add(id, result);
         
         return result.ToResult();
-    }
-    
-    public Result<ReadOnlyMemory<ToDoItemEntityNotify>> GetChildrenItems(Guid id)
-    {
-        if (childrenCache.TryGetValue(id, out var value))
-        {
-            return value.ToResult();
-        }
-        
-        childrenCache.Add(id, ReadOnlyMemory<ToDoItemEntityNotify>.Empty);
-        
-        return ReadOnlyMemory<ToDoItemEntityNotify>.Empty.ToResult();
     }
     
     public Result<ToDoItemEntityNotify> GetToDoItem(Guid id)
@@ -158,16 +144,21 @@ public class ToDoCache : IToDoCache
         return rootItems.ToResult();
     }
     
-    public Result<ReadOnlyMemory<ToDoItemEntityNotify>> UpdateChildrenItems(Guid id, ReadOnlyMemory<Guid> items)
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoItemEntityNotify>>> UpdateChildrenItemsAsync(
+        Guid id,
+        ReadOnlyMemory<Guid> items,
+        CancellationToken cancellationToken
+    )
     {
         return items.ToResult()
            .IfSuccessForEach(GetToDoItem)
-           .IfSuccess(x =>
-            {
-                childrenCache[id] = x;
-                
-                return x.ToResult();
-            });
+           .IfSuccessAsync(children => GetToDoItem(id)
+               .IfSuccessAsync(item => this.InvokeUiBackgroundAsync(() =>
+                {
+                    item.Children.Clear();
+                    item.Children.AddRange(children.ToArray());
+                }), cancellationToken)
+               .IfSuccessAsync(() => children.ToResult(), cancellationToken), cancellationToken);
     }
     
     public ConfiguredValueTaskAwaitable<Result<ToDoItemEntityNotify>> UpdateAsync(

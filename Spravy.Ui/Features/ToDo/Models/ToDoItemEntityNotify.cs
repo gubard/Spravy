@@ -25,6 +25,8 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
         this.WhenAnyValue(x => x.ReferenceId).Subscribe(_ => this.RaisePropertyChanged(nameof(CurrentId)));
         CompactCommands = new();
         SingleCommands = new();
+        Children = new();
+        MultiCommands = new();
         
         CompleteItem = new(MaterialIconKind.Check, new("Command.Complete"), SpravyCommand.Create(cancellationToken =>
         {
@@ -222,9 +224,9 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                 errorHandler));
         
         MultiAddChildItem = new(MaterialIconKind.Plus, new("Command.AddChildToDoItem"), SpravyCommand.Create(
-            (AvaloniaList<ToDoItemEntityNotify> items, CancellationToken cancellationToken) =>
+            cancellationToken =>
             {
-                ReadOnlyMemory<ToDoItemEntityNotify> selected = items.Where(x => x.IsSelected).ToArray();
+                ReadOnlyMemory<ToDoItemEntityNotify> selected = Children.Where(x => x.IsSelected).ToArray();
                 
                 if (selected.Length == 0)
                 {
@@ -250,7 +252,55 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                     cancellationToken);
             }, errorHandler));
         
-        MultiCommands = new();
+        MultiShowSettingItem = new(MaterialIconKind.Settings, new("Command.Setting"), SpravyCommand.Create(
+            cancellationToken =>
+            {
+                ReadOnlyMemory<ToDoItemEntityNotify> selected = Children.Where(x => x.IsSelected).ToArray();
+                
+                if (selected.Length == 0)
+                {
+                    return new Result(new NonItemSelectedError()).ToValueTaskResult().ConfigureAwait(false);
+                }
+                
+                return dialogViewer.ShowConfirmContentDialogAsync<MultiToDoItemSettingViewModel>(vm => dialogViewer
+                       .CloseContentDialogAsync(cancellationToken)
+                       .IfSuccessAsync(() => selected.ToResult()
+                           .IfSuccessForEachAsync(item => Result.AwaitableFalse
+                               .IfSuccessAsync(() =>
+                                {
+                                    if (vm.IsLink)
+                                    {
+                                        return toDoService.UpdateToDoItemLinkAsync(item.Id,
+                                            vm.Link.IsNullOrWhiteSpace() ? null : vm.Link.ToUri(),
+                                            cancellationToken);
+                                    }
+                                    
+                                    return Result.AwaitableFalse;
+                                }, cancellationToken)
+                               .IfSuccessAsync(() =>
+                                {
+                                    if (vm.IsName)
+                                    {
+                                        return toDoService.UpdateToDoItemNameAsync(item.Id, vm.Name,
+                                            cancellationToken);
+                                    }
+                                    
+                                    return Result.AwaitableFalse;
+                                }, cancellationToken)
+                               .IfSuccessAsync(() =>
+                                {
+                                    if (vm.IsType)
+                                    {
+                                        return toDoService.UpdateToDoItemTypeAsync(item.Id, vm.Type,
+                                            cancellationToken);
+                                    }
+                                    
+                                    return Result.AwaitableFalse;
+                                }, cancellationToken), cancellationToken), cancellationToken)
+                       .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
+                            cancellationToken), _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
+                    vm => vm.ToDoItemId = Id, cancellationToken);
+            }, errorHandler));
         
         MultiCommands.AddRange([
             MultiAddChildItem,
@@ -308,6 +358,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
     public AvaloniaList<SpravyCommandNotify> CompactCommands { get; }
     public AvaloniaList<SpravyCommandNotify> SingleCommands { get; }
     public AvaloniaList<SpravyCommandNotify> MultiCommands { get; }
+    public AvaloniaList<ToDoItemEntityNotify> Children { get; }
     
     [Reactive]
     public object[] Path { get; set; }

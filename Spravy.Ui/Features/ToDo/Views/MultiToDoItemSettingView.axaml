@@ -1,0 +1,39 @@
+<ru:ReactiveUserControl x:TypeArguments="vm:MultiToDoItemSettingViewModel"
+                        xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:ru="http://reactiveui.net"
+                        xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+                        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                        x:Class="Spravy.Ui.Features.ToDo.Views.MultiToDoItemSettingView"
+                        x:DataType="vm:MultiToDoItemSettingViewModel">
+    <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto">
+        <ToggleSwitch IsChecked="{Binding IsName}" />
+
+        <StackPanel Grid.Column="1">
+            <TextBlock Classes="field"
+                       Text="{DynamicResource ToDoItemSettingsView.Name}" />
+            <TextBox Text="{Binding Name}" />
+        </StackPanel>
+
+        <ToggleSwitch Grid.Row="1" IsChecked="{Binding IsLink}" />
+
+        <StackPanel Grid.Row="1" Grid.Column="1">
+            <TextBlock Classes="field"
+                       Text="{DynamicResource ToDoItemSettingsView.Url}" />
+            <TextBox Classes="content-type-url"
+                     Text="{Binding Link}" />
+        </StackPanel>
+
+        <ToggleSwitch Grid.Row="2" IsChecked="{Binding IsType}" />
+
+        <StackPanel Grid.Row="2" Grid.Column="1">
+            <TextBlock Classes="field"
+                       Text="{DynamicResource ToDoItemSettingsView.Type}" />
+            <ListBox Classes="wrap-panel"
+                     SelectedItem="{Binding Type}"
+                     ItemsSource="{Binding ToDoItemTypes}" />
+        </StackPanel>
+    </Grid>
+</ru:ReactiveUserControl>

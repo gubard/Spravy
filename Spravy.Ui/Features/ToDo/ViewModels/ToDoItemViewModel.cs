@@ -13,8 +13,6 @@ public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceP
     {
         refreshWork = TaskWork.Create(RefreshCoreAsync);
         CommandItems = new();
-        
-        this.WhenAnyValue(x => x.Item).Subscribe(_ => UpdateCommandItems());
     }
     
     public Guid Id { get; set; }
@@ -75,8 +73,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceP
         FastAddToDoItemViewModel.ParentId = Id;
         
         return Result.AwaitableFalse.IfSuccessAllAsync(cancellationToken,
-            () => RefreshToDoItemChildrenAsync(cancellationToken), 
-            () => RefreshToDoItemCore(cancellationToken),
+            () => RefreshToDoItemChildrenAsync(cancellationToken), () => RefreshToDoItemCore(cancellationToken),
             () => RefreshPathAsync(cancellationToken));
     }
     
@@ -86,7 +83,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceP
            .IfSuccessAsync(item => this.InvokeUiBackgroundAsync(() => Item = item), cancellationToken)
            .IfSuccessAsync(() => ToDoService.GetToDoItemAsync(Id, cancellationToken), cancellationToken)
            .IfSuccessAsync(item => ToDoCache.UpdateAsync(item, cancellationToken), cancellationToken)
-           .ToResultOnlyAsync();
+           .IfSuccessAsync(_ => this.InvokeUiBackgroundAsync(UpdateCommandItems), cancellationToken);
     }
     
     private ConfiguredValueTaskAwaitable<Result> RefreshPathAsync(CancellationToken cancellationToken)
@@ -97,10 +94,10 @@ public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceP
     
     private ConfiguredValueTaskAwaitable<Result> RefreshToDoItemChildrenAsync(CancellationToken cancellationToken)
     {
-        return ToDoCache.GetChildrenItems(Id)
-           .IfSuccessAsync(items => ToDoSubItemsViewModel.ClearExceptAsync(items, cancellationToken), cancellationToken)
+        return ToDoSubItemsViewModel
+           .ClearExceptAsync(Item?.Children.ToArray() ?? ReadOnlyMemory<ToDoItemEntityNotify>.Empty, cancellationToken)
            .IfSuccessAsync(() => ToDoService.GetChildrenToDoItemIdsAsync(Id, cancellationToken), cancellationToken)
-           .IfSuccessAsync(ids => ToDoCache.UpdateChildrenItems(Id, ids), cancellationToken)
+           .IfSuccessAsync(ids => ToDoCache.UpdateChildrenItemsAsync(Id, ids, cancellationToken), cancellationToken)
            .IfSuccessAsync(items => ToDoSubItemsViewModel.UpdateItemsAsync(items, this, false, cancellationToken),
                 cancellationToken);
     }

@@ -10,7 +10,7 @@
                         x:Class="Spravy.Ui.Views.ConfirmView"
                         x:DataType="vm:ConfirmViewModel">
     <UserControl.KeyBindings>
-        <KeyBinding Gesture="Ctrl+Enter" Command="{Binding ConfirmCommand}" />
+        <KeyBinding Gesture="Ctrl+Enter" Command="{Binding ConfirmCommand.Command}" />
     </UserControl.KeyBindings>
 
     <Grid RowDefinitions="*,Auto"
@@ -26,7 +26,7 @@
         <Button Name="{x:Static v:ConfirmView.OkButtonName}"
                 Grid.Row="1"
                 Grid.Column="1"
-                Command="{Binding ConfirmCommand}"
+                Command="{Binding ConfirmCommand.Command}"
                 ClickMode="Press"
                 Content="{DynamicResource ConfirmView.Ok}"
                 Classes="Flat" />

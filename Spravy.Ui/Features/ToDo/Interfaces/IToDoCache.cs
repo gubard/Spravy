@@ -4,9 +4,13 @@ public interface IToDoCache
 {
     Result<ReadOnlyMemory<ToDoItemEntityNotify>> UpdateRootItems(ReadOnlyMemory<Guid> roots);
     Result<ReadOnlyMemory<ToDoItemEntityNotify>> GetRootItems();
-    Result<ReadOnlyMemory<ToDoItemEntityNotify>> UpdateChildrenItems(Guid id, ReadOnlyMemory<Guid> items);
-    Result<ReadOnlyMemory<ToDoItemEntityNotify>> GetChildrenItems(Guid id);
     Result<ToDoItemEntityNotify> GetToDoItem(Guid id);
+    
+    ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoItemEntityNotify>>> UpdateChildrenItemsAsync(
+        Guid id,
+        ReadOnlyMemory<Guid> items,
+        CancellationToken cancellationToken
+    );
     
     ConfiguredValueTaskAwaitable<Result<ToDoItemEntityNotify>> UpdateAsync(
         ToDoItem toDoItem,
