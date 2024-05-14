@@ -9,7 +9,6 @@ public static class CommandStorage
     private static readonly MainSplitViewModel mainSplitViewModel;
     private static readonly IToDoService toDoService;
     private static readonly IToDoCache toDoCache;
-    private static readonly IOpenerLink openerLink;
     private static readonly IMapper mapper;
     private static readonly IAuthenticationService authenticationService;
     private static readonly IObjectStorage objectStorage;
@@ -25,7 +24,6 @@ public static class CommandStorage
         mapper = kernel.Get<IMapper>();
         authenticationService = kernel.Get<IAuthenticationService>();
         navigator = kernel.Get<INavigator>();
-        openerLink = kernel.Get<IOpenerLink>();
         dialogViewer = kernel.Get<IDialogViewer>();
         mainSplitViewModel = kernel.Get<MainSplitViewModel>();
         toDoService = kernel.Get<IToDoService>();
@@ -35,17 +33,6 @@ public static class CommandStorage
         
         SelectAll = CreateCommand<AvaloniaList<ToDoItemEntityNotify>>(SelectAllAsync, MaterialIconKind.CheckAll,
             "Select all");
-        
-        OpenLinkItem = CreateCommand<ILink>(OpenLinkAsync, MaterialIconKind.Link, "Open link");
-        
-        RemoveToDoItemFromFavoriteItem = CreateCommand<Guid>(
-            RemoveFavoriteToDoItemAsync, MaterialIconKind.Star, "Remove from favorite");
-        
-        AddToDoItemToFavoriteItem = CreateCommand<Guid>(
-            AddFavoriteToDoItemAsync, MaterialIconKind.StarOutline, "Add to favorite");
-        
-        SetDueDateTimeItem = CreateCommand<IDueDateTimeProperty>(
-            SetDueDateTimeAsync, MaterialIconKind.Pencil, "Set due date time");
         
         BackItem = CreateCommand(BackAsync, MaterialIconKind.ArrowLeft, "Back");
         NavigateToItem = CreateCommand<Type>(NavigateToAsync, MaterialIconKind.ArrowLeft, "Navigate to");
@@ -76,23 +63,14 @@ public static class CommandStorage
         SendNewVerificationCodeItem = CreateCommand<IVerificationEmail>(SendNewVerificationCodeAsync,
             MaterialIconKind.CodeString, "Verification email");
         
-        ResetToDoItemItem = CreateCommand<ICurrentIdProperty>(
-            ResetToDoItemAsync, MaterialIconKind.EncryptionReset, "Reset to-do item");
-        
         MultiDeleteToDoItemsItem = CreateCommand<AvaloniaList<ToDoItemEntityNotify>>(MultiDeleteToDoItemsAsync,
             MaterialIconKind.Delete, "Delete to-do items");
-        
-        CloneToDoItemItem = CreateCommand<IIdProperty>(
-            CloneToDoItemAsync, MaterialIconKind.FileMove, "Clone to-do item");
         
         AddPasswordItemItem = CreateCommand(AddPasswordItemAsync, MaterialIconKind.Plus, "Add password item");
         
         ShowPasswordItemSettingItem = CreateCommand<IIdProperty>(ShowPasswordItemSettingAsync,
             MaterialIconKind.Settings, "Show password setting");
     }
-    
-    public static CommandItem CloneToDoItemItem { get; }
-    public static CommandItem ResetToDoItemItem { get; }
     
     public static ICommand SendNewVerificationCodeCommand
     {
@@ -133,34 +111,6 @@ public static class CommandStorage
     }
     
     public static CommandItem NavigateToToDoItemItem { get; }
-    
-    public static ICommand OpenLinkCommand
-    {
-        get => OpenLinkItem.Command;
-    }
-    
-    public static CommandItem OpenLinkItem { get; }
-    
-    public static ICommand RemoveToDoItemFromFavoriteCommand
-    {
-        get => RemoveToDoItemFromFavoriteItem.Command;
-    }
-    
-    public static CommandItem RemoveToDoItemFromFavoriteItem { get; }
-    
-    public static ICommand AddToDoItemToFavoriteCommand
-    {
-        get => AddToDoItemToFavoriteItem.Command;
-    }
-    
-    public static CommandItem AddToDoItemToFavoriteItem { get; }
-    
-    public static ICommand SetDueDateTimeCommand
-    {
-        get => SetDueDateTimeItem.Command;
-    }
-    
-    public static CommandItem SetDueDateTimeItem { get; }
     
     public static ICommand BackCommand
     {
@@ -274,21 +224,6 @@ public static class CommandStorage
                 })
                .ToArray())
            .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken);
-    }
-    
-    private static ConfiguredValueTaskAwaitable<Result> ResetToDoItemAsync(
-        ICurrentIdProperty property,
-        CancellationToken cancellationToken
-    )
-    {
-        return dialogViewer.ShowConfirmContentDialogAsync<ResetToDoItemViewModel>(
-            vm => dialogViewer.CloseContentDialogAsync(cancellationToken)
-               .IfSuccessAsync(
-                    () => toDoService.ResetToDoItemAsync(mapper.Map<ResetToDoItemOptions>(vm), cancellationToken),
-                    cancellationToken)
-               .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
-            _ => dialogViewer.CloseContentDialogAsync(cancellationToken), vm => vm.Id = property.CurrentId,
-            cancellationToken);
     }
     
     private static ConfiguredValueTaskAwaitable<Result> SendNewVerificationCodeAsync(
@@ -507,59 +442,6 @@ public static class CommandStorage
         var result = await navigator.NavigateBackAsync(cancellationToken);
         
         return new(result.Errors);
-    }
-    
-    private static ConfiguredValueTaskAwaitable<Result> SetDueDateTimeAsync(
-        IDueDateTimeProperty property,
-        CancellationToken cancellationToken
-    )
-    {
-        return dialogViewer.ShowDateTimeConfirmDialogAsync(
-            value => dialogViewer.CloseInputDialogAsync(cancellationToken)
-               .IfSuccessAsync(() => cancellationToken.InvokeUiBackgroundAsync(() => property.DueDateTime = value),
-                    cancellationToken), calendar =>
-            {
-                calendar.SelectedDate = DateTimeOffset.Now.ToCurrentDay().DateTime;
-                calendar.SelectedTime = TimeSpan.Zero;
-            }, cancellationToken);
-    }
-    
-    private static ConfiguredValueTaskAwaitable<Result> RemoveFavoriteToDoItemAsync(
-        Guid id,
-        CancellationToken cancellationToken
-    )
-    {
-        return toDoService.RemoveFavoriteToDoItemAsync(id, cancellationToken)
-           .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken);
-    }
-    
-    private static ConfiguredValueTaskAwaitable<Result> AddFavoriteToDoItemAsync(
-        Guid id,
-        CancellationToken cancellationToken
-    )
-    {
-        return toDoService.AddFavoriteToDoItemAsync(id, cancellationToken)
-           .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken);
-    }
-    
-    private static ConfiguredValueTaskAwaitable<Result> OpenLinkAsync(ILink item, CancellationToken cancellationToken)
-    {
-        var link = item.Link.ThrowIfNull().ToUri();
-        
-        return openerLink.OpenLinkAsync(link, cancellationToken);
-    }
-    
-    private static ConfiguredValueTaskAwaitable<Result> CloneToDoItemAsync(
-        IIdProperty id,
-        CancellationToken cancellationToken
-    )
-    {
-        return dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
-            itemNotify => dialogViewer.CloseInputDialogAsync(cancellationToken)
-               .IfSuccessAsync(() => toDoService.CloneToDoItemAsync(id.Id, itemNotify.Id, cancellationToken),
-                    cancellationToken)
-               .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
-            view => view.DefaultSelectedItemId = id.Id, cancellationToken);
     }
     
     private static ConfiguredValueTaskAwaitable<Result> SelectAllAsync(

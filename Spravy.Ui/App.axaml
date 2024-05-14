@@ -172,7 +172,7 @@
                             </Button.Styles>
 
                             <Button.Flyout>
-                                <MenuFlyout ItemsSource="{Binding Commands}" />
+                                <MenuFlyout ItemsSource="{Binding CompactCommands}" />
                             </Button.Flyout>
 
                             <mi:MaterialIcon Kind="DotsHorizontal" />

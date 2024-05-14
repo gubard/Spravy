@@ -7,24 +7,14 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceProperty, IRefresh
 {
     private readonly TaskWork refreshWork;
+    private readonly ToDoSubItemsViewModel toDoSubItemsViewModel;
     
     public ToDoItemViewModel() : base(true)
     {
         refreshWork = TaskWork.Create(RefreshCoreAsync);
         CommandItems = new();
         
-        this.WhenAnyValue(x => x.Item)
-           .Subscribe(x =>
-            {
-                CommandItems.Clear();
-                
-                if (x is null)
-                {
-                    return;
-                }
-                
-                CommandItems.AddRange(x.AllCommands);
-            });
+        this.WhenAnyValue(x => x.Item).Subscribe(_ => UpdateCommandItems());
     }
     
     public Guid Id { get; set; }
@@ -34,7 +24,16 @@ public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceP
     public required ToDoItemCommands Commands { get; init; }
     
     [Inject]
-    public required ToDoSubItemsViewModel ToDoSubItemsViewModel { get; init; }
+    public required ToDoSubItemsViewModel ToDoSubItemsViewModel
+    {
+        get => toDoSubItemsViewModel;
+        [MemberNotNull(nameof(toDoSubItemsViewModel))]
+        init
+        {
+            toDoSubItemsViewModel = value;
+            toDoSubItemsViewModel.List.WhenAnyValue(x => x.IsMulti).Subscribe(_ => UpdateCommandItems());
+        }
+    }
     
     [Inject]
     public required FastAddToDoItemViewModel FastAddToDoItemViewModel { get; init; }
@@ -104,6 +103,18 @@ public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceP
            .IfSuccessAsync(ids => ToDoCache.UpdateChildrenItems(Id, ids), cancellationToken)
            .IfSuccessAsync(items => ToDoSubItemsViewModel.UpdateItemsAsync(items, this, false, cancellationToken),
                 cancellationToken);
+    }
+    
+    private void UpdateCommandItems()
+    {
+        CommandItems.Clear();
+        
+        if (Item is null)
+        {
+            return;
+        }
+        
+        CommandItems.AddRange(ToDoSubItemsViewModel.List.IsMulti ? Item.MultiCommands : Item.SingleCommands);
     }
     
     public override Result Stop()

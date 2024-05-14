@@ -1,3 +1,5 @@
+using Spravy.Ui.Errors;
+
 namespace Spravy.Ui.Features.ToDo.Models;
 
 public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
@@ -21,8 +23,8 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
         Link = string.Empty;
         Status = ToDoItemStatus.ReadyForComplete;
         this.WhenAnyValue(x => x.ReferenceId).Subscribe(_ => this.RaisePropertyChanged(nameof(CurrentId)));
-        Commands = new();
-        AllCommands = new();
+        CompactCommands = new();
+        SingleCommands = new();
         
         CompleteItem = new(MaterialIconKind.Check, new("Command.Complete"), SpravyCommand.Create(cancellationToken =>
         {
@@ -205,7 +207,8 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
         
         NavigateToCurrentItem =
             SpravyCommand.Create(
-                cancellationToken => navigator.NavigateToAsync<ToDoItemViewModel>(vm => vm.Id = CurrentId, cancellationToken),
+                cancellationToken =>
+                    navigator.NavigateToAsync<ToDoItemViewModel>(vm => vm.Id = CurrentId, cancellationToken),
                 errorHandler);
         
         CloneItem = new(MaterialIconKind.Copyleft, new("Command.Clone"),
@@ -217,6 +220,55 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                        .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                             cancellationToken), view => view.DefaultSelectedItemId = Id, cancellationToken),
                 errorHandler));
+        
+        MultiAddChildItem = new(MaterialIconKind.Plus, new("Command.AddChildToDoItem"), SpravyCommand.Create(
+            (AvaloniaList<ToDoItemEntityNotify> items, CancellationToken cancellationToken) =>
+            {
+                ReadOnlyMemory<ToDoItemEntityNotify> selected = items.Where(x => x.IsSelected).ToArray();
+                
+                if (selected.Length == 0)
+                {
+                    return new Result(new NonItemSelectedError()).ToValueTaskResult().ConfigureAwait(false);
+                }
+                
+                return dialogViewer.ShowConfirmContentDialogAsync<AddToDoItemViewModel>(viewModel => converter
+                       .Convert<Uri?>(viewModel.ToDoItemContent.Link)
+                       .IfSuccessAsync(uri => selected.ToResult()
+                           .IfSuccessForEachAsync(item =>
+                            {
+                                var options = new AddToDoItemOptions(item.Id, viewModel.ToDoItemContent.Name,
+                                    viewModel.ToDoItemContent.Type, viewModel.DescriptionContent.Description,
+                                    viewModel.DescriptionContent.Type, uri);
+                                
+                                return dialogViewer.CloseContentDialogAsync(cancellationToken)
+                                   .IfSuccessAsync(() => toDoService.AddToDoItemAsync(options, cancellationToken),
+                                        cancellationToken)
+                                   .IfSuccessAsync(_ => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
+                                        cancellationToken);
+                            }, cancellationToken), cancellationToken),
+                    _ => dialogViewer.CloseContentDialogAsync(cancellationToken), vm => vm.ParentId = CurrentId,
+                    cancellationToken);
+            }, errorHandler));
+        
+        MultiCommands = new();
+        
+        MultiCommands.AddRange([
+            MultiAddChildItem,
+            MultiShowSettingItem,
+            MultiDeleteItem,
+            MultiOpenLeafItem,
+            MultiChangeParentItem,
+            MultiMakeAsRootItem,
+            MultiCopyToClipboardItem,
+            MultiRandomizeChildrenOrderItem,
+            MultiChangeOrderItem,
+            MultiResetItem,
+            MultiCloneItem,
+            MultiOpenLinkItem,
+            MultiAddToFavoriteItem,
+            MultiRemoveFromFavoriteItem,
+            MultiCompleteItem,
+        ]);
     }
     
     public Guid Id { get; }
@@ -235,9 +287,27 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
     public SpravyCommandNotify ChangeOrderItem { get; }
     public SpravyCommandNotify ResetItem { get; }
     public SpravyCommandNotify CloneItem { get; }
+    
+    public SpravyCommandNotify MultiCompleteItem { get; }
+    public SpravyCommandNotify MultiAddToFavoriteItem { get; }
+    public SpravyCommandNotify MultiRemoveFromFavoriteItem { get; }
+    public SpravyCommandNotify MultiOpenLinkItem { get; }
+    public SpravyCommandNotify MultiAddChildItem { get; }
+    public SpravyCommandNotify MultiDeleteItem { get; }
+    public SpravyCommandNotify MultiShowSettingItem { get; }
+    public SpravyCommandNotify MultiOpenLeafItem { get; }
+    public SpravyCommandNotify MultiChangeParentItem { get; }
+    public SpravyCommandNotify MultiMakeAsRootItem { get; }
+    public SpravyCommandNotify MultiCopyToClipboardItem { get; }
+    public SpravyCommandNotify MultiRandomizeChildrenOrderItem { get; }
+    public SpravyCommandNotify MultiChangeOrderItem { get; }
+    public SpravyCommandNotify MultiResetItem { get; }
+    public SpravyCommandNotify MultiCloneItem { get; }
+    
     public SpravyCommand NavigateToCurrentItem { get; }
-    public AvaloniaList<SpravyCommandNotify> Commands { get; }
-    public AvaloniaList<SpravyCommandNotify> AllCommands { get; }
+    public AvaloniaList<SpravyCommandNotify> CompactCommands { get; }
+    public AvaloniaList<SpravyCommandNotify> SingleCommands { get; }
+    public AvaloniaList<SpravyCommandNotify> MultiCommands { get; }
     
     [Reactive]
     public object[] Path { get; set; }
@@ -340,33 +410,39 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
     {
         return this.InvokeUiBackgroundAsync(() =>
         {
-            Commands.Clear();
-            AllCommands.Clear();
-            Commands.Add(AddChildItem);
-            Commands.Add(ShowSettingItem);
-            Commands.Add(DeleteItem);
-            Commands.Add(OpenLeafItem);
-            Commands.Add(ChangeParentItem);
-            Commands.Add(MakeAsRootItem);
-            Commands.Add(CopyToClipboardItem);
-            Commands.Add(RandomizeChildrenOrderItem);
-            Commands.Add(ChangeOrderItem);
-            Commands.Add(ResetItem);
-            Commands.Add(CloneItem);
+            CompactCommands.Clear();
+            SingleCommands.Clear();
+            
+            CompactCommands.AddRange([
+                AddChildItem,
+                ShowSettingItem,
+                DeleteItem,
+                OpenLeafItem,
+                ChangeParentItem,
+                MakeAsRootItem,
+                CopyToClipboardItem,
+                RandomizeChildrenOrderItem,
+                ChangeOrderItem,
+                ResetItem,
+                CloneItem,
+            ]);
+            
+            var singleCommands = new List<SpravyCommandNotify>();
             
             if (IsCan.HasFlag(ToDoItemIsCan.CanComplete))
             {
-                AllCommands.Add(CompleteItem);
+                singleCommands.Add(CompleteItem);
             }
             
-            AllCommands.Add(IsFavorite ? RemoveFromFavoriteItem : AddToFavoriteItem);
+            singleCommands.Add(IsFavorite ? RemoveFromFavoriteItem : AddToFavoriteItem);
             
             if (!Link.IsNullOrWhiteSpace())
             {
-                AllCommands.Add(OpenLinkItem);
+                singleCommands.Add(OpenLinkItem);
             }
             
-            AllCommands.AddRange(Commands);
+            singleCommands.AddRange(CompactCommands);
+            SingleCommands.AddRange(singleCommands);
         });
     }
 }
