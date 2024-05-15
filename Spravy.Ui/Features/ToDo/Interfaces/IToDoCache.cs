@@ -22,9 +22,14 @@ public interface IToDoCache
         CancellationToken cancellationToken
     );
     
-    ConfiguredValueTaskAwaitable<Result> UpdateAsync(
+    ConfiguredValueTaskAwaitable<Result> UpdateParentsAsync(
         Guid id,
         ReadOnlyMemory<ToDoShortItem> parents,
+        CancellationToken cancellationToken
+    );
+    
+    ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoItemEntityNotify>>> UpdateAsync(
+        ReadOnlyMemory<ToDoSelectorItem> items,
         CancellationToken cancellationToken
     );
 }

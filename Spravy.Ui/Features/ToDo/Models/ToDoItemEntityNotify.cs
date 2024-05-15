@@ -79,12 +79,12 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                    .IfSuccessAsync(() => toDoService.DeleteToDoItemAsync(Id, cancellationToken), cancellationToken)
                    .IfSuccessAsync(() =>
                     {
-                        if (ParentId is null)
+                        if (Parent is null)
                         {
                             return navigator.NavigateToAsync<RootToDoItemsViewModel>(cancellationToken);
                         }
                         
-                        return navigator.NavigateToAsync<ToDoItemViewModel>(viewModel => viewModel.Id = ParentId.Value,
+                        return navigator.NavigateToAsync<ToDoItemViewModel>(viewModel => viewModel.Id = Parent.Id,
                             cancellationToken);
                     }, cancellationToken)
                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
@@ -126,7 +126,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                         cancellationToken), viewModel =>
                 {
                     viewModel.IgnoreIds.Add(Id);
-                    viewModel.DefaultSelectedItemId = ParentId.GetValueOrDefault();
+                    viewModel.DefaultSelectedItemId = (Parent?.Id).GetValueOrDefault();
                 }, cancellationToken), errorHandler));
         
         MakeAsRootItem = new(MaterialIconKind.FamilyTree, new("Command.MakeAsRootToDoItem"),
@@ -370,6 +370,12 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
     public bool IsSelected { get; set; }
     
     [Reactive]
+    public bool IsExpanded { get; set; }
+    
+    [Reactive]
+    public bool IsIgnore { get; set; }
+    
+    [Reactive]
     public bool IsFavorite { get; set; }
     
     [Reactive]
@@ -388,7 +394,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
     public string Name { get; set; }
     
     [Reactive]
-    public Guid? ParentId { get; set; }
+    public ToDoItemEntityNotify? Parent { get; set; }
     
     [Reactive]
     public Guid? ReferenceId { get; set; }

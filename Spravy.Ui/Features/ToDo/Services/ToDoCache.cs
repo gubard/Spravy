@@ -105,13 +105,22 @@ public class ToDoCache : IToDoCache
                 item.IsCan = toDoItem.IsCan;
                 item.IsFavorite = toDoItem.IsFavorite;
                 item.OrderIndex = toDoItem.OrderIndex;
-                item.ParentId = toDoItem.ParentId;
             })
+           .IfSuccessAsync(() =>
+            {
+                if (toDoItem.ParentId.HasValue)
+                {
+                    return GetToDoItem(toDoItem.ParentId.Value);
+                }
+                
+                return new((ToDoItemEntityNotify)null);
+            }, cancellationToken)
+           .IfSuccessAsync(parent => this.InvokeUiBackgroundAsync(() => item.Parent = parent), cancellationToken)
            .IfSuccessAsync(item.UpdateCommandsAsync, cancellationToken)
            .IfSuccessAsync(item.ToResult, cancellationToken);
     }
     
-    public ConfiguredValueTaskAwaitable<Result> UpdateAsync(
+    public ConfiguredValueTaskAwaitable<Result> UpdateParentsAsync(
         Guid id,
         ReadOnlyMemory<ToDoShortItem> parents,
         CancellationToken cancellationToken
@@ -127,13 +136,44 @@ public class ToDoCache : IToDoCache
                         cancellationToken), cancellationToken);
     }
     
+    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoItemEntityNotify>>> UpdateAsync(
+        ReadOnlyMemory<ToDoSelectorItem> items,
+        CancellationToken cancellationToken
+    )
+    {
+        return UpdateRootItems(items.ToArray().Select(x => x.Id).ToArray())
+           .IfSuccessAsync(
+                _ => items.ToResult()
+                   .IfSuccessForEachAsync(item => UpdateAsync(item, cancellationToken), cancellationToken),
+                cancellationToken);
+    }
+    
+    public ConfiguredValueTaskAwaitable<Result<ToDoItemEntityNotify>> UpdateAsync(
+        ToDoSelectorItem item,
+        CancellationToken cancellationToken
+    )
+    {
+        return GetToDoItem(item.Id)
+           .IfSuccessAsync(
+                x => this.InvokeUiBackgroundAsync(() => x.Name = item.Name)
+                   .IfSuccessAsync(
+                        () => item.Children
+                           .ToResult()
+                           .IfSuccessForEachAsync(y => UpdateAsync(y, cancellationToken), cancellationToken)
+                           .IfSuccessForEachAsync(y => y.Id.ToResult(), cancellationToken)
+                           .IfSuccessAsync(children => UpdateChildrenItemsAsync(x.Id, children, cancellationToken),
+                                cancellationToken)
+                           .IfSuccessAsync(_ => x.ToResult(), cancellationToken), cancellationToken),
+                cancellationToken);
+    }
+    
     public Result<ReadOnlyMemory<ToDoItemEntityNotify>> UpdateRootItems(ReadOnlyMemory<Guid> roots)
     {
         return roots.ToResult()
            .IfSuccessForEach(GetToDoItem)
            .IfSuccess(items =>
             {
-                rootItems = items;
+                rootItems = items.ToArray().OrderBy(x => x.OrderIndex).ToArray();
                 
                 return rootItems.ToResult();
             });
@@ -156,7 +196,7 @@ public class ToDoCache : IToDoCache
                .IfSuccessAsync(item => this.InvokeUiBackgroundAsync(() =>
                 {
                     item.Children.Clear();
-                    item.Children.AddRange(children.ToArray());
+                    item.Children.AddRange(children.ToArray().OrderBy(x => x.OrderIndex));
                 }), cancellationToken)
                .IfSuccessAsync(() => children.ToResult(), cancellationToken), cancellationToken);
     }
@@ -167,9 +207,13 @@ public class ToDoCache : IToDoCache
     )
     {
         return GetToDoItem(shortItem.Id)
-           .IfSuccessAsync(
-                item => this.InvokeUiBackgroundAsync(() => item.Name = shortItem.Name)
-                   .IfSuccessAsync(item.ToResult, cancellationToken), cancellationToken);
+           .IfSuccessAsync(item => this.InvokeUiBackgroundAsync(() =>
+                {
+                    item.IsExpanded = false;
+                    item.IsIgnore = false;
+                    item.Name = shortItem.Name;
+                })
+               .IfSuccessAsync(item.ToResult, cancellationToken), cancellationToken);
     }
     
     public ConfiguredValueTaskAwaitable<Result<ActiveToDoItemNotify>> UpdateAsync(

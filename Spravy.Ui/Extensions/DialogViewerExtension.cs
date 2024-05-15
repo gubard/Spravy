@@ -127,7 +127,7 @@ public static class DialogViewerExtension
 
     public static ConfiguredValueTaskAwaitable<Result> ShowToDoItemSelectorConfirmDialogAsync(
         this IDialogViewer dialogViewer,
-        Func<ToDoSelectorItemNotify, ConfiguredValueTaskAwaitable<Result>> confirmTask,
+        Func<ToDoItemEntityNotify, ConfiguredValueTaskAwaitable<Result>> confirmTask,
         Action<ToDoItemSelectorViewModel> setup,
         CancellationToken cancellationToken
     )

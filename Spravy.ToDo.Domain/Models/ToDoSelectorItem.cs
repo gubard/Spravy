@@ -2,7 +2,7 @@ namespace Spravy.ToDo.Domain.Models;
 
 public readonly struct ToDoSelectorItem
 {
-    public ToDoSelectorItem(Guid id, string name, ToDoSelectorItem[] children)
+    public ToDoSelectorItem(Guid id, string name, ReadOnlyMemory<ToDoSelectorItem> children)
     {
         Id = id;
         Name = name;
@@ -11,5 +11,5 @@ public readonly struct ToDoSelectorItem
 
     public Guid Id { get; }
     public string Name { get; }
-    public ToDoSelectorItem[] Children { get; }
+    public ReadOnlyMemory<ToDoSelectorItem> Children { get; }
 }

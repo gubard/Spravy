@@ -1,158 +1,127 @@
+using Spravy.Ui.Features.ToDo.Interfaces;
+
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ToDoItemSelectorViewModel : ViewModelBase
 {
-    private readonly List<ToDoSelectorItemNotify> itemsCache = new();
-
+    private readonly List<ToDoItemEntityNotify> itemsCache = new();
+    
     public ToDoItemSelectorViewModel()
     {
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
     }
-
+    
     [Inject]
     public required IToDoService ToDoService { get; init; }
-
+    
     [Inject]
     public required IMapper Mapper { get; init; }
-
-    public AvaloniaList<ToDoSelectorItemNotify> Roots { get; } = new();
+    
+    public AvaloniaList<ToDoItemEntityNotify> Roots { get; } = new();
     public ICommand InitializedCommand { get; }
     public List<Guid> IgnoreIds { get; } = new();
-
+    
     public Guid DefaultSelectedItemId { get; set; }
-
+    
+    [Inject]
+    public required IToDoCache ToDoCache { get; init; }
+    
     [Reactive]
     public ICommand SearchCommand { get; protected set; }
-
+    
     [Reactive]
     public string SearchText { get; set; } = string.Empty;
-
+    
     [Reactive]
-    public ToDoSelectorItemNotify? SelectedItem { get; set; }
-
+    public ToDoItemEntityNotify? SelectedItem { get; set; }
+    
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         SearchCommand = CreateCommandFromTask(TaskWork.Create(SearchAsync).RunAsync);
-
-        return Refresh(cancellationToken)
-           .IfSuccessAsync(() =>
-            {
-                SetItem(DefaultSelectedItemId);
-
-                return Result.AwaitableFalse;
-            }, cancellationToken);
+        
+        return Refresh(cancellationToken);
     }
-
+    
     private ConfiguredValueTaskAwaitable<Result> Refresh(CancellationToken cancellationToken)
     {
-        return this.InvokeUiBackgroundAsync(() => Roots.Clear())
-           .IfSuccessAsync(() => ToDoService.GetToDoSelectorItemsAsync(IgnoreIds.ToArray(), cancellationToken)
-               .IfSuccessAsync(items =>
-                {
-                    itemsCache.Clear();
-                    itemsCache.AddRange(Mapper.Map<ToDoSelectorItemNotify[]>(items.ToArray()));
-
-                    return this.InvokeUiBackgroundAsync(() => Roots.AddRange(itemsCache));
-                }, cancellationToken), cancellationToken);
+        return ToDoCache.GetRootItems()
+           .IfSuccessAsync(items => this.InvokeUiBackgroundAsync(() =>
+            {
+                Roots.Clear();
+                Roots.AddRange(items.ToArray());
+            }), cancellationToken)
+           .IfSuccessAsync(() => SetupAsync(cancellationToken), cancellationToken)
+           .IfSuccessAsync(() => ToDoService.GetToDoSelectorItemsAsync(IgnoreIds.ToArray(), cancellationToken),
+                cancellationToken)
+           .IfSuccessAsync(items => ToDoCache.UpdateAsync(items, cancellationToken), cancellationToken)
+           .IfSuccessAsync(items => this.InvokeUiBackgroundAsync(() =>
+            {
+                Roots.Clear();
+                Roots.AddRange(items.ToArray());
+            }), cancellationToken)
+           .IfSuccessAsync(() => SetupAsync(cancellationToken), cancellationToken);
     }
-
-    private ConfiguredValueTaskAwaitable<Result> SearchAsync(CancellationToken cancellationToken)
+    
+    private ConfiguredValueTaskAwaitable<Result> SetupAsync(
+        ToDoItemEntityNotify item,
+        CancellationToken cancellationToken
+    )
     {
-        return this.InvokeUiBackgroundAsync(() => Roots.Clear())
+        return Result.AwaitableFalse
            .IfSuccessAsync(() =>
             {
-                if (SearchText.IsNullOrWhiteSpace())
+                if (IgnoreIds.Contains(item.Id))
                 {
-                    return this.InvokeUiBackgroundAsync(() => Roots.AddRange(itemsCache));
+                    return this.InvokeUiBackgroundAsync(() => item.IsIgnore = true);
                 }
-
-                var result = new List<ToDoSelectorItemNotify>();
-
-                foreach (var item in itemsCache)
+                
+                return Result.AwaitableFalse;
+            }, cancellationToken)
+           .IfSuccessAsync(() =>
+            {
+                if (DefaultSelectedItemId == item.Id)
                 {
-                    Search(item, result);
+                    return this.InvokeUiBackgroundAsync(() => SelectedItem = item)
+                       .IfSuccessAsync(() => ExpandParentsAsync(item, cancellationToken), cancellationToken);
                 }
-
-                return this.InvokeUiBackgroundAsync(() => Roots.AddRange(result));
+                
+                return Result.AwaitableFalse;
+            }, cancellationToken)
+           .IfSuccessAsync(
+                () => item.Children
+                   .ToArray()
+                   .ToReadOnlyMemory()
+                   .ToResult()
+                   .IfSuccessForEachAsync(i => SetupAsync(i, cancellationToken), cancellationToken), cancellationToken);
+    }
+    
+    private ConfiguredValueTaskAwaitable<Result> ExpandParentsAsync(
+        ToDoItemEntityNotify item,
+        CancellationToken cancellationToken
+    )
+    {
+        return this.InvokeUiBackgroundAsync(() => item.IsExpanded = true)
+           .IfSuccessAsync(() =>
+            {
+                if (item.Parent == null)
+                {
+                    return Result.AwaitableFalse;
+                }
+                
+                return ExpandParentsAsync(item.Parent, cancellationToken);
             }, cancellationToken);
     }
-
-    private void Search(ToDoSelectorItemNotify item, List<ToDoSelectorItemNotify> result)
+    
+    private ConfiguredValueTaskAwaitable<Result> SetupAsync(CancellationToken cancellationToken)
     {
-        if (item.Name.ToUpperInvariant().Contains(SearchText.ToUpperInvariant()))
-        {
-            result.Add(item);
-        }
-
-        foreach (var child in item.Children)
-        {
-            Search(child, result);
-        }
+        return Roots.ToArray()
+           .ToReadOnlyMemory()
+           .ToResult()
+           .IfSuccessForEachAsync(item => SetupAsync(item, cancellationToken), cancellationToken);
     }
-
-    public void SetItem(Guid id)
+    
+    private ConfiguredValueTaskAwaitable<Result> SearchAsync(CancellationToken cancellationToken)
     {
-        foreach (var root in Roots)
-        {
-            if (root.Id != id)
-            {
-                foreach (var child in root.Children)
-                {
-                    child.Parent = root;
-                }
-
-                if (SetItem(id, root.Children))
-                {
-                    break;
-                }
-
-                continue;
-            }
-
-            SelectedItem = root;
-
-            break;
-        }
-
-        if (SelectedItem is null)
-        {
-            return;
-        }
-
-        SelectedItem.IsExpanded = true;
-        var current = SelectedItem;
-
-        while (current.Parent is not null)
-        {
-            current.Parent.IsExpanded = true;
-            current = current.Parent;
-        }
-    }
-
-    public bool SetItem(Guid id, IEnumerable<ToDoSelectorItemNotify> items)
-    {
-        foreach (var item in items)
-        {
-            if (item.Id != id)
-            {
-                foreach (var child in item.Children)
-                {
-                    child.Parent = item;
-                }
-
-                if (SetItem(id, item.Children))
-                {
-                    return true;
-                }
-
-                continue;
-            }
-
-            SelectedItem = item;
-
-            return true;
-        }
-
-        return false;
+        return Result.AwaitableFalse;
     }
 }

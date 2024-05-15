@@ -34,10 +34,18 @@
                   SelectionMode="Single"
                   SelectedItem="{Binding SelectedItem}">
             <TreeView.Styles>
-                <Style Selector="TreeViewItem" x:DataType="models:ToDoSelectorItemNotify">
+                <Style Selector="TreeViewItem" x:DataType="models:ToDoItemEntityNotify">
                     <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
+                    <Setter Property="IsVisible"
+                            Value="{Binding IsIgnore, Converter={StaticResource ReverseBooleanValueConverter}}" />
                 </Style>
             </TreeView.Styles>
+
+            <TreeView.DataTemplates>
+                <TreeDataTemplate DataType="models:ToDoItemEntityNotify" ItemsSource="{Binding Children}">
+                    <TextBlock Text="{Binding Name}" />
+                </TreeDataTemplate>
+            </TreeView.DataTemplates>
         </TreeView>
     </Grid>
 </ru:ReactiveUserControl>

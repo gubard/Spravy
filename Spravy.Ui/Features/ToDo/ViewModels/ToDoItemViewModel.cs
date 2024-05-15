@@ -89,7 +89,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceP
     private ConfiguredValueTaskAwaitable<Result> RefreshPathAsync(CancellationToken cancellationToken)
     {
         return ToDoService.GetParentsAsync(Id, cancellationToken)
-           .IfSuccessAsync(parents => ToDoCache.UpdateAsync(Id, parents, cancellationToken), cancellationToken);
+           .IfSuccessAsync(parents => ToDoCache.UpdateParentsAsync(Id, parents, cancellationToken), cancellationToken);
     }
     
     private ConfiguredValueTaskAwaitable<Result> RefreshToDoItemChildrenAsync(CancellationToken cancellationToken)

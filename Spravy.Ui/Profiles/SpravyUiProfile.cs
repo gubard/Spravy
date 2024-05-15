@@ -4,8 +4,6 @@ public class SpravyUiProfile : Profile
 {
     public SpravyUiProfile()
     {
-        CreateMap<ToDoSelectorItem, ToDoSelectorItemNotify>();
-        CreateMap<ToDoItem, ToDoSelectorItemNotify>();
         CreateMap<CreateUserViewModel, CreateUserOptions>();
         CreateMap<CreateUserViewModel, User>();
         CreateMap<LoginViewModel, User>();

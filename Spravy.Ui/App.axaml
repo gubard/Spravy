@@ -93,11 +93,7 @@
                 <mi:MaterialIcon Kind="{Binding Icon}" />
             </Button>
         </DataTemplate>
-
-        <TreeDataTemplate DataType="models:ToDoSelectorItemNotify" ItemsSource="{Binding Children}">
-            <TextBlock Text="{Binding Name}" />
-        </TreeDataTemplate>
-
+        
         <DataTemplate DataType="m:RootItem">
             <Button Command="{x:Static s:CommandStorage.NavigateToCommand}"
                     CommandParameter="{x:Type viewModels:RootToDoItemsViewModel}"
