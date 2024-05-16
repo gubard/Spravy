@@ -6,4 +6,6 @@
               mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
               x:Class="Spravy.Ui.Views.MainWindow"
               Title="Spravy"
-              Icon="/Assets/Images/Logo.png" />
+              Icon="/Assets/Images/Logo.png" 
+              Width="600"
+              Height="600" />

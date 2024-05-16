@@ -122,6 +122,32 @@ public class ToDoItemSelectorViewModel : ViewModelBase
     
     private ConfiguredValueTaskAwaitable<Result> SearchAsync(CancellationToken cancellationToken)
     {
-        return Result.AwaitableFalse;
+        return this.InvokeUiBackgroundAsync(() => Roots.Clear())
+           .IfSuccessAsync(() => ToDoCache.GetRootItems(), cancellationToken)
+           .IfSuccessForEachAsync(item => SearchAsync(item, cancellationToken), cancellationToken);
+    }
+    
+    private ConfiguredValueTaskAwaitable<Result> SearchAsync(
+        ToDoItemEntityNotify item,
+        CancellationToken cancellationToken
+    )
+    {
+        return Result.AwaitableFalse
+           .IfSuccessAsync(() =>
+            {
+                if (item.Name.Contains(SearchText))
+                {
+                    return this.InvokeUiBackgroundAsync(() => Roots.Add(item));
+                }
+                
+                return Result.AwaitableFalse;
+            }, cancellationToken)
+           .IfSuccessAsync(
+                () => item.Children
+                   .ToArray()
+                   .ToReadOnlyMemory()
+                   .ToResult()
+                   .IfSuccessForEachAsync(i => SearchAsync(i, cancellationToken), cancellationToken),
+                cancellationToken);
     }
 }
