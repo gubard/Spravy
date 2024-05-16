@@ -15,8 +15,6 @@ public class ToDoCache : IToDoCache
     private readonly IDialogViewer dialogViewer;
     private readonly IOpenerLink openerLink;
     private ReadOnlyMemory<ToDoItemEntityNotify> rootItems = ReadOnlyMemory<ToDoItemEntityNotify>.Empty;
-    private readonly SemaphoreSlim semaphoreToDoItem = new(1, 1);
-    private readonly SemaphoreSlim semaphoreActive = new(1, 1);
     
     public ToDoCache(
         IToDoService toDoService,
@@ -43,48 +41,30 @@ public class ToDoCache : IToDoCache
     
     public Result<ActiveToDoItemNotify> GetActive(Guid id)
     {
-        semaphoreActive.Wait();
+        if (activeCache.TryGetValue(id, out var value))
+        {
+            return value.ToResult();
+        }
         
-        try
-        {
-            if (activeCache.TryGetValue(id, out var value))
-            {
-                return value.ToResult();
-            }
-            
-            var result = new ActiveToDoItemNotify(id, navigator, errorHandler);
-            activeCache.Add(id, result);
-            
-            return result.ToResult();
-        }
-        finally
-        {
-            semaphoreToDoItem.Release();
-        }
+        var result = new ActiveToDoItemNotify(id, navigator, errorHandler);
+        activeCache.Add(id, result);
+        
+        return result.ToResult();
     }
     
     public Result<ToDoItemEntityNotify> GetToDoItem(Guid id)
     {
-        semaphoreToDoItem.Wait();
+        if (cache.TryGetValue(id, out var value))
+        {
+            return value.ToResult();
+        }
         
-        try
-        {
-            if (cache.TryGetValue(id, out var value))
-            {
-                return value.ToResult();
-            }
-            
-            var result = new ToDoItemEntityNotify(id, toDoService, navigator, uiApplicationService, dialogViewer,
-                converter, clipboardService, openerLink, errorHandler);
-            
-            cache.Add(id, result);
-            
-            return result.ToResult();
-        }
-        finally
-        {
-            semaphoreToDoItem.Release();
-        }
+        var result = new ToDoItemEntityNotify(id, toDoService, navigator, uiApplicationService, dialogViewer,
+            converter, clipboardService, openerLink, errorHandler);
+        
+        cache.Add(id, result);
+        
+        return result.ToResult();
     }
     
     public ConfiguredValueTaskAwaitable<Result<ToDoItemEntityNotify>> UpdateAsync(
