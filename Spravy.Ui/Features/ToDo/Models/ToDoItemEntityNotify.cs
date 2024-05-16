@@ -271,8 +271,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                                     if (vm.IsLink)
                                     {
                                         return toDoService.UpdateToDoItemLinkAsync(item.Id,
-                                            vm.Link.IsNullOrWhiteSpace() ? null : vm.Link.ToUri(),
-                                            cancellationToken);
+                                            vm.Link.IsNullOrWhiteSpace() ? null : vm.Link.ToUri(), cancellationToken);
                                     }
                                     
                                     return Result.AwaitableFalse;
@@ -281,8 +280,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                                 {
                                     if (vm.IsName)
                                     {
-                                        return toDoService.UpdateToDoItemNameAsync(item.Id, vm.Name,
-                                            cancellationToken);
+                                        return toDoService.UpdateToDoItemNameAsync(item.Id, vm.Name, cancellationToken);
                                     }
                                     
                                     return Result.AwaitableFalse;
@@ -291,8 +289,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                                 {
                                     if (vm.IsType)
                                     {
-                                        return toDoService.UpdateToDoItemTypeAsync(item.Id, vm.Type,
-                                            cancellationToken);
+                                        return toDoService.UpdateToDoItemTypeAsync(item.Id, vm.Type, cancellationToken);
                                     }
                                     
                                     return Result.AwaitableFalse;
@@ -484,21 +481,20 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                 CloneItem,
             ]);
             
-            var singleCommands = new List<SpravyCommandNotify>();
-            
-            if (IsCan.HasFlag(ToDoItemIsCan.CanComplete))
-            {
-                singleCommands.Add(CompleteItem);
-            }
-            
-            singleCommands.Add(IsFavorite ? RemoveFromFavoriteItem : AddToFavoriteItem);
+            var singleCommands = new List<SpravyCommandNotify>(CompactCommands);
             
             if (!Link.IsNullOrWhiteSpace())
             {
                 singleCommands.Add(OpenLinkItem);
             }
             
-            singleCommands.AddRange(CompactCommands);
+            singleCommands.Add(IsFavorite ? RemoveFromFavoriteItem : AddToFavoriteItem);
+            
+            if (IsCan.HasFlag(ToDoItemIsCan.CanComplete))
+            {
+                singleCommands.Add(CompleteItem);
+            }
+            
             SingleCommands.AddRange(singleCommands);
         });
     }
