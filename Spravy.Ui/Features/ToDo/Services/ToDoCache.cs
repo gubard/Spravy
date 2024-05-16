@@ -15,7 +15,8 @@ public class ToDoCache : IToDoCache
     private readonly IDialogViewer dialogViewer;
     private readonly IOpenerLink openerLink;
     private ReadOnlyMemory<ToDoItemEntityNotify> rootItems = ReadOnlyMemory<ToDoItemEntityNotify>.Empty;
-    private readonly SemaphoreSlim semaphore = new(1, 1);
+    private readonly SemaphoreSlim semaphoreToDoItem = new(1, 1);
+    private readonly SemaphoreSlim semaphoreActive = new(1, 1);
     
     public ToDoCache(
         IToDoService toDoService,
@@ -42,20 +43,31 @@ public class ToDoCache : IToDoCache
     
     public Result<ActiveToDoItemNotify> GetActive(Guid id)
     {
-        if (activeCache.TryGetValue(id, out var value))
+        semaphoreActive.Wait();
+        
+        try
         {
-            return value.ToResult();
+            if (activeCache.TryGetValue(id, out var value))
+            {
+                return value.ToResult();
+            }
+            
+            var result = new ActiveToDoItemNotify(id, navigator, errorHandler);
+            activeCache.Add(id, result);
+            
+            return result.ToResult();
         }
-        
-        var result = new ActiveToDoItemNotify(id, navigator, errorHandler);
-        activeCache.Add(id, result);
-        
-        return result.ToResult();
+        catch
+        {
+            semaphoreToDoItem.Release();
+            
+            throw;
+        }
     }
     
     public Result<ToDoItemEntityNotify> GetToDoItem(Guid id)
     {
-        semaphore.Wait();
+        semaphoreToDoItem.Wait();
         
         try
         {
@@ -64,8 +76,8 @@ public class ToDoCache : IToDoCache
                 return value.ToResult();
             }
             
-            var result = new ToDoItemEntityNotify(id, toDoService, navigator, uiApplicationService, dialogViewer, converter,
-                clipboardService, openerLink, errorHandler);
+            var result = new ToDoItemEntityNotify(id, toDoService, navigator, uiApplicationService, dialogViewer,
+                converter, clipboardService, openerLink, errorHandler);
             
             cache.Add(id, result);
             
@@ -73,7 +85,7 @@ public class ToDoCache : IToDoCache
         }
         catch
         {
-            semaphore.Release();
+            semaphoreToDoItem.Release();
             
             throw;
         }
