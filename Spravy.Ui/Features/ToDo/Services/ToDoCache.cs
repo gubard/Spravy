@@ -47,9 +47,13 @@ public class ToDoCache : IToDoCache
         }
         
         var result = new ActiveToDoItemNotify(id, navigator, errorHandler);
-        activeCache.Add(id, result);
         
-        return result.ToResult();
+        if (activeCache.TryAdd(id, result))
+        {
+            return result.ToResult();
+        }
+        
+        return activeCache[id].ToResult();
     }
     
     public Result<ToDoItemEntityNotify> GetToDoItem(Guid id)
@@ -59,12 +63,15 @@ public class ToDoCache : IToDoCache
             return value.ToResult();
         }
         
-        var result = new ToDoItemEntityNotify(id, toDoService, navigator, uiApplicationService, dialogViewer,
-            converter, clipboardService, openerLink, errorHandler);
+        var result = new ToDoItemEntityNotify(id, toDoService, navigator, uiApplicationService, dialogViewer, converter,
+            clipboardService, openerLink, errorHandler);
         
-        cache.Add(id, result);
+        if (cache.TryAdd(id, result))
+        {
+            return result.ToResult();
+        }
         
-        return result.ToResult();
+        return cache[id].ToResult();
     }
     
     public ConfiguredValueTaskAwaitable<Result<ToDoItemEntityNotify>> UpdateAsync(
