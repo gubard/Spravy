@@ -57,11 +57,9 @@ public class ToDoCache : IToDoCache
             
             return result.ToResult();
         }
-        catch
+        finally
         {
             semaphoreToDoItem.Release();
-            
-            throw;
         }
     }
     
@@ -83,11 +81,9 @@ public class ToDoCache : IToDoCache
             
             return result.ToResult();
         }
-        catch
+        finally
         {
             semaphoreToDoItem.Release();
-            
-            throw;
         }
     }
     
