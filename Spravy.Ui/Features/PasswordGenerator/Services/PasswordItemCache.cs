@@ -51,6 +51,11 @@ public class PasswordItemCache : IPasswordItemCache
     {
         var item = GetPasswordItem(passwordItem.Id);
         
-        return this.InvokeUiBackgroundAsync(() => item.Name = passwordItem.Name);
+        return this.InvokeUiBackgroundAsync(() =>
+        {
+             item.Name = passwordItem.Name;
+             
+             return Result.Success;
+        });
     }
 }

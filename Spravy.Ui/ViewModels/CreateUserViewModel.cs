@@ -292,7 +292,12 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
 
     private ConfiguredValueTaskAwaitable<Result> CreateUserAsync(CancellationToken cancellationToken)
     {
-        return this.InvokeUiBackgroundAsync(() => IsBusy = true)
+        return this.InvokeUiBackgroundAsync(() =>
+            {
+                 IsBusy = true;
+                 
+                 return Result.Success;
+            })
            .IfSuccessTryFinallyAsync(() =>
                 {
                     var options = Mapper.Map<CreateUserOptions>(this);
@@ -303,7 +308,12 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
                             vm.Identifier = Email;
                             vm.IdentifierType = UserIdentifierType.Email;
                         }, cancellationToken), cancellationToken);
-                }, () => this.InvokeUiBackgroundAsync(() => IsBusy = false).ToValueTask().ConfigureAwait(false),
+                }, () => this.InvokeUiBackgroundAsync(() =>
+                {
+                     IsBusy = false;
+                     
+                     return Result.Success;
+                }).ToValueTask().ConfigureAwait(false),
                 cancellationToken);
     }
 }

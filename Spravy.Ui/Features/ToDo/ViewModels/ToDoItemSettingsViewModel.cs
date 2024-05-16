@@ -59,6 +59,8 @@ public class ToDoItemSettingsViewModel : NavigatableViewModelBase
                 ToDoItemContent.Name = toDoItem.Name;
                 ToDoItemContent.Link = toDoItem.Link?.AbsoluteUri ?? string.Empty;
                 ToDoItemContent.Type = toDoItem.Type;
+                
+                return Result.Success;
             }), cancellationToken);
     }
     

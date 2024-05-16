@@ -60,6 +60,8 @@ public class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
                 DaysOffset = setting.DaysOffset;
                 WeeksOffset = setting.WeeksOffset;
                 IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
+                
+                return Result.Success;
             }), cancellationToken);
     }
 

@@ -15,11 +15,21 @@ public class NotificationManager : ISpravyNotificationManager
     {
         var view = kernel.Get<TView>();
 
-        return this.InvokeUiBackgroundAsync(() => managedNotificationManager.Show(view));
+        return this.InvokeUiBackgroundAsync(() =>
+        {
+             managedNotificationManager.Show(view);
+             
+             return Result.Success;
+        });
     }
 
     public ConfiguredValueTaskAwaitable<Result> ShowAsync(object view, CancellationToken cancellationToken)
     {
-        return this.InvokeUiBackgroundAsync(() => managedNotificationManager.Show(view));
+        return this.InvokeUiBackgroundAsync(() =>
+        {
+             managedNotificationManager.Show(view);
+             
+             return Result.Success;
+        });
     }
 }

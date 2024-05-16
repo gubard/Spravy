@@ -16,13 +16,13 @@ public class ToDoItemsGroupByNoneViewModel : ViewModelBase
         }
     }
     
-    public ConfiguredValueTaskAwaitable<Result> ClearExceptAsync(ReadOnlyMemory<ToDoItemEntityNotify> ids)
+    public Result ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> ids)
     {
-        return Items.ClearExceptAsync(ids);
+        return Items.ClearExceptUi(ids);
     }
     
-    public void UpdateItem(ToDoItemEntityNotify item)
+    public void UpdateItemUi(ToDoItemEntityNotify item)
     {
-        Items.UpdateItem(item);
+        Items.UpdateItemUi(item);
     }
 }

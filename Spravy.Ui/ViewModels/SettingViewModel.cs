@@ -162,12 +162,24 @@ public class SettingViewModel : NavigatableViewModelBase
         CancellationToken cancellationToken
     )
     {
-        return this.InvokeUiBackgroundAsync(() => IsBusy = true)
+        return this.InvokeUiBackgroundAsync(() =>
+            {
+                 IsBusy = true;
+                 
+                 return Result.Success;
+            })
            .IfSuccessTryFinallyAsync(() => this.InvokeUiBackgroundAsync(() =>
                 {
                     theme.ChangeColorTheme(colorTheme.Value);
                     colorTheme.IsSelect = true;
-                }), () => this.InvokeUiBackgroundAsync(() => IsBusy = false).ToValueTask().ConfigureAwait(false),
+                    
+                    return Result.Success;
+                }), () => this.InvokeUiBackgroundAsync(() =>
+                {
+                     IsBusy = false;
+                     
+                     return Result.Success;
+                }).ToValueTask().ConfigureAwait(false),
                 cancellationToken);
     }
 }

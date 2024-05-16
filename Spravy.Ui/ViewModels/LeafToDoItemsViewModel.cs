@@ -98,6 +98,8 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
             {
                 ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
                 ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
+                
+                return Result.Success;
             }), cancellationToken);
     }
     

@@ -31,7 +31,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
                     item => items.ToResult()
                        .IfSuccessForEach(x => ToDoCache.GetToDoItem(x))
                        .IfSuccessAsync(
-                            itemsNotify => List.ClearFavoriteExceptAsync(itemsNotify)
+                            itemsNotify => List.ClearFavoriteExceptUi(itemsNotify)
                                .IfSuccessAsync(
                                     () => RefreshFavoriteToDoItemsCore(itemsNotify, item, cancellationToken)
                                        .ConfigureAwait(false), cancellationToken), cancellationToken),
@@ -55,7 +55,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
             
             foreach (var item in items.Value.ToArray())
             {
-                var i = await ToDoCache.UpdateAsync(item, cancellationToken);
+                var i = await this.InvokeUiBackgroundAsync(() => ToDoCache.UpdateUi(item));
                 
                 if (i.IsHasError)
                 {
@@ -85,7 +85,12 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
                     return result;
                 }
                 
-                await this.InvokeUiBackgroundAsync(() => progressItem.Progress++);
+                await this.InvokeUiBackgroundAsync(() =>
+                {
+                    progressItem.Progress++;
+                    
+                    return Result.Success;
+                });
             }
         }
         
@@ -99,16 +104,15 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
         CancellationToken cancellationToken
     )
     {
-        return ClearExceptAsync(items, cancellationToken)
-           .IfSuccessAsync(() => RefreshFavoriteToDoItemsAsync(cancellationToken), cancellationToken)
-           .IfSuccessAsync(
-                () => RefreshToDoItemListsCore(items, autoOrder, progressItem, cancellationToken).ConfigureAwait(false),
-                cancellationToken);
+        return this.InvokeUiBackgroundAsync(() => ClearExceptUi(items))
+           .IfSuccessAllAsync(cancellationToken, () => RefreshFavoriteToDoItemsAsync(cancellationToken),
+                () => RefreshToDoItemListsCore(items, autoOrder, progressItem, cancellationToken)
+                   .ConfigureAwait(false));
     }
     
-    public ConfiguredValueTaskAwaitable<Result> ClearExceptAsync(ReadOnlyMemory<ToDoItemEntityNotify> items, CancellationToken cancellationToken)
+    public Result ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
-        return List.ClearExceptAsync(items, cancellationToken);
+        return List.ClearExceptUi(items);
     }
     
     private async ValueTask<Result> RefreshToDoItemListsCore(
@@ -131,7 +135,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
             
             foreach (var item in items.Value.ToArray())
             {
-                var i = await ToDoCache.UpdateAsync(item, cancellationToken);
+                var i = await this.InvokeUiBackgroundAsync(() => ToDoCache.UpdateUi(item));
                 
                 if (i.IsHasError)
                 {
@@ -157,7 +161,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
                 if (autoOrder)
                 {
                     i.Value.OrderIndex = orderIndex;
-                    var result = await List.UpdateItemAsync(i.Value);
+                    var result = await this.InvokeUiBackgroundAsync(() => List.UpdateItemUi(i.Value));
                     
                     if (result.IsHasError)
                     {
@@ -166,7 +170,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
                 }
                 else
                 {
-                    var result = await List.UpdateItemAsync(i.Value);
+                    var result = await this.InvokeUiBackgroundAsync(() => List.UpdateItemUi(i.Value));
                     
                     if (result.IsHasError)
                     {
@@ -175,7 +179,13 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
                 }
                 
                 orderIndex++;
-                await this.InvokeUiBackgroundAsync(() => progressItem.Progress++);
+                
+                await this.InvokeUiBackgroundAsync(() =>
+                {
+                    progressItem.Progress++;
+                    
+                    return Result.Success;
+                });
             }
         }
         

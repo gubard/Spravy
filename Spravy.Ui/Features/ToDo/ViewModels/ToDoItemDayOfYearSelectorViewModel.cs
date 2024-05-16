@@ -46,7 +46,12 @@ public class ToDoItemDayOfYearSelectorViewModel : ViewModelBase, IApplySettings
                            .Contains(day.Day))
                         {
                             var d = day;
-                            items.Add(() => this.InvokeUiBackgroundAsync(() => d.IsSelected = true));
+                            items.Add(() => this.InvokeUiBackgroundAsync(() =>
+                            {
+                                 d.IsSelected = true;
+                                 
+                                 return Result.Success;
+                            }));
                         }
                     }
                 }

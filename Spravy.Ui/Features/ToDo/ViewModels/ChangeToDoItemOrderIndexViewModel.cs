@@ -35,12 +35,18 @@ public class ChangeToDoItemOrderIndexViewModel : ViewModelBase
     {
         return ToDoService.GetSiblingsAsync(Id, cancellationToken)
            .IfSuccessAsync(
-                items => this.InvokeUiBackgroundAsync(() => Items.Clear())
-                   .IfSuccessAsync(
-                        () => items.ToResult()
-                           .IfSuccessForEachAsync(
-                                item => ToDoCache.UpdateAsync(item, cancellationToken)
-                                   .IfSuccessAsync(i => this.InvokeUiBackgroundAsync(() => Items.Add(i)),
-                                        cancellationToken), cancellationToken), cancellationToken), cancellationToken);
+                items => this.InvokeUiBackgroundAsync(() =>
+                    {
+                         Items.Clear();
+                         
+                         return items.ToResult()
+                            .IfSuccessForEach(item => ToDoCache.UpdateUi(item)
+                                .IfSuccess(i =>
+                                 {
+                                     Items.Add(i);
+                                     
+                                     return Result.Success;
+                                 }));
+                    }), cancellationToken);
     }
 }

@@ -11,27 +11,26 @@ public class ToDoItemsViewModel : ViewModelBase
     [Reactive]
     public bool IsExpanded { get; set; } = true;
     
-    public ConfiguredValueTaskAwaitable<Result> ClearExceptAsync(ReadOnlyMemory<ToDoItemEntityNotify> items)
+    public Result ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
-        return this.InvokeUiBackgroundAsync(() =>
+        Items.RemoveAll(Items.Where(x => !items.Span.Contains(x)));
+        
+        foreach (var item in items.Span)
         {
-            Items.RemoveAll(Items.Where(x => !items.Span.Contains(x)));
-            
-            foreach (var item in items.Span)
-            {
-                UpdateItem(item);
-            }
-        });
+            UpdateItemUi(item);
+        }
+        
+        return Result.Success;
     }
     
-    public void UpdateItem(ToDoItemEntityNotify item)
+    public Result UpdateItemUi(ToDoItemEntityNotify item)
     {
         var indexOf = IndexOf(item);
         var needIndex = GetNeedIndex(item);
         
         if (indexOf == needIndex)
         {
-            return;
+            return Result.Success;
         }
         
         if (indexOf == -1)
@@ -56,6 +55,8 @@ public class ToDoItemsViewModel : ViewModelBase
                 Items.Move(indexOf, needIndex);
             }
         }
+        
+        return Result.Success;
     }
     
     private int IndexOf(ToDoItemEntityNotify obj)
@@ -111,7 +112,7 @@ public class ToDoItemsViewModel : ViewModelBase
         return Items.Count;
     }
     
-    public void RemoveItem(ToDoItemEntityNotify item)
+    public void RemoveItemUi(ToDoItemEntityNotify item)
     {
         Items.Remove(item);
     }

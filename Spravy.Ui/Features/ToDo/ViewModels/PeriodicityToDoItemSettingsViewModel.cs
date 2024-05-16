@@ -57,6 +57,8 @@ public class PeriodicityToDoItemSettingsViewModel : ViewModelBase,
                 DueDate = setting.DueDate;
                 TypeOfPeriodicity = setting.TypeOfPeriodicity;
                 IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
+                
+                return Result.Success;
             }), cancellationToken);
     }
 

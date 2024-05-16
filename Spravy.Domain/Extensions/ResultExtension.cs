@@ -8,6 +8,32 @@ namespace Spravy.Domain.Extensions;
 
 public static class ResultExtension
 {
+    public static Result IfSuccessForEach<TValue>(
+        this Result<ReadOnlyMemory<TValue>> values,
+        Func<TValue, Result> func
+    )
+    {
+        if (values.IsHasError)
+        {
+            return new(values.Errors);
+        }
+        
+        var valuesArray = values.Value.ToArray();
+        
+        for (var index = 0; index < valuesArray.Length; index++)
+        {
+            var value = valuesArray[index];
+            var result = func.Invoke(value);
+            
+            if (result.IsHasError)
+            {
+                return new(result.Errors);
+            }
+        }
+        
+        return Result.Success;
+    }
+    
     public static Result<ReadOnlyMemory<TReturn>> IfSuccessForEach<TValue, TReturn>(
         this Result<ReadOnlyMemory<TValue>> values,
         Func<TValue, Result<TReturn>> func

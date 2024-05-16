@@ -29,7 +29,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceP
         init
         {
             toDoSubItemsViewModel = value;
-            toDoSubItemsViewModel.List.WhenAnyValue(x => x.IsMulti).Subscribe(_ => UpdateCommandItems());
+            toDoSubItemsViewModel.List.WhenAnyValue(x => x.IsMulti).Subscribe(_ => UpdateCommandItemsUi());
         }
     }
     
@@ -80,38 +80,51 @@ public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceP
     private ConfiguredValueTaskAwaitable<Result> RefreshToDoItemCore(CancellationToken cancellationToken)
     {
         return ToDoCache.GetToDoItem(Id)
-           .IfSuccessAsync(item => this.InvokeUiBackgroundAsync(() => Item = item), cancellationToken)
+           .IfSuccessAsync(item => this.InvokeUiBackgroundAsync(() =>
+            {
+                Item = item;
+                
+                return Result.Success;
+            }), cancellationToken)
            .IfSuccessAsync(() => ToDoService.GetToDoItemAsync(Id, cancellationToken), cancellationToken)
-           .IfSuccessAsync(item => ToDoCache.UpdateAsync(item, cancellationToken), cancellationToken)
-           .IfSuccessAsync(_ => this.InvokeUiBackgroundAsync(UpdateCommandItems), cancellationToken);
+           .IfSuccessAsync(
+                item => this.InvokeUiBackgroundAsync(() =>
+                    ToDoCache.UpdateUi(item).IfSuccess(_ => UpdateCommandItemsUi())),
+                cancellationToken);
     }
     
     private ConfiguredValueTaskAwaitable<Result> RefreshPathAsync(CancellationToken cancellationToken)
     {
         return ToDoService.GetParentsAsync(Id, cancellationToken)
-           .IfSuccessAsync(parents => ToDoCache.UpdateParentsAsync(Id, parents, cancellationToken), cancellationToken);
+           .IfSuccessAsync(parents => this.InvokeUiBackgroundAsync(() => ToDoCache.UpdateParentsUi(Id, parents)),
+                cancellationToken);
     }
     
     private ConfiguredValueTaskAwaitable<Result> RefreshToDoItemChildrenAsync(CancellationToken cancellationToken)
     {
-        return ToDoSubItemsViewModel
-           .ClearExceptAsync(Item?.Children.ToArray() ?? ReadOnlyMemory<ToDoItemEntityNotify>.Empty, cancellationToken)
+        return this
+           .InvokeUiBackgroundAsync(() =>
+                ToDoSubItemsViewModel.ClearExceptUi(Item?.Children.ToArray()
+                 ?? ReadOnlyMemory<ToDoItemEntityNotify>.Empty))
            .IfSuccessAsync(() => ToDoService.GetChildrenToDoItemIdsAsync(Id, cancellationToken), cancellationToken)
-           .IfSuccessAsync(ids => ToDoCache.UpdateChildrenItemsAsync(Id, ids, cancellationToken), cancellationToken)
+           .IfSuccessAsync(ids => this.InvokeUiBackgroundAsync(() => ToDoCache.UpdateChildrenItemsUi(Id, ids)),
+                cancellationToken)
            .IfSuccessAsync(items => ToDoSubItemsViewModel.UpdateItemsAsync(items, this, false, cancellationToken),
                 cancellationToken);
     }
     
-    private void UpdateCommandItems()
+    private Result UpdateCommandItemsUi()
     {
         CommandItems.Clear();
         
         if (Item is null)
         {
-            return;
+            return Result.Success;
         }
         
         CommandItems.AddRange(ToDoSubItemsViewModel.List.IsMulti ? Item.MultiCommands : Item.SingleCommands);
+        
+        return Result.Success;
     }
     
     public override Result Stop()
@@ -136,6 +149,8 @@ public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceP
             {
                 ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
                 ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
+                
+                return Result.Success;
             }), cancellationToken);
     }
 }

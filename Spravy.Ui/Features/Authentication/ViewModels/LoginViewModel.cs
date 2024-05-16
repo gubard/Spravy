@@ -143,6 +143,8 @@ public class LoginViewModel : NavigatableViewModelBase, ILoginProperties, INotif
             {
                 TryAutoLogin = false;
                 Login = s.Login;
+                
+                return Result.Success;
             }), cancellationToken);
     }
 }

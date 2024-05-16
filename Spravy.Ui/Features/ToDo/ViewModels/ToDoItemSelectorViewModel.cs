@@ -49,15 +49,19 @@ public class ToDoItemSelectorViewModel : ViewModelBase
             {
                 Roots.Clear();
                 Roots.AddRange(items.ToArray());
+                
+                return Result.Success;
             }), cancellationToken)
            .IfSuccessAsync(() => SetupAsync(cancellationToken), cancellationToken)
            .IfSuccessAsync(() => ToDoService.GetToDoSelectorItemsAsync(IgnoreIds.ToArray(), cancellationToken),
                 cancellationToken)
-           .IfSuccessAsync(items => ToDoCache.UpdateAsync(items, cancellationToken), cancellationToken)
+           .IfSuccessAsync(items => this.InvokeUiBackgroundAsync(()=>ToDoCache.UpdateUi(items)), cancellationToken)
            .IfSuccessAsync(items => this.InvokeUiBackgroundAsync(() =>
             {
                 Roots.Clear();
                 Roots.AddRange(items.ToArray());
+                
+                return Result.Success;
             }), cancellationToken)
            .IfSuccessAsync(() => SetupAsync(cancellationToken), cancellationToken);
     }
@@ -72,7 +76,12 @@ public class ToDoItemSelectorViewModel : ViewModelBase
             {
                 if (IgnoreIds.Contains(item.Id))
                 {
-                    return this.InvokeUiBackgroundAsync(() => item.IsIgnore = true);
+                    return this.InvokeUiBackgroundAsync(() =>
+                    {
+                         item.IsIgnore = true;
+                         
+                         return Result.Success;
+                    });
                 }
                 
                 return Result.AwaitableFalse;
@@ -81,7 +90,12 @@ public class ToDoItemSelectorViewModel : ViewModelBase
             {
                 if (DefaultSelectedItemId == item.Id)
                 {
-                    return this.InvokeUiBackgroundAsync(() => SelectedItem = item)
+                    return this.InvokeUiBackgroundAsync(() =>
+                        {
+                             SelectedItem = item;
+                             
+                             return Result.Success;
+                        })
                        .IfSuccessAsync(() => ExpandParentsAsync(item, cancellationToken), cancellationToken);
                 }
                 
@@ -100,7 +114,12 @@ public class ToDoItemSelectorViewModel : ViewModelBase
         CancellationToken cancellationToken
     )
     {
-        return this.InvokeUiBackgroundAsync(() => item.IsExpanded = true)
+        return this.InvokeUiBackgroundAsync(() =>
+            {
+                 item.IsExpanded = true;
+                 
+                 return Result.Success;
+            })
            .IfSuccessAsync(() =>
             {
                 if (item.Parent == null)
@@ -122,7 +141,12 @@ public class ToDoItemSelectorViewModel : ViewModelBase
     
     private ConfiguredValueTaskAwaitable<Result> SearchAsync(CancellationToken cancellationToken)
     {
-        return this.InvokeUiBackgroundAsync(() => Roots.Clear())
+        return this.InvokeUiBackgroundAsync(() =>
+            {
+                 Roots.Clear();
+                 
+                 return Result.Success;
+            })
            .IfSuccessAsync(() => ToDoCache.GetRootItems(), cancellationToken)
            .IfSuccessForEachAsync(item => SearchAsync(item, cancellationToken), cancellationToken);
     }
@@ -137,7 +161,12 @@ public class ToDoItemSelectorViewModel : ViewModelBase
             {
                 if (item.Name.Contains(SearchText))
                 {
-                    return this.InvokeUiBackgroundAsync(() => Roots.Add(item));
+                    return this.InvokeUiBackgroundAsync(() =>
+                    {
+                         Roots.Add(item);
+                         
+                         return Result.Success;
+                    });
                 }
                 
                 return Result.AwaitableFalse;

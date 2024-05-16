@@ -52,6 +52,8 @@ public class AddRootToDoItemViewModel : NavigatableViewModelBase
                 ToDoItemContent.Link = s.Link;
                 DescriptionContent.Description = s.Description;
                 DescriptionContent.Type = s.DescriptionType;
+                
+                return Result.Success;
             }), cancellationToken);
     }
 

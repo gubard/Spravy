@@ -421,14 +421,24 @@ public static class CommandStorage
             }, cancellationToken)
            .IfSuccessAsync(() => navigator.NavigateToAsync(ActionHelper<LoginViewModel>.Empty, cancellationToken),
                 cancellationToken)
-           .IfSuccessAsync(() => cancellationToken.InvokeUiBackgroundAsync(() => mainSplitViewModel.IsPaneOpen = false),
+           .IfSuccessAsync(() => cancellationToken.InvokeUiBackgroundAsync(() =>
+                {
+                     mainSplitViewModel.IsPaneOpen = false;
+                     
+                     return Result.Success;
+                }),
                 cancellationToken);
     }
     
     private static ConfiguredValueTaskAwaitable<Result> NavigateToAsync(Type type, CancellationToken cancellationToken)
     {
         return navigator.NavigateToAsync(type, cancellationToken)
-           .IfSuccessAsync(() => cancellationToken.InvokeUiBackgroundAsync(() => mainSplitViewModel.IsPaneOpen = false),
+           .IfSuccessAsync(() => cancellationToken.InvokeUiBackgroundAsync(() =>
+                {
+                    mainSplitViewModel.IsPaneOpen = false;
+                    
+                    return Result.Success;
+                }),
                 cancellationToken);
     }
     
@@ -465,6 +475,8 @@ public static class CommandStorage
                     item.IsSelected = true;
                 }
             }
+            
+            return Result.Success;
         });
     }
     
@@ -489,7 +501,11 @@ public static class CommandStorage
     private static ConfiguredValueTaskAwaitable<Result> SwitchPaneAsync(CancellationToken cancellationToken)
     {
         return cancellationToken.InvokeUiBackgroundAsync(() =>
-            mainSplitViewModel.IsPaneOpen = !mainSplitViewModel.IsPaneOpen);
+        {
+            mainSplitViewModel.IsPaneOpen = !mainSplitViewModel.IsPaneOpen;
+            
+            return Result.Success;
+        });
     }
     
     private static CommandItem CreateCommand(

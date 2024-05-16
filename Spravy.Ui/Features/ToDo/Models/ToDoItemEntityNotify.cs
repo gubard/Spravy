@@ -460,42 +460,41 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
         return Id.GetHashCode();
     }
     
-    public ConfiguredValueTaskAwaitable<Result> UpdateCommandsAsync()
+    public Result<ToDoItemEntityNotify> UpdateCommandsUi()
     {
-        return this.InvokeUiBackgroundAsync(() =>
+        CompactCommands.Clear();
+        SingleCommands.Clear();
+        
+        CompactCommands.AddRange([
+            AddChildItem,
+            ShowSettingItem,
+            DeleteItem,
+            OpenLeafItem,
+            ChangeParentItem,
+            MakeAsRootItem,
+            CopyToClipboardItem,
+            RandomizeChildrenOrderItem,
+            ChangeOrderItem,
+            ResetItem,
+            CloneItem,
+        ]);
+        
+        var singleCommands = new List<SpravyCommandNotify>(CompactCommands);
+        
+        if (!Link.IsNullOrWhiteSpace())
         {
-            CompactCommands.Clear();
-            SingleCommands.Clear();
-            
-            CompactCommands.AddRange([
-                AddChildItem,
-                ShowSettingItem,
-                DeleteItem,
-                OpenLeafItem,
-                ChangeParentItem,
-                MakeAsRootItem,
-                CopyToClipboardItem,
-                RandomizeChildrenOrderItem,
-                ChangeOrderItem,
-                ResetItem,
-                CloneItem,
-            ]);
-            
-            var singleCommands = new List<SpravyCommandNotify>(CompactCommands);
-            
-            if (!Link.IsNullOrWhiteSpace())
-            {
-                singleCommands.Add(OpenLinkItem);
-            }
-            
-            singleCommands.Add(IsFavorite ? RemoveFromFavoriteItem : AddToFavoriteItem);
-            
-            if (IsCan.HasFlag(ToDoItemIsCan.CanComplete))
-            {
-                singleCommands.Add(CompleteItem);
-            }
-            
-            SingleCommands.AddRange(singleCommands);
-        });
+            singleCommands.Add(OpenLinkItem);
+        }
+        
+        singleCommands.Add(IsFavorite ? RemoveFromFavoriteItem : AddToFavoriteItem);
+        
+        if (IsCan.HasFlag(ToDoItemIsCan.CanComplete))
+        {
+            singleCommands.Add(CompleteItem);
+        }
+        
+        SingleCommands.AddRange(singleCommands);
+        
+        return this.ToResult();
     }
 }

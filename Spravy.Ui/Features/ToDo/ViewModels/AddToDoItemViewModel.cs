@@ -46,7 +46,12 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
                        .Select(x => x.ThrowIfNull())
                        .ToArray();
                     
-                    return this.InvokeUiBackgroundAsync(() => Path = path);
+                    return this.InvokeUiBackgroundAsync(() =>
+                    {
+                         Path = path;
+                         
+                         return Result.Success;
+                    });
                 }, cancellationToken), cancellationToken);
     }
     
@@ -73,6 +78,8 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
                 ToDoItemContent.Link = s.Link;
                 DescriptionContent.Description = s.Description;
                 DescriptionContent.Type = s.DescriptionType;
+                
+                return Result.Success;
             }), cancellationToken);
     }
     

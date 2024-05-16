@@ -12,7 +12,12 @@ public class TaskProgressService : ITaskProgressService
         var result = new TaskProgressItem(impact);
         items.Add(result);
         
-        return this.InvokeUiBackgroundAsync(() => MainProgressBar.Maximum += impact)
+        return this.InvokeUiBackgroundAsync(() =>
+            {
+                 MainProgressBar.Maximum += impact;
+                 
+                 return Result.Success;
+            })
            .IfSuccessAsync(() =>
             {
                 result.WhenAnyValue(x => x.Progress)

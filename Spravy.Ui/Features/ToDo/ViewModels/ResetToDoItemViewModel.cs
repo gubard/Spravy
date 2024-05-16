@@ -55,6 +55,8 @@ public class ResetToDoItemViewModel : NavigatableViewModelBase
                 IsMoveCircleOrderIndex = s.IsMoveCircleOrderIndex;
                 IsOnlyCompletedTasks = s.IsOnlyCompletedTasks;
                 IsCompleteCurrentTask = s.IsCompleteCurrentTask;
+                
+                return Result.Success;
             }), cancellationToken);
     }
 

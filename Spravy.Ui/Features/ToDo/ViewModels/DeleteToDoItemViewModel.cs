@@ -54,6 +54,8 @@ public class DeleteToDoItemViewModel : ViewModelBase
                         Path = ToDoCache.GetToDoItem(ToDoItemId).Value.Path;
                         ToDoItemName = item.Name;
                         ChildrenText = childrenText;
+                        
+                        return Result.Success;
                     }), cancellationToken), cancellationToken), cancellationToken);
     }
 }

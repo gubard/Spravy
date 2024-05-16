@@ -43,7 +43,12 @@ public class LoginCommands
         CancellationToken cancellationToken
     )
     {
-        return this.InvokeUiBackgroundAsync(() => viewModel.IsBusy = true)
+        return this.InvokeUiBackgroundAsync(() =>
+            {
+                 viewModel.IsBusy = true;
+                 
+                 return Result.Success;
+            })
            .IfSuccessTryFinallyAsync(() => authenticationService
                    .IsVerifiedByLoginAsync(viewModel.Login, cancellationToken)
                    .IfSuccessAsync(isVerified =>
@@ -61,7 +66,12 @@ public class LoginCommands
                            .IfSuccessAsync(
                                 user => tokenService.LoginAsync(user, cancellationToken)
                                    .IfSuccessAsync(
-                                        () => this.InvokeUiBackgroundAsync(() => account.Login = user.Login)
+                                        () => this.InvokeUiBackgroundAsync(() =>
+                                            {
+                                                 account.Login = user.Login;
+                                                 
+                                                 return Result.Success;
+                                            })
                                            .IfSuccessAsync(() => RememberMeAsync(viewModel, cancellationToken),
                                                 cancellationToken)
                                            .IfSuccessAsync(
@@ -70,7 +80,12 @@ public class LoginCommands
                                                     cancellationToken), cancellationToken), cancellationToken),
                                 cancellationToken);
                     }, cancellationToken),
-                () => this.InvokeUiBackgroundAsync(() => viewModel.IsBusy = false).ToValueTask().ConfigureAwait(false),
+                () => this.InvokeUiBackgroundAsync(() =>
+                {
+                     viewModel.IsBusy = false;
+                     
+                     return Result.Success;
+                }).ToValueTask().ConfigureAwait(false),
                 cancellationToken);
     }
     
@@ -101,7 +116,12 @@ public class LoginCommands
         CancellationToken cancellationToken
     )
     {
-        return this.InvokeUiBackgroundAsync(() => viewModel.IsBusy = true)
+        return this.InvokeUiBackgroundAsync(() =>
+            {
+                 viewModel.IsBusy = true;
+                 
+                 return Result.Success;
+            })
            .IfSuccessTryFinallyAsync(() =>
                 {
                     if (!viewModel.TryAutoLogin)
@@ -140,7 +160,12 @@ public class LoginCommands
                                 }, cancellationToken);
                         }, cancellationToken);
                 },
-                () => this.InvokeUiBackgroundAsync(() => viewModel.IsBusy = false).ToValueTask().ConfigureAwait(false),
+                () => this.InvokeUiBackgroundAsync(() =>
+                {
+                     viewModel.IsBusy = false;
+                     
+                     return Result.Success;
+                }).ToValueTask().ConfigureAwait(false),
                 cancellationToken);
     }
     

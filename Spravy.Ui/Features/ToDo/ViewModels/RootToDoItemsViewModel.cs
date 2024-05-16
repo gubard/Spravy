@@ -95,7 +95,8 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
     private ConfiguredValueTaskAwaitable<Result> RefreshCoreAsync(CancellationToken cancellationToken)
     {
         return ToDoCache.GetRootItems()
-           .IfSuccessAsync(items => ToDoSubItemsViewModel.ClearExceptAsync(items, cancellationToken), cancellationToken)
+           .IfSuccessAsync(items => this.InvokeUiBackgroundAsync(() => ToDoSubItemsViewModel.ClearExceptUi(items)),
+                cancellationToken)
            .IfSuccessAsync(() => ToDoService.GetRootToDoItemIdsAsync(cancellationToken), cancellationToken)
            .IfSuccessAsync(items => ToDoCache.UpdateRootItems(items), cancellationToken)
            .IfSuccessAsync(
@@ -125,6 +126,8 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
             {
                 ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
                 ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
+                
+                return Result.Success;
             }), cancellationToken);
     }
     

@@ -43,20 +43,17 @@ public class ToDoItemsGroupByViewModel : ViewModelBase
         return Result.AwaitableFalse;
     }
     
-    public ConfiguredValueTaskAwaitable<Result> ClearExcept(
-        ReadOnlyMemory<ToDoItemEntityNotify> ids,
-        CancellationToken cancellationToken
-    )
+    public Result ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> ids)
     {
-        return GroupByNone.ClearExceptAsync(ids)
-           .IfSuccessAsync(() => GroupByStatus.ClearExceptAsync(ids, cancellationToken), cancellationToken)
-           .IfSuccessAsync(() => GroupByType.ClearExceptAsync(ids, cancellationToken), cancellationToken);
+        return GroupByNone.ClearExceptUi(ids)
+           .IfSuccess(() => GroupByStatus.ClearExceptUi(ids))
+           .IfSuccess(() => GroupByType.ClearExceptUi(ids));
     }
     
-    public void UpdateItem(ToDoItemEntityNotify item)
+    public void UpdateItemUi(ToDoItemEntityNotify item)
     {
-        GroupByNone.UpdateItem(item);
-        GroupByStatus.UpdateItem(item);
-        GroupByType.UpdateItem(item);
+        GroupByNone.UpdateItemUi(item);
+        GroupByStatus.UpdateItemUi(item);
+        GroupByType.UpdateItemUi(item);
     }
 }

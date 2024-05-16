@@ -59,6 +59,8 @@ public class PlannedToDoItemSettingsViewModel : ViewModelBase,
                 ChildrenType = setting.ChildrenType;
                 DueDate = setting.DueDate;
                 IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
+                
+                return Result.Success;
             }), cancellationToken);
     }
     

@@ -114,28 +114,27 @@ public class MultiToDoItemsViewModel : ViewModelBase
         return Result.AwaitableFalse;
     }
     
-    public ConfiguredValueTaskAwaitable<Result> ClearFavoriteExceptAsync(ReadOnlyMemory<ToDoItemEntityNotify> ids)
+    public Result ClearFavoriteExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> ids)
     {
-        return Favorite.ClearExceptAsync(ids);
+        return Favorite.ClearExceptUi(ids);
     }
     
-    public ConfiguredValueTaskAwaitable<Result> ClearExceptAsync(ReadOnlyMemory<ToDoItemEntityNotify> ids, CancellationToken cancellationToken)
+    public Result ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> ids)
     {
-        return ToDoItems.ClearExcept(ids, cancellationToken)
-           .IfSuccessAsync(() => MultiToDoItems.ClearExcept(ids, cancellationToken), cancellationToken);
+        return ToDoItems.ClearExceptUi(ids)
+           .IfSuccess(() => MultiToDoItems.ClearExceptUi(ids));
     }
     
     public ConfiguredValueTaskAwaitable<Result> UpdateFavoriteItemAsync(ToDoItemEntityNotify item)
     {
-        return this.InvokeUiBackgroundAsync(() => Favorite.UpdateItem(item));
+        return this.InvokeUiBackgroundAsync(() => Favorite.UpdateItemUi(item));
     }
     
-    public ConfiguredValueTaskAwaitable<Result> UpdateItemAsync(ToDoItemEntityNotify item)
+    public Result UpdateItemUi(ToDoItemEntityNotify item)
     {
-        return this.InvokeUiBackgroundAsync(() =>
-        {
-            ToDoItems.UpdateItem(item);
-            MultiToDoItems.UpdateItem(item);
-        });
+        ToDoItems.UpdateItemUi(item);
+        MultiToDoItems.UpdateItemUi(item);
+        
+        return Result.Success;
     }
 }

@@ -55,56 +55,53 @@ public class ToDoItemsGroupByStatusViewModel : ViewModelBase
         }
     }
     
-    public ConfiguredValueTaskAwaitable<Result> ClearExceptAsync(
-        ReadOnlyMemory<ToDoItemEntityNotify> items,
-        CancellationToken cancellationToken
-    )
+    public Result ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
-        return Missed.ClearExceptAsync(items.ToArray().Where(x => x.Status == ToDoItemStatus.Miss).ToArray())
-           .IfSuccessAsync(
-                () => ReadyForCompleted.ClearExceptAsync(items.ToArray()
+        return Missed.ClearExceptUi(items.ToArray().Where(x => x.Status == ToDoItemStatus.Miss).ToArray())
+           .IfSuccess(
+                () => ReadyForCompleted.ClearExceptUi(items.ToArray()
                    .Where(x => x.Status == ToDoItemStatus.ReadyForComplete)
-                   .ToArray()), cancellationToken)
-           .IfSuccessAsync(
-                () => Planned.ClearExceptAsync(items.ToArray()
+                   .ToArray()))
+           .IfSuccess(
+                () => Planned.ClearExceptUi(items.ToArray()
                    .Where(x => x.Status == ToDoItemStatus.Planned)
-                   .ToArray()), cancellationToken)
-           .IfSuccessAsync(
-                () => Completed.ClearExceptAsync(items.ToArray()
+                   .ToArray()))
+           .IfSuccess(
+                () => Completed.ClearExceptUi(items.ToArray()
                    .Where(x => x.Status == ToDoItemStatus.Completed)
-                   .ToArray()), cancellationToken);
+                   .ToArray()));
     }
     
-    public void UpdateItem(ToDoItemEntityNotify item)
+    public void UpdateItemUi(ToDoItemEntityNotify item)
     {
         switch (item.Status)
         {
             case ToDoItemStatus.Miss:
-                Missed.UpdateItem(item);
-                ReadyForCompleted.RemoveItem(item);
-                Planned.RemoveItem(item);
-                Completed.RemoveItem(item);
+                Missed.UpdateItemUi(item);
+                ReadyForCompleted.RemoveItemUi(item);
+                Planned.RemoveItemUi(item);
+                Completed.RemoveItemUi(item);
                 
                 break;
             case ToDoItemStatus.ReadyForComplete:
-                Missed.RemoveItem(item);
-                ReadyForCompleted.UpdateItem(item);
-                Planned.RemoveItem(item);
-                Completed.RemoveItem(item);
+                Missed.RemoveItemUi(item);
+                ReadyForCompleted.UpdateItemUi(item);
+                Planned.RemoveItemUi(item);
+                Completed.RemoveItemUi(item);
                 
                 break;
             case ToDoItemStatus.Planned:
-                Missed.RemoveItem(item);
-                ReadyForCompleted.RemoveItem(item);
-                Planned.UpdateItem(item);
-                Completed.RemoveItem(item);
+                Missed.RemoveItemUi(item);
+                ReadyForCompleted.RemoveItemUi(item);
+                Planned.UpdateItemUi(item);
+                Completed.RemoveItemUi(item);
                 
                 break;
             case ToDoItemStatus.Completed:
-                Missed.RemoveItem(item);
-                ReadyForCompleted.RemoveItem(item);
-                Planned.RemoveItem(item);
-                Completed.UpdateItem(item);
+                Missed.RemoveItemUi(item);
+                ReadyForCompleted.RemoveItemUi(item);
+                Planned.RemoveItemUi(item);
+                Completed.UpdateItemUi(item);
                 
                 break;
             default:

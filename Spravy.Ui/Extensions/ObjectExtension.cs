@@ -2,23 +2,19 @@ namespace Spravy.Ui.Extensions;
 
 public static class ObjectExtension
 {
-    public static ConfiguredValueTaskAwaitable<Result> InvokeUiBackgroundAsync<TObject>(this TObject _, Action callback)
+    public static ConfiguredValueTaskAwaitable<Result> InvokeUiBackgroundAsync<TObject>(
+        this TObject _,
+        Func<Result> callback
+    )
     {
-        return InvokeUiBackgroundCore(_, callback).ConfigureAwait(false);
+        return _.InvokeUiBackgroundCore(callback).ConfigureAwait(false);
     }
     
-    private static async ValueTask<Result> InvokeUiBackgroundCore<TObject>(this TObject _, Action callback)
+    private static async ValueTask<Result> InvokeUiBackgroundCore<TObject>(this TObject _, Func<Result> callback)
     {
-        await Dispatcher.UIThread.InvokeAsync(callback, DispatcherPriority.Background);
+        var result = await Dispatcher.UIThread.InvokeAsync(callback, DispatcherPriority.Background);
         
-        return Result.Success;
-    }
-    
-    public static async ValueTask<Result> InvokeUiBackgroundAsync<TObject>(this TObject _, Func<Task> callback)
-    {
-        await Dispatcher.UIThread.InvokeAsync(callback, DispatcherPriority.Background);
-        
-        return Result.Success;
+        return result;
     }
     
     public static ConfiguredValueTaskAwaitable<Result<TResult>> InvokeUiBackgroundAsync<TObject, TResult>(
