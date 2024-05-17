@@ -89,7 +89,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                     }, cancellationToken)
                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                         cancellationToken), _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
-                view => view.ToDoItemId = Id, cancellationToken), errorHandler));
+                view => view.Item = this, cancellationToken), errorHandler));
         
         ShowSettingItem = new(MaterialIconKind.Settings, new("Command.Setting"),
             SpravyCommand.Create(
