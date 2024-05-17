@@ -50,102 +50,65 @@ public class ToDoItemSelectorViewModel : ViewModelBase
                 Roots.Clear();
                 Roots.AddRange(items.ToArray());
                 
-                return Result.Success;
+                return SetupUi();
             }), cancellationToken)
-           .IfSuccessAsync(() => SetupAsync(cancellationToken), cancellationToken)
            .IfSuccessAsync(() => ToDoService.GetToDoSelectorItemsAsync(IgnoreIds.ToArray(), cancellationToken),
                 cancellationToken)
-           .IfSuccessAsync(items => this.InvokeUiBackgroundAsync(()=>ToDoCache.UpdateUi(items)), cancellationToken)
+           .IfSuccessAsync(items => this.InvokeUiBackgroundAsync(() => ToDoCache.UpdateUi(items)), cancellationToken)
            .IfSuccessAsync(items => this.InvokeUiBackgroundAsync(() =>
             {
                 Roots.Clear();
                 Roots.AddRange(items.ToArray());
                 
-                return Result.Success;
-            }), cancellationToken)
-           .IfSuccessAsync(() => SetupAsync(cancellationToken), cancellationToken);
+                return SetupUi();
+            }), cancellationToken);
     }
     
-    private ConfiguredValueTaskAwaitable<Result> SetupAsync(
-        ToDoItemEntityNotify item,
-        CancellationToken cancellationToken
-    )
+    private Result SetupUi(ToDoItemEntityNotify item)
     {
-        return Result.AwaitableFalse
-           .IfSuccessAsync(() =>
+        if (IgnoreIds.Contains(item.Id))
+        {
+            item.IsIgnore = true;
+        }
+        
+        if (DefaultSelectedItemId == item.Id)
+        {
+            SelectedItem = item;
+            var result = ExpandParentsUi(item);
+            
+            if (result.IsHasError)
             {
-                if (IgnoreIds.Contains(item.Id))
-                {
-                    return this.InvokeUiBackgroundAsync(() =>
-                    {
-                         item.IsIgnore = true;
-                         
-                         return Result.Success;
-                    });
-                }
-                
-                return Result.AwaitableFalse;
-            }, cancellationToken)
-           .IfSuccessAsync(() =>
-            {
-                if (DefaultSelectedItemId == item.Id)
-                {
-                    return this.InvokeUiBackgroundAsync(() =>
-                        {
-                             SelectedItem = item;
-                             
-                             return Result.Success;
-                        })
-                       .IfSuccessAsync(() => ExpandParentsAsync(item, cancellationToken), cancellationToken);
-                }
-                
-                return Result.AwaitableFalse;
-            }, cancellationToken)
-           .IfSuccessAsync(
-                () => item.Children
-                   .ToArray()
-                   .ToReadOnlyMemory()
-                   .ToResult()
-                   .IfSuccessForEachAsync(i => SetupAsync(i, cancellationToken), cancellationToken), cancellationToken);
+                return result;
+            }
+        }
+        
+        return item.Children.ToArray().ToReadOnlyMemory().ToResult().IfSuccessForEach(SetupUi);
     }
     
-    private ConfiguredValueTaskAwaitable<Result> ExpandParentsAsync(
-        ToDoItemEntityNotify item,
-        CancellationToken cancellationToken
-    )
+    private Result ExpandParentsUi(ToDoItemEntityNotify item)
     {
-        return this.InvokeUiBackgroundAsync(() =>
-            {
-                 item.IsExpanded = true;
-                 
-                 return Result.Success;
-            })
-           .IfSuccessAsync(() =>
-            {
-                if (item.Parent == null)
-                {
-                    return Result.AwaitableFalse;
-                }
-                
-                return ExpandParentsAsync(item.Parent, cancellationToken);
-            }, cancellationToken);
+        item.IsExpanded = true;
+        
+        if (item.Parent == null)
+        {
+            return Result.Success;
+        }
+        
+        return ExpandParentsUi(item.Parent);
     }
     
-    private ConfiguredValueTaskAwaitable<Result> SetupAsync(CancellationToken cancellationToken)
+    private Result SetupUi()
     {
-        return Roots.ToArray()
-           .ToReadOnlyMemory()
-           .ToResult()
-           .IfSuccessForEachAsync(item => SetupAsync(item, cancellationToken), cancellationToken);
+        return Roots.ToArray().ToReadOnlyMemory().ToResult().IfSuccessForEach(item => SetupUi(item));
     }
     
     private ConfiguredValueTaskAwaitable<Result> SearchAsync(CancellationToken cancellationToken)
     {
         return this.InvokeUiBackgroundAsync(() =>
             {
-                 Roots.Clear();
-                 
-                 return Result.Success;
+                Roots.Clear();
+                
+                return Result.Success;
             })
            .IfSuccessAsync(() => ToDoCache.GetRootItems(), cancellationToken)
            .IfSuccessForEachAsync(item => SearchAsync(item, cancellationToken), cancellationToken);
@@ -163,9 +126,9 @@ public class ToDoItemSelectorViewModel : ViewModelBase
                 {
                     return this.InvokeUiBackgroundAsync(() =>
                     {
-                         Roots.Add(item);
-                         
-                         return Result.Success;
+                        Roots.Add(item);
+                        
+                        return Result.Success;
                     });
                 }
                 
