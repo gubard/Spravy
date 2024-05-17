@@ -50,10 +50,10 @@ public class ToDoItemsGroupByViewModel : ViewModelBase
            .IfSuccess(() => GroupByType.ClearExceptUi(ids));
     }
     
-    public void UpdateItemUi(ToDoItemEntityNotify item)
+    public Result UpdateItemUi(ToDoItemEntityNotify item)
     {
-        GroupByNone.UpdateItemUi(item);
-        GroupByStatus.UpdateItemUi(item);
-        GroupByType.UpdateItemUi(item);
+        return GroupByNone.UpdateItemUi(item)
+           .IfSuccess(() => GroupByStatus.UpdateItemUi(item))
+           .IfSuccess(() => GroupByType.UpdateItemUi(item));
     }
 }

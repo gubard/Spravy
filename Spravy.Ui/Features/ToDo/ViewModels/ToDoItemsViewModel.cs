@@ -112,8 +112,10 @@ public class ToDoItemsViewModel : ViewModelBase
         return Items.Count;
     }
     
-    public void RemoveItemUi(ToDoItemEntityNotify item)
+    public Result RemoveItemUi(ToDoItemEntityNotify item)
     {
         Items.Remove(item);
+        
+        return Result.Success;
     }
 }

@@ -121,8 +121,7 @@ public class MultiToDoItemsViewModel : ViewModelBase
     
     public Result ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> ids)
     {
-        return ToDoItems.ClearExceptUi(ids)
-           .IfSuccess(() => MultiToDoItems.ClearExceptUi(ids));
+        return ToDoItems.ClearExceptUi(ids).IfSuccess(() => MultiToDoItems.ClearExceptUi(ids));
     }
     
     public ConfiguredValueTaskAwaitable<Result> UpdateFavoriteItemAsync(ToDoItemEntityNotify item)
@@ -132,9 +131,6 @@ public class MultiToDoItemsViewModel : ViewModelBase
     
     public Result UpdateItemUi(ToDoItemEntityNotify item)
     {
-        ToDoItems.UpdateItemUi(item);
-        MultiToDoItems.UpdateItemUi(item);
-        
-        return Result.Success;
+        return ToDoItems.UpdateItemUi(item).IfSuccess(() => MultiToDoItems.UpdateItemUi(item));
     }
 }

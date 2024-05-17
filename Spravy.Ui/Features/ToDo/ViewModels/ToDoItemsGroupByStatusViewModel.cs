@@ -1,3 +1,5 @@
+using Spravy.ToDo.Domain.Errors;
+
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ToDoItemsGroupByStatusViewModel : ViewModelBase
@@ -58,54 +60,42 @@ public class ToDoItemsGroupByStatusViewModel : ViewModelBase
     public Result ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
         return Missed.ClearExceptUi(items.ToArray().Where(x => x.Status == ToDoItemStatus.Miss).ToArray())
-           .IfSuccess(
-                () => ReadyForCompleted.ClearExceptUi(items.ToArray()
+           .IfSuccess(() =>
+                ReadyForCompleted.ClearExceptUi(items.ToArray()
                    .Where(x => x.Status == ToDoItemStatus.ReadyForComplete)
                    .ToArray()))
-           .IfSuccess(
-                () => Planned.ClearExceptUi(items.ToArray()
-                   .Where(x => x.Status == ToDoItemStatus.Planned)
-                   .ToArray()))
-           .IfSuccess(
-                () => Completed.ClearExceptUi(items.ToArray()
-                   .Where(x => x.Status == ToDoItemStatus.Completed)
-                   .ToArray()));
+           .IfSuccess(() =>
+                Planned.ClearExceptUi(items.ToArray().Where(x => x.Status == ToDoItemStatus.Planned).ToArray()))
+           .IfSuccess(() =>
+                Completed.ClearExceptUi(items.ToArray().Where(x => x.Status == ToDoItemStatus.Completed).ToArray()));
     }
     
-    public void UpdateItemUi(ToDoItemEntityNotify item)
+    public Result UpdateItemUi(ToDoItemEntityNotify item)
     {
         switch (item.Status)
         {
             case ToDoItemStatus.Miss:
-                Missed.UpdateItemUi(item);
-                ReadyForCompleted.RemoveItemUi(item);
-                Planned.RemoveItemUi(item);
-                Completed.RemoveItemUi(item);
-                
-                break;
+                return Missed.UpdateItemUi(item)
+                   .IfSuccess(() => ReadyForCompleted.RemoveItemUi(item))
+                   .IfSuccess(() => Planned.RemoveItemUi(item))
+                   .IfSuccess(() => Completed.RemoveItemUi(item));
             case ToDoItemStatus.ReadyForComplete:
-                Missed.RemoveItemUi(item);
-                ReadyForCompleted.UpdateItemUi(item);
-                Planned.RemoveItemUi(item);
-                Completed.RemoveItemUi(item);
-                
-                break;
+                return Missed.RemoveItemUi(item)
+                   .IfSuccess(() => ReadyForCompleted.UpdateItemUi(item))
+                   .IfSuccess(() => Planned.RemoveItemUi(item))
+                   .IfSuccess(() => Completed.RemoveItemUi(item));
             case ToDoItemStatus.Planned:
-                Missed.RemoveItemUi(item);
-                ReadyForCompleted.RemoveItemUi(item);
-                Planned.UpdateItemUi(item);
-                Completed.RemoveItemUi(item);
-                
-                break;
+                return Missed.RemoveItemUi(item)
+                   .IfSuccess(() => ReadyForCompleted.RemoveItemUi(item))
+                   .IfSuccess(() => Planned.UpdateItemUi(item))
+                   .IfSuccess(() => Completed.RemoveItemUi(item));
             case ToDoItemStatus.Completed:
-                Missed.RemoveItemUi(item);
-                ReadyForCompleted.RemoveItemUi(item);
-                Planned.RemoveItemUi(item);
-                Completed.UpdateItemUi(item);
-                
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
+                return Missed.RemoveItemUi(item)
+                   .IfSuccess(() => ReadyForCompleted.RemoveItemUi(item))
+                   .IfSuccess(() => Planned.RemoveItemUi(item))
+                   .IfSuccess(() => Completed.UpdateItemUi(item));
         }
+        
+        return new(new ToDoItemStatusOutOfRangeError(item.Status));
     }
 }
