@@ -1,56 +1,40 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:converters="clr-namespace:Spravy.Ui.Converters"
-                    xmlns:enums1="clr-namespace:Spravy.Ui.Features.ToDo.Enums"
-                    xmlns:system="clr-namespace:System;assembly=System.Runtime"
-                    xmlns:enums="clr-namespace:Spravy.Ui.Enums">
-    <converters:DoubleZeroToBooleanConverter x:Key="DoubleZeroToBooleanConverter" />
-    <converters:DateTimeOffsetToDateOnlyValueConverter x:Key="DateTimeOffsetToDateOnlyValueConverter" />
-    <converters:DateTimeToDateOnlyValueConverter x:Key="DateTimeToDateOnlyValueConverter" />
-    <converters:DoubleToPercentsConverter x:Key="DoubleToPercentsConverter95" Percentage=".95" />
-    <converters:DoubleToPercentsConverter x:Key="DoubleToPercentsConverter85" Percentage=".85" />
-    <converters:DoubleToPercentsConverter x:Key="DoubleToPercentsConverter70" Percentage=".70" />
-    <converters:DoubleToPercentsConverter x:Key="DoubleToPercentsConverter50" Percentage=".50" />
-    <converters:ToDoItemStatusLocalizationValueConverter x:Key="ToDoItemStatusLocalizationValueConverter" />
-    <converters:ObjectToVisibleValueConverter x:Key="ObjectToVisibleValueConverter" />
-    <converters:ToDoItemTypeLocalizationValueConverter x:Key="ToDoItemTypeLocalizationValueConverter" />
-    <converters:ToDoItemStatusToBrushValueConverter x:Key="ToDoItemStatusToBrushValueConverter" />
-    <converters:ReverseBooleanValueConverter x:Key="ReverseBooleanValueConverter" />
-    <converters:EmptyStringToNullConverter x:Key="EmptyStringToNullConverter" />
-    <converters:NullToBooleanConverter x:Key="NullToBooleanConverter" />
-    <converters:UInt32ZeroToBooleanConverter x:Key="UInt32ToIsVisibleConverter" />
-    <converters:Int32PositiveToBooleanConverter x:Key="Int32ToIsVisibleConverter" />
-    <converters:CompleteStatusToBrushConverter x:Key="CompleteStatusToBrushConverter" />
-    <converters:NullOrWhiteSpaceToBooleanValueConverter x:Key="NullOrWhiteSpaceToBooleanValueConverter" />
-    <converters:NullOrWhiteSpaceToBooleanValueConverter x:Key="NullOrWhiteSpaceToBooleanValueConverterReverse"
-                                                        Reverse="True" />
-    <converters:BooleanToCompletedStringConverter x:Key="BooleanToCompletedStringConverter" />
-    <converters:ToDoItemCanCompleteToBooleanConverter x:Key="ToDoItemCanCompleteToBooleanConverter" />
-    <converters:ToDoItemCanIncompleteToBooleanConverter x:Key="ToDoItemCanIncompleteToBooleanConverter" />
-    <converters:ToDoItemCanNoneToBooleanReverseConverter x:Key="ToDoItemCanNoneToBooleanReverseConverter" />
-    <converters:EnumToBooleanConverter x:TypeArguments="enums1:GroupBy"
-                                       x:Key="MultiEditingGroupByNoneToTrue"
-                                       Value="None" />
-    <converters:EnumToBooleanConverter x:TypeArguments="enums1:GroupBy"
-                                       x:Key="MultiEditingGroupByStatusToTrue"
-                                       Value="ByStatus" />
-    <converters:EnumToBooleanConverter x:TypeArguments="enums1:GroupBy"
-                                       x:Key="MultiEditingGroupByTypeToTrue"
-                                       Value="ByType" />
-    <converters:ObjectToBooleanConverter x:TypeArguments="system:Byte"
-                                         x:Key="TypeOfPeriodicityToIsVisible"
-                                         Value="0"
-                                         Reverse="True" />
-    <converters:EnumToBooleanConverter x:TypeArguments="enums:UserIdentifierType"
-                                       x:Key="UserIdentifierTypeEmailToTrue"
-                                       Value="Email" />
-    <converters:EnumToBooleanConverter x:TypeArguments="enums:UserIdentifierType"
-                                       x:Key="UserIdentifierTypeLoginToTrue"
-                                       Value="Login" />
-    <!--<converters:EnumToBooleanConverter x:TypeArguments="enums2:ToDoItemIsCan" 
-                                       x:Key="ToDoItemIsCanCanCompleteToTrue"
-                                       Value="CanComplete" />
-    <converters:EnumToBooleanConverter x:TypeArguments="enums2:ToDoItemIsCan" 
-                                       x:Key="ToDoItemIsCanCanIncompleteToTrue"
-                                       Value="CanIncomplete" />-->
+                    xmlns:c="clr-namespace:Spravy.Ui.Converters"
+                    xmlns:te="clr-namespace:Spravy.Ui.Features.ToDo.Enums"
+                    xmlns:s="clr-namespace:System;assembly=System.Runtime"
+                    xmlns:e="clr-namespace:Spravy.Ui.Enums"
+                    xmlns:lc="clr-namespace:Spravy.Ui.Features.Localizations.Converters">
+    <lc:ObjectToLocalizationConverter x:Key="ObjectToLocalizationConverter" />
+    <c:DoubleZeroToBooleanConverter x:Key="DoubleZeroToBooleanConverter" />
+    <c:DateTimeOffsetToDateOnlyValueConverter x:Key="DateTimeOffsetToDateOnlyValueConverter" />
+    <c:DateTimeToDateOnlyValueConverter x:Key="DateTimeToDateOnlyValueConverter" />
+    <c:DoubleToPercentsConverter x:Key="DoubleToPercentsConverter95" Percentage=".95" />
+    <c:DoubleToPercentsConverter x:Key="DoubleToPercentsConverter85" Percentage=".85" />
+    <c:DoubleToPercentsConverter x:Key="DoubleToPercentsConverter70" Percentage=".70" />
+    <c:DoubleToPercentsConverter x:Key="DoubleToPercentsConverter50" Percentage=".50" />
+    <c:ToDoItemStatusLocalizationValueConverter x:Key="ToDoItemStatusLocalizationValueConverter" />
+    <c:ObjectToVisibleValueConverter x:Key="ObjectToVisibleValueConverter" />
+    <c:ToDoItemTypeLocalizationValueConverter x:Key="ToDoItemTypeLocalizationValueConverter" />
+    <c:ToDoItemStatusToBrushValueConverter x:Key="ToDoItemStatusToBrushValueConverter" />
+    <c:ReverseBooleanValueConverter x:Key="ReverseBooleanValueConverter" />
+    <c:EmptyStringToNullConverter x:Key="EmptyStringToNullConverter" />
+    <c:NullToBooleanConverter x:Key="NullToBooleanConverter" />
+    <c:UInt32ZeroToBooleanConverter x:Key="UInt32ToIsVisibleConverter" />
+    <c:Int32PositiveToBooleanConverter x:Key="Int32ToIsVisibleConverter" />
+    <c:CompleteStatusToBrushConverter x:Key="CompleteStatusToBrushConverter" />
+    <c:NullOrWhiteSpaceToBooleanValueConverter x:Key="NullOrWhiteSpaceToBooleanValueConverter" />
+    <c:NullOrWhiteSpaceToBooleanValueConverter x:Key="NullOrWhiteSpaceToBooleanValueConverterReverse" Reverse="True" />
+    <c:BooleanToCompletedStringConverter x:Key="BooleanToCompletedStringConverter" />
+    <c:ToDoItemCanCompleteToBooleanConverter x:Key="ToDoItemCanCompleteToBooleanConverter" />
+    <c:ToDoItemCanIncompleteToBooleanConverter x:Key="ToDoItemCanIncompleteToBooleanConverter" />
+    <c:ToDoItemCanNoneToBooleanReverseConverter x:Key="ToDoItemCanNoneToBooleanReverseConverter" />
+    <c:EnumToBooleanConverter x:TypeArguments="te:GroupBy" x:Key="MultiEditingGroupByNoneToTrue" Value="None" />
+    <c:EnumToBooleanConverter x:TypeArguments="te:GroupBy" x:Key="MultiEditingGroupByStatusToTrue" Value="ByStatus" />
+    <c:EnumToBooleanConverter x:TypeArguments="te:GroupBy" x:Key="MultiEditingGroupByTypeToTrue" Value="ByType" />
+    <c:ObjectToBooleanConverter x:TypeArguments="s:Byte" x:Key="TypeOfPeriodicityToIsVisible" Value="0" Reverse="True" />
+    <c:EnumToBooleanConverter x:TypeArguments="e:UserIdentifierType" x:Key="UserIdentifierTypeEmailToTrue"
+                              Value="Email" />
+    <c:EnumToBooleanConverter x:TypeArguments="e:UserIdentifierType" x:Key="UserIdentifierTypeLoginToTrue"
+                              Value="Login" />
 </ResourceDictionary>

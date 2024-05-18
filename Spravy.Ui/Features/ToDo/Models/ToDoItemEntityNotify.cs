@@ -299,6 +299,24 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                     vm => vm.ToDoItemId = Id, cancellationToken);
             }, errorHandler));
         
+        MultiDeleteItem = new(MaterialIconKind.Delete, new("Command.Delete"), SpravyCommand.Create(cancellationToken =>
+        {
+            ReadOnlyMemory<ToDoItemEntityNotify> selected = Children.Where(x => x.IsSelected).ToArray();
+            
+            return dialogViewer.ShowConfirmContentDialogAsync<DeleteToDoItemViewModel>(
+                _ => dialogViewer.CloseContentDialogAsync(cancellationToken)
+                   .IfSuccessAsync(
+                        () => selected.ToResult()
+                           .IfSuccessForEachAsync(item => toDoService.DeleteToDoItemAsync(item.Id, cancellationToken),
+                                cancellationToken), cancellationToken)
+                   .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
+                        cancellationToken), _ => dialogViewer.CloseContentDialogAsync(cancellationToken), vm =>
+                {
+                    vm.Item = this;
+                    vm.DeletedIds = selected.ToArray().Select(x => x.Id).ToArray();
+                }, cancellationToken);
+        }, errorHandler));
+        
         MultiCommands.AddRange([
             MultiAddChildItem,
             MultiShowSettingItem,

@@ -22,7 +22,7 @@
     <ScrollViewer Classes="mini" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <c:GroupBox>
             <c:GroupBox.Header>
-                <TextBlock Classes="h4" Text="{Binding Item.Name}" />
+                <TextBlock Classes="h4" Text="{Binding Converter={StaticResource ObjectToLocalizationConverter}, ConverterParameter=DeleteToDoItemView.Header}" />
             </c:GroupBox.Header>
 
             <c:GroupBox.DataTemplates>
