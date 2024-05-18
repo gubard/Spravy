@@ -114,7 +114,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
         OpenLeafItem = new(MaterialIconKind.Leaf, new("Command.OpenLeaf"),
             SpravyCommand.Create(
                 cancellationToken =>
-                    navigator.NavigateToAsync<LeafToDoItemsViewModel>(vm => vm.Id = Id, cancellationToken),
+                    navigator.NavigateToAsync<LeafToDoItemsViewModel>(vm => vm.Item = this, cancellationToken),
                 errorHandler));
         
         ChangeParentItem = new(MaterialIconKind.SwapHorizontal, new("Command.ChangeParent"), SpravyCommand.Create(
@@ -316,6 +316,20 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                     vm.DeletedIds = selected.ToArray().Select(x => x.Id).ToArray();
                 }, cancellationToken);
         }, errorHandler));
+        
+        MultiOpenLeafItem = new(MaterialIconKind.Leaf, new("Command.OpenLeaf"),
+            SpravyCommand.Create(
+                cancellationToken =>
+                {
+                    ReadOnlyMemory<Guid> selected = Children.Where(x => x.IsSelected).Select(x => x.Id).ToArray();
+                    
+                    return navigator.NavigateToAsync<LeafToDoItemsViewModel>(vm =>
+                    {
+                        vm.Item = this;
+                        vm.LeafIds = selected;
+                    }, cancellationToken);
+                },
+                errorHandler));
         
         MultiCommands.AddRange([
             MultiAddChildItem,

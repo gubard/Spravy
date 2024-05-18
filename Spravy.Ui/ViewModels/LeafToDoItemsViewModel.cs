@@ -14,10 +14,11 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
     }
     
     public ICommand InitializedCommand { get; }
+    public ReadOnlyMemory<Guid> LeafIds { get; set; } = ReadOnlyMemory<Guid>.Empty;
     
     public override string ViewId
     {
-        get => $"{TypeCache<LeafToDoItemsViewModel>.Type.Name}:{Id}";
+        get => $"{TypeCache<LeafToDoItemsViewModel>.Type.Name}:{Item?.Name}";
     }
     
     [Inject]
@@ -45,7 +46,7 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
     public required ToDoSubItemsViewModel ToDoSubItemsViewModel { get; init; }
     
     [Reactive]
-    public Guid Id { get; set; }
+    public ToDoItemEntityNotify? Item { get; set; }
     
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
     {
@@ -61,9 +62,22 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
     
     private ConfiguredValueTaskAwaitable<Result> RefreshCoreAsync(CancellationToken cancellationToken)
     {
-        return ToDoService.GetLeafToDoItemIdsAsync(Id, cancellationToken)
+        if (LeafIds.IsEmpty)
+        {
+            return Item.IfNotNull(nameof(Item))
+               .IfSuccessAsync(
+                    item => ToDoService.GetLeafToDoItemIdsAsync(item.Id, cancellationToken)
+                       .IfSuccessForEachAsync(id => ToDoCache.GetToDoItem(id), cancellationToken)
+                       .IfSuccessAsync(
+                            items => ToDoSubItemsViewModel.UpdateItemsAsync(items, this, true, cancellationToken),
+                            cancellationToken), cancellationToken);
+        }
+        
+        return LeafIds.ToResult()
+           .IfSuccessForEachAsync(id => ToDoService.GetLeafToDoItemIdsAsync(id, cancellationToken), cancellationToken)
+           .IfSuccessAsync(items => items.SelectMany().ToResult(), cancellationToken)
            .IfSuccessForEachAsync(id => ToDoCache.GetToDoItem(id), cancellationToken)
-           .IfSuccessAsync(ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, true, cancellationToken),
+           .IfSuccessAsync(items => ToDoSubItemsViewModel.UpdateItemsAsync(items, this, true, cancellationToken),
                 cancellationToken);
     }
     

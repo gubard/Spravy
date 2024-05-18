@@ -5,6 +5,37 @@ namespace Spravy.Domain.Extensions;
 
 public static class MemoryExtension
 {
+    public static int Sum(this ReadOnlyMemory<int> memory)
+    {
+        var result = 0;
+        
+        for (var index = 0; index < memory.Span.Length; index++)
+        {
+            result += memory.Span[index];
+        }
+        
+        return result;
+    }
+    
+    public static ReadOnlyMemory<TSource> SelectMany<TSource>(this ReadOnlyMemory<ReadOnlyMemory<TSource>> memory)
+    {
+        var result = new Memory<TSource>(new TSource[memory.Select(x => x.Length).Sum()]);
+        var currentIndex = 0;
+        
+        for (var index = 0; index < memory.Span.Length; index++)
+        {
+            if (memory.Span[index].IsEmpty)
+            {
+                continue;
+            }
+            
+            memory.Span[index].CopyTo(result.Slice(currentIndex, memory.Span[index].Length));
+            currentIndex += memory.Length;
+        }
+        
+        return result;
+    }
+    
     public static ReadOnlyMemory<TResult> Select<TSource, TResult>(
         this ReadOnlyMemory<TSource> memory,
         Func<TSource, TResult> selector
