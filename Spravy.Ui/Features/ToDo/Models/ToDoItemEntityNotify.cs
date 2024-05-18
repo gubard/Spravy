@@ -125,7 +125,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                         cancellationToken), viewModel =>
                 {
-                    viewModel.IgnoreIds = new([id]);
+                    viewModel.IgnoreIds = new([id,]);
                     viewModel.DefaultSelectedItemId = (Parent?.Id).GetValueOrDefault();
                 }, cancellationToken), errorHandler));
         
@@ -228,7 +228,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
             {
                 ReadOnlyMemory<ToDoItemEntityNotify> selected = Children.Where(x => x.IsSelected).ToArray();
                 
-                if (selected.Length == 0)
+                if (selected.IsEmpty)
                 {
                     return new Result(new NonItemSelectedError()).ToValueTaskResult().ConfigureAwait(false);
                 }
@@ -257,7 +257,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
             {
                 ReadOnlyMemory<ToDoItemEntityNotify> selected = Children.Where(x => x.IsSelected).ToArray();
                 
-                if (selected.Length == 0)
+                if (selected.IsEmpty)
                 {
                     return new Result(new NonItemSelectedError()).ToValueTaskResult().ConfigureAwait(false);
                 }
@@ -303,6 +303,11 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
         {
             ReadOnlyMemory<ToDoItemEntityNotify> selected = Children.Where(x => x.IsSelected).ToArray();
             
+            if (selected.IsEmpty)
+            {
+                return new Result(new NonItemSelectedError()).ToValueTaskResult().ConfigureAwait(false);
+            }
+            
             return dialogViewer.ShowConfirmContentDialogAsync<DeleteToDoItemViewModel>(
                 _ => dialogViewer.CloseContentDialogAsync(cancellationToken)
                    .IfSuccessAsync(
@@ -322,6 +327,11 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
             {
                 ReadOnlyMemory<Guid> selected = Children.Where(x => x.IsSelected).Select(x => x.Id).ToArray();
                 
+                if (selected.IsEmpty)
+                {
+                    return new Result(new NonItemSelectedError()).ToValueTaskResult().ConfigureAwait(false);
+                }
+                
                 return navigator.NavigateToAsync<LeafToDoItemsViewModel>(vm =>
                 {
                     vm.Item = this;
@@ -333,6 +343,11 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
             cancellationToken =>
             {
                 ReadOnlyMemory<Guid> selected = Children.Where(x => x.IsSelected).Select(x => x.Id).ToArray();
+                
+                if (selected.IsEmpty)
+                {
+                    return new Result(new NonItemSelectedError()).ToValueTaskResult().ConfigureAwait(false);
+                }
                 
                 return dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
                     vm => dialogViewer.CloseInputDialogAsync(cancellationToken)
@@ -347,6 +362,48 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                         viewModel.IgnoreIds = selected;
                         viewModel.DefaultSelectedItemId = Id;
                     }, cancellationToken);
+            }, errorHandler));
+        
+        MultiMakeAsRootItem = new(MaterialIconKind.FamilyTree, new("Command.MakeAsRootToDoItem"), SpravyCommand.Create(
+            cancellationToken =>
+            {
+                ReadOnlyMemory<Guid> selected = Children.Where(x => x.IsSelected).Select(x => x.Id).ToArray();
+                
+                if (selected.IsEmpty)
+                {
+                    return new Result(new NonItemSelectedError()).ToValueTaskResult().ConfigureAwait(false);
+                }
+                
+                return selected.ToResult()
+                   .IfSuccessForEachAsync(i => toDoService.ToDoItemToRootAsync(i, cancellationToken), cancellationToken)
+                   .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
+                        cancellationToken);
+            }, errorHandler));
+        
+        MultiCopyToClipboardItem = new(MaterialIconKind.Clipboard, new("Command.CopyToClipboard"), SpravyCommand.Create(
+            cancellationToken =>
+            {
+                ReadOnlyMemory<Guid> selected = Children.Where(x => x.IsSelected).Select(x => x.Id).ToArray();
+                
+                if (selected.IsEmpty)
+                {
+                    return new Result(new NonItemSelectedError()).ToValueTaskResult().ConfigureAwait(false);
+                }
+                
+                return dialogViewer.ShowConfirmContentDialogAsync(view =>
+                    {
+                        var statuses = view.Statuses.Where(x => x.IsChecked).Select(x => x.Item);
+                        
+                        return dialogViewer.CloseContentDialogAsync(cancellationToken)
+                           .IfSuccessAsync(() => selected.ToResult(), cancellationToken)
+                           .IfSuccessForEachAsync(
+                                i => toDoService.ToDoItemToStringAsync(new(statuses, i), cancellationToken),
+                                cancellationToken)
+                           .IfSuccessAsync(
+                                items => clipboardService.SetTextAsync(items.Join(Environment.NewLine).ToString()),
+                                cancellationToken);
+                    }, _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
+                    ActionHelper<ToDoItemToStringSettingsViewModel>.Empty, cancellationToken);
             }, errorHandler));
         
         MultiCommands.AddRange([

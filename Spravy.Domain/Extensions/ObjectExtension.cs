@@ -142,6 +142,16 @@ public static class ObjectExtension
         return new([obj,]);
     }
     
+    public static ReadOnlyMemory<T> ToReadOnlyMemory<T>(this Memory<T> memory)
+    {
+        return memory;
+    }
+    
+    public static ReadOnlyMemory<T> ToReadOnlyMemory<T>(this Span<T> span)
+    {
+        return new (span.ToArray());
+    }
+    
     public static Result<T> IfNotNull<T>(this T? obj, string propertyName)
     {
         if (obj is null)

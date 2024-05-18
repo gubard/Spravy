@@ -25,6 +25,15 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
     public required IObjectStorage ObjectStorage { get; init; }
     
     [Inject]
+    public required IToDoService ToDoService { get; init; }
+    
+    [Inject]
+    public required IToDoCache ToDoCache { get; init; }
+    
+    [Inject]
+    public required ToDoSubItemsViewModel ToDoSubItemsViewModel { get; init; }
+    
+    [Inject]
     public required PageHeaderViewModel PageHeaderViewModel
     {
         get => pageHeaderViewModel;
@@ -35,15 +44,6 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
             pageHeaderViewModel.LeftCommand = CommandStorage.NavigateToCurrentToDoItemItem;
         }
     }
-    
-    [Inject]
-    public required IToDoService ToDoService { get; init; }
-    
-    [Inject]
-    public required IToDoCache ToDoCache { get; init; }
-    
-    [Inject]
-    public required ToDoSubItemsViewModel ToDoSubItemsViewModel { get; init; }
     
     [Reactive]
     public ToDoItemEntityNotify? Item { get; set; }
@@ -75,7 +75,7 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
         
         return LeafIds.ToResult()
            .IfSuccessForEachAsync(id => ToDoService.GetLeafToDoItemIdsAsync(id, cancellationToken), cancellationToken)
-           .IfSuccessAsync(items => items.SelectMany().ToResult(), cancellationToken)
+           .IfSuccessAsync(items => items.SelectMany().ToReadOnlyMemory().ToResult(), cancellationToken)
            .IfSuccessForEachAsync(id => ToDoCache.GetToDoItem(id), cancellationToken)
            .IfSuccessAsync(items => ToDoSubItemsViewModel.UpdateItemsAsync(items, this, true, cancellationToken),
                 cancellationToken);

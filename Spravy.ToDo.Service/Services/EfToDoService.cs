@@ -791,7 +791,7 @@ public class EfToDoService : IToDoService
                 var builder = new StringBuilder();
                 
                 return ToDoItemToStringAsync(context, options, 0, builder, offset, cancellationToken)
-                   .IfSuccessAsync(() => builder.ToString().ToResult(), cancellationToken);
+                   .IfSuccessAsync(() => builder.ToString().Trim().ToResult(), cancellationToken);
             }, cancellationToken);
     }
     
