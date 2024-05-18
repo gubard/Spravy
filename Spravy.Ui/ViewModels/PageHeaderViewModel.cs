@@ -26,10 +26,6 @@ public class PageHeaderViewModel : ViewModelBase
                 CommandStorage.MultiSetTypeToDoItemsItem.WithParam(items.List.MultiToDoItems.GroupByNone.Items.Items));
 
             Commands.Add(
-                CommandStorage.MultiSetParentToDoItemsItem.WithParam(items.List.MultiToDoItems.GroupByNone.Items
-                   .Items));
-
-            Commands.Add(
                 CommandStorage.MultiMoveToDoItemsToRootItem.WithParam(items.List.MultiToDoItems.GroupByNone.Items
                    .Items));
 

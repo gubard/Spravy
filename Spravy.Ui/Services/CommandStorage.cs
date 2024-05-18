@@ -51,9 +51,6 @@ public static class CommandStorage
         MultiCompleteToDoItemsItem = CreateCommand<AvaloniaList<ToDoItemEntityNotify>>(
             MultiSwitchCompleteToDoItemsAsync, MaterialIconKind.CheckAll, "Complete all to-do items");
         
-        MultiSetParentToDoItemsItem = CreateCommand<AvaloniaList<ToDoItemEntityNotify>>(MultiSetParentToDoItemsAsync,
-            MaterialIconKind.SwapHorizontal, "Set parent for all to-do items");
-        
         MultiMoveToDoItemsToRootItem = CreateCommand<AvaloniaList<ToDoItemEntityNotify>>(MultiMoveToDoItemsToRootAsync,
             MaterialIconKind.FamilyTree, "Move items to root");
         
@@ -80,7 +77,6 @@ public static class CommandStorage
     public static CommandItem SendNewVerificationCodeItem { get; }
     public static CommandItem MultiSetTypeToDoItemsItem { get; }
     public static CommandItem MultiMoveToDoItemsToRootItem { get; }
-    public static CommandItem MultiSetParentToDoItemsItem { get; }
     public static CommandItem MultiCompleteToDoItemsItem { get; }
     public static CommandItem NavigateToCurrentToDoItemItem { get; }
     
@@ -281,26 +277,6 @@ public static class CommandStorage
             viewModel.Items.AddRange(Enum.GetValues<ToDoItemType>().OfType<object>());
             viewModel.SelectedItem = viewModel.Items.First();
         }, cancellationToken);
-    }
-    
-    private static ConfiguredValueTaskAwaitable<Result> MultiSetParentToDoItemsAsync(
-        AvaloniaList<ToDoItemEntityNotify> itemsNotify,
-        CancellationToken cancellationToken
-    )
-    {
-        var ids = itemsNotify.Where(x => x.IsSelected).Select(x => x.Id).ToArray();
-        
-        return dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(item => dialogViewer
-               .CloseInputDialogAsync(cancellationToken)
-               .IfSuccessAllAsync(cancellationToken, ids.Select<Guid, Func<ConfiguredValueTaskAwaitable<Result>>>(x =>
-                    {
-                        var y = x;
-                        
-                        return () => toDoService.UpdateToDoItemParentAsync(y, item.Id, cancellationToken);
-                    })
-                   .ToArray())
-               .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
-            viewModel => viewModel.IgnoreIds.AddRange(ids), cancellationToken);
     }
     
     private static ConfiguredValueTaskAwaitable<Result> MultiSwitchCompleteToDoItemsAsync(

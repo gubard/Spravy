@@ -125,7 +125,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                         cancellationToken), viewModel =>
                 {
-                    viewModel.IgnoreIds.Add(Id);
+                    viewModel.IgnoreIds = new([id]);
                     viewModel.DefaultSelectedItemId = (Parent?.Id).GetValueOrDefault();
                 }, cancellationToken), errorHandler));
         
@@ -317,19 +317,37 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                 }, cancellationToken);
         }, errorHandler));
         
-        MultiOpenLeafItem = new(MaterialIconKind.Leaf, new("Command.OpenLeaf"),
-            SpravyCommand.Create(
-                cancellationToken =>
+        MultiOpenLeafItem = new(MaterialIconKind.Leaf, new("Command.OpenLeaf"), SpravyCommand.Create(
+            cancellationToken =>
+            {
+                ReadOnlyMemory<Guid> selected = Children.Where(x => x.IsSelected).Select(x => x.Id).ToArray();
+                
+                return navigator.NavigateToAsync<LeafToDoItemsViewModel>(vm =>
                 {
-                    ReadOnlyMemory<Guid> selected = Children.Where(x => x.IsSelected).Select(x => x.Id).ToArray();
-                    
-                    return navigator.NavigateToAsync<LeafToDoItemsViewModel>(vm =>
+                    vm.Item = this;
+                    vm.LeafIds = selected;
+                }, cancellationToken);
+            }, errorHandler));
+        
+        MultiChangeParentItem = new(MaterialIconKind.SwapHorizontal, new("Command.ChangeParent"), SpravyCommand.Create(
+            cancellationToken =>
+            {
+                ReadOnlyMemory<Guid> selected = Children.Where(x => x.IsSelected).Select(x => x.Id).ToArray();
+                
+                return dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
+                    vm => dialogViewer.CloseInputDialogAsync(cancellationToken)
+                       .IfSuccessAsync(
+                            () => selected.ToResult()
+                               .IfSuccessForEachAsync(
+                                    i => toDoService.UpdateToDoItemParentAsync(i, vm.Id, cancellationToken),
+                                    cancellationToken), cancellationToken)
+                       .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
+                            cancellationToken), viewModel =>
                     {
-                        vm.Item = this;
-                        vm.LeafIds = selected;
+                        viewModel.IgnoreIds = selected;
+                        viewModel.DefaultSelectedItemId = Id;
                     }, cancellationToken);
-                },
-                errorHandler));
+            }, errorHandler));
         
         MultiCommands.AddRange([
             MultiAddChildItem,

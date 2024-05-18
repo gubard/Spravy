@@ -23,7 +23,7 @@ public class ReferenceToDoItemSettingsViewModel : ViewModelBase, IApplySettings
         return ToDoService.GetReferenceToDoItemSettingsAsync(ToDoItemId, cancellationToken)
            .IfSuccessAsync(setting =>
             {
-                ToDoItemSelector.IgnoreIds.Add(ToDoItemId);
+                ToDoItemSelector.IgnoreIds = new([ToDoItemId]);
                 ToDoItemSelector.DefaultSelectedItemId = setting.ReferenceId;
                 
                 return Result.Success;

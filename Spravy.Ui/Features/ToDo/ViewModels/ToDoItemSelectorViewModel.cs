@@ -11,17 +11,13 @@ public class ToDoItemSelectorViewModel : ViewModelBase
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
     }
     
-    [Inject]
-    public required IToDoService ToDoService { get; init; }
-    
-    [Inject]
-    public required IMapper Mapper { get; init; }
-    
     public AvaloniaList<ToDoItemEntityNotify> Roots { get; } = new();
     public ICommand InitializedCommand { get; }
-    public List<Guid> IgnoreIds { get; } = new();
-    
+    public ReadOnlyMemory<Guid> IgnoreIds { get; set; } = ReadOnlyMemory<Guid>.Empty;
     public Guid DefaultSelectedItemId { get; set; }
+    
+    [Inject]
+    public required IToDoService ToDoService { get; init; }
     
     [Inject]
     public required IToDoCache ToDoCache { get; init; }
@@ -66,7 +62,7 @@ public class ToDoItemSelectorViewModel : ViewModelBase
     
     private Result SetupUi(ToDoItemEntityNotify item)
     {
-        if (IgnoreIds.Contains(item.Id))
+        if (IgnoreIds.Span.Contains(item.Id))
         {
             item.IsIgnore = true;
         }
