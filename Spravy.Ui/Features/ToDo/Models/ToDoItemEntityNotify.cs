@@ -1,3 +1,4 @@
+using Spravy.ToDo.Domain.Errors;
 using Spravy.Ui.Errors;
 
 namespace Spravy.Ui.Features.ToDo.Models;
@@ -42,7 +43,8 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                         case ToDoItemIsCan.CanIncomplete:
                             return toDoService.UpdateToDoItemCompleteStatusAsync(CurrentId, false, cancellationToken);
                         default:
-                            throw new ArgumentOutOfRangeException();
+                            return new Result(new ToDoItemIsCanOutOfRangeError(IsCan)).ToValueTaskResult()
+                               .ConfigureAwait(false);
                     }
                 }, cancellationToken)
                .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
@@ -595,7 +597,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
         
         singleCommands.Add(IsFavorite ? RemoveFromFavoriteItem : AddToFavoriteItem);
         
-        if (IsCan.HasFlag(ToDoItemIsCan.CanComplete))
+        if (IsCan != ToDoItemIsCan.None)
         {
             singleCommands.Add(CompleteItem);
         }
