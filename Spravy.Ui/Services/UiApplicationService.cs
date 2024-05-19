@@ -18,4 +18,11 @@ public class UiApplicationService : IUiApplicationService
         
         return refresh.RefreshAsync(cancellationToken);
     }
+    
+    public Result<Type> GetCurrentViewType()
+    {
+        return mainSplitViewModel.Content
+           .IfNotNull(nameof(mainSplitViewModel.Content))
+           .IfSuccess(content => content.GetType().ToResult());
+    }
 }

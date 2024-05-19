@@ -152,8 +152,7 @@
             <c:Stepper Steps="{Binding Item.Path}" Index="0" HorizontalAlignment="Center">
                 <c:Stepper.DataTemplates>
                     <DataTemplate DataType="m:ToDoItemEntityNotify">
-                        <Button Command="{x:Static s:CommandStorage.NavigateToToDoItemCommand}"
-                                CommandParameter="{Binding Id}"
+                        <Button Command="{Binding NavigateToCurrentItem.Command}"
                                 Content="{Binding Name}"
                                 Classes="Basic" />
                     </DataTemplate>

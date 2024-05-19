@@ -79,8 +79,14 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
             dialogViewer.ShowConfirmContentDialogAsync<DeleteToDoItemViewModel>(_ => dialogViewer
                    .CloseContentDialogAsync(cancellationToken)
                    .IfSuccessAsync(() => toDoService.DeleteToDoItemAsync(Id, cancellationToken), cancellationToken)
-                   .IfSuccessAsync(() =>
+                   .IfSuccessAsync(uiApplicationService.GetCurrentViewType, cancellationToken)
+                   .IfSuccessAsync(type =>
                     {
+                        if (type != typeof(ToDoItemViewModel))
+                        {
+                            return Result.AwaitableFalse;
+                        }
+                        
                         if (Parent is null)
                         {
                             return navigator.NavigateToAsync<RootToDoItemsViewModel>(cancellationToken);
