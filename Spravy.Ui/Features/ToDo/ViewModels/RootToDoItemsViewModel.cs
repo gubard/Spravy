@@ -6,7 +6,6 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
 {
     private readonly PageHeaderViewModel pageHeaderViewModel;
     private readonly TaskWork refreshWork;
-    private readonly ToDoSubItemsViewModel toDoSubItemsViewModel;
     
     public RootToDoItemsViewModel() : base(true)
     {
@@ -41,26 +40,7 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
     }
     
     [Inject]
-    public required ToDoSubItemsViewModel ToDoSubItemsViewModel
-    {
-        get => toDoSubItemsViewModel;
-        [MemberNotNull(nameof(toDoSubItemsViewModel))]
-        init
-        {
-            toDoSubItemsViewModel = value;
-            
-            toDoSubItemsViewModel.List
-               .WhenAnyValue(x => x.IsMulti)
-               .Skip(1)
-               .Subscribe(x =>
-                {
-                    if (x)
-                    {
-                        PageHeaderViewModel.SetMultiCommands(ToDoSubItemsViewModel);
-                    }
-                });
-        }
-    }
+    public required ToDoSubItemsViewModel ToDoSubItemsViewModel { get; init; }
     
     [Inject]
     public required IObjectStorage ObjectStorage { get; init; }

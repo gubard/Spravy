@@ -83,10 +83,8 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
     
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
-        return PageHeaderViewModel.SetMultiCommands(ToDoSubItemsViewModel)
-           .IfSuccessAsync(
-                () => ObjectStorage.GetObjectOrDefaultAsync<LeafToDoItemsViewModelSetting>(ViewId, cancellationToken)
-                   .IfSuccessAsync(obj => SetStateAsync(obj, cancellationToken), cancellationToken), cancellationToken)
+        return ObjectStorage.GetObjectOrDefaultAsync<LeafToDoItemsViewModelSetting>(ViewId, cancellationToken)
+           .IfSuccessAsync(obj => SetStateAsync(obj, cancellationToken), cancellationToken)
            .IfSuccessAsync(() => RefreshAsync(cancellationToken), cancellationToken);
     }
     
