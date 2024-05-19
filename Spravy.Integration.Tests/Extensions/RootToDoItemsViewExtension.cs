@@ -67,7 +67,6 @@ public static class RootToDoItemsViewExtension
            .ThrowIfNull()
            .GetVisualChildren()
            .Single()
-           .Case(a => a.ToString())
            .ThrowIfIsNotCast<Border>()
            .Child
            .ThrowIfNull()
@@ -79,6 +78,7 @@ public static class RootToDoItemsViewExtension
            .ElementAt(index)
            .ThrowIfIsNotCast<ContentPresenter>()
            .Child
+           .ThrowIfNull()
            .ThrowIfIsNotCast<Button>();
     }
     
@@ -127,7 +127,7 @@ public static class RootToDoItemsViewExtension
            .ElementAt(1)
            .ThrowIfIsNotCast<TextBlock>()
            .Case(tb => tb.Text.Should().Be("Loading..."))
-           .RunJobsAll(4)
+           .RunJobsAll(5)
            .Case(tb => tb.Text.Should().Be(name));
         
         return view;
