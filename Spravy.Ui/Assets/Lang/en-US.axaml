@@ -17,6 +17,10 @@
     <sys:String x:Key="Command.RemoveFromFavorite">Remove from favorite</sys:String>
     <sys:String x:Key="Command.OpenLink">Open link</sys:String>
     <sys:String x:Key="Command.Clone">Clone</sys:String>
+
+    <!--FastToDoItemView-->
+    <sys:String x:Key="FastToDoItemView.Type">Type</sys:String>
+    <sys:String x:Key="FastToDoItemView.Name">Name</sys:String>
     
     <!--RandomizeChildrenOrderView-->
     <sys:String x:Key="RandomizeChildrenOrderView.Header">Are you sure you want randomize "{Name}" children?</sys:String>

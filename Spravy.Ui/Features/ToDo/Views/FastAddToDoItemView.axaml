@@ -10,6 +10,8 @@
                         x:Class="Spravy.Ui.Features.ToDo.Views.FastAddToDoItemView"
                         x:DataType="vm:FastAddToDoItemViewModel">
     <StackPanel>
+        <TextBlock Classes="field" Text="{DynamicResource FastAddToDoItemView.Type}" />
+
         <ListBox ItemsSource="{Binding Types}" SelectedItem="{Binding Type}" SelectionMode="Single">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -17,6 +19,8 @@
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
         </ListBox>
+
+        <TextBlock Classes="field" Text="{DynamicResource FastAddToDoItemView.Name}" />
 
         <Grid ColumnDefinitions="*,Auto">
             <TextBox Text="{Binding Name}" />
