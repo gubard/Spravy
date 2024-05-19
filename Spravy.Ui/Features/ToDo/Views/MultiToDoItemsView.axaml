@@ -8,9 +8,11 @@
                         xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
                         xmlns:views="clr-namespace:Spravy.Ui.Features.ToDo.Views"
                         xmlns:models="clr-namespace:Spravy.Ui.Features.ToDo.Models"
+                        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                         x:Class="Spravy.Ui.Features.ToDo.Views.MultiToDoItemsView"
-                        x:DataType="vm:MultiToDoItemsViewModel">
+                        x:DataType="vm:MultiToDoItemsViewModel"
+                        IsMulti="{Binding IsMulti}">
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
             <InvokeCommandAction Command="{Binding InitializedCommand}" />
@@ -22,8 +24,9 @@
               Margin="2"
               IsVisible="{Binding ToDoItems.GroupByNone.Items.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
             <ToggleButton Classes="alignment-center"
-                          IsChecked="{Binding IsMulti}"
-                          Content="{DynamicResource MultiToDoItemsView.IsMulti}" />
+                          IsChecked="{Binding IsMulti}">
+                <avalonia:MaterialIcon Kind="CheckAll" />
+            </ToggleButton>
 
             <StackPanel Grid.Column="1">
                 <TextBlock Classes="field"
