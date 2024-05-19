@@ -10,9 +10,8 @@ public class ChangeToDoItemOrderIndexViewModel : ViewModelBase
     }
     
     public ICommand InitializedCommand { get; }
-    
-    [Inject]
-    public required IMapper Mapper { get; init; }
+    public Guid Id { get; set; }
+    public ReadOnlyMemory<Guid> ChangeToDoItemOrderIndexIds { get; set; } = ReadOnlyMemory<Guid>.Empty;
     
     [Inject]
     public required IToDoService ToDoService { get; init; }
@@ -26,27 +25,37 @@ public class ChangeToDoItemOrderIndexViewModel : ViewModelBase
     public ToDoItemEntityNotify? SelectedItem { get; set; }
     
     [Reactive]
-    public Guid Id { get; set; }
-    
-    [Reactive]
     public bool IsAfter { get; set; } = true;
     
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
-        return ToDoService.GetSiblingsAsync(Id, cancellationToken)
+        if (ChangeToDoItemOrderIndexIds.IsEmpty)
+        {
+            return ToDoService.GetSiblingsAsync(Id, cancellationToken)
+               .IfSuccessAsync(
+                    items => this.InvokeUiBackgroundAsync(() =>
+                    {
+                        Items.Clear();
+                        
+                        return items.ToResult()
+                           .IfSuccessForEach(item => ToDoCache.UpdateUi(item)
+                               .IfSuccess(i =>
+                                {
+                                    Items.Add(i);
+                                    
+                                    return Result.Success;
+                                }));
+                    }), cancellationToken);
+        }
+        
+        return ChangeToDoItemOrderIndexIds.ToResult().IfSuccessForEach(id=>ToDoCache.GetToDoItem(id))
            .IfSuccessAsync(
                 items => this.InvokeUiBackgroundAsync(() =>
-                    {
-                         Items.Clear();
-                         
-                         return items.ToResult()
-                            .IfSuccessForEach(item => ToDoCache.UpdateUi(item)
-                                .IfSuccess(i =>
-                                 {
-                                     Items.Add(i);
-                                     
-                                     return Result.Success;
-                                 }));
-                    }), cancellationToken);
+                {
+                    Items.Clear();
+                    Items.AddRange(items.ToArray());
+                    
+                    return Result.Success;
+                }), cancellationToken);
     }
 }

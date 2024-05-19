@@ -436,6 +436,58 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                     }, cancellationToken);
             }, errorHandler));
         
+        MultiChangeOrderItem = new(MaterialIconKind.ReorderHorizontal, new("Command.Reorder"), SpravyCommand.Create(
+            cancellationToken =>
+            {
+                ReadOnlyMemory<Guid> selected = Children.Where(x => x.IsSelected).Select(x => x.Id).Reverse().ToArray();
+                
+                if (selected.IsEmpty)
+                {
+                    return new Result(new NonItemSelectedError()).ToValueTaskResult().ConfigureAwait(false);
+                }
+                
+                return dialogViewer.ShowConfirmContentDialogAsync<ChangeToDoItemOrderIndexViewModel>(
+                    viewModel => viewModel.SelectedItem
+                       .IfNotNull(nameof(viewModel.SelectedItem))
+                       .IfSuccessAsync(
+                            selectedItem => dialogViewer.CloseContentDialogAsync(cancellationToken)
+                               .IfSuccessAsync(() => selected.ToResult(), cancellationToken)
+                               .IfSuccessForEachAsync(
+                                    i => toDoService.UpdateToDoItemOrderIndexAsync(
+                                        new(i, selectedItem.Id, viewModel.IsAfter), cancellationToken),
+                                    cancellationToken)
+                               .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
+                                    cancellationToken), cancellationToken),
+                    _ => dialogViewer.CloseContentDialogAsync(cancellationToken), viewModel =>
+                    {
+                        viewModel.Id = Id;
+                        
+                        viewModel.ChangeToDoItemOrderIndexIds =
+                            Children.Where(x => !x.IsSelected).Select(x => x.Id).ToArray();
+                    }, cancellationToken);
+            }, errorHandler));
+        
+        MultiResetItem = new(MaterialIconKind.Refresh, new("Command.Reset"), SpravyCommand.Create(cancellationToken =>
+            dialogViewer.ShowConfirmContentDialogAsync<ResetToDoItemViewModel>(vm =>
+                {
+                    ReadOnlyMemory<Guid> selected = Children.Where(x => x.IsSelected).Select(x => x.Id).ToArray();
+                    
+                    if (selected.IsEmpty)
+                    {
+                        return new Result(new NonItemSelectedError()).ToValueTaskResult().ConfigureAwait(false);
+                    }
+                    
+                    return dialogViewer.CloseContentDialogAsync(cancellationToken)
+                       .IfSuccessAsync(() => selected.ToResult(), cancellationToken)
+                       .IfSuccessForEachAsync(
+                            i => toDoService.ResetToDoItemAsync(
+                                new(i, vm.IsCompleteChildrenTask, vm.IsMoveCircleOrderIndex, vm.IsOnlyCompletedTasks,
+                                    vm.IsCompleteCurrentTask), cancellationToken), cancellationToken)
+                       .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
+                            cancellationToken);
+                }, _ => dialogViewer.CloseContentDialogAsync(cancellationToken), vm => vm.Id = CurrentId,
+                cancellationToken), errorHandler));
+        
         MultiCommands.AddRange([
             MultiAddChildItem,
             MultiShowSettingItem,
