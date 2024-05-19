@@ -11,8 +11,7 @@
                         xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                         x:Class="Spravy.Ui.Features.ToDo.Views.MultiToDoItemsView"
-                        x:DataType="vm:MultiToDoItemsViewModel"
-                        IsMulti="{Binding IsMulti}">
+                        x:DataType="vm:MultiToDoItemsViewModel">
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
             <InvokeCommandAction Command="{Binding InitializedCommand}" />
@@ -21,8 +20,7 @@
 
     <StackPanel>
         <Grid ColumnDefinitions="Auto,*"
-              Margin="2"
-              IsVisible="{Binding ToDoItems.GroupByNone.Items.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
+              Margin="2">
             <ToggleButton Classes="alignment-center"
                           IsChecked="{Binding IsMulti}">
                 <avalonia:MaterialIcon Kind="CheckAll" />
@@ -41,10 +39,10 @@
                         IsVisible="{Binding Favorite.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
         <ContentControl Name="{x:Static views:MultiToDoItemsView.ContentContentControlName}"
                         IsVisible="{Binding IsMulti, Converter={StaticResource ReverseBooleanValueConverter}}"
-                        Content="{Binding Content}" />
+                        Content="{Binding ToDoItems}" />
 
         <ContentControl IsVisible="{Binding IsMulti}"
-                        Content="{Binding Content}">
+                        Content="{Binding ToDoItems}">
             <ContentControl.DataTemplates>
                 <DataTemplate DataType="models:ToDoItemEntityNotify">
                     <ToggleButton Classes="content-alignment-stretch" Padding="0" IsChecked="{Binding IsSelected}">
