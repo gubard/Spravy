@@ -3,6 +3,10 @@
     <Style Selector=":is(Layoutable).vertical-alignment-center">
         <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
+    
+    <Style Selector=":is(Layoutable).horizontal-alignment-center">
+        <Setter Property="HorizontalAlignment" Value="Center" />
+    </Style>
 
     <Style Selector=":is(Layoutable).alignment-center">
         <Setter Property="HorizontalAlignment" Value="Center" />

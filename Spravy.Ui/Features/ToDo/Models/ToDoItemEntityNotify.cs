@@ -152,16 +152,14 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                 ActionHelper<ToDoItemToStringSettingsViewModel>.Empty, cancellationToken), errorHandler));
         
         RandomizeChildrenOrderItem = new(MaterialIconKind.DiceSix, new("Command.RandomizeChildrenOrder"),
-            SpravyCommand.Create(cancellationToken => dialogViewer.ShowConfirmContentDialogAsync<TextViewModel>(
-                _ => dialogViewer.CloseContentDialogAsync(cancellationToken)
-                   .IfSuccessAsync(() => toDoService.RandomizeChildrenOrderIndexAsync(CurrentId, cancellationToken),
-                        cancellationToken)
-                   .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
-                        cancellationToken), _ => dialogViewer.CloseContentDialogAsync(cancellationToken), viewModel =>
-                {
-                    viewModel.Text = "Are you sure?";
-                    viewModel.IsReadOnly = true;
-                }, cancellationToken), errorHandler));
+            SpravyCommand.Create(
+                cancellationToken => dialogViewer.ShowConfirmContentDialogAsync<RandomizeChildrenOrderViewModel>(
+                    _ => dialogViewer.CloseContentDialogAsync(cancellationToken)
+                       .IfSuccessAsync(() => toDoService.RandomizeChildrenOrderIndexAsync(CurrentId, cancellationToken),
+                            cancellationToken)
+                       .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
+                            cancellationToken), _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
+                    viewModel => viewModel.Item = this, cancellationToken), errorHandler));
         
         ChangeOrderItem = new(MaterialIconKind.ReorderHorizontal, new("Command.Reorder"), SpravyCommand.Create(
             cancellationToken => dialogViewer.ShowConfirmContentDialogAsync<ChangeToDoItemOrderIndexViewModel>(
@@ -406,6 +404,30 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                                 cancellationToken);
                     }, _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
                     ActionHelper<ToDoItemToStringSettingsViewModel>.Empty, cancellationToken);
+            }, errorHandler));
+        
+        MultiRandomizeChildrenOrderItem = new(MaterialIconKind.DiceSix, new("Command.RandomizeChildrenOrder"),
+            SpravyCommand.Create(cancellationToken =>
+            {
+                ReadOnlyMemory<Guid> selected = Children.Where(x => x.IsSelected).Select(x => x.Id).ToArray();
+                
+                if (selected.IsEmpty)
+                {
+                    return new Result(new NonItemSelectedError()).ToValueTaskResult().ConfigureAwait(false);
+                }
+                
+                return dialogViewer.ShowConfirmContentDialogAsync<RandomizeChildrenOrderViewModel>(
+                    _ => dialogViewer.CloseContentDialogAsync(cancellationToken)
+                       .IfSuccessAsync(() => selected.ToResult(), cancellationToken)
+                       .IfSuccessForEachAsync(i => toDoService.RandomizeChildrenOrderIndexAsync(i, cancellationToken),
+                            cancellationToken)
+                       .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
+                            cancellationToken), _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
+                    viewModel =>
+                    {
+                        viewModel.Item = this;
+                        viewModel.RandomizeChildrenOrderIds = selected;
+                    }, cancellationToken);
             }, errorHandler));
         
         MultiCommands.AddRange([

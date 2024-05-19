@@ -9,7 +9,8 @@
                         xmlns:mi="clr-namespace:Material.Icons;assembly=Material.Icons"
                         xmlns:m="clr-namespace:Spravy.Ui.Models"
                         xmlns:s="clr-namespace:Spravy.Ui.Services"
-                        xmlns:models="clr-namespace:Spravy.Ui.Features.ToDo.Models"
+                        xmlns:tm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
+                        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                         x:Class="Spravy.Ui.Features.ToDo.Views.DeleteToDoItemView"
                         x:DataType="vm:DeleteToDoItemViewModel">
@@ -36,11 +37,12 @@
                               HorizontalScrollBarVisibility="Auto">
                     <c:Stepper Steps="{Binding Item.Path}" Index="0" HorizontalAlignment="Center">
                         <c:Stepper.DataTemplates>
-                            <DataTemplate DataType="models:ToDoItemEntityNotify">
-                                <Button Command="{x:Static s:CommandStorage.NavigateToToDoItemCommand}"
-                                        CommandParameter="{Binding Id}"
-                                        Content="{Binding Name}"
-                                        Classes="Basic" />
+                            <DataTemplate DataType="tm:ToDoItemEntityNotify">
+                                <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5" />
+                            </DataTemplate>
+
+                            <DataTemplate DataType="m:RootItem">
+                                <avalonia:MaterialIcon Kind="Home" Margin="5" />
                             </DataTemplate>
                         </c:Stepper.DataTemplates>
                     </c:Stepper>

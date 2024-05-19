@@ -1,5 +1,4 @@
 using Spravy.Domain.Errors;
-using Spravy.Domain.Models;
 
 namespace Spravy.Db.Errors;
 

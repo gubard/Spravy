@@ -18,6 +18,9 @@
     <sys:String x:Key="Command.OpenLink">Open link</sys:String>
     <sys:String x:Key="Command.Clone">Clone</sys:String>
     
+    <!--RandomizeChildrenOrderView-->
+    <sys:String x:Key="RandomizeChildrenOrderView.Header">Are you sure you want randomize "{Name}" children?</sys:String>
+    
     <!--ResetToDoItemView-->
     <sys:String x:Key="ResetToDoItemView.CompleteChildrenTask">Complete children task</sys:String>
     <sys:String x:Key="ResetToDoItemView.MoveCircleOrderIndex">Move circle order index</sys:String>
