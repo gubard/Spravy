@@ -488,6 +488,105 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                 }, _ => dialogViewer.CloseContentDialogAsync(cancellationToken), vm => vm.Id = CurrentId,
                 cancellationToken), errorHandler));
         
+        MultiCloneItem = new(MaterialIconKind.Copyleft, new("Command.Clone"), SpravyCommand.Create(cancellationToken =>
+        {
+            ReadOnlyMemory<Guid> selected = Children.Where(x => x.IsSelected).Select(x => x.Id).ToArray();
+            
+            if (selected.IsEmpty)
+            {
+                return new Result(new NonItemSelectedError()).ToValueTaskResult().ConfigureAwait(false);
+            }
+            
+            return dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
+                itemNotify => dialogViewer.CloseInputDialogAsync(cancellationToken)
+                   .IfSuccessAsync(() => selected.ToResult(), cancellationToken)
+                   .IfSuccessForEachAsync(i => toDoService.CloneToDoItemAsync(i, itemNotify.Id, cancellationToken),
+                        cancellationToken)
+                   .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
+                        cancellationToken), view => view.DefaultSelectedItemId = Id, cancellationToken);
+        }, errorHandler));
+        
+        MultiOpenLinkItem = new(MaterialIconKind.Link, new("Command.OpenLink"), SpravyCommand.Create(
+            cancellationToken =>
+            {
+                ReadOnlyMemory<ToDoItemEntityNotify> selected = Children.Where(x => x.IsSelected).ToArray();
+                
+                if (selected.IsEmpty)
+                {
+                    return new Result(new NonItemSelectedError()).ToValueTaskResult().ConfigureAwait(false);
+                }
+                
+                return selected.ToResult()
+                   .IfSuccessForEachAsync(
+                        i => i.Link
+                           .IfNotNull(nameof(i.Link))
+                           .IfSuccessAsync(link => openerLink.OpenLinkAsync(link.ToUri(), cancellationToken),
+                                cancellationToken), cancellationToken);
+            }, errorHandler));
+        
+        MultiAddToFavoriteItem = new(MaterialIconKind.StarOutline, new("Command.AddToFavorite"), SpravyCommand.Create(
+            cancellationToken =>
+            {
+                ReadOnlyMemory<Guid> selected = Children.Where(x => x.IsSelected).Select(x => x.Id).ToArray();
+                
+                if (selected.IsEmpty)
+                {
+                    return new Result(new NonItemSelectedError()).ToValueTaskResult().ConfigureAwait(false);
+                }
+                
+                return selected.ToResult()
+                   .IfSuccessForEachAsync(i => toDoService.AddFavoriteToDoItemAsync(i, cancellationToken),
+                        cancellationToken)
+                   .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
+                        cancellationToken);
+            }, errorHandler));
+        
+        MultiRemoveFromFavoriteItem = new(MaterialIconKind.Star, new("Command.RemoveFromFavorite"),
+            SpravyCommand.Create(cancellationToken =>
+            {
+                ReadOnlyMemory<Guid> selected = Children.Where(x => x.IsSelected).Select(x => x.Id).ToArray();
+                
+                if (selected.IsEmpty)
+                {
+                    return new Result(new NonItemSelectedError()).ToValueTaskResult().ConfigureAwait(false);
+                }
+                
+                return selected.ToResult()
+                   .IfSuccessForEachAsync(i => toDoService.RemoveFavoriteToDoItemAsync(i, cancellationToken),
+                        cancellationToken)
+                   .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
+                        cancellationToken);
+            }, errorHandler));
+        
+        MultiCompleteItem = new(MaterialIconKind.Check, new("Command.Complete"), SpravyCommand.Create(cancellationToken =>
+        {
+            ReadOnlyMemory<ToDoItemEntityNotify> selected = Children.Where(x => x.IsSelected).ToArray();
+            
+            if (selected.IsEmpty)
+            {
+                return new Result(new NonItemSelectedError()).ToValueTaskResult().ConfigureAwait(false);
+            }
+            
+            return selected.ToResult()
+               .IfSuccessForEachAsync(i =>
+                {
+                    switch (i.IsCan)
+                    {
+                        case ToDoItemIsCan.None:
+                            return Result.AwaitableFalse;
+                        case ToDoItemIsCan.CanComplete:
+                            return toDoService.UpdateToDoItemCompleteStatusAsync(i.Id, true, cancellationToken);
+                        case ToDoItemIsCan.CanIncomplete:
+                            return toDoService.UpdateToDoItemCompleteStatusAsync(i.Id, false, cancellationToken);
+                        default:
+                            return new Result(new ToDoItemIsCanOutOfRangeError(IsCan)).ToValueTaskResult()
+                               .ConfigureAwait(false);
+                    }
+                }, cancellationToken)
+               .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
+                    cancellationToken);
+        }, errorHandler));
+        
         MultiCommands.AddRange([
             MultiAddChildItem,
             MultiShowSettingItem,
