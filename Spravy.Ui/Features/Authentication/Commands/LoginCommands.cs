@@ -171,14 +171,14 @@ public class LoginCommands
     
     private ConfiguredValueTaskAwaitable<Result> EnterAsync(LoginView view, CancellationToken cancellationToken)
     {
-        var loginTextBox = view.FindControl<TextBox>("LoginTextBox");
+        var loginTextBox = view.FindControl<TextBox>(LoginView.LoginTextBoxName);
         
         if (loginTextBox is null)
         {
             return Result.AwaitableFalse;
         }
         
-        var passwordTextBox = view.FindControl<TextBox>("PasswordTextBox");
+        var passwordTextBox = view.FindControl<TextBox>(LoginView.PasswordTextBoxName);
         
         if (passwordTextBox is null)
         {
