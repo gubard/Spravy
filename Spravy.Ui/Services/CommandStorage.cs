@@ -347,6 +347,9 @@ public static class CommandStorage
                .IfSuccessAsync(
                     () => toDoService.UpdateToDoItemDescriptionAsync(property.Id, viewModel.Content.Description,
                         cancellationToken), cancellationToken)
+               .IfSuccessAsync(
+                    () => toDoService.UpdateToDoItemDescriptionTypeAsync(property.Id, viewModel.Content.Type,
+                        cancellationToken), cancellationToken)
                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
             _ => dialogViewer.CloseContentDialogAsync(cancellationToken), viewModel =>
             {
@@ -398,24 +401,22 @@ public static class CommandStorage
            .IfSuccessAsync(() => navigator.NavigateToAsync(ActionHelper<LoginViewModel>.Empty, cancellationToken),
                 cancellationToken)
            .IfSuccessAsync(() => cancellationToken.InvokeUiBackgroundAsync(() =>
-                {
-                     mainSplitViewModel.IsPaneOpen = false;
-                     
-                     return Result.Success;
-                }),
-                cancellationToken);
+            {
+                mainSplitViewModel.IsPaneOpen = false;
+                
+                return Result.Success;
+            }), cancellationToken);
     }
     
     private static ConfiguredValueTaskAwaitable<Result> NavigateToAsync(Type type, CancellationToken cancellationToken)
     {
         return navigator.NavigateToAsync(type, cancellationToken)
            .IfSuccessAsync(() => cancellationToken.InvokeUiBackgroundAsync(() =>
-                {
-                    mainSplitViewModel.IsPaneOpen = false;
-                    
-                    return Result.Success;
-                }),
-                cancellationToken);
+            {
+                mainSplitViewModel.IsPaneOpen = false;
+                
+                return Result.Success;
+            }), cancellationToken);
     }
     
     private static ConfiguredValueTaskAwaitable<Result> BackAsync(CancellationToken cancellationToken)
