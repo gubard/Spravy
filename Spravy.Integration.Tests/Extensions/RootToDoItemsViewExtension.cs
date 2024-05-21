@@ -98,7 +98,17 @@ public static class RootToDoItemsViewExtension
                .Case(c => c.GetControl<Button>(ElementNames.OkButton).ClickOn(window).RunJobsAll(5)))
            .GetDoItemItemsControl()
            .ThrowIfNull()
-           .Case(ic => ic.ItemCount.Should().Be(toDoItemCount + 1))
+           .Case(ic => ic.ItemCount.Should().Be(toDoItemCount + 1));
+        
+        view.CheckLastToDoItemName("Loading...").RunJobsAll(1).CheckLastToDoItemName(name);
+        
+        return view;
+    }
+    
+    public static RootToDoItemsView CheckLastToDoItemName(this RootToDoItemsView view, string name)
+    {
+        view.GetDoItemItemsControl()
+           .ThrowIfNull()
            .GetVisualChildren()
            .Single()
            .ThrowIfIsNotCast<Border>()
@@ -126,8 +136,6 @@ public static class RootToDoItemsViewExtension
            .Children
            .ElementAt(1)
            .ThrowIfIsNotCast<TextBlock>()
-           .Case(tb => tb.Text.Should().Be("Loading..."))
-           .RunJobsAll(5)
            .Case(tb => tb.Text.Should().Be(name));
         
         return view;
