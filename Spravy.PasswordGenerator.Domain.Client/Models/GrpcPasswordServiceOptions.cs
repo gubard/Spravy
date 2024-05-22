@@ -1,6 +1,3 @@
-using Spravy.Client.Enums;
-using Spravy.Client.Interfaces;
-
 namespace Spravy.PasswordGenerator.Domain.Client.Models;
 
 public class GrpcPasswordServiceOptions : IGrpcOptionsValue

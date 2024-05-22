@@ -1,16 +1,3 @@
-using System.Runtime.CompilerServices;
-using Google.Protobuf;
-using Spravy.Client.Extensions;
-using Spravy.Client.Interfaces;
-using Spravy.Client.Services;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
-using Spravy.PasswordGenerator.Domain.Interfaces;
-using Spravy.PasswordGenerator.Domain.Models;
-using Spravy.PasswordGenerator.Protos;
-using static Spravy.PasswordGenerator.Protos.PasswordService;
-
 namespace Spravy.PasswordGenerator.Domain.Client.Services;
 
 public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
