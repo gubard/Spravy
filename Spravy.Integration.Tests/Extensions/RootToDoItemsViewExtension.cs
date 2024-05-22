@@ -100,7 +100,7 @@ public static class RootToDoItemsViewExtension
            .ThrowIfNull()
            .Case(ic => ic.ItemCount.Should().Be(toDoItemCount + 1));
         
-        view.CheckLastToDoItemName("Loading...").RunJobsAll(2).CheckLastToDoItemName(name);
+        view.CheckLastToDoItemName("Loading...").RunJobsAll(3).CheckLastToDoItemName(name);
         
         return view;
     }
