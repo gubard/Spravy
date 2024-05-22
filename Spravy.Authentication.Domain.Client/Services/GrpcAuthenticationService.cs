@@ -16,6 +16,8 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
     IAuthenticationService,
     IGrpcServiceCreator<GrpcAuthenticationService, AuthenticationServiceClient>
 {
+    public static readonly TimeSpan Timeout = TimeSpan.FromSeconds(15);
+    
     private readonly IConverter converter;
 
     public GrpcAuthenticationService(
@@ -34,7 +36,7 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
            .IfSuccessAsync(userGrpc => client.LoginAsync(new()
                 {
                     User = userGrpc,
-                })
+                }, deadline:DateTime.UtcNow.Add(Timeout),  cancellationToken:cancellationToken)
                .ToValueTaskResultValueOnly()
                .ConfigureAwait(false)
                .IfSuccessAsync(reply => converter.Convert<TokenResult>(reply).ToValueTaskResult().ConfigureAwait(false),
@@ -48,7 +50,7 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
     {
         return CallClientAsync(
             client => converter.Convert<CreateUserRequest>(options)
-               .IfSuccessAsync(request => client.CreateUserAsync(request).ToValueTaskResultOnly().ConfigureAwait(false),
+               .IfSuccessAsync(request => client.CreateUserAsync(request, deadline:DateTime.UtcNow.Add(Timeout),  cancellationToken:cancellationToken).ToValueTaskResultOnly().ConfigureAwait(false),
                     cancellationToken), cancellationToken);
     }
 
@@ -60,7 +62,7 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         return CallClientAsync(client => client.RefreshTokenAsync(new()
             {
                 RefreshToken = refreshToken,
-            })
+            }, deadline:DateTime.UtcNow.Add(Timeout),  cancellationToken:cancellationToken)
            .ToValueTaskResultValueOnly()
            .ConfigureAwait(false)
            .IfSuccessAsync(reply => converter.Convert<TokenResult>(reply).ToValueTaskResult().ConfigureAwait(false),
@@ -75,7 +77,7 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         return CallClientAsync(client => client.UpdateVerificationCodeByLoginAsync(new()
             {
                 Login = login,
-            })
+            }, deadline:DateTime.UtcNow.Add(Timeout),  cancellationToken:cancellationToken)
            .ToValueTaskResultOnly()
            .ConfigureAwait(false), cancellationToken);
     }
@@ -88,7 +90,7 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         return CallClientAsync(client => client.UpdateVerificationCodeByEmailAsync(new()
             {
                 Email = email,
-            })
+            }, deadline:DateTime.UtcNow.Add(Timeout),  cancellationToken:cancellationToken)
            .ToValueTaskResultOnly()
            .ConfigureAwait(false), cancellationToken);
     }
@@ -101,7 +103,7 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         return CallClientAsync(client => client.IsVerifiedByLoginAsync(new()
             {
                 Login = login,
-            })
+            }, deadline:DateTime.UtcNow.Add(Timeout),  cancellationToken:cancellationToken)
            .ToValueTaskResultValueOnly()
            .ConfigureAwait(false)
            .IfSuccessAsync(reply => reply.IsVerified.ToResult().ToValueTaskResult().ConfigureAwait(false),
@@ -116,7 +118,7 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
         return CallClientAsync(client => client.IsVerifiedByEmailAsync(new()
             {
                 Email = email,
-            })
+            }, deadline:DateTime.UtcNow.Add(Timeout),  cancellationToken:cancellationToken)
            .ToValueTaskResultValueOnly()
            .ConfigureAwait(false)
            .IfSuccessAsync(reply => reply.IsVerified.ToResult().ToValueTaskResult().ConfigureAwait(false),
@@ -133,7 +135,7 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
             {
                 Login = login,
                 VerificationCode = verificationCode,
-            })
+            }, deadline:DateTime.UtcNow.Add(Timeout),  cancellationToken:cancellationToken)
            .ToValueTaskResultOnly()
            .ConfigureAwait(false), cancellationToken);
     }
@@ -148,7 +150,7 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
             {
                 Email = email,
                 VerificationCode = verificationCode,
-            })
+            }, deadline:DateTime.UtcNow.Add(Timeout),  cancellationToken:cancellationToken)
            .ToValueTaskResultOnly()
            .ConfigureAwait(false), cancellationToken);
     }
@@ -163,7 +165,7 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
             {
                 Email = email,
                 NewEmail = newEmail,
-            })
+            }, deadline:DateTime.UtcNow.Add(Timeout),  cancellationToken:cancellationToken)
            .ToValueTaskResultOnly()
            .ConfigureAwait(false), cancellationToken);
     }
@@ -178,7 +180,7 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
             {
                 Login = login,
                 NewEmail = newEmail,
-            })
+            }, deadline:DateTime.UtcNow.Add(Timeout),  cancellationToken:cancellationToken)
            .ToValueTaskResultOnly()
            .ConfigureAwait(false), cancellationToken);
     }
@@ -193,7 +195,7 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
             {
                 Email = email,
                 VerificationCode = verificationCode,
-            }, cancellationToken: cancellationToken)
+            }, deadline:DateTime.UtcNow.Add(Timeout),  cancellationToken:cancellationToken)
            .ToValueTaskResultOnly()
            .ConfigureAwait(false), cancellationToken);
     }
@@ -208,7 +210,7 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
             {
                 Login = login,
                 VerificationCode = verificationCode,
-            }, cancellationToken: cancellationToken)
+            }, deadline:DateTime.UtcNow.Add(Timeout),  cancellationToken:cancellationToken)
            .ToValueTaskResultOnly()
            .ConfigureAwait(false), cancellationToken);
     }
@@ -225,7 +227,7 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
                 Email = email,
                 VerificationCode = verificationCode,
                 NewPassword = newPassword,
-            })
+            }, deadline:DateTime.UtcNow.Add(Timeout),  cancellationToken:cancellationToken)
            .ToValueTaskResultOnly()
            .ConfigureAwait(false), cancellationToken);
     }
@@ -242,7 +244,7 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
                 Login = login,
                 VerificationCode = verificationCode,
                 NewPassword = newPassword,
-            })
+            }, deadline:DateTime.UtcNow.Add(Timeout),  cancellationToken:cancellationToken)
            .ToValueTaskResultOnly()
            .ConfigureAwait(false), cancellationToken);
     }
