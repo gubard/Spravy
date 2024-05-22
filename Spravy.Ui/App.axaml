@@ -8,8 +8,8 @@
              xmlns:i="clr-namespace:Material.Icons;assembly=Material.Icons"
              xmlns:pm="clr-namespace:Spravy.Ui.Features.PasswordGenerator.Models"
              xmlns:lm="clr-namespace:Spravy.Ui.Features.Localizations.Models"
-             xmlns:viewModels="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
-             xmlns:models="clr-namespace:Spravy.Ui.Features.ToDo.Models"
+             xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+             xmlns:tm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
              x:Class="Spravy.Ui.App"
              RequestedThemeVariant="Dark">
     <Application.Resources>
@@ -96,7 +96,7 @@
         
         <DataTemplate DataType="m:RootItem">
             <Button Command="{x:Static s:CommandStorage.NavigateToCommand}"
-                    CommandParameter="{x:Type viewModels:RootToDoItemsViewModel}"
+                    CommandParameter="{x:Type vm:RootToDoItemsViewModel}"
                     Content="{x:Static i:MaterialIconKind.Home}"
                     Classes="Basic" />
         </DataTemplate>
@@ -105,7 +105,7 @@
             <mi:MaterialIcon Kind="{Binding}" />
         </DataTemplate>
 
-        <DataTemplate DataType="models:ToDoItemEntityNotify">
+        <DataTemplate DataType="tm:ToDoItemEntityNotify">
             <Button Command="{Binding NavigateToCurrentItem.Command}"
                     Classes="alignment-stretch glass-card content-alignment-stretch">
                 <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,*">
