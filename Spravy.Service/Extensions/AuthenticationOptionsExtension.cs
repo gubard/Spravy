@@ -1,6 +1,3 @@
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-
 namespace Spravy.Service.Extensions;
 
 public static class AuthenticationOptionsExtension

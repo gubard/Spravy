@@ -1,6 +1,3 @@
-using Grpc.Core;
-using Spravy.Domain.Exceptions;
-
 namespace Spravy.Service.Exceptions;
 
 public abstract class ServiceException : SpravyException

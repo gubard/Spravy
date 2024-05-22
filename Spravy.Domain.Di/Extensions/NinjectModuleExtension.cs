@@ -1,15 +1,3 @@
-using Grpc.Core;
-using Grpc.Net.Client;
-using Microsoft.Extensions.DependencyInjection;
-using Ninject;
-using Ninject.Modules;
-using Spravy.Client.Extensions;
-using Spravy.Client.Interfaces;
-using Spravy.Client.Services;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Services;
-
 namespace Spravy.Domain.Di.Extensions;
 
 public static class NinjectModuleExtension

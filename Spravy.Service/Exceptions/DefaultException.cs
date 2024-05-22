@@ -1,5 +1,3 @@
-using Grpc.Core;
-
 namespace Spravy.Service.Exceptions;
 
 public class DefaultException : ServiceException

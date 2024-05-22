@@ -1,6 +1,3 @@
-using Microsoft.AspNetCore.Http;
-using Spravy.Domain.Extensions;
-
 namespace Spravy.Service.Extensions;
 
 public static class HttpContextAccessorExtension

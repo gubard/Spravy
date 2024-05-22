@@ -1,10 +1,3 @@
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using Spravy.Db.Sqlite.Models;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
-using Spravy.Service.Extensions;
-
 namespace Spravy.Service.Middlewares;
 
 public class DataBaseSetupSqliteMiddleware<TDbContext> where TDbContext : DbContext

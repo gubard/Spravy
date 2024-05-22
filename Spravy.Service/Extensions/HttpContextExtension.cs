@@ -1,9 +1,3 @@
-using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
-using Spravy.Domain.Enums;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Helpers;
-
 namespace Spravy.Service.Extensions;
 
 public static class HttpContextExtension

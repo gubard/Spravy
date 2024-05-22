@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Cors.Infrastructure;
-
 namespace Spravy.Service.Extensions;
 
 public static class CorsOptionsExtension

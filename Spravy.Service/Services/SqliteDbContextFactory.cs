@@ -1,10 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using Spravy.Db.Interfaces;
-using Spravy.Db.Sqlite.Extensions;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
-
 namespace Spravy.Service.Services;
 
 public class SqliteDbContextFactory<TDbContext> : IFactory<TDbContext>

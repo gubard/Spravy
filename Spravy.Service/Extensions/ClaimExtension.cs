@@ -1,5 +1,3 @@
-using System.Security.Claims;
-
 namespace Spravy.Service.Extensions;
 
 public static class ClaimExtension

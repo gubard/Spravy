@@ -1,6 +1,3 @@
-using Microsoft.Extensions.Configuration;
-using Spravy.Domain.Helpers;
-
 namespace Spravy.Service.Extensions;
 
 public static class ConfigurationManagerExtension

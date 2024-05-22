@@ -1,13 +1,3 @@
-using System.Reflection;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Spravy.Db.Sqlite.Models;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
-
 namespace Spravy.Service.HostedServices;
 
 public class FolderMigratorHostedService<TDbContext> : IHostedService where TDbContext : DbContext

@@ -1,11 +1,3 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Serilog;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
-using Spravy.Service.Helpers;
-
 namespace Spravy.Service.Extensions;
 
 public static class WebApplicationBuilderExtension

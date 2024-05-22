@@ -1,5 +1,3 @@
-using Spravy.Domain.Interfaces;
-
 namespace Spravy.Service.Model;
 
 public class JwtOptions : IOptionsValue

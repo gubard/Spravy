@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Builder;
-
 namespace Spravy.Service.Helpers;
 
 public static class ServiceDefaults

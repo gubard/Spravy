@@ -1,11 +1,3 @@
-using System.Runtime.CompilerServices;
-using Microsoft.AspNetCore.Http;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Helpers;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
-using Spravy.Service.Extensions;
-
 namespace Spravy.Service.Services;
 
 public class ContextAccessorAuthorizationHttpHeaderFactory : IHttpHeaderFactory

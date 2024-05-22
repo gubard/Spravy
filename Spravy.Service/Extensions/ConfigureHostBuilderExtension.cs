@@ -1,6 +1,3 @@
-using Microsoft.AspNetCore.Builder;
-using Serilog;
-
 namespace Spravy.Service.Extensions;
 
 public static class ConfigureHostBuilderExtension

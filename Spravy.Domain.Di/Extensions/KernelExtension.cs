@@ -1,8 +1,3 @@
-using Microsoft.Extensions.Configuration;
-using Ninject;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
-
 namespace Spravy.Domain.Di.Extensions;
 
 public static class KernelExtension
