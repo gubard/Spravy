@@ -81,6 +81,7 @@ public class ServiceProjectBuilder : ProjectBuilder<ServiceProjectBuilderOptions
     {
         Cli.Wrap(
                 $"docker build {Options.CsprojFile.Directory.Combine("..")} -f {Options.CsprojFile.Directory.ToFile("Dockerfile")} -t {Options.GetProjectName().ToLower()}:{versionService.Version}")
+           .WithWorkingDirectory(Options.CsprojFile.Directory.ThrowIfNull().FullName)
            .ExecuteAsync()
            .GetAwaiter()
            .GetResult();
