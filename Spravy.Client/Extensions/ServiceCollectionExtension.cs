@@ -1,13 +1,3 @@
-using Grpc.Core;
-using Grpc.Net.Client;
-using Microsoft.Extensions.DependencyInjection;
-using Spravy.Client.Interfaces;
-using Spravy.Client.Services;
-using Spravy.Di.Extensions;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Services;
-
 namespace Spravy.Client.Extensions;
 
 public static class ServiceCollectionExtension

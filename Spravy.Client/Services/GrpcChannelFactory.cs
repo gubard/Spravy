@@ -1,11 +1,3 @@
-using Grpc.Core;
-using Grpc.Net.Client;
-using Grpc.Net.Client.Web;
-using Spravy.Client.Enums;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
-
 namespace Spravy.Client.Services;
 
 public class GrpcChannelFactory : IFactory<Uri, GrpcChannel>

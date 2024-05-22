@@ -1,7 +1,3 @@
-using Grpc.Core;
-using Spravy.Client.Services;
-using Spravy.Domain.Interfaces;
-
 namespace Spravy.Client.Interfaces;
 
 public interface IGrpcServiceCreatorAuth<out TGrpcService, TGrpcClient>

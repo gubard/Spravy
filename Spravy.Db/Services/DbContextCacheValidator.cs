@@ -1,6 +1,3 @@
-using Spravy.Db.Contexts;
-using Spravy.Domain.Interfaces;
-
 namespace Spravy.Db.Services;
 
 public class DbContextCacheValidator<TDbContext> : ICacheValidator<string, TDbContext>

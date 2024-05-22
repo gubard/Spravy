@@ -1,6 +1,3 @@
-using Spravy.Client.Enums;
-using Spravy.Domain.Interfaces;
-
 namespace Spravy.Client.Interfaces;
 
 public interface IGrpcOptionsValue : IOptionsValue

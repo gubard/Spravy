@@ -1,7 +1,3 @@
-using Grpc.Core;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Models;
-
 namespace Spravy.Client.Extensions;
 
 public static class AsyncUnaryCallExtension

@@ -1,5 +1,3 @@
-using Spravy.Domain.Errors;
-
 namespace Spravy.Db.Errors;
 
 public class NotFoundEntityError : Error

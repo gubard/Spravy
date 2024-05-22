@@ -1,12 +1,3 @@
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using Grpc.Core;
-using Spravy.Domain.Errors;
-using Spravy.Domain.Exceptions;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
-
 namespace Spravy.Client.Extensions;
 
 public static class RpcExceptionExtension

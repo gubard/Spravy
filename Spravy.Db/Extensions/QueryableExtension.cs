@@ -1,9 +1,3 @@
-using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
-using Microsoft.EntityFrameworkCore;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Models;
-
 namespace Spravy.Db.Extensions;
 
 public static class QueryableExtension

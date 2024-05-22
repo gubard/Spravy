@@ -1,9 +1,3 @@
-using System.Runtime.CompilerServices;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Models;
-
 namespace Spravy.Db.Extensions;
 
 public static class DbSetExtension

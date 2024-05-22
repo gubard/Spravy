@@ -1,6 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using Spravy.Db.Interfaces;
-
 namespace Spravy.Db.Contexts;
 
 public abstract class SpravyDbContext : DbContext

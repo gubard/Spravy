@@ -1,7 +1,3 @@
-using Grpc.Core;
-using Grpc.Net.Client;
-using Spravy.Domain.Interfaces;
-
 namespace Spravy.Client.Services;
 
 public class GrpcClientCacheValidator<TGrpcClient> : ICacheValidator<Uri, TGrpcClient> where TGrpcClient : ClientBase

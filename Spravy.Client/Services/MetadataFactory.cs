@@ -1,10 +1,3 @@
-using System.Runtime.CompilerServices;
-using Grpc.Core;
-using Spravy.Client.Interfaces;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
-
 namespace Spravy.Client.Services;
 
 public class MetadataFactory : IMetadataFactory

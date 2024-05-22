@@ -1,12 +1,3 @@
-using System.Runtime.CompilerServices;
-using Grpc.Core;
-using Spravy.Client.Exceptions;
-using Spravy.Client.Extensions;
-using Spravy.Domain.Errors;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
-
 namespace Spravy.Client.Services;
 
 public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBase
