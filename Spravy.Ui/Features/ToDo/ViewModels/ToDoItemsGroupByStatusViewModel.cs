@@ -1,5 +1,3 @@
-using Spravy.ToDo.Domain.Errors;
-
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ToDoItemsGroupByStatusViewModel : ViewModelBase

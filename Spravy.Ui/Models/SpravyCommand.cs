@@ -1,7 +1,4 @@
-﻿using Spravy.Ui.Errors;
-using Spravy.Ui.Features.PasswordGenerator.Interfaces;
-
-namespace Spravy.Ui.Models;
+﻿namespace Spravy.Ui.Models;
 
 public class SpravyCommand
 {

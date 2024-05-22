@@ -1,6 +1,4 @@
-﻿using Spravy.Ui.Features.ToDo.Interfaces;
-
-namespace Spravy.Ui.Features.ToDo.ViewModels;
+﻿namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ChangeToDoItemOrderIndexViewModel : ViewModelBase
 {

@@ -1,5 +1,3 @@
-using Spravy.Ui.Features.ToDo.Settings;
-
 namespace Spravy.Ui.Features.ToDo.Commands;
 
 public class ToDoItemCommands : ITaskProgressServiceProperty

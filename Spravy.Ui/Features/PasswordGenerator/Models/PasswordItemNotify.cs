@@ -1,5 +1,3 @@
-using Spravy.Ui.Features.PasswordGenerator.Interfaces;
-
 namespace Spravy.Ui.Features.PasswordGenerator.Models;
 
 public class PasswordItemNotify : NotifyBase, IPasswordItem, IIdProperty

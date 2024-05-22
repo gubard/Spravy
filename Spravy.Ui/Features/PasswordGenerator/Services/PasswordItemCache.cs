@@ -1,5 +1,3 @@
-using Spravy.Ui.Features.PasswordGenerator.Interfaces;
-
 namespace Spravy.Ui.Features.PasswordGenerator.Services;
 
 public class PasswordItemCache : IPasswordItemCache

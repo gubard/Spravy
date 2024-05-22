@@ -1,6 +1,3 @@
-using Spravy.ToDo.Domain.Errors;
-using Spravy.Ui.Errors;
-
 namespace Spravy.Ui.Features.ToDo.Models;
 
 public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>

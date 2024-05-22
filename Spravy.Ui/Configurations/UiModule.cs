@@ -1,8 +1,3 @@
-using Spravy.Ui.Features.PasswordGenerator.Interfaces;
-using Spravy.Ui.Features.PasswordGenerator.Services;
-using Spravy.Ui.Features.ToDo.Interfaces;
-using Spravy.Ui.Features.ToDo.Services;
-
 namespace Spravy.Ui.Configurations;
 
 public class UiModule : NinjectModule

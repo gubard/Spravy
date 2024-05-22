@@ -1,5 +1,3 @@
-using Spravy.Ui.Errors;
-
 namespace Spravy.Ui.Features.Authentication.Commands;
 
 public class VerificationCodeCommands

@@ -1,5 +1,3 @@
-using Spravy.Ui.Features.ToDo.Interfaces;
-
 namespace Spravy.Ui.ViewModels;
 
 public class TodayToDoItemsViewModel : NavigatableViewModelBase, IRefresh

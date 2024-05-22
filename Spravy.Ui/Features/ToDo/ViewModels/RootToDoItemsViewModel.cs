@@ -1,5 +1,3 @@
-using Spravy.Ui.Features.ToDo.Interfaces;
-
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderChanger, ITaskProgressServiceProperty
