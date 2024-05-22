@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -80,10 +81,16 @@ public class ServiceProjectBuilder : ProjectBuilder<ServiceProjectBuilderOptions
     
     public void BuildDocker()
     {
-        Process.Start(new ProcessStartInfo("docker",
+        var process = Process.Start(new ProcessStartInfo("docker",
                 $"build {Options.CsprojFile.Directory.Combine("..")} -f {Options.CsprojFile.Directory.ToFile("Dockerfile")} -t {Options.GetProjectName().ToLower()}:{versionService.Version}"))
-           .ThrowIfNull()
-           .WaitForExit();
+           .ThrowIfNull();
+        
+        process.WaitForExit();
+        
+        if (process.ExitCode != 0)
+        {
+            throw new($"ExitCode {process.ExitCode}");
+        }
     }
 
     string GetDaemonConfig() => $"""
