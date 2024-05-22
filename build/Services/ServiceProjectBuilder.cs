@@ -1,11 +1,9 @@
-using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
 using _build.Extensions;
 using _build.Helpers;
 using _build.Models;
-using CliWrap;
 using Nuke.Common.Tools.DotNet;
 using Serilog;
 
@@ -13,24 +11,24 @@ namespace _build.Services;
 
 public class ServiceProjectBuilder : ProjectBuilder<ServiceProjectBuilderOptions>
 {
-    public ServiceProjectBuilder(VersionService versionService, ServiceProjectBuilderOptions serviceOptions)
-        : base(serviceOptions, versionService)
+    public ServiceProjectBuilder(VersionService versionService, ServiceProjectBuilderOptions serviceOptions) : base(
+        serviceOptions, versionService)
     {
     }
-
+    
     public override void Setup()
     {
         Log.Logger.Information("Set app settings {File}", Options.AppSettingsFile);
         var jsonDocument = Options.AppSettingsFile.GetJsonDocument();
         using var stream = new MemoryStream();
-
+        
         stream.SetAppSettingsStream(jsonDocument, Options.Domain, Options.Hosts, Options.Token, Options.Port,
             Options.EmailPassword);
-
+        
         var jsonData = Encoding.UTF8.GetString(stream.ToArray());
         File.WriteAllText(Options.AppSettingsFile.FullName, jsonData);
     }
-
+    
     public void Publish()
     {
         if (Options.Runtimes.IsEmpty)
@@ -53,13 +51,13 @@ public class ServiceProjectBuilder : ProjectBuilder<ServiceProjectBuilderOptions
                    .SetRuntime(runtime.Name));
             }
         }
-
+        
         using var sshClient = Options.CreateSshClient();
         sshClient.Connect();
         using var ftpClient = Options.CreateFtpClient();
         ftpClient.Connect();
         ftpClient.DeleteIfExistsFolder(Options.GetAppFolder());
-
+        
         if (Options.Runtimes.IsEmpty)
         {
             ftpClient.UploadDirectory(Options.PublishFolder.FullName, Options.GetAppFolder().FullName);
@@ -69,7 +67,7 @@ public class ServiceProjectBuilder : ProjectBuilder<ServiceProjectBuilderOptions
             ftpClient.UploadDirectory(Options.PublishFolder.Combine(Options.Runtime.Name).FullName,
                 Options.GetAppFolder().FullName);
         }
-
+        
         sshClient.RunSudo(Options, $"rm /etc/systemd/system/{Options.GetServiceName()}");
         PathHelper.ServicesFolder.CreateIfNotExits();
         var serviceFile = PathHelper.ServicesFolder.ToFile(Options.GetServiceName());
@@ -92,12 +90,26 @@ public class ServiceProjectBuilder : ProjectBuilder<ServiceProjectBuilderOptions
             throw new($"ExitCode {process.ExitCode}");
         }
     }
-
+    
+    public void PushDockerImage()
+    {
+        var process = Process.Start(new ProcessStartInfo("docker",
+                $"image push 192.168.50.45:5000/myfirstimage/{Options.GetProjectName().ToLower()}:{versionService.Version}"))
+           .ThrowIfNull();
+        
+        process.WaitForExit();
+        
+        if (process.ExitCode != 0)
+        {
+            throw new($"ExitCode {process.ExitCode}");
+        }
+    }
+    
     string GetDaemonConfig() => $"""
         [Unit]
         Description={Options.GetProjectName()}
         After=network.target
-
+        
         [Service]
         WorkingDirectory={Options.GetAppFolder()}
         ExecStart=/usr/bin/dotnet {Options.GetAppDll()}
@@ -109,7 +121,7 @@ public class ServiceProjectBuilder : ProjectBuilder<ServiceProjectBuilderOptions
         User={Options.FtpUser}
         Environment=ASPNETCORE_ENVIRONMENT=Production
         Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
-
+        
         [Install]
         WantedBy=multi-user.target
         """;

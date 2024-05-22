@@ -81,8 +81,16 @@ class Build : NukeBuild
             serviceProjectBuilder.BuildDocker();
         }
     });
+    
+    Target StagingPushDockerImage => _ => _.DependsOn(StagingBuildDocker).Executes(() =>
+    {
+        foreach (var serviceProjectBuilder in Projects.OfType<ServiceProjectBuilder>())
+        {
+            serviceProjectBuilder.PushDockerImage();
+        }
+    });
 
-    Target StagingClean => _ => _.DependsOn(StagingBuildDocker).Executes(Clean);
+    Target StagingClean => _ => _.DependsOn(StagingPushDockerImage).Executes(Clean);
     Target ProdClean => _ => _.DependsOn(ProdSetupAppSettings).Executes(Clean);
 
     Target StagingRestore => _ => _.DependsOn(StagingClean).Executes(Restore);
