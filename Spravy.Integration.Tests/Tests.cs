@@ -7,7 +7,7 @@ public class Tests
     {
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
     }
-
+    
     [AvaloniaTest]
     [Order(0)]
     [Property("Priority", "0")]
@@ -158,7 +158,7 @@ public class Tests
                    .Case(() => w.GetCurrentView<RootToDoItemsView, RootToDoItemsViewModel>())
                    .Close(), (w, _) => w.SaveFrame().LogCurrentState());
     }
-
+    
     [AvaloniaTest]
     [Order(1)]
     [Property("Priority", "1")]
@@ -169,12 +169,10 @@ public class Tests
                 w => w.SetSize(1000, 1000)
                    .ShowWindow()
                    .RunJobsAll(5)
-                   .Case(() => w.GetCurrentView<RootToDoItemsView, RootToDoItemsViewModel>()
-                       .AddToDoItem(w, "To-Do item 1")
-                       .AddToDoItem(w, "To-Do item 2"))
+                   .Case(() => w.AddToDoItem("To-Do item 1").AddToDoItem("To-Do item 2"))
                    .Close(), (w, _) => w.SaveFrame().LogCurrentState());
     }
-
+    
     [AvaloniaTest]
     [Order(2)]
     [Property("Priority", "2")]
@@ -200,7 +198,7 @@ public class Tests
                        .Be(1))
                    .Close(), (w, _) => w.SaveFrame().LogCurrentState());
     }
-
+    
     [AvaloniaTest]
     [Order(3)]
     [Property("Priority", "3")]
