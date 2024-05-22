@@ -1,13 +1,25 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Design.PreviewWith>
-        <Border Padding="20">
-            <!-- Add Controls for Previewer Here -->
+        <Border Padding="20" Background="Black">
+           <CheckBox Classes="big">
+               <TextBlock Classes="h4 text-wrap" Text="Test"/>
+           </CheckBox>
         </Border>
     </Design.PreviewWith>
 
     <Style Selector="CheckBox">
         <Setter Property="TextElement.Foreground" Value="{DynamicResource SukiLowText}" />
         <Setter Property="Margin" Value="3" />
+    </Style>
+    
+    <Style Selector="CheckBox.h4 /template/ Border#border">
+        <Setter Property="Height" Value="30" />
+        <Setter Property="Width" Value="30" />
+    </Style>
+    
+    <Style Selector="CheckBox.h4 /template/ Path#checkMark">
+        <Setter Property="Height" Value="20" />
+        <Setter Property="Width" Value="20" />
     </Style>
 </Styles>

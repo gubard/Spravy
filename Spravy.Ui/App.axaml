@@ -131,15 +131,15 @@
 
                     <StackPanel Grid.Row="1">
                         <Grid ColumnDefinitions="Auto,*">
-                            <ToggleButton Classes="Switch alignment-top"
+                            <CheckBox Classes="h4 alignment-top"
                                           Margin="5,5,0,0"
                                           Command="{Binding CompleteItem.Item.Command}"
                                           IsVisible="{Binding IsCan, Converter={StaticResource ToDoItemCanNoneToBooleanReverseConverter}}"
                                           IsChecked="{Binding IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanConverter}}" />
                             <TextBlock Grid.Column="1"
-                                       Classes="h4 vertical-alignment-center"
-                                       Text="{Binding Name}"
-                                       TextWrapping="Wrap" />
+                                       Margin="5,5,0,0"
+                                       Classes="h4 text-wrap vertical-alignment-center"
+                                       Text="{Binding Name}" />
                         </Grid>
 
                         <Button
