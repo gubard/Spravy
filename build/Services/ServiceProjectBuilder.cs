@@ -3,6 +3,7 @@ using System.Text;
 using _build.Extensions;
 using _build.Helpers;
 using _build.Models;
+using CliWrap;
 using Nuke.Common.Tools.DotNet;
 using Serilog;
 
@@ -74,6 +75,15 @@ public class ServiceProjectBuilder : ProjectBuilder<ServiceProjectBuilderOptions
         ftpClient.CreateIfNotExistsFolder(PathHelper.ServicesFolder);
         ftpClient.UploadFile(serviceFile.FullName, serviceFile.FullName);
         sshClient.RunSudo(Options, $"cp {serviceFile} /etc/systemd/system/{Options.GetServiceName()}");
+    }
+    
+    public void BuildDocker()
+    {
+        Cli.Wrap(
+                $"docker buildx build {Options.GetAppsFolder()} -f {Options.GetAppFolder().ToFile("Dockerfile")} -t {Options.GetProjectName().ToLower()}:{versionService.Version}")
+           .ExecuteAsync()
+           .GetAwaiter()
+           .GetResult();
     }
 
     string GetDaemonConfig() => $"""

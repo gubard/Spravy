@@ -73,8 +73,16 @@ class Build : NukeBuild
             Projects = CreateProdFactory().Create(Solution.AllProjects.Select(x => new FileInfo(x.Path))).ToArray();
             SetupAppSettings();
         });
+    
+    Target StagingBuildDocker => _ => _.DependsOn(StagingSetupAppSettings).Executes(() =>
+    {
+        foreach (var serviceProjectBuilder in Projects.OfType<ServiceProjectBuilder>())
+        {
+            serviceProjectBuilder.BuildDocker();
+        }
+    });
 
-    Target StagingClean => _ => _.DependsOn(StagingSetupAppSettings).Executes(Clean);
+    Target StagingClean => _ => _.DependsOn(StagingBuildDocker).Executes(Clean);
     Target ProdClean => _ => _.DependsOn(ProdSetupAppSettings).Executes(Clean);
 
     Target StagingRestore => _ => _.DependsOn(StagingClean).Executes(Restore);
