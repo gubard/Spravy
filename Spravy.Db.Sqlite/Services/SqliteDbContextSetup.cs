@@ -1,8 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using Spravy.Db.Interfaces;
-using Spravy.Db.Sqlite.EntityTypeConfigurations;
-using Spravy.Db.Sqlite.Extensions;
-
 namespace Spravy.Db.Sqlite.Services;
 
 public class SqliteDbContextSetup : IDbContextSetup

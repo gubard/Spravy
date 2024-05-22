@@ -1,8 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Spravy.Db.Sqlite.Models;
-using Spravy.Domain.Interfaces;
-
 namespace Spravy.Db.Sqlite.Extensions;
 
 public static class DbContextOptionsBuilderExtension

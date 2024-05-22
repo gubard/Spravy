@@ -1,7 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Spravy.Domain.Interfaces;
-
 namespace Spravy.Db.Sqlite.Extensions;
 
 public static class ServiceCollectionExtension

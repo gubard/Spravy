@@ -1,6 +1,3 @@
-using Spravy.Db.Sqlite.Models;
-using Spravy.Domain.Extensions;
-
 namespace Spravy.Db.Sqlite.Extensions;
 
 public static class SqliteFolderOptionsExtension
