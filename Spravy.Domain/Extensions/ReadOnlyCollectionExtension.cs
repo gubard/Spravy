@@ -1,6 +1,4 @@
-﻿using System.Collections.ObjectModel;
-
-namespace Spravy.Domain.Extensions;
+﻿namespace Spravy.Domain.Extensions;
 
 public static class ReadOnlyCollectionExtension
 {

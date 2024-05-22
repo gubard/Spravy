@@ -1,7 +1,4 @@
-﻿using Spravy.Domain.Errors;
-using Spravy.Domain.Models;
-
-namespace Spravy.Domain.Extensions;
+﻿namespace Spravy.Domain.Extensions;
 
 public static class MemoryExtension
 {

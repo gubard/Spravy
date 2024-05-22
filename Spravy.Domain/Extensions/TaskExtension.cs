@@ -1,6 +1,3 @@
-using System.Runtime.CompilerServices;
-using Spravy.Domain.Models;
-
 namespace Spravy.Domain.Extensions;
 
 public static class TaskExtension

@@ -1,6 +1,3 @@
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
-
 namespace Spravy.Domain.Services;
 
 public abstract class Validator<TValue> : IValidator<TValue>

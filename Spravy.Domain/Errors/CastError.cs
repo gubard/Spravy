@@ -1,5 +1,3 @@
-using Spravy.Domain.Models;
-
 namespace Spravy.Domain.Errors;
 
 public class CastError : Error

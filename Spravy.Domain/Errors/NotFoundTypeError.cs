@@ -1,7 +1,4 @@
-﻿using Spravy.Domain.Helpers;
-using Spravy.Domain.Models;
-
-namespace Spravy.Domain.Errors;
+﻿namespace Spravy.Domain.Errors;
 
 public class NotFoundTypeError : Error
 {

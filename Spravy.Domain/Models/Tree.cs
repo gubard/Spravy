@@ -1,6 +1,4 @@
-﻿using Spravy.Domain.Extensions;
-
-namespace Spravy.Domain.Models;
+﻿namespace Spravy.Domain.Models;
 
 public class Tree<TKey, TValue> where TKey : notnull
 {

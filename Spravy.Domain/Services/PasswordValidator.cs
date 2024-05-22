@@ -1,5 +1,3 @@
-using Spravy.Domain.Interfaces;
-
 namespace Spravy.Domain.Services;
 
 public class PasswordValidator : Validator<string>, IPasswordValidator

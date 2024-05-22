@@ -1,8 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-using Spravy.Domain.Extensions;
-using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
-
 namespace Spravy.Domain.Services;
 
 public class CacheFactory<TKey, TValue> : IFactory<TKey, TValue>, ICache<TKey, TValue>

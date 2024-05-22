@@ -1,5 +1,3 @@
-using Spravy.Domain.Enums;
-
 namespace Spravy.Domain.Errors;
 
 public class RoleOutOfRangeError : ValueOutOfRangeError<Role>

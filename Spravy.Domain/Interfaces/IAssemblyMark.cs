@@ -1,5 +1,3 @@
-using System.Reflection;
-
 namespace Spravy.Domain.Interfaces;
 
 public interface IAssemblyMark

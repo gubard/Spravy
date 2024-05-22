@@ -1,7 +1,4 @@
-﻿using System.Linq.Expressions;
-using System.Reflection;
-
-namespace Spravy.Domain.Extensions;
+﻿namespace Spravy.Domain.Extensions;
 
 public static class ConstructorInfoExtension
 {

@@ -1,5 +1,3 @@
-using Spravy.Domain.Models;
-
 namespace Spravy.Domain.Interfaces;
 
 public interface IFactory<in TKey, TValue> where TValue : notnull

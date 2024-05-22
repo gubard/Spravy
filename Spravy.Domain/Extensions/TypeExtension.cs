@@ -1,9 +1,4 @@
-﻿using System.Linq.Expressions;
-using System.Reflection;
-using Spravy.Domain.Exceptions;
-using Spravy.Domain.Services;
-
-namespace Spravy.Domain.Extensions;
+﻿namespace Spravy.Domain.Extensions;
 
 public static class TypeExtension
 {

@@ -1,5 +1,3 @@
-using Spravy.Domain.Extensions;
-
 namespace Spravy.Domain.Models;
 
 public class QueryList<T> where T : class

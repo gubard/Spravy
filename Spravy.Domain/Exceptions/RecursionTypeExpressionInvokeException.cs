@@ -1,6 +1,4 @@
-﻿using System.Linq.Expressions;
-
-namespace Spravy.Domain.Exceptions;
+﻿namespace Spravy.Domain.Exceptions;
 
 public class RecursionTypeExpressionInvokeException : Exception
 {

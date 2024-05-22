@@ -1,5 +1,3 @@
-using Spravy.Domain.Extensions;
-
 namespace Spravy.Domain.Helpers;
 
 public static class TypeCtorHelper<TType, TParam>

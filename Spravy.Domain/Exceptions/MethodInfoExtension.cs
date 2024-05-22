@@ -1,7 +1,4 @@
-﻿using System.Linq.Expressions;
-using System.Reflection;
-
-namespace Spravy.Domain.Exceptions;
+﻿namespace Spravy.Domain.Exceptions;
 
 public static class MethodInfoExtension
 {

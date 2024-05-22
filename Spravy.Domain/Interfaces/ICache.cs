@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace Spravy.Domain.Interfaces;
 
 public interface ICache<in TKey, TValue>

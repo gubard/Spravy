@@ -1,5 +1,3 @@
-using Spravy.Domain.Extensions;
-
 namespace Spravy.Domain.Exceptions;
 
 public class TypeInvalidCastException : InvalidCastException

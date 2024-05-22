@@ -1,5 +1,3 @@
-using Spravy.Domain.Errors;
-
 namespace Spravy.Domain.Exceptions;
 
 public class ErrorsException : Exception
