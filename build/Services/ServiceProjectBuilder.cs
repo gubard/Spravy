@@ -80,7 +80,7 @@ public class ServiceProjectBuilder : ProjectBuilder<ServiceProjectBuilderOptions
     public void BuildDocker()
     {
         Cli.Wrap(
-                $"docker buildx build {Options.GetAppsFolder()} -f {Options.GetAppFolder().ToFile("Dockerfile")} -t {Options.GetProjectName().ToLower()}:{versionService.Version}")
+                $"docker build {Options.CsprojFile.Directory.Combine("..")} -f {Options.CsprojFile.Directory.ToFile("Dockerfile")} -t {Options.GetProjectName().ToLower()}:{versionService.Version}")
            .ExecuteAsync()
            .GetAwaiter()
            .GetResult();
