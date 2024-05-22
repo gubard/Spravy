@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using _build.Extensions;
@@ -79,12 +80,10 @@ public class ServiceProjectBuilder : ProjectBuilder<ServiceProjectBuilderOptions
     
     public void BuildDocker()
     {
-        Cli.Wrap(
-                $"docker build {Options.CsprojFile.Directory.Combine("..")} -f {Options.CsprojFile.Directory.ToFile("Dockerfile")} -t {Options.GetProjectName().ToLower()}:{versionService.Version}")
-           .WithWorkingDirectory("/".ToFolder().Combine("home", Options.FtpUser).FullName)
-           .ExecuteAsync()
-           .GetAwaiter()
-           .GetResult();
+        Process.Start(new ProcessStartInfo("docker",
+                $"build {Options.CsprojFile.Directory.Combine("..")} -f {Options.CsprojFile.Directory.ToFile("Dockerfile")} -t {Options.GetProjectName().ToLower()}:{versionService.Version}"))
+           .ThrowIfNull()
+           .WaitForExit();
     }
 
     string GetDaemonConfig() => $"""
