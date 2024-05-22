@@ -19,6 +19,10 @@ public class VersionService
     {
         LoadVersion();
         version++;
+    }
+    
+    public void Save()
+    {
         UpdateVersion();
     }
 

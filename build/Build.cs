@@ -141,7 +141,13 @@ class Build : NukeBuild
                 PublishBrowser();
                 SendTelegramTextMessage("Prod", FtpHost, FtpUser, FtpPassword, Domain);
             });
-
+    
+    protected override void OnTargetSucceeded(string target)
+    {
+        base.OnTargetSucceeded(target);
+        VersionService.Save();
+    }
+    
     /// Support plugins are available for:
     /// - JetBrains ReSharper        https://nuke.build/resharper
     /// - JetBrains Rider            https://nuke.build/rider
