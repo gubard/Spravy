@@ -1,0 +1,36 @@
+﻿services:
+  spravy.authentication.service:
+    image: spravy.authentication.service
+    build:
+      context: .
+      dockerfile: Spravy.Authentication.Service/Dockerfile
+
+  spravy.eventbus.service:
+    image: spravy.eventbus.service
+    build:
+      context: .
+      dockerfile: Spravy.EventBus.Service/Dockerfile
+
+  spravy.passwordgenerator.service:
+    image: spravy.passwordgenerator.service
+    build:
+      context: .
+      dockerfile: Spravy.PasswordGenerator.Service/Dockerfile
+
+  spravy.router.service:
+    image: spravy.router.service
+    build:
+      context: .
+      dockerfile: Spravy.Router.Service/Dockerfile
+
+  spravy.schedule.service:
+    image: spravy.schedule.service
+    build:
+      context: .
+      dockerfile: Spravy.Schedule.Service/Dockerfile
+
+  spravy.todo.service:
+    image: spravy.todo.service
+    build:
+      context: .
+      dockerfile: Spravy.ToDo.Service/Dockerfile
