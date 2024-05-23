@@ -93,15 +93,24 @@ public class ServiceProjectBuilder : ProjectBuilder<ServiceProjectBuilderOptions
     
     public void PushDockerImage()
     {
-        var process = Process.Start(new ProcessStartInfo("docker",
+        var processTag = Process.Start(new ProcessStartInfo("docker", $"tag {Options.GetProjectName().ToLower()}:{versionService.Version} 192.168.50.45/myfirstimage/{Options.GetProjectName().ToLower()}:{versionService.Version}")).ThrowIfNull();
+
+        processTag.WaitForExit();
+
+        if(processTag.ExitCode != 0)
+        {
+            throw new($"Tag ExitCode {processTag.ExitCode}");
+        }
+
+        var processPush = Process.Start(new ProcessStartInfo("docker",
                 $"image push 192.168.50.45:5000/myfirstimage/{Options.GetProjectName().ToLower()}:{versionService.Version}"))
            .ThrowIfNull();
         
-        process.WaitForExit();
+        processPush.WaitForExit();
         
-        if (process.ExitCode != 0)
+        if (processPush.ExitCode != 0)
         {
-            throw new($"ExitCode {process.ExitCode}");
+            throw new($"Push ExitCode {process.ExitCode}");
         }
     }
     
