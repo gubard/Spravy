@@ -110,7 +110,7 @@ public class ServiceProjectBuilder : ProjectBuilder<ServiceProjectBuilderOptions
         
         if (processPush.ExitCode != 0)
         {
-            throw new($"Push ExitCode {process.ExitCode}");
+            throw new($"Push ExitCode {processPush.ExitCode}");
         }
     }
     
