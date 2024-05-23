@@ -16,7 +16,7 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
     IAuthenticationService,
     IGrpcServiceCreator<GrpcAuthenticationService, AuthenticationServiceClient>
 {
-    public static readonly TimeSpan Timeout = TimeSpan.FromSeconds(15);
+    public static readonly TimeSpan Timeout = TimeSpan.FromSeconds(30);
     
     private readonly IConverter converter;
 

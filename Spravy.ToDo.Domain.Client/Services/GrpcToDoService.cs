@@ -22,7 +22,7 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
     IToDoService,
     IGrpcServiceCreatorAuth<GrpcToDoService, ToDoServiceClient>
 {
-    public static readonly TimeSpan Timeout = TimeSpan.FromSeconds(15);
+    public static readonly TimeSpan Timeout = TimeSpan.FromSeconds(30);
     
     private readonly IConverter converter;
     private readonly IMetadataFactory metadataFactory;

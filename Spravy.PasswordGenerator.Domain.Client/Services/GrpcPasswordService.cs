@@ -4,7 +4,7 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
     IPasswordService,
     IGrpcServiceCreatorAuth<GrpcPasswordService, PasswordServiceClient>
 {
-    public static readonly TimeSpan Timeout = TimeSpan.FromSeconds(15);
+    public static readonly TimeSpan Timeout = TimeSpan.FromSeconds(30);
     
     private readonly IConverter converter;
     private readonly IMetadataFactory metadataFactory;
