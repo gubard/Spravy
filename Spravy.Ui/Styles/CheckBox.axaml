@@ -2,7 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Design.PreviewWith>
         <Border Padding="20" Background="Black">
-           <CheckBox Classes="big">
+           <CheckBox Classes="h4">
                <TextBlock Classes="h4 text-wrap" Text="Test"/>
            </CheckBox>
         </Border>
@@ -21,5 +21,20 @@
     <Style Selector="CheckBox.h4 /template/ Path#checkMark">
         <Setter Property="Height" Value="20" />
         <Setter Property="Width" Value="20" />
+    </Style>
+    
+    <Style Selector="CheckBox">
+        <Setter Property="TextElement.Foreground" Value="{DynamicResource SukiLowText}" />
+        <Setter Property="Margin" Value="3" />
+    </Style>
+    
+    <Style Selector="CheckBox.h3 /template/ Border#border">
+        <Setter Property="Height" Value="50" />
+        <Setter Property="Width" Value="50" />
+    </Style>
+    
+    <Style Selector="CheckBox.h3 /template/ Path#checkMark">
+        <Setter Property="Height" Value="40" />
+        <Setter Property="Width" Value="40" />
     </Style>
 </Styles>
