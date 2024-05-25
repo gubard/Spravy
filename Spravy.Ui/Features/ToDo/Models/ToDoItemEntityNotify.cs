@@ -36,9 +36,43 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                         case ToDoItemIsCan.None:
                             return Result.AwaitableFalse;
                         case ToDoItemIsCan.CanComplete:
-                            return toDoService.UpdateToDoItemCompleteStatusAsync(CurrentId, true, cancellationToken);
+                            return this.InvokeUiBackgroundAsync(() =>
+                                {
+                                    IsCan = ToDoItemIsCan.None;
+                                    Status = ToDoItemStatus.Completed;
+                                    
+                                    return Result.Success;
+                                })
+                               .IfSuccessAsync(
+                                    () => uiApplicationService.GetCurrentView<IToDoItemUpdater>()
+                                       .IfSuccessAsync(
+                                            updater => this.InvokeUiBackgroundAsync(() =>
+                                                updater.UpdateToDoItemUi(this)),
+                                            cancellationToken)
+                                       .IfErrorsAsync(_ => Result.Success, cancellationToken), cancellationToken)
+                               .IfSuccessAsync(
+                                    () => toDoService.UpdateToDoItemCompleteStatusAsync(CurrentId, true,
+                                        cancellationToken),
+                                    cancellationToken);
                         case ToDoItemIsCan.CanIncomplete:
-                            return toDoService.UpdateToDoItemCompleteStatusAsync(CurrentId, false, cancellationToken);
+                            return this.InvokeUiBackgroundAsync(() =>
+                                {
+                                    IsCan = ToDoItemIsCan.None;
+                                    Status = ToDoItemStatus.ReadyForComplete;
+                                    
+                                    return Result.Success;
+                                })
+                               .IfSuccessAsync(
+                                    () => uiApplicationService.GetCurrentView<IToDoItemUpdater>()
+                                       .IfSuccessAsync(
+                                            updater => this.InvokeUiBackgroundAsync(() =>
+                                                updater.UpdateToDoItemUi(this)),
+                                            cancellationToken)
+                                       .IfErrorsAsync(_ => Result.Success, cancellationToken), cancellationToken)
+                               .IfSuccessAsync(
+                                    () => toDoService.UpdateToDoItemCompleteStatusAsync(CurrentId, false,
+                                        cancellationToken),
+                                    cancellationToken);
                         default:
                             return new Result(new ToDoItemIsCanOutOfRangeError(IsCan)).ToValueTaskResult()
                                .ConfigureAwait(false);

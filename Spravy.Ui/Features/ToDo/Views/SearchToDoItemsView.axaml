@@ -1,4 +1,4 @@
-<ru:ReactiveUserControl x:TypeArguments="vm:SearchViewModel"
+<ru:ReactiveUserControl x:TypeArguments="viewModels:SearchToDoItemsViewModel"
                         xmlns="https://github.com/avaloniaui"
                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -8,9 +8,11 @@
                         xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                         xmlns:v="clr-namespace:Spravy.Ui.Views"
                         xmlns:s="clr-namespace:Spravy.Ui.Services"
+                        xmlns:viewModels="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+                        xmlns:views="clr-namespace:Spravy.Ui.Features.ToDo.Views"
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
-                        x:Class="Spravy.Ui.Views.SearchView"
-                        x:DataType="vm:SearchViewModel">
+                        x:Class="Spravy.Ui.Features.ToDo.Views.SearchToDoItemsView"
+                        x:DataType="viewModels:SearchToDoItemsViewModel">
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
             <InvokeCommandAction Command="{Binding InitializedCommand}" />
@@ -29,7 +31,7 @@
 
             <StackPanel Grid.Column="1">
                 <TextBlock Classes="field" Text="{DynamicResource SearchView.Search}" />
-                <TextBox Name="{x:Static v:SearchView.SearchTextTextBoxName}"
+                <TextBox Name="{x:Static views:SearchToDoItemsView.SearchTextTextBoxName}"
                          Text="{Binding SearchText}" />
             </StackPanel>
 

@@ -2,6 +2,16 @@ namespace Spravy.Domain.Extensions;
 
 public static class ObjectExtension
 {
+    public static Result<TResult> IfIs<TResult>(this object obj)
+    {
+        if (obj is TResult result)
+        {
+            return result.ToResult();
+        }
+        
+        return new(new CastError(obj.GetType(), typeof(TResult)));
+    }
+    
     public static Result<TValue> ToResult<TValue>(this ReadOnlyMemory<Error> errors)
     {
         return new(errors);

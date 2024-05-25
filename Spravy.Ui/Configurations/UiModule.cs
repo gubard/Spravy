@@ -1,3 +1,5 @@
+using LeafToDoItemsView = Spravy.Ui.Features.ToDo.Views.LeafToDoItemsView;
+
 namespace Spravy.Ui.Configurations;
 
 public class UiModule : NinjectModule

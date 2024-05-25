@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceProperty, IRefresh
+public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceProperty, IRefresh, IToDoItemUpdater
 {
     private readonly TaskWork refreshWork;
     private readonly ToDoSubItemsViewModel toDoSubItemsViewModel;
@@ -148,5 +148,10 @@ public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceP
                 
                 return Result.Success;
             }), cancellationToken);
+    }
+    
+    public Result UpdateToDoItemUi(ToDoItemEntityNotify item)
+    {
+        return ToDoSubItemsViewModel.List.UpdateItemUi(item);
     }
 }

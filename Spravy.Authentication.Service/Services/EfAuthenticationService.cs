@@ -353,7 +353,7 @@ public class EfAuthenticationService : IAuthenticationService
                     }
 
                     return new(error);
-                }))
+                }), cancellationToken)
            .IfSuccessAsync(() => context.GetUserByEmailAsync(options.Email, cancellationToken)
                .IfSuccessAsync(_ => new(new UserWithEmailExistsError(options.Email)), cancellationToken)
                .IfErrorsAsync(errors => errors.GetSingle("Errors")
@@ -365,7 +365,7 @@ public class EfAuthenticationService : IAuthenticationService
                         }
 
                         return new(error);
-                    })), cancellationToken)
+                    }), cancellationToken), cancellationToken)
            .IfSuccessAsync(() => context.AddEntityAsync(newUser, cancellationToken), cancellationToken)
            .IfSuccessAsync(_ => Result.Success, cancellationToken), cancellationToken);
     }

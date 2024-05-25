@@ -1,10 +1,10 @@
-namespace Spravy.Ui.ViewModels;
+namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class SearchViewModel : NavigatableViewModelBase, IToDoItemSearchProperties
+public class SearchToDoItemsViewModel : NavigatableViewModelBase, IToDoItemSearchProperties, IToDoItemUpdater
 {
     private readonly TaskWork refreshWork;
     
-    public SearchViewModel() : base(true)
+    public SearchToDoItemsViewModel() : base(true)
     {
         refreshWork = TaskWork.Create(RefreshCoreAsync);
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
@@ -14,7 +14,7 @@ public class SearchViewModel : NavigatableViewModelBase, IToDoItemSearchProperti
     
     public override string ViewId
     {
-        get => TypeCache<SearchViewModel>.Type.Name;
+        get => TypeCache<SearchToDoItemsViewModel>.Type.Name;
     }
     
     [Inject]
@@ -71,18 +71,23 @@ public class SearchViewModel : NavigatableViewModelBase, IToDoItemSearchProperti
         return setting.CastObject<SearchViewModelSetting>()
            .IfSuccessAsync(s => this.InvokeUiBackgroundAsync(() =>
             {
-                 SearchText = s.SearchText;
-                 
-                 return Result.Success;
+                SearchText = s.SearchText;
+                
+                return Result.Success;
             }), cancellationToken);
+    }
+    
+    public Result UpdateToDoItemUi(ToDoItemEntityNotify item)
+    {
+        return ToDoSubItemsViewModel.List.UpdateItemUi(item);
     }
     
     [ProtoContract]
     private class SearchViewModelSetting : IViewModelSetting<SearchViewModelSetting>
     {
-        public SearchViewModelSetting(SearchViewModel viewModel)
+        public SearchViewModelSetting(SearchToDoItemsViewModel toDoItemsViewModel)
         {
-            SearchText = viewModel.SearchText;
+            SearchText = toDoItemsViewModel.SearchText;
         }
         
         public SearchViewModelSetting()

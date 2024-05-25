@@ -1,6 +1,6 @@
-namespace Spravy.Ui.ViewModels;
+namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
+public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUpdater
 {
     private readonly PageHeaderViewModel pageHeaderViewModel;
     private readonly TaskWork refreshWork;
@@ -111,6 +111,11 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase, IRefresh
                 
                 return Result.Success;
             }), cancellationToken);
+    }
+    
+    public Result UpdateToDoItemUi(ToDoItemEntityNotify item)
+    {
+        return ToDoSubItemsViewModel.List.UpdateItemUi(item);
     }
     
     [ProtoContract]

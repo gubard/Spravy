@@ -25,4 +25,11 @@ public class UiApplicationService : IUiApplicationService
            .IfNotNull(nameof(mainSplitViewModel.Content))
            .IfSuccess(content => content.GetType().ToResult());
     }
+    
+    public Result<TView> GetCurrentView<TView>()
+    {
+        return mainSplitViewModel.Content
+           .IfNotNull(nameof(mainSplitViewModel.Content))
+           .IfSuccess(vm => vm.IfIs<TView>());
+    }
 }

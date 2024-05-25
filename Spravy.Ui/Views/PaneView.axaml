@@ -38,7 +38,7 @@
             </Button>
 
             <Button Command="{x:Static s:CommandStorage.NavigateToCommand}"
-                    CommandParameter="{x:Type vm:SearchViewModel}">
+                    CommandParameter="{x:Type viewModels:SearchToDoItemsViewModel}">
                 <Grid ColumnDefinitions="Auto,Auto">
                     <mi:MaterialIcon Kind="Search" />
                     <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.Search}" />
