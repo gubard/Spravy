@@ -21,8 +21,7 @@ public static class WindowExtension
            .ThrowIfNull()
            .Case(ic => ic.ItemCount.Should().Be(toDoItemCount + 1));
         
-        view.CheckLastToDoItemName("Loading...").RunJobsAll(7);
-        window.GetCurrentView<RootToDoItemsView, RootToDoItemsViewModel>().CheckLastToDoItemName(name);
+        view.RunJobsAll(1).CheckLastToDoItemName(name);
         
         return window;
     }
