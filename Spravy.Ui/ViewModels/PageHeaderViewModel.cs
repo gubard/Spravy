@@ -11,5 +11,5 @@ public class PageHeaderViewModel : ViewModelBase
     [Reactive]
     public object? Header { get; set; }
 
-    public AvaloniaList<CommandItem> Commands { get; } = new();
+    public AvaloniaList<SpravyCommandNotify> Commands { get; } = new();
 }

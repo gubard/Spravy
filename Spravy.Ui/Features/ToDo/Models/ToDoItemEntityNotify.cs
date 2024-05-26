@@ -20,6 +20,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
         Name = "Loading...";
         Link = string.Empty;
         Status = ToDoItemStatus.ReadyForComplete;
+        OrderIndex = uint.MaxValue;
         this.WhenAnyValue(x => x.ReferenceId).Subscribe(_ => this.RaisePropertyChanged(nameof(CurrentId)));
         CompactCommands = new();
         SingleCommands = new();
@@ -610,7 +611,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                         case ToDoItemIsCan.CanIncomplete:
                             return toDoService.UpdateToDoItemCompleteStatusAsync(i.Id, false, cancellationToken);
                         default:
-                            return new Result(new ToDoItemIsCanOutOfRangeError(IsCan)).ToValueTaskResult()
+                            return new Result(new ToDoItemIsCanOutOfRangeError(i.IsCan)).ToValueTaskResult()
                                .ConfigureAwait(false);
                     }
                 }, cancellationToken)

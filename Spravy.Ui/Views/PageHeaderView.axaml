@@ -92,30 +92,36 @@
         <StackPanel Grid.Column="2" Orientation="Horizontal">
             <ContentControl Content="{Binding RightCommand}" />
 
-            <Panel IsVisible="{Binding Commands.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
+            <Panel
+                IsVisible="{Binding Commands.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
                 <ItemsControl HorizontalAlignment="Right"
                               VerticalAlignment="Center"
                               ItemsSource="{Binding Commands}"
-                              Classes="adaptive">
+                              Classes="adaptive-to-Do-item-view">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <WrapPanel Orientation="Horizontal" />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.DataTemplates>
+                        <DataTemplate DataType="m:SpravyCommandNotify">
+                            <Button Classes="Basic" Command="{Binding Item.Command}" Content="{Binding Kind}" />
+                        </DataTemplate>
+                    </ItemsControl.DataTemplates>
                 </ItemsControl>
 
-                <Button Classes="adaptive Basic">
+                <Button Classes="adaptive-to-Do-item-view Basic">
                     <Button.DataTemplates>
-                        <DataTemplate x:DataType="m:CommandItem">
-                            <TextBlock Text="{Binding Name}" />
+                        <DataTemplate x:DataType="m:SpravyCommandNotify">
+                            <ContentControl Content="{Binding Text}" />
                         </DataTemplate>
                     </Button.DataTemplates>
 
                     <Button.Styles>
-                        <Style Selector="MenuItem" x:DataType="m:CommandItem">
-                            <Setter Property="Command" Value="{Binding Command}" />
-                            <Setter Property="CommandParameter" Value="{Binding Parameter}" />
-                            <Setter Property="Icon" Value="{Binding Icon}" />
+                        <Style Selector="MenuItem" x:DataType="m:SpravyCommandNotify">
+                            <Setter Property="Command" Value="{Binding Item.Command}" />
+                            <Setter Property="Icon" Value="{Binding Kind}" />
                         </Style>
                     </Button.Styles>
 

@@ -25,6 +25,9 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
     public required ITaskProgressService TaskProgressService { get; init; }
     
     [Inject]
+    public required RootToDoItemsCommands Commands { get; init; }
+    
+    [Inject]
     public required PageHeaderViewModel PageHeaderViewModel
     {
         get => pageHeaderViewModel;
@@ -34,6 +37,24 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
             pageHeaderViewModel = value;
             pageHeaderViewModel.Header = "Spravy";
             pageHeaderViewModel.LeftCommand = CommandStorage.NavigateToCurrentToDoItemItem;
+            
+            pageHeaderViewModel.Commands.AddRange([
+                Commands.MultiAddChildItem,
+                Commands.MultiShowSettingItem,
+                Commands.MultiDeleteItem,
+                Commands.MultiOpenLeafItem,
+                Commands.MultiChangeParentItem,
+                Commands.MultiMakeAsRootItem,
+                Commands.MultiCopyToClipboardItem,
+                Commands.MultiRandomizeChildrenOrderItem,
+                Commands.MultiChangeOrderItem,
+                Commands.MultiResetItem,
+                Commands.MultiCloneItem,
+                Commands.MultiOpenLinkItem,
+                Commands.MultiAddToFavoriteItem,
+                Commands.MultiRemoveFromFavoriteItem,
+                Commands.MultiCompleteItem,
+            ]);
         }
     }
     
