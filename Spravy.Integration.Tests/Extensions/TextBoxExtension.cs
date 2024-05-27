@@ -31,9 +31,17 @@ public static class TextBoxExtension
         return textBox;
     }
 
-    public static TTextBox SetText<TTextBox>(this TTextBox textBox, Window window, string text) where TTextBox : TextBox
+    public static TTextBox SetText<TTextBox>(this TTextBox textBox, Window window, string text, bool focus = true) where TTextBox : TextBox
     {
-        textBox.FocusInput(window);
+        if (focus)
+        {
+            textBox.FocusInput(window);
+        }
+        else
+        {
+            textBox.MustFocused();
+        }
+        
         window.SetKeyTextInput(text);
 
         return textBox;
