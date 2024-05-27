@@ -70,6 +70,7 @@ public class BrowserProjectBuilder : UiProjectBuilder<BrowserProjectBuilderOptio
             {
                 Log.Information("Copy {ProjectName}", published.GetProjectName());
                 sshClient.RunSudo(Options, $"cp -rf {published.GetAppFolder()} {versionFolder}");
+                sshClient.RunSudo(Options, $"cp -rf {published.GetAppFolder()} {currentFolder}");
             }
         }
 
