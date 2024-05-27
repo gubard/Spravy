@@ -299,7 +299,7 @@ class Build : NukeBuild
         ftpClient.Connect();
         var html = PathHelper.WwwFolder.Combine(domain).Combine("html");
 
-        var items = ftpClient.GetListing(html.Combine("downloads").FullName, FtpListOption.Recursive)
+        var items = ftpClient.GetListing(html.Combine("downloads", VersionService.Version.ToString()).FullName, FtpListOption.Recursive)
            .Where(x => x.Type == FtpObjectType.File
              && (x.Name.EndsWith(".zip")
                  || (x.Name.EndsWith(".apk") || x.Name.EndsWith(".aab")) && x.Name.Contains("Spravy-Signed")))
