@@ -35,7 +35,7 @@ public class BrowserProjectBuilder : UiProjectBuilder<BrowserProjectBuilderOptio
         var browserDownloadsFolder = browserFolder.Combine("downloads");
         sshClient.RunSudo(Options, $"rm -rf {browserFolder}/*");
         var versionFolder = browserDownloadsFolder.Combine(versionService.Version.ToString());
-        var currentFolder = browserDownloadsFolder.Combine("currentFolder");
+        var currentFolder = browserDownloadsFolder.Combine("current");
         sshClient.RunSudo(Options, $"mkdir -p {versionFolder}");
         sshClient.RunSudo(Options, $"mkdir -p {currentFolder}");
         sshClient.RunSudo(Options, $" cp -rf {Options.GetAppFolder()}/* {browserFolder}");
