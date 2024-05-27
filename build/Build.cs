@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
@@ -76,6 +77,9 @@ class Build : NukeBuild
     
     Target StagingBuildDocker => _ => _.DependsOn(StagingSetupAppSettings).Executes(() =>
     {
+        var clean = Process.Start(new ProcessStartInfo("docker", "rmi $(docker images -q)")).ThrowIfNull();
+        clean.WaitForExit();
+        
         foreach (var serviceProjectBuilder in Projects.OfType<ServiceProjectBuilder>())
         {
             serviceProjectBuilder.BuildDocker();

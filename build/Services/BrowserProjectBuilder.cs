@@ -35,7 +35,9 @@ public class BrowserProjectBuilder : UiProjectBuilder<BrowserProjectBuilderOptio
         var browserDownloadsFolder = browserFolder.Combine("downloads");
         sshClient.RunSudo(Options, $"rm -rf {browserFolder}/*");
         var versionFolder = browserDownloadsFolder.Combine(versionService.Version.ToString());
+        var currentFolder = browserDownloadsFolder.Combine("currentFolder");
         sshClient.RunSudo(Options, $"mkdir -p {versionFolder}");
+        sshClient.RunSudo(Options, $"mkdir -p {currentFolder}");
         sshClient.RunSudo(Options, $" cp -rf {Options.GetAppFolder()}/* {browserFolder}");
 
         foreach (var published in Options.Publisheds)
@@ -44,11 +46,14 @@ public class BrowserProjectBuilder : UiProjectBuilder<BrowserProjectBuilderOptio
             {
                 Log.Information("Zip {ProjectName}", published.GetProjectName());
                 sshClient.RunSudo(Options, $"mkdir -p {versionFolder.Combine(published.GetProjectName())}");
+                sshClient.RunSudo(Options, $"mkdir -p {currentFolder.Combine(published.GetProjectName())}");
 
                 if (published.Runtimes.IsEmpty)
                 {
                     sshClient.SafeRun(
                         $"cd {published.GetAppFolder()} && echo {Options.SshPassword} | sudo -S  zip -r {versionFolder.Combine(published.GetProjectName()).ToFile($"{published.GetProjectName()}.zip")} ./*");
+                    sshClient.SafeRun(
+                        $"cd {published.GetAppFolder()} && echo {Options.SshPassword} | sudo -S  zip -r {currentFolder.Combine(published.GetProjectName()).ToFile($"{published.GetProjectName()}.zip")} ./*");
                 }
                 else
                 {
@@ -56,6 +61,8 @@ public class BrowserProjectBuilder : UiProjectBuilder<BrowserProjectBuilderOptio
                     {
                         sshClient.SafeRun(
                             $"cd {published.GetAppFolder().Combine(runtime.Name)} && echo {Options.SshPassword} | sudo -S zip -r {versionFolder.Combine(published.GetProjectName()).ToFile($"{published.GetProjectName()}.{runtime.Name}.zip")} ./*");
+                        sshClient.SafeRun(
+                            $"cd {published.GetAppFolder().Combine(runtime.Name)} && echo {Options.SshPassword} | sudo -S zip -r {currentFolder.Combine(published.GetProjectName()).ToFile($"{published.GetProjectName()}.{runtime.Name}.zip")} ./*");
                     }
                 }
             }
