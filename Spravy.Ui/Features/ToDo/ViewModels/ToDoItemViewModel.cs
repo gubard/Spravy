@@ -150,8 +150,13 @@ public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceP
             }), cancellationToken);
     }
     
-    public Result UpdateToDoItemUi(ToDoItemEntityNotify item)
+    public Result UpdateInListToDoItemUi(ToDoItemEntityNotify item)
     {
-        return ToDoSubItemsViewModel.List.UpdateItemUi(item);
+        if (ToDoSubItemsViewModel.List.ToDoItems.GroupByNone.Items.Items.Contains(item))
+        {
+            return ToDoSubItemsViewModel.List.UpdateItemUi(item);
+        }
+        
+        return Result.Success;
     }
 }

@@ -42,15 +42,10 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                                     IsCan = ToDoItemIsCan.None;
                                     Status = ToDoItemStatus.Completed;
                                     
-                                    return Result.Success;
+                                    return uiApplicationService.GetCurrentView<IToDoItemUpdater>()
+                                       .IfSuccess(u => u.UpdateInListToDoItemUi(this));
                                 })
-                               .IfSuccessAsync(
-                                    () => uiApplicationService.GetCurrentView<IToDoItemUpdater>()
-                                       .IfSuccessAsync(
-                                            updater => this.InvokeUiBackgroundAsync(() =>
-                                                updater.UpdateToDoItemUi(this)),
-                                            cancellationToken)
-                                       .IfErrorsAsync(_ => Result.Success, cancellationToken), cancellationToken)
+                               .IfErrorsAsync(_ => Result.Success, cancellationToken)
                                .IfSuccessAsync(
                                     () => toDoService.UpdateToDoItemCompleteStatusAsync(CurrentId, true,
                                         cancellationToken),
@@ -61,15 +56,10 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                                     IsCan = ToDoItemIsCan.None;
                                     Status = ToDoItemStatus.ReadyForComplete;
                                     
-                                    return Result.Success;
+                                    return uiApplicationService.GetCurrentView<IToDoItemUpdater>()
+                                       .IfSuccess(u => u.UpdateInListToDoItemUi(this));
                                 })
-                               .IfSuccessAsync(
-                                    () => uiApplicationService.GetCurrentView<IToDoItemUpdater>()
-                                       .IfSuccessAsync(
-                                            updater => this.InvokeUiBackgroundAsync(() =>
-                                                updater.UpdateToDoItemUi(this)),
-                                            cancellationToken)
-                                       .IfErrorsAsync(_ => Result.Success, cancellationToken), cancellationToken)
+                               .IfErrorsAsync(_ => Result.Success, cancellationToken)
                                .IfSuccessAsync(
                                     () => toDoService.UpdateToDoItemCompleteStatusAsync(CurrentId, false,
                                         cancellationToken),
@@ -590,34 +580,35 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                         cancellationToken);
             }, errorHandler));
         
-        MultiCompleteItem = new(MaterialIconKind.Check, new("Command.Complete"), SpravyCommand.Create(cancellationToken =>
-        {
-            ReadOnlyMemory<ToDoItemEntityNotify> selected = Children.Where(x => x.IsSelected).ToArray();
-            
-            if (selected.IsEmpty)
+        MultiCompleteItem = new(MaterialIconKind.Check, new("Command.Complete"), SpravyCommand.Create(
+            cancellationToken =>
             {
-                return new Result(new NonItemSelectedError()).ToValueTaskResult().ConfigureAwait(false);
-            }
-            
-            return selected.ToResult()
-               .IfSuccessForEachAsync(i =>
+                ReadOnlyMemory<ToDoItemEntityNotify> selected = Children.Where(x => x.IsSelected).ToArray();
+                
+                if (selected.IsEmpty)
                 {
-                    switch (i.IsCan)
+                    return new Result(new NonItemSelectedError()).ToValueTaskResult().ConfigureAwait(false);
+                }
+                
+                return selected.ToResult()
+                   .IfSuccessForEachAsync(i =>
                     {
-                        case ToDoItemIsCan.None:
-                            return Result.AwaitableFalse;
-                        case ToDoItemIsCan.CanComplete:
-                            return toDoService.UpdateToDoItemCompleteStatusAsync(i.Id, true, cancellationToken);
-                        case ToDoItemIsCan.CanIncomplete:
-                            return toDoService.UpdateToDoItemCompleteStatusAsync(i.Id, false, cancellationToken);
-                        default:
-                            return new Result(new ToDoItemIsCanOutOfRangeError(i.IsCan)).ToValueTaskResult()
-                               .ConfigureAwait(false);
-                    }
-                }, cancellationToken)
-               .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
-                    cancellationToken);
-        }, errorHandler));
+                        switch (i.IsCan)
+                        {
+                            case ToDoItemIsCan.None:
+                                return Result.AwaitableFalse;
+                            case ToDoItemIsCan.CanComplete:
+                                return toDoService.UpdateToDoItemCompleteStatusAsync(i.Id, true, cancellationToken);
+                            case ToDoItemIsCan.CanIncomplete:
+                                return toDoService.UpdateToDoItemCompleteStatusAsync(i.Id, false, cancellationToken);
+                            default:
+                                return new Result(new ToDoItemIsCanOutOfRangeError(i.IsCan)).ToValueTaskResult()
+                                   .ConfigureAwait(false);
+                        }
+                    }, cancellationToken)
+                   .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
+                        cancellationToken);
+            }, errorHandler));
         
         MultiCommands.AddRange([
             MultiAddChildItem,
