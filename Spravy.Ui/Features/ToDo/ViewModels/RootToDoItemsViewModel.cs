@@ -1,9 +1,13 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderChanger, ITaskProgressServiceProperty, IToDoItemUpdater
+public class RootToDoItemsViewModel : NavigatableViewModelBase,
+    IToDoItemOrderChanger,
+    ITaskProgressServiceProperty,
+    IToDoItemUpdater
 {
     private readonly PageHeaderViewModel pageHeaderViewModel;
     private readonly TaskWork refreshWork;
+    private readonly ToDoSubItemsViewModel toDoSubItemsViewModel;
     
     public RootToDoItemsViewModel() : base(true)
     {
@@ -37,29 +41,52 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase, IToDoItemOrderCh
             pageHeaderViewModel = value;
             pageHeaderViewModel.Header = "Spravy";
             pageHeaderViewModel.LeftCommand = CommandStorage.NavigateToCurrentToDoItemItem;
-            
-            pageHeaderViewModel.Commands.AddRange([
-                Commands.MultiAddChildItem,
-                Commands.MultiShowSettingItem,
-                Commands.MultiDeleteItem,
-                Commands.MultiOpenLeafItem,
-                Commands.MultiChangeParentItem,
-                Commands.MultiMakeAsRootItem,
-                Commands.MultiCopyToClipboardItem,
-                Commands.MultiRandomizeChildrenOrderItem,
-                Commands.MultiChangeOrderItem,
-                Commands.MultiResetItem,
-                Commands.MultiCloneItem,
-                Commands.MultiOpenLinkItem,
-                Commands.MultiAddToFavoriteItem,
-                Commands.MultiRemoveFromFavoriteItem,
-                Commands.MultiCompleteItem,
-            ]);
         }
     }
     
     [Inject]
-    public required ToDoSubItemsViewModel ToDoSubItemsViewModel { get; init; }
+    public required ToDoSubItemsViewModel ToDoSubItemsViewModel
+    {
+        get => toDoSubItemsViewModel;
+        [MemberNotNull(nameof(toDoSubItemsViewModel))]
+        init
+        {
+            toDoSubItemsViewModel = value;
+            
+            toDoSubItemsViewModel.List
+               .WhenAnyValue(x => x.IsMulti)
+               .Subscribe(x =>
+                {
+                    if (pageHeaderViewModel is null)
+                    {
+                        return;
+                    }
+                    
+                    pageHeaderViewModel.Commands.Clear();
+                    
+                    if (x)
+                    {
+                        pageHeaderViewModel.Commands.AddRange([
+                            Commands.MultiAddChildItem,
+                            Commands.MultiShowSettingItem,
+                            Commands.MultiDeleteItem,
+                            Commands.MultiOpenLeafItem,
+                            Commands.MultiChangeParentItem,
+                            Commands.MultiMakeAsRootItem,
+                            Commands.MultiCopyToClipboardItem,
+                            Commands.MultiRandomizeChildrenOrderItem,
+                            Commands.MultiChangeOrderItem,
+                            Commands.MultiResetItem,
+                            Commands.MultiCloneItem,
+                            Commands.MultiOpenLinkItem,
+                            Commands.MultiAddToFavoriteItem,
+                            Commands.MultiRemoveFromFavoriteItem,
+                            Commands.MultiCompleteItem,
+                        ]);
+                    }
+                });
+        }
+    }
     
     [Inject]
     public required IObjectStorage ObjectStorage { get; init; }

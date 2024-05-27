@@ -97,7 +97,7 @@
                 <ItemsControl HorizontalAlignment="Right"
                               VerticalAlignment="Center"
                               ItemsSource="{Binding Commands}"
-                              Classes="adaptive-to-Do-item-view">
+                              Classes="adaptive">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <WrapPanel Orientation="Horizontal" />
@@ -111,7 +111,7 @@
                     </ItemsControl.DataTemplates>
                 </ItemsControl>
 
-                <Button Classes="adaptive-to-Do-item-view Basic">
+                <Button Classes="adaptive Basic">
                     <Button.DataTemplates>
                         <DataTemplate x:DataType="m:SpravyCommandNotify">
                             <ContentControl Content="{Binding Text}" />
