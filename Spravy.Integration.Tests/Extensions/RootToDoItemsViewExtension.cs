@@ -4,12 +4,12 @@ public static class RootToDoItemsViewExtension
 {
     public static MenuItem GetToDoItemReset(this RootToDoItemsView view, Index index)
     {
-        return view.GetToDoItemDotsStackPanel(index).Children.ElementAt(10).ThrowIfIsNotCast<MenuItem>();
+        return view.GetToDoItemDotsStackPanel(index).Children.ElementAt(9).ThrowIfIsNotCast<MenuItem>();
     }
     
     public static MenuItem GetToDoItemReorder(this RootToDoItemsView view, Index index)
     {
-        return view.GetToDoItemDotsStackPanel(index).Children.ElementAt(9).ThrowIfIsNotCast<MenuItem>();
+        return view.GetToDoItemDotsStackPanel(index).Children.ElementAt(8).ThrowIfIsNotCast<MenuItem>();
     }
     
     public static StackPanel GetToDoItemDotsStackPanel(this RootToDoItemsView view, Index index)
