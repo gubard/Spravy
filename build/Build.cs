@@ -77,7 +77,7 @@ class Build : NukeBuild
     
     Target StagingBuildDocker => _ => _.DependsOn(StagingSetupAppSettings).Executes(() =>
     {
-        var clean = Process.Start(new ProcessStartInfo("docker", "rmi $(docker images -q)")).ThrowIfNull();
+        var clean = Process.Start(new ProcessStartInfo("docker", "image prune -f -a")).ThrowIfNull();
         clean.WaitForExit();
         
         foreach (var serviceProjectBuilder in Projects.OfType<ServiceProjectBuilder>())
