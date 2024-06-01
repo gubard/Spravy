@@ -74,11 +74,11 @@ public class ToDoItemSettingsViewModel : NavigatableViewModelBase
         CancellationToken cancellationToken
     )
     {
-        return Result.AwaitableFalse;
+        return Result.AwaitableSuccess;
     }
     
     public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
     {
-        return Result.AwaitableFalse;
+        return Result.AwaitableSuccess;
     }
 }

@@ -40,7 +40,7 @@ public class ToDoItemsGroupByViewModel : ViewModelBase
                 };
             });
         
-        return Result.AwaitableFalse;
+        return Result.AwaitableSuccess;
     }
     
     public Result ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> ids)

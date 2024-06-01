@@ -96,7 +96,7 @@ public class LoginCommands
     {
         if (!viewModel.IsRememberMe)
         {
-            return Result.AwaitableFalse;
+            return Result.AwaitableSuccess;
         }
         
         return tokenService.GetTokenAsync(cancellationToken)
@@ -126,7 +126,7 @@ public class LoginCommands
                 {
                     if (!viewModel.TryAutoLogin)
                     {
-                        return Result.AwaitableFalse;
+                        return Result.AwaitableSuccess;
                     }
                     
                     return objectStorage
@@ -139,7 +139,7 @@ public class LoginCommands
                                 {
                                     if (!value)
                                     {
-                                        return Result.AwaitableFalse;
+                                        return Result.AwaitableSuccess;
                                     }
                                     
                                     return objectStorage.GetObjectAsync<LoginStorageItem>(StorageIds.LoginId)
@@ -175,21 +175,21 @@ public class LoginCommands
         
         if (loginTextBox is null)
         {
-            return Result.AwaitableFalse;
+            return Result.AwaitableSuccess;
         }
         
         var passwordTextBox = view.FindControl<TextBox>(LoginView.PasswordTextBoxName);
         
         if (passwordTextBox is null)
         {
-            return Result.AwaitableFalse;
+            return Result.AwaitableSuccess;
         }
         
         if (loginTextBox.IsFocused)
         {
             passwordTextBox.Focus();
             
-            return Result.AwaitableFalse;
+            return Result.AwaitableSuccess;
         }
         
         return view.ViewModel
@@ -198,7 +198,7 @@ public class LoginCommands
             {
                 if (viewModel.HasErrors)
                 {
-                    return Result.AwaitableFalse;
+                    return Result.AwaitableSuccess;
                 }
                 
                 return LoginAsync(viewModel, cancellationToken);

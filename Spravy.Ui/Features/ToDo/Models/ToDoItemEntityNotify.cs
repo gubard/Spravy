@@ -29,13 +29,13 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
         
         CompleteItem = new(MaterialIconKind.Check, new("Command.Complete"), SpravyCommand.Create(cancellationToken =>
         {
-            return Result.AwaitableFalse
+            return Result.AwaitableSuccess
                .IfSuccessAsync(() =>
                 {
                     switch (IsCan)
                     {
                         case ToDoItemIsCan.None:
-                            return Result.AwaitableFalse;
+                            return Result.AwaitableSuccess;
                         case ToDoItemIsCan.CanComplete:
                             return this.InvokeUiBackgroundAsync(() =>
                                 {
@@ -106,7 +106,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                     {
                         if (type != typeof(ToDoItemViewModel))
                         {
-                            return Result.AwaitableFalse;
+                            return Result.AwaitableSuccess;
                         }
                         
                         if (Parent is null)
@@ -293,7 +293,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                 return dialogViewer.ShowConfirmContentDialogAsync<MultiToDoItemSettingViewModel>(vm => dialogViewer
                        .CloseContentDialogAsync(cancellationToken)
                        .IfSuccessAsync(() => selected.ToResult()
-                           .IfSuccessForEachAsync(item => Result.AwaitableFalse
+                           .IfSuccessForEachAsync(item => Result.AwaitableSuccess
                                .IfSuccessAsync(() =>
                                 {
                                     if (vm.IsLink)
@@ -302,7 +302,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                                             vm.Link.IsNullOrWhiteSpace() ? null : vm.Link.ToUri(), cancellationToken);
                                     }
                                     
-                                    return Result.AwaitableFalse;
+                                    return Result.AwaitableSuccess;
                                 }, cancellationToken)
                                .IfSuccessAsync(() =>
                                 {
@@ -311,7 +311,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                                         return toDoService.UpdateToDoItemNameAsync(item.Id, vm.Name, cancellationToken);
                                     }
                                     
-                                    return Result.AwaitableFalse;
+                                    return Result.AwaitableSuccess;
                                 }, cancellationToken)
                                .IfSuccessAsync(() =>
                                 {
@@ -320,7 +320,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                                         return toDoService.UpdateToDoItemTypeAsync(item.Id, vm.Type, cancellationToken);
                                     }
                                     
-                                    return Result.AwaitableFalse;
+                                    return Result.AwaitableSuccess;
                                 }, cancellationToken), cancellationToken), cancellationToken)
                        .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                             cancellationToken), _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
@@ -596,7 +596,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                         switch (i.IsCan)
                         {
                             case ToDoItemIsCan.None:
-                                return Result.AwaitableFalse;
+                                return Result.AwaitableSuccess;
                             case ToDoItemIsCan.CanComplete:
                                 return toDoService.UpdateToDoItemCompleteStatusAsync(i.Id, true, cancellationToken);
                             case ToDoItemIsCan.CanIncomplete:

@@ -39,17 +39,17 @@ public class DeleteAccountViewModel : NavigatableViewModelBase
         CancellationToken cancellationToken
     )
     {
-        return Result.AwaitableFalse;
+        return Result.AwaitableSuccess;
     }
 
     public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
     {
-        return Result.AwaitableFalse;
+        return Result.AwaitableSuccess;
     }
 
     private ConfiguredValueTaskAwaitable<Result> DeleteAccountAsync(CancellationToken cancellationToken)
     {
-        return Result.AwaitableFalse
+        return Result.AwaitableSuccess
            .IfSuccessAsync(() =>
             {
                 switch (IdentifierType)

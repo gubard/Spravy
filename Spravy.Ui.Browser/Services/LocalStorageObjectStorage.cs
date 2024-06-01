@@ -29,7 +29,7 @@ public class LocalStorageObjectStorage : IObjectStorage
     {
         JSInterop.LocalStorageRemoveItem(id);
 
-        return Result.AwaitableFalse;
+        return Result.AwaitableSuccess;
     }
 
     public ConfiguredValueTaskAwaitable<Result> SaveObjectAsync(string id, object obj)

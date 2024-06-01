@@ -30,7 +30,7 @@ public class VerificationCodeViewModel : NavigatableViewModelBase, IVerification
 
     public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
     {
-        return Result.AwaitableFalse;
+        return Result.AwaitableSuccess;
     }
 
     public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
@@ -38,6 +38,6 @@ public class VerificationCodeViewModel : NavigatableViewModelBase, IVerification
         CancellationToken cancellationToken
     )
     {
-        return Result.AwaitableFalse;
+        return Result.AwaitableSuccess;
     }
 }

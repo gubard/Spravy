@@ -113,7 +113,7 @@ public class ToDoItemSelectorViewModel : ViewModelBase
         CancellationToken cancellationToken
     )
     {
-        return Result.AwaitableFalse
+        return Result.AwaitableSuccess
            .IfSuccessAsync(() =>
             {
                 if (item.Name.Contains(SearchText))
@@ -126,7 +126,7 @@ public class ToDoItemSelectorViewModel : ViewModelBase
                     });
                 }
                 
-                return Result.AwaitableFalse;
+                return Result.AwaitableSuccess;
             }, cancellationToken)
            .IfSuccessAsync(
                 () => item.Children

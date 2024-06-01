@@ -13,6 +13,6 @@ public class BrowserOpenerLink : IOpenerLink
     {
         JSInterop.WindowOpen(link.AbsoluteUri);
 
-        return Result.AwaitableFalse;
+        return Result.AwaitableSuccess;
     }
 }

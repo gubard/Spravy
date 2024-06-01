@@ -19,6 +19,6 @@ public class ExceptionViewModel : ViewModelBase
     {
         this.WhenAnyValue(x => x.Exception).Subscribe(x => Message = x?.Message ?? string.Empty);
 
-        return Result.AwaitableFalse;
+        return Result.AwaitableSuccess;
     }
 }

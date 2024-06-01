@@ -13,7 +13,7 @@ public class StringMinLengthValidationRule : IValidationRule<string>
     {
         if (value is null)
         {
-            return Result.AwaitableFalse;
+            return Result.AwaitableSuccess;
         }
 
         if (value.Length < minLength)
@@ -23,6 +23,6 @@ public class StringMinLengthValidationRule : IValidationRule<string>
                .ConfigureAwait(false);
         }
 
-        return Result.AwaitableFalse;
+        return Result.AwaitableSuccess;
     }
 }

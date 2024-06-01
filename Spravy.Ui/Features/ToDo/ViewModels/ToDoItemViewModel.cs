@@ -68,7 +68,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceP
     {
         FastAddToDoItemViewModel.ParentId = Id;
         
-        return Result.AwaitableFalse.IfSuccessAllAsync(cancellationToken,
+        return Result.AwaitableSuccess.IfSuccessAllAsync(cancellationToken,
             () => RefreshToDoItemChildrenAsync(cancellationToken), () => RefreshToDoItemCore(cancellationToken),
             () => RefreshPathAsync(cancellationToken));
     }

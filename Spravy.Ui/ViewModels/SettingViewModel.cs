@@ -106,7 +106,7 @@ public class SettingViewModel : NavigatableViewModelBase
         this.WhenAnyValue(x => x.IsLightTheme)
            .Subscribe(x => theme.ChangeBaseTheme(x ? ThemeVariant.Light : ThemeVariant.Dark));
         
-        return Result.AwaitableFalse;
+        return Result.AwaitableSuccess;
     }
     
     private ConfiguredValueTaskAwaitable<Result> SaveSettingsAsync(CancellationToken cancellationToken)
@@ -146,7 +146,7 @@ public class SettingViewModel : NavigatableViewModelBase
     
     public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
     {
-        return Result.AwaitableFalse;
+        return Result.AwaitableSuccess;
     }
     
     public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
@@ -154,7 +154,7 @@ public class SettingViewModel : NavigatableViewModelBase
         CancellationToken cancellationToken
     )
     {
-        return Result.AwaitableFalse;
+        return Result.AwaitableSuccess;
     }
     
     public ConfiguredValueTaskAwaitable<Result> SwitchToColorTheme(

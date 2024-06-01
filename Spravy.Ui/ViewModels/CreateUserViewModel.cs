@@ -210,7 +210,7 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
         CreateUserCommand = CreateCommandFromTask(
             createUserWork.RunAsync, this.WhenAnyValue(x => x.HasErrors).Select(x => !x));
 
-        return Result.AwaitableFalse;
+        return Result.AwaitableSuccess;
     }
 
     private ConfiguredValueTaskAwaitable<Result> EnterAsync(CreateUserView view, CancellationToken cancellationToken)
@@ -219,54 +219,54 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
 
         if (emailTextBox is null)
         {
-            return Result.AwaitableFalse;
+            return Result.AwaitableSuccess;
         }
 
         var loginTextBox = view.FindControl<TextBox>(CreateUserView.LoginTextBoxName);
 
         if (loginTextBox is null)
         {
-            return Result.AwaitableFalse;
+            return Result.AwaitableSuccess;
         }
 
         if (emailTextBox.IsFocused)
         {
             loginTextBox.Focus();
 
-            return Result.AwaitableFalse;
+            return Result.AwaitableSuccess;
         }
 
         var passwordTextBox = view.FindControl<TextBox>(CreateUserView.PasswordTextBoxName);
 
         if (passwordTextBox is null)
         {
-            return Result.AwaitableFalse;
+            return Result.AwaitableSuccess;
         }
 
         if (loginTextBox.IsFocused)
         {
             passwordTextBox.Focus();
 
-            return Result.AwaitableFalse;
+            return Result.AwaitableSuccess;
         }
 
         var repeatPasswordTextBox = view.FindControl<TextBox>(CreateUserView.RepeatPasswordTextBoxName);
 
         if (repeatPasswordTextBox is null)
         {
-            return Result.AwaitableFalse;
+            return Result.AwaitableSuccess;
         }
 
         if (passwordTextBox.IsFocused)
         {
             repeatPasswordTextBox.Focus();
 
-            return Result.AwaitableFalse;
+            return Result.AwaitableSuccess;
         }
 
         if (HasErrors)
         {
-            return Result.AwaitableFalse;
+            return Result.AwaitableSuccess;
         }
 
         return CreateUserAsync(cancellationToken);
@@ -279,7 +279,7 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
 
     public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
     {
-        return Result.AwaitableFalse;
+        return Result.AwaitableSuccess;
     }
 
     public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
@@ -287,7 +287,7 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
         CancellationToken cancellationToken
     )
     {
-        return Result.AwaitableFalse;
+        return Result.AwaitableSuccess;
     }
 
     private ConfiguredValueTaskAwaitable<Result> CreateUserAsync(CancellationToken cancellationToken)

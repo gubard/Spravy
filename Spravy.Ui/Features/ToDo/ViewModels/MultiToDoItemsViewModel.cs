@@ -38,7 +38,7 @@ public class MultiToDoItemsViewModel : ViewModelBase
         this.WhenAnyValue(x => x.GroupBy)
            .Subscribe(x =>  ToDoItems.GroupBy = x);
         
-        return Result.AwaitableFalse;
+        return Result.AwaitableSuccess;
     }
     
     public Result ClearFavoriteExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> ids)

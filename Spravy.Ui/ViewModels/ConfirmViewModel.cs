@@ -29,7 +29,7 @@ public class ConfirmViewModel : ViewModelBase, ISaveState
             return saveState.SaveStateAsync(cancellationToken);
         }
         
-        return Result.AwaitableFalse;
+        return Result.AwaitableSuccess;
     }
     
     private async ValueTask<Result> CancelAsync()

@@ -33,7 +33,7 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
     {
         ForgotPasswordCommand = CreateCommandFromTask(TaskWork.Create(ForgotPasswordAsync).RunAsync);
 
-        return Result.AwaitableFalse;
+        return Result.AwaitableSuccess;
     }
 
     private ConfiguredValueTaskAwaitable<Result> ForgotPasswordAsync(CancellationToken cancellationToken)

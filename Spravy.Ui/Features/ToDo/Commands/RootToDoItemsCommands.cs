@@ -90,7 +90,7 @@ public class RootToDoItemsCommands
                 return dialogViewer.ShowConfirmContentDialogAsync(vm => dialogViewer
                        .CloseContentDialogAsync(cancellationToken)
                        .IfSuccessAsync(() => selected.ToResult()
-                           .IfSuccessForEachAsync(item => Result.AwaitableFalse
+                           .IfSuccessForEachAsync(item => Result.AwaitableSuccess
                                .IfSuccessAsync(() =>
                                 {
                                     if (vm.IsLink)
@@ -99,7 +99,7 @@ public class RootToDoItemsCommands
                                             vm.Link.IsNullOrWhiteSpace() ? null : vm.Link.ToUri(), cancellationToken);
                                     }
                                     
-                                    return Result.AwaitableFalse;
+                                    return Result.AwaitableSuccess;
                                 }, cancellationToken)
                                .IfSuccessAsync(() =>
                                 {
@@ -108,7 +108,7 @@ public class RootToDoItemsCommands
                                         return toDoService.UpdateToDoItemNameAsync(item.Id, vm.Name, cancellationToken);
                                     }
                                     
-                                    return Result.AwaitableFalse;
+                                    return Result.AwaitableSuccess;
                                 }, cancellationToken)
                                .IfSuccessAsync(() =>
                                 {
@@ -117,7 +117,7 @@ public class RootToDoItemsCommands
                                         return toDoService.UpdateToDoItemTypeAsync(item.Id, vm.Type, cancellationToken);
                                     }
                                     
-                                    return Result.AwaitableFalse;
+                                    return Result.AwaitableSuccess;
                                 }, cancellationToken), cancellationToken), cancellationToken)
                        .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                             cancellationToken), _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
@@ -627,7 +627,7 @@ public class RootToDoItemsCommands
                         switch (i.IsCan)
                         {
                             case ToDoItemIsCan.None:
-                                return Result.AwaitableFalse;
+                                return Result.AwaitableSuccess;
                             case ToDoItemIsCan.CanComplete:
                                 return toDoService.UpdateToDoItemCompleteStatusAsync(i.Id, true, cancellationToken);
                             case ToDoItemIsCan.CanIncomplete:

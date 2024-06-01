@@ -13,12 +13,12 @@ public class ValidCharsValidationRule : IValidationRule<string>
     {
         if (value is null)
         {
-            return Result.AwaitableFalse;
+            return Result.AwaitableSuccess;
         }
 
         if (value.AsSpan().IndexOfAnyExcept(validChars.Span) == -1)
         {
-            return Result.AwaitableFalse;
+            return Result.AwaitableSuccess;
         }
 
         return new Result(new VariableInvalidCharsError(validChars, sourceName)).ToValueTaskResult()

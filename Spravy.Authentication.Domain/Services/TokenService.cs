@@ -51,7 +51,7 @@ public class TokenService : ITokenService
             {
                 token = value;
 
-                return Result.AwaitableFalse;
+                return Result.AwaitableSuccess;
             }, cancellationToken);
     }
 
@@ -62,7 +62,7 @@ public class TokenService : ITokenService
             {
                 token = value;
 
-                return Result.AwaitableFalse;
+                return Result.AwaitableSuccess;
             }, cancellationToken);
     }
 }

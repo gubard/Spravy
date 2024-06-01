@@ -18,14 +18,14 @@ public class ErrorHandler : IErrorHandler
     {
         if (errors.IsEmpty)
         {
-            return Result.AwaitableFalse;
+            return Result.AwaitableSuccess;
         }
 
         errors = errors.ToArray().Where(x => !IgnoreIds.Span.Contains(x.Id)).ToArray();
 
         if (errors.IsEmpty)
         {
-            return Result.AwaitableFalse;
+            return Result.AwaitableSuccess;
         }
 
         return dialogViewer.ShowInfoErrorDialogAsync<ErrorViewModel>(
@@ -39,7 +39,7 @@ public class ErrorHandler : IErrorHandler
     {
         if (exception is TaskCanceledException)
         {
-            return Result.AwaitableFalse;
+            return Result.AwaitableSuccess;
         }
 
         if (exception is RpcException rpc)
@@ -47,7 +47,7 @@ public class ErrorHandler : IErrorHandler
             switch (rpc.StatusCode)
             {
                 case StatusCode.Cancelled:
-                    return Result.AwaitableFalse;
+                    return Result.AwaitableSuccess;
             }
         }
 
@@ -56,7 +56,7 @@ public class ErrorHandler : IErrorHandler
             switch (rpc2.StatusCode)
             {
                 case StatusCode.Cancelled:
-                    return Result.AwaitableFalse;
+                    return Result.AwaitableSuccess;
             }
         }
 

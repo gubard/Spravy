@@ -3,9 +3,11 @@ namespace Spravy.Domain.Models;
 public class Result
 {
     public static readonly Result CanceledByUserError = new(new CanceledByUserError());
+    public static readonly ValueTask<Result> CanceledByUserErrorValueTask = ValueTask.FromResult(CanceledByUserError);
+    public static readonly ConfiguredValueTaskAwaitable<Result> AwaitableCanceledByUserError = CanceledByUserErrorValueTask.ConfigureAwait(false);
     public static readonly Result Success = new(true);
     public static readonly ValueTask<Result> SuccessValueTask = ValueTask.FromResult(Success);
-    public static readonly ConfiguredValueTaskAwaitable<Result> AwaitableFalse = SuccessValueTask.ConfigureAwait(false);
+    public static readonly ConfiguredValueTaskAwaitable<Result> AwaitableSuccess = SuccessValueTask.ConfigureAwait(false);
 
     private Result(bool _)
     {

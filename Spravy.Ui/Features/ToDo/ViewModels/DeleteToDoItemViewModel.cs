@@ -40,7 +40,7 @@ public class DeleteToDoItemViewModel : ViewModelBase
         var statuses = Enum.GetValues<ToDoItemStatus>();
         
         return Item.IfNotNull(nameof(Item))
-           .IfSuccessAsync(item => Result.AwaitableFalse.IfSuccessAllAsync(cancellationToken,
+           .IfSuccessAsync(item => Result.AwaitableSuccess.IfSuccessAllAsync(cancellationToken,
                 () => ToDoService.GetToDoItemAsync(item.Id, cancellationToken)
                    .IfSuccessAsync(i => this.InvokeUiBackgroundAsync(() => ToDoCache.UpdateUi(i)), cancellationToken)
                    .ToResultOnlyAsync(),

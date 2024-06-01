@@ -14,7 +14,7 @@ public class ProtobufSerializer : ISerializer
     {
         Serializer.Serialize(stream, obj);
 
-        return Result.AwaitableFalse;
+        return Result.AwaitableSuccess;
     }
 
     public ConfiguredValueTaskAwaitable<Result<TObject>> DeserializeAsync<TObject>(Stream stream)

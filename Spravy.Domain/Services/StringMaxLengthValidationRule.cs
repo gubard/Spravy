@@ -13,7 +13,7 @@ public class StringMaxLengthValidationRule : IValidationRule<string>
     {
         if (value is null)
         {
-            return Result.AwaitableFalse;
+            return Result.AwaitableSuccess;
         }
 
         if (value.Length > maxLength)
@@ -23,6 +23,6 @@ public class StringMaxLengthValidationRule : IValidationRule<string>
                .ConfigureAwait(false);
         }
 
-        return Result.AwaitableFalse;
+        return Result.AwaitableSuccess;
     }
 }

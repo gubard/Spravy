@@ -21,6 +21,6 @@ public class AndroidOpenerLink : IOpenerLink
         var intent = new Intent(Intent.ActionView, global::Android.Net.Uri.Parse(link.AbsoluteUri));
         contextWrapper.StartActivity(intent);
 
-        return Result.AwaitableFalse;
+        return Result.AwaitableSuccess;
     }
 }

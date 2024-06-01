@@ -273,7 +273,7 @@ public class DialogViewer : IDialogViewer
     {
         if (DialogHost.IsDialogOpen(identifier))
         {
-            return Result.AwaitableFalse;
+            return Result.AwaitableSuccess;
         }
         
         return this.InvokeUiBackgroundAsync(() =>
@@ -288,7 +288,7 @@ public class DialogViewer : IDialogViewer
     {
         if (!DialogHost.IsDialogOpen(identifier))
         {
-            return Result.AwaitableFalse;
+            return Result.AwaitableSuccess;
         }
         
         return this.InvokeUiBackgroundAsync(() =>
@@ -302,7 +302,7 @@ public class DialogViewer : IDialogViewer
                     return saveState.SaveStateAsync(cancellationToken);
                 }
                 
-                return Result.AwaitableFalse;
+                return Result.AwaitableSuccess;
             }, cancellationToken)
            .IfSuccessAsync(() => this.InvokeUiBackgroundAsync(() =>
             {

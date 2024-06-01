@@ -14,7 +14,7 @@ public class EmptyNavigatable : INavigatable
 
     public ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
     {
-        return Result.AwaitableFalse;
+        return Result.AwaitableSuccess;
     }
 
     public Result Stop()
@@ -24,6 +24,6 @@ public class EmptyNavigatable : INavigatable
 
     public ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting, CancellationToken cancellationToken)
     {
-        return Result.AwaitableFalse;
+        return Result.AwaitableSuccess;
     }
 }

@@ -118,7 +118,7 @@ public class Navigator : INavigator
                             return refresh.RefreshAsync(cancellationToken);
                         }
                         
-                        return Result.AwaitableFalse;
+                        return Result.AwaitableSuccess;
                     }, cancellationToken)
                    .IfSuccessAsync(() => item.Navigatable.ToResult().ToValueTaskResult().ConfigureAwait(false),
                         cancellationToken);
@@ -146,7 +146,7 @@ public class Navigator : INavigator
     {
         if (Content.Content is null)
         {
-            return Result.AwaitableFalse;
+            return Result.AwaitableSuccess;
         }
         
         var content = (INavigatable)Content.Content;
@@ -154,7 +154,7 @@ public class Navigator : INavigator
         
         if (!content.IsPooled)
         {
-            return Result.AwaitableFalse;
+            return Result.AwaitableSuccess;
         }
         
         return content.SaveStateAsync(cancellationToken)
@@ -163,7 +163,7 @@ public class Navigator : INavigator
                 list.Add(new(content, lastSetup));
                 lastSetup = setup;
                 
-                return Result.AwaitableFalse;
+                return Result.AwaitableSuccess;
             }, cancellationToken);
     }
 }

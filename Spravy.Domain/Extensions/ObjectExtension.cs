@@ -152,7 +152,7 @@ public static class ObjectExtension
     
     public static ReadOnlyMemory<T> ToReadOnlyMemory<T>(this Span<T> span)
     {
-        return new (span.ToArray());
+        return new(span.ToArray());
     }
     
     public static Result<T> IfNotNull<T>(this T? obj, string propertyName)
@@ -163,6 +163,16 @@ public static class ObjectExtension
         }
         
         return new(obj);
+    }
+    
+    public static Result<T> IfNotNullStruct<T>(this T? obj, string propertyName) where T : struct
+    {
+        if (obj is null)
+        {
+            return new(new PropertyNullValueError(propertyName));
+        }
+        
+        return new(obj.Value);
     }
     
     public static void ThrowDisposedException<T>(this T obj) where T : notnull

@@ -4,6 +4,6 @@ public class EmptyApplySettings : IApplySettings
 {
     public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
     {
-        return Result.AwaitableFalse;
+        return Result.AwaitableSuccess;
     }
 }

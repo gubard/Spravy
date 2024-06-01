@@ -207,7 +207,7 @@ public static class CommandStorage
         CancellationToken cancellationToken
     )
     {
-        return Result.AwaitableFalse
+        return Result.AwaitableSuccess
            .IfSuccessAllAsync(cancellationToken, items.Where(x => x.IsSelected)
                .Select(x => x.Id)
                .Select<Guid, Func<ConfiguredValueTaskAwaitable<Result>>>(x =>
@@ -242,7 +242,7 @@ public static class CommandStorage
         CancellationToken cancellationToken
     )
     {
-        return Result.AwaitableFalse
+        return Result.AwaitableSuccess
            .IfSuccessAllAsync(cancellationToken, itemsNotify.Where(x => x.IsSelected)
                .Select<ToDoItemEntityNotify, Func<ConfiguredValueTaskAwaitable<Result>>>(x =>
                 {
@@ -314,7 +314,7 @@ public static class CommandStorage
             }
         }
         
-        return Result.AwaitableFalse.IfSuccessAllAsync(cancellationToken, tasks.ToArray());
+        return Result.AwaitableSuccess.IfSuccessAllAsync(cancellationToken, tasks.ToArray());
     }
     
     private static ConfiguredValueTaskAwaitable<Result> NavigateToCurrentToDoItemAsync(
@@ -394,7 +394,7 @@ public static class CommandStorage
                     return objectStorage.DeleteAsync(StorageIds.LoginId);
                 }
                 
-                return Result.AwaitableFalse;
+                return Result.AwaitableSuccess;
             }, cancellationToken)
            .IfSuccessAsync(() => navigator.NavigateToAsync(ActionHelper<LoginViewModel>.Empty, cancellationToken),
                 cancellationToken)
@@ -459,7 +459,7 @@ public static class CommandStorage
     {
         if (mainSplitViewModel.Content is not IRefresh refresh)
         {
-            return Result.AwaitableFalse;
+            return Result.AwaitableSuccess;
         }
         
         return refresh.RefreshAsync(cancellationToken);

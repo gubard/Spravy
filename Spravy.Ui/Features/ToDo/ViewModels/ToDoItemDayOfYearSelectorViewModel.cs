@@ -56,7 +56,7 @@ public class ToDoItemDayOfYearSelectorViewModel : ViewModelBase, IApplySettings
                     }
                 }
 
-                return Result.AwaitableFalse.IfSuccessAllAsync(cancellationToken, items.ToArray());
+                return Result.AwaitableSuccess.IfSuccessAllAsync(cancellationToken, items.ToArray());
             }, cancellationToken);
     }
 }

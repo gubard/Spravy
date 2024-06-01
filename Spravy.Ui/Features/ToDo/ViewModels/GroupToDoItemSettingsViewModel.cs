@@ -13,7 +13,7 @@ public class GroupToDoItemSettingsViewModel : NavigatableViewModelBase, IApplySe
 
     public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
     {
-        return Result.AwaitableFalse;
+        return Result.AwaitableSuccess;
     }
 
     public override Result Stop()
@@ -26,11 +26,11 @@ public class GroupToDoItemSettingsViewModel : NavigatableViewModelBase, IApplySe
         CancellationToken cancellationToken
     )
     {
-        return Result.AwaitableFalse;
+        return Result.AwaitableSuccess;
     }
 
     public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
     {
-        return Result.AwaitableFalse;
+        return Result.AwaitableSuccess;
     }
 }

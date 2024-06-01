@@ -4,6 +4,6 @@ public class CodeClipboardService : IClipboardService
 {
     public ConfiguredValueTaskAwaitable<Result> SetTextAsync(string? text)
     {
-        return Result.AwaitableFalse;
+        return Result.AwaitableSuccess;
     }
 }

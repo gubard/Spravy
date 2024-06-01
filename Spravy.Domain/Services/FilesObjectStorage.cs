@@ -28,7 +28,7 @@ public class FilesObjectStorage : IObjectStorage
         var file = root.ToFile(id);
         file.Delete();
 
-        return Result.AwaitableFalse;
+        return Result.AwaitableSuccess;
     }
 
     public ConfiguredValueTaskAwaitable<Result> SaveObjectAsync(string id, object obj)

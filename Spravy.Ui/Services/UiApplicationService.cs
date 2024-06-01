@@ -13,7 +13,7 @@ public class UiApplicationService : IUiApplicationService
     {
         if (mainSplitViewModel.Content is not IRefresh refresh)
         {
-            return Result.AwaitableFalse;
+            return Result.AwaitableSuccess;
         }
         
         return refresh.RefreshAsync(cancellationToken);

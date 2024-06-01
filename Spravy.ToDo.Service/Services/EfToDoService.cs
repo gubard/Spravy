@@ -506,7 +506,7 @@ public class EfToDoService : IToDoService
                     
                     item.IsCompleted = false;
                     
-                    return Result.AwaitableFalse;
+                    return Result.AwaitableSuccess;
                 }, cancellationToken), cancellationToken), cancellationToken);
     }
     
@@ -1128,7 +1128,7 @@ public class EfToDoService : IToDoService
                     {
                         i.ReferenceId = null;
                         
-                        return Result.AwaitableFalse;
+                        return Result.AwaitableSuccess;
                     }, cancellationToken), cancellationToken)
                .IfSuccessAsync(() => context.RemoveEntity(item), cancellationToken), cancellationToken);
     }
@@ -1165,12 +1165,12 @@ public class EfToDoService : IToDoService
                .IfSuccessForEachAsync(reference => context.FindEntityAsync<ToDoItemEntity>(reference.ReferenceId.Value)
                    .IfSuccessAsync(i => i.Type switch
                     {
-                        ToDoItemType.Value => Result.AwaitableFalse,
+                        ToDoItemType.Value => Result.AwaitableSuccess,
                         ToDoItemType.Group => StepCompletionAsync(context, i, completeTask, cancellationToken),
-                        ToDoItemType.Planned => Result.AwaitableFalse,
-                        ToDoItemType.Periodicity => Result.AwaitableFalse,
-                        ToDoItemType.PeriodicityOffset => Result.AwaitableFalse,
-                        ToDoItemType.Circle => Result.AwaitableFalse,
+                        ToDoItemType.Planned => Result.AwaitableSuccess,
+                        ToDoItemType.Periodicity => Result.AwaitableSuccess,
+                        ToDoItemType.PeriodicityOffset => Result.AwaitableSuccess,
+                        ToDoItemType.Circle => Result.AwaitableSuccess,
                         ToDoItemType.Step => Result.Execute(() => i.IsCompleted = completeTask)
                            .ToValueTaskResult()
                            .ConfigureAwait(false),
@@ -1241,14 +1241,14 @@ public class EfToDoService : IToDoService
                .IfSuccessForEachAsync(reference => context.FindEntityAsync<ToDoItemEntity>(reference.ReferenceId.Value)
                    .IfSuccessAsync(i => i.Type switch
                     {
-                        ToDoItemType.Value => Result.AwaitableFalse,
+                        ToDoItemType.Value => Result.AwaitableSuccess,
                         ToDoItemType.Group => CircleCompletionAsync(context, i, moveCircleOrderIndex, completeTask,
                             onlyCompletedTasks, cancellationToken),
-                        ToDoItemType.Planned => Result.AwaitableFalse,
-                        ToDoItemType.Periodicity => Result.AwaitableFalse,
-                        ToDoItemType.PeriodicityOffset => Result.AwaitableFalse,
-                        ToDoItemType.Circle => Result.AwaitableFalse,
-                        ToDoItemType.Step => Result.AwaitableFalse,
+                        ToDoItemType.Planned => Result.AwaitableSuccess,
+                        ToDoItemType.Periodicity => Result.AwaitableSuccess,
+                        ToDoItemType.PeriodicityOffset => Result.AwaitableSuccess,
+                        ToDoItemType.Circle => Result.AwaitableSuccess,
+                        ToDoItemType.Step => Result.AwaitableSuccess,
                         ToDoItemType.Reference => new Result(new ToDoItemTypeOutOfRangeError(i.Type))
                            .ToValueTaskResult()
                            .ConfigureAwait(false),
@@ -1277,7 +1277,7 @@ public class EfToDoService : IToDoService
                 {
                     if (!options.Statuses.Span.ToArray().Contains(parameters.Status))
                     {
-                        return Result.AwaitableFalse;
+                        return Result.AwaitableSuccess;
                     }
                     
                     builder.Duplicate(" ", level);
@@ -1388,19 +1388,19 @@ public class EfToDoService : IToDoService
     {
         switch (item.Type)
         {
-            case ToDoItemType.Value: return Result.AwaitableFalse;
-            case ToDoItemType.Group: return Result.AwaitableFalse;
-            case ToDoItemType.Planned: return Result.AwaitableFalse;
+            case ToDoItemType.Value: return Result.AwaitableSuccess;
+            case ToDoItemType.Group: return Result.AwaitableSuccess;
+            case ToDoItemType.Planned: return Result.AwaitableSuccess;
             case ToDoItemType.Periodicity:
                 return AddPeriodicity(item, cancellationToken).ToValueTaskResult().ConfigureAwait(false);
             case ToDoItemType.PeriodicityOffset:
                 return AddPeriodicityOffset(item, offset, cancellationToken).ToValueTaskResult().ConfigureAwait(false);
-            case ToDoItemType.Circle: return Result.AwaitableFalse;
-            case ToDoItemType.Step: return Result.AwaitableFalse;
+            case ToDoItemType.Circle: return Result.AwaitableSuccess;
+            case ToDoItemType.Step: return Result.AwaitableSuccess;
             case ToDoItemType.Reference:
                 if (!item.ReferenceId.HasValue)
                 {
-                    return Result.AwaitableFalse;
+                    return Result.AwaitableSuccess;
                 }
                 
                 return context.FindEntityAsync<ToDoItemEntity>(item.ReferenceId.Value)

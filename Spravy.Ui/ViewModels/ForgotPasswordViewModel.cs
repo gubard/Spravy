@@ -51,7 +51,7 @@ public class ForgotPasswordViewModel : NavigatableViewModelBase, IVerificationEm
 
     private ConfiguredValueTaskAwaitable<Result> ForgotPasswordAsync(CancellationToken cancellationToken)
     {
-        return Result.AwaitableFalse
+        return Result.AwaitableSuccess
            .IfSuccessAsync(() =>
             {
                 switch (IdentifierType)
@@ -75,7 +75,7 @@ public class ForgotPasswordViewModel : NavigatableViewModelBase, IVerificationEm
 
     public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
     {
-        return Result.AwaitableFalse;
+        return Result.AwaitableSuccess;
     }
 
     public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
@@ -83,6 +83,6 @@ public class ForgotPasswordViewModel : NavigatableViewModelBase, IVerificationEm
         CancellationToken cancellationToken
     )
     {
-        return Result.AwaitableFalse;
+        return Result.AwaitableSuccess;
     }
 }

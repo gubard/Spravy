@@ -9,6 +9,6 @@ public class SourceNotNullValidationRule<TObject> : IValidationRule<TObject> whe
             return new Result(new VariableNullValueError(sourceName)).ToValueTaskResult().ConfigureAwait(false);
         }
 
-        return Result.AwaitableFalse;
+        return Result.AwaitableSuccess;
     }
 }

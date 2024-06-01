@@ -2,10 +2,7 @@ namespace Spravy.Domain.Extensions;
 
 public static class ResultExtension
 {
-    public static Result IfSuccessForEach<TValue>(
-        this Result<ReadOnlyMemory<TValue>> values,
-        Func<TValue, Result> func
-    )
+    public static Result IfSuccessForEach<TValue>(this Result<ReadOnlyMemory<TValue>> values, Func<TValue, Result> func)
     {
         if (values.IsHasError)
         {
@@ -374,6 +371,25 @@ public static class ResultExtension
         }
         
         return Result.Success;
+    }
+    
+    public static ConfiguredValueTaskAwaitable<Result> IfErrorsAsync<TValue>(
+        this Result<TValue> result,
+        Func<ReadOnlyMemory<Error>, ConfiguredValueTaskAwaitable<Result>> func,
+        CancellationToken cancellationToken
+    )
+    {
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return Result.CanceledByUserError.ToValueTaskResult().ConfigureAwait(false);
+        }
+        
+        if (result.IsHasError)
+        {
+            return func.Invoke(result.Errors);
+        }
+        
+        return Result.AwaitableSuccess;
     }
     
     public static ConfiguredValueTaskAwaitable<Result> IfErrorsAsync(
@@ -830,6 +846,26 @@ public static class ResultExtension
         }
         
         return await action.Invoke();
+    }
+    
+    public static ConfiguredValueTaskAwaitable<Result> IfSuccessAsync<TValue>(
+        this Result<TValue> result,
+        Func<TValue, ConfiguredValueTaskAwaitable<Result>> action,
+        Func<ReadOnlyMemory<Error>, ConfiguredValueTaskAwaitable<Result>> errors,
+        CancellationToken cancellationToken
+    )
+    {
+        if (result.IsHasError)
+        {
+            return errors.Invoke(result.Errors);
+        }
+        
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return Result.AwaitableCanceledByUserError;
+        }
+        
+        return action.Invoke(result.Value);
     }
     
     public static ConfiguredValueTaskAwaitable<Result> IfSuccessAsync<TValue>(

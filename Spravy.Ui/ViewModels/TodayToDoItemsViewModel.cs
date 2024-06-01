@@ -58,7 +58,7 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IRefresh
 
     public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
     {
-        return Result.AwaitableFalse;
+        return Result.AwaitableSuccess;
     }
 
     public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
@@ -66,6 +66,6 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IRefresh
         CancellationToken cancellationToken
     )
     {
-        return Result.AwaitableFalse;
+        return Result.AwaitableSuccess;
     }
 }
