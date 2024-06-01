@@ -20,7 +20,8 @@
                             Classes="Basic"
                             IsVisible="{Binding IsMulti}"
                             Command="{Binding SwitchAllSelectionCommand.Command}"
-                            Content="{x:Static i:MaterialIconKind.CheckAll}" />
+                            Content="{x:Static i:MaterialIconKind.CheckAll}" 
+                            Padding="11,0,11,0" />
                 </Grid>
 
                 <TextBlock DockPanel.Dock="Right"
