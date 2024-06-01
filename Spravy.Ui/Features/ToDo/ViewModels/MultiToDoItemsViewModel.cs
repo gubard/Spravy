@@ -2,41 +2,36 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class MultiToDoItemsViewModel : ViewModelBase
 {
-    private readonly ToDoItemsViewModel favorite;
-    
-    public MultiToDoItemsViewModel()
+    public MultiToDoItemsViewModel(ToDoItemsViewModel favorite, ToDoItemsGroupByViewModel toDoItems)
     {
+        GroupBys = new(Enum.GetValues<GroupBy>());
+        GroupBy = GroupBy.ByStatus;
+        favorite.Header = new("MultiToDoItemsView.Favorite");
+        Favorite = favorite;
+        ToDoItems = toDoItems;
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
+        
+        this.WhenAnyValue(x => x.IsMulti).Subscribe(x =>
+        {
+            Favorite.IsMulti = x;
+            ToDoItems.IsMulti = x;
+        });
     }
     
     public ICommand InitializedCommand { get; }
-    public AvaloniaList<GroupBy> GroupBys { get; } = new(Enum.GetValues<GroupBy>());
-    
-    [Inject]
-    public required ToDoItemsViewModel Favorite
-    {
-        get => favorite;
-        [MemberNotNull(nameof(favorite))]
-        init
-        {
-            favorite = value;
-            favorite.Header = new("MultiToDoItemsView.Favorite");
-        }
-    }
-    
-    [Inject]
-    public required ToDoItemsGroupByViewModel ToDoItems { get; init; }
+    public AvaloniaList<GroupBy> GroupBys { get; }
+    public ToDoItemsViewModel Favorite { get; }
+    public ToDoItemsGroupByViewModel ToDoItems { get; }
     
     [Reactive]
-    public GroupBy GroupBy { get; set; } = GroupBy.ByStatus;
+    public GroupBy GroupBy { get; set; }
     
     [Reactive]
     public bool IsMulti { get; set; }
     
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
-        this.WhenAnyValue(x => x.GroupBy)
-           .Subscribe(x =>  ToDoItems.GroupBy = x);
+        this.WhenAnyValue(x => x.GroupBy).Subscribe(x => ToDoItems.GroupBy = x);
         
         return Result.AwaitableSuccess;
     }

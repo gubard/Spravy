@@ -2,19 +2,17 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ToDoItemsGroupByNoneViewModel : ViewModelBase
 {
-    private readonly ToDoItemsViewModel items;
-    
-    [Inject]
-    public required ToDoItemsViewModel Items
+    public ToDoItemsGroupByNoneViewModel(ToDoItemsViewModel items)
     {
-        get => items;
-        [MemberNotNull(nameof(items))]
-        init
-        {
-            items = value;
-            items.Header = new("ToDoItemsGroupByNoneView.Header");
-        }
+        items.Header = new("ToDoItemsGroupByNoneView.Header");
+        Items = items;
+        this.WhenAnyValue(x => x.IsMulti).Subscribe(x => Items.IsMulti = x);
     }
+    
+    public ToDoItemsViewModel Items { get; }
+    
+    [Reactive]
+    public bool IsMulti { get; set; }
     
     public Result ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> ids)
     {

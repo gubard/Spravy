@@ -2,58 +2,38 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ToDoItemsGroupByStatusViewModel : ViewModelBase
 {
-    private readonly ToDoItemsViewModel completed;
-    private readonly ToDoItemsViewModel missed;
-    private readonly ToDoItemsViewModel planned;
-    private readonly ToDoItemsViewModel readyForCompleted;
-    
-    [Inject]
-    public required ToDoItemsViewModel Missed
+    public ToDoItemsGroupByStatusViewModel(
+        ToDoItemsViewModel missed,
+        ToDoItemsViewModel readyForCompleted,
+        ToDoItemsViewModel planned,
+        ToDoItemsViewModel completed
+    )
     {
-        get => missed;
-        [MemberNotNull(nameof(missed))]
-        init
+        missed.Header = new("ToDoItemsGroupByStatusView.Missed");
+        Missed = missed;
+        readyForCompleted.Header = new("ToDoItemsGroupByStatusView.ReadyForCompleted");
+        ReadyForCompleted = readyForCompleted;
+        planned.Header = new("ToDoItemsGroupByStatusView.Planned");
+        Planned = planned;
+        completed.Header = new("ToDoItemsGroupByStatusView.Completed");
+        Completed = completed;
+        
+        this.WhenAnyValue(x => x.IsMulti).Subscribe(x =>
         {
-            missed = value;
-            missed.Header = new("ToDoItemsGroupByStatusView.Missed");
-        }
+            Missed.IsMulti = x;
+            ReadyForCompleted.IsMulti = x;
+            Planned.IsMulti = x;
+            Completed.IsMulti = x;
+        });
     }
     
-    [Inject]
-    public required ToDoItemsViewModel ReadyForCompleted
-    {
-        get => readyForCompleted;
-        [MemberNotNull(nameof(readyForCompleted))]
-        init
-        {
-            readyForCompleted = value;
-            readyForCompleted.Header = new("ToDoItemsGroupByStatusView.ReadyForCompleted");
-        }
-    }
+    public ToDoItemsViewModel Missed { get; }
+    public ToDoItemsViewModel ReadyForCompleted { get; }
+    public ToDoItemsViewModel Planned { get; }
+    public ToDoItemsViewModel Completed { get; }
     
-    [Inject]
-    public required ToDoItemsViewModel Planned
-    {
-        get => planned;
-        [MemberNotNull(nameof(planned))]
-        init
-        {
-            planned = value;
-            planned.Header = new("ToDoItemsGroupByStatusView.Planned");
-        }
-    }
-    
-    [Inject]
-    public required ToDoItemsViewModel Completed
-    {
-        get => completed;
-        [MemberNotNull(nameof(completed))]
-        init
-        {
-            completed = value;
-            completed.Header = new("ToDoItemsGroupByStatusView.Completed");
-        }
-    }
+    [Reactive]
+    public bool IsMulti { get; set; }
     
     public Result ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {

@@ -2,110 +2,59 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ToDoItemsGroupByTypeViewModel : ViewModelBase
 {
-    private readonly ToDoItemsViewModel circles;
-    private readonly ToDoItemsViewModel groups;
-    private readonly ToDoItemsViewModel periodicityOffsets;
-    private readonly ToDoItemsViewModel periodicitys;
-    private readonly ToDoItemsViewModel planneds;
-    private readonly ToDoItemsViewModel steps;
-    private readonly ToDoItemsViewModel values;
-    private readonly ToDoItemsViewModel references;
-    
-    [Inject]
-    public required ToDoItemsViewModel Values
+    public ToDoItemsGroupByTypeViewModel(
+        ToDoItemsViewModel circles,
+        ToDoItemsViewModel groups,
+        ToDoItemsViewModel periodicityOffsets,
+        ToDoItemsViewModel periodicitys,
+        ToDoItemsViewModel planneds,
+        ToDoItemsViewModel steps,
+        ToDoItemsViewModel values,
+        ToDoItemsViewModel references
+    )
     {
-        get => values;
-        [MemberNotNull(nameof(values))]
-        init
-        {
-            values = value;
-            values.Header = new("ToDoItemsGroupByTypeView.Values");
-        }
+        circles.Header = new("ToDoItemsGroupByTypeView.Circles");
+        Circles = circles;
+        groups.Header = new("ToDoItemsGroupByTypeView.Groups");
+        Groups = groups;
+        periodicityOffsets.Header = new("ToDoItemsGroupByTypeView.PeriodicityOffsets");
+        PeriodicityOffsets = periodicityOffsets;
+        periodicitys.Header = new("ToDoItemsGroupByTypeView.Periodicitys");
+        Periodicitys = periodicitys;
+        planneds.Header = new("ToDoItemsGroupByTypeView.Planneds");
+        Planneds = planneds;
+        steps.Header = new("ToDoItemsGroupByTypeView.Steps");
+        Steps = steps;
+        values.Header = new("ToDoItemsGroupByTypeView.Values");
+        Values = values;
+        references.Header = new("ToDoItemsGroupByTypeView.Reference");
+        References = references;
+        
+        this.WhenAnyValue(x => x.IsMulti)
+           .Subscribe(x =>
+            {
+                Values.IsMulti = x;
+                Groups.IsMulti = x;
+                Planneds.IsMulti = x;
+                Periodicitys.IsMulti = x;
+                PeriodicityOffsets.IsMulti = x;
+                Circles.IsMulti = x;
+                Steps.IsMulti = x;
+                References.IsMulti = x;
+            });
     }
     
-    [Inject]
-    public required ToDoItemsViewModel Groups
-    {
-        get => groups;
-        [MemberNotNull(nameof(groups))]
-        init
-        {
-            groups = value;
-            groups.Header = new("ToDoItemsGroupByTypeView.Groups");
-        }
-    }
+    public ToDoItemsViewModel Values { get; }
+    public ToDoItemsViewModel Groups { get; }
+    public ToDoItemsViewModel Planneds { get; }
+    public ToDoItemsViewModel Periodicitys { get; }
+    public ToDoItemsViewModel PeriodicityOffsets { get; }
+    public ToDoItemsViewModel Circles { get; }
+    public ToDoItemsViewModel Steps { get; }
+    public ToDoItemsViewModel References { get; }
     
-    [Inject]
-    public required ToDoItemsViewModel Planneds
-    {
-        get => planneds;
-        [MemberNotNull(nameof(planneds))]
-        init
-        {
-            planneds = value;
-            planneds.Header = new("ToDoItemsGroupByTypeView.Planneds");
-        }
-    }
-    
-    [Inject]
-    public required ToDoItemsViewModel Periodicitys
-    {
-        get => periodicitys;
-        [MemberNotNull(nameof(periodicitys))]
-        init
-        {
-            periodicitys = value;
-            periodicitys.Header = new("ToDoItemsGroupByTypeView.Periodicitys");
-        }
-    }
-    
-    [Inject]
-    public required ToDoItemsViewModel PeriodicityOffsets
-    {
-        get => periodicityOffsets;
-        [MemberNotNull(nameof(periodicityOffsets))]
-        init
-        {
-            periodicityOffsets = value;
-            periodicityOffsets.Header = new("ToDoItemsGroupByTypeView.PeriodicityOffsets");
-        }
-    }
-    
-    [Inject]
-    public required ToDoItemsViewModel Circles
-    {
-        get => circles;
-        [MemberNotNull(nameof(circles))]
-        init
-        {
-            circles = value;
-            circles.Header = new("ToDoItemsGroupByTypeView.Circles");
-        }
-    }
-    
-    [Inject]
-    public required ToDoItemsViewModel Steps
-    {
-        get => steps;
-        [MemberNotNull(nameof(steps))]
-        init
-        {
-            steps = value;
-            steps.Header = new("ToDoItemsGroupByTypeView.Steps");
-        }
-    }
-    
-    [Inject]
-    public required ToDoItemsViewModel References
-    {
-        get => references;
-        [MemberNotNull(nameof(references))]
-        init
-        {
-            references = value;
-            references.Header = new("ToDoItemsGroupByTypeView.Reference");
-        }
-    }
+    [Reactive]
+    public bool IsMulti { get; set; }
     
     public Result ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {

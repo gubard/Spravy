@@ -26,7 +26,6 @@
     <c:CompleteStatusToBrushConverter x:Key="CompleteStatusToBrushConverter" />
     <c:NullOrWhiteSpaceToBooleanValueConverter x:Key="NullOrWhiteSpaceToBooleanValueConverter" />
     <c:NullOrWhiteSpaceToBooleanValueConverter x:Key="NullOrWhiteSpaceToBooleanValueConverterReverse" Reverse="True" />
-    <c:BooleanToCompletedStringConverter x:Key="BooleanToCompletedStringConverter" />
     <c:ToDoItemCanCompleteToBooleanConverter x:Key="ToDoItemCanCompleteToBooleanConverter" />
     <c:ToDoItemCanIncompleteToBooleanConverter x:Key="ToDoItemCanIncompleteToBooleanConverter" />
     <c:ToDoItemCanNoneToBooleanReverseConverter x:Key="ToDoItemCanNoneToBooleanReverseConverter" />

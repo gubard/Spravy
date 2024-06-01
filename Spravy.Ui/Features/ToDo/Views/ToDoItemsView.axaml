@@ -1,49 +1,37 @@
-<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:ToDoItemsViewModel" xmlns="https://github.com/avaloniaui"
-                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                                xmlns:reactiveUi="http://reactiveui.net"
-                                xmlns:viewModels="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
-                                xmlns:models="clr-namespace:Spravy.Ui.Models"
-                                xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-                                xmlns:views="clr-namespace:Spravy.Ui.Features.ToDo.Views"
-                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                                x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemsView"
-                                x:DataType="viewModels:ToDoItemsViewModel">
+<ru:ReactiveUserControl x:TypeArguments="vm:ToDoItemsViewModel" xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:ru="http://reactiveui.net"
+                        xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+                        xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
+                        xmlns:i="clr-namespace:Material.Icons;assembly=Material.Icons"
+                        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                        x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemsView"
+                        x:DataType="vm:ToDoItemsViewModel">
     <Expander Margin="3"
               IsExpanded="{Binding IsExpanded}">
-        <Expander.DataTemplates>
-            <DataTemplate x:DataType="models:CommandItem">
-                <Button Classes="Basic"
-                        Margin="3,0,3,0"
-                        Padding="0"
-                        Command="{Binding Command}"
-                        CommandParameter="{Binding Parameter}">
-                    <avalonia:MaterialIcon Kind="{Binding Icon}" />
-                </Button>
-            </DataTemplate>
-        </Expander.DataTemplates>
-
         <Expander.Header>
             <DockPanel>
                 <Grid ColumnDefinitions="Auto,Auto" DockPanel.Dock="Left">
                     <ContentControl Content="{Binding Header}" Margin="0,0,5,0" />
 
-                    <ItemsControl Grid.Column="1" ItemsSource="{Binding Commands}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Horizontal" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                    </ItemsControl>
+                    <Button Grid.Column="1"
+                            Classes="Basic"
+                            IsVisible="{Binding IsMulti}"
+                            Command="{Binding SwitchAllSelectionCommand.Command}"
+                            Content="{x:Static i:MaterialIconKind.CheckAll}" />
                 </Grid>
 
-                <TextBlock DockPanel.Dock="Right" Text="{Binding Items.Count}" Foreground="{DynamicResource SukiText}" />
+                <TextBlock DockPanel.Dock="Right"
+                           Classes="alignment-center"
+                           Text="{Binding Items.Count}"
+                           Foreground="{DynamicResource SukiText}" />
                 <Control />
             </DockPanel>
         </Expander.Header>
 
-        <ItemsControl Name="{x:Static views:ToDoItemsView.ItemsItemsControlName}" ItemsSource="{Binding Items}">
+        <ItemsControl Name="{x:Static v:ToDoItemsView.ItemsItemsControlName}" ItemsSource="{Binding Items}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <VirtualizingStackPanel Orientation="Vertical" />
@@ -51,4 +39,4 @@
             </ItemsControl.ItemsPanel>
         </ItemsControl>
     </Expander>
-</reactiveUi:ReactiveUserControl>
+</ru:ReactiveUserControl>

@@ -2,21 +2,32 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ToDoItemsGroupByViewModel : ViewModelBase
 {
-    public ToDoItemsGroupByViewModel()
+    public ToDoItemsGroupByViewModel(
+        ToDoItemsGroupByNoneViewModel groupByNone,
+        ToDoItemsGroupByStatusViewModel groupByStatus,
+        ToDoItemsGroupByTypeViewModel groupByType
+    )
     {
+        GroupByNone = groupByNone;
+        GroupByStatus = groupByStatus;
+        GroupByType = groupByType;
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
+        
+        this.WhenAnyValue(x => x.IsMulti).Subscribe(x =>
+        {
+            GroupByNone.IsMulti = x;
+            GroupByStatus.IsMulti = x;
+            GroupByType.IsMulti = x;
+        });
     }
     
     public ICommand InitializedCommand { get; }
+    public ToDoItemsGroupByNoneViewModel GroupByNone { get; }
+    public ToDoItemsGroupByStatusViewModel GroupByStatus { get; }
+    public ToDoItemsGroupByTypeViewModel GroupByType { get; }
     
-    [Inject]
-    public required ToDoItemsGroupByNoneViewModel GroupByNone { get; init; }
-    
-    [Inject]
-    public required ToDoItemsGroupByStatusViewModel GroupByStatus { get; init; }
-    
-    [Inject]
-    public required ToDoItemsGroupByTypeViewModel GroupByType { get; init; }
+    [Reactive]
+    public bool IsMulti { get; set; }
     
     [Reactive]
     public GroupBy GroupBy { get; set; } = GroupBy.ByStatus;

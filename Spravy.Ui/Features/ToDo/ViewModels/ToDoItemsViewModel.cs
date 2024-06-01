@@ -2,8 +2,36 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ToDoItemsViewModel : ViewModelBase
 {
-    public AvaloniaList<CommandItem> Commands { get; } = new();
-    public AvaloniaList<ToDoItemEntityNotify> Items { get; } = new();
+    public ToDoItemsViewModel(IErrorHandler errorHandler)
+    {
+        Items = new();
+        
+        SwitchAllSelectionCommand = SpravyCommand.Create(_ => this.InvokeUiBackgroundAsync(() =>
+        {
+            if (Items.All(x => x.IsSelected))
+            {
+                foreach (var item in Items)
+                {
+                    item.IsSelected = false;
+                }
+            }
+            else
+            {
+                foreach (var item in Items)
+                {
+                    item.IsSelected = true;
+                }
+            }
+            
+            return Result.Success;
+        }), errorHandler);
+    }
+    
+    public SpravyCommand SwitchAllSelectionCommand { get; }
+    public AvaloniaList<ToDoItemEntityNotify> Items { get; }
+    
+    [Reactive]
+    public bool IsMulti { get; set; }
     
     [Reactive]
     public TextLocalization? Header { get; set; }

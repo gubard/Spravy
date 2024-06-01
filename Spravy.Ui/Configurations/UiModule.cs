@@ -88,7 +88,7 @@ public class UiModule : NinjectModule
         Bind<IClipboardService>()
            .ToMethod(_ =>
             {
-                var topLevel = Application.Current.ThrowIfNull("Application").GetTopLevel();
+                var topLevel = Application.Current.ThrowIfNull(nameof(Application)).GetTopLevel();
 
                 if (topLevel is null)
                 {
