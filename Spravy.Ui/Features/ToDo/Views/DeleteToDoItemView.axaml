@@ -28,7 +28,7 @@
                                Text="{Binding Item, Converter={StaticResource ObjectToLocalizationConverter}, ConverterParameter=DeleteToDoItemView.NamedHeader}" />
                     <TextBlock  Classes="h4 text-wrap"
                                 IsVisible="{Binding DeleteItems.Count, Converter={StaticResource Int32ToIsVisibleConverter}}"
-                                Text="{Binding Item, Converter={StaticResource ObjectToLocalizationConverter}, ConverterParameter=DeleteToDoItemView.Header}" />
+                                Text="{DynamicResource DeleteToDoItemView.Header}" />
                 </Panel>
             </c:GroupBox.Header>
 
