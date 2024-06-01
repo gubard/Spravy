@@ -4,6 +4,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceP
 {
     private readonly TaskWork refreshWork;
     private readonly ToDoSubItemsViewModel toDoSubItemsViewModel;
+    private Guid id;
     
     public ToDoItemViewModel() : base(true)
     {
@@ -11,7 +12,16 @@ public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceP
         CommandItems = new();
     }
     
-    public Guid Id { get; set; }
+    public Guid Id
+    {
+        get => id;
+        set
+        {
+            id = value;
+            FastAddToDoItemViewModel.ParentId = id;
+        }
+    }
+    
     public AvaloniaList<SpravyCommandNotify> CommandItems { get; }
     
     [Inject]
@@ -66,8 +76,6 @@ public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceP
     
     private ConfiguredValueTaskAwaitable<Result> RefreshCoreAsync(CancellationToken cancellationToken)
     {
-        FastAddToDoItemViewModel.ParentId = Id;
-        
         return Result.AwaitableSuccess.IfSuccessAllAsync(cancellationToken,
             () => RefreshToDoItemChildrenAsync(cancellationToken), () => RefreshToDoItemCore(cancellationToken),
             () => RefreshPathAsync(cancellationToken));

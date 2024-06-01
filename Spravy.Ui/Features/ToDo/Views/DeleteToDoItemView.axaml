@@ -8,22 +8,28 @@
                         xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
                         xmlns:mi="clr-namespace:Material.Icons;assembly=Material.Icons"
                         xmlns:m="clr-namespace:Spravy.Ui.Models"
-                        xmlns:s="clr-namespace:Spravy.Ui.Services"
                         xmlns:tm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
-                        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                        xmlns:mia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                         x:Class="Spravy.Ui.Features.ToDo.Views.DeleteToDoItemView"
                         x:DataType="vm:DeleteToDoItemViewModel">
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
-            <InvokeCommandAction Command="{Binding InitializedCommand}" />
+            <InvokeCommandAction Command="{Binding InitializedCommand.Command}" />
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 
     <ScrollViewer Classes="mini" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <c:GroupBox>
             <c:GroupBox.Header>
-                <TextBlock Classes="h4 text-wrap" Text="{Binding Converter={StaticResource ObjectToLocalizationConverter}, ConverterParameter=DeleteToDoItemView.Header}" />
+                <Panel>
+                    <TextBlock Classes="h4 text-wrap"
+                               IsVisible="{Binding DeleteItems.Count, Converter={StaticResource Int32PositiveToBooleanConverterReverse}}"
+                               Text="{Binding Item, Converter={StaticResource ObjectToLocalizationConverter}, ConverterParameter=DeleteToDoItemView.NamedHeader}" />
+                    <TextBlock  Classes="h4 text-wrap"
+                                IsVisible="{Binding DeleteItems.Count, Converter={StaticResource Int32ToIsVisibleConverter}}"
+                                Text="{Binding Item, Converter={StaticResource ObjectToLocalizationConverter}, ConverterParameter=DeleteToDoItemView.Header}" />
+                </Panel>
             </c:GroupBox.Header>
 
             <c:GroupBox.DataTemplates>
@@ -42,7 +48,7 @@
                             </DataTemplate>
 
                             <DataTemplate DataType="m:RootItem">
-                                <avalonia:MaterialIcon Kind="Home" Margin="5" />
+                                <mia:MaterialIcon Kind="Home" Margin="5" />
                             </DataTemplate>
                         </c:Stepper.DataTemplates>
                     </c:Stepper>

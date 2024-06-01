@@ -22,6 +22,7 @@
     <c:NullToBooleanConverter x:Key="NullToBooleanConverter" />
     <c:UInt32ZeroToBooleanConverter x:Key="UInt32ToIsVisibleConverter" />
     <c:Int32PositiveToBooleanConverter x:Key="Int32ToIsVisibleConverter" />
+    <c:Int32PositiveToBooleanConverter x:Key="Int32PositiveToBooleanConverterReverse" IsReverse="True" />
     <c:CompleteStatusToBrushConverter x:Key="CompleteStatusToBrushConverter" />
     <c:NullOrWhiteSpaceToBooleanValueConverter x:Key="NullOrWhiteSpaceToBooleanValueConverter" />
     <c:NullOrWhiteSpaceToBooleanValueConverter x:Key="NullOrWhiteSpaceToBooleanValueConverterReverse" Reverse="True" />

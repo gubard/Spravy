@@ -159,7 +159,7 @@ public class RootToDoItemsCommands
                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                         cancellationToken), _ => dialogViewer.CloseContentDialogAsync(cancellationToken), vm =>
                 {
-                    vm.DeletedIds = selected.ToArray().Select(x => x.Id).ToArray();
+                    vm.DeleteItems.Update(selected);
                 }, cancellationToken);
         }, errorHandler));
         

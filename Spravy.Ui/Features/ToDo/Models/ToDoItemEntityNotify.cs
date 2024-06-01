@@ -346,7 +346,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                         cancellationToken), _ => dialogViewer.CloseContentDialogAsync(cancellationToken), vm =>
                 {
                     vm.Item = this;
-                    vm.DeletedIds = selected.ToArray().Select(x => x.Id).ToArray();
+                    vm.DeleteItems.Update(selected);
                 }, cancellationToken);
         }, errorHandler));
         
