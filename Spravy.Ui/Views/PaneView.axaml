@@ -30,7 +30,7 @@
             </Button>
 
             <Button Command="{x:Static s:CommandStorage.NavigateToCommand}"
-                    CommandParameter="{x:Type vm:TodayToDoItemsViewModel}">
+                    CommandParameter="{x:Type viewModels:TodayToDoItemsViewModel}">
                 <Grid ColumnDefinitions="Auto,Auto">
                     <mi:MaterialIcon Kind="CalendarToday" />
                     <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.TodayToDoItems}" />

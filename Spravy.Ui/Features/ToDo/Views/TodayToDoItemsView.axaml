@@ -4,9 +4,9 @@
                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:ru="http://reactiveui.net"
-                        xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
+                        xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                        x:Class="Spravy.Ui.Views.TodayToDoItemsView"
+                        x:Class="Spravy.Ui.Features.ToDo.Views.TodayToDoItemsView"
                         x:DataType="vm:TodayToDoItemsViewModel">
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">

@@ -3,7 +3,8 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 public class RootToDoItemsViewModel : NavigatableViewModelBase,
     IToDoItemOrderChanger,
     ITaskProgressServiceProperty,
-    IToDoItemUpdater
+    IToDoItemUpdater,
+    IToDoSubItemsViewModelProperty
 {
     private readonly PageHeaderViewModel pageHeaderViewModel;
     private readonly TaskWork refreshWork;
@@ -66,23 +67,7 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase,
                     
                     if (x)
                     {
-                        pageHeaderViewModel.Commands.AddRange([
-                            Commands.MultiAddChildItem,
-                            Commands.MultiShowSettingItem,
-                            Commands.MultiDeleteItem,
-                            Commands.MultiOpenLeafItem,
-                            Commands.MultiChangeParentItem,
-                            Commands.MultiMakeAsRootItem,
-                            Commands.MultiCopyToClipboardItem,
-                            Commands.MultiRandomizeChildrenOrderItem,
-                            Commands.MultiChangeOrderItem,
-                            Commands.MultiResetItem,
-                            Commands.MultiCloneItem,
-                            Commands.MultiOpenLinkItem,
-                            Commands.MultiAddToFavoriteItem,
-                            Commands.MultiRemoveFromFavoriteItem,
-                            Commands.MultiCompleteItem,
-                        ]);
+                        pageHeaderViewModel.Commands.AddRange(Commands.Commands.ToArray());
                     }
                 });
         }

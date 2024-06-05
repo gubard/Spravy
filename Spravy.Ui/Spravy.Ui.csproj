@@ -148,6 +148,10 @@
           <DependentUpon>LeafToDoItemsView.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="Features\ToDo\Views\TodayToDoItemsView.axaml.cs">
+          <DependentUpon>TodayToDoItemsView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
     </ItemGroup>
 
     <ItemGroup>

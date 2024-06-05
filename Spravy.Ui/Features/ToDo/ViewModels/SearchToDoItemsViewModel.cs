@@ -1,16 +1,76 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class SearchToDoItemsViewModel : NavigatableViewModelBase, IToDoItemSearchProperties, IToDoItemUpdater
+public class SearchToDoItemsViewModel : NavigatableViewModelBase,
+    IToDoItemSearchProperties,
+    IToDoItemUpdater,
+    IToDoSubItemsViewModelProperty
 {
     private readonly TaskWork refreshWork;
     
-    public SearchToDoItemsViewModel() : base(true)
+    public SearchToDoItemsViewModel(
+        ToDoSubItemsViewModel toDoSubItemsViewModel,
+        IToDoService toDoService,
+        INavigator navigator,
+        IUiApplicationService uiApplicationService,
+        IDialogViewer dialogViewer,
+        IConverter converter,
+        IClipboardService clipboardService,
+        IOpenerLink openerLink,
+        IErrorHandler errorHandler
+    ) : base(true)
     {
+        ToDoSubItemsViewModel = toDoSubItemsViewModel;
+        Commands = new();
+        
+        ToDoSubItemsViewModel.List
+           .WhenAnyValue(x => x.IsMulti)
+           .Subscribe(x =>
+            {
+                Commands.Clear();
+                
+                if (x)
+                {
+                    Commands.AddRange([
+                        SpravyCommandNotify.CreateMultiCloneItem(uiApplicationService, toDoService, dialogViewer,
+                            errorHandler),
+                        SpravyCommandNotify.CreateMultiCompleteItem(uiApplicationService, toDoService, errorHandler),
+                        SpravyCommandNotify.CreateMultiDeleteItem(uiApplicationService, toDoService, dialogViewer,
+                            errorHandler),
+                        SpravyCommandNotify.CreateMultiResetItem(uiApplicationService, toDoService, dialogViewer,
+                            errorHandler),
+                        SpravyCommandNotify.CreateMultiAddChildItem(uiApplicationService, toDoService, dialogViewer,
+                            converter, errorHandler),
+                        SpravyCommandNotify.CreateMultiCloneItem(uiApplicationService, toDoService, dialogViewer,
+                            errorHandler),
+                        SpravyCommandNotify.CreateMultiChangeOrderItem(uiApplicationService, toDoService, dialogViewer,
+                            errorHandler),
+                        SpravyCommandNotify.CreateMultiChangeParentItem(uiApplicationService, toDoService, dialogViewer,
+                            errorHandler),
+                        SpravyCommandNotify.CreateMultiOpenLeafItem(uiApplicationService, navigator, errorHandler),
+                        SpravyCommandNotify.CreateMultiOpenLinkItem(uiApplicationService, openerLink, errorHandler),
+                        SpravyCommandNotify.CreateMultiShowSettingItem(uiApplicationService, toDoService, dialogViewer,
+                            errorHandler),
+                        SpravyCommandNotify.CreateMultiAddToFavoriteItem(uiApplicationService, toDoService,
+                            errorHandler),
+                        SpravyCommandNotify.CreateMultiCopyToClipboardItem(uiApplicationService, toDoService,
+                            dialogViewer,
+                            clipboardService, errorHandler),
+                        SpravyCommandNotify.CreateMultiRemoveFromFavoriteItem(uiApplicationService, toDoService,
+                            errorHandler),
+                        SpravyCommandNotify.CreateMultiRandomizeChildrenOrderItem(uiApplicationService, toDoService,
+                            dialogViewer, errorHandler),
+                        SpravyCommandNotify.CreateMultiMakeAsRootItem(uiApplicationService, toDoService, errorHandler),
+                    ]);
+                }
+            });
+        
         refreshWork = TaskWork.Create(RefreshCoreAsync);
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
     }
     
     public ICommand InitializedCommand { get; }
+    public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
+    public AvaloniaList<SpravyCommandNotify> Commands { get; }
     
     public override string ViewId
     {
@@ -28,9 +88,6 @@ public class SearchToDoItemsViewModel : NavigatableViewModelBase, IToDoItemSearc
     
     [Reactive]
     public string SearchText { get; set; } = string.Empty;
-    
-    [Inject]
-    public required ToDoSubItemsViewModel ToDoSubItemsViewModel { get; init; }
     
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
     {
