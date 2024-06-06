@@ -22,15 +22,13 @@
     </UserControl.KeyBindings>
 
     <c:GlassCard Name="{x:Static v:CreateUserView.CreateUserCardName}"
-                 HorizontalAlignment="Center"
-                 VerticalAlignment="Center"
+                 Classes="alignment-center"
                  Width="400">
         <c:BusyArea IsBusy="{Binding IsBusy}"
                     BusyText="{DynamicResource CreateUserView.Busy}">
             <StackPanel>
                 <TextBlock Text="{DynamicResource CreateUserView.CreateAccountHeader}"
-                           Classes="h2"
-                           HorizontalAlignment="Center" />
+                           Classes="h2 horizontal-alignment-center" />
                 <TextBlock Classes="field"
                            Text="{DynamicResource CreateUserView.Email}" />
                 <TextBox Name="{x:Static v:CreateUserView.EmailTextBoxName}"
