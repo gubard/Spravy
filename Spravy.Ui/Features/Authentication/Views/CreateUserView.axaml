@@ -11,14 +11,8 @@
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                         x:Class="Spravy.Ui.Features.Authentication.Views.CreateUserView"
                         x:DataType="vm:CreateUserViewModel">
-    <Interaction.Behaviors>
-        <EventTriggerBehavior EventName="Initialized">
-            <InvokeCommandAction Command="{Binding InitializedCommand}" />
-        </EventTriggerBehavior>
-    </Interaction.Behaviors>
-
     <UserControl.KeyBindings>
-        <KeyBinding Gesture="Enter" Command="{Binding EnterCommand}" CommandParameter="{Binding $self}" />
+        <KeyBinding Gesture="Enter" Command="{Binding Commands.EnterCommand.Command}" CommandParameter="{Binding $self}" />
     </UserControl.KeyBindings>
 
     <c:GlassCard Name="{x:Static v:CreateUserView.CreateUserCardName}"
@@ -57,7 +51,7 @@
 
                     <Button Name="{x:Static v:CreateUserView.CreateUserButtonName}"
                             Grid.Column="1"
-                            Command="{Binding CreateUserCommand}"
+                            Command="{Binding Commands.CreateUserCommand.Command}"
                             Content="{DynamicResource CreateUserView.CreateAccount}"
                             Classes="Flat" />
                 </Grid>

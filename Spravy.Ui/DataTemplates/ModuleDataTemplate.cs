@@ -2,9 +2,13 @@ namespace Spravy.Ui.DataTemplates;
 
 public class ModuleDataTemplate : IDataTemplate
 {
-    [Inject]
-    public required IKernel Resolver { get; init; }
-
+    private readonly IKernel resolver;
+    
+    public ModuleDataTemplate(IKernel resolver)
+    {
+        this.resolver = resolver;
+    }
+    
     public Control Build(object? param)
     {
         var type = param.ThrowIfNull().GetType();
@@ -16,7 +20,7 @@ public class ModuleDataTemplate : IDataTemplate
 
         var viewName = $"{ns}.{type.Name.Substring(0, type.Name.Length - 5)}";
         var viewType = type.Assembly.GetType(viewName).ThrowIfNull(viewName);
-        var view = (Control)Resolver.Get(viewType);
+        var view = (Control)resolver.Get(viewType);
 
         if (view is IViewFor viewFor)
         {
