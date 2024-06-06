@@ -10,6 +10,7 @@
              xmlns:lm="clr-namespace:Spravy.Ui.Features.Localizations.Models"
              xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
              xmlns:tm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
+             xmlns:ui="clr-namespace:Spravy.Ui"
              x:Class="Spravy.Ui.App"
              RequestedThemeVariant="Dark">
     <Application.Resources>
@@ -137,7 +138,8 @@
                     </Grid>
 
                     <StackPanel Grid.Column="1" Grid.Row="1">
-                        <TextBlock Margin="5,5,0,0"
+                        <TextBlock Name="{x:Static ui:App.NameTextBoxName}" 
+                                   Margin="5,5,0,0"
                                    Classes="h4 text-wrap vertical-alignment-center"
                                    Text="{Binding Name}" />
 

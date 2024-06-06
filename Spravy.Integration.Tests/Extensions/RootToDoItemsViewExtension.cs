@@ -124,18 +124,7 @@ public static class RootToDoItemsViewExtension
            .Child
            .ThrowIfNull()
            .ThrowIfIsNotCast<Button>()
-           .Content
-           .ThrowIfNull()
-           .ThrowIfIsNotCast<Grid>()
-           .Children
-           .ElementAt(1)
-           .ThrowIfIsNotCast<StackPanel>()
-           .Children
-           .First()
-           .ThrowIfIsNotCast<Grid>()
-           .Children
-           .ElementAt(1)
-           .ThrowIfIsNotCast<TextBlock>()
+           .GetControl<TextBlock>(ElementNames.NameTextBox)
            .Case(tb => tb.Text.Should().Be(name));
         
         return view;
