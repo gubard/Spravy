@@ -1,4 +1,4 @@
-namespace Spravy.Ui.ViewModels;
+namespace Spravy.Ui.Features.Authentication.ViewModels;
 
 public class ForgotPasswordViewModel : NavigatableViewModelBase, IVerificationEmail
 {

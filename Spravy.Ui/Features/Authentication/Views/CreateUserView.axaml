@@ -4,13 +4,12 @@
                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:ru="http://reactiveui.net"
-                        xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
-                        xmlns:v="clr-namespace:Spravy.Ui.Views"
                         xmlns:s="clr-namespace:Spravy.Ui.Services"
                         xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
-                        xmlns:viewModels="clr-namespace:Spravy.Ui.Features.Authentication.ViewModels"
+                        xmlns:vm="clr-namespace:Spravy.Ui.Features.Authentication.ViewModels"
+                        xmlns:v="clr-namespace:Spravy.Ui.Features.Authentication.Views"
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
-                        x:Class="Spravy.Ui.Views.CreateUserView"
+                        x:Class="Spravy.Ui.Features.Authentication.Views.CreateUserView"
                         x:DataType="vm:CreateUserViewModel">
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
@@ -55,7 +54,7 @@
                 <Grid ColumnDefinitions="*,*">
                     <Button Name="{x:Static v:CreateUserView.BackButtonName}"
                             Command="{x:Static s:CommandStorage.NavigateToCommand}"
-                            CommandParameter="{x:Type viewModels:LoginViewModel}"
+                            CommandParameter="{x:Type vm:LoginViewModel}"
                             Content="{DynamicResource CreateUserView.Back}" />
 
                     <Button Name="{x:Static v:CreateUserView.CreateUserButtonName}"

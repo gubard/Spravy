@@ -1,4 +1,6 @@
-namespace Spravy.Ui.ViewModels;
+using CreateUserView = Spravy.Ui.Features.Authentication.Views.CreateUserView;
+
+namespace Spravy.Ui.Features.Authentication.ViewModels;
 
 public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperties, INotifyDataErrorInfo
 {
