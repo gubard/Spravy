@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using _build.Interfaces;
 using Renci.SshNet;
 using Serilog;
@@ -12,14 +13,16 @@ public static class SshOptionsExtension
     static ConnectionInfo CreateSshConnection(string sshHost, string sshUser, string sshPassword)
     {
         Log.Logger.Information("Connecting SSH {FtpHost} {FtpUser}", sshHost, sshUser);
+        var methods = new List<AuthenticationMethod>();
         var values = sshHost.Split(":");
         var password = new PasswordAuthenticationMethod(sshUser, sshPassword);
+        methods.Add(password);
 
         if (values.Length == 2)
         {
-            return new(values[0], int.Parse(values[1]), sshUser, password);
+            return new(values[0], int.Parse(values[1]), sshUser, methods.ToArray());
         }
 
-        return new(values[0], sshUser, password);
+        return new(values[0], sshUser, methods.ToArray());
     }
 }

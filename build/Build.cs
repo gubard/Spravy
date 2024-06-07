@@ -345,15 +345,17 @@ class Build : NukeBuild
 
     ConnectionInfo CreateSshConnection(string sshHost, string sshUser, string sshPassword)
     {
+        var methods = new List<AuthenticationMethod>();
         var values = sshHost.Split(":");
         var password = new PasswordAuthenticationMethod(sshUser, sshPassword);
+        methods.Add(password);
 
         if (values.Length == 2)
         {
-            return new(values[0], int.Parse(values[1]), sshUser, password);
+            return new(values[0], int.Parse(values[1]), sshUser, methods.ToArray());
         }
 
-        return new(values[0], sshUser, password);
+        return new(values[0], sshUser, methods.ToArray());
     }
 
     FtpClient CreateFtpClient(string ftpHost, string ftpUser, string ftpPassword)
