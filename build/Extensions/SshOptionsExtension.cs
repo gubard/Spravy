@@ -7,8 +7,10 @@ namespace _build.Extensions;
 
 public static class SshOptionsExtension
 {
-    public static SshClient CreateSshClient(this ISshOptions options) =>
-        new(CreateSshConnection(options.SshHost, options.SshUser, options.SshPassword));
+    public static SshClient CreateSshClient(this ISshOptions options)
+    {
+        return new(CreateSshConnection(options.SshHost, options.SshUser, options.SshPassword));
+    }
 
     static ConnectionInfo CreateSshConnection(string sshHost, string sshUser, string sshPassword)
     {
