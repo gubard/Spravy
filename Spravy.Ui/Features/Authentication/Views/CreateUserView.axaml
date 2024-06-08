@@ -48,10 +48,10 @@
                             Command="{x:Static s:CommandStorage.NavigateToCommand}"
                             CommandParameter="{x:Type vm:LoginViewModel}"
                             Content="{DynamicResource CreateUserView.Back}" />
-
                     <Button Name="{x:Static v:CreateUserView.CreateUserButtonName}"
                             Grid.Column="1"
                             Command="{Binding Commands.CreateUserCommand.Command}"
+                            CommandParameter="{Binding}"
                             Content="{DynamicResource CreateUserView.CreateAccount}"
                             Classes="Flat" />
                 </Grid>
