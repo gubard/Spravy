@@ -138,8 +138,7 @@
                     </Grid>
 
                     <StackPanel Grid.Column="1" Grid.Row="1">
-                        <TextBlock Name="{x:Static ui:App.NameTextBoxName}" 
-                                   Margin="5,5,0,0"
+                        <TextBlock Margin="5,5,0,0"
                                    Classes="h4 text-wrap vertical-alignment-center"
                                    Text="{Binding Name}" />
 

@@ -2,30 +2,6 @@ namespace Spravy.Integration.Tests.Extensions;
 
 public static class WindowExtension
 {
-    public static Window AddToDoItem(this Window window, string name)
-    {
-        var view = window.GetCurrentView<RootToDoItemsView, RootToDoItemsViewModel>();
-        var toDoItemCount = view.GetDoItemItemsControl()?.ItemCount ?? 0;
-        
-        view.Case(() => view.GetControl<Button>(ElementNames.AddRootToDoItemButton).ClickOn(window).RunJobsAll(2))
-           .Case(() => window.GetContentDialogView<ConfirmView, ConfirmViewModel>()
-               .Case(c => c.GetControl<ContentControl>(ElementNames.ContentContentControl)
-                   .GetContentView<AddRootToDoItemView>()
-                   .GetControl<ContentControl>(ElementNames.ToDoItemContentContentControl)
-                   .GetContentView<ToDoItemContentView>()
-                   .GetControl<TextBox>(ElementNames.NameTextBox)
-                   .ClearText(window)
-                   .SetText(window, name))
-               .Case(c => c.GetControl<Button>(ElementNames.OkButton).ClickOn(window).RunJobsAll(5)))
-           .GetDoItemItemsControl()
-           .ThrowIfNull()
-           .Case(ic => ic.ItemCount.Should().Be(toDoItemCount + 1));
-        
-        view.RunJobsAll(1).CheckLastToDoItemName(name);
-        
-        return window;
-    }
-    
     public static TWindow CloseErrorDialogHost<TWindow>(this TWindow window) where TWindow : Window
     {
         var dialogHost = window.GetErrorDialogHost();

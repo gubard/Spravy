@@ -167,7 +167,7 @@ public class Tests
            .TryCatch(
                 w => w.SetSize(1000, 1000)
                    .ShowWindow()
-                   .RunJobsAll(5)
+                   .RunJobsAll(6)
                    .Case(() => w.GetCurrentView<RootToDoItemsView, RootToDoItemsViewModel>()
                        .AddToDoItem(w, "To-Do item 1")
                        .AddToDoItem(w, "To-Do item 2"))

@@ -86,7 +86,7 @@ public static class RootToDoItemsViewExtension
     {
         var toDoItemCount = view.GetDoItemItemsControl()?.ItemCount ?? 0;
         
-        view.Case(() => view.GetControl<Button>(ElementNames.AddRootToDoItemButton).ClickOn(window).RunJobsAll(2))
+        view.Case(() => view.GetControl<Button>(ElementNames.AddRootToDoItemButton).ClickOn(window).RunJobsAll(4))
            .Case(() => window.GetContentDialogView<ConfirmView, ConfirmViewModel>()
                .Case(c => c.GetControl<ContentControl>(ElementNames.ContentContentControl)
                    .GetContentView<AddRootToDoItemView>()
@@ -100,7 +100,7 @@ public static class RootToDoItemsViewExtension
            .ThrowIfNull()
            .Case(ic => ic.ItemCount.Should().Be(toDoItemCount + 1));
         
-        view.RunJobsAll(1).CheckLastToDoItemName(name);
+        view.RunJobsAll(4).CheckLastToDoItemName(name);
         
         return view;
     }
@@ -124,7 +124,15 @@ public static class RootToDoItemsViewExtension
            .Child
            .ThrowIfNull()
            .ThrowIfIsNotCast<Button>()
-           .GetControl<TextBlock>(ElementNames.NameTextBox)
+           .Content
+           .ThrowIfNull()
+           .ThrowIfIsNotCast<Grid>()
+           .Children
+           .ElementAt(2)
+           .ThrowIfIsNotCast<StackPanel>()
+           .Children
+           .First()
+           .ThrowIfIsNotCast<TextBlock>()
            .Case(tb => tb.Text.Should().Be(name));
         
         return view;

@@ -2,7 +2,6 @@ namespace Spravy.Ui;
 
 public class App : Application
 {
-    public const string NameTextBoxName = "name-text-box";
     [Inject]
     public IKernel? Resolver { get; init; } = DiHelper.Kernel;
 
