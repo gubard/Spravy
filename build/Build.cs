@@ -78,8 +78,15 @@ class Build : NukeBuild
     Target StagingBuildDocker => _ => _.DependsOn(StagingSetupAppSettings)
        .Executes(() =>
         {
-            var clean = Process.Start(new ProcessStartInfo("echo", $"{SshPassword} | sudo docker builder prune -f")).ThrowIfNull();
+            var clean = Process.Start(new ProcessStartInfo("echo", $"{SshPassword} | sudo docker builder prune -f"))
+               .ThrowIfNull();
+            
             clean.WaitForExit();
+            
+            if (clean.ExitCode != 0)
+            {
+                throw new($"Exit code {clean.ExitCode}");
+            }
             
             foreach (var serviceProjectBuilder in Projects.OfType<ServiceProjectBuilder>())
             {
