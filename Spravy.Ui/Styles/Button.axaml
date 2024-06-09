@@ -14,8 +14,8 @@
     </Style>
 
     <Style Selector="Button.glass-card">
-        <Setter Property="Padding" Value="10,10,10,0" />
-        <Setter Property="Margin" Value="0" />
+        <Setter Property="Padding" Value="5,5,5,0" />
+        <Setter Property="Margin" Value="2" />
         <Setter Property="Template">
             <ControlTemplate>
                 <controls:GlassCard Padding="{TemplateBinding Padding}"

@@ -10,7 +10,6 @@
              xmlns:lm="clr-namespace:Spravy.Ui.Features.Localizations.Models"
              xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
              xmlns:tm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
-             xmlns:ui="clr-namespace:Spravy.Ui"
              x:Class="Spravy.Ui.App"
              RequestedThemeVariant="Dark">
     <Application.Resources>
@@ -142,9 +141,9 @@
                                    Classes="h4 text-wrap vertical-alignment-center"
                                    Text="{Binding Name}" />
 
-                        <Button
-                            IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}"
-                            Command="{Binding Active.NavigateToCurrentItem.Command}">
+                        <Button Margin="0,0,0,5"
+                                IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}"
+                                Command="{Binding Active.NavigateToCurrentItem.Command}">
                             <TextBlock Text="{Binding Active.Name}" TextWrapping="Wrap" />
                         </Button>
                     </StackPanel>
