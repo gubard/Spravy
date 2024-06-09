@@ -14,7 +14,8 @@
     </Style>
 
     <Style Selector="Button.glass-card">
-        <Setter Property="Padding" Value="10" />
+        <Setter Property="Padding" Value="10,10,10,0" />
+        <Setter Property="Margin" Value="0" />
         <Setter Property="Template">
             <ControlTemplate>
                 <controls:GlassCard Padding="{TemplateBinding Padding}"
@@ -22,7 +23,7 @@
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="{TemplateBinding BorderThickness}"
                                     CornerRadius="{TemplateBinding CornerRadius}"
-                                    Margin="0"
+                                    Margin="{TemplateBinding Margin}"
                                     TextElement.Foreground="{TemplateBinding Foreground}">
                     <ContentPresenter HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                       VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"

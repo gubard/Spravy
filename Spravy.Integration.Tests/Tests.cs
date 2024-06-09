@@ -168,7 +168,9 @@ public class Tests
                 w => w.SetSize(1000, 1000)
                    .ShowWindow()
                    .RunJobsAll(5)
-                   .Case(() => w.AddToDoItem("To-Do item 1").AddToDoItem("To-Do item 2"))
+                   .Case(() => w.GetCurrentView<RootToDoItemsView, RootToDoItemsViewModel>()
+                       .AddToDoItem(w, "To-Do item 1")
+                       .AddToDoItem(w, "To-Do item 2"))
                    .Close(), (w, _) => w.SaveFrame().LogCurrentState());
     }
     
