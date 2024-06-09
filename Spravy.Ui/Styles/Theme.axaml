@@ -4,8 +4,9 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <MergeResourceInclude Source="NullableDatePicker.axaml" />
-                <MergeResourceInclude Source="IntegerSelectorControl.axaml" />
+                <MergeResourceInclude Source="IntegerSelectorItemControl.axaml" />
                 <MergeResourceInclude Source="IntegersSelectorControl.axaml" />
+                <MergeResourceInclude Source="EnumSelectorControl.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Styles.Resources>

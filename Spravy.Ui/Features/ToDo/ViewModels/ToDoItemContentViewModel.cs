@@ -6,8 +6,6 @@ public class ToDoItemContentViewModel : NavigatableViewModelBase
     {
     }
 
-    public AvaloniaList<ToDoItemType> ToDoItemTypes { get; } = new(Enum.GetValues<ToDoItemType>());
-
     [Reactive]
     public string Name { get; set; } = string.Empty;
 

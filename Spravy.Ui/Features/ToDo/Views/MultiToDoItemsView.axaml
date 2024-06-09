@@ -5,10 +5,11 @@
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:ru="http://reactiveui.net"
                         xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
-                        xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
-                        xmlns:views="clr-namespace:Spravy.Ui.Features.ToDo.Views"
-                        xmlns:models="clr-namespace:Spravy.Ui.Features.ToDo.Models"
-                        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                        xmlns:sc="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+                        xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
+                        xmlns:m="clr-namespace:Spravy.Ui.Features.ToDo.Models"
+                        xmlns:a="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                        xmlns:c="clr-namespace:Spravy.Ui.Controls"
                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                         x:Class="Spravy.Ui.Features.ToDo.Views.MultiToDoItemsView"
                         x:DataType="vm:MultiToDoItemsViewModel">
@@ -23,30 +24,28 @@
               Margin="2">
             <ToggleButton Classes="alignment-center"
                           IsChecked="{Binding IsMulti}">
-                <avalonia:MaterialIcon Kind="CheckAll" />
+                <a:MaterialIcon Kind="CheckAll" />
             </ToggleButton>
 
             <StackPanel Grid.Column="1">
                 <TextBlock Classes="field"
                            Text="{DynamicResource MultiToDoItemsView.GroupBy}" />
-                <ListBox Classes="wrap-panel"
-                         SelectedItem="{Binding GroupBy}"
-                         ItemsSource="{Binding GroupBys}" />
+                <c:EnumSelectorControl SelectedEnum="{Binding GroupBy}" />
             </StackPanel>
         </Grid>
 
         <ContentControl Content="{Binding Favorite}"
                         IsVisible="{Binding Favorite.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
-        <ContentControl Name="{x:Static views:MultiToDoItemsView.ContentContentControlName}"
+        <ContentControl Name="{x:Static v:MultiToDoItemsView.ContentContentControlName}"
                         IsVisible="{Binding IsMulti, Converter={StaticResource ReverseBooleanValueConverter}}"
                         Content="{Binding ToDoItems}" />
 
         <ContentControl IsVisible="{Binding IsMulti}"
                         Content="{Binding ToDoItems}">
             <ContentControl.DataTemplates>
-                <DataTemplate DataType="models:ToDoItemEntityNotify">
+                <DataTemplate DataType="m:ToDoItemEntityNotify">
                     <ToggleButton Classes="content-alignment-stretch" Padding="0" IsChecked="{Binding IsSelected}">
-                        <c:GlassCard Margin="0" CornerRadius="0" Padding="5">
+                        <sc:GlassCard Margin="0" CornerRadius="0" Padding="5">
                             <StackPanel>
                                 <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto">
                                     <Rectangle Width="15"
@@ -74,7 +73,7 @@
                                     <TextBlock Classes="h4" Text="{Binding Name}" />
                                 </ScrollViewer>
                             </StackPanel>
-                        </c:GlassCard>
+                        </sc:GlassCard>
                     </ToggleButton>
                 </DataTemplate>
             </ContentControl.DataTemplates>

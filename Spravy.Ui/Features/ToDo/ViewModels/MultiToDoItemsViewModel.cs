@@ -4,7 +4,6 @@ public class MultiToDoItemsViewModel : ViewModelBase
 {
     public MultiToDoItemsViewModel(ToDoItemsViewModel favorite, ToDoItemsGroupByViewModel toDoItems)
     {
-        GroupBys = new(Enum.GetValues<GroupBy>());
         GroupBy = GroupBy.ByStatus;
         favorite.Header = new("MultiToDoItemsView.Favorite");
         Favorite = favorite;
@@ -19,7 +18,6 @@ public class MultiToDoItemsViewModel : ViewModelBase
     }
     
     public ICommand InitializedCommand { get; }
-    public AvaloniaList<GroupBy> GroupBys { get; }
     public ToDoItemsViewModel Favorite { get; }
     public ToDoItemsGroupByViewModel ToDoItems { get; }
     

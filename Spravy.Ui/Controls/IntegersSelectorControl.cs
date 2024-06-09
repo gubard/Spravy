@@ -13,7 +13,7 @@ public class IntegersSelectorControl : TemplatedControl
     public static readonly StyledProperty<int> MaxProperty =
         AvaloniaProperty.Register<IntegersSelectorControl, int>(nameof(Max));
     
-    private readonly List<IntegerSelectorControl> integerControls = new();
+    private readonly List<IntegerSelectorItemControl> integerControls = new();
     private ItemsControl? itemsControl;
     private AvaloniaList<int>? selectedIntegers;
     private readonly List<IDisposable> disposables = new();
@@ -153,14 +153,14 @@ public class IntegersSelectorControl : TemplatedControl
         }
         
         integerControls.AddRange(Enumerable.Range(Min, Max)
-           .Select(x => new IntegerSelectorControl
+           .Select(x => new IntegerSelectorItemControl
             {
                 Value = x,
             }));
         
         foreach (var integerControl in integerControls)
         {
-            var source = integerControl.GetObservable(IntegerSelectorControl.IsSelectedProperty)
+            var source = integerControl.GetObservable(IntegerSelectorItemControl.IsSelectedProperty)
                .Skip(1)
                .Subscribe(x =>
                 {
