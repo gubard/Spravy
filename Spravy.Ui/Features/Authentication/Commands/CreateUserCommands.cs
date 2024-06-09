@@ -13,7 +13,7 @@ public class CreateUserCommands
         IErrorHandler errorHandler
     )
     {
-        converter = converter;
+        this.converter = converter;
         this.authenticationService = authenticationService;
         this.navigator = navigator;
         EnterCommand = SpravyCommand.Create<CreateUserView>(EnterAsync, errorHandler);
