@@ -7,7 +7,7 @@ public class CreateUserCommands
     private readonly INavigator navigator;
     
     public CreateUserCommands(
-        IConverter mapper,
+        IConverter converter,
         IAuthenticationService authenticationService,
         INavigator navigator,
         IErrorHandler errorHandler
