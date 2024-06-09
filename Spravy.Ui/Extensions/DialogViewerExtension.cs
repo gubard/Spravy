@@ -62,18 +62,6 @@ public static class DialogViewerExtension
             _ => dialogViewer.CloseInputDialogAsync(cancellationToken), setup, cancellationToken);
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> ShowDayOfMonthSelectorInputDialogAsync(
-        this IDialogViewer dialogViewer,
-        Func<IEnumerable<byte>, ConfiguredValueTaskAwaitable<Result>> confirmTask,
-        Action<ToDoItemDayOfMonthSelectorViewModel> setup,
-        CancellationToken cancellationToken
-    )
-    {
-        return dialogViewer.ShowConfirmInputDialogAsync(
-            view => confirmTask.Invoke(view.Items.Where(x => x.IsSelected).Select(x => x.Day)),
-            _ => dialogViewer.CloseInputDialogAsync(cancellationToken), setup, cancellationToken);
-    }
-
     public static ConfiguredValueTaskAwaitable<Result> ShowDayOfYearSelectorInputDialogAsync(
         this IDialogViewer dialogViewer,
         Func<IEnumerable<DayOfYear>, ConfiguredValueTaskAwaitable<Result>> confirmTask,
