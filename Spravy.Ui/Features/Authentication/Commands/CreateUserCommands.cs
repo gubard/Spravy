@@ -2,18 +2,18 @@ namespace Spravy.Ui.Features.Authentication.Commands;
 
 public class CreateUserCommands
 {
-    private readonly IMapper mapper;
+    private readonly IConverter converter;
     private readonly IAuthenticationService authenticationService;
     private readonly INavigator navigator;
     
     public CreateUserCommands(
-        IMapper mapper,
+        IConverter mapper,
         IAuthenticationService authenticationService,
         INavigator navigator,
         IErrorHandler errorHandler
     )
     {
-        this.mapper = mapper;
+        converter = converter;
         this.authenticationService = authenticationService;
         this.navigator = navigator;
         EnterCommand = SpravyCommand.Create<CreateUserView>(EnterAsync, errorHandler);
@@ -98,22 +98,19 @@ public class CreateUserCommands
                 
                 return Result.Success;
             })
-           .IfSuccessTryFinallyAsync(() =>
-            {
-                var options = mapper.Map<CreateUserOptions>(viewModel);
-                
-                return authenticationService.CreateUserAsync(options, cancellationToken)
+           .IfSuccessTryFinallyAsync(() => converter.Convert<CreateUserOptions>(viewModel)
+               .IfSuccessAsync(options => authenticationService.CreateUserAsync(options, cancellationToken)
                    .IfSuccessAsync(() => navigator.NavigateToAsync<VerificationCodeViewModel>(vm =>
                     {
                         vm.Identifier = viewModel.Email;
                         vm.IdentifierType = UserIdentifierType.Email;
-                    }, cancellationToken), cancellationToken);
-            }, () => this.InvokeUiBackgroundAsync(() =>
-                {
-                    viewModel.IsBusy = false;
-                    
-                    return Result.Success;
-                })
+                    }, cancellationToken), cancellationToken), cancellationToken), () => this.InvokeUiBackgroundAsync(
+                    () =>
+                    {
+                        viewModel.IsBusy = false;
+                        
+                        return Result.Success;
+                    })
                .ToValueTask()
                .ConfigureAwait(false), cancellationToken);
     }
