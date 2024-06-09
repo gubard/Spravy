@@ -100,7 +100,7 @@ public class CreateUserCommands
             })
            .IfSuccessTryFinallyAsync(() =>
             {
-                var options = mapper.Map<CreateUserOptions>(this);
+                var options = mapper.Map<CreateUserOptions>(viewModel);
                 
                 return authenticationService.CreateUserAsync(options, cancellationToken)
                    .IfSuccessAsync(() => navigator.NavigateToAsync<VerificationCodeViewModel>(vm =>
