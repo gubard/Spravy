@@ -80,13 +80,13 @@ public class Navigator : INavigator
             }), cancellationToken);
     }
     
-    public ConfiguredValueTaskAwaitable<Result<INavigatable?>> NavigateBackAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<INavigatable>> NavigateBackAsync(CancellationToken cancellationToken)
     {
         var item = list.Pop();
         
         if (item is null)
         {
-            return Result<INavigatable?>.DefaultAwaitableFalse;
+            return new Result<INavigatable>(new NavigatorCacheEmptyError()).ToValueTaskResult().ConfigureAwait(false);
         }
         
         return DialogViewer.CloseLastDialogAsync(cancellationToken)
@@ -94,14 +94,14 @@ public class Navigator : INavigator
             {
                 if (value)
                 {
-                    return new EmptyNavigatable().CastObject<INavigatable?>().ToValueTaskResult().ConfigureAwait(false);
+                    return new EmptyNavigatable().CastObject<INavigatable>().ToValueTaskResult().ConfigureAwait(false);
                 }
                 
                 if (MainSplitViewModel.IsPaneOpen)
                 {
                     MainSplitViewModel.IsPaneOpen = false;
                     
-                    return new EmptyNavigatable().CastObject<INavigatable?>().ToValueTaskResult().ConfigureAwait(false);
+                    return new EmptyNavigatable().CastObject<INavigatable>().ToValueTaskResult().ConfigureAwait(false);
                 }
                 
                 return this.InvokeUiBackgroundAsync(() =>

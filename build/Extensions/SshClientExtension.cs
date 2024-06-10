@@ -22,6 +22,8 @@ public static class SshClientExtension
         }
     }
 
-    public static void RunSudo(this SshClient client, ISshOptions options, string command) =>
+    public static void RunSudo(this SshClient client, ISshOptions options, string command)
+    {
         client.RunCommand($"echo {options.SshPassword} | sudo -S {command}");
+    }
 }

@@ -7,21 +7,22 @@ public class ObjectToBooleanConverter<TObject> : IValueConverter
 
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        try
-        {
-            var item = (TObject)value;
-
-            if (Reverse)
-            {
-                return !Value?.Equals(item);
-            }
-
-            return Value?.Equals(item);
-        }
-        catch
+        if (value is null)
         {
             return false;
         }
+        
+        if (value is not TObject item)
+        {
+            return false;
+        }
+        
+        if (Reverse)
+        {
+            return !Value?.Equals(item);
+        }
+        
+        return Value?.Equals(item);
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

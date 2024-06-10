@@ -1162,7 +1162,7 @@ public class EfToDoService : IToDoService
                .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Reference && x.ReferenceId.HasValue)
                .OrderBy(x => x.OrderIndex)
                .ToArrayEntitiesAsync(cancellationToken)
-               .IfSuccessForEachAsync(reference => context.FindEntityAsync<ToDoItemEntity>(reference.ReferenceId.Value)
+               .IfSuccessForEachAsync(reference => context.FindEntityAsync<ToDoItemEntity>(reference.ReferenceId.ThrowIfNullStruct())
                    .IfSuccessAsync(i => i.Type switch
                     {
                         ToDoItemType.Value => Result.AwaitableSuccess,
@@ -1238,7 +1238,7 @@ public class EfToDoService : IToDoService
                .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Reference && x.ReferenceId.HasValue)
                .OrderBy(x => x.OrderIndex)
                .ToArrayEntitiesAsync(cancellationToken)
-               .IfSuccessForEachAsync(reference => context.FindEntityAsync<ToDoItemEntity>(reference.ReferenceId.Value)
+               .IfSuccessForEachAsync(reference => context.FindEntityAsync<ToDoItemEntity>(reference.ReferenceId.ThrowIfNullStruct())
                    .IfSuccessAsync(i => i.Type switch
                     {
                         ToDoItemType.Value => Result.AwaitableSuccess,

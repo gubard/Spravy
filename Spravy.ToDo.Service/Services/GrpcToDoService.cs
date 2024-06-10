@@ -418,8 +418,6 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
                 id => toDoService.UpdateToDoItemTypeOfPeriodicityAsync(id, (TypeOfPeriodicity)request.Type,
                     context.CancellationToken), context.CancellationToken)
            .HandleAsync<UpdateToDoItemTypeOfPeriodicityReply>(serializer);
-        
-        ;
     }
     
     public override Task<UpdateToDoItemDueDateReply> UpdateToDoItemDueDate(

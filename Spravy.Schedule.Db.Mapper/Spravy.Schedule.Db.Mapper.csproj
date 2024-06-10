@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     </PropertyGroup>
 
     <ItemGroup>
@@ -15,5 +15,4 @@
         <ProjectReference Include="..\Spravy.Schedule.Db\Spravy.Schedule.Db.csproj" />
         <ProjectReference Include="..\Spravy.Schedule.Domain\Spravy.Schedule.Domain.csproj" />
     </ItemGroup>
-
 </Project>

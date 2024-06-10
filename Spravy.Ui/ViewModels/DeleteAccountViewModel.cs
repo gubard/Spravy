@@ -5,6 +5,7 @@ public class DeleteAccountViewModel : NavigatableViewModelBase
     public DeleteAccountViewModel() : base(true)
     {
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
+        DeleteAccountCommand = CreateCommandFromTask(TaskWork.Create(DeleteAccountAsync).RunAsync);
     }
 
     [Inject]
@@ -19,8 +20,7 @@ public class DeleteAccountViewModel : NavigatableViewModelBase
     [Reactive]
     public string Identifier { get; set; } = string.Empty;
 
-    [Reactive]
-    public ICommand DeleteAccountCommand { get; protected set; }
+    public ICommand DeleteAccountCommand { get; }
 
     public override string ViewId
     {
@@ -70,15 +70,13 @@ public class DeleteAccountViewModel : NavigatableViewModelBase
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
-        DeleteAccountCommand = CreateCommandFromTask(TaskWork.Create(DeleteAccountAsync).RunAsync);
-
-        switch (IdentifierType)
+        return IdentifierType switch
         {
-            case UserIdentifierType.Email:
-                return AuthenticationService.UpdateVerificationCodeByEmailAsync(Identifier, cancellationToken);
-            case UserIdentifierType.Login:
-                return AuthenticationService.UpdateVerificationCodeByLoginAsync(Identifier, cancellationToken);
-            default: throw new ArgumentOutOfRangeException();
-        }
+            UserIdentifierType.Email => AuthenticationService.UpdateVerificationCodeByEmailAsync(Identifier,
+                cancellationToken),
+            UserIdentifierType.Login => AuthenticationService.UpdateVerificationCodeByLoginAsync(Identifier,
+                cancellationToken),
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 }

@@ -11,6 +11,7 @@
         <SelfContained Condition="'$(Configuration)' == 'Release'">true</SelfContained>
         <PublishSingleFile>true</PublishSingleFile>
         <ApplicationIcon>Resources\Logo.ico</ApplicationIcon>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     </PropertyGroup>
 
     <PropertyGroup>

@@ -7,21 +7,20 @@ public class ToDoItemSelectorViewModel : ViewModelBase
     public ToDoItemSelectorViewModel()
     {
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
+        SearchCommand = CreateCommandFromTask(TaskWork.Create(SearchAsync).RunAsync);
     }
     
     public AvaloniaList<ToDoItemEntityNotify> Roots { get; } = new();
     public ICommand InitializedCommand { get; }
     public ReadOnlyMemory<Guid> IgnoreIds { get; set; } = ReadOnlyMemory<Guid>.Empty;
     public Guid DefaultSelectedItemId { get; set; }
+    public ICommand SearchCommand { get; }
     
     [Inject]
     public required IToDoService ToDoService { get; init; }
     
     [Inject]
     public required IToDoCache ToDoCache { get; init; }
-    
-    [Reactive]
-    public ICommand SearchCommand { get; protected set; }
     
     [Reactive]
     public string SearchText { get; set; } = string.Empty;
@@ -31,8 +30,6 @@ public class ToDoItemSelectorViewModel : ViewModelBase
     
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
-        SearchCommand = CreateCommandFromTask(TaskWork.Create(SearchAsync).RunAsync);
-        
         return Refresh(cancellationToken);
     }
     

@@ -4,11 +4,11 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
 {
     public EmailOrLoginInputViewModel() : base(true)
     {
-        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
+        ForgotPasswordCommand = CreateCommandFromTask(TaskWork.Create(ForgotPasswordAsync).RunAsync);
     }
-
-    public ICommand InitializedCommand { get; }
-
+    
+    public ICommand ForgotPasswordCommand { get;  }
+    
     public override string ViewId
     {
         get => TypeCache<EmailOrLoginInputViewModel>.Type.Name;
@@ -21,20 +21,10 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
     public required IAuthenticationService AuthenticationService { get; init; }
 
     [Reactive]
-    public ICommand ForgotPasswordCommand { get; protected set; }
-
-    [Reactive]
     public bool IsBusy { get; set; }
 
     [Reactive]
     public string EmailOrLogin { get; set; } = string.Empty;
-
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
-    {
-        ForgotPasswordCommand = CreateCommandFromTask(TaskWork.Create(ForgotPasswordAsync).RunAsync);
-
-        return Result.AwaitableSuccess;
-    }
 
     private ConfiguredValueTaskAwaitable<Result> ForgotPasswordAsync(CancellationToken cancellationToken)
     {
@@ -103,8 +93,6 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
                      return Result.Success;
                 }).ToValueTask().ConfigureAwait(false),
                 cancellationToken);
-
-        ;
     }
 
     public override Result Stop()

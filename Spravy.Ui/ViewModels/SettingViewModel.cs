@@ -4,10 +4,11 @@ public class SettingViewModel : NavigatableViewModelBase
 {
     private readonly PageHeaderViewModel pageHeaderViewModel;
     private readonly SukiTheme theme = SukiTheme.GetInstance();
+    private readonly ISpravyNotificationManager spravyNotificationManager;
     
-    public SettingViewModel() : base(true)
+    public SettingViewModel(ISpravyNotificationManager spravyNotificationManager) : base(true)
     {
-        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
+        this.spravyNotificationManager = spravyNotificationManager;
         AvailableColors = new(theme.ColorThemes.Select(x => new Selected<SukiColorTheme>(x)));
         
         foreach (var availableColor in AvailableColors)
@@ -19,17 +20,23 @@ public class SettingViewModel : NavigatableViewModelBase
         }
         
         IsLightTheme = theme.ActiveBaseTheme == ThemeVariant.Light;
+        ChangePasswordCommand = CreateCommandFromTask(TaskWork.Create(ChangePasswordAsync).RunAsync);
+        SaveSettingsCommand = CreateCommandFromTask(TaskWork.Create(SaveSettingsAsync).RunAsync);
+        DeleteAccountCommand = CreateCommandFromTask(TaskWork.Create(DeleteAccountAsync).RunAsync);
+        
+        SwitchToColorThemeCommand =
+            CreateCommandFromTask<Selected<SukiColorTheme>>(TaskWork
+               .Create<Selected<SukiColorTheme>>(SwitchToColorTheme)
+               .RunAsync);
+        
+        this.WhenAnyValue(x => x.IsLightTheme)
+           .Subscribe(x => theme.ChangeBaseTheme(x ? ThemeVariant.Light : ThemeVariant.Dark));
     }
     
     public override string ViewId
     {
         get => TypeCache<SettingViewModel>.Type.Name;
     }
-    
-    public ICommand InitializedCommand { get; }
-    
-    [Inject]
-    public required ISpravyNotificationManager SpravyNotificationManager { get; init; }
     
     public string Version
     {
@@ -57,9 +64,6 @@ public class SettingViewModel : NavigatableViewModelBase
     public required AccountNotify AccountNotify { get; init; }
     
     [Inject]
-    public required IAuthenticationService AuthenticationService { get; init; }
-    
-    [Inject]
     public required IObjectStorage ObjectStorage { get; init; }
     
     [Inject]
@@ -74,40 +78,16 @@ public class SettingViewModel : NavigatableViewModelBase
         }
     }
     
-    [Reactive]
-    public ICommand ChangePasswordCommand { get; protected set; }
-    
-    [Reactive]
-    public ICommand DeleteAccountCommand { get; protected set; }
-    
-    [Reactive]
-    public ICommand SwitchToColorThemeCommand { get; protected set; }
-    
-    [Reactive]
-    public ICommand SaveSettingsCommand { get; protected set; }
+    public ICommand ChangePasswordCommand { get;  }
+    public ICommand DeleteAccountCommand { get; }
+    public ICommand SwitchToColorThemeCommand { get;}
+    public ICommand SaveSettingsCommand { get;  }
     
     [Reactive]
     public bool IsBusy { get; set; }
     
     [Reactive]
     public bool IsLightTheme { get; set; }
-    
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
-    {
-        ChangePasswordCommand = CreateCommandFromTask(TaskWork.Create(ChangePasswordAsync).RunAsync);
-        SaveSettingsCommand = CreateCommandFromTask(TaskWork.Create(SaveSettingsAsync).RunAsync);
-        DeleteAccountCommand = CreateCommandFromTask(TaskWork.Create(DeleteAccountAsync).RunAsync);
-        
-        SwitchToColorThemeCommand =
-            CreateCommandFromTask<Selected<SukiColorTheme>>(TaskWork
-               .Create<Selected<SukiColorTheme>>(SwitchToColorTheme)
-               .RunAsync);
-        
-        this.WhenAnyValue(x => x.IsLightTheme)
-           .Subscribe(x => theme.ChangeBaseTheme(x ? ThemeVariant.Light : ThemeVariant.Dark));
-        
-        return Result.AwaitableSuccess;
-    }
     
     private ConfiguredValueTaskAwaitable<Result> SaveSettingsAsync(CancellationToken cancellationToken)
     {
@@ -117,7 +97,7 @@ public class SettingViewModel : NavigatableViewModelBase
                 ColorTheme = AvailableColors.Single(x => x.IsSelect).Value.DisplayName,
             })
            .IfSuccessAsync(
-                () => SpravyNotificationManager.ShowAsync(new TextLocalization("SettingView.SaveSetting"),
+                () => spravyNotificationManager.ShowAsync(new TextLocalization("SettingView.SaveSetting"),
                     cancellationToken), cancellationToken);
     }
     

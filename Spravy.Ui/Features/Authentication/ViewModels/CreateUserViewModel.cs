@@ -69,7 +69,9 @@ public class CreateUserViewModel : NavigatableViewModelBase, ICreateUserProperti
     [Reactive]
     public string RepeatPassword { get; set; } = string.Empty;
     
+#pragma warning disable CS0067
     public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
+#pragma warning restore CS0067
     
     public bool HasErrors
     {

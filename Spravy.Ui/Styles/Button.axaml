@@ -28,7 +28,7 @@
                     <ContentPresenter HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                       VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                                       Content="{TemplateBinding Content}"
-                                      FontFamily="avares://SukiUI/CustomFont#Quicksand"
+                                      FontFamily="ShantellSans#ShantellSans"
                                       FontSize="{TemplateBinding FontSize}"
                                       RecognizesAccessKey="True" />
                 </controls:GlassCard>

@@ -5,6 +5,7 @@ public class ForgotPasswordViewModel : NavigatableViewModelBase, IVerificationEm
     public ForgotPasswordViewModel() : base(true)
     {
         InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
+        ForgotPasswordCommand = CreateCommandFromTask(TaskWork.Create(ForgotPasswordAsync).RunAsync);
     }
 
     [Inject]
@@ -16,9 +17,7 @@ public class ForgotPasswordViewModel : NavigatableViewModelBase, IVerificationEm
     }
 
     public ICommand InitializedCommand { get; }
-
-    [Reactive]
-    public ICommand ForgotPasswordCommand { get; protected set; }
+    public ICommand ForgotPasswordCommand { get; }
 
     [Reactive]
     public string NewPassword { get; set; } = string.Empty;
@@ -37,8 +36,6 @@ public class ForgotPasswordViewModel : NavigatableViewModelBase, IVerificationEm
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
-        ForgotPasswordCommand = CreateCommandFromTask(TaskWork.Create(ForgotPasswordAsync).RunAsync);
-
         switch (IdentifierType)
         {
             case UserIdentifierType.Email:

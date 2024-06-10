@@ -14,6 +14,11 @@ public class NotificationManager : ISpravyNotificationManager
     public ConfiguredValueTaskAwaitable<Result> ShowAsync<TView>(CancellationToken cancellationToken)
     {
         var view = kernel.Get<TView>();
+        
+        if (view is null)
+        {
+            return new Result(new PropertyNullValueError(nameof(view))).ToValueTaskResult().ConfigureAwait(false);
+        }
 
         return this.InvokeUiBackgroundAsync(() =>
         {

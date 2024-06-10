@@ -49,9 +49,9 @@ public class EventStorage
                     cancellationToken), cancellationToken);
     }
 
-    public async Task<IEnumerable<EventValue>> PushEventAsync(Guid[] eventIds)
+    public Task<IEnumerable<EventValue>> PushEventAsync(Guid[] eventIds)
     {
-        return Enumerable.Empty<EventValue>();
+        return Enumerable.Empty<EventValue>().ToTaskResult();
         /*var file = fileFactory.Create();
 
         if (!lastWriteTimeUtc.TryGetValue(file.FullName, out var date))
