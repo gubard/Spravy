@@ -5,7 +5,7 @@
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:ru="http://reactiveui.net"
                         xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-                        xmlns:mdxaml="https://github.com/whistyun/Markdown.Avalonia"
+                        xmlns:md="https://github.com/whistyun/Markdown.Avalonia"
                         xmlns:s="clr-namespace:Spravy.Ui.Services"
                         xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
                         xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
@@ -14,6 +14,7 @@
                         xmlns:co="clr-namespace:SukiUI.Content;assembly=SukiUI"
                         xmlns:sm="clr-namespace:Spravy.Ui.Models"
                         xmlns:h="clr-namespace:Spravy.Ui.Helpers"
+                        xmlns:ct="clr-namespace:ColorTextBlock.Avalonia;assembly=ColorTextBlock.Avalonia"
                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                         x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemView"
                         x:DataType="vm:ToDoItemViewModel">
@@ -182,11 +183,11 @@
                                    IsVisible="{Binding Item.IsDescriptionPlainText}"
                                    Text="{Binding Item.Description}" />
 
-                        <mdxaml:MarkdownScrollViewer
+                        <md:MarkdownScrollViewer
                             Name="{x:Static v:ToDoItemView.MarkdownTextMarkdownScrollViewerName}"
                             IsVisible="{Binding Item.IsDescriptionMarkdownText}"
                             Markdown="{Binding Item.Description}">
-                            <mdxaml:MarkdownScrollViewer.Styles>
+                            <md:MarkdownScrollViewer.Styles>
                                 <Style Selector="Border.Table">
                                     <Setter Property="BorderThickness" Value="0" />
                                 </Style>
@@ -208,8 +209,22 @@
                                     <Setter Property="BorderBrush" Value="{DynamicResource SukiControlBorderBrush}" />
                                     <Setter Property="BorderThickness" Value="0,0,1,1" />
                                 </Style>
-                            </mdxaml:MarkdownScrollViewer.Styles>
-                        </mdxaml:MarkdownScrollViewer>
+    
+                                <Style Selector="ct|CHyperlink">
+                                    <Setter Property="Foreground" Value="{DynamicResource SukiPrimaryColor}"/>
+                                </Style>
+    
+                                <Style Selector="ct|CHyperlink:pointerover">
+                                    <Setter Property="Foreground" Value="{DynamicResource SukiAccentColor50}"/>
+                                    <Setter Property="BorderBrush" Value="{DynamicResource SukiAccentColor50}"/>
+                                </Style>
+    
+                                <Style Selector="ct|CHyperlink:pressed">
+                                    <Setter Property="Foreground" Value="{DynamicResource SukiAccentColor}"/>
+                                    <Setter Property="BorderBrush" Value="{DynamicResource SukiAccentColor}"/>
+                                </Style>
+                            </md:MarkdownScrollViewer.Styles>
+                        </md:MarkdownScrollViewer>
                     </Panel>
                 </Expander>
 

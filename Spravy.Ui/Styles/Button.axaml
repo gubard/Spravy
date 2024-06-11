@@ -28,7 +28,7 @@
                     <ContentPresenter HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                       VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                                       Content="{TemplateBinding Content}"
-                                      FontFamily="ShantellSans#ShantellSans"
+                                      FontFamily="fonts:Inter#Inter"
                                       FontSize="{TemplateBinding FontSize}"
                                       RecognizesAccessKey="True" />
                 </controls:GlassCard>
