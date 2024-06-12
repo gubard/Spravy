@@ -36,7 +36,7 @@ public class FilesObjectStorage : IObjectStorage
         return SaveObjectCore(id, obj).ConfigureAwait(false);
     }
 
-    public ConfiguredValueTaskAwaitable<Result<TObject>> GetObjectAsync<TObject>(string id)
+    public ConfiguredValueTaskAwaitable<Result<TObject>> GetObjectAsync<TObject>(string id) where TObject : notnull
     {
         return GetObjectCore<TObject>(id).ConfigureAwait(false);
     }
@@ -55,7 +55,7 @@ public class FilesObjectStorage : IObjectStorage
         return await serializer.SerializeAsync(obj, stream);
     }
 
-    private async ValueTask<Result<TObject>> GetObjectCore<TObject>(string id)
+    private async ValueTask<Result<TObject>> GetObjectCore<TObject>(string id) where TObject : notnull
     {
         var file = root.ToFile(id);
         await using var stream = file.OpenRead();

@@ -898,7 +898,7 @@ public class EfToDoService : IToDoService
                                 cancellationToken), cancellationToken), cancellationToken);
     }
     
-    public ConfiguredValueTaskAwaitable<Result<ActiveToDoItem?>> GetCurrentActiveToDoItemAsync(
+    public ConfiguredValueTaskAwaitable<Result<OptionStruct<ActiveToDoItem>>> GetCurrentActiveToDoItemAsync(
         CancellationToken cancellationToken
     )
     {
@@ -913,18 +913,18 @@ public class EfToDoService : IToDoService
                    .GetToDoItemParametersAsync(context, item, offset, cancellationToken)
                    .IfSuccessAsync(parameters =>
                     {
-                        if (parameters.ActiveItem is not null)
+                        if (parameters.ActiveItem.IsHasValue)
                         {
                             return parameters.ActiveItem.ToResult();
                         }
                         
-                        return new((ActiveToDoItem?)null);
+                        return new(new OptionStruct<ActiveToDoItem>(null));
                     }, cancellationToken), cancellationToken)
                .IfSuccessAsync(items =>
                 {
-                    var item = items.ToArray().FirstOrDefault(x => x is not null);
+                    var item = items.ToArray().FirstOrDefault(x => x.IsHasValue);
                     
-                    return new Result<ActiveToDoItem?>(item);
+                    return new Result<OptionStruct<ActiveToDoItem>>(item);
                 }, cancellationToken), cancellationToken);
     }
     

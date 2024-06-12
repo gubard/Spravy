@@ -2,7 +2,17 @@ namespace Spravy.Domain.Extensions;
 
 public static class ObjectExtension
 {
-    public static Result<TResult> IfIs<TResult>(this object obj)
+    public static Option<TValue> ToOption<TValue>(this TValue? value) where TValue : class
+    {
+        return new(value);
+    }
+    
+    public static OptionStruct<TValue> ToOption<TValue>(this TValue? value) where TValue : struct
+    {
+        return new(value);
+    }
+    
+    public static Result<TResult> IfIs<TResult>(this object obj) where TResult : notnull
     {
         if (obj is TResult result)
         {
@@ -12,12 +22,12 @@ public static class ObjectExtension
         return new(new CastError(obj.GetType(), typeof(TResult)));
     }
     
-    public static Result<TValue> ToResult<TValue>(this ReadOnlyMemory<Error> errors)
+    public static Result<TValue> ToResult<TValue>(this ReadOnlyMemory<Error> errors) where TValue : notnull
     {
         return new(errors);
     }
     
-    public static Result<TValue> ToResult<TValue>(this TValue value)
+    public static Result<TValue> ToResult<TValue>(this TValue value) where TValue : notnull
     {
         return new(value);
     }
@@ -155,7 +165,7 @@ public static class ObjectExtension
         return new(span.ToArray());
     }
     
-    public static Result<T> IfNotNull<T>(this T? obj, string propertyName)
+    public static Result<T> IfNotNull<T>(this T? obj, string propertyName) where T : notnull
     {
         if (obj is null)
         {
@@ -200,7 +210,7 @@ public static class ObjectExtension
         return (T)obj;
     }
     
-    public static Result<T> CastObject<T>(this object obj)
+    public static Result<T> CastObject<T>(this object obj) where T : notnull
     {
         if (obj is T item)
         {

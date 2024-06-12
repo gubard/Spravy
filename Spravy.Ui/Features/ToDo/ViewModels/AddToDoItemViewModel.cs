@@ -83,6 +83,26 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
             }), cancellationToken);
     }
     
+    public Result<AddToDoItemOptions> ConverterToAddToDoItemOptions(IConverter converter)
+    {
+        return ConverterToAddToDoItemOptions(ParentId, converter);
+    }
+    
+    public Result<AddToDoItemOptions> ConverterToAddToDoItemOptions(Guid parentId, IConverter converter)
+    {
+        if (ToDoItemContent.Link.IsNullOrWhiteSpace())
+        {
+            return new AddToDoItemOptions(parentId, ToDoItemContent.Name,
+                ToDoItemContent.Type, DescriptionContent.Description,
+                DescriptionContent.Type, null).ToResult();
+        }
+        
+        return converter.Convert<Uri>(ToDoItemContent.Link)
+           .IfSuccess(uri => new AddToDoItemOptions(parentId, ToDoItemContent.Name,
+                ToDoItemContent.Type, DescriptionContent.Description,
+                DescriptionContent.Type, uri).ToResult());
+    }
+    
     [ProtoContract]
     private class AddToDoItemViewModelSetting : IViewModelSetting<AddToDoItemViewModelSetting>
     {

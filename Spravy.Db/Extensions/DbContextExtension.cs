@@ -5,10 +5,10 @@ public static class DbContextExtension
     public static Result RemoveEntity<TEntity>(this DbContext context, TEntity entity) where TEntity : class
     {
         context.Remove(entity);
-
+        
         return Result.Success;
     }
-
+    
     public static ConfiguredValueTaskAwaitable<Result<EntityEntry<TEntity>>> AddEntityAsync<TEntity>(
         this DbContext context,
         TEntity entity,
@@ -17,7 +17,7 @@ public static class DbContextExtension
     {
         return AddEntityCore(context, entity, cancellationToken).ConfigureAwait(false);
     }
-
+    
     private static async ValueTask<Result<EntityEntry<TEntity>>> AddEntityCore<TEntity>(
         this DbContext context,
         TEntity entity,
@@ -25,10 +25,10 @@ public static class DbContextExtension
     ) where TEntity : class
     {
         var value = await context.AddAsync(entity, cancellationToken);
-
+        
         return value.ToResult();
     }
-
+    
     public static ConfiguredValueTaskAwaitable<Result<TEntity>> FindEntityAsync<TEntity>(
         this DbContext context,
         object key
@@ -36,38 +36,38 @@ public static class DbContextExtension
     {
         return FindEntityCore<TEntity>(context, key).ConfigureAwait(false);
     }
-
+    
     private static async ValueTask<Result<TEntity>> FindEntityCore<TEntity>(this DbContext context, object key)
         where TEntity : class
     {
         var value = await context.FindAsync<TEntity>(key);
-
+        
         if (value is null)
         {
             return new(new NotFoundEntityError(typeof(TEntity).Name, key.ToString().ThrowIfNull()));
         }
-
+        
         return value.ToResult();
     }
-
+    
     public static ConfiguredValueTaskAwaitable<Result<TReturn>> AtomicExecuteAsync<TDbContext, TReturn>(
         this TDbContext context,
         Func<ConfiguredValueTaskAwaitable<Result<TReturn>>> func,
         CancellationToken cancellationToken
-    ) where TDbContext : DbContext
+    ) where TDbContext : DbContext where TReturn : notnull
     {
         return AtomicExecuteCore(context, func, cancellationToken).ConfigureAwait(false);
     }
-
+    
     private static async ValueTask<Result<TReturn>> AtomicExecuteCore<TDbContext, TReturn>(
         this TDbContext context,
         Func<ConfiguredValueTaskAwaitable<Result<TReturn>>> func,
         CancellationToken cancellationToken
-    ) where TDbContext : DbContext
+    ) where TDbContext : DbContext where TReturn : notnull
     {
         await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
         Result<TReturn> result;
-
+        
         try
         {
             result = await func.Invoke();
@@ -75,10 +75,10 @@ public static class DbContextExtension
         catch
         {
             await transaction.RollbackAsync(cancellationToken);
-
+            
             throw;
         }
-
+        
         if (result.IsHasError)
         {
             await transaction.RollbackAsync(cancellationToken);
@@ -88,10 +88,10 @@ public static class DbContextExtension
             await context.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
         }
-
+        
         return result;
     }
-
+    
     public static ConfiguredValueTaskAwaitable<Result> AtomicExecuteAsync<TDbContext>(
         this TDbContext context,
         Func<ConfiguredValueTaskAwaitable<Result>> func,
@@ -100,7 +100,7 @@ public static class DbContextExtension
     {
         return AtomicExecuteCore(context, func, cancellationToken).ConfigureAwait(false);
     }
-
+    
     private static async ValueTask<Result> AtomicExecuteCore<TDbContext>(
         this TDbContext context,
         Func<ConfiguredValueTaskAwaitable<Result>> func,
@@ -109,7 +109,7 @@ public static class DbContextExtension
     {
         await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
         Result result;
-
+        
         try
         {
             result = await func.Invoke();
@@ -117,10 +117,10 @@ public static class DbContextExtension
         catch
         {
             await transaction.RollbackAsync(cancellationToken);
-
+            
             throw;
         }
-
+        
         if (result.IsHasError)
         {
             await transaction.RollbackAsync(cancellationToken);
@@ -130,7 +130,7 @@ public static class DbContextExtension
             await context.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
         }
-
+        
         return result;
     }
 }

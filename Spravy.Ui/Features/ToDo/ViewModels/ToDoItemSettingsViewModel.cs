@@ -57,7 +57,7 @@ public class ToDoItemSettingsViewModel : NavigatableViewModelBase
            .IfSuccessAsync(toDoItem => this.InvokeUiBackgroundAsync(() =>
             {
                 ToDoItemContent.Name = toDoItem.Name;
-                ToDoItemContent.Link = toDoItem.Link?.AbsoluteUri ?? string.Empty;
+                ToDoItemContent.Link = toDoItem.Link.Value?.AbsoluteUri ?? string.Empty;
                 ToDoItemContent.Type = toDoItem.Type;
                 
                 return Result.Success;

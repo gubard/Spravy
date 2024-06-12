@@ -15,7 +15,7 @@ public class IntegersSelectorControl : TemplatedControl
     
     private readonly List<IntegerSelectorItemControl> integerControls = new();
     private ItemsControl? itemsControl;
-    private AvaloniaList<int>? selectedIntegers;
+    private IEnumerable<int>? selectedIntegers;
     private readonly List<IDisposable> disposables = new();
     
     static IntegersSelectorControl()
@@ -56,9 +56,9 @@ public class IntegersSelectorControl : TemplatedControl
     {
         if (SelectedIntegers is null)
         {
-            if (selectedIntegers is not null)
+            if (selectedIntegers is INotifyCollectionChanged notifyCollectionChanged)
             {
-                selectedIntegers.CollectionChanged -= SelectedIntegersChangedEventHandler;
+                notifyCollectionChanged.CollectionChanged -= SelectedIntegersChangedEventHandler;
             }
             
             selectedIntegers = null;
@@ -73,17 +73,18 @@ public class IntegersSelectorControl : TemplatedControl
         }
         else
         {
-            if (SelectedIntegers is AvaloniaList<int> list)
+            if (selectedIntegers != SelectedIntegers)
             {
-                if (selectedIntegers != list)
+                if (selectedIntegers is INotifyCollectionChanged notifyCollectionChanged)
                 {
-                    if (selectedIntegers is not null)
-                    {
-                        selectedIntegers.CollectionChanged -= SelectedIntegersChangedEventHandler;
-                    }
-                    
-                    selectedIntegers = list;
-                    selectedIntegers.CollectionChanged += SelectedIntegersChangedEventHandler;
+                    notifyCollectionChanged.CollectionChanged -= SelectedIntegersChangedEventHandler;
+                }
+                
+                selectedIntegers = SelectedIntegers;
+                
+                if (selectedIntegers is INotifyCollectionChanged changed)
+                {
+                    changed.CollectionChanged += SelectedIntegersChangedEventHandler;
                 }
             }
             
@@ -176,7 +177,10 @@ public class IntegersSelectorControl : TemplatedControl
                             return;
                         }
                         
-                        selectedIntegers.Add(integerControl.Value);
+                        if (selectedIntegers is ICollection<int> collection)
+                        {
+                            collection.Add(integerControl.Value);
+                        }
                     }
                     else
                     {
@@ -185,7 +189,10 @@ public class IntegersSelectorControl : TemplatedControl
                             return;
                         }
                         
-                        selectedIntegers.Remove(integerControl.Value);
+                        if (selectedIntegers is ICollection<int> collection)
+                        {
+                            collection.Remove(integerControl.Value);
+                        }
                     }
                 });
             

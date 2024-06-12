@@ -1,5 +1,6 @@
 using AutoMapper;
 using Spravy.Domain.Extensions;
+using Spravy.Domain.Models;
 using Spravy.ToDo.Db.Extensions;
 using Spravy.ToDo.Db.Models;
 using Spravy.ToDo.Domain.Models;
@@ -35,8 +36,8 @@ public class SpravyToDoDbProfile : Profile
                 var parameters = (ToDoItemParameters)context.Items[ParametersName];
                 
                 return new(entity.Id, entity.Name, entity.IsFavorite, entity.Type, entity.Description,
-                    context.Mapper.Map<Uri?>(entity.Link), entity.OrderIndex, parameters.Status, parameters.ActiveItem,
-                    parameters.IsCan, entity.ParentId, entity.DescriptionType);
+                    context.Mapper.Map<Option<Uri>>(entity.Link), entity.OrderIndex, parameters.Status, parameters.ActiveItem,
+                    parameters.IsCan, entity.ParentId.ToOption(), entity.DescriptionType);
             });
     }
 }

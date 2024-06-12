@@ -624,23 +624,18 @@ public class SpravyCommand
                 return new Result(new NonItemSelectedError()).ToValueTaskResult().ConfigureAwait(false);
             }
             
-            return dialogViewer.ShowConfirmContentDialogAsync(viewModel => converter
-                   .Convert<Uri?>(viewModel.ToDoItemContent.Link)
-                   .IfSuccessAsync(uri => selected.ToResult()
-                       .IfSuccessForEachAsync(item =>
-                        {
-                            var options = new AddToDoItemOptions(item.Id, viewModel.ToDoItemContent.Name,
-                                viewModel.ToDoItemContent.Type, viewModel.DescriptionContent.Description,
-                                viewModel.DescriptionContent.Type, uri);
-                            
-                            return dialogViewer.CloseContentDialogAsync(cancellationToken)
-                               .IfSuccessAsync(() => toDoService.AddToDoItemAsync(options, cancellationToken),
-                                    cancellationToken)
-                               .IfSuccessAsync(_ => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
-                                    cancellationToken);
-                        }, cancellationToken), cancellationToken),
-                _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
-                ActionHelper<AddToDoItemViewModel>.Empty, cancellationToken);
+            return dialogViewer.ShowConfirmContentDialogAsync(
+                viewModel => selected.ToResult()
+                   .IfSuccessForEachAsync(
+                        item => viewModel.ConverterToAddToDoItemOptions(item.Id, converter)
+                           .IfSuccessAsync(
+                                options => dialogViewer.CloseContentDialogAsync(cancellationToken)
+                                   .IfSuccessAsync(() => toDoService.AddToDoItemAsync(options, cancellationToken),
+                                        cancellationToken)
+                                   .IfSuccessAsync(_ => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
+                                        cancellationToken), cancellationToken), cancellationToken),
+                _ => dialogViewer.CloseContentDialogAsync(cancellationToken), ActionHelper<AddToDoItemViewModel>.Empty,
+                cancellationToken);
         }, errorHandler);
         
         return _multiAddChild;
@@ -860,10 +855,10 @@ public class SpravyCommand
                .GetCurrentActiveToDoItemAsync(cancellationToken)
                .IfSuccessAsync(activeToDoItem =>
                 {
-                    if (activeToDoItem.HasValue)
+                    if (activeToDoItem.IsHasValue)
                     {
                         return navigator.NavigateToAsync<ToDoItemViewModel>(
-                            viewModel => viewModel.Id = activeToDoItem.Value.Id, cancellationToken);
+                            viewModel => viewModel.Id = activeToDoItem.Value.ThrowIfNullStruct().Id, cancellationToken);
                     }
                     
                     return navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken);

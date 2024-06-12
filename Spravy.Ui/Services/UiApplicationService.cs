@@ -26,7 +26,7 @@ public class UiApplicationService : IUiApplicationService
            .IfSuccess(content => content.GetType().ToResult());
     }
     
-    public Result<TView> GetCurrentView<TView>()
+    public Result<TView> GetCurrentView<TView>() where TView : notnull
     {
         return mainSplitViewModel.Content
            .IfNotNull(nameof(mainSplitViewModel.Content))

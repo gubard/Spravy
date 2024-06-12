@@ -79,7 +79,7 @@ public interface IToDoService
         CancellationToken cancellationToken
     );
     
-    ConfiguredValueTaskAwaitable<Result<ActiveToDoItem?>> GetCurrentActiveToDoItemAsync(
+    ConfiguredValueTaskAwaitable<Result<OptionStruct<ActiveToDoItem>>> GetCurrentActiveToDoItemAsync(
         CancellationToken cancellationToken
     );
     

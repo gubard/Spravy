@@ -84,7 +84,7 @@ public static class MemoryExtension
         return result;
     }
     
-    public static Result<T> GetSingle<T>(this ReadOnlyMemory<T> memory, string arrayName)
+    public static Result<T> GetSingle<T>(this ReadOnlyMemory<T> memory, string arrayName) where T : notnull
     {
         if (memory.IsEmpty)
         {

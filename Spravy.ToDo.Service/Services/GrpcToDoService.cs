@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Spravy.Domain.Enums;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
+using Spravy.Domain.Models;
 using Spravy.Service.Extensions;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
@@ -54,8 +55,8 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     public override Task<CloneToDoItemReply> CloneToDoItem(CloneToDoItemRequest request, ServerCallContext context)
     {
         return converter.Convert<Guid>(request.CloneId)
-           .IfSuccessAsync(converter.Convert<Guid?>(request.ParentId),
-                (ci, pi) => toDoService.CloneToDoItemAsync(ci, pi, context.CancellationToken),
+           .IfSuccessAsync(converter.Convert<OptionStruct<Guid>>(request.ParentId),
+                (ci, pi) => toDoService.CloneToDoItemAsync(ci, pi.Value, context.CancellationToken),
                 context.CancellationToken)
            .HandleAsync<CloneToDoItemReply>(serializer);
     }

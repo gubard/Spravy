@@ -48,7 +48,7 @@ public class Result
     }
 }
 
-public class Result<TValue>
+public class Result<TValue> where TValue : notnull
 {
     public static readonly Result<TValue> CanceledByUserError = new(new CanceledByUserError());
     

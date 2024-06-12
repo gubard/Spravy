@@ -80,22 +80,18 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                 this.RaisePropertyChanged(nameof(IsDescriptionMarkdownText));
             });
         
-        AddChildItem = new(MaterialIconKind.Plus, new("Command.AddChildToDoItem"), SpravyCommand.Create(
-            cancellationToken => dialogViewer.ShowConfirmContentDialogAsync<AddToDoItemViewModel>(viewModel => converter
-                   .Convert<Uri?>(viewModel.ToDoItemContent.Link)
-                   .IfSuccessAsync(uri =>
-                    {
-                        var options = new AddToDoItemOptions(viewModel.ParentId, viewModel.ToDoItemContent.Name,
-                            viewModel.ToDoItemContent.Type, viewModel.DescriptionContent.Description,
-                            viewModel.DescriptionContent.Type, uri);
-                        
-                        return dialogViewer.CloseContentDialogAsync(cancellationToken)
-                           .IfSuccessAsync(() => toDoService.AddToDoItemAsync(options, cancellationToken),
-                                cancellationToken)
-                           .IfSuccessAsync(_ => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
-                                cancellationToken);
-                    }, cancellationToken), _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
-                vm => vm.ParentId = CurrentId, cancellationToken), errorHandler));
+        AddChildItem = new(MaterialIconKind.Plus, new("Command.AddChildToDoItem"),
+            SpravyCommand.Create(
+                cancellationToken => dialogViewer.ShowConfirmContentDialogAsync<AddToDoItemViewModel>(
+                    viewModel => viewModel.ConverterToAddToDoItemOptions(converter)
+                       .IfSuccessAsync(
+                            options => dialogViewer.CloseContentDialogAsync(cancellationToken)
+                               .IfSuccessAsync(() => toDoService.AddToDoItemAsync(options, cancellationToken),
+                                    cancellationToken)
+                               .IfSuccessAsync(_ => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
+                                    cancellationToken), cancellationToken),
+                    _ => dialogViewer.CloseContentDialogAsync(cancellationToken), vm => vm.ParentId = CurrentId,
+                    cancellationToken), errorHandler));
         
         DeleteItem = new(MaterialIconKind.Delete, new("Command.Delete"), SpravyCommand.Create(cancellationToken =>
             dialogViewer.ShowConfirmContentDialogAsync<DeleteToDoItemViewModel>(_ => dialogViewer
@@ -121,17 +117,23 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                         cancellationToken), _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
                 view => view.Item = this, cancellationToken), errorHandler));
         
-        ShowSettingItem = new(MaterialIconKind.Settings, new("Command.Setting"),
-            SpravyCommand.Create(
-                cancellationToken => dialogViewer.ShowConfirmContentDialogAsync<ToDoItemSettingsViewModel>(
-                    vm => dialogViewer.CloseContentDialogAsync(cancellationToken)
+        ShowSettingItem = new(MaterialIconKind.Settings, new("Command.Setting"), SpravyCommand.Create(
+            cancellationToken => dialogViewer.ShowConfirmContentDialogAsync<ToDoItemSettingsViewModel>(vm =>
+                    dialogViewer.CloseContentDialogAsync(cancellationToken)
                        .IfSuccessAsync(
                             () => toDoService.UpdateToDoItemNameAsync(Id, vm.ToDoItemContent.Name, cancellationToken),
                             cancellationToken)
-                       .IfSuccessAsync(
-                            () => converter.Convert<Uri?>(vm.ToDoItemContent.Link)
+                       .IfSuccessAsync(() =>
+                        {
+                            if (vm.ToDoItemContent.Link.IsNullOrWhiteSpace())
+                            {
+                                return toDoService.UpdateToDoItemLinkAsync(Id, null, cancellationToken);
+                            }
+                            
+                            return converter.Convert<Uri>(vm.ToDoItemContent.Link)
                                .IfSuccessAsync(uri => toDoService.UpdateToDoItemLinkAsync(Id, uri, cancellationToken),
-                                    cancellationToken), cancellationToken)
+                                    cancellationToken);
+                        }, cancellationToken)
                        .IfSuccessAsync(
                             () => toDoService.UpdateToDoItemTypeAsync(Id, vm.ToDoItemContent.Type, cancellationToken),
                             cancellationToken)
@@ -139,7 +141,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                             cancellationToken)
                        .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                             cancellationToken), _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
-                    vm => vm.ToDoItemId = Id, cancellationToken), errorHandler));
+                vm => vm.ToDoItemId = Id, cancellationToken), errorHandler));
         
         OpenLeafItem = new(MaterialIconKind.Leaf, new("Command.OpenLeaf"),
             SpravyCommand.Create(
@@ -261,21 +263,14 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                     return new Result(new NonItemSelectedError()).ToValueTaskResult().ConfigureAwait(false);
                 }
                 
-                return dialogViewer.ShowConfirmContentDialogAsync<AddToDoItemViewModel>(viewModel => converter
-                       .Convert<Uri?>(viewModel.ToDoItemContent.Link)
-                       .IfSuccessAsync(uri => selected.ToResult()
-                           .IfSuccessForEachAsync(item =>
-                            {
-                                var options = new AddToDoItemOptions(item.Id, viewModel.ToDoItemContent.Name,
-                                    viewModel.ToDoItemContent.Type, viewModel.DescriptionContent.Description,
-                                    viewModel.DescriptionContent.Type, uri);
-                                
-                                return dialogViewer.CloseContentDialogAsync(cancellationToken)
-                                   .IfSuccessAsync(() => toDoService.AddToDoItemAsync(options, cancellationToken),
-                                        cancellationToken)
-                                   .IfSuccessAsync(_ => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
-                                        cancellationToken);
-                            }, cancellationToken), cancellationToken),
+                return dialogViewer.ShowConfirmContentDialogAsync<AddToDoItemViewModel>(
+                    viewModel => viewModel.ConverterToAddToDoItemOptions(converter)
+                       .IfSuccessAsync(
+                            options => dialogViewer.CloseContentDialogAsync(cancellationToken)
+                               .IfSuccessAsync(() => toDoService.AddToDoItemAsync(options, cancellationToken),
+                                    cancellationToken)
+                               .IfSuccessAsync(_ => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
+                                    cancellationToken), cancellationToken),
                     _ => dialogViewer.CloseContentDialogAsync(cancellationToken), vm => vm.ParentId = CurrentId,
                     cancellationToken);
             }, errorHandler));

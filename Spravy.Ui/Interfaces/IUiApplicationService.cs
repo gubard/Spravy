@@ -4,5 +4,5 @@ public interface IUiApplicationService
 {
     ConfiguredValueTaskAwaitable<Result> RefreshCurrentViewAsync(CancellationToken cancellationToken);
     Result<Type> GetCurrentViewType();
-    Result<TView> GetCurrentView<TView>();
+    Result<TView> GetCurrentView<TView>() where TView: notnull;
 }

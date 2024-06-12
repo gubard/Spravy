@@ -1,4 +1,5 @@
 using Spravy.Domain.Enums;
+using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
 
 namespace Spravy.ToDo.Domain.Models;
@@ -11,12 +12,12 @@ public readonly struct ToDoItem
         bool isFavorite,
         ToDoItemType type,
         string description,
-        Uri? link,
+        Option<Uri> link,
         uint orderIndex,
         ToDoItemStatus status,
-        ActiveToDoItem? active,
+        OptionStruct<ActiveToDoItem> active,
         ToDoItemIsCan isCan,
-        Guid? parentId,
+        OptionStruct<Guid> parentId,
         DescriptionType descriptionType
     )
     {
@@ -39,12 +40,12 @@ public readonly struct ToDoItem
     public bool IsFavorite { get; }
     public ToDoItemType Type { get; }
     public string Description { get; }
-    public Uri? Link { get; }
+    public Option<Uri> Link { get; }
     public uint OrderIndex { get; }
     public ToDoItemStatus Status { get; }
-    public ActiveToDoItem? Active { get; }
+    public OptionStruct<ActiveToDoItem> Active { get; }
     public ToDoItemIsCan IsCan { get; }
-    public Guid? ParentId { get; }
+    public OptionStruct<Guid> ParentId { get; }
     public DescriptionType DescriptionType { get; }
     
     public ToDoItem WithOrderIndex(uint orderIndex)

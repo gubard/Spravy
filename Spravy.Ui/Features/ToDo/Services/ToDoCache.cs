@@ -77,9 +77,9 @@ public class ToDoCache : IToDoCache
         return GetToDoItem(toDoItem.Id)
            .IfSuccess(item =>
             {
-                if (toDoItem.Active.HasValue)
+                if (toDoItem.Active.IsHasValue)
                 {
-                    return UpdateUi(toDoItem.Active.Value)
+                    return UpdateUi(toDoItem.Active.Value.ThrowIfNullStruct())
                        .IfSuccess(i =>
                         {
                             item.Active = i;
@@ -101,15 +101,15 @@ public class ToDoCache : IToDoCache
         item.DescriptionType = toDoItem.DescriptionType;
         item.Type = toDoItem.Type;
         item.Name = toDoItem.Name;
-        item.Link = toDoItem.Link?.AbsoluteUri ?? string.Empty;
+        item.Link = toDoItem.Link.Value?.AbsoluteUri ?? string.Empty;
         item.Status = toDoItem.Status;
         item.IsCan = toDoItem.IsCan;
         item.IsFavorite = toDoItem.IsFavorite;
         item.OrderIndex = toDoItem.OrderIndex;
         
-        if (toDoItem.ParentId.HasValue)
+        if (toDoItem.ParentId.IsHasValue)
         {
-            var parent = GetToDoItem(toDoItem.ParentId.Value);
+            var parent = GetToDoItem(toDoItem.ParentId.Value.ThrowIfNullStruct());
             
             if (parent.IsHasError)
             {

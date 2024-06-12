@@ -14,7 +14,7 @@ public class DefaultCtorResultError : Error
     }
 }
 
-public class DefaultCtorResultError<TValue> : Error
+public class DefaultCtorResultError<TValue> : Error  where TValue : notnull
 {
     public static readonly Guid MainId = new("38CE2C63-F732-40A8-BBBA-0595AC623F73");
 

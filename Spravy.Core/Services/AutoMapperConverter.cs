@@ -9,7 +9,7 @@ public class AutoMapperConverter : IConverter
         this.mapper = mapper;
     }
 
-    public Result<TResult> Convert<TResult>(object? source)
+    public Result<TResult> Convert<TResult>(object? source)  where TResult : notnull
     {
         return mapper.Map<TResult>(source).ToResult();
     }
