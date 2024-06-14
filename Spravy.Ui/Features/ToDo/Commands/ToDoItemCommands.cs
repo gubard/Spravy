@@ -1,8 +1,9 @@
 namespace Spravy.Ui.Features.ToDo.Commands;
 
-public class ToDoItemCommands : ITaskProgressServiceProperty
+public class ToDoItemCommands
 {
     private readonly IObjectStorage objectStorage;
+    private readonly ITaskProgressService taskProgressService;
     
     public ToDoItemCommands(
         IToDoService toDoService,
@@ -13,14 +14,13 @@ public class ToDoItemCommands : ITaskProgressServiceProperty
     )
     {
         this.objectStorage = objectStorage;
-        TaskProgressService = taskProgressService;
+        this.taskProgressService = taskProgressService;
         NavigateToCurrentToDo = SpravyCommand.CreateNavigateToCurrentToDoItem(toDoService, navigator, taskProgressService, errorHandler);
         InitializedCommand = SpravyCommand.Create<ToDoItemViewModel>(InitializedAsync, errorHandler);
     }
     
     public SpravyCommand InitializedCommand { get; }
     public SpravyCommand NavigateToCurrentToDo { get; }
-    public ITaskProgressService TaskProgressService { get; }
     
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(
         ToDoItemViewModel viewModel,
@@ -29,7 +29,7 @@ public class ToDoItemCommands : ITaskProgressServiceProperty
     {
         viewModel.FastAddToDoItemViewModel.ParentId = viewModel.Id;
         
-        return TaskProgressService.RunProgressAsync(
+        return taskProgressService.RunProgressAsync(
             () => objectStorage.GetObjectOrDefaultAsync<ToDoItemViewModelSetting>(viewModel.ViewId, cancellationToken)
                .IfSuccessAsync(obj => viewModel.SetStateAsync(obj, cancellationToken), cancellationToken)
                .IfSuccessAsync(() => viewModel.RefreshAsync(cancellationToken), cancellationToken), cancellationToken);

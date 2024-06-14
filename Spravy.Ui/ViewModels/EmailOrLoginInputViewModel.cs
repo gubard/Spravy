@@ -2,12 +2,15 @@ namespace Spravy.Ui.ViewModels;
 
 public class EmailOrLoginInputViewModel : NavigatableViewModelBase
 {
-    public EmailOrLoginInputViewModel() : base(true)
+    private readonly INavigator navigator;
+    
+    public EmailOrLoginInputViewModel(IErrorHandler errorHandler, INavigator navigator) : base(true)
     {
-        ForgotPasswordCommand = CreateCommandFromTask(TaskWork.Create(ForgotPasswordAsync).RunAsync);
+        this.navigator = navigator;
+        ForgotPasswordCommand = SpravyCommand.Create(ForgotPasswordAsync, errorHandler);
     }
     
-    public ICommand ForgotPasswordCommand { get;  }
+    public SpravyCommand ForgotPasswordCommand { get;  }
     
     public override string ViewId
     {
@@ -45,7 +48,7 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
                                 {
                                     return AuthenticationService
                                        .UpdateVerificationCodeByEmailAsync(EmailOrLogin, cancellationToken)
-                                       .IfSuccessAsync(() => Navigator.NavigateToAsync<ForgotPasswordViewModel>(vm =>
+                                       .IfSuccessAsync(() => navigator.NavigateToAsync<ForgotPasswordViewModel>(vm =>
                                         {
                                             vm.Identifier = EmailOrLogin;
 
@@ -55,7 +58,7 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
                                         }, cancellationToken), cancellationToken);
                                 }
 
-                                return Navigator.NavigateToAsync<VerificationCodeViewModel>(vm =>
+                                return navigator.NavigateToAsync<VerificationCodeViewModel>(vm =>
                                 {
                                     vm.IdentifierType = UserIdentifierType.Email;
                                     vm.Identifier = EmailOrLogin;
@@ -70,7 +73,7 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
                             {
                                 return AuthenticationService
                                    .UpdateVerificationCodeByLoginAsync(EmailOrLogin, cancellationToken)
-                                   .IfSuccessAsync(() => Navigator.NavigateToAsync<ForgotPasswordViewModel>(vm =>
+                                   .IfSuccessAsync(() => navigator.NavigateToAsync<ForgotPasswordViewModel>(vm =>
                                     {
                                         vm.Identifier = EmailOrLogin;
 
@@ -80,7 +83,7 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
                                     }, cancellationToken), cancellationToken);
                             }
 
-                            return Navigator.NavigateToAsync<VerificationCodeViewModel>(vm =>
+                            return navigator.NavigateToAsync<VerificationCodeViewModel>(vm =>
                             {
                                 vm.IdentifierType = UserIdentifierType.Login;
                                 vm.Identifier = EmailOrLogin;

@@ -2,22 +2,27 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class MultiToDoItemsViewModel : ViewModelBase
 {
-    public MultiToDoItemsViewModel(ToDoItemsViewModel favorite, ToDoItemsGroupByViewModel toDoItems)
+    public MultiToDoItemsViewModel(
+        ToDoItemsViewModel favorite,
+        ToDoItemsGroupByViewModel toDoItems,
+        IErrorHandler errorHandler
+    )
     {
         GroupBy = GroupBy.ByStatus;
         favorite.Header = new("MultiToDoItemsView.Favorite");
         Favorite = favorite;
         ToDoItems = toDoItems;
-        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
         
-        this.WhenAnyValue(x => x.IsMulti).Subscribe(x =>
-        {
-            Favorite.IsMulti = x;
-            ToDoItems.IsMulti = x;
-        });
+        this.WhenAnyValue(x => x.IsMulti)
+           .Subscribe(x =>
+            {
+                Favorite.IsMulti = x;
+                ToDoItems.IsMulti = x;
+            });
     }
     
-    public ICommand InitializedCommand { get; }
+    public SpravyCommand InitializedCommand { get; }
     public ToDoItemsViewModel Favorite { get; }
     public ToDoItemsGroupByViewModel ToDoItems { get; }
     

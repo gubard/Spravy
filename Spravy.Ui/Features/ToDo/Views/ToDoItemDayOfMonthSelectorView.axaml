@@ -11,7 +11,7 @@
                         x:DataType="vm:ToDoItemDayOfMonthSelectorViewModel">
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
-            <InvokeCommandAction Command="{Binding InitializedCommand}" />
+            <InvokeCommandAction Command="{Binding InitializedCommand.Command}" />
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 

@@ -3,24 +3,22 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 public class ToDoItemSelectorViewModel : ViewModelBase
 {
     private readonly List<ToDoItemEntityNotify> itemsCache = new();
+    private readonly IToDoService toDoService;
+    private readonly IToDoCache toDoCache;
     
-    public ToDoItemSelectorViewModel()
+    public ToDoItemSelectorViewModel(IToDoService toDoService, IToDoCache toDoCache, IErrorHandler errorHandler)
     {
-        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
-        SearchCommand = CreateCommandFromTask(TaskWork.Create(SearchAsync).RunAsync);
+        this.toDoService = toDoService;
+        this.toDoCache = toDoCache;
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
+        SearchCommand = SpravyCommand.Create(SearchAsync, errorHandler);
     }
     
     public AvaloniaList<ToDoItemEntityNotify> Roots { get; } = new();
-    public ICommand InitializedCommand { get; }
+    public SpravyCommand InitializedCommand { get; }
     public ReadOnlyMemory<Guid> IgnoreIds { get; set; } = ReadOnlyMemory<Guid>.Empty;
     public Guid DefaultSelectedItemId { get; set; }
-    public ICommand SearchCommand { get; }
-    
-    [Inject]
-    public required IToDoService ToDoService { get; init; }
-    
-    [Inject]
-    public required IToDoCache ToDoCache { get; init; }
+    public SpravyCommand SearchCommand { get; }
     
     [Reactive]
     public string SearchText { get; set; } = string.Empty;
@@ -35,7 +33,7 @@ public class ToDoItemSelectorViewModel : ViewModelBase
     
     private ConfiguredValueTaskAwaitable<Result> Refresh(CancellationToken cancellationToken)
     {
-        return ToDoCache.GetRootItems()
+        return toDoCache.GetRootItems()
            .IfSuccessAsync(items => this.InvokeUiBackgroundAsync(() =>
             {
                 Roots.Clear();
@@ -43,9 +41,9 @@ public class ToDoItemSelectorViewModel : ViewModelBase
                 
                 return SetupUi();
             }), cancellationToken)
-           .IfSuccessAsync(() => ToDoService.GetToDoSelectorItemsAsync(IgnoreIds.ToArray(), cancellationToken),
+           .IfSuccessAsync(() => toDoService.GetToDoSelectorItemsAsync(IgnoreIds.ToArray(), cancellationToken),
                 cancellationToken)
-           .IfSuccessAsync(items => this.InvokeUiBackgroundAsync(() => ToDoCache.UpdateUi(items)), cancellationToken)
+           .IfSuccessAsync(items => this.InvokeUiBackgroundAsync(() => toDoCache.UpdateUi(items)), cancellationToken)
            .IfSuccessAsync(items => this.InvokeUiBackgroundAsync(() =>
             {
                 Roots.Clear();
@@ -101,7 +99,7 @@ public class ToDoItemSelectorViewModel : ViewModelBase
                 
                 return Result.Success;
             })
-           .IfSuccessAsync(() => ToDoCache.GetRootItems(), cancellationToken)
+           .IfSuccessAsync(() => toDoCache.GetRootItems(), cancellationToken)
            .IfSuccessForEachAsync(item => SearchAsync(item, cancellationToken), cancellationToken);
     }
     

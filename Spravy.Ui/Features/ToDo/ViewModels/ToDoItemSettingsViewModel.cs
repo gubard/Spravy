@@ -2,9 +2,20 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ToDoItemSettingsViewModel : NavigatableViewModelBase
 {
-    public ToDoItemSettingsViewModel() : base(true)
+    private readonly IToDoService toDoService;
+    private readonly IKernel resolver;
+    
+    public ToDoItemSettingsViewModel(
+        ToDoItemContentViewModel toDoItemContent,
+        IKernel resolver,
+        IToDoService toDoService,
+        IErrorHandler errorHandler
+    ) : base(true)
     {
-        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
+        ToDoItemContent = toDoItemContent;
+        this.resolver = resolver;
+        this.toDoService = toDoService;
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
     }
     
     public override string ViewId
@@ -12,16 +23,8 @@ public class ToDoItemSettingsViewModel : NavigatableViewModelBase
         get => TypeCache<ToDoItemSettingsViewModel>.Type.Name;
     }
     
-    public ICommand InitializedCommand { get; }
-    
-    [Inject]
-    public required IKernel Resolver { get; init; }
-    
-    [Inject]
-    public required ToDoItemContentViewModel ToDoItemContent { get; init; }
-    
-    [Inject]
-    public required IToDoService ToDoService { get; init; }
+    public SpravyCommand InitializedCommand { get; }
+    public ToDoItemContentViewModel ToDoItemContent { get; }
     
     [Reactive]
     public IApplySettings? Settings { get; set; }
@@ -34,16 +37,16 @@ public class ToDoItemSettingsViewModel : NavigatableViewModelBase
         ToDoItemContent.WhenAnyValue(x => x.Type)
            .Subscribe(x => Settings = x switch
             {
-                ToDoItemType.Value => Resolver.Get<ValueToDoItemSettingsViewModel>().Case(vm => vm.Id = ToDoItemId),
-                ToDoItemType.Planned => Resolver.Get<PlannedToDoItemSettingsViewModel>().Case(vm => vm.Id = ToDoItemId),
-                ToDoItemType.Periodicity => Resolver.Get<PeriodicityToDoItemSettingsViewModel>()
+                ToDoItemType.Value => resolver.Get<ValueToDoItemSettingsViewModel>().Case(vm => vm.Id = ToDoItemId),
+                ToDoItemType.Planned => resolver.Get<PlannedToDoItemSettingsViewModel>().Case(vm => vm.Id = ToDoItemId),
+                ToDoItemType.Periodicity => resolver.Get<PeriodicityToDoItemSettingsViewModel>()
                    .Case(vm => vm.Id = ToDoItemId),
-                ToDoItemType.PeriodicityOffset => Resolver.Get<PeriodicityOffsetToDoItemSettingsViewModel>()
+                ToDoItemType.PeriodicityOffset => resolver.Get<PeriodicityOffsetToDoItemSettingsViewModel>()
                    .Case(vm => vm.Id = ToDoItemId),
-                ToDoItemType.Circle => Resolver.Get<ValueToDoItemSettingsViewModel>().Case(vm => vm.Id = ToDoItemId),
-                ToDoItemType.Step => Resolver.Get<ValueToDoItemSettingsViewModel>().Case(vm => vm.Id = ToDoItemId),
-                ToDoItemType.Group => Resolver.Get<GroupToDoItemSettingsViewModel>(),
-                ToDoItemType.Reference => Resolver.Get<ReferenceToDoItemSettingsViewModel>()
+                ToDoItemType.Circle => resolver.Get<ValueToDoItemSettingsViewModel>().Case(vm => vm.Id = ToDoItemId),
+                ToDoItemType.Step => resolver.Get<ValueToDoItemSettingsViewModel>().Case(vm => vm.Id = ToDoItemId),
+                ToDoItemType.Group => resolver.Get<GroupToDoItemSettingsViewModel>(),
+                ToDoItemType.Reference => resolver.Get<ReferenceToDoItemSettingsViewModel>()
                    .Case(vm => vm.ToDoItemId = ToDoItemId),
                 _ => throw new ArgumentOutOfRangeException(),
             });
@@ -53,7 +56,7 @@ public class ToDoItemSettingsViewModel : NavigatableViewModelBase
     
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
     {
-        return ToDoService.GetToDoItemAsync(ToDoItemId, cancellationToken)
+        return toDoService.GetToDoItemAsync(ToDoItemId, cancellationToken)
            .IfSuccessAsync(toDoItem => this.InvokeUiBackgroundAsync(() =>
             {
                 ToDoItemContent.Name = toDoItem.Name;

@@ -2,11 +2,15 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class RandomizeChildrenOrderViewModel : ViewModelBase
 {
+    private readonly IToDoCache toDoCache;
+    
+    public RandomizeChildrenOrderViewModel(IToDoCache toDoCache)
+    {
+        this.toDoCache = toDoCache;
+    }
+    
     public ToDoItemEntityNotify? Item { get; set; }
     public ReadOnlyMemory<Guid> RandomizeChildrenOrderIds { get; set; } = ReadOnlyMemory<Guid>.Empty;
-    
-    [Inject]
-    public required IToDoCache ToDoCache { get; init; }
     
     public string Name
     {
@@ -18,7 +22,7 @@ public class RandomizeChildrenOrderViewModel : ViewModelBase
             }
             
             return string.Join(", ",
-                RandomizeChildrenOrderIds.Select(x => ToDoCache.GetToDoItem(x).ThrowIfError().Name).ToArray());
+                RandomizeChildrenOrderIds.Select(x => toDoCache.GetToDoItem(x).ThrowIfError().Name).ToArray());
         }
     }
 }

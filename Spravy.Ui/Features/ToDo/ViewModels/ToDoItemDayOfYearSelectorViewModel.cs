@@ -2,36 +2,37 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ToDoItemDayOfYearSelectorViewModel : ViewModelBase, IApplySettings
 {
-    public ToDoItemDayOfYearSelectorViewModel()
+    private readonly IToDoService toDoService;
+    
+    public ToDoItemDayOfYearSelectorViewModel(IToDoService toDoService, IErrorHandler errorHandler)
     {
+        this.toDoService = toDoService;
+        
         Items = new(Enumerable.Range(1, 12)
            .Select(x => new DayOfYearSelectItem
             {
                 Month = (byte)x,
             }));
 
-        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
     }
 
     public AvaloniaList<DayOfYearSelectItem> Items { get; }
-    public ICommand InitializedCommand { get; }
-
-    [Inject]
-    public required IToDoService ToDoService { get; set; }
+    public SpravyCommand InitializedCommand { get; }
 
     [Reactive]
     public Guid ToDoItemId { get; set; }
 
     public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
     {
-        return ToDoService.UpdateToDoItemAnnuallyPeriodicityAsync(ToDoItemId,
+        return toDoService.UpdateToDoItemAnnuallyPeriodicityAsync(ToDoItemId,
             new(Items.SelectMany(x => x.Days.Where(y => y.IsSelected).Select(y => new DayOfYear(y.Day, x.Month)))),
             cancellationToken);
     }
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
-        return ToDoService.GetAnnuallyPeriodicityAsync(ToDoItemId, cancellationToken)
+        return toDoService.GetAnnuallyPeriodicityAsync(ToDoItemId, cancellationToken)
            .IfSuccessAsync(annuallyPeriodicity =>
             {
                 var items = new List<Func<ConfiguredValueTaskAwaitable<Result>>>();

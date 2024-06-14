@@ -2,15 +2,15 @@ namespace Spravy.Ui.Features.PasswordGenerator.ViewModels;
 
 public class PasswordItemSettingsViewModel : ViewModelBase
 {
-    public PasswordItemSettingsViewModel()
+    private readonly IPasswordService passwordService;
+    
+    public PasswordItemSettingsViewModel(IPasswordService passwordService, IErrorHandler errorHandler)
     {
-        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
+        this.passwordService = passwordService;
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
     }
 
-    public ICommand InitializedCommand { get; }
-
-    [Inject]
-    public required IPasswordService PasswordService { get; init; }
+    public SpravyCommand InitializedCommand { get; }
 
     [Reactive]
     public Guid Id { get; set; }
@@ -44,7 +44,7 @@ public class PasswordItemSettingsViewModel : ViewModelBase
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
-        return PasswordService.GetPasswordItemAsync(Id, cancellationToken)
+        return passwordService.GetPasswordItemAsync(Id, cancellationToken)
            .IfSuccessAsync(value => this.InvokeUiBackgroundAsync(() =>
             {
                 Name = value.Name;

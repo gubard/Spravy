@@ -3,12 +3,18 @@ namespace Spravy.Ui.ViewModels;
 public class SettingViewModel : NavigatableViewModelBase
 {
     private readonly PageHeaderViewModel pageHeaderViewModel;
+    private readonly INavigator navigator;
     private readonly SukiTheme theme = SukiTheme.GetInstance();
     private readonly ISpravyNotificationManager spravyNotificationManager;
     
-    public SettingViewModel(ISpravyNotificationManager spravyNotificationManager) : base(true)
+    public SettingViewModel(
+        ISpravyNotificationManager spravyNotificationManager,
+        IErrorHandler errorHandler,
+        INavigator navigator
+    ) : base(true)
     {
         this.spravyNotificationManager = spravyNotificationManager;
+        this.navigator = navigator;
         AvailableColors = new(theme.ColorThemes.Select(x => new Selected<SukiColorTheme>(x)));
         
         foreach (var availableColor in AvailableColors)
@@ -20,14 +26,10 @@ public class SettingViewModel : NavigatableViewModelBase
         }
         
         IsLightTheme = theme.ActiveBaseTheme == ThemeVariant.Light;
-        ChangePasswordCommand = CreateCommandFromTask(TaskWork.Create(ChangePasswordAsync).RunAsync);
-        SaveSettingsCommand = CreateCommandFromTask(TaskWork.Create(SaveSettingsAsync).RunAsync);
-        DeleteAccountCommand = CreateCommandFromTask(TaskWork.Create(DeleteAccountAsync).RunAsync);
-        
-        SwitchToColorThemeCommand =
-            CreateCommandFromTask<Selected<SukiColorTheme>>(TaskWork
-               .Create<Selected<SukiColorTheme>>(SwitchToColorTheme)
-               .RunAsync);
+        ChangePasswordCommand = SpravyCommand.Create(ChangePasswordAsync, errorHandler);
+        SaveSettingsCommand = SpravyCommand.Create(SaveSettingsAsync, errorHandler);
+        DeleteAccountCommand = SpravyCommand.Create(DeleteAccountAsync, errorHandler);
+        SwitchToColorThemeCommand = SpravyCommand.Create<Selected<SukiColorTheme>>(SwitchToColorTheme, errorHandler);
         
         this.WhenAnyValue(x => x.IsLightTheme)
            .Subscribe(x => theme.ChangeBaseTheme(x ? ThemeVariant.Light : ThemeVariant.Dark));
@@ -78,10 +80,10 @@ public class SettingViewModel : NavigatableViewModelBase
         }
     }
     
-    public ICommand ChangePasswordCommand { get;  }
-    public ICommand DeleteAccountCommand { get; }
-    public ICommand SwitchToColorThemeCommand { get;}
-    public ICommand SaveSettingsCommand { get;  }
+    public SpravyCommand ChangePasswordCommand { get; }
+    public SpravyCommand DeleteAccountCommand { get; }
+    public SpravyCommand SwitchToColorThemeCommand { get; }
+    public SpravyCommand SaveSettingsCommand { get; }
     
     [Reactive]
     public bool IsBusy { get; set; }
@@ -103,7 +105,7 @@ public class SettingViewModel : NavigatableViewModelBase
     
     private ConfiguredValueTaskAwaitable<Result> DeleteAccountAsync(CancellationToken cancellationToken)
     {
-        return Navigator.NavigateToAsync<DeleteAccountViewModel>(vm =>
+        return navigator.NavigateToAsync<DeleteAccountViewModel>(vm =>
         {
             vm.Identifier = AccountNotify.Login;
             vm.IdentifierType = UserIdentifierType.Login;
@@ -112,7 +114,7 @@ public class SettingViewModel : NavigatableViewModelBase
     
     private ConfiguredValueTaskAwaitable<Result> ChangePasswordAsync(CancellationToken cancellationToken)
     {
-        return Navigator.NavigateToAsync<ForgotPasswordViewModel>(vm =>
+        return navigator.NavigateToAsync<ForgotPasswordViewModel>(vm =>
         {
             vm.Identifier = AccountNotify.Login;
             vm.IdentifierType = UserIdentifierType.Login;
@@ -144,22 +146,23 @@ public class SettingViewModel : NavigatableViewModelBase
     {
         return this.InvokeUiBackgroundAsync(() =>
             {
-                 IsBusy = true;
-                 
-                 return Result.Success;
+                IsBusy = true;
+                
+                return Result.Success;
             })
            .IfSuccessTryFinallyAsync(() => this.InvokeUiBackgroundAsync(() =>
+            {
+                theme.ChangeColorTheme(colorTheme.Value);
+                colorTheme.IsSelect = true;
+                
+                return Result.Success;
+            }), () => this.InvokeUiBackgroundAsync(() =>
                 {
-                    theme.ChangeColorTheme(colorTheme.Value);
-                    colorTheme.IsSelect = true;
+                    IsBusy = false;
                     
                     return Result.Success;
-                }), () => this.InvokeUiBackgroundAsync(() =>
-                {
-                     IsBusy = false;
-                     
-                     return Result.Success;
-                }).ToValueTask().ConfigureAwait(false),
-                cancellationToken);
+                })
+               .ToValueTask()
+               .ConfigureAwait(false), cancellationToken);
     }
 }

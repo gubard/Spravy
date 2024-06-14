@@ -6,6 +6,9 @@ public class SearchToDoItemsViewModel : NavigatableViewModelBase,
     IToDoSubItemsViewModelProperty
 {
     private readonly TaskWork refreshWork;
+    private readonly IToDoService toDoService;
+    private readonly IToDoCache toDoCache;
+    private readonly IObjectStorage objectStorage;
     
     public SearchToDoItemsViewModel(
         ToDoSubItemsViewModel toDoSubItemsViewModel,
@@ -16,10 +19,15 @@ public class SearchToDoItemsViewModel : NavigatableViewModelBase,
         IConverter converter,
         IClipboardService clipboardService,
         IOpenerLink openerLink,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        IObjectStorage objectStorage,
+        IToDoCache toDoCache
     ) : base(true)
     {
         ToDoSubItemsViewModel = toDoSubItemsViewModel;
+        this.toDoService = toDoService;
+        this.objectStorage = objectStorage;
+        this.toDoCache = toDoCache;
         Commands = new();
         
         ToDoSubItemsViewModel.List
@@ -65,10 +73,10 @@ public class SearchToDoItemsViewModel : NavigatableViewModelBase,
             });
         
         refreshWork = TaskWork.Create(RefreshCoreAsync);
-        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
     }
     
-    public ICommand InitializedCommand { get; }
+    public SpravyCommand InitializedCommand { get; }
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
     public AvaloniaList<SpravyCommandNotify> Commands { get; }
     
@@ -76,15 +84,6 @@ public class SearchToDoItemsViewModel : NavigatableViewModelBase,
     {
         get => TypeCache<SearchToDoItemsViewModel>.Type.Name;
     }
-    
-    [Inject]
-    public required IToDoService ToDoService { get; init; }
-    
-    [Inject]
-    public required IToDoCache ToDoCache { get; init; }
-    
-    [Inject]
-    public required IObjectStorage ObjectStorage { get; init; }
     
     [Reactive]
     public string SearchText { get; set; } = string.Empty;
@@ -96,15 +95,15 @@ public class SearchToDoItemsViewModel : NavigatableViewModelBase,
     
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
-        return ObjectStorage.GetObjectOrDefaultAsync<SearchViewModelSetting>(ViewId, cancellationToken)
+        return objectStorage.GetObjectOrDefaultAsync<SearchViewModelSetting>(ViewId, cancellationToken)
            .IfSuccessAsync(obj => SetStateAsync(obj, cancellationToken), cancellationToken);
     }
     
     private ConfiguredValueTaskAwaitable<Result> RefreshCoreAsync(CancellationToken cancellationToken)
     {
-        return ToDoService.SearchToDoItemIdsAsync(SearchText, cancellationToken)
-           .IfSuccessForEachAsync(id => ToDoCache.GetToDoItem(id), cancellationToken)
-           .IfSuccessAsync(ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken),
+        return toDoService.SearchToDoItemIdsAsync(SearchText, cancellationToken)
+           .IfSuccessForEachAsync(id => toDoCache.GetToDoItem(id), cancellationToken)
+           .IfSuccessAsync(ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), false, cancellationToken),
                 cancellationToken);
     }
     
@@ -117,7 +116,7 @@ public class SearchToDoItemsViewModel : NavigatableViewModelBase,
     
     public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
     {
-        return ObjectStorage.SaveObjectAsync(ViewId, new SearchViewModelSetting(this));
+        return objectStorage.SaveObjectAsync(ViewId, new SearchViewModelSetting(this));
     }
     
     public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(

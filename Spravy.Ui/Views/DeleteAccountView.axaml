@@ -12,7 +12,7 @@
                         x:DataType="vm:DeleteAccountViewModel">
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
-            <InvokeCommandAction Command="{Binding InitializedCommand}" />
+            <InvokeCommandAction Command="{Binding InitializedCommand.Command}" />
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 
@@ -34,7 +34,7 @@
                         Content="{DynamicResource DeleteAccountView.Back}" />
                 <Button Grid.Row="1"
                         Grid.Column="1"
-                        Command="{Binding DeleteAccountCommand}"
+                        Command="{Binding DeleteAccountCommand.Command}"
                         Content="{DynamicResource DeleteAccountView.DeleteAccount}" />
             </Grid>
         </StackPanel>

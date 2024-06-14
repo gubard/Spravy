@@ -10,14 +10,14 @@
                         x:Class="Spravy.Ui.Views.InfoView"
                         x:DataType="vm:InfoViewModel">
     <UserControl.KeyBindings>
-        <KeyBinding Gesture="Ctrl+Enter" Command="{Binding OkCommand}" />
+        <KeyBinding Gesture="Ctrl+Enter" Command="{Binding OkCommand.Command}" />
     </UserControl.KeyBindings>
 
     <Grid RowDefinitions="*,Auto">
         <ContentControl Name="{x:Static v:InfoView.ContentContentControlName}" Content="{Binding Content}" />
         <Button Name="{x:Static v:InfoView.OkButtonName}"
                 Grid.Row="1"
-                Command="{Binding OkCommand}"
+                Command="{Binding OkCommand.Command}"
                 ClickMode="Press"
                 Content="{DynamicResource InfoView.Ok}"
                 Classes="Flat" />

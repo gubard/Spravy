@@ -1,15 +1,33 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceProperty, IRefresh, IToDoItemUpdater
+public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUpdater
 {
     private readonly TaskWork refreshWork;
-    private readonly ToDoSubItemsViewModel toDoSubItemsViewModel;
+    private readonly IObjectStorage objectStorage;
+    private readonly IToDoCache toDoCache;
+    private readonly IToDoService toDoService;
+    
     private Guid id;
     
-    public ToDoItemViewModel() : base(true)
+    public ToDoItemViewModel(
+        IObjectStorage objectStorage,
+        ToDoItemCommands commands,
+        ToDoSubItemsViewModel toDoSubItemsViewModel,
+        FastAddToDoItemViewModel fastAddToDoItemViewModel,
+        ITaskProgressService taskProgressService,
+        IToDoService toDoService,
+        IToDoCache toDoCache
+    ) : base(true)
     {
+        this.objectStorage = objectStorage;
+        Commands = commands;
+        ToDoSubItemsViewModel = toDoSubItemsViewModel;
+        FastAddToDoItemViewModel = fastAddToDoItemViewModel;
+        this.toDoService = toDoService;
+        this.toDoCache = toDoCache;
         refreshWork = TaskWork.Create(RefreshCoreAsync);
         CommandItems = new();
+        ToDoSubItemsViewModel.List.WhenAnyValue(x => x.IsMulti).Subscribe(_ => UpdateCommandItemsUi());
     }
     
     public Guid Id
@@ -23,27 +41,9 @@ public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceP
     }
     
     public AvaloniaList<SpravyCommandNotify> CommandItems { get; }
-    
-    [Inject]
-    public required ToDoItemCommands Commands { get; init; }
-    
-    [Inject]
-    public required ToDoSubItemsViewModel ToDoSubItemsViewModel
-    {
-        get => toDoSubItemsViewModel;
-        [MemberNotNull(nameof(toDoSubItemsViewModel))]
-        init
-        {
-            toDoSubItemsViewModel = value;
-            toDoSubItemsViewModel.List.WhenAnyValue(x => x.IsMulti).Subscribe(_ => UpdateCommandItemsUi());
-        }
-    }
-    
-    [Inject]
-    public required FastAddToDoItemViewModel FastAddToDoItemViewModel { get; init; }
-    
-    [Inject]
-    public required IObjectStorage ObjectStorage { get; init; }
+    public ToDoItemCommands Commands { get; }
+    public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
+    public FastAddToDoItemViewModel FastAddToDoItemViewModel { get; }
     
     [Reactive]
     public ToDoItemEntityNotify? Item { get; set; }
@@ -52,15 +52,6 @@ public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceP
     {
         get => $"{TypeCache<ToDoItemViewModel>.Type.Name}:{Id}";
     }
-    
-    [Inject]
-    public required IToDoCache ToDoCache { get; set; }
-    
-    [Inject]
-    public required IToDoService ToDoService { get; set; }
-    
-    [Inject]
-    public required ITaskProgressService TaskProgressService { get; init; }
     
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
     {
@@ -83,24 +74,24 @@ public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceP
     
     private ConfiguredValueTaskAwaitable<Result> RefreshToDoItemCore(CancellationToken cancellationToken)
     {
-        return ToDoCache.GetToDoItem(Id)
+        return toDoCache.GetToDoItem(Id)
            .IfSuccessAsync(item => this.InvokeUiBackgroundAsync(() =>
             {
                 Item = item;
                 
                 return Result.Success;
             }), cancellationToken)
-           .IfSuccessAsync(() => ToDoService.GetToDoItemAsync(Id, cancellationToken), cancellationToken)
+           .IfSuccessAsync(() => toDoService.GetToDoItemAsync(Id, cancellationToken), cancellationToken)
            .IfSuccessAsync(
                 item => this.InvokeUiBackgroundAsync(() =>
-                    ToDoCache.UpdateUi(item).IfSuccess(_ => UpdateCommandItemsUi())),
+                    toDoCache.UpdateUi(item).IfSuccess(_ => UpdateCommandItemsUi())),
                 cancellationToken);
     }
     
     private ConfiguredValueTaskAwaitable<Result> RefreshPathAsync(CancellationToken cancellationToken)
     {
-        return ToDoService.GetParentsAsync(Id, cancellationToken)
-           .IfSuccessAsync(parents => this.InvokeUiBackgroundAsync(() => ToDoCache.UpdateParentsUi(Id, parents)),
+        return toDoService.GetParentsAsync(Id, cancellationToken)
+           .IfSuccessAsync(parents => this.InvokeUiBackgroundAsync(() => toDoCache.UpdateParentsUi(Id, parents)),
                 cancellationToken);
     }
     
@@ -110,10 +101,10 @@ public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceP
            .InvokeUiBackgroundAsync(() =>
                 ToDoSubItemsViewModel.ClearExceptUi(Item?.Children.ToArray()
                  ?? ReadOnlyMemory<ToDoItemEntityNotify>.Empty))
-           .IfSuccessAsync(() => ToDoService.GetChildrenToDoItemIdsAsync(Id, cancellationToken), cancellationToken)
-           .IfSuccessAsync(ids => this.InvokeUiBackgroundAsync(() => ToDoCache.UpdateChildrenItemsUi(Id, ids)),
+           .IfSuccessAsync(() => toDoService.GetChildrenToDoItemIdsAsync(Id, cancellationToken), cancellationToken)
+           .IfSuccessAsync(ids => this.InvokeUiBackgroundAsync(() => toDoCache.UpdateChildrenItemsUi(Id, ids)),
                 cancellationToken)
-           .IfSuccessAsync(items => ToDoSubItemsViewModel.UpdateItemsAsync(items, this, false, cancellationToken),
+           .IfSuccessAsync(items => ToDoSubItemsViewModel.UpdateItemsAsync(items, false, cancellationToken),
                 cancellationToken);
     }
     
@@ -140,7 +131,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, ITaskProgressServiceP
     
     public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
     {
-        return ObjectStorage.SaveObjectAsync(ViewId, new ToDoItemViewModelSetting(this));
+        return objectStorage.SaveObjectAsync(ViewId, new ToDoItemViewModelSetting(this));
     }
     
     public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(

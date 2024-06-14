@@ -2,21 +2,19 @@
 
 public class ChangeToDoItemOrderIndexViewModel : ViewModelBase
 {
-    public ChangeToDoItemOrderIndexViewModel()
+    private readonly IToDoService toDoService;
+    private readonly IToDoCache toDoCache;
+    
+    public ChangeToDoItemOrderIndexViewModel(IToDoService toDoService, IToDoCache toDoCache, IErrorHandler errorHandler)
     {
-        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
+        this.toDoService = toDoService;
+        this.toDoCache = toDoCache;
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
     }
     
-    public ICommand InitializedCommand { get; }
+    public SpravyCommand InitializedCommand { get; }
     public Guid Id { get; set; }
     public ReadOnlyMemory<Guid> ChangeToDoItemOrderIndexIds { get; set; } = ReadOnlyMemory<Guid>.Empty;
-    
-    [Inject]
-    public required IToDoService ToDoService { get; init; }
-    
-    [Inject]
-    public required IToDoCache ToDoCache { get; init; }
-    
     public AvaloniaList<ToDoItemEntityNotify> Items { get; } = new();
     
     [Reactive]
@@ -29,31 +27,30 @@ public class ChangeToDoItemOrderIndexViewModel : ViewModelBase
     {
         if (ChangeToDoItemOrderIndexIds.IsEmpty)
         {
-            return ToDoService.GetSiblingsAsync(Id, cancellationToken)
-               .IfSuccessAsync(
-                    items => this.InvokeUiBackgroundAsync(() =>
-                    {
-                        Items.Clear();
-                        
-                        return items.ToResult()
-                           .IfSuccessForEach(item => ToDoCache.UpdateUi(item)
-                               .IfSuccess(i =>
-                                {
-                                    Items.Add(i);
-                                    
-                                    return Result.Success;
-                                }));
-                    }), cancellationToken);
-        }
-        
-        return ChangeToDoItemOrderIndexIds.ToResult().IfSuccessForEach(id=>ToDoCache.GetToDoItem(id))
-           .IfSuccessAsync(
-                items => this.InvokeUiBackgroundAsync(() =>
+            return toDoService.GetSiblingsAsync(Id, cancellationToken)
+               .IfSuccessAsync(items => this.InvokeUiBackgroundAsync(() =>
                 {
                     Items.Clear();
-                    Items.AddRange(items.ToArray());
                     
-                    return Result.Success;
+                    return items.ToResult()
+                       .IfSuccessForEach(item => toDoCache.UpdateUi(item)
+                           .IfSuccess(i =>
+                            {
+                                Items.Add(i);
+                                
+                                return Result.Success;
+                            }));
                 }), cancellationToken);
+        }
+        
+        return ChangeToDoItemOrderIndexIds.ToResult()
+           .IfSuccessForEach(id => toDoCache.GetToDoItem(id))
+           .IfSuccessAsync(items => this.InvokeUiBackgroundAsync(() =>
+            {
+                Items.Clear();
+                Items.AddRange(items.ToArray());
+                
+                return Result.Success;
+            }), cancellationToken);
     }
 }

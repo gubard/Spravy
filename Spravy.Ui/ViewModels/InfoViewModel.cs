@@ -2,21 +2,21 @@ namespace Spravy.Ui.ViewModels;
 
 public class InfoViewModel : ViewModelBase
 {
-    public InfoViewModel()
+    public InfoViewModel(IErrorHandler errorHandler)
     {
-        OkCommand = CreateCommandFromTask(async () => await OkAsync());
+        OkCommand = SpravyCommand.Create(OkAsync, errorHandler);
     }
-
+    
     [Reactive]
     public object? Content { get; set; }
-
+    
     public Func<object, ConfiguredValueTaskAwaitable<Result>>? OkTask { get; set; }
-    public ICommand OkCommand { get; }
-
-    private async ValueTask<Result> OkAsync()
+    public SpravyCommand OkCommand { get; }
+    
+    private ConfiguredValueTaskAwaitable<Result> OkAsync(CancellationToken cancellationToken)
     {
         var con = Content.ThrowIfNull();
-
-        return await OkTask.ThrowIfNull().Invoke(con);
+        
+        return OkTask.ThrowIfNull().Invoke(con);
     }
 }

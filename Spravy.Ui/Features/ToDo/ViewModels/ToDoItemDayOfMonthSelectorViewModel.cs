@@ -2,30 +2,30 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ToDoItemDayOfMonthSelectorViewModel : ViewModelBase, IApplySettings
 {
-    public ToDoItemDayOfMonthSelectorViewModel()
+    private readonly IToDoService toDoService;
+    
+    public ToDoItemDayOfMonthSelectorViewModel(IToDoService toDoService, IErrorHandler errorHandler)
     {
+        this.toDoService = toDoService;
         SelectedDays = new();
-        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
     }
     
     public AvaloniaList<int> SelectedDays { get; }
-    public ICommand InitializedCommand { get; }
-    
-    [Inject]
-    public required IToDoService ToDoService { get; set; }
+    public SpravyCommand InitializedCommand { get; }
     
     [Reactive]
     public Guid ToDoItemId { get; set; }
     
     public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
     {
-        return ToDoService.UpdateToDoItemMonthlyPeriodicityAsync(ToDoItemId, new(SelectedDays.Select(x => (byte)x)),
+        return toDoService.UpdateToDoItemMonthlyPeriodicityAsync(ToDoItemId, new(SelectedDays.Select(x => (byte)x)),
             cancellationToken);
     }
     
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
-        return ToDoService.GetMonthlyPeriodicityAsync(ToDoItemId, cancellationToken)
+        return toDoService.GetMonthlyPeriodicityAsync(ToDoItemId, cancellationToken)
            .IfSuccessAsync(monthlyPeriodicity => this.InvokeUiBackgroundAsync(() =>
             {
                 SelectedDays.AddRange(monthlyPeriodicity.Days.Select(x => (int)x));

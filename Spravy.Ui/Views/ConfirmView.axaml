@@ -20,7 +20,7 @@
                         Content="{Binding Content}" />
         <Button Name="{x:Static v:ConfirmView.CancelButtonName}"
                 Grid.Row="1"
-                Command="{Binding CancelCommand}"
+                Command="{Binding CancelCommand.Command}"
                 ClickMode="Press"
                 Content="{DynamicResource ConfirmView.Cancel}" />
         <Button Name="{x:Static v:ConfirmView.OkButtonName}"

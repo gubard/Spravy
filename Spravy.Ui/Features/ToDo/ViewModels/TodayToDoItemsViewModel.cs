@@ -2,6 +2,9 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class TodayToDoItemsViewModel : NavigatableViewModelBase, IRefresh, IToDoSubItemsViewModelProperty
 {
+    private readonly IToDoService toDoService;
+    private readonly IToDoCache toDoCache;
+    
     public TodayToDoItemsViewModel(
         PageHeaderViewModel pageHeaderViewModel,
         ToDoSubItemsViewModel toDoSubItemsViewModel,
@@ -12,13 +15,16 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IRefresh, IToDo
         IConverter converter,
         IClipboardService clipboardService,
         IOpenerLink openerLink,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        IToDoCache toDoCache
     ) : base(true)
     {
         PageHeaderViewModel = pageHeaderViewModel;
         PageHeaderViewModel.Header = "Today to-do";
         PageHeaderViewModel.LeftCommand = CommandStorage.NavigateToCurrentToDoItemItem;
         ToDoSubItemsViewModel = toDoSubItemsViewModel;
+        this.toDoService = toDoService;
+        this.toDoCache = toDoCache;
         
         ToDoSubItemsViewModel.List
            .WhenAnyValue(x => x.IsMulti)
@@ -62,18 +68,12 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IRefresh, IToDo
                 }
             });
         
-        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
     }
-    
-    [Inject]
-    public required IToDoService ToDoService { get; init; }
-    
-    [Inject]
-    public required IToDoCache ToDoCache { get; init; }
     
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
     public PageHeaderViewModel PageHeaderViewModel { get; }
-    public ICommand InitializedCommand { get; }
+    public SpravyCommand InitializedCommand { get; }
     
     public override string ViewId
     {
@@ -82,9 +82,9 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IRefresh, IToDo
     
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
     {
-        return ToDoService.GetTodayToDoItemsAsync(cancellationToken)
-           .IfSuccessForEachAsync(id => ToDoCache.GetToDoItem(id), cancellationToken)
-           .IfSuccessAsync(ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), this, false, cancellationToken),
+        return toDoService.GetTodayToDoItemsAsync(cancellationToken)
+           .IfSuccessForEachAsync(id => toDoCache.GetToDoItem(id), cancellationToken)
+           .IfSuccessAsync(ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), false, cancellationToken),
                 cancellationToken);
     }
     

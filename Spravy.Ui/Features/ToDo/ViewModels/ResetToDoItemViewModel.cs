@@ -2,12 +2,15 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ResetToDoItemViewModel : NavigatableViewModelBase
 {
-    public ResetToDoItemViewModel() : base(true)
+    private readonly IObjectStorage objectStorage;
+    
+    public ResetToDoItemViewModel(IObjectStorage objectStorage, IErrorHandler errorHandler) : base(true)
     {
-        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
+        this.objectStorage = objectStorage;
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
     }
 
-    public ICommand InitializedCommand { get; }
+    public SpravyCommand InitializedCommand { get; }
 
     [Reactive]
     public Guid Id { get; set; }
@@ -24,9 +27,6 @@ public class ResetToDoItemViewModel : NavigatableViewModelBase
     [Reactive]
     public bool IsOnlyCompletedTasks { get; set; }
 
-    [Inject]
-    public required IObjectStorage ObjectStorage { get; init; }
-
     public override string ViewId
     {
         get => $"{TypeCache<ResetToDoItemViewModel>.Type.Name}:{Id}";
@@ -34,7 +34,7 @@ public class ResetToDoItemViewModel : NavigatableViewModelBase
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
-        return ObjectStorage.GetObjectOrDefaultAsync<ResetToDoItemViewModelSetting>(ViewId, cancellationToken)
+        return objectStorage.GetObjectOrDefaultAsync<ResetToDoItemViewModelSetting>(ViewId, cancellationToken)
            .IfSuccessAsync(obj => SetStateAsync(obj, cancellationToken), cancellationToken);
     }
 
@@ -62,7 +62,7 @@ public class ResetToDoItemViewModel : NavigatableViewModelBase
 
     public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
     {
-        return ObjectStorage.SaveObjectAsync(ViewId, new ResetToDoItemViewModelSetting(this));
+        return objectStorage.SaveObjectAsync(ViewId, new ResetToDoItemViewModelSetting(this));
     }
 
     [ProtoContract]

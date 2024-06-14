@@ -5,13 +5,14 @@ public class ToDoItemsGroupByViewModel : ViewModelBase
     public ToDoItemsGroupByViewModel(
         ToDoItemsGroupByNoneViewModel groupByNone,
         ToDoItemsGroupByStatusViewModel groupByStatus,
-        ToDoItemsGroupByTypeViewModel groupByType
+        ToDoItemsGroupByTypeViewModel groupByType,
+        IErrorHandler errorHandler
     )
     {
         GroupByNone = groupByNone;
         GroupByStatus = groupByStatus;
         GroupByType = groupByType;
-        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
         
         this.WhenAnyValue(x => x.IsMulti).Subscribe(x =>
         {
@@ -21,7 +22,7 @@ public class ToDoItemsGroupByViewModel : ViewModelBase
         });
     }
     
-    public ICommand InitializedCommand { get; }
+    public SpravyCommand InitializedCommand { get; }
     public ToDoItemsGroupByNoneViewModel GroupByNone { get; }
     public ToDoItemsGroupByStatusViewModel GroupByStatus { get; }
     public ToDoItemsGroupByTypeViewModel GroupByType { get; }

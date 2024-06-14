@@ -1,86 +1,64 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class RootToDoItemsViewModel : NavigatableViewModelBase,
-    IToDoItemOrderChanger,
-    ITaskProgressServiceProperty,
     IToDoItemUpdater,
-    IToDoSubItemsViewModelProperty
+    IToDoSubItemsViewModelProperty,
+    IRefresh
 {
-    private readonly PageHeaderViewModel pageHeaderViewModel;
     private readonly TaskWork refreshWork;
-    private readonly ToDoSubItemsViewModel toDoSubItemsViewModel;
+    private readonly ITaskProgressService taskProgressService;
+    private readonly IObjectStorage objectStorage;
+    private readonly IToDoService toDoService;
+    private readonly IToDoCache toDoCache;
     
-    public RootToDoItemsViewModel() : base(true)
+    public RootToDoItemsViewModel(
+        ITaskProgressService taskProgressService,
+        FastAddToDoItemViewModel fastAddToDoItemViewModel,
+        RootToDoItemsCommands commands,
+        PageHeaderViewModel pageHeaderViewModel,
+        ToDoSubItemsViewModel toDoSubItemsViewModel,
+        IToDoCache toDoCache,
+        IObjectStorage objectStorage,
+        IToDoService toDoService,
+        IErrorHandler errorHandler
+    ) : base(true)
     {
+        this.taskProgressService = taskProgressService;
+        FastAddToDoItemViewModel = fastAddToDoItemViewModel;
+        Commands = commands;
+        PageHeaderViewModel = pageHeaderViewModel;
+        ToDoSubItemsViewModel = toDoSubItemsViewModel;
+        this.toDoCache = toDoCache;
+        this.objectStorage = objectStorage;
+        this.toDoService = toDoService;
         refreshWork = TaskWork.Create(RefreshCoreAsync);
-        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
+        pageHeaderViewModel.Header = "Spravy";
+        pageHeaderViewModel.LeftCommand = CommandStorage.NavigateToCurrentToDoItemItem;
+        
+        toDoSubItemsViewModel.List
+           .WhenAnyValue(x => x.IsMulti)
+           .Subscribe(x =>
+            {
+                PageHeaderViewModel.Commands.Clear();
+                
+                if (x)
+                {
+                    PageHeaderViewModel.Commands.AddRange(Commands.Commands.ToArray());
+                }
+            });
     }
     
-    public ICommand InitializedCommand { get; }
+    public SpravyCommand InitializedCommand { get; }
+    public FastAddToDoItemViewModel FastAddToDoItemViewModel { get; }
+    public RootToDoItemsCommands Commands { get; }
+    public PageHeaderViewModel PageHeaderViewModel { get; }
+    public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
     
     public override string ViewId
     {
         get => TypeCache<RootToDoItemsViewModel>.Type.Name;
     }
-    
-    [Inject]
-    public required FastAddToDoItemViewModel FastAddToDoItemViewModel { get; init; }
-    
-    [Inject]
-    public required ITaskProgressService TaskProgressService { get; init; }
-    
-    [Inject]
-    public required RootToDoItemsCommands Commands { get; init; }
-    
-    [Inject]
-    public required PageHeaderViewModel PageHeaderViewModel
-    {
-        get => pageHeaderViewModel;
-        [MemberNotNull(nameof(pageHeaderViewModel))]
-        init
-        {
-            pageHeaderViewModel = value;
-            pageHeaderViewModel.Header = "Spravy";
-            pageHeaderViewModel.LeftCommand = CommandStorage.NavigateToCurrentToDoItemItem;
-        }
-    }
-    
-    [Inject]
-    public required ToDoSubItemsViewModel ToDoSubItemsViewModel
-    {
-        get => toDoSubItemsViewModel;
-        [MemberNotNull(nameof(toDoSubItemsViewModel))]
-        init
-        {
-            toDoSubItemsViewModel = value;
-            
-            toDoSubItemsViewModel.List
-               .WhenAnyValue(x => x.IsMulti)
-               .Subscribe(x =>
-                {
-                    if (pageHeaderViewModel is null)
-                    {
-                        return;
-                    }
-                    
-                    pageHeaderViewModel.Commands.Clear();
-                    
-                    if (x)
-                    {
-                        pageHeaderViewModel.Commands.AddRange(Commands.Commands.ToArray());
-                    }
-                });
-        }
-    }
-    
-    [Inject]
-    public required IObjectStorage ObjectStorage { get; init; }
-    
-    [Inject]
-    public required IToDoService ToDoService { get; init; }
-    
-    [Inject]
-    public required IToDoCache ToDoCache { get; init; }
     
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
     {
@@ -89,8 +67,8 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase,
     
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
-        return TaskProgressService.RunProgressAsync(
-            () => ObjectStorage.GetObjectOrDefaultAsync<RootToDoItemsViewModelSetting>(ViewId, cancellationToken)
+        return taskProgressService.RunProgressAsync(
+            () => objectStorage.GetObjectOrDefaultAsync<RootToDoItemsViewModelSetting>(ViewId, cancellationToken)
                .IfSuccessAsync(obj => SetStateAsync(obj, cancellationToken), cancellationToken)
                .IfSuccessAsync(() => refreshWork.RunAsync().ToValueTaskResultOnly().ConfigureAwait(false),
                     cancellationToken), cancellationToken);
@@ -105,13 +83,13 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase,
     
     private ConfiguredValueTaskAwaitable<Result> RefreshCoreAsync(CancellationToken cancellationToken)
     {
-        return ToDoCache.GetRootItems()
+        return toDoCache.GetRootItems()
            .IfSuccessAsync(items => this.InvokeUiBackgroundAsync(() => ToDoSubItemsViewModel.ClearExceptUi(items)),
                 cancellationToken)
-           .IfSuccessAsync(() => ToDoService.GetRootToDoItemIdsAsync(cancellationToken), cancellationToken)
-           .IfSuccessAsync(items => ToDoCache.UpdateRootItems(items), cancellationToken)
+           .IfSuccessAsync(() => toDoService.GetRootToDoItemIdsAsync(cancellationToken), cancellationToken)
+           .IfSuccessAsync(items => toDoCache.UpdateRootItems(items), cancellationToken)
            .IfSuccessAsync(
-                items => ToDoSubItemsViewModel.UpdateItemsAsync(items.ToArray(), this, false, cancellationToken),
+                items => ToDoSubItemsViewModel.UpdateItemsAsync(items.ToArray(), false, cancellationToken),
                 cancellationToken);
     }
     
@@ -124,7 +102,7 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase,
     
     public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
     {
-        return ObjectStorage.SaveObjectAsync(ViewId, new RootToDoItemsViewModelSetting(this));
+        return objectStorage.SaveObjectAsync(ViewId, new RootToDoItemsViewModelSetting(this));
     }
     
     public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(

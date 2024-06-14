@@ -327,8 +327,7 @@ public static class CommandStorage
                 if (activeToDoItem.IsHasValue)
                 {
                     return navigator.NavigateToAsync<ToDoItemViewModel>(
-                        viewModel => viewModel.Id = activeToDoItem.Value.ThrowIfNullStruct().Id,
-                        cancellationToken);
+                        viewModel => viewModel.Id = activeToDoItem.Value.ThrowIfNullStruct().Id, cancellationToken);
                 }
                 
                 return navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken);
@@ -365,8 +364,8 @@ public static class CommandStorage
         return toDoService.SearchToDoItemIdsAsync(properties.SearchText, cancellationToken)
            .IfSuccessForEachAsync(id => toDoCache.GetToDoItem(id), cancellationToken)
            .IfSuccessAsync(
-                ids => properties.ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), properties, false,
-                    cancellationToken), cancellationToken);
+                ids => properties.ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), false, cancellationToken),
+                cancellationToken);
     }
     
     private static ConfiguredValueTaskAwaitable<Result> AddRootToDoItemAsync(CancellationToken cancellationToken)

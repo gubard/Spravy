@@ -2,21 +2,21 @@ namespace Spravy.Ui.Features.PasswordGenerator.ViewModels;
 
 public class DeletePasswordItemViewModel : ViewModelBase
 {
-    public DeletePasswordItemViewModel()
+    private readonly IPasswordService passwordService;
+    
+    public DeletePasswordItemViewModel(IPasswordService passwordService, IErrorHandler errorHandler)
     {
-        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
+        this.passwordService = passwordService;
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
     }
 
-    public ICommand InitializedCommand { get; }
+    public SpravyCommand InitializedCommand { get; }
 
     [Reactive]
     public Guid PasswordItemId { get; set; }
 
     [Reactive]
     public string PasswordItemName { get; set; } = string.Empty;
-
-    [Inject]
-    public required IPasswordService PasswordService { get; init; }
 
     public Header4Localization DeleteText
     {
@@ -30,7 +30,7 @@ public class DeletePasswordItemViewModel : ViewModelBase
     {
         this.WhenAnyValue(x => x.PasswordItemName).Subscribe(_ => this.RaisePropertyChanged(nameof(DeleteText)));
 
-        return PasswordService.GetPasswordItemAsync(PasswordItemId, cancellationToken)
+        return passwordService.GetPasswordItemAsync(PasswordItemId, cancellationToken)
            .IfSuccessAsync(value => this.InvokeUiBackgroundAsync(() =>
                 {
                      PasswordItemName = value.Name;

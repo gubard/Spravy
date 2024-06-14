@@ -2,41 +2,38 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ValueToDoItemSettingsViewModel : ViewModelBase, IToDoChildrenTypeProperty, IApplySettings
 {
-    public ValueToDoItemSettingsViewModel()
+    private readonly IToDoService toDoService;
+    
+    public ValueToDoItemSettingsViewModel(IToDoService toDoService, IErrorHandler errorHandler)
     {
-        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
+        this.toDoService = toDoService;
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
     }
-
-    public AvaloniaList<ToDoItemChildrenType> ChildrenTypes { get; } = new(Enum.GetValues<ToDoItemChildrenType>());
-
-    [Inject]
-    public required IToDoService ToDoService { get; set; }
-
-    public ICommand InitializedCommand { get; }
-
-    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
-    {
-        return ToDoService.UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, cancellationToken);
-    }
-
+    
+    public SpravyCommand InitializedCommand { get; }
+    
     [Reactive]
     public Guid Id { get; set; }
-
+    
     [Reactive]
     public ToDoItemChildrenType ChildrenType { get; set; }
-
+    
+    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
+    {
+        return toDoService.UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, cancellationToken);
+    }
+    
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
     {
-        return ToDoService.GetValueToDoItemSettingsAsync(Id, cancellationToken)
+        return toDoService.GetValueToDoItemSettingsAsync(Id, cancellationToken)
            .IfSuccessAsync(setting => this.InvokeUiBackgroundAsync(() =>
-                {
-                     ChildrenType = setting.ChildrenType;
-                     
-                     return Result.Success;
-                }),
-                cancellationToken);
+            {
+                ChildrenType = setting.ChildrenType;
+                
+                return Result.Success;
+            }), cancellationToken);
     }
-
+    
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         return RefreshAsync(cancellationToken);

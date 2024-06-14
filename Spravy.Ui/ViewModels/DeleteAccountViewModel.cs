@@ -2,11 +2,17 @@ namespace Spravy.Ui.ViewModels;
 
 public class DeleteAccountViewModel : NavigatableViewModelBase
 {
-    public DeleteAccountViewModel() : base(true)
+    private readonly INavigator navigator;
+    
+    public DeleteAccountViewModel(IErrorHandler errorHandler, INavigator navigator) : base(true)
     {
-        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
-        DeleteAccountCommand = CreateCommandFromTask(TaskWork.Create(DeleteAccountAsync).RunAsync);
+        this.navigator = navigator;
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
+        DeleteAccountCommand =  SpravyCommand.Create(DeleteAccountAsync, errorHandler);
     }
+    
+    public SpravyCommand DeleteAccountCommand { get; }
+    public SpravyCommand InitializedCommand { get; }
 
     [Inject]
     public required IAuthenticationService AuthenticationService { get; init; }
@@ -19,15 +25,11 @@ public class DeleteAccountViewModel : NavigatableViewModelBase
 
     [Reactive]
     public string Identifier { get; set; } = string.Empty;
-
-    public ICommand DeleteAccountCommand { get; }
-
+    
     public override string ViewId
     {
         get => TypeCache<DeleteAccountViewModel>.Type.Name;
     }
-
-    public ICommand InitializedCommand { get; }
 
     public override Result Stop()
     {
@@ -65,7 +67,7 @@ public class DeleteAccountViewModel : NavigatableViewModelBase
                     default: throw new ArgumentOutOfRangeException();
                 }
             }, cancellationToken)
-           .IfSuccessAsync(() => Navigator.NavigateToAsync<LoginViewModel>(cancellationToken), cancellationToken);
+           .IfSuccessAsync(() => navigator.NavigateToAsync<LoginViewModel>(cancellationToken), cancellationToken);
     }
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)

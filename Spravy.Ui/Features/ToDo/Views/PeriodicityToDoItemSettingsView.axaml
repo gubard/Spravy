@@ -5,19 +5,20 @@
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:ru="http://reactiveui.net"
                         xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+                        xmlns:c="clr-namespace:Spravy.Ui.Controls"
                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                         x:Class="Spravy.Ui.Features.ToDo.Views.PeriodicityToDoItemSettingsView"
                         x:DataType="vm:PeriodicityToDoItemSettingsViewModel">
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
-            <InvokeCommandAction Command="{Binding InitializedCommand}" />
+            <InvokeCommandAction Command="{Binding InitializedCommand.Command}" />
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 
     <StackPanel>
         <TextBlock Classes="field"
                    Text="{DynamicResource PeriodicityToDoItemSettingsView.ChildrenTypes}" />
-        <ListBox Classes="wrap-panel" ItemsSource="{Binding ChildrenTypes}" SelectedItem="{Binding ChildrenType}" />
+        <c:EnumSelectorControl SelectedEnum="{Binding ChildrenType}" />
         <TextBlock Classes="field"
                    Text="{DynamicResource PeriodicityToDoItemSettingsView.DueDate}" />
         <CalendarDatePicker
@@ -27,9 +28,7 @@
         <ToggleSwitch IsChecked="{Binding IsRequiredCompleteInDueDate}" />
         <TextBlock Classes="field"
                    Text="{DynamicResource PeriodicityToDoItemSettingsView.TypeOfPeriodicity}" />
-        <ListBox Classes="wrap-panel"
-                 ItemsSource="{Binding TypeOfPeriodicities}"
-                 SelectedItem="{Binding TypeOfPeriodicity}" />
+        <c:EnumSelectorControl SelectedEnum="{Binding TypeOfPeriodicity}" />
         <TextBlock Classes="field"
                    Text="{DynamicResource PeriodicityToDoItemSettingsView.Periodicity}" />
         <ContentControl Content="{Binding Periodicity}" />

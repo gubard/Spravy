@@ -11,7 +11,7 @@
                         x:DataType="viewModels:ToDoItemSettingsViewModel">
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
-            <InvokeCommandAction Command="{Binding InitializedCommand}" />
+            <InvokeCommandAction Command="{Binding InitializedCommand.Command}" />
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 

@@ -11,12 +11,12 @@ public class ConfirmViewModel : ViewModelBase, ISaveState
                         confirm => Content.IfNotNull(nameof(Content)).IfSuccessAsync(confirm, cancellationToken),
                         cancellationToken), cancellationToken), errorHandler);
         
-        CancelCommand = CreateCommandFromTask(async () => await CancelAsync());
+        CancelCommand = SpravyCommand.Create(CancelAsync, errorHandler);
     }
     
     public Func<object, ConfiguredValueTaskAwaitable<Result>>? ConfirmTask { get; set; }
     public Func<object, ConfiguredValueTaskAwaitable<Result>>? CancelTask { get; set; }
-    public ICommand CancelCommand { get; }
+    public SpravyCommand CancelCommand { get; }
     public SpravyCommand ConfirmCommand { get; }
     
     [Reactive]
@@ -32,11 +32,11 @@ public class ConfirmViewModel : ViewModelBase, ISaveState
         return Result.AwaitableSuccess;
     }
     
-    private async ValueTask<Result> CancelAsync()
+    private ConfiguredValueTaskAwaitable<Result> CancelAsync(CancellationToken cancellationToken)
     {
         var con = Content.ThrowIfNull();
         
-        return await CancelTask.ThrowIfNull().Invoke(con);
+        return CancelTask.ThrowIfNull().Invoke(con);
     }
     
     private async ValueTask<Result> ConfirmAsync()

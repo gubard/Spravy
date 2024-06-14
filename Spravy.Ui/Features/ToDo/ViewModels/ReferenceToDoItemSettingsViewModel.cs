@@ -2,28 +2,31 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ReferenceToDoItemSettingsViewModel : ViewModelBase, IApplySettings
 {
-    public ReferenceToDoItemSettingsViewModel()
+    private readonly IToDoService toDoService;
+    
+    public ReferenceToDoItemSettingsViewModel(
+        ToDoItemSelectorViewModel toDoItemSelector,
+        IToDoService toDoService,
+        IErrorHandler errorHandler
+    )
     {
-        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
+        ToDoItemSelector = toDoItemSelector;
+        this.toDoService = toDoService;
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
     }
     
-    public ICommand InitializedCommand { get; }
-    
-    [Inject]
-    public required IToDoService ToDoService { get; init; }
-    
-    [Inject]
-    public required ToDoItemSelectorViewModel ToDoItemSelector { get; init; }
+    public SpravyCommand InitializedCommand { get; }
+    public ToDoItemSelectorViewModel ToDoItemSelector { get; }
     
     [Reactive]
     public Guid ToDoItemId { get; set; }
     
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
-        return ToDoService.GetReferenceToDoItemSettingsAsync(ToDoItemId, cancellationToken)
+        return toDoService.GetReferenceToDoItemSettingsAsync(ToDoItemId, cancellationToken)
            .IfSuccessAsync(setting =>
             {
-                ToDoItemSelector.IgnoreIds = new([ToDoItemId]);
+                ToDoItemSelector.IgnoreIds = new([ToDoItemId,]);
                 ToDoItemSelector.DefaultSelectedItemId = setting.ReferenceId;
                 
                 return Result.Success;
@@ -32,7 +35,7 @@ public class ReferenceToDoItemSettingsViewModel : ViewModelBase, IApplySettings
     
     public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
     {
-        return ToDoService.UpdateReferenceToDoItemAsync(ToDoItemId, ToDoItemSelector.SelectedItem.ThrowIfNull().Id,
+        return toDoService.UpdateReferenceToDoItemAsync(ToDoItemId, ToDoItemSelector.SelectedItem.ThrowIfNull().Id,
             cancellationToken);
     }
 }

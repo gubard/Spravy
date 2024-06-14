@@ -2,46 +2,47 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ToDoItemDayOfWeekSelectorViewModel : ViewModelBase, IApplySettings
 {
-    public ToDoItemDayOfWeekSelectorViewModel()
+    private readonly IToDoService toDoService;
+    
+    public ToDoItemDayOfWeekSelectorViewModel(IToDoService toDoService, IErrorHandler errorHandler)
     {
+        this.toDoService = toDoService;
+        
         Items = new(Enum.GetValues<DayOfWeek>()
            .Select(x => new DayOfWeekSelectItem
             {
                 DayOfWeek = x,
             }));
-
-        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
+        
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
     }
-
+    
     public AvaloniaList<DayOfWeekSelectItem> Items { get; }
-    public ICommand InitializedCommand { get; }
-
-    [Inject]
-    public required IToDoService ToDoService { get; set; }
-
+    public SpravyCommand InitializedCommand { get; }
+    
     [Reactive]
     public Guid ToDoItemId { get; set; }
-
+    
     public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
     {
-        return ToDoService.UpdateToDoItemWeeklyPeriodicityAsync(ToDoItemId,
+        return toDoService.UpdateToDoItemWeeklyPeriodicityAsync(ToDoItemId,
             new(Items.Where(x => x.IsSelected).Select(x => x.DayOfWeek)), cancellationToken);
     }
-
+    
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
-        return ToDoService.GetWeeklyPeriodicityAsync(ToDoItemId, cancellationToken)
+        return toDoService.GetWeeklyPeriodicityAsync(ToDoItemId, cancellationToken)
            .IfSuccessAsync(weeklyPeriodicity => Result.AwaitableSuccess.IfSuccessAllAsync(cancellationToken,
                 Items.Where(x => weeklyPeriodicity.Days.Contains(x.DayOfWeek))
                    .Select<DayOfWeekSelectItem, Func<ConfiguredValueTaskAwaitable<Result>>>(x =>
                     {
                         var y = x;
-
+                        
                         return () => this.InvokeUiBackgroundAsync(() =>
                         {
-                             y.IsSelected = true;
-                             
-                             return Result.Success;
+                            y.IsSelected = true;
+                            
+                            return Result.Success;
                         });
                     })
                    .ToArray()), cancellationToken);

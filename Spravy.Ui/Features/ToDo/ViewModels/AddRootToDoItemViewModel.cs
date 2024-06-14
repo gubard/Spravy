@@ -2,43 +2,46 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class AddRootToDoItemViewModel : NavigatableViewModelBase
 {
-    public AddRootToDoItemViewModel() : base(true)
+    private readonly IObjectStorage objectStorage;
+    
+    public AddRootToDoItemViewModel(
+        IObjectStorage objectStorage,
+        ToDoItemContentViewModel toDoItemContent,
+        EditDescriptionContentViewModel descriptionContent,
+        IErrorHandler errorHandler
+    ) : base(true)
     {
-        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
+        this.objectStorage = objectStorage;
+        ToDoItemContent = toDoItemContent;
+        DescriptionContent = descriptionContent;
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
     }
-
-    public ICommand InitializedCommand { get; }
-
-    [Inject]
-    public required ToDoItemContentViewModel ToDoItemContent { get; init; }
-
-    [Inject]
-    public required EditDescriptionContentViewModel DescriptionContent { get; init; }
-
-    [Inject]
-    public required IObjectStorage ObjectStorage { get; init; }
-
+    
+    public SpravyCommand InitializedCommand { get; }
+    public ToDoItemContentViewModel ToDoItemContent { get; }
+    public EditDescriptionContentViewModel DescriptionContent { get; }
+    
     public override string ViewId
     {
         get => TypeCache<AddRootToDoItemViewModel>.Type.Name;
     }
-
+    
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
-        return ObjectStorage.GetObjectOrDefaultAsync<AddRootToDoItemViewModelSetting>(ViewId, cancellationToken)
+        return objectStorage.GetObjectOrDefaultAsync<AddRootToDoItemViewModelSetting>(ViewId, cancellationToken)
            .IfSuccessAsync(obj => SetStateAsync(obj, cancellationToken), cancellationToken);
     }
-
+    
     public override Result Stop()
     {
         return Result.Success;
     }
-
+    
     public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
     {
-        return ObjectStorage.SaveObjectAsync(ViewId, new AddRootToDoItemViewModelSetting(this));
+        return objectStorage.SaveObjectAsync(ViewId, new AddRootToDoItemViewModelSetting(this));
     }
-
+    
     public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
         object setting,
         CancellationToken cancellationToken
@@ -56,7 +59,7 @@ public class AddRootToDoItemViewModel : NavigatableViewModelBase
                 return Result.Success;
             }), cancellationToken);
     }
-
+    
     [ProtoContract]
     private class AddRootToDoItemViewModelSetting : IViewModelSetting<AddRootToDoItemViewModelSetting>
     {
@@ -68,7 +71,7 @@ public class AddRootToDoItemViewModel : NavigatableViewModelBase
         public AddRootToDoItemViewModelSetting()
         {
         }
-
+        
         public AddRootToDoItemViewModelSetting(AddRootToDoItemViewModel viewModel)
         {
             Name = viewModel.ToDoItemContent.Name;
@@ -77,22 +80,22 @@ public class AddRootToDoItemViewModel : NavigatableViewModelBase
             Description = viewModel.DescriptionContent.Description;
             DescriptionType = viewModel.DescriptionContent.Type;
         }
-
+        
         [ProtoMember(1)]
         public string Name { get; set; } = string.Empty;
-
+        
         [ProtoMember(2)]
         public ToDoItemType Type { get; set; }
-
+        
         [ProtoMember(3)]
         public string Link { get; set; } = string.Empty;
-
+        
         [ProtoMember(4)]
         public string Description { get; set; } = string.Empty;
-
+        
         [ProtoMember(5)]
         public DescriptionType DescriptionType { get; set; }
-
+        
         public static AddRootToDoItemViewModelSetting Default { get; }
     }
 }

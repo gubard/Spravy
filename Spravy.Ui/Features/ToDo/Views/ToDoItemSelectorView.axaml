@@ -10,13 +10,9 @@
                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                         x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemSelectorView"
                         x:DataType="viewModels:ToDoItemSelectorViewModel">
-    <Design.DataContext>
-        <viewModels:ToDoItemSelectorViewModel />
-    </Design.DataContext>
-
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
-            <InvokeCommandAction Command="{Binding InitializedCommand}" />
+            <InvokeCommandAction Command="{Binding InitializedCommand.Command}" />
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 
@@ -24,7 +20,7 @@
         <Grid ColumnDefinitions="*,Auto">
             <TextBox Text="{Binding SearchText}" />
 
-            <Button Grid.Column="1" Command="{Binding SearchCommand}">
+            <Button Grid.Column="1" Command="{Binding SearchCommand.Command}">
                 <mi:MaterialIcon Kind="Search" />
             </Button>
         </Grid>

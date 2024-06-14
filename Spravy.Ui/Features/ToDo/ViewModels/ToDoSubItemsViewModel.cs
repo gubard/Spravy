@@ -1,33 +1,33 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITaskProgressServiceProperty
+public class ToDoSubItemsViewModel : ViewModelBase
 {
-    private IRefresh? refreshToDoItem;
+    private readonly IToDoService toDoService;
+    private readonly IToDoCache toDoCache;
+    private readonly ITaskProgressService taskProgressService;
     
-    [Inject]
-    public required MultiToDoItemsViewModel List { get; init; }
-    
-    [Inject]
-    public required IToDoService ToDoService { get; init; }
-    
-    [Inject]
-    public required IToDoCache ToDoCache { get; init; }
-    
-    [Inject]
-    public required ITaskProgressService TaskProgressService { get; init; }
-    
-    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
+    public ToDoSubItemsViewModel(
+        IToDoService toDoService,
+        IToDoCache toDoCache,
+        MultiToDoItemsViewModel list,
+        ITaskProgressService taskProgressService
+    )
     {
-        return refreshToDoItem.ThrowIfNull().RefreshAsync(cancellationToken);
+        this.toDoService = toDoService;
+        this.toDoCache = toDoCache;
+        List = list;
+        this.taskProgressService = taskProgressService;
     }
+    
+    public MultiToDoItemsViewModel List { get; }
     
     private ConfiguredValueTaskAwaitable<Result> RefreshFavoriteToDoItemsAsync(CancellationToken cancellationToken)
     {
-        return ToDoService.GetFavoriteToDoItemIdsAsync(cancellationToken)
+        return toDoService.GetFavoriteToDoItemIdsAsync(cancellationToken)
            .IfSuccessAsync(
-                items => TaskProgressService.RunProgressAsync((ushort)items.Length,
+                items => taskProgressService.RunProgressAsync((ushort)items.Length,
                     item => items.ToResult()
-                       .IfSuccessForEach(x => ToDoCache.GetToDoItem(x))
+                       .IfSuccessForEach(x => toDoCache.GetToDoItem(x))
                        .IfSuccessAsync(
                             itemsNotify => List.ClearFavoriteExceptUi(itemsNotify)
                                .IfSuccessAsync(
@@ -42,7 +42,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
         CancellationToken cancellationToken
     )
     {
-        await foreach (var items in ToDoService
+        await foreach (var items in toDoService
            .GetToDoItemsAsync(ids.ToArray().Select(x => x.Id).ToArray(), 5, cancellationToken)
            .ConfigureAwait(false))
         {
@@ -53,7 +53,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
             
             foreach (var item in items.Value.ToArray())
             {
-                var i = await this.InvokeUiBackgroundAsync(() => ToDoCache.UpdateUi(item));
+                var i = await this.InvokeUiBackgroundAsync(() => toDoCache.UpdateUi(item));
                 
                 if (i.IsHasError)
                 {
@@ -62,7 +62,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
                 
                 if (item.Type == ToDoItemType.Reference)
                 {
-                    var reference = await ToDoService.GetReferenceToDoItemSettingsAsync(item.Id, cancellationToken);
+                    var reference = await toDoService.GetReferenceToDoItemSettingsAsync(item.Id, cancellationToken);
                     
                     if (reference.IsHasError)
                     {
@@ -122,7 +122,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
     {
         uint orderIndex = 1;
         
-        await foreach (var items in ToDoService
+        await foreach (var items in toDoService
            .GetToDoItemsAsync(ids.ToArray().Select(x => x.Id).ToArray(), 5, cancellationToken)
            .ConfigureAwait(false))
         {
@@ -133,7 +133,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
             
             foreach (var item in items.Value.ToArray())
             {
-                var i = await this.InvokeUiBackgroundAsync(() => ToDoCache.UpdateUi(item));
+                var i = await this.InvokeUiBackgroundAsync(() => toDoCache.UpdateUi(item));
                 
                 if (i.IsHasError)
                 {
@@ -142,7 +142,7 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
                 
                 if (item.Type == ToDoItemType.Reference)
                 {
-                    var reference = await ToDoService.GetReferenceToDoItemSettingsAsync(item.Id, cancellationToken);
+                    var reference = await toDoService.GetReferenceToDoItemSettingsAsync(item.Id, cancellationToken);
                     
                     if (reference.IsHasError)
                     {
@@ -192,14 +192,11 @@ public class ToDoSubItemsViewModel : ViewModelBase, IToDoItemOrderChanger, ITask
     
     public ConfiguredValueTaskAwaitable<Result> UpdateItemsAsync(
         ReadOnlyMemory<ToDoItemEntityNotify> ids,
-        IRefresh refresh,
         bool autoOrder,
         CancellationToken cancellationToken
     )
     {
-        refreshToDoItem = refresh;
-        
-        return TaskProgressService.RunProgressAsync((ushort)ids.Length,
+        return taskProgressService.RunProgressAsync((ushort)ids.Length,
             item => RefreshToDoItemListsAsync(ids, autoOrder, item, cancellationToken), cancellationToken);
     }
 }

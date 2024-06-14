@@ -2,11 +2,22 @@ namespace Spravy.Ui.Features.PasswordGenerator.ViewModels;
 
 public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
 {
-    private readonly PageHeaderViewModel pageHeaderViewModel;
+    private readonly IPasswordItemCache passwordItemCache;
+    private readonly IPasswordService passwordService;
     
-    public PasswordGeneratorViewModel() : base(true)
+    public PasswordGeneratorViewModel(
+        IPasswordService passwordService,
+        IPasswordItemCache passwordItemCache,
+        PageHeaderViewModel pageHeaderViewModel,
+        IErrorHandler errorHandler
+    ) : base(true)
     {
-        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
+        this.passwordService = passwordService;
+        this.passwordItemCache = passwordItemCache;
+        PageHeaderViewModel = pageHeaderViewModel;
+        pageHeaderViewModel.Header = new Header3Localization("PasswordGeneratorView.Header");
+        pageHeaderViewModel.LeftCommand = CommandStorage.NavigateToCurrentToDoItemItem;
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
     }
     
     public override string ViewId
@@ -14,37 +25,19 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
         get => TypeCache<PasswordGeneratorViewModel>.Type.Name;
     }
     
+    private PageHeaderViewModel PageHeaderViewModel { get; }
     public AvaloniaList<PasswordItemNotify> Items { get; } = new();
-    public ICommand InitializedCommand { get; }
-    
-    [Inject]
-    public required IPasswordItemCache PasswordItemCache { get; init; }
-    
-    [Inject]
-    public required IPasswordService PasswordService { get; init; }
-    
-    [Inject]
-    public required PageHeaderViewModel PageHeaderViewModel
-    {
-        get => pageHeaderViewModel;
-        [MemberNotNull(nameof(pageHeaderViewModel))]
-        init
-        {
-            pageHeaderViewModel = value;
-            pageHeaderViewModel.Header = new Header3Localization("PasswordGeneratorView.Header");
-            pageHeaderViewModel.LeftCommand = CommandStorage.NavigateToCurrentToDoItemItem;
-        }
-    }
+    public SpravyCommand InitializedCommand { get; }
     
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
     {
         Items.Clear();
         
-        return PasswordService.GetPasswordItemsAsync(cancellationToken)
+        return passwordService.GetPasswordItemsAsync(cancellationToken)
            .IfSuccessForEachAsync(item => this.InvokeUiBackgroundAsync(() =>
             {
-                Items.Add(PasswordItemCache.GetPasswordItem(item.Id));
-                PasswordItemCache.UpdateAsync(item);
+                Items.Add(passwordItemCache.GetPasswordItem(item.Id));
+                passwordItemCache.UpdateAsync(item);
                 
                 return Result.Success;
             }), cancellationToken);

@@ -26,7 +26,7 @@
 
                     <Button Grid.Column="1"
                             Classes="Flat"
-                            Command="{Binding ForgotPasswordCommand}"
+                            Command="{Binding ForgotPasswordCommand.Command}"
                             Content="{DynamicResource EmailOrLoginInputView.ChangePassword}" />
                 </Grid>
             </StackPanel>

@@ -2,30 +2,33 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class AddToDoItemViewModel : NavigatableViewModelBase
 {
-    public AddToDoItemViewModel() : base(true)
+    private readonly IObjectStorage objectStorage;
+    private readonly IToDoService toDoService;
+    
+    public AddToDoItemViewModel(
+        ToDoItemContentViewModel toDoItemContent,
+        EditDescriptionContentViewModel descriptionContent,
+        IObjectStorage objectStorage,
+        IToDoService toDoService,
+        IErrorHandler errorHandler
+    ) : base(true)
     {
-        InitializedCommand = CreateInitializedCommand(TaskWork.Create(InitializedAsync).RunAsync);
+        ToDoItemContent = toDoItemContent;
+        DescriptionContent = descriptionContent;
+        this.objectStorage = objectStorage;
+        this.toDoService = toDoService;
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
     }
     
-    public ICommand InitializedCommand { get; }
+    public SpravyCommand InitializedCommand { get; }
+    public ToDoItemContentViewModel ToDoItemContent { get; }
+    public EditDescriptionContentViewModel DescriptionContent { get; }
     
     [Reactive]
-    public object[] Path { get; set; } = Array.Empty<object>();
+    public object[] Path { get; set; } = [];
     
     [Reactive]
     public Guid ParentId { get; set; }
-    
-    [Inject]
-    public required ToDoItemContentViewModel ToDoItemContent { get; init; }
-    
-    [Inject]
-    public required EditDescriptionContentViewModel DescriptionContent { get; init; }
-    
-    [Inject]
-    public required IObjectStorage ObjectStorage { get; init; }
-    
-    [Inject]
-    public required IToDoService ToDoService { get; init; }
     
     public override string ViewId
     {
@@ -34,9 +37,9 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
     
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
-        return ObjectStorage.GetObjectOrDefaultAsync<AddToDoItemViewModelSetting>(ViewId, cancellationToken)
+        return objectStorage.GetObjectOrDefaultAsync<AddToDoItemViewModelSetting>(ViewId, cancellationToken)
            .IfSuccessAsync(obj => SetStateAsync(obj, cancellationToken), cancellationToken)
-           .IfSuccessAsync(() => ToDoService.GetParentsAsync(ParentId, cancellationToken)
+           .IfSuccessAsync(() => toDoService.GetParentsAsync(ParentId, cancellationToken)
                .IfSuccessAsync(parents =>
                 {
                     var path = MaterialIconKind.Home
@@ -48,9 +51,9 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
                     
                     return this.InvokeUiBackgroundAsync(() =>
                     {
-                         Path = path;
-                         
-                         return Result.Success;
+                        Path = path;
+                        
+                        return Result.Success;
                     });
                 }, cancellationToken), cancellationToken);
     }
@@ -62,7 +65,7 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
     
     public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
     {
-        return ObjectStorage.SaveObjectAsync(ViewId, new AddToDoItemViewModelSetting(this));
+        return objectStorage.SaveObjectAsync(ViewId, new AddToDoItemViewModelSetting(this));
     }
     
     public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
@@ -92,15 +95,13 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
     {
         if (ToDoItemContent.Link.IsNullOrWhiteSpace())
         {
-            return new AddToDoItemOptions(parentId, ToDoItemContent.Name,
-                ToDoItemContent.Type, DescriptionContent.Description,
-                DescriptionContent.Type, null).ToResult();
+            return new AddToDoItemOptions(parentId, ToDoItemContent.Name, ToDoItemContent.Type,
+                DescriptionContent.Description, DescriptionContent.Type, null).ToResult();
         }
         
         return converter.Convert<Uri>(ToDoItemContent.Link)
-           .IfSuccess(uri => new AddToDoItemOptions(parentId, ToDoItemContent.Name,
-                ToDoItemContent.Type, DescriptionContent.Description,
-                DescriptionContent.Type, uri).ToResult());
+           .IfSuccess(uri => new AddToDoItemOptions(parentId, ToDoItemContent.Name, ToDoItemContent.Type,
+                DescriptionContent.Description, DescriptionContent.Type, uri).ToResult());
     }
     
     [ProtoContract]
