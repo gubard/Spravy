@@ -2,6 +2,10 @@ namespace Spravy.Ui.ViewModels;
 
 public class PaneViewModel : ViewModelBase
 {
-    [Inject]
-    public required AccountNotify Account { get; init; }
+    public PaneViewModel(AccountNotify account)
+    {
+        Account = account;
+    }
+    
+    public AccountNotify Account { get;  }
 }

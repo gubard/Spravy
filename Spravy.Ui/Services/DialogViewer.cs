@@ -6,16 +6,19 @@ public class DialogViewer : IDialogViewer
     public const string ErrorDialogHostIdentifier = "ErrorDialogHost";
     public const string InputDialogHostIdentifier = "InputDialogHost";
     public const string ProgressDialogHostIdentifier = "ProgressDialogHost";
+    private readonly IKernel resolver;
     
-    [Inject]
-    public required IKernel Resolver { get; init; }
+    public DialogViewer(IKernel resolver)
+    {
+        this.resolver = resolver;
+    }
     
     public ConfiguredValueTaskAwaitable<Result> ShowContentDialogAsync<TView>(
         Action<TView> setupView,
         CancellationToken cancellationToken
     ) where TView : ViewModelBase
     {
-        var content = Resolver.Get<TView>();
+        var content = resolver.Get<TView>();
         
         if (content is null)
         {
@@ -37,7 +40,7 @@ public class DialogViewer : IDialogViewer
         CancellationToken cancellationToken
     ) where TView : ViewModelBase
     {
-        var content = Resolver.Get<TView>();
+        var content = resolver.Get<TView>();
         
         if (content is null)
         {
@@ -59,7 +62,7 @@ public class DialogViewer : IDialogViewer
         CancellationToken cancellationToken
     ) where TView : ViewModelBase
     {
-        var content = Resolver.Get<TView>();
+        var content = resolver.Get<TView>();
         
         if (content is null)
         {
@@ -81,7 +84,7 @@ public class DialogViewer : IDialogViewer
         CancellationToken cancellationToken
     ) where TView : ViewModelBase
     {
-        var content = Resolver.Get<TView>();
+        var content = resolver.Get<TView>();
         
         return this.InvokeUiBackgroundAsync(() =>
             {
@@ -91,7 +94,7 @@ public class DialogViewer : IDialogViewer
             })
            .IfSuccessAsync(() =>
             {
-                var infoViewModel = Resolver.Get<InfoViewModel>();
+                var infoViewModel = resolver.Get<InfoViewModel>();
                 infoViewModel.Content = content;
                 infoViewModel.OkTask = view => okTask.Invoke((TView)view);
                 
@@ -105,7 +108,7 @@ public class DialogViewer : IDialogViewer
         CancellationToken cancellationToken
     ) where TView : ViewModelBase
     {
-        var content = Resolver.Get<TView>();
+        var content = resolver.Get<TView>();
         
         return this.InvokeUiBackgroundAsync(() =>
             {
@@ -115,7 +118,7 @@ public class DialogViewer : IDialogViewer
             })
            .IfSuccessAsync(() =>
             {
-                var infoViewModel = Resolver.Get<InfoViewModel>();
+                var infoViewModel = resolver.Get<InfoViewModel>();
                 infoViewModel.Content = content;
                 infoViewModel.OkTask = view => okTask.Invoke((TView)view);
                 
@@ -129,7 +132,7 @@ public class DialogViewer : IDialogViewer
         CancellationToken cancellationToken
     ) where TView : ViewModelBase
     {
-        var content = Resolver.Get<TView>();
+        var content = resolver.Get<TView>();
         
         return this.InvokeUiBackgroundAsync(() =>
             {
@@ -139,7 +142,7 @@ public class DialogViewer : IDialogViewer
             })
            .IfSuccessAsync(() =>
             {
-                var infoViewModel = Resolver.Get<InfoViewModel>();
+                var infoViewModel = resolver.Get<InfoViewModel>();
                 infoViewModel.Content = content;
                 infoViewModel.OkTask = view => okTask.Invoke((TView)view);
                 
@@ -152,7 +155,7 @@ public class DialogViewer : IDialogViewer
         CancellationToken cancellationToken
     ) where TView : ViewModelBase
     {
-        var content = Resolver.Get<TView>();
+        var content = resolver.Get<TView>();
         
         if (content is null)
         {
@@ -209,7 +212,7 @@ public class DialogViewer : IDialogViewer
         CancellationToken cancellationToken
     ) where TView : ViewModelBase
     {
-        var content = Resolver.Get<TView>();
+        var content = resolver.Get<TView>();
         
         return this.InvokeUiBackgroundAsync(() =>
             {
@@ -219,7 +222,7 @@ public class DialogViewer : IDialogViewer
             })
            .IfSuccessAsync(() =>
             {
-                var confirmViewModel = Resolver.Get<ConfirmViewModel>();
+                var confirmViewModel = resolver.Get<ConfirmViewModel>();
                 confirmViewModel.Content = content;
                 confirmViewModel.ConfirmTask = view => confirmTask.Invoke((TView)view);
                 confirmViewModel.CancelTask = view => cancelTask.Invoke((TView)view);
@@ -235,7 +238,7 @@ public class DialogViewer : IDialogViewer
         CancellationToken cancellationToken
     ) where TView : ViewModelBase
     {
-        var content = Resolver.Get<TView>();
+        var content = resolver.Get<TView>();
         
         return this.InvokeUiBackgroundAsync(() =>
             {
@@ -245,7 +248,7 @@ public class DialogViewer : IDialogViewer
             })
            .IfSuccessAsync(() =>
             {
-                var confirmViewModel = Resolver.Get<ConfirmViewModel>();
+                var confirmViewModel = resolver.Get<ConfirmViewModel>();
                 confirmViewModel.Content = content;
                 confirmViewModel.ConfirmTask = view => confirmTask.Invoke((TView)view);
                 confirmViewModel.CancelTask = view => cancelTask.Invoke((TView)view);

@@ -112,12 +112,14 @@
 
                             <ItemsControl.DataTemplates>
                                 <DataTemplate DataType="sm:SpravyCommandNotify">
-                                    <Button Classes="Basic" Command="{Binding Item.Command}" Content="{Binding Kind}" />
+                                    <Button Classes="Basic mode-press"
+                                            Command="{Binding Item.Command}"
+                                            Content="{Binding Kind}" />
                                 </DataTemplate>
                             </ItemsControl.DataTemplates>
                         </ItemsControl>
 
-                        <Button Classes="adaptive-to-Do-item-view Basic">
+                        <Button Classes="adaptive-to-Do-item-view Basic mode-press">
                             <Button.DataTemplates>
                                 <DataTemplate x:DataType="sm:SpravyCommandNotify">
                                     <ContentControl Content="{Binding Text}" />
@@ -209,19 +211,19 @@
                                     <Setter Property="BorderBrush" Value="{DynamicResource SukiControlBorderBrush}" />
                                     <Setter Property="BorderThickness" Value="0,0,1,1" />
                                 </Style>
-    
+
                                 <Style Selector="ct|CHyperlink">
-                                    <Setter Property="Foreground" Value="{DynamicResource SukiPrimaryColor}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource SukiPrimaryColor}" />
                                 </Style>
-    
+
                                 <Style Selector="ct|CHyperlink:pointerover">
-                                    <Setter Property="Foreground" Value="{DynamicResource SukiAccentColor50}"/>
-                                    <Setter Property="BorderBrush" Value="{DynamicResource SukiAccentColor50}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource SukiAccentColor50}" />
+                                    <Setter Property="BorderBrush" Value="{DynamicResource SukiAccentColor50}" />
                                 </Style>
-    
+
                                 <Style Selector="ct|CHyperlink:pressed">
-                                    <Setter Property="Foreground" Value="{DynamicResource SukiAccentColor}"/>
-                                    <Setter Property="BorderBrush" Value="{DynamicResource SukiAccentColor}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource SukiAccentColor}" />
+                                    <Setter Property="BorderBrush" Value="{DynamicResource SukiAccentColor}" />
                                 </Style>
                             </md:MarkdownScrollViewer.Styles>
                         </md:MarkdownScrollViewer>

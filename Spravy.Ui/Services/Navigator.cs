@@ -3,28 +3,35 @@ namespace Spravy.Ui.Services;
 public class Navigator : INavigator
 {
     private readonly QueryList<NavigatorItem> list = new(5);
+    private readonly IKernel resolver;
+    private readonly IContent content;
+    private readonly IDialogViewer dialogViewer;
+    
     private Action<object> lastSetup = ActionHelper<object>.Empty;
     
-    [Inject]
-    public required IKernel Resolver { get; init; }
+    public Navigator(
+        IDialogViewer dialogViewer,
+        IKernel resolver,
+        IContent content,
+        MainSplitViewModel mainSplitViewModel
+    )
+    {
+        this.dialogViewer = dialogViewer;
+        this.resolver = resolver;
+        this.content = content;
+        MainSplitViewModel = mainSplitViewModel;
+    }
     
-    [Inject]
-    public required IContent Content { get; init; }
-    
-    [Inject]
-    public required IDialogViewer DialogViewer { get; init; }
-    
-    [Inject]
-    public required MainSplitViewModel MainSplitViewModel { get; init; }
+    public MainSplitViewModel MainSplitViewModel { get; }
     
     public ConfiguredValueTaskAwaitable<Result> NavigateToAsync(Type type, CancellationToken cancellationToken)
     {
-        var viewModel = (INavigatable)Resolver.Get(type);
+        var viewModel = (INavigatable)resolver.Get(type);
         
         return AddCurrentContentAsync(ActionHelper<object>.Empty, cancellationToken)
            .IfSuccessAsync(() => this.InvokeUiBackgroundAsync(() =>
             {
-                Content.Content = viewModel;
+                content.Content = viewModel;
                 
                 return Result.Success;
             }), cancellationToken);
@@ -38,7 +45,7 @@ public class Navigator : INavigator
         return AddCurrentContentAsync(obj => setup.Invoke((TViewModel)obj), cancellationToken)
            .IfSuccessAsync(() =>
             {
-                if (Content.Content is IRefresh refresh && Content.Content is TViewModel vm)
+                if (content.Content is IRefresh refresh && content.Content is TViewModel vm)
                 {
                     return this.InvokeUiBackgroundAsync(() =>
                         {
@@ -49,17 +56,17 @@ public class Navigator : INavigator
                        .IfSuccessAsync(() => refresh.RefreshAsync(cancellationToken), cancellationToken);
                 }
                 
-                if (Content.Content is IDisposable disposable)
+                if (content.Content is IDisposable disposable)
                 {
                     disposable.Dispose();
                 }
                 
-                var viewModel = Resolver.Get<TViewModel>();
+                var viewModel = resolver.Get<TViewModel>();
                 
                 return this.InvokeUiBackgroundAsync(() =>
                 {
                     setup.Invoke(viewModel);
-                    Content.Content = viewModel;
+                    content.Content = viewModel;
                     
                     return Result.Success;
                 });
@@ -69,12 +76,12 @@ public class Navigator : INavigator
     public ConfiguredValueTaskAwaitable<Result> NavigateToAsync<TViewModel>(CancellationToken cancellationToken)
         where TViewModel : INavigatable
     {
-        var viewModel = Resolver.Get<TViewModel>();
+        var viewModel = resolver.Get<TViewModel>();
         
         return AddCurrentContentAsync(ActionHelper<object>.Empty, cancellationToken)
            .IfSuccessAsync(() => this.InvokeUiBackgroundAsync(() =>
             {
-                Content.Content = viewModel;
+                content.Content = viewModel;
                 
                 return Result.Success;
             }), cancellationToken);
@@ -89,7 +96,7 @@ public class Navigator : INavigator
             return new Result<INavigatable>(new NavigatorCacheEmptyError()).ToValueTaskResult().ConfigureAwait(false);
         }
         
-        return DialogViewer.CloseLastDialogAsync(cancellationToken)
+        return dialogViewer.CloseLastDialogAsync(cancellationToken)
            .IfSuccessAsync(value =>
             {
                 if (value)
@@ -107,7 +114,7 @@ public class Navigator : INavigator
                 return this.InvokeUiBackgroundAsync(() =>
                     {
                         item.Setup.Invoke(item.Navigatable);
-                        Content.Content = item.Navigatable;
+                        content.Content = item.Navigatable;
                         
                         return Result.Success;
                     })
@@ -133,7 +140,7 @@ public class Navigator : INavigator
         return AddCurrentContentAsync(ActionHelper<object>.Empty, cancellationToken)
            .IfSuccessAsync(() => this.InvokeUiBackgroundAsync(() =>
             {
-                Content.Content = parameter;
+                content.Content = parameter;
                 
                 return Result.Success;
             }), cancellationToken);
@@ -144,12 +151,12 @@ public class Navigator : INavigator
         CancellationToken cancellationToken
     )
     {
-        if (Content.Content is null)
+        if (this.content.Content is null)
         {
             return Result.AwaitableSuccess;
         }
         
-        var content = (INavigatable)Content.Content;
+        var content = (INavigatable)this.content.Content;
         content.Stop();
         
         if (!content.IsPooled)

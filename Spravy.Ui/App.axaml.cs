@@ -2,8 +2,7 @@ namespace Spravy.Ui;
 
 public class App : Application
 {
-    [Inject]
-    public IKernel? Resolver { get; init; } = DiHelper.Kernel;
+    public IKernel Resolver { get; } = DiHelper.Kernel;
 
     public override void Initialize()
     {

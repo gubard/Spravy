@@ -3,19 +3,18 @@ namespace Spravy.Ui.ViewModels;
 public class DeleteAccountViewModel : NavigatableViewModelBase
 {
     private readonly INavigator navigator;
+    private readonly IAuthenticationService authenticationService;
     
-    public DeleteAccountViewModel(IErrorHandler errorHandler, INavigator navigator) : base(true)
+    public DeleteAccountViewModel(IErrorHandler errorHandler, INavigator navigator, IAuthenticationService authenticationService) : base(true)
     {
         this.navigator = navigator;
+        this.authenticationService = authenticationService;
         InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
         DeleteAccountCommand =  SpravyCommand.Create(DeleteAccountAsync, errorHandler);
     }
     
     public SpravyCommand DeleteAccountCommand { get; }
     public SpravyCommand InitializedCommand { get; }
-
-    [Inject]
-    public required IAuthenticationService AuthenticationService { get; init; }
 
     [Reactive]
     public UserIdentifierType IdentifierType { get; set; }
@@ -57,11 +56,11 @@ public class DeleteAccountViewModel : NavigatableViewModelBase
                 switch (IdentifierType)
                 {
                     case UserIdentifierType.Email:
-                        return AuthenticationService.DeleteUserByEmailAsync(Identifier,
+                        return authenticationService.DeleteUserByEmailAsync(Identifier,
                             VerificationCode.ToUpperInvariant(),
                             cancellationToken);
                     case UserIdentifierType.Login:
-                        return AuthenticationService.DeleteUserByEmailAsync(Identifier,
+                        return authenticationService.DeleteUserByEmailAsync(Identifier,
                             VerificationCode.ToUpperInvariant(),
                             cancellationToken);
                     default: throw new ArgumentOutOfRangeException();
@@ -74,9 +73,9 @@ public class DeleteAccountViewModel : NavigatableViewModelBase
     {
         return IdentifierType switch
         {
-            UserIdentifierType.Email => AuthenticationService.UpdateVerificationCodeByEmailAsync(Identifier,
+            UserIdentifierType.Email => authenticationService.UpdateVerificationCodeByEmailAsync(Identifier,
                 cancellationToken),
-            UserIdentifierType.Login => AuthenticationService.UpdateVerificationCodeByLoginAsync(Identifier,
+            UserIdentifierType.Login => authenticationService.UpdateVerificationCodeByLoginAsync(Identifier,
                 cancellationToken),
             _ => throw new ArgumentOutOfRangeException()
         };

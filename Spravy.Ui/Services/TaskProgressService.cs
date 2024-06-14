@@ -4,8 +4,12 @@ public class TaskProgressService : ITaskProgressService
 {
     private readonly List<TaskProgressItem> items = new();
     
-    [Inject]
-    public required MainProgressBarViewModel MainProgressBar { get; init; }
+    public TaskProgressService(MainProgressBarViewModel mainProgressBar)
+    {
+        MainProgressBar = mainProgressBar;
+    }
+    
+    public  MainProgressBarViewModel MainProgressBar { get;  }
     
     public ConfiguredValueTaskAwaitable<Result<TaskProgressItem>> AddItemAsync(ushort impact)
     {

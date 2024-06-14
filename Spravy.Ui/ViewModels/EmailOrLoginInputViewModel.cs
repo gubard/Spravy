@@ -3,138 +3,142 @@ namespace Spravy.Ui.ViewModels;
 public class EmailOrLoginInputViewModel : NavigatableViewModelBase
 {
     private readonly INavigator navigator;
+    private readonly IObjectStorage objectStorage;
+    private readonly IAuthenticationService authenticationService;
     
-    public EmailOrLoginInputViewModel(IErrorHandler errorHandler, INavigator navigator) : base(true)
+    public EmailOrLoginInputViewModel(
+        IErrorHandler errorHandler,
+        INavigator navigator,
+        IObjectStorage objectStorage,
+        IAuthenticationService authenticationService
+    ) : base(true)
     {
         this.navigator = navigator;
+        this.objectStorage = objectStorage;
+        this.authenticationService = authenticationService;
         ForgotPasswordCommand = SpravyCommand.Create(ForgotPasswordAsync, errorHandler);
     }
     
-    public SpravyCommand ForgotPasswordCommand { get;  }
+    public SpravyCommand ForgotPasswordCommand { get; }
     
     public override string ViewId
     {
         get => TypeCache<EmailOrLoginInputViewModel>.Type.Name;
     }
-
-    [Inject]
-    public required IObjectStorage ObjectStorage { get; init; }
-
-    [Inject]
-    public required IAuthenticationService AuthenticationService { get; init; }
-
+    
     [Reactive]
     public bool IsBusy { get; set; }
-
+    
     [Reactive]
     public string EmailOrLogin { get; set; } = string.Empty;
-
+    
     private ConfiguredValueTaskAwaitable<Result> ForgotPasswordAsync(CancellationToken cancellationToken)
     {
         return this.InvokeUiBackgroundAsync(() =>
             {
-                 IsBusy = true;
-                 
-                 return Result.Success;
+                IsBusy = true;
+                
+                return Result.Success;
             })
            .IfSuccessTryFinallyAsync(() =>
+            {
+                if (EmailOrLogin.Contains('@'))
                 {
-                    if (EmailOrLogin.Contains('@'))
-                    {
-                        return AuthenticationService.IsVerifiedByEmailAsync(EmailOrLogin, cancellationToken)
-                           .IfSuccessAsync(value =>
-                            {
-                                if (value)
-                                {
-                                    return AuthenticationService
-                                       .UpdateVerificationCodeByEmailAsync(EmailOrLogin, cancellationToken)
-                                       .IfSuccessAsync(() => navigator.NavigateToAsync<ForgotPasswordViewModel>(vm =>
-                                        {
-                                            vm.Identifier = EmailOrLogin;
-
-                                            vm.IdentifierType = EmailOrLogin.Contains('@')
-                                                ? UserIdentifierType.Email
-                                                : UserIdentifierType.Login;
-                                        }, cancellationToken), cancellationToken);
-                                }
-
-                                return navigator.NavigateToAsync<VerificationCodeViewModel>(vm =>
-                                {
-                                    vm.IdentifierType = UserIdentifierType.Email;
-                                    vm.Identifier = EmailOrLogin;
-                                }, cancellationToken);
-                            }, cancellationToken);
-                    }
-
-                    return AuthenticationService.IsVerifiedByLoginAsync(EmailOrLogin, cancellationToken)
+                    return authenticationService.IsVerifiedByEmailAsync(EmailOrLogin, cancellationToken)
                        .IfSuccessAsync(value =>
                         {
                             if (value)
                             {
-                                return AuthenticationService
-                                   .UpdateVerificationCodeByLoginAsync(EmailOrLogin, cancellationToken)
+                                return authenticationService
+                                   .UpdateVerificationCodeByEmailAsync(EmailOrLogin, cancellationToken)
                                    .IfSuccessAsync(() => navigator.NavigateToAsync<ForgotPasswordViewModel>(vm =>
                                     {
                                         vm.Identifier = EmailOrLogin;
-
+                                        
                                         vm.IdentifierType = EmailOrLogin.Contains('@')
                                             ? UserIdentifierType.Email
                                             : UserIdentifierType.Login;
                                     }, cancellationToken), cancellationToken);
                             }
-
+                            
                             return navigator.NavigateToAsync<VerificationCodeViewModel>(vm =>
                             {
-                                vm.IdentifierType = UserIdentifierType.Login;
+                                vm.IdentifierType = UserIdentifierType.Email;
                                 vm.Identifier = EmailOrLogin;
                             }, cancellationToken);
                         }, cancellationToken);
-                }, () => this.InvokeUiBackgroundAsync(() =>
+                }
+                
+                return authenticationService.IsVerifiedByLoginAsync(EmailOrLogin, cancellationToken)
+                   .IfSuccessAsync(value =>
+                    {
+                        if (value)
+                        {
+                            return authenticationService
+                               .UpdateVerificationCodeByLoginAsync(EmailOrLogin, cancellationToken)
+                               .IfSuccessAsync(() => navigator.NavigateToAsync<ForgotPasswordViewModel>(vm =>
+                                {
+                                    vm.Identifier = EmailOrLogin;
+                                    
+                                    vm.IdentifierType = EmailOrLogin.Contains('@')
+                                        ? UserIdentifierType.Email
+                                        : UserIdentifierType.Login;
+                                }, cancellationToken), cancellationToken);
+                        }
+                        
+                        return navigator.NavigateToAsync<VerificationCodeViewModel>(vm =>
+                        {
+                            vm.IdentifierType = UserIdentifierType.Login;
+                            vm.Identifier = EmailOrLogin;
+                        }, cancellationToken);
+                    }, cancellationToken);
+            }, () => this.InvokeUiBackgroundAsync(() =>
                 {
-                     IsBusy = false;
-                     
-                     return Result.Success;
-                }).ToValueTask().ConfigureAwait(false),
-                cancellationToken);
+                    IsBusy = false;
+                    
+                    return Result.Success;
+                })
+               .ToValueTask()
+               .ConfigureAwait(false), cancellationToken);
     }
-
+    
     public override Result Stop()
     {
         return Result.Success;
     }
-
+    
     public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
     {
-        return ObjectStorage.SaveObjectAsync(ViewId, new EmailOrLoginInputViewModelSetting(this));
+        return objectStorage.SaveObjectAsync(ViewId, new EmailOrLoginInputViewModelSetting(this));
     }
-
+    
     public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
         object setting,
         CancellationToken cancellationToken
     )
     {
         var s = setting.ThrowIfIsNotCast<EmailOrLoginInputViewModelSetting>();
-
+        
         return this.InvokeUiBackgroundAsync(() =>
         {
-             EmailOrLogin = s.Identifier;
-             
-             return Result.Success;
+            EmailOrLogin = s.Identifier;
+            
+            return Result.Success;
         });
     }
-
+    
     [ProtoContract]
     private class EmailOrLoginInputViewModelSetting
     {
         public EmailOrLoginInputViewModelSetting()
         {
         }
-
+        
         public EmailOrLoginInputViewModelSetting(EmailOrLoginInputViewModel viewModel)
         {
             Identifier = viewModel.EmailOrLogin;
         }
-
+        
         [ProtoMember(1)]
         public string Identifier { get; set; } = string.Empty;
     }

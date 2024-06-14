@@ -2,14 +2,18 @@ namespace Spravy.Ui.Services;
 
 public class ModuleViewLocator : IViewLocator
 {
-    [Inject]
-    public required IKernel Resolver { get; init; }
-
+    private readonly IKernel resolver;
+    
+    public ModuleViewLocator(IKernel resolver)
+    {
+        this.resolver = resolver;
+    }
+    
     public IViewFor ResolveView<T>(T? viewModel, string? contract = null)
     {
         if (viewModel is null)
         {
-            return Resolver.Get<IViewFor>();
+            return resolver.Get<IViewFor>();
         }
 
         var type = viewModel.GetType();
@@ -21,7 +25,7 @@ public class ModuleViewLocator : IViewLocator
 
         var viewName = $"{ns}.{type.Name.Substring(0, type.Name.Length - 5)}";
         var viewType = type.Assembly.GetType(viewName).ThrowIfNull(viewName);
-        var result = (IViewFor)Resolver.Get(viewType);
+        var result = (IViewFor)resolver.Get(viewType);
         result.ViewModel = viewModel;
 
         return result;

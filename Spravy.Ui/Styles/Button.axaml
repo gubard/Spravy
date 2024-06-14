@@ -12,6 +12,14 @@
     <Style Selector="Button">
         <Setter Property="Margin" Value="2" />
     </Style>
+    
+    <Style Selector=":is(Button).mode-press">
+        <Setter Property="ClickMode" Value="Press" />
+    </Style>
+    
+    <Style Selector=":is(Button).mode-release">
+        <Setter Property="ClickMode" Value="Release" />
+    </Style>
 
     <Style Selector="Button.glass-card">
         <Setter Property="Padding" Value="5,5,5,0" />

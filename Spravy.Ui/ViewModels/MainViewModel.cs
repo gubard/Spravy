@@ -2,9 +2,12 @@
 
 public class MainViewModel : ViewModelBase
 {
-    [Inject]
-    public required MainSplitViewModel MainSplit { get; init; }
+    public MainViewModel(MainProgressBarViewModel mainProgressBar, MainSplitViewModel mainSplit)
+    {
+        MainProgressBar = mainProgressBar;
+        MainSplit = mainSplit;
+    }
     
-    [Inject]
-    public required MainProgressBarViewModel MainProgressBar { get; init; }
+    public MainSplitViewModel MainSplit { get; }
+    public MainProgressBarViewModel MainProgressBar { get; }
 }

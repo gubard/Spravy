@@ -2,19 +2,25 @@ namespace Spravy.Ui.ViewModels;
 
 public class SettingViewModel : NavigatableViewModelBase
 {
-    private readonly PageHeaderViewModel pageHeaderViewModel;
     private readonly INavigator navigator;
     private readonly SukiTheme theme = SukiTheme.GetInstance();
     private readonly ISpravyNotificationManager spravyNotificationManager;
+    private readonly IObjectStorage objectStorage;
     
     public SettingViewModel(
         ISpravyNotificationManager spravyNotificationManager,
         IErrorHandler errorHandler,
-        INavigator navigator
+        INavigator navigator,
+        AccountNotify accountNotify,
+        IObjectStorage objectStorage,
+        PageHeaderViewModel pageHeaderViewModel
     ) : base(true)
     {
         this.spravyNotificationManager = spravyNotificationManager;
         this.navigator = navigator;
+        AccountNotify = accountNotify;
+        this.objectStorage = objectStorage;
+        PageHeaderViewModel = pageHeaderViewModel;
         AvailableColors = new(theme.ColorThemes.Select(x => new Selected<SukiColorTheme>(x)));
         
         foreach (var availableColor in AvailableColors)
@@ -30,6 +36,7 @@ public class SettingViewModel : NavigatableViewModelBase
         SaveSettingsCommand = SpravyCommand.Create(SaveSettingsAsync, errorHandler);
         DeleteAccountCommand = SpravyCommand.Create(DeleteAccountAsync, errorHandler);
         SwitchToColorThemeCommand = SpravyCommand.Create<Selected<SukiColorTheme>>(SwitchToColorTheme, errorHandler);
+        PageHeaderViewModel.Header = "Settings";
         
         this.WhenAnyValue(x => x.IsLightTheme)
            .Subscribe(x => theme.ChangeBaseTheme(x ? ThemeVariant.Light : ThemeVariant.Dark));
@@ -61,25 +68,8 @@ public class SettingViewModel : NavigatableViewModelBase
     }
     
     public AvaloniaList<Selected<SukiColorTheme>> AvailableColors { get; }
-    
-    [Inject]
-    public required AccountNotify AccountNotify { get; init; }
-    
-    [Inject]
-    public required IObjectStorage ObjectStorage { get; init; }
-    
-    [Inject]
-    public required PageHeaderViewModel PageHeaderViewModel
-    {
-        get => pageHeaderViewModel;
-        [MemberNotNull(nameof(pageHeaderViewModel))]
-        init
-        {
-            pageHeaderViewModel = value;
-            pageHeaderViewModel.Header = "Settings";
-        }
-    }
-    
+    public AccountNotify AccountNotify { get;  }
+    public PageHeaderViewModel PageHeaderViewModel { get; }
     public SpravyCommand ChangePasswordCommand { get; }
     public SpravyCommand DeleteAccountCommand { get; }
     public SpravyCommand SwitchToColorThemeCommand { get; }
@@ -93,7 +83,7 @@ public class SettingViewModel : NavigatableViewModelBase
     
     private ConfiguredValueTaskAwaitable<Result> SaveSettingsAsync(CancellationToken cancellationToken)
     {
-        return ObjectStorage.SaveObjectAsync(TypeCache<SettingModel>.Type.Name, new SettingModel
+        return objectStorage.SaveObjectAsync(TypeCache<SettingModel>.Type.Name, new SettingModel
             {
                 BaseTheme = IsLightTheme ? "Light" : "Dark",
                 ColorTheme = AvailableColors.Single(x => x.IsSelect).Value.DisplayName,
