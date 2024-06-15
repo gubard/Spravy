@@ -6,11 +6,11 @@ public class DialogViewer : IDialogViewer
     public const string ErrorDialogHostIdentifier = "ErrorDialogHost";
     public const string InputDialogHostIdentifier = "InputDialogHost";
     public const string ProgressDialogHostIdentifier = "ProgressDialogHost";
-    private readonly IKernel resolver;
+    private readonly IServiceFactory serviceFactory;
     
-    public DialogViewer(IKernel resolver)
+    public DialogViewer(IServiceFactory serviceFactory)
     {
-        this.resolver = resolver;
+        this.serviceFactory = serviceFactory;
     }
     
     public ConfiguredValueTaskAwaitable<Result> ShowContentDialogAsync<TView>(
@@ -18,12 +18,7 @@ public class DialogViewer : IDialogViewer
         CancellationToken cancellationToken
     ) where TView : ViewModelBase
     {
-        var content = resolver.Get<TView>();
-        
-        if (content is null)
-        {
-            return new Result(new NotFoundTypeError(typeof(TView))).ToValueTaskResult().ConfigureAwait(false);
-        }
+        var content = serviceFactory.CreateService<TView>();
         
         return this.InvokeUiBackgroundAsync(() =>
             {
@@ -40,12 +35,7 @@ public class DialogViewer : IDialogViewer
         CancellationToken cancellationToken
     ) where TView : ViewModelBase
     {
-        var content = resolver.Get<TView>();
-        
-        if (content is null)
-        {
-            return new Result(new NotFoundTypeError(typeof(TView))).ToValueTaskResult().ConfigureAwait(false);
-        }
+        var content = serviceFactory.CreateService<TView>();
         
         return this.InvokeUiBackgroundAsync(() =>
             {
@@ -62,12 +52,7 @@ public class DialogViewer : IDialogViewer
         CancellationToken cancellationToken
     ) where TView : ViewModelBase
     {
-        var content = resolver.Get<TView>();
-        
-        if (content is null)
-        {
-            return new Result(new NotFoundTypeError(typeof(TView))).ToValueTaskResult().ConfigureAwait(false);
-        }
+        var content = serviceFactory.CreateService<TView>();
         
         return this.InvokeUiBackgroundAsync(() =>
             {
@@ -84,7 +69,7 @@ public class DialogViewer : IDialogViewer
         CancellationToken cancellationToken
     ) where TView : ViewModelBase
     {
-        var content = resolver.Get<TView>();
+        var content = serviceFactory.CreateService<TView>();
         
         return this.InvokeUiBackgroundAsync(() =>
             {
@@ -94,7 +79,7 @@ public class DialogViewer : IDialogViewer
             })
            .IfSuccessAsync(() =>
             {
-                var infoViewModel = resolver.Get<InfoViewModel>();
+                var infoViewModel = serviceFactory.CreateService<InfoViewModel>();
                 infoViewModel.Content = content;
                 infoViewModel.OkTask = view => okTask.Invoke((TView)view);
                 
@@ -108,7 +93,7 @@ public class DialogViewer : IDialogViewer
         CancellationToken cancellationToken
     ) where TView : ViewModelBase
     {
-        var content = resolver.Get<TView>();
+        var content = serviceFactory.CreateService<TView>();
         
         return this.InvokeUiBackgroundAsync(() =>
             {
@@ -118,7 +103,7 @@ public class DialogViewer : IDialogViewer
             })
            .IfSuccessAsync(() =>
             {
-                var infoViewModel = resolver.Get<InfoViewModel>();
+                var infoViewModel = serviceFactory.CreateService<InfoViewModel>();
                 infoViewModel.Content = content;
                 infoViewModel.OkTask = view => okTask.Invoke((TView)view);
                 
@@ -132,7 +117,7 @@ public class DialogViewer : IDialogViewer
         CancellationToken cancellationToken
     ) where TView : ViewModelBase
     {
-        var content = resolver.Get<TView>();
+        var content = serviceFactory.CreateService<TView>();
         
         return this.InvokeUiBackgroundAsync(() =>
             {
@@ -142,7 +127,7 @@ public class DialogViewer : IDialogViewer
             })
            .IfSuccessAsync(() =>
             {
-                var infoViewModel = resolver.Get<InfoViewModel>();
+                var infoViewModel = serviceFactory.CreateService<InfoViewModel>();
                 infoViewModel.Content = content;
                 infoViewModel.OkTask = view => okTask.Invoke((TView)view);
                 
@@ -155,7 +140,7 @@ public class DialogViewer : IDialogViewer
         CancellationToken cancellationToken
     ) where TView : ViewModelBase
     {
-        var content = resolver.Get<TView>();
+        var content = serviceFactory.CreateService<TView>();
         
         if (content is null)
         {
@@ -212,7 +197,7 @@ public class DialogViewer : IDialogViewer
         CancellationToken cancellationToken
     ) where TView : ViewModelBase
     {
-        var content = resolver.Get<TView>();
+        var content = serviceFactory.CreateService<TView>();
         
         return this.InvokeUiBackgroundAsync(() =>
             {
@@ -222,7 +207,7 @@ public class DialogViewer : IDialogViewer
             })
            .IfSuccessAsync(() =>
             {
-                var confirmViewModel = resolver.Get<ConfirmViewModel>();
+                var confirmViewModel = serviceFactory.CreateService<ConfirmViewModel>();
                 confirmViewModel.Content = content;
                 confirmViewModel.ConfirmTask = view => confirmTask.Invoke((TView)view);
                 confirmViewModel.CancelTask = view => cancelTask.Invoke((TView)view);
@@ -238,7 +223,7 @@ public class DialogViewer : IDialogViewer
         CancellationToken cancellationToken
     ) where TView : ViewModelBase
     {
-        var content = resolver.Get<TView>();
+        var content = serviceFactory.CreateService<TView>();
         
         return this.InvokeUiBackgroundAsync(() =>
             {
@@ -248,7 +233,7 @@ public class DialogViewer : IDialogViewer
             })
            .IfSuccessAsync(() =>
             {
-                var confirmViewModel = resolver.Get<ConfirmViewModel>();
+                var confirmViewModel = serviceFactory.CreateService<ConfirmViewModel>();
                 confirmViewModel.Content = content;
                 confirmViewModel.ConfirmTask = view => confirmTask.Invoke((TView)view);
                 confirmViewModel.CancelTask = view => cancelTask.Invoke((TView)view);

@@ -10,7 +10,6 @@ global using Spravy.Client.Exceptions;
 global using Spravy.Client.Extensions;
 global using Spravy.Client.Interfaces;
 global using Spravy.Client.Services;
-global using Spravy.Di.Extensions;
 global using Spravy.Domain.Errors;
 global using Spravy.Domain.Exceptions;
 global using Spravy.Domain.Extensions;

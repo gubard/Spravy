@@ -8,12 +8,16 @@ public class PeriodicityToDoItemSettingsViewModel : ViewModelBase,
     IApplySettings
 {
     private readonly IToDoService toDoService;
-    private readonly IKernel resolve;
+    private readonly IServiceFactory serviceFactory;
     
-    public PeriodicityToDoItemSettingsViewModel(IToDoService toDoService, IKernel resolve, IErrorHandler errorHandler)
+    public PeriodicityToDoItemSettingsViewModel(
+        IToDoService toDoService,
+        IServiceFactory serviceFactory,
+        IErrorHandler errorHandler
+    )
     {
         this.toDoService = toDoService;
-        this.resolve = resolve;
+        this.serviceFactory = serviceFactory;
         InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
     }
     
@@ -71,11 +75,11 @@ public class PeriodicityToDoItemSettingsViewModel : ViewModelBase,
            .Subscribe(x => Periodicity = x switch
             {
                 TypeOfPeriodicity.Daily => new EmptyApplySettings(),
-                TypeOfPeriodicity.Weekly => resolve.Get<ToDoItemDayOfWeekSelectorViewModel>()
+                TypeOfPeriodicity.Weekly => serviceFactory.CreateService<ToDoItemDayOfWeekSelectorViewModel>()
                    .Case(y => y.ToDoItemId = Id),
-                TypeOfPeriodicity.Monthly => resolve.Get<ToDoItemDayOfMonthSelectorViewModel>()
+                TypeOfPeriodicity.Monthly => serviceFactory.CreateService<ToDoItemDayOfMonthSelectorViewModel>()
                    .Case(y => y.ToDoItemId = Id),
-                TypeOfPeriodicity.Annually => resolve.Get<ToDoItemDayOfYearSelectorViewModel>()
+                TypeOfPeriodicity.Annually => serviceFactory.CreateService<ToDoItemDayOfYearSelectorViewModel>()
                    .Case(y => y.ToDoItemId = Id),
                 _ => throw new ArgumentOutOfRangeException(nameof(x), x, null),
             });

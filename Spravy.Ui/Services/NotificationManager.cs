@@ -2,39 +2,35 @@ namespace Spravy.Ui.Services;
 
 public class NotificationManager : ISpravyNotificationManager
 {
-    private readonly IKernel kernel;
+    private readonly IServiceFactory serviceFactory;
     private readonly IManagedNotificationManager managedNotificationManager;
-
-    public NotificationManager(IManagedNotificationManager managedNotificationManager, IKernel kernel)
+    
+    public NotificationManager(IManagedNotificationManager managedNotificationManager, IServiceFactory serviceFactory)
     {
         this.managedNotificationManager = managedNotificationManager;
-        this.kernel = kernel;
+        this.serviceFactory = serviceFactory;
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result> ShowAsync<TView>(CancellationToken cancellationToken)
+        where TView : notnull
     {
-        var view = kernel.Get<TView>();
+        var view = serviceFactory.CreateService<TView>();
         
-        if (view is null)
-        {
-            return new Result(new PropertyNullValueError(nameof(view))).ToValueTaskResult().ConfigureAwait(false);
-        }
-
         return this.InvokeUiBackgroundAsync(() =>
         {
-             managedNotificationManager.Show(view);
-             
-             return Result.Success;
+            managedNotificationManager.Show(view);
+            
+            return Result.Success;
         });
     }
-
+    
     public ConfiguredValueTaskAwaitable<Result> ShowAsync(object view, CancellationToken cancellationToken)
     {
         return this.InvokeUiBackgroundAsync(() =>
         {
-             managedNotificationManager.Show(view);
-             
-             return Result.Success;
+            managedNotificationManager.Show(view);
+            
+            return Result.Success;
         });
     }
 }

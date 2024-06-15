@@ -5,7 +5,6 @@ using Spravy.Authentication.Domain.Client.Models;
 using Spravy.Db.Interfaces;
 using Spravy.Db.Sqlite.EntityTypeConfigurations;
 using Spravy.Db.Sqlite.Services;
-using Spravy.Di.Extensions;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;

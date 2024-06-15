@@ -25,7 +25,7 @@ public class MainActivity : AvaloniaMainActivity<App>
 
     private INavigator Navigator
     {
-        get => navigator ??= DiHelper.Kernel.ThrowIfNull().Get<INavigator>();
+        get => navigator ??= DiHelper.ServiceFactory.ThrowIfNull().Get<INavigator>();
     }
 
     protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)
@@ -41,7 +41,7 @@ public class MainActivity : AvaloniaMainActivity<App>
 
     protected override void OnCreate(Bundle? savedInstanceState)
     {
-        DiHelper.Kernel = new StandardKernel(new UiModule(true), new AndroidModule(this));
+        DiHelper.ServiceFactory = new StandardKernel(new UiModule(true), new AndroidModule(this));
         base.OnCreate(savedInstanceState);
     }
 

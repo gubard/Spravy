@@ -15,7 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Spravy.Di\Spravy.Di.csproj" />
+        <ProjectReference Include="..\Spravy.Core\Spravy.Core.csproj" />
         <ProjectReference Include="..\Spravy.Domain\Spravy.Domain.csproj" />
         <ProjectReference Include="..\Spravy.ToDo.Domain\Spravy.ToDo.Domain.csproj" />
     </ItemGroup>

@@ -1,3 +1,4 @@
+using Spravy.Core.Extensions;
 using Spravy.Db.Interfaces;
 using Spravy.Db.Sqlite.Models;
 using Spravy.Di.Extensions;

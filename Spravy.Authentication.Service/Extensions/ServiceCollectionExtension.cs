@@ -13,6 +13,7 @@ using Spravy.Authentication.Service.Services;
 using Spravy.Client.Extensions;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
+using Spravy.Core.Extensions;
 using Spravy.Core.Options;
 using Spravy.Core.Services;
 using Spravy.Db.Interfaces;

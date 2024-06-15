@@ -1,4 +1,7 @@
-namespace Spravy.Di.Extensions;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Spravy.Core.Extensions;
 
 public static class ServiceProviderExtension
 {

@@ -2,11 +2,11 @@ namespace Spravy.Ui.DataTemplates;
 
 public class ModuleDataTemplate : IDataTemplate
 {
-    private readonly IKernel resolver;
+    private readonly IServiceFactory serviceFactory;
     
-    public ModuleDataTemplate(IKernel resolver)
+    public ModuleDataTemplate(IServiceFactory serviceFactory)
     {
-        this.resolver = resolver;
+        this.serviceFactory = serviceFactory;
     }
     
     public Control Build(object? param)
@@ -20,7 +20,7 @@ public class ModuleDataTemplate : IDataTemplate
 
         var viewName = $"{ns}.{type.Name.Substring(0, type.Name.Length - 5)}";
         var viewType = type.Assembly.GetType(viewName).ThrowIfNull(viewName);
-        var view = (Control)resolver.Get(viewType);
+        var view = (Control)serviceFactory.CreateService(viewType);
 
         if (view is IViewFor viewFor)
         {

@@ -1,3 +1,5 @@
+using Spravy.Core.Extensions;
+
 namespace Spravy.Client.Extensions;
 
 public static class ServiceCollectionExtension

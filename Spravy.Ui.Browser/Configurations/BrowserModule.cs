@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Ninject.Modules;
 using Spravy.Authentication.Domain.Client.Models;
-using Spravy.Di.Extensions;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;

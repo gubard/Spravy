@@ -28,7 +28,7 @@ internal class Program
             Log.Information("Starting web app");
             await JSHost.ImportAsync("localStorage.js", "./localStorage.js");
             await JSHost.ImportAsync("window.js", "./window.js");
-            DiHelper.Kernel = new StandardKernel(BrowserModule.Default, new UiModule(false));
+            DiHelper.ServiceFactory = new StandardKernel(BrowserModule.Default, new UiModule(false));
             await BuildAvaloniaApp().WithInterFont().UseReactiveUI().StartBrowserAppAsync("out");
         }
         catch (Exception ex)
@@ -43,7 +43,7 @@ internal class Program
 
     public static AppBuilder BuildAvaloniaApp()
     {
-        return AppBuilder.Configure(() => DiHelper.Kernel.ThrowIfNull().Get<Application>())
+        return AppBuilder.Configure(() => DiHelper.ServiceFactory.ThrowIfNull().Get<Application>())
            .UseReactiveUI()
            .WithInterFont()
            .WithShantellSansFont();

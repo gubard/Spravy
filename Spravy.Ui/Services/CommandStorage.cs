@@ -15,17 +15,17 @@ public static class CommandStorage
     
     static CommandStorage()
     {
-        var kernel = DiHelper.Kernel.ThrowIfNull();
-        toDoCache = kernel.Get<IToDoCache>();
-        passwordService = kernel.Get<IPasswordService>();
-        objectStorage = kernel.Get<IObjectStorage>();
-        mapper = kernel.Get<IMapper>();
-        authenticationService = kernel.Get<IAuthenticationService>();
-        navigator = kernel.Get<INavigator>();
-        dialogViewer = kernel.Get<IDialogViewer>();
-        mainSplitViewModel = kernel.Get<MainSplitViewModel>();
-        toDoService = kernel.Get<IToDoService>();
-        errorHandler = kernel.Get<IErrorHandler>();
+        var kernel = DiHelper.ServiceFactory.ThrowIfNull();
+        toDoCache = kernel.CreateService<IToDoCache>();
+        passwordService = kernel.CreateService<IPasswordService>();
+        objectStorage = kernel.CreateService<IObjectStorage>();
+        mapper = kernel.CreateService<IMapper>();
+        authenticationService = kernel.CreateService<IAuthenticationService>();
+        navigator = kernel.CreateService<INavigator>();
+        dialogViewer = kernel.CreateService<IDialogViewer>();
+        mainSplitViewModel = kernel.CreateService<MainSplitViewModel>();
+        toDoService = kernel.CreateService<IToDoService>();
+        errorHandler = kernel.CreateService<IErrorHandler>();
         SwitchPaneItem = CreateCommand(SwitchPaneAsync, MaterialIconKind.Menu, "Open pane");
         NavigateToToDoItemItem = CreateCommand<Guid>(NavigateToToDoItemAsync, MaterialIconKind.ListBox, "Open");
         

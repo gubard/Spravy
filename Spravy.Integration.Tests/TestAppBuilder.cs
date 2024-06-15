@@ -14,7 +14,7 @@ public class TestAppBuilder
 
     public static AppBuilder BuildAvaloniaApp()
     {
-        DiHelper.Kernel = new StandardKernel(new UiModule(true), TestModule.Default);
+        DiHelper.ServiceFactory = new StandardKernel(new UiModule(true), TestModule.Default);
 
         return AppBuilder.Configure<App>()
            .UseReactiveUI()

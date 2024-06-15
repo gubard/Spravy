@@ -4,6 +4,7 @@ using Spravy.Authentication.Domain.Mapper.Profiles;
 using Spravy.Authentication.Domain.Services;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
+using Spravy.Core.Extensions;
 using Spravy.Core.Services;
 using Spravy.Db.Interfaces;
 using Spravy.Db.Sqlite.Models;

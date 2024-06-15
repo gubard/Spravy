@@ -1,12 +1,10 @@
 ﻿using System;
 using Avalonia;
 using Avalonia.ReactiveUI;
-using Ninject;
 using Serilog;
 using Spravy.Domain.Di.Helpers;
 using Spravy.Domain.Extensions;
-using Spravy.Ui.Configurations;
-using Spravy.Ui.Desktop.Configurations;
+using Spravy.Ui.Desktop.Modules;
 using Spravy.Ui.Extensions;
 
 namespace Spravy.Ui.Desktop;
@@ -36,9 +34,9 @@ public class Program
     
     public static AppBuilder BuildAvaloniaApp()
     {
-        DiHelper.Kernel = new StandardKernel(new UiModule(true), DesktopModule.Default);
+        DiHelper.ServiceFactory = new DesktopServiceProvider();
         
-        return AppBuilder.Configure(() => DiHelper.Kernel.ThrowIfNull().Get<Application>())
+        return AppBuilder.Configure(() => DiHelper.ServiceFactory.ThrowIfNull().CreateService<Application>())
            .UsePlatformDetect()
            .WithInterFont()
            .WithShantellSansFont()

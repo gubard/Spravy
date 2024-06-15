@@ -44,11 +44,11 @@ public class TaskWork
 
     public static TaskWork Create(Func<CancellationToken, ConfiguredValueTaskAwaitable<Result>> task)
     {
-        return new(task, DiHelper.Kernel.ThrowIfNull().Get<IErrorHandler>());
+        return new(task, DiHelper.ServiceFactory.ThrowIfNull().CreateService<IErrorHandler>());
     }
 
     public static TaskWork Create<T>(Func<T, CancellationToken, ConfiguredValueTaskAwaitable<Result>> task)
     {
-        return new(task, DiHelper.Kernel.ThrowIfNull().Get<IErrorHandler>());
+        return new(task, DiHelper.ServiceFactory.ThrowIfNull().CreateService<IErrorHandler>());
     }
 }

@@ -3,17 +3,17 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 public class ToDoItemSettingsViewModel : NavigatableViewModelBase
 {
     private readonly IToDoService toDoService;
-    private readonly IKernel resolver;
+    private readonly IServiceFactory serviceFactory;
     
     public ToDoItemSettingsViewModel(
         ToDoItemContentViewModel toDoItemContent,
-        IKernel resolver,
+        IServiceFactory serviceFactory,
         IToDoService toDoService,
         IErrorHandler errorHandler
     ) : base(true)
     {
         ToDoItemContent = toDoItemContent;
-        this.resolver = resolver;
+        this.serviceFactory = serviceFactory;
         this.toDoService = toDoService;
         InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
     }
@@ -37,16 +37,21 @@ public class ToDoItemSettingsViewModel : NavigatableViewModelBase
         ToDoItemContent.WhenAnyValue(x => x.Type)
            .Subscribe(x => Settings = x switch
             {
-                ToDoItemType.Value => resolver.Get<ValueToDoItemSettingsViewModel>().Case(vm => vm.Id = ToDoItemId),
-                ToDoItemType.Planned => resolver.Get<PlannedToDoItemSettingsViewModel>().Case(vm => vm.Id = ToDoItemId),
-                ToDoItemType.Periodicity => resolver.Get<PeriodicityToDoItemSettingsViewModel>()
+                ToDoItemType.Value => serviceFactory.CreateService<ValueToDoItemSettingsViewModel>()
                    .Case(vm => vm.Id = ToDoItemId),
-                ToDoItemType.PeriodicityOffset => resolver.Get<PeriodicityOffsetToDoItemSettingsViewModel>()
+                ToDoItemType.Planned => serviceFactory.CreateService<PlannedToDoItemSettingsViewModel>()
                    .Case(vm => vm.Id = ToDoItemId),
-                ToDoItemType.Circle => resolver.Get<ValueToDoItemSettingsViewModel>().Case(vm => vm.Id = ToDoItemId),
-                ToDoItemType.Step => resolver.Get<ValueToDoItemSettingsViewModel>().Case(vm => vm.Id = ToDoItemId),
-                ToDoItemType.Group => resolver.Get<GroupToDoItemSettingsViewModel>(),
-                ToDoItemType.Reference => resolver.Get<ReferenceToDoItemSettingsViewModel>()
+                ToDoItemType.Periodicity => serviceFactory.CreateService<PeriodicityToDoItemSettingsViewModel>()
+                   .Case(vm => vm.Id = ToDoItemId),
+                ToDoItemType.PeriodicityOffset => serviceFactory
+                   .CreateService<PeriodicityOffsetToDoItemSettingsViewModel>()
+                   .Case(vm => vm.Id = ToDoItemId),
+                ToDoItemType.Circle => serviceFactory.CreateService<ValueToDoItemSettingsViewModel>()
+                   .Case(vm => vm.Id = ToDoItemId),
+                ToDoItemType.Step => serviceFactory.CreateService<ValueToDoItemSettingsViewModel>()
+                   .Case(vm => vm.Id = ToDoItemId),
+                ToDoItemType.Group => serviceFactory.CreateService<GroupToDoItemSettingsViewModel>(),
+                ToDoItemType.Reference => serviceFactory.CreateService<ReferenceToDoItemSettingsViewModel>()
                    .Case(vm => vm.ToDoItemId = ToDoItemId),
                 _ => throw new ArgumentOutOfRangeException(),
             });

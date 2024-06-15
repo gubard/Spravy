@@ -2,30 +2,27 @@ namespace Spravy.Ui;
 
 public class App : Application
 {
-    public IKernel Resolver { get; } = DiHelper.Kernel;
-
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
-        var dataTemplates = Resolver.ThrowIfNull().Get<IEnumerable<IDataTemplate>>();
+        var dataTemplates = DiHelper.ServiceFactory.CreateService<IEnumerable<IDataTemplate>>();
         DataTemplates.AddRange(dataTemplates);
     }
-
+    
     public override void OnFrameworkInitializationCompleted()
     {
-        var resolver = Resolver.ThrowIfNull();
-        var objectStorage = resolver.Get<IObjectStorage>();
-
+        var objectStorage = DiHelper.ServiceFactory.CreateService<IObjectStorage>();
+        
         if (objectStorage.IsExistsAsync(TypeCache<SettingModel>.Type.Name).GetAwaiter().GetResult().Value)
         {
             var model = objectStorage.GetObjectAsync<SettingModel>(TypeCache<SettingModel>.Type.Name)
                .GetAwaiter()
                .GetResult()
                .Value;
-
+            
             var theme = SukiTheme.GetInstance();
             theme.ChangeColorTheme(theme.ColorThemes.Single(x => x.DisplayName == model.ColorTheme));
-
+            
             theme.ChangeBaseTheme(model.BaseTheme switch
             {
                 "Light" => ThemeVariant.Light,
@@ -33,18 +30,19 @@ public class App : Application
                 _ => throw new ArgumentOutOfRangeException(),
             });
         }
-
+        
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var window = resolver.Get<IDesktopTopLevelControl>().As<Window>().ThrowIfNull();
+            var window = DiHelper.ServiceFactory.CreateService<IDesktopTopLevelControl>().As<Window>().ThrowIfNull();
             desktop.MainWindow = window;
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {
-            var control = resolver.Get<ISingleViewTopLevelControl>().As<Control>().ThrowIfNull();
+            var control = DiHelper.ServiceFactory.CreateService<ISingleViewTopLevelControl>().As<Control>();
+            
             singleViewPlatform.MainView = control;
         }
-
+        
         base.OnFrameworkInitializationCompleted();
     }
 }

@@ -3,7 +3,7 @@ namespace Spravy.Ui.Services;
 public class Navigator : INavigator
 {
     private readonly QueryList<NavigatorItem> list = new(5);
-    private readonly IKernel resolver;
+    private readonly IServiceFactory serviceFactory;
     private readonly IContent content;
     private readonly IDialogViewer dialogViewer;
     
@@ -11,13 +11,13 @@ public class Navigator : INavigator
     
     public Navigator(
         IDialogViewer dialogViewer,
-        IKernel resolver,
+        IServiceFactory serviceFactory,
         IContent content,
         MainSplitViewModel mainSplitViewModel
     )
     {
         this.dialogViewer = dialogViewer;
-        this.resolver = resolver;
+        this.serviceFactory = serviceFactory;
         this.content = content;
         MainSplitViewModel = mainSplitViewModel;
     }
@@ -26,7 +26,7 @@ public class Navigator : INavigator
     
     public ConfiguredValueTaskAwaitable<Result> NavigateToAsync(Type type, CancellationToken cancellationToken)
     {
-        var viewModel = (INavigatable)resolver.Get(type);
+        var viewModel = (INavigatable)serviceFactory.CreateService(type);
         
         return AddCurrentContentAsync(ActionHelper<object>.Empty, cancellationToken)
            .IfSuccessAsync(() => this.InvokeUiBackgroundAsync(() =>
@@ -61,7 +61,7 @@ public class Navigator : INavigator
                     disposable.Dispose();
                 }
                 
-                var viewModel = resolver.Get<TViewModel>();
+                var viewModel = serviceFactory.CreateService<TViewModel>();
                 
                 return this.InvokeUiBackgroundAsync(() =>
                 {
@@ -76,7 +76,7 @@ public class Navigator : INavigator
     public ConfiguredValueTaskAwaitable<Result> NavigateToAsync<TViewModel>(CancellationToken cancellationToken)
         where TViewModel : INavigatable
     {
-        var viewModel = resolver.Get<TViewModel>();
+        var viewModel = serviceFactory.CreateService<TViewModel>();
         
         return AddCurrentContentAsync(ActionHelper<object>.Empty, cancellationToken)
            .IfSuccessAsync(() => this.InvokeUiBackgroundAsync(() =>

@@ -6,6 +6,7 @@ using Spravy.Authentication.Protos;
 using Spravy.Client.Extensions;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
+using Spravy.Core.Extensions;
 using Spravy.Core.Services;
 using Spravy.Db.Interfaces;
 using Spravy.Db.Sqlite.Models;

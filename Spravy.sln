@@ -80,8 +80,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Db.Sqlite", "Spravy.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Schedule.Db.Mapper", "Spravy.Schedule.Db.Mapper\Spravy.Schedule.Db.Mapper.csproj", "{422E9B47-7D7B-4F2E-9494-817D18CD4C78}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Domain.Di", "Spravy.Domain.Di\Spravy.Domain.Di.csproj", "{16D48F69-FCF3-40C2-900F-BF781DA7AF16}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Schedule.Domain.Client", "Spravy.Schedule.Domain.Client\Spravy.Schedule.Domain.Client.csproj", "{201BD07D-AA4D-4DF9-9E5A-86D634727090}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.EventBus.Db", "Spravy.EventBus.Db\Spravy.EventBus.Db.csproj", "{1052E9E8-0BC3-477A-BB0F-07D1A9247EFE}"
@@ -95,8 +93,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Ui", "Ui", "{C8FCA1D5-FB55-42E0-9C82-97F892985DD2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.EventBus.Db.Mapper", "Spravy.EventBus.Db.Mapper\Spravy.EventBus.Db.Mapper.csproj", "{D0ED9EBA-2AE3-42BC-B64D-B390F986589C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spravy.Di", "Spravy.Di\Spravy.Di.csproj", "{30B359CF-479F-4F13-A160-BB499D1CAF02}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Router", "Router", "{2767C4F9-3C74-406E-B5B0-DE02A0CA5936}"
 EndProject
@@ -281,10 +277,6 @@ Global
 		{422E9B47-7D7B-4F2E-9494-817D18CD4C78}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{422E9B47-7D7B-4F2E-9494-817D18CD4C78}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{422E9B47-7D7B-4F2E-9494-817D18CD4C78}.Release|Any CPU.Build.0 = Release|Any CPU
-		{16D48F69-FCF3-40C2-900F-BF781DA7AF16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{16D48F69-FCF3-40C2-900F-BF781DA7AF16}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{16D48F69-FCF3-40C2-900F-BF781DA7AF16}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{16D48F69-FCF3-40C2-900F-BF781DA7AF16}.Release|Any CPU.Build.0 = Release|Any CPU
 		{201BD07D-AA4D-4DF9-9E5A-86D634727090}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{201BD07D-AA4D-4DF9-9E5A-86D634727090}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{201BD07D-AA4D-4DF9-9E5A-86D634727090}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -309,10 +301,6 @@ Global
 		{D0ED9EBA-2AE3-42BC-B64D-B390F986589C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0ED9EBA-2AE3-42BC-B64D-B390F986589C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D0ED9EBA-2AE3-42BC-B64D-B390F986589C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{30B359CF-479F-4F13-A160-BB499D1CAF02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{30B359CF-479F-4F13-A160-BB499D1CAF02}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{30B359CF-479F-4F13-A160-BB499D1CAF02}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{30B359CF-479F-4F13-A160-BB499D1CAF02}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2F25E662-E5DF-4617-BA33-2D2ADFE8D06B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2F25E662-E5DF-4617-BA33-2D2ADFE8D06B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F25E662-E5DF-4617-BA33-2D2ADFE8D06B}.Release|Any CPU.ActiveCfg = Release|Any CPU
