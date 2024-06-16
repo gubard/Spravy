@@ -78,17 +78,10 @@ class Build : NukeBuild
     Target StagingBuildDocker => _ => _.DependsOn(StagingSetupAppSettings)
        .Executes(() =>
         {
-            var command = Cli.Wrap("eval")
-               .WithArguments($"echo {SshPassword} | sudo docker builder prune -f")
-               .ExecuteAsync()
-               .GetAwaiter()
-               .GetResult();
-
-            if (command.ExitCode != 0)
-            {
-                throw new($"Exit code {command.ExitCode}");
-            }
-
+            using var sshClient = new SshClient(CreateSshConnection(SshHost, SshUser, SshPassword));
+            sshClient.Connect();
+            sshClient.RunSudo(new SshOptions(SshHost, SshUser, SshPassword),"sudo docker builder prune -f");
+            
             foreach (var serviceProjectBuilder in Projects.OfType<ServiceProjectBuilder>())
             {
                 serviceProjectBuilder.BuildDocker();
