@@ -133,8 +133,29 @@ public static class WindowExtension
     public static DialogHost GetErrorDialogHost(this Window window)
     {
         var errorDialogHost = window.ThrowIfIsNotCast<MainWindow>()
+           .GetVisualChildren()
+           .Single()
+           .ThrowIfIsNotCast<Border>()
+           .Child
+           .ThrowIfNull()
+           .ThrowIfIsNotCast<Panel>()
+           .Children
+           .Single()
+           .ThrowIfIsNotCast<VisualLayerManager>()
+           .Child
+           .ThrowIfNull()
+           .ThrowIfIsNotCast<SukiHost>()
            .Content
            .ThrowIfNull()
+           .ThrowIfIsNotCast<Panel>()
+           .Children
+           .ElementAt(1)
+           .ThrowIfIsNotCast<DockPanel>()
+           .Children
+           .ElementAt(1)
+           .ThrowIfIsNotCast<ContentPresenter>()
+           .GetVisualChildren()
+           .Single()
            .ThrowIfIsNotCast<MainView>()
            .Case(w => w.DataContext.ThrowIfNull().ThrowIfIsNotCast<MainViewModel>())
            .Content
