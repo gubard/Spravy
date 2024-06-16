@@ -78,10 +78,6 @@ class Build : NukeBuild
     Target StagingBuildDocker => _ => _.DependsOn(StagingSetupAppSettings)
        .Executes(() =>
         {
-            using var sshClient = new SshClient(CreateSshConnection(SshHost, SshUser, SshPassword));
-            sshClient.Connect();
-            sshClient.RunSudo(new SshOptions(SshHost, SshUser, SshPassword),"sudo docker builder prune -f");
-            
             foreach (var serviceProjectBuilder in Projects.OfType<ServiceProjectBuilder>())
             {
                 serviceProjectBuilder.BuildDocker();
