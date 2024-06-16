@@ -44,9 +44,6 @@ public class LoginViewModel : NavigatableViewModelBase, INotifyDataErrorInfo
     public bool IsBusy { get; set; }
     
     [Reactive]
-    public bool TryAutoLogin { get; set; }
-    
-    [Reactive]
     public string Login { get; set; } = string.Empty;
     
     [Reactive]
@@ -147,7 +144,6 @@ public class LoginViewModel : NavigatableViewModelBase, INotifyDataErrorInfo
         return setting.CastObject<LoginViewModelSetting>()
            .IfSuccessAsync(s => this.InvokeUiBackgroundAsync(() =>
             {
-                TryAutoLogin = false;
                 Login = s.Login;
                 
                 return Result.Success;

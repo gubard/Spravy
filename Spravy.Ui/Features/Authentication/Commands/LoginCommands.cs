@@ -124,11 +124,6 @@ public class LoginCommands
             })
            .IfSuccessTryFinallyAsync(() =>
                 {
-                    if (!viewModel.TryAutoLogin)
-                    {
-                        return Result.AwaitableSuccess;
-                    }
-                    
                     return objectStorage
                        .GetObjectOrDefaultAsync<LoginViewModelSetting>(viewModel.ViewId, cancellationToken)
                        .IfSuccessAsync(setting =>
