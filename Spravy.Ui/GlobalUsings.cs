@@ -109,7 +109,6 @@ global using Grpc.Core;
 global using Serilog;
 global using Spravy.Authentication.Domain.Models;
 global using Spravy.Client.Exceptions;
-global using Spravy.Domain.Di.Helpers;
 global using Spravy.PasswordGenerator.Domain.Models;
 global using Spravy.Schedule.Domain.Models;
 global using Spravy.ToDo.Domain.Errors;

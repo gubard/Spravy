@@ -2,7 +2,7 @@
 using Avalonia;
 using Avalonia.ReactiveUI;
 using Serilog;
-using Spravy.Domain.Di.Helpers;
+using Spravy.Core.Helpers;
 using Spravy.Domain.Extensions;
 using Spravy.Ui.Desktop.Modules;
 using Spravy.Ui.Extensions;
@@ -36,7 +36,7 @@ public class Program
     {
         DiHelper.ServiceFactory = new DesktopServiceProvider();
         
-        return AppBuilder.Configure(() => DiHelper.ServiceFactory.ThrowIfNull().CreateService<Application>())
+        return AppBuilder.Configure(() => DiHelper.ServiceFactory.ThrowIfNull().CreateService<App>())
            .UsePlatformDetect()
            .WithInterFont()
            .WithShantellSansFont()

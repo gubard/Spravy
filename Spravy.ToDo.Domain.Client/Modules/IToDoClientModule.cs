@@ -19,12 +19,12 @@ namespace Spravy.ToDo.Domain.Client.Modules;
 [Transient(typeof(IToDoService), Factory = nameof(ToDoServiceFactory))]
 public interface IToDoClientModule
 {
-    public GrpcToDoServiceOptions GrpcToDoServiceOptionsFactory(IConfiguration configuration)
+    static GrpcToDoServiceOptions GrpcToDoServiceOptionsFactory(IConfiguration configuration)
     {
         return configuration.GetOptionsValue<GrpcToDoServiceOptions>();
     }
     
-    public IFactory<Uri, ToDoService.ToDoServiceClient> ToDoServiceClientsFactory(
+    static IFactory<Uri, ToDoService.ToDoServiceClient> ToDoServiceClientsFactory(
         ClientOptions options,
         GrpcToDoServiceOptions serviceOptions,
         ICacheValidator<Uri, GrpcChannel> cacheValidator
@@ -42,7 +42,7 @@ public interface IToDoClientModule
                 serviceOptions);
     }
     
-    public IToDoService ToDoServiceFactory(
+    static IToDoService ToDoServiceFactory(
         GrpcToDoServiceOptions options,
         IFactory<Uri, ToDoService.ToDoServiceClient> grpcClientFactory,
         IConverter converter,

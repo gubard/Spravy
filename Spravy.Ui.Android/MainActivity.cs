@@ -5,13 +5,11 @@ using Android.OS;
 using Avalonia;
 using Avalonia.Android;
 using Avalonia.ReactiveUI;
-using Ninject;
 using Serilog;
 using Serilog.Core;
-using Spravy.Domain.Di.Helpers;
+using Spravy.Core.Helpers;
 using Spravy.Domain.Extensions;
-using Spravy.Ui.Android.Configurations;
-using Spravy.Ui.Configurations;
+using Spravy.Ui.Android.Modules;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 
@@ -21,11 +19,14 @@ namespace Spravy.Ui.Android;
     ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize | ConfigChanges.UiMode)]
 public class MainActivity : AvaloniaMainActivity<App>
 {
+    private static MainActivity? _instance;
     private INavigator? navigator;
+
+    public static MainActivity Instance => _instance.ThrowIfNull();
 
     private INavigator Navigator
     {
-        get => navigator ??= DiHelper.ServiceFactory.ThrowIfNull().Get<INavigator>();
+        get => navigator ??= DiHelper.ServiceFactory.CreateService<INavigator>();
     }
 
     protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)
@@ -41,7 +42,8 @@ public class MainActivity : AvaloniaMainActivity<App>
 
     protected override void OnCreate(Bundle? savedInstanceState)
     {
-        DiHelper.ServiceFactory = new StandardKernel(new UiModule(true), new AndroidModule(this));
+        _instance = this;
+        DiHelper.ServiceFactory = new AndroidServiceProvider();
         base.OnCreate(savedInstanceState);
     }
 
@@ -61,11 +63,6 @@ public class MainActivity : AvaloniaMainActivity<App>
         var viewModel = await Navigator.NavigateBackAsync(CancellationToken.None);
 
         if (viewModel.IsHasError)
-        {
-            return;
-        }
-
-        if (viewModel.Value is null)
         {
             base.OnBackPressed();
         }

@@ -3,70 +3,56 @@ using Jab;
 using Microsoft.Extensions.Configuration;
 using Spravy.Client.Models;
 using Spravy.Core.Helpers;
-using Spravy.Db.Interfaces;
-using Spravy.Db.Services;
-using Spravy.Db.Sqlite.EntityTypeConfigurations;
-using Spravy.Db.Sqlite.Services;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;
+using Spravy.Domain.Services;
+using Spravy.Ui.Browser.Services;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Modules;
-using Spravy.Ui.Services;
 
-namespace Spravy.Ui.Desktop.Modules;
+namespace Spravy.Ui.Browser.Modules;
 
 [ServiceProvider]
 [Import(typeof(IUiModule))]
-[Transient(typeof(IObjectStorage), typeof(SqliteObjectStorage))]
-[Transient(typeof(IOpenerLink), typeof(OpenerLink))]
 [Singleton(typeof(IConfiguration), Factory = nameof(ConfigurationFactory))]
 [Singleton(typeof(ClientOptions), Factory = nameof(ClientOptionsFactory))]
 [Singleton(typeof(IServiceFactory), Factory = nameof(ServiceFactoryFactory))]
-[Transient(typeof(IDbContextSetup), Factory = nameof(DbContextSetupFactory))]
-[Transient(typeof(StorageDbContext), Factory = nameof(StorageDbContextFactory))]
-public partial class DesktopServiceProvider : IServiceFactory
+[Transient(typeof(IObjectStorage), typeof(LocalStorageObjectStorage))]
+[Transient(typeof(IStringToBytes), typeof(StringToUtf8Bytes))]
+[Transient(typeof(IBytesToString), typeof(Utf8BytesToString))]
+[Transient(typeof(IOpenerLink), typeof(BrowserOpenerLink))]
+public partial class BrowserServiceProvider : IServiceFactory
 {
     private readonly IServiceProvider serviceProvider;
-    
-    public DesktopServiceProvider()
+        
+    public BrowserServiceProvider()
     {
         serviceProvider = this;
     }
-    
-    static StorageDbContext StorageDbContextFactory(IDbContextSetup setup)
-    {
-        return new(setup);
-    }
-    
+
     public IServiceFactory ServiceFactoryFactory()
     {
         return DiHelper.ServiceFactory;
     }
-    
+        
     public ClientOptions ClientOptionsFactory()
     {
-        return new(true);
+        return new(false);
     }
-    
+        
     public IConfiguration ConfigurationFactory()
     {
-        return new ConfigurationBuilder().AddJsonFile(FileNames.DefaultConfigFileName).Build();
+        using var stream = SpravyUiBrowserMark.GetResourceStream(FileNames.DefaultConfigFileName).ThrowIfNull();
+
+        return new ConfigurationBuilder().AddJsonStream(stream).Build();
     }
-    
-    public IDbContextSetup DbContextSetupFactory()
-    {
-        return new SqliteDbContextSetup(new[]
-        {
-            new StorageEntityTypeConfiguration(),
-        }, "./storage/storage.db".ToFile(), true);
-    }
-    
+        
     public T CreateService<T>() where T : notnull
     {
         return GetService<T>();
     }
-    
+        
     public object CreateService(Type type)
     {
         return serviceProvider.GetService(type).ThrowIfNull();

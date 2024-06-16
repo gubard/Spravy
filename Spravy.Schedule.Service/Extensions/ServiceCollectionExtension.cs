@@ -10,7 +10,6 @@ using Spravy.Core.Extensions;
 using Spravy.Core.Services;
 using Spravy.Db.Interfaces;
 using Spravy.Db.Sqlite.Models;
-using Spravy.Di.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Services;
 using Spravy.EventBus.Domain.Client.Models;

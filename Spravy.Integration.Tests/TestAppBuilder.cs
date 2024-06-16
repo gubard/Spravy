@@ -1,3 +1,5 @@
+using Spravy.Core.Helpers;
+
 namespace Spravy.Integration.Tests;
 
 public class TestAppBuilder

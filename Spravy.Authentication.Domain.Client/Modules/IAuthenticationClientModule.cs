@@ -18,12 +18,12 @@ namespace Spravy.Authentication.Domain.Client.Modules;
 [Transient(typeof(IAuthenticationService), Factory = nameof(AuthenticationServiceFactory))]
 public interface IAuthenticationClientModule
 {
-    public GrpcAuthenticationServiceOptions GrpcAuthenticationServiceOptionsFactory(IConfiguration configuration)
+    static GrpcAuthenticationServiceOptions GrpcAuthenticationServiceOptionsFactory(IConfiguration configuration)
     {
         return configuration.GetOptionsValue<GrpcAuthenticationServiceOptions>();
     }
     
-    public IFactory<Uri, AuthenticationServiceClient> AuthenticationServiceClientsFactory(
+    static IFactory<Uri, AuthenticationServiceClient> AuthenticationServiceClientsFactory(
         ClientOptions options,
         GrpcAuthenticationServiceOptions serviceOptions,
         ICacheValidator<Uri, GrpcChannel> cacheValidator
@@ -41,7 +41,7 @@ public interface IAuthenticationClientModule
                 serviceOptions);
     }
     
-    public IAuthenticationService AuthenticationServiceFactory(
+    static IAuthenticationService AuthenticationServiceFactory(
         GrpcAuthenticationServiceOptions options,
         IFactory<Uri, AuthenticationServiceClient> grpcClientFactory,
         IConverter converter,

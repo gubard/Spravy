@@ -5,12 +5,9 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Browser;
 using Avalonia.ReactiveUI;
-using Ninject;
 using Serilog;
-using Spravy.Domain.Di.Helpers;
-using Spravy.Domain.Extensions;
-using Spravy.Ui.Browser.Configurations;
-using Spravy.Ui.Configurations;
+using Spravy.Core.Helpers;
+using Spravy.Ui.Browser.Modules;
 using Spravy.Ui.Extensions;
 
 [assembly: SupportedOSPlatform("browser")]
@@ -28,7 +25,7 @@ internal class Program
             Log.Information("Starting web app");
             await JSHost.ImportAsync("localStorage.js", "./localStorage.js");
             await JSHost.ImportAsync("window.js", "./window.js");
-            DiHelper.ServiceFactory = new StandardKernel(BrowserModule.Default, new UiModule(false));
+            DiHelper.ServiceFactory = new BrowserServiceProvider();
             await BuildAvaloniaApp().WithInterFont().UseReactiveUI().StartBrowserAppAsync("out");
         }
         catch (Exception ex)
@@ -43,7 +40,7 @@ internal class Program
 
     public static AppBuilder BuildAvaloniaApp()
     {
-        return AppBuilder.Configure(() => DiHelper.ServiceFactory.ThrowIfNull().Get<Application>())
+        return AppBuilder.Configure(() => DiHelper.ServiceFactory.CreateService<App>())
            .UseReactiveUI()
            .WithInterFont()
            .WithShantellSansFont();

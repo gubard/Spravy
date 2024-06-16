@@ -10,26 +10,27 @@ using Spravy.Db.Sqlite.Services;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;
+using Spravy.Ui.Android.Services;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Modules;
-using Spravy.Ui.Services;
+using Xamarin.Essentials;
 
-namespace Spravy.Ui.Desktop.Modules;
+namespace Spravy.Ui.Android.Modules;
 
 [ServiceProvider]
 [Import(typeof(IUiModule))]
-[Transient(typeof(IObjectStorage), typeof(SqliteObjectStorage))]
-[Transient(typeof(IOpenerLink), typeof(OpenerLink))]
 [Singleton(typeof(IConfiguration), Factory = nameof(ConfigurationFactory))]
 [Singleton(typeof(ClientOptions), Factory = nameof(ClientOptionsFactory))]
 [Singleton(typeof(IServiceFactory), Factory = nameof(ServiceFactoryFactory))]
 [Transient(typeof(IDbContextSetup), Factory = nameof(DbContextSetupFactory))]
 [Transient(typeof(StorageDbContext), Factory = nameof(StorageDbContextFactory))]
-public partial class DesktopServiceProvider : IServiceFactory
+[Transient(typeof(IObjectStorage), typeof(SqliteObjectStorage))]
+[Transient(typeof(IOpenerLink), typeof(AndroidOpenerLink))]
+public partial class AndroidServiceProvider : IServiceFactory
 {
     private readonly IServiceProvider serviceProvider;
     
-    public DesktopServiceProvider()
+    public AndroidServiceProvider()
     {
         serviceProvider = this;
     }
@@ -38,35 +39,37 @@ public partial class DesktopServiceProvider : IServiceFactory
     {
         return new(setup);
     }
-    
+
     public IServiceFactory ServiceFactoryFactory()
     {
         return DiHelper.ServiceFactory;
     }
-    
+        
     public ClientOptions ClientOptionsFactory()
     {
         return new(true);
     }
-    
+        
     public IConfiguration ConfigurationFactory()
     {
-        return new ConfigurationBuilder().AddJsonFile(FileNames.DefaultConfigFileName).Build();
+        using var stream = SpravyUiAndroidMark.GetResourceStream(FileNames.DefaultConfigFileName);
+
+        return new ConfigurationBuilder().AddJsonStream(stream.ThrowIfNull()).Build();
     }
-    
+        
     public IDbContextSetup DbContextSetupFactory()
     {
         return new SqliteDbContextSetup(new[]
         {
             new StorageEntityTypeConfiguration(),
-        }, "./storage/storage.db".ToFile(), true);
+        }, FileSystem.AppDataDirectory.ToDirectory().ToFile("storage.db"), true);
     }
-    
+        
     public T CreateService<T>() where T : notnull
     {
         return GetService<T>();
     }
-    
+        
     public object CreateService(Type type)
     {
         return serviceProvider.GetService(type).ThrowIfNull();

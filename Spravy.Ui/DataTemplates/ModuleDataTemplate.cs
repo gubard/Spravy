@@ -2,32 +2,32 @@ namespace Spravy.Ui.DataTemplates;
 
 public class ModuleDataTemplate : IDataTemplate
 {
+    private readonly IViewSelector viewSelector;
     private readonly IServiceFactory serviceFactory;
-    
-    public ModuleDataTemplate(IServiceFactory serviceFactory)
+
+    public ModuleDataTemplate(IViewSelector viewSelector, IServiceFactory serviceFactory)
     {
+        this.viewSelector = viewSelector;
         this.serviceFactory = serviceFactory;
     }
-    
+
     public Control Build(object? param)
     {
         var type = param.ThrowIfNull().GetType();
+        var view = viewSelector.GetView(type);
 
-        var ns = type.Namespace
-           .ThrowIfNullOrWhiteSpace()
-           .Replace(".ViewModels.", ".Views.")
-           .Replace(".ViewModels", ".Views");
-
-        var viewName = $"{ns}.{type.Name.Substring(0, type.Name.Length - 5)}";
-        var viewType = type.Assembly.GetType(viewName).ThrowIfNull(viewName);
-        var view = (Control)serviceFactory.CreateService(viewType);
-
-        if (view is IViewFor viewFor)
+        if (view.IsHasError)
         {
-            viewFor.ViewModel = param;
+            var errorView = serviceFactory.CreateService<ErrorView>();
+            errorView.ViewModel = serviceFactory.CreateService<ErrorViewModel>();
+            errorView.ViewModel.Errors.AddRange(view.Errors.ToArray());
+
+            return errorView;
         }
 
-        return view;
+        view.Value.ViewModel = param;
+
+        return view.Value.ThrowIfIsNotCast<Control>();
     }
 
     public bool Match(object? data)

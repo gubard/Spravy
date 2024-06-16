@@ -1,4 +1,4 @@
-namespace Spravy.Domain.Di.Helpers;
+namespace Spravy.Core.Helpers;
 
 public static class DiHelper
 {

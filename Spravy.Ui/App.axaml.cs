@@ -1,17 +1,21 @@
+using Spravy.Core.Helpers;
+
 namespace Spravy.Ui;
 
 public class App : Application
 {
+    private readonly IServiceFactory serviceFactory = DiHelper.ServiceFactory;
+    
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
-        var dataTemplates = DiHelper.ServiceFactory.CreateService<IEnumerable<IDataTemplate>>();
+        var dataTemplates = serviceFactory.CreateService<IEnumerable<IDataTemplate>>();
         DataTemplates.AddRange(dataTemplates);
     }
     
     public override void OnFrameworkInitializationCompleted()
     {
-        var objectStorage = DiHelper.ServiceFactory.CreateService<IObjectStorage>();
+        var objectStorage = serviceFactory.CreateService<IObjectStorage>();
         
         if (objectStorage.IsExistsAsync(TypeCache<SettingModel>.Type.Name).GetAwaiter().GetResult().Value)
         {
@@ -33,12 +37,12 @@ public class App : Application
         
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var window = DiHelper.ServiceFactory.CreateService<IDesktopTopLevelControl>().As<Window>().ThrowIfNull();
+            var window = serviceFactory.CreateService<IDesktopTopLevelControl>().As<Window>().ThrowIfNull();
             desktop.MainWindow = window;
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {
-            var control = DiHelper.ServiceFactory.CreateService<ISingleViewTopLevelControl>().As<Control>();
+            var control = serviceFactory.CreateService<ISingleViewTopLevelControl>().As<Control>();
             
             singleViewPlatform.MainView = control;
         }

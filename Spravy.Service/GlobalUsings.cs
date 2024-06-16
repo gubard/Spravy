@@ -26,7 +26,6 @@ global using Spravy.Db.Services;
 global using Spravy.Db.Sqlite.Extensions;
 global using Spravy.Db.Sqlite.Models;
 global using Spravy.Db.Sqlite.Services;
-global using Spravy.Di.Extensions;
 global using Spravy.Domain.Enums;
 global using Spravy.Domain.Exceptions;
 global using Spravy.Domain.Extensions;

@@ -12,7 +12,6 @@ global using Ninject;
 global using Ninject.Modules;
 global using Spravy.Authentication.Domain.Client.Models;
 global using Spravy.Db.Interfaces;
-global using Spravy.Domain.Di.Helpers;
 global using Spravy.Domain.Extensions;
 global using Spravy.Integration.Tests.Helpers;
 global using Spravy.Integration.Tests.Models;

@@ -1,12 +1,24 @@
 namespace Spravy.Ui.ViewModels;
 
-public class MainSplitViewModel : ViewModelBase, IContent
+public class MainSplitViewModel : ViewModelBase
 {
-    [Reactive]
-    public bool IsPaneOpen { get; set; }
+    public MainSplitViewModel(PaneViewModel pane, IServiceFactory serviceFactory, IErrorHandler errorHandler)
+    {
+        Pane = pane;
+
+        InitializedCommand = SpravyCommand.Create(_ => this.InvokeUiBackgroundAsync(() =>
+        {
+            Content = serviceFactory.CreateService<LoginViewModel>();
+
+            return Result.Success;
+        }), errorHandler);
+    }
+
+    public SpravyCommand InitializedCommand { get; }
+    public PaneViewModel Pane { get; }
 
     [Reactive]
-    public object? Pane { get; set; }
+    public bool IsPaneOpen { get; set; }
 
     [Reactive]
     public object? Content { get; set; }

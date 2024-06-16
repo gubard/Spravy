@@ -4,25 +4,21 @@ public class Navigator : INavigator
 {
     private readonly QueryList<NavigatorItem> list = new(5);
     private readonly IServiceFactory serviceFactory;
-    private readonly IContent content;
     private readonly IDialogViewer dialogViewer;
+    private readonly MainSplitViewModel mainSplitViewModel;
     
     private Action<object> lastSetup = ActionHelper<object>.Empty;
     
     public Navigator(
         IDialogViewer dialogViewer,
         IServiceFactory serviceFactory,
-        IContent content,
         MainSplitViewModel mainSplitViewModel
     )
     {
         this.dialogViewer = dialogViewer;
         this.serviceFactory = serviceFactory;
-        this.content = content;
-        MainSplitViewModel = mainSplitViewModel;
+        this.mainSplitViewModel = mainSplitViewModel;
     }
-    
-    public MainSplitViewModel MainSplitViewModel { get; }
     
     public ConfiguredValueTaskAwaitable<Result> NavigateToAsync(Type type, CancellationToken cancellationToken)
     {
@@ -31,7 +27,7 @@ public class Navigator : INavigator
         return AddCurrentContentAsync(ActionHelper<object>.Empty, cancellationToken)
            .IfSuccessAsync(() => this.InvokeUiBackgroundAsync(() =>
             {
-                content.Content = viewModel;
+                mainSplitViewModel.Content = viewModel;
                 
                 return Result.Success;
             }), cancellationToken);
@@ -45,7 +41,7 @@ public class Navigator : INavigator
         return AddCurrentContentAsync(obj => setup.Invoke((TViewModel)obj), cancellationToken)
            .IfSuccessAsync(() =>
             {
-                if (content.Content is IRefresh refresh && content.Content is TViewModel vm)
+                if (mainSplitViewModel.Content is IRefresh refresh && mainSplitViewModel.Content is TViewModel vm)
                 {
                     return this.InvokeUiBackgroundAsync(() =>
                         {
@@ -56,7 +52,7 @@ public class Navigator : INavigator
                        .IfSuccessAsync(() => refresh.RefreshAsync(cancellationToken), cancellationToken);
                 }
                 
-                if (content.Content is IDisposable disposable)
+                if (mainSplitViewModel.Content is IDisposable disposable)
                 {
                     disposable.Dispose();
                 }
@@ -66,7 +62,7 @@ public class Navigator : INavigator
                 return this.InvokeUiBackgroundAsync(() =>
                 {
                     setup.Invoke(viewModel);
-                    content.Content = viewModel;
+                    mainSplitViewModel.Content = viewModel;
                     
                     return Result.Success;
                 });
@@ -81,7 +77,7 @@ public class Navigator : INavigator
         return AddCurrentContentAsync(ActionHelper<object>.Empty, cancellationToken)
            .IfSuccessAsync(() => this.InvokeUiBackgroundAsync(() =>
             {
-                content.Content = viewModel;
+                mainSplitViewModel.Content = viewModel;
                 
                 return Result.Success;
             }), cancellationToken);
@@ -104,9 +100,9 @@ public class Navigator : INavigator
                     return new EmptyNavigatable().CastObject<INavigatable>().ToValueTaskResult().ConfigureAwait(false);
                 }
                 
-                if (MainSplitViewModel.IsPaneOpen)
+                if (mainSplitViewModel.IsPaneOpen)
                 {
-                    MainSplitViewModel.IsPaneOpen = false;
+                    mainSplitViewModel.IsPaneOpen = false;
                     
                     return new EmptyNavigatable().CastObject<INavigatable>().ToValueTaskResult().ConfigureAwait(false);
                 }
@@ -114,7 +110,7 @@ public class Navigator : INavigator
                 return this.InvokeUiBackgroundAsync(() =>
                     {
                         item.Setup.Invoke(item.Navigatable);
-                        content.Content = item.Navigatable;
+                        mainSplitViewModel.Content = item.Navigatable;
                         
                         return Result.Success;
                     })
@@ -140,7 +136,7 @@ public class Navigator : INavigator
         return AddCurrentContentAsync(ActionHelper<object>.Empty, cancellationToken)
            .IfSuccessAsync(() => this.InvokeUiBackgroundAsync(() =>
             {
-                content.Content = parameter;
+                mainSplitViewModel.Content = parameter;
                 
                 return Result.Success;
             }), cancellationToken);
@@ -151,12 +147,12 @@ public class Navigator : INavigator
         CancellationToken cancellationToken
     )
     {
-        if (this.content.Content is null)
+        if (mainSplitViewModel.Content is null)
         {
             return Result.AwaitableSuccess;
         }
         
-        var content = (INavigatable)this.content.Content;
+        var content = (INavigatable)mainSplitViewModel.Content;
         content.Stop();
         
         if (!content.IsPooled)

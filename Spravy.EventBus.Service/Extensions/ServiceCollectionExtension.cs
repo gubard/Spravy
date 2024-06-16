@@ -1,7 +1,6 @@
 using Spravy.Core.Extensions;
 using Spravy.Db.Interfaces;
 using Spravy.Db.Sqlite.Models;
-using Spravy.Di.Extensions;
 using Spravy.EventBus.Db.Contexts;
 using Spravy.EventBus.Db.Mapper.Profiles;
 using Spravy.EventBus.Db.Sqlite.Migrator;

@@ -9,4 +9,9 @@ public abstract class Error
 
     public Guid Id { get; }
     public abstract string Message { get; }
+
+    public override string ToString()
+    {
+        return Message;
+    }
 }
