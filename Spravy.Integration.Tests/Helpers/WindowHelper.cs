@@ -6,7 +6,7 @@ public static class WindowHelper
 {
     public static Window CreateWindow()
     {
-        var window = DiHelper.ServiceFactory.ThrowIfNull().Get<IDesktopTopLevelControl>() as Window;
+        var window = DiHelper.ServiceFactory.CreateService<IDesktopTopLevelControl>() as Window;
 
         return window.ThrowIfNull();
     }

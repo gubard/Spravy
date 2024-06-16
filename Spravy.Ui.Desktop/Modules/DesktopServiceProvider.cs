@@ -18,11 +18,12 @@ namespace Spravy.Ui.Desktop.Modules;
 
 [ServiceProvider]
 [Import(typeof(IUiModule))]
-[Transient(typeof(IObjectStorage), typeof(SqliteObjectStorage))]
-[Transient(typeof(IOpenerLink), typeof(OpenerLink))]
 [Singleton(typeof(IConfiguration), Factory = nameof(ConfigurationFactory))]
 [Singleton(typeof(ClientOptions), Factory = nameof(ClientOptionsFactory))]
 [Singleton(typeof(IServiceFactory), Factory = nameof(ServiceFactoryFactory))]
+[Transient(typeof(IObjectStorage), typeof(SqliteObjectStorage))]
+[Transient(typeof(IOpenerLink), typeof(OpenerLink))]
+[Transient(typeof(IClipboardService), typeof(TopLevelClipboardService))]
 [Transient(typeof(IDbContextSetup), Factory = nameof(DbContextSetupFactory))]
 [Transient(typeof(StorageDbContext), Factory = nameof(StorageDbContextFactory))]
 public partial class DesktopServiceProvider : IServiceFactory

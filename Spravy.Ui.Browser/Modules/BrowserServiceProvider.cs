@@ -10,6 +10,7 @@ using Spravy.Domain.Services;
 using Spravy.Ui.Browser.Services;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Modules;
+using Spravy.Ui.Services;
 
 namespace Spravy.Ui.Browser.Modules;
 
@@ -22,6 +23,7 @@ namespace Spravy.Ui.Browser.Modules;
 [Transient(typeof(IStringToBytes), typeof(StringToUtf8Bytes))]
 [Transient(typeof(IBytesToString), typeof(Utf8BytesToString))]
 [Transient(typeof(IOpenerLink), typeof(BrowserOpenerLink))]
+[Transient(typeof(IClipboardService), typeof(TopLevelClipboardService))]
 public partial class BrowserServiceProvider : IServiceFactory
 {
     private readonly IServiceProvider serviceProvider;

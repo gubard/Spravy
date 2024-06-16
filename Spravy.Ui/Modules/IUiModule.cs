@@ -23,7 +23,7 @@ namespace Spravy.Ui.Modules;
 [Singleton(typeof(IUiApplicationService), typeof(UiApplicationService))]
 [Singleton(typeof(ITokenService), typeof(TokenService))]
 [Singleton(typeof(ISingleViewTopLevelControl), typeof(SingleView))]
-[Singleton(typeof(IDesktopTopLevelControl),  Factory = nameof(DesktopTopLevelControlFactory))]
+[Singleton(typeof(IDesktopTopLevelControl), Factory = nameof(DesktopTopLevelControlFactory))]
 [Singleton(typeof(IEnumerable<IDataTemplate>), Factory = nameof(DataTemplatesFactory))]
 [Singleton(typeof(TopLevel), Factory = nameof(TopLevelFactory))]
 [Singleton(typeof(IMapper), Factory = nameof(MapperFactory))]
@@ -170,12 +170,17 @@ namespace Spravy.Ui.Modules;
 [Transient(typeof(IDataTemplate), typeof(ModuleDataTemplate))]
 [Transient(typeof(IMetadataFactory), typeof(MetadataFactory))]
 [Transient(typeof(IDialogViewer), typeof(DialogViewer))]
-[Transient(typeof(IClipboardService), typeof(TopLevelClipboardService))]
 [Transient(typeof(IViewSelector), typeof(ViewSelector))]
+[Transient(typeof(IClipboard), Factory = nameof(ClipboardFactory))]
 [Transient(typeof(IHttpHeaderFactory), Factory = nameof(HttpHeaderFactoryFactory))]
 [Transient(typeof(MapperConfiguration), Factory = nameof(MapperConfigurationFactory))]
 public interface IUiModule
 {
+    static IClipboard ClipboardFactory(TopLevel topLevel)
+    {
+        return topLevel.Clipboard.ThrowIfNull();
+    }
+
     static IDesktopTopLevelControl DesktopTopLevelControlFactory(MainViewModel viewModel)
     {
         return new MainWindow
@@ -183,7 +188,7 @@ public interface IUiModule
             Content = viewModel,
         };
     }
-    
+
     static IEnumerable<IDataTemplate> DataTemplatesFactory(IViewSelector viewSelector, IServiceFactory serviceFactory)
     {
         return new[]
@@ -191,27 +196,27 @@ public interface IUiModule
             new ModuleDataTemplate(viewSelector, serviceFactory),
         };
     }
-    
+
     static TopLevel TopLevelFactory(Application application)
     {
         return application.GetTopLevel().ThrowIfNull();
     }
-    
+
     static Application ApplicationFactory()
     {
         return Application.Current.ThrowIfNull(nameof(Application));
     }
-    
+
     static IHttpHeaderFactory HttpHeaderFactoryFactory(TokenHttpHeaderFactory token, TimeZoneHttpHeaderFactory timeZone)
     {
         return new CombineHttpHeaderFactory(token, timeZone);
     }
-    
+
     static IMapper MapperFactory(MapperConfiguration configuration)
     {
         return new Mapper(configuration);
     }
-    
+
     static MapperConfiguration MapperConfigurationFactory()
     {
         return new(expression =>
