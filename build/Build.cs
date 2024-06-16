@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
@@ -10,6 +9,7 @@ using _build.Extensions;
 using _build.Helpers;
 using _build.Interfaces;
 using _build.Services;
+using CliWrap;
 using FluentFTP;
 using Microsoft.IdentityModel.Tokens;
 using Nuke.Common;
@@ -26,22 +26,22 @@ class Build : NukeBuild
     static DirectoryInfo AndroidFolder;
     [Parameter] readonly string AndroidSigningKeyPass;
     [Parameter] readonly string AndroidSigningStorePass;
-    
+
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
-    
+
     [Parameter] readonly string Domain;
     [Parameter] readonly string EmailAccount2Password;
     [Parameter] readonly string EmailAccountPassword;
     [Parameter] readonly string FtpHost;
-    
+
     [Parameter] readonly string FtpPassword;
     [Parameter] readonly string FtpUser;
     [Parameter] readonly string JwtAudience;
     [Parameter] readonly string JwtIssuer;
     [Parameter] readonly string JwtKey;
     [Parameter] readonly string MailPassword;
-    
+
     [Solution] readonly Solution Solution;
     [Parameter] readonly string SshHost;
     [Parameter] readonly string SshPassword;
@@ -56,47 +56,45 @@ class Build : NukeBuild
     [Parameter] readonly string TelegramToken;
     IReadOnlyDictionary<string, ushort> Ports;
     IProjectBuilder[] Projects;
-    
+
     string Token;
-    
+
     VersionService VersionService;
-    
+
     Target StagingSetupAppSettings =>
         _ => _.Executes(() =>
         {
             Projects = CreateStagingFactory().Create(Solution.AllProjects.Select(x => new FileInfo(x.Path))).ToArray();
             SetupAppSettings();
         });
-    
+
     Target ProdSetupAppSettings =>
         _ => _.Executes(() =>
         {
             Projects = CreateProdFactory().Create(Solution.AllProjects.Select(x => new FileInfo(x.Path))).ToArray();
             SetupAppSettings();
         });
-    
+
     Target StagingBuildDocker => _ => _.DependsOn(StagingSetupAppSettings)
        .Executes(() =>
         {
-            var clean = Process.Start(new ProcessStartInfo("eval", $"echo {SshPassword} | sudo docker builder prune -f")
-                {
-                    WorkingDirectory = "/"
-                })
-               .ThrowIfNull();
-            
-            clean.WaitForExit();
-            
-            if (clean.ExitCode != 0)
+            var command = Cli.Wrap("eval")
+               .WithArguments($"echo {SshPassword} | sudo docker builder prune -f")
+               .ExecuteAsync()
+               .GetAwaiter()
+               .GetResult();
+
+            if (command.ExitCode != 0)
             {
-                throw new($"Exit code {clean.ExitCode}");
+                throw new($"Exit code {command.ExitCode}");
             }
-            
+
             foreach (var serviceProjectBuilder in Projects.OfType<ServiceProjectBuilder>())
             {
                 serviceProjectBuilder.BuildDocker();
             }
         });
-    
+
     Target StagingPushDockerImage => _ => _.DependsOn(StagingBuildDocker)
        .Executes(() =>
         {
@@ -105,20 +103,20 @@ class Build : NukeBuild
                 serviceProjectBuilder.PushDockerImage();
             }
         });
-    
+
     Target StagingClean => _ => _.DependsOn(StagingPushDockerImage).Executes(Clean);
     Target ProdClean => _ => _.DependsOn(ProdSetupAppSettings).Executes(Clean);
-    
+
     Target StagingRestore => _ => _.DependsOn(StagingClean).Executes(Restore);
     Target ProdRestore => _ => _.DependsOn(ProdClean).Executes(Restore);
-    
+
     Target StagingCompile => _ => _.DependsOn(StagingRestore).Executes(Compile);
     Target ProdCompile => _ => _.DependsOn(ProdRestore).Executes(Compile);
-    
+
     Target StagingPublishServices =>
         _ => _.DependsOn(CleanStagingDataBase, StagingCompile)
            .Executes(() => PublishServices(StagingSshHost, StagingSshUser, StagingSshPassword));
-    
+
     Target CleanStagingDataBase =>
         _ => _.Executes(() =>
         {
@@ -126,7 +124,7 @@ class Build : NukeBuild
             client.Connect();
             client.SafeRun($"echo {StagingSshPassword} | sudo -S rm -fr /home/{StagingFtpUser}/DataBases");
         });
-    
+
     Target Test =>
         _ => _.DependsOn(StagingPublishBrowser)
            .Executes(() =>
@@ -136,20 +134,20 @@ class Build : NukeBuild
                     project.Test();
                 }
             });
-    
+
     Target ProdPublishServices =>
         _ => _.DependsOn(ProdCompile).Executes(() => PublishServices(SshHost, SshUser, SshPassword));
-    
+
     Target StagingPublishDesktop =>
         _ => _.DependsOn(StagingPublishServices).Executes(PublishDesktop);
-    
+
     Target ProdPublishDesktop => _ => _.DependsOn(ProdPublishServices).Executes(PublishDesktop);
-    
+
     Target StagingPublishAndroid =>
         _ => _.DependsOn(StagingPublishServices).Executes(PublishAndroid);
-    
+
     Target ProdPublishAndroid => _ => _.DependsOn(ProdPublishServices).Executes(PublishAndroid);
-    
+
     Target StagingPublishBrowser =>
         _ => _.DependsOn(StagingPublishAndroid, StagingPublishDesktop)
            .Executes(() =>
@@ -157,7 +155,7 @@ class Build : NukeBuild
                 PublishBrowser();
                 SendTelegramTextMessage("Staging", StagingFtpHost, StagingFtpUser, StagingFtpPassword, StagingDomain);
             });
-    
+
     Target ProdPublishBrowser =>
         _ => _.DependsOn(ProdPublishAndroid, ProdPublishDesktop)
            .Executes(() =>
@@ -166,9 +164,9 @@ class Build : NukeBuild
                 SendTelegramTextMessage("Prod", FtpHost, FtpUser, FtpPassword, Domain);
                 VersionService.Save();
             });
-    
+
     public static int Main() => Execute<Build>(x => x.ProdPublishBrowser);
-    
+
     protected override void OnBuildInitialized()
     {
         base.OnBuildInitialized();
@@ -176,7 +174,7 @@ class Build : NukeBuild
         Token = CreteToken();
         VersionService = new($"/home/{FtpUser}/storage/version.txt".ToFile());
         VersionService.Load();
-        
+
         Ports = new Dictionary<string, ushort>
         {
             {
@@ -202,17 +200,17 @@ class Build : NukeBuild
             },
         };
     }
-    
+
     ProjectBuilderFactory CreateStagingFactory() => new(Configuration, MailPassword, Token, Ports, VersionService,
         PathHelper.PublishFolder, StagingFtpHost, StagingFtpUser, StagingFtpPassword, StagingSshHost, StagingSshUser,
         StagingSshPassword, StagingDomain, new($"/home/{StagingFtpUser}/storage/sign-key.keystore"),
         AndroidSigningKeyPass, AndroidSigningStorePass, EmailAccountPassword, EmailAccount2Password);
-    
+
     ProjectBuilderFactory CreateProdFactory() => new(Configuration, MailPassword, Token, Ports, VersionService,
         PathHelper.PublishFolder, FtpHost, FtpUser, FtpPassword, SshHost, SshUser, SshPassword, Domain,
         new($"/home/{FtpUser}/storage/sign-key.keystore"), AndroidSigningKeyPass, AndroidSigningStorePass,
         EmailAccountPassword, EmailAccount2Password);
-    
+
     void SetupAppSettings()
     {
         foreach (var project in Projects)
@@ -220,7 +218,7 @@ class Build : NukeBuild
             project.Setup();
         }
     }
-    
+
     void Clean()
     {
         foreach (var project in Projects)
@@ -228,7 +226,7 @@ class Build : NukeBuild
             project.Clean();
         }
     }
-    
+
     void Restore()
     {
         foreach (var project in Projects)
@@ -236,7 +234,7 @@ class Build : NukeBuild
             project.Restore();
         }
     }
-    
+
     void Compile()
     {
         foreach (var project in Projects)
@@ -244,30 +242,30 @@ class Build : NukeBuild
             project.Compile();
         }
     }
-    
+
     void PublishServices(string sshHost, string sshUser, string sshPassword)
     {
         using var sshClient = new SshClient(CreateSshConnection(sshHost, sshUser, sshPassword));
         sshClient.Connect();
-        
+
         foreach (var project in Projects.OfType<ServiceProjectBuilder>())
         {
             project.Publish();
         }
-        
+
         sshClient.SafeRun($"echo {sshPassword} | sudo -S chown -R $USER:$USER /etc/letsencrypt");
         sshClient.SafeRun($"echo {sshPassword} | sudo -S systemctl daemon-reload");
-        
+
         foreach (var project in Projects.OfType<ServiceProjectBuilder>())
         {
             sshClient.SafeRun(
                 $"echo {project.Options.SshPassword} | sudo -S systemctl enable {project.Options.GetServiceName()}");
-            
+
             sshClient.SafeRun(
                 $"echo {project.Options.SshPassword} | sudo -S systemctl restart {project.Options.GetServiceName()}");
         }
     }
-    
+
     void PublishDesktop()
     {
         foreach (var project in Projects.OfType<DesktopProjectBuilder>())
@@ -275,7 +273,7 @@ class Build : NukeBuild
             project.Publish();
         }
     }
-    
+
     void PublishAndroid()
     {
         foreach (var project in Projects.OfType<AndroidProjectBuilder>())
@@ -283,7 +281,7 @@ class Build : NukeBuild
             project.Publish();
         }
     }
-    
+
     void PublishBrowser()
     {
         foreach (var project in Projects.OfType<BrowserProjectBuilder>())
@@ -291,13 +289,13 @@ class Build : NukeBuild
             project.Publish();
         }
     }
-    
+
     void SendTelegramTextMessage(string name, string ftpHost, string ftpUser, string ftpPassword, string domain)
     {
         using var ftpClient = CreateFtpClient(ftpHost, ftpUser, ftpPassword);
         ftpClient.Connect();
         var html = PathHelper.WwwFolder.Combine(domain).Combine("html");
-        
+
         var items = ftpClient
            .GetListing(html.Combine("downloads", VersionService.Version.ToString()).FullName, FtpListOption.Recursive)
            .Where(x => x.Type == FtpObjectType.File
@@ -305,16 +303,16 @@ class Build : NukeBuild
                  || (x.Name.EndsWith(".apk") || x.Name.EndsWith(".aab")) && x.Name.Contains("Spravy-Signed")))
            .Select(x => InlineKeyboardButton.WithUrl(
                 GetButtonName(x.Name), x.FullName.Replace(html.FullName, $"https://{domain}")));
-        
+
         var botClient = new TelegramBotClient(TelegramToken);
-        
+
         botClient.SendTextMessageAsync("@spravy_release",
                 $"Published {name} v{VersionService.Version}({VersionService.Version.Code})",
                 replyMarkup: new InlineKeyboardMarkup(items))
            .GetAwaiter()
            .GetResult();
     }
-    
+
     string GetButtonName(string name) => Path.GetExtension(name).ToUpperInvariant() switch
     {
         ".APK" => ".APK",
@@ -322,52 +320,52 @@ class Build : NukeBuild
         ".ZIP" => Path.GetExtension(Path.GetFileNameWithoutExtension(name)).ThrowIfNull().ToUpperInvariant(),
         _ => throw new ArgumentOutOfRangeException(name),
     };
-    
+
     string CreteToken()
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtKey));
         var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
         var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
         var expires = DateTime.UtcNow.AddDays(30);
-        
+
         var claims = new List<Claim>
         {
             new(ClaimTypes.Role, "Service"),
         };
-        
+
         var token = new JwtSecurityToken(JwtIssuer, JwtAudience, claims, expires: expires,
             signingCredentials: signingCredentials);
-        
+
         var jwt = jwtSecurityTokenHandler.WriteToken(token);
-        
+
         return jwt;
     }
-    
+
     ConnectionInfo CreateSshConnection(string sshHost, string sshUser, string sshPassword)
     {
         var methods = new List<AuthenticationMethod>();
         var values = sshHost.Split(":");
         var password = new PasswordAuthenticationMethod(sshUser, sshPassword);
         methods.Add(password);
-        
+
         if (values.Length == 2)
         {
             return new(values[0], int.Parse(values[1]), sshUser, methods.ToArray());
         }
-        
+
         return new(values[0], sshUser, methods.ToArray());
     }
-    
+
     FtpClient CreateFtpClient(string ftpHost, string ftpUser, string ftpPassword)
     {
         var values = ftpHost.Split(":");
         Log.Logger.Information("Connecting {FtpHost} {FtpUser}", ftpHost, ftpUser);
-        
+
         if (values.Length == 2)
         {
             return new(values[0], ftpUser, ftpPassword, int.Parse(values[1]));
         }
-        
+
         return new(ftpHost, ftpUser, ftpPassword);
     }
 }
