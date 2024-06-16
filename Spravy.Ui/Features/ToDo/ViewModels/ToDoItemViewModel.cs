@@ -14,7 +14,6 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUp
         ToDoItemCommands commands,
         ToDoSubItemsViewModel toDoSubItemsViewModel,
         FastAddToDoItemViewModel fastAddToDoItemViewModel,
-        ITaskProgressService taskProgressService,
         IToDoService toDoService,
         IToDoCache toDoCache
     ) : base(true)

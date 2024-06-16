@@ -21,7 +21,7 @@ public class FastAddToDoItemViewModel : ViewModelBase
                         return toDoService.AddToDoItemAsync(options, cancellationToken).ToResultOnlyAsync();
                     }, _ =>
                     {
-                        var options = new AddRootToDoItemOptions(Name, ToDoItemType.Value, null, string.Empty,
+                        var options = new AddRootToDoItemOptions(Name, ToDoItemType.Value, new(null), string.Empty,
                             DescriptionType.PlainText);
                         
                         return toDoService.AddRootToDoItemAsync(options, cancellationToken).ToResultOnlyAsync();

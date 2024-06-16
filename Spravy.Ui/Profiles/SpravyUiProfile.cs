@@ -23,7 +23,7 @@ public class SpravyUiProfile : Profile
 
         CreateMap<AddRootToDoItemViewModel, AddRootToDoItemOptions>()
            .ConvertUsing((x, _, context) => new(x.ToDoItemContent.Name, x.ToDoItemContent.Type,
-                context.Mapper.Map<Uri?>(x.ToDoItemContent.Link), x.DescriptionContent.Description,
+                context.Mapper.Map<Option<Uri>>(x.ToDoItemContent.Link), x.DescriptionContent.Description,
                 x.DescriptionContent.Type));
     }
 }
