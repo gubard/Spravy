@@ -1,5 +1,3 @@
 namespace Spravy.Ui.Interfaces;
 
-public interface IDesktopTopLevelControl
-{
-}
+public interface IDesktopTopLevelControl;

@@ -28,7 +28,7 @@ namespace Spravy.Ui.Modules;
 [Singleton(typeof(IViewSelector), typeof(ViewSelector))]
 [Singleton(typeof(ISpravyNotificationManager), typeof(NotificationManager))]
 [Singleton(typeof(IManagedNotificationManager), typeof(WindowNotificationManager))]
-[Singleton(typeof(IDesktopTopLevelControl), Factory = nameof(DesktopTopLevelControlFactory))]
+[Singleton(typeof(IDesktopTopLevelControl), typeof(MainWindow))]
 [Singleton(typeof(IEnumerable<IDataTemplate>), Factory = nameof(DataTemplatesFactory))]
 [Singleton(typeof(TopLevel), Factory = nameof(TopLevelFactory))]
 [Singleton(typeof(IMapper), Factory = nameof(MapperFactory))]
@@ -179,14 +179,6 @@ public interface IUiModule
     static IClipboard ClipboardFactory(TopLevel topLevel)
     {
         return topLevel.Clipboard.ThrowIfNull();
-    }
-
-    static IDesktopTopLevelControl DesktopTopLevelControlFactory(MainViewModel viewModel)
-    {
-        return new MainWindow
-        {
-            Content = viewModel,
-        };
     }
 
     static IEnumerable<IDataTemplate> DataTemplatesFactory(IViewSelector viewSelector, IServiceFactory serviceFactory)
