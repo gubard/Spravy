@@ -757,16 +757,16 @@ public class GrpcToDoService : GrpcServiceBase<ToDoServiceClient>,
     
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemLinkAsync(
         Guid id,
-        Uri? link,
+        Option<Uri> link,
         CancellationToken cancellationToken
     )
     {
         return CallClientAsync(client => metadataFactory.CreateAsync(cancellationToken)
-           .IfSuccessAsync(converter.Convert<OptionString>(link), converter.Convert<ByteString>(id), (metadata, l, i) =>
+           .IfSuccessAsync(converter.Convert<string>(link), converter.Convert<ByteString>(id), (metadata, l, i) =>
                 client.UpdateToDoItemLinkAsync(new()
                     {
                         Id = i,
-                        Link = l.Value,
+                        Link = l,
                     }, metadata, DateTime.UtcNow.Add(Timeout), cancellationToken)
                    .ToValueTaskResultOnly()
                    .ConfigureAwait(false), cancellationToken), cancellationToken);

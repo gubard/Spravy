@@ -368,7 +368,7 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     )
     {
         return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(converter.Convert<Uri>(request.Link),
+           .IfSuccessAsync(converter.Convert<Option<Uri>>(request.Link),
                 (id, link) => toDoService.UpdateToDoItemLinkAsync(id, link, context.CancellationToken),
                 context.CancellationToken)
            .HandleAsync<UpdateToDoItemLinkReply>(serializer);

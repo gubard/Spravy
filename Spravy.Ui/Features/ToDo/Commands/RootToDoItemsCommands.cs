@@ -28,7 +28,7 @@ public class RootToDoItemsCommands
                 errorHandler),
             SpravyCommandNotify.CreateMultiOpenLeafItem(uiApplicationService, navigator, errorHandler),
             SpravyCommandNotify.CreateMultiOpenLinkItem(uiApplicationService, openerLink, errorHandler),
-            SpravyCommandNotify.CreateMultiShowSettingItem(uiApplicationService, toDoService, dialogViewer,
+            SpravyCommandNotify.CreateMultiShowSettingItem(uiApplicationService, toDoService, dialogViewer, converter,
                 errorHandler),
             SpravyCommandNotify.CreateMultiAddToFavoriteItem(uiApplicationService, toDoService, errorHandler),
             SpravyCommandNotify.CreateMultiCopyToClipboardItem(uiApplicationService, toDoService, dialogViewer,

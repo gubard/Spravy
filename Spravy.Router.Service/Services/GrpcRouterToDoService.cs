@@ -4,6 +4,7 @@ using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;
+using Spravy.Domain.Models;
 using Spravy.Service.Extensions;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
@@ -181,7 +182,7 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
     {
         var reply = new UpdateToDoItemLinkReply();
 
-        await toDoService.UpdateToDoItemLinkAsync(mapper.Map<Guid>(request.Id), mapper.Map<Uri>(request.Link),
+        await toDoService.UpdateToDoItemLinkAsync(mapper.Map<Guid>(request.Id), mapper.Map<Option<Uri>>(request.Link),
             context.CancellationToken);
 
         return reply;

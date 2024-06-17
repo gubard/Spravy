@@ -186,7 +186,7 @@ public interface IToDoService
     
     ConfiguredValueTaskAwaitable<Result> UpdateToDoItemLinkAsync(
         Guid id,
-        Uri? link,
+        Option<Uri> link,
         CancellationToken cancellationToken
     );
     

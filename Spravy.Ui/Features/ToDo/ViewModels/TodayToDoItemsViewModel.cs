@@ -4,7 +4,7 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IRefresh, IToDo
 {
     private readonly IToDoService toDoService;
     private readonly IToDoCache toDoCache;
-    
+
     public TodayToDoItemsViewModel(
         PageHeaderViewModel pageHeaderViewModel,
         ToDoSubItemsViewModel toDoSubItemsViewModel,
@@ -25,13 +25,13 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IRefresh, IToDo
         ToDoSubItemsViewModel = toDoSubItemsViewModel;
         this.toDoService = toDoService;
         this.toDoCache = toDoCache;
-        
+
         ToDoSubItemsViewModel.List
            .WhenAnyValue(x => x.IsMulti)
            .Subscribe(x =>
             {
                 PageHeaderViewModel.Commands.Clear();
-                
+
                 if (x)
                 {
                     PageHeaderViewModel.Commands.AddRange([
@@ -53,7 +53,7 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IRefresh, IToDo
                         SpravyCommandNotify.CreateMultiOpenLeafItem(uiApplicationService, navigator, errorHandler),
                         SpravyCommandNotify.CreateMultiOpenLinkItem(uiApplicationService, openerLink, errorHandler),
                         SpravyCommandNotify.CreateMultiShowSettingItem(uiApplicationService, toDoService, dialogViewer,
-                            errorHandler),
+                            converter, errorHandler),
                         SpravyCommandNotify.CreateMultiAddToFavoriteItem(uiApplicationService, toDoService,
                             errorHandler),
                         SpravyCommandNotify.CreateMultiCopyToClipboardItem(uiApplicationService, toDoService,
@@ -67,19 +67,19 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IRefresh, IToDo
                     ]);
                 }
             });
-        
+
         InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
     }
-    
+
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
     public PageHeaderViewModel PageHeaderViewModel { get; }
     public SpravyCommand InitializedCommand { get; }
-    
+
     public override string ViewId
     {
         get => TypeCache<TodayToDoItemsViewModel>.Type.Name;
     }
-    
+
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
     {
         return toDoService.GetTodayToDoItemsAsync(cancellationToken)
@@ -87,22 +87,22 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IRefresh, IToDo
            .IfSuccessAsync(ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), false, cancellationToken),
                 cancellationToken);
     }
-    
+
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         return RefreshAsync(cancellationToken);
     }
-    
+
     public override Result Stop()
     {
         return Result.Success;
     }
-    
+
     public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
     {
         return Result.AwaitableSuccess;
     }
-    
+
     public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
         object setting,
         CancellationToken cancellationToken

@@ -930,7 +930,7 @@ public class EfToDoService : IToDoService
     
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemLinkAsync(
         Guid id,
-        Uri? link,
+        Option<Uri> link,
         CancellationToken cancellationToken
     )
     {
@@ -939,7 +939,7 @@ public class EfToDoService : IToDoService
                .FindEntityAsync<ToDoItemEntity>(id)
                .IfSuccessAsync(value =>
                 {
-                    value.Link = mapper.Map<string>(link) ?? string.Empty;
+                    value.Link = mapper.Map<string>(link);
                     
                     return Result.Success;
                 }, cancellationToken), cancellationToken), cancellationToken);
