@@ -96,12 +96,12 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
         if (ToDoItemContent.Link.IsNullOrWhiteSpace())
         {
             return new AddToDoItemOptions(parentId, ToDoItemContent.Name, ToDoItemContent.Type,
-                DescriptionContent.Description, DescriptionContent.Type, null).ToResult();
+                DescriptionContent.Description, DescriptionContent.Type, new(null)).ToResult();
         }
         
         return converter.Convert<Uri>(ToDoItemContent.Link)
            .IfSuccess(uri => new AddToDoItemOptions(parentId, ToDoItemContent.Name, ToDoItemContent.Type,
-                DescriptionContent.Description, DescriptionContent.Type, uri).ToResult());
+                DescriptionContent.Description, DescriptionContent.Type, new(uri)).ToResult());
     }
     
     [ProtoContract]

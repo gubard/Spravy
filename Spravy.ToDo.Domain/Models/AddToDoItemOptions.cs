@@ -1,4 +1,5 @@
 using Spravy.Domain.Enums;
+using Spravy.Domain.Models;
 using Spravy.ToDo.Domain.Enums;
 
 namespace Spravy.ToDo.Domain.Models;
@@ -11,7 +12,7 @@ public readonly struct AddToDoItemOptions
         ToDoItemType type,
         string description,
         DescriptionType descriptionType,
-        Uri? link
+        Option<Uri> link
     )
     {
         ParentId = parentId;
@@ -25,7 +26,7 @@ public readonly struct AddToDoItemOptions
     public Guid ParentId { get; }
     public string Name { get; }
     public ToDoItemType Type { get; }
-    public Uri? Link { get; }
+    public Option<Uri> Link { get; }
     public string Description { get; }
     public DescriptionType DescriptionType { get; }
 }

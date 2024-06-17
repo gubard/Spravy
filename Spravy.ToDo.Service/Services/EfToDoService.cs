@@ -382,7 +382,7 @@ public class EfToDoService : IToDoService
                         toDoItem.DaysOffset = parent.DaysOffset;
                         toDoItem.MonthsOffset = parent.MonthsOffset;
                         toDoItem.YearsOffset = parent.YearsOffset;
-                        toDoItem.Link = options.Link?.AbsoluteUri ?? string.Empty;
+                        toDoItem.Link = options.Link.Value?.AbsoluteUri ?? string.Empty;
                         toDoItem.DescriptionType = options.DescriptionType;
                         
                         return context.AddEntityAsync(toDoItem, cancellationToken)

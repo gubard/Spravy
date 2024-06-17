@@ -16,7 +16,7 @@ public class FastAddToDoItemViewModel : ViewModelBase
                    .IfSuccessAsync(id =>
                     {
                         var options = new AddToDoItemOptions(id, Name, ToDoItemType.Value, string.Empty,
-                            DescriptionType.PlainText, null);
+                            DescriptionType.PlainText, new(null));
                         
                         return toDoService.AddToDoItemAsync(options, cancellationToken).ToResultOnlyAsync();
                     }, _ =>
