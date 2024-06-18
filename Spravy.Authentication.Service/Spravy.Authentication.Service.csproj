@@ -10,6 +10,7 @@
     <ItemGroup>
         <PackageReference Include="CsvHelper" Version="32.0.3" />
         <PackageReference Include="Grpc.AspNetCore" Version="2.63.0" />
+        <PackageReference Include="MailKit" Version="4.6.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -26,7 +27,6 @@
         <ProjectReference Include="..\Spravy.Db.Sqlite\Spravy.Db.Sqlite.csproj" />
         <ProjectReference Include="..\Spravy.EventBus.Domain.Client\Spravy.EventBus.Domain.Client.csproj" />
         <ProjectReference Include="..\Spravy.Service\Spravy.Service.csproj" />
-        <ProjectReference Include="..\Spravy.ToDo.Domain.Client\Spravy.ToDo.Domain.Client.csproj" />
     </ItemGroup>
 
     <ItemGroup>

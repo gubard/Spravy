@@ -1,11 +1,11 @@
 using System.Runtime.CompilerServices;
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Spravy.Db.Extensions;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
 using Spravy.PasswordGenerator.Db.Contexts;
+using Spravy.PasswordGenerator.Db.Mapper.Mappers;
 using Spravy.PasswordGenerator.Db.Models;
 using Spravy.PasswordGenerator.Domain.Interfaces;
 using Spravy.PasswordGenerator.Domain.Models;
@@ -15,19 +15,16 @@ namespace Spravy.PasswordGenerator.Service.Services;
 public class EfPasswordService : IPasswordService
 {
     private readonly IFactory<PasswordDbContext> dbContextFactory;
-    private readonly IMapper mapper;
     private readonly IPasswordGenerator passwordGenerator;
     private readonly IUserSecretService userSecretService;
 
     public EfPasswordService(
         IFactory<PasswordDbContext> dbContextFactory,
-        IMapper mapper,
         IUserSecretService userSecretService,
         IPasswordGenerator passwordGenerator
     )
     {
         this.dbContextFactory = dbContextFactory;
-        this.mapper = mapper;
         this.userSecretService = userSecretService;
         this.passwordGenerator = passwordGenerator;
     }
@@ -40,7 +37,7 @@ public class EfPasswordService : IPasswordService
         return dbContextFactory.Create()
            .IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(() =>
             {
-                var item = mapper.Map<PasswordItemEntity>(options);
+                var item = options.ToPasswordItemEntity();
                 item.Id = Guid.NewGuid();
 
                 return context.AddEntityAsync(item, cancellationToken).ToResultOnlyAsync();
@@ -56,7 +53,7 @@ public class EfPasswordService : IPasswordService
                 context => context.Set<PasswordItemEntity>()
                    .AsNoTracking()
                    .ToArrayEntitiesAsync(cancellationToken)
-                   .IfSuccessAsync(items => mapper.Map<PasswordItem[]>(items.ToArray()).ToReadOnlyMemory().ToResult(),
+                   .IfSuccessAsync(items => items.ToPasswordItem().ToResult(),
                         cancellationToken), cancellationToken);
     }
 
@@ -68,7 +65,7 @@ public class EfPasswordService : IPasswordService
         return dbContextFactory.Create()
            .IfSuccessDisposeAsync(
                 context => context.FindEntityAsync<PasswordItemEntity>(id)
-                   .IfSuccessAsync(item => mapper.Map<PasswordItem>(item).ToResult(), cancellationToken),
+                   .IfSuccessAsync(item => item.ToPasswordItem().ToResult(), cancellationToken),
                 cancellationToken);
     }
 
@@ -93,7 +90,7 @@ public class EfPasswordService : IPasswordService
                         item => userSecretService.GetUserSecretAsync(cancellationToken)
                            .IfSuccessAsync(
                                 userSecret => passwordGenerator.GeneratePassword($"{userSecret}{item.Key}",
-                                    mapper.Map<GeneratePasswordOptions>(item)), cancellationToken), cancellationToken),
+                                    item.ToGeneratePasswordOptions()), cancellationToken), cancellationToken),
                 cancellationToken);
     }
 

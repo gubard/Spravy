@@ -1,14 +1,13 @@
-using Google.Protobuf;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
+using Spravy.Core.Mappers;
 using Spravy.Domain.Enums;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
 using Spravy.Service.Extensions;
 using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Interfaces;
-using Spravy.ToDo.Domain.Models;
+using Spravy.ToDo.Domain.Mapper.Mappers;
 using Spravy.ToDo.Protos;
 
 namespace Spravy.ToDo.Service.Services;
@@ -16,670 +15,566 @@ namespace Spravy.ToDo.Service.Services;
 [Authorize]
 public class GrpcToDoService : ToDoService.ToDoServiceBase
 {
-    private readonly IConverter converter;
     private readonly ISerializer serializer;
     private readonly IToDoService toDoService;
-    
-    public GrpcToDoService(IToDoService toDoService, IConverter converter, ISerializer serializer)
+
+    public GrpcToDoService(IToDoService toDoService, ISerializer serializer)
     {
         this.toDoService = toDoService;
-        this.converter = converter;
         this.serializer = serializer;
     }
-    
+
     public override Task<GetReferenceToDoItemSettingsReply> GetReferenceToDoItemSettings(
         GetReferenceToDoItemSettingsRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(i => toDoService.GetReferenceToDoItemSettingsAsync(i, context.CancellationToken),
-                context.CancellationToken)
-           .IfSuccessAsync(settings => converter.Convert<GetReferenceToDoItemSettingsReply>(settings),
+        return toDoService.GetReferenceToDoItemSettingsAsync(request.Id.ToGuid(), context.CancellationToken)
+           .IfSuccessAsync(settings => settings.ToGetReferenceToDoItemSettingsReply().ToResult(),
                 context.CancellationToken)
            .HandleAsync(serializer);
     }
-    
+
     public override Task<UpdateReferenceToDoItemReply> UpdateReferenceToDoItem(
         UpdateReferenceToDoItemRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(converter.Convert<Guid>(request.ReferenceId),
-                (ci, ri) => toDoService.UpdateReferenceToDoItemAsync(ci, ri, context.CancellationToken),
-                context.CancellationToken)
+        return toDoService
+           .UpdateReferenceToDoItemAsync(request.Id.ToGuid(), request.ReferenceId.ToGuid(), context.CancellationToken)
            .HandleAsync<UpdateReferenceToDoItemReply>(serializer);
     }
-    
+
     public override Task<CloneToDoItemReply> CloneToDoItem(CloneToDoItemRequest request, ServerCallContext context)
     {
-        return converter.Convert<Guid>(request.CloneId)
-           .IfSuccessAsync(converter.Convert<OptionStruct<Guid>>(request.ParentId),
-                (ci, pi) => toDoService.CloneToDoItemAsync(ci, pi.Value, context.CancellationToken),
-                context.CancellationToken)
+        return toDoService
+           .CloneToDoItemAsync(request.CloneId.ToGuid(), request.ParentId.ToOptionGuid(), context.CancellationToken)
            .HandleAsync<CloneToDoItemReply>(serializer);
     }
-    
+
     public override Task<GetChildrenToDoItemShortsReply> GetChildrenToDoItemShorts(
         GetChildrenToDoItemShortsRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(
-                i => toDoService.GetChildrenToDoItemShortsAsync(i, context.CancellationToken)
-                   .IfSuccessAsync(
-                        items => converter.Convert<ToDoShortItemGrpc[]>(items)
-                           .ToValueTaskResult()
-                           .ConfigureAwait(false),
-                        context.CancellationToken), context.CancellationToken)
+        return toDoService.GetChildrenToDoItemShortsAsync(request.Id.ToGuid(), context.CancellationToken)
+           .IfSuccessAsync(items => items.ToToDoShortItemGrpc().ToResult(), context.CancellationToken)
            .HandleAsync(serializer, items =>
             {
                 var result = new GetChildrenToDoItemShortsReply();
-                result.Items.AddRange(items);
-                
+                result.Items.AddRange(items.ToArray());
+
                 return result;
             });
     }
-    
+
     public override Task<UpdateToDoItemDescriptionTypeReply> UpdateToDoItemDescriptionType(
         UpdateToDoItemDescriptionTypeRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(
-                i => toDoService.UpdateToDoItemDescriptionTypeAsync(i, (DescriptionType)request.Type,
-                    context.CancellationToken), context.CancellationToken)
+        return toDoService.UpdateToDoItemDescriptionTypeAsync(request.Id.ToGuid(), (DescriptionType)request.Type,
+                context.CancellationToken)
            .HandleAsync<UpdateToDoItemDescriptionTypeReply>(serializer);
     }
-    
+
     public override Task<ResetToDoItemReply> ResetToDoItem(ResetToDoItemRequest request, ServerCallContext context)
     {
-        return converter.Convert<ResetToDoItemOptions>(request)
-           .IfSuccessAsync(options => toDoService.ResetToDoItemAsync(options, context.CancellationToken),
-                context.CancellationToken)
+        return toDoService.ResetToDoItemAsync(request.ToResetToDoItemOptions(), context.CancellationToken)
            .HandleAsync<ResetToDoItemReply>(serializer);
     }
-    
+
     public override Task<GetTodayToDoItemsReply> GetTodayToDoItems(
         GetTodayToDoItemsRequest request,
         ServerCallContext context
     )
     {
         return toDoService.GetTodayToDoItemsAsync(context.CancellationToken)
-           .IfSuccessAsync(ids => converter.Convert<ByteString[]>(ids.ToArray()), context.CancellationToken)
+           .IfSuccessAsync(ids => ids.ToByteString().ToResult(), context.CancellationToken)
            .HandleAsync(serializer, ids =>
             {
                 var reply = new GetTodayToDoItemsReply();
-                reply.Ids.AddRange(ids);
-                
+                reply.Ids.AddRange(ids.ToArray());
+
                 return reply;
             });
     }
-    
+
     public override Task<UpdateToDoItemIsRequiredCompleteInDueDateReply> UpdateToDoItemIsRequiredCompleteInDueDate(
         UpdateToDoItemIsRequiredCompleteInDueDateRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(
-                i => toDoService.UpdateToDoItemIsRequiredCompleteInDueDateAsync(i, request.IsRequiredCompleteInDueDate,
-                    context.CancellationToken), context.CancellationToken)
+        return toDoService
+           .UpdateToDoItemIsRequiredCompleteInDueDateAsync(request.Id.ToGuid(), request.IsRequiredCompleteInDueDate,
+                context.CancellationToken)
            .HandleAsync<UpdateToDoItemIsRequiredCompleteInDueDateReply>(serializer);
     }
-    
+
     public override async Task GetToDoItems(
         GetToDoItemsRequest request,
         IServerStreamWriter<GetToDoItemsReply> responseStream,
         ServerCallContext context
     )
     {
-        var ids = converter.Convert<Guid[]>(request.Ids).Value;
-        
+        var ids = request.Ids.ToGuid();
+
         await foreach (var item in toDoService.GetToDoItemsAsync(ids, request.ChunkSize, context.CancellationToken))
         {
             var reply = new GetToDoItemsReply();
-            reply.Items.AddRange(converter.Convert<ToDoItemGrpc[]>(item.ThrowIfError().ToArray()).Value);
+            reply.Items.AddRange(item.ThrowIfError().ToToDoItemGrpc().ToArray());
             await responseStream.WriteAsync(reply);
         }
     }
-    
+
     public override Task<RandomizeChildrenOrderIndexReply> RandomizeChildrenOrderIndex(
         RandomizeChildrenOrderIndexRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(i => toDoService.RandomizeChildrenOrderIndexAsync(i, context.CancellationToken),
-                context.CancellationToken)
+        return toDoService.RandomizeChildrenOrderIndexAsync(request.Id.ToGuid(), context.CancellationToken)
            .HandleAsync<RandomizeChildrenOrderIndexReply>(serializer);
     }
-    
+
     public override Task<GetPeriodicityOffsetToDoItemSettingsReply> GetPeriodicityOffsetToDoItemSettings(
         GetPeriodicityOffsetToDoItemSettingsRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(i => toDoService.GetPeriodicityOffsetToDoItemSettingsAsync(i, context.CancellationToken),
-                context.CancellationToken)
-           .IfSuccessAsync(s => converter.Convert<GetPeriodicityOffsetToDoItemSettingsReply>(s),
-                context.CancellationToken)
+        return toDoService.GetPeriodicityOffsetToDoItemSettingsAsync(request.Id.ToGuid(), context.CancellationToken)
+           .IfSuccessAsync(s => s.ToGetPeriodicityOffsetToDoItemSettingsReply().ToResult(), context.CancellationToken)
            .HandleAsync(serializer);
     }
-    
+
     public override Task<GetMonthlyPeriodicityReply> GetMonthlyPeriodicity(
         GetMonthlyPeriodicityRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(i => toDoService.GetMonthlyPeriodicityAsync(i, context.CancellationToken),
-                context.CancellationToken)
-           .IfSuccessAsync(p => converter.Convert<GetMonthlyPeriodicityReply>(p), context.CancellationToken)
+        return toDoService.GetMonthlyPeriodicityAsync(request.Id.ToGuid(), context.CancellationToken)
+           .IfSuccessAsync(p => p.ToGetMonthlyPeriodicityReply().ToResult(), context.CancellationToken)
            .HandleAsync(serializer, p => p);
     }
-    
+
     public override Task<GetWeeklyPeriodicityReply> GetWeeklyPeriodicity(
         GetWeeklyPeriodicityRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(i => toDoService.GetWeeklyPeriodicityAsync(i, context.CancellationToken),
-                context.CancellationToken)
-           .IfSuccessAsync(i => converter.Convert<GetWeeklyPeriodicityReply>(i), context.CancellationToken)
+        return toDoService.GetWeeklyPeriodicityAsync(request.Id.ToGuid(), context.CancellationToken)
+           .IfSuccessAsync(i => i.ToGetWeeklyPeriodicityReply().ToResult(), context.CancellationToken)
            .HandleAsync(serializer);
     }
-    
+
     public override Task<GetAnnuallyPeriodicityReply> GetAnnuallyPeriodicity(
         GetAnnuallyPeriodicityRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(i => toDoService.GetAnnuallyPeriodicityAsync(i, context.CancellationToken),
-                context.CancellationToken)
-           .IfSuccessAsync(p => converter.Convert<GetAnnuallyPeriodicityReply>(p), context.CancellationToken)
+        return toDoService.GetAnnuallyPeriodicityAsync(request.Id.ToGuid(), context.CancellationToken)
+           .IfSuccessAsync(p => p.ToGetAnnuallyPeriodicityReply().ToResult(), context.CancellationToken)
            .HandleAsync(serializer);
     }
-    
+
     public override Task<GetPeriodicityToDoItemSettingsReply> GetPeriodicityToDoItemSettings(
         GetPeriodicityToDoItemSettingsRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(i => toDoService.GetPeriodicityToDoItemSettingsAsync(i, context.CancellationToken),
-                context.CancellationToken)
-           .IfSuccessAsync(s => converter.Convert<GetPeriodicityToDoItemSettingsReply>(s), context.CancellationToken)
+        return toDoService.GetPeriodicityToDoItemSettingsAsync(request.Id.ToGuid(), context.CancellationToken)
+           .IfSuccessAsync(s => s.ToGetPeriodicityToDoItemSettingsReply().ToResult(), context.CancellationToken)
            .HandleAsync(serializer, p => p);
     }
-    
+
     public override Task<GetValueToDoItemSettingsReply> GetValueToDoItemSettings(
         GetValueToDoItemSettingsRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(i => toDoService.GetValueToDoItemSettingsAsync(i, context.CancellationToken),
-                context.CancellationToken)
-           .IfSuccessAsync(s => converter.Convert<GetValueToDoItemSettingsReply>(s), context.CancellationToken)
+        return toDoService.GetValueToDoItemSettingsAsync(request.Id.ToGuid(), context.CancellationToken)
+           .IfSuccessAsync(s => s.ToGetValueToDoItemSettingsReply().ToResult(), context.CancellationToken)
            .HandleAsync(serializer);
     }
-    
+
     public override Task<GetPlannedToDoItemSettingsReply> GetPlannedToDoItemSettings(
         GetPlannedToDoItemSettingsRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(i => toDoService.GetPlannedToDoItemSettingsAsync(i, context.CancellationToken),
-                context.CancellationToken)
-           .IfSuccessAsync(s => converter.Convert<GetPlannedToDoItemSettingsReply>(s), context.CancellationToken)
+        return toDoService.GetPlannedToDoItemSettingsAsync(request.Id.ToGuid(), context.CancellationToken)
+           .IfSuccessAsync(s => s.ToGetPlannedToDoItemSettingsReply().ToResult(), context.CancellationToken)
            .HandleAsync(serializer);
     }
-    
+
     public override Task<GetParentsReply> GetParents(GetParentsRequest request, ServerCallContext context)
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(i => toDoService.GetParentsAsync(i, context.CancellationToken), context.CancellationToken)
-           .IfSuccessAsync(p => converter.Convert<ToDoShortItemGrpc[]>(p.ToArray()), context.CancellationToken)
+        return toDoService.GetParentsAsync(request.Id.ToGuid(), context.CancellationToken)
            .HandleAsync(serializer, parents =>
             {
                 var reply = new GetParentsReply();
-                reply.Parents.AddRange(parents);
-                
+                reply.Parents.AddRange(parents.ToToDoShortItemGrpc().ToArray());
+
                 return reply;
             });
     }
-    
+
     public override Task<GetRootToDoItemIdsReply> GetRootToDoItemIds(
         GetRootToDoItemIdsRequest request,
         ServerCallContext context
     )
     {
         return toDoService.GetRootToDoItemIdsAsync(context.CancellationToken)
-           .IfSuccessAsync(ids => converter.Convert<ByteString[]>(ids.ToArray()), context.CancellationToken)
            .HandleAsync(serializer, ids =>
             {
                 var reply = new GetRootToDoItemIdsReply();
-                reply.Ids.AddRange(ids);
-                
+                reply.Ids.AddRange(ids.ToByteString().ToArray());
+
                 return reply;
             });
     }
-    
+
     public override Task<GetLeafToDoItemIdsReply> GetLeafToDoItemIds(
         GetLeafToDoItemIdsRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(i => toDoService.GetLeafToDoItemIdsAsync(i, context.CancellationToken),
-                context.CancellationToken)
-           .IfSuccessAsync(ids => converter.Convert<ByteString[]>(ids.ToArray()), context.CancellationToken)
-           .HandleAsync(serializer, s =>
+        return toDoService.GetLeafToDoItemIdsAsync(request.Id.ToGuid(), context.CancellationToken)
+           .HandleAsync(serializer, ids =>
             {
                 var reply = new GetLeafToDoItemIdsReply();
-                reply.Ids.AddRange(s);
-                
+                reply.Ids.AddRange(ids.ToByteString().ToArray());
+
                 return reply;
             });
     }
-    
+
     public override Task<GetFavoriteToDoItemIdsRequestReply> GetFavoriteToDoItemIds(
         GetFavoriteToDoItemIdsRequest request,
         ServerCallContext context
     )
     {
         return toDoService.GetFavoriteToDoItemIdsAsync(context.CancellationToken)
-           .IfSuccessAsync(ids => converter.Convert<ByteString[]>(ids.ToArray()), context.CancellationToken)
            .HandleAsync(serializer, ids =>
             {
                 var reply = new GetFavoriteToDoItemIdsRequestReply();
-                reply.Ids.AddRange(ids);
-                
+                reply.Ids.AddRange(ids.ToByteString().ToArray());
+
                 return reply;
             });
     }
-    
+
     public override Task<GetChildrenToDoItemIdsReply> GetChildrenToDoItemIds(
         GetChildrenToDoItemIdsRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(i => toDoService.GetChildrenToDoItemIdsAsync(i, context.CancellationToken),
-                context.CancellationToken)
-           .IfSuccessAsync(ids => converter.Convert<ByteString[]>(ids.ToArray()), context.CancellationToken)
+        return toDoService.GetChildrenToDoItemIdsAsync(request.Id.ToGuid(), context.CancellationToken)
            .HandleAsync(serializer, ids =>
             {
                 var reply = new GetChildrenToDoItemIdsReply();
-                reply.Ids.AddRange(ids);
-                
+                reply.Ids.AddRange(ids.ToByteString().ToArray());
+
                 return reply;
             });
     }
-    
+
     public override Task<SearchToDoItemIdsReply> SearchToDoItemIds(
         SearchToDoItemIdsRequest request,
         ServerCallContext context
     )
     {
         return toDoService.SearchToDoItemIdsAsync(request.SearchText, context.CancellationToken)
-           .IfSuccessAsync(ids => converter.Convert<ByteString[]>(ids.ToArray()), context.CancellationToken)
            .HandleAsync(serializer, ids =>
             {
                 var reply = new SearchToDoItemIdsReply();
-                reply.Ids.AddRange(ids);
-                
+                reply.Ids.AddRange(ids.ToByteString().ToArray());
+
                 return reply;
             });
     }
-    
+
     public override Task<GetToDoItemReply> GetToDoItem(GetToDoItemRequest request, ServerCallContext context)
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(id => toDoService.GetToDoItemAsync(id, context.CancellationToken), context.CancellationToken)
-           .IfSuccessAsync(toDoItem => converter.Convert<GetToDoItemReply>(toDoItem), context.CancellationToken)
-           .HandleAsync(serializer);
+        return toDoService.GetToDoItemAsync(request.Id.ToGuid(), context.CancellationToken)
+           .HandleAsync(serializer, toDoItem =>
+            {
+                var reply = toDoItem.ToGetToDoItemReply();
+
+                return reply;
+            });
     }
-    
+
     public override Task<GetCurrentActiveToDoItemReply> GetCurrentActiveToDoItem(
         GetCurrentActiveToDoItemRequest request,
         ServerCallContext context
     )
     {
         return toDoService.GetCurrentActiveToDoItemAsync(context.CancellationToken)
-           .IfSuccessAsync(toDoItem => converter.Convert<ActiveToDoItemGrpc>(toDoItem), context.CancellationToken)
-           .HandleAsync(serializer, re => new GetCurrentActiveToDoItemReply
+           .HandleAsync(serializer, toDoItem => new GetCurrentActiveToDoItemReply
             {
-                Item = re,
+                Item = toDoItem.ToActiveToDoItemGrpc(),
             });
     }
-    
+
     public override Task<UpdateToDoItemLinkReply> UpdateToDoItemLink(
         UpdateToDoItemLinkRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(converter.Convert<Option<Uri>>(request.Link),
-                (id, link) => toDoService.UpdateToDoItemLinkAsync(id, link, context.CancellationToken),
-                context.CancellationToken)
+        return toDoService
+           .UpdateToDoItemLinkAsync(request.Id.ToGuid(), request.Link.ToOptionUri(), context.CancellationToken)
            .HandleAsync<UpdateToDoItemLinkReply>(serializer);
     }
-    
+
     public override Task<AddRootToDoItemReply> AddRootToDoItem(
         AddRootToDoItemRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<AddRootToDoItemOptions>(request)
-           .IfSuccessAsync(options => toDoService.AddRootToDoItemAsync(options, context.CancellationToken),
-                context.CancellationToken)
-           .IfSuccessAsync(id => converter.Convert<ByteString>(id), context.CancellationToken)
+        return toDoService.AddRootToDoItemAsync(request.ToAddRootToDoItemOptions(), context.CancellationToken)
            .HandleAsync(serializer, id => new AddRootToDoItemReply
             {
-                Id = id,
+                Id = id.ToByteString(),
             });
     }
-    
+
     public override Task<AddToDoItemReply> AddToDoItem(AddToDoItemRequest request, ServerCallContext context)
     {
-        return converter.Convert<AddToDoItemOptions>(request)
-           .IfSuccessAsync(options => toDoService.AddToDoItemAsync(options, context.CancellationToken),
-                context.CancellationToken)
-           .IfSuccessAsync(id => converter.Convert<ByteString>(id), context.CancellationToken)
+        return toDoService.AddToDoItemAsync(request.ToAddToDoItemOptions(), context.CancellationToken)
            .HandleAsync(serializer, id => new AddToDoItemReply
             {
-                Id = id,
+                Id = id.ToByteString(),
             });
     }
-    
+
     public override Task<DeleteToDoItemReply> DeleteToDoItem(DeleteToDoItemRequest request, ServerCallContext context)
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(id => toDoService.DeleteToDoItemAsync(id, context.CancellationToken),
-                context.CancellationToken)
+        return toDoService.DeleteToDoItemAsync(request.Id.ToGuid(), context.CancellationToken)
            .HandleAsync<DeleteToDoItemReply>(serializer);
     }
-    
+
     public override Task<UpdateToDoItemTypeOfPeriodicityReply> UpdateToDoItemTypeOfPeriodicity(
         UpdateToDoItemTypeOfPeriodicityRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(
-                id => toDoService.UpdateToDoItemTypeOfPeriodicityAsync(id, (TypeOfPeriodicity)request.Type,
-                    context.CancellationToken), context.CancellationToken)
+        return toDoService.UpdateToDoItemTypeOfPeriodicityAsync(request.Id.ToGuid(), (TypeOfPeriodicity)request.Type,
+                context.CancellationToken)
            .HandleAsync<UpdateToDoItemTypeOfPeriodicityReply>(serializer);
     }
-    
+
     public override Task<UpdateToDoItemDueDateReply> UpdateToDoItemDueDate(
         UpdateToDoItemDueDateRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(converter.Convert<DateOnly>(request.DueDate),
-                (id, dueDate) => toDoService.UpdateToDoItemDueDateAsync(id, dueDate, context.CancellationToken),
-                context.CancellationToken)
+        return toDoService
+           .UpdateToDoItemDueDateAsync(request.Id.ToGuid(), request.DueDate.ToDateOnly(), context.CancellationToken)
            .HandleAsync<UpdateToDoItemDueDateReply>(serializer);
     }
-    
+
     public override Task<UpdateToDoItemCompleteStatusReply> UpdateToDoItemCompleteStatus(
         UpdateToDoItemCompleteStatusRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(
-                id => toDoService.UpdateToDoItemCompleteStatusAsync(id, request.IsCompleted, context.CancellationToken),
-                context.CancellationToken)
+        return toDoService
+           .UpdateToDoItemCompleteStatusAsync(request.Id.ToGuid(), request.IsCompleted, context.CancellationToken)
            .HandleAsync<UpdateToDoItemCompleteStatusReply>(serializer);
     }
-    
+
     public override Task<UpdateToDoItemNameReply> UpdateToDoItemName(
         UpdateToDoItemNameRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(id => toDoService.UpdateToDoItemNameAsync(id, request.Name, context.CancellationToken),
-                context.CancellationToken)
+        return toDoService.UpdateToDoItemNameAsync(request.Id.ToGuid(), request.Name, context.CancellationToken)
            .HandleAsync<UpdateToDoItemNameReply>(serializer);
     }
-    
+
     public override Task<UpdateToDoItemOrderIndexReply> UpdateToDoItemOrderIndex(
         UpdateToDoItemOrderIndexRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<UpdateOrderIndexToDoItemOptions>(request)
-           .IfSuccessAsync(options => toDoService.UpdateToDoItemOrderIndexAsync(options, context.CancellationToken),
-                context.CancellationToken)
+        return toDoService
+           .UpdateToDoItemOrderIndexAsync(request.ToUpdateOrderIndexToDoItemOptions(), context.CancellationToken)
            .HandleAsync<UpdateToDoItemOrderIndexReply>(serializer);
     }
-    
+
     public override Task<UpdateToDoItemDescriptionReply> UpdateToDoItemDescription(
         UpdateToDoItemDescriptionRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(
-                id => toDoService.UpdateToDoItemDescriptionAsync(id, request.Description, context.CancellationToken),
-                context.CancellationToken)
+        return toDoService
+           .UpdateToDoItemDescriptionAsync(request.Id.ToGuid(), request.Description, context.CancellationToken)
            .HandleAsync<UpdateToDoItemDescriptionReply>(serializer);
     }
-    
+
     public override Task<UpdateToDoItemTypeReply> UpdateToDoItemType(
         UpdateToDoItemTypeRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(
-                id => toDoService.UpdateToDoItemTypeAsync(id, (ToDoItemType)request.Type, context.CancellationToken),
-                context.CancellationToken)
+        return toDoService
+           .UpdateToDoItemTypeAsync(request.Id.ToGuid(), (ToDoItemType)request.Type, context.CancellationToken)
            .HandleAsync<UpdateToDoItemTypeReply>(serializer);
     }
-    
+
     public override Task<AddFavoriteToDoItemReply> AddFavoriteToDoItem(
         AddFavoriteToDoItemRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(id => toDoService.AddFavoriteToDoItemAsync(id, context.CancellationToken),
-                context.CancellationToken)
+        return toDoService.AddFavoriteToDoItemAsync(request.Id.ToGuid(), context.CancellationToken)
            .HandleAsync<AddFavoriteToDoItemReply>(serializer);
     }
-    
+
     public override Task<RemoveFavoriteToDoItemReply> RemoveFavoriteToDoItem(
         RemoveFavoriteToDoItemRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(id => toDoService.RemoveFavoriteToDoItemAsync(id, context.CancellationToken),
-                context.CancellationToken)
+        return toDoService.RemoveFavoriteToDoItemAsync(request.Id.ToGuid(), context.CancellationToken)
            .HandleAsync<RemoveFavoriteToDoItemReply>(serializer);
     }
-    
+
     public override Task<UpdateToDoItemAnnuallyPeriodicityReply> UpdateToDoItemAnnuallyPeriodicity(
         UpdateToDoItemAnnuallyPeriodicityRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(converter.Convert<AnnuallyPeriodicity>(request.Periodicity),
-                (id, periodicity) =>
-                    toDoService.UpdateToDoItemAnnuallyPeriodicityAsync(id, periodicity, context.CancellationToken),
+        return toDoService
+           .UpdateToDoItemAnnuallyPeriodicityAsync(request.Id.ToGuid(), request.Periodicity.ToAnnuallyPeriodicity(),
                 context.CancellationToken)
            .HandleAsync<UpdateToDoItemAnnuallyPeriodicityReply>(serializer);
     }
-    
+
     public override Task<UpdateToDoItemMonthlyPeriodicityReply> UpdateToDoItemMonthlyPeriodicity(
         UpdateToDoItemMonthlyPeriodicityRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(converter.Convert<MonthlyPeriodicity>(request.Periodicity),
-                (id, periodicity) =>
-                    toDoService.UpdateToDoItemMonthlyPeriodicityAsync(id, periodicity, context.CancellationToken),
+        return toDoService
+           .UpdateToDoItemMonthlyPeriodicityAsync(request.Id.ToGuid(), request.Periodicity.ToMonthlyPeriodicity(),
                 context.CancellationToken)
            .HandleAsync<UpdateToDoItemMonthlyPeriodicityReply>(serializer);
     }
-    
+
     public override Task<UpdateToDoItemWeeklyPeriodicityReply> UpdateToDoItemWeeklyPeriodicity(
         UpdateToDoItemWeeklyPeriodicityRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(converter.Convert<WeeklyPeriodicity>(request.Periodicity),
-                (id, periodicity) =>
-                    toDoService.UpdateToDoItemWeeklyPeriodicityAsync(id, periodicity, context.CancellationToken),
+        return toDoService
+           .UpdateToDoItemWeeklyPeriodicityAsync(request.Id.ToGuid(), request.Periodicity.ToWeeklyPeriodicity(),
                 context.CancellationToken)
            .HandleAsync<UpdateToDoItemWeeklyPeriodicityReply>(serializer);
     }
-    
+
     public override Task<GetToDoSelectorItemsReply> GetToDoSelectorItems(
         GetToDoSelectorItemsRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<Guid[]>(request.IgnoreIds)
-           .IfSuccessAsync(ignoreIds => toDoService.GetToDoSelectorItemsAsync(ignoreIds, context.CancellationToken),
-                context.CancellationToken)
-           .IfSuccessAsync(toDoSelectorItems => converter.Convert<ToDoSelectorItemGrpc[]>(toDoSelectorItems.ToArray()),
-                context.CancellationToken)
+        return toDoService.GetToDoSelectorItemsAsync(request.IgnoreIds.ToGuid(), context.CancellationToken)
            .HandleAsync(serializer, toDoSelectorItems =>
             {
-                if (toDoSelectorItems == null)
-                {
-                    throw new ArgumentNullException(nameof(toDoSelectorItems));
-                }
-                
                 var reply = new GetToDoSelectorItemsReply();
-                reply.Items.AddRange(toDoSelectorItems);
-                
+                reply.Items.AddRange(toDoSelectorItems.ToToDoSelectorItemGrpc().ToArray());
+
                 return reply;
             });
     }
-    
+
     public override Task<UpdateToDoItemParentReply> UpdateToDoItemParent(
         UpdateToDoItemParentRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(converter.Convert<Guid>(request.ParentId),
-                (id, pi) => toDoService.UpdateToDoItemParentAsync(id, pi, context.CancellationToken),
-                context.CancellationToken)
+        return toDoService
+           .UpdateToDoItemParentAsync(request.Id.ToGuid(), request.ParentId.ToGuid(), context.CancellationToken)
            .HandleAsync<UpdateToDoItemParentReply>(serializer);
     }
-    
+
     public override Task<ToDoItemToRootReply> ToDoItemToRoot(ToDoItemToRootRequest request, ServerCallContext context)
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(id => toDoService.ToDoItemToRootAsync(id, context.CancellationToken),
-                context.CancellationToken)
+        return toDoService.ToDoItemToRootAsync(request.Id.ToGuid(), context.CancellationToken)
            .HandleAsync<ToDoItemToRootReply>(serializer);
     }
-    
+
     public override Task<ToDoItemToStringReply> ToDoItemToString(
         ToDoItemToStringRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<ToDoItemToStringOptions>(request)
-           .IfSuccessAsync(options => toDoService.ToDoItemToStringAsync(options, context.CancellationToken),
-                context.CancellationToken)
+        return toDoService.ToDoItemToStringAsync(request.ToToDoItemToStringOptions(), context.CancellationToken)
            .HandleAsync(serializer, value => new ToDoItemToStringReply
             {
                 Value = value,
             });
     }
-    
+
     public override Task<UpdateToDoItemDaysOffsetReply> UpdateToDoItemDaysOffset(
         UpdateToDoItemDaysOffsetRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(
-                id => toDoService.UpdateToDoItemDaysOffsetAsync(id, (ushort)request.Days, context.CancellationToken),
-                context.CancellationToken)
+        return toDoService
+           .UpdateToDoItemDaysOffsetAsync(request.Id.ToGuid(), (ushort)request.Days, context.CancellationToken)
            .HandleAsync<UpdateToDoItemDaysOffsetReply>(serializer);
     }
-    
+
     public override Task<UpdateToDoItemMonthsOffsetReply> UpdateToDoItemMonthsOffset(
         UpdateToDoItemMonthsOffsetRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(
-                id => toDoService.UpdateToDoItemMonthsOffsetAsync(id, (ushort)request.Months,
-                    context.CancellationToken), context.CancellationToken)
+        return toDoService.UpdateToDoItemMonthsOffsetAsync(request.Id.ToGuid(), (ushort)request.Months,
+                context.CancellationToken)
            .HandleAsync<UpdateToDoItemMonthsOffsetReply>(serializer);
     }
-    
+
     public override Task<UpdateToDoItemWeeksOffsetReply> UpdateToDoItemWeeksOffset(
         UpdateToDoItemWeeksOffsetRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(
-                id => toDoService.UpdateToDoItemWeeksOffsetAsync(id, (ushort)request.Weeks, context.CancellationToken),
-                context.CancellationToken)
+        return toDoService
+           .UpdateToDoItemWeeksOffsetAsync(request.Id.ToGuid(), (ushort)request.Weeks, context.CancellationToken)
            .HandleAsync<UpdateToDoItemWeeksOffsetReply>(serializer);
     }
-    
+
     public override Task<UpdateToDoItemYearsOffsetReply> UpdateToDoItemYearsOffset(
         UpdateToDoItemYearsOffsetRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(
-                id => toDoService.UpdateToDoItemYearsOffsetAsync(id, (ushort)request.Years, context.CancellationToken),
-                context.CancellationToken)
+        return toDoService
+           .UpdateToDoItemYearsOffsetAsync(request.Id.ToGuid(), (ushort)request.Years, context.CancellationToken)
            .HandleAsync<UpdateToDoItemYearsOffsetReply>(serializer);
     }
-    
+
     public override Task<UpdateToDoItemChildrenTypeReply> UpdateToDoItemChildrenType(
         UpdateToDoItemChildrenTypeRequest request,
         ServerCallContext context
     )
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(
-                id => toDoService.UpdateToDoItemChildrenTypeAsync(id, (ToDoItemChildrenType)request.Type,
-                    context.CancellationToken), context.CancellationToken)
+        return toDoService
+           .UpdateToDoItemChildrenTypeAsync(request.Id.ToGuid(), (ToDoItemChildrenType)request.Type,
+                context.CancellationToken)
            .HandleAsync<UpdateToDoItemChildrenTypeReply>(serializer);
     }
-    
+
     public override Task<GetSiblingsReply> GetSiblings(GetSiblingsRequest request, ServerCallContext context)
     {
-        return converter.Convert<Guid>(request.Id)
-           .IfSuccessAsync(id => toDoService.GetSiblingsAsync(id, context.CancellationToken), context.CancellationToken)
-           .IfSuccessAsync(items => converter.Convert<ToDoShortItemGrpc[]>(items.ToArray()), context.CancellationToken)
+        return toDoService.GetSiblingsAsync(request.Id.ToGuid(), context.CancellationToken)
            .HandleAsync(serializer, items =>
             {
                 var reply = new GetSiblingsReply();
-                reply.Items.AddRange(items);
-                
+                reply.Items.AddRange(items.ToToDoShortItemGrpc().ToArray());
+
                 return reply;
             });
     }

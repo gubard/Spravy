@@ -31,8 +31,6 @@ namespace Spravy.Ui.Modules;
 [Singleton(typeof(IDesktopTopLevelControl), typeof(MainWindow))]
 [Singleton(typeof(IEnumerable<IDataTemplate>), Factory = nameof(DataTemplatesFactory))]
 [Singleton(typeof(TopLevel), Factory = nameof(TopLevelFactory))]
-[Singleton(typeof(IMapper), Factory = nameof(MapperFactory))]
-[Singleton(typeof(IMapper), Factory = nameof(MapperFactory))]
 [Singleton(typeof(Application), Factory = nameof(ApplicationFactory))]
 [Transient(typeof(TokenHttpHeaderFactory))]
 [Transient(typeof(TimeZoneHttpHeaderFactory))]
@@ -166,14 +164,12 @@ namespace Spravy.Ui.Modules;
 [Transient(typeof(IPropertyValidator), typeof(PropertyValidator))]
 [Transient(typeof(IErrorHandler), typeof(ErrorHandler))]
 [Transient(typeof(ISerializer), typeof(ProtobufSerializer))]
-[Transient(typeof(IConverter), typeof(AutoMapperConverter))]
 [Transient(typeof(IResourceLoader), typeof(FileResourceLoader))]
 [Transient(typeof(IKeeper<Guid>), typeof(StaticKeeper<Guid>))]
 [Transient(typeof(IDataTemplate), typeof(ModuleDataTemplate))]
 [Transient(typeof(IMetadataFactory), typeof(MetadataFactory))]
 [Transient(typeof(IClipboard), Factory = nameof(ClipboardFactory))]
 [Transient(typeof(IHttpHeaderFactory), Factory = nameof(HttpHeaderFactoryFactory))]
-[Transient(typeof(MapperConfiguration), Factory = nameof(MapperConfigurationFactory))]
 public interface IUiModule
 {
     static IClipboard ClipboardFactory(TopLevel topLevel)
@@ -202,23 +198,5 @@ public interface IUiModule
     static IHttpHeaderFactory HttpHeaderFactoryFactory(TokenHttpHeaderFactory token, TimeZoneHttpHeaderFactory timeZone)
     {
         return new CombineHttpHeaderFactory(token, timeZone);
-    }
-
-    static IMapper MapperFactory(MapperConfiguration configuration)
-    {
-        return new Mapper(configuration);
-    }
-
-    static MapperConfiguration MapperConfigurationFactory()
-    {
-        return new(expression =>
-        {
-            expression.AddProfile<SpravyToDoProfile>();
-            expression.AddProfile<SpravyUiProfile>();
-            expression.AddProfile<SpravyAuthenticationProfile>();
-            expression.AddProfile<SpravyScheduleProfile>();
-            expression.AddProfile<SpravyEventBusProfile>();
-            expression.AddProfile<SpravyPasswordGeneratorProfile>();
-        });
     }
 }

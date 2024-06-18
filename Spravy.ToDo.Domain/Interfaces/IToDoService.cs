@@ -114,7 +114,7 @@ public interface IToDoService
     
     ConfiguredValueTaskAwaitable<Result> CloneToDoItemAsync(
         Guid cloneId,
-        Guid? parentId,
+        OptionStruct<Guid> parentId,
         CancellationToken cancellationToken
     );
     
@@ -242,7 +242,7 @@ public interface IToDoService
     );
     
     ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoSelectorItem>>> GetToDoSelectorItemsAsync(
-        Guid[] ignoreIds,
+        ReadOnlyMemory<Guid> ignoreIds,
         CancellationToken cancellationToken
     );
     

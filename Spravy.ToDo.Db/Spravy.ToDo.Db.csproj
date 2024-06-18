@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Spravy.Core\Spravy.Core.csproj" />
         <ProjectReference Include="..\Spravy.Db\Spravy.Db.csproj" />
         <ProjectReference Include="..\Spravy.ToDo.Domain\Spravy.ToDo.Domain.csproj" />
     </ItemGroup>

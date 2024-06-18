@@ -7,8 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoMapper" Version="13.0.1" />
-        <PackageReference Include="Google.Protobuf" Version="3.27.0" />
         <PackageReference Include="Grpc.Tools" Version="2.64.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -22,6 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Spravy.Core\Spravy.Core.csproj" />
         <ProjectReference Include="..\Spravy.Schedule.Domain\Spravy.Schedule.Domain.csproj" />
     </ItemGroup>
 </Project>

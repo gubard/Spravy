@@ -1,3 +1,5 @@
+using Spravy.Core.Mappers;
+
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class AddToDoItemViewModel : NavigatableViewModelBase
@@ -86,22 +88,22 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
             }), cancellationToken);
     }
     
-    public Result<AddToDoItemOptions> ConverterToAddToDoItemOptions(IConverter converter)
+    public Result<AddToDoItemOptions> ConverterToAddToDoItemOptions()
     {
-        return ConverterToAddToDoItemOptions(ParentId, converter);
+        return ConverterToAddToDoItemOptions(ParentId);
     }
     
-    public Result<AddToDoItemOptions> ConverterToAddToDoItemOptions(Guid parentId, IConverter converter)
+    public Result<AddToDoItemOptions> ConverterToAddToDoItemOptions(Guid parentId)
     {
         if (ToDoItemContent.Link.IsNullOrWhiteSpace())
         {
             return new AddToDoItemOptions(parentId, ToDoItemContent.Name, ToDoItemContent.Type,
                 DescriptionContent.Description, DescriptionContent.Type, new(null)).ToResult();
         }
-        
-        return converter.Convert<Uri>(ToDoItemContent.Link)
-           .IfSuccess(uri => new AddToDoItemOptions(parentId, ToDoItemContent.Name, ToDoItemContent.Type,
-                DescriptionContent.Description, DescriptionContent.Type, new(uri)).ToResult());
+
+        return new AddToDoItemOptions(parentId, ToDoItemContent.Name, ToDoItemContent.Type,
+                DescriptionContent.Description, DescriptionContent.Type, ToDoItemContent.Link.ToOptionUri())
+           .ToResult();
     }
     
     [ProtoContract]

@@ -4,10 +4,10 @@ namespace Spravy.ToDo.Domain.Models;
 
 public readonly struct MonthlyPeriodicity : IPeriodicity
 {
-    public MonthlyPeriodicity(IEnumerable<byte> days)
+    public MonthlyPeriodicity(ReadOnlyMemory<byte> days)
     {
-        Days = new SortedSet<byte>(days);
+        Days = days;
     }
 
-    public IReadOnlySet<byte> Days { get; }
+    public ReadOnlyMemory<byte> Days { get; }
 }

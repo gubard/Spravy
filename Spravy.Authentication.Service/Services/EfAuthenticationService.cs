@@ -1,6 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Runtime.CompilerServices;
-using AutoMapper;
 using Spravy.Authentication.Db.Contexts;
 using Spravy.Authentication.Db.Extensions;
 using Spravy.Authentication.Db.Models;
@@ -14,6 +13,7 @@ using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
 using Spravy.Service.Extensions;
+using Spravy.Authentication.Db.Mapper.Mappers;
 
 namespace Spravy.Authentication.Service.Services;
 
@@ -24,7 +24,6 @@ public class EfAuthenticationService : IAuthenticationService
     private readonly IHasher hasher;
     private readonly IFactory<string, IHasher> hasherFactory;
     private readonly ILoginValidator loginValidator;
-    private readonly IMapper mapper;
     private readonly IPasswordValidator passwordValidator;
     private readonly IRandom<string> randomString;
     private readonly ITokenFactory tokenFactory;
@@ -34,7 +33,6 @@ public class EfAuthenticationService : IAuthenticationService
         IHasher hasher,
         IFactory<string, IHasher> hasherFactory,
         ITokenFactory tokenFactory,
-        IMapper mapper,
         ILoginValidator loginValidator,
         IPasswordValidator passwordValidator,
         IEmailService emailService,
@@ -45,7 +43,6 @@ public class EfAuthenticationService : IAuthenticationService
         this.hasher = hasher;
         this.hasherFactory = hasherFactory;
         this.tokenFactory = tokenFactory;
-        this.mapper = mapper;
         this.loginValidator = loginValidator;
         this.passwordValidator = passwordValidator;
         this.emailService = emailService;
@@ -57,7 +54,7 @@ public class EfAuthenticationService : IAuthenticationService
         return context.GetVerifiedUserByLoginAsync(user.Login, cancellationToken)
            .IfSuccessAsync(
                 userEntity => CheckPassword(user.Password, userEntity)
-                   .IfSuccess(() => tokenFactory.Create(mapper.Map<UserTokenClaims>(userEntity))), cancellationToken);
+                   .IfSuccess(() => tokenFactory.Create(userEntity.ToUserTokenClaims())), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> CreateUserAsync(
@@ -84,7 +81,7 @@ public class EfAuthenticationService : IAuthenticationService
                 var id = Guid.Parse(jwtToken.Claims.GetNameIdentifierClaim().Value);
 
                 return context.FindEntityAsync<UserEntity>(id)
-                   .IfSuccessAsync(userEntity => tokenFactory.Create(mapper.Map<UserTokenClaims>(userEntity)),
+                   .IfSuccessAsync(userEntity => tokenFactory.Create(userEntity.ToUserTokenClaims()),
                         cancellationToken);
             }
             case Role.Service:

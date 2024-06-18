@@ -8,7 +8,6 @@ public class ToDoCache : IToDoCache
     private readonly IUiApplicationService uiApplicationService;
     private readonly IErrorHandler errorHandler;
     private readonly IClipboardService clipboardService;
-    private readonly IConverter converter;
     private readonly INavigator navigator;
     private readonly IDialogViewer dialogViewer;
     private readonly IOpenerLink openerLink;
@@ -19,7 +18,6 @@ public class ToDoCache : IToDoCache
         IUiApplicationService uiApplicationService,
         IErrorHandler errorHandler,
         IClipboardService clipboardService,
-        IConverter converter,
         INavigator navigator,
         IOpenerLink openerLink,
         IDialogViewer dialogViewer
@@ -30,7 +28,6 @@ public class ToDoCache : IToDoCache
         this.uiApplicationService = uiApplicationService;
         this.errorHandler = errorHandler;
         this.clipboardService = clipboardService;
-        this.converter = converter;
         this.navigator = navigator;
         this.openerLink = openerLink;
         this.dialogViewer = dialogViewer;
@@ -61,8 +58,7 @@ public class ToDoCache : IToDoCache
             return value.ToResult();
         }
         
-        var result = new ToDoItemEntityNotify(id, toDoService, navigator, uiApplicationService, dialogViewer, converter,
-            clipboardService, openerLink, errorHandler);
+        var result = new ToDoItemEntityNotify(id, toDoService, navigator, uiApplicationService, dialogViewer, clipboardService, openerLink, errorHandler);
         
         if (cache.TryAdd(id, result))
         {

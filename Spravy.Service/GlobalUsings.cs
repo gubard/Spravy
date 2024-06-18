@@ -3,7 +3,6 @@ global using System.Reflection;
 global using System.Runtime.CompilerServices;
 global using System.Security.Claims;
 global using System.Text;
-global using AutoMapper;
 global using Grpc.Core;
 global using Microsoft.AspNetCore.Authentication;
 global using Microsoft.AspNetCore.Authentication.JwtBearer;

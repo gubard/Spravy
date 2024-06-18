@@ -1,4 +1,5 @@
 using Spravy.Core.Helpers;
+using Spravy.Ui.Mappers;
 
 namespace Spravy.Ui.Services;
 
@@ -9,7 +10,6 @@ public static class CommandStorage
     private static readonly MainSplitViewModel mainSplitViewModel;
     private static readonly IToDoService toDoService;
     private static readonly IToDoCache toDoCache;
-    private static readonly IMapper mapper;
     private static readonly IAuthenticationService authenticationService;
     private static readonly IObjectStorage objectStorage;
     private static readonly IPasswordService passwordService;
@@ -21,7 +21,6 @@ public static class CommandStorage
         toDoCache = kernel.CreateService<IToDoCache>();
         passwordService = kernel.CreateService<IPasswordService>();
         objectStorage = kernel.CreateService<IObjectStorage>();
-        mapper = kernel.CreateService<IMapper>();
         authenticationService = kernel.CreateService<IAuthenticationService>();
         navigator = kernel.CreateService<INavigator>();
         dialogViewer = kernel.CreateService<IDialogViewer>();
@@ -197,7 +196,7 @@ public static class CommandStorage
         return dialogViewer.ShowConfirmContentDialogAsync(
             vm => dialogViewer.CloseContentDialogAsync(cancellationToken)
                .IfSuccessAsync(
-                    () => passwordService.AddPasswordItemAsync(mapper.Map<AddPasswordOptions>(vm), cancellationToken),
+                    () => passwordService.AddPasswordItemAsync(vm.ToAddPasswordOptions(), cancellationToken),
                     cancellationToken)
                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
             _ => dialogViewer.CloseContentDialogAsync(cancellationToken), ActionHelper<AddPasswordItemViewModel>.Empty,
@@ -374,7 +373,7 @@ public static class CommandStorage
     {
         return dialogViewer.ShowConfirmContentDialogAsync(view =>
             {
-                var options = mapper.Map<AddRootToDoItemOptions>(view);
+                var options = view.ToAddRootToDoItemOptions();
                 
                 return dialogViewer.CloseContentDialogAsync(cancellationToken)
                    .IfSuccessAsync(() => toDoService.AddRootToDoItemAsync(options, cancellationToken),

@@ -1,6 +1,5 @@
 using Spravy.Authentication.Domain.Client.Services;
 using Spravy.Authentication.Domain.Interfaces;
-using Spravy.Authentication.Domain.Mapper.Profiles;
 using Spravy.Authentication.Domain.Services;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
@@ -10,17 +9,14 @@ using Spravy.Db.Interfaces;
 using Spravy.Db.Sqlite.Models;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Services;
-using Spravy.EventBus.Domain.Mapper.Profiles;
 using Spravy.Service.Extensions;
 using Spravy.Service.HostedServices;
 using Spravy.Service.Services;
 using Spravy.ToDo.Db.Contexts;
-using Spravy.ToDo.Db.Mapper.Profiles;
 using Spravy.ToDo.Db.Services;
 using Spravy.ToDo.Db.Sqlite.Migrator;
 using Spravy.ToDo.Db.Sqlite.Services;
 using Spravy.ToDo.Domain.Interfaces;
-using Spravy.ToDo.Domain.Mapper.Profiles;
 using Spravy.ToDo.Service.Services;
 
 namespace Spravy.ToDo.Service.Extensions;
@@ -33,7 +29,6 @@ public static class ServiceCollectionExtension
         //serviceCollection.AddHostedService<EventBusHostedService>();
         serviceCollection.AddSpravySqliteFolderContext<SpravyDbToDoDbContext, SpravyToDoDbSqliteMigratorMark>();
         serviceCollection.AddSingleton<ITokenService, TokenService>();
-        serviceCollection.AddSingleton<IConverter, AutoMapperConverter>();
         serviceCollection.AddTransient<ISerializer, ProtobufSerializer>();
         serviceCollection.AddSingleton<IDbContextSetup, SqliteToDoDbContextSetup>();
         serviceCollection.AddSingleton<IFactory<string, SpravyDbToDoDbContext>, SpravyToDoDbContextFactory>();
@@ -46,10 +41,6 @@ public static class ServiceCollectionExtension
         serviceCollection.AddSingleton<TimeZoneHttpHeaderFactory>();
         serviceCollection.AddTransient<IToDoService, EfToDoService>();
         serviceCollection.AddTransient<GetterToDoItemParametersService>();
-
-        serviceCollection
-           .AddMapperConfiguration<SpravyToDoProfile, SpravyToDoDbProfile, SpravyEventBusProfile,
-                SpravyAuthenticationProfile>();
 
         /*serviceCollection.AddGrpcService<GrpcAuthenticationService,
             Spravy.Authentication.Protos.AuthenticationService.AuthenticationServiceClient,

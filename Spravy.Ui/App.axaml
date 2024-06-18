@@ -81,13 +81,6 @@
             <ToggleButton IsChecked="{Binding IsSelected}" Content="{Binding DayOfWeek}" />
         </DataTemplate>
 
-        <DataTemplate x:DataType="m:TimerItemToDoItemFavoriteNotify">
-            <StackPanel>
-                <CheckBox IsChecked="{Binding IsFavorite}" />
-                <TextBlock Text="{Binding DueDateTime, StringFormat=\{0:yyyy.MM.dd HH:mm zzz\}}" />
-            </StackPanel>
-        </DataTemplate>
-
         <DataTemplate x:DataType="m:CommandItem">
             <Button Classes="Basic" Command="{Binding Command}" CommandParameter="{Binding Parameter}">
                 <mi:MaterialIcon Kind="{Binding Icon}" />

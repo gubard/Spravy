@@ -34,7 +34,6 @@ public static class GrpcClientFactoryHelper
     public static TGrpcService CreateGrpcService<TGrpcService, TGrpcClient, TGrpcOptions>(
         TGrpcOptions options,
         IFactory<Uri, TGrpcClient> grpcClientFactory,
-        IConverter converter,
         ISerializer serializer
     )
         where TGrpcService : GrpcServiceBase<TGrpcClient>, IGrpcServiceCreator<TGrpcService, TGrpcClient>
@@ -43,13 +42,12 @@ public static class GrpcClientFactoryHelper
     {
         var host = options.Host.ThrowIfNullOrWhiteSpace().ToUri();
         
-        return TGrpcService.CreateGrpcService(grpcClientFactory, host, converter, serializer);
+        return TGrpcService.CreateGrpcService(grpcClientFactory, host, serializer);
     }
     
     public static TGrpcService CreateGrpcServiceAuth<TGrpcService, TGrpcClient, TGrpcOptions>(
         TGrpcOptions options,
         IFactory<Uri, TGrpcClient> grpcClientFactory,
-        IConverter converter,
         ISerializer serializer,
         IMetadataFactory metadataFactory
     )
@@ -59,7 +57,7 @@ public static class GrpcClientFactoryHelper
     {
         var host = options.Host.ThrowIfNullOrWhiteSpace().ToUri();
         
-        return TGrpcService.CreateGrpcService(grpcClientFactory, host, converter, metadataFactory, serializer);
+        return TGrpcService.CreateGrpcService(grpcClientFactory, host, metadataFactory, serializer);
     }
     
     private static IMetadataFactory CreateMetadataFactory<TGrpcOptions>(

@@ -40,13 +40,12 @@ public interface IPasswordGeneratorClientModule
     static IPasswordService PasswordServiceFactory(
         GrpcPasswordServiceOptions options,
         IFactory<Uri, PasswordServiceClient> grpcClientFactory,
-        IConverter converter,
         ISerializer serializer,
         IMetadataFactory metadataFactory
     )
     {
         return GrpcClientFactoryHelper
            .CreateGrpcServiceAuth<GrpcPasswordService, PasswordServiceClient, GrpcPasswordServiceOptions>(options,
-                grpcClientFactory, converter, serializer, metadataFactory);
+                grpcClientFactory, serializer, metadataFactory);
     }
 }

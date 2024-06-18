@@ -7,11 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoMapper" Version="13.0.1" />
-    </ItemGroup>
-
-    <ItemGroup>
         <ProjectReference Include="..\Spravy.Authentication.Db\Spravy.Authentication.Db.csproj" />
         <ProjectReference Include="..\Spravy.Authentication.Domain\Spravy.Authentication.Domain.csproj" />
+        <ProjectReference Include="..\Spravy.Core\Spravy.Core.csproj" />
     </ItemGroup>
 </Project>

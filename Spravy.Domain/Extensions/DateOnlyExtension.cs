@@ -12,11 +12,6 @@ public static class DateOnlyExtension
         return new(date.Year, month, date.Day);
     }
 
-    public static DateTime ToDateTime(this DateOnly date)
-    {
-        return new(date.Year, date.Month, date.Day);
-    }
-
     public static DateTime ToDateTime(this DateOnly date, DateTimeKind kind)
     {
         return new(date.Year, date.Month, date.Day, 0, 0, 0, 0, 0, kind);

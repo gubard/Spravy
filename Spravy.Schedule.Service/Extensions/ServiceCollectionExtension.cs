@@ -1,6 +1,5 @@
 using Spravy.Authentication.Domain.Client.Models;
 using Spravy.Authentication.Domain.Client.Services;
-using Spravy.Authentication.Domain.Mapper.Profiles;
 using Spravy.Authentication.Domain.Services;
 using Spravy.Authentication.Protos;
 using Spravy.Client.Extensions;
@@ -17,11 +16,9 @@ using Spravy.EventBus.Domain.Client.Services;
 using Spravy.EventBus.Domain.Interfaces;
 using Spravy.EventBus.Protos;
 using Spravy.Schedule.Db.Contexts;
-using Spravy.Schedule.Db.Mapper.Profiles;
 using Spravy.Schedule.Db.Sqlite.Migrator;
 using Spravy.Schedule.Db.Sqlite.Services;
 using Spravy.Schedule.Domain.Interfaces;
-using Spravy.Schedule.Domain.Mapper.Profiles;
 using Spravy.Schedule.Service.Services;
 using Spravy.Service.Extensions;
 using Spravy.Service.HostedServices;
@@ -35,13 +32,8 @@ public static class ServiceCollectionExtension
     public static IServiceCollection RegisterSchedule(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddHostedService<FolderMigratorHostedService<SpravyDbScheduleDbContext>>();
-
-        serviceCollection
-           .AddMapperConfiguration<SpravyScheduleProfile, SpravyScheduleDbProfile, SpravyAuthenticationProfile>();
-
         serviceCollection.AddSpravySqliteFolderContext<SpravyDbScheduleDbContext, SpravyScheduleDbSqliteMigratorMark>();
         serviceCollection.AddSingleton<ITokenService, TokenService>();
-        serviceCollection.AddSingleton<IConverter, AutoMapperConverter>();
         serviceCollection.AddSingleton<IFactory<string, SpravyDbScheduleDbContext>, SpravyScheduleDbContextFactory>();
         serviceCollection.AddSingleton<IDbContextSetup, SqliteScheduleDbContextSetup>();
         serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<SqliteFolderOptions>());

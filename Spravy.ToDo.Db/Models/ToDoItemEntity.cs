@@ -1,5 +1,5 @@
+using Spravy.Core.Mappers;
 using Spravy.Domain.Enums;
-using Spravy.Domain.Extensions;
 using Spravy.ToDo.Domain.Enums;
 
 namespace Spravy.ToDo.Db.Models;

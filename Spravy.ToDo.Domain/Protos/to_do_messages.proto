@@ -540,7 +540,7 @@ message ToDoSubItemGrpc {
 
 message ToDoSubItemPeriodicityGrpc {
     google.protobuf.Timestamp due_date = 1;
-    DateTimeOffsetGrpc last_completed = 9;
+    google.protobuf.Timestamp last_completed = 9;
 
     oneof Periodicity {
         DailyPeriodicityGrpc daily = 5;
@@ -553,7 +553,7 @@ message ToDoSubItemPeriodicityGrpc {
 message ToDoSubItemPlannedGrpc {
     bool is_completed = 1;
     google.protobuf.Timestamp due_date = 2;
-    DateTimeOffsetGrpc last_completed = 6;
+    google.protobuf.Timestamp last_completed = 6;
 }
 
 message ToDoSubItemGroupGrpc {
@@ -561,17 +561,17 @@ message ToDoSubItemGroupGrpc {
 
 message ToDoSubItemValueGrpc {
     bool is_completed = 1;
-    DateTimeOffsetGrpc last_completed = 5;
+    google.protobuf.Timestamp last_completed = 5;
 }
 
 message ToDoSubItemCircleGrpc {
     bool is_completed = 1;
-    DateTimeOffsetGrpc last_completed = 5;
+    google.protobuf.Timestamp last_completed = 5;
 }
 
 message ToDoSubItemStepGrpc {
     bool is_completed = 1;
-    DateTimeOffsetGrpc last_completed = 5;
+    google.protobuf.Timestamp last_completed = 5;
 }
 
 message ToDoItemParentGrpc {
@@ -583,11 +583,6 @@ message ToDoItemValueGrpc {
     google.protobuf.Timestamp due_date = 1;
     bool is_completed = 2;
     ToDoItemChildrenTypeGrpc children_type = 3;
-}
-
-message DateTimeOffsetGrpc {
-    google.protobuf.Timestamp date = 1;
-    google.protobuf.Duration offset = 2;
 }
 
 enum TypeOfPeriodicityGrpc {
@@ -602,7 +597,7 @@ message DailyPeriodicityGrpc {
 
 message ToDoSubItemPeriodicityOffsetGrpc {
     google.protobuf.Timestamp due_date = 1;
-    DateTimeOffsetGrpc last_completed = 5;
+    google.protobuf.Timestamp last_completed = 5;
 }
 
 message ToDoItemPeriodicityOffsetGrpc {

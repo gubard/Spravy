@@ -44,12 +44,11 @@ public interface IAuthenticationClientModule
     static IAuthenticationService AuthenticationServiceFactory(
         GrpcAuthenticationServiceOptions options,
         IFactory<Uri, AuthenticationServiceClient> grpcClientFactory,
-        IConverter converter,
         ISerializer serializer
     )
     {
         return GrpcClientFactoryHelper
            .CreateGrpcService<GrpcAuthenticationService, AuthenticationServiceClient, GrpcAuthenticationServiceOptions>(
-                options, grpcClientFactory, converter, serializer);
+                options, grpcClientFactory, serializer);
     }
 }

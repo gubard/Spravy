@@ -6,14 +6,14 @@ namespace Spravy.ToDo.Db.Extensions;
 
 public static class ToDoItemEntityExtension
 {
-    public static IEnumerable<byte> GetDaysOfMonth(this ToDoItemEntity item)
+    public static ReadOnlyMemory<byte> GetDaysOfMonth(this ToDoItemEntity item)
     {
         if (item.DaysOfMonth.IsNullOrWhiteSpace())
         {
-            return Enumerable.Empty<byte>();
+            return ReadOnlyMemory<byte>.Empty;
         }
 
-        return item.DaysOfMonth.Split(";").Select(byte.Parse);
+        return item.DaysOfMonth.Split(";").Select(byte.Parse).ToArray();
     }
 
     public static IEnumerable<DayOfWeek> GetDaysOfWeek(this ToDoItemEntity item)
@@ -48,7 +48,7 @@ public static class ToDoItemEntityExtension
         item.DaysOfYear = daysOfYear.Select(x => $"{x.Month}.{x.Day}").JoinString(";");
     }
 
-    public static void SetDaysOfMonth(this ToDoItemEntity item, IEnumerable<byte> daysOfMonth)
+    public static void SetDaysOfMonth(this ToDoItemEntity item, ReadOnlyMemory<byte> daysOfMonth)
     {
         item.DaysOfMonth = daysOfMonth.JoinString(";");
     }

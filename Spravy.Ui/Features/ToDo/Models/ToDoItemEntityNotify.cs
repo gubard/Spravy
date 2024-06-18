@@ -1,3 +1,6 @@
+using Spravy.Core.Mappers;
+using Spravy.Ui.Mappers;
+
 namespace Spravy.Ui.Features.ToDo.Models;
 
 public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
@@ -8,7 +11,6 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
         INavigator navigator,
         IUiApplicationService uiApplicationService,
         IDialogViewer dialogViewer,
-        IConverter converter,
         IClipboardService clipboardService,
         IOpenerLink openerLink,
         IErrorHandler errorHandler
@@ -83,7 +85,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
         AddChildItem = new(MaterialIconKind.Plus, new("Command.AddChildToDoItem"),
             SpravyCommand.Create(
                 cancellationToken => dialogViewer.ShowConfirmContentDialogAsync<AddToDoItemViewModel>(
-                    viewModel => viewModel.ConverterToAddToDoItemOptions(converter)
+                    viewModel => viewModel.ConverterToAddToDoItemOptions()
                        .IfSuccessAsync(
                             options => dialogViewer.CloseContentDialogAsync(cancellationToken)
                                .IfSuccessAsync(() => toDoService.AddToDoItemAsync(options, cancellationToken),
@@ -130,9 +132,8 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                                 return toDoService.UpdateToDoItemLinkAsync(Id, new(null), cancellationToken);
                             }
 
-                            return converter.Convert<Uri>(vm.ToDoItemContent.Link)
-                               .IfSuccessAsync(uri => toDoService.UpdateToDoItemLinkAsync(Id, new(uri), cancellationToken),
-                                    cancellationToken);
+                            return toDoService.UpdateToDoItemLinkAsync(Id, vm.ToDoItemContent.Link.ToOptionUri(),
+                                cancellationToken);
                         }, cancellationToken)
                        .IfSuccessAsync(
                             () => toDoService.UpdateToDoItemTypeAsync(Id, vm.ToDoItemContent.Type, cancellationToken),
@@ -211,9 +212,8 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                 cancellationToken => dialogViewer.ShowConfirmContentDialogAsync<ResetToDoItemViewModel>(
                     vm => dialogViewer.CloseContentDialogAsync(cancellationToken)
                        .IfSuccessAsync(
-                            () => converter.Convert<ResetToDoItemOptions>(vm)
-                               .IfSuccessAsync(o => toDoService.ResetToDoItemAsync(o, cancellationToken),
-                                    cancellationToken), cancellationToken)
+                            () => toDoService.ResetToDoItemAsync(vm.ToResetToDoItemOptions(), cancellationToken),
+                            cancellationToken)
                        .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                             cancellationToken), _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
                     vm => vm.Id = CurrentId, cancellationToken), errorHandler));
@@ -247,8 +247,9 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
             SpravyCommand.Create(
                 cancellationToken => dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
                     itemNotify => dialogViewer.CloseInputDialogAsync(cancellationToken)
-                       .IfSuccessAsync(() => toDoService.CloneToDoItemAsync(Id, itemNotify.Id, cancellationToken),
-                            cancellationToken)
+                       .IfSuccessAsync(
+                            () => toDoService.CloneToDoItemAsync(Id, itemNotify.Id.ThrowIfIsNotCast<Guid?>().ToOption(),
+                                cancellationToken), cancellationToken)
                        .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                             cancellationToken), view => view.DefaultSelectedItemId = Id, cancellationToken),
                 errorHandler));
@@ -264,7 +265,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                 }
 
                 return dialogViewer.ShowConfirmContentDialogAsync<AddToDoItemViewModel>(
-                    viewModel => viewModel.ConverterToAddToDoItemOptions(converter)
+                    viewModel => viewModel.ConverterToAddToDoItemOptions()
                        .IfSuccessAsync(
                             options => dialogViewer.CloseContentDialogAsync(cancellationToken)
                                .IfSuccessAsync(() => toDoService.AddToDoItemAsync(options, cancellationToken),
@@ -293,11 +294,8 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                                 {
                                     if (vm.IsLink)
                                     {
-                                        return converter.Convert<Option<Uri>>(vm.Link)
-                                           .IfSuccessAsync(
-                                                link => toDoService.UpdateToDoItemLinkAsync(item.Id, link,
-                                                    cancellationToken),
-                                                cancellationToken);
+                                        return toDoService.UpdateToDoItemLinkAsync(item.Id, vm.Link.ToOptionUri(),
+                                            cancellationToken);
                                     }
 
                                     return Result.AwaitableSuccess;
@@ -520,8 +518,9 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
             return dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
                 itemNotify => dialogViewer.CloseInputDialogAsync(cancellationToken)
                    .IfSuccessAsync(() => selected.ToResult(), cancellationToken)
-                   .IfSuccessForEachAsync(i => toDoService.CloneToDoItemAsync(i, itemNotify.Id, cancellationToken),
-                        cancellationToken)
+                   .IfSuccessForEachAsync(
+                        i => toDoService.CloneToDoItemAsync(i, itemNotify.Id.ThrowIfIsNotCast<Guid?>().ToOption(),
+                            cancellationToken), cancellationToken)
                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                         cancellationToken), view => view.DefaultSelectedItemId = Id, cancellationToken);
         }, errorHandler));

@@ -108,7 +108,7 @@ public class EventBusHostedService : IHostedService
 
     private async Task ChangeFavoriteAsync(FileInfo file, EventValue eventValue)
     {
-        var eventContent = ChangeToDoItemIsFavoriteEvent.Parser.ParseFrom(eventValue.Content);
+        var eventContent = ChangeToDoItemIsFavoriteEvent.Parser.ParseFrom(eventValue.Content.ToArray());
         var id = new Guid(eventContent.ToDoItemId.ToByteArray());
 
         await spravyToDoDbContext.Create(file.ToSqliteConnectionString())

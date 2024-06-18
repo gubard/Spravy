@@ -49,7 +49,6 @@ public static class ServiceCollectionExtension
         serviceCollection.AddGrpc();
         serviceCollection.AddAuthorization();
         serviceCollection.AddHttpContextAccessor();
-        serviceCollection.AddSingleton<IMapper>(sp => new Mapper(sp.GetRequiredService<MapperConfiguration>()));
         serviceCollection.AddCors(o => o.AddAllowAllPolicy());
         serviceCollection.AddTransient(sp => sp.GetConfigurationSection<JwtOptions>());
         serviceCollection.AddSpravyAuthentication(configuration);
@@ -61,60 +60,6 @@ public static class ServiceCollectionExtension
            .CreateIfNotExists();
 
         serviceCollection.AddDataProtection().PersistKeysToFileSystem(persistKeysDirectory);
-
-        return serviceCollection;
-    }
-
-    public static IServiceCollection AddMapperConfiguration<TProfile1, TProfile2, TProfile3>(
-        this IServiceCollection serviceCollection
-    ) where TProfile1 : Profile, new() where TProfile2 : Profile, new() where TProfile3 : Profile, new()
-    {
-        serviceCollection.AddSingleton(_ => new MapperConfiguration(cfg =>
-        {
-            cfg.AddProfile<TProfile1>();
-            cfg.AddProfile<TProfile2>();
-            cfg.AddProfile<TProfile3>();
-        }));
-
-        return serviceCollection;
-    }
-
-    public static IServiceCollection AddMapperConfiguration<TProfile1, TProfile2, TProfile3, TProfile4>(
-        this IServiceCollection serviceCollection
-    )
-        where TProfile1 : Profile, new()
-        where TProfile2 : Profile, new()
-        where TProfile3 : Profile, new()
-        where TProfile4 : Profile, new()
-    {
-        serviceCollection.AddSingleton(_ => new MapperConfiguration(cfg =>
-        {
-            cfg.AddProfile<TProfile1>();
-            cfg.AddProfile<TProfile2>();
-            cfg.AddProfile<TProfile3>();
-            cfg.AddProfile<TProfile4>();
-        }));
-
-        return serviceCollection;
-    }
-
-    public static IServiceCollection AddMapperConfiguration<TProfile1, TProfile2>(
-        this IServiceCollection serviceCollection
-    ) where TProfile1 : Profile, new() where TProfile2 : Profile, new()
-    {
-        serviceCollection.AddSingleton(_ => new MapperConfiguration(cfg =>
-        {
-            cfg.AddProfile<TProfile1>();
-            cfg.AddProfile<TProfile2>();
-        }));
-
-        return serviceCollection;
-    }
-
-    public static IServiceCollection AddMapperConfiguration<TProfile>(this IServiceCollection serviceCollection)
-        where TProfile : Profile, new()
-    {
-        serviceCollection.AddSingleton(_ => new MapperConfiguration(cfg => { cfg.AddProfile<TProfile>(); }));
 
         return serviceCollection;
     }

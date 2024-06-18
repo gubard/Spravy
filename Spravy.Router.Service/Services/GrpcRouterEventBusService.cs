@@ -1,7 +1,10 @@
-using AutoMapper;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
+using Spravy.Core.Mappers;
+using Spravy.Domain.Extensions;
+using Spravy.Domain.Interfaces;
 using Spravy.EventBus.Domain.Interfaces;
+using Spravy.EventBus.Domain.Mapper.Mappers;
 using Spravy.EventBus.Protos;
 using Spravy.Service.Extensions;
 
@@ -11,14 +14,18 @@ namespace Spravy.Router.Service.Services;
 public class GrpcRouterEventBusService : EventBusService.EventBusServiceBase
 {
     private readonly IEventBusService eventBusService;
+    private readonly ISerializer serializer;
     private readonly ILogger<GrpcRouterEventBusService> logger;
-    private readonly IMapper mapper;
 
-    public GrpcRouterEventBusService(IMapper mapper, ILogger<GrpcRouterEventBusService> logger, IEventBusService eventBusService)
+    public GrpcRouterEventBusService(
+        ILogger<GrpcRouterEventBusService> logger,
+        IEventBusService eventBusService,
+        ISerializer serializer
+    )
     {
-        this.mapper = mapper;
         this.logger = logger;
         this.eventBusService = eventBusService;
+        this.serializer = serializer;
     }
 
     public override async Task SubscribeEvents(
@@ -27,14 +34,14 @@ public class GrpcRouterEventBusService : EventBusService.EventBusServiceBase
         ServerCallContext context
     )
     {
-        var eventIds = mapper.Map<Guid[]>(request.EventIds);
+        var eventIds = request.EventIds.ToGuid();
         var userId = context.GetHttpContext().GetUserId();
         logger.LogInformation("{UserId} subscribe events {EventIds}", userId, eventIds);
         var events = eventBusService.SubscribeEventsAsync(eventIds, context.CancellationToken);
 
         await foreach (var @event in events)
         {
-            var subscribeEventsReply = mapper.Map<SubscribeEventsReply>(@event);
+            var subscribeEventsReply = @event.ThrowIfError().ToSubscribeEventsReply();
             await responseStream.WriteAsync(subscribeEventsReply, context.CancellationToken);
         }
     }
@@ -42,22 +49,26 @@ public class GrpcRouterEventBusService : EventBusService.EventBusServiceBase
     public override async Task<PublishEventReply> PublishEvent(PublishEventRequest request, ServerCallContext context)
     {
         var userId = context.GetHttpContext().GetUserId();
-        var id = mapper.Map<Guid>(request.EventId);
+        var id = request.EventId.ToGuid();
         logger.LogInformation("{UserId} push event {Id}", userId, id);
         await eventBusService.PublishEventAsync(id, request.Content.ToByteArray(), context.CancellationToken);
 
         return new();
     }
 
-    public override async Task<GetEventsReply> GetEvents(GetEventsRequest request, ServerCallContext context)
+    public override Task<GetEventsReply> GetEvents(GetEventsRequest request, ServerCallContext context)
     {
         var userId = context.GetHttpContext().GetUserId();
-        var eventIds = mapper.Map<Guid[]>(request.EventIds);
+        var eventIds = request.EventIds.ToGuid();
         logger.LogInformation("{UserId} get events {EventIds}", userId, eventIds);
-        var eventValues = await eventBusService.GetEventsAsync(eventIds, context.CancellationToken);
-        var reply = new GetEventsReply();
-        reply.Events.AddRange(mapper.Map<IEnumerable<Event>>(eventValues));
 
-        return reply;
+        return eventBusService.GetEventsAsync(eventIds, context.CancellationToken)
+           .HandleAsync(serializer, eventValues =>
+            {
+                var reply = new GetEventsReply();
+                reply.Events.AddRange(eventValues.ToEvent().ToArray());
+
+                return reply;
+            });
     }
 }

@@ -1,10 +1,11 @@
-﻿namespace Spravy.Ui.Features.Authentication.Commands;
+﻿using Spravy.Ui.Mappers;
+
+namespace Spravy.Ui.Features.Authentication.Commands;
 
 public class LoginCommands
 {
     private readonly IAuthenticationService authenticationService;
     private readonly INavigator navigator;
-    private readonly IConverter converter;
     private readonly AccountNotify account;
     private readonly ITokenService tokenService;
     private readonly IObjectStorage objectStorage;
@@ -12,7 +13,6 @@ public class LoginCommands
     public LoginCommands(
         IAuthenticationService authenticationService,
         INavigator navigator,
-        IConverter converter,
         AccountNotify account,
         ITokenService tokenService,
         IObjectStorage objectStorage,
@@ -21,7 +21,6 @@ public class LoginCommands
     {
         this.authenticationService = authenticationService;
         this.navigator = navigator;
-        this.converter = converter;
         this.account = account;
         this.tokenService = tokenService;
         this.objectStorage = objectStorage;
@@ -62,23 +61,20 @@ public class LoginCommands
                             }, cancellationToken);
                         }
                         
-                        return converter.Convert<User>(viewModel)
+                        return tokenService.LoginAsync(viewModel.ToUser(), cancellationToken)
                            .IfSuccessAsync(
-                                user => tokenService.LoginAsync(user, cancellationToken)
-                                   .IfSuccessAsync(
-                                        () => this.InvokeUiBackgroundAsync(() =>
-                                            {
-                                                 account.Login = user.Login;
+                                () => this.InvokeUiBackgroundAsync(() =>
+                                    {
+                                        account.Login = viewModel.Login;
                                                  
-                                                 return Result.Success;
-                                            })
-                                           .IfSuccessAsync(() => RememberMeAsync(viewModel, cancellationToken),
-                                                cancellationToken)
-                                           .IfSuccessAsync(
-                                                () => navigator.NavigateToAsync(
-                                                    ActionHelper<RootToDoItemsViewModel>.Empty,
-                                                    cancellationToken), cancellationToken), cancellationToken),
-                                cancellationToken);
+                                        return Result.Success;
+                                    })
+                                   .IfSuccessAsync(() => RememberMeAsync(viewModel, cancellationToken),
+                                        cancellationToken)
+                                   .IfSuccessAsync(
+                                        () => navigator.NavigateToAsync(
+                                            ActionHelper<RootToDoItemsViewModel>.Empty,
+                                            cancellationToken), cancellationToken), cancellationToken);
                     }, cancellationToken),
                 () => this.InvokeUiBackgroundAsync(() =>
                 {

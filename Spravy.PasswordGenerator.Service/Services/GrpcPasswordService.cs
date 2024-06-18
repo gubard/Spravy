@@ -1,9 +1,9 @@
-using AutoMapper;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
+using Spravy.Core.Mappers;
 using Spravy.Domain.Interfaces;
 using Spravy.PasswordGenerator.Domain.Interfaces;
-using Spravy.PasswordGenerator.Domain.Models;
+using Spravy.PasswordGenerator.Domain.Mapper.Mappers;
 using Spravy.PasswordGenerator.Protos;
 using Spravy.Service.Extensions;
 using static Spravy.PasswordGenerator.Protos.PasswordService;
@@ -13,14 +13,12 @@ namespace Spravy.PasswordGenerator.Service.Services;
 [Authorize]
 public class GrpcPasswordService : PasswordServiceBase
 {
-    private readonly IMapper mapper;
     private readonly IPasswordService passwordService;
     private readonly ISerializer serializer;
 
-    public GrpcPasswordService(IPasswordService passwordService, IMapper mapper, ISerializer serializer)
+    public GrpcPasswordService(IPasswordService passwordService, ISerializer serializer)
     {
         this.passwordService = passwordService;
-        this.mapper = mapper;
         this.serializer = serializer;
     }
 
@@ -29,7 +27,7 @@ public class GrpcPasswordService : PasswordServiceBase
         ServerCallContext context
     )
     {
-        return passwordService.GeneratePasswordAsync(mapper.Map<Guid>(request.Id), context.CancellationToken)
+        return passwordService.GeneratePasswordAsync(request.Id.ToGuid(), context.CancellationToken)
            .HandleAsync(serializer, value => new GeneratePasswordReply
             {
                 Password = value,
@@ -41,8 +39,8 @@ public class GrpcPasswordService : PasswordServiceBase
         ServerCallContext context
     )
     {
-        return passwordService.GetPasswordItemAsync(mapper.Map<Guid>(request.Id), context.CancellationToken)
-           .HandleAsync(serializer, value => mapper.Map<GetPasswordItemReply>(value));
+        return passwordService.GetPasswordItemAsync(request.Id.ToGuid(), context.CancellationToken)
+           .HandleAsync(serializer, value => value.ToGetPasswordItemReply());
     }
 
     public override Task<AddPasswordItemReply> AddPasswordItem(
@@ -50,7 +48,7 @@ public class GrpcPasswordService : PasswordServiceBase
         ServerCallContext context
     )
     {
-        return passwordService.AddPasswordItemAsync(mapper.Map<AddPasswordOptions>(request), context.CancellationToken)
+        return passwordService.AddPasswordItemAsync(request.ToAddPasswordOptions(), context.CancellationToken)
            .HandleAsync<AddPasswordItemReply>(serializer);
     }
 
@@ -63,7 +61,7 @@ public class GrpcPasswordService : PasswordServiceBase
            .HandleAsync(serializer, value =>
             {
                 var reply = new GetPasswordItemsReply();
-                reply.Items.AddRange(mapper.Map<PasswordItemGrpc[]>(value.ToArray()));
+                reply.Items.AddRange(value.ToPasswordItemGrpc().ToArray());
 
                 return reply;
             });
@@ -74,7 +72,7 @@ public class GrpcPasswordService : PasswordServiceBase
         ServerCallContext context
     )
     {
-        return passwordService.DeletePasswordItemAsync(mapper.Map<Guid>(request.Id), context.CancellationToken)
+        return passwordService.DeletePasswordItemAsync(request.Id.ToGuid(), context.CancellationToken)
            .HandleAsync<DeletePasswordItemReply>(serializer);
     }
 
@@ -84,7 +82,7 @@ public class GrpcPasswordService : PasswordServiceBase
     )
     {
         return passwordService
-           .UpdatePasswordItemNameAsync(mapper.Map<Guid>(request.Id), request.Name, context.CancellationToken)
+           .UpdatePasswordItemNameAsync(request.Id.ToGuid(), request.Name, context.CancellationToken)
            .HandleAsync<UpdatePasswordItemNameReply>(serializer);
     }
 
@@ -94,7 +92,7 @@ public class GrpcPasswordService : PasswordServiceBase
     )
     {
         return passwordService
-           .UpdatePasswordItemKeyAsync(mapper.Map<Guid>(request.Id), request.Key, context.CancellationToken)
+           .UpdatePasswordItemKeyAsync(request.Id.ToGuid(), request.Key, context.CancellationToken)
            .HandleAsync<UpdatePasswordItemKeyReply>(serializer);
     }
 
@@ -104,7 +102,7 @@ public class GrpcPasswordService : PasswordServiceBase
     )
     {
         return passwordService
-           .UpdatePasswordItemLengthAsync(mapper.Map<Guid>(request.Id), (ushort)request.Length,
+           .UpdatePasswordItemLengthAsync(request.Id.ToGuid(), (ushort)request.Length,
                 context.CancellationToken)
            .HandleAsync<UpdatePasswordItemLengthReply>(serializer);
     }
@@ -115,7 +113,7 @@ public class GrpcPasswordService : PasswordServiceBase
     )
     {
         return passwordService
-           .UpdatePasswordItemRegexAsync(mapper.Map<Guid>(request.Id), request.Regex, context.CancellationToken)
+           .UpdatePasswordItemRegexAsync(request.Id.ToGuid(), request.Regex, context.CancellationToken)
            .HandleAsync<UpdatePasswordItemRegexReply>(serializer);
     }
 
@@ -125,7 +123,7 @@ public class GrpcPasswordService : PasswordServiceBase
     )
     {
         return passwordService
-           .UpdatePasswordItemCustomAvailableCharactersAsync(mapper.Map<Guid>(request.Id),
+           .UpdatePasswordItemCustomAvailableCharactersAsync(request.Id.ToGuid(),
                 request.CustomAvailableCharacters, context.CancellationToken)
            .HandleAsync<UpdatePasswordItemCustomAvailableCharactersReply>(serializer);
     }
@@ -136,7 +134,7 @@ public class GrpcPasswordService : PasswordServiceBase
     )
     {
         return passwordService
-           .UpdatePasswordItemIsAvailableNumberAsync(mapper.Map<Guid>(request.Id), request.IsAvailableNumber,
+           .UpdatePasswordItemIsAvailableNumberAsync(request.Id.ToGuid(), request.IsAvailableNumber,
                 context.CancellationToken)
            .HandleAsync<UpdatePasswordItemIsAvailableNumberReply>(serializer);
     }
@@ -147,7 +145,7 @@ public class GrpcPasswordService : PasswordServiceBase
     )
     {
         return passwordService
-           .UpdatePasswordItemIsAvailableLowerLatinAsync(mapper.Map<Guid>(request.Id), request.IsAvailableLowerLatin,
+           .UpdatePasswordItemIsAvailableLowerLatinAsync(request.Id.ToGuid(), request.IsAvailableLowerLatin,
                 context.CancellationToken)
            .HandleAsync<UpdatePasswordItemIsAvailableLowerLatinReply>(serializer);
     }
@@ -158,7 +156,7 @@ public class GrpcPasswordService : PasswordServiceBase
     )
     {
         return passwordService
-           .UpdatePasswordItemIsAvailableSpecialSymbolsAsync(mapper.Map<Guid>(request.Id),
+           .UpdatePasswordItemIsAvailableSpecialSymbolsAsync(request.Id.ToGuid(),
                 request.IsAvailableSpecialSymbols, context.CancellationToken)
            .HandleAsync<UpdatePasswordItemIsAvailableSpecialSymbolsReply>(serializer);
     }
@@ -169,7 +167,7 @@ public class GrpcPasswordService : PasswordServiceBase
     )
     {
         return passwordService
-           .UpdatePasswordItemIsAvailableUpperLatinAsync(mapper.Map<Guid>(request.Id), request.IsAvailableUpperLatin,
+           .UpdatePasswordItemIsAvailableUpperLatinAsync(request.Id.ToGuid(), request.IsAvailableUpperLatin,
                 context.CancellationToken)
            .HandleAsync<UpdatePasswordItemIsAvailableUpperLatinReply>(serializer);
     }

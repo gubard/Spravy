@@ -1,5 +1,4 @@
 using System.Runtime.CompilerServices;
-using AutoMapper;
 using Spravy.Db.Extensions;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
@@ -16,16 +15,13 @@ public class EventStorage
     private static readonly Dictionary<string, DateTime> lastWriteTimeUtc = new();
     private readonly IFactory<SpravyDbEventBusDbContext> dbContextFactory;
     private readonly IFactory<FileInfo> fileFactory;
-    private readonly IMapper mapper;
 
     public EventStorage(
         IFactory<SpravyDbEventBusDbContext> dbContextFactory,
-        IMapper mapper,
         IFactory<FileInfo> fileFactory
     )
     {
         this.dbContextFactory = dbContextFactory;
-        this.mapper = mapper;
         this.fileFactory = fileFactory;
     }
 
@@ -49,9 +45,9 @@ public class EventStorage
                     cancellationToken), cancellationToken);
     }
 
-    public Task<IEnumerable<EventValue>> PushEventAsync(Guid[] eventIds)
+    public Task<ReadOnlyMemory<EventValue>> PushEventAsync(ReadOnlyMemory<Guid> eventIds)
     {
-        return Enumerable.Empty<EventValue>().ToTaskResult();
+        return ReadOnlyMemory<EventValue>.Empty.ToTaskResult();
         /*var file = fileFactory.Create();
 
         if (!lastWriteTimeUtc.TryGetValue(file.FullName, out var date))

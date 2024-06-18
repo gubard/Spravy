@@ -1,29 +1,20 @@
-using AutoMapper;
 using Grpc.Core;
 using Spravy.Authentication.Domain.Interfaces;
-using Spravy.Authentication.Domain.Models;
+using Spravy.Authentication.Domain.Mapper.Mappers;
 using Spravy.Authentication.Protos;
 using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
 using Spravy.Service.Extensions;
-using static Spravy.Authentication.Protos.AuthenticationService;
 
 namespace Spravy.Authentication.Service.Services;
 
-public class GrpcAuthenticationService : AuthenticationServiceBase
+public class GrpcAuthenticationService : AuthenticationService.AuthenticationServiceBase
 {
     private readonly IAuthenticationService authenticationService;
-    private readonly IMapper mapper;
     private readonly ISerializer serializer;
 
-    public GrpcAuthenticationService(
-        IAuthenticationService authenticationService,
-        IMapper mapper,
-        ISerializer serializer
-    )
+    public GrpcAuthenticationService(IAuthenticationService authenticationService, ISerializer serializer)
     {
         this.authenticationService = authenticationService;
-        this.mapper = mapper;
         this.serializer = serializer;
     }
 
@@ -133,7 +124,7 @@ public class GrpcAuthenticationService : AuthenticationServiceBase
 
     public override Task<CreateUserReply> CreateUser(CreateUserRequest request, ServerCallContext context)
     {
-        var options = mapper.Map<CreateUserOptions>(request);
+        var options = request.ToCreateUserOptions();
 
         return authenticationService.CreateUserAsync(options, context.CancellationToken)
            .HandleAsync<CreateUserReply>(serializer);
@@ -141,15 +132,15 @@ public class GrpcAuthenticationService : AuthenticationServiceBase
 
     public override Task<LoginReply> Login(LoginRequest request, ServerCallContext context)
     {
-        var user = mapper.Map<User>(request.User);
+        var user = request.User.ToUser();
 
         return authenticationService.LoginAsync(user, context.CancellationToken)
-           .HandleAsync(serializer, value => mapper.Map<LoginReply>(value));
+           .HandleAsync(serializer, value => value.ToLoginReply());
     }
 
     public override Task<RefreshTokenReply> RefreshToken(RefreshTokenRequest request, ServerCallContext context)
     {
         return authenticationService.RefreshTokenAsync(request.RefreshToken, context.CancellationToken)
-           .HandleAsync(serializer, value => mapper.Map<RefreshTokenReply>(value));
+           .HandleAsync(serializer, value => value.ToRefreshTokenReply());
     }
 }

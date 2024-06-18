@@ -1,4 +1,11 @@
-namespace Spravy.Core.Services;
+using System.Runtime.CompilerServices;
+using MailKit.Net.Smtp;
+using MimeKit;
+using Spravy.Core.Options;
+using Spravy.Domain.Interfaces;
+using Spravy.Domain.Models;
+
+namespace Spravy.Authentication.Service.Services;
 
 public class EmailService : IEmailService
 {

@@ -1,9 +1,10 @@
-using AutoMapper;
-using Google.Protobuf;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
+using Spravy.Core.Mappers;
+using Spravy.Domain.Interfaces;
 using Spravy.PasswordGenerator.Domain.Interfaces;
 using Spravy.PasswordGenerator.Protos;
+using Spravy.Service.Extensions;
 using static Spravy.PasswordGenerator.Protos.UserSecretService;
 
 namespace Spravy.PasswordGenerator.Service.Services;
@@ -11,27 +12,21 @@ namespace Spravy.PasswordGenerator.Service.Services;
 [Authorize]
 public class GrpcUserSecretService : UserSecretServiceBase
 {
-    private readonly IMapper mapper;
     private readonly IUserSecretService userSecretService;
+    private readonly ISerializer serializer;
 
-    public GrpcUserSecretService(IUserSecretService userSecretService, IMapper mapper)
+    public GrpcUserSecretService(IUserSecretService userSecretService, ISerializer serializer)
     {
         this.userSecretService = userSecretService;
-        this.mapper = mapper;
+        this.serializer = serializer;
     }
 
-    public override async Task<GetUserSecretReply> GetUserSecret(
-        GetUserSecretRequest request,
-        ServerCallContext context
-    )
+    public override Task<GetUserSecretReply> GetUserSecret(GetUserSecretRequest request, ServerCallContext context)
     {
-        var userSecret = await userSecretService.GetUserSecretAsync(context.CancellationToken);
-
-        var reply = new GetUserSecretReply
-        {
-            Secret = mapper.Map<ByteString>(userSecret),
-        };
-
-        return reply;
+        return userSecretService.GetUserSecretAsync(context.CancellationToken)
+           .HandleAsync(serializer, userSecret => new GetUserSecretReply
+            {
+                Secret = userSecret.ToByteString(),
+            });
     }
 }

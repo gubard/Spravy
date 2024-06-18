@@ -1,4 +1,5 @@
-﻿using Type = System.Type;
+﻿using Spravy.Core.Mappers;
+using Type = System.Type;
 
 namespace Spravy.Ui.Models;
 
@@ -81,7 +82,7 @@ public class SpravyCommand
                 return dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
                     itemNotify => dialogViewer.CloseInputDialogAsync(cancellationToken)
                        .IfSuccessAsync(() => selected.ToResult(), cancellationToken)
-                       .IfSuccessForEachAsync(i => toDoService.CloneToDoItemAsync(i, itemNotify.Id, cancellationToken),
+                       .IfSuccessForEachAsync(i => toDoService.CloneToDoItemAsync(i, itemNotify.Id.ThrowIfIsNotCast<Guid?>().ToOption(), cancellationToken),
                             cancellationToken)
                        .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                             cancellationToken), ActionHelper<ToDoItemSelectorViewModel>.Empty, cancellationToken);
@@ -465,7 +466,6 @@ public class SpravyCommand
         IUiApplicationService uiApplicationService,
         IToDoService toDoService,
         IDialogViewer dialogViewer,
-        IConverter converter,
         IErrorHandler errorHandler
     )
     {
@@ -506,11 +506,8 @@ public class SpravyCommand
                             {
                                 if (vm.IsLink)
                                 {
-                                    return converter.Convert<Option<Uri>>(vm.Link)
-                                       .IfSuccessAsync(
-                                            link => toDoService.UpdateToDoItemLinkAsync(item.Id, link,
-                                                cancellationToken),
-                                            cancellationToken);
+                                    return toDoService.UpdateToDoItemLinkAsync(item.Id, vm.Link.ToOptionUri(),
+                                        cancellationToken);
                                 }
 
                                 return Result.AwaitableSuccess;
@@ -597,7 +594,6 @@ public class SpravyCommand
         IUiApplicationService uiApplicationService,
         IToDoService toDoService,
         IDialogViewer dialogViewer,
-        IConverter converter,
         IErrorHandler errorHandler
     )
     {
@@ -633,7 +629,7 @@ public class SpravyCommand
             return dialogViewer.ShowConfirmContentDialogAsync(
                 viewModel => selected.ToResult()
                    .IfSuccessForEachAsync(
-                        item => viewModel.ConverterToAddToDoItemOptions(item.Id, converter)
+                        item => viewModel.ConverterToAddToDoItemOptions(item.Id)
                            .IfSuccessAsync(
                                 options => dialogViewer.CloseContentDialogAsync(cancellationToken)
                                    .IfSuccessAsync(() => toDoService.AddToDoItemAsync(options, cancellationToken),

@@ -1,10 +1,8 @@
 using System.IdentityModel.Tokens.Jwt;
 using Spravy.Authentication.Db.Contexts;
-using Spravy.Authentication.Db.Mapper.Profiles;
 using Spravy.Authentication.Db.Sqlite.Migrator;
 using Spravy.Authentication.Db.Sqlite.Services;
 using Spravy.Authentication.Domain.Interfaces;
-using Spravy.Authentication.Domain.Mapper.Profiles;
 using Spravy.Authentication.Domain.Models;
 using Spravy.Authentication.Service.Helpers;
 using Spravy.Authentication.Service.Interfaces;
@@ -27,7 +25,6 @@ using Spravy.EventBus.Domain.Client.Models;
 using Spravy.EventBus.Domain.Client.Services;
 using Spravy.EventBus.Domain.Interfaces;
 using Spravy.EventBus.Protos;
-using Spravy.Service.Extensions;
 using Spravy.Service.HostedServices;
 using Spravy.Service.Services;
 
@@ -38,7 +35,6 @@ public static class ServiceCollectionExtension
     public static IServiceCollection RegisterAuthentication(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddHostedService<FileMigratorHostedService<SpravyDbAuthenticationDbContext>>();
-        serviceCollection.AddMapperConfiguration<SpravyAuthenticationProfile, SpravyAuthenticationDbProfile>();
         serviceCollection.AddSingleton<IDbContextSetup, SqliteAuthenticationDbContextSetup>();
         serviceCollection.AddSingleton<ITokenFactory, JwtTokenFactory>();
         serviceCollection.AddSingleton<ISerializer, ProtobufSerializer>();

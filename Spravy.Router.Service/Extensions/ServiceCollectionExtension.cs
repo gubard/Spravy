@@ -12,9 +12,7 @@ using AuthenticationSchedule::Spravy.Schedule.Domain.Client.Services;
 using AuthenticationSchedule::Spravy.Schedule.Protos;
 using AuthenticationToDo::Spravy.ToDo.Domain.Client.Models;
 using AuthenticationToDo::Spravy.ToDo.Domain.Client.Services;
-using AuthenticationToDo::Spravy.ToDo.Protos;
 using Spravy.Authentication.Domain.Interfaces;
-using Spravy.Authentication.Domain.Mapper.Profiles;
 using Spravy.Authentication.Domain.Services;
 using Spravy.Client.Extensions;
 using Spravy.Client.Interfaces;
@@ -22,14 +20,11 @@ using Spravy.Client.Services;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Services;
 using Spravy.EventBus.Domain.Interfaces;
-using Spravy.EventBus.Domain.Mapper.Profiles;
 using Spravy.Schedule.Domain.Interfaces;
-using Spravy.Schedule.Domain.Mapper.Profiles;
-using Spravy.Service.Extensions;
 using Spravy.Service.Services;
 using Spravy.ToDo.Domain.Interfaces;
-using Spravy.ToDo.Domain.Mapper.Profiles;
 using Protos_EventBusService = AuthenticationEventBus::Spravy.EventBus.Protos.EventBusService;
+using ToDoService = AuthenticationToDo::Spravy.ToDo.Protos.ToDoService;
 
 namespace Spravy.Router.Service.Extensions;
 
@@ -46,10 +41,6 @@ public static class ServiceCollectionExtension
         serviceCollection.AddSingleton<ContextAccessorUserIdHttpHeaderFactory>();
         serviceCollection.AddSingleton<ContextAccessorAuthorizationHttpHeaderFactory>();
         serviceCollection.AddSingleton<ContextTimeZoneOffsetHttpHeaderFactory>();
-
-        serviceCollection
-           .AddMapperConfiguration<SpravyAuthenticationProfile, SpravyEventBusProfile, SpravyScheduleProfile,
-                SpravyToDoProfile>();
 
         serviceCollection
            .AddGrpcService<GrpcAuthenticationService, AuthenticationService.AuthenticationServiceClient,

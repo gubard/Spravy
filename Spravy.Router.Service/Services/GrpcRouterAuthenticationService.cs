@@ -1,10 +1,8 @@
-using AutoMapper;
 using Grpc.Core;
 using Spravy.Authentication.Domain.Interfaces;
-using Spravy.Authentication.Domain.Models;
+using Spravy.Authentication.Domain.Mapper.Mappers;
 using Spravy.Authentication.Protos;
 using Spravy.Domain.Interfaces;
-using Spravy.Domain.Models;
 using Spravy.Service.Extensions;
 
 namespace Spravy.Router.Service.Services;
@@ -12,17 +10,11 @@ namespace Spravy.Router.Service.Services;
 public class GrpcRouterAuthenticationService : AuthenticationService.AuthenticationServiceBase
 {
     private readonly IAuthenticationService authenticationService;
-    private readonly IMapper mapper;
     private readonly ISerializer serializer;
 
-    public GrpcRouterAuthenticationService(
-        IAuthenticationService authenticationService,
-        IMapper mapper,
-        ISerializer serializer
-    )
+    public GrpcRouterAuthenticationService(IAuthenticationService authenticationService, ISerializer serializer)
     {
         this.authenticationService = authenticationService;
-        this.mapper = mapper;
         this.serializer = serializer;
     }
 
@@ -138,7 +130,7 @@ public class GrpcRouterAuthenticationService : AuthenticationService.Authenticat
 
     public override async Task<CreateUserReply> CreateUser(CreateUserRequest request, ServerCallContext context)
     {
-        var options = mapper.Map<CreateUserOptions>(request);
+        var options = request.ToCreateUserOptions();
         await authenticationService.CreateUserAsync(options, context.CancellationToken);
 
         return new();
@@ -146,17 +138,15 @@ public class GrpcRouterAuthenticationService : AuthenticationService.Authenticat
 
     public override Task<LoginReply> Login(LoginRequest request, ServerCallContext context)
     {
-        var user = mapper.Map<User>(request.User);
+        var user = request.User.ToUser();
 
         return authenticationService.LoginAsync(user, context.CancellationToken)
-           .HandleAsync(serializer, token => mapper.Map<LoginReply>(token));
+           .HandleAsync(serializer, token => token.ToLoginReply());
     }
 
-    public override async Task<RefreshTokenReply> RefreshToken(RefreshTokenRequest request, ServerCallContext context)
+    public override Task<RefreshTokenReply> RefreshToken(RefreshTokenRequest request, ServerCallContext context)
     {
-        var result = await authenticationService.RefreshTokenAsync(request.RefreshToken, context.CancellationToken);
-        var reply = mapper.Map<RefreshTokenReply>(result);
-
-        return reply;
+        return authenticationService.RefreshTokenAsync(request.RefreshToken, context.CancellationToken)
+           .HandleAsync(serializer, login => login.ToRefreshTokenReply());
     }
 }

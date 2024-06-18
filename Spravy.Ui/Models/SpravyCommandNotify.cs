@@ -101,7 +101,6 @@ public class SpravyCommandNotify : NotifyBase
         IUiApplicationService uiApplicationService,
         IToDoService toDoService,
         IDialogViewer dialogViewer,
-        IConverter converter,
         IErrorHandler errorHandler
     )
     {
@@ -111,8 +110,7 @@ public class SpravyCommandNotify : NotifyBase
         }
 
         _multiAddChildItem = new(MaterialIconKind.Plus, new("Command.AddChildToDoItem"),
-            SpravyCommand.CreateMultiAddChild(uiApplicationService, toDoService, dialogViewer, converter,
-                errorHandler));
+            SpravyCommand.CreateMultiAddChild(uiApplicationService, toDoService, dialogViewer, errorHandler));
 
         return _multiAddChildItem;
     }
@@ -139,7 +137,6 @@ public class SpravyCommandNotify : NotifyBase
         IUiApplicationService uiApplicationService,
         IToDoService toDoService,
         IDialogViewer dialogViewer,
-        IConverter converter,
         IErrorHandler errorHandler
     )
     {
@@ -149,8 +146,7 @@ public class SpravyCommandNotify : NotifyBase
         }
 
         _multiShowSettingItem = new(MaterialIconKind.Settings, new("Command.Settings"),
-            SpravyCommand.CreateMultiShowSetting(uiApplicationService, toDoService, dialogViewer, converter,
-                errorHandler));
+            SpravyCommand.CreateMultiShowSetting(uiApplicationService, toDoService, dialogViewer, errorHandler));
 
         return _multiShowSettingItem;
     }

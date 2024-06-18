@@ -32,8 +32,7 @@ public static class ServiceCollectionExtension
             var options = sp.GetConfigurationSection<TGrpcOptions>();
 
             return TGrpcService.CreateGrpcService(sp.GetRequiredService<IFactory<Uri, TGrpcClient>>(),
-                options.Host.ThrowIfNull().ToUri(), sp.GetRequiredService<IConverter>(),
-                sp.GetRequiredService<ISerializer>());
+                options.Host.ThrowIfNull().ToUri(), sp.GetRequiredService<ISerializer>());
         });
 
         return serviceCollection;
@@ -67,8 +66,8 @@ public static class ServiceCollectionExtension
             var options = sp.GetConfigurationSection<TGrpcOptions>();
 
             return TGrpcService.CreateGrpcService(sp.GetRequiredService<IFactory<Uri, TGrpcClient>>(),
-                options.Host.ThrowIfNull().ToUri(), sp.GetRequiredService<IConverter>(),
-                CreateMetadataFactory(options, sp), sp.GetRequiredService<ISerializer>());
+                options.Host.ThrowIfNull().ToUri(), CreateMetadataFactory(options, sp),
+                sp.GetRequiredService<ISerializer>());
         });
 
         return serviceCollection;

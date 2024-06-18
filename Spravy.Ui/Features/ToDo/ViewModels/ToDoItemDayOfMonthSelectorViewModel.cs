@@ -19,7 +19,7 @@ public class ToDoItemDayOfMonthSelectorViewModel : ViewModelBase, IApplySettings
     
     public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
     {
-        return toDoService.UpdateToDoItemMonthlyPeriodicityAsync(ToDoItemId, new(SelectedDays.Select(x => (byte)x)),
+        return toDoService.UpdateToDoItemMonthlyPeriodicityAsync(ToDoItemId, new(SelectedDays.Select(x => (byte)x).ToArray()),
             cancellationToken);
     }
     
@@ -28,7 +28,7 @@ public class ToDoItemDayOfMonthSelectorViewModel : ViewModelBase, IApplySettings
         return toDoService.GetMonthlyPeriodicityAsync(ToDoItemId, cancellationToken)
            .IfSuccessAsync(monthlyPeriodicity => this.InvokeUiBackgroundAsync(() =>
             {
-                SelectedDays.AddRange(monthlyPeriodicity.Days.Select(x => (int)x));
+                SelectedDays.AddRange(monthlyPeriodicity.Days.Select(x => (int)x).ToArray());
                 
                 return Result.Success;
             }), cancellationToken);

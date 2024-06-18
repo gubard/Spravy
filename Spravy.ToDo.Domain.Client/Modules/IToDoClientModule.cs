@@ -45,13 +45,12 @@ public interface IToDoClientModule
     static IToDoService ToDoServiceFactory(
         GrpcToDoServiceOptions options,
         IFactory<Uri, ToDoService.ToDoServiceClient> grpcClientFactory,
-        IConverter converter,
         ISerializer serializer,
         IMetadataFactory metadataFactory
     )
     {
         return GrpcClientFactoryHelper
            .CreateGrpcServiceAuth<GrpcToDoService, ToDoService.ToDoServiceClient, GrpcToDoServiceOptions>(
-                options, grpcClientFactory, converter, serializer, metadataFactory);
+                options, grpcClientFactory, serializer, metadataFactory);
     }
 }

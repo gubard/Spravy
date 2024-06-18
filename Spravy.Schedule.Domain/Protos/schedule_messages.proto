@@ -4,7 +4,6 @@ option csharp_namespace = "Spravy.Schedule.Protos";
 
 package spravy.schedule;
 
-import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 
 message RemoveTimerRequest {
@@ -31,17 +30,12 @@ message AddTimerReply {
 message AddTimerParametersGrpc {
     bytes event_id = 1;
     bytes content = 2;
-    DateTimeOffsetGrpc due_date_time = 3;
+    google.protobuf.Timestamp due_date_time = 3;
 }
 
 message TimerItemGrpc {
     bytes id = 1;
     bytes event_id = 2;
     bytes content = 3;
-    DateTimeOffsetGrpc due_date_time = 4;
-}
-
-message DateTimeOffsetGrpc {
-    google.protobuf.Timestamp date = 1;
-    google.protobuf.Duration offset = 2;
+    google.protobuf.Timestamp due_date_time = 4;
 }

@@ -78,6 +78,11 @@ public static class EnumerableExtension
     {
         return string.Join(separator, enumerable.OfType<object>());
     }
+    
+    public static string JoinString<T>(this ReadOnlyMemory<T> memory, string separator)
+    {
+        return string.Join(separator, memory);
+    }
 
     public static string JoinString<TEnumerable>(this TEnumerable enumerable) where TEnumerable : IEnumerable
     {
