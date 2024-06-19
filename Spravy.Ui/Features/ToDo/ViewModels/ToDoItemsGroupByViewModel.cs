@@ -6,13 +6,14 @@ public class ToDoItemsGroupByViewModel : ViewModelBase
         ToDoItemsGroupByNoneViewModel groupByNone,
         ToDoItemsGroupByStatusViewModel groupByStatus,
         ToDoItemsGroupByTypeViewModel groupByType,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         GroupByNone = groupByNone;
         GroupByStatus = groupByStatus;
         GroupByType = groupByType;
-        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler, taskProgressService);
         
         this.WhenAnyValue(x => x.IsMulti).Subscribe(x =>
         {

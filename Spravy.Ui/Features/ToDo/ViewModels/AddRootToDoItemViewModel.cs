@@ -8,13 +8,14 @@ public class AddRootToDoItemViewModel : NavigatableViewModelBase
         IObjectStorage objectStorage,
         ToDoItemContentViewModel toDoItemContent,
         EditDescriptionContentViewModel descriptionContent,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     ) : base(true)
     {
         this.objectStorage = objectStorage;
         ToDoItemContent = toDoItemContent;
         DescriptionContent = descriptionContent;
-        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler, taskProgressService);
     }
     
     public SpravyCommand InitializedCommand { get; }

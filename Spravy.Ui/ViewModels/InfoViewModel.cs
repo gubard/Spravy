@@ -2,9 +2,9 @@ namespace Spravy.Ui.ViewModels;
 
 public class InfoViewModel : ViewModelBase
 {
-    public InfoViewModel(IErrorHandler errorHandler)
+    public InfoViewModel(IErrorHandler errorHandler, ITaskProgressService taskProgressService)
     {
-        OkCommand = SpravyCommand.Create(OkAsync, errorHandler);
+        OkCommand = SpravyCommand.Create(OkAsync, errorHandler, taskProgressService);
     }
     
     [Reactive]

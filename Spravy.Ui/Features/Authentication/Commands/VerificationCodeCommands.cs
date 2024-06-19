@@ -10,17 +10,18 @@ public class VerificationCodeCommands
         IAuthenticationService authenticationService,
         IErrorHandler errorHandler,
         IDialogViewer dialogViewer,
-        INavigator navigator
+        INavigator navigator,
+        ITaskProgressService taskProgressService
     )
     {
         this.authenticationService = authenticationService;
         this.dialogViewer = dialogViewer;
         this.navigator = navigator;
-        Initialized = SpravyCommand.Create<VerificationCodeViewModel>(InitializedAsync, errorHandler);
-        SendNewVerificationCode = SpravyCommand.CreateSendNewVerificationCode(authenticationService, errorHandler);
-        UpdateEmail = SpravyCommand.Create<IVerificationEmail>(UpdateEmailAsync, errorHandler);
-        Back = SpravyCommand.CreateBack(navigator, errorHandler);
-        VerificationEmail = SpravyCommand.Create<IVerificationEmail>(VerificationEmailAsync, errorHandler);
+        Initialized = SpravyCommand.Create<VerificationCodeViewModel>(InitializedAsync, errorHandler, taskProgressService);
+        SendNewVerificationCode = SpravyCommand.CreateSendNewVerificationCode(authenticationService, errorHandler, taskProgressService);
+        UpdateEmail = SpravyCommand.Create<IVerificationEmail>(UpdateEmailAsync, errorHandler, taskProgressService);
+        Back = SpravyCommand.CreateBack(navigator, errorHandler, taskProgressService);
+        VerificationEmail = SpravyCommand.Create<IVerificationEmail>(VerificationEmailAsync, errorHandler, taskProgressService);
     }
     
     public SpravyCommand Initialized { get; }

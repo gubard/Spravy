@@ -10,13 +10,14 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
         IErrorHandler errorHandler,
         INavigator navigator,
         IObjectStorage objectStorage,
-        IAuthenticationService authenticationService
+        IAuthenticationService authenticationService,
+        ITaskProgressService taskProgressService
     ) : base(true)
     {
         this.navigator = navigator;
         this.objectStorage = objectStorage;
         this.authenticationService = authenticationService;
-        ForgotPasswordCommand = SpravyCommand.Create(ForgotPasswordAsync, errorHandler);
+        ForgotPasswordCommand = SpravyCommand.Create(ForgotPasswordAsync, errorHandler, taskProgressService);
     }
     
     public SpravyCommand ForgotPasswordCommand { get; }

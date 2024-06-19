@@ -3,11 +3,15 @@ namespace Spravy.Ui.Features.PasswordGenerator.ViewModels;
 public class PasswordItemSettingsViewModel : ViewModelBase
 {
     private readonly IPasswordService passwordService;
-    
-    public PasswordItemSettingsViewModel(IPasswordService passwordService, IErrorHandler errorHandler)
+
+    public PasswordItemSettingsViewModel(
+        IPasswordService passwordService,
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
+    )
     {
         this.passwordService = passwordService;
-        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler, taskProgressService);
     }
 
     public SpravyCommand InitializedCommand { get; }
@@ -56,7 +60,7 @@ public class PasswordItemSettingsViewModel : ViewModelBase
                 IsAvailableNumber = value.IsAvailableNumber;
                 IsAvailableSpecialSymbols = value.IsAvailableSpecialSymbols;
                 CustomAvailableCharacters = value.CustomAvailableCharacters;
-                
+
                 return Result.Success;
             }), cancellationToken);
     }

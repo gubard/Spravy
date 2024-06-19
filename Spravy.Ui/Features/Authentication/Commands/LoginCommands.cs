@@ -16,7 +16,8 @@ public class LoginCommands
         AccountNotify account,
         ITokenService tokenService,
         IObjectStorage objectStorage,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         this.authenticationService = authenticationService;
@@ -24,11 +25,11 @@ public class LoginCommands
         this.account = account;
         this.tokenService = tokenService;
         this.objectStorage = objectStorage;
-        Initialized = SpravyCommand.Create<LoginViewModel>(InitializedAsync, errorHandler);
-        Enter = SpravyCommand.Create<LoginView>(EnterAsync, errorHandler);
-        Login = SpravyCommand.Create<LoginViewModel>(LoginAsync, errorHandler);
-        ForgotPassword = SpravyCommand.CreateNavigateTo<ForgotPasswordViewModel>(navigator, errorHandler);
-        CreateUser = SpravyCommand.CreateNavigateTo<CreateUserViewModel>(navigator, errorHandler);
+        Initialized = SpravyCommand.Create<LoginViewModel>(InitializedAsync, errorHandler, taskProgressService);
+        Enter = SpravyCommand.Create<LoginView>(EnterAsync, errorHandler, taskProgressService);
+        Login = SpravyCommand.Create<LoginViewModel>(LoginAsync, errorHandler, taskProgressService);
+        ForgotPassword = SpravyCommand.CreateNavigateTo<ForgotPasswordViewModel>(navigator, errorHandler, taskProgressService);
+        CreateUser = SpravyCommand.CreateNavigateTo<CreateUserViewModel>(navigator, errorHandler, taskProgressService);
     }
     
     public SpravyCommand Initialized { get; }

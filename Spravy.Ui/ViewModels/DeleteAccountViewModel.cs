@@ -4,15 +4,20 @@ public class DeleteAccountViewModel : NavigatableViewModelBase
 {
     private readonly INavigator navigator;
     private readonly IAuthenticationService authenticationService;
-    
-    public DeleteAccountViewModel(IErrorHandler errorHandler, INavigator navigator, IAuthenticationService authenticationService) : base(true)
+
+    public DeleteAccountViewModel(
+        IErrorHandler errorHandler,
+        INavigator navigator,
+        IAuthenticationService authenticationService,
+        ITaskProgressService taskProgressService
+    ) : base(true)
     {
         this.navigator = navigator;
         this.authenticationService = authenticationService;
-        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
-        DeleteAccountCommand =  SpravyCommand.Create(DeleteAccountAsync, errorHandler);
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler, taskProgressService);
+        DeleteAccountCommand = SpravyCommand.Create(DeleteAccountAsync, errorHandler, taskProgressService);
     }
-    
+
     public SpravyCommand DeleteAccountCommand { get; }
     public SpravyCommand InitializedCommand { get; }
 
@@ -24,7 +29,7 @@ public class DeleteAccountViewModel : NavigatableViewModelBase
 
     [Reactive]
     public string Identifier { get; set; } = string.Empty;
-    
+
     public override string ViewId
     {
         get => TypeCache<DeleteAccountViewModel>.Type.Name;
@@ -77,7 +82,7 @@ public class DeleteAccountViewModel : NavigatableViewModelBase
                 cancellationToken),
             UserIdentifierType.Login => authenticationService.UpdateVerificationCodeByLoginAsync(Identifier,
                 cancellationToken),
-            _ => throw new ArgumentOutOfRangeException()
+            _ => throw new ArgumentOutOfRangeException(),
         };
     }
 }

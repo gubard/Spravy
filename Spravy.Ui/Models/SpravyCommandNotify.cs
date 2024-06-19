@@ -32,7 +32,8 @@ public class SpravyCommandNotify : NotifyBase
     public static SpravyCommandNotify CreateMultiCompleteItem(
         IUiApplicationService uiApplicationService,
         IToDoService toDoService,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         if (_multiCompleteItem is not null)
@@ -41,7 +42,7 @@ public class SpravyCommandNotify : NotifyBase
         }
 
         _multiCompleteItem = new(MaterialIconKind.Check, new("Command.Complete"),
-            SpravyCommand.CreateMultiComplete(uiApplicationService, toDoService, errorHandler));
+            SpravyCommand.CreateMultiComplete(uiApplicationService, toDoService, errorHandler, taskProgressService));
 
         return _multiCompleteItem;
     }
@@ -49,7 +50,8 @@ public class SpravyCommandNotify : NotifyBase
     public static SpravyCommandNotify CreateMultiAddToFavoriteItem(
         IUiApplicationService uiApplicationService,
         IToDoService toDoService,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         if (_multiAddToFavoriteItem is not null)
@@ -58,7 +60,8 @@ public class SpravyCommandNotify : NotifyBase
         }
 
         _multiAddToFavoriteItem = new(MaterialIconKind.StarOutline, new("Command.AddToFavorite"),
-            SpravyCommand.CreateMultiAddToFavorite(uiApplicationService, toDoService, errorHandler));
+            SpravyCommand.CreateMultiAddToFavorite(uiApplicationService, toDoService, errorHandler,
+                taskProgressService));
 
         return _multiAddToFavoriteItem;
     }
@@ -66,7 +69,8 @@ public class SpravyCommandNotify : NotifyBase
     public static SpravyCommandNotify CreateMultiRemoveFromFavoriteItem(
         IUiApplicationService uiApplicationService,
         IToDoService toDoService,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         if (_multiRemoveFromFavoriteItem is not null)
@@ -75,7 +79,8 @@ public class SpravyCommandNotify : NotifyBase
         }
 
         _multiRemoveFromFavoriteItem = new(MaterialIconKind.Star, new("Command.RemoveFromFavorite"),
-            SpravyCommand.CreateMultiRemoveFromFavorite(uiApplicationService, toDoService, errorHandler));
+            SpravyCommand.CreateMultiRemoveFromFavorite(uiApplicationService, toDoService, errorHandler,
+                taskProgressService));
 
         return _multiRemoveFromFavoriteItem;
     }
@@ -83,7 +88,8 @@ public class SpravyCommandNotify : NotifyBase
     public static SpravyCommandNotify CreateMultiOpenLinkItem(
         IUiApplicationService uiApplicationService,
         IOpenerLink openerLink,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         if (_multiOpenLinkItem is not null)
@@ -92,7 +98,7 @@ public class SpravyCommandNotify : NotifyBase
         }
 
         _multiOpenLinkItem = new(MaterialIconKind.Link, new("Command.OpenLink"),
-            SpravyCommand.CreateMultiOpenLink(uiApplicationService, openerLink, errorHandler));
+            SpravyCommand.CreateMultiOpenLink(uiApplicationService, openerLink, errorHandler, taskProgressService));
 
         return _multiOpenLinkItem;
     }
@@ -101,7 +107,8 @@ public class SpravyCommandNotify : NotifyBase
         IUiApplicationService uiApplicationService,
         IToDoService toDoService,
         IDialogViewer dialogViewer,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         if (_multiAddChildItem is not null)
@@ -110,7 +117,8 @@ public class SpravyCommandNotify : NotifyBase
         }
 
         _multiAddChildItem = new(MaterialIconKind.Plus, new("Command.AddChildToDoItem"),
-            SpravyCommand.CreateMultiAddChild(uiApplicationService, toDoService, dialogViewer, errorHandler));
+            SpravyCommand.CreateMultiAddChild(uiApplicationService, toDoService, dialogViewer, errorHandler,
+                taskProgressService));
 
         return _multiAddChildItem;
     }
@@ -119,7 +127,8 @@ public class SpravyCommandNotify : NotifyBase
         IUiApplicationService uiApplicationService,
         IToDoService toDoService,
         IDialogViewer dialogViewer,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         if (_multiDeleteItem is not null)
@@ -128,7 +137,8 @@ public class SpravyCommandNotify : NotifyBase
         }
 
         _multiDeleteItem = new(MaterialIconKind.Delete, new("Command.Delete"),
-            SpravyCommand.CreateMultiDelete(uiApplicationService, toDoService, dialogViewer, errorHandler));
+            SpravyCommand.CreateMultiDelete(uiApplicationService, toDoService, dialogViewer, errorHandler,
+                taskProgressService));
 
         return _multiDeleteItem;
     }
@@ -137,7 +147,8 @@ public class SpravyCommandNotify : NotifyBase
         IUiApplicationService uiApplicationService,
         IToDoService toDoService,
         IDialogViewer dialogViewer,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         if (_multiShowSettingItem is not null)
@@ -146,7 +157,8 @@ public class SpravyCommandNotify : NotifyBase
         }
 
         _multiShowSettingItem = new(MaterialIconKind.Settings, new("Command.Settings"),
-            SpravyCommand.CreateMultiShowSetting(uiApplicationService, toDoService, dialogViewer, errorHandler));
+            SpravyCommand.CreateMultiShowSetting(uiApplicationService, toDoService, dialogViewer, errorHandler,
+                taskProgressService));
 
         return _multiShowSettingItem;
     }
@@ -154,7 +166,8 @@ public class SpravyCommandNotify : NotifyBase
     public static SpravyCommandNotify CreateMultiOpenLeafItem(
         IUiApplicationService uiApplicationService,
         INavigator navigator,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         if (_multiOpenLeafItem is not null)
@@ -163,7 +176,7 @@ public class SpravyCommandNotify : NotifyBase
         }
 
         _multiOpenLeafItem = new(MaterialIconKind.Leaf, new("Command.OpenLeaf"),
-            SpravyCommand.CreateMultiOpenLeaf(uiApplicationService, navigator, errorHandler));
+            SpravyCommand.CreateMultiOpenLeaf(uiApplicationService, navigator, errorHandler, taskProgressService));
 
         return _multiOpenLeafItem;
     }
@@ -172,7 +185,8 @@ public class SpravyCommandNotify : NotifyBase
         IUiApplicationService uiApplicationService,
         IToDoService toDoService,
         IDialogViewer dialogViewer,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         if (_multiChangeParentItem is not null)
@@ -181,7 +195,8 @@ public class SpravyCommandNotify : NotifyBase
         }
 
         _multiChangeParentItem = new(MaterialIconKind.SwapHorizontal, new("Command.ChangeParent"),
-            SpravyCommand.CreateMultiChangeParent(uiApplicationService, toDoService, dialogViewer, errorHandler));
+            SpravyCommand.CreateMultiChangeParent(uiApplicationService, toDoService, dialogViewer, errorHandler,
+                taskProgressService));
 
         return _multiChangeParentItem;
     }
@@ -189,7 +204,8 @@ public class SpravyCommandNotify : NotifyBase
     public static SpravyCommandNotify CreateMultiMakeAsRootItem(
         IUiApplicationService uiApplicationService,
         IToDoService toDoService,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         if (_multiMakeAsRootItem is not null)
@@ -198,7 +214,7 @@ public class SpravyCommandNotify : NotifyBase
         }
 
         _multiMakeAsRootItem = new(MaterialIconKind.FamilyTree, new("Command.MakeAsRootToDoItem"),
-            SpravyCommand.CreateMultiMakeAsRoot(uiApplicationService, toDoService, errorHandler));
+            SpravyCommand.CreateMultiMakeAsRoot(uiApplicationService, toDoService, errorHandler, taskProgressService));
 
         return _multiMakeAsRootItem;
     }
@@ -208,7 +224,8 @@ public class SpravyCommandNotify : NotifyBase
         IToDoService toDoService,
         IDialogViewer dialogViewer,
         IClipboardService clipboardService,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         if (_multiCopyToClipboardItem is not null)
@@ -218,7 +235,7 @@ public class SpravyCommandNotify : NotifyBase
 
         _multiCopyToClipboardItem = new(MaterialIconKind.Clipboard, new("Command.CopyToClipboard"),
             SpravyCommand.CreateMultiCopyToClipboard(uiApplicationService, toDoService, dialogViewer, clipboardService,
-                errorHandler));
+                errorHandler, taskProgressService));
 
         return _multiCopyToClipboardItem;
     }
@@ -227,7 +244,8 @@ public class SpravyCommandNotify : NotifyBase
         IUiApplicationService uiApplicationService,
         IToDoService toDoService,
         IDialogViewer dialogViewer,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         if (_multiRandomizeChildrenOrderItem is not null)
@@ -237,7 +255,7 @@ public class SpravyCommandNotify : NotifyBase
 
         _multiRandomizeChildrenOrderItem = new(MaterialIconKind.DiceSix, new("Command.RandomizeChildrenOrder"),
             SpravyCommand.CreateMultiRandomizeChildrenOrder(uiApplicationService, toDoService, dialogViewer,
-                errorHandler));
+                errorHandler, taskProgressService));
 
         return _multiRandomizeChildrenOrderItem;
     }
@@ -246,7 +264,8 @@ public class SpravyCommandNotify : NotifyBase
         IUiApplicationService uiApplicationService,
         IToDoService toDoService,
         IDialogViewer dialogViewer,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         if (_multiChangeOrderItem is not null)
@@ -255,7 +274,8 @@ public class SpravyCommandNotify : NotifyBase
         }
 
         _multiChangeOrderItem = new(MaterialIconKind.ReorderHorizontal, new("Command.Reorder"),
-            SpravyCommand.CreateMultiChangeOrder(uiApplicationService, toDoService, dialogViewer, errorHandler));
+            SpravyCommand.CreateMultiChangeOrder(uiApplicationService, toDoService, dialogViewer, errorHandler,
+                taskProgressService));
 
         return _multiChangeOrderItem;
     }
@@ -264,7 +284,8 @@ public class SpravyCommandNotify : NotifyBase
         IUiApplicationService uiApplicationService,
         IToDoService toDoService,
         IDialogViewer dialogViewer,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         if (_multiResetItem is not null)
@@ -273,7 +294,8 @@ public class SpravyCommandNotify : NotifyBase
         }
 
         _multiResetItem = new(MaterialIconKind.Refresh, new("Command.Reset"),
-            SpravyCommand.CreateMultiReset(uiApplicationService, toDoService, dialogViewer, errorHandler));
+            SpravyCommand.CreateMultiReset(uiApplicationService, toDoService, dialogViewer, errorHandler,
+                taskProgressService));
 
         return _multiResetItem;
     }
@@ -282,7 +304,8 @@ public class SpravyCommandNotify : NotifyBase
         IUiApplicationService uiApplicationService,
         IToDoService toDoService,
         IDialogViewer dialogViewer,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         if (_multiCloneItem is not null)
@@ -291,7 +314,8 @@ public class SpravyCommandNotify : NotifyBase
         }
 
         _multiCloneItem = new(MaterialIconKind.Copyleft, new("Command.Clone"),
-            SpravyCommand.CreateMultiClone(uiApplicationService, toDoService, dialogViewer, errorHandler));
+            SpravyCommand.CreateMultiClone(uiApplicationService, toDoService, dialogViewer, errorHandler,
+                taskProgressService));
 
         return _multiCloneItem;
     }

@@ -9,17 +9,18 @@ public class PasswordItemNotify : NotifyBase, IPasswordItem, IIdProperty
         IUiApplicationService uiApplicationService,
         IErrorHandler errorHandler,
         IClipboardService clipboardService,
-        ISpravyNotificationManager spravyNotificationManager
+        ISpravyNotificationManager spravyNotificationManager,
+        ITaskProgressService taskProgressService
     )
     {
         Name = passwordItem.Name;
         Id = passwordItem.Id;
         
         DeletePasswordItem = SpravyCommand.CreateDeletePasswordItem(Id, passwordService, dialogViewer,
-            uiApplicationService, errorHandler);
+            uiApplicationService, errorHandler, taskProgressService);
         
         GeneratePassword = SpravyCommand.CreateGeneratePassword(this, passwordService, clipboardService,
-            spravyNotificationManager, errorHandler);
+            spravyNotificationManager, errorHandler, taskProgressService);
     }
     
     [Reactive]

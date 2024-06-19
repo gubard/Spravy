@@ -6,12 +6,12 @@ public class ToDoItemSelectorViewModel : ViewModelBase
     private readonly IToDoService toDoService;
     private readonly IToDoCache toDoCache;
     
-    public ToDoItemSelectorViewModel(IToDoService toDoService, IToDoCache toDoCache, IErrorHandler errorHandler)
+    public ToDoItemSelectorViewModel(IToDoService toDoService, IToDoCache toDoCache, IErrorHandler errorHandler, ITaskProgressService taskProgressService)
     {
         this.toDoService = toDoService;
         this.toDoCache = toDoCache;
-        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
-        SearchCommand = SpravyCommand.Create(SearchAsync, errorHandler);
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler, taskProgressService);
+        SearchCommand = SpravyCommand.Create(SearchAsync, errorHandler, taskProgressService);
     }
     
     public AvaloniaList<ToDoItemEntityNotify> Roots { get; } = new();

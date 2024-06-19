@@ -9,32 +9,44 @@ public class RootToDoItemsCommands
         IDialogViewer dialogViewer,
         IClipboardService clipboardService,
         IOpenerLink openerLink,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         Commands = new[]
         {
-            SpravyCommandNotify.CreateMultiCloneItem(uiApplicationService, toDoService, dialogViewer, errorHandler),
-            SpravyCommandNotify.CreateMultiCompleteItem(uiApplicationService, toDoService, errorHandler),
-            SpravyCommandNotify.CreateMultiDeleteItem(uiApplicationService, toDoService, dialogViewer, errorHandler),
-            SpravyCommandNotify.CreateMultiResetItem(uiApplicationService, toDoService, dialogViewer, errorHandler),
-            SpravyCommandNotify.CreateMultiAddChildItem(uiApplicationService, toDoService, dialogViewer, errorHandler),
-            SpravyCommandNotify.CreateMultiCloneItem(uiApplicationService, toDoService, dialogViewer, errorHandler),
+            SpravyCommandNotify.CreateMultiCloneItem(uiApplicationService, toDoService, dialogViewer, errorHandler,
+                taskProgressService),
+            SpravyCommandNotify.CreateMultiCompleteItem(uiApplicationService, toDoService, errorHandler,
+                taskProgressService),
+            SpravyCommandNotify.CreateMultiDeleteItem(uiApplicationService, toDoService, dialogViewer, errorHandler,
+                taskProgressService),
+            SpravyCommandNotify.CreateMultiResetItem(uiApplicationService, toDoService, dialogViewer, errorHandler,
+                taskProgressService),
+            SpravyCommandNotify.CreateMultiAddChildItem(uiApplicationService, toDoService, dialogViewer, errorHandler,
+                taskProgressService),
+            SpravyCommandNotify.CreateMultiCloneItem(uiApplicationService, toDoService, dialogViewer, errorHandler,
+                taskProgressService),
             SpravyCommandNotify.CreateMultiChangeOrderItem(uiApplicationService, toDoService, dialogViewer,
-                errorHandler),
+                errorHandler, taskProgressService),
             SpravyCommandNotify.CreateMultiChangeParentItem(uiApplicationService, toDoService, dialogViewer,
-                errorHandler),
-            SpravyCommandNotify.CreateMultiOpenLeafItem(uiApplicationService, navigator, errorHandler),
-            SpravyCommandNotify.CreateMultiOpenLinkItem(uiApplicationService, openerLink, errorHandler),
-            SpravyCommandNotify.CreateMultiShowSettingItem(uiApplicationService, toDoService, dialogViewer, errorHandler),
-            SpravyCommandNotify.CreateMultiAddToFavoriteItem(uiApplicationService, toDoService, errorHandler),
+                errorHandler, taskProgressService),
+            SpravyCommandNotify.CreateMultiOpenLeafItem(uiApplicationService, navigator, errorHandler,
+                taskProgressService),
+            SpravyCommandNotify.CreateMultiOpenLinkItem(uiApplicationService, openerLink, errorHandler,
+                taskProgressService),
+            SpravyCommandNotify.CreateMultiShowSettingItem(uiApplicationService, toDoService, dialogViewer,
+                errorHandler, taskProgressService),
+            SpravyCommandNotify.CreateMultiAddToFavoriteItem(uiApplicationService, toDoService, errorHandler,
+                taskProgressService),
             SpravyCommandNotify.CreateMultiCopyToClipboardItem(uiApplicationService, toDoService, dialogViewer,
-                clipboardService, errorHandler),
-            SpravyCommandNotify.CreateMultiRemoveFromFavoriteItem(uiApplicationService, toDoService, errorHandler),
+                clipboardService, errorHandler, taskProgressService),
+            SpravyCommandNotify.CreateMultiRemoveFromFavoriteItem(uiApplicationService, toDoService, errorHandler,
+                taskProgressService),
             SpravyCommandNotify.CreateMultiRandomizeChildrenOrderItem(uiApplicationService, toDoService, dialogViewer,
-                errorHandler),
+                errorHandler, taskProgressService),
         };
     }
-    
+
     public ReadOnlyMemory<SpravyCommandNotify> Commands { get; }
 }

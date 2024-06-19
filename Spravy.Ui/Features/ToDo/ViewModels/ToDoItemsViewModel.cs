@@ -2,7 +2,7 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ToDoItemsViewModel : ViewModelBase
 {
-    public ToDoItemsViewModel(IErrorHandler errorHandler)
+    public ToDoItemsViewModel(IErrorHandler errorHandler, ITaskProgressService taskProgressService)
     {
         Items = new();
         
@@ -24,7 +24,7 @@ public class ToDoItemsViewModel : ViewModelBase
             }
             
             return Result.Success;
-        }), errorHandler);
+        }), errorHandler, taskProgressService);
     }
     
     public SpravyCommand SwitchAllSelectionCommand { get; }

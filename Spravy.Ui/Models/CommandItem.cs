@@ -44,10 +44,11 @@ public class CommandItem
     public static CommandItem Create(
         MaterialIconKind icon,
         string name,
+        IErrorHandler errorHandler,
         Func<CancellationToken, ConfiguredValueTaskAwaitable<Result>> func
     )
     {
-        var work = TaskWork.Create(func);
+        var work = TaskWork.Create(errorHandler, func);
         var command = ReactiveCommand.CreateFromTask(() => work.RunAsync());
 
         return new(icon, command, name, work, command.ThrownExceptions);
@@ -56,10 +57,11 @@ public class CommandItem
     public static CommandItem Create<TParam>(
         MaterialIconKind icon,
         string name,
+        IErrorHandler errorHandler,
         Func<TParam, CancellationToken, ConfiguredValueTaskAwaitable<Result>> func
     )
     {
-        var work = TaskWork.Create(func);
+        var work = TaskWork.Create(errorHandler, func);
         var command = ReactiveCommand.CreateFromTask<TParam>(work.RunAsync<TParam>);
 
         return new(icon, command, name, work, command.ThrownExceptions);
@@ -69,10 +71,11 @@ public class CommandItem
         MaterialIconKind icon,
         string name,
         object parameter,
+        IErrorHandler errorHandler,
         Func<CancellationToken, ConfiguredValueTaskAwaitable<Result>> func
     )
     {
-        var work = TaskWork.Create(func);
+        var work = TaskWork.Create(errorHandler, func);
         var command = ReactiveCommand.CreateFromTask(() => work.RunAsync());
 
         return new(icon, command, name, parameter, work, command.ThrownExceptions);
@@ -82,10 +85,11 @@ public class CommandItem
         MaterialIconKind icon,
         string name,
         object parameter,
+        IErrorHandler errorHandler,
         Func<TParam, CancellationToken, ConfiguredValueTaskAwaitable<Result>> func
     )
     {
-        var work = TaskWork.Create(func);
+        var work = TaskWork.Create(errorHandler, func);
         var command = ReactiveCommand.CreateFromTask<TParam>(work.RunAsync<TParam>);
 
         return new(icon, command, name, parameter, work, command.ThrownExceptions);

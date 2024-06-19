@@ -9,14 +9,16 @@ public class PasswordItemCache : IPasswordItemCache
     private readonly IClipboardService clipboardService;
     private readonly ISpravyNotificationManager spravyNotificationManager;
     private readonly IErrorHandler errorHandler;
-    
+    private readonly ITaskProgressService taskProgressService;
+
     public PasswordItemCache(
         IDialogViewer dialogViewer,
         IUiApplicationService uiApplicationService,
         IPasswordService passwordService,
         IClipboardService clipboardService,
         ISpravyNotificationManager spravyNotificationManager,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         cache = new();
@@ -26,6 +28,7 @@ public class PasswordItemCache : IPasswordItemCache
         this.clipboardService = clipboardService;
         this.spravyNotificationManager = spravyNotificationManager;
         this.errorHandler = errorHandler;
+        this.taskProgressService = taskProgressService;
     }
     
     public PasswordItemNotify GetPasswordItem(Guid id)
@@ -38,7 +41,7 @@ public class PasswordItemCache : IPasswordItemCache
         var result = new PasswordItemNotify(
             new(id, "Loading...", string.Empty, 512, string.Empty, true, true, true, true, string.Empty),
             passwordService, dialogViewer, uiApplicationService, errorHandler, clipboardService,
-            spravyNotificationManager);
+            spravyNotificationManager, taskProgressService);
         
         cache.Add(id, result);
         

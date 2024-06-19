@@ -4,10 +4,10 @@ public class ResetToDoItemViewModel : NavigatableViewModelBase
 {
     private readonly IObjectStorage objectStorage;
     
-    public ResetToDoItemViewModel(IObjectStorage objectStorage, IErrorHandler errorHandler) : base(true)
+    public ResetToDoItemViewModel(IObjectStorage objectStorage, IErrorHandler errorHandler, ITaskProgressService taskProgressService) : base(true)
     {
         this.objectStorage = objectStorage;
-        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler, taskProgressService);
     }
 
     public SpravyCommand InitializedCommand { get; }

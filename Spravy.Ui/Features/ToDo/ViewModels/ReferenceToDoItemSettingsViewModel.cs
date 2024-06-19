@@ -7,12 +7,13 @@ public class ReferenceToDoItemSettingsViewModel : ViewModelBase, IApplySettings
     public ReferenceToDoItemSettingsViewModel(
         ToDoItemSelectorViewModel toDoItemSelector,
         IToDoService toDoService,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         ToDoItemSelector = toDoItemSelector;
         this.toDoService = toDoService;
-        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler, taskProgressService);
     }
     
     public SpravyCommand InitializedCommand { get; }

@@ -3,18 +3,22 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 public class ToDoItemDayOfYearSelectorViewModel : ViewModelBase, IApplySettings
 {
     private readonly IToDoService toDoService;
-    
-    public ToDoItemDayOfYearSelectorViewModel(IToDoService toDoService, IErrorHandler errorHandler)
+
+    public ToDoItemDayOfYearSelectorViewModel(
+        IToDoService toDoService,
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
+    )
     {
         this.toDoService = toDoService;
-        
+
         Items = new(Enumerable.Range(1, 12)
            .Select(x => new DayOfYearSelectItem
             {
                 Month = (byte)x,
             }));
 
-        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler, taskProgressService);
     }
 
     public AvaloniaList<DayOfYearSelectItem> Items { get; }
@@ -47,11 +51,12 @@ public class ToDoItemDayOfYearSelectorViewModel : ViewModelBase, IApplySettings
                            .Contains(day.Day))
                         {
                             var d = day;
+
                             items.Add(() => this.InvokeUiBackgroundAsync(() =>
                             {
-                                 d.IsSelected = true;
-                                 
-                                 return Result.Success;
+                                d.IsSelected = true;
+
+                                return Result.Success;
                             }));
                         }
                     }

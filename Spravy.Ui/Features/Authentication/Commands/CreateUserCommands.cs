@@ -10,13 +10,14 @@ public class CreateUserCommands
     public CreateUserCommands(
         IAuthenticationService authenticationService,
         INavigator navigator,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         this.authenticationService = authenticationService;
         this.navigator = navigator;
-        EnterCommand = SpravyCommand.Create<CreateUserView>(EnterAsync, errorHandler);
-        CreateUserCommand = SpravyCommand.Create<CreateUserViewModel>(CreateUserAsync, errorHandler);
+        EnterCommand = SpravyCommand.Create<CreateUserView>(EnterAsync, errorHandler, taskProgressService);
+        CreateUserCommand = SpravyCommand.Create<CreateUserViewModel>(CreateUserAsync, errorHandler, taskProgressService);
     }
 
     public SpravyCommand EnterCommand { get; }

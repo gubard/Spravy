@@ -489,7 +489,7 @@ public static class CommandStorage
         string name
     )
     {
-        var result = CommandItem.Create(icon, name, func);
+        var result = CommandItem.Create(icon, name, errorHandler, func);
         result.ThrownExceptions.Subscribe(OnNextError);
         
         return result;
@@ -501,7 +501,7 @@ public static class CommandStorage
         string name
     )
     {
-        var result = CommandItem.Create(icon, name, func);
+        var result = CommandItem.Create(icon, name, errorHandler, func);
         result.ThrownExceptions.Subscribe(OnNextError);
         
         return result;

@@ -2,7 +2,7 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class DeleteToDoItemViewModel : ViewModelBase
 {
-    public DeleteToDoItemViewModel(IToDoService toDoService, IToDoCache toDoCache, IErrorHandler errorHandler)
+    public DeleteToDoItemViewModel(IToDoService toDoService, IToDoCache toDoCache, IErrorHandler errorHandler, ITaskProgressService taskProgressService)
     {
         DeleteItems = new();
         
@@ -64,7 +64,7 @@ public class DeleteToDoItemViewModel : ViewModelBase
                         });
                     }, cancellationToken);
             });
-        }, errorHandler);
+        }, errorHandler, taskProgressService);
     }
     
     public SpravyCommand InitializedCommand { get; }

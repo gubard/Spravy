@@ -8,13 +8,14 @@ public class ForgotPasswordViewModel : NavigatableViewModelBase, IVerificationEm
     public ForgotPasswordViewModel(
         IAuthenticationService authenticationService,
         IErrorHandler errorHandler,
-        INavigator navigator
+        INavigator navigator,
+        ITaskProgressService taskProgressService
     ) : base(true)
     {
         this.authenticationService = authenticationService;
         this.navigator = navigator;
-        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
-        ForgotPasswordCommand = SpravyCommand.Create(ForgotPasswordAsync, errorHandler);
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler, taskProgressService);
+        ForgotPasswordCommand = SpravyCommand.Create(ForgotPasswordAsync, errorHandler, taskProgressService);
     }
     
     public SpravyCommand InitializedCommand { get; }

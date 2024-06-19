@@ -46,7 +46,8 @@ public class SpravyCommand
         IUiApplicationService uiApplicationService,
         IToDoService toDoService,
         IDialogViewer dialogViewer,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         if (_multiClone is not null)
@@ -87,7 +88,7 @@ public class SpravyCommand
                        .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                             cancellationToken), ActionHelper<ToDoItemSelectorViewModel>.Empty, cancellationToken);
             }, _ => dialogViewer.CloseContentDialogAsync(cancellationToken), ActionHelper<ResetToDoItemViewModel>.Empty,
-            cancellationToken), errorHandler);
+            cancellationToken), errorHandler, taskProgressService);
 
         return _multiClone;
     }
@@ -96,7 +97,8 @@ public class SpravyCommand
         IUiApplicationService uiApplicationService,
         IToDoService toDoService,
         IDialogViewer dialogViewer,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         if (_multiReset is not null)
@@ -138,7 +140,7 @@ public class SpravyCommand
                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                         cancellationToken);
             }, _ => dialogViewer.CloseContentDialogAsync(cancellationToken), ActionHelper<ResetToDoItemViewModel>.Empty,
-            cancellationToken), errorHandler);
+            cancellationToken), errorHandler, taskProgressService);
 
         return _multiReset;
     }
@@ -147,7 +149,8 @@ public class SpravyCommand
         IUiApplicationService uiApplicationService,
         IToDoService toDoService,
         IDialogViewer dialogViewer,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         if (_multiChangeOrder is not null)
@@ -204,7 +207,7 @@ public class SpravyCommand
                        .Select(x => x.Id)
                        .ToArray();
                 }, cancellationToken);
-        }, errorHandler);
+        }, errorHandler, taskProgressService);
 
         return _multiChangeOrder;
     }
@@ -213,7 +216,8 @@ public class SpravyCommand
         IUiApplicationService uiApplicationService,
         IToDoService toDoService,
         IDialogViewer dialogViewer,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         if (_multiRandomizeChildrenOrder is not null)
@@ -256,7 +260,7 @@ public class SpravyCommand
                 {
                     viewModel.RandomizeChildrenOrderIds = selected;
                 }, cancellationToken);
-        }, errorHandler);
+        }, errorHandler, taskProgressService);
 
         return _multiRandomizeChildrenOrder;
     }
@@ -266,7 +270,8 @@ public class SpravyCommand
         IToDoService toDoService,
         IDialogViewer dialogViewer,
         IClipboardService clipboardService,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         if (_multiCopyToClipboard is not null)
@@ -313,7 +318,7 @@ public class SpravyCommand
                             cancellationToken);
                 }, _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
                 ActionHelper<ToDoItemToStringSettingsViewModel>.Empty, cancellationToken);
-        }, errorHandler);
+        }, errorHandler, taskProgressService);
 
         return _multiCopyToClipboard;
     }
@@ -321,7 +326,8 @@ public class SpravyCommand
     public static SpravyCommand CreateMultiMakeAsRoot(
         IUiApplicationService uiApplicationService,
         IToDoService toDoService,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         if (_multiMakeAsRoot is not null)
@@ -358,7 +364,7 @@ public class SpravyCommand
                .IfSuccessForEachAsync(i => toDoService.ToDoItemToRootAsync(i, cancellationToken), cancellationToken)
                .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                     cancellationToken);
-        }, errorHandler);
+        }, errorHandler, taskProgressService);
 
         return _multiMakeAsRoot;
     }
@@ -367,7 +373,8 @@ public class SpravyCommand
         IUiApplicationService uiApplicationService,
         IToDoService toDoService,
         IDialogViewer dialogViewer,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         if (_multiChangeParent is not null)
@@ -412,7 +419,7 @@ public class SpravyCommand
                 {
                     viewModel.IgnoreIds = selected;
                 }, cancellationToken);
-        }, errorHandler);
+        }, errorHandler, taskProgressService);
 
         return _multiChangeParent;
     }
@@ -420,7 +427,8 @@ public class SpravyCommand
     public static SpravyCommand CreateMultiOpenLeaf(
         IUiApplicationService uiApplicationService,
         INavigator navigator,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         if (_multiOpenLeaf is not null)
@@ -457,7 +465,7 @@ public class SpravyCommand
             {
                 vm.LeafIds = selected;
             }, cancellationToken);
-        }, errorHandler);
+        }, errorHandler, taskProgressService);
 
         return _multiOpenLeaf;
     }
@@ -466,7 +474,8 @@ public class SpravyCommand
         IUiApplicationService uiApplicationService,
         IToDoService toDoService,
         IDialogViewer dialogViewer,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         if (_multiShowSetting is not null)
@@ -533,7 +542,7 @@ public class SpravyCommand
                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                         cancellationToken), _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
                 ActionHelper<MultiToDoItemSettingViewModel>.Empty, cancellationToken);
-        }, errorHandler);
+        }, errorHandler, taskProgressService);
 
         return _multiShowSetting;
     }
@@ -542,7 +551,8 @@ public class SpravyCommand
         IUiApplicationService uiApplicationService,
         IToDoService toDoService,
         IDialogViewer dialogViewer,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         if (_multiDelete is not null)
@@ -585,7 +595,7 @@ public class SpravyCommand
                 {
                     vm.DeleteItems.Update(selected);
                 }, cancellationToken);
-        }, errorHandler);
+        }, errorHandler, taskProgressService);
 
         return _multiDelete;
     }
@@ -594,7 +604,8 @@ public class SpravyCommand
         IUiApplicationService uiApplicationService,
         IToDoService toDoService,
         IDialogViewer dialogViewer,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         if (_multiAddChild is not null)
@@ -638,7 +649,7 @@ public class SpravyCommand
                                         cancellationToken), cancellationToken), cancellationToken),
                 _ => dialogViewer.CloseContentDialogAsync(cancellationToken), ActionHelper<AddToDoItemViewModel>.Empty,
                 cancellationToken);
-        }, errorHandler);
+        }, errorHandler, taskProgressService);
 
         return _multiAddChild;
     }
@@ -646,7 +657,8 @@ public class SpravyCommand
     public static SpravyCommand CreateMultiOpenLink(
         IUiApplicationService uiApplicationService,
         IOpenerLink openerLink,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         if (_multiRemoveFromFavorite is not null)
@@ -684,7 +696,7 @@ public class SpravyCommand
                        .IfNotNull(nameof(i.Link))
                        .IfSuccessAsync(link => openerLink.OpenLinkAsync(link.ToUri(), cancellationToken),
                             cancellationToken), cancellationToken);
-        }, errorHandler);
+        }, errorHandler, taskProgressService);
 
         return _multiRemoveFromFavorite;
     }
@@ -692,7 +704,8 @@ public class SpravyCommand
     public static SpravyCommand CreateMultiRemoveFromFavorite(
         IUiApplicationService uiApplicationService,
         IToDoService toDoService,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         if (_multiRemoveFromFavorite is not null)
@@ -730,7 +743,7 @@ public class SpravyCommand
                     cancellationToken)
                .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                     cancellationToken);
-        }, errorHandler);
+        }, errorHandler, taskProgressService);
 
         return _multiRemoveFromFavorite;
     }
@@ -738,7 +751,8 @@ public class SpravyCommand
     public static SpravyCommand CreateMultiAddToFavorite(
         IUiApplicationService uiApplicationService,
         IToDoService toDoService,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         if (_multiAddToFavorite is not null)
@@ -776,7 +790,7 @@ public class SpravyCommand
                     cancellationToken)
                .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                     cancellationToken);
-        }, errorHandler);
+        }, errorHandler, taskProgressService);
 
         return _multiAddToFavorite;
     }
@@ -784,7 +798,8 @@ public class SpravyCommand
     public static SpravyCommand CreateMultiComplete(
         IUiApplicationService uiApplicationService,
         IToDoService toDoService,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         if (_multiComplete is not null)
@@ -834,7 +849,7 @@ public class SpravyCommand
                 }, cancellationToken)
                .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                     cancellationToken);
-        }, errorHandler);
+        }, errorHandler, taskProgressService);
 
         return _multiComplete;
     }
@@ -842,8 +857,8 @@ public class SpravyCommand
     public static SpravyCommand CreateNavigateToCurrentToDoItem(
         IToDoService toDoService,
         INavigator navigator,
-        ITaskProgressService taskProgressService,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler, 
+        ITaskProgressService taskProgressService
     )
     {
         if (_navigateToCurrentToDoItem is not null)
@@ -853,7 +868,7 @@ public class SpravyCommand
 
         ConfiguredValueTaskAwaitable<Result> NavigateToCurrentToDoItemAsync(CancellationToken cancellationToken)
         {
-            return taskProgressService.RunProgressAsync(() => toDoService
+            return toDoService
                .GetCurrentActiveToDoItemAsync(cancellationToken)
                .IfSuccessAsync(activeToDoItem =>
                 {
@@ -864,10 +879,10 @@ public class SpravyCommand
                     }
 
                     return navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken);
-                }, cancellationToken), cancellationToken);
+                }, cancellationToken);
         }
 
-        _navigateToCurrentToDoItem = Create(NavigateToCurrentToDoItemAsync, errorHandler);
+        _navigateToCurrentToDoItem = Create(NavigateToCurrentToDoItemAsync, errorHandler, taskProgressService);
 
         return _navigateToCurrentToDoItem;
     }
@@ -877,7 +892,8 @@ public class SpravyCommand
         IPasswordService passwordService,
         IClipboardService clipboard,
         ISpravyNotificationManager spravyNotificationManager,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler, 
+        ITaskProgressService taskProgressService
     )
     {
         if (generatePasswordCache.TryGetValue(passwordItem.Id, out var value))
@@ -895,7 +911,7 @@ public class SpravyCommand
                         cancellationToken), cancellationToken);
         }
 
-        var result = Create(GeneratePasswordAsync, errorHandler);
+        var result = Create(GeneratePasswordAsync, errorHandler, taskProgressService);
         generatePasswordCache.Add(passwordItem.Id, result);
 
         return result;
@@ -906,7 +922,8 @@ public class SpravyCommand
         IPasswordService passwordService,
         IDialogViewer dialogViewer,
         IUiApplicationService uiApplicationService,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler, 
+        ITaskProgressService taskProgressService
     )
     {
         if (deletePasswordItemCache.TryGetValue(id, out var value))
@@ -925,13 +942,13 @@ public class SpravyCommand
                 view => view.PasswordItemId = id, cancellationToken);
         }
 
-        var result = Create(DeletePasswordItemAsync, errorHandler);
+        var result = Create(DeletePasswordItemAsync, errorHandler, taskProgressService);
         deletePasswordItemCache.Add(id, result);
 
         return result;
     }
 
-    public static SpravyCommand CreateBack(INavigator navigator, IErrorHandler errorHandler)
+    public static SpravyCommand CreateBack(INavigator navigator, IErrorHandler errorHandler, ITaskProgressService taskProgressService)
     {
         if (_back is not null)
         {
@@ -945,14 +962,15 @@ public class SpravyCommand
             return new(result.Errors);
         }
 
-        _back = Create(c => BackCore(c).ConfigureAwait(false), errorHandler);
+        _back = Create(c => BackCore(c).ConfigureAwait(false), errorHandler, taskProgressService);
 
         return _back;
     }
 
     public static SpravyCommand CreateSendNewVerificationCode(
         IAuthenticationService authenticationService,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler, 
+        ITaskProgressService taskProgressService
     )
     {
         if (_sendNewVerificationCode is not null)
@@ -980,12 +998,12 @@ public class SpravyCommand
             }
         }
 
-        _sendNewVerificationCode = Create<IVerificationEmail>(SendNewVerificationCodeAsync, errorHandler);
+        _sendNewVerificationCode = Create<IVerificationEmail>(SendNewVerificationCodeAsync, errorHandler, taskProgressService);
 
         return _sendNewVerificationCode;
     }
 
-    public static SpravyCommand CreateNavigateTo<TViewModel>(INavigator navigator, IErrorHandler errorHandler)
+    public static SpravyCommand CreateNavigateTo<TViewModel>(INavigator navigator, IErrorHandler errorHandler, ITaskProgressService taskProgressService)
         where TViewModel : INavigatable
     {
         if (createNavigateToCache.TryGetValue(typeof(TViewModel), out var command))
@@ -993,7 +1011,7 @@ public class SpravyCommand
             return command;
         }
 
-        var result = Create(navigator.NavigateToAsync<TViewModel>, errorHandler);
+        var result = Create(navigator.NavigateToAsync<TViewModel>, errorHandler, taskProgressService);
         createNavigateToCache.Add(typeof(TViewModel), result);
 
         return result;
@@ -1001,7 +1019,8 @@ public class SpravyCommand
 
     public static SpravyCommand Create(
         Func<CancellationToken, ConfiguredValueTaskAwaitable<Result>> func,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         async void OnNextError(Exception exception)
@@ -1009,7 +1028,7 @@ public class SpravyCommand
             await errorHandler.ExceptionHandleAsync(exception, CancellationToken.None);
         }
 
-        var work = TaskWork.Create(func);
+        var work = TaskWork.Create(errorHandler, ct => taskProgressService.RunProgressAsync(func, ct));
         var command = ReactiveCommand.CreateFromTask(() => work.RunAsync());
         command.ThrownExceptions.Subscribe(OnNextError);
 
@@ -1018,7 +1037,8 @@ public class SpravyCommand
 
     public static SpravyCommand Create<TParam>(
         Func<TParam, CancellationToken, ConfiguredValueTaskAwaitable<Result>> func,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         async void OnNextError(Exception exception)
@@ -1026,7 +1046,7 @@ public class SpravyCommand
             await errorHandler.ExceptionHandleAsync(exception, CancellationToken.None);
         }
 
-        var work = TaskWork.Create(func);
+        var work = TaskWork.Create<TParam>(errorHandler, (param, ct) => taskProgressService.RunProgressAsync(func, param, ct));
         var command = ReactiveCommand.CreateFromTask<TParam>(work.RunAsync<TParam>);
         command.ThrownExceptions.Subscribe(OnNextError);
 

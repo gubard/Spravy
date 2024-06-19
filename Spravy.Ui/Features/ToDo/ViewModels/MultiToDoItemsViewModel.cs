@@ -5,14 +5,15 @@ public class MultiToDoItemsViewModel : ViewModelBase
     public MultiToDoItemsViewModel(
         ToDoItemsViewModel favorite,
         ToDoItemsGroupByViewModel toDoItems,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         GroupBy = GroupBy.ByStatus;
         favorite.Header = new("MultiToDoItemsView.Favorite");
         Favorite = favorite;
         ToDoItems = toDoItems;
-        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler, taskProgressService);
         
         this.WhenAnyValue(x => x.IsMulti)
            .Subscribe(x =>

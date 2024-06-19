@@ -7,15 +7,19 @@ public class PlannedToDoItemSettingsViewModel : ViewModelBase,
     IApplySettings
 {
     private readonly IToDoService toDoService;
-    
-    public PlannedToDoItemSettingsViewModel(IToDoService toDoService, IErrorHandler errorHandler)
+
+    public PlannedToDoItemSettingsViewModel(
+        IToDoService toDoService,
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
+    )
     {
         this.toDoService = toDoService;
-        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler, taskProgressService);
     }
-    
+
     public SpravyCommand InitializedCommand { get; }
-    
+
     public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
     {
         return toDoService.UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, cancellationToken)
@@ -25,19 +29,19 @@ public class PlannedToDoItemSettingsViewModel : ViewModelBase,
                 () => toDoService.UpdateToDoItemIsRequiredCompleteInDueDateAsync(Id, IsRequiredCompleteInDueDate,
                     cancellationToken), cancellationToken);
     }
-    
+
     [Reactive]
     public bool IsRequiredCompleteInDueDate { get; set; }
-    
+
     [Reactive]
     public Guid Id { get; set; }
-    
+
     [Reactive]
     public ToDoItemChildrenType ChildrenType { get; set; }
-    
+
     [Reactive]
     public DateOnly DueDate { get; set; }
-    
+
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
     {
         return toDoService.GetPlannedToDoItemSettingsAsync(Id, cancellationToken)
@@ -46,11 +50,11 @@ public class PlannedToDoItemSettingsViewModel : ViewModelBase,
                 ChildrenType = setting.ChildrenType;
                 DueDate = setting.DueDate;
                 IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
-                
+
                 return Result.Success;
             }), cancellationToken);
     }
-    
+
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
     {
         return RefreshAsync(cancellationToken);

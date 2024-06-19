@@ -9,13 +9,14 @@ public class ToDoItemSettingsViewModel : NavigatableViewModelBase
         ToDoItemContentViewModel toDoItemContent,
         IServiceFactory serviceFactory,
         IToDoService toDoService,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     ) : base(true)
     {
         ToDoItemContent = toDoItemContent;
         this.serviceFactory = serviceFactory;
         this.toDoService = toDoService;
-        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler, taskProgressService);
     }
     
     public override string ViewId

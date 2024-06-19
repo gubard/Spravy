@@ -11,36 +11,40 @@ public class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
     IApplySettings
 {
     private readonly IToDoService toDoService;
-    
-    public PeriodicityOffsetToDoItemSettingsViewModel(IToDoService toDoService, IErrorHandler errorHandler)
+
+    public PeriodicityOffsetToDoItemSettingsViewModel(
+        IToDoService toDoService,
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
+    )
     {
         this.toDoService = toDoService;
-        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler, taskProgressService);
     }
 
     public SpravyCommand InitializedCommand { get; }
-    
+
     [Reactive]
     public bool IsRequiredCompleteInDueDate { get; set; }
-    
+
     [Reactive]
     public Guid Id { get; set; }
-    
+
     [Reactive]
     public ToDoItemChildrenType ChildrenType { get; set; }
-    
+
     [Reactive]
     public ushort DaysOffset { get; set; }
-    
+
     [Reactive]
     public DateOnly DueDate { get; set; }
-    
+
     [Reactive]
     public ushort MonthsOffset { get; set; }
-    
+
     [Reactive]
     public ushort WeeksOffset { get; set; }
-    
+
     [Reactive]
     public ushort YearsOffset { get; set; }
 
@@ -57,8 +61,9 @@ public class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
                 cancellationToken)
            .IfSuccessAsync(() => toDoService.UpdateToDoItemDueDateAsync(Id, DueDate, cancellationToken),
                 cancellationToken)
-           .IfSuccessAsync(() => toDoService.UpdateToDoItemIsRequiredCompleteInDueDateAsync(Id, IsRequiredCompleteInDueDate, cancellationToken),
-                cancellationToken);
+           .IfSuccessAsync(
+                () => toDoService.UpdateToDoItemIsRequiredCompleteInDueDateAsync(Id, IsRequiredCompleteInDueDate,
+                    cancellationToken), cancellationToken);
     }
 
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
@@ -73,7 +78,7 @@ public class PeriodicityOffsetToDoItemSettingsViewModel : ViewModelBase,
                 DaysOffset = setting.DaysOffset;
                 WeeksOffset = setting.WeeksOffset;
                 IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
-                
+
                 return Result.Success;
             }), cancellationToken);
     }

@@ -14,11 +14,22 @@ public static class TaskProgressServiceExtension
     
     public static ConfiguredValueTaskAwaitable<Result> RunProgressAsync<TTaskProgressServiceProperty>(
         this TTaskProgressServiceProperty property,
-        Func<ConfiguredValueTaskAwaitable<Result>> func,
+        Func<CancellationToken, ConfiguredValueTaskAwaitable<Result>> func,
         CancellationToken cancellationToken
     ) where TTaskProgressServiceProperty : ITaskProgressService
     {
         return property.AddItemAsync(1)
-           .IfSuccessTryFinallyAsync(_ => func.Invoke(), item => item.Finish(), cancellationToken);
+           .IfSuccessTryFinallyAsync(_ => func.Invoke(cancellationToken), item => item.Finish(), cancellationToken);
+    }
+    
+    public static ConfiguredValueTaskAwaitable<Result> RunProgressAsync<TTaskProgressServiceProperty, TParam>(
+        this TTaskProgressServiceProperty property,
+        Func<TParam, CancellationToken, ConfiguredValueTaskAwaitable<Result>> func,
+        TParam param,
+        CancellationToken cancellationToken
+    ) where TTaskProgressServiceProperty : ITaskProgressService
+    {
+        return property.AddItemAsync(1)
+           .IfSuccessTryFinallyAsync(_ => func.Invoke(param, cancellationToken), item => item.Finish(), cancellationToken);
     }
 }

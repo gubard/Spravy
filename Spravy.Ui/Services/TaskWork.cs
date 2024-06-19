@@ -1,5 +1,3 @@
-using Spravy.Core.Helpers;
-
 namespace Spravy.Ui.Services;
 
 public class TaskWork
@@ -44,13 +42,19 @@ public class TaskWork
         cancellationTokenSource = new();
     }
 
-    public static TaskWork Create(Func<CancellationToken, ConfiguredValueTaskAwaitable<Result>> task)
+    public static TaskWork Create(
+        IErrorHandler errorHandler,
+        Func<CancellationToken, ConfiguredValueTaskAwaitable<Result>> task
+    )
     {
-        return new(task, DiHelper.ServiceFactory.ThrowIfNull().CreateService<IErrorHandler>());
+        return new(task, errorHandler);
     }
 
-    public static TaskWork Create<T>(Func<T, CancellationToken, ConfiguredValueTaskAwaitable<Result>> task)
+    public static TaskWork Create<T>(
+        IErrorHandler errorHandler,
+        Func<T, CancellationToken, ConfiguredValueTaskAwaitable<Result>> task
+    )
     {
-        return new(task, DiHelper.ServiceFactory.ThrowIfNull().CreateService<IErrorHandler>());
+        return new(task, errorHandler);
     }
 }

@@ -3,11 +3,15 @@ namespace Spravy.Ui.Features.PasswordGenerator.ViewModels;
 public class DeletePasswordItemViewModel : ViewModelBase
 {
     private readonly IPasswordService passwordService;
-    
-    public DeletePasswordItemViewModel(IPasswordService passwordService, IErrorHandler errorHandler)
+
+    public DeletePasswordItemViewModel(
+        IPasswordService passwordService,
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
+    )
     {
         this.passwordService = passwordService;
-        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler, taskProgressService);
     }
 
     public SpravyCommand InitializedCommand { get; }
@@ -32,11 +36,10 @@ public class DeletePasswordItemViewModel : ViewModelBase
 
         return passwordService.GetPasswordItemAsync(PasswordItemId, cancellationToken)
            .IfSuccessAsync(value => this.InvokeUiBackgroundAsync(() =>
-                {
-                     PasswordItemName = value.Name;
-                     
-                     return Result.Success;
-                }),
-                cancellationToken);
+            {
+                PasswordItemName = value.Name;
+
+                return Result.Success;
+            }), cancellationToken);
     }
 }

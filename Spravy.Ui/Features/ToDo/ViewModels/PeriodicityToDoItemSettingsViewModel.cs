@@ -13,12 +13,13 @@ public class PeriodicityToDoItemSettingsViewModel : ViewModelBase,
     public PeriodicityToDoItemSettingsViewModel(
         IToDoService toDoService,
         IServiceFactory serviceFactory,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         this.toDoService = toDoService;
         this.serviceFactory = serviceFactory;
-        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler, taskProgressService);
     }
     
     public SpravyCommand InitializedCommand { get; }

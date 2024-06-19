@@ -9,7 +9,8 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
         IPasswordService passwordService,
         IPasswordItemCache passwordItemCache,
         PageHeaderViewModel pageHeaderViewModel,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     ) : base(true)
     {
         this.passwordService = passwordService;
@@ -17,7 +18,7 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
         PageHeaderViewModel = pageHeaderViewModel;
         pageHeaderViewModel.Header = new Header3Localization("PasswordGeneratorView.Header");
         pageHeaderViewModel.LeftCommand = CommandStorage.NavigateToCurrentToDoItemItem;
-        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler, taskProgressService);
     }
     
     public override string ViewId

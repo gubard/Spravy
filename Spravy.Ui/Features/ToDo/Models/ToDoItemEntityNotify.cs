@@ -13,7 +13,8 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
         IDialogViewer dialogViewer,
         IClipboardService clipboardService,
         IOpenerLink openerLink,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     )
     {
         Path = [RootItem.Default, this,];
@@ -73,7 +74,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                 }, cancellationToken)
                .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                     cancellationToken);
-        }, errorHandler));
+        }, errorHandler, taskProgressService));
 
         this.WhenAnyValue(x => x.DescriptionType)
            .Subscribe(_ =>
@@ -93,7 +94,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                                .IfSuccessAsync(_ => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                                     cancellationToken), cancellationToken),
                     _ => dialogViewer.CloseContentDialogAsync(cancellationToken), vm => vm.ParentId = CurrentId,
-                    cancellationToken), errorHandler));
+                    cancellationToken), errorHandler, taskProgressService));
 
         DeleteItem = new(MaterialIconKind.Delete, new("Command.Delete"), SpravyCommand.Create(cancellationToken =>
             dialogViewer.ShowConfirmContentDialogAsync<DeleteToDoItemViewModel>(_ => dialogViewer
@@ -117,7 +118,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                     }, cancellationToken)
                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                         cancellationToken), _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
-                view => view.Item = this, cancellationToken), errorHandler));
+                view => view.Item = this, cancellationToken), errorHandler, taskProgressService));
 
         ShowSettingItem = new(MaterialIconKind.Settings, new("Command.Setting"), SpravyCommand.Create(
             cancellationToken => dialogViewer.ShowConfirmContentDialogAsync<ToDoItemSettingsViewModel>(vm =>
@@ -142,13 +143,13 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                             cancellationToken)
                        .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                             cancellationToken), _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
-                vm => vm.ToDoItemId = Id, cancellationToken), errorHandler));
+                vm => vm.ToDoItemId = Id, cancellationToken), errorHandler, taskProgressService));
 
         OpenLeafItem = new(MaterialIconKind.Leaf, new("Command.OpenLeaf"),
             SpravyCommand.Create(
                 cancellationToken =>
                     navigator.NavigateToAsync<LeafToDoItemsViewModel>(vm => vm.Item = this, cancellationToken),
-                errorHandler));
+                errorHandler, taskProgressService));
 
         ChangeParentItem = new(MaterialIconKind.SwapHorizontal, new("Command.ChangeParent"), SpravyCommand.Create(
             cancellationToken => dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
@@ -160,14 +161,14 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                 {
                     viewModel.IgnoreIds = new([id,]);
                     viewModel.DefaultSelectedItemId = (Parent?.Id).GetValueOrDefault();
-                }, cancellationToken), errorHandler));
+                }, cancellationToken), errorHandler, taskProgressService));
 
         MakeAsRootItem = new(MaterialIconKind.FamilyTree, new("Command.MakeAsRootToDoItem"),
             SpravyCommand.Create(
                 cancellationToken => toDoService.ToDoItemToRootAsync(Id, cancellationToken)
                    .IfSuccessAsync(
                         () => navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken),
-                        cancellationToken), errorHandler));
+                        cancellationToken), errorHandler, taskProgressService));
 
         CopyToClipboardItem = new(MaterialIconKind.Clipboard, new("Command.CopyToClipboard"), SpravyCommand.Create(
             cancellationToken => dialogViewer.ShowConfirmContentDialogAsync(view =>
@@ -180,7 +181,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                             () => toDoService.ToDoItemToStringAsync(options, cancellationToken)
                                .IfSuccessAsync(clipboardService.SetTextAsync, cancellationToken), cancellationToken);
                 }, _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
-                ActionHelper<ToDoItemToStringSettingsViewModel>.Empty, cancellationToken), errorHandler));
+                ActionHelper<ToDoItemToStringSettingsViewModel>.Empty, cancellationToken), errorHandler, taskProgressService));
 
         RandomizeChildrenOrderItem = new(MaterialIconKind.DiceSix, new("Command.RandomizeChildrenOrder"),
             SpravyCommand.Create(
@@ -190,7 +191,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                             cancellationToken)
                        .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                             cancellationToken), _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
-                    viewModel => viewModel.Item = this, cancellationToken), errorHandler));
+                    viewModel => viewModel.Item = this, cancellationToken), errorHandler, taskProgressService));
 
         ChangeOrderItem = new(MaterialIconKind.ReorderHorizontal, new("Command.Reorder"), SpravyCommand.Create(
             cancellationToken => dialogViewer.ShowConfirmContentDialogAsync<ChangeToDoItemOrderIndexViewModel>(
@@ -205,7 +206,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                        .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                             cancellationToken);
                 }, _ => dialogViewer.CloseContentDialogAsync(cancellationToken), viewModel => viewModel.Id = Id,
-                cancellationToken), errorHandler));
+                cancellationToken), errorHandler, taskProgressService));
 
         ResetItem = new(MaterialIconKind.Refresh, new("Command.Reset"),
             SpravyCommand.Create(
@@ -216,32 +217,32 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                             cancellationToken)
                        .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                             cancellationToken), _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
-                    vm => vm.Id = CurrentId, cancellationToken), errorHandler));
+                    vm => vm.Id = CurrentId, cancellationToken), errorHandler, taskProgressService));
 
         AddToFavoriteItem = new(MaterialIconKind.StarOutline, new("Command.AddToFavorite"),
             SpravyCommand.Create(
                 cancellationToken => toDoService.AddFavoriteToDoItemAsync(Id, cancellationToken)
                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
-                        cancellationToken), errorHandler));
+                        cancellationToken), errorHandler, taskProgressService));
 
         RemoveFromFavoriteItem = new(MaterialIconKind.Star, new("Command.RemoveFromFavorite"),
             SpravyCommand.Create(
                 cancellationToken => toDoService.RemoveFavoriteToDoItemAsync(Id, cancellationToken)
                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
-                        cancellationToken), errorHandler));
+                        cancellationToken), errorHandler, taskProgressService));
 
         OpenLinkItem = new(MaterialIconKind.Link, new("Command.OpenLink"), SpravyCommand.Create(cancellationToken =>
         {
             var link = Link.ThrowIfNull().ToUri();
 
             return openerLink.OpenLinkAsync(link, cancellationToken);
-        }, errorHandler));
+        }, errorHandler, taskProgressService));
 
         NavigateToCurrentItem =
             SpravyCommand.Create(
                 cancellationToken =>
                     navigator.NavigateToAsync<ToDoItemViewModel>(vm => vm.Id = CurrentId, cancellationToken),
-                errorHandler);
+                errorHandler, taskProgressService);
 
         CloneItem = new(MaterialIconKind.Copyleft, new("Command.Clone"),
             SpravyCommand.Create(
@@ -252,7 +253,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                                 cancellationToken), cancellationToken)
                        .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                             cancellationToken), view => view.DefaultSelectedItemId = Id, cancellationToken),
-                errorHandler));
+                errorHandler, taskProgressService));
 
         MultiAddChildItem = new(MaterialIconKind.Plus, new("Command.AddChildToDoItem"), SpravyCommand.Create(
             cancellationToken =>
@@ -274,7 +275,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                                     cancellationToken), cancellationToken),
                     _ => dialogViewer.CloseContentDialogAsync(cancellationToken), vm => vm.ParentId = CurrentId,
                     cancellationToken);
-            }, errorHandler));
+            }, errorHandler, taskProgressService));
 
         MultiShowSettingItem = new(MaterialIconKind.Settings, new("Command.Setting"), SpravyCommand.Create(
             cancellationToken =>
@@ -321,7 +322,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                        .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                             cancellationToken), _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
                     vm => vm.ToDoItemId = Id, cancellationToken);
-            }, errorHandler));
+            }, errorHandler, taskProgressService));
 
         MultiDeleteItem = new(MaterialIconKind.Delete, new("Command.Delete"), SpravyCommand.Create(cancellationToken =>
         {
@@ -344,7 +345,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                     vm.Item = this;
                     vm.DeleteItems.Update(selected);
                 }, cancellationToken);
-        }, errorHandler));
+        }, errorHandler, taskProgressService));
 
         MultiOpenLeafItem = new(MaterialIconKind.Leaf, new("Command.OpenLeaf"), SpravyCommand.Create(
             cancellationToken =>
@@ -361,7 +362,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                     vm.Item = this;
                     vm.LeafIds = selected;
                 }, cancellationToken);
-            }, errorHandler));
+            }, errorHandler, taskProgressService));
 
         MultiChangeParentItem = new(MaterialIconKind.SwapHorizontal, new("Command.ChangeParent"), SpravyCommand.Create(
             cancellationToken =>
@@ -386,7 +387,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                         viewModel.IgnoreIds = selected;
                         viewModel.DefaultSelectedItemId = Id;
                     }, cancellationToken);
-            }, errorHandler));
+            }, errorHandler, taskProgressService));
 
         MultiMakeAsRootItem = new(MaterialIconKind.FamilyTree, new("Command.MakeAsRootToDoItem"), SpravyCommand.Create(
             cancellationToken =>
@@ -402,7 +403,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                    .IfSuccessForEachAsync(i => toDoService.ToDoItemToRootAsync(i, cancellationToken), cancellationToken)
                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                         cancellationToken);
-            }, errorHandler));
+            }, errorHandler, taskProgressService));
 
         MultiCopyToClipboardItem = new(MaterialIconKind.Clipboard, new("Command.CopyToClipboard"), SpravyCommand.Create(
             cancellationToken =>
@@ -428,7 +429,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                                 cancellationToken);
                     }, _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
                     ActionHelper<ToDoItemToStringSettingsViewModel>.Empty, cancellationToken);
-            }, errorHandler));
+            }, errorHandler, taskProgressService));
 
         MultiRandomizeChildrenOrderItem = new(MaterialIconKind.DiceSix, new("Command.RandomizeChildrenOrder"),
             SpravyCommand.Create(cancellationToken =>
@@ -452,7 +453,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                         viewModel.Item = this;
                         viewModel.RandomizeChildrenOrderIds = selected;
                     }, cancellationToken);
-            }, errorHandler));
+            }, errorHandler, taskProgressService));
 
         MultiChangeOrderItem = new(MaterialIconKind.ReorderHorizontal, new("Command.Reorder"), SpravyCommand.Create(
             cancellationToken =>
@@ -483,7 +484,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                         viewModel.ChangeToDoItemOrderIndexIds =
                             Children.Where(x => !x.IsSelected).Select(x => x.Id).ToArray();
                     }, cancellationToken);
-            }, errorHandler));
+            }, errorHandler, taskProgressService));
 
         MultiResetItem = new(MaterialIconKind.Refresh, new("Command.Reset"), SpravyCommand.Create(cancellationToken =>
             dialogViewer.ShowConfirmContentDialogAsync<ResetToDoItemViewModel>(vm =>
@@ -504,7 +505,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                        .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                             cancellationToken);
                 }, _ => dialogViewer.CloseContentDialogAsync(cancellationToken), vm => vm.Id = CurrentId,
-                cancellationToken), errorHandler));
+                cancellationToken), errorHandler, taskProgressService));
 
         MultiCloneItem = new(MaterialIconKind.Copyleft, new("Command.Clone"), SpravyCommand.Create(cancellationToken =>
         {
@@ -523,7 +524,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                             cancellationToken), cancellationToken)
                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                         cancellationToken), view => view.DefaultSelectedItemId = Id, cancellationToken);
-        }, errorHandler));
+        }, errorHandler, taskProgressService));
 
         MultiOpenLinkItem = new(MaterialIconKind.Link, new("Command.OpenLink"), SpravyCommand.Create(
             cancellationToken =>
@@ -541,7 +542,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                            .IfNotNull(nameof(i.Link))
                            .IfSuccessAsync(link => openerLink.OpenLinkAsync(link.ToUri(), cancellationToken),
                                 cancellationToken), cancellationToken);
-            }, errorHandler));
+            }, errorHandler, taskProgressService));
 
         MultiAddToFavoriteItem = new(MaterialIconKind.StarOutline, new("Command.AddToFavorite"), SpravyCommand.Create(
             cancellationToken =>
@@ -558,7 +559,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                         cancellationToken)
                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                         cancellationToken);
-            }, errorHandler));
+            }, errorHandler, taskProgressService));
 
         MultiRemoveFromFavoriteItem = new(MaterialIconKind.Star, new("Command.RemoveFromFavorite"),
             SpravyCommand.Create(cancellationToken =>
@@ -575,7 +576,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                         cancellationToken)
                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                         cancellationToken);
-            }, errorHandler));
+            }, errorHandler, taskProgressService));
 
         MultiCompleteItem = new(MaterialIconKind.Check, new("Command.Complete"), SpravyCommand.Create(
             cancellationToken =>
@@ -605,7 +606,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                     }, cancellationToken)
                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                         cancellationToken);
-            }, errorHandler));
+            }, errorHandler, taskProgressService));
 
         MultiCommands.AddRange([
             MultiAddChildItem,

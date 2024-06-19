@@ -2,7 +2,12 @@ namespace Spravy.Ui.ViewModels;
 
 public class MainSplitViewModel : ViewModelBase
 {
-    public MainSplitViewModel(PaneViewModel pane, IServiceFactory serviceFactory, IErrorHandler errorHandler)
+    public MainSplitViewModel(
+        PaneViewModel pane,
+        IServiceFactory serviceFactory,
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
+    )
     {
         Pane = pane;
 
@@ -11,7 +16,7 @@ public class MainSplitViewModel : ViewModelBase
             Content = serviceFactory.CreateService<LoginViewModel>();
 
             return Result.Success;
-        }), errorHandler);
+        }), errorHandler, taskProgressService);
     }
 
     public SpravyCommand InitializedCommand { get; }

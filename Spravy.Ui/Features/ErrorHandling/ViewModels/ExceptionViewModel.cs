@@ -2,9 +2,9 @@ namespace Spravy.Ui.Features.ErrorHandling.ViewModels;
 
 public class ExceptionViewModel : ViewModelBase
 {
-    public ExceptionViewModel(IErrorHandler errorHandler)
+    public ExceptionViewModel(IErrorHandler errorHandler, ITaskProgressService taskProgressService)
     {
-        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler, taskProgressService);
     }
 
     public SpravyCommand InitializedCommand { get; }

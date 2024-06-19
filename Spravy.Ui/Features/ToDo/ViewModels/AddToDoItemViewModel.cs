@@ -12,14 +12,15 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
         EditDescriptionContentViewModel descriptionContent,
         IObjectStorage objectStorage,
         IToDoService toDoService,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
     ) : base(true)
     {
         ToDoItemContent = toDoItemContent;
         DescriptionContent = descriptionContent;
         this.objectStorage = objectStorage;
         this.toDoService = toDoService;
-        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler);
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler, taskProgressService);
     }
     
     public SpravyCommand InitializedCommand { get; }

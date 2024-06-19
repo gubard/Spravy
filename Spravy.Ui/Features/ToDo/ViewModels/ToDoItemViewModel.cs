@@ -15,7 +15,8 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUp
         ToDoSubItemsViewModel toDoSubItemsViewModel,
         FastAddToDoItemViewModel fastAddToDoItemViewModel,
         IToDoService toDoService,
-        IToDoCache toDoCache
+        IToDoCache toDoCache,
+        IErrorHandler errorHandler
     ) : base(true)
     {
         this.objectStorage = objectStorage;
@@ -24,7 +25,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUp
         FastAddToDoItemViewModel = fastAddToDoItemViewModel;
         this.toDoService = toDoService;
         this.toDoCache = toDoCache;
-        refreshWork = TaskWork.Create(RefreshCoreAsync);
+        refreshWork = TaskWork.Create(errorHandler, RefreshCoreAsync);
         CommandItems = new();
         ToDoSubItemsViewModel.List.WhenAnyValue(x => x.IsMulti).Subscribe(_ => UpdateCommandItemsUi());
     }
