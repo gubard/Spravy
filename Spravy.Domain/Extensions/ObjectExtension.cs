@@ -1,5 +1,13 @@
 namespace Spravy.Domain.Extensions;
 
+public static class ObjectExtensionV2
+{
+    public static OptionStruct<TValue> ToOption<TValue>(this TValue value) where TValue : struct
+    {
+        return new(value);
+    }
+}
+
 public static class ObjectExtension
 {
     public static Option<TValue> ToOption<TValue>(this TValue? value) where TValue : class

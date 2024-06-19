@@ -248,7 +248,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                 cancellationToken => dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
                     itemNotify => dialogViewer.CloseInputDialogAsync(cancellationToken)
                        .IfSuccessAsync(
-                            () => toDoService.CloneToDoItemAsync(Id, itemNotify.Id.ThrowIfIsNotCast<Guid?>().ToOption(),
+                            () => toDoService.CloneToDoItemAsync(Id, itemNotify.Id.ToOption(),
                                 cancellationToken), cancellationToken)
                        .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                             cancellationToken), view => view.DefaultSelectedItemId = Id, cancellationToken),
@@ -519,7 +519,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                 itemNotify => dialogViewer.CloseInputDialogAsync(cancellationToken)
                    .IfSuccessAsync(() => selected.ToResult(), cancellationToken)
                    .IfSuccessForEachAsync(
-                        i => toDoService.CloneToDoItemAsync(i, itemNotify.Id.ThrowIfIsNotCast<Guid?>().ToOption(),
+                        i => toDoService.CloneToDoItemAsync(i, itemNotify.Id.ToOption(),
                             cancellationToken), cancellationToken)
                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                         cancellationToken), view => view.DefaultSelectedItemId = Id, cancellationToken);

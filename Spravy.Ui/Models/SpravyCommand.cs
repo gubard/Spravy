@@ -82,7 +82,7 @@ public class SpravyCommand
                 return dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
                     itemNotify => dialogViewer.CloseInputDialogAsync(cancellationToken)
                        .IfSuccessAsync(() => selected.ToResult(), cancellationToken)
-                       .IfSuccessForEachAsync(i => toDoService.CloneToDoItemAsync(i, itemNotify.Id.ThrowIfIsNotCast<Guid?>().ToOption(), cancellationToken),
+                       .IfSuccessForEachAsync(i => toDoService.CloneToDoItemAsync(i, itemNotify.Id.ToOption(), cancellationToken),
                             cancellationToken)
                        .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                             cancellationToken), ActionHelper<ToDoItemSelectorViewModel>.Empty, cancellationToken);

@@ -1095,7 +1095,7 @@ public class EfToDoService : IToDoService
 
         foreach (var item in items)
         {
-            await AddCloneAsync(context, item, clone.Id.ThrowIfIsNotCast<Guid?>().ToOption(), cancellationToken);
+            await AddCloneAsync(context, item, clone.Id.ToOption(), cancellationToken);
         }
 
         return Result.Success;
