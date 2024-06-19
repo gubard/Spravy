@@ -73,7 +73,7 @@ public static class RootToDoItemsViewExtension
            .ThrowIfIsNotCast<ItemsPresenter>()
            .GetVisualChildren()
            .Single()
-           .ThrowIfIsNotCast<VirtualizingStackPanel>()
+           .ThrowIfIsNotCast<StackPanel>()
            .Children
            .ElementAt(index)
            .ThrowIfIsNotCast<ContentPresenter>()
@@ -117,7 +117,7 @@ public static class RootToDoItemsViewExtension
            .ThrowIfIsNotCast<ItemsPresenter>()
            .GetVisualChildren()
            .Single()
-           .ThrowIfIsNotCast<VirtualizingStackPanel>()
+           .ThrowIfIsNotCast<StackPanel>()
            .Children
            .Last()
            .ThrowIfIsNotCast<ContentPresenter>()
