@@ -20,7 +20,7 @@
                             Classes="Basic"
                             IsVisible="{Binding IsMulti}"
                             Command="{Binding SwitchAllSelectionCommand.Command}"
-                            Content="{x:Static i:MaterialIconKind.CheckAll}" 
+                            Content="{x:Static i:MaterialIconKind.CheckAll}"
                             Padding="11,0,11,0" />
                 </Grid>
 
@@ -32,12 +32,14 @@
             </DockPanel>
         </Expander.Header>
 
-        <ItemsControl Name="{x:Static v:ToDoItemsView.ItemsItemsControlName}" ItemsSource="{Binding Items}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <VirtualizingStackPanel Orientation="Vertical" />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-        </ItemsControl>
+        <Panel>
+            <ItemsControl Name="{x:Static v:ToDoItemsView.ItemsItemsControlVirtualizingStackPanelName}"
+                          Classes="virtualizing-stack-panel-vertical"
+                          IsVisible="{Binding Items.Count, Converter={StaticResource Int32MoreThen}, ConverterParameter=100}"
+                          ItemsSource="{Binding Items}" />
+            <ItemsControl Name="{x:Static v:ToDoItemsView.ItemsItemsControlName}"
+                          IsVisible="{Binding Items.Count, Converter={StaticResource Int32LessOrEqualsThen}, ConverterParameter=100}"
+                          ItemsSource="{Binding Items}" />
+        </Panel>
     </Expander>
 </ru:ReactiveUserControl>

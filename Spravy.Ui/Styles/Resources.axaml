@@ -33,6 +33,10 @@
     <c:EnumToBooleanConverter x:TypeArguments="te:GroupBy" x:Key="MultiEditingGroupByStatusToTrue" Value="ByStatus" />
     <c:EnumToBooleanConverter x:TypeArguments="te:GroupBy" x:Key="MultiEditingGroupByTypeToTrue" Value="ByType" />
     <c:ObjectToBooleanConverter x:TypeArguments="s:Byte" x:Key="TypeOfPeriodicityToIsVisible" Value="0" Reverse="True" />
+    <c:Int32MoreThenConverter x:Key="Int32MoreThen" IsEquals="False" IsReverse="False" />
+    <c:Int32MoreThenConverter x:Key="Int32LessThen" IsEquals="False" IsReverse="True" />
+    <c:Int32MoreThenConverter x:Key="Int32MoreOrEqualsThen" IsEquals="True" IsReverse="False" />
+    <c:Int32MoreThenConverter x:Key="Int32LessOrEqualsThen" IsEquals="True" IsReverse="True" />
     <c:EnumToBooleanConverter x:TypeArguments="e:UserIdentifierType" x:Key="UserIdentifierTypeEmailToTrue"
                               Value="Email" />
     <c:EnumToBooleanConverter x:TypeArguments="e:UserIdentifierType" x:Key="UserIdentifierTypeLoginToTrue"

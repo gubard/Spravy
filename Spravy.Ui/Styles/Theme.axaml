@@ -27,4 +27,6 @@
     <StyleInclude Source="ContentControl.axaml" />
     <StyleInclude Source="ScrollViewer.axaml" />
     <StyleInclude Source="CalendarDatePicker.axaml" />
+    <StyleInclude Source="VirtualizingStackPanel.axaml" />
+    <StyleInclude Source="ItemsControl.axaml" />
 </Styles>
