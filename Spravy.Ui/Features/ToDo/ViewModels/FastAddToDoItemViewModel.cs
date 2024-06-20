@@ -16,12 +16,12 @@ public class FastAddToDoItemViewModel : ViewModelBase
                 {
                     var options = new AddToDoItemOptions(id, Name, ToDoItemType.Value, string.Empty,
                         DescriptionType.PlainText,
-                        new(null));
+                        new());
 
                     return toDoService.AddToDoItemAsync(options, cancellationToken).ToResultOnlyAsync();
                 }, _ =>
                 {
-                    var options = new AddRootToDoItemOptions(Name, ToDoItemType.Value, new(null), string.Empty,
+                    var options = new AddRootToDoItemOptions(Name, ToDoItemType.Value, new(), string.Empty,
                         DescriptionType.PlainText);
 
                     return toDoService.AddRootToDoItemAsync(options, cancellationToken).ToResultOnlyAsync();

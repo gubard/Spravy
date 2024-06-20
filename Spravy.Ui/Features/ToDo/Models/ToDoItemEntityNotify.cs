@@ -126,16 +126,8 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                        .IfSuccessAsync(
                             () => toDoService.UpdateToDoItemNameAsync(Id, vm.ToDoItemContent.Name, cancellationToken),
                             cancellationToken)
-                       .IfSuccessAsync(() =>
-                        {
-                            if (vm.ToDoItemContent.Link.IsNullOrWhiteSpace())
-                            {
-                                return toDoService.UpdateToDoItemLinkAsync(Id, new(null), cancellationToken);
-                            }
-
-                            return toDoService.UpdateToDoItemLinkAsync(Id, vm.ToDoItemContent.Link.ToOptionUri(),
-                                cancellationToken);
-                        }, cancellationToken)
+                       .IfSuccessAsync(() =>toDoService.UpdateToDoItemLinkAsync(Id, vm.ToDoItemContent.Link.ToOptionUri(),
+                            cancellationToken), cancellationToken)
                        .IfSuccessAsync(
                             () => toDoService.UpdateToDoItemTypeAsync(Id, vm.ToDoItemContent.Type, cancellationToken),
                             cancellationToken)

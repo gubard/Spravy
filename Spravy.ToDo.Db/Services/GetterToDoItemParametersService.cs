@@ -24,7 +24,7 @@ public class GetterToDoItemParametersService
         return GetToDoItemParametersAsync(context, entity, offset, new(), cancellationToken)
            .IfSuccessAsync(parameters => CheckActiveItem(parameters, entity).ToResult(), cancellationToken);
     }
-    
+
     private ConfiguredValueTaskAwaitable<Result<ToDoItemParameters>> GetToDoItemParametersAsync(
         SpravyDbToDoDbContext context,
         ToDoItemEntity entity,
@@ -42,13 +42,13 @@ public class GetterToDoItemParametersService
                             cancellationToken)
                        .ConfigureAwait(false);
                 }
-                
+
                 return GetToDoItemParametersAsync(context, entity, DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly(),
                         offset, parameters, false, new(), cancellationToken)
                    .ConfigureAwait(false);
             }, cancellationToken);
     }
-    
+
     private async ValueTask<Result<ToDoItemParameters>> GetToDoItemParametersAsync(
         SpravyDbToDoDbContext context,
         ToDoItemEntity entity,
@@ -65,37 +65,43 @@ public class GetterToDoItemParametersService
             if (entity.ReferenceId.HasValue)
             {
                 ignoreIds.Add(entity.Id);
-                
+
                 return await context.FindEntityAsync<ToDoItemEntity>(entity.ReferenceId.Value)
                    .IfSuccessAsync(
                         item => GetToDoItemParametersAsync(context, item, dueDate, offset, parameters, useDueDate,
                                 ignoreIds, cancellationToken)
                            .ConfigureAwait(false), cancellationToken);
             }
-            
-            return parameters.With(ToDoItemIsCan.None).With(new OptionStruct<ActiveToDoItem>(null)).With(ToDoItemStatus.Miss).ToResult();
+
+            return parameters.With(ToDoItemIsCan.None)
+               .With(new OptionStruct<ActiveToDoItem>())
+               .With(ToDoItemStatus.Miss)
+               .ToResult();
         }
-        
+
         var isCompletable = IsCompletable(entity);
-        
+
         if (isCompletable.IsHasError)
         {
             return new(isCompletable.Errors);
         }
-        
+
         if (entity.IsCompleted && isCompletable.Value)
         {
-            return parameters.With(ToDoItemIsCan.CanIncomplete).With(new OptionStruct<ActiveToDoItem>(null)).With(ToDoItemStatus.Completed).ToResult();
+            return parameters.With(ToDoItemIsCan.CanIncomplete)
+               .With(new OptionStruct<ActiveToDoItem>())
+               .With(ToDoItemStatus.Completed)
+               .ToResult();
         }
-        
+
         var isMiss = false;
         var isDueable = await IsDueableAsync(context, entity, cancellationToken);
-        
+
         if (isDueable.IsHasError)
         {
             return new(isDueable.Errors);
         }
-        
+
         if (isDueable.Value)
         {
             if (useDueDate)
@@ -104,10 +110,13 @@ public class GetterToDoItemParametersService
                 {
                     isMiss = true;
                 }
-                
+
                 if (entity.DueDate > dueDate)
                 {
-                    return parameters.With(new OptionStruct<ActiveToDoItem>(null)).With(ToDoItemStatus.Planned).With(ToDoItemIsCan.None).ToResult();
+                    return parameters.With(new OptionStruct<ActiveToDoItem>())
+                       .With(ToDoItemStatus.Planned)
+                       .With(ToDoItemIsCan.None)
+                       .ToResult();
                 }
             }
             else
@@ -117,54 +126,65 @@ public class GetterToDoItemParametersService
                 {
                     isMiss = true;
                 }
-                
+
                 if (entity.DueDate > DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
                 {
-                    return parameters.With(new OptionStruct<ActiveToDoItem>(null)).With(ToDoItemStatus.Planned).With(ToDoItemIsCan.None).ToResult();
+                    return parameters.With(new OptionStruct<ActiveToDoItem>())
+                       .With(ToDoItemStatus.Planned)
+                       .With(ToDoItemIsCan.None)
+                       .ToResult();
                 }
             }
         }
-        
+
         var items = await context.Set<ToDoItemEntity>()
            .AsNoTracking()
            .Where(x => x.ParentId == entity.Id && !ignoreIds.Contains(x.Id))
            .OrderBy(x => x.OrderIndex)
            .ToArrayAsync(cancellationToken);
-        
-        ActiveToDoItem? firstReadyForComplete = null;
-        ActiveToDoItem? firstMiss = null;
+
+        var firstReadyForComplete = new OptionStruct<ActiveToDoItem>();
+        var firstMiss = new OptionStruct<ActiveToDoItem>();
         var hasPlanned = false;
-        
+
         foreach (var item in items)
         {
-            if (firstMiss.HasValue)
+            if (firstMiss.IsHasValue)
             {
                 break;
             }
-            
+
             var result = await GetToDoItemParametersAsync(context, item, dueDate, offset, parameters, true, ignoreIds,
                 cancellationToken);
-            
+
             if (result.IsHasError)
             {
                 return result;
             }
-            
+
             parameters = result.Value;
-            
+
             switch (parameters.Status)
             {
                 case ToDoItemStatus.Miss:
-                    firstMiss ??= parameters.ActiveItem.Value ?? ToActiveToDoItem(item);
-                    
+                {
+                    firstMiss = parameters.ActiveItem.TryGetValue(out var value)
+                        ? value.ToOption()
+                        : ToActiveToDoItem(item);
+
                     break;
+                }
                 case ToDoItemStatus.ReadyForComplete:
-                    firstReadyForComplete ??= parameters.ActiveItem.Value ?? ToActiveToDoItem(item);
-                    
+                {
+                    firstReadyForComplete = parameters.ActiveItem.TryGetValue(out var value)
+                        ? value.ToOption()
+                        : ToActiveToDoItem(item);
+
                     break;
+                }
                 case ToDoItemStatus.Planned:
                     hasPlanned = true;
-                    
+
                     break;
                 case ToDoItemStatus.Completed:
                     break;
@@ -172,108 +192,117 @@ public class GetterToDoItemParametersService
                     throw new ArgumentOutOfRangeException();
             }
         }
-        
-        var firstActive = firstMiss ?? firstReadyForComplete;
+
+        var firstActive = firstMiss.IsHasValue ? firstMiss : firstReadyForComplete;
         var isGroup = IsGroup(entity);
-        
+
         if (isGroup.IsHasError)
         {
             return new(isGroup.Errors);
         }
-        
+
         if (isGroup.Value)
         {
             if (isMiss)
             {
                 return parameters.With(ToDoItemStatus.Miss)
                    .With(ToDoItemIsCan.None)
-                   .With(new OptionStruct<ActiveToDoItem>(firstActive ?? ToActiveToDoItem(entity)))
+                   .With(firstActive.IsHasValue ? firstActive : ToActiveToDoItem(entity))
                    .ToResult();
             }
-            
-            if (firstMiss is not null)
+
+            if (firstMiss.IsHasValue)
             {
-                return parameters.With(ToDoItemStatus.Miss).With(ToDoItemIsCan.None).With(new OptionStruct<ActiveToDoItem>(firstMiss)).ToResult();
+                return parameters.With(ToDoItemStatus.Miss).With(ToDoItemIsCan.None).With(firstMiss).ToResult();
             }
-            
-            if (firstReadyForComplete is null)
+
+            if (!firstReadyForComplete.IsHasValue)
             {
                 if (hasPlanned)
                 {
-                    return parameters.With(ToDoItemStatus.Planned).With(ToDoItemIsCan.None).With(new OptionStruct<ActiveToDoItem>(null)).ToResult();
+                    return parameters.With(ToDoItemStatus.Planned)
+                       .With(ToDoItemIsCan.None)
+                       .With(new OptionStruct<ActiveToDoItem>())
+                       .ToResult();
                 }
-                
-                return parameters.With(ToDoItemStatus.Completed).With(ToDoItemIsCan.None).With(new OptionStruct<ActiveToDoItem>(null)).ToResult();
+
+                return parameters.With(ToDoItemStatus.Completed)
+                   .With(ToDoItemIsCan.None)
+                   .With(new OptionStruct<ActiveToDoItem>())
+                   .ToResult();
             }
-            
+
             return parameters.With(ToDoItemStatus.ReadyForComplete)
                .With(ToDoItemIsCan.None)
-               .With(new OptionStruct<ActiveToDoItem>(firstReadyForComplete))
+               .With(firstReadyForComplete)
                .ToResult();
         }
-        
+
         if (isMiss)
         {
             switch (entity.ChildrenType)
             {
                 case ToDoItemChildrenType.RequireCompletion:
-                    if (firstActive.HasValue)
+                    if (firstActive.IsHasValue)
                     {
                         return parameters.With(ToDoItemStatus.Miss)
                            .With(ToDoItemIsCan.None)
-                           .With(new OptionStruct<ActiveToDoItem>(firstActive))
+                           .With(firstActive)
                            .ToResult();
                     }
-                    
+
                     return parameters.With(ToDoItemStatus.Miss)
                        .With(ToDoItemIsCan.CanComplete)
-                       .With(new OptionStruct<ActiveToDoItem>(ToActiveToDoItem(entity)))
+                       .With(ToActiveToDoItem(entity))
                        .ToResult();
                 case ToDoItemChildrenType.IgnoreCompletion:
                     return parameters.With(ToDoItemStatus.Miss)
                        .With(ToDoItemIsCan.CanComplete)
-                       .With(new OptionStruct<ActiveToDoItem>(firstActive ?? ToActiveToDoItem(entity)))
+                       .With(firstActive.IsHasValue ? firstActive : ToActiveToDoItem(entity))
                        .ToResult();
                 default: throw new ArgumentOutOfRangeException();
             }
         }
-        
-        if (firstMiss is not null)
+
+        if (firstMiss.IsHasValue)
         {
             switch (entity.ChildrenType)
             {
                 case ToDoItemChildrenType.RequireCompletion:
-                    return parameters.With(ToDoItemStatus.Miss).With(ToDoItemIsCan.None).With(new OptionStruct<ActiveToDoItem>(firstMiss)).ToResult();
+                    return parameters.With(ToDoItemStatus.Miss).With(ToDoItemIsCan.None).With(firstMiss).ToResult();
                 case ToDoItemChildrenType.IgnoreCompletion:
                     return parameters.With(ToDoItemStatus.Miss)
                        .With(ToDoItemIsCan.CanComplete)
-                       .With(new OptionStruct<ActiveToDoItem>(firstMiss))
+                       .With(firstMiss)
                        .ToResult();
                 default: throw new ArgumentOutOfRangeException();
             }
         }
-        
-        if (firstReadyForComplete is not null)
+
+        if (firstReadyForComplete.IsHasValue)
         {
             switch (entity.ChildrenType)
             {
                 case ToDoItemChildrenType.RequireCompletion:
                     return parameters.With(ToDoItemStatus.ReadyForComplete)
                        .With(ToDoItemIsCan.None)
-                       .With(new OptionStruct<ActiveToDoItem>(firstReadyForComplete))
+                       .With(firstReadyForComplete)
                        .ToResult();
                 case ToDoItemChildrenType.IgnoreCompletion:
                     return parameters.With(ToDoItemStatus.ReadyForComplete)
                        .With(ToDoItemIsCan.CanComplete)
-                       .With(new OptionStruct<ActiveToDoItem>(firstReadyForComplete))
+                       .With(firstReadyForComplete)
                        .ToResult();
                 default: throw new ArgumentOutOfRangeException();
             }
         }
-        
-        return parameters.With(ToDoItemStatus.ReadyForComplete).With(ToDoItemIsCan.CanComplete).With(new OptionStruct<ActiveToDoItem>(null)).ToResult();
+
+        return parameters.With(ToDoItemStatus.ReadyForComplete)
+           .With(ToDoItemIsCan.CanComplete)
+           .With(new OptionStruct<ActiveToDoItem>())
+           .ToResult();
     }
-    
+
     private ConfiguredValueTaskAwaitable<Result<bool>> IsDueableAsync(
         SpravyDbToDoDbContext context,
         ToDoItemEntity entity,
@@ -297,7 +326,7 @@ public class GetterToDoItemParametersService
                .ConfigureAwait(false),
         };
     }
-    
+
     private ConfiguredValueTaskAwaitable<Result<DateOnly>> GetDueDateAsync(
         SpravyDbToDoDbContext context,
         ToDoItemEntity entity,
@@ -321,7 +350,7 @@ public class GetterToDoItemParametersService
                .ConfigureAwait(false),
         };
     }
-    
+
     private Result<bool> IsCompletable(ToDoItemEntity entity)
     {
         return entity.Type switch
@@ -337,7 +366,7 @@ public class GetterToDoItemParametersService
             _ => new(new ToDoItemTypeOutOfRangeError(entity.Type)),
         };
     }
-    
+
     private Result<bool> IsGroup(ToDoItemEntity entity)
     {
         return entity.Type switch
@@ -353,16 +382,22 @@ public class GetterToDoItemParametersService
             _ => new(new ToDoItemTypeOutOfRangeError(entity.Type)),
         };
     }
-    
+
     private ToDoItemParameters CheckActiveItem(ToDoItemParameters parameters, ToDoItemEntity entity)
     {
-        return parameters.ActiveItem.IsHasValue && parameters.ActiveItem.Value.ThrowIfNullStruct().Id == entity.ParentId
-            ? parameters.With(new OptionStruct<ActiveToDoItem>(null))
-            : parameters;
+        if (parameters.ActiveItem.TryGetValue(out var activeItem))
+        {
+            if (activeItem.Id == entity.ParentId)
+            {
+                return parameters.With(new OptionStruct<ActiveToDoItem>());
+            }
+        }
+
+        return parameters;
     }
-    
-    private ActiveToDoItem? ToActiveToDoItem(ToDoItemEntity entity)
+
+    private OptionStruct<ActiveToDoItem> ToActiveToDoItem(ToDoItemEntity entity)
     {
-        return entity.ParentId is null ? null : new ActiveToDoItem(entity.ParentId.Value, entity.Name);
+        return entity.ParentId is null ? new() : new ActiveToDoItem(entity.ParentId.Value, entity.Name).ToOption();
     }
 }

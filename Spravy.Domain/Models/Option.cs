@@ -2,52 +2,43 @@ namespace Spravy.Domain.Models;
 
 public readonly struct Option<TValue> where TValue : class
 {
-    public Option(TValue? value)
-    {
-        Value = value;
-        IsHasValue = Value is not null;
-    }
-    
-    public bool IsHasValue { get; }
-    public TValue? Value { get; }
-    
-    public bool TryGetValue([MaybeNullWhen(false)] out TValue value)
-    {
-        if (IsHasValue)
-        {
-            value = Value!;
-            
-            return true;
-        }
-        
-        value = null;
-        
-        return false;
-    }
-}
+    private readonly TValue? value;
 
-public readonly struct OptionStruct<TValue> where TValue : struct
-{
-    public OptionStruct(TValue? value)
+    public Option()
     {
-        Value = value;
-        IsHasValue = Value is not null;
+        value = null;
+        IsHasValue = false;
     }
-    
+
+    public Option(TValue value)
+    {
+        this.value = value;
+        IsHasValue = true;
+    }
+
     public bool IsHasValue { get; }
-    public TValue? Value { get; }
-    
-    public bool TryGetValue(out TValue value)
+
+    public Result<TValue> GetValue()
     {
         if (IsHasValue)
         {
-            value = Value!.Value;
-            
+            return new(value!);
+        }
+
+        return new(new PropertyNullValueError("Value"));
+    }
+
+    public bool TryGetValue([MaybeNullWhen(false)] out TValue result)
+    {
+        if (IsHasValue)
+        {
+            result = value!;
+
             return true;
         }
-        
-        value = default;
-        
+
+        result = null;
+
         return false;
     }
 }

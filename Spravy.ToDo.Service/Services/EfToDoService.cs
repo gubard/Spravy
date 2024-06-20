@@ -373,7 +373,7 @@ public class EfToDoService : IToDoService
                         toDoItem.DaysOffset = parent.DaysOffset;
                         toDoItem.MonthsOffset = parent.MonthsOffset;
                         toDoItem.YearsOffset = parent.YearsOffset;
-                        toDoItem.Link = options.Link.Value?.AbsoluteUri ?? string.Empty;
+                        toDoItem.Link = options.Link.TryGetValue(out var uri) ? uri.AbsoluteUri : string.Empty;
                         toDoItem.DescriptionType = options.DescriptionType;
 
                         return context.AddEntityAsync(toDoItem, cancellationToken)
@@ -911,7 +911,7 @@ public class EfToDoService : IToDoService
                             return parameters.ActiveItem.ToResult();
                         }
 
-                        return new(new OptionStruct<ActiveToDoItem>(null));
+                        return new(new OptionStruct<ActiveToDoItem>());
                     }, cancellationToken), cancellationToken)
                .IfSuccessAsync(items =>
                 {
@@ -1085,7 +1085,7 @@ public class EfToDoService : IToDoService
     {
         var id = clone.Id;
         clone.Id = Guid.NewGuid();
-        clone.ParentId = parentId.Value;
+        clone.ParentId = parentId.TryGetValue(out var value) ? value : null;
         await context.AddAsync(clone, cancellationToken);
 
         var items = await context.Set<ToDoItemEntity>()
@@ -1336,8 +1336,10 @@ public class EfToDoService : IToDoService
         CancellationToken cancellationToken
     )
     {
+        var pi = parentId.TryGetValue(out var value) ? (Guid?)value : null;
+        
         return context.Set<ToDoItemEntity>()
-           .Where(x => x.ParentId == parentId.Value)
+           .Where(x => x.ParentId == pi)
            .ToArrayEntitiesAsync(cancellationToken)
            .IfSuccessAsync(items =>
             {

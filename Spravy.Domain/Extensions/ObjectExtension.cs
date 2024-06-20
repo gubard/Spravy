@@ -12,12 +12,22 @@ public static class ObjectExtension
 {
     public static Option<TValue> ToOption<TValue>(this TValue? value) where TValue : class
     {
+        if (value is null)
+        {
+            return new();
+        }
+
         return new(value);
     }
     
     public static OptionStruct<TValue> ToOption<TValue>(this TValue? value) where TValue : struct
     {
-        return new(value);
+        if (value is null)
+        {
+            return new();
+        }
+
+        return new(value.Value);
     }
     
     public static Result<TResult> IfIs<TResult>(this object obj) where TResult : notnull

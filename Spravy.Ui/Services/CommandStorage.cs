@@ -325,10 +325,10 @@ public static class CommandStorage
         return toDoService.GetCurrentActiveToDoItemAsync(cancellationToken)
            .IfSuccessAsync(activeToDoItem =>
             {
-                if (activeToDoItem.IsHasValue)
+                if (activeToDoItem.TryGetValue(out var value))
                 {
                     return navigator.NavigateToAsync<ToDoItemViewModel>(
-                        viewModel => viewModel.Id = activeToDoItem.Value.ThrowIfNullStruct().Id, cancellationToken);
+                        viewModel => viewModel.Id = value.Id, cancellationToken);
                 }
                 
                 return navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken);

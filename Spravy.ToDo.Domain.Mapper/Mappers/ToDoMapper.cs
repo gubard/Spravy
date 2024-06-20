@@ -76,7 +76,7 @@ public static partial class ToDoMapper
     {
         if (value is null)
         {
-            return new(null);
+            return new();
         }
 
         return new(value.ToActiveToDoItem());
@@ -161,7 +161,7 @@ public static partial class ToDoMapper
     {
         if (byteString.IsEmpty)
         {
-            return new(null);
+            return new();
         }
 
         return new(byteString.ToGuid());

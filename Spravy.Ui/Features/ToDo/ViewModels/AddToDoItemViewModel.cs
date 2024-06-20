@@ -99,7 +99,7 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
         if (ToDoItemContent.Link.IsNullOrWhiteSpace())
         {
             return new AddToDoItemOptions(parentId, ToDoItemContent.Name, ToDoItemContent.Type,
-                DescriptionContent.Description, DescriptionContent.Type, new(null)).ToResult();
+                DescriptionContent.Description, DescriptionContent.Type, new()).ToResult();
         }
 
         return new AddToDoItemOptions(parentId, ToDoItemContent.Name, ToDoItemContent.Type,

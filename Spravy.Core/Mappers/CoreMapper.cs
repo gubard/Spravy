@@ -51,7 +51,7 @@ public static partial class CoreMapper
     {
         if (value.IsNullOrWhiteSpace())
         {
-            return new(null);
+            return new();
         }
 
         return new(value.ToUri());
@@ -116,7 +116,7 @@ public static partial class CoreMapper
     {
         if (value.IsEmpty)
         {
-            return new(null);
+            return new();
         }
 
         return new(value.ToGuid());
