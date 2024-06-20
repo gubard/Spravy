@@ -7,7 +7,7 @@ public class Tests
     {
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
     }
-    
+
     [AvaloniaTest]
     [Order(0)]
     [Property("Priority", "0")]
@@ -151,7 +151,10 @@ public class Tests
                            .SetText(w, TextHelper.TextLength8))
                        .Case(view => view.FindControl<CheckBox>(ElementNames.RememberMeCheckBoxName)
                            .ThrowIfNull()
-                           .ClickOn(w))
+                           .ClickOn(w)
+                           .IsChecked
+                           .Should()
+                           .Be(true))
                        .FindControl<Button>(ElementNames.LoginButton)
                        .ThrowIfNull()
                        .ClickOn(w)
@@ -159,7 +162,7 @@ public class Tests
                    .Case(() => w.GetCurrentView<RootToDoItemsView, RootToDoItemsViewModel>())
                    .Close(), (w, _) => w.SaveFrame().LogCurrentState());
     }
-    
+
     [AvaloniaTest]
     [Order(1)]
     [Property("Priority", "1")]
@@ -175,7 +178,7 @@ public class Tests
                        .AddToDoItem(w, "To-Do item 2"))
                    .Close(), (w, _) => w.SaveFrame().LogCurrentState());
     }
-    
+
     [AvaloniaTest]
     [Order(2)]
     [Property("Priority", "2")]
@@ -201,7 +204,7 @@ public class Tests
                        .Be(1))
                    .Close(), (w, _) => w.SaveFrame().LogCurrentState());
     }
-    
+
     [AvaloniaTest]
     [Order(3)]
     [Property("Priority", "3")]
