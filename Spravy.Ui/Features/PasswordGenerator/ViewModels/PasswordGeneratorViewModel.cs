@@ -26,7 +26,7 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
         get => TypeCache<PasswordGeneratorViewModel>.Type.Name;
     }
     
-    private PageHeaderViewModel PageHeaderViewModel { get; }
+    public PageHeaderViewModel PageHeaderViewModel { get; }
     public AvaloniaList<PasswordItemNotify> Items { get; } = new();
     public SpravyCommand InitializedCommand { get; }
     
