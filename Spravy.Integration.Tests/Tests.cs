@@ -86,6 +86,7 @@ public class Tests
                            .ValidateCreateUserViewTextBox(w, c, TextHelper.EmailLength50)
                            .Case(() => w.SetKeyTextInput(TextHelper.Email)))
                        .Case(() => w.KeyHandleQwerty(PhysicalKey.Enter, RawInputModifiers.None))
+                       .RunJobsAll(1)
                        .Case(c => c.FindControl<TextBox>(ElementNames.LoginTextBox)
                            .ThrowIfNull()
                            .MustFocused()
