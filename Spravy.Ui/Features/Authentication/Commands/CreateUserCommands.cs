@@ -17,7 +17,9 @@ public class CreateUserCommands
         this.authenticationService = authenticationService;
         this.navigator = navigator;
         EnterCommand = SpravyCommand.Create<CreateUserView>(EnterAsync, errorHandler, taskProgressService);
-        CreateUserCommand = SpravyCommand.Create<CreateUserViewModel>(CreateUserAsync, errorHandler, taskProgressService);
+
+        CreateUserCommand =
+            SpravyCommand.Create<CreateUserViewModel>(CreateUserAsync, errorHandler, taskProgressService);
     }
 
     public SpravyCommand EnterCommand { get; }
@@ -25,65 +27,63 @@ public class CreateUserCommands
 
     private ConfiguredValueTaskAwaitable<Result> EnterAsync(CreateUserView view, CancellationToken cancellationToken)
     {
-        var emailTextBox = view.FindControl<TextBox>(CreateUserView.EmailTextBoxName);
-
-        if (emailTextBox is null)
-        {
-            return Result.AwaitableSuccess;
-        }
-
-        var loginTextBox = view.FindControl<TextBox>(CreateUserView.LoginTextBoxName);
-
-        if (loginTextBox is null)
-        {
-            return Result.AwaitableSuccess;
-        }
-
-        if (emailTextBox.IsFocused)
-        {
-            loginTextBox.Focus();
-
-            return Result.AwaitableSuccess;
-        }
-
-        var passwordTextBox = view.FindControl<TextBox>(CreateUserView.PasswordTextBoxName);
-
-        if (passwordTextBox is null)
-        {
-            return Result.AwaitableSuccess;
-        }
-
-        if (loginTextBox.IsFocused)
-        {
-            passwordTextBox.Focus();
-
-            return Result.AwaitableSuccess;
-        }
-
-        var repeatPasswordTextBox = view.FindControl<TextBox>(CreateUserView.RepeatPasswordTextBoxName);
-
-        if (repeatPasswordTextBox is null)
-        {
-            return Result.AwaitableSuccess;
-        }
-
-        if (passwordTextBox.IsFocused)
-        {
-            repeatPasswordTextBox.Focus();
-
-            return Result.AwaitableSuccess;
-        }
-
-        return view.ViewModel
-           .IfNotNull(nameof(view.ViewModel))
-           .IfSuccessAsync(vm =>
+        return this.InvokeUiAsync(() => view.FindControl<TextBox>(CreateUserView.EmailTextBoxName)
+               .IfNotNull(CreateUserView.EmailTextBoxName)
+               .IfSuccess(emailTextBox => view.FindControl<TextBox>(CreateUserView.LoginTextBoxName)
+                   .IfNotNull(CreateUserView.LoginTextBoxName)
+                   .IfSuccess(loginTextBox => view.FindControl<TextBox>(CreateUserView.PasswordTextBoxName)
+                       .IfNotNull(CreateUserView.PasswordTextBoxName)
+                       .IfSuccess(passwordTextBox => view.FindControl<TextBox>(CreateUserView.RepeatPasswordTextBoxName)
+                           .IfNotNull(CreateUserView.RepeatPasswordTextBoxName)
+                           .IfSuccess(repeatPasswordTextBox => new
+                            {
+                                EmailTextBox = emailTextBox,
+                                PasswordTextBox = passwordTextBox,
+                                LoginTextBox = loginTextBox,
+                                RepeatPasswordTextBox = repeatPasswordTextBox,
+                            }.ToResult())))))
+           .IfSuccessAsync(controls =>
             {
-                if (vm.HasErrors)
+                if (controls.EmailTextBox.IsFocused)
                 {
-                    return Result.AwaitableSuccess;
+                    return this.InvokeUiAsync(() =>
+                    {
+                        controls.LoginTextBox.Focus();
+
+                        return Result.Success;
+                    });
                 }
 
-                return CreateUserAsync(vm, cancellationToken);
+                if (controls.LoginTextBox.IsFocused)
+                {
+                    return this.InvokeUiAsync(() =>
+                    {
+                        controls.PasswordTextBox.Focus();
+
+                        return Result.Success;
+                    });
+                }
+
+                if (controls.PasswordTextBox.IsFocused)
+                {
+                    return this.InvokeUiAsync(() =>
+                    {
+                        controls.RepeatPasswordTextBox.Focus();
+
+                        return Result.Success;
+                    });
+                }
+
+                return this.InvokeUiAsync(() => view.ViewModel.IfNotNull(nameof(view.ViewModel)))
+                   .IfSuccessAsync(vm =>
+                    {
+                        if (vm.HasErrors)
+                        {
+                            return Result.AwaitableSuccess;
+                        }
+
+                        return CreateUserAsync(vm, cancellationToken);
+                    }, cancellationToken);
             }, cancellationToken);
     }
 
