@@ -310,7 +310,7 @@ public class EfAuthenticationService : IAuthenticationService
     {
         var email = options.Email.Trim().ToUpperInvariant();
 
-        await foreach (var error in loginValidator.ValidateAsync(options.Login, nameof(options.Login)))
+        await foreach (var error in loginValidator.ValidateAsync(options.Login, nameof(options.Login)).WithCancellation(cancellationToken))
         {
             if (error.IsHasError)
             {
@@ -318,7 +318,7 @@ public class EfAuthenticationService : IAuthenticationService
             }
         }
 
-        await foreach (var error in passwordValidator.ValidateAsync(options.Password, nameof(options.Password)))
+        await foreach (var error in passwordValidator.ValidateAsync(options.Password, nameof(options.Password)).WithCancellation(cancellationToken))
         {
             if (error.IsHasError)
             {

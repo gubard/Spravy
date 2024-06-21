@@ -92,6 +92,11 @@ public class CreateUserCommands
         CancellationToken cancellationToken
     )
     {
+        if (viewModel.HasErrors)
+        {
+            return Result.AwaitableSuccess;
+        }
+
         return this.InvokeUiBackgroundAsync(() =>
             {
                 viewModel.IsBusy = true;
