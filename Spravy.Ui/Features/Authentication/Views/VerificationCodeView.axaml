@@ -33,23 +33,26 @@
                      Text="{Binding VerificationCode}" />
 
             <Grid ColumnDefinitions="*,*" RowDefinitions="*,*">
-                <Button Command="{Binding Commands.SendNewVerificationCode.Command}"
+                <Button Classes="mode-press"
+                        Command="{Binding Commands.SendNewVerificationCode.Command}"
                         CommandParameter="{Binding}"
                         Content="{DynamicResource VerificationCodeView.SendNewCode}" />
                 <Button Grid.Column="1"
+                        Classes="mode-press"
                         Command="{Binding Commands.UpdateEmail.Command}"
                         CommandParameter="{Binding}"
                         Content="{DynamicResource VerificationCodeView.ChangeEmail}" />
                 <Button Grid.Row="1"
+                        Classes="mode-press"
                         Command="{Binding Commands.Back.Command}"
                         Content="{DynamicResource VerificationCodeView.Back}" />
                 <Button Grid.Row="1"
                         Grid.Column="1"
                         Name="{x:Static v:VerificationCodeView.VerificationEmailButtonName}"
+                        Classes="Flat mode-press"
                         Command="{Binding Commands.VerificationEmail.Command}"
                         CommandParameter="{Binding }"
-                        Content="{DynamicResource VerificationCodeView.SubmitCode}"
-                        Classes="Flat" />
+                        Content="{DynamicResource VerificationCodeView.SubmitCode}" />
             </Grid>
         </StackPanel>
     </c:GlassCard>

@@ -17,7 +17,7 @@
                     <ContentControl Content="{Binding Header}" Margin="0,0,5,0" />
 
                     <Button Grid.Column="1"
-                            Classes="Basic"
+                            Classes="Basic mode-press"
                             IsVisible="{Binding IsMulti}"
                             Command="{Binding SwitchAllSelectionCommand.Command}"
                             Content="{x:Static i:MaterialIconKind.CheckAll}"

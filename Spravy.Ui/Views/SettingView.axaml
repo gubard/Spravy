@@ -26,9 +26,11 @@
                                          Text="{Binding AccountNotify.Login}" />
 
                                 <Grid ColumnDefinitions="*,*">
-                                    <Button Content="{DynamicResource SettingView.ChangePassword}"
+                                    <Button Classes="mode-press" 
+                                            Content="{DynamicResource SettingView.ChangePassword}"
                                             Command="{Binding ChangePasswordCommand.Command}" />
                                     <Button Grid.Column="1"
+                                            Classes="mode-press"
                                             Content="{DynamicResource SettingView.DeleteAccount}"
                                             Command="{Binding DeleteAccountCommand.Command}" />
                                 </Grid>
@@ -123,7 +125,7 @@
             </ScrollViewer>
 
             <Button Grid.Row="1"
-                    Classes="Flat"
+                    Classes="Flat mode-press"
                     Command="{Binding SaveSettingsCommand.Command}"
                     Content="{DynamicResource SettingView.Save}" />
         </Grid>

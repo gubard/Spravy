@@ -21,11 +21,12 @@
                 <TextBox Text="{Binding EmailOrLogin}" />
 
                 <Grid ColumnDefinitions="*,*">
-                    <Button Command="{x:Static s:CommandStorage.BackCommand}"
+                    <Button Classes="mode-press"
+                            Command="{x:Static s:CommandStorage.BackCommand}"
                             Content="{DynamicResource EmailOrLoginInputView.Back}" />
 
                     <Button Grid.Column="1"
-                            Classes="Flat"
+                            Classes="Flat mode-press"
                             Command="{Binding ForgotPasswordCommand.Command}"
                             Content="{DynamicResource EmailOrLoginInputView.ChangePassword}" />
                 </Grid>

@@ -21,7 +21,8 @@
                     Background="{DynamicResource SukiControlBorderBrush}"
                     BorderThickness="0" />
 
-            <Button Command="{x:Static s:CommandStorage.NavigateToCommand}"
+            <Button Classes="mode-press"
+                    Command="{x:Static s:CommandStorage.NavigateToCommand}"
                     CommandParameter="{x:Type viewModels:RootToDoItemsViewModel}">
                 <Grid ColumnDefinitions="Auto,Auto">
                     <mi:MaterialIcon Kind="Checks" />
@@ -29,7 +30,8 @@
                 </Grid>
             </Button>
 
-            <Button Command="{x:Static s:CommandStorage.NavigateToCommand}"
+            <Button Classes="mode-press"
+                    Command="{x:Static s:CommandStorage.NavigateToCommand}"
                     CommandParameter="{x:Type viewModels:TodayToDoItemsViewModel}">
                 <Grid ColumnDefinitions="Auto,Auto">
                     <mi:MaterialIcon Kind="CalendarToday" />
@@ -37,7 +39,8 @@
                 </Grid>
             </Button>
 
-            <Button Command="{x:Static s:CommandStorage.NavigateToCommand}"
+            <Button Classes="mode-press"
+                    Command="{x:Static s:CommandStorage.NavigateToCommand}"
                     CommandParameter="{x:Type viewModels:SearchToDoItemsViewModel}">
                 <Grid ColumnDefinitions="Auto,Auto">
                     <mi:MaterialIcon Kind="Search" />
@@ -45,7 +48,8 @@
                 </Grid>
             </Button>
 
-            <Button Command="{x:Static s:CommandStorage.NavigateToCommand}"
+            <Button Classes="mode-press"
+                    Command="{x:Static s:CommandStorage.NavigateToCommand}"
                     CommandParameter="{x:Type pg:PasswordGeneratorViewModel}">
                 <Grid ColumnDefinitions="Auto,Auto">
                     <mi:MaterialIcon Kind="Password" />
@@ -53,7 +57,8 @@
                 </Grid>
             </Button>
 
-            <Button Command="{x:Static s:CommandStorage.NavigateToCommand}"
+            <Button Classes="mode-press"
+                    Command="{x:Static s:CommandStorage.NavigateToCommand}"
                     CommandParameter="{x:Type vm:SettingViewModel}">
                 <Grid ColumnDefinitions="Auto,Auto">
                     <mi:MaterialIcon Kind="Settings" />
@@ -61,7 +66,8 @@
                 </Grid>
             </Button>
 
-            <Button Command="{x:Static s:CommandStorage.LogoutCommand}">
+            <Button Classes="mode-press"
+                    Command="{x:Static s:CommandStorage.LogoutCommand}">
                 <Grid ColumnDefinitions="Auto,Auto">
                     <mi:MaterialIcon Kind="Logout" />
                     <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.Logout}" />

@@ -20,7 +20,7 @@
         <Grid ColumnDefinitions="*,Auto">
             <TextBox Text="{Binding SearchText}" />
 
-            <Button Grid.Column="1" Command="{Binding SearchCommand.Command}">
+            <Button Grid.Column="1" Classes="mode-press" Command="{Binding SearchCommand.Command}">
                 <mi:MaterialIcon Kind="Search" />
             </Button>
         </Grid>
