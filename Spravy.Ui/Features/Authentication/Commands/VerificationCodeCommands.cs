@@ -8,6 +8,7 @@ public class VerificationCodeCommands
     
     public VerificationCodeCommands(
         IAuthenticationService authenticationService,
+        SpravyCommandService spravyCommandService,
         IErrorHandler errorHandler,
         IDialogViewer dialogViewer,
         INavigator navigator,
@@ -18,9 +19,9 @@ public class VerificationCodeCommands
         this.dialogViewer = dialogViewer;
         this.navigator = navigator;
         Initialized = SpravyCommand.Create<VerificationCodeViewModel>(InitializedAsync, errorHandler, taskProgressService);
-        SendNewVerificationCode = SpravyCommand.CreateSendNewVerificationCode(authenticationService, errorHandler, taskProgressService);
+        SendNewVerificationCode = spravyCommandService.SendNewVerificationCode;
         UpdateEmail = SpravyCommand.Create<IVerificationEmail>(UpdateEmailAsync, errorHandler, taskProgressService);
-        Back = SpravyCommand.CreateBack(navigator, errorHandler, taskProgressService);
+        Back = spravyCommandService.Back;
         VerificationEmail = SpravyCommand.Create<IVerificationEmail>(VerificationEmailAsync, errorHandler, taskProgressService);
     }
     

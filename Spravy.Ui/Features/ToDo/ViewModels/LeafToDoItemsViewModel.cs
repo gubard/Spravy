@@ -14,15 +14,11 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase,
         ToDoSubItemsViewModel toDoSubItemsViewModel,
         PageHeaderViewModel pageHeaderViewModel,
         IToDoService toDoService,
-        INavigator navigator,
-        IUiApplicationService uiApplicationService,
-        IDialogViewer dialogViewer,
-        IClipboardService clipboardService,
-        IOpenerLink openerLink,
         IErrorHandler errorHandler,
         IObjectStorage objectStorage,
         IToDoCache toDoCache,
-        ITaskProgressService taskProgressService
+        ITaskProgressService taskProgressService,
+        SpravyCommandNotifyService spravyCommandNotifyService
     ) : base(true)
     {
         ToDoSubItemsViewModel = toDoSubItemsViewModel;
@@ -40,42 +36,7 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase,
 
                 if (x)
                 {
-                    PageHeaderViewModel.Commands.AddRange([
-                        SpravyCommandNotify.CreateMultiCloneItem(uiApplicationService, toDoService, dialogViewer,
-                            errorHandler, taskProgressService),
-                        SpravyCommandNotify.CreateMultiCompleteItem(uiApplicationService, toDoService, errorHandler,
-                            taskProgressService),
-                        SpravyCommandNotify.CreateMultiDeleteItem(uiApplicationService, toDoService, dialogViewer,
-                            errorHandler, taskProgressService),
-                        SpravyCommandNotify.CreateMultiResetItem(uiApplicationService, toDoService, dialogViewer,
-                            errorHandler, taskProgressService),
-                        SpravyCommandNotify.CreateMultiAddChildItem(uiApplicationService, toDoService, dialogViewer,
-                            errorHandler, taskProgressService),
-                        SpravyCommandNotify.CreateMultiCloneItem(uiApplicationService, toDoService, dialogViewer,
-                            errorHandler, taskProgressService),
-                        SpravyCommandNotify.CreateMultiChangeOrderItem(uiApplicationService, toDoService, dialogViewer,
-                            errorHandler, taskProgressService),
-                        SpravyCommandNotify.CreateMultiChangeParentItem(uiApplicationService, toDoService, dialogViewer,
-                            errorHandler, taskProgressService),
-                        SpravyCommandNotify.CreateMultiOpenLeafItem(uiApplicationService, navigator, errorHandler,
-                            taskProgressService),
-                        SpravyCommandNotify.CreateMultiOpenLinkItem(uiApplicationService, openerLink, errorHandler,
-                            taskProgressService),
-                        SpravyCommandNotify.CreateMultiShowSettingItem(uiApplicationService, toDoService, dialogViewer,
-                            errorHandler, taskProgressService),
-                        SpravyCommandNotify.CreateMultiAddToFavoriteItem(uiApplicationService, toDoService,
-                            errorHandler,
-                            taskProgressService),
-                        SpravyCommandNotify.CreateMultiCopyToClipboardItem(uiApplicationService, toDoService,
-                            dialogViewer,
-                            clipboardService, errorHandler, taskProgressService),
-                        SpravyCommandNotify.CreateMultiRemoveFromFavoriteItem(uiApplicationService, toDoService,
-                            errorHandler, taskProgressService),
-                        SpravyCommandNotify.CreateMultiRandomizeChildrenOrderItem(uiApplicationService, toDoService,
-                            dialogViewer, errorHandler, taskProgressService),
-                        SpravyCommandNotify.CreateMultiMakeAsRootItem(uiApplicationService, toDoService, errorHandler,
-                            taskProgressService),
-                    ]);
+                    PageHeaderViewModel.Commands.AddRange(spravyCommandNotifyService.LeafToDoItemsMultiItems.ToArray());
                 }
             });
 

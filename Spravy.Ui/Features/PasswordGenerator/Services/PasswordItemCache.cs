@@ -3,32 +3,12 @@ namespace Spravy.Ui.Features.PasswordGenerator.Services;
 public class PasswordItemCache : IPasswordItemCache
 {
     private readonly Dictionary<Guid, PasswordItemNotify> cache;
-    private readonly IDialogViewer dialogViewer;
-    private readonly IUiApplicationService uiApplicationService;
-    private readonly IPasswordService passwordService;
-    private readonly IClipboardService clipboardService;
-    private readonly ISpravyNotificationManager spravyNotificationManager;
-    private readonly IErrorHandler errorHandler;
-    private readonly ITaskProgressService taskProgressService;
+    private readonly SpravyCommandService spravyCommandService;
 
-    public PasswordItemCache(
-        IDialogViewer dialogViewer,
-        IUiApplicationService uiApplicationService,
-        IPasswordService passwordService,
-        IClipboardService clipboardService,
-        ISpravyNotificationManager spravyNotificationManager,
-        IErrorHandler errorHandler,
-        ITaskProgressService taskProgressService
-    )
+    public PasswordItemCache(SpravyCommandService spravyCommandService)
     {
         cache = new();
-        this.dialogViewer = dialogViewer;
-        this.uiApplicationService = uiApplicationService;
-        this.passwordService = passwordService;
-        this.clipboardService = clipboardService;
-        this.spravyNotificationManager = spravyNotificationManager;
-        this.errorHandler = errorHandler;
-        this.taskProgressService = taskProgressService;
+        this.spravyCommandService = spravyCommandService;
     }
     
     public PasswordItemNotify GetPasswordItem(Guid id)
@@ -40,8 +20,7 @@ public class PasswordItemCache : IPasswordItemCache
         
         var result = new PasswordItemNotify(
             new(id, "Loading...", string.Empty, 512, string.Empty, true, true, true, true, string.Empty),
-            passwordService, dialogViewer, uiApplicationService, errorHandler, clipboardService,
-            spravyNotificationManager, taskProgressService);
+            spravyCommandService);
         
         cache.Add(id, result);
         

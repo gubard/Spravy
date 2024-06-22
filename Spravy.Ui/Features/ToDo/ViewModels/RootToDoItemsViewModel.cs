@@ -12,7 +12,7 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase,
 
     public RootToDoItemsViewModel(
         FastAddToDoItemViewModel fastAddToDoItemViewModel,
-        RootToDoItemsCommands commands,
+        SpravyCommandNotifyService spravyCommandNotifyService,
         PageHeaderViewModel pageHeaderViewModel,
         ToDoSubItemsViewModel toDoSubItemsViewModel,
         IToDoCache toDoCache,
@@ -23,7 +23,6 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase,
     ) : base(true)
     {
         FastAddToDoItemViewModel = fastAddToDoItemViewModel;
-        Commands = commands;
         PageHeaderViewModel = pageHeaderViewModel;
         ToDoSubItemsViewModel = toDoSubItemsViewModel;
         this.toDoCache = toDoCache;
@@ -42,14 +41,13 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase,
 
                 if (x)
                 {
-                    PageHeaderViewModel.Commands.AddRange(Commands.Commands.ToArray());
+                    PageHeaderViewModel.Commands.AddRange(spravyCommandNotifyService.RootToDoItemsMultiItems.ToArray());
                 }
             });
     }
 
     public SpravyCommand InitializedCommand { get; }
     public FastAddToDoItemViewModel FastAddToDoItemViewModel { get; }
-    public RootToDoItemsCommands Commands { get; }
     public PageHeaderViewModel PageHeaderViewModel { get; }
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
 
