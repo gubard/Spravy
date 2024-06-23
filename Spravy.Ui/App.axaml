@@ -56,7 +56,7 @@
 
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
                         <Button Content="{x:Static i:MaterialIconKind.Settings}"
-                                Command="{x:Static s:CommandStorage.ShowPasswordItemSettingCommand}"
+                                Command="{x:Static h:UiHelper.ShowPasswordItemSetting}"
                                 CommandParameter="{Binding}" />
                         <Button Content="{x:Static i:MaterialIconKind.Delete}"
                                 Command="{Binding DeletePasswordItem.Command}" />

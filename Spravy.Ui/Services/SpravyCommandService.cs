@@ -1163,6 +1163,49 @@ public class SpravyCommandService
                     viewModel.Content.Type = item.DescriptionType;
                     viewModel.ToDoItemName = item.Name;
                 }, cancellationToken), errorHandler, taskProgressService);
+
+        AddPasswordItem = SpravyCommand.Create(
+            cancellationToken => dialogViewer.ShowConfirmContentDialogAsync(
+                vm => dialogViewer.CloseContentDialogAsync(cancellationToken)
+                   .IfSuccessAsync(
+                        () => passwordService.AddPasswordItemAsync(vm.ToAddPasswordOptions(), cancellationToken),
+                        cancellationToken)
+                   .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
+                        cancellationToken), _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
+                ActionHelper<AddPasswordItemViewModel>.Empty, cancellationToken), errorHandler, taskProgressService);
+
+        ShowPasswordItemSetting = SpravyCommand.Create<PasswordItemNotify>(
+            (item, cancellationToken) => dialogViewer.ShowConfirmContentDialogAsync<PasswordItemSettingsViewModel>(
+                vm => dialogViewer.CloseContentDialogAsync(cancellationToken)
+                   .IfSuccessAsync(() => passwordService.UpdatePasswordItemKeyAsync(item.Id, vm.Key, cancellationToken),
+                        cancellationToken)
+                   .IfSuccessAsync(
+                        () => passwordService.UpdatePasswordItemLengthAsync(item.Id, vm.Length, cancellationToken),
+                        cancellationToken)
+                   .IfSuccessAsync(
+                        () => passwordService.UpdatePasswordItemNameAsync(item.Id, vm.Name, cancellationToken),
+                        cancellationToken)
+                   .IfSuccessAsync(
+                        () => passwordService.UpdatePasswordItemRegexAsync(item.Id, vm.Regex, cancellationToken),
+                        cancellationToken)
+                   .IfSuccessAsync(
+                        () => passwordService.UpdatePasswordItemCustomAvailableCharactersAsync(item.Id,
+                            vm.CustomAvailableCharacters, cancellationToken), cancellationToken)
+                   .IfSuccessAsync(
+                        () => passwordService.UpdatePasswordItemIsAvailableNumberAsync(item.Id, vm.IsAvailableNumber,
+                            cancellationToken), cancellationToken)
+                   .IfSuccessAsync(
+                        () => passwordService.UpdatePasswordItemIsAvailableLowerLatinAsync(item.Id,
+                            vm.IsAvailableLowerLatin, cancellationToken), cancellationToken)
+                   .IfSuccessAsync(
+                        () => passwordService.UpdatePasswordItemIsAvailableSpecialSymbolsAsync(item.Id,
+                            vm.IsAvailableSpecialSymbols, cancellationToken), cancellationToken)
+                   .IfSuccessAsync(
+                        () => passwordService.UpdatePasswordItemIsAvailableUpperLatinAsync(item.Id,
+                            vm.IsAvailableUpperLatin, cancellationToken), cancellationToken)
+                   .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
+                        cancellationToken), _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
+                vm => vm.Id = item.Id, cancellationToken), errorHandler, taskProgressService);
     }
 
     public SpravyCommand MultiCompleteToDoItem { get; }
@@ -1216,6 +1259,8 @@ public class SpravyCommandService
 
     public SpravyCommand GeneratePassword { get; }
     public SpravyCommand DeletePasswordItem { get; }
+    public SpravyCommand AddPasswordItem { get; }
+    public SpravyCommand ShowPasswordItemSetting { get; }
 
     public SpravyCommand SwitchPane { get; }
     public SpravyCommand SendNewVerificationCode { get; }
