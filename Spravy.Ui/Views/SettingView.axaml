@@ -10,7 +10,6 @@
                         xmlns:t="clr-namespace:Spravy.Ui.Views"
                         xmlns:sm="clr-namespace:Spravy.Ui.Models"
                         xmlns:h="clr-namespace:Spravy.Ui.Helpers"
-                        xmlns:s="clr-namespace:Spravy.Ui.Services"
                         xmlns:content="clr-namespace:SukiUI.Content;assembly=SukiUI"
                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                         x:Class="Spravy.Ui.Views.SettingView"

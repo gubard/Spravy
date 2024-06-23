@@ -5,7 +5,6 @@
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:ru="http://reactiveui.net"
                         xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-                        xmlns:s="clr-namespace:Spravy.Ui.Services"
                         xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
                         xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
                         xmlns:h="clr-namespace:Spravy.Ui.Helpers"

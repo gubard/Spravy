@@ -5,12 +5,10 @@ namespace Spravy.Ui.Services;
 
 public static class CommandStorage
 {
-    private static readonly INavigator navigator;
     private static readonly IDialogViewer dialogViewer;
     private static readonly MainSplitViewModel mainSplitViewModel;
     private static readonly IToDoService toDoService;
     private static readonly IToDoCache toDoCache;
-    private static readonly IObjectStorage objectStorage;
     private static readonly IPasswordService passwordService;
     private static readonly IErrorHandler errorHandler;
     
@@ -19,13 +17,10 @@ public static class CommandStorage
         var kernel = DiHelper.ServiceFactory.ThrowIfNull();
         toDoCache = kernel.CreateService<IToDoCache>();
         passwordService = kernel.CreateService<IPasswordService>();
-        objectStorage = kernel.CreateService<IObjectStorage>();
-        navigator = kernel.CreateService<INavigator>();
         dialogViewer = kernel.CreateService<IDialogViewer>();
         mainSplitViewModel = kernel.CreateService<MainSplitViewModel>();
         toDoService = kernel.CreateService<IToDoService>();
         errorHandler = kernel.CreateService<IErrorHandler>();
-        LogoutItem = CreateCommand(LogoutAsync, MaterialIconKind.Logout, "Logout");
         
         ToDoItemSearchItem = CreateCommand<IToDoItemSearchProperties>(
             ToDoItemSearchAsync, MaterialIconKind.Search, "Search to-do item");
@@ -52,13 +47,6 @@ public static class CommandStorage
     }
     
     public static CommandItem ToDoItemSearchItem { get; }
-    
-    public static ICommand LogoutCommand
-    {
-        get => LogoutItem.Command;
-    }
-    
-    public static CommandItem LogoutItem { get; }
     
     public static ICommand AddPasswordItemCommand
     {
@@ -158,36 +146,7 @@ public static class CommandStorage
                 ids => properties.ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), false, cancellationToken),
                 cancellationToken);
     }
-    
-    private static ConfiguredValueTaskAwaitable<Result> LogoutAsync(CancellationToken cancellationToken)
-    {
-        return objectStorage.IsExistsAsync(StorageIds.LoginId)
-           .IfSuccessAsync(value =>
-            {
-                if (value)
-                {
-                    return objectStorage.DeleteAsync(StorageIds.LoginId);
-                }
-                
-                return Result.AwaitableSuccess;
-            }, cancellationToken)
-           .IfSuccessAsync(() => navigator.NavigateToAsync(ActionHelper<LoginViewModel>.Empty, cancellationToken),
-                cancellationToken)
-           .IfSuccessAsync(() => cancellationToken.InvokeUiBackgroundAsync(() =>
-            {
-                mainSplitViewModel.IsPaneOpen = false;
-                
-                return Result.Success;
-            }), cancellationToken);
-    }
-    
-    private static async ValueTask<Result> BackCore(CancellationToken cancellationToken)
-    {
-        var result = await navigator.NavigateBackAsync(cancellationToken);
-        
-        return new(result.Errors);
-    }
-    
+
     public static ConfiguredValueTaskAwaitable<Result> RefreshCurrentViewAsync(CancellationToken cancellationToken)
     {
         if (mainSplitViewModel.Content is not IRefresh refresh)

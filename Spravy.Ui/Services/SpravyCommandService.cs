@@ -19,6 +19,7 @@ public class SpravyCommandService
         IAuthenticationService authenticationService,
         IPasswordService passwordService,
         MainSplitViewModel mainSplitViewModel,
+        IObjectStorage objectStorage,
         ISpravyNotificationManager spravyNotificationManager,
         INavigator navigator,
         IErrorHandler errorHandler,
@@ -1123,6 +1124,25 @@ public class SpravyCommandService
             }, _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
             ActionHelper<AddRootToDoItemViewModel>.Empty,
             cancellationToken), errorHandler, taskProgressService);
+
+        Logout = SpravyCommand.Create(cancellationToken => objectStorage.IsExistsAsync(StorageIds.LoginId)
+           .IfSuccessAsync(value =>
+            {
+                if (value)
+                {
+                    return objectStorage.DeleteAsync(StorageIds.LoginId);
+                }
+
+                return Result.AwaitableSuccess;
+            }, cancellationToken)
+           .IfSuccessAsync(() => navigator.NavigateToAsync(ActionHelper<LoginViewModel>.Empty, cancellationToken),
+                cancellationToken)
+           .IfSuccessAsync(() => cancellationToken.InvokeUiBackgroundAsync(() =>
+            {
+                mainSplitViewModel.IsPaneOpen = false;
+
+                return Result.Success;
+            }), cancellationToken), errorHandler, taskProgressService);
     }
 
     public SpravyCommand MultiCompleteToDoItem { get; }
@@ -1182,6 +1202,7 @@ public class SpravyCommandService
     public SpravyCommand Back { get; }
     public SpravyCommand NavigateToCurrentToDoItem { get; }
     public SpravyCommand AddRootToDoItem { get; }
+    public SpravyCommand Logout { get; }
 
     public SpravyCommand GetNavigateTo<TViewModel>() where TViewModel : INavigatable
     {
