@@ -6,4 +6,6 @@ public partial class LeafToDoItemsView : ReactiveUserControl<LeafToDoItemsViewMo
     {
         InitializeComponent();
     }
+
+    public LeafToDoItemsViewModel MainViewModel => ViewModel.ThrowIfNull();
 }

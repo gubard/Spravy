@@ -34,7 +34,7 @@ public class SpravyCommandService
                 navigator.NavigateToAsync<ToDoItemViewModel>(vm => vm.Id = item.CurrentId, cancellationToken),
             errorHandler, taskProgressService);
 
-        MultiClone = SpravyCommand.Create(cancellationToken => dialogViewer.ShowConfirmContentDialogAsync(vm =>
+        MultiClone = SpravyCommand.Create<IToDoSubItemsViewModelProperty>((view, cancellationToken) => dialogViewer.ShowConfirmContentDialogAsync(vm =>
             {
                 var view = uiApplicationService.GetCurrentView<IToDoSubItemsViewModelProperty>();
 
@@ -70,7 +70,7 @@ public class SpravyCommandService
             }, _ => dialogViewer.CloseContentDialogAsync(cancellationToken), ActionHelper<ResetToDoItemViewModel>.Empty,
             cancellationToken), errorHandler, taskProgressService);
 
-        MultiReset = SpravyCommand.Create(cancellationToken => dialogViewer.ShowConfirmContentDialogAsync(vm =>
+        MultiReset = SpravyCommand.Create<IToDoSubItemsViewModelProperty>((view, cancellationToken) => dialogViewer.ShowConfirmContentDialogAsync(vm =>
             {
                 var view = uiApplicationService.GetCurrentView<IToDoSubItemsViewModelProperty>();
 
@@ -106,17 +106,8 @@ public class SpravyCommandService
             }, _ => dialogViewer.CloseContentDialogAsync(cancellationToken), ActionHelper<ResetToDoItemViewModel>.Empty,
             cancellationToken), errorHandler, taskProgressService);
 
-        MultiChangeOrder = SpravyCommand.Create(cancellationToken =>
-        {
-            var view = uiApplicationService.GetCurrentView<IToDoSubItemsViewModelProperty>();
-
-            if (view.IsHasError)
-            {
-                return new Result(view.Errors).ToValueTaskResult().ConfigureAwait(false);
-            }
-
-            ReadOnlyMemory<Guid> selected = view.Value
-               .ToDoSubItemsViewModel
+        MultiChangeOrder = SpravyCommand.Create<IToDoSubItemsViewModelProperty>((view, cancellationToken) =>
+        { ReadOnlyMemory<Guid> selected = view.ToDoSubItemsViewModel
                .List
                .ToDoItems
                .GroupByNone
@@ -144,8 +135,7 @@ public class SpravyCommandService
                                 cancellationToken), cancellationToken),
                 _ => dialogViewer.CloseContentDialogAsync(cancellationToken), viewModel =>
                 {
-                    viewModel.ChangeToDoItemOrderIndexIds = view.Value
-                       .ToDoSubItemsViewModel
+                    viewModel.ChangeToDoItemOrderIndexIds = view.ToDoSubItemsViewModel
                        .List
                        .ToDoItems
                        .GroupByNone
@@ -157,17 +147,9 @@ public class SpravyCommandService
                 }, cancellationToken);
         }, errorHandler, taskProgressService);
 
-        MultiRandomizeChildrenOrder = SpravyCommand.Create(cancellationToken =>
+        MultiRandomizeChildrenOrder = SpravyCommand.Create<IToDoSubItemsViewModelProperty>((view, cancellationToken) =>
         {
-            var view = uiApplicationService.GetCurrentView<IToDoSubItemsViewModelProperty>();
-
-            if (view.IsHasError)
-            {
-                return new Result(view.Errors).ToValueTaskResult().ConfigureAwait(false);
-            }
-
-            ReadOnlyMemory<Guid> selected = view.Value
-               .ToDoSubItemsViewModel
+            ReadOnlyMemory<Guid> selected = view.ToDoSubItemsViewModel
                .List
                .ToDoItems
                .GroupByNone
@@ -194,17 +176,9 @@ public class SpravyCommandService
                 }, cancellationToken);
         }, errorHandler, taskProgressService);
 
-        MultiCopyToClipboard = SpravyCommand.Create(cancellationToken =>
+        MultiCopyToClipboard = SpravyCommand.Create<IToDoSubItemsViewModelProperty>((view, cancellationToken) =>
         {
-            var view = uiApplicationService.GetCurrentView<IToDoSubItemsViewModelProperty>();
-
-            if (view.IsHasError)
-            {
-                return new Result(view.Errors).ToValueTaskResult().ConfigureAwait(false);
-            }
-
-            ReadOnlyMemory<Guid> selected = view.Value
-               .ToDoSubItemsViewModel
+            ReadOnlyMemory<Guid> selected = view.ToDoSubItemsViewModel
                .List
                .ToDoItems
                .GroupByNone
@@ -235,17 +209,9 @@ public class SpravyCommandService
                 ActionHelper<ToDoItemToStringSettingsViewModel>.Empty, cancellationToken);
         }, errorHandler, taskProgressService);
 
-        MultiMakeAsRoot = SpravyCommand.Create(cancellationToken =>
+        MultiMakeAsRoot = SpravyCommand.Create<IToDoSubItemsViewModelProperty>((view, cancellationToken) =>
         {
-            var view = uiApplicationService.GetCurrentView<IToDoSubItemsViewModelProperty>();
-
-            if (view.IsHasError)
-            {
-                return new Result(view.Errors).ToValueTaskResult().ConfigureAwait(false);
-            }
-
-            ReadOnlyMemory<Guid> selected = view.Value
-               .ToDoSubItemsViewModel
+            ReadOnlyMemory<Guid> selected = view.ToDoSubItemsViewModel
                .List
                .ToDoItems
                .GroupByNone
@@ -266,17 +232,9 @@ public class SpravyCommandService
                     cancellationToken);
         }, errorHandler, taskProgressService);
 
-        MultiChangeParent = SpravyCommand.Create(cancellationToken =>
+        MultiChangeParent = SpravyCommand.Create<IToDoSubItemsViewModelProperty>((view, cancellationToken) =>
         {
-            var view = uiApplicationService.GetCurrentView<IToDoSubItemsViewModelProperty>();
-
-            if (view.IsHasError)
-            {
-                return new Result(view.Errors).ToValueTaskResult().ConfigureAwait(false);
-            }
-
-            ReadOnlyMemory<Guid> selected = view.Value
-               .ToDoSubItemsViewModel
+            ReadOnlyMemory<Guid> selected = view.ToDoSubItemsViewModel
                .List
                .ToDoItems
                .GroupByNone
@@ -305,17 +263,9 @@ public class SpravyCommandService
                 }, cancellationToken);
         }, errorHandler, taskProgressService);
 
-        MultiOpenLeaf = SpravyCommand.Create(cancellationToken =>
+        MultiOpenLeaf = SpravyCommand.Create<IToDoSubItemsViewModelProperty>((view, cancellationToken) =>
         {
-            var view = uiApplicationService.GetCurrentView<IToDoSubItemsViewModelProperty>();
-
-            if (view.IsHasError)
-            {
-                return new Result(view.Errors).ToValueTaskResult().ConfigureAwait(false);
-            }
-
-            ReadOnlyMemory<Guid> selected = view.Value
-               .ToDoSubItemsViewModel
+            ReadOnlyMemory<Guid> selected = view.ToDoSubItemsViewModel
                .List
                .ToDoItems
                .GroupByNone
@@ -336,17 +286,9 @@ public class SpravyCommandService
             }, cancellationToken);
         }, errorHandler, taskProgressService);
 
-        MultiShowSetting = SpravyCommand.Create(cancellationToken =>
+        MultiShowSetting = SpravyCommand.Create<IToDoSubItemsViewModelProperty>((view, cancellationToken) =>
         {
-            var view = uiApplicationService.GetCurrentView<IToDoSubItemsViewModelProperty>();
-
-            if (view.IsHasError)
-            {
-                return new Result(view.Errors).ToValueTaskResult().ConfigureAwait(false);
-            }
-
-            ReadOnlyMemory<ToDoItemEntityNotify> selected = view.Value
-               .ToDoSubItemsViewModel
+            ReadOnlyMemory<ToDoItemEntityNotify> selected = view.ToDoSubItemsViewModel
                .List
                .ToDoItems
                .GroupByNone
@@ -397,17 +339,9 @@ public class SpravyCommandService
                 ActionHelper<MultiToDoItemSettingViewModel>.Empty, cancellationToken);
         }, errorHandler, taskProgressService);
 
-        MultiDelete = SpravyCommand.Create(cancellationToken =>
+        MultiDelete = SpravyCommand.Create<IToDoSubItemsViewModelProperty>((view, cancellationToken) =>
         {
-            var view = uiApplicationService.GetCurrentView<IToDoSubItemsViewModelProperty>();
-
-            if (view.IsHasError)
-            {
-                return new Result(view.Errors).ToValueTaskResult().ConfigureAwait(false);
-            }
-
-            ReadOnlyMemory<ToDoItemEntityNotify> selected = view.Value
-               .ToDoSubItemsViewModel
+            ReadOnlyMemory<ToDoItemEntityNotify> selected = view.ToDoSubItemsViewModel
                .List
                .ToDoItems
                .GroupByNone
@@ -434,17 +368,9 @@ public class SpravyCommandService
                 }, cancellationToken);
         }, errorHandler, taskProgressService);
 
-        MultiAddChild = SpravyCommand.Create(cancellationToken =>
+        MultiAddChild = SpravyCommand.Create<IToDoSubItemsViewModelProperty>((view, cancellationToken) =>
         {
-            var view = uiApplicationService.GetCurrentView<IToDoSubItemsViewModelProperty>();
-
-            if (view.IsHasError)
-            {
-                return new Result(view.Errors).ToValueTaskResult().ConfigureAwait(false);
-            }
-
-            ReadOnlyMemory<ToDoItemEntityNotify> selected = view.Value
-               .ToDoSubItemsViewModel
+            ReadOnlyMemory<ToDoItemEntityNotify> selected = view.ToDoSubItemsViewModel
                .List
                .ToDoItems
                .GroupByNone
@@ -472,17 +398,9 @@ public class SpravyCommandService
                 cancellationToken);
         }, errorHandler, taskProgressService);
 
-        MultiOpenLink = SpravyCommand.Create(cancellationToken =>
+        MultiOpenLink = SpravyCommand.Create<IToDoSubItemsViewModelProperty>((view, cancellationToken) =>
         {
-            var view = uiApplicationService.GetCurrentView<IToDoSubItemsViewModelProperty>();
-
-            if (view.IsHasError)
-            {
-                return new Result(view.Errors).ToValueTaskResult().ConfigureAwait(false);
-            }
-
-            ReadOnlyMemory<ToDoItemEntityNotify> selected = view.Value
-               .ToDoSubItemsViewModel
+            ReadOnlyMemory<ToDoItemEntityNotify> selected = view.ToDoSubItemsViewModel
                .List
                .ToDoItems
                .GroupByNone
@@ -504,17 +422,9 @@ public class SpravyCommandService
                             cancellationToken), cancellationToken);
         }, errorHandler, taskProgressService);
 
-        MultiRemoveFromFavorite = SpravyCommand.Create(cancellationToken =>
+        MultiRemoveFromFavorite = SpravyCommand.Create<IToDoSubItemsViewModelProperty>((view, cancellationToken) =>
         {
-            var view = uiApplicationService.GetCurrentView<IToDoSubItemsViewModelProperty>();
-
-            if (view.IsHasError)
-            {
-                return new Result(view.Errors).ToValueTaskResult().ConfigureAwait(false);
-            }
-
-            ReadOnlyMemory<Guid> selected = view.Value
-               .ToDoSubItemsViewModel
+            ReadOnlyMemory<Guid> selected = view.ToDoSubItemsViewModel
                .List
                .ToDoItems
                .GroupByNone
@@ -536,17 +446,9 @@ public class SpravyCommandService
                     cancellationToken);
         }, errorHandler, taskProgressService);
 
-        MultiAddToFavorite = SpravyCommand.Create(cancellationToken =>
+        MultiAddToFavorite = SpravyCommand.Create<IToDoSubItemsViewModelProperty>((view, cancellationToken) =>
         {
-            var view = uiApplicationService.GetCurrentView<IToDoSubItemsViewModelProperty>();
-
-            if (view.IsHasError)
-            {
-                return new Result(view.Errors).ToValueTaskResult().ConfigureAwait(false);
-            }
-
-            ReadOnlyMemory<Guid> selected = view.Value
-               .ToDoSubItemsViewModel
+            ReadOnlyMemory<Guid> selected = view.ToDoSubItemsViewModel
                .List
                .ToDoItems
                .GroupByNone
@@ -568,17 +470,9 @@ public class SpravyCommandService
                     cancellationToken);
         }, errorHandler, taskProgressService);
 
-        MultiComplete = SpravyCommand.Create(cancellationToken =>
+        MultiComplete = SpravyCommand.Create<IToDoSubItemsViewModelProperty>((view, cancellationToken) =>
         {
-            var view = uiApplicationService.GetCurrentView<IToDoSubItemsViewModelProperty>();
-
-            if (view.IsHasError)
-            {
-                return new Result(view.Errors).ToValueTaskResult().ConfigureAwait(false);
-            }
-
-            ReadOnlyMemory<ToDoItemEntityNotify> selected = view.Value
-               .ToDoSubItemsViewModel
+            ReadOnlyMemory<ToDoItemEntityNotify> selected = view.ToDoSubItemsViewModel
                .List
                .ToDoItems
                .GroupByNone

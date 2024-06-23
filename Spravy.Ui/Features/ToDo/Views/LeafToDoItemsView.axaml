@@ -10,6 +10,7 @@
                         xmlns:c="clr-namespace:SukiUI.Content;assembly=SukiUI"
                         xmlns:m="clr-namespace:Spravy.Ui.Models"
                         xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                        xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                         x:Class="Spravy.Ui.Features.ToDo.Views.LeafToDoItemsView"
                         x:DataType="vm:LeafToDoItemsViewModel">
@@ -106,7 +107,7 @@
                             <DataTemplate DataType="m:SpravyCommandNotify">
                                 <Button Classes="Basic" 
                                         Command="{Binding Item.Command}"
-                                        CommandParameter="{Binding $parent[ItemsControl].DataContext}"
+                                        CommandParameter="{Binding $parent[v:LeafToDoItemsView].MainViewModel}"
                                         Content="{Binding Kind}" />
                             </DataTemplate>
                         </ItemsControl.DataTemplates>
@@ -122,7 +123,7 @@
                         <Button.Styles>
                             <Style Selector="MenuItem" x:DataType="m:SpravyCommandNotify">
                                 <Setter Property="Command" Value="{Binding Item.Command}" />
-                                <Setter Property="CommandParameter" Value="{Binding $parent[Button].DataContext}" />
+                                <Setter Property="CommandParameter" Value="{Binding $parent[v:LeafToDoItemsView].MainViewModel}" />
                                 <Setter Property="Icon" Value="{Binding Kind}" />
                             </Style>
                         </Button.Styles>

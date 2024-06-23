@@ -10,6 +10,7 @@
                         xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
                         xmlns:m="clr-namespace:Spravy.Ui.Models"
                         xmlns:h="clr-namespace:Spravy.Ui.Helpers"
+                        xmlns:co="clr-namespace:SukiUI.Content;assembly=SukiUI"
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                         x:Class="Spravy.Ui.Features.ToDo.Views.SearchToDoItemsView"
                         x:DataType="vm:SearchToDoItemsViewModel">
@@ -90,7 +91,10 @@
 
                 <ItemsControl.DataTemplates>
                     <DataTemplate DataType="m:SpravyCommandNotify">
-                        <Button Classes="Basic" Command="{Binding Item.Command}" Content="{Binding Kind}" />
+                        <Button Classes="Basic" 
+                                Command="{Binding Item.Command}"
+                                CommandParameter="{Binding $parent[v:SearchToDoItemsView].MainViewModel}"
+                                Content="{Binding Kind}" />
                     </DataTemplate>
                 </ItemsControl.DataTemplates>
             </ItemsControl>
@@ -105,6 +109,8 @@
                 <Button.Styles>
                     <Style Selector="MenuItem" x:DataType="m:SpravyCommandNotify">
                         <Setter Property="Command" Value="{Binding Item.Command}" />
+                        <Setter Property="CommandParameter"
+                                Value="{Binding $parent[v:SearchToDoItemsView].MainViewModel}" />
                         <Setter Property="Icon" Value="{Binding Kind}" />
                     </Style>
                 </Button.Styles>
@@ -118,7 +124,9 @@
         </Panel>
 
         <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto">
-            <ContentControl Content="{x:Static s:CommandStorage.SwitchPaneItem}" />
+            <Button Classes="Basic" Command="{x:Static s:CommandStorage.SwitchPaneCommand}">
+                <PathIcon Data="{x:Static co:Icons.Menu}" />
+            </Button>
 
             <StackPanel Grid.Column="1">
                 <TextBlock Classes="field" Text="{DynamicResource SearchView.Search}" />
