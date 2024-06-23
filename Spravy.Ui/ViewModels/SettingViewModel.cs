@@ -131,7 +131,7 @@ public class SettingViewModel : NavigatableViewModelBase
 
                 return Result.Success;
             })
-           .IfSuccessTryFinallyAsync(() => this.InvokeUiBackgroundAsync(() =>
+           .IfSuccessTryFinallyAsync(() => this.InvokeUiAsync(() =>
             {
                 theme.ChangeColorTheme(colorTheme.Value);
                 colorTheme.IsSelect = true;
