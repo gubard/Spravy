@@ -26,7 +26,6 @@ public static class CommandStorage
         toDoService = kernel.CreateService<IToDoService>();
         errorHandler = kernel.CreateService<IErrorHandler>();
         SwitchPaneItem = CreateCommand(SwitchPaneAsync, MaterialIconKind.Menu, "Open pane");
-        BackItem = CreateCommand(BackAsync, MaterialIconKind.ArrowLeft, "Back");
         LogoutItem = CreateCommand(LogoutAsync, MaterialIconKind.Logout, "Logout");
         AddRootToDoItemItem = CreateCommand(AddRootToDoItemAsync, MaterialIconKind.Plus, "Add root to-do item");
         
@@ -62,13 +61,6 @@ public static class CommandStorage
     }
     
     public static CommandItem SwitchPaneItem { get; }
-    
-    public static ICommand BackCommand
-    {
-        get => BackItem.Command;
-    }
-    
-    public static CommandItem BackItem { get; }
     
     public static ICommand LogoutCommand
     {
@@ -218,11 +210,6 @@ public static class CommandStorage
                 
                 return Result.Success;
             }), cancellationToken);
-    }
-    
-    private static ConfiguredValueTaskAwaitable<Result> BackAsync(CancellationToken cancellationToken)
-    {
-        return BackCore(cancellationToken).ConfigureAwait(false);
     }
     
     private static async ValueTask<Result> BackCore(CancellationToken cancellationToken)
