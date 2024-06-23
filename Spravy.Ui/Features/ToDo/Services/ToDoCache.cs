@@ -4,36 +4,24 @@ public class ToDoCache : IToDoCache
 {
     private readonly Dictionary<Guid, ToDoItemEntityNotify> cache;
     private readonly Dictionary<Guid, ActiveToDoItemNotify> activeCache;
-    private readonly IToDoService toDoService;
-    private readonly IUiApplicationService uiApplicationService;
     private readonly IErrorHandler errorHandler;
-    private readonly IClipboardService clipboardService;
     private readonly INavigator navigator;
-    private readonly IDialogViewer dialogViewer;
     private readonly ITaskProgressService taskProgressService;
-    private readonly IOpenerLink openerLink;
+    private readonly SpravyCommandNotifyService spravyCommandNotifyService;
     private ReadOnlyMemory<ToDoItemEntityNotify> rootItems = ReadOnlyMemory<ToDoItemEntityNotify>.Empty;
 
     public ToDoCache(
-        IToDoService toDoService,
-        IUiApplicationService uiApplicationService,
         IErrorHandler errorHandler,
-        IClipboardService clipboardService,
         INavigator navigator,
-        IOpenerLink openerLink,
-        IDialogViewer dialogViewer,
-        ITaskProgressService taskProgressService
+        ITaskProgressService taskProgressService,
+        SpravyCommandNotifyService spravyCommandNotifyService
     )
     {
         activeCache = new();
-        this.toDoService = toDoService;
-        this.uiApplicationService = uiApplicationService;
         this.errorHandler = errorHandler;
-        this.clipboardService = clipboardService;
         this.navigator = navigator;
-        this.openerLink = openerLink;
-        this.dialogViewer = dialogViewer;
         this.taskProgressService = taskProgressService;
+        this.spravyCommandNotifyService = spravyCommandNotifyService;
         cache = new();
     }
 
@@ -61,8 +49,7 @@ public class ToDoCache : IToDoCache
             return value.ToResult();
         }
 
-        var result = new ToDoItemEntityNotify(id, toDoService, navigator, uiApplicationService, dialogViewer,
-            clipboardService, openerLink, errorHandler, taskProgressService);
+        var result = new ToDoItemEntityNotify(id, spravyCommandNotifyService);
 
         if (cache.TryAdd(id, result))
         {

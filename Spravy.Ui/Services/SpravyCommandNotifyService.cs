@@ -2,137 +2,234 @@ namespace Spravy.Ui.Services;
 
 public class SpravyCommandNotifyService
 {
-    public SpravyCommandNotify MultiCompleteItem { get; }
-    public SpravyCommandNotify MultiAddToFavoriteItem { get; }
-    public SpravyCommandNotify MultiRemoveFromFavoriteItem { get; }
-    public SpravyCommandNotify MultiOpenLinkItem { get; }
-    public SpravyCommandNotify MultiAddChildItem { get; }
-    public SpravyCommandNotify MultiDeleteItem { get; }
-    public SpravyCommandNotify MultiShowSettingItem { get; }
-    public SpravyCommandNotify MultiOpenLeafItem { get; }
-    public SpravyCommandNotify MultiChangeParentItem { get; }
-    public SpravyCommandNotify MultiMakeAsRootItem { get; }
-    public SpravyCommandNotify MultiCopyToClipboardItem { get; }
-    public SpravyCommandNotify MultiRandomizeChildrenOrderItem { get; }
-    public SpravyCommandNotify MultiChangeOrderItem { get; }
-    public SpravyCommandNotify MultiResetItem { get; }
-    public SpravyCommandNotify MultiCloneItem { get; }
-    public ReadOnlyMemory<SpravyCommandNotify> LeafToDoItemsMultiItems { get; }
-    public ReadOnlyMemory<SpravyCommandNotify> RootToDoItemsMultiItems { get; }
-    public ReadOnlyMemory<SpravyCommandNotify> TodayToDoItemsMultiItems { get; }
-    public ReadOnlyMemory<SpravyCommandNotify> SearchToDoItemsMultiItems { get; }
-
     public SpravyCommandNotifyService(SpravyCommandService commandService)
     {
-        MultiCompleteItem = new(MaterialIconKind.Check, new("Command.Complete"), commandService.MultiComplete);
+        MultiComplete = new(MaterialIconKind.Check, new("Command.Complete"), commandService.MultiComplete);
 
-        MultiAddToFavoriteItem = new(MaterialIconKind.StarOutline, new("Command.AddToFavorite"),
+        MultiAddToFavorite = new(MaterialIconKind.StarOutline, new("Command.AddToFavorite"),
             commandService.MultiAddToFavorite);
 
-        MultiRemoveFromFavoriteItem = new(MaterialIconKind.Star, new("Command.RemoveFromFavorite"),
+        MultiRemoveFromFavorite = new(MaterialIconKind.Star, new("Command.RemoveFromFavorite"),
             commandService.MultiRemoveFromFavorite);
 
-        MultiOpenLinkItem = new(MaterialIconKind.Link, new("Command.OpenLink"), commandService.MultiOpenLink);
-        MultiAddChildItem = new(MaterialIconKind.Plus, new("Command.AddChildToDoItem"), commandService.MultiAddChild);
-        MultiDeleteItem = new(MaterialIconKind.Delete, new("Command.Delete"), commandService.MultiDelete);
-        MultiShowSettingItem = new(MaterialIconKind.Settings, new("Command.Settings"), commandService.MultiShowSetting);
-        MultiOpenLeafItem = new(MaterialIconKind.Leaf, new("Command.OpenLeaf"), commandService.MultiOpenLeaf);
+        MultiOpenLink = new(MaterialIconKind.Link, new("Command.OpenLink"), commandService.MultiOpenLink);
+        MultiAddChild = new(MaterialIconKind.Plus, new("Command.AddChildToDoItem"), commandService.MultiAddChild);
+        MultiDelete = new(MaterialIconKind.Delete, new("Command.Delete"), commandService.MultiDelete);
+        MultiShowSetting = new(MaterialIconKind.Settings, new("Command.Setting"), commandService.MultiShowSetting);
+        MultiOpenLeaf = new(MaterialIconKind.Leaf, new("Command.OpenLeaf"), commandService.MultiOpenLeaf);
 
-        MultiChangeParentItem = new(MaterialIconKind.SwapHorizontal, new("Command.ChangeParent"),
+        MultiChangeParent = new(MaterialIconKind.SwapHorizontal, new("Command.ChangeParent"),
             commandService.MultiChangeParent);
 
-        MultiMakeAsRootItem = new(MaterialIconKind.FamilyTree, new("Command.MakeAsRootToDoItem"),
+        MultiMakeAsRoot = new(MaterialIconKind.FamilyTree, new("Command.MakeAsRootToDoItem"),
             commandService.MultiMakeAsRoot);
 
-        MultiCopyToClipboardItem = new(MaterialIconKind.Clipboard, new("Command.CopyToClipboard"),
+        MultiCopyToClipboard = new(MaterialIconKind.Clipboard, new("Command.CopyToClipboard"),
             commandService.MultiCopyToClipboard);
 
-        MultiRandomizeChildrenOrderItem = new(MaterialIconKind.DiceSix, new("Command.RandomizeChildrenOrder"),
+        MultiRandomizeChildrenOrder = new(MaterialIconKind.DiceSix, new("Command.RandomizeChildrenOrder"),
             commandService.MultiRandomizeChildrenOrder);
 
-        MultiChangeOrderItem = new(MaterialIconKind.ReorderHorizontal, new("Command.Reorder"),
+        MultiChangeOrder = new(MaterialIconKind.ReorderHorizontal, new("Command.Reorder"),
             commandService.MultiChangeOrder);
 
-        MultiResetItem = new(MaterialIconKind.Refresh, new("Command.Reset"), commandService.MultiReset);
-        MultiCloneItem = new(MaterialIconKind.Copyleft, new("Command.Clone"), commandService.MultiClone);
+        MultiReset = new(MaterialIconKind.Refresh, new("Command.Reset"), commandService.MultiReset);
+        MultiClone = new(MaterialIconKind.Copyleft, new("Command.Clone"), commandService.MultiClone);
 
-        LeafToDoItemsMultiItems = new[]
+        MultiCompleteToDoItem =
+            new(MaterialIconKind.Check, new("Command.Complete"), commandService.MultiCompleteToDoItem);
+
+        MultiAddToFavoriteToDoItem = new(MaterialIconKind.StarOutline, new("Command.AddToFavorite"),
+            commandService.MultiAddToFavoriteToDoItem);
+
+        MultiRemoveFromFavoriteToDoItem = new(MaterialIconKind.Star, new("Command.RemoveFromFavorite"),
+            commandService.MultiRemoveFromFavoriteToDoItem);
+
+        MultiOpenLinkToDoItem =
+            new(MaterialIconKind.Link, new("Command.OpenLink"), commandService.MultiOpenLinkToDoItem);
+
+        MultiAddChildToDoItem = new(MaterialIconKind.Plus, new("Command.AddChildToDoItem"),
+            commandService.MultiAddChildToDoItem);
+
+        MultiDeleteToDoItem = new(MaterialIconKind.Delete, new("Command.Delete"), commandService.MultiDeleteToDoItem);
+
+        MultiShowSettingToDoItem = new(MaterialIconKind.Settings, new("Command.Setting"),
+            commandService.MultiShowSettingToDoItem);
+
+        MultiOpenLeafToDoItem =
+            new(MaterialIconKind.Leaf, new("Command.OpenLeaf"), commandService.MultiOpenLeafToDoItem);
+
+        MultiChangeParentToDoItem = new(MaterialIconKind.SwapHorizontal, new("Command.ChangeParent"),
+            commandService.MultiChangeParentToDoItem);
+
+        MultiMakeAsRootToDoItem = new(MaterialIconKind.FamilyTree, new("Command.MakeAsRootToDoItem"),
+            commandService.MultiMakeAsRootToDoItem);
+
+        MultiCopyToClipboardToDoItem = new(MaterialIconKind.Clipboard, new("Command.CopyToClipboard"),
+            commandService.MultiCopyToClipboardToDoItem);
+
+        MultiRandomizeChildrenOrderToDoItem = new(MaterialIconKind.DiceSix, new("Command.RandomizeChildrenOrder"),
+            commandService.MultiRandomizeChildrenOrderToDoItem);
+
+        MultiChangeOrderToDoItem = new(MaterialIconKind.ReorderHorizontal, new("Command.Reorder"),
+            commandService.MultiChangeOrderToDoItem);
+
+        MultiResetToDoItem = new(MaterialIconKind.Refresh, new("Command.Reset"), commandService.MultiResetToDoItem);
+        MultiCloneToDoItem = new(MaterialIconKind.Copyleft, new("Command.Clone"), commandService.MultiCloneToDoItem);
+        Complete = new(MaterialIconKind.Check, new("Command.Complete"), commandService.Complete);
+        AddToFavorite = new(MaterialIconKind.StarOutline, new("Command.AddToFavorite"), commandService.AddToFavorite);
+
+        RemoveFromFavorite = new(MaterialIconKind.Star, new("Command.RemoveFromFavorite"),
+            commandService.RemoveFromFavorite);
+
+        OpenLink = new(MaterialIconKind.Link, new("Command.OpenLink"), commandService.OpenLink);
+        AddChild = new(MaterialIconKind.Plus, new("Command.AddChildToDoItem"), commandService.AddChild);
+        Delete = new(MaterialIconKind.Delete, new("Command.Delete"), commandService.Delete);
+        ShowSetting = new(MaterialIconKind.Settings, new("Command.Setting"), commandService.ShowSetting);
+        OpenLeaf = new(MaterialIconKind.Leaf, new("Command.OpenLeaf"), commandService.OpenLeaf);
+        ChangeParent = new(MaterialIconKind.SwapHorizontal, new("Command.ChangeParent"), commandService.ChangeParent);
+        MakeAsRoot = new(MaterialIconKind.FamilyTree, new("Command.MakeAsRootToDoItem"), commandService.MakeAsRoot);
+
+        CopyToClipboard = new(MaterialIconKind.Clipboard, new("Command.CopyToClipboard"),
+            commandService.CopyToClipboard);
+
+        RandomizeChildrenOrder = new(MaterialIconKind.DiceSix, new("Command.RandomizeChildrenOrder"),
+            commandService.RandomizeChildrenOrder);
+
+        ChangeOrder = new(MaterialIconKind.ReorderHorizontal, new("Command.Reorder"), commandService.ChangeOrder);
+        Reset = new(MaterialIconKind.Refresh, new("Command.Reset"), commandService.Reset);
+        Clone = new(MaterialIconKind.Copyleft, new("Command.Clone"), commandService.Clone);
+
+        LeafToDoItemsMulti = new[]
         {
-            MultiCloneItem,
-            MultiCompleteItem,
-            MultiDeleteItem,
-            MultiResetItem,
-            MultiAddChildItem,
-            MultiCloneItem,
-            MultiChangeOrderItem,
-            MultiChangeParentItem,
-            MultiOpenLeafItem,
-            MultiOpenLinkItem,
-            MultiShowSettingItem,
-            MultiAddToFavoriteItem,
-            MultiCopyToClipboardItem,
-            MultiRemoveFromFavoriteItem,
-            MultiRandomizeChildrenOrderItem,
-            MultiMakeAsRootItem,
+            MultiClone,
+            MultiComplete,
+            MultiDelete,
+            MultiReset,
+            MultiAddChild,
+            MultiClone,
+            MultiChangeOrder,
+            MultiChangeParent,
+            MultiOpenLeaf,
+            MultiOpenLink,
+            MultiShowSetting,
+            MultiAddToFavorite,
+            MultiCopyToClipboard,
+            MultiRemoveFromFavorite,
+            MultiRandomizeChildrenOrder,
+            MultiMakeAsRoot,
         };
 
-        RootToDoItemsMultiItems = new[]
+        RootToDoItemsMulti = new[]
         {
-            MultiCloneItem,
-            MultiCompleteItem,
-            MultiDeleteItem,
-            MultiResetItem,
-            MultiAddChildItem,
-            MultiCloneItem,
-            MultiChangeOrderItem,
-            MultiChangeParentItem,
-            MultiOpenLeafItem,
-            MultiOpenLinkItem,
-            MultiShowSettingItem,
-            MultiAddToFavoriteItem,
-            MultiCopyToClipboardItem,
-            MultiRemoveFromFavoriteItem,
-            MultiRandomizeChildrenOrderItem,
+            MultiClone,
+            MultiComplete,
+            MultiDelete,
+            MultiReset,
+            MultiAddChild,
+            MultiClone,
+            MultiChangeOrder,
+            MultiChangeParent,
+            MultiOpenLeaf,
+            MultiOpenLink,
+            MultiShowSetting,
+            MultiAddToFavorite,
+            MultiCopyToClipboard,
+            MultiRemoveFromFavorite,
+            MultiRandomizeChildrenOrder,
         };
 
-        TodayToDoItemsMultiItems = new[]
+        TodayToDoItemsMulti = new[]
         {
-            MultiCloneItem,
-            MultiCompleteItem,
-            MultiDeleteItem,
-            MultiResetItem,
-            MultiAddChildItem,
-            MultiCloneItem,
-            MultiChangeOrderItem,
-            MultiChangeParentItem,
-            MultiOpenLeafItem,
-            MultiOpenLinkItem,
-            MultiShowSettingItem,
-            MultiAddToFavoriteItem,
-            MultiCopyToClipboardItem,
-            MultiRemoveFromFavoriteItem,
-            MultiRandomizeChildrenOrderItem,
-            MultiMakeAsRootItem,
+            MultiClone,
+            MultiComplete,
+            MultiDelete,
+            MultiReset,
+            MultiAddChild,
+            MultiClone,
+            MultiChangeOrder,
+            MultiChangeParent,
+            MultiOpenLeaf,
+            MultiOpenLink,
+            MultiShowSetting,
+            MultiAddToFavorite,
+            MultiCopyToClipboard,
+            MultiRemoveFromFavorite,
+            MultiRandomizeChildrenOrder,
+            MultiMakeAsRoot,
         };
 
-        SearchToDoItemsMultiItems = new[]
+        SearchToDoItemsMulti = new[]
         {
-            MultiCloneItem,
-            MultiCompleteItem,
-            MultiDeleteItem,
-            MultiResetItem,
-            MultiAddChildItem,
-            MultiCloneItem,
-            MultiChangeOrderItem,
-            MultiChangeParentItem,
-            MultiOpenLeafItem,
-            MultiOpenLinkItem,
-            MultiShowSettingItem,
-            MultiAddToFavoriteItem,
-            MultiCopyToClipboardItem,
-            MultiRemoveFromFavoriteItem,
-            MultiRandomizeChildrenOrderItem,
-            MultiMakeAsRootItem,
+            MultiClone,
+            MultiComplete,
+            MultiDelete,
+            MultiReset,
+            MultiAddChild,
+            MultiClone,
+            MultiChangeOrder,
+            MultiChangeParent,
+            MultiOpenLeaf,
+            MultiOpenLink,
+            MultiShowSetting,
+            MultiAddToFavorite,
+            MultiCopyToClipboard,
+            MultiRemoveFromFavorite,
+            MultiRandomizeChildrenOrder,
+            MultiMakeAsRoot,
         };
     }
+
+    public SpravyCommandNotify MultiComplete { get; }
+    public SpravyCommandNotify MultiAddToFavorite { get; }
+    public SpravyCommandNotify MultiRemoveFromFavorite { get; }
+    public SpravyCommandNotify MultiOpenLink { get; }
+    public SpravyCommandNotify MultiAddChild { get; }
+    public SpravyCommandNotify MultiDelete { get; }
+    public SpravyCommandNotify MultiShowSetting { get; }
+    public SpravyCommandNotify MultiOpenLeaf { get; }
+    public SpravyCommandNotify MultiChangeParent { get; }
+    public SpravyCommandNotify MultiMakeAsRoot { get; }
+    public SpravyCommandNotify MultiCopyToClipboard { get; }
+    public SpravyCommandNotify MultiRandomizeChildrenOrder { get; }
+    public SpravyCommandNotify MultiChangeOrder { get; }
+    public SpravyCommandNotify MultiReset { get; }
+    public SpravyCommandNotify MultiClone { get; }
+
+    public SpravyCommandNotify MultiCompleteToDoItem { get; }
+    public SpravyCommandNotify MultiAddToFavoriteToDoItem { get; }
+    public SpravyCommandNotify MultiRemoveFromFavoriteToDoItem { get; }
+    public SpravyCommandNotify MultiOpenLinkToDoItem { get; }
+    public SpravyCommandNotify MultiAddChildToDoItem { get; }
+    public SpravyCommandNotify MultiDeleteToDoItem { get; }
+    public SpravyCommandNotify MultiShowSettingToDoItem { get; }
+    public SpravyCommandNotify MultiOpenLeafToDoItem { get; }
+    public SpravyCommandNotify MultiChangeParentToDoItem { get; }
+    public SpravyCommandNotify MultiMakeAsRootToDoItem { get; }
+    public SpravyCommandNotify MultiCopyToClipboardToDoItem { get; }
+    public SpravyCommandNotify MultiRandomizeChildrenOrderToDoItem { get; }
+    public SpravyCommandNotify MultiChangeOrderToDoItem { get; }
+    public SpravyCommandNotify MultiResetToDoItem { get; }
+    public SpravyCommandNotify MultiCloneToDoItem { get; }
+
+    public SpravyCommandNotify Complete { get; }
+    public SpravyCommandNotify AddToFavorite { get; }
+    public SpravyCommandNotify RemoveFromFavorite { get; }
+    public SpravyCommandNotify OpenLink { get; }
+    public SpravyCommandNotify AddChild { get; }
+    public SpravyCommandNotify Delete { get; }
+    public SpravyCommandNotify ShowSetting { get; }
+    public SpravyCommandNotify OpenLeaf { get; }
+    public SpravyCommandNotify ChangeParent { get; }
+    public SpravyCommandNotify MakeAsRoot { get; }
+    public SpravyCommandNotify CopyToClipboard { get; }
+    public SpravyCommandNotify RandomizeChildrenOrder { get; }
+    public SpravyCommandNotify ChangeOrder { get; }
+    public SpravyCommandNotify Reset { get; }
+    public SpravyCommandNotify Clone { get; }
+
+    public ReadOnlyMemory<SpravyCommandNotify> LeafToDoItemsMulti { get; }
+    public ReadOnlyMemory<SpravyCommandNotify> RootToDoItemsMulti { get; }
+    public ReadOnlyMemory<SpravyCommandNotify> TodayToDoItemsMulti { get; }
+    public ReadOnlyMemory<SpravyCommandNotify> SearchToDoItemsMulti { get; }
 }

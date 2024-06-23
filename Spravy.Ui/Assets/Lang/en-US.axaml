@@ -17,6 +17,12 @@
     <sys:String x:Key="Command.RemoveFromFavorite">Remove from favorite</sys:String>
     <sys:String x:Key="Command.OpenLink">Open link</sys:String>
     <sys:String x:Key="Command.Clone">Clone</sys:String>
+    
+    <!--TodayToDoItemsView-->
+    <sys:String x:Key="TodayToDoItemsView.Header">Today to-do</sys:String>
+    
+    <!--LeafToDoItemsView-->
+    <sys:String x:Key="LeafToDoItemsView.Header">Leaf</sys:String>
 
     <!--FastToDoItemView-->
     <sys:String x:Key="FastAddToDoItemView.Type">Type</sys:String>
@@ -173,6 +179,7 @@
 
     <!--RootToDoItemsView-->
     <sys:String x:Key="RootToDoItemsView.CreateTask">Create To-Do Item</sys:String>
+    <sys:String x:Key="RootToDoItemsView.Header">Spravy</sys:String>
 
     <!--ToDoItemView-->
     <sys:String x:Key="ToDoItemView.Description">Description</sys:String>

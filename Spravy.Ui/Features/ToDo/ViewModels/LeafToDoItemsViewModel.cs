@@ -12,7 +12,6 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase,
 
     public LeafToDoItemsViewModel(
         ToDoSubItemsViewModel toDoSubItemsViewModel,
-        PageHeaderViewModel pageHeaderViewModel,
         IToDoService toDoService,
         IErrorHandler errorHandler,
         IObjectStorage objectStorage,
@@ -21,33 +20,31 @@ public class LeafToDoItemsViewModel : NavigatableViewModelBase,
         SpravyCommandNotifyService spravyCommandNotifyService
     ) : base(true)
     {
+        Commands = new();
         ToDoSubItemsViewModel = toDoSubItemsViewModel;
-        PageHeaderViewModel = pageHeaderViewModel;
         this.toDoService = toDoService;
         this.objectStorage = objectStorage;
         this.toDoCache = toDoCache;
-        PageHeaderViewModel.LeftCommand = CommandStorage.NavigateToCurrentToDoItemItem;
+        refreshWork = TaskWork.Create(errorHandler, RefreshCoreAsync);
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler, taskProgressService);
 
         ToDoSubItemsViewModel.List
            .WhenAnyValue(x => x.IsMulti)
            .Subscribe(x =>
             {
-                PageHeaderViewModel.Commands.Clear();
+                Commands.Clear();
 
                 if (x)
                 {
-                    PageHeaderViewModel.Commands.AddRange(spravyCommandNotifyService.LeafToDoItemsMultiItems.ToArray());
+                    Commands.AddRange(spravyCommandNotifyService.LeafToDoItemsMulti.ToArray());
                 }
             });
-
-        refreshWork = TaskWork.Create(errorHandler, RefreshCoreAsync);
-        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler, taskProgressService);
     }
 
     public SpravyCommand InitializedCommand { get; }
     public ReadOnlyMemory<Guid> LeafIds { get; set; } = ReadOnlyMemory<Guid>.Empty;
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
-    public PageHeaderViewModel PageHeaderViewModel { get; }
+    public AvaloniaList<SpravyCommandNotify> Commands { get; }
 
     public override string ViewId
     {

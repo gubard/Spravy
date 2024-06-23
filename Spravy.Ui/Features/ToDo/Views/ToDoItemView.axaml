@@ -114,6 +114,7 @@
                                 <DataTemplate DataType="sm:SpravyCommandNotify">
                                     <Button Classes="Basic mode-press"
                                             Command="{Binding Item.Command}"
+                                            CommandParameter="{Binding $parent[v:ToDoItemView].MainViewModel.Item}"
                                             Content="{Binding Kind}" />
                                 </DataTemplate>
                             </ItemsControl.DataTemplates>
@@ -129,6 +130,8 @@
                             <Button.Styles>
                                 <Style Selector="MenuItem" x:DataType="sm:SpravyCommandNotify">
                                     <Setter Property="Command" Value="{Binding Item.Command}" />
+                                    <Setter Property="CommandParameter"
+                                            Value="{Binding $parent[v:ToDoItemView].MainViewModel.Item}" />
                                     <Setter Property="Icon" Value="{Binding Kind}" />
                                 </Style>
                             </Button.Styles>
@@ -155,9 +158,10 @@
             <c:Stepper Steps="{Binding Item.Path}" Index="0" HorizontalAlignment="Center">
                 <c:Stepper.DataTemplates>
                     <DataTemplate DataType="m:ToDoItemEntityNotify">
-                        <Button Command="{Binding NavigateToCurrentItem.Command}"
-                                Content="{Binding Name}"
-                                Classes="Basic" />
+                        <Button Classes="Basic"
+                                Command="{x:Static h:UiHelper.NavigateToToDoItem}"
+                                CommandParameter="{Binding}"
+                                Content="{Binding Name}" />
                     </DataTemplate>
                 </c:Stepper.DataTemplates>
             </c:Stepper>

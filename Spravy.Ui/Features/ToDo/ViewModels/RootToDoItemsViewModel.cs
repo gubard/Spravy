@@ -13,7 +13,6 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase,
     public RootToDoItemsViewModel(
         FastAddToDoItemViewModel fastAddToDoItemViewModel,
         SpravyCommandNotifyService spravyCommandNotifyService,
-        PageHeaderViewModel pageHeaderViewModel,
         ToDoSubItemsViewModel toDoSubItemsViewModel,
         IToDoCache toDoCache,
         IObjectStorage objectStorage,
@@ -22,33 +21,31 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase,
         ITaskProgressService taskProgressService
     ) : base(true)
     {
+        Commands = new();
         FastAddToDoItemViewModel = fastAddToDoItemViewModel;
-        PageHeaderViewModel = pageHeaderViewModel;
         ToDoSubItemsViewModel = toDoSubItemsViewModel;
         this.toDoCache = toDoCache;
         this.objectStorage = objectStorage;
         this.toDoService = toDoService;
         refreshWork = TaskWork.Create(errorHandler, RefreshCoreAsync);
         InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler, taskProgressService);
-        pageHeaderViewModel.Header = "Spravy";
-        pageHeaderViewModel.LeftCommand = CommandStorage.NavigateToCurrentToDoItemItem;
 
         toDoSubItemsViewModel.List
            .WhenAnyValue(x => x.IsMulti)
            .Subscribe(x =>
             {
-                PageHeaderViewModel.Commands.Clear();
+                Commands.Clear();
 
                 if (x)
                 {
-                    PageHeaderViewModel.Commands.AddRange(spravyCommandNotifyService.RootToDoItemsMultiItems.ToArray());
+                    Commands.AddRange(spravyCommandNotifyService.RootToDoItemsMulti.ToArray());
                 }
             });
     }
 
+    public AvaloniaList<SpravyCommandNotify> Commands { get; }
     public SpravyCommand InitializedCommand { get; }
     public FastAddToDoItemViewModel FastAddToDoItemViewModel { get; }
-    public PageHeaderViewModel PageHeaderViewModel { get; }
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
 
     public override string ViewId

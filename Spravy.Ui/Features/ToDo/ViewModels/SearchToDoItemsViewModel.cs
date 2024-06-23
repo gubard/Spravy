@@ -34,7 +34,7 @@ public class SearchToDoItemsViewModel : NavigatableViewModelBase,
 
                 if (x)
                 {
-                    Commands.AddRange(spravyCommandNotifyService.SearchToDoItemsMultiItems.ToArray());
+                    Commands.AddRange(spravyCommandNotifyService.SearchToDoItemsMulti.ToArray());
                 }
             });
 

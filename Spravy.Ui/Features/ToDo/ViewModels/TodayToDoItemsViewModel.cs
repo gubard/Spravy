@@ -6,45 +6,35 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IRefresh, IToDo
     private readonly IToDoCache toDoCache;
 
     public TodayToDoItemsViewModel(
-        PageHeaderViewModel pageHeaderViewModel,
         ToDoSubItemsViewModel toDoSubItemsViewModel,
         IToDoService toDoService,
-        INavigator navigator,
-        IUiApplicationService uiApplicationService,
-        IDialogViewer dialogViewer,
-        IClipboardService clipboardService,
-        IOpenerLink openerLink,
         IErrorHandler errorHandler,
         IToDoCache toDoCache,
         SpravyCommandNotifyService spravyCommandNotifyService,
         ITaskProgressService taskProgressService
     ) : base(true)
     {
-        PageHeaderViewModel = pageHeaderViewModel;
-        PageHeaderViewModel.Header = "Today to-do";
-        PageHeaderViewModel.LeftCommand = CommandStorage.NavigateToCurrentToDoItemItem;
+        Commands = new();
         ToDoSubItemsViewModel = toDoSubItemsViewModel;
         this.toDoService = toDoService;
         this.toDoCache = toDoCache;
+        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler, taskProgressService);
 
         ToDoSubItemsViewModel.List
            .WhenAnyValue(x => x.IsMulti)
            .Subscribe(x =>
             {
-                PageHeaderViewModel.Commands.Clear();
+                Commands.Clear();
 
                 if (x)
                 {
-                    PageHeaderViewModel.Commands.AddRange(spravyCommandNotifyService.TodayToDoItemsMultiItems
-                       .ToArray());
+                    Commands.AddRange(spravyCommandNotifyService.TodayToDoItemsMulti.ToArray());
                 }
             });
-
-        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler, taskProgressService);
     }
 
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
-    public PageHeaderViewModel PageHeaderViewModel { get; }
+    public AvaloniaList<SpravyCommandNotify> Commands { get; }
     public SpravyCommand InitializedCommand { get; }
 
     public override string ViewId

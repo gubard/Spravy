@@ -9,4 +9,6 @@ public partial class ToDoItemView : ReactiveUserControl<ToDoItemViewModel>
     {
         InitializeComponent();
     }
+
+    public ToDoItemViewModel MainViewModel => ViewModel.ThrowIfNull();
 }

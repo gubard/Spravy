@@ -10,6 +10,8 @@
              xmlns:lm="clr-namespace:Spravy.Ui.Features.Localizations.Models"
              xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
              xmlns:tm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
+             xmlns:h="clr-namespace:Spravy.Ui.Helpers"
+             xmlns:ui="clr-namespace:Spravy.Ui"
              x:Class="Spravy.Ui.App"
              RequestedThemeVariant="Dark">
     <Application.Resources>
@@ -99,13 +101,15 @@
         </DataTemplate>
 
         <DataTemplate DataType="tm:ToDoItemEntityNotify">
-            <Button Command="{Binding NavigateToCurrentItem.Command}"
+            <Button Command="{x:Static h:UiHelper.NavigateToToDoItem}"
+                    CommandParameter="{Binding}"
                     Classes="alignment-stretch glass-card content-alignment-stretch">
                 <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,*">
                     <CheckBox Grid.RowSpan="2"
                               Classes="h3 alignment-top"
                               Margin="0,0,5,0"
-                              Command="{Binding CompleteItem.Item.Command}"
+                              Command="{x:Static h:UiHelper.Complete}"
+                              CommandParameter="{Binding}"
                               IsVisible="{Binding IsCan, Converter={StaticResource ToDoItemCanNoneToBooleanReverseConverter}}"
                               IsChecked="{Binding IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanConverter}}" />
 
@@ -145,7 +149,7 @@
                           Grid.Column="2"
                           ColumnDefinitions="Auto,Auto"
                           RowDefinitions="Auto,Auto">
-                        <Button CommandParameter="{Binding }">
+                        <Button>
                             <Button.DataTemplates>
                                 <DataTemplate x:DataType="m:SpravyCommandNotify">
                                     <ContentControl Content="{Binding Text}" />
@@ -155,6 +159,7 @@
                             <Button.Styles>
                                 <Style Selector="MenuItem" x:DataType="m:SpravyCommandNotify">
                                     <Setter Property="Command" Value="{Binding Item.Command}" />
+                                    <Setter Property="CommandParameter" Value="{Binding $parent[Button].DataContext}" />
                                     <Setter Property="Icon" Value="{Binding Kind}" />
                                 </Style>
                             </Button.Styles>
@@ -167,12 +172,14 @@
                         </Button>
 
                         <Panel Grid.Column="1">
-                            <Button Command="{Binding RemoveFromFavoriteItem.Item.Command}"
+                            <Button Command="{x:Static h:UiHelper.RemoveFromFavorite}"
+                                    CommandParameter="{Binding}"
                                     IsVisible="{Binding IsFavorite}">
                                 <mi:MaterialIcon Kind="Star" />
                             </Button>
 
-                            <Button Command="{Binding AddToFavoriteItem.Item.Command}"
+                            <Button Command="{x:Static h:UiHelper.AddToFavorite}"
+                                    CommandParameter="{Binding}"
                                     IsVisible="{Binding IsFavorite, Converter={StaticResource ReverseBooleanValueConverter}}">
                                 <mi:MaterialIcon Kind="StarOutline" />
                             </Button>
@@ -180,7 +187,8 @@
 
                         <Button Grid.Row="1"
                                 Grid.Column="1"
-                                Command="{Binding OpenLinkItem.Item.Command}"
+                                Command="{x:Static h:UiHelper.OpenLink}"
+                                CommandParameter="{Binding}"
                                 IsVisible="{Binding Link, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}">
                             <mi:MaterialIcon Kind="Link" />
                         </Button>

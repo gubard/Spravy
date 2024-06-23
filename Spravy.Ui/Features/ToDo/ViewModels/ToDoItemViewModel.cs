@@ -6,7 +6,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUp
     private readonly IObjectStorage objectStorage;
     private readonly IToDoCache toDoCache;
     private readonly IToDoService toDoService;
-    
+
     private Guid id;
     
     public ToDoItemViewModel(
@@ -16,7 +16,8 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUp
         FastAddToDoItemViewModel fastAddToDoItemViewModel,
         IToDoService toDoService,
         IToDoCache toDoCache,
-        IErrorHandler errorHandler
+        IErrorHandler errorHandler,
+        SpravyCommandService spravyCommandService
     ) : base(true)
     {
         this.objectStorage = objectStorage;
@@ -25,6 +26,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUp
         FastAddToDoItemViewModel = fastAddToDoItemViewModel;
         this.toDoService = toDoService;
         this.toDoCache = toDoCache;
+        SpravyCommandService = spravyCommandService;
         refreshWork = TaskWork.Create(errorHandler, RefreshCoreAsync);
         CommandItems = new();
         ToDoSubItemsViewModel.List.WhenAnyValue(x => x.IsMulti).Subscribe(_ => UpdateCommandItemsUi());
@@ -40,6 +42,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUp
         }
     }
     
+    public SpravyCommandService SpravyCommandService { get; }
     public AvaloniaList<SpravyCommandNotify> CommandItems { get; }
     public ToDoItemCommands Commands { get; }
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }

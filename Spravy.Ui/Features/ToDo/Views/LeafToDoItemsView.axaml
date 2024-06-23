@@ -5,6 +5,11 @@
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:ru="http://reactiveui.net"
                         xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+                        xmlns:h="clr-namespace:Spravy.Ui.Helpers"
+                        xmlns:s="clr-namespace:Spravy.Ui.Services"
+                        xmlns:c="clr-namespace:SukiUI.Content;assembly=SukiUI"
+                        xmlns:m="clr-namespace:Spravy.Ui.Models"
+                        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                         x:Class="Spravy.Ui.Features.ToDo.Views.LeafToDoItemsView"
                         x:DataType="vm:LeafToDoItemsViewModel">
@@ -14,8 +19,123 @@
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 
+    <UserControl.Styles>
+        <Style Selector="ItemsControl.adaptive">
+            <Setter Property="(Interaction.Behaviors)">
+                <BehaviorCollectionTemplate>
+                    <BehaviorCollection>
+                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
+                            <AdaptiveClassSetter MinWidth="0"
+                                                 MaxWidth="{x:Static h:MaterialDesignSize.MinMedium}"
+                                                 ClassName="small" />
+                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinMedium}"
+                                                 MaxWidth="Infinity"
+                                                 ClassName="wide" />
+                        </AdaptiveBehavior>
+                    </BehaviorCollection>
+                </BehaviorCollectionTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="Button.adaptive">
+            <Setter Property="(Interaction.Behaviors)">
+                <BehaviorCollectionTemplate>
+                    <BehaviorCollection>
+                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
+                            <AdaptiveClassSetter MinWidth="0"
+                                                 MaxWidth="{x:Static h:MaterialDesignSize.MinMedium}"
+                                                 ClassName="small" />
+                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinMedium}"
+                                                 MaxWidth="Infinity"
+                                                 ClassName="wide" />
+                        </AdaptiveBehavior>
+                    </BehaviorCollection>
+                </BehaviorCollectionTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="ItemsControl.small">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+
+        <Style Selector="ItemsControl.wide">
+            <Setter Property="IsVisible" Value="True" />
+        </Style>
+
+        <Style Selector="Button.small">
+            <Setter Property="IsVisible" Value="True" />
+        </Style>
+
+        <Style Selector="Button.wide">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+    </UserControl.Styles>
+
     <Grid RowDefinitions="Auto, *">
-        <ContentControl Content="{Binding PageHeaderViewModel}" />
+        <Grid ColumnDefinitions="Auto,*,Auto">
+            <StackPanel Orientation="Horizontal">
+                <Button Classes="Basic" Command="{x:Static s:CommandStorage.SwitchPaneCommand}">
+                    <PathIcon Data="{x:Static c:Icons.Menu}" />
+                </Button>
+
+                <ContentControl Content="{x:Static s:CommandStorage.NavigateToCurrentToDoItemItem}" />
+            </StackPanel>
+
+            <ScrollViewer Grid.Column="1"
+                          VerticalScrollBarVisibility="Disabled"
+                          HorizontalScrollBarVisibility="Auto"
+                          HorizontalAlignment="Left"
+                          Classes="mini">
+                <TextBlock Text="{DynamicResource LeafToDoItemsView.Header}" Classes="h3" />
+            </ScrollViewer>
+
+            <StackPanel Grid.Column="2" Orientation="Horizontal">
+                <Panel
+                    IsVisible="{Binding Commands.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
+                    <ItemsControl HorizontalAlignment="Right"
+                                  VerticalAlignment="Center"
+                                  ItemsSource="{Binding Commands}"
+                                  Classes="adaptive">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+
+                        <ItemsControl.DataTemplates>
+                            <DataTemplate DataType="m:SpravyCommandNotify">
+                                <Button Classes="Basic" 
+                                        Command="{Binding Item.Command}"
+                                        CommandParameter="{Binding $parent[ItemsControl].DataContext}"
+                                        Content="{Binding Kind}" />
+                            </DataTemplate>
+                        </ItemsControl.DataTemplates>
+                    </ItemsControl>
+
+                    <Button Classes="adaptive Basic mode-press">
+                        <Button.DataTemplates>
+                            <DataTemplate x:DataType="m:SpravyCommandNotify">
+                                <ContentControl Content="{Binding Text}" />
+                            </DataTemplate>
+                        </Button.DataTemplates>
+
+                        <Button.Styles>
+                            <Style Selector="MenuItem" x:DataType="m:SpravyCommandNotify">
+                                <Setter Property="Command" Value="{Binding Item.Command}" />
+                                <Setter Property="CommandParameter" Value="{Binding $parent[Button].DataContext}" />
+                                <Setter Property="Icon" Value="{Binding Kind}" />
+                            </Style>
+                        </Button.Styles>
+
+                        <Button.Flyout>
+                            <MenuFlyout ItemsSource="{Binding Commands}" />
+                        </Button.Flyout>
+
+                        <avalonia:MaterialIcon Kind="DotsHorizontal" />
+                    </Button>
+                </Panel>
+            </StackPanel>
+        </Grid>
 
         <ScrollViewer Classes="mini" Grid.Row="1">
             <ContentControl Content="{Binding ToDoSubItemsViewModel}" />
