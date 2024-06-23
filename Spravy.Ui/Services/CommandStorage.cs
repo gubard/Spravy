@@ -28,11 +28,6 @@ public static class CommandStorage
         toDoService = kernel.CreateService<IToDoService>();
         errorHandler = kernel.CreateService<IErrorHandler>();
         SwitchPaneItem = CreateCommand(SwitchPaneAsync, MaterialIconKind.Menu, "Open pane");
-        NavigateToToDoItemItem = CreateCommand<Guid>(NavigateToToDoItemAsync, MaterialIconKind.ListBox, "Open");
-        
-        SelectAll = CreateCommand<AvaloniaList<ToDoItemEntityNotify>>(SelectAllAsync, MaterialIconKind.CheckAll,
-            "Select all");
-        
         BackItem = CreateCommand(BackAsync, MaterialIconKind.ArrowLeft, "Back");
         NavigateToItem = CreateCommand<Type>(NavigateToAsync, MaterialIconKind.ArrowLeft, "Navigate to");
         LogoutItem = CreateCommand(LogoutAsync, MaterialIconKind.Logout, "Logout");
@@ -47,27 +42,12 @@ public static class CommandStorage
         NavigateToCurrentToDoItemItem = CreateCommand(NavigateToCurrentToDoItemAsync, MaterialIconKind.ArrowRight,
             "Open current to-do item");
         
-        MultiCompleteToDoItemsItem = CreateCommand<AvaloniaList<ToDoItemEntityNotify>>(
-            MultiSwitchCompleteToDoItemsAsync, MaterialIconKind.CheckAll, "Complete all to-do items");
-        
-        MultiMoveToDoItemsToRootItem = CreateCommand<AvaloniaList<ToDoItemEntityNotify>>(MultiMoveToDoItemsToRootAsync,
-            MaterialIconKind.FamilyTree, "Move items to root");
-        
-        MultiSetTypeToDoItemsItem = CreateCommand<AvaloniaList<ToDoItemEntityNotify>>(MultiSetTypeToDoItemsAsync,
-            MaterialIconKind.Switch, "Set type all to-do items");
-        
-        MultiDeleteToDoItemsItem = CreateCommand<AvaloniaList<ToDoItemEntityNotify>>(MultiDeleteToDoItemsAsync,
-            MaterialIconKind.Delete, "Delete to-do items");
-        
         AddPasswordItemItem = CreateCommand(AddPasswordItemAsync, MaterialIconKind.Plus, "Add password item");
         
         ShowPasswordItemSettingItem = CreateCommand<IIdProperty>(ShowPasswordItemSettingAsync,
             MaterialIconKind.Settings, "Show password setting");
     }
     
-    public static CommandItem MultiSetTypeToDoItemsItem { get; }
-    public static CommandItem MultiMoveToDoItemsToRootItem { get; }
-    public static CommandItem MultiCompleteToDoItemsItem { get; }
     public static CommandItem NavigateToCurrentToDoItemItem { get; }
     
     public static ICommand SetToDoDescriptionCommand
@@ -90,13 +70,6 @@ public static class CommandStorage
     }
     
     public static CommandItem SwitchPaneItem { get; }
-    
-    public static ICommand NavigateToToDoItemCommand
-    {
-        get => NavigateToToDoItemItem.Command;
-    }
-    
-    public static CommandItem NavigateToToDoItemItem { get; }
     
     public static ICommand BackCommand
     {
@@ -125,7 +98,6 @@ public static class CommandStorage
     }
     
     public static CommandItem AddRootToDoItemItem { get; }
-    public static CommandItem MultiDeleteToDoItemsItem { get; }
     
     public static ICommand AddPasswordItemCommand
     {
@@ -140,8 +112,6 @@ public static class CommandStorage
     }
     
     public static CommandItem ShowPasswordItemSettingItem { get; }
-    
-    public static CommandItem SelectAll { get; }
     
     private static ConfiguredValueTaskAwaitable<Result> ShowPasswordItemSettingAsync(
         IIdProperty idProperty,
@@ -192,75 +162,6 @@ public static class CommandStorage
                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
             _ => dialogViewer.CloseContentDialogAsync(cancellationToken), ActionHelper<AddPasswordItemViewModel>.Empty,
             cancellationToken);
-    }
-    
-    private static ConfiguredValueTaskAwaitable<Result> MultiDeleteToDoItemsAsync(
-        AvaloniaList<ToDoItemEntityNotify> items,
-        CancellationToken cancellationToken
-    )
-    {
-        return Result.AwaitableSuccess
-           .IfSuccessAllAsync(cancellationToken, items.Where(x => x.IsSelected)
-               .Select(x => x.Id)
-               .Select<Guid, Func<ConfiguredValueTaskAwaitable<Result>>>(x =>
-                {
-                    var y = x;
-                    
-                    return () => toDoService.DeleteToDoItemAsync(y, cancellationToken);
-                })
-               .ToArray())
-           .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken);
-    }
-    
-    private static ConfiguredValueTaskAwaitable<Result> MultiMoveToDoItemsToRootAsync(
-        AvaloniaList<ToDoItemEntityNotify> itemsNotify,
-        CancellationToken cancellationToken
-    )
-    {
-        return Result.AwaitableSuccess
-           .IfSuccessAllAsync(cancellationToken, itemsNotify.Where(x => x.IsSelected)
-               .Select<ToDoItemEntityNotify, Func<ConfiguredValueTaskAwaitable<Result>>>(x =>
-                {
-                    var id = x.Id;
-                    
-                    return () => toDoService.ToDoItemToRootAsync(id, cancellationToken);
-                })
-               .ToArray())
-           .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken);
-    }
-    
-    private static ConfiguredValueTaskAwaitable<Result> MultiSetTypeToDoItemsAsync(
-        AvaloniaList<ToDoItemEntityNotify> itemsNotify,
-        CancellationToken cancellationToken
-    )
-    {
-        var ids = itemsNotify.Where(x => x.IsSelected).Select(x => x.Id).ToArray();
-        
-        return dialogViewer.ShowItemSelectorDialogAsync<ToDoItemType>(type => dialogViewer
-           .CloseInputDialogAsync(cancellationToken)
-           .IfSuccessAllAsync(cancellationToken, ids.Select<Guid, Func<ConfiguredValueTaskAwaitable<Result>>>(x =>
-                {
-                    var y = x;
-                    
-                    return () => toDoService.UpdateToDoItemTypeAsync(y, type, cancellationToken);
-                })
-               .ToArray())
-           .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken), viewModel =>
-        {
-            viewModel.Items.AddRange(Enum.GetValues<ToDoItemType>().OfType<object>());
-            viewModel.SelectedItem = viewModel.Items.First();
-        }, cancellationToken);
-    }
-    
-    private static ConfiguredValueTaskAwaitable<Result> MultiSwitchCompleteToDoItemsAsync(
-        AvaloniaList<ToDoItemEntityNotify> itemsNotify,
-        CancellationToken cancellationToken
-    )
-    {
-        var items = itemsNotify.Where(x => x.IsSelected).ToArray();
-        
-        return CompleteAsync(items, cancellationToken)
-           .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken);
     }
     
     private static ConfiguredValueTaskAwaitable<Result> CompleteAsync(
@@ -403,32 +304,6 @@ public static class CommandStorage
         return new(result.Errors);
     }
     
-    private static ConfiguredValueTaskAwaitable<Result> SelectAllAsync(
-        AvaloniaList<ToDoItemEntityNotify> items,
-        CancellationToken cancellationToken
-    )
-    {
-        return cancellationToken.InvokeUiBackgroundAsync(() =>
-        {
-            if (items.All(x => x.IsSelected))
-            {
-                foreach (var item in items)
-                {
-                    item.IsSelected = false;
-                }
-            }
-            else
-            {
-                foreach (var item in items)
-                {
-                    item.IsSelected = true;
-                }
-            }
-            
-            return Result.Success;
-        });
-    }
-    
     public static ConfiguredValueTaskAwaitable<Result> RefreshCurrentViewAsync(CancellationToken cancellationToken)
     {
         if (mainSplitViewModel.Content is not IRefresh refresh)
@@ -437,14 +312,6 @@ public static class CommandStorage
         }
         
         return refresh.RefreshAsync(cancellationToken);
-    }
-    
-    private static ConfiguredValueTaskAwaitable<Result> NavigateToToDoItemAsync(
-        Guid id,
-        CancellationToken cancellationToken
-    )
-    {
-        return navigator.NavigateToAsync<ToDoItemViewModel>(vm => vm.Id = id, cancellationToken);
     }
     
     private static ConfiguredValueTaskAwaitable<Result> SwitchPaneAsync(CancellationToken cancellationToken)
