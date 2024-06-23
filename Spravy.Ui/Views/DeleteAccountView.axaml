@@ -16,8 +16,7 @@
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 
-    <c:GlassCard HorizontalAlignment="Center"
-                 VerticalAlignment="Center"
+    <c:GlassCard Classes="alignment-center"
                  MinWidth="300">
         <StackPanel>
             <TextBlock Classes="field"
