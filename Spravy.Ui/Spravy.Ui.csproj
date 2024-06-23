@@ -21,7 +21,7 @@
         <PackageReference Include="Avalonia.Xaml.Interactions.Custom" Version="11.0.10.9" />
         <PackageReference Include="Avalonia.Xaml.Interactions.DragAndDrop" Version="11.0.10.9" />
         <PackageReference Include="Avalonia.Xaml.Interactions.Responsive" Version="11.0.10.9" />
-        <PackageReference Include="DialogHost.Avalonia" Version="0.7.8" />
+        <PackageReference Include="DialogHost.Avalonia" Version="0.7.9" />
         <PackageReference Include="Grpc.Net.Client" Version="2.63.0" />
         <PackageReference Include="Grpc.Net.Client.Web" Version="2.63.0" />
         <PackageReference Include="Grpc.Net.ClientFactory" Version="2.63.0" />
@@ -30,7 +30,7 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Markdown.Avalonia" Version="11.0.2" />
-        <PackageReference Include="Material.Icons.Avalonia" Version="2.1.9" />
+        <PackageReference Include="Material.Icons.Avalonia" Version="2.1.10" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
         <PackageReference Include="ReactiveUI.Fody" Version="19.5.41" />
         <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
