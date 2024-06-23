@@ -25,7 +25,6 @@ public static class CommandStorage
         mainSplitViewModel = kernel.CreateService<MainSplitViewModel>();
         toDoService = kernel.CreateService<IToDoService>();
         errorHandler = kernel.CreateService<IErrorHandler>();
-        SwitchPaneItem = CreateCommand(SwitchPaneAsync, MaterialIconKind.Menu, "Open pane");
         LogoutItem = CreateCommand(LogoutAsync, MaterialIconKind.Logout, "Logout");
         AddRootToDoItemItem = CreateCommand(AddRootToDoItemAsync, MaterialIconKind.Plus, "Add root to-do item");
         
@@ -54,13 +53,6 @@ public static class CommandStorage
     }
     
     public static CommandItem ToDoItemSearchItem { get; }
-    
-    public static ICommand SwitchPaneCommand
-    {
-        get => SwitchPaneItem.Command;
-    }
-    
-    public static CommandItem SwitchPaneItem { get; }
     
     public static ICommand LogoutCommand
     {
@@ -227,16 +219,6 @@ public static class CommandStorage
         }
         
         return refresh.RefreshAsync(cancellationToken);
-    }
-    
-    private static ConfiguredValueTaskAwaitable<Result> SwitchPaneAsync(CancellationToken cancellationToken)
-    {
-        return cancellationToken.InvokeUiBackgroundAsync(() =>
-        {
-            mainSplitViewModel.IsPaneOpen = !mainSplitViewModel.IsPaneOpen;
-            
-            return Result.Success;
-        });
     }
     
     private static CommandItem CreateCommand(

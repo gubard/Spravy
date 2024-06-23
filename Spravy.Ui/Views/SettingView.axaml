@@ -23,7 +23,7 @@
                     <c:GroupBox.Header>
                         <Grid ColumnDefinitions="Auto,*">
                             <StackPanel Orientation="Horizontal">
-                                <Button Classes="Basic" Command="{x:Static s:CommandStorage.SwitchPaneCommand}">
+                                <Button Classes="Basic" Command="{x:Static h:UiHelper.SwitchPane}">
                                     <PathIcon Data="{x:Static content:Icons.Menu}" />
                                 </Button>
 

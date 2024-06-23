@@ -124,7 +124,7 @@
         </Panel>
 
         <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto">
-            <Button Classes="Basic" Command="{x:Static s:CommandStorage.SwitchPaneCommand}">
+            <Button Classes="Basic" Command="{x:Static h:UiHelper.SwitchPane}">
                 <PathIcon Data="{x:Static co:Icons.Menu}" />
             </Button>
 

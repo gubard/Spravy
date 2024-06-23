@@ -74,7 +74,7 @@
     <Grid RowDefinitions="Auto,*">
         <Grid ColumnDefinitions="Auto,*,Auto">
             <StackPanel Orientation="Horizontal">
-                <Button Classes="Basic" Command="{x:Static s:CommandStorage.SwitchPaneCommand}">
+                <Button Classes="Basic" Command="{x:Static h:UiHelper.SwitchPane}">
                     <PathIcon Data="{x:Static c:Icons.Menu}" />
                 </Button>
 

@@ -18,6 +18,7 @@ public class SpravyCommandService
         IOpenerLink openerLink,
         IAuthenticationService authenticationService,
         IPasswordService passwordService,
+        MainSplitViewModel mainSplitViewModel,
         ISpravyNotificationManager spravyNotificationManager,
         INavigator navigator,
         IErrorHandler errorHandler,
@@ -1097,6 +1098,13 @@ public class SpravyCommandService
                .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                     cancellationToken);
         }, errorHandler, taskProgressService);
+
+        SwitchPane = SpravyCommand.Create(cancellationToken => cancellationToken.InvokeUiBackgroundAsync(() =>
+        {
+            mainSplitViewModel.IsPaneOpen = !mainSplitViewModel.IsPaneOpen;
+
+            return Result.Success;
+        }), errorHandler, taskProgressService);
     }
     
     public SpravyCommand MultiCompleteToDoItem { get; }
@@ -1132,6 +1140,7 @@ public class SpravyCommandService
     public SpravyCommand Clone { get; }
     public SpravyCommand NavigateToToDoItem { get; }
 
+    public SpravyCommand SwitchPane { get; }
     public SpravyCommand SendNewVerificationCode { get; }
     public SpravyCommand Back { get; }
     public SpravyCommand NavigateToCurrentToDoItem { get; }

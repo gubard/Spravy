@@ -16,6 +16,7 @@ public static class UiHelper
         SendNewVerificationCode = commands.SendNewVerificationCode.Command;
         NavigateToCurrentToDoItem = commandsNotify.NavigateToCurrentToDoItem;
         Back = commands.Back.Command;
+        SwitchPane = commands.SwitchPane.Command;
         NavigateToRootToDoItems = commands.GetNavigateTo<RootToDoItemsViewModel>().Command;
         NavigateToTodayToDoItems = commands.GetNavigateTo<TodayToDoItemsViewModel>().Command;
         NavigateToSearchToDoItems = commands.GetNavigateTo<SearchToDoItemsViewModel>().Command;
@@ -35,5 +36,6 @@ public static class UiHelper
     public static readonly ICommand NavigateToSearchToDoItems;
     public static readonly ICommand NavigateToPasswordGenerator;
     public static readonly ICommand NavigateToSetting;
+    public static readonly ICommand SwitchPane;
     public static readonly SpravyCommandNotify NavigateToCurrentToDoItem;
 }
