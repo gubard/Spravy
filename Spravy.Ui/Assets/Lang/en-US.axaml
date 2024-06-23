@@ -17,6 +17,7 @@
     <sys:String x:Key="Command.RemoveFromFavorite">Remove from favorite</sys:String>
     <sys:String x:Key="Command.OpenLink">Open link</sys:String>
     <sys:String x:Key="Command.Clone">Clone</sys:String>
+    <sys:String x:Key="Command.OpenCurrent">Open current to-do item</sys:String>
     
     <!--TodayToDoItemsView-->
     <sys:String x:Key="TodayToDoItemsView.Header">Today to-do</sys:String>
@@ -138,6 +139,7 @@
     <sys:String x:Key="ToDoItemStatus.Completed">Completed</sys:String>
 
     <!--SettingView-->
+    <sys:String x:Key="SettingView.Header">Setting</sys:String>
     <sys:String x:Key="SettingView.Login">Login:</sys:String>
     <sys:String x:Key="SettingView.ChangePassword">Change password</sys:String>
     <sys:String x:Key="SettingView.Setting">Setting</sys:String>

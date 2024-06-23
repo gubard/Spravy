@@ -89,11 +89,6 @@ public class ViewSelector : IViewSelector
             return new(serviceFactory.CreateService<InfoView>());
         }
 
-        if (typeof(PageHeaderViewModel) == viewModelType)
-        {
-            return new(serviceFactory.CreateService<PageHeaderView>());
-        }
-
         if (typeof(SettingViewModel) == viewModelType)
         {
             return new(serviceFactory.CreateService<SettingView>());

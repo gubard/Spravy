@@ -78,7 +78,7 @@
                     <PathIcon Data="{x:Static c:Icons.Menu}" />
                 </Button>
 
-                <ContentControl Content="{x:Static s:CommandStorage.NavigateToCurrentToDoItemItem}" />
+                <ContentControl Content="{x:Static h:UiHelper.NavigateToCurrentToDoItem}" />
             </StackPanel>
 
             <ScrollViewer Grid.Column="1"

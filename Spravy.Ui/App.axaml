@@ -11,7 +11,6 @@
              xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
              xmlns:tm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
              xmlns:h="clr-namespace:Spravy.Ui.Helpers"
-             xmlns:ui="clr-namespace:Spravy.Ui"
              x:Class="Spravy.Ui.App"
              RequestedThemeVariant="Dark">
     <Application.Resources>
@@ -32,6 +31,10 @@
     </Application.Styles>
 
     <Application.DataTemplates>
+        <DataTemplate x:DataType="m:SpravyCommandNotify">
+            <Button Classes="Basic" Content="{Binding Kind}" Command="{Binding Item.Command}" />
+        </DataTemplate>
+
         <DataTemplate x:DataType="lm:Header4Localization">
             <TextBlock Text="{Binding Text}" Classes="h4 text-wrap" />
         </DataTemplate>

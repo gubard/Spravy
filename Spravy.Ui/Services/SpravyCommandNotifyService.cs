@@ -100,6 +100,9 @@ public class SpravyCommandNotifyService
         Reset = new(MaterialIconKind.Refresh, new("Command.Reset"), commandService.Reset);
         Clone = new(MaterialIconKind.Copyleft, new("Command.Clone"), commandService.Clone);
 
+        NavigateToCurrentToDoItem = new(MaterialIconKind.ArrowRight, new("Command.OpenCurrent"),
+            commandService.NavigateToCurrentToDoItem);
+
         LeafToDoItemsMulti = new[]
         {
             MultiClone,
@@ -209,6 +212,7 @@ public class SpravyCommandNotifyService
     public SpravyCommandNotify MultiResetToDoItem { get; }
     public SpravyCommandNotify MultiCloneToDoItem { get; }
 
+    public SpravyCommandNotify NavigateToCurrentToDoItem { get; }
     public SpravyCommandNotify Complete { get; }
     public SpravyCommandNotify AddToFavorite { get; }
     public SpravyCommandNotify RemoveFromFavorite { get; }

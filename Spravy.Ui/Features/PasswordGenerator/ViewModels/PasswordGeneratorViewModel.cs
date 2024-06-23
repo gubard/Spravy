@@ -8,16 +8,12 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
     public PasswordGeneratorViewModel(
         IPasswordService passwordService,
         IPasswordItemCache passwordItemCache,
-        PageHeaderViewModel pageHeaderViewModel,
         IErrorHandler errorHandler,
         ITaskProgressService taskProgressService
     ) : base(true)
     {
         this.passwordService = passwordService;
         this.passwordItemCache = passwordItemCache;
-        PageHeaderViewModel = pageHeaderViewModel;
-        pageHeaderViewModel.Header = new Header3Localization("PasswordGeneratorView.Header");
-        pageHeaderViewModel.LeftCommand = CommandStorage.NavigateToCurrentToDoItemItem;
         InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler, taskProgressService);
     }
     
@@ -26,7 +22,6 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
         get => TypeCache<PasswordGeneratorViewModel>.Type.Name;
     }
     
-    public PageHeaderViewModel PageHeaderViewModel { get; }
     public AvaloniaList<PasswordItemNotify> Items { get; } = new();
     public SpravyCommand InitializedCommand { get; }
     

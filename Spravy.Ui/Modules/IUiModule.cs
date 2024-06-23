@@ -65,8 +65,6 @@ namespace Spravy.Ui.Modules;
 [Transient(typeof(EmailOrLoginInputView))]
 [Transient(typeof(InfoViewModel))]
 [Transient(typeof(InfoView))]
-[Transient(typeof(PageHeaderViewModel))]
-[Transient(typeof(PageHeaderView))]
 [Transient(typeof(SettingViewModel))]
 [Transient(typeof(SettingView))]
 [Transient(typeof(TextViewModel))]

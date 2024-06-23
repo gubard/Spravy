@@ -13,7 +13,6 @@ public class SettingViewModel : NavigatableViewModelBase
         INavigator navigator,
         AccountNotify accountNotify,
         IObjectStorage objectStorage,
-        PageHeaderViewModel pageHeaderViewModel,
         ITaskProgressService taskProgressService
     ) : base(true)
     {
@@ -21,7 +20,6 @@ public class SettingViewModel : NavigatableViewModelBase
         this.navigator = navigator;
         AccountNotify = accountNotify;
         this.objectStorage = objectStorage;
-        PageHeaderViewModel = pageHeaderViewModel;
         AvailableColors = new(theme.ColorThemes.Select(x => new Selected<SukiColorTheme>(x)));
 
         foreach (var availableColor in AvailableColors)
@@ -39,8 +37,6 @@ public class SettingViewModel : NavigatableViewModelBase
 
         SwitchToColorThemeCommand =
             SpravyCommand.Create<Selected<SukiColorTheme>>(SwitchToColorTheme, errorHandler, taskProgressService);
-
-        PageHeaderViewModel.Header = "Settings";
 
         this.WhenAnyValue(x => x.IsLightTheme)
            .Subscribe(x => theme.ChangeBaseTheme(x ? ThemeVariant.Light : ThemeVariant.Dark));
@@ -73,7 +69,6 @@ public class SettingViewModel : NavigatableViewModelBase
 
     public AvaloniaList<Selected<SukiColorTheme>> AvailableColors { get; }
     public AccountNotify AccountNotify { get; }
-    public PageHeaderViewModel PageHeaderViewModel { get; }
     public SpravyCommand ChangePasswordCommand { get; }
     public SpravyCommand DeleteAccountCommand { get; }
     public SpravyCommand SwitchToColorThemeCommand { get; }
