@@ -26,7 +26,6 @@ public static class CommandStorage
         toDoService = kernel.CreateService<IToDoService>();
         errorHandler = kernel.CreateService<IErrorHandler>();
         LogoutItem = CreateCommand(LogoutAsync, MaterialIconKind.Logout, "Logout");
-        AddRootToDoItemItem = CreateCommand(AddRootToDoItemAsync, MaterialIconKind.Plus, "Add root to-do item");
         
         ToDoItemSearchItem = CreateCommand<IToDoItemSearchProperties>(
             ToDoItemSearchAsync, MaterialIconKind.Search, "Search to-do item");
@@ -60,13 +59,6 @@ public static class CommandStorage
     }
     
     public static CommandItem LogoutItem { get; }
-    
-    public static ICommand AddRootToDoItemCommand
-    {
-        get => AddRootToDoItemItem.Command;
-    }
-    
-    public static CommandItem AddRootToDoItemItem { get; }
     
     public static ICommand AddPasswordItemCommand
     {
@@ -165,21 +157,6 @@ public static class CommandStorage
            .IfSuccessAsync(
                 ids => properties.ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), false, cancellationToken),
                 cancellationToken);
-    }
-    
-    private static ConfiguredValueTaskAwaitable<Result> AddRootToDoItemAsync(CancellationToken cancellationToken)
-    {
-        return dialogViewer.ShowConfirmContentDialogAsync(view =>
-            {
-                var options = view.ToAddRootToDoItemOptions();
-                
-                return dialogViewer.CloseContentDialogAsync(cancellationToken)
-                   .IfSuccessAsync(() => toDoService.AddRootToDoItemAsync(options, cancellationToken),
-                        cancellationToken)
-                   .IfSuccessAsync(_ => RefreshCurrentViewAsync(cancellationToken), cancellationToken);
-            }, _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
-            ActionHelper<AddRootToDoItemViewModel>.Empty,
-            cancellationToken);
     }
     
     private static ConfiguredValueTaskAwaitable<Result> LogoutAsync(CancellationToken cancellationToken)

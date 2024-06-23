@@ -17,6 +17,7 @@ public static class UiHelper
         NavigateToCurrentToDoItem = commandsNotify.NavigateToCurrentToDoItem;
         Back = commands.Back.Command;
         SwitchPane = commands.SwitchPane.Command;
+        AddRootToDoItem = commands.AddRootToDoItem.Command;
         NavigateToRootToDoItems = commands.GetNavigateTo<RootToDoItemsViewModel>().Command;
         NavigateToTodayToDoItems = commands.GetNavigateTo<TodayToDoItemsViewModel>().Command;
         NavigateToSearchToDoItems = commands.GetNavigateTo<SearchToDoItemsViewModel>().Command;
@@ -37,5 +38,6 @@ public static class UiHelper
     public static readonly ICommand NavigateToPasswordGenerator;
     public static readonly ICommand NavigateToSetting;
     public static readonly ICommand SwitchPane;
+    public static readonly ICommand AddRootToDoItem;
     public static readonly SpravyCommandNotify NavigateToCurrentToDoItem;
 }

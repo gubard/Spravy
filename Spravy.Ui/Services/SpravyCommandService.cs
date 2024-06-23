@@ -35,80 +35,85 @@ public class SpravyCommandService
                 navigator.NavigateToAsync<ToDoItemViewModel>(vm => vm.Id = item.CurrentId, cancellationToken),
             errorHandler, taskProgressService);
 
-        MultiClone = SpravyCommand.Create<IToDoSubItemsViewModelProperty>((view, cancellationToken) => dialogViewer.ShowConfirmContentDialogAsync(vm =>
-            {
-                var view = uiApplicationService.GetCurrentView<IToDoSubItemsViewModelProperty>();
-
-                if (view.IsHasError)
+        MultiClone = SpravyCommand.Create<IToDoSubItemsViewModelProperty>((view, cancellationToken) =>
+            dialogViewer.ShowConfirmContentDialogAsync(vm =>
                 {
-                    return new Result(view.Errors).ToValueTaskResult().ConfigureAwait(false);
-                }
+                    var view = uiApplicationService.GetCurrentView<IToDoSubItemsViewModelProperty>();
 
-                ReadOnlyMemory<Guid> selected = view.Value
-                   .ToDoSubItemsViewModel
-                   .List
-                   .ToDoItems
-                   .GroupByNone
-                   .Items
-                   .Items
-                   .Where(x => x.IsSelected)
-                   .Select(x => x.Id)
-                   .ToArray();
+                    if (view.IsHasError)
+                    {
+                        return new Result(view.Errors).ToValueTaskResult().ConfigureAwait(false);
+                    }
 
-                if (selected.IsEmpty)
+                    ReadOnlyMemory<Guid> selected = view.Value
+                       .ToDoSubItemsViewModel
+                       .List
+                       .ToDoItems
+                       .GroupByNone
+                       .Items
+                       .Items
+                       .Where(x => x.IsSelected)
+                       .Select(x => x.Id)
+                       .ToArray();
+
+                    if (selected.IsEmpty)
+                    {
+                        return new Result(new NonItemSelectedError()).ToValueTaskResult().ConfigureAwait(false);
+                    }
+
+                    return dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
+                        itemNotify => dialogViewer.CloseInputDialogAsync(cancellationToken)
+                           .IfSuccessAsync(() => selected.ToResult(), cancellationToken)
+                           .IfSuccessForEachAsync(
+                                i => toDoService.CloneToDoItemAsync(i, itemNotify.Id.ToOption(), cancellationToken),
+                                cancellationToken)
+                           .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
+                                cancellationToken), ActionHelper<ToDoItemSelectorViewModel>.Empty, cancellationToken);
+                }, _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
+                ActionHelper<ResetToDoItemViewModel>.Empty,
+                cancellationToken), errorHandler, taskProgressService);
+
+        MultiReset = SpravyCommand.Create<IToDoSubItemsViewModelProperty>((view, cancellationToken) =>
+            dialogViewer.ShowConfirmContentDialogAsync(vm =>
                 {
-                    return new Result(new NonItemSelectedError()).ToValueTaskResult().ConfigureAwait(false);
-                }
+                    var view = uiApplicationService.GetCurrentView<IToDoSubItemsViewModelProperty>();
 
-                return dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
-                    itemNotify => dialogViewer.CloseInputDialogAsync(cancellationToken)
+                    if (view.IsHasError)
+                    {
+                        return new Result(view.Errors).ToValueTaskResult().ConfigureAwait(false);
+                    }
+
+                    ReadOnlyMemory<Guid> selected = view.Value
+                       .ToDoSubItemsViewModel
+                       .List
+                       .ToDoItems
+                       .GroupByNone
+                       .Items
+                       .Items
+                       .Where(x => x.IsSelected)
+                       .Select(x => x.Id)
+                       .ToArray();
+
+                    if (selected.IsEmpty)
+                    {
+                        return new Result(new NonItemSelectedError()).ToValueTaskResult().ConfigureAwait(false);
+                    }
+
+                    return dialogViewer.CloseContentDialogAsync(cancellationToken)
                        .IfSuccessAsync(() => selected.ToResult(), cancellationToken)
                        .IfSuccessForEachAsync(
-                            i => toDoService.CloneToDoItemAsync(i, itemNotify.Id.ToOption(), cancellationToken),
-                            cancellationToken)
+                            i => toDoService.ResetToDoItemAsync(
+                                new(i, vm.IsCompleteChildrenTask, vm.IsMoveCircleOrderIndex, vm.IsOnlyCompletedTasks,
+                                    vm.IsCompleteCurrentTask), cancellationToken), cancellationToken)
                        .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
-                            cancellationToken), ActionHelper<ToDoItemSelectorViewModel>.Empty, cancellationToken);
-            }, _ => dialogViewer.CloseContentDialogAsync(cancellationToken), ActionHelper<ResetToDoItemViewModel>.Empty,
-            cancellationToken), errorHandler, taskProgressService);
-
-        MultiReset = SpravyCommand.Create<IToDoSubItemsViewModelProperty>((view, cancellationToken) => dialogViewer.ShowConfirmContentDialogAsync(vm =>
-            {
-                var view = uiApplicationService.GetCurrentView<IToDoSubItemsViewModelProperty>();
-
-                if (view.IsHasError)
-                {
-                    return new Result(view.Errors).ToValueTaskResult().ConfigureAwait(false);
-                }
-
-                ReadOnlyMemory<Guid> selected = view.Value
-                   .ToDoSubItemsViewModel
-                   .List
-                   .ToDoItems
-                   .GroupByNone
-                   .Items
-                   .Items
-                   .Where(x => x.IsSelected)
-                   .Select(x => x.Id)
-                   .ToArray();
-
-                if (selected.IsEmpty)
-                {
-                    return new Result(new NonItemSelectedError()).ToValueTaskResult().ConfigureAwait(false);
-                }
-
-                return dialogViewer.CloseContentDialogAsync(cancellationToken)
-                   .IfSuccessAsync(() => selected.ToResult(), cancellationToken)
-                   .IfSuccessForEachAsync(
-                        i => toDoService.ResetToDoItemAsync(
-                            new(i, vm.IsCompleteChildrenTask, vm.IsMoveCircleOrderIndex, vm.IsOnlyCompletedTasks,
-                                vm.IsCompleteCurrentTask), cancellationToken), cancellationToken)
-                   .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
-                        cancellationToken);
-            }, _ => dialogViewer.CloseContentDialogAsync(cancellationToken), ActionHelper<ResetToDoItemViewModel>.Empty,
-            cancellationToken), errorHandler, taskProgressService);
+                            cancellationToken);
+                }, _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
+                ActionHelper<ResetToDoItemViewModel>.Empty,
+                cancellationToken), errorHandler, taskProgressService);
 
         MultiChangeOrder = SpravyCommand.Create<IToDoSubItemsViewModelProperty>((view, cancellationToken) =>
-        { ReadOnlyMemory<Guid> selected = view.ToDoSubItemsViewModel
+        {
+            ReadOnlyMemory<Guid> selected = view.ToDoSubItemsViewModel
                .List
                .ToDoItems
                .GroupByNone
@@ -889,20 +894,20 @@ public class SpravyCommandService
                 }, cancellationToken);
         }, errorHandler, taskProgressService);
 
-        MultiMakeAsRootToDoItem =  SpravyCommand.Create<ToDoItemEntityNotify>((item, cancellationToken) =>
+        MultiMakeAsRootToDoItem = SpravyCommand.Create<ToDoItemEntityNotify>((item, cancellationToken) =>
+        {
+            ReadOnlyMemory<Guid> selected = item.Children.Where(x => x.IsSelected).Select(x => x.Id).ToArray();
+
+            if (selected.IsEmpty)
             {
-                ReadOnlyMemory<Guid> selected = item.Children.Where(x => x.IsSelected).Select(x => x.Id).ToArray();
+                return new Result(new NonItemSelectedError()).ToValueTaskResult().ConfigureAwait(false);
+            }
 
-                if (selected.IsEmpty)
-                {
-                    return new Result(new NonItemSelectedError()).ToValueTaskResult().ConfigureAwait(false);
-                }
-
-                return selected.ToResult()
-                   .IfSuccessForEachAsync(i => toDoService.ToDoItemToRootAsync(i, cancellationToken), cancellationToken)
-                   .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
-                        cancellationToken);
-            }, errorHandler, taskProgressService);
+            return selected.ToResult()
+               .IfSuccessForEachAsync(i => toDoService.ToDoItemToRootAsync(i, cancellationToken), cancellationToken)
+               .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
+                    cancellationToken);
+        }, errorHandler, taskProgressService);
 
         MultiCopyToClipboardToDoItem = SpravyCommand.Create<ToDoItemEntityNotify>((item, cancellationToken) =>
         {
@@ -951,35 +956,35 @@ public class SpravyCommandService
                 }, cancellationToken);
         }, errorHandler, taskProgressService);
 
-        MultiChangeOrderToDoItem =  SpravyCommand.Create<ToDoItemEntityNotify>((item, cancellationToken) =>
+        MultiChangeOrderToDoItem = SpravyCommand.Create<ToDoItemEntityNotify>((item, cancellationToken) =>
+        {
+            ReadOnlyMemory<Guid> selected =
+                item.Children.Where(x => x.IsSelected).Select(x => x.Id).Reverse().ToArray();
+
+            if (selected.IsEmpty)
             {
-                ReadOnlyMemory<Guid> selected = item.Children.Where(x => x.IsSelected).Select(x => x.Id).Reverse().ToArray();
+                return new Result(new NonItemSelectedError()).ToValueTaskResult().ConfigureAwait(false);
+            }
 
-                if (selected.IsEmpty)
+            return dialogViewer.ShowConfirmContentDialogAsync<ChangeToDoItemOrderIndexViewModel>(
+                viewModel => viewModel.SelectedItem
+                   .IfNotNull(nameof(viewModel.SelectedItem))
+                   .IfSuccessAsync(
+                        selectedItem => dialogViewer.CloseContentDialogAsync(cancellationToken)
+                           .IfSuccessAsync(() => selected.ToResult(), cancellationToken)
+                           .IfSuccessForEachAsync(
+                                i => toDoService.UpdateToDoItemOrderIndexAsync(
+                                    new(i, selectedItem.Id, viewModel.IsAfter), cancellationToken), cancellationToken)
+                           .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
+                                cancellationToken), cancellationToken),
+                _ => dialogViewer.CloseContentDialogAsync(cancellationToken), viewModel =>
                 {
-                    return new Result(new NonItemSelectedError()).ToValueTaskResult().ConfigureAwait(false);
-                }
+                    viewModel.Id = item.Id;
 
-                return dialogViewer.ShowConfirmContentDialogAsync<ChangeToDoItemOrderIndexViewModel>(
-                    viewModel => viewModel.SelectedItem
-                       .IfNotNull(nameof(viewModel.SelectedItem))
-                       .IfSuccessAsync(
-                            selectedItem => dialogViewer.CloseContentDialogAsync(cancellationToken)
-                               .IfSuccessAsync(() => selected.ToResult(), cancellationToken)
-                               .IfSuccessForEachAsync(
-                                    i => toDoService.UpdateToDoItemOrderIndexAsync(
-                                        new(i, selectedItem.Id, viewModel.IsAfter), cancellationToken),
-                                    cancellationToken)
-                               .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
-                                    cancellationToken), cancellationToken),
-                    _ => dialogViewer.CloseContentDialogAsync(cancellationToken), viewModel =>
-                    {
-                        viewModel.Id = item.Id;
-
-                        viewModel.ChangeToDoItemOrderIndexIds =
-                            item.Children.Where(x => !x.IsSelected).Select(x => x.Id).ToArray();
-                    }, cancellationToken);
-            }, errorHandler, taskProgressService);
+                    viewModel.ChangeToDoItemOrderIndexIds =
+                        item.Children.Where(x => !x.IsSelected).Select(x => x.Id).ToArray();
+                }, cancellationToken);
+        }, errorHandler, taskProgressService);
 
         MultiResetToDoItem = SpravyCommand.Create<ToDoItemEntityNotify>((item, cancellationToken) =>
             dialogViewer.ShowConfirmContentDialogAsync<ResetToDoItemViewModel>(vm =>
@@ -1015,8 +1020,8 @@ public class SpravyCommandService
                 itemNotify => dialogViewer.CloseInputDialogAsync(cancellationToken)
                    .IfSuccessAsync(() => selected.ToResult(), cancellationToken)
                    .IfSuccessForEachAsync(
-                        i => toDoService.CloneToDoItemAsync(i, itemNotify.Id.ToOption(),
-                            cancellationToken), cancellationToken)
+                        i => toDoService.CloneToDoItemAsync(i, itemNotify.Id.ToOption(), cancellationToken),
+                        cancellationToken)
                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                         cancellationToken), view => view.DefaultSelectedItemId = item.Id, cancellationToken);
         }, errorHandler, taskProgressService);
@@ -1105,8 +1110,21 @@ public class SpravyCommandService
 
             return Result.Success;
         }), errorHandler, taskProgressService);
+
+        AddRootToDoItem = SpravyCommand.Create(cancellationToken => dialogViewer.ShowConfirmContentDialogAsync(view =>
+            {
+                var options = view.ToAddRootToDoItemOptions();
+
+                return dialogViewer.CloseContentDialogAsync(cancellationToken)
+                   .IfSuccessAsync(() => toDoService.AddRootToDoItemAsync(options, cancellationToken),
+                        cancellationToken)
+                   .IfSuccessAsync(_ => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
+                        cancellationToken);
+            }, _ => dialogViewer.CloseContentDialogAsync(cancellationToken),
+            ActionHelper<AddRootToDoItemViewModel>.Empty,
+            cancellationToken), errorHandler, taskProgressService);
     }
-    
+
     public SpravyCommand MultiCompleteToDoItem { get; }
     public SpravyCommand MultiAddToFavoriteToDoItem { get; }
     public SpravyCommand MultiRemoveFromFavoriteToDoItem { get; }
@@ -1140,10 +1158,6 @@ public class SpravyCommandService
     public SpravyCommand Clone { get; }
     public SpravyCommand NavigateToToDoItem { get; }
 
-    public SpravyCommand SwitchPane { get; }
-    public SpravyCommand SendNewVerificationCode { get; }
-    public SpravyCommand Back { get; }
-    public SpravyCommand NavigateToCurrentToDoItem { get; }
     public SpravyCommand MultiComplete { get; }
     public SpravyCommand MultiAddToFavorite { get; }
     public SpravyCommand MultiRemoveFromFavorite { get; }
@@ -1159,8 +1173,15 @@ public class SpravyCommandService
     public SpravyCommand MultiReset { get; }
     public SpravyCommand MultiClone { get; }
     public SpravyCommand MultiOpenLink { get; }
+
     public SpravyCommand GeneratePassword { get; }
     public SpravyCommand DeletePasswordItem { get; }
+
+    public SpravyCommand SwitchPane { get; }
+    public SpravyCommand SendNewVerificationCode { get; }
+    public SpravyCommand Back { get; }
+    public SpravyCommand NavigateToCurrentToDoItem { get; }
+    public SpravyCommand AddRootToDoItem { get; }
 
     public SpravyCommand GetNavigateTo<TViewModel>() where TViewModel : INavigatable
     {
