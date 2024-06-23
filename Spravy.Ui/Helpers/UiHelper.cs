@@ -20,6 +20,7 @@ public static class UiHelper
         AddRootToDoItem = commands.AddRootToDoItem.Command;
         Logout = commands.Logout.Command;
         RefreshCurrentView = commands.RefreshCurrentView.Command;
+        SetToDoItemDescription = commands.SetToDoItemDescription.Command;
         NavigateToRootToDoItems = commands.GetNavigateTo<RootToDoItemsViewModel>().Command;
         NavigateToTodayToDoItems = commands.GetNavigateTo<TodayToDoItemsViewModel>().Command;
         NavigateToSearchToDoItems = commands.GetNavigateTo<SearchToDoItemsViewModel>().Command;
@@ -43,5 +44,6 @@ public static class UiHelper
     public static readonly ICommand AddRootToDoItem;
     public static readonly ICommand Logout;
     public static readonly ICommand RefreshCurrentView;
+    public static readonly ICommand SetToDoItemDescription;
     public static readonly SpravyCommandNotify NavigateToCurrentToDoItem;
 }

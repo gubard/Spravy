@@ -7,7 +7,6 @@ public static class CommandStorage
 {
     private static readonly IDialogViewer dialogViewer;
     private static readonly MainSplitViewModel mainSplitViewModel;
-    private static readonly IToDoService toDoService;
     private static readonly IPasswordService passwordService;
     private static readonly IErrorHandler errorHandler;
     
@@ -17,24 +16,13 @@ public static class CommandStorage
         passwordService = kernel.CreateService<IPasswordService>();
         dialogViewer = kernel.CreateService<IDialogViewer>();
         mainSplitViewModel = kernel.CreateService<MainSplitViewModel>();
-        toDoService = kernel.CreateService<IToDoService>();
         errorHandler = kernel.CreateService<IErrorHandler>();
-        
-        SetToDoDescriptionItem = CreateCommand<ToDoItemEntityNotify>(SetToDoDescriptionAsync, MaterialIconKind.Pencil,
-            "Set to-do item description");
         
         AddPasswordItemItem = CreateCommand(AddPasswordItemAsync, MaterialIconKind.Plus, "Add password item");
         
         ShowPasswordItemSettingItem = CreateCommand<IIdProperty>(ShowPasswordItemSettingAsync,
             MaterialIconKind.Settings, "Show password setting");
     }
-    
-    public static ICommand SetToDoDescriptionCommand
-    {
-        get => SetToDoDescriptionItem.Command;
-    }
-    
-    public static CommandItem SetToDoDescriptionItem { get; }
     
     public static ICommand AddPasswordItemCommand
     {
@@ -99,28 +87,6 @@ public static class CommandStorage
                .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
             _ => dialogViewer.CloseContentDialogAsync(cancellationToken), ActionHelper<AddPasswordItemViewModel>.Empty,
             cancellationToken);
-    }
-    
-    private static ConfiguredValueTaskAwaitable<Result> SetToDoDescriptionAsync(
-        ToDoItemEntityNotify property,
-        CancellationToken cancellationToken
-    )
-    {
-        return dialogViewer.ShowConfirmContentDialogAsync<EditDescriptionViewModel>(
-            viewModel => dialogViewer.CloseContentDialogAsync(cancellationToken)
-               .IfSuccessAsync(
-                    () => toDoService.UpdateToDoItemDescriptionAsync(property.Id, viewModel.Content.Description,
-                        cancellationToken), cancellationToken)
-               .IfSuccessAsync(
-                    () => toDoService.UpdateToDoItemDescriptionTypeAsync(property.Id, viewModel.Content.Type,
-                        cancellationToken), cancellationToken)
-               .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken),
-            _ => dialogViewer.CloseContentDialogAsync(cancellationToken), viewModel =>
-            {
-                viewModel.Content.Description = property.Description;
-                viewModel.Content.Type = property.DescriptionType;
-                viewModel.ToDoItemName = property.Name;
-            }, cancellationToken);
     }
     
     public static ConfiguredValueTaskAwaitable<Result> RefreshCurrentViewAsync(CancellationToken cancellationToken)

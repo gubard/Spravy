@@ -1146,6 +1146,23 @@ public class SpravyCommandService
 
         RefreshCurrentView = SpravyCommand.Create(uiApplicationService.RefreshCurrentViewAsync, errorHandler,
             taskProgressService);
+
+        SetToDoItemDescription = SpravyCommand.Create<ToDoItemEntityNotify>((item, cancellationToken) =>
+            dialogViewer.ShowConfirmContentDialogAsync<EditDescriptionViewModel>(
+                viewModel => dialogViewer.CloseContentDialogAsync(cancellationToken)
+                   .IfSuccessAsync(
+                        () => toDoService.UpdateToDoItemDescriptionAsync(item.Id, viewModel.Content.Description,
+                            cancellationToken), cancellationToken)
+                   .IfSuccessAsync(
+                        () => toDoService.UpdateToDoItemDescriptionTypeAsync(item.Id, viewModel.Content.Type,
+                            cancellationToken), cancellationToken)
+                   .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
+                        cancellationToken), _ => dialogViewer.CloseContentDialogAsync(cancellationToken), viewModel =>
+                {
+                    viewModel.Content.Description = item.Description;
+                    viewModel.Content.Type = item.DescriptionType;
+                    viewModel.ToDoItemName = item.Name;
+                }, cancellationToken), errorHandler, taskProgressService);
     }
 
     public SpravyCommand MultiCompleteToDoItem { get; }
@@ -1207,6 +1224,7 @@ public class SpravyCommandService
     public SpravyCommand AddRootToDoItem { get; }
     public SpravyCommand Logout { get; }
     public SpravyCommand RefreshCurrentView { get; }
+    public SpravyCommand SetToDoItemDescription { get; }
 
     public SpravyCommand GetNavigateTo<TViewModel>() where TViewModel : INavigatable
     {
