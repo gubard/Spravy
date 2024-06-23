@@ -12,6 +12,7 @@ public static class UiHelper
         RemoveFromFavorite = commands.RemoveFromFavorite.Command;
         AddToFavorite = commands.AddToFavorite.Command;
         OpenLink = commands.OpenLink.Command;
+        SendNewVerificationCode = commands.SendNewVerificationCode.Command;
     }
 
     public static readonly ICommand NavigateToToDoItem;
@@ -19,4 +20,5 @@ public static class UiHelper
     public static readonly ICommand RemoveFromFavorite;
     public static readonly ICommand AddToFavorite;
     public static readonly ICommand OpenLink;
+    public static readonly ICommand SendNewVerificationCode;
 }

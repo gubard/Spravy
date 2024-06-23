@@ -56,9 +56,6 @@ public static class CommandStorage
         MultiSetTypeToDoItemsItem = CreateCommand<AvaloniaList<ToDoItemEntityNotify>>(MultiSetTypeToDoItemsAsync,
             MaterialIconKind.Switch, "Set type all to-do items");
         
-        SendNewVerificationCodeItem = CreateCommand<IVerificationEmail>(SendNewVerificationCodeAsync,
-            MaterialIconKind.CodeString, "Verification email");
-        
         MultiDeleteToDoItemsItem = CreateCommand<AvaloniaList<ToDoItemEntityNotify>>(MultiDeleteToDoItemsAsync,
             MaterialIconKind.Delete, "Delete to-do items");
         
@@ -68,12 +65,6 @@ public static class CommandStorage
             MaterialIconKind.Settings, "Show password setting");
     }
     
-    public static ICommand SendNewVerificationCodeCommand
-    {
-        get => SendNewVerificationCodeItem.Command;
-    }
-    
-    public static CommandItem SendNewVerificationCodeItem { get; }
     public static CommandItem MultiSetTypeToDoItemsItem { get; }
     public static CommandItem MultiMoveToDoItemsToRootItem { get; }
     public static CommandItem MultiCompleteToDoItemsItem { get; }
@@ -219,23 +210,6 @@ public static class CommandStorage
                 })
                .ToArray())
            .IfSuccessAsync(() => RefreshCurrentViewAsync(cancellationToken), cancellationToken);
-    }
-    
-    private static ConfiguredValueTaskAwaitable<Result> SendNewVerificationCodeAsync(
-        IVerificationEmail verificationEmail,
-        CancellationToken cancellationToken
-    )
-    {
-        switch (verificationEmail.IdentifierType)
-        {
-            case UserIdentifierType.Email:
-                return authenticationService.UpdateVerificationCodeByEmailAsync(verificationEmail.Identifier,
-                    cancellationToken);
-            case UserIdentifierType.Login:
-                return authenticationService.UpdateVerificationCodeByLoginAsync(verificationEmail.Identifier,
-                    cancellationToken);
-            default: throw new ArgumentOutOfRangeException();
-        }
     }
     
     private static ConfiguredValueTaskAwaitable<Result> MultiMoveToDoItemsToRootAsync(
