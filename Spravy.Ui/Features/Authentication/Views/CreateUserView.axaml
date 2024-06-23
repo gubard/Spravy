@@ -8,6 +8,7 @@
                         xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
                         xmlns:vm="clr-namespace:Spravy.Ui.Features.Authentication.ViewModels"
                         xmlns:v="clr-namespace:Spravy.Ui.Features.Authentication.Views"
+                        xmlns:h="clr-namespace:Spravy.Ui.Helpers"
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                         x:Class="Spravy.Ui.Features.Authentication.Views.CreateUserView"
                         x:DataType="vm:CreateUserViewModel">
@@ -46,8 +47,7 @@
                 <Grid ColumnDefinitions="*,*">
                     <Button Name="{x:Static v:CreateUserView.BackButtonName}"
                             Classes="mode-press"
-                            Command="{x:Static s:CommandStorage.NavigateToCommand}"
-                            CommandParameter="{x:Type vm:LoginViewModel}"
+                            Command="{x:Static h:UiHelper.Back}"
                             Content="{DynamicResource CreateUserView.Back}" />
                     <Button Name="{x:Static v:CreateUserView.CreateUserButtonName}"
                             Grid.Column="1"

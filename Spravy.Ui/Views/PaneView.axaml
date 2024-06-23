@@ -10,6 +10,7 @@
                         xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
                         xmlns:pg="clr-namespace:Spravy.Ui.Features.PasswordGenerator.ViewModels"
                         xmlns:viewModels="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+                        xmlns:h="clr-namespace:Spravy.Ui.Helpers"
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                         x:Class="Spravy.Ui.Views.PaneView"
                         x:DataType="vm:PaneViewModel">
@@ -22,8 +23,7 @@
                     BorderThickness="0" />
 
             <Button Classes="mode-press"
-                    Command="{x:Static s:CommandStorage.NavigateToCommand}"
-                    CommandParameter="{x:Type viewModels:RootToDoItemsViewModel}">
+                    Command="{x:Static h:UiHelper.NavigateToRootToDoItems}">
                 <Grid ColumnDefinitions="Auto,Auto">
                     <mi:MaterialIcon Kind="Checks" />
                     <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.ToDoItems}" />
@@ -31,8 +31,7 @@
             </Button>
 
             <Button Classes="mode-press"
-                    Command="{x:Static s:CommandStorage.NavigateToCommand}"
-                    CommandParameter="{x:Type viewModels:TodayToDoItemsViewModel}">
+                    Command="{x:Static h:UiHelper.NavigateToTodayToDoItems}">
                 <Grid ColumnDefinitions="Auto,Auto">
                     <mi:MaterialIcon Kind="CalendarToday" />
                     <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.TodayToDoItems}" />
@@ -40,8 +39,7 @@
             </Button>
 
             <Button Classes="mode-press"
-                    Command="{x:Static s:CommandStorage.NavigateToCommand}"
-                    CommandParameter="{x:Type viewModels:SearchToDoItemsViewModel}">
+                    Command="{x:Static h:UiHelper.NavigateToSearchToDoItems}">
                 <Grid ColumnDefinitions="Auto,Auto">
                     <mi:MaterialIcon Kind="Search" />
                     <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.Search}" />
@@ -49,8 +47,7 @@
             </Button>
 
             <Button Classes="mode-press"
-                    Command="{x:Static s:CommandStorage.NavigateToCommand}"
-                    CommandParameter="{x:Type pg:PasswordGeneratorViewModel}">
+                    Command="{x:Static h:UiHelper.NavigateToPasswordGenerator}">
                 <Grid ColumnDefinitions="Auto,Auto">
                     <mi:MaterialIcon Kind="Password" />
                     <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.PasswordGenerator}" />
@@ -58,8 +55,7 @@
             </Button>
 
             <Button Classes="mode-press"
-                    Command="{x:Static s:CommandStorage.NavigateToCommand}"
-                    CommandParameter="{x:Type vm:SettingViewModel}">
+                    Command="{x:Static h:UiHelper.NavigateToSetting}">
                 <Grid ColumnDefinitions="Auto,Auto">
                     <mi:MaterialIcon Kind="Settings" />
                     <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.Settings}" />

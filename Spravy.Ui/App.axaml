@@ -93,8 +93,7 @@
         </DataTemplate>
 
         <DataTemplate DataType="m:RootItem">
-            <Button Command="{x:Static s:CommandStorage.NavigateToCommand}"
-                    CommandParameter="{x:Type vm:RootToDoItemsViewModel}"
+            <Button Command="{x:Static h:UiHelper.NavigateToRootToDoItems}"
                     Content="{x:Static i:MaterialIconKind.Home}"
                     Classes="Basic" />
         </DataTemplate>

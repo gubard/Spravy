@@ -10,7 +10,6 @@ public static class CommandStorage
     private static readonly MainSplitViewModel mainSplitViewModel;
     private static readonly IToDoService toDoService;
     private static readonly IToDoCache toDoCache;
-    private static readonly IAuthenticationService authenticationService;
     private static readonly IObjectStorage objectStorage;
     private static readonly IPasswordService passwordService;
     private static readonly IErrorHandler errorHandler;
@@ -21,7 +20,6 @@ public static class CommandStorage
         toDoCache = kernel.CreateService<IToDoCache>();
         passwordService = kernel.CreateService<IPasswordService>();
         objectStorage = kernel.CreateService<IObjectStorage>();
-        authenticationService = kernel.CreateService<IAuthenticationService>();
         navigator = kernel.CreateService<INavigator>();
         dialogViewer = kernel.CreateService<IDialogViewer>();
         mainSplitViewModel = kernel.CreateService<MainSplitViewModel>();
@@ -29,7 +27,6 @@ public static class CommandStorage
         errorHandler = kernel.CreateService<IErrorHandler>();
         SwitchPaneItem = CreateCommand(SwitchPaneAsync, MaterialIconKind.Menu, "Open pane");
         BackItem = CreateCommand(BackAsync, MaterialIconKind.ArrowLeft, "Back");
-        NavigateToItem = CreateCommand<Type>(NavigateToAsync, MaterialIconKind.ArrowLeft, "Navigate to");
         LogoutItem = CreateCommand(LogoutAsync, MaterialIconKind.Logout, "Logout");
         AddRootToDoItemItem = CreateCommand(AddRootToDoItemAsync, MaterialIconKind.Plus, "Add root to-do item");
         
@@ -39,16 +36,11 @@ public static class CommandStorage
         SetToDoDescriptionItem = CreateCommand<ToDoItemEntityNotify>(SetToDoDescriptionAsync, MaterialIconKind.Pencil,
             "Set to-do item description");
         
-        NavigateToCurrentToDoItemItem = CreateCommand(NavigateToCurrentToDoItemAsync, MaterialIconKind.ArrowRight,
-            "Open current to-do item");
-        
         AddPasswordItemItem = CreateCommand(AddPasswordItemAsync, MaterialIconKind.Plus, "Add password item");
         
         ShowPasswordItemSettingItem = CreateCommand<IIdProperty>(ShowPasswordItemSettingAsync,
             MaterialIconKind.Settings, "Show password setting");
     }
-    
-    public static CommandItem NavigateToCurrentToDoItemItem { get; }
     
     public static ICommand SetToDoDescriptionCommand
     {
@@ -77,13 +69,6 @@ public static class CommandStorage
     }
     
     public static CommandItem BackItem { get; }
-    
-    public static ICommand NavigateToCommand
-    {
-        get => NavigateToItem.Command;
-    }
-    
-    public static CommandItem NavigateToItem { get; }
     
     public static ICommand LogoutCommand
     {
@@ -164,52 +149,6 @@ public static class CommandStorage
             cancellationToken);
     }
     
-    private static ConfiguredValueTaskAwaitable<Result> CompleteAsync(
-        IEnumerable<ToDoItemEntityNotify> items,
-        CancellationToken cancellationToken
-    )
-    {
-        var tasks = new List<Func<ConfiguredValueTaskAwaitable<Result>>>();
-        
-        foreach (var item in items)
-        {
-            switch (item.IsCan)
-            {
-                case ToDoItemIsCan.None:
-                    break;
-                case ToDoItemIsCan.CanComplete:
-                    tasks.Add(() => toDoService.UpdateToDoItemCompleteStatusAsync(item.Id, true, cancellationToken));
-                    
-                    break;
-                case ToDoItemIsCan.CanIncomplete:
-                    tasks.Add(() => toDoService.UpdateToDoItemCompleteStatusAsync(item.Id, false, cancellationToken));
-                    
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-        
-        return Result.AwaitableSuccess.IfSuccessAllAsync(cancellationToken, tasks.ToArray());
-    }
-    
-    private static ConfiguredValueTaskAwaitable<Result> NavigateToCurrentToDoItemAsync(
-        CancellationToken cancellationToken
-    )
-    {
-        return toDoService.GetCurrentActiveToDoItemAsync(cancellationToken)
-           .IfSuccessAsync(activeToDoItem =>
-            {
-                if (activeToDoItem.TryGetValue(out var value))
-                {
-                    return navigator.NavigateToAsync<ToDoItemViewModel>(
-                        viewModel => viewModel.Id = value.Id, cancellationToken);
-                }
-                
-                return navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, cancellationToken);
-            }, cancellationToken);
-    }
-    
     private static ConfiguredValueTaskAwaitable<Result> SetToDoDescriptionAsync(
         ToDoItemEntityNotify property,
         CancellationToken cancellationToken
@@ -273,17 +212,6 @@ public static class CommandStorage
             }, cancellationToken)
            .IfSuccessAsync(() => navigator.NavigateToAsync(ActionHelper<LoginViewModel>.Empty, cancellationToken),
                 cancellationToken)
-           .IfSuccessAsync(() => cancellationToken.InvokeUiBackgroundAsync(() =>
-            {
-                mainSplitViewModel.IsPaneOpen = false;
-                
-                return Result.Success;
-            }), cancellationToken);
-    }
-    
-    private static ConfiguredValueTaskAwaitable<Result> NavigateToAsync(Type type, CancellationToken cancellationToken)
-    {
-        return navigator.NavigateToAsync(type, cancellationToken)
            .IfSuccessAsync(() => cancellationToken.InvokeUiBackgroundAsync(() =>
             {
                 mainSplitViewModel.IsPaneOpen = false;
