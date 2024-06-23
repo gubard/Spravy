@@ -6,7 +6,6 @@
                         xmlns:ru="http://reactiveui.net"
                         xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
                         xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
-                        xmlns:s="clr-namespace:Spravy.Ui.Services"
                         xmlns:h="clr-namespace:Spravy.Ui.Helpers"
                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                         x:Class="Spravy.Ui.Views.DeleteAccountView"

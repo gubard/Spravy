@@ -8,7 +8,6 @@
              xmlns:i="clr-namespace:Material.Icons;assembly=Material.Icons"
              xmlns:pm="clr-namespace:Spravy.Ui.Features.PasswordGenerator.Models"
              xmlns:lm="clr-namespace:Spravy.Ui.Features.Localizations.Models"
-             xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
              xmlns:tm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
              xmlns:h="clr-namespace:Spravy.Ui.Helpers"
              x:Class="Spravy.Ui.App"

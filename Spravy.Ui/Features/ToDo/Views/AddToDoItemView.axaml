@@ -7,7 +7,6 @@
                         xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
                         xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
                         xmlns:models="clr-namespace:Spravy.Ui.Features.ToDo.Models"
-                        xmlns:s="clr-namespace:Spravy.Ui.Services"
                         xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                         xmlns:models1="clr-namespace:Spravy.Ui.Models"
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"

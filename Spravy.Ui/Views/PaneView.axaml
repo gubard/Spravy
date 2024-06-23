@@ -8,8 +8,6 @@
                         xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                         xmlns:s="clr-namespace:Spravy.Ui.Services"
                         xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
-                        xmlns:pg="clr-namespace:Spravy.Ui.Features.PasswordGenerator.ViewModels"
-                        xmlns:viewModels="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
                         xmlns:h="clr-namespace:Spravy.Ui.Helpers"
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                         x:Class="Spravy.Ui.Views.PaneView"
