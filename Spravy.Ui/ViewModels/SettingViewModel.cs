@@ -16,21 +16,11 @@ public class SettingViewModel : NavigatableViewModelBase
         ITaskProgressService taskProgressService
     ) : base(true)
     {
+        AvailableColors = new();
         this.spravyNotificationManager = spravyNotificationManager;
         this.navigator = navigator;
         AccountNotify = accountNotify;
         this.objectStorage = objectStorage;
-        AvailableColors = new(theme.ColorThemes.Select(x => new Selected<SukiColorTheme>(x)));
-
-        foreach (var availableColor in AvailableColors)
-        {
-            if (availableColor.Value == theme.ActiveColorTheme)
-            {
-                availableColor.IsSelect = true;
-            }
-        }
-
-        IsLightTheme = theme.ActiveBaseTheme == ThemeVariant.Light;
         ChangePasswordCommand = SpravyCommand.Create(ChangePasswordAsync, errorHandler, taskProgressService);
         SaveSettingsCommand = SpravyCommand.Create(SaveSettingsAsync, errorHandler, taskProgressService);
         DeleteAccountCommand = SpravyCommand.Create(DeleteAccountAsync, errorHandler, taskProgressService);
@@ -39,7 +29,9 @@ public class SettingViewModel : NavigatableViewModelBase
             SpravyCommand.Create<Selected<SukiColorTheme>>(SwitchToColorTheme, errorHandler, taskProgressService);
 
         this.WhenAnyValue(x => x.IsLightTheme)
-           .Subscribe(x => theme.ChangeBaseTheme(x ? ThemeVariant.Light : ThemeVariant.Dark));
+           .Skip(1)
+           .Subscribe(x =>
+                Dispatcher.UIThread.Invoke(() => theme.ChangeBaseTheme(x ? ThemeVariant.Light : ThemeVariant.Dark)));
     }
 
     public override string ViewId

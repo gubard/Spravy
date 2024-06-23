@@ -14,6 +14,12 @@
                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                         x:Class="Spravy.Ui.Views.SettingView"
                         x:DataType="vm:SettingViewModel">
+    <Interaction.Behaviors>
+        <EventTriggerBehavior EventName="Initialized">
+            <InvokeCommandAction Command="{x:Static h:UiHelper.SettingViewInitialized}" CommandParameter="{Binding}" />
+        </EventTriggerBehavior>
+    </Interaction.Behaviors>
+
     <c:BusyArea BusyText="{DynamicResource SettingView.Busy}"
                 IsBusy="{Binding IsBusy}">
         <Grid RowDefinitions="*,Auto">
@@ -38,7 +44,7 @@
                             </ScrollViewer>
                         </Grid>
                     </c:GroupBox.Header>
-                    
+
                     <ItemsControl Margin="20">
                         <c:GroupBox Header="Account Setting">
                             <StackPanel>
@@ -48,7 +54,7 @@
                                          Text="{Binding AccountNotify.Login}" />
 
                                 <Grid ColumnDefinitions="*,*">
-                                    <Button Classes="mode-press" 
+                                    <Button Classes="mode-press"
                                             Content="{DynamicResource SettingView.ChangePassword}"
                                             Command="{Binding ChangePasswordCommand.Command}" />
                                     <Button Grid.Column="1"

@@ -32,6 +32,7 @@ namespace Spravy.Ui.Modules;
 [Singleton(typeof(ISpravyNotificationManager), typeof(NotificationManager))]
 [Singleton(typeof(IManagedNotificationManager), typeof(WindowNotificationManager))]
 [Singleton(typeof(IDesktopTopLevelControl), typeof(MainWindow))]
+[Singleton(typeof(SukiTheme), Factory = nameof(SukiThemeFactory))]
 [Singleton(typeof(IEnumerable<IDataTemplate>), Factory = nameof(DataTemplatesFactory))]
 [Singleton(typeof(TopLevel), Factory = nameof(TopLevelFactory))]
 [Singleton(typeof(Application), Factory = nameof(ApplicationFactory))]
@@ -171,6 +172,11 @@ namespace Spravy.Ui.Modules;
 [Transient(typeof(IHttpHeaderFactory), Factory = nameof(HttpHeaderFactoryFactory))]
 public interface IUiModule
 {
+    static SukiTheme SukiThemeFactory()
+    {
+        return SukiTheme.GetInstance();
+    }
+    
     static IClipboard ClipboardFactory(TopLevel topLevel)
     {
         return topLevel.Clipboard.ThrowIfNull();

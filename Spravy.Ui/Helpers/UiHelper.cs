@@ -23,6 +23,7 @@ public static class UiHelper
         SetToDoItemDescription = commands.SetToDoItemDescription.Command;
         AddPasswordItem = commands.AddPasswordItem.Command;
         ShowPasswordItemSetting = commands.ShowPasswordItemSetting.Command;
+        SettingViewInitialized = commands.SettingViewInitialized.Command;
         NavigateToRootToDoItems = commands.GetNavigateTo<RootToDoItemsViewModel>().Command;
         NavigateToTodayToDoItems = commands.GetNavigateTo<TodayToDoItemsViewModel>().Command;
         NavigateToSearchToDoItems = commands.GetNavigateTo<SearchToDoItemsViewModel>().Command;
@@ -49,5 +50,6 @@ public static class UiHelper
     public static readonly ICommand SetToDoItemDescription;
     public static readonly ICommand AddPasswordItem;
     public static readonly ICommand ShowPasswordItemSetting;
+    public static readonly ICommand SettingViewInitialized;
     public static readonly SpravyCommandNotify NavigateToCurrentToDoItem;
 }
