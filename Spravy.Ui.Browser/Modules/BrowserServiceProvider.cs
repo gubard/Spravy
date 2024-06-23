@@ -54,9 +54,4 @@ public partial class BrowserServiceProvider : IServiceFactory
     {
         return GetService<T>();
     }
-        
-    public object CreateService(Type type)
-    {
-        return serviceProvider.GetService(type).ThrowIfNull();
-    }
 }

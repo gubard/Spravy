@@ -20,19 +20,6 @@ public class Navigator : INavigator
         this.mainSplitViewModel = mainSplitViewModel;
     }
     
-    public ConfiguredValueTaskAwaitable<Result> NavigateToAsync(Type type, CancellationToken cancellationToken)
-    {
-        var viewModel = (INavigatable)serviceFactory.CreateService(type);
-        
-        return AddCurrentContentAsync(ActionHelper<object>.Empty, cancellationToken)
-           .IfSuccessAsync(() => this.InvokeUiBackgroundAsync(() =>
-            {
-                mainSplitViewModel.Content = viewModel;
-                
-                return Result.Success;
-            }), cancellationToken);
-    }
-    
     public ConfiguredValueTaskAwaitable<Result> NavigateToAsync<TViewModel>(
         Action<TViewModel> setup,
         CancellationToken cancellationToken

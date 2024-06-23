@@ -67,9 +67,4 @@ public partial class DesktopServiceProvider : IServiceFactory
     {
         return GetService<T>();
     }
-    
-    public object CreateService(Type type)
-    {
-        return serviceProvider.GetService(type).ThrowIfNull();
-    }
 }

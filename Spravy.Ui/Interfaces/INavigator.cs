@@ -9,8 +9,6 @@ public interface INavigator
         CancellationToken cancellationToken
     ) where TViewModel : INavigatable;
 
-    ConfiguredValueTaskAwaitable<Result> NavigateToAsync(Type type, CancellationToken cancellationToken);
-
     ConfiguredValueTaskAwaitable<Result> NavigateToAsync<TViewModel>(
         Action<TViewModel> setup,
         CancellationToken cancellationToken

@@ -66,14 +66,9 @@ public partial class AndroidServiceProvider : IServiceFactory
             new StorageEntityTypeConfiguration(),
         }, FileSystem.AppDataDirectory.ToDirectory().ToFile("storage.db"), true);
     }
-        
+
     public T CreateService<T>() where T : notnull
     {
         return GetService<T>();
-    }
-        
-    public object CreateService(Type type)
-    {
-        return serviceProvider.GetService(type).ThrowIfNull();
     }
 }
