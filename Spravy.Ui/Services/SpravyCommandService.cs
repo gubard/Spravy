@@ -1143,6 +1143,9 @@ public class SpravyCommandService
 
                 return Result.Success;
             }), cancellationToken), errorHandler, taskProgressService);
+
+        RefreshCurrentView = SpravyCommand.Create(uiApplicationService.RefreshCurrentViewAsync, errorHandler,
+            taskProgressService);
     }
 
     public SpravyCommand MultiCompleteToDoItem { get; }
@@ -1203,6 +1206,7 @@ public class SpravyCommandService
     public SpravyCommand NavigateToCurrentToDoItem { get; }
     public SpravyCommand AddRootToDoItem { get; }
     public SpravyCommand Logout { get; }
+    public SpravyCommand RefreshCurrentView { get; }
 
     public SpravyCommand GetNavigateTo<TViewModel>() where TViewModel : INavigatable
     {

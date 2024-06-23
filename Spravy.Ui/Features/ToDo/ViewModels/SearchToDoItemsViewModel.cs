@@ -1,9 +1,9 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class SearchToDoItemsViewModel : NavigatableViewModelBase,
-    IToDoItemSearchProperties,
     IToDoItemUpdater,
-    IToDoSubItemsViewModelProperty
+    IToDoSubItemsViewModelProperty,
+    IRefresh
 {
     private readonly TaskWork refreshWork;
     private readonly IToDoService toDoService;

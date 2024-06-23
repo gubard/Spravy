@@ -8,22 +8,17 @@ public static class CommandStorage
     private static readonly IDialogViewer dialogViewer;
     private static readonly MainSplitViewModel mainSplitViewModel;
     private static readonly IToDoService toDoService;
-    private static readonly IToDoCache toDoCache;
     private static readonly IPasswordService passwordService;
     private static readonly IErrorHandler errorHandler;
     
     static CommandStorage()
     {
         var kernel = DiHelper.ServiceFactory.ThrowIfNull();
-        toDoCache = kernel.CreateService<IToDoCache>();
         passwordService = kernel.CreateService<IPasswordService>();
         dialogViewer = kernel.CreateService<IDialogViewer>();
         mainSplitViewModel = kernel.CreateService<MainSplitViewModel>();
         toDoService = kernel.CreateService<IToDoService>();
         errorHandler = kernel.CreateService<IErrorHandler>();
-        
-        ToDoItemSearchItem = CreateCommand<IToDoItemSearchProperties>(
-            ToDoItemSearchAsync, MaterialIconKind.Search, "Search to-do item");
         
         SetToDoDescriptionItem = CreateCommand<ToDoItemEntityNotify>(SetToDoDescriptionAsync, MaterialIconKind.Pencil,
             "Set to-do item description");
@@ -40,13 +35,6 @@ public static class CommandStorage
     }
     
     public static CommandItem SetToDoDescriptionItem { get; }
-    
-    public static ICommand ToDoItemSearchCommand
-    {
-        get => ToDoItemSearchItem.Command;
-    }
-    
-    public static CommandItem ToDoItemSearchItem { get; }
     
     public static ICommand AddPasswordItemCommand
     {
@@ -135,18 +123,6 @@ public static class CommandStorage
             }, cancellationToken);
     }
     
-    private static ConfiguredValueTaskAwaitable<Result> ToDoItemSearchAsync(
-        IToDoItemSearchProperties properties,
-        CancellationToken cancellationToken
-    )
-    {
-        return toDoService.SearchToDoItemIdsAsync(properties.SearchText, cancellationToken)
-           .IfSuccessForEachAsync(id => toDoCache.GetToDoItem(id), cancellationToken)
-           .IfSuccessAsync(
-                ids => properties.ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), false, cancellationToken),
-                cancellationToken);
-    }
-
     public static ConfiguredValueTaskAwaitable<Result> RefreshCurrentViewAsync(CancellationToken cancellationToken)
     {
         if (mainSplitViewModel.Content is not IRefresh refresh)
