@@ -168,6 +168,11 @@ public class GetterToDoItemParametersService
             {
                 case ToDoItemStatus.Miss:
                 {
+                    if (firstMiss.IsHasValue)
+                    {
+                        break;
+                    }
+
                     firstMiss = parameters.ActiveItem.TryGetValue(out var value)
                         ? value.ToOption()
                         : ToActiveToDoItem(item);
@@ -176,6 +181,11 @@ public class GetterToDoItemParametersService
                 }
                 case ToDoItemStatus.ReadyForComplete:
                 {
+                    if (firstReadyForComplete.IsHasValue)
+                    {
+                        break;
+                    }
+
                     firstReadyForComplete = parameters.ActiveItem.TryGetValue(out var value)
                         ? value.ToOption()
                         : ToActiveToDoItem(item);
@@ -188,8 +198,7 @@ public class GetterToDoItemParametersService
                     break;
                 case ToDoItemStatus.Completed:
                     break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                default: return new(new ToDoItemStatusOutOfRangeError(parameters.Status));
             }
         }
 
@@ -260,7 +269,7 @@ public class GetterToDoItemParametersService
                        .With(ToDoItemIsCan.CanComplete)
                        .With(firstActive.IsHasValue ? firstActive : ToActiveToDoItem(entity))
                        .ToResult();
-                default: throw new ArgumentOutOfRangeException();
+                default: return new(new ToDoItemChildrenTypeOutOfRangeError(entity.ChildrenType));
             }
         }
 
@@ -275,7 +284,7 @@ public class GetterToDoItemParametersService
                        .With(ToDoItemIsCan.CanComplete)
                        .With(firstMiss)
                        .ToResult();
-                default: throw new ArgumentOutOfRangeException();
+                default: return new(new ToDoItemChildrenTypeOutOfRangeError(entity.ChildrenType));
             }
         }
 
@@ -293,7 +302,7 @@ public class GetterToDoItemParametersService
                        .With(ToDoItemIsCan.CanComplete)
                        .With(firstReadyForComplete)
                        .ToResult();
-                default: throw new ArgumentOutOfRangeException();
+                default: return new(new ToDoItemChildrenTypeOutOfRangeError(entity.ChildrenType));
             }
         }
 
