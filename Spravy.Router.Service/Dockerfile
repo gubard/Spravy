@@ -6,6 +6,7 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 COPY ["Spravy.Router.Service/Spravy.Router.Service.csproj", "Spravy.Router.Service/"]
+COPY ["Directory.Build.props", "Spravy.Router.Service/Directory.Build.props"]
 RUN dotnet restore "Spravy.Router.Service/Spravy.Router.Service.csproj"
 COPY . .
 WORKDIR "/src/Spravy.Router.Service"

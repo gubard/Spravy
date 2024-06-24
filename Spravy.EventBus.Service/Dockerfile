@@ -6,6 +6,7 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 COPY ["Spravy.EventBus.Service/Spravy.EventBus.Service.csproj", "Spravy.EventBus.Service/"]
+COPY ["Directory.Build.props", "Spravy.EventBus.Service/Directory.Build.props"]
 RUN dotnet restore "Spravy.EventBus.Service/Spravy.EventBus.Service.csproj"
 COPY . .
 WORKDIR "/src/Spravy.EventBus.Service"

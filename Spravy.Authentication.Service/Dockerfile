@@ -6,6 +6,7 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 COPY ["Spravy.Authentication.Service/Spravy.Authentication.Service.csproj", "Spravy.Authentication.Service/"]
+COPY ["Directory.Build.props", "Spravy.Authentication.Service/Directory.Build.props"]
 RUN dotnet restore "Spravy.Authentication.Service/Spravy.Authentication.Service.csproj"
 COPY . .
 WORKDIR "/src/Spravy.Authentication.Service"
