@@ -520,11 +520,14 @@ public class SpravyCommandService
             {
                 if (activeToDoItem.TryGetValue(out var value))
                 {
-                    return navigator.NavigateToAsync<ToDoItemViewModel>(viewModel => viewModel.Id = value.Id,
-                        ct);
+                    if (value.ParentId.TryGetValue(out var parentId))
+                    {
+                        return navigator.NavigateToAsync<ToDoItemViewModel>(viewModel => viewModel.Id = parentId,
+                            ct);
+                    }
                 }
 
-                return navigator.NavigateToAsync(ActionHelper<RootToDoItemsViewModel>.Empty, ct);
+                return navigator.NavigateToAsync<RootToDoItemsViewModel>(ct);
             }, ct), errorHandler, taskProgressService);
 
         Back = SpravyCommand.Create(
