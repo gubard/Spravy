@@ -36,6 +36,7 @@ service ToDoService {
     rpc UpdateToDoItemChildrenType (UpdateToDoItemChildrenTypeRequest) returns (UpdateToDoItemChildrenTypeReply);
     rpc GetSiblings (GetSiblingsRequest) returns (GetSiblingsReply);
     rpc GetCurrentActiveToDoItem (GetCurrentActiveToDoItemRequest) returns (GetCurrentActiveToDoItemReply);
+    rpc GetActiveToDoItem (GetActiveToDoItemRequest) returns (GetActiveToDoItemReply);
     rpc UpdateToDoItemLink (UpdateToDoItemLinkRequest) returns (UpdateToDoItemLinkReply);
     rpc GetRootToDoItemIds (GetRootToDoItemIdsRequest) returns (GetRootToDoItemIdsReply);
     rpc GetFavoriteToDoItemIds (GetFavoriteToDoItemIdsRequest) returns (GetFavoriteToDoItemIdsRequestReply);

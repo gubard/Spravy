@@ -1228,6 +1228,23 @@ public class SpravyCommandService
 
                 return Result.Success;
             }), errorHandler, taskProgressService);
+
+        NavigateToActiveToDoItem = SpravyCommand.Create<ToDoItemEntityNotify>((item, cancellationToken) => toDoService
+           .GetActiveToDoItemAsync(item.Id, cancellationToken)
+           .IfSuccessAsync(active =>
+            {
+                if (active.TryGetValue(out var value))
+                {
+                    if (value.ParentId.TryGetValue(out var parentId))
+                    {
+                        return navigator.NavigateToAsync<ToDoItemViewModel>(vm => vm.Id = parentId, cancellationToken);
+                    }
+
+                    return navigator.NavigateToAsync<RootToDoItemsViewModel>(cancellationToken);
+                }
+
+                return uiApplicationService.RefreshCurrentViewAsync(cancellationToken);
+            }, cancellationToken), errorHandler, taskProgressService);
     }
 
     public SpravyCommand MultiCompleteToDoItem { get; }
@@ -1262,6 +1279,7 @@ public class SpravyCommandService
     public SpravyCommand Reset { get; }
     public SpravyCommand Clone { get; }
     public SpravyCommand NavigateToToDoItem { get; }
+    public SpravyCommand NavigateToActiveToDoItem { get; }
 
     public SpravyCommand MultiComplete { get; }
     public SpravyCommand MultiAddToFavorite { get; }

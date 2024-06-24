@@ -45,6 +45,21 @@ public class GrpcToDoService : GrpcServiceBase<ToDoService.ToDoServiceClient>,
         return new(grpcClientFactory, host, metadataFactory, serializer);
     }
 
+    public ConfiguredValueTaskAwaitable<Result<OptionStruct<ActiveToDoItem>>> GetActiveToDoItemAsync(
+        Guid id,
+        CancellationToken cancellationToken
+    )
+    {
+        return CallClientAsync(client => metadataFactory.CreateAsync(cancellationToken)
+           .IfSuccessAsync(metadata => client.GetActiveToDoItem(new()
+                {
+                    Id = id.ToByteString(),
+                }, metadata, DateTime.UtcNow.Add(Timeout), cancellationToken)
+               .ToResult(), cancellationToken)
+           .IfSuccessAsync(reply => reply.Item.ToOptionActiveToDoItem().ToResult(), cancellationToken),
+        cancellationToken);
+    }
+
     public ConfiguredValueTaskAwaitable<Result> CloneToDoItemAsync(
         Guid cloneId,
         OptionStruct<Guid> parentId,

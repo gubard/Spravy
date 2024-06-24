@@ -24,6 +24,18 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
         this.serializer = serializer;
     }
 
+    public override Task<GetActiveToDoItemReply> GetActiveToDoItem(
+        GetActiveToDoItemRequest request,
+        ServerCallContext context
+    )
+    {
+        return toDoService.GetActiveToDoItemAsync(request.Id.ToGuid(), context.CancellationToken)
+           .HandleAsync(serializer, active => new GetActiveToDoItemReply
+            {
+                Item = active.ToActiveToDoItemGrpc(),
+            });
+    }
+
     public override Task<GetReferenceToDoItemSettingsReply> GetReferenceToDoItemSettings(
         GetReferenceToDoItemSettingsRequest request,
         ServerCallContext context

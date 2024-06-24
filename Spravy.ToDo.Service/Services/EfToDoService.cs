@@ -69,6 +69,24 @@ public class EfToDoService : IToDoService
                 }, cancellationToken), cancellationToken), cancellationToken);
     }
 
+    public ConfiguredValueTaskAwaitable<Result<OptionStruct<ActiveToDoItem>>> GetActiveToDoItemAsync(
+        Guid id,
+        CancellationToken cancellationToken
+    )
+    {
+        var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
+
+        return dbContextFactory.Create()
+           .IfSuccessDisposeAsync(
+                context => context.AtomicExecuteAsync(
+                    () => context.FindEntityAsync<ToDoItemEntity>(id)
+                       .IfSuccessAsync(
+                            item => getterToDoItemParametersService.GetToDoItemParametersAsync(context, item, offset,
+                                cancellationToken), cancellationToken)
+                       .IfSuccessAsync(parameters => parameters.ActiveItem.ToResult(), cancellationToken),
+                    cancellationToken), cancellationToken);
+    }
+
     public ConfiguredValueTaskAwaitable<Result<ReferenceToDoItemSettings>> GetReferenceToDoItemSettingsAsync(
         Guid id,
         CancellationToken cancellationToken
@@ -1337,7 +1355,7 @@ public class EfToDoService : IToDoService
     )
     {
         var pi = parentId.TryGetValue(out var value) ? (Guid?)value : null;
-        
+
         return context.Set<ToDoItemEntity>()
            .Where(x => x.ParentId == pi)
            .ToArrayEntitiesAsync(cancellationToken)
@@ -1464,7 +1482,14 @@ public class EfToDoService : IToDoService
             {
                 var now = item.DueDate;
                 var dayOfMonth = now.Day;
-                var daysOfMonth = item.GetDaysOfMonth().ToArray().Order().Select(x => (byte?)x).ThrowIfEmpty().ToArray();
+
+                var daysOfMonth = item.GetDaysOfMonth()
+                   .ToArray()
+                   .Order()
+                   .Select(x => (byte?)x)
+                   .ThrowIfEmpty()
+                   .ToArray();
+
                 var nextDay = daysOfMonth.FirstOrDefault(x => x > dayOfMonth);
                 var daysInCurrentMonth = DateTime.DaysInMonth(now.Year, now.Month);
                 var daysInNextMonth = DateTime.DaysInMonth(now.AddMonths(1).Year, now.AddMonths(1).Month);

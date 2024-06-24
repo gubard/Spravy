@@ -21,8 +21,7 @@ public class GetterToDoItemParametersService
         CancellationToken cancellationToken
     )
     {
-        return GetToDoItemParametersAsync(context, entity, offset, new(), cancellationToken)
-           .IfSuccessAsync(parameters => CheckActiveItem(parameters, entity).ToResult(), cancellationToken);
+        return GetToDoItemParametersAsync(context, entity, offset, new(), cancellationToken);
     }
 
     private ConfiguredValueTaskAwaitable<Result<ToDoItemParameters>> GetToDoItemParametersAsync(
@@ -392,21 +391,8 @@ public class GetterToDoItemParametersService
         };
     }
 
-    private ToDoItemParameters CheckActiveItem(ToDoItemParameters parameters, ToDoItemEntity entity)
-    {
-        if (parameters.ActiveItem.TryGetValue(out var activeItem))
-        {
-            if (activeItem.Id == entity.ParentId)
-            {
-                return parameters.With(new OptionStruct<ActiveToDoItem>());
-            }
-        }
-
-        return parameters;
-    }
-
     private OptionStruct<ActiveToDoItem> ToActiveToDoItem(ToDoItemEntity entity)
     {
-        return entity.ParentId is null ? new() : new ActiveToDoItem(entity.ParentId.Value, entity.Name).ToOption();
+        return entity.ParentId is null ? new() : new ActiveToDoItem(entity.Id, entity.Name, entity.ParentId.ToOption()).ToOption();
     }
 }

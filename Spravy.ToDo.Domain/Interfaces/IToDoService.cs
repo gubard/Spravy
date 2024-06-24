@@ -14,243 +14,248 @@ public interface IToDoService
     ConfiguredValueTaskAwaitable<Result> RemoveFavoriteToDoItemAsync(Guid id, CancellationToken cancellationToken);
     ConfiguredValueTaskAwaitable<Result> ToDoItemToRootAsync(Guid id, CancellationToken cancellationToken);
     ConfiguredValueTaskAwaitable<Result<ToDoItem>> GetToDoItemAsync(Guid id, CancellationToken cancellationToken);
-    
+
+    ConfiguredValueTaskAwaitable<Result<OptionStruct<ActiveToDoItem>>> GetActiveToDoItemAsync(
+        Guid id,
+        CancellationToken cancellationToken
+    );
+
     ConfiguredValueTaskAwaitable<Result<ReferenceToDoItemSettings>> GetReferenceToDoItemSettingsAsync(
         Guid id,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result> UpdateReferenceToDoItemAsync(
         Guid id,
         Guid referenceId,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result> ResetToDoItemAsync(
         ResetToDoItemOptions options,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoShortItem>>> GetParentsAsync(
         Guid id,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> SearchToDoItemIdsAsync(
         string searchText,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetLeafToDoItemIdsAsync(
         Guid id,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetChildrenToDoItemIdsAsync(
         Guid id,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetRootToDoItemIdsAsync(
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetFavoriteToDoItemIdsAsync(
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result<Guid>> AddRootToDoItemAsync(
         AddRootToDoItemOptions options,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result<Guid>> AddToDoItemAsync(
         AddToDoItemOptions options,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result<string>> ToDoItemToStringAsync(
         ToDoItemToStringOptions options,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoShortItem>>> GetSiblingsAsync(
         Guid id,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result<OptionStruct<ActiveToDoItem>>> GetCurrentActiveToDoItemAsync(
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result<PlannedToDoItemSettings>> GetPlannedToDoItemSettingsAsync(
         Guid id,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result<ValueToDoItemSettings>> GetValueToDoItemSettingsAsync(
         Guid id,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result<WeeklyPeriodicity>> GetWeeklyPeriodicityAsync(
         Guid id,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result<MonthlyPeriodicity>> GetMonthlyPeriodicityAsync(
         Guid id,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result<AnnuallyPeriodicity>> GetAnnuallyPeriodicityAsync(
         Guid id,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetTodayToDoItemsAsync(
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result> CloneToDoItemAsync(
         Guid cloneId,
         OptionStruct<Guid> parentId,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result> UpdateToDoItemDescriptionTypeAsync(
         Guid id,
         DescriptionType type,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result> UpdateToDoItemDueDateAsync(
         Guid id,
         DateOnly dueDate,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result> UpdateToDoItemNameAsync(
         Guid id,
         string name,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result> UpdateToDoItemDescriptionAsync(
         Guid id,
         string description,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result> UpdateToDoItemCompleteStatusAsync(
         Guid id,
         bool isComplete,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result> UpdateToDoItemTypeAsync(
         Guid id,
         ToDoItemType type,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result> UpdateToDoItemParentAsync(
         Guid id,
         Guid parentId,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result> UpdateToDoItemDaysOffsetAsync(
         Guid id,
         ushort days,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result> UpdateToDoItemMonthsOffsetAsync(
         Guid id,
         ushort months,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result> UpdateToDoItemWeeksOffsetAsync(
         Guid id,
         ushort weeks,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result> UpdateToDoItemYearsOffsetAsync(
         Guid id,
         ushort years,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result> UpdateToDoItemLinkAsync(
         Guid id,
         Option<Uri> link,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoShortItem>>> GetChildrenToDoItemShortsAsync(
         Guid id,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result<PeriodicityToDoItemSettings>> GetPeriodicityToDoItemSettingsAsync(
         Guid id,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result> UpdateToDoItemTypeOfPeriodicityAsync(
         Guid id,
         TypeOfPeriodicity type,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result> UpdateToDoItemOrderIndexAsync(
         UpdateOrderIndexToDoItemOptions options,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result> UpdateToDoItemChildrenTypeAsync(
         Guid id,
         ToDoItemChildrenType type,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result> UpdateToDoItemIsRequiredCompleteInDueDateAsync(
         Guid id,
         bool value,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result> UpdateToDoItemAnnuallyPeriodicityAsync(
         Guid id,
         AnnuallyPeriodicity periodicity,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result> UpdateToDoItemMonthlyPeriodicityAsync(
         Guid id,
         MonthlyPeriodicity periodicity,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result> UpdateToDoItemWeeklyPeriodicityAsync(
         Guid id,
         WeeklyPeriodicity periodicity,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoSelectorItem>>> GetToDoSelectorItemsAsync(
         ReadOnlyMemory<Guid> ignoreIds,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredValueTaskAwaitable<Result<PeriodicityOffsetToDoItemSettings>> GetPeriodicityOffsetToDoItemSettingsAsync(
         Guid id,
         CancellationToken cancellationToken
     );
-    
+
     ConfiguredCancelableAsyncEnumerable<Result<ReadOnlyMemory<ToDoItem>>> GetToDoItemsAsync(
         ReadOnlyMemory<Guid> ids,
         uint chunkSize,

@@ -141,7 +141,8 @@
 
                         <Button Margin="0,0,0,5"
                                 IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}"
-                                Command="{Binding Active.NavigateToCurrentItem.Command}">
+                                Command="{x:Static h:UiHelper.NavigateToActiveToDoItem}"
+                                CommandParameter="{Binding}">
                             <TextBlock Text="{Binding Active.Name}" TextWrapping="Wrap" />
                         </Button>
                     </StackPanel>
