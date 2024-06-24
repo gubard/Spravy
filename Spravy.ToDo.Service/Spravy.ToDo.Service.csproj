@@ -13,8 +13,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Grpc.AspNetCore" Version="2.63.0" />
-        <PackageReference Include="Grpc.AspNetCore.Web" Version="2.63.0" />
+        <PackageReference Include="Grpc.AspNetCore" Version="$(GrpcVersion)" />
+        <PackageReference Include="Grpc.AspNetCore.Web" Version="$(GrpcVersion)" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.6" />
         <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
     </ItemGroup>
