@@ -9,7 +9,7 @@ COPY ["Spravy.ToDo.Service/Spravy.Service.csproj", "Spravy.ToDo.Service/"]
 COPY ["Directory.Build.props", "Spravy.ToDo.Service/Directory.Build.props"]
 RUN dotnet restore "Spravy.ToDo.Service/Spravy.Service.csproj"
 COPY . .
-WORKDIR "/src/Spravy.Service"
+WORKDIR "/src/Spravy.ToDo.Service"
 RUN dotnet build "Spravy.ToDo.Service.csproj" -c Release -o /app/build
 
 FROM build AS publish
