@@ -3,7 +3,7 @@
         <OutputType>Exe</OutputType>
         <TargetFramework>net8.0-android</TargetFramework>
         <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
-        <Nullable>enable</Nullable>
+        
         <ApplicationId>com.SerhiiMaksymovFOP.Spravy</ApplicationId>
         <ApplicationVersion>1</ApplicationVersion>
         <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
@@ -12,7 +12,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Avalonia.Android" Version="11.0.11" />
+        <PackageReference Include="Avalonia.Android" Version="$(AvaloniaVersion)" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.6" />
         <PackageReference Include="Serilog.Sinks.Xamarin" Version="1.0.0" />
         <PackageReference Include="Xamarin.Essentials" Version="1.8.1" />
