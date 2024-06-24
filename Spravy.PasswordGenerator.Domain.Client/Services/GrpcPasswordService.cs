@@ -33,220 +33,220 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
 
     public ConfiguredValueTaskAwaitable<Result> AddPasswordItemAsync(
         AddPasswordOptions options,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return CallClientAsync(
-            client => metadataFactory.CreateAsync(cancellationToken)
+            client => metadataFactory.CreateAsync(ct)
                .IfSuccessAsync(
                     metadata => client
                        .AddPasswordItemAsync(options.ToAddPasswordItemRequest(), metadata,
-                            DateTime.UtcNow.Add(Timeout), cancellationToken)
+                            DateTime.UtcNow.Add(Timeout), ct)
                        .ToValueTaskResultOnly()
-                       .ConfigureAwait(false), cancellationToken), cancellationToken);
+                       .ConfigureAwait(false), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<PasswordItem>>> GetPasswordItemsAsync(
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return CallClientAsync(
-            client => metadataFactory.CreateAsync(cancellationToken)
+            client => metadataFactory.CreateAsync(ct)
                .IfSuccessAsync(
                     metadata => client
-                       .GetPasswordItemsAsync(new(), metadata, DateTime.UtcNow.Add(Timeout), cancellationToken)
+                       .GetPasswordItemsAsync(new(), metadata, DateTime.UtcNow.Add(Timeout), ct)
                        .ToValueTaskResultValueOnly()
                        .ConfigureAwait(false)
-                       .IfSuccessAsync(reply => reply.Items.ToPasswordItem().ToResult(), cancellationToken),
-                    cancellationToken), cancellationToken);
+                       .IfSuccessAsync(reply => reply.Items.ToPasswordItem().ToResult(), ct),
+                    ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result<PasswordItem>> GetPasswordItemAsync(
         Guid id,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
-        return CallClientAsync(client => metadataFactory.CreateAsync(cancellationToken)
+        return CallClientAsync(client => metadataFactory.CreateAsync(ct)
                .IfSuccessAsync(metadata => client.GetPasswordItemAsync(new()
                     {
                         Id = id.ToByteString(),
-                    }, metadata, DateTime.UtcNow.Add(Timeout), cancellationToken)
+                    }, metadata, DateTime.UtcNow.Add(Timeout), ct)
                    .ToValueTaskResultValueOnly()
                    .ConfigureAwait(false)
-                   .IfSuccessAsync(reply => reply.ToPasswordItem().ToResult(), cancellationToken),
-                cancellationToken),
-            cancellationToken);
+                   .IfSuccessAsync(reply => reply.ToPasswordItem().ToResult(), ct),
+                ct),
+            ct);
     }
 
-    public ConfiguredValueTaskAwaitable<Result> DeletePasswordItemAsync(Guid id, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> DeletePasswordItemAsync(Guid id, CancellationToken ct)
     {
-        return CallClientAsync(client => metadataFactory.CreateAsync(cancellationToken)
+        return CallClientAsync(client => metadataFactory.CreateAsync(ct)
            .IfSuccessAsync(metadata => client.DeletePasswordItemAsync(new()
                 {
                     Id = id.ToByteString(),
-                }, metadata, DateTime.UtcNow.Add(Timeout), cancellationToken)
+                }, metadata, DateTime.UtcNow.Add(Timeout), ct)
                .ToValueTaskResultOnly()
-               .ConfigureAwait(false), cancellationToken), cancellationToken);
+               .ConfigureAwait(false), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result<string>> GeneratePasswordAsync(
         Guid id,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
-        return CallClientAsync(client => metadataFactory.CreateAsync(cancellationToken)
+        return CallClientAsync(client => metadataFactory.CreateAsync(ct)
            .IfSuccessAsync(metadata => client.GeneratePasswordAsync(new()
                     {
                         Id = id.ToByteString(),
-                    }, metadata, DateTime.UtcNow.Add(Timeout), cancellationToken)
+                    }, metadata, DateTime.UtcNow.Add(Timeout), ct)
                    .ToValueTaskResultValueOnly()
                    .ConfigureAwait(false)
                    .IfSuccessAsync(reply => reply.Password.ToResult().ToValueTaskResult().ConfigureAwait(false),
-                        cancellationToken),
-                cancellationToken), cancellationToken);
+                        ct),
+                ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemNameAsync(
         Guid id,
         string name,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
-        return CallClientAsync(client => metadataFactory.CreateAsync(cancellationToken)
+        return CallClientAsync(client => metadataFactory.CreateAsync(ct)
            .IfSuccessAsync(metadata => client.UpdatePasswordItemNameAsync(new()
                 {
                     Id = id.ToByteString(),
                     Name = name,
-                }, metadata, DateTime.UtcNow.Add(Timeout), cancellationToken)
+                }, metadata, DateTime.UtcNow.Add(Timeout), ct)
                .ToValueTaskResultOnly()
-               .ConfigureAwait(false), cancellationToken), cancellationToken);
+               .ConfigureAwait(false), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemKeyAsync(
         Guid id,
         string key,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
-        return CallClientAsync(client => metadataFactory.CreateAsync(cancellationToken)
+        return CallClientAsync(client => metadataFactory.CreateAsync(ct)
            .IfSuccessAsync(metadata => client.UpdatePasswordItemKeyAsync(new()
                 {
                     Id = id.ToByteString(),
                     Key = key,
-                }, metadata, DateTime.UtcNow.Add(Timeout), cancellationToken)
+                }, metadata, DateTime.UtcNow.Add(Timeout), ct)
                .ToValueTaskResultOnly()
-               .ConfigureAwait(false), cancellationToken), cancellationToken);
+               .ConfigureAwait(false), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemLengthAsync(
         Guid id,
         ushort length,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
-        return CallClientAsync(client => metadataFactory.CreateAsync(cancellationToken)
+        return CallClientAsync(client => metadataFactory.CreateAsync(ct)
            .IfSuccessAsync(metadata => client.UpdatePasswordItemLengthAsync(new()
                 {
                     Id = id.ToByteString(),
                     Length = length,
-                }, metadata, DateTime.UtcNow.Add(Timeout), cancellationToken)
+                }, metadata, DateTime.UtcNow.Add(Timeout), ct)
                .ToValueTaskResultOnly()
-               .ConfigureAwait(false), cancellationToken), cancellationToken);
+               .ConfigureAwait(false), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemRegexAsync(
         Guid id,
         string regex,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
-        return CallClientAsync(client => metadataFactory.CreateAsync(cancellationToken)
+        return CallClientAsync(client => metadataFactory.CreateAsync(ct)
            .IfSuccessAsync(metadata => client.UpdatePasswordItemRegexAsync(new()
                 {
                     Id = id.ToByteString(),
                     Regex = regex,
-                }, metadata, DateTime.UtcNow.Add(Timeout), cancellationToken)
+                }, metadata, DateTime.UtcNow.Add(Timeout), ct)
                .ToValueTaskResultOnly()
-               .ConfigureAwait(false), cancellationToken), cancellationToken);
+               .ConfigureAwait(false), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemIsAvailableNumberAsync(
         Guid id,
         bool isAvailableNumber,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
-        return CallClientAsync(client => metadataFactory.CreateAsync(cancellationToken)
+        return CallClientAsync(client => metadataFactory.CreateAsync(ct)
            .IfSuccessAsync(metadata => client.UpdatePasswordItemIsAvailableNumberAsync(new()
                 {
                     Id = id.ToByteString(),
                     IsAvailableNumber = isAvailableNumber,
-                }, metadata, DateTime.UtcNow.Add(Timeout), cancellationToken)
+                }, metadata, DateTime.UtcNow.Add(Timeout), ct)
                .ToValueTaskResultOnly()
-               .ConfigureAwait(false), cancellationToken), cancellationToken);
+               .ConfigureAwait(false), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemIsAvailableLowerLatinAsync(
         Guid id,
         bool isAvailableLowerLatin,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
-        return CallClientAsync(client => metadataFactory.CreateAsync(cancellationToken)
+        return CallClientAsync(client => metadataFactory.CreateAsync(ct)
            .IfSuccessAsync(metadata => client.UpdatePasswordItemIsAvailableLowerLatinAsync(new()
                 {
                     Id = id.ToByteString(),
                     IsAvailableLowerLatin = isAvailableLowerLatin,
-                }, metadata, DateTime.UtcNow.Add(Timeout), cancellationToken)
+                }, metadata, DateTime.UtcNow.Add(Timeout), ct)
                .ToValueTaskResultOnly()
-               .ConfigureAwait(false), cancellationToken), cancellationToken);
+               .ConfigureAwait(false), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemIsAvailableSpecialSymbolsAsync(
         Guid id,
         bool isAvailableSpecialSymbols,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
-        return CallClientAsync(client => metadataFactory.CreateAsync(cancellationToken)
+        return CallClientAsync(client => metadataFactory.CreateAsync(ct)
            .IfSuccessAsync(metadata => client.UpdatePasswordItemIsAvailableSpecialSymbolsAsync(new()
                 {
                     Id = id.ToByteString(),
                     IsAvailableSpecialSymbols = isAvailableSpecialSymbols,
-                }, metadata, DateTime.UtcNow.Add(Timeout), cancellationToken)
+                }, metadata, DateTime.UtcNow.Add(Timeout), ct)
                .ToValueTaskResultOnly()
-               .ConfigureAwait(false), cancellationToken), cancellationToken);
+               .ConfigureAwait(false), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemCustomAvailableCharactersAsync(
         Guid id,
         string customAvailableCharacters,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
-        return CallClientAsync(client => metadataFactory.CreateAsync(cancellationToken)
+        return CallClientAsync(client => metadataFactory.CreateAsync(ct)
            .IfSuccessAsync(metadata => client.UpdatePasswordItemCustomAvailableCharactersAsync(new()
                 {
                     Id = id.ToByteString(),
                     CustomAvailableCharacters = customAvailableCharacters,
-                }, metadata, DateTime.UtcNow.Add(Timeout), cancellationToken)
+                }, metadata, DateTime.UtcNow.Add(Timeout), ct)
                .ToValueTaskResultOnly()
-               .ConfigureAwait(false), cancellationToken), cancellationToken);
+               .ConfigureAwait(false), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemIsAvailableUpperLatinAsync(
         Guid id,
         bool isAvailableUpperLatin,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
-        return CallClientAsync(client => metadataFactory.CreateAsync(cancellationToken)
+        return CallClientAsync(client => metadataFactory.CreateAsync(ct)
            .IfSuccessAsync(metadata => client.UpdatePasswordItemIsAvailableUpperLatinAsync(new()
                 {
                     Id = id.ToByteString(),
                     IsAvailableUpperLatin = isAvailableUpperLatin,
-                }, metadata, DateTime.UtcNow.Add(Timeout), cancellationToken)
+                }, metadata, DateTime.UtcNow.Add(Timeout), ct)
                .ToValueTaskResultOnly()
-               .ConfigureAwait(false), cancellationToken), cancellationToken);
+               .ConfigureAwait(false), ct), ct);
     }
 }

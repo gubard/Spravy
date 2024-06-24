@@ -15,7 +15,7 @@ public class ExceptionViewModel : ViewModelBase
     [Reactive]
     public string Message { get; set; } = string.Empty;
 
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
         this.WhenAnyValue(x => x.Exception).Subscribe(x => Message = x?.Message ?? string.Empty);
 

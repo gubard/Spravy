@@ -12,19 +12,19 @@ public static class DbContextExtension
     public static ConfiguredValueTaskAwaitable<Result<EntityEntry<TEntity>>> AddEntityAsync<TEntity>(
         this DbContext context,
         TEntity entity,
-        CancellationToken cancellationToken
+        CancellationToken ct
     ) where TEntity : class
     {
-        return AddEntityCore(context, entity, cancellationToken).ConfigureAwait(false);
+        return AddEntityCore(context, entity, ct).ConfigureAwait(false);
     }
     
     private static async ValueTask<Result<EntityEntry<TEntity>>> AddEntityCore<TEntity>(
         this DbContext context,
         TEntity entity,
-        CancellationToken cancellationToken
+        CancellationToken ct
     ) where TEntity : class
     {
-        var value = await context.AddAsync(entity, cancellationToken);
+        var value = await context.AddAsync(entity, ct);
         
         return value.ToResult();
     }
@@ -53,19 +53,19 @@ public static class DbContextExtension
     public static ConfiguredValueTaskAwaitable<Result<TReturn>> AtomicExecuteAsync<TDbContext, TReturn>(
         this TDbContext context,
         Func<ConfiguredValueTaskAwaitable<Result<TReturn>>> func,
-        CancellationToken cancellationToken
+        CancellationToken ct
     ) where TDbContext : DbContext where TReturn : notnull
     {
-        return AtomicExecuteCore(context, func, cancellationToken).ConfigureAwait(false);
+        return AtomicExecuteCore(context, func, ct).ConfigureAwait(false);
     }
     
     private static async ValueTask<Result<TReturn>> AtomicExecuteCore<TDbContext, TReturn>(
         this TDbContext context,
         Func<ConfiguredValueTaskAwaitable<Result<TReturn>>> func,
-        CancellationToken cancellationToken
+        CancellationToken ct
     ) where TDbContext : DbContext where TReturn : notnull
     {
-        await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
+        await using var transaction = await context.Database.BeginTransactionAsync(ct);
         Result<TReturn> result;
         
         try
@@ -74,19 +74,19 @@ public static class DbContextExtension
         }
         catch
         {
-            await transaction.RollbackAsync(cancellationToken);
+            await transaction.RollbackAsync(ct);
             
             throw;
         }
         
         if (result.IsHasError)
         {
-            await transaction.RollbackAsync(cancellationToken);
+            await transaction.RollbackAsync(ct);
         }
         else
         {
-            await context.SaveChangesAsync(cancellationToken);
-            await transaction.CommitAsync(cancellationToken);
+            await context.SaveChangesAsync(ct);
+            await transaction.CommitAsync(ct);
         }
         
         return result;
@@ -95,19 +95,19 @@ public static class DbContextExtension
     public static ConfiguredValueTaskAwaitable<Result> AtomicExecuteAsync<TDbContext>(
         this TDbContext context,
         Func<ConfiguredValueTaskAwaitable<Result>> func,
-        CancellationToken cancellationToken
+        CancellationToken ct
     ) where TDbContext : DbContext
     {
-        return AtomicExecuteCore(context, func, cancellationToken).ConfigureAwait(false);
+        return AtomicExecuteCore(context, func, ct).ConfigureAwait(false);
     }
     
     private static async ValueTask<Result> AtomicExecuteCore<TDbContext>(
         this TDbContext context,
         Func<ConfiguredValueTaskAwaitable<Result>> func,
-        CancellationToken cancellationToken
+        CancellationToken ct
     ) where TDbContext : DbContext
     {
-        await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
+        await using var transaction = await context.Database.BeginTransactionAsync(ct);
         Result result;
         
         try
@@ -116,19 +116,19 @@ public static class DbContextExtension
         }
         catch
         {
-            await transaction.RollbackAsync(cancellationToken);
+            await transaction.RollbackAsync(ct);
             
             throw;
         }
         
         if (result.IsHasError)
         {
-            await transaction.RollbackAsync(cancellationToken);
+            await transaction.RollbackAsync(ct);
         }
         else
         {
-            await context.SaveChangesAsync(cancellationToken);
-            await transaction.CommitAsync(cancellationToken);
+            await context.SaveChangesAsync(ct);
+            await transaction.CommitAsync(ct);
         }
         
         return result;

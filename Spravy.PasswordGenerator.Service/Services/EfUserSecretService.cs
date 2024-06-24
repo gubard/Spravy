@@ -24,14 +24,14 @@ public class EfUserSecretService : IUserSecretService
     }
     
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<byte>>> GetUserSecretAsync(
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         var userId = httpContextAccessor.GetUserId().ToGuid();
         
         return context.AtomicExecuteAsync(() => context.Set<UserSecretEntity>()
            .AsNoTracking()
-           .GetSecretByUserIdAsync(userId, cancellationToken)
+           .GetSecretByUserIdAsync(userId, ct)
            .IfSuccessAsync(user => user.Secret.ToReadOnlyMemory().ToResult().ToValueTaskResult().ConfigureAwait(false),
                 errors =>
                 {
@@ -54,8 +54,8 @@ public class EfUserSecretService : IUserSecretService
                             Secret = secret,
                             UserId = userId,
                             Id = Guid.NewGuid(),
-                        }, cancellationToken)
-                       .IfSuccessAsync(_ => secret.ToReadOnlyMemory().ToResult(), cancellationToken);
-                }, cancellationToken), cancellationToken);
+                        }, ct)
+                       .IfSuccessAsync(_ => secret.ToReadOnlyMemory().ToResult(), ct);
+                }, ct), ct);
     }
 }

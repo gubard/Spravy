@@ -54,23 +54,23 @@ public class SearchToDoItemsViewModel : NavigatableViewModelBase,
     [Reactive]
     public string SearchText { get; set; } = string.Empty;
 
-    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken ct)
     {
         return refreshWork.RunAsync().ToValueTaskResultOnly().ConfigureAwait(false);
     }
 
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
-        return objectStorage.GetObjectOrDefaultAsync<SearchViewModelSetting>(ViewId, cancellationToken)
-           .IfSuccessAsync(obj => SetStateAsync(obj, cancellationToken), cancellationToken);
+        return objectStorage.GetObjectOrDefaultAsync<SearchViewModelSetting>(ViewId, ct)
+           .IfSuccessAsync(obj => SetStateAsync(obj, ct), ct);
     }
 
-    private ConfiguredValueTaskAwaitable<Result> RefreshCoreAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> RefreshCoreAsync(CancellationToken ct)
     {
-        return toDoService.SearchToDoItemIdsAsync(SearchText, cancellationToken)
-           .IfSuccessForEachAsync(id => toDoCache.GetToDoItem(id), cancellationToken)
-           .IfSuccessAsync(ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), false, cancellationToken),
-                cancellationToken);
+        return toDoService.SearchToDoItemIdsAsync(SearchText, ct)
+           .IfSuccessForEachAsync(id => toDoCache.GetToDoItem(id), ct)
+           .IfSuccessAsync(ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), false, ct),
+                ct);
     }
 
     public override Result Stop()
@@ -80,14 +80,14 @@ public class SearchToDoItemsViewModel : NavigatableViewModelBase,
         return Result.Success;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)
     {
-        return objectStorage.SaveObjectAsync(ViewId, new SearchViewModelSetting(this));
+        return objectStorage.SaveObjectAsync(ViewId, new SearchViewModelSetting(this), ct);
     }
 
     public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
         object setting,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return setting.CastObject<SearchViewModelSetting>()
@@ -96,7 +96,7 @@ public class SearchToDoItemsViewModel : NavigatableViewModelBase,
                 SearchText = s.SearchText;
 
                 return Result.Success;
-            }), cancellationToken);
+            }), ct);
     }
 
     public Result UpdateInListToDoItemUi(ToDoItemEntityNotify item)

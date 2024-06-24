@@ -8,72 +8,72 @@ public interface IPasswordService
 {
     ConfiguredValueTaskAwaitable<Result> AddPasswordItemAsync(
         AddPasswordOptions options,
-        CancellationToken cancellationToken
+        CancellationToken ct
     );
 
     ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<PasswordItem>>> GetPasswordItemsAsync(
-        CancellationToken cancellationToken
+        CancellationToken ct
     );
 
     ConfiguredValueTaskAwaitable<Result<PasswordItem>> GetPasswordItemAsync(
         Guid id,
-        CancellationToken cancellationToken
+        CancellationToken ct
     );
 
-    ConfiguredValueTaskAwaitable<Result> DeletePasswordItemAsync(Guid id, CancellationToken cancellationToken);
-    ConfiguredValueTaskAwaitable<Result<string>> GeneratePasswordAsync(Guid id, CancellationToken cancellationToken);
+    ConfiguredValueTaskAwaitable<Result> DeletePasswordItemAsync(Guid id, CancellationToken ct);
+    ConfiguredValueTaskAwaitable<Result<string>> GeneratePasswordAsync(Guid id, CancellationToken ct);
 
     ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemNameAsync(
         Guid id,
         string name,
-        CancellationToken cancellationToken
+        CancellationToken ct
     );
 
     ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemKeyAsync(
         Guid id,
         string key,
-        CancellationToken cancellationToken
+        CancellationToken ct
     );
 
     ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemLengthAsync(
         Guid id,
         ushort length,
-        CancellationToken cancellationToken
+        CancellationToken ct
     );
 
     ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemRegexAsync(
         Guid id,
         string regex,
-        CancellationToken cancellationToken
+        CancellationToken ct
     );
 
     ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemIsAvailableNumberAsync(
         Guid id,
         bool isAvailableNumber,
-        CancellationToken cancellationToken
+        CancellationToken ct
     );
 
     ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemIsAvailableLowerLatinAsync(
         Guid id,
         bool isAvailableLowerLatin,
-        CancellationToken cancellationToken
+        CancellationToken ct
     );
 
     ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemIsAvailableSpecialSymbolsAsync(
         Guid id,
         bool isAvailableSpecialSymbols,
-        CancellationToken cancellationToken
+        CancellationToken ct
     );
 
     ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemCustomAvailableCharactersAsync(
         Guid id,
         string customAvailableCharacters,
-        CancellationToken cancellationToken
+        CancellationToken ct
     );
 
     ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemIsAvailableUpperLatinAsync(
         Guid id,
         bool isAvailableUpperLatin,
-        CancellationToken cancellationToken
+        CancellationToken ct
     );
 }

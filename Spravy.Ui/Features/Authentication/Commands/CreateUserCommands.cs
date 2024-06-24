@@ -25,7 +25,7 @@ public class CreateUserCommands
     public SpravyCommand EnterCommand { get; }
     public SpravyCommand CreateUserCommand { get; }
 
-    private ConfiguredValueTaskAwaitable<Result> EnterAsync(CreateUserView view, CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> EnterAsync(CreateUserView view, CancellationToken ct)
     {
         return this.InvokeUiAsync(() => view.FindControl<TextBox>(CreateUserView.EmailTextBoxName)
                .IfNotNull(CreateUserView.EmailTextBoxName)
@@ -82,14 +82,14 @@ public class CreateUserCommands
                             return Result.AwaitableSuccess;
                         }
 
-                        return CreateUserAsync(vm, cancellationToken);
-                    }, cancellationToken);
-            }, cancellationToken);
+                        return CreateUserAsync(vm, ct);
+                    }, ct);
+            }, ct);
     }
 
     private ConfiguredValueTaskAwaitable<Result> CreateUserAsync(
         CreateUserViewModel viewModel,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         if (viewModel.HasErrors)
@@ -104,18 +104,18 @@ public class CreateUserCommands
                 return Result.Success;
             })
            .IfSuccessTryFinallyAsync(() => authenticationService
-               .CreateUserAsync(viewModel.ToCreateUserOptions(), cancellationToken)
+               .CreateUserAsync(viewModel.ToCreateUserOptions(), ct)
                .IfSuccessAsync(() => navigator.NavigateToAsync<VerificationCodeViewModel>(vm =>
                 {
                     vm.Identifier = viewModel.Email;
                     vm.IdentifierType = UserIdentifierType.Email;
-                }, cancellationToken), cancellationToken), () => this.InvokeUiBackgroundAsync(() =>
+                }, ct), ct), () => this.InvokeUiBackgroundAsync(() =>
                 {
                     viewModel.IsBusy = false;
 
                     return Result.Success;
                 })
                .ToValueTask()
-               .ConfigureAwait(false), cancellationToken);
+               .ConfigureAwait(false), ct);
     }
 }

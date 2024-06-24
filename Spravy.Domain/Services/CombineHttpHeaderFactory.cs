@@ -10,21 +10,21 @@ public class CombineHttpHeaderFactory : IHttpHeaderFactory
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsAsync(
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
-        return CreateHeaderItemsCore(cancellationToken).ConfigureAwait(false);
+        return CreateHeaderItemsCore(ct).ConfigureAwait(false);
     }
 
     public async ValueTask<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsCore(
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         var result = new List<HttpHeaderItem>();
 
         foreach (var factory in factories.ToArray())
         {
-            var headers = await factory.CreateHeaderItemsAsync(cancellationToken);
+            var headers = await factory.CreateHeaderItemsAsync(ct);
 
             if (headers.IsHasError)
             {

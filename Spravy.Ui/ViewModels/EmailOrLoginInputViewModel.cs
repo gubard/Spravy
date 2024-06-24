@@ -33,7 +33,7 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
     [Reactive]
     public string EmailOrLogin { get; set; } = string.Empty;
     
-    private ConfiguredValueTaskAwaitable<Result> ForgotPasswordAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> ForgotPasswordAsync(CancellationToken ct)
     {
         return this.InvokeUiBackgroundAsync(() =>
             {
@@ -45,13 +45,13 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
             {
                 if (EmailOrLogin.Contains('@'))
                 {
-                    return authenticationService.IsVerifiedByEmailAsync(EmailOrLogin, cancellationToken)
+                    return authenticationService.IsVerifiedByEmailAsync(EmailOrLogin, ct)
                        .IfSuccessAsync(value =>
                         {
                             if (value)
                             {
                                 return authenticationService
-                                   .UpdateVerificationCodeByEmailAsync(EmailOrLogin, cancellationToken)
+                                   .UpdateVerificationCodeByEmailAsync(EmailOrLogin, ct)
                                    .IfSuccessAsync(() => navigator.NavigateToAsync<ForgotPasswordViewModel>(vm =>
                                     {
                                         vm.Identifier = EmailOrLogin;
@@ -59,24 +59,24 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
                                         vm.IdentifierType = EmailOrLogin.Contains('@')
                                             ? UserIdentifierType.Email
                                             : UserIdentifierType.Login;
-                                    }, cancellationToken), cancellationToken);
+                                    }, ct), ct);
                             }
                             
                             return navigator.NavigateToAsync<VerificationCodeViewModel>(vm =>
                             {
                                 vm.IdentifierType = UserIdentifierType.Email;
                                 vm.Identifier = EmailOrLogin;
-                            }, cancellationToken);
-                        }, cancellationToken);
+                            }, ct);
+                        }, ct);
                 }
                 
-                return authenticationService.IsVerifiedByLoginAsync(EmailOrLogin, cancellationToken)
+                return authenticationService.IsVerifiedByLoginAsync(EmailOrLogin, ct)
                    .IfSuccessAsync(value =>
                     {
                         if (value)
                         {
                             return authenticationService
-                               .UpdateVerificationCodeByLoginAsync(EmailOrLogin, cancellationToken)
+                               .UpdateVerificationCodeByLoginAsync(EmailOrLogin, ct)
                                .IfSuccessAsync(() => navigator.NavigateToAsync<ForgotPasswordViewModel>(vm =>
                                 {
                                     vm.Identifier = EmailOrLogin;
@@ -84,15 +84,15 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
                                     vm.IdentifierType = EmailOrLogin.Contains('@')
                                         ? UserIdentifierType.Email
                                         : UserIdentifierType.Login;
-                                }, cancellationToken), cancellationToken);
+                                }, ct), ct);
                         }
                         
                         return navigator.NavigateToAsync<VerificationCodeViewModel>(vm =>
                         {
                             vm.IdentifierType = UserIdentifierType.Login;
                             vm.Identifier = EmailOrLogin;
-                        }, cancellationToken);
-                    }, cancellationToken);
+                        }, ct);
+                    }, ct);
             }, () => this.InvokeUiBackgroundAsync(() =>
                 {
                     IsBusy = false;
@@ -100,7 +100,7 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
                     return Result.Success;
                 })
                .ToValueTask()
-               .ConfigureAwait(false), cancellationToken);
+               .ConfigureAwait(false), ct);
     }
     
     public override Result Stop()
@@ -108,14 +108,14 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
         return Result.Success;
     }
     
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)
     {
-        return objectStorage.SaveObjectAsync(ViewId, new EmailOrLoginInputViewModelSetting(this));
+        return objectStorage.SaveObjectAsync(ViewId, new EmailOrLoginInputViewModelSetting(this), ct);
     }
     
     public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
         object setting,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         var s = setting.ThrowIfIsNotCast<EmailOrLoginInputViewModelSetting>();

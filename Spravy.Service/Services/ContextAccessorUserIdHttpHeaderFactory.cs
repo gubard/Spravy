@@ -10,7 +10,7 @@ public class ContextAccessorUserIdHttpHeaderFactory : IHttpHeaderFactory
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsAsync(
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         var userId = httpContextAccessor.HttpContext.ThrowIfNull().GetUserId();

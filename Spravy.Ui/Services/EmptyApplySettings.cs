@@ -2,7 +2,7 @@ namespace Spravy.Ui.Services;
 
 public class EmptyApplySettings : IApplySettings
 {
-    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;
     }

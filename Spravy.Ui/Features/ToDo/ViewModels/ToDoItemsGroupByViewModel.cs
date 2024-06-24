@@ -37,7 +37,7 @@ public class ToDoItemsGroupByViewModel : ViewModelBase
     [Reactive]
     public object? Content { get; set; }
     
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
         Content = GroupByStatus;
         

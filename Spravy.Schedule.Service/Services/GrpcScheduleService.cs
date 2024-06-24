@@ -46,6 +46,6 @@ public class GrpcScheduleService : ScheduleService.ScheduleServiceBase
                 reply.Items.AddRange(items.ToTimerItemGrpc().ToArray());
 
                 return reply;
-            });
+            }, context.CancellationToken);
     }
 }

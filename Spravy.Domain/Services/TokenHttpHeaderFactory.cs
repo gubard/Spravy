@@ -10,15 +10,15 @@ public class TokenHttpHeaderFactory : IHttpHeaderFactory
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsAsync(
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
-        return tokenService.GetTokenAsync(cancellationToken)
+        return tokenService.GetTokenAsync(ct)
            .IfSuccessAsync(
                 value => HttpHeaderItem.CreateBearerAuthorization(value)
                    .ToReadOnlyMemory()
                    .ToResult()
                    .ToValueTaskResult()
-                   .ConfigureAwait(false), cancellationToken);
+                   .ConfigureAwait(false), ct);
     }
 }

@@ -9,9 +9,9 @@ public class MetadataFactory : IMetadataFactory
         this.httpHeaderFactory = httpHeaderFactory;
     }
 
-    public ConfiguredValueTaskAwaitable<Result<Metadata>> CreateAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<Metadata>> CreateAsync(CancellationToken ct)
     {
-        return httpHeaderFactory.CreateHeaderItemsAsync(cancellationToken)
+        return httpHeaderFactory.CreateHeaderItemsAsync(ct)
            .IfSuccessAsync(value =>
             {
                 var metadata = new Metadata();
@@ -22,6 +22,6 @@ public class MetadataFactory : IMetadataFactory
                 }
 
                 return metadata.ToResult().ToValueTaskResult().ConfigureAwait(false);
-            }, cancellationToken);
+            }, ct);
     }
 }

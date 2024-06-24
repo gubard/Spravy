@@ -18,10 +18,10 @@ public class Navigator : INavigator
 
     public ConfiguredValueTaskAwaitable<Result> NavigateToAsync<TViewModel>(
         Action<TViewModel> setup,
-        CancellationToken cancellationToken
+        CancellationToken ct
     ) where TViewModel : INavigatable
     {
-        return AddCurrentContentAsync(obj => setup.Invoke((TViewModel)obj), cancellationToken)
+        return AddCurrentContentAsync(obj => setup.Invoke((TViewModel)obj), ct)
            .IfSuccessAsync(() =>
             {
                 if (mainSplitViewModel.Content is IRefresh refresh && mainSplitViewModel.Content is TViewModel vm)
@@ -32,7 +32,7 @@ public class Navigator : INavigator
 
                             return Result.Success;
                         })
-                       .IfSuccessAsync(() => refresh.RefreshAsync(cancellationToken), cancellationToken);
+                       .IfSuccessAsync(() => refresh.RefreshAsync(ct), ct);
                 }
 
                 if (mainSplitViewModel.Content is IDisposable disposable)
@@ -49,24 +49,24 @@ public class Navigator : INavigator
 
                     return Result.Success;
                 });
-            }, cancellationToken);
+            }, ct);
     }
 
-    public ConfiguredValueTaskAwaitable<Result> NavigateToAsync<TViewModel>(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> NavigateToAsync<TViewModel>(CancellationToken ct)
         where TViewModel : INavigatable
     {
         var viewModel = serviceFactory.CreateService<TViewModel>();
 
-        return AddCurrentContentAsync(ActionHelper<object>.Empty, cancellationToken)
+        return AddCurrentContentAsync(ActionHelper<object>.Empty, ct)
            .IfSuccessAsync(() => this.InvokeUiBackgroundAsync(() =>
             {
                 mainSplitViewModel.Content = viewModel;
 
                 return Result.Success;
-            }), cancellationToken);
+            }), ct);
     }
 
-    public ConfiguredValueTaskAwaitable<Result<INavigatable>> NavigateBackAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<INavigatable>> NavigateBackAsync(CancellationToken ct)
     {
         var item = list.Pop();
 
@@ -81,7 +81,7 @@ public class Navigator : INavigator
 
                 return Result.Success;
             })
-           .IfSuccessAsync(() => dialogViewer.CloseLastDialogAsync(cancellationToken), cancellationToken)
+           .IfSuccessAsync(() => dialogViewer.CloseLastDialogAsync(ct), ct)
            .IfSuccessAsync(value =>
             {
                 if (value)
@@ -107,33 +107,33 @@ public class Navigator : INavigator
                     {
                         if (item.Navigatable is IRefresh refresh)
                         {
-                            return refresh.RefreshAsync(cancellationToken);
+                            return refresh.RefreshAsync(ct);
                         }
 
                         return Result.AwaitableSuccess;
-                    }, cancellationToken)
+                    }, ct)
                    .IfSuccessAsync(() => item.Navigatable.ToResult().ToValueTaskResult().ConfigureAwait(false),
-                        cancellationToken);
-            }, cancellationToken);
+                        ct);
+            }, ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> NavigateToAsync<TViewModel>(
         TViewModel parameter,
-        CancellationToken cancellationToken
+        CancellationToken ct
     ) where TViewModel : INavigatable
     {
-        return AddCurrentContentAsync(ActionHelper<object>.Empty, cancellationToken)
+        return AddCurrentContentAsync(ActionHelper<object>.Empty, ct)
            .IfSuccessAsync(() => this.InvokeUiBackgroundAsync(() =>
             {
                 mainSplitViewModel.Content = parameter;
 
                 return Result.Success;
-            }), cancellationToken);
+            }), ct);
     }
 
     private ConfiguredValueTaskAwaitable<Result> AddCurrentContentAsync(
         Action<object> setup,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         if (mainSplitViewModel.Content is null)
@@ -149,19 +149,19 @@ public class Navigator : INavigator
             return Result.AwaitableSuccess;
         }
 
-        return content.SaveStateAsync(cancellationToken)
+        return content.SaveStateAsync(ct)
            .IfSuccessAsync(() =>
             {
                 list.Add(new(content, lastSetup));
                 lastSetup = setup;
 
                 return Result.AwaitableSuccess;
-            }, cancellationToken)
+            }, ct)
            .IfSuccessAsync(() => this.InvokeUiBackgroundAsync(() =>
             {
                 mainSplitViewModel.IsPaneOpen = false;
 
                 return Result.Success;
-            }), cancellationToken);
+            }), ct);
     }
 }

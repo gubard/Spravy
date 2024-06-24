@@ -5,5 +5,5 @@ namespace Spravy.Feedback.Domain.Interfaces;
 
 public interface IFeedback
 {
-    ConfiguredValueTaskAwaitable SendErrorAsync(ErrorFeedback feedback, CancellationToken cancellationToken);
+    ConfiguredValueTaskAwaitable SendErrorAsync(ErrorFeedback feedback, CancellationToken ct);
 }

@@ -49,25 +49,25 @@ public class EfAuthenticationService : IAuthenticationService
         this.randomString = randomString;
     }
 
-    public ConfiguredValueTaskAwaitable<Result<TokenResult>> LoginAsync(User user, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<TokenResult>> LoginAsync(User user, CancellationToken ct)
     {
-        return context.GetVerifiedUserByLoginAsync(user.Login, cancellationToken)
+        return context.GetVerifiedUserByLoginAsync(user.Login, ct)
            .IfSuccessAsync(
                 userEntity => CheckPassword(user.Password, userEntity)
-                   .IfSuccess(() => tokenFactory.Create(userEntity.ToUserTokenClaims())), cancellationToken);
+                   .IfSuccess(() => tokenFactory.Create(userEntity.ToUserTokenClaims())), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> CreateUserAsync(
         CreateUserOptions options,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
-        return CreateUserCore(options, cancellationToken).ConfigureAwait(false);
+        return CreateUserCore(options, ct).ConfigureAwait(false);
     }
 
     public ConfiguredValueTaskAwaitable<Result<TokenResult>> RefreshTokenAsync(
         string refreshToken,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         var jwtHandler = new JwtSecurityTokenHandler();
@@ -82,7 +82,7 @@ public class EfAuthenticationService : IAuthenticationService
 
                 return context.FindEntityAsync<UserEntity>(id)
                    .IfSuccessAsync(userEntity => tokenFactory.Create(userEntity.ToUserTokenClaims()),
-                        cancellationToken);
+                        ct);
             }
             case Role.Service:
             {
@@ -95,12 +95,12 @@ public class EfAuthenticationService : IAuthenticationService
 
     public ConfiguredValueTaskAwaitable<Result> UpdateVerificationCodeByLoginAsync(
         string login,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         login = login.Trim();
 
-        return context.AtomicExecuteAsync(() => context.GetUserByLoginAsync(login, cancellationToken)
+        return context.AtomicExecuteAsync(() => context.GetUserByLoginAsync(login, ct)
            .IfSuccessAsync(userEntity =>
             {
                 var verificationCode = randomString.GetRandom().ThrowIfNull();
@@ -109,18 +109,18 @@ public class EfAuthenticationService : IAuthenticationService
                 userEntity.VerificationCodeHash = hash;
 
                 return emailService.SendEmailAsync("VerificationCode", userEntity.Email.ThrowIfNullOrWhiteSpace(),
-                    verificationCode, cancellationToken);
-            }, cancellationToken), cancellationToken);
+                    verificationCode, ct);
+            }, ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateVerificationCodeByEmailAsync(
         string email,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         email = email.Trim().ToUpperInvariant();
 
-        return context.AtomicExecuteAsync(() => context.GetUserByEmailAsync(email, cancellationToken)
+        return context.AtomicExecuteAsync(() => context.GetUserByEmailAsync(email, ct)
            .IfSuccessAsync(userEntity =>
             {
                 var verificationCode = randomString.GetRandom().ThrowIfNull();
@@ -128,41 +128,41 @@ public class EfAuthenticationService : IAuthenticationService
                 userEntity.VerificationCodeMethod = hasher.HashMethod;
                 userEntity.VerificationCodeHash = hash;
 
-                return emailService.SendEmailAsync("VerificationCode", email, verificationCode, cancellationToken);
-            }, cancellationToken), cancellationToken);
+                return emailService.SendEmailAsync("VerificationCode", email, verificationCode, ct);
+            }, ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result<bool>> IsVerifiedByLoginAsync(
         string login,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         login = login.Trim();
 
-        return context.GetUserByLoginAsync(login, cancellationToken)
-           .IfSuccessAsync(user => user.IsEmailVerified.ToResult(), cancellationToken);
+        return context.GetUserByLoginAsync(login, ct)
+           .IfSuccessAsync(user => user.IsEmailVerified.ToResult(), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result<bool>> IsVerifiedByEmailAsync(
         string email,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         email = email.Trim().ToUpperInvariant();
 
-        return context.GetUserByEmailAsync(email, cancellationToken)
-           .IfSuccessAsync(userEntity => userEntity.IsEmailVerified.ToResult(), cancellationToken);
+        return context.GetUserByEmailAsync(email, ct)
+           .IfSuccessAsync(userEntity => userEntity.IsEmailVerified.ToResult(), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> VerifiedEmailByLoginAsync(
         string login,
         string verificationCode,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         login = login.Trim();
 
-        return context.AtomicExecuteAsync(() => context.GetUserByLoginAsync(login, cancellationToken)
+        return context.AtomicExecuteAsync(() => context.GetUserByLoginAsync(login, ct)
            .IfSuccessAsync(userEntity => CheckVerificationCode(verificationCode, userEntity)
                .IfSuccess(() =>
                 {
@@ -171,18 +171,18 @@ public class EfAuthenticationService : IAuthenticationService
                     userEntity.VerificationCodeHash = null;
 
                     return Result.Success;
-                }), cancellationToken), cancellationToken);
+                }), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> VerifiedEmailByEmailAsync(
         string email,
         string verificationCode,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         email = email.Trim().ToUpperInvariant();
 
-        return context.AtomicExecuteAsync(() => context.GetUserByEmailAsync(email, cancellationToken)
+        return context.AtomicExecuteAsync(() => context.GetUserByEmailAsync(email, ct)
            .IfSuccessAsync(userEntity => CheckVerificationCode(verificationCode, userEntity)
                .IfSuccess(() =>
                 {
@@ -191,83 +191,83 @@ public class EfAuthenticationService : IAuthenticationService
                     userEntity.VerificationCodeHash = null;
 
                     return Result.Success;
-                }), cancellationToken), cancellationToken);
+                }), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateEmailNotVerifiedUserByEmailAsync(
         string email,
         string newEmail,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         email = email.Trim().ToUpperInvariant();
 
-        return context.AtomicExecuteAsync(() => context.GetNotVerifiedUserByEmailAsync(email, cancellationToken)
+        return context.AtomicExecuteAsync(() => context.GetNotVerifiedUserByEmailAsync(email, ct)
            .IfSuccessAsync(userEntity =>
             {
                 userEntity.Email = newEmail;
 
                 return Result.Success;
-            }, cancellationToken), cancellationToken);
+            }, ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateEmailNotVerifiedUserByLoginAsync(
         string login,
         string newEmail,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         login = login.Trim();
 
-        return context.AtomicExecuteAsync(() => context.GetNotVerifiedUserByLoginAsync(login, cancellationToken)
+        return context.AtomicExecuteAsync(() => context.GetNotVerifiedUserByLoginAsync(login, ct)
            .IfSuccessAsync(userEntity =>
             {
                 userEntity.Email = newEmail;
 
                 return Result.Success;
-            }, cancellationToken), cancellationToken);
+            }, ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> DeleteUserByEmailAsync(
         string email,
         string verificationCode,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         email = email.Trim().ToUpperInvariant();
 
         return context.AtomicExecuteAsync(
-            () => context.GetVerifiedUserByEmailAsync(email, cancellationToken)
+            () => context.GetVerifiedUserByEmailAsync(email, ct)
                .IfSuccessAsync(
                     userEntity => CheckVerificationCode(verificationCode, userEntity)
-                       .IfSuccess(() => context.RemoveEntity(userEntity)), cancellationToken), cancellationToken);
+                       .IfSuccess(() => context.RemoveEntity(userEntity)), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> DeleteUserByLoginAsync(
         string login,
         string verificationCode,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         login = login.Trim();
 
         return context.AtomicExecuteAsync(
-            () => context.GetVerifiedUserByLoginAsync(login, cancellationToken)
+            () => context.GetVerifiedUserByLoginAsync(login, ct)
                .IfSuccessAsync(
                     userEntity => CheckVerificationCode(verificationCode, userEntity)
-                       .IfSuccess(() => context.RemoveEntity(userEntity)), cancellationToken), cancellationToken);
+                       .IfSuccess(() => context.RemoveEntity(userEntity)), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdatePasswordByEmailAsync(
         string email,
         string verificationCode,
         string newPassword,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         email = email.Trim().ToUpperInvariant();
 
-        return context.AtomicExecuteAsync(() => context.GetVerifiedUserByEmailAsync(email, cancellationToken)
+        return context.AtomicExecuteAsync(() => context.GetVerifiedUserByEmailAsync(email, ct)
            .IfSuccessAsync(userEntity => CheckVerificationCode(verificationCode, userEntity)
                .IfSuccess(() => hasherFactory.Create(userEntity.HashMethod.ThrowIfNullOrWhiteSpace())
                    .IfSuccess(newHasher =>
@@ -279,19 +279,19 @@ public class EfAuthenticationService : IAuthenticationService
                         userEntity.PasswordHash = hash;
 
                         return Result.Success;
-                    })), cancellationToken), cancellationToken);
+                    })), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdatePasswordByLoginAsync(
         string login,
         string verificationCode,
         string newPassword,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         login = login.Trim();
 
-        return context.AtomicExecuteAsync(() => context.GetUserByLoginAsync(login, cancellationToken)
+        return context.AtomicExecuteAsync(() => context.GetUserByLoginAsync(login, ct)
            .IfSuccessAsync(userEntity => CheckVerificationCode(verificationCode, userEntity)
                .IfSuccess(() => hasherFactory.Create(userEntity.HashMethod.ThrowIfNullOrWhiteSpace())
                    .IfSuccess(newHasher =>
@@ -303,14 +303,14 @@ public class EfAuthenticationService : IAuthenticationService
                         userEntity.PasswordHash = hash;
 
                         return Result.Success;
-                    })), cancellationToken), cancellationToken);
+                    })), ct), ct);
     }
 
-    private async ValueTask<Result> CreateUserCore(CreateUserOptions options, CancellationToken cancellationToken)
+    private async ValueTask<Result> CreateUserCore(CreateUserOptions options, CancellationToken ct)
     {
         var email = options.Email.Trim().ToUpperInvariant();
 
-        await foreach (var error in loginValidator.ValidateAsync(options.Login, nameof(options.Login)).WithCancellation(cancellationToken))
+        await foreach (var error in loginValidator.ValidateAsync(options.Login, nameof(options.Login)).WithCancellation(ct))
         {
             if (error.IsHasError)
             {
@@ -318,7 +318,7 @@ public class EfAuthenticationService : IAuthenticationService
             }
         }
 
-        await foreach (var error in passwordValidator.ValidateAsync(options.Password, nameof(options.Password)).WithCancellation(cancellationToken))
+        await foreach (var error in passwordValidator.ValidateAsync(options.Password, nameof(options.Password)).WithCancellation(ct))
         {
             if (error.IsHasError)
             {
@@ -339,8 +339,8 @@ public class EfAuthenticationService : IAuthenticationService
             Email = email,
         };
 
-        return await context.AtomicExecuteAsync(() => context.GetUserByLoginAsync(options.Login, cancellationToken)
-           .IfSuccessAsync(_ => new(new UserWithLoginExistsError(options.Login)), cancellationToken)
+        return await context.AtomicExecuteAsync(() => context.GetUserByLoginAsync(options.Login, ct)
+           .IfSuccessAsync(_ => new(new UserWithLoginExistsError(options.Login)), ct)
            .IfErrorsAsync(errors => errors.GetSingle("Errors")
                .IfSuccess(error =>
                 {
@@ -350,9 +350,9 @@ public class EfAuthenticationService : IAuthenticationService
                     }
 
                     return new(error);
-                }), cancellationToken)
-           .IfSuccessAsync(() => context.GetUserByEmailAsync(options.Email, cancellationToken)
-               .IfSuccessAsync(_ => new(new UserWithEmailExistsError(options.Email)), cancellationToken)
+                }), ct)
+           .IfSuccessAsync(() => context.GetUserByEmailAsync(options.Email, ct)
+               .IfSuccessAsync(_ => new(new UserWithEmailExistsError(options.Email)), ct)
                .IfErrorsAsync(errors => errors.GetSingle("Errors")
                    .IfSuccess(error =>
                     {
@@ -362,9 +362,9 @@ public class EfAuthenticationService : IAuthenticationService
                         }
 
                         return new(error);
-                    }), cancellationToken), cancellationToken)
-           .IfSuccessAsync(() => context.AddEntityAsync(newUser, cancellationToken), cancellationToken)
-           .IfSuccessAsync(_ => Result.Success, cancellationToken), cancellationToken);
+                    }), ct), ct)
+           .IfSuccessAsync(() => context.AddEntityAsync(newUser, ct), ct)
+           .IfSuccessAsync(_ => Result.Success, ct), ct);
     }
 
     private Result Check(string code, string hashMethod, string valueHash)

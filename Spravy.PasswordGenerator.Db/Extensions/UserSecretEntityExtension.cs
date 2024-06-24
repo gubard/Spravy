@@ -13,19 +13,19 @@ public static class UserSecretEntityExtension
     public static ConfiguredValueTaskAwaitable<Result<UserSecretEntity>> GetSecretByUserIdAsync(
         this IQueryable<UserSecretEntity> queryable,
         Guid userId,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
-        return GetSecretByUserIdCore(queryable, userId, cancellationToken).ConfigureAwait(false);
+        return GetSecretByUserIdCore(queryable, userId, ct).ConfigureAwait(false);
     }
     
     private static async ValueTask<Result<UserSecretEntity>> GetSecretByUserIdCore(
         IQueryable<UserSecretEntity> queryable,
         Guid userId,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
-        var items = await queryable.Where(x => x.UserId == userId).Take(2).ToArrayAsync(cancellationToken);
+        var items = await queryable.Where(x => x.UserId == userId).Take(2).ToArrayAsync(ct);
         
         if (items.Length == 0)
         {

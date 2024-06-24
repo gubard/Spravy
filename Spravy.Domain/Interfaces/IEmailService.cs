@@ -6,6 +6,6 @@ public interface IEmailService
         string subject,
         string recipientEmail,
         string text,
-        CancellationToken cancellationToken
+        CancellationToken ct
     );
 }

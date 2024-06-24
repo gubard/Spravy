@@ -69,6 +69,6 @@ public class GrpcRouterEventBusService : EventBusService.EventBusServiceBase
                 reply.Events.AddRange(eventValues.ToEvent().ToArray());
 
                 return reply;
-            });
+            }, context.CancellationToken);
     }
 }

@@ -43,14 +43,14 @@ public class EventBusHostedService : IHostedService
         this.logger = logger;
     }
 
-    public Task StartAsync(CancellationToken cancellationToken)
+    public Task StartAsync(CancellationToken ct)
     {
         Execute();
 
         return Task.CompletedTask;
     }
 
-    public Task StopAsync(CancellationToken cancellationToken)
+    public Task StopAsync(CancellationToken ct)
     {
         return Task.CompletedTask;
     }

@@ -42,17 +42,17 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IRefresh, IToDo
         get => TypeCache<TodayToDoItemsViewModel>.Type.Name;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken ct)
     {
-        return toDoService.GetTodayToDoItemsAsync(cancellationToken)
-           .IfSuccessForEachAsync(id => toDoCache.GetToDoItem(id), cancellationToken)
-           .IfSuccessAsync(ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), false, cancellationToken),
-                cancellationToken);
+        return toDoService.GetTodayToDoItemsAsync(ct)
+           .IfSuccessForEachAsync(id => toDoCache.GetToDoItem(id), ct)
+           .IfSuccessAsync(ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), false, ct),
+                ct);
     }
 
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
-        return RefreshAsync(cancellationToken);
+        return RefreshAsync(ct);
     }
 
     public override Result Stop()
@@ -60,14 +60,14 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IRefresh, IToDo
         return Result.Success;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;
     }
 
     public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
         object setting,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return Result.AwaitableSuccess;

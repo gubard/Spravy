@@ -26,12 +26,12 @@ public class ToDoItemSelectorViewModel : ViewModelBase
     [Reactive]
     public ToDoItemEntityNotify? SelectedItem { get; set; }
     
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
-        return Refresh(cancellationToken);
+        return Refresh(ct);
     }
     
-    private ConfiguredValueTaskAwaitable<Result> Refresh(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> Refresh(CancellationToken ct)
     {
         return toDoCache.GetRootItems()
            .IfSuccessAsync(items => this.InvokeUiBackgroundAsync(() =>
@@ -40,17 +40,17 @@ public class ToDoItemSelectorViewModel : ViewModelBase
                 Roots.AddRange(items.ToArray());
                 
                 return SetupUi();
-            }), cancellationToken)
-           .IfSuccessAsync(() => toDoService.GetToDoSelectorItemsAsync(IgnoreIds.ToArray(), cancellationToken),
-                cancellationToken)
-           .IfSuccessAsync(items => this.InvokeUiBackgroundAsync(() => toDoCache.UpdateUi(items)), cancellationToken)
+            }), ct)
+           .IfSuccessAsync(() => toDoService.GetToDoSelectorItemsAsync(IgnoreIds.ToArray(), ct),
+                ct)
+           .IfSuccessAsync(items => this.InvokeUiBackgroundAsync(() => toDoCache.UpdateUi(items)), ct)
            .IfSuccessAsync(items => this.InvokeUiBackgroundAsync(() =>
             {
                 Roots.Clear();
                 Roots.AddRange(items.ToArray());
                 
                 return SetupUi();
-            }), cancellationToken);
+            }), ct);
     }
     
     private Result SetupUi(ToDoItemEntityNotify item)
@@ -91,7 +91,7 @@ public class ToDoItemSelectorViewModel : ViewModelBase
         return Roots.ToArray().ToReadOnlyMemory().ToResult().IfSuccessForEach(item => SetupUi(item));
     }
     
-    private ConfiguredValueTaskAwaitable<Result> SearchAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> SearchAsync(CancellationToken ct)
     {
         return this.InvokeUiBackgroundAsync(() =>
             {
@@ -99,13 +99,13 @@ public class ToDoItemSelectorViewModel : ViewModelBase
                 
                 return Result.Success;
             })
-           .IfSuccessAsync(() => toDoCache.GetRootItems(), cancellationToken)
-           .IfSuccessForEachAsync(item => SearchAsync(item, cancellationToken), cancellationToken);
+           .IfSuccessAsync(() => toDoCache.GetRootItems(), ct)
+           .IfSuccessForEachAsync(item => SearchAsync(item, ct), ct);
     }
     
     private ConfiguredValueTaskAwaitable<Result> SearchAsync(
         ToDoItemEntityNotify item,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return Result.AwaitableSuccess
@@ -122,13 +122,13 @@ public class ToDoItemSelectorViewModel : ViewModelBase
                 }
                 
                 return Result.AwaitableSuccess;
-            }, cancellationToken)
+            }, ct)
            .IfSuccessAsync(
                 () => item.Children
                    .ToArray()
                    .ToReadOnlyMemory()
                    .ToResult()
-                   .IfSuccessForEachAsync(i => SearchAsync(i, cancellationToken), cancellationToken),
-                cancellationToken);
+                   .IfSuccessForEachAsync(i => SearchAsync(i, ct), ct),
+                ct);
     }
 }

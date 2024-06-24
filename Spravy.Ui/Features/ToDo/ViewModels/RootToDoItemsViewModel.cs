@@ -53,17 +53,17 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase,
         get => TypeCache<RootToDoItemsViewModel>.Type.Name;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken ct)
     {
         return RefreshCore().ConfigureAwait(false);
     }
 
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
-        return objectStorage.GetObjectOrDefaultAsync<RootToDoItemsViewModelSetting>(ViewId, cancellationToken)
-           .IfSuccessAsync(obj => SetStateAsync(obj, cancellationToken), cancellationToken)
+        return objectStorage.GetObjectOrDefaultAsync<RootToDoItemsViewModelSetting>(ViewId, ct)
+           .IfSuccessAsync(obj => SetStateAsync(obj, ct), ct)
            .IfSuccessAsync(() => refreshWork.RunAsync().ToValueTaskResultOnly().ConfigureAwait(false),
-                cancellationToken);
+                ct);
     }
 
     public async ValueTask<Result> RefreshCore()
@@ -73,15 +73,15 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase,
         return Result.Success;
     }
 
-    private ConfiguredValueTaskAwaitable<Result> RefreshCoreAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> RefreshCoreAsync(CancellationToken ct)
     {
         return toDoCache.GetRootItems()
            .IfSuccessAsync(items => this.InvokeUiBackgroundAsync(() => ToDoSubItemsViewModel.ClearExceptUi(items)),
-                cancellationToken)
-           .IfSuccessAsync(() => toDoService.GetRootToDoItemIdsAsync(cancellationToken), cancellationToken)
-           .IfSuccessAsync(items => toDoCache.UpdateRootItems(items), cancellationToken)
-           .IfSuccessAsync(items => ToDoSubItemsViewModel.UpdateItemsAsync(items.ToArray(), false, cancellationToken),
-                cancellationToken);
+                ct)
+           .IfSuccessAsync(() => toDoService.GetRootToDoItemIdsAsync(ct), ct)
+           .IfSuccessAsync(items => toDoCache.UpdateRootItems(items), ct)
+           .IfSuccessAsync(items => ToDoSubItemsViewModel.UpdateItemsAsync(items.ToArray(), false, ct),
+                ct);
     }
 
     public override Result Stop()
@@ -91,14 +91,14 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase,
         return Result.Success;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)
     {
-        return objectStorage.SaveObjectAsync(ViewId, new RootToDoItemsViewModelSetting(this));
+        return objectStorage.SaveObjectAsync(ViewId, new RootToDoItemsViewModelSetting(this), ct);
     }
 
     public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
         object setting,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return setting.CastObject<RootToDoItemsViewModelSetting>()
@@ -108,7 +108,7 @@ public class RootToDoItemsViewModel : NavigatableViewModelBase,
                 ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
 
                 return Result.Success;
-            }), cancellationToken);
+            }), ct);
     }
 
     public Result UpdateInListToDoItemUi(ToDoItemEntityNotify item)

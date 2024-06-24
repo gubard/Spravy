@@ -6,85 +6,85 @@ namespace Spravy.Authentication.Domain.Interfaces;
 
 public interface IAuthenticationService
 {
-    ConfiguredValueTaskAwaitable<Result<TokenResult>> LoginAsync(User user, CancellationToken cancellationToken);
+    ConfiguredValueTaskAwaitable<Result<TokenResult>> LoginAsync(User user, CancellationToken ct);
 
     ConfiguredValueTaskAwaitable<Result> CreateUserAsync(
         CreateUserOptions options,
-        CancellationToken cancellationToken
+        CancellationToken ct
     );
 
     ConfiguredValueTaskAwaitable<Result<TokenResult>> RefreshTokenAsync(
         string refreshToken,
-        CancellationToken cancellationToken
+        CancellationToken ct
     );
 
     ConfiguredValueTaskAwaitable<Result> UpdateVerificationCodeByLoginAsync(
         string login,
-        CancellationToken cancellationToken
+        CancellationToken ct
     );
 
     ConfiguredValueTaskAwaitable<Result> UpdateVerificationCodeByEmailAsync(
         string email,
-        CancellationToken cancellationToken
+        CancellationToken ct
     );
 
     ConfiguredValueTaskAwaitable<Result<bool>> IsVerifiedByLoginAsync(
         string login,
-        CancellationToken cancellationToken
+        CancellationToken ct
     );
 
     ConfiguredValueTaskAwaitable<Result<bool>> IsVerifiedByEmailAsync(
         string email,
-        CancellationToken cancellationToken
+        CancellationToken ct
     );
 
     ConfiguredValueTaskAwaitable<Result> VerifiedEmailByLoginAsync(
         string login,
         string verificationCode,
-        CancellationToken cancellationToken
+        CancellationToken ct
     );
 
     ConfiguredValueTaskAwaitable<Result> VerifiedEmailByEmailAsync(
         string email,
         string verificationCode,
-        CancellationToken cancellationToken
+        CancellationToken ct
     );
 
     ConfiguredValueTaskAwaitable<Result> UpdateEmailNotVerifiedUserByEmailAsync(
         string email,
         string newEmail,
-        CancellationToken cancellationToken
+        CancellationToken ct
     );
 
     ConfiguredValueTaskAwaitable<Result> UpdateEmailNotVerifiedUserByLoginAsync(
         string login,
         string newEmail,
-        CancellationToken cancellationToken
+        CancellationToken ct
     );
 
     ConfiguredValueTaskAwaitable<Result> DeleteUserByEmailAsync(
         string email,
         string verificationCode,
-        CancellationToken cancellationToken
+        CancellationToken ct
     );
 
     ConfiguredValueTaskAwaitable<Result> DeleteUserByLoginAsync(
         string login,
         string verificationCode,
-        CancellationToken cancellationToken
+        CancellationToken ct
     );
 
     ConfiguredValueTaskAwaitable<Result> UpdatePasswordByEmailAsync(
         string email,
         string verificationCode,
         string newPassword,
-        CancellationToken cancellationToken
+        CancellationToken ct
     );
 
     ConfiguredValueTaskAwaitable<Result> UpdatePasswordByLoginAsync(
         string login,
         string verificationCode,
         string newPassword,
-        CancellationToken cancellationToken
+        CancellationToken ct
     );
 }

@@ -20,17 +20,17 @@ public class EmailService : IEmailService
         string subject,
         string recipientEmail,
         string text,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
-        return SendEmailCore(subject, recipientEmail, text, cancellationToken).ConfigureAwait(false);
+        return SendEmailCore(subject, recipientEmail, text, ct).ConfigureAwait(false);
     }
 
     public async ValueTask<Result> SendEmailCore(
         string subject,
         string recipientEmail,
         string text,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         using var message = new MimeMessage();
@@ -44,10 +44,10 @@ public class EmailService : IEmailService
         };
 
         using var client = new SmtpClient();
-        await client.ConnectAsync(options.Host, 587, false, cancellationToken);
-        await client.AuthenticateAsync(options.Login, options.Password, cancellationToken);
-        await client.SendAsync(message, cancellationToken);
-        await client.DisconnectAsync(true, cancellationToken);
+        await client.ConnectAsync(options.Host, 587, false, ct);
+        await client.AuthenticateAsync(options.Login, options.Password, ct);
+        await client.SendAsync(message, ct);
+        await client.DisconnectAsync(true, ct);
 
         return Result.Success;
     }

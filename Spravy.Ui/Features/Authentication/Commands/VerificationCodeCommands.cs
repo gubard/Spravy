@@ -33,7 +33,7 @@ public class VerificationCodeCommands
     
     private ConfiguredValueTaskAwaitable<Result> VerificationEmailAsync(
         IVerificationEmail verificationEmail,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         switch (verificationEmail.IdentifierType)
@@ -41,15 +41,15 @@ public class VerificationCodeCommands
             case UserIdentifierType.Email:
                 return authenticationService
                    .VerifiedEmailByEmailAsync(verificationEmail.Identifier,
-                        verificationEmail.VerificationCode.ToUpperInvariant(), cancellationToken)
-                   .IfSuccessAsync(() => navigator.NavigateToAsync<LoginViewModel>(cancellationToken),
-                        cancellationToken);
+                        verificationEmail.VerificationCode.ToUpperInvariant(), ct)
+                   .IfSuccessAsync(() => navigator.NavigateToAsync<LoginViewModel>(ct),
+                        ct);
             case UserIdentifierType.Login:
                 return authenticationService
                    .VerifiedEmailByLoginAsync(verificationEmail.Identifier,
-                        verificationEmail.VerificationCode.ToUpperInvariant(), cancellationToken)
-                   .IfSuccessAsync(() => navigator.NavigateToAsync<LoginViewModel>(cancellationToken),
-                        cancellationToken);
+                        verificationEmail.VerificationCode.ToUpperInvariant(), ct)
+                   .IfSuccessAsync(() => navigator.NavigateToAsync<LoginViewModel>(ct),
+                        ct);
             default:
                 return new Result(new UserIdentifierTypeOutOfRangeError(verificationEmail.IdentifierType))
                    .ToValueTaskResult()
@@ -59,42 +59,42 @@ public class VerificationCodeCommands
     
     private ConfiguredValueTaskAwaitable<Result> UpdateEmailAsync(
         IVerificationEmail verificationEmail,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dialogViewer.ShowSingleStringConfirmDialogAsync(newEmail => dialogViewer
-           .CloseInputDialogAsync(cancellationToken)
+           .CloseInputDialogAsync(ct)
            .IfSuccessAsync(() =>
             {
                 switch (verificationEmail.IdentifierType)
                 {
                     case UserIdentifierType.Email:
                         return authenticationService.UpdateEmailNotVerifiedUserByEmailAsync(
-                            verificationEmail.Identifier, newEmail, cancellationToken);
+                            verificationEmail.Identifier, newEmail, ct);
                     case UserIdentifierType.Login:
                         return authenticationService.UpdateEmailNotVerifiedUserByLoginAsync(
-                            verificationEmail.Identifier, newEmail, cancellationToken);
+                            verificationEmail.Identifier, newEmail, ct);
                     default:
                         return new Result(new UserIdentifierTypeOutOfRangeError(verificationEmail.IdentifierType))
                            .ToValueTaskResult()
                            .ConfigureAwait(false);
                 }
-            }, cancellationToken), ActionHelper<TextViewModel>.Empty, cancellationToken);
+            }, ct), ActionHelper<TextViewModel>.Empty, ct);
     }
     
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(
         VerificationCodeViewModel viewModel,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         switch (viewModel.IdentifierType)
         {
             case UserIdentifierType.Email:
                 return authenticationService.UpdateVerificationCodeByEmailAsync(viewModel.Identifier,
-                    cancellationToken);
+                    ct);
             case UserIdentifierType.Login:
                 return authenticationService.UpdateVerificationCodeByLoginAsync(viewModel.Identifier,
-                    cancellationToken);
+                    ct);
             default:
                 return new Result(new UserIdentifierTypeOutOfRangeError(viewModel.IdentifierType)).ToValueTaskResult()
                    .ConfigureAwait(false);

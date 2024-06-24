@@ -25,23 +25,23 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
     public AvaloniaList<PasswordItemNotify> Items { get; } = new();
     public SpravyCommand InitializedCommand { get; }
     
-    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken ct)
     {
         Items.Clear();
         
-        return passwordService.GetPasswordItemsAsync(cancellationToken)
+        return passwordService.GetPasswordItemsAsync(ct)
            .IfSuccessForEachAsync(item => this.InvokeUiBackgroundAsync(() =>
             {
                 Items.Add(passwordItemCache.GetPasswordItem(item.Id));
                 passwordItemCache.UpdateAsync(item);
                 
                 return Result.Success;
-            }), cancellationToken);
+            }), ct);
     }
     
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
-        return RefreshAsync(cancellationToken);
+        return RefreshAsync(ct);
     }
     
     public override Result Stop()
@@ -51,13 +51,13 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
     
     public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
         object setting,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return Result.AwaitableSuccess;
     }
     
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;
     }

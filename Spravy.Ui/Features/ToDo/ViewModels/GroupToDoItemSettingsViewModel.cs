@@ -11,7 +11,7 @@ public class GroupToDoItemSettingsViewModel : NavigatableViewModelBase, IApplySe
         get => TypeCache<GroupToDoItemSettingsViewModel>.Type.Name;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;
     }
@@ -23,13 +23,13 @@ public class GroupToDoItemSettingsViewModel : NavigatableViewModelBase, IApplySe
 
     public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
         object setting,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return Result.AwaitableSuccess;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;
     }

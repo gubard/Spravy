@@ -8,12 +8,12 @@ public interface IScheduleService
 {
     ConfiguredValueTaskAwaitable<Result> AddTimerAsync(
         AddTimerParameters parameters,
-        CancellationToken cancellationToken
+        CancellationToken ct
     );
 
     ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<TimerItem>>> GetListTimesAsync(
-        CancellationToken cancellationToken
+        CancellationToken ct
     );
 
-    ConfiguredValueTaskAwaitable<Result> RemoveTimerAsync(Guid id, CancellationToken cancellationToken);
+    ConfiguredValueTaskAwaitable<Result> RemoveTimerAsync(Guid id, CancellationToken ct);
 }

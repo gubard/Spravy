@@ -42,23 +42,23 @@ public class PeriodicityToDoItemSettingsViewModel : ViewModelBase,
     [Reactive]
     public TypeOfPeriodicity TypeOfPeriodicity { get; set; }
     
-    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken ct)
     {
-        return toDoService.UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, cancellationToken)
-           .IfSuccessAsync(() => toDoService.UpdateToDoItemDueDateAsync(Id, DueDate, cancellationToken),
-                cancellationToken)
+        return toDoService.UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, ct)
+           .IfSuccessAsync(() => toDoService.UpdateToDoItemDueDateAsync(Id, DueDate, ct),
+                ct)
            .IfSuccessAsync(
                 () => toDoService.UpdateToDoItemIsRequiredCompleteInDueDateAsync(Id, IsRequiredCompleteInDueDate,
-                    cancellationToken), cancellationToken)
+                    ct), ct)
            .IfSuccessAsync(
-                () => toDoService.UpdateToDoItemTypeOfPeriodicityAsync(Id, TypeOfPeriodicity, cancellationToken),
-                cancellationToken)
-           .IfSuccessAsync(() => Periodicity.ThrowIfNull().ApplySettingsAsync(cancellationToken), cancellationToken);
+                () => toDoService.UpdateToDoItemTypeOfPeriodicityAsync(Id, TypeOfPeriodicity, ct),
+                ct)
+           .IfSuccessAsync(() => Periodicity.ThrowIfNull().ApplySettingsAsync(ct), ct);
     }
     
-    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken ct)
     {
-        return toDoService.GetPeriodicityToDoItemSettingsAsync(Id, cancellationToken)
+        return toDoService.GetPeriodicityToDoItemSettingsAsync(Id, ct)
            .IfSuccessAsync(setting => this.InvokeUiBackgroundAsync(() =>
             {
                 ChildrenType = setting.ChildrenType;
@@ -67,10 +67,10 @@ public class PeriodicityToDoItemSettingsViewModel : ViewModelBase,
                 IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
                 
                 return Result.Success;
-            }), cancellationToken);
+            }), ct);
     }
     
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
         this.WhenAnyValue(x => x.TypeOfPeriodicity)
            .Subscribe(x => Periodicity = x switch
@@ -85,6 +85,6 @@ public class PeriodicityToDoItemSettingsViewModel : ViewModelBase,
                 _ => throw new ArgumentOutOfRangeException(nameof(x), x, null),
             });
         
-        return RefreshAsync(cancellationToken);
+        return RefreshAsync(ct);
     }
 }

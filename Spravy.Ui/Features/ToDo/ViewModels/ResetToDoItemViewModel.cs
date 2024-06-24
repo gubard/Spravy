@@ -32,10 +32,10 @@ public class ResetToDoItemViewModel : NavigatableViewModelBase
         get => $"{TypeCache<ResetToDoItemViewModel>.Type.Name}:{Id}";
     }
 
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
-        return objectStorage.GetObjectOrDefaultAsync<ResetToDoItemViewModelSetting>(ViewId, cancellationToken)
-           .IfSuccessAsync(obj => SetStateAsync(obj, cancellationToken), cancellationToken);
+        return objectStorage.GetObjectOrDefaultAsync<ResetToDoItemViewModelSetting>(ViewId, ct)
+           .IfSuccessAsync(obj => SetStateAsync(obj, ct), ct);
     }
 
     public override Result Stop()
@@ -45,7 +45,7 @@ public class ResetToDoItemViewModel : NavigatableViewModelBase
 
     public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
         object setting,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return setting.CastObject<ResetToDoItemViewModelSetting>()
@@ -57,12 +57,12 @@ public class ResetToDoItemViewModel : NavigatableViewModelBase
                 IsCompleteCurrentTask = s.IsCompleteCurrentTask;
                 
                 return Result.Success;
-            }), cancellationToken);
+            }), ct);
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)
     {
-        return objectStorage.SaveObjectAsync(ViewId, new ResetToDoItemViewModelSetting(this));
+        return objectStorage.SaveObjectAsync(ViewId, new ResetToDoItemViewModelSetting(this), ct);
     }
 
     [ProtoContract]

@@ -10,7 +10,7 @@ public class ContextTimeZoneOffsetHttpHeaderFactory : IHttpHeaderFactory
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsAsync(
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         var authorization = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffsetHeader();

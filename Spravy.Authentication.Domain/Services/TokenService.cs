@@ -18,7 +18,7 @@ public class TokenService : ITokenService
         this.authenticationService = authenticationService;
     }
 
-    public ConfiguredValueTaskAwaitable<Result<string>> GetTokenAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<string>> GetTokenAsync(CancellationToken ct)
     {
         var jwtHandler = new JwtSecurityTokenHandler();
         var jwtToken = jwtHandler.ReadJwtToken(token.Token);
@@ -35,34 +35,34 @@ public class TokenService : ITokenService
             return new Result<string>(token.Token).ToValueTaskResult().ConfigureAwait(false);
         }
 
-        return authenticationService.RefreshTokenAsync(token.RefreshToken, cancellationToken)
+        return authenticationService.RefreshTokenAsync(token.RefreshToken, ct)
            .IfSuccessAsync(value =>
             {
                 token = value;
 
                 return token.Token.ToResult().ToValueTaskResult().ConfigureAwait(false);
-            }, cancellationToken);
+            }, ct);
     }
 
-    public ConfiguredValueTaskAwaitable<Result> LoginAsync(User user, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> LoginAsync(User user, CancellationToken ct)
     {
-        return authenticationService.LoginAsync(user, cancellationToken)
+        return authenticationService.LoginAsync(user, ct)
            .IfSuccessAsync(value =>
             {
                 token = value;
 
                 return Result.AwaitableSuccess;
-            }, cancellationToken);
+            }, ct);
     }
 
-    public ConfiguredValueTaskAwaitable<Result> LoginAsync(string refreshToken, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> LoginAsync(string refreshToken, CancellationToken ct)
     {
-        return authenticationService.RefreshTokenAsync(refreshToken, cancellationToken)
+        return authenticationService.RefreshTokenAsync(refreshToken, ct)
            .IfSuccessAsync(value =>
             {
                 token = value;
 
                 return Result.AwaitableSuccess;
-            }, cancellationToken);
+            }, ct);
     }
 }

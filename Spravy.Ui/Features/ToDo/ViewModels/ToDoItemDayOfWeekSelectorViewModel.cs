@@ -27,16 +27,16 @@ public class ToDoItemDayOfWeekSelectorViewModel : ViewModelBase, IApplySettings
     [Reactive]
     public Guid ToDoItemId { get; set; }
 
-    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken ct)
     {
         return toDoService.UpdateToDoItemWeeklyPeriodicityAsync(ToDoItemId,
-            new(Items.Where(x => x.IsSelected).Select(x => x.DayOfWeek)), cancellationToken);
+            new(Items.Where(x => x.IsSelected).Select(x => x.DayOfWeek)), ct);
     }
 
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
-        return toDoService.GetWeeklyPeriodicityAsync(ToDoItemId, cancellationToken)
-           .IfSuccessAsync(weeklyPeriodicity => Result.AwaitableSuccess.IfSuccessAllAsync(cancellationToken,
+        return toDoService.GetWeeklyPeriodicityAsync(ToDoItemId, ct)
+           .IfSuccessAsync(weeklyPeriodicity => Result.AwaitableSuccess.IfSuccessAllAsync(ct,
                 Items.Where(x => weeklyPeriodicity.Days.Contains(x.DayOfWeek))
                    .Select<DayOfWeekSelectItem, Func<ConfiguredValueTaskAwaitable<Result>>>(x =>
                     {
@@ -49,6 +49,6 @@ public class ToDoItemDayOfWeekSelectorViewModel : ViewModelBase, IApplySettings
                             return Result.Success;
                         });
                     })
-                   .ToArray()), cancellationToken);
+                   .ToArray()), ct);
     }
 }

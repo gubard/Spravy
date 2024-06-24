@@ -30,16 +30,16 @@ public class DeletePasswordItemViewModel : ViewModelBase
         });
     }
 
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
         this.WhenAnyValue(x => x.PasswordItemName).Subscribe(_ => this.RaisePropertyChanged(nameof(DeleteText)));
 
-        return passwordService.GetPasswordItemAsync(PasswordItemId, cancellationToken)
+        return passwordService.GetPasswordItemAsync(PasswordItemId, ct)
            .IfSuccessAsync(value => this.InvokeUiBackgroundAsync(() =>
             {
                 PasswordItemName = value.Name;
 
                 return Result.Success;
-            }), cancellationToken);
+            }), ct);
     }
 }

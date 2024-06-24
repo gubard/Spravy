@@ -22,24 +22,24 @@ public class ValueToDoItemSettingsViewModel : ViewModelBase, IToDoChildrenTypePr
     [Reactive]
     public ToDoItemChildrenType ChildrenType { get; set; }
 
-    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken ct)
     {
-        return toDoService.UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, cancellationToken);
+        return toDoService.UpdateToDoItemChildrenTypeAsync(Id, ChildrenType, ct);
     }
 
-    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken ct)
     {
-        return toDoService.GetValueToDoItemSettingsAsync(Id, cancellationToken)
+        return toDoService.GetValueToDoItemSettingsAsync(Id, ct)
            .IfSuccessAsync(setting => this.InvokeUiBackgroundAsync(() =>
             {
                 ChildrenType = setting.ChildrenType;
 
                 return Result.Success;
-            }), cancellationToken);
+            }), ct);
     }
 
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
-        return RefreshAsync(cancellationToken);
+        return RefreshAsync(ct);
     }
 }

@@ -11,10 +11,10 @@ public abstract class NavigatableViewModelBase : ViewModelBase, INavigatable
     public abstract string ViewId { get; }
     
     public abstract Result Stop();
-    public abstract ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken);
+    public abstract ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct);
     
     public abstract ConfiguredValueTaskAwaitable<Result> SetStateAsync(
         object setting,
-        CancellationToken cancellationToken
+        CancellationToken ct
     );
 }

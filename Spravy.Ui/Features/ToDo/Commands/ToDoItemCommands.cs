@@ -23,13 +23,13 @@ public class ToDoItemCommands
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(
         ToDoItemViewModel viewModel,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         viewModel.FastAddToDoItemViewModel.ParentId = viewModel.Id;
 
-        return objectStorage.GetObjectOrDefaultAsync<ToDoItemViewModelSetting>(viewModel.ViewId, cancellationToken)
-           .IfSuccessAsync(obj => viewModel.SetStateAsync(obj, cancellationToken), cancellationToken)
-           .IfSuccessAsync(() => viewModel.RefreshAsync(cancellationToken), cancellationToken);
+        return objectStorage.GetObjectOrDefaultAsync<ToDoItemViewModelSetting>(viewModel.ViewId, ct)
+           .IfSuccessAsync(obj => viewModel.SetStateAsync(obj, ct), ct)
+           .IfSuccessAsync(() => viewModel.RefreshAsync(ct), ct);
     }
 }

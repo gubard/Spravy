@@ -6,5 +6,5 @@ public interface INavigatable : ISaveState
     string ViewId { get; }
 
     Result Stop();
-    ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting, CancellationToken cancellationToken);
+    ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting, CancellationToken ct);
 }

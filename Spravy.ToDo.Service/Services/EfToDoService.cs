@@ -40,7 +40,7 @@ public class EfToDoService : IToDoService
     public ConfiguredValueTaskAwaitable<Result> CloneToDoItemAsync(
         Guid cloneId,
         OptionStruct<Guid> parentId,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
@@ -48,14 +48,14 @@ public class EfToDoService : IToDoService
                 context => context.AtomicExecuteAsync(
                     () => context.FindEntityAsync<ToDoItemEntity>(cloneId)
                        .IfSuccessAsync(
-                            clone => AddCloneAsync(context, clone, parentId, cancellationToken).ConfigureAwait(false),
-                            cancellationToken), cancellationToken), cancellationToken);
+                            clone => AddCloneAsync(context, clone, parentId, ct).ConfigureAwait(false),
+                            ct), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemDescriptionTypeAsync(
         Guid id,
         DescriptionType type,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
@@ -66,12 +66,12 @@ public class EfToDoService : IToDoService
                     item.DescriptionType = type;
 
                     return Result.Success;
-                }, cancellationToken), cancellationToken), cancellationToken);
+                }, ct), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result<OptionStruct<ActiveToDoItem>>> GetActiveToDoItemAsync(
         Guid id,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
@@ -82,28 +82,28 @@ public class EfToDoService : IToDoService
                     () => context.FindEntityAsync<ToDoItemEntity>(id)
                        .IfSuccessAsync(
                             item => getterToDoItemParametersService.GetToDoItemParametersAsync(context, item, offset,
-                                cancellationToken), cancellationToken)
-                       .IfSuccessAsync(parameters => parameters.ActiveItem.ToResult(), cancellationToken),
-                    cancellationToken), cancellationToken);
+                                ct), ct)
+                       .IfSuccessAsync(parameters => parameters.ActiveItem.ToResult(), ct),
+                    ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReferenceToDoItemSettings>> GetReferenceToDoItemSettingsAsync(
         Guid id,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
            .IfSuccessDisposeAsync(
                 context => context.AtomicExecuteAsync(
                     () => context.FindEntityAsync<ToDoItemEntity>(id)
-                       .IfSuccessAsync(item => item.ToReferenceToDoItemSettings().ToResult(), cancellationToken),
-                    cancellationToken), cancellationToken);
+                       .IfSuccessAsync(item => item.ToReferenceToDoItemSettings().ToResult(), ct),
+                    ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateReferenceToDoItemAsync(
         Guid id,
         Guid referenceId,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
@@ -114,12 +114,12 @@ public class EfToDoService : IToDoService
                     item.ReferenceId = referenceId;
 
                     return Result.Success;
-                }, cancellationToken), cancellationToken), cancellationToken);
+                }, ct), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> ResetToDoItemAsync(
         ResetToDoItemOptions options,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
@@ -133,29 +133,29 @@ public class EfToDoService : IToDoService
                     {
                         item.IsCompleted = true;
 
-                        return UpdateDueDateAsync(context, item, offset, cancellationToken)
-                           .IfSuccessAsync(item.ToResult, cancellationToken);
+                        return UpdateDueDateAsync(context, item, offset, ct)
+                           .IfSuccessAsync(item.ToResult, ct);
                     }
 
                     return item.ToResult().ToValueTaskResult().ConfigureAwait(false);
-                }, cancellationToken)
+                }, ct)
                .IfSuccessAsync(
                     item => CircleCompletionAsync(context, item, options.IsMoveCircleOrderIndex,
-                            options.IsCompleteChildrenTask, options.IsOnlyCompletedTasks, cancellationToken)
+                            options.IsCompleteChildrenTask, options.IsOnlyCompletedTasks, ct)
                        .IfSuccessAsync(
-                            () => StepCompletionAsync(context, item, options.IsCompleteChildrenTask, cancellationToken),
-                            cancellationToken), cancellationToken), cancellationToken), cancellationToken);
+                            () => StepCompletionAsync(context, item, options.IsCompleteChildrenTask, ct),
+                            ct), ct), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> RandomizeChildrenOrderIndexAsync(
         Guid id,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
            .IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(() => context.Set<ToDoItemEntity>()
                .Where(x => x.ParentId == id)
-               .ToArrayEntitiesAsync(cancellationToken)
+               .ToArrayEntitiesAsync(ct)
                .IfSuccessAsync(children =>
                 {
                     var random = children.Randomize();
@@ -166,12 +166,12 @@ public class EfToDoService : IToDoService
                     }
 
                     return Result.Success;
-                }, cancellationToken), cancellationToken), cancellationToken);
+                }, ct), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoShortItem>>> GetParentsAsync(
         Guid id,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
@@ -183,20 +183,20 @@ public class EfToDoService : IToDoService
                         new(item.Id, item.Name),
                     };
 
-                    return GetParentsAsync(context, id, parents, cancellationToken)
+                    return GetParentsAsync(context, id, parents, ct)
                        .ConfigureAwait(false)
                        .IfSuccessAsync(() =>
                         {
                             parents.Reverse();
 
                             return parents.ToArray().ToReadOnlyMemory().ToResult();
-                        }, cancellationToken);
-                }, cancellationToken), cancellationToken);
+                        }, ct);
+                }, ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> SearchToDoItemIdsAsync(
         string searchText,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
@@ -206,12 +206,12 @@ public class EfToDoService : IToDoService
                    .Where(x => x.Name.Contains(searchText))
                    .OrderBy(x => x.OrderIndex)
                    .Select(x => x.Id)
-                   .ToArrayEntitiesAsync(cancellationToken), cancellationToken);
+                   .ToArrayEntitiesAsync(ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetLeafToDoItemIdsAsync(
         Guid id,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
@@ -219,7 +219,7 @@ public class EfToDoService : IToDoService
                .AsNoTracking()
                .Where(x => x.ParentId == id)
                .OrderBy(x => x.OrderIndex)
-               .ToArrayEntitiesAsync(cancellationToken)
+               .ToArrayEntitiesAsync(ct)
                .IfSuccessAsync(entities =>
                 {
                     if (entities.IsEmpty)
@@ -230,26 +230,26 @@ public class EfToDoService : IToDoService
                     var result = new List<Guid>();
 
                     return entities.ToResult()
-                       .IfSuccessForEachAsync(e => GetLeafToDoItemIdsAsync(context, e, cancellationToken)
+                       .IfSuccessForEachAsync(e => GetLeafToDoItemIdsAsync(context, e, ct)
                            .ConfigureAwait(false)
                            .IfSuccessAsync(i =>
                             {
                                 result.Add(i);
 
                                 return Result.Success;
-                            }, cancellationToken), cancellationToken)
-                       .IfSuccessAsync(() => result.ToArray().ToReadOnlyMemory().ToResult(), cancellationToken);
-                }, cancellationToken), cancellationToken);
+                            }, ct), ct)
+                       .IfSuccessAsync(() => result.ToArray().ToReadOnlyMemory().ToResult(), ct);
+                }, ct), ct);
     }
 
-    public ConfiguredValueTaskAwaitable<Result<ToDoItem>> GetToDoItemAsync(Guid id, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<ToDoItem>> GetToDoItemAsync(Guid id, CancellationToken ct)
     {
         return dbContextFactory.Create()
            .IfSuccessDisposeAsync(context => context.FindEntityAsync<ToDoItemEntity>(id)
                .IfSuccessAsync(item => getterToDoItemParametersService
                    .GetToDoItemParametersAsync(context, item,
                         httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset(),
-                        cancellationToken)
+                        ct)
                    .IfSuccessAsync(parameters =>
                     {
                         if (item.Type == ToDoItemType.Reference && item.ReferenceId.HasValue)
@@ -264,16 +264,16 @@ public class EfToDoService : IToDoService
                                         OrderIndex = item.OrderIndex,
                                         Name = item.Name,
                                     }).ToToDoItem(parameters)
-                                   .ToResult(), cancellationToken);
+                                   .ToResult(), ct);
                         }
 
                         return item.ToToDoItem(parameters).ToResult().ToValueTaskResult().ConfigureAwait(false);
-                    }, cancellationToken), cancellationToken), cancellationToken);
+                    }, ct), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetChildrenToDoItemIdsAsync(
         Guid id,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
@@ -283,12 +283,12 @@ public class EfToDoService : IToDoService
                    .Where(x => x.ParentId == id)
                    .OrderBy(x => x.OrderIndex)
                    .Select(x => x.Id)
-                   .ToArrayEntitiesAsync(cancellationToken), cancellationToken);
+                   .ToArrayEntitiesAsync(ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoShortItem>>> GetChildrenToDoItemShortsAsync(
         Guid id,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
@@ -297,12 +297,12 @@ public class EfToDoService : IToDoService
                    .AsNoTracking()
                    .Where(x => x.ParentId == id)
                    .OrderBy(x => x.OrderIndex)
-                   .ToArrayEntitiesAsync(cancellationToken)
-                   .IfSuccessAsync(items => items.ToToDoShortItem().ToResult(), cancellationToken), cancellationToken);
+                   .ToArrayEntitiesAsync(ct)
+                   .IfSuccessAsync(items => items.ToToDoShortItem().ToResult(), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetRootToDoItemIdsAsync(
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
@@ -312,11 +312,11 @@ public class EfToDoService : IToDoService
                    .Where(x => x.ParentId == null)
                    .OrderBy(x => x.OrderIndex)
                    .Select(x => x.Id)
-                   .ToArrayEntitiesAsync(cancellationToken), cancellationToken);
+                   .ToArrayEntitiesAsync(ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetFavoriteToDoItemIdsAsync(
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
@@ -326,12 +326,12 @@ public class EfToDoService : IToDoService
                    .OrderBy(x => x.OrderIndex)
                    .Where(x => x.IsFavorite)
                    .Select(x => x.Id)
-                   .ToArrayEntitiesAsync(cancellationToken), cancellationToken);
+                   .ToArrayEntitiesAsync(ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result<Guid>> AddRootToDoItemAsync(
         AddRootToDoItemOptions options,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         var id = Guid.NewGuid();
@@ -341,7 +341,7 @@ public class EfToDoService : IToDoService
                .AsNoTracking()
                .Where(x => x.ParentId == null)
                .Select(x => x.OrderIndex)
-               .ToArrayEntitiesAsync(cancellationToken)
+               .ToArrayEntitiesAsync(ct)
                .IfSuccessAsync(items =>
                 {
                     var newEntity = options.ToToDoItemEntity();
@@ -351,14 +351,14 @@ public class EfToDoService : IToDoService
                     newEntity.DescriptionType = options.DescriptionType;
                     newEntity.Link = options.Link.MapToString();
 
-                    return context.AddEntityAsync(newEntity, cancellationToken)
-                       .IfSuccessAsync(_ => id.ToResult(), cancellationToken);
-                }, cancellationToken), cancellationToken), cancellationToken);
+                    return context.AddEntityAsync(newEntity, ct)
+                       .IfSuccessAsync(_ => id.ToResult(), ct);
+                }, ct), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result<Guid>> AddToDoItemAsync(
         AddToDoItemOptions options,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         var id = Guid.NewGuid();
@@ -371,7 +371,7 @@ public class EfToDoService : IToDoService
                    .AsNoTracking()
                    .Where(x => x.ParentId == options.ParentId)
                    .Select(x => x.OrderIndex)
-                   .ToArrayEntitiesAsync(cancellationToken)
+                   .ToArrayEntitiesAsync(ct)
                    .IfSuccessAsync(items =>
                     {
                         var toDoItem = options.ToToDoItemEntity();
@@ -394,29 +394,29 @@ public class EfToDoService : IToDoService
                         toDoItem.Link = options.Link.TryGetValue(out var uri) ? uri.AbsoluteUri : string.Empty;
                         toDoItem.DescriptionType = options.DescriptionType;
 
-                        return context.AddEntityAsync(toDoItem, cancellationToken)
-                           .IfSuccessAsync(_ => id.ToResult(), cancellationToken);
-                    }, cancellationToken), cancellationToken), cancellationToken), cancellationToken);
+                        return context.AddEntityAsync(toDoItem, ct)
+                           .IfSuccessAsync(_ => id.ToResult(), ct);
+                    }, ct), ct), ct), ct);
     }
 
-    public ConfiguredValueTaskAwaitable<Result> DeleteToDoItemAsync(Guid id, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> DeleteToDoItemAsync(Guid id, CancellationToken ct)
     {
         return dbContextFactory.Create()
            .IfSuccessDisposeAsync(
                 context => context.AtomicExecuteAsync(
                     () => context.FindEntityAsync<ToDoItemEntity>(id)
                        .IfSuccessAsync(
-                            item => DeleteToDoItemAsync(id, context, cancellationToken)
+                            item => DeleteToDoItemAsync(id, context, ct)
                                .IfSuccessAsync(
                                     () => NormalizeOrderIndexAsync(context, item.ParentId.ToOption(),
-                                        cancellationToken), cancellationToken), cancellationToken), cancellationToken),
-                cancellationToken);
+                                        ct), ct), ct), ct),
+                ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemTypeOfPeriodicityAsync(
         Guid id,
         TypeOfPeriodicity type,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
@@ -427,13 +427,13 @@ public class EfToDoService : IToDoService
                     item.TypeOfPeriodicity = type;
 
                     return Result.Success;
-                }, cancellationToken), cancellationToken), cancellationToken);
+                }, ct), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemDueDateAsync(
         Guid id,
         DateOnly dueDate,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
@@ -444,13 +444,13 @@ public class EfToDoService : IToDoService
                     item.DueDate = dueDate;
 
                     return Result.Success;
-                }, cancellationToken), cancellationToken), cancellationToken);
+                }, ct), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemCompleteStatusAsync(
         Guid id,
         bool isComplete,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
@@ -463,7 +463,7 @@ public class EfToDoService : IToDoService
                     if (isComplete)
                     {
                         return getterToDoItemParametersService
-                           .GetToDoItemParametersAsync(context, item, offset, cancellationToken)
+                           .GetToDoItemParametersAsync(context, item, offset, ct)
                            .IfSuccessAsync(parameters =>
                             {
                                 if (!parameters.IsCan.HasFlag(ToDoItemIsCan.CanComplete))
@@ -500,30 +500,30 @@ public class EfToDoService : IToDoService
                                     default: throw new ArgumentOutOfRangeException();
                                 }
 
-                                return UpdateDueDateAsync(context, item, offset, cancellationToken)
+                                return UpdateDueDateAsync(context, item, offset, ct)
                                    .IfSuccessAsync(() =>
                                     {
                                         item.LastCompleted = DateTimeOffset.Now;
 
                                         return CircleCompletionAsync(context, item, true, false, false,
-                                                cancellationToken)
+                                                ct)
                                            .IfSuccessAsync(
-                                                () => StepCompletionAsync(context, item, false, cancellationToken),
-                                                cancellationToken);
-                                    }, cancellationToken);
-                            }, cancellationToken);
+                                                () => StepCompletionAsync(context, item, false, ct),
+                                                ct);
+                                    }, ct);
+                            }, ct);
                     }
 
                     item.IsCompleted = false;
 
                     return Result.AwaitableSuccess;
-                }, cancellationToken), cancellationToken), cancellationToken);
+                }, ct), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemNameAsync(
         Guid id,
         string name,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
@@ -533,12 +533,12 @@ public class EfToDoService : IToDoService
                     item.Name = name;
 
                     return Result.Success;
-                }, cancellationToken), cancellationToken), cancellationToken);
+                }, ct), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemOrderIndexAsync(
         UpdateOrderIndexToDoItemOptions options,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
@@ -551,7 +551,7 @@ public class EfToDoService : IToDoService
 
                         return context.Set<ToDoItemEntity>()
                            .Where(x => x.ParentId == item.ParentId && x.Id != item.Id && x.OrderIndex >= orderIndex)
-                           .ToArrayEntitiesAsync(cancellationToken)
+                           .ToArrayEntitiesAsync(ct)
                            .IfSuccessAsync(items =>
                             {
                                 foreach (var itemEntity in items.Span)
@@ -561,15 +561,15 @@ public class EfToDoService : IToDoService
 
                                 item.OrderIndex = orderIndex;
 
-                                return NormalizeOrderIndexAsync(context, item.ParentId.ToOption(), cancellationToken);
-                            }, cancellationToken);
-                    }, cancellationToken), cancellationToken), cancellationToken), cancellationToken);
+                                return NormalizeOrderIndexAsync(context, item.ParentId.ToOption(), ct);
+                            }, ct);
+                    }, ct), ct), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemDescriptionAsync(
         Guid id,
         string description,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
@@ -580,13 +580,13 @@ public class EfToDoService : IToDoService
                     item.Description = description;
 
                     return Result.Success;
-                }, cancellationToken), cancellationToken), cancellationToken);
+                }, ct), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemTypeAsync(
         Guid id,
         ToDoItemType type,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
@@ -597,10 +597,10 @@ public class EfToDoService : IToDoService
                     item.Type = type;
 
                     return Result.Success;
-                }, cancellationToken), cancellationToken), cancellationToken);
+                }, ct), ct), ct);
     }
 
-    public ConfiguredValueTaskAwaitable<Result> AddFavoriteToDoItemAsync(Guid id, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> AddFavoriteToDoItemAsync(Guid id, CancellationToken ct)
     {
         return dbContextFactory.Create()
            .IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(() => context
@@ -610,12 +610,12 @@ public class EfToDoService : IToDoService
                     item.IsFavorite = true;
 
                     return Result.Success;
-                }, cancellationToken), cancellationToken), cancellationToken);
+                }, ct), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> RemoveFavoriteToDoItemAsync(
         Guid id,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
@@ -626,13 +626,13 @@ public class EfToDoService : IToDoService
                     item.IsFavorite = false;
 
                     return Result.Success;
-                }, cancellationToken), cancellationToken), cancellationToken);
+                }, ct), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemIsRequiredCompleteInDueDateAsync(
         Guid id,
         bool value,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
@@ -643,11 +643,11 @@ public class EfToDoService : IToDoService
                     item.IsRequiredCompleteInDueDate = value;
 
                     return Result.Success;
-                }, cancellationToken), cancellationToken), cancellationToken);
+                }, ct), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<Guid>>> GetTodayToDoItemsAsync(
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
@@ -664,20 +664,20 @@ public class EfToDoService : IToDoService
                     x.Id,
                     x.DueDate,
                 })
-               .ToArrayEntitiesAsync(cancellationToken)
+               .ToArrayEntitiesAsync(ct)
                .IfSuccessAsync(
                     items => items.ToArray()
                        .Where(x => x.DueDate <= DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly())
                        .Select(x => x.Id)
                        .ToArray()
                        .ToReadOnlyMemory()
-                       .ToResult(), cancellationToken), cancellationToken);
+                       .ToResult(), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemAnnuallyPeriodicityAsync(
         Guid id,
         AnnuallyPeriodicity periodicity,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
@@ -688,13 +688,13 @@ public class EfToDoService : IToDoService
                     item.SetDaysOfYear(periodicity.Days);
 
                     return Result.Success;
-                }, cancellationToken), cancellationToken), cancellationToken);
+                }, ct), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemMonthlyPeriodicityAsync(
         Guid id,
         MonthlyPeriodicity periodicity,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
@@ -705,13 +705,13 @@ public class EfToDoService : IToDoService
                     item.SetDaysOfMonth(periodicity.Days);
 
                     return Result.Success;
-                }, cancellationToken), cancellationToken), cancellationToken);
+                }, ct), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemWeeklyPeriodicityAsync(
         Guid id,
         WeeklyPeriodicity periodicity,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
@@ -722,12 +722,12 @@ public class EfToDoService : IToDoService
                     item.SetDaysOfWeek(periodicity.Days);
 
                     return Result.Success;
-                }, cancellationToken), cancellationToken), cancellationToken);
+                }, ct), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoSelectorItem>>> GetToDoSelectorItemsAsync(
         ReadOnlyMemory<Guid> ignoreIds,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
@@ -738,18 +738,18 @@ public class EfToDoService : IToDoService
                      && !ignoreIds.ToArray().Contains(x.Id)
                      && x.Type != ToDoItemType.Reference)
                    .OrderBy(x => x.OrderIndex)
-                   .ToArrayEntitiesAsync(cancellationToken)
+                   .ToArrayEntitiesAsync(ct)
                    .IfSuccessForEachAsync(
-                        item => GetToDoSelectorItemsAsync(context, item.Id, ignoreIds, cancellationToken)
+                        item => GetToDoSelectorItemsAsync(context, item.Id, ignoreIds, ct)
                            .IfSuccessAsync(
                                 children => new ToDoSelectorItem(item.Id, item.Name, children.ToArray()).ToResult(),
-                                cancellationToken), cancellationToken), cancellationToken);
+                                ct), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemParentAsync(
         Guid id,
         Guid parentId,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
@@ -759,7 +759,7 @@ public class EfToDoService : IToDoService
                    .AsNoTracking()
                    .Where(x => x.ParentId == parentId)
                    .Select(x => x.OrderIndex)
-                   .ToArrayEntitiesAsync(cancellationToken)
+                   .ToArrayEntitiesAsync(ct)
                    .IfSuccessAsync(items =>
                     {
                         entity = entity.ThrowIfNull();
@@ -767,10 +767,10 @@ public class EfToDoService : IToDoService
                         entity.OrderIndex = items.Length == 0 ? 0 : items.Max() + 1;
 
                         return Result.Success;
-                    }, cancellationToken), cancellationToken), cancellationToken), cancellationToken);
+                    }, ct), ct), ct), ct);
     }
 
-    public ConfiguredValueTaskAwaitable<Result> ToDoItemToRootAsync(Guid id, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> ToDoItemToRootAsync(Guid id, CancellationToken ct)
     {
         return dbContextFactory.Create()
            .IfSuccessDisposeAsync(context => context.AtomicExecuteAsync(() => context
@@ -779,7 +779,7 @@ public class EfToDoService : IToDoService
                    .AsNoTracking()
                    .Where(x => x.ParentId == null)
                    .Select(x => x.OrderIndex)
-                   .ToArrayEntitiesAsync(cancellationToken)
+                   .ToArrayEntitiesAsync(ct)
                    .IfSuccessAsync(items =>
                     {
                         entity = entity.ThrowIfNull();
@@ -787,12 +787,12 @@ public class EfToDoService : IToDoService
                         entity.OrderIndex = items.Length == 0 ? 0 : items.Max() + 1;
 
                         return Result.Success;
-                    }, cancellationToken), cancellationToken), cancellationToken), cancellationToken);
+                    }, ct), ct), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result<string>> ToDoItemToStringAsync(
         ToDoItemToStringOptions options,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
@@ -802,15 +802,15 @@ public class EfToDoService : IToDoService
             {
                 var builder = new StringBuilder();
 
-                return ToDoItemToStringAsync(context, options, 0, builder, offset, cancellationToken)
-                   .IfSuccessAsync(() => builder.ToString().Trim().ToResult(), cancellationToken);
-            }, cancellationToken);
+                return ToDoItemToStringAsync(context, options, 0, builder, offset, ct)
+                   .IfSuccessAsync(() => builder.ToString().Trim().ToResult(), ct);
+            }, ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemDaysOffsetAsync(
         Guid id,
         ushort days,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
@@ -821,13 +821,13 @@ public class EfToDoService : IToDoService
                     item.DaysOffset = days;
 
                     return Result.Success;
-                }, cancellationToken), cancellationToken), cancellationToken);
+                }, ct), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemMonthsOffsetAsync(
         Guid id,
         ushort months,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
@@ -838,13 +838,13 @@ public class EfToDoService : IToDoService
                     item.MonthsOffset = months;
 
                     return Result.Success;
-                }, cancellationToken), cancellationToken), cancellationToken);
+                }, ct), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemWeeksOffsetAsync(
         Guid id,
         ushort weeks,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
@@ -855,13 +855,13 @@ public class EfToDoService : IToDoService
                     item.WeeksOffset = weeks;
 
                     return Result.Success;
-                }, cancellationToken), cancellationToken), cancellationToken);
+                }, ct), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemYearsOffsetAsync(
         Guid id,
         ushort years,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
@@ -872,13 +872,13 @@ public class EfToDoService : IToDoService
                     item.YearsOffset = years;
 
                     return Result.Success;
-                }, cancellationToken), cancellationToken), cancellationToken);
+                }, ct), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemChildrenTypeAsync(
         Guid id,
         ToDoItemChildrenType type,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
@@ -889,12 +889,12 @@ public class EfToDoService : IToDoService
                     item.ChildrenType = type;
 
                     return Result.Success;
-                }, cancellationToken), cancellationToken), cancellationToken);
+                }, ct), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoShortItem>>> GetSiblingsAsync(
         Guid id,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
@@ -904,13 +904,13 @@ public class EfToDoService : IToDoService
                         item => context.Set<ToDoItemEntity>()
                            .Where(x => x.ParentId == item.ParentId && x.Id != item.Id)
                            .OrderBy(x => x.OrderIndex)
-                           .ToArrayEntitiesAsync(cancellationToken)
-                           .IfSuccessAsync(items => items.ToToDoShortItem().ToResult(), cancellationToken),
-                        cancellationToken), cancellationToken);
+                           .ToArrayEntitiesAsync(ct)
+                           .IfSuccessAsync(items => items.ToToDoShortItem().ToResult(), ct),
+                        ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result<OptionStruct<ActiveToDoItem>>> GetCurrentActiveToDoItemAsync(
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         var offset = httpContextAccessor.HttpContext.ThrowIfNull().GetTimeZoneOffset();
@@ -919,9 +919,9 @@ public class EfToDoService : IToDoService
            .IfSuccessDisposeAsync(context => context.Set<ToDoItemEntity>()
                .Where(x => x.ParentId == null)
                .OrderBy(x => x.OrderIndex)
-               .ToArrayEntitiesAsync(cancellationToken)
+               .ToArrayEntitiesAsync(ct)
                .IfSuccessForEachAsync(item => getterToDoItemParametersService
-                   .GetToDoItemParametersAsync(context, item, offset, cancellationToken)
+                   .GetToDoItemParametersAsync(context, item, offset, ct)
                    .IfSuccessAsync(parameters =>
                     {
                         if (parameters.ActiveItem.IsHasValue)
@@ -930,19 +930,19 @@ public class EfToDoService : IToDoService
                         }
 
                         return new(new OptionStruct<ActiveToDoItem>());
-                    }, cancellationToken), cancellationToken)
+                    }, ct), ct)
                .IfSuccessAsync(items =>
                 {
                     var item = items.ToArray().FirstOrDefault(x => x.IsHasValue);
 
                     return new Result<OptionStruct<ActiveToDoItem>>(item);
-                }, cancellationToken), cancellationToken);
+                }, ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemLinkAsync(
         Guid id,
         Option<Uri> link,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
@@ -953,111 +953,111 @@ public class EfToDoService : IToDoService
                     value.Link = link.MapToString();
 
                     return Result.Success;
-                }, cancellationToken), cancellationToken), cancellationToken);
+                }, ct), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result<PlannedToDoItemSettings>> GetPlannedToDoItemSettingsAsync(
         Guid id,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
            .IfSuccessDisposeAsync(
                 context => context.FindEntityAsync<ToDoItemEntity>(id)
-                   .IfSuccessAsync(item => item.ToPlannedToDoItemSettings().ToResult(), cancellationToken),
-                cancellationToken);
+                   .IfSuccessAsync(item => item.ToPlannedToDoItemSettings().ToResult(), ct),
+                ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result<ValueToDoItemSettings>> GetValueToDoItemSettingsAsync(
         Guid id,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
            .IfSuccessDisposeAsync(
                 context => context.FindEntityAsync<ToDoItemEntity>(id)
-                   .IfSuccessAsync(item => item.ToValueToDoItemSettings().ToResult(), cancellationToken),
-                cancellationToken);
+                   .IfSuccessAsync(item => item.ToValueToDoItemSettings().ToResult(), ct),
+                ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result<PeriodicityToDoItemSettings>> GetPeriodicityToDoItemSettingsAsync(
         Guid id,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
            .IfSuccessAsync(
                 context => context.FindEntityAsync<ToDoItemEntity>(id)
-                   .IfSuccessAsync(item => item.ToPeriodicityToDoItemSettings().ToResult(), cancellationToken),
-                cancellationToken);
+                   .IfSuccessAsync(item => item.ToPeriodicityToDoItemSettings().ToResult(), ct),
+                ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result<WeeklyPeriodicity>> GetWeeklyPeriodicityAsync(
         Guid id,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
            .IfSuccessDisposeAsync(
                 context => context.FindEntityAsync<ToDoItemEntity>(id)
-                   .IfSuccessAsync(item => item.ToWeeklyPeriodicity().ToResult(), cancellationToken),
-                cancellationToken);
+                   .IfSuccessAsync(item => item.ToWeeklyPeriodicity().ToResult(), ct),
+                ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result<MonthlyPeriodicity>> GetMonthlyPeriodicityAsync(
         Guid id,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
            .IfSuccessDisposeAsync(
                 context => context.FindEntityAsync<ToDoItemEntity>(id)
-                   .IfSuccessAsync(item => item.ToMonthlyPeriodicity().ToResult(), cancellationToken),
-                cancellationToken);
+                   .IfSuccessAsync(item => item.ToMonthlyPeriodicity().ToResult(), ct),
+                ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result<AnnuallyPeriodicity>> GetAnnuallyPeriodicityAsync(
         Guid id,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
            .IfSuccessDisposeAsync(
                 context => context.FindEntityAsync<ToDoItemEntity>(id)
-                   .IfSuccessAsync(item => item.ToAnnuallyPeriodicity().ToResult(), cancellationToken),
-                cancellationToken);
+                   .IfSuccessAsync(item => item.ToAnnuallyPeriodicity().ToResult(), ct),
+                ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result<PeriodicityOffsetToDoItemSettings>>
-        GetPeriodicityOffsetToDoItemSettingsAsync(Guid id, CancellationToken cancellationToken)
+        GetPeriodicityOffsetToDoItemSettingsAsync(Guid id, CancellationToken ct)
     {
         return dbContextFactory.Create()
            .IfSuccessDisposeAsync(
                 context => context.FindEntityAsync<ToDoItemEntity>(id)
-                   .IfSuccessAsync(item => item.ToPeriodicityOffsetToDoItemSettings().ToResult(), cancellationToken),
-                cancellationToken);
+                   .IfSuccessAsync(item => item.ToPeriodicityOffsetToDoItemSettings().ToResult(), ct),
+                ct);
     }
 
     public ConfiguredCancelableAsyncEnumerable<Result<ReadOnlyMemory<ToDoItem>>> GetToDoItemsAsync(
         ReadOnlyMemory<Guid> ids,
         uint chunkSize,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
-        return GetToDoItemsCore(ids, chunkSize, cancellationToken).ConfigureAwait(false);
+        return GetToDoItemsCore(ids, chunkSize, ct).ConfigureAwait(false);
     }
 
     private async IAsyncEnumerable<Result<ReadOnlyMemory<ToDoItem>>> GetToDoItemsCore(
         ReadOnlyMemory<Guid> ids,
         uint chunkSize,
-        [EnumeratorCancellation] CancellationToken cancellationToken
+        [EnumeratorCancellation] CancellationToken ct
     )
     {
         var items = new List<ToDoItem>();
 
         for (var i = 0; i < ids.Length; i++)
         {
-            if (cancellationToken.IsCancellationRequested)
+            if (ct.IsCancellationRequested)
             {
                 yield return Result<ReadOnlyMemory<ToDoItem>>.CanceledByUserError;
 
@@ -1074,7 +1074,7 @@ public class EfToDoService : IToDoService
                 }
             }
 
-            var item = await GetToDoItemAsync(ids.Span[i], cancellationToken);
+            var item = await GetToDoItemAsync(ids.Span[i], ct);
 
             if (item.IsHasError)
             {
@@ -1098,22 +1098,22 @@ public class EfToDoService : IToDoService
         SpravyDbToDoDbContext context,
         ToDoItemEntity clone,
         OptionStruct<Guid> parentId,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         var id = clone.Id;
         clone.Id = Guid.NewGuid();
         clone.ParentId = parentId.TryGetValue(out var value) ? value : null;
-        await context.AddAsync(clone, cancellationToken);
+        await context.AddAsync(clone, ct);
 
         var items = await context.Set<ToDoItemEntity>()
            .AsNoTracking()
            .Where(x => x.ParentId == id)
-           .ToArrayAsync(cancellationToken);
+           .ToArrayAsync(ct);
 
         foreach (var item in items)
         {
-            await AddCloneAsync(context, item, clone.Id.ToOption(), cancellationToken);
+            await AddCloneAsync(context, item, clone.Id.ToOption(), ct);
         }
 
         return Result.Success;
@@ -1122,39 +1122,39 @@ public class EfToDoService : IToDoService
     private ConfiguredValueTaskAwaitable<Result> DeleteToDoItemAsync(
         Guid id,
         SpravyDbToDoDbContext context,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return context.FindEntityAsync<ToDoItemEntity>(id)
            .IfSuccessAsync(item => context.Set<ToDoItemEntity>()
                .AsNoTracking()
                .Where(x => x.ParentId == id)
-               .ToArrayEntitiesAsync(cancellationToken)
-               .IfSuccessForEachAsync(child => DeleteToDoItemAsync(child.Id, context, cancellationToken),
-                    cancellationToken)
+               .ToArrayEntitiesAsync(ct)
+               .IfSuccessForEachAsync(child => DeleteToDoItemAsync(child.Id, context, ct),
+                    ct)
                .IfSuccessAsync(() => context.Set<ToDoItemEntity>()
                    .Where(x => x.ReferenceId == id)
-                   .ToArrayEntitiesAsync(cancellationToken)
+                   .ToArrayEntitiesAsync(ct)
                    .IfSuccessForEachAsync(i =>
                     {
                         i.ReferenceId = null;
 
                         return Result.AwaitableSuccess;
-                    }, cancellationToken), cancellationToken)
-               .IfSuccessAsync(() => context.RemoveEntity(item), cancellationToken), cancellationToken);
+                    }, ct), ct)
+               .IfSuccessAsync(() => context.RemoveEntity(item), ct), ct);
     }
 
     private ConfiguredValueTaskAwaitable<Result> StepCompletionAsync(
         SpravyDbToDoDbContext context,
         ToDoItemEntity item,
         bool completeTask,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return context.Set<ToDoItemEntity>()
            .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Step)
            .OrderBy(x => x.OrderIndex)
-           .ToArrayEntitiesAsync(cancellationToken)
+           .ToArrayEntitiesAsync(ct)
            .IfSuccessAsync(steps =>
             {
                 foreach (var step in steps.Span)
@@ -1165,20 +1165,20 @@ public class EfToDoService : IToDoService
                 return context.Set<ToDoItemEntity>()
                    .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Group)
                    .OrderBy(x => x.OrderIndex)
-                   .ToArrayEntitiesAsync(cancellationToken)
-                   .IfSuccessForEachAsync(group => StepCompletionAsync(context, group, completeTask, cancellationToken),
-                        cancellationToken);
-            }, cancellationToken)
+                   .ToArrayEntitiesAsync(ct)
+                   .IfSuccessForEachAsync(group => StepCompletionAsync(context, group, completeTask, ct),
+                        ct);
+            }, ct)
            .IfSuccessAsync(() => context.Set<ToDoItemEntity>()
                .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Reference && x.ReferenceId.HasValue)
                .OrderBy(x => x.OrderIndex)
-               .ToArrayEntitiesAsync(cancellationToken)
+               .ToArrayEntitiesAsync(ct)
                .IfSuccessForEachAsync(reference => context
                    .FindEntityAsync<ToDoItemEntity>(reference.ReferenceId.ThrowIfNullStruct())
                    .IfSuccessAsync(i => i.Type switch
                     {
                         ToDoItemType.Value => Result.AwaitableSuccess,
-                        ToDoItemType.Group => StepCompletionAsync(context, i, completeTask, cancellationToken),
+                        ToDoItemType.Group => StepCompletionAsync(context, i, completeTask, ct),
                         ToDoItemType.Planned => Result.AwaitableSuccess,
                         ToDoItemType.Periodicity => Result.AwaitableSuccess,
                         ToDoItemType.PeriodicityOffset => Result.AwaitableSuccess,
@@ -1191,7 +1191,7 @@ public class EfToDoService : IToDoService
                            .ConfigureAwait(false),
                         _ => new Result(new ToDoItemTypeOutOfRangeError(i.Type)).ToValueTaskResult()
                            .ConfigureAwait(false),
-                    }, cancellationToken), cancellationToken), cancellationToken);
+                    }, ct), ct), ct);
     }
 
     private ConfiguredValueTaskAwaitable<Result> CircleCompletionAsync(
@@ -1200,13 +1200,13 @@ public class EfToDoService : IToDoService
         bool moveCircleOrderIndex,
         bool completeTask,
         bool onlyCompletedTasks,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return context.Set<ToDoItemEntity>()
            .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Circle)
            .OrderBy(x => x.OrderIndex)
-           .ToArrayEntitiesAsync(cancellationToken)
+           .ToArrayEntitiesAsync(ct)
            .IfSuccessAsync(circleChildren =>
             {
                 if (circleChildren.Length != 0)
@@ -1241,22 +1241,22 @@ public class EfToDoService : IToDoService
                 return context.Set<ToDoItemEntity>()
                    .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Group)
                    .OrderBy(x => x.OrderIndex)
-                   .ToArrayEntitiesAsync(cancellationToken)
+                   .ToArrayEntitiesAsync(ct)
                    .IfSuccessForEachAsync(
                         group => CircleCompletionAsync(context, group, moveCircleOrderIndex, completeTask,
-                            onlyCompletedTasks, cancellationToken), cancellationToken);
-            }, cancellationToken)
+                            onlyCompletedTasks, ct), ct);
+            }, ct)
            .IfSuccessAsync(() => context.Set<ToDoItemEntity>()
                .Where(x => x.ParentId == item.Id && x.Type == ToDoItemType.Reference && x.ReferenceId.HasValue)
                .OrderBy(x => x.OrderIndex)
-               .ToArrayEntitiesAsync(cancellationToken)
+               .ToArrayEntitiesAsync(ct)
                .IfSuccessForEachAsync(reference => context
                    .FindEntityAsync<ToDoItemEntity>(reference.ReferenceId.ThrowIfNullStruct())
                    .IfSuccessAsync(i => i.Type switch
                     {
                         ToDoItemType.Value => Result.AwaitableSuccess,
                         ToDoItemType.Group => CircleCompletionAsync(context, i, moveCircleOrderIndex, completeTask,
-                            onlyCompletedTasks, cancellationToken),
+                            onlyCompletedTasks, ct),
                         ToDoItemType.Planned => Result.AwaitableSuccess,
                         ToDoItemType.Periodicity => Result.AwaitableSuccess,
                         ToDoItemType.PeriodicityOffset => Result.AwaitableSuccess,
@@ -1267,7 +1267,7 @@ public class EfToDoService : IToDoService
                            .ConfigureAwait(false),
                         _ => new Result(new ToDoItemTypeOutOfRangeError(i.Type)).ToValueTaskResult()
                            .ConfigureAwait(false),
-                    }, cancellationToken), cancellationToken), cancellationToken);
+                    }, ct), ct), ct);
     }
 
     private ConfiguredValueTaskAwaitable<Result> ToDoItemToStringAsync(
@@ -1276,16 +1276,16 @@ public class EfToDoService : IToDoService
         ushort level,
         StringBuilder builder,
         TimeSpan offset,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return context.Set<ToDoItemEntity>()
            .AsNoTracking()
            .Where(x => x.ParentId == options.Id)
            .OrderBy(x => x.OrderIndex)
-           .ToArrayEntitiesAsync(cancellationToken)
+           .ToArrayEntitiesAsync(ct)
            .IfSuccessForEachAsync(item => getterToDoItemParametersService
-               .GetToDoItemParametersAsync(context, item, offset, cancellationToken)
+               .GetToDoItemParametersAsync(context, item, offset, ct)
                .IfSuccessAsync(parameters =>
                 {
                     if (!options.Statuses.Span.ToArray().Contains(parameters.Status))
@@ -1298,39 +1298,39 @@ public class EfToDoService : IToDoService
                     builder.AppendLine();
 
                     return ToDoItemToStringAsync(context, new(options.Statuses.ToArray(), item.Id), (ushort)(level + 1),
-                        builder, offset, cancellationToken);
-                }, cancellationToken), cancellationToken);
+                        builder, offset, ct);
+                }, ct), ct);
     }
 
     private ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoSelectorItem>>> GetToDoSelectorItemsAsync(
         SpravyDbToDoDbContext context,
         Guid id,
         ReadOnlyMemory<Guid> ignoreIds,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return context.Set<ToDoItemEntity>()
            .AsNoTracking()
            .Where(x => x.ParentId == id && !ignoreIds.ToArray().Contains(x.Id) && x.Type != ToDoItemType.Reference)
            .OrderBy(x => x.OrderIndex)
-           .ToArrayEntitiesAsync(cancellationToken)
+           .ToArrayEntitiesAsync(ct)
            .IfSuccessForEachAsync(
-                item => GetToDoSelectorItemsAsync(context, item.Id, ignoreIds, cancellationToken)
+                item => GetToDoSelectorItemsAsync(context, item.Id, ignoreIds, ct)
                    .IfSuccessAsync(children => new ToDoSelectorItem(item.Id, item.Name, children.ToArray()).ToResult(),
-                        cancellationToken), cancellationToken);
+                        ct), ct);
     }
 
     private async IAsyncEnumerable<Result<Guid>> GetLeafToDoItemIdsAsync(
         SpravyDbToDoDbContext context,
         ToDoItemEntity itemEntity,
-        [EnumeratorCancellation] CancellationToken cancellationToken
+        [EnumeratorCancellation] CancellationToken ct
     )
     {
         var entities = await context.Set<ToDoItemEntity>()
            .AsNoTracking()
            .Where(x => x.ParentId == itemEntity.Id)
            .OrderBy(x => x.OrderIndex)
-           .ToArrayAsync(cancellationToken);
+           .ToArrayAsync(ct);
 
         if (entities.IsEmpty())
         {
@@ -1341,7 +1341,7 @@ public class EfToDoService : IToDoService
 
         foreach (var entity in entities)
         {
-            await foreach (var item in GetLeafToDoItemIdsAsync(context, entity, cancellationToken))
+            await foreach (var item in GetLeafToDoItemIdsAsync(context, entity, ct))
             {
                 yield return item;
             }
@@ -1351,14 +1351,14 @@ public class EfToDoService : IToDoService
     private ConfiguredValueTaskAwaitable<Result> NormalizeOrderIndexAsync(
         SpravyDbToDoDbContext context,
         OptionStruct<Guid> parentId,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         var pi = parentId.TryGetValue(out var value) ? (Guid?)value : null;
 
         return context.Set<ToDoItemEntity>()
            .Where(x => x.ParentId == pi)
-           .ToArrayEntitiesAsync(cancellationToken)
+           .ToArrayEntitiesAsync(ct)
            .IfSuccessAsync(items =>
             {
                 var ordered = items.ToArray().OrderBy(x => x.OrderIndex).ToArray();
@@ -1369,20 +1369,20 @@ public class EfToDoService : IToDoService
                 }
 
                 return Result.Success;
-            }, cancellationToken);
+            }, ct);
     }
 
     private async ValueTask<Result> GetParentsAsync(
         SpravyDbToDoDbContext context,
         Guid id,
         List<ToDoShortItem> parents,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         var parent = await context.Set<ToDoItemEntity>()
            .AsNoTracking()
            .Include(x => x.Parent)
-           .SingleAsync(x => x.Id == id, cancellationToken);
+           .SingleAsync(x => x.Id == id, ct);
 
         if (parent.Parent is null)
         {
@@ -1391,14 +1391,14 @@ public class EfToDoService : IToDoService
 
         parents.Add(parent.Parent.ToToDoShortItem());
 
-        return await GetParentsAsync(context, parent.Parent.Id, parents, cancellationToken);
+        return await GetParentsAsync(context, parent.Parent.Id, parents, ct);
     }
 
     private ConfiguredValueTaskAwaitable<Result> UpdateDueDateAsync(
         SpravyDbToDoDbContext context,
         ToDoItemEntity item,
         TimeSpan offset,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         switch (item.Type)
@@ -1407,9 +1407,9 @@ public class EfToDoService : IToDoService
             case ToDoItemType.Group: return Result.AwaitableSuccess;
             case ToDoItemType.Planned: return Result.AwaitableSuccess;
             case ToDoItemType.Periodicity:
-                return AddPeriodicity(item, cancellationToken).ToValueTaskResult().ConfigureAwait(false);
+                return AddPeriodicity(item, ct).ToValueTaskResult().ConfigureAwait(false);
             case ToDoItemType.PeriodicityOffset:
-                return AddPeriodicityOffset(item, offset, cancellationToken).ToValueTaskResult().ConfigureAwait(false);
+                return AddPeriodicityOffset(item, offset, ct).ToValueTaskResult().ConfigureAwait(false);
             case ToDoItemType.Circle: return Result.AwaitableSuccess;
             case ToDoItemType.Step: return Result.AwaitableSuccess;
             case ToDoItemType.Reference:
@@ -1419,15 +1419,15 @@ public class EfToDoService : IToDoService
                 }
 
                 return context.FindEntityAsync<ToDoItemEntity>(item.ReferenceId.Value)
-                   .IfSuccessAsync(i => UpdateDueDateAsync(context, i, offset, cancellationToken), cancellationToken);
+                   .IfSuccessAsync(i => UpdateDueDateAsync(context, i, offset, ct), ct);
             default:
                 return new Result(new ToDoItemTypeOutOfRangeError(item.Type)).ToValueTaskResult().ConfigureAwait(false);
         }
     }
 
-    private Result AddPeriodicityOffset(ToDoItemEntity item, TimeSpan offset, CancellationToken cancellationToken)
+    private Result AddPeriodicityOffset(ToDoItemEntity item, TimeSpan offset, CancellationToken ct)
     {
-        if (cancellationToken.IsCancellationRequested)
+        if (ct.IsCancellationRequested)
         {
             return Result.CanceledByUserError;
         }
@@ -1453,9 +1453,9 @@ public class EfToDoService : IToDoService
         return Result.Success;
     }
 
-    private Result AddPeriodicity(ToDoItemEntity item, CancellationToken cancellationToken)
+    private Result AddPeriodicity(ToDoItemEntity item, CancellationToken ct)
     {
-        if (cancellationToken.IsCancellationRequested)
+        if (ct.IsCancellationRequested)
         {
             return Result.CanceledByUserError;
         }

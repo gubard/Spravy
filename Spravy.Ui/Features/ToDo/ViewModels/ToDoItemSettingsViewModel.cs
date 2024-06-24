@@ -33,7 +33,7 @@ public class ToDoItemSettingsViewModel : NavigatableViewModelBase
     [Reactive]
     public Guid ToDoItemId { get; set; }
 
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
         ToDoItemContent.WhenAnyValue(x => x.Type)
            .Subscribe(x => Settings = x switch
@@ -57,12 +57,12 @@ public class ToDoItemSettingsViewModel : NavigatableViewModelBase
                 _ => throw new ArgumentOutOfRangeException(),
             });
 
-        return RefreshAsync(cancellationToken);
+        return RefreshAsync(ct);
     }
 
-    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken ct)
     {
-        return toDoService.GetToDoItemAsync(ToDoItemId, cancellationToken)
+        return toDoService.GetToDoItemAsync(ToDoItemId, ct)
            .IfSuccessAsync(toDoItem => this.InvokeUiBackgroundAsync(() =>
             {
                 ToDoItemContent.Name = toDoItem.Name;
@@ -70,7 +70,7 @@ public class ToDoItemSettingsViewModel : NavigatableViewModelBase
                 ToDoItemContent.Type = toDoItem.Type;
 
                 return Result.Success;
-            }), cancellationToken);
+            }), ct);
     }
 
     public override Result Stop()
@@ -80,13 +80,13 @@ public class ToDoItemSettingsViewModel : NavigatableViewModelBase
 
     public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
         object setting,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return Result.AwaitableSuccess;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;
     }

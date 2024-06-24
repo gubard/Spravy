@@ -13,7 +13,7 @@ public class InfoViewModel : ViewModelBase
     public Func<object, ConfiguredValueTaskAwaitable<Result>>? OkTask { get; set; }
     public SpravyCommand OkCommand { get; }
     
-    private ConfiguredValueTaskAwaitable<Result> OkAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> OkAsync(CancellationToken ct)
     {
         var con = Content.ThrowIfNull();
         

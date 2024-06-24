@@ -79,13 +79,13 @@ public class GrpcEventBusService : EventBusService.EventBusServiceBase
 
     private async ValueTask<IsSuccessValue<ReadOnlyMemory<EventValue>>> WaitAnyEventAsync(
         ReadOnlyMemory<Guid> eventIds,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
-        while (!cancellationToken.IsCancellationRequested)
+        while (!ct.IsCancellationRequested)
         {
             var eventValue = await eventStorage.PushEventAsync(eventIds);
-            await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
+            await Task.Delay(TimeSpan.FromSeconds(1), ct);
 
             return new(eventValue);
         }

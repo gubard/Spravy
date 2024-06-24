@@ -9,7 +9,7 @@ namespace Spravy.Ui.Browser.Services;
 
 public class BrowserOpenerLink : IOpenerLink
 {
-    public ConfiguredValueTaskAwaitable<Result> OpenLinkAsync(Uri link, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> OpenLinkAsync(Uri link, CancellationToken ct)
     {
         JSInterop.WindowOpen(link.AbsoluteUri);
 

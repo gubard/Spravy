@@ -9,14 +9,14 @@ public class UiApplicationService : IUiApplicationService
         this.mainSplitViewModel = mainSplitViewModel;
     }
     
-    public ConfiguredValueTaskAwaitable<Result> RefreshCurrentViewAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> RefreshCurrentViewAsync(CancellationToken ct)
     {
         if (mainSplitViewModel.Content is not IRefresh refresh)
         {
             return Result.AwaitableSuccess;
         }
         
-        return refresh.RefreshAsync(cancellationToken);
+        return refresh.RefreshAsync(ct);
     }
     
     public Result<Type> GetCurrentViewType()

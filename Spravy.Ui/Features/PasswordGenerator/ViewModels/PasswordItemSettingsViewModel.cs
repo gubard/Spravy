@@ -46,9 +46,9 @@ public class PasswordItemSettingsViewModel : ViewModelBase
     [Reactive]
     public string CustomAvailableCharacters { get; set; } = string.Empty;
 
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
-        return passwordService.GetPasswordItemAsync(Id, cancellationToken)
+        return passwordService.GetPasswordItemAsync(Id, ct)
            .IfSuccessAsync(value => this.InvokeUiBackgroundAsync(() =>
             {
                 Name = value.Name;
@@ -62,6 +62,6 @@ public class PasswordItemSettingsViewModel : ViewModelBase
                 CustomAvailableCharacters = value.CustomAvailableCharacters;
 
                 return Result.Success;
-            }), cancellationToken);
+            }), ct);
     }
 }

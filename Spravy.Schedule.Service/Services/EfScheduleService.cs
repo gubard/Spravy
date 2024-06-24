@@ -23,7 +23,7 @@ public class EfScheduleService : IScheduleService
 
     public ConfiguredValueTaskAwaitable<Result> AddTimerAsync(
         AddTimerParameters parameters,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         var newTimer = new TimerEntity
@@ -37,12 +37,12 @@ public class EfScheduleService : IScheduleService
         return dbContextFactory.Create()
            .IfSuccessDisposeAsync(
                 context => context.AtomicExecuteAsync(
-                    () => context.Set<TimerEntity>().AddEntityAsync(newTimer, cancellationToken).ToResultOnlyAsync(),
-                    cancellationToken), cancellationToken);
+                    () => context.Set<TimerEntity>().AddEntityAsync(newTimer, ct).ToResultOnlyAsync(),
+                    ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<TimerItem>>> GetListTimesAsync(
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return dbContextFactory.Create()
@@ -50,17 +50,17 @@ public class EfScheduleService : IScheduleService
                 context => context.AtomicExecuteAsync(
                     () => context.Set<TimerEntity>()
                        .AsNoTracking()
-                       .ToArrayEntitiesAsync(cancellationToken)
+                       .ToArrayEntitiesAsync(ct)
                        .IfSuccessAsync(timers => timers.ToTimerItem().ToResult(),
-                            cancellationToken), cancellationToken), cancellationToken);
+                            ct), ct), ct);
     }
 
-    public ConfiguredValueTaskAwaitable<Result> RemoveTimerAsync(Guid id, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> RemoveTimerAsync(Guid id, CancellationToken ct)
     {
         return dbContextFactory.Create()
            .IfSuccessDisposeAsync(
                 context => context.AtomicExecuteAsync(
                     () => context.FindEntityAsync<TimerEntity>(id)
-                       .IfSuccessAsync(context.RemoveEntity, cancellationToken), cancellationToken), cancellationToken);
+                       .IfSuccessAsync(context.RemoveEntity, ct), ct), ct);
     }
 }

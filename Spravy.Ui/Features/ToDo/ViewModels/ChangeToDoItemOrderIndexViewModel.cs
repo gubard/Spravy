@@ -28,11 +28,11 @@ public class ChangeToDoItemOrderIndexViewModel : ViewModelBase
     [Reactive]
     public bool IsAfter { get; set; } = true;
 
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
         if (ChangeToDoItemOrderIndexIds.IsEmpty)
         {
-            return toDoService.GetSiblingsAsync(Id, cancellationToken)
+            return toDoService.GetSiblingsAsync(Id, ct)
                .IfSuccessAsync(items => this.InvokeUiBackgroundAsync(() =>
                 {
                     Items.Clear();
@@ -45,7 +45,7 @@ public class ChangeToDoItemOrderIndexViewModel : ViewModelBase
 
                                 return Result.Success;
                             }));
-                }), cancellationToken);
+                }), ct);
         }
 
         return ChangeToDoItemOrderIndexIds.ToResult()
@@ -56,6 +56,6 @@ public class ChangeToDoItemOrderIndexViewModel : ViewModelBase
                 Items.AddRange(items.ToArray());
 
                 return Result.Success;
-            }), cancellationToken);
+            }), ct);
     }
 }

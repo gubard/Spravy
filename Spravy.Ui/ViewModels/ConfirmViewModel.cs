@@ -5,9 +5,9 @@ public class ConfirmViewModel : ViewModelBase, ISaveState
     public ConfirmViewModel(IErrorHandler errorHandler, ITaskProgressService taskProgressService)
     {
         ConfirmCommand = SpravyCommand.Create(
-            cancellationToken => ConfirmTask.IfNotNull(nameof(ConfirmTask))
-               .IfSuccessAsync(confirm => Content.IfNotNull(nameof(Content)).IfSuccessAsync(confirm, cancellationToken),
-                    cancellationToken), errorHandler, taskProgressService);
+            ct => ConfirmTask.IfNotNull(nameof(ConfirmTask))
+               .IfSuccessAsync(confirm => Content.IfNotNull(nameof(Content)).IfSuccessAsync(confirm, ct),
+                    ct), errorHandler, taskProgressService);
 
         CancelCommand = SpravyCommand.Create(CancelAsync, errorHandler, taskProgressService);
     }
@@ -20,17 +20,17 @@ public class ConfirmViewModel : ViewModelBase, ISaveState
     [Reactive]
     public object? Content { get; set; }
 
-    public ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)
     {
         if (Content is ISaveState saveState)
         {
-            return saveState.SaveStateAsync(cancellationToken);
+            return saveState.SaveStateAsync(ct);
         }
 
         return Result.AwaitableSuccess;
     }
 
-    private ConfiguredValueTaskAwaitable<Result> CancelAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> CancelAsync(CancellationToken ct)
     {
         var con = Content.ThrowIfNull();
 

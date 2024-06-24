@@ -18,7 +18,7 @@ public class FolderMigratorHostedService<TDbContext> : IHostedService where TDbC
         this.logger = logger;
     }
 
-    public async Task StartAsync(CancellationToken cancellationToken)
+    public async Task StartAsync(CancellationToken ct)
     {
         var migrationFile = sqliteFolderOptions.DataBasesFolder
            .ThrowIfNullOrWhiteSpace()
@@ -48,7 +48,7 @@ public class FolderMigratorHostedService<TDbContext> : IHostedService where TDbC
         {
             logger.LogInformation("Start migration {MigrationId} {DataBaseFile}", migrationId, dataBaseFile);
             await using var spravyToDoDbContext = dbContextFactory.Create($"DataSource={dataBaseFile}").ThrowIfError();
-            await spravyToDoDbContext.Database.MigrateAsync(cancellationToken);
+            await spravyToDoDbContext.Database.MigrateAsync(ct);
             logger.LogInformation("End migration {MigrationId} {DataBaseFile}", migrationId, dataBaseFile);
         }
 
@@ -61,7 +61,7 @@ public class FolderMigratorHostedService<TDbContext> : IHostedService where TDbC
         logger.LogInformation("End migration to {MigrationId}", migrationId);
     }
 
-    public Task StopAsync(CancellationToken cancellationToken)
+    public Task StopAsync(CancellationToken ct)
     {
         return Task.CompletedTask;
     }

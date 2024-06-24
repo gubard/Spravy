@@ -2,18 +2,18 @@ namespace Spravy.Ui.Interfaces;
 
 public interface INavigator
 {
-    ConfiguredValueTaskAwaitable<Result<INavigatable>> NavigateBackAsync(CancellationToken cancellationToken);
+    ConfiguredValueTaskAwaitable<Result<INavigatable>> NavigateBackAsync(CancellationToken ct);
 
     ConfiguredValueTaskAwaitable<Result> NavigateToAsync<TViewModel>(
         TViewModel parameter,
-        CancellationToken cancellationToken
+        CancellationToken ct
     ) where TViewModel : INavigatable;
 
     ConfiguredValueTaskAwaitable<Result> NavigateToAsync<TViewModel>(
         Action<TViewModel> setup,
-        CancellationToken cancellationToken
+        CancellationToken ct
     ) where TViewModel : INavigatable;
 
-    ConfiguredValueTaskAwaitable<Result> NavigateToAsync<TViewModel>(CancellationToken cancellationToken)
+    ConfiguredValueTaskAwaitable<Result> NavigateToAsync<TViewModel>(CancellationToken ct)
         where TViewModel : INavigatable;
 }

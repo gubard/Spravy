@@ -22,21 +22,21 @@ public class ReferenceToDoItemSettingsViewModel : ViewModelBase, IApplySettings
     [Reactive]
     public Guid ToDoItemId { get; set; }
     
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
-        return toDoService.GetReferenceToDoItemSettingsAsync(ToDoItemId, cancellationToken)
+        return toDoService.GetReferenceToDoItemSettingsAsync(ToDoItemId, ct)
            .IfSuccessAsync(setting =>
             {
                 ToDoItemSelector.IgnoreIds = new([ToDoItemId,]);
                 ToDoItemSelector.DefaultSelectedItemId = setting.ReferenceId;
                 
                 return Result.Success;
-            }, cancellationToken);
+            }, ct);
     }
     
-    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken ct)
     {
         return toDoService.UpdateReferenceToDoItemAsync(ToDoItemId, ToDoItemSelector.SelectedItem.ThrowIfNull().Id,
-            cancellationToken);
+            ct);
     }
 }

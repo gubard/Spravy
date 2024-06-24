@@ -16,10 +16,11 @@ public class App : Application
     public override void OnFrameworkInitializationCompleted()
     {
         var objectStorage = serviceFactory.CreateService<IObjectStorage>();
+        var ct = CancellationToken.None;
         
-        if (objectStorage.IsExistsAsync(TypeCache<SettingModel>.Type.Name).GetAwaiter().GetResult().Value)
+        if (objectStorage.IsExistsAsync(TypeCache<SettingModel>.Type.Name, ct).GetAwaiter().GetResult().Value)
         {
-            var model = objectStorage.GetObjectAsync<SettingModel>(TypeCache<SettingModel>.Type.Name)
+            var model = objectStorage.GetObjectAsync<SettingModel>(TypeCache<SettingModel>.Type.Name, ct)
                .GetAwaiter()
                .GetResult()
                .Value;

@@ -6,19 +6,19 @@ public class DeleteToDoItemViewModel : ViewModelBase
     {
         DeleteItems = new();
         
-        InitializedCommand = SpravyCommand.Create(cancellationToken =>
+        InitializedCommand = SpravyCommand.Create(ct =>
         {
             var statuses = Enum.GetValues<ToDoItemStatus>();
             
-            return Result.AwaitableSuccess.IfSuccessAllAsync(cancellationToken, () =>
+            return Result.AwaitableSuccess.IfSuccessAllAsync(ct, () =>
             {
                 if (Item is null)
                 {
                     return Result.AwaitableSuccess;
                 }
                 
-                return toDoService.GetToDoItemAsync(Item.Id, cancellationToken)
-                   .IfSuccessAsync(i => this.InvokeUiBackgroundAsync(() => toDoCache.UpdateUi(i)), cancellationToken)
+                return toDoService.GetToDoItemAsync(Item.Id, ct)
+                   .IfSuccessAsync(i => this.InvokeUiBackgroundAsync(() => toDoCache.UpdateUi(i)), ct)
                    .ToResultOnlyAsync();
             }, () =>
             {
@@ -27,31 +27,31 @@ public class DeleteToDoItemViewModel : ViewModelBase
                     return Result.AwaitableSuccess;
                 }
                 
-                return toDoService.GetParentsAsync(Item.Id, cancellationToken)
+                return toDoService.GetParentsAsync(Item.Id, ct)
                    .IfSuccessAsync(
                         parents => this.InvokeUiBackgroundAsync(() => toDoCache.UpdateParentsUi(Item.Id, parents)),
-                        cancellationToken);
+                        ct);
             }, () =>
             {
                 if (DeleteItems.IsEmpty())
                 {
                     return Item.IfNotNull(nameof(Item))
                        .IfSuccessAsync(item => toDoService
-                           .ToDoItemToStringAsync(new(statuses, item.Id), cancellationToken)
+                           .ToDoItemToStringAsync(new(statuses, item.Id), ct)
                            .IfSuccessAsync(text => this.InvokeUiBackgroundAsync(() =>
                             {
                                 ChildrenText = text;
                                 
                                 return Result.Success;
-                            }), cancellationToken), cancellationToken);
+                            }), ct), ct);
                 }
                 
                 return DeleteItems.ToReadOnlyMemory()
                    .ToResult()
                    .IfSuccessForEachAsync(
-                        i => toDoService.ToDoItemToStringAsync(new(statuses, i.Id), cancellationToken).IfSuccessAsync(
-                            str => $"{i.Name}{Environment.NewLine} {str.Split(Environment.NewLine).JoinString($"{Environment.NewLine} ")}".ToResult(), cancellationToken),
-                        cancellationToken)
+                        i => toDoService.ToDoItemToStringAsync(new(statuses, i.Id), ct).IfSuccessAsync(
+                            str => $"{i.Name}{Environment.NewLine} {str.Split(Environment.NewLine).JoinString($"{Environment.NewLine} ")}".ToResult(), ct),
+                        ct)
                    .IfSuccessAsync(values =>
                     {
                         var childrenText = string.Join(Environment.NewLine, values.ToArray());
@@ -62,7 +62,7 @@ public class DeleteToDoItemViewModel : ViewModelBase
                             
                             return Result.Success;
                         });
-                    }, cancellationToken);
+                    }, ct);
             });
         }, errorHandler, taskProgressService);
     }

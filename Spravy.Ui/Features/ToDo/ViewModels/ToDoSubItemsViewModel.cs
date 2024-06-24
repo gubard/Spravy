@@ -21,9 +21,9 @@ public class ToDoSubItemsViewModel : ViewModelBase
     
     public MultiToDoItemsViewModel List { get; }
     
-    private ConfiguredValueTaskAwaitable<Result> RefreshFavoriteToDoItemsAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> RefreshFavoriteToDoItemsAsync(CancellationToken ct)
     {
-        return toDoService.GetFavoriteToDoItemIdsAsync(cancellationToken)
+        return toDoService.GetFavoriteToDoItemIdsAsync(ct)
            .IfSuccessAsync(
                 items => taskProgressService.RunProgressAsync((ushort)items.Length,
                     item => items.ToResult()
@@ -31,19 +31,19 @@ public class ToDoSubItemsViewModel : ViewModelBase
                        .IfSuccessAsync(
                             itemsNotify => List.ClearFavoriteExceptUi(itemsNotify)
                                .IfSuccessAsync(
-                                    () => RefreshFavoriteToDoItemsCore(itemsNotify, item, cancellationToken)
-                                       .ConfigureAwait(false), cancellationToken), cancellationToken),
-                    cancellationToken), cancellationToken);
+                                    () => RefreshFavoriteToDoItemsCore(itemsNotify, item, ct)
+                                       .ConfigureAwait(false), ct), ct),
+                    ct), ct);
     }
     
     private async ValueTask<Result> RefreshFavoriteToDoItemsCore(
         ReadOnlyMemory<ToDoItemEntityNotify> ids,
         TaskProgressItem progressItem,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         await foreach (var items in toDoService
-           .GetToDoItemsAsync(ids.ToArray().Select(x => x.Id).ToArray(), 5, cancellationToken)
+           .GetToDoItemsAsync(ids.ToArray().Select(x => x.Id).ToArray(), 5, ct)
            .ConfigureAwait(false))
         {
             if (items.IsHasError)
@@ -62,7 +62,7 @@ public class ToDoSubItemsViewModel : ViewModelBase
                 
                 if (item.Type == ToDoItemType.Reference)
                 {
-                    var reference = await toDoService.GetReferenceToDoItemSettingsAsync(item.Id, cancellationToken);
+                    var reference = await toDoService.GetReferenceToDoItemSettingsAsync(item.Id, ct);
                     
                     if (reference.IsHasError)
                     {
@@ -99,12 +99,12 @@ public class ToDoSubItemsViewModel : ViewModelBase
         ReadOnlyMemory<ToDoItemEntityNotify> items,
         bool autoOrder,
         TaskProgressItem progressItem,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return this.InvokeUiBackgroundAsync(() => ClearExceptUi(items))
-           .IfSuccessAllAsync(cancellationToken, () => RefreshFavoriteToDoItemsAsync(cancellationToken),
-                () => RefreshToDoItemListsCore(items, autoOrder, progressItem, cancellationToken)
+           .IfSuccessAllAsync(ct, () => RefreshFavoriteToDoItemsAsync(ct),
+                () => RefreshToDoItemListsCore(items, autoOrder, progressItem, ct)
                    .ConfigureAwait(false));
     }
     
@@ -117,13 +117,13 @@ public class ToDoSubItemsViewModel : ViewModelBase
         ReadOnlyMemory<ToDoItemEntityNotify> ids,
         bool autoOrder,
         TaskProgressItem progressItem,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         uint orderIndex = 1;
         
         await foreach (var items in toDoService
-           .GetToDoItemsAsync(ids.ToArray().Select(x => x.Id).ToArray(), 5, cancellationToken)
+           .GetToDoItemsAsync(ids.ToArray().Select(x => x.Id).ToArray(), 5, ct)
            .ConfigureAwait(false))
         {
             if (items.IsHasError)
@@ -142,7 +142,7 @@ public class ToDoSubItemsViewModel : ViewModelBase
                 
                 if (item.Type == ToDoItemType.Reference)
                 {
-                    var reference = await toDoService.GetReferenceToDoItemSettingsAsync(item.Id, cancellationToken);
+                    var reference = await toDoService.GetReferenceToDoItemSettingsAsync(item.Id, ct);
                     
                     if (reference.IsHasError)
                     {
@@ -193,10 +193,10 @@ public class ToDoSubItemsViewModel : ViewModelBase
     public ConfiguredValueTaskAwaitable<Result> UpdateItemsAsync(
         ReadOnlyMemory<ToDoItemEntityNotify> ids,
         bool autoOrder,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return taskProgressService.RunProgressAsync((ushort)ids.Length,
-            item => RefreshToDoItemListsAsync(ids, autoOrder, item, cancellationToken), cancellationToken);
+            item => RefreshToDoItemListsAsync(ids, autoOrder, item, ct), ct);
     }
 }

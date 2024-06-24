@@ -13,10 +13,10 @@ public static class SpravyDbAuthenticationDbContextExtension
     public static ConfiguredValueTaskAwaitable<Result<UserEntity>> GetNotVerifiedUserByEmailAsync(
         this SpravyDbAuthenticationDbContext context,
         string email,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
-        return context.GetUserByEmailAsync(email, cancellationToken)
+        return context.GetUserByEmailAsync(email, ct)
            .IfSuccessAsync(user =>
             {
                 if (user.IsEmailVerified)
@@ -27,16 +27,16 @@ public static class SpravyDbAuthenticationDbContextExtension
                 }
 
                 return new(user);
-            }, cancellationToken);
+            }, ct);
     }
 
     public static ConfiguredValueTaskAwaitable<Result<UserEntity>> GetNotVerifiedUserByLoginAsync(
         this SpravyDbAuthenticationDbContext context,
         string login,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
-        return context.GetUserByLoginAsync(login, cancellationToken)
+        return context.GetUserByLoginAsync(login, ct)
            .IfSuccessAsync(user =>
             {
                 if (!user.IsEmailVerified)
@@ -47,16 +47,16 @@ public static class SpravyDbAuthenticationDbContextExtension
                 }
 
                 return new(user);
-            }, cancellationToken);
+            }, ct);
     }
 
     public static ConfiguredValueTaskAwaitable<Result<UserEntity>> GetVerifiedUserByEmailAsync(
         this SpravyDbAuthenticationDbContext context,
         string email,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
-        return context.GetUserByEmailAsync(email, cancellationToken)
+        return context.GetUserByEmailAsync(email, ct)
            .IfSuccessAsync(user =>
             {
                 if (!user.IsEmailVerified)
@@ -67,16 +67,16 @@ public static class SpravyDbAuthenticationDbContextExtension
                 }
 
                 return new(user);
-            }, cancellationToken);
+            }, ct);
     }
 
     public static ConfiguredValueTaskAwaitable<Result<UserEntity>> GetVerifiedUserByLoginAsync(
         this SpravyDbAuthenticationDbContext context,
         string login,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
-        return context.GetUserByLoginAsync(login, cancellationToken)
+        return context.GetUserByLoginAsync(login, ct)
            .IfSuccessAsync(user =>
             {
                 if (!user.IsEmailVerified)
@@ -87,25 +87,25 @@ public static class SpravyDbAuthenticationDbContextExtension
                 }
 
                 return new(user);
-            }, cancellationToken);
+            }, ct);
     }
 
     public static ConfiguredValueTaskAwaitable<Result<UserEntity>> GetUserByLoginAsync(
         this SpravyDbAuthenticationDbContext context,
         string login,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
-        return GetUserByLoginCore(context, login, cancellationToken).ConfigureAwait(false);
+        return GetUserByLoginCore(context, login, ct).ConfigureAwait(false);
     }
 
     private static async ValueTask<Result<UserEntity>> GetUserByLoginCore(
         this SpravyDbAuthenticationDbContext context,
         string login,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
-        var users = await context.Set<UserEntity>().Where(x => x.Login == login).ToArrayAsync(cancellationToken);
+        var users = await context.Set<UserEntity>().Where(x => x.Login == login).ToArrayAsync(ct);
 
         if (users.Length == 0)
         {
@@ -123,19 +123,19 @@ public static class SpravyDbAuthenticationDbContextExtension
     public static ConfiguredValueTaskAwaitable<Result<UserEntity>> GetUserByEmailAsync(
         this SpravyDbAuthenticationDbContext context,
         string email,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
-        return GetUserByEmailCore(context, email, cancellationToken).ConfigureAwait(false);
+        return GetUserByEmailCore(context, email, ct).ConfigureAwait(false);
     }
 
     private static async ValueTask<Result<UserEntity>> GetUserByEmailCore(
         this SpravyDbAuthenticationDbContext context,
         string email,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
-        var users = await context.Set<UserEntity>().Where(x => x.Email == email).ToArrayAsync(cancellationToken);
+        var users = await context.Set<UserEntity>().Where(x => x.Email == email).ToArrayAsync(ct);
 
         if (users.Length == 0)
         {

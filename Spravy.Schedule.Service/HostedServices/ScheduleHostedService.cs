@@ -33,24 +33,24 @@ public class ScheduleHostedService : IHostedService
         this.logger = logger;
     }
     
-    public Task StartAsync(CancellationToken cancellationToken)
+    public Task StartAsync(CancellationToken ct)
     {
         var dataBaseFiles = sqliteFolderOptions.GetDataBaseFiles();
         
         foreach (var dataBaseFile in dataBaseFiles)
         {
-            tasks.Add(dataBaseFile.FullName, HandleDataBaseAsync(dataBaseFile, cancellationToken));
+            tasks.Add(dataBaseFile.FullName, HandleDataBaseAsync(dataBaseFile, ct));
         }
         
         return Task.CompletedTask;
     }
     
-    public Task StopAsync(CancellationToken cancellationToken)
+    public Task StopAsync(CancellationToken ct)
     {
         return Task.CompletedTask;
     }
     
-    private async Task HandleDataBaseAsync(FileInfo file, CancellationToken cancellationToken)
+    private async Task HandleDataBaseAsync(FileInfo file, CancellationToken ct)
     {
         while (true)
         {
@@ -61,7 +61,7 @@ public class ScheduleHostedService : IHostedService
                     await spravyScheduleDbContextFactory.Create(file.ToSqliteConnectionString())
                        .IfSuccessAsync(context => context.AtomicExecuteAsync(() => context.Set<TimerEntity>()
                            .AsNoTracking()
-                           .ToArrayEntitiesAsync(cancellationToken)
+                           .ToArrayEntitiesAsync(ct)
                            .IfSuccessAllInOrderAsync(timers =>
                             {
                                 var tasks = new List<Func<ConfiguredValueTaskAwaitable<Result>>>();
@@ -76,13 +76,13 @@ public class ScheduleHostedService : IHostedService
                                     tasks.Add(() => eventBusServiceFactory.Create(file.GetFileNameWithoutExtension())
                                        .IfSuccessAsync(
                                             eventBusService => eventBusService
-                                               .PublishEventAsync(timer.EventId, timer.Content, cancellationToken)
-                                               .IfSuccessAsync(() => context.RemoveEntity(timer), cancellationToken),
-                                            cancellationToken));
+                                               .PublishEventAsync(timer.EventId, timer.Content, ct)
+                                               .IfSuccessAsync(() => context.RemoveEntity(timer), ct),
+                                            ct));
                                 }
                                 
                                 return tasks.ToArray();
-                            }, cancellationToken), cancellationToken), cancellationToken);
+                            }, ct), ct), ct);
                 }
                 catch (Exception e)
                 {
@@ -94,7 +94,7 @@ public class ScheduleHostedService : IHostedService
                 logger.Log(LogLevel.Error, e, null);
             }
             
-            await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
+            await Task.Delay(TimeSpan.FromSeconds(1), ct);
         }
     }
 }

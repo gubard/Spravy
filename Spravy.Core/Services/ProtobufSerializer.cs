@@ -10,14 +10,14 @@ public class ProtobufSerializer : ISerializer
         }
     }
     
-    public ConfiguredValueTaskAwaitable<Result> SerializeAsync<T>(T obj, Stream stream)
+    public ConfiguredValueTaskAwaitable<Result> SerializeAsync<T>(T obj, Stream stream, CancellationToken ct)
     {
         Serializer.Serialize(stream, obj);
         
         return Result.AwaitableSuccess;
     }
     
-    public ConfiguredValueTaskAwaitable<Result<TObject>> DeserializeAsync<TObject>(Stream stream)
+    public ConfiguredValueTaskAwaitable<Result<TObject>> DeserializeAsync<TObject>(Stream stream, CancellationToken ct)
         where TObject : notnull
     {
         return Deserialize<TObject>(stream).ToValueTaskResult().ConfigureAwait(false);

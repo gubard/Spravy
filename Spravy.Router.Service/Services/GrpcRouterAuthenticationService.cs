@@ -113,7 +113,7 @@ public class GrpcRouterAuthenticationService : AuthenticationService.Authenticat
            .HandleAsync(serializer, value => new IsVerifiedByLoginReply
             {
                 IsVerified = value,
-            });
+            }, context.CancellationToken);
     }
 
     public override Task<IsVerifiedByEmailReply> IsVerifiedByEmail(
@@ -125,7 +125,7 @@ public class GrpcRouterAuthenticationService : AuthenticationService.Authenticat
            .HandleAsync(serializer, value => new IsVerifiedByEmailReply
             {
                 IsVerified = value,
-            });
+            }, context.CancellationToken);
     }
 
     public override async Task<CreateUserReply> CreateUser(CreateUserRequest request, ServerCallContext context)
@@ -141,12 +141,12 @@ public class GrpcRouterAuthenticationService : AuthenticationService.Authenticat
         var user = request.User.ToUser();
 
         return authenticationService.LoginAsync(user, context.CancellationToken)
-           .HandleAsync(serializer, token => token.ToLoginReply());
+           .HandleAsync(serializer, token => token.ToLoginReply(), context.CancellationToken);
     }
 
     public override Task<RefreshTokenReply> RefreshToken(RefreshTokenRequest request, ServerCallContext context)
     {
         return authenticationService.RefreshTokenAsync(request.RefreshToken, context.CancellationToken)
-           .HandleAsync(serializer, login => login.ToRefreshTokenReply());
+           .HandleAsync(serializer, login => login.ToRefreshTokenReply(), context.CancellationToken);
     }
 }

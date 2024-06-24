@@ -131,14 +131,14 @@ public class LoginViewModel : NavigatableViewModelBase, INotifyDataErrorInfo
         return Result.Success;
     }
     
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)
     {
-        return objectStorage.SaveObjectAsync(ViewId, new LoginViewModelSetting(this));
+        return objectStorage.SaveObjectAsync(ViewId, new LoginViewModelSetting(this), ct);
     }
     
     public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
         object setting,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return setting.CastObject<LoginViewModelSetting>()
@@ -147,6 +147,6 @@ public class LoginViewModel : NavigatableViewModelBase, INotifyDataErrorInfo
                 Login = s.Login;
                 
                 return Result.Success;
-            }), cancellationToken);
+            }), ct);
     }
 }

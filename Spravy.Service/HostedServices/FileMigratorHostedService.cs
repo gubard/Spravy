@@ -17,7 +17,7 @@ public class FileMigratorHostedService<TDbContext> : IHostedService where TDbCon
         this.logger = logger;
     }
 
-    public async Task StartAsync(CancellationToken cancellationToken)
+    public async Task StartAsync(CancellationToken ct)
     {
         var dataBaseFile = sqliteFileOptions.DataBaseFile.ThrowIfNull().ToFile();
         logger.LogInformation("Start migration {DataBaseFile}", dataBaseFile);
@@ -30,11 +30,11 @@ public class FileMigratorHostedService<TDbContext> : IHostedService where TDbCon
             dataBaseFile.Directory.Create();
         }
 
-        await context.Database.MigrateAsync(cancellationToken);
+        await context.Database.MigrateAsync(ct);
         logger.LogInformation("End migration {DataBaseFile}", dataBaseFile);
     }
 
-    public Task StopAsync(CancellationToken cancellationToken)
+    public Task StopAsync(CancellationToken ct)
     {
         return Task.CompletedTask;
     }

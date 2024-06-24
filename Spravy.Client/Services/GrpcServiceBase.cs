@@ -15,12 +15,12 @@ public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBas
     
     protected ConfiguredValueTaskAwaitable<Result> CallClientAsync(
         Func<TGrpcClient, ConfiguredValueTaskAwaitable<Result>> func,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         try
         {
-            return grpcClientFactory.Create(host).IfSuccessAsync(func.Invoke, cancellationToken);
+            return grpcClientFactory.Create(host).IfSuccessAsync(func.Invoke, ct);
         }
         catch (RpcException exception)
         {
@@ -72,20 +72,20 @@ public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBas
     
     protected ConfiguredValueTaskAwaitable<Result<TValue>> CallClientAsync<TValue>(
         Func<TGrpcClient, ConfiguredValueTaskAwaitable<Result<TValue>>> func,
-        CancellationToken cancellationToken
+        CancellationToken ct
     ) where TValue : notnull
     {
-        return CallClientCore(func, cancellationToken).ConfigureAwait(false);
+        return CallClientCore(func, ct).ConfigureAwait(false);
     }
     
     private async ValueTask<Result<TValue>> CallClientCore<TValue>(
         Func<TGrpcClient, ConfiguredValueTaskAwaitable<Result<TValue>>> func,
-        CancellationToken cancellationToken
+        CancellationToken ct
     ) where TValue : notnull
     {
         try
         {
-            return await grpcClientFactory.Create(host).IfSuccessAsync(func.Invoke, cancellationToken);
+            return await grpcClientFactory.Create(host).IfSuccessAsync(func.Invoke, ct);
         }
         catch (RpcException exception)
         {
@@ -138,11 +138,11 @@ public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBas
     
     protected ConfiguredCancelableAsyncEnumerable<TResult> CallClientAsync<TResult>(
         Func<TGrpcClient, CancellationToken, ConfiguredCancelableAsyncEnumerable<TResult>> func,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         var client = grpcClientFactory.Create(host);
         
-        return func.Invoke(client.Value, cancellationToken);
+        return func.Invoke(client.Value, ct);
     }
 }

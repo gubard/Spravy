@@ -21,20 +21,20 @@ public class ToDoItemDayOfMonthSelectorViewModel : ViewModelBase, IApplySettings
     [Reactive]
     public Guid ToDoItemId { get; set; }
 
-    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken ct)
     {
         return toDoService.UpdateToDoItemMonthlyPeriodicityAsync(ToDoItemId,
-            new(SelectedDays.Select(x => (byte)x).ToArray()), cancellationToken);
+            new(SelectedDays.Select(x => (byte)x).ToArray()), ct);
     }
 
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
-        return toDoService.GetMonthlyPeriodicityAsync(ToDoItemId, cancellationToken)
+        return toDoService.GetMonthlyPeriodicityAsync(ToDoItemId, ct)
            .IfSuccessAsync(monthlyPeriodicity => this.InvokeUiBackgroundAsync(() =>
             {
                 SelectedDays.AddRange(monthlyPeriodicity.Days.Select(x => (int)x).ToArray());
 
                 return Result.Success;
-            }), cancellationToken);
+            }), ct);
     }
 }

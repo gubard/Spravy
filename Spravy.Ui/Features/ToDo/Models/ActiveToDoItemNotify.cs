@@ -8,7 +8,7 @@ public class ActiveToDoItemNotify : NotifyBase
         
         NavigateToCurrentItem =
             SpravyCommand.Create(
-                cancellationToken => navigator.NavigateToAsync<ToDoItemViewModel>(vm => vm.Id = Id, cancellationToken),
+                ct => navigator.NavigateToAsync<ToDoItemViewModel>(vm => vm.Id = Id, ct),
                 errorHandler, taskProgressService);
     }
     

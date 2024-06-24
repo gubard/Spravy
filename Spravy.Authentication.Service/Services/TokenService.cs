@@ -22,7 +22,7 @@ public class TokenService : ITokenService
            .ThrowIfError();
     }
 
-    public ConfiguredValueTaskAwaitable<Result<string>> GetTokenAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<string>> GetTokenAsync(CancellationToken ct)
     {
         var jwtHandler = new JwtSecurityTokenHandler();
         var jwtToken = jwtHandler.ReadJwtToken(token.Token);
@@ -39,15 +39,15 @@ public class TokenService : ITokenService
                 token = t;
 
                 return new Result<string>(token.Token).ToValueTaskResult().ConfigureAwait(false);
-            }, cancellationToken);
+            }, ct);
     }
 
-    public ConfiguredValueTaskAwaitable<Result> LoginAsync(User user, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> LoginAsync(User user, CancellationToken ct)
     {
         throw new NotSupportedException();
     }
 
-    public ConfiguredValueTaskAwaitable<Result> LoginAsync(string refreshToken, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> LoginAsync(string refreshToken, CancellationToken ct)
     {
         throw new NotSupportedException();
     }

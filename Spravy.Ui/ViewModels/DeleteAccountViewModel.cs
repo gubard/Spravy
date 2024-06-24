@@ -42,18 +42,18 @@ public class DeleteAccountViewModel : NavigatableViewModelBase
 
     public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
         object setting,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return Result.AwaitableSuccess;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;
     }
 
-    private ConfiguredValueTaskAwaitable<Result> DeleteAccountAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> DeleteAccountAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess
            .IfSuccessAsync(() =>
@@ -63,25 +63,25 @@ public class DeleteAccountViewModel : NavigatableViewModelBase
                     case UserIdentifierType.Email:
                         return authenticationService.DeleteUserByEmailAsync(Identifier,
                             VerificationCode.ToUpperInvariant(),
-                            cancellationToken);
+                            ct);
                     case UserIdentifierType.Login:
                         return authenticationService.DeleteUserByEmailAsync(Identifier,
                             VerificationCode.ToUpperInvariant(),
-                            cancellationToken);
+                            ct);
                     default: throw new ArgumentOutOfRangeException();
                 }
-            }, cancellationToken)
-           .IfSuccessAsync(() => navigator.NavigateToAsync<LoginViewModel>(cancellationToken), cancellationToken);
+            }, ct)
+           .IfSuccessAsync(() => navigator.NavigateToAsync<LoginViewModel>(ct), ct);
     }
 
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
         return IdentifierType switch
         {
             UserIdentifierType.Email => authenticationService.UpdateVerificationCodeByEmailAsync(Identifier,
-                cancellationToken),
+                ct),
             UserIdentifierType.Login => authenticationService.UpdateVerificationCodeByLoginAsync(Identifier,
-                cancellationToken),
+                ct),
             _ => throw new ArgumentOutOfRangeException(),
         };
     }

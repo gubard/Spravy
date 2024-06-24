@@ -41,40 +41,40 @@ public class GrpcScheduleService : GrpcServiceBase<ScheduleService.ScheduleServi
 
     public ConfiguredValueTaskAwaitable<Result> AddTimerAsync(
         AddTimerParameters parameters,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
-        return CallClientAsync(client => metadataFactory.CreateAsync(cancellationToken)
+        return CallClientAsync(client => metadataFactory.CreateAsync(ct)
            .IfSuccessAsync(metadata => client.AddTimerAsync(new()
                 {
                     Parameters = parameters.ToAddTimerParametersGrpc(),
-                }, metadata, cancellationToken: cancellationToken)
+                }, metadata, ct: ct)
                .ToValueTaskResultOnly()
-               .ConfigureAwait(false), cancellationToken), cancellationToken);
+               .ConfigureAwait(false), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<TimerItem>>> GetListTimesAsync(
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return CallClientAsync(
-            client => metadataFactory.CreateAsync(cancellationToken)
+            client => metadataFactory.CreateAsync(ct)
                .IfSuccessAsync(
                     value => client.GetListTimesAsync(new(), value)
                        .ToValueTaskResultValueOnly()
                        .ConfigureAwait(false)
-                       .IfSuccessAsync(timers => timers.Items.ToTimerItem().ToResult(), cancellationToken),
-                    cancellationToken), cancellationToken);
+                       .IfSuccessAsync(timers => timers.Items.ToTimerItem().ToResult(), ct),
+                    ct), ct);
     }
 
-    public ConfiguredValueTaskAwaitable<Result> RemoveTimerAsync(Guid id, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> RemoveTimerAsync(Guid id, CancellationToken ct)
     {
-        return CallClientAsync(client => metadataFactory.CreateAsync(cancellationToken)
+        return CallClientAsync(client => metadataFactory.CreateAsync(ct)
            .IfSuccessAsync(metadata => client.RemoveTimerAsync(new()
                 {
                     Id = id.ToByteString(),
                 }, metadata)
                .ToValueTaskResultOnly()
-               .ConfigureAwait(false), cancellationToken), cancellationToken);
+               .ConfigureAwait(false), ct), ct);
     }
 }

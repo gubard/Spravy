@@ -27,16 +27,16 @@ public class ToDoItemDayOfYearSelectorViewModel : ViewModelBase, IApplySettings
     [Reactive]
     public Guid ToDoItemId { get; set; }
 
-    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken ct)
     {
         return toDoService.UpdateToDoItemAnnuallyPeriodicityAsync(ToDoItemId,
             new(Items.SelectMany(x => x.Days.Where(y => y.IsSelected).Select(y => new DayOfYear(y.Day, x.Month)))),
-            cancellationToken);
+            ct);
     }
 
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
-        return toDoService.GetAnnuallyPeriodicityAsync(ToDoItemId, cancellationToken)
+        return toDoService.GetAnnuallyPeriodicityAsync(ToDoItemId, ct)
            .IfSuccessAsync(annuallyPeriodicity =>
             {
                 var items = new List<Func<ConfiguredValueTaskAwaitable<Result>>>();
@@ -62,7 +62,7 @@ public class ToDoItemDayOfYearSelectorViewModel : ViewModelBase, IApplySettings
                     }
                 }
 
-                return Result.AwaitableSuccess.IfSuccessAllAsync(cancellationToken, items.ToArray());
-            }, cancellationToken);
+                return Result.AwaitableSuccess.IfSuccessAllAsync(ct, items.ToArray());
+            }, ct);
     }
 }

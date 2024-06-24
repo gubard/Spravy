@@ -12,7 +12,7 @@ public class EmptyNavigatable : INavigatable
         get => TypeCache<EmptyNavigatable>.Type.Name;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;
     }
@@ -22,7 +22,7 @@ public class EmptyNavigatable : INavigatable
         return Result.Success;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> SetStateAsync(object setting, CancellationToken ct)
     {
         return Result.AwaitableSuccess;
     }

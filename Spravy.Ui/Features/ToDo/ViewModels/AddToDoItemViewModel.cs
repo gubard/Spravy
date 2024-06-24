@@ -38,11 +38,11 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
         get => $"{TypeCache<AddToDoItemViewModel>.Type.Name}:{ParentId}";
     }
     
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
-        return objectStorage.GetObjectOrDefaultAsync<AddToDoItemViewModelSetting>(ViewId, cancellationToken)
-           .IfSuccessAsync(obj => SetStateAsync(obj, cancellationToken), cancellationToken)
-           .IfSuccessAsync(() => toDoService.GetParentsAsync(ParentId, cancellationToken)
+        return objectStorage.GetObjectOrDefaultAsync<AddToDoItemViewModelSetting>(ViewId, ct)
+           .IfSuccessAsync(obj => SetStateAsync(obj, ct), ct)
+           .IfSuccessAsync(() => toDoService.GetParentsAsync(ParentId, ct)
                .IfSuccessAsync(parents =>
                 {
                     var path = MaterialIconKind.Home
@@ -58,7 +58,7 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
                         
                         return Result.Success;
                     });
-                }, cancellationToken), cancellationToken);
+                }, ct), ct);
     }
     
     public override Result Stop()
@@ -66,14 +66,14 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
         return Result.Success;
     }
     
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)
     {
-        return objectStorage.SaveObjectAsync(ViewId, new AddToDoItemViewModelSetting(this));
+        return objectStorage.SaveObjectAsync(ViewId, new AddToDoItemViewModelSetting(this), ct);
     }
     
     public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
         object setting,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return setting.CastObject<AddToDoItemViewModelSetting>()
@@ -86,7 +86,7 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
                 DescriptionContent.Type = s.DescriptionType;
                 
                 return Result.Success;
-            }), cancellationToken);
+            }), ct);
     }
     
     public Result<AddToDoItemOptions> ConverterToAddToDoItemOptions()

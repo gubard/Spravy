@@ -72,34 +72,34 @@ public class SettingViewModel : NavigatableViewModelBase
     [Reactive]
     public bool IsLightTheme { get; set; }
 
-    private ConfiguredValueTaskAwaitable<Result> SaveSettingsAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> SaveSettingsAsync(CancellationToken ct)
     {
         return objectStorage.SaveObjectAsync(TypeCache<SettingModel>.Type.Name, new SettingModel
             {
                 BaseTheme = IsLightTheme ? "Light" : "Dark",
                 ColorTheme = AvailableColors.Single(x => x.IsSelect).Value.DisplayName,
-            })
+            }, ct)
            .IfSuccessAsync(
                 () => spravyNotificationManager.ShowAsync(new TextLocalization("SettingView.SaveSetting"),
-                    cancellationToken), cancellationToken);
+                    ct), ct);
     }
 
-    private ConfiguredValueTaskAwaitable<Result> DeleteAccountAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> DeleteAccountAsync(CancellationToken ct)
     {
         return navigator.NavigateToAsync<DeleteAccountViewModel>(vm =>
         {
             vm.Identifier = AccountNotify.Login;
             vm.IdentifierType = UserIdentifierType.Login;
-        }, cancellationToken);
+        }, ct);
     }
 
-    private ConfiguredValueTaskAwaitable<Result> ChangePasswordAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> ChangePasswordAsync(CancellationToken ct)
     {
         return navigator.NavigateToAsync<ForgotPasswordViewModel>(vm =>
         {
             vm.Identifier = AccountNotify.Login;
             vm.IdentifierType = UserIdentifierType.Login;
-        }, cancellationToken);
+        }, ct);
     }
 
     public override Result Stop()
@@ -107,14 +107,14 @@ public class SettingViewModel : NavigatableViewModelBase
         return Result.Success;
     }
 
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)
     {
         return Result.AwaitableSuccess;
     }
 
     public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
         object setting,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return Result.AwaitableSuccess;
@@ -122,7 +122,7 @@ public class SettingViewModel : NavigatableViewModelBase
 
     public ConfiguredValueTaskAwaitable<Result> SwitchToColorTheme(
         Selected<SukiColorTheme> colorTheme,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return this.InvokeUiBackgroundAsync(() =>
@@ -144,6 +144,6 @@ public class SettingViewModel : NavigatableViewModelBase
                     return Result.Success;
                 })
                .ToValueTask()
-               .ConfigureAwait(false), cancellationToken);
+               .ConfigureAwait(false), ct);
     }
 }

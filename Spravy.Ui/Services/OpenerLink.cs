@@ -2,7 +2,7 @@ namespace Spravy.Ui.Services;
 
 public class OpenerLink : IOpenerLink
 {
-    public ConfiguredValueTaskAwaitable<Result> OpenLinkAsync(Uri link, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> OpenLinkAsync(Uri link, CancellationToken ct)
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {

@@ -28,7 +28,7 @@ public class EventStorage
     public ConfiguredValueTaskAwaitable<Result> AddEventAsync(
         Guid id,
         byte[] content,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         var newEvent = new EventEntity
@@ -41,8 +41,8 @@ public class EventStorage
         return dbContextFactory.Create()
            .IfSuccessDisposeAsync(
                 context => context.AtomicExecuteAsync(
-                    () => context.Set<EventEntity>().AddEntityAsync(newEvent, cancellationToken).ToResultOnlyAsync(),
-                    cancellationToken), cancellationToken);
+                    () => context.Set<EventEntity>().AddEntityAsync(newEvent, ct).ToResultOnlyAsync(),
+                    ct), ct);
     }
 
     public Task<ReadOnlyMemory<EventValue>> PushEventAsync(ReadOnlyMemory<Guid> eventIds)

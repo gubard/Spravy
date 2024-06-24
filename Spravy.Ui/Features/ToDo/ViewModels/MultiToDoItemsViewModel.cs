@@ -33,7 +33,7 @@ public class MultiToDoItemsViewModel : ViewModelBase
     [Reactive]
     public bool IsMulti { get; set; }
     
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
         this.WhenAnyValue(x => x.GroupBy).Subscribe(x => ToDoItems.GroupBy = x);
         

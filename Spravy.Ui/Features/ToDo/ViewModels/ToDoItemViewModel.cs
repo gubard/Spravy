@@ -56,7 +56,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUp
         get => $"{TypeCache<ToDoItemViewModel>.Type.Name}:{Id}";
     }
     
-    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken ct)
     {
         return RefreshCore().ConfigureAwait(false);
     }
@@ -68,14 +68,14 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUp
         return Result.Success;
     }
     
-    private ConfiguredValueTaskAwaitable<Result> RefreshCoreAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> RefreshCoreAsync(CancellationToken ct)
     {
-        return Result.AwaitableSuccess.IfSuccessAllAsync(cancellationToken,
-            () => RefreshToDoItemChildrenAsync(cancellationToken), () => RefreshToDoItemCore(cancellationToken),
-            () => RefreshPathAsync(cancellationToken));
+        return Result.AwaitableSuccess.IfSuccessAllAsync(ct,
+            () => RefreshToDoItemChildrenAsync(ct), () => RefreshToDoItemCore(ct),
+            () => RefreshPathAsync(ct));
     }
     
-    private ConfiguredValueTaskAwaitable<Result> RefreshToDoItemCore(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> RefreshToDoItemCore(CancellationToken ct)
     {
         return toDoCache.GetToDoItem(Id)
            .IfSuccessAsync(item => this.InvokeUiBackgroundAsync(() =>
@@ -83,32 +83,32 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUp
                 Item = item;
                 
                 return Result.Success;
-            }), cancellationToken)
-           .IfSuccessAsync(() => toDoService.GetToDoItemAsync(Id, cancellationToken), cancellationToken)
+            }), ct)
+           .IfSuccessAsync(() => toDoService.GetToDoItemAsync(Id, ct), ct)
            .IfSuccessAsync(
                 item => this.InvokeUiBackgroundAsync(() =>
                     toDoCache.UpdateUi(item).IfSuccess(_ => UpdateCommandItemsUi())),
-                cancellationToken);
+                ct);
     }
     
-    private ConfiguredValueTaskAwaitable<Result> RefreshPathAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> RefreshPathAsync(CancellationToken ct)
     {
-        return toDoService.GetParentsAsync(Id, cancellationToken)
+        return toDoService.GetParentsAsync(Id, ct)
            .IfSuccessAsync(parents => this.InvokeUiBackgroundAsync(() => toDoCache.UpdateParentsUi(Id, parents)),
-                cancellationToken);
+                ct);
     }
     
-    private ConfiguredValueTaskAwaitable<Result> RefreshToDoItemChildrenAsync(CancellationToken cancellationToken)
+    private ConfiguredValueTaskAwaitable<Result> RefreshToDoItemChildrenAsync(CancellationToken ct)
     {
         return this
            .InvokeUiBackgroundAsync(() =>
                 ToDoSubItemsViewModel.ClearExceptUi(Item?.Children.ToArray()
                  ?? ReadOnlyMemory<ToDoItemEntityNotify>.Empty))
-           .IfSuccessAsync(() => toDoService.GetChildrenToDoItemIdsAsync(Id, cancellationToken), cancellationToken)
+           .IfSuccessAsync(() => toDoService.GetChildrenToDoItemIdsAsync(Id, ct), ct)
            .IfSuccessAsync(ids => this.InvokeUiBackgroundAsync(() => toDoCache.UpdateChildrenItemsUi(Id, ids)),
-                cancellationToken)
-           .IfSuccessAsync(items => ToDoSubItemsViewModel.UpdateItemsAsync(items, false, cancellationToken),
-                cancellationToken);
+                ct)
+           .IfSuccessAsync(items => ToDoSubItemsViewModel.UpdateItemsAsync(items, false, ct),
+                ct);
     }
     
     private Result UpdateCommandItemsUi()
@@ -132,14 +132,14 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUp
         return Result.Success;
     }
     
-    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken cancellationToken)
+    public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)
     {
-        return objectStorage.SaveObjectAsync(ViewId, new ToDoItemViewModelSetting(this));
+        return objectStorage.SaveObjectAsync(ViewId, new ToDoItemViewModelSetting(this), ct);
     }
     
     public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
         object setting,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return setting.CastObject<ToDoItemViewModelSetting>()
@@ -149,7 +149,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUp
                 ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
                 
                 return Result.Success;
-            }), cancellationToken);
+            }), ct);
     }
     
     public Result UpdateInListToDoItemUi(ToDoItemEntityNotify item)

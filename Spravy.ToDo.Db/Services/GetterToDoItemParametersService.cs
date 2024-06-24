@@ -18,10 +18,10 @@ public class GetterToDoItemParametersService
         SpravyDbToDoDbContext context,
         ToDoItemEntity entity,
         TimeSpan offset,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
-        return GetToDoItemParametersAsync(context, entity, offset, new(), cancellationToken);
+        return GetToDoItemParametersAsync(context, entity, offset, new(), ct);
     }
 
     private ConfiguredValueTaskAwaitable<Result<ToDoItemParameters>> GetToDoItemParametersAsync(
@@ -29,23 +29,23 @@ public class GetterToDoItemParametersService
         ToDoItemEntity entity,
         TimeSpan offset,
         ToDoItemParameters parameters,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
-        return IsDueableAsync(context, entity, cancellationToken)
+        return IsDueableAsync(context, entity, ct)
            .IfSuccessAsync(isDueable =>
             {
                 if (isDueable)
                 {
                     return GetToDoItemParametersAsync(context, entity, entity.DueDate, offset, parameters, false, new(),
-                            cancellationToken)
+                            ct)
                        .ConfigureAwait(false);
                 }
 
                 return GetToDoItemParametersAsync(context, entity, DateTimeOffset.UtcNow.Add(offset).Date.ToDateOnly(),
-                        offset, parameters, false, new(), cancellationToken)
+                        offset, parameters, false, new(), ct)
                    .ConfigureAwait(false);
-            }, cancellationToken);
+            }, ct);
     }
 
     private async ValueTask<Result<ToDoItemParameters>> GetToDoItemParametersAsync(
@@ -56,7 +56,7 @@ public class GetterToDoItemParametersService
         ToDoItemParameters parameters,
         bool useDueDate,
         List<Guid> ignoreIds,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         if (entity.Type == ToDoItemType.Reference)
@@ -68,8 +68,8 @@ public class GetterToDoItemParametersService
                 return await context.FindEntityAsync<ToDoItemEntity>(entity.ReferenceId.Value)
                    .IfSuccessAsync(
                         item => GetToDoItemParametersAsync(context, item, dueDate, offset, parameters, useDueDate,
-                                ignoreIds, cancellationToken)
-                           .ConfigureAwait(false), cancellationToken);
+                                ignoreIds, ct)
+                           .ConfigureAwait(false), ct);
             }
 
             return parameters.With(ToDoItemIsCan.None)
@@ -94,7 +94,7 @@ public class GetterToDoItemParametersService
         }
 
         var isMiss = false;
-        var isDueable = await IsDueableAsync(context, entity, cancellationToken);
+        var isDueable = await IsDueableAsync(context, entity, ct);
 
         if (isDueable.IsHasError)
         {
@@ -140,7 +140,7 @@ public class GetterToDoItemParametersService
            .AsNoTracking()
            .Where(x => x.ParentId == entity.Id && !ignoreIds.Contains(x.Id))
            .OrderBy(x => x.OrderIndex)
-           .ToArrayAsync(cancellationToken);
+           .ToArrayAsync(ct);
 
         var firstReadyForComplete = new OptionStruct<ActiveToDoItem>();
         var firstMiss = new OptionStruct<ActiveToDoItem>();
@@ -154,7 +154,7 @@ public class GetterToDoItemParametersService
             }
 
             var result = await GetToDoItemParametersAsync(context, item, dueDate, offset, parameters, true, ignoreIds,
-                cancellationToken);
+                ct);
 
             if (result.IsHasError)
             {
@@ -314,7 +314,7 @@ public class GetterToDoItemParametersService
     private ConfiguredValueTaskAwaitable<Result<bool>> IsDueableAsync(
         SpravyDbToDoDbContext context,
         ToDoItemEntity entity,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return entity.Type switch
@@ -328,7 +328,7 @@ public class GetterToDoItemParametersService
             ToDoItemType.Step => false.ToResult().ToValueTaskResult().ConfigureAwait(false),
             ToDoItemType.Reference => entity.ReferenceId.HasValue
                 ? context.FindEntityAsync<ToDoItemEntity>(entity.ReferenceId.Value)
-                   .IfSuccessAsync(item => IsDueableAsync(context, item, cancellationToken), cancellationToken)
+                   .IfSuccessAsync(item => IsDueableAsync(context, item, ct), ct)
                 : false.ToResult().ToValueTaskResult().ConfigureAwait(false),
             _ => new Result<bool>(new ToDoItemTypeOutOfRangeError(entity.Type)).ToValueTaskResult()
                .ConfigureAwait(false),
@@ -338,7 +338,7 @@ public class GetterToDoItemParametersService
     private ConfiguredValueTaskAwaitable<Result<DateOnly>> GetDueDateAsync(
         SpravyDbToDoDbContext context,
         ToDoItemEntity entity,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return entity.Type switch
@@ -352,7 +352,7 @@ public class GetterToDoItemParametersService
             ToDoItemType.Step => entity.DueDate.ToResult().ToValueTaskResult().ConfigureAwait(false),
             ToDoItemType.Reference => entity.ReferenceId.HasValue
                 ? context.FindEntityAsync<ToDoItemEntity>(entity.ReferenceId.Value)
-                   .IfSuccessAsync(item => GetDueDateAsync(context, item, cancellationToken), cancellationToken)
+                   .IfSuccessAsync(item => GetDueDateAsync(context, item, ct), ct)
                 : DateOnly.MinValue.ToResult().ToValueTaskResult().ConfigureAwait(false),
             _ => new Result<DateOnly>(new ToDoItemTypeOutOfRangeError(entity.Type)).ToValueTaskResult()
                .ConfigureAwait(false),

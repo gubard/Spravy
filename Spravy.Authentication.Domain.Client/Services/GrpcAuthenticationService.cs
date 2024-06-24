@@ -26,195 +26,195 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
     {
     }
 
-    public ConfiguredValueTaskAwaitable<Result<TokenResult>> LoginAsync(User user, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result<TokenResult>> LoginAsync(User user, CancellationToken ct)
     {
         return CallClientAsync(client => client.LoginAsync(new()
             {
                 User = user.ToUserGrpc(),
-            }, deadline: DateTime.UtcNow.Add(Timeout), cancellationToken: cancellationToken)
+            }, deadline: DateTime.UtcNow.Add(Timeout), ct: ct)
            .ToValueTaskResultValueOnly()
            .ConfigureAwait(false)
-           .IfSuccessAsync(reply => reply.ToTokenResult().ToResult(), cancellationToken), cancellationToken);
+           .IfSuccessAsync(reply => reply.ToTokenResult().ToResult(), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> CreateUserAsync(
         CreateUserOptions options,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return CallClientAsync(
             client => client
                .CreateUserAsync(options.ToCreateUserRequest(), deadline: DateTime.UtcNow.Add(Timeout),
-                    cancellationToken: cancellationToken)
+                    ct: ct)
                .ToValueTaskResultOnly()
-               .ConfigureAwait(false), cancellationToken);
+               .ConfigureAwait(false), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result<TokenResult>> RefreshTokenAsync(
         string refreshToken,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return CallClientAsync(client => client.RefreshTokenAsync(new()
             {
                 RefreshToken = refreshToken,
-            }, deadline: DateTime.UtcNow.Add(Timeout), cancellationToken: cancellationToken)
+            }, deadline: DateTime.UtcNow.Add(Timeout), ct: ct)
            .ToValueTaskResultValueOnly()
            .ConfigureAwait(false)
-           .IfSuccessAsync(reply => reply.ToTokenResult().ToResult(), cancellationToken), cancellationToken);
+           .IfSuccessAsync(reply => reply.ToTokenResult().ToResult(), ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateVerificationCodeByLoginAsync(
         string login,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return CallClientAsync(client => client.UpdateVerificationCodeByLoginAsync(new()
             {
                 Login = login,
-            }, deadline: DateTime.UtcNow.Add(Timeout), cancellationToken: cancellationToken)
+            }, deadline: DateTime.UtcNow.Add(Timeout), ct: ct)
            .ToValueTaskResultOnly()
-           .ConfigureAwait(false), cancellationToken);
+           .ConfigureAwait(false), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateVerificationCodeByEmailAsync(
         string email,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return CallClientAsync(client => client.UpdateVerificationCodeByEmailAsync(new()
             {
                 Email = email,
-            }, deadline: DateTime.UtcNow.Add(Timeout), cancellationToken: cancellationToken)
+            }, deadline: DateTime.UtcNow.Add(Timeout), ct: ct)
            .ToValueTaskResultOnly()
-           .ConfigureAwait(false), cancellationToken);
+           .ConfigureAwait(false), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result<bool>> IsVerifiedByLoginAsync(
         string login,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return CallClientAsync(client => client.IsVerifiedByLoginAsync(new()
             {
                 Login = login,
-            }, deadline: DateTime.UtcNow.Add(Timeout), cancellationToken: cancellationToken)
+            }, deadline: DateTime.UtcNow.Add(Timeout), ct: ct)
            .ToValueTaskResultValueOnly()
            .ConfigureAwait(false)
            .IfSuccessAsync(reply => reply.IsVerified.ToResult().ToValueTaskResult().ConfigureAwait(false),
-                cancellationToken), cancellationToken);
+                ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result<bool>> IsVerifiedByEmailAsync(
         string email,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return CallClientAsync(client => client.IsVerifiedByEmailAsync(new()
             {
                 Email = email,
-            }, deadline: DateTime.UtcNow.Add(Timeout), cancellationToken: cancellationToken)
+            }, deadline: DateTime.UtcNow.Add(Timeout), ct: ct)
            .ToValueTaskResultValueOnly()
            .ConfigureAwait(false)
            .IfSuccessAsync(reply => reply.IsVerified.ToResult().ToValueTaskResult().ConfigureAwait(false),
-                cancellationToken), cancellationToken);
+                ct), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> VerifiedEmailByLoginAsync(
         string login,
         string verificationCode,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return CallClientAsync(client => client.VerifiedEmailByLoginAsync(new()
             {
                 Login = login,
                 VerificationCode = verificationCode,
-            }, deadline: DateTime.UtcNow.Add(Timeout), cancellationToken: cancellationToken)
+            }, deadline: DateTime.UtcNow.Add(Timeout), ct: ct)
            .ToValueTaskResultOnly()
-           .ConfigureAwait(false), cancellationToken);
+           .ConfigureAwait(false), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> VerifiedEmailByEmailAsync(
         string email,
         string verificationCode,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return CallClientAsync(client => client.VerifiedEmailByEmailAsync(new()
             {
                 Email = email,
                 VerificationCode = verificationCode,
-            }, deadline: DateTime.UtcNow.Add(Timeout), cancellationToken: cancellationToken)
+            }, deadline: DateTime.UtcNow.Add(Timeout), ct: ct)
            .ToValueTaskResultOnly()
-           .ConfigureAwait(false), cancellationToken);
+           .ConfigureAwait(false), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateEmailNotVerifiedUserByEmailAsync(
         string email,
         string newEmail,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return CallClientAsync(client => client.UpdateEmailNotVerifiedUserByEmailAsync(new()
             {
                 Email = email,
                 NewEmail = newEmail,
-            }, deadline: DateTime.UtcNow.Add(Timeout), cancellationToken: cancellationToken)
+            }, deadline: DateTime.UtcNow.Add(Timeout), ct: ct)
            .ToValueTaskResultOnly()
-           .ConfigureAwait(false), cancellationToken);
+           .ConfigureAwait(false), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateEmailNotVerifiedUserByLoginAsync(
         string login,
         string newEmail,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return CallClientAsync(client => client.UpdateEmailNotVerifiedUserByLoginAsync(new()
             {
                 Login = login,
                 NewEmail = newEmail,
-            }, deadline: DateTime.UtcNow.Add(Timeout), cancellationToken: cancellationToken)
+            }, deadline: DateTime.UtcNow.Add(Timeout), ct: ct)
            .ToValueTaskResultOnly()
-           .ConfigureAwait(false), cancellationToken);
+           .ConfigureAwait(false), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> DeleteUserByEmailAsync(
         string email,
         string verificationCode,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return CallClientAsync(client => client.DeleteUserByEmailAsync(new()
             {
                 Email = email,
                 VerificationCode = verificationCode,
-            }, deadline: DateTime.UtcNow.Add(Timeout), cancellationToken: cancellationToken)
+            }, deadline: DateTime.UtcNow.Add(Timeout), ct: ct)
            .ToValueTaskResultOnly()
-           .ConfigureAwait(false), cancellationToken);
+           .ConfigureAwait(false), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> DeleteUserByLoginAsync(
         string login,
         string verificationCode,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return CallClientAsync(client => client.DeleteUserByLoginAsync(new()
             {
                 Login = login,
                 VerificationCode = verificationCode,
-            }, deadline: DateTime.UtcNow.Add(Timeout), cancellationToken: cancellationToken)
+            }, deadline: DateTime.UtcNow.Add(Timeout), ct: ct)
            .ToValueTaskResultOnly()
-           .ConfigureAwait(false), cancellationToken);
+           .ConfigureAwait(false), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdatePasswordByEmailAsync(
         string email,
         string verificationCode,
         string newPassword,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return CallClientAsync(client => client.UpdatePasswordByEmailAsync(new()
@@ -222,16 +222,16 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
                 Email = email,
                 VerificationCode = verificationCode,
                 NewPassword = newPassword,
-            }, deadline: DateTime.UtcNow.Add(Timeout), cancellationToken: cancellationToken)
+            }, deadline: DateTime.UtcNow.Add(Timeout), ct: ct)
            .ToValueTaskResultOnly()
-           .ConfigureAwait(false), cancellationToken);
+           .ConfigureAwait(false), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdatePasswordByLoginAsync(
         string login,
         string verificationCode,
         string newPassword,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         return CallClientAsync(client => client.UpdatePasswordByLoginAsync(new()
@@ -239,9 +239,9 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
                 Login = login,
                 VerificationCode = verificationCode,
                 NewPassword = newPassword,
-            }, deadline: DateTime.UtcNow.Add(Timeout), cancellationToken: cancellationToken)
+            }, deadline: DateTime.UtcNow.Add(Timeout), ct: ct)
            .ToValueTaskResultOnly()
-           .ConfigureAwait(false), cancellationToken);
+           .ConfigureAwait(false), ct);
     }
 
     public static GrpcAuthenticationService CreateGrpcService(

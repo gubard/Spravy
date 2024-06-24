@@ -11,7 +11,7 @@ public class NotificationManager : ISpravyNotificationManager
         this.serviceFactory = serviceFactory;
     }
     
-    public ConfiguredValueTaskAwaitable<Result> ShowAsync<TView>(CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> ShowAsync<TView>(CancellationToken ct)
         where TView : notnull
     {
         var view = serviceFactory.CreateService<TView>();
@@ -24,7 +24,7 @@ public class NotificationManager : ISpravyNotificationManager
         });
     }
     
-    public ConfiguredValueTaskAwaitable<Result> ShowAsync(object view, CancellationToken cancellationToken)
+    public ConfiguredValueTaskAwaitable<Result> ShowAsync(object view, CancellationToken ct)
     {
         return this.InvokeUiBackgroundAsync(() =>
         {
