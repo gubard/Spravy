@@ -48,7 +48,7 @@ public class GrpcScheduleService : GrpcServiceBase<ScheduleService.ScheduleServi
            .IfSuccessAsync(metadata => client.AddTimerAsync(new()
                 {
                     Parameters = parameters.ToAddTimerParametersGrpc(),
-                }, metadata, ct: ct)
+                }, metadata, cancellationToken: ct)
                .ToValueTaskResultOnly()
                .ConfigureAwait(false), ct), ct);
     }

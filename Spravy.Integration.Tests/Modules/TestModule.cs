@@ -3,6 +3,7 @@ using Spravy.Client.Models;
 using Spravy.Core.Helpers;
 using Spravy.Db.Services;
 using Spravy.Ui.Modules;
+using Spravy.Core.Services;
 
 namespace Spravy.Integration.Tests.Modules;
 
@@ -11,18 +12,16 @@ namespace Spravy.Integration.Tests.Modules;
 [Singleton(typeof(IConfiguration), Factory = nameof(ConfigurationFactory))]
 [Singleton(typeof(ClientOptions), Factory = nameof(ClientOptionsFactory))]
 [Singleton(typeof(IServiceFactory), Factory = nameof(ServiceFactoryFactory))]
-[Transient(typeof(IObjectStorage), typeof(SqliteObjectStorage))]
 [Transient(typeof(IOpenerLink), typeof(OpenerLink))]
+[Transient(typeof(IClipboardService), typeof(CodeClipboardService))]
 [Transient(typeof(IDbContextSetup), Factory = nameof(DbContextSetupFactory))]
 [Transient(typeof(StorageDbContext), Factory = nameof(StorageDbContextFactory))]
-[Transient(typeof(IClipboardService), typeof(CodeClipboardService))]
+[Transient(typeof(IObjectStorage), Factory = nameof(SqliteObjectStorageFactory))]
 public partial class TestServiceProvider : IServiceFactory
 {
-    private readonly IServiceProvider serviceProvider;
-    
-    public TestServiceProvider()
+    static IObjectStorage SqliteObjectStorageFactory(StorageDbContext context, ProtobufSerializer serializer)
     {
-        serviceProvider = this;
+        return new SqliteObjectStorage(context, serializer);
     }
     
     static StorageDbContext StorageDbContextFactory(IDbContextSetup setup)

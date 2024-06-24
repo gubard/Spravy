@@ -148,6 +148,17 @@ public class ToDoCache : IToDoCache
             });
     }
 
+    public Result ResetItemsUi()
+    {
+        foreach (var value in cache.Values)
+        {
+            value.IsExpanded = false;
+            value.IsIgnore = false;
+        }
+        
+        return Result.Success;
+    }
+
     public Result<ReadOnlyMemory<ToDoItemEntityNotify>> UpdateRootItems(ReadOnlyMemory<Guid> roots)
     {
         return roots.ToResult()
@@ -185,8 +196,6 @@ public class ToDoCache : IToDoCache
         return GetToDoItem(shortItem.Id)
            .IfSuccess(item =>
             {
-                item.IsExpanded = false;
-                item.IsIgnore = false;
                 item.Name = shortItem.Name;
 
                 return item.ToResult();

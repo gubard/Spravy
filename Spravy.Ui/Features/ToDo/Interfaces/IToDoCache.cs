@@ -2,6 +2,7 @@ namespace Spravy.Ui.Features.ToDo.Interfaces;
 
 public interface IToDoCache
 {
+    Result ResetItemsUi();
     Result<ReadOnlyMemory<ToDoItemEntityNotify>> UpdateRootItems(ReadOnlyMemory<Guid> roots);
     Result<ReadOnlyMemory<ToDoItemEntityNotify>> GetRootItems();
     Result<ToDoItemEntityNotify> GetToDoItem(Guid id);

@@ -1,5 +1,4 @@
-﻿using System;
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.ReactiveUI;
 using Serilog;
 using Spravy.Core.Helpers;

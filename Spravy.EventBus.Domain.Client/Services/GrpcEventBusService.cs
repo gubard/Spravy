@@ -56,7 +56,7 @@ public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
                         Content = content.ToByteString(),
                     };
 
-                    return client.PublishEventAsync(request, metadata, ct: ct)
+                    return client.PublishEventAsync(request, metadata, cancellationToken: ct)
                        .ToValueTaskResultOnly()
                        .ConfigureAwait(false);
                 }, ct), ct);
@@ -73,7 +73,7 @@ public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
                 var request = new GetEventsRequest();
                 request.EventIds.AddRange(eventIds.ToByteString().ToArray());
 
-                return client.GetEventsAsync(request, metadata, ct: ct)
+                return client.GetEventsAsync(request, metadata, cancellationToken: ct)
                    .ToValueTaskResultValueOnly()
                    .ConfigureAwait(false)
                    .IfSuccessAsync(
@@ -101,7 +101,7 @@ public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
         var eventIdsByteString = eventIds.ToByteString();
         request.EventIds.AddRange(eventIdsByteString.ToArray());
         var metadata = await metadataFactory.CreateAsync(ct);
-        using var response = client.SubscribeEvents(request, metadata.Value, ct: ct);
+        using var response = client.SubscribeEvents(request, metadata.Value, cancellationToken: ct);
 
         while (await response.ResponseStream.MoveNext(ct))
         {

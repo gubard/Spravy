@@ -1,8 +1,8 @@
-using System;
 using Jab;
 using Microsoft.Extensions.Configuration;
 using Spravy.Client.Models;
 using Spravy.Core.Helpers;
+using Spravy.Core.Services;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;
@@ -19,18 +19,16 @@ namespace Spravy.Ui.Browser.Modules;
 [Singleton(typeof(IConfiguration), Factory = nameof(ConfigurationFactory))]
 [Singleton(typeof(ClientOptions), Factory = nameof(ClientOptionsFactory))]
 [Singleton(typeof(IServiceFactory), Factory = nameof(ServiceFactoryFactory))]
-[Transient(typeof(IObjectStorage), typeof(LocalStorageObjectStorage))]
 [Transient(typeof(IStringToBytes), typeof(StringToUtf8Bytes))]
 [Transient(typeof(IBytesToString), typeof(Utf8BytesToString))]
 [Transient(typeof(IOpenerLink), typeof(BrowserOpenerLink))]
 [Transient(typeof(IClipboardService), typeof(TopLevelClipboardService))]
+[Transient(typeof(IObjectStorage), Factory = nameof(LocalStorageObjectStorageFactory))]
 public partial class BrowserServiceProvider : IServiceFactory
 {
-    private readonly IServiceProvider serviceProvider;
-        
-    public BrowserServiceProvider()
+    public IObjectStorage LocalStorageObjectStorageFactory(ProtobufSerializer serializer)
     {
-        serviceProvider = this;
+        return new LocalStorageObjectStorage(serializer);
     }
 
     public IServiceFactory ServiceFactoryFactory()
