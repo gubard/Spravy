@@ -35,10 +35,10 @@
         <Panel>
             <ItemsControl Name="{x:Static v:ToDoItemsView.ItemsItemsControlVirtualizingStackPanelName}"
                           Classes="virtualizing-stack-panel-vertical"
-                          IsVisible="{Binding Items.Count, Converter={StaticResource Int32MoreThen}, ConverterParameter=100}"
+                          IsVisible="{Binding Items.Count, Converter={StaticResource Int32MoreThen}, ConverterParameter=10}"
                           ItemsSource="{Binding Items}" />
             <ItemsControl Name="{x:Static v:ToDoItemsView.ItemsItemsControlName}"
-                          IsVisible="{Binding Items.Count, Converter={StaticResource Int32LessOrEqualsThen}, ConverterParameter=100}"
+                          IsVisible="{Binding Items.Count, Converter={StaticResource Int32LessOrEqualsThen}, ConverterParameter=10}"
                           ItemsSource="{Binding Items}" />
         </Panel>
     </Expander>
