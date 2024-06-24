@@ -1,4 +1,4 @@
-﻿var directory = new DirectoryInfo("../../../../Spravy.Ui");
+﻿var directory = new DirectoryInfo("../../../../");
 Console.WriteLine($"Directory: {directory}");
 
 var viewModels = directory.GetFiles("*ViewModel.cs", SearchOption.AllDirectories)
@@ -12,6 +12,11 @@ var views = directory.GetFiles("*View.axaml", SearchOption.AllDirectories)
    .ToArray();
 
 var commands = directory.GetFiles("*Commands.cs", SearchOption.AllDirectories)
+   .Select(x => Path.GetFileNameWithoutExtension(x.Name))
+   .Distinct()
+   .ToArray();
+
+var errors = directory.GetFiles("*Error.cs", SearchOption.AllDirectories)
    .Select(x => Path.GetFileNameWithoutExtension(x.Name))
    .Distinct()
    .ToArray();
@@ -46,4 +51,9 @@ foreach (var viewModel in viewModels)
             }
             """);
     }
+}
+
+foreach (var error in errors)
+{
+    Console.WriteLine($"[JsonSerializable(typeof({error}))]");
 }
