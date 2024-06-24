@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Jab;
 using Spravy.Authentication.Domain.Client.Modules;
 using Spravy.Client.Modules;
@@ -162,6 +163,7 @@ namespace Spravy.Ui.Modules;
 [Transient(typeof(CreateUserView))]
 [Transient(typeof(CreateUserCommands))]
 [Transient(typeof(IPropertyValidator), typeof(PropertyValidator))]
+[Transient(typeof(UiJsonSerializerContext), typeof(JsonSerializerContext))]
 [Transient(typeof(IErrorHandler), typeof(ErrorHandler))]
 [Transient(typeof(ISerializer), typeof(ProtobufSerializer))]
 [Transient(typeof(IResourceLoader), typeof(FileResourceLoader))]

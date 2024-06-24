@@ -5,11 +5,14 @@ namespace Spravy.Core.Services;
 
 public class SpravyJsonSerializer : ISerializer
 {
-    private readonly JsonSerializerContext context;
+    private readonly JsonSerializerOptions options;
 
     public SpravyJsonSerializer(JsonSerializerContext context)
     {
-        this.context = context;
+        options = new()
+        {
+            TypeInfoResolver = context,
+        };
     }
 
     public ConfiguredValueTaskAwaitable<Result> SerializeAsync<T>(T obj, Stream stream, CancellationToken ct)
@@ -17,21 +20,31 @@ public class SpravyJsonSerializer : ISerializer
         return SerializeCore(obj, stream, ct).ConfigureAwait(false);
     }
 
-    public async ValueTask<Result> SerializeCore<T>(T obj, Stream stream, CancellationToken ct)
+    private async ValueTask<Result> SerializeCore<T>(T obj, Stream stream, CancellationToken ct)
     {
-        await JsonSerializer.SerializeAsync(stream, obj, typeof(T) , context, ct);
-        
+        await JsonSerializer.SerializeAsync(stream, obj, options, ct);
+
         return Result.Success;
     }
 
     public ConfiguredValueTaskAwaitable<Result<TObject>> DeserializeAsync<TObject>(Stream stream, CancellationToken ct)
         where TObject : notnull
     {
-        throw new NotImplementedException();
+        return DeserializeCore<TObject>(stream, ct).ConfigureAwait(false);
+    }
+
+    private async ValueTask<Result<TObject>> DeserializeCore<TObject>(Stream stream, CancellationToken ct)
+        where TObject : notnull
+    {
+        var result = await JsonSerializer.DeserializeAsync<TObject>(stream, options, ct);
+
+        return result.ThrowIfNull().ToResult();
     }
 
     public Result<TObject> Deserialize<TObject>(Stream stream) where TObject : notnull
     {
-        throw new NotImplementedException();
+        var result = JsonSerializer.Deserialize<TObject>(stream, options);
+
+        return result.ThrowIfNull().ToResult();
     }
 }
