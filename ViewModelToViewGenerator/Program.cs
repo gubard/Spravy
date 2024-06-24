@@ -55,5 +55,10 @@ foreach (var viewModel in viewModels)
 
 foreach (var error in errors)
 {
+    if (error == "Error")
+    {
+        continue;
+    }
+
     Console.WriteLine($"[JsonSerializable(typeof({error}))]");
 }
