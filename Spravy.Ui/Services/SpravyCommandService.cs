@@ -572,7 +572,7 @@ public class SpravyCommandService
 
         Complete = SpravyCommand.Create<ToDoItemEntityNotify>((item, cancellationToken) =>
         {
-            return Result.AwaitableSuccess
+            Result.AwaitableSuccess
                .IfSuccessAsync(() =>
                 {
                     switch (item.IsCan)
@@ -612,6 +612,8 @@ public class SpravyCommandService
                 }, cancellationToken)
                .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(cancellationToken),
                     cancellationToken);
+
+            return Result.AwaitableSuccess;
         }, errorHandler, taskProgressService);
 
         AddChild = SpravyCommand.Create<ToDoItemEntityNotify>(
