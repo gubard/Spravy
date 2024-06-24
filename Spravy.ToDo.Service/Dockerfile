@@ -5,9 +5,9 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY ["Spravy.ToDo.Service/Spravy.Service.csproj", "Spravy.ToDo.Service/"]
+COPY ["Spravy.ToDo.Service/Spravy.ToDo.Service.csproj", "Spravy.ToDo.Service/"]
 COPY ["Directory.Build.props", "Spravy.ToDo.Service/Directory.Build.props"]
-RUN dotnet restore "Spravy.ToDo.Service/Spravy.Service.csproj"
+RUN dotnet restore "Spravy.ToDo.Service/Spravy.ToDo.Service.csproj"
 COPY . .
 WORKDIR "/src/Spravy.ToDo.Service"
 RUN dotnet build "Spravy.ToDo.Service.csproj" -c Release -o /app/build
