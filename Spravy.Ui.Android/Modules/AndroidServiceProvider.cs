@@ -1,3 +1,4 @@
+using Avalonia.Controls;
 using Jab;
 using Microsoft.Extensions.Configuration;
 using Spravy.Client.Models;
@@ -11,6 +12,7 @@ using Spravy.Domain.Extensions;
 using Spravy.Domain.Helpers;
 using Spravy.Domain.Interfaces;
 using Spravy.Ui.Android.Services;
+using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Modules;
 using Xamarin.Essentials;
@@ -22,6 +24,7 @@ namespace Spravy.Ui.Android.Modules;
 [Import(typeof(IUiModule))]
 [Singleton(typeof(IConfiguration), Factory = nameof(ConfigurationFactory))]
 [Singleton(typeof(ClientOptions), Factory = nameof(ClientOptionsFactory))]
+[Singleton(typeof(TopLevel), Factory = nameof(TopLevelFactory))]
 [Singleton(typeof(IServiceFactory), Factory = nameof(ServiceFactoryFactory))]
 [Transient(typeof(IOpenerLink), typeof(AndroidOpenerLink))]
 [Transient(typeof(IClipboardService), typeof(TopLevelClipboardService))]
@@ -30,6 +33,11 @@ namespace Spravy.Ui.Android.Modules;
 [Transient(typeof(IObjectStorage), Factory = nameof(SqliteObjectStorageFactory))]
 public partial class AndroidServiceProvider : IServiceFactory
 {
+    static TopLevel TopLevelFactory(Avalonia.Application application)
+    {
+        return application.GetTopLevel().ThrowIfNull();
+    }
+    
     static IObjectStorage SqliteObjectStorageFactory(StorageDbContext context, ProtobufSerializer serializer)
     {
         return new SqliteObjectStorage(context, serializer);

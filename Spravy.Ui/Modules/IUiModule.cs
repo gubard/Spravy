@@ -35,7 +35,6 @@ namespace Spravy.Ui.Modules;
 [Singleton(typeof(IDesktopTopLevelControl), typeof(MainWindow))]
 [Singleton(typeof(SukiTheme), Factory = nameof(SukiThemeFactory))]
 [Singleton(typeof(IEnumerable<IDataTemplate>), Factory = nameof(DataTemplatesFactory))]
-[Singleton(typeof(TopLevel), Factory = nameof(TopLevelFactory))]
 [Singleton(typeof(Application), Factory = nameof(ApplicationFactory))]
 [Transient(typeof(TokenHttpHeaderFactory))]
 [Transient(typeof(TimeZoneHttpHeaderFactory))]
@@ -191,11 +190,6 @@ public interface IUiModule
         {
             new ModuleDataTemplate(viewSelector, serviceFactory),
         };
-    }
-
-    static TopLevel TopLevelFactory(Application application)
-    {
-        return application.GetTopLevel().ThrowIfNull();
     }
 
     static Application ApplicationFactory()

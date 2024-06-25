@@ -12,6 +12,7 @@ namespace Spravy.Integration.Tests.Modules;
 [Singleton(typeof(IConfiguration), Factory = nameof(ConfigurationFactory))]
 [Singleton(typeof(ClientOptions), Factory = nameof(ClientOptionsFactory))]
 [Singleton(typeof(IServiceFactory), Factory = nameof(ServiceFactoryFactory))]
+[Singleton(typeof(TopLevel), Factory = nameof(TopLevelFactory))]
 [Transient(typeof(IOpenerLink), typeof(OpenerLink))]
 [Transient(typeof(IClipboardService), typeof(CodeClipboardService))]
 [Transient(typeof(IDbContextSetup), Factory = nameof(DbContextSetupFactory))]
@@ -19,6 +20,11 @@ namespace Spravy.Integration.Tests.Modules;
 [Transient(typeof(IObjectStorage), Factory = nameof(SqliteObjectStorageFactory))]
 public partial class TestServiceProvider : IServiceFactory
 {
+    static TopLevel TopLevelFactory(IDesktopTopLevelControl desktopTopLevelControl)
+    {
+        return desktopTopLevelControl.ThrowIfIsNotCast<Window>();
+    }
+    
     static IObjectStorage SqliteObjectStorageFactory(StorageDbContext context, ProtobufSerializer serializer)
     {
         return new SqliteObjectStorage(context, serializer);
