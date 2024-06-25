@@ -57,7 +57,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
     public object[] Path { get; set; }
 
     [Reactive]
-    public ActiveToDoItemNotify? Active { get; set; }
+    public ToDoItemEntityNotify? Active { get; set; }
 
     [Reactive]
     public bool IsSelected { get; set; }

@@ -3,43 +3,13 @@ namespace Spravy.Ui.Features.ToDo.Services;
 public class ToDoCache : IToDoCache
 {
     private readonly Dictionary<Guid, ToDoItemEntityNotify> cache;
-    private readonly Dictionary<Guid, ActiveToDoItemNotify> activeCache;
-    private readonly IErrorHandler errorHandler;
-    private readonly INavigator navigator;
-    private readonly ITaskProgressService taskProgressService;
     private readonly SpravyCommandNotifyService spravyCommandNotifyService;
     private ReadOnlyMemory<ToDoItemEntityNotify> rootItems = ReadOnlyMemory<ToDoItemEntityNotify>.Empty;
 
-    public ToDoCache(
-        IErrorHandler errorHandler,
-        INavigator navigator,
-        ITaskProgressService taskProgressService,
-        SpravyCommandNotifyService spravyCommandNotifyService
-    )
+    public ToDoCache(SpravyCommandNotifyService spravyCommandNotifyService)
     {
-        activeCache = new();
-        this.errorHandler = errorHandler;
-        this.navigator = navigator;
-        this.taskProgressService = taskProgressService;
         this.spravyCommandNotifyService = spravyCommandNotifyService;
         cache = new();
-    }
-
-    public Result<ActiveToDoItemNotify> GetActive(Guid id)
-    {
-        if (activeCache.TryGetValue(id, out var value))
-        {
-            return value.ToResult();
-        }
-
-        var result = new ActiveToDoItemNotify(id, navigator, errorHandler, taskProgressService);
-
-        if (activeCache.TryAdd(id, result))
-        {
-            return result.ToResult();
-        }
-
-        return activeCache[id].ToResult();
     }
 
     public Result<ToDoItemEntityNotify> GetToDoItem(Guid id)
@@ -64,7 +34,7 @@ public class ToDoCache : IToDoCache
         return GetToDoItem(toDoItem.Id)
            .IfSuccess(item =>
             {
-                if (toDoItem.Active.TryGetValue( out var value))
+                if (toDoItem.Active.TryGetValue(out var value))
                 {
                     return UpdateUi(value)
                        .IfSuccess(i =>
@@ -82,13 +52,36 @@ public class ToDoCache : IToDoCache
             });
     }
 
+    public Result<ToDoItemEntityNotify> UpdateUi(ActiveToDoItem activeToDoItem)
+    {
+        return GetToDoItem(activeToDoItem.Id)
+           .IfSuccess(item =>
+            {
+                item.Name = activeToDoItem.Name;
+
+                if (activeToDoItem.ParentId.TryGetValue(out var parentId))
+                {
+                    return GetToDoItem(parentId)
+                       .IfSuccess(i =>
+                        {
+                            item.Parent = i;
+
+                            return Result.Success;
+                        })
+                       .IfSuccess(item.ToResult);
+                }
+
+                return item.ToResult();
+            });
+    }
+
     private Result<ToDoItemEntityNotify> UpdatePropertiesUi(ToDoItemEntityNotify item, ToDoItem toDoItem)
     {
         item.Description = toDoItem.Description;
         item.DescriptionType = toDoItem.DescriptionType;
         item.Type = toDoItem.Type;
         item.Name = toDoItem.Name;
-        item.Link = toDoItem.Link.TryGetValue(out var uri) ? uri.AbsoluteUri: string.Empty;
+        item.Link = toDoItem.Link.TryGetValue(out var uri) ? uri.AbsoluteUri : string.Empty;
         item.Status = toDoItem.Status;
         item.IsCan = toDoItem.IsCan;
         item.IsFavorite = toDoItem.IsFavorite;
@@ -155,7 +148,7 @@ public class ToDoCache : IToDoCache
             value.IsExpanded = false;
             value.IsIgnore = false;
         }
-        
+
         return Result.Success;
     }
 
@@ -197,17 +190,6 @@ public class ToDoCache : IToDoCache
            .IfSuccess(item =>
             {
                 item.Name = shortItem.Name;
-
-                return item.ToResult();
-            });
-    }
-
-    public Result<ActiveToDoItemNotify> UpdateUi(ActiveToDoItem active)
-    {
-        return GetActive(active.Id)
-           .IfSuccess(item =>
-            {
-                item.Name = active.Name;
 
                 return item.ToResult();
             });
