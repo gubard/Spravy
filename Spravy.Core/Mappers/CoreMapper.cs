@@ -121,4 +121,14 @@ public static partial class CoreMapper
 
         return new(value.ToGuid());
     }
+    
+    public static Guid? ToNullableGuid(this OptionStruct<Guid> value)
+    {
+        return value.TryGetValue(out var v) ? v : null;
+    }
+
+    public static OptionStruct<Guid> ToOptionGuid(this Guid? value)
+    {
+        return value.ToOption();
+    }
 }

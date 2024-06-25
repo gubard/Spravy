@@ -57,4 +57,14 @@ public static partial class ToDoDbMapper
     {
         return value.MapToString();
     }
+    
+    private static Guid? ToNullableGuid(OptionStruct<Guid> value)
+    {
+        return value.ToNullableGuid();
+    }
+
+    private static OptionStruct<Guid> ToOptionGuid(Guid? value)
+    {
+        return value.ToOptionGuid();
+    }
 }

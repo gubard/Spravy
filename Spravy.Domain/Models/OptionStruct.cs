@@ -28,4 +28,14 @@ public readonly struct OptionStruct<TValue> where TValue : struct
 
         return IsHasValue;
     }
+    
+    public TValue? GetValueOrNull()
+    {
+        if (IsHasValue)
+        {
+            return value;
+        }
+
+        return null;
+    }
 }

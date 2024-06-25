@@ -28,8 +28,12 @@ public class ReferenceToDoItemSettingsViewModel : ViewModelBase, IApplySettings
            .IfSuccessAsync(setting =>
             {
                 ToDoItemSelector.IgnoreIds = new([ToDoItemId,]);
-                ToDoItemSelector.DefaultSelectedItemId = setting.ReferenceId;
-                
+
+                if (setting.ReferenceId.TryGetValue(out var referenceId))
+                {
+                    ToDoItemSelector.DefaultSelectedItemId = referenceId;
+                }
+
                 return Result.Success;
             }, ct);
     }

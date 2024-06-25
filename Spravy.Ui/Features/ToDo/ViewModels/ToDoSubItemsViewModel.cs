@@ -69,7 +69,7 @@ public class ToDoSubItemsViewModel : ViewModelBase
                         return new(reference.Errors);
                     }
                     
-                    i.Value.ReferenceId = reference.Value.ReferenceId;
+                    i.Value.ReferenceId = reference.Value.ReferenceId.GetValueOrNull();
                 }
                 else
                 {
@@ -149,7 +149,7 @@ public class ToDoSubItemsViewModel : ViewModelBase
                         return new(reference.Errors);
                     }
                     
-                    i.Value.ReferenceId = reference.Value.ReferenceId;
+                    i.Value.ReferenceId = reference.Value.ReferenceId.GetValueOrNull();
                 }
                 else
                 {

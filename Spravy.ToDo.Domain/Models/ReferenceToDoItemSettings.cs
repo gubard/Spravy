@@ -1,11 +1,13 @@
+using Spravy.Domain.Models;
+
 namespace Spravy.ToDo.Domain.Models;
 
 public readonly struct ReferenceToDoItemSettings
 {
-    public ReferenceToDoItemSettings(Guid referenceId)
+    public ReferenceToDoItemSettings(OptionStruct<Guid> referenceId)
     {
         ReferenceId = referenceId;
     }
     
-    public Guid ReferenceId { get; }
+    public OptionStruct<Guid> ReferenceId { get; }
 }
