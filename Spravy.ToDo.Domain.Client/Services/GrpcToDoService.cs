@@ -3,6 +3,7 @@ using Grpc.Core;
 using Spravy.Client.Extensions;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
+using Spravy.Core.Interfaces;
 using Spravy.Core.Mappers;
 using Spravy.Domain.Enums;
 using Spravy.Domain.Extensions;
@@ -29,8 +30,8 @@ public class GrpcToDoService : GrpcServiceBase<ToDoService.ToDoServiceClient>,
         IFactory<Uri, ToDoService.ToDoServiceClient> grpcClientFactory,
         Uri host,
         IMetadataFactory metadataFactory,
-        ISerializer serializer
-    ) : base(grpcClientFactory, host, serializer)
+        IRpcExceptionHandler handler
+    ) : base(grpcClientFactory, host, handler)
     {
         this.metadataFactory = metadataFactory;
     }
@@ -39,10 +40,10 @@ public class GrpcToDoService : GrpcServiceBase<ToDoService.ToDoServiceClient>,
         IFactory<Uri, ToDoService.ToDoServiceClient> grpcClientFactory,
         Uri host,
         IMetadataFactory metadataFactory,
-        ISerializer serializer
+        IRpcExceptionHandler handler
     )
     {
-        return new(grpcClientFactory, host, metadataFactory, serializer);
+        return new(grpcClientFactory, host, metadataFactory, handler);
     }
 
     public ConfiguredValueTaskAwaitable<Result<OptionStruct<ActiveToDoItem>>> GetActiveToDoItemAsync(

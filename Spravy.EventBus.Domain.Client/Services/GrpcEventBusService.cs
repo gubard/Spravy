@@ -2,6 +2,7 @@ using System.Runtime.CompilerServices;
 using Spravy.Client.Extensions;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
+using Spravy.Core.Interfaces;
 using Spravy.Core.Mappers;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
@@ -24,8 +25,8 @@ public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
         IFactory<Uri, EventBusServiceClient> grpcClientFactory,
         Uri host,
         IMetadataFactory metadataFactory,
-        ISerializer serializer
-    ) : base(grpcClientFactory, host, serializer)
+        IRpcExceptionHandler handler
+    ) : base(grpcClientFactory, host, handler)
     {
         this.metadataFactory = metadataFactory;
     }
@@ -85,10 +86,10 @@ public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
         IFactory<Uri, EventBusServiceClient> grpcClientFactory,
         Uri host,
         IMetadataFactory metadataFactory,
-        ISerializer serializer
+        IRpcExceptionHandler handler
     )
     {
-        return new(grpcClientFactory, host, metadataFactory, serializer);
+        return new(grpcClientFactory, host, metadataFactory, handler);
     }
 
     private async IAsyncEnumerable<Result<EventValue>> SubscribeEventsAsyncCore(

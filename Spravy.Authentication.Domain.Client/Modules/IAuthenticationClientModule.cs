@@ -7,6 +7,7 @@ using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Client.Helpers;
 using Spravy.Client.Models;
 using Spravy.Core.Extensions;
+using Spravy.Core.Interfaces;
 using Spravy.Domain.Interfaces;
 using static Spravy.Authentication.Protos.AuthenticationService;
 
@@ -44,11 +45,11 @@ public interface IAuthenticationClientModule
     static IAuthenticationService AuthenticationServiceFactory(
         GrpcAuthenticationServiceOptions options,
         IFactory<Uri, AuthenticationServiceClient> grpcClientFactory,
-        ISerializer serializer
+        IRpcExceptionHandler handler
     )
     {
         return GrpcClientFactoryHelper
            .CreateGrpcService<GrpcAuthenticationService, AuthenticationServiceClient, GrpcAuthenticationServiceOptions>(
-                options, grpcClientFactory, serializer);
+                options, grpcClientFactory, handler);
     }
 }

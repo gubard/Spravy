@@ -1,4 +1,5 @@
 using Spravy.Client.Services;
+using Spravy.Core.Interfaces;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
@@ -14,7 +15,7 @@ public class EventBusServiceFactory : IFactory<string, IEventBusService>
     private readonly IFactory<Uri, EventBusService.EventBusServiceClient> eventBusServiceClientFactory;
     private readonly IHttpHeaderFactory httpHeaderFactory;
     private readonly GrpcEventBusServiceOptions options;
-    private readonly ISerializer serializer;
+    private readonly IRpcExceptionHandler handler;
     private readonly ITokenService tokenService;
 
     public EventBusServiceFactory(
@@ -22,14 +23,14 @@ public class EventBusServiceFactory : IFactory<string, IEventBusService>
         IFactory<Uri, EventBusService.EventBusServiceClient> eventBusServiceClientFactory,
         GrpcEventBusServiceOptions options,
         ITokenService tokenService,
-        ISerializer serializer
+        IRpcExceptionHandler handler
     )
     {
         this.httpHeaderFactory = httpHeaderFactory;
         this.eventBusServiceClientFactory = eventBusServiceClientFactory;
         this.options = options;
         this.tokenService = tokenService;
-        this.serializer = serializer;
+        this.handler = handler;
     }
 
     public Result<IEventBusService> Create(string key)
@@ -49,7 +50,7 @@ public class EventBusServiceFactory : IFactory<string, IEventBusService>
         var metadataFactory = new MetadataFactory(new CombineHttpHeaderFactory(headers));
         var host = options.Host.ThrowIfNull().ToUri();
 
-        return new GrpcEventBusService(eventBusServiceClientFactory, host, metadataFactory, serializer)
+        return new GrpcEventBusService(eventBusServiceClientFactory, host, metadataFactory, handler)
            .ToResult<IEventBusService>();
     }
 }

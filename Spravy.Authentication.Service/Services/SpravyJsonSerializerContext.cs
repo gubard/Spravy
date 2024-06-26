@@ -1,13 +1,11 @@
 using System.Text.Json.Serialization;
 using Spravy.Db.Errors;
+using Spravy.Domain.Errors;
+using Spravy.ToDo.Domain.Errors;
 
-namespace Spravy.Ui.Services;
+namespace Spravy.Authentication.Service.Services;
 
 [JsonSourceGenerationOptions]
-[JsonSerializable(typeof(UserIdentifierTypeOutOfRangeError))]
-[JsonSerializable(typeof(NonItemSelectedError))]
-[JsonSerializable(typeof(NavigatorCacheEmptyError))]
-[JsonSerializable(typeof(NotViewForViewModelError))]
 [JsonSerializable(typeof(ToDoItemIsCanOutOfRangeError))]
 [JsonSerializable(typeof(ToDoItemAlreadyCompleteError))]
 [JsonSerializable(typeof(ToDoItemStatusOutOfRangeError))]
@@ -39,4 +37,4 @@ namespace Spravy.Ui.Services;
 [JsonSerializable(typeof(MaxCycleCountReachedError))]
 [JsonSerializable(typeof(NotFoundTypeError))]
 [JsonSerializable(typeof(NotFoundEntityError))]
-public partial class UiJsonSerializerContext : JsonSerializerContext;
+public partial class SpravyJsonSerializerContext : JsonSerializerContext;

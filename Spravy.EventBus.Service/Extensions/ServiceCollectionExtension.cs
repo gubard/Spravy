@@ -1,6 +1,10 @@
+using System.Text.Json.Serialization;
 using Spravy.Core.Extensions;
+using Spravy.Core.Interfaces;
+using Spravy.Core.Services;
 using Spravy.Db.Interfaces;
 using Spravy.Db.Sqlite.Models;
+using Spravy.Domain.Interfaces;
 using Spravy.EventBus.Db.Contexts;
 using Spravy.EventBus.Db.Sqlite.Migrator;
 using Spravy.EventBus.Db.Sqlite.Services;
@@ -19,7 +23,10 @@ public static class ServiceCollectionExtension
         serviceCollection.AddSingleton<IDbContextSetup, SqliteEventBusDbContextSetup>();
         serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<SqliteFolderOptions>());
         serviceCollection.AddTransient<EventStorage>();
-
+        serviceCollection.AddTransient<IRpcExceptionHandler, RpcExceptionHandler>();
+        serviceCollection.AddTransient<ISerializer, SpravyJsonSerializer>();
+        serviceCollection.AddTransient<JsonSerializerContext, SpravyJsonSerializerContext>();
+        
         return serviceCollection;
     }
 }

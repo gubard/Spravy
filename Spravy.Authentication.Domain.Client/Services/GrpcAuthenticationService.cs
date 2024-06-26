@@ -5,6 +5,7 @@ using Spravy.Authentication.Domain.Models;
 using Spravy.Client.Extensions;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
+using Spravy.Core.Interfaces;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
@@ -21,8 +22,8 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
     public GrpcAuthenticationService(
         IFactory<Uri, AuthenticationServiceClient> grpcClientFactory,
         Uri host,
-        ISerializer serializer
-    ) : base(grpcClientFactory, host, serializer)
+        IRpcExceptionHandler handler
+    ) : base(grpcClientFactory, host, handler)
     {
     }
 
@@ -247,9 +248,9 @@ public class GrpcAuthenticationService : GrpcServiceBase<AuthenticationServiceCl
     public static GrpcAuthenticationService CreateGrpcService(
         IFactory<Uri, AuthenticationServiceClient> grpcClientFactory,
         Uri host,
-        ISerializer serializer
+        IRpcExceptionHandler handler
     )
     {
-        return new(grpcClientFactory, host, serializer);
+        return new(grpcClientFactory, host, handler);
     }
 }

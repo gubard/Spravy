@@ -1,4 +1,5 @@
 using Spravy.Core.Extensions;
+using Spravy.Core.Interfaces;
 
 namespace Spravy.Client.Extensions;
 
@@ -32,7 +33,7 @@ public static class ServiceCollectionExtension
             var options = sp.GetConfigurationSection<TGrpcOptions>();
 
             return TGrpcService.CreateGrpcService(sp.GetRequiredService<IFactory<Uri, TGrpcClient>>(),
-                options.Host.ThrowIfNull().ToUri(), sp.GetRequiredService<ISerializer>());
+                options.Host.ThrowIfNull().ToUri(), sp.GetRequiredService<IRpcExceptionHandler>());
         });
 
         return serviceCollection;
@@ -67,7 +68,7 @@ public static class ServiceCollectionExtension
 
             return TGrpcService.CreateGrpcService(sp.GetRequiredService<IFactory<Uri, TGrpcClient>>(),
                 options.Host.ThrowIfNull().ToUri(), CreateMetadataFactory(options, sp),
-                sp.GetRequiredService<ISerializer>());
+                sp.GetRequiredService<IRpcExceptionHandler>());
         });
 
         return serviceCollection;

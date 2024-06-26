@@ -1,9 +1,11 @@
+using System.Text.Json.Serialization;
 using Spravy.Authentication.Domain.Client.Services;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Services;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
 using Spravy.Core.Extensions;
+using Spravy.Core.Interfaces;
 using Spravy.Core.Services;
 using Spravy.Db.Interfaces;
 using Spravy.Db.Sqlite.Models;
@@ -29,9 +31,9 @@ public static class ServiceCollectionExtension
         //serviceCollection.AddHostedService<EventBusHostedService>();
         serviceCollection.AddSpravySqliteFolderContext<SpravyDbToDoDbContext, SpravyToDoDbSqliteMigratorMark>();
         serviceCollection.AddSingleton<ITokenService, TokenService>();
-        serviceCollection.AddTransient<ISerializer, ProtobufSerializer>();
         serviceCollection.AddSingleton<IDbContextSetup, SqliteToDoDbContextSetup>();
         serviceCollection.AddSingleton<IFactory<string, SpravyDbToDoDbContext>, SpravyToDoDbContextFactory>();
+        serviceCollection.AddTransient<IRpcExceptionHandler, RpcExceptionHandler>();
         //serviceCollection.AddSingleton<IEventBusService>(sp => sp.GetRequiredService<GrpcEventBusService>());
         //serviceCollection.AddSingleton<IKeeper<TokenResult>, StaticKeeper<TokenResult>>();
         //serviceCollection.AddSingleton<IFactory<string, IEventBusService>, EventBusServiceFactory>();
@@ -41,6 +43,8 @@ public static class ServiceCollectionExtension
         serviceCollection.AddSingleton<TimeZoneHttpHeaderFactory>();
         serviceCollection.AddTransient<IToDoService, EfToDoService>();
         serviceCollection.AddTransient<GetterToDoItemParametersService>();
+        serviceCollection.AddTransient<ISerializer, SpravyJsonSerializer>();
+        serviceCollection.AddTransient<JsonSerializerContext, SpravyJsonSerializerContext>();
 
         /*serviceCollection.AddGrpcService<GrpcAuthenticationService,
             Spravy.Authentication.Protos.AuthenticationService.AuthenticationServiceClient,

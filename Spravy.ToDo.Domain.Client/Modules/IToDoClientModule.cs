@@ -5,6 +5,7 @@ using Spravy.Client.Helpers;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Models;
 using Spravy.Core.Extensions;
+using Spravy.Core.Interfaces;
 using Spravy.Domain.Interfaces;
 using Spravy.ToDo.Domain.Client.Models;
 using Spravy.ToDo.Domain.Client.Services;
@@ -45,12 +46,12 @@ public interface IToDoClientModule
     static IToDoService ToDoServiceFactory(
         GrpcToDoServiceOptions options,
         IFactory<Uri, ToDoService.ToDoServiceClient> grpcClientFactory,
-        ISerializer serializer,
+        IRpcExceptionHandler handler,
         IMetadataFactory metadataFactory
     )
     {
         return GrpcClientFactoryHelper
            .CreateGrpcServiceAuth<GrpcToDoService, ToDoService.ToDoServiceClient, GrpcToDoServiceOptions>(
-                options, grpcClientFactory, serializer, metadataFactory);
+                options, grpcClientFactory, handler, metadataFactory);
     }
 }

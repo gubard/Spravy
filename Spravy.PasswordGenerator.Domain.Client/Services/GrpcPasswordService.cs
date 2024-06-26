@@ -1,3 +1,4 @@
+using Spravy.Core.Interfaces;
 using Spravy.Core.Mappers;
 using Spravy.PasswordGenerator.Domain.Mapper.Mappers;
 
@@ -15,8 +16,8 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
         IFactory<Uri, PasswordServiceClient> grpcClientFactory,
         Uri host,
         IMetadataFactory metadataFactory,
-        ISerializer serializer
-    ) : base(grpcClientFactory, host, serializer)
+        IRpcExceptionHandler handler
+    ) : base(grpcClientFactory, host, handler)
     {
         this.metadataFactory = metadataFactory;
     }
@@ -25,10 +26,10 @@ public class GrpcPasswordService : GrpcServiceBase<PasswordServiceClient>,
         IFactory<Uri, PasswordServiceClient> grpcClientFactory,
         Uri host,
         IMetadataFactory metadataFactory,
-        ISerializer serializer
+        IRpcExceptionHandler handler
     )
     {
-        return new(grpcClientFactory, host, metadataFactory, serializer);
+        return new(grpcClientFactory, host, metadataFactory, handler);
     }
 
     public ConfiguredValueTaskAwaitable<Result> AddPasswordItemAsync(

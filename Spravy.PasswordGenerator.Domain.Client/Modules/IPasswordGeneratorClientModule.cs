@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Spravy.Client.Helpers;
 using Spravy.Client.Models;
 using Spravy.Core.Extensions;
+using Spravy.Core.Interfaces;
 using Spravy.PasswordGenerator.Domain.Client.Models;
 using Spravy.PasswordGenerator.Domain.Client.Services;
 
@@ -40,12 +41,12 @@ public interface IPasswordGeneratorClientModule
     static IPasswordService PasswordServiceFactory(
         GrpcPasswordServiceOptions options,
         IFactory<Uri, PasswordServiceClient> grpcClientFactory,
-        ISerializer serializer,
+        IRpcExceptionHandler handler,
         IMetadataFactory metadataFactory
     )
     {
         return GrpcClientFactoryHelper
            .CreateGrpcServiceAuth<GrpcPasswordService, PasswordServiceClient, GrpcPasswordServiceOptions>(options,
-                grpcClientFactory, serializer, metadataFactory);
+                grpcClientFactory, handler, metadataFactory);
     }
 }

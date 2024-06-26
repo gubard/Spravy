@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using Jab;
 using Spravy.Authentication.Domain.Client.Modules;
 using Spravy.Client.Modules;
+using Spravy.Core.Interfaces;
 using Spravy.PasswordGenerator.Domain.Client.Modules;
 using Spravy.ToDo.Domain.Client.Modules;
 using Spravy.Ui.Features.PasswordGenerator.Views;
@@ -163,13 +164,14 @@ namespace Spravy.Ui.Modules;
 [Transient(typeof(CreateUserCommands))]
 [Transient(typeof(ProtobufSerializer))]
 [Transient(typeof(IPropertyValidator), typeof(PropertyValidator))]
-[Transient(typeof(JsonSerializerContext), typeof(UiJsonSerializerContext))]
+[Transient(typeof(JsonSerializerContext), typeof(SpravyJsonSerializerContext))]
 [Transient(typeof(IErrorHandler), typeof(ErrorHandler))]
 [Transient(typeof(ISerializer), typeof(SpravyJsonSerializer))]
 [Transient(typeof(IResourceLoader), typeof(FileResourceLoader))]
 [Transient(typeof(IKeeper<Guid>), typeof(StaticKeeper<Guid>))]
 [Transient(typeof(IDataTemplate), typeof(ModuleDataTemplate))]
 [Transient(typeof(IMetadataFactory), typeof(MetadataFactory))]
+[Transient(typeof(IRpcExceptionHandler), typeof(RpcExceptionHandler))]
 [Transient(typeof(IClipboard), Factory = nameof(ClipboardFactory))]
 [Transient(typeof(IHttpHeaderFactory), Factory = nameof(HttpHeaderFactoryFactory))]
 public interface IUiModule

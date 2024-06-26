@@ -3,8 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Spravy.Domain.Errors;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Models;
-using Spravy.PasswordGenerator.Db.Errors;
 using Spravy.PasswordGenerator.Db.Models;
+using Spravy.PasswordGenerator.Domain.Errors;
 
 namespace Spravy.PasswordGenerator.Db.Extensions;
 

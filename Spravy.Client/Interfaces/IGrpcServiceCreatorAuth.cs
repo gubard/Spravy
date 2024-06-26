@@ -1,3 +1,5 @@
+using Spravy.Core.Interfaces;
+
 namespace Spravy.Client.Interfaces;
 
 public interface IGrpcServiceCreatorAuth<out TGrpcService, TGrpcClient>
@@ -7,7 +9,7 @@ public interface IGrpcServiceCreatorAuth<out TGrpcService, TGrpcClient>
         IFactory<Uri, TGrpcClient> grpcClientFactory,
         Uri host,
         IMetadataFactory metadataFactory,
-        ISerializer serializer
+        IRpcExceptionHandler handler
     );
 }
 
@@ -17,6 +19,6 @@ public interface IGrpcServiceCreator<out TGrpcService, TGrpcClient>
     static abstract TGrpcService CreateGrpcService(
         IFactory<Uri, TGrpcClient> grpcClientFactory,
         Uri host,
-        ISerializer serializer
+        IRpcExceptionHandler handler
     );
 }

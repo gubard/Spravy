@@ -59,6 +59,38 @@ foreach (var error in errors)
     {
         continue;
     }
+    
+    if (error == "ValueOutOfRangeError")
+    {
+        continue;
+    }
 
     Console.WriteLine($"[JsonSerializable(typeof({error}))]");
+}
+
+foreach (var error in errors)
+{
+    if (error == "Error")
+    {
+        continue;
+    }
+    
+    if (error == "ValueOutOfRangeError")
+    {
+        continue;
+    }
+
+    Console.WriteLine($$"""
+        if ({{error}}.MainId == id)
+        {
+            var error = await serializer.DeserializeAsync<{{error}}>(stream, ct);
+        
+            if (error.IsHasError)
+            {
+                return error.Errors;
+            }
+        
+            return new([error.Value,]);
+        }
+        """);
 }

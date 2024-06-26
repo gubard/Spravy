@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Text.Json.Serialization;
 using Spravy.Authentication.Db.Contexts;
 using Spravy.Authentication.Db.Sqlite.Migrator;
 using Spravy.Authentication.Db.Sqlite.Services;
@@ -12,6 +13,7 @@ using Spravy.Client.Extensions;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
 using Spravy.Core.Extensions;
+using Spravy.Core.Interfaces;
 using Spravy.Core.Options;
 using Spravy.Core.Services;
 using Spravy.Db.Interfaces;
@@ -27,6 +29,7 @@ using Spravy.EventBus.Domain.Interfaces;
 using Spravy.EventBus.Protos;
 using Spravy.Service.HostedServices;
 using Spravy.Service.Services;
+using SpravyJsonSerializerContext = Spravy.Authentication.Service.Services.SpravyJsonSerializerContext;
 
 namespace Spravy.Authentication.Service.Extensions;
 
@@ -37,7 +40,6 @@ public static class ServiceCollectionExtension
         serviceCollection.AddHostedService<FileMigratorHostedService<SpravyDbAuthenticationDbContext>>();
         serviceCollection.AddSingleton<IDbContextSetup, SqliteAuthenticationDbContextSetup>();
         serviceCollection.AddSingleton<ITokenFactory, JwtTokenFactory>();
-        serviceCollection.AddSingleton<ISerializer, ProtobufSerializer>();
         serviceCollection.AddSingleton<JwtSecurityTokenHandler>();
         serviceCollection.AddSingleton<IKeeper<TokenResult>, StaticKeeper<TokenResult>>();
         serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<JwtTokenFactoryOptions>());
@@ -46,6 +48,7 @@ public static class ServiceCollectionExtension
         serviceCollection.AddSingleton<ContextAccessorUserIdHttpHeaderFactory>();
         serviceCollection.AddSingleton<IEventBusService>(sp => sp.GetRequiredService<GrpcEventBusService>());
         serviceCollection.AddSingleton<ITokenService, TokenService>();
+        serviceCollection.AddTransient<IRpcExceptionHandler, RpcExceptionHandler>();
         serviceCollection.AddTransient<IFactory<string, IHasher>, HasherFactory>();
         serviceCollection.AddTransient<IFactory<string, Named<IBytesToString>>, BytesToStringFactory>();
         serviceCollection.AddTransient<IFactory<string, Named<IStringToBytes>>, StringToBytesFactory>();
@@ -55,6 +58,8 @@ public static class ServiceCollectionExtension
         serviceCollection.AddTransient(_ => NamedHelper.StringToUtf8Bytes.ToRef());
         serviceCollection.AddSingleton<TimeZoneHttpHeaderFactory>();
         serviceCollection.AddTransient<IEmailService, EmailService>();
+        serviceCollection.AddTransient<ISerializer, SpravyJsonSerializer>();
+        serviceCollection.AddTransient<JsonSerializerContext, SpravyJsonSerializerContext>();
 
         serviceCollection.AddTransient<IRandom<string>>(_ =>
             new RandomString("QAZWSXEDCRFVTGBYHNUJMIKOP0123456789", 6));

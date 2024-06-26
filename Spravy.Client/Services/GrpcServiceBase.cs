@@ -1,16 +1,18 @@
+using Spravy.Core.Interfaces;
+
 namespace Spravy.Client.Services;
 
 public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBase
 {
     private readonly IFactory<Uri, TGrpcClient> grpcClientFactory;
     private readonly Uri host;
-    private readonly ISerializer serializer;
+    private readonly IRpcExceptionHandler handler;
     
-    protected GrpcServiceBase(IFactory<Uri, TGrpcClient> grpcClientFactory, Uri host, ISerializer serializer)
+    protected GrpcServiceBase(IFactory<Uri, TGrpcClient> grpcClientFactory, Uri host, IRpcExceptionHandler handler)
     {
         this.grpcClientFactory = grpcClientFactory;
         this.host = host;
-        this.serializer = serializer;
+        this.handler = handler;
     }
     
     protected ConfiguredValueTaskAwaitable<Result> CallClientAsync(
@@ -33,7 +35,7 @@ public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBas
                 case StatusCode.Unknown:
                     throw;
                 case StatusCode.InvalidArgument:
-                    return exception.ToErrorAsync(serializer);
+                    return handler.ToErrorAsync(exception, ct);
                 case StatusCode.DeadlineExceeded:
                     throw;
                 case StatusCode.NotFound:
@@ -98,7 +100,7 @@ public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBas
                 case StatusCode.Unknown:
                     throw;
                 case StatusCode.InvalidArgument:
-                    var error = await exception.ToErrorAsync(serializer);
+                    var error = await handler.ToErrorAsync(exception, ct);
                     
                     return error.Errors.ToResult<TValue>();
                 case StatusCode.DeadlineExceeded:

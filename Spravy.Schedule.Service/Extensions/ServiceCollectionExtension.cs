@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Spravy.Authentication.Domain.Client.Models;
 using Spravy.Authentication.Domain.Client.Services;
 using Spravy.Authentication.Domain.Services;
@@ -6,6 +7,7 @@ using Spravy.Client.Extensions;
 using Spravy.Client.Interfaces;
 using Spravy.Client.Services;
 using Spravy.Core.Extensions;
+using Spravy.Core.Interfaces;
 using Spravy.Core.Services;
 using Spravy.Db.Interfaces;
 using Spravy.Db.Sqlite.Models;
@@ -38,14 +40,16 @@ public static class ServiceCollectionExtension
         serviceCollection.AddSingleton<IDbContextSetup, SqliteScheduleDbContextSetup>();
         serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<SqliteFolderOptions>());
         serviceCollection.AddSingleton<IFactory<string, IEventBusService>, EventBusServiceFactory>();
+        serviceCollection.AddTransient<IRpcExceptionHandler, RpcExceptionHandler>();
         //serviceCollection.AddSingleton<IKeeper<TokenResult>, StaticKeeper<TokenResult>>();
         serviceCollection.AddSingleton<ITokenService, TokenService>();
         serviceCollection.AddSingleton<IMetadataFactory, MetadataFactory>();
         serviceCollection.AddSingleton<ContextAccessorUserIdHttpHeaderFactory>();
         serviceCollection.AddSingleton<TimeZoneHttpHeaderFactory>();
         serviceCollection.AddTransient<IHttpHeaderFactory, TimeZoneHttpHeaderFactory>();
-        serviceCollection.AddTransient<ISerializer, ProtobufSerializer>();
         serviceCollection.AddTransient<IScheduleService, EfScheduleService>();
+        serviceCollection.AddTransient<ISerializer, SpravyJsonSerializer>();
+        serviceCollection.AddTransient<JsonSerializerContext, SpravyJsonSerializerContext>();
 
         serviceCollection
            .AddGrpcService<GrpcAuthenticationService, AuthenticationService.AuthenticationServiceClient,

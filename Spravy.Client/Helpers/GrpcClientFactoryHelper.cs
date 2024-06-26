@@ -1,3 +1,5 @@
+using Spravy.Core.Interfaces;
+
 namespace Spravy.Client.Helpers;
 
 public static class GrpcClientFactoryHelper
@@ -34,7 +36,7 @@ public static class GrpcClientFactoryHelper
     public static TGrpcService CreateGrpcService<TGrpcService, TGrpcClient, TGrpcOptions>(
         TGrpcOptions options,
         IFactory<Uri, TGrpcClient> grpcClientFactory,
-        ISerializer serializer
+        IRpcExceptionHandler handler
     )
         where TGrpcService : GrpcServiceBase<TGrpcClient>, IGrpcServiceCreator<TGrpcService, TGrpcClient>
         where TGrpcClient : ClientBase
@@ -42,13 +44,13 @@ public static class GrpcClientFactoryHelper
     {
         var host = options.Host.ThrowIfNullOrWhiteSpace().ToUri();
         
-        return TGrpcService.CreateGrpcService(grpcClientFactory, host, serializer);
+        return TGrpcService.CreateGrpcService(grpcClientFactory, host, handler);
     }
     
     public static TGrpcService CreateGrpcServiceAuth<TGrpcService, TGrpcClient, TGrpcOptions>(
         TGrpcOptions options,
         IFactory<Uri, TGrpcClient> grpcClientFactory,
-        ISerializer serializer,
+        IRpcExceptionHandler handler,
         IMetadataFactory metadataFactory
     )
         where TGrpcService : GrpcServiceBase<TGrpcClient>, IGrpcServiceCreatorAuth<TGrpcService, TGrpcClient>
@@ -57,7 +59,7 @@ public static class GrpcClientFactoryHelper
     {
         var host = options.Host.ThrowIfNullOrWhiteSpace().ToUri();
         
-        return TGrpcService.CreateGrpcService(grpcClientFactory, host, metadataFactory, serializer);
+        return TGrpcService.CreateGrpcService(grpcClientFactory, host, metadataFactory, handler);
     }
     
     private static IMetadataFactory CreateMetadataFactory<TGrpcOptions>(

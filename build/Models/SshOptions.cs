@@ -1,4 +1,6 @@
-namespace _build.Interfaces;
+using _build.Interfaces;
+
+namespace _build.Models;
 
 public class SshOptions : ISshOptions
 {
