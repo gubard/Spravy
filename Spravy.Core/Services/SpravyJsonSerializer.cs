@@ -16,13 +16,14 @@ public class SpravyJsonSerializer : ISerializer
     }
 
     public ConfiguredValueTaskAwaitable<Result> SerializeAsync<T>(T obj, Stream stream, CancellationToken ct)
+        where T : notnull
     {
         return SerializeCore(obj, stream, ct).ConfigureAwait(false);
     }
 
-    private async ValueTask<Result> SerializeCore<T>(T obj, Stream stream, CancellationToken ct)
+    private async ValueTask<Result> SerializeCore<T>(T obj, Stream stream, CancellationToken ct) where T : notnull
     {
-        await JsonSerializer.SerializeAsync(stream, obj, options, ct);
+        await JsonSerializer.SerializeAsync(stream, obj, obj.GetType(), options, ct);
 
         return Result.Success;
     }
