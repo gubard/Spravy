@@ -67,7 +67,7 @@ public static class WindowExtension
 
     public static TWindow SaveFrame<TWindow>(this TWindow window) where TWindow : Window
     {
-        return window.RunJobsAll().SaveFrame(FileHelper.GetFrameShortFile());
+        return window.SaveFrame(FileHelper.GetFrameShortFile());
     }
 
     public static TWindow LogCurrentState<TWindow>(this TWindow window) where TWindow : Window

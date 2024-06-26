@@ -70,6 +70,7 @@ public class Tests
                            .FindControl<Button>(ElementNames.BackButton)
                            .ThrowIfNull()
                            .ClickOn(w))
+                       .RunJobsAll(1)
                        .Case(() => w.GetCurrentView<LoginView, LoginViewModel>()
                            .FindControl<Button>(ElementNames.CreateUserButton)
                            .ThrowIfNull()
