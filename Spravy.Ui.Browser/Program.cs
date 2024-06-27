@@ -16,6 +16,7 @@ internal class Program
 {
     private static async Task Main()
     {
+        DiHelper.ServiceFactory = new BrowserServiceProvider();
         Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
 
         try
@@ -23,7 +24,6 @@ internal class Program
             Log.Information("Starting web app");
             await JSHost.ImportAsync("localStorage.js", "./localStorage.js");
             await JSHost.ImportAsync("window.js", "./window.js");
-            DiHelper.ServiceFactory = new BrowserServiceProvider();
             await BuildAvaloniaApp().WithInterFont().UseReactiveUI().StartBrowserAppAsync("out");
         }
         catch (Exception ex)
