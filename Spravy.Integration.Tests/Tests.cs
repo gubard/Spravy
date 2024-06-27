@@ -111,6 +111,7 @@ public class Tests
                            .ValidateCreateUserViewTextBox(w, c, TextHelper.TextLength8)
                            .Case(() => w.SetKeyTextInput(TextHelper.TextLength8)))
                        .Case(() => w.KeyHandleQwerty(PhysicalKey.Enter, RawInputModifiers.None))
+                       .RunJobsAll(1)
                        .Case(c => c.FindControl<TextBox>(ElementNames.RepeatPasswordTextBox)
                            .ThrowIfNull()
                            .MustFocused()
