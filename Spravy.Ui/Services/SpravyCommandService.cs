@@ -591,10 +591,10 @@ public class SpravyCommandService
                                     return uiApplicationService.GetCurrentView<IToDoItemUpdater>()
                                        .IfSuccess(u => u.UpdateInListToDoItemUi(item));
                                 })
-                               .IfErrorsAsync(_ => Result.Success, ct)
+                               .IfErrorsAsync(_ => Result.Success, CancellationToken.None)
                                .IfSuccessAsync(
                                     () => toDoService.UpdateToDoItemCompleteStatusAsync(item.CurrentId, true,
-                                        ct), ct);
+                                        CancellationToken.None), CancellationToken.None);
                         case ToDoItemIsCan.CanIncomplete:
                             return this.InvokeUiBackgroundAsync(() =>
                                 {
@@ -604,17 +604,17 @@ public class SpravyCommandService
                                     return uiApplicationService.GetCurrentView<IToDoItemUpdater>()
                                        .IfSuccess(u => u.UpdateInListToDoItemUi(item));
                                 })
-                               .IfErrorsAsync(_ => Result.Success, ct)
+                               .IfErrorsAsync(_ => Result.Success, CancellationToken.None)
                                .IfSuccessAsync(
                                     () => toDoService.UpdateToDoItemCompleteStatusAsync(item.CurrentId, false,
-                                        ct), ct);
+                                        CancellationToken.None), CancellationToken.None);
                         default:
                             return new Result(new ToDoItemIsCanOutOfRangeError(item.IsCan)).ToValueTaskResult()
                                .ConfigureAwait(false);
                     }
-                }, ct)
+                }, CancellationToken.None)
                .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct),
-                    ct);
+                    CancellationToken.None);
 
             return Result.AwaitableSuccess;
         }, errorHandler, taskProgressService);
