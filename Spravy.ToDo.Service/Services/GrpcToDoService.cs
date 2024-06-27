@@ -391,8 +391,8 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
     )
     {
         return toDoService
-           .UpdateToDoItemCompleteStatusAsync(request.Id.ToGuid(), request.IsCompleted, context.CancellationToken)
-           .HandleAsync<UpdateToDoItemCompleteStatusReply>(serializer, context.CancellationToken);
+           .UpdateToDoItemCompleteStatusAsync(request.Id.ToGuid(), request.IsCompleted, CancellationToken.None)
+           .HandleAsync<UpdateToDoItemCompleteStatusReply>(serializer, CancellationToken.None);
     }
 
     public override Task<UpdateToDoItemNameReply> UpdateToDoItemName(

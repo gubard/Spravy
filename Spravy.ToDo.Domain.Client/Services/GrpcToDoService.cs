@@ -362,14 +362,14 @@ public class GrpcToDoService : GrpcServiceBase<ToDoService.ToDoServiceClient>,
         CancellationToken ct
     )
     {
-        return CallClientAsync(client => metadataFactory.CreateAsync(ct)
+        return CallClientAsync(client => metadataFactory.CreateAsync(CancellationToken.None)
            .IfSuccessAsync(metadata => client.UpdateToDoItemCompleteStatusAsync(new()
                 {
                     Id = id.ToByteString(),
                     IsCompleted = isComplete,
-                }, metadata, DateTime.UtcNow.Add(Timeout), ct)
+                }, metadata, DateTime.UtcNow.Add(Timeout), CancellationToken.None)
                .ToValueTaskResultOnly()
-               .ConfigureAwait(false), ct), ct);
+               .ConfigureAwait(false), CancellationToken.None), CancellationToken.None);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateToDoItemNameAsync(
