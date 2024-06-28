@@ -2,6 +2,42 @@ namespace Spravy.Ui.Extensions;
 
 public static class TaskProgressServiceExtension
 {
+    public static ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<TResult>>> RunProgressAsync<
+        TTaskProgressServiceProperty,
+        TItem,
+        TResult
+    >(
+        this TTaskProgressServiceProperty property,
+        ReadOnlyMemory<TItem> items,
+        Func<TItem, ConfiguredValueTaskAwaitable<Result<TResult>>> func,
+        CancellationToken ct
+    )
+        where TTaskProgressServiceProperty : ITaskProgressService
+        where TResult : notnull
+    {
+        return property
+            .AddItemAsync((ushort)items.Length)
+            .IfSuccessTryFinallyAsync(
+                taskProgressItem =>
+                    items
+                        .ToResult()
+                        .IfSuccessForEachAsync(
+                            item =>
+                                func.Invoke(item)
+                                    .IfSuccessAsync(
+                                        r =>
+                                            taskProgressItem
+                                                .IncreaseAsync()
+                                                .IfSuccessAsync(() => r.ToResult(), ct),
+                                        ct
+                                    ),
+                            ct
+                        ),
+                item => item.Finish(),
+                ct
+            );
+    }
+
     public static ConfiguredValueTaskAwaitable<Result> RunProgressAsync<
         TTaskProgressServiceProperty,
         TItem
