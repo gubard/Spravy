@@ -14,12 +14,13 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
         Link = string.Empty;
         Status = ToDoItemStatus.ReadyForComplete;
         OrderIndex = uint.MaxValue;
-        this.WhenAnyValue(x => x.ReferenceId)
-            .Subscribe(_ => this.RaisePropertyChanged(nameof(CurrentId)));
         CompactCommands = new();
         SingleCommands = new();
         Children = new();
         MultiCommands = new();
+
+        this.WhenAnyValue(x => x.ReferenceId)
+            .Subscribe(_ => this.RaisePropertyChanged(nameof(CurrentId)));
 
         this.WhenAnyValue(x => x.DescriptionType)
             .Subscribe(_ =>
@@ -117,6 +118,18 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
     public Guid CurrentId
     {
         get => ReferenceId ?? Id;
+    }
+
+    public Result<ReadOnlyMemory<ToDoItemEntityNotify>> GetSelectedItems()
+    {
+        ReadOnlyMemory<ToDoItemEntityNotify> selected = Children.Where(x => x.IsSelected).ToArray();
+
+        if (selected.IsEmpty)
+        {
+            return new(new NonItemSelectedError());
+        }
+
+        return new(selected);
     }
 
     public bool Equals(ToDoItemEntityNotify? other)
