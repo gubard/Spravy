@@ -77,19 +77,9 @@ public class SpravyCommandService
                 dialogViewer.ShowConfirmContentDialogAsync(
                     vm =>
                     {
-                        var view =
-                            uiApplicationService.GetCurrentView<IToDoSubItemsViewModelProperty>();
-
-                        if (view.IsHasError)
-                        {
-                            return new Result(view.Errors)
-                                .ToValueTaskResult()
-                                .ConfigureAwait(false);
-                        }
-
                         ReadOnlyMemory<Guid> selected = view
-                            .Value.ToDoSubItemsViewModel.List.ToDoItems.GroupByNone.Items.Items.Where(
-                                x => x.IsSelected
+                            .ToDoSubItemsViewModel.List.ToDoItems.GroupByNone.Items.Items.Where(x =>
+                                x.IsSelected
                             )
                             .Select(x => x.Id)
                             .ToArray();
