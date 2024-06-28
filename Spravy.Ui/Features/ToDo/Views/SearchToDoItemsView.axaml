@@ -73,9 +73,7 @@
     </Interaction.Behaviors>
 
     <UserControl.KeyBindings>
-        <KeyBinding Gesture="Enter"
-                    Command="{x:Static h:UiHelper.RefreshCurrentView}"
-                    CommandParameter="{Binding}" />
+        <KeyBinding Gesture="Enter" Command="{x:Static h:UiHelper.RefreshCurrentView}" />
     </UserControl.KeyBindings>
 
     <Grid RowDefinitions="Auto, Auto,*">
