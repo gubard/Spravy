@@ -6,7 +6,6 @@
                         xmlns:ru="http://reactiveui.net"
                         xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                         xmlns:md="https://github.com/whistyun/Markdown.Avalonia"
-                        xmlns:s="clr-namespace:Spravy.Ui.Services"
                         xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
                         xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
                         xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"

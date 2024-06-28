@@ -4,66 +4,12 @@
                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:ru="http://reactiveui.net"
-                        xmlns:ir="clr-namespace:Avalonia.Xaml.Interactions.Responsive;assembly=Avalonia.Xaml.Interactions.Responsive"
-                        xmlns:h="clr-namespace:Spravy.Ui.Helpers"
                         xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
                         xmlns:viewModels="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
                         xmlns:views="clr-namespace:Spravy.Ui.Features.ToDo.Views"
                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                         x:Class="Spravy.Ui.Features.ToDo.Views.ToDoSubItemsView"
                         x:DataType="viewModels:ToDoSubItemsViewModel">
-    <UserControl.Styles>
-        <Style Selector="UniformGrid.adaptive">
-            <Setter Property="(Interaction.Behaviors)">
-                <BehaviorCollectionTemplate>
-                    <BehaviorCollection>
-                        <ir:AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
-                            <ir:AdaptiveClassSetter MinWidth="0"
-                                                    MaxWidth="{x:Static h:MaterialDesignSize.MinMedium}"
-                                                    ClassName="small" />
-                            <ir:AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinMedium}"
-                                                    MaxWidth="Infinity"
-                                                    ClassName="wide" />
-                        </ir:AdaptiveBehavior>
-                    </BehaviorCollection>
-                </BehaviorCollectionTemplate>
-            </Setter>
-        </Style>
-
-        <Style Selector="StackPanel.adaptive">
-            <Setter Property="(Interaction.Behaviors)">
-                <BehaviorCollectionTemplate>
-                    <BehaviorCollection>
-                        <ir:AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
-                            <ir:AdaptiveClassSetter MinWidth="0"
-                                                    MaxWidth="{x:Static h:MaterialDesignSize.MinMedium}"
-                                                    ClassName="small" />
-                            <ir:AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinMedium}"
-                                                    MaxWidth="Infinity"
-                                                    ClassName="wide" />
-                        </ir:AdaptiveBehavior>
-                    </BehaviorCollection>
-                </BehaviorCollectionTemplate>
-            </Setter>
-        </Style>
-
-        <Style Selector="UniformGrid.small">
-            <Setter Property="IsVisible" Value="False" />
-        </Style>
-
-        <Style Selector="UniformGrid.wide">
-            <Setter Property="IsVisible" Value="True" />
-        </Style>
-
-        <Style Selector="StackPanel.small">
-            <Setter Property="IsVisible" Value="True" />
-        </Style>
-
-        <Style Selector="StackPanel.wide">
-            <Setter Property="IsVisible" Value="False" />
-        </Style>
-    </UserControl.Styles>
-
     <ContentControl Name="{x:Static views:ToDoSubItemsView.ListContentControlName}" Content="{Binding List}">
         <ContentControl.Styles>
             <Style Selector="Expander">

@@ -12,7 +12,7 @@
              x:DataType="vm:MainViewModel">
     <UserControl.Styles>
         <Style
-            Selector="dh|DialogHost.extra-small > Grid#PART_DialogHostRoot > dh|DialogOverlayPopupHost">
+            Selector="dh|DialogHost.dialog-host-extra-small > Grid#PART_DialogHostRoot > dh|DialogOverlayPopupHost">
             <Setter Property="Width"
                     Value="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter95}}" />
             <Setter Property="MaxHeight"
@@ -20,7 +20,7 @@
         </Style>
 
         <Style
-            Selector="dh|DialogHost.small > Grid#PART_DialogHostRoot > dh|DialogOverlayPopupHost">
+            Selector="dh|DialogHost.dialog-host-small > Grid#PART_DialogHostRoot > dh|DialogOverlayPopupHost">
             <Setter Property="Width"
                     Value="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter85}}" />
             <Setter Property="MaxHeight"
@@ -28,7 +28,7 @@
         </Style>
 
         <Style
-            Selector="dh|DialogHost.medium > Grid#PART_DialogHostRoot > dh|DialogOverlayPopupHost">
+            Selector="dh|DialogHost.dialog-host-medium > Grid#PART_DialogHostRoot > dh|DialogOverlayPopupHost">
             <Setter Property="Width"
                     Value="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter70}}" />
             <Setter Property="MaxHeight"
@@ -36,7 +36,7 @@
         </Style>
 
         <Style
-            Selector="dh|DialogHost.large > Grid#PART_DialogHostRoot > dh|DialogOverlayPopupHost">
+            Selector="dh|DialogHost.dialog-host-large > Grid#PART_DialogHostRoot > dh|DialogOverlayPopupHost">
             <Setter Property="Width"
                     Value="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter50}}" />
             <Setter Property="MaxHeight"
@@ -50,25 +50,25 @@
                         <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
                             <AdaptiveClassSetter MinWidth="0"
                                                  MaxWidth="{x:Static h:MaterialDesignSize.MaxExtraSmall}"
-                                                 ClassName="extra-small" />
+                                                 ClassName="dialog-host-extra-small" />
                         </AdaptiveBehavior>
 
                         <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
                             <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinSmall}"
                                                  MaxWidth="{x:Static h:MaterialDesignSize.MaxSmall}"
-                                                 ClassName="small" />
+                                                 ClassName="dialog-host-small" />
                         </AdaptiveBehavior>
 
                         <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
                             <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinMedium}"
                                                  MaxWidth="{x:Static h:MaterialDesignSize.MaxMedium}"
-                                                 ClassName="medium" />
+                                                 ClassName="dialog-host-medium" />
                         </AdaptiveBehavior>
 
                         <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
                             <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinLarge}"
                                                  MaxWidth="Infinity"
-                                                 ClassName="large" />
+                                                 ClassName="dialog-host-large" />
                         </AdaptiveBehavior>
                     </BehaviorCollection>
                 </BehaviorCollectionTemplate>
