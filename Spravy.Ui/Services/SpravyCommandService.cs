@@ -508,56 +508,46 @@ public class SpravyCommandService
 
         MultiAddChild = SpravyCommand.Create<IToDoSubItemsViewModelProperty>(
             (view, ct) =>
-            {
-                ReadOnlyMemory<ToDoItemEntityNotify> selected = view
-                    .ToDoSubItemsViewModel.List.ToDoItems.GroupByNone.Items.Items.Where(x =>
-                        x.IsSelected
-                    )
-                    .ToArray();
-
-                if (selected.IsEmpty)
-                {
-                    return new Result(new NonItemSelectedError())
-                        .ToValueTaskResult()
-                        .ConfigureAwait(false);
-                }
-
-                return dialogViewer.ShowConfirmContentDialogAsync(
-                    viewModel =>
-                        selected
-                            .ToResult()
-                            .IfSuccessForEachAsync(
-                                item =>
-                                    viewModel
-                                        .ConverterToAddToDoItemOptions(item.Id)
-                                        .IfSuccessAsync(
-                                            options =>
-                                                dialogViewer
-                                                    .CloseContentDialogAsync(ct)
+                view.GetSelectedItems()
+                    .IfSuccessAsync(
+                        selected =>
+                            dialogViewer.ShowConfirmContentDialogAsync(
+                                viewModel =>
+                                    selected
+                                        .ToResult()
+                                        .IfSuccessForEachAsync(
+                                            item =>
+                                                viewModel
+                                                    .ConverterToAddToDoItemOptions(item.Id)
                                                     .IfSuccessAsync(
-                                                        () =>
-                                                            toDoService.AddToDoItemAsync(
-                                                                options,
-                                                                ct
-                                                            ),
-                                                        ct
-                                                    )
-                                                    .IfSuccessAsync(
-                                                        _ =>
-                                                            uiApplicationService.RefreshCurrentViewAsync(
-                                                                ct
-                                                            ),
+                                                        options =>
+                                                            dialogViewer
+                                                                .CloseContentDialogAsync(ct)
+                                                                .IfSuccessAsync(
+                                                                    () =>
+                                                                        toDoService.AddToDoItemAsync(
+                                                                            options,
+                                                                            ct
+                                                                        ),
+                                                                    ct
+                                                                )
+                                                                .IfSuccessAsync(
+                                                                    _ =>
+                                                                        uiApplicationService.RefreshCurrentViewAsync(
+                                                                            ct
+                                                                        ),
+                                                                    ct
+                                                                ),
                                                         ct
                                                     ),
                                             ct
                                         ),
+                                _ => dialogViewer.CloseContentDialogAsync(ct),
+                                ActionHelper<AddToDoItemViewModel>.Empty,
                                 ct
                             ),
-                    _ => dialogViewer.CloseContentDialogAsync(ct),
-                    ActionHelper<AddToDoItemViewModel>.Empty,
-                    ct
-                );
-            },
+                        ct
+                    ),
             errorHandler,
             taskProgressService
         );
