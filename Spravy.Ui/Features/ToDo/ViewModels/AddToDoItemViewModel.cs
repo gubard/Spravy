@@ -21,6 +21,7 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
         DescriptionContent = descriptionContent;
         this.objectStorage = objectStorage;
         this.toDoService = toDoService;
+
         InitializedCommand = SpravyCommand.Create(
             InitializedAsync,
             errorHandler,

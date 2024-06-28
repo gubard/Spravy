@@ -1054,25 +1054,31 @@ public class SpravyCommandService
                         selected =>
                             dialogViewer.ShowConfirmContentDialogAsync<AddToDoItemViewModel>(
                                 viewModel =>
-                                    viewModel
-                                        .ConverterToAddToDoItemOptions()
-                                        .IfSuccessAsync(
-                                            options =>
-                                                dialogViewer
-                                                    .CloseContentDialogAsync(ct)
+                                    selected
+                                        .ToResult()
+                                        .IfSuccessForEachAsync(
+                                            i =>
+                                                viewModel
+                                                    .ConverterToAddToDoItemOptions(i.Id)
                                                     .IfSuccessAsync(
-                                                        () =>
-                                                            toDoService.AddToDoItemAsync(
-                                                                options,
-                                                                ct
-                                                            ),
-                                                        ct
-                                                    )
-                                                    .IfSuccessAsync(
-                                                        _ =>
-                                                            uiApplicationService.RefreshCurrentViewAsync(
-                                                                ct
-                                                            ),
+                                                        options =>
+                                                            dialogViewer
+                                                                .CloseContentDialogAsync(ct)
+                                                                .IfSuccessAsync(
+                                                                    () =>
+                                                                        toDoService.AddToDoItemAsync(
+                                                                            options,
+                                                                            ct
+                                                                        ),
+                                                                    ct
+                                                                )
+                                                                .IfSuccessAsync(
+                                                                    _ =>
+                                                                        uiApplicationService.RefreshCurrentViewAsync(
+                                                                            ct
+                                                                        ),
+                                                                    ct
+                                                                ),
                                                         ct
                                                     ),
                                             ct
