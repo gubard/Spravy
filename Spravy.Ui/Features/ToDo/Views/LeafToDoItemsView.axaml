@@ -8,7 +8,7 @@
                         xmlns:h="clr-namespace:Spravy.Ui.Helpers"
                         xmlns:c="clr-namespace:SukiUI.Content;assembly=SukiUI"
                         xmlns:m="clr-namespace:Spravy.Ui.Models"
-                        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                        xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                         xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                         x:Class="Spravy.Ui.Features.ToDo.Views.LeafToDoItemsView"
@@ -131,7 +131,7 @@
                             <MenuFlyout ItemsSource="{Binding Commands}" />
                         </Button.Flyout>
 
-                        <avalonia:MaterialIcon Kind="DotsHorizontal" />
+                        <mi:MaterialIcon Kind="DotsHorizontal" />
                     </Button>
                 </Panel>
             </StackPanel>

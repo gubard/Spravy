@@ -6,9 +6,9 @@
                         xmlns:ru="http://reactiveui.net"
                         xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
                         xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
-                        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-                        xmlns:models="clr-namespace:Spravy.Ui.Features.ToDo.Models"
-                        xmlns:models1="clr-namespace:Spravy.Ui.Models"
+                        xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                        xmlns:tm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
+                        xmlns:m="clr-namespace:Spravy.Ui.Models"
                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                         x:Class="Spravy.Ui.Features.ToDo.Views.RandomizeChildrenOrderView"
                         x:DataType="vm:RandomizeChildrenOrderViewModel">
@@ -22,12 +22,12 @@
                    Index="0"
                    Classes="horizontal-alignment-center read-only">
             <c:Stepper.DataTemplates>
-                <DataTemplate DataType="models:ToDoItemEntityNotify">
+                <DataTemplate DataType="tm:ToDoItemEntityNotify">
                     <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5" />
                 </DataTemplate>
 
-                <DataTemplate DataType="models1:RootItem">
-                    <avalonia:MaterialIcon Kind="Home" Margin="5" />
+                <DataTemplate DataType="m:RootItem">
+                    <mi:MaterialIcon Kind="Home" Margin="5" />
                 </DataTemplate>
             </c:Stepper.DataTemplates>
         </c:Stepper>

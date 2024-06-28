@@ -1,15 +1,15 @@
-<ru:ReactiveUserControl x:TypeArguments="viewModels:ToDoItemSelectorViewModel"
+<ru:ReactiveUserControl x:TypeArguments="vm:ToDoItemSelectorViewModel"
                         xmlns="https://github.com/avaloniaui"
                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:ru="http://reactiveui.net"
                         xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-                        xmlns:models="clr-namespace:Spravy.Ui.Features.ToDo.Models"
-                        xmlns:viewModels="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+                        xmlns:tm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
+                        xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                         x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemSelectorView"
-                        x:DataType="viewModels:ToDoItemSelectorViewModel">
+                        x:DataType="vm:ToDoItemSelectorViewModel">
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
             <InvokeCommandAction Command="{Binding InitializedCommand.Command}" />
@@ -30,7 +30,7 @@
                   SelectionMode="Single"
                   SelectedItem="{Binding SelectedItem}">
             <TreeView.Styles>
-                <Style Selector="TreeViewItem" x:DataType="models:ToDoItemEntityNotify">
+                <Style Selector="TreeViewItem" x:DataType="tm:ToDoItemEntityNotify">
                     <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
                     <Setter Property="IsVisible"
                             Value="{Binding IsIgnore, Converter={StaticResource ReverseBooleanValueConverter}}" />
@@ -38,7 +38,7 @@
             </TreeView.Styles>
 
             <TreeView.DataTemplates>
-                <TreeDataTemplate DataType="models:ToDoItemEntityNotify" ItemsSource="{Binding Children}">
+                <TreeDataTemplate DataType="tm:ToDoItemEntityNotify" ItemsSource="{Binding Children}">
                     <TextBlock Text="{Binding Name}" />
                 </TreeDataTemplate>
             </TreeView.DataTemplates>

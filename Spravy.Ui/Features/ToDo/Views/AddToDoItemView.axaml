@@ -6,9 +6,9 @@
                         xmlns:ru="http://reactiveui.net"
                         xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
                         xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
-                        xmlns:models="clr-namespace:Spravy.Ui.Features.ToDo.Models"
-                        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-                        xmlns:models1="clr-namespace:Spravy.Ui.Models"
+                        xmlns:tm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
+                        xmlns:a="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                        xmlns:m="clr-namespace:Spravy.Ui.Models"
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                         x:Class="Spravy.Ui.Features.ToDo.Views.AddToDoItemView"
                         x:DataType="vm:AddToDoItemViewModel">
@@ -28,12 +28,12 @@
                                   VerticalScrollBarVisibility="Disabled">
                         <c:Stepper Index="0" Steps="{Binding Path}" HorizontalAlignment="Left" >
                             <c:Stepper.DataTemplates>
-                                <DataTemplate DataType="models:ToDoItemEntityNotify">
+                                <DataTemplate DataType="tm:ToDoItemEntityNotify">
                                     <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5" />
                                 </DataTemplate>
 
-                                <DataTemplate DataType="models1:RootItem">
-                                    <avalonia:MaterialIcon Kind="Home" Margin="5" />
+                                <DataTemplate DataType="m:RootItem">
+                                    <a:MaterialIcon Kind="Home" Margin="5" />
                                 </DataTemplate>
                             </c:Stepper.DataTemplates>
                         </c:Stepper>

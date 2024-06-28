@@ -1,33 +1,33 @@
-<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:ToDoItemsGroupByTypeViewModel"
-                                xmlns="https://github.com/avaloniaui"
-                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                                xmlns:viewModels="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
-                                xmlns:reactiveUi="http://reactiveui.net"
-                                xmlns:helpers="clr-namespace:Spravy.Ui.Helpers"
-                                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                                x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemsGroupByTypeView"
-                                x:DataType="viewModels:ToDoItemsGroupByTypeViewModel">
+<ru:ReactiveUserControl x:TypeArguments="vm:ToDoItemsGroupByTypeViewModel"
+                        xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
+                        xmlns:ru="http://reactiveui.net"
+                        xmlns:h="clr-namespace:Spravy.Ui.Helpers"
+                        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                        x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemsGroupByTypeView"
+                        x:DataType="vm:ToDoItemsGroupByTypeViewModel">
     <UserControl.Styles>
         <Style Selector="ItemsControl.adaptive">
             <Setter Property="(Interaction.Behaviors)">
                 <BehaviorCollectionTemplate>
                     <BehaviorCollection>
                         <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
-                            <AdaptiveClassSetter MinWidth="{x:Static helpers:MaterialDesignSize.MaxExtraSmall}"
-                                                 MaxWidth="{x:Static helpers:MaterialDesignSize.MaxExtraSmall}"
+                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MaxExtraSmall}"
+                                                 MaxWidth="{x:Static h:MaterialDesignSize.MaxExtraSmall}"
                                                  ClassName="to-do-items-group-by-type-view-extra-small" />
-                            <AdaptiveClassSetter MinWidth="{x:Static helpers:MaterialDesignSize.MinSmall}"
-                                                 MaxWidth="{x:Static helpers:MaterialDesignSize.MaxSmall}"
+                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinSmall}"
+                                                 MaxWidth="{x:Static h:MaterialDesignSize.MaxSmall}"
                                                  ClassName="to-do-items-group-by-type-view-small" />
-                            <AdaptiveClassSetter MinWidth="{x:Static helpers:MaterialDesignSize.MinMedium}"
-                                                 MaxWidth="{x:Static helpers:MaterialDesignSize.MaxMedium}"
+                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinMedium}"
+                                                 MaxWidth="{x:Static h:MaterialDesignSize.MaxMedium}"
                                                  ClassName="to-do-items-group-by-type-view-medium" />
-                            <AdaptiveClassSetter MinWidth="{x:Static helpers:MaterialDesignSize.MinLarge}"
-                                                 MaxWidth="{x:Static helpers:MaterialDesignSize.MaxLarge}"
+                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinLarge}"
+                                                 MaxWidth="{x:Static h:MaterialDesignSize.MaxLarge}"
                                                  ClassName="to-do-items-group-by-type-view-large" />
-                            <AdaptiveClassSetter MinWidth="{x:Static helpers:MaterialDesignSize.MinExtraLarge}"
+                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinExtraLarge}"
                                                  MaxWidth="Infinity"
                                                  ClassName="to-do-items-group-by-type-view-extra-large" />
                         </AdaptiveBehavior>
@@ -95,4 +95,4 @@
         <ContentControl Content="{Binding References}"
                         IsVisible="{Binding References.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
     </ItemsControl>
-</reactiveUi:ReactiveUserControl>
+</ru:ReactiveUserControl>
