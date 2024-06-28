@@ -554,22 +554,7 @@ public class SpravyCommandService
 
         MultiOpenLink = SpravyCommand.Create<IToDoSubItemsViewModelProperty>(
             (view, ct) =>
-            {
-                ReadOnlyMemory<ToDoItemEntityNotify> selected = view
-                    .ToDoSubItemsViewModel.List.ToDoItems.GroupByNone.Items.Items.Where(x =>
-                        x.IsSelected
-                    )
-                    .ToArray();
-
-                if (selected.IsEmpty)
-                {
-                    return new Result(new NonItemSelectedError())
-                        .ToValueTaskResult()
-                        .ConfigureAwait(false);
-                }
-
-                return selected
-                    .ToResult()
+                view.GetSelectedItems()
                     .IfSuccessForEachAsync(
                         i =>
                             i.Link.IfNotNull(nameof(i.Link))
@@ -578,82 +563,34 @@ public class SpravyCommandService
                                     ct
                                 ),
                         ct
-                    );
-            },
+                    ),
             errorHandler,
             taskProgressService
         );
 
         MultiRemoveFromFavorite = SpravyCommand.Create<IToDoSubItemsViewModelProperty>(
             (view, ct) =>
-            {
-                ReadOnlyMemory<Guid> selected = view
-                    .ToDoSubItemsViewModel.List.ToDoItems.GroupByNone.Items.Items.Where(x =>
-                        x.IsSelected
-                    )
-                    .Select(x => x.Id)
-                    .ToArray();
-
-                if (selected.IsEmpty)
-                {
-                    return new Result(new NonItemSelectedError())
-                        .ToValueTaskResult()
-                        .ConfigureAwait(false);
-                }
-
-                return selected
-                    .ToResult()
+                view.GetSelectedItems()
+                    .IfSuccess(selected => selected.Select(x => x.Id).ToResult())
                     .IfSuccessForEachAsync(i => toDoService.RemoveFavoriteToDoItemAsync(i, ct), ct)
-                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct);
-            },
+                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct),
             errorHandler,
             taskProgressService
         );
 
         MultiAddToFavorite = SpravyCommand.Create<IToDoSubItemsViewModelProperty>(
             (view, ct) =>
-            {
-                ReadOnlyMemory<Guid> selected = view
-                    .ToDoSubItemsViewModel.List.ToDoItems.GroupByNone.Items.Items.Where(x =>
-                        x.IsSelected
-                    )
-                    .Select(x => x.Id)
-                    .ToArray();
-
-                if (selected.IsEmpty)
-                {
-                    return new Result(new NonItemSelectedError())
-                        .ToValueTaskResult()
-                        .ConfigureAwait(false);
-                }
-
-                return selected
-                    .ToResult()
+                view.GetSelectedItems()
+                    .IfSuccess(selected => selected.Select(x => x.Id).ToResult())
                     .IfSuccessForEachAsync(i => toDoService.AddFavoriteToDoItemAsync(i, ct), ct)
-                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct);
-            },
+                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct),
             errorHandler,
             taskProgressService
         );
 
         MultiComplete = SpravyCommand.Create<IToDoSubItemsViewModelProperty>(
             (view, ct) =>
-            {
-                ReadOnlyMemory<ToDoItemEntityNotify> selected = view
-                    .ToDoSubItemsViewModel.List.ToDoItems.GroupByNone.Items.Items.Where(x =>
-                        x.IsSelected
-                    )
-                    .ToArray();
-
-                if (selected.IsEmpty)
-                {
-                    return new Result(new NonItemSelectedError())
-                        .ToValueTaskResult()
-                        .ConfigureAwait(false);
-                }
-
-                return selected
-                    .ToResult()
+                view.GetSelectedItems()
                     .IfSuccessForEachAsync(
                         i =>
                         {
@@ -681,8 +618,7 @@ public class SpravyCommandService
                         },
                         ct
                     )
-                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct);
-            },
+                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct),
             errorHandler,
             taskProgressService
         );
@@ -721,35 +657,32 @@ public class SpravyCommandService
 
         SendNewVerificationCode = SpravyCommand.Create<IVerificationEmail>(
             (verificationEmail, ct) =>
-            {
-                switch (verificationEmail.IdentifierType)
+                verificationEmail.IdentifierType switch
                 {
-                    case UserIdentifierType.Email:
-                        return authenticationService.UpdateVerificationCodeByEmailAsync(
+                    UserIdentifierType.Email
+                        => authenticationService.UpdateVerificationCodeByEmailAsync(
                             verificationEmail.Identifier,
                             ct
-                        );
-                    case UserIdentifierType.Login:
-                        return authenticationService.UpdateVerificationCodeByLoginAsync(
+                        ),
+                    UserIdentifierType.Login
+                        => authenticationService.UpdateVerificationCodeByLoginAsync(
                             verificationEmail.Identifier,
                             ct
-                        );
-                    default:
-                        return new Result(
+                        ),
+                    _
+                        => new Result(
                             new UserIdentifierTypeOutOfRangeError(verificationEmail.IdentifierType)
                         )
                             .ToValueTaskResult()
-                            .ConfigureAwait(false);
-                }
-            },
+                            .ConfigureAwait(false)
+                },
             errorHandler,
             taskProgressService
         );
 
         GeneratePassword = SpravyCommand.Create<PasswordItemNotify>(
             (passwordItem, ct) =>
-            {
-                return passwordService
+                passwordService
                     .GeneratePasswordAsync(passwordItem.Id, ct)
                     .IfSuccessAsync(clipboardService.SetTextAsync, ct)
                     .IfSuccessAsync(
@@ -762,8 +695,7 @@ public class SpravyCommandService
                                 ct
                             ),
                         ct
-                    );
-            },
+                    ),
             errorHandler,
             taskProgressService
         );
@@ -1085,6 +1017,7 @@ public class SpravyCommandService
                     viewModel =>
                     {
                         var targetId = viewModel.SelectedItem.ThrowIfNull().Id;
+
                         var options = new UpdateOrderIndexToDoItemOptions(
                             viewModel.Id,
                             targetId,
