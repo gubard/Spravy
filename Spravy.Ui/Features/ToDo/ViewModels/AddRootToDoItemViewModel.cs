@@ -16,6 +16,7 @@ public class AddRootToDoItemViewModel : NavigatableViewModelBase
         this.objectStorage = objectStorage;
         ToDoItemContent = toDoItemContent;
         DescriptionContent = descriptionContent;
+
         InitializedCommand = SpravyCommand.Create(
             InitializedAsync,
             errorHandler,
