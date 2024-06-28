@@ -18,26 +18,26 @@
                         <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
                             <AdaptiveClassSetter MinWidth="0"
                                                  MaxWidth="{x:Static h:MaterialDesignSize.MaxExtraSmall}"
-                                                 ClassName="extra-small" />
+                                                 ClassName="to-do-items-group-by-status-view-extra-small" />
                             <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MaxExtraSmall}"
                                                  MaxWidth="{x:Static h:MaterialDesignSize.MaxSmall}"
-                                                 ClassName="small" />
+                                                 ClassName="to-do-items-group-by-status-view-small" />
                             <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MaxSmall}"
                                                  MaxWidth="{x:Static h:MaterialDesignSize.MaxMedium}"
-                                                 ClassName="medium" />
+                                                 ClassName="to-do-items-group-by-status-view-medium" />
                             <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MaxMedium}"
                                                  MaxWidth="{x:Static h:MaterialDesignSize.MaxLarge}"
-                                                 ClassName="large" />
+                                                 ClassName="to-do-items-group-by-status-view-large" />
                             <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MaxLarge}"
                                                  MaxWidth="Infinity"
-                                                 ClassName="wide" />
+                                                 ClassName="to-do-items-group-by-status-view-wide" />
                         </AdaptiveBehavior>
                     </BehaviorCollection>
                 </BehaviorCollectionTemplate>
             </Setter>
         </Style>
 
-        <Style Selector="ItemsControl.extra-small">
+        <Style Selector="ItemsControl.to-do-items-group-by-status-view-extra-small">
             <Setter Property="ItemsPanel">
                 <ItemsPanelTemplate>
                     <StackPanel />
@@ -45,7 +45,7 @@
             </Setter>
         </Style>
 
-        <Style Selector="ItemsControl.small">
+        <Style Selector="ItemsControl.to-do-items-group-by-status-view-small">
             <Setter Property="ItemsPanel">
                 <ItemsPanelTemplate>
                     <StackPanel />
@@ -53,7 +53,7 @@
             </Setter>
         </Style>
 
-        <Style Selector="ItemsControl.medium">
+        <Style Selector="ItemsControl.to-do-items-group-by-status-view-medium">
             <Setter Property="ItemsPanel">
                 <ItemsPanelTemplate>
                     <StackPanel />
@@ -61,7 +61,7 @@
             </Setter>
         </Style>
 
-        <Style Selector="ItemsControl.large">
+        <Style Selector="ItemsControl.to-do-items-group-by-status-view-large">
             <Setter Property="ItemsPanel">
                 <ItemsPanelTemplate>
                     <UniformGrid Rows="1" />
@@ -69,7 +69,7 @@
             </Setter>
         </Style>
 
-        <Style Selector="ItemsControl.extra-large">
+        <Style Selector="ItemsControl.to-do-items-group-by-status-view-extra-large">
             <Setter Property="ItemsPanel">
                 <ItemsPanelTemplate>
                     <UniformGrid Rows="1" />

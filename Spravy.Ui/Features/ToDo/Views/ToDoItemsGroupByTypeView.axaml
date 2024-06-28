@@ -17,26 +17,26 @@
                         <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
                             <AdaptiveClassSetter MinWidth="{x:Static helpers:MaterialDesignSize.MaxExtraSmall}"
                                                  MaxWidth="{x:Static helpers:MaterialDesignSize.MaxExtraSmall}"
-                                                 ClassName="extra-small" />
+                                                 ClassName="to-do-items-group-by-type-view-extra-small" />
                             <AdaptiveClassSetter MinWidth="{x:Static helpers:MaterialDesignSize.MinSmall}"
                                                  MaxWidth="{x:Static helpers:MaterialDesignSize.MaxSmall}"
-                                                 ClassName="small" />
+                                                 ClassName="to-do-items-group-by-type-view-small" />
                             <AdaptiveClassSetter MinWidth="{x:Static helpers:MaterialDesignSize.MinMedium}"
                                                  MaxWidth="{x:Static helpers:MaterialDesignSize.MaxMedium}"
-                                                 ClassName="medium" />
+                                                 ClassName="to-do-items-group-by-type-view-medium" />
                             <AdaptiveClassSetter MinWidth="{x:Static helpers:MaterialDesignSize.MinLarge}"
                                                  MaxWidth="{x:Static helpers:MaterialDesignSize.MaxLarge}"
-                                                 ClassName="large" />
+                                                 ClassName="to-do-items-group-by-type-view-large" />
                             <AdaptiveClassSetter MinWidth="{x:Static helpers:MaterialDesignSize.MinExtraLarge}"
                                                  MaxWidth="Infinity"
-                                                 ClassName="extra-large" />
+                                                 ClassName="to-do-items-group-by-type-view-extra-large" />
                         </AdaptiveBehavior>
                     </BehaviorCollection>
                 </BehaviorCollectionTemplate>
             </Setter>
         </Style>
 
-        <Style Selector="ItemsControl.extra-small">
+        <Style Selector="ItemsControl.to-do-items-group-by-type-view-extra-small">
             <Setter Property="ItemsPanel">
                 <ItemsPanelTemplate>
                     <StackPanel />
@@ -44,7 +44,7 @@
             </Setter>
         </Style>
 
-        <Style Selector="ItemsControl.small">
+        <Style Selector="ItemsControl.to-do-items-group-by-type-view-small">
             <Setter Property="ItemsPanel">
                 <ItemsPanelTemplate>
                     <StackPanel />
@@ -52,7 +52,7 @@
             </Setter>
         </Style>
 
-        <Style Selector="ItemsControl.medium">
+        <Style Selector="ItemsControl.to-do-items-group-by-type-view-medium">
             <Setter Property="ItemsPanel">
                 <ItemsPanelTemplate>
                     <StackPanel />
@@ -60,7 +60,7 @@
             </Setter>
         </Style>
 
-        <Style Selector="ItemsControl.large">
+        <Style Selector="ItemsControl.to-do-items-group-by-type-view-large">
             <Setter Property="ItemsPanel">
                 <ItemsPanelTemplate>
                     <UniformGrid Rows="1" />
@@ -68,7 +68,7 @@
             </Setter>
         </Style>
 
-        <Style Selector="ItemsControl.extra-large">
+        <Style Selector="ItemsControl.to-do-items-group-by-type-view-extra-large">
             <Setter Property="ItemsPanel">
                 <ItemsPanelTemplate>
                     <UniformGrid Rows="1" />
