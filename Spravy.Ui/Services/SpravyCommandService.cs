@@ -40,60 +40,34 @@ public class SpravyCommandService
         );
 
         MultiClone = SpravyCommand.Create<IToDoSubItemsViewModelProperty>(
-            (view, ct) =>
-                dialogViewer.ShowConfirmContentDialogAsync(
-                    vm =>
-                    {
-                        var view =
-                            uiApplicationService.GetCurrentView<IToDoSubItemsViewModelProperty>();
-
-                        if (view.IsHasError)
-                        {
-                            return new Result(view.Errors)
-                                .ToValueTaskResult()
-                                .ConfigureAwait(false);
-                        }
-
-                        ReadOnlyMemory<Guid> selected = view
-                            .Value.ToDoSubItemsViewModel.List.ToDoItems.GroupByNone.Items.Items.Where(
-                                x => x.IsSelected
-                            )
-                            .Select(x => x.Id)
-                            .ToArray();
-
-                        if (selected.IsEmpty)
-                        {
-                            return new Result(new NonItemSelectedError())
-                                .ToValueTaskResult()
-                                .ConfigureAwait(false);
-                        }
-
-                        return dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
-                            itemNotify =>
-                                dialogViewer
-                                    .CloseInputDialogAsync(ct)
-                                    .IfSuccessAsync(() => selected.ToResult(), ct)
-                                    .IfSuccessForEachAsync(
-                                        i =>
-                                            toDoService.CloneToDoItemAsync(
-                                                i,
-                                                itemNotify.Id.ToOption(),
-                                                ct
-                                            ),
-                                        ct
-                                    )
-                                    .IfSuccessAsync(
-                                        () => uiApplicationService.RefreshCurrentViewAsync(ct),
-                                        ct
-                                    ),
-                            ActionHelper<ToDoItemSelectorViewModel>.Empty,
-                            ct
-                        );
-                    },
-                    _ => dialogViewer.CloseContentDialogAsync(ct),
-                    ActionHelper<ResetToDoItemViewModel>.Empty,
-                    ct
-                ),
+            (property, ct) =>
+                property
+                    .GetSelectedItems()
+                    .IfSuccess(selected => selected.Select(x => x.Id).ToResult())
+                    .IfSuccessAsync(
+                        selectedIds =>
+                            dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
+                                vm =>
+                                    selectedIds
+                                        .ToResult()
+                                        .IfSuccessForEachAsync(
+                                            i =>
+                                                toDoService.CloneToDoItemAsync(
+                                                    i,
+                                                    vm.Id.ToOption(),
+                                                    ct
+                                                ),
+                                            ct
+                                        )
+                                        .IfSuccessAsync(
+                                            () => uiApplicationService.RefreshCurrentViewAsync(ct),
+                                            ct
+                                        ),
+                                vm => vm.IgnoreIds = selectedIds,
+                                ct
+                            ),
+                        ct
+                    ),
             errorHandler,
             taskProgressService
         );

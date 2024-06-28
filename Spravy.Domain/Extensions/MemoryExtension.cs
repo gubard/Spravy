@@ -30,7 +30,7 @@ public static class MemoryExtension
         return result;
     }
 
-    public static int Sum(this Memory<int> memory)
+    public static int Sum(this ReadOnlyMemory<int> memory)
     {
         var result = 0;
 
@@ -75,7 +75,7 @@ public static class MemoryExtension
         return result;
     }
 
-    public static Span<TResult> Select<TSource, TResult>(
+    public static ReadOnlyMemory<TResult> Select<TSource, TResult>(
         this ReadOnlyMemory<TSource> memory,
         Func<TSource, TResult> selector
     )
