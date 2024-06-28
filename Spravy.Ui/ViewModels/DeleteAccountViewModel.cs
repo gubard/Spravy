@@ -10,12 +10,21 @@ public class DeleteAccountViewModel : NavigatableViewModelBase
         INavigator navigator,
         IAuthenticationService authenticationService,
         ITaskProgressService taskProgressService
-    ) : base(true)
+    )
+        : base(true)
     {
         this.navigator = navigator;
         this.authenticationService = authenticationService;
-        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler, taskProgressService);
-        DeleteAccountCommand = SpravyCommand.Create(DeleteAccountAsync, errorHandler, taskProgressService);
+        InitializedCommand = SpravyCommand.Create(
+            InitializedAsync,
+            errorHandler,
+            taskProgressService
+        );
+        DeleteAccountCommand = SpravyCommand.Create(
+            DeleteAccountAsync,
+            errorHandler,
+            taskProgressService
+        );
     }
 
     public SpravyCommand DeleteAccountCommand { get; }
@@ -55,33 +64,41 @@ public class DeleteAccountViewModel : NavigatableViewModelBase
 
     private ConfiguredValueTaskAwaitable<Result> DeleteAccountAsync(CancellationToken ct)
     {
-        return Result.AwaitableSuccess
-           .IfSuccessAsync(() =>
-            {
-                switch (IdentifierType)
+        return Result
+            .AwaitableSuccess.IfSuccessAsync(
+                () =>
                 {
-                    case UserIdentifierType.Email:
-                        return authenticationService.DeleteUserByEmailAsync(Identifier,
-                            VerificationCode.ToUpperInvariant(),
-                            ct);
-                    case UserIdentifierType.Login:
-                        return authenticationService.DeleteUserByEmailAsync(Identifier,
-                            VerificationCode.ToUpperInvariant(),
-                            ct);
-                    default: throw new ArgumentOutOfRangeException();
-                }
-            }, ct)
-           .IfSuccessAsync(() => navigator.NavigateToAsync<LoginViewModel>(ct), ct);
+                    switch (IdentifierType)
+                    {
+                        case UserIdentifierType.Email:
+                            return authenticationService.DeleteUserByEmailAsync(
+                                Identifier,
+                                VerificationCode.ToUpperInvariant(),
+                                ct
+                            );
+                        case UserIdentifierType.Login:
+                            return authenticationService.DeleteUserByEmailAsync(
+                                Identifier,
+                                VerificationCode.ToUpperInvariant(),
+                                ct
+                            );
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                },
+                ct
+            )
+            .IfSuccessAsync(() => navigator.NavigateToAsync<LoginViewModel>(ct), ct);
     }
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
         return IdentifierType switch
         {
-            UserIdentifierType.Email => authenticationService.UpdateVerificationCodeByEmailAsync(Identifier,
-                ct),
-            UserIdentifierType.Login => authenticationService.UpdateVerificationCodeByLoginAsync(Identifier,
-                ct),
+            UserIdentifierType.Email
+                => authenticationService.UpdateVerificationCodeByEmailAsync(Identifier, ct),
+            UserIdentifierType.Login
+                => authenticationService.UpdateVerificationCodeByLoginAsync(Identifier, ct),
             _ => throw new ArgumentOutOfRangeException(),
         };
     }

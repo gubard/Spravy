@@ -1,12 +1,13 @@
 using System.IO;
+using Nuke.Common.Tools.DotNet;
 using _build.Extensions;
 using _build.Interfaces;
 using _build.Models;
-using Nuke.Common.Tools.DotNet;
 
 namespace _build.Services;
 
-public abstract class ProjectBuilder<TOptions> : IProjectBuilder where TOptions : ProjectBuilderOptions
+public abstract class ProjectBuilder<TOptions> : IProjectBuilder
+    where TOptions : ProjectBuilderOptions
 {
     protected readonly VersionService versionService;
 
@@ -24,16 +25,22 @@ public abstract class ProjectBuilder<TOptions> : IProjectBuilder where TOptions 
     {
         if (Options.Runtimes.IsEmpty)
         {
-            DotNetTasks.DotNetClean(setting => setting.SetProject(Options.CsprojFile.FullName)
-               .SetConfiguration(Options.Configuration));
+            DotNetTasks.DotNetClean(setting =>
+                setting
+                    .SetProject(Options.CsprojFile.FullName)
+                    .SetConfiguration(Options.Configuration)
+            );
         }
         else
         {
             foreach (var runtime in Options.Runtimes.Span)
             {
-                DotNetTasks.DotNetClean(setting => setting.SetProject(Options.CsprojFile.FullName)
-                   .SetConfiguration(Options.Configuration)
-                   .SetRuntime(runtime.Name));
+                DotNetTasks.DotNetClean(setting =>
+                    setting
+                        .SetProject(Options.CsprojFile.FullName)
+                        .SetConfiguration(Options.Configuration)
+                        .SetRuntime(runtime.Name)
+                );
             }
         }
 
@@ -45,14 +52,17 @@ public abstract class ProjectBuilder<TOptions> : IProjectBuilder where TOptions 
     {
         if (Options.Runtimes.IsEmpty)
         {
-            DotNetTasks.DotNetRestore(setting => setting.SetProjectFile(Options.CsprojFile.FullName));
+            DotNetTasks.DotNetRestore(setting =>
+                setting.SetProjectFile(Options.CsprojFile.FullName)
+            );
         }
         else
         {
             foreach (var runtime in Options.Runtimes.Span)
             {
                 DotNetTasks.DotNetRestore(setting =>
-                    setting.SetProjectFile(Options.CsprojFile.FullName).SetRuntime(runtime.Name));
+                    setting.SetProjectFile(Options.CsprojFile.FullName).SetRuntime(runtime.Name)
+                );
             }
         }
     }
@@ -61,20 +71,26 @@ public abstract class ProjectBuilder<TOptions> : IProjectBuilder where TOptions 
     {
         if (Options.Runtimes.IsEmpty)
         {
-            DotNetTasks.DotNetBuild(setting => setting.SetProjectFile(Options.CsprojFile.FullName)
-               .EnableNoRestore()
-               .SetConfiguration(Options.Configuration)
-               .AddProperty("Version", versionService.Version.ToString()));
+            DotNetTasks.DotNetBuild(setting =>
+                setting
+                    .SetProjectFile(Options.CsprojFile.FullName)
+                    .EnableNoRestore()
+                    .SetConfiguration(Options.Configuration)
+                    .AddProperty("Version", versionService.Version.ToString())
+            );
         }
         else
         {
             foreach (var runtime in Options.Runtimes.Span)
             {
-                DotNetTasks.DotNetBuild(setting => setting.SetProjectFile(Options.CsprojFile.FullName)
-                   .EnableNoRestore()
-                   .SetConfiguration(Options.Configuration)
-                   .AddProperty("Version", versionService.Version.ToString())
-                   .SetRuntime(runtime.Name));
+                DotNetTasks.DotNetBuild(setting =>
+                    setting
+                        .SetProjectFile(Options.CsprojFile.FullName)
+                        .EnableNoRestore()
+                        .SetConfiguration(Options.Configuration)
+                        .AddProperty("Version", versionService.Version.ToString())
+                        .SetRuntime(runtime.Name)
+                );
             }
         }
     }

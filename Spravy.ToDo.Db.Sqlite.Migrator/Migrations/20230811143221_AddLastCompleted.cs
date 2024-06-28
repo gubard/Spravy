@@ -16,15 +16,17 @@ namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
                 table: "ToDoItem",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)));
+                defaultValue: new DateTimeOffset(
+                    new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                    new TimeSpan(0, 0, 0, 0, 0)
+                )
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "LastCompleted",
-                table: "ToDoItem");
+            migrationBuilder.DropColumn(name: "LastCompleted", table: "ToDoItem");
         }
     }
 }

@@ -18,7 +18,8 @@ namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
                 nullable: false,
                 defaultValueSql: "CURRENT_TIMESTAMP",
                 oldClrType: typeof(DateTimeOffset),
-                oldType: "TEXT");
+                oldType: "TEXT"
+            );
         }
 
         /// <inheritdoc />
@@ -31,7 +32,8 @@ namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
                 nullable: false,
                 oldClrType: typeof(DateTimeOffset),
                 oldType: "TEXT",
-                oldDefaultValueSql: "CURRENT_TIMESTAMP");
+                oldDefaultValueSql: "CURRENT_TIMESTAMP"
+            );
         }
     }
 }

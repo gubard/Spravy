@@ -1,6 +1,7 @@
 namespace Spravy.Client.Services;
 
-public class GrpcClientCacheValidator<TGrpcClient> : ICacheValidator<Uri, TGrpcClient> where TGrpcClient : ClientBase
+public class GrpcClientCacheValidator<TGrpcClient> : ICacheValidator<Uri, TGrpcClient>
+    where TGrpcClient : ClientBase
 {
     private readonly ICache<Uri, GrpcChannel> grpcChannelCache;
     private readonly ICacheValidator<Uri, GrpcChannel> grpcChannelCacheValidator;

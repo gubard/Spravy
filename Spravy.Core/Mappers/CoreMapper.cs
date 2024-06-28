@@ -8,8 +8,9 @@ namespace Spravy.Core.Mappers;
 public static partial class CoreMapper
 {
     public static partial ReadOnlyMemory<ByteString> ToByteString(this ReadOnlyMemory<Guid> value);
+
     public static partial ReadOnlyMemory<Guid> ToGuid(this IEnumerable<ByteString> value);
-    
+
     public static DateTime ToDateTime(this DateOnly value)
     {
         return new(value.Year, value.Month, value.Day);
@@ -34,14 +35,15 @@ public static partial class CoreMapper
     {
         return value.Kind switch
         {
-            DateTimeKind.Unspecified => throw new ArgumentOutOfRangeException(nameof(value.Kind),
-                value.Kind.ToString()),
+            DateTimeKind.Unspecified
+                => throw new ArgumentOutOfRangeException(nameof(value.Kind), value.Kind.ToString()),
             DateTimeKind.Utc => Timestamp.FromDateTime(value),
-            DateTimeKind.Local => Timestamp.FromDateTime(TimeZoneInfo.ConvertTimeToUtc(value, TimeZoneInfo.Local)),
+            DateTimeKind.Local
+                => Timestamp.FromDateTime(TimeZoneInfo.ConvertTimeToUtc(value, TimeZoneInfo.Local)),
             _ => throw new ArgumentOutOfRangeException(nameof(value.Kind), value.Kind.ToString())
         };
     }
-    
+
     public static DateTime MapToDateTime(this Timestamp value)
     {
         return value.ToDateTime();
@@ -56,7 +58,7 @@ public static partial class CoreMapper
 
         return new(value.ToUri());
     }
-    
+
     public static string MapToString(this Option<Uri> value)
     {
         if (value.TryGetValue(out var uri))
@@ -96,12 +98,12 @@ public static partial class CoreMapper
     {
         return new(value);
     }
-    
+
     public static ReadOnlyMemory<byte> ToMemory(this byte[] value)
     {
         return value;
     }
-    
+
     public static ByteString ToByteString(this OptionStruct<Guid> value)
     {
         if (value.TryGetValue(out var id))
@@ -121,7 +123,7 @@ public static partial class CoreMapper
 
         return new(value.ToGuid());
     }
-    
+
     public static Guid? ToNullableGuid(this OptionStruct<Guid> value)
     {
         return value.TryGetValue(out var v) ? v : null;

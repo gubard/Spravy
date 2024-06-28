@@ -5,9 +5,16 @@ public class ConfirmViewModel : ViewModelBase, ISaveState
     public ConfirmViewModel(IErrorHandler errorHandler, ITaskProgressService taskProgressService)
     {
         ConfirmCommand = SpravyCommand.Create(
-            ct => ConfirmTask.IfNotNull(nameof(ConfirmTask))
-               .IfSuccessAsync(confirm => Content.IfNotNull(nameof(Content)).IfSuccessAsync(confirm, ct),
-                    ct), errorHandler, taskProgressService);
+            ct =>
+                ConfirmTask
+                    .IfNotNull(nameof(ConfirmTask))
+                    .IfSuccessAsync(
+                        confirm => Content.IfNotNull(nameof(Content)).IfSuccessAsync(confirm, ct),
+                        ct
+                    ),
+            errorHandler,
+            taskProgressService
+        );
 
         CancelCommand = SpravyCommand.Create(CancelAsync, errorHandler, taskProgressService);
     }

@@ -14,25 +14,23 @@ namespace Spravy.Authentication.Db.Sqlite.Migrator.Migrations
                 name: "Email",
                 table: "User",
                 type: "TEXT",
-                nullable: true);
+                nullable: true
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_User_Email",
                 table: "User",
                 column: "Email",
-                unique: true);
+                unique: true
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropIndex(
-                name: "IX_User_Email",
-                table: "User");
+            migrationBuilder.DropIndex(name: "IX_User_Email", table: "User");
 
-            migrationBuilder.DropColumn(
-                name: "Email",
-                table: "User");
+            migrationBuilder.DropColumn(name: "Email", table: "User");
         }
     }
 }

@@ -18,16 +18,15 @@ namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
                 defaultValue: false
             );
 
-            migrationBuilder.Sql("UPDATE ToDoItem SET IsRequiredCompleteInDueDate = 1 WHERE 1 > 0;");
+            migrationBuilder.Sql(
+                "UPDATE ToDoItem SET IsRequiredCompleteInDueDate = 1 WHERE 1 > 0;"
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "IsRequiredCompleteInDueDate",
-                table: "ToDoItem"
-            );
+            migrationBuilder.DropColumn(name: "IsRequiredCompleteInDueDate", table: "ToDoItem");
         }
     }
 }

@@ -8,6 +8,6 @@ public readonly struct ReferenceToDoItemSettings
     {
         ReferenceId = referenceId;
     }
-    
+
     public OptionStruct<Guid> ReferenceId { get; }
 }

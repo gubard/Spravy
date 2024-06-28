@@ -1,7 +1,7 @@
 namespace Spravy.Ui.Features.ToDo.Views;
 
-public partial class
-    PeriodicityOffsetToDoItemSettingsView : ReactiveUserControl<PeriodicityOffsetToDoItemSettingsViewModel>
+public partial class PeriodicityOffsetToDoItemSettingsView
+    : ReactiveUserControl<PeriodicityOffsetToDoItemSettingsViewModel>
 {
     public PeriodicityOffsetToDoItemSettingsView()
     {

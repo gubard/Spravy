@@ -1,5 +1,3 @@
 namespace Spravy.Ui.Models;
 
-public class NotifyBase : ReactiveObject
-{
-}
+public class NotifyBase : ReactiveObject { }

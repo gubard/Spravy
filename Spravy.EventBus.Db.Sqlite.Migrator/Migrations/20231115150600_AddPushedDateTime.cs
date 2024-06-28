@@ -15,15 +15,14 @@ namespace Spravy.EventBus.Db.Sqlite.Migrator.Migrations
                 name: "PushedDateTime",
                 table: "Event",
                 type: "TEXT",
-                nullable: true);
+                nullable: true
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "PushedDateTime",
-                table: "Event");
+            migrationBuilder.DropColumn(name: "PushedDateTime", table: "Event");
         }
     }
 }

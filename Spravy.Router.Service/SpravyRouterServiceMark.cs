@@ -5,9 +5,11 @@ namespace Spravy.Router.Service;
 
 public struct SpravyRouterServiceMark : IAssemblyMark
 {
-    public static AssemblyName AssemblyName { get; } = typeof(SpravyRouterServiceMark).Assembly.GetName();
+    public static AssemblyName AssemblyName { get; } =
+        typeof(SpravyRouterServiceMark).Assembly.GetName();
 
-    public static string AssemblyFullName { get; } = typeof(SpravyRouterServiceMark).Assembly.GetName().FullName;
+    public static string AssemblyFullName { get; } =
+        typeof(SpravyRouterServiceMark).Assembly.GetName().FullName;
 
     public static Assembly Assembly { get; } = typeof(SpravyRouterServiceMark).Assembly;
 

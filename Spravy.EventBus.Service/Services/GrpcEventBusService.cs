@@ -16,7 +16,7 @@ public class GrpcEventBusService : EventBusService.EventBusServiceBase
     private readonly EventStorage eventStorage;
     private readonly ILogger<GrpcEventBusService> logger;
 
-    public GrpcEventBusService( EventStorage eventStorage, ILogger<GrpcEventBusService> logger)
+    public GrpcEventBusService(EventStorage eventStorage, ILogger<GrpcEventBusService> logger)
     {
         this.eventStorage = eventStorage;
         this.logger = logger;
@@ -55,17 +55,27 @@ public class GrpcEventBusService : EventBusService.EventBusServiceBase
         }
     }
 
-    public override async Task<PublishEventReply> PublishEvent(PublishEventRequest request, ServerCallContext context)
+    public override async Task<PublishEventReply> PublishEvent(
+        PublishEventRequest request,
+        ServerCallContext context
+    )
     {
         var userId = context.GetHttpContext().GetUserId();
         var id = request.EventId.ToGuid();
         logger.LogInformation("{UserId} push event {Id}", userId, id);
-        await eventStorage.AddEventAsync(id, request.Content.ToByteArray(), context.CancellationToken);
+        await eventStorage.AddEventAsync(
+            id,
+            request.Content.ToByteArray(),
+            context.CancellationToken
+        );
 
         return new();
     }
 
-    public override async Task<GetEventsReply> GetEvents(GetEventsRequest request, ServerCallContext context)
+    public override async Task<GetEventsReply> GetEvents(
+        GetEventsRequest request,
+        ServerCallContext context
+    )
     {
         var userId = context.GetHttpContext().GetUserId();
         var eventIds = request.EventIds.ToGuid();

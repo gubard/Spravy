@@ -38,9 +38,10 @@ internal class Program
 
     public static AppBuilder BuildAvaloniaApp()
     {
-        return AppBuilder.Configure(() => DiHelper.ServiceFactory.CreateService<App>())
-           .UseReactiveUI()
-           .WithInterFont()
-           .WithShantellSansFont();
+        return AppBuilder
+            .Configure(() => DiHelper.ServiceFactory.CreateService<App>())
+            .UseReactiveUI()
+            .WithInterFont()
+            .WithShantellSansFont();
     }
 }

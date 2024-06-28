@@ -17,7 +17,10 @@ public static class StringExtension
         return new(str);
     }
 
-    public static Result<string> CheckNullOrWhiteSpaceProperty(this string? propertyValue, string propertyName)
+    public static Result<string> CheckNullOrWhiteSpaceProperty(
+        this string? propertyValue,
+        string propertyName
+    )
     {
         if (propertyValue is null)
         {
@@ -165,7 +168,8 @@ public static class StringExtension
         }
     }
 
-    public static TEnum ParseEnum<TEnum>(this string str) where TEnum : struct
+    public static TEnum ParseEnum<TEnum>(this string str)
+        where TEnum : struct
     {
         return Enum.Parse<TEnum>(str);
     }

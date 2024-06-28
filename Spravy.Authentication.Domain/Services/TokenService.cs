@@ -35,34 +35,49 @@ public class TokenService : ITokenService
             return new Result<string>(token.Token).ToValueTaskResult().ConfigureAwait(false);
         }
 
-        return authenticationService.RefreshTokenAsync(token.RefreshToken, ct)
-           .IfSuccessAsync(value =>
-            {
-                token = value;
+        return authenticationService
+            .RefreshTokenAsync(token.RefreshToken, ct)
+            .IfSuccessAsync(
+                value =>
+                {
+                    token = value;
 
-                return token.Token.ToResult().ToValueTaskResult().ConfigureAwait(false);
-            }, ct);
+                    return token.Token.ToResult().ToValueTaskResult().ConfigureAwait(false);
+                },
+                ct
+            );
     }
 
     public ConfiguredValueTaskAwaitable<Result> LoginAsync(User user, CancellationToken ct)
     {
-        return authenticationService.LoginAsync(user, ct)
-           .IfSuccessAsync(value =>
-            {
-                token = value;
+        return authenticationService
+            .LoginAsync(user, ct)
+            .IfSuccessAsync(
+                value =>
+                {
+                    token = value;
 
-                return Result.AwaitableSuccess;
-            }, ct);
+                    return Result.AwaitableSuccess;
+                },
+                ct
+            );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> LoginAsync(string refreshToken, CancellationToken ct)
+    public ConfiguredValueTaskAwaitable<Result> LoginAsync(
+        string refreshToken,
+        CancellationToken ct
+    )
     {
-        return authenticationService.RefreshTokenAsync(refreshToken, ct)
-           .IfSuccessAsync(value =>
-            {
-                token = value;
+        return authenticationService
+            .RefreshTokenAsync(refreshToken, ct)
+            .IfSuccessAsync(
+                value =>
+                {
+                    token = value;
 
-                return Result.AwaitableSuccess;
-            }, ct);
+                    return Result.AwaitableSuccess;
+                },
+                ct
+            );
     }
 }

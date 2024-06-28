@@ -4,12 +4,14 @@ public class VariableStringMaxLengthError : Error
 {
     public static readonly Guid MainId = new("B554DD15-82E1-4B54-AEB4-88CFF95CCCEA");
 
-    protected VariableStringMaxLengthError() : base(MainId)
+    protected VariableStringMaxLengthError()
+        : base(MainId)
     {
         VariableName = string.Empty;
     }
 
-    public VariableStringMaxLengthError(ushort maxLength, string variableName, uint variableLength) : base(MainId)
+    public VariableStringMaxLengthError(ushort maxLength, string variableName, uint variableLength)
+        : base(MainId)
     {
         MaxLength = maxLength;
         VariableName = variableName;
@@ -22,6 +24,7 @@ public class VariableStringMaxLengthError : Error
 
     public override string Message
     {
-        get => $"Variable {VariableName} length can't be more then {MaxLength}, but current length {VariableLength}";
+        get =>
+            $"Variable {VariableName} length can't be more then {MaxLength}, but current length {VariableLength}";
     }
 }

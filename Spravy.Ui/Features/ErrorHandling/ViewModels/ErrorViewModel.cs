@@ -2,9 +2,8 @@ namespace Spravy.Ui.Features.ErrorHandling.ViewModels;
 
 public class ErrorViewModel : NavigatableViewModelBase
 {
-    public ErrorViewModel() : base(true)
-    {
-    }
+    public ErrorViewModel()
+        : base(true) { }
 
     public override string ViewId
     {

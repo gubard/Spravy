@@ -35,41 +35,46 @@ public partial class DesktopServiceProvider : IServiceFactory
     {
         return application.GetTopLevel().ThrowIfNull();
     }
-    
-    static IObjectStorage SqliteObjectStorageFactory(StorageDbContext context, ProtobufSerializer serializer)
+
+    static IObjectStorage SqliteObjectStorageFactory(
+        StorageDbContext context,
+        ProtobufSerializer serializer
+    )
     {
         return new SqliteObjectStorage(context, serializer);
     }
-    
+
     static StorageDbContext StorageDbContextFactory(IDbContextSetup setup)
     {
         return new(setup);
     }
-    
+
     public IServiceFactory ServiceFactoryFactory()
     {
         return DiHelper.ServiceFactory;
     }
-    
+
     public ClientOptions ClientOptionsFactory()
     {
         return new(true);
     }
-    
+
     public IConfiguration ConfigurationFactory()
     {
         return new ConfigurationBuilder().AddJsonFile(FileNames.DefaultConfigFileName).Build();
     }
-    
+
     public IDbContextSetup DbContextSetupFactory()
     {
-        return new SqliteDbContextSetup(new[]
-        {
-            new StorageEntityTypeConfiguration(),
-        }, "./storage/storage.db".ToFile(), true);
+        return new SqliteDbContextSetup(
+            new[] { new StorageEntityTypeConfiguration(), },
+            "./storage/storage.db".ToFile(),
+            true
+        );
     }
-    
-    public T CreateService<T>() where T : notnull
+
+    public T CreateService<T>()
+        where T : notnull
     {
         return GetService<T>();
     }

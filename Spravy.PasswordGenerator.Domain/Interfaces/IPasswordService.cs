@@ -21,7 +21,10 @@ public interface IPasswordService
     );
 
     ConfiguredValueTaskAwaitable<Result> DeletePasswordItemAsync(Guid id, CancellationToken ct);
-    ConfiguredValueTaskAwaitable<Result<string>> GeneratePasswordAsync(Guid id, CancellationToken ct);
+    ConfiguredValueTaskAwaitable<Result<string>> GeneratePasswordAsync(
+        Guid id,
+        CancellationToken ct
+    );
 
     ConfiguredValueTaskAwaitable<Result> UpdatePasswordItemNameAsync(
         Guid id,

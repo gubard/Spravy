@@ -21,7 +21,10 @@ public class GrpcRouterRouterScheduleService : ScheduleService.ScheduleServiceBa
         this.serializer = serializer;
     }
 
-    public override async Task<AddTimerReply> AddTimer(AddTimerRequest request, ServerCallContext context)
+    public override async Task<AddTimerReply> AddTimer(
+        AddTimerRequest request,
+        ServerCallContext context
+    )
     {
         var parameters = request.Parameters.ToAddTimerParameters();
         await scheduleService.AddTimerAsync(parameters, context.CancellationToken);
@@ -29,7 +32,10 @@ public class GrpcRouterRouterScheduleService : ScheduleService.ScheduleServiceBa
         return new();
     }
 
-    public override async Task<RemoveTimerReply> RemoveTimer(RemoveTimerRequest request, ServerCallContext context)
+    public override async Task<RemoveTimerReply> RemoveTimer(
+        RemoveTimerRequest request,
+        ServerCallContext context
+    )
     {
         var id = request.Id.ToGuid();
         await scheduleService.RemoveTimerAsync(id, context.CancellationToken);
@@ -37,15 +43,23 @@ public class GrpcRouterRouterScheduleService : ScheduleService.ScheduleServiceBa
         return new();
     }
 
-    public override Task<GetListTimesReply> GetListTimes(GetListTimesRequest request, ServerCallContext context)
+    public override Task<GetListTimesReply> GetListTimes(
+        GetListTimesRequest request,
+        ServerCallContext context
+    )
     {
-        return scheduleService.GetListTimesAsync(context.CancellationToken)
-           .HandleAsync(serializer, items =>
-            {
-                var reply = new GetListTimesReply();
-                reply.Items.AddRange(items.ToTimerItemGrpc().ToArray());
+        return scheduleService
+            .GetListTimesAsync(context.CancellationToken)
+            .HandleAsync(
+                serializer,
+                items =>
+                {
+                    var reply = new GetListTimesReply();
+                    reply.Items.AddRange(items.ToTimerItemGrpc().ToArray());
 
-                return reply;
-            }, context.CancellationToken);
+                    return reply;
+                },
+                context.CancellationToken
+            );
     }
 }

@@ -1,6 +1,7 @@
 ﻿namespace Spravy.Domain.Models;
 
-public class TreeNode<TKey, TValue> where TKey : notnull
+public class TreeNode<TKey, TValue>
+    where TKey : notnull
 {
     private readonly Dictionary<TKey, TreeNode<TKey, TValue>> nodes;
 

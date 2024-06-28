@@ -20,7 +20,9 @@ namespace Spravy.PasswordGenerator.Service.Extensions;
 
 public static class ServiceCollectionExtension
 {
-    public static IServiceCollection RegisterPasswordGenerator(this IServiceCollection serviceCollection)
+    public static IServiceCollection RegisterPasswordGenerator(
+        this IServiceCollection serviceCollection
+    )
     {
         serviceCollection.AddHostedService<FolderMigratorHostedService<PasswordDbContext>>();
         serviceCollection.AddHostedService<FileMigratorHostedService<UserSecretDbContext>>();
@@ -33,17 +35,26 @@ public static class ServiceCollectionExtension
         serviceCollection.AddTransient<IRpcExceptionHandler, RpcExceptionHandler>();
         serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<SqliteFolderOptions>());
         serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<SqliteFileOptions>());
-        serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<PasswordGeneratorOptions>());
-        serviceCollection.AddTransient<IFactory<string, UserSecretDbContext>, UserSecretDbContextFactory>();
+        serviceCollection.AddSingleton(sp =>
+            sp.GetConfigurationSection<PasswordGeneratorOptions>()
+        );
+        serviceCollection.AddTransient<
+            IFactory<string, UserSecretDbContext>,
+            UserSecretDbContextFactory
+        >();
         serviceCollection.AddTransient<ISerializer, SpravyJsonSerializer>();
         serviceCollection.AddTransient<JsonSerializerContext, SpravyJsonSerializerContext>();
 
-        serviceCollection
-           .AddSpravySqliteFolderContext<PasswordDbContext, SpravyPasswordGeneratorDbSqliteMigratorMark,
-                SqlitePasswordDbContextSetup>();
+        serviceCollection.AddSpravySqliteFolderContext<
+            PasswordDbContext,
+            SpravyPasswordGeneratorDbSqliteMigratorMark,
+            SqlitePasswordDbContextSetup
+        >();
 
-        serviceCollection
-           .AddSpravySqliteFileDbContext<UserSecretDbContext, SpravyPasswordGeneratorDbSqliteMigratorMark>();
+        serviceCollection.AddSpravySqliteFileDbContext<
+            UserSecretDbContext,
+            SpravyPasswordGeneratorDbSqliteMigratorMark
+        >();
 
         return serviceCollection;
     }

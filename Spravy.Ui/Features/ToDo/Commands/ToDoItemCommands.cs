@@ -14,8 +14,11 @@ public class ToDoItemCommands
         this.objectStorage = objectStorage;
         NavigateToCurrentToDo = spravyCommandService.NavigateToCurrentToDoItem;
 
-        InitializedCommand =
-            SpravyCommand.Create<ToDoItemViewModel>(InitializedAsync, errorHandler, taskProgressService);
+        InitializedCommand = SpravyCommand.Create<ToDoItemViewModel>(
+            InitializedAsync,
+            errorHandler,
+            taskProgressService
+        );
     }
 
     public SpravyCommand InitializedCommand { get; }
@@ -28,8 +31,9 @@ public class ToDoItemCommands
     {
         viewModel.FastAddToDoItemViewModel.ParentId = viewModel.Id;
 
-        return objectStorage.GetObjectOrDefaultAsync<ToDoItemViewModelSetting>(viewModel.ViewId, ct)
-           .IfSuccessAsync(obj => viewModel.SetStateAsync(obj, ct), ct)
-           .IfSuccessAsync(() => viewModel.RefreshAsync(ct), ct);
+        return objectStorage
+            .GetObjectOrDefaultAsync<ToDoItemViewModelSetting>(viewModel.ViewId, ct)
+            .IfSuccessAsync(obj => viewModel.SetStateAsync(obj, ct), ct)
+            .IfSuccessAsync(() => viewModel.RefreshAsync(ct), ct);
     }
 }

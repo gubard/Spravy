@@ -10,10 +10,16 @@ try
 {
     Log.Information("Starting web app");
 
-    WebApplication.CreateBuilder(args)
-       .BuildSpravy<GrpcRouterAuthenticationService, GrpcRouterEventBusService, GrpcRouterRouterScheduleService, GrpcRouterToDoService,
-            SpravyRouterServiceMark>(args, x => x.RegisterRouter())
-       .Run();
+    WebApplication
+        .CreateBuilder(args)
+        .BuildSpravy<
+            GrpcRouterAuthenticationService,
+            GrpcRouterEventBusService,
+            GrpcRouterRouterScheduleService,
+            GrpcRouterToDoService,
+            SpravyRouterServiceMark
+        >(args, x => x.RegisterRouter())
+        .Run();
 }
 catch (Exception ex)
 {

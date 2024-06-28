@@ -64,7 +64,10 @@ public static class TypeExtension
         return Expression.NewArrayInit(type);
     }
 
-    public static NewArrayExpression ToNewArrayInit(this Type type, IEnumerable<Expression> expressions)
+    public static NewArrayExpression ToNewArrayInit(
+        this Type type,
+        IEnumerable<Expression> expressions
+    )
     {
         return Expression.NewArrayInit(type, expressions);
     }

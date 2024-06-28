@@ -27,9 +27,16 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService.UpdateToDoItemIsRequiredCompleteInDueDateAsync(request.Id.ToGuid(),
-                request.IsRequiredCompleteInDueDate, context.CancellationToken)
-           .HandleAsync<UpdateToDoItemIsRequiredCompleteInDueDateReply>(serializer, context.CancellationToken);
+        return toDoService
+            .UpdateToDoItemIsRequiredCompleteInDueDateAsync(
+                request.Id.ToGuid(),
+                request.IsRequiredCompleteInDueDate,
+                context.CancellationToken
+            )
+            .HandleAsync<UpdateToDoItemIsRequiredCompleteInDueDateReply>(
+                serializer,
+                context.CancellationToken
+            );
     }
 
     public override Task<GetTodayToDoItemsReply> GetTodayToDoItems(
@@ -37,20 +44,29 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService.GetTodayToDoItemsAsync(context.CancellationToken)
-           .HandleAsync(serializer, ids =>
-            {
-                var result = new GetTodayToDoItemsReply();
-                result.Ids.AddRange(ids.ToByteString().ToArray());
+        return toDoService
+            .GetTodayToDoItemsAsync(context.CancellationToken)
+            .HandleAsync(
+                serializer,
+                ids =>
+                {
+                    var result = new GetTodayToDoItemsReply();
+                    result.Ids.AddRange(ids.ToByteString().ToArray());
 
-                return result;
-            }, context.CancellationToken);
+                    return result;
+                },
+                context.CancellationToken
+            );
     }
 
-    public override Task<ResetToDoItemReply> ResetToDoItem(ResetToDoItemRequest request, ServerCallContext context)
+    public override Task<ResetToDoItemReply> ResetToDoItem(
+        ResetToDoItemRequest request,
+        ServerCallContext context
+    )
     {
-        return toDoService.ResetToDoItemAsync(request.ToResetToDoItemOptions(), context.CancellationToken)
-           .HandleAsync<ResetToDoItemReply>(serializer, context.CancellationToken);
+        return toDoService
+            .ResetToDoItemAsync(request.ToResetToDoItemOptions(), context.CancellationToken)
+            .HandleAsync<ResetToDoItemReply>(serializer, context.CancellationToken);
     }
 
     public override Task<GetPeriodicityOffsetToDoItemSettingsReply> GetPeriodicityOffsetToDoItemSettings(
@@ -58,13 +74,21 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService.GetPeriodicityOffsetToDoItemSettingsAsync(request.Id.ToGuid(), context.CancellationToken)
-           .HandleAsync(serializer, settings =>
-            {
-                var reply = settings.ToGetPeriodicityOffsetToDoItemSettingsReply();
+        return toDoService
+            .GetPeriodicityOffsetToDoItemSettingsAsync(
+                request.Id.ToGuid(),
+                context.CancellationToken
+            )
+            .HandleAsync(
+                serializer,
+                settings =>
+                {
+                    var reply = settings.ToGetPeriodicityOffsetToDoItemSettingsReply();
 
-                return reply;
-            }, context.CancellationToken);
+                    return reply;
+                },
+                context.CancellationToken
+            );
     }
 
     public override Task<GetValueToDoItemSettingsReply> GetValueToDoItemSettings(
@@ -72,13 +96,18 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService.GetValueToDoItemSettingsAsync(request.Id.ToGuid(), context.CancellationToken)
-           .HandleAsync(serializer, settings =>
-            {
-                var reply = settings.ToGetValueToDoItemSettingsReply();
+        return toDoService
+            .GetValueToDoItemSettingsAsync(request.Id.ToGuid(), context.CancellationToken)
+            .HandleAsync(
+                serializer,
+                settings =>
+                {
+                    var reply = settings.ToGetValueToDoItemSettingsReply();
 
-                return reply;
-            }, context.CancellationToken);
+                    return reply;
+                },
+                context.CancellationToken
+            );
     }
 
     public override Task<GetRootToDoItemIdsReply> GetRootToDoItemIds(
@@ -86,14 +115,19 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService.GetRootToDoItemIdsAsync(context.CancellationToken)
-           .HandleAsync(serializer, ids =>
-            {
-                var reply = new GetRootToDoItemIdsReply();
-                reply.Ids.AddRange(ids.ToByteString().ToArray());
+        return toDoService
+            .GetRootToDoItemIdsAsync(context.CancellationToken)
+            .HandleAsync(
+                serializer,
+                ids =>
+                {
+                    var reply = new GetRootToDoItemIdsReply();
+                    reply.Ids.AddRange(ids.ToByteString().ToArray());
 
-                return reply;
-            }, context.CancellationToken);
+                    return reply;
+                },
+                context.CancellationToken
+            );
     }
 
     public override Task<GetPlannedToDoItemSettingsReply> GetPlannedToDoItemSettings(
@@ -101,13 +135,18 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService.GetPlannedToDoItemSettingsAsync(request.Id.ToGuid(), context.CancellationToken)
-           .HandleAsync(serializer, settings =>
-            {
-                var reply = settings.ToGetPlannedToDoItemSettingsReply();
+        return toDoService
+            .GetPlannedToDoItemSettingsAsync(request.Id.ToGuid(), context.CancellationToken)
+            .HandleAsync(
+                serializer,
+                settings =>
+                {
+                    var reply = settings.ToGetPlannedToDoItemSettingsReply();
 
-                return reply;
-            }, context.CancellationToken);
+                    return reply;
+                },
+                context.CancellationToken
+            );
     }
 
     public override Task<GetPeriodicityToDoItemSettingsReply> GetPeriodicityToDoItemSettings(
@@ -115,13 +154,18 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService.GetPeriodicityToDoItemSettingsAsync(request.Id.ToGuid(), context.CancellationToken)
-           .HandleAsync(serializer, settings =>
-            {
-                var reply = settings.ToGetPeriodicityToDoItemSettingsReply();
+        return toDoService
+            .GetPeriodicityToDoItemSettingsAsync(request.Id.ToGuid(), context.CancellationToken)
+            .HandleAsync(
+                serializer,
+                settings =>
+                {
+                    var reply = settings.ToGetPeriodicityToDoItemSettingsReply();
 
-                return reply;
-            }, context.CancellationToken);
+                    return reply;
+                },
+                context.CancellationToken
+            );
     }
 
     public override Task<GetLeafToDoItemIdsReply> GetLeafToDoItemIds(
@@ -129,14 +173,19 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService.GetLeafToDoItemIdsAsync(request.Id.ToGuid(), context.CancellationToken)
-           .HandleAsync(serializer, ids =>
-            {
-                var reply = new GetLeafToDoItemIdsReply();
-                reply.Ids.AddRange(ids.ToByteString().ToArray());
+        return toDoService
+            .GetLeafToDoItemIdsAsync(request.Id.ToGuid(), context.CancellationToken)
+            .HandleAsync(
+                serializer,
+                ids =>
+                {
+                    var reply = new GetLeafToDoItemIdsReply();
+                    reply.Ids.AddRange(ids.ToByteString().ToArray());
 
-                return reply;
-            }, context.CancellationToken);
+                    return reply;
+                },
+                context.CancellationToken
+            );
     }
 
     public override Task<GetFavoriteToDoItemIdsRequestReply> GetFavoriteToDoItemIds(
@@ -144,14 +193,19 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService.GetFavoriteToDoItemIdsAsync(context.CancellationToken)
-           .HandleAsync(serializer, ids =>
-            {
-                var reply = new GetFavoriteToDoItemIdsRequestReply();
-                reply.Ids.AddRange(ids.ToByteString().ToArray());
+        return toDoService
+            .GetFavoriteToDoItemIdsAsync(context.CancellationToken)
+            .HandleAsync(
+                serializer,
+                ids =>
+                {
+                    var reply = new GetFavoriteToDoItemIdsRequestReply();
+                    reply.Ids.AddRange(ids.ToByteString().ToArray());
 
-                return reply;
-            }, context.CancellationToken);
+                    return reply;
+                },
+                context.CancellationToken
+            );
     }
 
     public override Task<GetCurrentActiveToDoItemReply> GetCurrentActiveToDoItem(
@@ -159,14 +213,19 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService.GetCurrentActiveToDoItemAsync(context.CancellationToken)
-           .HandleAsync(serializer, item =>
-            {
-                var reply = new GetCurrentActiveToDoItemReply();
-                reply.Item = item.ToActiveToDoItemGrpc();
+        return toDoService
+            .GetCurrentActiveToDoItemAsync(context.CancellationToken)
+            .HandleAsync(
+                serializer,
+                item =>
+                {
+                    var reply = new GetCurrentActiveToDoItemReply();
+                    reply.Item = item.ToActiveToDoItemGrpc();
 
-                return reply;
-            }, context.CancellationToken);
+                    return reply;
+                },
+                context.CancellationToken
+            );
     }
 
     public override Task<GetChildrenToDoItemIdsReply> GetChildrenToDoItemIds(
@@ -174,14 +233,19 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService.GetChildrenToDoItemIdsAsync(request.Id.ToGuid(), context.CancellationToken)
-           .HandleAsync(serializer, ids =>
-            {
-                var reply = new GetChildrenToDoItemIdsReply();
-                reply.Ids.AddRange(ids.ToByteString().ToArray());
+        return toDoService
+            .GetChildrenToDoItemIdsAsync(request.Id.ToGuid(), context.CancellationToken)
+            .HandleAsync(
+                serializer,
+                ids =>
+                {
+                    var reply = new GetChildrenToDoItemIdsReply();
+                    reply.Ids.AddRange(ids.ToByteString().ToArray());
 
-                return reply;
-            }, context.CancellationToken);
+                    return reply;
+                },
+                context.CancellationToken
+            );
     }
 
     public override Task<UpdateToDoItemLinkReply> UpdateToDoItemLink(
@@ -189,9 +253,13 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService.UpdateToDoItemLinkAsync(request.Id.ToGuid(), request.Link.ToOptionUri(),
-                context.CancellationToken)
-           .HandleAsync<UpdateToDoItemLinkReply>(serializer, context.CancellationToken);
+        return toDoService
+            .UpdateToDoItemLinkAsync(
+                request.Id.ToGuid(),
+                request.Link.ToOptionUri(),
+                context.CancellationToken
+            )
+            .HandleAsync<UpdateToDoItemLinkReply>(serializer, context.CancellationToken);
     }
 
     public override Task<SearchToDoItemIdsReply> SearchToDoItemIds(
@@ -199,14 +267,19 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService.SearchToDoItemIdsAsync(request.SearchText, context.CancellationToken)
-           .HandleAsync(serializer, ids =>
-            {
-                var reply = new SearchToDoItemIdsReply();
-                reply.Ids.AddRange(ids.ToByteString().ToArray());
+        return toDoService
+            .SearchToDoItemIdsAsync(request.SearchText, context.CancellationToken)
+            .HandleAsync(
+                serializer,
+                ids =>
+                {
+                    var reply = new SearchToDoItemIdsReply();
+                    reply.Ids.AddRange(ids.ToByteString().ToArray());
 
-                return reply;
-            }, context.CancellationToken);
+                    return reply;
+                },
+                context.CancellationToken
+            );
     }
 
     public override Task<RandomizeChildrenOrderIndexReply> RandomizeChildrenOrderIndex(
@@ -214,8 +287,9 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService.RandomizeChildrenOrderIndexAsync(request.Id.ToGuid(), context.CancellationToken)
-           .HandleAsync<RandomizeChildrenOrderIndexReply>(serializer, context.CancellationToken);
+        return toDoService
+            .RandomizeChildrenOrderIndexAsync(request.Id.ToGuid(), context.CancellationToken)
+            .HandleAsync<RandomizeChildrenOrderIndexReply>(serializer, context.CancellationToken);
     }
 
     public override async Task GetToDoItems(
@@ -226,7 +300,13 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
     {
         var ids = request.Ids.ToGuid();
 
-        await foreach (var item in toDoService.GetToDoItemsAsync(ids, request.ChunkSize, context.CancellationToken))
+        await foreach (
+            var item in toDoService.GetToDoItemsAsync(
+                ids,
+                request.ChunkSize,
+                context.CancellationToken
+            )
+        )
         {
             var reply = new GetToDoItemsReply();
             reply.Items.AddRange(item.Value.ToToDoItemGrpc().ToArray());
@@ -234,15 +314,23 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         }
     }
 
-    public override Task<GetToDoItemReply> GetToDoItem(GetToDoItemRequest request, ServerCallContext context)
+    public override Task<GetToDoItemReply> GetToDoItem(
+        GetToDoItemRequest request,
+        ServerCallContext context
+    )
     {
-        return toDoService.GetToDoItemAsync(request.Id.ToGuid(), context.CancellationToken)
-           .HandleAsync(serializer, item =>
-            {
-                var reply = item.ToGetToDoItemReply();
+        return toDoService
+            .GetToDoItemAsync(request.Id.ToGuid(), context.CancellationToken)
+            .HandleAsync(
+                serializer,
+                item =>
+                {
+                    var reply = item.ToGetToDoItemReply();
 
-                return reply;
-            }, context.CancellationToken);
+                    return reply;
+                },
+                context.CancellationToken
+            );
     }
 
     public override Task<GetWeeklyPeriodicityReply> GetWeeklyPeriodicity(
@@ -250,13 +338,18 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService.GetWeeklyPeriodicityAsync(request.Id.ToGuid(), context.CancellationToken)
-           .HandleAsync(serializer, periodicity =>
-            {
-                var reply = periodicity.ToGetWeeklyPeriodicityReply();
+        return toDoService
+            .GetWeeklyPeriodicityAsync(request.Id.ToGuid(), context.CancellationToken)
+            .HandleAsync(
+                serializer,
+                periodicity =>
+                {
+                    var reply = periodicity.ToGetWeeklyPeriodicityReply();
 
-                return reply;
-            }, context.CancellationToken);
+                    return reply;
+                },
+                context.CancellationToken
+            );
     }
 
     public override Task<GetMonthlyPeriodicityReply> GetMonthlyPeriodicity(
@@ -264,13 +357,18 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService.GetMonthlyPeriodicityAsync(request.Id.ToGuid(), context.CancellationToken)
-           .HandleAsync(serializer, periodicity =>
-            {
-                var reply = periodicity.ToGetMonthlyPeriodicityReply();
+        return toDoService
+            .GetMonthlyPeriodicityAsync(request.Id.ToGuid(), context.CancellationToken)
+            .HandleAsync(
+                serializer,
+                periodicity =>
+                {
+                    var reply = periodicity.ToGetMonthlyPeriodicityReply();
 
-                return reply;
-            }, context.CancellationToken);
+                    return reply;
+                },
+                context.CancellationToken
+            );
     }
 
     public override Task<GetAnnuallyPeriodicityReply> GetAnnuallyPeriodicity(
@@ -278,39 +376,60 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService.GetAnnuallyPeriodicityAsync(request.Id.ToGuid(), context.CancellationToken)
-           .HandleAsync(serializer, periodicity =>
-            {
-                var reply = periodicity.ToGetAnnuallyPeriodicityReply();
+        return toDoService
+            .GetAnnuallyPeriodicityAsync(request.Id.ToGuid(), context.CancellationToken)
+            .HandleAsync(
+                serializer,
+                periodicity =>
+                {
+                    var reply = periodicity.ToGetAnnuallyPeriodicityReply();
 
-                return reply;
-            }, context.CancellationToken);
+                    return reply;
+                },
+                context.CancellationToken
+            );
     }
 
-    public override Task<GetSiblingsReply> GetSiblings(GetSiblingsRequest request, ServerCallContext context)
+    public override Task<GetSiblingsReply> GetSiblings(
+        GetSiblingsRequest request,
+        ServerCallContext context
+    )
     {
         var id = request.Id.ToGuid();
 
-        return toDoService.GetSiblingsAsync(id, context.CancellationToken)
-           .HandleAsync(serializer, items =>
-            {
-                var reply = new GetSiblingsReply();
-                reply.Items.AddRange(items.ToToDoShortItemGrpc().ToArray());
+        return toDoService
+            .GetSiblingsAsync(id, context.CancellationToken)
+            .HandleAsync(
+                serializer,
+                items =>
+                {
+                    var reply = new GetSiblingsReply();
+                    reply.Items.AddRange(items.ToToDoShortItemGrpc().ToArray());
 
-                return reply;
-            }, context.CancellationToken);
+                    return reply;
+                },
+                context.CancellationToken
+            );
     }
 
-    public override Task<GetParentsReply> GetParents(GetParentsRequest request, ServerCallContext context)
+    public override Task<GetParentsReply> GetParents(
+        GetParentsRequest request,
+        ServerCallContext context
+    )
     {
-        return toDoService.GetParentsAsync(request.Id.ToGuid(), context.CancellationToken)
-           .HandleAsync(serializer, parents =>
-            {
-                var reply = new GetParentsReply();
-                reply.Parents.AddRange(parents.ToToDoShortItemGrpc().ToArray());
+        return toDoService
+            .GetParentsAsync(request.Id.ToGuid(), context.CancellationToken)
+            .HandleAsync(
+                serializer,
+                parents =>
+                {
+                    var reply = new GetParentsReply();
+                    reply.Parents.AddRange(parents.ToToDoShortItemGrpc().ToArray());
 
-                return reply;
-            }, context.CancellationToken);
+                    return reply;
+                },
+                context.CancellationToken
+            );
     }
 
     public override Task<AddRootToDoItemReply> AddRootToDoItem(
@@ -318,36 +437,47 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService.AddRootToDoItemAsync(request.ToAddRootToDoItemOptions(), context.CancellationToken)
-           .HandleAsync(serializer, id =>
-            {
-                var reply = new AddRootToDoItemReply
+        return toDoService
+            .AddRootToDoItemAsync(request.ToAddRootToDoItemOptions(), context.CancellationToken)
+            .HandleAsync(
+                serializer,
+                id =>
                 {
-                    Id = id.ToByteString(),
-                };
+                    var reply = new AddRootToDoItemReply { Id = id.ToByteString(), };
 
-                return reply;
-            }, context.CancellationToken);
+                    return reply;
+                },
+                context.CancellationToken
+            );
     }
 
-    public override Task<AddToDoItemReply> AddToDoItem(AddToDoItemRequest request, ServerCallContext context)
+    public override Task<AddToDoItemReply> AddToDoItem(
+        AddToDoItemRequest request,
+        ServerCallContext context
+    )
     {
-        return toDoService.AddToDoItemAsync(request.ToAddToDoItemOptions(), context.CancellationToken)
-           .HandleAsync(serializer, id =>
-            {
-                var reply = new AddToDoItemReply
+        return toDoService
+            .AddToDoItemAsync(request.ToAddToDoItemOptions(), context.CancellationToken)
+            .HandleAsync(
+                serializer,
+                id =>
                 {
-                    Id = id.ToByteString(),
-                };
+                    var reply = new AddToDoItemReply { Id = id.ToByteString(), };
 
-                return reply;
-            }, context.CancellationToken);
+                    return reply;
+                },
+                context.CancellationToken
+            );
     }
 
-    public override Task<DeleteToDoItemReply> DeleteToDoItem(DeleteToDoItemRequest request, ServerCallContext context)
+    public override Task<DeleteToDoItemReply> DeleteToDoItem(
+        DeleteToDoItemRequest request,
+        ServerCallContext context
+    )
     {
-        return toDoService.DeleteToDoItemAsync(request.Id.ToGuid(), context.CancellationToken)
-           .HandleAsync<DeleteToDoItemReply>(serializer, context.CancellationToken);
+        return toDoService
+            .DeleteToDoItemAsync(request.Id.ToGuid(), context.CancellationToken)
+            .HandleAsync<DeleteToDoItemReply>(serializer, context.CancellationToken);
     }
 
     public override Task<UpdateToDoItemTypeOfPeriodicityReply> UpdateToDoItemTypeOfPeriodicity(
@@ -355,9 +485,16 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService.UpdateToDoItemTypeOfPeriodicityAsync(request.Id.ToGuid(),
-                (TypeOfPeriodicity)request.Type, context.CancellationToken)
-           .HandleAsync<UpdateToDoItemTypeOfPeriodicityReply>(serializer, context.CancellationToken);
+        return toDoService
+            .UpdateToDoItemTypeOfPeriodicityAsync(
+                request.Id.ToGuid(),
+                (TypeOfPeriodicity)request.Type,
+                context.CancellationToken
+            )
+            .HandleAsync<UpdateToDoItemTypeOfPeriodicityReply>(
+                serializer,
+                context.CancellationToken
+            );
     }
 
     public override Task<UpdateToDoItemDueDateReply> UpdateToDoItemDueDate(
@@ -367,8 +504,9 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
     {
         var dueDate = request.DueDate.ToDateOnly();
 
-        return toDoService.UpdateToDoItemDueDateAsync(request.Id.ToGuid(), dueDate, context.CancellationToken)
-           .HandleAsync<UpdateToDoItemDueDateReply>(serializer, context.CancellationToken);
+        return toDoService
+            .UpdateToDoItemDueDateAsync(request.Id.ToGuid(), dueDate, context.CancellationToken)
+            .HandleAsync<UpdateToDoItemDueDateReply>(serializer, context.CancellationToken);
     }
 
     public override Task<UpdateToDoItemCompleteStatusReply> UpdateToDoItemCompleteStatus(
@@ -377,8 +515,12 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
     )
     {
         return toDoService
-           .UpdateToDoItemCompleteStatusAsync(request.Id.ToGuid(), request.IsCompleted, context.CancellationToken)
-           .HandleAsync<UpdateToDoItemCompleteStatusReply>(serializer, context.CancellationToken);
+            .UpdateToDoItemCompleteStatusAsync(
+                request.Id.ToGuid(),
+                request.IsCompleted,
+                context.CancellationToken
+            )
+            .HandleAsync<UpdateToDoItemCompleteStatusReply>(serializer, context.CancellationToken);
     }
 
     public override Task<UpdateToDoItemNameReply> UpdateToDoItemName(
@@ -386,8 +528,9 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService.UpdateToDoItemNameAsync(request.Id.ToGuid(), request.Name, context.CancellationToken)
-           .HandleAsync<UpdateToDoItemNameReply>(serializer, context.CancellationToken);
+        return toDoService
+            .UpdateToDoItemNameAsync(request.Id.ToGuid(), request.Name, context.CancellationToken)
+            .HandleAsync<UpdateToDoItemNameReply>(serializer, context.CancellationToken);
     }
 
     public override Task<UpdateToDoItemOrderIndexReply> UpdateToDoItemOrderIndex(
@@ -397,8 +540,9 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
     {
         var options = request.ToUpdateOrderIndexToDoItemOptions();
 
-        return toDoService.UpdateToDoItemOrderIndexAsync(options, context.CancellationToken)
-           .HandleAsync<UpdateToDoItemOrderIndexReply>(serializer, context.CancellationToken);
+        return toDoService
+            .UpdateToDoItemOrderIndexAsync(options, context.CancellationToken)
+            .HandleAsync<UpdateToDoItemOrderIndexReply>(serializer, context.CancellationToken);
     }
 
     public override Task<UpdateToDoItemDescriptionReply> UpdateToDoItemDescription(
@@ -407,8 +551,12 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
     )
     {
         return toDoService
-           .UpdateToDoItemDescriptionAsync(request.Id.ToGuid(), request.Description, context.CancellationToken)
-           .HandleAsync<UpdateToDoItemDescriptionReply>(serializer, context.CancellationToken);
+            .UpdateToDoItemDescriptionAsync(
+                request.Id.ToGuid(),
+                request.Description,
+                context.CancellationToken
+            )
+            .HandleAsync<UpdateToDoItemDescriptionReply>(serializer, context.CancellationToken);
     }
 
     public override Task<UpdateToDoItemTypeReply> UpdateToDoItemType(
@@ -416,9 +564,13 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService.UpdateToDoItemTypeAsync(request.Id.ToGuid(), (ToDoItemType)request.Type,
-                context.CancellationToken)
-           .HandleAsync<UpdateToDoItemTypeReply>(serializer, context.CancellationToken);
+        return toDoService
+            .UpdateToDoItemTypeAsync(
+                request.Id.ToGuid(),
+                (ToDoItemType)request.Type,
+                context.CancellationToken
+            )
+            .HandleAsync<UpdateToDoItemTypeReply>(serializer, context.CancellationToken);
     }
 
     public override Task<AddFavoriteToDoItemReply> AddFavoriteToDoItem(
@@ -426,8 +578,9 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService.AddFavoriteToDoItemAsync(request.Id.ToGuid(), context.CancellationToken)
-           .HandleAsync<AddFavoriteToDoItemReply>(serializer, context.CancellationToken);
+        return toDoService
+            .AddFavoriteToDoItemAsync(request.Id.ToGuid(), context.CancellationToken)
+            .HandleAsync<AddFavoriteToDoItemReply>(serializer, context.CancellationToken);
     }
 
     public override Task<RemoveFavoriteToDoItemReply> RemoveFavoriteToDoItem(
@@ -435,8 +588,9 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService.RemoveFavoriteToDoItemAsync(request.Id.ToGuid(), context.CancellationToken)
-           .HandleAsync<RemoveFavoriteToDoItemReply>(serializer, context.CancellationToken);
+        return toDoService
+            .RemoveFavoriteToDoItemAsync(request.Id.ToGuid(), context.CancellationToken)
+            .HandleAsync<RemoveFavoriteToDoItemReply>(serializer, context.CancellationToken);
     }
 
     public override Task<UpdateToDoItemAnnuallyPeriodicityReply> UpdateToDoItemAnnuallyPeriodicity(
@@ -444,9 +598,16 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService.UpdateToDoItemAnnuallyPeriodicityAsync(request.Id.ToGuid(),
-                request.Periodicity.ToAnnuallyPeriodicity(), context.CancellationToken)
-           .HandleAsync<UpdateToDoItemAnnuallyPeriodicityReply>(serializer, context.CancellationToken);
+        return toDoService
+            .UpdateToDoItemAnnuallyPeriodicityAsync(
+                request.Id.ToGuid(),
+                request.Periodicity.ToAnnuallyPeriodicity(),
+                context.CancellationToken
+            )
+            .HandleAsync<UpdateToDoItemAnnuallyPeriodicityReply>(
+                serializer,
+                context.CancellationToken
+            );
     }
 
     public override Task<UpdateToDoItemMonthlyPeriodicityReply> UpdateToDoItemMonthlyPeriodicity(
@@ -454,9 +615,16 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService.UpdateToDoItemMonthlyPeriodicityAsync(request.Id.ToGuid(),
-                request.Periodicity.ToMonthlyPeriodicity(), context.CancellationToken)
-           .HandleAsync<UpdateToDoItemMonthlyPeriodicityReply>(serializer, context.CancellationToken);
+        return toDoService
+            .UpdateToDoItemMonthlyPeriodicityAsync(
+                request.Id.ToGuid(),
+                request.Periodicity.ToMonthlyPeriodicity(),
+                context.CancellationToken
+            )
+            .HandleAsync<UpdateToDoItemMonthlyPeriodicityReply>(
+                serializer,
+                context.CancellationToken
+            );
     }
 
     public override Task<UpdateToDoItemWeeklyPeriodicityReply> UpdateToDoItemWeeklyPeriodicity(
@@ -464,9 +632,16 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService.UpdateToDoItemWeeklyPeriodicityAsync(request.Id.ToGuid(),
-                request.Periodicity.ToWeeklyPeriodicity(), context.CancellationToken)
-           .HandleAsync<UpdateToDoItemWeeklyPeriodicityReply>(serializer, context.CancellationToken);
+        return toDoService
+            .UpdateToDoItemWeeklyPeriodicityAsync(
+                request.Id.ToGuid(),
+                request.Periodicity.ToWeeklyPeriodicity(),
+                context.CancellationToken
+            )
+            .HandleAsync<UpdateToDoItemWeeklyPeriodicityReply>(
+                serializer,
+                context.CancellationToken
+            );
     }
 
     public override Task<GetToDoSelectorItemsReply> GetToDoSelectorItems(
@@ -474,14 +649,19 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService.GetToDoSelectorItemsAsync(request.IgnoreIds.ToGuid(), context.CancellationToken)
-           .HandleAsync(serializer, items =>
-            {
-                var reply = new GetToDoSelectorItemsReply();
-                reply.Items.AddRange(items.ToToDoSelectorItemGrpc().ToArray());
+        return toDoService
+            .GetToDoSelectorItemsAsync(request.IgnoreIds.ToGuid(), context.CancellationToken)
+            .HandleAsync(
+                serializer,
+                items =>
+                {
+                    var reply = new GetToDoSelectorItemsReply();
+                    reply.Items.AddRange(items.ToToDoSelectorItemGrpc().ToArray());
 
-                return reply;
-            }, context.CancellationToken);
+                    return reply;
+                },
+                context.CancellationToken
+            );
     }
 
     public override Task<UpdateToDoItemParentReply> UpdateToDoItemParent(
@@ -489,15 +669,23 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService.UpdateToDoItemParentAsync(request.Id.ToGuid(), request.ParentId.ToGuid(),
-                context.CancellationToken)
-           .HandleAsync<UpdateToDoItemParentReply>(serializer, context.CancellationToken);
+        return toDoService
+            .UpdateToDoItemParentAsync(
+                request.Id.ToGuid(),
+                request.ParentId.ToGuid(),
+                context.CancellationToken
+            )
+            .HandleAsync<UpdateToDoItemParentReply>(serializer, context.CancellationToken);
     }
 
-    public override Task<ToDoItemToRootReply> ToDoItemToRoot(ToDoItemToRootRequest request, ServerCallContext context)
+    public override Task<ToDoItemToRootReply> ToDoItemToRoot(
+        ToDoItemToRootRequest request,
+        ServerCallContext context
+    )
     {
-        return toDoService.ToDoItemToRootAsync(request.Id.ToGuid(), context.CancellationToken)
-           .HandleAsync<ToDoItemToRootReply>(serializer, context.CancellationToken);
+        return toDoService
+            .ToDoItemToRootAsync(request.Id.ToGuid(), context.CancellationToken)
+            .HandleAsync<ToDoItemToRootReply>(serializer, context.CancellationToken);
     }
 
     public override Task<ToDoItemToStringReply> ToDoItemToString(
@@ -505,11 +693,13 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService.ToDoItemToStringAsync(request.ToToDoItemToStringOptions(), context.CancellationToken)
-           .HandleAsync(serializer, value => new ToDoItemToStringReply
-            {
-                Value = value,
-            }, context.CancellationToken);
+        return toDoService
+            .ToDoItemToStringAsync(request.ToToDoItemToStringOptions(), context.CancellationToken)
+            .HandleAsync(
+                serializer,
+                value => new ToDoItemToStringReply { Value = value, },
+                context.CancellationToken
+            );
     }
 
     public override Task<UpdateToDoItemDaysOffsetReply> UpdateToDoItemDaysOffset(
@@ -518,8 +708,12 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
     )
     {
         return toDoService
-           .UpdateToDoItemDaysOffsetAsync(request.Id.ToGuid(), (ushort)request.Days, context.CancellationToken)
-           .HandleAsync<UpdateToDoItemDaysOffsetReply>(serializer, context.CancellationToken);
+            .UpdateToDoItemDaysOffsetAsync(
+                request.Id.ToGuid(),
+                (ushort)request.Days,
+                context.CancellationToken
+            )
+            .HandleAsync<UpdateToDoItemDaysOffsetReply>(serializer, context.CancellationToken);
     }
 
     public override Task<UpdateToDoItemMonthsOffsetReply> UpdateToDoItemMonthsOffset(
@@ -527,9 +721,13 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService.UpdateToDoItemMonthsOffsetAsync(request.Id.ToGuid(), (ushort)request.Months,
-                context.CancellationToken)
-           .HandleAsync<UpdateToDoItemMonthsOffsetReply>(serializer, context.CancellationToken);
+        return toDoService
+            .UpdateToDoItemMonthsOffsetAsync(
+                request.Id.ToGuid(),
+                (ushort)request.Months,
+                context.CancellationToken
+            )
+            .HandleAsync<UpdateToDoItemMonthsOffsetReply>(serializer, context.CancellationToken);
     }
 
     public override Task<UpdateToDoItemWeeksOffsetReply> UpdateToDoItemWeeksOffset(
@@ -537,9 +735,13 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService.UpdateToDoItemWeeksOffsetAsync(request.Id.ToGuid(), (ushort)request.Weeks,
-                context.CancellationToken)
-           .HandleAsync<UpdateToDoItemWeeksOffsetReply>(serializer, context.CancellationToken);
+        return toDoService
+            .UpdateToDoItemWeeksOffsetAsync(
+                request.Id.ToGuid(),
+                (ushort)request.Weeks,
+                context.CancellationToken
+            )
+            .HandleAsync<UpdateToDoItemWeeksOffsetReply>(serializer, context.CancellationToken);
     }
 
     public override Task<UpdateToDoItemYearsOffsetReply> UpdateToDoItemYearsOffset(
@@ -547,9 +749,13 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService.UpdateToDoItemYearsOffsetAsync(request.Id.ToGuid(), (ushort)request.Years,
-                context.CancellationToken)
-           .HandleAsync<UpdateToDoItemYearsOffsetReply>(serializer, context.CancellationToken);
+        return toDoService
+            .UpdateToDoItemYearsOffsetAsync(
+                request.Id.ToGuid(),
+                (ushort)request.Years,
+                context.CancellationToken
+            )
+            .HandleAsync<UpdateToDoItemYearsOffsetReply>(serializer, context.CancellationToken);
     }
 
     public override Task<UpdateToDoItemChildrenTypeReply> UpdateToDoItemChildrenType(
@@ -557,8 +763,12 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         ServerCallContext context
     )
     {
-        return toDoService.UpdateToDoItemChildrenTypeAsync(request.Id.ToGuid(),
-                (ToDoItemChildrenType)request.Type, context.CancellationToken)
-           .HandleAsync<UpdateToDoItemChildrenTypeReply>(serializer, context.CancellationToken);
+        return toDoService
+            .UpdateToDoItemChildrenTypeAsync(
+                request.Id.ToGuid(),
+                (ToDoItemChildrenType)request.Type,
+                context.CancellationToken
+            )
+            .HandleAsync<UpdateToDoItemChildrenTypeReply>(serializer, context.CancellationToken);
     }
 }

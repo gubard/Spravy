@@ -6,9 +6,9 @@ public class EditDescriptionViewModel : ViewModelBase
     {
         Content = content;
     }
-    
+
     public EditDescriptionContentViewModel Content { get; }
-    
+
     [Reactive]
     public string ToDoItemName { get; set; } = string.Empty;
 }

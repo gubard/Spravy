@@ -2,11 +2,10 @@ namespace Spravy.Db.Extensions;
 
 public static class DbSetExtension
 {
-    public static ConfiguredValueTaskAwaitable<Result<EntityEntry<TEntity>>> AddEntityAsync<TEntity>(
-        this DbSet<TEntity> dbSet,
-        TEntity entity,
-        CancellationToken ct
-    ) where TEntity : class
+    public static ConfiguredValueTaskAwaitable<
+        Result<EntityEntry<TEntity>>
+    > AddEntityAsync<TEntity>(this DbSet<TEntity> dbSet, TEntity entity, CancellationToken ct)
+        where TEntity : class
     {
         return AddEntityCore(dbSet, entity, ct).ConfigureAwait(false);
     }
@@ -15,7 +14,8 @@ public static class DbSetExtension
         this DbSet<TEntity> dbSet,
         TEntity entity,
         CancellationToken ct
-    ) where TEntity : class
+    )
+        where TEntity : class
     {
         var value = await dbSet.AddAsync(entity, ct);
 

@@ -2,9 +2,8 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class GroupToDoItemSettingsViewModel : NavigatableViewModelBase, IApplySettings
 {
-    public GroupToDoItemSettingsViewModel() : base(true)
-    {
-    }
+    public GroupToDoItemSettingsViewModel()
+        : base(true) { }
 
     public override string ViewId
     {

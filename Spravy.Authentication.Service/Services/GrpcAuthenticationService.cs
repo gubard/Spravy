@@ -12,7 +12,10 @@ public class GrpcAuthenticationService : AuthenticationService.AuthenticationSer
     private readonly IAuthenticationService authenticationService;
     private readonly ISerializer serializer;
 
-    public GrpcAuthenticationService(IAuthenticationService authenticationService, ISerializer serializer)
+    public GrpcAuthenticationService(
+        IAuthenticationService authenticationService,
+        ISerializer serializer
+    )
     {
         this.authenticationService = authenticationService;
         this.serializer = serializer;
@@ -24,9 +27,13 @@ public class GrpcAuthenticationService : AuthenticationService.AuthenticationSer
     )
     {
         return authenticationService
-           .UpdatePasswordByLoginAsync(request.Login, request.VerificationCode, request.NewPassword,
-                context.CancellationToken)
-           .HandleAsync<UpdatePasswordByLoginReply>(serializer, context.CancellationToken);
+            .UpdatePasswordByLoginAsync(
+                request.Login,
+                request.VerificationCode,
+                request.NewPassword,
+                context.CancellationToken
+            )
+            .HandleAsync<UpdatePasswordByLoginReply>(serializer, context.CancellationToken);
     }
 
     public override Task<UpdatePasswordByEmailReply> UpdatePasswordByEmail(
@@ -35,9 +42,13 @@ public class GrpcAuthenticationService : AuthenticationService.AuthenticationSer
     )
     {
         return authenticationService
-           .UpdatePasswordByEmailAsync(request.Email, request.VerificationCode, request.NewPassword,
-                context.CancellationToken)
-           .HandleAsync<UpdatePasswordByEmailReply>(serializer, context.CancellationToken);
+            .UpdatePasswordByEmailAsync(
+                request.Email,
+                request.VerificationCode,
+                request.NewPassword,
+                context.CancellationToken
+            )
+            .HandleAsync<UpdatePasswordByEmailReply>(serializer, context.CancellationToken);
     }
 
     public override Task<UpdateEmailNotVerifiedUserByLoginReply> UpdateEmailNotVerifiedUserByLogin(
@@ -46,8 +57,15 @@ public class GrpcAuthenticationService : AuthenticationService.AuthenticationSer
     )
     {
         return authenticationService
-           .UpdateEmailNotVerifiedUserByLoginAsync(request.Login, request.NewEmail, context.CancellationToken)
-           .HandleAsync<UpdateEmailNotVerifiedUserByLoginReply>(serializer, context.CancellationToken);
+            .UpdateEmailNotVerifiedUserByLoginAsync(
+                request.Login,
+                request.NewEmail,
+                context.CancellationToken
+            )
+            .HandleAsync<UpdateEmailNotVerifiedUserByLoginReply>(
+                serializer,
+                context.CancellationToken
+            );
     }
 
     public override Task<UpdateEmailNotVerifiedUserByEmailReply> UpdateEmailNotVerifiedUserByEmail(
@@ -56,8 +74,15 @@ public class GrpcAuthenticationService : AuthenticationService.AuthenticationSer
     )
     {
         return authenticationService
-           .UpdateEmailNotVerifiedUserByEmailAsync(request.Email, request.NewEmail, context.CancellationToken)
-           .HandleAsync<UpdateEmailNotVerifiedUserByEmailReply>(serializer, context.CancellationToken);
+            .UpdateEmailNotVerifiedUserByEmailAsync(
+                request.Email,
+                request.NewEmail,
+                context.CancellationToken
+            )
+            .HandleAsync<UpdateEmailNotVerifiedUserByEmailReply>(
+                serializer,
+                context.CancellationToken
+            );
     }
 
     public override Task<UpdateVerificationCodeByLoginReply> UpdateVerificationCodeByLogin(
@@ -65,8 +90,9 @@ public class GrpcAuthenticationService : AuthenticationService.AuthenticationSer
         ServerCallContext context
     )
     {
-        return authenticationService.UpdateVerificationCodeByLoginAsync(request.Login, context.CancellationToken)
-           .HandleAsync<UpdateVerificationCodeByLoginReply>(serializer, context.CancellationToken);
+        return authenticationService
+            .UpdateVerificationCodeByLoginAsync(request.Login, context.CancellationToken)
+            .HandleAsync<UpdateVerificationCodeByLoginReply>(serializer, context.CancellationToken);
     }
 
     public override Task<UpdateVerificationCodeByEmailReply> UpdateVerificationCodeByEmail(
@@ -74,8 +100,9 @@ public class GrpcAuthenticationService : AuthenticationService.AuthenticationSer
         ServerCallContext context
     )
     {
-        return authenticationService.UpdateVerificationCodeByEmailAsync(request.Email, context.CancellationToken)
-           .HandleAsync<UpdateVerificationCodeByEmailReply>(serializer, context.CancellationToken);
+        return authenticationService
+            .UpdateVerificationCodeByEmailAsync(request.Email, context.CancellationToken)
+            .HandleAsync<UpdateVerificationCodeByEmailReply>(serializer, context.CancellationToken);
     }
 
     public override Task<VerifiedEmailByLoginReply> VerifiedEmailByLogin(
@@ -84,8 +111,12 @@ public class GrpcAuthenticationService : AuthenticationService.AuthenticationSer
     )
     {
         return authenticationService
-           .VerifiedEmailByLoginAsync(request.Login, request.VerificationCode, context.CancellationToken)
-           .HandleAsync<VerifiedEmailByLoginReply>(serializer, context.CancellationToken);
+            .VerifiedEmailByLoginAsync(
+                request.Login,
+                request.VerificationCode,
+                context.CancellationToken
+            )
+            .HandleAsync<VerifiedEmailByLoginReply>(serializer, context.CancellationToken);
     }
 
     public override Task<VerifiedEmailByEmailReply> VerifiedEmailByEmail(
@@ -94,8 +125,12 @@ public class GrpcAuthenticationService : AuthenticationService.AuthenticationSer
     )
     {
         return authenticationService
-           .VerifiedEmailByEmailAsync(request.Email, request.VerificationCode, context.CancellationToken)
-           .HandleAsync<VerifiedEmailByEmailReply>(serializer, context.CancellationToken);
+            .VerifiedEmailByEmailAsync(
+                request.Email,
+                request.VerificationCode,
+                context.CancellationToken
+            )
+            .HandleAsync<VerifiedEmailByEmailReply>(serializer, context.CancellationToken);
     }
 
     public override Task<IsVerifiedByLoginReply> IsVerifiedByLogin(
@@ -103,11 +138,13 @@ public class GrpcAuthenticationService : AuthenticationService.AuthenticationSer
         ServerCallContext context
     )
     {
-        return authenticationService.IsVerifiedByLoginAsync(request.Login, context.CancellationToken)
-           .HandleAsync(serializer, value => new IsVerifiedByLoginReply
-            {
-                IsVerified = value,
-            }, context.CancellationToken);
+        return authenticationService
+            .IsVerifiedByLoginAsync(request.Login, context.CancellationToken)
+            .HandleAsync(
+                serializer,
+                value => new IsVerifiedByLoginReply { IsVerified = value, },
+                context.CancellationToken
+            );
     }
 
     public override Task<IsVerifiedByEmailReply> IsVerifiedByEmail(
@@ -115,32 +152,47 @@ public class GrpcAuthenticationService : AuthenticationService.AuthenticationSer
         ServerCallContext context
     )
     {
-        return authenticationService.IsVerifiedByEmailAsync(request.Email, context.CancellationToken)
-           .HandleAsync(serializer, value => new IsVerifiedByEmailReply
-            {
-                IsVerified = value,
-            }, context.CancellationToken);
+        return authenticationService
+            .IsVerifiedByEmailAsync(request.Email, context.CancellationToken)
+            .HandleAsync(
+                serializer,
+                value => new IsVerifiedByEmailReply { IsVerified = value, },
+                context.CancellationToken
+            );
     }
 
-    public override Task<CreateUserReply> CreateUser(CreateUserRequest request, ServerCallContext context)
+    public override Task<CreateUserReply> CreateUser(
+        CreateUserRequest request,
+        ServerCallContext context
+    )
     {
         var options = request.ToCreateUserOptions();
 
-        return authenticationService.CreateUserAsync(options, context.CancellationToken)
-           .HandleAsync<CreateUserReply>(serializer, context.CancellationToken);
+        return authenticationService
+            .CreateUserAsync(options, context.CancellationToken)
+            .HandleAsync<CreateUserReply>(serializer, context.CancellationToken);
     }
 
     public override Task<LoginReply> Login(LoginRequest request, ServerCallContext context)
     {
         var user = request.User.ToUser();
 
-        return authenticationService.LoginAsync(user, context.CancellationToken)
-           .HandleAsync(serializer, value => value.ToLoginReply(), context.CancellationToken);
+        return authenticationService
+            .LoginAsync(user, context.CancellationToken)
+            .HandleAsync(serializer, value => value.ToLoginReply(), context.CancellationToken);
     }
 
-    public override Task<RefreshTokenReply> RefreshToken(RefreshTokenRequest request, ServerCallContext context)
+    public override Task<RefreshTokenReply> RefreshToken(
+        RefreshTokenRequest request,
+        ServerCallContext context
+    )
     {
-        return authenticationService.RefreshTokenAsync(request.RefreshToken, context.CancellationToken)
-           .HandleAsync(serializer, value => value.ToRefreshTokenReply(), context.CancellationToken);
+        return authenticationService
+            .RefreshTokenAsync(request.RefreshToken, context.CancellationToken)
+            .HandleAsync(
+                serializer,
+                value => value.ToRefreshTokenReply(),
+                context.CancellationToken
+            );
     }
 }

@@ -1,5 +1,3 @@
 namespace Spravy.Ui.ViewModels;
 
-public abstract class PeriodicityViewModel : ViewModelBase
-{
-}
+public abstract class PeriodicityViewModel : ViewModelBase { }

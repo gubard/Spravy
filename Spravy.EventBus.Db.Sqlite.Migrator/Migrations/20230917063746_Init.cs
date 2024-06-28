@@ -22,14 +22,14 @@ namespace Spravy.EventBus.Db.Sqlite.Migrator.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Event", x => x.Id);
-                });
+                }
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Event");
+            migrationBuilder.DropTable(name: "Event");
         }
     }
 }

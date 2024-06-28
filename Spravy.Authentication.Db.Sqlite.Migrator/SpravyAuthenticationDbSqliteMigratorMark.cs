@@ -11,7 +11,8 @@ public readonly struct SpravyAuthenticationDbSqliteMigratorMark : IAssemblyMark
     public static string AssemblyFullName { get; } =
         typeof(SpravyAuthenticationDbSqliteMigratorMark).Assembly.GetName().FullName;
 
-    public static Assembly Assembly { get; } = typeof(SpravyAuthenticationDbSqliteMigratorMark).Assembly;
+    public static Assembly Assembly { get; } =
+        typeof(SpravyAuthenticationDbSqliteMigratorMark).Assembly;
 
     public static Stream? GetResourceStream(string resourceName)
     {

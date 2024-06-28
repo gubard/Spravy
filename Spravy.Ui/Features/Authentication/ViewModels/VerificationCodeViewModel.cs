@@ -2,18 +2,19 @@ namespace Spravy.Ui.Features.Authentication.ViewModels;
 
 public class VerificationCodeViewModel : NavigatableViewModelBase, IVerificationEmail
 {
-    public VerificationCodeViewModel(VerificationCodeCommands commands) : base(true)
+    public VerificationCodeViewModel(VerificationCodeCommands commands)
+        : base(true)
     {
         Commands = commands;
     }
-    
+
     public VerificationCodeCommands Commands { get; }
 
     public override string ViewId
     {
         get => TypeCache<VerificationCodeViewModel>.Type.Name;
     }
-    
+
     [Reactive]
     public string Identifier { get; set; } = string.Empty;
 

@@ -1,7 +1,7 @@
 using System.IO;
-using _build.Interfaces;
 using FluentFTP;
 using Serilog;
+using _build.Interfaces;
 
 namespace _build.Extensions;
 
@@ -9,7 +9,11 @@ public static class FtpOptionsExtension
 {
     public static FtpClient CreateFtpClient(this IFtpOptions options)
     {
-        Log.Logger.Information("Connecting FTP {FtpHost} {FtpUser}", options.FtpHost, options.FtpUser);
+        Log.Logger.Information(
+            "Connecting FTP {FtpHost} {FtpUser}",
+            options.FtpHost,
+            options.FtpUser
+        );
         var values = options.FtpHost.Split(":");
 
         if (values.Length == 2)
@@ -20,5 +24,6 @@ public static class FtpOptionsExtension
         return new(options.FtpHost, options.FtpUser, options.FtpPassword);
     }
 
-    public static DirectoryInfo GetAppsFolder(this IFtpOptions options) => $"/home/{options.FtpUser}/Apps".ToFolder();
+    public static DirectoryInfo GetAppsFolder(this IFtpOptions options) =>
+        $"/home/{options.FtpUser}/Apps".ToFolder();
 }

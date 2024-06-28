@@ -46,17 +46,26 @@ public static class ExpressionExtension
         return Expression.Convert(expression, type);
     }
 
-    public static InvocationExpression ToInvoke(this Expression expression, IEnumerable<Expression> expressions)
+    public static InvocationExpression ToInvoke(
+        this Expression expression,
+        IEnumerable<Expression> expressions
+    )
     {
         return Expression.Invoke(expression, expressions);
     }
 
-    public static InvocationExpression ToInvoke(this Expression expression, params Expression[] expressions)
+    public static InvocationExpression ToInvoke(
+        this Expression expression,
+        params Expression[] expressions
+    )
     {
         return Expression.Invoke(expression, expressions);
     }
 
-    public static LambdaExpression ToLambda(this Expression expression, params ParameterExpression[] parameters)
+    public static LambdaExpression ToLambda(
+        this Expression expression,
+        params ParameterExpression[] parameters
+    )
     {
         return Expression.Lambda(expression, parameters);
     }

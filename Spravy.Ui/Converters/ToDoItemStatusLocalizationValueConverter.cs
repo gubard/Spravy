@@ -18,15 +18,25 @@ public class ToDoItemStatusLocalizationValueConverter : IValueConverter
 
         switch (status)
         {
-            case ToDoItemStatus.ReadyForComplete: return application.GetResource("ToDoItemStatus.ReadyForComplete");
-            case ToDoItemStatus.Completed: return application.GetResource("ToDoItemStatus.Completed");
-            case ToDoItemStatus.Planned: return application.GetResource("ToDoItemStatus.Planned");
-            case ToDoItemStatus.Miss: return application.GetResource("ToDoItemStatus.Miss");
-            default: throw new ArgumentOutOfRangeException();
+            case ToDoItemStatus.ReadyForComplete:
+                return application.GetResource("ToDoItemStatus.ReadyForComplete");
+            case ToDoItemStatus.Completed:
+                return application.GetResource("ToDoItemStatus.Completed");
+            case ToDoItemStatus.Planned:
+                return application.GetResource("ToDoItemStatus.Planned");
+            case ToDoItemStatus.Miss:
+                return application.GetResource("ToDoItemStatus.Miss");
+            default:
+                throw new ArgumentOutOfRangeException();
         }
     }
 
-    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    public object ConvertBack(
+        object? value,
+        Type targetType,
+        object? parameter,
+        CultureInfo culture
+    )
     {
         throw new NotSupportedException();
     }

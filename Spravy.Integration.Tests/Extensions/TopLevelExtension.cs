@@ -31,7 +31,11 @@ public static class TopLevelExtension
         return topLevel;
     }
 
-    public static TopLevel SpravyMouseMove(this TopLevel topLevel, Point point, RawInputModifiers modifiers)
+    public static TopLevel SpravyMouseMove(
+        this TopLevel topLevel,
+        Point point,
+        RawInputModifiers modifiers
+    )
     {
         topLevel.MouseMove(point, modifiers);
 

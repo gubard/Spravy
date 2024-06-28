@@ -11,12 +11,17 @@ public class MainSplitViewModel : ViewModelBase
     {
         Pane = pane;
 
-        InitializedCommand = SpravyCommand.Create(_ => this.InvokeUiBackgroundAsync(() =>
-        {
-            Content = serviceFactory.CreateService<LoginViewModel>();
+        InitializedCommand = SpravyCommand.Create(
+            _ =>
+                this.InvokeUiBackgroundAsync(() =>
+                {
+                    Content = serviceFactory.CreateService<LoginViewModel>();
 
-            return Result.Success;
-        }), errorHandler, taskProgressService);
+                    return Result.Success;
+                }),
+            errorHandler,
+            taskProgressService
+        );
     }
 
     public SpravyCommand InitializedCommand { get; }

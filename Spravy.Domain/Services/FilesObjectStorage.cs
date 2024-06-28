@@ -31,12 +31,20 @@ public class FilesObjectStorage : IObjectStorage
         return Result.AwaitableSuccess;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> SaveObjectAsync(string id, object obj, CancellationToken ct)
+    public ConfiguredValueTaskAwaitable<Result> SaveObjectAsync(
+        string id,
+        object obj,
+        CancellationToken ct
+    )
     {
         return SaveObjectCore(id, obj, ct).ConfigureAwait(false);
     }
 
-    public ConfiguredValueTaskAwaitable<Result<TObject>> GetObjectAsync<TObject>(string id, CancellationToken ct) where TObject : notnull
+    public ConfiguredValueTaskAwaitable<Result<TObject>> GetObjectAsync<TObject>(
+        string id,
+        CancellationToken ct
+    )
+        where TObject : notnull
     {
         return GetObjectCore<TObject>(id, ct).ConfigureAwait(false);
     }
@@ -55,7 +63,8 @@ public class FilesObjectStorage : IObjectStorage
         return await serializer.SerializeAsync(obj, stream, ct);
     }
 
-    private async ValueTask<Result<TObject>> GetObjectCore<TObject>(string id, CancellationToken ct) where TObject : notnull
+    private async ValueTask<Result<TObject>> GetObjectCore<TObject>(string id, CancellationToken ct)
+        where TObject : notnull
     {
         var file = root.ToFile(id);
         await using var stream = file.OpenRead();

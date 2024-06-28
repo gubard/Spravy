@@ -23,10 +23,7 @@ namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "CreatedDateTime",
-                table: "ToDoItem"
-            );
+            migrationBuilder.DropColumn(name: "CreatedDateTime", table: "ToDoItem");
         }
     }
 }

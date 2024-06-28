@@ -2,19 +2,17 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
-using _build.Extensions;
-using _build.Models;
 using Nuke.Common.Tools.DotNet;
 using Serilog;
+using _build.Extensions;
+using _build.Models;
 
 namespace _build.Services;
 
 public class TestProjectBuilder : ProjectBuilder<TestProjectBuilderOptions>
 {
-    public TestProjectBuilder(TestProjectBuilderOptions options, VersionService versionService) 
-        : base(options, versionService)
-    {
-    }
+    public TestProjectBuilder(TestProjectBuilderOptions options, VersionService versionService)
+        : base(options, versionService) { }
 
     public override void Setup()
     {
@@ -32,10 +30,11 @@ public class TestProjectBuilder : ProjectBuilder<TestProjectBuilderOptions>
         {
             var output = DotNetTasks.DotNetTest(s =>
                 s.SetConfiguration(Options.Configuration)
-                   .EnableNoRestore()
-                   .EnableNoBuild()
-                   .SetProjectFile(Options.CsprojFile.FullName)
-                   .SetFilter($"Priority={i}"));
+                    .EnableNoRestore()
+                    .EnableNoBuild()
+                    .SetProjectFile(Options.CsprojFile.FullName)
+                    .SetFilter($"Priority={i}")
+            );
 
             if (output.Any(x => x.Text.Contains("No test matches the given testcase filter")))
             {
@@ -46,10 +45,7 @@ public class TestProjectBuilder : ProjectBuilder<TestProjectBuilderOptions>
 
     void SetAppSettingsStream(Stream stream, JsonDocument jsonDocument)
     {
-        var jsonWriterOptions = new JsonWriterOptions
-        {
-            Indented = true,
-        };
+        var jsonWriterOptions = new JsonWriterOptions { Indented = true, };
 
         using var writer = new Utf8JsonWriter(stream, jsonWriterOptions);
         writer.WriteStartObject();
@@ -79,23 +75,30 @@ public class TestProjectBuilder : ProjectBuilder<TestProjectBuilderOptions>
             return false;
         }
 
-        writer.AddObject(property.Name, () =>
-        {
-            foreach (var obj in property.Value.EnumerateObject())
+        writer.AddObject(
+            property.Name,
+            () =>
             {
-                if (obj.Name == "Password")
+                foreach (var obj in property.Value.EnumerateObject())
                 {
-                    Log.Information("Set password for {Name}", property.Name);
+                    if (obj.Name == "Password")
+                    {
+                        Log.Information("Set password for {Name}", property.Name);
 
-                    writer.AddStringValue("Password",
-                        property.Name == "EmailAccount" ? Options.EmailAccountPassword : Options.EmailAccount2Password);
+                        writer.AddStringValue(
+                            "Password",
+                            property.Name == "EmailAccount"
+                                ? Options.EmailAccountPassword
+                                : Options.EmailAccount2Password
+                        );
 
-                    continue;
+                        continue;
+                    }
+
+                    obj.WriteTo(writer);
                 }
-
-                obj.WriteTo(writer);
             }
-        });
+        );
 
         return true;
     }

@@ -9,32 +9,40 @@ public class SpravyJsonSerializer : ISerializer
 
     public SpravyJsonSerializer(JsonSerializerContext context)
     {
-        options = new()
-        {
-            TypeInfoResolver = context,
-        };
+        options = new() { TypeInfoResolver = context, };
     }
 
-    public ConfiguredValueTaskAwaitable<Result> SerializeAsync<T>(T obj, Stream stream, CancellationToken ct)
+    public ConfiguredValueTaskAwaitable<Result> SerializeAsync<T>(
+        T obj,
+        Stream stream,
+        CancellationToken ct
+    )
         where T : notnull
     {
         return SerializeCore(obj, stream, ct).ConfigureAwait(false);
     }
 
-    private async ValueTask<Result> SerializeCore<T>(T obj, Stream stream, CancellationToken ct) where T : notnull
+    private async ValueTask<Result> SerializeCore<T>(T obj, Stream stream, CancellationToken ct)
+        where T : notnull
     {
         await JsonSerializer.SerializeAsync(stream, obj, obj.GetType(), options, ct);
 
         return Result.Success;
     }
 
-    public ConfiguredValueTaskAwaitable<Result<TObject>> DeserializeAsync<TObject>(Stream stream, CancellationToken ct)
+    public ConfiguredValueTaskAwaitable<Result<TObject>> DeserializeAsync<TObject>(
+        Stream stream,
+        CancellationToken ct
+    )
         where TObject : notnull
     {
         return DeserializeCore<TObject>(stream, ct).ConfigureAwait(false);
     }
 
-    private async ValueTask<Result<TObject>> DeserializeCore<TObject>(Stream stream, CancellationToken ct)
+    private async ValueTask<Result<TObject>> DeserializeCore<TObject>(
+        Stream stream,
+        CancellationToken ct
+    )
         where TObject : notnull
     {
         var result = await JsonSerializer.DeserializeAsync<TObject>(stream, options, ct);
@@ -42,7 +50,8 @@ public class SpravyJsonSerializer : ISerializer
         return result.ThrowIfNull().ToResult();
     }
 
-    public Result<TObject> Deserialize<TObject>(Stream stream) where TObject : notnull
+    public Result<TObject> Deserialize<TObject>(Stream stream)
+        where TObject : notnull
     {
         var result = JsonSerializer.Deserialize<TObject>(stream, options);
 

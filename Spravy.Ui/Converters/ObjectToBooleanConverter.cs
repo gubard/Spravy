@@ -11,21 +11,26 @@ public class ObjectToBooleanConverter<TObject> : IValueConverter
         {
             return false;
         }
-        
+
         if (value is not TObject item)
         {
             return false;
         }
-        
+
         if (Reverse)
         {
             return !Value?.Equals(item);
         }
-        
+
         return Value?.Equals(item);
     }
 
-    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    public object ConvertBack(
+        object? value,
+        Type targetType,
+        object? parameter,
+        CultureInfo culture
+    )
     {
         throw new NotSupportedException();
     }

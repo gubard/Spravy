@@ -5,13 +5,17 @@ using Spravy.Schedule.Db.Sqlite.Services;
 
 namespace Spravy.Schedule.Db.Sqlite.Migrator;
 
-public class SpravyScheduleDesignTimeDbContextFactory : IDesignTimeDbContextFactory<SpravyDbScheduleDbContext>
+public class SpravyScheduleDesignTimeDbContextFactory
+    : IDesignTimeDbContextFactory<SpravyDbScheduleDbContext>
 {
     public SpravyDbScheduleDbContext CreateDbContext(string[] args)
     {
-        var options = new DbContextOptionsBuilder().UseSqlite(args[0],
-                b => b.MigrationsAssembly(SpravyScheduleDbSqliteMigratorMark.AssemblyFullName))
-           .Options;
+        var options = new DbContextOptionsBuilder()
+            .UseSqlite(
+                args[0],
+                b => b.MigrationsAssembly(SpravyScheduleDbSqliteMigratorMark.AssemblyFullName)
+            )
+            .Options;
 
         return new(options, new SqliteScheduleDbContextSetup());
     }

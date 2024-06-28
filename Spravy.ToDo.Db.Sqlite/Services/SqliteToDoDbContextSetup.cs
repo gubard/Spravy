@@ -21,7 +21,5 @@ public class SqliteToDoDbContextSetup : IDbContextSetup
         modelBuilder.ApplyConfiguration(new ToDoItemEntityTypeConfiguration());
     }
 
-    public void OnConfiguring(DbContextOptionsBuilder builder)
-    {
-    }
+    public void OnConfiguring(DbContextOptionsBuilder builder) { }
 }

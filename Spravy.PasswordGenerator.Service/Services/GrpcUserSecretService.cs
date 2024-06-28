@@ -21,12 +21,17 @@ public class GrpcUserSecretService : UserSecretServiceBase
         this.serializer = serializer;
     }
 
-    public override Task<GetUserSecretReply> GetUserSecret(GetUserSecretRequest request, ServerCallContext context)
+    public override Task<GetUserSecretReply> GetUserSecret(
+        GetUserSecretRequest request,
+        ServerCallContext context
+    )
     {
-        return userSecretService.GetUserSecretAsync(context.CancellationToken)
-           .HandleAsync(serializer, userSecret => new GetUserSecretReply
-            {
-                Secret = userSecret.ToByteString(),
-            }, context.CancellationToken);
+        return userSecretService
+            .GetUserSecretAsync(context.CancellationToken)
+            .HandleAsync(
+                serializer,
+                userSecret => new GetUserSecretReply { Secret = userSecret.ToByteString(), },
+                context.CancellationToken
+            );
     }
 }

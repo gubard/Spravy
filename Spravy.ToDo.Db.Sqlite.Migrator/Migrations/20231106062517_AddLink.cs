@@ -15,15 +15,14 @@ namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
                 table: "ToDoItem",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: ""
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "Link",
-                table: "ToDoItem");
+            migrationBuilder.DropColumn(name: "Link", table: "ToDoItem");
         }
     }
 }

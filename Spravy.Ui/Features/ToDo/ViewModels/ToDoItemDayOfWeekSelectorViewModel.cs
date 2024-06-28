@@ -12,13 +12,15 @@ public class ToDoItemDayOfWeekSelectorViewModel : ViewModelBase, IApplySettings
     {
         this.toDoService = toDoService;
 
-        Items = new(Enum.GetValues<DayOfWeek>()
-           .Select(x => new DayOfWeekSelectItem
-            {
-                DayOfWeek = x,
-            }));
+        Items = new(
+            Enum.GetValues<DayOfWeek>().Select(x => new DayOfWeekSelectItem { DayOfWeek = x, })
+        );
 
-        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler, taskProgressService);
+        InitializedCommand = SpravyCommand.Create(
+            InitializedAsync,
+            errorHandler,
+            taskProgressService
+        );
     }
 
     public AvaloniaList<DayOfWeekSelectItem> Items { get; }
@@ -29,26 +31,41 @@ public class ToDoItemDayOfWeekSelectorViewModel : ViewModelBase, IApplySettings
 
     public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken ct)
     {
-        return toDoService.UpdateToDoItemWeeklyPeriodicityAsync(ToDoItemId,
-            new(Items.Where(x => x.IsSelected).Select(x => x.DayOfWeek)), ct);
+        return toDoService.UpdateToDoItemWeeklyPeriodicityAsync(
+            ToDoItemId,
+            new(Items.Where(x => x.IsSelected).Select(x => x.DayOfWeek)),
+            ct
+        );
     }
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
-        return toDoService.GetWeeklyPeriodicityAsync(ToDoItemId, ct)
-           .IfSuccessAsync(weeklyPeriodicity => Result.AwaitableSuccess.IfSuccessAllAsync(ct,
-                Items.Where(x => weeklyPeriodicity.Days.Contains(x.DayOfWeek))
-                   .Select<DayOfWeekSelectItem, Func<ConfiguredValueTaskAwaitable<Result>>>(x =>
-                    {
-                        var y = x;
+        return toDoService
+            .GetWeeklyPeriodicityAsync(ToDoItemId, ct)
+            .IfSuccessAsync(
+                weeklyPeriodicity =>
+                    Result.AwaitableSuccess.IfSuccessAllAsync(
+                        ct,
+                        Items
+                            .Where(x => weeklyPeriodicity.Days.Contains(x.DayOfWeek))
+                            .Select<
+                                DayOfWeekSelectItem,
+                                Func<ConfiguredValueTaskAwaitable<Result>>
+                            >(x =>
+                            {
+                                var y = x;
 
-                        return () => this.InvokeUiBackgroundAsync(() =>
-                        {
-                            y.IsSelected = true;
+                                return () =>
+                                    this.InvokeUiBackgroundAsync(() =>
+                                    {
+                                        y.IsSelected = true;
 
-                            return Result.Success;
-                        });
-                    })
-                   .ToArray()), ct);
+                                        return Result.Success;
+                                    });
+                            })
+                            .ToArray()
+                    ),
+                ct
+            );
     }
 }

@@ -21,7 +21,5 @@ public class SqliteEventBusDbContextSetup : IDbContextSetup
         modelBuilder.ApplyConfiguration(new EventEntityTypeConfiguration());
     }
 
-    public void OnConfiguring(DbContextOptionsBuilder builder)
-    {
-    }
+    public void OnConfiguring(DbContextOptionsBuilder builder) { }
 }

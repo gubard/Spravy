@@ -11,17 +11,21 @@ public class MetadataFactory : IMetadataFactory
 
     public ConfiguredValueTaskAwaitable<Result<Metadata>> CreateAsync(CancellationToken ct)
     {
-        return httpHeaderFactory.CreateHeaderItemsAsync(ct)
-           .IfSuccessAsync(value =>
-            {
-                var metadata = new Metadata();
-
-                foreach (var item in value.Span)
+        return httpHeaderFactory
+            .CreateHeaderItemsAsync(ct)
+            .IfSuccessAsync(
+                value =>
                 {
-                    metadata.Add(item.Name, item.Value);
-                }
+                    var metadata = new Metadata();
 
-                return metadata.ToResult().ToValueTaskResult().ConfigureAwait(false);
-            }, ct);
+                    foreach (var item in value.Span)
+                    {
+                        metadata.Add(item.Name, item.Value);
+                    }
+
+                    return metadata.ToResult().ToValueTaskResult().ConfigureAwait(false);
+                },
+                ct
+            );
     }
 }

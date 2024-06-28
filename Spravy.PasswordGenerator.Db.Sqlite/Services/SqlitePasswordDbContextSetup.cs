@@ -21,7 +21,5 @@ public class SqlitePasswordDbContextSetup : IDbContextSetup
         modelBuilder.ApplyConfiguration(new PasswordItemEntityTypeConfiguration());
     }
 
-    public void OnConfiguring(DbContextOptionsBuilder builder)
-    {
-    }
+    public void OnConfiguring(DbContextOptionsBuilder builder) { }
 }

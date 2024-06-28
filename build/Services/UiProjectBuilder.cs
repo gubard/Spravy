@@ -1,18 +1,18 @@
 using System;
 using System.IO;
 using System.Text;
-using _build.Extensions;
-using _build.Models;
 using Nuke.Common.Tools.DotNet;
 using Serilog;
+using _build.Extensions;
+using _build.Models;
 
 namespace _build.Services;
 
-public abstract class UiProjectBuilder<TOptions> : ProjectBuilder<TOptions> where TOptions : ProjectBuilderOptions
+public abstract class UiProjectBuilder<TOptions> : ProjectBuilder<TOptions>
+    where TOptions : ProjectBuilderOptions
 {
-    protected UiProjectBuilder(TOptions options, VersionService versionService) : base(options, versionService)
-    {
-    }
+    protected UiProjectBuilder(TOptions options, VersionService versionService)
+        : base(options, versionService) { }
 
     public override void Setup()
     {
@@ -32,21 +32,26 @@ public abstract class UiProjectBuilder<TOptions> : ProjectBuilder<TOptions> wher
             {
                 if (Options.Runtimes.IsEmpty)
                 {
-                    DotNetTasks.DotNetBuild(setting => setting.SetProjectFile(Options.CsprojFile.FullName)
-                       .EnableNoRestore()
-                       .SetConfiguration(Options.Configuration)
-                       .AddProperty("Version", versionService.Version.ToString()));
+                    DotNetTasks.DotNetBuild(setting =>
+                        setting
+                            .SetProjectFile(Options.CsprojFile.FullName)
+                            .EnableNoRestore()
+                            .SetConfiguration(Options.Configuration)
+                            .AddProperty("Version", versionService.Version.ToString())
+                    );
                 }
                 else
                 {
                     foreach (var runtime in Options.Runtimes.Span)
                     {
                         DotNetTasks.DotNetBuild(setting =>
-                            setting.SetProjectFile(Options.CsprojFile.FullName)
-                               .EnableNoRestore()
-                               .SetConfiguration(Options.Configuration)
-                               .AddProperty("Version", versionService.Version.ToString())
-                               .SetRuntime(runtime.Name));
+                            setting
+                                .SetProjectFile(Options.CsprojFile.FullName)
+                                .EnableNoRestore()
+                                .SetConfiguration(Options.Configuration)
+                                .AddProperty("Version", versionService.Version.ToString())
+                                .SetRuntime(runtime.Name)
+                        );
                     }
                 }
 

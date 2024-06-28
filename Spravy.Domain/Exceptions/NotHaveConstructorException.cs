@@ -2,7 +2,8 @@
 
 public class NotHaveConstructorException : Exception
 {
-    public NotHaveConstructorException(Type type) : base($"Type {type} not have constructor.")
+    public NotHaveConstructorException(Type type)
+        : base($"Type {type} not have constructor.")
     {
         Type = type;
     }

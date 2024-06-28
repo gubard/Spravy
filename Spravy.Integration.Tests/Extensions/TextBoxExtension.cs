@@ -2,7 +2,8 @@ namespace Spravy.Integration.Tests.Extensions;
 
 public static class TextBoxExtension
 {
-    public static TTextBox ClearText<TTextBox>(this TTextBox textBox, Window window) where TTextBox : TextBox
+    public static TTextBox ClearText<TTextBox>(this TTextBox textBox, Window window)
+        where TTextBox : TextBox
     {
         if (textBox.Text.IsNullOrWhiteSpace())
         {
@@ -19,19 +20,29 @@ public static class TextBoxExtension
             window.RunJobsAll();
         }
 
-        CycleHelper.While(() => textBox.Text.ThrowIfNull().Length > 0, () =>
-            {
-                window.SpravyKeyPressQwerty(PhysicalKey.Backspace, RawInputModifiers.None);
-                window.RunJobsAll();
-                window.SpravyKeyReleaseQwerty(PhysicalKey.Backspace, RawInputModifiers.None);
-                window.RunJobsAll();
-            })
-           .ThrowIfError();
+        CycleHelper
+            .While(
+                () => textBox.Text.ThrowIfNull().Length > 0,
+                () =>
+                {
+                    window.SpravyKeyPressQwerty(PhysicalKey.Backspace, RawInputModifiers.None);
+                    window.RunJobsAll();
+                    window.SpravyKeyReleaseQwerty(PhysicalKey.Backspace, RawInputModifiers.None);
+                    window.RunJobsAll();
+                }
+            )
+            .ThrowIfError();
 
         return textBox;
     }
 
-    public static TTextBox SetText<TTextBox>(this TTextBox textBox, Window window, string text, bool focus = true) where TTextBox : TextBox
+    public static TTextBox SetText<TTextBox>(
+        this TTextBox textBox,
+        Window window,
+        string text,
+        bool focus = true
+    )
+        where TTextBox : TextBox
     {
         if (focus)
         {
@@ -41,13 +52,14 @@ public static class TextBoxExtension
         {
             textBox.MustFocused();
         }
-        
+
         window.SetKeyTextInput(text);
 
         return textBox;
     }
 
-    public static TTextBox FocusInput<TTextBox>(this TTextBox textBox, Window window) where TTextBox : TextBox
+    public static TTextBox FocusInput<TTextBox>(this TTextBox textBox, Window window)
+        where TTextBox : TextBox
     {
         textBox.ClickOn(window).RunJobsAll(2).MustFocused();
 

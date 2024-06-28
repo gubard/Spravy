@@ -29,10 +29,16 @@ public static class ServiceCollectionExtension
     {
         serviceCollection.AddHostedService<FolderMigratorHostedService<SpravyDbToDoDbContext>>();
         //serviceCollection.AddHostedService<EventBusHostedService>();
-        serviceCollection.AddSpravySqliteFolderContext<SpravyDbToDoDbContext, SpravyToDoDbSqliteMigratorMark>();
+        serviceCollection.AddSpravySqliteFolderContext<
+            SpravyDbToDoDbContext,
+            SpravyToDoDbSqliteMigratorMark
+        >();
         serviceCollection.AddSingleton<ITokenService, TokenService>();
         serviceCollection.AddSingleton<IDbContextSetup, SqliteToDoDbContextSetup>();
-        serviceCollection.AddSingleton<IFactory<string, SpravyDbToDoDbContext>, SpravyToDoDbContextFactory>();
+        serviceCollection.AddSingleton<
+            IFactory<string, SpravyDbToDoDbContext>,
+            SpravyToDoDbContextFactory
+        >();
         serviceCollection.AddTransient<IRpcExceptionHandler, RpcExceptionHandler>();
         //serviceCollection.AddSingleton<IEventBusService>(sp => sp.GetRequiredService<GrpcEventBusService>());
         //serviceCollection.AddSingleton<IKeeper<TokenResult>, StaticKeeper<TokenResult>>();
@@ -55,11 +61,13 @@ public static class ServiceCollectionExtension
             GrpcEventBusServiceOptions>();*/
 
         serviceCollection.AddSingleton<IAuthenticationService>(sp =>
-            sp.GetRequiredService<GrpcAuthenticationService>());
+            sp.GetRequiredService<GrpcAuthenticationService>()
+        );
 
-        serviceCollection.AddSingleton<IHttpHeaderFactory>(sp =>
-            new CombineHttpHeaderFactory(sp.GetRequiredService<TimeZoneHttpHeaderFactory>(),
-                sp.GetRequiredService<ContextAccessorUserIdHttpHeaderFactory>()));
+        serviceCollection.AddSingleton<IHttpHeaderFactory>(sp => new CombineHttpHeaderFactory(
+            sp.GetRequiredService<TimeZoneHttpHeaderFactory>(),
+            sp.GetRequiredService<ContextAccessorUserIdHttpHeaderFactory>()
+        ));
 
         return serviceCollection;
     }

@@ -14,7 +14,8 @@ public abstract class SpravyDbContext : DbContext
         }
     }
 
-    protected SpravyDbContext(DbContextOptions options, IDbContextSetup setup) : base(options)
+    protected SpravyDbContext(DbContextOptions options, IDbContextSetup setup)
+        : base(options)
     {
         this.setup = setup;
     }

@@ -38,36 +38,17 @@ namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
                 name: "ToDoItemValueEntity"
             );*/
 
-            migrationBuilder.DropIndex(
-                name: "IX_ToDoItem_GroupId",
-                table: "ToDoItem"
-            );
+            migrationBuilder.DropIndex(name: "IX_ToDoItem_GroupId", table: "ToDoItem");
 
-            migrationBuilder.DropIndex(
-                name: "IX_ToDoItem_StatisticalId",
-                table: "ToDoItem"
-            );
+            migrationBuilder.DropIndex(name: "IX_ToDoItem_StatisticalId", table: "ToDoItem");
 
-            migrationBuilder.DropIndex(
-                name: "IX_ToDoItem_ValueId",
-                table: "ToDoItem"
-            );
+            migrationBuilder.DropIndex(name: "IX_ToDoItem_ValueId", table: "ToDoItem");
 
-            migrationBuilder.DropColumn(
-                name: "GroupId",
-                table: "ToDoItem"
-            );
+            migrationBuilder.DropColumn(name: "GroupId", table: "ToDoItem");
 
-            migrationBuilder.DropColumn(
-                name: "StatisticalId",
-                table: "ToDoItem"
-            );
+            migrationBuilder.DropColumn(name: "StatisticalId", table: "ToDoItem");
 
-            migrationBuilder.RenameColumn(
-                name: "ValueId",
-                table: "ToDoItem",
-                newName: "DueDate"
-            );
+            migrationBuilder.RenameColumn(name: "ValueId", table: "ToDoItem", newName: "DueDate");
 
             migrationBuilder.AddColumn<uint>(
                 name: "CompletedCount",
@@ -113,36 +94,17 @@ namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "CompletedCount",
-                table: "ToDoItem"
-            );
+            migrationBuilder.DropColumn(name: "CompletedCount", table: "ToDoItem");
 
-            migrationBuilder.DropColumn(
-                name: "FailedCount",
-                table: "ToDoItem"
-            );
+            migrationBuilder.DropColumn(name: "FailedCount", table: "ToDoItem");
 
-            migrationBuilder.DropColumn(
-                name: "IsCompleted",
-                table: "ToDoItem"
-            );
+            migrationBuilder.DropColumn(name: "IsCompleted", table: "ToDoItem");
 
-            migrationBuilder.DropColumn(
-                name: "SkippedCount",
-                table: "ToDoItem"
-            );
+            migrationBuilder.DropColumn(name: "SkippedCount", table: "ToDoItem");
 
-            migrationBuilder.DropColumn(
-                name: "TypeOfPeriodicity",
-                table: "ToDoItem"
-            );
+            migrationBuilder.DropColumn(name: "TypeOfPeriodicity", table: "ToDoItem");
 
-            migrationBuilder.RenameColumn(
-                name: "DueDate",
-                table: "ToDoItem",
-                newName: "ValueId"
-            );
+            migrationBuilder.RenameColumn(name: "DueDate", table: "ToDoItem", newName: "ValueId");
 
             migrationBuilder.AddColumn<Guid>(
                 name: "GroupId",
@@ -167,7 +129,10 @@ namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     ItemId = table.Column<Guid>(type: "TEXT", nullable: false)
                 },
-                constraints: table => { table.PrimaryKey("PK_ToDoItemGroupEntity", x => x.Id); }
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ToDoItemGroupEntity", x => x.Id);
+                }
             );
 
             migrationBuilder.CreateTable(
@@ -180,7 +145,10 @@ namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
                     ItemId = table.Column<Guid>(type: "TEXT", nullable: false),
                     SkippedCount = table.Column<uint>(type: "INTEGER", nullable: false)
                 },
-                constraints: table => { table.PrimaryKey("PK_ToDoItemStatisticalEntity", x => x.Id); }
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ToDoItemStatisticalEntity", x => x.Id);
+                }
             );
 
             migrationBuilder.CreateTable(
@@ -193,7 +161,10 @@ namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
                     ItemId = table.Column<Guid>(type: "TEXT", nullable: false),
                     TypeOfPeriodicity = table.Column<byte>(type: "INTEGER", nullable: false)
                 },
-                constraints: table => { table.PrimaryKey("PK_ToDoItemValueEntity", x => x.Id); }
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ToDoItemValueEntity", x => x.Id);
+                }
             );
 
             migrationBuilder.CreateIndex(

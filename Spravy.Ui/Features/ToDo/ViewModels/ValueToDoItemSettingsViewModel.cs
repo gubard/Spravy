@@ -1,6 +1,9 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class ValueToDoItemSettingsViewModel : ViewModelBase, IToDoChildrenTypeProperty, IApplySettings
+public class ValueToDoItemSettingsViewModel
+    : ViewModelBase,
+        IToDoChildrenTypeProperty,
+        IApplySettings
 {
     private readonly IToDoService toDoService;
 
@@ -11,7 +14,11 @@ public class ValueToDoItemSettingsViewModel : ViewModelBase, IToDoChildrenTypePr
     )
     {
         this.toDoService = toDoService;
-        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler, taskProgressService);
+        InitializedCommand = SpravyCommand.Create(
+            InitializedAsync,
+            errorHandler,
+            taskProgressService
+        );
     }
 
     public SpravyCommand InitializedCommand { get; }
@@ -29,13 +36,18 @@ public class ValueToDoItemSettingsViewModel : ViewModelBase, IToDoChildrenTypePr
 
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken ct)
     {
-        return toDoService.GetValueToDoItemSettingsAsync(Id, ct)
-           .IfSuccessAsync(setting => this.InvokeUiBackgroundAsync(() =>
-            {
-                ChildrenType = setting.ChildrenType;
+        return toDoService
+            .GetValueToDoItemSettingsAsync(Id, ct)
+            .IfSuccessAsync(
+                setting =>
+                    this.InvokeUiBackgroundAsync(() =>
+                    {
+                        ChildrenType = setting.ChildrenType;
 
-                return Result.Success;
-            }), ct);
+                        return Result.Success;
+                    }),
+                ct
+            );
     }
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)

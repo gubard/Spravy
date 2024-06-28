@@ -2,28 +2,23 @@ namespace Spravy.Domain.Exceptions;
 
 public class TypeInvalidCastException : InvalidCastException
 {
-    public TypeInvalidCastException(Type expectedType, Type currentType) : base(
-        CreateMessage(expectedType, currentType))
+    public TypeInvalidCastException(Type expectedType, Type currentType)
+        : base(CreateMessage(expectedType, currentType))
     {
         CurrentType = currentType;
 
-        ExpectedTypes = new[]
-        {
-            expectedType,
-        };
+        ExpectedTypes = new[] { expectedType, };
     }
 
-    public TypeInvalidCastException(Type currentType, params Type[] expectedTypes) : base(CreateMessage(expectedTypes,
-        currentType))
+    public TypeInvalidCastException(Type currentType, params Type[] expectedTypes)
+        : base(CreateMessage(expectedTypes, currentType))
     {
         CurrentType = currentType;
         ExpectedTypes = expectedTypes.ThrowIfNullOrEmpty().ToArray();
     }
 
-    public TypeInvalidCastException(Type currentType, IEnumerable<Type> expectedTypes) : this(currentType,
-        expectedTypes.ToArray())
-    {
-    }
+    public TypeInvalidCastException(Type currentType, IEnumerable<Type> expectedTypes)
+        : this(currentType, expectedTypes.ToArray()) { }
 
     public Type CurrentType { get; }
     public IEnumerable<Type> ExpectedTypes { get; }

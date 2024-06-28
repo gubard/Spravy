@@ -27,9 +27,17 @@ public class HasherFactory : IFactory<string, IHasher>
     {
         var values = key.Split(";");
 
-        return stringToBytesFactory.Create(values[0])
-           .IfSuccess(hashServiceFactory.Create(values[1]), bytesToStringFactory.Create(values[2]),
+        return stringToBytesFactory
+            .Create(values[0])
+            .IfSuccess(
+                hashServiceFactory.Create(values[1]),
+                bytesToStringFactory.Create(values[2]),
                 (stringToBytes, hashService, bytesToString) =>
-                    new Hasher(new(bytesToString), new(hashService), new(stringToBytes)).ToResult<IHasher>());
+                    new Hasher(
+                        new(bytesToString),
+                        new(hashService),
+                        new(stringToBytes)
+                    ).ToResult<IHasher>()
+            );
     }
 }

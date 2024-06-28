@@ -84,52 +84,111 @@ public class ProjectBuilderFactory
 
             if (projectName.EndsWith(".Tests"))
             {
-                var projectBuilderOptions = new TestProjectBuilderOptions(csprojFile,
-                    csprojFile.Directory.ToFile("testsettings.json"), ports, Enumerable.Empty<Runtime>(), configuration,
-                    domain, emailAccountPassword, emailAccount2Password);
+                var projectBuilderOptions = new TestProjectBuilderOptions(
+                    csprojFile,
+                    csprojFile.Directory.ToFile("testsettings.json"),
+                    ports,
+                    Enumerable.Empty<Runtime>(),
+                    configuration,
+                    domain,
+                    emailAccountPassword,
+                    emailAccount2Password
+                );
 
                 yield return new TestProjectBuilder(projectBuilderOptions, versionService);
             }
 
             if (projectName.EndsWith(".Service"))
             {
-                yield return new ServiceProjectBuilder(versionService, new(csprojFile,
-                    csprojFile.Directory.ToFile("appsettings.json"), ports, new[]
-                    {
-                        Runtime.LinuxX64,
-                    }, configuration, domain, ports[csprojFile.GetFileNameWithoutExtension().GetGrpcServiceName()],
-                    token, emailPassword, publishFolder.Combine(projectName), ftpHost, ftpUser, ftpPassword, sshHost,
-                    sshUser, sshPassword, Runtime.LinuxX64));
+                yield return new ServiceProjectBuilder(
+                    versionService,
+                    new(
+                        csprojFile,
+                        csprojFile.Directory.ToFile("appsettings.json"),
+                        ports,
+                        new[] { Runtime.LinuxX64, },
+                        configuration,
+                        domain,
+                        ports[csprojFile.GetFileNameWithoutExtension().GetGrpcServiceName()],
+                        token,
+                        emailPassword,
+                        publishFolder.Combine(projectName),
+                        ftpHost,
+                        ftpUser,
+                        ftpPassword,
+                        sshHost,
+                        sshUser,
+                        sshPassword,
+                        Runtime.LinuxX64
+                    )
+                );
             }
 
             if (projectName.EndsWith(".Android"))
             {
-                yield return new AndroidProjectBuilder(versionService,
-                    publishFolders.AddItem(new AndroidProjectBuilderOptions(csprojFile,
-                        csprojFile.Directory.ToFile("appsettings.json"), ports, Enumerable.Empty<Runtime>(),
-                        configuration, domain, keyStoreFile, androidSigningKeyPass, androidSigningStorePass, ftpHost,
-                        ftpPassword, ftpUser, publishFolder.Combine(projectName))));
+                yield return new AndroidProjectBuilder(
+                    versionService,
+                    publishFolders.AddItem(
+                        new AndroidProjectBuilderOptions(
+                            csprojFile,
+                            csprojFile.Directory.ToFile("appsettings.json"),
+                            ports,
+                            Enumerable.Empty<Runtime>(),
+                            configuration,
+                            domain,
+                            keyStoreFile,
+                            androidSigningKeyPass,
+                            androidSigningStorePass,
+                            ftpHost,
+                            ftpPassword,
+                            ftpUser,
+                            publishFolder.Combine(projectName)
+                        )
+                    )
+                );
             }
 
             if (projectName.EndsWith(".Browser"))
             {
-                yield return new BrowserProjectBuilder(versionService, new(csprojFile,
-                    csprojFile.Directory.ToFile("appsettings.json"), ports, new[]
-                    {
-                        Runtime.BrowserWasm,
-                    }, configuration, domain, ftpHost, ftpUser, ftpPassword, sshHost, sshUser, sshPassword,
-                    publishFolders));
+                yield return new BrowserProjectBuilder(
+                    versionService,
+                    new(
+                        csprojFile,
+                        csprojFile.Directory.ToFile("appsettings.json"),
+                        ports,
+                        new[] { Runtime.BrowserWasm, },
+                        configuration,
+                        domain,
+                        ftpHost,
+                        ftpUser,
+                        ftpPassword,
+                        sshHost,
+                        sshUser,
+                        sshPassword,
+                        publishFolders
+                    )
+                );
             }
 
             if (projectName.EndsWith(".Desktop"))
             {
-                yield return new DesktopProjectBuilder(versionService, publishFolders.AddItem(
-                    new DesktopProjectBuilderOptions(csprojFile, csprojFile.Directory.ToFile("appsettings.json"), ports,
-                        new[]
-                        {
-                            Runtime.LinuxX64,
-                            Runtime.WinX64,
-                        }, configuration, domain, ftpHost, ftpUser, ftpPassword, publishFolder.Combine(projectName))));
+                yield return new DesktopProjectBuilder(
+                    versionService,
+                    publishFolders.AddItem(
+                        new DesktopProjectBuilderOptions(
+                            csprojFile,
+                            csprojFile.Directory.ToFile("appsettings.json"),
+                            ports,
+                            new[] { Runtime.LinuxX64, Runtime.WinX64, },
+                            configuration,
+                            domain,
+                            ftpHost,
+                            ftpUser,
+                            ftpPassword,
+                            publishFolder.Combine(projectName)
+                        )
+                    )
+                );
             }
         }
     }

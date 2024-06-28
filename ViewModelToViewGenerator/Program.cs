@@ -1,25 +1,29 @@
 ﻿var directory = new DirectoryInfo("../../../../");
 Console.WriteLine($"Directory: {directory}");
 
-var viewModels = directory.GetFiles("*ViewModel.cs", SearchOption.AllDirectories)
-   .Select(x => Path.GetFileNameWithoutExtension(x.Name))
-   .Distinct()
-   .ToArray();
+var viewModels = directory
+    .GetFiles("*ViewModel.cs", SearchOption.AllDirectories)
+    .Select(x => Path.GetFileNameWithoutExtension(x.Name))
+    .Distinct()
+    .ToArray();
 
-var views = directory.GetFiles("*View.axaml", SearchOption.AllDirectories)
-   .Select(x => Path.GetFileNameWithoutExtension(x.Name))
-   .Distinct()
-   .ToArray();
+var views = directory
+    .GetFiles("*View.axaml", SearchOption.AllDirectories)
+    .Select(x => Path.GetFileNameWithoutExtension(x.Name))
+    .Distinct()
+    .ToArray();
 
-var commands = directory.GetFiles("*Commands.cs", SearchOption.AllDirectories)
-   .Select(x => Path.GetFileNameWithoutExtension(x.Name))
-   .Distinct()
-   .ToArray();
+var commands = directory
+    .GetFiles("*Commands.cs", SearchOption.AllDirectories)
+    .Select(x => Path.GetFileNameWithoutExtension(x.Name))
+    .Distinct()
+    .ToArray();
 
-var errors = directory.GetFiles("*Error.cs", SearchOption.AllDirectories)
-   .Select(x => Path.GetFileNameWithoutExtension(x.Name))
-   .Distinct()
-   .ToArray();
+var errors = directory
+    .GetFiles("*Error.cs", SearchOption.AllDirectories)
+    .Select(x => Path.GetFileNameWithoutExtension(x.Name))
+    .Distinct()
+    .ToArray();
 
 foreach (var viewModel in viewModels)
 {
@@ -44,12 +48,14 @@ foreach (var viewModel in viewModels)
 
     if (views.Contains(view))
     {
-        Console.WriteLine($$"""
+        Console.WriteLine(
+            $$"""
             if (typeof({{viewModel}}) == viewModelType)
             {
                   return new (serviceFactory.CreateService<{{view}}>());
             }
-            """);
+            """
+        );
     }
 }
 
@@ -59,7 +65,7 @@ foreach (var error in errors)
     {
         continue;
     }
-    
+
     if (error == "ValueOutOfRangeError")
     {
         continue;
@@ -74,23 +80,25 @@ foreach (var error in errors)
     {
         continue;
     }
-    
+
     if (error == "ValueOutOfRangeError")
     {
         continue;
     }
 
-    Console.WriteLine($$"""
+    Console.WriteLine(
+        $$"""
         if ({{error}}.MainId == id)
         {
             var error = await serializer.DeserializeAsync<{{error}}>(stream, ct);
-        
+
             if (error.IsHasError)
             {
                 return error.Errors;
             }
-        
+
             return new([error.Value,]);
         }
-        """);
+        """
+    );
 }

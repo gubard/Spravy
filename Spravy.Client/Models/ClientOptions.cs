@@ -6,6 +6,6 @@ public class ClientOptions
     {
         UseCache = useCache;
     }
-    
+
     public bool UseCache { get; }
 }

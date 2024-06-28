@@ -38,11 +38,20 @@ public class EventStorage
             Id = Guid.NewGuid(),
         };
 
-        return dbContextFactory.Create()
-           .IfSuccessDisposeAsync(
-                context => context.AtomicExecuteAsync(
-                    () => context.Set<EventEntity>().AddEntityAsync(newEvent, ct).ToResultOnlyAsync(),
-                    ct), ct);
+        return dbContextFactory
+            .Create()
+            .IfSuccessDisposeAsync(
+                context =>
+                    context.AtomicExecuteAsync(
+                        () =>
+                            context
+                                .Set<EventEntity>()
+                                .AddEntityAsync(newEvent, ct)
+                                .ToResultOnlyAsync(),
+                        ct
+                    ),
+                ct
+            );
     }
 
     public Task<ReadOnlyMemory<EventValue>> PushEventAsync(ReadOnlyMemory<Guid> eventIds)

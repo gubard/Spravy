@@ -8,7 +8,7 @@ public partial class SearchToDoItemsView : ReactiveUserControl<SearchToDoItemsVi
     {
         InitializeComponent();
     }
-    
+
     public SearchToDoItemsViewModel MainViewModel => ViewModel.ThrowIfNull();
 
     private void InitializeComponent()

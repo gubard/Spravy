@@ -1,6 +1,6 @@
-using _build.Interfaces;
 using Renci.SshNet;
 using Serilog;
+using _build.Interfaces;
 
 namespace _build.Extensions;
 
@@ -11,7 +11,10 @@ public static class SshClientExtension
         using var runCommand = client.RunCommand(command);
         Log.Logger.Information("Run SSH command: {Command}", command);
 
-        if (!string.IsNullOrWhiteSpace(runCommand.Error) && !runCommand.Error.StartsWith("[sudo] password for"))
+        if (
+            !string.IsNullOrWhiteSpace(runCommand.Error)
+            && !runCommand.Error.StartsWith("[sudo] password for")
+        )
         {
             throw new(runCommand.Error);
         }

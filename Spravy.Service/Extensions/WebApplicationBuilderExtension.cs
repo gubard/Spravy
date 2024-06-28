@@ -2,10 +2,15 @@ namespace Spravy.Service.Extensions;
 
 public static class WebApplicationBuilderExtension
 {
-    public static WebApplicationBuilder AddSpravy<TAssemblyMark>(this WebApplicationBuilder builder, string[] args)
+    public static WebApplicationBuilder AddSpravy<TAssemblyMark>(
+        this WebApplicationBuilder builder,
+        string[] args
+    )
         where TAssemblyMark : IAssemblyMark
     {
-        Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(builder.Configuration).CreateLogger();
+        Log.Logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(builder.Configuration)
+            .CreateLogger();
         builder.Configuration.AddSpravy(args);
         builder.Services.AddSpravy<TAssemblyMark>(builder.Configuration);
         builder.Host.UseSpravy();
@@ -17,22 +22,40 @@ public static class WebApplicationBuilderExtension
         this WebApplicationBuilder builder,
         string[] args,
         Action<IServiceCollection> setupServiceCollection
-    ) where TService : class where TAssemblyMark : IAssemblyMark
+    )
+        where TService : class
+        where TAssemblyMark : IAssemblyMark
     {
-        return builder.BuildSpravy<TService, TAssemblyMark>(args, Enumerable.Empty<Type>(), setupServiceCollection);
+        return builder.BuildSpravy<TService, TAssemblyMark>(
+            args,
+            Enumerable.Empty<Type>(),
+            setupServiceCollection
+        );
     }
 
     public static WebApplication BuildSpravy<TService1, TService2, TAssemblyMark>(
         this WebApplicationBuilder builder,
         string[] args,
         Action<IServiceCollection> setupServiceCollection
-    ) where TService1 : class where TService2 : class where TAssemblyMark : IAssemblyMark
+    )
+        where TService1 : class
+        where TService2 : class
+        where TAssemblyMark : IAssemblyMark
     {
-        return builder.BuildSpravy<TService1, TService2, TAssemblyMark>(args, Enumerable.Empty<Type>(),
-            setupServiceCollection);
+        return builder.BuildSpravy<TService1, TService2, TAssemblyMark>(
+            args,
+            Enumerable.Empty<Type>(),
+            setupServiceCollection
+        );
     }
 
-    public static WebApplication BuildSpravy<TService1, TService2, TService3, TService4, TAssemblyMark>(
+    public static WebApplication BuildSpravy<
+        TService1,
+        TService2,
+        TService3,
+        TService4,
+        TAssemblyMark
+    >(
         this WebApplicationBuilder builder,
         string[] args,
         Action<IServiceCollection> setupServiceCollection
@@ -43,8 +66,11 @@ public static class WebApplicationBuilderExtension
         where TService4 : class
         where TAssemblyMark : IAssemblyMark
     {
-        return builder.BuildSpravy<TService1, TService2, TService3, TService4, TAssemblyMark>(args,
-            Enumerable.Empty<Type>(), setupServiceCollection);
+        return builder.BuildSpravy<TService1, TService2, TService3, TService4, TAssemblyMark>(
+            args,
+            Enumerable.Empty<Type>(),
+            setupServiceCollection
+        );
     }
 
     public static WebApplication BuildSpravy<TService, TAssemblyMark>(
@@ -52,9 +78,15 @@ public static class WebApplicationBuilderExtension
         string[] args,
         Type middleware,
         Action<IServiceCollection> setupServiceCollection
-    ) where TService : class where TAssemblyMark : IAssemblyMark
+    )
+        where TService : class
+        where TAssemblyMark : IAssemblyMark
     {
-        return builder.BuildSpravy<TService, TAssemblyMark>(args, middleware.ToEnumerable(), setupServiceCollection);
+        return builder.BuildSpravy<TService, TAssemblyMark>(
+            args,
+            middleware.ToEnumerable(),
+            setupServiceCollection
+        );
     }
 
     public static WebApplication BuildSpravy<TService, TAssemblyMark>(
@@ -62,7 +94,9 @@ public static class WebApplicationBuilderExtension
         string[] args,
         IEnumerable<Type> middlewares,
         Action<IServiceCollection> setupServiceCollection
-    ) where TService : class where TAssemblyMark : IAssemblyMark
+    )
+        where TService : class
+        where TAssemblyMark : IAssemblyMark
     {
         builder.AddSpravy<TAssemblyMark>(args);
         setupServiceCollection.Invoke(builder.Services);
@@ -95,7 +129,10 @@ public static class WebApplicationBuilderExtension
         string[] args,
         IEnumerable<Type> middlewares,
         Action<IServiceCollection> setupServiceCollection
-    ) where TService1 : class where TService2 : class where TAssemblyMark : IAssemblyMark
+    )
+        where TService1 : class
+        where TService2 : class
+        where TAssemblyMark : IAssemblyMark
     {
         builder.AddSpravy<TAssemblyMark>(args);
         setupServiceCollection.Invoke(builder.Services);
@@ -124,7 +161,13 @@ public static class WebApplicationBuilderExtension
         return app;
     }
 
-    public static WebApplication BuildSpravy<TService1, TService2, TService3, TService4, TAssemblyMark>(
+    public static WebApplication BuildSpravy<
+        TService1,
+        TService2,
+        TService3,
+        TService4,
+        TAssemblyMark
+    >(
         this WebApplicationBuilder builder,
         string[] args,
         IEnumerable<Type> middlewares,

@@ -9,9 +9,9 @@ public class CombineHttpHeaderFactory : IHttpHeaderFactory
         this.factories = factories;
     }
 
-    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsAsync(
-        CancellationToken ct
-    )
+    public ConfiguredValueTaskAwaitable<
+        Result<ReadOnlyMemory<HttpHeaderItem>>
+    > CreateHeaderItemsAsync(CancellationToken ct)
     {
         return CreateHeaderItemsCore(ct).ConfigureAwait(false);
     }

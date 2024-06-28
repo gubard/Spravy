@@ -2,10 +2,7 @@ namespace Spravy.Ui.Services;
 
 public class ErrorHandler : IErrorHandler
 {
-    private static readonly ReadOnlyMemory<Guid> IgnoreIds = new[]
-    {
-        CanceledByUserError.MainId,
-    };
+    private static readonly ReadOnlyMemory<Guid> IgnoreIds = new[] { CanceledByUserError.MainId, };
 
     private readonly IDialogViewer dialogViewer;
 
@@ -14,7 +11,10 @@ public class ErrorHandler : IErrorHandler
         this.dialogViewer = dialogViewer;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> ErrorsHandleAsync(ReadOnlyMemory<Error> errors, CancellationToken token)
+    public ConfiguredValueTaskAwaitable<Result> ErrorsHandleAsync(
+        ReadOnlyMemory<Error> errors,
+        CancellationToken token
+    )
     {
         if (errors.IsEmpty)
         {
@@ -29,13 +29,22 @@ public class ErrorHandler : IErrorHandler
         }
 
         return dialogViewer.ShowInfoErrorDialogAsync<ErrorViewModel>(
-            _ => dialogViewer.CloseErrorDialogAsync(CancellationToken.None)
-               .IfSuccessAsync(() => dialogViewer.CloseProgressDialogAsync(CancellationToken.None),
-                    CancellationToken.None), viewModel => viewModel.Errors.AddRange(errors.ToArray()),
-            CancellationToken.None);
+            _ =>
+                dialogViewer
+                    .CloseErrorDialogAsync(CancellationToken.None)
+                    .IfSuccessAsync(
+                        () => dialogViewer.CloseProgressDialogAsync(CancellationToken.None),
+                        CancellationToken.None
+                    ),
+            viewModel => viewModel.Errors.AddRange(errors.ToArray()),
+            CancellationToken.None
+        );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> ExceptionHandleAsync(Exception exception, CancellationToken token)
+    public ConfiguredValueTaskAwaitable<Result> ExceptionHandleAsync(
+        Exception exception,
+        CancellationToken token
+    )
     {
         if (exception is TaskCanceledException)
         {
@@ -63,8 +72,12 @@ public class ErrorHandler : IErrorHandler
         Log.Logger.Error(exception, "UI error");
 
         return dialogViewer.ShowInfoErrorDialogAsync<ExceptionViewModel>(
-            _ => dialogViewer.CloseErrorDialogAsync(token)
-               .IfSuccessAsync(() => dialogViewer.CloseProgressDialogAsync(token), token),
-            viewModel => viewModel.Exception = exception, token);
+            _ =>
+                dialogViewer
+                    .CloseErrorDialogAsync(token)
+                    .IfSuccessAsync(() => dialogViewer.CloseProgressDialogAsync(token), token),
+            viewModel => viewModel.Exception = exception,
+            token
+        );
     }
 }

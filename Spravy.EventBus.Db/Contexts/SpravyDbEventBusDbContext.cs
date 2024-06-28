@@ -4,17 +4,20 @@ using Spravy.Db.Interfaces;
 
 namespace Spravy.EventBus.Db.Contexts;
 
-public class SpravyDbEventBusDbContext : SpravyDbContext, IDbContextCreator<SpravyDbEventBusDbContext>
+public class SpravyDbEventBusDbContext
+    : SpravyDbContext,
+        IDbContextCreator<SpravyDbEventBusDbContext>
 {
-    protected SpravyDbEventBusDbContext(IDbContextSetup setup) : base(setup)
-    {
-    }
+    protected SpravyDbEventBusDbContext(IDbContextSetup setup)
+        : base(setup) { }
 
-    public SpravyDbEventBusDbContext(DbContextOptions options, IDbContextSetup setup) : base(options, setup)
-    {
-    }
+    public SpravyDbEventBusDbContext(DbContextOptions options, IDbContextSetup setup)
+        : base(options, setup) { }
 
-    public static SpravyDbEventBusDbContext CreateDbContext(IDbContextSetup setup, DbContextOptions options)
+    public static SpravyDbEventBusDbContext CreateDbContext(
+        IDbContextSetup setup,
+        DbContextOptions options
+    )
     {
         return new(options, setup);
     }

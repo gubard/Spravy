@@ -12,13 +12,15 @@ public class ToDoItemDayOfYearSelectorViewModel : ViewModelBase, IApplySettings
     {
         this.toDoService = toDoService;
 
-        Items = new(Enumerable.Range(1, 12)
-           .Select(x => new DayOfYearSelectItem
-            {
-                Month = (byte)x,
-            }));
+        Items = new(
+            Enumerable.Range(1, 12).Select(x => new DayOfYearSelectItem { Month = (byte)x, })
+        );
 
-        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler, taskProgressService);
+        InitializedCommand = SpravyCommand.Create(
+            InitializedAsync,
+            errorHandler,
+            taskProgressService
+        );
     }
 
     public AvaloniaList<DayOfYearSelectItem> Items { get; }
@@ -29,40 +31,55 @@ public class ToDoItemDayOfYearSelectorViewModel : ViewModelBase, IApplySettings
 
     public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken ct)
     {
-        return toDoService.UpdateToDoItemAnnuallyPeriodicityAsync(ToDoItemId,
-            new(Items.SelectMany(x => x.Days.Where(y => y.IsSelected).Select(y => new DayOfYear(y.Day, x.Month)))),
-            ct);
+        return toDoService.UpdateToDoItemAnnuallyPeriodicityAsync(
+            ToDoItemId,
+            new(
+                Items.SelectMany(x =>
+                    x.Days.Where(y => y.IsSelected).Select(y => new DayOfYear(y.Day, x.Month))
+                )
+            ),
+            ct
+        );
     }
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
-        return toDoService.GetAnnuallyPeriodicityAsync(ToDoItemId, ct)
-           .IfSuccessAsync(annuallyPeriodicity =>
-            {
-                var items = new List<Func<ConfiguredValueTaskAwaitable<Result>>>();
-
-                foreach (var item in Items)
+        return toDoService
+            .GetAnnuallyPeriodicityAsync(ToDoItemId, ct)
+            .IfSuccessAsync(
+                annuallyPeriodicity =>
                 {
-                    foreach (var day in item.Days)
+                    var items = new List<Func<ConfiguredValueTaskAwaitable<Result>>>();
+
+                    foreach (var item in Items)
                     {
-                        if (annuallyPeriodicity.Days
-                           .Where(x => x.Month == item.Month)
-                           .Select(x => x.Day)
-                           .Contains(day.Day))
+                        foreach (var day in item.Days)
                         {
-                            var d = day;
-
-                            items.Add(() => this.InvokeUiBackgroundAsync(() =>
+                            if (
+                                annuallyPeriodicity
+                                    .Days.Where(x => x.Month == item.Month)
+                                    .Select(x => x.Day)
+                                    .Contains(day.Day)
+                            )
                             {
-                                d.IsSelected = true;
+                                var d = day;
 
-                                return Result.Success;
-                            }));
+                                items.Add(
+                                    () =>
+                                        this.InvokeUiBackgroundAsync(() =>
+                                        {
+                                            d.IsSelected = true;
+
+                                            return Result.Success;
+                                        })
+                                );
+                            }
                         }
                     }
-                }
 
-                return Result.AwaitableSuccess.IfSuccessAllAsync(ct, items.ToArray());
-            }, ct);
+                    return Result.AwaitableSuccess.IfSuccessAllAsync(ct, items.ToArray());
+                },
+                ct
+            );
     }
 }

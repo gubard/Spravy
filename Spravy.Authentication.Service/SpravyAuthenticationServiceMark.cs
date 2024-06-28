@@ -5,7 +5,8 @@ namespace Spravy.Authentication.Service;
 
 public struct SpravyAuthenticationServiceMark : IAssemblyMark
 {
-    public static AssemblyName AssemblyName { get; } = typeof(SpravyAuthenticationServiceMark).Assembly.GetName();
+    public static AssemblyName AssemblyName { get; } =
+        typeof(SpravyAuthenticationServiceMark).Assembly.GetName();
 
     public static string AssemblyFullName { get; } =
         typeof(SpravyAuthenticationServiceMark).Assembly.GetName().FullName;

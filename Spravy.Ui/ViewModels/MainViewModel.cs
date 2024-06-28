@@ -7,7 +7,7 @@ public class MainViewModel : ViewModelBase
         MainProgressBar = mainProgressBar;
         MainSplit = mainSplit;
     }
-    
+
     public MainSplitViewModel MainSplit { get; }
     public MainProgressBarViewModel MainProgressBar { get; }
 }

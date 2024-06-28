@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Runtime.CompilerServices;
 using Spravy.Authentication.Db.Contexts;
 using Spravy.Authentication.Db.Extensions;
+using Spravy.Authentication.Db.Mapper.Mappers;
 using Spravy.Authentication.Db.Models;
 using Spravy.Authentication.Domain.Interfaces;
 using Spravy.Authentication.Domain.Models;
@@ -13,7 +14,6 @@ using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Domain.Models;
 using Spravy.Service.Extensions;
-using Spravy.Authentication.Db.Mapper.Mappers;
 
 namespace Spravy.Authentication.Service.Services;
 
@@ -49,12 +49,19 @@ public class EfAuthenticationService : IAuthenticationService
         this.randomString = randomString;
     }
 
-    public ConfiguredValueTaskAwaitable<Result<TokenResult>> LoginAsync(User user, CancellationToken ct)
+    public ConfiguredValueTaskAwaitable<Result<TokenResult>> LoginAsync(
+        User user,
+        CancellationToken ct
+    )
     {
-        return context.GetVerifiedUserByLoginAsync(user.Login, ct)
-           .IfSuccessAsync(
-                userEntity => CheckPassword(user.Password, userEntity)
-                   .IfSuccess(() => tokenFactory.Create(userEntity.ToUserTokenClaims())), ct);
+        return context
+            .GetVerifiedUserByLoginAsync(user.Login, ct)
+            .IfSuccessAsync(
+                userEntity =>
+                    CheckPassword(user.Password, userEntity)
+                        .IfSuccess(() => tokenFactory.Create(userEntity.ToUserTokenClaims())),
+                ct
+            );
     }
 
     public ConfiguredValueTaskAwaitable<Result> CreateUserAsync(
@@ -80,16 +87,21 @@ public class EfAuthenticationService : IAuthenticationService
             {
                 var id = Guid.Parse(jwtToken.Claims.GetNameIdentifierClaim().Value);
 
-                return context.FindEntityAsync<UserEntity>(id)
-                   .IfSuccessAsync(userEntity => tokenFactory.Create(userEntity.ToUserTokenClaims()),
-                        ct);
+                return context
+                    .FindEntityAsync<UserEntity>(id)
+                    .IfSuccessAsync(
+                        userEntity => tokenFactory.Create(userEntity.ToUserTokenClaims()),
+                        ct
+                    );
             }
             case Role.Service:
             {
                 return tokenFactory.Create().ToValueTaskResult().ConfigureAwait(false);
             }
             default:
-                return new Result<TokenResult>(new RoleOutOfRangeError(role)).ToValueTaskResult().ConfigureAwait(false);
+                return new Result<TokenResult>(new RoleOutOfRangeError(role))
+                    .ToValueTaskResult()
+                    .ConfigureAwait(false);
         }
     }
 
@@ -100,17 +112,29 @@ public class EfAuthenticationService : IAuthenticationService
     {
         login = login.Trim();
 
-        return context.AtomicExecuteAsync(() => context.GetUserByLoginAsync(login, ct)
-           .IfSuccessAsync(userEntity =>
-            {
-                var verificationCode = randomString.GetRandom().ThrowIfNull();
-                var hash = hasher.ComputeHash(verificationCode);
-                userEntity.VerificationCodeMethod = hasher.HashMethod;
-                userEntity.VerificationCodeHash = hash;
+        return context.AtomicExecuteAsync(
+            () =>
+                context
+                    .GetUserByLoginAsync(login, ct)
+                    .IfSuccessAsync(
+                        userEntity =>
+                        {
+                            var verificationCode = randomString.GetRandom().ThrowIfNull();
+                            var hash = hasher.ComputeHash(verificationCode);
+                            userEntity.VerificationCodeMethod = hasher.HashMethod;
+                            userEntity.VerificationCodeHash = hash;
 
-                return emailService.SendEmailAsync("VerificationCode", userEntity.Email.ThrowIfNullOrWhiteSpace(),
-                    verificationCode, ct);
-            }, ct), ct);
+                            return emailService.SendEmailAsync(
+                                "VerificationCode",
+                                userEntity.Email.ThrowIfNullOrWhiteSpace(),
+                                verificationCode,
+                                ct
+                            );
+                        },
+                        ct
+                    ),
+            ct
+        );
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateVerificationCodeByEmailAsync(
@@ -120,16 +144,29 @@ public class EfAuthenticationService : IAuthenticationService
     {
         email = email.Trim().ToUpperInvariant();
 
-        return context.AtomicExecuteAsync(() => context.GetUserByEmailAsync(email, ct)
-           .IfSuccessAsync(userEntity =>
-            {
-                var verificationCode = randomString.GetRandom().ThrowIfNull();
-                var hash = hasher.ComputeHash(verificationCode);
-                userEntity.VerificationCodeMethod = hasher.HashMethod;
-                userEntity.VerificationCodeHash = hash;
+        return context.AtomicExecuteAsync(
+            () =>
+                context
+                    .GetUserByEmailAsync(email, ct)
+                    .IfSuccessAsync(
+                        userEntity =>
+                        {
+                            var verificationCode = randomString.GetRandom().ThrowIfNull();
+                            var hash = hasher.ComputeHash(verificationCode);
+                            userEntity.VerificationCodeMethod = hasher.HashMethod;
+                            userEntity.VerificationCodeHash = hash;
 
-                return emailService.SendEmailAsync("VerificationCode", email, verificationCode, ct);
-            }, ct), ct);
+                            return emailService.SendEmailAsync(
+                                "VerificationCode",
+                                email,
+                                verificationCode,
+                                ct
+                            );
+                        },
+                        ct
+                    ),
+            ct
+        );
     }
 
     public ConfiguredValueTaskAwaitable<Result<bool>> IsVerifiedByLoginAsync(
@@ -139,8 +176,9 @@ public class EfAuthenticationService : IAuthenticationService
     {
         login = login.Trim();
 
-        return context.GetUserByLoginAsync(login, ct)
-           .IfSuccessAsync(user => user.IsEmailVerified.ToResult(), ct);
+        return context
+            .GetUserByLoginAsync(login, ct)
+            .IfSuccessAsync(user => user.IsEmailVerified.ToResult(), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result<bool>> IsVerifiedByEmailAsync(
@@ -150,8 +188,9 @@ public class EfAuthenticationService : IAuthenticationService
     {
         email = email.Trim().ToUpperInvariant();
 
-        return context.GetUserByEmailAsync(email, ct)
-           .IfSuccessAsync(userEntity => userEntity.IsEmailVerified.ToResult(), ct);
+        return context
+            .GetUserByEmailAsync(email, ct)
+            .IfSuccessAsync(userEntity => userEntity.IsEmailVerified.ToResult(), ct);
     }
 
     public ConfiguredValueTaskAwaitable<Result> VerifiedEmailByLoginAsync(
@@ -162,16 +201,25 @@ public class EfAuthenticationService : IAuthenticationService
     {
         login = login.Trim();
 
-        return context.AtomicExecuteAsync(() => context.GetUserByLoginAsync(login, ct)
-           .IfSuccessAsync(userEntity => CheckVerificationCode(verificationCode, userEntity)
-               .IfSuccess(() =>
-                {
-                    userEntity.IsEmailVerified = true;
-                    userEntity.VerificationCodeMethod = null;
-                    userEntity.VerificationCodeHash = null;
+        return context.AtomicExecuteAsync(
+            () =>
+                context
+                    .GetUserByLoginAsync(login, ct)
+                    .IfSuccessAsync(
+                        userEntity =>
+                            CheckVerificationCode(verificationCode, userEntity)
+                                .IfSuccess(() =>
+                                {
+                                    userEntity.IsEmailVerified = true;
+                                    userEntity.VerificationCodeMethod = null;
+                                    userEntity.VerificationCodeHash = null;
 
-                    return Result.Success;
-                }), ct), ct);
+                                    return Result.Success;
+                                }),
+                        ct
+                    ),
+            ct
+        );
     }
 
     public ConfiguredValueTaskAwaitable<Result> VerifiedEmailByEmailAsync(
@@ -182,16 +230,25 @@ public class EfAuthenticationService : IAuthenticationService
     {
         email = email.Trim().ToUpperInvariant();
 
-        return context.AtomicExecuteAsync(() => context.GetUserByEmailAsync(email, ct)
-           .IfSuccessAsync(userEntity => CheckVerificationCode(verificationCode, userEntity)
-               .IfSuccess(() =>
-                {
-                    userEntity.IsEmailVerified = true;
-                    userEntity.VerificationCodeMethod = null;
-                    userEntity.VerificationCodeHash = null;
+        return context.AtomicExecuteAsync(
+            () =>
+                context
+                    .GetUserByEmailAsync(email, ct)
+                    .IfSuccessAsync(
+                        userEntity =>
+                            CheckVerificationCode(verificationCode, userEntity)
+                                .IfSuccess(() =>
+                                {
+                                    userEntity.IsEmailVerified = true;
+                                    userEntity.VerificationCodeMethod = null;
+                                    userEntity.VerificationCodeHash = null;
 
-                    return Result.Success;
-                }), ct), ct);
+                                    return Result.Success;
+                                }),
+                        ct
+                    ),
+            ct
+        );
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateEmailNotVerifiedUserByEmailAsync(
@@ -202,13 +259,21 @@ public class EfAuthenticationService : IAuthenticationService
     {
         email = email.Trim().ToUpperInvariant();
 
-        return context.AtomicExecuteAsync(() => context.GetNotVerifiedUserByEmailAsync(email, ct)
-           .IfSuccessAsync(userEntity =>
-            {
-                userEntity.Email = newEmail;
+        return context.AtomicExecuteAsync(
+            () =>
+                context
+                    .GetNotVerifiedUserByEmailAsync(email, ct)
+                    .IfSuccessAsync(
+                        userEntity =>
+                        {
+                            userEntity.Email = newEmail;
 
-                return Result.Success;
-            }, ct), ct);
+                            return Result.Success;
+                        },
+                        ct
+                    ),
+            ct
+        );
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateEmailNotVerifiedUserByLoginAsync(
@@ -219,13 +284,21 @@ public class EfAuthenticationService : IAuthenticationService
     {
         login = login.Trim();
 
-        return context.AtomicExecuteAsync(() => context.GetNotVerifiedUserByLoginAsync(login, ct)
-           .IfSuccessAsync(userEntity =>
-            {
-                userEntity.Email = newEmail;
+        return context.AtomicExecuteAsync(
+            () =>
+                context
+                    .GetNotVerifiedUserByLoginAsync(login, ct)
+                    .IfSuccessAsync(
+                        userEntity =>
+                        {
+                            userEntity.Email = newEmail;
 
-                return Result.Success;
-            }, ct), ct);
+                            return Result.Success;
+                        },
+                        ct
+                    ),
+            ct
+        );
     }
 
     public ConfiguredValueTaskAwaitable<Result> DeleteUserByEmailAsync(
@@ -237,10 +310,17 @@ public class EfAuthenticationService : IAuthenticationService
         email = email.Trim().ToUpperInvariant();
 
         return context.AtomicExecuteAsync(
-            () => context.GetVerifiedUserByEmailAsync(email, ct)
-               .IfSuccessAsync(
-                    userEntity => CheckVerificationCode(verificationCode, userEntity)
-                       .IfSuccess(() => context.RemoveEntity(userEntity)), ct), ct);
+            () =>
+                context
+                    .GetVerifiedUserByEmailAsync(email, ct)
+                    .IfSuccessAsync(
+                        userEntity =>
+                            CheckVerificationCode(verificationCode, userEntity)
+                                .IfSuccess(() => context.RemoveEntity(userEntity)),
+                        ct
+                    ),
+            ct
+        );
     }
 
     public ConfiguredValueTaskAwaitable<Result> DeleteUserByLoginAsync(
@@ -252,10 +332,17 @@ public class EfAuthenticationService : IAuthenticationService
         login = login.Trim();
 
         return context.AtomicExecuteAsync(
-            () => context.GetVerifiedUserByLoginAsync(login, ct)
-               .IfSuccessAsync(
-                    userEntity => CheckVerificationCode(verificationCode, userEntity)
-                       .IfSuccess(() => context.RemoveEntity(userEntity)), ct), ct);
+            () =>
+                context
+                    .GetVerifiedUserByLoginAsync(login, ct)
+                    .IfSuccessAsync(
+                        userEntity =>
+                            CheckVerificationCode(verificationCode, userEntity)
+                                .IfSuccess(() => context.RemoveEntity(userEntity)),
+                        ct
+                    ),
+            ct
+        );
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdatePasswordByEmailAsync(
@@ -267,19 +354,34 @@ public class EfAuthenticationService : IAuthenticationService
     {
         email = email.Trim().ToUpperInvariant();
 
-        return context.AtomicExecuteAsync(() => context.GetVerifiedUserByEmailAsync(email, ct)
-           .IfSuccessAsync(userEntity => CheckVerificationCode(verificationCode, userEntity)
-               .IfSuccess(() => hasherFactory.Create(userEntity.HashMethod.ThrowIfNullOrWhiteSpace())
-                   .IfSuccess(newHasher =>
-                    {
-                        var hash = newHasher.ComputeHash($"{userEntity.Salt};{newPassword}");
-                        userEntity.VerificationCodeMethod = null;
-                        userEntity.VerificationCodeHash = null;
-                        userEntity.HashMethod = newHasher.HashMethod;
-                        userEntity.PasswordHash = hash;
+        return context.AtomicExecuteAsync(
+            () =>
+                context
+                    .GetVerifiedUserByEmailAsync(email, ct)
+                    .IfSuccessAsync(
+                        userEntity =>
+                            CheckVerificationCode(verificationCode, userEntity)
+                                .IfSuccess(
+                                    () =>
+                                        hasherFactory
+                                            .Create(userEntity.HashMethod.ThrowIfNullOrWhiteSpace())
+                                            .IfSuccess(newHasher =>
+                                            {
+                                                var hash = newHasher.ComputeHash(
+                                                    $"{userEntity.Salt};{newPassword}"
+                                                );
+                                                userEntity.VerificationCodeMethod = null;
+                                                userEntity.VerificationCodeHash = null;
+                                                userEntity.HashMethod = newHasher.HashMethod;
+                                                userEntity.PasswordHash = hash;
 
-                        return Result.Success;
-                    })), ct), ct);
+                                                return Result.Success;
+                                            })
+                                ),
+                        ct
+                    ),
+            ct
+        );
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdatePasswordByLoginAsync(
@@ -291,26 +393,45 @@ public class EfAuthenticationService : IAuthenticationService
     {
         login = login.Trim();
 
-        return context.AtomicExecuteAsync(() => context.GetUserByLoginAsync(login, ct)
-           .IfSuccessAsync(userEntity => CheckVerificationCode(verificationCode, userEntity)
-               .IfSuccess(() => hasherFactory.Create(userEntity.HashMethod.ThrowIfNullOrWhiteSpace())
-                   .IfSuccess(newHasher =>
-                    {
-                        var hash = newHasher.ComputeHash($"{userEntity.Salt};{newPassword}");
-                        userEntity.VerificationCodeMethod = null;
-                        userEntity.VerificationCodeHash = null;
-                        userEntity.HashMethod = newHasher.HashMethod;
-                        userEntity.PasswordHash = hash;
+        return context.AtomicExecuteAsync(
+            () =>
+                context
+                    .GetUserByLoginAsync(login, ct)
+                    .IfSuccessAsync(
+                        userEntity =>
+                            CheckVerificationCode(verificationCode, userEntity)
+                                .IfSuccess(
+                                    () =>
+                                        hasherFactory
+                                            .Create(userEntity.HashMethod.ThrowIfNullOrWhiteSpace())
+                                            .IfSuccess(newHasher =>
+                                            {
+                                                var hash = newHasher.ComputeHash(
+                                                    $"{userEntity.Salt};{newPassword}"
+                                                );
+                                                userEntity.VerificationCodeMethod = null;
+                                                userEntity.VerificationCodeHash = null;
+                                                userEntity.HashMethod = newHasher.HashMethod;
+                                                userEntity.PasswordHash = hash;
 
-                        return Result.Success;
-                    })), ct), ct);
+                                                return Result.Success;
+                                            })
+                                ),
+                        ct
+                    ),
+            ct
+        );
     }
 
     private async ValueTask<Result> CreateUserCore(CreateUserOptions options, CancellationToken ct)
     {
         var email = options.Email.Trim().ToUpperInvariant();
 
-        await foreach (var error in loginValidator.ValidateAsync(options.Login, nameof(options.Login)).WithCancellation(ct))
+        await foreach (
+            var error in loginValidator
+                .ValidateAsync(options.Login, nameof(options.Login))
+                .WithCancellation(ct)
+        )
         {
             if (error.IsHasError)
             {
@@ -318,7 +439,11 @@ public class EfAuthenticationService : IAuthenticationService
             }
         }
 
-        await foreach (var error in passwordValidator.ValidateAsync(options.Password, nameof(options.Password)).WithCancellation(ct))
+        await foreach (
+            var error in passwordValidator
+                .ValidateAsync(options.Password, nameof(options.Password))
+                .WithCancellation(ct)
+        )
         {
             if (error.IsHasError)
             {
@@ -339,38 +464,62 @@ public class EfAuthenticationService : IAuthenticationService
             Email = email,
         };
 
-        return await context.AtomicExecuteAsync(() => context.GetUserByLoginAsync(options.Login, ct)
-           .IfSuccessAsync(_ => new(new UserWithLoginExistsError(options.Login)), ct)
-           .IfErrorsAsync(errors => errors.GetSingle("Errors")
-               .IfSuccess(error =>
-                {
-                    if (error.Id == UserWithLoginNotExistsError.MainId)
-                    {
-                        return Result.Success;
-                    }
+        return await context.AtomicExecuteAsync(
+            () =>
+                context
+                    .GetUserByLoginAsync(options.Login, ct)
+                    .IfSuccessAsync(_ => new(new UserWithLoginExistsError(options.Login)), ct)
+                    .IfErrorsAsync(
+                        errors =>
+                            errors
+                                .GetSingle("Errors")
+                                .IfSuccess(error =>
+                                {
+                                    if (error.Id == UserWithLoginNotExistsError.MainId)
+                                    {
+                                        return Result.Success;
+                                    }
 
-                    return new(error);
-                }), ct)
-           .IfSuccessAsync(() => context.GetUserByEmailAsync(options.Email, ct)
-               .IfSuccessAsync(_ => new(new UserWithEmailExistsError(options.Email)), ct)
-               .IfErrorsAsync(errors => errors.GetSingle("Errors")
-                   .IfSuccess(error =>
-                    {
-                        if (error.Id == UserWithEmailNotExistsError.MainId)
-                        {
-                            return Result.Success;
-                        }
+                                    return new(error);
+                                }),
+                        ct
+                    )
+                    .IfSuccessAsync(
+                        () =>
+                            context
+                                .GetUserByEmailAsync(options.Email, ct)
+                                .IfSuccessAsync(
+                                    _ => new(new UserWithEmailExistsError(options.Email)),
+                                    ct
+                                )
+                                .IfErrorsAsync(
+                                    errors =>
+                                        errors
+                                            .GetSingle("Errors")
+                                            .IfSuccess(error =>
+                                            {
+                                                if (error.Id == UserWithEmailNotExistsError.MainId)
+                                                {
+                                                    return Result.Success;
+                                                }
 
-                        return new(error);
-                    }), ct), ct)
-           .IfSuccessAsync(() => context.AddEntityAsync(newUser, ct), ct)
-           .IfSuccessAsync(_ => Result.Success, ct), ct);
+                                                return new(error);
+                                            }),
+                                    ct
+                                ),
+                        ct
+                    )
+                    .IfSuccessAsync(() => context.AddEntityAsync(newUser, ct), ct)
+                    .IfSuccessAsync(_ => Result.Success, ct),
+            ct
+        );
     }
 
     private Result Check(string code, string hashMethod, string valueHash)
     {
-        return hasherFactory.Create(hashMethod.ThrowIfNullOrWhiteSpace())
-           .IfSuccess(newHasher =>
+        return hasherFactory
+            .Create(hashMethod.ThrowIfNullOrWhiteSpace())
+            .IfSuccess(newHasher =>
             {
                 var hash = newHasher.ComputeHash(code);
 
@@ -385,13 +534,19 @@ public class EfAuthenticationService : IAuthenticationService
 
     private Result CheckVerificationCode(string code, UserEntity entity)
     {
-        return Check(code, entity.VerificationCodeMethod.ThrowIfNullOrWhiteSpace(),
-            entity.VerificationCodeHash.ThrowIfNullOrWhiteSpace());
+        return Check(
+            code,
+            entity.VerificationCodeMethod.ThrowIfNullOrWhiteSpace(),
+            entity.VerificationCodeHash.ThrowIfNullOrWhiteSpace()
+        );
     }
 
     private Result CheckPassword(string password, UserEntity entity)
     {
-        return Check($"{entity.Salt};{password}", entity.HashMethod.ThrowIfNullOrWhiteSpace(),
-            entity.PasswordHash.ThrowIfNullOrWhiteSpace());
+        return Check(
+            $"{entity.Salt};{password}",
+            entity.HashMethod.ThrowIfNullOrWhiteSpace(),
+            entity.PasswordHash.ThrowIfNullOrWhiteSpace()
+        );
     }
 }

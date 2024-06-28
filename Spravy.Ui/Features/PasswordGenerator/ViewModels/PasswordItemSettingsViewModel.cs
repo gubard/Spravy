@@ -11,7 +11,11 @@ public class PasswordItemSettingsViewModel : ViewModelBase
     )
     {
         this.passwordService = passwordService;
-        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler, taskProgressService);
+        InitializedCommand = SpravyCommand.Create(
+            InitializedAsync,
+            errorHandler,
+            taskProgressService
+        );
     }
 
     public SpravyCommand InitializedCommand { get; }
@@ -48,20 +52,25 @@ public class PasswordItemSettingsViewModel : ViewModelBase
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
-        return passwordService.GetPasswordItemAsync(Id, ct)
-           .IfSuccessAsync(value => this.InvokeUiBackgroundAsync(() =>
-            {
-                Name = value.Name;
-                Regex = value.Regex;
-                Key = value.Key;
-                Length = value.Length;
-                IsAvailableUpperLatin = value.IsAvailableUpperLatin;
-                IsAvailableLowerLatin = value.IsAvailableLowerLatin;
-                IsAvailableNumber = value.IsAvailableNumber;
-                IsAvailableSpecialSymbols = value.IsAvailableSpecialSymbols;
-                CustomAvailableCharacters = value.CustomAvailableCharacters;
+        return passwordService
+            .GetPasswordItemAsync(Id, ct)
+            .IfSuccessAsync(
+                value =>
+                    this.InvokeUiBackgroundAsync(() =>
+                    {
+                        Name = value.Name;
+                        Regex = value.Regex;
+                        Key = value.Key;
+                        Length = value.Length;
+                        IsAvailableUpperLatin = value.IsAvailableUpperLatin;
+                        IsAvailableLowerLatin = value.IsAvailableLowerLatin;
+                        IsAvailableNumber = value.IsAvailableNumber;
+                        IsAvailableSpecialSymbols = value.IsAvailableSpecialSymbols;
+                        CustomAvailableCharacters = value.CustomAvailableCharacters;
 
-                return Result.Success;
-            }), ct);
+                        return Result.Success;
+                    }),
+                ct
+            );
     }
 }

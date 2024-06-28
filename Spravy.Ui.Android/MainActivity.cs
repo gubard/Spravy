@@ -12,8 +12,15 @@ using Spravy.Ui.Interfaces;
 
 namespace Spravy.Ui.Android;
 
-[Activity(Label = "Spravy", Theme = "@style/MyTheme.NoActionBar", Icon = "@drawable/icon", MainLauncher = true,
-    ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize | ConfigChanges.UiMode)]
+[Activity(
+    Label = "Spravy",
+    Theme = "@style/MyTheme.NoActionBar",
+    Icon = "@drawable/icon",
+    MainLauncher = true,
+    ConfigurationChanges = ConfigChanges.Orientation
+        | ConfigChanges.ScreenSize
+        | ConfigChanges.UiMode
+)]
 public class MainActivity : AvaloniaMainActivity<App>
 {
     private static MainActivity? _instance;
@@ -28,13 +35,15 @@ public class MainActivity : AvaloniaMainActivity<App>
 
     protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)
     {
-        Log.Logger = new LoggerConfiguration().WriteTo
-           .AndroidLog()
-           .Enrich
-           .WithProperty(Constants.SourceContextPropertyName, "Spravy")
-           .CreateLogger();
+        Log.Logger = new LoggerConfiguration()
+            .WriteTo.AndroidLog()
+            .Enrich.WithProperty(Constants.SourceContextPropertyName, "Spravy")
+            .CreateLogger();
 
-        return base.CustomizeAppBuilder(builder).WithInterFont().WithShantellSansFont().UseReactiveUI();
+        return base.CustomizeAppBuilder(builder)
+            .WithInterFont()
+            .WithShantellSansFont()
+            .UseReactiveUI();
     }
 
     protected override void OnCreate(Bundle? savedInstanceState)

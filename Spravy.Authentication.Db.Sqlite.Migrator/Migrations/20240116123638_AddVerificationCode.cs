@@ -15,35 +15,32 @@ namespace Spravy.Authentication.Db.Sqlite.Migrator.Migrations
                 table: "User",
                 type: "INTEGER",
                 nullable: false,
-                defaultValue: false);
+                defaultValue: false
+            );
 
             migrationBuilder.AddColumn<string>(
                 name: "VerificationCodeHash",
                 table: "User",
                 type: "TEXT",
-                nullable: true);
+                nullable: true
+            );
 
             migrationBuilder.AddColumn<string>(
                 name: "VerificationCodeMethod",
                 table: "User",
                 type: "TEXT",
-                nullable: true);
+                nullable: true
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "IsEmailVerified",
-                table: "User");
+            migrationBuilder.DropColumn(name: "IsEmailVerified", table: "User");
 
-            migrationBuilder.DropColumn(
-                name: "VerificationCodeHash",
-                table: "User");
+            migrationBuilder.DropColumn(name: "VerificationCodeHash", table: "User");
 
-            migrationBuilder.DropColumn(
-                name: "VerificationCodeMethod",
-                table: "User");
+            migrationBuilder.DropColumn(name: "VerificationCodeMethod", table: "User");
         }
     }
 }

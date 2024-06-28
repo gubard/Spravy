@@ -1,6 +1,7 @@
 namespace Spravy.Domain.Models;
 
-public readonly struct Option<TValue> where TValue : class
+public readonly struct Option<TValue>
+    where TValue : class
 {
     private readonly TValue? value;
 

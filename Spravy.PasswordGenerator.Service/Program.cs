@@ -13,10 +13,14 @@ try
 {
     Log.Information("Starting web app");
 
-    WebApplication.CreateBuilder(args)
-       .BuildSpravy<GrpcUserSecretService, GrpcPasswordService, SpravyPasswordGeneratorMark>(args,
-            typeof(DataBaseSetupSqliteMiddleware<PasswordDbContext>).ToEnumerable(), x => x.RegisterPasswordGenerator())
-       .Run();
+    WebApplication
+        .CreateBuilder(args)
+        .BuildSpravy<GrpcUserSecretService, GrpcPasswordService, SpravyPasswordGeneratorMark>(
+            args,
+            typeof(DataBaseSetupSqliteMiddleware<PasswordDbContext>).ToEnumerable(),
+            x => x.RegisterPasswordGenerator()
+        )
+        .Run();
 }
 catch (Exception ex)
 {

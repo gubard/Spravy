@@ -4,104 +4,237 @@ public class SpravyCommandNotifyService
 {
     public SpravyCommandNotifyService(SpravyCommandService commandService)
     {
-        MultiComplete = new(MaterialIconKind.Check, new("Command.Complete"), commandService.MultiComplete);
+        MultiComplete = new(
+            MaterialIconKind.Check,
+            new("Command.Complete"),
+            commandService.MultiComplete
+        );
 
-        MultiAddToFavorite = new(MaterialIconKind.StarOutline, new("Command.AddToFavorite"),
-            commandService.MultiAddToFavorite);
+        MultiAddToFavorite = new(
+            MaterialIconKind.StarOutline,
+            new("Command.AddToFavorite"),
+            commandService.MultiAddToFavorite
+        );
 
-        MultiRemoveFromFavorite = new(MaterialIconKind.Star, new("Command.RemoveFromFavorite"),
-            commandService.MultiRemoveFromFavorite);
+        MultiRemoveFromFavorite = new(
+            MaterialIconKind.Star,
+            new("Command.RemoveFromFavorite"),
+            commandService.MultiRemoveFromFavorite
+        );
 
-        MultiOpenLink = new(MaterialIconKind.Link, new("Command.OpenLink"), commandService.MultiOpenLink);
-        MultiAddChild = new(MaterialIconKind.Plus, new("Command.AddChildToDoItem"), commandService.MultiAddChild);
-        MultiDelete = new(MaterialIconKind.Delete, new("Command.Delete"), commandService.MultiDelete);
-        MultiShowSetting = new(MaterialIconKind.Settings, new("Command.Setting"), commandService.MultiShowSetting);
-        MultiOpenLeaf = new(MaterialIconKind.Leaf, new("Command.OpenLeaf"), commandService.MultiOpenLeaf);
+        MultiOpenLink = new(
+            MaterialIconKind.Link,
+            new("Command.OpenLink"),
+            commandService.MultiOpenLink
+        );
+        MultiAddChild = new(
+            MaterialIconKind.Plus,
+            new("Command.AddChildToDoItem"),
+            commandService.MultiAddChild
+        );
+        MultiDelete = new(
+            MaterialIconKind.Delete,
+            new("Command.Delete"),
+            commandService.MultiDelete
+        );
+        MultiShowSetting = new(
+            MaterialIconKind.Settings,
+            new("Command.Setting"),
+            commandService.MultiShowSetting
+        );
+        MultiOpenLeaf = new(
+            MaterialIconKind.Leaf,
+            new("Command.OpenLeaf"),
+            commandService.MultiOpenLeaf
+        );
 
-        MultiChangeParent = new(MaterialIconKind.SwapHorizontal, new("Command.ChangeParent"),
-            commandService.MultiChangeParent);
+        MultiChangeParent = new(
+            MaterialIconKind.SwapHorizontal,
+            new("Command.ChangeParent"),
+            commandService.MultiChangeParent
+        );
 
-        MultiMakeAsRoot = new(MaterialIconKind.FamilyTree, new("Command.MakeAsRootToDoItem"),
-            commandService.MultiMakeAsRoot);
+        MultiMakeAsRoot = new(
+            MaterialIconKind.FamilyTree,
+            new("Command.MakeAsRootToDoItem"),
+            commandService.MultiMakeAsRoot
+        );
 
-        MultiCopyToClipboard = new(MaterialIconKind.Clipboard, new("Command.CopyToClipboard"),
-            commandService.MultiCopyToClipboard);
+        MultiCopyToClipboard = new(
+            MaterialIconKind.Clipboard,
+            new("Command.CopyToClipboard"),
+            commandService.MultiCopyToClipboard
+        );
 
-        MultiRandomizeChildrenOrder = new(MaterialIconKind.DiceSix, new("Command.RandomizeChildrenOrder"),
-            commandService.MultiRandomizeChildrenOrder);
+        MultiRandomizeChildrenOrder = new(
+            MaterialIconKind.DiceSix,
+            new("Command.RandomizeChildrenOrder"),
+            commandService.MultiRandomizeChildrenOrder
+        );
 
-        MultiChangeOrder = new(MaterialIconKind.ReorderHorizontal, new("Command.Reorder"),
-            commandService.MultiChangeOrder);
+        MultiChangeOrder = new(
+            MaterialIconKind.ReorderHorizontal,
+            new("Command.Reorder"),
+            commandService.MultiChangeOrder
+        );
 
         MultiReset = new(MaterialIconKind.Refresh, new("Command.Reset"), commandService.MultiReset);
-        MultiClone = new(MaterialIconKind.Copyleft, new("Command.Clone"), commandService.MultiClone);
+        MultiClone = new(
+            MaterialIconKind.Copyleft,
+            new("Command.Clone"),
+            commandService.MultiClone
+        );
 
-        MultiCompleteToDoItem =
-            new(MaterialIconKind.Check, new("Command.Complete"), commandService.MultiCompleteToDoItem);
+        MultiCompleteToDoItem = new(
+            MaterialIconKind.Check,
+            new("Command.Complete"),
+            commandService.MultiCompleteToDoItem
+        );
 
-        MultiAddToFavoriteToDoItem = new(MaterialIconKind.StarOutline, new("Command.AddToFavorite"),
-            commandService.MultiAddToFavoriteToDoItem);
+        MultiAddToFavoriteToDoItem = new(
+            MaterialIconKind.StarOutline,
+            new("Command.AddToFavorite"),
+            commandService.MultiAddToFavoriteToDoItem
+        );
 
-        MultiRemoveFromFavoriteToDoItem = new(MaterialIconKind.Star, new("Command.RemoveFromFavorite"),
-            commandService.MultiRemoveFromFavoriteToDoItem);
+        MultiRemoveFromFavoriteToDoItem = new(
+            MaterialIconKind.Star,
+            new("Command.RemoveFromFavorite"),
+            commandService.MultiRemoveFromFavoriteToDoItem
+        );
 
-        MultiOpenLinkToDoItem =
-            new(MaterialIconKind.Link, new("Command.OpenLink"), commandService.MultiOpenLinkToDoItem);
+        MultiOpenLinkToDoItem = new(
+            MaterialIconKind.Link,
+            new("Command.OpenLink"),
+            commandService.MultiOpenLinkToDoItem
+        );
 
-        MultiAddChildToDoItem = new(MaterialIconKind.Plus, new("Command.AddChildToDoItem"),
-            commandService.MultiAddChildToDoItem);
+        MultiAddChildToDoItem = new(
+            MaterialIconKind.Plus,
+            new("Command.AddChildToDoItem"),
+            commandService.MultiAddChildToDoItem
+        );
 
-        MultiDeleteToDoItem = new(MaterialIconKind.Delete, new("Command.Delete"), commandService.MultiDeleteToDoItem);
+        MultiDeleteToDoItem = new(
+            MaterialIconKind.Delete,
+            new("Command.Delete"),
+            commandService.MultiDeleteToDoItem
+        );
 
-        MultiShowSettingToDoItem = new(MaterialIconKind.Settings, new("Command.Setting"),
-            commandService.MultiShowSettingToDoItem);
+        MultiShowSettingToDoItem = new(
+            MaterialIconKind.Settings,
+            new("Command.Setting"),
+            commandService.MultiShowSettingToDoItem
+        );
 
-        MultiOpenLeafToDoItem =
-            new(MaterialIconKind.Leaf, new("Command.OpenLeaf"), commandService.MultiOpenLeafToDoItem);
+        MultiOpenLeafToDoItem = new(
+            MaterialIconKind.Leaf,
+            new("Command.OpenLeaf"),
+            commandService.MultiOpenLeafToDoItem
+        );
 
-        MultiChangeParentToDoItem = new(MaterialIconKind.SwapHorizontal, new("Command.ChangeParent"),
-            commandService.MultiChangeParentToDoItem);
+        MultiChangeParentToDoItem = new(
+            MaterialIconKind.SwapHorizontal,
+            new("Command.ChangeParent"),
+            commandService.MultiChangeParentToDoItem
+        );
 
-        MultiMakeAsRootToDoItem = new(MaterialIconKind.FamilyTree, new("Command.MakeAsRootToDoItem"),
-            commandService.MultiMakeAsRootToDoItem);
+        MultiMakeAsRootToDoItem = new(
+            MaterialIconKind.FamilyTree,
+            new("Command.MakeAsRootToDoItem"),
+            commandService.MultiMakeAsRootToDoItem
+        );
 
-        MultiCopyToClipboardToDoItem = new(MaterialIconKind.Clipboard, new("Command.CopyToClipboard"),
-            commandService.MultiCopyToClipboardToDoItem);
+        MultiCopyToClipboardToDoItem = new(
+            MaterialIconKind.Clipboard,
+            new("Command.CopyToClipboard"),
+            commandService.MultiCopyToClipboardToDoItem
+        );
 
-        MultiRandomizeChildrenOrderToDoItem = new(MaterialIconKind.DiceSix, new("Command.RandomizeChildrenOrder"),
-            commandService.MultiRandomizeChildrenOrderToDoItem);
+        MultiRandomizeChildrenOrderToDoItem = new(
+            MaterialIconKind.DiceSix,
+            new("Command.RandomizeChildrenOrder"),
+            commandService.MultiRandomizeChildrenOrderToDoItem
+        );
 
-        MultiChangeOrderToDoItem = new(MaterialIconKind.ReorderHorizontal, new("Command.Reorder"),
-            commandService.MultiChangeOrderToDoItem);
+        MultiChangeOrderToDoItem = new(
+            MaterialIconKind.ReorderHorizontal,
+            new("Command.Reorder"),
+            commandService.MultiChangeOrderToDoItem
+        );
 
-        MultiResetToDoItem = new(MaterialIconKind.Refresh, new("Command.Reset"), commandService.MultiResetToDoItem);
-        MultiCloneToDoItem = new(MaterialIconKind.Copyleft, new("Command.Clone"), commandService.MultiCloneToDoItem);
+        MultiResetToDoItem = new(
+            MaterialIconKind.Refresh,
+            new("Command.Reset"),
+            commandService.MultiResetToDoItem
+        );
+        MultiCloneToDoItem = new(
+            MaterialIconKind.Copyleft,
+            new("Command.Clone"),
+            commandService.MultiCloneToDoItem
+        );
         Complete = new(MaterialIconKind.Check, new("Command.Complete"), commandService.Complete);
-        AddToFavorite = new(MaterialIconKind.StarOutline, new("Command.AddToFavorite"), commandService.AddToFavorite);
+        AddToFavorite = new(
+            MaterialIconKind.StarOutline,
+            new("Command.AddToFavorite"),
+            commandService.AddToFavorite
+        );
 
-        RemoveFromFavorite = new(MaterialIconKind.Star, new("Command.RemoveFromFavorite"),
-            commandService.RemoveFromFavorite);
+        RemoveFromFavorite = new(
+            MaterialIconKind.Star,
+            new("Command.RemoveFromFavorite"),
+            commandService.RemoveFromFavorite
+        );
 
         OpenLink = new(MaterialIconKind.Link, new("Command.OpenLink"), commandService.OpenLink);
-        AddChild = new(MaterialIconKind.Plus, new("Command.AddChildToDoItem"), commandService.AddChild);
+        AddChild = new(
+            MaterialIconKind.Plus,
+            new("Command.AddChildToDoItem"),
+            commandService.AddChild
+        );
         Delete = new(MaterialIconKind.Delete, new("Command.Delete"), commandService.Delete);
-        ShowSetting = new(MaterialIconKind.Settings, new("Command.Setting"), commandService.ShowSetting);
+        ShowSetting = new(
+            MaterialIconKind.Settings,
+            new("Command.Setting"),
+            commandService.ShowSetting
+        );
         OpenLeaf = new(MaterialIconKind.Leaf, new("Command.OpenLeaf"), commandService.OpenLeaf);
-        ChangeParent = new(MaterialIconKind.SwapHorizontal, new("Command.ChangeParent"), commandService.ChangeParent);
-        MakeAsRoot = new(MaterialIconKind.FamilyTree, new("Command.MakeAsRootToDoItem"), commandService.MakeAsRoot);
+        ChangeParent = new(
+            MaterialIconKind.SwapHorizontal,
+            new("Command.ChangeParent"),
+            commandService.ChangeParent
+        );
+        MakeAsRoot = new(
+            MaterialIconKind.FamilyTree,
+            new("Command.MakeAsRootToDoItem"),
+            commandService.MakeAsRoot
+        );
 
-        CopyToClipboard = new(MaterialIconKind.Clipboard, new("Command.CopyToClipboard"),
-            commandService.CopyToClipboard);
+        CopyToClipboard = new(
+            MaterialIconKind.Clipboard,
+            new("Command.CopyToClipboard"),
+            commandService.CopyToClipboard
+        );
 
-        RandomizeChildrenOrder = new(MaterialIconKind.DiceSix, new("Command.RandomizeChildrenOrder"),
-            commandService.RandomizeChildrenOrder);
+        RandomizeChildrenOrder = new(
+            MaterialIconKind.DiceSix,
+            new("Command.RandomizeChildrenOrder"),
+            commandService.RandomizeChildrenOrder
+        );
 
-        ChangeOrder = new(MaterialIconKind.ReorderHorizontal, new("Command.Reorder"), commandService.ChangeOrder);
+        ChangeOrder = new(
+            MaterialIconKind.ReorderHorizontal,
+            new("Command.Reorder"),
+            commandService.ChangeOrder
+        );
         Reset = new(MaterialIconKind.Refresh, new("Command.Reset"), commandService.Reset);
         Clone = new(MaterialIconKind.Copyleft, new("Command.Clone"), commandService.Clone);
 
-        NavigateToCurrentToDoItem = new(MaterialIconKind.ArrowRight, new("Command.OpenCurrent"),
-            commandService.NavigateToCurrentToDoItem);
+        NavigateToCurrentToDoItem = new(
+            MaterialIconKind.ArrowRight,
+            new("Command.OpenCurrent"),
+            commandService.NavigateToCurrentToDoItem
+        );
 
         LeafToDoItemsMulti = new[]
         {

@@ -14,15 +14,14 @@ namespace Spravy.Authentication.Db.Sqlite.Migrator.Migrations
                 name: "IX_User_Login",
                 table: "User",
                 column: "Login",
-                unique: true);
+                unique: true
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropIndex(
-                name: "IX_User_Login",
-                table: "User");
+            migrationBuilder.DropIndex(name: "IX_User_Login", table: "User");
         }
     }
 }

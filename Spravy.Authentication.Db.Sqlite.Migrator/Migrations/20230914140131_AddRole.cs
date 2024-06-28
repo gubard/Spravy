@@ -16,7 +16,8 @@ namespace Spravy.Authentication.Db.Sqlite.Migrator.Migrations
                 type: "TEXT",
                 nullable: true,
                 oldClrType: typeof(string),
-                oldType: "TEXT");
+                oldType: "TEXT"
+            );
 
             migrationBuilder.AlterColumn<string>(
                 name: "PasswordHash",
@@ -24,7 +25,8 @@ namespace Spravy.Authentication.Db.Sqlite.Migrator.Migrations
                 type: "TEXT",
                 nullable: true,
                 oldClrType: typeof(string),
-                oldType: "TEXT");
+                oldType: "TEXT"
+            );
 
             migrationBuilder.AlterColumn<string>(
                 name: "Login",
@@ -32,7 +34,8 @@ namespace Spravy.Authentication.Db.Sqlite.Migrator.Migrations
                 type: "TEXT",
                 nullable: true,
                 oldClrType: typeof(string),
-                oldType: "TEXT");
+                oldType: "TEXT"
+            );
 
             migrationBuilder.AlterColumn<string>(
                 name: "HashMethod",
@@ -40,22 +43,22 @@ namespace Spravy.Authentication.Db.Sqlite.Migrator.Migrations
                 type: "TEXT",
                 nullable: true,
                 oldClrType: typeof(string),
-                oldType: "TEXT");
+                oldType: "TEXT"
+            );
 
             migrationBuilder.AddColumn<int>(
                 name: "Role",
                 table: "User",
                 type: "INTEGER",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: 0
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "Role",
-                table: "User");
+            migrationBuilder.DropColumn(name: "Role", table: "User");
 
             migrationBuilder.AlterColumn<string>(
                 name: "Salt",
@@ -65,7 +68,8 @@ namespace Spravy.Authentication.Db.Sqlite.Migrator.Migrations
                 defaultValue: "",
                 oldClrType: typeof(string),
                 oldType: "TEXT",
-                oldNullable: true);
+                oldNullable: true
+            );
 
             migrationBuilder.AlterColumn<string>(
                 name: "PasswordHash",
@@ -75,7 +79,8 @@ namespace Spravy.Authentication.Db.Sqlite.Migrator.Migrations
                 defaultValue: "",
                 oldClrType: typeof(string),
                 oldType: "TEXT",
-                oldNullable: true);
+                oldNullable: true
+            );
 
             migrationBuilder.AlterColumn<string>(
                 name: "Login",
@@ -85,7 +90,8 @@ namespace Spravy.Authentication.Db.Sqlite.Migrator.Migrations
                 defaultValue: "",
                 oldClrType: typeof(string),
                 oldType: "TEXT",
-                oldNullable: true);
+                oldNullable: true
+            );
 
             migrationBuilder.AlterColumn<string>(
                 name: "HashMethod",
@@ -95,7 +101,8 @@ namespace Spravy.Authentication.Db.Sqlite.Migrator.Migrations
                 defaultValue: "",
                 oldClrType: typeof(string),
                 oldType: "TEXT",
-                oldNullable: true);
+                oldNullable: true
+            );
         }
     }
 }

@@ -14,7 +14,8 @@ public class TestProjectBuilderOptions : ProjectBuilderOptions
         string domain,
         string emailAccountPassword,
         string emailAccount2Password
-    ) : base(csprojFile, appSettingsFile, hosts, runtimes, configuration, domain)
+    )
+        : base(csprojFile, appSettingsFile, hosts, runtimes, configuration, domain)
     {
         EmailAccountPassword = emailAccountPassword;
         EmailAccount2Password = emailAccount2Password;

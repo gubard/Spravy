@@ -33,13 +33,24 @@ public static class ServiceCollectionExtension
 {
     public static IServiceCollection RegisterSchedule(this IServiceCollection serviceCollection)
     {
-        serviceCollection.AddHostedService<FolderMigratorHostedService<SpravyDbScheduleDbContext>>();
-        serviceCollection.AddSpravySqliteFolderContext<SpravyDbScheduleDbContext, SpravyScheduleDbSqliteMigratorMark>();
+        serviceCollection.AddHostedService<
+            FolderMigratorHostedService<SpravyDbScheduleDbContext>
+        >();
+        serviceCollection.AddSpravySqliteFolderContext<
+            SpravyDbScheduleDbContext,
+            SpravyScheduleDbSqliteMigratorMark
+        >();
         serviceCollection.AddSingleton<ITokenService, TokenService>();
-        serviceCollection.AddSingleton<IFactory<string, SpravyDbScheduleDbContext>, SpravyScheduleDbContextFactory>();
+        serviceCollection.AddSingleton<
+            IFactory<string, SpravyDbScheduleDbContext>,
+            SpravyScheduleDbContextFactory
+        >();
         serviceCollection.AddSingleton<IDbContextSetup, SqliteScheduleDbContextSetup>();
         serviceCollection.AddSingleton(sp => sp.GetConfigurationSection<SqliteFolderOptions>());
-        serviceCollection.AddSingleton<IFactory<string, IEventBusService>, EventBusServiceFactory>();
+        serviceCollection.AddSingleton<
+            IFactory<string, IEventBusService>,
+            EventBusServiceFactory
+        >();
         serviceCollection.AddTransient<IRpcExceptionHandler, RpcExceptionHandler>();
         //serviceCollection.AddSingleton<IKeeper<TokenResult>, StaticKeeper<TokenResult>>();
         serviceCollection.AddSingleton<ITokenService, TokenService>();
@@ -51,16 +62,21 @@ public static class ServiceCollectionExtension
         serviceCollection.AddTransient<ISerializer, SpravyJsonSerializer>();
         serviceCollection.AddTransient<JsonSerializerContext, SpravyJsonSerializerContext>();
 
-        serviceCollection
-           .AddGrpcService<GrpcAuthenticationService, AuthenticationService.AuthenticationServiceClient,
-                GrpcAuthenticationServiceOptions>();
+        serviceCollection.AddGrpcService<
+            GrpcAuthenticationService,
+            AuthenticationService.AuthenticationServiceClient,
+            GrpcAuthenticationServiceOptions
+        >();
 
-        serviceCollection
-           .AddGrpcServiceAuth<GrpcEventBusService, EventBusService.EventBusServiceClient,
-                GrpcEventBusServiceOptions>();
+        serviceCollection.AddGrpcServiceAuth<
+            GrpcEventBusService,
+            EventBusService.EventBusServiceClient,
+            GrpcEventBusServiceOptions
+        >();
 
         serviceCollection.AddSingleton<IAuthenticationService>(sp =>
-            sp.GetRequiredService<GrpcAuthenticationService>());
+            sp.GetRequiredService<GrpcAuthenticationService>()
+        );
 
         return serviceCollection;
     }

@@ -22,20 +22,21 @@ namespace Spravy.PasswordGenerator.Db.Sqlite.Migrator.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UserSecrets", x => x.Id);
-                });
+                }
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserSecrets_UserId",
                 table: "UserSecrets",
                 column: "UserId",
-                unique: true);
+                unique: true
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "UserSecrets");
+            migrationBuilder.DropTable(name: "UserSecrets");
         }
     }
 }

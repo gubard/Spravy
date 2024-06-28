@@ -6,10 +6,7 @@ public static class TypeCtorHelper<TType, TParam>
 
     static TypeCtorHelper()
     {
-        var ctorParams = new[]
-        {
-            typeof(TParam),
-        };
+        var ctorParams = new[] { typeof(TParam), };
 
         var variable = typeof(TParam).ToVariableAutoName();
         var ctor = typeof(TType).GetConstructor(ctorParams).ThrowIfNull();

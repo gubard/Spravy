@@ -8,7 +8,7 @@ public class BytesToUpperCaseHexString : IBytesToString
         // and create a string.
         var sBuilder = new StringBuilder();
 
-        // Loop through each byte of the hashed data 
+        // Loop through each byte of the hashed data
         // and format each one as a hexadecimal string.
         foreach (var value in input)
         {

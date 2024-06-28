@@ -18,7 +18,7 @@ public static class UserSecretEntityExtension
     {
         return GetSecretByUserIdCore(queryable, userId, ct).ConfigureAwait(false);
     }
-    
+
     private static async ValueTask<Result<UserSecretEntity>> GetSecretByUserIdCore(
         IQueryable<UserSecretEntity> queryable,
         Guid userId,
@@ -26,17 +26,17 @@ public static class UserSecretEntityExtension
     )
     {
         var items = await queryable.Where(x => x.UserId == userId).Take(2).ToArrayAsync(ct);
-        
+
         if (items.Length == 0)
         {
             return new(new NotFoundUserSecretError(userId));
         }
-        
+
         if (items.Length == 2)
         {
             return new(new MultiValuesArrayError("UserSecrets", (ulong)items.Length));
         }
-        
+
         return items[0].ToResult();
     }
 }

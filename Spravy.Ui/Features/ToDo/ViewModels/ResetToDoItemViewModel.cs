@@ -3,11 +3,20 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 public class ResetToDoItemViewModel : NavigatableViewModelBase
 {
     private readonly IObjectStorage objectStorage;
-    
-    public ResetToDoItemViewModel(IObjectStorage objectStorage, IErrorHandler errorHandler, ITaskProgressService taskProgressService) : base(true)
+
+    public ResetToDoItemViewModel(
+        IObjectStorage objectStorage,
+        IErrorHandler errorHandler,
+        ITaskProgressService taskProgressService
+    )
+        : base(true)
     {
         this.objectStorage = objectStorage;
-        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler, taskProgressService);
+        InitializedCommand = SpravyCommand.Create(
+            InitializedAsync,
+            errorHandler,
+            taskProgressService
+        );
     }
 
     public SpravyCommand InitializedCommand { get; }
@@ -34,8 +43,9 @@ public class ResetToDoItemViewModel : NavigatableViewModelBase
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
-        return objectStorage.GetObjectOrDefaultAsync<ResetToDoItemViewModelSetting>(ViewId, ct)
-           .IfSuccessAsync(obj => SetStateAsync(obj, ct), ct);
+        return objectStorage
+            .GetObjectOrDefaultAsync<ResetToDoItemViewModelSetting>(ViewId, ct)
+            .IfSuccessAsync(obj => SetStateAsync(obj, ct), ct);
     }
 
     public override Result Stop()
@@ -48,16 +58,21 @@ public class ResetToDoItemViewModel : NavigatableViewModelBase
         CancellationToken ct
     )
     {
-        return setting.CastObject<ResetToDoItemViewModelSetting>()
-           .IfSuccessAsync(s => this.InvokeUiBackgroundAsync(() =>
-            {
-                IsCompleteChildrenTask = s.IsCompleteChildrenTask;
-                IsMoveCircleOrderIndex = s.IsMoveCircleOrderIndex;
-                IsOnlyCompletedTasks = s.IsOnlyCompletedTasks;
-                IsCompleteCurrentTask = s.IsCompleteCurrentTask;
-                
-                return Result.Success;
-            }), ct);
+        return setting
+            .CastObject<ResetToDoItemViewModelSetting>()
+            .IfSuccessAsync(
+                s =>
+                    this.InvokeUiBackgroundAsync(() =>
+                    {
+                        IsCompleteChildrenTask = s.IsCompleteChildrenTask;
+                        IsMoveCircleOrderIndex = s.IsMoveCircleOrderIndex;
+                        IsOnlyCompletedTasks = s.IsOnlyCompletedTasks;
+                        IsCompleteCurrentTask = s.IsCompleteCurrentTask;
+
+                        return Result.Success;
+                    }),
+                ct
+            );
     }
 
     public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)
@@ -76,16 +91,11 @@ public class ResetToDoItemViewModel : NavigatableViewModelBase
             IsCompleteCurrentTask = viewModel.IsCompleteCurrentTask;
         }
 
-        public ResetToDoItemViewModelSetting()
-        {
-        }
+        public ResetToDoItemViewModelSetting() { }
 
         static ResetToDoItemViewModelSetting()
         {
-            Default = new()
-            {
-                IsMoveCircleOrderIndex = true,
-            };
+            Default = new() { IsMoveCircleOrderIndex = true, };
         }
 
         [ProtoMember(1)]

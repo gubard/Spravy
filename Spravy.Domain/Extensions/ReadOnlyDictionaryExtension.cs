@@ -2,7 +2,11 @@
 
 public static class ReadOnlyDictionaryExtension
 {
-    public static TValue GetValue<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dictionary, TKey key, TValue def)
+    public static TValue GetValue<TKey, TValue>(
+        this IReadOnlyDictionary<TKey, TValue> dictionary,
+        TKey key,
+        TValue def
+    )
     {
         if (dictionary.TryGetValue(key, out var result))
         {

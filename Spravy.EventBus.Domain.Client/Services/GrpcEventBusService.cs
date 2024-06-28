@@ -15,9 +15,10 @@ using static Spravy.EventBus.Protos.EventBusService;
 
 namespace Spravy.EventBus.Domain.Client.Services;
 
-public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
-    IEventBusService,
-    IGrpcServiceCreatorAuth<GrpcEventBusService, EventBusServiceClient>
+public class GrpcEventBusService
+    : GrpcServiceBase<EventBusServiceClient>,
+        IEventBusService,
+        IGrpcServiceCreatorAuth<GrpcEventBusService, EventBusServiceClient>
 {
     private readonly IMetadataFactory metadataFactory;
 
@@ -26,7 +27,8 @@ public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
         Uri host,
         IMetadataFactory metadataFactory,
         IRpcExceptionHandler handler
-    ) : base(grpcClientFactory, host, handler)
+    )
+        : base(grpcClientFactory, host, handler)
     {
         this.metadataFactory = metadataFactory;
     }
@@ -37,8 +39,10 @@ public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
     )
     {
         return CallClientAsync(
-            (client, token) => SubscribeEventsAsyncCore(client, eventIds, token).ConfigureAwait(false),
-            ct);
+            (client, token) =>
+                SubscribeEventsAsyncCore(client, eventIds, token).ConfigureAwait(false),
+            ct
+        );
     }
 
     public ConfiguredValueTaskAwaitable<Result> PublishEventAsync(
@@ -47,20 +51,28 @@ public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
         CancellationToken ct
     )
     {
-        return CallClientAsync(client => metadataFactory.CreateAsync(ct)
-           .IfSuccessAsync(
-                metadata =>
-                {
-                    var request = new PublishEventRequest
-                    {
-                        EventId = eventId.ToByteString(),
-                        Content = content.ToByteString(),
-                    };
+        return CallClientAsync(
+            client =>
+                metadataFactory
+                    .CreateAsync(ct)
+                    .IfSuccessAsync(
+                        metadata =>
+                        {
+                            var request = new PublishEventRequest
+                            {
+                                EventId = eventId.ToByteString(),
+                                Content = content.ToByteString(),
+                            };
 
-                    return client.PublishEventAsync(request, metadata, cancellationToken: ct)
-                       .ToValueTaskResultOnly()
-                       .ConfigureAwait(false);
-                }, ct), ct);
+                            return client
+                                .PublishEventAsync(request, metadata, cancellationToken: ct)
+                                .ToValueTaskResultOnly()
+                                .ConfigureAwait(false);
+                        },
+                        ct
+                    ),
+            ct
+        );
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<EventValue>>> GetEventsAsync(
@@ -68,18 +80,29 @@ public class GrpcEventBusService : GrpcServiceBase<EventBusServiceClient>,
         CancellationToken ct
     )
     {
-        return CallClientAsync(client => metadataFactory.CreateAsync(ct)
-           .IfSuccessAsync(metadata =>
-            {
-                var request = new GetEventsRequest();
-                request.EventIds.AddRange(eventIds.ToByteString().ToArray());
+        return CallClientAsync(
+            client =>
+                metadataFactory
+                    .CreateAsync(ct)
+                    .IfSuccessAsync(
+                        metadata =>
+                        {
+                            var request = new GetEventsRequest();
+                            request.EventIds.AddRange(eventIds.ToByteString().ToArray());
 
-                return client.GetEventsAsync(request, metadata, cancellationToken: ct)
-                   .ToValueTaskResultValueOnly()
-                   .ConfigureAwait(false)
-                   .IfSuccessAsync(
-                        events => events.Events.ToEventValue().ToResult(), ct);
-            }, ct), ct);
+                            return client
+                                .GetEventsAsync(request, metadata, cancellationToken: ct)
+                                .ToValueTaskResultValueOnly()
+                                .ConfigureAwait(false)
+                                .IfSuccessAsync(
+                                    events => events.Events.ToEventValue().ToResult(),
+                                    ct
+                                );
+                        },
+                        ct
+                    ),
+            ct
+        );
     }
 
     public static GrpcEventBusService CreateGrpcService(

@@ -2,7 +2,8 @@ namespace Spravy.Integration.Tests.Extensions;
 
 public static class VisualExtension
 {
-    public static TVisual ClickOn<TVisual>(this TVisual visual, Window window) where TVisual : Visual
+    public static TVisual ClickOn<TVisual>(this TVisual visual, Window window)
+        where TVisual : Visual
     {
         visual.IsVisible.Should().Be(true);
 
@@ -11,7 +12,10 @@ public static class VisualExtension
             inputElement.MustEnabled();
         }
 
-        var position = visual.TranslatePoint(new(0, 0), window).ThrowIfNullStruct().Center(visual.Bounds);
+        var position = visual
+            .TranslatePoint(new(0, 0), window)
+            .ThrowIfNullStruct()
+            .Center(visual.Bounds);
         window.RunJobsAll();
         window.SpravyMouseMove(position, RawInputModifiers.None);
         window.RunJobsAll();
@@ -23,7 +27,8 @@ public static class VisualExtension
         return visual;
     }
 
-    public static TVisual MustWidth<TVisual>(this TVisual visual, double width) where TVisual : Visual
+    public static TVisual MustWidth<TVisual>(this TVisual visual, double width)
+        where TVisual : Visual
     {
         visual.Bounds.Width.Should().Be(width);
 

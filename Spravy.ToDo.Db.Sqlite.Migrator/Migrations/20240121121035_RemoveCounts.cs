@@ -10,21 +10,13 @@ namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "CompletedCount",
-                table: "ToDoItem");
+            migrationBuilder.DropColumn(name: "CompletedCount", table: "ToDoItem");
 
-            migrationBuilder.DropColumn(
-                name: "FailedCount",
-                table: "ToDoItem");
+            migrationBuilder.DropColumn(name: "FailedCount", table: "ToDoItem");
 
-            migrationBuilder.DropColumn(
-                name: "LastCompletedType",
-                table: "ToDoItem");
+            migrationBuilder.DropColumn(name: "LastCompletedType", table: "ToDoItem");
 
-            migrationBuilder.DropColumn(
-                name: "SkippedCount",
-                table: "ToDoItem");
+            migrationBuilder.DropColumn(name: "SkippedCount", table: "ToDoItem");
         }
 
         /// <inheritdoc />
@@ -35,27 +27,31 @@ namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
                 table: "ToDoItem",
                 type: "INTEGER",
                 nullable: false,
-                defaultValue: 0u);
+                defaultValue: 0u
+            );
 
             migrationBuilder.AddColumn<uint>(
                 name: "FailedCount",
                 table: "ToDoItem",
                 type: "INTEGER",
                 nullable: false,
-                defaultValue: 0u);
+                defaultValue: 0u
+            );
 
             migrationBuilder.AddColumn<int>(
                 name: "LastCompletedType",
                 table: "ToDoItem",
                 type: "INTEGER",
-                nullable: true);
+                nullable: true
+            );
 
             migrationBuilder.AddColumn<uint>(
                 name: "SkippedCount",
                 table: "ToDoItem",
                 type: "INTEGER",
                 nullable: false,
-                defaultValue: 0u);
+                defaultValue: 0u
+            );
         }
     }
 }

@@ -24,14 +24,14 @@ namespace Spravy.Authentication.Db.Sqlite.Migrator.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_User", x => x.Id);
-                });
+                }
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "User");
+            migrationBuilder.DropTable(name: "User");
         }
     }
 }

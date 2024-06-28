@@ -6,7 +6,10 @@ public class SqliteDbContextFactory<TDbContext> : IFactory<TDbContext>
     private readonly IFactory<string, TDbContext> dbContextFactory;
     private readonly IFactory<FileInfo> fileFactory;
 
-    public SqliteDbContextFactory(IFactory<string, TDbContext> dbContextFactory, IFactory<FileInfo> fileFactory)
+    public SqliteDbContextFactory(
+        IFactory<string, TDbContext> dbContextFactory,
+        IFactory<FileInfo> fileFactory
+    )
     {
         this.dbContextFactory = dbContextFactory;
         this.fileFactory = fileFactory;
@@ -14,7 +17,10 @@ public class SqliteDbContextFactory<TDbContext> : IFactory<TDbContext>
 
     public Result<TDbContext> Create()
     {
-        return fileFactory.Create()
-           .IfSuccess(connectionString => dbContextFactory.Create(connectionString.ToSqliteConnectionString()));
+        return fileFactory
+            .Create()
+            .IfSuccess(connectionString =>
+                dbContextFactory.Create(connectionString.ToSqliteConnectionString())
+            );
     }
 }

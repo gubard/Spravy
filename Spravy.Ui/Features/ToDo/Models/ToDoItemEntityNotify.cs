@@ -14,36 +14,39 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
         Link = string.Empty;
         Status = ToDoItemStatus.ReadyForComplete;
         OrderIndex = uint.MaxValue;
-        this.WhenAnyValue(x => x.ReferenceId).Subscribe(_ => this.RaisePropertyChanged(nameof(CurrentId)));
+        this.WhenAnyValue(x => x.ReferenceId)
+            .Subscribe(_ => this.RaisePropertyChanged(nameof(CurrentId)));
         CompactCommands = new();
         SingleCommands = new();
         Children = new();
         MultiCommands = new();
 
         this.WhenAnyValue(x => x.DescriptionType)
-           .Subscribe(_ =>
+            .Subscribe(_ =>
             {
                 this.RaisePropertyChanged(nameof(IsDescriptionPlainText));
                 this.RaisePropertyChanged(nameof(IsDescriptionMarkdownText));
             });
 
-        MultiCommands.AddRange([
-            spravyCommandNotifyService.MultiAddChildToDoItem,
-            spravyCommandNotifyService.MultiShowSettingToDoItem,
-            spravyCommandNotifyService.MultiDeleteToDoItem,
-            spravyCommandNotifyService.MultiOpenLeafToDoItem,
-            spravyCommandNotifyService.MultiChangeParentToDoItem,
-            spravyCommandNotifyService.MultiMakeAsRootToDoItem,
-            spravyCommandNotifyService.MultiCopyToClipboardToDoItem,
-            spravyCommandNotifyService.MultiRandomizeChildrenOrderToDoItem,
-            spravyCommandNotifyService.MultiChangeOrderToDoItem,
-            spravyCommandNotifyService.MultiResetToDoItem,
-            spravyCommandNotifyService.MultiCloneToDoItem,
-            spravyCommandNotifyService.MultiOpenLinkToDoItem,
-            spravyCommandNotifyService.MultiAddToFavoriteToDoItem,
-            spravyCommandNotifyService.MultiRemoveFromFavoriteToDoItem,
-            spravyCommandNotifyService.MultiCompleteToDoItem,
-        ]);
+        MultiCommands.AddRange(
+            [
+                spravyCommandNotifyService.MultiAddChildToDoItem,
+                spravyCommandNotifyService.MultiShowSettingToDoItem,
+                spravyCommandNotifyService.MultiDeleteToDoItem,
+                spravyCommandNotifyService.MultiOpenLeafToDoItem,
+                spravyCommandNotifyService.MultiChangeParentToDoItem,
+                spravyCommandNotifyService.MultiMakeAsRootToDoItem,
+                spravyCommandNotifyService.MultiCopyToClipboardToDoItem,
+                spravyCommandNotifyService.MultiRandomizeChildrenOrderToDoItem,
+                spravyCommandNotifyService.MultiChangeOrderToDoItem,
+                spravyCommandNotifyService.MultiResetToDoItem,
+                spravyCommandNotifyService.MultiCloneToDoItem,
+                spravyCommandNotifyService.MultiOpenLinkToDoItem,
+                spravyCommandNotifyService.MultiAddToFavoriteToDoItem,
+                spravyCommandNotifyService.MultiRemoveFromFavoriteToDoItem,
+                spravyCommandNotifyService.MultiCompleteToDoItem,
+            ]
+        );
     }
 
     public Guid Id { get; }
@@ -161,19 +164,21 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
         CompactCommands.Clear();
         SingleCommands.Clear();
 
-        CompactCommands.AddRange([
-            spravyCommandNotifyService.AddChild,
-            spravyCommandNotifyService.ShowSetting,
-            spravyCommandNotifyService.Delete,
-            spravyCommandNotifyService.OpenLeaf,
-            spravyCommandNotifyService.ChangeParent,
-            spravyCommandNotifyService.MakeAsRoot,
-            spravyCommandNotifyService.CopyToClipboard,
-            spravyCommandNotifyService.RandomizeChildrenOrder,
-            spravyCommandNotifyService.ChangeOrder,
-            spravyCommandNotifyService.Reset,
-            spravyCommandNotifyService.Clone,
-        ]);
+        CompactCommands.AddRange(
+            [
+                spravyCommandNotifyService.AddChild,
+                spravyCommandNotifyService.ShowSetting,
+                spravyCommandNotifyService.Delete,
+                spravyCommandNotifyService.OpenLeaf,
+                spravyCommandNotifyService.ChangeParent,
+                spravyCommandNotifyService.MakeAsRoot,
+                spravyCommandNotifyService.CopyToClipboard,
+                spravyCommandNotifyService.RandomizeChildrenOrder,
+                spravyCommandNotifyService.ChangeOrder,
+                spravyCommandNotifyService.Reset,
+                spravyCommandNotifyService.Clone,
+            ]
+        );
 
         var singleCommands = new List<SpravyCommandNotify>(CompactCommands);
 
@@ -182,9 +187,11 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
             singleCommands.Add(spravyCommandNotifyService.OpenLink);
         }
 
-        singleCommands.Add(IsFavorite
-            ? spravyCommandNotifyService.RemoveFromFavorite
-            : spravyCommandNotifyService.AddToFavorite);
+        singleCommands.Add(
+            IsFavorite
+                ? spravyCommandNotifyService.RemoveFromFavorite
+                : spravyCommandNotifyService.AddToFavorite
+        );
 
         if (IsCan != ToDoItemIsCan.None)
         {

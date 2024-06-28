@@ -5,10 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using _build.Extensions;
-using _build.Helpers;
-using _build.Interfaces;
-using _build.Services;
 using FluentFTP;
 using Microsoft.IdentityModel.Tokens;
 using Nuke.Common;
@@ -17,42 +13,93 @@ using Renci.SshNet;
 using Serilog;
 using Telegram.Bot;
 using Telegram.Bot.Types.ReplyMarkups;
+using _build.Extensions;
+using _build.Helpers;
+using _build.Interfaces;
+using _build.Services;
 
 namespace _build;
 
 class Build : NukeBuild
 {
     static DirectoryInfo AndroidFolder;
-    [Parameter] readonly string AndroidSigningKeyPass;
-    [Parameter] readonly string AndroidSigningStorePass;
+
+    [Parameter]
+    readonly string AndroidSigningKeyPass;
+
+    [Parameter]
+    readonly string AndroidSigningStorePass;
 
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
-    readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
+    readonly Configuration Configuration = IsLocalBuild
+        ? Configuration.Debug
+        : Configuration.Release;
 
-    [Parameter] readonly string Domain;
-    [Parameter] readonly string EmailAccount2Password;
-    [Parameter] readonly string EmailAccountPassword;
-    [Parameter] readonly string FtpHost;
+    [Parameter]
+    readonly string Domain;
 
-    [Parameter] readonly string FtpPassword;
-    [Parameter] readonly string FtpUser;
-    [Parameter] readonly string JwtAudience;
-    [Parameter] readonly string JwtIssuer;
-    [Parameter] readonly string JwtKey;
-    [Parameter] readonly string MailPassword;
+    [Parameter]
+    readonly string EmailAccount2Password;
 
-    [Solution] readonly Solution Solution;
-    [Parameter] readonly string SshHost;
-    [Parameter] readonly string SshPassword;
-    [Parameter] readonly string SshUser;
-    [Parameter] readonly string StagingDomain;
-    [Parameter] readonly string StagingFtpHost;
-    [Parameter] readonly string StagingFtpPassword;
-    [Parameter] readonly string StagingFtpUser;
-    [Parameter] readonly string StagingSshHost;
-    [Parameter] readonly string StagingSshPassword;
-    [Parameter] readonly string StagingSshUser;
-    [Parameter] readonly string TelegramToken;
+    [Parameter]
+    readonly string EmailAccountPassword;
+
+    [Parameter]
+    readonly string FtpHost;
+
+    [Parameter]
+    readonly string FtpPassword;
+
+    [Parameter]
+    readonly string FtpUser;
+
+    [Parameter]
+    readonly string JwtAudience;
+
+    [Parameter]
+    readonly string JwtIssuer;
+
+    [Parameter]
+    readonly string JwtKey;
+
+    [Parameter]
+    readonly string MailPassword;
+
+    [Solution]
+    readonly Solution Solution;
+
+    [Parameter]
+    readonly string SshHost;
+
+    [Parameter]
+    readonly string SshPassword;
+
+    [Parameter]
+    readonly string SshUser;
+
+    [Parameter]
+    readonly string StagingDomain;
+
+    [Parameter]
+    readonly string StagingFtpHost;
+
+    [Parameter]
+    readonly string StagingFtpPassword;
+
+    [Parameter]
+    readonly string StagingFtpUser;
+
+    [Parameter]
+    readonly string StagingSshHost;
+
+    [Parameter]
+    readonly string StagingSshPassword;
+
+    [Parameter]
+    readonly string StagingSshUser;
+
+    [Parameter]
+    readonly string TelegramToken;
     IReadOnlyDictionary<string, ushort> Ports;
     IProjectBuilder[] Projects;
 
@@ -61,36 +108,46 @@ class Build : NukeBuild
     VersionService VersionService;
 
     Target StagingSetupAppSettings =>
-        _ => _.Executes(() =>
-        {
-            Projects = CreateStagingFactory().Create(Solution.AllProjects.Select(x => new FileInfo(x.Path))).ToArray();
-            SetupAppSettings();
-        });
+        _ =>
+            _.Executes(() =>
+            {
+                Projects = CreateStagingFactory()
+                    .Create(Solution.AllProjects.Select(x => new FileInfo(x.Path)))
+                    .ToArray();
+                SetupAppSettings();
+            });
 
     Target ProdSetupAppSettings =>
-        _ => _.Executes(() =>
-        {
-            Projects = CreateProdFactory().Create(Solution.AllProjects.Select(x => new FileInfo(x.Path))).ToArray();
-            SetupAppSettings();
-        });
-
-    Target StagingBuildDocker => _ => _.DependsOn(StagingSetupAppSettings)
-       .Executes(() =>
-        {
-            foreach (var serviceProjectBuilder in Projects.OfType<ServiceProjectBuilder>())
+        _ =>
+            _.Executes(() =>
             {
-                serviceProjectBuilder.BuildDocker();
-            }
-        });
+                Projects = CreateProdFactory()
+                    .Create(Solution.AllProjects.Select(x => new FileInfo(x.Path)))
+                    .ToArray();
+                SetupAppSettings();
+            });
 
-    Target StagingPushDockerImage => _ => _.DependsOn(StagingBuildDocker)
-       .Executes(() =>
-        {
-            foreach (var serviceProjectBuilder in Projects.OfType<ServiceProjectBuilder>())
-            {
-                serviceProjectBuilder.PushDockerImage();
-            }
-        });
+    Target StagingBuildDocker =>
+        _ =>
+            _.DependsOn(StagingSetupAppSettings)
+                .Executes(() =>
+                {
+                    foreach (var serviceProjectBuilder in Projects.OfType<ServiceProjectBuilder>())
+                    {
+                        serviceProjectBuilder.BuildDocker();
+                    }
+                });
+
+    Target StagingPushDockerImage =>
+        _ =>
+            _.DependsOn(StagingBuildDocker)
+                .Executes(() =>
+                {
+                    foreach (var serviceProjectBuilder in Projects.OfType<ServiceProjectBuilder>())
+                    {
+                        serviceProjectBuilder.PushDockerImage();
+                    }
+                });
 
     Target StagingClean => _ => _.DependsOn(StagingPushDockerImage).Executes(Clean);
     Target ProdClean => _ => _.DependsOn(ProdSetupAppSettings).Executes(Clean);
@@ -102,29 +159,39 @@ class Build : NukeBuild
     Target ProdCompile => _ => _.DependsOn(ProdRestore).Executes(Compile);
 
     Target StagingPublishServices =>
-        _ => _.DependsOn(CleanStagingDataBase, StagingCompile)
-           .Executes(() => PublishServices(StagingSshHost, StagingSshUser, StagingSshPassword));
+        _ =>
+            _.DependsOn(CleanStagingDataBase, StagingCompile)
+                .Executes(
+                    () => PublishServices(StagingSshHost, StagingSshUser, StagingSshPassword)
+                );
 
     Target CleanStagingDataBase =>
-        _ => _.Executes(() =>
-        {
-            using var client = new SshClient(CreateSshConnection(StagingSshHost, StagingSshUser, StagingSshPassword));
-            client.Connect();
-            client.SafeRun($"echo {StagingSshPassword} | sudo -S rm -fr /home/{StagingFtpUser}/DataBases");
-        });
-
-    Target Test =>
-        _ => _.DependsOn(StagingPublishBrowser)
-           .Executes(() =>
+        _ =>
+            _.Executes(() =>
             {
-                foreach (var project in Projects.OfType<TestProjectBuilder>())
-                {
-                    project.Test();
-                }
+                using var client = new SshClient(
+                    CreateSshConnection(StagingSshHost, StagingSshUser, StagingSshPassword)
+                );
+                client.Connect();
+                client.SafeRun(
+                    $"echo {StagingSshPassword} | sudo -S rm -fr /home/{StagingFtpUser}/DataBases"
+                );
             });
 
+    Target Test =>
+        _ =>
+            _.DependsOn(StagingPublishBrowser)
+                .Executes(() =>
+                {
+                    foreach (var project in Projects.OfType<TestProjectBuilder>())
+                    {
+                        project.Test();
+                    }
+                });
+
     Target ProdPublishServices =>
-        _ => _.DependsOn(ProdCompile).Executes(() => PublishServices(SshHost, SshUser, SshPassword));
+        _ =>
+            _.DependsOn(ProdCompile).Executes(() => PublishServices(SshHost, SshUser, SshPassword));
 
     Target StagingPublishDesktop =>
         _ => _.DependsOn(StagingPublishServices).Executes(PublishDesktop);
@@ -137,21 +204,29 @@ class Build : NukeBuild
     Target ProdPublishAndroid => _ => _.DependsOn(ProdPublishServices).Executes(PublishAndroid);
 
     Target StagingPublishBrowser =>
-        _ => _.DependsOn(StagingPublishAndroid, StagingPublishDesktop)
-           .Executes(() =>
-            {
-                PublishBrowser();
-                SendTelegramTextMessage("Staging", StagingFtpHost, StagingFtpUser, StagingFtpPassword, StagingDomain);
-            });
+        _ =>
+            _.DependsOn(StagingPublishAndroid, StagingPublishDesktop)
+                .Executes(() =>
+                {
+                    PublishBrowser();
+                    SendTelegramTextMessage(
+                        "Staging",
+                        StagingFtpHost,
+                        StagingFtpUser,
+                        StagingFtpPassword,
+                        StagingDomain
+                    );
+                });
 
     Target ProdPublishBrowser =>
-        _ => _.DependsOn(ProdPublishAndroid, ProdPublishDesktop)
-           .Executes(() =>
-            {
-                PublishBrowser();
-                SendTelegramTextMessage("Prod", FtpHost, FtpUser, FtpPassword, Domain);
-                VersionService.Save();
-            });
+        _ =>
+            _.DependsOn(ProdPublishAndroid, ProdPublishDesktop)
+                .Executes(() =>
+                {
+                    PublishBrowser();
+                    SendTelegramTextMessage("Prod", FtpHost, FtpUser, FtpPassword, Domain);
+                    VersionService.Save();
+                });
 
     public static int Main() => Execute<Build>(x => x.ProdPublishBrowser);
 
@@ -165,39 +240,59 @@ class Build : NukeBuild
 
         Ports = new Dictionary<string, ushort>
         {
-            {
-                "Spravy.Authentication.Service".GetGrpcServiceName(), 5000
-            },
-            {
-                "Spravy.EventBus.Service".GetGrpcServiceName(), 5001
-            },
-            {
-                "Spravy.Router.Service".GetGrpcServiceName(), 5002
-            },
-            {
-                "Spravy.Schedule.Service".GetGrpcServiceName(), 5003
-            },
-            {
-                "Spravy.ToDo.Service".GetGrpcServiceName(), 5004
-            },
-            {
-                "Spravy.PasswordGenerator.Service".GetGrpcServiceName(), 5005
-            },
-            {
-                "Spravy.Password.Service".GetGrpcServiceName(), 5005
-            },
+            { "Spravy.Authentication.Service".GetGrpcServiceName(), 5000 },
+            { "Spravy.EventBus.Service".GetGrpcServiceName(), 5001 },
+            { "Spravy.Router.Service".GetGrpcServiceName(), 5002 },
+            { "Spravy.Schedule.Service".GetGrpcServiceName(), 5003 },
+            { "Spravy.ToDo.Service".GetGrpcServiceName(), 5004 },
+            { "Spravy.PasswordGenerator.Service".GetGrpcServiceName(), 5005 },
+            { "Spravy.Password.Service".GetGrpcServiceName(), 5005 },
         };
     }
 
-    ProjectBuilderFactory CreateStagingFactory() => new(Configuration, MailPassword, Token, Ports, VersionService,
-        PathHelper.PublishFolder, StagingFtpHost, StagingFtpUser, StagingFtpPassword, StagingSshHost, StagingSshUser,
-        StagingSshPassword, StagingDomain, new($"/home/{StagingFtpUser}/storage/sign-key.keystore"),
-        AndroidSigningKeyPass, AndroidSigningStorePass, EmailAccountPassword, EmailAccount2Password);
+    ProjectBuilderFactory CreateStagingFactory() =>
+        new(
+            Configuration,
+            MailPassword,
+            Token,
+            Ports,
+            VersionService,
+            PathHelper.PublishFolder,
+            StagingFtpHost,
+            StagingFtpUser,
+            StagingFtpPassword,
+            StagingSshHost,
+            StagingSshUser,
+            StagingSshPassword,
+            StagingDomain,
+            new($"/home/{StagingFtpUser}/storage/sign-key.keystore"),
+            AndroidSigningKeyPass,
+            AndroidSigningStorePass,
+            EmailAccountPassword,
+            EmailAccount2Password
+        );
 
-    ProjectBuilderFactory CreateProdFactory() => new(Configuration, MailPassword, Token, Ports, VersionService,
-        PathHelper.PublishFolder, FtpHost, FtpUser, FtpPassword, SshHost, SshUser, SshPassword, Domain,
-        new($"/home/{FtpUser}/storage/sign-key.keystore"), AndroidSigningKeyPass, AndroidSigningStorePass,
-        EmailAccountPassword, EmailAccount2Password);
+    ProjectBuilderFactory CreateProdFactory() =>
+        new(
+            Configuration,
+            MailPassword,
+            Token,
+            Ports,
+            VersionService,
+            PathHelper.PublishFolder,
+            FtpHost,
+            FtpUser,
+            FtpPassword,
+            SshHost,
+            SshUser,
+            SshPassword,
+            Domain,
+            new($"/home/{FtpUser}/storage/sign-key.keystore"),
+            AndroidSigningKeyPass,
+            AndroidSigningStorePass,
+            EmailAccountPassword,
+            EmailAccount2Password
+        );
 
     void SetupAppSettings()
     {
@@ -247,10 +342,12 @@ class Build : NukeBuild
         foreach (var project in Projects.OfType<ServiceProjectBuilder>())
         {
             sshClient.SafeRun(
-                $"echo {project.Options.SshPassword} | sudo -S systemctl enable {project.Options.GetServiceName()}");
+                $"echo {project.Options.SshPassword} | sudo -S systemctl enable {project.Options.GetServiceName()}"
+            );
 
             sshClient.SafeRun(
-                $"echo {project.Options.SshPassword} | sudo -S systemctl restart {project.Options.GetServiceName()}");
+                $"echo {project.Options.SshPassword} | sudo -S systemctl restart {project.Options.GetServiceName()}"
+            );
         }
     }
 
@@ -278,51 +375,81 @@ class Build : NukeBuild
         }
     }
 
-    void SendTelegramTextMessage(string name, string ftpHost, string ftpUser, string ftpPassword, string domain)
+    void SendTelegramTextMessage(
+        string name,
+        string ftpHost,
+        string ftpUser,
+        string ftpPassword,
+        string domain
+    )
     {
         using var ftpClient = CreateFtpClient(ftpHost, ftpUser, ftpPassword);
         ftpClient.Connect();
         var html = PathHelper.WwwFolder.Combine(domain).Combine("html");
 
         var items = ftpClient
-           .GetListing(html.Combine("downloads", VersionService.Version.ToString()).FullName, FtpListOption.Recursive)
-           .Where(x => x.Type == FtpObjectType.File
-             && (x.Name.EndsWith(".zip")
-                 || (x.Name.EndsWith(".apk") || x.Name.EndsWith(".aab")) && x.Name.Contains("Spravy-Signed")))
-           .Select(x => InlineKeyboardButton.WithUrl(
-                GetButtonName(x.Name), x.FullName.Replace(html.FullName, $"https://{domain}")));
+            .GetListing(
+                html.Combine("downloads", VersionService.Version.ToString()).FullName,
+                FtpListOption.Recursive
+            )
+            .Where(x =>
+                x.Type == FtpObjectType.File
+                && (
+                    x.Name.EndsWith(".zip")
+                    || (x.Name.EndsWith(".apk") || x.Name.EndsWith(".aab"))
+                        && x.Name.Contains("Spravy-Signed")
+                )
+            )
+            .Select(x =>
+                InlineKeyboardButton.WithUrl(
+                    GetButtonName(x.Name),
+                    x.FullName.Replace(html.FullName, $"https://{domain}")
+                )
+            );
 
         var botClient = new TelegramBotClient(TelegramToken);
 
-        botClient.SendTextMessageAsync("@spravy_release",
+        botClient
+            .SendTextMessageAsync(
+                "@spravy_release",
                 $"Published {name} v{VersionService.Version}({VersionService.Version.Code})",
-                replyMarkup: new InlineKeyboardMarkup(items))
-           .GetAwaiter()
-           .GetResult();
+                replyMarkup: new InlineKeyboardMarkup(items)
+            )
+            .GetAwaiter()
+            .GetResult();
     }
 
-    string GetButtonName(string name) => Path.GetExtension(name).ToUpperInvariant() switch
-    {
-        ".APK" => ".APK",
-        ".AAB" => ".AAB",
-        ".ZIP" => Path.GetExtension(Path.GetFileNameWithoutExtension(name)).ThrowIfNull().ToUpperInvariant(),
-        _ => throw new ArgumentOutOfRangeException(name),
-    };
+    string GetButtonName(string name) =>
+        Path.GetExtension(name).ToUpperInvariant() switch
+        {
+            ".APK" => ".APK",
+            ".AAB" => ".AAB",
+            ".ZIP"
+                => Path.GetExtension(Path.GetFileNameWithoutExtension(name))
+                    .ThrowIfNull()
+                    .ToUpperInvariant(),
+            _ => throw new ArgumentOutOfRangeException(name),
+        };
 
     string CreteToken()
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtKey));
-        var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+        var signingCredentials = new SigningCredentials(
+            key,
+            SecurityAlgorithms.HmacSha512Signature
+        );
         var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
         var expires = DateTime.UtcNow.AddDays(30);
 
-        var claims = new List<Claim>
-        {
-            new(ClaimTypes.Role, "Service"),
-        };
+        var claims = new List<Claim> { new(ClaimTypes.Role, "Service"), };
 
-        var token = new JwtSecurityToken(JwtIssuer, JwtAudience, claims, expires: expires,
-            signingCredentials: signingCredentials);
+        var token = new JwtSecurityToken(
+            JwtIssuer,
+            JwtAudience,
+            claims,
+            expires: expires,
+            signingCredentials: signingCredentials
+        );
 
         var jwt = jwtSecurityTokenHandler.WriteToken(token);
 

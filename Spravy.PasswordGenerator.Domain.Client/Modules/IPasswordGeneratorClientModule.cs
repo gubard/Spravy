@@ -12,11 +12,16 @@ namespace Spravy.PasswordGenerator.Domain.Client.Modules;
 
 [ServiceProviderModule]
 [Singleton(typeof(GrpcPasswordServiceOptions), Factory = nameof(GrpcPasswordServiceOptionsFactory))]
-[Singleton(typeof(IFactory<Uri, PasswordServiceClient>), Factory = nameof(PasswordServiceClientsFactory))]
+[Singleton(
+    typeof(IFactory<Uri, PasswordServiceClient>),
+    Factory = nameof(PasswordServiceClientsFactory)
+)]
 [Transient(typeof(IPasswordService), Factory = nameof(PasswordServiceFactory))]
 public interface IPasswordGeneratorClientModule
 {
-    static GrpcPasswordServiceOptions GrpcPasswordServiceOptionsFactory(IConfiguration configuration)
+    static GrpcPasswordServiceOptions GrpcPasswordServiceOptionsFactory(
+        IConfiguration configuration
+    )
     {
         return configuration.GetOptionsValue<GrpcPasswordServiceOptions>();
     }
@@ -29,13 +34,18 @@ public interface IPasswordGeneratorClientModule
     {
         if (options.UseCache)
         {
-            return GrpcClientFactoryHelper
-               .CreateCacheGrpcFactory<GrpcPasswordService, PasswordServiceClient, GrpcPasswordServiceOptions>(
-                    serviceOptions, cacheValidator);
+            return GrpcClientFactoryHelper.CreateCacheGrpcFactory<
+                GrpcPasswordService,
+                PasswordServiceClient,
+                GrpcPasswordServiceOptions
+            >(serviceOptions, cacheValidator);
         }
 
-        return GrpcClientFactoryHelper
-           .CreateGrpcFactory<GrpcPasswordService, PasswordServiceClient, GrpcPasswordServiceOptions>(serviceOptions);
+        return GrpcClientFactoryHelper.CreateGrpcFactory<
+            GrpcPasswordService,
+            PasswordServiceClient,
+            GrpcPasswordServiceOptions
+        >(serviceOptions);
     }
 
     static IPasswordService PasswordServiceFactory(
@@ -45,8 +55,10 @@ public interface IPasswordGeneratorClientModule
         IMetadataFactory metadataFactory
     )
     {
-        return GrpcClientFactoryHelper
-           .CreateGrpcServiceAuth<GrpcPasswordService, PasswordServiceClient, GrpcPasswordServiceOptions>(options,
-                grpcClientFactory, handler, metadataFactory);
+        return GrpcClientFactoryHelper.CreateGrpcServiceAuth<
+            GrpcPasswordService,
+            PasswordServiceClient,
+            GrpcPasswordServiceOptions
+        >(options, grpcClientFactory, handler, metadataFactory);
     }
 }

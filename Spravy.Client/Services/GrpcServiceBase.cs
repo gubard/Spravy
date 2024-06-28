@@ -2,19 +2,24 @@ using Spravy.Core.Interfaces;
 
 namespace Spravy.Client.Services;
 
-public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBase
+public abstract class GrpcServiceBase<TGrpcClient>
+    where TGrpcClient : ClientBase
 {
     private readonly IFactory<Uri, TGrpcClient> grpcClientFactory;
     private readonly Uri host;
     private readonly IRpcExceptionHandler handler;
-    
-    protected GrpcServiceBase(IFactory<Uri, TGrpcClient> grpcClientFactory, Uri host, IRpcExceptionHandler handler)
+
+    protected GrpcServiceBase(
+        IFactory<Uri, TGrpcClient> grpcClientFactory,
+        Uri host,
+        IRpcExceptionHandler handler
+    )
     {
         this.grpcClientFactory = grpcClientFactory;
         this.host = host;
         this.handler = handler;
     }
-    
+
     protected ConfiguredValueTaskAwaitable<Result> CallClientAsync(
         Func<TGrpcClient, ConfiguredValueTaskAwaitable<Result>> func,
         CancellationToken ct
@@ -59,11 +64,13 @@ public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBas
                 case StatusCode.Internal:
                     throw;
                 case StatusCode.Unavailable:
-                    return new Result(new ServiceUnavailableError(host.ToString())).ToValueTaskResult()
-                       .ConfigureAwait(false);
+                    return new Result(new ServiceUnavailableError(host.ToString()))
+                        .ToValueTaskResult()
+                        .ConfigureAwait(false);
                 case StatusCode.DataLoss:
                     throw;
-                default: throw new ArgumentOutOfRangeException();
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
         catch (Exception e)
@@ -71,19 +78,21 @@ public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBas
             throw new GrpcException(host, e);
         }
     }
-    
+
     protected ConfiguredValueTaskAwaitable<Result<TValue>> CallClientAsync<TValue>(
         Func<TGrpcClient, ConfiguredValueTaskAwaitable<Result<TValue>>> func,
         CancellationToken ct
-    ) where TValue : notnull
+    )
+        where TValue : notnull
     {
         return CallClientCore(func, ct).ConfigureAwait(false);
     }
-    
+
     private async ValueTask<Result<TValue>> CallClientCore<TValue>(
         Func<TGrpcClient, ConfiguredValueTaskAwaitable<Result<TValue>>> func,
         CancellationToken ct
-    ) where TValue : notnull
+    )
+        where TValue : notnull
     {
         try
         {
@@ -101,7 +110,7 @@ public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBas
                     throw;
                 case StatusCode.InvalidArgument:
                     var error = await handler.ToErrorAsync(exception, ct);
-                    
+
                     return error.Errors.ToResult<TValue>();
                 case StatusCode.DeadlineExceeded:
                     throw;
@@ -129,7 +138,8 @@ public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBas
                     return new(new ServiceUnavailableError(host.ToString()));
                 case StatusCode.DataLoss:
                     throw;
-                default: throw new ArgumentOutOfRangeException();
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
         catch (Exception e)
@@ -137,14 +147,14 @@ public abstract class GrpcServiceBase<TGrpcClient> where TGrpcClient : ClientBas
             throw new GrpcException(host, e);
         }
     }
-    
+
     protected ConfiguredCancelableAsyncEnumerable<TResult> CallClientAsync<TResult>(
         Func<TGrpcClient, CancellationToken, ConfiguredCancelableAsyncEnumerable<TResult>> func,
         CancellationToken ct
     )
     {
         var client = grpcClientFactory.Create(host);
-        
+
         return func.Invoke(client.Value, ct);
     }
 }

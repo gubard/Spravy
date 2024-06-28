@@ -7,12 +7,14 @@ public interface INavigator
     ConfiguredValueTaskAwaitable<Result> NavigateToAsync<TViewModel>(
         TViewModel parameter,
         CancellationToken ct
-    ) where TViewModel : INavigatable;
+    )
+        where TViewModel : INavigatable;
 
     ConfiguredValueTaskAwaitable<Result> NavigateToAsync<TViewModel>(
         Action<TViewModel> setup,
         CancellationToken ct
-    ) where TViewModel : INavigatable;
+    )
+        where TViewModel : INavigatable;
 
     ConfiguredValueTaskAwaitable<Result> NavigateToAsync<TViewModel>(CancellationToken ct)
         where TViewModel : INavigatable;

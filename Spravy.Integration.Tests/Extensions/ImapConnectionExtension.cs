@@ -18,7 +18,10 @@ public static class ImapConnectionExtension
         }
     }
 
-    public static TValue Execute<TValue>(this ImapConnection connection, Func<ImapClient, TValue> action)
+    public static TValue Execute<TValue>(
+        this ImapConnection connection,
+        Func<ImapClient, TValue> action
+    )
     {
         using var client = new ImapClient();
 

@@ -1,9 +1,10 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class SearchToDoItemsViewModel : NavigatableViewModelBase,
-    IToDoItemUpdater,
-    IToDoSubItemsViewModelProperty,
-    IRefresh
+public class SearchToDoItemsViewModel
+    : NavigatableViewModelBase,
+        IToDoItemUpdater,
+        IToDoSubItemsViewModelProperty,
+        IRefresh
 {
     private readonly TaskWork refreshWork;
     private readonly IToDoService toDoService;
@@ -18,7 +19,8 @@ public class SearchToDoItemsViewModel : NavigatableViewModelBase,
         IObjectStorage objectStorage,
         IToDoCache toDoCache,
         ITaskProgressService taskProgressService
-    ) : base(true)
+    )
+        : base(true)
     {
         ToDoSubItemsViewModel = toDoSubItemsViewModel;
         this.toDoService = toDoService;
@@ -26,9 +28,9 @@ public class SearchToDoItemsViewModel : NavigatableViewModelBase,
         this.toDoCache = toDoCache;
         Commands = new();
 
-        ToDoSubItemsViewModel.List
-           .WhenAnyValue(x => x.IsMulti)
-           .Subscribe(x =>
+        ToDoSubItemsViewModel
+            .List.WhenAnyValue(x => x.IsMulti)
+            .Subscribe(x =>
             {
                 Commands.Clear();
 
@@ -39,7 +41,11 @@ public class SearchToDoItemsViewModel : NavigatableViewModelBase,
             });
 
         refreshWork = TaskWork.Create(errorHandler, RefreshCoreAsync);
-        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler, taskProgressService);
+        InitializedCommand = SpravyCommand.Create(
+            InitializedAsync,
+            errorHandler,
+            taskProgressService
+        );
     }
 
     public SpravyCommand InitializedCommand { get; }
@@ -61,16 +67,20 @@ public class SearchToDoItemsViewModel : NavigatableViewModelBase,
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
-        return objectStorage.GetObjectOrDefaultAsync<SearchViewModelSetting>(ViewId, ct)
-           .IfSuccessAsync(obj => SetStateAsync(obj, ct), ct);
+        return objectStorage
+            .GetObjectOrDefaultAsync<SearchViewModelSetting>(ViewId, ct)
+            .IfSuccessAsync(obj => SetStateAsync(obj, ct), ct);
     }
 
     private ConfiguredValueTaskAwaitable<Result> RefreshCoreAsync(CancellationToken ct)
     {
-        return toDoService.SearchToDoItemIdsAsync(SearchText, ct)
-           .IfSuccessForEachAsync(id => toDoCache.GetToDoItem(id), ct)
-           .IfSuccessAsync(ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), false, ct),
-                ct);
+        return toDoService
+            .SearchToDoItemIdsAsync(SearchText, ct)
+            .IfSuccessForEachAsync(id => toDoCache.GetToDoItem(id), ct)
+            .IfSuccessAsync(
+                ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), false, ct),
+                ct
+            );
     }
 
     public override Result Stop()
@@ -90,13 +100,18 @@ public class SearchToDoItemsViewModel : NavigatableViewModelBase,
         CancellationToken ct
     )
     {
-        return setting.CastObject<SearchViewModelSetting>()
-           .IfSuccessAsync(s => this.InvokeUiBackgroundAsync(() =>
-            {
-                SearchText = s.SearchText;
+        return setting
+            .CastObject<SearchViewModelSetting>()
+            .IfSuccessAsync(
+                s =>
+                    this.InvokeUiBackgroundAsync(() =>
+                    {
+                        SearchText = s.SearchText;
 
-                return Result.Success;
-            }), ct);
+                        return Result.Success;
+                    }),
+                ct
+            );
     }
 
     public Result UpdateInListToDoItemUi(ToDoItemEntityNotify item)
@@ -117,9 +132,7 @@ public class SearchToDoItemsViewModel : NavigatableViewModelBase,
             SearchText = toDoItemsViewModel.SearchText;
         }
 
-        public SearchViewModelSetting()
-        {
-        }
+        public SearchViewModelSetting() { }
 
         static SearchViewModelSetting()
         {

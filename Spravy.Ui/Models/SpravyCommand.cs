@@ -22,7 +22,10 @@ public class SpravyCommand
             await errorHandler.ExceptionHandleAsync(exception, CancellationToken.None);
         }
 
-        var work = TaskWork.Create(errorHandler, ct => taskProgressService.RunProgressAsync(func, ct));
+        var work = TaskWork.Create(
+            errorHandler,
+            ct => taskProgressService.RunProgressAsync(func, ct)
+        );
         var command = ReactiveCommand.CreateFromTask(() => work.RunAsync());
         command.ThrownExceptions.Subscribe(OnNextError);
 
@@ -40,7 +43,10 @@ public class SpravyCommand
             await errorHandler.ExceptionHandleAsync(exception, CancellationToken.None);
         }
 
-        var work = TaskWork.Create<TParam>(errorHandler, (param, ct) => taskProgressService.RunProgressAsync(func, param, ct));
+        var work = TaskWork.Create<TParam>(
+            errorHandler,
+            (param, ct) => taskProgressService.RunProgressAsync(func, param, ct)
+        );
         var command = ReactiveCommand.CreateFromTask<TParam>(work.RunAsync<TParam>);
         command.ThrownExceptions.Subscribe(OnNextError);
 

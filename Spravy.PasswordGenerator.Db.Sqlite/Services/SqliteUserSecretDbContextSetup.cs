@@ -21,7 +21,5 @@ public class SqliteUserSecretDbContextSetup : IDbContextSetup
         modelBuilder.ApplyConfiguration(new UserSecretEntityTypeConfiguration());
     }
 
-    public void OnConfiguring(DbContextOptionsBuilder builder)
-    {
-    }
+    public void OnConfiguring(DbContextOptionsBuilder builder) { }
 }

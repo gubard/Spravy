@@ -1,6 +1,7 @@
 namespace Spravy.Domain.Models;
 
-public class QueryList<T> where T : class
+public class QueryList<T>
+    where T : class
 {
     private readonly T?[] array;
     private readonly ulong size;

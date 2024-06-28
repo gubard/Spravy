@@ -15,8 +15,8 @@ using Spravy.Ui.Android.Services;
 using Spravy.Ui.Extensions;
 using Spravy.Ui.Interfaces;
 using Spravy.Ui.Modules;
-using Xamarin.Essentials;
 using Spravy.Ui.Services;
+using Xamarin.Essentials;
 
 namespace Spravy.Ui.Android.Modules;
 
@@ -37,12 +37,15 @@ public partial class AndroidServiceProvider : IServiceFactory
     {
         return application.GetTopLevel().ThrowIfNull();
     }
-    
-    static IObjectStorage SqliteObjectStorageFactory(StorageDbContext context, ProtobufSerializer serializer)
+
+    static IObjectStorage SqliteObjectStorageFactory(
+        StorageDbContext context,
+        ProtobufSerializer serializer
+    )
     {
         return new SqliteObjectStorage(context, serializer);
     }
-    
+
     static StorageDbContext StorageDbContextFactory(IDbContextSetup setup)
     {
         return new(setup);
@@ -52,28 +55,30 @@ public partial class AndroidServiceProvider : IServiceFactory
     {
         return DiHelper.ServiceFactory;
     }
-        
+
     public ClientOptions ClientOptionsFactory()
     {
         return new(true);
     }
-        
+
     public IConfiguration ConfigurationFactory()
     {
         using var stream = SpravyUiAndroidMark.GetResourceStream(FileNames.DefaultConfigFileName);
 
         return new ConfigurationBuilder().AddJsonStream(stream.ThrowIfNull()).Build();
     }
-        
+
     public IDbContextSetup DbContextSetupFactory()
     {
-        return new SqliteDbContextSetup(new[]
-        {
-            new StorageEntityTypeConfiguration(),
-        }, FileSystem.AppDataDirectory.ToDirectory().ToFile("storage.db"), true);
+        return new SqliteDbContextSetup(
+            new[] { new StorageEntityTypeConfiguration(), },
+            FileSystem.AppDataDirectory.ToDirectory().ToFile("storage.db"),
+            true
+        );
     }
 
-    public T CreateService<T>() where T : notnull
+    public T CreateService<T>()
+        where T : notnull
     {
         return GetService<T>();
     }

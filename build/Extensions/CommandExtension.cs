@@ -11,11 +11,12 @@ public static class CommandExtension
         var errorStringBuilder = new StringBuilder();
         var outputStringBuilder = new StringBuilder();
 
-        command.WithStandardErrorPipe(PipeTarget.ToStringBuilder(errorStringBuilder))
-           .WithStandardOutputPipe(PipeTarget.ToStringBuilder(outputStringBuilder))
-           .ExecuteAsync()
-           .GetAwaiter()
-           .GetResult();
+        command
+            .WithStandardErrorPipe(PipeTarget.ToStringBuilder(errorStringBuilder))
+            .WithStandardOutputPipe(PipeTarget.ToStringBuilder(outputStringBuilder))
+            .ExecuteAsync()
+            .GetAwaiter()
+            .GetResult();
 
         Log.Information("{Error}", errorStringBuilder.ToString());
         Log.Information("{Output}", outputStringBuilder.ToString());

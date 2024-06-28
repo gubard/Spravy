@@ -17,7 +17,8 @@ namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
                 nullable: false,
                 defaultValue: "",
                 oldClrType: typeof(string),
-                oldType: "TEXT");
+                oldType: "TEXT"
+            );
         }
 
         /// <inheritdoc />
@@ -30,7 +31,8 @@ namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
                 nullable: false,
                 oldClrType: typeof(string),
                 oldType: "TEXT",
-                oldDefaultValue: "");
+                oldDefaultValue: ""
+            );
         }
     }
 }

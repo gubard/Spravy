@@ -1,6 +1,9 @@
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
-public class TodayToDoItemsViewModel : NavigatableViewModelBase, IRefresh, IToDoSubItemsViewModelProperty
+public class TodayToDoItemsViewModel
+    : NavigatableViewModelBase,
+        IRefresh,
+        IToDoSubItemsViewModelProperty
 {
     private readonly IToDoService toDoService;
     private readonly IToDoCache toDoCache;
@@ -12,17 +15,22 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IRefresh, IToDo
         IToDoCache toDoCache,
         SpravyCommandNotifyService spravyCommandNotifyService,
         ITaskProgressService taskProgressService
-    ) : base(true)
+    )
+        : base(true)
     {
         Commands = new();
         ToDoSubItemsViewModel = toDoSubItemsViewModel;
         this.toDoService = toDoService;
         this.toDoCache = toDoCache;
-        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler, taskProgressService);
+        InitializedCommand = SpravyCommand.Create(
+            InitializedAsync,
+            errorHandler,
+            taskProgressService
+        );
 
-        ToDoSubItemsViewModel.List
-           .WhenAnyValue(x => x.IsMulti)
-           .Subscribe(x =>
+        ToDoSubItemsViewModel
+            .List.WhenAnyValue(x => x.IsMulti)
+            .Subscribe(x =>
             {
                 Commands.Clear();
 
@@ -44,10 +52,13 @@ public class TodayToDoItemsViewModel : NavigatableViewModelBase, IRefresh, IToDo
 
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken ct)
     {
-        return toDoService.GetTodayToDoItemsAsync(ct)
-           .IfSuccessForEachAsync(id => toDoCache.GetToDoItem(id), ct)
-           .IfSuccessAsync(ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), false, ct),
-                ct);
+        return toDoService
+            .GetTodayToDoItemsAsync(ct)
+            .IfSuccessForEachAsync(id => toDoCache.GetToDoItem(id), ct)
+            .IfSuccessAsync(
+                ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), false, ct),
+                ct
+            );
     }
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)

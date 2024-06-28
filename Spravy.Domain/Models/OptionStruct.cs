@@ -1,6 +1,7 @@
 namespace Spravy.Domain.Models;
 
-public readonly struct OptionStruct<TValue> where TValue : struct
+public readonly struct OptionStruct<TValue>
+    where TValue : struct
 {
     private readonly TValue value;
 
@@ -28,7 +29,7 @@ public readonly struct OptionStruct<TValue> where TValue : struct
 
         return IsHasValue;
     }
-    
+
     public TValue? GetValueOrNull()
     {
         if (IsHasValue)

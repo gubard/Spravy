@@ -8,24 +8,23 @@ public class TestAppBuilder
 
     static TestAppBuilder()
     {
-        Configuration = new ConfigurationBuilder().AddJsonFile("testsettings.json")
-           .AddEnvironmentVariables("Spravy_")
-           .AddCommandLine(Environment.GetCommandLineArgs())
-           .Build();
+        Configuration = new ConfigurationBuilder()
+            .AddJsonFile("testsettings.json")
+            .AddEnvironmentVariables("Spravy_")
+            .AddCommandLine(Environment.GetCommandLineArgs())
+            .Build();
     }
 
     public static AppBuilder BuildAvaloniaApp()
     {
         DiHelper.ServiceFactory = new TestServiceProvider();
 
-        return AppBuilder.Configure<App>()
-           .UseReactiveUI()
-           .UseSkia()
-           .UseHeadless(new()
-            {
-                UseHeadlessDrawing = false,
-            })
-           .WithShantellSansFont()
-           .WithInterFont();
+        return AppBuilder
+            .Configure<App>()
+            .UseReactiveUI()
+            .UseSkia()
+            .UseHeadless(new() { UseHeadlessDrawing = false, })
+            .WithShantellSansFont()
+            .WithInterFont();
     }
 }

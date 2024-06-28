@@ -18,8 +18,9 @@ public class TokenService : ITokenService
     {
         this.tokenFactory = tokenFactory;
 
-        token = tokenFactory.Create(new("authentication.service", Guid.Empty, Role.Service, string.Empty))
-           .ThrowIfError();
+        token = tokenFactory
+            .Create(new("authentication.service", Guid.Empty, Role.Service, string.Empty))
+            .ThrowIfError();
     }
 
     public ConfiguredValueTaskAwaitable<Result<string>> GetTokenAsync(CancellationToken ct)
@@ -33,13 +34,19 @@ public class TokenService : ITokenService
             return new Result<string>(token.Token).ToValueTaskResult().ConfigureAwait(false);
         }
 
-        return tokenFactory.Create(new("authentication.service", Guid.Empty, Role.Service, string.Empty))
-           .IfSuccessAsync(t =>
-            {
-                token = t;
+        return tokenFactory
+            .Create(new("authentication.service", Guid.Empty, Role.Service, string.Empty))
+            .IfSuccessAsync(
+                t =>
+                {
+                    token = t;
 
-                return new Result<string>(token.Token).ToValueTaskResult().ConfigureAwait(false);
-            }, ct);
+                    return new Result<string>(token.Token)
+                        .ToValueTaskResult()
+                        .ConfigureAwait(false);
+                },
+                ct
+            );
     }
 
     public ConfiguredValueTaskAwaitable<Result> LoginAsync(User user, CancellationToken ct)
@@ -47,7 +54,10 @@ public class TokenService : ITokenService
         throw new NotSupportedException();
     }
 
-    public ConfiguredValueTaskAwaitable<Result> LoginAsync(string refreshToken, CancellationToken ct)
+    public ConfiguredValueTaskAwaitable<Result> LoginAsync(
+        string refreshToken,
+        CancellationToken ct
+    )
     {
         throw new NotSupportedException();
     }

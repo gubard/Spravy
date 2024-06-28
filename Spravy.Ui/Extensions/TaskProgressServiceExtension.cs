@@ -7,29 +7,39 @@ public static class TaskProgressServiceExtension
         ushort impact,
         Func<TaskProgressItem, ConfiguredValueTaskAwaitable<Result>> func,
         CancellationToken ct
-    ) where TTaskProgressServiceProperty : ITaskProgressService
+    )
+        where TTaskProgressServiceProperty : ITaskProgressService
     {
-        return property.AddItemAsync(impact).IfSuccessTryFinallyAsync(func, item => item.Finish(), ct);
+        return property
+            .AddItemAsync(impact)
+            .IfSuccessTryFinallyAsync(func, item => item.Finish(), ct);
     }
-    
+
     public static ConfiguredValueTaskAwaitable<Result> RunProgressAsync<TTaskProgressServiceProperty>(
         this TTaskProgressServiceProperty property,
         Func<CancellationToken, ConfiguredValueTaskAwaitable<Result>> func,
         CancellationToken ct
-    ) where TTaskProgressServiceProperty : ITaskProgressService
+    )
+        where TTaskProgressServiceProperty : ITaskProgressService
     {
-        return property.AddItemAsync(1)
-           .IfSuccessTryFinallyAsync(_ => func.Invoke(ct), item => item.Finish(), ct);
+        return property
+            .AddItemAsync(1)
+            .IfSuccessTryFinallyAsync(_ => func.Invoke(ct), item => item.Finish(), ct);
     }
-    
-    public static ConfiguredValueTaskAwaitable<Result> RunProgressAsync<TTaskProgressServiceProperty, TParam>(
+
+    public static ConfiguredValueTaskAwaitable<Result> RunProgressAsync<
+        TTaskProgressServiceProperty,
+        TParam
+    >(
         this TTaskProgressServiceProperty property,
         Func<TParam, CancellationToken, ConfiguredValueTaskAwaitable<Result>> func,
         TParam param,
         CancellationToken ct
-    ) where TTaskProgressServiceProperty : ITaskProgressService
+    )
+        where TTaskProgressServiceProperty : ITaskProgressService
     {
-        return property.AddItemAsync(1)
-           .IfSuccessTryFinallyAsync(_ => func.Invoke(param, ct), item => item.Finish(), ct);
+        return property
+            .AddItemAsync(1)
+            .IfSuccessTryFinallyAsync(_ => func.Invoke(param, ct), item => item.Finish(), ct);
     }
 }

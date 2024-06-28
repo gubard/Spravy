@@ -180,18 +180,18 @@ public interface IUiModule
     {
         return SukiTheme.GetInstance();
     }
-    
+
     static IClipboard ClipboardFactory(TopLevel topLevel)
     {
         return topLevel.Clipboard.ThrowIfNull();
     }
 
-    static IEnumerable<IDataTemplate> DataTemplatesFactory(IViewSelector viewSelector, IServiceFactory serviceFactory)
+    static IEnumerable<IDataTemplate> DataTemplatesFactory(
+        IViewSelector viewSelector,
+        IServiceFactory serviceFactory
+    )
     {
-        return new[]
-        {
-            new ModuleDataTemplate(viewSelector, serviceFactory),
-        };
+        return new[] { new ModuleDataTemplate(viewSelector, serviceFactory), };
     }
 
     static Application ApplicationFactory()
@@ -199,7 +199,10 @@ public interface IUiModule
         return Application.Current.ThrowIfNull(nameof(Application));
     }
 
-    static IHttpHeaderFactory HttpHeaderFactoryFactory(TokenHttpHeaderFactory token, TimeZoneHttpHeaderFactory timeZone)
+    static IHttpHeaderFactory HttpHeaderFactoryFactory(
+        TokenHttpHeaderFactory token,
+        TimeZoneHttpHeaderFactory timeZone
+    )
     {
         return new CombineHttpHeaderFactory(token, timeZone);
     }

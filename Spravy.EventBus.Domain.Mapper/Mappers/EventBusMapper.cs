@@ -10,8 +10,11 @@ namespace Spravy.EventBus.Domain.Mapper.Mappers;
 public static partial class EventBusMapper
 {
     public static partial ReadOnlyMemory<Event> ToEvent(this ReadOnlyMemory<EventValue> value);
+
     public static partial ReadOnlyMemory<EventValue> ToEventValue(this IEnumerable<Event> value);
+
     public static partial Event ToEvent(this EventValue value);
+
     public static partial SubscribeEventsReply ToSubscribeEventsReply(this EventValue value);
 
     public static EventValue ToEventValue(this SubscribeEventsReply value)

@@ -19,8 +19,11 @@ public class SpravyScheduleDbContextFactory : IFactory<string, SpravyDbScheduleD
     public Result<SpravyDbScheduleDbContext> Create(string key)
     {
         var options = new DbContextOptionsBuilder()
-           .UseSqlite(key, b => b.MigrationsAssembly(SpravyScheduleDbSqliteMigratorMark.AssemblyFullName))
-           .Options;
+            .UseSqlite(
+                key,
+                b => b.MigrationsAssembly(SpravyScheduleDbSqliteMigratorMark.AssemblyFullName)
+            )
+            .Options;
 
         return new SpravyDbScheduleDbContext(options, dbContextSetup).ToResult();
     }

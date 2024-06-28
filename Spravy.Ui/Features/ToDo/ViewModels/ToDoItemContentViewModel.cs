@@ -2,9 +2,8 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class ToDoItemContentViewModel : NavigatableViewModelBase
 {
-    public ToDoItemContentViewModel() : base(true)
-    {
-    }
+    public ToDoItemContentViewModel()
+        : base(true) { }
 
     [Reactive]
     public string Name { get; set; } = string.Empty;

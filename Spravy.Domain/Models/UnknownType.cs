@@ -1,5 +1,3 @@
 namespace Spravy.Domain.Models;
 
-public readonly struct UnknownType
-{
-}
+public readonly struct UnknownType { }

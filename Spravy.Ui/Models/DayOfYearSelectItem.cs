@@ -6,11 +6,9 @@ public class DayOfYearSelectItem : NotifyBase
 
     public DayOfYearSelectItem()
     {
-        Days = new(Enumerable.Range(1, 31)
-           .Select(x => new DayOfMonthSelectItem
-            {
-                Day = (byte)x,
-            }));
+        Days = new(
+            Enumerable.Range(1, 31).Select(x => new DayOfMonthSelectItem { Day = (byte)x, })
+        );
     }
 
     public byte Month

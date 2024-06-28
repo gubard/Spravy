@@ -7,7 +7,9 @@ public static class DelegateExtension
     static DelegateExtension()
     {
         var delegateType = typeof(Delegate);
-        DelegateInvokeDynamicType = delegateType.GetMethod(nameof(Delegate.DynamicInvoke)).ThrowIfNull();
+        DelegateInvokeDynamicType = delegateType
+            .GetMethod(nameof(Delegate.DynamicInvoke))
+            .ThrowIfNull();
     }
 
     public static Type[] GetParameterTypes(this Delegate del)
@@ -25,7 +27,9 @@ public static class DelegateExtension
             var args = arguments.Where(x => !x.Type.IsClosure());
             var parameters = typeof(object).ToNewArrayInit(args);
 
-            return DelegateInvokeDynamicType.ToCall(del.ToConstant(), parameters).ToConvert(del.Method.ReturnType);
+            return DelegateInvokeDynamicType
+                .ToCall(del.ToConstant(), parameters)
+                .ToConvert(del.Method.ReturnType);
         }
 
         return del.Method.ToCall(instance, arguments);

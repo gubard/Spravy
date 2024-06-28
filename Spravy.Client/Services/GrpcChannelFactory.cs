@@ -5,7 +5,10 @@ public class GrpcChannelFactory : IFactory<Uri, GrpcChannel>
     private readonly ChannelCredentials channelCredentials;
     private readonly GrpcChannelType grpcChannelType;
 
-    public GrpcChannelFactory(GrpcChannelType grpcChannelType, ChannelCredentials channelCredentials)
+    public GrpcChannelFactory(
+        GrpcChannelType grpcChannelType,
+        ChannelCredentials channelCredentials
+    )
     {
         this.grpcChannelType = grpcChannelType;
         this.channelCredentials = channelCredentials;
@@ -15,7 +18,8 @@ public class GrpcChannelFactory : IFactory<Uri, GrpcChannel>
     {
         switch (grpcChannelType)
         {
-            case GrpcChannelType.Default: return GrpcChannel.ForAddress(key).ToResult();
+            case GrpcChannelType.Default:
+                return GrpcChannel.ForAddress(key).ToResult();
             case GrpcChannelType.GrpcWeb:
             {
                 var httpClientHandler = new HttpClientHandler();
@@ -42,7 +46,12 @@ public class GrpcChannelFactory : IFactory<Uri, GrpcChannel>
 
                 return GrpcChannel.ForAddress(key, grpcChannelOptions).ToResult();
             }
-            default: throw new ArgumentOutOfRangeException(nameof(grpcChannelType), grpcChannelType, null);
+            default:
+                throw new ArgumentOutOfRangeException(
+                    nameof(grpcChannelType),
+                    grpcChannelType,
+                    null
+                );
         }
     }
 }

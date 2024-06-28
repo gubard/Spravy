@@ -6,17 +6,22 @@ public static class ObjectStorageExtension
         this IObjectStorage objectStorage,
         string id,
         CancellationToken ct
-    ) where TObject : IViewModelSetting<TObject>
+    )
+        where TObject : IViewModelSetting<TObject>
     {
-        return objectStorage.IsExistsAsync(id, ct)
-           .IfSuccessAsync(value =>
-            {
-                if (value)
+        return objectStorage
+            .IsExistsAsync(id, ct)
+            .IfSuccessAsync(
+                value =>
                 {
-                    return objectStorage.GetObjectAsync<TObject>(id, ct);
-                }
+                    if (value)
+                    {
+                        return objectStorage.GetObjectAsync<TObject>(id, ct);
+                    }
 
-                return TObject.Default.ToResult().ToValueTaskResult().ConfigureAwait(false);
-            }, ct);
+                    return TObject.Default.ToResult().ToValueTaskResult().ConfigureAwait(false);
+                },
+                ct
+            );
     }
 }

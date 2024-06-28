@@ -13,36 +13,41 @@ public class ToDoItemsGroupByViewModel : ViewModelBase
         GroupByNone = groupByNone;
         GroupByStatus = groupByStatus;
         GroupByType = groupByType;
-        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler, taskProgressService);
-        
-        this.WhenAnyValue(x => x.IsMulti).Subscribe(x =>
-        {
-            GroupByNone.IsMulti = x;
-            GroupByStatus.IsMulti = x;
-            GroupByType.IsMulti = x;
-        });
+        InitializedCommand = SpravyCommand.Create(
+            InitializedAsync,
+            errorHandler,
+            taskProgressService
+        );
+
+        this.WhenAnyValue(x => x.IsMulti)
+            .Subscribe(x =>
+            {
+                GroupByNone.IsMulti = x;
+                GroupByStatus.IsMulti = x;
+                GroupByType.IsMulti = x;
+            });
     }
-    
+
     public SpravyCommand InitializedCommand { get; }
     public ToDoItemsGroupByNoneViewModel GroupByNone { get; }
     public ToDoItemsGroupByStatusViewModel GroupByStatus { get; }
     public ToDoItemsGroupByTypeViewModel GroupByType { get; }
-    
+
     [Reactive]
     public bool IsMulti { get; set; }
-    
+
     [Reactive]
     public GroupBy GroupBy { get; set; } = GroupBy.ByStatus;
-    
+
     [Reactive]
     public object? Content { get; set; }
-    
+
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
         Content = GroupByStatus;
-        
+
         this.WhenAnyValue(x => x.GroupBy)
-           .Subscribe(x =>
+            .Subscribe(x =>
             {
                 Content = x switch
                 {
@@ -52,21 +57,23 @@ public class ToDoItemsGroupByViewModel : ViewModelBase
                     _ => throw new ArgumentOutOfRangeException(nameof(x), x, null),
                 };
             });
-        
+
         return Result.AwaitableSuccess;
     }
-    
+
     public Result ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> ids)
     {
-        return GroupByNone.ClearExceptUi(ids)
-           .IfSuccess(() => GroupByStatus.ClearExceptUi(ids))
-           .IfSuccess(() => GroupByType.ClearExceptUi(ids));
+        return GroupByNone
+            .ClearExceptUi(ids)
+            .IfSuccess(() => GroupByStatus.ClearExceptUi(ids))
+            .IfSuccess(() => GroupByType.ClearExceptUi(ids));
     }
-    
+
     public Result UpdateItemUi(ToDoItemEntityNotify item)
     {
-        return GroupByNone.UpdateItemUi(item)
-           .IfSuccess(() => GroupByStatus.UpdateItemUi(item))
-           .IfSuccess(() => GroupByType.UpdateItemUi(item));
+        return GroupByNone
+            .UpdateItemUi(item)
+            .IfSuccess(() => GroupByStatus.UpdateItemUi(item))
+            .IfSuccess(() => GroupByType.UpdateItemUi(item));
     }
 }

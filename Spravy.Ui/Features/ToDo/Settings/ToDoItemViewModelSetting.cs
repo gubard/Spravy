@@ -8,24 +8,19 @@ public class ToDoItemViewModelSetting : IViewModelSetting<ToDoItemViewModelSetti
         GroupBy = viewModel.ToDoSubItemsViewModel.List.GroupBy;
         IsMulti = viewModel.ToDoSubItemsViewModel.List.IsMulti;
     }
-    
-    public ToDoItemViewModelSetting()
-    {
-    }
-    
+
+    public ToDoItemViewModelSetting() { }
+
     static ToDoItemViewModelSetting()
     {
-        Default = new()
-        {
-            GroupBy = GroupBy.ByStatus,
-        };
+        Default = new() { GroupBy = GroupBy.ByStatus, };
     }
-    
+
     [ProtoMember(1)]
     public GroupBy GroupBy { get; set; }
-    
+
     [ProtoMember(2)]
     public bool IsMulti { get; set; }
-    
+
     public static ToDoItemViewModelSetting Default { get; }
 }

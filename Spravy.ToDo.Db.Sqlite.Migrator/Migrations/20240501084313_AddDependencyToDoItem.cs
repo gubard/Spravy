@@ -27,31 +27,35 @@ namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
                         column: x => x.DependencyToDoItemId,
                         principalTable: "ToDoItem",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Cascade
+                    );
                     table.ForeignKey(
                         name: "FK_DependencyToDoItem_ToDoItem_ToDoItemId",
                         column: x => x.ToDoItemId,
                         principalTable: "ToDoItem",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
+                        onDelete: ReferentialAction.Cascade
+                    );
+                }
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_DependencyToDoItem_DependencyToDoItemId",
                 table: "DependencyToDoItem",
-                column: "DependencyToDoItemId");
+                column: "DependencyToDoItemId"
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_DependencyToDoItem_ToDoItemId",
                 table: "DependencyToDoItem",
-                column: "ToDoItemId");
+                column: "ToDoItemId"
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "DependencyToDoItem");
+            migrationBuilder.DropTable(name: "DependencyToDoItem");
         }
     }
 }

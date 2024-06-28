@@ -36,10 +36,20 @@ public static class ServiceCollectionExtension
 {
     public static IServiceCollection RegisterRouter(this IServiceCollection serviceCollection)
     {
-        serviceCollection.AddGrpcServiceAuth<GrpcToDoService, ToDoService.ToDoServiceClient, GrpcToDoServiceOptions>();
-        serviceCollection.AddTransient<IEventBusService>(sp => sp.GetRequiredService<GrpcEventBusService>());
-        serviceCollection.AddTransient<IScheduleService>(sp => sp.GetRequiredService<GrpcScheduleService>());
-        serviceCollection.AddTransient<IToDoService>(sp => sp.GetRequiredService<GrpcToDoService>());
+        serviceCollection.AddGrpcServiceAuth<
+            GrpcToDoService,
+            ToDoService.ToDoServiceClient,
+            GrpcToDoServiceOptions
+        >();
+        serviceCollection.AddTransient<IEventBusService>(sp =>
+            sp.GetRequiredService<GrpcEventBusService>()
+        );
+        serviceCollection.AddTransient<IScheduleService>(sp =>
+            sp.GetRequiredService<GrpcScheduleService>()
+        );
+        serviceCollection.AddTransient<IToDoService>(sp =>
+            sp.GetRequiredService<GrpcToDoService>()
+        );
         serviceCollection.AddTransient<IRpcExceptionHandler, RpcExceptionHandler>();
         serviceCollection.AddTransient<ITokenService, TokenService>();
         serviceCollection.AddTransient<IMetadataFactory, MetadataFactory>();
@@ -49,25 +59,33 @@ public static class ServiceCollectionExtension
         serviceCollection.AddTransient<ISerializer, SpravyJsonSerializer>();
         serviceCollection.AddTransient<JsonSerializerContext, SpravyJsonSerializerContext>();
 
-        serviceCollection
-           .AddGrpcService<GrpcAuthenticationService, AuthenticationService.AuthenticationServiceClient,
-                GrpcAuthenticationServiceOptions>();
+        serviceCollection.AddGrpcService<
+            GrpcAuthenticationService,
+            AuthenticationService.AuthenticationServiceClient,
+            GrpcAuthenticationServiceOptions
+        >();
 
-        serviceCollection
-           .AddGrpcServiceAuth<GrpcEventBusService, Protos_EventBusService.EventBusServiceClient,
-                GrpcEventBusServiceOptions>();
+        serviceCollection.AddGrpcServiceAuth<
+            GrpcEventBusService,
+            Protos_EventBusService.EventBusServiceClient,
+            GrpcEventBusServiceOptions
+        >();
 
-        serviceCollection
-           .AddGrpcServiceAuth<GrpcScheduleService, ScheduleService.ScheduleServiceClient,
-                GrpcScheduleServiceOptions>();
+        serviceCollection.AddGrpcServiceAuth<
+            GrpcScheduleService,
+            ScheduleService.ScheduleServiceClient,
+            GrpcScheduleServiceOptions
+        >();
 
         serviceCollection.AddTransient<IAuthenticationService>(sp =>
-            sp.GetRequiredService<GrpcAuthenticationService>());
+            sp.GetRequiredService<GrpcAuthenticationService>()
+        );
 
-        serviceCollection.AddTransient<IHttpHeaderFactory>(sp =>
-            new CombineHttpHeaderFactory(sp.GetRequiredService<ContextAccessorUserIdHttpHeaderFactory>(),
-                sp.GetRequiredService<ContextAccessorAuthorizationHttpHeaderFactory>(),
-                sp.GetRequiredService<ContextTimeZoneOffsetHttpHeaderFactory>()));
+        serviceCollection.AddTransient<IHttpHeaderFactory>(sp => new CombineHttpHeaderFactory(
+            sp.GetRequiredService<ContextAccessorUserIdHttpHeaderFactory>(),
+            sp.GetRequiredService<ContextAccessorAuthorizationHttpHeaderFactory>(),
+            sp.GetRequiredService<ContextTimeZoneOffsetHttpHeaderFactory>()
+        ));
 
         return serviceCollection;
     }

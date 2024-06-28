@@ -14,10 +14,23 @@ public class DateTimeOffsetToDateOnlyValueConverter : IValueConverter
             return DateTimeOffset.MinValue;
         }
 
-        return new DateTimeOffset(dateOnly.Year, dateOnly.Month, dateOnly.Day, 0, 0, 0, DateTimeOffset.Now.Offset);
+        return new DateTimeOffset(
+            dateOnly.Year,
+            dateOnly.Month,
+            dateOnly.Day,
+            0,
+            0,
+            0,
+            DateTimeOffset.Now.Offset
+        );
     }
 
-    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    public object? ConvertBack(
+        object? value,
+        Type targetType,
+        object? parameter,
+        CultureInfo culture
+    )
     {
         if (value is not DateTimeOffset dateTimeOffset)
         {

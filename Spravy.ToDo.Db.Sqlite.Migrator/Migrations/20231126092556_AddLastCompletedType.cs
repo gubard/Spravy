@@ -14,15 +14,14 @@ namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
                 name: "LastCompletedType",
                 table: "ToDoItem",
                 type: "INTEGER",
-                nullable: true);
+                nullable: true
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "LastCompletedType",
-                table: "ToDoItem");
+            migrationBuilder.DropColumn(name: "LastCompletedType", table: "ToDoItem");
         }
     }
 }

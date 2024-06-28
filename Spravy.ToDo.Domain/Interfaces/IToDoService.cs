@@ -8,7 +8,10 @@ namespace Spravy.ToDo.Domain.Interfaces;
 
 public interface IToDoService
 {
-    ConfiguredValueTaskAwaitable<Result> RandomizeChildrenOrderIndexAsync(Guid id, CancellationToken ct);
+    ConfiguredValueTaskAwaitable<Result> RandomizeChildrenOrderIndexAsync(
+        Guid id,
+        CancellationToken ct
+    );
     ConfiguredValueTaskAwaitable<Result> DeleteToDoItemAsync(Guid id, CancellationToken ct);
     ConfiguredValueTaskAwaitable<Result> AddFavoriteToDoItemAsync(Guid id, CancellationToken ct);
     ConfiguredValueTaskAwaitable<Result> RemoveFavoriteToDoItemAsync(Guid id, CancellationToken ct);
@@ -20,10 +23,9 @@ public interface IToDoService
         CancellationToken ct
     );
 
-    ConfiguredValueTaskAwaitable<Result<ReferenceToDoItemSettings>> GetReferenceToDoItemSettingsAsync(
-        Guid id,
-        CancellationToken ct
-    );
+    ConfiguredValueTaskAwaitable<
+        Result<ReferenceToDoItemSettings>
+    > GetReferenceToDoItemSettingsAsync(Guid id, CancellationToken ct);
 
     ConfiguredValueTaskAwaitable<Result> UpdateReferenceToDoItemAsync(
         Guid id,
@@ -84,9 +86,9 @@ public interface IToDoService
         CancellationToken ct
     );
 
-    ConfiguredValueTaskAwaitable<Result<OptionStruct<ActiveToDoItem>>> GetCurrentActiveToDoItemAsync(
-        CancellationToken ct
-    );
+    ConfiguredValueTaskAwaitable<
+        Result<OptionStruct<ActiveToDoItem>>
+    > GetCurrentActiveToDoItemAsync(CancellationToken ct);
 
     ConfiguredValueTaskAwaitable<Result<PlannedToDoItemSettings>> GetPlannedToDoItemSettingsAsync(
         Guid id,
@@ -195,15 +197,13 @@ public interface IToDoService
         CancellationToken ct
     );
 
-    ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoShortItem>>> GetChildrenToDoItemShortsAsync(
-        Guid id,
-        CancellationToken ct
-    );
+    ConfiguredValueTaskAwaitable<
+        Result<ReadOnlyMemory<ToDoShortItem>>
+    > GetChildrenToDoItemShortsAsync(Guid id, CancellationToken ct);
 
-    ConfiguredValueTaskAwaitable<Result<PeriodicityToDoItemSettings>> GetPeriodicityToDoItemSettingsAsync(
-        Guid id,
-        CancellationToken ct
-    );
+    ConfiguredValueTaskAwaitable<
+        Result<PeriodicityToDoItemSettings>
+    > GetPeriodicityToDoItemSettingsAsync(Guid id, CancellationToken ct);
 
     ConfiguredValueTaskAwaitable<Result> UpdateToDoItemTypeOfPeriodicityAsync(
         Guid id,
@@ -246,15 +246,13 @@ public interface IToDoService
         CancellationToken ct
     );
 
-    ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoSelectorItem>>> GetToDoSelectorItemsAsync(
-        ReadOnlyMemory<Guid> ignoreIds,
-        CancellationToken ct
-    );
+    ConfiguredValueTaskAwaitable<
+        Result<ReadOnlyMemory<ToDoSelectorItem>>
+    > GetToDoSelectorItemsAsync(ReadOnlyMemory<Guid> ignoreIds, CancellationToken ct);
 
-    ConfiguredValueTaskAwaitable<Result<PeriodicityOffsetToDoItemSettings>> GetPeriodicityOffsetToDoItemSettingsAsync(
-        Guid id,
-        CancellationToken ct
-    );
+    ConfiguredValueTaskAwaitable<
+        Result<PeriodicityOffsetToDoItemSettings>
+    > GetPeriodicityOffsetToDoItemSettingsAsync(Guid id, CancellationToken ct);
 
     ConfiguredCancelableAsyncEnumerable<Result<ReadOnlyMemory<ToDoItem>>> GetToDoItemsAsync(
         ReadOnlyMemory<Guid> ids,

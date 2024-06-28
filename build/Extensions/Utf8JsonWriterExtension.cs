@@ -7,7 +7,11 @@ namespace _build.Extensions;
 
 public static class Utf8JsonWriterExtension
 {
-    public static void AddObject(this Utf8JsonWriter writer, string name, Action<Utf8JsonWriter> setup)
+    public static void AddObject(
+        this Utf8JsonWriter writer,
+        string name,
+        Action<Utf8JsonWriter> setup
+    )
     {
         writer.WritePropertyName(name);
         writer.WriteStartObject();
@@ -29,40 +33,64 @@ public static class Utf8JsonWriterExtension
         writer.WriteStringValue(value);
     }
 
-    public static bool SetKestrel(this Utf8JsonWriter writer, JsonProperty property, uint port, string domain)
+    public static bool SetKestrel(
+        this Utf8JsonWriter writer,
+        JsonProperty property,
+        uint port,
+        string domain
+    )
     {
         if (property.Name != "Kestrel")
         {
             return false;
         }
 
-        writer.AddObject(property.Name, () =>
-        {
-            writer.AddObject("EndPoints", () => writer.AddObject("HttpsInlineCertAndKeyFile", () =>
+        writer.AddObject(
+            property.Name,
+            () =>
             {
-                writer.AddStringValue("Url", $"https://0.0.0.0:{port}");
-                Log.Information("Added Url: https://0.0.0.0:{Port}", port);
+                writer.AddObject(
+                    "EndPoints",
+                    () =>
+                        writer.AddObject(
+                            "HttpsInlineCertAndKeyFile",
+                            () =>
+                            {
+                                writer.AddStringValue("Url", $"https://0.0.0.0:{port}");
+                                Log.Information("Added Url: https://0.0.0.0:{Port}", port);
 
-                writer.AddObject("Certificate", () =>
+                                writer.AddObject(
+                                    "Certificate",
+                                    () =>
+                                    {
+                                        writer.AddStringValue(
+                                            "Path",
+                                            $"/etc/letsencrypt/live/{domain}/fullchain.pem"
+                                        );
+                                        writer.AddStringValue(
+                                            "KeyPath",
+                                            $"/etc/letsencrypt/live/{domain}/privkey.pem"
+                                        );
+                                    }
+                                );
+
+                                Log.Information("Added Certificate");
+                            }
+                        )
+                );
+
+                foreach (var obj in property.Value.EnumerateObject())
                 {
-                    writer.AddStringValue("Path", $"/etc/letsencrypt/live/{domain}/fullchain.pem");
-                    writer.AddStringValue("KeyPath", $"/etc/letsencrypt/live/{domain}/privkey.pem");
-                });
+                    if (obj.Name == "EndPoints")
+                    {
+                        continue;
+                    }
 
-                Log.Information("Added Certificate");
-            }));
-
-            foreach (var obj in property.Value.EnumerateObject())
-            {
-                if (obj.Name == "EndPoints")
-                {
-                    continue;
+                    Log.Information("Added {Object}", obj.Name);
+                    obj.WriteTo(writer);
                 }
-
-                Log.Information("Added {Object}", obj.Name);
-                obj.WriteTo(writer);
             }
-        });
+        );
 
         return true;
     }
@@ -80,31 +108,34 @@ public static class Utf8JsonWriterExtension
             return false;
         }
 
-        writer.AddObject(property.Name, () =>
-        {
-            foreach (var obj in property.Value.EnumerateObject())
+        writer.AddObject(
+            property.Name,
+            () =>
             {
-                switch (obj.Name)
+                foreach (var obj in property.Value.EnumerateObject())
                 {
-                    case "Host":
-                        writer.AddStringValue("Host", $"https://{domain}:{port}");
+                    switch (obj.Name)
+                    {
+                        case "Host":
+                            writer.AddStringValue("Host", $"https://{domain}:{port}");
 
-                        break;
-                    case "Token":
-                        writer.AddStringValue("Token", token);
+                            break;
+                        case "Token":
+                            writer.AddStringValue("Token", token);
 
-                        break;
-                    case "ChannelCredentialType":
-                        writer.AddStringValue("ChannelCredentialType", "SecureSsl");
+                            break;
+                        case "ChannelCredentialType":
+                            writer.AddStringValue("ChannelCredentialType", "SecureSsl");
 
-                        break;
-                    default:
-                        obj.WriteTo(writer);
+                            break;
+                        default:
+                            obj.WriteTo(writer);
 
-                        break;
+                            break;
+                    }
                 }
             }
-        });
+        );
 
         Log.Information("Setup service {ServiceName}", property.Name);
         Log.Information("Set host {Domain}", domain);
@@ -112,27 +143,34 @@ public static class Utf8JsonWriterExtension
         return true;
     }
 
-    public static bool SetEmailService(this Utf8JsonWriter writer, JsonProperty property, string password)
+    public static bool SetEmailService(
+        this Utf8JsonWriter writer,
+        JsonProperty property,
+        string password
+    )
     {
         if (property.Name != "EmailService")
         {
             return false;
         }
 
-        writer.AddObject(property.Name, w =>
-        {
-            foreach (var p in property.Value.EnumerateObject())
+        writer.AddObject(
+            property.Name,
+            w =>
             {
-                if (p.Name == "Password")
+                foreach (var p in property.Value.EnumerateObject())
                 {
-                    w.AddStringValue("Password", password);
-                }
-                else
-                {
-                    p.WriteTo(w);
+                    if (p.Name == "Password")
+                    {
+                        w.AddStringValue("Password", password);
+                    }
+                    else
+                    {
+                        p.WriteTo(w);
+                    }
                 }
             }
-        });
+        );
 
         return true;
     }
@@ -157,24 +195,33 @@ public static class Utf8JsonWriterExtension
             return false;
         }
 
-        writer.AddObject("Serilog", () =>
-        {
-            foreach (var ser in property.Value.EnumerateObject())
+        writer.AddObject(
+            "Serilog",
+            () =>
             {
-                if (ser.Name == "MinimumLevel")
+                foreach (var ser in property.Value.EnumerateObject())
                 {
-                    writer.AddObject("MinimumLevel", () =>
+                    if (ser.Name == "MinimumLevel")
                     {
-                        writer.AddStringValue("Default", "Information");
-                        writer.AddObject("Override", () => writer.AddStringValue("Microsoft", "Information"));
-                    });
+                        writer.AddObject(
+                            "MinimumLevel",
+                            () =>
+                            {
+                                writer.AddStringValue("Default", "Information");
+                                writer.AddObject(
+                                    "Override",
+                                    () => writer.AddStringValue("Microsoft", "Information")
+                                );
+                            }
+                        );
 
-                    continue;
+                        continue;
+                    }
+
+                    ser.WriteTo(writer);
                 }
-
-                ser.WriteTo(writer);
             }
-        });
+        );
 
         return true;
     }

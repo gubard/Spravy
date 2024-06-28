@@ -23,14 +23,14 @@ namespace Spravy.Schedule.Db.Sqlite.Migrator.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Timer", x => x.Id);
-                });
+                }
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Timer");
+            migrationBuilder.DropTable(name: "Timer");
         }
     }
 }

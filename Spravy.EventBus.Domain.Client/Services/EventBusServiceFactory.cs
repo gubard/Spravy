@@ -12,7 +12,10 @@ namespace Spravy.EventBus.Domain.Client.Services;
 
 public class EventBusServiceFactory : IFactory<string, IEventBusService>
 {
-    private readonly IFactory<Uri, EventBusService.EventBusServiceClient> eventBusServiceClientFactory;
+    private readonly IFactory<
+        Uri,
+        EventBusService.EventBusServiceClient
+    > eventBusServiceClientFactory;
     private readonly IHttpHeaderFactory httpHeaderFactory;
     private readonly GrpcEventBusServiceOptions options;
     private readonly IRpcExceptionHandler handler;
@@ -50,7 +53,11 @@ public class EventBusServiceFactory : IFactory<string, IEventBusService>
         var metadataFactory = new MetadataFactory(new CombineHttpHeaderFactory(headers));
         var host = options.Host.ThrowIfNull().ToUri();
 
-        return new GrpcEventBusService(eventBusServiceClientFactory, host, metadataFactory, handler)
-           .ToResult<IEventBusService>();
+        return new GrpcEventBusService(
+            eventBusServiceClientFactory,
+            host,
+            metadataFactory,
+            handler
+        ).ToResult<IEventBusService>();
     }
 }

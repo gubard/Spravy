@@ -33,7 +33,7 @@ public partial class BrowserServiceProvider : IServiceFactory
     {
         return application.GetTopLevel().ThrowIfNull();
     }
-    
+
     public IObjectStorage LocalStorageObjectStorageFactory(ProtobufSerializer serializer)
     {
         return new LocalStorageObjectStorage(serializer);
@@ -43,20 +43,23 @@ public partial class BrowserServiceProvider : IServiceFactory
     {
         return DiHelper.ServiceFactory;
     }
-        
+
     public ClientOptions ClientOptionsFactory()
     {
         return new(false);
     }
-        
+
     public IConfiguration ConfigurationFactory()
     {
-        using var stream = SpravyUiBrowserMark.GetResourceStream(FileNames.DefaultConfigFileName).ThrowIfNull();
+        using var stream = SpravyUiBrowserMark
+            .GetResourceStream(FileNames.DefaultConfigFileName)
+            .ThrowIfNull();
 
         return new ConfigurationBuilder().AddJsonStream(stream).Build();
     }
-        
-    public T CreateService<T>() where T : notnull
+
+    public T CreateService<T>()
+        where T : notnull
     {
         return GetService<T>();
     }

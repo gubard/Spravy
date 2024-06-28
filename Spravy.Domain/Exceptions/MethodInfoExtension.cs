@@ -4,7 +4,10 @@ public static class MethodInfoExtension
 {
     public static bool IsRtDynamicMethod(this MethodInfo methodInfo)
     {
-        if (methodInfo.GetType().ToString() == "System.Reflection.Emit.DynamicMethod+RTDynamicMethod")
+        if (
+            methodInfo.GetType().ToString()
+            == "System.Reflection.Emit.DynamicMethod+RTDynamicMethod"
+        )
         {
             return true;
         }

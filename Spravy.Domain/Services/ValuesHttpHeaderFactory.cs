@@ -9,9 +9,9 @@ public class ValuesHttpHeaderFactory : IHttpHeaderFactory
         this.items = items;
     }
 
-    public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<HttpHeaderItem>>> CreateHeaderItemsAsync(
-        CancellationToken ct
-    )
+    public ConfiguredValueTaskAwaitable<
+        Result<ReadOnlyMemory<HttpHeaderItem>>
+    > CreateHeaderItemsAsync(CancellationToken ct)
     {
         return items.ToResult().ToValueTaskResult().ConfigureAwait(false);
     }

@@ -47,10 +47,22 @@ public readonly struct ToDoItem
     public ToDoItemIsCan IsCan { get; }
     public OptionStruct<Guid> ParentId { get; }
     public DescriptionType DescriptionType { get; }
-    
+
     public ToDoItem WithOrderIndex(uint orderIndex)
     {
-        return new(Id, Name, IsFavorite, Type, Description, Link, orderIndex, Status, Active, IsCan, ParentId,
-            DescriptionType);
+        return new(
+            Id,
+            Name,
+            IsFavorite,
+            Type,
+            Description,
+            Link,
+            orderIndex,
+            Status,
+            Active,
+            IsCan,
+            ParentId,
+            DescriptionType
+        );
     }
 }

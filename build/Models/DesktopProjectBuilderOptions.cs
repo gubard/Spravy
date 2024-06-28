@@ -17,7 +17,8 @@ public class DesktopProjectBuilderOptions : ProjectBuilderOptions, IPublished
         string ftpUser,
         string ftpPassword,
         DirectoryInfo publishFolder
-    ) : base(csprojFile, appSettingsFile, hosts, runtimes, configuration, domain)
+    )
+        : base(csprojFile, appSettingsFile, hosts, runtimes, configuration, domain)
     {
         FtpHost = ftpHost;
         FtpUser = ftpUser;

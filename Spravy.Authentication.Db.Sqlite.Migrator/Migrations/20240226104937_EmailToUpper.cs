@@ -14,9 +14,6 @@ namespace Spravy.Authentication.Db.Sqlite.Migrator.Migrations
         }
 
         /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-
-        }
+        protected override void Down(MigrationBuilder migrationBuilder) { }
     }
 }

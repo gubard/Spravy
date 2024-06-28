@@ -20,7 +20,8 @@ public class BrowserProjectBuilderOptions : ProjectBuilderOptions, IFtpOptions, 
         string sshUser,
         string sshPassword,
         IEnumerable<IPublished> publisheds
-    ) : base(csprojFile, appSettingsFile, hosts, runtimes, configuration, domain)
+    )
+        : base(csprojFile, appSettingsFile, hosts, runtimes, configuration, domain)
     {
         FtpHost = ftpHost;
         FtpUser = ftpUser;

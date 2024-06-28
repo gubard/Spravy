@@ -21,7 +21,5 @@ public class SqliteAuthenticationDbContextSetup : IDbContextSetup
         modelBuilder.ApplyConfiguration(new UserEntityTypeConfiguration());
     }
 
-    public void OnConfiguring(DbContextOptionsBuilder builder)
-    {
-    }
+    public void OnConfiguring(DbContextOptionsBuilder builder) { }
 }

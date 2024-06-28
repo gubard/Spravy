@@ -4,8 +4,12 @@ public static class CorsPolicyBuilderExtension
 {
     public static CorsPolicyBuilder AddGrpcHeaders(this CorsPolicyBuilder policyBuilder)
     {
-        policyBuilder.WithExposedHeaders(PolicyNames.GrpcStatusHeader, PolicyNames.GrpcMessageHeader,
-            PolicyNames.GrpcEncodingHeader, PolicyNames.GrpcAcceptEncodingHeader);
+        policyBuilder.WithExposedHeaders(
+            PolicyNames.GrpcStatusHeader,
+            PolicyNames.GrpcMessageHeader,
+            PolicyNames.GrpcEncodingHeader,
+            PolicyNames.GrpcAcceptEncodingHeader
+        );
 
         return policyBuilder;
     }

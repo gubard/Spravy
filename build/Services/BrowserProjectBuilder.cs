@@ -1,18 +1,19 @@
 using System;
 using System.IO;
+using Serilog;
 using _build.Extensions;
 using _build.Helpers;
 using _build.Models;
-using Serilog;
 
 namespace _build.Services;
 
 public class BrowserProjectBuilder : UiProjectBuilder<BrowserProjectBuilderOptions>
 {
-    public BrowserProjectBuilder(VersionService versionService, BrowserProjectBuilderOptions browserOptions) 
-        : base(browserOptions, versionService)
-    {
-    }
+    public BrowserProjectBuilder(
+        VersionService versionService,
+        BrowserProjectBuilderOptions browserOptions
+    )
+        : base(browserOptions, versionService) { }
 
     public void Publish()
     {
@@ -23,7 +24,8 @@ public class BrowserProjectBuilder : UiProjectBuilder<BrowserProjectBuilderOptio
             throw new NullReferenceException();
         }
 
-        var appBundleFolder = Path.Combine(Options.CsprojFile.Directory.FullName, appBundlePath).ToFolder();
+        var appBundleFolder = Path.Combine(Options.CsprojFile.Directory.FullName, appBundlePath)
+            .ToFolder();
         using var sshClient = Options.CreateSshClient();
         sshClient.Connect();
         using var ftpClient = Options.CreateFtpClient();
@@ -45,24 +47,34 @@ public class BrowserProjectBuilder : UiProjectBuilder<BrowserProjectBuilderOptio
             if (published.IsNeedZip)
             {
                 Log.Information("Zip {ProjectName}", published.GetProjectName());
-                sshClient.RunSudo(Options, $"mkdir -p {versionFolder.Combine(published.GetProjectName())}");
-                sshClient.RunSudo(Options, $"mkdir -p {currentFolder.Combine(published.GetProjectName())}");
+                sshClient.RunSudo(
+                    Options,
+                    $"mkdir -p {versionFolder.Combine(published.GetProjectName())}"
+                );
+                sshClient.RunSudo(
+                    Options,
+                    $"mkdir -p {currentFolder.Combine(published.GetProjectName())}"
+                );
 
                 if (published.Runtimes.IsEmpty)
                 {
                     sshClient.SafeRun(
-                        $"cd {published.GetAppFolder()} && echo {Options.SshPassword} | sudo -S  zip -r {versionFolder.Combine(published.GetProjectName()).ToFile($"{published.GetProjectName()}.zip")} ./*");
+                        $"cd {published.GetAppFolder()} && echo {Options.SshPassword} | sudo -S  zip -r {versionFolder.Combine(published.GetProjectName()).ToFile($"{published.GetProjectName()}.zip")} ./*"
+                    );
                     sshClient.SafeRun(
-                        $"cd {published.GetAppFolder()} && echo {Options.SshPassword} | sudo -S  zip -r {currentFolder.Combine(published.GetProjectName()).ToFile($"{published.GetProjectName()}.zip")} ./*");
+                        $"cd {published.GetAppFolder()} && echo {Options.SshPassword} | sudo -S  zip -r {currentFolder.Combine(published.GetProjectName()).ToFile($"{published.GetProjectName()}.zip")} ./*"
+                    );
                 }
                 else
                 {
                     foreach (var runtime in published.Runtimes.Span)
                     {
                         sshClient.SafeRun(
-                            $"cd {published.GetAppFolder().Combine(runtime.Name)} && echo {Options.SshPassword} | sudo -S zip -r {versionFolder.Combine(published.GetProjectName()).ToFile($"{published.GetProjectName()}.{runtime.Name}.zip")} ./*");
+                            $"cd {published.GetAppFolder().Combine(runtime.Name)} && echo {Options.SshPassword} | sudo -S zip -r {versionFolder.Combine(published.GetProjectName()).ToFile($"{published.GetProjectName()}.{runtime.Name}.zip")} ./*"
+                        );
                         sshClient.SafeRun(
-                            $"cd {published.GetAppFolder().Combine(runtime.Name)} && echo {Options.SshPassword} | sudo -S zip -r {currentFolder.Combine(published.GetProjectName()).ToFile($"{published.GetProjectName()}.{runtime.Name}.zip")} ./*");
+                            $"cd {published.GetAppFolder().Combine(runtime.Name)} && echo {Options.SshPassword} | sudo -S zip -r {currentFolder.Combine(published.GetProjectName()).ToFile($"{published.GetProjectName()}.{runtime.Name}.zip")} ./*"
+                        );
                     }
                 }
             }

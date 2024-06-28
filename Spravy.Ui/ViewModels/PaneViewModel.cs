@@ -6,6 +6,6 @@ public class PaneViewModel : ViewModelBase
     {
         Account = account;
     }
-    
-    public AccountNotify Account { get;  }
+
+    public AccountNotify Account { get; }
 }

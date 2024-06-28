@@ -21,7 +21,5 @@ public class SqliteScheduleDbContextSetup : IDbContextSetup
         modelBuilder.ApplyConfiguration(new TimerEntityTypeConfiguration());
     }
 
-    public void OnConfiguring(DbContextOptionsBuilder builder)
-    {
-    }
+    public void OnConfiguring(DbContextOptionsBuilder builder) { }
 }

@@ -14,7 +14,7 @@ public class Program
     public static void Main(string[] args)
     {
         Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
-        
+
         try
         {
             BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
@@ -22,7 +22,7 @@ public class Program
         catch (Exception ex)
         {
             Log.Fatal(ex, "Application terminated unexpectedly");
-            
+
             throw;
         }
         finally
@@ -30,15 +30,16 @@ public class Program
             Log.CloseAndFlush();
         }
     }
-    
+
     public static AppBuilder BuildAvaloniaApp()
     {
         DiHelper.ServiceFactory = new DesktopServiceProvider();
-        
-        return AppBuilder.Configure(() => DiHelper.ServiceFactory.ThrowIfNull().CreateService<App>())
-           .UsePlatformDetect()
-           .WithInterFont()
-           .WithShantellSansFont()
-           .UseReactiveUI();
+
+        return AppBuilder
+            .Configure(() => DiHelper.ServiceFactory.ThrowIfNull().CreateService<App>())
+            .UsePlatformDetect()
+            .WithInterFont()
+            .WithShantellSansFont()
+            .UseReactiveUI();
     }
 }

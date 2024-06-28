@@ -6,17 +6,17 @@ public class TaskProgressItem : NotifyBase
     {
         Impact = impact;
     }
-    
+
     public ushort Impact { get; }
-    
+
     [Reactive]
     public ushort Progress { get; set; }
-    
+
     public bool IsFinished
     {
         get => Progress >= Impact;
     }
-    
+
     public void Finish()
     {
         Progress = Impact;

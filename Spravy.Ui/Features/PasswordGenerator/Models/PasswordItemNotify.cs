@@ -9,13 +9,13 @@ public class PasswordItemNotify : NotifyBase, IPasswordItem, IIdProperty
         DeletePasswordItem = spravyCommandService.DeletePasswordItem;
         GeneratePassword = spravyCommandService.GeneratePassword;
     }
-    
+
     [Reactive]
     public string Name { get; set; }
-    
+
     [Reactive]
     public Guid Id { get; set; }
-    
+
     public SpravyCommand DeletePasswordItem { get; private set; }
     public SpravyCommand GeneratePassword { get; private set; }
 }

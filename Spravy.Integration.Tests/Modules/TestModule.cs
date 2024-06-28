@@ -1,9 +1,9 @@
 using Jab;
 using Spravy.Client.Models;
 using Spravy.Core.Helpers;
+using Spravy.Core.Services;
 using Spravy.Db.Services;
 using Spravy.Ui.Modules;
-using Spravy.Core.Services;
 
 namespace Spravy.Integration.Tests.Modules;
 
@@ -24,41 +24,46 @@ public partial class TestServiceProvider : IServiceFactory
     {
         return desktopTopLevelControl.ThrowIfIsNotCast<Window>();
     }
-    
-    static IObjectStorage SqliteObjectStorageFactory(StorageDbContext context, ProtobufSerializer serializer)
+
+    static IObjectStorage SqliteObjectStorageFactory(
+        StorageDbContext context,
+        ProtobufSerializer serializer
+    )
     {
         return new SqliteObjectStorage(context, serializer);
     }
-    
+
     static StorageDbContext StorageDbContextFactory(IDbContextSetup setup)
     {
         return new(setup);
     }
-    
+
     public IServiceFactory ServiceFactoryFactory()
     {
         return DiHelper.ServiceFactory;
     }
-    
+
     public ClientOptions ClientOptionsFactory()
     {
         return new(true);
     }
-    
+
     public IConfiguration ConfigurationFactory()
     {
         return new ConfigurationBuilder().AddJsonFile("testsettings.json").Build();
     }
-    
+
     public IDbContextSetup DbContextSetupFactory()
     {
-        return new SqliteDbContextSetup(new[]
-        {
-            new StorageEntityTypeConfiguration(),
-        }, "./storage/storage.db".ToFile(), true);
+        return new SqliteDbContextSetup(
+            new[] { new StorageEntityTypeConfiguration(), },
+            "./storage/storage.db".ToFile(),
+            true
+        );
     }
-    
-    public T CreateService<T>() where T : notnull
+
+    public T CreateService<T>()
+        where T : notnull
     {
         return GetService<T>();
     }

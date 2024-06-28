@@ -11,7 +11,7 @@ public class Int32MoreThenConverter : IValueConverter
         {
             return false;
         }
-        
+
         if (parameter is not int p)
         {
             if (parameter is not string str)
@@ -21,7 +21,7 @@ public class Int32MoreThenConverter : IValueConverter
 
             if (!int.TryParse(str, out p))
             {
-                return false; 
+                return false;
             }
         }
 
@@ -34,11 +34,16 @@ public class Int32MoreThenConverter : IValueConverter
         {
             return v < p;
         }
-        
+
         return v > p;
     }
-    
-    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+
+    public object ConvertBack(
+        object? value,
+        Type targetType,
+        object? parameter,
+        CultureInfo culture
+    )
     {
         throw new NotSupportedException();
     }

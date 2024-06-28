@@ -39,13 +39,31 @@ public static class DateTimeOffsetExtension
 
     public static DateTimeOffset WithDay(this DateTimeOffset date, int day)
     {
-        return new(date.Year, date.Month, day, date.Hour, date.Minute, date.Second, date.Millisecond, date.Microsecond,
-            date.Offset);
+        return new(
+            date.Year,
+            date.Month,
+            day,
+            date.Hour,
+            date.Minute,
+            date.Second,
+            date.Millisecond,
+            date.Microsecond,
+            date.Offset
+        );
     }
 
     public static DateTimeOffset WithMonth(this DateTimeOffset date, int month)
     {
-        return new(date.Year, month, date.Day, date.Hour, date.Minute, date.Second, date.Millisecond, date.Microsecond,
-            date.Offset);
+        return new(
+            date.Year,
+            month,
+            date.Day,
+            date.Hour,
+            date.Minute,
+            date.Second,
+            date.Millisecond,
+            date.Microsecond,
+            date.Offset
+        );
     }
 }

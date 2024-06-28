@@ -33,9 +33,9 @@ public static class ToDoItemEntityExtension
             return Enumerable.Empty<DayOfYear>();
         }
 
-        return item.DaysOfYear
-           .Split(";")
-           .Select(x =>
+        return item
+            .DaysOfYear.Split(";")
+            .Select(x =>
             {
                 var value = x.Split(".");
 

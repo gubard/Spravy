@@ -11,7 +11,11 @@ public class DeletePasswordItemViewModel : ViewModelBase
     )
     {
         this.passwordService = passwordService;
-        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler, taskProgressService);
+        InitializedCommand = SpravyCommand.Create(
+            InitializedAsync,
+            errorHandler,
+            taskProgressService
+        );
     }
 
     public SpravyCommand InitializedCommand { get; }
@@ -24,22 +28,25 @@ public class DeletePasswordItemViewModel : ViewModelBase
 
     public Header4Localization DeleteText
     {
-        get => new("DeletePasswordItemView.Header", new
-        {
-            PasswordItemName,
-        });
+        get => new("DeletePasswordItemView.Header", new { PasswordItemName, });
     }
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
-        this.WhenAnyValue(x => x.PasswordItemName).Subscribe(_ => this.RaisePropertyChanged(nameof(DeleteText)));
+        this.WhenAnyValue(x => x.PasswordItemName)
+            .Subscribe(_ => this.RaisePropertyChanged(nameof(DeleteText)));
 
-        return passwordService.GetPasswordItemAsync(PasswordItemId, ct)
-           .IfSuccessAsync(value => this.InvokeUiBackgroundAsync(() =>
-            {
-                PasswordItemName = value.Name;
+        return passwordService
+            .GetPasswordItemAsync(PasswordItemId, ct)
+            .IfSuccessAsync(
+                value =>
+                    this.InvokeUiBackgroundAsync(() =>
+                    {
+                        PasswordItemName = value.Name;
 
-                return Result.Success;
-            }), ct);
+                        return Result.Success;
+                    }),
+                ct
+            );
     }
 }

@@ -24,10 +24,7 @@ public class EventBusHostedService : IHostedService
 
     static EventBusHostedService()
     {
-        eventIds = new[]
-        {
-            EventIdHelper.ChangeFavoriteId,
-        };
+        eventIds = new[] { EventIdHelper.ChangeFavoriteId, };
     }
 
     public EventBusHostedService(
@@ -76,10 +73,14 @@ public class EventBusHostedService : IHostedService
 
                 try
                 {
-                    var eventBusService = spravyEventBusServiceFactory.Create(file.GetFileNameWithoutExtension())
-                       .ThrowIfError();
+                    var eventBusService = spravyEventBusServiceFactory
+                        .Create(file.GetFileNameWithoutExtension())
+                        .ThrowIfError();
 
-                    var stream = eventBusService.SubscribeEventsAsync(eventIds.ToArray(), source.Token);
+                    var stream = eventBusService.SubscribeEventsAsync(
+                        eventIds.ToArray(),
+                        source.Token
+                    );
                     logger.LogInformation("Connected for events {File}", file);
 
                     await foreach (var eventValue in stream)
@@ -108,17 +109,32 @@ public class EventBusHostedService : IHostedService
 
     private async Task ChangeFavoriteAsync(FileInfo file, EventValue eventValue)
     {
-        var eventContent = ChangeToDoItemIsFavoriteEvent.Parser.ParseFrom(eventValue.Content.ToArray());
+        var eventContent = ChangeToDoItemIsFavoriteEvent.Parser.ParseFrom(
+            eventValue.Content.ToArray()
+        );
         var id = new Guid(eventContent.ToDoItemId.ToByteArray());
 
-        await spravyToDoDbContext.Create(file.ToSqliteConnectionString())
-           .IfSuccessAsync(context => context.AtomicExecuteAsync(() => context.FindEntityAsync<ToDoItemEntity>(id)
-               .IfSuccessAsync(item =>
-                {
-                    item.IsFavorite = eventContent.IsFavorite;
+        await spravyToDoDbContext
+            .Create(file.ToSqliteConnectionString())
+            .IfSuccessAsync(
+                context =>
+                    context.AtomicExecuteAsync(
+                        () =>
+                            context
+                                .FindEntityAsync<ToDoItemEntity>(id)
+                                .IfSuccessAsync(
+                                    item =>
+                                    {
+                                        item.IsFavorite = eventContent.IsFavorite;
 
-                    return Result.Success;
-                }, CancellationToken.None), CancellationToken.None), CancellationToken.None)
-           .ThrowIfErrorAsync();
+                                        return Result.Success;
+                                    },
+                                    CancellationToken.None
+                                ),
+                        CancellationToken.None
+                    ),
+                CancellationToken.None
+            )
+            .ThrowIfErrorAsync();
     }
 }

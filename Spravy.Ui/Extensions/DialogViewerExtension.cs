@@ -9,18 +9,26 @@ public static class DialogViewerExtension
         CancellationToken ct
     )
     {
-        return dialogViewer.ShowConfirmInputDialogAsync(viewModel => confirmTask.Invoke((ushort)viewModel.Value),
-            _ => dialogViewer.CloseInputDialogAsync(ct), setup, ct);
+        return dialogViewer.ShowConfirmInputDialogAsync(
+            viewModel => confirmTask.Invoke((ushort)viewModel.Value),
+            _ => dialogViewer.CloseInputDialogAsync(ct),
+            setup,
+            ct
+        );
     }
 
     public static ConfiguredValueTaskAwaitable<Result> ShowInfoContentDialogAsync<TView>(
         this IDialogViewer dialogViewer,
         Action<TView> setupView,
         CancellationToken ct
-    ) where TView : ViewModelBase
+    )
+        where TView : ViewModelBase
     {
-        return dialogViewer.ShowInfoContentDialogAsync(_ => dialogViewer.CloseContentDialogAsync(ct),
-            setupView, ct);
+        return dialogViewer.ShowInfoContentDialogAsync(
+            _ => dialogViewer.CloseContentDialogAsync(ct),
+            setupView,
+            ct
+        );
     }
 
     public static ConfiguredValueTaskAwaitable<Result> ShowSingleStringConfirmDialogAsync(
@@ -30,8 +38,12 @@ public static class DialogViewerExtension
         CancellationToken ct
     )
     {
-        return dialogViewer.ShowConfirmInputDialogAsync(view => confirmTask.Invoke(view.Text.ThrowIfNull()),
-            _ => dialogViewer.CloseInputDialogAsync(ct), setup, ct);
+        return dialogViewer.ShowConfirmInputDialogAsync(
+            view => confirmTask.Invoke(view.Text.ThrowIfNull()),
+            _ => dialogViewer.CloseInputDialogAsync(ct),
+            setup,
+            ct
+        );
     }
 
     public static ConfiguredValueTaskAwaitable<Result> ShowMultiStringConfirmDialogAsync(
@@ -41,13 +53,17 @@ public static class DialogViewerExtension
         CancellationToken ct
     )
     {
-        return dialogViewer.ShowConfirmInputDialogAsync(view => confirmTask.Invoke(view.Text.ThrowIfNull()),
-            _ => dialogViewer.CloseInputDialogAsync(ct), (TextViewModel textBox) =>
+        return dialogViewer.ShowConfirmInputDialogAsync(
+            view => confirmTask.Invoke(view.Text.ThrowIfNull()),
+            _ => dialogViewer.CloseInputDialogAsync(ct),
+            (TextViewModel textBox) =>
             {
                 textBox.AcceptsReturn = true;
                 textBox.TextWrapping = TextWrapping.Wrap;
                 setup.Invoke(textBox);
-            }, ct);
+            },
+            ct
+        );
     }
 
     public static ConfiguredValueTaskAwaitable<Result> ShowDayOfWeekSelectorInputDialogAsync(
@@ -58,8 +74,12 @@ public static class DialogViewerExtension
     )
     {
         return dialogViewer.ShowConfirmInputDialogAsync(
-            view => confirmTask.Invoke(view.Items.Where(x => x.IsSelected).Select(x => x.DayOfWeek)),
-            _ => dialogViewer.CloseInputDialogAsync(ct), setup, ct);
+            view =>
+                confirmTask.Invoke(view.Items.Where(x => x.IsSelected).Select(x => x.DayOfWeek)),
+            _ => dialogViewer.CloseInputDialogAsync(ct),
+            setup,
+            ct
+        );
     }
 
     public static ConfiguredValueTaskAwaitable<Result> ShowDayOfYearSelectorInputDialogAsync(
@@ -70,9 +90,16 @@ public static class DialogViewerExtension
     )
     {
         return dialogViewer.ShowConfirmInputDialogAsync(
-            view => confirmTask.Invoke(view.Items.SelectMany(x =>
-                x.Days.Where(y => y.IsSelected).Select(y => new DayOfYear(y.Day, x.Month)))),
-            _ => dialogViewer.CloseInputDialogAsync(ct), setup, ct);
+            view =>
+                confirmTask.Invoke(
+                    view.Items.SelectMany(x =>
+                        x.Days.Where(y => y.IsSelected).Select(y => new DayOfYear(y.Day, x.Month))
+                    )
+                ),
+            _ => dialogViewer.CloseInputDialogAsync(ct),
+            setup,
+            ct
+        );
     }
 
     public static ConfiguredValueTaskAwaitable<Result> ShowDateConfirmDialogAsync(
@@ -84,7 +111,10 @@ public static class DialogViewerExtension
     {
         return dialogViewer.ShowConfirmInputDialogAsync(
             view => confirmTask.Invoke(view.SelectedDate.ThrowIfNullStruct()),
-            _ => dialogViewer.CloseInputDialogAsync(ct), setup, ct);
+            _ => dialogViewer.CloseInputDialogAsync(ct),
+            setup,
+            ct
+        );
     }
 
     public static ConfiguredValueTaskAwaitable<Result> ShowItemSelectorDialogAsync<TItem>(
@@ -96,7 +126,10 @@ public static class DialogViewerExtension
     {
         return dialogViewer.ShowConfirmInputDialogAsync(
             view => confirmTask.Invoke(view.SelectedItem.ThrowIfNull().ThrowIfIsNotCast<TItem>()),
-            _ => dialogViewer.CloseInputDialogAsync(ct), setup, ct);
+            _ => dialogViewer.CloseInputDialogAsync(ct),
+            setup,
+            ct
+        );
     }
 
     public static ConfiguredValueTaskAwaitable<Result> ShowDateTimeConfirmDialogAsync(
@@ -107,10 +140,16 @@ public static class DialogViewerExtension
     )
     {
         return dialogViewer.ShowConfirmInputDialogAsync<SpravyDateTimeViewModel>(
-            viewModel => confirmTask.Invoke(
-                viewModel.SelectedDate.ThrowIfNullStruct().Add(viewModel.SelectedTime.ThrowIfNullStruct())),
-            _ => dialogViewer.CloseInputDialogAsync(ct), viewModel => setupCalendar?.Invoke(viewModel),
-            ct);
+            viewModel =>
+                confirmTask.Invoke(
+                    viewModel
+                        .SelectedDate.ThrowIfNullStruct()
+                        .Add(viewModel.SelectedTime.ThrowIfNullStruct())
+                ),
+            _ => dialogViewer.CloseInputDialogAsync(ct),
+            viewModel => setupCalendar?.Invoke(viewModel),
+            ct
+        );
     }
 
     public static ConfiguredValueTaskAwaitable<Result> ShowToDoItemSelectorConfirmDialogAsync(
@@ -120,7 +159,11 @@ public static class DialogViewerExtension
         CancellationToken ct
     )
     {
-        return dialogViewer.ShowConfirmInputDialogAsync(view => confirmTask.Invoke(view.SelectedItem.ThrowIfNull()),
-            _ => dialogViewer.CloseInputDialogAsync(ct), setup, ct);
+        return dialogViewer.ShowConfirmInputDialogAsync(
+            view => confirmTask.Invoke(view.SelectedItem.ThrowIfNull()),
+            _ => dialogViewer.CloseInputDialogAsync(ct),
+            setup,
+            ct
+        );
     }
 }

@@ -12,7 +12,11 @@ public class ToDoItemDayOfMonthSelectorViewModel : ViewModelBase, IApplySettings
     {
         this.toDoService = toDoService;
         SelectedDays = new();
-        InitializedCommand = SpravyCommand.Create(InitializedAsync, errorHandler, taskProgressService);
+        InitializedCommand = SpravyCommand.Create(
+            InitializedAsync,
+            errorHandler,
+            taskProgressService
+        );
     }
 
     public AvaloniaList<int> SelectedDays { get; }
@@ -23,18 +27,28 @@ public class ToDoItemDayOfMonthSelectorViewModel : ViewModelBase, IApplySettings
 
     public ConfiguredValueTaskAwaitable<Result> ApplySettingsAsync(CancellationToken ct)
     {
-        return toDoService.UpdateToDoItemMonthlyPeriodicityAsync(ToDoItemId,
-            new(SelectedDays.Select(x => (byte)x).ToArray()), ct);
+        return toDoService.UpdateToDoItemMonthlyPeriodicityAsync(
+            ToDoItemId,
+            new(SelectedDays.Select(x => (byte)x).ToArray()),
+            ct
+        );
     }
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
-        return toDoService.GetMonthlyPeriodicityAsync(ToDoItemId, ct)
-           .IfSuccessAsync(monthlyPeriodicity => this.InvokeUiBackgroundAsync(() =>
-            {
-                SelectedDays.AddRange(monthlyPeriodicity.Days.Select(x => (int)x).ToArray());
+        return toDoService
+            .GetMonthlyPeriodicityAsync(ToDoItemId, ct)
+            .IfSuccessAsync(
+                monthlyPeriodicity =>
+                    this.InvokeUiBackgroundAsync(() =>
+                    {
+                        SelectedDays.AddRange(
+                            monthlyPeriodicity.Days.Select(x => (int)x).ToArray()
+                        );
 
-                return Result.Success;
-            }), ct);
+                        return Result.Success;
+                    }),
+                ct
+            );
     }
 }

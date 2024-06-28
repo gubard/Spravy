@@ -4,12 +4,14 @@ public class NotViewForViewModelError : Error
 {
     public static readonly Guid MainId = new("581F4157-B1D1-444C-80B9-9A093BF98D17");
 
-    protected NotViewForViewModelError() : base(MainId)
+    protected NotViewForViewModelError()
+        : base(MainId)
     {
         ViewModelType = string.Empty;
     }
 
-    public NotViewForViewModelError(string viewModelType) : base(MainId)
+    public NotViewForViewModelError(string viewModelType)
+        : base(MainId)
     {
         ViewModelType = viewModelType;
     }

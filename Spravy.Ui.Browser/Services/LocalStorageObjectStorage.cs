@@ -29,12 +29,20 @@ public class LocalStorageObjectStorage : IObjectStorage
         return Result.AwaitableSuccess;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> SaveObjectAsync(string id, object obj, CancellationToken ct)
+    public ConfiguredValueTaskAwaitable<Result> SaveObjectAsync(
+        string id,
+        object obj,
+        CancellationToken ct
+    )
     {
         return SaveObjectCore(id, obj, ct).ConfigureAwait(false);
     }
 
-    public ConfiguredValueTaskAwaitable<Result<TObject>> GetObjectAsync<TObject>(string id, CancellationToken ct) where TObject: notnull
+    public ConfiguredValueTaskAwaitable<Result<TObject>> GetObjectAsync<TObject>(
+        string id,
+        CancellationToken ct
+    )
+        where TObject : notnull
     {
         return GetObjectCore<TObject>(id, ct).ConfigureAwait(false);
     }
@@ -56,7 +64,8 @@ public class LocalStorageObjectStorage : IObjectStorage
         return Result.Success;
     }
 
-    public async ValueTask<Result<TObject>> GetObjectCore<TObject>(string id, CancellationToken ct) where TObject: notnull
+    public async ValueTask<Result<TObject>> GetObjectCore<TObject>(string id, CancellationToken ct)
+        where TObject : notnull
     {
         var value = JSInterop.LocalStorageGetItem(id);
         var bytes = Convert.FromBase64String(value);

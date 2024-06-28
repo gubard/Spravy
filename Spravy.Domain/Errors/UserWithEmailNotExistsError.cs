@@ -4,12 +4,14 @@ public class UserWithEmailNotExistsError : Error
 {
     public static readonly Guid MainId = new("8C3C0491-09FB-48EC-AE28-2E40B51513A0");
 
-    protected UserWithEmailNotExistsError() : base(MainId)
+    protected UserWithEmailNotExistsError()
+        : base(MainId)
     {
         Email = string.Empty;
     }
 
-    public UserWithEmailNotExistsError(string email) : base(MainId)
+    public UserWithEmailNotExistsError(string email)
+        : base(MainId)
     {
         Email = email;
     }

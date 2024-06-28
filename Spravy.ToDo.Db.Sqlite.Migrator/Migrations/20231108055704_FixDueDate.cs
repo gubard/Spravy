@@ -10,13 +10,12 @@ namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.Sql("UPDATE ToDoItem SET DueDate = SUBSTR(DueDate, 1, 10) WHERE 1 > 0;");
+            migrationBuilder.Sql(
+                "UPDATE ToDoItem SET DueDate = SUBSTR(DueDate, 1, 10) WHERE 1 > 0;"
+            );
         }
 
         /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-
-        }
+        protected override void Down(MigrationBuilder migrationBuilder) { }
     }
 }

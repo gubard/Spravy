@@ -29,20 +29,22 @@ namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
                         name: "FK_ToDoItem_ToDoItem_ParentId",
                         column: x => x.ParentId,
                         principalTable: "ToDoItem",
-                        principalColumn: "Id");
-                });
+                        principalColumn: "Id"
+                    );
+                }
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_ToDoItem_ParentId",
                 table: "ToDoItem",
-                column: "ParentId");
+                column: "ParentId"
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "ToDoItem");
+            migrationBuilder.DropTable(name: "ToDoItem");
         }
     }
 }

@@ -13,7 +13,8 @@ namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
             migrationBuilder.RenameColumn(
                 name: "IsCurrent",
                 table: "ToDoItem",
-                newName: "IsPinned");
+                newName: "IsPinned"
+            );
         }
 
         /// <inheritdoc />
@@ -22,7 +23,8 @@ namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
             migrationBuilder.RenameColumn(
                 name: "IsPinned",
                 table: "ToDoItem",
-                newName: "IsCurrent");
+                newName: "IsCurrent"
+            );
         }
     }
 }

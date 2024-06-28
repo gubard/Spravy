@@ -7,18 +7,16 @@ public class LoginViewModelSetting : IViewModelSetting<LoginViewModelSetting>
     {
         Login = viewModel.Login;
     }
-    
-    public LoginViewModelSetting()
-    {
-    }
-    
+
+    public LoginViewModelSetting() { }
+
     static LoginViewModelSetting()
     {
         Default = new();
     }
-    
+
     [ProtoMember(1)]
     public string Login { get; set; } = string.Empty;
-    
+
     public static LoginViewModelSetting Default { get; }
 }

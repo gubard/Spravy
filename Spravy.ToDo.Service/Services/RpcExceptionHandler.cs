@@ -18,7 +18,10 @@ public class RpcExceptionHandler : IRpcExceptionHandler
         this.serializer = serializer;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> ToErrorAsync(RpcException exception, CancellationToken ct)
+    public ConfiguredValueTaskAwaitable<Result> ToErrorAsync(
+        RpcException exception,
+        CancellationToken ct
+    )
     {
         return ToErrorCore(exception, ct).ConfigureAwait(false);
     }
@@ -53,7 +56,11 @@ public class RpcExceptionHandler : IRpcExceptionHandler
         return Result.Success;
     }
 
-    private async ValueTask<ReadOnlyMemory<Error>> GetErrorsAsync(Guid id, Metadata.Entry trailer, CancellationToken ct)
+    private async ValueTask<ReadOnlyMemory<Error>> GetErrorsAsync(
+        Guid id,
+        Metadata.Entry trailer,
+        CancellationToken ct
+    )
     {
         await using var stream = new MemoryStream(trailer.ValueBytes);
 
@@ -83,7 +90,10 @@ public class RpcExceptionHandler : IRpcExceptionHandler
 
         if (ToDoItemStatusOutOfRangeError.MainId == id)
         {
-            var error = await serializer.DeserializeAsync<ToDoItemStatusOutOfRangeError>(stream, ct);
+            var error = await serializer.DeserializeAsync<ToDoItemStatusOutOfRangeError>(
+                stream,
+                ct
+            );
 
             if (error.IsHasError)
             {
@@ -107,7 +117,10 @@ public class RpcExceptionHandler : IRpcExceptionHandler
 
         if (ToDoItemChildrenTypeOutOfRangeError.MainId == id)
         {
-            var error = await serializer.DeserializeAsync<ToDoItemChildrenTypeOutOfRangeError>(stream, ct);
+            var error = await serializer.DeserializeAsync<ToDoItemChildrenTypeOutOfRangeError>(
+                stream,
+                ct
+            );
 
             if (error.IsHasError)
             {
@@ -164,7 +177,7 @@ public class RpcExceptionHandler : IRpcExceptionHandler
 
             return new([error.Value,]);
         }
-        
+
         if (ServiceUnavailableError.MainId == id)
         {
             var error = await serializer.DeserializeAsync<ServiceUnavailableError>(stream, ct);
@@ -263,7 +276,10 @@ public class RpcExceptionHandler : IRpcExceptionHandler
 
         if (PropertyWhiteSpaceStringError.MainId == id)
         {
-            var error = await serializer.DeserializeAsync<PropertyWhiteSpaceStringError>(stream, ct);
+            var error = await serializer.DeserializeAsync<PropertyWhiteSpaceStringError>(
+                stream,
+                ct
+            );
 
             if (error.IsHasError)
             {

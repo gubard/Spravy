@@ -15,37 +15,34 @@ namespace Spravy.ToDo.Db.Sqlite.Migrator.Migrations
                 table: "ToDoItem",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: "1");
+                defaultValue: "1"
+            );
 
             migrationBuilder.AddColumn<string>(
                 name: "DaysOfWeek",
                 table: "ToDoItem",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: "Monday");
+                defaultValue: "Monday"
+            );
 
             migrationBuilder.AddColumn<string>(
                 name: "DaysOfYear",
                 table: "ToDoItem",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: "1.1");
+                defaultValue: "1.1"
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "DaysOfMonth",
-                table: "ToDoItem");
+            migrationBuilder.DropColumn(name: "DaysOfMonth", table: "ToDoItem");
 
-            migrationBuilder.DropColumn(
-                name: "DaysOfWeek",
-                table: "ToDoItem");
+            migrationBuilder.DropColumn(name: "DaysOfWeek", table: "ToDoItem");
 
-            migrationBuilder.DropColumn(
-                name: "DaysOfYear",
-                table: "ToDoItem");
+            migrationBuilder.DropColumn(name: "DaysOfYear", table: "ToDoItem");
         }
     }
 }
