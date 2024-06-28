@@ -117,4 +117,3 @@ global using Spravy.Ui.Views;
 global using SukiUI;
 global using SukiUI.Controls;
 global using SukiUI.Models;
-global using SpravyDateTimeViewModel = Spravy.Ui.ViewModels.DateTimeViewModel;

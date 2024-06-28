@@ -24,39 +24,9 @@ public class ViewSelector : IViewSelector
             return new(serviceFactory.CreateService<PaneView>());
         }
 
-        if (typeof(PathViewModel) == viewModelType)
-        {
-            return new(serviceFactory.CreateService<PathView>());
-        }
-
         if (typeof(MainSplitViewModel) == viewModelType)
         {
             return new(serviceFactory.CreateService<MainSplitView>());
-        }
-
-        if (typeof(CalendarViewModel) == viewModelType)
-        {
-            return new(serviceFactory.CreateService<CalendarView>());
-        }
-
-        if (typeof(SpravyDateTimeViewModel) == viewModelType)
-        {
-            return new(serviceFactory.CreateService<DateTimeView>());
-        }
-
-        if (typeof(DialogProgressViewModel) == viewModelType)
-        {
-            return new(serviceFactory.CreateService<DialogProgressView>());
-        }
-
-        if (typeof(ItemSelectorViewModel) == viewModelType)
-        {
-            return new(serviceFactory.CreateService<ItemSelectorView>());
-        }
-
-        if (typeof(NumberViewModel) == viewModelType)
-        {
-            return new(serviceFactory.CreateService<NumberView>());
         }
 
         if (typeof(EditDescriptionViewModel) == viewModelType)
