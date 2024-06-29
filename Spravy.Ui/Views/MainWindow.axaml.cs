@@ -2,9 +2,9 @@ namespace Spravy.Ui.Views;
 
 public partial class MainWindow : SukiWindow, IDesktopTopLevelControl
 {
-    public MainWindow(ISingleViewTopLevelControl singleView)
+    public MainWindow(MainViewModel viewModel)
     {
         InitializeComponent();
-        Content = singleView;
+        Content = viewModel;
     }
 }
