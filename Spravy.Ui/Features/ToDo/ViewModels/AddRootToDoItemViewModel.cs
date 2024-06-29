@@ -7,37 +7,21 @@ public class AddRootToDoItemViewModel : NavigatableViewModelBase
     public AddRootToDoItemViewModel(
         IObjectStorage objectStorage,
         ToDoItemContentViewModel toDoItemContent,
-        EditDescriptionContentViewModel descriptionContent,
-        IErrorHandler errorHandler,
-        ITaskProgressService taskProgressService
+        EditDescriptionContentViewModel descriptionContent
     )
         : base(true)
     {
         this.objectStorage = objectStorage;
         ToDoItemContent = toDoItemContent;
         DescriptionContent = descriptionContent;
-
-        InitializedCommand = SpravyCommand.Create(
-            InitializedAsync,
-            errorHandler,
-            taskProgressService
-        );
     }
 
-    public SpravyCommand InitializedCommand { get; }
     public ToDoItemContentViewModel ToDoItemContent { get; }
     public EditDescriptionContentViewModel DescriptionContent { get; }
 
     public override string ViewId
     {
         get => TypeCache<AddRootToDoItemViewModel>.Type.Name;
-    }
-
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
-    {
-        return objectStorage
-            .GetObjectOrDefaultAsync<AddRootToDoItemViewModelSetting>(ViewId, ct)
-            .IfSuccessAsync(obj => SetStateAsync(obj, ct), ct);
     }
 
     public override Result Stop()
@@ -71,43 +55,5 @@ public class AddRootToDoItemViewModel : NavigatableViewModelBase
                     }),
                 ct
             );
-    }
-
-    [ProtoContract]
-    private class AddRootToDoItemViewModelSetting
-        : IViewModelSetting<AddRootToDoItemViewModelSetting>
-    {
-        static AddRootToDoItemViewModelSetting()
-        {
-            Default = new();
-        }
-
-        public AddRootToDoItemViewModelSetting() { }
-
-        public AddRootToDoItemViewModelSetting(AddRootToDoItemViewModel viewModel)
-        {
-            Name = viewModel.ToDoItemContent.Name;
-            Type = viewModel.ToDoItemContent.Type;
-            Link = viewModel.ToDoItemContent.Link;
-            Description = viewModel.DescriptionContent.Description;
-            DescriptionType = viewModel.DescriptionContent.Type;
-        }
-
-        [ProtoMember(1)]
-        public string Name { get; set; } = string.Empty;
-
-        [ProtoMember(2)]
-        public ToDoItemType Type { get; set; }
-
-        [ProtoMember(3)]
-        public string Link { get; set; } = string.Empty;
-
-        [ProtoMember(4)]
-        public string Description { get; set; } = string.Empty;
-
-        [ProtoMember(5)]
-        public DescriptionType DescriptionType { get; set; }
-
-        public static AddRootToDoItemViewModelSetting Default { get; }
     }
 }

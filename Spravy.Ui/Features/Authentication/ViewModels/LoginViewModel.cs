@@ -9,14 +9,12 @@ public class LoginViewModel : NavigatableViewModelBase, INotifyDataErrorInfo
     private bool passwordChanged;
 
     public LoginViewModel(
-        LoginCommands commands,
         IObjectStorage objectStorage,
         IPropertyValidator propertyValidator,
         AccountNotify account
     )
         : base(true)
     {
-        Commands = commands;
         this.objectStorage = objectStorage;
         this.propertyValidator = propertyValidator;
         Account = account;
@@ -39,7 +37,6 @@ public class LoginViewModel : NavigatableViewModelBase, INotifyDataErrorInfo
     }
 
     public AccountNotify Account { get; }
-    public LoginCommands Commands { get; }
 
     [Reactive]
     public bool IsBusy { get; set; }

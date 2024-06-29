@@ -5,45 +5,12 @@ public class ToDoItemsGroupByViewModel : ViewModelBase
     public ToDoItemsGroupByViewModel(
         ToDoItemsGroupByNoneViewModel groupByNone,
         ToDoItemsGroupByStatusViewModel groupByStatus,
-        ToDoItemsGroupByTypeViewModel groupByType,
-        IErrorHandler errorHandler,
-        ITaskProgressService taskProgressService
+        ToDoItemsGroupByTypeViewModel groupByType
     )
     {
         GroupByNone = groupByNone;
         GroupByStatus = groupByStatus;
         GroupByType = groupByType;
-        InitializedCommand = SpravyCommand.Create(
-            InitializedAsync,
-            errorHandler,
-            taskProgressService
-        );
-
-        this.WhenAnyValue(x => x.IsMulti)
-            .Subscribe(x =>
-            {
-                GroupByNone.IsMulti = x;
-                GroupByStatus.IsMulti = x;
-                GroupByType.IsMulti = x;
-            });
-    }
-
-    public SpravyCommand InitializedCommand { get; }
-    public ToDoItemsGroupByNoneViewModel GroupByNone { get; }
-    public ToDoItemsGroupByStatusViewModel GroupByStatus { get; }
-    public ToDoItemsGroupByTypeViewModel GroupByType { get; }
-
-    [Reactive]
-    public bool IsMulti { get; set; }
-
-    [Reactive]
-    public GroupBy GroupBy { get; set; } = GroupBy.ByStatus;
-
-    [Reactive]
-    public object? Content { get; set; }
-
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
-    {
         Content = GroupByStatus;
 
         this.WhenAnyValue(x => x.GroupBy)
@@ -58,8 +25,27 @@ public class ToDoItemsGroupByViewModel : ViewModelBase
                 };
             });
 
-        return Result.AwaitableSuccess;
+        this.WhenAnyValue(x => x.IsMulti)
+            .Subscribe(x =>
+            {
+                GroupByNone.IsMulti = x;
+                GroupByStatus.IsMulti = x;
+                GroupByType.IsMulti = x;
+            });
     }
+
+    public ToDoItemsGroupByNoneViewModel GroupByNone { get; }
+    public ToDoItemsGroupByStatusViewModel GroupByStatus { get; }
+    public ToDoItemsGroupByTypeViewModel GroupByType { get; }
+
+    [Reactive]
+    public bool IsMulti { get; set; }
+
+    [Reactive]
+    public GroupBy GroupBy { get; set; } = GroupBy.ByStatus;
+
+    [Reactive]
+    public object? Content { get; set; }
 
     public Result ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> ids)
     {

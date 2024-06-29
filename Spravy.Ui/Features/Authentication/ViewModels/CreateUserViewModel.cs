@@ -12,11 +12,10 @@ public class CreateUserViewModel
     private bool passwordChanged;
     private bool repeatPasswordChanged;
 
-    public CreateUserViewModel(IPropertyValidator propertyValidator, CreateUserCommands commands)
+    public CreateUserViewModel(IPropertyValidator propertyValidator)
         : base(true)
     {
         this.propertyValidator = propertyValidator;
-        Commands = commands;
 
         this.WhenAnyValue(x => x.Email)
             .Skip(1)
@@ -50,8 +49,6 @@ public class CreateUserViewModel
                 this.RaisePropertyChanged(nameof(HasErrors));
             });
     }
-
-    public CreateUserCommands Commands { get; }
 
     public override string ViewId
     {

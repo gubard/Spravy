@@ -13,11 +13,8 @@ public class MultiToDoItemsViewModel : ViewModelBase
         favorite.Header = new("MultiToDoItemsView.Favorite");
         Favorite = favorite;
         ToDoItems = toDoItems;
-        InitializedCommand = SpravyCommand.Create(
-            InitializedAsync,
-            errorHandler,
-            taskProgressService
-        );
+
+        this.WhenAnyValue(x => x.GroupBy).Subscribe(x => ToDoItems.GroupBy = x);
 
         this.WhenAnyValue(x => x.IsMulti)
             .Subscribe(x =>
@@ -27,7 +24,6 @@ public class MultiToDoItemsViewModel : ViewModelBase
             });
     }
 
-    public SpravyCommand InitializedCommand { get; }
     public ToDoItemsViewModel Favorite { get; }
     public ToDoItemsGroupByViewModel ToDoItems { get; }
 
@@ -36,13 +32,6 @@ public class MultiToDoItemsViewModel : ViewModelBase
 
     [Reactive]
     public bool IsMulti { get; set; }
-
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
-    {
-        this.WhenAnyValue(x => x.GroupBy).Subscribe(x => ToDoItems.GroupBy = x);
-
-        return Result.AwaitableSuccess;
-    }
 
     public Result ClearFavoriteExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> ids)
     {

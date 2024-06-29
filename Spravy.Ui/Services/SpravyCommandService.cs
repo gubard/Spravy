@@ -21,6 +21,8 @@ public class SpravyCommandService
         MainSplitViewModel mainSplitViewModel,
         IObjectStorage objectStorage,
         SukiTheme sukiTheme,
+        AccountNotify accountNotify,
+        ITokenService tokenService,
         ISpravyNotificationManager spravyNotificationManager,
         INavigator navigator,
         IErrorHandler errorHandler,
@@ -1999,6 +2001,370 @@ public class SpravyCommandService
             errorHandler,
             taskProgressService
         );
+
+        CreateUserViewEnter = SpravyCommand.Create<CreateUserView>(
+            (view, ct) =>
+                this.InvokeUiAsync(
+                        () =>
+                            view.FindControl<TextBox>(CreateUserView.EmailTextBoxName)
+                                .IfNotNull(CreateUserView.EmailTextBoxName)
+                                .IfSuccess(emailTextBox =>
+                                    view.FindControl<TextBox>(CreateUserView.LoginTextBoxName)
+                                        .IfNotNull(CreateUserView.LoginTextBoxName)
+                                        .IfSuccess(loginTextBox =>
+                                            view.FindControl<TextBox>(
+                                                    CreateUserView.PasswordTextBoxName
+                                                )
+                                                .IfNotNull(CreateUserView.PasswordTextBoxName)
+                                                .IfSuccess(passwordTextBox =>
+                                                    view.FindControl<TextBox>(
+                                                            CreateUserView.RepeatPasswordTextBoxName
+                                                        )
+                                                        .IfNotNull(
+                                                            CreateUserView.RepeatPasswordTextBoxName
+                                                        )
+                                                        .IfSuccess(repeatPasswordTextBox =>
+                                                            new
+                                                            {
+                                                                EmailTextBox = emailTextBox,
+                                                                PasswordTextBox = passwordTextBox,
+                                                                LoginTextBox = loginTextBox,
+                                                                RepeatPasswordTextBox = repeatPasswordTextBox,
+                                                            }.ToResult()
+                                                        )
+                                                )
+                                        )
+                                )
+                    )
+                    .IfSuccessAsync(
+                        controls =>
+                        {
+                            if (controls.EmailTextBox.IsFocused)
+                            {
+                                return this.InvokeUiAsync(() =>
+                                {
+                                    controls.LoginTextBox.Focus();
+
+                                    return Result.Success;
+                                });
+                            }
+
+                            if (controls.LoginTextBox.IsFocused)
+                            {
+                                return this.InvokeUiAsync(() =>
+                                {
+                                    controls.PasswordTextBox.Focus();
+
+                                    return Result.Success;
+                                });
+                            }
+
+                            if (controls.PasswordTextBox.IsFocused)
+                            {
+                                return this.InvokeUiAsync(() =>
+                                {
+                                    controls.RepeatPasswordTextBox.Focus();
+
+                                    return Result.Success;
+                                });
+                            }
+
+                            return this.InvokeUiAsync(
+                                    () => view.ViewModel.IfNotNull(nameof(view.ViewModel))
+                                )
+                                .IfSuccessAsync(
+                                    vm =>
+                                    {
+                                        if (vm.HasErrors)
+                                        {
+                                            return Result.AwaitableSuccess;
+                                        }
+
+                                        return CreateUserAsync(vm, authenticationService, ct);
+                                    },
+                                    ct
+                                );
+                        },
+                        ct
+                    ),
+            errorHandler,
+            taskProgressService
+        );
+
+        CreateUser = SpravyCommand.Create<CreateUserViewModel>(
+            (vm, ct) => CreateUserAsync(vm, authenticationService, ct),
+            errorHandler,
+            taskProgressService
+        );
+
+        LoginViewInitialized = SpravyCommand.Create<LoginViewModel>(
+            (viewModel, ct) =>
+                this.InvokeUiBackgroundAsync(() =>
+                    {
+                        viewModel.IsBusy = true;
+
+                        return Result.Success;
+                    })
+                    .IfSuccessTryFinallyAsync(
+                        () =>
+                        {
+                            return objectStorage
+                                .GetObjectOrDefaultAsync<LoginViewModelSetting>(
+                                    viewModel.ViewId,
+                                    ct
+                                )
+                                .IfSuccessAsync(
+                                    setting =>
+                                    {
+                                        return viewModel
+                                            .SetStateAsync(setting, ct)
+                                            .IfSuccessAsync(
+                                                () =>
+                                                    objectStorage.IsExistsAsync(
+                                                        StorageIds.LoginId,
+                                                        ct
+                                                    ),
+                                                ct
+                                            )
+                                            .IfSuccessAsync(
+                                                value =>
+                                                {
+                                                    if (!value)
+                                                    {
+                                                        return Result.AwaitableSuccess;
+                                                    }
+
+                                                    return objectStorage
+                                                        .GetObjectAsync<LoginStorageItem>(
+                                                            StorageIds.LoginId,
+                                                            ct
+                                                        )
+                                                        .IfSuccessAsync(
+                                                            item =>
+                                                            {
+                                                                var jwtHandler =
+                                                                    new JwtSecurityTokenHandler();
+                                                                var jwtToken =
+                                                                    jwtHandler.ReadJwtToken(
+                                                                        item.Token
+                                                                    );
+                                                                var l = jwtToken
+                                                                    .Claims.Single(x =>
+                                                                        x.Type == ClaimTypes.Name
+                                                                    )
+                                                                    .Value;
+                                                                accountNotify.Login = l;
+
+                                                                return tokenService
+                                                                    .LoginAsync(
+                                                                        item.Token.ThrowIfNullOrWhiteSpace(),
+                                                                        ct
+                                                                    )
+                                                                    .IfSuccessAsync(
+                                                                        () =>
+                                                                            navigator.NavigateToAsync(
+                                                                                ActionHelper<RootToDoItemsViewModel>.Empty,
+                                                                                ct
+                                                                            ),
+                                                                        ct
+                                                                    );
+                                                            },
+                                                            ct
+                                                        );
+                                                },
+                                                ct
+                                            );
+                                    },
+                                    ct
+                                );
+                        },
+                        () =>
+                            this.InvokeUiBackgroundAsync(() =>
+                                {
+                                    viewModel.IsBusy = false;
+
+                                    return Result.Success;
+                                })
+                                .ToValueTask()
+                                .ConfigureAwait(false),
+                        ct
+                    ),
+            errorHandler,
+            taskProgressService
+        );
+
+        Login = SpravyCommand.Create<LoginViewModel>(
+            (vm, ct) =>
+                LoginAsync(
+                    vm,
+                    authenticationService,
+                    tokenService,
+                    objectStorage,
+                    accountNotify,
+                    ct
+                ),
+            errorHandler,
+            taskProgressService
+        );
+
+        LoginViewEnter = SpravyCommand.Create<LoginView>(
+            (view, ct) =>
+                this.InvokeUiAsync(
+                        () =>
+                            view.FindControl<TextBox>(LoginView.LoginTextBoxName)
+                                .IfNotNull(nameof(LoginView.LoginTextBoxName))
+                    )
+                    .IfSuccessAsync(
+                        loginTextBox =>
+                            this.InvokeUiAsync(
+                                    () =>
+                                        view.FindControl<TextBox>(LoginView.PasswordTextBoxName)
+                                            .IfNotNull(LoginView.PasswordTextBoxName)
+                                )
+                                .IfSuccessAsync(
+                                    passwordTextBox =>
+                                    {
+                                        if (loginTextBox.IsFocused)
+                                        {
+                                            return this.InvokeUiAsync(() =>
+                                            {
+                                                passwordTextBox.Focus();
+
+                                                return Result.Success;
+                                            });
+                                        }
+
+                                        if (passwordTextBox.IsFocused)
+                                        {
+                                            return this.InvokeUiAsync(
+                                                    () =>
+                                                        view.ViewModel.IfNotNull(
+                                                            nameof(view.ViewModel)
+                                                        )
+                                                )
+                                                .IfSuccessAsync(
+                                                    viewModel =>
+                                                    {
+                                                        if (viewModel.HasErrors)
+                                                        {
+                                                            return Result.AwaitableSuccess;
+                                                        }
+
+                                                        return LoginAsync(
+                                                            viewModel,
+                                                            authenticationService,
+                                                            tokenService,
+                                                            objectStorage,
+                                                            accountNotify,
+                                                            ct
+                                                        );
+                                                    },
+                                                    ct
+                                                );
+                                        }
+
+                                        return Result.AwaitableSuccess;
+                                    },
+                                    ct
+                                ),
+                        ct
+                    ),
+            errorHandler,
+            taskProgressService
+        );
+
+        DeletePasswordItemViewInitialized = SpravyCommand.Create<DeletePasswordItemViewModel>(
+            (vm, ct) =>
+                passwordService
+                    .GetPasswordItemAsync(vm.PasswordItemId, ct)
+                    .IfSuccessAsync(
+                        value =>
+                            this.InvokeUiBackgroundAsync(() =>
+                            {
+                                vm.PasswordItemName = value.Name;
+
+                                return Result.Success;
+                            }),
+                        ct
+                    ),
+            errorHandler,
+            taskProgressService
+        );
+
+        PasswordGeneratorViewInitialized = SpravyCommand.Create<PasswordGeneratorViewModel>(
+            (vm, ct) => vm.RefreshAsync(ct),
+            errorHandler,
+            taskProgressService
+        );
+
+        PasswordItemSettingsViewInitialized = SpravyCommand.Create<PasswordItemSettingsViewModel>(
+            (vm, ct) =>
+                passwordService
+                    .GetPasswordItemAsync(vm.Id, ct)
+                    .IfSuccessAsync(
+                        value =>
+                            this.InvokeUiBackgroundAsync(() =>
+                            {
+                                vm.Name = value.Name;
+                                vm.Regex = value.Regex;
+                                vm.Key = value.Key;
+                                vm.Length = value.Length;
+                                vm.IsAvailableUpperLatin = value.IsAvailableUpperLatin;
+                                vm.IsAvailableLowerLatin = value.IsAvailableLowerLatin;
+                                vm.IsAvailableNumber = value.IsAvailableNumber;
+                                vm.IsAvailableSpecialSymbols = value.IsAvailableSpecialSymbols;
+                                vm.CustomAvailableCharacters = value.CustomAvailableCharacters;
+
+                                return Result.Success;
+                            }),
+                        ct
+                    ),
+            errorHandler,
+            taskProgressService
+        );
+
+        AddRootToDoItemViewInitialized = SpravyCommand.Create<AddRootToDoItemViewModel>(
+            (vm, ct) =>
+                objectStorage
+                    .GetObjectOrDefaultAsync<AddRootToDoItemViewModelSetting>(vm.ViewId, ct)
+                    .IfSuccessAsync(obj => vm.SetStateAsync(obj, ct), ct),
+            errorHandler,
+            taskProgressService
+        );
+
+        AddToDoItemViewInitialized = SpravyCommand.Create<AddToDoItemViewModel>(
+            (vm, ct) =>
+                objectStorage
+                    .GetObjectOrDefaultAsync<AddToDoItemViewModelSetting>(vm.ViewId, ct)
+                    .IfSuccessAsync(obj => vm.SetStateAsync(obj, ct), ct)
+                    .IfSuccessAsync(
+                        () =>
+                            toDoService
+                                .GetParentsAsync(vm.ParentId, ct)
+                                .IfSuccessAsync(
+                                    parents =>
+                                    {
+                                        var path = MaterialIconKind
+                                            .Home.As<object>()
+                                            .ToEnumerable()
+                                            .Concat(parents.ToArray().Select(x => x.Name))
+                                            .Select(x => x.ThrowIfNull())
+                                            .ToArray();
+
+                                        return this.InvokeUiBackgroundAsync(() =>
+                                        {
+                                            vm.Path = path;
+
+                                            return Result.Success;
+                                        });
+                                    },
+                                    ct
+                                ),
+                        ct
+                    ),
+            errorHandler,
+            taskProgressService
+        );
     }
 
     public SpravyCommand MultiCompleteToDoItem { get; }
@@ -2067,8 +2433,20 @@ public class SpravyCommandService
 
     public SpravyCommand SettingViewInitialized { get; }
     public SpravyCommand ForgotPasswordViewInitialized { get; }
+    public SpravyCommand LoginViewInitialized { get; }
+    public SpravyCommand DeletePasswordItemViewInitialized { get; }
+    public SpravyCommand PasswordGeneratorViewInitialized { get; }
+    public SpravyCommand PasswordItemSettingsViewInitialized { get; }
+    public SpravyCommand AddRootToDoItemViewInitialized { get; }
+    public SpravyCommand AddToDoItemViewInitialized { get; }
 
     public SpravyCommand ForgotPassword { get; }
+
+    public SpravyCommand CreateUserViewEnter { get; }
+    public SpravyCommand CreateUser { get; }
+
+    public SpravyCommand Login { get; }
+    public SpravyCommand LoginViewEnter { get; }
 
     public SpravyCommand GetNavigateTo<TViewModel>()
         where TViewModel : INavigatable
@@ -2086,5 +2464,161 @@ public class SpravyCommandService
         createNavigateToCache.Add(typeof(TViewModel), result);
 
         return result;
+    }
+
+    private ConfiguredValueTaskAwaitable<Result> CreateUserAsync(
+        CreateUserViewModel viewModel,
+        IAuthenticationService authenticationService,
+        CancellationToken ct
+    )
+    {
+        if (viewModel.HasErrors)
+        {
+            return Result.AwaitableSuccess;
+        }
+
+        return this.InvokeUiBackgroundAsync(() =>
+            {
+                viewModel.IsBusy = true;
+
+                return Result.Success;
+            })
+            .IfSuccessTryFinallyAsync(
+                () =>
+                    authenticationService
+                        .CreateUserAsync(viewModel.ToCreateUserOptions(), ct)
+                        .IfSuccessAsync(
+                            () =>
+                                navigator.NavigateToAsync<VerificationCodeViewModel>(
+                                    vm =>
+                                    {
+                                        vm.Identifier = viewModel.Email;
+                                        vm.IdentifierType = UserIdentifierType.Email;
+                                    },
+                                    ct
+                                ),
+                            ct
+                        ),
+                () =>
+                    this.InvokeUiBackgroundAsync(() =>
+                        {
+                            viewModel.IsBusy = false;
+
+                            return Result.Success;
+                        })
+                        .ToValueTask()
+                        .ConfigureAwait(false),
+                ct
+            );
+    }
+
+    private ConfiguredValueTaskAwaitable<Result> LoginAsync(
+        LoginViewModel viewModel,
+        IAuthenticationService authenticationService,
+        ITokenService tokenService,
+        IObjectStorage objectStorage,
+        AccountNotify accountNotify,
+        CancellationToken ct
+    )
+    {
+        if (viewModel.HasErrors)
+        {
+            return Result.AwaitableSuccess;
+        }
+
+        return this.InvokeUiBackgroundAsync(() =>
+            {
+                viewModel.IsBusy = true;
+
+                return Result.Success;
+            })
+            .IfSuccessTryFinallyAsync(
+                () =>
+                    authenticationService
+                        .IsVerifiedByLoginAsync(viewModel.Login, ct)
+                        .IfSuccessAsync(
+                            isVerified =>
+                            {
+                                if (!isVerified)
+                                {
+                                    return navigator.NavigateToAsync<VerificationCodeViewModel>(
+                                        vm =>
+                                        {
+                                            vm.Identifier = viewModel.Login;
+                                            vm.IdentifierType = UserIdentifierType.Login;
+                                        },
+                                        ct
+                                    );
+                                }
+
+                                return tokenService
+                                    .LoginAsync(viewModel.ToUser(), ct)
+                                    .IfSuccessAsync(
+                                        () =>
+                                            this.InvokeUiBackgroundAsync(() =>
+                                                {
+                                                    accountNotify.Login = viewModel.Login;
+
+                                                    return Result.Success;
+                                                })
+                                                .IfSuccessAsync(
+                                                    () =>
+                                                        RememberMeAsync(
+                                                            viewModel,
+                                                            tokenService,
+                                                            objectStorage,
+                                                            ct
+                                                        ),
+                                                    ct
+                                                )
+                                                .IfSuccessAsync(
+                                                    () =>
+                                                        navigator.NavigateToAsync(
+                                                            ActionHelper<RootToDoItemsViewModel>.Empty,
+                                                            ct
+                                                        ),
+                                                    ct
+                                                ),
+                                        ct
+                                    );
+                            },
+                            ct
+                        ),
+                () =>
+                    this.InvokeUiBackgroundAsync(() =>
+                        {
+                            viewModel.IsBusy = false;
+
+                            return Result.Success;
+                        })
+                        .ToValueTask()
+                        .ConfigureAwait(false),
+                ct
+            );
+    }
+
+    private ConfiguredValueTaskAwaitable<Result> RememberMeAsync(
+        LoginViewModel viewModel,
+        ITokenService tokenService,
+        IObjectStorage objectStorage,
+        CancellationToken ct
+    )
+    {
+        if (!viewModel.IsRememberMe)
+        {
+            return Result.AwaitableSuccess;
+        }
+
+        return tokenService
+            .GetTokenAsync(ct)
+            .IfSuccessAsync(
+                token =>
+                {
+                    var item = new LoginStorageItem { Token = token, };
+
+                    return objectStorage.SaveObjectAsync(StorageIds.LoginId, item, ct);
+                },
+                ct
+            );
     }
 }

@@ -9,12 +9,14 @@
                         xmlns:tm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
                         xmlns:a="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                         xmlns:m="clr-namespace:Spravy.Ui.Models"
+                        xmlns:helpers="clr-namespace:Spravy.Ui.Helpers"
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                         x:Class="Spravy.Ui.Features.ToDo.Views.AddToDoItemView"
                         x:DataType="vm:AddToDoItemViewModel">
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
-            <InvokeCommandAction Command="{Binding InitializedCommand.Command}" />
+            <InvokeCommandAction Command="{x:Static helpers:UiHelper.AddToDoItemViewInitialized}"
+                                 CommandParameter="{Binding}" />
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 
@@ -26,7 +28,7 @@
 
                     <ScrollViewer Classes="mini" HorizontalScrollBarVisibility="Auto"
                                   VerticalScrollBarVisibility="Disabled">
-                        <c:Stepper Index="0" Steps="{Binding Path}" HorizontalAlignment="Left" >
+                        <c:Stepper Index="0" Steps="{Binding Path}" HorizontalAlignment="Left">
                             <c:Stepper.DataTemplates>
                                 <DataTemplate DataType="tm:ToDoItemEntityNotify">
                                     <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5" />

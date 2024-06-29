@@ -27,11 +27,23 @@ public static class UiHelper
         NavigateToActiveToDoItem = commands.NavigateToActiveToDoItem.Command;
         ForgotPasswordViewInitialized = commands.ForgotPasswordViewInitialized.Command;
         ForgotPassword = commands.ForgotPassword.Command;
+        CreateUserViewEnter = commands.CreateUserViewEnter.Command;
+        CreateUser = commands.CreateUser.Command;
+        LoginViewInitialized = commands.LoginViewInitialized.Command;
+        LoginViewEnter = commands.LoginViewEnter.Command;
+        Login = commands.Login.Command;
+        AddToDoItemViewInitialized = commands.AddToDoItemViewInitialized.Command;
+        AddRootToDoItemViewInitialized = commands.AddRootToDoItemViewInitialized.Command;
+        PasswordItemSettingsViewInitialized = commands.PasswordItemSettingsViewInitialized.Command;
+        PasswordGeneratorViewInitialized = commands.PasswordGeneratorViewInitialized.Command;
+        DeletePasswordItemViewInitialized = commands.DeletePasswordItemViewInitialized.Command;
         NavigateToRootToDoItems = commands.GetNavigateTo<RootToDoItemsViewModel>().Command;
         NavigateToTodayToDoItems = commands.GetNavigateTo<TodayToDoItemsViewModel>().Command;
         NavigateToSearchToDoItems = commands.GetNavigateTo<SearchToDoItemsViewModel>().Command;
         NavigateToPasswordGenerator = commands.GetNavigateTo<PasswordGeneratorViewModel>().Command;
         NavigateToSetting = commands.GetNavigateTo<SettingViewModel>().Command;
+        NavigateToForgotPassword = commands.GetNavigateTo<ForgotPasswordViewModel>().Command;
+        NavigateToCreateUser = commands.GetNavigateTo<CreateUserViewModel>().Command;
     }
 
     public static readonly ICommand Back;
@@ -45,6 +57,8 @@ public static class UiHelper
     public static readonly ICommand NavigateToTodayToDoItems;
     public static readonly ICommand NavigateToSearchToDoItems;
     public static readonly ICommand NavigateToPasswordGenerator;
+    public static readonly ICommand NavigateToForgotPassword;
+    public static readonly ICommand NavigateToCreateUser;
     public static readonly ICommand NavigateToSetting;
     public static readonly ICommand SwitchPane;
     public static readonly ICommand AddRootToDoItem;
@@ -57,5 +71,15 @@ public static class UiHelper
     public static readonly ICommand ForgotPasswordViewInitialized;
     public static readonly ICommand ForgotPassword;
     public static readonly ICommand NavigateToActiveToDoItem;
+    public static readonly ICommand CreateUserViewEnter;
+    public static readonly ICommand CreateUser;
+    public static readonly ICommand LoginViewInitialized;
+    public static readonly ICommand LoginViewEnter;
+    public static readonly ICommand Login;
+    public static readonly ICommand DeletePasswordItemViewInitialized;
+    public static readonly ICommand PasswordGeneratorViewInitialized;
+    public static readonly ICommand PasswordItemSettingsViewInitialized;
+    public static readonly ICommand AddRootToDoItemViewInitialized;
+    public static readonly ICommand AddToDoItemViewInitialized;
     public static readonly SpravyCommandNotify NavigateToCurrentToDoItem;
 }

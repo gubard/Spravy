@@ -7,12 +7,14 @@
                         xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
                         xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
                         xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
+                        xmlns:h="clr-namespace:Spravy.Ui.Helpers"
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                         x:Class="Spravy.Ui.Features.ToDo.Views.AddRootToDoItemView"
                         x:DataType="vm:AddRootToDoItemViewModel">
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
-            <InvokeCommandAction Command="{Binding InitializedCommand.Command}" />
+            <InvokeCommandAction Command="{x:Static h:UiHelper.AddRootToDoItemViewInitialized}"
+                                 CommandParameter="{Binding}" />
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 

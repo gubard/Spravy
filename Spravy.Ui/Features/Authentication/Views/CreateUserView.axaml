@@ -12,7 +12,9 @@
                         x:Class="Spravy.Ui.Features.Authentication.Views.CreateUserView"
                         x:DataType="vm:CreateUserViewModel">
     <UserControl.KeyBindings>
-        <KeyBinding Gesture="Enter" Command="{Binding Commands.EnterCommand.Command}" CommandParameter="{Binding $self}" />
+        <KeyBinding Gesture="Enter" 
+                    Command="{x:Static h:UiHelper.CreateUserViewEnter}"
+                    CommandParameter="{Binding $self}" />
     </UserControl.KeyBindings>
 
     <c:GlassCard Name="{x:Static v:CreateUserView.CreateUserCardName}"
@@ -51,7 +53,7 @@
                     <Button Name="{x:Static v:CreateUserView.CreateUserButtonName}"
                             Grid.Column="1"
                             Classes="Flat mode-press"
-                            Command="{Binding Commands.CreateUserCommand.Command}"
+                            Command="{x:Static h:UiHelper.CreateUser}"
                             CommandParameter="{Binding}"
                             Content="{DynamicResource CreateUserView.CreateAccount}" />
                 </Grid>

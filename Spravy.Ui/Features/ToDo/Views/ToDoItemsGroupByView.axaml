@@ -9,11 +9,5 @@
                                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                                 x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemsGroupByView"
                                 x:DataType="viewModels:ToDoItemsGroupByViewModel">
-    <Interaction.Behaviors>
-        <EventTriggerBehavior EventName="Initialized">
-            <InvokeCommandAction Command="{Binding InitializedCommand.Command}" />
-        </EventTriggerBehavior>
-    </Interaction.Behaviors>
-
     <ContentControl Name="{x:Static v:ToDoItemsGroupByView.ContentContentControlName}" Content="{Binding Content}" />
 </reactiveUi:ReactiveUserControl>

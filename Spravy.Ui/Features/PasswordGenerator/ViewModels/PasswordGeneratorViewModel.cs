@@ -7,19 +7,12 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
 
     public PasswordGeneratorViewModel(
         IPasswordService passwordService,
-        IPasswordItemCache passwordItemCache,
-        IErrorHandler errorHandler,
-        ITaskProgressService taskProgressService
+        IPasswordItemCache passwordItemCache
     )
         : base(true)
     {
         this.passwordService = passwordService;
         this.passwordItemCache = passwordItemCache;
-        InitializedCommand = SpravyCommand.Create(
-            InitializedAsync,
-            errorHandler,
-            taskProgressService
-        );
     }
 
     public override string ViewId
@@ -28,7 +21,6 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
     }
 
     public AvaloniaList<PasswordItemNotify> Items { get; } = new();
-    public SpravyCommand InitializedCommand { get; }
 
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken ct)
     {
@@ -47,11 +39,6 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
                     }),
                 ct
             );
-    }
-
-    private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
-    {
-        return RefreshAsync(ct);
     }
 
     public override Result Stop()
