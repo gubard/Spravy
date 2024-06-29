@@ -1941,6 +1941,64 @@ public class SpravyCommandService
             errorHandler,
             taskProgressService
         );
+
+        ForgotPasswordViewInitialized = SpravyCommand.Create<ForgotPasswordViewModel>(
+            (vm, ct) =>
+                vm.IdentifierType switch
+                {
+                    UserIdentifierType.Email
+                        => authenticationService.UpdateVerificationCodeByEmailAsync(
+                            vm.Identifier,
+                            ct
+                        ),
+                    UserIdentifierType.Login
+                        => authenticationService.UpdateVerificationCodeByLoginAsync(
+                            vm.Identifier,
+                            ct
+                        ),
+                    _
+                        => new Result(new UserIdentifierTypeOutOfRangeError(vm.IdentifierType))
+                            .ToValueTaskResult()
+                            .ConfigureAwait(false)
+                },
+            errorHandler,
+            taskProgressService
+        );
+
+        ForgotPassword = SpravyCommand.Create<ForgotPasswordViewModel>(
+            (vm, ct) =>
+                Result
+                    .AwaitableSuccess.IfSuccessAsync(
+                        () =>
+                            vm.IdentifierType switch
+                            {
+                                UserIdentifierType.Email
+                                    => authenticationService.UpdatePasswordByEmailAsync(
+                                        vm.Identifier,
+                                        vm.VerificationCode.ToUpperInvariant(),
+                                        vm.NewPassword,
+                                        ct
+                                    ),
+                                UserIdentifierType.Login
+                                    => authenticationService.UpdatePasswordByLoginAsync(
+                                        vm.Identifier,
+                                        vm.VerificationCode.ToUpperInvariant(),
+                                        vm.NewPassword,
+                                        ct
+                                    ),
+                                _
+                                    => new Result(
+                                        new UserIdentifierTypeOutOfRangeError(vm.IdentifierType)
+                                    )
+                                        .ToValueTaskResult()
+                                        .ConfigureAwait(false)
+                            },
+                        ct
+                    )
+                    .IfSuccessAsync(() => navigator.NavigateToAsync<LoginViewModel>(ct), ct),
+            errorHandler,
+            taskProgressService
+        );
     }
 
     public SpravyCommand MultiCompleteToDoItem { get; }
@@ -2008,6 +2066,9 @@ public class SpravyCommandService
     public SpravyCommand SetToDoItemDescription { get; }
 
     public SpravyCommand SettingViewInitialized { get; }
+    public SpravyCommand ForgotPasswordViewInitialized { get; }
+
+    public SpravyCommand ForgotPassword { get; }
 
     public SpravyCommand GetNavigateTo<TViewModel>()
         where TViewModel : INavigatable
