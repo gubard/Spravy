@@ -19,58 +19,6 @@
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 
-    <UserControl.Styles>
-        <Style Selector="ItemsControl.adaptive">
-            <Setter Property="(Interaction.Behaviors)">
-                <BehaviorCollectionTemplate>
-                    <BehaviorCollection>
-                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
-                            <AdaptiveClassSetter MinWidth="0"
-                                                 MaxWidth="{x:Static h:MaterialDesignSize.MinMedium}"
-                                                 ClassName="small" />
-                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinMedium}"
-                                                 MaxWidth="Infinity"
-                                                 ClassName="wide" />
-                        </AdaptiveBehavior>
-                    </BehaviorCollection>
-                </BehaviorCollectionTemplate>
-            </Setter>
-        </Style>
-
-        <Style Selector="Button.adaptive">
-            <Setter Property="(Interaction.Behaviors)">
-                <BehaviorCollectionTemplate>
-                    <BehaviorCollection>
-                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
-                            <AdaptiveClassSetter MinWidth="0"
-                                                 MaxWidth="{x:Static h:MaterialDesignSize.MinMedium}"
-                                                 ClassName="small" />
-                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinMedium}"
-                                                 MaxWidth="Infinity"
-                                                 ClassName="wide" />
-                        </AdaptiveBehavior>
-                    </BehaviorCollection>
-                </BehaviorCollectionTemplate>
-            </Setter>
-        </Style>
-
-        <Style Selector="ItemsControl.small">
-            <Setter Property="IsVisible" Value="False" />
-        </Style>
-
-        <Style Selector="ItemsControl.wide">
-            <Setter Property="IsVisible" Value="True" />
-        </Style>
-
-        <Style Selector="Button.small">
-            <Setter Property="IsVisible" Value="True" />
-        </Style>
-
-        <Style Selector="Button.wide">
-            <Setter Property="IsVisible" Value="False" />
-        </Style>
-    </UserControl.Styles>
-
     <Grid RowDefinitions="Auto,*, Auto">
         <Grid ColumnDefinitions="Auto,*,Auto">
             <StackPanel Orientation="Horizontal">
@@ -95,7 +43,7 @@
                     <ItemsControl HorizontalAlignment="Right"
                                   VerticalAlignment="Center"
                                   ItemsSource="{Binding Commands}"
-                                  Classes="adaptive">
+                                  Classes="adaptive-commands-items-control">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <WrapPanel Orientation="Horizontal" />
@@ -112,7 +60,7 @@
                         </ItemsControl.DataTemplates>
                     </ItemsControl>
 
-                    <Button Classes="adaptive Basic mode-press">
+                    <Button Classes="adaptive-commands-button Basic mode-press">
                         <Button.DataTemplates>
                             <DataTemplate x:DataType="m:SpravyCommandNotify">
                                 <ContentControl Content="{Binding Text}" />

@@ -13,58 +13,6 @@
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                         x:Class="Spravy.Ui.Features.ToDo.Views.SearchToDoItemsView"
                         x:DataType="vm:SearchToDoItemsViewModel">
-    <UserControl.Styles>
-        <Style Selector="ItemsControl.adaptive">
-            <Setter Property="(Interaction.Behaviors)">
-                <BehaviorCollectionTemplate>
-                    <BehaviorCollection>
-                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
-                            <AdaptiveClassSetter MinWidth="0"
-                                                 MaxWidth="{x:Static h:MaterialDesignSize.MinMedium}"
-                                                 ClassName="small" />
-                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinMedium}"
-                                                 MaxWidth="Infinity"
-                                                 ClassName="wide" />
-                        </AdaptiveBehavior>
-                    </BehaviorCollection>
-                </BehaviorCollectionTemplate>
-            </Setter>
-        </Style>
-
-        <Style Selector="Button.adaptive">
-            <Setter Property="(Interaction.Behaviors)">
-                <BehaviorCollectionTemplate>
-                    <BehaviorCollection>
-                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
-                            <AdaptiveClassSetter MinWidth="0"
-                                                 MaxWidth="{x:Static h:MaterialDesignSize.MinMedium}"
-                                                 ClassName="small" />
-                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinMedium}"
-                                                 MaxWidth="Infinity"
-                                                 ClassName="wide" />
-                        </AdaptiveBehavior>
-                    </BehaviorCollection>
-                </BehaviorCollectionTemplate>
-            </Setter>
-        </Style>
-
-        <Style Selector="ItemsControl.small">
-            <Setter Property="IsVisible" Value="False" />
-        </Style>
-
-        <Style Selector="ItemsControl.wide">
-            <Setter Property="IsVisible" Value="True" />
-        </Style>
-
-        <Style Selector="Button.small">
-            <Setter Property="IsVisible" Value="True" />
-        </Style>
-
-        <Style Selector="Button.wide">
-            <Setter Property="IsVisible" Value="False" />
-        </Style>
-    </UserControl.Styles>
-
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
             <InvokeCommandAction Command="{Binding InitializedCommand.Command}" />
@@ -79,7 +27,7 @@
         <Panel
             IsVisible="{Binding Commands.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
             <ItemsControl ItemsSource="{Binding Commands}"
-                          Classes="adaptive horizontal-alignment-right vertical-alignment-center">
+                          Classes="adaptive-commands-items-control horizontal-alignment-right vertical-alignment-center">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel Orientation="Horizontal" />
@@ -96,7 +44,7 @@
                 </ItemsControl.DataTemplates>
             </ItemsControl>
 
-            <Button Classes="adaptive Basic horizontal-alignment-right mode-press">
+            <Button Classes="adaptive-commands-button Basic horizontal-alignment-right mode-press">
                 <Button.DataTemplates>
                     <DataTemplate x:DataType="m:SpravyCommandNotify">
                         <ContentControl Content="{Binding Text}" />

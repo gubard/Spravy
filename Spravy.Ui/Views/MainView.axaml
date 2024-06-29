@@ -5,91 +5,24 @@
              xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
              xmlns:dh="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
              xmlns:s="clr-namespace:Spravy.Ui.Services"
-             xmlns:h="clr-namespace:Spravy.Ui.Helpers"
              xmlns:views="clr-namespace:Spravy.Ui.Views"
              mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
              x:Class="Spravy.Ui.Views.MainView"
              x:DataType="vm:MainViewModel">
-    <UserControl.Styles>
-        <Style
-            Selector="dh|DialogHost.dialog-host-extra-small > Grid#PART_DialogHostRoot > dh|DialogOverlayPopupHost">
-            <Setter Property="Width"
-                    Value="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter95}}" />
-            <Setter Property="MaxHeight"
-                    Value="{Binding $parent[TopLevel].Height, Converter={StaticResource DoubleToPercentsConverter95}}" />
-        </Style>
-
-        <Style
-            Selector="dh|DialogHost.dialog-host-small > Grid#PART_DialogHostRoot > dh|DialogOverlayPopupHost">
-            <Setter Property="Width"
-                    Value="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter85}}" />
-            <Setter Property="MaxHeight"
-                    Value="{Binding $parent[TopLevel].Height, Converter={StaticResource DoubleToPercentsConverter95}}" />
-        </Style>
-
-        <Style
-            Selector="dh|DialogHost.dialog-host-medium > Grid#PART_DialogHostRoot > dh|DialogOverlayPopupHost">
-            <Setter Property="Width"
-                    Value="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter70}}" />
-            <Setter Property="MaxHeight"
-                    Value="{Binding $parent[TopLevel].Height, Converter={StaticResource DoubleToPercentsConverter95}}" />
-        </Style>
-
-        <Style
-            Selector="dh|DialogHost.dialog-host-large > Grid#PART_DialogHostRoot > dh|DialogOverlayPopupHost">
-            <Setter Property="Width"
-                    Value="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter50}}" />
-            <Setter Property="MaxHeight"
-                    Value="{Binding $parent[TopLevel].Height, Converter={StaticResource DoubleToPercentsConverter95}}" />
-        </Style>
-
-        <Style Selector="dh|DialogHost.adaptive">
-            <Setter Property="(Interaction.Behaviors)">
-                <BehaviorCollectionTemplate>
-                    <BehaviorCollection>
-                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
-                            <AdaptiveClassSetter MinWidth="0"
-                                                 MaxWidth="{x:Static h:MaterialDesignSize.MaxExtraSmall}"
-                                                 ClassName="dialog-host-extra-small" />
-                        </AdaptiveBehavior>
-
-                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
-                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinSmall}"
-                                                 MaxWidth="{x:Static h:MaterialDesignSize.MaxSmall}"
-                                                 ClassName="dialog-host-small" />
-                        </AdaptiveBehavior>
-
-                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
-                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinMedium}"
-                                                 MaxWidth="{x:Static h:MaterialDesignSize.MaxMedium}"
-                                                 ClassName="dialog-host-medium" />
-                        </AdaptiveBehavior>
-
-                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
-                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinLarge}"
-                                                 MaxWidth="Infinity"
-                                                 ClassName="dialog-host-large" />
-                        </AdaptiveBehavior>
-                    </BehaviorCollection>
-                </BehaviorCollectionTemplate>
-            </Setter>
-        </Style>
-    </UserControl.Styles>
-
     <Panel>
         <ContentControl Content="{Binding MainProgressBar}" ZIndex="100" VerticalAlignment="Top" />
 
         <dh:DialogHost Name="{x:Static views:MainView.ErrorDialogHostName}"
-                       Classes="adaptive"
+                       Classes="adaptive-dialog-host"
                        Identifier="{x:Static s:DialogViewer.ErrorDialogHostIdentifier}">
             <dh:DialogHost Name="{x:Static views:MainView.ProgressDialogHostName}"
-                           Classes="adaptive"
+                           Classes="adaptive-dialog-host"
                            Identifier="{x:Static s:DialogViewer.ProgressDialogHostIdentifier}">
                 <dh:DialogHost Name="{x:Static views:MainView.InputDialogHostName}"
-                               Classes="adaptive"
+                               Classes="adaptive-dialog-host"
                                Identifier="{x:Static s:DialogViewer.InputDialogHostIdentifier}">
                     <dh:DialogHost Name="{x:Static views:MainView.ContentDialogHostName}"
-                                   Classes="adaptive"
+                                   Classes="adaptive-dialog-host"
                                    Identifier="{x:Static s:DialogViewer.ContentDialogHostIdentifier}">
                         <ContentControl Name="{x:Static views:MainView.MainContentName}"
                                         Content="{Binding MainSplit}" />

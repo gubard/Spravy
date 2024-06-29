@@ -5,79 +5,10 @@
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:ru="http://reactiveui.net"
                         xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
-                        xmlns:h="clr-namespace:Spravy.Ui.Helpers"
                         xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                         x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemsGroupByStatusView"
                         x:DataType="vm:ToDoItemsGroupByStatusViewModel">
-    <UserControl.Styles>
-        <Style Selector="ItemsControl.adaptive-to-do-items-group-by-status-view">
-            <Setter Property="(Interaction.Behaviors)">
-                <BehaviorCollectionTemplate>
-                    <BehaviorCollection>
-                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
-                            <AdaptiveClassSetter MinWidth="0"
-                                                 MaxWidth="{x:Static h:MaterialDesignSize.MaxExtraSmall}"
-                                                 ClassName="to-do-items-group-by-status-view-extra-small" />
-                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MaxExtraSmall}"
-                                                 MaxWidth="{x:Static h:MaterialDesignSize.MaxSmall}"
-                                                 ClassName="to-do-items-group-by-status-view-small" />
-                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MaxSmall}"
-                                                 MaxWidth="{x:Static h:MaterialDesignSize.MaxMedium}"
-                                                 ClassName="to-do-items-group-by-status-view-medium" />
-                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MaxMedium}"
-                                                 MaxWidth="{x:Static h:MaterialDesignSize.MaxLarge}"
-                                                 ClassName="to-do-items-group-by-status-view-large" />
-                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MaxLarge}"
-                                                 MaxWidth="Infinity"
-                                                 ClassName="to-do-items-group-by-status-view-wide" />
-                        </AdaptiveBehavior>
-                    </BehaviorCollection>
-                </BehaviorCollectionTemplate>
-            </Setter>
-        </Style>
-
-        <Style Selector="ItemsControl.to-do-items-group-by-status-view-extra-small">
-            <Setter Property="ItemsPanel">
-                <ItemsPanelTemplate>
-                    <StackPanel />
-                </ItemsPanelTemplate>
-            </Setter>
-        </Style>
-
-        <Style Selector="ItemsControl.to-do-items-group-by-status-view-small">
-            <Setter Property="ItemsPanel">
-                <ItemsPanelTemplate>
-                    <StackPanel />
-                </ItemsPanelTemplate>
-            </Setter>
-        </Style>
-
-        <Style Selector="ItemsControl.to-do-items-group-by-status-view-medium">
-            <Setter Property="ItemsPanel">
-                <ItemsPanelTemplate>
-                    <StackPanel />
-                </ItemsPanelTemplate>
-            </Setter>
-        </Style>
-
-        <Style Selector="ItemsControl.to-do-items-group-by-status-view-large">
-            <Setter Property="ItemsPanel">
-                <ItemsPanelTemplate>
-                    <UniformGrid Rows="1" />
-                </ItemsPanelTemplate>
-            </Setter>
-        </Style>
-
-        <Style Selector="ItemsControl.to-do-items-group-by-status-view-extra-large">
-            <Setter Property="ItemsPanel">
-                <ItemsPanelTemplate>
-                    <UniformGrid Rows="1" />
-                </ItemsPanelTemplate>
-            </Setter>
-        </Style>
-    </UserControl.Styles>
-
     <ItemsControl Classes="adaptive-to-do-items-group-by-status-view">
         <ContentControl Content="{Binding Missed}"
                         IsVisible="{Binding Missed.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />

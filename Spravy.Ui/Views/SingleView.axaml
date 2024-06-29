@@ -2,7 +2,257 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:h="clr-namespace:Spravy.Ui.Helpers"
+             xmlns:dh="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Spravy.Ui.Views.SingleView"
              TextElement.Foreground="{DynamicResource SukiText}"
-             Background="{DynamicResource SingleViewBackground}" />
+             Background="{DynamicResource SingleViewBackground}">
+    <UserControl.Styles>
+        <Style Selector="ItemsControl.adaptive-commands-items-control">
+            <Setter Property="(Interaction.Behaviors)">
+                <BehaviorCollectionTemplate>
+                    <BehaviorCollection>
+                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
+                            <AdaptiveClassSetter MinWidth="0"
+                                                 MaxWidth="{x:Static h:MaterialDesignSize.MinMedium}"
+                                                 ClassName="small-adaptive-commands-items-control" />
+                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinMedium}"
+                                                 MaxWidth="Infinity"
+                                                 ClassName="wide-adaptive-commands-items-control" />
+                        </AdaptiveBehavior>
+                    </BehaviorCollection>
+                </BehaviorCollectionTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="Button.adaptive-commands-button">
+            <Setter Property="(Interaction.Behaviors)">
+                <BehaviorCollectionTemplate>
+                    <BehaviorCollection>
+                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
+                            <AdaptiveClassSetter MinWidth="0"
+                                                 MaxWidth="{x:Static h:MaterialDesignSize.MinMedium}"
+                                                 ClassName="small-adaptive-commands-button" />
+                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinMedium}"
+                                                 MaxWidth="Infinity"
+                                                 ClassName="wide-adaptive-commands-button" />
+                        </AdaptiveBehavior>
+                    </BehaviorCollection>
+                </BehaviorCollectionTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="ItemsControl.small-adaptive-commands-items-control">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+
+        <Style Selector="ItemsControl.wide-adaptive-commands-items-control">
+            <Setter Property="IsVisible" Value="True" />
+        </Style>
+
+        <Style Selector="Button.small-adaptive-commands-button">
+            <Setter Property="IsVisible" Value="True" />
+        </Style>
+
+        <Style Selector="Button.wide-adaptive-commands-button">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+
+        <Style Selector="ItemsControl.adaptive-to-do-items-group-by-status-view">
+            <Setter Property="(Interaction.Behaviors)">
+                <BehaviorCollectionTemplate>
+                    <BehaviorCollection>
+                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
+                            <AdaptiveClassSetter MinWidth="0"
+                                                 MaxWidth="{x:Static h:MaterialDesignSize.MaxExtraSmall}"
+                                                 ClassName="to-do-items-group-by-status-view-extra-small" />
+                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MaxExtraSmall}"
+                                                 MaxWidth="{x:Static h:MaterialDesignSize.MaxSmall}"
+                                                 ClassName="to-do-items-group-by-status-view-small" />
+                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MaxSmall}"
+                                                 MaxWidth="{x:Static h:MaterialDesignSize.MaxMedium}"
+                                                 ClassName="to-do-items-group-by-status-view-medium" />
+                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MaxMedium}"
+                                                 MaxWidth="{x:Static h:MaterialDesignSize.MaxLarge}"
+                                                 ClassName="to-do-items-group-by-status-view-large" />
+                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MaxLarge}"
+                                                 MaxWidth="Infinity"
+                                                 ClassName="to-do-items-group-by-status-view-wide" />
+                        </AdaptiveBehavior>
+                    </BehaviorCollection>
+                </BehaviorCollectionTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="ItemsControl.to-do-items-group-by-status-view-extra-small">
+            <Setter Property="ItemsPanel">
+                <ItemsPanelTemplate>
+                    <StackPanel />
+                </ItemsPanelTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="ItemsControl.to-do-items-group-by-status-view-small">
+            <Setter Property="ItemsPanel">
+                <ItemsPanelTemplate>
+                    <StackPanel />
+                </ItemsPanelTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="ItemsControl.to-do-items-group-by-status-view-medium">
+            <Setter Property="ItemsPanel">
+                <ItemsPanelTemplate>
+                    <StackPanel />
+                </ItemsPanelTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="ItemsControl.to-do-items-group-by-status-view-large">
+            <Setter Property="ItemsPanel">
+                <ItemsPanelTemplate>
+                    <UniformGrid Rows="1" />
+                </ItemsPanelTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="ItemsControl.to-do-items-group-by-status-view-extra-large">
+            <Setter Property="ItemsPanel">
+                <ItemsPanelTemplate>
+                    <UniformGrid Rows="1" />
+                </ItemsPanelTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="ItemsControl.adaptive-to-do-items-group-by-type-view">
+            <Setter Property="(Interaction.Behaviors)">
+                <BehaviorCollectionTemplate>
+                    <BehaviorCollection>
+                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
+                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MaxExtraSmall}"
+                                                 MaxWidth="{x:Static h:MaterialDesignSize.MaxExtraSmall}"
+                                                 ClassName="to-do-items-group-by-type-view-extra-small" />
+                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinSmall}"
+                                                 MaxWidth="{x:Static h:MaterialDesignSize.MaxSmall}"
+                                                 ClassName="to-do-items-group-by-type-view-small" />
+                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinMedium}"
+                                                 MaxWidth="{x:Static h:MaterialDesignSize.MaxMedium}"
+                                                 ClassName="to-do-items-group-by-type-view-medium" />
+                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinLarge}"
+                                                 MaxWidth="{x:Static h:MaterialDesignSize.MaxLarge}"
+                                                 ClassName="to-do-items-group-by-type-view-large" />
+                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinExtraLarge}"
+                                                 MaxWidth="Infinity"
+                                                 ClassName="to-do-items-group-by-type-view-extra-large" />
+                        </AdaptiveBehavior>
+                    </BehaviorCollection>
+                </BehaviorCollectionTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="ItemsControl.to-do-items-group-by-type-view-extra-small">
+            <Setter Property="ItemsPanel">
+                <ItemsPanelTemplate>
+                    <StackPanel />
+                </ItemsPanelTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="ItemsControl.to-do-items-group-by-type-view-small">
+            <Setter Property="ItemsPanel">
+                <ItemsPanelTemplate>
+                    <StackPanel />
+                </ItemsPanelTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="ItemsControl.to-do-items-group-by-type-view-medium">
+            <Setter Property="ItemsPanel">
+                <ItemsPanelTemplate>
+                    <StackPanel />
+                </ItemsPanelTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="ItemsControl.to-do-items-group-by-type-view-large">
+            <Setter Property="ItemsPanel">
+                <ItemsPanelTemplate>
+                    <UniformGrid Rows="1" />
+                </ItemsPanelTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="ItemsControl.to-do-items-group-by-type-view-extra-large">
+            <Setter Property="ItemsPanel">
+                <ItemsPanelTemplate>
+                    <UniformGrid Rows="1" />
+                </ItemsPanelTemplate>
+            </Setter>
+        </Style>
+
+        <Style
+            Selector="dh|DialogHost.dialog-host-extra-small > Grid#PART_DialogHostRoot > dh|DialogOverlayPopupHost">
+            <Setter Property="Width"
+                    Value="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter95}}" />
+            <Setter Property="MaxHeight"
+                    Value="{Binding $parent[TopLevel].Height, Converter={StaticResource DoubleToPercentsConverter95}}" />
+        </Style>
+
+        <Style
+            Selector="dh|DialogHost.dialog-host-small > Grid#PART_DialogHostRoot > dh|DialogOverlayPopupHost">
+            <Setter Property="Width"
+                    Value="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter85}}" />
+            <Setter Property="MaxHeight"
+                    Value="{Binding $parent[TopLevel].Height, Converter={StaticResource DoubleToPercentsConverter95}}" />
+        </Style>
+
+        <Style
+            Selector="dh|DialogHost.dialog-host-medium > Grid#PART_DialogHostRoot > dh|DialogOverlayPopupHost">
+            <Setter Property="Width"
+                    Value="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter70}}" />
+            <Setter Property="MaxHeight"
+                    Value="{Binding $parent[TopLevel].Height, Converter={StaticResource DoubleToPercentsConverter95}}" />
+        </Style>
+
+        <Style
+            Selector="dh|DialogHost.dialog-host-large > Grid#PART_DialogHostRoot > dh|DialogOverlayPopupHost">
+            <Setter Property="Width"
+                    Value="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter50}}" />
+            <Setter Property="MaxHeight"
+                    Value="{Binding $parent[TopLevel].Height, Converter={StaticResource DoubleToPercentsConverter95}}" />
+        </Style>
+
+        <Style Selector="dh|DialogHost.adaptive-dialog-host">
+            <Setter Property="(Interaction.Behaviors)">
+                <BehaviorCollectionTemplate>
+                    <BehaviorCollection>
+                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
+                            <AdaptiveClassSetter MinWidth="0"
+                                                 MaxWidth="{x:Static h:MaterialDesignSize.MaxExtraSmall}"
+                                                 ClassName="dialog-host-extra-small" />
+                        </AdaptiveBehavior>
+
+                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
+                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinSmall}"
+                                                 MaxWidth="{x:Static h:MaterialDesignSize.MaxSmall}"
+                                                 ClassName="dialog-host-small" />
+                        </AdaptiveBehavior>
+
+                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
+                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinMedium}"
+                                                 MaxWidth="{x:Static h:MaterialDesignSize.MaxMedium}"
+                                                 ClassName="dialog-host-medium" />
+                        </AdaptiveBehavior>
+
+                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
+                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinLarge}"
+                                                 MaxWidth="Infinity"
+                                                 ClassName="dialog-host-large" />
+                        </AdaptiveBehavior>
+                    </BehaviorCollection>
+                </BehaviorCollectionTemplate>
+            </Setter>
+        </Style>
+    </UserControl.Styles>
+</UserControl>
