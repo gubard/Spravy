@@ -86,18 +86,6 @@ public class RpcExceptionHandler : IRpcExceptionHandler
             return new([error.Value,]);
         }
 
-        if (NavigatorCacheEmptyError.MainId == id)
-        {
-            var error = await serializer.DeserializeAsync<NavigatorCacheEmptyError>(stream, ct);
-
-            if (error.IsHasError)
-            {
-                return error.Errors;
-            }
-
-            return new([error.Value,]);
-        }
-
         if (NotViewForViewModelError.MainId == id)
         {
             var error = await serializer.DeserializeAsync<NotViewForViewModelError>(stream, ct);

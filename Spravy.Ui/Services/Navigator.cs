@@ -85,71 +85,67 @@ public class Navigator : INavigator
         CancellationToken ct
     )
     {
-        var item = list.Pop();
-
-        if (item is null)
-        {
-            return new Result<INavigatable>(new NavigatorCacheEmptyError())
-                .ToValueTaskResult()
-                .ConfigureAwait(false);
-        }
-
-        return this.InvokeUiBackgroundAsync(() =>
-            {
-                mainSplitViewModel.IsPaneOpen = false;
-
-                return Result.Success;
-            })
-            .IfSuccessAsync(() => dialogViewer.CloseLastDialogAsync(ct), ct)
+        return list.Pop()
             .IfSuccessAsync(
-                value =>
-                {
-                    if (value)
-                    {
-                        return new EmptyNavigatable()
-                            .CastObject<INavigatable>()
-                            .ToValueTaskResult()
-                            .ConfigureAwait(false);
-                    }
-
-                    if (mainSplitViewModel.IsPaneOpen)
-                    {
-                        mainSplitViewModel.IsPaneOpen = false;
-
-                        return new EmptyNavigatable()
-                            .CastObject<INavigatable>()
-                            .ToValueTaskResult()
-                            .ConfigureAwait(false);
-                    }
-
-                    return this.InvokeUiBackgroundAsync(() =>
+                item =>
+                    this.InvokeUiBackgroundAsync(() =>
                         {
-                            item.Setup.Invoke(item.Navigatable);
-                            mainSplitViewModel.Content = item.Navigatable;
+                            mainSplitViewModel.IsPaneOpen = false;
 
                             return Result.Success;
                         })
+                        .IfSuccessAsync(() => dialogViewer.CloseLastDialogAsync(ct), ct)
                         .IfSuccessAsync(
-                            () =>
+                            value =>
                             {
-                                if (item.Navigatable is IRefresh refresh)
+                                if (value)
                                 {
-                                    return refresh.RefreshAsync(ct);
+                                    return new EmptyNavigatable()
+                                        .CastObject<INavigatable>()
+                                        .ToValueTaskResult()
+                                        .ConfigureAwait(false);
                                 }
 
-                                return Result.AwaitableSuccess;
+                                if (mainSplitViewModel.IsPaneOpen)
+                                {
+                                    mainSplitViewModel.IsPaneOpen = false;
+
+                                    return new EmptyNavigatable()
+                                        .CastObject<INavigatable>()
+                                        .ToValueTaskResult()
+                                        .ConfigureAwait(false);
+                                }
+
+                                return this.InvokeUiBackgroundAsync(() =>
+                                    {
+                                        item.Setup.Invoke(item.Navigatable);
+                                        mainSplitViewModel.Content = item.Navigatable;
+
+                                        return Result.Success;
+                                    })
+                                    .IfSuccessAsync(
+                                        () =>
+                                        {
+                                            if (item.Navigatable is IRefresh refresh)
+                                            {
+                                                return refresh.RefreshAsync(ct);
+                                            }
+
+                                            return Result.AwaitableSuccess;
+                                        },
+                                        ct
+                                    )
+                                    .IfSuccessAsync(
+                                        () =>
+                                            item
+                                                .Navigatable.ToResult()
+                                                .ToValueTaskResult()
+                                                .ConfigureAwait(false),
+                                        ct
+                                    );
                             },
                             ct
-                        )
-                        .IfSuccessAsync(
-                            () =>
-                                item
-                                    .Navigatable.ToResult()
-                                    .ToValueTaskResult()
-                                    .ConfigureAwait(false),
-                            ct
-                        );
-                },
+                        ),
                 ct
             );
     }
@@ -193,10 +189,10 @@ public class Navigator : INavigator
 
         return content
             .SaveStateAsync(ct)
+            .IfSuccessAsync(() => list.Add(new(content, lastSetup)), ct)
             .IfSuccessAsync(
                 () =>
                 {
-                    list.Add(new(content, lastSetup));
                     lastSetup = setup;
 
                     return Result.AwaitableSuccess;

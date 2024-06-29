@@ -6,7 +6,6 @@ namespace Spravy.Ui.Services;
 [JsonSourceGenerationOptions]
 [JsonSerializable(typeof(UserIdentifierTypeOutOfRangeError))]
 [JsonSerializable(typeof(NonItemSelectedError))]
-[JsonSerializable(typeof(NavigatorCacheEmptyError))]
 [JsonSerializable(typeof(NotViewForViewModelError))]
 [JsonSerializable(typeof(ToDoItemIsCanOutOfRangeError))]
 [JsonSerializable(typeof(ToDoItemAlreadyCompleteError))]

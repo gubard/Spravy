@@ -3,60 +3,45 @@ namespace Spravy.Domain.Models;
 public class QueryList<T>
     where T : class
 {
-    private readonly T?[] array;
-    private readonly ulong size;
+    private Memory<T?> array;
+    private int currentIndex;
 
     public QueryList(ulong size)
     {
-        this.size = size;
+        currentIndex = 0;
         array = new T[size];
     }
 
-    public QueryList<T> Add(T item)
+    public Result Add(T item)
     {
-        item.ThrowIfNull();
-
-        for (var i = 0; i < array.Length; i++)
-        {
-            if (array[i] != null)
+        return item.IfNotNull(nameof(item))
+            .IfSuccess(i =>
             {
-                continue;
-            }
+                if (array.Length == currentIndex)
+                {
+                    var slice = array.Slice(1, array.Length - 1);
+                    slice.CopyTo(array);
+                    array.Span[^1] = i;
+                }
+                else
+                {
+                    array.Span[currentIndex] = i;
+                    currentIndex++;
+                }
 
-            array[i] = item;
-
-            return this;
-        }
-
-        for (var i = 0; i < array.Length - 1; i++)
-        {
-            array[i] = array[i + 1];
-        }
-
-        array[^1] = item;
-
-        return this;
+                return Result.Success;
+            });
     }
 
-    public T? Pop()
+    public Result<T> Pop()
     {
-        var index = 0;
-
-        for (var i = 1; i < array.Length - 1; i++)
+        if (array.IsEmpty)
         {
-            if (array[i] != null)
-            {
-                index = i;
-            }
-            else
-            {
-                break;
-            }
+            return new(new EmptyArrayError("query"));
         }
 
-        var result = array[index];
-        array[index] = default;
+        currentIndex--;
 
-        return result;
+        return array.Span[currentIndex].ThrowIfNull().ToResult();
     }
 }
