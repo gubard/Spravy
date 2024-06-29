@@ -43,14 +43,14 @@
     <sys:String x:Key="ToDoItemsGroupByTypeView.Groups">Groups</sys:String>
     <sys:String x:Key="ToDoItemsGroupByTypeView.Planneds">Planneds</sys:String>
     <sys:String x:Key="ToDoItemsGroupByTypeView.Periodicitys">Periodicitys</sys:String>
-    <sys:String x:Key="ToDoItemsGroupByTypeView.PeriodicityOffsets">PeriodicityOffsets</sys:String>
+    <sys:String x:Key="ToDoItemsGroupByTypeView.PeriodicityOffsets">Periodicity offsets</sys:String>
     <sys:String x:Key="ToDoItemsGroupByTypeView.Circles">Circles</sys:String>
     <sys:String x:Key="ToDoItemsGroupByTypeView.Steps">Steps</sys:String>
 
     <!--ToDoItemsGroupByStatusView-->
     <sys:String x:Key="ToDoItemsGroupByStatusView.Completed">Completed</sys:String>
     <sys:String x:Key="ToDoItemsGroupByStatusView.Planned">Planned</sys:String>
-    <sys:String x:Key="ToDoItemsGroupByStatusView.ReadyForCompleted">ReadyForCompleted</sys:String>
+    <sys:String x:Key="ToDoItemsGroupByStatusView.ReadyForCompleted">Ready for completed</sys:String>
     <sys:String x:Key="ToDoItemsGroupByStatusView.Missed">Missed</sys:String>
 
     <!--ToDoItemsGroupByNoneView-->
