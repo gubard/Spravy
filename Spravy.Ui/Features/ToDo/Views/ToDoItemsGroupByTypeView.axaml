@@ -8,7 +8,7 @@
                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                         x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemsGroupByTypeView"
                         x:DataType="vm:ToDoItemsGroupByTypeViewModel">
-    <ItemsControl Classes="adaptive-to-do-items-group-by-type-view">
+    <ItemsControl Classes="to-do-items-group">
         <ContentControl Content="{Binding Groups}"
                         IsVisible="{Binding Groups.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
         <ContentControl Content="{Binding Values}"

@@ -61,33 +61,24 @@
             <Setter Property="IsVisible" Value="False" />
         </Style>
 
-        <Style Selector="ItemsControl.adaptive-to-do-items-group-by-status-view">
+        <Style Selector="ItemsControl.to-do-items-group">
             <Setter Property="(Interaction.Behaviors)">
                 <BehaviorCollectionTemplate>
                     <BehaviorCollection>
                         <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
                             <AdaptiveClassSetter MinWidth="0"
-                                                 MaxWidth="{x:Static h:MaterialDesignSize.MaxExtraSmall}"
-                                                 ClassName="to-do-items-group-by-status-view-extra-small" />
-                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MaxExtraSmall}"
-                                                 MaxWidth="{x:Static h:MaterialDesignSize.MaxSmall}"
-                                                 ClassName="to-do-items-group-by-status-view-small" />
-                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MaxSmall}"
-                                                 MaxWidth="{x:Static h:MaterialDesignSize.MaxMedium}"
-                                                 ClassName="to-do-items-group-by-status-view-medium" />
-                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MaxMedium}"
                                                  MaxWidth="{x:Static h:MaterialDesignSize.MaxLarge}"
-                                                 ClassName="to-do-items-group-by-status-view-large" />
+                                                 ClassName="to-do-items-group-small" />
                             <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MaxLarge}"
                                                  MaxWidth="Infinity"
-                                                 ClassName="to-do-items-group-by-status-view-wide" />
+                                                 ClassName="to-do-items-group-wide" />
                         </AdaptiveBehavior>
                     </BehaviorCollection>
                 </BehaviorCollectionTemplate>
             </Setter>
         </Style>
 
-        <Style Selector="ItemsControl.to-do-items-group-by-status-view-extra-small">
+        <Style Selector="ItemsControl.to-do-items-group-small">
             <Setter Property="ItemsPanel">
                 <ItemsPanelTemplate>
                     <StackPanel />
@@ -95,97 +86,7 @@
             </Setter>
         </Style>
 
-        <Style Selector="ItemsControl.to-do-items-group-by-status-view-small">
-            <Setter Property="ItemsPanel">
-                <ItemsPanelTemplate>
-                    <StackPanel />
-                </ItemsPanelTemplate>
-            </Setter>
-        </Style>
-
-        <Style Selector="ItemsControl.to-do-items-group-by-status-view-medium">
-            <Setter Property="ItemsPanel">
-                <ItemsPanelTemplate>
-                    <StackPanel />
-                </ItemsPanelTemplate>
-            </Setter>
-        </Style>
-
-        <Style Selector="ItemsControl.to-do-items-group-by-status-view-large">
-            <Setter Property="ItemsPanel">
-                <ItemsPanelTemplate>
-                    <UniformGrid Rows="1" />
-                </ItemsPanelTemplate>
-            </Setter>
-        </Style>
-
-        <Style Selector="ItemsControl.to-do-items-group-by-status-view-extra-large">
-            <Setter Property="ItemsPanel">
-                <ItemsPanelTemplate>
-                    <UniformGrid Rows="1" />
-                </ItemsPanelTemplate>
-            </Setter>
-        </Style>
-
-        <Style Selector="ItemsControl.adaptive-to-do-items-group-by-type-view">
-            <Setter Property="(Interaction.Behaviors)">
-                <BehaviorCollectionTemplate>
-                    <BehaviorCollection>
-                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
-                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MaxExtraSmall}"
-                                                 MaxWidth="{x:Static h:MaterialDesignSize.MaxExtraSmall}"
-                                                 ClassName="to-do-items-group-by-type-view-extra-small" />
-                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinSmall}"
-                                                 MaxWidth="{x:Static h:MaterialDesignSize.MaxSmall}"
-                                                 ClassName="to-do-items-group-by-type-view-small" />
-                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinMedium}"
-                                                 MaxWidth="{x:Static h:MaterialDesignSize.MaxMedium}"
-                                                 ClassName="to-do-items-group-by-type-view-medium" />
-                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinLarge}"
-                                                 MaxWidth="{x:Static h:MaterialDesignSize.MaxLarge}"
-                                                 ClassName="to-do-items-group-by-type-view-large" />
-                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinExtraLarge}"
-                                                 MaxWidth="Infinity"
-                                                 ClassName="to-do-items-group-by-type-view-extra-large" />
-                        </AdaptiveBehavior>
-                    </BehaviorCollection>
-                </BehaviorCollectionTemplate>
-            </Setter>
-        </Style>
-
-        <Style Selector="ItemsControl.to-do-items-group-by-type-view-extra-small">
-            <Setter Property="ItemsPanel">
-                <ItemsPanelTemplate>
-                    <StackPanel />
-                </ItemsPanelTemplate>
-            </Setter>
-        </Style>
-
-        <Style Selector="ItemsControl.to-do-items-group-by-type-view-small">
-            <Setter Property="ItemsPanel">
-                <ItemsPanelTemplate>
-                    <StackPanel />
-                </ItemsPanelTemplate>
-            </Setter>
-        </Style>
-
-        <Style Selector="ItemsControl.to-do-items-group-by-type-view-medium">
-            <Setter Property="ItemsPanel">
-                <ItemsPanelTemplate>
-                    <StackPanel />
-                </ItemsPanelTemplate>
-            </Setter>
-        </Style>
-
-        <Style Selector="ItemsControl.to-do-items-group-by-type-view-large">
-            <Setter Property="ItemsPanel">
-                <ItemsPanelTemplate>
-                    <UniformGrid Rows="1" />
-                </ItemsPanelTemplate>
-            </Setter>
-        </Style>
-
-        <Style Selector="ItemsControl.to-do-items-group-by-type-view-extra-large">
+        <Style Selector="ItemsControl.to-do-items-group-wide">
             <Setter Property="ItemsPanel">
                 <ItemsPanelTemplate>
                     <UniformGrid Rows="1" />

@@ -9,7 +9,7 @@
                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                         x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemsGroupByStatusView"
                         x:DataType="vm:ToDoItemsGroupByStatusViewModel">
-    <ItemsControl Classes="adaptive-to-do-items-group-by-status-view">
+    <ItemsControl Classes="to-do-items-group">
         <ContentControl Content="{Binding Missed}"
                         IsVisible="{Binding Missed.Items.Count, Converter={StaticResource Int32ToIsVisibleConverter}}" />
         <ContentControl Name="{x:Static v:ToDoItemsGroupByStatusView.ReadyForCompletedContentControlName}"

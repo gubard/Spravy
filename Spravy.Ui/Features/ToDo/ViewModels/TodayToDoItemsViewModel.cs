@@ -22,6 +22,7 @@ public class TodayToDoItemsViewModel
         ToDoSubItemsViewModel = toDoSubItemsViewModel;
         this.toDoService = toDoService;
         this.toDoCache = toDoCache;
+
         InitializedCommand = SpravyCommand.Create(
             InitializedAsync,
             errorHandler,
