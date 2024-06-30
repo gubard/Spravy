@@ -13,6 +13,7 @@ public class SpravyCommandService
     public SpravyCommandService(
         IUiApplicationService uiApplicationService,
         IToDoService toDoService,
+        IToDoCache toDoCache,
         IDialogViewer dialogViewer,
         IClipboardService clipboardService,
         IOpenerLink openerLink,
@@ -2200,6 +2201,8 @@ public class SpravyCommandService
                     authenticationService,
                     tokenService,
                     objectStorage,
+                    toDoService,
+                    toDoCache,
                     accountNotify,
                     ct
                 ),
@@ -2255,6 +2258,8 @@ public class SpravyCommandService
                                                             authenticationService,
                                                             tokenService,
                                                             objectStorage,
+                                                            toDoService,
+                                                            toDoCache,
                                                             accountNotify,
                                                             ct
                                                         );
@@ -2517,6 +2522,8 @@ public class SpravyCommandService
         IAuthenticationService authenticationService,
         ITokenService tokenService,
         IObjectStorage objectStorage,
+        IToDoService toDoService,
+        IToDoCache toDoCache,
         AccountNotify accountNotify,
         CancellationToken ct
     )
@@ -2569,6 +2576,24 @@ public class SpravyCommandService
                                                             objectStorage,
                                                             ct
                                                         ),
+                                                    ct
+                                                )
+                                                .IfSuccessAsync(
+                                                    () =>
+                                                        toDoService.GetToDoSelectorItemsAsync(
+                                                            ReadOnlyMemory<Guid>.Empty,
+                                                            ct
+                                                        ),
+                                                    ct
+                                                )
+                                                .IfSuccessAsync(
+                                                    items =>
+                                                        this.InvokeUiBackgroundAsync(() =>
+                                                        {
+                                                            toDoCache.UpdateUi(items);
+
+                                                            return Result.Success;
+                                                        }),
                                                     ct
                                                 )
                                                 .IfSuccessAsync(

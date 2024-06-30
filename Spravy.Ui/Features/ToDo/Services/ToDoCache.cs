@@ -3,13 +3,14 @@ namespace Spravy.Ui.Features.ToDo.Services;
 public class ToDoCache : IToDoCache
 {
     private readonly Dictionary<Guid, ToDoItemEntityNotify> cache;
-    private readonly SpravyCommandNotifyService spravyCommandNotifyService;
+    private readonly IServiceFactory serviceFactory;
+
     private ReadOnlyMemory<ToDoItemEntityNotify> rootItems =
         ReadOnlyMemory<ToDoItemEntityNotify>.Empty;
 
-    public ToDoCache(SpravyCommandNotifyService spravyCommandNotifyService)
+    public ToDoCache(IServiceFactory serviceFactory)
     {
-        this.spravyCommandNotifyService = spravyCommandNotifyService;
+        this.serviceFactory = serviceFactory;
         cache = new();
     }
 
@@ -20,7 +21,10 @@ public class ToDoCache : IToDoCache
             return value.ToResult();
         }
 
-        var result = new ToDoItemEntityNotify(id, spravyCommandNotifyService);
+        var result = new ToDoItemEntityNotify(
+            id,
+            serviceFactory.CreateService<SpravyCommandNotifyService>()
+        );
 
         if (cache.TryAdd(id, result))
         {

@@ -8,16 +8,11 @@ public class LoginViewModel : NavigatableViewModelBase, INotifyDataErrorInfo
     private bool loginChanged;
     private bool passwordChanged;
 
-    public LoginViewModel(
-        IObjectStorage objectStorage,
-        IPropertyValidator propertyValidator,
-        AccountNotify account
-    )
+    public LoginViewModel(IObjectStorage objectStorage, IPropertyValidator propertyValidator)
         : base(true)
     {
         this.objectStorage = objectStorage;
         this.propertyValidator = propertyValidator;
-        Account = account;
 
         this.WhenAnyValue(x => x.Login)
             .Skip(1)
@@ -35,8 +30,6 @@ public class LoginViewModel : NavigatableViewModelBase, INotifyDataErrorInfo
                 this.RaisePropertyChanged(nameof(HasErrors));
             });
     }
-
-    public AccountNotify Account { get; }
 
     [Reactive]
     public bool IsBusy { get; set; }
