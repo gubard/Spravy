@@ -105,16 +105,17 @@
             <Button Command="{x:Static h:UiHelper.NavigateToToDoItem}"
                     CommandParameter="{Binding}"
                     Classes="alignment-stretch glass-card content-alignment-stretch">
-                <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,*">
-                    <CheckBox Grid.RowSpan="2"
+                <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto, Auto,*">
+                    <CheckBox Grid.Row="1" 
+                              Grid.RowSpan="2"
                               Classes="h3 alignment-top"
-                              Margin="0,0,5,0"
+                              Margin="0,0,5,5"
                               Command="{x:Static h:UiHelper.Complete}"
                               CommandParameter="{Binding}"
                               IsVisible="{Binding IsCan, Converter={StaticResource ToDoItemCanNoneToBooleanReverseConverter}}"
                               IsChecked="{Binding IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanConverter}}" />
 
-                    <Grid Grid.Column="1" Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*,Auto,Auto">
+                    <Grid Grid.ColumnSpan="3" ColumnDefinitions="Auto,Auto,*,Auto,Auto">
                         <Rectangle Width="15"
                                    Margin="0,0,3,0"
                                    Height="2"
@@ -134,7 +135,7 @@
                                    Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                     </Grid>
 
-                    <StackPanel Grid.Column="1" Grid.Row="1">
+                    <StackPanel Grid.Column="1" Grid.Row="2">
                         <TextBlock Margin="5,5,0,0"
                                    Classes="h4 text-wrap vertical-alignment-center"
                                    Text="{Binding Name}" />
@@ -147,7 +148,7 @@
                         </Button>
                     </StackPanel>
 
-                    <Grid Grid.Row="1"
+                    <Grid Grid.Row="2"
                           Grid.Column="2"
                           ColumnDefinitions="Auto,Auto"
                           RowDefinitions="Auto,Auto">
