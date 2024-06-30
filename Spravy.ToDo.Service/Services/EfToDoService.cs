@@ -1240,6 +1240,7 @@ public class EfToDoService : IToDoService
                                             new ToDoSelectorItem(
                                                 item.Id,
                                                 item.Name,
+                                                item.OrderIndex,
                                                 children.ToArray()
                                             ).ToResult(),
                                         ct
@@ -2129,6 +2130,7 @@ public class EfToDoService : IToDoService
                                 new ToDoSelectorItem(
                                     item.Id,
                                     item.Name,
+                                    item.OrderIndex,
                                     children.ToArray()
                                 ).ToResult(),
                             ct

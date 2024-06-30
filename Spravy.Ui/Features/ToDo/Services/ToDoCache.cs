@@ -148,6 +148,7 @@ public class ToDoCache : IToDoCache
             .IfSuccess(x =>
             {
                 x.Name = item.Name;
+                x.OrderIndex = item.OrderIndex;
 
                 return item
                     .Children.ToResult()

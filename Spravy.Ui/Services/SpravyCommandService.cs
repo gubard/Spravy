@@ -2163,6 +2163,28 @@ public class SpravyCommandService
                                                                     )
                                                                     .IfSuccessAsync(
                                                                         () =>
+                                                                            toDoService.GetToDoSelectorItemsAsync(
+                                                                                ReadOnlyMemory<Guid>.Empty,
+                                                                                ct
+                                                                            ),
+                                                                        ct
+                                                                    )
+                                                                    .IfSuccessAsync(
+                                                                        items =>
+                                                                            this.InvokeUiBackgroundAsync(
+                                                                                () =>
+                                                                                {
+                                                                                    toDoCache.UpdateUi(
+                                                                                        items
+                                                                                    );
+
+                                                                                    return Result.Success;
+                                                                                }
+                                                                            ),
+                                                                        ct
+                                                                    )
+                                                                    .IfSuccessAsync(
+                                                                        () =>
                                                                             navigator.NavigateToAsync(
                                                                                 ActionHelper<RootToDoItemsViewModel>.Empty,
                                                                                 ct

@@ -355,6 +355,7 @@ message ToDoSelectorItemGrpc {
   bytes id = 1;
   string name = 2;
   repeated ToDoSelectorItemGrpc children = 3;
+  uint32 order_index = 4;
 }
 
 message UpdateToDoItemWeeklyPeriodicityRequest {
