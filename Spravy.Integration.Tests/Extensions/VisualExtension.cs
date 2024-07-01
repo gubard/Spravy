@@ -16,6 +16,7 @@ public static class VisualExtension
             .TranslatePoint(new(0, 0), window)
             .ThrowIfNullStruct()
             .Center(visual.Bounds);
+
         window.RunJobsAll();
         window.SpravyMouseMove(position, RawInputModifiers.None);
         window.RunJobsAll();

@@ -5,7 +5,7 @@
              xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
              xmlns:dh="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
              xmlns:s="clr-namespace:Spravy.Ui.Services"
-             xmlns:views="clr-namespace:Spravy.Ui.Views"
+             xmlns:v="clr-namespace:Spravy.Ui.Views"
              xmlns:h="clr-namespace:Spravy.Ui.Helpers"
              mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
              x:Class="Spravy.Ui.Views.MainView"
@@ -159,22 +159,22 @@
         </Style>
     </UserControl.Styles>
 
-    <Panel>
-        <ContentControl Content="{Binding MainProgressBar}" ZIndex="100" VerticalAlignment="Top" />
+    <Panel Name="{x:Static v:MainView.MainPanelName}">
+        <ContentControl Content="{Binding MainProgressBar}" VerticalAlignment="Top" />
 
-        <dh:DialogHost Name="{x:Static views:MainView.ErrorDialogHostName}"
+        <dh:DialogHost Name="{x:Static v:MainView.ErrorDialogHostName}"
                        Classes="adaptive-dialog-host"
                        Identifier="{x:Static s:DialogViewer.ErrorDialogHostIdentifier}">
-            <dh:DialogHost Name="{x:Static views:MainView.ProgressDialogHostName}"
+            <dh:DialogHost Name="{x:Static v:MainView.ProgressDialogHostName}"
                            Classes="adaptive-dialog-host"
                            Identifier="{x:Static s:DialogViewer.ProgressDialogHostIdentifier}">
-                <dh:DialogHost Name="{x:Static views:MainView.InputDialogHostName}"
+                <dh:DialogHost Name="{x:Static v:MainView.InputDialogHostName}"
                                Classes="adaptive-dialog-host"
                                Identifier="{x:Static s:DialogViewer.InputDialogHostIdentifier}">
-                    <dh:DialogHost Name="{x:Static views:MainView.ContentDialogHostName}"
+                    <dh:DialogHost Name="{x:Static v:MainView.ContentDialogHostName}"
                                    Classes="adaptive-dialog-host"
                                    Identifier="{x:Static s:DialogViewer.ContentDialogHostIdentifier}">
-                        <ContentControl Name="{x:Static views:MainView.MainContentName}"
+                        <ContentControl Name="{x:Static v:MainView.MainContentName}"
                                         Content="{Binding MainSplit}" />
                     </dh:DialogHost>
                 </dh:DialogHost>

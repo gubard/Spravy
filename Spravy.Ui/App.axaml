@@ -50,7 +50,8 @@
 
         <DataTemplate x:DataType="pm:PasswordItemNotify">
             <Button Classes="alignment-stretch glass-card content-alignment-stretch"
-                    Command="{Binding GeneratePassword.Command}">
+                    Command="{Binding GeneratePassword.Command}"
+                    CommandParameter="{Binding}">
                 <Grid ColumnDefinitions="*,Auto">
                     <TextBlock Classes="text-wrap h4" Text="{Binding Name}" />
 
@@ -59,7 +60,8 @@
                                 Command="{x:Static h:UiHelper.ShowPasswordItemSetting}"
                                 CommandParameter="{Binding}" />
                         <Button Content="{x:Static i:MaterialIconKind.Delete}"
-                                Command="{Binding DeletePasswordItem.Command}" />
+                                Command="{Binding DeletePasswordItem.Command}" 
+                                CommandParameter="{Binding}"/>
                     </StackPanel>
                 </Grid>
             </Button>
@@ -106,7 +108,7 @@
                     CommandParameter="{Binding}"
                     Classes="alignment-stretch glass-card content-alignment-stretch">
                 <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto, Auto,*">
-                    <CheckBox Grid.Row="1" 
+                    <CheckBox Grid.Row="1"
                               Grid.RowSpan="2"
                               Classes="h3 alignment-top"
                               Margin="0,0,5,5"
@@ -115,7 +117,7 @@
                               IsVisible="{Binding IsCan, Converter={StaticResource ToDoItemCanNoneToBooleanReverseConverter}}"
                               IsChecked="{Binding IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanConverter}}" />
 
-                    <Grid Grid.ColumnSpan="3" ColumnDefinitions="Auto,Auto,*,Auto,Auto">
+                    <Grid Grid.ColumnSpan="3" ColumnDefinitions="Auto,Auto,*,Auto,*,Auto,Auto">
                         <Rectangle Width="15"
                                    Margin="0,0,3,0"
                                    Height="2"
@@ -126,9 +128,14 @@
                                    Margin="3,0,3,0"
                                    Height="2"
                                    Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
-                        <TextBlock Grid.Column="3"
-                                   Text="{Binding Status, Converter={StaticResource ToDoItemStatusLocalizationValueConverter}}" />
+                        <mi:MaterialIcon Grid.Column="3" PointerPressed="ReorderOnPointerPressed" Kind="ReorderHorizontal" />
                         <Rectangle Grid.Column="4"
+                                   Margin="3,0,3,0"
+                                   Height="2"
+                                   Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
+                        <TextBlock Grid.Column="5"
+                                   Text="{Binding Status, Converter={StaticResource ToDoItemStatusLocalizationValueConverter}}" />
+                        <Rectangle Grid.Column="6"
                                    Width="15"
                                    Margin="3,0,0,0"
                                    Height="2"

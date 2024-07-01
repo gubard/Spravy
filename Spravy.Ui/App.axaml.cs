@@ -1,4 +1,7 @@
+using Avalonia.Input;
+using Avalonia.Layout;
 using Spravy.Core.Helpers;
+using Spravy.Ui.Features.ToDo.Views;
 
 namespace Spravy.Ui;
 
@@ -53,6 +56,7 @@ public class App : Application
                 .CreateService<IDesktopTopLevelControl>()
                 .As<Window>()
                 .ThrowIfNull();
+
             desktop.MainWindow = window;
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
@@ -63,5 +67,65 @@ public class App : Application
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    private async void ReorderOnPointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (Current is null)
+        {
+            return;
+        }
+
+        var mainPanel = serviceFactory
+            .CreateService<MainView>()
+            .FindControl<Panel>(MainView.MainPanelName);
+
+        var topLevel = serviceFactory.CreateService<TopLevel>();
+
+        if (mainPanel is null)
+        {
+            return;
+        }
+
+        if (sender is not Visual visual)
+        {
+            return;
+        }
+
+        if (visual.DataContext is not ToDoItemEntityNotify toDoItem)
+        {
+            return;
+        }
+
+        var button = visual.FindVisualParent<Button>();
+
+        if (button is null)
+        {
+            return;
+        }
+
+        var contentControl = new ContentControl
+        {
+            Width = button.Bounds.Width,
+            Height = button.Bounds.Height,
+            Content = toDoItem,
+            ZIndex = 100,
+            HorizontalAlignment = HorizontalAlignment.Left,
+            VerticalAlignment = VerticalAlignment.Top,
+            Background = Brushes.Red,
+        };
+
+        var mousePosition = e.GetPosition(topLevel);
+        mainPanel.Children.Add(contentControl);
+
+        contentControl.RenderTransform = new TranslateTransform(
+            mousePosition.X - button.Bounds.Width / 2,
+            mousePosition.Y - button.Bounds.Height / 2 + 20
+        );
+
+        var dragData = new DataObject();
+        dragData.Set("to-do-item", toDoItem);
+        await DragDrop.DoDragDrop(e, dragData, DragDropEffects.Move);
+        mainPanel.Children.Remove(contentControl);
     }
 }

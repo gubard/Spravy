@@ -1,4 +1,4 @@
-namespace Spravy.Integration.Tests.Extensions;
+namespace Spravy.Ui.Extensions;
 
 public static class PointExtension
 {
