@@ -360,7 +360,7 @@ public class Tests
                                     .FindControl<Button>(ElementNames.LoginButton)
                                     .ThrowIfNull()
                                     .ClickOn(w)
-                                    .RunJobsAll(2)
+                                    .RunJobsAll(3)
                         )
                         .Case(() => w.GetCurrentView<RootToDoItemsView, RootToDoItemsViewModel>())
                         .Close(),
