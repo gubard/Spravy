@@ -112,20 +112,26 @@ public class App : Application
             ZIndex = 100,
             HorizontalAlignment = HorizontalAlignment.Left,
             VerticalAlignment = VerticalAlignment.Top,
-            Background = Brushes.Red,
         };
 
         var mousePosition = e.GetPosition(topLevel);
         mainPanel.Children.Add(contentControl);
-
-        contentControl.RenderTransform = new TranslateTransform(
-            mousePosition.X - button.Bounds.Width / 2,
-            mousePosition.Y - button.Bounds.Height / 2 + 20
-        );
-
+        var x = mousePosition.X + 20;
+        var y = mousePosition.Y - button.Bounds.Height / 2 + 20;
+        contentControl.RenderTransform = new TranslateTransform(x, y);
         var dragData = new DataObject();
-        dragData.Set("to-do-item", toDoItem);
-        await DragDrop.DoDragDrop(e, dragData, DragDropEffects.Move);
+        dragData.Set(UiHelper.ToDoItemEntityNotifyDataFormat, toDoItem);
+        UiHelper.IsDrag = true;
+
+        try
+        {
+            await DragDrop.DoDragDrop(e, dragData, DragDropEffects.Move);
+        }
+        finally
+        {
+            UiHelper.IsDrag = false;
+        }
+
         mainPanel.Children.Remove(contentControl);
     }
 }

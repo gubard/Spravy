@@ -4,6 +4,9 @@ namespace Spravy.Ui.Helpers;
 
 public static class UiHelper
 {
+    public static bool IsDrag;
+    public const string ToDoItemEntityNotifyDataFormat = "to-do-item-entity-notify";
+
     static UiHelper()
     {
         var commands = DiHelper.ServiceFactory.CreateService<SpravyCommandService>();

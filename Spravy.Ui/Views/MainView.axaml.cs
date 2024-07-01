@@ -16,13 +16,18 @@ public partial class MainView : ReactiveUserControl<MainViewModel>
     {
         this.serviceFactory = serviceFactory;
         InitializeComponent();
-
-        AddHandler(DragDrop.DragOverEvent, DragOver);
         AddHandler(DragDrop.DropEvent, Drop);
     }
 
-    private void DragOver(object? sender, DragEventArgs e)
+    protected override void OnPointerMoved(PointerEventArgs e)
     {
+        base.OnPointerMoved(e);
+
+        if (!UiHelper.IsDrag)
+        {
+            return;
+        }
+
         var mainPanel = this.FindControl<Panel>(MainPanelName);
 
         if (mainPanel is null)
@@ -39,30 +44,14 @@ public partial class MainView : ReactiveUserControl<MainViewModel>
 
         var topLevel = serviceFactory.CreateService<TopLevel>();
         var mousePosition = e.GetPosition(topLevel);
-
-        control.RenderTransform = new TranslateTransform(
-            mousePosition.X - control.Bounds.Width / 2,
-            mousePosition.Y - control.Bounds.Height / 2 + 20
-        );
-
-        e.DragEffects = DragDropEffects.Move;
-
-        var data = e.Data.Get("to-do-item");
-
-        if (data is not ToDoItemEntityNotify taskItem)
-            return;
-
-        /*if (!vm.IsDestinationValid(taskItem, (e.Source as Control)?.Name))
-        {
-            e.DragEffects = DragDropEffects.None;
-        }*/
+        var x = mousePosition.X + 20;
+        var y = mousePosition.Y - control.Bounds.Height / 2 + 20;
+        control.RenderTransform = new TranslateTransform(x, y);
     }
 
     private void Drop(object? sender, DragEventArgs e)
     {
-        Console.WriteLine("Drop");
-
-        var data = e.Data.Get("to-do-item");
+        var data = e.Data.Get(UiHelper.ToDoItemEntityNotifyDataFormat);
 
         if (data is not ToDoItemEntityNotify taskItem)
         {
