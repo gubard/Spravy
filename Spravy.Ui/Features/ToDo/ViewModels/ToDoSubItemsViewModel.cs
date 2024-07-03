@@ -66,16 +66,16 @@ public class ToDoSubItemsViewModel : ViewModelBase
                 .ConfigureAwait(false)
         )
         {
-            if (items.IsHasError)
+            if (!items.TryGetValue(out var value))
             {
                 return new(items.Errors);
             }
 
-            foreach (var item in items.Value.ToArray())
+            foreach (var item in value.ToArray())
             {
                 var i = await this.InvokeUiBackgroundAsync(() => toDoCache.UpdateUi(item));
 
-                if (i.IsHasError)
+                if (!i.TryGetValue(out var t))
                 {
                     return new(i.Errors);
                 }
@@ -87,19 +87,19 @@ public class ToDoSubItemsViewModel : ViewModelBase
                         ct
                     );
 
-                    if (reference.IsHasError)
+                    if (!reference.TryGetValue(out var v))
                     {
                         return new(reference.Errors);
                     }
 
-                    i.Value.ReferenceId = reference.Value.ReferenceId.GetValueOrNull();
+                    t.ReferenceId = v.ReferenceId.GetValueOrNull();
                 }
                 else
                 {
-                    i.Value.ReferenceId = null;
+                    t.ReferenceId = null;
                 }
 
-                var result = await List.UpdateFavoriteItemAsync(i.Value);
+                var result = await List.UpdateFavoriteItemAsync(t);
 
                 if (result.IsHasError)
                 {
@@ -155,16 +155,16 @@ public class ToDoSubItemsViewModel : ViewModelBase
                 .ConfigureAwait(false)
         )
         {
-            if (items.IsHasError)
+            if (!items.TryGetValue(out var value))
             {
                 return new(items.Errors);
             }
 
-            foreach (var item in items.Value.ToArray())
+            foreach (var item in value.ToArray())
             {
                 var i = await this.InvokeUiBackgroundAsync(() => toDoCache.UpdateUi(item));
 
-                if (i.IsHasError)
+                if (!i.TryGetValue(out var t))
                 {
                     return new(i.Errors);
                 }
@@ -176,24 +176,23 @@ public class ToDoSubItemsViewModel : ViewModelBase
                         ct
                     );
 
-                    if (reference.IsHasError)
+                    if (!reference.TryGetValue(out var r))
                     {
                         return new(reference.Errors);
                     }
 
-                    i.Value.ReferenceId = reference.Value.ReferenceId.GetValueOrNull();
+                    t.ReferenceId = r.ReferenceId.GetValueOrNull();
                 }
                 else
                 {
-                    i.Value.ReferenceId = null;
+                    t.ReferenceId = null;
                 }
 
                 if (autoOrder)
                 {
-                    i.Value.OrderIndex = orderIndex;
-                    var result = await this.InvokeUiBackgroundAsync(
-                        () => List.UpdateItemUi(i.Value)
-                    );
+                    t.OrderIndex = orderIndex;
+
+                    var result = await this.InvokeUiBackgroundAsync(() => List.UpdateItemUi(t));
 
                     if (result.IsHasError)
                     {
@@ -202,9 +201,7 @@ public class ToDoSubItemsViewModel : ViewModelBase
                 }
                 else
                 {
-                    var result = await this.InvokeUiBackgroundAsync(
-                        () => List.UpdateItemUi(i.Value)
-                    );
+                    var result = await this.InvokeUiBackgroundAsync(() => List.UpdateItemUi(t));
 
                     if (result.IsHasError)
                     {

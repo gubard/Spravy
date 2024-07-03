@@ -155,6 +155,6 @@ public abstract class GrpcServiceBase<TGrpcClient>
     {
         var client = grpcClientFactory.Create(host);
 
-        return func.Invoke(client.Value, ct);
+        return func.Invoke(client.ThrowIfError(), ct);
     }
 }

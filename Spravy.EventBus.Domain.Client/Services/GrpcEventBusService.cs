@@ -125,7 +125,15 @@ public class GrpcEventBusService
         var eventIdsByteString = eventIds.ToByteString();
         request.EventIds.AddRange(eventIdsByteString.ToArray());
         var metadata = await metadataFactory.CreateAsync(ct);
-        using var response = client.SubscribeEvents(request, metadata.Value, cancellationToken: ct);
+
+        if (!metadata.TryGetValue(out var value))
+        {
+            yield return new(metadata.Errors);
+
+            yield break;
+        }
+
+        using var response = client.SubscribeEvents(request, value, cancellationToken: ct);
 
         while (await response.ResponseStream.MoveNext(ct))
         {

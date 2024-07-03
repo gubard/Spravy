@@ -46,12 +46,12 @@ public static class ResultExtension
     {
         var result = await task;
 
-        if (result.IsHasError)
+        if (!result.TryGetValue(out var rv))
         {
             throw await result.ToRpcExceptionAsync(serializer, ct);
         }
 
-        return func.Invoke(result.Value);
+        return func.Invoke(rv);
     }
 
     public static async Task<TValue> HandleAsync<TValue>(
@@ -63,12 +63,12 @@ public static class ResultExtension
     {
         var result = await task;
 
-        if (result.IsHasError)
+        if (!result.TryGetValue(out var rv))
         {
             throw await result.ToRpcExceptionAsync(serializer, ct);
         }
 
-        return result.Value;
+        return rv;
     }
 
     public static async ValueTask<Metadata> GetMetadataAsync<TValue>(

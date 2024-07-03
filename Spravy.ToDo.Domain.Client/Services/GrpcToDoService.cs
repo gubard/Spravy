@@ -1528,19 +1528,14 @@ public class GrpcToDoService
         request.Ids.AddRange(idsByteString.ToArray());
         var metadata = await metadataFactory.CreateAsync(ct);
 
-        if (metadata.IsHasError)
+        if (!metadata.TryGetValue(out var value))
         {
             yield return new(metadata.Errors);
 
             yield break;
         }
 
-        using var response = client.GetToDoItems(
-            request,
-            metadata.Value,
-            DateTime.UtcNow.Add(Timeout),
-            ct
-        );
+        using var response = client.GetToDoItems(request, value, DateTime.UtcNow.Add(Timeout), ct);
 
         while (await MoveNextAsync(response, ct))
         {

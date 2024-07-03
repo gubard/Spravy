@@ -1,6 +1,7 @@
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Spravy.Core.Mappers;
+using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
 using Spravy.Service.Extensions;
 using Spravy.ToDo.Domain.Enums;
@@ -309,7 +310,7 @@ public class GrpcRouterToDoService : ToDoService.ToDoServiceBase
         )
         {
             var reply = new GetToDoItemsReply();
-            reply.Items.AddRange(item.Value.ToToDoItemGrpc().ToArray());
+            reply.Items.AddRange(item.ThrowIfError().ToToDoItemGrpc().ToArray());
             await responseStream.WriteAsync(reply);
         }
     }

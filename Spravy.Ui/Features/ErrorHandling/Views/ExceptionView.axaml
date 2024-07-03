@@ -5,16 +5,8 @@
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:ru="http://reactiveui.net"
                         xmlns:vm="clr-namespace:Spravy.Ui.Features.ErrorHandling.ViewModels"
-                        xmlns:h="clr-namespace:Spravy.Ui.Helpers"
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                         x:Class="Spravy.Ui.Features.ErrorHandling.Views.ExceptionView"
                         x:DataType="vm:ExceptionViewModel">
-    <Interaction.Behaviors>
-        <EventTriggerBehavior EventName="Initialized">
-            <InvokeCommandAction Command="{x:Static h:UiHelper.DeletePasswordItemViewInitialized}"
-                                 CommandParameter="{Binding}" />
-        </EventTriggerBehavior>
-    </Interaction.Behaviors>
-
     <TextBlock Text="{Binding Message}" Classes="text-wrap" />
 </ru:ReactiveUserControl>

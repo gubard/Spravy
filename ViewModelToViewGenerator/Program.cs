@@ -90,15 +90,17 @@ foreach (var error in errors)
         $$"""
         if ({{error}}.MainId == id)
         {
-            var error = await serializer.DeserializeAsync<{{error}}>(stream, ct);
+            var result = await serializer.DeserializeAsync<{{error}}>(stream, ct);
 
-            if (error.IsHasError)
+            if (!result.TryGetValue(out var value))
             {
-                return error.Errors;
+                return result.Errors;
             }
-
-            return new([error.Value,]);
+            
+            return new([value,]);
         }
         """
     );
+
+    Console.WriteLine();
 }

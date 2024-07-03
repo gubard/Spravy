@@ -112,12 +112,12 @@ public class GetterToDoItemParametersService
 
         var isCompletable = IsCompletable(entity);
 
-        if (isCompletable.IsHasError)
+        if (!isCompletable.TryGetValue(out var i))
         {
             return new(isCompletable.Errors);
         }
 
-        if (entity.IsCompleted && isCompletable.Value)
+        if (entity.IsCompleted && i)
         {
             return parameters
                 .With(ToDoItemIsCan.CanIncomplete)
@@ -129,12 +129,12 @@ public class GetterToDoItemParametersService
         var isMiss = false;
         var isDueable = await IsDueableAsync(context, entity, ct);
 
-        if (isDueable.IsHasError)
+        if (!isDueable.TryGetValue(out var rv))
         {
             return new(isDueable.Errors);
         }
 
-        if (isDueable.Value)
+        if (rv)
         {
             if (useDueDate)
             {
@@ -202,12 +202,12 @@ public class GetterToDoItemParametersService
                 ct
             );
 
-            if (result.IsHasError)
+            if (!result.TryGetValue(out var r))
             {
                 return result;
             }
 
-            parameters = result.Value;
+            parameters = r;
 
             switch (parameters.Status)
             {
@@ -251,12 +251,12 @@ public class GetterToDoItemParametersService
         var firstActive = firstMiss.IsHasValue ? firstMiss : firstReadyForComplete;
         var isGroup = IsGroup(entity);
 
-        if (isGroup.IsHasError)
+        if (!isGroup.TryGetValue(out var g))
         {
             return new(isGroup.Errors);
         }
 
-        if (isGroup.Value)
+        if (g)
         {
             if (isMiss)
             {

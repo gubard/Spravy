@@ -1,7 +1,6 @@
 using Avalonia.Input;
 using Avalonia.Layout;
 using Spravy.Core.Helpers;
-using Spravy.Ui.Features.ToDo.Views;
 
 namespace Spravy.Ui;
 
@@ -26,28 +25,31 @@ public class App : Application
                 .IsExistsAsync(TypeCache<SettingModel>.Type.Name, ct)
                 .GetAwaiter()
                 .GetResult()
-                .Value
+                .TryGetValue(out var isExists) && isExists
         )
         {
-            var model = objectStorage
-                .GetObjectAsync<SettingModel>(TypeCache<SettingModel>.Type.Name, ct)
-                .GetAwaiter()
-                .GetResult()
-                .Value;
+            if (
+                objectStorage
+                    .GetObjectAsync<SettingModel>(TypeCache<SettingModel>.Type.Name, ct)
+                    .GetAwaiter()
+                    .GetResult()
+                    .TryGetValue(out var model)
+            )
+            {
+                var theme = SukiTheme.GetInstance();
+                theme.ChangeColorTheme(
+                    theme.ColorThemes.Single(x => x.DisplayName == model.ColorTheme)
+                );
 
-            var theme = SukiTheme.GetInstance();
-            theme.ChangeColorTheme(
-                theme.ColorThemes.Single(x => x.DisplayName == model.ColorTheme)
-            );
-
-            theme.ChangeBaseTheme(
-                model.BaseTheme switch
-                {
-                    "Light" => ThemeVariant.Light,
-                    "Dark" => ThemeVariant.Dark,
-                    _ => throw new ArgumentOutOfRangeException(),
-                }
-            );
+                theme.ChangeBaseTheme(
+                    model.BaseTheme switch
+                    {
+                        "Light" => ThemeVariant.Light,
+                        "Dark" => ThemeVariant.Dark,
+                        _ => ThemeVariant.Dark,
+                    }
+                );
+            }
         }
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)

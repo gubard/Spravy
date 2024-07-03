@@ -1752,14 +1752,14 @@ public class EfToDoService : IToDoService
 
             var item = await GetToDoItemAsync(ids.Span[i], ct);
 
-            if (item.IsHasError)
+            if (!item.TryGetValue(out var a))
             {
                 yield return new(item.Errors);
 
                 yield break;
             }
 
-            items.Add(item.Value);
+            items.Add(a);
         }
 
         if (items.Count > 0)

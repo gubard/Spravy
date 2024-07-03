@@ -1,5 +1,3 @@
-using Avalonia.Input;
-
 namespace Spravy.Ui.Features.ToDo.Views;
 
 public partial class ToDoItemsView : ReactiveUserControl<ToDoItemsViewModel>

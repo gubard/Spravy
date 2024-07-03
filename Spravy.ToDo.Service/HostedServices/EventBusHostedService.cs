@@ -87,7 +87,7 @@ public class EventBusHostedService : IHostedService
                     {
                         if (eventValue.ThrowIfError().Id == EventIdHelper.ChangeFavoriteId)
                         {
-                            await ChangeFavoriteAsync(file, eventValue.Value);
+                            await ChangeFavoriteAsync(file, eventValue.ThrowIfError());
                         }
                     }
                 }

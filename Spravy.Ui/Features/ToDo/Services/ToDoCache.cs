@@ -99,12 +99,12 @@ public class ToDoCache : IToDoCache
         {
             var parent = GetToDoItem(value);
 
-            if (parent.IsHasError)
+            if (parent.TryGetValue(out var p))
             {
                 return parent;
             }
 
-            item.Parent = parent.Value;
+            item.Parent = p;
         }
         else
         {

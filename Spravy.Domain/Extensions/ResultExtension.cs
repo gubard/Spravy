@@ -7,12 +7,12 @@ public static class ResultExtension
         Func<TValue, Result> func
     )
     {
-        if (values.IsHasError)
+        if (!values.TryGetValue(out var v))
         {
             return new(values.Errors);
         }
 
-        var valuesArray = values.Value.ToArray();
+        var valuesArray = v.ToArray();
 
         for (var index = 0; index < valuesArray.Length; index++)
         {
@@ -34,25 +34,25 @@ public static class ResultExtension
     )
         where TReturn : notnull
     {
-        if (values.IsHasError)
+        if (!values.TryGetValue(out var v))
         {
             return new(values.Errors);
         }
 
-        var array = new TReturn[values.Value.Length];
-        var valuesArray = values.Value.ToArray();
+        var array = new TReturn[v.Length];
+        var valuesArray = v.ToArray();
 
         for (var index = 0; index < valuesArray.Length; index++)
         {
             var value = valuesArray[index];
             var result = func.Invoke(value);
 
-            if (result.IsHasError)
+            if (!result.TryGetValue(out var rv))
             {
                 return new(result.Errors);
             }
 
-            array[index] = result.Value;
+            array[index] = rv;
         }
 
         return array.ToReadOnlyMemory().ToResult();
@@ -87,20 +87,20 @@ public static class ResultExtension
             return Result<ReadOnlyMemory<TReturn>>.CanceledByUserError;
         }
 
-        if (values.IsHasError)
+        if (!values.TryGetValue(out var v))
         {
             return new(values.Errors);
         }
 
-        var array = new TReturn[values.Value.Length];
-        var valuesArray = values.Value.ToArray();
+        var array = new TReturn[v.Length];
+        var valuesArray = v.ToArray();
 
         for (var index = 0; index < valuesArray.Length; index++)
         {
             var value = valuesArray[index];
             var result = func.Invoke(value);
 
-            if (result.IsHasError)
+            if (!result.TryGetValue(out var rv))
             {
                 return new(result.Errors);
             }
@@ -110,7 +110,7 @@ public static class ResultExtension
                 return Result<ReadOnlyMemory<TReturn>>.CanceledByUserError;
             }
 
-            array[index] = result.Value;
+            array[index] = rv;
         }
 
         return array.ToReadOnlyMemory().ToResult();
@@ -138,7 +138,7 @@ public static class ResultExtension
     )
         where TReturn : notnull
     {
-        if (values.IsHasError)
+        if (!values.TryGetValue(out var v))
         {
             return new(values.Errors);
         }
@@ -148,15 +148,15 @@ public static class ResultExtension
             return Result<ReadOnlyMemory<TReturn>>.CanceledByUserError;
         }
 
-        var array = new TReturn[values.Value.Length];
-        var valuesArray = values.Value.ToArray();
+        var array = new TReturn[v.Length];
+        var valuesArray = v.ToArray();
 
         for (var index = 0; index < valuesArray.Length; index++)
         {
             var value = valuesArray[index];
             var result = await func.Invoke(value);
 
-            if (result.IsHasError)
+            if (!result.TryGetValue(out var rv))
             {
                 return new(result.Errors);
             }
@@ -166,7 +166,7 @@ public static class ResultExtension
                 return Result<ReadOnlyMemory<TReturn>>.CanceledByUserError;
             }
 
-            array[index] = result.Value;
+            array[index] = rv;
         }
 
         return array.ToReadOnlyMemory().ToResult();
@@ -201,20 +201,20 @@ public static class ResultExtension
             return Result<ReadOnlyMemory<TReturn>>.CanceledByUserError;
         }
 
-        if (values.IsHasError)
+        if (!values.TryGetValue(out var v))
         {
             return new(values.Errors);
         }
 
-        var array = new TReturn[values.Value.Length];
-        var valuesArray = values.Value.ToArray();
+        var array = new TReturn[v.Length];
+        var valuesArray = v.ToArray();
 
         for (var index = 0; index < valuesArray.Length; index++)
         {
             var value = valuesArray[index];
             var result = await func.Invoke(value);
 
-            if (result.IsHasError)
+            if (!result.TryGetValue(out var rv))
             {
                 return new(result.Errors);
             }
@@ -224,7 +224,7 @@ public static class ResultExtension
                 return Result<ReadOnlyMemory<TReturn>>.CanceledByUserError;
             }
 
-            array[index] = result.Value;
+            array[index] = rv;
         }
 
         return array.ToReadOnlyMemory().ToResult();
@@ -245,7 +245,7 @@ public static class ResultExtension
         CancellationToken ct
     )
     {
-        if (values.IsHasError)
+        if (!values.TryGetValue(out var v))
         {
             return new(values.Errors);
         }
@@ -255,7 +255,7 @@ public static class ResultExtension
             return Result.CanceledByUserError;
         }
 
-        foreach (var value in values.Value.ToArray())
+        foreach (var value in v.ToArray())
         {
             var result = await func.Invoke(value);
 
@@ -290,12 +290,12 @@ public static class ResultExtension
     {
         var values = await task;
 
-        if (values.IsHasError)
+        if (!values.TryGetValue(out var v))
         {
             return new(values.Errors);
         }
 
-        foreach (var value in values.Value.ToArray())
+        foreach (var value in v.ToArray())
         {
             var result = await func.Invoke(value);
 
@@ -337,12 +337,12 @@ public static class ResultExtension
                 return Result.CanceledByUserError;
             }
 
-            if (result.IsHasError)
+            if (!result.TryGetValue(out var rv))
             {
                 return new(result.Errors);
             }
 
-            var item = func.Invoke(result.Value);
+            var item = func.Invoke(rv);
 
             if (item.IsHasError)
             {
@@ -372,7 +372,7 @@ public static class ResultExtension
     {
         var result = await task;
 
-        if (result.IsHasError)
+        if (!result.TryGetValue(out var rv))
         {
             return new(result.Errors);
         }
@@ -382,7 +382,7 @@ public static class ResultExtension
             return Result.CanceledByUserError;
         }
 
-        var awaitables = funcs.Invoke(result.Value);
+        var awaitables = funcs.Invoke(rv);
 
         foreach (var awaitable in awaitables)
         {
@@ -488,12 +488,12 @@ public static class ResultExtension
     public static TValue ThrowIfError<TValue>(this Result<TValue> result)
         where TValue : notnull
     {
-        if (result.IsHasError)
+        if (!result.TryGetValue(out var rv))
         {
             throw new ErrorsException(result.Errors);
         }
 
-        return result.Value;
+        return rv;
     }
 
     public static void ThrowIfError(this Result result)
@@ -580,11 +580,15 @@ public static class ResultExtension
         where TArg : notnull
     {
         var result = await task;
-        var errors = arg.Errors.Combine(result.Errors);
 
-        if (!errors.IsEmpty)
+        if (!result.TryGetValue(out var rv))
         {
-            return new(errors);
+            return new(result.Errors);
+        }
+
+        if (!arg.TryGetValue(out var a1))
+        {
+            return new(arg.Errors);
         }
 
         if (ct.IsCancellationRequested)
@@ -592,7 +596,7 @@ public static class ResultExtension
             return Result.CanceledByUserError;
         }
 
-        return await func.Invoke(result.Value, arg.Value);
+        return await func.Invoke(rv, a1);
     }
 
     public static ConfiguredValueTaskAwaitable<Result> IfSuccessAsync<TValue, TArg>(
@@ -635,11 +639,15 @@ public static class ResultExtension
         where TArg : notnull
     {
         var result = await task;
-        var errors = arg.Errors.Combine(result.Errors);
 
-        if (!errors.IsEmpty)
+        if (!result.TryGetValue(out var rv))
         {
-            return new(errors);
+            return new(result.Errors);
+        }
+
+        if (!arg.TryGetValue(out var a1))
+        {
+            return new(arg.Errors);
         }
 
         if (ct.IsCancellationRequested)
@@ -647,7 +655,7 @@ public static class ResultExtension
             return Result<TReturn>.CanceledByUserError;
         }
 
-        return await func.Invoke(result.Value, arg.Value);
+        return await func.Invoke(rv, a1);
     }
 
     public static ConfiguredValueTaskAwaitable<Result<TReturn>> IfSuccessAsync<
@@ -680,11 +688,15 @@ public static class ResultExtension
         where TValue : notnull
     {
         var result = await task;
-        var errors = arg.Errors.Combine(result.Errors);
 
-        if (!errors.IsEmpty)
+        if (!result.TryGetValue(out var rv))
         {
-            return await errorsFunc.Invoke(errors);
+            return new(result.Errors);
+        }
+
+        if (!arg.TryGetValue(out var a1))
+        {
+            return new(arg.Errors);
         }
 
         if (ct.IsCancellationRequested)
@@ -692,7 +704,7 @@ public static class ResultExtension
             return Result<TReturn>.CanceledByUserError;
         }
 
-        return await func.Invoke(result.Value, arg.Value);
+        return await func.Invoke(rv, a1);
     }
 
     public static ConfiguredValueTaskAwaitable<Result> IfSuccessAsync<TValue, TArg1, TArg2>(
@@ -721,11 +733,20 @@ public static class ResultExtension
         where TArg2 : notnull
     {
         var result = await task;
-        var errors = arg1.Errors.Combine(arg2.Errors, result.Errors);
 
-        if (!errors.IsEmpty)
+        if (!result.TryGetValue(out var rv))
         {
-            return new(errors);
+            return new(result.Errors);
+        }
+
+        if (!arg1.TryGetValue(out var a1))
+        {
+            return new(arg1.Errors);
+        }
+
+        if (!arg2.TryGetValue(out var a2))
+        {
+            return new(arg2.Errors);
         }
 
         if (ct.IsCancellationRequested)
@@ -733,7 +754,7 @@ public static class ResultExtension
             return Result.CanceledByUserError;
         }
 
-        return await func.Invoke(result.Value, arg1.Value, arg2.Value);
+        return await func.Invoke(rv, a1, a2);
     }
 
     public static ConfiguredValueTaskAwaitable<Result<TReturn>> IfSuccessAsync<TReturn>(
@@ -897,7 +918,7 @@ public static class ResultExtension
     {
         var result = await task;
 
-        if (result.IsHasError)
+        if (!result.TryGetValue(out var rv))
         {
             return new(result.Errors);
         }
@@ -907,7 +928,7 @@ public static class ResultExtension
             return Result.CanceledByUserError;
         }
 
-        var tasks = funcs.Select(x => x.Invoke(result.Value)).ToArray();
+        var tasks = funcs.Select(x => x.Invoke(rv)).ToArray();
         var errors = ReadOnlyMemory<Error>.Empty;
 
         foreach (var awaitable in tasks)
@@ -961,7 +982,7 @@ public static class ResultExtension
     )
         where TValue : notnull
     {
-        if (result.IsHasError)
+        if (!result.TryGetValue(out var rv))
         {
             return errors.Invoke(result.Errors);
         }
@@ -971,7 +992,7 @@ public static class ResultExtension
             return Result.AwaitableCanceledByUserError;
         }
 
-        return action.Invoke(result.Value);
+        return action.Invoke(rv);
     }
 
     public static ConfiguredValueTaskAwaitable<Result> IfSuccessAsync<TValue>(
@@ -991,7 +1012,7 @@ public static class ResultExtension
     )
         where TValue : notnull
     {
-        if (result.IsHasError)
+        if (!result.TryGetValue(out var rv))
         {
             return new(result.Errors);
         }
@@ -1001,7 +1022,7 @@ public static class ResultExtension
             return Result.CanceledByUserError;
         }
 
-        return await action.Invoke(result.Value);
+        return await action.Invoke(rv);
     }
 
     public static ConfiguredValueTaskAwaitable<Result> IfSuccessAsync<TValue, TArg>(
@@ -1013,11 +1034,14 @@ public static class ResultExtension
         where TValue : notnull
         where TArg : notnull
     {
-        var errors = result.Errors.Combine(arg.Errors);
-
-        if (!errors.IsEmpty)
+        if (!result.TryGetValue(out var rv))
         {
-            return new Result(errors).ToValueTaskResult().ConfigureAwait(false);
+            return new Result(result.Errors).ToValueTaskResult().ConfigureAwait(false);
+        }
+
+        if (!arg.TryGetValue(out var a))
+        {
+            return new Result(arg.Errors).ToValueTaskResult().ConfigureAwait(false);
         }
 
         if (ct.IsCancellationRequested)
@@ -1025,7 +1049,7 @@ public static class ResultExtension
             return Result.CanceledByUserError.ToValueTaskResult().ConfigureAwait(false);
         }
 
-        return action.Invoke(result.Value, arg.Value);
+        return action.Invoke(rv, a);
     }
 
     public static ConfiguredValueTaskAwaitable<Result<TReturn>> IfSuccessAsync<TValue, TReturn>(
@@ -1036,7 +1060,7 @@ public static class ResultExtension
         where TReturn : notnull
         where TValue : notnull
     {
-        if (result.IsHasError)
+        if (!result.TryGetValue(out var rv))
         {
             return new Result<TReturn>(result.Errors).ToValueTaskResult().ConfigureAwait(false);
         }
@@ -1046,7 +1070,7 @@ public static class ResultExtension
             return Result<TReturn>.CanceledByUserError.ToValueTaskResult().ConfigureAwait(false);
         }
 
-        return action.Invoke(result.Value);
+        return action.Invoke(rv);
     }
 
     public static ConfiguredValueTaskAwaitable<Result<TReturn>> IfSuccessAsync<TValue, TReturn>(
@@ -1070,7 +1094,7 @@ public static class ResultExtension
     {
         var result = await task;
 
-        if (result.IsHasError)
+        if (!result.TryGetValue(out var rv))
         {
             return new(result.Errors);
         }
@@ -1080,7 +1104,7 @@ public static class ResultExtension
             return Result<TReturn>.CanceledByUserError;
         }
 
-        return await action.Invoke(result.Value);
+        return await action.Invoke(rv);
     }
 
     public static ConfiguredValueTaskAwaitable<Result<TReturn>> IfSuccessAsync<TValue, TReturn>(
@@ -1106,7 +1130,7 @@ public static class ResultExtension
     {
         var result = await task;
 
-        if (result.IsHasError)
+        if (!result.TryGetValue(out var rv))
         {
             return await errorsFunc.Invoke(result.Errors);
         }
@@ -1116,7 +1140,7 @@ public static class ResultExtension
             return Result<TReturn>.CanceledByUserError;
         }
 
-        return await func.Invoke(result.Value);
+        return await func.Invoke(rv);
     }
 
     public static ConfiguredValueTaskAwaitable<Result<TReturn>> IfSuccessAsync<TValue, TReturn>(
@@ -1140,7 +1164,7 @@ public static class ResultExtension
     {
         var result = await task;
 
-        if (result.IsHasError)
+        if (!result.TryGetValue(out var rv))
         {
             return new(result.Errors);
         }
@@ -1150,7 +1174,7 @@ public static class ResultExtension
             return Result<TReturn>.CanceledByUserError;
         }
 
-        return func.Invoke(result.Value);
+        return func.Invoke(rv);
     }
 
     public static ConfiguredValueTaskAwaitable<Result<TReturn>> IfSuccessDisposeAsync<
@@ -1175,12 +1199,12 @@ public static class ResultExtension
         where TValue : IAsyncDisposable
         where TReturn : notnull
     {
-        if (result.IsHasError)
+        if (!result.TryGetValue(out var rv))
         {
             return new(result.Errors);
         }
 
-        await using var value = result.Value;
+        await using var value = rv;
 
         if (ct.IsCancellationRequested)
         {
@@ -1207,12 +1231,12 @@ public static class ResultExtension
     )
         where TValue : IAsyncDisposable
     {
-        if (result.IsHasError)
+        if (!result.TryGetValue(out var rv))
         {
             return new(result.Errors);
         }
 
-        await using var value = result.Value;
+        await using var value = rv;
 
         if (ct.IsCancellationRequested)
         {
@@ -1241,7 +1265,7 @@ public static class ResultExtension
     {
         var result = await task;
 
-        if (result.IsHasError)
+        if (!result.TryGetValue(out var rv))
         {
             return new(result.Errors);
         }
@@ -1251,7 +1275,7 @@ public static class ResultExtension
             return Result.CanceledByUserError;
         }
 
-        return action.Invoke(result.Value);
+        return action.Invoke(rv);
     }
 
     public static ConfiguredValueTaskAwaitable<Result> IfSuccessAsync<TValue>(
@@ -1273,7 +1297,7 @@ public static class ResultExtension
     {
         var result = await task;
 
-        if (result.IsHasError)
+        if (!result.TryGetValue(out var rv))
         {
             return new(result.Errors);
         }
@@ -1283,7 +1307,7 @@ public static class ResultExtension
             return Result.CanceledByUserError;
         }
 
-        return await action.Invoke(result.Value);
+        return await action.Invoke(rv);
     }
 
     public static Result<TReturn> IfSuccess<TReturn>(
@@ -1307,23 +1331,23 @@ public static class ResultExtension
         where TReturn : notnull
         where TValue : notnull
     {
-        if (result.IsHasError)
+        if (!result.TryGetValue(out var rv))
         {
             return new(result.Errors);
         }
 
-        return action.Invoke(result.Value);
+        return action.Invoke(rv);
     }
 
     public static Result IfSuccess<TValue>(this Result<TValue> result, Func<TValue, Result> action)
         where TValue : notnull
     {
-        if (result.IsHasError)
+        if (!result.TryGetValue(out var rv))
         {
             return new(result.Errors);
         }
 
-        return action.Invoke(result.Value);
+        return action.Invoke(rv);
     }
 
     public static Result IfSuccess(this Result result, Func<Result> action)
@@ -1346,14 +1370,22 @@ public static class ResultExtension
         where TArg1 : notnull
         where TArg2 : notnull
     {
-        var errors = result.Errors.Combine(arg1.Errors, arg2.Errors);
-
-        if (!errors.IsEmpty)
+        if (result.IsHasError)
         {
-            return new(errors);
+            return new(result.Errors);
         }
 
-        return action.Invoke(arg1.Value, arg2.Value);
+        if (!arg1.TryGetValue(out var a1))
+        {
+            return new(arg1.Errors);
+        }
+
+        if (!arg2.TryGetValue(out var a2))
+        {
+            return new(arg2.Errors);
+        }
+
+        return action.Invoke(a1, a2);
     }
 
     public static Result<TReturn> IfSuccess<TValue, TArg1, TArg2, TReturn>(
@@ -1367,14 +1399,22 @@ public static class ResultExtension
         where TArg2 : notnull
         where TValue : notnull
     {
-        var errors = result.Errors.Combine(arg1.Errors, arg2.Errors);
-
-        if (!errors.IsEmpty)
+        if (!result.TryGetValue(out var rv))
         {
-            return new(errors);
+            return new(result.Errors);
         }
 
-        return action.Invoke(result.Value, arg1.Value, arg2.Value);
+        if (!arg1.TryGetValue(out var a1))
+        {
+            return new(arg1.Errors);
+        }
+
+        if (!arg2.TryGetValue(out var a2))
+        {
+            return new(arg2.Errors);
+        }
+
+        return action.Invoke(rv, a1, a2);
     }
 
     public static ConfiguredValueTaskAwaitable<Result<TResult>> IfSuccessTryFinallyAsync<
@@ -1403,7 +1443,7 @@ public static class ResultExtension
     {
         var result = await task;
 
-        if (result.IsHasError)
+        if (!result.TryGetValue(out var rv))
         {
             return new(result.Errors);
         }
@@ -1415,11 +1455,11 @@ public static class ResultExtension
                 return Result<TResult>.CanceledByUserError;
             }
 
-            return await funcTry.Invoke(result.Value);
+            return await funcTry.Invoke(rv);
         }
         finally
         {
-            funcFinally.Invoke(result.Value);
+            funcFinally.Invoke(rv);
         }
     }
 
@@ -1444,7 +1484,7 @@ public static class ResultExtension
     {
         var result = await task;
 
-        if (result.IsHasError)
+        if (!result.TryGetValue(out var rv))
         {
             return new(result.Errors);
         }
@@ -1456,11 +1496,11 @@ public static class ResultExtension
                 return Result.CanceledByUserError;
             }
 
-            return await funcTry.Invoke(result.Value);
+            return await funcTry.Invoke(rv);
         }
         finally
         {
-            funcFinally.Invoke(result.Value);
+            funcFinally.Invoke(rv);
         }
     }
 
@@ -1485,7 +1525,7 @@ public static class ResultExtension
     {
         var result = await task;
 
-        if (result.IsHasError)
+        if (!result.TryGetValue(out var rv))
         {
             return new(result.Errors);
         }
@@ -1497,11 +1537,11 @@ public static class ResultExtension
                 return Result.CanceledByUserError;
             }
 
-            return await funcTry.Invoke(result.Value);
+            return await funcTry.Invoke(rv);
         }
         finally
         {
-            await funcFinally.Invoke(result.Value);
+            await funcFinally.Invoke(rv);
         }
     }
 

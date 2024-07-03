@@ -26,12 +26,12 @@ public class CombineHttpHeaderFactory : IHttpHeaderFactory
         {
             var headers = await factory.CreateHeaderItemsAsync(ct);
 
-            if (headers.IsHasError)
+            if (!headers.TryGetValue(out var value))
             {
                 return headers;
             }
 
-            result.AddRange(headers.Value.Span);
+            result.AddRange(value.Span);
         }
 
         return result.ToReadOnlyMemory().ToResult();

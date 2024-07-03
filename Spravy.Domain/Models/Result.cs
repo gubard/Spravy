@@ -82,9 +82,18 @@ public class Result<TValue>
 
     public ReadOnlyMemory<Error> Errors { get; }
 
-    public TValue Value
+    public bool TryGetValue([MaybeNullWhen(false)] out TValue result)
     {
-        get => IsHasError || value is null ? throw new ErrorsException(Errors) : value;
+        if (IsHasError)
+        {
+            result = default;
+
+            return false;
+        }
+
+        result = value!;
+
+        return true;
     }
 
     public bool IsHasError
