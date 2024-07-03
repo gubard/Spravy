@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Spravy.Core.Mappers;
@@ -252,11 +253,16 @@ public class EfToDoService : IToDoService
                                 .IfSuccessAsync(
                                     children =>
                                     {
-                                        var random = children.Randomize();
+                                        SetRandomOrderIndex(children);
 
-                                        for (var i = children.Length - 1; i > 0; i--)
+                                        var items = children
+                                            .ToArray()
+                                            .OrderBy(x => x.OrderIndex)
+                                            .ToArray();
+
+                                        for (var i = 0; items.Length > i; i++)
                                         {
-                                            random.Span[i].OrderIndex = (uint)i;
+                                            items[i].OrderIndex = (uint)i;
                                         }
 
                                         return Result.Success;
@@ -267,6 +273,14 @@ public class EfToDoService : IToDoService
                     ),
                 ct
             );
+    }
+
+    private void SetRandomOrderIndex(ReadOnlyMemory<ToDoItemEntity> entities)
+    {
+        foreach (var entity in entities.Span)
+        {
+            entity.OrderIndex = (uint)RandomNumberGenerator.GetInt32(0, Int32.MaxValue);
+        }
     }
 
     public ConfiguredValueTaskAwaitable<Result<ReadOnlyMemory<ToDoShortItem>>> GetParentsAsync(
