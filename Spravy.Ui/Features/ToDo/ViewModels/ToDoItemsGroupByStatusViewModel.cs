@@ -65,34 +65,35 @@ public class ToDoItemsGroupByStatusViewModel : ViewModelBase
 
     public Result UpdateItemUi(ToDoItemEntityNotify item)
     {
-        switch (item.Status)
+        var result = item.Status switch
         {
-            case ToDoItemStatus.Miss:
-                return Missed
+            ToDoItemStatus.Miss
+                => Missed
                     .UpdateItemUi(item)
                     .IfSuccess(() => ReadyForCompleted.RemoveItemUi(item))
                     .IfSuccess(() => Planned.RemoveItemUi(item))
-                    .IfSuccess(() => Completed.RemoveItemUi(item));
-            case ToDoItemStatus.ReadyForComplete:
-                return Missed
+                    .IfSuccess(() => Completed.RemoveItemUi(item)),
+            ToDoItemStatus.ReadyForComplete
+                => Missed
                     .RemoveItemUi(item)
                     .IfSuccess(() => ReadyForCompleted.UpdateItemUi(item))
                     .IfSuccess(() => Planned.RemoveItemUi(item))
-                    .IfSuccess(() => Completed.RemoveItemUi(item));
-            case ToDoItemStatus.Planned:
-                return Missed
+                    .IfSuccess(() => Completed.RemoveItemUi(item)),
+            ToDoItemStatus.Planned
+                => Missed
                     .RemoveItemUi(item)
                     .IfSuccess(() => ReadyForCompleted.RemoveItemUi(item))
                     .IfSuccess(() => Planned.UpdateItemUi(item))
-                    .IfSuccess(() => Completed.RemoveItemUi(item));
-            case ToDoItemStatus.Completed:
-                return Missed
+                    .IfSuccess(() => Completed.RemoveItemUi(item)),
+            ToDoItemStatus.Completed
+                => Missed
                     .RemoveItemUi(item)
                     .IfSuccess(() => ReadyForCompleted.RemoveItemUi(item))
                     .IfSuccess(() => Planned.RemoveItemUi(item))
-                    .IfSuccess(() => Completed.UpdateItemUi(item));
-        }
+                    .IfSuccess(() => Completed.UpdateItemUi(item)),
+            _ => new(new ToDoItemStatusOutOfRangeError(item.Status))
+        };
 
-        return new(new ToDoItemStatusOutOfRangeError(item.Status));
+        return result;
     }
 }

@@ -2,12 +2,7 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class MultiToDoItemsViewModel : ViewModelBase
 {
-    public MultiToDoItemsViewModel(
-        ToDoItemsViewModel favorite,
-        ToDoItemsGroupByViewModel toDoItems,
-        IErrorHandler errorHandler,
-        ITaskProgressService taskProgressService
-    )
+    public MultiToDoItemsViewModel(ToDoItemsViewModel favorite, ToDoItemsGroupByViewModel toDoItems)
     {
         GroupBy = GroupBy.ByStatus;
         favorite.Header = new("MultiToDoItemsView.Favorite");
