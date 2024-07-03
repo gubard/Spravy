@@ -75,7 +75,6 @@ public class App : Application
 
     private async void ReorderOnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
-        Console.WriteLine("asdkasoidasoidkasod");
         if (Current is null)
         {
             return;
