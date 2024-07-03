@@ -5,6 +5,8 @@ namespace Spravy.Ui.Views;
 public partial class MainView : ReactiveUserControl<MainViewModel>
 {
     private readonly IServiceFactory serviceFactory;
+    private readonly IToDoService toDoService;
+    private readonly IUiApplicationService uiApplicationService;
     public const string ErrorDialogHostName = "error-dialog-host";
     public const string ProgressDialogHostName = "progress-dialog-host";
     public const string InputDialogHostName = "input-dialog-host";
@@ -12,9 +14,15 @@ public partial class MainView : ReactiveUserControl<MainViewModel>
     public const string MainContentName = "main-content-control";
     public const string MainPanelName = "main-panel-control";
 
-    public MainView(IServiceFactory serviceFactory)
+    public MainView(
+        IServiceFactory serviceFactory,
+        IToDoService toDoService,
+        IUiApplicationService uiApplicationService
+    )
     {
         this.serviceFactory = serviceFactory;
+        this.toDoService = toDoService;
+        this.uiApplicationService = uiApplicationService;
         InitializeComponent();
         AddHandler(DragDrop.DropEvent, Drop);
     }
@@ -49,13 +57,50 @@ public partial class MainView : ReactiveUserControl<MainViewModel>
         control.RenderTransform = new TranslateTransform(x, y);
     }
 
-    private void Drop(object? sender, DragEventArgs e)
+    private async void Drop(object? sender, DragEventArgs e)
     {
         var data = e.Data.Get(UiHelper.ToDoItemEntityNotifyDataFormat);
 
-        if (data is not ToDoItemEntityNotify taskItem)
+        if (data is not ToDoItemEntityNotify dataItem)
         {
             return;
         }
+
+        if (e.Source is not Control control)
+        {
+            return;
+        }
+
+        if (control.DataContext is not ToDoItemEntityNotify sourceItem)
+        {
+            return;
+        }
+
+        if (dataItem.Equals(sourceItem))
+        {
+            return;
+        }
+
+        var button = control.FindVisualParent<Button>(App.RootToDoItemButtonName);
+
+        if (button is null)
+        {
+            return;
+        }
+
+        var pointerPosition = e.GetPosition(button);
+
+        if (pointerPosition.Y > button.Bounds.Height / 2)
+        {
+            var options = new UpdateOrderIndexToDoItemOptions(dataItem.Id, sourceItem.Id, true);
+            await toDoService.UpdateToDoItemOrderIndexAsync(options, CancellationToken.None);
+        }
+        else
+        {
+            var options = new UpdateOrderIndexToDoItemOptions(dataItem.Id, sourceItem.Id, false);
+            await toDoService.UpdateToDoItemOrderIndexAsync(options, CancellationToken.None);
+        }
+
+        await uiApplicationService.RefreshCurrentViewAsync(CancellationToken.None);
     }
 }

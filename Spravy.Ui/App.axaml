@@ -10,6 +10,7 @@
              xmlns:lm="clr-namespace:Spravy.Ui.Features.Localizations.Models"
              xmlns:tm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
              xmlns:h="clr-namespace:Spravy.Ui.Helpers"
+             xmlns:ui="clr-namespace:Spravy.Ui"
              x:Class="Spravy.Ui.App"
              RequestedThemeVariant="Dark">
     <Application.Resources>
@@ -60,8 +61,8 @@
                                 Command="{x:Static h:UiHelper.ShowPasswordItemSetting}"
                                 CommandParameter="{Binding}" />
                         <Button Content="{x:Static i:MaterialIconKind.Delete}"
-                                Command="{Binding DeletePasswordItem.Command}" 
-                                CommandParameter="{Binding}"/>
+                                Command="{Binding DeletePasswordItem.Command}"
+                                CommandParameter="{Binding}" />
                     </StackPanel>
                 </Grid>
             </Button>
@@ -104,7 +105,8 @@
         </DataTemplate>
 
         <DataTemplate DataType="tm:ToDoItemEntityNotify">
-            <Button Command="{x:Static h:UiHelper.NavigateToToDoItem}"
+            <Button Name="{x:Static ui:App.RootToDoItemButtonName}"
+                    Command="{x:Static h:UiHelper.NavigateToToDoItem}"
                     CommandParameter="{Binding}"
                     Classes="alignment-stretch glass-card content-alignment-stretch">
                 <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto, Auto,*">
@@ -128,7 +130,12 @@
                                    Margin="3,0,3,0"
                                    Height="2"
                                    Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
-                        <mi:MaterialIcon Grid.Column="3" PointerPressed="ReorderOnPointerPressed" Kind="ReorderHorizontal" />
+                        <mi:MaterialIcon Grid.Column="3"
+                                         PointerPressed="ReorderOnPointerPressed"
+                                         Background="Transparent"
+                                         Width="20"
+                                         Height="20"
+                                         Kind="ReorderHorizontal" />
                         <Rectangle Grid.Column="4"
                                    Margin="3,0,3,0"
                                    Height="2"

@@ -6,6 +6,8 @@ namespace Spravy.Ui;
 
 public class App : Application
 {
+    public const string RootToDoItemButtonName = "root-to-do-item-button";
+
     private readonly IServiceFactory serviceFactory = DiHelper.ServiceFactory;
 
     public override void Initialize()
@@ -73,6 +75,7 @@ public class App : Application
 
     private async void ReorderOnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
+        Console.WriteLine("asdkasoidasoidkasod");
         if (Current is null)
         {
             return;
