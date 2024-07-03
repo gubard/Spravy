@@ -13,7 +13,22 @@ public static class ToDoItemEntityExtension
             return ReadOnlyMemory<byte>.Empty;
         }
 
-        return item.DaysOfMonth.Split(";").Select(byte.Parse).ToArray();
+        var values = item.DaysOfMonth.Split(";");
+        var result = new Memory<byte>(new byte[values.Length]);
+
+        for (var index = 0; index < values.Length; index++)
+        {
+            if (byte.TryParse(values[index], out var b))
+            {
+                result.Span[index] = b;
+            }
+            else
+            {
+                return ReadOnlyMemory<byte>.Empty;
+            }
+        }
+
+        return result;
     }
 
     public static IEnumerable<DayOfWeek> GetDaysOfWeek(this ToDoItemEntity item)

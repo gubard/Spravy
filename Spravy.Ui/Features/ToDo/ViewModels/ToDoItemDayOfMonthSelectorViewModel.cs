@@ -12,6 +12,7 @@ public class ToDoItemDayOfMonthSelectorViewModel : ViewModelBase, IApplySettings
     {
         this.toDoService = toDoService;
         SelectedDays = new();
+
         InitializedCommand = SpravyCommand.Create(
             InitializedAsync,
             errorHandler,
