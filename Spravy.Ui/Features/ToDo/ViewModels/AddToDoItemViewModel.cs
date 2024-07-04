@@ -5,20 +5,17 @@ namespace Spravy.Ui.Features.ToDo.ViewModels;
 public class AddToDoItemViewModel : NavigatableViewModelBase
 {
     private readonly IObjectStorage objectStorage;
-    private readonly IToDoService toDoService;
 
     public AddToDoItemViewModel(
         ToDoItemContentViewModel toDoItemContent,
         EditDescriptionContentViewModel descriptionContent,
-        IObjectStorage objectStorage,
-        IToDoService toDoService
+        IObjectStorage objectStorage
     )
         : base(true)
     {
         ToDoItemContent = toDoItemContent;
         DescriptionContent = descriptionContent;
         this.objectStorage = objectStorage;
-        this.toDoService = toDoService;
     }
 
     public ToDoItemContentViewModel ToDoItemContent { get; }
@@ -42,7 +39,9 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
 
     public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)
     {
-        return objectStorage.SaveObjectAsync(ViewId, new AddToDoItemViewModelSetting(this), ct);
+        var setting = new AddToDoItemViewModelSetting(this);
+
+        return objectStorage.SaveObjectAsync(ViewId, setting, ct);
     }
 
     public override ConfiguredValueTaskAwaitable<Result> SetStateAsync(
