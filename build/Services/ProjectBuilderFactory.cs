@@ -179,7 +179,7 @@ public class ProjectBuilderFactory
                             csprojFile,
                             csprojFile.Directory.ToFile("appsettings.json"),
                             ports,
-                            new[] { Runtime.LinuxX64, Runtime.WinX64, },
+                            new[] { Runtime.LinuxX64, Runtime.WinX64, Runtime.WinArmX64, },
                             configuration,
                             domain,
                             ftpHost,
