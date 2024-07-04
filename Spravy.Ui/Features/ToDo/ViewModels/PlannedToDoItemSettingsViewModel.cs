@@ -59,7 +59,7 @@ public class PlannedToDoItemSettingsViewModel
             .GetPlannedToDoItemSettingsAsync(Id, ct)
             .IfSuccessAsync(
                 setting =>
-                    this.InvokeUiBackgroundAsync(() =>
+                    this.PostUiBackground(() =>
                     {
                         ChildrenType = setting.ChildrenType;
                         DueDate = setting.DueDate;

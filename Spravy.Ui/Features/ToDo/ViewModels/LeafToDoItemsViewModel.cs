@@ -125,17 +125,17 @@ public class LeafToDoItemsViewModel
     {
         return setting
             .CastObject<LeafToDoItemsViewModelSetting>()
-            .IfSuccessAsync(
-                s =>
-                    this.InvokeUiBackgroundAsync(() =>
-                    {
-                        ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
-                        ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
+            .IfSuccess(s =>
+                this.PostUiBackground(() =>
+                {
+                    ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
+                    ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
 
-                        return Result.Success;
-                    }),
-                ct
-            );
+                    return Result.Success;
+                })
+            )
+            .ToValueTaskResult()
+            .ConfigureAwait(false);
     }
 
     public Result UpdateInListToDoItemUi(ToDoItemEntityNotify item)

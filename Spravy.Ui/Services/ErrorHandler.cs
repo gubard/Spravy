@@ -13,7 +13,7 @@ public class ErrorHandler : IErrorHandler
 
     public ConfiguredValueTaskAwaitable<Result> ErrorsHandleAsync(
         ReadOnlyMemory<Error> errors,
-        CancellationToken token
+        CancellationToken ct
     )
     {
         if (errors.IsEmpty)
@@ -31,19 +31,16 @@ public class ErrorHandler : IErrorHandler
         return dialogViewer.ShowInfoErrorDialogAsync<ErrorViewModel>(
             _ =>
                 dialogViewer
-                    .CloseErrorDialogAsync(CancellationToken.None)
-                    .IfSuccessAsync(
-                        () => dialogViewer.CloseProgressDialogAsync(CancellationToken.None),
-                        CancellationToken.None
-                    ),
+                    .CloseErrorDialogAsync(ct)
+                    .IfSuccessAsync(() => dialogViewer.CloseProgressDialogAsync(ct), ct),
             viewModel => viewModel.Errors.AddRange(errors.ToArray()),
-            CancellationToken.None
+            ct
         );
     }
 
     public ConfiguredValueTaskAwaitable<Result> ExceptionHandleAsync(
         Exception exception,
-        CancellationToken token
+        CancellationToken ct
     )
     {
         if (exception is TaskCanceledException)
@@ -74,10 +71,10 @@ public class ErrorHandler : IErrorHandler
         return dialogViewer.ShowInfoErrorDialogAsync<ExceptionViewModel>(
             _ =>
                 dialogViewer
-                    .CloseErrorDialogAsync(token)
-                    .IfSuccessAsync(() => dialogViewer.CloseProgressDialogAsync(token), token),
+                    .CloseErrorDialogAsync(ct)
+                    .IfSuccessAsync(() => dialogViewer.CloseProgressDialogAsync(ct), ct),
             viewModel => viewModel.Exception = exception,
-            token
+            ct
         );
     }
 }

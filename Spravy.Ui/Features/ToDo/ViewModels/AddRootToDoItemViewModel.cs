@@ -41,19 +41,19 @@ public class AddRootToDoItemViewModel : NavigatableViewModelBase
     {
         return setting
             .CastObject<AddRootToDoItemViewModelSetting>()
-            .IfSuccessAsync(
-                s =>
-                    this.InvokeUiBackgroundAsync(() =>
-                    {
-                        ToDoItemContent.Name = s.Name;
-                        ToDoItemContent.Type = s.Type;
-                        ToDoItemContent.Link = s.Link;
-                        DescriptionContent.Description = s.Description;
-                        DescriptionContent.Type = s.DescriptionType;
+            .IfSuccess(s =>
+                this.PostUiBackground(() =>
+                {
+                    ToDoItemContent.Name = s.Name;
+                    ToDoItemContent.Type = s.Type;
+                    ToDoItemContent.Link = s.Link;
+                    DescriptionContent.Description = s.Description;
+                    DescriptionContent.Type = s.DescriptionType;
 
-                        return Result.Success;
-                    }),
-                ct
-            );
+                    return Result.Success;
+                })
+            )
+            .ToValueTaskResult()
+            .ConfigureAwait(false);
     }
 }

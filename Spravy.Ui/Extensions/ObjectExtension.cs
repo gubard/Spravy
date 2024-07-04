@@ -2,6 +2,13 @@ namespace Spravy.Ui.Extensions;
 
 public static class ObjectExtension
 {
+    public static Result PostUiBackground<TObject>(this TObject _, Func<Result> func)
+    {
+        Dispatcher.UIThread.Post(() => func.Invoke(), DispatcherPriority.Background);
+
+        return Result.Success;
+    }
+
     public static ConfiguredValueTaskAwaitable<Result> InvokeUiAsync<TObject>(
         this TObject _,
         Func<Result> callback

@@ -60,19 +60,19 @@ public class ResetToDoItemViewModel : NavigatableViewModelBase
     {
         return setting
             .CastObject<ResetToDoItemViewModelSetting>()
-            .IfSuccessAsync(
-                s =>
-                    this.InvokeUiBackgroundAsync(() =>
-                    {
-                        IsCompleteChildrenTask = s.IsCompleteChildrenTask;
-                        IsMoveCircleOrderIndex = s.IsMoveCircleOrderIndex;
-                        IsOnlyCompletedTasks = s.IsOnlyCompletedTasks;
-                        IsCompleteCurrentTask = s.IsCompleteCurrentTask;
+            .IfSuccess(s =>
+                this.PostUiBackground(() =>
+                {
+                    IsCompleteChildrenTask = s.IsCompleteChildrenTask;
+                    IsMoveCircleOrderIndex = s.IsMoveCircleOrderIndex;
+                    IsOnlyCompletedTasks = s.IsOnlyCompletedTasks;
+                    IsCompleteCurrentTask = s.IsCompleteCurrentTask;
 
-                        return Result.Success;
-                    }),
-                ct
-            );
+                    return Result.Success;
+                })
+            )
+            .ToValueTaskResult()
+            .ConfigureAwait(false);
     }
 
     public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)

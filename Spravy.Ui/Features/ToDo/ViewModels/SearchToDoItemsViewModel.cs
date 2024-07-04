@@ -102,16 +102,16 @@ public class SearchToDoItemsViewModel
     {
         return setting
             .CastObject<SearchViewModelSetting>()
-            .IfSuccessAsync(
-                s =>
-                    this.InvokeUiBackgroundAsync(() =>
-                    {
-                        SearchText = s.SearchText;
+            .IfSuccess(s =>
+                this.PostUiBackground(() =>
+                {
+                    SearchText = s.SearchText;
 
-                        return Result.Success;
-                    }),
-                ct
-            );
+                    return Result.Success;
+                })
+            )
+            .ToValueTaskResult()
+            .ConfigureAwait(false);
     }
 
     public Result UpdateInListToDoItemUi(ToDoItemEntityNotify item)

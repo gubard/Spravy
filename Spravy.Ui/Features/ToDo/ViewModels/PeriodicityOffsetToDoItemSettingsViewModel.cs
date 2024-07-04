@@ -91,7 +91,7 @@ public class PeriodicityOffsetToDoItemSettingsViewModel
             .GetPeriodicityOffsetToDoItemSettingsAsync(Id, ct)
             .IfSuccessAsync(
                 setting =>
-                    this.InvokeUiBackgroundAsync(() =>
+                    this.PostUiBackground(() =>
                     {
                         ChildrenType = setting.ChildrenType;
                         DueDate = setting.DueDate;

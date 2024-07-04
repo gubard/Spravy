@@ -86,10 +86,8 @@ public class RootToDoItemsViewModel
     {
         return toDoCache
             .GetRootItems()
-            .IfSuccessAsync(
-                items =>
-                    this.InvokeUiBackgroundAsync(() => ToDoSubItemsViewModel.ClearExceptUi(items)),
-                ct
+            .IfSuccess(items =>
+                this.PostUiBackground(() => ToDoSubItemsViewModel.ClearExceptUi(items))
             )
             .IfSuccessAsync(() => toDoService.GetRootToDoItemIdsAsync(ct), ct)
             .IfSuccessAsync(items => toDoCache.UpdateRootItems(items), ct)
@@ -118,17 +116,17 @@ public class RootToDoItemsViewModel
     {
         return setting
             .CastObject<RootToDoItemsViewModelSetting>()
-            .IfSuccessAsync(
-                s =>
-                    this.InvokeUiBackgroundAsync(() =>
-                    {
-                        ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
-                        ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
+            .IfSuccess(s =>
+                this.PostUiBackground(() =>
+                {
+                    ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
+                    ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
 
-                        return Result.Success;
-                    }),
-                ct
-            );
+                    return Result.Success;
+                })
+            )
+            .ToValueTaskResult()
+            .ConfigureAwait(false);
     }
 
     public Result UpdateInListToDoItemUi(ToDoItemEntityNotify item)

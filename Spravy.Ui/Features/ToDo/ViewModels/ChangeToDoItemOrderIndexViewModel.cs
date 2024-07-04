@@ -41,7 +41,7 @@ public class ChangeToDoItemOrderIndexViewModel : ViewModelBase
                 .GetSiblingsAsync(Id, ct)
                 .IfSuccessAsync(
                     items =>
-                        this.InvokeUiBackgroundAsync(() =>
+                        this.PostUiBackground(() =>
                         {
                             Items.Clear();
 
@@ -65,16 +65,16 @@ public class ChangeToDoItemOrderIndexViewModel : ViewModelBase
         return ChangeToDoItemOrderIndexIds
             .ToResult()
             .IfSuccessForEach(id => toDoCache.GetToDoItem(id))
-            .IfSuccessAsync(
-                items =>
-                    this.InvokeUiBackgroundAsync(() =>
-                    {
-                        Items.Clear();
-                        Items.AddRange(items.ToArray());
+            .IfSuccess(items =>
+                this.PostUiBackground(() =>
+                {
+                    Items.Clear();
+                    Items.AddRange(items.ToArray());
 
-                        return Result.Success;
-                    }),
-                ct
-            );
+                    return Result.Success;
+                })
+            )
+            .ToValueTaskResult()
+            .ConfigureAwait(false);
     }
 }

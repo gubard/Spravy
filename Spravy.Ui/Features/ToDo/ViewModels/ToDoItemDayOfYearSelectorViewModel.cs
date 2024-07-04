@@ -66,12 +66,14 @@ public class ToDoItemDayOfYearSelectorViewModel : ViewModelBase, IApplySettings
 
                                 items.Add(
                                     () =>
-                                        this.InvokeUiBackgroundAsync(() =>
-                                        {
-                                            d.IsSelected = true;
+                                        this.PostUiBackground(() =>
+                                            {
+                                                d.IsSelected = true;
 
-                                            return Result.Success;
-                                        })
+                                                return Result.Success;
+                                            })
+                                            .ToValueTaskResult()
+                                            .ConfigureAwait(false)
                                 );
                             }
                         }

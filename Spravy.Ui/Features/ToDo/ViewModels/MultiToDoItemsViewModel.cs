@@ -38,9 +38,9 @@ public class MultiToDoItemsViewModel : ViewModelBase
         return ToDoItems.ClearExceptUi(ids);
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateFavoriteItemAsync(ToDoItemEntityNotify item)
+    public Result UpdateFavoriteItemUi(ToDoItemEntityNotify item)
     {
-        return this.InvokeUiBackgroundAsync(() => Favorite.UpdateItemUi(item));
+        return Favorite.UpdateItemUi(item);
     }
 
     public Result UpdateItemUi(ToDoItemEntityNotify item)

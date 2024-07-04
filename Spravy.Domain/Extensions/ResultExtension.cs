@@ -452,6 +452,17 @@ public static class ResultExtension
         return Result.Success;
     }
 
+    public static Result ToResultOnly<TValue>(this Result<TValue> task)
+        where TValue : notnull
+    {
+        if (task.TryGetValue(out _))
+        {
+            return Result.Success;
+        }
+
+        return new(task.Errors);
+    }
+
     public static ConfiguredValueTaskAwaitable<Result> ToResultOnlyAsync<TValue>(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task
     )
@@ -944,6 +955,36 @@ public static class ResultExtension
         }
 
         return new(errors);
+    }
+
+    public static ConfiguredValueTaskAwaitable<Result<TReturn>> IfSuccessAsync<TReturn>(
+        this Result result,
+        Func<ConfiguredValueTaskAwaitable<Result<TReturn>>> action,
+        CancellationToken ct
+    )
+        where TReturn : notnull
+    {
+        return IfSuccessCore(result, action, ct).ConfigureAwait(false);
+    }
+
+    private static async ValueTask<Result<TReturn>> IfSuccessCore<TReturn>(
+        this Result result,
+        Func<ConfiguredValueTaskAwaitable<Result<TReturn>>> action,
+        CancellationToken ct
+    )
+        where TReturn : notnull
+    {
+        if (result.IsHasError)
+        {
+            return new(result.Errors);
+        }
+
+        if (ct.IsCancellationRequested)
+        {
+            return Result<TReturn>.CanceledByUserError;
+        }
+
+        return await action.Invoke();
     }
 
     public static ConfiguredValueTaskAwaitable<Result> IfSuccessAsync(

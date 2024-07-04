@@ -85,20 +85,18 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUp
     {
         return toDoCache
             .GetToDoItem(Id)
-            .IfSuccessAsync(
-                item =>
-                    this.InvokeUiBackgroundAsync(() =>
-                    {
-                        Item = item;
+            .IfSuccess(item =>
+                this.PostUiBackground(() =>
+                {
+                    Item = item;
 
-                        return Result.Success;
-                    }),
-                ct
+                    return Result.Success;
+                })
             )
             .IfSuccessAsync(() => toDoService.GetToDoItemAsync(Id, ct), ct)
             .IfSuccessAsync(
                 item =>
-                    this.InvokeUiBackgroundAsync(
+                    this.PostUiBackground(
                         () => toDoCache.UpdateUi(item).IfSuccess(_ => UpdateCommandItemsUi())
                     ),
                 ct
@@ -110,15 +108,14 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUp
         return toDoService
             .GetParentsAsync(Id, ct)
             .IfSuccessAsync(
-                parents =>
-                    this.InvokeUiBackgroundAsync(() => toDoCache.UpdateParentsUi(Id, parents)),
+                parents => this.PostUiBackground(() => toDoCache.UpdateParentsUi(Id, parents)),
                 ct
             );
     }
 
     private ConfiguredValueTaskAwaitable<Result> RefreshToDoItemChildrenAsync(CancellationToken ct)
     {
-        return this.InvokeUiBackgroundAsync(
+        return this.PostUiBackground(
                 () =>
                     ToDoSubItemsViewModel.ClearExceptUi(
                         Item?.Children.ToArray() ?? ReadOnlyMemory<ToDoItemEntityNotify>.Empty
@@ -167,17 +164,17 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUp
     {
         return setting
             .CastObject<ToDoItemViewModelSetting>()
-            .IfSuccessAsync(
-                s =>
-                    this.InvokeUiBackgroundAsync(() =>
-                    {
-                        ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
-                        ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
+            .IfSuccess(s =>
+                this.PostUiBackground(() =>
+                {
+                    ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
+                    ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
 
-                        return Result.Success;
-                    }),
-                ct
-            );
+                    return Result.Success;
+                })
+            )
+            .ToValueTaskResult()
+            .ConfigureAwait(false);
     }
 
     public Result UpdateInListToDoItemUi(ToDoItemEntityNotify item)

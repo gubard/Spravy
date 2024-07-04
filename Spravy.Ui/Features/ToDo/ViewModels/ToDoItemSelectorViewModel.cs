@@ -14,12 +14,18 @@ public class ToDoItemSelectorViewModel : ViewModelBase
     {
         this.toDoService = toDoService;
         this.toDoCache = toDoCache;
+
         InitializedCommand = SpravyCommand.Create(
             InitializedAsync,
             errorHandler,
             taskProgressService
         );
-        SearchCommand = SpravyCommand.Create(SearchAsync, errorHandler, taskProgressService);
+
+        SearchCommand = SpravyCommand.Create(
+            _ => Search().ToValueTaskResult().ConfigureAwait(false),
+            errorHandler,
+            taskProgressService
+        );
     }
 
     public AvaloniaList<ToDoItemEntityNotify> Roots { get; } = new();
@@ -41,18 +47,16 @@ public class ToDoItemSelectorViewModel : ViewModelBase
 
     private ConfiguredValueTaskAwaitable<Result> Refresh(CancellationToken ct)
     {
-        return this.InvokeUiBackgroundAsync(() => toDoCache.ResetItemsUi())
-            .IfSuccessAsync(() => toDoCache.GetRootItems(), ct)
-            .IfSuccessAsync(
-                items =>
-                    this.InvokeUiBackgroundAsync(() =>
-                    {
-                        Roots.Clear();
-                        Roots.AddRange(items.ToArray());
+        return this.PostUiBackground(() => toDoCache.ResetItemsUi())
+            .IfSuccess(() => toDoCache.GetRootItems())
+            .IfSuccess(items =>
+                this.PostUiBackground(() =>
+                {
+                    Roots.Clear();
+                    Roots.AddRange(items.ToArray());
 
-                        return SetupUi();
-                    }),
-                ct
+                    return SetupUi();
+                })
             )
             .IfSuccessAsync(
                 () => toDoService.GetToDoSelectorItemsAsync(IgnoreIds.ToArray(), ct),
@@ -64,7 +68,7 @@ public class ToDoItemSelectorViewModel : ViewModelBase
             )
             .IfSuccessAsync(
                 items =>
-                    this.InvokeUiBackgroundAsync(() =>
+                    this.PostUiBackground(() =>
                     {
                         Roots.Clear();
                         Roots.AddRange(items.ToArray());
@@ -110,56 +114,40 @@ public class ToDoItemSelectorViewModel : ViewModelBase
 
     private Result SetupUi()
     {
-        return Roots
-            .ToArray()
-            .ToReadOnlyMemory()
-            .ToResult()
-            .IfSuccessForEach(item => SetupUi(item));
+        return Roots.ToArray().ToReadOnlyMemory().ToResult().IfSuccessForEach(SetupUi);
     }
 
-    private ConfiguredValueTaskAwaitable<Result> SearchAsync(CancellationToken ct)
+    private Result Search()
     {
-        return this.InvokeUiBackgroundAsync(() =>
+        return this.PostUiBackground(() =>
             {
                 Roots.Clear();
 
                 return Result.Success;
             })
-            .IfSuccessAsync(() => toDoCache.GetRootItems(), ct)
-            .IfSuccessForEachAsync(item => SearchAsync(item, ct), ct);
+            .IfSuccess(() => toDoCache.GetRootItems())
+            .IfSuccessForEach(Search);
     }
 
-    private ConfiguredValueTaskAwaitable<Result> SearchAsync(
-        ToDoItemEntityNotify item,
-        CancellationToken ct
-    )
+    private Result Search(ToDoItemEntityNotify item)
     {
         return Result
-            .AwaitableSuccess.IfSuccessAsync(
-                () =>
+            .Success.IfSuccess(() =>
+            {
+                if (item.Name.Contains(SearchText))
                 {
-                    if (item.Name.Contains(SearchText))
+                    return this.PostUiBackground(() =>
                     {
-                        return this.InvokeUiBackgroundAsync(() =>
-                        {
-                            Roots.Add(item);
+                        Roots.Add(item);
 
-                            return Result.Success;
-                        });
-                    }
+                        return Result.Success;
+                    });
+                }
 
-                    return Result.AwaitableSuccess;
-                },
-                ct
-            )
-            .IfSuccessAsync(
-                () =>
-                    item
-                        .Children.ToArray()
-                        .ToReadOnlyMemory()
-                        .ToResult()
-                        .IfSuccessForEachAsync(i => SearchAsync(i, ct), ct),
-                ct
+                return Result.Success;
+            })
+            .IfSuccess(
+                () => item.Children.ToArray().ToReadOnlyMemory().ToResult().IfSuccessForEach(Search)
             );
     }
 }

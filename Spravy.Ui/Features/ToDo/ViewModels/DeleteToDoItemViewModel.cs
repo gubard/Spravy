@@ -28,10 +28,12 @@ public class DeleteToDoItemViewModel : ViewModelBase
                         return toDoService
                             .GetToDoItemAsync(Item.Id, ct)
                             .IfSuccessAsync(
-                                i => this.InvokeUiBackgroundAsync(() => toDoCache.UpdateUi(i)),
+                                i =>
+                                    this.PostUiBackground(
+                                        () => toDoCache.UpdateUi(i).ToResultOnly()
+                                    ),
                                 ct
-                            )
-                            .ToResultOnlyAsync();
+                            );
                     },
                     () =>
                     {
@@ -44,7 +46,7 @@ public class DeleteToDoItemViewModel : ViewModelBase
                             .GetParentsAsync(Item.Id, ct)
                             .IfSuccessAsync(
                                 parents =>
-                                    this.InvokeUiBackgroundAsync(
+                                    this.PostUiBackground(
                                         () => toDoCache.UpdateParentsUi(Item.Id, parents)
                                     ),
                                 ct
@@ -61,7 +63,7 @@ public class DeleteToDoItemViewModel : ViewModelBase
                                             .ToDoItemToStringAsync(new(statuses, item.Id), ct)
                                             .IfSuccessAsync(
                                                 text =>
-                                                    this.InvokeUiBackgroundAsync(() =>
+                                                    this.PostUiBackground(() =>
                                                     {
                                                         ChildrenText = text;
 
@@ -95,7 +97,7 @@ public class DeleteToDoItemViewModel : ViewModelBase
                                         values.ToArray()
                                     );
 
-                                    return this.InvokeUiBackgroundAsync(() =>
+                                    return this.PostUiBackground(() =>
                                     {
                                         ChildrenText = childrenText;
 

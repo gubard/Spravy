@@ -99,7 +99,7 @@ public class ToDoSubItemsViewModel : ViewModelBase
                     t.ReferenceId = null;
                 }
 
-                var result = await List.UpdateFavoriteItemAsync(t);
+                var result = await this.InvokeUiBackgroundAsync(() => List.UpdateFavoriteItemUi(t));
 
                 if (result.IsHasError)
                 {

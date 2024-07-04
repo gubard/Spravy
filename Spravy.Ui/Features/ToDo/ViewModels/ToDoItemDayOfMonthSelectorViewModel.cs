@@ -41,7 +41,7 @@ public class ToDoItemDayOfMonthSelectorViewModel : ViewModelBase, IApplySettings
             .GetMonthlyPeriodicityAsync(ToDoItemId, ct)
             .IfSuccessAsync(
                 monthlyPeriodicity =>
-                    this.InvokeUiBackgroundAsync(() =>
+                    this.PostUiBackground(() =>
                     {
                         SelectedDays.AddRange(
                             monthlyPeriodicity.Days.Select(x => (int)x).ToArray()

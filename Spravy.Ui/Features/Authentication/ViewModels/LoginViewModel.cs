@@ -140,15 +140,15 @@ public class LoginViewModel : NavigatableViewModelBase, INotifyDataErrorInfo
     {
         return setting
             .CastObject<LoginViewModelSetting>()
-            .IfSuccessAsync(
-                s =>
-                    this.InvokeUiBackgroundAsync(() =>
-                    {
-                        Login = s.Login;
+            .IfSuccess(s =>
+                this.PostUiBackground(() =>
+                {
+                    Login = s.Login;
 
-                        return Result.Success;
-                    }),
-                ct
-            );
+                    return Result.Success;
+                })
+            )
+            .ToValueTaskResult()
+            .ConfigureAwait(false);
     }
 }

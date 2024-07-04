@@ -4,10 +4,11 @@ public interface IErrorHandler
 {
     ConfiguredValueTaskAwaitable<Result> ErrorsHandleAsync(
         ReadOnlyMemory<Error> errors,
-        CancellationToken token
+        CancellationToken ct
     );
+
     ConfiguredValueTaskAwaitable<Result> ExceptionHandleAsync(
         Exception exception,
-        CancellationToken token
+        CancellationToken ct
     );
 }

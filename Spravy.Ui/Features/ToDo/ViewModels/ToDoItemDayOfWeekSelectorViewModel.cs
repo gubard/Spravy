@@ -56,12 +56,14 @@ public class ToDoItemDayOfWeekSelectorViewModel : ViewModelBase, IApplySettings
                                 var y = x;
 
                                 return () =>
-                                    this.InvokeUiBackgroundAsync(() =>
-                                    {
-                                        y.IsSelected = true;
+                                    this.PostUiBackground(() =>
+                                        {
+                                            y.IsSelected = true;
 
-                                        return Result.Success;
-                                    });
+                                            return Result.Success;
+                                        })
+                                        .ToValueTaskResult()
+                                        .ConfigureAwait(false);
                             })
                             .ToArray()
                     ),
