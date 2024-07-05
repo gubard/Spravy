@@ -149,71 +149,93 @@ public class ToDoSubItemsViewModel : ViewModelBase
                 .ConfigureAwait(false)
         )
         {
-            if (!items.TryGetValue(out var value))
-            {
-                return new(items.Errors);
-            }
-
-            foreach (var item in value.ToArray())
-            {
-                var i = await this.InvokeUiBackgroundAsync(() => toDoCache.UpdateUi(item));
-
-                if (!i.TryGetValue(out var t))
-                {
-                    return new(i.Errors);
-                }
-
-                if (item.Type == ToDoItemType.Reference)
-                {
-                    var reference = await toDoService.GetReferenceToDoItemSettingsAsync(
-                        item.Id,
-                        ct
-                    );
-
-                    if (!reference.TryGetValue(out var r))
+            await items
+                .IfSuccessForEach(item =>
+                    this.PostUiBackground(() => toDoCache.UpdateUi(item).ToResultOnly())
+                )
+                .IfSuccess(() => items.IfSuccessForEach(item => toDoCache.GetToDoItem(item.Id)))
+                .IfSuccessForEachAsync(
+                    item =>
                     {
-                        return new(reference.Errors);
-                    }
+                        return GetReferenceId(item, ct)
+                            .IfSuccessAsync(
+                                referenceId =>
+                                    this.PostUiBackground(() =>
+                                    {
+                                        item.ReferenceId = referenceId.GetValueOrNull();
 
-                    t.ReferenceId = r.ReferenceId.GetValueOrNull();
-                }
-                else
-                {
-                    t.ReferenceId = null;
-                }
+                                        return Result.Success;
+                                    }),
+                                ct
+                            )
+                            .IfSuccessAsync(
+                                () =>
+                                {
+                                    if (autoOrder)
+                                    {
+                                        var oi = orderIndex;
 
-                if (autoOrder)
-                {
-                    t.OrderIndex = orderIndex;
+                                        return this.PostUiBackground(() =>
+                                        {
+                                            item.OrderIndex = oi;
 
-                    var result = this.PostUiBackground(() => List.UpdateItemUi(t));
+                                            return Result.Success;
+                                        });
+                                    }
 
-                    if (result.IsHasError)
-                    {
-                        return result;
-                    }
-                }
-                else
-                {
-                    var result = this.PostUiBackground(() => List.UpdateItemUi(t));
+                                    return Result.Success;
+                                },
+                                ct
+                            )
+                            .IfSuccessAsync(
+                                () =>
+                                {
+                                    orderIndex++;
 
-                    if (result.IsHasError)
-                    {
-                        return result;
-                    }
-                }
+                                    return progressItem.Increase();
+                                },
+                                ct
+                            )
+                            .IfSuccessAsync(() => item.ToResult(), ct);
+                    },
+                    ct
+                )
+                .IfSuccessAsync(
+                    itemsNotify =>
+                        this.PostUiBackground(() =>
+                        {
+                            foreach (var item in itemsNotify.Span)
+                            {
+                                var result = List.UpdateItemUi(item);
 
-                orderIndex++;
-                var pi = progressItem.Increase();
+                                if (result.IsHasError)
+                                {
+                                    return result;
+                                }
+                            }
 
-                if (pi.IsHasError)
-                {
-                    return pi;
-                }
-            }
+                            return Result.Success;
+                        }),
+                    ct
+                );
         }
 
         return Result.Success;
+    }
+
+    private ConfiguredValueTaskAwaitable<Result<OptionStruct<Guid>>> GetReferenceId(
+        ToDoItemEntityNotify item,
+        CancellationToken ct
+    )
+    {
+        if (item.Type == ToDoItemType.Reference)
+        {
+            return toDoService
+                .GetReferenceToDoItemSettingsAsync(item.Id, ct)
+                .IfSuccessAsync(reference => reference.ReferenceId.ToResult(), ct);
+        }
+
+        return OptionStruct<Guid>.Default.ToResult().ToValueTaskResult().ConfigureAwait(false);
     }
 
     public ConfiguredValueTaskAwaitable<Result> UpdateItemsAsync(
