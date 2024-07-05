@@ -705,13 +705,11 @@ public class SpravyCommandService
                 Result
                     .AwaitableSuccess.IfSuccessAsync(
                         () =>
-                        {
-                            switch (item.IsCan)
+                            item.IsCan switch
                             {
-                                case ToDoItemIsCan.None:
-                                    return Result.AwaitableSuccess;
-                                case ToDoItemIsCan.CanComplete:
-                                    return this.InvokeUiBackgroundAsync(() =>
+                                ToDoItemIsCan.None => Result.AwaitableSuccess,
+                                ToDoItemIsCan.CanComplete
+                                    => this.PostUi(() =>
                                         {
                                             item.IsCan = ToDoItemIsCan.None;
                                             item.Status = ToDoItemStatus.Completed;
@@ -720,18 +718,17 @@ public class SpravyCommandService
                                                 .GetCurrentView<IToDoItemUpdater>()
                                                 .IfSuccess(u => u.UpdateInListToDoItemUi(item));
                                         })
-                                        .IfErrorsAsync(_ => Result.Success, CancellationToken.None)
                                         .IfSuccessAsync(
                                             () =>
                                                 toDoService.UpdateToDoItemCompleteStatusAsync(
                                                     item.CurrentId,
                                                     true,
-                                                    CancellationToken.None
+                                                    ct
                                                 ),
-                                            CancellationToken.None
-                                        );
-                                case ToDoItemIsCan.CanIncomplete:
-                                    return this.InvokeUiBackgroundAsync(() =>
+                                            ct
+                                        ),
+                                ToDoItemIsCan.CanIncomplete
+                                    => this.PostUi(() =>
                                         {
                                             item.IsCan = ToDoItemIsCan.None;
                                             item.Status = ToDoItemStatus.ReadyForComplete;
@@ -740,28 +737,23 @@ public class SpravyCommandService
                                                 .GetCurrentView<IToDoItemUpdater>()
                                                 .IfSuccess(u => u.UpdateInListToDoItemUi(item));
                                         })
-                                        .IfErrorsAsync(_ => Result.Success, CancellationToken.None)
                                         .IfSuccessAsync(
                                             () =>
                                                 toDoService.UpdateToDoItemCompleteStatusAsync(
                                                     item.CurrentId,
                                                     false,
-                                                    CancellationToken.None
+                                                    ct
                                                 ),
-                                            CancellationToken.None
-                                        );
-                                default:
-                                    return new Result(new ToDoItemIsCanOutOfRangeError(item.IsCan))
+                                            ct
+                                        ),
+                                _
+                                    => new Result(new ToDoItemIsCanOutOfRangeError(item.IsCan))
                                         .ToValueTaskResult()
-                                        .ConfigureAwait(false);
-                            }
-                        },
-                        CancellationToken.None
+                                        .ConfigureAwait(false)
+                            },
+                        ct
                     )
-                    .IfSuccessAsync(
-                        () => uiApplicationService.RefreshCurrentViewAsync(ct),
-                        CancellationToken.None
-                    );
+                    .IfSuccessAsync(() => uiApplicationService.RefreshCurrentViewAsync(ct), ct);
 
                 return Result.AwaitableSuccess;
             },
