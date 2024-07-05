@@ -62,7 +62,11 @@ public class ToDoSubItemsViewModel : ViewModelBase
     {
         await foreach (
             var items in toDoService
-                .GetToDoItemsAsync(ids.ToArray().Select(x => x.Id).ToArray(), 5, ct)
+                .GetToDoItemsAsync(
+                    ids.ToArray().Select(x => x.Id).ToArray(),
+                    UiHelper.ChunkSize,
+                    ct
+                )
                 .ConfigureAwait(false)
         )
         {
@@ -145,7 +149,11 @@ public class ToDoSubItemsViewModel : ViewModelBase
 
         await foreach (
             var items in toDoService
-                .GetToDoItemsAsync(ids.ToArray().Select(x => x.Id).ToArray(), 5, ct)
+                .GetToDoItemsAsync(
+                    ids.ToArray().Select(x => x.Id).ToArray(),
+                    UiHelper.ChunkSize,
+                    ct
+                )
                 .ConfigureAwait(false)
         )
         {

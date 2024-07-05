@@ -6,6 +6,7 @@ public static class UiHelper
 {
     public static bool IsDrag;
     public const string ToDoItemEntityNotifyDataFormat = "to-do-item-entity-notify";
+    public const uint ChunkSize = 10;
 
     static UiHelper()
     {
