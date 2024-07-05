@@ -40,7 +40,7 @@ public class ValueToDoItemSettingsViewModel
             .GetValueToDoItemSettingsAsync(Id, ct)
             .IfSuccessAsync(
                 setting =>
-                    this.InvokeUiBackgroundAsync(() =>
+                    this.PostUiBackground(() =>
                     {
                         ChildrenType = setting.ChildrenType;
 

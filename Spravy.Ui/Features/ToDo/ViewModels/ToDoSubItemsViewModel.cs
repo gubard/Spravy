@@ -99,19 +99,13 @@ public class ToDoSubItemsViewModel : ViewModelBase
                     t.ReferenceId = null;
                 }
 
-                var result = await this.InvokeUiBackgroundAsync(() => List.UpdateFavoriteItemUi(t));
+                var result = this.PostUiBackground(() => List.UpdateFavoriteItemUi(t))
+                    .IfSuccess(progressItem.Increase);
 
                 if (result.IsHasError)
                 {
                     return result;
                 }
-
-                await this.InvokeUiBackgroundAsync(() =>
-                {
-                    progressItem.Progress++;
-
-                    return Result.Success;
-                });
             }
         }
 
@@ -125,7 +119,7 @@ public class ToDoSubItemsViewModel : ViewModelBase
         CancellationToken ct
     )
     {
-        return this.InvokeUiBackgroundAsync(() => ClearExceptUi(items))
+        return this.PostUiBackground(() => ClearExceptUi(items))
             .IfSuccessAllAsync(
                 ct,
                 () => RefreshFavoriteToDoItemsAsync(ct),
@@ -192,7 +186,7 @@ public class ToDoSubItemsViewModel : ViewModelBase
                 {
                     t.OrderIndex = orderIndex;
 
-                    var result = await this.InvokeUiBackgroundAsync(() => List.UpdateItemUi(t));
+                    var result = this.PostUiBackground(() => List.UpdateItemUi(t));
 
                     if (result.IsHasError)
                     {
@@ -201,7 +195,7 @@ public class ToDoSubItemsViewModel : ViewModelBase
                 }
                 else
                 {
-                    var result = await this.InvokeUiBackgroundAsync(() => List.UpdateItemUi(t));
+                    var result = this.PostUiBackground(() => List.UpdateItemUi(t));
 
                     if (result.IsHasError)
                     {
@@ -210,13 +204,12 @@ public class ToDoSubItemsViewModel : ViewModelBase
                 }
 
                 orderIndex++;
+                var pi = progressItem.Increase();
 
-                await this.InvokeUiBackgroundAsync(() =>
+                if (pi.IsHasError)
                 {
-                    progressItem.Progress++;
-
-                    return Result.Success;
-                });
+                    return pi;
+                }
             }
         }
 

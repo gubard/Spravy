@@ -27,8 +27,8 @@ public static class TaskProgressServiceExtension
                                     .IfSuccessAsync(
                                         r =>
                                             taskProgressItem
-                                                .IncreaseAsync()
-                                                .IfSuccessAsync(() => r.ToResult(), ct),
+                                                .Increase()
+                                                .IfSuccess(() => r.ToResult()),
                                         ct
                                     ),
                             ct
@@ -56,9 +56,7 @@ public static class TaskProgressServiceExtension
                     items
                         .ToResult()
                         .IfSuccessForEachAsync(
-                            item =>
-                                func.Invoke(item)
-                                    .IfSuccessAsync(taskProgressItem.IncreaseAsync, ct),
+                            item => func.Invoke(item).IfSuccessAsync(taskProgressItem.Increase, ct),
                             ct
                         ),
                 item => item.Finish(),

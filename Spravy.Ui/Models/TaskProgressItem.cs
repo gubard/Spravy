@@ -22,9 +22,9 @@ public class TaskProgressItem : NotifyBase
         Progress = Impact;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> IncreaseAsync()
+    public Result Increase()
     {
-        return this.InvokeUiBackgroundAsync(() =>
+        return this.PostUiBackground(() =>
         {
             Progress++;
 

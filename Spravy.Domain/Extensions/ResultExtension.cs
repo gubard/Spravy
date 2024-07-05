@@ -861,6 +861,54 @@ public static class ResultExtension
     }
 
     public static ConfiguredValueTaskAwaitable<Result> IfSuccessAllAsync(
+        this Result result,
+        CancellationToken ct,
+        params Func<ConfiguredValueTaskAwaitable<Result>>[] funcs
+    )
+    {
+        return IfSuccessAllCore(result, ct, funcs).ConfigureAwait(false);
+    }
+
+    private static async ValueTask<Result> IfSuccessAllCore(
+        this Result result,
+        CancellationToken ct,
+        params Func<ConfiguredValueTaskAwaitable<Result>>[] funcs
+    )
+    {
+        if (result.IsHasError)
+        {
+            return new(result.Errors);
+        }
+
+        if (ct.IsCancellationRequested)
+        {
+            return Result.CanceledByUserError;
+        }
+
+        var tasks = funcs.Select(x => x.Invoke()).ToArray();
+        var errors = ReadOnlyMemory<Error>.Empty;
+
+        foreach (var awaitable in tasks)
+        {
+            var r = await awaitable;
+
+            if (ct.IsCancellationRequested)
+            {
+                return Result.CanceledByUserError;
+            }
+
+            errors = errors.Combine(r.Errors);
+        }
+
+        if (errors.IsEmpty)
+        {
+            return Result.Success;
+        }
+
+        return new(errors);
+    }
+
+    public static ConfiguredValueTaskAwaitable<Result> IfSuccessAllAsync(
         this ConfiguredValueTaskAwaitable<Result> task,
         CancellationToken ct,
         params Func<ConfiguredValueTaskAwaitable<Result>>[] funcs
