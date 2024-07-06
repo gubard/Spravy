@@ -46,7 +46,7 @@ public class RpcExceptionHandler : IRpcExceptionHandler
             }
 
             var values = await GetErrorsAsync(id, trailer, ct);
-            errors.Combine(values);
+            errors = errors.Combine(values);
         }
 
         if (!errors.IsEmpty)
