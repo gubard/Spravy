@@ -11,42 +11,39 @@ public class TaskProgressService : ITaskProgressService
 
     public MainProgressBarViewModel MainProgressBar { get; }
 
-    public ConfiguredValueTaskAwaitable<Result<TaskProgressItem>> AddItemAsync(ushort impact)
+    public Result<TaskProgressItem> AddItem(ushort impact)
     {
         var result = new TaskProgressItem(impact);
         items.Add(result);
 
-        return this.InvokeUiBackgroundAsync(() =>
+        return this.PostUiBackground(() =>
             {
                 MainProgressBar.Maximum += impact;
 
                 return Result.Success;
             })
-            .IfSuccessAsync(
-                () =>
-                {
-                    result
-                        .WhenAnyValue(x => x.Progress)
-                        .Subscribe(_ =>
+            .IfSuccess(() =>
+            {
+                result
+                    .WhenAnyValue(x => x.Progress)
+                    .Subscribe(_ =>
+                    {
+                        var span = CollectionsMarshal.AsSpan(items);
+
+                        if (IsAllFinished(span))
                         {
-                            var span = CollectionsMarshal.AsSpan(items);
+                            items.Clear();
+                            MainProgressBar.Value = 0;
+                            MainProgressBar.Maximum = 0;
+                        }
+                        else
+                        {
+                            MainProgressBar.Value = GetAllProgress(span);
+                        }
+                    });
 
-                            if (IsAllFinished(span))
-                            {
-                                items.Clear();
-                                MainProgressBar.Value = 0;
-                                MainProgressBar.Maximum = 0;
-                            }
-                            else
-                            {
-                                MainProgressBar.Value = GetAllProgress(span);
-                            }
-                        });
-
-                    return result.ToResult();
-                },
-                CancellationToken.None
-            );
+                return result.ToResult();
+            });
     }
 
     private bool IsAllFinished(Span<TaskProgressItem> span)

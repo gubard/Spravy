@@ -2,5 +2,5 @@ namespace Spravy.Ui.Interfaces;
 
 public interface ITaskProgressService
 {
-    ConfiguredValueTaskAwaitable<Result<TaskProgressItem>> AddItemAsync(ushort impact);
+    Result<TaskProgressItem> AddItem(ushort impact);
 }

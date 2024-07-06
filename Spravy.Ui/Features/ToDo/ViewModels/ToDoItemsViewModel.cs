@@ -58,38 +58,56 @@ public class ToDoItemsViewModel : ViewModelBase
         return Result.Success;
     }
 
+    private int BinarySearch(ToDoItemEntityNotify x, int low, int high)
+    {
+        if (high <= low)
+        {
+            return x.OrderIndex > Items[low].OrderIndex ? low + 1 : low;
+        }
+
+        var mid = (low + high) / 2;
+
+        if (x.OrderIndex == Items[mid].OrderIndex)
+        {
+            return mid + 1;
+        }
+
+        if (x.OrderIndex > Items[mid].OrderIndex)
+        {
+            return BinarySearch(x, mid + 1, high);
+        }
+
+        return BinarySearch(x, low, mid - 1);
+    }
+
+    private void BinarySort()
+    {
+        for (var i = 1; i < Items.Count; ++i)
+        {
+            var j = i - 1;
+            var key = Items[i];
+            var pos = BinarySearch(key, 0, j);
+
+            while (j >= pos)
+            {
+                Items[j + 1] = Items[j];
+                j--;
+            }
+
+            Items[j + 1] = key;
+        }
+    }
+
     public Result UpdateItemUi(ToDoItemEntityNotify item)
     {
         var indexOf = IndexOf(item);
-        var needIndex = GetNeedIndex(item);
-
-        if (indexOf == needIndex)
-        {
-            return Result.Success;
-        }
 
         if (indexOf == -1)
         {
-            if (needIndex == Items.Count)
-            {
-                Items.Add(item);
-            }
-            else
-            {
-                Items.Insert(needIndex, item);
-            }
+            Items.Add(item);
         }
-        else
-        {
-            if (needIndex == Items.Count)
-            {
-                Items.Move(indexOf, needIndex - 1);
-            }
-            else
-            {
-                Items.Move(indexOf, needIndex);
-            }
-        }
+
+        BinarySort();
 
         return Result.Success;
     }

@@ -1510,6 +1510,50 @@ public static class ResultExtension
         TValue,
         TResult
     >(
+        this Result<TValue> task,
+        Func<TValue, ConfiguredValueTaskAwaitable<Result<TResult>>> funcTry,
+        Action<TValue> funcFinally,
+        CancellationToken ct
+    )
+        where TValue : notnull
+        where TResult : notnull
+    {
+        return IfSuccessTryFinallyCore(task, funcTry, funcFinally, ct).ConfigureAwait(false);
+    }
+
+    private static async ValueTask<Result<TResult>> IfSuccessTryFinallyCore<TValue, TResult>(
+        this Result<TValue> result,
+        Func<TValue, ConfiguredValueTaskAwaitable<Result<TResult>>> funcTry,
+        Action<TValue> funcFinally,
+        CancellationToken ct
+    )
+        where TValue : notnull
+        where TResult : notnull
+    {
+        if (!result.TryGetValue(out var rv))
+        {
+            return new(result.Errors);
+        }
+
+        try
+        {
+            if (ct.IsCancellationRequested)
+            {
+                return Result<TResult>.CanceledByUserError;
+            }
+
+            return await funcTry.Invoke(rv);
+        }
+        finally
+        {
+            funcFinally.Invoke(rv);
+        }
+    }
+
+    public static ConfiguredValueTaskAwaitable<Result<TResult>> IfSuccessTryFinallyAsync<
+        TValue,
+        TResult
+    >(
         this ConfiguredValueTaskAwaitable<Result<TValue>> task,
         Func<TValue, ConfiguredValueTaskAwaitable<Result<TResult>>> funcTry,
         Action<TValue> funcFinally,
@@ -1542,6 +1586,45 @@ public static class ResultExtension
             if (ct.IsCancellationRequested)
             {
                 return Result<TResult>.CanceledByUserError;
+            }
+
+            return await funcTry.Invoke(rv);
+        }
+        finally
+        {
+            funcFinally.Invoke(rv);
+        }
+    }
+
+    public static ConfiguredValueTaskAwaitable<Result> IfSuccessTryFinallyAsync<TValue>(
+        this Result<TValue> task,
+        Func<TValue, ConfiguredValueTaskAwaitable<Result>> funcTry,
+        Action<TValue> funcFinally,
+        CancellationToken ct
+    )
+        where TValue : notnull
+    {
+        return IfSuccessTryFinallyCore(task, funcTry, funcFinally, ct).ConfigureAwait(false);
+    }
+
+    private static async ValueTask<Result> IfSuccessTryFinallyCore<TValue>(
+        this Result<TValue> result,
+        Func<TValue, ConfiguredValueTaskAwaitable<Result>> funcTry,
+        Action<TValue> funcFinally,
+        CancellationToken ct
+    )
+        where TValue : notnull
+    {
+        if (!result.TryGetValue(out var rv))
+        {
+            return new(result.Errors);
+        }
+
+        try
+        {
+            if (ct.IsCancellationRequested)
+            {
+                return Result.CanceledByUserError;
             }
 
             return await funcTry.Invoke(rv);
@@ -1586,6 +1669,28 @@ public static class ResultExtension
             }
 
             return await funcTry.Invoke(rv);
+        }
+        finally
+        {
+            funcFinally.Invoke(rv);
+        }
+    }
+
+    public static Result IfSuccessTryFinally<TValue>(
+        this Result<TValue> result,
+        Func<TValue, Result> funcTry,
+        Action<TValue> funcFinally
+    )
+        where TValue : notnull
+    {
+        if (!result.TryGetValue(out var rv))
+        {
+            return new(result.Errors);
+        }
+
+        try
+        {
+            return funcTry.Invoke(rv);
         }
         finally
         {

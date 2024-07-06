@@ -204,26 +204,16 @@ public class ToDoSubItemsViewModel : ViewModelBase
                                 },
                                 ct
                             )
-                            .IfSuccessAsync(() => item.ToResult(), ct);
+                            .IfSuccessAsync(item.ToResult, ct);
                     },
                     ct
                 )
                 .IfSuccessAsync(
                     itemsNotify =>
-                        this.PostUiBackground(() =>
-                        {
-                            foreach (var item in itemsNotify.Span)
-                            {
-                                var result = List.UpdateItemUi(item);
-
-                                if (result.IsHasError)
-                                {
-                                    return result;
-                                }
-                            }
-
-                            return Result.Success;
-                        }),
+                        taskProgressService.RunProgress(
+                            itemsNotify,
+                            item => this.PostUiBackground(() => List.UpdateItemUi(item))
+                        ),
                     ct
                 );
         }
