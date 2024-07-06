@@ -11,9 +11,9 @@ public abstract class Validator<TValue> : IValidator<TValue>
 
     public async IAsyncEnumerable<Result> ValidateAsync(TValue value, string sourceName)
     {
-        foreach (var rule in rules.Span.ToArray())
+        for (var index = 0; index < rules.Span.Length; index++)
         {
-            var result = await rule.ValidateAsync(value, sourceName);
+            var result = await rules.Span[index].ValidateAsync(value, sourceName);
 
             if (result.IsHasError)
             {

@@ -21,7 +21,7 @@ public class ErrorHandler : IErrorHandler
             return Result.AwaitableSuccess;
         }
 
-        errors = errors.ToArray().Where(x => !IgnoreIds.Span.Contains(x.Id)).ToArray();
+        errors = errors.Where(x => !IgnoreIds.Span.Contains(x.Id));
 
         if (errors.IsEmpty)
         {

@@ -39,27 +39,19 @@ public class ToDoItemsGroupByStatusViewModel : ViewModelBase
     public Result ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
         return Missed
-            .ClearExceptUi(items.ToArray().Where(x => x.Status == ToDoItemStatus.Miss).ToArray())
+            .ClearExceptUi(items.Where(x => x.Status == ToDoItemStatus.Miss))
             .IfSuccess(
                 () =>
                     ReadyForCompleted.ClearExceptUi(
-                        items
-                            .ToArray()
-                            .Where(x => x.Status == ToDoItemStatus.ReadyForComplete)
-                            .ToArray()
+                        items.Where(x => x.Status == ToDoItemStatus.ReadyForComplete)
                     )
             )
             .IfSuccess(
-                () =>
-                    Planned.ClearExceptUi(
-                        items.ToArray().Where(x => x.Status == ToDoItemStatus.Planned).ToArray()
-                    )
+                () => Planned.ClearExceptUi(items.Where(x => x.Status == ToDoItemStatus.Planned))
             )
             .IfSuccess(
                 () =>
-                    Completed.ClearExceptUi(
-                        items.ToArray().Where(x => x.Status == ToDoItemStatus.Completed).ToArray()
-                    )
+                    Completed.ClearExceptUi(items.Where(x => x.Status == ToDoItemStatus.Completed))
             );
     }
 

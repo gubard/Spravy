@@ -36,7 +36,11 @@ public class SearchToDoItemsViewModel
 
                 if (x)
                 {
-                    Commands.AddRange(spravyCommandNotifyService.SearchToDoItemsMulti.ToArray());
+                    Commands.Update(spravyCommandNotifyService.SearchToDoItemsMulti);
+                }
+                else
+                {
+                    Commands.Clear();
                 }
             });
 
@@ -77,10 +81,7 @@ public class SearchToDoItemsViewModel
         return toDoService
             .SearchToDoItemIdsAsync(SearchText, ct)
             .IfSuccessForEachAsync(id => toDoCache.GetToDoItem(id), ct)
-            .IfSuccessAsync(
-                ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), false, ct),
-                ct
-            );
+            .IfSuccessAsync(ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids, false, ct), ct);
     }
 
     public override Result Stop()

@@ -14,7 +14,7 @@ public class TypeInvalidCastException : InvalidCastException
         : base(CreateMessage(expectedTypes, currentType))
     {
         CurrentType = currentType;
-        ExpectedTypes = expectedTypes.ThrowIfNullOrEmpty().ToArray();
+        ExpectedTypes = expectedTypes.ThrowIfNullOrEmpty();
     }
 
     public TypeInvalidCastException(Type currentType, IEnumerable<Type> expectedTypes)

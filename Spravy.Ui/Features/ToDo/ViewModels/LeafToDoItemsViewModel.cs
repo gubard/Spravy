@@ -38,11 +38,13 @@ public class LeafToDoItemsViewModel
             .List.WhenAnyValue(x => x.IsMulti)
             .Subscribe(x =>
             {
-                Commands.Clear();
-
                 if (x)
                 {
-                    Commands.AddRange(spravyCommandNotifyService.LeafToDoItemsMulti.ToArray());
+                    Commands.Update(spravyCommandNotifyService.LeafToDoItemsMulti);
+                }
+                else
+                {
+                    Commands.Clear();
                 }
             });
     }

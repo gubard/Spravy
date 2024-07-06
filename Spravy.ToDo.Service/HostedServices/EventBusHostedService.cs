@@ -77,10 +77,7 @@ public class EventBusHostedService : IHostedService
                         .Create(file.GetFileNameWithoutExtension())
                         .ThrowIfError();
 
-                    var stream = eventBusService.SubscribeEventsAsync(
-                        eventIds.ToArray(),
-                        source.Token
-                    );
+                    var stream = eventBusService.SubscribeEventsAsync(eventIds, source.Token);
                     logger.LogInformation("Connected for events {File}", file);
 
                     await foreach (var eventValue in stream)

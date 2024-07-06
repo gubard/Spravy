@@ -41,8 +41,10 @@ public class GrpcEventBusService : EventBusService.EventBusServiceBase
                 return;
             }
 
-            foreach (var eventValue in eventValues.Value.ToArray())
+            for (var index = 0; index < eventValues.Value.Length; index++)
             {
+                var eventValue = eventValues.Value.Span[index];
+
                 var reply = new SubscribeEventsReply
                 {
                     EventId = eventValue.Id.ToByteString(),

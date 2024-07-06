@@ -255,14 +255,11 @@ public class EfToDoService : IToDoService
                                     {
                                         SetRandomOrderIndex(children);
 
-                                        var items = children
-                                            .ToArray()
-                                            .OrderBy(x => x.OrderIndex)
-                                            .ToArray();
+                                        var items = children.OrderBy(x => x.OrderIndex);
 
                                         for (var i = 0; items.Length > i; i++)
                                         {
-                                            items[i].OrderIndex = (uint)i;
+                                            items.Span[i].OrderIndex = (uint)i;
                                         }
 
                                         return Result.Success;
@@ -371,7 +368,7 @@ public class EfToDoService : IToDoService
                                         e =>
                                             GetLeafToDoItemIdsAsync(context, e, ct)
                                                 .ConfigureAwait(false)
-                                                .IfSuccessAsync(
+                                                .IfSuccessForEachAsync(
                                                     i =>
                                                     {
                                                         result.Add(i);
@@ -1232,6 +1229,8 @@ public class EfToDoService : IToDoService
         Result<ReadOnlyMemory<ToDoSelectorItem>>
     > GetToDoSelectorItemsAsync(ReadOnlyMemory<Guid> ignoreIds, CancellationToken ct)
     {
+        var list = new List<Guid>(ignoreIds.ToArray());
+
         return dbContextFactory
             .Create()
             .IfSuccessDisposeAsync(
@@ -1241,21 +1240,21 @@ public class EfToDoService : IToDoService
                         .AsNoTracking()
                         .Where(x =>
                             x.ParentId == null
-                            && !ignoreIds.ToArray().Contains(x.Id)
+                            && !list.Contains(x.Id)
                             && x.Type != ToDoItemType.Reference
                         )
                         .OrderBy(x => x.OrderIndex)
                         .ToArrayEntitiesAsync(ct)
                         .IfSuccessForEachAsync(
                             item =>
-                                GetToDoSelectorItemsAsync(context, item.Id, ignoreIds, ct)
+                                GetToDoSelectorItemsAsync(context, item.Id, list, ct)
                                     .IfSuccessAsync(
                                         children =>
                                             new ToDoSelectorItem(
                                                 item.Id,
                                                 item.Name,
                                                 item.OrderIndex,
-                                                children.ToArray()
+                                                children
                                             ).ToResult(),
                                         ct
                                     ),
@@ -1575,7 +1574,7 @@ public class EfToDoService : IToDoService
                         .IfSuccessAsync(
                             items =>
                             {
-                                var item = items.ToArray().FirstOrDefault(x => x.IsHasValue);
+                                var item = items.FirstOrDefault(x => x.IsHasValue);
 
                                 return new Result<OptionStruct<ActiveToDoItem>>(item);
                             },
@@ -1962,20 +1961,18 @@ public class EfToDoService : IToDoService
                 {
                     if (circleChildren.Length != 0)
                     {
-                        if (!onlyCompletedTasks || circleChildren.ToArray().All(x => x.IsCompleted))
+                        if (!onlyCompletedTasks || circleChildren.All(x => x.IsCompleted))
                         {
                             var nextOrderIndex = item.CurrentCircleOrderIndex;
 
                             if (moveCircleOrderIndex)
                             {
-                                var next = circleChildren
-                                    .ToArray()
-                                    .FirstOrDefault(x =>
-                                        x.OrderIndex > item.CurrentCircleOrderIndex
-                                    );
+                                var next = circleChildren.FirstOrDefault(x =>
+                                    x.OrderIndex > item.CurrentCircleOrderIndex
+                                );
 
                                 nextOrderIndex =
-                                    next?.OrderIndex ?? circleChildren.ToArray().First().OrderIndex;
+                                    next?.OrderIndex ?? circleChildren.Span[0].OrderIndex;
                                 item.CurrentCircleOrderIndex = nextOrderIndex;
                             }
 
@@ -2093,7 +2090,11 @@ public class EfToDoService : IToDoService
                         .IfSuccessAsync(
                             parameters =>
                             {
-                                if (!options.Statuses.Span.ToArray().Contains(parameters.Status))
+                                if (
+                                    !options
+                                        .Statuses.Select(x => (byte)x)
+                                        .Span.Contains((byte)parameters.Status)
+                                )
                                 {
                                     return Result.AwaitableSuccess;
                                 }
@@ -2104,7 +2105,7 @@ public class EfToDoService : IToDoService
 
                                 return ToDoItemToStringAsync(
                                     context,
-                                    new(options.Statuses.ToArray(), item.Id),
+                                    new(options.Statuses, item.Id),
                                     (ushort)(level + 1),
                                     builder,
                                     offset,
@@ -2122,7 +2123,7 @@ public class EfToDoService : IToDoService
     > GetToDoSelectorItemsAsync(
         SpravyDbToDoDbContext context,
         Guid id,
-        ReadOnlyMemory<Guid> ignoreIds,
+        List<Guid> ignoreIds,
         CancellationToken ct
     )
     {
@@ -2130,9 +2131,7 @@ public class EfToDoService : IToDoService
             .Set<ToDoItemEntity>()
             .AsNoTracking()
             .Where(x =>
-                x.ParentId == id
-                && !ignoreIds.ToArray().Contains(x.Id)
-                && x.Type != ToDoItemType.Reference
+                x.ParentId == id && !ignoreIds.Contains(x.Id) && x.Type != ToDoItemType.Reference
             )
             .OrderBy(x => x.OrderIndex)
             .ToArrayEntitiesAsync(ct)
@@ -2145,7 +2144,7 @@ public class EfToDoService : IToDoService
                                     item.Id,
                                     item.Name,
                                     item.OrderIndex,
-                                    children.ToArray()
+                                    children
                                 ).ToResult(),
                             ct
                         ),
@@ -2197,11 +2196,11 @@ public class EfToDoService : IToDoService
             .IfSuccessAsync(
                 items =>
                 {
-                    var ordered = items.ToArray().OrderBy(x => x.OrderIndex).ToArray();
+                    var ordered = items.OrderBy(x => x.OrderIndex);
 
-                    for (var index = 0u; index < ordered.LongLength; index++)
+                    for (var index = 0; index < ordered.Length; index++)
                     {
-                        ordered[index].OrderIndex = index;
+                        ordered.Span[index].OrderIndex = (uint)index;
                     }
 
                     return Result.Success;
@@ -2317,11 +2316,13 @@ public class EfToDoService : IToDoService
             case TypeOfPeriodicity.Weekly:
             {
                 var dayOfWeek = item.DueDate.DayOfWeek;
+
                 var daysOfWeek = item.GetDaysOfWeek()
                     .Order()
                     .Select(x => (DayOfWeek?)x)
                     .ThrowIfEmpty()
                     .ToArray();
+
                 var nextDay = daysOfWeek.FirstOrDefault(x => x > dayOfWeek);
 
                 item.DueDate = nextDay is not null
@@ -2364,6 +2365,7 @@ public class EfToDoService : IToDoService
             case TypeOfPeriodicity.Annually:
             {
                 var now = item.DueDate;
+
                 var daysOfYear = item.GetDaysOfYear()
                     .Order()
                     .Select(x => (DayOfYear?)x)

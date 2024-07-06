@@ -62,11 +62,7 @@ public class ToDoSubItemsViewModel : ViewModelBase
     {
         await foreach (
             var items in toDoService
-                .GetToDoItemsAsync(
-                    ids.ToArray().Select(x => x.Id).ToArray(),
-                    UiHelper.ChunkSize,
-                    ct
-                )
+                .GetToDoItemsAsync(ids.Select(x => x.Id), UiHelper.ChunkSize, ct)
                 .ConfigureAwait(false)
         )
         {
@@ -75,8 +71,9 @@ public class ToDoSubItemsViewModel : ViewModelBase
                 return new(items.Errors);
             }
 
-            foreach (var item in value.ToArray())
+            for (var index = 0; index < value.Length; index++)
             {
+                var item = value.Span[index];
                 var i = await this.InvokeUiBackgroundAsync(() => toDoCache.UpdateUi(item));
 
                 if (!i.TryGetValue(out var t))
@@ -117,19 +114,17 @@ public class ToDoSubItemsViewModel : ViewModelBase
     }
 
     private ConfiguredValueTaskAwaitable<Result> RefreshToDoItemListsAsync(
-        ReadOnlyMemory<ToDoItemEntityNotify> items,
+        ReadOnlyMemory<ToDoItemEntityNotify> entities,
         bool autoOrder,
         TaskProgressItem progressItem,
         CancellationToken ct
     )
     {
-        return this.PostUiBackground(() => ClearExceptUi(items))
+        return this.PostUiBackground(() => ClearExceptUi(entities))
             .IfSuccessAllAsync(
                 ct,
                 () => RefreshFavoriteToDoItemsAsync(ct),
-                () =>
-                    RefreshToDoItemListsCore(items, autoOrder, progressItem, ct)
-                        .ConfigureAwait(false)
+                () => RefreshToDoItemListsCore(entities, autoOrder, progressItem, ct)
             );
     }
 
@@ -138,8 +133,8 @@ public class ToDoSubItemsViewModel : ViewModelBase
         return List.ClearExceptUi(items);
     }
 
-    private async ValueTask<Result> RefreshToDoItemListsCore(
-        ReadOnlyMemory<ToDoItemEntityNotify> ids,
+    private ConfiguredValueTaskAwaitable<Result> RefreshToDoItemListsCore(
+        ReadOnlyMemory<ToDoItemEntityNotify> entities,
         bool autoOrder,
         TaskProgressItem progressItem,
         CancellationToken ct
@@ -147,78 +142,74 @@ public class ToDoSubItemsViewModel : ViewModelBase
     {
         uint orderIndex = 1;
 
-        await foreach (
-            var items in toDoService
-                .GetToDoItemsAsync(
-                    ids.ToArray().Select(x => x.Id).ToArray(),
-                    UiHelper.ChunkSize,
-                    ct
-                )
-                .ConfigureAwait(false)
-        )
-        {
-            await items
-                .IfSuccessForEach(item =>
-                    this.PostUiBackground(() => toDoCache.UpdateUi(item).ToResultOnly())
-                )
-                .IfSuccess(() => items.IfSuccessForEach(item => toDoCache.GetToDoItem(item.Id)))
-                .IfSuccessForEachAsync(
-                    item =>
-                    {
-                        return GetReferenceId(item, ct)
-                            .IfSuccessAsync(
-                                referenceId =>
-                                    this.PostUiBackground(() =>
-                                    {
-                                        item.ReferenceId = referenceId.GetValueOrNull();
+        return toDoService
+            .GetToDoItemsAsync(entities.Select(x => x.Id), UiHelper.ChunkSize, ct)
+            .IfSuccessForEachAsync(
+                items =>
+                    items
+                        .ToResult()
+                        .IfSuccessForEach(item =>
+                            this.PostUiBackground(() => toDoCache.UpdateUi(item).ToResultOnly())
+                        )
+                        .IfSuccess(
+                            () => items.IfSuccessForEach(item => toDoCache.GetToDoItem(item.Id))
+                        )
+                        .IfSuccessForEachAsync(
+                            item =>
+                            {
+                                return GetReferenceId(item, ct)
+                                    .IfSuccessAsync(
+                                        referenceId =>
+                                            this.PostUiBackground(() =>
+                                            {
+                                                item.ReferenceId = referenceId.GetValueOrNull();
 
-                                        return Result.Success;
-                                    }),
-                                ct
-                            )
-                            .IfSuccessAsync(
-                                () =>
-                                {
-                                    if (autoOrder)
-                                    {
-                                        var oi = orderIndex;
-
-                                        return this.PostUiBackground(() =>
+                                                return Result.Success;
+                                            }),
+                                        ct
+                                    )
+                                    .IfSuccessAsync(
+                                        () =>
                                         {
-                                            item.OrderIndex = oi;
+                                            if (autoOrder)
+                                            {
+                                                var oi = orderIndex;
+
+                                                return this.PostUiBackground(() =>
+                                                {
+                                                    item.OrderIndex = oi;
+
+                                                    return Result.Success;
+                                                });
+                                            }
 
                                             return Result.Success;
-                                        });
-                                    }
+                                        },
+                                        ct
+                                    )
+                                    .IfSuccessAsync(
+                                        () =>
+                                        {
+                                            orderIndex++;
 
-                                    return Result.Success;
-                                },
-                                ct
-                            )
-                            .IfSuccessAsync(
-                                () =>
-                                {
-                                    orderIndex++;
-
-                                    return progressItem.Increase();
-                                },
-                                ct
-                            )
-                            .IfSuccessAsync(item.ToResult, ct);
-                    },
-                    ct
-                )
-                .IfSuccessAsync(
-                    itemsNotify =>
-                        taskProgressService.RunProgress(
-                            itemsNotify,
-                            item => this.PostUiBackground(() => List.UpdateItemUi(item))
+                                            return progressItem.Increase();
+                                        },
+                                        ct
+                                    )
+                                    .IfSuccessAsync(item.ToResult, ct);
+                            },
+                            ct
+                        )
+                        .IfSuccessAsync(
+                            itemsNotify =>
+                                taskProgressService.RunProgress(
+                                    itemsNotify,
+                                    item => this.PostUiBackground(() => List.UpdateItemUi(item))
+                                ),
+                            ct
                         ),
-                    ct
-                );
-        }
-
-        return Result.Success;
+                ct
+            );
     }
 
     private ConfiguredValueTaskAwaitable<Result<OptionStruct<Guid>>> GetReferenceId(

@@ -52,16 +52,12 @@ public class ToDoItemSelectorViewModel : ViewModelBase
             .IfSuccess(items =>
                 this.PostUiBackground(() =>
                 {
-                    Roots.Clear();
-                    Roots.AddRange(items.ToArray());
+                    Roots.Update(items);
 
                     return SetupUi();
                 })
             )
-            .IfSuccessAsync(
-                () => toDoService.GetToDoSelectorItemsAsync(IgnoreIds.ToArray(), ct),
-                ct
-            )
+            .IfSuccessAsync(() => toDoService.GetToDoSelectorItemsAsync(IgnoreIds, ct), ct)
             .IfSuccessAsync(
                 items => this.InvokeUiBackgroundAsync(() => toDoCache.UpdateUi(items)),
                 ct
@@ -70,8 +66,7 @@ public class ToDoItemSelectorViewModel : ViewModelBase
                 items =>
                     this.PostUiBackground(() =>
                     {
-                        Roots.Clear();
-                        Roots.AddRange(items.ToArray());
+                        Roots.Update(items);
 
                         return SetupUi();
                     }),

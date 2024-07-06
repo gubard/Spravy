@@ -227,7 +227,8 @@ public class SpravyCommandService
                                 {
                                     var statuses = vm
                                         .Statuses.Where(x => x.IsChecked)
-                                        .Select(x => x.Item);
+                                        .Select(x => x.Item)
+                                        .ToArray();
 
                                     return dialogViewer
                                         .CloseContentDialogAsync(ct)
@@ -933,7 +934,11 @@ public class SpravyCommandService
                 dialogViewer.ShowConfirmContentDialogAsync(
                     view =>
                     {
-                        var statuses = view.Statuses.Where(x => x.IsChecked).Select(x => x.Item);
+                        var statuses = view
+                            .Statuses.Where(x => x.IsChecked)
+                            .Select(x => x.Item)
+                            .ToArray();
+
                         var options = new ToDoItemToStringOptions(statuses, item.CurrentId);
 
                         return dialogViewer
@@ -1341,7 +1346,8 @@ public class SpravyCommandService
                                 {
                                     var statuses = view
                                         .Statuses.Where(x => x.IsChecked)
-                                        .Select(x => x.Item);
+                                        .Select(x => x.Item)
+                                        .ToArray();
 
                                     return dialogViewer
                                         .CloseContentDialogAsync(ct)

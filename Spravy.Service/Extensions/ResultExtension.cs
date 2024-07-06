@@ -80,8 +80,9 @@ public static class ResultExtension
     {
         var metadata = new Metadata();
 
-        foreach (var validationResult in result.Errors.ToArray())
+        for (var index = 0; index < result.Errors.Length; index++)
         {
+            var validationResult = result.Errors.Span[index];
             await using var stream = new MemoryStream();
             await serializer.SerializeAsync(validationResult, stream, ct);
             metadata.Add($"{validationResult.Id}-bin", stream.ToArray());
@@ -98,8 +99,9 @@ public static class ResultExtension
     {
         var metadata = new Metadata();
 
-        foreach (var validationResult in result.Errors.ToArray())
+        for (var index = 0; index < result.Errors.Length; index++)
         {
+            var validationResult = result.Errors.Span[index];
             await using var stream = new MemoryStream();
             await serializer.SerializeAsync(validationResult, stream, ct);
             metadata.Add($"{validationResult.Id}-bin", stream.ToArray());

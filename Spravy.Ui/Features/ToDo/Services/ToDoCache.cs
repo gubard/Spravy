@@ -124,10 +124,9 @@ public class ToDoCache : IToDoCache
                     .IfSuccess(ps =>
                     {
                         item.Path = RootItem
-                            .Default.As<object>()
-                            .ToEnumerable()
-                            .Concat(ps.ToArray())
-                            .ToArray()!;
+                            .DefaultObject.ToReadOnlyMemory()
+                            .Combine(ps.Select(x => (object)x))
+                            .ToArray();
 
                         return Result.Success;
                     })
@@ -138,7 +137,7 @@ public class ToDoCache : IToDoCache
         ReadOnlyMemory<ToDoSelectorItem> items
     )
     {
-        return UpdateRootItems(items.ToArray().Select(x => x.Id).ToArray())
+        return UpdateRootItems(items.Select(x => x.Id))
             .IfSuccess(_ => items.ToResult().IfSuccessForEach(UpdateUi));
     }
 
@@ -177,7 +176,7 @@ public class ToDoCache : IToDoCache
             .IfSuccessForEach(GetToDoItem)
             .IfSuccess(items =>
             {
-                rootItems = items.ToArray().OrderBy(x => x.OrderIndex).ToArray();
+                rootItems = items.OrderBy(x => x.OrderIndex);
 
                 return rootItems.ToResult();
             });
@@ -200,8 +199,7 @@ public class ToDoCache : IToDoCache
                 GetToDoItem(id)
                     .IfSuccess(item =>
                     {
-                        item.Children.Clear();
-                        item.Children.AddRange(children.ToArray().OrderBy(x => x.OrderIndex));
+                        item.Children.Update(children.OrderBy(x => x.OrderIndex));
 
                         return Result.Success;
                     })

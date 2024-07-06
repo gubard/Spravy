@@ -23,7 +23,7 @@ public class RpcExceptionHandler : IRpcExceptionHandler
 
     private async ValueTask<Result> ToErrorCore(RpcException exception, CancellationToken ct)
     {
-        var errors = new List<Error>();
+        var errors = new ReadOnlyMemory<Error>();
 
         foreach (var trailer in exception.Trailers)
         {
@@ -40,12 +40,12 @@ public class RpcExceptionHandler : IRpcExceptionHandler
             }
 
             var values = await GetErrorsAsync(id, trailer, ct);
-            errors.AddRange(values.ToArray());
+            errors.Combine(values);
         }
 
-        if (errors.Any())
+        if (!errors.IsEmpty)
         {
-            return new(errors.ToArray());
+            return new(errors);
         }
 
         return Result.Success;

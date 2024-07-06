@@ -71,7 +71,7 @@ public class ScheduleHostedService : IHostedService
                                             .IfSuccessAllInOrderAsync(
                                                 timers =>
                                                 {
-                                                    var tasks =
+                                                    var list =
                                                         new List<
                                                             Func<
                                                                 ConfiguredValueTaskAwaitable<Result>
@@ -85,7 +85,7 @@ public class ScheduleHostedService : IHostedService
                                                             continue;
                                                         }
 
-                                                        tasks.Add(
+                                                        list.Add(
                                                             () =>
                                                                 eventBusServiceFactory
                                                                     .Create(
@@ -111,7 +111,7 @@ public class ScheduleHostedService : IHostedService
                                                         );
                                                     }
 
-                                                    return tasks.ToArray();
+                                                    return list.ToArray();
                                                 },
                                                 ct
                                             ),

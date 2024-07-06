@@ -3,20 +3,12 @@ namespace Spravy.Domain.Extensions;
 public static class ResultExtension
 {
     public static Result IfSuccessForEach<TValue>(
-        this Result<ReadOnlyMemory<TValue>> values,
+        this ReadOnlyMemory<TValue> values,
         Func<TValue, Result> func
     )
     {
-        if (!values.TryGetValue(out var v))
+        foreach (var value in values.Span)
         {
-            return new(values.Errors);
-        }
-
-        var valuesArray = v.ToArray();
-
-        for (var index = 0; index < valuesArray.Length; index++)
-        {
-            var value = valuesArray[index];
             var result = func.Invoke(value);
 
             if (result.IsHasError)
@@ -26,6 +18,52 @@ public static class ResultExtension
         }
 
         return Result.Success;
+    }
+
+    public static Result IfSuccessForEach<TValue>(
+        this Result<ReadOnlyMemory<TValue>> values,
+        Func<TValue, Result> func
+    )
+    {
+        if (!values.TryGetValue(out var v))
+        {
+            return new(values.Errors);
+        }
+
+        for (var index = 0; index < v.Length; index++)
+        {
+            var result = func.Invoke(v.Span[index]);
+
+            if (result.IsHasError)
+            {
+                return new(result.Errors);
+            }
+        }
+
+        return Result.Success;
+    }
+
+    public static Result<ReadOnlyMemory<TReturn>> IfSuccessForEach<TValue, TReturn>(
+        this ReadOnlyMemory<TValue> values,
+        Func<TValue, Result<TReturn>> func
+    )
+        where TReturn : notnull
+    {
+        var span = new Span<TReturn>(new TReturn[values.Length]);
+
+        for (var index = 0; index < values.Length; index++)
+        {
+            var result = func.Invoke(values.Span[index]);
+
+            if (!result.TryGetValue(out var rv))
+            {
+                return new(result.Errors);
+            }
+
+            span[index] = rv;
+        }
+
+        return span.ToReadOnlyMemory().ToResult();
     }
 
     public static Result<ReadOnlyMemory<TReturn>> IfSuccessForEach<TValue, TReturn>(
@@ -39,13 +77,11 @@ public static class ResultExtension
             return new(values.Errors);
         }
 
-        var array = new TReturn[v.Length];
-        var valuesArray = v.ToArray();
+        var array = new Span<TReturn>(new TReturn[v.Length]);
 
-        for (var index = 0; index < valuesArray.Length; index++)
+        for (var index = 0; index < v.Length; index++)
         {
-            var value = valuesArray[index];
-            var result = func.Invoke(value);
+            var result = func.Invoke(v.Span[index]);
 
             if (!result.TryGetValue(out var rv))
             {
@@ -92,13 +128,11 @@ public static class ResultExtension
             return new(values.Errors);
         }
 
-        var array = new TReturn[v.Length];
-        var valuesArray = v.ToArray();
+        var array = new Memory<TReturn>(new TReturn[v.Length]);
 
-        for (var index = 0; index < valuesArray.Length; index++)
+        for (var index = 0; index < v.Length; index++)
         {
-            var value = valuesArray[index];
-            var result = func.Invoke(value);
+            var result = func.Invoke(v.Span[index]);
 
             if (!result.TryGetValue(out var rv))
             {
@@ -110,7 +144,7 @@ public static class ResultExtension
                 return Result<ReadOnlyMemory<TReturn>>.CanceledByUserError;
             }
 
-            array[index] = rv;
+            array.Span[index] = rv;
         }
 
         return array.ToReadOnlyMemory().ToResult();
@@ -148,13 +182,11 @@ public static class ResultExtension
             return Result<ReadOnlyMemory<TReturn>>.CanceledByUserError;
         }
 
-        var array = new TReturn[v.Length];
-        var valuesArray = v.ToArray();
+        var array = new Memory<TReturn>(new TReturn[v.Length]);
 
-        for (var index = 0; index < valuesArray.Length; index++)
+        for (var index = 0; index < v.Length; index++)
         {
-            var value = valuesArray[index];
-            var result = await func.Invoke(value);
+            var result = await func.Invoke(v.Span[index]);
 
             if (!result.TryGetValue(out var rv))
             {
@@ -166,7 +198,7 @@ public static class ResultExtension
                 return Result<ReadOnlyMemory<TReturn>>.CanceledByUserError;
             }
 
-            array[index] = rv;
+            array.Span[index] = rv;
         }
 
         return array.ToReadOnlyMemory().ToResult();
@@ -206,13 +238,11 @@ public static class ResultExtension
             return new(values.Errors);
         }
 
-        var array = new TReturn[v.Length];
-        var valuesArray = v.ToArray();
+        var array = new Memory<TReturn>(new TReturn[v.Length]);
 
-        for (var index = 0; index < valuesArray.Length; index++)
+        for (var index = 0; index < v.Length; index++)
         {
-            var value = valuesArray[index];
-            var result = await func.Invoke(value);
+            var result = await func.Invoke(v.Span[index]);
 
             if (!result.TryGetValue(out var rv))
             {
@@ -224,7 +254,7 @@ public static class ResultExtension
                 return Result<ReadOnlyMemory<TReturn>>.CanceledByUserError;
             }
 
-            array[index] = rv;
+            array.Span[index] = rv;
         }
 
         return array.ToReadOnlyMemory().ToResult();
@@ -255,9 +285,9 @@ public static class ResultExtension
             return Result.CanceledByUserError;
         }
 
-        foreach (var value in v.ToArray())
+        for (var index = 0; index < v.Length; index++)
         {
-            var result = await func.Invoke(value);
+            var result = await func.Invoke(v.Span[index]);
 
             if (result.IsHasError)
             {
@@ -295,9 +325,9 @@ public static class ResultExtension
             return new(values.Errors);
         }
 
-        foreach (var value in v.ToArray())
+        for (var index = 0; index < v.Length; index++)
         {
-            var result = await func.Invoke(value);
+            var result = await func.Invoke(v.Span[index]);
 
             if (result.IsHasError)
             {
@@ -313,17 +343,108 @@ public static class ResultExtension
         return Result.Success;
     }
 
-    public static ConfiguredValueTaskAwaitable<Result> IfSuccessAsync<TValue>(
+    public static ConfiguredValueTaskAwaitable<
+        Result<ReadOnlyMemory<TReturn>>
+    > IfSuccessForEachAsync<TValue, TReturn>(
+        this ConfiguredCancelableAsyncEnumerable<Result<TValue>> enumerable,
+        Func<TValue, ConfiguredValueTaskAwaitable<Result<TReturn>>> func,
+        CancellationToken ct
+    )
+        where TValue : notnull
+        where TReturn : notnull
+    {
+        return IfSuccessForEachCore(enumerable, func, ct).ConfigureAwait(false);
+    }
+
+    private static async ValueTask<Result<ReadOnlyMemory<TReturn>>> IfSuccessForEachCore<
+        TValue,
+        TReturn
+    >(
+        this ConfiguredCancelableAsyncEnumerable<Result<TValue>> enumerable,
+        Func<TValue, ConfiguredValueTaskAwaitable<Result<TReturn>>> func,
+        CancellationToken ct
+    )
+        where TValue : notnull
+        where TReturn : notnull
+    {
+        var list = new List<TReturn>();
+
+        await foreach (var result in enumerable)
+        {
+            if (ct.IsCancellationRequested)
+            {
+                return Result<ReadOnlyMemory<TReturn>>.CanceledByUserError;
+            }
+
+            if (!result.TryGetValue(out var rv))
+            {
+                return new(result.Errors);
+            }
+
+            var item = await func.Invoke(rv);
+
+            if (!item.TryGetValue(out var v))
+            {
+                return new(item.Errors);
+            }
+
+            list.Add(v);
+        }
+
+        return list.ToArray().ToReadOnlyMemory().ToResult();
+    }
+
+    public static ConfiguredValueTaskAwaitable<Result> IfSuccessForEachAsync<TValue>(
+        this ConfiguredCancelableAsyncEnumerable<Result<TValue>> enumerable,
+        Func<TValue, ConfiguredValueTaskAwaitable<Result>> func,
+        CancellationToken ct
+    )
+        where TValue : notnull
+    {
+        return IfSuccessForEachCore(enumerable, func, ct).ConfigureAwait(false);
+    }
+
+    private static async ValueTask<Result> IfSuccessForEachCore<TValue>(
+        this ConfiguredCancelableAsyncEnumerable<Result<TValue>> enumerable,
+        Func<TValue, ConfiguredValueTaskAwaitable<Result>> func,
+        CancellationToken ct
+    )
+        where TValue : notnull
+    {
+        await foreach (var result in enumerable)
+        {
+            if (ct.IsCancellationRequested)
+            {
+                return Result.CanceledByUserError;
+            }
+
+            if (!result.TryGetValue(out var rv))
+            {
+                return new(result.Errors);
+            }
+
+            var item = await func.Invoke(rv);
+
+            if (item.IsHasError)
+            {
+                return item;
+            }
+        }
+
+        return Result.Success;
+    }
+
+    public static ConfiguredValueTaskAwaitable<Result> IfSuccessForEachAsync<TValue>(
         this ConfiguredCancelableAsyncEnumerable<Result<TValue>> enumerable,
         Func<TValue, Result> func,
         CancellationToken ct
     )
         where TValue : notnull
     {
-        return IfSuccessCore(enumerable, func, ct).ConfigureAwait(false);
+        return IfSuccessForEachCore(enumerable, func, ct).ConfigureAwait(false);
     }
 
-    private static async ValueTask<Result> IfSuccessCore<TValue>(
+    private static async ValueTask<Result> IfSuccessForEachCore<TValue>(
         this ConfiguredCancelableAsyncEnumerable<Result<TValue>> enumerable,
         Func<TValue, Result> func,
         CancellationToken ct

@@ -33,11 +33,13 @@ public class TodayToDoItemsViewModel
             .List.WhenAnyValue(x => x.IsMulti)
             .Subscribe(x =>
             {
-                Commands.Clear();
-
                 if (x)
                 {
-                    Commands.AddRange(spravyCommandNotifyService.TodayToDoItemsMulti.ToArray());
+                    Commands.Update(spravyCommandNotifyService.TodayToDoItemsMulti);
+                }
+                else
+                {
+                    Commands.Clear();
                 }
             });
     }
@@ -56,10 +58,7 @@ public class TodayToDoItemsViewModel
         return toDoService
             .GetTodayToDoItemsAsync(ct)
             .IfSuccessForEachAsync(id => toDoCache.GetToDoItem(id), ct)
-            .IfSuccessAsync(
-                ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids.ToArray(), false, ct),
-                ct
-            );
+            .IfSuccessAsync(ids => ToDoSubItemsViewModel.UpdateItemsAsync(ids, false, ct), ct);
     }
 
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)

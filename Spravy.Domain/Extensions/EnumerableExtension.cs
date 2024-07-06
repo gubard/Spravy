@@ -63,6 +63,18 @@ public static class EnumerableExtension
         return array;
     }
 
+    public static TItem[] ThrowIfNullOrEmpty<TItem>(
+        this TItem[]? enumerable,
+        [CallerArgumentExpression(nameof(enumerable))] string paramName = ""
+    )
+    {
+        var array = enumerable.ThrowIfNull().ToArray();
+        array.ThrowIfNull(paramName);
+        array.ThrowIfEmpty(paramName);
+
+        return array;
+    }
+
     public static IEnumerable<TItem> ThrowIfEmpty<TItem>(
         this IEnumerable<TItem> enumerable,
         [CallerArgumentExpression(nameof(enumerable))] string paramName = ""

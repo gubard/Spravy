@@ -68,8 +68,7 @@ public class ChangeToDoItemOrderIndexViewModel : ViewModelBase
             .IfSuccess(items =>
                 this.PostUiBackground(() =>
                 {
-                    Items.Clear();
-                    Items.AddRange(items.ToArray());
+                    Items.Update(items.ToArray());
 
                     return Result.Success;
                 })

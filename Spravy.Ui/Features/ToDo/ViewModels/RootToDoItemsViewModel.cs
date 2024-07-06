@@ -40,11 +40,13 @@ public class RootToDoItemsViewModel
             .List.WhenAnyValue(x => x.IsMulti)
             .Subscribe(x =>
             {
-                Commands.Clear();
-
                 if (x)
                 {
-                    Commands.AddRange(spravyCommandNotifyService.RootToDoItemsMulti.ToArray());
+                    Commands.Update(spravyCommandNotifyService.RootToDoItemsMulti);
+                }
+                else
+                {
+                    Commands.Clear();
                 }
             });
     }
@@ -91,10 +93,7 @@ public class RootToDoItemsViewModel
             )
             .IfSuccessAsync(() => toDoService.GetRootToDoItemIdsAsync(ct), ct)
             .IfSuccessAsync(items => toDoCache.UpdateRootItems(items), ct)
-            .IfSuccessAsync(
-                items => ToDoSubItemsViewModel.UpdateItemsAsync(items.ToArray(), false, ct),
-                ct
-            );
+            .IfSuccessAsync(items => ToDoSubItemsViewModel.UpdateItemsAsync(items, false, ct), ct);
     }
 
     public override Result Stop()

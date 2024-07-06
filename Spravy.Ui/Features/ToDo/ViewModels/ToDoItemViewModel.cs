@@ -115,12 +115,24 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUp
 
     private ConfiguredValueTaskAwaitable<Result> RefreshToDoItemChildrenAsync(CancellationToken ct)
     {
-        return this.PostUiBackground(
-                () =>
-                    ToDoSubItemsViewModel.ClearExceptUi(
-                        Item?.Children.ToArray() ?? ReadOnlyMemory<ToDoItemEntityNotify>.Empty
-                    )
-            )
+        return this.PostUiBackground(() =>
+            {
+                if (Item is null)
+                {
+                    ToDoSubItemsViewModel.ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify>.Empty);
+
+                    return Result.Success;
+                }
+
+                if (Item.Children.Count == 0)
+                {
+                    ToDoSubItemsViewModel.ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify>.Empty);
+
+                    return Result.Success;
+                }
+
+                return ToDoSubItemsViewModel.ClearExceptUi(Item.Children.ToArray());
+            })
             .IfSuccessAsync(() => toDoService.GetChildrenToDoItemIdsAsync(Id, ct), ct)
             .IfSuccessAsync(
                 ids => this.InvokeUiBackgroundAsync(() => toDoCache.UpdateChildrenItemsUi(Id, ids)),

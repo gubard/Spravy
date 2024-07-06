@@ -141,6 +141,23 @@ public static class ObjectExtension
 
     public static ReadOnlyMemory<T> Combine<T>(
         this ReadOnlyMemory<T> memory,
+        ReadOnlyMemory<T> value
+    )
+    {
+        if (value.Length == 0)
+        {
+            return memory;
+        }
+
+        var result = new Memory<T>(new T[memory.Length + value.Length]);
+        memory.CopyTo(result);
+        value.CopyTo(result.Slice(memory.Length));
+
+        return result;
+    }
+
+    public static ReadOnlyMemory<T> Combine<T>(
+        this ReadOnlyMemory<T> memory,
         params ReadOnlyMemory<T>[] memories
     )
     {
@@ -167,7 +184,7 @@ public static class ObjectExtension
                 continue;
             }
 
-            memories[i].Span.CopyTo(result.Span.Slice(index));
+            memories[i].CopyTo(result.Slice(index));
             index += memories[i].Length;
         }
 

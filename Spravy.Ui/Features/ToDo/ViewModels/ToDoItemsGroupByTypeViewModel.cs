@@ -59,51 +59,25 @@ public class ToDoItemsGroupByTypeViewModel : ViewModelBase
     public Result ClearExceptUi(ReadOnlyMemory<ToDoItemEntityNotify> items)
     {
         return Values
-            .ClearExceptUi(items.ToArray().Where(x => x.Type == ToDoItemType.Value).ToArray())
+            .ClearExceptUi(items.Where(x => x.Type == ToDoItemType.Value))
+            .IfSuccess(() => Groups.ClearExceptUi(items.Where(x => x.Type == ToDoItemType.Group)))
             .IfSuccess(
-                () =>
-                    Groups.ClearExceptUi(
-                        items.ToArray().Where(x => x.Type == ToDoItemType.Group).ToArray()
-                    )
+                () => Planneds.ClearExceptUi(items.Where(x => x.Type == ToDoItemType.Planned))
             )
             .IfSuccess(
                 () =>
-                    Planneds.ClearExceptUi(
-                        items.ToArray().Where(x => x.Type == ToDoItemType.Planned).ToArray()
-                    )
-            )
-            .IfSuccess(
-                () =>
-                    Periodicitys.ClearExceptUi(
-                        items.ToArray().Where(x => x.Type == ToDoItemType.Periodicity).ToArray()
-                    )
+                    Periodicitys.ClearExceptUi(items.Where(x => x.Type == ToDoItemType.Periodicity))
             )
             .IfSuccess(
                 () =>
                     PeriodicityOffsets.ClearExceptUi(
-                        items
-                            .ToArray()
-                            .Where(x => x.Type == ToDoItemType.PeriodicityOffset)
-                            .ToArray()
+                        items.Where(x => x.Type == ToDoItemType.PeriodicityOffset)
                     )
             )
+            .IfSuccess(() => Circles.ClearExceptUi(items.Where(x => x.Type == ToDoItemType.Circle)))
+            .IfSuccess(() => Steps.ClearExceptUi(items.Where(x => x.Type == ToDoItemType.Step)))
             .IfSuccess(
-                () =>
-                    Circles.ClearExceptUi(
-                        items.ToArray().Where(x => x.Type == ToDoItemType.Circle).ToArray()
-                    )
-            )
-            .IfSuccess(
-                () =>
-                    Steps.ClearExceptUi(
-                        items.ToArray().Where(x => x.Type == ToDoItemType.Step).ToArray()
-                    )
-            )
-            .IfSuccess(
-                () =>
-                    References.ClearExceptUi(
-                        items.ToArray().Where(x => x.Type == ToDoItemType.Reference).ToArray()
-                    )
+                () => References.ClearExceptUi(items.Where(x => x.Type == ToDoItemType.Reference))
             );
     }
 

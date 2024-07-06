@@ -22,9 +22,9 @@ public class CombineHttpHeaderFactory : IHttpHeaderFactory
     {
         var result = new List<HttpHeaderItem>();
 
-        foreach (var factory in factories.ToArray())
+        for (var index = 0; index < factories.Length; index++)
         {
-            var headers = await factory.CreateHeaderItemsAsync(ct);
+            var headers = await factories.Span[index].CreateHeaderItemsAsync(ct);
 
             if (!headers.TryGetValue(out var value))
             {
