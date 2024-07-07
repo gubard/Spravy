@@ -85,7 +85,7 @@ public class GetterToDoItemParametersService
                 ignoreIds.Add(entity.Id);
 
                 return await context
-                    .FindEntityAsync<ToDoItemEntity>(entity.ReferenceId.Value)
+                    .GetEntityAsync<ToDoItemEntity>(entity.ReferenceId.Value)
                     .IfSuccessAsync(
                         item =>
                             GetToDoItemParametersAsync(
@@ -399,7 +399,7 @@ public class GetterToDoItemParametersService
             ToDoItemType.Reference
                 => entity.ReferenceId.HasValue
                     ? context
-                        .FindEntityAsync<ToDoItemEntity>(entity.ReferenceId.Value)
+                        .GetEntityAsync<ToDoItemEntity>(entity.ReferenceId.Value)
                         .IfSuccessAsync(item => IsDueableAsync(context, item, ct), ct)
                     : false.ToResult().ToValueTaskResult().ConfigureAwait(false),
             _
@@ -434,7 +434,7 @@ public class GetterToDoItemParametersService
             ToDoItemType.Reference
                 => entity.ReferenceId.HasValue
                     ? context
-                        .FindEntityAsync<ToDoItemEntity>(entity.ReferenceId.Value)
+                        .GetEntityAsync<ToDoItemEntity>(entity.ReferenceId.Value)
                         .IfSuccessAsync(item => GetDueDateAsync(context, item, ct), ct)
                     : DateOnly.MinValue.ToResult().ToValueTaskResult().ConfigureAwait(false),
             _

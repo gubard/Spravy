@@ -80,7 +80,7 @@ public class EfScheduleService : IScheduleService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<TimerEntity>(id)
+                                .GetEntityAsync<TimerEntity>(id)
                                 .IfSuccessAsync(context.RemoveEntity, ct),
                         ct
                     ),

@@ -88,7 +88,7 @@ public class EfAuthenticationService : IAuthenticationService
                 var id = Guid.Parse(jwtToken.Claims.GetNameIdentifierClaim().Value);
 
                 return context
-                    .FindEntityAsync<UserEntity>(id)
+                    .GetEntityAsync<UserEntity>(id)
                     .IfSuccessAsync(
                         userEntity => tokenFactory.Create(userEntity.ToUserTokenClaims()),
                         ct

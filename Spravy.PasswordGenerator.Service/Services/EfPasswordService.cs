@@ -79,7 +79,7 @@ public class EfPasswordService : IPasswordService
             .IfSuccessDisposeAsync(
                 context =>
                     context
-                        .FindEntityAsync<PasswordItemEntity>(id)
+                        .GetEntityAsync<PasswordItemEntity>(id)
                         .IfSuccessAsync(item => item.ToPasswordItem().ToResult(), ct),
                 ct
             );
@@ -97,7 +97,7 @@ public class EfPasswordService : IPasswordService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<PasswordItemEntity>(id)
+                                .GetEntityAsync<PasswordItemEntity>(id)
                                 .IfSuccessAsync(context.RemoveEntity, ct),
                         ct
                     ),
@@ -115,7 +115,7 @@ public class EfPasswordService : IPasswordService
             .IfSuccessDisposeAsync(
                 context =>
                     context
-                        .FindEntityAsync<PasswordItemEntity>(id)
+                        .GetEntityAsync<PasswordItemEntity>(id)
                         .IfSuccessAsync(
                             item =>
                                 userSecretService
@@ -147,7 +147,7 @@ public class EfPasswordService : IPasswordService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<PasswordItemEntity>(id)
+                                .GetEntityAsync<PasswordItemEntity>(id)
                                 .IfSuccessAsync(
                                     item =>
                                     {
@@ -176,7 +176,7 @@ public class EfPasswordService : IPasswordService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<PasswordItemEntity>(id)
+                                .GetEntityAsync<PasswordItemEntity>(id)
                                 .IfSuccessAsync(
                                     item =>
                                     {
@@ -205,7 +205,7 @@ public class EfPasswordService : IPasswordService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<PasswordItemEntity>(id)
+                                .GetEntityAsync<PasswordItemEntity>(id)
                                 .IfSuccessAsync(
                                     item =>
                                     {
@@ -234,7 +234,7 @@ public class EfPasswordService : IPasswordService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<PasswordItemEntity>(id)
+                                .GetEntityAsync<PasswordItemEntity>(id)
                                 .IfSuccessAsync(
                                     item =>
                                     {
@@ -263,7 +263,7 @@ public class EfPasswordService : IPasswordService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<PasswordItemEntity>(id)
+                                .GetEntityAsync<PasswordItemEntity>(id)
                                 .IfSuccessAsync(
                                     item =>
                                     {
@@ -290,7 +290,7 @@ public class EfPasswordService : IPasswordService
             .IfSuccessDisposeAsync(
                 context =>
                     context
-                        .FindEntityAsync<PasswordItemEntity>(id)
+                        .GetEntityAsync<PasswordItemEntity>(id)
                         .IfSuccessAsync(
                             item =>
                             {
@@ -317,7 +317,7 @@ public class EfPasswordService : IPasswordService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<PasswordItemEntity>(id)
+                                .GetEntityAsync<PasswordItemEntity>(id)
                                 .IfSuccessAsync(
                                     item =>
                                     {
@@ -346,7 +346,7 @@ public class EfPasswordService : IPasswordService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<PasswordItemEntity>(id)
+                                .GetEntityAsync<PasswordItemEntity>(id)
                                 .IfSuccessAsync(
                                     item =>
                                     {
@@ -375,7 +375,7 @@ public class EfPasswordService : IPasswordService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<PasswordItemEntity>(id)
+                                .GetEntityAsync<PasswordItemEntity>(id)
                                 .IfSuccessAsync(
                                     item =>
                                     {

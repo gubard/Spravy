@@ -30,16 +30,16 @@ public static class DbContextExtension
         return value.ToResult();
     }
 
-    public static ConfiguredValueTaskAwaitable<Result<TEntity>> FindEntityAsync<TEntity>(
+    public static ConfiguredValueTaskAwaitable<Result<TEntity>> GetEntityAsync<TEntity>(
         this DbContext context,
         object key
     )
         where TEntity : class
     {
-        return FindEntityCore<TEntity>(context, key).ConfigureAwait(false);
+        return GetEntityCore<TEntity>(context, key).ConfigureAwait(false);
     }
 
-    private static async ValueTask<Result<TEntity>> FindEntityCore<TEntity>(
+    private static async ValueTask<Result<TEntity>> GetEntityCore<TEntity>(
         this DbContext context,
         object key
     )
@@ -53,6 +53,26 @@ public static class DbContextExtension
         }
 
         return value.ToResult();
+    }
+
+    public static ConfiguredValueTaskAwaitable<Result<Option<TEntity>>> FindEntityAsync<TEntity>(
+        this DbContext context,
+        object key
+    )
+        where TEntity : class
+    {
+        return FindEntityCore<TEntity>(context, key).ConfigureAwait(false);
+    }
+
+    private static async ValueTask<Result<Option<TEntity>>> FindEntityCore<TEntity>(
+        this DbContext context,
+        object key
+    )
+        where TEntity : class
+    {
+        var value = await context.FindAsync<TEntity>(key);
+
+        return value.ToOption().ToResult();
     }
 
     public static ConfiguredValueTaskAwaitable<Result<TReturn>> AtomicExecuteAsync<

@@ -118,7 +118,7 @@ public class EventBusHostedService : IHostedService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<ToDoItemEntity>(id)
+                                .GetEntityAsync<ToDoItemEntity>(id)
                                 .IfSuccessAsync(
                                     item =>
                                     {

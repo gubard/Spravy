@@ -51,7 +51,7 @@ public class EfToDoService : IToDoService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<ToDoItemEntity>(cloneId)
+                                .GetEntityAsync<ToDoItemEntity>(cloneId)
                                 .IfSuccessAsync(
                                     clone =>
                                         AddCloneAsync(context, clone, parentId, ct)
@@ -77,7 +77,7 @@ public class EfToDoService : IToDoService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<ToDoItemEntity>(id)
+                                .GetEntityAsync<ToDoItemEntity>(id)
                                 .IfSuccessAsync(
                                     item =>
                                     {
@@ -106,7 +106,7 @@ public class EfToDoService : IToDoService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<ToDoItemEntity>(id)
+                                .GetEntityAsync<ToDoItemEntity>(id)
                                 .IfSuccessAsync(
                                     item =>
                                         getterToDoItemParametersService.GetToDoItemParametersAsync(
@@ -135,7 +135,7 @@ public class EfToDoService : IToDoService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<ToDoItemEntity>(id)
+                                .GetEntityAsync<ToDoItemEntity>(id)
                                 .IfSuccessAsync(
                                     item => item.ToReferenceToDoItemSettings().ToResult(),
                                     ct
@@ -159,7 +159,7 @@ public class EfToDoService : IToDoService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<ToDoItemEntity>(id)
+                                .GetEntityAsync<ToDoItemEntity>(id)
                                 .IfSuccessAsync(
                                     item =>
                                     {
@@ -189,7 +189,7 @@ public class EfToDoService : IToDoService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<ToDoItemEntity>(options.Id)
+                                .GetEntityAsync<ToDoItemEntity>(options.Id)
                                 .IfSuccessAsync(
                                     item =>
                                     {
@@ -290,7 +290,7 @@ public class EfToDoService : IToDoService
             .IfSuccessDisposeAsync(
                 context =>
                     context
-                        .FindEntityAsync<ToDoItemEntity>(id)
+                        .GetEntityAsync<ToDoItemEntity>(id)
                         .IfSuccessAsync(
                             item =>
                             {
@@ -400,7 +400,7 @@ public class EfToDoService : IToDoService
             .IfSuccessDisposeAsync(
                 context =>
                     context
-                        .FindEntityAsync<ToDoItemEntity>(id)
+                        .GetEntityAsync<ToDoItemEntity>(id)
                         .IfSuccessAsync(
                             item =>
                                 getterToDoItemParametersService
@@ -421,7 +421,7 @@ public class EfToDoService : IToDoService
                                             )
                                             {
                                                 return context
-                                                    .FindEntityAsync<ToDoItemEntity>(
+                                                    .GetEntityAsync<ToDoItemEntity>(
                                                         item.ReferenceId.Value
                                                     )
                                                     .IfSuccessAsync(
@@ -590,7 +590,7 @@ public class EfToDoService : IToDoService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<ToDoItemEntity>(options.ParentId)
+                                .GetEntityAsync<ToDoItemEntity>(options.ParentId)
                                 .IfSuccessAsync(
                                     parent =>
                                         context
@@ -658,7 +658,7 @@ public class EfToDoService : IToDoService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<ToDoItemEntity>(id)
+                                .GetEntityAsync<ToDoItemEntity>(id)
                                 .IfSuccessAsync(
                                     item =>
                                         DeleteToDoItemAsync(id, context, ct)
@@ -692,7 +692,7 @@ public class EfToDoService : IToDoService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<ToDoItemEntity>(id)
+                                .GetEntityAsync<ToDoItemEntity>(id)
                                 .IfSuccessAsync(
                                     item =>
                                     {
@@ -721,7 +721,7 @@ public class EfToDoService : IToDoService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<ToDoItemEntity>(id)
+                                .GetEntityAsync<ToDoItemEntity>(id)
                                 .IfSuccessAsync(
                                     item =>
                                     {
@@ -752,7 +752,7 @@ public class EfToDoService : IToDoService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<ToDoItemEntity>(id)
+                                .GetEntityAsync<ToDoItemEntity>(id)
                                 .IfSuccessAsync(
                                     item =>
                                     {
@@ -875,7 +875,7 @@ public class EfToDoService : IToDoService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<ToDoItemEntity>(id)
+                                .GetEntityAsync<ToDoItemEntity>(id)
                                 .IfSuccessAsync(
                                     item =>
                                     {
@@ -903,11 +903,11 @@ public class EfToDoService : IToDoService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<ToDoItemEntity>(options.Id)
+                                .GetEntityAsync<ToDoItemEntity>(options.Id)
                                 .IfSuccessAsync(
                                     item =>
                                         context
-                                            .FindEntityAsync<ToDoItemEntity>(options.TargetId)
+                                            .GetEntityAsync<ToDoItemEntity>(options.TargetId)
                                             .IfSuccessAsync(
                                                 targetItem =>
                                                 {
@@ -967,7 +967,7 @@ public class EfToDoService : IToDoService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<ToDoItemEntity>(id)
+                                .GetEntityAsync<ToDoItemEntity>(id)
                                 .IfSuccessAsync(
                                     item =>
                                     {
@@ -996,7 +996,7 @@ public class EfToDoService : IToDoService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<ToDoItemEntity>(id)
+                                .GetEntityAsync<ToDoItemEntity>(id)
                                 .IfSuccessAsync(
                                     item =>
                                     {
@@ -1024,7 +1024,7 @@ public class EfToDoService : IToDoService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<ToDoItemEntity>(id)
+                                .GetEntityAsync<ToDoItemEntity>(id)
                                 .IfSuccessAsync(
                                     item =>
                                     {
@@ -1052,7 +1052,7 @@ public class EfToDoService : IToDoService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<ToDoItemEntity>(id)
+                                .GetEntityAsync<ToDoItemEntity>(id)
                                 .IfSuccessAsync(
                                     item =>
                                     {
@@ -1081,7 +1081,7 @@ public class EfToDoService : IToDoService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<ToDoItemEntity>(id)
+                                .GetEntityAsync<ToDoItemEntity>(id)
                                 .IfSuccessAsync(
                                     item =>
                                     {
@@ -1151,7 +1151,7 @@ public class EfToDoService : IToDoService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<ToDoItemEntity>(id)
+                                .GetEntityAsync<ToDoItemEntity>(id)
                                 .IfSuccessAsync(
                                     item =>
                                     {
@@ -1180,7 +1180,7 @@ public class EfToDoService : IToDoService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<ToDoItemEntity>(id)
+                                .GetEntityAsync<ToDoItemEntity>(id)
                                 .IfSuccessAsync(
                                     item =>
                                     {
@@ -1209,7 +1209,7 @@ public class EfToDoService : IToDoService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<ToDoItemEntity>(id)
+                                .GetEntityAsync<ToDoItemEntity>(id)
                                 .IfSuccessAsync(
                                     item =>
                                     {
@@ -1277,7 +1277,7 @@ public class EfToDoService : IToDoService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<ToDoItemEntity>(id)
+                                .GetEntityAsync<ToDoItemEntity>(id)
                                 .IfSuccessAsync(
                                     entity =>
                                         context
@@ -1315,7 +1315,7 @@ public class EfToDoService : IToDoService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<ToDoItemEntity>(id)
+                                .GetEntityAsync<ToDoItemEntity>(id)
                                 .IfSuccessAsync(
                                     entity =>
                                         context
@@ -1378,7 +1378,7 @@ public class EfToDoService : IToDoService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<ToDoItemEntity>(id)
+                                .GetEntityAsync<ToDoItemEntity>(id)
                                 .IfSuccessAsync(
                                     item =>
                                     {
@@ -1407,7 +1407,7 @@ public class EfToDoService : IToDoService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<ToDoItemEntity>(id)
+                                .GetEntityAsync<ToDoItemEntity>(id)
                                 .IfSuccessAsync(
                                     item =>
                                     {
@@ -1436,7 +1436,7 @@ public class EfToDoService : IToDoService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<ToDoItemEntity>(id)
+                                .GetEntityAsync<ToDoItemEntity>(id)
                                 .IfSuccessAsync(
                                     item =>
                                     {
@@ -1465,7 +1465,7 @@ public class EfToDoService : IToDoService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<ToDoItemEntity>(id)
+                                .GetEntityAsync<ToDoItemEntity>(id)
                                 .IfSuccessAsync(
                                     item =>
                                     {
@@ -1494,7 +1494,7 @@ public class EfToDoService : IToDoService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<ToDoItemEntity>(id)
+                                .GetEntityAsync<ToDoItemEntity>(id)
                                 .IfSuccessAsync(
                                     item =>
                                     {
@@ -1520,7 +1520,7 @@ public class EfToDoService : IToDoService
             .IfSuccessDisposeAsync(
                 context =>
                     context
-                        .FindEntityAsync<ToDoItemEntity>(id)
+                        .GetEntityAsync<ToDoItemEntity>(id)
                         .IfSuccessAsync(
                             item =>
                                 context
@@ -1597,7 +1597,7 @@ public class EfToDoService : IToDoService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .FindEntityAsync<ToDoItemEntity>(id)
+                                .GetEntityAsync<ToDoItemEntity>(id)
                                 .IfSuccessAsync(
                                     value =>
                                     {
@@ -1622,7 +1622,7 @@ public class EfToDoService : IToDoService
             .IfSuccessDisposeAsync(
                 context =>
                     context
-                        .FindEntityAsync<ToDoItemEntity>(id)
+                        .GetEntityAsync<ToDoItemEntity>(id)
                         .IfSuccessAsync(item => item.ToPlannedToDoItemSettings().ToResult(), ct),
                 ct
             );
@@ -1637,7 +1637,7 @@ public class EfToDoService : IToDoService
             .IfSuccessDisposeAsync(
                 context =>
                     context
-                        .FindEntityAsync<ToDoItemEntity>(id)
+                        .GetEntityAsync<ToDoItemEntity>(id)
                         .IfSuccessAsync(item => item.ToValueToDoItemSettings().ToResult(), ct),
                 ct
             );
@@ -1652,7 +1652,7 @@ public class EfToDoService : IToDoService
             .IfSuccessAsync(
                 context =>
                     context
-                        .FindEntityAsync<ToDoItemEntity>(id)
+                        .GetEntityAsync<ToDoItemEntity>(id)
                         .IfSuccessAsync(
                             item => item.ToPeriodicityToDoItemSettings().ToResult(),
                             ct
@@ -1671,7 +1671,7 @@ public class EfToDoService : IToDoService
             .IfSuccessDisposeAsync(
                 context =>
                     context
-                        .FindEntityAsync<ToDoItemEntity>(id)
+                        .GetEntityAsync<ToDoItemEntity>(id)
                         .IfSuccessAsync(item => item.ToWeeklyPeriodicity().ToResult(), ct),
                 ct
             );
@@ -1687,7 +1687,7 @@ public class EfToDoService : IToDoService
             .IfSuccessDisposeAsync(
                 context =>
                     context
-                        .FindEntityAsync<ToDoItemEntity>(id)
+                        .GetEntityAsync<ToDoItemEntity>(id)
                         .IfSuccessAsync(item => item.ToMonthlyPeriodicity().ToResult(), ct),
                 ct
             );
@@ -1703,7 +1703,7 @@ public class EfToDoService : IToDoService
             .IfSuccessDisposeAsync(
                 context =>
                     context
-                        .FindEntityAsync<ToDoItemEntity>(id)
+                        .GetEntityAsync<ToDoItemEntity>(id)
                         .IfSuccessAsync(item => item.ToAnnuallyPeriodicity().ToResult(), ct),
                 ct
             );
@@ -1718,7 +1718,7 @@ public class EfToDoService : IToDoService
             .IfSuccessDisposeAsync(
                 context =>
                     context
-                        .FindEntityAsync<ToDoItemEntity>(id)
+                        .GetEntityAsync<ToDoItemEntity>(id)
                         .IfSuccessAsync(
                             item => item.ToPeriodicityOffsetToDoItemSettings().ToResult(),
                             ct
@@ -1816,7 +1816,7 @@ public class EfToDoService : IToDoService
     )
     {
         return context
-            .FindEntityAsync<ToDoItemEntity>(id)
+            .GetEntityAsync<ToDoItemEntity>(id)
             .IfSuccessAsync(
                 item =>
                     context
@@ -1896,7 +1896,7 @@ public class EfToDoService : IToDoService
                         .IfSuccessForEachAsync(
                             reference =>
                                 context
-                                    .FindEntityAsync<ToDoItemEntity>(
+                                    .GetEntityAsync<ToDoItemEntity>(
                                         reference.ReferenceId.ThrowIfNullStruct()
                                     )
                                     .IfSuccessAsync(
@@ -2024,7 +2024,7 @@ public class EfToDoService : IToDoService
                         .IfSuccessForEachAsync(
                             reference =>
                                 context
-                                    .FindEntityAsync<ToDoItemEntity>(
+                                    .GetEntityAsync<ToDoItemEntity>(
                                         reference.ReferenceId.ThrowIfNullStruct()
                                     )
                                     .IfSuccessAsync(
@@ -2264,7 +2264,7 @@ public class EfToDoService : IToDoService
                 }
 
                 return context
-                    .FindEntityAsync<ToDoItemEntity>(item.ReferenceId.Value)
+                    .GetEntityAsync<ToDoItemEntity>(item.ReferenceId.Value)
                     .IfSuccessAsync(i => UpdateDueDateAsync(context, i, offset, ct), ct);
             default:
                 return new Result(new ToDoItemTypeOutOfRangeError(item.Type))

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Spravy.Db.Interfaces;
 using Spravy.Domain.Extensions;
 using Spravy.Domain.Interfaces;
@@ -10,10 +11,12 @@ namespace Spravy.ToDo.Db.Sqlite.Migrator;
 public class SpravyToDoDbContextFactory : IFactory<string, SpravyDbToDoDbContext>
 {
     private readonly IDbContextSetup dbContextSetup;
+    private readonly ILoggerFactory loggerFactory;
 
-    public SpravyToDoDbContextFactory(IDbContextSetup dbContextSetup)
+    public SpravyToDoDbContextFactory(IDbContextSetup dbContextSetup, ILoggerFactory loggerFactory)
     {
         this.dbContextSetup = dbContextSetup;
+        this.loggerFactory = loggerFactory;
     }
 
     public Result<SpravyDbToDoDbContext> Create(string key)
@@ -23,8 +26,11 @@ public class SpravyToDoDbContextFactory : IFactory<string, SpravyDbToDoDbContext
                 key,
                 b => b.MigrationsAssembly(SpravyToDoDbSqliteMigratorMark.AssemblyFullName)
             )
+            .UseLoggerFactory(loggerFactory)
             .Options;
 
-        return new SpravyDbToDoDbContext(options, dbContextSetup).ToResult();
+        var context = new SpravyDbToDoDbContext(options, dbContextSetup);
+
+        return context.ToResult();
     }
 }
