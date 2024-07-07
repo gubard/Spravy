@@ -43,12 +43,7 @@ public class RpcExceptionHandler : IRpcExceptionHandler
             errors = errors.Combine(values);
         }
 
-        if (!errors.IsEmpty)
-        {
-            return new(errors);
-        }
-
-        return Result.Success;
+        return !errors.IsEmpty ? new(errors) : Result.Success;
     }
 
     private async ValueTask<ReadOnlyMemory<Error>> GetErrorsAsync(
