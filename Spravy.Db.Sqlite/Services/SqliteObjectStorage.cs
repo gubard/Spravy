@@ -56,35 +56,48 @@ public class SqliteObjectStorage : IObjectStorage
     )
     {
         return storageDbContext.AtomicExecuteAsync(
-            () => SaveObjectCore(id, obj, ct).ConfigureAwait(false),
+            () =>
+                storageDbContext
+                    .FindEntityAsync<StorageEntity>(id)
+                    .IfSuccessAsync(
+                        item =>
+                            new MemoryStream()
+                                .ToResult()
+                                .IfSuccessDisposeAsync(
+                                    stream =>
+                                        serializer
+                                            .SerializeAsync(obj, stream, ct)
+                                            .IfSuccessAsync(
+                                                () =>
+                                                {
+                                                    stream.Position = 0;
+
+                                                    if (item.TryGetValue(out var entity))
+                                                    {
+                                                        entity.Value = stream.ToArray();
+
+                                                        return Result.AwaitableSuccess;
+                                                    }
+
+                                                    entity = new()
+                                                    {
+                                                        Id = id,
+                                                        Value = stream.ToArray(),
+                                                    };
+
+                                                    return storageDbContext
+                                                        .Set<StorageEntity>()
+                                                        .AddEntityAsync(entity, ct)
+                                                        .ToResultOnlyAsync();
+                                                },
+                                                ct
+                                            ),
+                                    ct
+                                ),
+                        ct
+                    ),
             ct
         );
-    }
-
-    private async ValueTask<Result> SaveObjectCore(string id, object obj, CancellationToken ct)
-    {
-        var item = await storageDbContext.FindAsync<StorageEntity>(id);
-        await using var steam = new MemoryStream();
-        var result = await serializer.SerializeAsync(obj, steam, ct);
-
-        if (result.IsHasError)
-        {
-            return result;
-        }
-
-        steam.Position = 0;
-
-        if (item is null)
-        {
-            var entity = new StorageEntity { Id = id, Value = steam.ToArray(), };
-            await storageDbContext.Set<StorageEntity>().AddAsync(entity, ct);
-        }
-        else
-        {
-            item.Value = steam.ToArray();
-        }
-
-        return Result.Success;
     }
 
     private async ValueTask<Result<TObject>> GetObjectCore<TObject>(string id, CancellationToken ct)
