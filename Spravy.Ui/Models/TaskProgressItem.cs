@@ -19,7 +19,12 @@ public class TaskProgressItem : NotifyBase
 
     public void Finish()
     {
-        Progress = Impact;
+        this.PostUiBackground(() =>
+        {
+            Progress = Impact;
+
+            return Result.Success;
+        });
     }
 
     public Result Increase()
