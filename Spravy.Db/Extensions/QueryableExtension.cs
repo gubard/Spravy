@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Query;
+
 namespace Spravy.Db.Extensions;
 
 public static class QueryableExtension
@@ -17,5 +20,25 @@ public static class QueryableExtension
         var array = await source.ToArrayAsync(ct);
 
         return array.ToReadOnlyMemory().ToResult();
+    }
+
+    public static ConfiguredValueTaskAwaitable<Result<int>> ExecuteUpdateEntityAsync<TSource>(
+        this IQueryable<TSource> source,
+        Expression<Func<SetPropertyCalls<TSource>, SetPropertyCalls<TSource>>> setPropertyCalls,
+        CancellationToken ct
+    )
+    {
+        return source.ExecuteUpdateEntityCore(setPropertyCalls, ct).ConfigureAwait(false);
+    }
+
+    private static async ValueTask<Result<int>> ExecuteUpdateEntityCore<TSource>(
+        this IQueryable<TSource> source,
+        Expression<Func<SetPropertyCalls<TSource>, SetPropertyCalls<TSource>>> setPropertyCalls,
+        CancellationToken ct
+    )
+    {
+        var result = await source.ExecuteUpdateAsync(setPropertyCalls, ct);
+
+        return result.ToResult();
     }
 }

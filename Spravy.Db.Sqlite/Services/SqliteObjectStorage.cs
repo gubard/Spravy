@@ -71,18 +71,28 @@ public class SqliteObjectStorage : IObjectStorage
                                                 () =>
                                                 {
                                                     stream.Position = 0;
+                                                    var value = stream.ToArray();
 
-                                                    if (item.TryGetValue(out var entity))
+                                                    if (item.TryGetValue(out _))
                                                     {
-                                                        entity.Value = stream.ToArray();
-
-                                                        return Result.AwaitableSuccess;
+                                                        return storageDbContext
+                                                            .Set<StorageEntity>()
+                                                            .Where(x => x.Id == id)
+                                                            .ExecuteUpdateEntityAsync(
+                                                                x =>
+                                                                    x.SetProperty(
+                                                                        p => p.Value,
+                                                                        value
+                                                                    ),
+                                                                ct
+                                                            )
+                                                            .ToResultOnlyAsync();
                                                     }
 
-                                                    entity = new()
+                                                    var entity = new StorageEntity
                                                     {
                                                         Id = id,
-                                                        Value = stream.ToArray(),
+                                                        Value = value,
                                                     };
 
                                                     return storageDbContext

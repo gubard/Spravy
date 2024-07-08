@@ -967,16 +967,13 @@ public class EfToDoService : IToDoService
                     context.AtomicExecuteAsync(
                         () =>
                             context
-                                .GetEntityAsync<ToDoItemEntity>(id)
-                                .IfSuccessAsync(
-                                    item =>
-                                    {
-                                        item.Description = description;
-
-                                        return Result.Success;
-                                    },
+                                .Set<ToDoItemEntity>()
+                                .Where(x => x.Id == id)
+                                .ExecuteUpdateEntityAsync(
+                                    x => x.SetProperty(y => y.Description, description),
                                     ct
-                                ),
+                                )
+                                .ToResultOnlyAsync(),
                         ct
                     ),
                 ct
