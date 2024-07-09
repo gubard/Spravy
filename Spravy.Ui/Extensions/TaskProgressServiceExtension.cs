@@ -95,6 +95,16 @@ public static class TaskProgressServiceExtension
         return property.AddItem(impact).IfSuccessTryFinallyAsync(func, item => item.Finish(), ct);
     }
 
+    public static Result RunProgress<TTaskProgressServiceProperty>(
+        this TTaskProgressServiceProperty property,
+        ushort impact,
+        Func<TaskProgressItem, Result> func
+    )
+        where TTaskProgressServiceProperty : ITaskProgressService
+    {
+        return property.AddItem(impact).IfSuccessTryFinally(func, item => item.Finish());
+    }
+
     public static ConfiguredValueTaskAwaitable<Result> RunProgressAsync<TTaskProgressServiceProperty>(
         this TTaskProgressServiceProperty property,
         Func<CancellationToken, ConfiguredValueTaskAwaitable<Result>> func,

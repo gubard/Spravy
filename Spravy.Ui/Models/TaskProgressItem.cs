@@ -27,6 +27,13 @@ public class TaskProgressItem : NotifyBase
         });
     }
 
+    public Result IncreaseUi()
+    {
+        Progress++;
+
+        return Result.Success;
+    }
+
     public Result Increase()
     {
         return this.PostUiBackground(() =>

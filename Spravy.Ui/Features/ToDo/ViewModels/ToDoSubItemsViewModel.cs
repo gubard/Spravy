@@ -203,8 +203,17 @@ public class ToDoSubItemsViewModel : ViewModelBase
                         .IfSuccessAsync(
                             itemsNotify =>
                                 taskProgressService.RunProgress(
-                                    itemsNotify,
-                                    item => this.PostUiBackground(() => List.UpdateItemUi(item))
+                                    (ushort)itemsNotify.Length,
+                                    item =>
+                                        this.PostUiBackground(
+                                            () =>
+                                                itemsNotify
+                                                    .ToResult()
+                                                    .IfSuccessForEach(i =>
+                                                        List.UpdateItemUi(i)
+                                                            .IfSuccess(item.IncreaseUi)
+                                                    )
+                                        )
                                 ),
                             ct
                         ),
