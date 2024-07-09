@@ -366,7 +366,12 @@ public class EfToDoService : IToDoService
                                     .ToResult()
                                     .IfSuccessForEachAsync(
                                         e =>
-                                            GetLeafToDoItemIdsAsync(context, e, ct)
+                                            GetLeafToDoItemIdsAsync(
+                                                    context,
+                                                    e,
+                                                    new List<Guid>(),
+                                                    ct
+                                                )
                                                 .ConfigureAwait(false)
                                                 .IfSuccessForEachAsync(
                                                     i =>
@@ -2152,9 +2157,43 @@ public class EfToDoService : IToDoService
     private async IAsyncEnumerable<Result<Guid>> GetLeafToDoItemIdsAsync(
         SpravyDbToDoDbContext context,
         ToDoItemEntity itemEntity,
+        List<Guid> ignoreIds,
         [EnumeratorCancellation] CancellationToken ct
     )
     {
+        if (ignoreIds.Contains(itemEntity.Id))
+        {
+            yield break;
+        }
+
+        if (itemEntity.Type == ToDoItemType.Reference)
+        {
+            ignoreIds.Add(itemEntity.Id);
+
+            if (itemEntity.ReferenceId is null)
+            {
+                yield return itemEntity.Id.ToResult();
+
+                yield break;
+            }
+
+            var result = await context.GetEntityAsync<ToDoItemEntity>(itemEntity.ReferenceId);
+
+            if (!result.TryGetValue(out var reference))
+            {
+                yield return new(result.Errors);
+
+                yield break;
+            }
+
+            await foreach (var item in GetLeafToDoItemIdsAsync(context, reference, ignoreIds, ct))
+            {
+                yield return item;
+            }
+
+            yield break;
+        }
+
         var entities = await context
             .Set<ToDoItemEntity>()
             .AsNoTracking()
@@ -2171,7 +2210,7 @@ public class EfToDoService : IToDoService
 
         foreach (var entity in entities)
         {
-            await foreach (var item in GetLeafToDoItemIdsAsync(context, entity, ct))
+            await foreach (var item in GetLeafToDoItemIdsAsync(context, entity, ignoreIds, ct))
             {
                 yield return item;
             }
