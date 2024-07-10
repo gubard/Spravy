@@ -8,7 +8,7 @@ public static class ChannelCredentialTypeExtension
         {
             ChannelCredentialType.SecureSsl => ChannelCredentials.SecureSsl,
             ChannelCredentialType.Insecure => ChannelCredentials.Insecure,
-            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null),
         };
     }
 }
