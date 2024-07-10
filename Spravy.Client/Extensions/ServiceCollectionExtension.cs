@@ -17,6 +17,7 @@ public static class ServiceCollectionExtension
             ICacheValidator<Uri, GrpcChannel>,
             GrpcChannelCacheValidator
         >();
+
         serviceCollection.AddTransient(sp => sp.GetConfigurationSection<TGrpcOptions>());
 
         serviceCollection.AddTransient<IFactory<Uri, TGrpcClient>>(sp =>
@@ -66,6 +67,7 @@ public static class ServiceCollectionExtension
             ICacheValidator<Uri, GrpcChannel>,
             GrpcChannelCacheValidator
         >();
+
         serviceCollection.AddTransient(sp => sp.GetConfigurationSection<TGrpcOptions>());
 
         serviceCollection.AddTransient<IFactory<Uri, TGrpcClient>>(sp =>
