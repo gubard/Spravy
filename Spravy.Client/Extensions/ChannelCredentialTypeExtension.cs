@@ -4,14 +4,11 @@ public static class ChannelCredentialTypeExtension
 {
     public static ChannelCredentials GetChannelCredentials(this ChannelCredentialType type)
     {
-        switch (type)
+        return type switch
         {
-            case ChannelCredentialType.SecureSsl:
-                return ChannelCredentials.SecureSsl;
-            case ChannelCredentialType.Insecure:
-                return ChannelCredentials.Insecure;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(type), type, null);
-        }
+            ChannelCredentialType.SecureSsl => ChannelCredentials.SecureSsl,
+            ChannelCredentialType.Insecure => ChannelCredentials.Insecure,
+            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+        };
     }
 }

@@ -17,6 +17,7 @@ public static class GrpcClientFactoryHelper
         var grpcChannelFactory = new GrpcChannelFactory(options.ChannelType, channelCredentials);
         var cacheFactory = new CacheFactory<Uri, GrpcChannel>(grpcChannelFactory, cacheValidator);
         var clientFactory = new GrpcClientFactory<TGrpcClient>(cacheFactory);
+
         var clientValidator = new GrpcClientCacheValidator<TGrpcClient>(
             cacheValidator,
             cacheFactory
@@ -84,6 +85,7 @@ public static class GrpcClientFactoryHelper
             .GetResult();
 
         var tokenHttpHeaderFactory = new TokenHttpHeaderFactory(tokenService);
+
         var combineHttpHeaderFactory = new CombineHttpHeaderFactory(
             httpHeaderFactory,
             tokenHttpHeaderFactory
