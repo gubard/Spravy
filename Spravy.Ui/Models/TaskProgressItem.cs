@@ -33,14 +33,4 @@ public class TaskProgressItem : NotifyBase
 
         return Result.Success;
     }
-
-    public Result Increase()
-    {
-        return this.PostUiBackground(() =>
-        {
-            Progress++;
-
-            return Result.Success;
-        });
-    }
 }

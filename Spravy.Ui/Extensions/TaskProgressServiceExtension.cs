@@ -26,8 +26,7 @@ public static class TaskProgressServiceExtension
                                 func.Invoke(item)
                                     .IfSuccessAsync(
                                         r =>
-                                            taskProgressItem
-                                                .Increase()
+                                            ct.PostUiBackground(taskProgressItem.IncreaseUi)
                                                 .IfSuccess(() => r.ToResult()),
                                         ct
                                     ),
@@ -56,7 +55,12 @@ public static class TaskProgressServiceExtension
                     items
                         .ToResult()
                         .IfSuccessForEachAsync(
-                            item => func.Invoke(item).IfSuccessAsync(taskProgressItem.Increase, ct),
+                            item =>
+                                func.Invoke(item)
+                                    .IfSuccessAsync(
+                                        () => ct.PostUiBackground(taskProgressItem.IncreaseUi),
+                                        ct
+                                    ),
                             ct
                         ),
                 item => item.Finish(),
@@ -78,7 +82,10 @@ public static class TaskProgressServiceExtension
                     items
                         .ToResult()
                         .IfSuccessForEach(item =>
-                            func.Invoke(item).IfSuccess(taskProgressItem.Increase)
+                            func.Invoke(item)
+                                .IfSuccess(
+                                    () => property.PostUiBackground(taskProgressItem.IncreaseUi)
+                                )
                         ),
                 item => item.Finish()
             );

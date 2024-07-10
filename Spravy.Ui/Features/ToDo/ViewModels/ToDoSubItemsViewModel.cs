@@ -100,8 +100,9 @@ public class ToDoSubItemsViewModel : ViewModelBase
                     t.ReferenceId = null;
                 }
 
-                var result = this.PostUiBackground(() => List.UpdateFavoriteItemUi(t))
-                    .IfSuccess(progressItem.Increase);
+                var result = this.PostUiBackground(
+                    () => List.UpdateFavoriteItemUi(t).IfSuccess(progressItem.IncreaseUi)
+                );
 
                 if (result.IsHasError)
                 {
@@ -192,7 +193,7 @@ public class ToDoSubItemsViewModel : ViewModelBase
                                         {
                                             orderIndex++;
 
-                                            return progressItem.Increase();
+                                            return this.PostUiBackground(progressItem.IncreaseUi);
                                         },
                                         ct
                                     )
