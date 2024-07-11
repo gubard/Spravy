@@ -4,6 +4,7 @@ using Spravy.Domain.Extensions;
 using Spravy.Domain.Models;
 using Spravy.ToDo.Db.Extensions;
 using Spravy.ToDo.Db.Models;
+using Spravy.ToDo.Domain.Enums;
 using Spravy.ToDo.Domain.Models;
 
 namespace Spravy.ToDo.Db.Mapper.Mappers;
@@ -11,12 +12,6 @@ namespace Spravy.ToDo.Db.Mapper.Mappers;
 [Mapper(PreferParameterlessConstructors = false)]
 public static partial class ToDoDbMapper
 {
-    public static partial ReferenceToDoItemSettings ToReferenceToDoItemSettings(
-        this ToDoItemEntity entity
-    );
-
-    public static partial ToDoItemEntity ToToDoItemEntity(this ReferenceToDoItemSettings entity);
-
     public static partial PlannedToDoItemSettings ToPlannedToDoItemSettings(
         this ToDoItemEntity entity
     );
@@ -65,6 +60,11 @@ public static partial class ToDoDbMapper
 
     public static ToDoItem ToToDoItem(this ToDoItemEntity entity, ToDoItemParameters parameters)
     {
+        var referenceId =
+            entity.Type == ToDoItemType.Reference
+                ? entity.ReferenceId.ToOptionGuid()
+                : OptionStruct<Guid>.Default;
+
         return new(
             entity.Id,
             entity.Name,
@@ -77,7 +77,8 @@ public static partial class ToDoDbMapper
             parameters.ActiveItem,
             parameters.IsCan,
             entity.ParentId.ToOption(),
-            entity.DescriptionType
+            entity.DescriptionType,
+            referenceId
         );
     }
 

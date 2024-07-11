@@ -23,10 +23,6 @@ public interface IToDoService
         CancellationToken ct
     );
 
-    ConfiguredValueTaskAwaitable<
-        Result<ReferenceToDoItemSettings>
-    > GetReferenceToDoItemSettingsAsync(Guid id, CancellationToken ct);
-
     ConfiguredValueTaskAwaitable<Result> UpdateReferenceToDoItemAsync(
         Guid id,
         Guid referenceId,

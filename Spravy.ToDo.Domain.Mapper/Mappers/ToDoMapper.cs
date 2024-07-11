@@ -221,14 +221,6 @@ public static partial class ToDoMapper
         this PeriodicityOffsetToDoItemSettings value
     );
 
-    public static partial ReferenceToDoItemSettings ToReferenceToDoItemSettings(
-        this GetReferenceToDoItemSettingsReply value
-    );
-
-    public static partial GetReferenceToDoItemSettingsReply ToGetReferenceToDoItemSettingsReply(
-        this ReferenceToDoItemSettings value
-    );
-
     private static ByteString ToByteString(Guid id)
     {
         return id.ToByteString();

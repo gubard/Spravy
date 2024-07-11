@@ -18,7 +18,8 @@ public readonly struct ToDoItem
         OptionStruct<ActiveToDoItem> active,
         ToDoItemIsCan isCan,
         OptionStruct<Guid> parentId,
-        DescriptionType descriptionType
+        DescriptionType descriptionType,
+        OptionStruct<Guid> referenceId
     )
     {
         Id = id;
@@ -33,6 +34,7 @@ public readonly struct ToDoItem
         IsCan = isCan;
         ParentId = parentId;
         DescriptionType = descriptionType;
+        ReferenceId = referenceId;
     }
 
     public Guid Id { get; }
@@ -47,6 +49,7 @@ public readonly struct ToDoItem
     public ToDoItemIsCan IsCan { get; }
     public OptionStruct<Guid> ParentId { get; }
     public DescriptionType DescriptionType { get; }
+    public OptionStruct<Guid> ReferenceId { get; }
 
     public ToDoItem WithOrderIndex(uint orderIndex)
     {
@@ -62,7 +65,8 @@ public readonly struct ToDoItem
             Active,
             IsCan,
             ParentId,
-            DescriptionType
+            DescriptionType,
+            ReferenceId
         );
     }
 }

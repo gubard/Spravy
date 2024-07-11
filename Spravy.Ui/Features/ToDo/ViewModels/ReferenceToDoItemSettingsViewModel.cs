@@ -13,6 +13,7 @@ public class ReferenceToDoItemSettingsViewModel : ViewModelBase, IApplySettings
     {
         ToDoItemSelector = toDoItemSelector;
         this.toDoService = toDoService;
+
         InitializedCommand = SpravyCommand.Create(
             InitializedAsync,
             errorHandler,
@@ -29,13 +30,13 @@ public class ReferenceToDoItemSettingsViewModel : ViewModelBase, IApplySettings
     private ConfiguredValueTaskAwaitable<Result> InitializedAsync(CancellationToken ct)
     {
         return toDoService
-            .GetReferenceToDoItemSettingsAsync(ToDoItemId, ct)
+            .GetToDoItemAsync(ToDoItemId, ct)
             .IfSuccessAsync(
-                setting =>
+                item =>
                 {
                     ToDoItemSelector.IgnoreIds = new([ToDoItemId,]);
 
-                    if (setting.ReferenceId.TryGetValue(out var referenceId))
+                    if (item.ReferenceId.TryGetValue(out var referenceId))
                     {
                         ToDoItemSelector.DefaultSelectedItemId = referenceId;
                     }

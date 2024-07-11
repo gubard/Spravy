@@ -124,28 +124,6 @@ public class EfToDoService : IToDoService
             );
     }
 
-    public ConfiguredValueTaskAwaitable<
-        Result<ReferenceToDoItemSettings>
-    > GetReferenceToDoItemSettingsAsync(Guid id, CancellationToken ct)
-    {
-        return dbContextFactory
-            .Create()
-            .IfSuccessDisposeAsync(
-                context =>
-                    context.AtomicExecuteAsync(
-                        () =>
-                            context
-                                .GetEntityAsync<ToDoItemEntity>(id)
-                                .IfSuccessAsync(
-                                    item => item.ToReferenceToDoItemSettings().ToResult(),
-                                    ct
-                                ),
-                        ct
-                    ),
-                ct
-            );
-    }
-
     public ConfiguredValueTaskAwaitable<Result> UpdateReferenceToDoItemAsync(
         Guid id,
         Guid referenceId,

@@ -135,32 +135,6 @@ public class GrpcToDoService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<
-        Result<ReferenceToDoItemSettings>
-    > GetReferenceToDoItemSettingsAsync(Guid id, CancellationToken ct)
-    {
-        return CallClientAsync(
-            client =>
-                metadataFactory
-                    .CreateAsync(ct)
-                    .IfSuccessAsync(
-                        metadata =>
-                            client
-                                .GetReferenceToDoItemSettingsAsync(
-                                    new() { Id = id.ToByteString(), },
-                                    metadata,
-                                    DateTime.UtcNow.Add(Timeout),
-                                    ct
-                                )
-                                .ToValueTaskResultValueOnly()
-                                .ConfigureAwait(false),
-                        ct
-                    )
-                    .IfSuccessAsync(reply => reply.ToReferenceToDoItemSettings().ToResult(), ct),
-            ct
-        );
-    }
-
     public ConfiguredValueTaskAwaitable<Result> UpdateReferenceToDoItemAsync(
         Guid id,
         Guid referenceId,

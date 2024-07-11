@@ -38,20 +38,6 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
             );
     }
 
-    public override Task<GetReferenceToDoItemSettingsReply> GetReferenceToDoItemSettings(
-        GetReferenceToDoItemSettingsRequest request,
-        ServerCallContext context
-    )
-    {
-        return toDoService
-            .GetReferenceToDoItemSettingsAsync(request.Id.ToGuid(), context.CancellationToken)
-            .IfSuccessAsync(
-                settings => settings.ToGetReferenceToDoItemSettingsReply().ToResult(),
-                context.CancellationToken
-            )
-            .HandleAsync(serializer, context.CancellationToken);
-    }
-
     public override Task<UpdateReferenceToDoItemReply> UpdateReferenceToDoItem(
         UpdateReferenceToDoItemRequest request,
         ServerCallContext context

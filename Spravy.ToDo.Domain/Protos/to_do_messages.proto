@@ -104,6 +104,7 @@ message ToDoItemGrpc {
   ToDoItemIsCanGrpc is_can = 10;
   bytes parent_id = 11;
   DescriptionTypeGrpc description_type = 12;
+  bytes referenceId = 13;
 }
 
 message GetToDoItemsReply {
@@ -225,6 +226,7 @@ message GetToDoItemReply {
   ToDoItemIsCanGrpc is_can = 10;
   bytes parent_id = 11;
   DescriptionTypeGrpc description_type = 12;
+  bytes referenceId = 13;
 }
 
 message GetChildrenToDoItemIdsRequest {
@@ -533,6 +535,7 @@ message ToDoSubItemGrpc {
   bool is_favorite = 8;
   ActiveToDoItemGrpc active = 9;
   string link = 12;
+  bytes referenceId = 16;
 
   oneof Parameters {
     ToDoSubItemValueGrpc value = 6;

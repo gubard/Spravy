@@ -94,6 +94,7 @@ public class ToDoCache : IToDoCache
         item.IsCan = toDoItem.IsCan;
         item.IsFavorite = toDoItem.IsFavorite;
         item.OrderIndex = toDoItem.OrderIndex;
+        item.ReferenceId = toDoItem.ReferenceId.GetValueOrNull();
 
         if (toDoItem.ParentId.TryGetValue(out var value))
         {
