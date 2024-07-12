@@ -200,7 +200,20 @@ public class ToDoCache : IToDoCache
                 GetToDoItem(id)
                     .IfSuccess(item =>
                     {
-                        item.Children.Update(children.OrderBy(x => x.OrderIndex));
+                        item.Children.RemoveAll(
+                            item.Children.Where(x => !items.Span.Contains(x.Id))
+                        );
+
+                        var currentChildrenIds = item
+                            .Children.Select(x => x.Id)
+                            .ToArray()
+                            .ToReadOnlyMemory();
+
+                        item.Children.AddRange(
+                            children.Where(x => !currentChildrenIds.Span.Contains(x.Id)).ToArray()
+                        );
+
+                        item.BinarySortChildren();
 
                         return Result.Success;
                     })

@@ -215,4 +215,44 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
 
         return this.ToResult();
     }
+
+    private int BinarySearch(ToDoItemEntityNotify x, int low, int high)
+    {
+        if (high <= low)
+        {
+            return x.OrderIndex > Children[low].OrderIndex ? low + 1 : low;
+        }
+
+        var mid = (low + high) / 2;
+
+        if (x.OrderIndex == Children[mid].OrderIndex)
+        {
+            return mid + 1;
+        }
+
+        if (x.OrderIndex > Children[mid].OrderIndex)
+        {
+            return BinarySearch(x, mid + 1, high);
+        }
+
+        return BinarySearch(x, low, mid - 1);
+    }
+
+    public void BinarySortChildren()
+    {
+        for (var i = 1; i < Children.Count; ++i)
+        {
+            var j = i - 1;
+            var key = Children[i];
+            var pos = BinarySearch(key, 0, j);
+
+            while (j >= pos)
+            {
+                Children[j + 1] = Children[j];
+                j--;
+            }
+
+            Children[j + 1] = key;
+        }
+    }
 }
