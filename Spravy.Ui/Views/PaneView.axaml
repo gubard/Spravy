@@ -44,7 +44,8 @@
             </Button>
 
             <Button Classes="mode-press"
-                    Command="{x:Static h:UiHelper.NavigateToPasswordGenerator}">
+                    Command="{x:Static h:UiHelper.NavigateToPasswordGenerator}"
+                    IsVisible="{Binding IsShowPasswordGenerator}">
                 <Grid ColumnDefinitions="Auto,Auto">
                     <mi:MaterialIcon Kind="Password" />
                     <TextBlock Grid.Column="1" Text="{DynamicResource PaneView.PasswordGenerator}" />
