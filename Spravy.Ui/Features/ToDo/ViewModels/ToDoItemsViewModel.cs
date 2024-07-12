@@ -58,46 +58,6 @@ public class ToDoItemsViewModel : ViewModelBase
         return Result.Success;
     }
 
-    private int BinarySearch(ToDoItemEntityNotify x, int low, int high)
-    {
-        if (high <= low)
-        {
-            return x.OrderIndex > Items[low].OrderIndex ? low + 1 : low;
-        }
-
-        var mid = (low + high) / 2;
-
-        if (x.OrderIndex == Items[mid].OrderIndex)
-        {
-            return mid + 1;
-        }
-
-        if (x.OrderIndex > Items[mid].OrderIndex)
-        {
-            return BinarySearch(x, mid + 1, high);
-        }
-
-        return BinarySearch(x, low, mid - 1);
-    }
-
-    private void BinarySort()
-    {
-        for (var i = 1; i < Items.Count; ++i)
-        {
-            var j = i - 1;
-            var key = Items[i];
-            var pos = BinarySearch(key, 0, j);
-
-            while (j >= pos)
-            {
-                Items[j + 1] = Items[j];
-                j--;
-            }
-
-            Items[j + 1] = key;
-        }
-    }
-
     public Result UpdateItemUi(ToDoItemEntityNotify item)
     {
         var indexOf = IndexOf(item);
@@ -107,7 +67,7 @@ public class ToDoItemsViewModel : ViewModelBase
             Items.Add(item);
         }
 
-        BinarySort();
+        Items.BinarySort();
 
         return Result.Success;
     }

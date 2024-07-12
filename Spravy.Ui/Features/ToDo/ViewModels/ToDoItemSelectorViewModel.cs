@@ -67,6 +67,7 @@ public class ToDoItemSelectorViewModel : ViewModelBase
                     this.PostUiBackground(() =>
                     {
                         Roots.Update(items);
+                        Roots.BinarySort();
 
                         return SetupUi();
                     }),

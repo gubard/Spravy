@@ -153,6 +153,15 @@ public class ToDoCache : IToDoCache
                 return item
                     .Children.ToResult()
                     .IfSuccessForEach(UpdateUi)
+                    .IfSuccessForEach(y =>
+                        this.PostUiBackground(() =>
+                            {
+                                y.Parent = x;
+
+                                return Result.Success;
+                            })
+                            .IfSuccess(y.ToResult)
+                    )
                     .IfSuccessForEach(y => y.Id.ToResult())
                     .IfSuccess(children => UpdateChildrenItemsUi(x.Id, children))
                     .IfSuccess(_ => x.ToResult());
@@ -213,7 +222,7 @@ public class ToDoCache : IToDoCache
                             children.Where(x => !currentChildrenIds.Span.Contains(x.Id)).ToArray()
                         );
 
-                        item.BinarySortChildren();
+                        item.Children.BinarySort();
 
                         return Result.Success;
                     })
