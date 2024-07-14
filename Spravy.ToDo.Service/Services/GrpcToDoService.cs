@@ -63,7 +63,16 @@ public class GrpcToDoService : ToDoService.ToDoServiceBase
                 request.ParentId.ToOptionGuid(),
                 context.CancellationToken
             )
-            .HandleAsync<CloneToDoItemReply>(serializer, context.CancellationToken);
+            .HandleAsync(
+                serializer,
+                id =>
+                {
+                    var reply = new CloneToDoItemReply { NewItemId = id.ToByteString(), };
+
+                    return reply;
+                },
+                context.CancellationToken
+            );
     }
 
     public override Task<GetChildrenToDoItemShortsReply> GetChildrenToDoItemShorts(

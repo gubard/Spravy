@@ -42,6 +42,68 @@ public class SpravyCommandService
             taskProgressService
         );
 
+        MultiCreateReference = SpravyCommand.Create<IToDoSubItemsViewModelProperty>(
+            (property, ct) =>
+                property
+                    .GetSelectedItems()
+                    .IfSuccess(selected => selected.Select(x => x.Id).ToResult())
+                    .IfSuccessAsync(
+                        selectedIds =>
+                            dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
+                                vm =>
+                                    dialogViewer
+                                        .CloseInputDialogAsync(ct)
+                                        .IfSuccessAsync(
+                                            () =>
+                                                taskProgressService
+                                                    .RunProgressAsync(
+                                                        selectedIds,
+                                                        i =>
+                                                            toDoService
+                                                                .CloneToDoItemAsync(
+                                                                    i,
+                                                                    vm.Id.ToOption(),
+                                                                    ct
+                                                                )
+                                                                .IfSuccessAsync(
+                                                                    id =>
+                                                                        toDoService
+                                                                            .UpdateToDoItemTypeAsync(
+                                                                                id,
+                                                                                ToDoItemType.Reference,
+                                                                                ct
+                                                                            )
+                                                                            .IfSuccessAsync(
+                                                                                () =>
+                                                                                    toDoService.UpdateReferenceToDoItemAsync(
+                                                                                        id,
+                                                                                        i,
+                                                                                        ct
+                                                                                    ),
+                                                                                ct
+                                                                            ),
+                                                                    ct
+                                                                ),
+                                                        ct
+                                                    )
+                                                    .IfSuccessAsync(
+                                                        () =>
+                                                            uiApplicationService.RefreshCurrentViewAsync(
+                                                                ct
+                                                            ),
+                                                        ct
+                                                    ),
+                                            ct
+                                        ),
+                                vm => vm.IgnoreIds = selectedIds,
+                                ct
+                            ),
+                        ct
+                    ),
+            errorHandler,
+            taskProgressService
+        );
+
         MultiClone = SpravyCommand.Create<IToDoSubItemsViewModelProperty>(
             (property, ct) =>
                 property
@@ -67,7 +129,7 @@ public class SpravyCommandService
                                                         ct
                                                     )
                                                     .IfSuccessAsync(
-                                                        () =>
+                                                        _ =>
                                                             uiApplicationService.RefreshCurrentViewAsync(
                                                                 ct
                                                             ),
@@ -1094,6 +1156,48 @@ public class SpravyCommandService
                                 ct
                             )
                             .IfSuccessAsync(
+                                _ => uiApplicationService.RefreshCurrentViewAsync(ct),
+                                ct
+                            ),
+                    view => view.DefaultSelectedItemId = item.Id,
+                    ct
+                ),
+            errorHandler,
+            taskProgressService
+        );
+
+        CreateReference = SpravyCommand.Create<ToDoItemEntityNotify>(
+            (item, ct) =>
+                dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
+                    itemNotify =>
+                        dialogViewer
+                            .CloseInputDialogAsync(ct)
+                            .IfSuccessAsync(
+                                () =>
+                                    toDoService
+                                        .CloneToDoItemAsync(item.Id, itemNotify.Id.ToOption(), ct)
+                                        .IfSuccessAsync(
+                                            id =>
+                                                toDoService
+                                                    .UpdateToDoItemTypeAsync(
+                                                        id,
+                                                        ToDoItemType.Reference,
+                                                        ct
+                                                    )
+                                                    .IfSuccessAsync(
+                                                        () =>
+                                                            toDoService.UpdateReferenceToDoItemAsync(
+                                                                id,
+                                                                item.Id,
+                                                                ct
+                                                            ),
+                                                        ct
+                                                    ),
+                                            ct
+                                        ),
+                                ct
+                            )
+                            .IfSuccessAsync(
                                 () => uiApplicationService.RefreshCurrentViewAsync(ct),
                                 ct
                             ),
@@ -1553,6 +1657,63 @@ public class SpravyCommandService
                                                             itemNotify.Id.ToOption(),
                                                             ct
                                                         ),
+                                                    ct
+                                                ),
+                                            ct
+                                        )
+                                        .IfSuccessAsync(
+                                            _ => uiApplicationService.RefreshCurrentViewAsync(ct),
+                                            ct
+                                        ),
+                                view => view.DefaultSelectedItemId = item.Id,
+                                ct
+                            ),
+                        ct
+                    ),
+            errorHandler,
+            taskProgressService
+        );
+
+        MultiCreateReferenceToDoItem = SpravyCommand.Create<ToDoItemEntityNotify>(
+            (item, ct) =>
+                item.GetSelectedItems()
+                    .IfSuccess(selected => selected.Select(x => x.Id).ToResult())
+                    .IfSuccessAsync(
+                        selected =>
+                            dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
+                                itemNotify =>
+                                    dialogViewer
+                                        .CloseInputDialogAsync(ct)
+                                        .IfSuccessAsync(
+                                            () =>
+                                                taskProgressService.RunProgressAsync(
+                                                    selected,
+                                                    i =>
+                                                        toDoService
+                                                            .CloneToDoItemAsync(
+                                                                i,
+                                                                itemNotify.Id.ToOption(),
+                                                                ct
+                                                            )
+                                                            .IfSuccessAsync(
+                                                                id =>
+                                                                    toDoService
+                                                                        .UpdateToDoItemTypeAsync(
+                                                                            id,
+                                                                            ToDoItemType.Reference,
+                                                                            ct
+                                                                        )
+                                                                        .IfSuccessAsync(
+                                                                            () =>
+                                                                                toDoService.UpdateReferenceToDoItemAsync(
+                                                                                    id,
+                                                                                    item.Id,
+                                                                                    ct
+                                                                                ),
+                                                                            ct
+                                                                        ),
+                                                                ct
+                                                            ),
                                                     ct
                                                 ),
                                             ct
@@ -2416,6 +2577,7 @@ public class SpravyCommandService
     public SpravyCommand MultiChangeOrderToDoItem { get; }
     public SpravyCommand MultiResetToDoItem { get; }
     public SpravyCommand MultiCloneToDoItem { get; }
+    public SpravyCommand MultiCreateReferenceToDoItem { get; }
 
     public SpravyCommand Complete { get; }
     public SpravyCommand AddToFavorite { get; }
@@ -2432,6 +2594,7 @@ public class SpravyCommandService
     public SpravyCommand ChangeOrder { get; }
     public SpravyCommand Reset { get; }
     public SpravyCommand Clone { get; }
+    public SpravyCommand CreateReference { get; }
     public SpravyCommand NavigateToToDoItem { get; }
     public SpravyCommand NavigateToActiveToDoItem { get; }
 
@@ -2449,6 +2612,7 @@ public class SpravyCommandService
     public SpravyCommand MultiChangeOrder { get; }
     public SpravyCommand MultiReset { get; }
     public SpravyCommand MultiClone { get; }
+    public SpravyCommand MultiCreateReference { get; }
     public SpravyCommand MultiOpenLink { get; }
 
     public SpravyCommand GeneratePassword { get; }

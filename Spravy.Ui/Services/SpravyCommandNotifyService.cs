@@ -27,21 +27,25 @@ public class SpravyCommandNotifyService
             new("Command.OpenLink"),
             commandService.MultiOpenLink
         );
+
         MultiAddChild = new(
             MaterialIconKind.Plus,
             new("Command.AddChildToDoItem"),
             commandService.MultiAddChild
         );
+
         MultiDelete = new(
             MaterialIconKind.Delete,
             new("Command.Delete"),
             commandService.MultiDelete
         );
+
         MultiShowSetting = new(
             MaterialIconKind.Settings,
             new("Command.Setting"),
             commandService.MultiShowSetting
         );
+
         MultiOpenLeaf = new(
             MaterialIconKind.Leaf,
             new("Command.OpenLeaf"),
@@ -79,10 +83,17 @@ public class SpravyCommandNotifyService
         );
 
         MultiReset = new(MaterialIconKind.Refresh, new("Command.Reset"), commandService.MultiReset);
+
         MultiClone = new(
             MaterialIconKind.Copyleft,
             new("Command.Clone"),
             commandService.MultiClone
+        );
+
+        MultiCreateReference = new(
+            MaterialIconKind.LinkVariant,
+            new("Command.CreateReference"),
+            commandService.MultiCreateReference
         );
 
         MultiCompleteToDoItem = new(
@@ -168,12 +179,21 @@ public class SpravyCommandNotifyService
             new("Command.Reset"),
             commandService.MultiResetToDoItem
         );
+
         MultiCloneToDoItem = new(
             MaterialIconKind.Copyleft,
             new("Command.Clone"),
             commandService.MultiCloneToDoItem
         );
+
+        MultiCreateReferenceToDoItem = new(
+            MaterialIconKind.LinkVariant,
+            new("Command.CreateReference"),
+            commandService.MultiCreateReferenceToDoItem
+        );
+
         Complete = new(MaterialIconKind.Check, new("Command.Complete"), commandService.Complete);
+
         AddToFavorite = new(
             MaterialIconKind.StarOutline,
             new("Command.AddToFavorite"),
@@ -187,18 +207,23 @@ public class SpravyCommandNotifyService
         );
 
         OpenLink = new(MaterialIconKind.Link, new("Command.OpenLink"), commandService.OpenLink);
+
         AddChild = new(
             MaterialIconKind.Plus,
             new("Command.AddChildToDoItem"),
             commandService.AddChild
         );
+
         Delete = new(MaterialIconKind.Delete, new("Command.Delete"), commandService.Delete);
+
         ShowSetting = new(
             MaterialIconKind.Settings,
             new("Command.Setting"),
             commandService.ShowSetting
         );
+
         OpenLeaf = new(MaterialIconKind.Leaf, new("Command.OpenLeaf"), commandService.OpenLeaf);
+
         ChangeParent = new(
             MaterialIconKind.SwapHorizontal,
             new("Command.ChangeParent"),
@@ -227,8 +252,15 @@ public class SpravyCommandNotifyService
             new("Command.Reorder"),
             commandService.ChangeOrder
         );
+
         Reset = new(MaterialIconKind.Refresh, new("Command.Reset"), commandService.Reset);
         Clone = new(MaterialIconKind.Copyleft, new("Command.Clone"), commandService.Clone);
+
+        CreateReference = new(
+            MaterialIconKind.LinkVariant,
+            new("Command.CreateReference"),
+            commandService.CreateReference
+        );
 
         NavigateToCurrentToDoItem = new(
             MaterialIconKind.ArrowRight,
@@ -253,6 +285,7 @@ public class SpravyCommandNotifyService
             MultiRemoveFromFavorite,
             MultiRandomizeChildrenOrder,
             MultiMakeAsRoot,
+            MultiCreateReference,
         };
 
         RootToDoItemsMulti = new[]
@@ -271,6 +304,7 @@ public class SpravyCommandNotifyService
             MultiCopyToClipboard,
             MultiRemoveFromFavorite,
             MultiRandomizeChildrenOrder,
+            MultiCreateReference,
         };
 
         TodayToDoItemsMulti = new[]
@@ -290,11 +324,11 @@ public class SpravyCommandNotifyService
             MultiRemoveFromFavorite,
             MultiRandomizeChildrenOrder,
             MultiMakeAsRoot,
+            MultiCreateReference,
         };
 
         SearchToDoItemsMulti = new[]
         {
-            MultiClone,
             MultiComplete,
             MultiDelete,
             MultiReset,
@@ -310,6 +344,7 @@ public class SpravyCommandNotifyService
             MultiRemoveFromFavorite,
             MultiRandomizeChildrenOrder,
             MultiMakeAsRoot,
+            MultiCreateReference,
         };
     }
 
@@ -328,6 +363,7 @@ public class SpravyCommandNotifyService
     public SpravyCommandNotify MultiChangeOrder { get; }
     public SpravyCommandNotify MultiReset { get; }
     public SpravyCommandNotify MultiClone { get; }
+    public SpravyCommandNotify MultiCreateReference { get; }
 
     public SpravyCommandNotify MultiCompleteToDoItem { get; }
     public SpravyCommandNotify MultiAddToFavoriteToDoItem { get; }
@@ -344,6 +380,7 @@ public class SpravyCommandNotifyService
     public SpravyCommandNotify MultiChangeOrderToDoItem { get; }
     public SpravyCommandNotify MultiResetToDoItem { get; }
     public SpravyCommandNotify MultiCloneToDoItem { get; }
+    public SpravyCommandNotify MultiCreateReferenceToDoItem { get; }
 
     public SpravyCommandNotify NavigateToCurrentToDoItem { get; }
     public SpravyCommandNotify Complete { get; }
@@ -361,6 +398,7 @@ public class SpravyCommandNotifyService
     public SpravyCommandNotify ChangeOrder { get; }
     public SpravyCommandNotify Reset { get; }
     public SpravyCommandNotify Clone { get; }
+    public SpravyCommandNotify CreateReference { get; }
 
     public ReadOnlyMemory<SpravyCommandNotify> LeafToDoItemsMulti { get; }
     public ReadOnlyMemory<SpravyCommandNotify> RootToDoItemsMulti { get; }

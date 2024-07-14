@@ -73,7 +73,7 @@ public class GrpcToDoService
         );
     }
 
-    public ConfiguredValueTaskAwaitable<Result> CloneToDoItemAsync(
+    public ConfiguredValueTaskAwaitable<Result<Guid>> CloneToDoItemAsync(
         Guid cloneId,
         OptionStruct<Guid> parentId,
         CancellationToken ct
@@ -86,7 +86,7 @@ public class GrpcToDoService
                     .IfSuccessAsync(
                         metadata =>
                             client
-                                .CloneToDoItemAsync(
+                                .CloneToDoItem(
                                     new()
                                     {
                                         CloneId = cloneId.ToByteString(),
@@ -96,8 +96,8 @@ public class GrpcToDoService
                                     DateTime.UtcNow.Add(Timeout),
                                     ct
                                 )
-                                .ToValueTaskResultOnly()
-                                .ConfigureAwait(false),
+                                .ToResult()
+                                .IfSuccess(reply => reply.NewItemId.ToGuid().ToResult()),
                         ct
                     ),
             ct

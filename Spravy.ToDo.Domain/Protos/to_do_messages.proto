@@ -37,6 +37,7 @@ message CloneToDoItemRequest {
 }
 
 message CloneToDoItemReply {
+  bytes new_item_id = 1;
 }
 
 message GetChildrenToDoItemShortsRequest {

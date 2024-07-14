@@ -38,7 +38,7 @@ public class EfToDoService : IToDoService
         this.getterToDoItemParametersService = getterToDoItemParametersService;
     }
 
-    public ConfiguredValueTaskAwaitable<Result> CloneToDoItemAsync(
+    public ConfiguredValueTaskAwaitable<Result<Guid>> CloneToDoItemAsync(
         Guid cloneId,
         OptionStruct<Guid> parentId,
         CancellationToken ct
@@ -1763,7 +1763,7 @@ public class EfToDoService : IToDoService
         }
     }
 
-    private async ValueTask<Result> AddCloneAsync(
+    private async ValueTask<Result<Guid>> AddCloneAsync(
         SpravyDbToDoDbContext context,
         ToDoItemEntity clone,
         OptionStruct<Guid> parentId,
@@ -1786,7 +1786,7 @@ public class EfToDoService : IToDoService
             await AddCloneAsync(context, item, clone.Id.ToOption(), ct);
         }
 
-        return Result.Success;
+        return clone.Id.ToResult();
     }
 
     private ConfiguredValueTaskAwaitable<Result> DeleteToDoItemAsync(

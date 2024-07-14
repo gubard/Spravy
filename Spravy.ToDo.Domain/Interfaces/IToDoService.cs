@@ -115,7 +115,7 @@ public interface IToDoService
         CancellationToken ct
     );
 
-    ConfiguredValueTaskAwaitable<Result> CloneToDoItemAsync(
+    ConfiguredValueTaskAwaitable<Result<Guid>> CloneToDoItemAsync(
         Guid cloneId,
         OptionStruct<Guid> parentId,
         CancellationToken ct

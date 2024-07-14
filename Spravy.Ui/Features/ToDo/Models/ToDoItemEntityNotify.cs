@@ -46,6 +46,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                 spravyCommandNotifyService.MultiAddToFavoriteToDoItem,
                 spravyCommandNotifyService.MultiRemoveFromFavoriteToDoItem,
                 spravyCommandNotifyService.MultiCompleteToDoItem,
+                spravyCommandNotifyService.MultiCreateReferenceToDoItem,
             ]
         );
     }
@@ -190,6 +191,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
                 spravyCommandNotifyService.ChangeOrder,
                 spravyCommandNotifyService.Reset,
                 spravyCommandNotifyService.Clone,
+                spravyCommandNotifyService.CreateReference,
             ]
         );
 
