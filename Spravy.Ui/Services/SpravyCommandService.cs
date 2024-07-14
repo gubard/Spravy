@@ -51,19 +51,28 @@ public class SpravyCommandService
                         selectedIds =>
                             dialogViewer.ShowToDoItemSelectorConfirmDialogAsync(
                                 vm =>
-                                    taskProgressService
-                                        .RunProgressAsync(
-                                            selectedIds,
-                                            i =>
-                                                toDoService.CloneToDoItemAsync(
-                                                    i,
-                                                    vm.Id.ToOption(),
-                                                    ct
-                                                ),
-                                            ct
-                                        )
+                                    dialogViewer
+                                        .CloseInputDialogAsync(ct)
                                         .IfSuccessAsync(
-                                            () => uiApplicationService.RefreshCurrentViewAsync(ct),
+                                            () =>
+                                                taskProgressService
+                                                    .RunProgressAsync(
+                                                        selectedIds,
+                                                        i =>
+                                                            toDoService.CloneToDoItemAsync(
+                                                                i,
+                                                                vm.Id.ToOption(),
+                                                                ct
+                                                            ),
+                                                        ct
+                                                    )
+                                                    .IfSuccessAsync(
+                                                        () =>
+                                                            uiApplicationService.RefreshCurrentViewAsync(
+                                                                ct
+                                                            ),
+                                                        ct
+                                                    ),
                                             ct
                                         ),
                                 vm => vm.IgnoreIds = selectedIds,
