@@ -52,10 +52,11 @@
 
                         <ItemsControl.DataTemplates>
                             <DataTemplate DataType="m:SpravyCommandNotify">
-                                <Button Classes="Basic" 
+                                <Button Classes="Basic"
                                         Command="{Binding Item.Command}"
                                         CommandParameter="{Binding $parent[v:LeafToDoItemsView].MainViewModel}"
-                                        Content="{Binding Kind}" />
+                                        Content="{Binding Kind}"
+                                        ToolTip.Tip="{Binding Text}" />
                             </DataTemplate>
                         </ItemsControl.DataTemplates>
                     </ItemsControl>
@@ -70,7 +71,8 @@
                         <Button.Styles>
                             <Style Selector="MenuItem" x:DataType="m:SpravyCommandNotify">
                                 <Setter Property="Command" Value="{Binding Item.Command}" />
-                                <Setter Property="CommandParameter" Value="{Binding $parent[v:LeafToDoItemsView].MainViewModel}" />
+                                <Setter Property="CommandParameter"
+                                        Value="{Binding $parent[v:LeafToDoItemsView].MainViewModel}" />
                                 <Setter Property="Icon" Value="{Binding Kind}" />
                             </Style>
                         </Button.Styles>

@@ -54,7 +54,8 @@
                                 <Button Classes="Basic"
                                         Command="{Binding Item.Command}"
                                         CommandParameter="{Binding $parent[ItemsControl].DataContext}"
-                                        Content="{Binding Kind}" />
+                                        Content="{Binding Kind}"
+                                        ToolTip.Tip="{Binding Text}" />
                             </DataTemplate>
                         </ItemsControl.DataTemplates>
                     </ItemsControl>

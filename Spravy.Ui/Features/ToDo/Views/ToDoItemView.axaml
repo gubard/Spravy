@@ -62,7 +62,8 @@
                                     <Button Classes="Basic mode-press"
                                             Command="{Binding Item.Command}"
                                             CommandParameter="{Binding $parent[v:ToDoItemView].MainViewModel.Item}"
-                                            Content="{Binding Kind}" />
+                                            Content="{Binding Kind}"
+                                            ToolTip.Tip="{Binding Text}" />
                                 </DataTemplate>
                             </ItemsControl.DataTemplates>
                         </ItemsControl>

@@ -39,7 +39,8 @@
                         <Button Classes="Basic" 
                                 Command="{Binding Item.Command}"
                                 CommandParameter="{Binding $parent[v:SearchToDoItemsView].MainViewModel}"
-                                Content="{Binding Kind}" />
+                                Content="{Binding Kind}"
+                                ToolTip.Tip="{Binding Text}" />
                     </DataTemplate>
                 </ItemsControl.DataTemplates>
             </ItemsControl>

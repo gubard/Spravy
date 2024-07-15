@@ -32,7 +32,10 @@
 
     <Application.DataTemplates>
         <DataTemplate x:DataType="m:SpravyCommandNotify">
-            <Button Classes="Basic" Content="{Binding Kind}" Command="{Binding Item.Command}" />
+            <Button Classes="Basic"
+                    Content="{Binding Kind}"
+                    Command="{Binding Item.Command}"
+                    ToolTip.Tip="{Binding Text}" />
         </DataTemplate>
 
         <DataTemplate x:DataType="lm:Header4Localization">
