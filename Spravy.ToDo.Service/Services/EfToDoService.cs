@@ -344,12 +344,7 @@ public class EfToDoService : IToDoService
                                     .ToResult()
                                     .IfSuccessForEachAsync(
                                         e =>
-                                            GetLeafToDoItemIdsAsync(
-                                                    context,
-                                                    e,
-                                                    new List<Guid>(),
-                                                    ct
-                                                )
+                                            GetLeafToDoItemIdsAsync(context, e, new(), ct)
                                                 .ConfigureAwait(false)
                                                 .IfSuccessForEachAsync(
                                                     i =>
