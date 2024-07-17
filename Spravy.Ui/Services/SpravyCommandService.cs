@@ -1707,7 +1707,7 @@ public class SpravyCommandService
                                                                             () =>
                                                                                 toDoService.UpdateReferenceToDoItemAsync(
                                                                                     id,
-                                                                                    item.Id,
+                                                                                    i,
                                                                                     ct
                                                                                 ),
                                                                             ct
