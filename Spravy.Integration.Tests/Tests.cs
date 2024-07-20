@@ -13,6 +13,8 @@ public class Tests
     [Property("Priority", "0")]
     public void CreateUserFlow()
     {
+        LogCurrentTestMethod();
+        
         WindowHelper
             .CreateWindow()
             .TryCatch(
@@ -373,6 +375,8 @@ public class Tests
     [Property("Priority", "1")]
     public void TestAddToDoItemFlow()
     {
+        LogCurrentTestMethod();
+        
         WindowHelper
             .CreateWindow()
             .TryCatch(
@@ -396,6 +400,8 @@ public class Tests
     [Property("Priority", "2")]
     public void TestChangeToDoItemFlow()
     {
+        LogCurrentTestMethod();
+        
         WindowHelper
             .CreateWindow()
             .TryCatch(
@@ -431,6 +437,8 @@ public class Tests
     [Property("Priority", "3")]
     public void TestResetToDoItemFlow()
     {
+        LogCurrentTestMethod();
+        
         WindowHelper
             .CreateWindow()
             .TryCatch(
@@ -495,5 +503,11 @@ public class Tests
                         .Close(),
                 (w, _) => w.SaveFrame().LogCurrentState()
             );
+    }
+    
+    private void LogCurrentTestMethod()
+    {
+        var methodName = TestContext.CurrentContext.Test.Name;
+        Console.WriteLine($"Currently running test: {methodName}");
     }
 }
