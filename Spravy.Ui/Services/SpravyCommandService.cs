@@ -729,7 +729,7 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        GeneratePassword = SpravyCommand.Create<PasswordItemNotify>(
+        GeneratePassword = SpravyCommand.Create<PasswordItemEntityNotify>(
             (passwordItem, ct) =>
                 passwordService
                     .GeneratePasswordAsync(passwordItem.Id, ct)
@@ -749,7 +749,7 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        DeletePasswordItem = SpravyCommand.Create<PasswordItemNotify>(
+        DeletePasswordItem = SpravyCommand.Create<PasswordItemEntityNotify>(
             (passwordItem, ct) =>
                 dialogViewer.ShowConfirmContentDialogAsync<DeletePasswordItemViewModel>(
                     _ =>
@@ -1965,7 +1965,7 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        ShowPasswordItemSetting = SpravyCommand.Create<PasswordItemNotify>(
+        ShowPasswordItemSetting = SpravyCommand.Create<PasswordItemEntityNotify>(
             (item, ct) =>
                 dialogViewer.ShowConfirmContentDialogAsync<PasswordItemSettingsViewModel>(
                     vm =>

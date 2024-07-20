@@ -52,9 +52,9 @@
                        Foreground="{DynamicResource SukiText}" />
         </DataTemplate>
 
-        <DataTemplate x:DataType="pm:PasswordItemNotify">
+        <DataTemplate x:DataType="pm:PasswordItemEntityNotify">
             <Button Classes="alignment-stretch glass-card content-alignment-stretch"
-                    Command="{Binding GeneratePassword.Command}"
+                    Command="{x:Static h:UiHelper.GeneratePassword}"
                     CommandParameter="{Binding}">
                 <Grid ColumnDefinitions="*,Auto">
                     <TextBlock Classes="text-wrap h4" Text="{Binding Name}" />
@@ -64,7 +64,7 @@
                                 Command="{x:Static h:UiHelper.ShowPasswordItemSetting}"
                                 CommandParameter="{Binding}" />
                         <Button Content="{x:Static i:MaterialIconKind.Delete}"
-                                Command="{Binding DeletePasswordItem.Command}"
+                                Command="{x:Static h:UiHelper.DeletePasswordItem}"
                                 CommandParameter="{Binding}" />
                     </StackPanel>
                 </Grid>

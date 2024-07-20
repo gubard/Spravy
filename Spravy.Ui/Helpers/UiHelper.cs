@@ -41,6 +41,8 @@ public static class UiHelper
         PasswordItemSettingsViewInitialized = commands.PasswordItemSettingsViewInitialized.Command;
         PasswordGeneratorViewInitialized = commands.PasswordGeneratorViewInitialized.Command;
         DeletePasswordItemViewInitialized = commands.DeletePasswordItemViewInitialized.Command;
+        GeneratePassword = commands.GeneratePassword.Command;
+        DeletePasswordItem = commands.DeletePasswordItem.Command;
         NavigateToRootToDoItems = commands.GetNavigateTo<RootToDoItemsViewModel>().Command;
         NavigateToTodayToDoItems = commands.GetNavigateTo<TodayToDoItemsViewModel>().Command;
         NavigateToSearchToDoItems = commands.GetNavigateTo<SearchToDoItemsViewModel>().Command;
@@ -85,5 +87,7 @@ public static class UiHelper
     public static readonly ICommand PasswordItemSettingsViewInitialized;
     public static readonly ICommand AddRootToDoItemViewInitialized;
     public static readonly ICommand AddToDoItemViewInitialized;
+    public static readonly ICommand GeneratePassword;
+    public static readonly ICommand DeletePasswordItem;
     public static readonly SpravyCommandNotify NavigateToCurrentToDoItem;
 }

@@ -20,7 +20,7 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
         get => TypeCache<PasswordGeneratorViewModel>.Type.Name;
     }
 
-    public AvaloniaList<PasswordItemNotify> Items { get; } = new();
+    public AvaloniaList<PasswordItemEntityNotify> Items { get; } = new();
 
     public ConfiguredValueTaskAwaitable<Result> RefreshAsync(CancellationToken ct)
     {
@@ -29,14 +29,14 @@ public class PasswordGeneratorViewModel : NavigatableViewModelBase, IRefresh
         return passwordService
             .GetPasswordItemsAsync(ct)
             .IfSuccessForEachAsync(
-                item =>
-                    this.InvokeUiBackgroundAsync(() =>
-                    {
-                        Items.Add(passwordItemCache.GetPasswordItem(item.Id));
-                        passwordItemCache.UpdateAsync(item);
+                item => passwordItemCache.GetPasswordItem(item.Id).IfSuccessAsync(i=>this.InvokeUiBackgroundAsync(() =>
+                {
+                    Items.Add(i);
+                    passwordItemCache.UpdateUi(item);
 
-                        return Result.Success;
-                    }),
+                    return Result.Success;
+                }), ct)
+                    ,
                 ct
             );
     }

@@ -2,52 +2,38 @@ namespace Spravy.Ui.Features.PasswordGenerator.Services;
 
 public class PasswordItemCache : IPasswordItemCache
 {
-    private readonly Dictionary<Guid, PasswordItemNotify> cache;
-    private readonly SpravyCommandService spravyCommandService;
+    private readonly Dictionary<Guid, PasswordItemEntityNotify> cache;
 
-    public PasswordItemCache(SpravyCommandService spravyCommandService)
+    public PasswordItemCache()
     {
         cache = new();
-        this.spravyCommandService = spravyCommandService;
     }
 
-    public PasswordItemNotify GetPasswordItem(Guid id)
+    public Result<PasswordItemEntityNotify> GetPasswordItem(Guid id)
     {
         if (cache.TryGetValue(id, out var value))
         {
-            return value;
+            return value.ToResult();
         }
 
-        var result = new PasswordItemNotify(
-            new(
-                id,
-                "Loading...",
-                string.Empty,
-                512,
-                string.Empty,
-                true,
-                true,
-                true,
-                true,
-                string.Empty
-            ),
-            spravyCommandService
-        );
+        var result = new PasswordItemEntityNotify();
 
-        cache.Add(id, result);
+        if (cache.TryAdd(id, result))
+        {
+            return result.ToResult();
+        }
 
-        return result;
+        return cache[id].ToResult();
     }
 
-    public ConfiguredValueTaskAwaitable<Result> UpdateAsync(PasswordItem passwordItem)
+    public Result UpdateUi(PasswordItem passwordItem)
     {
-        var item = GetPasswordItem(passwordItem.Id);
+        return GetPasswordItem(passwordItem.Id)
+           .IfSuccess(item =>
+            {
+                item.Name = passwordItem.Name;
 
-        return this.InvokeUiBackgroundAsync(() =>
-        {
-            item.Name = passwordItem.Name;
-
-            return Result.Success;
-        });
+                return Result.Success;
+            });
     }
 }
