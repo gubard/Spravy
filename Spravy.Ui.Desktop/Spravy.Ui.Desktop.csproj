@@ -9,6 +9,10 @@
         <PublishReadyToRun>true</PublishReadyToRun>
         <SelfContained Condition="'$(Configuration)' == 'Release'">true</SelfContained>
         <ApplicationIcon>Resources\Logo.ico</ApplicationIcon>
+        <!--<PublishAot>true</PublishAot>
+        <RunAOTCompilation>true</RunAOTCompilation>
+        <PublishTrimmed>true</PublishTrimmed>
+        <TrimMode>full</TrimMode>-->
     </PropertyGroup>
 
     <PropertyGroup>

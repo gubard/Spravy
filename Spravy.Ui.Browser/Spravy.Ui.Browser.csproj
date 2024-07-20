@@ -3,10 +3,13 @@
         <RuntimeIdentifier>browser-wasm</RuntimeIdentifier>
         <WasmMainJSPath>AppBundle\main.js</WasmMainJSPath>
         <OutputType>Exe</OutputType>
-        
+
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <!--<WasmStripILAfterAOT>true</WasmStripILAfterAOT>
+        <PublishAot>true</PublishAot>
+        <RunAOTCompilation>true</RunAOTCompilation>
         <PublishTrimmed>true</PublishTrimmed>
-        <TrimMode>full</TrimMode>
+        <TrimMode>full</TrimMode>-->
     </PropertyGroup>
 
     <ItemGroup>
