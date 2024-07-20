@@ -9,7 +9,6 @@
         <RuntimeIdentifiers>linux-x64;win-x64;win-arm64;linux-arm64</RuntimeIdentifiers>
         <PublishReadyToRun>true</PublishReadyToRun>
         <SelfContained Condition="'$(Configuration)' == 'Release'">true</SelfContained>
-        <PublishSingleFile>true</PublishSingleFile>
         <ApplicationIcon>Resources\Logo.ico</ApplicationIcon>
     </PropertyGroup>
 
