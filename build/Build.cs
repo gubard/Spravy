@@ -405,7 +405,7 @@ class Build : NukeBuild
                     GetButtonName(x.Name),
                     x.FullName.Replace(html.FullName, $"https://{domain}")
                 )
-            );
+            ).ToArray();
 
         var botClient = new TelegramBotClient(TelegramToken);
 
@@ -417,6 +417,41 @@ class Build : NukeBuild
             )
             .GetAwaiter()
             .GetResult();
+
+        var currentItems = new List<InlineKeyboardButton>();
+
+        for (var i = 0; i < items.Length; i++)
+        {
+            currentItems.Add(items[i]);
+
+            if (i % 4 != 0 || i == 0)
+            {
+                continue;
+            }
+
+            botClient
+               .SendTextMessageAsync(
+                    "@spravy_release",
+                    $"Published {name} v{VersionService.Version}({VersionService.Version.Code})",
+                    replyMarkup: new InlineKeyboardMarkup(currentItems)
+                )
+               .GetAwaiter()
+               .GetResult();
+                
+            currentItems.Clear();
+        }
+
+        if (currentItems.Count != 0)
+        {
+            botClient
+               .SendTextMessageAsync(
+                    "@spravy_release",
+                    $"Published {name} v{VersionService.Version}({VersionService.Version.Code})",
+                    replyMarkup: new InlineKeyboardMarkup(currentItems)
+                )
+               .GetAwaiter()
+               .GetResult();
+        }
     }
 
     string GetButtonName(string name) =>
