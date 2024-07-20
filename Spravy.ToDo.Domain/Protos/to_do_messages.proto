@@ -4,7 +4,6 @@ option csharp_namespace = "Spravy.ToDo.Protos";
 
 package spravy.to_do;
 
-import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 
 message GetActiveToDoItemRequest {
