@@ -102,7 +102,7 @@ public class PeriodicityOffsetToDoItemSettingsViewModel
                         IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
 
                         return Result.Success;
-                    }),
+                    }, ct),
                 ct
             );
     }

@@ -89,7 +89,7 @@ public class RootToDoItemsViewModel
         return toDoCache
             .GetRootItems()
             .IfSuccess(items =>
-                this.PostUiBackground(() => ToDoSubItemsViewModel.ClearExceptUi(items))
+                this.PostUiBackground(() => ToDoSubItemsViewModel.ClearExceptUi(items), ct)
             )
             .IfSuccessAsync(() => toDoService.GetRootToDoItemIdsAsync(ct), ct)
             .IfSuccessAsync(items => toDoCache.UpdateRootItems(items), ct)
@@ -122,7 +122,7 @@ public class RootToDoItemsViewModel
                     ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
 
                     return Result.Success;
-                })
+                }, ct)
             )
             .ToValueTaskResult()
             .ConfigureAwait(false);

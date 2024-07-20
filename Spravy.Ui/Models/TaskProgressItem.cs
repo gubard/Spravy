@@ -22,9 +22,9 @@ public class TaskProgressItem : NotifyBase
         this.PostUiBackground(() =>
         {
             Progress = Impact;
-
+        
             return Result.Success;
-        });
+        }, CancellationToken.None);
     }
 
     public Result IncreaseUi()

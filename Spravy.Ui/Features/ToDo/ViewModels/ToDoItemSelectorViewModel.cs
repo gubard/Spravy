@@ -22,7 +22,7 @@ public class ToDoItemSelectorViewModel : ViewModelBase
         );
 
         SearchCommand = SpravyCommand.Create(
-            _ => Search().ToValueTaskResult().ConfigureAwait(false),
+            ct => Search(ct).ToValueTaskResult().ConfigureAwait(false),
             errorHandler,
             taskProgressService
         );
@@ -47,7 +47,7 @@ public class ToDoItemSelectorViewModel : ViewModelBase
 
     private ConfiguredValueTaskAwaitable<Result> Refresh(CancellationToken ct)
     {
-        return this.PostUiBackground(() => toDoCache.ResetItemsUi())
+        return this.PostUiBackground(() => toDoCache.ResetItemsUi(), ct)
             .IfSuccess(() => toDoCache.GetRootItems())
             .IfSuccess(items =>
                 this.PostUiBackground(() =>
@@ -55,7 +55,7 @@ public class ToDoItemSelectorViewModel : ViewModelBase
                     Roots.Update(items);
 
                     return SetupUi();
-                })
+                }, ct)
             )
             .IfSuccessAsync(() => toDoService.GetToDoSelectorItemsAsync(IgnoreIds, ct), ct)
             .IfSuccessAsync(
@@ -70,7 +70,7 @@ public class ToDoItemSelectorViewModel : ViewModelBase
                         Roots.BinarySort();
 
                         return SetupUi();
-                    }),
+                    }, ct),
                 ct
             );
     }
@@ -113,19 +113,19 @@ public class ToDoItemSelectorViewModel : ViewModelBase
         return Roots.ToArray().ToReadOnlyMemory().ToResult().IfSuccessForEach(SetupUi);
     }
 
-    private Result Search()
+    private Result Search(CancellationToken ct)
     {
         return this.PostUiBackground(() =>
             {
                 Roots.Clear();
 
                 return Result.Success;
-            })
+            }, ct)
             .IfSuccess(() => toDoCache.GetRootItems())
-            .IfSuccessForEach(Search);
+            .IfSuccessForEach(x => Search(x, ct));
     }
 
-    private Result Search(ToDoItemEntityNotify item)
+    private Result Search(ToDoItemEntityNotify item, CancellationToken ct)
     {
         return Result
             .Success.IfSuccess(() =>
@@ -137,13 +137,13 @@ public class ToDoItemSelectorViewModel : ViewModelBase
                         Roots.Add(item);
 
                         return Result.Success;
-                    });
+                    }, ct);
                 }
 
                 return Result.Success;
             })
             .IfSuccess(
-                () => item.Children.ToArray().ToReadOnlyMemory().ToResult().IfSuccessForEach(Search)
+                () => item.Children.ToArray().ToReadOnlyMemory().ToResult().IfSuccessForEach(x => Search(x, ct))
             );
     }
 }

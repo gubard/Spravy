@@ -82,7 +82,7 @@ public class PeriodicityToDoItemSettingsViewModel
                         IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
 
                         return Result.Success;
-                    }),
+                    }, ct),
                 ct
             );
     }

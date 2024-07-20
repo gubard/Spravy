@@ -71,7 +71,7 @@ public class ToDoItemDayOfYearSelectorViewModel : ViewModelBase, IApplySettings
                                                 d.IsSelected = true;
 
                                                 return Result.Success;
-                                            })
+                                            }, ct)
                                             .ToValueTaskResult()
                                             .ConfigureAwait(false)
                                 );

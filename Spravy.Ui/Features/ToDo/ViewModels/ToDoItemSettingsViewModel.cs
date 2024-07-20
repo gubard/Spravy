@@ -97,7 +97,7 @@ public class ToDoItemSettingsViewModel : NavigatableViewModelBase
                         ToDoItemContent.Type = toDoItem.Type;
 
                         return Result.Success;
-                    }),
+                    }, ct),
                 ct
             );
     }

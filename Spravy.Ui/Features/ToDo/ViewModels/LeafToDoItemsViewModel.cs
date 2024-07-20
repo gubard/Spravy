@@ -134,7 +134,7 @@ public class LeafToDoItemsViewModel
                     ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
 
                     return Result.Success;
-                })
+                }, ct)
             )
             .ToValueTaskResult()
             .ConfigureAwait(false);

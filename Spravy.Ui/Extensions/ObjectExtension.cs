@@ -9,9 +9,17 @@ public static class ObjectExtension
         return Result.Success;
     }
 
-    public static Result PostUiBackground<TObject>(this TObject _, Func<Result> func)
+    public static Result PostUiBackground<TObject>(this TObject _, Func<Result> func, CancellationToken ct)
     {
-        Dispatcher.UIThread.Post(() => func.Invoke(), DispatcherPriority.Background);
+        Dispatcher.UIThread.Post(() =>
+        {
+            if (ct.IsCancellationRequested)
+            {
+                return;
+            }
+
+            func.Invoke();
+        }, DispatcherPriority.Background);
 
         return Result.Success;
     }

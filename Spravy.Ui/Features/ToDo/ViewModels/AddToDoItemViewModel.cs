@@ -61,7 +61,7 @@ public class AddToDoItemViewModel : NavigatableViewModelBase
                     DescriptionContent.Type = s.DescriptionType;
 
                     return Result.Success;
-                })
+                }, ct)
             )
             .ToValueTaskResult()
             .ConfigureAwait(false);

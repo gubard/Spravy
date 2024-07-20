@@ -109,7 +109,7 @@ public class SearchToDoItemsViewModel
                     SearchText = s.SearchText;
 
                     return Result.Success;
-                })
+                }, ct)
             )
             .ToValueTaskResult()
             .ConfigureAwait(false);

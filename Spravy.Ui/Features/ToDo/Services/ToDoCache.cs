@@ -139,7 +139,7 @@ public class ToDoCache : IToDoCache
     )
     {
         return UpdateRootItems(items.Select(x => x.Id))
-            .IfSuccess(_ => items.ToResult().IfSuccessForEach(UpdateUi));
+            .IfSuccess(_ => items.ToResult().IfSuccessForEach(x => UpdateUi(x)));
     }
 
     public Result<ToDoItemEntityNotify> UpdateUi(ToDoSelectorItem item)
@@ -152,16 +152,13 @@ public class ToDoCache : IToDoCache
 
                 return item
                     .Children.ToResult()
-                    .IfSuccessForEach(UpdateUi)
+                    .IfSuccessForEach(y => UpdateUi(y))
                     .IfSuccessForEach(y =>
-                        this.PostUiBackground(() =>
-                            {
-                                y.Parent = x;
+                    {
+                        y.Parent = x;
 
-                                return Result.Success;
-                            })
-                            .IfSuccess(y.ToResult)
-                    )
+                        return y.ToResult();
+                    })
                     .IfSuccessForEach(y => y.Id.ToResult())
                     .IfSuccess(children => UpdateChildrenItemsUi(x.Id, children))
                     .IfSuccess(_ => x.ToResult());

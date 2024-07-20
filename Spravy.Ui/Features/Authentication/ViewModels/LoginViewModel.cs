@@ -146,7 +146,7 @@ public class LoginViewModel : NavigatableViewModelBase, INotifyDataErrorInfo
                     Login = s.Login;
 
                     return Result.Success;
-                })
+                }, ct)
             )
             .ToValueTaskResult()
             .ConfigureAwait(false);

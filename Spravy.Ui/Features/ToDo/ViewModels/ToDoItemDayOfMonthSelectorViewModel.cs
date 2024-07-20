@@ -48,7 +48,7 @@ public class ToDoItemDayOfMonthSelectorViewModel : ViewModelBase, IApplySettings
                         );
 
                         return Result.Success;
-                    }),
+                    }, ct),
                 ct
             );
     }

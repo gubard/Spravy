@@ -7,7 +7,7 @@ public class ToDoItemsViewModel : ViewModelBase
         Items = new();
 
         SwitchAllSelectionCommand = SpravyCommand.Create(
-            _ =>
+            ct =>
                 this.PostUiBackground(() =>
                     {
                         if (Items.All(x => x.IsSelected))
@@ -26,7 +26,7 @@ public class ToDoItemsViewModel : ViewModelBase
                         }
 
                         return Result.Success;
-                    })
+                    }, ct)
                     .ToValueTaskResult()
                     .ConfigureAwait(false),
             errorHandler,

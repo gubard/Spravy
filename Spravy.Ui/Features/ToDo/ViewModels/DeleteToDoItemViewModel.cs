@@ -30,7 +30,7 @@ public class DeleteToDoItemViewModel : ViewModelBase
                             .IfSuccessAsync(
                                 i =>
                                     this.PostUiBackground(
-                                        () => toDoCache.UpdateUi(i).ToResultOnly()
+                                        () => toDoCache.UpdateUi(i).ToResultOnly(), ct
                                     ),
                                 ct
                             );
@@ -47,7 +47,7 @@ public class DeleteToDoItemViewModel : ViewModelBase
                             .IfSuccessAsync(
                                 parents =>
                                     this.PostUiBackground(
-                                        () => toDoCache.UpdateParentsUi(Item.Id, parents)
+                                        () => toDoCache.UpdateParentsUi(Item.Id, parents), ct
                                     ),
                                 ct
                             );
@@ -68,7 +68,7 @@ public class DeleteToDoItemViewModel : ViewModelBase
                                                         ChildrenText = text;
 
                                                         return Result.Success;
-                                                    }),
+                                                    }, ct),
                                                 ct
                                             ),
                                     ct
@@ -102,7 +102,7 @@ public class DeleteToDoItemViewModel : ViewModelBase
                                         ChildrenText = childrenText;
 
                                         return Result.Success;
-                                    });
+                                    }, ct);
                                 },
                                 ct
                             );

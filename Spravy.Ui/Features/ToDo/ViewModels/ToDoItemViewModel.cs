@@ -91,13 +91,13 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUp
                     Item = item;
 
                     return Result.Success;
-                })
+                }, ct)
             )
             .IfSuccessAsync(() => toDoService.GetToDoItemAsync(Id, ct), ct)
             .IfSuccessAsync(
                 item =>
                     this.PostUiBackground(
-                        () => toDoCache.UpdateUi(item).IfSuccess(_ => UpdateCommandItemsUi())
+                        () => toDoCache.UpdateUi(item).IfSuccess(_ => UpdateCommandItemsUi()), ct
                     ),
                 ct
             );
@@ -108,7 +108,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUp
         return toDoService
             .GetParentsAsync(Id, ct)
             .IfSuccessAsync(
-                parents => this.PostUiBackground(() => toDoCache.UpdateParentsUi(Id, parents)),
+                parents => this.PostUiBackground(() => toDoCache.UpdateParentsUi(Id, parents), ct),
                 ct
             );
     }
@@ -132,7 +132,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUp
                 }
 
                 return ToDoSubItemsViewModel.ClearExceptUi(Item.Children.ToArray());
-            })
+            }, ct)
             .IfSuccessAsync(() => toDoService.GetChildrenToDoItemIdsAsync(Id, ct), ct)
             .IfSuccessAsync(
                 ids => this.InvokeUiBackgroundAsync(() => toDoCache.UpdateChildrenItemsUi(Id, ids)),
@@ -183,7 +183,7 @@ public class ToDoItemViewModel : NavigatableViewModelBase, IRefresh, IToDoItemUp
                     ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
 
                     return Result.Success;
-                })
+                }, ct)
             )
             .ToValueTaskResult()
             .ConfigureAwait(false);

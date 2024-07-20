@@ -61,7 +61,7 @@ public class ToDoItemDayOfWeekSelectorViewModel : ViewModelBase, IApplySettings
                                             y.IsSelected = true;
 
                                             return Result.Success;
-                                        })
+                                        }, ct)
                                         .ToValueTaskResult()
                                         .ConfigureAwait(false);
                             })

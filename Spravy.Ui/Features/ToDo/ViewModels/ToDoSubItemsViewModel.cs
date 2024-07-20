@@ -82,7 +82,7 @@ public class ToDoSubItemsViewModel : ViewModelBase
                 }
 
                 var result = this.PostUiBackground(
-                    () => List.UpdateFavoriteItemUi(t).IfSuccess(progressItem.IncreaseUi)
+                    () => List.UpdateFavoriteItemUi(t).IfSuccess(progressItem.IncreaseUi), ct
                 );
 
                 if (result.IsHasError)
@@ -102,7 +102,7 @@ public class ToDoSubItemsViewModel : ViewModelBase
         CancellationToken ct
     )
     {
-        return this.PostUiBackground(() => ClearExceptUi(entities))
+        return this.PostUiBackground(() => ClearExceptUi(entities), ct)
             .IfSuccessAllAsync(
                 ct,
                 () => RefreshFavoriteToDoItemsAsync(ct),
@@ -131,7 +131,7 @@ public class ToDoSubItemsViewModel : ViewModelBase
                     items
                         .ToResult()
                         .IfSuccessForEach(item =>
-                            this.PostUiBackground(() => toDoCache.UpdateUi(item).ToResultOnly())
+                            this.PostUiBackground(() => toDoCache.UpdateUi(item).ToResultOnly(), ct)
                         )
                         .IfSuccess(
                             () => items.IfSuccessForEach(item => toDoCache.GetToDoItem(item.Id))
@@ -149,7 +149,7 @@ public class ToDoSubItemsViewModel : ViewModelBase
                                             item.OrderIndex = oi;
 
                                             return Result.Success;
-                                        });
+                                        }, ct);
                                     }
 
                                     return Result.Success;
@@ -158,7 +158,7 @@ public class ToDoSubItemsViewModel : ViewModelBase
                                 {
                                     orderIndex++;
 
-                                    return this.PostUiBackground(progressItem.IncreaseUi);
+                                    return this.PostUiBackground(progressItem.IncreaseUi, ct);
                                 })
                                 .IfSuccess(item.ToResult)
                         )
@@ -172,8 +172,8 @@ public class ToDoSubItemsViewModel : ViewModelBase
                                                 .ToResult()
                                                 .IfSuccessForEach(i =>
                                                     List.UpdateItemUi(i).IfSuccess(item.IncreaseUi)
-                                                )
-                                    )
+                                                ), ct
+                                    ), ct
                             )
                         ),
                 ct

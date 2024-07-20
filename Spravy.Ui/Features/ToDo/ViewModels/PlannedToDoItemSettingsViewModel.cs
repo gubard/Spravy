@@ -66,7 +66,7 @@ public class PlannedToDoItemSettingsViewModel
                         IsRequiredCompleteInDueDate = setting.IsRequiredCompleteInDueDate;
 
                         return Result.Success;
-                    }),
+                    }, ct),
                 ct
             );
     }

@@ -57,7 +57,7 @@ public class ChangeToDoItemOrderIndexViewModel : ViewModelBase
                                             return Result.Success;
                                         })
                                 );
-                        }),
+                        }, ct),
                     ct
                 );
         }
@@ -71,7 +71,7 @@ public class ChangeToDoItemOrderIndexViewModel : ViewModelBase
                     Items.Update(items.ToArray());
 
                     return Result.Success;
-                })
+                }, ct)
             )
             .ToValueTaskResult()
             .ConfigureAwait(false);

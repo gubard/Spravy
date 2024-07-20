@@ -45,7 +45,7 @@ public class ValueToDoItemSettingsViewModel
                         ChildrenType = setting.ChildrenType;
 
                         return Result.Success;
-                    }),
+                    }, ct),
                 ct
             );
     }

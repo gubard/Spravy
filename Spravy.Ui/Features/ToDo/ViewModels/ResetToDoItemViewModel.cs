@@ -69,7 +69,7 @@ public class ResetToDoItemViewModel : NavigatableViewModelBase
                     IsCompleteCurrentTask = s.IsCompleteCurrentTask;
 
                     return Result.Success;
-                })
+                }, ct)
             )
             .ToValueTaskResult()
             .ConfigureAwait(false);

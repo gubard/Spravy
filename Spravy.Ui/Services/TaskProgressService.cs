@@ -11,7 +11,7 @@ public class TaskProgressService : ITaskProgressService
 
     public MainProgressBarViewModel MainProgressBar { get; }
 
-    public Result<TaskProgressItem> AddItem(ushort impact)
+    public Result<TaskProgressItem> AddItem(ushort impact, CancellationToken ct)
     {
         var result = new TaskProgressItem(impact);
         items.Add(result);
@@ -21,7 +21,7 @@ public class TaskProgressService : ITaskProgressService
                 MainProgressBar.Maximum += impact;
 
                 return Result.Success;
-            })
+            }, ct)
             .IfSuccess(() =>
             {
                 result
