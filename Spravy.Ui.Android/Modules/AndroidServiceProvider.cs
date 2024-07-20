@@ -26,24 +26,16 @@ namespace Spravy.Ui.Android.Modules;
 [Singleton(typeof(ClientOptions), Factory = nameof(ClientOptionsFactory))]
 [Singleton(typeof(TopLevel), Factory = nameof(TopLevelFactory))]
 [Singleton(typeof(IServiceFactory), Factory = nameof(ServiceFactoryFactory))]
+[Transient(typeof(IObjectStorage), typeof(SqliteObjectStorage))]
 [Transient(typeof(IOpenerLink), typeof(AndroidOpenerLink))]
 [Transient(typeof(IClipboardService), typeof(TopLevelClipboardService))]
 [Transient(typeof(IDbContextSetup), Factory = nameof(DbContextSetupFactory))]
 [Transient(typeof(StorageDbContext), Factory = nameof(StorageDbContextFactory))]
-[Transient(typeof(IObjectStorage), Factory = nameof(SqliteObjectStorageFactory))]
 public partial class AndroidServiceProvider : IServiceFactory
 {
     static TopLevel TopLevelFactory(Avalonia.Application application)
     {
         return application.GetTopLevel().ThrowIfNull();
-    }
-
-    static IObjectStorage SqliteObjectStorageFactory(
-        StorageDbContext context,
-        ProtobufSerializer serializer
-    )
-    {
-        return new SqliteObjectStorage(context, serializer);
     }
 
     static StorageDbContext StorageDbContextFactory(IDbContextSetup setup)

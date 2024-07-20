@@ -125,7 +125,6 @@ public class SearchToDoItemsViewModel
         return Result.Success;
     }
 
-    [ProtoContract]
     private class SearchViewModelSetting : IViewModelSetting<SearchViewModelSetting>
     {
         public SearchViewModelSetting(SearchToDoItemsViewModel toDoItemsViewModel)
@@ -140,9 +139,7 @@ public class SearchToDoItemsViewModel
             Default = new();
         }
 
-        [ProtoMember(1)]
         public string SearchText { get; set; } = string.Empty;
-
         public static SearchViewModelSetting Default { get; }
     }
 }

@@ -173,7 +173,6 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
         });
     }
 
-    [ProtoContract]
     private class EmailOrLoginInputViewModelSetting
     {
         public EmailOrLoginInputViewModelSetting() { }
@@ -183,7 +182,6 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
             Identifier = viewModel.EmailOrLogin;
         }
 
-        [ProtoMember(1)]
         public string Identifier { get; set; } = string.Empty;
     }
 }

@@ -138,7 +138,6 @@ public class RootToDoItemsViewModel
         return Result.Success;
     }
 
-    [ProtoContract]
     private class RootToDoItemsViewModelSetting : IViewModelSetting<RootToDoItemsViewModelSetting>
     {
         static RootToDoItemsViewModelSetting()
@@ -153,13 +152,8 @@ public class RootToDoItemsViewModel
         }
 
         public RootToDoItemsViewModelSetting() { }
-
-        [ProtoMember(1)]
         public GroupBy GroupBy { get; set; }
-
-        [ProtoMember(2)]
         public bool IsMulti { get; set; }
-
         public static RootToDoItemsViewModelSetting Default { get; }
     }
 }

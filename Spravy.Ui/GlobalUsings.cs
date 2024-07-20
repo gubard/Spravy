@@ -40,7 +40,6 @@ global using Grpc.Core;
 global using Grpc.Net.Client;
 global using Material.Icons;
 global using Microsoft.Extensions.DependencyInjection;
-global using ProtoBuf;
 global using ReactiveUI;
 global using ReactiveUI.Fody.Helpers;
 global using Serilog;

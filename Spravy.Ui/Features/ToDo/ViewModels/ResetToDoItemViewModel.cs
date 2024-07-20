@@ -80,7 +80,6 @@ public class ResetToDoItemViewModel : NavigatableViewModelBase
         return objectStorage.SaveObjectAsync(ViewId, new ResetToDoItemViewModelSetting(this), ct);
     }
 
-    [ProtoContract]
     private class ResetToDoItemViewModelSetting : IViewModelSetting<ResetToDoItemViewModelSetting>
     {
         public ResetToDoItemViewModelSetting(ResetToDoItemViewModel viewModel)
@@ -97,19 +96,11 @@ public class ResetToDoItemViewModel : NavigatableViewModelBase
         {
             Default = new() { IsMoveCircleOrderIndex = true, };
         }
-
-        [ProtoMember(1)]
+        
         public bool IsCompleteChildrenTask { get; set; }
-
-        [ProtoMember(2)]
         public bool IsMoveCircleOrderIndex { get; set; }
-
-        [ProtoMember(3)]
         public bool IsOnlyCompletedTasks { get; set; }
-
-        [ProtoMember(4)]
         public bool IsCompleteCurrentTask { get; set; }
-
         public static ResetToDoItemViewModelSetting Default { get; }
     }
 }
