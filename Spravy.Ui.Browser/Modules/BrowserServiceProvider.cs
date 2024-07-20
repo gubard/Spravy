@@ -26,17 +26,12 @@ namespace Spravy.Ui.Browser.Modules;
 [Transient(typeof(IBytesToString), typeof(Utf8BytesToString))]
 [Transient(typeof(IOpenerLink), typeof(BrowserOpenerLink))]
 [Transient(typeof(IClipboardService), typeof(TopLevelClipboardService))]
-[Transient(typeof(IObjectStorage), Factory = nameof(LocalStorageObjectStorageFactory))]
+[Transient(typeof(IObjectStorage), typeof(LocalStorageObjectStorage))]
 public partial class BrowserServiceProvider : IServiceFactory
 {
     static TopLevel TopLevelFactory(Avalonia.Application application)
     {
         return application.GetTopLevel().ThrowIfNull();
-    }
-
-    public IObjectStorage LocalStorageObjectStorageFactory(ProtobufSerializer serializer)
-    {
-        return new LocalStorageObjectStorage(serializer);
     }
 
     public IServiceFactory ServiceFactoryFactory()
