@@ -134,7 +134,7 @@ class Build : NukeBuild
                 {
                     foreach (var serviceProjectBuilder in Projects.OfType<ServiceProjectBuilder>())
                     {
-                        //serviceProjectBuilder.BuildDocker();
+                        serviceProjectBuilder.BuildDocker();
                     }
                 });
 
