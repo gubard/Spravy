@@ -525,7 +525,7 @@ public class EfAuthenticationService : IAuthenticationService
 
                 if (hash != valueHash)
                 {
-                    return new(new WrongPassword());
+                    return new(new WrongPasswordError());
                 }
 
                 return Result.Success;

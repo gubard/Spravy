@@ -37,4 +37,5 @@ namespace Spravy.Authentication.Service.Services;
 [JsonSerializable(typeof(MaxCycleCountReachedError))]
 [JsonSerializable(typeof(NotFoundTypeError))]
 [JsonSerializable(typeof(NotFoundEntityError))]
+[JsonSerializable(typeof(WrongPasswordError))]
 public partial class SpravyJsonSerializerContext : JsonSerializerContext;

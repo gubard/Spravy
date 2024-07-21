@@ -46,4 +46,5 @@ namespace Spravy.Ui.Services;
 [JsonSerializable(typeof(ResetToDoItemViewModelSetting))]
 [JsonSerializable(typeof(RootToDoItemsViewModelSetting))]
 [JsonSerializable(typeof(SearchViewModelSetting))]
+[JsonSerializable(typeof(LoginStorageItem))]
 public partial class SpravyJsonSerializerContext : JsonSerializerContext;
