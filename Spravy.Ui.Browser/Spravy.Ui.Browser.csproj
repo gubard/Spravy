@@ -5,10 +5,10 @@
         <OutputType>Exe</OutputType>
 
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <!--<WasmStripILAfterAOT>true</WasmStripILAfterAOT>
-        <PublishAot>true</PublishAot>
-        <RunAOTCompilation>true</RunAOTCompilation>
+        <PublishReadyToRun>true</PublishReadyToRun>
+        <!--<PublishAot>true</PublishAot>
         <PublishTrimmed>true</PublishTrimmed>
+        <RunAOTCompilation>true</RunAOTCompilation>        
         <TrimMode>full</TrimMode>-->
     </PropertyGroup>
 
