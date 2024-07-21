@@ -424,7 +424,7 @@ class Build : NukeBuild
         {
             currentItems.Add(items[i]);
 
-            if (i % 4 != 0 || i == 0)
+            if (i % 3 != 0 || i == 0)
             {
                 continue;
             }
