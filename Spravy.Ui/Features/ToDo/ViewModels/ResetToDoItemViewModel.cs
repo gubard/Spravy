@@ -61,15 +61,18 @@ public class ResetToDoItemViewModel : NavigatableViewModelBase
         return setting
             .CastObject<ResetToDoItemViewModelSetting>()
             .IfSuccess(s =>
-                this.PostUiBackground(() =>
-                {
-                    IsCompleteChildrenTask = s.IsCompleteChildrenTask;
-                    IsMoveCircleOrderIndex = s.IsMoveCircleOrderIndex;
-                    IsOnlyCompletedTasks = s.IsOnlyCompletedTasks;
-                    IsCompleteCurrentTask = s.IsCompleteCurrentTask;
+                this.PostUiBackground(
+                    () =>
+                    {
+                        IsCompleteChildrenTask = s.IsCompleteChildrenTask;
+                        IsMoveCircleOrderIndex = s.IsMoveCircleOrderIndex;
+                        IsOnlyCompletedTasks = s.IsOnlyCompletedTasks;
+                        IsCompleteCurrentTask = s.IsCompleteCurrentTask;
 
-                    return Result.Success;
-                }, ct)
+                        return Result.Success;
+                    },
+                    ct
+                )
             )
             .ToValueTaskResult()
             .ConfigureAwait(false);
@@ -78,29 +81,5 @@ public class ResetToDoItemViewModel : NavigatableViewModelBase
     public override ConfiguredValueTaskAwaitable<Result> SaveStateAsync(CancellationToken ct)
     {
         return objectStorage.SaveObjectAsync(ViewId, new ResetToDoItemViewModelSetting(this), ct);
-    }
-
-    private class ResetToDoItemViewModelSetting : IViewModelSetting<ResetToDoItemViewModelSetting>
-    {
-        public ResetToDoItemViewModelSetting(ResetToDoItemViewModel viewModel)
-        {
-            IsCompleteChildrenTask = viewModel.IsCompleteChildrenTask;
-            IsMoveCircleOrderIndex = viewModel.IsMoveCircleOrderIndex;
-            IsOnlyCompletedTasks = viewModel.IsOnlyCompletedTasks;
-            IsCompleteCurrentTask = viewModel.IsCompleteCurrentTask;
-        }
-
-        public ResetToDoItemViewModelSetting() { }
-
-        static ResetToDoItemViewModelSetting()
-        {
-            Default = new() { IsMoveCircleOrderIndex = true, };
-        }
-        
-        public bool IsCompleteChildrenTask { get; set; }
-        public bool IsMoveCircleOrderIndex { get; set; }
-        public bool IsOnlyCompletedTasks { get; set; }
-        public bool IsCompleteCurrentTask { get; set; }
-        public static ResetToDoItemViewModelSetting Default { get; }
     }
 }

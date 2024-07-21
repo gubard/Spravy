@@ -128,13 +128,16 @@ public class LeafToDoItemsViewModel
         return setting
             .CastObject<LeafToDoItemsViewModelSetting>()
             .IfSuccess(s =>
-                this.PostUiBackground(() =>
-                {
-                    ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
-                    ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
+                this.PostUiBackground(
+                    () =>
+                    {
+                        ToDoSubItemsViewModel.List.GroupBy = s.GroupBy;
+                        ToDoSubItemsViewModel.List.IsMulti = s.IsMulti;
 
-                    return Result.Success;
-                }, ct)
+                        return Result.Success;
+                    },
+                    ct
+                )
             )
             .ToValueTaskResult()
             .ConfigureAwait(false);
@@ -148,25 +151,5 @@ public class LeafToDoItemsViewModel
         }
 
         return Result.Success;
-    }
-
-    private class LeafToDoItemsViewModelSetting : IViewModelSetting<LeafToDoItemsViewModelSetting>
-    {
-        public LeafToDoItemsViewModelSetting(LeafToDoItemsViewModel viewModel)
-        {
-            GroupBy = viewModel.ToDoSubItemsViewModel.List.GroupBy;
-            IsMulti = viewModel.ToDoSubItemsViewModel.List.IsMulti;
-        }
-
-        public LeafToDoItemsViewModelSetting() { }
-
-        static LeafToDoItemsViewModelSetting()
-        {
-            Default = new() { GroupBy = GroupBy.ByStatus, };
-        }
-
-        public GroupBy GroupBy { get; set; }
-        public bool IsMulti { get; set; }
-        public static LeafToDoItemsViewModelSetting Default { get; }
     }
 }

@@ -104,12 +104,15 @@ public class SearchToDoItemsViewModel
         return setting
             .CastObject<SearchViewModelSetting>()
             .IfSuccess(s =>
-                this.PostUiBackground(() =>
-                {
-                    SearchText = s.SearchText;
+                this.PostUiBackground(
+                    () =>
+                    {
+                        SearchText = s.SearchText;
 
-                    return Result.Success;
-                }, ct)
+                        return Result.Success;
+                    },
+                    ct
+                )
             )
             .ToValueTaskResult()
             .ConfigureAwait(false);
@@ -123,23 +126,5 @@ public class SearchToDoItemsViewModel
         }
 
         return Result.Success;
-    }
-
-    private class SearchViewModelSetting : IViewModelSetting<SearchViewModelSetting>
-    {
-        public SearchViewModelSetting(SearchToDoItemsViewModel toDoItemsViewModel)
-        {
-            SearchText = toDoItemsViewModel.SearchText;
-        }
-
-        public SearchViewModelSetting() { }
-
-        static SearchViewModelSetting()
-        {
-            Default = new();
-        }
-
-        public string SearchText { get; set; } = string.Empty;
-        public static SearchViewModelSetting Default { get; }
     }
 }
