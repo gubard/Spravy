@@ -405,7 +405,8 @@ class Build : NukeBuild
                     GetButtonName(x.Name),
                     x.FullName.Replace(html.FullName, $"https://{domain}")
                 )
-            ).ToArray();
+            )
+            .ToArray();
 
         var botClient = new TelegramBotClient(TelegramToken);
 
@@ -430,27 +431,27 @@ class Build : NukeBuild
             }
 
             botClient
-               .SendTextMessageAsync(
+                .SendTextMessageAsync(
                     "@spravy_release",
                     $"Published {name} v{VersionService.Version}({VersionService.Version.Code})",
                     replyMarkup: new InlineKeyboardMarkup(currentItems)
                 )
-               .GetAwaiter()
-               .GetResult();
-                
+                .GetAwaiter()
+                .GetResult();
+
             currentItems.Clear();
         }
 
         if (currentItems.Count != 0)
         {
             botClient
-               .SendTextMessageAsync(
+                .SendTextMessageAsync(
                     "@spravy_release",
                     $"Published {name} v{VersionService.Version}({VersionService.Version.Code})",
                     replyMarkup: new InlineKeyboardMarkup(currentItems)
                 )
-               .GetAwaiter()
-               .GetResult();
+                .GetAwaiter()
+                .GetResult();
         }
     }
 
