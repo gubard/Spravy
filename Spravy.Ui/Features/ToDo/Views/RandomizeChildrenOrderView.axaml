@@ -15,7 +15,7 @@
     <c:GroupBox>
         <c:GroupBox.Header>
             <TextBlock
-                Text="{Binding Converter={StaticResource ObjectToLocalizationConverter}, ConverterParameter=RandomizeChildrenOrderView.Header}" />
+                Text="{Binding Item, Converter={StaticResource ObjectToLocalizationConverter}, ConverterParameter=RandomizeChildrenOrderView.Header}" />
         </c:GroupBox.Header>
 
         <c:Stepper Steps="{Binding Item.Path}"

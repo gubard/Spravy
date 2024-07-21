@@ -43,7 +43,6 @@ global using Microsoft.Extensions.DependencyInjection;
 global using ReactiveUI;
 global using ReactiveUI.Fody.Helpers;
 global using Serilog;
-global using SmartFormat;
 global using Spravy.Authentication.Domain.Client.Models;
 global using Spravy.Authentication.Domain.Client.Services;
 global using Spravy.Authentication.Domain.Interfaces;

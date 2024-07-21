@@ -1,7 +1,10 @@
 namespace Spravy.Ui.Features.ToDo.Models;
 
-public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
+public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>, IParameters
 {
+    private static readonly ReadOnlyMemory<char> idParameterName = nameof(Id).AsMemory();
+    private static readonly ReadOnlyMemory<char> nameParameterName = nameof(Name).AsMemory();
+    
     private readonly SpravyCommandNotifyService spravyCommandNotifyService;
 
     public ToDoItemEntityNotify(Guid id, SpravyCommandNotifyService spravyCommandNotifyService)
@@ -171,6 +174,20 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
     public override int GetHashCode()
     {
         return Id.GetHashCode();
+    }
+    public Result<string> GetParameter(ReadOnlySpan<char> parameterName)
+    {
+        if (idParameterName.Span == parameterName)
+        {
+            return Id.ToString().ToResult();
+        }
+        
+        if (nameParameterName.Span == parameterName)
+        {
+            return Name.ToResult();
+        }
+
+        return new(new NotFoundNamedError(parameterName.ToString()));
     }
 
     public Result<ToDoItemEntityNotify> UpdateCommandsUi()

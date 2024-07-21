@@ -9,14 +9,14 @@ public class TextLocalization
         Key = key;
     }
 
-    public TextLocalization(string key, object? parameters)
+    public TextLocalization(string key, IParameters? parameters)
     {
         Key = key;
         Parameters = parameters;
     }
 
     public string Key { get; }
-    public object? Parameters { get; }
+    public IParameters? Parameters { get; }
 
     public string Text
     {
@@ -36,10 +36,15 @@ public class TextLocalization
             {
                 return str;
             }
+            
+            var result = SpravyFormat.Format(str, Parameters);
 
-            var result = Smart.Format(str, Parameters);
+            if (result.TryGetValue(out var formatted))
+            {
+                return formatted;
+            }
 
-            return result;
+            return string.Join(Environment.NewLine, result.Errors.Select(x => x.Message).ToArray());
         }
     }
 }

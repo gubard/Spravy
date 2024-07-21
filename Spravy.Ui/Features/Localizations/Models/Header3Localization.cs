@@ -5,6 +5,6 @@ public class Header3Localization : TextLocalization
     public Header3Localization(string key)
         : base(key) { }
 
-    public Header3Localization(string key, object? parameters)
+    public Header3Localization(string key, IParameters? parameters)
         : base(key, parameters) { }
 }

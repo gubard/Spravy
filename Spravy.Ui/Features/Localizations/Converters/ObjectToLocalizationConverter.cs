@@ -30,8 +30,20 @@ public class ObjectToLocalizationConverter : IValueConverter
         {
             return "Template must be string.";
         }
+        
+        if (value is not IParameters parameters)
+        {
+            return "Parameters must be IParameters.";
+        }
 
-        return Smart.Format(template, value);
+        var result = SpravyFormat.Format(template, parameters);
+
+        if (result.TryGetValue(out var formatted))
+        {
+            return formatted;
+        }
+
+        return string.Join(Environment.NewLine, result.Errors.Select(x => x.Message).ToArray());
     }
 
     public object ConvertBack(
