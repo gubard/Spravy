@@ -133,7 +133,7 @@ public class ProjectBuilderFactory
                             csprojFile,
                             csprojFile.Directory.ToFile("appsettings.json"),
                             ports,
-                            Enumerable.Empty<Runtime>(),
+                            new[] { Runtime.AndroidArm64, },
                             configuration,
                             domain,
                             keyStoreFile,
@@ -182,9 +182,9 @@ public class ProjectBuilderFactory
                             new[]
                             {
                                 Runtime.LinuxX64,
-                                Runtime.LinuxArmX64,
+                                Runtime.LinuxArm64,
                                 Runtime.WinX64,
-                                Runtime.WinArmX64,
+                                Runtime.WinArm64,
                             },
                             configuration,
                             domain,
