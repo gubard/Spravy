@@ -5,12 +5,11 @@
         One for Windows with net7.0-windows TFM, one for MacOS with net7.0-macos and one with net7.0 TFM for Linux.-->
 
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
-        <RuntimeIdentifiers>linux-x64;win-x64;win-arm64;linux-arm64</RuntimeIdentifiers>
-        <PublishReadyToRun>true</PublishReadyToRun>
+        <RuntimeIdentifiers>linux-x86;win-x86;linux-x64;win-x64;win-arm64;linux-arm64</RuntimeIdentifiers>
         <SelfContained Condition="'$(Configuration)' == 'Release'">true</SelfContained>
         <ApplicationIcon>Resources\Logo.ico</ApplicationIcon>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-        <!--<PublishReadyToRun>true</PublishReadyToRun>-->
+        <PublishReadyToRun>true</PublishReadyToRun>
         <!--<PublishAot>true</PublishAot>
         <PublishTrimmed>true</PublishTrimmed>
         <RunAOTCompilation>true</RunAOTCompilation>        
