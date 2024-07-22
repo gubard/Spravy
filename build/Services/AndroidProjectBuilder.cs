@@ -15,6 +15,8 @@ public class AndroidProjectBuilder : UiProjectBuilder<AndroidProjectBuilderOptio
 
     public override void Compile()
     {
+        return;
+
         for (var i = 0; i < 3; i++)
         {
             try
