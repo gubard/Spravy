@@ -10,8 +10,8 @@
         <ApplicationIcon>Resources\Logo.ico</ApplicationIcon>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
         <PublishReadyToRun>true</PublishReadyToRun>
-        <!--<PublishAot>true</PublishAot>
         <PublishTrimmed>true</PublishTrimmed>
+        <!--<PublishAot>true</PublishAot>
         <RunAOTCompilation>true</RunAOTCompilation>        
         <TrimMode>full</TrimMode>-->
     </PropertyGroup>
