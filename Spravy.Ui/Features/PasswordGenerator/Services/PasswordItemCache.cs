@@ -16,7 +16,7 @@ public class PasswordItemCache : IPasswordItemCache
             return value.ToResult();
         }
 
-        var result = new PasswordItemEntityNotify();
+        var result = new PasswordItemEntityNotify { Id = id, Name = "Loading...", };
 
         if (cache.TryAdd(id, result))
         {
@@ -29,7 +29,7 @@ public class PasswordItemCache : IPasswordItemCache
     public Result UpdateUi(PasswordItem passwordItem)
     {
         return GetPasswordItem(passwordItem.Id)
-           .IfSuccess(item =>
+            .IfSuccess(item =>
             {
                 item.Name = passwordItem.Name;
 
