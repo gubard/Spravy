@@ -15,8 +15,6 @@ public class AndroidProjectBuilder : UiProjectBuilder<AndroidProjectBuilderOptio
 
     public override void Compile()
     {
-        return;
-
         for (var i = 0; i < 3; i++)
         {
             try
@@ -106,8 +104,8 @@ public class AndroidProjectBuilder : UiProjectBuilder<AndroidProjectBuilderOptio
                             .SetProperty("Version", versionService.Version.ToString())
                             .SetConfiguration(Options.Configuration)
                             .SetOutput(Options.PublishFolder.FullName)
+                            .EnableNoRestore()
                             .DisableNoBuild()
-                            .DisableNoRestore()
                     );
                 }
                 else
@@ -134,8 +132,8 @@ public class AndroidProjectBuilder : UiProjectBuilder<AndroidProjectBuilderOptio
                                 .SetConfiguration(Options.Configuration)
                                 .SetOutput(Options.PublishFolder.Combine(runtime.Name).FullName)
                                 .SetRuntime(runtime.Name)
+                                .EnableNoRestore()
                                 .DisableNoBuild()
-                                .DisableNoRestore()
                         );
                     }
                 }
