@@ -6,7 +6,7 @@
 
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <PublishReadyToRun>true</PublishReadyToRun>
-        <PublishTrimmed>true</PublishTrimmed>
+        <!--<PublishTrimmed>true</PublishTrimmed>-->
         <!--<PublishAot>true</PublishAot>
         <RunAOTCompilation>true</RunAOTCompilation>        
         <TrimMode>full</TrimMode>-->
