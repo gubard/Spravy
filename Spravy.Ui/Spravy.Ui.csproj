@@ -21,7 +21,7 @@
         <PackageReference Include="Grpc.Net.Client" Version="$(GrpcVersion)" />
         <PackageReference Include="Grpc.Net.Client.Web" Version="$(GrpcVersion)" />
         <PackageReference Include="Grpc.Net.ClientFactory" Version="$(GrpcVersion)" />
-        <PackageReference Include="Grpc.Tools" Version="2.64.0">
+        <PackageReference Include="Grpc.Tools" Version="2.65.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -31,7 +31,7 @@
         <PackageReference Include="ReactiveUI.Fody" Version="19.5.41" />
         <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
         <PackageReference Include="SukiUI" Version="6.0.0-beta4" />
-        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.6.3" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.0" />
     </ItemGroup>
 
     <ItemGroup>
