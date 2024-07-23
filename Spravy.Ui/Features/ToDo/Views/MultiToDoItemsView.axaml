@@ -63,7 +63,7 @@
                                 <ScrollViewer Classes="mini"
                                               VerticalScrollBarVisibility="Disabled"
                                               HorizontalScrollBarVisibility="Auto">
-                                    <TextBlock Classes="h4" Text="{Binding Name}" />
+                                    <TextBlock Classes="alignment-left" Text="{Binding Name}" />
                                 </ScrollViewer>
                             </StackPanel>
                         </Border>

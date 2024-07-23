@@ -1,16 +1,15 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Design.PreviewWith>
-        <Border Padding="20">
-            <!-- Add Controls for Previewer Here -->
-        </Border>
-    </Design.PreviewWith>
-
     <Style Selector="ListBox.wrap-panel">
         <Setter Property="ItemsPanel">
             <ItemsPanelTemplate>
                 <WrapPanel />
             </ItemsPanelTemplate>
         </Setter>
+    </Style>
+
+    <Style Selector="ListBoxItem">
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
     </Style>
 </Styles>

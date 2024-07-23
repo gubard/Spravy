@@ -97,7 +97,9 @@
                 Name="{x:Static v:RootToDoItemsView.AddRootToDoItemButtonName}"
                 Classes="Flat mode-press"
                 Command="{x:Static h:UiHelper.AddRootToDoItem}"
-                Height="64">
+                Height="64"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center">
             <StackPanel Orientation="Horizontal">
                 <mi:MaterialIcon Kind="Plus" Width="40" Height="40" />
                 <TextBlock Text="{DynamicResource RootToDoItemsView.CreateTask}" VerticalAlignment="Center"
