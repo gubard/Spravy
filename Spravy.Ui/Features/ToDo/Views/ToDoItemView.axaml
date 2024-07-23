@@ -121,10 +121,11 @@
                     <Expander.Header>
                         <Button Command="{x:Static h:UiHelper.SetToDoItemDescription}"
                                 CommandParameter="{Binding Item}"
-                                Classes="Basic mode-press alignment-left">
+                                Classes="mode-press alignment-left">
                             <StackPanel Orientation="Horizontal">
                                 <mi:MaterialIcon Kind="Pencil" Margin="0,0,3,0" />
-                                <TextBlock Text="{DynamicResource ToDoItemView.Description}" Classes="alignment-center" />
+                                <TextBlock Text="{DynamicResource ToDoItemView.Description}"
+                                           Classes="alignment-center" />
                             </StackPanel>
                         </Button>
                     </Expander.Header>
