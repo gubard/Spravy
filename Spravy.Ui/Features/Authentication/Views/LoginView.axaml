@@ -13,7 +13,7 @@
                         x:DataType="vm:LoginViewModel">
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
-            <InvokeCommandAction Command="{x:Static h:UiHelper.LoginViewInitialized}" CommandParameter="{Binding}" />
+            <InvokeCommandAction Command="{x:Static h:UiHelper.LoginViewInitialized}" CommandParameter="{Binding $self}" />
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 
