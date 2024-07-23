@@ -112,6 +112,3 @@ global using Spravy.Ui.Models;
 global using Spravy.Ui.Services;
 global using Spravy.Ui.ViewModels;
 global using Spravy.Ui.Views;
-global using SukiUI;
-global using SukiUI.Controls;
-global using SukiUI.Models;

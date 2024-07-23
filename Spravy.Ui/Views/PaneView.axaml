@@ -6,12 +6,11 @@
                         xmlns:ru="http://reactiveui.net"
                         xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
                         xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-                        xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
                         xmlns:h="clr-namespace:Spravy.Ui.Helpers"
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                         x:Class="Spravy.Ui.Views.PaneView"
                         x:DataType="vm:PaneViewModel">
-    <c:GlassCard IsOpaque="True">
+    <Border>
         <StackPanel>
             <TextBlock Text="{Binding Account.Login}" Classes="h2" Margin="5" />
             <Border Height="1"
@@ -68,5 +67,5 @@
                 </Grid>
             </Button>
         </StackPanel>
-    </c:GlassCard>
+    </Border>
 </ru:ReactiveUserControl>

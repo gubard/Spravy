@@ -5,7 +5,7 @@
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:ru="http://reactiveui.net"
                         xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
-                        xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+                        xmlns:c="clr-namespace:Spravy.Ui.Controls"
                         mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="200"
                         x:Class="Spravy.Ui.Views.EditDescriptionView"
                         x:DataType="vm:EditDescriptionViewModel">

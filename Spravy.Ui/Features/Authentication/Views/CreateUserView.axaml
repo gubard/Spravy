@@ -4,10 +4,10 @@
                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:ru="http://reactiveui.net"
-                        xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
                         xmlns:vm="clr-namespace:Spravy.Ui.Features.Authentication.ViewModels"
                         xmlns:v="clr-namespace:Spravy.Ui.Features.Authentication.Views"
                         xmlns:h="clr-namespace:Spravy.Ui.Helpers"
+                        xmlns:c="clr-namespace:Spravy.Ui.Controls"
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                         x:Class="Spravy.Ui.Features.Authentication.Views.CreateUserView"
                         x:DataType="vm:CreateUserViewModel">
@@ -17,7 +17,7 @@
                     CommandParameter="{Binding $self}" />
     </UserControl.KeyBindings>
 
-    <c:GlassCard Name="{x:Static v:CreateUserView.CreateUserCardName}"
+    <Border Name="{x:Static v:CreateUserView.CreateUserCardName}"
                  Classes="alignment-center"
                  Width="400">
         <c:BusyArea IsBusy="{Binding IsBusy}"
@@ -59,5 +59,5 @@
                 </Grid>
             </StackPanel>
         </c:BusyArea>
-    </c:GlassCard>
+    </Border>
 </ru:ReactiveUserControl>

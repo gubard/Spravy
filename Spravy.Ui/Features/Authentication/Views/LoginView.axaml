@@ -4,10 +4,10 @@
                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:ru="http://reactiveui.net"
-                        xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
                         xmlns:vm="clr-namespace:Spravy.Ui.Features.Authentication.ViewModels"
                         xmlns:v="clr-namespace:Spravy.Ui.Features.Authentication.Views"
                         xmlns:h="clr-namespace:Spravy.Ui.Helpers"
+                        xmlns:c="clr-namespace:Spravy.Ui.Controls"
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                         x:Class="Spravy.Ui.Features.Authentication.Views.LoginView"
                         x:DataType="vm:LoginViewModel">
@@ -21,7 +21,7 @@
         <KeyBinding Gesture="Enter" Command="{x:Static h:UiHelper.LoginViewEnter}" CommandParameter="{Binding $self}" />
     </UserControl.KeyBindings>
 
-    <c:GlassCard HorizontalAlignment="Center"
+    <Border HorizontalAlignment="Center"
                  VerticalAlignment="Center"
                  MinWidth="300">
         <c:BusyArea BusyText="{DynamicResource LoginView.Busy}"
@@ -62,5 +62,5 @@
                 </Grid>
             </StackPanel>
         </c:BusyArea>
-    </c:GlassCard>
+    </Border>
 </ru:ReactiveUserControl>

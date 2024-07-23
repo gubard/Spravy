@@ -26,8 +26,7 @@
 
                 <TextBlock DockPanel.Dock="Right"
                            Classes="alignment-center"
-                           Text="{Binding Items.Count}"
-                           Foreground="{DynamicResource SukiText}" />
+                           Text="{Binding Items.Count}" />
                 <Control />
             </DockPanel>
         </Expander.Header>

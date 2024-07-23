@@ -21,7 +21,6 @@ public class SpravyCommandService
         IPasswordService passwordService,
         MainSplitViewModel mainSplitViewModel,
         IObjectStorage objectStorage,
-        SukiTheme sukiTheme,
         AccountNotify accountNotify,
         ITokenService tokenService,
         ISpravyNotificationManager spravyNotificationManager,
@@ -2060,31 +2059,6 @@ public class SpravyCommandService
             taskProgressService
         );
 
-        SettingViewInitialized = SpravyCommand.Create<SettingViewModel>(
-            (viewModel, _) =>
-                this.InvokeUiBackgroundAsync(() =>
-                {
-                    viewModel.AvailableColors.Clear();
-                    viewModel.AvailableColors.AddRange(
-                        sukiTheme.ColorThemes.Select(x => new Selected<SukiColorTheme>(x))
-                    );
-
-                    foreach (var availableColor in viewModel.AvailableColors)
-                    {
-                        if (availableColor.Value == sukiTheme.ActiveColorTheme)
-                        {
-                            availableColor.IsSelect = true;
-                        }
-                    }
-
-                    viewModel.IsLightTheme = sukiTheme.ActiveBaseTheme == ThemeVariant.Light;
-
-                    return Result.Success;
-                }),
-            errorHandler,
-            taskProgressService
-        );
-
         NavigateToActiveToDoItem = SpravyCommand.Create<ToDoItemEntityNotify>(
             (item, ct) =>
                 toDoService
@@ -2629,7 +2603,6 @@ public class SpravyCommandService
     public SpravyCommand RefreshCurrentView { get; }
     public SpravyCommand SetToDoItemDescription { get; }
 
-    public SpravyCommand SettingViewInitialized { get; }
     public SpravyCommand ForgotPasswordViewInitialized { get; }
     public SpravyCommand LoginViewInitialized { get; }
     public SpravyCommand DeletePasswordItemViewInitialized { get; }

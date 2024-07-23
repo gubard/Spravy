@@ -5,7 +5,6 @@
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:ru="http://reactiveui.net"
                         xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
-                        xmlns:sc="clr-namespace:SukiUI.Controls;assembly=SukiUI"
                         xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
                         xmlns:m="clr-namespace:Spravy.Ui.Features.ToDo.Models"
                         xmlns:a="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
@@ -39,7 +38,7 @@
             <ContentControl.DataTemplates>
                 <DataTemplate DataType="m:ToDoItemEntityNotify">
                     <ToggleButton Classes="content-alignment-stretch" Padding="0" IsChecked="{Binding IsSelected}">
-                        <sc:GlassCard Margin="0" CornerRadius="0" Padding="5">
+                        <Border Margin="0" CornerRadius="0" Padding="5">
                             <StackPanel>
                                 <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto">
                                     <Rectangle Width="15"
@@ -67,7 +66,7 @@
                                     <TextBlock Classes="h4" Text="{Binding Name}" />
                                 </ScrollViewer>
                             </StackPanel>
-                        </sc:GlassCard>
+                        </Border>
                     </ToggleButton>
                 </DataTemplate>
             </ContentControl.DataTemplates>

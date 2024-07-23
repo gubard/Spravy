@@ -17,10 +17,6 @@
         <Setter Property="Background" Value="Transparent" />
     </Style>
 
-    <Style Selector="dh|DialogOverlayPopupHost">
-        <Setter Property="Background" Value="{DynamicResource SingleViewBackground}" />
-    </Style>
-
     <Style
         Selector="dh|DialogOverlayPopupHost > Border#PART_ContentBackground > ContentPresenter#PART_ContentPresenter">
         <Setter Property="CornerRadius" Value="20" />

@@ -9,7 +9,6 @@
                         xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
                         xmlns:m="clr-namespace:Spravy.Ui.Models"
                         xmlns:h="clr-namespace:Spravy.Ui.Helpers"
-                        xmlns:co="clr-namespace:SukiUI.Content;assembly=SukiUI"
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                         x:Class="Spravy.Ui.Features.ToDo.Views.SearchToDoItemsView"
                         x:DataType="vm:SearchToDoItemsViewModel">
@@ -71,7 +70,7 @@
 
         <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto">
             <Button Classes="Basic" Command="{x:Static h:UiHelper.SwitchPane}">
-                <PathIcon Data="{x:Static co:Icons.Menu}" />
+                <mi:MaterialIcon Kind="Menu" />
             </Button>
 
             <StackPanel Grid.Column="1">

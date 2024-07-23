@@ -6,7 +6,6 @@
                         xmlns:ru="http://reactiveui.net"
                         xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
                         xmlns:h="clr-namespace:Spravy.Ui.Helpers"
-                        xmlns:c="clr-namespace:SukiUI.Content;assembly=SukiUI"
                         xmlns:m="clr-namespace:Spravy.Ui.Models"
                         xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                         xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
@@ -23,7 +22,7 @@
         <Grid ColumnDefinitions="Auto,*,Auto">
             <StackPanel Orientation="Horizontal">
                 <Button Classes="Basic" Command="{x:Static h:UiHelper.SwitchPane}">
-                    <PathIcon Data="{x:Static c:Icons.Menu}" />
+                    <mi:MaterialIcon Kind="Menu" />
                 </Button>
 
                 <ContentControl Content="{x:Static h:UiHelper.NavigateToCurrentToDoItem}" />

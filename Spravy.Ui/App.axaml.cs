@@ -19,41 +19,6 @@ public class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        var objectStorage = serviceFactory.CreateService<IObjectStorage>();
-        var ct = CancellationToken.None;
-
-        if (
-            objectStorage
-                .IsExistsAsync(TypeCache<SettingModel>.Type.Name, ct)
-                .GetAwaiter()
-                .GetResult()
-                .TryGetValue(out var isExists) && isExists
-        )
-        {
-            if (
-                objectStorage
-                    .GetObjectAsync<SettingModel>(TypeCache<SettingModel>.Type.Name, ct)
-                    .GetAwaiter()
-                    .GetResult()
-                    .TryGetValue(out var model)
-            )
-            {
-                var theme = SukiTheme.GetInstance();
-                theme.ChangeColorTheme(
-                    theme.ColorThemes.Single(x => x.DisplayName == model.ColorTheme)
-                );
-
-                theme.ChangeBaseTheme(
-                    model.BaseTheme switch
-                    {
-                        "Light" => ThemeVariant.Light,
-                        "Dark" => ThemeVariant.Dark,
-                        _ => ThemeVariant.Dark,
-                    }
-                );
-            }
-        }
-
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             var window = serviceFactory

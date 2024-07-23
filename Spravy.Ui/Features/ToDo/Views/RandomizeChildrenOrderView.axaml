@@ -5,10 +5,10 @@
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:ru="http://reactiveui.net"
                         xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
-                        xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
                         xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                         xmlns:tm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
                         xmlns:m="clr-namespace:Spravy.Ui.Models"
+                        xmlns:c="clr-namespace:Spravy.Ui.Controls"
                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                         x:Class="Spravy.Ui.Features.ToDo.Views.RandomizeChildrenOrderView"
                         x:DataType="vm:RandomizeChildrenOrderViewModel">

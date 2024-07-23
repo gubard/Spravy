@@ -4,7 +4,6 @@
                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:ru="http://reactiveui.net"
-                        xmlns:c="clr-namespace:SukiUI.Controls;assembly=SukiUI"
                         xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
                         xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -14,9 +13,6 @@
         <ContentControl.Styles>
             <Style Selector="Expander">
                 <Setter Property="VerticalAlignment" Value="Top" />
-            </Style>
-            <Style Selector="c|GlassCard">
-                <Setter Property="Margin" Value="0,0,0,5" />
             </Style>
         </ContentControl.Styles>
     </ContentControl>

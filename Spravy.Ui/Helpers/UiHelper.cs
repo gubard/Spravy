@@ -27,7 +27,6 @@ public static class UiHelper
         SetToDoItemDescription = commands.SetToDoItemDescription.Command;
         AddPasswordItem = commands.AddPasswordItem.Command;
         ShowPasswordItemSetting = commands.ShowPasswordItemSetting.Command;
-        SettingViewInitialized = commands.SettingViewInitialized.Command;
         NavigateToActiveToDoItem = commands.NavigateToActiveToDoItem.Command;
         ForgotPasswordViewInitialized = commands.ForgotPasswordViewInitialized.Command;
         ForgotPassword = commands.ForgotPassword.Command;
@@ -73,7 +72,6 @@ public static class UiHelper
     public static readonly ICommand SetToDoItemDescription;
     public static readonly ICommand AddPasswordItem;
     public static readonly ICommand ShowPasswordItemSetting;
-    public static readonly ICommand SettingViewInitialized;
     public static readonly ICommand ForgotPasswordViewInitialized;
     public static readonly ICommand ForgotPassword;
     public static readonly ICommand NavigateToActiveToDoItem;
