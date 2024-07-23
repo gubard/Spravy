@@ -5,7 +5,7 @@ namespace Spravy.Ui.Controls;
 public class GroupBox : ContentControl
 {
     public static readonly StyledProperty<object?> HeaderProperty = AvaloniaProperty.Register<
-        EnumSelectorControl,
+        GroupBox,
         object?
     >(nameof(Header), defaultBindingMode: BindingMode.TwoWay);
 

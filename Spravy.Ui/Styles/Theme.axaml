@@ -8,6 +8,7 @@
                 <MergeResourceInclude Source="IntegersSelectorControl.axaml" />
                 <MergeResourceInclude Source="EnumSelectorControl.axaml" />
                 <MergeResourceInclude Source="GroupBox.axaml" />
+                <MergeResourceInclude Source="Stepper.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Styles.Resources>

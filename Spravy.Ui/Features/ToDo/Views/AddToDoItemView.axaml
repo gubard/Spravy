@@ -28,7 +28,7 @@
 
                     <ScrollViewer Classes="mini" HorizontalScrollBarVisibility="Auto"
                                   VerticalScrollBarVisibility="Disabled">
-                        <controls:Stepper Index="0" Steps="{Binding Path}" HorizontalAlignment="Left">
+                        <controls:Stepper Steps="{Binding Path}" HorizontalAlignment="Left">
                             <controls:Stepper.DataTemplates>
                                 <DataTemplate DataType="tm:ToDoItemEntityNotify">
                                     <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5" />

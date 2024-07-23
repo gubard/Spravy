@@ -4,15 +4,30 @@ namespace Spravy.Ui.Controls;
 
 public class Stepper : TemplatedControl
 {
-    public static readonly StyledProperty<uint> IndexProperty = AvaloniaProperty.Register<
-        EnumSelectorControl,
-        uint
-    >(nameof(Index), defaultBindingMode: BindingMode.TwoWay);
-
     public static readonly StyledProperty<IEnumerable> StepsProperty = AvaloniaProperty.Register<
-        EnumSelectorControl,
+        Stepper,
         IEnumerable
     >(nameof(Steps), defaultBindingMode: BindingMode.TwoWay);
+
+    public static readonly StyledProperty<IEnumerable> ItemsProperty = AvaloniaProperty.Register<
+        Stepper,
+        IEnumerable
+    >(nameof(Items), defaultBindingMode: BindingMode.OneWayToSource);
+
+    static Stepper()
+    {
+        StepsProperty.Changed.AddClassHandler<Stepper>(
+            (control, _) =>
+            {
+                control.Items = control.Steps.OfType<object>().ToArray();
+            }
+        );
+    }
+
+    public Stepper()
+    {
+        Items = Array.Empty<object>();
+    }
 
     public IEnumerable Steps
     {
@@ -20,9 +35,9 @@ public class Stepper : TemplatedControl
         set => SetValue(StepsProperty, value);
     }
 
-    public uint Index
+    public IEnumerable Items
     {
-        get => GetValue(IndexProperty);
-        set => SetValue(IndexProperty, value);
+        get => GetValue(ItemsProperty);
+        private set => SetValue(ItemsProperty, value);
     }
 }

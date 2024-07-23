@@ -41,7 +41,7 @@
             <StackPanel>
                 <ScrollViewer Classes="mini" VerticalScrollBarVisibility="Disabled"
                               HorizontalScrollBarVisibility="Auto">
-                    <c:Stepper Steps="{Binding Item.Path}" Index="0" HorizontalAlignment="Center">
+                    <c:Stepper Steps="{Binding Item.Path}" HorizontalAlignment="Center">
                         <c:Stepper.DataTemplates>
                             <DataTemplate DataType="tm:ToDoItemEntityNotify">
                                 <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5" />

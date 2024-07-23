@@ -18,9 +18,7 @@
                 Text="{Binding Item, Converter={StaticResource ObjectToLocalizationConverter}, ConverterParameter=RandomizeChildrenOrderView.Header}" />
         </c:GroupBox.Header>
 
-        <c:Stepper Steps="{Binding Item.Path}"
-                   Index="0"
-                   Classes="horizontal-alignment-center read-only">
+        <c:Stepper Steps="{Binding Item.Path}" Classes="horizontal-alignment-center read-only">
             <c:Stepper.DataTemplates>
                 <DataTemplate DataType="tm:ToDoItemEntityNotify">
                     <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5" />
