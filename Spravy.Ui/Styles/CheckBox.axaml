@@ -11,7 +11,7 @@
         <Setter Property="Margin" Value="3" />
         <Setter Property="Height" Value="50" />
         <Setter Property="Width" Value="50" />
-        <Setter Property="BorderBrush" Value="#88FFFFFF" />  
+        <Setter Property="BorderBrush" Value="#88FFFFFF" />
         <Setter Property="BorderThickness" Value="1" />
 
         <Setter Property="Template">
@@ -22,17 +22,22 @@
                         Padding="{TemplateBinding Padding}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         CornerRadius="{TemplateBinding CornerRadius}"
-                        BorderThickness="{TemplateBinding BorderThickness}">
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        Width="{TemplateBinding Width}"
+                        Height="{TemplateBinding Height}">
                     <avalonia:MaterialIcon IsVisible="{TemplateBinding IsChecked}"
                                            Kind="Check"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Margin="0,0,10,0"
                                            Width="{TemplateBinding Width}"
                                            Height="{TemplateBinding Height}" />
                 </Border>
             </ControlTemplate>
         </Setter>
     </Style>
-    
+
     <Style Selector="CheckBox.complete-to-do-item:pointerover">
-        <Setter Property="BorderBrush" Value="White" />  
+        <Setter Property="BorderBrush" Value="White" />
     </Style>
 </Styles>

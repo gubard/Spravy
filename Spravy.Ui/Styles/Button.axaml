@@ -23,27 +23,4 @@
     <Style Selector=":is(Button).mode-release">
         <Setter Property="ClickMode" Value="Release" />
     </Style>
-
-    <Style Selector="Button.glass-card">
-        <Setter Property="Padding" Value="5,5,5,0" />
-        <Setter Property="Margin" Value="2" />
-        <Setter Property="Template">
-            <ControlTemplate>
-                <Border Padding="{TemplateBinding Padding}"
-                                    Background="{TemplateBinding Background}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="{TemplateBinding CornerRadius}"
-                                    Margin="{TemplateBinding Margin}"
-                                    TextElement.Foreground="{TemplateBinding Foreground}">
-                    <ContentPresenter HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                      VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                      Content="{TemplateBinding Content}"
-                                      FontFamily="fonts:Inter#Inter"
-                                      FontSize="{TemplateBinding FontSize}"
-                                      RecognizesAccessKey="True" />
-                </Border>
-            </ControlTemplate>
-        </Setter>
-    </Style>
 </Styles>
