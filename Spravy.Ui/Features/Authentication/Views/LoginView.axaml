@@ -27,7 +27,7 @@
             MinWidth="300">
         <c:BusyArea BusyText="{DynamicResource LoginView.Busy}"
                     IsBusy="{Binding IsBusy}">
-            <c:GroupBox>
+            <c:GroupBox Classes="header-alignment-center">
                 <c:GroupBox.Header>
                     <TextBlock Text="{DynamicResource LoginView.WelcomeToSpravy}" Classes="h2"
                                HorizontalAlignment="Center" />
