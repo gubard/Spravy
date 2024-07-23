@@ -25,49 +25,46 @@
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             MinWidth="300">
-        <c:BusyArea BusyText="{DynamicResource LoginView.Busy}"
-                    IsBusy="{Binding IsBusy}">
-            <c:GroupBox Classes="header-alignment-center">
-                <c:GroupBox.Header>
-                    <TextBlock Text="{DynamicResource LoginView.WelcomeToSpravy}" Classes="h2"
-                               HorizontalAlignment="Center" />
-                </c:GroupBox.Header>
+        <c:GroupBox Classes="header-alignment-center">
+            <c:GroupBox.Header>
+                <TextBlock Text="{DynamicResource LoginView.WelcomeToSpravy}" Classes="h2"
+                           HorizontalAlignment="Center" />
+            </c:GroupBox.Header>
 
-                <StackPanel>
-                    <TextBlock Classes="field"
-                               Text="{DynamicResource LoginView.Login}" />
-                    <TextBox Name="{x:Static v:LoginView.LoginTextBoxName}"
-                             Text="{Binding Login}" />
-                    <TextBlock Classes="field"
-                               Text="{DynamicResource LoginView.Password}" />
-                    <TextBox Name="{x:Static v:LoginView.PasswordTextBoxName}"
-                             Classes="password-char content-type-password"
-                             Text="{Binding Password}" />
+            <StackPanel>
+                <TextBlock Classes="field"
+                           Text="{DynamicResource LoginView.Login}" />
+                <TextBox Name="{x:Static v:LoginView.LoginTextBoxName}"
+                         Text="{Binding Login}" />
+                <TextBlock Classes="field"
+                           Text="{DynamicResource LoginView.Password}" />
+                <TextBox Name="{x:Static v:LoginView.PasswordTextBoxName}"
+                         Classes="password-char content-type-password"
+                         Text="{Binding Password}" />
 
-                    <Grid ColumnDefinitions="*,*" RowDefinitions="*,*">
-                        <CheckBox Name="{x:Static v:LoginView.RememberMeCheckBoxName}"
-                                  IsChecked="{Binding IsRememberMe}"
-                                  Content="{DynamicResource LoginView.RememberMe}"
-                                  HorizontalAlignment="Center" />
-                        <Button Grid.Column="1"
-                                Classes="mode-press"
-                                Command="{x:Static h:UiHelper.NavigateToForgotPassword}"
-                                Content="{DynamicResource LoginView.ForgotPassword}" />
-                        <Button Grid.Row="1"
-                                Name="{x:Static v:LoginView.CreateUserButtonName}"
-                                Classes="mode-press"
-                                Command="{x:Static h:UiHelper.NavigateToCreateUser}"
-                                Content="{DynamicResource LoginView.CreateAccount}" />
-                        <Button Grid.Row="1"
-                                Grid.Column="1"
-                                Name="{x:Static v:LoginView.LoginButtonName}"
-                                Classes="Flat mode-press"
-                                Command="{x:Static h:UiHelper.Login}"
-                                CommandParameter="{Binding}"
-                                Content="{DynamicResource LoginView.Login}" />
-                    </Grid>
-                </StackPanel>
-            </c:GroupBox>
-        </c:BusyArea>
+                <Grid ColumnDefinitions="*,*" RowDefinitions="*,*">
+                    <CheckBox Name="{x:Static v:LoginView.RememberMeCheckBoxName}"
+                              IsChecked="{Binding IsRememberMe}"
+                              Content="{DynamicResource LoginView.RememberMe}"
+                              HorizontalAlignment="Center" />
+                    <Button Grid.Column="1"
+                            Classes="mode-press"
+                            Command="{x:Static h:UiHelper.NavigateToForgotPassword}"
+                            Content="{DynamicResource LoginView.ForgotPassword}" />
+                    <Button Grid.Row="1"
+                            Name="{x:Static v:LoginView.CreateUserButtonName}"
+                            Classes="mode-press"
+                            Command="{x:Static h:UiHelper.NavigateToCreateUser}"
+                            Content="{DynamicResource LoginView.CreateAccount}" />
+                    <Button Grid.Row="1"
+                            Grid.Column="1"
+                            Name="{x:Static v:LoginView.LoginButtonName}"
+                            Classes="Flat mode-press"
+                            Command="{x:Static h:UiHelper.Login}"
+                            CommandParameter="{Binding}"
+                            Content="{DynamicResource LoginView.Login}" />
+                </Grid>
+            </StackPanel>
+        </c:GroupBox>
     </Border>
 </ru:ReactiveUserControl>

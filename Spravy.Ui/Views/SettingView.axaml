@@ -11,106 +11,103 @@
                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                         x:Class="Spravy.Ui.Views.SettingView"
                         x:DataType="vm:SettingViewModel">
-    <c:BusyArea BusyText="{DynamicResource SettingView.Busy}"
-                IsBusy="{Binding IsBusy}">
-        <Grid RowDefinitions="*,Auto">
-            <ScrollViewer Classes="mini">
-                <c:GroupBox>
-                    <c:GroupBox.Header>
-                        <Grid ColumnDefinitions="Auto,*">
-                            <StackPanel Orientation="Horizontal">
-                                <Button Classes="Basic" Command="{x:Static h:UiHelper.SwitchPane}">
-                                    <ai:MaterialIcon Kind="Menu" />
-                                </Button>
+    <Grid RowDefinitions="*,Auto">
+        <ScrollViewer Classes="mini">
+            <c:GroupBox>
+                <c:GroupBox.Header>
+                    <Grid ColumnDefinitions="Auto,*">
+                        <StackPanel Orientation="Horizontal">
+                            <Button Classes="Basic" Command="{x:Static h:UiHelper.SwitchPane}">
+                                <ai:MaterialIcon Kind="Menu" />
+                            </Button>
 
-                                <ContentControl Content="{x:Static h:UiHelper.NavigateToCurrentToDoItem}" />
-                            </StackPanel>
+                            <ContentControl Content="{x:Static h:UiHelper.NavigateToCurrentToDoItem}" />
+                        </StackPanel>
 
-                            <ScrollViewer Grid.Column="1"
-                                          VerticalScrollBarVisibility="Disabled"
-                                          HorizontalScrollBarVisibility="Auto"
-                                          HorizontalAlignment="Left"
-                                          Classes="mini">
-                                <TextBlock Text="{DynamicResource SettingView.Header}" Classes="h3" />
-                            </ScrollViewer>
-                        </Grid>
-                    </c:GroupBox.Header>
+                        <ScrollViewer Grid.Column="1"
+                                      VerticalScrollBarVisibility="Disabled"
+                                      HorizontalScrollBarVisibility="Auto"
+                                      HorizontalAlignment="Left"
+                                      Classes="mini">
+                            <TextBlock Text="{DynamicResource SettingView.Header}" Classes="h3" />
+                        </ScrollViewer>
+                    </Grid>
+                </c:GroupBox.Header>
 
-                    <ItemsControl Margin="20">
-                        <c:GroupBox Header="Account Setting">
-                            <StackPanel>
-                                <TextBlock Classes="field"
-                                           Text="{DynamicResource SettingView.Login}" />
-                                <TextBox Classes="read-only"
-                                         Text="{Binding AccountNotify.Login}" />
+                <ItemsControl Margin="20">
+                    <c:GroupBox Header="Account Setting">
+                        <StackPanel>
+                            <TextBlock Classes="field"
+                                       Text="{DynamicResource SettingView.Login}" />
+                            <TextBox Classes="read-only"
+                                     Text="{Binding AccountNotify.Login}" />
 
-                                <Grid ColumnDefinitions="*,*">
-                                    <Button Classes="mode-press"
-                                            Content="{DynamicResource SettingView.ChangePassword}"
-                                            Command="{Binding ChangePasswordCommand.Command}" />
-                                    <Button Grid.Column="1"
-                                            Classes="mode-press"
-                                            Content="{DynamicResource SettingView.DeleteAccount}"
-                                            Command="{Binding DeleteAccountCommand.Command}" />
-                                </Grid>
-                            </StackPanel>
-                        </c:GroupBox>
+                            <Grid ColumnDefinitions="*,*">
+                                <Button Classes="mode-press"
+                                        Content="{DynamicResource SettingView.ChangePassword}"
+                                        Command="{Binding ChangePasswordCommand.Command}" />
+                                <Button Grid.Column="1"
+                                        Classes="mode-press"
+                                        Content="{DynamicResource SettingView.DeleteAccount}"
+                                        Command="{Binding DeleteAccountCommand.Command}" />
+                            </Grid>
+                        </StackPanel>
+                    </c:GroupBox>
 
-                        <c:GroupBox Header="Base Theme">
-                            <StackPanel HorizontalAlignment="Center"
-                                        Orientation="Horizontal">
-                                <RadioButton Width="135"
-                                             Height="120"
-                                             Padding="0"
-                                             Classes="GigaChips"
-                                             GroupName="RadioBaseTheme"
-                                             IsChecked="{Binding IsLightTheme}">
-                                    <Border Margin="-50"
-                                            Background="#fafafa"
-                                            CornerRadius="{DynamicResource MediumCornerRadius}">
-                                        <Grid>
-                                            <TextBlock Margin="42"
-                                                       HorizontalAlignment="Center"
-                                                       VerticalAlignment="Bottom"
-                                                       FontWeight="DemiBold"
-                                                       Foreground="#555555"
-                                                       Text="Light Mode" />
-                                        </Grid>
-                                    </Border>
-                                </RadioButton>
+                    <c:GroupBox Header="Base Theme">
+                        <StackPanel HorizontalAlignment="Center"
+                                    Orientation="Horizontal">
+                            <RadioButton Width="135"
+                                         Height="120"
+                                         Padding="0"
+                                         Classes="GigaChips"
+                                         GroupName="RadioBaseTheme"
+                                         IsChecked="{Binding IsLightTheme}">
+                                <Border Margin="-50"
+                                        Background="#fafafa"
+                                        CornerRadius="{DynamicResource MediumCornerRadius}">
+                                    <Grid>
+                                        <TextBlock Margin="42"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Bottom"
+                                                   FontWeight="DemiBold"
+                                                   Foreground="#555555"
+                                                   Text="Light Mode" />
+                                    </Grid>
+                                </Border>
+                            </RadioButton>
 
-                                <RadioButton Width="135"
-                                             Height="120"
-                                             Classes="GigaChips"
-                                             GroupName="RadioBaseTheme"
-                                             IsChecked="{Binding !IsLightTheme}">
-                                    <Border Margin="-50"
-                                            Background="#222222"
-                                            CornerRadius="{DynamicResource MediumCornerRadius}">
-                                        <Grid>
-                                            <TextBlock Margin="42"
-                                                       HorizontalAlignment="Center"
-                                                       VerticalAlignment="Bottom"
-                                                       FontWeight="DemiBold"
-                                                       Foreground="#fafafa"
-                                                       Text="Dark Mode" />
-                                        </Grid>
-                                    </Border>
-                                </RadioButton>
-                            </StackPanel>
-                        </c:GroupBox>
+                            <RadioButton Width="135"
+                                         Height="120"
+                                         Classes="GigaChips"
+                                         GroupName="RadioBaseTheme"
+                                         IsChecked="{Binding !IsLightTheme}">
+                                <Border Margin="-50"
+                                        Background="#222222"
+                                        CornerRadius="{DynamicResource MediumCornerRadius}">
+                                    <Grid>
+                                        <TextBlock Margin="42"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Bottom"
+                                                   FontWeight="DemiBold"
+                                                   Foreground="#fafafa"
+                                                   Text="Dark Mode" />
+                                    </Grid>
+                                </Border>
+                            </RadioButton>
+                        </StackPanel>
+                    </c:GroupBox>
 
-                        <c:GroupBox Header="Application Info">
-                            <StackPanel>
-                                <TextBlock Classes="field"
-                                           Text="{DynamicResource SettingView.Version}" />
-                                <TextBox Classes="read-only"
-                                         Text="{Binding Version}" />
-                            </StackPanel>
-                        </c:GroupBox>
-                    </ItemsControl>
-                </c:GroupBox>
-            </ScrollViewer>
-        </Grid>
-    </c:BusyArea>
+                    <c:GroupBox Header="Application Info">
+                        <StackPanel>
+                            <TextBlock Classes="field"
+                                       Text="{DynamicResource SettingView.Version}" />
+                            <TextBox Classes="read-only"
+                                     Text="{Binding Version}" />
+                        </StackPanel>
+                    </c:GroupBox>
+                </ItemsControl>
+            </c:GroupBox>
+        </ScrollViewer>
+    </Grid>
 </ru:ReactiveUserControl>

@@ -7,57 +7,53 @@
                         xmlns:vm="clr-namespace:Spravy.Ui.Features.Authentication.ViewModels"
                         xmlns:v="clr-namespace:Spravy.Ui.Features.Authentication.Views"
                         xmlns:h="clr-namespace:Spravy.Ui.Helpers"
-                        xmlns:c="clr-namespace:Spravy.Ui.Controls"
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                         x:Class="Spravy.Ui.Features.Authentication.Views.CreateUserView"
                         x:DataType="vm:CreateUserViewModel">
     <UserControl.KeyBindings>
-        <KeyBinding Gesture="Enter" 
+        <KeyBinding Gesture="Enter"
                     Command="{x:Static h:UiHelper.CreateUserViewEnter}"
                     CommandParameter="{Binding $self}" />
     </UserControl.KeyBindings>
 
     <Border Name="{x:Static v:CreateUserView.CreateUserCardName}"
-                 Classes="alignment-center"
-                 Width="400">
-        <c:BusyArea IsBusy="{Binding IsBusy}"
-                    BusyText="{DynamicResource CreateUserView.Busy}">
-            <StackPanel>
-                <TextBlock Text="{DynamicResource CreateUserView.CreateAccountHeader}"
-                           Classes="h2 horizontal-alignment-center" />
-                <TextBlock Classes="field"
-                           Text="{DynamicResource CreateUserView.Email}" />
-                <TextBox Name="{x:Static v:CreateUserView.EmailTextBoxName}"
-                         Text="{Binding Email}"
-                         Classes="content-type-email" />
-                <TextBlock Classes="field"
-                           Text="{DynamicResource CreateUserView.Login}" />
-                <TextBox Name="{x:Static v:CreateUserView.LoginTextBoxName}"
-                         Text="{Binding Login}" />
-                <TextBlock Classes="field"
-                           Text="{DynamicResource CreateUserView.Password}" />
-                <TextBox Name="{x:Static v:CreateUserView.PasswordTextBoxName}"
-                         Text="{Binding Password}"
-                         Classes="content-type-password password-char" />
-                <TextBlock Classes="field"
-                           Text="{DynamicResource CreateUserView.RepeatPassword}" />
-                <TextBox Name="{x:Static v:CreateUserView.RepeatPasswordTextBoxName}"
-                         Text="{Binding RepeatPassword}"
-                         Classes="content-type-password password-char" />
+            Classes="alignment-center"
+            Width="400">
+        <StackPanel>
+            <TextBlock Text="{DynamicResource CreateUserView.CreateAccountHeader}"
+                       Classes="h2 horizontal-alignment-center" />
+            <TextBlock Classes="field"
+                       Text="{DynamicResource CreateUserView.Email}" />
+            <TextBox Name="{x:Static v:CreateUserView.EmailTextBoxName}"
+                     Text="{Binding Email}"
+                     Classes="content-type-email" />
+            <TextBlock Classes="field"
+                       Text="{DynamicResource CreateUserView.Login}" />
+            <TextBox Name="{x:Static v:CreateUserView.LoginTextBoxName}"
+                     Text="{Binding Login}" />
+            <TextBlock Classes="field"
+                       Text="{DynamicResource CreateUserView.Password}" />
+            <TextBox Name="{x:Static v:CreateUserView.PasswordTextBoxName}"
+                     Text="{Binding Password}"
+                     Classes="content-type-password password-char" />
+            <TextBlock Classes="field"
+                       Text="{DynamicResource CreateUserView.RepeatPassword}" />
+            <TextBox Name="{x:Static v:CreateUserView.RepeatPasswordTextBoxName}"
+                     Text="{Binding RepeatPassword}"
+                     Classes="content-type-password password-char" />
 
-                <Grid ColumnDefinitions="*,*">
-                    <Button Name="{x:Static v:CreateUserView.BackButtonName}"
-                            Classes="mode-press"
-                            Command="{x:Static h:UiHelper.Back}"
-                            Content="{DynamicResource CreateUserView.Back}" />
-                    <Button Name="{x:Static v:CreateUserView.CreateUserButtonName}"
-                            Grid.Column="1"
-                            Classes="Flat mode-press"
-                            Command="{x:Static h:UiHelper.CreateUser}"
-                            CommandParameter="{Binding}"
-                            Content="{DynamicResource CreateUserView.CreateAccount}" />
-                </Grid>
-            </StackPanel>
-        </c:BusyArea>
+            <Grid ColumnDefinitions="*,*">
+                <Button Name="{x:Static v:CreateUserView.BackButtonName}"
+                        Classes="mode-press"
+                        Command="{x:Static h:UiHelper.Back}"
+                        Content="{DynamicResource CreateUserView.Back}" />
+                <Button Name="{x:Static v:CreateUserView.CreateUserButtonName}"
+                        Grid.Column="1"
+                        Classes="Flat mode-press"
+                        Command="{x:Static h:UiHelper.CreateUser}"
+                        CommandParameter="{Binding}"
+                        Content="{DynamicResource CreateUserView.CreateAccount}" />
+            </Grid>
+        </StackPanel>
     </Border>
 </ru:ReactiveUserControl>

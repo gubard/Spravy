@@ -6,31 +6,27 @@
                         xmlns:ru="http://reactiveui.net"
                         xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
                         xmlns:h="clr-namespace:Spravy.Ui.Helpers"
-                        xmlns:c="clr-namespace:Spravy.Ui.Controls"
                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                         x:Class="Spravy.Ui.Views.EmailOrLoginInputView"
                         x:DataType="vm:EmailOrLoginInputViewModel">
     <Border HorizontalAlignment="Center"
             VerticalAlignment="Center"
             MinWidth="300">
-        <c:BusyArea BusyText="{DynamicResource EmailOrLoginInputView.Busy}"
-                    IsBusy="{Binding IsBusy}">
-            <StackPanel>
-                <TextBlock Classes="field"
-                           Text="{DynamicResource EmailOrLoginInputView.EmailOrLogin}" />
-                <TextBox Text="{Binding EmailOrLogin}" />
+        <StackPanel>
+            <TextBlock Classes="field"
+                       Text="{DynamicResource EmailOrLoginInputView.EmailOrLogin}" />
+            <TextBox Text="{Binding EmailOrLogin}" />
 
-                <Grid ColumnDefinitions="*,*">
-                    <Button Classes="mode-press"
-                            Command="{x:Static h:UiHelper.Back}"
-                            Content="{DynamicResource EmailOrLoginInputView.Back}" />
+            <Grid ColumnDefinitions="*,*">
+                <Button Classes="mode-press"
+                        Command="{x:Static h:UiHelper.Back}"
+                        Content="{DynamicResource EmailOrLoginInputView.Back}" />
 
-                    <Button Grid.Column="1"
-                            Classes="Flat mode-press"
-                            Command="{Binding ForgotPasswordCommand.Command}"
-                            Content="{DynamicResource EmailOrLoginInputView.ChangePassword}" />
-                </Grid>
-            </StackPanel>
-        </c:BusyArea>
+                <Button Grid.Column="1"
+                        Classes="Flat mode-press"
+                        Command="{Binding ForgotPasswordCommand.Command}"
+                        Content="{DynamicResource EmailOrLoginInputView.ChangePassword}" />
+            </Grid>
+        </StackPanel>
     </Border>
 </ru:ReactiveUserControl>
