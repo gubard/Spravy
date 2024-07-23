@@ -150,7 +150,7 @@ public class ProjectBuilderFactory
 
             if (projectName.EndsWith(".Browser"))
             {
-                yield return new BrowserProjectBuilder(
+                /*yield return new BrowserProjectBuilder(
                     versionService,
                     new(
                         csprojFile,
@@ -167,7 +167,7 @@ public class ProjectBuilderFactory
                         sshPassword,
                         publishFolders
                     )
-                );
+                );*/
             }
 
             if (projectName.EndsWith(".Desktop"))
