@@ -14,11 +14,13 @@
     </Design.PreviewWith>
 
     <Style Selector="dh|DialogHost">
-        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Background" Value="Black" />
     </Style>
 
     <Style
         Selector="dh|DialogOverlayPopupHost > Border#PART_ContentBackground > ContentPresenter#PART_ContentPresenter">
-        <Setter Property="CornerRadius" Value="20" />
+        <Setter Property="CornerRadius" Value="5" />
+        <Setter Property="BorderBrush" Value="#88FFFFFF"/>
+        <Setter Property="BorderThickness" Value="1" />
     </Style>
 </Styles>

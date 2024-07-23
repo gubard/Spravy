@@ -13,8 +13,7 @@
         <KeyBinding Gesture="Ctrl+Enter" Command="{Binding ConfirmCommand.Command}" />
     </UserControl.KeyBindings>
 
-    <Grid RowDefinitions="*,Auto"
-          ColumnDefinitions="*,*">
+    <Grid RowDefinitions="*,Auto" ColumnDefinitions="*,*">
         <ContentControl Name="{x:Static v:ConfirmView.ContentContentControlName}"
                         Grid.ColumnSpan="2"
                         Content="{Binding Content}" />

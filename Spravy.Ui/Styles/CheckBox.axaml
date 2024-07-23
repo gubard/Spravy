@@ -1,34 +1,38 @@
 <Styles xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia">
     <Design.PreviewWith>
-        <Border Padding="20" Background="Black">
-           <CheckBox Classes="h4">
-               <TextBlock Classes="h4 text-wrap" Text="Test"/>
-           </CheckBox>
+        <Border Padding="20" Background="Black" Width="">
+            <CheckBox IsChecked="False" Classes="complete-to-do-item" />
         </Border>
     </Design.PreviewWith>
 
-    <Style Selector="CheckBox">
+    <Style Selector="CheckBox.complete-to-do-item">
         <Setter Property="Margin" Value="3" />
-    </Style>
-    
-    <Style Selector="CheckBox.h4 /template/ Border#border">
-        <Setter Property="Height" Value="30" />
-        <Setter Property="Width" Value="30" />
-    </Style>
-    
-    <Style Selector="CheckBox.h4 /template/ Path#checkMark">
-        <Setter Property="Height" Value="20" />
-        <Setter Property="Width" Value="20" />
-    </Style>
-
-    <Style Selector="CheckBox.h3 /template/ Border#border">
-        <Setter Property="Height" Value="60" />
-        <Setter Property="Width" Value="60" />
-    </Style>
-    
-    <Style Selector="CheckBox.h3 /template/ Path#checkMark">
         <Setter Property="Height" Value="50" />
         <Setter Property="Width" Value="50" />
+        <Setter Property="BorderBrush" Value="#88FFFFFF" />  
+        <Setter Property="BorderThickness" Value="1" />
+
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border x:Name="PART_Border"
+                        Background="{TemplateBinding Background}"
+                        Margin="{TemplateBinding Margin}"
+                        Padding="{TemplateBinding Padding}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                    <avalonia:MaterialIcon IsVisible="{TemplateBinding IsChecked}"
+                                           Kind="Check"
+                                           Width="{TemplateBinding Width}"
+                                           Height="{TemplateBinding Height}" />
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+    
+    <Style Selector="CheckBox.complete-to-do-item:pointerover">
+        <Setter Property="BorderBrush" Value="White" />  
     </Style>
 </Styles>

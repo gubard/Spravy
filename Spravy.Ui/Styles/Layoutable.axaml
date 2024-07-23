@@ -30,4 +30,8 @@
     <Style Selector=":is(Layoutable).alignment-top">
         <Setter Property="VerticalAlignment" Value="Top" />
     </Style>
+    
+    <Style Selector=":is(Layoutable).alignment-left">
+        <Setter Property="HorizontalAlignment" Value="Left" />
+    </Style>
 </Styles>

@@ -1,0 +1,19 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:c="clr-namespace:Spravy.Ui.Controls">
+    <ControlTheme x:Key="GroupBoxStyle" TargetType="c:GroupBox">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid RowDefinitions="Auto, Auto, *">
+                    <ContentPresenter Content="{TemplateBinding Header}" />
+                    <Rectangle Grid.Row="1" Margin="0,2,0,2" Fill="White" Height="1" />
+                    <ContentPresenter Grid.Row="2" Content="{TemplateBinding Content}" />
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+
+    <ControlTheme x:Key="{x:Type c:GroupBox}"
+                  BasedOn="{StaticResource GroupBoxStyle}"
+                  TargetType="c:GroupBox" />
+</ResourceDictionary>
