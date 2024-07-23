@@ -121,6 +121,8 @@
                 <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto, Auto,*">
                     <ToggleButton Grid.Row="1"
                                   Grid.RowSpan="2"
+                                  BorderThickness="1"
+                                  BorderBrush="#88FFFFFF"
                                   Classes="alignment-top"
                                   Width="50"
                                   Height="50"
