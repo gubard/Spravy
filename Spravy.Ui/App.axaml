@@ -119,14 +119,21 @@
                     CommandParameter="{Binding}"
                     Classes="alignment-stretch content-alignment-stretch">
                 <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto, Auto,*">
-                    <CheckBox Grid.Row="1"
-                              Grid.RowSpan="2"
-                              Classes="complete-to-do-item alignment-top"
-                              Margin="0,0,5,5"
-                              Command="{x:Static h:UiHelper.Complete}"
-                              CommandParameter="{Binding}"
-                              IsVisible="{Binding IsCan, Converter={StaticResource ToDoItemCanNoneToBooleanReverseConverter}}"
-                              IsChecked="{Binding IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanConverter}}" />
+                    <ToggleButton Grid.Row="1"
+                                  Grid.RowSpan="2"
+                                  Classes="alignment-top"
+                                  Width="50"
+                                  Height="50"
+                                  Margin="0,0,5,5"
+                                  Command="{x:Static h:UiHelper.Complete}"
+                                  CommandParameter="{Binding}"
+                                  IsVisible="{Binding IsCan, Converter={StaticResource ToDoItemCanNoneToBooleanReverseConverter}}"
+                                  IsChecked="{Binding IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanConverter}}">
+                        <mi:MaterialIcon Kind="Check"
+                                         Width="45"
+                                         Height="45"
+                                         IsVisible="{Binding IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanConverter}}" />
+                    </ToggleButton>
 
                     <Grid Grid.ColumnSpan="3" ColumnDefinitions="Auto,Auto,*,Auto,*,Auto,Auto">
                         <Rectangle Width="15"
