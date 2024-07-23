@@ -21,9 +21,10 @@
         <KeyBinding Gesture="Enter" Command="{x:Static h:UiHelper.LoginViewEnter}" CommandParameter="{Binding $self}" />
     </UserControl.KeyBindings>
 
-    <Border HorizontalAlignment="Center"
-                 VerticalAlignment="Center"
-                 MinWidth="300">
+    <Border Classes="card"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            MinWidth="300">
         <c:BusyArea BusyText="{DynamicResource LoginView.Busy}"
                     IsBusy="{Binding IsBusy}">
             <StackPanel>

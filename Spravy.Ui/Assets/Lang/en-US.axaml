@@ -47,6 +47,7 @@
     <sys:String x:Key="ToDoItemsGroupByTypeView.PeriodicityOffsets">Periodicity offsets</sys:String>
     <sys:String x:Key="ToDoItemsGroupByTypeView.Circles">Circles</sys:String>
     <sys:String x:Key="ToDoItemsGroupByTypeView.Steps">Steps</sys:String>
+    <sys:String x:Key="ToDoItemsGroupByTypeView.Reference">Reference</sys:String>
 
     <!--ToDoItemsGroupByStatusView-->
     <sys:String x:Key="ToDoItemsGroupByStatusView.Completed">Completed</sys:String>

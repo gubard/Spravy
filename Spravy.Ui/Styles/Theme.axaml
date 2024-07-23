@@ -29,4 +29,5 @@
     <StyleInclude Source="CalendarDatePicker.axaml" />
     <StyleInclude Source="VirtualizingStackPanel.axaml" />
     <StyleInclude Source="ItemsControl.axaml" />
+    <StyleInclude Source="Boarder.axaml" />
 </Styles>

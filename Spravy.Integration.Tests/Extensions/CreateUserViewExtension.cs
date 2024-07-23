@@ -14,8 +14,7 @@ public static class CreateUserViewExtension
             .Case(() => window.SetKeyTextInput(text))
             .MustHasError()
             .Case(
-                () =>
-                    createUserView.GetControl<GlassCard>(ElementNames.CreateUserCard).MustWidth(400)
+                () => createUserView.GetControl<Border>(ElementNames.CreateUserCard).MustWidth(400)
             )
             .ClearText(window);
     }
@@ -32,8 +31,7 @@ public static class CreateUserViewExtension
             .Case(() => window.SetKeyTextInput(text))
             .MustNotHasError()
             .Case(
-                () =>
-                    createUserView.GetControl<GlassCard>(ElementNames.CreateUserCard).MustWidth(400)
+                () => createUserView.GetControl<Border>(ElementNames.CreateUserCard).MustWidth(400)
             )
             .ClearText(window);
     }
