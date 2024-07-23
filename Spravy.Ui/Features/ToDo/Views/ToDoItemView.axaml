@@ -138,45 +138,7 @@
                         <md:MarkdownScrollViewer
                             Name="{x:Static v:ToDoItemView.MarkdownTextMarkdownScrollViewerName}"
                             IsVisible="{Binding Item.IsDescriptionMarkdownText}"
-                            Markdown="{Binding Item.Description}">
-                            <md:MarkdownScrollViewer.Styles>
-                                <Style Selector="Border.Table">
-                                    <Setter Property="BorderThickness" Value="0" />
-                                </Style>
-
-                                <Style Selector="Border.TableHeader">
-                                    <Setter Property="Background" Value="{DynamicResource SukiCardBackground}" />
-                                    <Setter Property="BorderBrush" Value="{DynamicResource SukiControlBorderBrush}" />
-                                    <Setter Property="BorderThickness" Value="0,0,1,1" />
-                                </Style>
-
-                                <Style Selector="Border.OddTableRow">
-                                    <Setter Property="Background" Value="{DynamicResource SukiBackground}" />
-                                    <Setter Property="BorderBrush" Value="{DynamicResource SukiControlBorderBrush}" />
-                                    <Setter Property="BorderThickness" Value="0,0,1,1" />
-                                </Style>
-
-                                <Style Selector="Border.EvenTableRow">
-                                    <Setter Property="Background" Value="{DynamicResource SukiStrongBackground}" />
-                                    <Setter Property="BorderBrush" Value="{DynamicResource SukiControlBorderBrush}" />
-                                    <Setter Property="BorderThickness" Value="0,0,1,1" />
-                                </Style>
-
-                                <Style Selector="ct|CHyperlink">
-                                    <Setter Property="Foreground" Value="{DynamicResource SukiPrimaryColor}" />
-                                </Style>
-
-                                <Style Selector="ct|CHyperlink:pointerover">
-                                    <Setter Property="Foreground" Value="{DynamicResource SukiAccentColor50}" />
-                                    <Setter Property="BorderBrush" Value="{DynamicResource SukiAccentColor50}" />
-                                </Style>
-
-                                <Style Selector="ct|CHyperlink:pressed">
-                                    <Setter Property="Foreground" Value="{DynamicResource SukiAccentColor}" />
-                                    <Setter Property="BorderBrush" Value="{DynamicResource SukiAccentColor}" />
-                                </Style>
-                            </md:MarkdownScrollViewer.Styles>
-                        </md:MarkdownScrollViewer>
+                            Markdown="{Binding Item.Description}" />
                     </Panel>
                 </Expander>
 
