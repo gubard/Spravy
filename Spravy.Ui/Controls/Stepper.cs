@@ -17,10 +17,7 @@ public class Stepper : TemplatedControl
     static Stepper()
     {
         StepsProperty.Changed.AddClassHandler<Stepper>(
-            (control, _) =>
-            {
-                control.Items = control.Steps.OfType<object>().ToArray();
-            }
+            (control, _) => control.Items = control.Steps.OfType<object>().ToArray()
         );
     }
 
