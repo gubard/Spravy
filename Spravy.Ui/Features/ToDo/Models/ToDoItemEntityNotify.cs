@@ -4,7 +4,7 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
 {
     private static readonly ReadOnlyMemory<char> idParameterName = nameof(Id).AsMemory();
     private static readonly ReadOnlyMemory<char> nameParameterName = nameof(Name).AsMemory();
-    
+
     private readonly SpravyCommandNotifyService spravyCommandNotifyService;
 
     public ToDoItemEntityNotify(Guid id, SpravyCommandNotifyService spravyCommandNotifyService)
@@ -175,14 +175,15 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
     {
         return Id.GetHashCode();
     }
+
     public Result<string> GetParameter(ReadOnlySpan<char> parameterName)
     {
-        if (idParameterName.Span == parameterName)
+        if (idParameterName.Span.AreEquals(parameterName))
         {
             return Id.ToString().ToResult();
         }
-        
-        if (nameParameterName.Span == parameterName)
+
+        if (nameParameterName.Span.AreEquals(parameterName))
         {
             return Name.ToResult();
         }

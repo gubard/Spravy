@@ -13,12 +13,12 @@ public class PasswordItemEntityNotify : NotifyBase, IPasswordItem, IIdProperty, 
 
     public Result<string> GetParameter(ReadOnlySpan<char> parameterName)
     {
-        if (nameParameterName.Span == parameterName)
+        if (nameParameterName.Span.AreEquals(parameterName))
         {
             return Name.ToResult();
         }
 
-        if (idParameterName.Span == parameterName)
+        if (idParameterName.Span.AreEquals(parameterName))
         {
             return Id.ToString().ToResult();
         }
