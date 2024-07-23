@@ -70,7 +70,7 @@ public class MainActivity : AvaloniaMainActivity<App>
 
         if (viewModel.IsHasError)
         {
-            base.OnBackPressed();
+            OnBackPressedDispatcher.OnBackPressed();
         }
     }
 }
