@@ -41,18 +41,17 @@
 
     <Application.DataTemplates>
         <DataTemplate x:DataType="m:SpravyCommandNotify">
-            <Button Classes="Basic"
-                    Content="{Binding Kind}"
+            <Button Content="{Binding Kind}"
                     Command="{Binding Item.Command}"
                     ToolTip.Tip="{Binding Text}" />
         </DataTemplate>
 
         <DataTemplate x:DataType="lm:Header4Localization">
-            <TextBlock Text="{Binding Text}" Classes="h4 text-wrap" />
+            <TextBlock Text="{Binding Text}" Classes="text-wrap" />
         </DataTemplate>
 
         <DataTemplate x:DataType="lm:Header3Localization">
-            <TextBlock Text="{Binding Text}" Classes="h3 text-wrap" />
+            <TextBlock Text="{Binding Text}" Classes="text-wrap" />
         </DataTemplate>
 
         <DataTemplate x:DataType="lm:TextLocalization">
@@ -61,7 +60,7 @@
         </DataTemplate>
 
         <DataTemplate x:DataType="pm:PasswordItemEntityNotify">
-            <Button Classes="alignment-stretch glass-card content-alignment-stretch"
+            <Button Classes="alignment-stretch content-alignment-stretch"
                     Command="{x:Static h:UiHelper.GeneratePassword}"
                     CommandParameter="{Binding}">
                 <Grid ColumnDefinitions="*,Auto">
@@ -100,15 +99,14 @@
         </DataTemplate>
 
         <DataTemplate x:DataType="m:CommandItem">
-            <Button Classes="Basic" Command="{Binding Command}" CommandParameter="{Binding Parameter}">
+            <Button Command="{Binding Command}" CommandParameter="{Binding Parameter}">
                 <mi:MaterialIcon Kind="{Binding Icon}" />
             </Button>
         </DataTemplate>
 
         <DataTemplate DataType="m:RootItem">
             <Button Command="{x:Static h:UiHelper.NavigateToRootToDoItems}"
-                    Content="{x:Static i:MaterialIconKind.Home}"
-                    Classes="Basic" />
+                    Content="{x:Static i:MaterialIconKind.Home}" />
         </DataTemplate>
 
         <DataTemplate DataType="i:MaterialIconKind">
@@ -119,7 +117,7 @@
             <Button Name="{x:Static ui:App.RootToDoItemButtonName}"
                     Command="{x:Static h:UiHelper.NavigateToToDoItem}"
                     CommandParameter="{Binding}"
-                    Classes="alignment-stretch glass-card content-alignment-stretch">
+                    Classes="alignment-stretch content-alignment-stretch">
                 <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto, Auto,*">
                     <CheckBox Grid.Row="1"
                               Grid.RowSpan="2"
@@ -162,7 +160,7 @@
 
                     <StackPanel Grid.Column="1" Grid.Row="2">
                         <TextBlock Margin="5,5,0,0"
-                                   Classes="h4 text-wrap vertical-alignment-center alignment-left"
+                                   Classes="text-wrap vertical-alignment-center alignment-left"
                                    Text="{Binding Name}" />
 
                         <Button Margin="0,0,0,5"
