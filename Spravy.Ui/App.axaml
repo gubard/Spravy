@@ -61,7 +61,7 @@
                     Command="{x:Static h:UiHelper.GeneratePassword}"
                     CommandParameter="{Binding}">
                 <Grid ColumnDefinitions="*,Auto">
-                    <TextBlock Classes="text-wrap h4" Text="{Binding Name}" />
+                    <TextBlock Classes="text-wrap alignment-left" Text="{Binding Name}" />
 
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
                         <Button Content="{x:Static i:MaterialIconKind.Settings}"
