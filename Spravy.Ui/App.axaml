@@ -33,6 +33,10 @@
             <Setter Property="Icon" Value="{Binding Kind}" />
             <Setter Property="HorizontalAlignment" Value="Left" />
         </Style>
+
+        <Style Selector="TreeViewItem">
+            <Setter Property="HorizontalAlignment" Value="Left" />
+        </Style>
     </Application.Styles>
 
     <Application.DataTemplates>
