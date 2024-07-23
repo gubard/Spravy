@@ -413,8 +413,7 @@ class Build : NukeBuild
         botClient
             .SendTextMessageAsync(
                 "@spravy_release",
-                $"Published {name} v{VersionService.Version}({VersionService.Version.Code})",
-                replyMarkup: new InlineKeyboardMarkup(items)
+                $"Published {name} v{VersionService.Version}({VersionService.Version.Code})"
             )
             .GetAwaiter()
             .GetResult();
@@ -425,7 +424,7 @@ class Build : NukeBuild
         {
             currentItems.Add(items[i]);
 
-            if (i % 3 != 0 || i == 0)
+            if (i % 2 != 0 || i == 0)
             {
                 continue;
             }
