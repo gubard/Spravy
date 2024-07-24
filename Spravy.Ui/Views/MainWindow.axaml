@@ -7,4 +7,18 @@
           Title="Spravy"
           Icon="/Assets/Images/Logo.png" 
           Width="600"
-          Height="600" />
+          Height="600" 
+          TransparencyLevelHint="AcrylicBlur"
+          Background="Transparent" >
+    <Panel x:Name="PART_Panel">
+        <ExperimentalAcrylicBorder IsHitTestVisible="False">
+            <ExperimentalAcrylicBorder.Material>
+                <ExperimentalAcrylicMaterial
+                    BackgroundSource="Digger"
+                    TintColor="Black"
+                    TintOpacity="1"
+                    MaterialOpacity="0.65" />
+            </ExperimentalAcrylicBorder.Material>
+        </ExperimentalAcrylicBorder>
+    </Panel>
+</Window>
