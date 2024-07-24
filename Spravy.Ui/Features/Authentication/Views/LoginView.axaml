@@ -13,7 +13,8 @@
                         x:DataType="vm:LoginViewModel">
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Initialized">
-            <InvokeCommandAction Command="{x:Static h:UiHelper.LoginViewInitialized}" CommandParameter="{Binding $self}" />
+            <InvokeCommandAction Command="{x:Static h:UiHelper.LoginViewInitialized}"
+                                 CommandParameter="{Binding $self}" />
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 
@@ -27,8 +28,7 @@
             MinWidth="300">
         <c:GroupBoxControl Classes="header-alignment-center">
             <c:GroupBoxControl.Header>
-                <TextBlock Text="{DynamicResource LoginView.WelcomeToSpravy}" Classes="h2"
-                           HorizontalAlignment="Center" />
+                <TextBlock Classes="alignment-center" Text="{DynamicResource LoginView.WelcomeToSpravy}" />
             </c:GroupBoxControl.Header>
 
             <StackPanel>

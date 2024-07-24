@@ -7,9 +7,4 @@
             </ItemsPanelTemplate>
         </Setter>
     </Style>
-
-    <Style Selector="ListBoxItem">
-        <Setter Property="HorizontalAlignment" Value="Stretch" />
-        <Setter Property="VerticalAlignment" Value="Stretch" />
-    </Style>
 </Styles>

@@ -32,4 +32,7 @@
     <StyleInclude Source="VirtualizingStackPanel.axaml" />
     <StyleInclude Source="ItemsControl.axaml" />
     <StyleInclude Source="Boarder.axaml" />
+    <StyleInclude Source="ListBoxItem.axaml" />
+    <StyleInclude Source="MenuItem.axaml" />
+    <StyleInclude Source="TreeViewItem.axaml" />
 </Styles>
