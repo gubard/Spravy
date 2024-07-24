@@ -26,9 +26,9 @@
                     <TextBlock Classes="h4 text-wrap"
                                IsVisible="{Binding DeleteItems.Count, Converter={StaticResource Int32PositiveToBooleanConverterReverse}}"
                                Text="{Binding Item, Converter={StaticResource ObjectToLocalizationConverter}, ConverterParameter=DeleteToDoItemView.NamedHeader}" />
-                    <TextBlock  Classes="h4 text-wrap"
-                                IsVisible="{Binding DeleteItems.Count, Converter={StaticResource Int32ToIsVisibleConverter}}"
-                                Text="{DynamicResource DeleteToDoItemView.Header}" />
+                    <TextBlock Classes="h4 text-wrap"
+                               IsVisible="{Binding DeleteItems.Count, Converter={StaticResource Int32ToIsVisibleConverter}}"
+                               Text="{DynamicResource DeleteToDoItemView.Header}" />
                 </Panel>
             </c:GroupBoxControl.Header>
 
@@ -54,10 +54,10 @@
                     </c:PathControl>
                 </ScrollViewer>
 
-                <TextBlock
-                    IsVisible="{Binding ChildrenText, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}"
-                    Text="{DynamicResource DeleteToDoItemView.Body}" />
-                <TextBlock Text="{Binding ChildrenText}" />
+                <TextBlock Classes="alignment-left"
+                           IsVisible="{Binding ChildrenText, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}"
+                           Text="{DynamicResource DeleteToDoItemView.Body}" />
+                <TextBlock Classes="alignment-left" Text="{Binding ChildrenText}" />
             </StackPanel>
         </c:GroupBoxControl>
     </ScrollViewer>
