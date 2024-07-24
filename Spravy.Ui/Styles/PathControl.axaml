@@ -1,7 +1,7 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:controls="clr-namespace:Spravy.Ui.Controls">
-    <ControlTheme x:Key="StepperStyle" TargetType="controls:Stepper">
+    <ControlTheme x:Key="StepperStyle" TargetType="controls:PathControl">
         <Setter Property="Template">
             <ControlTemplate>
                 <ItemsControl x:Name="PART_ItemsControl" ItemsSource="{TemplateBinding Items}" />
@@ -17,7 +17,7 @@
         </Style>
     </ControlTheme>
 
-    <ControlTheme x:Key="{x:Type controls:Stepper}"
+    <ControlTheme x:Key="{x:Type controls:PathControl}"
                   BasedOn="{StaticResource StepperStyle}"
-                  TargetType="controls:Stepper" />
+                  TargetType="controls:PathControl" />
 </ResourceDictionary>

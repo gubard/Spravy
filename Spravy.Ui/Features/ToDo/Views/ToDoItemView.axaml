@@ -102,16 +102,16 @@
                       VerticalScrollBarVisibility="Disabled"
                       HorizontalScrollBarVisibility="Auto"
                       Margin="8,0,0,0">
-            <controls:Stepper Steps="{Binding Item.Path}" HorizontalAlignment="Center">
-                <controls:Stepper.DataTemplates>
+            <controls:PathControl Steps="{Binding Item.Path}" HorizontalAlignment="Center">
+                <controls:PathControl.DataTemplates>
                     <DataTemplate DataType="m:ToDoItemEntityNotify">
                         <Button Classes="Basic"
                                 Command="{x:Static h:UiHelper.NavigateToToDoItem}"
                                 CommandParameter="{Binding}"
                                 Content="{Binding Name}" />
                     </DataTemplate>
-                </controls:Stepper.DataTemplates>
-            </controls:Stepper>
+                </controls:PathControl.DataTemplates>
+            </controls:PathControl>
         </ScrollViewer>
 
         <ScrollViewer Classes="mini" Grid.Row="2">

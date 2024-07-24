@@ -19,16 +19,16 @@
     </Interaction.Behaviors>
 
     <ScrollViewer Classes="mini" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-        <c:GroupBox>
-            <c:GroupBox.Header>
+        <c:GroupBoxControl>
+            <c:GroupBoxControl.Header>
                 <TextBlock Text="{DynamicResource AddRootToDoItemView.Header}" Classes="h4" />
-            </c:GroupBox.Header>
+            </c:GroupBoxControl.Header>
 
             <StackPanel>
                 <ContentControl Name="{x:Static v:AddRootToDoItemView.ToDoItemContentContentControlName}"
                                 Content="{Binding ToDoItemContent}" />
                 <ContentControl Content="{Binding DescriptionContent}" />
             </StackPanel>
-        </c:GroupBox>
+        </c:GroupBoxControl>
     </ScrollViewer>
 </ru:ReactiveUserControl>

@@ -12,14 +12,14 @@
                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                         x:Class="Spravy.Ui.Features.ToDo.Views.RandomizeChildrenOrderView"
                         x:DataType="vm:RandomizeChildrenOrderViewModel">
-    <c:GroupBox>
-        <c:GroupBox.Header>
+    <c:GroupBoxControl>
+        <c:GroupBoxControl.Header>
             <TextBlock
                 Text="{Binding Item, Converter={StaticResource ObjectToLocalizationConverter}, ConverterParameter=RandomizeChildrenOrderView.Header}" />
-        </c:GroupBox.Header>
+        </c:GroupBoxControl.Header>
 
-        <c:Stepper Steps="{Binding Item.Path}" Classes="horizontal-alignment-center read-only">
-            <c:Stepper.DataTemplates>
+        <c:PathControl Steps="{Binding Item.Path}" Classes="horizontal-alignment-center read-only">
+            <c:PathControl.DataTemplates>
                 <DataTemplate DataType="tm:ToDoItemEntityNotify">
                     <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5" />
                 </DataTemplate>
@@ -27,7 +27,7 @@
                 <DataTemplate DataType="m:RootItem">
                     <mi:MaterialIcon Kind="Home" Margin="5" />
                 </DataTemplate>
-            </c:Stepper.DataTemplates>
-        </c:Stepper>
-    </c:GroupBox>
+            </c:PathControl.DataTemplates>
+        </c:PathControl>
+    </c:GroupBoxControl>
 </ru:ReactiveUserControl>

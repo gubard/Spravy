@@ -2,10 +2,10 @@ using Avalonia.Data;
 
 namespace Spravy.Ui.Controls;
 
-public class GroupBox : ContentControl
+public class GroupBoxControl : ContentControl
 {
     public static readonly StyledProperty<object?> HeaderProperty = AvaloniaProperty.Register<
-        GroupBox,
+        GroupBoxControl,
         object?
     >(nameof(Header), defaultBindingMode: BindingMode.TwoWay);
 

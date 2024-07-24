@@ -25,11 +25,11 @@
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             MinWidth="300">
-        <c:GroupBox Classes="header-alignment-center">
-            <c:GroupBox.Header>
+        <c:GroupBoxControl Classes="header-alignment-center">
+            <c:GroupBoxControl.Header>
                 <TextBlock Text="{DynamicResource LoginView.WelcomeToSpravy}" Classes="h2"
                            HorizontalAlignment="Center" />
-            </c:GroupBox.Header>
+            </c:GroupBoxControl.Header>
 
             <StackPanel>
                 <TextBlock Classes="field"
@@ -65,6 +65,6 @@
                             Content="{DynamicResource LoginView.Login}" />
                 </Grid>
             </StackPanel>
-        </c:GroupBox>
+        </c:GroupBoxControl>
     </Border>
 </ru:ReactiveUserControl>

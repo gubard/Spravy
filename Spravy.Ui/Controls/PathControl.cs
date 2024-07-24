@@ -2,26 +2,26 @@ using Avalonia.Data;
 
 namespace Spravy.Ui.Controls;
 
-public class Stepper : TemplatedControl
+public class PathControl : TemplatedControl
 {
     public static readonly StyledProperty<IEnumerable> StepsProperty = AvaloniaProperty.Register<
-        Stepper,
+        PathControl,
         IEnumerable
     >(nameof(Steps), defaultBindingMode: BindingMode.TwoWay);
 
     public static readonly StyledProperty<IEnumerable> ItemsProperty = AvaloniaProperty.Register<
-        Stepper,
+        PathControl,
         IEnumerable
     >(nameof(Items), defaultBindingMode: BindingMode.OneWayToSource);
 
-    static Stepper()
+    static PathControl()
     {
-        StepsProperty.Changed.AddClassHandler<Stepper>(
+        StepsProperty.Changed.AddClassHandler<PathControl>(
             (control, _) => control.Items = control.Steps.OfType<object>().ToArray()
         );
     }
 
-    public Stepper()
+    public PathControl()
     {
         Items = Array.Empty<object>();
     }

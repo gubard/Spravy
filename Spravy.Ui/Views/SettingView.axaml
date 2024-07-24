@@ -13,8 +13,8 @@
                         x:DataType="vm:SettingViewModel">
     <Grid RowDefinitions="*,Auto">
         <ScrollViewer Classes="mini">
-            <c:GroupBox>
-                <c:GroupBox.Header>
+            <c:GroupBoxControl>
+                <c:GroupBoxControl.Header>
                     <Grid ColumnDefinitions="Auto,*">
                         <StackPanel Orientation="Horizontal">
                             <Button Classes="Basic" Command="{x:Static h:UiHelper.SwitchPane}">
@@ -32,10 +32,10 @@
                             <TextBlock Text="{DynamicResource SettingView.Header}" Classes="h3" />
                         </ScrollViewer>
                     </Grid>
-                </c:GroupBox.Header>
+                </c:GroupBoxControl.Header>
 
                 <ItemsControl Margin="20">
-                    <c:GroupBox Header="Account Setting">
+                    <c:GroupBoxControl Header="Account Setting">
                         <StackPanel>
                             <TextBlock Classes="field"
                                        Text="{DynamicResource SettingView.Login}" />
@@ -52,9 +52,9 @@
                                         Command="{Binding DeleteAccountCommand.Command}" />
                             </Grid>
                         </StackPanel>
-                    </c:GroupBox>
+                    </c:GroupBoxControl>
 
-                    <c:GroupBox Header="Base Theme">
+                    <c:GroupBoxControl Header="Base Theme">
                         <StackPanel HorizontalAlignment="Center"
                                     Orientation="Horizontal">
                             <RadioButton Width="135"
@@ -96,18 +96,18 @@
                                 </Border>
                             </RadioButton>
                         </StackPanel>
-                    </c:GroupBox>
+                    </c:GroupBoxControl>
 
-                    <c:GroupBox Header="Application Info">
+                    <c:GroupBoxControl Header="Application Info">
                         <StackPanel>
                             <TextBlock Classes="field"
                                        Text="{DynamicResource SettingView.Version}" />
                             <TextBox Classes="read-only"
                                      Text="{Binding Version}" />
                         </StackPanel>
-                    </c:GroupBox>
+                    </c:GroupBoxControl>
                 </ItemsControl>
-            </c:GroupBox>
+            </c:GroupBoxControl>
         </ScrollViewer>
     </Grid>
 </ru:ReactiveUserControl>

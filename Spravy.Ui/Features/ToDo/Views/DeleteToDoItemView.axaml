@@ -20,8 +20,8 @@
     </Interaction.Behaviors>
 
     <ScrollViewer Classes="mini" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-        <c:GroupBox>
-            <c:GroupBox.Header>
+        <c:GroupBoxControl>
+            <c:GroupBoxControl.Header>
                 <Panel>
                     <TextBlock Classes="h4 text-wrap"
                                IsVisible="{Binding DeleteItems.Count, Converter={StaticResource Int32PositiveToBooleanConverterReverse}}"
@@ -30,19 +30,19 @@
                                 IsVisible="{Binding DeleteItems.Count, Converter={StaticResource Int32ToIsVisibleConverter}}"
                                 Text="{DynamicResource DeleteToDoItemView.Header}" />
                 </Panel>
-            </c:GroupBox.Header>
+            </c:GroupBoxControl.Header>
 
-            <c:GroupBox.DataTemplates>
+            <c:GroupBoxControl.DataTemplates>
                 <DataTemplate DataType="m:RootItem">
                     <ContentControl Content="{x:Static mi:MaterialIconKind.Home}" Margin="5,0,5,0" />
                 </DataTemplate>
-            </c:GroupBox.DataTemplates>
+            </c:GroupBoxControl.DataTemplates>
 
             <StackPanel>
                 <ScrollViewer Classes="mini" VerticalScrollBarVisibility="Disabled"
                               HorizontalScrollBarVisibility="Auto">
-                    <c:Stepper Steps="{Binding Item.Path}" HorizontalAlignment="Center">
-                        <c:Stepper.DataTemplates>
+                    <c:PathControl Steps="{Binding Item.Path}" HorizontalAlignment="Center">
+                        <c:PathControl.DataTemplates>
                             <DataTemplate DataType="tm:ToDoItemEntityNotify">
                                 <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5" />
                             </DataTemplate>
@@ -50,8 +50,8 @@
                             <DataTemplate DataType="m:RootItem">
                                 <mia:MaterialIcon Kind="Home" Margin="5" />
                             </DataTemplate>
-                        </c:Stepper.DataTemplates>
-                    </c:Stepper>
+                        </c:PathControl.DataTemplates>
+                    </c:PathControl>
                 </ScrollViewer>
 
                 <TextBlock
@@ -59,6 +59,6 @@
                     Text="{DynamicResource DeleteToDoItemView.Body}" />
                 <TextBlock Text="{Binding ChildrenText}" />
             </StackPanel>
-        </c:GroupBox>
+        </c:GroupBoxControl>
     </ScrollViewer>
 </ru:ReactiveUserControl>

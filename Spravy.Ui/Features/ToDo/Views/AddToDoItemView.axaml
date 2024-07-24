@@ -21,15 +21,15 @@
     </Interaction.Behaviors>
 
     <ScrollViewer Classes="mini" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-        <controls:GroupBox>
-            <controls:GroupBox.Header>
+        <controls:GroupBoxControl>
+            <controls:GroupBoxControl.Header>
                 <StackPanel>
                     <TextBlock Text="{DynamicResource AddToDoItemView.Header}" Classes="h4" />
 
                     <ScrollViewer Classes="mini" HorizontalScrollBarVisibility="Auto"
                                   VerticalScrollBarVisibility="Disabled">
-                        <controls:Stepper Steps="{Binding Path}" HorizontalAlignment="Left">
-                            <controls:Stepper.DataTemplates>
+                        <controls:PathControl Steps="{Binding Path}" HorizontalAlignment="Left">
+                            <controls:PathControl.DataTemplates>
                                 <DataTemplate DataType="tm:ToDoItemEntityNotify">
                                     <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5" />
                                 </DataTemplate>
@@ -37,16 +37,16 @@
                                 <DataTemplate DataType="m:RootItem">
                                     <a:MaterialIcon Kind="Home" Margin="5" />
                                 </DataTemplate>
-                            </controls:Stepper.DataTemplates>
-                        </controls:Stepper>
+                            </controls:PathControl.DataTemplates>
+                        </controls:PathControl>
                     </ScrollViewer>
                 </StackPanel>
-            </controls:GroupBox.Header>
+            </controls:GroupBoxControl.Header>
 
             <StackPanel>
                 <ContentControl Content="{Binding ToDoItemContent}" />
                 <ContentControl Content="{Binding DescriptionContent}" />
             </StackPanel>
-        </controls:GroupBox>
+        </controls:GroupBoxControl>
     </ScrollViewer>
 </ru:ReactiveUserControl>

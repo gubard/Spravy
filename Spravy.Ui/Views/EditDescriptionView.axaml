@@ -10,12 +10,12 @@
                         x:Class="Spravy.Ui.Views.EditDescriptionView"
                         x:DataType="vm:EditDescriptionViewModel">
     <ScrollViewer Classes="mini" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-        <c:GroupBox>
-            <c:GroupBox.Header>
+        <c:GroupBoxControl>
+            <c:GroupBoxControl.Header>
                 <TextBlock Text="{Binding ToDoItemName}" Classes="h4" />
-            </c:GroupBox.Header>
+            </c:GroupBoxControl.Header>
 
             <ContentControl Content="{Binding Content}" />
-        </c:GroupBox>
+        </c:GroupBoxControl>
     </ScrollViewer>
 </ru:ReactiveUserControl>
