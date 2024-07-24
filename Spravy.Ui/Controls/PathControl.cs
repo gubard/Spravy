@@ -30,6 +30,21 @@ public class PathControl : TemplatedControl
             (control, _) =>
             {
                 var segments = control.Segments.OfType<object>().ToArray().AsSpan();
+
+                if (segments.IsEmpty)
+                {
+                    control.Items = Array.Empty<object>();
+
+                    return;
+                }
+
+                if (segments.Length == 1)
+                {
+                    control.Items = segments.ToArray();
+
+                    return;
+                }
+
                 var body = segments[..^1];
                 var items = new object[segments.Length * 2 - 1].AsSpan();
 

@@ -1,6 +1,17 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Style Selector="ListBoxItem /template/ ContentPresenter#PART_ContentPresenter">
+    <Design.PreviewWith>
+        <Border Padding="20" Width="200">
+            <ListBox>
+                <TextBlock Text="Test 1" />
+                <TextBlock Text="Test 2" />
+                <TextBlock Text="Test 3" />
+            </ListBox>
+        </Border>
+    </Design.PreviewWith>
+
+    <Style Selector="ListBoxItem">
         <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="CornerRadius" Value="5" />
     </Style>
 </Styles>
