@@ -28,7 +28,7 @@
 
                     <ScrollViewer Classes="mini" HorizontalScrollBarVisibility="Auto"
                                   VerticalScrollBarVisibility="Disabled">
-                        <controls:PathControl Steps="{Binding Path}" HorizontalAlignment="Left">
+                        <controls:PathControl Segments="{Binding Path}" HorizontalAlignment="Left">
                             <controls:PathControl.DataTemplates>
                                 <DataTemplate DataType="tm:ToDoItemEntityNotify">
                                     <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5" />
