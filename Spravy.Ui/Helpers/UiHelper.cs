@@ -47,8 +47,8 @@ public static class UiHelper
         NavigateToSearchToDoItems = commands.GetNavigateTo<SearchToDoItemsViewModel>().Command;
         NavigateToPasswordGenerator = commands.GetNavigateTo<PasswordGeneratorViewModel>().Command;
         NavigateToSetting = commands.GetNavigateTo<SettingViewModel>().Command;
-        NavigateToForgotPassword = commands.GetNavigateTo<ForgotPasswordViewModel>().Command;
         NavigateToCreateUser = commands.GetNavigateTo<CreateUserViewModel>().Command;
+        NavigateToEmailOrLoginInput = commands.GetNavigateTo<EmailOrLoginInputViewModel>().Command;
     }
 
     public static readonly ICommand Back;
@@ -62,7 +62,7 @@ public static class UiHelper
     public static readonly ICommand NavigateToTodayToDoItems;
     public static readonly ICommand NavigateToSearchToDoItems;
     public static readonly ICommand NavigateToPasswordGenerator;
-    public static readonly ICommand NavigateToForgotPassword;
+    public static readonly ICommand NavigateToEmailOrLoginInput;
     public static readonly ICommand NavigateToCreateUser;
     public static readonly ICommand NavigateToSetting;
     public static readonly ICommand SwitchPane;
