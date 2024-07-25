@@ -16,6 +16,8 @@ namespace Spravy.Ui.Modules;
 [Import(typeof(IToDoClientModule))]
 [Import(typeof(IPasswordGeneratorClientModule))]
 [Singleton(typeof(AccountNotify))]
+[Singleton(typeof(SingleViewModel))]
+[Singleton(typeof(MainWindowModel))]
 [Singleton(typeof(App))]
 [Singleton(typeof(MainProgressBarViewModel))]
 [Singleton(typeof(MainSplitViewModel))]
@@ -27,14 +29,14 @@ namespace Spravy.Ui.Modules;
 [Singleton(typeof(ITaskProgressService), typeof(TaskProgressService))]
 [Singleton(typeof(IUiApplicationService), typeof(UiApplicationService))]
 [Singleton(typeof(ITokenService), typeof(TokenService))]
-[Singleton(typeof(ISingleViewTopLevelControl), typeof(SingleView))]
 [Singleton(typeof(IToDoCache), typeof(ToDoCache))]
 [Singleton(typeof(IDialogViewer), typeof(DialogViewer))]
 [Singleton(typeof(IViewSelector), typeof(ViewSelector))]
 [Singleton(typeof(IPasswordItemCache), typeof(PasswordItemCache))]
 [Singleton(typeof(ISpravyNotificationManager), typeof(NotificationManager))]
 [Singleton(typeof(IManagedNotificationManager), typeof(WindowNotificationManager))]
-[Singleton(typeof(IDesktopTopLevelControl), typeof(MainWindow))]
+[Singleton(typeof(IDesktopTopLevelControl), Factory = nameof(DesktopTopLevelControlFactory))]
+[Singleton(typeof(ISingleViewTopLevelControl), Factory = nameof(SingleViewTopLevelControlFactory))]
 [Singleton(typeof(IEnumerable<IDataTemplate>), Factory = nameof(DataTemplatesFactory))]
 [Singleton(typeof(Application), Factory = nameof(ApplicationFactory))]
 [Transient(typeof(TokenHttpHeaderFactory))]
@@ -160,6 +162,18 @@ namespace Spravy.Ui.Modules;
 [Transient(typeof(IHttpHeaderFactory), Factory = nameof(HttpHeaderFactoryFactory))]
 public interface IUiModule
 {
+    static IDesktopTopLevelControl DesktopTopLevelControlFactory(MainWindowModel mainWindowModel)
+    {
+        return new MainWindow { ViewModel = mainWindowModel, };
+    }
+
+    static ISingleViewTopLevelControl SingleViewTopLevelControlFactory(
+        SingleViewModel singleViewModel
+    )
+    {
+        return new SingleView { ViewModel = singleViewModel, };
+    }
+
     static IClipboard ClipboardFactory(TopLevel topLevel)
     {
         return topLevel.Clipboard.ThrowIfNull();

@@ -1,16 +1,20 @@
-<Window xmlns="https://github.com/avaloniaui"
-          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-          mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
-          x:Class="Spravy.Ui.Views.MainWindow"
-          Title="Spravy"
-          Icon="/Assets/Images/Logo.png" 
-          Width="600"
-          Height="600" 
-          TransparencyLevelHint="AcrylicBlur"
-          Background="Transparent" 
-          ExtendClientAreaToDecorationsHint="True">
+<ru:ReactiveWindow x:TypeArguments="vm:MainWindowModel"
+                   xmlns="https://github.com/avaloniaui"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                   xmlns:vm="clr-namespace:Spravy.Ui.ViewModels"
+                   xmlns:ru="http://reactiveui.net"
+                   mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
+                   x:Class="Spravy.Ui.Views.MainWindow"
+                   Title="Spravy"
+                   Icon="/Assets/Images/Logo.png"
+                   Width="600"
+                   Height="600"
+                   TransparencyLevelHint="AcrylicBlur"
+                   Background="Transparent"
+                   ExtendClientAreaToDecorationsHint="True"
+                   x:DataType="vm:MainWindowModel">
     <Panel x:Name="PART_Panel">
         <ExperimentalAcrylicBorder IsHitTestVisible="False">
             <ExperimentalAcrylicBorder.Material>
@@ -21,5 +25,7 @@
                     MaterialOpacity="0.65" />
             </ExperimentalAcrylicBorder.Material>
         </ExperimentalAcrylicBorder>
+
+        <ContentControl Content="{Binding MainViewModel}" />
     </Panel>
-</Window>
+</ru:ReactiveWindow>

@@ -1,20 +1,9 @@
 namespace Spravy.Ui.Views;
 
-public partial class MainWindow : Window, IDesktopTopLevelControl
+public partial class MainWindow : ReactiveWindow<MainWindowModel>, IDesktopTopLevelControl
 {
-    private readonly MainViewModel mainViewModel;
-
-    public MainWindow(MainViewModel mainViewModel)
+    public MainWindow()
     {
         InitializeComponent();
-        this.mainViewModel = mainViewModel;
-    }
-
-    protected override void OnLoaded(RoutedEventArgs e)
-    {
-        base.OnLoaded(e);
-
-        this.GetControl<Panel>("PART_Panel")
-            .Children.Add(new ContentControl { Content = mainViewModel, });
     }
 }
