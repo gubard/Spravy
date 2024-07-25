@@ -17,7 +17,7 @@
                 <c:GroupBoxControl.Header>
                     <Grid ColumnDefinitions="Auto,*">
                         <StackPanel Orientation="Horizontal">
-                            <Button Classes="Basic" Command="{x:Static h:UiHelper.SwitchPane}">
+                            <Button Command="{x:Static h:UiHelper.SwitchPane}">
                                 <ai:MaterialIcon Kind="Menu" />
                             </Button>
 
@@ -29,7 +29,7 @@
                                       HorizontalScrollBarVisibility="Auto"
                                       HorizontalAlignment="Left"
                                       Classes="mini">
-                            <TextBlock Text="{DynamicResource SettingView.Header}" Classes="h3" />
+                            <TextBlock Text="{DynamicResource SettingView.Header}" />
                         </ScrollViewer>
                     </Grid>
                 </c:GroupBoxControl.Header>

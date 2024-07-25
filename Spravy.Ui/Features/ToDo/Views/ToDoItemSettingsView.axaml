@@ -20,7 +20,7 @@
                   VerticalScrollBarVisibility="Auto">
         <c:GroupBoxControl>
             <c:GroupBoxControl.Header>
-                <TextBlock Text="{DynamicResource ToDoItemSettingsView.Settings}" Classes="h4" />
+                <TextBlock Text="{DynamicResource ToDoItemSettingsView.Settings}" />
             </c:GroupBoxControl.Header>
 
             <StackPanel>

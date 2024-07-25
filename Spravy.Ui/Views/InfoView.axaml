@@ -17,7 +17,7 @@
         <ContentControl Name="{x:Static v:InfoView.ContentContentControlName}" Content="{Binding Content}" />
         <Button Name="{x:Static v:InfoView.OkButtonName}"
                 Grid.Row="1"
-                Classes="Flat mode-press"
+                Classes="mode-press"
                 Command="{Binding OkCommand.Command}"
                 Content="{DynamicResource InfoView.Ok}" />
     </Grid>

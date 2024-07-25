@@ -4,7 +4,8 @@
                     xmlns:te="clr-namespace:Spravy.Ui.Features.ToDo.Enums"
                     xmlns:s="clr-namespace:System;assembly=System.Runtime"
                     xmlns:e="clr-namespace:Spravy.Ui.Enums"
-                    xmlns:lc="clr-namespace:Spravy.Ui.Features.Localizations.Converters">
+                    xmlns:lc="clr-namespace:Spravy.Ui.Features.Localizations.Converters"
+                    xmlns:m="clr-namespace:Spravy.Ui.Models">
     <lc:ObjectToLocalizationConverter x:Key="ObjectToLocalizationConverter" />
     <c:DoubleZeroToBooleanConverter x:Key="DoubleZeroToBooleanConverter" />
     <c:DateTimeOffsetToDateOnlyValueConverter x:Key="DateTimeOffsetToDateOnlyValueConverter" />
@@ -37,8 +38,16 @@
     <c:Int32MoreThenConverter x:Key="Int32LessThen" IsEquals="False" IsReverse="True" />
     <c:Int32MoreThenConverter x:Key="Int32MoreOrEqualsThen" IsEquals="True" IsReverse="False" />
     <c:Int32MoreThenConverter x:Key="Int32LessOrEqualsThen" IsEquals="True" IsReverse="True" />
+
     <c:EnumToBooleanConverter x:TypeArguments="e:UserIdentifierType" x:Key="UserIdentifierTypeEmailToTrue"
                               Value="Email" />
+
     <c:EnumToBooleanConverter x:TypeArguments="e:UserIdentifierType" x:Key="UserIdentifierTypeLoginToTrue"
                               Value="Login" />
+
+    <DataTemplates x:Key="CommandDataTemplates">
+        <DataTemplate x:DataType="m:SpravyCommandNotify">
+            <ContentControl Content="{Binding Text}" />
+        </DataTemplate>
+    </DataTemplates>
 </ResourceDictionary>

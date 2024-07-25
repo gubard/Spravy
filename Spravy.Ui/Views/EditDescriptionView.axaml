@@ -12,7 +12,7 @@
     <ScrollViewer Classes="mini" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <c:GroupBoxControl>
             <c:GroupBoxControl.Header>
-                <TextBlock Text="{Binding ToDoItemName}" Classes="h4" />
+                <TextBlock Text="{Binding ToDoItemName}" />
             </c:GroupBoxControl.Header>
 
             <ContentControl Content="{Binding Content}" />

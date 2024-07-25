@@ -21,7 +21,7 @@
             Width="400">
         <StackPanel>
             <TextBlock Text="{DynamicResource CreateUserView.CreateAccountHeader}"
-                       Classes="h2 horizontal-alignment-center" />
+                       Classes="horizontal-alignment-center" />
             <TextBlock Classes="field"
                        Text="{DynamicResource CreateUserView.Email}" />
             <TextBox Name="{x:Static v:CreateUserView.EmailTextBoxName}"
@@ -49,7 +49,7 @@
                         Content="{DynamicResource CreateUserView.Back}" />
                 <Button Name="{x:Static v:CreateUserView.CreateUserButtonName}"
                         Grid.Column="1"
-                        Classes="Flat mode-press"
+                        Classes="mode-press"
                         Command="{x:Static h:UiHelper.CreateUser}"
                         CommandParameter="{Binding}"
                         Content="{DynamicResource CreateUserView.CreateAccount}" />

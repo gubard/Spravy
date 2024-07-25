@@ -24,7 +24,7 @@
         <controls:GroupBoxControl>
             <controls:GroupBoxControl.Header>
                 <StackPanel>
-                    <TextBlock Text="{DynamicResource AddToDoItemView.Header}" Classes="h4" />
+                    <TextBlock Text="{DynamicResource AddToDoItemView.Header}" />
 
                     <ScrollViewer Classes="mini" HorizontalScrollBarVisibility="Auto"
                                   VerticalScrollBarVisibility="Disabled">

@@ -27,11 +27,11 @@
             <Panel>
                 <Grid ColumnDefinitions="Auto,*,Auto">
                     <StackPanel Orientation="Horizontal">
-                        <Button Classes="Basic" Command="{x:Static h:UiHelper.SwitchPane}">
+                        <Button Command="{x:Static h:UiHelper.SwitchPane}">
                             <mi:MaterialIcon Kind="Menu" />
                         </Button>
 
-                        <Button Classes="Basic mode-press" Command="{Binding Commands.NavigateToCurrentToDo.Command}">
+                        <Button Classes="mode-press" Command="{Binding Commands.NavigateToCurrentToDo.Command}">
                             <mi:MaterialIcon Kind="ArrowRight" />
                         </Button>
                     </StackPanel>
@@ -41,7 +41,7 @@
                                   HorizontalScrollBarVisibility="Auto"
                                   HorizontalAlignment="Left"
                                   Classes="mini">
-                        <TextBlock Text="{Binding Item.Name}" Classes="h3" />
+                        <TextBlock Text="{Binding Item.Name}" />
                     </ScrollViewer>
 
                     <Panel Grid.Column="2"
@@ -58,7 +58,7 @@
 
                             <ItemsControl.DataTemplates>
                                 <DataTemplate DataType="sm:SpravyCommandNotify">
-                                    <Button Classes="Basic mode-press"
+                                    <Button Classes="mode-press"
                                             Command="{Binding Item.Command}"
                                             CommandParameter="{Binding $parent[v:ToDoItemView].MainViewModel.Item}"
                                             Content="{Binding Kind}"
@@ -67,7 +67,7 @@
                             </ItemsControl.DataTemplates>
                         </ItemsControl>
 
-                        <Button Classes="adaptive-commands-button Basic mode-press">
+                        <Button Classes="adaptive-commands-button mode-press">
                             <Button.DataTemplates>
                                 <DataTemplate x:DataType="sm:SpravyCommandNotify">
                                     <ContentControl Content="{Binding Text}" />
@@ -105,8 +105,7 @@
             <controls:PathControl Segments="{Binding Item.Path}" HorizontalAlignment="Center">
                 <controls:PathControl.DataTemplates>
                     <DataTemplate DataType="m:ToDoItemEntityNotify">
-                        <Button Classes="Basic"
-                                Command="{x:Static h:UiHelper.NavigateToToDoItem}"
+                        <Button Command="{x:Static h:UiHelper.NavigateToToDoItem}"
                                 CommandParameter="{Binding}"
                                 Content="{Binding Name}" />
                     </DataTemplate>

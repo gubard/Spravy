@@ -20,7 +20,7 @@
     <Grid RowDefinitions="Auto,*">
         <Grid ColumnDefinitions="Auto,*,Auto">
             <StackPanel Orientation="Horizontal">
-                <Button Classes="Basic" Command="{x:Static h:UiHelper.SwitchPane}">
+                <Button Command="{x:Static h:UiHelper.SwitchPane}">
                     <mi:MaterialIcon Kind="Menu" />
                 </Button>
 
@@ -32,7 +32,7 @@
                           HorizontalScrollBarVisibility="Auto"
                           HorizontalAlignment="Left"
                           Classes="mini">
-                <TextBlock Text="{DynamicResource TodayToDoItemsView.Header}" Classes="h3" />
+                <TextBlock Text="{DynamicResource TodayToDoItemsView.Header}" />
             </ScrollViewer>
 
             <StackPanel Grid.Column="2" Orientation="Horizontal">
@@ -50,8 +50,7 @@
 
                         <ItemsControl.DataTemplates>
                             <DataTemplate DataType="m:SpravyCommandNotify">
-                                <Button Classes="Basic"
-                                        Command="{Binding Item.Command}"
+                                <Button Command="{Binding Item.Command}"
                                         CommandParameter="{Binding $parent[ItemsControl].DataContext}"
                                         Content="{Binding Kind}"
                                         ToolTip.Tip="{Binding Text}" />
@@ -59,7 +58,7 @@
                         </ItemsControl.DataTemplates>
                     </ItemsControl>
 
-                    <Button Classes="adaptive-commands-button Basic mode-press">
+                    <Button Classes="adaptive-commands-button mode-press">
                         <Button.DataTemplates>
                             <DataTemplate x:DataType="m:SpravyCommandNotify">
                                 <ContentControl Content="{Binding Text}" />

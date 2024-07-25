@@ -35,8 +35,7 @@
 
                 <ItemsControl.DataTemplates>
                     <DataTemplate DataType="m:SpravyCommandNotify">
-                        <Button Classes="Basic" 
-                                Command="{Binding Item.Command}"
+                        <Button Command="{Binding Item.Command}"
                                 CommandParameter="{Binding $parent[v:SearchToDoItemsView].MainViewModel}"
                                 Content="{Binding Kind}"
                                 ToolTip.Tip="{Binding Text}" />
@@ -44,7 +43,7 @@
                 </ItemsControl.DataTemplates>
             </ItemsControl>
 
-            <Button Classes="adaptive-commands-button Basic alignment-right mode-press">
+            <Button Classes="adaptive-commands-button alignment-right mode-press">
                 <Button.DataTemplates>
                     <DataTemplate x:DataType="m:SpravyCommandNotify">
                         <ContentControl Content="{Binding Text}" />

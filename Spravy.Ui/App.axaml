@@ -179,6 +179,14 @@
                                     <ContentControl Content="{Binding Text}" />
                                 </DataTemplate>
                             </Button.DataTemplates>
+                            
+                            <Button.Styles>
+                                <Style Selector="MenuItem" x:DataType="m:SpravyCommandNotify">
+                                    <Setter Property="Command" Value="{Binding Item.Command}" />
+                                    <Setter Property="CommandParameter" Value="{Binding $parent[Button].DataContext}" />
+                                    <Setter Property="Icon" Value="{Binding Kind}" />
+                                </Style>
+                            </Button.Styles>
 
                             <Button.Flyout>
                                 <MenuFlyout ItemsSource="{Binding CompactCommands}" />

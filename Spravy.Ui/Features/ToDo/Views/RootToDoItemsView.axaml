@@ -21,7 +21,7 @@
     <Grid RowDefinitions="Auto,*, Auto">
         <Grid ColumnDefinitions="Auto,*,Auto">
             <StackPanel Orientation="Horizontal">
-                <Button Classes="Basic" Command="{x:Static h:UiHelper.SwitchPane}">
+                <Button Command="{x:Static h:UiHelper.SwitchPane}">
                     <mi:MaterialIcon Kind="Menu" />
                 </Button>
 
@@ -33,7 +33,7 @@
                           HorizontalScrollBarVisibility="Auto"
                           HorizontalAlignment="Left"
                           Classes="mini">
-                <TextBlock Text="{DynamicResource RootToDoItemsView.Header}" Classes="h3" />
+                <TextBlock Text="{DynamicResource RootToDoItemsView.Header}" />
             </ScrollViewer>
 
             <StackPanel Grid.Column="2" Orientation="Horizontal">
@@ -51,8 +51,7 @@
 
                         <ItemsControl.DataTemplates>
                             <DataTemplate DataType="m:SpravyCommandNotify">
-                                <Button Classes="Basic" 
-                                        Command="{Binding Item.Command}"
+                                <Button Command="{Binding Item.Command}"
                                         CommandParameter="{Binding $parent[ItemsControl].DataContext}"
                                         Content="{Binding Kind}"
                                         ToolTip.Tip="{Binding Text}" />
@@ -60,7 +59,7 @@
                         </ItemsControl.DataTemplates>
                     </ItemsControl>
 
-                    <Button Classes="adaptive-commands-button Basic mode-press">
+                    <Button Classes="adaptive-commands-button mode-press">
                         <Button.DataTemplates>
                             <DataTemplate x:DataType="m:SpravyCommandNotify">
                                 <ContentControl Content="{Binding Text}" />
@@ -95,15 +94,14 @@
 
         <Button Grid.Row="2"
                 Name="{x:Static v:RootToDoItemsView.AddRootToDoItemButtonName}"
-                Classes="Flat mode-press"
+                Classes="mode-press"
                 Command="{x:Static h:UiHelper.AddRootToDoItem}"
                 Height="64"
                 HorizontalContentAlignment="Center"
                 VerticalContentAlignment="Center">
             <StackPanel Orientation="Horizontal">
                 <mi:MaterialIcon Kind="Plus" Width="40" Height="40" />
-                <TextBlock Text="{DynamicResource RootToDoItemsView.CreateTask}" VerticalAlignment="Center"
-                           Classes="h3" />
+                <TextBlock Text="{DynamicResource RootToDoItemsView.CreateTask}" VerticalAlignment="Center" />
             </StackPanel>
         </Button>
     </Grid>

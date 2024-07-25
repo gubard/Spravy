@@ -48,7 +48,7 @@
                 <Button Grid.Row="1"
                         Grid.Column="1"
                         Name="{x:Static v:VerificationCodeView.VerificationEmailButtonName}"
-                        Classes="Flat mode-press"
+                        Classes="mode-press"
                         Command="{Binding Commands.VerificationEmail.Command}"
                         CommandParameter="{Binding }"
                         Content="{DynamicResource VerificationCodeView.SubmitCode}" />

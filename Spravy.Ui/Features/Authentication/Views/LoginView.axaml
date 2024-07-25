@@ -59,7 +59,7 @@
                     <Button Grid.Row="1"
                             Grid.Column="1"
                             Name="{x:Static v:LoginView.LoginButtonName}"
-                            Classes="Flat mode-press"
+                            Classes="mode-press"
                             Command="{x:Static h:UiHelper.Login}"
                             CommandParameter="{Binding}"
                             Content="{DynamicResource LoginView.Login}" />

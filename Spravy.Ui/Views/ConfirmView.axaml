@@ -25,7 +25,7 @@
         <Button Name="{x:Static v:ConfirmView.OkButtonName}"
                 Grid.Row="1"
                 Grid.Column="1"
-                Classes="Flat mode-press"
+                Classes="mode-press"
                 Command="{Binding ConfirmCommand.Command}"
                 Content="{DynamicResource ConfirmView.Ok}" />
     </Grid>

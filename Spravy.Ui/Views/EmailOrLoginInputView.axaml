@@ -23,7 +23,7 @@
                         Content="{DynamicResource EmailOrLoginInputView.Back}" />
 
                 <Button Grid.Column="1"
-                        Classes="Flat mode-press"
+                        Classes="mode-press"
                         Command="{Binding ForgotPasswordCommand.Command}"
                         Content="{DynamicResource EmailOrLoginInputView.ChangePassword}" />
             </Grid>

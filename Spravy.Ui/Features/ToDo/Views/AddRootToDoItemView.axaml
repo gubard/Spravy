@@ -21,7 +21,7 @@
     <ScrollViewer Classes="mini" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <c:GroupBoxControl>
             <c:GroupBoxControl.Header>
-                <TextBlock Text="{DynamicResource AddRootToDoItemView.Header}" Classes="h4" />
+                <TextBlock Text="{DynamicResource AddRootToDoItemView.Header}" />
             </c:GroupBoxControl.Header>
 
             <StackPanel>

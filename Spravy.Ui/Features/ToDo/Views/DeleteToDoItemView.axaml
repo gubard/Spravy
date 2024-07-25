@@ -23,10 +23,10 @@
         <c:GroupBoxControl>
             <c:GroupBoxControl.Header>
                 <Panel>
-                    <TextBlock Classes="h4 text-wrap"
+                    <TextBlock Classes="text-wrap"
                                IsVisible="{Binding DeleteItems.Count, Converter={StaticResource Int32PositiveToBooleanConverterReverse}}"
                                Text="{Binding Item, Converter={StaticResource ObjectToLocalizationConverter}, ConverterParameter=DeleteToDoItemView.NamedHeader}" />
-                    <TextBlock Classes="h4 text-wrap"
+                    <TextBlock Classes="text-wrap"
                                IsVisible="{Binding DeleteItems.Count, Converter={StaticResource Int32ToIsVisibleConverter}}"
                                Text="{DynamicResource DeleteToDoItemView.Header}" />
                 </Panel>
