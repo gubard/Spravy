@@ -69,7 +69,7 @@
         </Panel>
 
         <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto">
-            <Button Classes="Basic" Command="{x:Static h:UiHelper.SwitchPane}">
+            <Button Classes="alignment-center" Command="{x:Static h:UiHelper.SwitchPane}">
                 <mi:MaterialIcon Kind="Menu" />
             </Button>
 
@@ -80,7 +80,7 @@
             </StackPanel>
 
             <Button Grid.Column="2"
-                    Classes="mode-press"
+                    Classes="mode-press alignment-bottom"
                     Command="{x:Static h:UiHelper.RefreshCurrentView}">
                 <mi:MaterialIcon Kind="Search" />
             </Button>
