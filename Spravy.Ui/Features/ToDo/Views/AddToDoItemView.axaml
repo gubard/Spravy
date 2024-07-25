@@ -23,27 +23,25 @@
     <ScrollViewer Classes="mini" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <controls:GroupBoxControl>
             <controls:GroupBoxControl.Header>
-                <StackPanel>
-                    <TextBlock Text="{DynamicResource AddToDoItemView.Header}" />
-
-                    <ScrollViewer Classes="mini" HorizontalScrollBarVisibility="Auto"
-                                  VerticalScrollBarVisibility="Disabled">
-                        <controls:PathControl Segments="{Binding Path}" HorizontalAlignment="Left">
-                            <controls:PathControl.DataTemplates>
-                                <DataTemplate DataType="tm:ToDoItemEntityNotify">
-                                    <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5" />
-                                </DataTemplate>
-
-                                <DataTemplate DataType="m:RootItem">
-                                    <a:MaterialIcon Kind="Home" Margin="5" />
-                                </DataTemplate>
-                            </controls:PathControl.DataTemplates>
-                        </controls:PathControl>
-                    </ScrollViewer>
-                </StackPanel>
+                <TextBlock Classes="alignment-left" Text="{DynamicResource AddToDoItemView.Header}" />
             </controls:GroupBoxControl.Header>
 
             <StackPanel>
+                <ScrollViewer Classes="mini" HorizontalScrollBarVisibility="Auto"
+                              VerticalScrollBarVisibility="Disabled">
+                    <controls:PathControl Segments="{Binding Path}" HorizontalAlignment="Left">
+                        <controls:PathControl.DataTemplates>
+                            <DataTemplate DataType="tm:ToDoItemEntityNotify">
+                                <TextBlock Text="{Binding Name}" Classes="alignment-center" Margin="5" />
+                            </DataTemplate>
+
+                            <DataTemplate DataType="m:RootItem">
+                                <a:MaterialIcon Kind="Home" Margin="5" />
+                            </DataTemplate>
+                        </controls:PathControl.DataTemplates>
+                    </controls:PathControl>
+                </ScrollViewer>
+
                 <ContentControl Content="{Binding ToDoItemContent}" />
                 <ContentControl Content="{Binding DescriptionContent}" />
             </StackPanel>

@@ -22,7 +22,7 @@
     <ScrollViewer Classes="mini" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <c:GroupBoxControl>
             <c:GroupBoxControl.Header>
-                <Panel>
+                <Panel Classes="alignment-left">
                     <TextBlock Classes="text-wrap"
                                IsVisible="{Binding DeleteItems.Count, Converter={StaticResource Int32PositiveToBooleanConverterReverse}}"
                                Text="{Binding Item, Converter={StaticResource ObjectToLocalizationConverter}, ConverterParameter=DeleteToDoItemView.NamedHeader}" />

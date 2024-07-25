@@ -7,6 +7,7 @@
                         xmlns:vm="clr-namespace:Spravy.Ui.Features.Authentication.ViewModels"
                         xmlns:v="clr-namespace:Spravy.Ui.Features.Authentication.Views"
                         xmlns:h="clr-namespace:Spravy.Ui.Helpers"
+                        xmlns:c="clr-namespace:Spravy.Ui.Controls"
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                         x:Class="Spravy.Ui.Features.Authentication.Views.CreateUserView"
                         x:DataType="vm:CreateUserViewModel">
@@ -16,9 +17,10 @@
                     CommandParameter="{Binding $self}" />
     </UserControl.KeyBindings>
 
-    <Border Name="{x:Static v:CreateUserView.CreateUserCardName}"
-            Classes="alignment-center"
-            Width="400">
+    <c:BusyAreaControl Name="{x:Static v:CreateUserView.CreateUserCardName}"
+                     Classes="card"
+                     Width="400"
+                     IsBusy="{Binding IsBusy}">
         <StackPanel>
             <TextBlock Text="{DynamicResource CreateUserView.CreateAccountHeader}"
                        Classes="horizontal-alignment-center" />
@@ -55,5 +57,5 @@
                         Content="{DynamicResource CreateUserView.CreateAccount}" />
             </Grid>
         </StackPanel>
-    </Border>
+    </c:BusyAreaControl>
 </ru:ReactiveUserControl>

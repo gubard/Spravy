@@ -22,10 +22,9 @@
         <KeyBinding Gesture="Enter" Command="{x:Static h:UiHelper.LoginViewEnter}" CommandParameter="{Binding $self}" />
     </UserControl.KeyBindings>
 
-    <Border Classes="card"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            MinWidth="300">
+    <c:BusyAreaControl Classes="card"
+                       MinWidth="300"
+                       IsBusy="{Binding IsBusy}">
         <c:GroupBoxControl Classes="header-alignment-center">
             <c:GroupBoxControl.Header>
                 <TextBlock Classes="alignment-center" Text="{DynamicResource LoginView.WelcomeToSpravy}" />
@@ -66,5 +65,5 @@
                 </Grid>
             </StackPanel>
         </c:GroupBoxControl>
-    </Border>
+    </c:BusyAreaControl>
 </ru:ReactiveUserControl>

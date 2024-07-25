@@ -14,8 +14,8 @@
                         x:DataType="vm:RandomizeChildrenOrderViewModel">
     <c:GroupBoxControl>
         <c:GroupBoxControl.Header>
-            <TextBlock
-                Text="{Binding Item, Converter={StaticResource ObjectToLocalizationConverter}, ConverterParameter=RandomizeChildrenOrderView.Header}" />
+            <TextBlock Classes="alignment-left"
+                       Text="{Binding Item, Converter={StaticResource ObjectToLocalizationConverter}, ConverterParameter=RandomizeChildrenOrderView.Header}" />
         </c:GroupBoxControl.Header>
 
         <c:PathControl Segments="{Binding Item.Path}" Classes="horizontal-alignment-center read-only">

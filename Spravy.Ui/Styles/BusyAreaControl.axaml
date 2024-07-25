@@ -1,0 +1,58 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:c="clr-namespace:Spravy.Ui.Controls">
+    <ControlTheme x:Key="BusyAreaControlStyle" TargetType="c:BusyAreaControl">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Width="{TemplateBinding Width}"
+                        Height="{TemplateBinding Height}"
+                        MaxWidth="{TemplateBinding MaxWidth}"
+                        MaxHeight="{TemplateBinding MaxHeight}"
+                        MinWidth="{TemplateBinding MinWidth}"
+                        MinHeight="{TemplateBinding MinHeight}"
+                        HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                        VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                    <Panel>
+                        <ContentPresenter Content="{TemplateBinding Content}" />
+
+                        <Border x:Name="BusyAreaBorder" IsVisible="{TemplateBinding IsBusy}">
+                            <ContentPresenter Content="{TemplateBinding BusyArea}" />
+                        </Border>
+                    </Panel>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+        
+        <Style Selector="^">
+            <Setter Property="BusyArea">
+                <Template>
+                    <StackPanel Classes="alignment-center">
+                        <ProgressBar IsIndeterminate="True" />
+                        <TextBlock Text="{StaticResource LoginView.Busy}" />
+                    </StackPanel>
+                </Template>
+            </Setter>
+        </Style>
+        
+        <Style Selector="^ /template/ Border#BusyAreaBorder">
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="Background" Value="#88000000" />
+        </Style>
+
+        <Style Selector="^.card">
+            <Setter Property="BorderBrush" Value="White" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="2" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+        </Style>
+    </ControlTheme>
+
+    <ControlTheme x:Key="{x:Type c:BusyAreaControl}"
+                  BasedOn="{StaticResource BusyAreaControlStyle}"
+                  TargetType="c:BusyAreaControl" />
+</ResourceDictionary>
