@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.PasswordGenerator.Models;
 
-public class PasswordItemEntityNotify : NotifyBase, IPasswordItem, IIdProperty, IParameters
+public class PasswordItemEntityNotify : NotifyBase, IPasswordItem, IIdProperty, IObjectParameters
 {
     private static readonly ReadOnlyMemory<char> nameParameterName = nameof(Name).AsMemory();
     private static readonly ReadOnlyMemory<char> idParameterName = nameof(Id).AsMemory();
@@ -24,5 +24,10 @@ public class PasswordItemEntityNotify : NotifyBase, IPasswordItem, IIdProperty, 
         }
 
         return new(new NotFoundNamedError(parameterName.ToString()));
+    }
+
+    public Result SetParameter(ReadOnlySpan<char> parameterName, ReadOnlySpan<char> parameterValue)
+    {
+        return new(new NotImplementedError(nameof(SetParameter)));
     }
 }

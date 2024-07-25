@@ -30,8 +30,8 @@ public class ObjectToLocalizationConverter : IValueConverter
         {
             return "Template must be string.";
         }
-        
-        if (value is not IParameters parameters)
+
+        if (value is not IObjectParameters parameters)
         {
             return "Parameters must be IParameters.";
         }

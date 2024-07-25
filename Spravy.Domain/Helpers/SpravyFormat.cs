@@ -2,12 +2,15 @@
 
 public static class SpravyFormat
 {
-    public static Result<string> Format(string input, IParameters parameters)
+    public static Result<string> Format(string input, IObjectParameters objectParameters)
     {
-        return Format(input.AsSpan(), parameters);
+        return Format(input.AsSpan(), objectParameters);
     }
 
-    public static Result<string> Format(ReadOnlySpan<char> input, IParameters parameters)
+    public static Result<string> Format(
+        ReadOnlySpan<char> input,
+        IObjectParameters objectParameters
+    )
     {
         var currentSlice = input;
         var result = new StringBuilder();
@@ -35,7 +38,7 @@ public static class SpravyFormat
             result.Append(currentSlice.Slice(0, start));
             var parameterName = currentSlice.Slice(start + 1, end - start - 1);
             currentSlice = currentSlice.Slice(end + 1);
-            var parameterValue = parameters.GetParameter(parameterName);
+            var parameterValue = objectParameters.GetParameter(parameterName);
 
             if (!parameterValue.TryGetValue(out var value))
             {

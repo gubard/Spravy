@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.PasswordGenerator.ViewModels;
 
-public class DeletePasswordItemViewModel : ViewModelBase, IParameters
+public class DeletePasswordItemViewModel : ViewModelBase, IObjectParameters
 {
     private static readonly ReadOnlyMemory<char> passwordItemNameParameterName = nameof(
             PasswordItemName
@@ -32,5 +32,10 @@ public class DeletePasswordItemViewModel : ViewModelBase, IParameters
         }
 
         return new(new NotFoundNamedError(parameterName.ToString()));
+    }
+
+    public Result SetParameter(ReadOnlySpan<char> parameterName, ReadOnlySpan<char> parameterValue)
+    {
+        return new(new NotImplementedError(nameof(SetParameter)));
     }
 }

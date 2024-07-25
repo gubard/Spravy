@@ -9,14 +9,14 @@ public class TextLocalization
         Key = key;
     }
 
-    public TextLocalization(string key, IParameters? parameters)
+    public TextLocalization(string key, IObjectParameters? parameters)
     {
         Key = key;
         Parameters = parameters;
     }
 
     public string Key { get; }
-    public IParameters? Parameters { get; }
+    public IObjectParameters? Parameters { get; }
 
     public string Text
     {
@@ -36,7 +36,7 @@ public class TextLocalization
             {
                 return str;
             }
-            
+
             var result = SpravyFormat.Format(str, Parameters);
 
             if (result.TryGetValue(out var formatted))

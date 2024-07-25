@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Features.ToDo.Models;
 
-public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>, IParameters
+public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>, IObjectParameters
 {
     private static readonly ReadOnlyMemory<char> idParameterName = nameof(Id).AsMemory();
     private static readonly ReadOnlyMemory<char> nameParameterName = nameof(Name).AsMemory();
@@ -234,5 +234,10 @@ public class ToDoItemEntityNotify : NotifyBase, IEquatable<ToDoItemEntityNotify>
         SingleCommands.AddRange(singleCommands);
 
         return this.ToResult();
+    }
+
+    public Result SetParameter(ReadOnlySpan<char> parameterName, ReadOnlySpan<char> parameterValue)
+    {
+        return new(new NotImplementedError(nameof(SetParameter)));
     }
 }
