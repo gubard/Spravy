@@ -7,14 +7,13 @@
                    xmlns:ru="http://reactiveui.net"
                    mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                    x:Class="Spravy.Ui.Views.MainWindow"
+                   x:DataType="vm:MainWindowModel"
                    Title="Spravy"
                    Icon="/Assets/Images/Logo.png"
                    Width="600"
                    Height="600"
                    TransparencyLevelHint="AcrylicBlur"
-                   Background="Transparent"
-                   ExtendClientAreaToDecorationsHint="True"
-                   x:DataType="vm:MainWindowModel">
+                   Background="Transparent">
     <Panel x:Name="PART_Panel">
         <ExperimentalAcrylicBorder IsHitTestVisible="False">
             <ExperimentalAcrylicBorder.Material>
