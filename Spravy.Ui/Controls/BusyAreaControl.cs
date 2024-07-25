@@ -12,6 +12,23 @@ public class BusyAreaControl : ContentControl
         bool
     >(nameof(IsBusy));
 
+    static BusyAreaControl()
+    {
+        IsBusyProperty.Changed.AddClassHandler<BusyAreaControl>(
+            (control, _) =>
+            {
+                if (control.IsBusy)
+                {
+                    control.PseudoClasses.Set(":is-busy", true);
+                }
+                else
+                {
+                    control.PseudoClasses.Set(":is-busy", false);
+                }
+            }
+        );
+    }
+
     public bool IsBusy
     {
         get => GetValue(IsBusyProperty);

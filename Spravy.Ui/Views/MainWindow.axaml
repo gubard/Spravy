@@ -9,7 +9,8 @@
           Width="600"
           Height="600" 
           TransparencyLevelHint="AcrylicBlur"
-          Background="Transparent" >
+          Background="Transparent" 
+          ExtendClientAreaToDecorationsHint="True">
     <Panel x:Name="PART_Panel">
         <ExperimentalAcrylicBorder IsHitTestVisible="False">
             <ExperimentalAcrylicBorder.Material>
