@@ -26,7 +26,7 @@
         <Panel
             IsVisible="{Binding Commands.Count, Converter={StaticResource Int32ToIsVisibleConverter}}">
             <ItemsControl ItemsSource="{Binding Commands}"
-                          Classes="adaptive-commands-items-control horizontal-alignment-right vertical-alignment-center">
+                          Classes="adaptive-commands-items-control alignment-right vertical-alignment-center">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel Orientation="Horizontal" />
@@ -44,7 +44,7 @@
                 </ItemsControl.DataTemplates>
             </ItemsControl>
 
-            <Button Classes="adaptive-commands-button Basic horizontal-alignment-right mode-press">
+            <Button Classes="adaptive-commands-button Basic alignment-right mode-press">
                 <Button.DataTemplates>
                     <DataTemplate x:DataType="m:SpravyCommandNotify">
                         <ContentControl Content="{Binding Text}" />

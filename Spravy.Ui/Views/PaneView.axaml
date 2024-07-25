@@ -10,7 +10,12 @@
                         mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
                         x:Class="Spravy.Ui.Views.PaneView"
                         x:DataType="vm:PaneViewModel">
-    <Border>
+    <Panel>
+        <Button Classes="alignment-top alignment-right"
+                Command="{x:Static h:UiHelper.SwitchPane}">
+            <mi:MaterialIcon Kind="Close" />
+        </Button>
+
         <StackPanel>
             <TextBlock Text="{Binding Account.Login}" Classes="h2" Margin="5" />
             <Border Height="1"
@@ -67,5 +72,5 @@
                 </Grid>
             </Button>
         </StackPanel>
-    </Border>
+    </Panel>
 </ru:ReactiveUserControl>

@@ -8,7 +8,7 @@
         <Setter Property="HorizontalAlignment" Value="Center" />
     </Style>
 
-    <Style Selector=":is(Layoutable).horizontal-alignment-right">
+    <Style Selector=":is(Layoutable).alignment-right">
         <Setter Property="HorizontalAlignment" Value="Right" />
     </Style>
 
