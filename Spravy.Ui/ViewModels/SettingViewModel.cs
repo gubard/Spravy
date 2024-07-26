@@ -3,29 +3,41 @@ namespace Spravy.Ui.ViewModels;
 public class SettingViewModel : NavigatableViewModelBase
 {
     private readonly INavigator navigator;
+    private readonly Application application;
 
     public SettingViewModel(
         IErrorHandler errorHandler,
         INavigator navigator,
         AccountNotify accountNotify,
-        ITaskProgressService taskProgressService
+        ITaskProgressService taskProgressService,
+        Application application
     )
         : base(true)
     {
         this.navigator = navigator;
         AccountNotify = accountNotify;
-
+        this.application = application;
         ChangePasswordCommand = SpravyCommand.Create(
             ChangePasswordAsync,
             errorHandler,
             taskProgressService
         );
-
         DeleteAccountCommand = SpravyCommand.Create(
             DeleteAccountAsync,
             errorHandler,
             taskProgressService
         );
+
+        this.WhenAnyValue(x => x.SelectedTheme)
+            .Subscribe(x =>
+                application.RequestedThemeVariant = x switch
+                {
+                    ThemeType.Default => ThemeVariant.Default,
+                    ThemeType.Light => ThemeVariant.Light,
+                    ThemeType.Dark => ThemeVariant.Dark,
+                    _ => throw new ArgumentOutOfRangeException(nameof(x), x, null)
+                }
+            );
     }
 
     public override string ViewId
@@ -57,6 +69,9 @@ public class SettingViewModel : NavigatableViewModelBase
     public AccountNotify AccountNotify { get; }
     public SpravyCommand ChangePasswordCommand { get; }
     public SpravyCommand DeleteAccountCommand { get; }
+
+    [Reactive]
+    public ThemeType SelectedTheme { get; set; }
 
     [Reactive]
     public bool IsBusy { get; set; }

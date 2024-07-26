@@ -56,47 +56,7 @@
                         </c:GroupBoxControl>
 
                         <c:GroupBoxControl Header="Base Theme">
-                            <StackPanel HorizontalAlignment="Center"
-                                        Orientation="Horizontal">
-                                <RadioButton Width="135"
-                                             Height="120"
-                                             Padding="0"
-                                             Classes="GigaChips"
-                                             GroupName="RadioBaseTheme"
-                                             IsChecked="{Binding IsLightTheme}">
-                                    <Border Margin="-50"
-                                            Background="#fafafa"
-                                            CornerRadius="{DynamicResource MediumCornerRadius}">
-                                        <Grid>
-                                            <TextBlock Margin="42"
-                                                       HorizontalAlignment="Center"
-                                                       VerticalAlignment="Bottom"
-                                                       FontWeight="DemiBold"
-                                                       Foreground="#555555"
-                                                       Text="Light Mode" />
-                                        </Grid>
-                                    </Border>
-                                </RadioButton>
-
-                                <RadioButton Width="135"
-                                             Height="120"
-                                             Classes="GigaChips"
-                                             GroupName="RadioBaseTheme"
-                                             IsChecked="{Binding !IsLightTheme}">
-                                    <Border Margin="-50"
-                                            Background="#222222"
-                                            CornerRadius="{DynamicResource MediumCornerRadius}">
-                                        <Grid>
-                                            <TextBlock Margin="42"
-                                                       HorizontalAlignment="Center"
-                                                       VerticalAlignment="Bottom"
-                                                       FontWeight="DemiBold"
-                                                       Foreground="#fafafa"
-                                                       Text="Dark Mode" />
-                                        </Grid>
-                                    </Border>
-                                </RadioButton>
-                            </StackPanel>
+                            <c:EnumSelectorControl SelectedEnum="{Binding SelectedTheme}" />
                         </c:GroupBoxControl>
 
                         <c:GroupBoxControl Header="Application Info">
