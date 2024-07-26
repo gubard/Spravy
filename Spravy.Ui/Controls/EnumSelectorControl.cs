@@ -10,7 +10,7 @@ public class EnumSelectorControl : TemplatedControl
             defaultBindingMode: BindingMode.TwoWay
         );
 
-    private ListBox? listBox;
+    private SelectingItemsControl? selectingItemsControl;
 
     static EnumSelectorControl()
     {
@@ -28,22 +28,22 @@ public class EnumSelectorControl : TemplatedControl
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
         base.OnApplyTemplate(e);
-        var lb = e.NameScope.Find<ListBox>("PART_ListBox");
-        UpdateListBox(lb);
+        var lb = e.NameScope.Find<SelectingItemsControl>("PART_SelectingItemsControl");
+        UpdateSelectingItemsControl(lb);
     }
 
-    private void UpdateListBox(ListBox? lb)
+    private void UpdateSelectingItemsControl(SelectingItemsControl? lb)
     {
-        if (listBox is not null)
+        if (selectingItemsControl is not null)
         {
-            listBox.SelectionChanged -= OnSelectionChanged;
+            selectingItemsControl.SelectionChanged -= OnSelectionChanged;
         }
 
-        listBox = lb;
+        selectingItemsControl = lb;
 
-        if (listBox is not null)
+        if (selectingItemsControl is not null)
         {
-            listBox.SelectionChanged += OnSelectionChanged;
+            selectingItemsControl.SelectionChanged += OnSelectionChanged;
         }
 
         UpdateEnums();
@@ -51,7 +51,7 @@ public class EnumSelectorControl : TemplatedControl
 
     private void OnSelectionChanged(object? sender, SelectionChangedEventArgs args)
     {
-        if (sender is not ListBox lb)
+        if (sender is not SelectingItemsControl lb)
         {
             return;
         }
@@ -69,22 +69,22 @@ public class EnumSelectorControl : TemplatedControl
 
     private void UpdateEnums()
     {
-        if (listBox is null)
+        if (selectingItemsControl is null)
         {
             return;
         }
 
         if (SelectedEnum is null)
         {
-            if (listBox.Items.Count != 0)
+            if (selectingItemsControl.Items.Count != 0)
             {
-                listBox.Items.Clear();
+                selectingItemsControl.Items.Clear();
             }
 
             return;
         }
 
-        var first = listBox.Items.FirstOrDefault();
+        var first = selectingItemsControl.Items.FirstOrDefault();
 
         if (first is null)
         {
@@ -92,32 +92,32 @@ public class EnumSelectorControl : TemplatedControl
 
             foreach (var value in values)
             {
-                listBox.Items.Add(value);
+                selectingItemsControl.Items.Add(value);
             }
 
-            listBox.SelectedItem = SelectedEnum;
+            selectingItemsControl.SelectedItem = SelectedEnum;
 
             return;
         }
 
         if (first.GetType() != SelectedEnum.GetType())
         {
-            listBox.Items.Clear();
+            selectingItemsControl.Items.Clear();
             var values = Enum.GetValues(SelectedEnum.GetType());
 
             foreach (var value in values)
             {
-                listBox.Items.Add(value);
+                selectingItemsControl.Items.Add(value);
             }
 
-            listBox.SelectedItem = SelectedEnum;
+            selectingItemsControl.SelectedItem = SelectedEnum;
 
             return;
         }
 
-        if (!Equals(listBox.SelectedItem, SelectedEnum))
+        if (!Equals(selectingItemsControl.SelectedItem, SelectedEnum))
         {
-            listBox.SelectedItem = SelectedEnum;
+            selectingItemsControl.SelectedItem = SelectedEnum;
         }
     }
 }

@@ -7,15 +7,23 @@
         <Setter Property="Margin" Value="0,2,0,2" />
         <Setter Property="Template">
             <ControlTemplate>
-                <ListBox x:Name="PART_ListBox" SelectionMode="Single" />
+                <ListBox x:Name="PART_SelectingItemsControl" SelectionMode="Single" />
             </ControlTemplate>
         </Setter>
 
-        <Style Selector="^ /template/ ListBox#PART_ListBox">
+        <Style Selector="^ /template/ ListBox#PART_SelectingItemsControl">
             <Setter Property="ItemsPanel">
                 <ItemsPanelTemplate>
                     <WrapPanel Orientation="Horizontal" />
                 </ItemsPanelTemplate>
+            </Setter>
+        </Style>
+        
+        <Style Selector="^.combo-box">
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <ComboBox x:Name="PART_SelectingItemsControl" />
+                </ControlTemplate>
             </Setter>
         </Style>
     </ControlTheme>
