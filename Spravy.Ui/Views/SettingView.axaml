@@ -56,7 +56,7 @@
                         </c:GroupBoxControl>
 
                         <c:GroupBoxControl Header="Base Theme">
-                            <c:EnumSelectorControl SelectedEnum="{Binding SelectedTheme}" />
+                            <c:EnumSelectorControl Classes="alignment-center" SelectedEnum="{Binding SelectedTheme}" />
                         </c:GroupBoxControl>
 
                         <c:GroupBoxControl Header="Application Info">
