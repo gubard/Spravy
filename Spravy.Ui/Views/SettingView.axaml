@@ -11,6 +11,58 @@
                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                         x:Class="Spravy.Ui.Views.SettingView"
                         x:DataType="vm:SettingViewModel">
+    <UserControl.Styles>
+        <Style Selector="Border.adaptive-card">
+            <Setter Property="(Interaction.Behaviors)">
+                <BehaviorCollectionTemplate>
+                    <BehaviorCollection>
+                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
+                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinMedium}"
+                                                 MaxWidth="Infinity"
+                                                 ClassName="card" />
+                        </AdaptiveBehavior>
+                    </BehaviorCollection>
+                </BehaviorCollectionTemplate>
+            </Setter>
+        </Style>
+        
+        <Style Selector="ItemsControl.adaptive-items-control">
+            <Setter Property="(Interaction.Behaviors)">
+                <BehaviorCollectionTemplate>
+                    <BehaviorCollection>
+                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
+                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinMedium}"
+                                                 MaxWidth="Infinity"
+                                                 ClassName="wrap-panel" />
+                        </AdaptiveBehavior>
+                    </BehaviorCollection>
+                </BehaviorCollectionTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="Border.card">
+            <Setter Property="Width" Value="300" />
+            <Setter Property="Height" Value="150" />
+        </Style>
+
+        <!--<Style Selector="Button.adaptive-commands-button">
+            <Setter Property="(Interaction.Behaviors)">
+                <BehaviorCollectionTemplate>
+                    <BehaviorCollection>
+                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
+                            <AdaptiveClassSetter MinWidth="0"
+                                                 MaxWidth="{x:Static h:MaterialDesignSize.MinMedium}"
+                                                 ClassName="small-adaptive-commands-button" />
+                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinMedium}"
+                                                 MaxWidth="Infinity"
+                                                 ClassName="wide-adaptive-commands-button" />
+                        </AdaptiveBehavior>
+                    </BehaviorCollection>
+                </BehaviorCollectionTemplate>
+            </Setter>
+        </Style>-->
+    </UserControl.Styles>
+
     <c:BusyAreaControl IsBusy="{Binding IsBusy}">
         <Grid RowDefinitions="*,Auto">
             <ScrollViewer Classes="mini">
@@ -35,38 +87,43 @@
                         </Grid>
                     </c:GroupBoxControl.Header>
 
-                    <ItemsControl Margin="20">
-                        <c:GroupBoxControl Header="Account Setting">
-                            <StackPanel>
-                                <TextBlock Classes="field"
-                                           Text="{DynamicResource SettingView.Login}" />
-                                <TextBox Classes="read-only"
-                                         Text="{Binding AccountNotify.Login}" />
+                    <ItemsControl Classes="adaptive-items-control">
+                        <Border Classes="adaptive-card">
+                            <c:GroupBoxControl Header="Account Setting">
+                                <StackPanel>
+                                    <TextBlock Classes="field"
+                                               Text="{DynamicResource SettingView.Login}" />
+                                    <c:CopiedTextControl Text="{Binding AccountNotify.Login}" />
 
-                                <Grid ColumnDefinitions="*,*">
-                                    <Button Classes="mode-press"
-                                            Content="{DynamicResource SettingView.ChangePassword}"
-                                            Command="{Binding ChangePasswordCommand.Command}" />
-                                    <Button Grid.Column="1"
-                                            Classes="mode-press"
-                                            Content="{DynamicResource SettingView.DeleteAccount}"
-                                            Command="{Binding DeleteAccountCommand.Command}" />
-                                </Grid>
-                            </StackPanel>
-                        </c:GroupBoxControl>
+                                    <Grid ColumnDefinitions="*,*">
+                                        <Button Classes="mode-press"
+                                                Content="{DynamicResource SettingView.ChangePassword}"
+                                                Command="{Binding ChangePasswordCommand.Command}" />
+                                        <Button Grid.Column="1"
+                                                Classes="mode-press"
+                                                Content="{DynamicResource SettingView.DeleteAccount}"
+                                                Command="{Binding DeleteAccountCommand.Command}" />
+                                    </Grid>
+                                </StackPanel>
+                            </c:GroupBoxControl>
+                        </Border>
 
-                        <c:GroupBoxControl Header="Base Theme">
-                            <c:EnumSelectorControl Classes="alignment-center" SelectedEnum="{Binding SelectedTheme}" />
-                        </c:GroupBoxControl>
+                        <Border Classes="adaptive-card">
+                            <c:GroupBoxControl Header="Base Theme">
+                                <c:EnumSelectorControl Classes="alignment-center"
+                                                       SelectedEnum="{Binding SelectedTheme}" />
+                            </c:GroupBoxControl>
+                        </Border>
 
-                        <c:GroupBoxControl Header="Application Info">
-                            <StackPanel>
-                                <TextBlock Classes="field"
-                                           Text="{DynamicResource SettingView.Version}" />
-                                <TextBox Classes="read-only"
-                                         Text="{Binding Version}" />
-                            </StackPanel>
-                        </c:GroupBoxControl>
+                        <Border Classes="adaptive-card">
+                            <c:GroupBoxControl Header="Application Info">
+                                <StackPanel>
+                                    <TextBlock Classes="field"
+                                               Text="{DynamicResource SettingView.Version}" />
+                                    <c:CopiedTextControl Text="{Binding Version}" />
+                                </StackPanel>
+                            </c:GroupBoxControl>
+                        </Border>
                     </ItemsControl>
                 </c:GroupBoxControl>
             </ScrollViewer>

@@ -7,4 +7,12 @@
             </ItemsPanelTemplate>
         </Setter>
     </Style>
+    
+    <Style Selector="ItemsControl.wrap-panel">
+        <Setter Property="ItemsPanel">
+            <ItemsPanelTemplate>
+                <WrapPanel />
+            </ItemsPanelTemplate>
+        </Setter>
+    </Style>
 </Styles>
