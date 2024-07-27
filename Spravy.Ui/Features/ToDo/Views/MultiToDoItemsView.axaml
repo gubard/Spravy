@@ -9,11 +9,19 @@
                         xmlns:m="clr-namespace:Spravy.Ui.Features.ToDo.Models"
                         xmlns:a="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                         xmlns:c="clr-namespace:Spravy.Ui.Controls"
+                        xmlns:h="clr-namespace:Spravy.Ui.Helpers"
                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                         x:Class="Spravy.Ui.Features.ToDo.Views.MultiToDoItemsView"
                         x:DataType="vm:MultiToDoItemsViewModel">
+    <Interaction.Behaviors>
+        <EventTriggerBehavior EventName="Initialized">
+            <InvokeCommandAction Command="{x:Static h:UiHelper.MultiToDoItemsViewInitialized}"
+                                 CommandParameter="{Binding $self}" />
+        </EventTriggerBehavior>
+    </Interaction.Behaviors>
+    
     <StackPanel>
-        <Grid ColumnDefinitions="Auto,*"
+        <Grid ColumnDefinitions="Auto,*,*"
               Margin="2">
             <ToggleButton Classes="alignment-center"
                           IsChecked="{Binding IsMulti}">
@@ -24,6 +32,12 @@
                 <TextBlock Classes="field"
                            Text="{DynamicResource MultiToDoItemsView.GroupBy}" />
                 <c:EnumSelectorControl SelectedEnum="{Binding GroupBy}" />
+            </StackPanel>
+            
+            <StackPanel Grid.Column="2">
+                <TextBlock Classes="field"
+                           Text="{DynamicResource MultiToDoItemsView.GroupBy}" />
+                <c:EnumSelectorControl SelectedEnum="{Binding ToDoItemViewType}" />
             </StackPanel>
         </Grid>
 

@@ -6,3 +6,9 @@ public enum ThemeType
     Light,
     Dark,
 }
+
+public enum ToDoItemViewType
+{
+    List,
+    Card,
+}

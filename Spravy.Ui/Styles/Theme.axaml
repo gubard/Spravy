@@ -11,6 +11,7 @@
                 <MergeResourceInclude Source="PathControl.axaml" />
                 <MergeResourceInclude Source="BusyAreaControl.axaml" />
                 <MergeResourceInclude Source="CopiedTextControl.axaml" />
+                <MergeResourceInclude Source="AdaptiveResources.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Styles.Resources>

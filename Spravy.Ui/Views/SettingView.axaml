@@ -11,57 +11,27 @@
                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                         x:Class="Spravy.Ui.Views.SettingView"
                         x:DataType="vm:SettingViewModel">
-    <UserControl.Styles>
-        <Style Selector="Border.adaptive-card">
-            <Setter Property="(Interaction.Behaviors)">
-                <BehaviorCollectionTemplate>
-                    <BehaviorCollection>
-                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
-                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinMedium}"
-                                                 MaxWidth="Infinity"
-                                                 ClassName="card" />
-                        </AdaptiveBehavior>
-                    </BehaviorCollection>
-                </BehaviorCollectionTemplate>
-            </Setter>
-        </Style>
-        
-        <Style Selector="ItemsControl.adaptive-items-control">
-            <Setter Property="(Interaction.Behaviors)">
-                <BehaviorCollectionTemplate>
-                    <BehaviorCollection>
-                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
-                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinMedium}"
-                                                 MaxWidth="Infinity"
-                                                 ClassName="wrap-panel" />
-                        </AdaptiveBehavior>
-                    </BehaviorCollection>
-                </BehaviorCollectionTemplate>
-            </Setter>
-        </Style>
-
-        <Style Selector="Border.card">
+    <UserControl.Resources>
+        <Style x:Key="BorderAdaptive" Selector="Border.adaptive">
+            <Setter Property="Background" Value="#22FFFFFF" />
+            <Setter Property="Padding" Value="5" />
+            <Setter Property="CornerRadius" Value="5" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="#88FFFFFF" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="Width" Value="300" />
             <Setter Property="Height" Value="150" />
         </Style>
 
-        <!--<Style Selector="Button.adaptive-commands-button">
-            <Setter Property="(Interaction.Behaviors)">
-                <BehaviorCollectionTemplate>
-                    <BehaviorCollection>
-                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
-                            <AdaptiveClassSetter MinWidth="0"
-                                                 MaxWidth="{x:Static h:MaterialDesignSize.MinMedium}"
-                                                 ClassName="small-adaptive-commands-button" />
-                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinMedium}"
-                                                 MaxWidth="Infinity"
-                                                 ClassName="wide-adaptive-commands-button" />
-                        </AdaptiveBehavior>
-                    </BehaviorCollection>
-                </BehaviorCollectionTemplate>
+        <Style x:Key="ItemsControlAdaptiveI" Selector="ItemsControl.adaptive-items-control">
+            <Setter Property="ItemsPanel">
+                <ItemsPanelTemplate>
+                    <WrapPanel />
+                </ItemsPanelTemplate>
             </Setter>
-        </Style>-->
-    </UserControl.Styles>
+        </Style>
+    </UserControl.Resources>
 
     <c:BusyAreaControl IsBusy="{Binding IsBusy}">
         <Grid RowDefinitions="*,Auto">
@@ -88,7 +58,7 @@
                     </c:GroupBoxControl.Header>
 
                     <ItemsControl Classes="adaptive-items-control">
-                        <Border Classes="adaptive-card">
+                        <Border Classes="adaptive">
                             <c:GroupBoxControl Header="Account Setting">
                                 <StackPanel>
                                     <TextBlock Classes="field"
@@ -108,14 +78,14 @@
                             </c:GroupBoxControl>
                         </Border>
 
-                        <Border Classes="adaptive-card">
+                        <Border Classes="adaptive">
                             <c:GroupBoxControl Header="Base Theme">
                                 <c:EnumSelectorControl Classes="alignment-center"
                                                        SelectedEnum="{Binding SelectedTheme}" />
                             </c:GroupBoxControl>
                         </Border>
 
-                        <Border Classes="adaptive-card">
+                        <Border Classes="adaptive">
                             <c:GroupBoxControl Header="Application Info">
                                 <StackPanel>
                                     <TextBlock Classes="field"

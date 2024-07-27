@@ -25,6 +25,45 @@ public partial class MainView : ReactiveUserControl<MainViewModel>
         this.uiApplicationService = uiApplicationService;
         InitializeComponent();
         AddHandler(DragDrop.DropEvent, Drop);
+
+        this.AddAdaptiveStyle(
+            new[] { MaterialDesignSizeType.ExtraSmall, MaterialDesignSizeType.Small, },
+            "AdaptiveCommandsSmall"
+        );
+
+        this.AddAdaptiveStyle(
+            new[]
+            {
+                MaterialDesignSizeType.Medium,
+                MaterialDesignSizeType.Large,
+                MaterialDesignSizeType.ExtraLarge,
+            },
+            "AdaptiveCommandsWide"
+        );
+
+        this.AddAdaptiveStyle(
+            new[]
+            {
+                MaterialDesignSizeType.ExtraSmall,
+                MaterialDesignSizeType.Small,
+                MaterialDesignSizeType.Medium,
+            },
+            "ToDoItemsGroupSmall"
+        );
+
+        this.AddAdaptiveStyle(
+            new[] { MaterialDesignSizeType.Large, MaterialDesignSizeType.ExtraLarge, },
+            "ToDoItemsGroupWide"
+        );
+
+        this.AddAdaptiveStyle(new[] { MaterialDesignSizeType.ExtraSmall, }, "DialogHostExtraSmall");
+        this.AddAdaptiveStyle(new[] { MaterialDesignSizeType.Small, }, "DialogHostSmall");
+        this.AddAdaptiveStyle(new[] { MaterialDesignSizeType.Medium, }, "DialogHostMedium");
+
+        this.AddAdaptiveStyle(
+            new[] { MaterialDesignSizeType.Large, MaterialDesignSizeType.ExtraLarge },
+            "DialogHostLarge"
+        );
     }
 
     protected override void OnPointerMoved(PointerEventArgs e)

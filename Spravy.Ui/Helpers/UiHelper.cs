@@ -49,6 +49,7 @@ public static class UiHelper
         NavigateToSetting = commands.GetNavigateTo<SettingViewModel>().Command;
         NavigateToCreateUser = commands.GetNavigateTo<CreateUserViewModel>().Command;
         NavigateToEmailOrLoginInput = commands.GetNavigateTo<EmailOrLoginInputViewModel>().Command;
+        MultiToDoItemsViewInitialized = commands.MultiToDoItemsViewInitialized.Command;
     }
 
     public static readonly ICommand Back;
@@ -87,5 +88,6 @@ public static class UiHelper
     public static readonly ICommand AddToDoItemViewInitialized;
     public static readonly ICommand GeneratePassword;
     public static readonly ICommand DeletePasswordItem;
+    public static readonly ICommand MultiToDoItemsViewInitialized;
     public static readonly SpravyCommandNotify NavigateToCurrentToDoItem;
 }

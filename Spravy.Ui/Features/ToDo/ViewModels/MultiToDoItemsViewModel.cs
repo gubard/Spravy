@@ -1,3 +1,6 @@
+using Avalonia.Markup.Xaml.Styling;
+using Spravy.Ui.Features.ToDo.Views;
+
 namespace Spravy.Ui.Features.ToDo.ViewModels;
 
 public class MultiToDoItemsViewModel : ViewModelBase
@@ -21,9 +24,13 @@ public class MultiToDoItemsViewModel : ViewModelBase
 
     public ToDoItemsViewModel Favorite { get; }
     public ToDoItemsGroupByViewModel ToDoItems { get; }
+    public MultiToDoItemsView? MultiToDoItemsView { get; set; }
 
     [Reactive]
     public GroupBy GroupBy { get; set; }
+
+    [Reactive]
+    public ToDoItemViewType ToDoItemViewType { get; set; }
 
     [Reactive]
     public bool IsMulti { get; set; }

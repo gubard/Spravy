@@ -1,4 +1,5 @@
 using Spravy.Core.Mappers;
+using Spravy.Ui.Features.ToDo.Views;
 using Spravy.Ui.Mappers;
 
 namespace Spravy.Ui.Services;
@@ -2569,6 +2570,22 @@ public class SpravyCommandService
             errorHandler,
             taskProgressService
         );
+
+        MultiToDoItemsViewInitialized = SpravyCommand.Create<MultiToDoItemsView>(
+            (view, _) =>
+                view
+                    .ViewModel.IfNotNull(nameof(view.ViewModel))
+                    .IfSuccess(vm =>
+                    {
+                        vm.MultiToDoItemsView = view;
+
+                        return Result.Success;
+                    })
+                    .ToValueTaskResult()
+                    .ConfigureAwait(false),
+            errorHandler,
+            taskProgressService
+        );
     }
 
     public SpravyCommand MultiCompleteToDoItem { get; }
@@ -2645,6 +2662,7 @@ public class SpravyCommandService
     public SpravyCommand PasswordItemSettingsViewInitialized { get; }
     public SpravyCommand AddRootToDoItemViewInitialized { get; }
     public SpravyCommand AddToDoItemViewInitialized { get; }
+    public SpravyCommand MultiToDoItemsViewInitialized { get; }
 
     public SpravyCommand ForgotPassword { get; }
 

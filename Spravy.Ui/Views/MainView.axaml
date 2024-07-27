@@ -10,154 +10,83 @@
              mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
              x:Class="Spravy.Ui.Views.MainView"
              x:DataType="vm:MainViewModel">
-    <UserControl.Styles>
-        <Style Selector="ItemsControl.adaptive-commands-items-control">
-            <Setter Property="(Interaction.Behaviors)">
-                <BehaviorCollectionTemplate>
-                    <BehaviorCollection>
-                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
-                            <AdaptiveClassSetter MinWidth="0"
-                                                 MaxWidth="{x:Static h:MaterialDesignSize.MinMedium}"
-                                                 ClassName="small-adaptive-commands-items-control" />
-                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinMedium}"
-                                                 MaxWidth="Infinity"
-                                                 ClassName="wide-adaptive-commands-items-control" />
-                        </AdaptiveBehavior>
-                    </BehaviorCollection>
-                </BehaviorCollectionTemplate>
-            </Setter>
-        </Style>
+    <UserControl.Resources>
+        <!-- ReSharper disable once Xaml.RedundantResource -->
+        <Styles x:Key="AdaptiveCommandsSmall">
+            <Style Selector="ItemsControl.adaptive-commands-items-control">
+                <Setter Property="IsVisible" Value="False" />
+            </Style>
 
-        <Style Selector="Button.adaptive-commands-button">
-            <Setter Property="(Interaction.Behaviors)">
-                <BehaviorCollectionTemplate>
-                    <BehaviorCollection>
-                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
-                            <AdaptiveClassSetter MinWidth="0"
-                                                 MaxWidth="{x:Static h:MaterialDesignSize.MinMedium}"
-                                                 ClassName="small-adaptive-commands-button" />
-                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinMedium}"
-                                                 MaxWidth="Infinity"
-                                                 ClassName="wide-adaptive-commands-button" />
-                        </AdaptiveBehavior>
-                    </BehaviorCollection>
-                </BehaviorCollectionTemplate>
-            </Setter>
-        </Style>
+            <Style Selector="Button.adaptive-commands-button">
+                <Setter Property="IsVisible" Value="True" />
+            </Style>
+        </Styles>
 
-        <Style Selector="ItemsControl.small-adaptive-commands-items-control">
-            <Setter Property="IsVisible" Value="False" />
-        </Style>
+        <!-- ReSharper disable once Xaml.RedundantResource -->
+        <Styles x:Key="AdaptiveCommandsWide">
+            <Style Selector="ItemsControl.adaptive-commands-items-control">
+                <Setter Property="IsVisible" Value="True" />
+            </Style>
 
-        <Style Selector="ItemsControl.wide-adaptive-commands-items-control">
-            <Setter Property="IsVisible" Value="True" />
-        </Style>
+            <Style Selector="Button.adaptive-commands-button">
+                <Setter Property="IsVisible" Value="False" />
+            </Style>
+        </Styles>
 
-        <Style Selector="Button.small-adaptive-commands-button">
-            <Setter Property="IsVisible" Value="True" />
-        </Style>
+        <!-- ReSharper disable once Xaml.RedundantResource -->
+        <Styles x:Key="ToDoItemsGroupSmall">
+            <Style Selector="ItemsControl.to-do-items-group">
+                <Setter Property="ItemsPanel">
+                    <ItemsPanelTemplate>
+                        <StackPanel />
+                    </ItemsPanelTemplate>
+                </Setter>
+            </Style>
+        </Styles>
 
-        <Style Selector="Button.wide-adaptive-commands-button">
-            <Setter Property="IsVisible" Value="False" />
-        </Style>
+        <!-- ReSharper disable once Xaml.RedundantResource -->
+        <Styles x:Key="ToDoItemsGroupWide">
+            <Style Selector="ItemsControl.to-do-items-group">
+                <Setter Property="ItemsPanel">
+                    <ItemsPanelTemplate>
+                        <UniformGrid Rows="1" />
+                    </ItemsPanelTemplate>
+                </Setter>
+            </Style>
+        </Styles>
 
-        <Style Selector="ItemsControl.to-do-items-group">
-            <Setter Property="(Interaction.Behaviors)">
-                <BehaviorCollectionTemplate>
-                    <BehaviorCollection>
-                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
-                            <AdaptiveClassSetter MinWidth="0"
-                                                 MaxWidth="{x:Static h:MaterialDesignSize.MaxLarge}"
-                                                 ClassName="to-do-items-group-small" />
-                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MaxLarge}"
-                                                 MaxWidth="Infinity"
-                                                 ClassName="to-do-items-group-wide" />
-                        </AdaptiveBehavior>
-                    </BehaviorCollection>
-                </BehaviorCollectionTemplate>
-            </Setter>
-        </Style>
-
-        <Style Selector="ItemsControl.to-do-items-group-small">
-            <Setter Property="ItemsPanel">
-                <ItemsPanelTemplate>
-                    <StackPanel />
-                </ItemsPanelTemplate>
-            </Setter>
-        </Style>
-
-        <Style Selector="ItemsControl.to-do-items-group-wide">
-            <Setter Property="ItemsPanel">
-                <ItemsPanelTemplate>
-                    <UniformGrid Rows="1" />
-                </ItemsPanelTemplate>
-            </Setter>
-        </Style>
-
-        <Style
-            Selector="dh|DialogHost.dialog-host-extra-small > Grid#PART_DialogHostRoot > dh|DialogOverlayPopupHost">
+        <Style x:Key="DialogHostExtraSmall"
+               Selector="dh|DialogHost.adaptive-dialog-host > Grid#PART_DialogHostRoot > dh|DialogOverlayPopupHost">
             <Setter Property="Width"
                     Value="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter95}}" />
             <Setter Property="MaxHeight"
                     Value="{Binding $parent[TopLevel].Height, Converter={StaticResource DoubleToPercentsConverter95}}" />
         </Style>
 
-        <Style
-            Selector="dh|DialogHost.dialog-host-small > Grid#PART_DialogHostRoot > dh|DialogOverlayPopupHost">
+        <Style x:Key="DialogHostSmall"
+               Selector="dh|DialogHost.adaptive-dialog-host > Grid#PART_DialogHostRoot > dh|DialogOverlayPopupHost">
             <Setter Property="Width"
                     Value="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter85}}" />
             <Setter Property="MaxHeight"
                     Value="{Binding $parent[TopLevel].Height, Converter={StaticResource DoubleToPercentsConverter95}}" />
         </Style>
 
-        <Style
-            Selector="dh|DialogHost.dialog-host-medium > Grid#PART_DialogHostRoot > dh|DialogOverlayPopupHost">
+        <Style x:Key="DialogHostMedium"
+               Selector="dh|DialogHost.adaptive-dialog-host > Grid#PART_DialogHostRoot > dh|DialogOverlayPopupHost">
             <Setter Property="Width"
                     Value="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter70}}" />
             <Setter Property="MaxHeight"
                     Value="{Binding $parent[TopLevel].Height, Converter={StaticResource DoubleToPercentsConverter95}}" />
         </Style>
 
-        <Style
-            Selector="dh|DialogHost.dialog-host-large > Grid#PART_DialogHostRoot > dh|DialogOverlayPopupHost">
+        <Style x:Key="DialogHostLarge"
+               Selector="dh|DialogHost.adaptive-dialog-host > Grid#PART_DialogHostRoot > dh|DialogOverlayPopupHost">
             <Setter Property="Width"
                     Value="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter50}}" />
             <Setter Property="MaxHeight"
                     Value="{Binding $parent[TopLevel].Height, Converter={StaticResource DoubleToPercentsConverter95}}" />
         </Style>
-
-        <Style Selector="dh|DialogHost.adaptive-dialog-host">
-            <Setter Property="(Interaction.Behaviors)">
-                <BehaviorCollectionTemplate>
-                    <BehaviorCollection>
-                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
-                            <AdaptiveClassSetter MinWidth="0"
-                                                 MaxWidth="{x:Static h:MaterialDesignSize.MaxExtraSmall}"
-                                                 ClassName="dialog-host-extra-small" />
-                        </AdaptiveBehavior>
-
-                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
-                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinSmall}"
-                                                 MaxWidth="{x:Static h:MaterialDesignSize.MaxSmall}"
-                                                 ClassName="dialog-host-small" />
-                        </AdaptiveBehavior>
-
-                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
-                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinMedium}"
-                                                 MaxWidth="{x:Static h:MaterialDesignSize.MaxMedium}"
-                                                 ClassName="dialog-host-medium" />
-                        </AdaptiveBehavior>
-
-                        <AdaptiveBehavior SourceControl="{Binding $parent[TopLevel]}">
-                            <AdaptiveClassSetter MinWidth="{x:Static h:MaterialDesignSize.MinLarge}"
-                                                 MaxWidth="Infinity"
-                                                 ClassName="dialog-host-large" />
-                        </AdaptiveBehavior>
-                    </BehaviorCollection>
-                </BehaviorCollectionTemplate>
-            </Setter>
-        </Style>
-    </UserControl.Styles>
+    </UserControl.Resources>
 
     <Panel Name="{x:Static v:MainView.MainPanelName}">
         <ContentControl Content="{Binding MainProgressBar}" VerticalAlignment="Top" />

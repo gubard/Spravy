@@ -67,7 +67,7 @@
                             </ItemsControl.DataTemplates>
                         </ItemsControl>
 
-                        <Button Classes="adaptive-commands-button mode-press">
+                        <Button Classes="adaptive-commands-button mode-press alignment-right">
                             <Button.DataTemplates>
                                 <DataTemplate x:DataType="sm:SpravyCommandNotify">
                                     <ContentControl Content="{Binding Text}" />
