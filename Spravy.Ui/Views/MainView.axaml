@@ -6,7 +6,6 @@
              xmlns:dh="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
              xmlns:s="clr-namespace:Spravy.Ui.Services"
              xmlns:v="clr-namespace:Spravy.Ui.Views"
-             xmlns:h="clr-namespace:Spravy.Ui.Helpers"
              mc:Ignorable="d" d:DesignWidth="425" d:DesignHeight="700"
              x:Class="Spravy.Ui.Views.MainView"
              x:DataType="vm:MainViewModel">

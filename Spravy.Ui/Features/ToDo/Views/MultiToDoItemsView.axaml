@@ -19,7 +19,28 @@
                                  CommandParameter="{Binding $self}" />
         </EventTriggerBehavior>
     </Interaction.Behaviors>
-    
+
+    <UserControl.Resources>
+        <!-- ReSharper disable once Xaml.RedundantResource -->
+        <Styles x:Key="CardToDoItems">
+            <Style Selector="ItemsControl.to-do-items-control">
+                <Setter Property="ItemsPanel">
+                    <ItemsPanelTemplate>
+                        <WrapPanel />
+                    </ItemsPanelTemplate>
+                </Setter>
+            </Style>
+
+            <Style Selector="Button.to-do-item">
+                <Setter Property="Width" Value="300" />
+            </Style>
+
+            <Style Selector="ToggleButton.to-do-item">
+                <Setter Property="Width" Value="200" />
+            </Style>
+        </Styles>
+    </UserControl.Resources>
+
     <StackPanel>
         <Grid ColumnDefinitions="Auto,*,*"
               Margin="2">
@@ -33,10 +54,10 @@
                            Text="{DynamicResource MultiToDoItemsView.GroupBy}" />
                 <c:EnumSelectorControl SelectedEnum="{Binding GroupBy}" />
             </StackPanel>
-            
+
             <StackPanel Grid.Column="2">
                 <TextBlock Classes="field"
-                           Text="{DynamicResource MultiToDoItemsView.GroupBy}" />
+                           Text="{DynamicResource MultiToDoItemsView.ViewLike}" />
                 <c:EnumSelectorControl SelectedEnum="{Binding ToDoItemViewType}" />
             </StackPanel>
         </Grid>
@@ -51,7 +72,8 @@
                         Content="{Binding ToDoItems}">
             <ContentControl.DataTemplates>
                 <DataTemplate DataType="m:ToDoItemEntityNotify">
-                    <ToggleButton Classes="content-alignment-stretch" Padding="0" IsChecked="{Binding IsSelected}">
+                    <ToggleButton Classes="content-alignment-stretch to-do-item" Padding="0"
+                                  IsChecked="{Binding IsSelected}">
                         <Border Margin="0" CornerRadius="0" Padding="5">
                             <StackPanel>
                                 <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto">

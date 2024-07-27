@@ -1,6 +1,6 @@
 namespace Spravy.Ui.Extensions;
 
-public static class StyleHostExtension
+public static class AvaloniaExtension
 {
     public static void AddAdaptiveStyle<T>(
         this T host,

@@ -122,6 +122,7 @@
     <!--MultiToDoItemsView-->
     <sys:String x:Key="MultiToDoItemsView.IsMulti">Select a few</sys:String>
     <sys:String x:Key="MultiToDoItemsView.GroupBy">Group by</sys:String>
+    <sys:String x:Key="MultiToDoItemsView.ViewLike">View like</sys:String>
     <sys:String x:Key="MultiToDoItemsView.Favorite">Favorite</sys:String>
 
     <!--ToDoItemType-->

@@ -32,7 +32,7 @@
         </Expander.Header>
 
         <ItemsControl DragDrop.AllowDrop="True"
-                      Classes="test"
+                      Classes="to-do-items-control"
                       Name="{x:Static v:ToDoItemsView.ItemsItemsControlName}"
                       ItemsSource="{Binding Items}" />
     </Expander>

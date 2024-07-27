@@ -20,6 +20,35 @@ public class MultiToDoItemsViewModel : ViewModelBase
                 Favorite.IsMulti = x;
                 ToDoItems.IsMulti = x;
             });
+
+        this.WhenAnyValue(x => x.ToDoItemViewType)
+            .Subscribe(x =>
+            {
+                if (MultiToDoItemsView is null)
+                {
+                    return;
+                }
+
+                if (!MultiToDoItemsView.TryGetStyle("CardToDoItems", out var style))
+                {
+                    return;
+                }
+
+                switch (x)
+                {
+                    case ToDoItemViewType.List:
+                        MultiToDoItemsView.Styles.Remove(style);
+                        break;
+                    case ToDoItemViewType.Card:
+                        if (!MultiToDoItemsView.Styles.Contains(style))
+                        {
+                            MultiToDoItemsView.Styles.Add(style);
+                        }
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(x), x, null);
+                }
+            });
     }
 
     public ToDoItemsViewModel Favorite { get; }
