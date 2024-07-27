@@ -18,10 +18,9 @@
 
         <StackPanel>
             <TextBlock Text="{Binding Account.Login}" Margin="5" />
-            <Border Height="1"
+            <Rectangle Height="1"
                     Margin="0,10,0,10"
-                    Background="{DynamicResource SukiControlBorderBrush}"
-                    BorderThickness="0" />
+                    Fill="{DynamicResource ExpanderHeaderBorderBrush}" />
 
             <Button Classes="mode-press"
                     Command="{x:Static h:UiHelper.NavigateToRootToDoItems}">

@@ -14,7 +14,8 @@
                         VerticalAlignment="{TemplateBinding VerticalAlignment}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding CornerRadius}">
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        Background="{TemplateBinding Background}">
                     <Panel>
                         <ContentPresenter x:Name="ContentPresenter" Content="{TemplateBinding Content}" />
 
@@ -48,11 +49,12 @@
         </Style>
 
         <Style Selector="^.card">
-            <Setter Property="BorderBrush" Value="White" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderBrush}" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="CornerRadius" Value="2" />
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="Background" Value="{DynamicResource ButtonBackground}" />
         </Style>
     </ControlTheme>
 

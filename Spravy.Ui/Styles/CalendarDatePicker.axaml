@@ -1,18 +1,3 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Design.PreviewWith>
-        <Border Padding="20" Background="Black" Width="200" Height="200">
-            <CalendarDatePicker />
-        </Border>
-    </Design.PreviewWith>
-
-    <Style Selector="CalendarDatePicker">
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="BorderBrush" Value="{DynamicResource SukiControlBorderBrush}" />
-        <Setter Property="CornerRadius" Value="{DynamicResource SmallCornerRadius}" />
-    </Style>
-
-    <Style Selector="CalendarDatePicker /template/ Calendar#PART_Calendar">
-        <Setter Property="Background" Value="{DynamicResource SukiCardBackground}" />
-    </Style>
 </Styles>

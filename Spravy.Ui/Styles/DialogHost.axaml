@@ -28,7 +28,7 @@
     <Style
         Selector="dh|DialogOverlayPopupHost > Border#PART_ContentBackground > ContentPresenter#PART_ContentPresenter">
         <Setter Property="CornerRadius" Value="5" />
-        <Setter Property="BorderBrush" Value="#88FFFFFF" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
     </Style>
 </Styles>

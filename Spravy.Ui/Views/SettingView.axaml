@@ -13,11 +13,11 @@
                         x:DataType="vm:SettingViewModel">
     <UserControl.Resources>
         <Style x:Key="BorderAdaptive" Selector="Border.adaptive">
-            <Setter Property="Background" Value="#22FFFFFF" />
+            <Setter Property="Background" Value="{DynamicResource ButtonBackground}" />
             <Setter Property="Padding" Value="5" />
             <Setter Property="CornerRadius" Value="5" />
             <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="BorderBrush" Value="#88FFFFFF" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderBrush}" />
             <Setter Property="HorizontalAlignment" Value="Center" />
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="Width" Value="300" />
