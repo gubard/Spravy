@@ -130,7 +130,7 @@
 
                     <Panel>
                         <TextBlock Name="{x:Static v:ToDoItemView.PlainTextTextBlockName}"
-                                   Classes="alignment-left"
+                                   Classes="alignment-left text-wrap"
                                    IsVisible="{Binding Item.IsDescriptionPlainText}"
                                    Text="{Binding Item.Description}" />
 
