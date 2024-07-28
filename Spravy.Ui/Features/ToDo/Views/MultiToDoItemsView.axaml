@@ -6,10 +6,12 @@
                         xmlns:ru="http://reactiveui.net"
                         xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
                         xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
-                        xmlns:m="clr-namespace:Spravy.Ui.Features.ToDo.Models"
-                        xmlns:a="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                        xmlns:tm="clr-namespace:Spravy.Ui.Features.ToDo.Models"
+                        xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                         xmlns:c="clr-namespace:Spravy.Ui.Controls"
                         xmlns:h="clr-namespace:Spravy.Ui.Helpers"
+                        xmlns:m="clr-namespace:Spravy.Ui.Models"
+                        xmlns:ui="clr-namespace:Spravy.Ui"
                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                         x:Class="Spravy.Ui.Features.ToDo.Views.MultiToDoItemsView"
                         x:DataType="vm:MultiToDoItemsViewModel">
@@ -19,6 +21,127 @@
                                  CommandParameter="{Binding $self}" />
         </EventTriggerBehavior>
     </Interaction.Behaviors>
+
+    <UserControl.DataTemplates>
+        <DataTemplate DataType="tm:ToDoItemEntityNotify">
+            <Button Name="{x:Static ui:App.RootToDoItemButtonName}"
+                    Command="{x:Static h:UiHelper.NavigateToToDoItem}"
+                    CommandParameter="{Binding}"
+                    Classes="alignment-stretch content-alignment-stretch to-do-item">
+                <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto, Auto,*">
+                    <ToggleButton Grid.Row="1"
+                                  Grid.RowSpan="2"
+                                  BorderThickness="1"
+                                  BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}"
+                                  Classes="alignment-top"
+                                  Width="50"
+                                  Height="50"
+                                  Margin="0,0,5,5"
+                                  Command="{x:Static h:UiHelper.Complete}"
+                                  CommandParameter="{Binding}"
+                                  IsVisible="{Binding IsCan, Converter={StaticResource ToDoItemCanNoneToBooleanReverseConverter}}"
+                                  IsChecked="{Binding IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanConverter}}">
+                        <mi:MaterialIcon Kind="Check"
+                                         Width="45"
+                                         Height="45"
+                                         IsVisible="{Binding IsCan, Mode=OneWay, Converter={StaticResource ToDoItemCanCompleteToBooleanConverter}}" />
+                    </ToggleButton>
+
+                    <Grid Grid.ColumnSpan="3" ColumnDefinitions="Auto,Auto,*,Auto,*,Auto,Auto">
+                        <Rectangle Width="15"
+                                   Margin="0,0,3,0"
+                                   Height="2"
+                                   Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding Type, Converter={StaticResource ToDoItemTypeLocalizationValueConverter}}" />
+                        <Rectangle Grid.Column="2"
+                                   Margin="3,0,3,0"
+                                   Height="2"
+                                   Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
+                        <mi:MaterialIcon Grid.Column="3"
+                                         PointerPressed="ReorderOnPointerPressed"
+                                         Background="Transparent"
+                                         Width="20"
+                                         Height="20"
+                                         Kind="ReorderHorizontal" />
+                        <Rectangle Grid.Column="4"
+                                   Margin="3,0,3,0"
+                                   Height="2"
+                                   Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
+                        <TextBlock Grid.Column="5"
+                                   Text="{Binding Status, Converter={StaticResource ToDoItemStatusLocalizationValueConverter}}" />
+                        <Rectangle Grid.Column="6"
+                                   Width="15"
+                                   Margin="3,0,0,0"
+                                   Height="2"
+                                   Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
+                    </Grid>
+
+                    <StackPanel Grid.Column="1" Grid.Row="2">
+                        <TextBlock Margin="5,5,0,0"
+                                   Classes="text-wrap vertical-alignment-center alignment-left"
+                                   Text="{Binding Name}" />
+
+                        <Button Margin="0,0,0,5"
+                                IsVisible="{Binding Active, Converter={StaticResource NullToBooleanConverter}}"
+                                Command="{x:Static h:UiHelper.NavigateToActiveToDoItem}"
+                                CommandParameter="{Binding}">
+                            <TextBlock Text="{Binding Active.Name}" TextWrapping="Wrap" />
+                        </Button>
+                    </StackPanel>
+
+                    <Grid Grid.Row="2"
+                          Grid.Column="2"
+                          ColumnDefinitions="Auto,Auto"
+                          RowDefinitions="Auto,Auto">
+                        <Button>
+                            <Button.DataTemplates>
+                                <DataTemplate x:DataType="m:SpravyCommandNotify">
+                                    <ContentControl Content="{Binding Text}" />
+                                </DataTemplate>
+                            </Button.DataTemplates>
+
+                            <Button.Styles>
+                                <Style Selector="MenuItem" x:DataType="m:SpravyCommandNotify">
+                                    <Setter Property="Command" Value="{Binding Item.Command}" />
+                                    <Setter Property="CommandParameter" Value="{Binding $parent[Button].DataContext}" />
+                                    <Setter Property="Icon" Value="{Binding Kind}" />
+                                </Style>
+                            </Button.Styles>
+
+                            <Button.Flyout>
+                                <MenuFlyout ItemsSource="{Binding CompactCommands}" />
+                            </Button.Flyout>
+
+                            <mi:MaterialIcon Kind="DotsHorizontal" />
+                        </Button>
+
+                        <Panel Grid.Column="1">
+                            <Button Command="{x:Static h:UiHelper.RemoveFromFavorite}"
+                                    CommandParameter="{Binding}"
+                                    IsVisible="{Binding IsFavorite}">
+                                <mi:MaterialIcon Kind="Star" />
+                            </Button>
+
+                            <Button Command="{x:Static h:UiHelper.AddToFavorite}"
+                                    CommandParameter="{Binding}"
+                                    IsVisible="{Binding IsFavorite, Converter={StaticResource ReverseBooleanValueConverter}}">
+                                <mi:MaterialIcon Kind="StarOutline" />
+                            </Button>
+                        </Panel>
+
+                        <Button Grid.Row="1"
+                                Grid.Column="1"
+                                Command="{x:Static h:UiHelper.OpenLink}"
+                                CommandParameter="{Binding}"
+                                IsVisible="{Binding Link, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}">
+                            <mi:MaterialIcon Kind="Link" />
+                        </Button>
+                    </Grid>
+                </Grid>
+            </Button>
+        </DataTemplate>
+    </UserControl.DataTemplates>
 
     <UserControl.Resources>
         <!-- ReSharper disable once Xaml.RedundantResource -->
@@ -46,7 +169,7 @@
               Margin="2">
             <ToggleButton Classes="alignment-center"
                           IsChecked="{Binding IsMulti}">
-                <a:MaterialIcon Kind="CheckAll" />
+                <mi:MaterialIcon Kind="CheckAll" />
             </ToggleButton>
 
             <StackPanel Grid.Column="1" Margin="2,0,2,0">
@@ -71,27 +194,19 @@
         <ContentControl IsVisible="{Binding IsMulti}"
                         Content="{Binding ToDoItems}">
             <ContentControl.DataTemplates>
-                <DataTemplate DataType="m:ToDoItemEntityNotify">
+                <DataTemplate DataType="tm:ToDoItemEntityNotify">
                     <ToggleButton Classes="content-alignment-stretch to-do-item" Padding="0"
                                   IsChecked="{Binding IsSelected}">
                         <Border Margin="0" CornerRadius="0" Padding="5">
                             <StackPanel>
-                                <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto">
-                                    <Rectangle Width="15"
-                                               Margin="0,0,3,0"
+                                <Grid ColumnDefinitions="*,Auto,*">
+                                    <Rectangle Margin="0,0,3,0"
                                                Height="2"
                                                Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                                     <TextBlock Grid.Column="1"
                                                Text="{Binding Type, Converter={StaticResource ToDoItemTypeLocalizationValueConverter}}" />
                                     <Rectangle Grid.Column="2"
                                                Margin="3,0,3,0"
-                                               Height="2"
-                                               Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
-                                    <TextBlock Grid.Column="3"
-                                               Text="{Binding Status, Converter={StaticResource ToDoItemStatusLocalizationValueConverter}}" />
-                                    <Rectangle Grid.Column="4"
-                                               Width="15"
-                                               Margin="3,0,0,0"
                                                Height="2"
                                                Fill="{Binding Status, Converter={StaticResource ToDoItemStatusToBrushValueConverter}}" />
                                 </Grid>

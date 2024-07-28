@@ -5,7 +5,7 @@
                         xmlns:ru="http://reactiveui.net"
                         xmlns:vm="clr-namespace:Spravy.Ui.Features.ToDo.ViewModels"
                         xmlns:v="clr-namespace:Spravy.Ui.Features.ToDo.Views"
-                        xmlns:i="clr-namespace:Material.Icons;assembly=Material.Icons"
+                        xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                         x:Class="Spravy.Ui.Features.ToDo.Views.ToDoItemsView"
                         x:DataType="vm:ToDoItemsViewModel">
@@ -19,9 +19,9 @@
                     <Button Grid.Column="1"
                             Classes="mode-press"
                             IsVisible="{Binding IsMulti}"
-                            Command="{Binding SwitchAllSelectionCommand.Command}"
-                            Content="{x:Static i:MaterialIconKind.CheckAll}"
-                            Padding="11,0,11,0" />
+                            Command="{Binding SwitchAllSelectionCommand.Command}">
+                        <mi:MaterialIcon Kind="CheckAll" />
+                    </Button>
                 </Grid>
 
                 <TextBlock DockPanel.Dock="Right"

@@ -25,4 +25,28 @@ public static class ResourceHostExtension
 
         return true;
     }
+
+    public static bool TryGetDataTemplate<T>(
+        this T resourceHost,
+        string resourceKey,
+        [MaybeNullWhen(false)] out IDataTemplate dataTemplate
+    )
+        where T : IStyleHost, IResourceHost
+    {
+        dataTemplate = null;
+
+        if (!resourceHost.TryFindResource(resourceKey, out var resource))
+        {
+            return false;
+        }
+
+        if (resource is not IDataTemplate result)
+        {
+            return false;
+        }
+
+        dataTemplate = result;
+
+        return true;
+    }
 }

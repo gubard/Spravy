@@ -1,13 +1,13 @@
 namespace Spravy.Ui.Extensions;
 
-public static class AvaloniaExtension
+public static class HostExtension
 {
     public static void AddAdaptiveStyle<T>(
         this T host,
         ReadOnlyMemory<MaterialDesignSizeType> types,
         string resourceKey
     )
-        where T : IStyleHost, IResourceHost
+        where T : IStyleHost, IResourceHost, IDataTemplateHost
     {
         if (!host.TryFindResource(resourceKey, out var resource))
         {
