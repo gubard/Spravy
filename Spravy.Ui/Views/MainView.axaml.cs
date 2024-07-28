@@ -1,12 +1,13 @@
 using Avalonia.Input;
+using Spravy.Core.Helpers;
 
 namespace Spravy.Ui.Views;
 
 public partial class MainView : ReactiveUserControl<MainViewModel>
 {
-    private readonly IServiceFactory serviceFactory;
-    private readonly IToDoService toDoService;
-    private readonly IUiApplicationService uiApplicationService;
+    private readonly IServiceFactory serviceFactory = DiHelper.ServiceFactory.CreateService<IServiceFactory>();
+    private readonly IToDoService toDoService = DiHelper.ServiceFactory.CreateService<IToDoService>();
+    private readonly IUiApplicationService uiApplicationService = DiHelper.ServiceFactory.CreateService<IUiApplicationService>();
     public const string ErrorDialogHostName = "error-dialog-host";
     public const string ProgressDialogHostName = "progress-dialog-host";
     public const string InputDialogHostName = "input-dialog-host";
@@ -14,15 +15,8 @@ public partial class MainView : ReactiveUserControl<MainViewModel>
     public const string MainContentName = "main-content-control";
     public const string MainPanelName = "main-panel-control";
 
-    public MainView(
-        IServiceFactory serviceFactory,
-        IToDoService toDoService,
-        IUiApplicationService uiApplicationService
-    )
+    public MainView()
     {
-        this.serviceFactory = serviceFactory;
-        this.toDoService = toDoService;
-        this.uiApplicationService = uiApplicationService;
         InitializeComponent();
         AddHandler(DragDrop.DropEvent, Drop);
 
