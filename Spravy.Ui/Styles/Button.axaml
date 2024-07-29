@@ -1,13 +1,5 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Design.PreviewWith>
-        <Border Padding="20" Width="500">
-            <Button Classes="glass-card">
-                <TextBlock Text="Button" />
-            </Button>
-        </Border>
-    </Design.PreviewWith>
-
     <Style Selector="Button">
         <Setter Property="Margin" Value="2" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />

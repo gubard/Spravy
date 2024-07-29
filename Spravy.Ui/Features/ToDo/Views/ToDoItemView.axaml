@@ -114,7 +114,8 @@
 
         <ScrollViewer Classes="mini" Grid.Row="2">
             <StackPanel>
-                <Expander Margin="3"
+                <Expander Classes="header-alignment-left"
+                          Margin="3"
                           IsExpanded="{Binding Item.Description, Mode=OneWay, Converter={StaticResource NullOrWhiteSpaceToBooleanValueConverterReverse}}">
                     <Expander.Header>
                         <Button Command="{x:Static h:UiHelper.SetToDoItemDescription}"
