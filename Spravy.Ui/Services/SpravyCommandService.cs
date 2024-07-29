@@ -1932,6 +1932,7 @@ public class SpravyCommandService
                         viewModel.Content.Description = item.Description;
                         viewModel.Content.Type = item.DescriptionType;
                         viewModel.ToDoItemName = item.Name;
+                        viewModel.FocusUi();
                     },
                     ct
                 ),

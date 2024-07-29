@@ -11,4 +11,9 @@ public class EditDescriptionViewModel : ViewModelBase
 
     [Reactive]
     public string ToDoItemName { get; set; } = string.Empty;
+
+    public Result FocusUi()
+    {
+        return Content.FocusUi();
+    }
 }
