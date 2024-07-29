@@ -227,25 +227,20 @@ public class DialogViewer : IDialogViewer
         where TView : ViewModelBase
     {
         var content = serviceFactory.CreateService<TView>();
+        var confirmViewModel = serviceFactory.CreateService<ConfirmViewModel>();
+        confirmViewModel.Content = content;
+        confirmViewModel.ConfirmTask = view => confirmTask.Invoke((TView)view);
+        confirmViewModel.CancelTask = view => cancelTask.Invoke((TView)view);
 
-        return this.InvokeUiBackgroundAsync(() =>
+        confirmViewModel.Initialized = () =>
+            this.InvokeUiBackgroundAsync(() =>
             {
                 setupView.Invoke(content);
 
                 return Result.Success;
-            })
-            .IfSuccessAsync(
-                () =>
-                {
-                    var confirmViewModel = serviceFactory.CreateService<ConfirmViewModel>();
-                    confirmViewModel.Content = content;
-                    confirmViewModel.ConfirmTask = view => confirmTask.Invoke((TView)view);
-                    confirmViewModel.CancelTask = view => cancelTask.Invoke((TView)view);
+            });
 
-                    return ShowView(confirmViewModel, ContentDialogHostIdentifier);
-                },
-                ct
-            );
+        return ShowView(confirmViewModel, ContentDialogHostIdentifier);
     }
 
     public ConfiguredValueTaskAwaitable<Result> ShowConfirmInputDialogAsync<TView>(
@@ -257,25 +252,20 @@ public class DialogViewer : IDialogViewer
         where TView : ViewModelBase
     {
         var content = serviceFactory.CreateService<TView>();
+        var confirmViewModel = serviceFactory.CreateService<ConfirmViewModel>();
+        confirmViewModel.Content = content;
+        confirmViewModel.ConfirmTask = view => confirmTask.Invoke((TView)view);
+        confirmViewModel.CancelTask = view => cancelTask.Invoke((TView)view);
 
-        return this.InvokeUiBackgroundAsync(() =>
+        confirmViewModel.Initialized = () =>
+            this.InvokeUiBackgroundAsync(() =>
             {
                 setupView.Invoke(content);
 
                 return Result.Success;
-            })
-            .IfSuccessAsync(
-                () =>
-                {
-                    var confirmViewModel = serviceFactory.CreateService<ConfirmViewModel>();
-                    confirmViewModel.Content = content;
-                    confirmViewModel.ConfirmTask = view => confirmTask.Invoke((TView)view);
-                    confirmViewModel.CancelTask = view => cancelTask.Invoke((TView)view);
+            });
 
-                    return ShowView(confirmViewModel, InputDialogHostIdentifier);
-                },
-                ct
-            );
+        return ShowView(confirmViewModel, InputDialogHostIdentifier);
     }
 
     public ConfiguredValueTaskAwaitable<Result> CloseContentDialogAsync(CancellationToken ct)

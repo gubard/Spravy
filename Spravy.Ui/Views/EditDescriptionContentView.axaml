@@ -15,12 +15,15 @@
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 
-    <StackPanel>
+    <Grid RowDefinitions="Auto,Auto,*">
         <TextBlock Classes="field"
                    Text="{DynamicResource EditDescriptionView.Description}" />
-        <c:EnumSelectorControl SelectedEnum="{Binding Type}" />
-        <TextBox x:Name="DescriptionTextBox"
-                 Classes="accepts-return vertical-content-alignment-top content-type-social"
-                 Text="{Binding Description}" />
-    </StackPanel>
+        <c:EnumSelectorControl Grid.Row="1" SelectedEnum="{Binding Type}" />
+
+        <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+            <TextBox x:Name="DescriptionTextBox"
+                     Classes="accepts-return vertical-content-alignment-top content-type-social text-wrap"
+                     Text="{Binding Description}" />
+        </ScrollViewer>
+    </Grid>
 </ru:ReactiveUserControl>
