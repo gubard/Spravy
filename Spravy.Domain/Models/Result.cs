@@ -53,6 +53,9 @@ public class Result<TValue>
 {
     public static readonly Result<TValue> CanceledByUserError = new(new CanceledByUserError());
 
+    public static readonly Func<TValue, ConfiguredValueTaskAwaitable<Result>> EmptyFunc = _ =>
+        Result.AwaitableSuccess;
+
     private readonly TValue? value;
 
     public Result()

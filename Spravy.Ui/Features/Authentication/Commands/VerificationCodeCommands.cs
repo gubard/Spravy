@@ -113,8 +113,6 @@ public class VerificationCodeCommands
                         },
                         ct
                     ),
-            ActionHelper<TextViewModel>.Empty,
-            _ => Result.AwaitableSuccess,
             ct
         );
     }
