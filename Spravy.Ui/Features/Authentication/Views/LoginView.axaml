@@ -48,6 +48,7 @@
                               HorizontalAlignment="Center" />
                     <Button Grid.Column="1"
                             Classes="mode-press"
+                            Name="{x:Static v:LoginView.ForgotPasswordButtonName}"
                             Command="{x:Static h:UiHelper.NavigateToEmailOrLoginInput}"
                             Content="{DynamicResource LoginView.ForgotPassword}" />
                     <Button Grid.Row="1"

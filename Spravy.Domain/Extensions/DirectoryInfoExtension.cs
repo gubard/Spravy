@@ -23,4 +23,16 @@ public static class DirectoryInfoExtension
 
         return directory;
     }
+
+    public static DirectoryInfo DeleteIfExists(this DirectoryInfo directory, bool recursive)
+    {
+        if (!directory.Exists)
+        {
+            return directory;
+        }
+
+        directory.Delete(recursive);
+
+        return directory;
+    }
 }

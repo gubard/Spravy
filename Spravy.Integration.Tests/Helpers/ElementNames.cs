@@ -2,6 +2,7 @@ namespace Spravy.Integration.Tests.Helpers;
 
 public static class ElementNames
 {
+    public const string ForgotPasswordButton = "forgot-password-button";
     public const string EmailTextBox = "email-text-box";
     public const string CreateUserCard = "create-user-card";
     public const string CreateUserButton = "create-user-button";

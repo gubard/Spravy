@@ -1,3 +1,5 @@
+using Spravy.Ui.Setting;
+
 namespace Spravy.Ui.ViewModels;
 
 public class EmailOrLoginInputViewModel : NavigatableViewModelBase
@@ -171,17 +173,5 @@ public class EmailOrLoginInputViewModel : NavigatableViewModelBase
 
             return Result.Success;
         });
-    }
-
-    private class EmailOrLoginInputViewModelSetting
-    {
-        public EmailOrLoginInputViewModelSetting() { }
-
-        public EmailOrLoginInputViewModelSetting(EmailOrLoginInputViewModel viewModel)
-        {
-            Identifier = viewModel.EmailOrLogin;
-        }
-
-        public string Identifier { get; set; } = string.Empty;
     }
 }

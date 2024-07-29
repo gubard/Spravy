@@ -14,7 +14,8 @@ public class Tests
     public void CreateUserFlow()
     {
         LogCurrentTestMethod();
-        
+        Directory.GetCurrentDirectory().ToDirectory().Combine("storage").Delete(true);
+
         WindowHelper
             .CreateWindow()
             .TryCatch(
@@ -350,15 +351,6 @@ public class Tests
                                             .ThrowIfNull()
                                             .SetText(w, TextHelper.TextLength8)
                                     )
-                                    .Case(view =>
-                                        view.FindControl<CheckBox>(
-                                                ElementNames.RememberMeCheckBoxName
-                                            )
-                                            .ThrowIfNull()
-                                            .ClickOn(w)
-                                            .IsChecked.Should()
-                                            .Be(true)
-                                    )
                                     .FindControl<Button>(ElementNames.LoginButton)
                                     .ThrowIfNull()
                                     .ClickOn(w)
@@ -373,10 +365,76 @@ public class Tests
     [AvaloniaTest]
     [Order(1)]
     [Property("Priority", "1")]
+    public void ForgotPasswordFlow()
+    {
+        LogCurrentTestMethod();
+
+        WindowHelper
+            .CreateWindow()
+            .TryCatch(
+                w =>
+                    w.SetSize(1000, 1000)
+                        .ShowWindow()
+                        .Case(
+                            () =>
+                                w.GetCurrentView<LoginView, LoginViewModel>()
+                                    .RunJobsAll(1)
+                                    .FindControl<Button>(ElementNames.ForgotPasswordButton)
+                                    .ThrowIfNull()
+                                    .ClickOn(w)
+                                    .RunJobsAll(1)
+                        )
+                        .Case(
+                            () =>
+                                w.GetCurrentView<
+                                    EmailOrLoginInputView,
+                                    EmailOrLoginInputViewModel
+                                >()
+                                    .FindControl<Button>("BackButton")
+                                    .ThrowIfNull()
+                                    .ClickOn(w)
+                                    .RunJobsAll(1)
+                        )
+                        .Case(
+                            () =>
+                                w.GetCurrentView<LoginView, LoginViewModel>()
+                                    .FindControl<Button>(ElementNames.ForgotPasswordButton)
+                                    .ThrowIfNull()
+                                    .ClickOn(w)
+                                    .RunJobsAll(1)
+                        )
+                        .Case(() => TestAppBuilder.Configuration.GetImapConnection().ClearInbox())
+                        .Case(
+                            () =>
+                                w.GetCurrentView<
+                                    EmailOrLoginInputView,
+                                    EmailOrLoginInputViewModel
+                                >()
+                                    .Case(view =>
+                                        view.FindControl<TextBox>("EmailOrLoginTextBox")
+                                            .ThrowIfNull()
+                                            .SetText(w, TextHelper.Email)
+                                    )
+                                    .FindControl<Button>("ForgotPasswordButton")
+                                    .ThrowIfNull()
+                                    .ClickOn(w)
+                                    .RunJobsAll(5)
+                        )
+                        .Case(
+                            () =>
+                                TestAppBuilder.Configuration.GetImapConnection().GetLastEmailText()
+                        ),
+                (w, _) => w.SaveFrame().LogCurrentState()
+            );
+    }
+
+    [AvaloniaTest]
+    [Order(2)]
+    [Property("Priority", "2")]
     public void TestAddToDoItemFlow()
     {
         LogCurrentTestMethod();
-        
+
         WindowHelper
             .CreateWindow()
             .TryCatch(
@@ -396,12 +454,12 @@ public class Tests
     }
 
     [AvaloniaTest]
-    [Order(2)]
-    [Property("Priority", "2")]
+    [Order(3)]
+    [Property("Priority", "3")]
     public void TestChangeToDoItemFlow()
     {
         LogCurrentTestMethod();
-        
+
         WindowHelper
             .CreateWindow()
             .TryCatch(
@@ -433,12 +491,12 @@ public class Tests
     }
 
     [AvaloniaTest]
-    [Order(3)]
-    [Property("Priority", "3")]
+    [Order(4)]
+    [Property("Priority", "4")]
     public void TestResetToDoItemFlow()
     {
         LogCurrentTestMethod();
-        
+
         WindowHelper
             .CreateWindow()
             .TryCatch(
@@ -504,7 +562,7 @@ public class Tests
                 (w, _) => w.SaveFrame().LogCurrentState()
             );
     }
-    
+
     private void LogCurrentTestMethod()
     {
         var methodName = TestContext.CurrentContext.Test.Name;

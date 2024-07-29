@@ -1,3 +1,5 @@
+using Spravy.Ui.Controls;
+
 namespace Spravy.Integration.Tests.Extensions;
 
 public static class CreateUserViewExtension
@@ -14,7 +16,10 @@ public static class CreateUserViewExtension
             .Case(() => window.SetKeyTextInput(text))
             .MustHasError()
             .Case(
-                () => createUserView.GetControl<Border>(ElementNames.CreateUserCard).MustWidth(400)
+                () =>
+                    createUserView
+                        .GetControl<BusyAreaControl>(ElementNames.CreateUserCard)
+                        .MustWidth(400)
             )
             .ClearText(window);
     }
@@ -31,7 +36,10 @@ public static class CreateUserViewExtension
             .Case(() => window.SetKeyTextInput(text))
             .MustNotHasError()
             .Case(
-                () => createUserView.GetControl<Border>(ElementNames.CreateUserCard).MustWidth(400)
+                () =>
+                    createUserView
+                        .GetControl<BusyAreaControl>(ElementNames.CreateUserCard)
+                        .MustWidth(400)
             )
             .ClearText(window);
     }

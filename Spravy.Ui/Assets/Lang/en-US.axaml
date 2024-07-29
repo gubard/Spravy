@@ -93,6 +93,7 @@
     <sys:String x:Key="EmailOrLoginInputView.Back">Back</sys:String>
     <sys:String x:Key="EmailOrLoginInputView.ChangePassword">Change password</sys:String>
     <sys:String x:Key="EmailOrLoginInputView.Busy">Send verification code...</sys:String>
+    <sys:String x:Key="EmailOrLoginInputView.Header">Forgot password</sys:String>
 
     <!--InfoView-->
     <sys:String x:Key="InfoView.Ok">Ok</sys:String>
@@ -197,6 +198,7 @@
     <sys:String x:Key="VerificationCodeView.VerificationCode">Verification code</sys:String>
     <sys:String x:Key="VerificationCodeView.Back">Back</sys:String>
     <sys:String x:Key="VerificationCodeView.SubmitCode">Submit code</sys:String>
+    <sys:String x:Key="VerificationCodeView.Header">Action confirmation</sys:String>
 
     <!--AddRootToDoItemView-->
     <sys:String x:Key="AddRootToDoItemView.Name">Name</sys:String>

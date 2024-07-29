@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Spravy.Db.Errors;
+using Spravy.Ui.Setting;
 
 namespace Spravy.Ui.Services;
 
@@ -48,4 +49,5 @@ namespace Spravy.Ui.Services;
 [JsonSerializable(typeof(SearchViewModelSetting))]
 [JsonSerializable(typeof(LoginStorageItem))]
 [JsonSerializable(typeof(SettingModel))]
+[JsonSerializable(typeof(EmailOrLoginInputViewModelSetting))]
 public partial class SpravyJsonSerializerContext : JsonSerializerContext;
